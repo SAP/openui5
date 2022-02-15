@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/ui/model/type/String",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/JSTokenizer",
-	"sap/base/util/deepClone",
 	"sap/base/Log"
 ], function(
 	ColumnMenu,
@@ -35,7 +34,6 @@ sap.ui.define([
 	StringType,
 	ObjectPath,
 	JSTokenizer,
-	deepClone,
 	Log
 ) {
 	"use strict";

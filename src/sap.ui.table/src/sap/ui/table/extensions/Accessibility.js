@@ -9,9 +9,8 @@ sap.ui.define([
 	"../utils/TableUtils",
 	"../library",
 	"sap/ui/core/Control",
-	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
-], function(ExtensionBase, AccRenderExtension, TableUtils, library, Control, Device, jQuery) {
+], function(ExtensionBase, AccRenderExtension, TableUtils, library, Control, jQuery) {
 	"use strict";
 
 	// shortcuts

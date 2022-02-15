@@ -567,7 +567,7 @@ sap.ui.define([
 				}
 			}
 		}
-	}});
+	}, renderer: FileUploaderRenderer});
 
 
 	/**

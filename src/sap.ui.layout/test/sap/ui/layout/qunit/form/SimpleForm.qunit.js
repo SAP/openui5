@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/ui/layout/library",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/GridData",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
@@ -18,7 +17,6 @@ sap.ui.define([
 ],
 	function(
 		library,
-		qutils,
 		SimpleForm,
 		GridData,
 		ResponsiveFlowLayoutData,

@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/m/ToolbarSpacer",
-	"sap/ui/thirdparty/jquery"
-], function(Log, Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, Popup, MenuM, MenuItemM, ToolbarSpacer, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device"
+], function(Log, Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, Popup, MenuM, MenuItemM, ToolbarSpacer, jQuery, Device) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Menus.Controller", {
@@ -97,7 +98,7 @@ sap.ui.define([
 		},
 
 		onProductIdCellContextMenu : function(oEvent) {
-			if (sap.ui.Device.support.touch) {
+			if (Device.support.touch) {
 				return; //Do not use context menus on touch devices
 			}
 

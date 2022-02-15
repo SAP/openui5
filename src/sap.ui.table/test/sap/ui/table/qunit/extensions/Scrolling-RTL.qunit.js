@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/dom/jquery/scrollLeftRTL" // provides jQuery.fn.scrollLeftRTL
 ], function(TableQUnitUtils, RowAction, RowActionItem, TableUtils, Device, tableLibrary, Column, Control, jQuery, oCore) {
 	"use strict";
 

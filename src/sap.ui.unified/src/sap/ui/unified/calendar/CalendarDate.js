@@ -5,10 +5,9 @@
 // Provides class sap.ui.unified.calendar.CalendarDate
 sap.ui.define([
 	'sap/ui/base/Object',
-	'sap/ui/core/date/UniversalDate',
-	"sap/ui/thirdparty/jquery"
+	'sap/ui/core/date/UniversalDate'
 ],
-	function(BaseObject, UniversalDate, jQuery) {
+	function(BaseObject, UniversalDate) {
 		"use strict";
 
 		/*

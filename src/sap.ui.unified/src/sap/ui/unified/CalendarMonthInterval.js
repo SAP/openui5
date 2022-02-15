@@ -10,7 +10,6 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	'sap/ui/core/Renderer',
 	'sap/ui/core/format/DateFormat',
 	'./calendar/CalendarUtils',
 	'./calendar/CustomYearPicker',
@@ -31,7 +30,6 @@ sap.ui.define([
 	Core,
 	Locale,
 	LocaleData,
-	Renderer,
 	DateFormat,
 	CalendarUtils,
 	CustomYearPicker,
@@ -199,7 +197,7 @@ sap.ui.define([
 			 */
 			startDateChange : {}
 		}
-	}});
+	}, renderer: CalendarMonthIntervalRenderer});
 
 	/*
 	 * There are different modes (stored in this._iMode)

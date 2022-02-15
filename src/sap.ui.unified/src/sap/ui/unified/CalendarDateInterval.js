@@ -94,7 +94,7 @@ sap.ui.define([
 
 		},
 		designtime: "sap/ui/unified/designtime/CalendarDateInterval.designtime"
-	}});
+	}, renderer: CalendarDateIntervalRenderer});
 
 	CalendarDateInterval.prototype.init = function(){
 

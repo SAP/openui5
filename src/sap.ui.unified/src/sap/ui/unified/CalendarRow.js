@@ -16,7 +16,6 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	"./CalendarRowRenderer",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/checkMouseEnterOrLeave",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/CalendarAppointment"
 ], function(
@@ -32,7 +31,6 @@ sap.ui.define([
 	Locale,
 	CalendarRowRenderer,
 	containsOrEquals,
-	checkMouseEnterOrLeave,
 	jQuery,
 	CalendarAppointment
 ) {
@@ -344,7 +342,7 @@ sap.ui.define([
 				}
 			}
 		}
-	}});
+	}, renderer: CalendarRowRenderer});
 
 	CalendarRow.prototype.init = function(){
 

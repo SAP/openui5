@@ -159,7 +159,7 @@ sap.ui.define([
 			pressButton2 : {}
 
 		}
-	}});
+	}, renderer: HeaderRenderer});
 
 	/**
 	 * If set, the third button will be displayed

@@ -4,8 +4,9 @@
 sap.ui.define([
 	"./TableHelper.support",
 	"sap/ui/support/library",
-	"sap/ui/Device"
-], function(SupportHelper, SupportLibrary, Device) {
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function(SupportHelper, SupportLibrary, Device, jQuery) {
 	"use strict";
 
 	var Categories = SupportLibrary.Categories;

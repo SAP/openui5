@@ -4,10 +4,9 @@
 
 sap.ui.define([
 	'sap/ui/core/Renderer',
-	'sap/ui/core/theming/Parameters',
 	'./FormLayoutRenderer',
 	"sap/base/Log"
-	], function(Renderer, themingParameters, FormLayoutRenderer, Log) {
+	], function(Renderer, FormLayoutRenderer, Log) {
 	"use strict";
 
 

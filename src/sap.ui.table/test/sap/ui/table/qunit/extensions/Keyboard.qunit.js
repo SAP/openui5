@@ -5,17 +5,14 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
-	"sap/ui/table/TreeTable",
-	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/CreationRow",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/extensions/Keyboard",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, TableUtils, qutils, Table, TreeTable, AnalyticalTable, CreationRow, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, Device, jQuery, oCore) {
+], function(TableQUnitUtils, TableUtils, qutils, Table, CreationRow, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, jQuery, oCore) {
 	"use strict";
 
 	// mapping of global function calls

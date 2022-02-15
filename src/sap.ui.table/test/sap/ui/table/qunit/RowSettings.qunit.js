@@ -6,8 +6,10 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/core/Core"
-], function(TableQUnitUtils, RowSettings, TableUtils, CoreLibrary, ThemeParameters, oCore) {
+	"sap/ui/core/Core",
+    "sap/ui/table/RowAction",
+    "sap/ui/table/RowActionItem"
+], function(TableQUnitUtils, RowSettings, TableUtils, CoreLibrary, ThemeParameters, oCore, RowAction, RowActionItem) {
 	"use strict";
 
 	// mapping of global function calls
@@ -398,9 +400,9 @@ sap.ui.define([
 			createTables(false, false, 3);
 
 			oTable.setVisibleRowCount(3);
-			oTable.setRowActionTemplate(new sap.ui.table.RowAction({
+			oTable.setRowActionTemplate(new RowAction({
 				items: [
-					new sap.ui.table.RowActionItem({
+					new RowActionItem({
 						type: "Navigation"
 					})
 				]

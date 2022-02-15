@@ -163,7 +163,7 @@ sap.ui.define([
 				}
 			}
 		}
-	}});
+	}, renderer: MonthsRowRenderer});
 
 	MonthsRow.prototype.init = function(){
 

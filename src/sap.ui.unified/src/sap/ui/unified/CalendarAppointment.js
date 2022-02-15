@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.CalendarAppointment.
-sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat', 'sap/ui/core/LocaleData', './library', "sap/base/Log"],
-	function(DateTypeRange, DateFormat, NumberFormat, LocaleData, library, Log) {
+sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat', './library', "sap/base/Log"],
+	function(DateTypeRange, DateFormat, NumberFormat, library, Log) {
 	"use strict";
 
 	/**

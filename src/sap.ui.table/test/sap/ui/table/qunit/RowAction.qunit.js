@@ -1,7 +1,6 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
@@ -10,7 +9,7 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/Device",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, qutils, RowAction, RowActionItem, Row, Table, TableUtils, Device, oCore) {
+], function(qutils, RowAction, RowActionItem, Row, Table, TableUtils, Device, oCore) {
 	"use strict";
 
 	var MENUICON = "sap-icon://overflow";

@@ -3,10 +3,11 @@
  */
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
+	'sap/ui/core/CalendarType',
 	'sap/ui/core/Control',
+	'sap/ui/core/Core',
 	'sap/ui/core/LocaleData',
 	'sap/ui/unified/calendar/CalendarUtils',
-	'sap/ui/unified/DateRange',
 	'sap/ui/unified/DateTypeRange',
 	'./calendar/Header',
 	'./calendar/Month',
@@ -26,10 +27,11 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log"
 ], function(
+	CalendarType,
 	Control,
+	oCore,
 	LocaleData,
 	CalendarUtils,
-	DateRange,
 	DateTypeRange,
 	Header,
 	Month,
@@ -51,8 +53,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oCore = sap.ui.getCore(),
-		CalendarType = sap.ui.core.CalendarType;
 	/*
 	 * Inside the Calendar CalendarDate objects are used. But in the API JS dates are used.
 	 * So conversion must be done on API functions.
@@ -302,7 +302,7 @@ sap.ui.define([
 				}
 			}
 		}
-	}});
+	}, renderer: CalendarRenderer});
 
 	/*
 	 * There are different modes (stored in this._iMode)

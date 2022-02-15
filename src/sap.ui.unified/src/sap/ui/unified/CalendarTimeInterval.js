@@ -19,11 +19,9 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/Device',
 	'sap/ui/core/Locale',
-	'sap/ui/core/library',
 	"./CalendarTimeIntervalRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
-	"sap/ui/core/Popup",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/DateRange",
@@ -44,11 +42,9 @@ sap.ui.define([
 	DateFormat,
 	Device,
 	Locale,
-	coreLibrary,
 	CalendarTimeIntervalRenderer,
 	containsOrEquals,
 	deepEqual,
-	Popup,
 	Log,
 	jQuery,
 	DateRange,
@@ -213,7 +209,7 @@ sap.ui.define([
 			 */
 			startDateChange : {}
 		}
-	}});
+	}, renderer: CalendarTimeIntervalRenderer});
 
 	/*
 	 * There are different modes (stored in this._iMode)

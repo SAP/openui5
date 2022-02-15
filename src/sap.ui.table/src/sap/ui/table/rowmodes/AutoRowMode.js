@@ -5,12 +5,14 @@ sap.ui.define([
 	"../library",
 	"../utils/TableUtils",
 	"./RowMode",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	library,
 	TableUtils,
 	RowMode,
-	Device
+	Device,
+	jQuery
 ) {
 	"use strict";
 

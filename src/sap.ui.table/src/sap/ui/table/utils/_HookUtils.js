@@ -3,7 +3,7 @@
  */
 
 // Provides helper sap.ui.table.utils._HookUtils.
-sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	var Hooks = new window.WeakMap();

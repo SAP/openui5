@@ -1,11 +1,10 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Row",
 	"sap/ui/table/Column"
-], function(TableQUnitUtils, TableUtils, Row, Column) {
+], function(TableUtils, Row, Column) {
 	"use strict";
 
 	var Hook = TableUtils.Hook;

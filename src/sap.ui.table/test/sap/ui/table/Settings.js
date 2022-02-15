@@ -1,16 +1,91 @@
-sap.ui.define([
-	"sap/ui/table/plugins/MultiSelectionPlugin",
+sap.ui.define("test-resources/sap/ui/table/Settings", [
+	"sap/base/Log",
+	"sap/base/util/deepExtend",
+	"sap/m/Button",
+	"sap/m/CheckBox",
+	"sap/m/Dialog",
+	"sap/m/HBox",
+	"sap/m/Input",
+	"sap/m/Label",
+	"sap/m/library",
+	"sap/m/Menu",
+	"sap/m/MenuItem",
 	"sap/m/MessageToast",
-	"sap/ui/core/Core"
-], function(MultiSelectionPlugin, MessageToast, oCore) {
+	"sap/m/Select",
+	"sap/m/Text",
+	"sap/m/Toolbar",
+	"sap/m/VBox",
+	"sap/ui/core/Core",
+	"sap/ui/core/Item",
+	"sap/ui/core/library",
+	"sap/ui/core/Popup",
+	"sap/ui/core/Title",
+	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/layout/form/ResponsiveGridLayout", // layout used for SimpleForm
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/table/Column",
+	"sap/ui/table/plugins/MultiSelectionPlugin",
+	"sap/ui/table/RowAction",
+	"sap/ui/table/RowActionItem",
+	"sap/ui/table/RowSettings",
+	"sap/ui/table/Table",
+	"sap/ui/table/utils/TableUtils",
+	"sap/ui/unified/Menu",
+	"sap/ui/unified/MenuItem",
+	"sap/ui/unified/MenuTextFieldItem"
+], function(
+	Log,
+	deepExtend,
+	Button,
+	CheckBox,
+	Dialog,
+	HBox,
+	Input,
+	Label,
+	mobileLibrary,
+	Menu,
+	MenuItem,
+	MessageToast,
+	Select,
+	Text,
+	Toolbar,
+	VBox,
+	oCore,
+	Item,
+	coreLibrary,
+	Popup,
+	Title,
+	SimpleForm,
+	ResponsiveGridLayout,
+	JSONModel,
+	Column,
+	MultiSelectionPlugin,
+	RowAction,
+	RowActionItem,
+	RowSettings,
+	Table,
+	TableUtils,
+	UnifiedMenu,
+	UnifiedMenuItem,
+	MenuTextFieldItem
+) {
 	"use strict";
 
-	window.TABLESETTINGS = {};
-	var TABLESETTINGS = window.TABLESETTINGS;
+	// shortcut for sap.ui.core.Popup.Dock
+	var Dock = Popup.Dock;
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+
+	var TABLESETTINGS = window.TABLESETTINGS = {};
+
 	// Test data
 	var i, l;
 
-	window.TABLESETTINGS.listTestData = [
+	TABLESETTINGS.listTestData = [
 		{lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Success"},
 		{lastName: "Friese", name: "Andrew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", objStatusText: "Name partly OK Text", objStatusTitle: "Name partly OK Title", objStatusState: "Warning", highlightState: "Warning", navigatedState: true},
 		{lastName: "Mann", name: "Sarah", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "images/Person.png", gender: "female", rating: 3, money: 1345.212, birthday: "1987-04-01", currency: "EUR", objStatusText: "Name not OK Text", objStatusTitle: "Name not OK Title", objStatusState: "Error", highlightState: "Error"},
@@ -33,17 +108,17 @@ sap.ui.define([
 		{lastName: "Summer", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Information"}
 	];
 
-	var aOrgData = jQuery.extend(true, [], window.TABLESETTINGS.listTestData);
+	var aOrgData = deepExtend([], TABLESETTINGS.listTestData);
 	for (i = 0; i < 9; i++) {
-		window.TABLESETTINGS.listTestData = window.TABLESETTINGS.listTestData.concat(jQuery.extend(true, [], aOrgData));
+		TABLESETTINGS.listTestData = TABLESETTINGS.listTestData.concat(deepExtend([], aOrgData));
 	}
 
-	for (i = 0, l = window.TABLESETTINGS.listTestData.length; i < l; i++) {
-		window.TABLESETTINGS.listTestData[i].lastName += " - " + (i + 1);
-		window.TABLESETTINGS.listTestData[i].birthdayDate = new Date(window.TABLESETTINGS.listTestData[i].birthday);
+	for (i = 0, l = TABLESETTINGS.listTestData.length; i < l; i++) {
+		TABLESETTINGS.listTestData[i].lastName += " - " + (i + 1);
+		TABLESETTINGS.listTestData[i].birthdayDate = new Date(TABLESETTINGS.listTestData[i].birthday);
 	}
 
-	window.TABLESETTINGS.treeTestData = {
+	TABLESETTINGS.treeTestData = {
 		root:{
 			name: "root",
 			description: "moep moep",
@@ -217,7 +292,7 @@ sap.ui.define([
 	};
 
 	for (i = 0; i < 20; i++) {
-		window.TABLESETTINGS.treeTestData.root[4][i] = {
+		TABLESETTINGS.treeTestData.root[4][i] = {
 			name: "subitem4-" + i,
 			description: "subitem4-" + i + " description",
 			checked: false,
@@ -383,7 +458,7 @@ sap.ui.define([
 					text: "Row count",
 					input: true,
 					value: function(oTable) {
-						if (sap.ui.table.utils.TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.FixedRowMode")) {
+						if (TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.FixedRowMode")) {
 							return oTable.getRowMode().getRowCount();
 						}
 					},
@@ -396,7 +471,7 @@ sap.ui.define([
 					text: "Hide empty rows",
 					input: "boolean",
 					value: function(oTable) {
-						if (sap.ui.table.utils.TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.FixedRowMode")) {
+						if (TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.FixedRowMode")) {
 							return oTable.getRowMode().getHideEmptyRows();
 						}
 					},
@@ -409,7 +484,7 @@ sap.ui.define([
 					text: "Hide empty rows",
 					input: "boolean",
 					value: function(oTable) {
-						if (sap.ui.table.utils.TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.AutoRowMode")) {
+						if (TableUtils.isA(oTable.getRowMode(), "sap.ui.table.rowmodes.AutoRowMode")) {
 							return oTable.getRowMode().getHideEmptyRows();
 						}
 					},
@@ -519,7 +594,7 @@ sap.ui.define([
 				DENSITY: {
 					text: "Density",
 					value: function(oTable) {
-						var sDensity = sap.ui.table.utils.TableUtils.getContentDensity(oTable);
+						var sDensity = TableUtils.getContentDensity(oTable);
 						if (!sDensity || sDensity.indexOf("sapUiSize") === -1) {
 							return null;
 						}
@@ -697,9 +772,9 @@ sap.ui.define([
 			action: function(oTable, bValue) {
 				if (bValue) {
 					oTable.setContextMenu(
-						new sap.m.Menu({
+						new Menu({
 							items: [
-								new sap.m.MenuItem({text : "{name}"})
+								new MenuItem({text : "{name}"})
 							]
 						})
 					);
@@ -730,10 +805,10 @@ sap.ui.define([
 					action: function(oTable, bValue) {
 						oTable.setShowOverlay(bValue);
 						if (bValue) {
-							new sap.m.Button({
+							new Button({
 								id: "HideOverlayButton",
 								text: "Hide overlay",
-								type: sap.m.ButtonType.Emphasized,
+								type: ButtonType.Emphasized,
 								press: function(oEvent) {
 									oTable.setShowOverlay(false);
 									oEvent.getSource().destroy();
@@ -829,8 +904,8 @@ sap.ui.define([
 							text: "Navigation",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATION";
-								var oTemplate = new sap.ui.table.RowAction({items: [
-									new sap.ui.table.RowActionItem({
+								var oTemplate = new RowAction({items: [
+									new RowActionItem({
 										type: "Navigation",
 										press: fnRowActionPress,
 										visible: {
@@ -851,8 +926,8 @@ sap.ui.define([
 							text: "Navigation & Delete",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONDELETE";
-								var oTemplate = new sap.ui.table.RowAction({items: [
-									new sap.ui.table.RowActionItem({
+								var oTemplate = new RowAction({items: [
+									new RowActionItem({
 										type: "Navigation",
 										press: fnRowActionPress,
 										visible: {
@@ -865,7 +940,7 @@ sap.ui.define([
 											}
 										}
 									}),
-									new sap.ui.table.RowActionItem({type: "Delete", press: fnRowActionPress})
+									new RowActionItem({type: "Delete", press: fnRowActionPress})
 								]});
 								switchRowActions(oTable, 2, oTemplate);
 							}
@@ -874,8 +949,8 @@ sap.ui.define([
 							text: "Navigation & Custom",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONCUSTOM";
-								var oTemplate = new sap.ui.table.RowAction({items: [
-									new sap.ui.table.RowActionItem({
+								var oTemplate = new RowAction({items: [
+									new RowActionItem({
 										type: "Navigation",
 										press: fnRowActionPress,
 										visible: {
@@ -888,7 +963,7 @@ sap.ui.define([
 											}
 										}
 									}),
-									new sap.ui.table.RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnRowActionPress})
+									new RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnRowActionPress})
 								]});
 								switchRowActions(oTable, 2, oTemplate);
 							}
@@ -897,11 +972,11 @@ sap.ui.define([
 							text: "Multiple Actions",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "MULTI";
-								var oTemplate = new sap.ui.table.RowAction({items: [
-									new sap.ui.table.RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
-									new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
-									new sap.ui.table.RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnRowActionPress}),
-									new sap.ui.table.RowActionItem({icon: "sap-icon://line-chart", text: "Analyze", press: fnRowActionPress})
+								var oTemplate = new RowAction({items: [
+									new RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
+									new RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
+									new RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnRowActionPress}),
+									new RowActionItem({icon: "sap-icon://line-chart", text: "Analyze", press: fnRowActionPress})
 								]});
 								switchRowActions(oTable, 2, oTemplate);
 							}
@@ -910,11 +985,11 @@ sap.ui.define([
 							text: "Multiple Actions (1 Column)",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "MULTI_ONE";
-								var oTemplate = new sap.ui.table.RowAction({items: [
-									new sap.ui.table.RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
-									new sap.ui.table.RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
-									new sap.ui.table.RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnRowActionPress}),
-									new sap.ui.table.RowActionItem({icon: "sap-icon://line-chart", text: "Analyze", press: fnRowActionPress})
+								var oTemplate = new RowAction({items: [
+									new RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
+									new RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
+									new RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnRowActionPress}),
+									new RowActionItem({icon: "sap-icon://line-chart", text: "Analyze", press: fnRowActionPress})
 								]});
 								switchRowActions(oTable, 1, oTemplate);
 							}
@@ -971,25 +1046,25 @@ sap.ui.define([
 				HIGHLIGHTS: {
 					text: "Highlights",
 					value: function(oTable) {
-						return sap.ui.table.utils.TableUtils.hasRowHighlights(oTable);
+						return TableUtils.hasRowHighlights(oTable);
 					},
 					input: "boolean",
 					action: function(oTable, bValue) {
-						oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-							highlight: bValue ? "{highlightState}" : sap.ui.core.MessageType.None,
-							navigated: sap.ui.table.utils.TableUtils.hasRowNavigationIndicators(oTable) ? "{navigatedState}" : false
+						oTable.setRowSettingsTemplate(new RowSettings({
+							highlight: bValue ? "{highlightState}" : MessageType.None,
+							navigated: TableUtils.hasRowNavigationIndicators(oTable) ? "{navigatedState}" : false
 						}));
 					}
 				},
 				NAVINDICATORS: {
 					text: "Navigation Indicators",
 					value: function(oTable) {
-						return sap.ui.table.utils.TableUtils.hasRowNavigationIndicators(oTable);
+						return TableUtils.hasRowNavigationIndicators(oTable);
 					},
 					input: "boolean",
 					action: function(oTable, bValue) {
-						oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-							highlight: sap.ui.table.utils.TableUtils.hasRowHighlights(oTable) ? "{highlightState}" : sap.ui.core.MessageType.None,
+						oTable.setRowSettingsTemplate(new RowSettings({
+							highlight: TableUtils.hasRowHighlights(oTable) ? "{highlightState}" : MessageType.None,
 							navigated: bValue ? "{navigatedState}" : false
 						}));
 					}
@@ -1100,7 +1175,7 @@ sap.ui.define([
 	}
 
 	function initMenu(mActions) {
-		var oMenu = new sap.ui.unified.Menu();
+		var oMenu = new UnifiedMenu();
 
 		function onSelectTextFieldItem(oEvent) {
 			var oTFItem = oEvent.getParameter("item");
@@ -1125,12 +1200,12 @@ sap.ui.define([
 				} else {
 					sValue = oActionValue ? (oActionValue + "") : null;
 				}
-				oItem = new sap.ui.unified.MenuTextFieldItem({value: sValue, label: mActions[item].text, visible: !mActions[item].hidden, enabled: !mActions[item].disabled});
+				oItem = new MenuTextFieldItem({value: sValue, label: mActions[item].text, visible: !mActions[item].hidden, enabled: !mActions[item].disabled});
 				oItem._action = mActions[item].action;
 				oItem._boolean = bIsBoolean;
 				oItem.attachSelect(onSelectTextFieldItem);
 			} else {
-				oItem = new sap.ui.unified.MenuItem({text: mActions[item].text, visible: !mActions[item].hidden, enabled: !mActions[item].disabled});
+				oItem = new UnifiedMenuItem({text: mActions[item].text, visible: !mActions[item].hidden, enabled: !mActions[item].disabled});
 				if (mActions[item].choice || mActions[item].group) {
 					oItem.setSubmenu(initMenu(mActions[item].choice || mActions[item].group));
 				} else {
@@ -1156,15 +1231,15 @@ sap.ui.define([
 			var oRelatedControl = null;
 
 			if (oAction.group) {
-				oClass = sap.m.Button;
+				oClass = Button;
 				mSettings.icon = "sap-icon://edit";
 				mSettings.width = "3rem";
 				mSettings.press = function(oEvent) {
-					oEvent.getSource()._related.open(false, oEvent.getSource(), sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.BeginBottom, oEvent.getSource());
+					oEvent.getSource()._related.open(false, oEvent.getSource(), Dock.BeginTop, Dock.BeginBottom, oEvent.getSource());
 				};
 				oRelatedControl = initMenu(mActions[item].group);
 			} else if (oAction.choice) {
-				oClass = sap.m.Select;
+				oClass = Select;
 				mSettings.items = [];
 				mSettings.forceSelection = false;
 				mSettings.selectedKey = oActionValue || null;
@@ -1176,7 +1251,7 @@ sap.ui.define([
 				};
 				for ( var item in oAction.choice) {
 					if (!oAction.choice[item].hidden && !oAction.choice[item].disabled) {
-						var oItem = new sap.ui.core.Item({
+						var oItem = new Item({
 							text: oAction.choice[item].text,
 							key: item
 						});
@@ -1185,7 +1260,7 @@ sap.ui.define([
 					}
 				}
 			} else if (oAction.input === "boolean") {
-				oClass = sap.m.CheckBox;
+				oClass = CheckBox;
 				mSettings.selected = oActionValue ? !!oActionValue : false;
 				mSettings.select = function(oEvent) {
 					if (oEvent.getSource()._action) {
@@ -1193,7 +1268,7 @@ sap.ui.define([
 					}
 				};
 			} else if (oAction.input) {
-				oClass = sap.m.Input;
+				oClass = Input;
 				mSettings.value = oActionValue ? (oActionValue + "") : null;
 				mSettings.change = function(oEvent) {
 					if (oEvent.getSource()._action) {
@@ -1201,7 +1276,7 @@ sap.ui.define([
 					}
 				};
 			} else if (oAction.action) {
-				oClass = sap.m.Button;
+				oClass = Button;
 				mSettings.icon = "sap-icon://edit";
 				mSettings.width = "3rem";
 				mSettings.press = function(oEvent) {
@@ -1213,7 +1288,7 @@ sap.ui.define([
 				return null;
 			}
 
-			var oLabel = new sap.m.Label({text: oAction.text, tooltip: oAction.text});
+			var oLabel = new Label({text: oAction.text, tooltip: oAction.text});
 			aResult.push(oLabel);
 			var oControl = new oClass(mSettings);
 			oControl._action = oAction.action;
@@ -1231,7 +1306,7 @@ sap.ui.define([
 	}
 
 	function initForm(mActions) {
-		var oForm = new sap.ui.layout.form.SimpleForm({
+		var oForm = new SimpleForm({
 			editable: true,
 			layout: "ResponsiveGridLayout",
 			columnsXL: 2,
@@ -1243,14 +1318,14 @@ sap.ui.define([
 			labelSpanS: 7
 		});
 
-		var oSettingsSelector = new sap.m.Select({
+		var oSettingsSelector = new Select({
 			width: "100%",
 			selectedKey: loadAppliedSettingsKey(),
 			items: (function() {
 				var aItems = [];
 
 				for (var key in TABLESETTINGS.storedSettings) {
-					aItems.push(new sap.ui.core.Item({
+					aItems.push(new Item({
 						key: key,
 						text: key
 					}));
@@ -1272,20 +1347,20 @@ sap.ui.define([
 			}
 		});
 
-		var oNewSettingsInput = new sap.m.Input({
+		var oNewSettingsInput = new Input({
 			placeholder: "Name"
 		});
 
 		var aFormElements = [
-			new sap.ui.core.Title({text: "Save/Load Settings"}),
-			new sap.m.VBox({
+			new Title({text: "Save/Load Settings"}),
+			new VBox({
 				renderType: "Bare",
 				items: [
-					new sap.m.HBox({
+					new HBox({
 						renderType: "Bare",
 						items: [
 							oSettingsSelector,
-							new sap.m.Button({
+							new Button({
 								icon: "sap-icon://delete",
 								text: "Delete",
 								press: function(oEvent) {
@@ -1298,7 +1373,7 @@ sap.ui.define([
 										var aSelectItems = [];
 
 										for (var key in TABLESETTINGS.storedSettings) {
-											aSelectItems.push(new sap.ui.core.Item({
+											aSelectItems.push(new Item({
 												key: key,
 												text: key
 											}));
@@ -1329,11 +1404,11 @@ sap.ui.define([
 							})
 						]
 					}),
-					new sap.m.HBox({
+					new HBox({
 						renderType: "Bare",
 						items: [
 							oNewSettingsInput,
-							new sap.m.Button({
+							new Button({
 								icon: "sap-icon://save",
 								text: "Save",
 								press: function(oEvent) {
@@ -1347,7 +1422,7 @@ sap.ui.define([
 										var aSelectItems = [];
 
 										for (var key in TABLESETTINGS.storedSettings) {
-											aSelectItems.push(new sap.ui.core.Item({
+											aSelectItems.push(new Item({
 												key: key,
 												text: key
 											}));
@@ -1383,7 +1458,7 @@ sap.ui.define([
 		var bHasUncategorizedActions = false;
 		for (var item in mActions) {
 			if (mActions[item].group) {
-				aFormElements.push(new sap.ui.core.Title({text: mActions[item].text}));
+				aFormElements.push(new Title({text: mActions[item].text}));
 				aFormElements = aFormElements.concat(initFormElements(mActions[item].group));
 			} else {
 				bHasUncategorizedActions = true;
@@ -1391,7 +1466,7 @@ sap.ui.define([
 			}
 		}
 		if (bHasUncategorizedActions) {
-			aFormElements.push(new sap.ui.core.Title({text: "Others"}));
+			aFormElements.push(new Title({text: "Others"}));
 			aFormElements = aFormElements.concat(initFormElements(mUncategorizedActions));
 		}
 
@@ -1403,13 +1478,13 @@ sap.ui.define([
 	}
 
 	function initDialog(mActions) {
-		var oDialog = new sap.m.Dialog({
+		var oDialog = new Dialog({
 			id: "settingsDialog",
 			title: "Table Settings",
 			resizable: true,
 			contentWidth: "1000px",
 			content: initForm(mActions),
-			endButton: new sap.m.Button({
+			endButton: new Button({
 				text: "Close",
 				press: function() {
 					oDialog.close();
@@ -1509,7 +1584,7 @@ sap.ui.define([
 		var oRowSettings = null;
 
 		if (mSettings.hasOwnProperty("RowSettings")) {
-			oRowSettings = new sap.ui.table.RowSettings();
+			oRowSettings = new RowSettings();
 
 			for (sPropertyName in mSettings["RowSettings"]) {
 				oSetting = mSettings["RowSettings"][sPropertyName];
@@ -1590,13 +1665,13 @@ sap.ui.define([
 			oCore.loadLibrary("sap.ui.unified");
 			oCore.loadLibrary("sap.m");
 		} catch (e) {
-			jQuery.sap.log.error("The table settings extension needs librarys 'sap.m', 'sap.ui.unified' and 'sap.ui.layout'.");
+			Log.error("The table settings extension needs librarys 'sap.m', 'sap.ui.unified' and 'sap.ui.layout'.");
 			throw (e);
 		}
 
 		TABLESETTINGS.table = oTable;
 		TABLESETTINGS.model = oTable.getModel();
-		TABLESETTINGS.actions = jQuery.extend(true, {}, DEFAULTACTIONS, mCustomActions || {});
+		TABLESETTINGS.actions = deepExtend({}, DEFAULTACTIONS, mCustomActions || {});
 		TABLESETTINGS.storedSettings = loadSettingsSnapshots();
 
 		var sAppliedSettingsKey = loadAppliedSettingsKey();
@@ -1605,7 +1680,7 @@ sap.ui.define([
 			applySettingsSnapshot(oTable, TABLESETTINGS.storedSettings[sAppliedSettingsKey]);
 		}
 
-		var oButton = new sap.m.Button({icon: "sap-icon://action-settings", tooltip: "Settings", press: function() {
+		var oButton = new Button({icon: "sap-icon://action-settings", tooltip: "Settings", press: function() {
 			if (oSettingsMenu == null) {
 				oSettingsMenu = initDialog(TABLESETTINGS.actions);
 			} else {
@@ -1615,14 +1690,14 @@ sap.ui.define([
 			oSettingsMenu.open();
 		}});
 
-		var oSettingsSelector = new sap.m.Select({
+		var oSettingsSelector = new Select({
 			id: "settingsSelector",
 			selectedKey: sAppliedSettingsKey,
 			items: (function() {
 				var aItems = [];
 
 				for (var key in TABLESETTINGS.storedSettings) {
-					aItems.push(new sap.ui.core.Item({
+					aItems.push(new Item({
 						key: key,
 						text: key
 					}));
@@ -1651,19 +1726,19 @@ sap.ui.define([
 	TABLESETTINGS.addServiceSettings = function(oTable, sKey, fnUpdate) {
 		var mServiceSettings = JSON.parse(window.localStorage.getItem(sKey));
 
-		oTable.addExtension(new sap.m.Toolbar({
+		oTable.addExtension(new Toolbar({
 			content: [
-				new sap.m.Input("TableSettings_ServiceUrl", {
+				new Input("TableSettings_ServiceUrl", {
 					value: mServiceSettings ? mServiceSettings.url : undefined,
 					tooltip: "Service Url",
 					placeholder: "Enter Service Url"
 				}),
-				new sap.m.Input("TableSettings_Collection", {
+				new Input("TableSettings_Collection", {
 					value: mServiceSettings ? mServiceSettings.collection : undefined,
 					tooltip: "Service Collection",
 					placeholder: "Enter Service Collection"
 				}),
-				new sap.m.Button({
+				new Button({
 					tooltip: "Go",
 					icon: "sap-icon://restart",
 					press: function() {
@@ -1688,9 +1763,7 @@ sap.ui.define([
 
 	//*************************
 
-	jQuery.sap.require("sap.ui.model.json.JSONModel");
-
-	var oColumnSettingsModel = new sap.ui.model.json.JSONModel();
+	var oColumnSettingsModel = new JSONModel();
 
 	function createAndOpenColumnDialog(oTable, mConfig) {
 		var aData = [];
@@ -1717,14 +1790,14 @@ sap.ui.define([
 			}
 		}
 
-		var oSettingsTable = new sap.ui.table.Table({
+		var oSettingsTable = new Table({
 			selectionMode: "None",
 			rows: "{/columns}",
 			fixedColumnCount: 1,
 			columns: [
-				new sap.ui.table.Column({
+				new Column({
 					label: "Column",
-					template: new sap.m.Text({wrapping: false, text: "{label}"}),
+					template: new Text({wrapping: false, text: "{label}"}),
 					width: "200px"
 				})
 			]
@@ -1734,29 +1807,29 @@ sap.ui.define([
 		var oColumn;
 		for (var item in mConfig) {
 			if (!mConfig[item].hidden) {
-				oColumn = new sap.ui.table.Column({
+				oColumn = new Column({
 					label: mConfig[item].text,
-					template: new sap.m.CheckBox({selected: "{" + item + "}"}),
+					template: new CheckBox({selected: "{" + item + "}"}),
 					minWidth: 120
 				});
 				if (mConfig[item].input == "boolean") {
-					oColumn.setTemplate(new sap.m.CheckBox({enabled: !mConfig[item].disabled, selected: "{" + item + "}"}));
+					oColumn.setTemplate(new CheckBox({enabled: !mConfig[item].disabled, selected: "{" + item + "}"}));
 				} else {
-					oColumn.setTemplate(new sap.m.Input({enabled: !mConfig[item].disabled, value: "{" + item + "}"}));
+					oColumn.setTemplate(new Input({enabled: !mConfig[item].disabled, value: "{" + item + "}"}));
 				}
 				oSettingsTable.addColumn(oColumn);
 			}
 		}
 
-		var oDialog = new sap.m.Dialog({
+		var oDialog = new Dialog({
 			title: "Table Column Settings",
 			resizable: true,
 			contentWidth: "1000px",
 			content: [oSettingsTable],
-			endButton: new sap.m.Button({
+			endButton: new Button({
 				text: "Cancel", press: function() { oDialog.close(); }
 			}),
-			beginButton: new sap.m.Button({
+			beginButton: new Button({
 				text: "Ok",
 				press: function() {
 					changeSettings();
@@ -1770,16 +1843,15 @@ sap.ui.define([
 
 	function setDensity(sDensity, oTable) {
 		if (sDensity !== "") {
-			var $Body = jQuery("body");
-			$Body.toggleClass("sapUiSizeCozy", sDensity === "sapUiSizeCozy");
-			$Body.toggleClass("sapUiSizeCompact", sDensity != "sapUiSizeCozy");
+			document.body.classList.toggle("sapUiSizeCozy", sDensity === "sapUiSizeCozy");
+			document.body.classList.toggle("sapUiSizeCompact", sDensity != "sapUiSizeCozy");
 			oTable.toggleStyleClass("sapUiSizeCondensed", sDensity === "sapUiSizeCondensed");
 			oTable.invalidate();
 		}
 	}
 
 	var oCustom;
-	var oEmptyModel = new sap.ui.model.json.JSONModel();
+	var oEmptyModel = new JSONModel();
 
 	function switchNoData(oTable, sState) {
 		var oNoDataConfig = TABLESETTINGS.actions.AREAS.group.NODATA;
@@ -1793,7 +1865,7 @@ sap.ui.define([
 				oNoDataConfig.setData(oTable, true);
 				oTable.setShowNoData(true);
 				if (!oCustom) {
-					oCustom = new sap.m.Text({text: "Some custom no data control"});
+					oCustom = new Text({text: "Some custom no data control"});
 				}
 				oTable.setNoData(oCustom);
 				break;
@@ -1828,5 +1900,6 @@ sap.ui.define([
 		oTable.setRowActionCount(iCount);
 	}
 
+	return TABLESETTINGS;
 
 });

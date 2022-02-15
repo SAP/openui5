@@ -1,14 +1,13 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/core/Control",
 	"sap/ui/unified/ShellLayout",
 	"sap/base/util/ObjectPath",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(qutils, containsOrEquals, Control, ShellLayout, ObjectPath, jQuery, oCore) {
+], function(containsOrEquals, Control, ShellLayout, ObjectPath, jQuery, oCore) {
 	"use strict";
 
 	// Control initialization

@@ -6,14 +6,13 @@ sap.ui.define([
 	"sap/ui/unified/MenuItem",
 	"sap/ui/unified/MenuItemBase",
 	"sap/ui/unified/MenuTextFieldItem",
-	"sap/base/Log",
 	"sap/m/Button",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Popup",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
-], function(qutils, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Log, Button, Device, KeyCodes, Popup, Core, jQuery) {
+], function(qutils, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Button, Device, KeyCodes, Popup, Core, jQuery) {
 	"use strict";
 
 	var Dock = Popup.Dock;

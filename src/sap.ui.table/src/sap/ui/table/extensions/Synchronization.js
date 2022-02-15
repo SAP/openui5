@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"./ExtensionBase", "../Table", "../utils/TableUtils", "../library", "sap/base/Log"
-], function(ExtensionBase, Table, TableUtils, library, Log) {
+	"./ExtensionBase", "../utils/TableUtils", "../library", "sap/base/Log"
+], function(ExtensionBase, TableUtils, library, Log) {
 	"use strict";
 
 	/**

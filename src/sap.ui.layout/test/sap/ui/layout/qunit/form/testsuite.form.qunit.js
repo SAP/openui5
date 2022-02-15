@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
-], function(Log, jQuery) {
+], function(jQuery) {
 
 	"use strict";
 

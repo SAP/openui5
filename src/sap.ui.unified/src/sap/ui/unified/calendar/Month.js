@@ -244,7 +244,7 @@ sap.ui.define([
 
 
 		}
-	}});
+	}, renderer: MonthRenderer});
 
 	Month.prototype.init = function(){
 

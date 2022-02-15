@@ -5,7 +5,8 @@ sap.ui.define([
 	"sap/ui/layout/ResponsiveFlowLayoutData",
 	"sap/m/Button",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/dom/jquery/rect" // provides jQuery.fn.rect
 ], function(ResponsiveFlowLayout, ResponsiveFlowLayoutData, Button, jQuery, oCore) {
 	"use strict";
 

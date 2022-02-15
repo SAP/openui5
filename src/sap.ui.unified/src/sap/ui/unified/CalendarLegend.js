@@ -6,13 +6,12 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'./library',
-	'sap/ui/Device',
 	'./CalendarLegendRenderer',
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/CalendarLegendItem"
 ],
-	function(Control, library, Device, CalendarLegendRenderer, Log, jQuery, CalendarLegendItem) {
+	function(Control, library, CalendarLegendRenderer, Log, jQuery, CalendarLegendItem) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.CalendarDayType
@@ -84,7 +83,8 @@ sap.ui.define([
 
 			//don't render standardItems unless it's a PC legend
 			this._bShouldRenderStandardItems = true;
-		}
+		},
+		renderer: CalendarLegendRenderer
 	});
 
 	CalendarLegend.prototype.setStandardItems = function (aValues) {

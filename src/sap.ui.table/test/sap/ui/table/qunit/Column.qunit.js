@@ -11,9 +11,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/Item",
-	"sap/m/Text",
+	"sap/m/Button",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, qutils, Column, Table, CreationRow, JSONModel, Menu, ColumnMenu, QuickAction, Item, Text, oCore) {
+], function(TableQUnitUtils, qutils, Column, Table, CreationRow, JSONModel, Menu, ColumnMenu, QuickAction, Item, Button, oCore) {
 	"use strict";
 
 	QUnit.module("Basics");
@@ -1152,8 +1152,8 @@ sap.ui.define([
 	QUnit.module("ColumnHeaderMenu Association", {
 		beforeEach: function() {
 			this.oMenu = new ColumnMenu({
-				quickActions: [new QuickAction({label: "Quick Action A", content: new sap.m.Button({text: "Execute"})})],
-				items: [new Item({label: "Item A", icon: "sap-icon://sort", content: new sap.m.Button({text: "Execute"})})]
+				quickActions: [new QuickAction({label: "Quick Action A", content: new Button({text: "Execute"})})],
+				items: [new Item({label: "Item A", icon: "sap-icon://sort", content: new Button({text: "Execute"})})]
 			});
 			this.oTable = TableQUnitUtils.createTable({
 				columns: [TableQUnitUtils.createTextColumn().setAssociation("columnHeaderMenu", this.oMenu)]

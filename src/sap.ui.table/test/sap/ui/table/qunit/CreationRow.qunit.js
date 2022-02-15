@@ -6,11 +6,9 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Control",
-	"sap/ui/model/json/JSONModel",
 	"sap/m/Toolbar",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, CreationRow, Column, qutils, KeyCodes, Control, JSONModel, Toolbar, oCore) {
+], function(TableQUnitUtils, CreationRow, Column, qutils, KeyCodes, Toolbar, oCore) {
 	"use strict";
 
 	var TestControl = TableQUnitUtils.TestControl;

@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/Device",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, ExtensionBase, TableUtils, library, Device, JSONModel, oCore) {
+], function(TableQUnitUtils, ExtensionBase, TableUtils, library, Device, oCore) {
 	"use strict";
 
 	QUnit.module("Initialization", {

@@ -5,19 +5,10 @@ sap.ui.define([
 	"sap/ui/unified/CalendarWeekInterval",
 	"sap/ui/unified/CalendarDateInterval",
 	"sap/ui/unified/calendar/CalendarDate",
-	"sap/m/PlanningCalendar",
-	"sap/m/PlanningCalendarRow",
-	"sap/ui/unified/CalendarAppointment",
-	"sap/m/SearchField",
-	"sap/m/Button",
-	"sap/ui/unified/DateTypeRange",
-	"sap/base/Log",
-	"sap/ui/unified/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(qutils, CalendarWeekInterval, CalendarDateInterval, CalendarDate, PlanningCalendar, PlanningCalendarRow,
-	CalendarAppointment, SearchField, Button, DateTypeRange, Log, unifiedLibrary, KeyCodes, jQuery, oCore) {
+], function(qutils, CalendarWeekInterval, CalendarDateInterval, CalendarDate, KeyCodes, jQuery, oCore) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested

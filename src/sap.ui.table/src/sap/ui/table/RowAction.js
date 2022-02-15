@@ -68,7 +68,8 @@ sap.ui.define([
 				_menu: {type: "sap.ui.unified.Menu", multiple: false, visibility: "hidden"}
 			},
 			events: {}
-		}
+		},
+		renderer: RowActionRenderer
 	});
 
 	RowAction.prototype.init = function() {

@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/performance/trace/Interaction",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/scrollLeftRTL" // provides jQuery.fn.scrollLeftRTL
 ], function(ExtensionBase, TableUtils, library, Device, Interaction, Log, jQuery) {
 	"use strict";
 

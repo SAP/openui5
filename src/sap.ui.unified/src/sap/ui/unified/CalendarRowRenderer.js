@@ -8,9 +8,9 @@ sap.ui.define([
 	'sap/ui/unified/CalendarLegendRenderer',
 	'sap/ui/Device',
 	'sap/ui/unified/library',
-	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleText',
-	"sap/base/Log"
+	'sap/base/Log',
+	'sap/ui/core/IconPool' // required by RenderManager#icon
 	],
 	function (
 		UniversalDate,
@@ -18,7 +18,6 @@ sap.ui.define([
 		CalendarLegendRenderer,
 		Device,
 		library,
-		IconPool,
 		InvisibleText,
 		Log) {
 		"use strict";

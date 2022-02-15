@@ -152,7 +152,7 @@ sap.ui.define([
 			var oModel;
 
 			if (oSettingsModel.getProperty("/jsonModel")) {
-				oModel = new sap.ui.model.json.JSONModel();
+				oModel = new JSONModel();
 				oModel.setData(this.getTestData(oSettingsModel.getProperty("/dataLength"), oSettingsModel.getProperty("/columnCount")));
 			} else {
 				// start mockserver

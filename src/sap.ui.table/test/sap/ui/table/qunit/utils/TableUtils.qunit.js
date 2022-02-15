@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selectors ":sapTabbable", ":sapFocusable"
 ], function(
 	TableQUnitUtils,
 	TableUtils,

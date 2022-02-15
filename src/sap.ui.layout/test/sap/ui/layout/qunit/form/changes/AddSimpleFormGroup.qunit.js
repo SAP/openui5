@@ -2,8 +2,6 @@
 sap.ui.define([
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/layout/form/FormElement",
-	"sap/ui/layout/form/FormContainer",
 	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
@@ -15,8 +13,6 @@ sap.ui.define([
 ], function(
 	AddSimpleFormGroup,
 	SimpleForm,
-	FormElement,
-	FormContainer,
 	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,

@@ -1,15 +1,15 @@
 /*global QUnit, sinon, oTable, oTreeTable*/
 
 sap.ui.define([
-	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Control, Device, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/table/qunit/TableQUnitUtils" // implicitly used via globals (e.g. createTables)
+], function(TableUtils, DragDropInfo, CoreLibrary, Control, Device, jQuery, oCore) {
 	"use strict";
 
 	// mapping of globals

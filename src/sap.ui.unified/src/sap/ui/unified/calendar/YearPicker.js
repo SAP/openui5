@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
-	'sap/ui/core/date/UniversalDate',
 	"sap/ui/unified/DateRange",
 	'sap/ui/unified/library',
 	'sap/ui/core/format/DateFormat',
@@ -23,7 +22,6 @@ sap.ui.define([
 	ItemNavigation,
 	CalendarUtils,
 	CalendarDate,
-	UniversalDate,
 	DateRange,
 	library,
 	DateFormat,
@@ -134,7 +132,7 @@ sap.ui.define([
 			 */
 			pageChange : {}
 		}
-	}});
+	}, renderer: YearPickerRenderer});
 
 	/* eslint-disable no-lonely-if */
 

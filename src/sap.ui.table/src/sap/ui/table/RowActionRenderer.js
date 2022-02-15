@@ -3,8 +3,8 @@
  */
 
 //Provides default renderer for control sap.ui.table.RowAction
-sap.ui.define(['sap/ui/table/Row'],
-	function(Row) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 	/**

@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selector ":sapTabbable"
 ], function(TableQUnitUtils, qutils, TableUtils, KeyboardDelegate, Device, F6Navigation, library, Table, Column, KeyCodes, JSONModel, jQuery, oCore) {
 	"use strict";
 

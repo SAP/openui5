@@ -136,7 +136,7 @@ sap.ui.define([
 			pageChange : {}
 
 		}
-	}});
+	}, renderer: MonthPickerRenderer});
 
 	MonthPicker.prototype.init = function(){
 

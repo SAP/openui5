@@ -69,7 +69,7 @@ sap.ui.define([
 			 */
 			content2 : {type : "sap.ui.core.Control", multiple : true, singularName : "content2"}
 		}
-	}});
+	}, renderer: ContentSwitcherRenderer});
 
 	(function(window) {
 

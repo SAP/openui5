@@ -4,20 +4,16 @@
 
 // Provides class sap.ui.unified.calendar.YearRangePicker
 sap.ui.define([
-	"sap/ui/core/Renderer",
 	"./YearPicker",
 	"./YearRangePickerRenderer",
 	"./CalendarDate",
-	"sap/ui/core/date/UniversalDate",
 	"./CalendarUtils",
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
-		Renderer,
 		YearPicker,
 		YearRangePickerRenderer,
 		CalendarDate,
-		UniversalDate,
 		CalendarUtils,
 		jQuery
 	) {
@@ -31,19 +27,19 @@ sap.ui.define([
 	 *
 	 * @class
 	 * Renders a <code>YearPicker</code> with <code>ItemNavigation</code>.
-	*
-	* <b>Note:</b> This control is used inside the calendar and is not meant for
-	* standalone usage.
-	*
-	* The control is related to the <code>YearPicker</code> control through a
-	* <code>sap.ui.unified.Calendar</code> instance.
-	*
-	* The default value of the <code>rangeSize</code> property should be equal to the
-	* default value of the <code>years</code> property in <code>YearPicker</code>.
-	*
-	* As in all date-time controls, all public JS Date objects that are given
-	* (<code>setDate()</code>) or read (<code>getFirstRenderedDate</code>) have values
-	* which are considered as date objects in browser (local) timezone.
+	 *
+	 * <b>Note:</b> This control is used inside the calendar and is not meant for
+	 * standalone usage.
+	 *
+	 * The control is related to the <code>YearPicker</code> control through a
+	 * <code>sap.ui.unified.Calendar</code> instance.
+	 *
+	 * The default value of the <code>rangeSize</code> property should be equal to the
+	 * default value of the <code>years</code> property in <code>YearPicker</code>.
+	 *
+	 * As in all date-time controls, all public JS Date objects that are given
+	 * (<code>setDate()</code>) or read (<code>getFirstRenderedDate</code>) have values
+	 * which are considered as date objects in browser (local) timezone.
 	 * @extends sap.ui.unified.calendar.YearPicker
 	 *
 	 * @author SAP SE
@@ -75,7 +71,8 @@ sap.ui.define([
 				 */
 				rangeSize: {type : "int", group : "Appearance", defaultValue: 20}
 			}
-		}
+		},
+		renderer: YearRangePickerRenderer
 	});
 
 	/**

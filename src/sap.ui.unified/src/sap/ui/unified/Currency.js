@@ -114,7 +114,7 @@ sap.ui.define([
 			},
 			designtime: "sap/ui/unified/designtime/Currency.designtime",
 			dnd: { draggable: true, droppable: false }
-		}});
+		}, renderer: CurrencyRenderer});
 
 		//Whitespace characters to align values
 		Currency.FIGURE_SPACE = '\u2007';

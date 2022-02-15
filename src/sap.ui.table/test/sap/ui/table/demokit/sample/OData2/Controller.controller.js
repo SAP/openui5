@@ -2,13 +2,12 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Column",
 	"sap/ui/unified/Currency",
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/model/type/String"
-], function(Controller, MockServer, ODataModel, JSONModel, Column, Currency, Label, Text, StringType) {
+], function(Controller, MockServer, ODataModel, Column, Currency, Label, Text, StringType) {
 	"use strict";
 
 	var sServiceUrl = "http://my.test.service.com/";

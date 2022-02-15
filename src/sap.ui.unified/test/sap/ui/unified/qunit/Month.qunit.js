@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/unified/calendar/Month",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/CalendarLegend",
-	"sap/ui/unified/CalendarLegendRenderer",
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/m/Button",
 	"sap/ui/unified/DateRange",
@@ -17,7 +16,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(Month, CalendarDate, CalendarLegend, CalendarLegendRenderer,
+], function(Month, CalendarDate, CalendarLegend,
 	CalendarLegendItem, Button, DateRange, DateTypeRange, CalendarType, InvisibleText, ItemNavigation, unifiedLibrary, KeyCodes, Device, jQuery, oCore) {
 	"use strict";
 

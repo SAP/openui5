@@ -31,9 +31,9 @@ sap.ui.define([
 			this.oMockServer.start();
 
 			var aSelectionModes = [];
-			jQuery.each(SelectionMode, function(k, v){
+			Object.keys(SelectionMode).forEach(function(k){
 				if (k != SelectionMode.Multi) {
-					aSelectionModes.push({key: k, text: v});
+					aSelectionModes.push({key: k, text: SelectionMode[k]});
 				}
 			});
 

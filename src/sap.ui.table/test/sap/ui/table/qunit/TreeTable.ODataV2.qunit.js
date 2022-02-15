@@ -5,12 +5,11 @@ sap.ui.define([
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/Filter",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
-], function(TableQUnitUtils, TreeTable, Column, ODataModel, TableUtils, Filter, MockServer, Core, jQuery) {
+], function(TableQUnitUtils, TreeTable, Column, ODataModel, Filter, MockServer, Core, jQuery) {
 	"use strict";
 
 	//MockServer for use with annotated tree
