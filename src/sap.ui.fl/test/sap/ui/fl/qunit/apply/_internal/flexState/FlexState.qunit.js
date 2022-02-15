@@ -544,12 +544,15 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("FlexState without stubs", {
+	QUnit.module("FlexState without stubs and a ushell container", {
 		beforeEach: function() {
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oLoaderSpy = sandbox.spy(Loader, "loadFlexData");
 			this.oApplyStorageLoadFlexDataSpy = sandbox.spy(Storage, "loadFlexData");
 			this.oApplyStorageCompleteFlexDataSpy = sandbox.spy(Storage, "completeFlexData");
+			this.oRegistrationHandlerStub = sandbox.stub();
+			this.oDeRegistrationHandlerStub = sandbox.stub();
+			getUshellContainerStub(this.oRegistrationHandlerStub, this.oDeRegistrationHandlerStub);
 		},
 		afterEach: function() {
 			FlexState.clearState();
@@ -582,6 +585,7 @@ sap.ui.define([
 				componentId: sComponentId
 			}))
 			.then(function() {
+				assert.strictEqual(this.oRegistrationHandlerStub.callCount, 1, "the navigation handler was only registered once");
 				assert.equal(this.oLoaderSpy.callCount, 2, "loader is not called again");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is not called again");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is not called again");
@@ -614,6 +618,7 @@ sap.ui.define([
 				componentId: sComponentId
 			}))
 			.then(function() {
+				assert.strictEqual(this.oRegistrationHandlerStub.callCount, 1, "the navigation handler was only registered once");
 				assert.equal(this.oLoaderSpy.callCount, 2, "loader is not called again");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is not called again");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is called for the first time");

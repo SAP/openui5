@@ -42,10 +42,12 @@ sap.ui.define([
 	 * The persistence happens inside an object mapped to the component reference, with the following properties:
 	 *
 	 *	{
-	 * 		appDescriptorMap: {},
-	 * 		changesMap: {},
-	 * 		variantsMap: {},
-	 * 		compVariantsMap: {},
+	 * 		preparedMaps: {
+	 * 			appDescriptorMap: {},
+	 * 			changesMap: {},
+	 * 			variantsMap: {},
+	 * 			compVariantsMap: {},
+	 * 		},
 	 * 		storageResponse: {
 	 * 			changes: {
 	 * 				changes: [...],
@@ -63,8 +65,10 @@ sap.ui.define([
 	 * 			},
 	 * 			loadModules: <boolean>
 	 * 		},
+	 * 		unfilteredStorageResnonse: {...}, // same as above but without layer filtering
 	 *		partialFlexState: <boolean>,
-	 *		componentId: "<componentId>"
+	 *		componentId: "<componentId>",
+	 *		componentData: {...}
 	 *	}
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.FlexState
@@ -101,6 +105,7 @@ sap.ui.define([
 		}
 	};
 	// some runtime data is only fetched once (e.g. during control init) and has to survive an invalidation of the FlexState
+	// TODO: move to maps as soon as they don't get cleared with cache invalidation
 	var _mExternalData = {
 		compVariants: {},
 		variants: {}
@@ -211,7 +216,7 @@ sap.ui.define([
 
 	function registerMaxLayerHandler(sReference) {
 		var oShellNavigationService = getUShellService("ShellNavigation");
-		if (oShellNavigationService) {
+		if (oShellNavigationService && !_mNavigationHandlers[sReference]) {
 			_mNavigationHandlers[sReference] = handleMaxLayerChange.bind(null, sReference);
 			oShellNavigationService.registerNavigationFilter(_mNavigationHandlers[sReference]);
 		}
@@ -243,10 +248,6 @@ sap.ui.define([
 			return oShellNavigationService.NavigationFilterStatus.Continue;
 		}
 		return undefined;
-	}
-
-	function clearPreparedMaps(sReference) {
-		_mInstances[sReference].preparedMaps = {};
 	}
 
 	function checkPartialFlexState(mInitProperties) {
@@ -293,8 +294,8 @@ sap.ui.define([
 		return undefined;
 	}
 
-	// TODO: get rid of the following module dependencies as far as the change state
-	//       is migrated from changePersistenceFactory to the FlexState
+	// TODO: get rid of the following module dependencies as soon as the change state
+	// is migrated from changePersistenceFactory to the FlexState
 	function lazyLoadModules() {
 		return Promise.all([
 			Utils.requireAsync("sap/ui/fl/ChangePersistenceFactory")
@@ -378,8 +379,8 @@ sap.ui.define([
 			deRegisterMaxLayerHandler(sReference);
 			delete _mInstances[sReference];
 			delete _mInitPromises[sReference];
-			// TODO: get rid of the following deletes as far as the change state
-			//       is migrated from changePersistenceFactory to the FlexState
+			// TODO: get rid of the following deletes as soon as the change state
+			// is migrated from changePersistenceFactory to the FlexState
 			if (
 				_oChangePersistenceFactory
 				&& (_oChangePersistenceFactory._instanceCache || {}).hasOwnProperty(sReference)
@@ -428,14 +429,10 @@ sap.ui.define([
 	 * The next initialize call will add it again.
 	 *
 	 * @param {string} sReference - Flex reference of the app
-	 * @param {string} sComponentId - Component instance ID
 	 */
-	FlexState.clearFilteredResponse = function(sReference, sComponentId) {
-		if (
-			_mInstances[sReference]
-			&& (!sComponentId || sComponentId === _mInstances[sReference].componentId)
-		) {
-			clearPreparedMaps(sReference);
+	FlexState.clearFilteredResponse = function(sReference) {
+		if (_mInstances[sReference]) {
+			_mInstances[sReference].preparedMaps = {};
 			delete _mInstances[sReference].storageResponse;
 		}
 	};
