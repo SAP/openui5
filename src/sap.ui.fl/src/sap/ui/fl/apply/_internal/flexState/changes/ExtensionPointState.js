@@ -3,17 +3,19 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/merge",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/ChangePersistenceFactory"
 ], function(
-	ChangesWriteAPI,
-	ChangePersistenceFactory,
 	_omit,
 	merge,
-	Log
+	Log,
+	ChangesUtils,
+	ChangesWriteAPI,
+	ChangePersistenceFactory
 ) {
 	"use strict";
 
@@ -30,11 +32,11 @@ sap.ui.define([
 	 */
 	var ExtensionPointState = {};
 
-	function isChangeValidForExtensionPoint(oChangePersistence, mPropertyBag, oChange) {
+	function isChangeValidForExtensionPoint(mPropertyBag, oChange) {
 		if (oChange.getSelector().name !== mPropertyBag.extensionPointName) {
 			return false;
 		}
-		return oChangePersistence.changesHavingCorrectViewPrefix(mPropertyBag, oChange);
+		return ChangesUtils.filterChangeByView(mPropertyBag, oChange);
 	}
 
 	function isValidForRuntimeOnlyChanges(oChange, mExtensionPointInfo) {
@@ -99,7 +101,7 @@ sap.ui.define([
 		}
 		return oChangePersistence.getChangesForComponent()
 			.then(function(aChanges) {
-				return aChanges.filter(isChangeValidForExtensionPoint.bind(this, oChangePersistence, mPropertyBag));
+				return aChanges.filter(isChangeValidForExtensionPoint.bind(undefined, mPropertyBag));
 			});
 	};
 

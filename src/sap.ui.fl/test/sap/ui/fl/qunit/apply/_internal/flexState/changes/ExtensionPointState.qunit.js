@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Change",
@@ -8,6 +9,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	ChangesUtils,
 	ExtensionPointState,
 	ChangePersistenceFactory,
 	Change,
@@ -17,6 +19,7 @@ sap.ui.define([
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
+
 	function createExtensionPoint(oView, sExtensionPointName, oParent, sAggregationName, iIndex) {
 		return {
 			view: oView,
@@ -27,11 +30,8 @@ sap.ui.define([
 		};
 	}
 
-	function mockChangePersistance(aChanges, bChangeMapCreated, fnAddChangeAndUpadateDependencies, fnHavingCorrectViewPrefix) {
+	function mockChangePersistance(aChanges, bChangeMapCreated, fnAddChangeAndUpadateDependencies) {
 		var oChangePersistence = {
-			changesHavingCorrectViewPrefix: fnHavingCorrectViewPrefix || function () {
-				return true;
-			},
 			getChangesForComponent: function () {
 				return Promise.resolve(aChanges || []);
 			},
@@ -63,6 +63,7 @@ sap.ui.define([
 			this.mPropertyBag = {
 				targetControl: this.oPanel
 			};
+			sandbox.stub(ChangesUtils, "filterChangeByView").returns(true);
 		},
 		afterEach: function () {
 			this.oPanel.destroy();
@@ -164,16 +165,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("with extension point changes exists", function (assert) {
-			var oHavingCorrectViewPrefixStub = sinon.stub().returns(true);
+			var oViewFilterStub = sandbox.stub(ChangesUtils, "filterChangeByView").returns(true);
 			var aChanges = createChangeList(3, true/*is in initial state*/, this.mExtensionPointInfo.name);
-			var oChangePersistence = mockChangePersistance(aChanges, undefined, undefined, oHavingCorrectViewPrefixStub);
+			var oChangePersistence = mockChangePersistance(aChanges);
 			return ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, this.mPropertyBag)
 				.then(function (aChanges) {
 					assert.strictEqual(aChanges.length, 3, "then no changes are returned");
 					assert.ok(aChanges.every(function (oChange) {
 						return oChange.getSelector().name === this.mExtensionPointInfo.name;
 					}.bind(this)), "then the returnd changes are related to the extension point");
-					assert.strictEqual(oHavingCorrectViewPrefixStub.callCount, 3, "then the changes are checked for having correct view prefix");
+					assert.strictEqual(oViewFilterStub.callCount, 3, "then the changes are checked for having correct view prefix");
 				}.bind(this));
 		});
 	});

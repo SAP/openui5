@@ -519,26 +519,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when _getLayerFromChangeOrChangeContent is called with a change instance", function(assert) {
-			var oChange = new Change({
-				fileName: "change1",
-				layer: Layer.USER,
-				selector: {id: "controlId"},
-				dependentSelector: []
-			});
-			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent(oChange), Layer.USER, "then the correct layer is returned");
-		});
-
-		QUnit.test("when _getLayerFromChangeOrChangeContent is called with a variant instance", function(assert) {
-			var oVariant = new Variant({
-				content: {
-					fileName: "variant1",
-					layer: Layer.USER
-				}
-			});
-			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent(oVariant), Layer.USER, "then the correct layer is returned");
-		});
-
 		QUnit.test("getChangesForComponent shall ignore max layer parameter when current layer is set", function(assert) {
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: {
@@ -3049,37 +3029,6 @@ sap.ui.define([
 				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0], oChangeContent3, "the second change was processed afterwards");
 				assert.equal(this.oWriteStub.getCall(1).args[0].parentVersion, sap.ui.fl.Versions.Draft, "the version parameter is set to draft for further requests");
 			}.bind(this));
-		});
-	});
-
-	QUnit.module("getResetAndPublishInfo", {
-		beforeEach: function() {
-			sandbox.stub(FlexState, "initialize").resolves();
-			sandbox.stub(WriteStorage, "getFlexInfo").returns(
-				Promise.resolve({
-					isResetEnabled: true,
-					isPublishEnabled: true
-				})
-			);
-			this._mComponentProperties = {
-				name: "testScenarioComponent"
-			};
-			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
-			this.mPropertyBag = {
-				layer: Layer.CUSTOMER,
-				reference: "testScenarioComponent"
-			};
-		},
-		afterEach: function() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("call getResetAndPublishInfo", function(assert) {
-			return this.oChangePersistence.getResetAndPublishInfo(this.mPropertyBag)
-				.then(function(oResetAndPublishInfo) {
-					assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
-					assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "isPublishEnabled is true");
-				});
 		});
 	});
 

@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -29,6 +30,7 @@ sap.ui.define([
 	DescriptorChangeTypes,
 	Condenser,
 	FlexObjectState,
+	Storage,
 	ManifestUtils,
 	VariantManagementState,
 	FeaturesAPI,
@@ -187,7 +189,7 @@ sap.ui.define([
 			// If there is change and the layer is transportable , the request to back end is always necessary
 			// because of control variant reset logic through setVisible change and app descriptor changes
 			if (bIsLayerTransportable) {
-				return ChangesController.getFlexControllerInstance(mPropertyBag.selector).getResetAndPublishInfo(mPropertyBag)
+				return Storage.getFlexInfo(mPropertyBag)
 					.then(function(oResponse) {
 						oFlexInfo.allContextsProvided = oResponse.allContextsProvided === undefined || oResponse.allContextsProvided;
 						oFlexInfo.isResetEnabled = oResponse.isResetEnabled;

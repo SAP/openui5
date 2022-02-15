@@ -16,7 +16,7 @@ sap.ui.define([
 	/**
 	 * Util class for Applier/ChangeReverter.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.connectors.changes.Utils
+	 * @namespace sap.ui.fl.apply._internal.changes.Utils
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
@@ -106,6 +106,50 @@ sap.ui.define([
 			var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
 			return FlexCustomData.hasChangeApplyFinishedCustomData(oControl, oChange, oModifier)
 				.then(isDependencyStillValid.bind(null, oChange));
+		},
+
+		/**
+		 * Checks if the passed change belongs to the given view
+		 *
+		 * @param {object} mPropertyBag - Additional information
+		 * @param {object} mPropertyBag.modifier - Reuse operations handling the changes on the given view type
+		 * @param {object} mPropertyBag.appComponent - Application component for the view
+		 * @param {object} mPropertyBag.viewId - ID of the view
+		 * @param {sap.ui.fl.Change} oChange - Change instance to check
+		 * @returns {boolean} <code>true</code> if the change belongs to the given view
+		 */
+		filterChangeByView: function(mPropertyBag, oChange) {
+			var oModifier = mPropertyBag.modifier;
+			var oAppComponent = mPropertyBag.appComponent;
+			var oSelector = oChange.getSelector();
+			if (!oSelector) {
+				return false;
+			}
+			if (oSelector.viewSelector) {
+				var sSelectorViewId = oModifier.getControlIdBySelector(oSelector.viewSelector, oAppComponent);
+				return sSelectorViewId === mPropertyBag.viewId;
+			}
+			var sSelectorId = oSelector.id;
+			if (sSelectorId) {
+				var sViewId;
+				if (oChange.getSelector().idIsLocal) {
+					if (oAppComponent) {
+						sViewId = oAppComponent.getLocalId(mPropertyBag.viewId);
+					}
+				} else {
+					sViewId = mPropertyBag.viewId;
+				}
+				var iIndex = 0;
+				var sSelectorIdViewPrefix;
+				do {
+					iIndex = sSelectorId.indexOf("--", iIndex);
+					sSelectorIdViewPrefix = sSelectorId.slice(0, iIndex);
+					iIndex++;
+				} while (sSelectorIdViewPrefix !== sViewId && iIndex > 0);
+
+				return sSelectorIdViewPrefix === sViewId;
+			}
+			return false;
 		}
 	};
 
