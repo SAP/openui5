@@ -1018,8 +1018,8 @@ sap.ui.define([
 			}
 			if (oCache !== undefined) {
 				// Pending changes for this cache are only possible when there is a cache already
-				if (oCache && oCache.hasPendingChangesForPath("", false,
-						bIgnoreKeptAlive && oDependent.mParameters.$$ownRequest)) {
+				if (oCache && oCache.hasPendingChangesForPath("", false, bIgnoreKeptAlive
+						&& oDependent.mParameters && oDependent.mParameters.$$ownRequest)) {
 					return true;
 				}
 			} else if (oDependent.hasPendingChangesForPath("")) {
