@@ -2909,8 +2909,9 @@ sap.ui.define([
 			payload: this.getPayload(),
 			preventGetDescription: this._bPreventGetDescription,
 			conditionModel: oConditionModelInfo.model,
-			conditionModelName : oConditionModelInfo.name,
-			defaultOperatorName : this.getDefaultOperator ? this.getDefaultOperator() : null
+			conditionModelName: oConditionModelInfo.name,
+			defaultOperatorName: this.getDefaultOperator ? this.getDefaultOperator() : null,
+			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getMaxConditions() !== 1 // also replace whitespaces in tokens
 		};
 
 	};
@@ -2985,7 +2986,8 @@ sap.ui.define([
 			preventGetDescription: this._bPreventGetDescription,
 			conditionModel: oConditionModelInfo.model,
 			conditionModelName : oConditionModelInfo.name,
-			getConditions: this.getConditions.bind(this) // TODO: better solution to update unit in all conditions
+			getConditions: this.getConditions.bind(this), // TODO: better solution to update unit in all conditions
+			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getEditMode() === EditMode.EditableDisplay
 		};
 
 	};

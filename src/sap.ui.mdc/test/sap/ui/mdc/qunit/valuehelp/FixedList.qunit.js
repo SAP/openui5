@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/model/ParseException",
 	"sap/ui/model/FormatException",
 	"sap/m/library",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/base/strings/whitespaceReplacer"
 ], function (
 		ValueHelpDelegate,
 		FixedList,
@@ -23,7 +24,8 @@ sap.ui.define([
 		ParseException,
 		FormatException,
 		mLibrary,
-		coreLibrary
+		coreLibrary,
+		whitespaceReplacer
 	) {
 	"use strict";
 
@@ -52,7 +54,7 @@ sap.ui.define([
 			oFixedList = new FixedList("FL1", {
 				items: [
 					new ListFieldHelpItem("I1", {key: "I1", text: "Item 1", additionalText: "My Item 1", groupKey: "G1", groupText: "Group 1"}),
-					new ListFieldHelpItem("I2", {key: "I2", text: "My Item 2", additionalText: "Item 2", groupKey: "G2", groupText: "Group 2", textDirection: coreLibrary.TextDirection.RTL}),
+					new ListFieldHelpItem("I2", {key: "I2", text: "My Item   2", additionalText: "Item   2", groupKey: "G2", groupText: "Group 2", textDirection: coreLibrary.TextDirection.RTL}),
 					new ListFieldHelpItem("I3", {key: "I3", text: "item 3", additionalText: "My Item 3", groupKey: "G1", groupText: "Group 1"})
 				],
 				conditions: aConditions, // don't need to test the binding of Container here
@@ -110,8 +112,8 @@ sap.ui.define([
 				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item1 is DisplayListItem");
 				assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item1 type");
 				assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.RTL, "Item1 valueTextDirection");
-				assert.equal(oItem.getLabel(), "My Item 2", "Item1 label");
-				assert.equal(oItem.getValue(), "Item 2", "Item1 value");
+				assert.equal(oItem.getLabel(), whitespaceReplacer("My Item   2"), "Item1 label");
+				assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item1 value");
 				assert.ok(oItem.getSelected(), "Item1 selected");
 				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item1 has style class sapMComboBoxNonInteractiveItem");
 				oItem = oContent.getItems()[2];
@@ -184,8 +186,8 @@ sap.ui.define([
 				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item4 is DisplayListItem");
 				assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item4 type");
 				assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.RTL, "Item4 valueTextDirection");
-				assert.equal(oItem.getLabel(), "My Item 2", "Item4 label");
-				assert.equal(oItem.getValue(), "Item 2", "Item4 value");
+				assert.equal(oItem.getLabel(), whitespaceReplacer("My Item   2"), "Item4 label");
+				assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item4 value");
 				assert.ok(oItem.getSelected(), "Item4 selected");
 				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item4 has style class sapMComboBoxNonInteractiveItem");
 
@@ -248,8 +250,8 @@ sap.ui.define([
 				assert.equal(oItem.getValue(), "My Item 1", "Item0 value");
 				assert.ok(oItem.getSelected(), "Item0 selected");
 				oItem = oContent.getItems()[1];
-				assert.equal(oItem.getLabel(), "My Item 2", "Item1 label");
-				assert.equal(oItem.getValue(), "Item 2", "Item1 value");
+				assert.equal(oItem.getLabel(), whitespaceReplacer("My Item   2"), "Item1 label");
+				assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item1 value");
 				assert.notOk(oItem.getSelected(), "Item1 not selected");
 				oItem = oContent.getItems()[2];
 				assert.equal(oItem.getLabel(), "item 3", "Item2 label");
@@ -287,7 +289,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I2", description: "My Item 2"}, "Item returned");
+				assert.deepEqual(oItem, {key: "I2", description: "My Item   2"}, "Item returned");
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError);
@@ -565,7 +567,7 @@ sap.ui.define([
 				oItem = oContent.getItems()[2];
 				assert.notOk(oItem.getSelected(), "Item2 not selected");
 
-				oCondition = Condition.createItemCondition("I2", "My Item 2");
+				oCondition = Condition.createItemCondition("I2", "My Item   2");
 				assert.equal(iNavigate, 1, "Navigated Event fired");
 				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 				assert.equal(sNavigateItemId, "FL1-item-FL1-List-1", "Navigated itemId");
@@ -635,7 +637,7 @@ sap.ui.define([
 				oItem = oContent.getItems()[4];
 				assert.ok(oItem.getSelected(), "Item4 selected");
 
-				var oCondition = Condition.createItemCondition("I2", "My Item 2");
+				var oCondition = Condition.createItemCondition("I2", "My Item   2");
 				assert.equal(iNavigate, 1, "Navigated Event fired");
 				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 				assert.equal(sNavigateItemId, "FL1-item-FL1-List-2", "Navigated itemId");
@@ -675,7 +677,7 @@ sap.ui.define([
 				oItem = oContent.getItems()[4];
 				assert.ok(oItem.getSelected(), "Item4 selected");
 
-				oCondition = Condition.createItemCondition("I2", "My Item 2");
+				oCondition = Condition.createItemCondition("I2", "My Item   2");
 				assert.equal(iNavigate, 1, "Navigated Event fired");
 				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 				assert.equal(sNavigateItemId, "FL1-item-FL1-List-2", "Navigated itemId");
@@ -696,7 +698,7 @@ sap.ui.define([
 				oItem = oContent.getItems()[4];
 				assert.ok(oItem.getSelected(), "Item4 selected");
 
-				oCondition = Condition.createItemCondition("I2", "My Item 2");
+				oCondition = Condition.createItemCondition("I2", "My Item   2");
 				assert.equal(iNavigate, 1, "Navigated Event fired");
 				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 				assert.equal(sNavigateItemId, "FL1-item-FL1-List-2", "Navigated itemId");

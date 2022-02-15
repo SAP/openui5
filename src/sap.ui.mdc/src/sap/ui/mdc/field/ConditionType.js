@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/base/util/merge',
+	'sap/base/strings/whitespaceReplacer',
 	'sap/ui/base/SyncPromise'
 ],
 	function(
@@ -31,6 +32,7 @@ sap.ui.define([
 		BaseType,
 		ConditionValidated,
 		merge,
+		whitespaceReplacer,
 		SyncPromise
 		) {
 	"use strict";
@@ -70,6 +72,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oFormatOptions.conditionModel] <code>ConditionModel</code>, if bound to one
 	 * @param {string} [oFormatOptions.conditionModelName] Name of the <code>ConditionModel</code>, if bound to one
 	 * @param {string} [oFormatOptions.defaultOperatorName] Name of the default <code>Operator</code>
+	 * @param {boolean} [oFormatOptions.convertWhitespaces] If set, whitespaces will be replaced by special characters to display whitespaces in HTML
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.ConditionType
 	 */
@@ -202,7 +205,15 @@ sap.ui.define([
 			throw new FormatException("No valid condition provided, Operator wrong.");
 		}
 
-		return oOperator.format(oCondition, oType, sDisplay, bHideOperator);
+		var sResult = oOperator.format(oCondition, oType, sDisplay, bHideOperator);
+		var bConvertWhitespaces = this.oFormatOptions.convertWhitespaces;
+
+		if (bConvertWhitespaces && (_getBaseType.call(this, oType) === BaseType.String || sDisplay !== FieldDisplay.Value)) {
+			// convert only string types to prevent unwanted side effects
+			sResult = whitespaceReplacer(sResult);
+		}
+
+		return sResult;
 
 	}
 
