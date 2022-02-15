@@ -8,12 +8,11 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
-	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, CalendarType, DateFormat, KeyCodes, jQuery, oCore) {
+], function(qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested

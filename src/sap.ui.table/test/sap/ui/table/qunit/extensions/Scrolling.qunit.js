@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/FixedRowMode",
 	"sap/ui/table/rowmodes/AutoRowMode",
 	"sap/ui/table/utils/TableUtils",
+	"sap/ui/table/TableRenderer",
 	"sap/ui/Device",
 	"sap/ui/table/library",
 	"sap/ui/table/Column",
@@ -15,7 +16,7 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, RowAction, RowActionItem, FixedRowMode, AutoRowMode, TableUtils, Device, tableLibrary, Column, Control, JSONModel, Context, ChangeReason, oCore) {
+], function(TableQUnitUtils, RowAction, RowActionItem, FixedRowMode, AutoRowMode, TableUtils, TableRenderer, Device, tableLibrary, Column, Control, JSONModel, Context, ChangeReason, oCore) {
 	"use strict";
 
 	// mapping of global function calls
@@ -143,7 +144,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 		var oScrollExtension = oTable._getScrollExtension();
 		var oVSb = oScrollExtension.getVerticalScrollbar();
-		var iOriginalApiVersion = sap.ui.table.TableRenderer.apiVersion;
+		var iOriginalApiVersion = TableRenderer.apiVersion;
 
 		assert.ok(oVSb.offsetWidth > 0 && oVSb.offsetHeight > 0, "Table content does not fit height -> Vertical scrollbar is visible");
 
@@ -156,7 +157,7 @@ sap.ui.define([
 
 		}).then(function() {
 			// BCP: 1970484410
-			sap.ui.table.TableRenderer.apiVersion = 1;
+			TableRenderer.apiVersion = 1;
 			oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(7), "other");
 			oTable.bindRows({
 				path: "/",
@@ -172,7 +173,7 @@ sap.ui.define([
 				assert.ok(oVSb.offsetWidth > 0 && oVSb.offsetHeight > 0, "Table content does not fit height -> Vertical scrollbar is visible");
 			}
 		}).finally(function() {
-			sap.ui.table.TableRenderer.apiVersion = iOriginalApiVersion;
+			TableRenderer.apiVersion = iOriginalApiVersion;
 		});
 	});
 

@@ -2,10 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
-	"sap/ui/table/plugins/SelectionPlugin",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter"
-], function(TableQUnitUtils, SelectionPlugin, Sorter, Filter) {
+], function(TableQUnitUtils, Sorter, Filter) {
 	"use strict";
 
 	QUnit.module("Automatic deselection", {

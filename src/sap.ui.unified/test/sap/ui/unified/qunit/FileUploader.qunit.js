@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/FileUploader",
-	"sap/ui/unified/FileUploaderParameter",
 	"sap/ui/unified/FileUploaderHttpRequestMethod",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/InvisibleText",
@@ -11,7 +10,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/Device",
 	"sap/ui/core/Core"
-], function(qutils, FileUploader, FileUploaderParameter, FileUploaderHttpRequestMethod, TooltipBase, InvisibleText, Label, Text, Device, oCore) {
+], function(qutils, FileUploader, FileUploaderHttpRequestMethod, TooltipBase, InvisibleText, Label, Text, Device, oCore) {
 	"use strict";
 
 	/**

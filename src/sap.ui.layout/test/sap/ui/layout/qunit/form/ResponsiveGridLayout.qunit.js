@@ -5,7 +5,6 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/each",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/ResponsiveGridLayout",
@@ -23,7 +22,6 @@ sap.ui.define([
 	],
 	function(
 		jQuery,
-		qutils,
 		each,
 		Form,
 		ResponsiveGridLayout,

@@ -13,13 +13,11 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/CalendarWeekInterval",
 	"sap/ui/unified/calendar/DatesRow",
-	"sap/ui/unified/library",
-	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(KeyCodes, qutils, CalendarDateInterval, CalendarType, Locale, LocaleData, DateFormat, DateRange, DateTypeRange,
-	CalendarDate, CalendarWeekInterval, DatesRow, unifiedLibrary, Log, Device, jQuery, oCore) {
+	CalendarDate, CalendarWeekInterval, DatesRow, Device, jQuery, oCore) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested

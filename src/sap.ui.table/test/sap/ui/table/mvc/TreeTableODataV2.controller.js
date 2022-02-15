@@ -8,9 +8,24 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessagePopover",
 	"sap/m/MessagePopoverItem",
-	"sap/ui/core/Core"
-], function(Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, MessagePopover, MessagePopoverItem, oCore) {
+	"sap/ui/core/Core",
+    "sap/ui/table/library",
+    "sap/ui/core/util/MockServer",
+    "sap/ui/model/Filter",
+    "sap/ui/table/TreeTable",
+    "sap/ui/table/Column",
+    "sap/ui/model/odata/v2/ODataModel",
+    "sap/ui/core/HTML",
+    "sap/ui/performance/Measurement",
+    "sap/base/util/uid",
+    "sap/base/security/encodeXML",
+    "sap/ui/core/syncStyleClass"
+], function(Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, MessagePopover, MessagePopoverItem, oCore,
+			tableLibrary, MockServer, Filter, TreeTable, Column, ODataModel, HTML, Measurement, uid, encodeXML, syncStyleClass) {
 	"use strict";
+
+	// shortcut for sap.ui.table.VisibleRowCountMode
+	var VisibleRowCountMode = tableLibrary.VisibleRowCountMode;
 
 	var oTable;
 
@@ -60,7 +75,7 @@ sap.ui.define([
 				hierarchyDescendantCountFor: "",
 				hierarchyExternalKeyFor: "",
 				visibleRowCount: 20,
-				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Fixed,
+				visibleRowCountMode: VisibleRowCountMode.Fixed,
 				overall: 0,
 				onBeforeRendering: 0,
 				rendering: 0,
@@ -92,11 +107,10 @@ sap.ui.define([
 
 			// auto expand mock service
 			if (sServiceUrl.indexOf("odataFake") >= 0) {
-				jQuery.sap.require("sap.ui.core.util.MockServer");
 				sServiceUrl = "/odataFake/";
 				if (!this.oMockServer) {
 					//Mock server for use with navigation properties
-					this.oMockServer = new sap.ui.core.util.MockServer({
+					this.oMockServer = new MockServer({
 						rootUri: sServiceUrl
 					});
 					this.oMockServer.simulate("../core/qunit/model/metadata_orgHierarchy.xml", "../core/qunit/model/orgHierarchy/");
@@ -106,11 +120,10 @@ sap.ui.define([
 
 			// sequential expand mock service
 			if (sServiceUrl.indexOf("classicFake") >= 0) {
-				jQuery.sap.require("sap.ui.core.util.MockServer");
 				sServiceUrl = "/classicFake/";
 				if (!this.oMockServer) {
 					//Mock server for use with navigation properties
-					this.oMockServer = new sap.ui.core.util.MockServer({
+					this.oMockServer = new MockServer({
 						rootUri: sServiceUrl
 					});
 					this.oMockServer.simulate("../core/qunit/model/metadata_odtbmd.xml", "../core/qunit/model/odtbmd/");
@@ -151,7 +164,7 @@ sap.ui.define([
 			var sFilterProperty = oViewModel.getProperty("/filterProperty");
 			var sFilterOperator = oViewModel.getProperty("/filterOperator");
 			var sFilterValue = oViewModel.getProperty("/filterValue");
-			var oApplicationFilter = sFilterProperty && sFilterOperator && sFilterValue ? new sap.ui.model.Filter(sFilterProperty, sFilterOperator, sFilterValue) : [];
+			var oApplicationFilter = sFilterProperty && sFilterOperator && sFilterValue ? new Filter(sFilterProperty, sFilterOperator, sFilterValue) : [];
 
 			// hierarchy properties
 			var bUseLocalMetadata = oView.byId("useLocalMetadata").getSelected();
@@ -187,9 +200,9 @@ sap.ui.define([
 				oTable.destroyColumns();
 			}
 
-			jQuery.sap.measure.start("createTable");
+			Measurement.start("createTable");
 
-			oTable = oView.byId("tableOData") || new sap.ui.table.TreeTable({
+			oTable = oView.byId("tableOData") || new TreeTable({
 				rootLevel: iRootLevel,
 				threshold: iTableThreshold,
 				visibleRowCount: iVisibleRowCount
@@ -199,8 +212,8 @@ sap.ui.define([
 
 			// recreate the columns
 			var aProperties = sSelectProperties.split(",");
-			jQuery.each(aProperties, function(iIndex, sProperty) {
-				oTable.addColumn(new sap.ui.table.Column({
+			aProperties.forEach(function(sProperty) {
+				oTable.addColumn(new Column({
 					label: sProperty,
 					template: "odata>" + sProperty,
 					sortProperty: sProperty,
@@ -213,7 +226,7 @@ sap.ui.define([
 				this.oODataModel.destroy();
 				this._oMessageManager.unregisterMessageProcessor(this.oODataModel);
 			}
-			this.oODataModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {
+			this.oODataModel = new ODataModel(sServiceUrl, {
 				json: true,
 				defaultUpdateMethod: "PUT",
 				disableHeadRequestForToken: true,
@@ -266,7 +279,7 @@ sap.ui.define([
 		},
 
 		ensureCorrectChangeGroup: function(sEntityType) {
-			this._sTreeChangeGroup = this._sTreeChangeGroup || ("sapTreeHM-" + jQuery.sap.uid());
+			this._sTreeChangeGroup = this._sTreeChangeGroup || ("sapTreeHM-" + uid());
 
 			// make sure we have a change group
 			var mChangeGroups = this.oODataModel.getChangeGroups();
@@ -291,21 +304,21 @@ sap.ui.define([
 		attachPerformanceTools: function(oTable) {
 			oTable.addDelegate({
 				onBeforeRendering: function() {
-					jQuery.sap.measure.start("onBeforeRendering","",["Render"]);
-					jQuery.sap.measure.start("rendering","",["Render"]);
+					Measurement.start("onBeforeRendering","",["Render"]);
+					Measurement.start("rendering","",["Render"]);
 				},
 				onAfterRendering: function() {
-					jQuery.sap.measure.start("onAfterRendering","",["Render"]);
+					Measurement.start("onAfterRendering","",["Render"]);
 				}
 			}, true);
 
 			oTable.addDelegate({
 				onBeforeRendering: function() {
-					jQuery.sap.measure.end("onBeforeRendering");
+					Measurement.end("onBeforeRendering");
 				},
 				onAfterRendering: function() {
-					jQuery.sap.measure.end("onAfterRendering");
-					jQuery.sap.measure.end("rendering");
+					Measurement.end("onAfterRendering");
+					Measurement.end("rendering");
 				}
 			}, false);
 
@@ -314,10 +327,10 @@ sap.ui.define([
 				var oViewModel = that.getView().getModel();
 				oTable.detachRowsUpdated(fnRowsUpdated);
 
-				var iOverall = Math.round(jQuery.sap.measure.end("createTable").duration * 1) / 1;
-				var iRendering = Math.round(jQuery.sap.measure.getMeasurement("rendering").duration * 1) / 1;
-				var iBeforeRendering = Math.round(jQuery.sap.measure.getMeasurement("onBeforeRendering").duration * 100) / 100;
-				var iAfterRendering = Math.round(jQuery.sap.measure.getMeasurement("onAfterRendering").duration * 1) / 1;
+				var iOverall = Math.round(Measurement.end("createTable").duration * 1) / 1;
+				var iRendering = Math.round(Measurement.getMeasurement("rendering").duration * 1) / 1;
+				var iBeforeRendering = Math.round(Measurement.getMeasurement("onBeforeRendering").duration * 100) / 100;
+				var iAfterRendering = Math.round(Measurement.getMeasurement("onAfterRendering").duration * 1) / 1;
 
 				var iTableCreate = Math.round((iOverall - iRendering) * 1) / 1;
 				var iFactor = Math.round(iAfterRendering / iRendering * 100);
@@ -345,11 +358,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * jQuery Measure Tools
+		 * Measure Tools
 		 */
 		attachMeasurementTools: function() {
 			var oViewModel = this.getView().getModel();
-			var aJSMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
+			var aJSMeasure = Measurement.filterMeasurements(function(oMeasurement) {
 				return oMeasurement.categories.indexOf("JS") > -1 ? oMeasurement : null;
 			});
 
@@ -515,8 +528,8 @@ sap.ui.define([
 				contentWidth: "600px",
 				contentHeight: "300px",
 				content: [
-					new sap.ui.core.HTML({
-						content: "<span style='padding: 5px'>" + jQuery.sap.escapeHTML(sErrorText) + "</span><br/><span><i>Please see the debug-console ('Network' tab), for the actual back-end response.</i></span>"
+					new HTML({
+						content: "<span style='padding: 5px'>" + encodeXML(sErrorText) + "</span><br/><span><i>Please see the debug-console ('Network' tab), for the actual back-end response.</i></span>"
 					})
 				],
 				beginButton: new Button({
@@ -619,7 +632,7 @@ sap.ui.define([
 
 			this._oPasteDialog.setRememberSelections(false);
 
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oPasteDialog);
+			syncStyleClass("sapUiSizeCompact", this.getView(), this._oPasteDialog);
 
 			this._oPasteDialog.open();
 		},

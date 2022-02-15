@@ -74,7 +74,8 @@ sap.ui.define([
 					allowPreventDefault: true
 				}
 			}
-		}
+		},
+		renderer: Renderer
 	});
 
 	/*

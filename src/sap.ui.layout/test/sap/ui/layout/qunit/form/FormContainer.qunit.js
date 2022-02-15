@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/core/Title",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/ui/core/Core"
 	],
 	function(
-			qutils,
 			FormContainer,
 			FormElement,
 			Title,

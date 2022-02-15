@@ -1,7 +1,6 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/calendar/CalendarUtils",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/UniversalDate",
@@ -13,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Core"
-], function(qutils, CalendarUtils, LocaleData, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType, oCore) {
+], function(CalendarUtils, LocaleData, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType, oCore) {
 	"use strict";
 
 	QUnit.module("getFirstDateOfWeek/Month for week Sunday-Saturday (en_US locale)", {

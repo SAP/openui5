@@ -42,10 +42,9 @@ sap.ui.define([
 	var OneMonthDatesRow = DatesRow.extend("sap.ui.unified.calendar.OneMonthDatesRow", /** @lends sap.ui.unified.calendar.OneMonthDatesRow.prototype */ {
 		metadata : {
 			library : "sap.ui.unified"
-		}
+		},
+		renderer: OneMonthDatesRowRenderer
 	});
-
-	OneMonthDatesRow.apiVersion = 2;
 
 	OneMonthDatesRow.prototype.init = function() {
 		DatesRow.prototype.init.apply(this, arguments);

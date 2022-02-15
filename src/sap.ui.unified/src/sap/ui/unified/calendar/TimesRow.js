@@ -170,7 +170,7 @@ sap.ui.define([
 				}
 			}
 		}
-	}});
+	}, renderer: TimesRowRenderer});
 
 	TimesRow.prototype.init = function(){
 

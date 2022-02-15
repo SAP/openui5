@@ -6,21 +6,19 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
-	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
-	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts",
-	"sap/ui/model/analytics/ODataModelAdapter",
-	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
 	"sap/ui/model/TreeAutoExpandMode",
 	"sap/ui/table/AnalyticalColumn",
 	"sap/ui/model/type/Float",
-	"sap/ui/model/Filter",
 	"sap/ui/table/Row",
 	"sap/ui/table/library",
 	"sap/ui/core/TooltipBase",
-	"sap/ui/core/Core"
-], function(TableQUnitUtils, AnalyticalTable, TableUtils, ODataModel, ODataModelV2,
-			o4aFakeService, TBA_ServiceDocument, ATBA_Batch_Contexts, ODataModelAdapter, AnalyticalTreeBindingAdapter,
-			TreeAutoExpandMode, AnalyticalColumn, FloatType, Filter, Row, library, TooltipBase, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/model/analytics/ODataModelAdapter",
+	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
+	"sap/ui/core/qunit/analytics/TBA_ServiceDocument", // provides mock data
+	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts" // provides mock data
+], function(TableQUnitUtils, AnalyticalTable, TableUtils, ODataModel, ODataModelV2, o4aFakeService,
+			TreeAutoExpandMode, AnalyticalColumn, FloatType, Row, library, TooltipBase, Core) {
 	/*global QUnit,sinon*/
 	"use strict";
 

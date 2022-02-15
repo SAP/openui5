@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessageToast"
-], function(Controller, JSONModel, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/m/Toolbar"
+], function(Controller, JSONModel, MessageToast, Toolbar) {
 	"use strict";
 
 	var TABLESETTINGS = window.TABLESETTINGS;
@@ -21,12 +22,12 @@ sap.ui.define([
 			oTable.setModel(oModel);
 			oTreeTable.setModel(oModel);
 
-			oTable.addExtension(new sap.m.Toolbar());
+			oTable.addExtension(new Toolbar());
 			TABLESETTINGS.init(oTable, function(oButton) {
 				oTable.getExtension()[0].addContent(oButton);
 			});
 
-			oTreeTable.addExtension(new sap.m.Toolbar());
+			oTreeTable.addExtension(new Toolbar());
 			// TODO: Make table settings interoperable with multi table pages
 			//TABLESETTINGS.init(oTreeTable, function(oButton) {
 			//	oTreeTable.getExtension()[0].addContent(oButton);
@@ -95,7 +96,7 @@ sap.ui.define([
 		},
 
 		showDragStartEventInfo: function(oEvent, sTitle) {
-			sap.m.MessageToast.show(
+			MessageToast.show(
 				sTitle + " (" + "DragStart parameters" + ")"
 				+ "\nDrag target: " + oEvent.getParameter("target").getId()
 				+ "\nDrag session: " + (oEvent.getParameter("dragSession") ? "available" : "not available")
@@ -107,7 +108,7 @@ sap.ui.define([
 		},
 
 		showDragEnterEventInfo: function(oEvent, sTitle) {
-			sap.m.MessageToast.show(
+			MessageToast.show(
 				sTitle + " (" + "DragEnter parameters" + ")"
 				+ "\nDrop target: " + oEvent.getParameter("target").getId()
 				+ "\nDrag session: " + (oEvent.getParameter("dragSession") ? "available" : "not available")
@@ -119,7 +120,7 @@ sap.ui.define([
 		},
 
 		showDropEventInfo: function(oEvent, sTitle) {
-			sap.m.MessageToast.show(
+			MessageToast.show(
 				sTitle + " (" + "Drop parameters" + ")"
 				+ "\nDragged control: " + oEvent.getParameter("draggedControl").getId()
 				+ "\nDropped control: " + oEvent.getParameter("droppedControl").getId()

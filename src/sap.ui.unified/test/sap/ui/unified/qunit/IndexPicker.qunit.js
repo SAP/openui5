@@ -2,10 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/unified/calendar/IndexPicker",
-	"sap/ui/unified/DateRange",
-	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/core/Core"
-], function(IndexPicker, DateRange, CalendarDate, oCore) {
+], function(IndexPicker, oCore) {
 	"use strict";
 
 		QUnit.module("API ", {

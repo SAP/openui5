@@ -3,8 +3,8 @@
  */
 
 sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/CalendarLegend', 'sap/ui/unified/CalendarLegendRenderer',
-	'sap/ui/core/library', 'sap/ui/unified/library', "sap/base/Log", 'sap/ui/core/InvisibleText', "sap/ui/core/format/DateFormat", "sap/ui/core/Locale"],
-	function(CalendarUtils, CalendarDate, CalendarLegend, CalendarLegendRenderer, coreLibrary, library, Log, InvisibleText, DateFormat, Locale) {
+	'sap/ui/core/library', 'sap/ui/unified/library', "sap/base/Log", 'sap/ui/core/InvisibleText'],
+	function(CalendarUtils, CalendarDate, CalendarLegend, CalendarLegendRenderer, coreLibrary, library, Log, InvisibleText) {
 	"use strict";
 
 

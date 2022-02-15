@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/security/encodeXML"],
-	function(encodeXML) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 

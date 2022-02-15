@@ -3,11 +3,10 @@
 sap.ui.define([
 	"sap/ui/table/library",
 	'sap/ui/Device',
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Core"
-], function(library, Device, QUnitUtils, TableQUnitUtils, Filter, oCore) {
+], function(library, Device, TableQUnitUtils, Filter, oCore) {
 	"use strict";
 
 	QUnit.module("Initialization and Destruction", {

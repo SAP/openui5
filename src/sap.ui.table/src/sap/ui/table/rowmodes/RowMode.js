@@ -5,13 +5,11 @@ sap.ui.define([
 	"../library",
 	"../utils/TableUtils",
 	"sap/ui/core/Element",
-	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	library,
 	TableUtils,
 	Element,
-	Log,
 	jQuery
 ) {
 	"use strict";

@@ -64,7 +64,7 @@ sap.ui.define([
 			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : true}
 
 		}
-	}});
+	}, renderer: DatesRowRenderer});
 
 	DatesRow.prototype.init = function(){
 

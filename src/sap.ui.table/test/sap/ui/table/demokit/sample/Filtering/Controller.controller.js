@@ -2,13 +2,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessageToast",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/format/DateFormat",
 	"sap/m/ToolbarSpacer",
 	"sap/ui/thirdparty/jquery"
-], function(Log, Controller, JSONModel, MessageToast, Filter, FilterOperator, DateFormat, ToolbarSpacer, jQuery) {
+], function(Log, Controller, JSONModel, Filter, FilterOperator, DateFormat, ToolbarSpacer, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Filtering.Controller", {

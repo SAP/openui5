@@ -1,18 +1,16 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/Device",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/m/Image",
 	"sap/m/Slider",
-	"sap/m/TextArea",
 	"sap/m/RatingIndicator",
 	"sap/m/CheckBox",
 	"sap/m/Label",
 	"sap/ui/core/Core"
-], function(Device, qutils, VerticalLayout, Button, Input, Image, Slider, TextArea, RatingIndicator, CheckBox, Label, oCore) {
+], function(Device, VerticalLayout, Button, Input, Image, Slider, RatingIndicator, CheckBox, Label, oCore) {
 	"use strict";
 
 	var oLayout1 = new VerticalLayout("Layout1", {

@@ -9,7 +9,8 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 		var done = assert.async();
 		var oPromise = oCore.loadLibrary("sap.ui.table", {async: true});
 		oPromise.then(function() {
-			assert.ok(!!sap.ui.table, "Table Lib loaded");
+			var tableNamespace = sap.ui.require("sap/ui/table/library");
+			assert.ok(!!tableNamespace, "Table Lib loaded");
 			done();
 		});
 		oPromise["catch"](function() {
@@ -19,7 +20,10 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 	});
 
 	QUnit.test("TableHelper", function(assert) {
-		var oHelper = sap.ui.table.TableHelper;
+		assert.expect(5);
+
+		var tableNamespace = sap.ui.require("sap/ui/table/library");
+		var oHelper = tableNamespace.TableHelper;
 
 		assert.ok(!!oHelper, "TableHelper exists");
 		assert.ok(!oHelper.bFinal, "TableHelper is not final");

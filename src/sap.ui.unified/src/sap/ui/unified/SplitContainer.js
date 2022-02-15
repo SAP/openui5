@@ -85,7 +85,7 @@ sap.ui.define([
 			 */
 			secondaryContent : {type : "sap.ui.core.Control", multiple : true, singularName : "secondaryContent"}
 		}
-	}});
+	}, renderer: SplitContainerRenderer});
 
 	(function(window) {
 

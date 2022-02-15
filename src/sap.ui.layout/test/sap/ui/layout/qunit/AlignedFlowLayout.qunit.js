@@ -2,7 +2,6 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
-	"sap/ui/Device",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
 	"sap/ui/core/IntervalTrigger",
@@ -10,7 +9,6 @@ sap.ui.define([
 ], function(
 	Core,
 	Control,
-	Device,
 	AlignedFlowLayout,
 	Rem,
 	IntervalTrigger,

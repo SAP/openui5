@@ -150,7 +150,7 @@ sap.ui.define([
 				}
 			}
 		}
-	}, renderer: "sap.ui.table.TableRenderer"});
+	}, renderer: TableRenderer});
 
 
 	/**

@@ -11,8 +11,7 @@ sap.ui.define(['sap/ui/unified/library', "sap/ui/thirdparty/jquery"],
 	/**
 	 * @namespace
 	 */
-	var FileUploaderRenderer = function() {
-	};
+	var FileUploaderRenderer = {};
 
 	FileUploaderRenderer.apiVersion = 2;
 

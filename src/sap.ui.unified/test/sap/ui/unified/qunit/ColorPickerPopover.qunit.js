@@ -1,7 +1,5 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/unified/ColorPickerPopover",
 	"sap/ui/unified/library",
 	"sap/m/ResponsivePopover",
@@ -9,8 +7,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
-	qutils,
-	createAndAppendDiv,
 	ColorPickerPopover,
 	unifiedLibrary,
 	ResponsivePopover,

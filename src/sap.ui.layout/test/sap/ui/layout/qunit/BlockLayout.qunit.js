@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/m/Dialog',
 	'sap/m/Link',
 	'sap/m/Text',
-	'sap/ui/core/Core'
+	'sap/ui/core/Core',
+	'sap/ui/Device'
 ], function(
 	jQuery,
 	Log,
@@ -22,7 +23,8 @@ sap.ui.define([
 	Dialog,
 	Link,
 	Text,
-	Core) {
+	Core,
+	Device) {
 	'use strict';
 
 	var BlockBackgroundType = layoutLibrary.BlockBackgroundType;
@@ -485,8 +487,8 @@ sap.ui.define([
 	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
 		var oContainer = new BlockLayoutCell(),
-			sSize = sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px",
-			sResponsiveSize = sap.ui.Device.resize.width <= 599 ? "0px" : sSize,
+			sSize = Device.resize.width <= 1023 ? "16px" : "16px 32px",
+			sResponsiveSize = Device.resize.width <= 599 ? "0px" : sSize,
 			aResponsiveSize = sResponsiveSize.split(" "),
 			$containerContent;
 

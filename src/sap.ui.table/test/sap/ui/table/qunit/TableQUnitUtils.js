@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/dom/jquery/scrollLeftRTL" // provides jQuery.fn.scrollLeftRTL
 ], function(
 	TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, PluginBase, TableUtils, Device, JSONModel, Control, merge, jQuery, oCore
 ) {
@@ -267,7 +268,7 @@ sap.ui.define([
 		return oClone;
 	}
 
-	sap.ui.table.TableHelper = {
+	TableLibrary.TableHelper = {
 		createLabel: function(mConfig) {
 			return new TestControl(mConfig);
 		},

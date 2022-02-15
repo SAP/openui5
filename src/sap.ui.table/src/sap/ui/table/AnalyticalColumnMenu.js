@@ -34,7 +34,7 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './library', "sap/
 		metadata : {
 			library : "sap.ui.table"
 		},
-		renderer: "sap.ui.unified.MenuRenderer"
+		renderer: MenuRenderer
 	});
 
 	/**

@@ -4,17 +4,20 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/base/ManagedObject",
+    "sap/ui/table/AnalyticalTable",
 	"sap/ui/table/Column",
+    "sap/ui/table/RowAction",
 	"sap/ui/table/RowSettings",
+    "sap/ui/table/TreeTable",
 	"sap/ui/table/library",
-	"sap/ui/model/json/JSONModel",
+    "sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/core/library",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, TableUtils, ManagedObject, Column, RowSettings, Library, JSONModel, Device, coreLibrary, Filter, FilterOperator, jQuery, oCore) {
+], function(TableQUnitUtils, TableUtils, ManagedObject, AnalyticalTable, Column, RowAction, RowSettings, TreeTable, Library, JSONModel, Device, coreLibrary, Filter, FilterOperator, jQuery, oCore) {
 	"use strict";
 
 	var SelectionMode = Library.SelectionMode;
@@ -280,7 +283,7 @@ sap.ui.define([
 		var oCell = oRow.getCells()[iCol];
 		var iIndex = Column.ofCell(oCell).getIndex();
 
-		if (oTable instanceof sap.ui.table.TreeTable && iIndex == 0 && $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length == 1 || bGroup){
+		if (oTable instanceof TreeTable && iIndex == 0 && $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length == 1 || bGroup){
 			aDescriptions.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 		}
 
@@ -1416,7 +1419,7 @@ sap.ui.define([
 		oTable.attachEventOnce("rowsUpdated", function() {
 			assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
 
-			oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+			oTable.setRowActionTemplate(new RowAction());
 			oTable.setRowActionCount(1);
 			oCore.applyChanges();
 
@@ -1445,7 +1448,7 @@ sap.ui.define([
 		oTable.attachEventOnce("rowsUpdated", function() {
 			assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
 
-			oTreeTable.setRowActionTemplate(new sap.ui.table.RowAction());
+			oTreeTable.setRowActionTemplate(new RowAction());
 			oTreeTable.setRowActionCount(1);
 			oCore.applyChanges();
 
@@ -1454,7 +1457,7 @@ sap.ui.define([
 			oCore.applyChanges();
 			assert.strictEqual($Elem.attr("aria-labelledby"), oTreeTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
 
-			var oAnalyticalTable = new sap.ui.table.AnalyticalTable();
+			var oAnalyticalTable = new AnalyticalTable();
 			oAnalyticalTable.placeAt("qunit-fixture");
 			oCore.applyChanges();
 			$Elem = oAnalyticalTable.$("sapUiTableGridCnt");
@@ -1526,7 +1529,7 @@ sap.ui.define([
 		var iNumberOfColumns = oTable._getVisibleColumns().length;
 		var $Elem, i;
 
-		oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+		oTable.setRowActionTemplate(new RowAction());
 		oTable.setRowActionCount(1);
 		oCore.applyChanges();
 

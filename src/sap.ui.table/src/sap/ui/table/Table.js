@@ -868,7 +868,7 @@ sap.ui.define([
 			}
 		},
 		designtime:  "sap/ui/table/designtime/Table.designtime"
-	}});
+	}, renderer: TableRenderer});
 
 	/**
 	 * Gets content of aggregation <code>dragDropConfig</code> which defines the drag-and-drop configuration.

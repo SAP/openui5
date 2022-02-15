@@ -21,8 +21,6 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/TextArea",
-	"sap/m/Text",
-	"sap/m/Link",
 	"sap/ui/core/Core"
 	],
 	function(
@@ -43,8 +41,6 @@ sap.ui.define([
 		Label,
 		Input,
 		TextArea,
-		Text,
-		Link,
 		oCore
 	) {
 	"use strict";

@@ -96,7 +96,7 @@ sap.ui.define(['./ShellHeader', './ShellLayout', './library', './ShellRenderer']
 			 */
 			user : {type : "sap.ui.unified.ShellHeadUserItem", multiple : false, forwarding: {idSuffix: "-header", aggregation: "user"}}
 		}
-	}});
+	}, renderer: ShellRenderer});
 
 
 	Shell.prototype.init = function(){

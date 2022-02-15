@@ -11,9 +11,7 @@ sap.ui.define([
 	"./TableRenderer",
 	'./library',
 	'sap/ui/model/analytics/ODataModelAdapter',
-	'sap/ui/model/SelectionModel',
 	'sap/ui/model/Sorter',
-	'sap/ui/unified/Menu',
 	'sap/ui/unified/MenuItem',
 	'./utils/TableUtils',
 	"./plugins/BindingSelection",
@@ -29,9 +27,7 @@ sap.ui.define([
 		TableRenderer,
 		library,
 		ODataModelAdapter,
-		SelectionModel,
 		Sorter,
-		Menu,
 		MenuItem,
 		TableUtils,
 		BindingSelectionPlugin,
@@ -166,7 +162,7 @@ sap.ui.define([
 			dirty : {type : "boolean", group : "Appearance", defaultValue : null, deprecated: true}
 		},
 		designtime: "sap/ui/table/designtime/AnalyticalTable.designtime"
-	}, renderer: "sap.ui.table.TableRenderer"});
+	}, renderer: TableRenderer});
 
 	/**
 	 * @inheritDoc

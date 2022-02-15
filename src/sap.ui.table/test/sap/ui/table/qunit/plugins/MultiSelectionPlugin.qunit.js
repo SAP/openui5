@@ -5,12 +5,11 @@ sap.ui.define([
 	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/table/Table",
-	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/table/library",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, MultiSelectionPlugin, MockServer, Table, TableUtils, ODataModel, tableLibrary, qutils, oCore) {
+], function(TableQUnitUtils, MultiSelectionPlugin, MockServer, Table, ODataModel, tableLibrary, qutils, oCore) {
 	"use strict";
 
 	var sServiceURI = "/service/";

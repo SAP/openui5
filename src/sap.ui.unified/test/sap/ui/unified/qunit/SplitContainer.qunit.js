@@ -1,13 +1,12 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/core/Control",
 	"sap/ui/unified/SplitContainer",
 	"sap/base/util/ObjectPath",
 	"sap/ui/thirdparty/jquery"
-], function(qutils, containsOrEquals, Control, SplitContainer, ObjectPath, jQuery) {
+], function(containsOrEquals, Control, SplitContainer, ObjectPath, jQuery) {
 	"use strict";
 
 	// Control initialization

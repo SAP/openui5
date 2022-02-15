@@ -84,7 +84,8 @@ sap.ui.define([
 				 */
 				focus: {}
 			}
-		}
+		},
+		renderer: IndexPickerRenderer
 	});
 
 	IndexPicker.prototype.init = function(){
@@ -244,11 +245,11 @@ sap.ui.define([
 		var aDomRefs = this._oItemNavigation.getItemDomRefs();
 
 		// find out what index was focused
-		var $DomRef = jQuery(aDomRefs[iIndex]);
+		var oDomRef = aDomRefs[iIndex];
 
 		this.iCurrentIndex = oFocusedIndex;
 
-		oFocusedIndex = $DomRef.attr("data-sap-ui-index");
+		oFocusedIndex = oDomRef.getAttribute("data-sap-ui-index");
 
 		this.fireFocus({index: oFocusedIndex});
 	}

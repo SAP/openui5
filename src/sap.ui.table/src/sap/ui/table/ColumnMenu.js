@@ -9,12 +9,11 @@ sap.ui.define([
 	'sap/ui/unified/MenuItem',
 	'sap/ui/unified/MenuTextFieldItem',
 	"sap/ui/unified/MenuRenderer",
-	'sap/ui/Device',
 	'./utils/TableUtils',
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Menu, MenuItem, MenuTextFieldItem, MenuRenderer, Device, TableUtils, assert, jQuery) {
+	function(library, Menu, MenuItem, MenuTextFieldItem, MenuRenderer, TableUtils, assert, jQuery) {
 	"use strict";
 
 	/**
@@ -49,7 +48,7 @@ sap.ui.define([
 		metadata : {
 			library : "sap.ui.table"
 		},
-		renderer: "sap.ui.unified.MenuRenderer"
+		renderer: MenuRenderer
 	});
 
 

@@ -7,20 +7,19 @@ sap.ui.define([
 	'sap/ui/core/ValueStateSupport',
 	'./MenuItemBase',
 	'./library',
-	'sap/ui/core/IconPool',
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/base/Log',
 	'sap/ui/events/PseudoEvents',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/Core',
-	'sap/ui/dom/jquery/cursorPos' // jQuery Plugin "cursorPos"
+	'sap/ui/core/IconPool', // required by RenderManager#icon
+	'sap/ui/dom/jquery/cursorPos' // provides jQuery.fn.cursorPos
 ],
 	function(
 		ValueStateSupport,
 		MenuItemBase,
 		library,
-		IconPool,
 		coreLibrary,
 		Device,
 		Log,

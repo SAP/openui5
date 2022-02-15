@@ -104,7 +104,7 @@ sap.ui.define([
 			 */
 			curtainSplitContainer : {type : "sap.ui.unified.SplitContainer", multiple : false, visibility : "hidden"}
 		}
-	}});
+	}, renderer: ShellLayoutRenderer});
 
 
 	ShellLayout._SIDEPANE_WIDTH_PHONE = 208;

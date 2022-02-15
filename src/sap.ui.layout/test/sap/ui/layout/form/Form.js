@@ -138,8 +138,7 @@ sap.ui.require([
 	var oButtonCompact = new ToggleButton({text: 'compact',
 		press: function(oEvent) {
 			var bPressed = oEvent.getParameter("pressed");
-			var $Body = jQuery("#body");
-			$Body.toggleClass("sapUiSizeCompact", bPressed);
+			document.body.classList.toggle("sapUiSizeCompact", bPressed);
 		}
 	});
 

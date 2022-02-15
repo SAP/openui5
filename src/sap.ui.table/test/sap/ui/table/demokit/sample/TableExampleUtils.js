@@ -4,8 +4,9 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 	"sap/m/Popover",
 	"sap/m/List",
 	"sap/m/Button",
-	"sap/m/FeedListItem"
-], function(syncStyleClass, JSONModel, Popover, List, Button, FeedListItem) {
+	"sap/m/FeedListItem",
+	"sap/ui/thirdparty/jquery"
+], function(syncStyleClass, JSONModel, Popover, List, Button, FeedListItem, jQuery) {
 	"use strict";
 
 	function showInfo(aItems, oBy) {
