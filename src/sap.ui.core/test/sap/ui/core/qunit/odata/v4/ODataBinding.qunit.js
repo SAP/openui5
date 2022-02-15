@@ -1614,7 +1614,7 @@ sap.ui.define([
 			.returns(mMergedQueryOptions);
 		this.mock(oBinding).expects("doCreateCache")
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions), undefined,
-				undefined, "~bOldCacheReadOnly~", sinon.match.same(oOldCache))
+				undefined, "~bKeepCreated~", sinon.match.same(oOldCache))
 			.returns(oNewCache);
 		this.mock(oOldCache).expects("setActive").exactly(bOldCacheIsReused ? 0 : 1)
 			.withExactArgs(false);
@@ -1628,7 +1628,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.createAndSetCache(mQueryOptions, "/resource/path", /*oContext*/undefined,
-				"~bOldCacheReadOnly~", oOldCache),
+				"~bKeepCreated~", oOldCache),
 			oNewCache
 		);
 
@@ -1690,7 +1690,7 @@ sap.ui.define([
 			.returns("/deep/resource/path");
 		this.mock(oBinding).expects("doCreateCache")
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions),
-				sinon.match.same(oContext), "deep/resource/path", "~bOldCacheReadOnly~",
+				sinon.match.same(oContext), "deep/resource/path", "~bKeepCreated~",
 				sinon.match.same(oOldCache))
 			.returns(oCache);
 		this.mock(oCache).expects("setLateQueryOptions").exactly(bHasLateQueryOptions ? 1 : 0)
@@ -1700,7 +1700,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.createAndSetCache(mQueryOptions, "/resource/path", oContext,
-				"~bOldCacheReadOnly~", oOldCache),
+				"~bKeepCreated~", oOldCache),
 			oCache
 		);
 
@@ -1841,7 +1841,7 @@ sap.ui.define([
 			.returns("/deep/resource/path");
 		this.mock(oBinding).expects("doCreateCache")
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions),
-				sinon.match.same(oContext), "deep/resource/path", "~bOldCacheReadOnly~",
+				sinon.match.same(oContext), "deep/resource/path", "~bKeepCreated~",
 				sinon.match.same(oOldCache))
 			.returns(oCache1);
 		this.mock(oOldCache).expects("setActive").withExactArgs(false);
@@ -1849,7 +1849,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.createAndSetCache(mQueryOptions, "/resource/path", oContext,
-				"~bOldCacheReadOnly~", oOldCache),
+				"~bKeepCreated~", oOldCache),
 			oCache1
 		);
 

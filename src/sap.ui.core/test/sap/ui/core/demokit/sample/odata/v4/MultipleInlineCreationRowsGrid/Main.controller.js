@@ -150,11 +150,6 @@ sap.ui.define([
 
 		onRefresh : function () {
 			this.getView().getModel().refresh();
-			if (this.oUIModel.getProperty("/sLayout") !== LayoutType.OneColumn) {
-				this.getView().byId("parts").getBinding("rows")
-					.attachEventOnce("dataReceived",
-						this.createInactiveRows.bind(this, iEmptyRowCount));
-			}
 		},
 
 		onSave : function () {

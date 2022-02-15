@@ -43,7 +43,9 @@ sap.ui.define([
 		sODCB = "sap.ui.model.odata.v4.ODataContextBinding",
 		sODLB = "sap.ui.model.odata.v4.ODataListBinding",
 		sODPrB = "sap.ui.model.odata.v4.ODataPropertyBinding",
+		sPreviousFailed = "HTTP request was not processed because the previous request failed",
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
+		rSkip = /&\$skip=(\d+)/, // $skip=<number>
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		rTop = /&\$top=(\d+)/, // $top=<number>
 		rTransientPredicate = /\(\$uid=[-\w]+\)/g;
@@ -261,6 +263,16 @@ sap.ui.define([
 	 */
 	function getBindingContextPath(oManagedObject) {
 		return oManagedObject.getBindingContext().getPath();
+	}
+
+	/**
+	 * Returns the given context's path. Transient predicates are normalized to "($uid=...)".
+	 *
+	 * @param {sap.ui.model.Context} oContext - A context
+	 * @returns {string} The context's path
+	 */
+	function getNormalizedPath(oContext) {
+		return oContext.getPath().replace(rTransientPredicate, "($uid=...)");
 	}
 
 	/**
@@ -1784,6 +1796,7 @@ sap.ui.define([
 			var iCount,
 				iLength,
 				aMatches,
+				iSkip = 0,
 				iTop;
 
 			if (typeof vRequest === "string") {
@@ -1813,8 +1826,11 @@ sap.ui.define([
 					iCount = parseInt(vResponse["@odata.count"]);
 					iLength = vResponse.value.length;
 					iTop = parseInt(aMatches[1]);
-					if (iLength !== iCount && iLength !== iTop) {
-						//TODO take $skip into consideration once it becomes necessary
+					aMatches = rSkip.exec(vRequest.url);
+					if (aMatches) {
+						iSkip = parseInt(aMatches[1]);
+					}
+					if (iLength !== iTop && iSkip + iLength !== iCount) {
 						throw new Error("Unexpected short read?");
 					}
 				}
@@ -7108,15 +7124,7 @@ sap.ui.define([
 
 			assertIndices(assert, oBinding.getCurrentContexts(), [-2, -1, 0]);
 
-			// Note: changes have to be expected with the current iIndex of the contexts because
-			// ODLB#refreshInternal is called before changes are checked but at this point in time
-			// oBinding.iCreatedContexts is not yet restored
-			that.expectChange("note", "new5", -5)
-				.expectChange("note", "new4", -4)
-				.expectChange("note", "new3", -3)
-				.expectChange("note", "new2", -2)
-				.expectChange("note", "new1", -1)
-				.expectChange("note", "#42", 0)
+			that.expectChange("note", ["new5", "new4", "new3", "new2", "new1", "#42"])
 				.expectRequest({
 					method : "POST",
 					url : "SalesOrderList",
@@ -7127,7 +7135,11 @@ sap.ui.define([
 					url : "SalesOrderList",
 					payload : {Note : "new4"}
 				}/* response does not matter here */)
-				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100"
+				.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '43' or SalesOrderID eq '44'&$top=2"
+					/* response does not matter here */)
+				.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$filter=not (SalesOrderID eq '43' or SalesOrderID eq '44')&$skip=0&$top=97"
 					/* response does not matter here */)
 				.expectMessages([{
 					code : "CODE",
@@ -7143,9 +7155,11 @@ sap.ui.define([
 				.exactly(2);
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to get contexts for " + sSalesOrderService + "SalesOrderList"
-					+ " with start index 0 and length 100",
-					sinon.match("request was not processed because the previous request failed"),
+					+ " with start index 0 and length 100", sinon.match(sPreviousFailed),
 					"sap.ui.model.odata.v4.ODataListBinding");
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to refresh kept-alive elements",
+					sinon.match(sPreviousFailed), "sap.ui.model.odata.v4.ODataListBinding");
 
 			aCreatedContexts.push(oBinding.create({Note : "new3"}, /*bSkipRefresh*/true));
 			aCreatedContexts.push(oBinding.create({Note : "new4"}, /*bSkipRefresh*/true));
@@ -7157,8 +7171,7 @@ sap.ui.define([
 			return Promise.all([
 				oBinding.getHeaderContext().requestSideEffects([""])
 					.then(mustFail(assert), function (oError0) {
-						assert.strictEqual(oError0.message,
-							"HTTP request was not processed because the previous request failed");
+						assert.strictEqual(oError0.message, sPreviousFailed);
 						assert.strictEqual(oError0.cause.message, sCreateError);
 					}),
 				that.waitForChanges(assert,
@@ -7168,22 +7181,36 @@ sap.ui.define([
 			var aCurrentContexts = oBinding.getCurrentContexts();
 
 			assert.strictEqual(oBinding.getCount(), 5);
+			assert.strictEqual(oBinding.getLength(), 6);
+			assert.strictEqual(oBinding.isLengthFinal(), true);
+			assert.deepEqual(aCurrentContexts.map(getNormalizedPath), [
+				"/SalesOrderList($uid=...)",
+				"/SalesOrderList($uid=...)",
+				"/SalesOrderList($uid=...)",
+				"/SalesOrderList('44')",
+				"/SalesOrderList('43')",
+				"/SalesOrderList('42')"
+			]);
 			assertIndices(assert, aCurrentContexts, [-5, -4, -3, -2, -1, 0]);
 
 			// 3. the list binding is properly restored
 			// still 3x transient
 			assert.ok(aCurrentContexts[0].isTransient());
+			assert.strictEqual(aCurrentContexts[0].getProperty("Note"), "new5");
 			assert.ok(aCurrentContexts[1].isTransient());
+			assert.strictEqual(aCurrentContexts[1].getProperty("Note"), "new4");
 			assert.ok(aCurrentContexts[2].isTransient());
+			assert.strictEqual(aCurrentContexts[2].getProperty("Note"), "new3");
 			// still 2x created but already saved
-			//TODO: have to be still created after rejection
-			//assert.ok(aCurrentContexts[3].created());
+			assert.ok(aCurrentContexts[3].created());
 			assert.notOk(aCurrentContexts[3].isTransient());
-			//TODO: have to be still created after rejection
-			//assert.ok(aCurrentContexts[4].created());
+			assert.strictEqual(aCurrentContexts[3].getProperty("Note"), "new2");
+			assert.ok(aCurrentContexts[4].created());
 			assert.notOk(aCurrentContexts[4].isTransient());
+			assert.strictEqual(aCurrentContexts[4].getProperty("Note"), "new1");
 			// still 1x NOT created
 			assert.notOk(aCurrentContexts[5].created());
+			assert.strictEqual(aCurrentContexts[5].getProperty("Note"), "#42");
 
 			that.expectChange("note", [, "new3", "new2", "new1", "#42"]);
 
@@ -7200,6 +7227,18 @@ sap.ui.define([
 				that.waitForChanges(assert, "4. deletion of second transient context")
 			]);
 		}).then(function () {
+			var aCurrentContexts = oBinding.getCurrentContexts();
+
+			assert.strictEqual(oBinding.getCount(), 4);
+			assert.strictEqual(oBinding.getLength(), 5);
+			assert.strictEqual(oBinding.isLengthFinal(), true);
+			assert.deepEqual(aCurrentContexts.map(getNormalizedPath), [
+				"/SalesOrderList($uid=...)",
+				"/SalesOrderList($uid=...)",
+				"/SalesOrderList('44')",
+				"/SalesOrderList('43')",
+				"/SalesOrderList('42')"
+			]);
 			assertIndices(assert, oBinding.getCurrentContexts(), [-4, -3, -2, -1, 0]);
 		});
 	});
@@ -8272,7 +8311,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$filter=(contains(Note,'SalesOrder'))"
-					+ " and not (SalesOrderID eq '46' or SalesOrderID eq '44')"
+					+ " and not (SalesOrderID eq '44' or SalesOrderID eq '46')"
 					+ "&$select=Note,SalesOrderID&$skip=2&$top=2", {value : []});
 
 			oTable.requestItems();
@@ -18623,7 +18662,7 @@ sap.ui.define([
 
 		this.expectRequest("Artists?$apply=groupby"
 				+ "((IsActiveEntity,BestPublication/DraftAdministrativeData/InProcessByUser))"
-				+ "/orderby(BestPublication/DraftAdministrativeData/InProcessByUser%20desc)"
+				+ "/orderby(BestPublication/DraftAdministrativeData/InProcessByUser desc)"
 				+ "&$count=true&$skip=0&$top=6", {
 				"@odata.count" : "2",
 				value : [{
@@ -24682,8 +24721,7 @@ sap.ui.define([
 			oPromise = that.oView.byId("form").getBindingContext().requestSideEffects([{
 				$PropertyPath : "GrossAmount"
 			}]).then(mustFail(assert), function (oError0) {
-				assert.strictEqual(oError0.message,
-					"HTTP request was not processed because the previous request failed");
+				assert.strictEqual(oError0.message, sPreviousFailed);
 			});
 
 			return Promise.all([
@@ -27131,8 +27169,7 @@ sap.ui.define([
 					that.waitForChanges(assert)
 				]);
 			}).then(function () {
-				assert.strictEqual(
-					oTeamCreatedContext.getPath().replace(rTransientPredicate, "($uid=...)"),
+				assert.strictEqual(getNormalizedPath(oTeamCreatedContext),
 					bKeepTransientPath ? "/TEAMS($uid=...)" : "/TEAMS('23')");
 				if (bKeepTransientPath) {
 					assert.strictEqual(oTeamCreatedContext.getPath(), sTransientPath);
@@ -29471,10 +29508,18 @@ sap.ui.define([
 	// Allow side effect to refresh a dependent list binding even if it only contains transient
 	// contexts.
 	// JIRA: CPOUI5ODATAV4-37
+	//
+	// Keep all created contexts during a side-effects refresh (JIRA: CPOUI5ODATAV4-1384)
 [false, true].forEach(function (bEmpty) {
 	[false, true].forEach(function (bSuccess) {
-		var sTitle = "CPOUI5ODATAV4-37: items table is empty = " + bEmpty
-				+ "; creation succeeds = " + bSuccess;
+		[false, true].forEach(function (bFound) {
+			var sTitle = "CPOUI5ODATAV4-37: items table is empty = " + bEmpty
+					+ "; creation succeeds = " + bSuccess
+					+ "; created item is part of side effect response = " + bFound;
+
+			if (!bSuccess && bFound) {
+				return;
+			}
 
 	QUnit.test(sTitle, function (assert) {
 		var oCreationRowContext,
@@ -29525,12 +29570,11 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			// Note: Context#requestSideEffects sync. calls ODLB#reset, but
-			// ODPrB#checkUpdateInternal is intentionally async => oTableBinding.iCreatedContexts
-			// is already reset here
-			that.expectChange("note", "First new row", -1);
+			var aItems;
+
+			that.expectChange("note", ["First new row"]);
 			if (!bEmpty) {
-				that.expectChange("note", ["Foo"]);
+				that.expectChange("note", [, "Foo"]);
 			}
 			that.expectRequest({
 					batchNo : 2,
@@ -29539,7 +29583,8 @@ sap.ui.define([
 					url : "SalesOrderList('1')/SO_2_SOITEM"
 				}, bSuccess ? {
 					ItemPosition : "0",
-					Note : "First new row",
+					Note : "First *new* row",
+					NoteLanguage : "ignored",
 					SalesOrderID : "1"
 				} : createErrorInsideBatch())
 				.expectMessages(bSuccess ? [] : [{
@@ -29561,25 +29606,40 @@ sap.ui.define([
 			}
 
 			// add transient row to items table
-			oNewContext = oTableBinding.create({Note : "First new row"}, /*bSkipRefresh*/true);
+			oNewContext = oTableBinding.create({Note : "First new row"}, /*bSkipRefresh*/false);
 
+			aItems = [{
+				ItemPosition : "10",
+				Note : "Foo - side effect",
+				SalesOrderID : "1"
+			}];
+			if (bFound) {
+				aItems.unshift({
+					ItemPosition : "0",
+					Note : "n/a",
+					SalesOrderID : "1"
+				});
+			} // else: let's assume "First new row" would be filtered out
 			that.expectRequest({
 					batchNo : 2,
 					url : "SalesOrderList('1')/SO_2_SOITEM"
 						+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100"
-				}, {
-					value : [{ //TODO failed to drill-down if this is missing (BCP: 2170230216)
-						ItemPosition : "0",
-						Note : "First new row",
-						SalesOrderID : "1"
-					}, {
-						ItemPosition : "10",
-						Note : "Foo - side effect",
-						SalesOrderID : "1"
-					}]
-				});
+				}, bSuccess ? {value : aItems} : undefined);
 			if (bSuccess) {
-				that.expectChange("note", [, "Foo - side effect"]);
+				that.expectChange("note", ["First *new* row", "Foo - side effect"]);
+			}
+
+			if (bSuccess) { // see /*bSkipRefresh*/false
+				that.expectRequest({
+						batchNo : 3,
+						url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0')"
+							+ "?$select=ItemPosition,Note,SalesOrderID"
+					}, {
+						ItemPosition : "0",
+						Note : "First **new** row",
+						SalesOrderID : "1"
+					})
+					.expectChange("note", ["First **new** row"]);
 			}
 
 			// code under test: requestSideEffects promise resolves, "creationRow::note" unchanged
@@ -29587,21 +29647,18 @@ sap.ui.define([
 				oTableBinding.getContext().requestSideEffects(["SO_2_SOITEM"])
 					.then(bSuccess ? null : mustFail(assert), function (oError0) {
 						assert.notOk(bSuccess);
-						assert.strictEqual(oError0.message,
-							"HTTP request was not processed because the previous request failed");
+						assert.strictEqual(oError0.message, sPreviousFailed);
 						assert.strictEqual(oError0.cause.message, "Request intentionally failed");
 					}),
 				bSuccess && oNewContext.created(),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "requestSideEffects")
 			]);
 		}).then(function () {
-			if (bSuccess) {
-				return; // must not use oNewContext anymore after side effects refresh!
-			}
-
 			assert.strictEqual(oNewContext.getBinding(), oTableBinding);
 			assert.strictEqual(oNewContext.getIndex(), 0);
-			assert.strictEqual(oNewContext.getProperty("Note"), "First new row");
+			assert.strictEqual(oNewContext.getProperty("Note"),
+				bSuccess ? "First **new** row" : "First new row");
+			assert.notOk("NoteLanguage" in oNewContext.getObject(), "updateSelected :-)");
 
 			that.expectChange("note", ["*First new row*"]);
 
@@ -29633,6 +29690,7 @@ sap.ui.define([
 			]);
 		});
 	});
+		});
 	});
 });
 
@@ -29895,16 +29953,7 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("id", ["44", "43"])
-			//TODO Wrong index is caused by ODPaB#refreshDependentListBindingsWithoutCache which
-			// again resets the BP_2_SO list binding and thus sets this.iCreatedContexts = 0;
-			// => Context#getIndex returns a negative number
-			// This is later healed by ODLB#createContexts, but we have a timing issue, with the
-			// response for #create and #rSE being handled in an interleaved fashion
-			// JIRA: CPOUI5ODATAV4-288
-			.expectChange("note", "Side", -1)
-			.expectChange("note", "Unrealistic", -2)
-			.expectChange("note", [,, "Effect"]);
-			//.expectChange("note", ["Unrealistic", "Side", "Effect"]);
+			.expectChange("note", ["Unrealistic", "Side", "Effect"]);
 	},
 	text : "Repeated POST succeeds"
 }, {
@@ -30068,8 +30117,8 @@ sap.ui.define([
 	// Scenario: Creation of an entity fails due to a network error. A subsequent call to
 	// requestSideEffects repeats the failed POST in the same $batch but fails again. All transient
 	// contexts are kept, even if not visible.
-	// JIRA: CPOUI5UISERVICESV3-1764
-	QUnit.skip("requestSideEffects keeps invisible transient contexts", function (assert) {
+	// JIRA: CPOUI5UISERVICESV3-1764 (now: CPOUI5ODATAV4-1361)
+	QUnit.test("requestSideEffects keeps invisible transient contexts", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			oTableBinding,
@@ -30090,22 +30139,19 @@ sap.ui.define([
 			.expectChange("note", ["Test 1", "Test 2"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.oLogMock.expects("error").withArgs("POST on 'SalesOrderList' failed; will be"
-				+ " repeated automatically");
-			that.oLogMock.expects("error").withArgs("$batch failed");
+			that.oLogMock.expects("error")
+				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
+					sinon.match("Request intentionally failed"),
+					"sap.ui.model.odata.v4.ODataListBinding");
 
 			that.expectRequest({
 					method : "POST",
 					payload : {Note : "Created"},
 					url : "SalesOrderList"
-				}, createError())
+				}, createErrorInsideBatch())
 				.expectMessages([{
-					message : "Communication error: 500 ",
-					persistent : true,
-					technical : true,
-					type : "Error"
-				}, {
-					message : "HTTP request was not processed because $batch failed",
+					code : "CODE",
+					message : "Request intentionally failed",
 					persistent : true,
 					technical : true,
 					type : "Error"
@@ -30117,7 +30163,7 @@ sap.ui.define([
 			oTableBinding = oTable.getBinding("rows");
 			oTableBinding.create({Note : "Created"}, /*bSkipRefresh*/true);
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "creation fails");
 		}).then(function () {
 			that.expectChange("id", [, "0500000001", "0500000002"])
 				.expectChange("note", [, "Test 1", "Test 2"]);
@@ -30125,26 +30171,28 @@ sap.ui.define([
 			// scroll down
 			oTable.setFirstVisibleRow(1);
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "scroll down");
 		}).then(function () {
-			var oCausingError = createError();
+			var oError = createErrorInsideBatch();
 
 			// remove persistent, technical messages from above
 			sap.ui.getCore().getMessageManager().removeAllMessages();
 
-			that.oLogMock.expects("error").withArgs("POST on 'SalesOrderList' failed; will be"
-				+ " repeated automatically");
-			that.oLogMock.expects("error").withArgs("Failed to get contexts for "
-				+ sSalesOrderService + "SalesOrderList with start index 1 and length 2");
-			that.oLogMock.expects("error").withArgs("$batch failed");
-			that.oLogMock.expects("error").withArgs("Failed to request side effects");
+			that.oLogMock.expects("error")
+				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
+					sinon.match(oError.error.message), "sap.ui.model.odata.v4.ODataListBinding");
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to get contexts for " + sSalesOrderService + "SalesOrderList"
+					+ " with start index 1 and length 2",
+					sinon.match("request was not processed because the previous request failed"),
+					"sap.ui.model.odata.v4.ODataListBinding");
 
 			that.expectRequest({
 					batchNo : 3,
 					method : "POST",
 					payload : {Note : "Created"},
 					url : "SalesOrderList"
-				}, oCausingError)
+				}, oError)
 				.expectRequest({
 					batchNo : 3,
 					// Because of the transient row in the first context the skip has to be adapted
@@ -30152,12 +30200,8 @@ sap.ui.define([
 					url : "SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2"
 				}) // no response required
 				.expectMessages([{
-					message : "Communication error: 500 ",
-					persistent : true,
-					technical : true,
-					type : "Error"
-				}, {
-					message : "HTTP request was not processed because $batch failed",
+					code : "CODE",
+					message : "Request intentionally failed",
 					persistent : true,
 					technical : true,
 					type : "Error"
@@ -30167,10 +30211,9 @@ sap.ui.define([
 				// code under test
 				oTableBinding.getHeaderContext().requestSideEffects([{
 					$NavigationPropertyPath : ""
-				}]).then(mustFail(assert), function (oError) {
-					if (!(oCausingError && oError.cause === oCausingError)) {
-						throw oError;
-					}
+				}]).then(mustFail(assert), function (oError0) {
+					assert.strictEqual(oError0.message,
+						"HTTP request was not processed because the previous request failed");
 				}),
 				that.waitForChanges(assert)
 			]);
@@ -31843,7 +31886,7 @@ sap.ui.define([
 				oSideEffectsPromise;
 
 			// refresh via side effect fails
-			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", oError)
+			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=99", oError)
 				.expectMessages([{
 					message : oError.message,
 					persistent : true,
@@ -33623,7 +33666,8 @@ sap.ui.define([
 		this.expectChange("name", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("EMPLOYEES?$count=true&$select=ID,Name&$skip=0&$top=2", {
+			// Note: GET triggered by 1st #create - one transient taken into account for prefetch
+			that.expectRequest("EMPLOYEES?$count=true&$select=ID,Name&$skip=0&$top=3", {
 					"@odata.count" : "1",
 					value : [{ID : "1", Name : "Frederic Fall"}]
 				})
@@ -37514,7 +37558,7 @@ sap.ui.define([
 	// Show that the transient ones properly survive.
 	// JIRA: CPOUI5ODATAV4-1362
 	//
-	// Add refresh (JIRA: CPOUI5ODATAV4-1382)
+	// Add refresh (JIRA: CPOUI5ODATAV4-1382) and side-effects refresh (JIRA: CPOUI5ODATAV4-1384)
 	QUnit.test("CPOUI5ODATAV4-1362", function (assert) {
 		var oBinding,
 			oContextA,
@@ -37621,6 +37665,25 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "change parameters");
 		}).then(function () {
+			that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$orderby=Team_Id desc"
+					+ "&$filter=MANAGER_ID ne '666'&$search=TDOP&$skip=0&$top=3", {
+					"@odata.count" : "2",
+					value : [{
+						Name : "Team #3 *** TDO",
+						Team_Id : "TEAM_03"
+					}, {
+						Name : "Team #1 * T",
+						Team_Id : "TEAM_01"
+					}]
+				})
+				.expectChange("name", ["Team #3 *** TDO", "Team #1 * T"]);
+
+			return Promise.all([
+				// code under test (JIRA: CPOUI5ODATAV4-1384)
+				oBinding.getHeaderContext().requestSideEffects([""], "$auto"),
+				that.waitForChanges(assert, "request side effects")
+			]);
+		}).then(function () {
 			that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$filter=MANAGER_ID ne '666'"
 					+ "&$skip=0&$top=3", {
 					"@odata.count" : "2",
@@ -37721,8 +37784,10 @@ sap.ui.define([
 	// rows on suspend.
 	// JIRA: CPOUI5ODATAV4-1409
 	//
-	// Add refresh (JIRA: CPOUI5ODATAV4-1382)
-["changeParameters", "filter", "refresh", "resume", "sort"].forEach(function (sMethod) {
+	// Add refresh (JIRA: CPOUI5ODATAV4-1382) and side-effects refresh (JIRA: CPOUI5ODATAV4-1384)
+[
+	"changeParameters", "filter", "refresh", "resume", "sideEffectsRefresh", "sort"
+].forEach(function (sMethod) {
 	[false, true].forEach(function (bRelative) {
 	var sTitle = "CPOUI5ODATAV4-1362: created persisted, " + sMethod
 			+ ", $$ownRequest = " + bRelative;
@@ -37739,16 +37804,14 @@ sap.ui.define([
 			sView = bRelative ? '\
 <FlexBox binding="{/Departments(Sector=\'EMEA\',ID=\'UI5\')}" id="objectPage">\
 	<FlexBox binding="{}">\
-		<t:Table id="table"\
-			rows="{parameters : {$$ownRequest : true}, path : \'DEPARTMENT_2_TEAMS\'}"\
-			threshold="0" visibleRowCount="4">\
+		<t:Table id="table" threshold="0" visibleRowCount="4"\
+			rows="{parameters : {$$ownRequest : true}, path : \'DEPARTMENT_2_TEAMS\'}">\
 			<Text id="id" text="{Team_Id}"/>\
 			<Text id="name" text="{Name}"/>\
 		</t:Table>\
 	</FlexBox>\
 </FlexBox>' : '\
-<t:Table id="table" rows="{/TEAMS}" threshold="0"\
-	visibleRowCount="4">\
+<t:Table id="table" rows="{/TEAMS}" threshold="0" visibleRowCount="4">\
 	<Text id="id" text="{Team_Id}"/>\
 	<Text id="name" text="{Name}"/>\
 </t:Table>',
@@ -37865,6 +37928,23 @@ sap.ui.define([
 					oPromise = oBinding.getRootBinding().resumeAsync();
 					break;
 
+				case "sideEffectsRefresh":
+					that.expectRequest(sTeams + "?$select=Name,Team_Id"
+							+ "&$filter=Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B'&$top=2", {
+							value : [{
+								Name : "New 'A' Team!",
+								Team_Id : "TEAM_A"
+							}, {
+								Name : "New 'B' Team!",
+								Team_Id : "TEAM_B"
+							}]
+						})
+						.expectChange("name", [,, "New 'B' Team!", "New 'A' Team!"]);
+
+					// code under test (JIRA: CPOUI5ODATAV4-1384)
+					oPromise = oBinding.getHeaderContext().requestSideEffects([""], "$auto");
+					break;
+
 				case "sort":
 					that.expectRequest(sTeams + "?$select=Name,Team_Id&$orderby=Team_Id desc"
 							+ "&$skip=0&$top=2", oResult);
@@ -37876,8 +37956,10 @@ sap.ui.define([
 				// no default
 			}
 
-			that.expectChange("id", [,, "TEAM_02", "TEAM_01"])
-				.expectChange("name", [,, "Team #2", "Team #1"]);
+			if (sMethod !== "sideEffectsRefresh") {
+				that.expectChange("id", [,, "TEAM_02", "TEAM_01"])
+					.expectChange("name", [,, "Team #2", "Team #1"]);
+			}
 
 			return Promise.all([
 				oPromise,
@@ -37912,6 +37994,383 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A table shows a visible area with five persisted rows. Three transient ones are
+	// added at the start, inside the visible area. A side-effects refresh takes place and the GET
+	// is in the same $batch as those POSTs. Show that the newly created rows are kept in place and
+	// the persisted ones are properly refreshed. Expect no "short read" - length remains unknown!
+	// A 2nd side-effects refresh takes place, keeping the created rows in place and refreshing them
+	// separately, but one of them has been deleted on the server.
+	// JIRA: CPOUI5ODATAV4-1384
+	QUnit.test("CPOUI5ODATAV4-1384: side-effects refresh at top", function (assert) {
+		var oBinding,
+			oContextA,
+			oContextB,
+			oContextC,
+			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			// Note: threshold is either 0 or at least visibleRowCount
+			sView = '\
+<t:Table id="table" rows="{/TEAMS}" threshold="0" visibleRowCount="5">\
+	<Text id="id" text="{Team_Id}"/>\
+	<Text id="name" text="{Name}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=5", {
+				value : [
+					{Name : "Team #1", Team_Id : "TEAM_01"},
+					{Name : "Team #2", Team_Id : "TEAM_02"},
+					{Name : "Team #3", Team_Id : "TEAM_03"},
+					{Name : "Team #4", Team_Id : "TEAM_04"},
+					{Name : "Team #5", Team_Id : "TEAM_05"}
+				]
+			})
+			.expectChange("id", ["TEAM_01", "TEAM_02", "TEAM_03", "TEAM_04", "TEAM_05"])
+			.expectChange("name", ["Team #1", "Team #2", "Team #3", "Team #4", "Team #5"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("rows");
+
+			assert.strictEqual(oBinding.getCount(), undefined);
+			assert.strictEqual(oBinding.getLength(), 15);
+			assert.notOk(oBinding.isLengthFinal());
+
+			that.expectChange("id", ["TEAM_C", "TEAM_B", "TEAM_A", "TEAM_01", "TEAM_02"])
+				.expectChange("name",
+					["New Team C", "New Team B", "New Team A", "Team #1", "Team #2"]);
+
+			oContextA = oBinding.create({Name : "New Team A", Team_Id : "TEAM_A"}, true);
+			oContextB = oBinding.create({Name : "New Team B", Team_Id : "TEAM_B"}, true);
+			oContextC = oBinding.create({Name : "New Team C", Team_Id : "TEAM_C"}, true);
+
+			return that.waitForChanges(assert, "3x transient");
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), undefined);
+			assert.strictEqual(oBinding.getLength(), 18);
+			assert.notOk(oBinding.isLengthFinal());
+			assert.deepEqual(oBinding.getAllCurrentContexts().map(getNormalizedPath), [
+				"/TEAMS($uid=...)",
+				"/TEAMS($uid=...)",
+				"/TEAMS($uid=...)",
+				"/TEAMS('TEAM_01')",
+				"/TEAMS('TEAM_02')",
+				"/TEAMS('TEAM_03')",
+				"/TEAMS('TEAM_04')",
+				"/TEAMS('TEAM_05')"
+			]);
+
+			that.expectRequest({
+					batchNo : 2,
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New Team A", Team_Id : "TEAM_A"}
+				}, {Name : "New 'A' Team", Team_Id : "TEAM_A"})
+				.expectRequest({
+					batchNo : 2,
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New Team B", Team_Id : "TEAM_B"}
+				}, {Name : "New 'B' Team", Team_Id : "TEAM_B"})
+				.expectRequest({
+					batchNo : 2,
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New Team C", Team_Id : "TEAM_C"}
+				}, {Name : "New 'C' Team", Team_Id : "TEAM_C"})
+				.expectRequest({
+					batchNo : 2,
+					method : "GET",
+					url : "TEAMS?$select=Name,Team_Id&$skip=0&$top=5"
+				}, {
+					value : [
+						{Name : "n/a", Team_Id : "TEAM_A"},
+						{Name : "'#1' Team", Team_Id : "TEAM_01"},
+						{Name : "n/b", Team_Id : "TEAM_B"},
+						{Name : "'#2' Team", Team_Id : "TEAM_02"},
+						{Name : "n/c", Team_Id : "TEAM_C"}
+					]
+				})
+				.expectChange("name",
+					["New 'C' Team", "New 'B' Team", "New 'A' Team", "'#1' Team", "'#2' Team"]);
+
+			return Promise.all([
+				// code under test
+				oBinding.getHeaderContext().requestSideEffects([""]),
+				that.oModel.submitBatch("update"),
+				oContextA.created(),
+				oContextB.created(),
+				oContextC.created(),
+				that.waitForChanges(assert, "1st side-effects refresh")
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), undefined);
+			assert.strictEqual(oBinding.getLength(), 15);
+			assert.notOk(oBinding.isLengthFinal());
+			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
+				"/TEAMS('TEAM_C')",
+				"/TEAMS('TEAM_B')",
+				"/TEAMS('TEAM_A')",
+				"/TEAMS('TEAM_01')",
+				"/TEAMS('TEAM_02')"
+			]);
+
+			that.expectRequest("TEAMS?$select=Name,Team_Id"
+					+ "&$filter=Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B' or Team_Id eq 'TEAM_C'"
+					+ "&$top=3", {
+					value : [
+						{Name : "'A' Team", Team_Id : "TEAM_A"},
+						// {Name : "'B' Team", Team_Id : "TEAM_B"}, // deleted on server
+						{Name : "'C' Team", Team_Id : "TEAM_C"}
+					]
+				})
+				.expectChange("name", [,, "'A' Team"]) // #refreshKeptElements updates "on the fly"
+				.expectRequest("TEAMS?$select=Name,Team_Id&$filter=not (Team_Id eq 'TEAM_A'"
+					+ " or Team_Id eq 'TEAM_B' or Team_Id eq 'TEAM_C')&$skip=0&$top=2", {
+					value : [
+						{Name : "'#1' Team *", Team_Id : "TEAM_01"},
+						{Name : "'#2' Team **", Team_Id : "TEAM_02"}
+					]
+				})
+				.expectChange("name", ["'C' Team", "'A' Team", "'#1' Team *", "'#2' Team **"])
+				.expectChange("id", [, "TEAM_A", "TEAM_01", "TEAM_02"])
+				//TODO one could avoid this request by increasing the prefetch above to compensate
+				// for the potential deletion of kept-alive contexts
+				.expectRequest("TEAMS?$select=Name,Team_Id&$filter=not (Team_Id eq 'TEAM_A'"
+					+ " or Team_Id eq 'TEAM_C')&$skip=2&$top=1", {
+					value : [{Name : "'#3' Team ***", Team_Id : "TEAM_03"}]
+				})
+				.expectChange("name", [,,,, "'#3' Team ***"])
+				.expectChange("id", [,,,, "TEAM_03"]);
+
+			return Promise.all([
+				// code under test
+				oBinding.getHeaderContext().requestSideEffects([""], "$auto"),
+				that.waitForChanges(assert, "2nd side-effects refresh")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A table shows a visible area with five persisted rows. Three transient ones are
+	// added at the end, inside the visible area. A side-effects refresh takes place and the GET
+	// is in the same $batch as those POSTs. Show that the newly created rows are kept in place and
+	// the persisted ones are properly refreshed. Expect no "short read" - count remains accurate!
+	// A 2nd side-effects refresh takes place, keeping the created rows in place and refreshing them
+	// separately, but one of them has been deleted on the server.
+	// JIRA: CPOUI5ODATAV4-1384
+	QUnit.test("CPOUI5ODATAV4-1384: side-effects refresh at bottom", function (assert) {
+		var oBinding,
+			oContextA,
+			oContextB,
+			oContextC,
+			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oTable,
+			// Note: threshold is either 0 or at least visibleRowCount
+			sView = '\
+<Text id="count" text="{headerContext>$count}"/>\
+<t:Table id="table" rows="{path : \'/TEAMS\', parameters : {$count : true}}" threshold="0"\
+		visibleRowCount="5">\
+	<Text id="id" text="{Team_Id}"/>\
+	<Text id="name" text="{Name}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$skip=0&$top=5", {
+				"@odata.count" : "9",
+				value : [
+					{Name : "Team #1", Team_Id : "TEAM_01"},
+					{Name : "Team #2", Team_Id : "TEAM_02"},
+					{Name : "Team #3", Team_Id : "TEAM_03"},
+					{Name : "Team #4", Team_Id : "TEAM_04"},
+					{Name : "Team #5", Team_Id : "TEAM_05"}
+				]
+			})
+			.expectChange("count")
+			.expectChange("id", ["TEAM_01", "TEAM_02", "TEAM_03", "TEAM_04", "TEAM_05"])
+			.expectChange("name", ["Team #1", "Team #2", "Team #3", "Team #4", "Team #5"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectChange("count", "9");
+
+			// code under test
+			that.oView.setModel(that.oView.getModel(), "headerContext");
+			that.oView.byId("count").setBindingContext(oBinding.getHeaderContext(),
+				"headerContext");
+
+			return that.waitForChanges(assert, "$count");
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 9);
+			assert.strictEqual(oBinding.getLength(), 9);
+			assert.ok(oBinding.isLengthFinal());
+			assert.strictEqual(oBinding.isFirstCreateAtEnd(), undefined);
+
+			that.expectChange("count", "10");
+			oContextA = oBinding.create({Name : "New A", Team_Id : "TEAM_A"}, true, true);
+			that.expectChange("count", "11");
+			oContextB = oBinding.create({Name : "New B", Team_Id : "TEAM_B"}, true, true);
+			that.expectChange("count", "12");
+			oContextC = oBinding.create({Name : "New C", Team_Id : "TEAM_C"}, true, true);
+
+			assert.strictEqual(oBinding.getCount(), 12);
+			assert.strictEqual(oBinding.getLength(), 12);
+			assert.ok(oBinding.isLengthFinal());
+			assert.strictEqual(oBinding.isFirstCreateAtEnd(), true);
+
+			that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$skip=7&$top=2", {
+					"@odata.count" : "9",
+					value : [
+						{Name : "Team #8", Team_Id : "TEAM_08"},
+						{Name : "Team #9", Team_Id : "TEAM_09"}
+					]
+				})
+				.expectChange("id", [,,,,,,, "TEAM_08", "TEAM_09", "TEAM_A", "TEAM_B", "TEAM_C"])
+				.expectChange("name", [,,,,,,, "Team #8", "Team #9", "New A", "New B", "New C"]);
+			oTable.setFirstVisibleRow(7);
+
+			return that.waitForChanges(assert, "3x transient at bottom");
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 12);
+			assert.strictEqual(oBinding.getLength(), 12);
+			assert.ok(oBinding.isLengthFinal());
+			assert.strictEqual(oBinding.isFirstCreateAtEnd(), true);
+			assert.deepEqual(oBinding.getAllCurrentContexts().map(getNormalizedPath), [
+				// Note: created ones are at the top here
+				"/TEAMS($uid=...)",
+				"/TEAMS($uid=...)",
+				"/TEAMS($uid=...)",
+				"/TEAMS('TEAM_01')",
+				"/TEAMS('TEAM_02')",
+				"/TEAMS('TEAM_03')",
+				"/TEAMS('TEAM_04')",
+				"/TEAMS('TEAM_05')",
+				// Note: the gap is not visible here
+				"/TEAMS('TEAM_08')",
+				"/TEAMS('TEAM_09')"
+			]);
+
+			that.expectRequest({
+					batchNo : 3,
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New A", Team_Id : "TEAM_A"}
+				}, {Name : "'A' Team", Team_Id : "TEAM_A"})
+				// Note: GET not yet processed, binding still "empty"
+				.expectChange("name", ["'A' Team"])
+				.expectRequest({
+					batchNo : 3,
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New B", Team_Id : "TEAM_B"}
+				}, {Name : "'B' Team", Team_Id : "TEAM_B"})
+				.expectChange("name", [, "'B' Team"])
+				.expectRequest({
+					batchNo : 3,
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New C", Team_Id : "TEAM_C"}
+				}, {Name : "'C' Team", Team_Id : "TEAM_C"})
+				.expectChange("name", [,, "'C' Team"])
+				.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					// $skip=7&$top=5 with a prefetch of 3 in each direction
+					url : "TEAMS?$count=true&$select=Name,Team_Id&$skip=4&$top=11"
+				}, {
+					"@odata.count" : "12",
+					value : [
+						{Name : "'#5' Team", Team_Id : "TEAM_05"},
+						{Name : "'#6' Team", Team_Id : "TEAM_06"},
+						{Name : "'#7' Team", Team_Id : "TEAM_07"},
+						{Name : "n/a", Team_Id : "TEAM_A"},
+						{Name : "'#8' Team", Team_Id : "TEAM_08"},
+						{Name : "n/b", Team_Id : "TEAM_B"},
+						{Name : "'#9' Team", Team_Id : "TEAM_09"},
+						{Name : "n/c", Team_Id : "TEAM_C"}
+					]
+				})
+				.expectChange("name", [,,,,,,, "'#8' Team", "'#9' Team"]);
+
+			return Promise.all([
+				// code under test
+				oBinding.getHeaderContext().requestSideEffects([""]),
+				that.oModel.submitBatch("update"),
+				oContextA.created(),
+				oContextB.created(),
+				oContextC.created(),
+				that.waitForChanges(assert, "1st side-effects refresh")
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 12);
+			assert.strictEqual(oBinding.getLength(), 12);
+			assert.ok(oBinding.isLengthFinal());
+			assert.strictEqual(oBinding.isFirstCreateAtEnd(), true);
+			assert.deepEqual(oBinding.getAllCurrentContexts().map(getNormalizedPath), [
+				// Note: created ones are at the top here
+				"/TEAMS('TEAM_C')",
+				"/TEAMS('TEAM_B')",
+				"/TEAMS('TEAM_A')",
+				// Note: the gap is not visible here
+				"/TEAMS('TEAM_05')",
+				"/TEAMS('TEAM_06')",
+				"/TEAMS('TEAM_07')",
+				"/TEAMS('TEAM_08')",
+				"/TEAMS('TEAM_09')"
+			]);
+			assert.deepEqual(oTable.getRows().map(getBindingContextPath), [
+				"/TEAMS('TEAM_08')",
+				"/TEAMS('TEAM_09')",
+				"/TEAMS('TEAM_A')",
+				"/TEAMS('TEAM_B')",
+				"/TEAMS('TEAM_C')"
+			]);
+
+			that.expectRequest("TEAMS?$select=Name,Team_Id"
+					+ "&$filter=Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B' or Team_Id eq 'TEAM_C'"
+					+ "&$top=3", {
+					value : [
+						{Name : "Team 'A'", Team_Id : "TEAM_A"},
+						// {Name : "Team 'B'", Team_Id : "TEAM_B"}, // deleted on server
+						{Name : "Team 'C'", Team_Id : "TEAM_C"}
+					]
+				})
+				.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$filter=not "
+					+ "(Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B' or Team_Id eq 'TEAM_C')"
+					+ "&$skip=7&$top=5", {
+					"@odata.count" : "9",
+					value : [
+						{Name : "Team no. 8", Team_Id : "TEAM_08"},
+						{Name : "Team no. 9", Team_Id : "TEAM_09"}
+					]
+				})
+				.expectChange("count", "11")
+				.expectChange("id", [,,,,,,, "TEAM_08", "TEAM_09", "TEAM_A", "TEAM_C"])
+				.expectChange("name", [,,,,,,, "Team no. 8", "Team no. 9", "Team 'A'", "Team 'C'"])
+				//TODO one could avoid this request by increasing the prefetch above to compensate
+				// for the potential deletion of kept-alive contexts
+				.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$filter=not "
+					+ "(Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_C')&$skip=6&$top=1", {
+					"@odata.count" : "9",
+					value : [{Name : "Team no. 7", Team_Id : "TEAM_07"}]
+				})
+				.expectChange("id", [,,,,,, "TEAM_07"])
+				.expectChange("name", [,,,,,, "Team no. 7"]);
+
+			return Promise.all([
+				// code under test
+				oBinding.getHeaderContext().requestSideEffects([""], "$auto"),
+				that.waitForChanges(assert, "2nd side-effects refresh")
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 11);
+			assert.strictEqual(oBinding.getLength(), 11);
+			assert.ok(oBinding.isLengthFinal());
+			assert.strictEqual(oBinding.isFirstCreateAtEnd(), true);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: #getAllCurrentContexts returns contexts for all records that are available in the
