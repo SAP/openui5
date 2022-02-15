@@ -96,6 +96,7 @@ sap.ui.define([
 					}
 
 				case "sap.ui.model.odata.type.DateTimeOffset":
+				case "sap.ui.model.odata.type.DateTimeWithTimezone":
 					return BaseType.DateTime;
 
 				case "sap.ui.model.odata.type.Time":

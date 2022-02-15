@@ -12,9 +12,12 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/model/Filter",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/odata/type/String",
+	"sap/ui/model/odata/type/DateTimeWithTimezone",
+	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UniversalDateUtils",
 	"sap/m/library"
@@ -25,9 +28,12 @@ sap.ui.define([
 	Condition,
 	BaseType,
 	ConditionValidated,
+	FieldDisplay,
 	Filter,
 	IntegerType,
 	StringType,
+	DateTimeWithTimezoneType,
+	DateTimeOffsetType,
 	UniversalDate,
 	UniversalDateUtils,
 	mLibrary
@@ -265,7 +271,7 @@ sap.ui.define([
 						assert.equal(bIsEmpty, oTest.isEmpty, "isEmpty check");
 
 						try {
-							oOperator.validate(oCondition.values, oTest.type);
+							oOperator.validate(oCondition.values, oTest.type, oTest.compositeTypes);
 						} catch (oException) {
 							assert.ok(!oTest.valid, "Exception fired in validation");
 						}
@@ -318,6 +324,11 @@ sap.ui.define([
 		var oIntType = new IntegerType({}, {maximum: 3});
 		var oStringType = new StringType({}, {maxLength: 5});
 		var oNUMCType = new StringType({}, {maxLength: 5, isDigitSequence: true, nullable: false});
+		var oDateTimeWithTimezoneType1 = new DateTimeWithTimezoneType({pattern: "yyyy-MM-dd'T'HH:mm:ss", showTimezone: false});
+		oDateTimeWithTimezoneType1._aCurrentValue = ["2022-02-24T12:15:30Z", "Europe/Berlin"];
+		var oDateTimeWithTimezoneType2 = new DateTimeWithTimezoneType({showTimezone: true, showDate: false, showTime: false});
+		oDateTimeWithTimezoneType2._aCurrentValue = ["2022-02-24T12:15:30Z", "Europe/Berlin"];
+		var oDateTimeOffsetType = new DateTimeOffsetType({}, {V4: true});
 
 		var aFormatTest = {
 				"EQ": [{
@@ -331,9 +342,9 @@ sap.ui.define([
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, "Value"],
+						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, FieldDisplay.Value],
 						formatValue: "Test",
-						parseArgs: ["=Test", undefined, "Value"],
+						parseArgs: ["=Test", undefined, FieldDisplay.Value],
 						parsedValue: "Test",
 						condition: Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -343,7 +354,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition("EQ", ["Test"]), undefined, undefined],
 						formatValue: "=Test",
-						parseArgs: ["Test", undefined, "Value", true],
+						parseArgs: ["Test", undefined, FieldDisplay.Value, true],
 						parsedValue: "Test",
 						condition: Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -351,9 +362,9 @@ sap.ui.define([
 						filter: {path: "test", operator: "EQ", value1: "Test"}
 					},
 					{
-						formatArgs: [Condition.createItemCondition("Test"), undefined, "Value"],
+						formatArgs: [Condition.createItemCondition("Test"), undefined, FieldDisplay.Value],
 						formatValue: "=Test",
-						parseArgs: ["Test", undefined, "Value", true],
+						parseArgs: ["Test", undefined, FieldDisplay.Value, true],
 						parsedValue: "Test",
 						condition: Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -361,27 +372,27 @@ sap.ui.define([
 						filter: {path: "test", operator: "EQ", value1: "Test"}
 					},
 					{
-						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, "Description"],
+						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, FieldDisplay.Description],
 						formatValue: "desc",
-						parseArgs: ["=desc", undefined, "Description"],
+						parseArgs: ["=desc", undefined, FieldDisplay.Description],
 						parsedValue: "desc",
 						condition: Condition.createCondition("EQ", [undefined, "desc"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, "ValueDescription"],
+						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, FieldDisplay.ValueDescription],
 						formatValue: "Test (desc)",
-						parseArgs: ["=Test", undefined, "ValueDescription"],
+						parseArgs: ["=Test", undefined, FieldDisplay.ValueDescription],
 						parsedValue: "Test",
 						condition: Condition.createCondition("EQ", ["Test", undefined], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createItemCondition(5, "desc"), oIntType, "ValueDescription"],
+						formatArgs: [Condition.createItemCondition(5, "desc"), oIntType, FieldDisplay.ValueDescription],
 						formatValue: "5 (desc)",
-						parseArgs: ["=5", oIntType, "ValueDescription"],
+						parseArgs: ["=5", oIntType, FieldDisplay.ValueDescription],
 						parsedValue: "5",
 						condition: Condition.createCondition("EQ", [5, undefined], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -389,9 +400,9 @@ sap.ui.define([
 						type: oIntType
 					},
 					{
-						formatArgs: [Condition.createItemCondition(5, "desc"), oIntType, "DescriptionValue"],
+						formatArgs: [Condition.createItemCondition(5, "desc"), oIntType, FieldDisplay.DescriptionValue],
 						formatValue: "desc (5)",
-						parseArgs: ["=desc (5)", oIntType, "DescriptionValue"],
+						parseArgs: ["=desc (5)", oIntType, FieldDisplay.DescriptionValue],
 						parsedValue: "5desc",
 						condition: Condition.createCondition("EQ", [5, "desc"], undefined, undefined, ConditionValidated.Validated),
 						isEmpty: false,
@@ -399,9 +410,9 @@ sap.ui.define([
 						type: oIntType
 					},
 					{
-						formatArgs: [Condition.createItemCondition(1, "desc"), oIntType, "ValueDescription"],
+						formatArgs: [Condition.createItemCondition(1, "desc"), oIntType, FieldDisplay.ValueDescription],
 						formatValue: "1 (desc)",
-						parseArgs: ["=A", oIntType, "ValueDescription"],
+						parseArgs: ["=A", oIntType, FieldDisplay.ValueDescription],
 						parsedValue: "",
 						condition: Condition.createCondition("EQ", [undefined, undefined], undefined, undefined, ConditionValidated.NotValidated),
 						exception: true,
@@ -410,27 +421,27 @@ sap.ui.define([
 						type: oIntType
 					},
 					{
-						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, "ValueDescription"],
+						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, FieldDisplay.ValueDescription],
 						formatValue: "Test (desc)",
-						parseArgs: ["=Test (desc)", undefined, "ValueDescription"],
+						parseArgs: ["=Test (desc)", undefined, FieldDisplay.ValueDescription],
 						parsedValue: "Testdesc",
 						condition: Condition.createCondition("EQ", ["Test", "desc"], undefined, undefined, ConditionValidated.Validated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createItemCondition(null, "desc"), undefined, "ValueDescription"],
+						formatArgs: [Condition.createItemCondition(null, "desc"), undefined, FieldDisplay.ValueDescription],
 						formatValue: " (desc)",
-						parseArgs: ["=", undefined, "ValueDescription"],
+						parseArgs: ["=", undefined, FieldDisplay.ValueDescription],
 						parsedValue: undefined,
 						condition: null,
 						isEmpty: true,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("EQ", ["Test", undefined], undefined, undefined, ConditionValidated.Validated), undefined, "ValueDescription"],
+						formatArgs: [Condition.createCondition("EQ", ["Test", undefined], undefined, undefined, ConditionValidated.Validated), undefined, FieldDisplay.ValueDescription],
 						formatValue: "Test",
-						parseArgs: ["=Test", undefined, "ValueDescription"],
+						parseArgs: ["=Test", undefined, FieldDisplay.ValueDescription],
 						parsedValue: "Test",
 						condition: Condition.createCondition("EQ", ["Test", undefined], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -461,6 +472,28 @@ sap.ui.define([
 						condition: Condition.createCondition("EQ", ["a", "b"], undefined, undefined, ConditionValidated.Validated),
 						isEmpty: false,
 						valid: true
+					},
+					{ // DateTime with Timezone
+						formatArgs: [Condition.createCondition("EQ", [["2022-02-24T12:15:30Z", "Europe/Berlin"]]), oDateTimeWithTimezoneType1, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
+						formatValue: "2022-02-24T13:15:30",
+						parseArgs: ["2022-02-24T14:15:30", oDateTimeWithTimezoneType1, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
+						parsedValue: "2022-02-24T14:15:30+01:00,Europe/Berlin",
+						condition: Condition.createCondition("EQ", [["2022-02-24T14:15:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: false, // as String (for timezone) allows only 5 characters -> test for usage of this type
+						type: oDateTimeWithTimezoneType1,
+						compositeTypes: [oDateTimeOffsetType, oStringType]
+					},
+					{
+						formatArgs: [Condition.createCondition("EQ", [["2022-02-24T12:15:30Z", "Europe/Berlin"]]), oDateTimeWithTimezoneType2, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
+						formatValue: "Europe/Berlin",
+						parseArgs: ["America/New_York", oDateTimeWithTimezoneType2, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
+						parsedValue: "2022-02-24T12:15:30Z,America/New_York",
+						condition: Condition.createCondition("EQ", [["2022-02-24T12:15:30Z", "America/New_York"]], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: false, // as String (for timezone) allows only 5 characters -> test for usage of this type
+						type: oDateTimeWithTimezoneType2,
+						compositeTypes: [oDateTimeOffsetType, oStringType]
 					}
 				],
 				"NE": [{
@@ -796,7 +829,7 @@ sap.ui.define([
 					}
 				],
 				"StartsWith": [{
-						formatArgs: [Condition.createCondition("StartsWith", ["Test"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("StartsWith", ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "Test*",
 						parsedValue: "Test",
 						condition: Condition.createCondition("StartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
@@ -806,7 +839,7 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("StartsWith", ["*"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("StartsWith", ["*"]), oStringType, FieldDisplay.Description],
 						formatValue: "**",
 						parsedValue: undefined,
 						isEmpty: true,
@@ -814,7 +847,7 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("StartsWith", ["a", "b"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("StartsWith", ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "a*",
 						parsedValue: "a",
 						condition: Condition.createCondition("StartsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
@@ -823,9 +856,9 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("StartsWith", ["Test"]), oStringType, "Description", true],
+						formatArgs: [Condition.createCondition("StartsWith", ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
-						parseArgs: ["Test", oStringType, "Description", true],
+						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
 						condition: Condition.createCondition("StartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -835,9 +868,9 @@ sap.ui.define([
 					}
 				],
 				"NotStartsWith": [{
-						formatArgs: [Condition.createCondition("NotStartsWith", ["Test"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("NotStartsWith", ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(Test*)",
-						parseArgs: ["!Test*", oStringType, "Description"],
+						parseArgs: ["!Test*", oStringType, FieldDisplay.Description],
 						parsedValue: "Test",
 						condition: Condition.createCondition("NotStartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -846,7 +879,7 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotStartsWith", ["*"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("NotStartsWith", ["*"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(**)",
 						parsedValue: undefined,
 						isEmpty: true,
@@ -854,9 +887,9 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotStartsWith", ["a", "b"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("NotStartsWith", ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(a*)",
-						parseArgs: ["!a*", oStringType, "Description"],
+						parseArgs: ["!a*", oStringType, FieldDisplay.Description],
 						parsedValue: "a",
 						condition: Condition.createCondition("NotStartsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -864,9 +897,9 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotStartsWith", ["Test"]), oStringType, "Description", true],
+						formatArgs: [Condition.createCondition("NotStartsWith", ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
-						parseArgs: ["Test", oStringType, "Description", true],
+						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
 						condition: Condition.createCondition("NotStartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -876,7 +909,7 @@ sap.ui.define([
 					}
 				],
 				"EndsWith": [{
-						formatArgs: [Condition.createCondition("EndsWith", ["Test"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("EndsWith", ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "*Test",
 						parsedValue: "Test",
 						condition: Condition.createCondition("EndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
@@ -886,7 +919,7 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("EndsWith", ["a", "b"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("EndsWith", ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "*a",
 						parsedValue: "a",
 						condition: Condition.createCondition("EndsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
@@ -895,9 +928,9 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("EndsWith", ["Test"]), oStringType, "Description", true],
+						formatArgs: [Condition.createCondition("EndsWith", ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
-						parseArgs: ["Test", oStringType, "Description", true],
+						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
 						condition: Condition.createCondition("EndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -907,9 +940,9 @@ sap.ui.define([
 					}
 				],
 				"NotEndsWith": [{
-						formatArgs: [Condition.createCondition("NotEndsWith", ["Test"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("NotEndsWith", ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(*Test)",
-						parseArgs: ["!*Test", oStringType, "Description"],
+						parseArgs: ["!*Test", oStringType, FieldDisplay.Description],
 						parsedValue: "Test",
 						condition: Condition.createCondition("NotEndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -918,9 +951,9 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotEndsWith", ["a", "b"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("NotEndsWith", ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(*a)",
-						parseArgs: ["!*a", oStringType, "Description"],
+						parseArgs: ["!*a", oStringType, FieldDisplay.Description],
 						parsedValue: "a",
 						condition: Condition.createCondition("NotEndsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -928,9 +961,9 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotEndsWith", ["Test"]), oStringType, "Description", true],
+						formatArgs: [Condition.createCondition("NotEndsWith", ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
-						parseArgs: ["Test", oStringType, "Description", true],
+						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
 						condition: Condition.createCondition("NotEndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -1047,7 +1080,7 @@ sap.ui.define([
 					}
 				],
 				"Contains": [{
-						formatArgs: [Condition.createCondition("Contains", ["Test"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("Contains", ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "*Test*",
 						parsedValue: "Test",
 						condition: Condition.createCondition("Contains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
@@ -1058,7 +1091,7 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("Contains", ["a", "b"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("Contains", ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "*a*",
 						parsedValue: "a",
 						condition: Condition.createCondition("Contains", ["a"], undefined, undefined, ConditionValidated.NotValidated),
@@ -1067,9 +1100,9 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("Contains", ["01"]), oNUMCType, "Description"],
+						formatArgs: [Condition.createCondition("Contains", ["01"]), oNUMCType, FieldDisplay.Description],
 						formatValue: "*01*",
-						parseArgs: ["*1*", oNUMCType, "Description"],
+						parseArgs: ["*1*", oNUMCType, FieldDisplay.Description],
 						parsedValue: "1",
 						condition: Condition.createCondition("Contains", ["1"], undefined, undefined, ConditionValidated.NotValidated),
 						exception: false,
@@ -1078,9 +1111,9 @@ sap.ui.define([
 						type: oNUMCType
 					},
 					{
-						formatArgs: [Condition.createCondition("Contains", ["1"]), oNUMCType, "Description"],
+						formatArgs: [Condition.createCondition("Contains", ["1"]), oNUMCType, FieldDisplay.Description],
 						formatValue: "*1*",
-						parseArgs: ["*A*", oNUMCType, "Description"],
+						parseArgs: ["*A*", oNUMCType, FieldDisplay.Description],
 						parsedValue: "A",
 						condition: Condition.createCondition("Contains", ["A"], undefined, undefined, ConditionValidated.NotValidated),
 						exception: true,
@@ -1089,9 +1122,9 @@ sap.ui.define([
 						type: oNUMCType
 					},
 					{
-						formatArgs: [Condition.createCondition("Contains", ["Test"]), oStringType, "Description", true],
+						formatArgs: [Condition.createCondition("Contains", ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
-						parseArgs: ["Test", oStringType, "Description", true],
+						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
 						condition: Condition.createCondition("Contains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -1101,9 +1134,9 @@ sap.ui.define([
 					}
 				],
 				"NotContains": [{
-						formatArgs: [Condition.createCondition("NotContains", ["Test"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("NotContains", ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(*Test*)",
-						parseArgs: ["!*Test*", oStringType, "Description"],
+						parseArgs: ["!*Test*", oStringType, FieldDisplay.Description],
 						parsedValue: "Test",
 						condition: Condition.createCondition("NotContains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -1113,9 +1146,9 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotContains", ["a", "b"]), oStringType, "Description"],
+						formatArgs: [Condition.createCondition("NotContains", ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(*a*)",
-						parseArgs: ["!*a*", oStringType, "Description"],
+						parseArgs: ["!*a*", oStringType, FieldDisplay.Description],
 						parsedValue: "a",
 						condition: Condition.createCondition("NotContains", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -1123,9 +1156,9 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotContains", ["Test"]), oStringType, "Description", true],
+						formatArgs: [Condition.createCondition("NotContains", ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
-						parseArgs: ["Test", oStringType, "Description", true],
+						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
 						condition: Condition.createCondition("NotContains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,

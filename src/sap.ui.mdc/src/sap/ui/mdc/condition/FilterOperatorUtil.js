@@ -79,7 +79,7 @@ function(
 							Description: "{1}",
 							Value: "{0}"
 						},
-						format: function(oCondition, oType, sDisplayFormat, bHideOperator) {
+						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes) {
 							sDisplayFormat = sDisplayFormat || FieldDisplay.DescriptionValue;
 							var iCount = this.valueTypes.length;
 							var aValues = oCondition.values;
@@ -98,9 +98,9 @@ function(
 									vValue = "";
 								}
 
-								if (i == 0 && oType && (typeof oType.formatValue === "function")) {
+								if (i == 0) {
 									// only the first value can be formatted. second value is the description string
-									sReplace = oType.formatValue(vValue, "string");
+									sReplace = this._formatValue(vValue, oType, aCompositeTypes);
 								} else {
 									sReplace = vValue;
 								}
@@ -114,14 +114,14 @@ function(
 
 							return sTokenText;
 						},
-						parse: function(sText, oType, sDisplayFormat, bDefaultOperator) {
+						parse: function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes) {
 							sDisplayFormat = sDisplayFormat || FieldDisplay.DescriptionValue;
-							var aResult = Operator.prototype.parse.apply(this, [sText, oType, sDisplayFormat, bDefaultOperator]);
+							var aResult = Operator.prototype.parse.apply(this, [sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes]);
 
 							if (bDefaultOperator && (!aResult || aResult[0] === null || aResult[0] === undefined) && sDisplayFormat !== FieldDisplay.Value) {
 								// in default case and no key determined (simple-EQ case)-> use text as key (parse again to use type)
 								sDisplayFormat = FieldDisplay.Value;
-								aResult = Operator.prototype.parse.apply(this, [sText, oType, sDisplayFormat, bDefaultOperator]);
+								aResult = Operator.prototype.parse.apply(this, [sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes]);
 							}
 							if (aResult && (aResult[1] === null || aResult[1] === undefined) && sDisplayFormat === FieldDisplay.Value) {
 								aResult = [aResult[0]]; // only key
@@ -776,7 +776,7 @@ function(
 							oDate = UniversalDateUtils.getMonthStartDate(oDate);
 							return UniversalDateUtils.getRange(0, "MONTH", oDate);
 						},
-						format: function(oCondition, oType, sDisplayFormat, bHideOperator) {
+						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes) {
 							var iValue = oCondition.values[0];
 							var sTokenText = this.tokenFormat;
 							var sReplace = _getMonths.apply(this)[iValue];
@@ -846,7 +846,7 @@ function(
 							oDate = UniversalDateUtils.getMonthStartDate(oDate);
 							return UniversalDateUtils.getRange(0, "MONTH", oDate);
 						},
-						format: function(oCondition, oType, sDisplayFormat, bHideOperator) {
+						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes) {
 							var iValue = oCondition.values[0];
 							var iYear = oCondition.values[1];
 							var sTokenText = this.tokenFormat;

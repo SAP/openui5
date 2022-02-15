@@ -164,6 +164,13 @@ sap.ui.define([
 				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
 				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
 				this._oContentFactory.setDataType(oBindingInfo.type);
+				if (oBindingInfo.type.isA("sap.ui.model.CompositeType") && oBindingInfo.parts) {
+					var aTypes = [];
+					for (var i = 0; i < oBindingInfo.parts.length; i++) {
+						aTypes.push(oBindingInfo.parts[i].type);
+					}
+					this._oContentFactory.setCompositeTypes(aTypes);
+				}
 				this._oContentFactory.updateConditionType();
 				this.invalidate(); // as new inner control might be needed
 			}

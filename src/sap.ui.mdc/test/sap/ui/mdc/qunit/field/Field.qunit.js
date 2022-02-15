@@ -28,8 +28,10 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/odata/type/Currency",
-	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/type/DateTimeWithTimezone",
+	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/odata/type/DateTime",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
@@ -58,8 +60,10 @@ sap.ui.define([
 	IntegerType,
 	CurrencyType,
 	oDataCurrencyType,
-	JSONModel,
+	DateTimeWithTimezoneType,
+	DateTimeOffsetType,
 	DateTimeType,
+	JSONModel,
 	KeyCodes,
 	oCore
 ) {
@@ -1477,6 +1481,89 @@ sap.ui.define([
 				}, 0);
 			}, 0);
 		}, 0);
+
+	});
+
+	QUnit.module("DateTime with timezone", {
+		beforeEach: function() {
+			oModel = new JSONModel({
+				dateTime: "2022-02-25T07:06:30+01:00",
+				timezone: "Europe/Berlin"
+			});
+
+			oType = new DateTimeWithTimezoneType({showTimezone: true});
+			oType._bMyType = true;
+			oType2 = new DateTimeOffsetType({}, {V4: true});
+			oType2._bMyType = true;
+			oType3 = new StringType();
+			oType3._bMyType = true;
+
+			oField = new Field("F1", {
+				value: {parts: [{path: "/dateTime", type: oType2}, {path: "/timezone", type: oType3}], type: oType},
+				change: _myChangeHandler
+			}).placeAt("content");
+			oField.setModel(oModel);
+
+			oField2 = new Field("F12", {
+				value: {parts: [{path: "/dateTime", type: oType2}, {path: "/timezone", type: oType3}], type: oType},
+				editMode: EditMode.Display,
+				change: _myChangeHandler
+			}).placeAt("content");
+			oField2.setModel(oModel);
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			oField.destroy();
+			oField = undefined;
+			oField2.destroy();
+			oField2 = undefined;
+			oModel.destroy();
+			oModel = undefined;
+			oType.destroy();
+			oType = undefined;
+			oType2.destroy();
+			oType2 = undefined;
+			oType3.destroy();
+			oType3 = undefined;
+			_cleanupEvents();
+		}
+	});
+
+	QUnit.test("inner control binding", function(assert) {
+
+		assert.notOk(oField._oContentFactory.getDataType()._bMyType, "Given Type is not used used in Field");
+		assert.ok(oField._oContentFactory.getDataType().isA("sap.ui.model.odata.type.DateTimeWithTimezone"), "DateTimeWithTimezone type used");
+		assert.deepEqual(oField._oContentFactory.getCompositeTypes(), [oType2, oType3], "Composite types stored");
+		var aContent = oField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		assert.ok(oContent instanceof DateTimePicker, "DateTimePicker used");
+		assert.equal(oContent.getValue(), "2022-02-25T07:06:30", "Value set on DateTimePicker control");
+		assert.equal(oContent.getTimezone(), "Europe/Berlin", "Timezone set on DateTimePicker control");
+		var oBindingInfo = oContent.getBindingInfo("value");
+		var oConditionsType = oBindingInfo.type;
+		var oMyType = oConditionsType.getFormatOptions().valueType;
+		assert.notOk(oMyType._bMyType, "Given Type is not used in Binding for DateTimePicker");
+		assert.ok(oMyType.isA("sap.ui.model.odata.type.DateTimeWithTimezone"), "DateTimeWithTimezone type used in ConditionsType");
+		var aCompositeTypes = oConditionsType.getFormatOptions().compositeTypes;
+		assert.deepEqual(aCompositeTypes, [oType2, oType3], "Composite types stored used in ConditionsType");
+		var oMyOriginalType = oConditionsType.getFormatOptions().originalDateType;
+		assert.equal(oMyOriginalType, oType, "original type used in ConditionsType as originalDateType");
+
+		var sText = oType.formatValue([new Date(2022, 1, 25, 7, 6, 30, 0), "Europe/Berlin"], "string"); // as it might locale dependent (formatting and parsing tested in ConditionType)
+		assert.ok(oField2._oContentFactory.getDataType()._bMyType, "Given Type is used used in Field");
+		assert.deepEqual(oField2._oContentFactory.getCompositeTypes(), [oType2, oType3], "Composite types stored");
+		aContent = oField2.getAggregation("_content");
+		oContent = aContent && aContent.length > 0 && aContent[0];
+		assert.ok(oContent instanceof Text, "Text used");
+		assert.equal(oContent.getText(), sText, "Text set on text control");
+		oBindingInfo = oContent.getBindingInfo("text");
+		oConditionsType = oBindingInfo.type;
+		oMyType = oConditionsType.getFormatOptions().valueType;
+		assert.ok(oMyType._bMyType, "Given Type is used in Binding for Text");
+		aCompositeTypes = oConditionsType.getFormatOptions().compositeTypes;
+		assert.deepEqual(aCompositeTypes, [oType2, oType3], "Composite types stored used in ConditionsType");
+		oMyOriginalType = oConditionsType.getFormatOptions().originalDateType;
+		assert.notOk(oMyOriginalType, "no type used in ConditionsType as originalDateType");
 
 	});
 

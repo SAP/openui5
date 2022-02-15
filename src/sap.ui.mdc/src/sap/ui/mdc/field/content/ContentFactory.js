@@ -411,6 +411,14 @@ sap.ui.define([
 		this._oUnitType = oUnitType;
 	};
 
+	ContentFactory.prototype.getCompositeTypes = function() {
+		return this._aCompositeTypes;
+	};
+
+	ContentFactory.prototype.setCompositeTypes = function(aCompositeTypes) {
+		this._aCompositeTypes = aCompositeTypes;
+	};
+
 	ContentFactory.prototype.isMeasure = function() {
 		return this._bIsMeasure;
 	};
