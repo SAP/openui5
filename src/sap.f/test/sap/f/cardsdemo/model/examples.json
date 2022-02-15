@@ -229,5 +229,11 @@
 		"description": "Play around with showMessage() method",
 		"route": "message",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Transparent",
+		"description": "Card without background and border",
+		"route": "transparent",
+		"group": "Other Card Examples"
 	}
 ]
