@@ -959,6 +959,10 @@ sap.ui.define([
 				.addStyleClass("sapMTBHiddenElement");
 		}
 
+		//Removing accessibility attributes
+		this._oOverflowToolbarButtonClone._getTooltip = function() { return ""; };
+		this._oOverflowToolbarButtonClone.removeAllAssociation("ariaLabelledBy");
+
 		return this._oOverflowToolbarButtonClone;
 	};
 
