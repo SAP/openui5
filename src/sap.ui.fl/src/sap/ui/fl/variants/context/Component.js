@@ -64,15 +64,11 @@ sap.ui.define([
 		 * Checks whether the given context sharing component is ready to be saved.
 		 * Displays UI error message in case there is an inconsistency within the variant: The 'restricted' option is selected, but no role was chosen.
 		 *
+		 * @deprecated As of version 1.100
 		 * @returns {boolean} <code>true</code> if the component has errors, <code>false</code> if there are no errors
 		 */
 		hasErrorsAndShowErrorMessage: function() {
-			var oRootControl = this.getRootControl();
-			var oRestrictedRadioButton = oRootControl.byId("restrictedRadioButton");
-			var aSelectedRoles = this.getModel("selectedContexts").getProperty("/selected");
-			var bIsErrorShown = oRestrictedRadioButton.getSelected() && aSelectedRoles.length === 0;
-			oRootControl.getController().showErrorMessage(bIsErrorShown);
-			return bIsErrorShown;
+			return false;
 		}
 	});
 });

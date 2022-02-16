@@ -10,16 +10,6 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheContextSharingVisibilityFragmentPage: {
 			actions: {
-				iSelectRadioButton: function (sRadioButtonTitle) {
-					return this.waitFor({
-						controlType: "sap.m.RadioButton",
-						properties: {
-							text: sRadioButtonTitle
-						},
-						searchOpenDialogs: true,
-						actions: new Press()
-					});
-				},
 				iClickOnAddRoleButton: function () {
 					return this.waitFor({
 						id: "contextSharing---ContextVisibility--addContextsButton",

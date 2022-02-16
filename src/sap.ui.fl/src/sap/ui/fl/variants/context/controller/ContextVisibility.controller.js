@@ -4,24 +4,18 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/library",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
-	"sap/m/MessageStrip",
 	"sap/base/util/restricted/_isEqual"
 ], function (
 	Controller,
 	Fragment,
-	coreLibrary,
 	WriteStorage,
 	Layer,
-	MessageStrip,
 	_isEqual
 ) {
 	"use strict";
 
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	function buildQueryParameterMap(mConfig) {
 		var mDefaultValues = {layer: Layer.CUSTOMER, type: "role"};
@@ -76,8 +70,6 @@ sap.ui.define([
 			this.oSelectedContextsModel.refresh(true);
 			var oSelectedContexts = this.getOwnerComponent().getSelectedContexts();
 			var bHasContexts = oSelectedContexts.role.length > 0;
-			this.byId("selectedContextsList").setVisible(bHasContexts);
-
 			if (bHasContexts) {
 				return assignDescriptionsToSelectedRoles.call(this, oSelectedContexts);
 			}
@@ -101,11 +93,6 @@ sap.ui.define([
 			});
 		},
 
-		formatSelectedIndex: function(aSelectedRoles) {
-			this.byId("selectedContextsList").setVisible(aSelectedRoles.length !== 0);
-			return aSelectedRoles.length === 0 ? 0 : 1;
-		},
-
 		formatTooltip: function(sDescription) {
 			if (!this.oI18n) {
 				this.oI18n = this.getView().getModel("i18n").getResourceBundle();
@@ -113,20 +100,6 @@ sap.ui.define([
 			return sDescription.length === 0 ? this.oI18n.getText("NO_DESCRIPTION") : sDescription;
 		},
 
-		/**
-		 * If restricted radio button is selected, then it reveals the hidden selected contexts list.
-		 * @param {sap.ui.base.Event} oEvent - Event object
-		 */
-		onSelectRestrictedRadioButton: function(oEvent) {
-			oEvent.getSource().setSelected(true);
-			var bFlag = oEvent.getParameters() && oEvent.getParameters().selected;
-			this.byId("selectedContextsList").setVisible(bFlag);
-		},
-
-		onSelectPublicRadioButton: function() {
-			this.oSelectedContextsModel.setProperty("/selected", []);
-			this.showErrorMessage(false);
-		},
 
 		/**
 		 * Checks if all data is loaded from back end.
@@ -199,8 +172,8 @@ sap.ui.define([
 		 */
 		onSelectContexts: function() {
 			this.oSelectedContextsModel.setProperty("/selected", this.oCurrentSelection);
+			this.oSelectedContextsModel.refresh(true);
 			this.oCurrentSelection = [];
-			this.showErrorMessage(false);
 		},
 
 		/**
@@ -226,24 +199,12 @@ sap.ui.define([
 			this.oSelectedContextsModel.setProperty("/selected", []);
 		},
 
-		/**
-		 * Shows or removes error message depending on the input.
-		 * @param {boolean} bShowError - Whether the error should be shown on the UI
-		 */
-		showErrorMessage: function(bShowError) {
-			var sErrorMessageId = this.getView().getId() + "--noSelectedRolesError";
-			var oErrorMessage = sap.ui.getCore().byId(sErrorMessageId);
-			if (oErrorMessage) {
-				oErrorMessage.destroy();
-			}
-			if (bShowError) {
-				oErrorMessage = new MessageStrip(sErrorMessageId, {text: this.oI18n.getText("SELECTED_ROLES_ERROR"), type: MessageType.Error, showIcon: true});
-				this.byId("visibilityPanel").insertContent(oErrorMessage, 1);
-			}
-		},
-
 		isRemoveAllEnabled: function(aSelectedRoleIds) {
 			return aSelectedRoleIds.length !== 0;
+		},
+
+		isMessageStripVisible: function(aSelectedRoles) {
+			return aSelectedRoles.length === 0;
 		}
 	});
 });

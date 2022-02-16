@@ -214,24 +214,6 @@ sap.ui.define([
 			assert.equal(oController.isSelected(oItem2, aSelectedItems), false, "then item is not selected");
 		});
 
-		QUnit.test("when restricted radio button is selected", function (assert) {
-			var oEvent = {
-				getSource: function() {
-					return new RadioButton();
-				},
-				getParameters: function() {
-					return {selected: true};
-				}
-			};
-			var fnSetVisibleStub = sandbox.stub(oController, "byId").returns({
-				setVisible: function(bFlag) {
-					return bFlag;
-				}
-			});
-			oController.onSelectRestrictedRadioButton(oEvent);
-			assert.equal(fnSetVisibleStub.callCount, 1, "then the visibility of hidden panel is set to 'true'");
-		});
-
 		QUnit.test("when clicking confirm on select roles list", function (assert) {
 			oController.oSelectedContextsModel = new JSONModel({selected: []});
 			oController.oCurrentSelection = [{ id: "REMOTE", description: "Role for accessing remote system"}];
