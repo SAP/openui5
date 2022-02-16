@@ -82,6 +82,7 @@ sap.ui.define([
 			"sap.ui.mdc.field.BoolFieldHelp",
 			"sap.ui.mdc.field.ConditionFieldHelp",
 			"sap.ui.mdc.filterbar.aligned.FilterItemLayout",
+			"sap.ui.mdc.Link",
 			"sap.ui.mdc.link.ContactDetailsAddressItem",
 			"sap.ui.mdc.link.ContactDetailsEmailItem",
 			"sap.ui.mdc.link.ContactDetailsItem",
