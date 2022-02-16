@@ -65,6 +65,9 @@ sap.ui.define([
 			},
 			showSelectionDetails: {
 				ignore: true
+			},
+			propertyInfo: {
+				ignore: true
 			}
 		},
 		aggregations: {

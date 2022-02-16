@@ -161,7 +161,15 @@ sap.ui.define([
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
                     enabled: false,
                     press: function (oEvent) {
-                        oMDCChart.getEngine().uimanager.show(oMDCChart, oMDCChart.getP13nMode());
+
+                        //TODO: Move this to p13n functionality?
+                        if (oMDCChart.isPropertyHelperFinal()){
+                            oMDCChart.getEngine().uimanager.show(oMDCChart, oMDCChart.getP13nMode());
+                        } else {
+                            oMDCChart.finalizePropertyHelper().then(function(){
+                                oMDCChart.getEngine().uimanager.show(oMDCChart, oMDCChart.getP13nMode());
+                            });
+                        }
                     }
                 });
                 this.addEnd(this._oSettingsBtn);

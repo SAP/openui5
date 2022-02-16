@@ -47,7 +47,8 @@ function(
                         name: sDelegatePath,
 					    payload: {
 						collectionPath: "/testPath"
-						}}
+						}},
+						propertyInfo: [{name: "name1"}, {name: "name2"}]
 					});
 				}
 			});
@@ -77,6 +78,15 @@ function(
 		assert.ok(this.oMDCChart);
 		assert.ok(this.oMDCChart.isA("sap.ui.mdc.IxState"));
 
+    });
+
+	QUnit.test("PropertyHelperMixin relevant parts are part of MDC Chart", function(assert) {
+		assert.ok(this.oMDCChart.isPropertyHelperFinal);
+		assert.ok(this.oMDCChart._getPropertyByNameAsync);
+    });
+
+	QUnit.test("PropertyHelper not finalized on startup", function(assert) {
+		assert.ok(this.oMDCChart.isPropertyHelperFinal() == false);
     });
 
 	QUnit.test("MDC Chart init", function(assert) {

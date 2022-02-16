@@ -90,7 +90,7 @@ sap.ui.define([
 						}
 				};
 
-				return mPropertyBag ? this.fetchProperties(oObj) : oControl.getControlDelegate().fetchProperties(oControl);
+				return mPropertyBag ? this.fetchProperties(oObj) : Promise.resolve(oControl.getPropertyHelper().getProperties());
 			}.bind(this));
 	};
 
