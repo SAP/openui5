@@ -26,6 +26,9 @@ sap.ui.define([
 				that.oParams.previous = oEvent.getParameter("previous");
 				that.oParams.current = oEvent.getParameter("current");
 			});
+			this.oSpies.onNavigationChanged = this.spy(function (oEvent) {
+				that.oParams.step = oEvent.getParameter("step");
+			});
 			this.oSpies.onComplete = this.spy();
 			this.oSpies.error = this.spy(Log, "error");
 
@@ -42,6 +45,7 @@ sap.ui.define([
 			this.oWizard = new Wizard(this.sWizardId, {
 				stepActivate: this.oSpies.onStepActivated,
 				complete: this.oSpies.onComplete,
+				navigationChange: this.oSpies.onNavigationChanged,
 				steps: [
 					new WizardStep({
 						title: "Step 1",
@@ -139,6 +143,7 @@ sap.ui.define([
 			oSpyNextStep,
 			aWizardSteps,
 			oWizard = new Wizard({
+				navigationChange: this.oSpies.onNavigationChanged,
 				steps: [ new WizardStep(), new WizardStep(), new WizardStep() ]
 			});
 
@@ -156,6 +161,7 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(oSpyPreviousStep.callCount, aWizardSteps.length, "Previous step should be called once");
+		assert.ok(this.oSpies.onNavigationChanged.called, "navigationChange should be fired");
 
 		// Arrange
 		this.clock.tick(300);
@@ -167,6 +173,8 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oSpyNextStep.calledOnce, "Next step should be called once");
+		assert.ok(this.oSpies.onNavigationChanged.called, "navigationChange should be fired");
+
 
 		// cleanup
 		oWizard.destroy();
@@ -272,6 +280,7 @@ sap.ui.define([
 	QUnit.test("Click on next button should fire Wizard events", function (assert) {
 		this.oWizard._getNextButton().firePress();
 		assert.strictEqual(this.oSpies.onStepActivated.calledOnce, true, "StepActivate should be fired");
+		assert.notOk(this.oSpies.onNavigationChanged.called, "NavigationChange should not be fired");
 	});
 
 	QUnit.test("Click on next button should fire _handleNextButtonPress before (not as) the attachEvent handler of the 'complete' event is executed", function (assert) {

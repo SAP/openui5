@@ -57,34 +57,43 @@ sap.ui.define([
 		},
 
 		onDialogAfterOpen: function () {
-			this._oWizard = this.byId( "CreateProductWizard");
+			this._oWizard = this.byId("CreateProductWizard");
+			this._iSelectedStepIndex = 0;
+			this._oSelectedStep = this._oWizard.getSteps()[this._iSelectedStepIndex];
 
 			this.handleButtonsVisibility();
 		},
 
 		handleButtonsVisibility: function () {
 			var oModel = this.getView().getModel();
-			switch (this._oWizard.getProgress()){
-				case 1:
+			switch (this._iSelectedStepIndex){
+				case 0:
 					oModel.setProperty("/nextButtonVisible", true);
 					oModel.setProperty("/nextButtonEnabled", true);
 					oModel.setProperty("/backButtonVisible", false);
 					oModel.setProperty("/reviewButtonVisible", false);
 					oModel.setProperty("/finishButtonVisible", false);
 					break;
-				case 2:
+				case 1:
 					oModel.setProperty("/backButtonVisible", true);
-					break;
-				case 3:
 					oModel.setProperty("/nextButtonVisible", true);
 					oModel.setProperty("/reviewButtonVisible", false);
+					oModel.setProperty("/finishButtonVisible", false);
 					break;
-				case 4:
+				case 2:
+					oModel.setProperty("/nextButtonVisible", true);
+					oModel.setProperty("/backButtonVisible", true);
+					oModel.setProperty("/reviewButtonVisible", false);
+					oModel.setProperty("/finishButtonVisible", false);
+					break;
+				case 3:
 					oModel.setProperty("/nextButtonVisible", false);
+					oModel.setProperty("/backButtonVisible", true);
 					oModel.setProperty("/reviewButtonVisible", true);
 					oModel.setProperty("/finishButtonVisible", false);
 					break;
-				case 5:
+				case 4:
+					oModel.setProperty("/nextButtonVisible", false);
 					oModel.setProperty("/finishButtonVisible", true);
 					oModel.setProperty("/backButtonVisible", false);
 					oModel.setProperty("/reviewButtonVisible", false);
@@ -94,44 +103,52 @@ sap.ui.define([
 
 		},
 
+		handleNavigationChange: function (oEvent) {
+			this._oSelectedStep = oEvent.getParameter("step");
+			this._iSelectedStepIndex = this._oWizard.getSteps().indexOf(this._oSelectedStep);
+			this.handleButtonsVisibility();
+		},
+
 		setProductType: function (oEvent) {
 			var sProductType = oEvent.getSource().getTitle();
 			this.getView().getModel().setProperty("/productType", sProductType);
-			this.byId( "ProductStepChosenType").setText("Chosen product type: " + sProductType);
-			this._oWizard.validateStep(this.byId( "ProductTypeStep"));
+			this.byId("ProductStepChosenType").setText("Chosen product type: " + sProductType);
+			this._oWizard.validateStep(this.byId("ProductTypeStep"));
 		},
 
 		setProductTypeFromSegmented: function (oEvent) {
 			var sProductType = oEvent.getParameters().item.getText();
 			this.getView().getModel().setProperty("/productType", sProductType);
-			this._oWizard.validateStep(this.byId( "ProductTypeStep"));
+			this._oWizard.validateStep(this.byId("ProductTypeStep"));
 		},
 
 		additionalInfoValidation: function () {
 			var oModel = this.getView().getModel(),
-				sName = this.byId( "ProductName").getValue(),
-				iWeight = parseInt(this.byId( "ProductWeight").getValue());
+				sName = this.byId("ProductName").getValue(),
+				iWeight = parseInt(this.byId("ProductWeight").getValue());
 
 			this.handleButtonsVisibility();
 
 			if (isNaN(iWeight)) {
+				this._oWizard.setCurrentStep(this.byId("ProductInfoStep"));
 				oModel.setProperty("/productWeightState", ValueState.Error);
 			} else {
 				oModel.setProperty("/productWeightState", ValueState.None);
 			}
 
 			if (sName.length < 6) {
+				this._oWizard.setCurrentStep(this.byId("ProductInfoStep"));
 				oModel.setProperty("/productNameState", ValueState.Error);
 			} else {
 				oModel.setProperty("/productNameState", ValueState.None);
 			}
 
 			if (sName.length < 6 || isNaN(iWeight)) {
-				this._oWizard.invalidateStep(this.byId( "ProductInfoStep"));
+				this._oWizard.invalidateStep(this.byId("ProductInfoStep"));
 				oModel.setProperty("/nextButtonEnabled", false);
 				oModel.setProperty("/finishButtonVisible", false);
 			} else {
-				this._oWizard.validateStep(this.byId( "ProductInfoStep"));
+				this._oWizard.validateStep(this.byId("ProductInfoStep"));
 				oModel.setProperty("/nextButtonEnabled", true);
 			}
 		},
@@ -184,15 +201,34 @@ sap.ui.define([
 		},
 
 		onDialogNextButton: function () {
-			if (this._oWizard.getProgressStep().getValidated()) {
+			this._iSelectedStepIndex = this._oWizard.getSteps().indexOf(this._oSelectedStep);
+			var oNextStep = this._oWizard.getSteps()[this._iSelectedStepIndex + 1];
+
+			if (this._oSelectedStep && !this._oSelectedStep.bLast) {
+				this._oWizard.goToStep(oNextStep, true);
+			} else {
 				this._oWizard.nextStep();
 			}
+
+			this._iSelectedStepIndex++;
+			this._oSelectedStep = oNextStep;
 
 			this.handleButtonsVisibility();
 		},
 
 		onDialogBackButton: function () {
-			this._oWizard.previousStep();
+			this._iSelectedStepIndex = this._oWizard.getSteps().indexOf(this._oSelectedStep);
+			var oPreviousStep = this._oWizard.getSteps()[this._iSelectedStepIndex - 1];
+
+			if (this._oSelectedStep) {
+				this._oWizard.goToStep(oPreviousStep, true);
+			} else {
+				this._oWizard.previousStep();
+			}
+
+			this._iSelectedStepIndex--;
+			this._oSelectedStep = oPreviousStep;
+
 			this.handleButtonsVisibility();
 		},
 
@@ -210,7 +246,7 @@ sap.ui.define([
 
 		discardProgress: function () {
 			var oModel = this.getView().getModel();
-			this._oWizard.discardProgress(this.byId( "ProductTypeStep"));
+			this._oWizard.discardProgress(this.byId("ProductTypeStep"));
 
 			var clearContent = function (aContent) {
 				for (var i = 0; i < aContent.length; i++) {
