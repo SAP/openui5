@@ -70,21 +70,27 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
-	QUnit.test("No data available for particular filter", function (assert) {
+	QUnit.test("Show 'No Data' message and show valid data after that", function (assert) {
 		// Arrange
 		var done = assert.async();
 
 		this.oCard.attachEvent("_ready", function () {
 			// Act
 			this.oCard.getModel("filters").setProperty("/shipper/value", "43");
-
 			Core.applyChanges();
 
 			setTimeout(function () {
 				assert.strictEqual(this.oCard.getCardContent().getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "an empty list is displayed");
-				done();
-			}.bind(this), 500);
 
+				// Act
+				this.oCard.getModel("filters").setProperty("/shipper/value", "3");
+				Core.applyChanges();
+
+				setTimeout(function () {
+					assert.ok(this.oCard.getCardContent().isA("sap.ui.integration.cards.ListContent"), "list content is displayed");
+					done();
+				}.bind(this), 500);
+			}.bind(this), 500);
 		}.bind(this));
 
 		// Act
