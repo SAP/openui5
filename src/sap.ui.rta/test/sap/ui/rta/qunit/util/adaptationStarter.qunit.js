@@ -54,10 +54,6 @@ sap.ui.define([
 					oResourceBundle.getText("TIT_ADAPTATION_STARTER_MIXED_CHANGES_TITLE"),
 					"then the title of the mixed changes message is shown correctly"
 				);
-				/**
-				 * TODO: This test should be integrated again after the automatic translations have refreshed the messagebundle
-				 * the translations have not implemented the new link syntax yet because of that the test is failing
-				 *
 				assert.strictEqual(
 					this.fnMessageBoxStub.lastCall.args[0].mAggregations.content.map(function(item, index) {
 						if (index === 1) {
@@ -67,7 +63,7 @@ sap.ui.define([
 					}).join(""),
 					oResourceBundle.getText("MSG_ADAPTATION_STARTER_MIXED_CHANGES_WARNING"),
 					"then the text of the mixed changes message is shown correctly"
-				);*/
+				);
 			}.bind(this));
 		});
 
