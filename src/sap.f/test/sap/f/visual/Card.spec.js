@@ -397,7 +397,7 @@ describe("sap.f.Card", function () {
 				focusElement(oElement);
 			}
 
-			takePictureOfElement(oElement, "14_No_Header_No_Content_" + oCard.id);
+			takePictureOfElement(oElement, "14_NoHeader_NoContent_" + oCard.id);
 		});
 
 		navigateBack();
