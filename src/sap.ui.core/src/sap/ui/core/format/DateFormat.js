@@ -941,7 +941,7 @@ sap.ui.define([
 					sPart = oParseHelper.findNumbers(sValue, oPart.digits);
 				}
 				var iYear = parseInt(sPart);
-				var iWeekYear;
+				var iWeekYear = iYear;
 				// Find the right century for two-digit years
 				if (sCalendarType != CalendarType.Japanese && sPart.length <= 2) {
 					var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
