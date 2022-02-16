@@ -43,7 +43,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.layout.form.FormLayout} oLayout an object representation of the Layout control that should be rendered
-	 * @param {sap.ui.layout.form.Form} oForm, a form control to render its content
+	 * @param {sap.ui.layout.form.Form} oForm a form control to render its content
 	 */
 	FormLayoutRenderer.renderForm = function(rm, oLayout, oForm){
 

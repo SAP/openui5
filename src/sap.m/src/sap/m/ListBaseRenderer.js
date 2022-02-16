@@ -44,12 +44,10 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *          oRenderManager the RenderManager that can be used for writing to the
-	 *          Render-Output-Buffer
-	 * @param {sap.m.ListBase}
-	 *          oControl an object representation of the control that should be
-	 *          rendered
+	 * @param {sap.ui.core.RenderManager} rm
+	 *          RenderManager that can be used to render the control's DOM
+	 * @param {sap.m.ListBase} oControl
+	 *          The list to be rendered
 	 */
 	ListBaseRenderer.render = function(rm, oControl) {
 		// container

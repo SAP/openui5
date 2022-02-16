@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/library", "sap/m/Hyphenation
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.m.Title} oShell an object representation of the control that should be rendered
+	 * @param {sap.m.Title} oTitle an object representation of the control that should be rendered
 	 */
 	TitleRenderer.render = function(oRm, oTitle){
 		var oAssoTitle = oTitle._getTitle(),

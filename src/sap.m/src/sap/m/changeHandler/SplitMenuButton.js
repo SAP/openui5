@@ -247,10 +247,10 @@ sap.ui.define([
 	 * Callback function which is attached via modifier in applyChange
 	 *
 	 * @param {sap.ui.base.Event} oEvent Event object
-	 * @param {object} mSelector Selector object
-	 * @param {string} mSelector.id ID used for determination of the flexibility target
-	 * @param {boolean} mSelector.idIsLocal flag if the selector.id has to be concatenated with the application component ID
-	 * while applying the change.
+	 * @param {object} mParameters
+	 * @param {{id: string, idIsLocal: boolean}} mParameters.selector Selector describing the target of the flexibility change
+	 * @param {sap.ui.core.ID} mParameters.appComponentId
+	 * @param {sap.ui.core.Control} mParameters.menu
 	 */
 	SplitMenuButton.pressHandler = function (oEvent, mParameters) {
 		var oMenuItem = JsControlTreeModifier.bySelector(mParameters.selector, Component.get(mParameters.appComponentId));

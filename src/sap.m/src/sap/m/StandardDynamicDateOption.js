@@ -358,10 +358,10 @@ sap.ui.define([
 
 		/**
 		 * Creates a UI for this DynamicDateOption.
-		 * @param {*} oOptions some parameters that can adapt the UI from outside
+		 * @param {sap.m.DynamicDateRange} Control to create the UI for
 		 * @param {function} fnControlsUpdated A callback invoked when any of the created controls updates its value
 		 *
-		 * @return {Object[]} Returns an array of controls which is mapped to the parameters of this DynamicDateOption.
+		 * @return {sap.ui.core.Control[]} Returns an array of controls which is mapped to the parameters of this DynamicDateOption.
 		 */
 		StandardDynamicDateOption.prototype.createValueHelpUI = function(oControl, fnControlsUpdated) {
 			var oOptions = oControl._getOptions(),

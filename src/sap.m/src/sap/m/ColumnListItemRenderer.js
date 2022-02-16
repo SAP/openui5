@@ -27,6 +27,15 @@ sap.ui.define([
 	var ColumnListItemRenderer = Renderer.extend(ListItemBaseRenderer);
 	ColumnListItemRenderer.apiVersion = 2;
 
+	/**
+	 * Renders the HTML for the given control, using the provided
+	 * {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} rm
+	 *            RenderManager that can be used to render the control's DOM
+	 * @param {sap.m.ColumnListItem} oLI
+	 *            The item to be rendered
+	 */
 	ColumnListItemRenderer.render = function(rm, oLI) {
 		var oTable = oLI.getTable();
 		if (!oTable) {
@@ -104,17 +113,6 @@ sap.ui.define([
 		return "";
 	};
 
-	/**
-	 * Renders the HTML for the given control, using the provided
-	 * {@link sap.ui.core.RenderManager}.
-	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager the RenderManager that can be used for writing to
-	 *            the Render-Output-Buffer
-	 * @param {sap.m.ColumnListItem}
-	 *            oControl an object representation of the control that should be
-	 *            rendered
-	 */
 	ColumnListItemRenderer.renderLIAttributes = function(rm, oLI) {
 		rm.class("sapMListTblRow");
 		var vAlign = oLI.getVAlign();

@@ -244,7 +244,7 @@ sap.ui.define([
 
 	/**
 	 * Moves focus on the corresponding subsection when MenuItem is selected
-	 * @param {sap.ui.core.Control} oSourceControl: selected Item
+	 * @param {sap.ui.core.Control} oSourceControl selected Item
 	 * @private
 	 */
 	ABHelper.prototype._moveFocusOnSection = function (oSourceControl) {

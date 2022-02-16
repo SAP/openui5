@@ -569,8 +569,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	 *
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.m.InputBase} oControl An object representation of the control that should be rendered.
-	 * @param {string} sPosition An aggregation from which the icon should be rendered - begin or end.
+	 * @param {sap.ui.core.Icon[]} aIcons List of icons to render
 	 */
 	InputBaseRenderer.writeIcons = function (oRm, aIcons) {
 		oRm.openStart("div")

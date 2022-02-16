@@ -354,9 +354,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Cleanup the dom changes previously done by <code>updateTableRowForGrouping</code>.
+		 * Cleanup the DOM changes previously done by <code>updateTableRowForGrouping</code>.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {sap.ui.table.Row} oRow Instance of the row
 		 */
 		cleanupTableRowForGrouping: function(oRow) {

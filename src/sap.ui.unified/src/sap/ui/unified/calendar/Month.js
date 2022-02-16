@@ -1559,7 +1559,7 @@ sap.ui.define([
 	/**
 	 * Calculates week number.
 	 *
-	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Start date of the week
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate Start date of the week
 	 * @returns {int} Week number
 	 * @private
 	 */
@@ -1729,7 +1729,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the last week's date based on that week's start date.
-	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Week's start date
+	 * @param {sap.ui.unified.calendar.CalendarDate} oWeekStartDate Week's start date
 	 * @returns {sap.ui.unified.calendar.CalendarDate} Last week's date
 	 * @private
 	 */
@@ -1813,7 +1813,7 @@ sap.ui.define([
 
 	/**
 	 * Selects a given date.
-	 * @param{sap.ui.unified.calendar.CalendarDate} oDate the date to select
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate the date to select
 	 * @param {boolean} bMove Whether there is move mode
 	 * @return {boolean} true if the date was really selected, false otherwise
 	 * @private

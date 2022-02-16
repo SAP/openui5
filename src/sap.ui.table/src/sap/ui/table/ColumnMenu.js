@@ -330,7 +330,6 @@ sap.ui.define([
 
 	/**
 	 * Factory method for the column visibility menu item.
-	 * @param {string} sId the id of the menu item.
 	 * @param {sap.ui.table.Column} oColumn the associated column to the menu item.
 	 * @returns {sap.ui.unified.MenuItem} the created menu item.
 	 * @private

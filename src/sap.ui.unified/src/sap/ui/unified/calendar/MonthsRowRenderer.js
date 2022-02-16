@@ -120,7 +120,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 	/**
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.unified.calendar.MonthsRow} oMonthsRow An object representation of the control that should be rendered
-	 * @param {sap.ui.core.LocaleData} oLocalDate
+	 * @param {sap.ui.core.LocaleData} oLocaleDate
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The first date of the month
 	 */
 	MonthsRowRenderer.renderHeaderLine = function(oRm, oMonthsRow, oLocaleData, oDate){

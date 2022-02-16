@@ -18,12 +18,10 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer"],
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager the RenderManager that can be used for writing to
-	 *            the Render-Output-Buffer
-	 * @param {sap.m.CustomListItem}
-	 *            oControl an object representation of the control that should be
-	 *            rendered
+	 * @param {sap.ui.core.RenderManager} rm
+	 *            RenderManager that can be used to render the control's DOM
+	 * @param {sap.m.CustomListItem} oLI
+	 *            The item to be rendered
 	 */
 	CustomListItemRenderer.renderLIAttributes = function(rm, oLI) {
 		rm.class("sapMCLI");
