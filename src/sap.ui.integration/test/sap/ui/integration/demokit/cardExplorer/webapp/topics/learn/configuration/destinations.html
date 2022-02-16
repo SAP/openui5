@@ -114,7 +114,7 @@
 			"url": "{{destinations.myDestination}}/Orders",
 			"parameters": {
 				"$format": "json",
-				"$top": "{{parameters.maxItems}}",
+				"$top": "{parameters>/maxItems/value}",
 				"$orderby": "Freight desc"
 			}
 		}

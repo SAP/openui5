@@ -51,7 +51,7 @@
 			}
 		},
 		"header": {
-			"title": "Product {{parameters.productName}}"
+			"title": "Product {parameters>/productName/value}"
 		}
 	}
 }

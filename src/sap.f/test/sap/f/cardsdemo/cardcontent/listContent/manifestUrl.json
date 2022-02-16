@@ -33,7 +33,7 @@
 					"value": "{Name}, {{parameters.TODAY_ISO}}"
 				},
 				"description": {
-					"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+					"value": "Stationed in: {parameters>/city/value}, {parameters>/country/value}"
 				},
 				"highlight": "{state}"
 			}

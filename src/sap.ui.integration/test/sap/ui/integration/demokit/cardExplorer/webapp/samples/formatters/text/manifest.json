@@ -55,7 +55,7 @@
 		"type": "List",
 		"header": {
 			"title": "My Products",
-			"subTitle": "{= format.text('{{parameters.subtitleText}}', ['2', ${/items}.length]) }",
+			"subTitle": "{= format.text(${parameters>/subtitleText/value}, ['2', ${/items}.length]) }",
 			"icon": {
 				"src": "sap-icon://product"
 			}

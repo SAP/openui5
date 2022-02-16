@@ -37,13 +37,13 @@
 					"Content-Type": "application/json"
 				},
 				"parameters": {
-					"query": "\\{Products(Supplier: {{parameters.supplierId}}) \\{Name ProductCategory Weight WeightUnit\\}\\}"
+					"query": "\\{Products(Supplier: {parameters>/supplierId/value}) \\{Name ProductCategory Weight WeightUnit\\}\\}"
 				}
 			},
 			"path": "/data"
 		},
 		"header": {
-			"title": "Products by Supplier {{parameters.supplierId}}",
+			"title": "Products by Supplier {parameters>/supplierId/value}",
 			"subTitle": "Query in Request Body",
 			"icon": {
 				"src": "sap-icon://product"

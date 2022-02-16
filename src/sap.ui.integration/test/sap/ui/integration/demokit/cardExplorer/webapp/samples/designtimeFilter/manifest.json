@@ -49,7 +49,7 @@
 				"url": "{{destinations.northwind}}/Customers",
 				"parameters": {
 					"$select": "CustomerID, CompanyName, Country, City, Address",
-					"$filter": "Country eq '{{parameters.Country}}'"
+					"$filter": "Country eq '{parameters>/Country/value}'"
 				}
 			},
 			"path": "/value"

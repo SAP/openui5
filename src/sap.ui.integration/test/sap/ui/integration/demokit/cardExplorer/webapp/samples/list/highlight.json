@@ -29,20 +29,20 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "{{parameters.title}}",
-			"subTitle": "{{parameters.subTitle}}",
+			"title": "{parameters>/title/value}",
+			"subTitle": "{parameters>/subTitle/value}",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
 			"status": {
-				"text": "{{parameters.maxItems}} of 20"
+				"text": "{parameters>/maxItems/value} of 20"
 			}
 		},
 		"configuration": {
 			"editor": "dt/Configuration",
 			"parameters": {
 				"title" : {
-					"value": "List Card with Top {{parameters.maxItems}} Products"
+					"value": "List Card with Top 4 Products"
 				},
 				"subTitle": {
 					"value": "These are the top sellers this month"

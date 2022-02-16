@@ -50,7 +50,7 @@
 			"request": {
 				"url": "{{destinations.Northwind_V4}}/Orders",
 				"parameters": {
-					"$top": "{{parameters.maxOrdersShown}}",
+					"$top": "{parameters>/maxOrdersShown/value}",
 					"$filter": "Shipper/ShipperID eq {filters>/shipper/value}"
 				}
 			},

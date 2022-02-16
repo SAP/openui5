@@ -106,7 +106,7 @@
 		},
 		"type": "List",
 		"header": {
-			"title": "{{cardTitle}} {{parameters.city}}",
+			"title": "{{cardTitle}} {parameters>/city}",
 			"subTitle": "{{cardSubTitle}}",
 			"icon": {
 				"src": "sap-icon://customer-briefing"
@@ -125,7 +125,7 @@
 				"request": {
 					"url": "https://services.odata.org/V2/Northwind/Northwind.svc/Customer_and_Suppliers_by_Cities",
 					"parameters": {
-						"$filter": "{{parameters.city}}",
+						"$filter": "{parameters>/city/value}",
 					}
 				},
 				"path": "/articles"

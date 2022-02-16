@@ -130,7 +130,7 @@
 			}
 		},
 		"header": {
-			"title": "{{parameters.cardTitle}}",
+			"title": "{parameters>/cardTitle/value}",
 			"subTitle": "Card Sub Title",
 			"icon": {
 				"src": "sap-icon://accept",
