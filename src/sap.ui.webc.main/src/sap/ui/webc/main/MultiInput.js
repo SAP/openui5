@@ -5,10 +5,11 @@
 // Provides control sap.ui.webc.main.MultiInput.
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
+	"sap/ui/base/ManagedObjectObserver",
 	"./library",
 	"sap/ui/core/library",
 	"./thirdparty/MultiInput"
-], function(WebComponent, library, coreLibrary) {
+], function(WebComponent, ManagedObjectObserver, library, coreLibrary) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -45,6 +46,10 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.webc.main",
 			tag: "ui5-multi-input-ui5",
+			interfaces: [
+				"sap.ui.core.IFormContent",
+				"sap.ui.core.ISemanticFormContent"
+			],
 			properties: {
 
 				/**
@@ -201,7 +206,13 @@ sap.ui.define([
 					type: "sap.ui.core.CSSSize",
 					defaultValue: null,
 					mapping: "style"
-				}
+				},
+
+				/**
+				 * Changed when tokens aggregation changes. The value for sap.ui.core.ISemanticFormContent interface.
+				 * @private
+				 */
+				 _semanticFormValue: {type: "string", group: "Behavior", defaultValue: "", visibility: "hidden"}
 			},
 			defaultAggregation: "suggestionItems",
 			aggregations: {
@@ -332,6 +343,55 @@ sap.ui.define([
 	 */
 
 	/* CUSTOM CODE START */
+
+	MultiInput.prototype.init = function () {
+		/* Aggregation forwarding does not invalidate outer control, but we need to have that invalidation */
+		this._oTokenizerObserver = new ManagedObjectObserver(function(oChange) {
+			this.updateFormValueProperty();
+		}.bind(this));
+
+		this._oTokenizerObserver.observe(this, {
+			aggregations: ["tokens"]
+		});
+	};
+
+	/**
+	 * Gets formatted form value.
+	 *
+	 * In the context of the MultiInput, this is the merged value of all the Tokens in the control.
+	 * @returns {string} The semantic form value
+	 * @since 1.94
+	 * @experimental
+	 */
+	MultiInput.prototype.getFormFormattedValue = function () {
+		return this.getTokens()
+			.map(function (oToken) {
+				return oToken.getText();
+			})
+			.join(", ");
+	};
+
+	/**
+	 * The property which triggers form display invalidation when changed
+	 *
+	 * @returns {string} The property, containing the semantic form value
+	 * @since 1.94
+	 * @experimental
+	 */
+	MultiInput.prototype.getFormValueProperty = function () {
+		return "_semanticFormValue";
+	};
+
+	/**
+	 * ISemanticFormContent interface works only with properties. The state of MultiInput is kept as Tokens.
+	 * Update _semanticFormValue property so it'd match MultiInput's state, but as a string which could be reused.
+	 *
+	 * @private
+	 */
+	MultiInput.prototype.updateFormValueProperty = function () {
+		this.setProperty("_semanticFormValue", this.getFormFormattedValue(), true);
+	};
+
 	/* CUSTOM CODE END */
 
 	return MultiInput;
