@@ -1,7 +1,10 @@
-/*global QUnit */
+/*global QUnit, sinon*/
 sap.ui.define([
-	'sap/ui/performance/trace/Interaction'
-], function(Interaction) {
+	'sap/ui/performance/trace/Interaction',
+	'sap/ui/core/mvc/XMLView',
+	'sap/ui/performance/trace/FESRHelper',
+	"sap/ui/test/actions/Press"
+], function(Interaction, XMLView, FESRHelper, Press) {
 	"use strict";
 
 	QUnit.module("Interaction API", {
@@ -70,6 +73,50 @@ sap.ui.define([
 
 		Interaction.clear();
 
+	});
+
+	QUnit.test("Semantic Stepname", function(assert) {
+		assert.expect(2);
+		this.clock = sinon.useFakeTimers();
+		window.performance.getEntriesByType = function() { return []; };
+
+		return XMLView.create({
+			definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:fesr="http://schemas.sap.com/sapui5/extension/sap.ui.core.FESR/1">'
+			+ '          <Button id="btnWithDeclarativeSemanticAnnotation" text="Create something" fesr:press="create"/>                     '
+			+ '          <Button id="btnWithProgramaticSemanticAnnotation" text="Delete something"/>                     '
+			+ '    </mvc:View>         '
+		}).then(function (oView) {
+			oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			return new Promise(function(resolve, reject) {
+				var oBtn1 = oView.byId("btnWithDeclarativeSemanticAnnotation"),
+					oBtn2 = oView.byId("btnWithProgramaticSemanticAnnotation"),
+					oPress = new Press(),
+					oInteraction;
+
+				FESRHelper.setSemanticStepname(oBtn2, "press", "delete");
+
+				oBtn1.attachPress(function () {
+					oInteraction = Interaction.getPending();
+					assert.strictEqual(oInteraction.semanticStepName, "create", "Semantic step name declared in XMLView is correct");
+					this.clock.tick(1);
+					oPress.executeOn(oBtn2);
+				}.bind(this));
+
+				oBtn2.attachPress(function () {
+					oInteraction = Interaction.getPending();
+					assert.strictEqual(oInteraction.semanticStepName, "delete", "Semantic step name set programatically is correct");
+					resolve();
+				});
+
+				oPress.executeOn(oBtn1);
+			}.bind(this)).then(function () {
+				// cleanup
+				oView.destroy();
+				delete window.performance.getEntriesByType;
+				this.clock.restore();
+			}.bind(this));
+		}.bind(this));
 	});
 
 });

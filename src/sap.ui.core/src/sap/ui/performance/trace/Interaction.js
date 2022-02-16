@@ -6,12 +6,13 @@
 sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/ui/performance/XHRInterceptor",
+	"sap/ui/performance/trace/FESRHelper",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/now",
 	"sap/base/util/uid",
 	"sap/base/Log",
 	"sap/ui/thirdparty/URI"
-], function(Measurement, XHRInterceptor, LoaderExtensions, now, uid, Log, URI) {
+], function(Measurement, XHRInterceptor, FESRHelper, LoaderExtensions, now, uid, Log, URI) {
 
 	"use strict";
 
@@ -475,6 +476,7 @@ sap.ui.define([
 			oPendingInteraction.start = iTime;
 			if (oSrcElement && oSrcElement.getId) {
 				oPendingInteraction.trigger = oSrcElement.getId();
+				oPendingInteraction.semanticStepName = FESRHelper.getSemanticStepname(oSrcElement, sType);
 			}
 			/*eslint-disable no-console */
 			if (Log.isLoggable(null, "sap.ui.Performance")) {
@@ -624,13 +626,15 @@ sap.ui.define([
 					var elem = oBrowserElement;
 					if (elem && oElement.getId() === elem.getId()) {
 						oPendingInteraction.trigger = oElement.getId();
+						oPendingInteraction.semanticStepName = FESRHelper.getSemanticStepname(oElement, sEventId);
 						oPendingInteraction.event = sEventId;
 					    bMatched = true;
 					} else {
 						while (elem && elem.getParent()) {
 							elem = elem.getParent();
 							if (oElement.getId() === elem.getId()) {
-								oPendingInteraction.trigger = oElement.getId();
+						oPendingInteraction.trigger = oElement.getId();
+						oPendingInteraction.semanticStepName = FESRHelper.getSemanticStepname(oElement, sEventId);
 								oPendingInteraction.event = sEventId;
 								//if we find no direct match we consider the last control event for the trigger/event (step name)
 								break;

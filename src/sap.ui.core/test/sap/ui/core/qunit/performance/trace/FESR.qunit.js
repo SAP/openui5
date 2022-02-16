@@ -340,4 +340,41 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		this.clock.restore();
 	});
 
+	QUnit.test("Semantic Stepname", function(assert) {
+		assert.expect(3);
+		this.clock = sinon.useFakeTimers();
+		window.performance.getEntriesByType = function() { return []; };
+		var addFakeProcessingTime = function () {
+			// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
+			var notifyAsyncStepCallback;
+
+			notifyAsyncStepCallback = Interaction.notifyAsyncStep();
+			this.clock.tick(1);
+			notifyAsyncStepCallback();
+		}.bind(this);
+
+		FESR.onBeforeCreated = function(oFESRHandle, oInteraction) {
+			assert.strictEqual(oFESRHandle.stepName, "SemanticStepName", "Correct Semantic Stepname set.");
+			return {
+				stepName: oFESRHandle.stepName,
+				appNameLong: oFESRHandle.appNameLong,
+				appNameShort: oFESRHandle.appNameShort,
+				timeToInteractive: oFESRHandle.timeToInteractive,
+				interactionType: oFESRHandle.interactionType
+			};
+		};
+
+		FESR.setActive(true, "example.url");
+		Interaction.start();
+		addFakeProcessingTime();
+		Interaction.getPending().semanticStepName = "SemanticStepName";
+		Interaction.end(true);
+		this.clock.tick(60000);
+		FESR.setActive(false);
+
+		// cleanup
+		delete window.performance.getEntriesByType;
+		this.clock.restore();
+	});
+
 });
