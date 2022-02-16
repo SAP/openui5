@@ -146,17 +146,28 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getIndex()", function (assert) {
-		var oBinding = {},
-			oContext = Context.create(null/*oModel*/, oBinding, "/foo", 42),
+		var oBinding = {
+				isFirstCreateAtEnd : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			oContext0 = Context.create(null/*oModel*/, oBinding, "/foo", 42),
+			oContext1 = Context.create(null/*oModel*/, {/*ODCB*/}, "/foo"),
 			iResult = {/*a number*/};
 
-		this.mock(oContext).expects("getModelIndex").returns(iResult);
+		oBindingMock.expects("isFirstCreateAtEnd").withExactArgs().returns(undefined);
+		this.mock(oContext0).expects("getModelIndex").returns(iResult);
 
 		// code under test
-		assert.strictEqual(oContext.getIndex(), iResult);
+		assert.strictEqual(oContext0.getIndex(), iResult);
 
+		this.mock(oContext1).expects("getModelIndex").never();
+
+		// code under test
+		assert.strictEqual(oContext1.getIndex(), undefined);
+
+		oBindingMock.expects("isFirstCreateAtEnd").exactly(6).withExactArgs().returns(true);
 		// simulate ODataListBinding#create (4x at the end)
-		oBinding.bCreatedAtEnd = true;
+		oBinding.bFirstCreateAtEnd = true;
 		oBinding.iCreatedContexts = 4;
 
 		// code under test

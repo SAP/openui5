@@ -73,10 +73,6 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkPart(7, "", "inactive");
 				When.onTheMessagePopover.close();
 				if (bSubmitModeAPI) {
-					// test selection mode NONE, try to select Product 20
-					When.onTheListReport.selectProduct(1);
-					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 5 Parts");
-
 					// delete row 5 (has to be deleted before activating and submitting row 6)
 					When.onTheObjectPage.pressCancel();
 					Then.onTheObjectPage.checkPartsLength(7);

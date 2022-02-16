@@ -915,6 +915,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns all created elements for the given path.
+	 *
+	 * @param {string} sPath
+	 *   Relative path to drill-down into
+	 * @returns {object[]}
+	 *   An array with all created elements
+	 *
+	 * @public
+	 */
+	_Cache.prototype.getCreatedElements = function (sPath) {
+		var aCollection = this.getValue(sPath);
+
+		return aCollection ? aCollection.slice(0, aCollection.$created) : [];
+	};
+
+	/**
 	 * Returns the query options to be used for downloading list data corresponding to the given
 	 * query options.
 	 *
@@ -2386,11 +2402,16 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.lib._Cache#getValue
 	 */
 	_CollectionCache.prototype.getValue = function (sPath) {
-		var oSyncPromise = this.drillDown(this.aElements, sPath, _GroupLock.$cached);
+		var oSyncPromise;
 
+		if (!sPath) {
+			return this.aElements;
+		}
+		oSyncPromise = this.fetchValue(_GroupLock.$cached, sPath);
 		if (oSyncPromise.isFulfilled()) {
 			return oSyncPromise.getResult();
 		}
+		oSyncPromise.caught();
 	};
 
 	/**
@@ -3189,6 +3210,7 @@ sap.ui.define([
 			if (oSyncPromise.isFulfilled()) {
 				return oSyncPromise.getResult();
 			}
+			oSyncPromise.caught();
 		}
 	};
 

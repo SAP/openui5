@@ -1576,13 +1576,13 @@ sap.ui.define([
 		 * <code>canceled === true</code>. Note: The reporting class name is ignored.
 		 *
 		 * @param {string} sLogMessage - The expected log message
-		 * @param {string} sErrorMessage - The expected error message
+		 * @param {string} [sErrorMessage=sLogMessage] - The expected error message
 		 * @returns {object} The test instance for chaining
 		 */
 		expectCanceledError : function (sLogMessage, sErrorMessage) {
 			this.aExpectedCanceledErrors.push({
 				logMessage : sLogMessage,
-				errorMessage : sErrorMessage
+				errorMessage : sErrorMessage || sLogMessage
 			});
 
 			return this;
@@ -3891,13 +3891,14 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Create a new entity without using a UI and reset it immediately via ODataModel.
 	// No request is added to the queue and ODataModel#hasPendingChanges and
 	// ODataListBinding#hasPendingChanges work as expected.
 	// JIRA: CPOUI5ODATAV4-36
-	QUnit.test("create an entity and immediately reset changes (no UI)", function (assert) {
+	QUnit.test("create an entity and immediately reset changes (no UI) V4-36", function (assert) {
 		var // use autoExpandSelect so that the cache is created asynchronously
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
@@ -3905,6 +3906,10 @@ sap.ui.define([
 		return this.createView(assert, "", oModel).then(function () {
 			var oListBindingWithoutUI = oModel.bindList("/SalesOrderList"),
 				oCreatedPromise = oListBindingWithoutUI.create({}, true).created();
+
+			that.oLogMock.expects("error")
+				.withArgs(sinon.match("Failed to drill-down into ($uid="),
+					sSalesOrderService + "SalesOrderList", "sap.ui.model.odata.v4.lib._Cache");
 
 			assert.ok(oModel.hasPendingChanges());
 			assert.ok(oListBindingWithoutUI.hasPendingChanges());
@@ -3932,7 +3937,6 @@ sap.ui.define([
 			});
 		});
 	});
-});
 
 	//*********************************************************************************************
 	// Scenario: ODCB, late property at a binding for a complex type, so that no entity can be found
@@ -11370,33 +11374,6 @@ sap.ui.define([
 			assert.notOk(oTeamBinding.hasPendingChanges(), "no more pending changes");
 
 			return that.waitForChanges(assert);
-		});
-	});
-
-	//*********************************************************************************************
-	// Scenario:
-	QUnit.test("setContext on relative binding is forbidden", function (assert) {
-		var oTeam2EmployeesBinding,
-			that = this;
-
-		return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
-			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
-			that.oView.byId("form").getObjectBinding();
-			// insert new employee at first row
-			that.expectChange("id", ["", "2"])
-				.expectChange("text", ["John Doe", "Frederic Fall"]);
-			oTeam2EmployeesBinding.create({ID : null, Name : "John Doe"});
-
-			return that.waitForChanges(assert);
-		}).then(function () {
-			assert.throws(function () {
-				that.oView.byId("form").bindElement("/TEAMS('43')",
-					{$expand : {TEAM_2_EMPLOYEES : {$select : "ID,Name"}}});
-			}, new Error("setContext on relative binding is forbidden if a transient entity exists"
-				+ ": sap.ui.model.odata.v4.ODataListBinding: /TEAMS('42')|TEAM_2_EMPLOYEES"));
-
-			// Is needed for afterEach, to avoid that destroy is called twice
-			that.oView.byId("form").getObjectBinding().destroy = function () {};
 		});
 	});
 
@@ -30983,7 +30960,7 @@ sap.ui.define([
 	// added to the queue and ODataModel#hasPendingChanges and ODataListBinding#hasPendingChanges
 	// work as expected.
 	// JIRA: CPOUI5UISERVICESV3-1994
-	QUnit.test("create an entity and immediately reset changes (no UI)", function (assert) {
+	QUnit.test("create an entity and immediately reset changes (no UI) V3-1994", function (assert) {
 		var // use autoExpandSelect so that the cache is created asynchronously
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
@@ -31521,6 +31498,7 @@ sap.ui.define([
 
 			that.expectCanceledError("Failed to create cache for binding " + sODLB + ": /|TEAMS",
 					"Cache discarded as a new cache has been created")
+				.expectCanceledError("Cache discarded as a new cache has been created")
 				.expectCanceledError(sODLB + ": /|TEAMS: Failed to enhance query options for"
 						+ " auto-$expand/$select for child Team_Id",
 					"Cache discarded as a new cache has been created")
@@ -33955,25 +33933,30 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Multiple creation rows, grid table
 	//
-	// Create contexts at different insert positions:
+	// Create contexts at different insert positions (CPOUI5ODATAV4-1379):
 	//   "end of end", "end of start", "start of end" (not allowed), "start of start"
+	// Switch parent context via setContext (CPOUI5ODATAV4-1450)
 	//
 	// (1) read items
-	// (2) add multiple inline creation rows (and expect the "start of end" exception)
-	// (3) delete inline creation rows
-	//
-	// JIRA: CPOUI5ODATAV4-1379
+	// (2a) add three inline creation rows (ICR)
+	// (2b) try to add two ICRs and expect the "start of end" exception at the second creation
+	// (3) switch parent context via setContext
+	// (4) switch parent context back, ICRs are still present
+	// (5) cleanup test: delete all ICRs
 [{
 	title : "end of end",
 	firstInsertAtEnd : true,
 	secondInsertAtEnd : true,
-	secondExpectChange : [, "First", "Second", "Third"]
+	secondExpectChange : [, "First", "Second", "Third"],
+	fourthExpectChange : ["Note 10", "First", "Second", "Third"],
+	fifthExpectChange : []
 }, {
 	title : "end of start",
 	firstInsertAtEnd : false,
 	secondInsertAtEnd : true,
 	secondExpectChange : ["First", "Second", "Third", "Note 10"],
-	thirdExpectChange : ["Note 10"]
+	fourthExpectChange : ["First", "Second", "Third", "Note 10"],
+	fifthExpectChange : ["Note 10"]
 }, {
 	title : "start of end (not allowed)",
 	firstInsertAtEnd : true,
@@ -33984,12 +33967,14 @@ sap.ui.define([
 	firstInsertAtEnd : false,
 	secondInsertAtEnd : false,
 	secondExpectChange : ["Third", "Second", "First", "Note 10"],
-	thirdExpectChange : ["Note 10"]
+	fourthExpectChange : ["Third", "Second", "First", "Note 10"],
+	fifthExpectChange : ["Note 10"]
 }].forEach(function (oFixture) {
 	var sTitle = "Multiple inline creation rows, grid table; insert position: " + oFixture.title;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding,
+			oBindingContext,
 			oContext0,
 			oContext1,
 			oContext2,
@@ -34010,8 +33995,9 @@ sap.ui.define([
 					value : [{SalesOrderID : "42", Note : "Note 10"}]
 				});
 
+			oBindingContext = oModel.createBindingContext("/SalesOrderList('42')");
 			oBinding = that.oView.byId("table").getBinding("rows");
-			oBinding.setContext(oModel.createBindingContext("/SalesOrderList('42')"));
+			oBinding.setContext(oBindingContext);
 
 			return that.waitForChanges(assert, "(1) read SOITEMs");
 		}).then(function () {
@@ -34025,40 +34011,131 @@ sap.ui.define([
 					// code under test
 					oBinding.create({Note : "Second"}, true, oFixture.secondInsertAtEnd, true);
 				}, new Error("Cannot create at the start after creation at end"));
+
+				assert.strictEqual(oBinding.iCreatedContexts, 1);
+
+				return that.waitForChanges(assert, "(2a) add ICRs (throws)");
 			} else {
 				// code under test
 				oContext1 = oBinding.create({Note : "Second"}, true, oFixture.secondInsertAtEnd,
 					true);
 				oContext2 = oBinding.create({Note : "Third"}, true, oFixture.secondInsertAtEnd,
 					true);
-			}
 
-			// code under test
-			assert.strictEqual(oBinding.isFirstCreateAtEnd(), oFixture.firstInsertAtEnd);
+				assert.strictEqual(oBinding.iCreatedContexts, 3);
 
-			return that.waitForChanges(assert, "(2) add inline creation rows");
-		}).then(function () {
-			if (oFixture.thirdExpectChange) {
-				that.expectChange("note", oFixture.thirdExpectChange);
-			}
+				// code under test
+				assert.strictEqual(oBinding.isFirstCreateAtEnd(), oFixture.firstInsertAtEnd);
 
-			oContext0.delete();
-			if (oContext1) {
-				oContext1.delete();
-			}
-			if (oContext2) {
-				oContext2.delete();
-			}
+				return that.waitForChanges(assert, "(2b) add ICRs").then(function () {
+					that.expectChange("note", ["Note 43"])
+						.expectRequest("SalesOrderList('43')/SO_2_SOITEM?"
+							+ "$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=110", {
+							value : [{SalesOrderID : "43", Note : "Note 43"}]
+						});
 
-			return Promise.all([
-				checkCanceled(assert, oContext0.created()),
-				oContext1 && checkCanceled(assert, oContext1.created()),
-				oContext2 && checkCanceled(assert, oContext2.created()),
-				that.waitForChanges(assert, "(3) delete inline creation rows")
-			]);
+					// code under test
+					oBinding.setContext(oModel.createBindingContext("/SalesOrderList('43')"));
+
+					assert.strictEqual(oBinding.iCreatedContexts, 0);
+
+					return that.waitForChanges(assert, "(3) switch binding context");
+				}).then(function () {
+					that.expectChange("note", oFixture.fourthExpectChange);
+
+					// code under test
+					oBinding.setContext(oBindingContext);
+
+					return that.waitForChanges(assert, "(4) switch binding context back");
+				}).then(function () {
+					that.expectChange("note", oFixture.fifthExpectChange);
+
+					assert.strictEqual(oBinding.iCreatedContexts, 3);
+
+					oContext0.delete();
+					oContext1.delete();
+					oContext2.delete();
+
+					assert.strictEqual(oBinding.iCreatedContexts, 0);
+
+					return Promise.all([
+						checkCanceled(assert, oContext0.created()),
+						checkCanceled(assert, oContext1.created()),
+						checkCanceled(assert, oContext2.created()),
+						that.waitForChanges(assert, "(5) delete inline creation rows")
+					]);
+				});
+			}
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: relative ODLB w/o own cache; switch binding context via setContext with transient
+	// rows present. Switch back and expect that transient rows survived.
+	//
+	// JIRA: CPOUI5ODATAV4-1450
+	QUnit.test("ODLB w/o own cache: setContext with transient rows", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oFirstBindingContext,
+			oListBinding,
+			sView = '\
+<FlexBox id="flexbox" binding="{/SalesOrderList(\'42\')}">\
+	<t:Table id="table" rows="{path : \'SO_2_SOITEM\', \
+			parameters : {$$updateGroupId : \'update\', $count: true}}">\
+		<Text id="note" text="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM?"
+				+ "$count=true&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=110", {
+				"@odata.count" : "1",
+				value : [{SalesOrderID : "42", Note : "Note 10"}]
+			})
+			.expectChange("note", ["Note 10"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("table").getBinding("rows");
+			oFirstBindingContext = that.oView.byId("table").getBindingContext();
+
+			that.expectChange("note", ["First", "Note 10"]);
+
+			oListBinding.create({Note : "First"}, true, false, false);
+
+			assert.strictEqual(oListBinding.aContexts[0].isTransient(), true);
+			assert.strictEqual(oListBinding.aContexts.length, 2);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note", ["Note 43"])
+				.expectRequest("SalesOrderList('43')/SO_2_SOITEM?"
+					+ "$count=true&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=110", {
+					"@odata.count" : "1",
+					value : [{SalesOrderID : "43", Note : "Note 43"}]
+				});
+
+			// code under test
+			that.oView.byId("table").setBindingContext(
+				oModel.createBindingContext("/SalesOrderList('43')"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oListBinding.aContexts[0].isTransient(), undefined);
+			assert.strictEqual(oListBinding.aContexts.length, 1);
+
+			that.expectChange("note", ["First", "Note 10"]);
+
+			// code under test
+			that.oView.byId("table").setBindingContext(oFirstBindingContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oListBinding.aContexts[0].isTransient(), true);
+			assert.strictEqual(oListBinding.aContexts.length, 2);
+		});
+	});
+
 	//*********************************************************************************************
 	// Scenario: Create a row and delete it again. Then request more data and check the count.
 	//

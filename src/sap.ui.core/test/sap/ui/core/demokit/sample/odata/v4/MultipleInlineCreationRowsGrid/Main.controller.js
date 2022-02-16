@@ -38,9 +38,7 @@ sap.ui.define([
 
 		createInactiveRows : function (iCount) {
 			var oBinding = this.getView().byId("parts").getBinding("rows"),
-				bInactive,
-				i,
-				that = this;
+				i;
 
 			function createEmptyRow() {
 				var oContext = oBinding.create({}, true, true, /*bInactive*/true);
@@ -49,9 +47,6 @@ sap.ui.define([
 					if (!oError.canceled) {
 						throw oError; // unexpected error
 					}
-					bInactive = oContext.isInactive();
-				}).finally(function () {
-					that.incrementActive(bInactive ? 0 : -1);
 				});
 			}
 
@@ -83,14 +78,8 @@ sap.ui.define([
 			return {bDescending : bDescending, sNewIcon : sNewIcon};
 		},
 
-		incrementActive : function (iIncrement) {
-			this.oUIModel.setProperty("/iActive",
-				this.oUIModel.getProperty("/iActive") + iIncrement);
-		},
-
 		onActivate : function () {
 			this.createInactiveRows(1);
-			this.incrementActive(1);
 		},
 
 		onCancel : function () {
@@ -122,11 +111,11 @@ sap.ui.define([
 			var oPartsBinding,
 				oProductsBinding,
 				oView = this.getView(),
-				oModel = oView.getModel();
+				oModel = oView.getModel(),
+				that = this;
 
 			this.initMessagePopover("showMessages");
 			this.oUIModel = new JSONModel({
-				iActive : 0,
 				sActivity : "",
 				bAPI : oModel.getGroupProperty(oModel.getUpdateGroupId(), "submit")
 					=== SubmitMode.API,
@@ -146,6 +135,13 @@ sap.ui.define([
 			oPartsBinding.attachCreateActivate(this.onActivate, this);
 			oPartsBinding.attachCreateSent(this.showSaving, this);
 			oPartsBinding.attachCreateCompleted(this.showNothing, this);
+
+			// attach an event handler to the data received event and create inactive rows inside
+			oPartsBinding.attachDataReceived(function () {
+				if (oPartsBinding.isFirstCreateAtEnd() === undefined) {
+					that.createInactiveRows(iEmptyRowCount);
+				}
+			});
 		},
 
 		onRefresh : function () {
@@ -194,12 +190,10 @@ sap.ui.define([
 		},
 
 		setPartsContext : function (oContext) {
-			this.deleteInactiveRows();
 			this.getView().byId("parts").setBindingContext(oContext);
 			this.byId("partsTitle").setBindingContext(
 				this.getView().byId("parts").getBinding("rows").getHeaderContext(),
 				"headerContext");
-			this.createInactiveRows(iEmptyRowCount);
 			this.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
 		},
 

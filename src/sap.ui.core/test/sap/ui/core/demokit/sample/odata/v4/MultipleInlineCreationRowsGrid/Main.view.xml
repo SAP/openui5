@@ -33,7 +33,7 @@
 							$$patchWithoutSideEffects : true,
 							$select : ['HasDraftEntity']
 						}
-					}" mode="{= ${ui>/iActive} ? 'None' : 'SingleSelectMaster'}"
+					}" mode="SingleSelectMaster"
 					selectionChange="onSelectProduct">
 					<headerToolbar>
 						<Toolbar>
