@@ -146,6 +146,9 @@ sap.ui.define([
 
 			this.bRawValues = this.oType.getUseRawValues();
 			this.bInternalValues = this.oType.getUseInternalValues();
+			this.oType.processPartTypes(this.aBindings.map(function (oBinding) {
+				return oBinding.getType();
+			}));
 
 			if (this.bRawValues && this.bInternalValues) {
 				throw new Error(this.oType + " has both 'bUseRawValues' & 'bUseInternalValues' set to true. Only one of them is allowed to be true");

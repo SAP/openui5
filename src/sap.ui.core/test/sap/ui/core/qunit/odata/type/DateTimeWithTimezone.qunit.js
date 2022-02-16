@@ -9,16 +9,27 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/odata/type/DateTimeWithTimezone",
+	"sap/ui/model/odata/type/Decimal",
+	"sap/ui/model/odata/type/String",
 	"sap/ui/test/TestUtils"
 ], function (Log, DateFormat, DateFormatTimezoneDisplay, CompositeType, FormatException,
-		ParseException, DateTimeWithTimezone, TestUtils) {
+		ParseException, DateTimeWithTimezone, DecimalType, StringType, TestUtils) {
 	/*global sinon, QUnit*/
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.type.DateTimeWithTimezone",
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-		sDefaultTimezone = sap.ui.getCore().getConfiguration().getTimezone();
+		sDefaultTimezone = sap.ui.getCore().getConfiguration().getTimezone(),
+		MyStringType = StringType.extend("MyString", {
+			constructor : function () {
+				StringType.apply(this, arguments);
+			}
+		});
+
+	MyStringType.prototype.getName = function () {
+		return "MyStringType";
+	};
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.DateTimeWithTimezone", {
@@ -49,6 +60,7 @@ sap.ui.define([
 		assert.strictEqual(oType.oFormat, null);
 		assert.strictEqual(oType.bParseWithValues, true);
 		assert.strictEqual(oType.bUseInternalValues, true);
+		assert.strictEqual(oType.vEmptyTimezoneValue, null);
 
 		// cloning the type does not throw an error
 		// code under test
@@ -333,7 +345,10 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oType = new DateTimeWithTimezone({showTimezone : DateFormatTimezoneDisplay.Only});
 
-		assert.deepEqual(oType.parseValue(vValue, "string", [/*not relevant*/]), [undefined, null]);
+		oType.vEmptyTimezoneValue = "~emptyTimezoneValue";
+
+		assert.deepEqual(oType.parseValue(vValue, "string", [/*not relevant*/]),
+			[undefined, "~emptyTimezoneValue"]);
 	});
 });
 
@@ -390,6 +405,7 @@ sap.ui.define([
 	QUnit.test("parseValue: to string", function (assert) {
 		var oFormat = {parse : function (){}},
 			oFormatMock = this.mock(oFormat),
+			aParsedDate = ["~timestamp", "~timezone"],
 			oType = new DateTimeWithTimezone(),
 			oTypeMock = this.mock(oType);
 
@@ -397,20 +413,20 @@ sap.ui.define([
 		this.mock(DateFormat).expects("getDateTimeWithTimezoneInstance")
 			.withExactArgs({})
 			.returns(oFormat);
-		oFormatMock.expects("parse").withExactArgs("~sValue", "~timezone").returns("~parsedDate");
+		oFormatMock.expects("parse").withExactArgs("~sValue", "~timezone").returns(aParsedDate);
 
 		// code under test
 		assert.strictEqual(oType.parseValue("~sValue", "~sourceType", ["~timestamp", "~timezone"]),
-			"~parsedDate");
+			aParsedDate);
 
 		assert.strictEqual(oType.oFormat, oFormat);
 
 		oTypeMock.expects("getPrimitiveType").withExactArgs("~sourceType").returns("string");
-		oFormatMock.expects("parse").withExactArgs("~sValue", "~timezone").returns("~parsedDate");
+		oFormatMock.expects("parse").withExactArgs("~sValue", "~timezone").returns(aParsedDate);
 
 		// code under test
 		assert.strictEqual(oType.parseValue("~sValue", "~sourceType", ["~timestamp", "~timezone"]),
-			"~parsedDate");
+			aParsedDate);
 	});
 
 	//*********************************************************************************************
@@ -595,6 +611,30 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(oType.getPartsIgnoringMessages(), oFixture.aResult);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	oType : undefined, vValue : null
+}, {
+	oType : new DecimalType(), vValue : null
+}, {
+	oType : new StringType(), vValue : null
+}, {
+	oType : new StringType({parseKeepsEmptyString : "invalid"}), vValue : null
+}, {
+	oType : new StringType({parseKeepsEmptyString : true}), vValue : ""
+}, { // also support subclasses of sap.ui.model.odata.type.String
+	oType : new MyStringType({parseKeepsEmptyString : true}), vValue : ""
+}].forEach(function (oFixture, i) {
+	QUnit.test("processPartTypes, " + i, function (assert) {
+		var oType = new DateTimeWithTimezone();
+
+		// code under test
+		oType.processPartTypes([undefined, oFixture.oType]);
+
+		assert.strictEqual(oType.vEmptyTimezoneValue, oFixture.vValue);
 	});
 });
 });

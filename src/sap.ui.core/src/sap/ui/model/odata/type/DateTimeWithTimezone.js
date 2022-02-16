@@ -68,6 +68,7 @@ sap.ui.define([
 				this.oFormat = null;
 				this.bParseWithValues = true;
 				this.bUseInternalValues = true;
+				this.vEmptyTimezoneValue = null;
 
 				// must not overwrite setConstraints and setFormatOptions on prototype as they are
 				// called in SimpleType constructor
@@ -272,7 +273,7 @@ sap.ui.define([
 			case "string":
 				if (!vValue) {
 					if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
-						return [/*unchanged*/undefined, null];
+						return [/*unchanged*/undefined, this.vEmptyTimezoneValue];
 					}
 
 					return [null, /*unchanged*/undefined];
@@ -287,6 +288,27 @@ sap.ui.define([
 			default:
 				throw new ParseException("Don't know how to parse " + this.getName() + " from "
 					+ sSourceType);
+		}
+	};
+
+	/**
+	 * Processes the types of the parts of this composite type. Sets the parse result for an
+	 * empty time zone input to the empty string in case the string type of the time zone part
+	 * requires this.
+	 *
+	 * @param {sap.ui.model.SimpleType[]} aPartTypes Types of the composite binding's parts
+	 *
+	 * @override sap.ui.model.CompositeType#processPartTypes
+	 * @protected
+	 * @since 1.100.0
+	 */
+	DateTimeWithTimezone.prototype.processPartTypes = function (aPartTypes) {
+		var oTimezoneType = aPartTypes[1];
+
+		if (oTimezoneType
+				&& oTimezoneType.isA("sap.ui.model.odata.type.String")
+				&& oTimezoneType.getFormatOptions().parseKeepsEmptyString === true) {
+			this.vEmptyTimezoneValue = "";
 		}
 	};
 

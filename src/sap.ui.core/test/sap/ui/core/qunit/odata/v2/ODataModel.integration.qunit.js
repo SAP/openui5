@@ -34,6 +34,7 @@ sap.ui.define([
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		sDefaultTimezone = sap.ui.getCore().getConfiguration().getTimezone(),
 		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
 		NO_CONTENT = {/*204 no content*/},
 		sODataMessageParserClassName = "sap.ui.model.odata.ODataMessageParser",
@@ -470,6 +471,8 @@ sap.ui.define([
 			}
 			// reset the language
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			// reset the time zone
+			sap.ui.getCore().getConfiguration().setTimezone(sDefaultTimezone);
 		},
 
 		/**
@@ -7615,35 +7618,33 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// JIRA: CPOUI5MODELS-752
 	QUnit.test("Messages: sap.ui.model.odata.type.DateTimeWithTimezone", function (assert) {
 		var oDateWarning = this.createResponseMessage("DateTime", "Foo", "warning"),
-			oModel = createSpecialCasesModel(),
+			oModel = createSpecialCasesModel({
+				defaultBindingMode : BindingMode.TwoWay
+			}),
 			sView = '\
 <FlexBox id="objectPage" binding="{/DateTimeWithTimezoneSet(\'1\')}">\
-	<Input id="Hide" value="{\
+	<Input id="hide" value="{\
 		formatOptions : {showTimezone : \'Hide\'},\
-		mode : \'TwoWay\',\
 		parts : [\
 			{path : \'DateTime\', parameters : {useUndefinedIfUnresolved : true}},\
 			{path : \'TimezoneID\', parameters : {useUndefinedIfUnresolved : true}}\
 		],\
 		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
-	<Input id="Only" value="{\
+	<Input id="only" value="{\
 		formatOptions : {showTimezone : \'Only\'},\
-		mode : \'TwoWay\',\
 		parts : [\
 			{path : \'DateTime\', parameters : {useUndefinedIfUnresolved : true}},\
 			{path : \'TimezoneID\', parameters : {useUndefinedIfUnresolved : true}}\
 		],\
 		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
-	<Input id="Show" value="{\
+	<Input id="show" value="{\
 		formatOptions : {showTimezone : \'Show\'},\
-		mode : \'TwoWay\',\
 		parts : [\
 			{path : \'DateTime\', parameters : {useUndefinedIfUnresolved : true}},\
 			{path : \'TimezoneID\', parameters : {useUndefinedIfUnresolved : true}}\
 		],\
 		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
-	<Input id="NoFormatOption" value="{\
-		mode : \'TwoWay\',\
+	<Input id="noFormatOption" value="{\
 		parts : [\
 			{path : \'DateTime\', parameters : {useUndefinedIfUnresolved : true}},\
 			{path : \'TimezoneID\', parameters : {useUndefinedIfUnresolved : true}}\
@@ -7658,15 +7659,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				ID : "1",
 				TimezoneID : "America/New_York"
 			}, {"sap-message" : getMessageHeader(oDateWarning)})
-			.expectValue("Hide", "Jan 17, 2022, 4:54:48 AM")
-			.expectValue("Only", "America/New_York")
-			.expectValue("Show", "Jan 17, 2022, 4:54:48 AM America/New_York")
-			.expectValue("NoFormatOption", "Jan 17, 2022, 4:54:48 AM America/New_York")
+			.expectValue("hide", "Jan 17, 2022, 4:54:48 AM")
+			.expectValue("only", "America/New_York")
+			.expectValue("show", "Jan 17, 2022, 4:54:48 AM America/New_York")
+			.expectValue("noFormatOption", "Jan 17, 2022, 4:54:48 AM America/New_York")
 			.expectMessage(oDateWarning, "/DateTimeWithTimezoneSet('1')/")
-			.expectValueState("Hide", "Warning", "Foo")
-			.expectValueState("Only", "None", "")
-			.expectValueState("Show", "Warning", "Foo")
-			.expectValueState("NoFormatOption", "Warning", "Foo");
+			.expectValueState("hide", "Warning", "Foo")
+			.expectValueState("only", "None", "")
+			.expectValueState("show", "Warning", "Foo")
+			.expectValueState("noFormatOption", "Warning", "Foo");
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
@@ -7678,15 +7679,77 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					TimezoneID : "America/New_York"
 				}, {"sap-message" : getMessageHeader(oTimezoneWarning)})
 				.expectMessage(oTimezoneWarning, "/DateTimeWithTimezoneSet('1')/", undefined, true)
-				.expectValueState("Hide", "None", "")
-				.expectValueState("Only", "Warning", "Bar")
-				.expectValueState("Show", "Warning", "Bar")
-				.expectValueState("NoFormatOption", "Warning", "Bar");
+				.expectValueState("hide", "None", "")
+				.expectValueState("only", "Warning", "Bar")
+				.expectValueState("show", "Warning", "Bar")
+				.expectValueState("noFormatOption", "Warning", "Bar");
 
 			// code under test
 			oModel.refresh();
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: DateTimeWithTimezone type parses empty input for time zone to empty string instead
+	// of null if the corresponding part has format option parseKeepsEmptyString.
+	// JIRA: CPOUI5MODELS-858
+	QUnit.test("Empty string: sap.ui.model.odata.type.DateTimeWithTimezone", function (assert) {
+		var oModel = createSpecialCasesModel({
+				defaultBindingMode : BindingMode.TwoWay
+			}),
+			sView = '\
+<FlexBox id="objectPage" binding="{/DateTimeWithTimezoneSet(\'1\')}">\
+	<Input id="only" value="{\
+		formatOptions : {showTimezone : \'Only\'},\
+		parts : [\
+			{path : \'DateTime\', parameters : {useUndefinedIfUnresolved : true}},\
+			{\
+				constraints : {nullable : false},\
+				formatOptions : {parseKeepsEmptyString : true},\
+				parameters : {useUndefinedIfUnresolved : true},\
+				path : \'TimezoneID\',\
+				type : \'sap.ui.model.odata.type.String\'\
+			}\
+		],\
+		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
+</FlexBox>',
+		that = this;
+
+		sap.ui.getCore().getConfiguration().setTimezone("Europe/London");
+
+		this.expectHeadRequest()
+			.expectRequest("DateTimeWithTimezoneSet('1')", {
+				DateTime : new Date(1642413288000),
+				ID : "1",
+				TimezoneID : ""
+			})
+			.expectValue("only", "Europe/London");
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectValue("only", "America/New_York");
+
+			// code under test
+			that.oView.byId("only").setValue("America/New_York");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oModel.getProperty("/DateTimeWithTimezoneSet('1')/TimezoneID"),
+				"America/New_York");
+
+			that.expectValue("only", "Europe/London")
+				.expectValue("only", "Europe/London")
+				.expectValueState("only", "None", "");
+
+			// code under test
+			that.oView.byId("only").setValue("");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oModel.getProperty("/DateTimeWithTimezoneSet('1')/TimezoneID"),
+				"", "time zone value in model is empty string, not null");
 		});
 	});
 
