@@ -3468,4 +3468,33 @@ sap.ui.define([
 			done();
 		}, 1000);
 	});
+
+	QUnit.test("Clone button tooltip not anounced, when control used in List based conrols", function (assert) {
+
+		//Arrange
+		var oOtb = new OverflowToolbar({
+			content: [
+				new Button({
+					text: "Test Button",
+					layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow})
+				}),
+				new Button({
+					text: "Test Button Without Announcement",
+					layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow})
+				})
+			],
+			width: "200px"
+		}),
+		oTable = new sap.m.Table({
+			columns: [new sap.m.Column({})],
+			items: [new sap.m.ColumnListItem({ cells: [oOtb]})]
+		});
+
+		//Act
+		oTable.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//Assert
+		assert.equal(oTable.getItems()[0].getContentAnnouncement(), "Test Button More", "here");
+	});
 });
