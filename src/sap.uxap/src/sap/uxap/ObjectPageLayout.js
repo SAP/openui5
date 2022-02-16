@@ -2015,8 +2015,6 @@ sap.ui.define([
 
 		this._applyUxRules(true);
 
-		this._requestAdjustLayout(true);
-
 		/* reset the selected section,
 		 as the previously selected section may not be available anymore,
 		 as it might have been deleted, or emptied, or set to hidden in the previous step */
@@ -2030,12 +2028,19 @@ sap.ui.define([
 				this._setCurrentTabSection(oSelectedSection);
 				this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oSelectedSection);
 			}
-			this._oLazyLoading.doLazyLoading();
-			// if the current scroll position is not at the selected section OR the ScrollEnablement is still scrolling due to an animation
-			if (!this._isClosestScrolledSection(sSelectedSectionId) || this._oScroller._$Container.is(":animated")) {
-				// then change the selection to match the correct section
-				this.scrollToSection(sSelectedSectionId, null, 0, false, true /* redirect scroll */);
-			}
+			this._requestAdjustLayout(true)
+				.then(function (bSuccess) { // scrolling must be done after the layout adjustment is done (so the latest section positions are determined)
+					if (bSuccess) {
+						this._oLazyLoading.doLazyLoading();
+					}
+					this._adjustSelectedSectionByUXRules(); //section may have changed again from the app before the promise completed => ensure adjustment
+					sSelectedSectionId = this.getSelectedSection();
+					// if the current scroll position is not at the selected section OR the ScrollEnablement is still scrolling due to an animation
+					if (!this._isClosestScrolledSection(sSelectedSectionId) || this._oScroller._$Container.is(":animated")) {
+						// then change the selection to match the correct section
+						this.scrollToSection(sSelectedSectionId, null, 0, false, true /* redirect scroll */);
+					}
+				}.bind(this));
 		}
 	};
 
@@ -2664,11 +2669,6 @@ sap.ui.define([
 
 		this._setSectionInfoIsDirty(false);
 
-		// if a scroll event was fired *before* the delayed execution of <code>_updateScreenHeightSectionBasesAndSpacer</code>
-		// => wrong section may have been selected in <code>_updateSelectionOnScroll</code>
-		// => update the selection using the newly updated DOM positions and the current scrollTop
-		this._updateSelectionOnScroll(this._$opWrapper.scrollTop());
-
 		return true; // return success flag
 	};
 
@@ -3002,9 +3002,9 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onUpdateContentSize = function (oEvent) {
-		var oSize = oEvent.size;
-
-		this.iContentHeight = oSize.height;
+		var iScrollTop,
+			oSize = oEvent.size,
+			oOldSize = oEvent.oldSize;
 
 		if (oSize.height === 0 || oSize.width === 0) {
 			Log.info("ObjectPageLayout :: not triggering calculations if height or width is 0");
@@ -3017,18 +3017,17 @@ sap.ui.define([
 
 		this._adjustHeaderHeights();
 		this._requestAdjustLayout(true); // call adjust layout to calculate the new section sizes
-	};
 
-	ObjectPageLayout.prototype.triggerPendingLayoutUpdates = function () {
-		if (this._hasPendingLayoutUpdate()) {
-			this._requestAdjustLayout(true);
+		if (oOldSize.height > 0 || oOldSize.width > 0) {
+			// if the content that changed its height was *above* the current scroll position =>
+			// then the current scroll position updated respectively and => triggered a scroll event =>
+			// a new section may become selected during that scroll;
+			// problem if this happened BEFORE _requestAdjustLayout executed => wrong section may have been selected
+			// solution implemented bellow is to ensure that scroll handler is called with the latest scrollTop => we ensure the correct section is selected
+			iScrollTop = this._$opWrapper.scrollTop();
+			this._updateSelectionOnScroll(iScrollTop);
 		}
-	};
 
-	ObjectPageLayout.prototype._hasPendingLayoutUpdate = function () {
-		return this._oLayoutTask && this._oLayoutTask.isPending()
-		// pending resize notification that will trigger the due layout update on resize
-		|| (this._$contentContainer.length && this._$contentContainer.get(0).offsetHeight !== this.iContentHeight);
 	};
 
 	/**
@@ -4219,9 +4218,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.triggerPendingLayoutUpdates();
-
-		var iScrollTop = this._$opWrapper.scrollTop(),
+		var iScrollTop = this._oScroller.getScrollTop(),
 			sScrolledSubSectionId = this._getClosestScrolledSectionBaseId(
 				this._oScroller.getScrollTop(), this.iScreenHeight, true /* subSections only */),
 			iScrollTopWithinScrolledSubSection;
