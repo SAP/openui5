@@ -231,6 +231,43 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_ListCard_maxItems_Parameters_Binding = {
+		"sap.app": {
+			"id": "test.cards.list.card4"
+		},
+		"sap.card": {
+			"configuration": {
+				"parameters": {
+					"max": {
+						"value": 2
+					}
+				}
+			},
+			"type": "List",
+			"header": {
+				"title": "L3 Request list content Card"
+			},
+			"content": {
+				"data": {
+					"json": [{
+						"Name": "Notebook Basic 15"
+					},
+						{
+							"Name": "Notebook Basic 17"
+						},
+						{
+							"Name": "Notebook Basic 18"
+						}
+					]
+				},
+				"maxItems": "{parameters>/max/value}",
+				"item": {
+					"title": "{Name}"
+				}
+			}
+		}
+	};
+
 	var oManifest_ListCard_BulletMicrochart = {
 		"sap.app": {
 			"id": "oManifest_ListCard_BulletMicrochart"
@@ -689,6 +726,24 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest_ListCard_maxItems_Parameters);
+	});
+
+	QUnit.test("Using maxItems set through binding", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
+			assert.ok(iNumberOfItems === 2, "After Manifest is processed maxItems should be a number");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_ListCard_maxItems_Parameters_Binding);
 	});
 
 	QUnit.test("Icon properties", function (assert) {

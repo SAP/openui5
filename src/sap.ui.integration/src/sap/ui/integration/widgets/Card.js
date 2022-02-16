@@ -2324,7 +2324,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.getContentPageSize = function (oContentConfig) {
-		var iMaxItems = parseInt((oContentConfig || {}).maxItems) || 0,
+		var iMaxItems = parseInt(BindingResolver.resolveValue(oContentConfig, this).maxItems) || 0,
 			oFooter = this.getAggregation("_footer"),
 			oPaginator;
 
