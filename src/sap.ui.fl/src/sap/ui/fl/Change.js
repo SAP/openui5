@@ -85,9 +85,11 @@ sap.ui.define([
 	Change.applyState = {
 		INITIAL: 0,
 		APPLYING: 1,
-		APPLY_FINISHED: 2,
+		APPLY_FINISHED: 2, // Deprecated
 		REVERTING: 3,
-		REVERT_FINISHED: 4
+		REVERT_FINISHED: 4,
+		APPLY_SUCCESSFUL: 5,
+		APPLY_FAILED: 6
 	};
 
 	Change.operations = {
@@ -152,10 +154,22 @@ sap.ui.define([
 		this.setApplyState(Change.applyState.APPLYING);
 	};
 
-	Change.prototype.markFinished = function(oResult) {
+	// Deprecated, use markSuccessful or markFailed instead
+	Change.prototype.markFinished = function(oResult, bApplySuccessful) {
 		this._aQueuedProcesses.pop();
 		this._resolveChangeProcessingPromiseWithError(Change.operations.APPLY, oResult);
-		this.setApplyState(Change.applyState.APPLY_FINISHED);
+		var sNewApplyState = bApplySuccessful !== false
+			? Change.applyState.APPLY_SUCCESSFUL
+			: Change.applyState.APPLY_FAILED;
+		this.setApplyState(sNewApplyState);
+	};
+
+	Change.prototype.markSuccessful = function(oResult) {
+		this.markFinished(oResult, true);
+	};
+
+	Change.prototype.markFailed = function(oResult) {
+		this.markFinished(oResult, false);
 	};
 
 	Change.prototype.startReverting = function() {
@@ -172,8 +186,16 @@ sap.ui.define([
 		return this.getApplyState() === Change.applyState.APPLYING;
 	};
 
+	Change.prototype.isSuccessfullyApplied = function() {
+		return this.getApplyState() === Change.applyState.APPLY_SUCCESSFUL;
+	};
+
+	Change.prototype.hasApplyProcessFailed = function() {
+		return this.getApplyState() === Change.applyState.APPLY_FAILED;
+	};
+
 	Change.prototype.isApplyProcessFinished = function() {
-		return this.getApplyState() === Change.applyState.APPLY_FINISHED;
+		return this.isSuccessfullyApplied() || this.hasApplyProcessFailed();
 	};
 
 	Change.prototype.hasRevertProcessStarted = function() {

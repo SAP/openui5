@@ -191,6 +191,27 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when (rename) changes have failed during the apply process", function(assert) {
+			var oFailedChange;
+			return loadChangesFromPath("renameChanges.json", assert, 9)
+				.then(function (aLoadedChanges) {
+					this.aChanges = aLoadedChanges;
+					return applyChangeSequentially(aLoadedChanges);
+				}.bind(this))
+				.then(function () {
+					// Get one of the changes that would normally be condensed
+					oFailedChange = this.aChanges.find(function (oChange) {
+						return oChange.getFileName() === "id_1576490280160_42_renameField";
+					});
+					oFailedChange.markFailed();
+					return Condenser.condense(oAppComponent, this.aChanges);
+				}.bind(this))
+				.then(function (aRemainingChanges) {
+					assert.ok(aRemainingChanges.includes(oFailedChange), "then the failed change is not condensed");
+					assert.strictEqual(aRemainingChanges.length, 4, "then there is one more remaining change");
+				});
+		});
+
 		QUnit.test("multiple hide changes on the same control", function(assert) {
 			return loadApplyCondenseChanges.call(this, "hideChanges.json", 4, 1, assert).then(function(aRemainingChanges) {
 				assert.equal(aRemainingChanges[0].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
@@ -433,6 +454,10 @@ sap.ui.define([
 			return loadApplyCondenseChanges.call(this, "moveBetweenTwoGroups.json", 19, 0, assert);
 		});
 
+		/* Failed changes should no longer be condensed because the missing revert data can break the condenser depending
+		on the implementation of getCondenserInfo
+		Once already applied changes are generally deleted by the condenser, this test can be reenabled
+
 		QUnit.test("add changes", function(assert) {
 			return loadApplyCondenseChanges.call(this, "addChanges.json", 6, 3, assert).then(function() {
 				// a second addFields is 'not applicable' and can't be reverted
@@ -452,7 +477,7 @@ sap.ui.define([
 				assert.equal(aFirstGroupElements[4].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 4) + sCompanyCodeFieldId);
 				assert.equal(aFirstGroupElements[5].getId(), getControlSelectorId(sComplexProperty03FieldId), getMessage(sAffectedControlMgs, undefined, 5) + sComplexProperty03FieldId);
 			}.bind(this));
-		});
+		}); */
 
 		[[], [0, 1, 2]].forEach(function(aBackendChanges) {
 			var sName = "add / move within one group";

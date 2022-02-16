@@ -67,7 +67,7 @@ sap.ui.define([
 		})
 		.then(_waitForApplyIfNecessary.bind(null, oChange))
 		.then(function() {
-			if (oChange.isApplyProcessFinished()) {
+			if (oChange.isSuccessfullyApplied()) {
 				oChange.startReverting();
 				return oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
 			}

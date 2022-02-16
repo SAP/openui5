@@ -95,21 +95,36 @@ sap.ui.define([
 
 		QUnit.test("Change.applyState", function(assert) {
 			var oChange = new Change(this.oChangeDef);
-			assert.equal(oChange.getProperty("applyState"), Change.applyState.INITIAL, "initially the state is INITIAL");
+			assert.strictEqual(oChange.getProperty("applyState"), Change.applyState.INITIAL, "initially the state is INITIAL");
 
 			oChange.setQueuedForApply();
 			oChange.setQueuedForApply();
 			oChange.startApplying();
-			assert.equal(oChange._aQueuedProcesses.length, 1, "APPLY operation only added once");
-			assert.equal(oChange.getProperty("applyState"), Change.applyState.APPLYING, "the applyState got changed correctly");
+			assert.strictEqual(oChange._aQueuedProcesses.length, 1, "APPLY operation only added once");
+			assert.strictEqual(oChange.getProperty("applyState"), Change.applyState.APPLYING, "the applyState got changed correctly");
 			assert.ok(oChange.hasApplyProcessStarted(), "the function returns the correct value");
 			assert.notOk(oChange.isCurrentProcessFinished());
 			assert.notOk(oChange.isQueuedForRevert());
 			assert.ok(oChange.isQueuedForApply());
 
+			oChange.markSuccessful();
+			assert.strictEqual(oChange.getProperty("applyState"), Change.applyState.APPLY_SUCCESSFUL, "the applyState got changed correctly");
+			assert.ok(oChange.isSuccessfullyApplied(), "the function returns the correct value");
+			assert.ok(oChange.isApplyProcessFinished(), "isApplyProcessFinished returns the correct value");
+			assert.ok(oChange.isCurrentProcessFinished());
+			assert.notOk(oChange.isQueuedForRevert());
+			assert.notOk(oChange.isQueuedForApply());
+
+			oChange.markFailed();
+			assert.strictEqual(oChange.getProperty("applyState"), Change.applyState.APPLY_FAILED, "the applyState got changed correctly");
+			assert.ok(oChange.hasApplyProcessFailed(), "the function returns the correct value");
+			assert.ok(oChange.isApplyProcessFinished(), "isApplyProcessFinished returns the correct value");
+			assert.ok(oChange.isCurrentProcessFinished());
+			assert.notOk(oChange.isQueuedForRevert());
+			assert.notOk(oChange.isQueuedForApply());
+
 			oChange.markFinished();
-			assert.equal(oChange.getProperty("applyState"), Change.applyState.APPLY_FINISHED, "the applyState got changed correctly");
-			assert.ok(oChange.isApplyProcessFinished(), "the function returns the correct value");
+			assert.strictEqual(oChange.getProperty("applyState"), Change.applyState.APPLY_SUCCESSFUL, "the legacy setter is working");
 			assert.ok(oChange.isCurrentProcessFinished());
 			assert.notOk(oChange.isQueuedForRevert());
 			assert.notOk(oChange.isQueuedForApply());
@@ -117,15 +132,15 @@ sap.ui.define([
 			oChange.setQueuedForRevert();
 			oChange.setQueuedForRevert();
 			oChange.startReverting();
-			assert.equal(oChange._aQueuedProcesses.length, 1, "REVERT operation only added once");
-			assert.equal(oChange.getProperty("applyState"), Change.applyState.REVERTING, "the applyState got changed correctly");
+			assert.strictEqual(oChange._aQueuedProcesses.length, 1, "REVERT operation only added once");
+			assert.strictEqual(oChange.getProperty("applyState"), Change.applyState.REVERTING, "the applyState got changed correctly");
 			assert.ok(oChange.hasRevertProcessStarted(), "the function returns the correct value");
 			assert.notOk(oChange.isCurrentProcessFinished());
 			assert.ok(oChange.isQueuedForRevert());
 			assert.notOk(oChange.isQueuedForApply());
 
 			oChange.markRevertFinished();
-			assert.equal(oChange.getProperty("applyState"), Change.applyState.REVERT_FINISHED, "the applyState got changed correctly");
+			assert.strictEqual(oChange.getProperty("applyState"), Change.applyState.REVERT_FINISHED, "the applyState got changed correctly");
 			assert.ok(oChange.isRevertProcessFinished(), "the function returns the correct value");
 			assert.ok(oChange.isCurrentProcessFinished());
 			assert.notOk(oChange.isQueuedForRevert());

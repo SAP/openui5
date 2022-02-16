@@ -334,9 +334,8 @@ sap.ui.define([
 						includeDirtyChanges: true
 					};
 					return PersistenceWriteAPI._getUIChanges(mPropertyBag).then(function(aChanges) {
-						assert.strictEqual(
-							aChanges[0].getApplyState(),
-							Change.applyState.APPLY_FINISHED,
+						assert.ok(
+							aChanges[0].isSuccessfullyApplied(),
 							"then the change keeps its apply state"
 						);
 						assert.notStrictEqual(

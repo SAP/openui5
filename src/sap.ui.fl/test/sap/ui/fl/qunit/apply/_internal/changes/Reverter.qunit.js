@@ -114,7 +114,7 @@ sap.ui.define([
 
 		QUnit.test("with a change currently being applied and apply working fine", function(assert) {
 			sandbox.stub(this.oAppliedChange, "hasApplyProcessStarted").returns(true);
-			var oIsApplyFinishedStub = sandbox.stub(this.oAppliedChange, "isApplyProcessFinished").returns(false);
+			var oIsApplyFinishedStub = sandbox.stub(this.oAppliedChange, "isSuccessfullyApplied").returns(false);
 			var oAddPromiseStub = sandbox.stub(this.oAppliedChange, "addPromiseForApplyProcessing").callsFake(function() {
 				oIsApplyFinishedStub.returns(true);
 				return Promise.resolve();
@@ -130,7 +130,7 @@ sap.ui.define([
 		QUnit.test("with a change currently being applied and apply throwing an error", function(assert) {
 			var sErrorMessage = "myError";
 			sandbox.stub(this.oChange, "hasApplyProcessStarted").returns(true);
-			sandbox.stub(this.oChange, "isApplyProcessFinished").returns(false);
+			sandbox.stub(this.oChange, "isSuccessfullyApplied").returns(false);
 			var oAddPromiseStub = sandbox.stub(this.oChange, "addPromiseForApplyProcessing").resolves({
 				error: sErrorMessage
 			});
@@ -150,6 +150,16 @@ sap.ui.define([
 				assert.equal(this.oRevertChangeStub.callCount, 0, "the change handler was not called");
 				assert.equal(this.oLogStub.callCount, 1, "an error was logged");
 				assert.ok(this.oLogStub.lastCall.args[0].indexOf("Change was never applied") > -1, "the specific message was logged");
+			}.bind(this));
+		});
+
+		QUnit.test("with a failed change", function(assert) {
+			sandbox.stub(this.oChange, "isSuccessfullyApplied").returns(false);
+			return Reverter.revertChangeOnControl(this.oChange, this.oControl, this.mPropertyBag).then(function(bResult) {
+				assert.notOk(bResult, "the function returns false");
+				assert.ok(this.oRevertChangeStub.notCalled, "the change handler was not called");
+				assert.ok(this.oLogStub.calledOnce, "an error was logged");
+				assert.ok(this.oLogStub.lastCall.args[0].includes("Change was never applied"), "the specific message was logged");
 			}.bind(this));
 		});
 
