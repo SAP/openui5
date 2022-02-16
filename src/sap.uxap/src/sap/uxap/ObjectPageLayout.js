@@ -30,7 +30,6 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/events/F6Navigation",
 	"sap/ui/dom/getFirstEditableInput",
 	"sap/ui/core/theming/Parameters",
 	'sap/ui/dom/units/Rem'
@@ -61,7 +60,6 @@ sap.ui.define([
 	isEmptyObject,
 	merge,
 	KeyCodes,
-	F6Navigation,
 	getFirstEditableInput,
 	Parameters,
 	DomUnitsRem
@@ -1135,22 +1133,7 @@ sap.ui.define([
 
 		this._ensureCorrectParentHeight();
 
-		if (this._$sectionsContainer) {
-			this._$sectionsContainer.off("focusout");
-			this._$sectionsContainer.off("focusin");
-		}
-
 		this._cacheDomElements();
-
-		if (this._$sectionsContainer) {
-			this._$sectionsContainer.on("focusin", function () {
-				this._skipToNextFastGroup = true;
-			}.bind(this));
-
-			this._$sectionsContainer.on("focusout", function () {
-				this._skipToNextFastGroup = false;
-			}.bind(this));
-		}
 
 		if (this._hasDynamicTitle()) {
 			this.addStyleClass("sapUxAPObjectPageHasDynamicTitle");
@@ -1576,7 +1559,6 @@ sap.ui.define([
 		this._$stickyHeaderContent = this.$("stickyHeaderContent");
 		this._$contentContainer = this.$("scroll");
 		this._$sectionsContainer = this.$("sectionsContainer");
-		this._$skipFastGroupAnchor = this.$("skipFastGroupAnchor");
 
 		// BCP 1870201875: explicitly set the latest scrollContainer dom ref
 		// (as the scroller obtains the latest scrollContainer dom ref in a LATER hook, which fails in conditions detailed in BCP 1870201875)
@@ -1829,37 +1811,6 @@ sap.ui.define([
 		}
 		this.setProperty("useIconTabBar", bValue);
 		return this;
-	};
-
-	/**
-	 * Handler for F6
-	 *
-	 * @param {Object} oEvent - The event object
-	 */
-	ObjectPageLayout.prototype.onsapskipforward = function(oEvent) {
-		if (this._skipToNextFastGroup) {
-			this._handleGroupNavigation(oEvent, true);
-		}
-	};
-
-	/**
-	 * Handler for Shift + F6
-	 *
-	 * @param {Object} oEvent - The event object
-	 */
-	ObjectPageLayout.prototype.onsapskipback = function(oEvent) {
-		if (this._skipToNextFastGroup) {
-			this._handleGroupNavigation(oEvent, false);
-		}
-	};
-
-	ObjectPageLayout.prototype._handleGroupNavigation = function (oEvent, bForward) {
-		var oSettings = {
-			target: bForward ? this._$skipFastGroupAnchor[0] : this._$sectionsContainer[0]
-		};
-
-		oEvent.type = "keydown";
-		F6Navigation.handleF6GroupNavigation(oEvent, oSettings);
 	};
 
 	/**

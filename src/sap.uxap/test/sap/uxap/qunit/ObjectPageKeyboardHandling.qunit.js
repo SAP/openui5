@@ -37,39 +37,6 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 		}
 	});
 
-	QUnit.test("F6 - focus should to the first element in the tab chain of the next F6-group, no matter where it resides within the List of Sections", function (assert) {
-		// Arrange
-		var done = assert.async(),
-			oObjectPage = this.oObjectPage,
-			$oExpectedTarget,
-			oF6NavigationStub,
-			fnF6NavigationStub = function (oEvent, oSettings) {
-				// Assert
-				assert.strictEqual(oSettings.target, $oExpectedTarget[0],
-					"The correct dom ref is given for starting point, skipping the sections of OP");
-
-				// Clean up
-				oF6NavigationStub.restore(); // restore explicitly and ignore further calls
-				done();
-			},
-			fnOnDomReady = function () {
-				// Arrange
-				// _$skipFastGroupAnchor the DOMNode which should be used as
-				// starting point to find the next DOMNode in the F6 chain.
-				$oExpectedTarget = oObjectPage._$skipFastGroupAnchor;
-
-				// Act
-				oObjectPage.getSections()[0].getDomRef().focus();
-				QUtils.triggerKeydown(oObjectPage.getDomRef(), KeyCodes.F6);
-			};
-
-		// Arrange
-		oF6NavigationStub = this.stub(F6Navigation, "handleF6GroupNavigation").callsFake(fnF6NavigationStub);
-		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
-		this.oView.placeAt("qunit-fixture");
-		Core.applyChanges();
-	});
-
 	QUnit.test("F6/SHIFT+F6 - order should be correct", function (assert) {
 		assert.expect(10); //number of assertions
 		// Arrange
