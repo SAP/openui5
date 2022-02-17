@@ -2034,8 +2034,9 @@ sap.ui.define([
 
 		/**
 		 * Updates the old value with the given new value for the selected properties (see
-		 * {@link #updateExisting}). If no selected properties are given or if "*" is contained in
-		 * the selected properties, then all properties are selected. Fires change events for all
+		 * {@link #updateExisting}). If a property is missing in the new value, the old value
+		 * remains unchanged. If no selected properties are given or if "*" is contained in the
+		 * selected properties, then all properties are selected. Fires change events for all
 		 * changed properties.
 		 *
 		 * Restrictions:
@@ -2073,7 +2074,9 @@ sap.ui.define([
 					var vSourceProperty = oSource[sSegment],
 						vTargetProperty = oTarget[sSegment];
 
-					if (Array.isArray(vSourceProperty)) {
+					if (!(sSegment in oSource)) {
+						return false; // ignore missing property
+					} else if (Array.isArray(vSourceProperty)) {
 						// copy complete collection; no change events as long as collection-valued
 						// properties are not supported
 						oTarget[sSegment] = vSourceProperty;

@@ -7223,12 +7223,14 @@ sap.ui.define([
 <Table id="table" items="{/SalesOrderList}">\
 	<Input id="note" value="{Note}"/>\
 	<Text id="companyName" binding="{SO_2_BP}" text="{CompanyName}"/>\
+	<Text id="buyerID" text="{BuyerID}"/>\
 </Table>',
 				that = this;
 
-			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+			this.expectRequest("SalesOrderList?$select=BuyerID,Note,SalesOrderID"
 					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100", {
 					value : [{
+						BuyerID : "23",
 						Note : "foo",
 						SalesOrderID : "42",
 						SO_2_BP : {
@@ -7238,16 +7240,19 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("note", ["foo"])
-				.expectChange("companyName", ["SAP"]);
+				.expectChange("companyName", ["SAP"])
+				.expectChange("buyerID", ["23"]);
 
 			return this.createView(assert, sView, oModel).then(function () {
 				var oTable = that.oView.byId("table");
 
-				that.expectChange("note", ["bar"])
-					.expectChange("note", ["baz", "foo"])
-					.expectChange("companyName", [null, "SAP"]);
+				that.expectChange("note", ["bar", "foo"])
+					.expectChange("companyName", [null, "SAP"])
+					.expectChange("buyerID", ["24", "23"])
+					.expectChange("note", ["baz"]);
 
-				oCreatedContext = oTable.getBinding("items").create({Note : "bar"}, bSkipRefresh);
+				oCreatedContext = oTable.getBinding("items")
+					.create({BuyerID : "24", Note : "bar"}, bSkipRefresh);
 				oTable.getItems()[0].getCells()[0].getBinding("value").setValue("baz");
 
 				return that.waitForChanges(assert);
@@ -7255,8 +7260,9 @@ sap.ui.define([
 				that.expectRequest({
 						method : "POST",
 						url : "SalesOrderList",
-						payload : {Note : "baz"}
+						payload : {BuyerID : "24", Note : "baz"}
 					}, {
+						// no BuyerID (JIRA: CPOUI5ODATAV4-1503)
 						Note : "from server",
 						SalesOrderID : "43"
 					})
@@ -7271,8 +7277,9 @@ sap.ui.define([
 							}
 						});
 				} else {
-					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID"
+					that.expectRequest("SalesOrderList('43')?$select=BuyerID,Note,SalesOrderID"
 							+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+							BuyerID : "24",
 							Note : "fresh from server",
 							SalesOrderID : "43",
 							SO_2_BP : {
@@ -7289,6 +7296,8 @@ sap.ui.define([
 					that.oModel.submitBatch("update"),
 					that.waitForChanges(assert)
 				]);
+			}).then(function () {
+				assert.strictEqual(oCreatedContext.getProperty("BuyerID"), "24");
 			});
 		});
 	});
@@ -12843,12 +12852,15 @@ sap.ui.define([
 	//
 	// Property annotations contribute to $select and do not cause a "Failed to drill-down".
 	// BCP: 2170245436
+	// Setting stream property to undefined leads to implicit value.
+	// BCP: 2280039562
 ["@mediaReadLink", "@odata.mediaReadLink"].forEach(function (sAnnotation) {
 	[undefined, null, "image/jpeg"].forEach(function (vMediaContentType) {
 		var sTitle = "stream property with " + sAnnotation + "=" + vMediaContentType;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oContext,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			oResponse = {},
 			sView = '\
 <FlexBox binding="{/Equipments(\'1\')/EQUIPMENT_2_PRODUCT}">\
@@ -12856,7 +12868,8 @@ sap.ui.define([
 	<Text id="contentType"\
 		text="{= JSON.stringify(%{ProductPicture/Picture@odata.mediaContentType}) }"/>\
 	<Text id="fooBar" text="{= %{SupplierIdentifier@foo.bar} }"/>\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
 		oResponse["Picture" + sAnnotation] = "ProductPicture('42')";
 		if (vMediaContentType !== undefined) {
@@ -12875,7 +12888,32 @@ sap.ui.define([
 			.expectChange("contentType", JSON.stringify(vMediaContentType))
 			.expectChange("fooBar", "The answer");
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			oContext = that.oView.byId("contentType").getBindingContext();
+
+			that.expectChange("url", null)
+				.expectRequest({
+					method : "PATCH",
+					// prefixed with container since Products is in a different metadata document
+					url : "com.sap.gateway.default.iwbep.tea_busi_product.v0001.Container%2F"
+						+ "Products(42)",
+					payload : {
+						ProductPicture : {
+							Picture : null
+						}
+					}
+				}, {/* response does not matter here */});
+
+			oContext.setProperty("ProductPicture/Picture", null);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("url", sTeaBusi + "ProductPicture('42')");
+
+			oContext.setProperty("ProductPicture/Picture", undefined, null);
+
+			return that.waitForChanges(assert);
+		});
 	});
 	});
 });
