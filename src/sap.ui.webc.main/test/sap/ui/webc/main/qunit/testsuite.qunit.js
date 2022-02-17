@@ -357,6 +357,14 @@ sap.ui.define(function() {
 				},
 				sinon: false,
 				group: "Designtime"
+			},
+			"designtime/Table": {
+				title: "QUnit Page for sap.ui.webc.main.Table design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.main","sap.ui.rta"]
+				},
+				sinon: false,
+				group: "Designtime"
 			}
 		}
 	};
