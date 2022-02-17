@@ -1178,7 +1178,8 @@
 			"sap.m.sample.Select2Columns",
 			"sap.m.sample.SelectWithIcons",
 			"sap.m.sample.SelectValueState",
-			"sap.m.sample.SelectWithWrappedItemText"
+			"sap.m.sample.SelectWithWrappedItemText",
+			"sap.m.sample.SelectChangeEvents"
 		  ]
 		},
 		{
@@ -2471,6 +2472,11 @@
 		  "id": "sap.m.sample.SelectWithIcons",
 		  "name": "Select - with icons",
 		  "description": "Illustrates the usage of a Select with icons"
+		},
+		{
+		  "id": "sap.m.sample.SelectChangeEvents",
+		  "name": "Select - Change Events",
+		  "description": "Demonstrates the use of 'change' and 'liveChange' events."
 		},
 		{
 		  "id": "sap.m.sample.SelectList",

@@ -465,6 +465,30 @@ function(
 								type: "sap.ui.core.Item"
 							}
 						}
+					},
+
+					/**
+					 * Fires when the user navigates through the <code>Select</code> items.
+					 * It's also fired on revert of the currently selected item.
+					 *
+					 * <b>Note:</b> Revert occurs in some of the following actions:
+					 * <ul>
+					 * 	<li>The user clicks outside of the <code>Select</code></li>
+					 * 	<li>The <i>Escape</i> key is pressed</li>
+					 * </ul>
+					 *
+					 * @since 1.100
+					 */
+					liveChange: {
+						parameters: {
+
+							/**
+							 * The selected item.
+							 */
+							selectedItem: {
+								type: "sap.ui.core.Item"
+							}
+						}
 					}
 				},
 				designtime: "sap/m/designtime/Select.designtime"
@@ -490,6 +514,9 @@ function(
 			}
 
 			if (oItem) {
+				if (this.getSelectedItemId() !== oItem.getId()) {
+					this.fireEvent("liveChange", {selectedItem: oItem});
+				}
 				this.setSelection(oItem);
 				this.setValue(oItem.getText());
 				this.scrollToItem(oItem);
@@ -599,6 +626,7 @@ function(
 			var oItem = this.getSelectedItem();
 
 			if (this._oSelectionOnFocus !== oItem) {
+				this.fireEvent("liveChange", {selectedItem: this._oSelectionOnFocus});
 				this.setSelection(this._oSelectionOnFocus);
 				this.setValue(this._getSelectedItemText());
 			}
@@ -1517,7 +1545,7 @@ function(
 		};
 
 		/**
-		 * Handles the <code>selectionChange</code> event on the <code>SelectList</code>.
+		 * Handles the <code>liveChange</code> event on the <code>SelectList</code>.
 		 *
 		 * @param {sap.ui.base.Event} oControlEvent
 		 * @private
