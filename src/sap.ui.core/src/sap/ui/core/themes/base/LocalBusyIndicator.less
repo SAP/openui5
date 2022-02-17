@@ -49,6 +49,7 @@
 }
 
 //  Make sure blocked layers are not "nested", and in case of busy indicators the animations do not overlay each other
+[__is-busy] .sapUiLocalBusy .sapUiBlockLayer,
 .sapUiLocalBusy .sapUiLocalBusy .sapUiBlockLayer {
 	display: none;
 }
@@ -276,3 +277,16 @@ html[data-sap-ui-animation-mode="minimal"] {
 @keyframes sapUiBusyAnimationSmallBackground { .mixin-small-background-animation-frames; }
 
 @keyframes sapUiBusyAnimationSmallShadow { .mixin-small-shadow-animation-frames; }
+
+
+// #### RETROFIT ####
+
+:root {
+	--ui5_web_components_busy_indicator_display: flex;
+	--ui5_web_components_busy_indicator_background-color: @_sap_ui_core_LocalBusyIndicator_Background;
+}
+
+//  Make sure blocked layers are not "nested", and in case of busy indicators the animations do not overlay each other
+.sapUiLocalBusy {
+	--ui5_web_components_busy_indicator_display: none;
+}

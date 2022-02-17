@@ -112,7 +112,7 @@ sap.ui.define([
 			}
 
 			var aAttributes = oDomRef.getAttributeNames();
-			var aSkipList = ["id", "data-sap-ui", "style", "class"];
+			var aSkipList = ["id", "data-sap-ui", "style", "class", "__is-busy"];
 			aAttributes.forEach(function(sAttr) {
 				if (aSkipList.indexOf(sAttr) !== -1) {
 					return; // Skip attributes, set by the framework

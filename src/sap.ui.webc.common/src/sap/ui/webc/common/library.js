@@ -10,11 +10,13 @@ sap.ui.define([
 		"sap/ui/base/DataType",
 		"./Icons",
 		"./thirdparty/base/features/OpenUI5Support",
+		"./thirdparty/base/features/OpenUI5Enablement",
 		"./thirdparty/base/AssetRegistry",
 		"./thirdparty/base/CustomElementsScope",
-		"./thirdparty/base/CSP"
+		"./thirdparty/base/CSP",
+		"./thirdparty/base/UI5Element"
 	],
-	function(coreLibrary, DataType, Icons, OpenUI5Support, AssetRegistry, CustomElementsScope, CSP) {
+	function(coreLibrary, DataType, Icons, OpenUI5Support, OpenUI5Enablement, AssetRegistry, CustomElementsScope, CSP, UI5Element) {
 
 	"use strict";
 
@@ -66,6 +68,8 @@ sap.ui.define([
 	CSP.setPreloadLinks(false);
 	CSP.setPackageCSSRoot("@ui5/webcomponents-base", sap.ui.require.toUrl("sap/ui/webc/common/thirdparty/base/css/"));
 	CSP.setPackageCSSRoot("@ui5/webcomponents-theming", sap.ui.require.toUrl("sap/ui/webc/common/thirdparty/theming/css/"));
+
+	OpenUI5Enablement.enrichBusyIndicatorSettings(UI5Element);
 
 	return thisLib;
 });
