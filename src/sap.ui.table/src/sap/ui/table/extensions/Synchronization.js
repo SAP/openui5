@@ -236,7 +236,7 @@ sap.ui.define([
 	/**
 	 * Synchronizes the layout information.
 	 *
-	 * @param {{top:number, headerHeight:number, contentHeight:number}} mLayoutData The layout information.
+	 * @param {{top: number, headerHeight: number, contentHeight: number}} mLayoutData The layout information.
 	 */
 	SyncExtension.prototype.syncLayout = function(mLayoutData) {
 		this.callInterfaceHook("layout", arguments);

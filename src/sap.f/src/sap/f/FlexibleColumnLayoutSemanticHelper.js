@@ -390,7 +390,7 @@ sap.ui.define([
 	/**
 	 * Returns information about the current layout
 	 * @param {sap.f.LayoutType} sLayout
-	 * @returns {{layout: string, maxColumnsCount: number, columnsSizes: {beginColumn, midColumn, endColumn}, columnsVisibility: {beginColumn, midColumn, endColumn}, isFullScreen, isLogicallyFullScreen, actionButtonsInfo: {midColumn, endColumn}}}
+	 * @returns {{layout: string, maxColumnsCount: number, columnsSizes: {beginColumn: number, midColumn: number, endColumn: number}, columnsVisibility: {beginColumn: boolean, midColumn: boolean, endColumn: boolean}, isFullScreen: boolean, isLogicallyFullScreen: boolean, actionButtonsInfo: {midColumn: object, endColumn: object}}}
 	 * @private
 	 */
 	FlexibleColumnLayoutSemanticHelper.prototype._getUIStateForLayout = function (sLayout) {

@@ -122,7 +122,7 @@ sap.ui.define([
 		 * Create an instance of the DynamicDateFormat.
 		 *
 		 * @param {object} [oFormatOptions] Object which defines the format options
-		 * @param {{sap.ui.core.Locale}} [oLocale] Locale to get the formatter for
+		 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 		 * @return {sap.m.DynamicDateFormat} Instance of the DynamicDateFormat
 		 * @private
 		 */
