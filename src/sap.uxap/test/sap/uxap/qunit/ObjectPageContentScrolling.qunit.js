@@ -105,7 +105,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			fnDone = assert.async();
 
 		oObjectPage.attachSectionChange(function(oEvent) {
-			assert.equal(oEvent.getParameter("section").getId(), oSection.getId(), "sectionChange event is fired upon scrolling to a specified section");
+				assert.equal(oEvent.getParameter("section").getId(), oSection.getId(), "sectionChange event is fired upon scrolling to a specified section");
 			fnDone();
 		});
 
