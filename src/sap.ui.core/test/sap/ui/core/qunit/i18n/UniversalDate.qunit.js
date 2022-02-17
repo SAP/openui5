@@ -545,6 +545,24 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("invalid date object", function (assert) {
+		this.dateSpy.restore();
+
+		var oInvalidDate = new Date("");
+
+		// call #getUTCWeek
+		var oUniversalDateInstance = new UniversalDate(oInvalidDate);
+		assert.throws(function() {
+			oUniversalDateInstance.getUTCWeek();
+		}, new Error("Could not determine the first day of the week, because the date " +
+			"object is invalid"));
+
+		// getInstance call
+		assert.throws(function() {
+			UniversalDate.getInstance(oInvalidDate);
+		}, new Error("The given date object is invalid"));
+	});
+
 	//--- helpers ----------------------------------------------------------------------------------------------
 	function check(assert, iArgsCount) {
 		assert.ok(this.dateSpy.callCount, 1, "InnerDate must be instantiated just ones");
