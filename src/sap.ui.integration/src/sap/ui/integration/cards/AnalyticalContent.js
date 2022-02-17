@@ -143,6 +143,18 @@ sap.ui.define([
 	 */
 	AnalyticalContent.prototype.onDataChanged = function () {
 		this._createChart();
+		var oChart = this.getAggregation("_content");
+		if (oChart) {
+			var vizDS = oChart._getVizDataset(),
+				noData = vizDS
+					&& vizDS._FlatTableD
+					&& vizDS._FlatTableD._data
+					&& Array.isArray(vizDS._FlatTableD._data)
+					&& (!vizDS._FlatTableD._data.length);
+			if (noData) {
+				this.getParent()._handleError("No data available", true);
+			}
+		}
 	};
 
 	/**

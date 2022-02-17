@@ -14,9 +14,6 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/deepEqual",
 	"sap/ui/integration/util/DataProviderFactory",
-	"sap/m/HBox",
-	"sap/ui/core/Icon",
-	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/model/ObservableModel",
 	"sap/ui/model/resource/ResourceModel",
@@ -37,7 +34,9 @@ sap.ui.define([
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
-	"sap/ui/integration/util/Utils"
+	"sap/ui/integration/util/Utils",
+	"sap/m/HBox",
+	"sap/m/library"
 ], function (
 	CardRenderer,
 	Footer,
@@ -51,9 +50,6 @@ sap.ui.define([
 	merge,
 	deepEqual,
 	DataProviderFactory,
-	HBox,
-	Icon,
-	Text,
 	JSONModel,
 	ObservableModel,
 	ResourceModel,
@@ -74,7 +70,9 @@ sap.ui.define([
 	IllustratedMessage,
 	IllustratedMessageType,
 	IllustratedMessageSize,
-	Utils
+	Utils,
+	HBox,
+	mLibrary
 ) {
 	"use strict";
 
@@ -103,11 +101,18 @@ sap.ui.define([
 
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
 
+	var CardArea = library.CardArea;
+
 	var CardDataMode = library.CardDataMode;
 
 	var CARD_DESTROYED_ERROR = "Card is destroyed!";
 
-	var CardArea = library.CardArea;
+	var FlexRendertype = mLibrary.FlexRendertype;
+
+	var FlexJustifyContent = mLibrary.FlexJustifyContent;
+
+	var FlexAlignItems = mLibrary.FlexAlignItems;
+
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -1844,6 +1849,9 @@ sap.ui.define([
 					sIllustratedMessageType = IllustratedMessageType.NoEntries;
 					sTitle = this._oIntegrationRb.getText("CARD_NO_ITEMS_ERROR_LISTS");
 					break;
+				case "Analytical":
+					sIllustratedMessageType = IllustratedMessageType.NoEntries;
+					sTitle = this._oIntegrationRb.getText("CARD_NO_ITEMS_ERROR_CHART");
 			}
 		}
 
@@ -1856,14 +1864,22 @@ sap.ui.define([
 				sDescription = oErrorData.description;
 		}
 
+
 		var oIllustratedMessage = new IllustratedMessage({
 			illustrationType: sIllustratedMessageType,
 			illustrationSize: sIllustratedMessageSize,
 			title: sTitle,
 			description: sDescription ? sDescription : " "
-		}).addStyleClass("sapFCardErrorContent");
+		});
 
-		return oIllustratedMessage;
+		var oFlexBox = new HBox({
+			renderType: FlexRendertype.Bare,
+			justifyContent: FlexJustifyContent.Center,
+			alignItems: FlexAlignItems.Center,
+			width: "100%",
+			items: [oIllustratedMessage]
+		}).addStyleClass("sapFCardErrorContent");
+		return oFlexBox;
 	};
 
 	/**

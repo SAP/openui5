@@ -2005,7 +2005,9 @@ sap.ui.define([
 							"size": "Auto"
 						}
 					};
-					var oIllustratedMessage = this.oCard._getIllustratedMessage(oErrorConfiguration, true);
+					var oFlexBox = this.oCard._getIllustratedMessage(oErrorConfiguration, true),
+						oIllustratedMessage = oFlexBox.getItems()[0];
+
 					// Assert
 					assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "The message type set by developer is correct");
 					assert.strictEqual(oIllustratedMessage.getIllustrationSize(), IllustratedMessageSize.Auto, "The message size set by developer is correct");
@@ -2027,9 +2029,9 @@ sap.ui.define([
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
-				var oIllustratedMessage = this.oCard._getIllustratedMessage();
+				var oFlexBox = this.oCard._getIllustratedMessage(),
+					oIllustratedMessage = oFlexBox.getItems()[0];
 				// Assert
-
 				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.UnableToLoad, "Default message type is used for list");
 
 				// Clean up
@@ -2046,10 +2048,11 @@ sap.ui.define([
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
-				var oIllustratedMessage = this.oCard._getIllustratedMessage(undefined, true);
+				var oFlexBox = this.oCard._getIllustratedMessage(undefined, true),
+					oIllustratedMessage = oFlexBox.getItems()[0];
 				// Assert
 				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message type should be no data for List Card");
-				assert.strictEqual(this.oCard.getCardContent().getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
+				assert.strictEqual(this.oCard.getCardContent().getItems()[0].getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
 
 				// Clean up
 				done();
@@ -2065,10 +2068,12 @@ sap.ui.define([
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
 				Core.applyChanges();
-				var oIllustratedMessage = this.oCard._getIllustratedMessage(undefined, true);
+				var oFlexBox = this.oCard._getIllustratedMessage(undefined, true),
+					oIllustratedMessage = oFlexBox.getItems()[0];
+
 				// Assert
 				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Illustrated message type should be no data for Table Card");
-				assert.strictEqual(this.oCard.getCardContent().getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
+				assert.strictEqual(this.oCard.getCardContent().getItems()[0].getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
 
 				// Clean up
 				done();
