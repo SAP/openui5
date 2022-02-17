@@ -74,7 +74,7 @@
 								showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorVH.delegate', payload: {}}">
 								<mdcf:filterBar>
 									<!-- <vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorsVH.FB.delegate', payload: {collectionName: 'Authors'}}" > -->
-									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+									<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:basicSearchField>
 											<mdc:FilterField
 												delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
@@ -277,7 +277,7 @@
 									<mdcf:OutParameter id="IOFFVHSub-Out-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
 								</mdcf:outParameters>
 								<mdcf:filterBar>
-									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+									<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:filterItems>
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
@@ -342,7 +342,7 @@
 									<mdcf:OutParameter id="IOFFVHDetail-Out-SubGenre" value="{$filters>/conditions/subgenre_code}" helpPath="subgenre_code" />
 								</mdcf:outParameters>
 								<mdcf:filterBar>
-									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+									<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:filterItems>
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />

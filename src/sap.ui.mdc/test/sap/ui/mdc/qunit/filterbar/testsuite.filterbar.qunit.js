@@ -31,7 +31,8 @@ sap.ui.define([
 			loader: {
 				paths: {
 					"sap/ui/mdc/qunit": "test-resources/sap/ui/mdc/qunit/",
-					"sap/ui/core/qunit": "test-resources/sap/ui/core/qunit/"
+					"sap/ui/core/qunit": "test-resources/sap/ui/core/qunit/",
+					"delegates": "test-resources/sap/ui/mdc/delegates"
 				}
 			},
 			page: "test-resources/sap/ui/mdc/qunit/teststarter.qunit.html?testsuite={suite}&test={name}",
@@ -58,10 +59,6 @@ sap.ui.define([
 			"FilterBarFlex": {
 				group: "FilterBar",
 				module: "./FilterBarFlex.qunit"
-			},
-			"GenericFilterBarDelegate": {
-				group: "FilterBar",
-				module: "./vh/GenericFilterBarDelegate.qunit"
 			},
 			"valueHelp.FilterBar": {
 				group: "FilterBar",

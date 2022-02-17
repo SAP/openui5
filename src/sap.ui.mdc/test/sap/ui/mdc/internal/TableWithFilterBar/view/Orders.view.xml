@@ -84,7 +84,7 @@
 								<mdcv:Dialog title="Order Number">
 									<mdcvc:MTable keyPath="OrderNo" filterFields="">
 										<mdcvc:filterBar>
-											<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
+											<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 												<vhfb:filterItems>
 													<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
 												</vhfb:filterItems>
@@ -116,7 +116,7 @@
 
 									<mdcvc:MDCTable keyPath="OrderNo" filterFields="">
 										<mdcvc:filterBar>
-											<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
+											<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 												<vhfb:filterItems>
 													<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
 												</vhfb:filterItems>

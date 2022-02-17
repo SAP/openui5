@@ -44,7 +44,7 @@
 
 							<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH4" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Books', key: 'title'}}" caseSensitive="false">
 								<mdcf:filterBar>
-									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: 'Books'}}" >
+									<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: 'Books'}}" >
 									<vhfb:filterItems>
 										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
 									</vhfb:filterItems>
@@ -112,7 +112,7 @@
 									<core:Item text="Search Template 1" key="template1"/>
 								</mdcf:collectiveSearchItems>
 								<mdcf:filterBar>
-									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+									<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:basicSearchField>
 											<mdc:FilterField
 												delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
@@ -298,7 +298,7 @@
 									<mdcf:OutParameter id="IOFFVHSub-Out-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
 								</mdcf:outParameters>
 								<mdcf:filterBar>
-									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+									<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:filterItems>
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
@@ -403,7 +403,7 @@
 									<mdcf:OutParameter id="IOFFVHDetail-Out-SubGenre" value="{$filters>/conditions/subgenre_code}" helpPath="subgenre_code" />
 								</mdcf:outParameters>
 								<mdcf:filterBar>
-									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+									<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:filterItems>
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
