@@ -924,6 +924,29 @@ sap.ui.define([
 		assert.ok(this.oFeedListItem.$("actionButton").length === 0, "The action button is not rendered");
 	});
 
+	QUnit.module("Actions Button visibility test", {
+		beforeEach: function () {
+			this.oFeedListItem = new FeedListItem({
+				actions: [
+					new FeedListItemAction({
+						visible:false
+					}),
+					new FeedListItemAction({
+						visible:false
+					})
+				]
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oFeedListItem.destroy();
+		}
+	});
+
+	QUnit.test("Action button should not be visible if all actions are set to visible false", function (assert) {
+		assert.ok(this.oFeedListItem.$("actionButton").length === 0, "The action button is not rendered when all FeedListItemActions are set visible false");
+	});
+
 	QUnit.module("Method 'init'", {
 		beforeEach: function () {
 			this.oStub = sinon.stub(FeedListItem.prototype, "_onActionButtonPress");
