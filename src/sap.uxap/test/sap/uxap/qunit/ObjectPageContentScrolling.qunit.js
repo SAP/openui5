@@ -104,7 +104,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oSection = oObjectPage.getSections()[9],
 			fnDone = assert.async();
 
-		oObjectPage.attachSectionChange(function(oEvent) {
+		oObjectPage.attachEventOnce("sectionChange", function(oEvent) {
 			assert.equal(oEvent.getParameter("section").getId(), oSection.getId(), "sectionChange event is fired upon scrolling to a specified section");
 			fnDone();
 		});
@@ -224,6 +224,81 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		this.stub(oObjectPage, "_getClosestScrolledSectionBaseId").returns(oFirstSubSection.getId());
 
 		assert.ok(oObjectPage._isClosestScrolledSection(oFirstSection.getId()), "itentified current section");
+	});
+
+	QUnit.test("triggerPendingLayoutUpdates corrects invalid selection",function(assert) {
+		var oObjectPage = this.oObjectPage,
+			oFirstSection = oObjectPage.getSections()[0],
+			oFirstSubSection = oFirstSection.getSubSections()[0],
+			sSelectedSectionId = oObjectPage.getSections()[1].getId(),
+			item1 = new sap.m.Button({text: "content", visible: false}),
+			item2 = new sap.m.Button({text: "content", visible: false}),
+			item3 = new sap.m.Button({text: "content", visible: false}),
+			iScrollTopBeforeChange,
+			iExpectedScrollTopAfterChange,
+			done = assert.async();
+
+			oFirstSubSection.addBlock(sap.m.VBox({
+				items: [item1, item2, item3]
+			}));
+
+		// Setup: select a section lower than the first
+		oObjectPage.setSelectedSection(sSelectedSectionId);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function(){
+			iScrollTopBeforeChange = oObjectPage._$opWrapper.scrollTop();
+
+			//act
+			item1.setVisible(true);
+			item2.setVisible(true);
+			item3.setVisible(true);
+			Core.applyChanges();
+
+			iExpectedScrollTopAfterChange = iScrollTopBeforeChange + (3 * item1.getDomRef().offsetHeight);
+			// synchronously call the result of the expected scroll event
+			// the browser fires that scroll event because the position of the selected section changed
+			oObjectPage._updateSelectionOnScroll(iExpectedScrollTopAfterChange);
+			// the page internally sets a wrong selected section
+			// because we do not yet update the cached positions of the sections
+			assert.notEqual(oObjectPage.getSelectedSection() , sSelectedSectionId, "selected section has changed");
+
+			// act: request the page to update the positions of the sections and check its current selected section
+			oObjectPage.triggerPendingLayoutUpdates();
+			assert.strictEqual(oObjectPage.getSelectedSection() , sSelectedSectionId, "selected section is now corrected");
+			done();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
+	QUnit.test("triggerPendingLayoutUpdates is called on before rendering",function(assert) {
+		var oObjectPage = this.oObjectPage,
+			sSelectedSectionId = oObjectPage.getSections()[1].getId(),
+			iScrollTop,
+			oSpy = this.spy(oObjectPage, "triggerPendingLayoutUpdates"),
+			done = assert.async();
+
+		// Setup: select a section lower than the first
+		oObjectPage.setSelectedSection(sSelectedSectionId);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function(){
+			iScrollTop = oObjectPage._$opWrapper.scrollTop();
+			oSpy.reset();
+
+			// synchronously call the result of a scroll event that
+			// the browser fires when the position of the selected section changed
+			oObjectPage._updateSelectionOnScroll(iScrollTop + 100);
+			// the page internally sets a wrong selected section
+			// because on scroll we do not yet update the cached positions of the sections
+			assert.notEqual(oObjectPage.getSelectedSection() , sSelectedSectionId, "selected section has changed");
+
+			// act: trigger rerendering while an incorrect selected section is set
+			oObjectPage.onBeforeRendering();
+			assert.strictEqual(oSpy.callCount, 1, "selected section is updated");
+			done();
+		});
+
+		helpers.renderObject(oObjectPage);
 	});
 
 	QUnit.module("Scroll to snap", {
