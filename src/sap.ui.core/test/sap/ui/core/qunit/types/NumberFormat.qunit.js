@@ -25,6 +25,22 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 
 	QUnit.module("NumberFormat");
 
+	QUnit.test("invalid groupingSize", function(assert) {
+		[-1, 0].forEach(function (groupingSize) {
+			var oIntegerInstance = NumberFormat.getIntegerInstance({
+				groupingEnabled: true,
+				groupingSize: groupingSize
+			});
+			assert.strictEqual(oIntegerInstance.format(12345), "", "integer with groupingSize: '" + groupingSize + "'");
+
+			// float instance has groupingEnabled: true by default
+			var oFloatInstance = NumberFormat.getFloatInstance({
+				groupingSize: groupingSize
+			});
+			assert.strictEqual(oFloatInstance.format(12345), "", "float with groupingSize: '" + groupingSize + "'");
+		});
+	});
+
 	QUnit.test("Constructor call leads to error", function(assert) {
 		assert.throws(function() {
 			new NumberFormat();

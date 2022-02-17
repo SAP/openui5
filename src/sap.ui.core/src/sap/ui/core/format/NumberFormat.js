@@ -303,6 +303,18 @@ sap.ui.define([
 	 * default value.
 	 * </p>
 	 *
+	 * The following example shows how grouping is done:
+	 * <pre>
+	 * var oFormat = NumberFormat.getFloatInstance({
+	 *     "groupingEnabled": true,  // grouping is enabled
+	 *     "groupingSeparator": '.', // grouping separator is '.'
+	 *     "groupingSize": 3,        // the amount of digits to be grouped (here: thousand)
+	 *     "decimalSeparator": ","   // the decimal separator must be different from the grouping separator
+	 * });
+	 *
+	 * oFormat.format(1234.56); // "1.234,56"
+	 * </pre>
+	 *
 	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
 	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
@@ -320,7 +332,8 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
+	 *   is <code>3</code>. It must be a positive number.
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -363,6 +376,17 @@ sap.ui.define([
 	 * default value.
 	 * </p>
 	 *
+	 * The following example shows how grouping is done:
+	 * <pre>
+	 * var oFormat = NumberFormat.getIntegerInstance({
+	 *     "groupingEnabled": true,  // grouping is enabled
+	 *     "groupingSeparator": '.', // grouping separator is '.'
+	 *     "groupingSize": 3         // the amount of digits to be grouped (here: thousand)
+	 * });
+	 *
+	 * oFormat.format(1234); // "1.234"
+	 * </pre>
+	 *
 	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
 	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
@@ -380,7 +404,8 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.groupingEnabled=false] defines whether grouping is enabled (show the grouping separators)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
+	 *   is <code>3</code>. It must be a positive number.
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -482,7 +507,8 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
+	 *   is <code>3</code>. It must be a positive number.
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -584,7 +610,8 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
+	 *   is <code>3</code>. It must be a positive number.
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -664,7 +691,8 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
+	 *   is <code>3</code>. It must be a positive number.
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -1070,6 +1098,12 @@ sap.ui.define([
 			mUnitPatterns,
 			sLookupMeasure,
 			bValueIsNullOrUndefined = vValue === undefined || vValue === null;
+
+		if (oOptions.groupingEnabled && oOptions.groupingSize <= 0) {
+			// invalid grouping size specified
+			Log.error("Grouping requires the 'groupingSize' format option to be a positive number, but it is '" + oOptions.groupingSize + "' instead.");
+			return "";
+		}
 
 		// emptyString is only relevant for the number part (vValue)
 		if (oOptions.showNumber && (vValue === oOptions.emptyString || (isNaN(vValue) && isNaN(oOptions.emptyString)))) {
