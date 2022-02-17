@@ -101,7 +101,7 @@
 							<t:Column width="8em">
 								<Label text="Description" />
 								<t:template>
-									<Input value="{description}"/>
+									<Input id="description" value="{description}"/>
 								</t:template>
 							</t:Column>
 							<t:Column width="8em">

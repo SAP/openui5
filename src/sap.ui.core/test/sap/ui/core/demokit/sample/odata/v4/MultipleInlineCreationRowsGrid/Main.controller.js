@@ -64,7 +64,7 @@ sap.ui.define([
 			this.getView().byId("parts").getBinding("rows").getAllCurrentContexts()
 				.forEach(function (oContext) {
 					if (oContext.isInactive()) {
-						oContext.delete();
+						oContext.delete("$auto");
 					}
 			});
 		},
@@ -105,7 +105,7 @@ sap.ui.define([
 				"Do you really want to delete part " + iPartNo + "?",
 				function (sCode) {
 					if (sCode === "OK") {
-						oContext.delete();
+						oContext.delete("$auto");
 					}
 				},
 				"Confirm Deletion"
