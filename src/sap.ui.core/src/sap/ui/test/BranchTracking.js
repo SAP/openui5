@@ -658,6 +658,7 @@
 		QUnit.begin(function () {
 			var sFileName, aHits;
 
+			jQuery("body").css("overflow", "scroll"); // always show scrollbar, avoid flickering
 			jQuery("#qunit-modulefilter-dropdown-list").css("max-height", "none");
 
 			jQuery("#qunit-modulefilter-dropdown").on("click", function (oMouseEvent) {
