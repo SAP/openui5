@@ -14,9 +14,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils",
 	"sap/ui/core/Core",
-	"sap/ui/core/dnd/DragAndDrop"
+	"sap/ui/core/dnd/DragAndDrop",
+	"sap/ui/base/Event"
 ], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase) {
 	"use strict";
 
 	function getData() {
@@ -551,6 +552,58 @@ sap.ui.define([
 		oEvent = createjQueryDragEventDummy("dragend", this.oUploadSet.getList().getItems()[0], false);
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.ok(oEvent.dragSession === oDragSession, "dragend: Drag session was preserved");
+
+	});
+
+	QUnit.test("Test for method setMultiple", function(assert) {
+		assert.equal(this.oUploadSet.getMultiple(), false, "Initial multiple value (false) is set correctly");
+		this.oUploadSet.setMultiple(true);
+		assert.equal(this.oUploadSet.getMultiple(), true, "Multiple property should be set to true");
+	});
+
+	QUnit.test("Drag and drop of multiple files with multiple property", function(assert) {
+
+		// arrange
+		var oFileList = { // dummy files list used to simulate drag drop files
+			0: {
+				name: "Sample Drop File",
+				size: 1,
+				type: "type"
+			},
+			1: {
+				name: "Sample Drop File 2",
+				size: 1,
+				type: "type"
+			},
+			length: 2
+		};
+		var oEvent = new EventBase("drop", {}, { // using BaseEvent to create sample drop event to simulate drag and drop
+			browserEvent: {
+				dataTransfer: {
+					files: oFileList
+				}
+			}
+		});
+
+		this.stub(this.oUploadSet, "_processNewFileObjects").callsFake(function() {
+			// creating fake function since this function makes xhr call to upload files
+			return true;
+		});
+		this.stub(MessageBox, "error").returns("Dummy Error message");
+
+		// act
+		this.oUploadSet._onDropFile(oEvent); // method invoked on uploadSet when dropping files to upload
+
+		// assert
+		assert.ok(this.oUploadSet._processNewFileObjects.notCalled, "Multiple files are not uploaded with multiple property set to false");
+
+		// act
+		this.oUploadSet.setMultiple(true);
+
+		this.oUploadSet._onDropFile(oEvent); // method invoked on uploadSet when dropping files to upload
+
+		// assert
+		assert.ok(this.oUploadSet._processNewFileObjects.called, "Multiple files are uploaded with multiple property set to true");
 
 	});
 

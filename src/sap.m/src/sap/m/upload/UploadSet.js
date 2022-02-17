@@ -109,7 +109,13 @@ sap.ui.define([
 				 * HTTP request method chosen for file upload.
 				 * @since 1.90
 				 */
-				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: UploaderHttpRequestMethod.Post}
+				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: UploaderHttpRequestMethod.Post},
+				/**
+				 * Lets the user select multiple files from the same folder and then upload them.
+				 *
+				 * If multiple property is set to false, the control shows an error message if more than one file is chosen for drag & drop.
+				 */
+				 multiple: {type: "boolean", group: "Behavior", defaultValue: false}
 				},
 			defaultAggregation: "items",
 			aggregations: {
@@ -692,6 +698,14 @@ sap.ui.define([
 		return this;
 	};
 
+	UploadSet.prototype.setMultiple = function (bMultiple) {
+		if (this.getMultiple() !== bMultiple) {
+			this.setProperty("multiple", bMultiple);
+			this.getDefaultFileUploader().setMultiple(bMultiple);
+		}
+		return this;
+	};
+
 	/* ============== */
 	/* Public methods */
 	/* ============== */
@@ -751,6 +765,13 @@ sap.ui.define([
 		oEvent.preventDefault();
 		if (this.getUploadEnabled()) {
 			oFiles = oEvent.getParameter("browserEvent").dataTransfer.files;
+			// Handling drag and drop of multiple files to upload with multiple property set
+			if (oFiles && oFiles.length > 1 && !this.getMultiple()) {
+				var sMessage = this._oRb.getText("UPLOADCOLLECTION_MULTIPLE_FALSE");
+				Log.warning("Multiple files upload is retsricted for this multiple property set");
+				MessageBox.error(sMessage);
+				return;
+			}
 			this._processNewFileObjects(oFiles);
 		}
 	};
@@ -803,7 +824,7 @@ sap.ui.define([
 				mimeType: this.getMediaTypes(),
 				icon: "",
 				iconFirst: false,
-				multiple: true,
+				multiple: this.getMultiple(),
 				style: "Transparent",
 				name: "uploadSetFileUploader",
 				sameFilenameAllowed: true,
