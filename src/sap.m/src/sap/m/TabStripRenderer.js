@@ -155,7 +155,7 @@ sap.ui.define([
 	 * Renders the text of a passed <code>TabStripItem</code>.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.TabStripItem} oItem <code>TabStripItem</code> instance which text to be rendered
+	 * @param {string} item text to be rendered
 	 */
 	TabStripRenderer.renderItemText = function (oRm, sItemText) {
 
@@ -297,7 +297,7 @@ sap.ui.define([
 	 * Returns the accessibility attributes for a given <code>TabStripItem</code>.
 	 *
 	 * @param {sap.m.TabStripItem} oItem The <code>TabStripItem</code> to prepare accessibility attributes for
-	 * @param {sap.m.TabStrip} oTabStripParent The <code>TabStrip</code> parent control
+	 * @param {sap.m.TabStrip} oTabStrip The <code>TabStrip</code> parent control
 	 * @param {sap.m.TabStripItem} oSelectedItem The <code>TabStripItem</code> that is currently selected
 	 * @returns {Object} The accessibility attributes for given <code>TabStripItem</code>
 	 * @private

@@ -31,8 +31,9 @@ sap.ui.define([
 			/**
 			 * Inserts control at correct place in the DOM.
 			 * @param {string} sInsertAfterBeforePosition comes from drop event, it can be "Before" or "After"
-			 * @param {object} $DraggedControl control that is being dragged
-			 * @param {object} $DroppedControl control that the dragged control will be dropped on
+			 * @param {object} oDraggedControl control that is being dragged
+			 * @param {object} oDroppedControl control that the dragged control will be dropped on
+			 * @param {boolean} bIsOverflow
 			 */
 			_insertControl: function(sInsertAfterBeforePosition, oDraggedControl, oDroppedControl, bIsOverflow) {
 				var $DraggedControl = oDraggedControl.$(),

@@ -225,7 +225,7 @@ sap.ui.define([
 
 	/**
 	 * Called when the control or its children are changed.
-	 * @param {sap.ui.core.Control} The originating control
+	 * @param {sap.ui.core.Element} oOrigin The originating control
 	 * @private
 	 */
 	Menu.prototype.invalidate = function(oOrigin){

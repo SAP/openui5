@@ -244,7 +244,7 @@ sap.ui.define(["sap/ui/Device"],
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 		 * @param {boolean} bRender - shows if the control should be rendered
 		 * @param {string} sId - the id of the div that should be rendered
-		 * @param {boolean} bRenderAlways - shows if the DOM of the control should be rendered no matter if the control is rendered inside or not
+		 * @param {boolean} bApplyBelizePlusClass - shows if the DOM of the control should be rendered no matter if the control is rendered inside or not
 		 */
 		ObjectPageLayoutRenderer._renderHeaderContentDOM = function (oRm, oControl, bRender, sId, bApplyBelizePlusClass) {
 			oRm.openStart("header", oControl.getId() + sId)

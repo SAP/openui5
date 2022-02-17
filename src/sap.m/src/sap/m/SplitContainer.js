@@ -1472,7 +1472,7 @@ function(
 	/**
 	 * Returns the page with the given ID in master area (if there's no page that has the given ID, null is returned).
 	 *
-	 * @param {string} sId
+	 * @param {string} pageId
 	 *         The ID of the page that needs to be fetched
 	 * @returns {sap.ui.core.Control|null}
 	 *         The requested page
@@ -1488,7 +1488,7 @@ function(
 	/**
 	 * Returns the page with the given ID in detail area. If there's no page that has the given ID, null is returned.
 	 *
-	 * @param {string} sId The ID of the page that needs to be fetched.
+	 * @param {string} pageId The ID of the page that needs to be fetched.
 	 * @returns {sap.ui.core.Control|null} the requested page
 	 * @public
 	 * @since 1.11.1

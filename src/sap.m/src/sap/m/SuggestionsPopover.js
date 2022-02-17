@@ -224,8 +224,8 @@ sap.ui.define([
 	 * Handles the navigation inside the list.
 	 *
 	 * @private
-	 * @param {jQuery.Event} oEvent Arrow key event.
 	 * @param {sap.ui.core.Control} oParent The input control that instantiates this suggestions popover
+	 * @param {jQuery.Event} oEvent Arrow key event.
 	 */
 	SuggestionsPopover.prototype.handleListNavigation = function(oParent, oEvent) {
 		var	oPopover = this.getPopover();

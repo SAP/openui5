@@ -1184,7 +1184,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.table.Row} oRow Instance of the row.
 	 * @param {jQuery} $Ref The jQuery references to the DOM areas of the row.
-	 * @param {string} sSelectReference The text for the tooltip.
+	 * @param {string} sTextMouse The text for the tooltip.
 	 * @public
 	 */
 	AccExtension.prototype.updateRowTooltips = function(oRow, $Ref, sTextMouse) {

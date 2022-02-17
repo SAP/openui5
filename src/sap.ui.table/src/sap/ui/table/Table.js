@@ -1346,6 +1346,7 @@ sap.ui.define([
 
 	/**
 	 * Synchronizes the row heights.
+	 * @param {float[]} aRowItemHeights
 	 * @param {boolean} bHeader update of column headers if true, otherwise update data rows.
 	 * @private
 	 */

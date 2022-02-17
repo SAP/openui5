@@ -146,8 +146,8 @@ sap.ui.define([
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
-		 * @param {object} jQuery reference to the header dom element
-		 * @param {object} change event of child-element that brought the need to adapt the headerTitle layout
+		 * @param {jQuery} $headerDomRef reference to the header dom element
+		 * @param {object} oEvent change event of child-element that brought the need to adapt the headerTitle layout
 		 * @private
 		 */
 		ObjectPageDynamicHeaderTitle.prototype._adaptObjectPageHeaderIndentifierLine = function ($headerDomRef, oEvent) {

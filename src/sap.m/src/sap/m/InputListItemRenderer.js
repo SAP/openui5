@@ -22,12 +22,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *          oRenderManager the RenderManager that can be used for writing to the
-	 *          Render-Output-Buffer
-	 * @param {sap.m.InputListItem}
-	 *          oControl an object representation of the control that should be
-	 *          rendered
+	 * @param {sap.ui.core.RenderManager} rm
+	 *          RenderManager that can be used to render the control's DOM
+	 * @param {sap.m.InputListItem} oLI
+	 *          The item to be rendered
 	 */
 	InputListItemRenderer.renderLIAttributes = function(rm, oLI) {
 		rm.class("sapMILI");

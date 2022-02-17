@@ -1960,7 +1960,7 @@ sap.ui.define([
 			destroyFF(this.oFF);
 		},
 		/**
-		 *
+		 * @param {QUnit.Assert} assert
 		 * @param {int} iListCount the number of expected ff lists
 		 */
 		testFacetFilterList: function (assert, iListCount) {

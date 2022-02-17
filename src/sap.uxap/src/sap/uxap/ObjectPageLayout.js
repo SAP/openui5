@@ -824,7 +824,7 @@ sap.ui.define([
 	 * Snaps the header
 	 * and toggles the state of the title and the anchorBar accordingly
 	 *
-	 * @param bAppendHeaderToContent, determines if the header should be snapped
+	 * @param {boolean} bAppendHeaderToContent, determines if the header should be snapped
 	 * with or without scroll:
 	 *
 	 * (1) If the <code>bAppendHeaderToContent</code> is <code>true</code>, then the
@@ -880,7 +880,7 @@ sap.ui.define([
 	 * Expands the header
 	 * and toggles the state of the title and the anchorBar accordingly
 	 *
-	 * @param bAppendHeaderToTitle, determines if the header should be in the
+	 * @param {boolean} bAppendHeaderToTitle, determines if the header should be in the
 	 * scrollable content-area or in the non-scrollable title-area
 	 *
 	 * @private

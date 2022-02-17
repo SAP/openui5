@@ -188,7 +188,7 @@ sap.ui.define([
 	/**
 	 * Sets the rating value. The method is automatically checking whether the value is in the valid range of 0-{@link #getMaxValue maxValue} and if it is a valid number. Calling the setter with null or undefined will reset the value to it's default.
 	 *
-	 * @param {float} fValue The rating value to be set.
+	 * @param {float|string} vValue The rating value to be set.
 	 * @returns {this} Returns <code>this</code> to facilitate method chaining.
 	 * @override
 	 * @public

@@ -308,8 +308,8 @@ sap.ui.define([
 	 * (1) In actionSheet mode, it opens the menu
 	 * (2) In "button" mode (i.e. when the menu has a single menu-item) it represents the only menu-item
 	 *
-	 * @param {boolean} bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 * @param {sap.m.Button} oButton - the new base button
+	 * @param {boolean} bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 * @return {this} Returns <code>this</code> to allow method chaining
 	 */
 	ShareMenu.prototype._setBaseButton = function (oButton, bSuppressInvalidate) {

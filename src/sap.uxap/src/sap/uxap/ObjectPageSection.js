@@ -90,7 +90,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the closest ObjectPageSection.
-	 * @param  {sap.uxap.ObjectPageSectionBase} oSectionBase
+	 * @param  {sap.uxap.ObjectPageSectionBase} vSectionBase
 	 * @returns {sap.uxap.ObjectPageSection} The closest ObjectPageSection
 	 * @private
 	 */
