@@ -4174,7 +4174,7 @@ sap.ui.define([
 	 * Gets the node info for the given row-index.
 	 *
 	 * @param {int} iRowIndex The row-index
-	 * @returns {{index:int}} Node info for the given row-index
+	 * @returns {{index: int}} Node info for the given row-index
 	 */
 	ODataTreeBindingFlat.prototype.getNodeInfoByRowIndex = function(iRowIndex) {
 		var iCPointer = 0, iEPointer = 0, oNode, bTypeCollapse, iValidCollapseIndex = -1;

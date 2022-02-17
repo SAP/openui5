@@ -2003,7 +2003,7 @@ function(
 
 	/**
 	 * Calculates the dimension of TileContainer root DOM element.
-	 * @return {{width, height: *, outerheight: *, outerwidth: *}}
+	 * @return {{width: any, height: any, outerheight: any, outerwidth: any}}
 	 * @private
 	 */
 	TileContainer.prototype._calculateDimension = function(){
