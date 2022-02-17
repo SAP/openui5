@@ -3396,13 +3396,14 @@ sap.ui.define([
 			},
 			oError = new Error(),
 			oMetaModel = {
-				getObject : function () {
+				fetchObject : function () {
 					assert.ok(false); // use only when mocked
 				}
 			},
 			oModel = {
 				bAutoExpandSelect : true,
 				getMetaModel : function () { return oMetaModel; },
+				getPredicateIndex : function () {},
 				getReporter : function () {
 					return function (oError0) {
 						assert.strictEqual(oError0, oError);
@@ -3413,10 +3414,7 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/path");
 
 		this.mock(oContext).expects("isTransient").exactly(3).withExactArgs().returns(false);
-		this.mock(oContext).expects("getValue").exactly(3).withExactArgs().returns("~value~");
-		this.mock(_Helper).expects("getPrivateAnnotation").exactly(3)
-			.withExactArgs("~value~", "predicate")
-			.returns("('foo')");
+		this.mock(oModel).expects("getPredicateIndex").exactly(3).withExactArgs("/path");
 		this.mock(oBinding).expects("checkKeepAlive").exactly(3)
 			.withExactArgs(sinon.match.same(oContext));
 
@@ -3425,10 +3423,17 @@ sap.ui.define([
 		assert.strictEqual(oContext.isKeepAlive(), "bTrueOrFalse");
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 
+		oContext.fnOnBeforeDestroy = "foo";
+
+		// code under test
+		oContext.setKeepAlive(false, "fnOnBeforeDestroy", true);
+		assert.strictEqual(oContext.isKeepAlive(), false);
+		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
+
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("/path").returns("/meta/path");
-		this.mock(oMetaModel).expects("getObject")
+		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
-			.returns("path/to/messages");
+			.resolves("path/to/messages");
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
 			.withExactArgs(sinon.match.same(oContext), "path/to/messages", {})
 			.resolves("/reduced/path");
@@ -3439,11 +3444,6 @@ sap.ui.define([
 		oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);
 		assert.strictEqual(oContext.isKeepAlive(), true);
 		assert.strictEqual(oContext.fnOnBeforeDestroy, "fnOnBeforeDestroy");
-
-		// code under test
-		oContext.setKeepAlive(false, "fnOnBeforeDestroy", true);
-		assert.strictEqual(oContext.isKeepAlive(), false);
-		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 	});
 
 	//*********************************************************************************************
@@ -3451,13 +3451,14 @@ sap.ui.define([
 		var oBinding = {
 				checkKeepAlive : function () {}
 			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/path"),
+			oModel = {
+				getPredicateIndex : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/path"),
 			oError = new Error();
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
-		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~value~", "predicate")
-			.returns("('foo')");
+		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/path");
 		this.mock(oBinding).expects("checkKeepAlive")
 			.withExactArgs(sinon.match.same(oContext)).throws(oError);
 
@@ -3484,37 +3485,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setKeepAlive: no predicate", function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
-
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
-		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~value~", "predicate")
-			.returns(undefined);
-
-		assert.throws(function () {
-			// code under test
-			oContext.setKeepAlive(true);
-		}, new Error("No key predicate known at /path"));
-
-		assert.strictEqual(oContext.isKeepAlive(), false);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("setKeepAlive: bRequestMessages w/o autoExpandSelect", function (assert) {
 		var oBinding = {
 				checkKeepAlive : function () {}
 			},
 			oModel = {
-				bAutoExpandSelect : false
+				bAutoExpandSelect : false,
+				getPredicateIndex : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/path");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
-		this.mock(_Helper).expects("getPrivateAnnotation")
-			.withExactArgs("~value~", "predicate")
-			.returns("('foo')");
+		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/path");
 		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
 		this.mock(_Helper).expects("getMetaPath").never();
 
@@ -3528,35 +3510,37 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("setKeepAlive: missing messages annotation", function (assert) {
-		var oBinding = {
+		var done = assert.async(),
+			oBinding = {
 				checkKeepAlive : function () {}
 			},
 			oMetaModel = {
-				getObject : function () {}
+				fetchObject : function () {}
 			},
 			oModel = {
 				bAutoExpandSelect : true,
-				getMetaModel : function () { return oMetaModel; }
+				getPredicateIndex : function () {},
+				getMetaModel : function () { return oMetaModel; },
+				getReporter : function () {
+					return function (oError) {
+						assert.strictEqual(oError.message,
+							"Missing @com.sap.vocabularies.Common.v1.Messages");
+						done();
+					};
+				}
 			},
 			oContext = Context.create(oModel, oBinding, "/path");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
-		this.mock(_Helper).expects("getPrivateAnnotation")
-			.withExactArgs("~value~", "predicate")
-			.returns("('foo')");
+		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/path");
 		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("/path").returns("/meta/path");
-		this.mock(oMetaModel).expects("getObject")
+		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
-			.returns(undefined);
+			.resolves(undefined);
 
-		assert.throws(function () {
-			// code under test
-			oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);
-		}, new Error("Missing @com.sap.vocabularies.Common.v1.Messages"));
-
-		assert.strictEqual(oContext.isKeepAlive(), false);
+		// code under test
+		oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);
 	});
 
 	//*********************************************************************************************
@@ -3568,11 +3552,12 @@ sap.ui.define([
 			},
 			oError = new Error(),
 			oMetaModel = {
-				getObject : function () {}
+				fetchObject : function () {}
 			},
 			oModel = {
 				bAutoExpandSelect : true,
 				getMetaModel : function () { return oMetaModel; },
+				getPredicateIndex : function () {},
 				getReporter : function () {
 					return function (oError0) {
 						assert.strictEqual(oError0, oError);
@@ -3583,15 +3568,12 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/path");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
-		this.mock(_Helper).expects("getPrivateAnnotation")
-			.withExactArgs("~value~", "predicate")
-			.returns("('foo')");
+		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/path");
 		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("/path").returns("/meta/path");
-		this.mock(oMetaModel).expects("getObject")
+		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
-			.returns("path/to/messages");
+			.resolves("path/to/messages");
 		this.mock(oBinding).expects("fetchIfChildCanUseCache")
 			.withExactArgs(sinon.match.same(oContext), "path/to/messages", {})
 			.rejects(oError);

@@ -1602,8 +1602,8 @@ sap.ui.define([
 			},
 			mMergedQueryOptions = {},
 			oOldCache = {
-				setActive : function () {}
-				// setLateQueryOptions : function () {}
+				setActive : function () {},
+				setLateQueryOptions : function () {}
 			},
 			oNewCache = bOldCacheIsReused ? oOldCache : oCache,
 			mQueryOptions = {};
@@ -1616,11 +1616,14 @@ sap.ui.define([
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions), undefined,
 				undefined, "~bOldCacheReadOnly~", sinon.match.same(oOldCache))
 			.returns(oNewCache);
+		this.mock(oOldCache).expects("setActive").exactly(bOldCacheIsReused ? 0 : 1)
+			.withExactArgs(false);
+		this.mock(oOldCache).expects("setLateQueryOptions")
+			.exactly(bHasLateQueryOptions && bOldCacheIsReused ? 1 : 0)
+			.withExactArgs(sinon.match.same(mLateQueryOptions));
 		this.mock(oCache).expects("setLateQueryOptions")
 			.exactly(bHasLateQueryOptions && !bOldCacheIsReused ? 1 : 0)
 			.withExactArgs(sinon.match.same(mLateQueryOptions));
-		this.mock(oOldCache).expects("setActive").exactly(bOldCacheIsReused ? 0 : 1)
-			.withExactArgs(false);
 
 		assert.strictEqual(
 			// code under test

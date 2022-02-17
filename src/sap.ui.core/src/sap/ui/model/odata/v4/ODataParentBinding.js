@@ -174,20 +174,20 @@ sap.ui.define([
 
 	/**
 	 * Decides whether the given query options can be fulfilled by this binding and merges them into
-	 * this binding's aggregated query options if necessary.
+	 * this binding's <code>mAggregatedQueryOptions</code> if necessary.
 	 *
 	 * The query options cannot be fulfilled if there are conflicts. A conflict is an option other
-	 * than $expand, $select and $count which has different values in the aggregate and the options
-	 * to be merged. This is checked recursively.
+	 * than <code>$expand</code>, <code>$select</code> and <code>$count</code> which has different
+	 * values in the aggregate and the options to be merged. This is checked recursively.
 	 *
-	 * Merging is not necessary if the binding's cache has already requested its data and the query
-	 * options would extend $select. In this case the binding's cache will request the resp.
-	 * property and add it when it is accessed.
+	 * If the cache is already immutable the query options are aggregated into
+	 * <code>mLateQueryOptions</code>. Then they also cannot be fulfilled if they contain a
+	 * <code>$expand</code> using a collection-valued navigation property.
 	 *
-	 * Note: * is an item in $select and $expand just as others, that is it must be part of the
-	 * array of items and one must not ignore the other items if * is provided. See
-	 * "5.1.2 System Query Option $expand" and "5.1.3 System Query Option $select" in specification
-	 * "OData Version 4.0 Part 2: URL Conventions".
+	 * Note: * is an item in <code>$select</code> and <code>$expand</code> just as others, that is
+	 * it must be part of the array of items and one must not ignore the other items if * is
+	 * provided. See "5.1.2 System Query Option $expand" and "5.1.3 System Query Option $select" in
+	 * specification "OData Version 4.0 Part 2: URL Conventions".
 	 *
 	 * @param {object} mQueryOptions - The query options to be merged
 	 * @param {string} sBaseMetaPath - This binding's meta path
@@ -201,7 +201,6 @@ sap.ui.define([
 			bCacheImmutable, bIsProperty) {
 		var mAggregatedQueryOptionsClone = _Helper.merge({},
 				bCacheImmutable && this.mLateQueryOptions || this.mAggregatedQueryOptions),
-			bChanged = false,
 			that = this;
 
 		/*
@@ -233,7 +232,6 @@ sap.ui.define([
 							.fetchObject(sExpandMetaPath).getResult().$isCollection) {
 						return false;
 					}
-					bChanged = true;
 				}
 				return merge(mAggregatedQueryOptions.$expand[sExpandPath],
 					mQueryOptions0.$expand[sExpandPath], sExpandMetaPath, true, bAddExpand);
@@ -247,7 +245,6 @@ sap.ui.define([
 			 */
 			function mergeSelectPath(sSelectPath) {
 				if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
-					bChanged = true;
 					mAggregatedQueryOptions.$select.push(sSelectPath);
 				}
 				return true;
@@ -288,7 +285,7 @@ sap.ui.define([
 		if (merge(mAggregatedQueryOptionsClone, mQueryOptions, sBaseMetaPath)) {
 			if (!bCacheImmutable) {
 				this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
-			} else if (bChanged) {
+			} else {
 				this.mLateQueryOptions = mAggregatedQueryOptionsClone;
 			}
 			return true;

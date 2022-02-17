@@ -2313,14 +2313,15 @@ sap.ui.define([
 
 	/**
 	 * Calls {@link sap.ui.model.odata.v4.Context#setKeepAlive} at the context for the given path
-	 * and returns it.
+	 * and returns it. Since 1.100.0 the function always returns such a context. If none exists yet,
+	 * it is created without data and a request for its entity is sent.
 	 *
 	 * @param {string} sPath
 	 *   The path of the context to be kept alive
 	 * @param {boolean} [bRequestMessages]
 	 *   Whether to request messages for the context's entity
-	 * @returns {sap.ui.model.odata.v4.Context|undefined}
-	 *   The kept-alive context, or <code>undefined</code> if it does not exist
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   The kept-alive context
 	 * @throws {Error}
 	 *   If {@link sap.ui.model.odata.v4.Context#setKeepAlive} fails
 	 *
@@ -2332,11 +2333,36 @@ sap.ui.define([
 		var oContext = this.mPreviousContextsByPath[sPath]
 				|| this.aContexts.find(function (oCandidate) {
 					return oCandidate && oCandidate.getPath() === sPath;
-				});
+				}),
+			iPredicateIndex = this.oModel.getPredicateIndex(sPath),
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
-		if (oContext) {
-			oContext.setKeepAlive(true, oContext.fnOnBeforeDestroy, bRequestMessages);
+		if (!oContext) {
+			if (!sResolvedPath) {
+				throw new Error("Binding is unresolved: " + this);
+			}
+			if (sPath.slice(0, iPredicateIndex) !== sResolvedPath) {
+				throw new Error(this + ": Not a valid context path: " + sPath);
+			}
+			oContext = Context.create(this.oModel, this, sPath);
+			this.mPreviousContextsByPath[sPath] = oContext;
+			this.oCachePromise.then(function (oCache) {
+				// call ASAP so that dependent property bindings find the entity in the cache
+				oCache.createEmptyElement(sPath.slice(iPredicateIndex));
+			});
+			// *request*Object so that requestProperty definitely runs after setKeepAlive and adds
+			// to mLateProperties
+			this.oModel.getMetaModel().requestObject(_Helper.getMetaPath(sResolvedPath) + "/")
+				.then(function (oType) {
+					// ensure that the key properties are requested even if unbound
+					return oContext.requestProperty(oType.$Key.map(function (vKey) {
+						return typeof vKey === "object" ? Object.values(vKey)[0] : vKey;
+					}));
+				})
+				.catch(this.oModel.getReporter());
 		}
+
+		oContext.setKeepAlive(true, oContext.fnOnBeforeDestroy, bRequestMessages);
 		return oContext;
 	};
 

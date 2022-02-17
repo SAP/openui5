@@ -8352,16 +8352,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getKeepAliveContext: no context", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES");
-
-		assert.strictEqual(
-			// code under test
-			oBinding.getKeepAliveContext("/EMPLOYEES('4')", "~bRequestMessages~"),
-			undefined);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("getKeepAliveContext: kept-alive context not in the list", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			sPath = "/EMPLOYEES('4')",
@@ -8374,8 +8364,92 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oBinding.getKeepAliveContext("/EMPLOYEES('4')", "~bRequestMessages~"),
+			oBinding.getKeepAliveContext(sPath, "~bRequestMessages~"),
 			oContext);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bAsync) {
+	// The test always fails in requestProperty to check that the reporter is attached correctly
+	QUnit.test("getKeepAliveContext: create context, async=" + bAsync, function (assert) {
+		var done = assert.async(),
+			oParentContext = this.oModel.createBindingContext("/"),
+			oBinding = this.bindList("EMPLOYEES", oParentContext),
+			oCache = {
+				createEmptyElement : function () {}
+			},
+			oContext = {
+				requestProperty : function () {},
+				setKeepAlive : function () {}
+			},
+			oError = new Error(),
+			bHasEmptyElement = false,
+			sPath = "/EMPLOYEES('4')",
+			oSetKeepAliveExpectation,
+			oType = {
+				$Key : ["a", {b : "c/d"}, "e", {f : "g/h"}]
+			};
+
+		oBinding.oCachePromise = bAsync ? Promise.resolve(oCache) : SyncPromise.resolve(oCache);
+		this.mock(this.oModel).expects("resolve")
+			.withExactArgs("EMPLOYEES", sinon.match.same(oParentContext)).returns("/EMPLOYEES");
+		this.mock(this.oModel).expects("getPredicateIndex").withExactArgs(sPath).returns(10);
+		this.mock(Context).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), sPath)
+			.returns(oContext);
+		oSetKeepAliveExpectation = this.mock(oContext).expects("setKeepAlive")
+			.withExactArgs(true, undefined, "~bRequestMessages~");
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("/EMPLOYEES").returns("/meta/path");
+		this.mock(this.oModel.getMetaModel()).expects("requestObject")
+			.withExactArgs("/meta/path/").resolves(oType);
+		this.mock(oCache).expects("createEmptyElement").withExactArgs("('4')")
+			.callsFake(function () {
+				bHasEmptyElement = true;
+			});
+		this.mock(oContext).expects("requestProperty").withExactArgs(["a", "c/d", "e", "g/h"])
+			.callsFake(function () {
+				assert.ok(oSetKeepAliveExpectation.called);
+				assert.strictEqual(bHasEmptyElement, true);
+				return Promise.reject(oError);
+			});
+		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(function (oError0) {
+			assert.strictEqual(oError0, oError);
+			done();
+		});
+
+		assert.strictEqual(
+			// code under test
+			oBinding.getKeepAliveContext(sPath, "~bRequestMessages~"),
+			oContext);
+		assert.strictEqual(oBinding.mPreviousContextsByPath[sPath], oContext);
+		assert.ok(oSetKeepAliveExpectation.called);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getKeepAliveContext: unresolved", function (assert) {
+		var oBinding = this.bindList("EMPLOYEES");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.getKeepAliveContext("/EMPLOYEES('1')");
+		}, new Error("Binding is unresolved: " + oBinding));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeepAliveContext: not a valid context path", function (assert) {
+		var oParentContext = this.oModel.createBindingContext("/"),
+			oBinding = this.bindList("EMPLOYEES", oParentContext),
+			sPath = "/TEAMS('1')";
+
+		this.mock(this.oModel).expects("resolve")
+			.withExactArgs("EMPLOYEES", sinon.match.same(oParentContext)).returns("/EMPLOYEES");
+		this.mock(this.oModel).expects("getPredicateIndex").withExactArgs(sPath).returns(6);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.getKeepAliveContext(sPath);
+		}, new Error(oBinding + ": Not a valid context path: " + sPath));
 	});
 
 	//*********************************************************************************************

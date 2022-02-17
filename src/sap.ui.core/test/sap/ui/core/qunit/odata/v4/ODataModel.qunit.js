@@ -2534,6 +2534,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getPredicateIndex", function (assert) {
+		var oModel = this.createModel();
+
+		function success(sPath, sPredicate) {
+			assert.strictEqual(sPath.slice(oModel.getPredicateIndex(sPath)), sPredicate);
+		}
+
+		function fail(sPath) {
+			assert.throws(function () {
+				oModel.getPredicateIndex(sPath);
+			}, new Error("Not a list context path to an entity: " + sPath));
+		}
+
+		success("foo('bar')", "('bar')");
+		success("foo('bar()')", "('bar()')");
+		success("foo('bar')/baz('qux')", "('qux')");
+		fail("foo");
+		fail("foo('bar'");
+		fail("foo('bar')/baz)");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getKeepAliveContext: no binding found", function (assert) {
 		var oModel = this.createModel("", {autoExpandSelect : true});
 
@@ -2555,6 +2577,8 @@ sap.ui.define([
 			{$$getKeepAliveContext : true});
 		oListBinding = oModel.bindList("Items", oModel.createBindingContext("/SalesOrders('1')"),
 			undefined, undefined, {$$getKeepAliveContext : true});
+		oModelMock.expects("getPredicateIndex").withExactArgs("/SalesOrders('1')/Items('2')")
+			.returns(23);
 		oModelMock.expects("resolve").withExactArgs("/Products", undefined).returns("/Products");
 		oModelMock.expects("resolve")
 			.withExactArgs("Items", sinon.match.same(oListBinding.oContext))
@@ -2590,22 +2614,20 @@ sap.ui.define([
 		// needs late property requests to become valid.
 		assert.throws(function () {
 			// code under test
-			this.createModel().getKeepAliveContext("/EMPLOYEES('1')");
+			this.createModel().getKeepAliveContext();
 		}, new Error("Missing parameter autoExpandSelect"));
 	});
 
 	//*********************************************************************************************
-	// For these paths no matching list binding can ever appear
-["/TEAMS", "TEAMS('1')", "/TEAMS(", "/TEAMS('1')/Name"].forEach(function (sPath) {
-	QUnit.test("getKeepAliveContext: invalid path " + sPath, function (assert) {
+	// TODO remove with CPOUI5ODATAV4-1407 when the model creates an ODLB anyway?
+	QUnit.test("getKeepAliveContext: relative path", function (assert) {
 		var oModel = this.createModel("", {autoExpandSelect : true});
 
 		assert.throws(function () {
 			// code under test
-			oModel.getKeepAliveContext(sPath);
-		}, new Error("Not a list context path to an entity: " + sPath));
+			oModel.getKeepAliveContext("TEAMS('1')");
+		}, new Error("Not a list context path to an entity: TEAMS('1')"));
 	});
-});
 });
 //TODO constructor: test that the service root URL is absolute?
 //TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId

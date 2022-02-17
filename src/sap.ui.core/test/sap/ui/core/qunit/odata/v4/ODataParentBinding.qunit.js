@@ -1923,6 +1923,7 @@ sap.ui.define([
 [{
 	aggregatedQueryOptions : {$select : ["Name", "AGE"]},
 	childQueryOptions : {$select : ["Name"]},
+	lateQueryOptions : {$select : ["Name"]},
 	success : true,
 	title : "same $select as before"
 }, {
@@ -1942,6 +1943,12 @@ sap.ui.define([
 	lateQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id", "Name"]}}},
 	success : true,
 	title : "new $select in existing $expand"
+}, {
+	aggregatedQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id"]}}},
+	childQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id"]}}},
+	lateQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id"]}}},
+	success : true,
+	title : "same $expand"
 }, {
 	aggregatedQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {}}},
 	childQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$expand : {TEAM_2_MANAGER : {}}}}},

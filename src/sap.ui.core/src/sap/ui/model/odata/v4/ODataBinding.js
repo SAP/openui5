@@ -299,13 +299,11 @@ sap.ui.define([
 			oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions, undefined,
 				undefined, bOldCacheReadOnly, oOldCache);
 		}
-		if (oOldCache !== oCache) {
-			if (oOldCache) {
-				oOldCache.setActive(false);
-			}
-			if (this.mLateQueryOptions) {
-				oCache.setLateQueryOptions(this.mLateQueryOptions);
-			}
+		if (oOldCache && oOldCache !== oCache) {
+			oOldCache.setActive(false);
+		}
+		if (this.mLateQueryOptions) {
+			oCache.setLateQueryOptions(this.mLateQueryOptions);
 		}
 		this.oCache = oCache;
 
