@@ -1402,6 +1402,58 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("rearrage column - ResponsiveTable", function(assert) {
+		var done = assert.async();
+		var oTable = new Table({
+			type: "ResponsiveTable"
+		});
+		var fnSetMobileColumnOrderSpy = sinon.spy(oTable, "_setMobileColumnOrder");
+
+		oTable.addColumn(new Column("test1", {
+			header: "Test1",
+			template: new Text({
+				text: "Test1"
+			})
+		}));
+
+		oTable.addColumn(new Column("test2", {
+			header: "Test2",
+			template: new Text({
+				text: "Test2"
+			})
+		}));
+
+		oTable.addColumn(new Column("test3", {
+			header: "Test3",
+			template: new Text({
+				text: "Test3"
+			})
+		}));
+
+		// place the table at the dom
+		oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oTable.initialized().then(function() {
+			var fnTableInvalidate = sinon.spy(oTable._oTable, "invalidate");
+			var oTest3MDCColumn = oTable.getColumns()[2];
+			var oTest3InnerColumn = Core.byId(oTest3MDCColumn.getId() + "-innerColumn");
+			assert.strictEqual(oTest3MDCColumn.getHeader(), "Test3");
+			assert.strictEqual(oTable.indexOfColumn(oTest3MDCColumn), 2, "Column index is 2");
+			assert.strictEqual(oTest3InnerColumn.getOrder(), 2, "inner column has the correct order");
+
+			// trigger moveColumn - Test3 column is moved to index 0
+			oTable.moveColumn(oTest3MDCColumn, 0);
+			assert.ok(fnSetMobileColumnOrderSpy.calledOnce);
+			assert.ok(fnTableInvalidate.calledOnce);
+			assert.strictEqual(oTable.indexOfColumn(oTest3MDCColumn), 0, "Test3 column is moved to index 0");
+			assert.strictEqual(oTest3InnerColumn.getOrder(), 0, "Test3 inner column is updated with the correct column order");
+
+			oTable.destroy();
+			done();
+		});
+	});
+
 	QUnit.test("Selection - GridTable", function(assert) {
 		function selectItem(oRow, bUser) {
 			if (bUser) {
