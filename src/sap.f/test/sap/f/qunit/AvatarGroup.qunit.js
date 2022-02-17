@@ -1,12 +1,14 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/m/Page",
 	"sap/f/AvatarGroup",
 	"sap/f/AvatarGroupItem",
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes"
 ],
 function (
+	Page,
 	AvatarGroup,
 	AvatarGroupItem,
 	Core,
@@ -343,6 +345,29 @@ function (
 		assert.equal(this.oAvatarGroup._bShowMoreButton, false, "Show more button should not be shown");
 		assert.strictEqual(this.oAvatarGroup._bAutoWidth, true, "Auto width is true");
 		assert.strictEqual(this.oAvatarGroup._oShowMoreButton.getText(), "", "Show more button should not have text");
+	});
+
+	QUnit.test("_onResize does not invalidates infinitely when control is not visible", function (assert) {
+		// Arrange
+		var oSpy;
+		this.oPage = new sap.m.Page({
+			content: [ this.oAvatarGroup ]
+		});
+		this.oPage.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		oSpy = this.spy(this.oAvatarGroup, "invalidate");
+
+		// Act
+		this.oPage.$().css("display", "none");
+		this.oAvatarGroup._onResize(); // Not waiting for ResizeHandler
+
+		// Assert
+		assert.ok(oSpy.notCalled, "AvatarGroup is not invalidated, when parent gets hidden");
+
+		// Clean up
+		oSpy.restore();
+		this.oPage.destroy();
 	});
 
 });
