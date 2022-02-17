@@ -164,6 +164,20 @@ sap.ui.define([
 			assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), false, "... then isEnabled returns false");
 		});
 
+		QUnit.test("when an aggregationoverlay has remove action designTime metadata, and the removal of last visible element in aggregation is allowed", function(assert) {
+			 var oAggregationOverlay = this.oLayoutOverlay.getChildren()[0];
+			 oAggregationOverlay.getDesignTimeMetadata().setData({
+				 actions: {
+					 remove: {
+						 removeLastElement: true
+					 }
+				 }
+			 });
+
+			this.oButton1.setVisible(false);
+			assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), true, "... then isEnabled returns true");
+		});
+
 		QUnit.test("when remove is not available for all elements in the same aggregation (empty aggregation use-case)", function(assert) {
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions: {

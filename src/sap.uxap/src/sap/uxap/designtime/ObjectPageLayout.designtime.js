@@ -157,6 +157,9 @@ function(
 					addIFrame: {
 						text: sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ADD_IFRAME_IN_HEADER"),
 						changeType: "addIFrame"
+					},
+					remove : {
+						removeLastElement: true
 					}
 				}
 			},
