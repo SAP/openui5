@@ -2285,14 +2285,14 @@ sap.ui.define([
 		this.removeAggregation("columns", oMDCColumn, true);
 		this.insertAggregation("columns", oMDCColumn, iIndex, true);
 		if (this._oTable) {
+			if (this._bMobileTable) {
+				// responsive table requires the column order to be updated.
+				this._setMobileColumnOrder();
+				return;
+			}
 			// move column in inner table
 			oColumn = this._oTable.removeColumn(oMDCColumn.getId() + "-innerColumn");
 			this._oTable.insertColumn(oColumn, iIndex);
-
-			// update template for ResponsiveTable
-			if (this._bMobileTable) {
-				this._updateColumnTemplate(oMDCColumn, iIndex);
-			}
 		}
 	};
 
@@ -2349,6 +2349,25 @@ sap.ui.define([
 				}
 			});
 		}
+	};
+
+	/**
+	 * Sets the column order for the responsive table. The order is set according to the index of the mdc columns.
+	 * Updating the responsive table's column order and invalidating avoid rebinds.
+	 * @private
+	 */
+	 Table.prototype._setMobileColumnOrder = function() {
+		this.getColumns().forEach(function(oMDCColumn) {
+			var oColumn = Core.byId(oMDCColumn.getId() + "-innerColumn");
+			if (!oColumn) {
+				return;
+			}
+			// since we ensure correct index of the mdcColumn control we can set the same order to the inner responsive table columns
+			oColumn.setOrder(this.indexOfColumn(oMDCColumn));
+		}, this);
+
+		// invalidate the inner table to apply the correct order on the UI. See sap.m.Column#setOrder
+		this._oTable.invalidate();
 	};
 
 	Table._removeItemCell = function(oItem, iRemoveIndex, iInsertIndex) {
