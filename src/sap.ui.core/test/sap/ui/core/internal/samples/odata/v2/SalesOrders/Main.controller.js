@@ -501,7 +501,10 @@ sap.ui.define([
 		},
 
 		onShowMessageDetails : function (oEvent) {
-			var oContext = oEvent.getSource().getObjectBinding("messages").getBoundContext(),
+			var oMessage = oEvent.getSource().data("message"),
+				oMessageModel = this.getView().getModel("messages"),
+				aMessages = oMessageModel.getObject("/"),
+				oContext = oMessageModel.createBindingContext("/" + aMessages.indexOf(oMessage)),
 				oMessageDetails = this.byId("messageDetails");
 
 			oMessageDetails.setBindingContext(oContext, "messages");
