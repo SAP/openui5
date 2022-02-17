@@ -1311,6 +1311,13 @@ sap.ui.define([
 				&& (!this._bClearButtonPressed);
 		};
 
+		DynamicDateRangeInput.prototype.onfocusin = function (oEvent) {
+			Input.prototype.onfocusin.apply(this, arguments);
+			if (this._getControlOrigin()._oPopup && this._getControlOrigin()._oPopup.isOpen()) {
+				this._getControlOrigin()._closePopup();
+			}
+		};
+
 		var DynamicDateRangeListItem = StandardListItem.extend("sap.m.DynamicDateRangeListItem", {
 			metadata: {
 				library: "sap.m",
