@@ -221,6 +221,16 @@ input.sapMSFI[type="search"]:focus {
 	opacity: 1; // in FF by default the opacity is 60%
 }
 
+.sapMSF:not(.sapMSFVal) form:not(.sapMSFReload) {
+	padding-right: @_sap_m_SearchField_ButtonSize;
+}
+
+.sapMSF.sapMSFDisabled form,
+.sapMSF:not(.sapMSFVal) form.sapMSFNS:not(.sapMSFReload),
+.sapMSF.sapMFocus:not(.sapMSFVal) form.sapMSFReload {
+	padding-right: 0.625rem;
+}
+
 /* Compact size */
 .sapUiSizeCompact {
 
@@ -259,5 +269,15 @@ input.sapMSFI[type="search"]:focus {
 
 	.sapMSFR:not(.sapMSFNS) {
 		right: 2rem;
+	}
+
+	.sapMSF:not(.sapMSFVal) form:not(.sapMSFReload) {
+		padding-right: 2rem;
+	}
+
+	.sapMSF.sapMSFDisabled form,
+	.sapMSF:not(.sapMSFVal) form.sapMSFNS:not(.sapMSFReload),
+	.sapMSF.sapMFocus:not(.sapMSFVal) form.sapMSFReload {
+		padding-right: @_sap_m_SearchField_Compact_FormPaddingLeft;
 	}
 }

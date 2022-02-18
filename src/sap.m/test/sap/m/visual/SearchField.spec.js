@@ -32,4 +32,12 @@ describe("sap.m.SearchField", function () {
 		expect(takeScreenshot(element(by.id("Dialog")))).toLookAs("6_SearchField_in_dialog");
 		element(by.id("reject")).click();
 	});
+
+	it("Should visualize SearchField with truncated placeholder", function () {
+		expect(takeScreenshot(element(by.id("SF9")))).toLookAs("7_SearchField_truncation_placeholder");
+	});
+
+	it("Should visualize SearchField with truncated value", function () {
+		expect(takeScreenshot(element(by.id("SF10")))).toLookAs("8_Truncation_value");
+	});
 });
