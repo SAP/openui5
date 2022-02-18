@@ -94,6 +94,11 @@ sap.ui.define([
 								value: "Ivaylo Ivanov",
 								elementType: QuickViewGroupElementType.pageLink,
 								pageLinkId: "customPageId3"
+							},
+							{
+								label: "Favorite Food",
+								value: "",
+								elementType: QuickViewGroupElementType.text
 							}
 						]
 					}
@@ -447,6 +452,13 @@ sap.ui.define([
 
 		assert.strictEqual(jQuery(".sapMQuickViewPageWithoutHeader").length, 0, "QuickView has Header");
 		assert.strictEqual(this.oQuickView._oPopover.$().attr("aria-labelledby"), this.oQuickView._oNavContainer.getCurrentPage().getCustomHeader().getContentMiddle()[0].getId(), "aria-labelledby is correctly set");
+	});
+
+	QUnit.test("Value is not provided and hyphen is rendered", function (assert) {
+		this.oButton.firePress();
+		this.clock.tick(500);
+
+		assert.strictEqual(jQuery(".sapMEmptyIndicator").length, 1, "Hyphen is rendered.");
 	});
 
 	QUnit.test("Clicking on a button to open a QuickView", function (assert) {

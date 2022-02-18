@@ -2,7 +2,7 @@
 	<Panel
 		id="quickViewCardContainer"
 		width="auto"
-		height="600px">
+		height="650px">
 		<QuickViewCard
 			id="quickViewCard"
 			pages="{ path : '/pages', templateShareable : true }"
