@@ -2,7 +2,7 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    "./BasePanel",
+    "sap/m/p13n/BasePanel",
 	"sap/m/Label",
 	"sap/base/util/deepEqual",
 	"sap/m/CustomListItem",
@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/core/library",
 	"sap/m/HBox",
-	"sap/m/library"
-], function(BasePanel, Label, deepEqual, CustomListItem, List, Panel, Toolbar,Text, Icon, coreLibrary, HBox, mLibrary) {
+	"sap/m/library",
+	"sap/base/util/merge"
+], function(BasePanel, Label, deepEqual, CustomListItem, List, Panel, Toolbar,Text, Icon, coreLibrary, HBox, mLibrary, merge) {
 	"use strict";
 
 
@@ -33,7 +34,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The GroupView is a list based view to personalize selection and filter values of a Control that allows certain filter capabilities.
-	 * @extends sap.ui.mdc.p13n.panels.BasePanel
+	 * @extends sap.m.p13n.BasePanel
 	 * @author SAP SE
 	 * @private
 	 * @experimental
@@ -43,7 +44,12 @@ sap.ui.define([
 	 */
 	var GroupView = BasePanel.extend("sap.ui.mdc.p13n.panels.GroupView", {
 		metadata: {
-			library: "sap.ui.mdc"
+			library: "sap.ui.mdc",
+			properties: {
+				itemFactory: {
+					type: "function"
+				}
+			}
 		},
 		renderer: {
 			apiVersion: 2
@@ -62,8 +68,8 @@ sap.ui.define([
 				//Do not read the whole content
 				//Announce tet 'Filter Group' + <grouplabel>, e.g. "Filter Group Basic"
 				formatter: function(sGroupLabel) {
-					return this.getResourceText("p13nDialog.FILTER_GROUP_DESCRIPTION", sGroupLabel);
-				}.bind(this)
+					return sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.FILTER_GROUP_DESCRIPTION", sGroupLabel);
+				}
 			},
 			content: [
 				this._createGroupPanelTemplate()
@@ -75,11 +81,12 @@ sap.ui.define([
 
 		this._aInitializedLists = [];
 
-		this.setTemplate(oGroupPanelTemplate);
+		this._setTemplate(oGroupPanelTemplate);
+		oGroupPanelTemplate.setType("Inactive");
 		this._setMoveButtonVisibility(true);
 	};
 
-	GroupView.prototype.getShowFactory = function() {
+	GroupView.prototype._getShowFactory = function() {
 		return this._bShowFactory;
 	};
 
@@ -114,9 +121,9 @@ sap.ui.define([
 				var oSource = oEvt.getSource();
 				var oInnerList = oSource.getContent()[0];
 				this._addInitializedList(oInnerList);
-				if (this.getShowFactory()){
+				if (this._getShowFactory()){
 					this._addFactoryControl(oInnerList);
-					this.filterWithoutDestroy(this._aCurrentFilters);// --> check if there is already an existing Filter
+					this.filterContent(this._aCurrentFilters);// --> check if there is already an existing Filter
 				}
 
 			}.bind(this),
@@ -144,7 +151,7 @@ sap.ui.define([
 			keyboardMode: ListKeyboardMode.Navigation,
 			selectionChange: function(oBindingInfo) {
 				var sPath = oBindingInfo.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
-				var oItem = this.getP13nModel().getProperty(sPath);
+				var oItem = this._getP13nModel().getProperty(sPath);
 				var oP13nModel = this.getModel(this.P13N_MODEL);
 				//TODO: remove 'selected' condition enhance
 				if (oP13nModel && oItem) {
@@ -243,7 +250,7 @@ sap.ui.define([
 					size: "0.5rem",
 					color: IconColor.Neutral,
 					visible: {
-						path: this.P13N_MODEL + ">isFiltered",
+						path: this.P13N_MODEL + ">active",
 						formatter: function(bIsFiltered) {
 							if (bIsFiltered){
 								return true;
@@ -271,7 +278,7 @@ sap.ui.define([
 		oList.getItems().forEach(function(oItem){
 
 			var sPath = oItem.getBindingContextPath();
-			var sKey = this.getP13nModel().getProperty(sPath).name;
+			var sKey = this._getP13nModel().getProperty(sPath).name;
 
 			fnItemCallback.call(this, oItem, sKey);
 		}.bind(this));
@@ -330,7 +337,7 @@ sap.ui.define([
 		return aSelectedItems;
 	};
 
-	GroupView.prototype.filterWithoutDestroy = function(aFilter) {
+	GroupView.prototype.filterContent = function(aFilter) {
 		if (!this._bInitialized || deepEqual(aFilter, this._aCurrentFilters)) {
 			return;
 		}
@@ -346,7 +353,7 @@ sap.ui.define([
 				this._togglePanelVisibility(oPanel);
 			}
 
-			if (this.getShowFactory() && aInitializedGroups.indexOf(oInnerList.getId()) > -1) {
+			if (this._getShowFactory() && aInitializedGroups.indexOf(oInnerList.getId()) > -1) {
 				this._addFactoryControl(oInnerList);
 			}
 		}.bind(this));
@@ -380,7 +387,7 @@ sap.ui.define([
 		this._oListControl.getItems().forEach(function(oOuterItem){
 			var oPanel = oOuterItem.getContent()[0];
 			var sBindingPath = oPanel.getBindingContext(this.P13N_MODEL).sPath;
-			var oItem = this.getP13nModel().getProperty(sBindingPath);
+			var oItem = this._getP13nModel().getProperty(sBindingPath);
 			if (oItem.group === sGroup) {
 				oPanel.setExpanded(bExpand);
 			}
@@ -394,12 +401,16 @@ sap.ui.define([
 		if (oContext){
 			var sPanelBindingContextPath = oContext.sPath;
 
-			var oItem = this.getP13nModel().getProperty(sPanelBindingContextPath);
+			var oItem = this._getP13nModel().getProperty(sPanelBindingContextPath);
 			oItem.groupVisible = oInnerList.getVisibleItems().length < 1 ? false : true;
 
-			this.getP13nModel().setProperty(sPanelBindingContextPath, oItem);
+			this._getP13nModel().setProperty(sPanelBindingContextPath, oItem);
 		}
 
+	};
+
+	GroupView.prototype.getItems = function() {
+		return this._oListControl.getItems();
 	};
 
 	GroupView.prototype._checkFirstGroup = function() {
@@ -427,24 +438,36 @@ sap.ui.define([
 
 		this._oListControl.getInfoToolbar().addContent(new Text({
 			width: "75%",
-			text: this.getResourceText("p13nDialog.LIST_VIEW_COLUMN")
+			text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.LIST_VIEW_COLUMN")
 		}).addStyleClass("firstColumnPadding"));
 
 		if (!this._bShowFactory) {
 			this._oListControl.getInfoToolbar().addContent(new Text({
 				textAlign: "Center",
 				width: "25%",
-				text: this.getResourceText("p13nDialog.LIST_VIEW_ACTIVE")
+				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.LIST_VIEW_ACTIVE")
 			}).addStyleClass("firstColumnPadding"));
 		}
 
     };
 
-	GroupView.prototype.setP13nModel = function(oModel) {
-		this.setModel(oModel, this.P13N_MODEL);
-		this._bindListItems();
+	GroupView.prototype.setP13nData = function(aP13nData) {
+		this._getP13nModel().setProperty("/itemsGrouped", aP13nData);
+		if (!this._bInitialized) {
+			this._bindListItems();
+		}
 		this._checkFirstGroup();
 		this._checkAllPanels();
+	};
+
+	GroupView.prototype.getP13nData = function (bOnlyActive) {
+		var aItems = this._getP13nModel().getProperty("/itemsGrouped");
+		if (bOnlyActive) {
+			aItems = aItems.filter(function(oItem){
+				return oItem[this.PRESENCE_ATTRIBUTE];
+			}.bind(this));
+		}
+		return aItems;
 	};
 
     GroupView.prototype._bindListItems = function () {
@@ -452,7 +475,7 @@ sap.ui.define([
 			path: this.P13N_MODEL + ">/itemsGrouped",
 			templateShareable: false,
 			key: "group",
-			template: this.getTemplate().clone()
+			template: this.getAggregation("_template").clone()
 		}));
 	};
 

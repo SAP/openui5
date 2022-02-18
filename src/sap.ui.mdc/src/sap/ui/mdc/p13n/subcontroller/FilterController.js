@@ -98,7 +98,7 @@ sap.ui.define([
         var oAdaptationModel = this._getP13nModel(oPropertyHelper);
 
         return this.getAdaptationControl().retrieveInbuiltFilter().then(function(oAdaptationFilterBar){
-            oAdaptationFilterBar.setP13nModel(oAdaptationModel);
+            oAdaptationFilterBar.setP13nData(oAdaptationModel.oData);
             oAdaptationFilterBar.setLiveMode(false);
             this._oAdaptationFB = oAdaptationFilterBar;
             return oAdaptationFilterBar.createFilterFields().then(function(){
@@ -119,8 +119,8 @@ sap.ui.define([
     FilterController.prototype.model2State = function() {
         var oItems = {},
             oFilter = this.getCurrentState();
-        this._oAdaptationModel.getProperty("/items").forEach(function(oItem) {
-            if (oItem.isFiltered && Object.keys(oFilter).includes(oItem.name)) {
+            this._oAdaptationModel.getProperty("/items").forEach(function(oItem) {
+            if (oItem.active && Object.keys(oFilter).includes(oItem.name)) {
                 oItems[oItem.name] = oFilter[oItem.name];
             }
         });
@@ -137,7 +137,7 @@ sap.ui.define([
             var sName = oProperty.name;
 
             var aExistingFilters = mExistingFilters[sName];
-            mItem.isFiltered = aExistingFilters && aExistingFilters.length > 0 ? true : false;
+            mItem.active = aExistingFilters && aExistingFilters.length > 0 ? true : false;
 
             return !(oProperty.filterable === false);
         });

@@ -50,7 +50,6 @@ sap.ui.define([
 			"sap.ui.mdc.MultiValueField",
 			"sap.ui.mdc.link.Panel",
 			"sap.ui.mdc.link.ContactDetails",
-			"sap.ui.mdc.ui.Container",
 			"sap.ui.mdc.Chart",
 			"sap.ui.mdc.p13n.PersistenceProvider"
 			],
@@ -94,7 +93,6 @@ sap.ui.define([
 			"sap.ui.mdc.link.SemanticObjectMappingItem",
 			"sap.ui.mdc.field.InParameter",
 			"sap.ui.mdc.field.OutParameter",
-			"sap.ui.mdc.ui.ContainerItem",
 			"sap.ui.mdc.field.MultiValueFieldItem",
 			"sap.ui.mdc.ValueHelp",
 			"sap.ui.mdc.valuehelp.Popover",

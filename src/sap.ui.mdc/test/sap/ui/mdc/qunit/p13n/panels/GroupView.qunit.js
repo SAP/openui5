@@ -2,11 +2,9 @@
 sap.ui.define([
 	"sap/ui/mdc/p13n/panels/GroupView",
 	"sap/ui/mdc/p13n/P13nBuilder",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/mdc/p13n/PropertyHelper",
 	"sap/m/VBox",
 	"sap/ui/core/Core"
-], function(GroupView, P13nBuilder, JSONModel, PropertyHelper, VBox, oCore) {
+], function(GroupView, P13nBuilder, VBox, oCore) {
 	"use strict";
 
 	var aVisible = ["key1", "key2", "key3"];
@@ -56,7 +54,7 @@ sap.ui.define([
 
 			var fnEnhancer = function(mItem, oProperty) {
 				if (oProperty.name == "key2") {
-					mItem.isFiltered = true;
+					mItem.active = true;
 				}
 				mItem.visible = aVisible.indexOf(oProperty.name) > -1;
 				return true;
@@ -76,12 +74,12 @@ sap.ui.define([
 
 	QUnit.test("check instantiation", function(assert){
 		assert.ok(this.oGroupView, "Panel created");
-		this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
+		this.oGroupView.setP13nData(this.oP13nData.itemsGrouped);
 		assert.ok(this.oGroupView.getModel(this.oGroupView.P13N_MODEL).isA("sap.ui.model.json.JSONModel"), "Model has been set");
 	});
 
 	var fnCheckListCreation = function(assert) {
-		this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
+		this.oGroupView.setP13nData(this.oP13nData.itemsGrouped);
 
 		var oOuterList = this.oGroupView._oListControl;
 		assert.ok(oOuterList.isA("sap.m.ListBase"), "Inner control is a list");
@@ -103,7 +101,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check column toggle", function(assert){
-		this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
+		this.oGroupView.setP13nData(this.oP13nData.itemsGrouped);
 
 		var oOuterList = this.oGroupView._oListControl;
 
@@ -117,7 +115,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'active' icon'", function(assert){
-		this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
+		this.oGroupView.setP13nData(this.oP13nData.itemsGrouped);
 
 		//Go in 'active' with icon view --> hide filter fields
 		this.oGroupView.showFactory(false);
@@ -125,18 +123,18 @@ sap.ui.define([
 		assert.ok(this.oGroupView.getPanels()[0].getContent()[0].getItems()[1].getContent()[0].getItems()[1].getItems()[0].getVisible(), "Item is filtered (active)");
 
 		//Mock what happens during runtime if a filter is made inactive
-		this.oP13nData.itemsGrouped[0].items[1].isFiltered = false;
-		this.oGroupView.getP13nModel().refresh();
+		this.oP13nData.itemsGrouped[0].items[1].active = false;
+		this.oGroupView._getP13nModel().refresh();
 		assert.ok(!this.oGroupView.getPanels()[0].getContent()[0].getItems()[1].getContent()[0].getItems()[1].getItems()[0].getVisible(), "Item is NOT filtered (active)");
 
 		//Mock what happens during runtime if a filter is made active
-		this.oP13nData.itemsGrouped[0].items[1].isFiltered = true;
-		this.oGroupView.getP13nModel().refresh();
+		this.oP13nData.itemsGrouped[0].items[1].active = true;
+		this.oGroupView._getP13nModel().refresh();
 		assert.ok(this.oGroupView.getPanels()[0].getContent()[0].getItems()[1].getContent()[0].getItems()[1].getItems()[0].getVisible(), "Item is filtered (active)");
 	});
 
 	QUnit.test("Check 'labelFor' association on fields", function(assert){
-		this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
+		this.oGroupView.setP13nData(this.oP13nData.itemsGrouped);
 
 		var aPanels = this.oGroupView.getPanels();
 

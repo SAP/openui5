@@ -178,8 +178,10 @@ sap.ui.define([
 			aModelItemsGrouped[0].items[2].visible = true;
 
 			//3 items selected --> mock a model change
-			oAddaptFiltersController._oAdaptationModel.setProperty("/items", aModelItems);
-			oAddaptFiltersController._oAdaptationModel.setProperty("/itemsGrouped", aModelItemsGrouped);
+			oAFPanel.setP13nData({
+				items: aModelItems,
+				itemsGrouped: aModelItemsGrouped
+			});
 
 			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
 			assert.equal(oFirstGroupList.getSelectedItems().length, 3, "3 items selected");

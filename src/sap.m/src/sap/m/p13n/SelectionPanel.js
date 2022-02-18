@@ -16,8 +16,9 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
 	"sap/m/OverflowToolbar",
-	"sap/ui/model/Filter"
-], function(BasePanel, Label, ColumnListItem, HBox, VBox, coreLibrary, Icon, Text, Column, Table, mLibrary, ToolbarSpacer, Button, OverflowToolbar, Filter) {
+	"sap/ui/model/Filter",
+	"sap/base/util/merge"
+], function(BasePanel, Label, ColumnListItem, HBox, VBox, coreLibrary, Icon, Text, Column, Table, mLibrary, ToolbarSpacer, Button, OverflowToolbar, Filter, merge) {
 	"use strict";
 
 	// shortcut for sap.ui.core.IconColor
@@ -270,9 +271,12 @@ sap.ui.define([
 	 * @public
 	 * @param {sap.m.p13n.Item[]} aP13nData An array containing the personalization state that is represented by the <code>SelectionPanel</code>.
 	 */
-	SelectionPanel.prototype.setP13nData = function() {
-		this._oListControl.removeSelections();
-		BasePanel.prototype.setP13nData.apply(this, arguments);
+	SelectionPanel.prototype.setP13nData = function(aP13nData) {
+		if (this.getEnableCount()) {
+			aP13nData = merge([], aP13nData);
+			this._oListControl.removeSelections();
+		}
+		BasePanel.prototype.setP13nData.call(this, aP13nData);
 		this._updateCount();
 	};
 

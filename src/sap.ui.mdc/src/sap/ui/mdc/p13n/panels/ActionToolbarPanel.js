@@ -2,9 +2,9 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    "./ListView",
+    "sap/m/p13n/SelectionPanel",
     "sap/ui/model/Sorter"
-], function(ListView, Sorter) {
+], function(SelectionPanel, Sorter) {
 	"use strict";
 
     /**
@@ -13,7 +13,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class
-	 * @extends sap.ui.mdc.p13n.panels.ListView
+	 * @extends sap.m.p13n.SelectionPanel
 	 * @author SAP SE
 	 * @constructor The ActionToolbarPanel is a list based view to personalize selection and ordering of a Control aggregation.
 	 * @private
@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.p13n.panels.ActionToolbarPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ActionToolbarPanel = ListView.extend("sap.ui.mdc.p13n.panels.ActionToolbarPanel", {
+	var ActionToolbarPanel = SelectionPanel.extend("sap.ui.mdc.p13n.panels.ActionToolbarPanel", {
 		metadata: {
             library: "sap.ui.mdc"
         },
@@ -32,7 +32,7 @@ sap.ui.define([
     });
 
     ActionToolbarPanel.prototype._bindListItems = function(mBindingInfo) {
-        var oTemplate = this.getTemplate();
+        var oTemplate = this.getAggregation("_template");
 		if (oTemplate) {
             var fnGetAlignment = function(oContext) {
                 return oContext.getProperty("alignment");
@@ -47,7 +47,7 @@ sap.ui.define([
                 sorter: oSorter,
 				key: "name",
 				templateShareable: false,
-				template: this.getTemplate().clone()
+				template: this.getAggregation("_template").clone()
 			}, mBindingInfo));
 		}
     };

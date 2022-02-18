@@ -25,14 +25,11 @@ sap.ui.define([
             showHeader: true
         });
         oSelectionPanel.setEnableReorder(false);
-        oSelectionPanel.setPanelColumns([oResourceBundle.getText("actiontoolbar.RTA_COLUMN_HEADER"), new Column({
-            width: "25%",
-            hAlign: "Center",
-            vAlign: "Middle"
-        })]);
-        var oAdaptationModel = this._getP13nModel(oPropertyHelper);
-        oSelectionPanel.setP13nModel(oAdaptationModel);
+        oSelectionPanel.setFieldColumn(oResourceBundle.getText("actiontoolbar.RTA_COLUMN_HEADER"));
 
+        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+        oSelectionPanel.setP13nData(oAdaptationData.items);
+        this._oPanel = oSelectionPanel;
         return Promise.resolve(oSelectionPanel);
     };
 
