@@ -91,7 +91,6 @@ sap.ui.define([
 			Utils.setNestedPropertyValue(oManifest, sManifestPath, oSubConfig);
 		});
 
-		oCard.destroy();
 		return JSON.stringify(oManifest);
 	};
 
