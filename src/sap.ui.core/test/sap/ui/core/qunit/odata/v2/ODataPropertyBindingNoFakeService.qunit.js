@@ -33,10 +33,22 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{mParameters : undefined, bIgnoreMessages : undefined},
-	{mParameters : {}, bIgnoreMessages : undefined},
-	{mParameters : {ignoreMessages : "~ignoreMessages"}, bIgnoreMessages : "~ignoreMessages"}
-].forEach(function (oFixture, i) {
+	{
+		bIgnoreMessages : undefined,
+		mParameters : undefined,
+		bUseUndefinedIfUnresolved : undefined
+	}, {
+		bIgnoreMessages : undefined,
+		mParameters : {},
+		bUseUndefinedIfUnresolved : undefined
+	}, {
+		bIgnoreMessages : "~ignoreMessages",
+		mParameters : {
+			ignoreMessages : "~ignoreMessages",
+			useUndefinedIfUnresolved : "~useUndefinedIfUnresolved"
+		},
+		bUseUndefinedIfUnresolved : "~useUndefinedIfUnresolved"
+}].forEach(function (oFixture, i) {
 	QUnit.test("basics: #" + i, function (assert) {
 		var oBinding,
 			oDataState = {
@@ -59,6 +71,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.bInitial, true);
 		assert.strictEqual(oBinding.oValue, "~value");
+		assert.strictEqual(oBinding.bUseUndefinedIfUnresolved, oFixture.bUseUndefinedIfUnresolved);
 	});
 });
 
@@ -275,5 +288,22 @@ sap.ui.define([
 
 		// code under test
 		ODataPropertyBinding.prototype.checkDataState.call(oBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getValue", function (assert) {
+		var oBinding = {
+				oContext : "~context",
+				oModel : {_getObject : function () {}},
+				sPath : "~path",
+				bUseUndefinedIfUnresolved : "~useUndefinedIfUnresolved"
+			};
+
+		this.mock(oBinding.oModel).expects("_getObject")
+			.withExactArgs("~path", "~context", undefined, "~useUndefinedIfUnresolved")
+			.returns("~value");
+
+		// code under test
+		assert.strictEqual(ODataPropertyBinding.prototype._getValue.call(oBinding), "~value");
 	});
 });

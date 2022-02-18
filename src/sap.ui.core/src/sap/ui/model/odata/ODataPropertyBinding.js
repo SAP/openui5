@@ -39,6 +39,7 @@ sap.ui.define([
 			this.vOriginalValue = undefined;
 			this.getDataState().setValue(this.oValue);
 			this.setIgnoreMessages(mParameters && mParameters.ignoreMessages);
+			this.bUseUndefinedIfUnresolved = mParameters && mParameters.useUndefinedIfUnresolved;
 		}
 
 	});
@@ -71,7 +72,8 @@ sap.ui.define([
 	 * @return {object} the current value of the bound target
 	 */
 	ODataPropertyBinding.prototype._getValue = function(){
-		return this.oModel._getObject(this.sPath, this.oContext);
+		return this.oModel._getObject(this.sPath, this.oContext, /*bOriginalValue*/undefined,
+			this.bUseUndefinedIfUnresolved);
 	};
 
 	/*
