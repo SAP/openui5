@@ -62,7 +62,7 @@ npm run serve-sdk
 3. Launch the Demo Kit at [http://localhost:8000/documentation.html](http://localhost:8000/documentation.html)
 
 ##### Available Build Configurations
-- `OPENUI5_LIBRARIES="sap.m,sap.ui.core"`: Filter libraries to build
+- `OPENUI5_LIBRARIES="sap.m,sap.ui.core"`: Filter libraries to build. It is required to perform a complete SDK build with `npm run build-sdk` before restricting the SDK build by using the environment variable `OPENUI5_LIBRARIES`.
 
 ##### Shortcuts
 In the OpenUI5 **root directory**:
