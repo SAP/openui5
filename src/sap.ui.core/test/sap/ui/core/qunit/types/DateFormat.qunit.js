@@ -18,18 +18,56 @@ sap.ui.define([
 			oDefaultTime = DateFormat.getTimeInstance();
 
 		QUnit.module("DateFormat format", {
-			beforeEach: function () {
+			beforeEach: function (assert) {
 				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
+				this.oErrorSpy = sinon.spy(Log, "error");
 			},
 			afterEach: function () {
+				this.oErrorSpy.restore();
 				sap.ui.getCore().getConfiguration().setTimezone(null);
 			}
 		});
 
 		QUnit.test("format invalid date", function (assert) {
-			var oDate = new Date("");
-			assert.ok(isNaN(oDate.getTime()), "This is an invalid date");
-			assert.strictEqual(oDefaultDate.format(oDate), "", "Formatting an invalid date should return ''");
+			var that = this;
+			var iInitialCount = 0;
+			assert.equal(this.oErrorSpy.callCount, 0, "No error is logged yet");
+			[{}, {getTime: function() {}}, new Date("")].forEach(function (oInvalidDate) {
+				assert.strictEqual(oDefaultDate.format(oInvalidDate), "", "Formatting an invalid date should return ''");
+				iInitialCount++;
+				assert.equal(that.oErrorSpy.callCount, iInitialCount, "Error is logged");
+				assert.equal(that.oErrorSpy.getCall(iInitialCount - 1).args[0], "The given date instance isn't valid.", "Correct log message");
+			});
+
+			// interval with only one value
+			assert.strictEqual(DateFormat.getInstance({
+				interval: true
+			}).format([new Date("")]), "", "Formatting an invalid date should return ''");
+
+			iInitialCount++;
+			assert.equal(that.oErrorSpy.callCount, iInitialCount, "Error is logged");
+			assert.equal(that.oErrorSpy.getCall(iInitialCount - 1).args[0], "Interval DateFormat can only format with 2 date instances but 1 is given.", "Correct log message");
+
+			// singleIntervalValue, with first date being null
+			assert.deepEqual(DateFormat.getInstance({
+				interval: true,
+				singleIntervalValue: true
+			}).format([null, null]), "", "Formatting an invalid date should return ''");
+
+			iInitialCount++;
+			assert.equal(that.oErrorSpy.callCount, iInitialCount, "Error is logged");
+			assert.equal(that.oErrorSpy.getCall(iInitialCount - 1).args[0], "First date instance which is passed to the interval DateFormat shouldn't be null.", "Correct log message");
+
+			// interval with 2 invalid values
+			assert.strictEqual(DateFormat.getInstance({
+				interval: true
+			}).format([new Date(""), null]), "", "Formatting an invalid date should return ''");
+
+			iInitialCount++;
+			assert.equal(that.oErrorSpy.callCount, iInitialCount, "Error is logged");
+			assert.equal(that.oErrorSpy.getCall(iInitialCount - 1).args[0], "At least one date instance which is passed to the interval DateFormat isn't valid.", "Correct log message");
 		});
 
 		QUnit.test("format undefined date", function (assert) {

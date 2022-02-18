@@ -1848,10 +1848,7 @@ sap.ui.define([
 				return "";
 			}
 			vJSDate = vJSDate.map(function(oJSDate) {
-				if (oJSDate && !isNaN(oJSDate.getTime())) {
-					return convertToTimezone(oJSDate, sTimezone, bUTC);
-				}
-				return oJSDate;
+				return convertToTimezone(oJSDate, sTimezone, bUTC);
 			});
 
 			if (this.oFormatOptions.singleIntervalValue) {
@@ -1866,11 +1863,7 @@ sap.ui.define([
 			}
 
 			if (sResult === undefined) {
-				var bValid = vJSDate.every(function(oJSDate) {
-					return oJSDate && !isNaN(oJSDate.getTime());
-				});
-
-				if (!bValid) {
+				if (!vJSDate.every(isValidDateObject)) {
 					Log.error("At least one date instance which is passed to the interval DateFormat isn't valid.");
 					return "";
 				}
@@ -1878,7 +1871,7 @@ sap.ui.define([
 				sResult = this._formatInterval(vJSDate, bUTC);
 			}
 		} else {
-			if (!vJSDate || isNaN(vJSDate.getTime())) {
+			if (!isValidDateObject(vJSDate)) {
 				// Although an invalid date was given, the DATETIME_WITH_TIMEZONE instance might
 				// have a pattern with the timezone (VV) inside then the IANA timezone ID is returned
 				if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE && this.oFormatOptions.pattern.includes("VV")) {
@@ -2115,8 +2108,7 @@ sap.ui.define([
 	 */
 	var convertToTimezone = function(oJSDate, sTimezone, bUTC) {
 		// Convert to timezone if provided and a valid date is supplied
-		if (!bUTC
-			&& oJSDate && !isNaN(oJSDate.getTime())) {
+		if (!bUTC && isValidDateObject(oJSDate)) {
 			// convert given date to a date in the target timezone
 			return TimezoneUtil.convertToTimezone(oJSDate, sTimezone);
 		}
@@ -2216,6 +2208,11 @@ sap.ui.define([
 		}
 
 		return true;
+	}
+
+	// the expectation is that a valid Date has a getTime function which returns a valid number
+	function isValidDateObject(oDate) {
+		return oDate && typeof oDate.getTime === "function" && !isNaN(oDate.getTime());
 	}
 
 	/**
