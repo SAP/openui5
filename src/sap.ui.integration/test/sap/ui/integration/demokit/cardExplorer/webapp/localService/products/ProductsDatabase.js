@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/base/util/deepExtend"
-], function(deepExtend) {
+	"sap/base/util/deepExtend",
+	"sap/ui/thirdparty/jquery"
+], function(deepExtend, jQuery) {
 	"use strict";
 
 	var aInitialData, aData;

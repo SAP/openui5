@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/Extension"
+	"sap/ui/integration/Extension",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	Log,
 	Core,
 	Card,
-	Extension
+	Extension,
+	jQuery
 ) {
 	"use strict";
 

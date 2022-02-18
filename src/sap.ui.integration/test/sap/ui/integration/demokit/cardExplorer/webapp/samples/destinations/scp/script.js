@@ -6,6 +6,8 @@
 (function() {
 	"use strict";
 
+	/*global jQuery */
+
 	var rDestinations = /^\/destinations\/northwind\/V3\/Northwind\/Northwind\.svc\/(.*)/;
 	var fnOldAjax = jQuery.ajax;
 

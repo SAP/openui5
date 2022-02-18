@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/widgets/Card",
 	"sap/base/Log",
-	"sap/ui/integration/Host"
+	"sap/ui/integration/Host",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	Core,
 	DataProviderFactory,
@@ -17,7 +18,8 @@ sap.ui.define([
 	RequestDataProvider,
 	Card,
 	Log,
-	Host
+	Host,
+	jQuery
 ) {
 	"use strict";
 

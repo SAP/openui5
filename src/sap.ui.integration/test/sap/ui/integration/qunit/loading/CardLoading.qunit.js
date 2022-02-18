@@ -8,7 +8,8 @@ sap.ui.define([
 		"sap/ui/integration/cards/BaseContent",
 		"sap/ui/integration/cards/Header",
 		"sap/ui/integration/cards/filters/SelectFilter",
-		"sap/ui/integration/library"
+		"sap/ui/integration/library",
+		"sap/ui/thirdparty/jquery"
 	],
 	function (
 		Card,
@@ -18,7 +19,8 @@ sap.ui.define([
 		BaseContent,
 		Header,
 		Filter,
-		integrationLibrary
+		integrationLibrary,
+		jQuery
 	) {
 		"use strict";
 

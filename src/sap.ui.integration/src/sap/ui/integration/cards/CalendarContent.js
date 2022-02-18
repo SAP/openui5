@@ -14,7 +14,9 @@ sap.ui.define([
 		"sap/m/library",
 		"sap/m/Button",
 		"sap/m/FlexBox",
-		'sap/ui/core/format/DateFormat',
+		"sap/ui/core/format/DateFormat",
+		"sap/ui/core/Locale",
+		"sap/ui/core/LocaleData",
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
 		"sap/ui/unified/calendar/CalendarDate",
@@ -36,6 +38,8 @@ sap.ui.define([
 		Button,
 		FlexBox,
 		DateFormat,
+		Locale,
+		LocaleData,
 		Filter,
 		FilterOperator,
 		CalendarDate,
@@ -695,8 +699,8 @@ sap.ui.define([
 
 			if (!this._oLocaleData) {
 				var sLocale = _getLocale.call(this);
-				var oLocale = new sap.ui.core.Locale(sLocale);
-				this._oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+				var oLocale = new Locale(sLocale);
+				this._oLocaleData = LocaleData.getInstance(oLocale);
 			}
 
 			return this._oLocaleData;

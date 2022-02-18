@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/core/Manifest",
 	"sap/base/util/deepClone",
+	"sap/base/util/deepExtend",
+	"sap/base/util/each",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/isEmptyObject",
 	"sap/base/Log",
@@ -15,6 +17,8 @@ sap.ui.define([
 	BaseObject,
 	CoreManifest,
 	deepClone,
+	deepExtend,
+	each,
 	isPlainObject,
 	isEmptyObject,
 	Log,
@@ -279,7 +283,7 @@ sap.ui.define([
 		var iCurrentLevel = 0,
 			iMaxLevel = 15,
 			//Always need the unprocessed manifest
-			oUnprocessedJson = jQuery.extend(true, {}, this._oManifest.getRawJson()),
+			oUnprocessedJson = deepExtend({}, this._oManifest.getRawJson()),
 			oDataSources = this.get(APP_DATA_SOURCES);
 
 		process(oUnprocessedJson, this.oResourceBundle, iCurrentLevel, iMaxLevel, this._oCombinedParams, oDataSources, this._oCombinedFilters);
@@ -493,7 +497,7 @@ sap.ui.define([
 			return;
 		}
 
-		jQuery.each(oManifestFilters, function (sKey, oConfig) {
+		each(oManifestFilters, function (sKey, oConfig) {
 			var sValue = mRuntimeFilters.get(sKey) || oConfig.value;
 
 			oCombinedFilters[sKey] = sValue;

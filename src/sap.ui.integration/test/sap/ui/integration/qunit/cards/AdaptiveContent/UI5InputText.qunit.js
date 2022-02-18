@@ -3,14 +3,12 @@
 sap.ui.define([
 	"sap/ui/integration/cards/AdaptiveContent",
 	"sap/ui/integration/cards/adaptivecards/elements/UI5InputText",
-	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/Core"
 ],
 function (
 	AdaptiveContent,
 	UI5InputText,
-	Core,
-	jQuery
+	Core
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
