@@ -63,7 +63,10 @@ sap.ui.define([
 	 * @class
 	 * Icon uses embedded font instead of pixel image. Comparing to image, Icon is easily scalable, color can be altered live and various effects can be added using css.
 	 *
-	 * A set of built in Icons is available and they can be fetched by calling sap.ui.core.IconPool.getIconURI and set this value to the src property on the Icon.
+	 * A set of built in Icons is available in the <a href="test-resources/sap/m/demokit/iconExplorer/webapp/index.html">Icon Explorer</a>.
+	 *
+	 * For further information, see {@link topic:21ea0ea94614480d9a910b2e93431291 Icon and Icon Pool}.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent
 	 *
@@ -84,8 +87,18 @@ sap.ui.define([
 			properties : {
 
 				/**
-				 * This property should be set by the return value of calling sap.ui.core.IconPool.getIconURI with an Icon name parameter and an optional collection parameter which is required when using application extended Icons.
-				 * A list of standard icons is available in the <a href="test-resources/sap/m/demokit/iconExplorer/webapp/index.html">Icon Explorer</a>.
+				 * This property can be set by following options:
+				 *
+				 * <b>Option 1:</b></br>
+				 * The value has to be matched by following pattern <code>sap-icon://collection-name/icon-name</code> where
+				 * <code>collection-name</code> and <code>icon-name</code> have to be replaced by the desired values.
+				 * In case the default UI5 icons are used the <code>collection-name</code> can be omited.</br>
+				 * <i>Example:</i> <code>sap-icon://accept</code>
+				 *
+				 * <b>Option 2:</b>
+				 * The value is determined by using {@link sap.ui.core.IconPool.getIconURI} with an Icon name parameter
+				 * and an optional collection parameter which is required when using application extended Icons.</br>
+				 * <i>Example:</i> <code>IconPool.getIconURI("accept")</code>
 				 */
 				src : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
