@@ -81,10 +81,15 @@ sap.ui.define([
 			bHasPaginator = this.getCard() ? this.getCardInstance().hasPaginator() : false,
 			maxItems = oConfiguration.maxItems;
 
+		if (!Number.isNaN(parseInt(maxItems))) {
+			maxItems = parseInt(maxItems);
+		}
+
 		if (oList && maxItems && !bHasPaginator) {
-			oList.setGrowing(true);
-			//If pass trough parameters maxItems is a string
-			oList.setGrowingThreshold(parseInt(maxItems));
+			oList.applySettings({
+				growing: true,
+				growingThreshold: maxItems
+			});
 			oList.addStyleClass("sapFCardMaxItems");
 		}
 
