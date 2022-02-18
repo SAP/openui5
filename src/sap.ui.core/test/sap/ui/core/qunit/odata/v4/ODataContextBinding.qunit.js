@@ -13,11 +13,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataParentBinding",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, SyncPromise, Binding, ChangeReason, ContextBinding, Context,
-		ODataContextBinding, ODataModel, asODataParentBinding, _Cache, _GroupLock, _Helper,
-		TestUtils) {
+		ODataContextBinding, ODataModel, asODataParentBinding, _Cache, _GroupLock, _Helper) {
 	"use strict";
 
 	var aAllowedBindingParameters = ["$$canonicalPath", "$$groupId", "$$inheritExpandSelect",
@@ -44,10 +42,6 @@ sap.ui.define([
 			this.mock(this.oModel.oRequestor.oModelInterface)
 				.expects("fetchMetadata").atLeast(0)
 				.returns(SyncPromise.resolve());
-		},
-
-		afterEach : function () {
-			return TestUtils.awaitRendering();
 		},
 
 		/**
@@ -4893,25 +4887,4 @@ sap.ui.define([
 			assert.strictEqual(bDependent1Refreshed, true);
 		});
 	});
-
-	//*******************************************************************************************
-	if (TestUtils.isRealOData()) {
-		//*****************************************************************************************
-		QUnit.test("Action import on navigation property", function () {
-			var oModel = new ODataModel({
-					serviceUrl : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-					synchronizationMode : "None"
-				}),
-				oBinding = oModel.bindContext("EMPLOYEE_2_TEAM/"
-					+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)"),
-				oParentBinding = oModel.bindContext("/EMPLOYEES('1')", null,
-					{$expand : "EMPLOYEE_2_TEAM"});
-
-			// ensure object of bound action is loaded
-			return oParentBinding.getBoundContext().requestObject().then(function () {
-				oBinding.setContext(oParentBinding.getBoundContext());
-				return oBinding.setParameter("ManagerID", "3").execute();
-			});
-		});
-	}
 });

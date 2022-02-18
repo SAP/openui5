@@ -13,7 +13,8 @@ sap.ui.define([
 
 	var mTests = {
 			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true' : 'full',
-			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true&module=sap.ui.model.odata.v4.ODataModel.integration' : 'integration'
+			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&module=sap.ui.model.odata.v4.ODataModel.integration' : 'integration',
+			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&module=sap.ui.model.odata.v4.ODataModel.realOData&realOData=true' : 'integration'
 		};
 
 	function addOPATests(oSuite) {

@@ -7517,62 +7517,6 @@ forEach({
 	});
 
 	//*********************************************************************************************
-	if (TestUtils.isRealOData()) {
-		//*****************************************************************************************
-		QUnit.test("getValueListType, requestValueListInfo: realOData", function (assert) {
-			var oModel = new ODataModel({
-					serviceUrl : sSampleServiceUrl,
-					synchronizationMode : "None"
-				}),
-				oMetaModel = oModel.getMetaModel(),
-				sPropertyPath = "/ProductList('HT-1000')/Category";
-
-			return oMetaModel.requestObject("/ProductList/").then(function () {
-				assert.strictEqual(oMetaModel.getValueListType(
-						"/com.sap.gateway.default.zui5_epm_sample.v0002.Contact/Sex"),
-					ValueListType.Fixed);
-				assert.strictEqual(oMetaModel.getValueListType(sPropertyPath),
-					ValueListType.Standard);
-				return oMetaModel.requestValueListInfo(sPropertyPath).then(function (oResult) {
-					var oValueListInfo = oResult[""];
-
-					assert.strictEqual(oValueListInfo.CollectionPath, "H_EPM_PD_CATS_SH_Set");
-				});
-			});
-		});
-
-		//*****************************************************************************************
-		QUnit.test("requestValueListInfo: same model w/o reference, realOData", function (assert) {
-			var oModel = new ODataModel({
-					serviceUrl : sSampleServiceUrl,
-					synchronizationMode : "None"
-				}),
-				oMetaModel = oModel.getMetaModel(),
-				sPropertyPath = "/ProductList/0/CurrencyCode",
-				oValueListMetaModel;
-
-			return oMetaModel.requestObject("/ProductList/").then(function () {
-				// value list in the data service
-				assert.strictEqual(oMetaModel.getValueListType(sPropertyPath),
-					ValueListType.Standard);
-				return oMetaModel.requestValueListInfo(sPropertyPath);
-			}).then(function (oValueListInfo) {
-				var sPropertyPath2 = "/H_TCURC_SH_Set/1/WAERS";
-
-				// value list in the value list service
-				oValueListMetaModel = oValueListInfo[""].$model.getMetaModel();
-				assert.strictEqual(oValueListMetaModel.getValueListType(sPropertyPath2),
-					ValueListType.Standard);
-				assert.strictEqual(oValueListInfo[""].CollectionPath, "H_TCURC_SH_Set");
-				return oValueListMetaModel.requestValueListInfo(sPropertyPath2);
-			}).then(function (oValueListInfo) {
-				assert.strictEqual(oValueListInfo[""].$model.getMetaModel(), oValueListMetaModel);
-				assert.strictEqual(oValueListInfo[""].CollectionPath, "TCURC_CT_Set");
-			});
-		});
-	}
-
-	//*********************************************************************************************
 	[{
 		mAnnotations : {},
 		sExpectedPath : undefined,

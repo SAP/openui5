@@ -2,16 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, Log, deepEqual, merge, uid, SyncPromise, _Helper, TestUtils, URI) {
+], function (Log, deepEqual, merge, uid, SyncPromise, _Helper, URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Helper";
@@ -1051,24 +1049,6 @@ sap.ui.define([
 		assert.deepEqual(_Helper.toArray(aArray), [0]);
 		assert.notStrictEqual(_Helper.toArray(aArray), aArray);
 	});
-
-	//*********************************************************************************************
-	// Integration tests with real back end
-	if (TestUtils.isRealOData()) {
-		QUnit.test("Integration test for formatLiteral", function (assert) {
-			var done = assert.async(),
-			sResolvedServiceUrl
-				= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/";
-
-			jQuery.ajax(sResolvedServiceUrl + "BusinessPartnerList?"
-				+ "$filter=CompanyName eq + " + _Helper.formatLiteral("Becker Berlin", "Edm.String")
-				, {method : "GET"}
-			).then(function (oData) {
-				assert.strictEqual(oData.value[0].CompanyName, "Becker Berlin");
-				done();
-			});
-		});
-	}
 
 	//*********************************************************************************************
 	[{

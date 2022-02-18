@@ -24,8 +24,7 @@ sap.ui.define([
 			reportStateMessages : function () {},
 			reportTransitionMessages : function () {}
 		},
-		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-		sSampleServiceUrl = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/";
+		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
 	/**
 	 * Creates a mock for jQuery's XHR wrapper.
@@ -152,7 +151,7 @@ sap.ui.define([
 
 			return oGroupLock;
 		}
-});
+	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bStatistics) {
@@ -3491,132 +3490,6 @@ sap.ui.define([
 			assert.strictEqual(fnGetHeader.callCount, oFixture.iCallCount);
 		});
 	});
-
-	//*********************************************************************************************
-	if (TestUtils.isRealOData()) {
-		QUnit.test("request(...)/processBatch (realOData) success", function (assert) {
-			var oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
-				sResourcePath = "TEAMS('TEAM_01')",
-				that = this;
-
-			function assertResult(oPayload) {
-				delete oPayload["@odata.metadataEtag"];
-				assert.deepEqual(oPayload, {
-					"@odata.context" : "$metadata#TEAMS/$entity",
-					Team_Id : "TEAM_01",
-					Name : "Business Suite",
-					MEMBER_COUNT : 2,
-					MANAGER_ID : "3",
-					BudgetCurrency : "USD",
-					Budget : "555.55"
-				});
-			}
-
-			return oRequestor.request("GET", sResourcePath).then(assertResult)
-				.then(function () {
-					return Promise.all([
-						oRequestor.request("GET", sResourcePath, that.createGroupLock())
-							.then(assertResult),
-						oRequestor.request("GET", sResourcePath, that.createGroupLock())
-							.then(assertResult),
-						oRequestor.processBatch("groupId")
-					]);
-				});
-		});
-
-		//*****************************************************************************************
-		QUnit.test("request(...)/processBatch (realOData) fail", function (assert) {
-			var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
-
-			oRequestor.request(
-				"GET", "TEAMS('TEAM_01')", this.createGroupLock()
-			).then(function (oResult) {
-				delete oResult["@odata.metadataEtag"];
-				assert.deepEqual(oResult, {
-					"@odata.context" : "$metadata#TEAMS/$entity",
-					Team_Id : "TEAM_01",
-					Name : "Business Suite",
-					MEMBER_COUNT : 2,
-					MANAGER_ID : "3",
-					BudgetCurrency : "USD",
-					Budget : "555.55"
-				});
-			}, function (oError) {
-				assert.ok(false, oError);
-			});
-
-			oRequestor.request("GET", "fail", this.createGroupLock()).then(function (oResult) {
-				assert.ok(false, oResult);
-			}, function (oError) {
-				assert.ok(oError instanceof Error);
-				assert.strictEqual(typeof oError.error, "object");
-				assert.strictEqual(typeof oError.message, "string");
-				assert.strictEqual(oError.status, 404);
-			});
-
-			// code under test
-			return oRequestor.processBatch("groupId").then(function (oResult) {
-				assert.strictEqual(oResult, undefined);
-			});
-		});
-
-		//*****************************************************************************************
-		QUnit.test("request(ProductList)/processBatch (realOData) patch", function () {
-			var oBody = {Name : "modified by QUnit test"},
-				oRequestor = _Requestor.create(sSampleServiceUrl, oModelInterface),
-				sResourcePath = "ProductList('HT-1001')";
-
-			// code under test
-			return Promise.all([
-					oRequestor.request("PATCH", sResourcePath, this.createGroupLock(), {
-								"If-Match" : {"@odata.etag" : "*"}
-							}, oBody)
-						.then(function (oResult) {
-							TestUtils.deepContains(oResult, oBody);
-						}),
-					oRequestor.processBatch("groupId")
-				]);
-		});
-
-		//*****************************************************************************************
-		QUnit.test("processBatch (real OData): error in change set", function (assert) {
-			var sCommonMessage,
-				oEntity = {
-					"@odata.etag" : "*"
-				},
-				oRequestor = _Requestor.create(sSampleServiceUrl, oModelInterface);
-
-			function onError(sRequestUrl, oError) {
-				if (sCommonMessage) {
-					assert.strictEqual(oError.message, sCommonMessage);
-				} else {
-					sCommonMessage = oError.message;
-				}
-				assert.strictEqual(oError.requestUrl, sRequestUrl);
-			}
-
-			// code under test
-			return Promise.all([
-				oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
-						{"If-Match" : oEntity}, {Name : "foo"})
-					.then(undefined,
-						onError.bind(null, sSampleServiceUrl + "ProductList('HT-1001')")),
-				oRequestor.request("POST", "Unknown", this.createGroupLock(), undefined, {})
-					.then(undefined, onError.bind(null, sSampleServiceUrl + "Unknown")),
-				oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
-						{"If-Match" : oEntity}, {Name : "bar"})
-					.then(undefined,
-						onError.bind(null, sSampleServiceUrl + "ProductList('HT-1001')")),
-				oRequestor.request("GET", "SalesOrderList?$skip=0&$top=10", this.createGroupLock())
-					.then(undefined, function (oError) {
-						assert.strictEqual(oError.message,
-							"HTTP request was not processed because the previous request failed");
-						assert.strictEqual(oError.$reported, true);
-					}),
-				oRequestor.processBatch("groupId")
-			]);
-		});
-	}
 
 	//*********************************************************************************************
 	QUnit.test("getPathAndAddQueryOptions: Action", function (assert) {
