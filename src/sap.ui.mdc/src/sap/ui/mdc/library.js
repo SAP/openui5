@@ -1143,9 +1143,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enumeration of the <code>multiSelectMode>/code> in <code>ListBase</code>.
+	 * Enumeration of the <code>multiSelectMode</code> in <code>ListBase</code>.
 	 * @enum {string}
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.MultiSelectMode = {
 		/**
