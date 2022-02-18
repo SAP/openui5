@@ -4762,6 +4762,7 @@ sap.ui.define([
 			sinon.stub(oFieldInfo, "isTriggerable").returns(Promise.resolve(false));
 			sinon.stub(oFieldInfo, "getTriggerHref").returns(Promise.resolve("test.test"));
 			sinon.stub(oFieldInfo, "getDirectLinkHrefAndTarget").returns(null);
+			sinon.stub(oFieldInfo, "checkDirectNavigation").returns(Promise.resolve(false));
 			sinon.stub(oFieldInfo, "getContent").returns(Promise.resolve(oCore.byId("L1")));
 			sinon.spy(oFieldInfo, "open");
 
@@ -4823,6 +4824,7 @@ sap.ui.define([
 			sinon.stub(oFieldInfo, "isTriggerable").returns(Promise.resolve(true));
 			sinon.stub(oFieldInfo, "getTriggerHref").returns(Promise.resolve(undefined));
 			sinon.stub(oFieldInfo, "getDirectLinkHrefAndTarget").returns(Promise.resolve(null));
+			sinon.stub(oFieldInfo, "checkDirectNavigation").returns(Promise.resolve(false));
 			sinon.stub(oFieldInfo, "getContent").returns(Promise.resolve(oCore.byId("L1")));
 			sinon.spy(oFieldInfo, "open");
 
