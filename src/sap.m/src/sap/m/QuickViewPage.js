@@ -80,6 +80,9 @@ sap.ui.define([
 	// shortcut for sap.m.AvatarShape
 	var AvatarShape = library.AvatarShape;
 
+	// shortcut for sap.m.EmptyIndicator
+	var EmptyIndicatorMode = library.EmptyIndicatorMode;
+
 	var oRB = Core.getLibraryResourceBundle('sap.m');
 
 	/**
@@ -499,7 +502,7 @@ sap.ui.define([
 
 			if (!oCurrentGroupElementValue) {
 				// Add dummy text element so that the form renders the oLabel
-				oForm.addContent(new Text({text : ""}));
+				oForm.addContent(new Text({text : "", emptyIndicatorMode: EmptyIndicatorMode.On}));
 				continue;
 			}
 

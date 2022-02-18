@@ -75,6 +75,11 @@ sap.ui.define([
 						value: "+359 888 888 888",
 						elementType: "phone",
 						visible : false
+					},
+					{
+						label: "Other",
+						value: "",
+						elementType: "text"
 					}
 				]
 			}
@@ -181,6 +186,10 @@ sap.ui.define([
 	QUnit.test("Element is not visible", function (assert) {
 		var $phoneLinks = this.oQuickViewPage.$().find('a[href*="tel"]');
 		assert.strictEqual($phoneLinks.length, 1, "Second phone is not visible");
+	});
+
+	QUnit.test("Value is not provided and hyphen is rendered", function (assert) {
+		assert.strictEqual(document.getElementsByClassName("sapMEmptyIndicator").length, 1, "Hyphen is rendered.");
 	});
 
 	QUnit.module("Rendering", {

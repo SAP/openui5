@@ -48,6 +48,11 @@
 							"value": "main.contact@company.com",
 							"emailSubject": "Subject",
 							"elementType": "email"
+						},
+						{
+							"label": "Additional info",
+							"value": "",
+							"elementType": "text"
 						}
 					]
 				}
