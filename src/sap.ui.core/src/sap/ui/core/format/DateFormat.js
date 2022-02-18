@@ -347,23 +347,6 @@ sap.ui.define([
 	/**
 	 * Get a datetimeWithTimezone instance of the DateFormat, which can be used for formatting.
 	 *
-	 * @example
-	 * // Timezone difference -5 hours, UTC Zulu
-	 * var sTimezone = "America/New_York";
-	 * var oDate = new Date("2021-11-13T13:22:33Z");
-	 *
-	 * // Show (default)
-	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Show"}).format(oDate, false, sTimezone);
-	 * // Result: "Nov 13, 2021, 8:22:33 AM America/New_York"
-	 *
-	 * // Hide
-	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Hide"}).format(oDate, false, sTimezone);
-	 * // Result: "Nov 13, 2021, 8:22:33 AM"
-	 *
-	 * // Only
-	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Only"}).format(oDate, false, sTimezone);
-	 * // Result: "America/New_York"
-	 *
 	 * @param {object} [oFormatOptions] An object which defines the format options
 	 * @param {string} [oFormatOptions.format] A string containing pattern symbols (e.g. "yMMMd" or "Hms") which will be converted into a pattern for the used locale that matches the wanted symbols best.
 	 *  The symbols must be in canonical order, that is: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w), Day-Of-Week (E/e/c), Day (d), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
@@ -388,6 +371,7 @@ sap.ui.define([
 	 * @static
 	 * @public
 	 * @since 1.99.0
+	 * @experimental As of 1.99.0 certain aspects of this API are not settled yet, i.e. the defaulting for the timezone parameter might change.
 	 */
 	DateFormat.getDateTimeWithTimezoneInstance = function(oFormatOptions, oLocale) {
 		return this.createInstance(oFormatOptions, oLocale, this.oDateTimeWithTimezoneInfo);
@@ -1802,7 +1786,10 @@ sap.ui.define([
 	 * Uses the timezone from {@link sap.ui.core.Configuration#getTimezone}, which falls back to the
 	 * browser's local timezone to convert the given date.
 	 *
-	 * @example <caption>DateTime (with timezone "Europe/Berlin")</caption>
+	 * When using instances from getDateTimeWithTimezoneInstance, please see the corresponding documentation:
+	 * {@link sap.ui.core.format.DateFormat.getDateTimeWithTimezoneInstance#format}.
+	 *
+	 * @example <caption>DateTime (assuming timezone "Europe/Berlin")</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
 	 * DateFormat.getDateTimeInstance().format(oDate);
 	 * // output: "Dec 24, 2021, 2:37:00 PM"
@@ -2223,13 +2210,16 @@ sap.ui.define([
 	 * Uses the timezone from {@link sap.ui.core.Configuration#getTimezone}, which falls back to the
 	 * browser's local timezone to convert the given date.
 	 *
-	 * @example <caption>DateTime (with timezone "Europe/Berlin")</caption>
+	 * When using instances from getDateTimeWithTimezoneInstance, please see the corresponding documentation:
+	 * {@link sap.ui.core.format.DateFormat.getDateTimeWithTimezoneInstance#parse}.
+	 *
+	 * @example <caption>DateTime (assuming timezone "Europe/Berlin")</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
 	 * DateFormat.getDateTimeInstance().parse("Dec 24, 2021, 2:37:00 PM");
 	 * // output: oDate
 	 *
 	 * @param {string} sValue the string containing a formatted date/time value
-	 * @param {boolean} bUTC whether to use UTC, if no timezone is contained
+	 * @param {boolean} bUTC whether to use UTC
 	 * @param {boolean} bStrict whether to use strict value check
 	 * @return {Date|Date[]} the parsed value(s)
 	 * @public
