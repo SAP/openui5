@@ -958,6 +958,7 @@ sap.ui.define([
 			oContent.refreshData();
 		} else {
 			this.destroyAggregation("_content");
+			this._destroyTemporaryContent();
 			this._applyContentManifestSettings();
 		}
 
@@ -1066,10 +1067,7 @@ sap.ui.define([
 
 		this.destroyAggregation("_extension");
 
-		if (this._oTemporaryContent) {
-			this._oTemporaryContent.destroy();
-			this._oTemporaryContent = null;
-		}
+		this._destroyTemporaryContent();
 
 		// destroying the factory would also destroy the data provider
 		if (this._oDataProviderFactory) {
@@ -1427,6 +1425,7 @@ sap.ui.define([
 			var oCardContent = this.getAggregation("_content");
 			if (oCardContent && !oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
 				this.destroyAggregation("_content");
+				this._destroyTemporaryContent();
 				this._applyContentManifestSettings();
 			}
 
@@ -1787,6 +1786,13 @@ sap.ui.define([
 			if (oContent === this._oTemporaryContent) {
 				this._oTemporaryContent = null;
 			}
+		}
+	};
+
+	Card.prototype._destroyTemporaryContent = function () {
+		if (this._oTemporaryContent) {
+			this._oTemporaryContent.destroy();
+			this._oTemporaryContent = null;
 		}
 	};
 

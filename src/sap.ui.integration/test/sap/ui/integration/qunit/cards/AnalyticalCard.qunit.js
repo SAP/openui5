@@ -704,6 +704,69 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_Analytical_Global_Card_Data = {
+		"sap.app": {"id": "sap.fe", "type": "card"},
+		"sap.ui": {"technology": "UI5"},
+		"sap.card": {
+			"type": "Analytical",
+			"data": {
+				"json": {
+					"mainValue": "44.3M",
+					"mainValueUnscaled": "44,345,318",
+					"mainValueNoScale": "44.3",
+					"mainUnit": "EUR",
+					"mainCriticality": "Error",
+					"targetNumber": "45",
+					"targetUnit": "M",
+					"deviationNumber": "-1.5",
+					"chartData": [
+						{"Country": "United Kingdom", "SalesAmount": "13872516.000"},
+						{"Country": "USA", "SalesAmount": "30472802.000"}
+					]
+				}
+			},
+			"header": {
+				"type": "Numeric",
+				"title": "Actual Sales Amount",
+				"subTitle": "Sales actual figures",
+				"unitOfMeasurement": "{mainUnit}",
+				"mainIndicator": {
+					"number": "{mainValueNoScale}"
+				}
+			},
+			"content": {
+				"minHeight": "25rem",
+				"chartProperties": {
+					"plotArea": {"dataLabel": {"visible": false}},
+					"title": {
+						"visible": true,
+						"alignment": "left",
+						"text": "Sales Amount by Country Name"
+					},
+					"categoryAxis": {"title": {"visible": false}},
+					"valueAxis": {
+						"title": {"visible": false},
+						"label": {"formatString": "ShortFloat"}
+					}
+				},
+				"data": {
+					"path": "/chartData"
+				},
+				"chartType": "StackedBar",
+				"dimensions": [{"name": "Country Name", "value": "{Country}"}],
+				"measures": [{"name": "Sales Amount", "value": "{SalesAmount}"}],
+				"feeds": [
+					{"uid": "valueAxis", "type": "Measure", "values": ["Sales Amount"]},
+					{
+						"uid": "categoryAxis",
+						"type": "Dimension",
+						"values": ["Country Name"]
+					}
+				]
+			}
+		}
+	};
+
 	function testStackedBarChartCreation(oCard, oManifest, assert) {
 		// Arrange
 		var done = assert.async(),
@@ -778,13 +841,9 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("Init");
+
 
 	return Core.loadLibrary("sap.viz", { async: true }).then(function () {
-		QUnit.test("Initialization - AnalyticalContent", function (assert) {
-			testContentInitialization(oManifest_AnalyticalCard, assert);
-		});
-
 		QUnit.module("Chart creation", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -799,6 +858,24 @@ sap.ui.define([
 				this.oCard.destroy();
 				this.oCard = null;
 			}
+		});
+
+		/*
+		* This test should be the first one,
+		* as it covers the initial creation of the analytical content
+		 */
+		QUnit.test("Creating chart with global card data", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oContent = this.oCard.getCardContent();
+				assert.ok(oContent.isA("sap.ui.integration.cards.AnalyticalContent"), "Chart is rendered");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_Analytical_Global_Card_Data);
 		});
 
 		QUnit.test("Using manifest", function (assert) {
@@ -836,6 +913,12 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_Analytical_WithFeeds);
+		});
+
+		QUnit.module("Init");
+
+		QUnit.test("Initialization - AnalyticalContent", function (assert) {
+			testContentInitialization(oManifest_AnalyticalCard, assert);
 		});
 
 		QUnit.module("vizProperties");
