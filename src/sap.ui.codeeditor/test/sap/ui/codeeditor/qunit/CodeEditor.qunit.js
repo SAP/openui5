@@ -218,4 +218,34 @@ sap.ui.define([
 		assert.strictEqual(sIdForLabel, this.oCodeEditor.getId() + "-editor-textarea", "The id of the textarea should be returned");
 		assert.ok(document.getElementById(sIdForLabel), "Element that can be labeled should exist");
 	});
+
+	QUnit.module("Theming", {
+		beforeEach: function () {
+			this.oCodeEditor = new CodeEditor();
+
+			this.oCodeEditor.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCodeEditor.destroy();
+		}
+	});
+
+	QUnit.test("Theme change", function (assert) {
+		var done = assert.async(2);
+
+		Core.attachThemeChanged(function () {
+			var sTheme = Core.getConfiguration().getTheme();
+			if (sTheme === "sap_fiori_3") {
+				assert.strictEqual(this.oCodeEditor._oEditor.getTheme(), "ace/theme/crimson_editor", "theme is correct");
+			} else if (sTheme === "sap_fiori_3_hcb") {
+				assert.strictEqual(this.oCodeEditor._oEditor.getTheme(), "ace/theme/chaos", "theme is correct");
+			}
+
+			Core.applyTheme("sap_fiori_3_hcb");
+			done();
+		}.bind(this));
+
+		Core.applyTheme("sap_fiori_3");
+	});
 });

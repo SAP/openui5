@@ -232,19 +232,6 @@ sap.ui.define([
 			"sap-ui-codeeditor-ace"
 		);
 
-		var sUiTheme = Core.getConfiguration().getTheme().toLowerCase();
-		var sEditorTheme = "tomorrow";
-		if (sUiTheme.indexOf("hcb") > -1) {
-			sEditorTheme = "chaos";
-		} else if (sUiTheme.indexOf("hcw") > -1) {
-			sEditorTheme = "github";
-		} else if (sUiTheme === "sap_fiori_3") {
-			sEditorTheme = "crimson_editor";
-		} else if (sUiTheme === "sap_fiori_3_dark") {
-			sEditorTheme = "clouds_midnight";
-		}
-		this.setColorTheme(sEditorTheme);
-
 		this._oEditor.setOptions({
 			enableBasicAutocompletion: true,
 			enableSnippets: true,
@@ -302,6 +289,24 @@ sap.ui.define([
 		jQuery(this._oEditorDomRef).remove(); // remove DOM node together with all event listeners
 		this._oEditorDomRef = null;
 		this._oEditor = null;
+	};
+
+	/**
+	 * @private
+	 */
+	CodeEditor.prototype.onThemeChanged = function() {
+		var sUiTheme = Core.getConfiguration().getTheme().toLowerCase();
+		var sEditorTheme = "tomorrow";
+		if (sUiTheme.indexOf("hcb") > -1) {
+			sEditorTheme = "chaos";
+		} else if (sUiTheme.indexOf("hcw") > -1) {
+			sEditorTheme = "github";
+		} else if (sUiTheme === "sap_fiori_3") {
+			sEditorTheme = "crimson_editor";
+		} else if (sUiTheme === "sap_fiori_3_dark") {
+			sEditorTheme = "clouds_midnight";
+		}
+		this.setColorTheme(sEditorTheme);
 	};
 
 	/**
