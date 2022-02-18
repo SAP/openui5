@@ -150,15 +150,43 @@ For documenting JavaScript, UI5 uses the JSDoc3 toolkit which mimics JavaDoc. Se
 
 -   Document the constructor with `@class, @author, @since`, …
 -   For subclasses, document the inheritance by using an `@extends` tag in their constructor doclet
--   Document at least public and protected methods with JSDoc, mark them as `@public`/`@protected`
-    -   When you also document private methods with JSDoc, mark them with `@private` (this is currently the default in UI5, but not in JSDoc, so it is safer to explicitly specify it)
-    -   "Protected" is not clearly defined in a JavaScript environment, in UI5 it means: not for use by applications, but might be used even outside the same class or subclasses, but only in closely related classes.
+-   Document the visibility level of your methods according to section [Visibility Levels](#visibility-levels-jsdoc)
 -   Document method parameters with type (in curly braces) and parameter name (in square brackets if optional)
 -   For static helper classes that only provide static methods use `@namespace`
 
 See the [example for creating a class with documentation](guidelines/classexample.md).
 
 Also see the [list of common JSDoc pitfalls](guidelines/jsdocpitfalls.md).
+
+#### Visibility Levels (JSDoc)
+
+Tags such as `@public` or `@private` allow you to control the visibility of the JSDoc documentation.
+
+You can select from several block tags to determine if and how the JSDoc documentation for your API is displayed in the *API Reference*. The tag you choose also affects API usage and compatibility, namely
+
+-   whether your API is meant to be used in application development or OpenUI5 framework development,
+-   whether you have to keep your API compatible. For more information, see [Compatibility Rules](https://openui5.hana.ondemand.com/#/topic/91f087396f4d1014b6dd926db0e91070).
+
+The following table gives an overview over the available tags:
+
+**Tags for Visibility**
+
+| Tag          | Description | Compatibility Required | Can be used by applications | Further Details | Example |
+| ------------ | ----------- | ---------------------- | --------------------------- | --------------- | ------- |
+| `@public`    | Indicates that the API, such as a class or method, is generally available for application developers. | 🟢 | 🟢 | | [`ManagedObject.prototype.getId`](https://github.com/SAP/openui5/blob/c67c74d5de985904b50fb250b0d335c08b275025/src/sap.ui.core/src/sap/ui/base/ManagedObject.js#L1266) |
+| `@protected` | Indicates that usage of the API is restricted. It is not meant to be used by applications. | 🟢  | 🔴 | The API might be used outside the relevant class or subclasses, but only in closely related classes (so called "friends") in OpenUI5 framework development. Currently, there is no way to document "friends" properly in the UI5 *API Reference*. | [`Control.prototype.invalidate`](https://github.com/SAP/openui5/blob/c67c74d5de985904b50fb250b0d335c08b275025/src/sap.ui.core/src/sap/ui/core/Control.js#L323) |
+| `@private` | Indicates that the API is not meant for use outside of OpenUI5 framework development. It won't be visible in the OpenUI5 documentation. <p><blockquote><h3>Note:</h3>If you also document private methods with JSDoc, mark them as `@private`. This is currently the default in OpenUI5, but not in JSDoc, so it is safer to explicitly specify this.</blockquote></p> | 🔴 | 🔴 | The API is not meant to be used outside its own class, module, package, or library. We recommend to use the underscore character "`_`" as a prefix for technical names of private entities. | [`Icon.prototype._getOutputTitle`](https://github.com/SAP/openui5/blob/c67c74d5de985904b50fb250b0d335c08b275025/src/sap.ui.core/src/sap/ui/core/Icon.js#L477) |
+| `@ui5-restricted` | Indicates that the API is only meant for certain stakeholders within OpenUI5 framework development and won't be visible in the OpenUI5 documentation. <p><blockquote><h3>Note:</h3>`@ui5-restricted` should always be preceded by `@private`. This is to make sure that content isn't accidentally made public if an external JSDoc generator is used that doesn't recognize this tag.</blockquote></p> | 🔴 | 🔴 | To specify the stakeholders that are allowed to use this API, insert a space- or comma-separated list of stakeholders after the tag, typically package names like `sap.ui.core`, like this: <p> `@ui5-restricted package_name_1, package_name_2` You can also add free text. </p> | `@ui5-restricted sap.ui.core, sap.m, sap.viz` in [`Control.prototype.setBlocked`](https://github.com/SAP/openui5/blob/c67c74d5de985904b50fb250b0d335c08b275025/src/sap.ui.core/src/sap/ui/core/Control.js#L944) |
+| `@sap-restricted`| Deprecated, replaced by `@ui5-restricted` | 🔴 | 🔴 | | |
+
+1) There’s no compatibility promise for `ui5-restricted` APIs. However, before introducing incompatible changes the owner is expected to announce them to the listed stakeholders, so that all affected parties can cooperate to achieve a smooth migration.
+2) Any potential new usage should be discussed with the owner first, then the stakeholder information should be updated, and only then should the API be used.
+
+If more than one of the above tags is used, the last one wins.
+
+> **Note**:
+> The OpenUI5 *API Reference* only includes APIs of categories `@public` and `@protected`.
+
 
 UI5 Control Development Guidelines
 ----------------------------------
