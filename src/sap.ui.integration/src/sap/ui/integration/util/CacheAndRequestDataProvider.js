@@ -39,27 +39,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.integration, shell-toolkit
 	 * @alias sap.ui.integration.util.CacheAndRequestDataProvider
 	 */
-	var CacheAndRequestDataProvider = RequestDataProvider.extend("sap.ui.integration.util.CacheAndRequestDataProvider", {
-		metadata: {
-			associations : {
-				/**
-				 * The host which is used for communication with the caching service worker.
-				 */
-				host: {
-					type : "sap.ui.integration.Host",
-					multiple: false
-				},
-
-				/**
-				 * Optionally the card which will be used as reference for the requests and for visual representation of cache timestamp and refresh.
-				 */
-				card: {
-					type : "sap.ui.integration.widgets.Card",
-					multiple: false
-				}
-			}
-		}
-	});
+	var CacheAndRequestDataProvider = RequestDataProvider.extend("sap.ui.integration.util.CacheAndRequestDataProvider");
 
 	/**
 	 * @override
@@ -181,15 +161,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Asks the host to modify the headers. Mainly for the cache headers.
+	 * Adds cache related headers.
 	 * @param {map} mHeaders Current headers.
 	 * @param {Object} oSettings Request settings
 	 * @returns {map} The new headers
 	 */
 	CacheAndRequestDataProvider.prototype._prepareHeaders = function (mHeaders, oSettings) {
-		var oCard = this.getCardInstance(),
-			oHost = this.getHostInstance(),
-			oDefault = {
+		var oDefault = {
 				enabled: true,
 				maxAge: 0,
 				staleWhileRevalidate: true
@@ -214,11 +192,7 @@ sap.ui.define([
 
 		oNewSettings.request.cache = oCache;
 
-		if (oHost && oHost.modifyRequestHeaders) {
-			return oHost.modifyRequestHeaders(Object.assign({}, mHeaders), oNewSettings, oCard);
-		}
-
-		return mHeaders;
+		return RequestDataProvider.prototype._prepareHeaders.call(this, mHeaders, oNewSettings);
 	};
 
 	/**

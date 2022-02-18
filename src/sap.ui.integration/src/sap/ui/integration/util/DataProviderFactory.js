@@ -142,6 +142,13 @@ sap.ui.define([
 			oDataProvider.setHost(oHost);
 		} else if (oDataSettings.request) {
 			oDataProvider = new RequestDataProvider(oConfig);
+
+			if (oCard) {
+				oDataProvider.setCard(oCard);
+			}
+			if (oHost) {
+				oDataProvider.setHost(oHost);
+			}
 		} else if (oDataSettings.service) {
 			oDataProvider = new ServiceDataProvider(oConfig);
 		} else if (oDataSettings.json) {
