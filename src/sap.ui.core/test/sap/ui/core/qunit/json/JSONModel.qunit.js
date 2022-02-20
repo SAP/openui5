@@ -124,7 +124,7 @@ sap.ui.define([
 			number: 123,
 			bool: true,
 			func: function() {},
-			date: new Date()
+			date: new Date(Date.UTC(2022,0,1))
 		};
 		var oModel = new JSONModel(oData, true),
 			oString = oModel.bindProperty("/string"),
