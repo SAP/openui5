@@ -188,7 +188,8 @@ sap.ui.define([
                      * @since 1.99
                      */
                      filterConditions: {
-                        type: "object"
+                        type: "object",
+                        defaultValue: {}
                     },
                     /**
                      * Controls the visibility of the chart tooltip. If set to <code>true </code>, an instance of sap.viz.ui5.controls.VizTooltip will

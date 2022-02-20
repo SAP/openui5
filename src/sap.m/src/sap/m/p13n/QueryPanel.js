@@ -2,7 +2,7 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/layout/Grid", "./BasePanel", "sap/ui/core/Item", "sap/m/CustomListItem", "sap/m/Select", "sap/m/List", "sap/m/HBox", "sap/m/library", "sap/m/Button", "sap/base/util/merge"
+	"sap/ui/layout/Grid", "./BasePanel", "sap/ui/core/ListItem", "sap/m/CustomListItem", "sap/m/Select", "sap/m/List", "sap/m/HBox", "sap/m/library", "sap/m/Button", "sap/base/util/merge"
 ], function (Grid, BasePanel, Item, CustomListItem, Select, List, HBox, mLibrary, Button, merge) {
 	"use strict";
 
@@ -278,7 +278,9 @@ sap.ui.define([
 			this._addQueryRow();
 			var oSelect = oEvt.getSource();
 			var oNoneItem = oSelect.getItemByKey(this.NONE_KEY);
-			oNoneItem.setEnabled(false);
+			if (oNoneItem) {
+				oNoneItem.setEnabled(false);
+			}
 		}
 	};
 

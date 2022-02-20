@@ -4,13 +4,13 @@
 
 // Provides control sap.ui.mdc.filterbar.FilterItemLayout.
 sap.ui.define([
-	'sap/ui/mdc/filterbar/IFilterContainer','sap/m/Table', 'sap/m/Column', 'sap/m/Text', 'sap/m/VBox'
-], function(IFilterContainer, Table, Column, Text, VBox) {
+	'sap/ui/mdc/filterbar/IFilterContainer','sap/m/Table', 'sap/m/Column', 'sap/m/Text', 'sap/m/VBox', 'sap/ui/mdc/p13n/panels/FilterPanel', 'sap/base/util/UriParameters'
+], function(IFilterContainer, Table, Column, Text, VBox, FilterPanel, SAPUriParameters) {
 	"use strict";
 
 	/**
 	 * Constructor for a new filterBar/p13n/TableContainer.
-     * Used for a simple FilterBar table like view, should be used in combination with <code>FilterCellLayout</code>
+     * Used for a simple FilterBar table like view, should be used in combination with <code>FilterGroupLayout</code>
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @class The TableContainer is a IFilterContainer implementation for <code>sap.m.Table</code>
 	 * @extends sap.ui.mdc.filterbar.IFilterContainer
@@ -42,18 +42,51 @@ sap.ui.define([
 			]
 		});
 
-		this._oMessageStripContainer = new VBox(this.getId() + "-messageStripContainer");
+		var oURLParams = new SAPUriParameters(window.location.search);
+		this._bUseQueryPanel = oURLParams.getAll("sap-ui-xx-filterQueryPanel")[0] === "true";
 
-		this.oLayout = new VBox({
-			items: [
-				this._oMessageStripContainer,
-				this._oTable
-			]
-		});
+		//FIXME: remove check once the UI has been decided
+		if (this._bUseQueryPanel) {
+			this.oLayout = new FilterPanel({
+				enableReorder: false
+			});
+
+			this.mFilterItems = {};
+
+			this.oLayout.setItemFactory(function(oItem){
+				var sKey = oItem.name;
+				var oFilterItem = this.mFilterItems[sKey];
+				return oFilterItem;
+			}.bind(this));
+		} else {
+			this._oMessageStripContainer = new VBox(this.getId() + "-messageStripContainer");
+
+			this.oLayout = new VBox({
+				items: [
+					this._oMessageStripContainer,
+					this._oTable
+				]
+			});
+		}
+
 	};
 
 	TableContainer.prototype.insertFilterField = function(oControl, iIndex) {
-		this._oTable.insertItem(oControl, iIndex);
+
+		//FIXME: remove check once the UI has been decided
+		if (this._bUseQueryPanel) {
+			this.mFilterItems[oControl._getFieldPath()] = oControl;
+		} else {
+			this._oTable.insertItem(oControl, iIndex);
+		}
+
+	};
+
+	TableContainer.prototype.setP13nData = function(oAdaptationData) {
+		//FIXME: remove check once the UI has been decided
+		if (this._bUseQueryPanel) {
+			this.oLayout.setP13nData(oAdaptationData.items);
+		}
 	};
 
 	TableContainer.prototype.removeFilterField = function(oControl) {
@@ -61,15 +94,20 @@ sap.ui.define([
 	};
 
 	TableContainer.prototype.setMessageStrip = function(oStrip) {
-		this._oMessageStripContainer.removeAllItems();
-		this._oMessageStripContainer.addItem(oStrip);
+		//FIXME: remove check once the UI has been decided
+		if (this._bUseQueryPanel) {
+			this.oLayout.setMessageStrip(oStrip);
+		} else {
+			this._oMessageStripContainer.removeAllItems();
+			this._oMessageStripContainer.addItem(oStrip);
+		}
 	};
 
 	TableContainer.prototype.getFilterFields = function() {
 		return this._oTable.getItems();
 	};
 
-	TableContainer.prototype.update = function() {
+	TableContainer.prototype.update = function(oP13nModel) {
 		//Called when the UI model is being set - trigger update logic here
 	};
 

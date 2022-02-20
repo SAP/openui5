@@ -1,3 +1,4 @@
+
 /*
  * ! ${copyright}
  */
@@ -60,5 +61,4 @@ sap.ui.define(['sap/m/ColumnListItem', 'sap/m/ColumnListItemRenderer', 'sap/m/La
 	};
 
 	return FilterColumnLayout;
-
 });
