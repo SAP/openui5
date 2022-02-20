@@ -2,16 +2,6 @@
  * ${copyright}
  */
 
-/**
- * @class Provides utility functions for tables
- * @alias sap.m.table.Util
- * @author SAP SE
- * @version ${version}
- * @since 1.96.0
- * @private
- * @static
- * @experimental Since 1.96.0. This class is experimental and the API might be changed in future.
- */
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Core",
@@ -20,6 +10,16 @@ sap.ui.define([
 	"use strict";
 	/*global Intl*/
 
+	/**
+	 * Provides utility functions for tables.
+	 * @namespace
+	 * @alias module:sap/m/table/Util
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.96.0
+	 * @private
+	 * @experimental Since 1.96.0. This class is experimental and the API might be changed in future.
+	 */
 	var Util = {};
 
 	// local privates
@@ -55,7 +55,7 @@ sap.ui.define([
 
 
 	/**
-	 * Calculates the width of a give ODataType that is used in tables.
+	 * Calculates the width of a given ODataType that is used in tables.
 	 *
 	 * @param {sap.ui.model.odata.type.ODataType} oType The ODataType instance
 	 * @param {object} [mSettings] The settings object

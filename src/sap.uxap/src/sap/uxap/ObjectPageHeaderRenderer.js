@@ -6,8 +6,8 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 	"use strict";
 
 	/**
-	 * @class HeaderBase renderer.
-	 * @static
+	 * Header renderer.
+	 * @namespace
 	 */
 	var ObjectPageHeaderRenderer = {
 		apiVersion: 2

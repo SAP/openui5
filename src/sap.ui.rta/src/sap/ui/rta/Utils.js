@@ -39,15 +39,13 @@ function(
 	"use strict";
 
 	/**
-	 * Class for Utils.
+	 * Utility functionality to work with controls, e.g. iterate through aggregations, find parents, etc.
 	 *
-	 * @class Utility functionality to work with controls, e.g. iterate through aggregations, find parents, etc.
-	 *
+	 * @namespace
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @private
-	 * @static
 	 * @since 1.30
 	 * @alias sap.ui.rta.Utils
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality.

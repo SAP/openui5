@@ -35,8 +35,8 @@ sap.ui.define([
 	});
 
 	/**
-	 * @type {map} Status Enum. Provides all available status.
-	 * @static
+	 * Status Enum, provides all available status.
+	 * @type {Object<string, {key: string, text: string, value: int}>}
 	 */
 	Test.STATUS = {
 		SUPPORTED: {
@@ -67,7 +67,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @type {map} Type Enum. Provides all availabe types.
+	 * Type Enum, provides all available types.
+	 * @type {Object<string, string>}
 	 * @static
 	 */
 	Test.TYPE = {

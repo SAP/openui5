@@ -30,12 +30,13 @@ sap.ui.define([
 	var oEngine;
 
 	/**
-	 * Constructor for a new Engine. The Engine should always be accessed
-	 * via 'getInstance' and not by creating a new instance of it. The class should only be used
-	 * to create derivations.
+	 * Constructor for a new Engine.
+	 *
+	 * The Engine should always be accessed via 'getInstance' and not by creating a new instance of it.
+	 * The class should only be used to create derivations.
 	 *
 	 * @class
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.mdc.p13n.AdaptationProvider
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -1024,9 +1025,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * @private
-	 *
 	 * This method can be used for debugging to retrieve the complete registry.
+	 *
+	 * @private
 	 */
 	Engine.prototype._getRegistry = function() {
 		var oRegistry = {

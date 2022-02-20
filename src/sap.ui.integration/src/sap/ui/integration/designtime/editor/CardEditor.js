@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @class
 	 * A control allows to edit manifest settings for a card based on a configuration from a designtime module.
 	 *
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.integration.editor.Editor
 	 *
 	 * @author SAP SE
 	 * @version ${version}

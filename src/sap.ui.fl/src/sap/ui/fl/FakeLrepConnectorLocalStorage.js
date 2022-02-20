@@ -13,15 +13,14 @@ function(
 	"use strict";
 
 	/**
-	 * Class for storing changes in local storage
+	 * Utility for storing changes in local storage.
 	 *
-	 * @class
+	 * @namespace
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @private
-	 * @static
 	 * @since 1.48
 	 * @alias sap.ui.fl.FakeLrepConnectorLocalStorage
 	 */

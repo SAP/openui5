@@ -6,8 +6,8 @@ sap.ui.define(function () {
 	"use strict";
 
 	/**
-	 * @class BreadCrumbs renderer.
-	 * @static
+	 * BreadCrumbs renderer.
+	 * @namespace
 	 */
 	var BreadCrumbsRenderer = {
 		apiVersion: 2

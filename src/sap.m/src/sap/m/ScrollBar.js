@@ -89,8 +89,8 @@ function(Control, ScrollBarRenderer) {
 	};
 
 	/**
-	 * @override
 	 * Custom setter, helping DOM changes to appear to the element, before DOM event handlers hit on it.
+	 * @override
 	 */
 	ScrollBar.prototype.setContentSize = function (sContentSize) {
 		var $SbCnt = this.$("sbcnt");

@@ -8,8 +8,8 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class HeaderContent renderer.
-	 * @static
+	 * HeaderContent renderer.
+	 * @namespace
 	 */
 	var ObjectPageHeaderContentRenderer = {
 		apiVersion: 2

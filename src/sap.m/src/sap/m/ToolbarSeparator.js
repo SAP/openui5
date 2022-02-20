@@ -46,7 +46,8 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ToolbarSeparatorRenderer']
 	ToolbarSeparator.CLASSNAME_OVERFLOW_TOOLBAR = "sapMTBSeparatorOverflowToolbar";
 
 	/**
-	 * @private used for OverflowToolbar functionality
+	 * Used for OverflowToolbar functionality.
+	 * @private
 	 */
 
 	ToolbarSeparator.prototype._onBeforeEnterOverflow = function(oControl) {
@@ -54,7 +55,8 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ToolbarSeparatorRenderer']
 	};
 
 	/**
-	 * @private used for OverflowToolbar functionality
+	 * Used for OverflowToolbar functionality.
+	 * @private
 	 */
 
 	ToolbarSeparator.prototype._onAfterExitOverflow = function(oControl) {

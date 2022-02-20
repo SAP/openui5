@@ -295,7 +295,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @private used for OverflowToolbar functionality
+	 * Used for OverflowToolbar functionality.
+	 * @private
 	 */
 
 	GenericTag.prototype._onBeforeEnterOverflow = function(oControl) {
@@ -303,7 +304,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @private used for OverflowToolbar functionality
+	 * Used for OverflowToolbar functionality.
+	 * @private
 	 */
 
 	GenericTag.prototype._onAfterExitOverflow = function(oControl) {

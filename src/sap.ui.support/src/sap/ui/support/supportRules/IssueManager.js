@@ -10,7 +10,8 @@ sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/support
 	function (deepExtend, BaseObject, library, constants) {
 		"use strict";
 		/**
-		 * @type {object[]} _aIssues Issues stored in the IssueManager
+		 * Issues stored in the IssueManager.
+		 * @type {object[]}
 		 * @private
 		 */
 		var _aIssues = [];

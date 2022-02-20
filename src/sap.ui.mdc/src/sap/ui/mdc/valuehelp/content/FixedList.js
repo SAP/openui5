@@ -23,7 +23,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element showing a list with fix values.
-	 * @extends sap.ui.mdc.valuehelp.base.Content
+	 * @extends sap.ui.mdc.valuehelp.base.ListContent
 	 * @version ${version}
 	 * @constructor
 	 * @abstract

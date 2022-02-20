@@ -7,8 +7,8 @@ sap.ui.define(["sap/ui/Device"],
 		"use strict";
 
 		/**
-		 * @class ObjectPageRenderer renderer.
-		 * @static
+		 * ObjectPageLayout renderer.
+		 * @namespace
 		 */
 		var ObjectPageLayoutRenderer = {
 			apiVersion: 2
