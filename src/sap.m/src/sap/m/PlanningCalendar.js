@@ -1,3 +1,11 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable consistent-return */
+/* eslint-disable no-redeclare */
+/* eslint-disable no-lonely-if */
+/* eslint-disable new-cap */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable block-scoped-var */
+/* eslint-disable valid-jsdoc */
 /*!
  * ${copyright}
  */
@@ -3763,7 +3771,7 @@ sap.ui.define([
 		var iPlaceholders = this.getProperty("intervals");
 
 		if (this.getIntervalType() === CalendarIntervalType.Hour) {
-			iPlaceholders *= 2 ;
+			iPlaceholders *= 4;
 		}
 
 		this.removeAllAggregation("_intervalPlaceholders");
@@ -4063,7 +4071,7 @@ sap.ui.define([
 		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
 			oAppStartUTC = CalendarUtils._createUniversalUTCDate(oAppStartDate, null, true),
 			oAppEndUTC = CalendarUtils._createUniversalUTCDate(oAppEndDate, null, true),
-			oStartDateUTC = new Date(oRowStartUTC.setUTCMinutes(0, 0, 0) + (iIndex * 30 * 60 * 1000));
+			oStartDateUTC = new Date(oRowStartUTC.setUTCMinutes(0, 0, 0) + (iIndex * 15 * 60 * 1000));
 
 		return {
 			startDate: CalendarUtils._createLocalDate(oStartDateUTC, true),
@@ -4233,7 +4241,7 @@ sap.ui.define([
 
 	PlanningCalendar.prototype._calcResizeNewHoursAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
 		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(new Date(oRowStartDate.getTime()), null, true),
-			iMinutesStep = 30 * 60 * 1000, // 30 min
+			iMinutesStep = 15 * 60 * 1000, // 15 min
 			oAppStartUTC = CalendarUtils._createUniversalUTCDate(oAppStartDate, null, true),
 			oAppEndUTC = new Date(oRowStartUTC.setUTCMinutes(0, 0, 0) + ((iIndex + 1) *  iMinutesStep));
 
@@ -4287,7 +4295,7 @@ sap.ui.define([
 
 	PlanningCalendar.prototype._calcCreateNewAppHours = function(oRowStartDate, iStartIndex, iEndIndex) {
 		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
-			iMinutesStep = 30 * 60 * 1000,  // 30 min
+			iMinutesStep = 15 * 60 * 1000,  // 15 min
 			iStartAddon = (iStartIndex <= iEndIndex) ? iStartIndex : iEndIndex,
 			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex,
 			oRowStartDateTimeUTC = new Date(oRowStartUTC.setUTCMinutes(0, 0, 0)),
