@@ -53,7 +53,8 @@ sap.ui.define([
 	});
 
 	/**
-	 * @override to suppress the {} being recognized as binding strings
+	 * Overridden to suppress the {} being recognized as binding strings.
+	 * @override
 	 */
 	AddXMLAtExtensionPoint.prototype.bindProperty = function(sName, oBindingInfo) {
 		if (sName === "fragment") {

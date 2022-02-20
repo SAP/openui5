@@ -15,13 +15,12 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Utility class for MetadataPropagationUtil.
+	 * Functionality to propagate DesignTime and RelevantContainer.
 	 *
-	 * @class Functionality to propagate DesignTime and RelevantContainer
+	 * @namespace
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @static
 	 * @since 1.54
 	 * @alias sap.ui.dt.MetadataPropagationUtil
 	 */

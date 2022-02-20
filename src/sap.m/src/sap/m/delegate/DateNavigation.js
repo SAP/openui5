@@ -41,8 +41,8 @@ sap.ui.define([
 		});
 
 		/**
-		 * 24 hours as milliseconds
-		 * @type {number} milliseconds
+		 * 24 hours as milliseconds.
+		 * @type {int}
 		 * @private
 		 */
 		DateNavigation.HOURS24 = 1000 * 3600 * 24;

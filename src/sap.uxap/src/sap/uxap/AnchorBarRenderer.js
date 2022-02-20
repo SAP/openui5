@@ -7,8 +7,8 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 		"use strict";
 
 		/**
-		 * @class ObjectPageRenderer renderer.
-		 * @static
+		 * ObjectPageRenderer renderer.
+		 * @namespace
 		 */
 		var AnchorBarRenderer = Renderer.extend(ToolbarRenderer);
 

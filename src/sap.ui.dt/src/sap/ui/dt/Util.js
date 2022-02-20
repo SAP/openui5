@@ -16,16 +16,13 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Class for Utils.
+	 * Utilities for sap.ui.dt library.
 	 *
-	 * @class
-	 * Utilities for sap.ui.dt library
-	 *
+	 * @namespace
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @private
-	 * @static
 	 * @since 1.54
 	 * @alias sap.ui.dt.DOMUtil
 	 * @experimental Since 1.54. This class is experimental and provides only limited functionality. Also the API might be changed in future.

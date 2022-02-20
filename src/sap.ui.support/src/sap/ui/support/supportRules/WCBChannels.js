@@ -9,22 +9,16 @@ function () {
 
 	/**
 	 * <h3>Overview</h3>
-	 * These channels enable the user to hook to the {@link sap.ui.support.WindowCommunicationBus }
+	 * Channel constants which can be used to subscribe to the {@link sap.ui.support.WindowCommunicationBus}
+	 *
 	 * <h3>Usage</h3>
 	 * These channels are used for communication with Main.
-	 * @name sap.ui.support.WCBChannels
-	 * @alias CommunicationBusChannels
+	 *
+	 * @enum {string} sap.ui.support.WCBChannels
 	 * @readonly
 	 * @protected
-	 * @returns {Object} Returns the channel constants which are used to subscribe to sap.ui.support.WindowCommunicationBus
 	 */
-	return {
-		/**
-		 * @enum
-		 * @readonly
-		 * The following channels can subscribe to the WindowCommunicationBus
-		 */
-
+	return /** @lends sap.ui.support.WCBChannels */ {
 		/**
 		 * State change in the core.
 		 * @type {string}

@@ -7,8 +7,8 @@ sap.ui.define(["sap/m/ButtonRenderer", "sap/ui/core/Renderer"],
 		"use strict";
 
 		/**
-		 * @class ObjectPageRenderer renderer.
-		 * @static
+		 * ObjectPageRenderer renderer.
+		 * @namespace
 		 */
 		var ObjectPageHeaderActionButtonRenderer = Renderer.extend(ButtonRenderer);
 

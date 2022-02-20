@@ -25,15 +25,13 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Class for ElementUtil.
+	 * Utility functionality to work with UI5 elements, e.g. iterate through aggregations, find parents, ...
 	 *
-	 * @class Utility functionality to work with elements, e.g. iterate through aggregations, find parents, ...
-	 *
+	 * @namespace
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @private
-	 * @static
 	 * @since 1.30
 	 * @alias sap.ui.dt.ElementUtil
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API

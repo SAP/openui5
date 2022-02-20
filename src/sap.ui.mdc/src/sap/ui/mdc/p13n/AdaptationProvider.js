@@ -12,9 +12,9 @@ sap.ui.define([
 	 * modules such as the UIManager and the DefaultProviderRegistry.
 	 *
 	 * @author SAP SE
-	 * @private
 	 * @since 1.90
 	 * @experimental As of version 1.90
+	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @alias sap.ui.mdc.p13n.AdaptationProvider
 	 */

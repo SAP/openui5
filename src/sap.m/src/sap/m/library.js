@@ -1807,7 +1807,7 @@ sap.ui.define([
 		 * @public
 		 * @experimental since 1.96
 		 */
-		 ArticleMode: "ArticleMode",
+		ArticleMode: "ArticleMode",
 
 		/**
 		 * Line mode (Implemented for both, cozy and compact densities).
@@ -1823,10 +1823,13 @@ sap.ui.define([
 		/**
 		 * Icon mode.
 		 *
-		 * GenericTile displays a combination of icon and header title. It is applicable only for the OneByOne FrameType and TwoByHalf FrameType.
-		 * @public 1.96
+		 * GenericTile displays a combination of icon and header title.
+		 *
+		 * It is applicable only for the OneByOne FrameType and TwoByHalf FrameType.
+		 * @public
+		 * @since 1.96
 		 * @experimental Since 1.96
-		*/
+		 */
 		IconMode : "IconMode"
 	};
 

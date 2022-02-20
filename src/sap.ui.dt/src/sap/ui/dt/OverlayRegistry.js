@@ -17,16 +17,13 @@ function(
 	"use strict";
 
 	/**
-	 * Class for OverlayRegistry.
+	 * Static registry for Overlays.
 	 *
-	 * @class
-	 * Static registry for Overlays
-	 *
+	 * @namespace
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @private
-	 * @static
 	 * @since 1.30
 	 * @alias sap.ui.dt.OverlayRegistry
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.

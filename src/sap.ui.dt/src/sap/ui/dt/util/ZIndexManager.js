@@ -26,12 +26,11 @@ sap.ui.define([
 	/**
 	 * Utility class to calculate the next available z-index.
 	 *
-	 * @class
+	 * @namespace
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @private
-	 * @static
 	 * @since 1.64
 	 * @alias sap.ui.dt.util.ZIndexManager
 	 * @experimental Since 1.64. This class is experimental and provides only limited functionality. Also the API might be changed in future.

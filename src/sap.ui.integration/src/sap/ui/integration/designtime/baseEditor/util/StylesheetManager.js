@@ -26,7 +26,7 @@ sap.ui.define([
 
 	/**
 	 * Store keeps information about loaded files and amount of users they have.
-	 * @type {StoreItem[]} - List of loaded CSS files
+	 * @type {Object<string, StoreItem>}
 	 */
 	var mStore = {};
 

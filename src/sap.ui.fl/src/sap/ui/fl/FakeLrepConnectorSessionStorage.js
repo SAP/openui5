@@ -13,15 +13,14 @@ function(
 	"use strict";
 
 	/**
-	 * Class for storing changes in session storage
+	 * Utility for storing changes in session storage.
 	 *
-	 * @class
+	 * @namespace
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @private
-	 * @static
 	 * @since 1.58
 	 * @alias sap.ui.fl.FakeLrepConnectorSessionStorage
 	 */

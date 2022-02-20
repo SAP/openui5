@@ -33,17 +33,16 @@ sap.ui.define([
         "use strict";
 
         /**
-         /**
          * Constructor for a new ChartToolbar.
          *
          * @param {string} [sId] id for the new control, generated automatically if no id is given
          * @param {object} [mSettings] initial settings for the new control
-         * @class The ChartToolbar control creates a sap.m.OverflowToolbar based on metadata and the configuration specified.
-         * @extends sap.m.OverflowToolbar
+         * @class The ChartToolbar control is a sap.m.OverflowToolbar based on metadata and the configuration specified.
+         * @extends sap.ui.mdc.ActionToolbar
          * @author SAP SE
          * @version ${version}
          * @constructor
-         * @experimental As of version ...
+         * @experimental As of version 1.88
          * @private
          * @since 1.88
          * @alias sap.ui.mdc.chart.ChartToolbar

@@ -6,8 +6,8 @@ sap.ui.define(function () {
 	"use strict";
 
 	/**
-	 * @class Section renderer.
-	 * @static
+	 * SubSection renderer.
+	 * @namespace
 	 */
 	var ObjectPageSubSectionRenderer = {
 		apiVersion: 2

@@ -20,12 +20,14 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 	 */
 	var GridDragOver = BaseObject.extend("sap.f.dnd.GridDragOver", {
 		/**
-		 * @type {int} The timeout to hold on same position, before drop is suggested
+		 * The timeout to hold on same position, before drop is suggested.
+		 * @type {int}
 		 */
 		_iTimeoutBeforeDrop: 200,
 
 		/**
-		 * @type {jQuery} The indicator to show in the grid
+		 * The indicator to show in the grid.
+		 * @type {jQuery}
 		 */
 		_$indicator: jQuery("<div class='sapUiDnDGridIndicator'></div>"),
 
