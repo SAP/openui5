@@ -15,11 +15,14 @@ sap.ui.define([
 		var coreInstance = null;
 
 		/**
-		 * @classdesc
+		 * @class
+		 *
 		 * <h3>Overview</h3>
 		 * The CoreFacade interface gives access to the Metadata, Models, UI areas and Components of the Core object.
+		 *
 		 * <h3>Usage</h3>
 		 * The CoreFacade is passed to all rule check functions as an object. This helps rule developers to access the core state.
+		 *
 		 * @name sap.ui.support.CoreFacade
 		 * @param {object} oCore Core object as available in core plugins
 		 * @returns {object} Instance of the <code>CoreFacade</code>
@@ -28,11 +31,10 @@ sap.ui.define([
 		function CoreFacade(oCore) {
 			coreInstance = oCore;
 
-			return {
+			return /** @lends sap.ui.support.CoreFacade.prototype */ {
 				/**
 				 * Gets the Metadata from the Core object.
 				 * @public
-				 * @name sap.ui.support.CoreFacade.getMetadata
 				 */
 				getMetadata: function () {
 					return coreInstance.getMetadata();
@@ -40,7 +42,6 @@ sap.ui.define([
 				/**
 				 * Gets the UI areas from the Core object.
 				 * @public
-				 * @name sap.ui.support.CoreFacade.getUIAreas
 				 */
 				getUIAreas: function () {
 					return UIArea.registry.all();

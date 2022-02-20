@@ -12,15 +12,18 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/supportRules/IssueManager","sap/u
 		"use strict";
 
 		/**
-		 * @classdesc
+		 * @class
+		 *
 		 * <h3>Overview</h3>
 		 * Analyzer class that runs tasks. A Task runs a function for every entry in its object array.
 		 * The Analyzer counts the task objects and calculates the percentages.
+		 *
 		 * <h3>Usage</h3>
 		 * With the start, restart, stop and pause methods the analyzer can be controlled.
 		 * While running it asynchronously, it selects objects from the list of each task and completes them.
+		 *
 		 * @private
-		 * @class sap.ui.support.Analyzer
+		 * @alias sap.ui.support.Analyzer
 		 */
 		var Analyzer = function () {
 			this.dStartedAt = null;
