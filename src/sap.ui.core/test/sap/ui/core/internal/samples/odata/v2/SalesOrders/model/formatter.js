@@ -3,16 +3,22 @@ sap.ui.define([], function () {
 
 	return {
 		formatMessageDescription : function (oMessage) {
-			var sMessageDescription = oMessage.description,
-				sResult = sMessageDescription ? sMessageDescription + "\n\n" : "";
+			var sResult = "";
 
-			return sResult + "See technical details for more information.";
+			if (oMessage) {
+				if (oMessage.description) {
+					sResult += oMessage.description + "\n\n";
+				}
+				sResult += "See technical details for more information.";
+			}
+
+			return sResult;
 		},
 
 		formatMessageSubtitle : function (oMessage) {
 			var i,
-				sMessageFullTarget = oMessage.fullTarget,
-				sResult = oMessage.additionalText ? oMessage.additionalText + "\n" : "";
+				sMessageFullTarget = oMessage && oMessage.fullTarget,
+				sResult = oMessage && oMessage.additionalText ? oMessage.additionalText + "\n" : "";
 
 			if (sMessageFullTarget) {
 				i = sMessageFullTarget.lastIndexOf("ItemPosition=");

@@ -391,7 +391,7 @@ sap.ui.define([
 				 * Presses the "More" button of the sales orders table
 				 */
 				pressSalesOrdersMoreButton : function () {
-					Helper.pressMoreButton(this, sViewName);
+					Helper.pressMoreButton(this, sViewName, "SalesOrderSet");
 				},
 				/*
 				 * Presses the "Refresh sales orders table" button.
