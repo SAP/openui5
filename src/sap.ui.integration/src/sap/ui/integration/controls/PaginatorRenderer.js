@@ -62,6 +62,8 @@ sap.ui.define([
 						label: oResourceBundle.getText("CAROUSEL_POSITION", [i + 1, iPageCount])
 					});
 
+				oRm.attr("data-slide", i + 1);
+
 				if (i === iPageNumber) {
 					oRm.class("sapMCrslActive");
 				}
