@@ -26,9 +26,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: WrappingType,
 				defaultValue: WrappingType.None,
 			},
+			accessibleName: {
+				type: String,
+			},
 			accessibleNameRef: {
 				type: String,
-				defaultValue: "",
 			},
 			 accessibleRole: {
 				type: String,
@@ -94,7 +96,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return (this.disabled || !this.textContent.length) ? "-1" : "0";
 		}
 		get ariaLabelText() {
-			return AriaLabelHelper.getAriaLabelledByTexts(this);
+			return AriaLabelHelper.getEffectiveAriaLabelText(this);
 		}
 		get hasLinkType() {
 			return this.design !== LinkDesign.Default;

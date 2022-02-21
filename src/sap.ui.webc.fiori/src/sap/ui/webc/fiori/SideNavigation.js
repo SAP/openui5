@@ -99,6 +99,7 @@ sap.ui.define([
 				 * Fired when the selection has changed via user interaction
 				 */
 				selectionChange: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * the clicked item.

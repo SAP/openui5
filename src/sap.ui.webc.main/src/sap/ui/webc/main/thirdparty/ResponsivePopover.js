@@ -3,9 +3,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 	const metadata = {
 		tag: "ui5-responsive-popover",
 		properties:  {
-			withPadding: {
-				type: Boolean,
-			},
 			contentOnlyOnDesktop: {
 				type: Boolean,
 			},
@@ -87,10 +84,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			return ResponsivePopover.i18nBundle.getText(i18nDefaults.RESPONSIVE_POPOVER_CLOSE_DIALOG_BUTTON);
 		}
 		_afterDialogOpen(event) {
+			this.open = true;
 			this.opened = true;
 			this._propagateDialogEvent(event);
 		}
 		_afterDialogClose(event) {
+			this.open = false;
 			this.opened = false;
 			this._propagateDialogEvent(event);
 		}

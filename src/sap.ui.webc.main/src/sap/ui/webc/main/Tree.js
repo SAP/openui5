@@ -166,6 +166,7 @@ sap.ui.define([
 				 * Fired when a tree item is activated.
 				 */
 				itemClick: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * The clicked item.

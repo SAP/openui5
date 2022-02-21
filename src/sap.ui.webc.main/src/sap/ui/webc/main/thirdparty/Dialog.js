@@ -105,23 +105,36 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			this._isRTL = this.effectiveDir === "rtl";
 			this.onPhone = Device.isPhone();
 			this.onDesktop = Device.isDesktop();
-			this._detachResizeHandlers();
 		}
 		onAfterRendering() {
+			if (!this.isOpen() && this.open) {
+				this.show();
+			} else if (this.isOpen() && !this.open) {
+				this.close();
+			}
+		}
+		onEnterDOM() {
+			super.onEnterDOM();
 			this._attachResizeHandlers();
 		}
 		onExitDOM() {
 			super.onExitDOM();
 			this._detachResizeHandlers();
 		}
+		_resize() {
+			super._resize();
+			if (this._resizeHandlersAttached) {
+				this._center();
+			}
+		}
 		_attachResizeHandlers() {
-			ResizeHandler__default.register(this, this._screenResizeHandler);
-			ResizeHandler__default.register(document.body, this._screenResizeHandler);
-			this._resizeHandlersAttached = true;
+			if (!this._resizeHandlersAttached) {
+				ResizeHandler__default.register(document.body, this._screenResizeHandler);
+				this._resizeHandlersAttached = true;
+			}
 		}
 		_detachResizeHandlers() {
 			if (this._resizeHandlersAttached) {
-				ResizeHandler__default.deregister(this, this._screenResizeHandler);
 				ResizeHandler__default.deregister(document.body, this._screenResizeHandler);
 				this._resizeHandlersAttached = false;
 			}

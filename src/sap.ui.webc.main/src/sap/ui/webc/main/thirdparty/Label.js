@@ -1,9 +1,10 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Device', './types/WrappingType', './generated/templates/LabelTemplate.lit', './generated/themes/Label.css'], function (UI5Element, litRender, Device, WrappingType, LabelTemplate_lit, Label_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/util/findNodeOwner', 'sap/ui/webc/common/thirdparty/base/Device', './types/WrappingType', './generated/templates/LabelTemplate.lit', './generated/themes/Label.css'], function (UI5Element, litRender, findNodeOwner, Device, WrappingType, LabelTemplate_lit, Label_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
+	var findNodeOwner__default = /*#__PURE__*/_interopDefaultLegacy(findNodeOwner);
 
 	const metadata = {
 		tag: "ui5-label",
@@ -50,7 +51,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			};
 		}
 		_onclick() {
-			const elementToFocus = document.getElementById(this.for);
+			if (!this.for) {
+				return;
+			}
+			const ownerNode = findNodeOwner__default(this);
+			const elementToFocus = ownerNode.querySelector(`#${this.for}`);
 			if (elementToFocus) {
 				elementToFocus.focus();
 			}

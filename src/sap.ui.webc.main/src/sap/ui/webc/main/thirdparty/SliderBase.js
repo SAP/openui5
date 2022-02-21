@@ -321,18 +321,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.effectiveDir === "rtl" ? "right" : "left";
 		}
 		get _tickmarks() {
+			const currentTheme = Theme.getTheme();
+			const currentColor = SliderBase.TICKMARK_COLOR_MAP[currentTheme];
 			if (!this.showTickmarks || !this._effectiveStep) {
 				return;
 			}
 			if (this._hiddenTickmarks) {
-				return `linear-gradient(to right, currentColor 1px, transparent 0) 0 center / calc(100% - 1px) 100% repeat-x`;
+				return `linear-gradient(to right, ${currentColor} 1px, transparent 0) 0 center / calc(100% - 1px) 100% repeat-x`;
 			}
 			const maxStr = String(this._effectiveMax);
 			const minStr = String(this._effectiveMin);
 			const stepStr = String(this._effectiveStep);
-			const currentTheme = Theme.getTheme();
 			const tickmarkWidth = "1px";
-			const currentColor = SliderBase.TICKMARK_COLOR_MAP[currentTheme];
 			this._tickmarksAmount = `${maxStr - minStr} / ${stepStr}`;
 			this._hiddenTickmarks = false;
 			const tickmarksGradientBase = `linear-gradient(to right, ${currentColor} ${tickmarkWidth}, transparent 0) `;

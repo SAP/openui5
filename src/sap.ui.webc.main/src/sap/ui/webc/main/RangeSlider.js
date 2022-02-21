@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/RangeSlider"
-], function(WebComponent, library) {
+], function(WebComponent, library, EnabledPropagator) {
 	"use strict";
 
 	/**
@@ -74,11 +75,16 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines whether the slider is in disabled state.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -181,6 +187,8 @@ sap.ui.define([
 			designtime: "sap/ui/webc/main/designtime/RangeSlider.designtime"
 		}
 	});
+
+	EnabledPropagator.call(RangeSlider.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

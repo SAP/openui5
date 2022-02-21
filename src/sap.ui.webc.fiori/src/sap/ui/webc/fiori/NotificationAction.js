@@ -6,9 +6,10 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"sap/ui/webc/main/library",
 	"./thirdparty/NotificationAction"
-], function(WebComponent, library, mainLibrary) {
+], function(WebComponent, library, EnabledPropagator, mainLibrary) {
 	"use strict";
 
 	var ButtonDesign = mainLibrary.ButtonDesign;
@@ -64,13 +65,16 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines if the action is disabled. <br>
-				 * <br>
-				 * <b>Note:</b> a disabled action can't be pressed or focused, and it is not in the tab chain.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -93,6 +97,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	EnabledPropagator.call(NotificationAction.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

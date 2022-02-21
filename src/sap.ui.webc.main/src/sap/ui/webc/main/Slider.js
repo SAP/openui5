@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/Slider"
-], function(WebComponent, library) {
+], function(WebComponent, library, EnabledPropagator) {
 	"use strict";
 
 	/**
@@ -75,20 +76,29 @@ sap.ui.define([
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.Slider
+	 * @implements sap.ui.core.IFormContent
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Slider = WebComponent.extend("sap.ui.webc.main.Slider", {
 		metadata: {
 			library: "sap.ui.webc.main",
 			tag: "ui5-slider-ui5",
+			interfaces: [
+				"sap.ui.core.IFormContent"
+			],
 			properties: {
 
 				/**
-				 * Defines whether the slider is in disabled state.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -181,6 +191,8 @@ sap.ui.define([
 			designtime: "sap/ui/webc/main/designtime/Slider.designtime"
 		}
 	});
+
+	EnabledPropagator.call(Slider.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

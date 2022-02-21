@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/WizardStep"
-], function(WebComponent, library) {
+], function(WebComponent, library, EnabledPropagator) {
 	"use strict";
 
 	/**
@@ -66,15 +67,16 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines if the step is <code>disabled</code>. When disabled the step is displayed, but the user can't select the step by clicking or navigate to it with scrolling. <br>
-				 * <br>
-				 *
-				 *
-				 * <b>Note:</b> Step can't be <code>selected</code> and <code>disabled</code> at the same time. In this case the <code>selected</code> property would take precedence.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -142,6 +144,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	EnabledPropagator.call(WizardStep.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

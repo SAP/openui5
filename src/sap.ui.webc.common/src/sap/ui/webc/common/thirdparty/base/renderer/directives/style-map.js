@@ -1,4 +1,4 @@
-sap.ui.define(['exports', '../../style-map-3e5a195d', 'sap/ui/webc/common/thirdparty/lit-html/directive'], function (exports, styleMap, directive) { 'use strict';
+sap.ui.define(['exports', '../../_chunks/style-map', 'sap/ui/webc/common/thirdparty/lit-html/directive'], function (exports, styleMap, directive) { 'use strict';
 
 
 

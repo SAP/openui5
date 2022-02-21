@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/MediaGalleryItem"
-], function(WebComponent, library) {
+], function(WebComponent, library, EnabledPropagator) {
 	"use strict";
 
 	var MediaGalleryItemLayout = library.MediaGalleryItemLayout;
@@ -54,11 +55,16 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines whether the component is in disabled state.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -105,6 +111,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	EnabledPropagator.call(MediaGalleryItem.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/Link"
-], function(WebComponent, library) {
+], function(WebComponent, library, EnabledPropagator) {
 	"use strict";
 
 	var LinkDesign = library.LinkDesign;
@@ -82,6 +83,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines the component design. <br>
 				 * <br>
 				 * <b>Note:</b> Avaialble options are <code>Default</code>, <code>Subtle</code>, and <code>Emphasized</code>.
@@ -92,13 +101,16 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the component is disabled. <br>
-				 * <br>
-				 * <b>Note:</b> When disabled, the click event cannot be triggered by the user.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -179,6 +191,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	EnabledPropagator.call(Link.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

@@ -7,7 +7,7 @@ sap.ui.define(function () { 'use strict';
 		patch: 2,
 		suffix: "",
 		isNext: false,
-		buildTime: 1644236777,
+		buildTime: 1645441753,
 	};
 
 	return VersionInfo;

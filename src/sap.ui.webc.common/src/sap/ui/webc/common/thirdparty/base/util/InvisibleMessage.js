@@ -2,16 +2,18 @@ sap.ui.define(['../types/InvisibleMessageMode', './getSingletonElementInstance',
 
 	let politeSpan;
 	let assertiveSpan;
+	const setOutOfViewportStyles = el => {
+		el.style.position = "absolute";
+		el.style.clip = "rect(1px,1px,1px,1px)";
+		el.style.userSelect = "none";
+		el.style.left = "-1000px";
+		el.style.top = "-1000px";
+		el.style.pointerEvents = "none";
+	};
 	Boot.attachBoot(() => {
 		if (politeSpan && assertiveSpan) {
 			return;
 		}
-		const styles = `position: absolute;
-	clip: rect(1px,1px,1px,1px);
-	user-select: none;
-	left: -1000px;
-	top: -1000px;
-	pointer-events: none;`;
 		politeSpan = document.createElement("span");
 		assertiveSpan = document.createElement("span");
 		politeSpan.classList.add("ui5-invisiblemessage-polite");
@@ -20,8 +22,8 @@ sap.ui.define(['../types/InvisibleMessageMode', './getSingletonElementInstance',
 		assertiveSpan.setAttribute("aria-live", "assertive");
 		politeSpan.setAttribute("role", "alert");
 		assertiveSpan.setAttribute("role", "alert");
-		politeSpan.style.cssText = styles;
-		assertiveSpan.style.cssText = styles;
+		setOutOfViewportStyles(politeSpan);
+		setOutOfViewportStyles(assertiveSpan);
 		getSingletonElementInstance("ui5-static-area").appendChild(politeSpan);
 		getSingletonElementInstance("ui5-static-area").appendChild(assertiveSpan);
 	});

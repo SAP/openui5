@@ -6,9 +6,10 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
 	"./thirdparty/CheckBox"
-], function(WebComponent, library, coreLibrary) {
+], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -68,7 +69,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Sets the accessible aria name of the component.
+				 * Defines the accessible aria name of the component.
 				 */
 				accessibleName: {
 					type: "string",
@@ -86,13 +87,16 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the component is disabled. <br>
-				 * <br>
-				 * <b>Note:</b> A disabled component is completely noninteractive.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -211,6 +215,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	EnabledPropagator.call(CheckBox.prototype);
 
 	/* CUSTOM CODE START */
 

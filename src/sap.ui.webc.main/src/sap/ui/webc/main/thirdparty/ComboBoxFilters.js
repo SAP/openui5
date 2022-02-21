@@ -1,4 +1,4 @@
-sap.ui.define(['exports', './ComboBoxFilters-f59100bd'], function (exports, ComboBoxFilters) { 'use strict';
+sap.ui.define(['exports', './_chunks/ComboBoxFilters'], function (exports, ComboBoxFilters) { 'use strict';
 
 
 

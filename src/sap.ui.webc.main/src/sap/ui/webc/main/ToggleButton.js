@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/ToggleButton"
-], function(WebComponent, library) {
+], function(WebComponent, library, EnabledPropagator) {
 	"use strict";
 
 	var ButtonDesign = library.ButtonDesign;
@@ -74,7 +75,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Sets the accessible aria name of the component.
+				 * Defines the accessible aria name of the component.
 				 */
 				accessibleName: {
 					type: "string"
@@ -103,11 +104,16 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the component is disabled. A disabled component can't be pressed or focused, and it is not in the tab chain.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -192,6 +198,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	EnabledPropagator.call(ToggleButton.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */
