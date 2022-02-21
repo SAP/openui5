@@ -11,8 +11,8 @@ sap.ui.define([
 		// shortcut for sap.ui.core.CalendarType
 		var CalendarType = library.CalendarType;
 
-		var oDateTime = new Date("Tue Sep 11 06:46:13 2001 GMT+0000"),
-			oTZDateTime = new Date("Tue Sep 11 03:46:13 2001 GMT+0530"),
+		var oDateTime = new Date("Tue Sep 23 06:46:13 2000 GMT+0000"),
+			oTZDateTime = new Date("Tue Sep 23 03:46:13 2000 GMT+0530"),
 			oDefaultDate = DateFormat.getInstance(),
 			oDefaultDateTime = DateFormat.getDateTimeInstance(),
 			oDefaultTime = DateFormat.getTimeInstance();
@@ -76,28 +76,28 @@ sap.ui.define([
 		});
 
 		QUnit.test("format default date", function (assert) {
-			assert.equal(oDefaultDate.format(oDateTime), "Sep 11, 2001", "default date");
-			assert.equal(oDefaultDateTime.format(oDateTime), "Sep 11, 2001, 8:46:13 AM", "default datetime");
+			assert.equal(oDefaultDate.format(oDateTime), "Sep 23, 2000", "default date");
+			assert.equal(oDefaultDateTime.format(oDateTime), "Sep 23, 2000, 8:46:13 AM", "default datetime");
 			assert.equal(oDefaultTime.format(oDateTime), "8:46:13 AM", "default time");
 		});
 
 		QUnit.test("format default date UTC", function (assert) {
-			assert.equal(oDefaultDate.format(oTZDateTime, true), "Sep 10, 2001", "default date UTC");
-			assert.equal(oDefaultDateTime.format(oTZDateTime, true), "Sep 10, 2001, 10:16:13 PM", "default datetime UTC");
+			assert.equal(oDefaultDate.format(oTZDateTime, true), "Sep 22, 2000", "default date UTC");
+			assert.equal(oDefaultDateTime.format(oTZDateTime, true), "Sep 22, 2000, 10:16:13 PM", "default datetime UTC");
 			assert.equal(oDefaultTime.format(oTZDateTime, true), "10:16:13 PM", "default time UTC");
 		});
 
 		QUnit.test("format date with given style", function (assert) {
-			assert.equal(DateFormat.getDateInstance({ style: "short" }).format(oDateTime), "9/11/01", "short date");
-			assert.equal(DateFormat.getDateInstance({ style: "medium" }).format(oDateTime), "Sep 11, 2001", "medium date");
-			assert.equal(DateFormat.getDateInstance({ style: "long" }).format(oDateTime), "September 11, 2001", "long date");
-			assert.equal(DateFormat.getDateInstance({ style: "full" }).format(oDateTime), "Tuesday, September 11, 2001", "full date");
-			assert.equal(DateFormat.getDateTimeInstance({ style: "short" }).format(oDateTime), "9/11/01, 8:46 AM", "short datetime");
-			assert.equal(DateFormat.getDateTimeInstance({ style: "medium" }).format(oDateTime), "Sep 11, 2001, 8:46:13 AM", "medium datetime");
-			assert.equal(DateFormat.getDateTimeInstance({ style: "long" }).format(oDateTime), "September 11, 2001 at 8:46:13 AM GMT+02:00", "long datetime");
-			assert.equal(DateFormat.getDateTimeInstance({ style: "full" }).format(oDateTime), "Tuesday, September 11, 2001 at 8:46:13 AM GMT+02:00", "full datetime");
-			assert.equal(DateFormat.getDateTimeInstance({ style: "medium/short" }).format(oDateTime), "Sep 11, 2001, 8:46 AM", "medium/short datetime");
-			assert.equal(DateFormat.getDateTimeInstance({ style: "long/medium" }).format(oDateTime), "September 11, 2001 at 8:46:13 AM", "long/medium datetime");
+			assert.equal(DateFormat.getDateInstance({ style: "short" }).format(oDateTime), "9/23/00", "short date");
+			assert.equal(DateFormat.getDateInstance({ style: "medium" }).format(oDateTime), "Sep 23, 2000", "medium date");
+			assert.equal(DateFormat.getDateInstance({ style: "long" }).format(oDateTime), "September 23, 2000", "long date");
+			assert.equal(DateFormat.getDateInstance({ style: "full" }).format(oDateTime), "Saturday, September 23, 2000", "full date");
+			assert.equal(DateFormat.getDateTimeInstance({ style: "short" }).format(oDateTime), "9/23/00, 8:46 AM", "short datetime");
+			assert.equal(DateFormat.getDateTimeInstance({ style: "medium" }).format(oDateTime), "Sep 23, 2000, 8:46:13 AM", "medium datetime");
+			assert.equal(DateFormat.getDateTimeInstance({ style: "long" }).format(oDateTime), "September 23, 2000 at 8:46:13 AM GMT+02:00", "long datetime");
+			assert.equal(DateFormat.getDateTimeInstance({ style: "full" }).format(oDateTime), "Saturday, September 23, 2000 at 8:46:13 AM GMT+02:00", "full datetime");
+			assert.equal(DateFormat.getDateTimeInstance({ style: "medium/short" }).format(oDateTime), "Sep 23, 2000, 8:46 AM", "medium/short datetime");
+			assert.equal(DateFormat.getDateTimeInstance({ style: "long/medium" }).format(oDateTime), "September 23, 2000 at 8:46:13 AM", "long/medium datetime");
 			assert.equal(DateFormat.getTimeInstance({ style: "short" }).format(oDateTime), "8:46 AM", "short time");
 			assert.equal(DateFormat.getTimeInstance({ style: "medium" }).format(oDateTime), "8:46:13 AM", "medium time");
 			assert.equal(DateFormat.getTimeInstance({ style: "long" }).format(oDateTime), "8:46:13 AM GMT+02:00", "long time");
@@ -106,15 +106,15 @@ sap.ui.define([
 
 		QUnit.test("format date for a specific locale", function (assert) {
 			var oLocale = new Locale("de-DE");
-			assert.equal(DateFormat.getDateInstance(oLocale).format(oDateTime), "11.09.2001", "date with defaults for given locale");
-			assert.equal(DateFormat.getDateTimeInstance(oLocale).format(oDateTime), "11.09.2001, 08:46:13", "datetime with defaults for given locale");
+			assert.equal(DateFormat.getDateInstance(oLocale).format(oDateTime), "23.09.2000", "date with defaults for given locale");
+			assert.equal(DateFormat.getDateTimeInstance(oLocale).format(oDateTime), "23.09.2000, 08:46:13", "datetime with defaults for given locale");
 			assert.equal(DateFormat.getTimeInstance(oLocale).format(oDateTime), "08:46:13", "time with defaults for given locale");
 		});
 
 		QUnit.test("format date with custom pattern for a specific locale", function (assert) {
 			var oLocale = new Locale("de-DE");
-			assert.equal(DateFormat.getDateInstance({ pattern: "dd MMM yyyy" }, oLocale).format(oDateTime), "11 Sept. 2001", "date with custom pattern for given locale");
-			assert.equal(DateFormat.getDateTimeInstance({ pattern: "dd MMM yyyy hh:mm:ss a" }, oLocale).format(oDateTime), "11 Sept. 2001 08:46:13 AM", "datetime with custom pattern for given locale");
+			assert.equal(DateFormat.getDateInstance({ pattern: "dd MMM yyyy" }, oLocale).format(oDateTime), "23 Sept. 2000", "date with custom pattern for given locale");
+			assert.equal(DateFormat.getDateTimeInstance({ pattern: "dd MMM yyyy hh:mm:ss a" }, oLocale).format(oDateTime), "23 Sept. 2000 08:46:13 AM", "datetime with custom pattern for given locale");
 			assert.equal(DateFormat.getTimeInstance({ pattern: "hh:mm:ss a" }, oLocale).format(oDateTime), "08:46:13 AM", "datetime with custom pattern for given locale");
 		});
 
@@ -3016,15 +3016,15 @@ sap.ui.define([
 				"Only local offset is formatted");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss VV z"
-				}).format(oDateTime).toString(), "2001-09-11T08:46:13 Europe/Berlin GMT+02:00",
+				}).format(oDateTime).toString(), "2000-09-23T08:46:13 Europe/Berlin GMT+02:00",
 				"Local timezone and offset is formatted");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss z VV"
-				}).format(oDateTime).toString(), "2001-09-11T08:46:13 GMT+02:00 Europe/Berlin",
+				}).format(oDateTime).toString(), "2000-09-23T08:46:13 GMT+02:00 Europe/Berlin",
 				"Local offset and timezone is formatted");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss VV"
-				}).format(oDateTime).toString(), "2001-09-11T08:46:13 Europe/Berlin",
+				}).format(oDateTime).toString(), "2000-09-23T08:46:13 Europe/Berlin",
 				"Local timezone is formatted");
 		});
 
@@ -3041,15 +3041,15 @@ sap.ui.define([
 				"Parsed the initial unix epoch date with pattern symbol z.");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss VV z"
-				}).parse("2001-09-11T08:46:13 Europe/Berlin GMT+02:00").getTime(), oDateTime.getTime(),
+				}).parse("2000-09-23T08:46:13 Europe/Berlin GMT+02:00").getTime(), oDateTime.getTime(),
 				"Parsed with pattern symbols VV and z.");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss z VV"
-				}).parse("2001-09-11T08:46:13 GMT+02:00 Europe/Berlin").getTime(), oDateTime.getTime(),
+				}).parse("2000-09-23T08:46:13 GMT+02:00 Europe/Berlin").getTime(), oDateTime.getTime(),
 				"Parsed with pattern symbols z and VV.");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss VV"
-				}).parse("2001-09-11T08:46:13 Europe/Berlin").getTime(), oDateTime.getTime(),
+				}).parse("2000-09-23T08:46:13 Europe/Berlin").getTime(), oDateTime.getTime(),
 				"Parsed with pattern symbol VV.");
 		});
 
