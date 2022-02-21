@@ -31,7 +31,9 @@ sap.ui.define([
 				sMockdataBaseUrl : sJsonFilesUrl,
 				bGenerateMissingMockData : true,
 				aEntitySetsNames: [
-					"SEPMRA_C_PD_Product"
+					"SEPMRA_C_PD_Product",
+					"SEPMRA_C_PD_ProductText",
+					"SEPMRA_C_PD_Supplier"
 				]
 			});
 
