@@ -3,6 +3,33 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "a25f4ad7b4935ec46b15289f133ba869d2cb2325",
+        "type": "FIX",
+        "text": " DateFormat#format: date parameter check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170331920"
+          }
+        ]
+      },
+      {
+        "id": "a1e67dba803414d3e2ca8047de1eae9465d1f3d9",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UniversalDate: invalid date (endless loop)"
+      },
+      {
+        "id": "9d0322af482fe9587710722274897ce6f489f00c",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Fix invalid groupingSize configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180410670"
+          }
+        ]
+      },
+      {
         "id": "3bc74395d2984156159d90106a4fbbc2ce9e8f93",
         "type": "FIX",
         "text": " sap.ui.model.odata.v2.ODataListBinding#setContext: Do not fire change event if unresolved",
@@ -10,6 +37,17 @@
           {
             "type": "BCP",
             "reference": "2280055052"
+          }
+        ]
+      },
+      {
+        "id": "94390048bf14c461d3e7c1218e77f0e398372b81",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: parse symbol \"Y\" (weekYear) with 2 digits",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280031405"
           }
         ]
       },

@@ -3,6 +3,33 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "157064ec6fdc02f383fb618c32b8d6b6cafca880",
+        "type": "FIX",
+        "text": " CardExplorer: Remove older {{parameters.xxx}} syntax from samples"
+      },
+      {
+        "id": "49e2640730b4a20ae55b633af8f3f2936f1d10b3",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Image name in visual tests edited to be valid",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280053987"
+          }
+        ]
+      },
+      {
+        "id": "67844bb85e69f81a1acb59d04da7902de728ba02",
+        "type": "FIX",
+        "text": " sap.m.AvatarGroup: Correct items to render count",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280056755"
+          }
+        ]
+      },
+      {
         "id": "aee22437cef1a488ebd8e51888de0b35320828f4",
         "type": "FIX",
         "text": " sap.f.PlanningCalendarInCardLegend: hardcoded text replaced",
