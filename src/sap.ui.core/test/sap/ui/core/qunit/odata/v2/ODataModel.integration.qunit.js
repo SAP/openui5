@@ -13249,6 +13249,100 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: Messages that are no longer valid after a side-effects request are removed
+	// JIRA: CPOUI5MODELS-656
+	QUnit.test("Request side effects: correct message handling", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope(),
+			oMsgSalesOrder = this.createResponseMessage("SalesOrderID", "Foo"),
+			oMsgSalesOrderToLineItems1 = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='1')/Note", "Bar"),
+			oMsgSalesOrderItem1 = cloneODataMessage(oMsgSalesOrderToLineItems1,
+				"(SalesOrderID='1',ItemPosition='1')/Note"),
+			sView = '\
+<FlexBox id="objectPage" binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
+	<t:Table id="table" rows="{\
+			path : \'ToLineItems\',\
+			parameters : {transitionMessagesOnly : true}\
+		}" visibleRowCount="2">\
+		<Text id="itemPosition" text="{ItemPosition}"/>\
+		<Input id="note" value="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
+				requestUri : "SalesOrderSet('1')",
+				headers : {"sap-message-scope" : "BusinessObject"}
+			}, {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				SalesOrderID : "1"
+			}, {"sap-message" : getMessageHeader([oMsgSalesOrder, oMsgSalesOrderToLineItems1])})
+			.expectRequest({
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=102",
+				headers : {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
+			}, {
+				results : [{
+					__metadata : {uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"},
+					SalesOrderID : "1",
+					ItemPosition : "1",
+					Note : "Item 1"
+				}, {
+					__metadata : {uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='2')"},
+					SalesOrderID : "1",
+					ItemPosition : "2",
+					Note : "Item 2"
+				}]
+			})
+			.expectMessage(oMsgSalesOrder, "/SalesOrderSet('1')/")
+			.expectMessage(oMsgSalesOrderItem1, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems")
+			.expectValue("salesOrderID", "1")
+			.expectValue("itemPosition", ["1", "2"])
+			.expectValue("note", ["Item 1", "Item 2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					requestUri : "SalesOrderSet('1')?$expand=ToLineItems",
+					headers : {"sap-message-scope" : "BusinessObject"}
+				}, {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					ToLineItems : {
+						results : [{
+							__metadata : {
+								uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='2')"
+							},
+							SalesOrderID : "1",
+							ItemPosition : "2",
+							Note : "Item 2"
+						}, {
+							__metadata : {
+								uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='3')"
+							},
+							SalesOrderID : "1",
+							ItemPosition : "3",
+							Note : "Item 3"
+						}]
+					}
+				}, {"sap-message" : getMessageHeader([oMsgSalesOrder])})
+				.expectValue("itemPosition", ["2", "3"])
+				.expectValue("note", ["Item 2", "Item 3"])
+				.expectMessage(oMsgSalesOrder, "/SalesOrderSet('1')/", undefined, true);
+
+			// code under test
+			oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
+				urlParameters : {$expand : "ToLineItems"}
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: When enforcing the update of a relative list binding with a transient context via
 	// ODataModel#updateBindings(true), there is no backend request.
 	// JIRA: CPOUI5MODELS-755

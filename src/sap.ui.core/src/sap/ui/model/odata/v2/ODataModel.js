@@ -5664,7 +5664,8 @@ sap.ui.define([
 	 *   The context referring to the entity to read side effects for
 	 * @param {object} [mParameters]
 	 *   A map of parameters as specified for {@link sap.ui.model.odata.v2.ODataModel#read}, where
-	 *   only the following subset of these is supported.
+	 *   only the following subset of these is supported. The <code>updateAggregatedMessages</code>
+	 *   parameter is immutably set to <code>true</code>.
 	 * @param {string} [mParameters.groupId]
 	 *   The ID of a request group
 	 * @param {Object<string,string>} [mParameters.urlParameters]
@@ -5701,6 +5702,7 @@ sap.ui.define([
 					success : function (/*oData, oResponse*/) {
 						resolve();
 					},
+					updateAggregatedMessages : true,
 					urlParameters : mParameters.urlParameters
 				}, true);
 		});
