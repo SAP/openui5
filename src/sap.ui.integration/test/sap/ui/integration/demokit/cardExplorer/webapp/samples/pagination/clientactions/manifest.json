@@ -1,0 +1,147 @@
+
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.data.list.card",
+		"type": "card",
+		"title": "Sample for Client-Side Pagination in Cards",
+		"subTitle": "Sample for Client-Side Pagination in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Pagination",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+				"parameters": {
+					"$format": "json",
+					"$top": 20
+				}
+			},
+			"path": "/value"
+		},
+		"header": {
+			"title": "Products",
+			"subTitle": "In Stock Information",
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"20"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock",
+				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			}
+		},
+		"footer": {
+			"paginator": {
+				"pageSize": 5
+			},
+			"actionsStrip": [
+				{
+					"text": "Approve",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "approve"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Reject",
+					"text": "Reject",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "reject"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"text": "Details",
+					"ariaHasPopup": "Dialog",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "openSnack"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"icon": "sap-icon://email",
+					"text": "Contact",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "mailto:{email}"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"text": "Book a Meeting",
+					"overflowPriority": "AlwaysOverflow",
+					"actions": [
+						{
+							"type": "Navigation",
+							"enabled": false,
+							"parameters": {
+								"url": "{agendaUrl}"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"text": "Contact Company",
+					"overflowPriority": "AlwaysOverflow",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "mailto:{company/email}?subject={company/emailSubject}"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

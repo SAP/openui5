@@ -139,7 +139,8 @@ sap.ui.define([
 
 				this.getModel("paginator").setData({
 					skip: iStartIndex,
-					top: this.getPageSize()
+					size: this.getPageSize(),
+					pageIndex: this.getPageNumber()
 				});
 
 				oCardContent.refreshData();

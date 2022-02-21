@@ -118,7 +118,7 @@
 			</p>
 
 			<h2 id="paginatorModel">Paginator Model</h2>
-			<p>The following values are available for the paginator model:</p>
+			<p>The following values are available for the paginator model, when server-side mode is used:</p>
 			<table>
 				<tr>
 					<th>Path</th>
@@ -129,6 +129,15 @@
 					<td>The number of records (items) from the beginning
 						that should be skipped in the current
 						request in order to provide pagination</td>
+				</tr>
+				<tr>
+					<td>{paginator>/size}</td>
+					<td>The number of records (items)
+						that should be returned from the request</td>
+				</tr>
+				<tr>
+					<td>{paginator>/pageIndex}</td>
+					<td>The currently selected page index</td>
 				</tr>
 			</table>
 		</div>
