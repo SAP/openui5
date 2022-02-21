@@ -827,7 +827,7 @@
           }
         },
         "feeds": {
-          "description": "Feeds for the chart.",
+          "description": "Feeds for the chart",
           "type": "array",
           "items": {
             "$ref": "#/definitions/ContentType.Analytical.Field"
@@ -1169,7 +1169,7 @@
           "type": "string"
         },
         "type": {
-          "description": "Defines the type of the displayed information. Some of the types are deprecated.",
+          "description": "Defines the type of the displayed information. Some of the types are deprecated",
           "type": "string",
           "oneOf": [
             {
@@ -1177,6 +1177,7 @@
                 "Default",
                 "NumericData",
                 "Status",
+                "IconGroup",
                 "phone",
                 "email",
                 "link",
@@ -1241,6 +1242,30 @@
                 "End"
               ],
               "default": "Begin"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "template": {
+          "description": "[Experimental] Template definition for the icons in the group",
+          "$ref": "#/definitions/ContentType.Object.Item.IconGroupTemplate"
+        },
+        "path": {
+          "description": "[Experimental] Binding path to the icon data",
+          "type": "string"
+        },
+        "size": {
+          "description": "[Experimental] The size of the icons in an IconGroup",
+          "oneOf": [
+            {
+              "enum": [
+                "XS",
+                "S",
+                "M"
+              ],
+              "default": "XS"
             },
             {
               "$ref": "#/definitions/simpleBinding"
@@ -1324,6 +1349,41 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
+        }
+      }
+    },
+    "ContentType.Object.Item.IconGroupTemplate": {
+      "description": "Template definition for the icons in the group",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "icon"
+      ],
+      "properties": {
+        "icon": {
+          "$ref": "#/definitions/ContentType.Object.Item.IconGroupIcon"
+        },
+        "actions": {
+          "description": "Defines actions that can be applied on the icon",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/action"
+          }
+        }
+      }
+    },
+    "ContentType.Object.Item.IconGroupIcon": {
+      "description": "Definition for icons in the IconGroup",
+      "type": "object",
+      "additionalProperties": false,
+      "properties":  {
+        "src": {
+          "type": "string",
+          "description": "Represents icon name or source URL"
+        },
+        "text": {
+          "type": "string",
+          "description": "Represents text that will be displayed in the icon"
         }
       }
     },
@@ -2062,7 +2122,7 @@
           "additionalProperties": true
         },
         "retryAfter": {
-          "description": "Number of seconds before the request is retried if it failed the previous time.",
+          "description": "Number of seconds before the request is retried if it failed the previous time",
           "oneOf": [
             {
               "type": "number"
@@ -2098,7 +2158,7 @@
       }
     },
     "batchRequest": {
-      "description": "Represents a request which is a part of a batch request.",
+      "description": "Represents a request which is a part of a batch request",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -2138,22 +2198,22 @@
       "additionalProperties": false,
       "properties": {
         "maxAge": {
-          "description": "The maximum age for which the cache is considered fresh.",
+          "description": "The maximum age for which the cache is considered fresh",
           "type": "number",
           "default": 0
         },
         "staleWhileRevalidate": {
-          "description": "Should we show stale cache while revalidating.",
+          "description": "Should we show stale cache while revalidating",
           "type": "boolean",
           "default": false
         },
         "noStore": {
-          "description": "[Deprecated] Set to true to disable caching for this card.",
+          "description": "[Deprecated] Set to true to disable caching for this card",
           "type": "boolean",
           "default": false
         },
         "enabled": {
-          "description": "Set to false to disable caching for this card.",
+          "description": "Set to false to disable caching for this card",
           "type": "boolean",
           "default": false
         }
@@ -2863,7 +2923,7 @@
       "additionalProperties": false,
       "properties": {
         "actions": {
-          "description": "Action(s) which will be executed when button is pressed.",
+          "description": "Action(s) which will be executed when button is pressed",
           "type": "array",
           "items": {
             "$ref": "#/definitions/action"
