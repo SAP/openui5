@@ -308,6 +308,10 @@ sap.ui.define([
 			window["sap-ui-config"].libs = window["sap-ui-config"].libs.join(",");
 		}
 
+		// write test config to window
+		// can be read by specific tests, e.g. tests in the generic test collection
+		window["sap-ui-test-config"] = oConfig.testConfig || {};
+
 		if ( oConfig.bootCore ) {
 			pTestEnv = pTestEnv.then(function() {
 				return new Promise(function(resolve, reject) {

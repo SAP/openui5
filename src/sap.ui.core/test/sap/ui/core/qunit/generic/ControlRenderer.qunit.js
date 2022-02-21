@@ -1,54 +1,73 @@
-/*global QUnit */
+
+/*!
+ * ${copyright}
+ */
+
+/* global sinon */
 sap.ui.define([
-	"sap/ui/qunit/utils/ControlIterator",
-	"sap/ui/Device"
-], function(ControlIterator, Device) {
+	"sap/ui/test/generic/TestBase"
+], function(TestBase) {
 	"use strict";
 
-	QUnit.module("ControlRenderer");
+	var syncSpy = sinon.spy(sap.ui, "requireSync");
 
-	QUnit.test("check async loading", function(assert) {
-		if (!Device.browser.chrome) {
-			assert.ok(true, "should only be executed on Chrome since it is a generic, browser independent test");
-			return;
-		}
+	/**
+	 * @namespace
+	 * @private
+	 */
+	var ControlRenderer = TestBase.extend("sap.ui.core.qunit.generic.ControlRenderer", {
+		/**
+		 * @override
+		 */
+		shouldIgnoreControl: function(oClassInfo, assert) {
+			var sControlName = oClassInfo.className,
+				oCapabilities = this.getObjectCapabilities(sControlName) || {},
+				bIgnore = false,
+				oMetadata = oClassInfo.fnClass.getMetadata();
 
-		var done = assert.async();
-
-		var syncSpy = this.spy(sap.ui, "requireSync");
-		var aNonExistingRenderers = [];
-		ControlIterator.run(function(sControlName, oControlClass, oInfo) {
-			// check if, although control has been loaded already, retrieving the control's renderer would trigger a successful sync request
-			if (oInfo.canRender) {
-				var metadata = oControlClass.getMetadata();
-
-				var rendererModuleName = metadata.getRendererName().replace(/\./g, "/");
-				var renderer = sap.ui.require(rendererModuleName);
-				if (!renderer) {
-					// manually call #getRenderer() to trigger a sync call (requireSync)
-					try {
-						metadata.getRenderer();
-					} catch (e) {
-						// sync request fails -> no renderer present
-						aNonExistingRenderers.push(rendererModuleName);
-					}
-				}
+			if (oCapabilities.create === false) {
+				assert.ok(true, "WARNING: " + sControlName + " cannot be instantiated on its own.");
+				bIgnore = true;
 			}
-		}, {
-			librariesToTest: ControlIterator.aKnownOpenUI5Libraries,
-			includeElements: false,
-			done: function() {
-				var aCalls = syncSpy.getCalls().map(function(o) {
+
+			if (oMetadata && oMetadata.isAbstract()) {
+				assert.ok(true, "INFO: " + sControlName + " cannot be instantiated because it is abstract.");
+				bIgnore = true;
+			}
+
+			if (!(oMetadata && oMetadata.isA("sap.ui.core.Control"))) {
+				assert.ok(true, "INFO: " + sControlName + " cannot be rendered because its no control.");
+				bIgnore = true;
+			}
+
+			if (!(oMetadata && oMetadata.getRendererName())) {
+				assert.ok(true, "INFO: " + sControlName + " cannot be rendered because it has no renderer.");
+				bIgnore = true;
+			}
+
+			return bIgnore;
+		},
+
+		/**
+		 * @override
+		 */
+		testControl: function(oClassInfo, assert) {
+			var oMetadata = oClassInfo.fnClass.getMetadata();
+
+			var sRendererModuleName = oMetadata.getRendererName().replace(/\./g, "/");
+			// manually call #getRenderer() to trigger a sync call (requireSync)
+			try {
+				oMetadata.getRenderer();
+				var bTestSuccessful = !(syncSpy.getCalls().map(function(o) {
 					return o.args[0];
-				});
-
-				assert.deepEqual(aCalls.filter(function(r) {
-					return r.endsWith("Renderer") && aNonExistingRenderers.indexOf(r) === -1;
-				}), [], "Renderers should never be required using synchronously. Check the respective control and add a dependency to its renderer");
-
-				done();
+				}).includes(sRendererModuleName));
+				assert.ok(bTestSuccessful, "No sync request to get renderer for control: " + oMetadata.getName());
+			} catch (e) {
+				// sync request fails -> no renderer present
+				assert.ok(true, "INFO: Tried to getRenderer for control: " + oMetadata.getName() + " which has no renderer");
 			}
-		});
+		}
 	});
 
+	return new ControlRenderer().setupAndStart();
 });
