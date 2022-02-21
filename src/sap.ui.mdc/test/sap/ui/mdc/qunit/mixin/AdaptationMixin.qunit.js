@@ -24,7 +24,15 @@ sap.ui.define(
                     }
                 }
             });
+
             AdaptationMixin.call(TestClass.prototype);
+
+            TestClass.prototype.awaitPropertyHelper = function() {
+                return Promise.resolve({});
+            };
+            TestClass.prototype.isPropertyHelperFinal = function() {
+                return true;
+            };
         };
 
         var fnCleanup = function () {

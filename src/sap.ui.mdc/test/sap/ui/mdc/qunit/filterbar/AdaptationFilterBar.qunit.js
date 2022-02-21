@@ -116,12 +116,12 @@ sap.ui.define([
 			assert.notOk(this.oAdaptationFilterBar.getPropertyHelper(), "PropertyHelper not expected");
 
 			//init AdaptationFilterBar
-			this.oAdaptationFilterBar.initialized().then(function(){
+//			this.oAdaptationFilterBar.initialized().then(function(){
 				this.oTestTable.awaitPropertyHelper().then(function(oPropertyHelper){
 					assert.deepEqual(this.oAdaptationFilterBar.getPropertyHelper(), oPropertyHelper, "PropertyHelper has been passed from the Parent");
 					done();
 				}.bind(this));
-			}.bind(this));
+//			}.bind(this));
 		}.bind(this));
 
 	});
@@ -630,6 +630,7 @@ sap.ui.define([
 						collectionName: "test"
 					}
 				},
+				propertyInfo: [{name: "key1", typeConfig: {}}],
 				filterItems: {
 					path: "$custom>/data",
 					template: new FilterField({
@@ -639,15 +640,18 @@ sap.ui.define([
 				}
 			});
 
-			this.oParent.setModel(oMyModel, "$custom");
+			return this.oParent.initialized().then(function() {
+				this.oParent.setModel(oMyModel, "$custom");
 
-			sinon.stub(FBTestDelegate, "addItem").callsFake(function(sKey, oControl){
-				return Promise.resolve(new FilterField({
-					conditions: "{$filters>/conditions/" + sKey + "}"
-				}));
-			});
+				sinon.stub(FBTestDelegate, "addItem").callsFake(function(sKey, oControl){
+					return Promise.resolve(new FilterField({
+						conditions: "{$filters>/conditions/" + sKey + "}"
+					}));
+				});
 
-			return this.oParent.retrieveInbuiltFilter();
+				return this.oParent.retrieveInbuiltFilter();
+			}.bind(this));
+
 		},
 		afterEach: function(assert) {
 			FBTestDelegate.addItem.restore();
@@ -668,6 +672,8 @@ sap.ui.define([
 				}
 			]
 		});
+
+		sinon.stub();
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)

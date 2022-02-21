@@ -368,8 +368,14 @@ sap.ui.define([
 
 	FilterBarBase.prototype.applySettings = function(mSettings, oScope) {
 		this._setPropertyHelperClass(PropertyHelper);
+		this._setupPropertyInfoStore("propertyInfo");
 		this._applySettings(mSettings, oScope);
-		this._initControlDelegate();
+		//this._initControlDelegate();
+		Promise.all([this.awaitPropertyHelper()]).then(function() {
+			if (!this._bIsBeingDestroyed) {
+				this._applyInitialFilterConditions();
+			}
+		}.bind(this));
 	};
 
 	FilterBarBase.prototype._applySettings = function(mSettings, oScope) {
@@ -380,13 +386,13 @@ sap.ui.define([
 		this._oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
 	};
 
-	FilterBarBase.prototype._initControlDelegate = function() {
-		this.initControlDelegate().then(function() {
-			if (!this._bIsBeingDestroyed) {
-				this._applyInitialFilterConditions();
-			}
-		}.bind(this));
-	};
+//	FilterBarBase.prototype._initControlDelegate = function() {
+//		Promise.all([this.awaitPropertyHelper()]).then(function() {
+//			if (!this._bIsBeingDestroyed) {
+//				this._applyInitialFilterConditions();
+//			}
+//		}.bind(this));
+//	};
 
 	FilterBarBase.prototype._waitForMetadata = function() {
 		return this._retrieveMetadata().then(function() {
@@ -626,44 +632,8 @@ sap.ui.define([
 		return (nIdx >= 0);
 	};
 
-	FilterBarBase.prototype._getPropertyByName = function(sName) {
-		return FilterUtil.getPropertyByKey(this.getPropertyInfoSet(), sName);
-	};
-
 	FilterBarBase.prototype.getPropertyInfoSet = function() {
-		var oTypeUtil, aProperties = [];
-
-		if (this._hasPropertyHelper()) {
-			return this.getPropertyHelper().getProperties();
-		}
-
-		var aPropertyInfo = this.getPropertyInfo();
-		if (aPropertyInfo && (aPropertyInfo.length > 0)) {
-			oTypeUtil = this.getTypeUtil();
-
-			for (var i = 0; i < aPropertyInfo.length; i++) {
-				var oPropertyInfo = aPropertyInfo[i];
-				if (oPropertyInfo) {
-					var oTypeConfig = oTypeUtil.getTypeConfig(oPropertyInfo.dataType, oPropertyInfo.formatOptions, oPropertyInfo.constraints);
-					aProperties.push({
-						name: oPropertyInfo.name,
-						typeConfig: oTypeConfig,
-						maxConditions: oPropertyInfo.maxConditions,
-						constraints: oPropertyInfo.constraints,
-						formatOptions: oPropertyInfo.formatOptions,
-						required: oPropertyInfo.required,
-						caseSensitive: oPropertyInfo.caseSensitive,
-						display: oPropertyInfo.display
-					});
-				}
-			}
-		}
-
-		return aProperties;
-	};
-
-	FilterBarBase.prototype._hasPropertyHelper = function() {
-		return !!this.getPropertyHelper();
+		return this.getPropertyHelper() ? this.getPropertyHelper().getProperties() : [];
 	};
 
 	FilterBarBase.prototype._createPropertyInfoChange = function(oProperty) {
@@ -678,7 +648,9 @@ sap.ui.define([
 					formatOption: oProperty.formatOptions,
 					required: oProperty.required,
 					caseSensitive: oProperty.caseSensitive,
-					display: oProperty.display
+					display: oProperty.display,
+					hiddenFilter: oProperty.hiddenFilter,
+					label: oProperty.label
 				}
 			},
 			selectorElement: this
@@ -688,7 +660,11 @@ sap.ui.define([
 	FilterBarBase.prototype.createPropertyInfoChanges = function(sFieldPath) {
 		var oProperty, oChange, aChanges = [];
 
-		if (!this._hasPropertyInfo(sFieldPath)) {
+		var nIdx = this.getPropertyInfo().findIndex(function(oEntry) {
+			return oEntry.name === sFieldPath;
+		});
+
+		if (nIdx < 0) {
 			oProperty = this._getPropertyByName(sFieldPath);
 			if (oProperty) {
 				oChange = this._createPropertyInfoChange(oProperty);
@@ -748,7 +724,7 @@ sap.ui.define([
 
 					var aConditions = oEvent.getParameter("value");
 
-					if (this._hasPropertyHelper() || this._getPropertyByName(sFieldPath)) {
+					if (this._getPropertyByName(sFieldPath)) {
 						fAddConditionChange(sFieldPath, aConditions);
 					} else {
 						this._registerOnEngineOnModificationEnd();
@@ -940,7 +916,7 @@ sap.ui.define([
 		}.bind(this);
 
 		return this.initialized().then(function() {
-			if (!this._hasMetadata()) {
+			if (!this.isPropertyHelperFinal()) {
 				return this._retrieveMetadata().then(function() {
 					return fValidateFc();
 				});
@@ -955,10 +931,6 @@ sap.ui.define([
 			clearTimeout(this._iDelayedSearchId);
 			this._iDelayedSearchId = null;
 		}
-	};
-
-	FilterBarBase.prototype._hasMetadata = function() {
-		return (this._hasPropertyHelper() || (this.getPropertyInfo().length > 0));
 	};
 
 	FilterBarBase.prototype._getRequiredFieldsWithoutValues = function() {
@@ -1238,8 +1210,17 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype.initialized = function() {
+
+		if (!this._oMetadataAppliedPromise) {
+			this._retrieveMetadata();
+		}
 		return this.waitForInitialization();
 	};
+
+	FilterBarBase.prototype._initialized = function() {
+		return this.waitForInitialization();
+	};
+
 
 	/**
 	 * Returns the conditions of the inner condition model.
@@ -1277,6 +1258,22 @@ sap.ui.define([
 		}.bind(this) : undefined;
 	};
 
+	FilterBarBase.prototype._isPathKnownAsync = function(sFieldPath, oXCondition) {
+		var sName, sKey, aPromises = [];
+
+		aPromises.push(this._getPropertyByNameAsync(sFieldPath));
+		for (sKey in oXCondition["inParameters"]) {
+			sName = sKey.startsWith("conditions/") ? sKey.slice(11) : sKey; // just use field name
+			aPromises.push(this._getPropertyByNameAsync(sName));
+		}
+
+		for (sKey in oXCondition["outParameters"]) {
+			sName = sKey.startsWith("conditions/") ? sKey.slice(11) : sKey; // just use field name
+			aPromises.push(this._getPropertyByNameAsync(sName));
+		}
+
+		return Promise.all(aPromises);
+	};
 
 	FilterBarBase.prototype._isPathKnown = function(sFieldPath, oXCondition) {
 		var sKey, sName;
@@ -1312,16 +1309,12 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype.removeCondition = function(sFieldPath, oXCondition) {
-		return this.initialized().then(function() {
+		return this._initialized().then(function() {
 			var oCM = this._getConditionModel();
 			if (oCM) {
-				if (!this._hasPropertyHelper() && !this._isPathKnown(sFieldPath, oXCondition)) {
-					return this._retrieveMetadata().then(function() {
-						this._removeCondition(sFieldPath, oXCondition, oCM);
-					}.bind(this));
-				} else {
+				this._isPathKnownAsync(sFieldPath, oXCondition).then(function() {
 					this._removeCondition(sFieldPath, oXCondition, oCM);
-				}
+				}.bind(this));
 			}
 		}.bind(this));
 	};
@@ -1344,17 +1337,12 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype.addCondition = function(sFieldPath, oXCondition) {
-		return this.initialized().then(function() {
+		return this._initialized().then(function() {
 			var oCM = this._getConditionModel();
 			if (oCM) {
-
-				if (!this._hasPropertyHelper() && !this._isPathKnown(sFieldPath, oXCondition)) {
-					return this._retrieveMetadata().then(function() {
-						this._addCondition(sFieldPath, oXCondition, oCM);
-					}.bind(this));
-				} else {
+				this._isPathKnownAsync(sFieldPath, oXCondition).then(function() {
 					this._addCondition(sFieldPath, oXCondition, oCM);
-				}
+				}.bind(this));
 			}
 		}.bind(this));
 
@@ -1409,7 +1397,7 @@ sap.ui.define([
 				}
 			}
 
-			if (!bAllPropertiesKnown && !this._hasPropertyHelper()) {
+			if (!bAllPropertiesKnown) {
 				this._retrieveMetadata().then(function() {
 					fApplyConditions(mConditionsData);
 				});
@@ -1615,27 +1603,28 @@ sap.ui.define([
 		}
 
 		this._fResolveMetadataApplied = undefined;
-		this._oMetadataAppliedPromise = new Promise(function(resolve) {
+		this._oMetadataAppliedPromise = new Promise(function(resolve, reject) {
 			this._fResolveMetadataApplied = resolve;
+			this._fRejectMetadataApplied = reject;
 		}.bind(this));
 
 
 		this.initControlDelegate().then(function() {
 			if (!this._bIsBeingDestroyed) {
 
-				var fnResolveMetadata = function() {
-					this._fResolveMetadataApplied();
+				var fnResolveMetadata = function(bFlag) {
+					bFlag ? this._fResolveMetadataApplied() : this._fRejectMetadataApplied();
 					this._fResolveMetadataApplied = null;
+					this._fRejectMetadataApplied = null;
 				}.bind(this);
 
-				if (this.bDelegateInitialized && this.getControlDelegate().fetchProperties) {
-					this.initPropertyHelper().then(function(oPropertyHelper) {
-						//this._oPropertyHelper = oPropertyHelper;
-						fnResolveMetadata();
+				if (this.bDelegateInitialized) {
+					this.finalizePropertyHelper().then(function() {
+						fnResolveMetadata(true);
 					});
 				} else {
-					Log.error("Provided delegate '" + this.getDelegate().path + "' not valid.");
-					fnResolveMetadata();
+					Log.error("Delegate not initialized.");
+					fnResolveMetadata(false);
 				}
 			}
 		}.bind(this));
@@ -1744,36 +1733,6 @@ sap.ui.define([
 
 		}.bind(this));
 	};
-
-	FilterBarBase.prototype._suspendBinding = function(oFilterField) {
-
-		if (oFilterField) {
-			var oBinding = oFilterField.getBinding("conditions");
-			if (oBinding) {
-				if (!this._aBindings) {
-					this._aBindings = [];
-				}
-				oBinding.suspend();
-				this._aBindings.push(oFilterField);
-			}
-		}
-	};
-
-	FilterBarBase.prototype._resumeBindings = function() {
-		if (this._aBindings) {
-			this._aBindings.forEach(function(oFilterField) {
-				if (!oFilterField.bIsDestroyed) {
-					var oBinding = oFilterField.getBinding("conditions");
-					if (oBinding) {
-						oBinding.resume();
-					}
-				}
-			});
-
-			this._aBindings = null;
-		}
-	};
-
 
 	FilterBarBase.prototype._isChangeApplying = function() {
 		return  !!this._oFlexPromise;

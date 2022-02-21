@@ -88,6 +88,7 @@ sap.ui.define([
 		]);
 	}
 
+
 	function addItem(sPropertyName, oFilterBar, mPropertyBag) {
 		return Promise.resolve(new FilterField("comp---view--myFilterBar--" + sPropertyName, {
 			conditions:"{$filters>/conditions/" + sPropertyName + "}"
@@ -126,8 +127,10 @@ sap.ui.define([
 
 	QUnit.test('RemoveFilter - applyChange & revertChange on a js control tree', function(assert) {
 		var done = assert.async();
+
 		var oContent = createRemoveChangeDefinition();
 		oContent.index = 0;
+
 		return ChangesWriteAPI.create({
 			changeSpecificData: oContent,
 			selector: this.oFilterBar
@@ -143,6 +146,7 @@ sap.ui.define([
 				appComponent: this.oUiComponent,
 				view: this.oView
 			}).then(function() {
+
 				assert.notEqual(this.oFilterItem.getId(), this.oFilterBar.getAggregation('filterItems')[1].getId(), "filter has been removed successfully");
 				assert.strictEqual(this.oFilterBar.getFilterItems().length, 2);
 
@@ -162,6 +166,7 @@ sap.ui.define([
 
 	QUnit.test('AddFilter - applyChange & revertChange on a js control tree', function(assert) {
 		var done = assert.async();
+
 		var sPropertyName = "CurrencyCode";
 		return ChangesWriteAPI.create({
 			changeSpecificData: createAddChangeDefinition(sPropertyName),
@@ -193,6 +198,7 @@ sap.ui.define([
 
 	QUnit.test('MoveFilter - applyChange & revertChange on a js control tree', function(assert) {
 		var done = assert.async();
+
 		var sPropertyName = "ProductID";
 		return ChangesWriteAPI.create({
 			changeSpecificData: createMoveChangeDefinition(sPropertyName, 0),
@@ -226,6 +232,7 @@ sap.ui.define([
 
 	QUnit.test('addCondition - applyChange & revertChange on a js control tree with old format for in parameters', function(assert) {
 		var done = assert.async();
+
 		var oContent = createAddConditionChangeDefinitionOldFormat();
 
 		var aPropertyInfo = [{
@@ -249,6 +256,7 @@ sap.ui.define([
 			var oChangeHandler = FilterBarFlexHandler["addCondition"].changeHandler;
 
 			assert.deepEqual(this.oFilterBar.getFilterConditions()[oContent.content.name], undefined, "condition initially non existing");
+			this.oFilterBar._applyInitialFilterConditions();
 
 			// Test apply
 			oChangeHandler.applyChange(oChange, this.oFilterBar, {
@@ -296,6 +304,7 @@ sap.ui.define([
 			var oChangeHandler = FilterBarFlexHandler["addCondition"].changeHandler;
 
 			assert.deepEqual(this.oFilterBar.getFilterConditions()[oContent.content.name], undefined, "condition initially non existing");
+			this.oFilterBar._applyInitialFilterConditions();
 
 			// Test apply
 			oChangeHandler.applyChange(oChange, this.oFilterBar, {
@@ -320,6 +329,7 @@ sap.ui.define([
 
 	QUnit.test('addCondition - applyChange & revertChange on a js control tree with invalid conditions', function(assert) {
 		var done = assert.async();
+
 		var oContent = createAddConditionChangeDefinition("MyDummyOperator");
 		return ChangesWriteAPI.create({
 			changeSpecificData: oContent,
@@ -328,6 +338,7 @@ sap.ui.define([
 			var oChangeHandler = FilterBarFlexHandler["addCondition"].changeHandler;
 
 			assert.deepEqual(this.oFilterBar.getFilterConditions()[oContent.content.name], undefined, "condition initially non existing");
+			this.oFilterBar._applyInitialFilterConditions();
 
 			// Test apply
 			oChangeHandler.applyChange(oChange, this.oFilterBar, {
@@ -367,6 +378,7 @@ sap.ui.define([
 			selector: this.oFilterBar
 		}).then(function(oChange) {
 			var oChangeHandler = FilterBarFlexHandler["removeCondition"].changeHandler;
+			this.oFilterBar._applyInitialFilterConditions();
 
 			// Test apply
 			oChangeHandler.applyChange(oChange, this.oFilterBar, {
@@ -438,6 +450,8 @@ sap.ui.define([
 			changeSpecificData: oContent3,
 			selector: this.oFilterBar
 		});
+
+		this.oFilterBar._applyInitialFilterConditions();
 
 		var oChangeHandler = FilterBarFlexHandler["addCondition"].changeHandler;
 

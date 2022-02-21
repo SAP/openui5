@@ -46,5 +46,30 @@ sap.ui.define([
 		}
 	});
 
+
+	/**
+	 * Applies defaults and resolves property references.
+	 *
+	 * @param {object} oProperty The property to prepare
+	 * @protected
+	 */
+	PropertyHelper.prototype.prepareProperty = function(oProperty) {
+
+		if (!oProperty.typeConfig) {
+
+			var oParent = this.getParent();
+			if (oParent && oParent._oDelegate) {
+				var oTypeUtil = oParent._oDelegate.getTypeUtil();
+				try {
+					oProperty.typeConfig = oTypeUtil.getTypeConfig(oProperty.dataType, oProperty.formatOptions, oProperty.constraints);
+				} catch (ex) {
+					//
+				}
+			}
+		}
+
+		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);
+	};
+
 	return PropertyHelper;
 });
