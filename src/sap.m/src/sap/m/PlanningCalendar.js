@@ -1,11 +1,3 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable consistent-return */
-/* eslint-disable no-redeclare */
-/* eslint-disable no-lonely-if */
-/* eslint-disable new-cap */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable block-scoped-var */
-/* eslint-disable valid-jsdoc */
 /*!
  * ${copyright}
  */
