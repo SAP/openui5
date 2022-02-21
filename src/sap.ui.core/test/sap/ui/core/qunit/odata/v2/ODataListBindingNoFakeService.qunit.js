@@ -848,6 +848,135 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[true, false].forEach(function (bUseExpandedList) {
+	QUnit.test("checkExpandedList: expanded 'to N' navigation property; skip reload needed;"
+			+ " not read via side effect; bUseExpandedList=" + bUseExpandedList, function (assert) {
+		var oModel = {_getObject : function () {}},
+			oBinding = {
+				oContext : "~oContext",
+				oModel : oModel,
+				sPath : "~sPath",
+				bUseExpandedList : bUseExpandedList,
+				_initSortersFilters : function () {},
+				applyFilter : function () {},
+				applySort : function () {},
+				isResolved : function () {}
+			},
+			aList = ["path0"];
+
+		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
+		this.mock(oBinding).expects("applyFilter").withExactArgs();
+		this.mock(oBinding).expects("applySort").withExactArgs();
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.checkExpandedList.call(oBinding, true), true);
+
+		assert.strictEqual(oBinding.bUseExpandedList, true);
+		assert.strictEqual(oBinding.aExpandRefs, aList);
+		assert.deepEqual(oBinding.aExpandRefs, ["path0"]);
+		assert.strictEqual(oBinding.aAllKeys, aList);
+		assert.strictEqual(oBinding.iLength, 1);
+		assert.strictEqual(oBinding.bLengthFinal, true);
+		assert.strictEqual(oBinding.bDataAvailable, true);
+	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bUseExpandedList) {
+	QUnit.test("checkExpandedList: expanded 'to N' navigation property; skip reload needed;"
+			+ " read via side effect; bUseExpandedList=" + bUseExpandedList, function (assert) {
+		var oModel = {
+				_getObject : function () {},
+				getKey : function () {}
+
+			},
+			oBinding = {
+				oContext : "~oContext",
+				oModel : oModel,
+				sPath : "~sPath",
+				bUseExpandedList : bUseExpandedList,
+				_getCreatedPersistedContexts : function () {},
+				_initSortersFilters : function () {},
+				applyFilter : function () {},
+				applySort : function () {},
+				isResolved : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			aList = ["path0", "path1", "path2"];
+
+		aList.sideEffects = true;
+
+		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_getCreatedPersistedContexts")
+			.withExactArgs()
+			.returns(["~Context0", "~Context1"]);
+		oModelMock.expects("getKey").withExactArgs("~Context0").returns("path0");
+		oModelMock.expects("getKey").withExactArgs("~Context1").returns("path1");
+		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
+		this.mock(oBinding).expects("applyFilter").withExactArgs();
+		this.mock(oBinding).expects("applySort").withExactArgs();
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.checkExpandedList.call(oBinding, true),
+			bUseExpandedList);
+
+		assert.strictEqual(oBinding.bUseExpandedList, bUseExpandedList);
+		assert.strictEqual(oBinding.aExpandRefs, bUseExpandedList ? aList : undefined);
+		assert.deepEqual(oBinding.aAllKeys, bUseExpandedList ? ["path2"] : null);
+		assert.deepEqual(aList, ["path0", "path1", "path2"]); // original value not modified
+		assert.strictEqual(oBinding.iLength, 1);
+		assert.strictEqual(oBinding.bLengthFinal, true);
+		assert.strictEqual(oBinding.bDataAvailable, true);
+	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bUseExpandedList) {
+	var sTitle = "checkExpandedList: expanded 'to N' navigation property; skip reload needed;"
+			+ " read via side effect, no created persisted contexts;"
+			+ " bUseExpandedList=" + bUseExpandedList;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = {_getObject : function () {}},
+			oBinding = {
+				oContext : "~oContext",
+				oModel : oModel,
+				sPath : "~sPath",
+				bUseExpandedList : bUseExpandedList,
+				_getCreatedPersistedContexts : function () {},
+				_initSortersFilters : function () {},
+				applyFilter : function () {},
+				applySort : function () {},
+				isResolved : function () {}
+			},
+			aList = ["path0", "path1", "path2"];
+
+		aList.sideEffects = true;
+
+		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_getCreatedPersistedContexts").withExactArgs().returns([]);
+		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
+		this.mock(oBinding).expects("applyFilter").withExactArgs();
+		this.mock(oBinding).expects("applySort").withExactArgs();
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.checkExpandedList.call(oBinding, true),
+			bUseExpandedList);
+
+		assert.strictEqual(oBinding.bUseExpandedList, bUseExpandedList);
+		assert.strictEqual(oBinding.aExpandRefs, bUseExpandedList ? aList : undefined);
+		assert.strictEqual(oBinding.aAllKeys, bUseExpandedList ? aList : null);
+		assert.strictEqual(oBinding.iLength, 3);
+		assert.strictEqual(oBinding.bLengthFinal, true);
+		assert.strictEqual(oBinding.bDataAvailable, true);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("_refresh: getResolvedPath is called", function (assert) {
 		var oBinding = {
 				_hasTransientParentContext : function () {},
@@ -1746,16 +1875,33 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_getCreatedPersistedExcludeFilter: only transient contexts", function (assert) {
-		var oBinding = {_getCreatedContexts : function () {}},
+	QUnit.test("_getCreatedPersistedContexts", function (assert) {
+		var aContexts,
+			oBinding = {_getCreatedContexts : function () {}},
 			oContext0 = {isTransient : function () {}},
-			oContext1 = {isTransient : function () {}};
+			oContext1 = {isTransient : function () {}},
+			oContext2 = {isTransient : function () {}};
 
 		this.mock(oBinding).expects("_getCreatedContexts")
 			.withExactArgs()
-			.returns([oContext0, oContext1]);
-		this.mock(oContext0).expects("isTransient").withExactArgs().returns(true);
+			.returns([oContext0, oContext1, oContext2]);
+		this.mock(oContext0).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oContext1).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext2).expects("isTransient").withExactArgs().returns(false);
+
+		// code under test
+		aContexts = ODataListBinding.prototype._getCreatedPersistedContexts.call(oBinding);
+
+		assert.deepEqual(aContexts, [oContext0, oContext2]);
+		assert.strictEqual(aContexts[0], oContext0);
+		assert.strictEqual(aContexts[1], oContext2);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getCreatedPersistedExcludeFilter: only transient contexts", function (assert) {
+		var oBinding = {_getCreatedPersistedContexts : function () {}};
+
+		this.mock(oBinding).expects("_getCreatedPersistedContexts").withExactArgs().returns([]);
 		this.mock(ODataUtils).expects("_createFilterParams").never();
 
 		// code under test
@@ -1770,30 +1916,20 @@ sap.ui.define([
 				oModel : {
 					oMetadata : {}
 				},
-				_getCreatedContexts : function () {},
+				_getCreatedPersistedContexts : function () {},
 				_getFilterForPredicate : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
-			oContext0 = {isTransient : function () {}},
-			oContext1 = {
-				getPath : function () {},
-				isTransient : function () {}
-			},
-			oContext2 = {
-				getPath : function () {},
-				isTransient : function () {}
-			},
+			oContext0 = {getPath : function () {}},
+			oContext1 = {getPath : function () {}},
 			oFilter1 = new Filter("~Path", FilterOperator.EQ, "foo"),
 			oFilter2 = new Filter("~Path", FilterOperator.EQ, "bar");
 
-		oBindingMock.expects("_getCreatedContexts")
+		oBindingMock.expects("_getCreatedPersistedContexts")
 			.withExactArgs()
-			.returns([oContext0, oContext1, oContext2]);
-		this.mock(oContext0).expects("isTransient").withExactArgs().returns(true);
-		this.mock(oContext1).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext2).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext1).expects("getPath").withExactArgs().returns("~sPath('1')");
-		this.mock(oContext2).expects("getPath").withExactArgs().returns("~sPath('2')");
+			.returns([oContext0, oContext1]);
+		this.mock(oContext0).expects("getPath").withExactArgs().returns("~sPath('1')");
+		this.mock(oContext1).expects("getPath").withExactArgs().returns("~sPath('2')");
 		oBindingMock.expects("_getFilterForPredicate").withExactArgs("('1')").returns(oFilter1);
 		oBindingMock.expects("_getFilterForPredicate").withExactArgs("('2')").returns(oFilter2);
 		this.mock(ODataUtils).expects("_createFilterParams")
@@ -1822,18 +1958,14 @@ sap.ui.define([
 				oModel : {
 					oMetadata : {}
 				},
-				_getCreatedContexts : function () {},
+				_getCreatedPersistedContexts : function () {},
 				_getFilterForPredicate : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
-			oContext = {
-				getPath : function () {},
-				isTransient : function () {}
-			},
+			oContext = {getPath : function () {}},
 			oFilter = new Filter("~Path", FilterOperator.EQ, "foo");
 
-		oBindingMock.expects("_getCreatedContexts").withExactArgs().returns([oContext]);
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		oBindingMock.expects("_getCreatedPersistedContexts").withExactArgs().returns([oContext]);
 		this.mock(oContext).expects("getPath").withExactArgs().returns("~sPath('1')");
 		oBindingMock.expects("_getFilterForPredicate").withExactArgs("('1')").returns(oFilter);
 		this.mock(ODataUtils).expects("_createFilterParams")

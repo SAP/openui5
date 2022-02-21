@@ -62,7 +62,8 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v2.ODataModel",
 		MessageType = coreLibrary.MessageType,
-		mMessageType2Severity = {};
+		mMessageType2Severity = {},
+		aRequestSideEffectsParametersAllowList = ["groupId", "urlParameters"];
 
 	mMessageType2Severity[MessageType.Error] = 0;
 	mMessageType2Severity[MessageType.Warning] = 1;
@@ -343,6 +344,9 @@ sap.ui.define([
 			this.bPersistTechnicalMessages = bPersistTechnicalMessages === undefined
 				? undefined : !!bPersistTechnicalMessages;
 			this.oCreatedContextsCache = new _CreatedContextsCache();
+			// a list of functions to be called to clean up expanded lists when the side effects
+			// have been processed
+			this.aSideEffectCleanUpFunctions = [];
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -1467,11 +1471,13 @@ sap.ui.define([
 	 * @param {string} [sPathFromCanonicalParent] The path concatenated from the canonical path of
 	 *   the parent and the navigation property when importing data for a 0..1 navigation
 	 *   property via a recursive call to this method
+	 * @param {boolean} [bSideEffects]
+	 *   Whether the data to import results from a side-effects request
 	 * @return {string|string[]} Key of imported data or array of keys in case of nested entries
 	 * @private
 	 */
 	ODataModel.prototype._importData = function(oData, mChangedEntities, oResponse, sPath,
-			sDeepPath, sKey, bFunctionImport, sPathFromCanonicalParent) {
+			sDeepPath, sKey, bFunctionImport, sPathFromCanonicalParent, bSideEffects) {
 		var that = this,
 			aList, oResult, oEntry, oCurrentEntry;
 			sPath = sPath || "";
@@ -1481,7 +1487,10 @@ sap.ui.define([
 			aList = [];
 			each(oData.results, function(i, entry) {
 				var sKey = that._getKey(entry);
-				sKey = that._importData(entry, mChangedEntities, oResponse, sPath.substr(0, sPath.lastIndexOf("/")), sDeepPath, sKey);
+				sKey = that._importData(entry, mChangedEntities, oResponse,
+					sPath.substr(0, sPath.lastIndexOf("/")), sDeepPath, sKey,
+					/*bFunctionImport*/undefined, /*sPathFromCanonicalParent*/undefined,
+					bSideEffects);
 				if (sKey) {
 					aList.push(sKey);
 				}
@@ -1535,9 +1544,21 @@ sap.ui.define([
 					var sNewDeepPath = sDeepPath + "/" + sName;
 
 					oResult = that._importData(oProperty, mChangedEntities, oResponse, sNewPath,
-						sNewDeepPath, undefined, false, "/" + sKey + "/" + sName);
+						sNewDeepPath, undefined, false, "/" + sKey + "/" + sName, bSideEffects);
 					if (Array.isArray(oResult)) {
-						oEntry[sName] = { __list: oResult };
+						oEntry[sName] = {__list: oResult};
+						if (bSideEffects) {
+							oEntry[sName].__list.sideEffects = true;
+							that.aSideEffectCleanUpFunctions.push(function () {
+									// maybe check oEntry[sName].__list.sideEffects before deleting
+									// the navigation property; this can happen if an
+									// ODataModel#read is triggered with an expand of the same
+									// "to N" navigation property as requested with
+									// ODataModel#requestSideEffects; see BLI CPOUI5MODELS-656
+									delete oEntry[sName];
+								});
+
+						}
 					} else {
 						if (oCurrentEntry[sName] && oCurrentEntry[sName].__ref) {
 							if (oCurrentEntry[sName].__ref !== oResult) {
@@ -3277,6 +3298,10 @@ sap.ui.define([
 			if (fnSuccess) {
 				fnSuccess(oData, oResponse);
 			}
+			that.aSideEffectCleanUpFunctions.forEach(function (fnCleanUp) {
+				fnCleanUp();
+			});
+			that.aSideEffectCleanUpFunctions = [];
 			fnResolveCompleted();
 		}
 
@@ -3296,6 +3321,7 @@ sap.ui.define([
 			if (fnError) {
 				fnError(oError);
 			}
+			// no need to clean up side-effects expands as no data was imported
 			fnResolveCompleted();
 		}
 
@@ -4195,11 +4221,14 @@ sap.ui.define([
 				//need a deep data copy for import
 				oImportData = merge({}, oResultData);
 				if (oRequest.key || oRequest.created) {
-					that._importData(oImportData, mLocalGetEntities, oResponse, undefined,
-						undefined, undefined, bIsFunction);
+					// no need to pass sideEffects because side-effects requests don't have a key or
+					// a created property attached to the request
+					that._importData(oImportData, mLocalGetEntities, oResponse, /*sPath*/undefined,
+						/*sDeepPath*/undefined, /*sKey*/undefined, bIsFunction);
 				} else {
 					that._importData(oImportData, mLocalGetEntities, oResponse, sPath,
-						oRequest.deepPath, undefined, bIsFunction);
+						oRequest.deepPath, /*sKey*/undefined, bIsFunction,
+						/*sPathFromCanonicalParent*/undefined, oRequest.sideEffects);
 				}
 				oResponse._imported = true;
 			}
@@ -4718,11 +4747,13 @@ sap.ui.define([
 	 *   or changed resources are updated. It is considered only if
 	 *   {@link sap.ui.model.odata.MessageScope.BusinessObject} is set and if the OData service
 	 *   supports message scope.
+	 * @param {boolean} [bSideEffects]
+	 *   Whether the request is to read side effects
 	 * @return {object} Request object
 	 * @private
 	 */
 	ODataModel.prototype._createRequest = function(sUrl, sDeepPath, sMethod, mHeaders, oData, sETag,
-			bAsync, bUpdateAggregatedMessages) {
+			bAsync, bUpdateAggregatedMessages, bSideEffects) {
 		var oRequest;
 
 		bAsync = bAsync !== false;
@@ -4772,16 +4803,18 @@ sap.ui.define([
 		}
 
 		oRequest = {
-			headers : mHeaders,
-			requestUri : sUrl,
-			method : sMethod,
-			user : this.sUser,
-			password : this.sPassword,
 			async : bAsync,
 			deepPath : sDeepPath,
-			updateAggregatedMessages : bUpdateAggregatedMessages
+			headers : mHeaders,
+			method : sMethod,
+			password : this.sPassword,
+			requestUri : sUrl,
+			updateAggregatedMessages : bUpdateAggregatedMessages,
+			user : this.sUser
 		};
-
+		if (bSideEffects) {
+			oRequest.sideEffects = true;
+		}
 		if (oData) {
 			oRequest.data = oData;
 		}
@@ -5519,6 +5552,24 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.read = function(sPath, mParameters) {
+		return this._read(sPath, mParameters);
+	};
+
+	/**
+	 * Triggers a <code>GET</code> request to the OData service.
+	 *
+	 * @param {string} sPath
+	 *   The path as specified in {@link #read}
+	 * @param {object} [mParameters]
+	 *   The parameters as specified in {@link #read}
+	 * @param {boolean} [bSideEffects]
+	 *   Whether to read data as side effects
+	 * @return {object}
+	 *   An object which has an <code>abort</code> function to abort the current request.
+	 *
+	 * @private
+	 */
+	 ODataModel.prototype._read = function(sPath, mParameters, bSideEffects) {
 		var bCanonical, oContext, fnError, sETag, aFilters, sGroupId, mHeaders, sMethod, oRequest,
 			aSorters, fnSuccess, bUpdateAggregatedMessages, aUrlParams, mUrlParams,
 			that = this;
@@ -5583,7 +5634,7 @@ sap.ui.define([
 			sUrl = that._createRequestUrlWithNormalizedPath(sResourcePath, aUrlParams,
 				that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, sETag,
-				undefined, bUpdateAggregatedMessages);
+				undefined, bUpdateAggregatedMessages, bSideEffects);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
@@ -5602,6 +5653,57 @@ sap.ui.define([
 		} else {
 			return this._processRequest(createReadRequest, fnError);
 		}
+	};
+
+	/**
+	 * Requests side effects for the entity referred to by the given context using a GET request
+	 * with the given URL parameters, esp. <code>$expand</code> and <code>$select</code>, which
+	 * represent the paths affected by side effects on the entity.
+	 *
+	 * @param {sap.ui.model.odata.v2.Context} oContext
+	 *   The context referring to the entity to read side effects for
+	 * @param {object} [mParameters]
+	 *   A map of parameters as specified for {@link sap.ui.model.odata.v2.ODataModel#read}, where
+	 *   only the following subset of these is supported.
+	 * @param {string} [mParameters.groupId]
+	 *   The ID of a request group
+	 * @param {Object<string,string>} [mParameters.urlParameters]
+	 *   URL parameters for the side-effects request as a map from a URL parameter name to its
+	 *   string value including <code>$expand</code> and <code>$select</code>
+	 * @returns {Promise}
+	 *   The promise on the outcome of the side-effects request; resolves with
+	 *   <code>undefined</code> if the request is processed successfully, or rejects with an error
+	 *   object if the request fails
+	 * @throws {Error}
+	 *   If the given parameters map contains any other parameter than those documented above
+	 *
+	 * @private
+	 * @see sap.ui.model.odata.v2.ODataModel#read
+	 * @ui5-restricted sap.suite.ui.generic
+	 */
+	ODataModel.prototype.requestSideEffects = function (oContext, mParameters) {
+		var sParameterKey,
+			that = this;
+
+		mParameters = mParameters || {};
+		for (sParameterKey in mParameters) {
+			if (!aRequestSideEffectsParametersAllowList.includes(sParameterKey)) {
+				throw new Error("Parameter '" + sParameterKey + "' is not supported");
+			}
+		}
+
+		return new Promise(function (resolve, reject) {
+			that._read("", {
+					// pass context to keep deep path information for message handling
+					context : oContext,
+					error : reject,
+					groupId : mParameters.groupId,
+					success : function (/*oData, oResponse*/) {
+						resolve();
+					},
+					urlParameters : mParameters.urlParameters
+				}, true);
+		});
 	};
 
 	/**
