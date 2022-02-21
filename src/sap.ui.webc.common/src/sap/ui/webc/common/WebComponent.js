@@ -272,6 +272,10 @@ sap.ui.define([
 		WebComponent.prototype.__updateObjectProperties = function(oDomRef) {
 			var oAttrProperties = this.getMetadata().getPropertiesByMapping("attribute");
 			for (var sPropName in oAttrProperties) {
+				if (this.isPropertyInitial(sPropName)) {
+					continue; // do not set properties that were not explicitly set/bound
+				}
+
 				var oPropData = oAttrProperties[sPropName];
 				var vPropValue = oPropData.get(this);
 

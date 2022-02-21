@@ -69,6 +69,10 @@ sap.ui.define([
 		WebComponentRenderer.renderAttributeProperties = function(oRm, oWebComponent) {
 			var oAttrProperties = oWebComponent.getMetadata().getPropertiesByMapping("attribute");
 			for (var sPropName in oAttrProperties) {
+				if (oWebComponent.isPropertyInitial(sPropName)) {
+					continue; // do not set attributes for properties that were not explicitly set or bound
+				}
+
 				var oPropData = oAttrProperties[sPropName];
 				var vPropValue = oPropData.get(oWebComponent);
 				if (oPropData.type === "object" || typeof vPropValue === "object") {
