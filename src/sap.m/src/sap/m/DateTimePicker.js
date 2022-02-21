@@ -400,6 +400,10 @@ sap.ui.define([
 			sFormattedValue,
 			oNewDateValue;
 
+		if (this.getTimezone() === sTimezone) {
+			return this;
+		}
+
 		oCurrentDateValue = this.getDateValue() || this._parseValue(this.getValue(), false);
 		sFormattedValue = this._formatValue(oCurrentDateValue, false);
 
@@ -595,11 +599,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the format options of the value or dateValue binding with timezone.
-	 * @returns {object} The binding format options or an empty object instance.
+	 * Gets the format options of the value or dateValue binding.
+	 * @returns {object} The binding format options or undefined.
 	 * @private
 	 */
-	DateTimePicker.prototype._getBindingWithTimezoneFormatOptions = function() {
+	DateTimePicker.prototype._getBindingFormatOptions = function() {
 		var oBinding = this.getBinding("value") || this.getBinding("dateValue"),
 			oBindingType;
 
@@ -607,7 +611,7 @@ sap.ui.define([
 			oBindingType = oBinding.getType();
 		}
 
-		if (oBindingType && oBindingType.isA(["sap.ui.model.odata.type.DateTimeWithTimezone"])) {
+		if (this._isSupportedBindingType(oBindingType)) {
 			return jQuery.extend({}, oBindingType.getFormatOptions());
 		}
 	};
@@ -621,13 +625,13 @@ sap.ui.define([
 	 * @private
 	 */
 	DateTimePicker.prototype._getTimezoneFormatOptions = function(bDisplayFormat) {
-		var oFormatOptions = this._getBindingWithTimezoneFormatOptions() || {},
+		var oFormatOptions = this._getBindingFormatOptions() || {},
 			sFormat = bDisplayFormat ? this.getDisplayFormat() : this.getValueFormat(),
 			oBinding = this.getBinding("value") || this.getBinding("dateValue"),
 			oBindingType = oBinding && oBinding.getType && oBinding.getType();
 
-		if (bDisplayFormat || !this._getTimezone()
-			|| (oBindingType && this._isSupportedBindingType(oBindingType))) {
+		if (bDisplayFormat || !this._getTimezone() ||
+			(oBindingType && !oBindingType.isA(["sap.ui.model.odata.type.DateTimeWithTimezone"]))) {
 			oFormatOptions.showTimezone = DateFormatTimezoneDisplay.Hide;
 		}
 
@@ -645,7 +649,7 @@ sap.ui.define([
 			oFormatOptions.strictParsing = true;
 		}
 
-		if (sFormat && (!oBinding || !oBindingType || !this._isSupportedBindingType(oBindingType))) {
+		if (sFormat && !this._isSupportedBindingType(oBindingType)) {
 			oFormatOptions[this._checkStyle(sFormat) ? "style" : "pattern"] = sFormat;
 		}
 
@@ -737,14 +741,10 @@ sap.ui.define([
 			oBindingType = oBinding && oBinding.getType(),
 			aDateWithTimezone;
 
-		if (oBindingType) {
-			if (oBindingType.isA(["sap.ui.model.odata.type.DateTimeWithTimezone"])) {
-				var aCurrentBindingValues = oBinding.getCurrentValues().slice(0);
-				aCurrentBindingValues[1] = sTimezone || this._getTimezone(true);
-				return oBindingType.parseValue(sValue, "string", aCurrentBindingValues)[0];
-			} else if (!bDisplayFormat && this._isSupportedBindingType(oBindingType)) {
-				return DatePicker.prototype._parseValue.apply(this, arguments);
-			}
+		if (oBindingType && oBindingType.isA(["sap.ui.model.odata.type.DateTimeWithTimezone"])) {
+			var aCurrentBindingValues = oBinding.getCurrentValues().slice(0);
+			aCurrentBindingValues[1] = sTimezone || this._getTimezone(true);
+			return oBindingType.parseValue(sValue, "string", aCurrentBindingValues)[0];
 		}
 
 		aDateWithTimezone = this._getFormatter(bDisplayFormat)
