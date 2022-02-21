@@ -116,9 +116,13 @@ sap.ui.define([
 			return oItemCopy;
 		}
 
-		var oBindingInfo = BindingHelper.extractBindingInfo(vItem, mLocalBindingNamespaces);
+		if (typeof vItem === "string") {
+			var oBindingInfo = BindingHelper.extractBindingInfo(vItem, mLocalBindingNamespaces);
 
-		return BindingHelper.escapeParametersAndDataSources(oBindingInfo || vItem);
+			return BindingHelper.escapeParametersAndDataSources(oBindingInfo || vItem);
+		}
+
+		return vItem;
 	};
 
 	/**
