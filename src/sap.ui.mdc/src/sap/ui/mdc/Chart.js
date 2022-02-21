@@ -441,6 +441,7 @@ sap.ui.define([
          * @ui5-restricted sap.ui.mdc
          */
         Chart.prototype.applySettings = function (mSettings, oScope) {
+            this._setPropertyHelperClass(PropertyHelper);
             Control.prototype.applySettings.apply(this, arguments);
 
             this.initializedPromise = new Promise(function (resolve, reject) {
@@ -517,7 +518,7 @@ sap.ui.define([
          * Is called during init when autoBindOnInit = "true", if "false" then this is called by _rebind()
          */
         Chart.prototype._createContentfromPropertyInfos = function () {
-            this.initPropertyHelper(PropertyHelper).then(function () {
+            this.initPropertyHelper().then(function () {
                 //Create content on inner chart instance
                 this.getControlDelegate().createInnerChartContent(this, this._innerChartDataLoadComplete.bind(this));
 

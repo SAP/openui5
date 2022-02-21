@@ -670,6 +670,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Table.prototype.applySettings = function() {
+		this._setPropertyHelperClass(PropertyHelper);
 		Control.prototype.applySettings.apply(this, arguments);
 		this.initControlDelegate();
 	};
@@ -1382,7 +1383,7 @@ sap.ui.define([
 		this._onAfterTableCreated(true); // Resolve any pending promise if table exists
 
 		var pTableInit = this.initialized().then(function() {
-			this.initPropertyHelper(PropertyHelper);
+			this.initPropertyHelper();
 
 			// add this to the micro task execution queue to enable consumers to handle this correctly
 			var oCreationRow = this.getCreationRow();
@@ -2649,8 +2650,7 @@ sap.ui.define([
 		var iRowCount;
 		if (!bConsiderTotal) {
 			iRowCount = oRowBinding.getLength();
-		} else {
-			if (typeof oRowBinding.getCount === 'function') {
+		} else if (typeof oRowBinding.getCount === 'function') {
 				iRowCount = oRowBinding.getCount();
 			} else if (oRowBinding.isLengthFinal()) {
 				// This branch is only fallback and for TreeBindings (TreeBindings should be excluded when MDCTable will support TreeBinding,
@@ -2658,7 +2658,6 @@ sap.ui.define([
 				// ListBindings should in general get a getCount function in nearer future (5341464)
 				iRowCount = oRowBinding.getLength();
 			}
-		}
 
 		if (iRowCount < 0 || iRowCount === "0") {
 			iRowCount = 0;

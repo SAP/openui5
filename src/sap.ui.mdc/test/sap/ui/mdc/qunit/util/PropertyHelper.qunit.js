@@ -1590,6 +1590,66 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getProperties(), [], "After destruction");
 	});
 
+	QUnit.test("setProperties", function(assert) {
+
+		var oValidatePropertiesSpy = sinon.spy();
+		var oValidatePropertySpy = sinon.spy();
+
+		var aReplacementProperties = [{
+			name: "replacedPropsA",
+			label: "Replaced Property A",
+			sortable: false,
+			filterable: false,
+			visible: false
+		}, {
+			name: "replacedPropsB",
+			label: "Replaced Property B",
+			sortable: false,
+			filterable: false,
+			visible: false
+		}];
+
+		var MyPropertyHelper = PropertyHelper.extend("sap.ui.mdc.test.table.PropertyHelper", {
+			validateProperties: function() {
+				PropertyHelper.prototype.validateProperties.apply(this, arguments);
+				oValidatePropertiesSpy.apply(this, merge([], arguments));
+			},
+			validateProperty: function() {
+				oValidatePropertySpy.apply(this, merge([], arguments));
+				PropertyHelper.prototype.validateProperty.apply(this, arguments);
+			}
+		});
+		var oMyPropertyHelper = new MyPropertyHelper(this.aOriginalProperties);
+
+		var aProperties = oMyPropertyHelper.getProperties();
+		assert.equal(aProperties.length, this.aOriginalProperties.length,
+			"The property array contains as many entries as there are properties");
+			this.aOriginalProperties.forEach(function(oOriginalProperty, iIndex) {
+			assert.strictEqual(aProperties[iIndex].name, oOriginalProperty.name,
+				"The property array references the correct property at index " + iIndex);
+		});
+
+		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(this.aOriginalProperties, undefined), "#validateProperties called once with the correct arguments");
+
+
+		oMyPropertyHelper.setProperties(aReplacementProperties);
+		aProperties = oMyPropertyHelper.getProperties();
+
+		assert.equal(aProperties.length, aReplacementProperties.length,
+			"The property array contains as many entries as there are replaced properties");
+		aReplacementProperties.forEach(function(oOriginalProperty, iIndex) {
+			assert.strictEqual(aProperties[iIndex].name, oOriginalProperty.name,
+				"The property array references the correct replaced property at index " + iIndex);
+		});
+
+		assert.ok(oValidatePropertiesSpy.calledTwice, "#validateProperties called twice");
+		assert.ok(oValidatePropertiesSpy.lastCall.calledWithExactly(aReplacementProperties, this.aOriginalProperties), "#validateProperties called a second time with the correct arguments");
+
+
+		oMyPropertyHelper.destroy();
+
+	});
+
 	QUnit.test("getPropertyMap", function(assert) {
 		var mProperties = this.oPropertyHelper.getPropertyMap();
 
@@ -1910,10 +1970,10 @@ sap.ui.define([
 		});
 		var oMyPropertyHelper = new MyPropertyHelper(aProperties);
 
-		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(aProperties), "#validateProperties called once with the correct arguments");
+		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(aProperties, undefined), "#validateProperties called once with the correct arguments");
 		assert.equal(oValidatePropertySpy.callCount, 2, "#validateProperty called twice");
-		assert.ok(oValidatePropertySpy.firstCall.calledWithExactly(aProperties[0], aProperties), "Arguments of first #validateProperty call");
-		assert.ok(oValidatePropertySpy.secondCall.calledWithExactly(aProperties[1], aProperties), "Arguments of second #validateProperty call");
+		assert.ok(oValidatePropertySpy.firstCall.calledWithExactly(aProperties[0], aProperties, undefined), "Arguments of first #validateProperty call");
+		assert.ok(oValidatePropertySpy.secondCall.calledWithExactly(aProperties[1], aProperties, undefined), "Arguments of second #validateProperty call");
 
 		oMyPropertyHelper.destroy();
 	});

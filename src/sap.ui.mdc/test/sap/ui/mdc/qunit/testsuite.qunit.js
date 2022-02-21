@@ -293,6 +293,11 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				module: "./mixin/FilterIntegrationMixin.qunit",
 				sinon: true
 			},
+			"PropertyHelperMixin": {
+				group: "Mixin",
+				module: "./mixin/PropertyHelperMixin.qunit",
+				sinon: true
+			},
 			"ValueHelp Testsuite" : {
 				title: "ValueHelp Testsuite",
 				group: "Testsuite",
