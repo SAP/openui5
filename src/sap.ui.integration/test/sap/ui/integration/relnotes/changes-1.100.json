@@ -3,6 +3,55 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "52228598a007aa881e5bed04b68491dfbe8eb8a9",
+        "type": "FIX",
+        "text": " Integration card: Data is now correctly loaded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280067984"
+          }
+        ]
+      },
+      {
+        "id": "23302ada1210edced5eea6ab07f6186285181884",
+        "type": "FIX",
+        "text": " Integration card: maxItems is now correctly working with binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280060860"
+          }
+        ]
+      },
+      {
+        "id": "157064ec6fdc02f383fb618c32b8d6b6cafca880",
+        "type": "FIX",
+        "text": " CardExplorer: Remove older {{parameters.xxx}} syntax from samples"
+      },
+      {
+        "id": "4eb2cf6747ae6b7ae6481db3bb568fe68ad42f89",
+        "type": "FIX",
+        "text": " Integration card: Expression binding is now working correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280046317"
+          }
+        ]
+      },
+      {
+        "id": "7197e99cb476306138e047b54b1a216f1e508bac",
+        "type": "FIX",
+        "text": " Integration card: \"No data\" message is now correctly removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280056156"
+          }
+        ]
+      },
+      {
         "id": "366b7e5699b905473bf696eee26189b08902de07",
         "type": "FIX",
         "text": " Integration card: Complex expression bindings in actions now work correctly",

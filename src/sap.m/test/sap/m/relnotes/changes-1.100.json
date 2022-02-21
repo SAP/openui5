@@ -3,6 +3,93 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "232b3d44d2b4d5f07e059e2293afba3bdea9d29d",
+        "type": "FEATURE",
+        "text": " sap.m.QuickView: Placeholder for empty texts added"
+      },
+      {
+        "id": "d1f2348bc39fc655bbe3613415b047035270a5ce",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Selecting sub item is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280041989"
+          }
+        ]
+      },
+      {
+        "id": "febe5b879625807628a92ba298cb01c867178a4e",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Last/Next X options are now with correct limits",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280024045"
+          }
+        ]
+      },
+      {
+        "id": "983020e2b65f326b4dc4ebc924cbd6f427cdd5ea",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Paddings fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280057765"
+          }
+        ]
+      },
+      {
+        "id": "7592607fb70b9827f86d9f0c03ce4623dbde5a98",
+        "type": "FEATURE",
+        "text": " Add property -multiple similar to upload collection"
+      },
+      {
+        "id": "42b9cc0579c2af510de23f66407df0a8c104a972",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Introduced new 'liveChange' event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170305445"
+          }
+        ]
+      },
+      {
+        "id": "b6d06443de6d5ef1fb7941727bc4b7ace41e9aec",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Tab indexes are now updated correctly on keyboard navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280017689"
+          }
+        ]
+      },
+      {
+        "id": "afae324894b7de6c3f80a4c3cfff59ca3295ded6",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Some binding options take priority",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280055168"
+          }
+        ]
+      },
+      {
+        "id": "092f4756c44cb2297fbb46c3a1c72b49ed59711f",
+        "type": "FIX",
+        "text": " FeedListItem : FeedListItemActionButton visibility check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170206153"
+          }
+        ]
+      },
+      {
         "id": "1c2bd851e3ab6651a2a5a7c38246198990a7d74c",
         "type": "FIX",
         "text": " AbstractContainer - Change section's position to relative",
@@ -67,6 +154,17 @@
           {
             "type": "BCP",
             "reference": "2170287752"
+          }
+        ]
+      },
+      {
+        "id": "d3d890658e32237a3519cd2860765152c7f2d305",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: This Month is now parsed correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280042362"
           }
         ]
       },
