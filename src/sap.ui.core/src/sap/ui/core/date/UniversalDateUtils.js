@@ -447,7 +447,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 			},
 
 			/**
-			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of the the last day of the current week
+			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of the last day of the current week
 			 * @private
 			 * @ui5-restricted sap.ui.comp
 			 */
