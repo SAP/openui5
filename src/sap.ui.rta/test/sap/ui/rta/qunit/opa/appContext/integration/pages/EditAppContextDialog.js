@@ -50,7 +50,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function (vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getValue(), sAppContextTitle);
+							Opa5.assert.strictEqual(oControl.getValue(), sAppContextTitle, "I see app context title: " + sAppContextTitle);
 						}
 					});
 				},
@@ -60,7 +60,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function (vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getValue(), sAppContextDescription);
+							Opa5.assert.strictEqual(oControl.getValue(), sAppContextDescription, "I see app context title: " + sAppContextDescription);
 						}
 					});
 				},
@@ -70,7 +70,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function (vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.eual(oControl.getVisible(), bIsVisible);
+							Opa5.assert.eual(oControl.getVisible(), bIsVisible, "I see correct role radio selection button selected");
 						}
 					});
 				},
@@ -80,7 +80,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function (vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getTitle(), "Edit App Context");
+							Opa5.assert.strictEqual(oControl.getTitle(), "Edit App Context", "I see edit app context dialog");
 						}
 					});
 				}

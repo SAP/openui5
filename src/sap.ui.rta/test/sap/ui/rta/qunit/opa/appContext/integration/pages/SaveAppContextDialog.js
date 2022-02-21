@@ -50,7 +50,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function (vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getValue(), sAppContextTitle);
+							Opa5.assert.strictEqual(oControl.getValue(), sAppContextTitle, "I see entered app context title: " + sAppContextTitle);
 						}
 					});
 				},
@@ -60,7 +60,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function (vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getValue(), sAppContextDescription);
+							Opa5.assert.strictEqual(oControl.getValue(), sAppContextDescription, "I see entered app context description: " + sAppContextDescription);
 						}
 					});
 				},
@@ -69,7 +69,7 @@ sap.ui.define([
 						id: "sap.ui.rta.appContexts---ManageContexts--savecontextdialog",
 						searchOpenDialogs: true,
 						success: function () {
-							Opa5.assert.ok(true, "dialog is visible");
+							Opa5.assert.ok(true, "I see save app context dialog");
 						}
 					});
 				}

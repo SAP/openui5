@@ -76,7 +76,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function (vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.ok(oControl.getVisible());
+							Opa5.assert.ok(oControl.getVisible(), "I see correct role radio selection button selected");
 						}
 					});
 				},
@@ -87,7 +87,10 @@ sap.ui.define([
 						properties: {
 							title: sRoleTitle
 						},
-						searchOpenDialogs: true
+						searchOpenDialogs: true,
+						success: function () {
+							Opa5.assert.ok(true, "I see role title: " + sRoleTitle);
+						}
 					});
 				},
 				iShouldSelectedRoleCount: function (iExpectedRoleLength) {
@@ -98,7 +101,7 @@ sap.ui.define([
 							id: "contextSharing---ContextVisibility--restrictedToolbar"
 						},
 						success: function (aControls) {
-							Opa5.assert.equal(aControls.length, iExpectedRoleLength);
+							Opa5.assert.equal(aControls.length, iExpectedRoleLength, "I see expected assigned app context role count of " + iExpectedRoleLength);
 						}
 					});
 				}
