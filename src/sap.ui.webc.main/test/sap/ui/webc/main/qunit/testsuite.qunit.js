@@ -365,6 +365,9 @@ sap.ui.define(function() {
 				},
 				sinon: false,
 				group: "Designtime"
+			},
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/webc/main/qunit/testsuite.generic.qunit.html"
 			}
 		}
 	};

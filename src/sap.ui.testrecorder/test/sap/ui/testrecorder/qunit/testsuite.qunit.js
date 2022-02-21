@@ -28,6 +28,9 @@ sap.ui.define([
 		"codeSnippets/CodeSnippetProvider": {
 			title: "QUnit Page for sap.ui.testrecorder.codeSnippets.CodeSnippetProvider",
 			module: "./codeSnippets/CodeSnippetProvider.qunit"
+		},
+		"Generic Testsuite": {
+			page: "test-resources/sap/ui/testrecorder/qunit/testsuite.generic.qunit.html"
 		}
 	};
 

@@ -93,8 +93,8 @@ sap.ui.define(function () {
 				autostart: false
 			},
 
-			"EnforceSemanticRendering": {
-				title: "QUnit Page for Semantic Rendering Coverage"
+			"Generic Testsuite": {
+				page: "test-resources/sap/tnt/qunit/testsuite.generic.qunit.html"
 			},
 
 			// -------------------------------------------------------------------------------

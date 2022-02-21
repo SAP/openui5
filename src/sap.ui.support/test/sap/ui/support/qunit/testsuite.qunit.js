@@ -111,6 +111,9 @@ sap.ui.define(function() {
 			"integration/ui/TemporaryRulesJourney": {
 				title: "Integration Tests for Support Assistant's Temporary Rules",
 				module: "sap/ui/support/integration/ui/journeys/TemporaryRulesJourney"
+			},
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/support/qunit/testsuite.generic.qunit.html"
 			}
 		}
 	};

@@ -89,9 +89,6 @@ sap.ui.define(function () {
 				},
 				autostart: false
 			},
-			"EnforceSemanticRendering": {
-				title: "QUnit Page for Semantic Rendering Coverage"
-			},
 			"FlexibleColumnLayout": {
 				coverage: {
 					only: ["sap/f/FlexibleColumnLayout"]
@@ -256,6 +253,9 @@ sap.ui.define(function () {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/SemanticPage.qunit"
+			},
+			"Generic Testsuite": {
+				page: "test-resources/sap/f/qunit/testsuite.generic.qunit.html"
 			}
 		}
 	};
