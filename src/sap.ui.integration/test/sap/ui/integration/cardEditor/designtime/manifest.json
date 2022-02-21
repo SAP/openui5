@@ -130,6 +130,18 @@
 				"enum": {
 					"value": ""
 				},
+				"string1inSubtab": {
+					"value": "abc"
+				},
+				"string2inSubtab": {
+					"value": "abc"
+				},
+				"string3inSubtab": {
+					"value": "abc"
+				},
+				"string4inSubtab": {
+					"value": "abc"
+				},
 				"stringWithStaticList": {
 					"value": "key1"
 				},

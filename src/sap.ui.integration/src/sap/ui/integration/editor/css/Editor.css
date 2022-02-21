@@ -6,8 +6,8 @@
 }
 
 .sapUiIntegrationEditor .sapUiIntegrationEditorForm {
-	height: 350px;
-	width: 100%;
+	height: var(--sapUiIntegrationEditorFormHeight, 350px);;
+	width: var(--sapUiIntegrationEditorFormWidth, 100%);
 	box-sizing: border-box;
 	margin:0 0.5rem;
 	overflow-y: auto;
@@ -25,6 +25,10 @@
 }
 .sapUiIntegrationEditor .sapUiIntegrationEditorTranslationPanel .sapMPanelContent {
 	padding: 0.625rem 1rem 1.375rem 0rem;
+}
+
+.sapUiIntegrationEditorSubTab {
+	margin-top: 0.625rem;
 }
 
 .sapUiIntegrationEditor .sapUiIntegrationEditorSubPanel .sapMPanelContent {
@@ -473,6 +477,17 @@
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorPanelHeader .sapMTitle {
     margin-top: 0;
 }
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorTabMessageStrip {
+	margin: -0.575rem 1rem -0.625rem 2rem;
+	padding: 0 0.5rem;
+	min-height: 1.2rem;
+	transition: opacity 0.3s;
+	z-index:1;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorTabMessageStrip .sapMText {
+	font-size: 0.75rem;
+	vertical-align: middle;
+}
 .sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelMessageStrip {
 	margin: -0.3rem 1rem 0 2rem;
 	padding: 0 0.5rem;
@@ -572,4 +587,36 @@
 	padding: unset;
 	background-image: unset;
 	color: var(--colorValue);
+}
+
+.errorBTNImage .sapMBtnIcon  {
+	color: #b00 !important;
+	font-size: 12px !important;
+}
+
+.warningBTNImage .sapMBtnIcon  {
+	color: var(--sapUiCriticalText, darkorange) !important;
+	font-size: 12px !important;
+}
+
+.validationBTNMargin .sapMITBFilterExpandBtn {
+	margin-left: 0.1rem !important;
+}
+
+.cardEditorIconTabBarBG {
+	background-color: lightgrey;
+}
+
+.errorBTN .sapMBtnInner {
+	border: none !important;
+	background-color: inherit !important;
+}
+
+.errorBTNDisabled {
+	opacity: unset !important;
+}
+
+.tabMessageStrip .sapMText {
+	font-size: 0.875rem !important;
+	font-weight: normal !important;
 }

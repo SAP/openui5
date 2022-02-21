@@ -794,6 +794,88 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "{= ${items>boolean1/value} === true ? 'dependentBoolean3 True' : 'dependentBoolean3 False' }",
 						"type": "string"
 					},
+					"subTabgroup": {
+						"label": "Sub Group (Tab)",
+						"type": "group",
+						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+					},
+					"subGroup4": {
+						"type": "group",
+						"label": "Sub Tab 1",
+						"level": "1",
+						"expanded": true,
+						"visualization": {
+							"type": "Tab"
+						}
+					},
+					"string1inSubtab": {
+						"manifestpath": "/sap.card/configuration/parameters/string1inSubtab/value",
+						"label": "String Validation 1",
+						"type": "string",
+						"translatable": true,
+						"editableToUser": true,
+						"visibleToUser": true,
+						"required": true,
+						"description": "test",
+						"validation": {
+							"type": "warning",
+							"minLength": 8,
+							"message": "The length of the string less than 8."
+						}
+					},
+					"subGroup5": {
+						"type": "group",
+						"label": "Sub Tab 2",
+						"level": "1",
+						"expanded": true,
+						"visualization": {
+							"type": "Tab"
+						}
+					},
+					"string2inSubtab": {
+						"manifestpath": "/sap.card/configuration/parameters/string2inSubtab/value",
+						"label": "String Validation 2",
+						"type": "string",
+						"translatable": true,
+						"editableToUser": true,
+						"visibleToUser": true,
+						"required": true,
+						"description": "test",
+						"validation": {
+							"type": "error",
+							"minLength": 8,
+							"message": "The length of the string less than 8."
+						}
+					},
+					"string3inSubtab": {
+						"manifestpath": "/sap.card/configuration/parameters/string3inSubtab/value",
+						"label": "String Validation 3",
+						"type": "string",
+						"translatable": true,
+						"required": true,
+						"description": "test",
+						"validation": {
+							"type": "warning",
+							"minLength": 8,
+							"message": "The length of the string less than 8."
+						}
+					},
+					"subGroup6": {
+						"type": "group",
+						"label": "Sub Tab 3",
+						"level": "1",
+						"expanded": true,
+						"visualization": {
+							"type": "Tab"
+						}
+					},
+					"string4inSubtab": {
+						"manifestpath": "/sap.card/configuration/parameters/string4inSubtab/value",
+						"label": "String Validation 4",
+						"type": "string",
+						"translatable": true,
+						"required": true
+					},
 					"filterBackendInStringArray": {
 						"label": "Filter backend by input in MultiComboBox or MultiInput",
 						"type": "group"
