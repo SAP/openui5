@@ -8,6 +8,8 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 
 	var Priority = Core.Priority;
 
+	var LoadState = library.LoadState;
+
 	/**
 	 * Constructor for a new sap.m.TileContent control.
 	 *
@@ -59,7 +61,12 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 				 * Adds a priority badge before the content. Works only in Generic Tile ActionMode.
 				 * @experimental Since 1.96
 				 */
-				"priority" : {type: "sap.ui.core.Priority", group: "Misc", defaultValue: Priority.None}
+				"priority" : {type: "sap.ui.core.Priority", group: "Misc", defaultValue: Priority.None},
+				/**
+				 * The load status.
+				 * @since 1.101.0
+				 */
+				"state": {type: "sap.m.LoadState", group: "Misc", defaultValue: LoadState.Loaded}
 			},
 			defaultAggregation : "content",
 			aggregations : {
@@ -79,6 +86,7 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	};
 
 	TileContent.prototype.onBeforeRendering = function() {
+		this.setProperty("disabled", this.getState() === LoadState.Disabled, true);
 		if (this.getContent() && this._oDelegate) {
 			if (this.getDisabled()) {
 				this.getContent().addDelegate(this._oDelegate);

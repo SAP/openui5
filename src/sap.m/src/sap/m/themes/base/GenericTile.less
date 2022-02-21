@@ -80,7 +80,7 @@
 }
 
 
-.sapMGTContentShimmerPlaceholderItem {
+.sapMGTContentShimmerPlaceholderItem, .sapMTileCntContentShimmerPlaceholderItem{
 	padding: 1rem 1rem 0 1rem;
 	box-sizing: border-box;
 	display: flex;
@@ -88,7 +88,7 @@
 	align-items: center;
 	flex: 1 1 auto;
 
-	&.sapMGTContentShimmerPlaceholderWithChart.sapMGTContentShimmerPlaceholderWithDescription {
+	&.sapMGTContentShimmerPlaceholderWithChart.sapMGTContentShimmerPlaceholderWithDescription, .sapMTileCntContentShimmerPlaceholderWithDescription {
 		height: 6rem;
 	}
 
@@ -99,7 +99,7 @@
 		display: inline-block;
 	}
 
-	.sapMGTContentShimmerPlaceholderRows {
+	.sapMGTContentShimmerPlaceholderRows, .sapMTileCntContentShimmerPlaceholderRows {
 		flex-grow: 1;
 
 		.sapMGTContentShimmerPlaceholderItemText {
@@ -107,14 +107,14 @@
 			margin-bottom: 0.5rem;
 			width: 80%;
 		}
-		.sapMGTContentShimmerPlaceholderItemTextFooter {
+		.sapMGTContentShimmerPlaceholderItemTextFooter, .sapMTileCntContentShimmerPlaceholderItemTextFooter {
 			height: 0.5rem;
 			margin-bottom: 0.5rem;
 			margin-top: 0.5rem;
 			width: 80%;
 			top: 3rem;
 		}
-		.sapMGTContentShimmerPlaceholderItemBox {
+		.sapMGTContentShimmerPlaceholderItemBox, .sapMTileCntContentShimmerPlaceholderItemBox{
 			height: 2rem;
 			margin-bottom: 0.5rem;
 			margin-top: 0.5rem;
@@ -206,7 +206,7 @@
 	}
 }
 
-.sapMGTLoadingShimmer {
+.sapMGTLoadingShimmer, .sapMTileCntLoadingShimmer{
 .sapMGTLoadingShimmerMixin();
 }
 
@@ -451,7 +451,7 @@ border-radius: 0.25rem;
 }
 
 .sapMGTHdrTxt > .sapMGTTitle,
-.sapMGenericTileFtrFldTxt>.sapMGTFailed {
+.sapMGenericTileFtrFldTxt>.sapMGTFailed, .sapMTileCntFtrFldTxt>.sapMGTFailed{
 	cursor: inherit;
 }
 
@@ -531,13 +531,13 @@ border-radius: 0.25rem;
 	color: @sapUiTileIconColor;
 }
 
-.sapMGenericTileFtrFldTxt {
+.sapMGenericTileFtrFldTxt, .sapMTileCntFtrFldTxt {
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontSmallSize;
 	color: @sapUiTileTextColor;
 }
 
-.sapMGenericTileFtrFldIcn {
+.sapMGenericTileFtrFldIcn, .sapMTileCntFtrFldIcn {
 	color: @sapUiTileTextColor;
 }
 
@@ -1062,14 +1062,14 @@ html[dir=rtl] .sapMGTLineMode {
 	border-radius: 0.25rem !important;
 }
 
-.sapMGenericTileFtrFld {
+.sapMGenericTileFtrFld, .sapMTileCntFtrFld{
 	left: 0.4375rem;
 	right: 0.4375rem;
 	bottom: 0.75rem;
 	position: absolute;
 }
 
-.sapMGenericTileFtrFldTxt {
+.sapMGenericTileFtrFldTxt, .sapMTileCntFtrFldTxt {
 	font-weight: normal;
 	display:table-cell;
 	padding-left: 0.5rem;
@@ -1077,17 +1077,17 @@ html[dir=rtl] .sapMGTLineMode {
 	width: 100%;
 }
 
-html[dir=rtl] .sapMGenericTileFtrFldTxt {
+html[dir=rtl] .sapMGenericTileFtrFldTxt, .sapMTileCntFtrFldTxt {
 	padding-right:0.5rem;
 }
 
-.sapMGenericTileFtrFldIcn {
+.sapMGenericTileFtrFldIcn, .sapMTileCntFtrFldIcn {
 	margin-right: 0.5rem;
 	display: table-cell;
 	vertical-align: bottom;
 }
 
-.sapMGenericTileFtrFldIcn>.sapMGTFtrFldIcnMrk {
+.sapMGenericTileFtrFldIcn>.sapMGTFtrFldIcnMrk, .sapMTileCntFtrFldIcn>.sapMGTFtrFldIcnMrk {
 	vertical-align: bottom;
 }
 

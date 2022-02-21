@@ -34,15 +34,52 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", 
 		var sFrameTypeClass = encodeCSS("sapMFrameType" + oControl.getFrameType());
 
 		oRm.openStart("div", oControl);
-		oRm.class("sapMTileCnt");
+		oRm.class(oControl.getState() == "Disabled" ? "sapMTileCnt sapMTileCntDisabled" : "sapMTileCnt");
 		oRm.class(sContentTypeClass);
 		oRm.class(sFrameTypeClass);
 		if (sTooltip.trim()) { // trim check needed since IE11 renders white spaces
 			oRm.attr("title", sTooltip);
 		}
 		oRm.openEnd();
-		this._renderContent(oRm, oControl);
-		this._renderFooter(oRm, oControl);
+		if (oControl.getState() == "Loading") {
+			oRm.openStart("div").class("sapMTileCntContentShimmerPlaceholderItem");
+			oRm.class("sapMTileCntContentShimmerPlaceholderWithDescription");
+			oRm.openEnd();
+			oRm.openStart("div").class("sapMTileCntContentShimmerPlaceholderRows")
+			.openEnd();
+			if (!(oControl.getParent().getFrameType() === "TwoByHalf" || oControl.getParent().getFrameType() === "OneByHalf")) {
+				oRm.openStart("div")
+				.class("sapMTileCntContentShimmerPlaceholderItemBox")
+				.class("sapMTileCntLoadingShimmer")
+				.openEnd()
+				.close("div");
+			}
+			oRm.openStart("div")
+			.class("sapMTileCntContentShimmerPlaceholderItemTextFooter")
+			.class("sapMTileCntLoadingShimmer")
+			.openEnd()
+			.close("div");
+			oRm.close("div");
+			oRm.close("div");
+		} else if (oControl.getState() == "Failed"){
+			oRm.openStart("div", oControl.getId() + "-failed-ftr");
+			oRm.class("sapMTileCntFtrFld");
+			oRm.openEnd();
+			oRm.openStart("div", oControl.getId() + "-failed-icon");
+			oRm.class("sapMTileCntFtrFldIcn");
+			oRm.openEnd();
+			oRm.renderControl(oControl.getParent()._oWarningIcon);
+			oRm.close("div");
+			oRm.openStart("div", oControl.getId() + "-failed-text");
+			oRm.class("sapMTileCntFtrFldTxt");
+			oRm.openEnd();
+			oRm.renderControl(oControl.getParent().getAggregation("_failedMessageText"));
+			oRm.close("div");
+			oRm.close("div");
+		} else {
+			this._renderContent(oRm, oControl);
+			this._renderFooter(oRm, oControl);
+		}
 
 		oRm.close("div");
 	};
