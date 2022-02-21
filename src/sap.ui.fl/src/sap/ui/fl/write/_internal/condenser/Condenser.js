@@ -473,7 +473,7 @@ sap.ui.define([
 		var aNotCondensableChanges = [];
 		var aCondensableChanges = [];
 		aChanges.slice(0).reverse().forEach(function(oChange) {
-			if (oChange instanceof Change && oChange.isApplyProcessFinished()) {
+			if (oChange instanceof Change && oChange.isSuccessfullyApplied()) {
 				aCondensableChanges.push(oChange);
 			} else {
 				aNotCondensableChanges.push(oChange);

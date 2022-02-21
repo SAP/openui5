@@ -204,8 +204,8 @@ sap.ui.define([
 				assert.equal(oCopyDependenciesFromInitialChangesMap.callCount, 0, "and update dependencies was not called");
 				assert.equal(oMarkFinishedSpy0.callCount, 1, "the status of the change got updated");
 				assert.equal(oMarkFinishedSpy1.callCount, 1, "the status of the change got updated");
-				assert.ok(oChange0.isApplyProcessFinished(), "the status is APPLY_FINISHED");
-				assert.ok(oChange1.isApplyProcessFinished(), "the status is APPLY_FINISHED");
+				assert.ok(oChange0.isSuccessfullyApplied(), "the status is APPLY_SUCCESSFUL");
+				assert.ok(oChange1.isSuccessfullyApplied(), "the status is APPLY_SUCCESSFUL");
 				assert.deepEqual(oChange0.getRevertData(), oRevertData, "the revert data is saved in the change");
 				assert.deepEqual(oChange1.getRevertData(), oRevertData, "the revert data is saved in the change");
 			}.bind(this));
@@ -234,7 +234,7 @@ sap.ui.define([
 				.then(function() {
 					return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl)
 						.then(function() {
-							assert.ok(oChange.isApplyProcessFinished(), "the status is APPLY_FINISHED");
+							assert.ok(oChange.hasApplyProcessFailed(), "the status is APPLY_FAILED");
 							assert.ok(oSetRevertDataSpy.notCalled, "then no revert data is set on the unapplied change");
 						});
 				}.bind(this));
@@ -1189,7 +1189,7 @@ sap.ui.define([
 					return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange])
 						.then(function() {
 							assert.ok(oSetRevertDataSpy.notCalled, "then no revert data is set on the unapplied change");
-							assert.ok(this.oChange.isApplyProcessFinished(), "then the status is APPLY_FINISHED");
+							assert.ok(this.oChange.hasApplyProcessFailed(), "then the status is APPLY_FAILED");
 						}.bind(this));
 				}.bind(this));
 		});
