@@ -1159,7 +1159,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enumeration of the <code>multiSelectMode>/code> in <code>ListBase</code>.
+	 * Enumeration of the <code>multiSelectMode</code> in <code>ListBase</code>.
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
