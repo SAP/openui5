@@ -481,8 +481,8 @@ sap.ui.define([
 	IconTabHeader.prototype.setSelectedKey = function (sKey) {
 		var aItems = this.getTabFilters(),
 			bIsParentIconTabBar = this._isInsideIconTabBar(),
-			bSelectedItemFound,
-			bApiChange = true;
+			bApiChange = true,
+			oSelectedItem;
 
 		if (aItems.length > 0) {
 			sKey = sKey || aItems[0]._getNonEmptyKey();
@@ -490,15 +490,11 @@ sap.ui.define([
 
 		// adjust UI and internal variables if already rendered (otherwise taken care by onBeforeRendering)
 		if (this.$().length) {
-			for (var i = 0; i < aItems.length; i++) {
-				if (aItems[i]._getNonEmptyKey() === sKey) {
-					this.setSelectedItem(aItems[i], bApiChange);
-					bSelectedItemFound = true;
-					break;
-				}
-			}
+			oSelectedItem = this._findItemByKey(sKey);
 
-			if (!bSelectedItemFound && !bIsParentIconTabBar && sKey) {
+			if (oSelectedItem) {
+				this.setSelectedItem(oSelectedItem, bApiChange);
+			} else if (!bIsParentIconTabBar && sKey) {
 				this.setSelectedItem(null);
 			}
 		}

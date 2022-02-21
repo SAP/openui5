@@ -278,15 +278,40 @@ sap.ui.define([
 		var oIconTabBar = new IconTabBar({
 			items: [
 				new IconTabFilter({key: "key1"}),
-				new IconTabFilter({key: "key2"})
+				new IconTabFilter({
+					key: "key2",
+					content: new Button({text: "Button"}),
+					items: [
+						new IconTabFilter({key: "key21"}),
+						new IconTabFilter({key: "key22"})
+					]
+				})
 			]
-		});
+		}).placeAt("qunit-fixture");
 
 		// Act
 		oIconTabBar.setSelectedKey("key2");
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oIconTabBar.getSelectedKey(), "key2", "selected item is set correctly");
+		assert.ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBSelected"), "sapMITBSelected class is set correctly");
+
+		// Act
+		oIconTabBar.setSelectedKey("key1");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oIconTabBar.getSelectedKey(), "key1", "selected item is set correctly");
+		assert.ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBSelected"), "sapMITBSelected class is set correctly");
+
+		// Act
+		oIconTabBar.setSelectedKey("key21");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oIconTabBar.getSelectedKey(), "key21", "selected item is set correctly");
+		assert.ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBSelected"), "sapMITBSelected class is set correctly");
 
 		// Clean up
 		oIconTabBar.destroy();
