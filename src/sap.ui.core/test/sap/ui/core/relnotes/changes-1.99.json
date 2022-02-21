@@ -3,6 +3,17 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "70ba807095548cbe8a8690553b127ac88e1ce00c",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#setContext: Do not fire change event if unresolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280055052"
+          }
+        ]
+      },
+      {
         "id": "4223f5cd97847100f79f1d5deaf008d5b6f9f58a",
         "type": "FIX",
         "text": " sap.ui.core.format.NumberFormat: less strict checks for parsing grouping separators",

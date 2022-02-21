@@ -3,6 +3,17 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "b730ca96f7335548bd8aab7738bde78769a310aa",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Some binding options take priority",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280055168"
+          }
+        ]
+      },
+      {
         "id": "1c2bd851e3ab6651a2a5a7c38246198990a7d74c",
         "type": "FIX",
         "text": " AbstractContainer - Change section's position to relative",
