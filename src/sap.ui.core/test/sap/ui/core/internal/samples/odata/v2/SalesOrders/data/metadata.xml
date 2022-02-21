@@ -945,6 +945,11 @@
 					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
 						MaxLength="10"/>
 				</FunctionImport>
+				<FunctionImport Name="SalesOrder_FixItems" ReturnType="GWSAMPLE_BASIC.CT_String"
+					m:HttpMethod="POST" sap:action-for="GWSAMPLE_BASIC.SalesOrder">
+					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In" MaxLength="10"
+						sap:label="Sa. Ord. ID"/>
+				</FunctionImport>
 				<FunctionImport Name="SalesOrderItem_Clone"
 					ReturnType="GWSAMPLE_BASIC.SalesOrderLineItem" EntitySet="SalesOrderLineItemSet"
 					m:HttpMethod="POST" sap:action-for="GWSAMPLE_BASIC.SalesOrderLineItem">

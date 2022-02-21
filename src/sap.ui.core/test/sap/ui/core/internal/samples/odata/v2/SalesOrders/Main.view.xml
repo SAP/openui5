@@ -230,8 +230,12 @@
 								</layoutData>
 							</Select>
 							<ToolbarSpacer/>
-							<Button id="fixAllQuantities::ToLineItems" press="onFixAllQuantities"
+							<Button enabled="{= %{ui>/salesOrderItemsCount} > 0}"
+								id="fixAllQuantities::ToLineItems" press="onFixAllQuantities"
 								text="Fix Quantities" tooltip="Fix all faulty quantities" />
+							<Button enabled="{= %{ui>/salesOrderItemsCount} > 0}"
+								id="fixItems::ToLineItems" press="onFixItems" text="Fix Items"
+								tooltip="Fix all faulty items" />
 							<Button enabled="{ui>/itemSelected}" id="cloneItem::ToLineItems"
 								press="onCloneItem" text="Clone Item"
 								tooltip="Clone the selected line item" />
