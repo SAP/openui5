@@ -232,6 +232,8 @@ sap.ui.define([
 			"sap-ui-codeeditor-ace"
 		);
 
+		this._applyTheme();
+
 		this._oEditor.setOptions({
 			enableBasicAutocompletion: true,
 			enableSnippets: true,
@@ -295,6 +297,13 @@ sap.ui.define([
 	 * @private
 	 */
 	CodeEditor.prototype.onThemeChanged = function() {
+		this._applyTheme();
+	};
+
+	/**
+	 * @private
+	 */
+	CodeEditor.prototype._applyTheme = function() {
 		var sUiTheme = Core.getConfiguration().getTheme().toLowerCase();
 		var sEditorTheme = "tomorrow";
 		if (sUiTheme.indexOf("hcb") > -1) {
