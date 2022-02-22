@@ -147,7 +147,7 @@ sap.ui.define([
 	 * <code>FieldValueHelp</code> needs to wait.
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.model.ListBinding} oListBindings <code>ListBinding</code> to check
+	 * @param {sap.ui.model.ListBinding} oListBinding <code>ListBinding</code> to check
 	 * @returns {boolean|Promise<boolean>} <code>Promise</code> that is resolved once <code>ListBinding</code> has been updated
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp, sap.ui.mdc.field.FieldValueHelpMTableWrapper

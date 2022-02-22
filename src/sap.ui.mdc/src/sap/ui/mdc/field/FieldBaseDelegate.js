@@ -96,7 +96,7 @@ sap.ui.define([
 	 * This function enhances the value with unit or currency information if needed by the data type.
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {any[]} aValues Value
+	 * @param {any[]} aValue Value
 	 * @param {object} oTypeInitialization Information needed to initialize internal type
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase

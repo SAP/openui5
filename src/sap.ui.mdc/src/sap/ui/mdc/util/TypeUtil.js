@@ -58,7 +58,7 @@ sap.ui.define([
 		 *
 		 * As default <code>string</code> is returned.
 		 *
-		 * @param {string} vType Given type string or sap.ui.model.SimpleType
+		 * @param {string} sType Given type string or sap.ui.model.SimpleType
 		 * @param {object} oFormatOptions Used <code>FormatOptions</code>
 		 * @param {object} oConstraints Used <code>Constraints</code>
 		 * @returns {sap.ui.mdc.enum.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...

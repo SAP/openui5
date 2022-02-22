@@ -157,7 +157,7 @@ sap.ui.define([
 	/**
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - specified overlays
 	 * @param {sap.ui.core.Element} oCombineElement - element where the combine was triggered
-	 * @returns {promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	Combine.prototype.handleCombine = function(aElementOverlays, oCombineElement) {
 		var oCombineElementOverlay;

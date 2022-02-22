@@ -7,19 +7,30 @@ sap.ui.define([], function() {
 	/**
 	 * @typedef sap.ui.test.generic.GenericTestCollection.ObjectCapabilities
 	 *
-	 * @param {string} moduleName Name of the module that contains the class. If not given, it is assumed that a module with the same name as the class (dots replaced by slashes) exports the class.
-	 * When given, the module is loaded and the class is retrieved via its global name
-	 * @param {boolean|function} create Explicit false if the control can't be instantiated via constructor or
-	 * factory function expecting the following parameters: Class, mSettings
-	 * @param {boolean} rendererHasDependencies Control renderer has dependencies to parent or child controls and can't be rendered standalone
-	 * @param {map} properties A map containing the property name as key and
-	 * either enum sap.ui.test.generic.GenericTestCollection.ExcludeReason or a "value to set" as value
-	 * @param {map} aggregations A map containing the aggregation name as key and
-	 * either enum sap.ui.test.generic.GenericTestCollection.ExcludeReason or the class which should be used as value
-	 * @param {integer} apiVersion=2 The API version of the control's renderer should be set in case the renderer does not support semantic rendering
-	 * @param {object} [knownIssues=undefined] Exceptions for known but not fixed issues
-	 * @param {boolean} knownIssues.Id Exception for know duplicate ID issues
-	 * @param {boolean} knownIssues.memoryLeak Exception for know memory leak issues
+	 * @param {string} moduleName
+	 *    Name of the module that contains the class. If not given, it is assumed that a module
+	 *    with the same name as the class (dots replaced by slashes) exports the class.
+	 *    When given, the module is loaded and the class is retrieved via its global name
+	 * @param {boolean|function} create
+	 *    Explicit false if the control can't be instantiated via constructor or factory function
+	 *    expecting the following parameters: Class, mSettings
+	 * @param {boolean} rendererHasDependencies
+	 *    Control renderer has dependencies to parent or child controls and can't be rendered standalone
+	 * @param {Object<string, sap.ui.test.generic.GenericTestCollection.ExcludeReason|any>} properties
+	 *    A map containing the property name as key and either an {@link sap.ui.test.generic.GenericTestCollection.ExcludeReason ExcludeReason}
+	 *    or a "value to set" as value
+	 * @param {Object<string, sap.ui.test.generic.GenericTestCollection.ExcludeReason|function>} aggregations
+	 *    A map containing the aggregation name as key and either an {@link sap.ui.test.generic.GenericTestCollection.ExcludeReason ExcludeReason}
+	 *    or the class which should be used as value
+	 * @param {int} [apiVersion=2]
+	 *    The API version of the control's renderer should be set in case the renderer does not support
+	 *    semantic rendering
+	 * @param {object} [knownIssues=undefined]
+	 *    Exceptions for known but not fixed issues
+	 * @param {boolean} knownIssues.Id
+	 *    Exception for known duplicate ID issues
+	 * @param {boolean} knownIssues.memoryLeak
+	 *    Exception for known memory leak issues
 	 *
 	 * @private
 	 * @ui5-restricted Only for DIST layer libraries

@@ -228,8 +228,9 @@ sap.ui.define([
 	 * such abstract classes are remembered and the first non-abstract subclass will test all its methods
 	 * including the inherited ones, not only its own methods.
 	 *
-	 * @param {string} sClassName class to be tested
-	 * @param {function} fnAssert QUnit assert
+	 * @param {function} oClass class to be tested
+	 * @param {function} assert QUnit assert
+	 * @param {object} oClassConstraints
 	 */
 	function assertAllSettersForClass(oClass, assert, oClassConstraints) {
 		var oMetadata = oClass.getMetadata(),

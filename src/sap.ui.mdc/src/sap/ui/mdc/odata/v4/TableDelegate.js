@@ -203,7 +203,7 @@ sap.ui.define([
 	 * <code>model</code>... must be provided in the {@link #updateBindingInfo updateBindingInfo} method always,
 	 * and those keys must not be changed conditionally.
 	 *
-	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the table
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
 	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
 	 * @protected

@@ -242,7 +242,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {object} mActionConfig Action config object
+	 * @param {object} vAction Action config object
+	 * @param {boolean} bIsActionDefinition
 	 * @returns {sap.m.Button} Button, which will be displayed in the menu
 	 */
 	ActionsToolbar.prototype._createActionButton = function (vAction, bIsActionDefinition) {

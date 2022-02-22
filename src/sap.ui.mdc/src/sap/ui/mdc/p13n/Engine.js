@@ -558,7 +558,7 @@ sap.ui.define([
 	 * @private
 	 *
 	 * @param {sap.ui.mdc.Control} vControl The registered control instance
-	 * @param {string} sKey The key for the according Controller
+	 * @param {string|string[]} aKeys The key for the according Controller
 	 * @param {Object[]} aCustomInfo A custom set of propertyinfos as base to create the UI
 	 *
 	 * @returns {Promise} A Promise resolving after the adaptation housekeeping has been initialized.
@@ -623,7 +623,7 @@ sap.ui.define([
 	 * and the set of provided registered keys.
 	 *
 	 * @param {sap.ui.mdc.Control} vControl The registered Control instance.
-	 * @param {string|array} vKey A key as string or an array of keys
+	 * @param {string|array} vKeys A key as string or an array of keys
 	 *
 	 * @returns {object} The requested UI settings of the control instance and provided keys
 	 */
@@ -930,7 +930,7 @@ sap.ui.define([
 	/**
 	 * Reads the current state of the subcontrollers and triggers a state appliance
 	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered Control instance.
+	 * @param {sap.ui.mdc.Control} oControl The registered Control instance.
 	 * @param {array} aKeys An array of keys
 	 * @returns {Promise} A Promise resolving after all p13n changes have been calculated and processed
 	 */

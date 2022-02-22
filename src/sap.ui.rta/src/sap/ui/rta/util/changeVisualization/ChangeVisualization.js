@@ -215,7 +215,7 @@ sap.ui.define([
 	 * Sets the selected command category and visualizes all changes for the given category
 	 *
 	 * @param {event} oEvent - Event
-	 * @returns {promise} - Promise of category change
+	 * @returns {Promise} - Promise of category change
 	 */
 	ChangeVisualization.prototype.onCommandCategorySelection = function(oEvent) {
 		var sSelectedCommandCategory = oEvent.getParameter("item").getKey();

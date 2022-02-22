@@ -204,7 +204,7 @@
 	/**
 	 * Searches the index, given a search string
 	 *
-	 * @param sQuery, the search string
+	 * @param sQuery - the search string
 	 * @returns {Promise<any>}
 	 */
 	function searchIndex(sQuery, oOptions) {

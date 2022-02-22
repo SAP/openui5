@@ -27,7 +27,7 @@ sap.ui.define([
 		*
 		* Falls back to 'object' if type cannot be found.
 		*
-		* @param {string} sType Given model specific type
+		* @param {string} sDataType Given model specific type
 		* @returns {string} primitive type name
 		*/
 		getPrimitiveType: function (sDataType) {

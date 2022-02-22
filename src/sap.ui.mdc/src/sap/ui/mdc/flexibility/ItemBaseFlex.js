@@ -19,7 +19,6 @@ sap.ui.define([
 		 * @param {object} Delegate The control specific delegate
 		 * @param {string} sDataPropertyName The property name which should be added
 		 * @param {object} oControl The control defined as <code>selectorElement</code> in the change
-		 * @param {object} oChangeContent The current change content
 		 * @param {object} mPropertyBag Instance of property bag from Flex change API
 		 */
 		beforeAddItem: function(Delegate, sDataPropertyName, oControl, mPropertyBag) {

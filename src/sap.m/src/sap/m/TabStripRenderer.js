@@ -155,7 +155,7 @@ sap.ui.define([
 	 * Renders the text of a passed <code>TabStripItem</code>.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-	 * @param {string} item text to be rendered
+	 * @param {string} sItemText item text to be rendered
 	 */
 	TabStripRenderer.renderItemText = function (oRm, sItemText) {
 

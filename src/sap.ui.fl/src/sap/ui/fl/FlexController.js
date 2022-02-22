@@ -105,7 +105,7 @@ sap.ui.define([
 	/**
 	 * Sets the variant switch promise
 	 *
-	 * @param {promise} oPromise variant switch promise
+	 * @param {Promise} oPromise variant switch promise
 	 */
 	FlexController.prototype.setVariantSwitchPromise = function(oPromise) {
 		this._oVariantSwitchPromise = oPromise;
@@ -114,7 +114,7 @@ sap.ui.define([
 	/**
 	 * Returns the variant switch promise. By default this is a resolved promise
 	 *
-	 * @returns {promise} variant switch promise
+	 * @returns {Promise} variant switch promise
 	 */
 	FlexController.prototype.waitForVariantSwitch = function() {
 		if (!this._oVariantSwitchPromise) {

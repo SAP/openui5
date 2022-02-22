@@ -410,7 +410,7 @@ function(
 	 * @param {Element} xmlNode The current XMLNode which is being processed
 	 * @param {boolean} bAsync Whether the view is processed asynchronously
 	 *
-	 * @return {promise|undefined} The promise resolves after all modules are loaded. If the given xml node
+	 * @return {Promise|undefined} The promise resolves after all modules are loaded. If the given xml node
 	 *  doesn't have require context defined, undefined is returned.
 	 */
 	function parseAndLoadRequireContext(xmlNode, bAsync) {

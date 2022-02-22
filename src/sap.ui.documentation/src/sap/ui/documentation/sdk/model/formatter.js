@@ -21,7 +21,7 @@ sap.ui.define([
 		 * Formats a library namespace to link to the API reference if it starts with sap.
 		 *
 		 * @public
-		 * @param {string} sNamespace value to be formatted
+		 * @param {string} sLink value to be formatted
 		 * @returns {string} formatted link
 		 */
 		crossLink: function (sLink) {

@@ -161,7 +161,7 @@ sap.ui.define([
 		 * This method will check the text, selected status and index of a given array in a p13n dialog, which contains p13n items in a defined structure.
 		 * Note: the index of the p13n item in the array will also be checked, according to the index of the item in the dialog.
 		 *
-		 * @param {object} aItems - the array which is containing the items to be checked in the dialog as following: [{p13nItem: 'Country', selected: true}]
+		 * @param {object} vItems - the array which is containing the items to be checked in the dialog as following: [{p13nItem: 'Country', selected: true}]
 		 * @private
 		 */
 		 iShouldSeeP13nItems: function (vItems) {
@@ -194,7 +194,7 @@ sap.ui.define([
 		 * This method will check the text, selected status and index of a given array in a p13n dialog, which contains p13n items in a defined structure.
 		 * Note: the index of the p13n item in the array will also be checked, according to the index of the item in the dialog.
 		 *
-		 * @param {object} aItems - the array which is containing the items to be checked in the dialog as following: [{p13nItem: 'Country', selected: true}]
+		 * @param {object} vItems - the array which is containing the items to be checked in the dialog as following: [{p13nItem: 'Country', selected: true}]
 		 * @private
 		 */
 		iShouldSeeChartP13nItems: function (vItems) {

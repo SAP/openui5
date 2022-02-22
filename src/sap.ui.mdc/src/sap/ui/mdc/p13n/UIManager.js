@@ -99,7 +99,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc
 	 *
 	 * @param {sap.ui.mdc.Control} vControl The registered control instance
-	 * @param {string} sKey The key for the according Controller
+	 * @param {string|string[]} vKey The key for the according Controller
 	 * @param {Object[]} aCustomInfo A custom set of propertyinfos as base to create the UI
 	 *
 	 * @returns {Promise} A Promise resolving in the P13n UI.
@@ -155,8 +155,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
-	 * @param {string} aKeys The registerd key to get the corresponding Controller.
+	 * @param {sap.ui.mdc.Control} oControl The registered control instance.
+	 * @param {string} aKeys The registered key to get the corresponding Controller.
 	 *
 	 * @returns {Promise} A Promise resolving in the according container
 	 * (Depending on the Controllers livemode config).
@@ -231,9 +231,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
-	 * @param {sap.ui.core.Control} oPanel The control instance which is set in the content area of the container.
+	 * @param {sap.ui.mdc.Control} oControl The registered control instance.
+	 * @param {string[]} aKeys The registered keys to get the corresponding Controller.
+	 * @param {*} oPopupContent
+	 * @param {*} oUISettings
 	 *
 	 * @returns {Promise} Returns a Promise resolving in the container instance
 	 */
@@ -295,9 +296,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
+	 * @param {sap.ui.mdc.Control} oControl The registered control instance.
+	 * @param {string[]} aKeys The registerd key to get the corresponding Controller.
 	 * @param {sap.ui.core.Control} oPanel The control instance which is set in the content area of the container.
+	 * @param {object} mUISettings
 	 *
 	 * @returns {sap.m.ResponsivePopover} The popover instance.
 	 */

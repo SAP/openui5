@@ -127,7 +127,7 @@ sap.ui.define([
 			 * @param {sap.ui.unified.calendar.CalendarDate} oFocusDate The first day of the target month.
 			 * @param {sap.ui.unified.calendar.CalendarDate} oFirstVisibleDate Expected first visible day.
 			 * @param {sap.ui.unified.calendar.CalendarDate} oLastVisibleDate Expected last visible day.
-			 * @param {int} iVisibleDaysExpected visible days.
+			 * @param {int} iVisibleDays Expected visible days.
 			 * @param {string} sTargetMonthName Name of the target month used for test description.
 			 * @param {boolean} [bForRendering=false] should days before 0001-01-01 be included in the returned array.
 			 */
