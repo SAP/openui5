@@ -289,7 +289,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("CompositeBinding: setType, no parts ignoring messages", function(assert) {
-		var oCompositeBinding = {},
+		var oCompositeBinding = {
+				aBindings : []
+			},
 			oType = new MyCompositeType();
 
 		this.mock(oType).expects("getPartsIgnoringMessages").withExactArgs().returns([]);
@@ -301,6 +303,7 @@ sap.ui.define([
 	QUnit.test("CompositeBinding: setType, some parts ignoring messages", function(assert) {
 		var oSimpleBinding = {
 				getIgnoreMessages : function () {},
+				getType : function () {},
 				setIgnoreMessages : function () {},
 				supportsIgnoreMessages : function () {}
 			},
@@ -330,6 +333,23 @@ sap.ui.define([
 		this.mock(aBindings[3]).expects("supportsIgnoreMessages").withExactArgs().returns(true);
 		this.mock(aBindings[3]).expects("getIgnoreMessages").withExactArgs().returns(undefined);
 		this.mock(aBindings[3]).expects("setIgnoreMessages").withExactArgs(true);
+
+		// code under test
+		CompositeBinding.prototype.setType.call(oCompositeBinding, oType, "~internalType");
+	});
+
+	QUnit.test("CompositeBinding: setType calls processPartTypes", function(assert) {
+		var oPart0 = {getType : function () {}},
+			oPart1 = {getType : function () {}},
+			oCompositeBinding = {
+				aBindings : [oPart0, oPart1]
+			},
+			oType = new MyCompositeType();
+
+		this.mock(oType).expects("getPartsIgnoringMessages").withExactArgs().returns([]);
+		this.mock(oPart0).expects("getType").withExactArgs().returns("~type0");
+		this.mock(oPart1).expects("getType").withExactArgs().returns("~type1");
+		this.mock(oType).expects("processPartTypes").withExactArgs(["~type0", "~type1"]);
 
 		// code under test
 		CompositeBinding.prototype.setType.call(oCompositeBinding, oType, "~internalType");

@@ -64,4 +64,10 @@ sap.ui.define([
 		assert.strictEqual(CompositeType.prototype.getParseWithValues.call(oCompositeType),
 			"~bParseWithValues");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("processPartTypes", function (assert) {
+		// code under test: method exists and does nothing
+		assert.strictEqual(CompositeType.prototype.processPartTypes(), undefined);
+	});
 });

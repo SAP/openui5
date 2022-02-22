@@ -173,5 +173,17 @@ sap.ui.define(['./SimpleType'],
 		return this.bParseWithValues;
 	};
 
+	/**
+	 * Processes the types of the parts of this composite type. A concrete composite type may
+	 * override this method if it needs to derive information from the types of the parts.
+	 *
+	 * @param {sap.ui.model.SimpleType[]} aPartTypes Types of the composite binding's parts
+	 *
+	 * @protected
+	 * @since 1.100.0
+	 */
+	CompositeType.prototype.processPartTypes = function (aPartTypes) {
+	};
+
 	return CompositeType;
 });
