@@ -250,6 +250,11 @@ sap.ui.define([
 						key: 'float'
 					},
 					{
+						title: 'Initials',
+						target: 'learnDetail',
+						key: 'initials'
+					},
+					{
 						title: 'Integer',
 						target: 'learnDetail',
 						key: 'integer'

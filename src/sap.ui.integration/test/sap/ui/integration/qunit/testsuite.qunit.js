@@ -114,6 +114,7 @@ sap.ui.define(function () {
 					"./formatters/CardFormatters.qunit",
 					"./formatters/DateTimeFormatter.qunit",
 					"./formatters/IconFormatter.qunit",
+					"./formatters/InitialsFormatters.qunit",
 					"./formatters/NumberFormatter.qunit",
 					"./formatters/TextFormatter.qunit"
 				]
