@@ -8390,8 +8390,7 @@ sap.ui.define([
 
 		oBinding.oCachePromise = bAsync ? Promise.resolve(oCache) : SyncPromise.resolve(oCache);
 		this.mock(this.oModel).expects("checkGroupId").withExactArgs(sGroupId);
-		this.mock(this.oModel).expects("resolve")
-			.withExactArgs("EMPLOYEES", sinon.match.same(oParentContext)).returns("/EMPLOYEES");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
 		this.mock(this.oModel).expects("getPredicateIndex").withExactArgs(sPath).returns(10);
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), sPath)
@@ -8445,8 +8444,7 @@ sap.ui.define([
 			oBinding = this.bindList("EMPLOYEES", oParentContext),
 			sPath = "/TEAMS('1')";
 
-		this.mock(this.oModel).expects("resolve")
-			.withExactArgs("EMPLOYEES", sinon.match.same(oParentContext)).returns("/EMPLOYEES");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
 		this.mock(this.oModel).expects("getPredicateIndex").withExactArgs(sPath).returns(6);
 
 		assert.throws(function () {
