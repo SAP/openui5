@@ -136,7 +136,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_onListItemClick(event) {
 			const listItem = event.detail.item;
 			const treeItem = listItem.treeItem;
-			this.fireEvent("item-click", { item: treeItem });
+			if (!this.fireEvent("item-click", { item: treeItem }, true)) {
+				event.preventDefault();
+			}
 		}
 		_onListItemDelete(event) {
 			const listItem = event.detail.item;

@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/Option"
-], function(WebComponent, library) {
+], function(WebComponent, library, EnabledPropagator) {
 	"use strict";
 
 	/**
@@ -44,13 +45,16 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines whether the component is in disabled state. <br>
-				 * <br>
-				 * <b>Note:</b> A disabled component is noninteractive.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -88,6 +92,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	EnabledPropagator.call(Option.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

@@ -25,6 +25,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			textOff: {
 				type: String,
 			},
+			 accessibleName: {
+				type: String,
+			},
 			 accessibleNameRef: {
 				type: String,
 				defaultValue: "",

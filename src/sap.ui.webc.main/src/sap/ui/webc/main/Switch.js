@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/Switch"
-], function(WebComponent, library) {
+], function(WebComponent, library, EnabledPropagator) {
 	"use strict";
 
 	var SwitchDesign = library.SwitchDesign;
@@ -47,13 +48,24 @@ sap.ui.define([
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.Switch
+	 * @implements sap.ui.core.IFormContent
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Switch = WebComponent.extend("sap.ui.webc.main.Switch", {
 		metadata: {
 			library: "sap.ui.webc.main",
 			tag: "ui5-switch-ui5",
+			interfaces: [
+				"sap.ui.core.IFormContent"
+			],
 			properties: {
+
+				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string"
+				},
 
 				/**
 				 * Defines if the component is checked. <br>
@@ -76,13 +88,16 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the component is disabled. <br>
-				 * <br>
-				 * <b>Note:</b> A disabled component is noninteractive.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -105,6 +120,15 @@ sap.ui.define([
 				textOn: {
 					type: "string",
 					defaultValue: ""
+				},
+
+				/**
+				 * Defines the width of the control
+				 */
+				width: {
+					type: "sap.ui.core.CSSSize",
+					defaultValue: null,
+					mapping: "style"
 				}
 			},
 			associations: {
@@ -133,6 +157,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	EnabledPropagator.call(Switch.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

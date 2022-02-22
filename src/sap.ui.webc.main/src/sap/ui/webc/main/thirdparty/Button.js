@@ -171,14 +171,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				return;
 			}
 			this.active = false;
-			this.focused = false;
+			if (Device.isDesktop()) {
+				this.focused = false;
+			}
 		}
 		_onfocusin(event) {
 			if (this.nonInteractive) {
 				return;
 			}
 			event.isMarked = "button";
-			this.focused = true;
+			if (Device.isDesktop()) {
+				this.focused = true;
+			}
 		}
 		get hasButtonType() {
 			return this.design !== ButtonDesign.Default && this.design !== ButtonDesign.Transparent;

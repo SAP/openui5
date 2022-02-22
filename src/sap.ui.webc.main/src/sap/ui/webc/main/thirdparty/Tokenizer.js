@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/delegate/ScrollEnablement', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/ValueState', './ResponsivePopover', './List', './StandardListItem', './generated/templates/TokenizerTemplate.lit', './generated/templates/TokenizerPopoverTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Tokenizer.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, ScrollEnablement, Integer, i18nBundle, Keys, Device, ValueState, ResponsivePopover, List, StandardListItem, TokenizerTemplate_lit, TokenizerPopoverTemplate_lit, i18nDefaults, Tokenizer_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/delegate/ScrollEnablement', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/ValueState', './ResponsivePopover', './List', './StandardListItem', './generated/templates/TokenizerTemplate.lit', './generated/templates/TokenizerPopoverTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Tokenizer.css', './generated/themes/TokenizerPopover.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, ScrollEnablement, Integer, i18nBundle, Keys, Device, ValueState, ResponsivePopover, List, StandardListItem, TokenizerTemplate_lit, TokenizerPopoverTemplate_lit, i18nDefaults, Tokenizer_css, TokenizerPopover_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -66,7 +66,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return Tokenizer_css;
 		}
 		static get staticAreaStyles() {
-			return [ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css];
+			return [ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css, TokenizerPopover_css];
 		}
 		static get staticAreaTemplate() {
 			return TokenizerPopoverTemplate_lit;
@@ -123,22 +123,38 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		onAfterRendering() {
 			this._scrollEnablement.scrollContainer = this.expanded ? this.contentDom : this;
 		}
-		_tokenDelete(event) {
+		_delete(event) {
+			if (this._selectedTokens.length) {
+				this._selectedTokens.forEach(token => this._tokenDelete(event, token));
+			} else {
+				this._tokenDelete(event);
+			}
+		}
+		_tokenDelete(event, token) {
 			let nextTokenIndex;
-			const deletedTokenIndex = this._getVisibleTokens().indexOf(event.target);
+			const tokens = this._getVisibleTokens();
+			const deletedTokenIndex = token ? tokens.indexOf(token) : tokens.indexOf(event.target);
+			const notSelectedTokens = tokens.filter(t => !t.selected);
 			if (event.detail && event.detail.backSpace) {
 				nextTokenIndex = deletedTokenIndex === 0 ? deletedTokenIndex + 1 : deletedTokenIndex - 1;
 			} else {
-				nextTokenIndex = deletedTokenIndex === this._getVisibleTokens().length - 1 ? deletedTokenIndex - 1 : deletedTokenIndex + 1;
+				nextTokenIndex = deletedTokenIndex === tokens.length - 1 ? deletedTokenIndex - 1 : deletedTokenIndex + 1;
 			}
-			const nextToken = this._getVisibleTokens()[nextTokenIndex];
+			let nextToken = tokens[nextTokenIndex];
+			if (notSelectedTokens.length > 1) {
+				while (nextToken && nextToken.selected) {
+					nextToken = event.detail.backSpace ? tokens[--nextTokenIndex] : tokens[++nextTokenIndex];
+				}
+			} else {
+				nextToken = notSelectedTokens[0];
+			}
 			if (nextToken && !Device.isPhone()) {
 				this._itemNav.setCurrentItem(nextToken);
 				setTimeout(() => {
 					nextToken.focus();
 				}, 0);
 			}
-			this.fireEvent("token-delete", { ref: event.target });
+			this.fireEvent("token-delete", { ref: token || event.target });
 		}
 		itemDelete(event) {
 			const token = event.detail.item.tokenRef;
@@ -298,6 +314,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get _isPhone() {
 			return Device.isPhone();
+		}
+		get _selectedTokens() {
+			return this._getTokens().filter(token => token.selected);
 		}
 		get classes() {
 			return {

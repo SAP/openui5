@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/localization/dates/CalendarDate', 'sap/ui/webc/common/thirdparty/localization/dates/modifyDateBy', 'sap/ui/webc/common/thirdparty/localization/dates/getRoundedTimestamp', 'sap/ui/webc/common/thirdparty/localization/dates/getTodayUTCTimestamp', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/icons/appointment-2', 'sap/ui/webc/common/thirdparty/icons/decline', './generated/i18n/i18n-defaults', './DateComponentBase', './Icon', './Button', './ResponsivePopover', './Calendar', './CalendarDate', './Input', './types/InputType', './generated/templates/DatePickerTemplate.lit', './generated/templates/DatePickerPopoverTemplate.lit', 'sap/ui/webc/common/thirdparty/localization/features/calendar/Gregorian', './generated/themes/DatePicker.css', './generated/themes/DatePickerPopover.css', './generated/themes/ResponsivePopoverCommon.css'], function (FeaturesRegistry, CalendarDate, modifyDateBy, getRoundedTimestamp, getTodayUTCTimestamp, ValueState, AriaLabelHelper, Keys, Device, appointment2, decline, i18nDefaults, DateComponentBase, Icon, Button, ResponsivePopover, Calendar, CalendarDate$1, Input, InputType, DatePickerTemplate_lit, DatePickerPopoverTemplate_lit, Gregorian, DatePicker_css, DatePickerPopover_css, ResponsivePopoverCommon_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/localization/dates/CalendarDate', 'sap/ui/webc/common/thirdparty/localization/dates/modifyDateBy', 'sap/ui/webc/common/thirdparty/localization/dates/getRoundedTimestamp', 'sap/ui/webc/common/thirdparty/localization/dates/getTodayUTCTimestamp', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/icons/appointment-2', 'sap/ui/webc/common/thirdparty/icons/decline', './types/HasPopup', './generated/i18n/i18n-defaults', './DateComponentBase', './Icon', './Button', './ResponsivePopover', './Calendar', './CalendarDate', './Input', './types/InputType', './generated/templates/DatePickerTemplate.lit', './generated/templates/DatePickerPopoverTemplate.lit', 'sap/ui/webc/common/thirdparty/localization/features/calendar/Gregorian', './generated/themes/DatePicker.css', './generated/themes/DatePickerPopover.css', './generated/themes/ResponsivePopoverCommon.css'], function (FeaturesRegistry, CalendarDate, modifyDateBy, getRoundedTimestamp, getTodayUTCTimestamp, ValueState, AriaLabelHelper, Keys, Device, appointment2, decline, HasPopup, i18nDefaults, DateComponentBase, Icon, Button, ResponsivePopover, Calendar, CalendarDate$1, Input, InputType, DatePickerTemplate_lit, DatePickerPopoverTemplate_lit, Gregorian, DatePicker_css, DatePickerPopover_css, ResponsivePopoverCommon_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -125,6 +125,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			} else if (this.name) {
 				console.warn(`In order for the "name" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`);
 			}
+			this.value = this.normalizeValue(this.value);
 			this.liveValue = this.value;
 		}
 		get _calendarSelectionMode() {
@@ -288,9 +289,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		get accInfo() {
 			return {
 				"ariaRoledescription": this.dateAriaDescription,
-				"ariaHasPopup": "true",
+				"ariaHasPopup": HasPopup.Grid,
 				"ariaAutoComplete": "none",
-				"role": "combobox",
 				"ariaControls": `${this._id}-responsive-popover`,
 				"ariaExpanded": this.isOpen(),
 				"ariaRequired": this.required,

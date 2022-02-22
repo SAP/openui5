@@ -1,4 +1,4 @@
-sap.ui.define(['exports', '../style-map-3e5a195d', 'sap/ui/webc/common/thirdparty/lit-html/static', 'sap/ui/webc/common/thirdparty/lit-html/directives/repeat', 'sap/ui/webc/common/thirdparty/lit-html/directives/class-map', 'sap/ui/webc/common/thirdparty/lit-html/directives/if-defined', 'sap/ui/webc/common/thirdparty/lit-html/directives/unsafe-html'], function (exports, styleMap, _static, repeat, classMap, ifDefined, unsafeHtml) { 'use strict';
+sap.ui.define(['exports', '../_chunks/style-map', 'sap/ui/webc/common/thirdparty/lit-html/static', 'sap/ui/webc/common/thirdparty/lit-html/directives/repeat', 'sap/ui/webc/common/thirdparty/lit-html/directives/class-map', 'sap/ui/webc/common/thirdparty/lit-html/directives/if-defined', 'sap/ui/webc/common/thirdparty/lit-html/directives/unsafe-html'], function (exports, styleMap, _static, repeat, classMap, ifDefined, unsafeHtml) { 'use strict';
 
 	const litRender = (templateResult, domNode, styleStrOrHrefsArr, { host } = {}) => {
 		if (typeof styleStrOrHrefsArr === "string") {

@@ -25,6 +25,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		static get styles() {
 			return [DatePicker.styles, DateRangePicker_css];
 		}
+		constructor() {
+			super();
+			this._prevDelimiter = null;
+		}
 		get dateValue() {
 			return null;
 		}
@@ -137,7 +141,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		}
 		_splitValueByDelimiter(value) {
 			const valuesArray = [];
-			const partsArray = value.split(this._effectiveDelimiter);
+			const partsArray = value.split(this._prevDelimiter || this._effectiveDelimiter);
 			valuesArray[0] = partsArray.slice(0, partsArray.length / 2).join(this._effectiveDelimiter);
 			valuesArray[1] = partsArray.slice(partsArray.length / 2).join(this._effectiveDelimiter);
 			return valuesArray;
@@ -160,6 +164,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			return undefined;
 		}
 		_buildValue(firstDateTimestamp, lastDateTimestamp) {
+			this._prevDelimiter = this._effectiveDelimiter;
 			if (firstDateTimestamp) {
 				const firstDateString = this._getStringFromTimestamp(firstDateTimestamp * 1000);
 				if (!lastDateTimestamp) {

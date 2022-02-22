@@ -687,6 +687,66 @@ Use to display both a master and a detail page when the user should focus on the
 			Tent: "Tent",
 
 			/**
+			 * "TntChartArea" illustration type.
+			 * @public
+			 */
+			TntChartArea: "TntChartArea",
+
+			/**
+			 * "TntChartArea2" illustration type.
+			 * @public
+			 */
+			TntChartArea2: "TntChartArea2",
+
+			/**
+			 * "TntChartBar" illustration type.
+			 * @public
+			 */
+			TntChartBar: "TntChartBar",
+
+			/**
+			 * "TntChartBPMNFlow" illustration type.
+			 * @public
+			 */
+			TntChartBPMNFlow: "TntChartBPMNFlow",
+
+			/**
+			 * "TntChartBullet" illustration type.
+			 * @public
+			 */
+			TntChartBullet: "TntChartBullet",
+
+			/**
+			 * "TntChartDoughnut" illustration type.
+			 * @public
+			 */
+			TntChartDoughnut: "TntChartDoughnut",
+
+			/**
+			 * "TntChartFlow" illustration type.
+			 * @public
+			 */
+			TntChartFlow: "TntChartFlow",
+
+			/**
+			 * "TntChartGantt" illustration type.
+			 * @public
+			 */
+			TntChartGantt: "TntChartGantt",
+
+			/**
+			 * "TntChartOrg" illustration type.
+			 * @public
+			 */
+			TntChartOrg: "TntChartOrg",
+
+			/**
+			 * "TntChartPie" illustration type.
+			 * @public
+			 */
+			TntChartPie: "TntChartPie",
+
+			/**
 			 * "TntCodePlaceholder" illustration type.
 			 * @public
 			 */
@@ -697,6 +757,12 @@ Use to display both a master and a detail page when the user should focus on the
 			 * @public
 			 */
 			TntCompany: "TntCompany",
+
+			/**
+			 * "TntComponents" illustration type.
+			 * @public
+			 */
+			TntComponents: "TntComponents",
 
 			/**
 			 * "TntExternalLink" illustration type.
@@ -753,6 +819,12 @@ Use to display both a master and a detail page when the user should focus on the
 			TntRadar: "TntRadar",
 
 			/**
+			 * "TntSecrets" illustration type.
+			 * @public
+			 */
+			TntSecrets: "TntSecrets",
+
+			/**
 			 * "TntServices" illustration type.
 			 * @public
 			 */
@@ -783,6 +855,30 @@ Use to display both a master and a detail page when the user should focus on the
 			TntSuccessfulAuth: "TntSuccessfulAuth",
 
 			/**
+			 * "TntSystems" illustration type.
+			 * @public
+			 */
+			TntSystems: "TntSystems",
+
+			/**
+			 * "TntTeams" illustration type.
+			 * @public
+			 */
+			TntTeams: "TntTeams",
+
+			/**
+			 * "TntTools" illustration type.
+			 * @public
+			 */
+			TntTools: "TntTools",
+
+			/**
+			 * "TntUnableToLoad" illustration type.
+			 * @public
+			 */
+			TntUnableToLoad: "TntUnableToLoad",
+
+			/**
 			 * "TntUnlock" illustration type.
 			 * @public
 			 */
@@ -793,6 +889,12 @@ Use to display both a master and a detail page when the user should focus on the
 			 * @public
 			 */
 			TntUnsuccessfulAuth: "TntUnsuccessfulAuth",
+
+			/**
+			 * "TntUser2" illustration type.
+			 * @public
+			 */
+			TntUser2: "TntUser2",
 
 			/**
 			 * "Unable To Load" illustration type.

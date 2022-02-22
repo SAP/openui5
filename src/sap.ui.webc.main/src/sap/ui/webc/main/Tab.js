@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/Tab"
-], function(WebComponent, library) {
+], function(WebComponent, library, EnabledPropagator) {
 	"use strict";
 
 	var SemanticColor = library.SemanticColor;
@@ -75,11 +76,16 @@ sap.ui.define([
 				},
 
 				/**
-				 * Enabled items can be selected.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -127,6 +133,8 @@ sap.ui.define([
 	 * @name sap.ui.webc.main.Tab#getTabInStripDomRef
 	 * @function
 	 */
+
+	EnabledPropagator.call(Tab.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

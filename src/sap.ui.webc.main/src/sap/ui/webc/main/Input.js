@@ -6,9 +6,10 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
 	"./thirdparty/Input"
-], function(WebComponent, library, coreLibrary) {
+], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -37,7 +38,6 @@ sap.ui.define([
 	 *
 	 *
 	 * <ul>
-	 *     <li>[F4], [ALT]+[UP], or [ALT]+[DOWN] - Opens value help if available, same as clicking the value help icon. (Does not open suggestion list.)</li>
 	 *     <li>[ESC] - Closes the suggestion list, if open. If closed or not enabled, cancels changes and reverts to the value which the Input field had when it got the focus.</li>
 	 *     <li>[ENTER] or [RETURN] - If suggestion list is open takes over the current matching item and closes it. If value state or group header is focused, does nothing.</li>
 	 *     <li>[DOWN] - Focuses the next matching item in the suggestion list.</li>
@@ -56,7 +56,7 @@ sap.ui.define([
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.Input
-	 * @implements sap.ui.webc.main.IInput
+	 * @implements sap.ui.webc.main.IInput, sap.ui.core.IFormContent
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Input = WebComponent.extend("sap.ui.webc.main.Input", {
@@ -64,25 +64,29 @@ sap.ui.define([
 			library: "sap.ui.webc.main",
 			tag: "ui5-input-ui5",
 			interfaces: [
-				"sap.ui.webc.main.IInput"
+				"sap.ui.webc.main.IInput",
+				"sap.ui.core.IFormContent"
 			],
 			properties: {
 
 				/**
-				 * Sets the accessible aria name of the component.
+				 * Defines the accessible aria name of the component.
 				 */
 				accessibleName: {
 					type: "string"
 				},
 
 				/**
-				 * Defines whether the component is in disabled state. <br>
-				 * <br>
-				 * <b>Note:</b> A disabled component is completely noninteractive.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -313,6 +317,8 @@ sap.ui.define([
 	 * @name sap.ui.webc.main.Input#getPreviewItem
 	 * @function
 	 */
+
+	EnabledPropagator.call(Input.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

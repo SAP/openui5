@@ -6,9 +6,10 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
 	"./thirdparty/ProgressIndicator"
-], function(WebComponent, library, coreLibrary) {
+], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -34,21 +35,17 @@ sap.ui.define([
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.ProgressIndicator
+	 * @implements sap.ui.core.IFormContent
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ProgressIndicator = WebComponent.extend("sap.ui.webc.main.ProgressIndicator", {
 		metadata: {
 			library: "sap.ui.webc.main",
 			tag: "ui5-progress-indicator-ui5",
+			interfaces: [
+				"sap.ui.core.IFormContent"
+			],
 			properties: {
-
-				/**
-				 * Defines whether component is in disabled state.
-				 */
-				disabled: {
-					type: "boolean",
-					defaultValue: false
-				},
 
 				/**
 				 * Specifies the text value to be displayed in the bar.
@@ -61,6 +58,19 @@ sap.ui.define([
 				 */
 				displayValue: {
 					type: "string"
+				},
+
+				/**
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
+				 */
+				enabled: {
+					type: "boolean",
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -109,6 +119,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	EnabledPropagator.call(ProgressIndicator.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

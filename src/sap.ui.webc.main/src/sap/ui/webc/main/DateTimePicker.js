@@ -6,9 +6,10 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
 	"./thirdparty/DateTimePicker"
-], function(WebComponent, library, coreLibrary) {
+], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 
 	var CalendarType = coreLibrary.CalendarType;
@@ -75,12 +76,16 @@ sap.ui.define([
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.DateTimePicker
+	 * @implements sap.ui.core.IFormContent
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DateTimePicker = WebComponent.extend("sap.ui.webc.main.DateTimePicker", {
 		metadata: {
 			library: "sap.ui.webc.main",
 			tag: "ui5-datetime-picker-ui5",
+			interfaces: [
+				"sap.ui.core.IFormContent"
+			],
 			properties: {
 
 				/**
@@ -91,11 +96,16 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines whether the component is displayed as disabled.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -358,6 +368,8 @@ sap.ui.define([
 	 * @name sap.ui.webc.main.DateTimePicker#getDateValue
 	 * @function
 	 */
+
+	EnabledPropagator.call(DateTimePicker.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

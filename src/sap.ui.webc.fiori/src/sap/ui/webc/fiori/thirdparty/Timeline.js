@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', './generated/templates/TimelineTemplate.lit', './generated/i18n/i18n-defaults', './TimelineItem', './generated/themes/Timeline.css', './types/TimelineLayout'], function (UI5Element, i18nBundle, litRender, Keys, ItemNavigation, NavigationMode, TimelineTemplate_lit, i18nDefaults, TimelineItem, Timeline_css, TimelineLayout) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', './generated/i18n/i18n-defaults', './generated/templates/TimelineTemplate.lit', './TimelineItem', './generated/themes/Timeline.css', './types/TimelineLayout'], function (UI5Element, i18nBundle, litRender, Keys, ItemNavigation, NavigationMode, i18nDefaults, TimelineTemplate_lit, TimelineItem, Timeline_css, TimelineLayout) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -17,6 +17,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			layout: {
 				type: TimelineLayout,
 				defaultValue: TimelineLayout.Vertical,
+			},
+			accessibleName: {
+				type: String,
 			},
 		},
 		slots:  {
@@ -53,7 +56,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			Timeline.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents-fiori");
 		}
 		get ariaLabel() {
-			return Timeline.i18nBundle.getText(i18nDefaults.TIMELINE_ARIA_LABEL);
+			return this.accessibleName
+				? `${Timeline.i18nBundle.getText(i18nDefaults.TIMELINE_ARIA_LABEL)} ${this.accessibleName}`
+				: Timeline.i18nBundle.getText(i18nDefaults.TIMELINE_ARIA_LABEL);
 		}
 		_onfocusin(event) {
 			const target = event.target;

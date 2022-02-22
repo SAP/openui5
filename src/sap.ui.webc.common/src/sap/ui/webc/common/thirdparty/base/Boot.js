@@ -1,9 +1,9 @@
-sap.ui.define(['exports', './EventProvider', './util/whenDOMReady', './FontFace', './SystemCSSVars', './config/Theme', './theming/applyTheme', './Runtimes', './FeaturesRegistry'], function (exports, EventProvider, whenDOMReady, FontFace, SystemCSSVars, Theme, applyTheme, Runtimes, FeaturesRegistry) { 'use strict';
+sap.ui.define(['exports', './util/whenDOMReady', './FontFace', './SystemCSSVars', './config/Theme', './theming/applyTheme', './Runtimes', './FeaturesRegistry'], function (exports, whenDOMReady, FontFace, SystemCSSVars, Theme, applyTheme, Runtimes, FeaturesRegistry) { 'use strict';
 
 	let bootPromise;
-	const eventProvider = new EventProvider();
-	const attachBoot = listener => {
-		eventProvider.attachEvent("boot", listener);
+	const attachBoot = async listener => {
+		await boot();
+		listener();
 	};
 	const boot = async () => {
 		if (bootPromise) {
@@ -23,7 +23,6 @@ sap.ui.define(['exports', './EventProvider', './util/whenDOMReady', './FontFace'
 			OpenUI5Support && OpenUI5Support.attachListeners();
 			FontFace();
 			SystemCSSVars();
-			await eventProvider.fireEventAsync("boot");
 			resolve();
 		});
 		return bootPromise;

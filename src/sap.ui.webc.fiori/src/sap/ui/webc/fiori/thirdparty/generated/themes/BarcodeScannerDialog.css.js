@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Themes', 'sa
 
 	Themes.registerThemePropertiesLoader("@ui5/webcomponents-theming", "sap_fiori_3", () => defaultThemeBase__default);
 	Themes.registerThemePropertiesLoader("@ui5/webcomponents-fiori", "sap_fiori_3", () => parametersBundle_css);
-	var barcodeScannerDialogCss = {packageName:"@ui5/webcomponents-fiori",fileName:"themes/BarcodeScannerDialog.css",content:".ui5-barcode-scanner-dialog-video,.ui5-barcode-scanner-dialog-video-wrapper{height:100%;width:100%}.ui5-barcode-scanner-dialog-video{object-fit:cover}.ui5-barcode-scanner-dialog-footer{display:flex;justify-content:flex-end;width:100%;padding:0 .5rem 0 0}[dir=rtl] .ui5-barcode-scanner-dialog-footer{padding:0 0 0 .5rem}.ui5-barcode-scanner-dialog-busy{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1}.ui5-barcode-scanner-dialog-busy:not([active]){display:none}"};
+	var barcodeScannerDialogCss = {packageName:"@ui5/webcomponents-fiori",fileName:"themes/BarcodeScannerDialog.css",content:".ui5-barcode-scanner-dialog-video,.ui5-barcode-scanner-dialog-video-wrapper{height:100%;width:100%}.ui5-barcode-scanner-dialog-video{object-fit:cover}.ui5-barcode-scanner-dialog-footer{display:flex;justify-content:flex-end;width:100%}.ui5-barcode-scanner-dialog-busy{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1}.ui5-barcode-scanner-dialog-busy:not([active]){display:none}"};
 
 	return barcodeScannerDialogCss;
 

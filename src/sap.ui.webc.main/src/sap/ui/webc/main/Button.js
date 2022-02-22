@@ -5,11 +5,11 @@
 // Provides control sap.ui.webc.main.Button.
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
-	'sap/ui/core/EnabledPropagator',
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
 	"./thirdparty/Button"
-], function(WebComponent, EnabledPropagator, library, coreLibrary) {
+], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 
 	var TextDirection = coreLibrary.TextDirection;
@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.Button
-	 * @implements sap.ui.webc.main.IButton
+	 * @implements sap.ui.webc.main.IButton, sap.ui.core.IFormContent
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Button = WebComponent.extend("sap.ui.webc.main.Button", {
@@ -60,7 +60,8 @@ sap.ui.define([
 			library: "sap.ui.webc.main",
 			tag: "ui5-button-ui5",
 			interfaces: [
-				"sap.ui.webc.main.IButton"
+				"sap.ui.webc.main.IButton",
+				"sap.ui.core.IFormContent"
 			],
 			properties: {
 
@@ -95,7 +96,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Sets the accessible aria name of the component.
+				 * Defines the accessible aria name of the component.
 				 */
 				accessibleName: {
 					type: "string"
@@ -124,7 +125,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the component is enabled. A disabled component can't be pressed or focused, and it is not in the tab chain.
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
 				enabled: {
 					type: "boolean",
@@ -224,10 +225,9 @@ sap.ui.define([
 		}
 	});
 
-	/* CUSTOM CODE START */
-
 	EnabledPropagator.call(Button.prototype);
 
+	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */
 
 	return Button;

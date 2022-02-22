@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/types/CSSColor', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/util/ColorConversion', './generated/templates/ColorPickerTemplate.lit', './Input', './Slider', './Label', './generated/themes/ColorPicker.css'], function (UI5Element, CSSColor, Device, Render, litRender, Integer, Float, ColorConversion, ColorPickerTemplate_lit, Input, Slider, Label, ColorPicker_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/CSSColor', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/util/ColorConversion', './generated/templates/ColorPickerTemplate.lit', './Input', './Slider', './Label', './generated/themes/ColorPicker.css'], function (UI5Element, Keys, CSSColor, Device, Render, litRender, Integer, Float, ColorConversion, ColorPickerTemplate_lit, Input, Slider, Label, ColorPicker_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -36,6 +36,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			_hue: {
 				type: Integer__default,
 				defaultValue: 0,
+			},
+			_isSelectedColorChanged: {
+				type: Boolean,
+			},
+			 _isHueValueChanged: {
+				type: Boolean,
 			},
 			_wrongHEX: {
 				type: Boolean,
@@ -190,6 +196,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.selectedHue = event.target.value;
 			this._hue = this.selectedHue;
 			this._setMainColor(this._hue);
+			this._isHueValueChanged = true;
 			const tempColor = this._calculateColorFromCoordinates(this._selectedCoordinates.x + 6.5, this._selectedCoordinates.y + 6.5);
 			if (tempColor) {
 				this._setColor(ColorConversion.HSLToRGB(tempColor));
@@ -200,6 +207,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const hexRegex = new RegExp("^[<0-9 abcdef]+$");
 			if (newValue.length === 3) {
 				newValue = `${newValue[0]}${newValue[0]}${newValue[1]}${newValue[1]}${newValue[2]}${newValue[2]}`;
+			}
+			if (newValue === this.hex) {
+				return;
 			}
 			this.hex = newValue;
 			if (newValue.length !== 6 || !hexRegex.test(newValue)) {
@@ -275,13 +285,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				x: x - 6.5,
 				y: y - 6.5,
 			};
+			this._isSelectedColorChanged = true;
 			const tempColor = this._calculateColorFromCoordinates(x, y);
 			if (tempColor) {
 				this._setColor(ColorConversion.HSLToRGB(tempColor));
 			}
 		}
+		_onkeydown(event) {
+			if (Keys.isEnter(event)) {
+				this._handleHEXChange(event);
+			}
+		}
 		_calculateColorFromCoordinates(x, y) {
-			const h = Math.round(this._hue / 4.25),
+			const h = this._hue / 4.25,
 				s = 1 - +(Math.round((y / 256) + "e+2") + "e-2"),
 				l = +(Math.round((x / 256) + "e+2") + "e-2");
 			if (!s || !l) {
@@ -322,7 +338,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				x: ((Math.round(hslColours.l * 100) * 2.56)) - 6.5,
 				y: (256 - (Math.round(hslColours.s * 100) * 2.56)) - 6.5,
 			};
-			this._hue = this.selectedHue ? this.selectedHue : Math.round(hslColours.h * 4.25);
+			if (this._isSelectedColorChanged) {
+				this._isSelectedColorChanged = false;
+			} else if (this._isHueValueChanged) {
+				this._isHueValueChanged = false;
+				this._hue = this.selectedHue ? this.selectedHue : this._hue;
+			} else {
+				this._hue = Math.round(hslColours.h * 4.25);
+			}
 			this._setMainColor(this._hue);
 		}
 		get inputsDisabled() {

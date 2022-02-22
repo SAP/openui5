@@ -3,9 +3,9 @@ sap.ui.define(['require', 'sap/ui/webc/common/thirdparty/base/asset-registries/I
 	const loadIconsBundle = async (collection) => {
 	    let iconData = null;
 		if (collection === "SAP-icons-v5") {
-			iconData = (await new Promise(function (resolve, reject) { require(['../SAP-icons-027beaa9'], resolve, reject) })).default;
+			iconData = (await new Promise(function (resolve, reject) { require(['../_chunks/SAP-icons'], resolve, reject) })).default;
 		} else {
-			iconData = (await new Promise(function (resolve, reject) { require(['../SAP-icons-340ee996'], resolve, reject) })).default;
+			iconData = (await new Promise(function (resolve, reject) { require(['../_chunks/SAP-icons2'], resolve, reject) })).default;
 		}
 	    if (typeof iconData === "string" && iconData.endsWith(".json")) {
 	        throw new Error("[icons] Invalid bundling detected - dynamic JSON imports bundled as URLs. Switch to inlining JSON files from the build or use `import \"@ui5/webcomponents-icons/dist/Assets-static.js\". Check the \"Assets\" documentation for more information.");

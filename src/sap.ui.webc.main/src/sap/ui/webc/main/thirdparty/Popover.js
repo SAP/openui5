@@ -1,9 +1,8 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/util/PopupUtils', 'sap/ui/webc/common/thirdparty/base/util/clamp', './Popup', './types/PopoverPlacementType', './types/PopoverVerticalAlign', './types/PopoverHorizontalAlign', './popup-utils/PopoverRegistry', './generated/templates/PopoverTemplate.lit', './generated/themes/BrowserScrollbar.css', './generated/themes/PopupsCommon.css', './generated/themes/Popover.css'], function (Integer, Device, ResizeHandler, PopupUtils, clamp, Popup, PopoverPlacementType, PopoverVerticalAlign, PopoverHorizontalAlign, PopoverRegistry, PopoverTemplate_lit, BrowserScrollbar_css, PopupsCommon_css, Popover_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/util/PopupUtils', 'sap/ui/webc/common/thirdparty/base/util/clamp', './Popup', './types/PopoverPlacementType', './types/PopoverVerticalAlign', './types/PopoverHorizontalAlign', './popup-utils/PopoverRegistry', './generated/templates/PopoverTemplate.lit', './generated/themes/BrowserScrollbar.css', './generated/themes/PopupsCommon.css', './generated/themes/Popover.css'], function (Integer, Device, PopupUtils, clamp, Popup, PopoverPlacementType, PopoverVerticalAlign, PopoverHorizontalAlign, PopoverRegistry, PopoverTemplate_lit, BrowserScrollbar_css, PopupsCommon_css, Popover_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var Integer__default = /*#__PURE__*/_interopDefaultLegacy(Integer);
-	var ResizeHandler__default = /*#__PURE__*/_interopDefaultLegacy(ResizeHandler);
 	var clamp__default = /*#__PURE__*/_interopDefaultLegacy(clamp);
 
 	const arrowSize = 8;
@@ -36,6 +35,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			},
 			allowTargetOverlap: {
 				type: Boolean,
+			},
+			opener: {
+				type: String,
 			},
 			disableScrolling: {
 				type: Boolean,
@@ -78,7 +80,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 	class Popover extends Popup {
 		constructor() {
 			super();
-			this._handleResize = this.handleResize.bind(this);
 		}
 		static get metadata() {
 			return metadata;
@@ -95,11 +96,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 		static get ARROW_MARGIN() {
 			return 6;
 		}
-		onEnterDOM() {
-			ResizeHandler__default.register(this, this._handleResize);
-		}
-		onExitDOM() {
-			ResizeHandler__default.deregister(this, this._handleResize);
+		onAfterRendering() {
+			if (!this.isOpen() && this.open) {
+				const opener = document.getElementById(this.opener);
+				if (!opener) {
+					console.warn("Valid opener id is required.");
+					return;
+				}
+				this.showAt(opener);
+			} else if (this.isOpen() && !this.open) {
+				this.close();
+			}
 		}
 		isOpenerClicked(event) {
 			const target = event.target;
@@ -143,7 +150,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 				&& openerRect.left === 0
 				&& openerRect.right === 0;
 		}
-		handleResize() {
+		_resize() {
+			super._resize();
 			if (this.opened) {
 				this.reposition();
 			}

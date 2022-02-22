@@ -76,13 +76,13 @@ sap.ui.define([
 					defaultValue: false
 				}
 			},
-			defaultAggregation: "content",
+			defaultAggregation: "colors",
 			aggregations: {
 
 				/**
 				 * Defines the content of the component.
 				 */
-				content: {
+				colors: {
 					type: "sap.ui.core.Control",
 					multiple: true
 				}

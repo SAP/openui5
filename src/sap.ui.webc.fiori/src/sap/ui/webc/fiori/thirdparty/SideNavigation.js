@@ -89,11 +89,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			});
 		}
 		_setSelectedItem(item) {
+			if (!this.fireEvent("selection-change", { item }, true)) {
+				return;
+			}
 			this._walk(current => {
 				current.selected = false;
 			});
 			item.selected = true;
-			this.fireEvent("selection-change", { item });
 		}
 		_buildPopoverContent(item) {
 			this._popoverContent = {
