@@ -28,15 +28,15 @@ sap.ui.define([
 	var Utils = {
 		/**
 		 * @param  {string} sClassName The class name which should be loaded
-		 * @param  {string} sModuleName Name of the module that contains the class. If not given, it is assumed that a module with the same name as the class (dots replaced by slashes) exports the class.
+		 * @param  {string} sContainingModuleName Name of the module that contains the class. If not given, it is assumed that a module with the same name as the class (dots replaced by slashes) exports the class.
 		 * When given, the module is loaded and the class is retrieved via its global name
 		 * @return {Promise<sap.ui.test.generic.ClassInfo>} Returns a promise resolving with a <code>sap.ui.test.generic.ClassInfo</code> object.
 		 */
-		loadClass: function(sClassName, sModuleName) {
+		loadClass: function(sClassName, sContainingModuleName) {
 			return new Promise(function(resolve) {
-				sModuleName = sModuleName ? sModuleName.replace(/\./g, "/") : sClassName.replace(/\./g, "/");
+				var sModuleName = sContainingModuleName ? sContainingModuleName : sClassName.replace(/\./g, "/");
 				require([sModuleName], function(Class) {
-					if (sModuleName) {
+					if (sContainingModuleName) {
 						Class = ObjectPath.get(sClassName);
 					}
 					resolve({

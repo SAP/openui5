@@ -28,7 +28,7 @@ sap.ui.define([
 			"sap.ui.core.mvc.XMLView": {
 				create: function (XMLView, mParameters) {
 					var mParams = mParameters || {};
-					mParams.definition = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:ui="sap.ui">'
+					mParams.definition = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">'
 					+ '          <Button text="Press me"/>                     '
 					+ '    </mvc:View>                                         ';
 					return XMLView.create(mParams);
@@ -38,7 +38,7 @@ sap.ui.define([
 				create: false
 			},
 			"sap.ui.core.mvc.XMLAfterRenderingNotifier": {
-				moduleName: "sap.ui.core.mvc.XMLView"
+				moduleName: "sap/ui/core/mvc/XMLView"
 			},
 			"sap.ui.core.mvc.View": {
 				create: false
