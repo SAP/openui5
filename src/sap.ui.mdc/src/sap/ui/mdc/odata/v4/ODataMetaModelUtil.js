@@ -161,8 +161,8 @@ sap.ui.define(["sap/ui/mdc/util/TypeUtil"], function(TypeUtil) {
 
 	/**
 	 * Checks whether the thresholds are dynamic or constant.
-	 * @param {object} the threshold skeleton
-	 * @param {object} the UI.DataPoint.CriticalityCalculation annotation
+	 * @param {object} oThresholds the threshold skeleton
+	 * @param {object} oCriticalityCalculation the UI.DataPoint.CriticalityCalculation annotation
 	 * @returns {boolean} <code>true</code> if the threshold should be supplied as ConstantThresholds, <code>false</code> if the threshold should
 	 *          be supplied as DynamicThresholds
 	 * @private

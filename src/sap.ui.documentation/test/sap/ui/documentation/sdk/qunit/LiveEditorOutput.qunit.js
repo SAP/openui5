@@ -80,7 +80,8 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 
 		/**
 		 * Waits for a UI5 object with the given id to be created in the frame window
-		 * @param sId
+		 * @param {Window} oFrameWindow
+		 * @param {string} sId
 		 * @returns {Promise<any>}
 		 */
 		function waitForUI5Object(oFrameWindow, sId) {
@@ -113,7 +114,7 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 
 		/**
 		 * Waits for condition
-		 * @param sId
+		 * @param {function} fnCondition
 		 * @returns {Promise<any>}
 		 */
 		function waitForCondition(fnCondition) {

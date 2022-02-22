@@ -28,9 +28,9 @@ sap.ui.define([
 
 
     /**
-	 * Updates the breadcrumps shown on the MDC Chart
+	 * Updates the breadcrumbs shown on the MDC Chart
 	 *
-	 * @param {sap.ui.mdc.Chart} oChart the MDC Chart to update the breadcrumps on
+	 * @param {sap.ui.mdc.Chart} oMDCChart the MDC Chart to update the breadcrumbs on
 	 * @param {*} oDrillableItems the drillable items
 	 *
 	 * @experimental
@@ -52,7 +52,7 @@ sap.ui.define([
                 oDrillableItems.forEach(function(dim, index, array) {
 
                     // show breadcrumbs
-                    //If Breadcrumps were set invisible for no drill stack, they need to be set visible again
+                    //If Breadcrumbs were set invisible for no drill stack, they need to be set visible again
                     this.setVisible(true);
 
                     // use the last entry of each drill-stack entry to built
@@ -119,11 +119,11 @@ sap.ui.define([
 	};
 
     /**
-	 * Creates a breadcrump with given settings
-	 * @param oChart the chart the breadcrump is for
-	 * @param oCrumbSettings settings for the breadcrump
+	 * Creates a breadcrumb with given settings
+	 * @param oMDCChart the chart the breadcrumb is for
+	 * @param oCrumbSettings settings for the breadcrumb
 	 *
-	 * @returns the created breadcrump
+	 * @returns {sap.m.Link} the created breadcrumb
 	 *
 	 * @experimental
 	 * @private

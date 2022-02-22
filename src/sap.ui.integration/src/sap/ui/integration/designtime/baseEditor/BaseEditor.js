@@ -728,8 +728,8 @@ sap.ui.define([
 	/**
 	 * Loads i18n bundles.
 	 *
-	 * @param {string[]} aBundleList - List of paths to i18n bundles
-	 * @returns {Promise} Array of {@link sap.base.i18n.ResourceBundle i18n resource bundles}
+	 * @param {string[]} aBundlePaths - List of paths to i18n bundles
+	 * @returns {Promise<module:sap/base/i18n/ResourceBundle>} Array of {@link module:sap/base/i18n/ResourceBundle i18n resource bundles}
 	 * @private
 	 */
 	BaseEditor.prototype._loadI18nBundles = function (aBundlePaths) {

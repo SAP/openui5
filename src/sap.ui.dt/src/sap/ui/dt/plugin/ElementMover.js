@@ -76,7 +76,7 @@ sap.ui.define([
 
 	/**
 	 * @param {sap.ui.dt.Overlay} oOverlay - overlay instance
-	 * @return {promise} Resolved promise with true value
+	 * @return {Promise} Resolved promise with true value
 	 * @protected
 	 */
 	ElementMover.prototype.checkMovable = function() {

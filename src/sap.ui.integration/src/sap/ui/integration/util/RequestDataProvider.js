@@ -275,7 +275,7 @@ sap.ui.define([
 	/**
 	 * Reads retry-after value from response headers or from settings.
 	 * @param {Object} jqXHR The jQuery XHR response.
-	 * @returns {integer} The number of seconds after which to retry the request.
+	 * @returns {int} The number of seconds after which to retry the request.
 	 */
 	RequestDataProvider.prototype._getRetryAfter = function (jqXHR) {
 		var oRequestConfig = this.getSettings().request,

@@ -110,7 +110,7 @@ sap.ui.define([
 		/**
 		 * Filters the table.
 		 *
-		 * @param  {sString} sFilter The filter string.
+		 * @param  {string} sFilter The filter string.
 		 *
 		 * @public
 		 */

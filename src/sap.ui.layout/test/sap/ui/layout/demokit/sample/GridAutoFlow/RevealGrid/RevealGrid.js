@@ -40,7 +40,7 @@ sap.ui.define([
 
 		/**
 		 * Destroys an overlay.
-		 * @param {String[]|String} oId ID of the Grid based layout control
+		 * @param {string[]|string} oId ID of the Grid based layout control
 		 * @param {object} oView The view that the Grid based control is held in
 		 */
 		destroy: function (oId, oView) {

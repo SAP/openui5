@@ -29,7 +29,7 @@ sap.ui.define([
      */
 
     /**
-     *Zooms in on the inner chart.
+     * Zooms in on the inner chart.
      * @param {int} iValue Number of steps for zooming in
      *
      * @experimental
@@ -40,7 +40,7 @@ sap.ui.define([
     };
 
     /**
-     *Zooms out of the inner chart.
+     * Zooms out of the inner chart.
      * @param {int} iValue Number of steps for zooming out
      *
      * @experimental
@@ -156,9 +156,9 @@ sap.ui.define([
     /**
      * Removes an existing MDC chart item for a given property name and updates the inner chart.
      * Called and used by p13n
-     * @param {string} sPropertyName Name of the property removed
+     * @param {string} oProperty Name of the property removed
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart from which property is removed
-     * @returns {Promise<bool>} Promise containing information whether the item was deleted
+     * @returns {Promise<boolean>} Promise containing information whether the item was deleted
      *
      * @experimental
      * @private

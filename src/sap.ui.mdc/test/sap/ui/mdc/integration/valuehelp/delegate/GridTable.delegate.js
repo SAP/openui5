@@ -117,7 +117,7 @@ sap.ui.define([
 	/**
 	 * Updates the binding info with the relevant path and model from the metadata.
 	 *
-	 * @param {Object} oMDCTable The MDC table instance
+	 * @param {Object} oTable The MDC table instance
 	 * @param {Object} oBindingInfo The bindingInfo of the table
 	 */
 	 ODataTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {

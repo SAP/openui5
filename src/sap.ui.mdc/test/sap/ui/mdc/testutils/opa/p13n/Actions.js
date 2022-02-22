@@ -740,9 +740,9 @@ sap.ui.define([
 		 * 2. Selects a chart type given by <code>sChartType</code>.
 		 * 3. Executes the given <code>ChartPersonalizationConfiguration</code>.
 		 * 4. Closes the personalization dialog.
-		 * @param {sap.ui.core.Control | string} oChart Instance / ID of the <code>SmartChart</code> that is personalized
+		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>SmartChart</code> that is personalized
 		 * @param {string} sChartType String containing the type of chart that is displayed
-		 * @param {ChartPersonalizationConfiguration[]} aConfigurations Array containing the chart personalization configuration objects
+		 * @param {ChartPersonalizationConfiguration[]} aItems Array containing the chart personalization configuration objects
 		 * @returns {Promise} OPA waitFor
 		 */
 		iPersonalizeChart: function(oControl, sChartType, aItems) {

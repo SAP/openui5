@@ -268,6 +268,7 @@ sap.ui.define([
                 },
                 /**
                  * Assertion to check visible dimensions on the MDC Chart
+                 * @param {array} aDimensions
                  * @param {string} sId Id of the MDC Chart
                  * @returns {Promise} OPA waitFor
                  */
@@ -276,6 +277,7 @@ sap.ui.define([
                 },
                 /**
                  * Assertion to check visible measures on the MDC Chart
+                 * @param {array} aMeasures
                  * @param {string} sId Id of the MDC Chart
                  * @returns {Promise} OPA waitFor
                 */

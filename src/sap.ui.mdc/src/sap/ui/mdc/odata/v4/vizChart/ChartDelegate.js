@@ -211,7 +211,7 @@ sap.ui.define([
 
     /**
      * Gets the current zooming information for the inner chart
-     * @returns {integer} Current zoom level on the inner chart
+     * @returns {int} Current zoom level on the inner chart
      */
     ChartDelegate.getZoomState = function (oMDCChart) {
 
@@ -326,6 +326,7 @@ sap.ui.define([
     /**
      * Sets the visibility of the legend
      * This is called by the MDC Chart, do not call it directly!
+     * @param {sap.ui.mdc.Chart} oMDCChart Chart to the set the legend visibility on
      * @param {boolean} bVisible true to show legend, false to hide
      *
      * @experimental
@@ -368,7 +369,8 @@ sap.ui.define([
     /**
      * Inserts an MDC Chart Item (in case of sap.chart.Chart a Measure/Dimension) on the inner chart
      * This function is called by MDC Chart on a change of the <code>Items</code> aggregation
-     * @param {sap.ui.mdc.chart-Item} oMDCChartItem the MDC CHart Item to insert into the inner chart
+     * @param {sap.ui.mdc.Chart} oMDCChart the MDC Chart to insert the item into
+     * @param {sap.ui.mdc.chart.Item} oMDCChartItem the MDC Chart Item to insert into the inner chart
      * @param {int} iIndex the index to insert into
      */
     ChartDelegate.insertItemToInnerChart = function (oMDCChart, oMDCChartItem, iIndex) {
@@ -410,6 +412,7 @@ sap.ui.define([
     /**
      * Removes an Item (in case of sap.chart.Chart a Measure/Dimension) from the inner chart
      * This function is called by MDC Chart on a change of the <code>Items</code> aggregation
+     * @param {sap.ui.mdc.Chart} oMDCChart the MDC Chart to remove the item from
      * @param {sap.ui.mdc.chart.Item} oMDCChartItem The Item to remove from the inner chart
      */
     ChartDelegate.removeItemFromInnerChart = function (oMDCChart, oMDCChartItem) {
@@ -750,7 +753,7 @@ sap.ui.define([
 
     /**
      * Updates the coloring on the inner chart
-     * @param {sap.chart.Chart} oChart inner chart
+     * @param {sap.chart.Chart} oMDCChart inner chart
      * @param {array} aVisibleDimensions visible dimensions for inner chart
      * @param {array} aVisibleMeasures visible measures for inner chart
      *
@@ -808,9 +811,8 @@ sap.ui.define([
     /**
      * Updates the semantical pattern for given measures
      *
-     * @param {sap.chart.Chart} oChart the inner chart
-     * @param {array} aVisibleMeasures array containing the visible measures on the inner chart
-     * @param {*} mDataPoints data points of the inner chart
+     * @param {sap.chart.Chart} oMDCChart the inner chart
+     * @param {*} aProperties // TODO what is this parameter used for?
      *
      * @experimental
      * @private
@@ -1004,6 +1006,7 @@ sap.ui.define([
     /**
      * Sets the chart type of the inner chart
      * Is called by MDC Chart when <code>chartType</code> property is updated
+     * @param {sap.ui.mdc.Chart} oMDCChart the MDC Chart to set the chart type for
      * @param {string} sChartType the new chart type
      */
     ChartDelegate.setChartType = function (oMDCChart, sChartType) {
@@ -1415,6 +1418,7 @@ sap.ui.define([
 
     /**
      * Sets tooltips visible/invisible on inner chart
+     * @param {sap.ui.mdc.Chart} oMDCChart the MDC Chart
      * @param {boolean}  bFlag true for visible, false for invisible
      */
     ChartDelegate.setChartTooltipVisibility = function (oMDCChart, bFlag) {

@@ -1043,7 +1043,7 @@ sap.ui.define([
 	 * Finds the sub-element with the given <code>sId</code> contained
 	 * within <code>$headerDomRef</code>
 	 *
-	 * @param {jQuery} headerDomRef reference to the header dom element
+	 * @param {jQuery} $headerDomRef reference to the header dom element
 	 * @param {string} sId the id of the element to be found
 	 *
 	 * Returns the jQuery reference to the dom element with the given sId

@@ -116,7 +116,7 @@ function (
 
 	/**
 	 * Replaces current selection with specified list of overlays/controls.
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]|sap.ui.core.Control|sap.ui.core.Control[]} vSelection
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]|sap.ui.core.Control|sap.ui.core.Control[]} vObjects
 	 *     Objects which should be selected can be:
 	 *         - a single overlay
 	 *         - an array of overlays

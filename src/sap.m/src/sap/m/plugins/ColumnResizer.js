@@ -211,8 +211,8 @@ sap.ui.define([
 
 	/**
 	 * Returns the hovered column index. If column index is found the returns the index else returns -1.
-	 * @param {integer} iClientX clientX from the mouse/touch event
-	 * @returns {integer} hovered column index
+	 * @param {int} iClientX clientX from the mouse/touch event
+	 * @returns {int} hovered column index
 	 * @private
 	 */
 	ColumnResizer.prototype._getHoveredColumnIndex = function(iClientX) {
@@ -224,7 +224,7 @@ sap.ui.define([
 	/**
 	 * Returns the horizontal distance by which a column's width should be increased or decreased.
 	 * This gets called when columns must be automatically resized on the double click mouse.
-	 * @returns {integer} horizontal distance
+	 * @returns {int} horizontal distance
 	 * @private
 	 */
 	ColumnResizer.prototype._calculateAutoColumnDistanceX = function() {
@@ -252,7 +252,7 @@ sap.ui.define([
 
 	/**
 	 * Displays the resize handle on the column which is hovered
-	 * @param {integer} iColumnIndex column index
+	 * @param {int} iColumnIndex column index
 	 * @param {boolean} bMobileHandle indicates whether the alternate handle is visible
 	 * @private
 	 */
@@ -333,7 +333,7 @@ sap.ui.define([
 	 * - Next column and its width (if available).
 	 * - Maximum increase and decrease resize value.
 	 * - Existance of dummy column.
-	 * @param {integer} iIndex column index
+	 * @param {int} iIndex column index
 	 * @private
 	 */
 	ColumnResizer.prototype._startResizeSession = function(iIndex) {
@@ -355,7 +355,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the horizontal resize distance to the session by which the column was increased or decreased.
-	 * @param {integer} iDistanceX horizontal resize distance
+	 * @param {int} iDistanceX horizontal resize distance
 	 * @private
 	 */
 	ColumnResizer.prototype._setSessionDistanceX = function(iDistanceX) {
@@ -419,7 +419,7 @@ sap.ui.define([
 	/**
 	 * This function is called when column resizing is trigger via keyboard events <code>onsapleftmodifiers</code> & <code>onsaprightmodifiers</code>.
 	 * @param {object} oEvent keyboard event
-	 * @param {integer} iDistanceX resize distance
+	 * @param {int} iDistanceX resize distance
 	 * @private
 	 */
 	ColumnResizer.prototype._onLeftRightModifiersKeyDown = function(oEvent, iDistanceX) {
