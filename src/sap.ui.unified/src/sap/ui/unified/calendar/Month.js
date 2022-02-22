@@ -1574,11 +1574,13 @@ sap.ui.define([
 		// includes days in a new month into a new year, we explicitly changed the week number
 		// US calendar weeks overlap Jan 1st is always week 1 while Dec 31st is always last week number
 		var bIsRegionUS = oLocaleData.firstDayStartsFirstWeek();
-		if (oDate.getMonth() === 11 && oEndDate.getMonth() === 0 && bIsRegionUS) {
-			iWeekNumber = 1;
+
+		if (oEndDate.getMonth() === 0 && this._oDate.getMonth() === 0  && bIsRegionUS) {
+			iWeekNumber = oDateFormat.format(oEndDate.toLocalJSDate());
 		} else {
 			iWeekNumber = oDateFormat.format(oDate.toLocalJSDate());
 		}
+
 		return iWeekNumber;
 	};
 
