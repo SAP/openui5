@@ -462,6 +462,10 @@ sap.ui.define([
 			iAvatarNetWidth = this._getAvatarNetWidth(iAvatarWidth, iAvatarMargin),
 			iRenderedAvatars = this.$().children(".sapFAvatarGroupItem").length;
 
+		if (iWidth === 0) {
+			return;
+		}
+
 		this._iAvatarsToShow = this._getAvatarsToShow(iWidth, iAvatarWidth, iAvatarNetWidth);
 
 		if (iAvatarGroupItems > this._iAvatarsToShow && iAvatarGroupItems > 0) {
