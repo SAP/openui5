@@ -5809,6 +5809,7 @@ sap.ui.define([
 
 					return true;
 				})),
+				updateAggregatedMessages : true,
 				urlParameters : sinon.match.same(mParameters.urlParameters)
 			}, /*bSideEffect*/true);
 
@@ -5858,6 +5859,7 @@ sap.ui.define([
 				error : sinon.match.func,
 				groupId : undefined,
 				success : sinon.match.func,
+				updateAggregatedMessages : true,
 				urlParameters : oFixture.mExpectsUrlParams
 			}, /*bSideEffect*/true);
 
