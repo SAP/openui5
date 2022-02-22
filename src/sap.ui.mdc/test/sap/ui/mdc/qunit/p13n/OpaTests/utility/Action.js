@@ -428,6 +428,14 @@ sap.ui.define([
 				actions: new Press()
 			});
 		},
+		iSimulateColumnResize: function (sName, sWidth) {
+			return this.waitFor({
+				controlType: "sap.ui.table.Table",
+				success: function(aTable) {
+					aTable[0].fireColumnResize({column:aTable[0].getColumns()[0],width: sWidth});
+				}
+			});
+		},
 		iClickOnColumn: function(sName, bResponsiveTable){
 			var sColumnNameSpace = bResponsiveTable ? "sap.m.Column" : "sap.ui.table.Column";
 			var sTableNameSpace = bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table";

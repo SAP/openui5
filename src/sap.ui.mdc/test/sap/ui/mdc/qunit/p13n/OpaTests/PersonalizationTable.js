@@ -86,6 +86,23 @@ sap.ui.define([
 		Then.theVariantManagementIsDirty(false);
 	});
 
+	opaTest("When I Resize the columns and save it as new variant", function (Given, When, Then) {
+		When.iSimulateColumnResize("Name", "500px");
+		When.iSaveVariantAs("Standard", "ColumnResizeVariant");
+		When.iSelectDefaultVariant("ColumnResizeVariant");
+		Then.iShouldSeeSelectedVariant("ColumnResizeVariant");
+
+		Then.iTeardownMyAppFrame();
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
+		Then.iShouldSeeSelectedVariant("ColumnResizeVariant");
+		Then.iShouldSeeTheUpdatedColumnWidth();
+		When.iSelectVariant("Standard");
+		Then.iShouldSeeSelectedVariant("Standard");
+	});
+
 	opaTest("When I press on 'Add/Remove Columns' button, the table-specific-dialog opens", function (Given, When, Then) {
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 

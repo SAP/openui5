@@ -587,6 +587,15 @@ sap.ui.define([
 				errorMessage: "Could not find dirty VariantManagement"
 			});
 		},
+		iShouldSeeTheUpdatedColumnWidth: function() {
+			return this.waitFor({
+				controlType: "sap.ui.table.Table",
+				success: function(aTable) {
+					var sWidth = aTable[0].getColumns()[0].getWidth();
+					Opa5.assert.equal(sWidth, "500px", "Column width is updated");
+				}
+			});
+		},
 		iShouldSeeSelectedVariant: function (sVariantName) {
 			return this.waitFor({
 				controlType: "sap.ui.fl.variants.VariantManagement",
