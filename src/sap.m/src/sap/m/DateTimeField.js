@@ -306,7 +306,7 @@ sap.ui.define([
 			oDateLocal,
 			oDate;
 
-		if (oBindingType && this._isSupportedBindingType(oBindingType)) {
+		if (this._isSupportedBindingType(oBindingType)) {
 			try {
 				oDate = oBindingType.parseValue(sValue, "string");
 
@@ -350,7 +350,7 @@ sap.ui.define([
 			oFormatOptions,
 			oDateUTC;
 
-		if (oBindingType && this._isSupportedBindingType(oBindingType)) {
+		if (this._isSupportedBindingType(oBindingType)) {
 			if ((oBindingType.oFormatOptions && oBindingType.oFormatOptions.UTC) || (oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly)) {
 				// convert to UTC date because it will be formatted as UTC date
 				oDateUTC = new Date(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(),
@@ -376,7 +376,7 @@ sap.ui.define([
 	};
 
 	DateTimeField.prototype._isSupportedBindingType = function (oBindingType) {
-		return oBindingType.isA([
+		return !!oBindingType && oBindingType.isA([
 			"sap.ui.model.type.Date",
 			"sap.ui.model.odata.type.DateTime",
 			"sap.ui.model.odata.type.DateTimeOffset"

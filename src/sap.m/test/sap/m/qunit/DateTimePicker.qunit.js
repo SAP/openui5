@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/unified/DateRange",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -32,7 +33,8 @@ sap.ui.define([
 	jQuery,
 	KeyCodes,
 	DateRange,
-	oCore
+	oCore,
+	ManagedObjectObserver
 ) {
 	"use strict";
 
@@ -1119,5 +1121,83 @@ sap.ui.define([
 
 		// clean
 		oDTP.destroy();
+	});
+
+	QUnit.test("timezone + bound value type DateTime - order", function(assert) {
+		// arrange
+		var oModel = new JSONModel({ date: new Date(2016, 1, 18, 3, 0, 0) }),
+			oDTP = new DateTimePicker("dtpbo", {
+				timezone: "America/New_York" // UTC-5
+			}).setModel(oModel);
+
+		oDTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// act
+		oDTP.bindProperty("value", { path: '/date', type: new DateTime() });
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oDTP.getDateValue().getTime(), Date.UTC(2016, 1, 18, 8, 0, 0), "correct dateValue");
+
+		// clean
+		oDTP.destroy();
+	});
+
+	QUnit.test("timezone + bound value data type String", function(assert) {
+		// arrange
+		var oModel = new JSONModel({ date: "Feb++18++2016, 3:00:00 AM" }),
+			oDTP = new DateTimePicker("dtpbs", {
+				valueFormat: "MMM++dd++yyyy, h:mm:ss a",
+				timezone: "America/New_York" // UTC-5
+			}).setModel(oModel);
+
+		oDTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// act
+		oDTP.bindProperty("value", { path: '/date', type: new sap.ui.model.type.String() });
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(oDTP.getDateValue(), "has dateValue");
+		assert.equal(oDTP.getDateValue().getTime(), Date.UTC(2016, 1, 18, 8, 0, 0), "correct dateValue");
+
+		// clean
+		oDTP.destroy();
+	});
+
+	QUnit.test("timezone setter does not update 'value' when timezone is the same", function(assert) {
+		// arrange
+		var done = assert.async(),
+			oDTP = new sap.m.DateTimePicker("dtp", {
+				value: "2022-02-11T07:16:33",
+				valueFormat: "yyyy-MM-dd'T'HH:mm:ss",
+				displayFormat: "medium",
+				timezone: "Europe/Berlin",
+				showTimezone: true
+			}).placeAt("qunit-fixture"),
+			oObserver = new ManagedObjectObserver(function(oChanges) {
+				var oControl;
+
+				if (oChanges.name === "value") {
+					oControl = oChanges.object;
+					oControl.setTimezone(oControl.getTimezone());
+
+					// assert
+					assert.equal(oDTP.getValue(), "2022-02-17T17:16:33", "the value is as expected");
+
+					// clean
+					oDTP.destroy();
+					done();
+				}
+			});
+
+		oObserver.observe(oDTP, {
+			properties: ["value", "timezone"]
+		});
+
+		// act
+		oDTP.setValue("2022-02-17T17:16:33");
 	});
 });
