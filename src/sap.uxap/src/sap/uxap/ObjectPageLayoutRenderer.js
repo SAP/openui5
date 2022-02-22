@@ -197,11 +197,6 @@ sap.ui.define(["sap/ui/Device"],
 				.openEnd()
 				.close("div");
 
-			oRm.openStart("span", oControl.getId() + "-skipFastGroupAnchor")
-				.class("sapUiPseudoInvisibleText")
-				.openEnd()
-				.close("span");
-
 			oRm.close("div"); // END scroll
 
 			oRm.close("div"); // END wrapper

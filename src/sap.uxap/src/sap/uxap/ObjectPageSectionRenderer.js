@@ -38,6 +38,8 @@ sap.ui.define(function () {
 			oRm.attr("aria-labelledby", oLabelledBy.getId());
 		}
 
+		oRm.attr("data-sap-ui-customfastnavgroup", true);
+
 		oRm.openEnd();
 
 		oRm.openStart("div", oControl.getId() + "-header")
