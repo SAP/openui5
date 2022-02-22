@@ -13,6 +13,10 @@ sap.ui.define([
 	 * unlocked. If locked, its {@link #waitFor} returns a promise that is resolved when the lock is
 	 * unlocked.
 	 *
+	 * Do not use this constructor directly. Use
+	 * {@link sap.ui.model.odata.v4.lib._Requestor#lockGroup} instead, so that the
+	 * <code>bLocked</code> flag is handled.
+	 *
 	 * @param {string} sGroupId
 	 *   The group ID
 	 * @param {object} oOwner

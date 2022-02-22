@@ -3894,7 +3894,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#fetchLateProperty: $select", function (assert) {
+[undefined, "$auto.heroes"].forEach(function (sGroupId) {
+	QUnit.test("Cache#fetchLateProperty: $select, group=" + sGroupId, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees('31')", {}),
 			oData = {
 				foo : {
@@ -3918,6 +3919,9 @@ sap.ui.define([
 				"~2~" : {}
 			};
 
+		if (sGroupId) {
+			_Helper.setPrivateAnnotation(oEntity, "groupId", sGroupId);
+		}
 		oCache.mLateQueryOptions = {};
 		oHelperMock.expects("getMetaPath").withExactArgs("").returns("~resMetaPath~");
 		this.mock(oCache).expects("fetchTypes")
@@ -3945,7 +3949,10 @@ sap.ui.define([
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("~metaPath~", sinon.match.same(oCache.mQueryOptions), true)
 			.returns("?~");
-		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
+		this.mock(oGroupLock).expects("getUnlockedCopy").exactly(sGroupId ? 0 : 1)
+			.withExactArgs().returns(oRequestGroupLock);
+		this.oRequestorMock.expects("lockGroup").exactly(sGroupId ? 1 : 0)
+			.withExactArgs(sGroupId, sinon.match.same(oCache)).returns(oRequestGroupLock);
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "~/?~", sinon.match.same(oRequestGroupLock), undefined,
 				undefined, undefined, undefined, "~metaPath~", undefined, false,
@@ -3970,6 +3977,7 @@ sap.ui.define([
 			assert.strictEqual(oResult, "baz");
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("Cache#fetchLateProperty: $select, nested entity", function (assert) {

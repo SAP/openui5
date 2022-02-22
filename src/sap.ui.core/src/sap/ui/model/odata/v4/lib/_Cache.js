@@ -662,6 +662,7 @@ sap.ui.define([
 			sRequestedPropertyPath, sMissingPropertyPath) {
 		var sFullResourceMetaPath,
 			sFullResourcePath,
+			sGroupId,
 			sMergeBasePath, // full resource path plus custom query options
 			oPromise,
 			mQueryOptions,
@@ -738,7 +739,9 @@ sap.ui.define([
 			// allow merge
 			sMergeBasePath = sFullResourcePath
 				+ this.oRequestor.buildQueryString(sFullResourceMetaPath, this.mQueryOptions, true);
-			oPromise = this.oRequestor.request("GET", sMergeBasePath, oGroupLock.getUnlockedCopy(),
+			sGroupId = _Helper.getPrivateAnnotation(oResource, "groupId");
+			oPromise = this.oRequestor.request("GET", sMergeBasePath,
+				sGroupId ? this.oRequestor.lockGroup(sGroupId, this) : oGroupLock.getUnlockedCopy(),
 				undefined, undefined, undefined, undefined, sFullResourceMetaPath, undefined,
 				false, mQueryOptions
 			).then(function (oData) {
