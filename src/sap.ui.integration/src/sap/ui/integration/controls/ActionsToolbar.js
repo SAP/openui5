@@ -309,7 +309,7 @@ sap.ui.define([
 		if (oChanges.mutation === "insert") {
 			var oButton = this._createActionButton(oActionDefinition, true);
 
-			this.getAggregation("_actionSheet").addButton(oButton);
+			this.getAggregation("_actionSheet").insertButton(oButton, this.indexOfActionDefinition(oActionDefinition));
 			oActionDefinition.setAssociation("_menuButton", oButton);
 
 			var oActionObserver = new ManagedObjectObserver(this._observeSingleAction.bind(this));

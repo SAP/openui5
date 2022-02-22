@@ -571,16 +571,10 @@ sap.ui.define([
 			this._initReadyState();
 		}
 
-		if (this._bApplyManifest) {
-			var vManifest = this.getManifest();
-
-			if (!vManifest) {
-				// Destroy the manifest when null/undefined/empty string are passed
-				this.destroyManifest();
-			} else {
-				this._cleanupOldManifest();
-				this.createManifest(vManifest, this.getBaseUrl());
-			}
+		var vManifest = this.getManifest();
+		if (vManifest && this._bApplyManifest) {
+			this._cleanupOldManifest();
+			this.createManifest(vManifest, this.getBaseUrl());
 		}
 
 		if (!this._bApplyManifest && this._bApplyParameters) {
@@ -595,9 +589,17 @@ sap.ui.define([
 	};
 
 	Card.prototype.setManifest = function (vValue) {
-		this.setProperty("manifest", vValue);
-		this.destroyActionDefinitions();
+		if (!deepEqual(this.getProperty("manifest"), vValue)) {
+			this.destroyActionDefinitions();
+		}
+
+		if (!vValue) {
+			// Destroy the manifest when null/undefined/empty string is passed
+			this._destroyManifest();
+		}
+
 		this._bApplyManifest = true;
+		this.setProperty("manifest", vValue);
 		return this;
 	};
 
@@ -730,7 +732,7 @@ sap.ui.define([
 			}.bind(this), function (vErr) {
 				this._logFundamentalError("Failed to load " + sExtensionPath + ". Check if the path is correct. Reason: " + vErr);
 				reject(vErr);
-			});
+			}.bind(this));
 		}.bind(this));
 	};
 
@@ -1001,7 +1003,7 @@ sap.ui.define([
 
 		CardBase.prototype.exit.call(this);
 
-		this.destroyManifest();
+		this._destroyManifest();
 		this._oCardObserver.destroy();
 		this._oCardObserver = null;
 		this._oContentFactory = null;
@@ -1016,7 +1018,7 @@ sap.ui.define([
 	/**
 	 * Destroys everything configured by the manifest.
 	 */
-	Card.prototype.destroyManifest = function () {
+	Card.prototype._destroyManifest = function () {
 		if (this._oCardManifest) {
 			this._oCardManifest.destroy();
 			this._oCardManifest = null;
