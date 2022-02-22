@@ -5,11 +5,12 @@
 		title="Preselected Settings"
 		sortDescending="true"
 		groupDescending="true"
-		confirm="handleConfirm">
+		confirm="handleConfirm"
+		selectedSortItem="sortItem3">
 		<sortItems>
 			<ViewSettingsItem text="Field 1" key="1" />
 			<ViewSettingsItem text="Field 2" key="2" />
-			<ViewSettingsItem text="Field 3" key="3" selected="true" />
+			<ViewSettingsItem id="sortItem3" text="Field 3" key="3" />
 		</sortItems>
 		<groupItems>
 			<ViewSettingsItem text="Field 1" key="1" />
