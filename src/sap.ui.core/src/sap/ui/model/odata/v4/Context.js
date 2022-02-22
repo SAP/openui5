@@ -1012,7 +1012,6 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> this context's root binding is suspended,
 	 *     <li> this context is transient (see {@link #isTransient}),
-	 *     <li> this context is not in the collection (has no index, see {@link #getIndex}),
 	 *     <li> the given other context does not belong to the same list binding as this context, or
 	 *       is already in the collection (has an index, see {@link #getIndex}).
 	 *   </ul>
@@ -1024,7 +1023,7 @@ sap.ui.define([
 		var oElement;
 
 		this.oBinding.checkSuspended();
-		if (this.iIndex === undefined || this.isTransient()) {
+		if (this.isTransient()) {
 			throw new Error("Cannot replace " + this);
 		}
 		if (oOtherContext.oBinding !== this.oBinding || oOtherContext.iIndex !== undefined) {

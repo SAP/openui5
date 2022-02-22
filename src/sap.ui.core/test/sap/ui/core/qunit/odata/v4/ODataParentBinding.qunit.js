@@ -1020,8 +1020,7 @@ sap.ui.define([
 }, {
 	cache : {
 		hasSentRequest : function () { return true; },
-		setLateQueryOptions : function () {},
-		setQueryOptions : function () {}
+		setLateQueryOptions : function () {}
 	},
 	cacheImmmutable : true,
 	fetchIfChildCanUseCacheCallCount : 0,
@@ -1029,8 +1028,7 @@ sap.ui.define([
 }, {
 	cache : {
 		hasSentRequest : function () { return false; },
-		setLateQueryOptions : function () {},
-		setQueryOptions : function () {}
+		setLateQueryOptions : function () {}
 	},
 	cacheImmmutable : true,
 	fetchIfChildCanUseCacheCallCount : 0,
@@ -1039,8 +1037,7 @@ sap.ui.define([
 }, {
 	cache : {
 		hasSentRequest : function () { return false; },
-		setLateQueryOptions : function () {},
-		setQueryOptions : function () {}
+		setLateQueryOptions : function () {}
 	},
 	cacheImmmutable : true,
 	fetchIfChildCanUseCacheCallCount : 0,

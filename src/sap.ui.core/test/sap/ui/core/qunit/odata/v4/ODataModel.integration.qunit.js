@@ -35825,10 +35825,8 @@ sap.ui.define([
 	// Scenario: Flexible Column Layout, ODataModel#getKeepAliveContext
 	// A list report and an object page are set up in different ways such that the object page shows
 	// an active entity visible in the list report, including a manually requested late property for
-	// the object-page.
-	// Afterwards the object page switches to the draft, a property is changed in the object page
-	// and side effects including messages are requested. The result must not be influenced by the
-	// different setups.
+	// the object-page. The result must not be influenced by the different scenarios.
+	// Scenarios:
 	// (1) Read the entities in the list and afterwards get an existing kept-alive context for the
 	//     object page from it.
 	//     Context#setKeepAlive (called indirectly) must request messages (JIRA: CPOUI5ODATAV4-981).
@@ -35836,151 +35834,42 @@ sap.ui.define([
 	// (2) Initially get the kept-alive context for the object page from the then-empty list and see
 	//     that the page is set up using one $batch.
 	//     JIRA: CPOUI5ODATAV4-1406
-	// (...) To be continued.
+	// (3) Get the kept-alive context for the object page while the list is still unresolved, then
+	//     resolve the list and perform the tests.
+	//     JIRA: CPOUI5ODATAV4-1407
+	// (4) Get the kept-alive context for the object page and perform the tests while the list is
+	//     still unresolved. The object page must be useable nevertheless. In the end resolve the
+	//     list and see that it is in sync with the object page.
+	//     JIRA: CPOUI5ODATAV4-1407
+	// Steps:
+	// (1) and (2) initialization in different order
+	// (3) edit action
+	// (4) setBindingContext for the draft
+	// (5) change a property and request side effects
+	// (6) cancel the draft
+	// (7) resolve list if not done in (1) or (2)
 	// The properties Name and defaultChannel are in both bindings and have to be kept in sync,
 	// lastUsedChannel is only in the object page and must be requested as late property,
 	// HasDraftEntity is the manually requested late property, sendsAutographs is only in the list
 	// report and must be inherited by the action.
-[{
-	description : "(1) first list, then object page",
-	batchNo : 5,
-	setup : function (assert, oListBinding) {
-		var that = this;
-
-		this.expectRequest("Artists"
-				+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel,sendsAutographs"
-				+ "&$skip=0&$top=100", {
-				value : [{
-					"@odata.etag" : "etag.active1",
-					ArtistID : "A1",
-					IsActiveEntity : true,
-					Name : "Artist 1",
-					defaultChannel : "Channel 1",
-					sendsAutographs : true
-				}]
-			})
-			.expectChange("listChannel", ["Channel 1"])
-			.expectChange("listName", ["Artist 1"])
-			.expectChange("sendsAutographs", ["Yes"]);
-
-		oListBinding.resume();
-
-		return this.waitForChanges(assert, "initialize list").then(function () {
-			var oContext;
-
-			that.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)"
-					+ "?$select=HasDraftEntity,Messages,lastUsedChannel", {
-					"@odata.etag" : "etag.active1",
-					HasDraftEntity : false,
-					Messages : [{
-						message : "Active message",
-						numericSeverity : 2,
-						target : "defaultChannel"
-					}],
-					lastUsedChannel : "Channel 2"
-				})
-				.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)/_Publication"
-					+ "?$select=PublicationID&$skip=0&$top=100",
-					{value : [{PublicationID : "P1"}]}
-				)
-				.expectChange("name", "Artist 1")
-				.expectChange("defaultChannel", "Channel 1")
-				.expectChange("lastUsedChannel", "Channel 2")
-				.expectChange("publication", ["P1"])
-				.expectMessages([{
-					message : "Active message",
-					type : "Information",
-					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
-				}]);
-
-			oContext = that.oModel.getKeepAliveContext(
-				"/Artists(ArtistID='A1',IsActiveEntity=true)", true);
-			that.oView.byId("objectPage").setBindingContext(oContext);
-
-			return Promise.all([
-				oContext.requestProperty("HasDraftEntity"),
-				that.waitForChanges(assert, "initialize object page")
-			]);
-		});
-	}
-}, {
-	description : "(2) list and object page in the same batch",
-	batchNo : 4,
-	setup : function (assert, oListBinding) {
-		var oContext;
-
-		this.expectRequest({
-				batchNo : 1,
-				method : "GET",
-				url : "Artists"
-					+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel,sendsAutographs"
-					+ "&$skip=0&$top=100"
-			}, {
-				value : [{
-					"@odata.etag" : "etag.active1",
-					ArtistID : "A1",
-					IsActiveEntity : true,
-					Name : "Artist 1",
-					defaultChannel : "Channel 1",
-					sendsAutographs : true
-				}]
-			})
-			.expectRequest({
-				batchNo : 1,
-				method : "GET",
-				url : "Artists(ArtistID='A1',IsActiveEntity=true)"
-					+ "?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages,Name,defaultChannel"
-					+ ",lastUsedChannel"
-			}, {
-				"@odata.etag" : "etag.active1",
-				ArtistID : "A1",
-				HasDraftEntity : false,
-				IsActiveEntity : true,
-				Messages : [{
-					message : "Active message",
-					numericSeverity : 2,
-					target : "defaultChannel"
-				}],
-				Name : "Artist 1",
-				defaultChannel : "Channel 1",
-				lastUsedChannel : "Channel 2"
-			})
-			.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)/_Publication"
-				+ "?$select=PublicationID&$skip=0&$top=100",
-				{value : [{PublicationID : "P1"}]}
-			)
-			.expectChange("name", "Artist 1")
-			.expectChange("defaultChannel", "Channel 1")
-			.expectChange("lastUsedChannel", "Channel 2")
-			.expectChange("listName", ["Artist 1"])
-			.expectChange("listChannel", ["Channel 1"])
-			.expectChange("publication", ["P1"])
-			.expectChange("sendsAutographs", ["Yes"])
-			.expectMessages([{
-				message : "Active message",
-				type : "Information",
-				target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
-			}]);
-
-		oListBinding.resume();
-		oContext = this.oModel.getKeepAliveContext(
-			"/Artists(ArtistID='A1',IsActiveEntity=true)", true);
-		this.oView.byId("objectPage").setBindingContext(oContext);
-
-		return Promise.all([
-			oContext.requestProperty("HasDraftEntity"),
-			this.waitForChanges(assert, "initialize")
-		]);
-	}
-}].forEach(function (oFixture) {
-	QUnit.test("getKeepAliveContext: " + oFixture.description, function (assert) {
-		var oListBinding,
+// list, page: the step number in which they are initialized;
+// patchNo: the batchNo of the $batch with the PATCH and the side effect request
+[
+	{list : 1, page : 2, patchNo : 5, title : "(1) first list, then object page"},
+	{list : 1, page : 1, patchNo : 4, title : "(2) list and object page in the same batch"},
+	{list : 2, page : 1, patchNo : 5, title : "(3) first object page, then list, then tests"},
+	{list : 7, page : 1, patchNo : 4, title : "(4) first object page, then tests, then list"}
+].forEach(function (oFixture) {
+	QUnit.test("getKeepAliveContext: " + oFixture.title, function (assert) {
+		var oActiveContext,
+			oDraftContext,
+			bListResolved = false,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			oObjectPage,
 			sView = '\
-<Table id="listReport"\ items="{path : \'/Artists\', \
-		parameters : {$$getKeepAliveContext : true, $$patchWithoutSideEffects : true}, \
-		suspended : true}">\
+<Table id="listReport"\ items="{path : \'Artists\', \
+		parameters : {$$getKeepAliveContext : true, $$patchWithoutSideEffects : true,\
+			$$ownRequest : true}}">\
 	<Text id="listName" text="{Name}"/>\
 	<Text id="listChannel" text="{defaultChannel}"/>\
 	<Text id="sendsAutographs" text="{sendsAutographs}"/>\
@@ -35995,6 +35884,94 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
+		/*
+		 * Resolves the list report and expects the corresponding request and changes.
+ 		 * @param {number} iBatchNo - The number of the $batch for the request
+		 */
+		function initializeList(iBatchNo) {
+			that.expectRequest({
+					batchNo : iBatchNo,
+					method : "GET",
+					url : "Artists"
+						+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel,sendsAutographs"
+						+ "&$skip=0&$top=100"
+				}, {
+					value : [{
+						"@odata.etag" : "etag.active1",
+						ArtistID : "A1",
+						IsActiveEntity : true,
+						Name : "Artist 1",
+						defaultChannel : "Channel 1",
+						sendsAutographs : true
+					}]
+				})
+				.expectChange("listName", ["Artist 1"])
+				.expectChange("listChannel", ["Channel 1"])
+				.expectChange("sendsAutographs", ["Yes"]);
+
+			that.oView.byId("listReport").setBindingContext(oModel.createBindingContext("/"));
+			bListResolved = true;
+		}
+
+		/*
+		 * Gets a context for the active entity, binds the object page to it and expects the
+		 * corresponding requests and changes.
+		 * @param {number} iBatchNo - The number of the $batch for the entity request
+		 * @param {boolean} bLate - Whether it is late, i.e. the list data is already there
+		 * @returns {Promise} - The promise of the requestProperty for "HasDraftEntity"
+		 */
+		function initializeObjectPage(iBatchNo, bLate) {
+			var oResponse = {
+					"@odata.etag" : "etag.active1",
+					HasDraftEntity : false,
+					Messages : [{
+						message : "Active message",
+						numericSeverity : 2,
+						target : "defaultChannel"
+					}],
+					lastUsedChannel : "Channel 2"
+				};
+
+			if (bLate) {
+				that.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)"
+						+ "?$select=HasDraftEntity,Messages,lastUsedChannel",
+						oResponse);
+			} else { // if not late, the list's properties are also part of the request
+				that.expectRequest({
+						batchNo : iBatchNo,
+						method : "GET",
+						url : "Artists(ArtistID='A1',IsActiveEntity=true)"
+							+ "?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages,Name,"
+							+ "defaultChannel,lastUsedChannel"
+					}, Object.assign(oResponse, {
+						ArtistID : "A1",
+						IsActiveEntity : true,
+						Name : "Artist 1",
+						defaultChannel : "Channel 1"
+					}));
+			}
+			that.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)/_Publication"
+					+ "?$select=PublicationID&$skip=0&$top=100",
+					{value : [{PublicationID : "P1"}]}
+				)
+				.expectChange("name", "Artist 1")
+				.expectChange("defaultChannel", "Channel 1")
+				.expectChange("lastUsedChannel", "Channel 2")
+				.expectChange("publication", ["P1"])
+				.expectMessages([{
+					message : "Active message",
+					type : "Information",
+					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
+				}]);
+
+			oActiveContext = that.oModel.getKeepAliveContext(
+				"/Artists(ArtistID='A1',IsActiveEntity=true)", true,
+				{$$patchWithoutSideEffects : true});
+			oObjectPage.setBindingContext(oActiveContext);
+
+			return oActiveContext.requestProperty("HasDraftEntity");
+		}
+
 		this.expectChange("listName", [])
 			.expectChange("listChannel", [])
 			.expectChange("sendsAutographs", [])
@@ -36004,24 +35981,27 @@ sap.ui.define([
 			.expectChange("publication", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oListBinding = that.oView.byId("listReport").getBinding("items");
 			oObjectPage = that.oView.byId("objectPage");
 
-			return oFixture.setup.call(that, assert, oListBinding);
+			if (oFixture.list === 1) {
+				initializeList(1);
+			}
+			return Promise.all([
+				oFixture.page === 1 && initializeObjectPage(1, false),
+				that.waitForChanges(assert, "(1) initialization")
+			]);
 		}).then(function () {
-			return that.checkValueState(assert, "defaultChannel", "Information", "Active message");
+			if (oFixture.list === 2) {
+				initializeList(2);
+			}
+			return Promise.all([
+				oFixture.page === 2 && initializeObjectPage(2, true),
+				that.waitForChanges(assert, "(2) initialization")
+			]);
 		}).then(function () {
 			var oActionBinding = that.oModel.bindContext("special.cases.EditAction(...)",
-					oObjectPage.getBindingContext(), {$$inheritExpandSelect : true});
-
-			that.expectRequest({
-					method : "POST",
-					url : "Artists(ArtistID='A1',IsActiveEntity=true)/special.cases.EditAction"
-						+ "?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages,Name,"
-						+ "defaultChannel,lastUsedChannel,sendsAutographs",
-					headers : {"If-Match" : "etag.active1"},
-					payload : {}
-				}, {
+					oObjectPage.getBindingContext(), {$$inheritExpandSelect : true}),
+				oResponse = {
 					"@odata.etag" : "etag.draft1",
 					ArtistID : "A1",
 					HasDraftEntity : false,
@@ -36033,9 +36013,22 @@ sap.ui.define([
 					}],
 					Name : "Artist 1",
 					defaultChannel : "Channel 1",
-					lastUsedChannel : "Channel 2",
-					sendsAutographs : true
-				})
+					lastUsedChannel : "Channel 2"
+				},
+				sUrl = "Artists(ArtistID='A1',IsActiveEntity=true)/special.cases.EditAction"
+					+ "?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages,Name,"
+					+ "defaultChannel,lastUsedChannel";
+
+			if (bListResolved) {
+				sUrl += ",sendsAutographs";
+				oResponse.sendsAutographs = true;
+			}
+			that.expectRequest({
+					method : "POST",
+					url : sUrl,
+					headers : {"If-Match" : "etag.active1"},
+					payload : {}
+				}, oResponse)
 				.expectMessages([{
 					message : "Active message",
 					type : "Information",
@@ -36048,27 +36041,25 @@ sap.ui.define([
 
 			return Promise.all([
 				oActionBinding.execute(undefined, undefined, undefined, /*bReplaceWithRVC*/true),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "(3) edit action")
 			]);
 		}).then(function (aResults) {
-			var oReturnValueContext = aResults[0];
-
 			that.expectRequest("Artists(ArtistID='A1',IsActiveEntity=false)/_Publication"
 					+ "?$select=PublicationID&$skip=0&$top=100",
 					{value : [{PublicationID : "P1"}]}
 				)
 				.expectChange("publication", ["P1"]);
 
-			oObjectPage.setBindingContext(oReturnValueContext);
+			oDraftContext = aResults[0];
+			oObjectPage.setBindingContext(oDraftContext);
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "(4) setBindingContext");
 		}).then(function () {
 			return that.checkValueState(assert, "defaultChannel", "Information", "Draft message");
 		}).then(function () {
-			that.expectChange("listChannel", ["Channel 3"])
-				.expectChange("defaultChannel", "Channel 3")
+			that.expectChange("defaultChannel", "Channel 3")
 				.expectRequest({
-					batchNo : oFixture.batchNo,
+					batchNo : oFixture.patchNo,
 					headers : {
 						"If-Match" : "etag.draft1",
 						Prefer : "return=minimal"
@@ -36080,7 +36071,7 @@ sap.ui.define([
 					url : "Artists(ArtistID='A1',IsActiveEntity=false)"
 				}) // 204 No Content - no need to update the ETag when requesting side effects
 				.expectRequest({
-					batchNo : oFixture.batchNo,
+					batchNo : oFixture.patchNo,
 					url : "Artists?$select=ArtistID,IsActiveEntity,Messages,defaultChannel"
 						+ "&$filter=ArtistID eq 'A1' and IsActiveEntity eq false"
 				}, {
@@ -36096,7 +36087,6 @@ sap.ui.define([
 						defaultChannel : "Channel 3*"
 					}]
 				})
-				.expectChange("listChannel", ["Channel 3*"])
 				.expectChange("defaultChannel", "Channel 3*")
 				.expectMessages([{
 					message : "Active message",
@@ -36107,40 +36097,46 @@ sap.ui.define([
 					type : "Information",
 					target : "/Artists(ArtistID='A1',IsActiveEntity=false)/defaultChannel"
 				}]);
+			if (bListResolved) {
+				that.expectChange("listChannel", ["Channel 3"])
+					.expectChange("listChannel", ["Channel 3*"]);
+			}
 
 			that.oView.byId("defaultChannel").getBinding("value").setValue("Channel 3");
 
 			return Promise.all([
 				oObjectPage.getBindingContext().requestSideEffects(["defaultChannel", "Messages"]),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "(5) set property and request side effects")
 			]);
 		}).then(function () {
 			return that.checkValueState(assert, "defaultChannel", "Information", "Updated message");
 		}).then(function () {
-			that.expectRequest("Artists?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages"
-					+ "&$filter=ArtistID eq 'A1' and IsActiveEntity eq false"
-					+ " or ArtistID eq 'A1' and IsActiveEntity eq true&$top=2", {
-					value : [{
-						"@odata.etag" : "etag.draft2",
-						ArtistID : "A1",
-						HasDraftEntity : false,
-						IsActiveEntity : false,
-						Messages : []
-					}, {
-						"@odata.etag" : "etag.active1",
-						ArtistID : "A1",
-						HasDraftEntity : true,
-						IsActiveEntity : true,
-						Messages : []
-					}]
-				})
-				.expectMessages([]);
+			that.expectChange("defaultChannel", "Channel 1")
+				.expectChange("publication", ["P1"])
+				.expectMessages([{
+					message : "Active message",
+					type : "Information",
+					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
+				}])
+				.expectRequest({
+					method : "DELETE",
+					url : "Artists(ArtistID='A1',IsActiveEntity=false)"
+				});
+			if (bListResolved) {
+				that.expectChange("listChannel", ["Channel 1"]);
+			}
 
-			return Promise.all([
-				// code under test - these properties may only be requested by kept-alive contexts
-				oListBinding.getHeaderContext().requestSideEffects(["HasDraftEntity", "Messages"]),
-				that.waitForChanges(assert)
-			]);
+			oDraftContext.replaceWith(oActiveContext);
+			oDraftContext.delete("$auto", true);
+			oObjectPage.setBindingContext(oActiveContext);
+
+			return that.waitForChanges(assert, "(6) cancel");
+		}).then(function () {
+			if (oFixture.list === 7) {
+				initializeList(6);
+			}
+
+			return that.waitForChanges(assert, "(7) resolve list if not done yet");
 		});
 	});
 });
@@ -36337,6 +36333,108 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(oContext.getProperty("@odata.etag"), "etag3.1");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Flexible Column Layout, ODataModel#getKeepAliveContext
+	// An object page requests a kept-alive context matching an entity in a relative binding with
+	// $$getKeepAliveContext. This binding has a matching parked cache which must be ignored.
+	// Immediately afterwards resolve the binding. Modify a property and see that list and object
+	// page are in sync.
+	// JIRA: CPOUI5ODATAV4-1407
+	QUnit.test("getKeepAliveContext: immediately release temporary binding", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<Table id="list" items="{path : \'Artists\', parameters : {$$getKeepAliveContext : true,\
+ 		$$ownRequest : true, foo : \'bar\', $count : true}}">\
+	<Text id="listName" text="{Name}"/>\
+	<Text id="defaultChannel" text="{defaultChannel}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Input id="name" value="{Name}"/>\
+	<Text id="lastUsedChannel" text="{lastUsedChannel}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("listName", [])
+			.expectChange("defaultChannel", [])
+			.expectChange("name")
+			.expectChange("lastUsedChannel");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists?foo=bar&$count=true"
+					+ "&$select=ArtistID,IsActiveEntity,Name,defaultChannel&$skip=0&$top=100", {
+					"@odata.count" : "1",
+					value : [{
+						ArtistID : "1",
+						IsActiveEntity : false,
+						Name : "n/a", // must be ignored for the object page
+						defaultChannel : "01"
+					}]
+				})
+				.expectChange("listName", ["n/a"])
+				.expectChange("defaultChannel", ["01"]);
+
+			oTable = that.oView.byId("list");
+			oTable.setBindingContext(oModel.createBindingContext("/"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oTable.setBindingContext(undefined);
+
+			assert.strictEqual(oTable.getBinding("items").getLength(), 0);
+
+			return that.waitForChanges(assert); // wait for UI update
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)?foo=bar"
+					+ "&$select=ArtistID,IsActiveEntity,Name,lastUsedChannel", {
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "The Beatles",
+					lastUsedChannel : "02"
+				})
+				.expectRequest("Artists?foo=bar&$count=true"
+					+ "&$select=ArtistID,IsActiveEntity,Name,defaultChannel&$skip=0&$top=100", {
+					"@odata.count" : "1",
+					value : [{
+						ArtistID : "1",
+						IsActiveEntity : false,
+						Name : "The Beatles",
+						defaultChannel : "01"
+					}]
+				})
+				.expectChange("name", "The Beatles")
+				.expectChange("lastUsedChannel", "02")
+				.expectChange("listName", ["The Beatles"])
+				.expectChange("defaultChannel", ["01"]);
+
+			that.oView.byId("objectPage").setBindingContext(
+				oModel.getKeepAliveContext("/Artists(ArtistID='1',IsActiveEntity=false)",
+					false, {foo : "bar"})
+			);
+			oTable.setBindingContext(oModel.createBindingContext("/"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("name", "The Beatles (changed)")
+				.expectChange("listName", ["The Beatles (changed)"])
+				.expectRequest({
+					method : "PATCH",
+					url : "Artists(ArtistID='1',IsActiveEntity=false)?foo=bar",
+					payload : {Name : "The Beatles (changed)"}
+				}, {
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "The Beatles (changed*)"
+				})
+				.expectChange("name", "The Beatles (changed*)")
+				.expectChange("listName", ["The Beatles (changed*)"]);
+
+			that.oView.byId("name").getBinding("value").setValue("The Beatles (changed)");
+
+			return that.waitForChanges(assert);
 		});
 	});
 

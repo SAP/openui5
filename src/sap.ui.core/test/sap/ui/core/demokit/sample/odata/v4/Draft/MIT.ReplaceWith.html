@@ -16,18 +16,19 @@
 		<h2>PREPARATION</h2>
 			To check console errors open the developer tools before starting the application and
 			check at each step that there are no errors and warnings.
-		<h3>Testing with mock data</h3>
-		Start the Draft application URL (adjust host and port if necessary):
-			<ul>
-				<li> local:
-					<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft">
-						http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft
-					</a>
-				</li>
-			</ul>
+
 		<h2>REALIZE and CHECK</h2>
 		<h3>Start Up</h3>
 		<ol>
+			<li>Start the Draft application URL (adjust host and port if necessary):
+				<ul>
+					<li> local:
+						<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft">
+							http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft
+						</a>
+					</li>
+				</ul>
+			</li>
 			<li>Select the first product in the list report.</li>
 			<li><b>Check:</b> An object page for the product appears, no input field is editable,
 				only the <code>Edit</code> and <code>Refresh</code> buttons are enabled.</li>
@@ -78,22 +79,52 @@
 			product is an active entity with its original name.
 			</li>
 		</ol>
-		<h2>PREPARATION</h2>
-		To check console errors open the developer tools before starting the application and
-		check at each step that there are no errors and warnings.
-		<h3>Testing with mock data</h3>
-		Start the Draft application URL (adjust host and port if necessary):
-		<ul>
-			<li> local:
-				<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)">
-					http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)
-				</a>
-			</li>
-		</ul>
+
 		<h2>REALIZE and CHECK</h2>
+		<li> Start the Draft application URL (adjust host and port if necessary):
+			<ul>
+				<li> local:
+					<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)">
+						http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)
+					</a>
+				</li>
+			</ul>
+		</li>
+		<li><b>Check:</b> The list report and an object page for the product with ID 10 appears, no
+			input field is editable, only the <code>Edit</code> and <code>Refresh</code> buttons are
+			enabled in the object page.</li>
+		<li>Repeat the tests "Edit & Cancel" and "Edit & Activate" from above.</li>
+
+		<h2>REALIZE and CHECK</h2>
+		<li> Start the Draft application URL (adjust host and port if necessary):
+			<ul>
+				<li> local:
+					<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList">
+						http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList
+					</a>
+				</li>
+			</ul>
+		</li>
 		<li><b>Check:</b> An object page for the product with ID 10 appears, no input field is
 			editable, only the <code>Edit</code> and <code>Refresh</code> buttons are enabled.</li>
-		<li>Repeat the tests "Edit & Cancel", "Edit & Activate" and "Cancel Without Edit" from the
-		    previous run.</li>
+		<li>Press the "Show List" button.</li>
+		<li><b>Check:</b> The list report appears.</li>
+		<li>Repeat the tests "Edit & Cancel" and "Edit & Activate" from above.</li>
+
+		<h2>REALIZE and CHECK</h2>
+		<li> Start the Draft application URL (adjust host and port if necessary):
+			<ul>
+				<li> local:
+					<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList">
+						http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList
+					</a>
+				</li>
+			</ul>
+		</li>
+		<li><b>Check:</b> An object page for the product with ID 10 appears, no input field is
+			editable, only the <code>Edit</code> and <code>Refresh</code> buttons are enabled.</li>
+		<li>Repeat the tests "Edit & Cancel" and "Edit & Activate" from above.</li>
+		<li>Press the "Show List" button.</li>
+		<li><b>Check:</b> The list report appears.</li>
 	</body>
 </html>

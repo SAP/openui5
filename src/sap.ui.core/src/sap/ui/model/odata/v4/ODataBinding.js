@@ -163,8 +163,20 @@ sap.ui.define([
 						throw new Error("Unsupported operation mode: " + vValue);
 					}
 					break;
-				case "$$canonicalPath":
 				case "$$getKeepAliveContext":
+					if (that.isRelative() && !mParameters.$$ownRequest) {
+						throw new Error(
+							"$$getKeepAliveContext requires $$ownRequest in a relative binding");
+					}
+					["$$aggregation", "$$canonicalPath", "$$sharedRequest"]
+						.forEach(function (sForbidden) {
+							if (sForbidden in mParameters) {
+								throw new Error("Cannot combine $$getKeepAliveContext and "
+									+ sForbidden);
+							}
+						});
+					// falls through
+				case "$$canonicalPath":
 				case "$$noPatch":
 				case "$$ownRequest":
 				case "$$patchWithoutSideEffects":

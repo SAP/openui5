@@ -23,7 +23,21 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/test/TestUtils"
 	], function (Helper, Any, Main, Opa5, opaTest, TestUtils) {
 
-		function runTest(Given, When, Then, sHash) {
+		/*
+		 * The actual test run.
+		 * @param {object} Given - The OPA Given object
+		 * @param {object} When - The OPA When object
+		 * @param {object} Then - The OPA Then object
+		 * @param {String} [sHash] - The hash the application starts with
+		 * @param {boolean} [bShowListEarly]
+		 *    When to show the list:
+		 *    undefined: It's always there
+		 *    true: Immediately after the object page was filled
+		 *    false: At the end of the test
+		 */
+		function runTest(Given, When, Then, sHash, bShowListEarly) {
+			var bHasList = bShowListEarly === undefined;
+
 			if (!sHash) {
 				When.onAnyPage.applySupportAssistant();
 			}
@@ -43,7 +57,14 @@ sap.ui.getCore().attachInit(function () {
 			Then.onTheObjectPage.checkProductID("10");
 			Then.onTheObjectPage.checkIsActiveEntity(true);
 			Then.onTheObjectPage.checkName("Product 1");
-			Then.onTheListReport.checkProduct(0, "10", true, "Product 1");
+
+			if (bShowListEarly) {
+				When.onTheObjectPage.pressShowList();
+				bHasList = true;
+			}
+			if (bHasList) {
+				Then.onTheListReport.checkProduct(0, "10", true, "Product 1");
+			}
 
 			// Edit & Cancel
 			When.onTheObjectPage.pressEdit();
@@ -51,19 +72,25 @@ sap.ui.getCore().attachInit(function () {
 			Then.onTheObjectPage.checkProductID("10");
 			Then.onTheObjectPage.checkIsActiveEntity(false);
 			Then.onTheObjectPage.checkName("Product 1");
-			Then.onTheListReport.checkProduct(0, "10", false, "Product 1");
+			if (bHasList) {
+				Then.onTheListReport.checkProduct(0, "10", false, "Product 1");
+			}
 
 			When.onTheObjectPage.changeName("Test");
 
 			Then.onTheObjectPage.checkName("Test");
-			Then.onTheListReport.checkProduct(0, "10", false, "Test");
+			if (bHasList) {
+				Then.onTheListReport.checkProduct(0, "10", false, "Test");
+			}
 
 			When.onTheObjectPage.pressCancel();
 
 			Then.onTheObjectPage.checkProductID("10");
 			Then.onTheObjectPage.checkIsActiveEntity(true);
 			Then.onTheObjectPage.checkName("Product 1");
-			Then.onTheListReport.checkProduct(0, "10", true, "Product 1");
+			if (bHasList) {
+				Then.onTheListReport.checkProduct(0, "10", true, "Product 1");
+			}
 
 			// Edit & Activate
 			When.onTheObjectPage.pressEdit();
@@ -72,14 +99,18 @@ sap.ui.getCore().attachInit(function () {
 			Then.onTheObjectPage.checkIsActiveEntity(false);
 			Then.onTheObjectPage.checkName("Product 1");
 			Then.onTheObjectPage.checkPart(0, "1", "Part 1", "2.00");
-			Then.onTheListReport.checkProduct(0, "10", false, "Product 1");
+			if (bHasList) {
+				Then.onTheListReport.checkProduct(0, "10", false, "Product 1");
+			}
 
 			When.onTheObjectPage.changeName("Test");
 			When.onTheObjectPage.changeQuantity(0, "123");
 
 			Then.onTheObjectPage.checkName("Test");
 			Then.onTheObjectPage.checkPart(0, "1", "Part 1", "123.00");
-			Then.onTheListReport.checkProduct(0, "10", false, "Test");
+			if (bHasList) {
+				Then.onTheListReport.checkProduct(0, "10", false, "Test");
+			}
 
 			When.onTheObjectPage.pressSave();
 
@@ -87,26 +118,34 @@ sap.ui.getCore().attachInit(function () {
 			Then.onTheObjectPage.checkIsActiveEntity(true);
 			Then.onTheObjectPage.checkName("Test");
 			Then.onTheObjectPage.checkPart(0, "1", "Part 1", "123.00");
+
+			if (bShowListEarly === false) {
+				When.onTheObjectPage.pressShowList();
+			}
 			Then.onTheListReport.checkProduct(0, "10", true, "Test");
 
-			// Cancel Without Edit
-			When.onTheListReport.selectProduct(1);
-			Then.onTheObjectPage.checkProductID("20");
-			Then.onTheObjectPage.checkIsActiveEntity(false);
-			Then.onTheObjectPage.checkName("Product 2 (draft)");
-			Then.onTheListReport.checkProduct(1, "20", false, "Product 2 (draft)");
+			if (!sHash) {
+				// here the context for row 1 always exists, so nothing new with a hash
 
-			When.onTheObjectPage.changeName("Test");
+				// Cancel Without Edit
+				When.onTheListReport.selectProduct(1);
+				Then.onTheObjectPage.checkProductID("20");
+				Then.onTheObjectPage.checkIsActiveEntity(false);
+				Then.onTheObjectPage.checkName("Product 2 (draft)");
+				Then.onTheListReport.checkProduct(1, "20", false, "Product 2 (draft)");
 
-			Then.onTheObjectPage.checkName("Test");
-			Then.onTheListReport.checkProduct(1, "20", false, "Test");
+				When.onTheObjectPage.changeName("Test");
 
-			When.onTheObjectPage.pressCancel();
+				Then.onTheObjectPage.checkName("Test");
+				Then.onTheListReport.checkProduct(1, "20", false, "Test");
 
-			Then.onTheObjectPage.checkProductID("20");
-			Then.onTheObjectPage.checkIsActiveEntity(true);
-			Then.onTheObjectPage.checkName("Product 2");
-			Then.onTheListReport.checkProduct(1, "20", true, "Product 2");
+				When.onTheObjectPage.pressCancel();
+
+				Then.onTheObjectPage.checkProductID("20");
+				Then.onTheObjectPage.checkIsActiveEntity(true);
+				Then.onTheObjectPage.checkName("Product 2");
+				Then.onTheListReport.checkProduct(1, "20", true, "Product 2");
+			}
 
 			Then.onAnyPage.checkLog();
 			if (!sHash) {
@@ -121,13 +160,23 @@ sap.ui.getCore().attachInit(function () {
 			QUnit.skip("Test runs only with realOData=false");
 		} else {
 			//*****************************************************************************
-			opaTest("Starting with list", function (Given, When, Then) {
+			opaTest("Start with list", function (Given, When, Then) {
 				runTest(Given, When, Then);
 			});
 
 			//*****************************************************************************
-			opaTest("Starting with list and object page", function (Given, When, Then) {
+			opaTest("Start with list and object page", function (Given, When, Then) {
 				runTest(Given, When, Then, "/Products(ID=10,IsActiveEntity=true)");
+			});
+
+			//*****************************************************************************
+			opaTest("Start with object page, then open list", function (Given, When, Then) {
+				runTest(Given, When, Then, "Products(ID=10,IsActiveEntity=true)?noList", true);
+			});
+
+			//*****************************************************************************
+			opaTest("Start with object page, open list in the end", function (Given, When, Then) {
+				runTest(Given, When, Then, "Products(ID=10,IsActiveEntity=true)?noList", false);
 			});
 		}
 

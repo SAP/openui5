@@ -65,6 +65,9 @@ sap.ui.define([
 				},
 				pressSave : function () {
 					Helper.pressButton(this, sObjectPage, "save");
+				},
+				pressShowList : function () {
+					Helper.pressButton(this, sObjectPage, "showList");
 				}
 			},
 			assertions : {

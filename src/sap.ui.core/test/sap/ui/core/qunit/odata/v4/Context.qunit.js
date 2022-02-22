@@ -1528,18 +1528,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bTransient) {
-	var sTitle = "replaceWith: "
-			+ (bTransient ? "transient context" : "not in the collection");
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("replaceWith: transient context", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			oContext = bTransient
-				? Context.create({/*oModel*/}, oBinding, "/EMPLOYEES($uid=1)", 0,
-					SyncPromise.resolve(Promise.resolve()))
-				: Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('1')", undefined);
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES($uid=1)", 0,
+					SyncPromise.resolve(Promise.resolve()));
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		// #toString calls #isTransient, mock neither of them
@@ -1549,7 +1543,6 @@ sap.ui.define([
 			oContext.replaceWith();
 		}, new Error("Cannot replace " + oContext));
 	});
-});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bWrongBinding) {

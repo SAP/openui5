@@ -838,9 +838,7 @@ sap.ui.define([
 	 * Since 1.98.0, a single-valued navigation property can be treated like a function if
 	 * <ul>
 	 *   <li> it has the same type as the operation binding's parent context,
-	 *   <li> that parent context is in the collection (has an index, see
-	 *     {@link sap.ui.model.odata.v4.Context#getIndex}) of a list binding for a top-level entity
-	 *     set,
+	 *   <li> that parent context is in a list binding for a top-level entity set,
 	 *   <li> there is a navigation property binding which points to that same entity set,
 	 *   <li> no operation parameters have been set,
 	 *   <li> the <code>bReplaceWithRVC</code> parameter is used.
@@ -948,7 +946,7 @@ sap.ui.define([
 					+ sResolvedPath);
 			}
 			if (bReplaceWithRVC) {
-				if (!this.oContext.getBinding || this.oContext.iIndex === undefined) {
+				if (!this.oContext.getBinding) {
 					throw new Error("Cannot replace this parent context: " + this.oContext);
 				}
 				this.oContext.getBinding().checkKeepAlive(this.oContext);
