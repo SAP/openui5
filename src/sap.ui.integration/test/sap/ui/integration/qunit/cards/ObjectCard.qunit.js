@@ -5,13 +5,17 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/integration/cards/ObjectContent",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/integration/cards/actions/CardActions",
+	"sap/ui/qunit/utils/MemoryLeakCheck"
 ], function (
 	Log,
 	mLibrary,
 	ObjectContent,
 	Card,
-	Core
+	Core,
+	CardActions,
+	MemoryLeakCheck
 ) {
 	"use strict";
 
@@ -1003,6 +1007,105 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Avatar group with template", function (assert) {
+		// Arrange
+		var done = assert.async();
+		var oCardData = {
+			team: [
+				{},
+				{},
+				{}
+			]
+		};
+
+		this.oCard.attachEvent("_ready", function () {
+			var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
+				oAvatarGroup = oGroup.getItems()[1];
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(oAvatarGroup.getItems().length, oCardData.team.length, "Correct number of items should be created");
+			oAvatarGroup.getItems().forEach(function (oItem) {
+				assert.ok(oItem.getDomRef(), "Item " + oItem.getId() + " should be rendered");
+			});
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card.avatarGroup"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": oCardData
+				},
+				"content": {
+					"groups": [{
+						"items": [{
+							"label": "Team",
+							"type": "IconGroup",
+							"path": "team",
+							"template": {
+								"icon": {
+									"src": "{/iconSrc}",
+									"text": "{/name}"
+								}
+							}
+						}]
+					}]
+				}
+			}
+		});
+	});
+
+	QUnit.test("Properties of item template for avatars are correctly bound", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
+				oAvatarGroup = oGroup.getItems()[1],
+				oItemTemplate = oAvatarGroup.getBindingInfo("items").template;
+
+			// Assert
+			assert.strictEqual(oItemTemplate.getBindingPath("src"), "/iconSrc", "'src' property should be correctly bound");
+			assert.strictEqual(oItemTemplate.getBindingPath("initials"), "/name", "'initials' property should be correctly bound");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card.avatarGroup"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": {}
+				},
+				"content": {
+					"groups": [{
+						"items": [{
+							"label": "Team",
+							"type": "IconGroup",
+							"path": "team",
+							"template": {
+								"icon": {
+									"src": "{/iconSrc}",
+									"text": "{/name}"
+								}
+							}
+						}]
+					}]
+				}
+			}
+		});
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -1156,6 +1259,45 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oCard.setManifest(oManifest_ComplexLayout);
+	});
+
+	MemoryLeakCheck.checkControl("ObjectContent with IconGroup", function () {
+		// Arrange
+		var oObjectContent = new ObjectContent();
+		var oConfig = {
+			"groups": [{
+				"items": [{
+					"label": "Team",
+					"type": "IconGroup",
+					"path": "team",
+					"template": {
+						"icon": {
+							"src": "{/iconSrc}",
+							"text": "{/name}"
+						}
+					}
+				}]
+			}]
+		};
+
+		sinon.stub(oObjectContent, "getCardInstance").returns({
+			getBindingContext: function () {
+				return undefined;
+			},
+			getBindingNamespaces: function () {
+				return {};
+			},
+			isSkeleton: function () {
+				return false;
+			}
+		});
+
+		oObjectContent.setActions(new CardActions());
+
+		// Act
+		oObjectContent.setConfiguration(oConfig);
+
+		return oObjectContent;
 	});
 
 });

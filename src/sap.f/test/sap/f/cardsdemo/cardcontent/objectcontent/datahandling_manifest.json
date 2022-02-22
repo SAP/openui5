@@ -52,6 +52,36 @@
 							"icon": {
 								"src": "{manager/photo}"
 							}
+						},
+						{
+							"label": "Team. With Actions",
+							"type": "IconGroup",
+							"path": "team",
+							"template": {
+								"icon": {
+									"src": "{imageUrl}",
+									"text": "{= ${firstName}.substring(0, 1) + ${lastName}.substring(0, 1)}"
+								},
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "{imageUrl}"
+										}
+									}
+								]
+							}
+						},
+						{
+							"label": "Team. Without Actions",
+							"type": "IconGroup",
+							"path": "team",
+							"template": {
+								"icon": {
+									"src": "{imageUrl}",
+									"text": "{= ${firstName}.substring(0, 2) }"
+								}
+							}
 						}
 					]
 				},

@@ -370,4 +370,19 @@ function (
 		this.oPage.destroy();
 	});
 
+	QUnit.test("non-interactive AvatarGroup - using _interactive property", function (assert) {
+		//Arrange
+		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
+		this.oAvatarGroup._setInteractive(false);
+		var oFirePressSpy = this.spy(this.oAvatarGroup, "firePress");
+		Core.applyChanges();
+
+		// Act
+		this.oAvatarGroup.ontap();
+
+		// Assert
+		assert.strictEqual(oFirePressSpy.callCount, 0, "firePress event is not fired");
+		var iTabbaleAvatars = this.oAvatarGroup.getDomRef().querySelectorAll('.sapFAvatarGroupItem[tabindex="-1"]').length;
+		assert.strictEqual(iTabbaleAvatars, 0, "Avatars are not included in the tab chain");
+	});
 });

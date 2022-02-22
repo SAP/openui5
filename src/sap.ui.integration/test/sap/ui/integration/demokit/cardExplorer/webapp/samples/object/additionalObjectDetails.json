@@ -36,6 +36,22 @@
 			"subTitle": "Overdue Billing"
 		},
 		"content": {
+			"data": {
+				"json": {
+					"contacts": [
+						{
+							"firstName": "Alain",
+							"lastName": "Chevalier",
+							"photo": "./AlainChevalier.png"
+						},
+						{
+							"firstName": "Donna",
+							"lastName": "Moore",
+							"photo": "./DonnaMoore.png"
+						}
+					]
+				}
+			},
 			"groups": [
 				{
 					"alignment": "Stretch",
@@ -67,6 +83,25 @@
 						{
 							"label": "Project",
 							"value": "RN4765"
+						},
+						{
+							"label": "Contacts",
+							"type": "IconGroup",
+							"path": "contacts",
+							"template": {
+								"icon": {
+									"src": "{photo}",
+									"text": "{= ${firstName}.substring(0, 1) + ${lastName}.substring(0, 1)}"
+								},
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "/contacts-service?firstName={firstName}&lastName={lastName}"
+										}
+									}
+								]
+							}
 						}
 					]
 				}

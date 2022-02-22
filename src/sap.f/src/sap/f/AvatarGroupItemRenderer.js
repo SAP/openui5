@@ -27,7 +27,7 @@ sap.ui.define(["sap/f/library"],
 				.class("sapFAvatarGroupItem")
 				.class("sapFAvatarGroupItem" + oAvatarGroupItem._sAvatarDisplaySize);
 
-			if (oAvatarGroupItem._getGroupType() === "Individual") {
+			if (oAvatarGroupItem._getInteractive() && oAvatarGroupItem._getGroupType() === "Individual") {
 				oRm.attr("tabindex", 0);
 			}
 
