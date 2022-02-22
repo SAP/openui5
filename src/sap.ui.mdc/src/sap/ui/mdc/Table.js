@@ -1384,6 +1384,9 @@ sap.ui.define([
 		var pTableInit = this.initialized().then(function() {
 			this.initPropertyHelper();
 
+			//Make sure that in case of default xConfig appliance the state is initially read once
+			this._onModifications();
+
 			// add this to the micro task execution queue to enable consumers to handle this correctly
 			var oCreationRow = this.getCreationRow();
 			if (oCreationRow) {

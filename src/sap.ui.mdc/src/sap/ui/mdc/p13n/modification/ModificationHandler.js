@@ -121,7 +121,10 @@ sap.ui.define([
 			.then(function(oRetrievedXConfig) {
 				oXConfig = oRetrievedXConfig;
 				if (oXConfig) {
-					return oModifier.getProperty(oXConfig, "value");
+					return oModifier.getProperty(oXConfig, "value")
+					.then(function(sConfig){
+						return merge({}, JSON.parse(sConfig.replace(/\\/g, '')));
+					});
 				}
 				return {
 					aggregations: {}
@@ -158,19 +161,20 @@ sap.ui.define([
 
 				var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : undefined;
 
-				if (!oControl._pXConfigCreation) {
-					oControl._pXConfigCreation = oModifier.createAndAddCustomData(oControl, "xConfig", oConfig, oAppComponent);
-					return oControl._pXConfigCreation
+				var pDelete = Promise.resolve();
+				if (oXConfig && oControl.isA) {
+					pDelete = oModifier.removeAggregation(oControl, "customData", oXConfig)
 					.then(function(){
-						return oConfig;
-					});
-				} else {
-					oControl._pXConfigCreation
-					.then(function(oCustomData){
-						oModifier.setProperty(oCustomData, "value", oConfig);
-						return oConfig;
+						return oModifier.destroy(oXConfig);
 					});
 				}
+
+				return pDelete.then(function(){
+					return oModifier.createAndAddCustomData(oControl, "xConfig", JSON.stringify(oConfig), oAppComponent)
+					.then(function(){
+						return merge({}, oConfig);
+					});
+				});
 			});
 	};
 
@@ -201,8 +205,8 @@ sap.ui.define([
 				.then(function(oAggregationConfig) {
 					if (oAggregationConfig) {
 						return oModifier.getProperty(oAggregationConfig, "value")
-							.then(function(oValue) {
-								return merge({}, oValue);
+							.then(function(sValue) {
+								return merge({}, JSON.parse(sValue.replace(/\\/g, '')));
 							});
 					}
 					return null;
@@ -244,7 +248,7 @@ sap.ui.define([
 		oAggregationConfig = fnGetAggregationSync(oControl, "customData").find(function(oCustomData){
 			return fnGetPropertySync(oCustomData, "key") == "xConfig";
 		});
-		oConfig = oAggregationConfig ? merge({}, fnGetPropertySync(oAggregationConfig, "value")) : null;
+		oConfig = oAggregationConfig ? merge({}, JSON.parse(fnGetPropertySync(oAggregationConfig, "value").replace(/\\/g, ''))) : null;
 		return oConfig;
 	};
 

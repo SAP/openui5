@@ -166,7 +166,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Check 'enhanceXConfig' and 'readXConfig' ", function(assert){
+	QUnit.test("Check 'enhanceXConfig' and 'readXConfig'", function(assert){
 
 		var oFMHStub = sinon.spy(FlexModificationHandler.getInstance(), "enhanceConfig");
 
