@@ -85,16 +85,8 @@ sap.ui.define([
 					mapping: "style"
 				}
 			},
-			defaultAggregation: "content",
+			defaultAggregation: "middleContent",
 			aggregations: {
-
-				/**
-				 * Defines the content in the middle of the bar
-				 */
-				content: {
-					type: "sap.ui.core.Control",
-					multiple: true
-				},
 
 				/**
 				 * Defines the content at the end of the bar
@@ -103,6 +95,14 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true,
 					slot: "endContent"
+				},
+
+				/**
+				 * Defines the content in the middle of the bar
+				 */
+				middleContent: {
+					type: "sap.ui.core.Control",
+					multiple: true
 				},
 
 				/**

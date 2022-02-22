@@ -47,7 +47,7 @@ sap.ui.define([
 				],
 				logo: new Avatar({
 					icon: "employee",
-					content: new Button({
+					image: new Button({
 						icon: "employee",
 						text: "Some text...",
 						click: function(oEvent) {
@@ -98,7 +98,7 @@ sap.ui.define([
 				],
 				profile: new Avatar({
 					icon: "employee",
-					content: new Button({
+					image: new Button({
 						icon: "employee",
 						text: "Some text...",
 						click: function(oEvent) {

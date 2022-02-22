@@ -55,7 +55,7 @@ sap.ui.define([
 				 *         <ul>
 				 *             <li><code>true</code></li>
 				 *             <li><code>false</code></li>
-				 *             <ul>
+				 *         </ul>
 				 *     </li>
 				 *     <li><code>hasPopup</code>: Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by the button. Accepts the following string values:
 				 *         <ul>
