@@ -132,7 +132,7 @@ sap.ui.define([
                     },
 
                     /**
-                     * Set chart's legend properties.
+                     * Enables the legend of the chart.
                      *
                      * @since 1.88
                      */
@@ -192,8 +192,7 @@ sap.ui.define([
                         defaultValue: {}
                     },
                     /**
-                     * Controls the visibility of the chart tooltip. If set to <code>true </code>, an instance of sap.viz.ui5.controls.VizTooltip will
-                     * be created and shown when hovering over a data point.
+                     * Controls the visibility of the chart tooltip. If set to <code>true</code>, an instance of {@link sap.viz.ui5.controls.VizTooltip} is created and shown when hovering over a data point.
                      *
                      * @since 1.88
                      */
@@ -203,7 +202,8 @@ sap.ui.define([
                         defaultValue: true
                     },
                     /**
-                     * Binds the chart automatically after the initial creation of the chart
+                     * If set to <code>true</code>, the chart is automatically bound after initialization.
+                     * If set to <code>false</code>, the chart is bound after the first call to <code>rebind</code>.
                      */
                     autoBindOnInit: {
                         type: "boolean",
@@ -212,7 +212,7 @@ sap.ui.define([
                     },
 
                     /**
-                     * Specifies the type of chart to be created by the SmartChart control.
+                     * Specifies the type of chart to be created by the <code>Chart</code> control.
                      */
                     chartType: {
                         type: "string",
