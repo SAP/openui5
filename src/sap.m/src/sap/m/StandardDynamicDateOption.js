@@ -773,13 +773,13 @@ sap.ui.define([
 				case "NEXTYEARS":
 					return UniversalDateUtils.ranges.nextYears(iParamLastNext);
 				case "FROM":
-					return [oValue.values[0], oValue.values[0]];
+					return [UniversalDate.getInstance(oValue.values[0])];
 				case "TO":
-					return [oValue.values[0], oValue.values[0]];
+					return [UniversalDate.getInstance(oValue.values[0])];
 				case "FROMDATETIME":
-					return [oValue.values[0], oValue.values[0]];
+					return [UniversalDate.getInstance(oValue.values[0])];
 				case "TODATETIME":
-					return [oValue.values[0], oValue.values[0]];
+					return [UniversalDate.getInstance(oValue.values[0])];
 				case "YEARTODATE":
 					return UniversalDateUtils.ranges.yearToDate();
 				case "DATETOYEAR":

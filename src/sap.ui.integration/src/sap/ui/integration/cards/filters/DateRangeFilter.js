@@ -128,7 +128,8 @@ sap.ui.define([
 
 			var aDates = DynamicDateUtil.toDates(oDateRangeValue),
 				dStart = aDates[0].getJSDate ? aDates[0].getJSDate() : aDates[0],
-				dEnd = aDates[1].getJSDate ? aDates[1].getJSDate() : aDates[1];
+				iSecondIndex = oDateRangeValue.operator === "TO" || oDateRangeValue.operator === "FROM" ? 0 : 1,
+				dEnd = aDates[iSecondIndex] && aDates[iSecondIndex].getJSDate ? aDates[iSecondIndex].getJSDate() : aDates[iSecondIndex];
 
 			oRange = {
 				start: dStart.toISOString(),

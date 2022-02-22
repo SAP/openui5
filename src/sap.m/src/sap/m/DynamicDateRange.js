@@ -382,10 +382,13 @@ sap.ui.define([
 		};
 
 		DynamicDateRange.prototype.setValue = function(oValue) {
+			var sOptionKey = oValue && oValue.operator;
+
 			// substutude the semantically equivalent values
 			oValue = this._substitudeValue(oValue);
 
 			this.setProperty("value", oValue);
+			this._oSelectedOption = DynamicDateUtil.getOption(sOptionKey);
 
 			// Forward Dynamic Date Range control property values to inner sap.m.Input instance.
 			this._updateInputValue(oValue);
@@ -589,11 +592,13 @@ sap.ui.define([
 				switch (sType) {
 					case "datetime":
 						oFormatOptions = Object.create(this._getFormatter()._dateTimeFormatter.oFormatOptions);
+						oFormatOptions.singleIntervalValue = true;
 						oFormatOptions.interval = true;
 						this._oDatesLabelFormatter = DateFormat.getDateTimeInstance(oFormatOptions);
 						break;
 					default:
 						oFormatOptions = Object.create(this._getFormatter()._dateFormatter.oFormatOptions);
+						oFormatOptions.singleIntervalValue = true;
 						oFormatOptions.interval = true;
 						this._oDatesLabelFormatter = DateFormat.getInstance(oFormatOptions);
 				}
@@ -913,6 +918,10 @@ sap.ui.define([
 
 			aResultDates = DynamicDateUtil.toDates(oOutputValue);
 			if (aResultDates) {
+				if (this._oSelectedOption.getKey() === "FROMDATETIME" || this._oSelectedOption.getKey() === "TODATETIME"
+					|| this._oSelectedOption.getKey() === "FROM" || this._oSelectedOption.getKey() === "TO") {
+					aResultDates.push(null);
+				}
 				sFormattedDates = this._getDatesLabelFormatter().format(aResultDates);
 				this._getDatesLabel().setText(oResourceBundle.getText("DDR_INFO_DATES", [sFormattedDates]));
 			}
