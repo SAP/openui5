@@ -1297,8 +1297,7 @@ sap.ui.define([
 	 * Returns the <code>sap.ui.core.IColumnHeaderMenu<\code>, which is the current target of the association <code>columnHeaderMenu</code>, or null.
 	 *
 	 * @returns {sap.ui.core.IColumnHeaderMenu}
-	 * @since 1.98.0
-	 * @public
+	 * @private
 	 */
 	Column.prototype.getColumnHeaderMenu = function () {
 		return sap.ui.getCore().byId(this.getAssociation("columnHeaderMenu"));
