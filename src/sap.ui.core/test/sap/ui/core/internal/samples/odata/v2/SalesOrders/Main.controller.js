@@ -292,6 +292,8 @@ sap.ui.define([
 				sSalesOrderID = oEvent.getSource().getBindingContext().getProperty("SalesOrderID"),
 				that = this;
 
+			// SalesOrder_FixQuantities sets the quantity of all items with the product HT-1000 to
+			// at least 2
 			oModel.callFunction("/SalesOrder_FixQuantities", {
 				adjustDeepPath : function () {
 					return "/SalesOrderSet('" + sSalesOrderID + "')/ToLineItems";
@@ -310,6 +312,37 @@ sap.ui.define([
 			});
 		},
 
+		onFixItems : function (oEvent) {
+			var oBindingContext = oEvent.getSource().getBindingContext(),
+				oModel = this.getView().getModel(),
+				sSalesOrderID = oBindingContext.getProperty("SalesOrderID");
+
+			// SalesOrder_FixItems iterates the items and
+			// - sets the quantity of the item to at least 2 if the item's product is HT-1000
+			// - removes the item if the item's product is HT-1502 (works only for items that
+			//   have been read from the server; created persisted items are untouched, see also
+			//   CPOUI5MODELS-843)
+			// - replaces the item's product HT-1110 by the product HT-1111
+			oModel.callFunction("/SalesOrder_FixItems", {
+				groupId : "FixQuantity",
+				method : "POST",
+				success : function () {
+					MessageToast.show("Successfully fixed all items for sales order "
+						+ sSalesOrderID);
+				},
+				urlParameters : {
+					SalesOrderID : encodeURL(sSalesOrderID)
+				}
+			});
+
+			oModel.requestSideEffects(oBindingContext, {
+				groupId : "FixQuantity",
+				urlParameters : {$expand : "ToLineItems,ToLineItems/ToProduct"}
+			});
+
+			oModel.submitChanges({groupId : "FixQuantity"});
+		},
+
 		onFixQuantity : function (oEvent) {
 			var oBindingContext = oEvent.getSource().getBindingContext(),
 				sItemPosition = oBindingContext.getProperty("ItemPosition"),
@@ -320,6 +353,8 @@ sap.ui.define([
 				MessageToast.show("Cannot fix quantity as item is not yet persisted");
 				return;
 			}
+			// SalesOrderItem_FixQuantity sets the quantity of the given item to at least 2 if the
+			// item's product is HT-1000
 			oModel.callFunction("/SalesOrderItem_FixQuantity", {
 				groupId : "FixQuantity",
 				method : "POST",
