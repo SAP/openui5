@@ -97,14 +97,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the ID of the HTML Element, which will get the initial focus.
-				 */
-				initialFocus: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
 				 * Indicates if the element is open
 				 */
 				open: {
@@ -193,6 +185,18 @@ sap.ui.define([
 						type: "property",
 						to: "accessibleNameRef",
 						formatter: "_getAriaLabelledByForRendering"
+					}
+				},
+
+				/**
+				 * Defines the ID of the HTML Element, which will get the initial focus.
+				 */
+				initialFocus: {
+					type: "sap.ui.core.Control",
+					multiple: false,
+					mapping: {
+						type: "property",
+						to: "initialFocus"
 					}
 				}
 			},

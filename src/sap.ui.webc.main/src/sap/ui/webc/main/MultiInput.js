@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/library",
-	"./thirdparty/MultiInput"
+	"./thirdparty/MultiInput",
+	"./thirdparty/features/InputElementsFormSupport"
 ], function(WebComponent, library, EnabledPropagator, ManagedObjectObserver, coreLibrary) {
 	"use strict";
 
@@ -371,7 +372,7 @@ sap.ui.define([
 	 *
 	 * In the context of the MultiInput, this is the merged value of all the Tokens in the control.
 	 * @returns {string} The semantic form value
-	 * @since 1.94
+	 * @since 1.100
 	 * @experimental
 	 */
 	MultiInput.prototype.getFormFormattedValue = function() {
@@ -386,7 +387,7 @@ sap.ui.define([
 	 * The property which triggers form display invalidation when changed
 	 *
 	 * @returns {string} The property, containing the semantic form value
-	 * @since 1.94
+	 * @since 1.100
 	 * @experimental
 	 */
 	MultiInput.prototype.getFormValueProperty = function() {
