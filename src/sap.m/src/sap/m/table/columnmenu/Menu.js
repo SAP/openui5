@@ -78,7 +78,8 @@ sap.ui.define([
 				_quickActions: { type: "sap.m.table.columnmenu.QuickActionBase", visibility: "hidden" },
 				_items: { type: "sap.m.table.columnmenu.ItemBase", visibility: "hidden" }
 			}
-		}
+		},
+		renderer: MenuRenderer
 	});
 
 	var DEFAULT_KEY = "$default";
