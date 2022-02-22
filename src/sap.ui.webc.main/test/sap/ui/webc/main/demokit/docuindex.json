@@ -1,0 +1,78 @@
+{
+	"explored": {
+	  "entitiesDefaults": {
+		"appComponent": "CA-UI5-CTR",
+		"formFactors": "ML"
+	  },
+	  "samplesRef": [
+		{
+		  "namespace": "sap.ui.webc.main.sample",
+		  "ref": "test-resources/sap/ui/webc/main/demokit/sample"
+		}
+	  ],
+	  "entities": [
+		{
+		  "id": "sap.ui.webc.main.ComboBox",
+		  "name": "ComboBox (web component)",
+		  "category": "User Input",
+		  "since": "1.92.0",
+		  "samples": ["sap.ui.webc.main.sample.ComboBox"]
+		},
+		{
+		  "id": "sap.ui.webc.main.Input",
+		  "name": "Input (web component)",
+		  "category": "User Input",
+		  "since": "1.92.0",
+		  "samples": ["sap.ui.webc.main.sample.Input"]
+		},
+		{
+		  "id": "sap.ui.webc.main.MultiComboBox",
+		  "name": "Multi Combo Box (web component)",
+		  "category": "User Input",
+		  "since": "1.92.0",
+		  "samples": ["sap.ui.webc.main.sample.MultiComboBox"]
+		},
+		{
+		  "id": "sap.ui.webc.main.MultiInput",
+		  "name": "Multi Input (web component)",
+		  "category": "User Input",
+		  "since": "1.92.0",
+		  "samples": ["sap.ui.webc.main.sample.MultiInput"]
+		},
+		{
+		  "id": "sap.ui.webc.main.TextArea",
+		  "name": "Text Area (web component)",
+		  "category": "User Input",
+		  "since": "1.92.0",
+		  "samples": ["sap.ui.webc.main.sample.TextArea"]
+		}
+	  ],
+	  "samples": [
+		{
+		  "id": "sap.ui.webc.main.sample.ComboBox",
+		  "name": "ComboBox Freestyle Example",
+		  "description": "Demonstrates the basic usage of ComboBox"
+		},
+		{
+		  "id": "sap.ui.webc.main.sample.Input",
+		  "name": "Input Freestyle Example",
+		  "description": "Demonstrates the basic usage of Input"
+		},
+		{
+		  "id": "sap.ui.webc.main.sample.MultiComboBox",
+		  "name": "MultiComboBox Freestyle Example",
+		  "description": "Demonstrates the basic usage of MultiComboBox"
+		},
+		{
+		  "id": "sap.ui.webc.main.sample.MultiInput",
+		  "name": "MultiInput Freestyle Example",
+		  "description": "Demonstrates the basic usage of MultiInput"
+		},
+		{
+		  "id": "sap.ui.webc.main.sample.TextArea",
+		  "name": "TextArea Freestyle Example",
+		  "description": "Demonstrates the basic usage of TextArea"
+		}
+	  ]
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"explored": {
+	  "entitiesDefaults": {
+		"appComponent": "CA-UI5-CTR",
+		"formFactors": "ML"
+	  },
+	  "samplesRef": [
+		{
+		  "namespace": "sap.ui.webc.fiori.sample",
+		  "ref": "test-resources/sap/ui/webc/fiori/demokit/sample"
+		}
+	  ],
+	  "entities": [
+
+	  ],
+	  "samples": [
+
+	  ]
+	}
+}
