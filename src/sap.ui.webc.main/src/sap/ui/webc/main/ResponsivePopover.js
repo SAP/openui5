@@ -112,14 +112,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the ID of the HTML Element, which will get the initial focus.
-				 */
-				initialFocus: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
 				 * Defines whether the component should close when clicking/tapping outside of the popover. If enabled, it blocks any interaction with the background.
 				 */
 				modal: {
@@ -133,14 +125,6 @@ sap.ui.define([
 				open: {
 					type: "boolean",
 					defaultValue: false
-				},
-
-				/**
-				 * Defines the opener id of the element that the popover is shown at
-				 */
-				opener: {
-					type: "string",
-					defaultValue: ""
 				},
 
 				/**
@@ -215,6 +199,18 @@ sap.ui.define([
 			associations: {
 
 				/**
+				 * Defines the opener id of the element that the popover is shown at
+				 */
+				opener: {
+					type: "sap.ui.core.Control",
+					multiple: false,
+					mapping: {
+						type: "property",
+						to: "opener"
+					}
+				},
+
+				/**
 				 * Receives id(or many ids) of the controls that label this control.
 				 */
 				ariaLabelledBy: {
@@ -224,6 +220,18 @@ sap.ui.define([
 						type: "property",
 						to: "accessibleNameRef",
 						formatter: "_getAriaLabelledByForRendering"
+					}
+				},
+
+				/**
+				 * Defines the ID of the HTML Element, which will get the initial focus.
+				 */
+				initialFocus: {
+					type: "sap.ui.core.Control",
+					multiple: false,
+					mapping: {
+						type: "property",
+						to: "initialFocus"
 					}
 				}
 			},

@@ -8,7 +8,8 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
-	"./thirdparty/StepInput"
+	"./thirdparty/StepInput",
+	"./thirdparty/features/InputElementsFormSupport"
 ], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 

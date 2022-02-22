@@ -8,7 +8,9 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
-	"./thirdparty/Input"
+	"./thirdparty/Input",
+	"./thirdparty/features/InputElementsFormSupport",
+	"./thirdparty/features/InputSuggestions"
 ], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 
