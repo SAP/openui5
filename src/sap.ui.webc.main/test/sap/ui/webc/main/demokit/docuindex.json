@@ -13,36 +13,36 @@
 	  "entities": [
 		{
 		  "id": "sap.ui.webc.main.ComboBox",
-		  "name": "ComboBox (web component)",
-		  "category": "User Input",
+		  "name": "ComboBox",
+		  "category": "Web Components",
 		  "since": "1.92.0",
 		  "samples": ["sap.ui.webc.main.sample.ComboBox"]
 		},
 		{
 		  "id": "sap.ui.webc.main.Input",
-		  "name": "Input (web component)",
-		  "category": "User Input",
+		  "name": "Input",
+		  "category": "Web Components",
 		  "since": "1.92.0",
 		  "samples": ["sap.ui.webc.main.sample.Input"]
 		},
 		{
 		  "id": "sap.ui.webc.main.MultiComboBox",
-		  "name": "Multi Combo Box (web component)",
-		  "category": "User Input",
+		  "name": "Multi Combo Box",
+		  "category": "Web Components",
 		  "since": "1.92.0",
 		  "samples": ["sap.ui.webc.main.sample.MultiComboBox"]
 		},
 		{
 		  "id": "sap.ui.webc.main.MultiInput",
-		  "name": "Multi Input (web component)",
-		  "category": "User Input",
+		  "name": "Multi Input",
+		  "category": "Web Components",
 		  "since": "1.92.0",
 		  "samples": ["sap.ui.webc.main.sample.MultiInput"]
 		},
 		{
 		  "id": "sap.ui.webc.main.TextArea",
-		  "name": "Text Area (web component)",
-		  "category": "User Input",
+		  "name": "Text Area",
+		  "category": "Web Components",
 		  "since": "1.92.0",
 		  "samples": ["sap.ui.webc.main.sample.TextArea"]
 		}

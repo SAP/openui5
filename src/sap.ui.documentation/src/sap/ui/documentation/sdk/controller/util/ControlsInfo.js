@@ -50,7 +50,8 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 					"Data Binding",
 					"Data Visualization",
 					"Map",
-					"Utility"
+					"Utility",
+					"Web Components"
 				];
 				var afilterProps = ["namespace", "since", "category"]; // content density are set manually
 				var oFilterSets = {
