@@ -618,6 +618,29 @@ sap.ui.define([
 		assert.strictEqual(oErrorLogSpy.callCount, 0, "setSelectedSortItem does not throw an error.");
 	});
 
+	QUnit.test("setSelectedSortItem, setSelectedGroupItem by item id", function(assert) {
+		// arrange
+		var oVSD = new ViewSettingsDialog({
+				selectedSortItem: "sortItem2",
+				selectedGroupItem: "groupItem1",
+				sortItems: [
+					new ViewSettingsItem("sortItem1", { text: "1", key: "s1" }),
+					new ViewSettingsItem("sortItem2", { text: "2", key: "s2" })
+				],
+				groupItems: [
+					new ViewSettingsItem("groupItem1", { text: "1", key: "g1" }),
+					new ViewSettingsItem("groupItem2", { text: "2", key: "g2" })
+				]
+			});
+
+		// assert
+		assert.strictEqual(oVSD.getSortItems()[1].getSelected(), true, "sort item selected via its id");
+		assert.strictEqual(oVSD.getGroupItems()[0].getSelected(), true, "group item selected via its id");
+
+		// clean
+		oVSD.destroy();
+	});
+
 	QUnit.test("setFilter count doe not throw an error when filter item type is sap.m.ViewSettingsCustomItem", function (assert) {
 		var done = assert.async(),
 				oVSD = new ViewSettingsDialog({
