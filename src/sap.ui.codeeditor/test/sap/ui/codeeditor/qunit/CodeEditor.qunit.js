@@ -231,6 +231,16 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Initial rendering", function (assert) {
+		var oThemeStub = this.stub(Core.getConfiguration(), "getTheme").returns("sap_fiori_3");
+
+		var oCodeEditor = new CodeEditor();
+		assert.strictEqual(oCodeEditor._oEditor.getTheme(), "ace/theme/crimson_editor", "Initial theme is set correctly");
+
+		oCodeEditor.destroy();
+		oThemeStub.restore();
+	});
+
 	QUnit.test("Theme change", function (assert) {
 		var done = assert.async(2);
 
