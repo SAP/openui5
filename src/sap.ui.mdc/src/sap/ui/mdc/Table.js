@@ -1756,7 +1756,7 @@ sap.ui.define([
 					context: {title: that.getHeader()}
 				},
 				dataSource: oRowBinding,
-				fileType: mCustomConfig.selectedFileType == "pdf" ? "PDF" : "XLSX",
+				fileType: mCustomConfig.selectedFileType,
 				fileName: mCustomConfig ? mCustomConfig.fileName : this.getHeader()
 			};
 
