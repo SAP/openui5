@@ -876,6 +876,13 @@ sap.ui.define([
 		return undefined;
 	};
 
+	RuntimeAuthoring.prototype._saveOnly = function(oEvent) {
+		var fnCallback = oEvent.getParameter("callback") || function() {};
+		return waitForPendingActions.call(this)
+			.then(this._serializeToLrep.bind(this))
+			.then(fnCallback);
+	};
+
 	RuntimeAuthoring.prototype._serializeAndSave = function() {
 		// Save changes on the current layer and discard dirty changes on other layers
 		return this._oSerializer.saveCommands(this._oVersionsModel.getProperty("/versioningEnabled"), this.getLayer(), true);
@@ -1052,7 +1059,8 @@ sap.ui.define([
 				},
 				textResources: this._getTextResources(),
 				restore: this._onRestore.bind(this),
-				exit: this.stop.bind(this, false, bUserLayer)
+				exit: this.stop.bind(this, false, bUserLayer),
+				save: this._saveOnly.bind(this)
 			};
 
 			if (!bUserLayer) {
