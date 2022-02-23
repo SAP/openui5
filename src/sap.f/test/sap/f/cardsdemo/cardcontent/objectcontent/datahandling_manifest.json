@@ -60,7 +60,7 @@
 							"template": {
 								"icon": {
 									"src": "{imageUrl}",
-									"text": "{= ${firstName}.substring(0, 1) + ${lastName}.substring(0, 1)}"
+									"text": "{= format.initials(${firstName} + ' ' + ${lastName}) }"
 								},
 								"actions": [
 									{
@@ -79,7 +79,7 @@
 							"template": {
 								"icon": {
 									"src": "{imageUrl}",
-									"text": "{= ${firstName}.substring(0, 2) }"
+									"text": "{= format.initials(${firstName} + ' ' + ${lastName}) }"
 								}
 							}
 						}
