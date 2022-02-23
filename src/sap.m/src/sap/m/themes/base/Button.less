@@ -385,7 +385,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 }
 
 :not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnEmphasized.sapMBtnActive > .sapMBtnIcon {
-	color: @sapUiButtonActiveTextColor;
+	color: @sapUiButtonEmphasizedActiveTextColor;
 }
 
 .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
@@ -455,7 +455,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 .sapMBtn .sapMBtnNegative.sapMBtnInner,
 .sapMBtn .sapMBtnSuccess.sapMBtnInner,
 .sapMBtn .sapMBtnNeutral.sapMBtnInner{
-		text-shadow: none;
+		text-shadow: @sapContent_ContrastTextShadow;
 }
 
 .sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnCritical{
