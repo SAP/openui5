@@ -3433,7 +3433,7 @@ sap.ui.define([
 
 		}.bind(this));
 
-		return sClosestId;
+		return this.oCore.byId(sClosestId) ? sClosestId : null;
 	};
 
 
