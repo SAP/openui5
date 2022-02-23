@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company. All rights reserved.
 // * Theming Engine 1.68.3
-// * data:{"sModified":"2022-02-14T15:12:17Z"}
+// * data:{"sModified":"2022-02-23T11:37:26Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_horizon/base.less (Version 11.1.35) *******************/
+/******************* FILE /Base/baseLib/sap_horizon/base.less (Version 11.1.36-SNAPSHOT) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -219,6 +219,8 @@
 
 // [Tags "!Protected"]
 @sapContent_MarkerTextColor: @sapAccentColor7;
+@sapContent_MeasureIndicatorColor: @sapField_BorderColor;
+@sapContent_Selected_MeasureIndicatorColor: @sapHighlightColor;
 
 // [Tags "!Protected"]
 @sapContent_Placeholderloading_Background: darken(@sapBaseColor, 20);
@@ -237,6 +239,7 @@
 
 // [Tags "!Protected"]
 @sapContent_UnratedColor: @sapPrimary5;
+@sapContent_BusyColor: @sapContent_IconColor;
 
 // [Tags "!Protected"]
 @sapContent_FocusColor: @sapPrimary2;
@@ -275,7 +278,7 @@
 @sapContent_ContrastTextShadow: 0 0 0.0625rem fade(darken(@sapContent_ShadowColor, 100), 70);
 
 // [Tags "!Protected"]
-@sapContent_HeaderShadow: 0 0 0.25rem 0 fade(@sapContent_ShadowColor, 16), inset 0 -0.0625rem 0 0 @sapObjectHeader_BorderColor;
+@sapContent_HeaderShadow: 0 0.125rem 0.125rem 0 fade(@sapContent_ShadowColor, 5), inset 0 -0.0625rem 0 0 @sapObjectHeader_BorderColor;
 
 // [Tags "!Protected"]
 @sapContent_Interaction_Shadow: 0 0 0.125rem 0 fade(@sapContent_ShadowColor, 72);
@@ -357,6 +360,7 @@
 
 // [Tags "!Protected"]
 @sapContent_Selected_ForegroundColor: @sapSelectedColor;
+@sapContent_ForcedColorAdjust: none;
 @sapContent_Illustrative_Color1: #5d36ff;
 @sapContent_Illustrative_Color2: #0070f2;
 @sapContent_Illustrative_Color3: #f58b00;
@@ -383,6 +387,8 @@
 
 // [Tags "!Protected"]
 @sapFontBoldFamily: "72-Bold", "72-Boldfull", "72", "72full", Arial, Helvetica, sans-serif;
+@sapFontSemiboldFamily: "72-Semibold", "72-Semiboldfull", "72", "72full", Arial, Helvetica, sans-serif;
+@sapFontSemiboldDuplexFamily: "72-SemiboldDuplex", "72-SemiboldDuplexfull", "72", "72full", Arial, Helvetica, sans-serif;
 
 // [Tags "!Protected"]
 @sapFontBlackFamily: "72Black", "72", "72full", Arial, Helvetica, sans-serif;
@@ -505,7 +511,7 @@
 @sapShell_Navigation_Active_Background: @sapShell_Active_Background;
 
 // [Tags "!Protected"]
-@sapShell_Shadow: 0 0 0.5 * @sapContent_GridSize 0 fade(@sapContent_ShadowColor, 20), inset 0 -0.0625 * @sapContent_GridSize 0 0 fade(@sapContent_ShadowColor, 10);
+@sapShell_Shadow: 0 0.125rem 0.125rem 0 fade(@sapContent_ShadowColor, 10), inset 0 -0.0625rem 0 0 fade(@sapContent_ShadowColor, 20);
 
 // [Tags "!Protected"]
 @sapShell_NegativeColor: @sapNegativeColor;
@@ -521,6 +527,36 @@
 
 // [Tags "!Protected"]
 @sapShell_NeutralColor: @sapNeutralColor;
+@sapAvatar_1_Background: @sapAccentBackgroundColor1;
+@sapAvatar_1_BorderColor: @sapAvatar_1_Background;
+@sapAvatar_1_TextColor: contrast(@sapAvatar_1_Background, darken(@sapAccentColor1, 9), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapAvatar_2_Background: @sapAccentBackgroundColor2;
+@sapAvatar_2_BorderColor: @sapAvatar_2_Background;
+@sapAvatar_2_TextColor: contrast(@sapAvatar_2_Background, @sapAccentColor2, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapAvatar_3_Background: @sapAccentBackgroundColor3;
+@sapAvatar_3_BorderColor: @sapAvatar_3_Background;
+@sapAvatar_3_TextColor: contrast(@sapAvatar_3_Background, @sapAccentColor3, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapAvatar_4_Background: @sapAccentBackgroundColor4;
+@sapAvatar_4_BorderColor: @sapAvatar_4_Background;
+@sapAvatar_4_TextColor: contrast(@sapAvatar_4_Background, @sapAccentColor4, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapAvatar_5_Background: @sapAccentBackgroundColor5;
+@sapAvatar_5_BorderColor: @sapAvatar_5_Background;
+@sapAvatar_5_TextColor: contrast(@sapAvatar_5_Background, darken(@sapAccentColor5, 2), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapAvatar_6_Background: @sapAccentBackgroundColor6;
+@sapAvatar_6_BorderColor: @sapAvatar_6_Background;
+@sapAvatar_6_TextColor: contrast(@sapAvatar_6_Background, @sapAccentColor6, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapAvatar_7_Background: @sapAccentBackgroundColor7;
+@sapAvatar_7_BorderColor: @sapAvatar_7_Background;
+@sapAvatar_7_TextColor: contrast(@sapAvatar_7_Background, @sapAccentColor7, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapAvatar_8_Background: @sapAccentBackgroundColor8;
+@sapAvatar_8_BorderColor: @sapAvatar_8_Background;
+@sapAvatar_8_TextColor: contrast(@sapAvatar_8_Background, @sapAccentColor8, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapAvatar_9_Background: @sapAccentBackgroundColor9;
+@sapAvatar_9_BorderColor: @sapAvatar_9_Background;
+@sapAvatar_9_TextColor: contrast(@sapAvatar_9_Background, @sapAccentColor9, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapAvatar_10_Background: @sapAccentBackgroundColor10;
+@sapAvatar_10_BorderColor: @sapAvatar_10_Background;
+@sapAvatar_10_TextColor: contrast(@sapAvatar_10_Background, darken(@sapAccentColor10, 3), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapButton_Background: darken(@sapBackgroundColor, 4);
@@ -892,16 +928,52 @@
 @sapButton_Neutral_Active_TextColor: contrast(@sapButton_Neutral_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
-@sapButton_Track_Selected_Background: @sapHighlightColor;
-
-// [Tags "!Protected"]
-@sapButton_Track_Selected_TextColor: @sapHighlightColor;
-
-// [Tags "!Protected"]
 @sapButton_Track_Background: @sapNeutralElementColor;
+@sapButton_Track_BorderColor: @sapButton_Track_Background;
 
 // [Tags "!Protected"]
 @sapButton_Track_TextColor: contrast(@sapButton_Track_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Track_Hover_Background: darken(@sapButton_Track_Background, 7);
+@sapButton_Track_Hover_BorderColor: @sapButton_Track_Hover_Background;
+
+// [Tags "!Protected"]
+@sapButton_Track_Selected_Background: @sapSelectedColor;
+@sapButton_Track_Selected_BorderColor: @sapButton_Track_Selected_Background;
+
+// [Tags "!Protected"]
+@sapButton_Track_Selected_TextColor: contrast(@sapButton_Track_Selected_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Track_Selected_Hover_Background: darken(@sapButton_Track_Selected_Background, 5);
+@sapButton_Track_Selected_Hover_BorderColor: @sapButton_Track_Selected_Hover_Background;
+@sapButton_Handle_Background: @sapPrimary3;
+@sapButton_Handle_BorderColor: @sapButton_Handle_Background;
+@sapButton_Handle_TextColor: contrast(@sapButton_Handle_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Handle_Hover_Background: @sapButton_Handle_Background;
+@sapButton_Handle_Hover_BorderColor: fade(@sapButton_Handle_Background, 50);
+@sapButton_Handle_Selected_Background: @sapButton_Selected_Background;
+@sapButton_Handle_Selected_BorderColor: @sapButton_Handle_Selected_Background;
+@sapButton_Handle_Selected_TextColor: @sapButton_Selected_TextColor;
+@sapButton_Handle_Selected_Hover_Background: @sapButton_Handle_Selected_Background;
+@sapButton_Handle_Selected_Hover_BorderColor: fade(@sapButton_Handle_Selected_Background, 50);
+@sapButton_Track_Negative_Background: @sapNegativeElementColor;
+@sapButton_Track_Negative_BorderColor: @sapButton_Track_Negative_Background;
+@sapButton_Track_Negative_TextColor: contrast(@sapButton_Track_Negative_Background, @sapNegativeElementColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Track_Negative_Hover_Background: darken(@sapButton_Track_Negative_Background, 10);
+@sapButton_Track_Negative_Hover_BorderColor: @sapButton_Track_Negative_Hover_Background;
+@sapButton_Handle_Negative_Background: @sapButton_Handle_Background;
+@sapButton_Handle_Negative_BorderColor: @sapButton_Handle_Negative_Background;
+@sapButton_Handle_Negative_TextColor: contrast(@sapButton_Handle_Negative_Background, @sapNegativeTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Handle_Negative_Hover_Background: @sapButton_Handle_Negative_Background;
+@sapButton_Handle_Negative_Hover_BorderColor: fade(@sapButton_Handle_Negative_Background, 50);
+@sapButton_Track_Positive_Background: @sapPositiveElementColor;
+@sapButton_Track_Positive_BorderColor: @sapButton_Track_Positive_Background;
+@sapButton_Track_Positive_TextColor: contrast(@sapButton_Track_Positive_Background, @sapPositiveElementColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Track_Positive_Hover_Background: darken(@sapButton_Track_Positive_Background, 3);
+@sapButton_Track_Positive_Hover_BorderColor: @sapButton_Track_Positive_Hover_Background;
+@sapButton_Handle_Positive_Background: @sapPrimary3;
+@sapButton_Handle_Positive_BorderColor: @sapButton_Handle_Positive_Background;
+@sapButton_Handle_Positive_TextColor: contrast(@sapButton_Handle_Positive_Background, @sapPositiveTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Handle_Positive_Hover_Background: @sapButton_Handle_Positive_Background;
+@sapButton_Handle_Positive_Hover_BorderColor: fade(@sapButton_Handle_Positive_Background, 50);
 
 // [Tags "!Protected"]
 @sapButton_TokenBackground: @sapPrimary3;
@@ -911,6 +983,7 @@
 
 // [Tags "!Protected"]
 @sapField_Background: darken(@sapPrimary4, 2);
+@sapField_BackgroundStyle: ~"0 100% / 100% @{sapField_BorderWidth} no-repeat linear-gradient(0deg, @{sapField_BorderColor}, @{sapField_BorderColor}) border-box";
 
 // [Tags "!Protected"]
 @sapField_TextColor: darken(@sapTextColor, 9);
@@ -926,12 +999,14 @@
 
 // [Tags "!Protected"]
 @sapField_BorderWidth: @sapElement_BorderWidth;
+@sapField_BorderStyle: solid;
 
 // [Tags "!Protected"]
 @sapField_BorderCornerRadius: 0.25 * @sapContent_GridSize;
 
 // [Tags "!Protected"]
 @sapField_Hover_Background: @sapBaseColor;
+@sapField_Hover_BackgroundStyle: ~"0 100% / 100% @{sapField_BorderWidth} no-repeat linear-gradient(0deg, @{sapField_Hover_BorderColor}, @{sapField_Hover_BorderColor}) border-box";
 
 // [Tags "!Protected"]
 @sapField_Hover_BorderColor: @sapField_BorderColor;
@@ -968,6 +1043,7 @@
 
 // [Tags "!Protected"]
 @sapField_InvalidBackground: @sapErrorBackground;
+@sapField_InvalidBackgroundStyle: ~"0 100% / 100% @{sapField_InvalidBorderWidth} no-repeat linear-gradient(0deg, @{sapField_InvalidColor}, @{sapField_InvalidColor}) border-box";
 
 // [Tags "!Protected"]
 @sapField_InvalidBorderWidth: 0.125 * @sapContent_GridSize;
@@ -980,6 +1056,7 @@
 
 // [Tags "!Protected"]
 @sapField_WarningBackground: @sapWarningBackground;
+@sapField_WarningBackgroundStyle: ~"0 100% / 100% @{sapField_WarningBorderWidth} no-repeat linear-gradient(0deg, @{sapField_WarningColor}, @{sapField_WarningColor}) border-box";
 
 // [Tags "!Protected"]
 @sapField_WarningBorderWidth: 0.125 * @sapContent_GridSize;
@@ -992,6 +1069,7 @@
 
 // [Tags "!Protected"]
 @sapField_SuccessBackground: @sapSuccessBackground;
+@sapField_SuccessBackgroundStyle: ~"0 100% / 100% @{sapField_SuccessBorderWidth} no-repeat linear-gradient(0deg, @{sapField_SuccessColor}, @{sapField_SuccessColor}) border-box";
 
 // [Tags "!Protected"]
 @sapField_SuccessBorderWidth: 0.0625 * @sapContent_GridSize;
@@ -1004,6 +1082,7 @@
 
 // [Tags "!Protected"]
 @sapField_InformationBackground: @sapInformationBackground;
+@sapField_InformationBackgroundStyle: ~"0 100% / 100% @{sapField_InformationBorderWidth} no-repeat linear-gradient(0deg, @sapField_InformationColor, @sapField_InformationColor) border-box";
 
 // [Tags "!Protected"]
 @sapField_InformationBorderWidth: 0.125 * @sapContent_GridSize;
@@ -1019,6 +1098,9 @@
 
 // [Tags "!Protected"]
 @sapGroup_TitleTextColor: contrast(@sapGroup_TitleBackground, @sapTitleColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+@sapGroup_Title_FontSize: @sapFontHeader5Size;
 
 // [Tags "!Protected"]
 @sapGroup_ContentBackground: @sapBaseColor;
@@ -1112,9 +1194,45 @@
 
 // [Tags "!Protected"]
 @sapList_TableFixedBorderColor: darken(@sapList_BorderColor, 35);
+@sapMessage_ErrorBorderColor: darken(@sapErrorBackground, 18);
+@sapMessage_WarningBorderColor: darken(@sapWarningBackground, 20);
+@sapMessage_SuccessBorderColor: darken(@sapSuccessBackground, 24);
+@sapMessage_InformationBorderColor: darken(@sapInformationBackground, 20);
+@sapPopover_BorderCornerRadius: 0.5 * @sapContent_GridSize;
+@sapProgress_Background: darken(@sapNeutralBackground, 9.2);
+@sapProgress_BorderColor: @sapProgress_Background;
+@sapProgress_TextColor: @sapTextColor;
+@sapProgress_FontSize: @sapFontSize;
+@sapProgress_NegativeBackground: darken(@sapErrorBackground, 3);
+@sapProgress_NegativeBorderColor: @sapProgress_NegativeBackground;
+@sapProgress_NegativeTextColor: @sapProgress_TextColor;
+@sapProgress_CriticalBackground: darken(@sapWarningBackground, 5);
+@sapProgress_CriticalBorderColor: @sapProgress_CriticalBackground;
+@sapProgress_CriticalTextColor: @sapProgress_TextColor;
+@sapProgress_PositiveBackground: darken(@sapSuccessBackground, 10);
+@sapProgress_PositiveBorderColor: @sapProgress_PositiveBackground;
+@sapProgress_PositiveTextColor: @sapProgress_TextColor;
+@sapProgress_InformationBackground: darken(@sapInformationBackground, 4);
+@sapProgress_InformationBorderColor: @sapProgress_InformationBackground;
+@sapProgress_InformationTextColor: @sapProgress_TextColor;
+@sapProgress_Value_Background: @sapNeutralElementColor;
+@sapProgress_Value_BorderColor: @sapProgress_Background;
+@sapProgress_Value_TextColor: @sapNeutralElementColor;
+@sapProgress_Value_NegativeBackground: @sapNegativeElementColor;
+@sapProgress_Value_NegativeBorderColor: @sapProgress_NegativeBackground;
+@sapProgress_Value_NegativeTextColor: @sapNegativeElementColor;
+@sapProgress_Value_CriticalBackground: @sapCriticalElementColor;
+@sapProgress_Value_CriticalBorderColor: @sapProgress_CriticalBackground;
+@sapProgress_Value_CriticalTextColor: @sapCriticalElementColor;
+@sapProgress_Value_PositiveBackground: @sapPositiveElementColor;
+@sapProgress_Value_PositiveBorderColor: @sapProgress_PositiveBackground;
+@sapProgress_Value_PositiveTextColor: @sapPositiveElementColor;
+@sapProgress_Value_InformationBackground: @sapInformativeElementColor;
+@sapProgress_Value_InformationBorderColor: @sapProgress_InformationBackground;
+@sapProgress_Value_InformationTextColor: @sapInformativeElementColor;
 
 // [Tags "!Protected"]
-@sapScrollBar_FaceColor: lighten(@sapPrimary4, 3);
+@sapScrollBar_FaceColor: lighten(@sapPrimary5, 2);
 
 // [Tags "!Protected"]
 @sapScrollBar_TrackColor: @sapBaseColor;
@@ -1130,6 +1248,19 @@
 
 // [Tags "!Protected"]
 @sapScrollBar_Hover_FaceColor: darken(@sapScrollBar_FaceColor, 4);
+@sapSlider_Background: darken(@sapNeutralBackground, 9.2);
+@sapSlider_BorderColor: @sapSlider_Background;
+@sapSlider_Selected_Background: @sapSelectedColor;
+@sapSlider_Selected_BorderColor: @sapSlider_Selected_Background;
+@sapSlider_HandleBackground: @sapPrimary3;
+@sapSlider_HandleBorderColor: @sapSlider_HandleBackground;
+@sapSlider_RangeHandleBackground: @sapSlider_HandleBackground;
+@sapSlider_Hover_HandleBackground: @sapSlider_HandleBackground;
+@sapSlider_Hover_HandleBorderColor: @sapHighlightColor;
+@sapSlider_Hover_RangeHandleBackground: transparent;
+@sapSlider_Active_HandleBackground: @sapButton_Active_Background;
+@sapSlider_Active_HandleBorderColor: @sapSlider_Active_HandleBackground;
+@sapSlider_Active_RangeHandleBackground: transparent;
 
 // [Tags "!Protected"]
 @sapPageHeader_Background: @sapBaseColor;
@@ -1172,6 +1303,11 @@
 
 // [Tags "!Protected"]
 @sapObjectHeader_BorderColor: darken(@sapObjectHeader_Background, 15);
+@sapObjectHeader_Title_TextColor: contrast(@sapObjectHeader_Background, @sapTitleColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapObjectHeader_Title_FontSize: @sapFontHeader2Size;
+@sapObjectHeader_Title_SnappedFontSize: @sapFontHeader4Size;
+@sapObjectHeader_Title_FontFamily: @sapFontBlackFamily;
+@sapObjectHeader_Subtitle_TextColor: contrast(@sapObjectHeader_Background, @sapContent_LabelColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapBlockLayer_Background: #000;
@@ -1187,6 +1323,7 @@
 
 // [Tags "!Protected"]
 @sapTile_BorderColor: transparent;
+@sapTile_BorderCornerRadius: 1 * @sapContent_GridSize;
 
 // [Tags "!Protected"]
 @sapTile_TitleTextColor: contrast(@sapTile_Background, @sapTitleColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
@@ -1231,6 +1368,8 @@
 
 // [Tags "!Protected"]
 @sapIndicationColor_1: #840606;
+@sapIndicationColor_1_Background: @sapIndicationColor_1;
+@sapIndicationColor_1_BorderColor: @sapIndicationColor_1;
 
 // [Tags "!Protected"]
 @sapIndicationColor_1_Hover_Background: darken(@sapIndicationColor_1, 5);
@@ -1239,10 +1378,12 @@
 @sapIndicationColor_1_Active_Background: darken(@sapIndicationColor_1, 10);
 
 // [Tags "!Protected"]
-@sapIndicationColor_1_TextColor: contrast(@sapIndicationColor_1, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_1_TextColor: contrast(@sapIndicationColor_1_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapIndicationColor_2: #aa0808;
+@sapIndicationColor_2_Background: @sapIndicationColor_2;
+@sapIndicationColor_2_BorderColor: @sapIndicationColor_2;
 
 // [Tags "!Protected"]
 @sapIndicationColor_2_Hover_Background: darken(@sapIndicationColor_2, 5);
@@ -1251,10 +1392,12 @@
 @sapIndicationColor_2_Active_Background: darken(@sapIndicationColor_2, 10);
 
 // [Tags "!Protected"]
-@sapIndicationColor_2_TextColor: contrast(@sapIndicationColor_2, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_2_TextColor: contrast(@sapIndicationColor_2_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapIndicationColor_3: #e76500;
+@sapIndicationColor_3_Background: @sapIndicationColor_3;
+@sapIndicationColor_3_BorderColor: @sapIndicationColor_3;
 
 // [Tags "!Protected"]
 @sapIndicationColor_3_Hover_Background: darken(@sapIndicationColor_3, 3);
@@ -1263,10 +1406,12 @@
 @sapIndicationColor_3_Active_Background: darken(@sapIndicationColor_3, 6);
 
 // [Tags "!Protected"]
-@sapIndicationColor_3_TextColor: contrast(@sapIndicationColor_3, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_3_TextColor: contrast(@sapIndicationColor_3_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapIndicationColor_4: #256f3a;
+@sapIndicationColor_4_Background: @sapIndicationColor_4;
+@sapIndicationColor_4_BorderColor: @sapIndicationColor_4;
 
 // [Tags "!Protected"]
 @sapIndicationColor_4_Hover_Background: darken(@sapIndicationColor_4, 5);
@@ -1275,10 +1420,12 @@
 @sapIndicationColor_4_Active_Background: darken(@sapIndicationColor_4, 10);
 
 // [Tags "!Protected"]
-@sapIndicationColor_4_TextColor: contrast(@sapIndicationColor_4, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_4_TextColor: contrast(@sapIndicationColor_4_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapIndicationColor_5: #0070f2;
+@sapIndicationColor_5_Background: @sapIndicationColor_5;
+@sapIndicationColor_5_BorderColor: @sapIndicationColor_5;
 
 // [Tags "!Protected"]
 @sapIndicationColor_5_Hover_Background: darken(@sapIndicationColor_5, 5);
@@ -1287,10 +1434,12 @@
 @sapIndicationColor_5_Active_Background: darken(@sapIndicationColor_5, 10);
 
 // [Tags "!Protected"]
-@sapIndicationColor_5_TextColor: contrast(@sapIndicationColor_5, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_5_TextColor: contrast(@sapIndicationColor_5_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapIndicationColor_6: #046c7a;
+@sapIndicationColor_6_Background: @sapIndicationColor_6;
+@sapIndicationColor_6_BorderColor: @sapIndicationColor_6;
 
 // [Tags "!Protected"]
 @sapIndicationColor_6_Hover_Background: darken(@sapIndicationColor_6, 5);
@@ -1299,10 +1448,12 @@
 @sapIndicationColor_6_Active_Background: darken(@sapIndicationColor_6, 10);
 
 // [Tags "!Protected"]
-@sapIndicationColor_6_TextColor: contrast(@sapIndicationColor_6, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_6_TextColor: contrast(@sapIndicationColor_6_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapIndicationColor_7: #5d36ff;
+@sapIndicationColor_7_Background: @sapIndicationColor_7;
+@sapIndicationColor_7_BorderColor: @sapIndicationColor_7;
 
 // [Tags "!Protected"]
 @sapIndicationColor_7_Hover_Background: darken(@sapIndicationColor_7, 5);
@@ -1311,10 +1462,12 @@
 @sapIndicationColor_7_Active_Background: darken(@sapIndicationColor_7, 10);
 
 // [Tags "!Protected"]
-@sapIndicationColor_7_TextColor: contrast(@sapIndicationColor_7, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_7_TextColor: contrast(@sapIndicationColor_7_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapIndicationColor_8: #a100c2;
+@sapIndicationColor_8_Background: @sapIndicationColor_8;
+@sapIndicationColor_8_BorderColor: @sapIndicationColor_8;
 
 // [Tags "!Protected"]
 @sapIndicationColor_8_Hover_Background: darken(@sapIndicationColor_8, 5);
@@ -1323,7 +1476,7 @@
 @sapIndicationColor_8_Active_Background: darken(@sapIndicationColor_8, 10);
 
 // [Tags "!Protected"]
-@sapIndicationColor_8_TextColor: contrast(@sapIndicationColor_8, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapIndicationColor_8_TextColor: contrast(@sapIndicationColor_8_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapLegend_WorkingBackground: @sapList_Background;
@@ -1547,12 +1700,20 @@
 // @sapFontUrl_72_Regular_woff: url(./../baseTheme/fonts/72-Regular.woff);
 // @sapFontUrl_72_Bold_woff2: url(./../baseTheme/fonts/72-Bold.woff2);
 // @sapFontUrl_72_Bold_woff: url(./../baseTheme/fonts/72-Bold.woff);
+// @sapFontUrl_72_Semibold_woff2: url(./../baseTheme/fonts/72-Semibold.woff2);
+// @sapFontUrl_72_Semibold_woff: url(./../baseTheme/fonts/72-Semibold.woff);
+// @sapFontUrl_72_SemiboldDuplex_woff2: url(./../baseTheme/fonts/72-SemiboldDuplex.woff2);
+// @sapFontUrl_72_SemiboldDuplex_woff: url(./../baseTheme/fonts/72-SemiboldDuplex.woff);
 // @sapFontUrl_72_Light_woff2: url(./../baseTheme/fonts/72-Light.woff2);
 // @sapFontUrl_72_Light_woff: url(./../baseTheme/fonts/72-Light.woff);
 // @sapFontUrl_72_Regular_full_woff2: url(./../baseTheme/fonts/72-Regular-full.woff2);
 // @sapFontUrl_72_Regular_full_woff: url(./../baseTheme/fonts/72-Regular-full.woff);
 // @sapFontUrl_72_Bold_full_woff2: url(./../baseTheme/fonts/72-Bold-full.woff2);
 // @sapFontUrl_72_Bold_full_woff: url(./../baseTheme/fonts/72-Bold-full.woff);
+// @sapFontUrl_72_Semibold_full_woff2: url(./../baseTheme/fonts/72-Semibold-full.woff2);
+// @sapFontUrl_72_Semibold_full_woff: url(./../baseTheme/fonts/72-Semibold-full.woff);
+// @sapFontUrl_72_SemiboldDuplex_full_woff2: url(./../baseTheme/fonts/72-SemiboldDuplex-full.woff2);
+// @sapFontUrl_72_SemiboldDuplex_full_woff: url(./../baseTheme/fonts/72-SemiboldDuplex-full.woff);
 // @sapFontUrl_72_Light_full_woff2: url(./../baseTheme/fonts/72-Light-full.woff2);
 // @sapFontUrl_72_Light_full_woff: url(./../baseTheme/fonts/72-Light-full.woff);
 // @sapFontUrl_72_Black_woff2: url(./../baseTheme/fonts/72-Black.woff2);
@@ -1578,5 +1739,4 @@
 // @sapSvgLib_SAPWeb-icons: url(./svg/libs/SAPWeb-icons.svg);
 @sapBackgroundColorDefault: darken(@sapPrimary3, 3);
 @sapList_HighlightColor: @sapHighlightColor;
-@sapGroup_Title_FontSize: @sapFontSize;
 @sapShell_BackgroundGradient: linear-gradient(to bottom, @sapShell_Background, @sapShell_Background);
