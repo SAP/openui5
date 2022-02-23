@@ -40,7 +40,21 @@ sap.ui.define([
 						formatOptions: oFormatter
 					},
 					editable: oConfig.editable,
-					type: "Number"
+					type: "Number",
+					parseError: function (oEvent) {
+						var oControl = oEvent.getSource(),
+						errorMsg = null;
+						if (oControl.getValue() !== "") {
+							if (oEvent.getParameters() && oEvent.getParameters().exception && oEvent.getParameters().exception.message) {
+								errorMsg = oEvent.getParameters().exception.message;
+							} else {
+								errorMsg = oEvent.getId();
+							}
+							oControl.getParent()._showValueState("error", errorMsg);
+						} else {
+							oControl.getParent()._showValueState("none", "");
+						}
+					}
 				}
 			};
 		} else if (oVisualization.type === "Slider") {
