@@ -609,6 +609,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			} else {
 				this._innerInput.blur();
 			}
+			!Device.isPhone() && this._innerInput.setSelectionRange(0, this.value.length);
 			this._lastValue = this.value;
 		}
 		inputFocusOut(event) {

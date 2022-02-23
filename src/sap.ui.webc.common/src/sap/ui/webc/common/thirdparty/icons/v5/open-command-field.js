@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "open-command-field";
-	const pathData = "M390 257L287 155c-6-6-9-14-9-22 0-7 3-15 9-21s14-10 22-10 15 4 22 10l124 124c6 6 9 14 9 21 0 8-3 16-9 22L331 403c-7 6-14 9-22 9s-16-3-22-9-9-14-9-22c0-7 3-15 9-21zm-226-1L62 153c-6-6-9-14-9-21 0-8 3-16 9-22s14-9 22-9 15 3 22 9l124 124c6 6 9 14 9 22 0 7-3 15-9 21L106 401c-7 6-14 9-22 9s-16-3-22-9-9-14-9-22c0-7 3-15 9-21z";
+	const pathData = "M287 155q-9-9-9-22 0-12 9-21 10-10 22-10 10 0 22 10l124 124q9 9 9 21 0 13-9 22L331 403q-10 9-22 9-13 0-22-9t-9-22q0-12 9-21l103-103zm-225-2q-9-9-9-21 0-13 9-22t22-9q12 0 22 9l124 124q9 9 9 22 0 12-9 21L106 401q-10 9-22 9-13 0-22-9t-9-22q0-12 9-21l102-102z";
 	const ltr = false;
 	const collection = "SAP-icons-v5";
 	const packageName = "@ui5/webcomponents-icons";

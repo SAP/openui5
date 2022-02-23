@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (Icons, i18nDefaults) { 'use strict';
 
 	const name = "add";
-	const pathData = "M444 220c22 0 36 15 36 37s-14 37-36 37H294v149c0 22-15 37-37 37s-36-15-36-37V294H69c-22 0-37-15-37-37s15-37 37-37h152V73c0-22 14-37 36-37s37 15 37 37v147h150z";
+	const pathData = "M286 279v164q0 11-7.5 18.5T260 469q-10 0-18-8-8-6-8-18V279H70q-12 0-18-8-8-8-8-18 0-11 7.5-18.5T70 227h164V63q0-11 7.5-18.5T260 37t18.5 7.5T286 63v164h164q11 0 18.5 7.5T476 253t-7.5 18.5T450 279H286z";
 	const ltr = false;
 	const accData = i18nDefaults.ICON_ADD;
 	const collection = "SAP-icons-v5";

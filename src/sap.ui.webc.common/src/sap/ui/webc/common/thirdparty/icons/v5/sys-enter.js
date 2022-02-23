@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "sys-enter";
-	const pathData = "M256 0c141 0 256 115 256 256 0 140-115 255-256 255C116 511 1 396 1 256 1 115 116 0 256 0zm0 460c113 0 204-92 204-204 0-113-91-205-204-205-112 0-204 92-204 205 0 112 92 204 204 204zm84-299c11-10 26-10 36 0s10 26 0 36L223 350c-10 10-26 10-36 0l-51-51c-10-10-10-26 0-36s26-10 36 0l33 33z";
+	const pathData = "M256 0q53 0 99.5 20T437 75t55 81.5 20 99.5q0 52-20 98.5T437 436t-81.5 55-99.5 20q-52 0-98.5-20T76 436t-55-81.5T1 256q0-53 20-99.5T76 75t81.5-55T256 0zm0 460q42 0 79.5-16t65-44 43.5-65 16-79-16-79.5-43.5-65.5-65-44T256 51t-79 16-65 44-44 65.5T52 256t16 79 44 65 65 44 79 16zm84-299q8-8 18-8t18 8 8 18-8 18L223 350q-8 8-18 8t-18-8l-51-51q-8-8-8-18t8-18 18-8 18 8l33 33z";
 	const ltr = true;
 	const collection = "SAP-icons-v5";
 	const packageName = "@ui5/webcomponents-icons";

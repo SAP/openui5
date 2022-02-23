@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (Icons, i18nDefaults) { 'use strict';
 
 	const name = "message-information";
-	const pathData = "M288 378V250c0-18-14-32-32-32s-32 14-32 32v128c0 17 14 32 32 32s32-15 32-32zM256 0c141 0 256 115 256 256S397 512 256 512 0 397 0 256 115 0 256 0zm0 178c21 0 38-17 38-38s-17-39-38-39-38 18-38 39 17 38 38 38z";
+	const pathData = "M288 250q0-14-9-23t-23-9-23 9-9 23v128q0 13 9 22.5t23 9.5 23-9.5 9-22.5V250zM256 0q53 0 99.5 20T437 75t55 81.5 20 99.5-20 99.5-55 81.5-81.5 55-99.5 20-99.5-20T75 437t-55-81.5T0 256t20-99.5T75 75t81.5-55T256 0zm0 178q16 0 27-11t11-27-11-27.5-27-11.5-27 11.5-11 27.5 11 27 27 11z";
 	const ltr = true;
 	const accData = i18nDefaults.ICON_MESSAGE_INFORMATION;
 	const collection = "SAP-icons-v5";

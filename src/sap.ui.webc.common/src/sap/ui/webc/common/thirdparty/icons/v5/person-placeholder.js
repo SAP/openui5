@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "person-placeholder";
-	const pathData = "M358 242c74 28 125 99 125 184v57c0 17-11 29-28 29H57c-17 0-28-12-28-29v-57c0-85 51-156 125-184-26-26-40-60-40-99C114 63 177 1 256 1c80 0 142 62 142 142 0 39-14 73-40 99zM256 57c-48 0-85 37-85 86 0 48 37 85 85 85s85-37 85-85c0-49-37-86-85-86zm170 398v-29c0-79-62-142-141-142h-57c-80 0-142 63-142 142v29h340z";
+	const pathData = "M358 242q56 21 90.5 70.5T483 426v57q0 13-7.5 21t-20.5 8H57q-13 0-20.5-8T29 483v-57q0-64 34.5-113.5T154 242q-40-40-40-99 0-30 11-56t30.5-45 45-30T256 1t56 11 45 30 30 45 11 56q0 59-40 99zM256 57q-36 0-60.5 24.5T171 143q0 36 24.5 60.5T256 228t60.5-24.5T341 143q0-37-24.5-61.5T256 57zm170 369q0-30-11-55.5t-30-45-44.5-30.5-55.5-11h-57q-30 0-56 11t-45 30.5-30 45T86 426v29h340v-29z";
 	const ltr = false;
 	const collection = "SAP-icons-v5";
 	const packageName = "@ui5/webcomponents-icons";

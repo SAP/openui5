@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "fridge";
-	const pathData = "M384.5 1c43 0 76 33 76 76v358c0 43-33 77-76 77h-256c-43 0-77-34-77-77V77c0-43 34-76 77-76h256zm-256 51c-15 0-25 10-25 25v102h306V77c0-15-10-25-25-25h-256zm256 409c15 0 25-11 25-26V231h-306v204c0 15 10 26 25 26h256zm-205-307c-15 0-25-10-25-26v-25c0-16 10-26 25-26 16 0 26 10 26 26v25c0 16-10 26-26 26zm0 102c16 0 26 10 26 26v76c0 16-10 26-26 26-15 0-25-10-25-26v-76c0-16 10-26 25-26z";
+	const pathData = "M384.5 1q32 0 54 22t22 54v358q0 32-22 54.5t-54 22.5h-256q-32 0-54.5-22.5T51.5 435V77q0-32 22.5-54t54.5-22h256zm-256 51q-25 0-25 25v102h306V77q0-25-25-25h-256zm256 409q11 0 18-7.5t7-18.5V231h-306v204q0 11 7 18.5t18 7.5h256zm-205-307q-25 0-25-26v-25q0-26 25-26 26 0 26 26v25q0 26-26 26zm0 102q26 0 26 26v76q0 26-26 26-25 0-25-26v-76q0-26 25-26z";
 	const ltr = false;
 	const collection = "SAP-icons-v5";
 	const packageName = "@ui5/webcomponents-icons";

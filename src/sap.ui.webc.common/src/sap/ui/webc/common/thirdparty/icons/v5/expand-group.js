@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (Icons, i18nDefaults) { 'use strict';
 
 	const name = "expand-group";
-	const pathData = "M257.5 403l102-103c6-6 14-9 22-9s15 3 22 9c6 7 9 14 9 22s-3 16-9 22l-124 124c-7 6-14 9-22 9s-16-3-22-9l-124-124c-6-6-9-14-9-22s3-15 9-22c6-6 14-9 22-9s15 3 22 9zm2-225l102-103c6-6 14-9 22-9 7 0 15 3 21 9 7 6 10 14 10 22s-3 15-10 22l-124 124c-6 6-13 9-21 9s-16-3-22-9l-124-124c-6-7-9-14-9-22s3-16 9-22 14-9 22-9 15 3 22 9z";
+	const pathData = "M359.5 300q9-9 22-9 12 0 22 9 9 10 9 22 0 13-9 22l-124 124q-10 9-22 9-13 0-22-9l-124-124q-9-9-9-22 0-12 9-22 9-9 22-9 12 0 22 9l102 103zm2-225q9-9 22-9 12 0 21 9 10 9 10 22 0 12-10 22l-124 124q-9 9-21 9-13 0-22-9l-124-124q-9-11-9-22 0-13 9-22t22-9q12 0 22 9l102 103z";
 	const ltr = false;
 	const accData = i18nDefaults.ICON_EXPAND_GROUP;
 	const collection = "SAP-icons-v5";

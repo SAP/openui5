@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "sys-cancel-2";
-	const pathData = "M301 256l74-73c12-13 12-33 0-46-13-12-33-12-46 0l-73 74-73-74c-13-12-33-12-46 0-12 13-12 33 0 46l74 73-74 73c-12 13-12 33 0 46 13 12 33 12 46 0l73-74 73 74c13 12 33 12 46 0 12-13 12-33 0-46zm-45 256C115 512 0 397 0 256S115 0 256 0s256 115 256 256-115 256-256 256z";
+	const pathData = "M375 183q9-10 9-23t-9-23q-10-9-23-9t-23 9l-73 74-73-74q-10-9-23-9t-23 9q-9 10-9 23t9 23l74 73-74 73q-9 10-9 23t9 23q10 9 23 9t23-9l73-74 73 74q10 9 23 9t23-9q9-10 9-23t-9-23l-74-73zM256 512q-53 0-99.5-20T75 437t-55-81.5T0 256t20-99.5T75 75t81.5-55T256 0t99.5 20T437 75t55 81.5 20 99.5-20 99.5-55 81.5-81.5 55-99.5 20z";
 	const ltr = false;
 	const collection = "SAP-icons-v5";
 	const packageName = "@ui5/webcomponents-icons";

@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (Icons, i18nDefaults) { 'use strict';
 
 	const name = "overflow";
-	const pathData = "M57.5 205c31 0 57 26 57 57 0 32-26 57-57 57-32 0-57-25-57-57 0-31 25-57 57-57zm397 0c32 0 57 26 57 57 0 32-25 57-57 57-31 0-57-25-57-57 0-31 26-57 57-57zm-199 0c32 0 57 26 57 57 0 32-25 57-57 57-31 0-56-25-56-57 0-31 25-57 56-57z";
+	const pathData = "M57.5 205q23 0 40 17t17 40q0 24-17 40.5t-40 16.5q-24 0-40.5-16.5T.5 262q0-23 16.5-40t40.5-17zm397 0q24 0 40.5 17t16.5 40q0 24-16.5 40.5T454.5 319q-23 0-40-16.5t-17-40.5q0-23 17-40t40-17zm-199 0q24 0 40.5 17t16.5 40q0 24-16.5 40.5T255.5 319q-23 0-39.5-16.5T199.5 262q0-23 16.5-40t39.5-17z";
 	const ltr = false;
 	const accData = i18nDefaults.ICON_OVERFLOW;
 	const collection = "SAP-icons-v5";

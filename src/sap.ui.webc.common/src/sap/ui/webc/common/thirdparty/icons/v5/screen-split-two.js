@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "screen-split-two";
-	const pathData = "M435 20c43 0 77 33 77 76v307c0 43-34 77-77 77H77c-43 0-76-34-76-77V96c0-43 33-76 76-76h358zM52 403c0 15 10 26 25 26h154V71H77c-15 0-25 10-25 25v307zm409 0V96c0-15-11-25-26-25H282v358h153c15 0 26-11 26-26z";
+	const pathData = "M435 20q32 0 54.5 22T512 96v307q0 32-22.5 54.5T435 480H77q-32 0-54-22.5T1 403V96q0-32 22-54t54-22h358zM52 403q0 11 7 18.5t18 7.5h154V71H77q-25 0-25 25v307zM461 96q0-11-7.5-18T435 71H282v358h153q11 0 18.5-7.5T461 403V96z";
 	const ltr = false;
 	const collection = "SAP-icons-v5";
 	const packageName = "@ui5/webcomponents-icons";

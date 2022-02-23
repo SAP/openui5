@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (Icons, i18nDefaults) { 'use strict';
 
 	const name = "redo";
-	const pathData = "M330 342c-13-12-13-32 0-44l73-74H160c-54 0-96 42-96 96s42 96 96 96h192c19 0 32 13 32 32s-13 32-32 32H160C71 480 1 410 1 320c0-89 70-160 159-160h243l-73-73c-13-13-13-32 0-45 12-13 31-13 44 0l125 125c6 6 13 13 13 25 0 13-4 19-13 26L374 342c-13 13-32 13-44 0z";
+	const pathData = "M331.5 308q-8-8-8-18t8-18l60-60h-229q-33 0-55.5 22.5T84.5 290t22.5 55.5 55.5 22.5h98q12 0 19 7.5t7 18.5q0 26-26 26h-98q-27 0-50.5-10t-41.5-27.5-28-41.5-10-51 10-51 28-41.5T112 170t50.5-10h229l-60-59q-8-10-8-19 0-10 8-18t18-8 18 8l102 101q4 5 7 9t3 12q0 14-10 21l-102 101q-7 8-18 8t-18-8z";
 	const ltr = false;
 	const accData = i18nDefaults.ICON_REDO;
 	const collection = "SAP-icons-v5";

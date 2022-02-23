@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "rhombus-milestone";
-	const pathData = "M461 210q19 19 19 45.5T461 301L302 461q-21 19-46 19-24 0-45-19L51 301q-19-19-19-45.5T51 210L211 50q19-18 45-18t46 18zm-22 68q9-9 9-22 0-14-9-23L279 73q-9-9-23-9-13 0-22 9L74 233q-10 9-10 22.5T74 278l160 160q10 10 22 10 13 0 23-10z";
+	const pathData = "M490 203q22 22 22 51l-.5 15.5L490 307 309 490q-24 22-53 22-27 0-51-22L22 307Q0 285 0 255t22-52L205 21q21-21 51-21t53 21zm-25 78q10-10 10-25 0-16-10-26L282 47q-10-10-26-10-15 0-25 10L48 230q-11 10-11 25.5T48 281l183 183q11 11 25 11 15 0 26-11z";
 	const ltr = false;
 	const collection = "SAP-icons";
 	const packageName = "@ui5/webcomponents-icons";

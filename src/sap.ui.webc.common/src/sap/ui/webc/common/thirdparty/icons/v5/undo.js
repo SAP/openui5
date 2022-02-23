@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (Icons, i18nDefaults) { 'use strict';
 
 	const name = "undo";
-	const pathData = "M351.5 160c90 0 160 71 160 160s-70 160-160 160h-191c-19 0-32-13-32-32s13-32 32-32h191c55 0 96-42 96-96s-41-96-96-96h-242l73 74c13 12 13 32 0 44-13 13-32 13-45 0l-124-124c-7-7-13-13-13-26s4-16 13-25l124-125c13-13 32-13 45 0s13 32 0 45l-73 73h242z";
+	const pathData = "M180.5 308q-7 8-18 8t-18-8l-101-101q-11-7-11-21 0-8 3.5-12t7.5-9l101-101q8-8 18-8t18 8q8 7 8 18t-8 19l-59 59h228q27 0 51 10t41.5 27.5 27.5 41.5 10 51-10 51-27.5 41.5-41.5 27.5-51 10h-98q-11 0-18.5-7t-7.5-19q0-11 7.5-18.5t18.5-7.5h98q33 0 55.5-22.5t22.5-55.5-22.5-55.5-55.5-22.5h-228l59 60q8 7 8 18t-8 18z";
 	const ltr = false;
 	const accData = i18nDefaults.ICON_UNDO;
 	const collection = "SAP-icons-v5";

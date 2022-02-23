@@ -417,20 +417,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				return;
 			}
 			if (!this.getPreviouslyFocusedItem()) {
-				if (this.getFirstItem(x => x.selected && !x.disabled)) {
-					this.focusFirstSelectedItem();
-				} else {
-					this.focusFirstItem();
-				}
+				this.focusFirstItem();
 				event.stopImmediatePropagation();
 				return;
 			}
 			if (!this.getForwardingFocus()) {
-				if (this.getFirstItem(x => x.selected && !x.disabled)) {
-					this.focusFirstSelectedItem();
-				} else {
-					this.focusPreviouslyFocusedItem();
-				}
+				this.focusPreviouslyFocusedItem();
 				event.stopImmediatePropagation();
 			}
 			this.setForwardingFocus(false);

@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (Icons, i18nDefaults) { 'use strict';
 
 	const name = "resize-horizontal";
-	const pathData = "M205.25 20c15 0 26 10 26 25v409c0 15-11 26-26 26s-26-11-26-26V45c0-15 11-25 26-25zm102 0c16 0 26 10 26 25v409c0 15-10 26-26 26-15 0-25-11-25-26V45c0-15 10-25 25-25zm-186 135c10 10 10 26 0 36l-59 59 59 58c10 11 10 26 0 36-11 10-26 10-36 0l-77-76c-10-11-10-26 0-36l77-77c10-10 25-10 36 0zm383 77c10 10 10 25 0 36l-77 76c-10 10-25 10-36 0-10-10-10-25 0-36l59-58-59-59c-10-10-10-26 0-36 11-10 26-10 36 0z";
+	const pathData = "M205 20q11 0 18.5 7t7.5 18v409q0 11-7.5 18.5T205 480t-18.5-7.5T179 454V45q0-11 7.5-18t18.5-7zm102 0q26 0 26 25v409q0 11-7 18.5t-19 7.5q-11 0-18-7.5t-7-18.5V45q0-25 25-25zM121 155q8 8 8 18t-8 18l-59 59 59 58q8 8 8 18t-8 18-18 8-18-8L8 268q-8-8-8-18t8-18l77-77q8-8 18-8t18 8zm383 77q8 8 8 18t-8 18l-77 76q-8 8-18 8t-18-8-8-18 8-18l59-58-59-59q-8-8-8-18t8-18 18-8 18 8z";
 	const ltr = false;
 	const accData = i18nDefaults.ICON_RESIZE_HORIZONTAL;
 	const collection = "SAP-icons-v5";

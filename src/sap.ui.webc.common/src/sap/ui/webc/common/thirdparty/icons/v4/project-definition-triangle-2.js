@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "project-definition-triangle-2";
-	const pathData = "M471.95 371q9 19 8 38.5t-11 35-26.5 25.5-37.5 10h-297q-21 0-37.5-10t-26.5-25.5-11.5-35 7.5-38.5l149-298q11-20 29-30.5t38-10.5 38.5 10.5 29.5 30.5z";
+	const pathData = "M502 388q10 19 10 39 0 2-1 14.5t-12.5 30-30.5 29-42 11.5H88q-24 0-43-11.5t-30.5-29-12.5-30T1 425q0-18 9-37L180 49q12-23 32.5-35T256 2t44 12 33 35z";
 	const ltr = false;
 	const collection = "SAP-icons";
 	const packageName = "@ui5/webcomponents-icons";

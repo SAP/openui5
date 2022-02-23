@@ -28,7 +28,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			submits: {
 				type: Boolean,
 			},
-			title: {
+			tooltip: {
 				type: String,
 			},
 			active: {
@@ -211,7 +211,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.nonInteractive ? "-1" : this._tabIndex;
 		}
 		get showIconTooltip() {
-			return this.iconOnly && !this.title;
+			return this.iconOnly && !this.tooltip;
 		}
 		get ariaLabelText() {
 			return AriaLabelHelper.getEffectiveAriaLabelText(this);

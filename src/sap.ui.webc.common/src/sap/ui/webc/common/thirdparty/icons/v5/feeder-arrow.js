@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "feeder-arrow";
-	const pathData = "M274 256L172 153c-6-6-9-14-9-21 0-8 3-16 9-22s14-9 22-9c7 0 15 3 21 9l124 124c7 6 10 14 10 22 0 7-3 15-10 21L215 401c-6 6-14 9-21 9-8 0-16-3-22-9s-9-14-9-22c0-7 3-15 9-21z";
+	const pathData = "M172 153q-9-9-9-21 0-13 9-22t22-9q12 0 21 9l124 124q10 9 10 22 0 12-10 21L215 401q-9 9-21 9-13 0-22-9t-9-22q0-12 9-21l102-102z";
 	const ltr = false;
 	const collection = "SAP-icons-v5";
 	const packageName = "@ui5/webcomponents-icons";

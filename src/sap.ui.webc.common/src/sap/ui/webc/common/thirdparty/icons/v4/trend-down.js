@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "trend-down";
-	const pathData = "M447.95 448q0 13-9.5 22.5t-22.5 9.5h-223q-14 0-23.5-9.5t-9.5-23.5q0-13 9.5-22.5t22.5-9.5l148 1-263-263q-9-9-9.5-22t9.5-23q9-9 22.5-9t22.5 9l263 263V224q0-14 9-23.5t23-8.5q14-1 23 8t8 23v225z";
+	const pathData = "M448 448q0 13-9.5 22.5T416 480H193q-14 0-23.5-9.5T160 447q0-13 9.5-22.5T192 415l148 1L77 153q-9-9-9.5-16l-.5-7q0-12 10-22 9-9 22.5-9t22.5 9l263 263V224q0-14 8.5-23t20.5-9h6q12 0 20 8t8 20v228z";
 	const ltr = false;
 	const collection = "SAP-icons";
 	const packageName = "@ui5/webcomponents-icons";

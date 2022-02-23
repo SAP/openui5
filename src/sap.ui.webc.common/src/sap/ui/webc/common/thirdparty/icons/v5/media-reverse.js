@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "media-reverse";
-	const pathData = "M438 42c9 6 10 15 10 29v370c0 14-7 25-17 32-6 4-13 6-20 6s-13-2-18-5L98 289c-12-7-19-18-19-29s8-23 19-30L393 46c7-6 17-9 27-9 6 0 13 1 18 5zm-64 332V138L186 256z";
+	const pathData = "M438 42q7 5 8.5 11.5T448 71v370q0 20-17 32-9 6-20 6-10 0-18-5L98 289q-19-11-19-29 0-8 5.5-16.5T98 230L393 46q14-9 27-9 5 0 9.5 1t8.5 4zm-64 96L186 256l188 118V138z";
 	const ltr = true;
 	const collection = "SAP-icons-v5";
 	const packageName = "@ui5/webcomponents-icons";

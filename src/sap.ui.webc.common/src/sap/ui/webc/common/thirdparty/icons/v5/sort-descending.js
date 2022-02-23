@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (Icons, i18nDefaults) { 'use strict';
 
 	const name = "sort-descending";
-	const pathData = "M483 28c17 0 29 11 29 29 0 17-12 28-29 28H228c-17 0-28-11-28-28 0-18 11-29 28-29h255zm-85 114c17 0 29 11 29 28s-12 28-29 28H228c-17 0-28-11-28-28s11-28 28-28h170zm-85 113c17 0 28 12 28 29s-11 28-28 28h-85c-17 0-28-11-28-28s11-29 28-29h85zM49 377l37 37V57c0-18 11-29 28-29s29 11 29 29v357l37-37c11-11 28-11 39 0 12 12 12 29 0 40l-85 85c-11 12-28 12-40 0L9 417c-11-11-11-28 0-40 12-11 29-11 40 0z";
+	const pathData = "M186.5 340q7-7 18-7t18.5 7 7.5 18-8 19l-77 76q-6 8-18 8-10 0-18-8l-77-76q-7-7-7-19 0-11 7.5-18t18.5-7 18 7l33 33V77q0-11 7-18.5t18-7.5 18.5 7.5 7.5 18.5v296zm172-84q11 0 18 7.5t7 18.5-7 18-18 7h-77q-11 0-18.5-7t-7.5-18 7.5-18.5 18.5-7.5h77zm102-205q11 0 18.5 7.5t7.5 18.5-7.5 18-18.5 7h-179q-11 0-18.5-7t-7.5-18 7.5-18.5 18.5-7.5h179zm-51 103q11 0 18.5 7t7.5 18-7.5 18.5-18.5 7.5h-128q-11 0-18.5-7.5t-7.5-18.5 7.5-18 18.5-7h128z";
 	const ltr = false;
 	const accData = i18nDefaults.ICON_SORT_DESCENDING;
 	const collection = "SAP-icons-v5";

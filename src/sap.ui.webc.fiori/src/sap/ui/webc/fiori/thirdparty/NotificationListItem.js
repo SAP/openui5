@@ -34,7 +34,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 			},
 			footnotes: {
 				type: HTMLElement,
-				propertyName: "footnotes",
 				individualSlots: true,
 			},
 			"default": {

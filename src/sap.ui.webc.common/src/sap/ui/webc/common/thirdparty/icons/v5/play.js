@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
 
 	const name = "play";
-	const pathData = "M256 2c141 0 256 115 256 255 0 141-115 256-256 256C116 513 1 398 1 257 1 117 116 2 256 2zm0 459c113 0 205-92 205-204S369 53 256 53C144 53 52 145 52 257s92 204 204 204zm-10-301l102 77c6 5 11 12 11 20s-5 15-11 20l-102 77c-7 5-18 8-25 3-8-5-16-13-16-23V180c0-10 5-17 16-23 7-5 20-2 25 3z";
+	const pathData = "M256 2q53 0 99.5 20T437 77t55 81 20 99-20 99.5-55 81.5-81.5 55-99.5 20q-52 0-98.5-20T76 438t-55-81.5T1 257t20-99 55-81 81.5-55T256 2zm0 459q42 0 79.5-16t65.5-44 44-65 16-79-16-79-44-65-65.5-44T256 53t-79 16-65 44-44 65-16 79 16 79 44 65 65 44 79 16zm92-224q11 9 11 20t-11 20l-102 77q-5 4-12.5 5.5T221 357q-6-4-11-9.5t-5-13.5V180q0-14 16-23 5-4 13-2.5t12 5.5z";
 	const ltr = true;
 	const collection = "SAP-icons-v5";
 	const packageName = "@ui5/webcomponents-icons";

@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/animations/slideDown', 'sap/ui/webc/common/thirdparty/base/animations/slideUp', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-right', './Button', './types/TitleLevel', './types/PanelAccessibleRole', './generated/templates/PanelTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Panel.css'], function (UI5Element, litRender, slideDown, slideUp, Keys, AnimationMode$1, AnimationMode, i18nBundle, slimArrowRight, Button, TitleLevel, PanelAccessibleRole, PanelTemplate_lit, i18nDefaults, Panel_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/animations/slideDown', 'sap/ui/webc/common/thirdparty/base/animations/slideUp', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-right', './Button', './Icon', './types/TitleLevel', './types/PanelAccessibleRole', './generated/templates/PanelTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Panel.css'], function (UI5Element, litRender, slideDown, slideUp, Keys, AnimationMode$1, AnimationMode, i18nBundle, slimArrowRight, Button, Icon, TitleLevel, PanelAccessibleRole, PanelTemplate_lit, i18nDefaults, Panel_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -226,7 +226,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			};
 		}
 		static get dependencies() {
-			return [Button];
+			return [Button, Icon];
 		}
 		static async onDefine() {
 			Panel.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
