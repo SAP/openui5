@@ -18,6 +18,7 @@
 			sameFilenameAllowed="true"
 			fileType="xml"
 			width="100%"
+			value="{translation>/filePath}"
 			icon="sap-icon://upload"
 			change=".saveFiles">
 			<u:xhrSettings>
@@ -26,14 +27,15 @@
 		</u:FileUploader>
 		<beginButton>
 			<Button
-				id="sapUiRta_uploadChangedTextsButton"
+				id="uploadTranslation"
 				text="{i18n>BTN_UPLOAD_CHANGED_TEXTS}"
+				enabled="{= !!${translation>/filePath}}"
 				type="Emphasized"
-				enabled="{= ${translation>/uploadChangedTexts}}"
 				press=".handleUploadPress" />
 		</beginButton>
 		<endButton>
 			<Button
+				id="cancelTranslationUpload"
 				text="{i18n>BUT_UPLOAD_CHANGED_TEXTS_CANCEL}"
 				press=".onCancelUploadDialog" />
 		</endButton>

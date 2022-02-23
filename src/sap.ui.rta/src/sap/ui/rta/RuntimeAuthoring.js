@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/library",
@@ -72,6 +73,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
 	VersionsAPI,
+	TranslationAPI,
 	Layer,
 	LayerUtils,
 	flexLibrary,
@@ -411,7 +413,7 @@ sap.ui.define([
 
 	RuntimeAuthoring.prototype._initVersioning = function() {
 		return VersionsAPI.initialize({
-			selector: this.getRootControlInstance(),
+			control: this.getRootControlInstance(),
 			layer: this.getLayer()
 		}).then(this._setVersionsModel.bind(this));
 	};
@@ -607,14 +609,14 @@ sap.ui.define([
 
 	RuntimeAuthoring.prototype._isOldVersionDisplayed = function() {
 		return VersionsAPI.isOldVersionDisplayed({
-			selector: this.getRootControlInstance(),
+			control: this.getRootControlInstance(),
 			layer: this.getLayer()
 		});
 	};
 
 	RuntimeAuthoring.prototype._isDraftAvailable = function() {
 		return VersionsAPI.isDraftAvailable({
-			selector: this.getRootControlInstance(),
+			control: this.getRootControlInstance(),
 			layer: this.getLayer()
 		});
 	};
@@ -624,7 +626,7 @@ sap.ui.define([
 		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		Log.error("Failed to transfer changes", sErrorMessage);
-		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
+		var sMsg = oTextResources.getText("MSG_TECHNICAL_ERROR") + "\n"
 				+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
 		MessageBox.error(sMsg, {
 			styleClass: Utils.getRtaStyleClassName()
@@ -719,6 +721,8 @@ sap.ui.define([
 			var oCommandStack = this.getCommandStack();
 			var bCanUndo = oCommandStack.canUndo();
 			var bCanRedo = oCommandStack.canRedo();
+			var bTranslationRelevantDirtyChange = this._oToolbarControlsModel.getProperty("/translationVisible") &&
+				TranslationAPI.hasTranslationRelevantDirtyChanges({layer: Layer.CUSTOMER, selector: this.getRootControlInstance()});
 
 			// TODO: move to the setter to the ChangesState
 			this._oVersionsModel.setDirtyChanges(bCanUndo);
@@ -726,6 +730,7 @@ sap.ui.define([
 			this._oToolbarControlsModel.setProperty("/redoEnabled", bCanRedo);
 			this._oToolbarControlsModel.setProperty("/publishEnabled", this.bInitialPublishEnabled || bCanUndo);
 			this._oToolbarControlsModel.setProperty("/restoreEnabled", this.bInitialResetEnabled || bCanUndo);
+			this._oToolbarControlsModel.setProperty("/translationEnabled", this.bInitialTranslationEnabled || bTranslationRelevantDirtyChange);
 		}
 		this.fireUndoRedoStackModified();
 		return Promise.resolve();
@@ -930,7 +935,7 @@ sap.ui.define([
 		var oSelector = this.getRootControlInstance();
 		return VersionsAPI.activate({
 			layer: sLayer,
-			selector: oSelector,
+			control: oSelector,
 			title: sVersionTitle
 		}).then(function () {
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
@@ -970,7 +975,7 @@ sap.ui.define([
 			if (sAction === MessageBox.Action.OK) {
 				return VersionsAPI.discardDraft({
 					layer: this.getLayer(),
-					selector: this.getRootControlInstance(),
+					control: this.getRootControlInstance(),
 					updateState: true
 				})
 				.then(this._handleDiscard.bind(this));
@@ -1025,7 +1030,7 @@ sap.ui.define([
 		}
 		var mParsedHash = FlexUtils.getParsedURLHash(this._getUShellService("URLParsing"));
 		VersionsAPI.loadVersionForApplication({
-			selector: this.getRootControlInstance(),
+			control: this.getRootControlInstance(),
 			layer: this.getLayer(),
 			version: sVersion
 		});
@@ -1088,47 +1093,66 @@ sap.ui.define([
 			}
 			this.addDependent(oToolbar, "toolbar");
 
-			return oToolbar.onFragmentLoaded().then(function() {
-				var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
-				var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
-				var oUriParameters = UriParameters.fromURL(window.location.href);
-				// the "Visualization" tab should not be visible if the "fiori-tools-rta-mode" URL-parameter is set to any value but "false"
-				var bVisualizationButtonVisible;
-				if (oUriParameters.has("fiori-tools-rta-mode") && oUriParameters.get("fiori-tools-rta-mode") !== "false") {
-					bVisualizationButtonVisible = false;
-				} else {
-					bVisualizationButtonVisible = true;
-				}
+			return Promise.all([oToolbar.onFragmentLoaded(), FeaturesAPI.isKeyUserTranslationEnabled(this.getLayer())])
+				.then(function(aArguments) {
+					var bTranslationAvailable = aArguments[1];
+					var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
+					var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
+					var oUriParameters = UriParameters.fromURL(window.location.href);
+					// the "Visualization" tab should not be visible if the "fiori-tools-rta-mode" URL-parameter is set to any value but "false"
+					var bVisualizationButtonVisible;
+					bVisualizationButtonVisible = !oUriParameters.has("fiori-tools-rta-mode") || oUriParameters.get("fiori-tools-rta-mode") === "false";
+					this.bInitialTranslationEnabled = false;
 
-				this._oToolbarControlsModel = new JSONModel({
-					undoEnabled: false,
-					redoEnabled: false,
-					translationVisible: false,
-					translationEnabled: false,
-					publishVisible: aButtonsVisibility.publishAvailable,
-					publishEnabled: this.bInitialPublishEnabled,
-					restoreEnabled: this.bInitialResetEnabled,
-					appVariantsOverviewVisible: bSaveAsAvailable && bExtendedOverview,
-					appVariantsOverviewEnabled: bSaveAsAvailable && bExtendedOverview,
-					saveAsVisible: bSaveAsAvailable,
-					saveAsEnabled: false,
-					manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
-					manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
-					modeSwitcher: this.getMode(),
-					visualizationButtonVisible: bVisualizationButtonVisible
-				});
+					this._oToolbarControlsModel = new JSONModel({
+						undoEnabled: false,
+						redoEnabled: false,
+						translationVisible: bTranslationAvailable,
+						translationEnabled: this.bInitialTranslationEnabled,
+						publishVisible: aButtonsVisibility.publishAvailable,
+						publishEnabled: this.bInitialPublishEnabled,
+						restoreEnabled: this.bInitialResetEnabled,
+						appVariantsOverviewVisible: bSaveAsAvailable && bExtendedOverview,
+						appVariantsOverviewEnabled: bSaveAsAvailable && bExtendedOverview,
+						saveAsVisible: bSaveAsAvailable,
+						saveAsEnabled: false,
+						manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
+						manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
+						modeSwitcher: this.getMode(),
+						visualizationButtonVisible: bVisualizationButtonVisible
+					});
 
-				if (bSaveAsAvailable) {
-					RtaAppVariantFeature.isManifestSupported().then(function (bResult) {
-						this._oToolbarControlsModel.setProperty("/saveAsEnabled", bResult);
-						this._oToolbarControlsModel.setProperty("/appVariantsOverviewEnabled", bResult);
-						this._oToolbarControlsModel.setProperty("/manageAppsEnabled", bResult);
+					var oTranslationPromise = new Promise(function (resolve) {
+						if (!bTranslationAvailable) {
+							resolve();
+							return;
+						}
+
+						TranslationAPI.getSourceLanguages({selector: this.getRootControlInstance(), layer: this.getLayer()})
+							.then(function (aSourceLanguages) {
+								this.bInitialTranslationEnabled = aSourceLanguages.length > 0;
+								this._oToolbarControlsModel.setProperty("/translationEnabled", this.bInitialTranslationEnabled);
+							}.bind(this)).finally(resolve);
 					}.bind(this));
-				}
 
-				this.getToolbar().setModel(this._oVersionsModel, "versions");
-				this.getToolbar().setModel(this._oToolbarControlsModel, "controls");
-			}.bind(this));
+					var oSaveAsPromise = new Promise(function (resolve) {
+						if (!bSaveAsAvailable) {
+							resolve();
+							return;
+						}
+
+						RtaAppVariantFeature.isManifestSupported().then(function (bResult) {
+							this._oToolbarControlsModel.setProperty("/saveAsEnabled", bResult);
+							this._oToolbarControlsModel.setProperty("/appVariantsOverviewEnabled", bResult);
+							this._oToolbarControlsModel.setProperty("/manageAppsEnabled", bResult);
+						}.bind(this)).finally(resolve);
+					}.bind(this));
+
+					this.getToolbar().setModel(this._oVersionsModel, "versions");
+					this.getToolbar().setModel(this._oToolbarControlsModel, "controls");
+
+					return Promise.all([oTranslationPromise, oSaveAsPromise]);
+				}.bind(this));
 		}
 		return Promise.resolve();
 	};
@@ -1669,12 +1693,12 @@ sap.ui.define([
 			if (oReloadInfo.isDraftAvailable) {
 				// clears FlexState and triggers reloading of the flex data without blocking
 				VersionsAPI.loadDraftForApplication({
-					selector: oReloadInfo.selector,
+					control: oReloadInfo.selector,
 					layer: oReloadInfo.layer
 				});
 			} else {
 				VersionsAPI.loadVersionForApplication({
-					selector: oReloadInfo.selector,
+					control: oReloadInfo.selector,
 					layer: oReloadInfo.layer,
 					allContexts: oReloadInfo.allContexts
 				});

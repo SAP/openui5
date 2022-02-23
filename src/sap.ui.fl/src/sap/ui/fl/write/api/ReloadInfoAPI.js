@@ -30,7 +30,7 @@ sap.ui.define([
 
 		return FeaturesAPI.isVersioningEnabled(oReloadInfo.layer).then(function(bVersioningAvailable) {
 			return bVersioningAvailable && VersionsAPI.isDraftAvailable({
-				selector: oReloadInfo.selector,
+				control: oReloadInfo.selector,
 				layer: oReloadInfo.layer
 			});
 		});
@@ -231,7 +231,10 @@ sap.ui.define([
 		initialDraftGotActivated: function(oReloadInfo) {
 			if (oReloadInfo.versioningEnabled) {
 				var bUrlHasVersionParameter = this.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft}, oReloadInfo.URLParsingService);
-				return !VersionsAPI.isDraftAvailable(oReloadInfo) && bUrlHasVersionParameter;
+				return !VersionsAPI.isDraftAvailable({
+					control: oReloadInfo.selector,
+					layer: oReloadInfo.layer
+				}) && bUrlHasVersionParameter;
 			}
 			return false;
 		},

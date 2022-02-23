@@ -166,7 +166,11 @@ sap.ui.define([
 				"de-DE"
 			];
 			var sUrl = "/flexKeyuser/flex/keyuser/v1/translation/sourcelanguages/reference";
-			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: aReturnedLanguages});
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({
+				response: {
+					sourceLanguages: aReturnedLanguages
+				}
+			});
 			return KeyUserConnector.translation.getSourceLanguages(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, [
 					"en-US",

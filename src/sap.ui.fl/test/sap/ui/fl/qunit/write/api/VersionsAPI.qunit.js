@@ -36,6 +36,9 @@ sap.ui.define([
 				getManifest: function () {
 					return {};
 				},
+				getManifestObject: function () {
+					return {};
+				},
 				getId: function () {
 					return "sComponentId";
 				},
@@ -62,7 +65,7 @@ sap.ui.define([
 
 			VersionsAPI.isDraftAvailable({
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			});
 
 			assert.equal(oGetModelStub.callCount, 1, "then the model was requested once");
@@ -75,6 +78,9 @@ sap.ui.define([
 		before: function() {
 			this.oAppComponent = {
 				getManifest: function () {
+					return {};
+				},
+				getManifestObject: function () {
 					return {};
 				},
 				getId: function () {
@@ -98,21 +104,21 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when no selector is provided", function (assert) {
+		QUnit.test("when no control is provided", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER
 			};
 
 			assert.throws(
 				VersionsAPI.isDraftAvailable.bind(undefined, mPropertyBag),
-				new Error("No selector was provided"),
+				new Error("No control was provided"),
 				"then an Error is thrown"
 			);
 		});
 
 		QUnit.test("when no layer is provided", function (assert) {
 			var mPropertyBag = {
-				selector: new Control()
+				control: new Control()
 			};
 
 			assert.throws(
@@ -122,10 +128,10 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
+		QUnit.test("when a control and a layer were provided, but no app ID could be determined", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			};
 
 			assert.throws(
@@ -135,10 +141,10 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a selector and a layer were provided and a draft exists", function(assert) {
+		QUnit.test("when a control and a layer were provided and a draft exists", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
@@ -155,10 +161,10 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when a selector and a layer were provided and a draft does not exists", function(assert) {
+		QUnit.test("when a control and a layer were provided and a draft does not exists", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
@@ -181,6 +187,9 @@ sap.ui.define([
 				getManifest: function () {
 					return {};
 				},
+				getManifestObject: function () {
+					return {};
+				},
 				getId: function () {
 					return "sComponentId";
 				},
@@ -202,21 +211,21 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when no selector is provided", function (assert) {
+		QUnit.test("when no control is provided", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER
 			};
 
 			assert.throws(
 				VersionsAPI.isOldVersionDisplayed.bind(undefined, mPropertyBag),
-				new Error("No selector was provided"),
+				new Error("No control was provided"),
 				"then an Error is thrown"
 			);
 		});
 
 		QUnit.test("when no layer is provided", function (assert) {
 			var mPropertyBag = {
-				selector: new Control()
+				control: new Control()
 			};
 
 			assert.throws(
@@ -226,10 +235,10 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
+		QUnit.test("when a control and a layer were provided, but no app ID could be determined", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			};
 
 			assert.throws(
@@ -239,10 +248,10 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a selector and a layer were provided and a draft exists", function(assert) {
+		QUnit.test("when a control and a layer were provided and a draft exists", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
@@ -259,10 +268,10 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when a selector and a layer were provided and display version is equal to active version", function(assert) {
+		QUnit.test("when a control and a layer were provided and display version is equal to active version", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
@@ -278,7 +287,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when a selector and a layer were provided and display version is not equal to active version", function(assert) {
+		QUnit.test("when a control and a layer were provided and display version is not equal to active version", function(assert) {
 			sandbox.stub(UriParameters, "fromQuery").returns({
 				get: function () {
 					return "1";
@@ -286,7 +295,7 @@ sap.ui.define([
 			});
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
@@ -309,52 +318,7 @@ sap.ui.define([
 				getManifest: function () {
 					return {};
 				},
-				getId: function () {
-					return "sComponentId";
-				},
-				getComponentData: function () {
-					return {
-						startupParameters: ["sap-app-id"]
-					};
-				}
-			};
-		},
-		beforeEach: function () {
-			sandbox.stub(Settings, "getInstance").resolves({
-				isVersioningEnabled: function () {
-					return true;
-				}
-			});
-		},
-		afterEach: function() {
-			sandbox.restore();
-			Versions.clearInstances();
-		}
-	}, function() {
-		QUnit.test("when no selector is provided", function (assert) {
-			var oSelector = new Control();
-			var mPropertyBag = {
-				layer: Layer.CUSTOMER,
-				selector: oSelector
-			};
-
-			var oLoadVersionForApplicationStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
-
-			return VersionsAPI.loadDraftForApplication(mPropertyBag)
-			.then(function () {
-				assert.equal(oLoadVersionForApplicationStub.callCount, 1, "loadVersionsForApplication was called once");
-				var oParameters = oLoadVersionForApplicationStub.getCall(0).args[0];
-				assert.equal(oParameters.layer, Layer.CUSTOMER, "and the layer was passed");
-				assert.equal(oParameters.selector, oSelector, "as well as the selector was passed");
-				assert.equal(oParameters.version, sap.ui.fl.Versions.Draft, "and the version number of the draft was passed");
-			});
-		});
-	});
-
-	QUnit.module("Given VersionsAPI.loadVersionForApplication is called", {
-		before: function() {
-			this.oAppComponent = {
-				getManifest: function () {
+				getManifestObject: function () {
 					return {};
 				},
 				getId: function () {
@@ -379,19 +343,70 @@ sap.ui.define([
 			Versions.clearInstances();
 		}
 	}, function() {
-		QUnit.test("when no selector is provided", function (assert) {
+		QUnit.test("when no control is provided", function (assert) {
+			var oControl = new Control();
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				control: oControl
+			};
+
+			var oLoadVersionForApplicationStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
+
+			return VersionsAPI.loadDraftForApplication(mPropertyBag)
+			.then(function () {
+				assert.equal(oLoadVersionForApplicationStub.callCount, 1, "loadVersionsForApplication was called once");
+				var oParameters = oLoadVersionForApplicationStub.getCall(0).args[0];
+				assert.equal(oParameters.layer, Layer.CUSTOMER, "and the layer was passed");
+				assert.equal(oParameters.control, oControl, "as well as the control was passed");
+				assert.equal(oParameters.version, sap.ui.fl.Versions.Draft, "and the version number of the draft was passed");
+			});
+		});
+	});
+
+	QUnit.module("Given VersionsAPI.loadVersionForApplication is called", {
+		before: function() {
+			this.oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getManifestObject: function () {
+					return {};
+				},
+				getId: function () {
+					return "sComponentId";
+				},
+				getComponentData: function () {
+					return {
+						startupParameters: ["sap-app-id"]
+					};
+				}
+			};
+		},
+		beforeEach: function () {
+			sandbox.stub(Settings, "getInstance").resolves({
+				isVersioningEnabled: function () {
+					return true;
+				}
+			});
+		},
+		afterEach: function() {
+			sandbox.restore();
+			Versions.clearInstances();
+		}
+	}, function() {
+		QUnit.test("when no control is provided", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER
 			};
 
 			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "No selector was provided", "then an Error is thrown");
+				assert.equal(sErrorMessage, "No control was provided", "then an Error is thrown");
 			});
 		});
 
 		QUnit.test("when no layer is provided", function (assert) {
 			var mPropertyBag = {
-				selector: new Control()
+				control: new Control()
 			};
 
 			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (sErrorMessage) {
@@ -399,24 +414,26 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when a selector, a layer and a version were provided, but no app ID could be determined", function (assert) {
+		QUnit.test("when a control, a layer and a version were provided, but no app ID could be determined", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control(),
+				control: new Control(),
 				version: sap.ui.fl.Versions.Original
 			};
 
-			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (oError) {
-				assert.equal(oError.message, "The application ID could not be determined", "then an Error is thrown");
-			});
+			assert.throws(
+				VersionsAPI.loadVersionForApplication.bind(undefined, mPropertyBag),
+				new Error("The application ID could not be determined"),
+				"then an Error is thrown"
+			);
 		});
 
-		QUnit.test("when a selector, a layer and context parameter were provided and the request returns a list", function (assert) {
+		QUnit.test("when a control, a layer and context parameter were provided and the request returns a list", function (assert) {
 			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;
 			var mPropertyBag = {
 				layer: sLayer,
-				selector: new Control(),
+				control: new Control(),
 				allContexts: true
 			};
 			sandbox.stub(Versions, "getVersionsModel").returns({
@@ -440,12 +457,12 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when a selector and a layer were provided and the request returns a list of versions", function (assert) {
+		QUnit.test("when a control and a layer were provided and the request returns a list of versions", function (assert) {
 			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;
 			var mPropertyBag = {
 				layer: sLayer,
-				selector: new Control(),
+				control: new Control(),
 				componentData: {},
 				manifest: {},
 				version: sap.ui.fl.Versions.Draft
@@ -467,12 +484,12 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when a selector and a layer but no version were provided and the request returns a list of versions", function (assert) {
+		QUnit.test("when a control and a layer but no version were provided and the request returns a list of versions", function (assert) {
 			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;
 			var mPropertyBag = {
 				layer: sLayer,
-				selector: new Control(),
+				control: new Control(),
 				componentData: {},
 				manifest: {}
 			};
@@ -507,6 +524,9 @@ sap.ui.define([
 				getManifest: function () {
 					return {};
 				},
+				getManifestObject: function () {
+					return {};
+				},
 				getId: function () {
 					return "sComponentId";
 				},
@@ -521,19 +541,19 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when no selector is provided", function (assert) {
+		QUnit.test("when no control is provided", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER
 			};
 
 			return VersionsAPI.activate(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "No selector was provided", "then an Error is thrown");
+				assert.equal(sErrorMessage, "No control was provided", "then an Error is thrown");
 			});
 		});
 
 		QUnit.test("when no layer is provided", function (assert) {
 			var mPropertyBag = {
-				selector: new Control()
+				control: new Control()
 			};
 
 			return VersionsAPI.activate(mPropertyBag).catch(function (sErrorMessage) {
@@ -544,7 +564,7 @@ sap.ui.define([
 		QUnit.test("when no version title is provided", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			};
 
 			return VersionsAPI.activate(mPropertyBag).catch(function (sErrorMessage) {
@@ -552,23 +572,25 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
+		QUnit.test("when a control and a layer were provided, but no app ID could be determined", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control(),
+				control: new Control(),
 				title: "new Title"
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(undefined);
 
-			return VersionsAPI.activate(mPropertyBag).catch(function (oError) {
-				assert.equal(oError.message, "The application ID could not be determined", "then an Error is thrown");
-			});
+			assert.throws(
+				VersionsAPI.activate.bind(undefined, mPropertyBag),
+				new Error("The application ID could not be determined"),
+				"then an Error is thrown"
+			);
 		});
 
-		QUnit.test("when a selector and a layer were provided and the request returns a list of versions", function(assert) {
+		QUnit.test("when a control and a layer were provided and the request returns a list of versions", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control(),
+				control: new Control(),
 				title: "new Title"
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
@@ -589,6 +611,9 @@ sap.ui.define([
 				getManifest: function () {
 					return {};
 				},
+				getManifestObject: function () {
+					return {};
+				},
 				getId: function () {
 					return "sComponentId";
 				},
@@ -604,18 +629,18 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when no selector is provided", function (assert) {
+		QUnit.test("when no control is provided", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER
 			};
 
 			return VersionsAPI.discardDraft(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "No selector was provided", "then an Error is thrown");
+				assert.equal(sErrorMessage, "No control was provided", "then an Error is thrown");
 			});
 		});
 		QUnit.test("when no layer is provided", function (assert) {
 			var mPropertyBag = {
-				selector: new Control()
+				control: new Control()
 			};
 
 			return VersionsAPI.discardDraft(mPropertyBag).catch(function (sErrorMessage) {
@@ -623,21 +648,23 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when a selector and a layer were provided, but no app ID could be determined", function(assert) {
+		QUnit.test("when a control and a layer were provided, but no app ID could be determined", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			};
 
-			return VersionsAPI.discardDraft(mPropertyBag).catch(function (oError) {
-				assert.equal(oError.message, "The application ID could not be determined", "then an Error is thrown");
-			});
+			assert.throws(
+				VersionsAPI.discardDraft.bind(undefined, mPropertyBag),
+				new Error("The application ID could not be determined"),
+				"then an Error is thrown"
+			);
 		});
 
-		QUnit.test("when a selector, a layer and a flag to update the state were provided and the request returns a list of versions", function(assert) {
+		QUnit.test("when a control, a layer and a flag to update the state were provided and the request returns a list of versions", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			};
 
 			var sReference = "com.sap.app";
@@ -657,7 +684,7 @@ sap.ui.define([
 		QUnit.test("when a AppComponent was found", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control()
+				control: new Control()
 			};
 
 			var sReference = "com.sap.app";

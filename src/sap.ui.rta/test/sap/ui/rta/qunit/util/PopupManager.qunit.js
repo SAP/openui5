@@ -120,6 +120,9 @@ sap.ui.define([
 				},
 				isVariantAdaptationEnabled: function() {
 					return false;
+				},
+				isKeyUserTranslationEnabled: function () {
+					return false;
 				}
 			};
 			sandbox.stub(FlSettings, "getInstance").resolves(oSettings);

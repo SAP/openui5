@@ -5,6 +5,7 @@
 /* global FormData */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
 	"sap/ui/rta/Utils",
@@ -13,9 +14,11 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/fl/write/api/TranslationAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/core/util/File"
 ], function(
+	Log,
 	ManagedObject,
 	Fragment,
 	Utils,
@@ -24,10 +27,22 @@ sap.ui.define([
 	MessageBox,
 	MessageToast,
 	TranslationAPI,
+	VersionsAPI,
 	Layer,
 	FileUtil
 ) {
 	"use strict";
+
+	function showError (vError) {
+		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		Log.error(sErrorMessage);
+		var sMsg = oTextResources.getText("MSG_TECHNICAL_ERROR") + "\n"
+			+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
+		MessageBox.error(sMsg, {
+			styleClass: Utils.getRtaStyleClassName()
+		});
+	}
 
 	/**
 	 * Controller for the <code>sap.ui.rta.toolbar.translation.Translation</code> controls.
@@ -53,73 +68,86 @@ sap.ui.define([
 		},
 		constructor: function () {
 			ManagedObject.prototype.constructor.apply(this, arguments);
-			this._oTranslationModel = new JSONModel(getTranslationModelData());
+			this._oTranslationModel = new JSONModel(getInitialTranslationModelData());
 		}
 	});
 
-	function saveFiles(oEvent) {
-		this._oTranslationModel.setProperty("/file", oEvent.getParameter("files")[0]);
+	function downloadFile(oEvent) {
+		var oModel = oEvent.getSource().getModel("translation");
+		var sSourceLanguage = oModel.getProperty("/sourceLanguage");
+		var sTargetLanguage = oModel.getProperty("/targetLanguage");
+		var sFileName = sSourceLanguage + "_" + sTargetLanguage + "_" + "TranslationXLIFF";
+
+		var mPropertyBag = {
+			layer: Layer.CUSTOMER,
+			sourceLanguage: sSourceLanguage,
+			targetLanguage: sTargetLanguage,
+			selector: this.getToolbar().getRtaInformation().rootControl
+		};
+
+		var oSavePromise = new Promise(function (resolve) {
+			if (oModel.getProperty("/translationRelevantDirtyChangesExist")) {
+				oSavePromise = this.getToolbar().fireSave({
+					callback: resolve
+				});
+			} else {
+				resolve();
+			}
+		}.bind(this));
+
+		oSavePromise
+			.then(TranslationAPI.getTexts.bind(undefined, mPropertyBag))
+			.then(function (translationTextsXML) {
+				FileUtil.save(translationTextsXML, sFileName, "xml", "application/xml");
+				this._oDownloadDialog.close();
+			}.bind(this)).catch(function (e) {
+				showError(e);
+			});
 	}
 
-	function resetDownloadTranslationDialog() {
-		this._oTranslationModel.setData(getTranslationModelData());
-		return Promise.resolve(this._oDialogDownload);
-	}
-
-	function createDownloadTranslationDialog() {
+	Translation.prototype._createDownloadTranslationDialog = function() {
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.translation.DownloadTranslationDialog",
 			id: this.getToolbar().getId() + "_download_translation_fragment",
 			controller: {
-				onDownloadFile: function (oEvent) {
-					var oModel = oEvent.getSource().getModel("translation");
-					var sSourceLanguage = oModel.getProperty("/sourceLanguage");
-					var sTargetLanguage = oModel.getProperty("/targetLanguage");
-					var sFileName = sSourceLanguage + "_" + sTargetLanguage + "_" + "TranslationXLIFF";
-
-					var mPropertyBag = {
-						layer: Layer.CUSTOMER,
-						sourceLanguage: sSourceLanguage,
-						targetLanguage: sTargetLanguage,
-						selector: this.getToolbar().getRtaInformation().rootControl
-					};
-					TranslationAPI.getTexts(mPropertyBag).then(function (translationTextsXML) {
-						FileUtil.save(translationTextsXML, sFileName, "xml", "application/xml");
-					}).catch(function (e) {
-						MessageBox.error("Translation texts export failed: " + e);
-					});
-				}.bind(this),
+				onDownloadFile: downloadFile.bind(this),
 				onCancelDownloadDialog: function () {
-					this._oDialogDownload.close();
+					this._oDownloadDialog.close();
 				}.bind(this)
 			}
-		}).then(function (oTranslationDialog) {
-			this._oDialogDownload = oTranslationDialog;
-			this._oDialogDownload.setModel(this._oTranslationModel, "translation");
-			this.getToolbar().addDependent(this._oDialogDownload);
+		}).then(function (oDownloadDialog) {
+			this._oDownloadDialog = oDownloadDialog;
+			this._oDownloadDialog.setModel(this._oTranslationModel, "translation");
+			this.getToolbar().addDependent(this._oDownloadDialog);
+			return oDownloadDialog;
 		}.bind(this));
-	}
+	};
 
-	function createUploadTranslationDialog() {
+	Translation.prototype._createUploadTranslationDialog = function() {
 		var sUploadId = this.getToolbar().getId() + "_upload_translation_fragment";
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.translation.UploadTranslationDialog",
 			id: sUploadId,
 			controller: {
 				onCancelUploadDialog: function () {
-					this._oDialogUpload.close();
+					this._oUploadDialog.close();
 				}.bind(this),
-				saveFiles: saveFiles.bind(this),
+				formatUploadEnabled: function () {
+					var oFileUploader = sap.ui.getCore().byId(sUploadId + "--fileUploader");
+					return oFileUploader.checkFileReadable();
+				},
+				saveFiles: function(oEvent) {
+					this._oTranslationModel.setProperty("/file", oEvent.getParameter("files")[0]);
+				}.bind(this),
 				handleUploadPress: handleUploadPress.bind(this, sUploadId)
 			}
-		}).then(function (oTranslationDialog) {
-			this._oDialogUpload = oTranslationDialog;
-			this._oDialogUpload.setModel(this._oTranslationModel, "translation");
-			this.getToolbar().addDependent(this._oDialogUpload);
-			return sUploadId;
+		}).then(function (oUploadDialog) {
+			this._oUploadDialog = oUploadDialog;
+			this._oUploadDialog.setModel(this._oTranslationModel, "translation");
+			this.getToolbar().addDependent(this._oUploadDialog);
+			return this._oUploadDialog;
 		}.bind(this));
-	}
-
+	};
 
 	function handleUploadPress(sUploadId) {
 		var oFileUploader = sap.ui.getCore().byId(sUploadId + "--fileUploader");
@@ -130,16 +158,21 @@ sap.ui.define([
 					payload: new FormData()
 				};
 				mPropertyBag.payload.append("file", this._oTranslationModel.getProperty("/file"), oFileUploader.getValue());
-				TranslationAPI.postTranslationTexts(mPropertyBag).then(function () {
-					MessageToast.show("Translation texts import successful");
-				}).catch(function (sError) {
-					MessageBox.error("Translation texts import failed: " + sError);
+				return TranslationAPI.uploadTranslationTexts(mPropertyBag).then(function () {
+					var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+					var sMsg = oTextResources.getText("MSG_UPLOAD_TRANSLATION_SUCCESS");
+					MessageToast.show(sMsg, {
+						styleClass: Utils.getRtaStyleClassName()
+					});
+					this._oUploadDialog.close();
+				}.bind(this)).catch(function (e) {
+					showError(e);
 				}).finally(oFileUploader.clear.bind(oFileUploader));
 			}
 		}.bind(this));
 	}
 
-	function getTranslationModelData() {
+	function getInitialTranslationModelData() {
 		return Object.assign({}, {
 			sourceLanguage: "",
 			sourceLanguages: [],
@@ -148,67 +181,40 @@ sap.ui.define([
 		});
 	}
 
-	Translation.prototype.showTranslationPopover = function (oEvent) {
-		var oTranslationButton = oEvent.getSource();
+	Translation.prototype.openDownloadTranslationDialog = function (mPropertyBag) {
+		var bHasTranslationRelevantDirtyChange = TranslationAPI.hasTranslationRelevantDirtyChanges(mPropertyBag);
+		this._oTranslationModel.setProperty("/translationRelevantDirtyChangesExist", bHasTranslationRelevantDirtyChange);
 
-		if (!this._oPopoverPromise) {
-			this._oPopoverPromise = Fragment.load({
-				name: "sap.ui.rta.toolbar.translation.TranslationPopover",
-				id: this.getToolbar().getId() + "_translationPopoverDialog",
-				controller: {
-					openDownloadTranslationDialog: this.openDownloadTranslationDialog.bind(this),
-					openUploadTranslationDialog: this.openUploadTranslationDialog.bind(this)
-				}
-			}).then(function (oTranslationPopover) {
-				this._oPopover = oTranslationPopover;
-				oTranslationButton.addDependent(this._oPopover);
-				return this._oPopover;
-			}.bind(this));
-		}
-
-		return this._oPopoverPromise.then(function (oTranslationDialog) {
-			if (!oTranslationDialog.isOpen()) {
-				oTranslationDialog.openBy(oTranslationButton);
-			} else {
-				oTranslationDialog.close();
-			}
-		});
-	};
-
-	Translation.prototype.openDownloadTranslationDialog = function () {
-		if (this._oDialogDownload) {
-			this._oDialogPromise = resetDownloadTranslationDialog.call(this);
-		} else {
-			this._oDialogPromise = createDownloadTranslationDialog.call(this);
-		}
-		return this._oDialogPromise.then(function () {
-			var mPropertyBag = {
-				layer: Layer.CUSTOMER,
-				selector: this.getToolbar().getRtaInformation().rootControl
-			};
-			TranslationAPI.getSourceLanguages(mPropertyBag).then(function (oResponse) {
-				var aSourceLanguages = oResponse.sourceLanguages;
+		return TranslationAPI.getSourceLanguages(mPropertyBag)
+			.then(function (aSourceLanguages) {
 				if (aSourceLanguages) {
 					this._oTranslationModel.setProperty("/sourceLanguages", aSourceLanguages);
 					this._oTranslationModel.setProperty("/sourceLanguage", aSourceLanguages[0] || "");
 				}
-				this.getToolbar().addDependent(this._oDialogDownload);
-				this._oDialogDownload.open();
 			}.bind(this))
-			.catch(function (e) {
-				MessageBox.error("Get translation source languages failed: " + e);
+			.then(function () {
+				if (this._oDownloadDialogPromise) {
+					this._oTranslationModel.setProperty("/targetLanguage", "");
+				} else {
+					this._oDownloadDialogPromise = this._createDownloadTranslationDialog();
+				}
+				return this._oDownloadDialogPromise;
+			}.bind(this))
+			.then(function (oDialog) {
+				return oDialog.open();
+			})
+			.catch(function (vError) {
+				showError(vError);
 			});
-			return this._oDialogDownload;
-		}.bind(this));
 	};
 
 	Translation.prototype.openUploadTranslationDialog = function () {
-		if (!this._oDialogUpload) {
-			this._oDialogPromise = createUploadTranslationDialog.call(this);
+		if (!this._oUploadDialogPromise) {
+			this._oUploadDialogPromise = this._createUploadTranslationDialog();
 		}
-		return this._oDialogPromise.then(function () {
-			this.getToolbar().addDependent(this._oDialogUpload);
-			return this._oDialogUpload.open();
+		return this._oUploadDialogPromise.then(function (oUploadDialog) {
+			this.getToolbar().addDependent(oUploadDialog);
+			return oUploadDialog.open();
 		}.bind(this));
 	};
 
