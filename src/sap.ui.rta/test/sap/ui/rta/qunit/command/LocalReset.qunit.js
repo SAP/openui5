@@ -1,7 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
+	"sap/base/Log",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/LocalResetAPI",
@@ -11,9 +11,8 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
-	FlUtils,
+], function(
+	Log,
 	Change,
 	Layer,
 	LocalResetAPI,
@@ -31,6 +30,9 @@ function(
 	QUnit.module("Given a SimpleForm with designtime metadata for localReset ...", {
 		beforeEach: function () {
 			this.oSimpleForm = new Control();
+			var oOverlay = new ElementOverlay({element: this.oSimpleForm});
+			sandbox.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
+			this.oLogStub = sandbox.stub(Log, "error");
 		},
 		afterEach: function () {
 			this.oSimpleForm.destroy();
@@ -38,8 +40,6 @@ function(
 		}
 	}, function () {
 		QUnit.test("when calling command factory for localReset ...", function(assert) {
-			var oOverlay = new ElementOverlay({element: this.oSimpleForm});
-			sandbox.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 			var oChange1 = new Change({
 				fileName: "change1",
 				fileType: "change",
@@ -87,8 +87,9 @@ function(
 				.then(function(oCommand) {
 					oLocalResetCommand = oCommand;
 					assert.ok(oLocalResetCommand, "localReset command exists for element");
+					assert.strictEqual(this.oLogStub.callCount, 0, "no error was logged");
 					return oLocalResetCommand.execute();
-				})
+				}.bind(this))
 				.then(function() {
 					assert.strictEqual(oResetChangesStub.callCount, 1, "then on execute resetChanges is called once");
 					assert.strictEqual(oResetChangesStub.args[0][0], aChanges, "...with the correct array of changes");
@@ -101,6 +102,28 @@ function(
 				.catch(function (oError) {
 					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
+		});
+
+		QUnit.test("when calling the command factory for localReset with CAUTION_variantIndependent", function(assert) {
+			var oDesignTimeMetadata = new ElementDesignTimeMetadata({
+				data: {
+					actions: {
+						localReset: {
+							changeType: "localReset",
+							isEnabled: true,
+							CAUTION_variantIndependent: true
+						}
+					}
+				}
+			});
+			sandbox.stub(LocalResetAPI, "getNestedUIChangesForControl").returns([]);
+
+			return CommandFactory.getCommandFor(this.oSimpleForm, "localReset", {
+				currentVariant: ""
+			}, oDesignTimeMetadata).then(function(oCommand) {
+				assert.ok(oCommand, "localReset command exists for element");
+				assert.strictEqual(this.oLogStub.callCount, 1, "one error was logged");
+			}.bind(this));
 		});
 	});
 

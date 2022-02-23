@@ -91,8 +91,8 @@ sap.ui.define([
 		oCommand.setJsOnly(bJsOnly);
 		if (oCommand.setVariantIndependent) {
 			oCommand.setVariantIndependent(bVariantIndependent);
-		} else {
-			Log.error("the variant independent Flag is not available for the action used in: ", sChangeType);
+		} else if (bVariantIndependent) {
+			Log.error("the variant independent Flag is not available for the action", sChangeType);
 		}
 		return true;
 	}
