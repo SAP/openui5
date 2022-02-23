@@ -1895,13 +1895,20 @@ sap.ui.define([
 	/**
 	 * Returns the scaling factor which is calculated based on the format options and the current locale being used.
 	 *
-	 * This function returns meaningful scaling factor only when the formatting option 'style' is set to 'short' or 'long' and the option 'shortRefNumber' is set which
-	 * is used for calculating the scale factor.
+	 * This function only returns a meaningful scaling factor when the 'style' formatting option is set
+	 * to 'short' or 'long', and the 'shortRefNumber' option for calculating the scale factor is set.
 	 *
-	 * Consider using this function when the option 'showScale' is set to false which makes the scale factor not to appear in every formatted number but in a shared place.
+	 * Consider using this function when the 'showScale' option is set to <code>false</code>, which
+	 * causes the scale factor not to appear in every formatted number but in a shared place.
 	 *
-	 * @since 1.40
-	 * @returns {string|undefined} The scale string if it exists based on the given 'shortRefNumber' option. Otherwise it returns undefined.
+	 * @example thousand (locale "en")
+	 *
+	 * NumberFormat.getFloatInstance({style: "long", shortRefNumber: 1000}).getScale();
+	 * // "thousand"
+	 *
+	 * @returns {string|undefined} The scale string if it exists based on the given 'shortRefNumber' option. Otherwise it returns <code>undefined</code>.
+	 * @since 1.100
+	 * @public
 	 */
 	NumberFormat.prototype.getScale = function() {
 		if ((this.oFormatOptions.style !== "short" && this.oFormatOptions.style !== "long") || this.oFormatOptions.shortRefNumber === undefined) {
