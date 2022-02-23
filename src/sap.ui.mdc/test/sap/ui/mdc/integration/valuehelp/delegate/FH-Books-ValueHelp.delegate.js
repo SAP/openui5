@@ -90,7 +90,7 @@ sap.ui.define([
 					filterBar: new FilterBar(sId + "-MDCTable-FB", {
 						liveMode: false,
 						delegate: {
-							name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate",
+							name: "delegates/GenericVhFilterBarDelegate",
 							payload: {}
 						},
 						filterItems: [
@@ -152,7 +152,7 @@ sap.ui.define([
 					filterBar: new FilterBar(sId + "-MTable-FB", {
 						liveMode: false,
 						delegate: {
-							name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate",
+							name: "delegates/GenericVhFilterBarDelegate",
 							payload: {}
 						},
 						filterItems: [

@@ -114,14 +114,14 @@ sap.ui.define([
 				 * FilterBar
 				 */
 				filterBar: {
-					type: "sap.ui.mdc.filterbar.FilterBarBase",
+					type: "sap.ui.mdc.filterbar.vh.FilterBar",
 					multiple: false
 				},
 				/**
 				 * Default FilterBar, ceated internally if none given.
 				 */
 				_defaultFilterBar: {
-					type: "sap.ui.mdc.filterbar.FilterBarBase",
+					type: "sap.ui.mdc.filterbar.vh.FilterBar",
 					multiple: false,
 					visibility: "hidden"
 				}

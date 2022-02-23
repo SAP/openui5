@@ -20,7 +20,7 @@
 	<mdc:dependents>
 		<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH2" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
 			<mdcf:filterBar>
-				<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: 'Books'}}" >
+				<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: 'Books'}}" >
 				<vhfb:filterItems>
 					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
 				</vhfb:filterItems>
@@ -91,7 +91,7 @@
 			showConditionPanel="true"
 			delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
 			<mdcf:filterBar>
-				<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+				<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 					<vhfb:basicSearchField>
 						<mdc:FilterField
 							delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"

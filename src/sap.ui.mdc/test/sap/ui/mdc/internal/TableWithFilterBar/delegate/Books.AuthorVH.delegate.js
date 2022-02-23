@@ -44,7 +44,7 @@ sap.ui.define([
 						oCurrentContent.setFilterBar(
 							new FilterBar(oCurrentContent.getId() + "--" +  "template1-FB",{
 								liveMode: false,
-								delegate: {name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate", payload: {}},
+								delegate: {name: "delegates/GenericVhFilterBarDelegate", payload: {}},
 								basicSearchField: new FilterField({
 									delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
 									dataType: "Edm.String",
@@ -95,7 +95,7 @@ sap.ui.define([
 						oCurrentContent.setFilterBar(
 							new FilterBar(oCurrentContent.getId() + "--" +  "default-FB", {
 								liveMode: false,
-								delegate: {name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate", payload: {}},
+								delegate: {name: "delegates/GenericVhFilterBarDelegate", payload: {}},
 								basicSearchField: new FilterField({
 									delegate: {	name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
 									dataType: "Edm.String",
@@ -211,7 +211,7 @@ sap.ui.define([
 	// 			this.MySearchTemplate1Filterbar = new FilterBar(
 	// 			{
 	// 				liveMode: false,
-	// 				delegate: {name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}},
+	// 				delegate: {name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}},
 	// 				basicSearchField: new FilterField({
 	// 					delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
 	// 					dataType: "Edm.String",

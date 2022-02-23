@@ -115,7 +115,7 @@ sap.ui.define([
 						new FilterBar({
 							liveMode: false,
 							delegate: {
-								name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate",
+								name: "delegates/GenericVhFilterBarDelegate",
 								payload: {}
 							},
 							basicSearchField: new FilterField({
@@ -174,7 +174,7 @@ sap.ui.define([
 						new FilterBar({
 							liveMode: false,
 							delegate: {
-								name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate",
+								name: "delegates/GenericVhFilterBarDelegate",
 								payload: {}
 							},
 							basicSearchField: new FilterField({

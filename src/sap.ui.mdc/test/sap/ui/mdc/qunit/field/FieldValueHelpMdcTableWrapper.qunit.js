@@ -116,7 +116,7 @@ sap.ui.define([
 			getFilterBar: function () {
 				oFilterBar = oFilterBar || new FilterBar({
 					liveMode: false,
-					delegate: {name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}},
+					delegate: {name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}},
 					filterConditions: { myfilter: [{ operator: "EQ", values: ["a"] }] },
 					filterItems: [
 						new FilterField({

@@ -107,7 +107,7 @@
 													<mdcf:OutParameter id="IOFFVHRegion-Out-CountryDesc" value="{countryOfOrigin/descr}" fixedValue=""/>
 												</mdcf:outParameters>
 												<mdcf:filterBar>
-													<vhfb:FilterBar liveMode= "false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+													<vhfb:FilterBar liveMode= "false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 														<mdc:FilterField id="VHFFBTextFFCountry"
 															label= "Country"
 															editMode= "Editable"
@@ -189,7 +189,7 @@
 													<mdcf:OutParameter id="IOFFVHCity-Out-RegionDesc" value="{regionOfOrigin/text}" fixedValue=""/>
 												</mdcf:outParameters>
 												<mdcf:filterBar>
-													<vhfb:FilterBar liveMode= "false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+													<vhfb:FilterBar liveMode= "false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 														<mdc:FilterField id="VHFFBTextFFCountry2" label= "Country" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" operators="EQ,NE" valueState="{ path: '$filters>/fieldPath/country_code/valueState'}" valueStateText="{ path: '$filters>/fieldPath/country_code/valueStateText'}">
 														</mdc:FilterField>
 														<mdc:FilterField id="VHFFBTextFFRegion2" label= "Region" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/region_code}" valueState="{ path: '$filters>/fieldPath/region_code/valueState'}" valueStateText="{ path: '$filters>/fieldPath/region_code/valueStateText'}">

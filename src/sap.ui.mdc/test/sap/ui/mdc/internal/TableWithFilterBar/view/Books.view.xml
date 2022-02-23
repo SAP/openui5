@@ -115,7 +115,7 @@
 									<mdcv:Dialog title="Title">
 										<mdcvc:MDCTable keyPath="title" descriptionPath="title" filterFields="$search">
 											<mdcvc:filterBar>
-												<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
+												<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 													<vhfb:basicSearchField>
 														<mdc:FilterField
 															delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
@@ -369,7 +369,7 @@
 									<mdcv:Dialog title="Sub Genre">
 										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
 											<mdcvc:filterBar>
-												<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+												<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 													<vhfb:basicSearchField>
 														<mdc:FilterField
 															delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
@@ -489,7 +489,7 @@
 									<mdcv:Dialog title="Detail Genre">
 										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
 											<mdcvc:filterBar>
-												<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+												<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 													<vhfb:basicSearchField>
 														<mdc:FilterField
 															delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
@@ -863,7 +863,7 @@
 						<mdcv:Dialog title="Genre">
 							<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
 								<mdcvc:filterBar>
-									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+									<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:basicSearchField>
 											<mdc:FilterField
 												delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"

@@ -8,18 +8,12 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Helper class for sap.ui.mdc.filterbar.vh.GenericFilterBarDelegate.
-	*  This GenericFilterbarDelegate creates the propertyInfo based on the FilterItems of the Filterbar and does NOT load and analyse any metadata!
+	 * Helper class for sap.ui.mdc.filterbar.vh.GenericVhFilterBarDelegate.
+	 * This GenericVhFilterBarDelegate creates the propertyInfo based on the FilterItems of the Filterbar and does NOT load and analyse any metadata!
 	 * <h3><b>Note:</b></h3>
 	 * The class is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
-	 *
-	 * @author SAP SE
-	 * @private
-	 * @experimental
-	 * @since 1.86
-	 * @alias sap.ui.mdc.filterbar.vh.GenericFilterBarDelegate
 	 */
-	var GenericFilterBarDelegate = Object.assign({}, FilterBarDelegate);
+	var GenericVhFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 
 	/**
 	 * Fetches the relevant metadata (from the FilterItems of the FiterBar) for the FilterBar and returns property info array
@@ -27,7 +21,7 @@ sap.ui.define([
 	 * @param {Object} oFilterBar - instance of the valuehelp FilterBar
 	 * @returns {Array} array of property info
 	 */
-	GenericFilterBarDelegate.fetchProperties = function(oFilterBar) {
+	GenericVhFilterBarDelegate.fetchProperties = function(oFilterBar) {
 		if (!oFilterBar.__oObserver) {
 			oFilterBar.__oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
 			oFilterBar.__oObserver.observe(oFilterBar, {
@@ -134,7 +128,7 @@ sap.ui.define([
 		}
 	}
 
-	GenericFilterBarDelegate.cleanup = function(oFilterBar) {
+	GenericVhFilterBarDelegate.cleanup = function(oFilterBar) {
 
 		if (oFilterBar.__oObserver) {
 			oFilterBar.__oObserver.disconnect();
@@ -144,5 +138,5 @@ sap.ui.define([
 
 	};
 
-	return GenericFilterBarDelegate;
+	return GenericVhFilterBarDelegate;
 });
