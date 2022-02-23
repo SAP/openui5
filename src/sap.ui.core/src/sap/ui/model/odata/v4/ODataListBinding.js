@@ -2343,7 +2343,7 @@ sap.ui.define([
 					return oCandidate && oCandidate.getPath() === sPath;
 				}),
 			iPredicateIndex = this.oModel.getPredicateIndex(sPath),
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			sResolvedPath = this.getResolvedPath();
 
 		this.oModel.checkGroupId(sGroupId);
 		if (!oContext) {
