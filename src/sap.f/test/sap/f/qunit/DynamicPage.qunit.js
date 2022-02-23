@@ -417,10 +417,6 @@ function (
 			"The DynamicPage Header is not empty - sapFDynamicPageTitleOnly is not added");
 	});
 
-	QUnit.test("DynamicPage ScrollBar rendered", function (assert) {
-		assert.ok(this.oDynamicPage.$("vertSB")[0], "DynamicPage ScrollBar has rendered successfully");
-	});
-
 	QUnit.test("_updateFitContainer is called onAfterRendering", function (assert) {
 		var oDeviceStub = this.stub(Device, "system",  {
 			desktop: false,
@@ -1465,13 +1461,10 @@ function (
 		assert.equal(oDynamicPage._getScrollPosition(), 0, "scroll position is correct");
 	});
 
-	QUnit.test("Expand header updates scrollbar", function (assert) {
+	QUnit.test("Expand header updates title positioning", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
 			oTitle = oDynamicPage.getTitle(),
-			oScrollSpy = this.spy(oDynamicPage, "_onWrapperScroll"),
-			done = assert.async();
-
-		assert.expect(2);
+			oUpdateSpy = this.spy(oDynamicPage, "_updateTitlePositioning");
 
 		oDynamicPage.setHeaderExpanded(false);
 		oUtil.renderObject(oDynamicPage);
@@ -1482,14 +1475,11 @@ function (
 
 		assert.equal(oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
 
-		oScrollSpy.reset();
+		oUpdateSpy.reset();
 
 		//act
 		oTitle.fireEvent("_titlePress");
-		setTimeout(function() {
-			assert.equal(oScrollSpy.callCount, 1, "listener for updating the custom scrollBar position is called");
-			done();
-		}, 0);
+		assert.equal(oUpdateSpy.callCount, 1, "update of title position is called");
 	});
 
 	QUnit.test("expand shows the visual indicator", function (assert) {
@@ -1847,7 +1837,7 @@ function (
 		var $headerWrapper = this.oDynamicPage.$("header"),
 			$contentWrapper = this.oDynamicPage.$("contentWrapper"),
 			sHeaderId = this.oDynamicPage.getHeader().getId(),
-			oPinSpy = this.spy(this.oDynamicPage, "_updateScrollBar"),
+			oPinSpy = this.spy(this.oDynamicPage, "_updateTitlePositioning"),
 			oDynamicPageTitle = this.oDynamicPage.getTitle(),
 			oDynamicPageHeader = this.oDynamicPage.getHeader(),
 			$oDynamicPage =  this.oDynamicPage.$(),
@@ -1881,7 +1871,7 @@ function (
 		var $headerWrapper = this.oDynamicPage.$("header"),
 			$contentWrapper = this.oDynamicPage.$("contentWrapper"),
 			sHeaderId = this.oDynamicPage.getHeader().getId(),
-			oPinSpy = this.spy(this.oDynamicPage, "_updateScrollBar"),
+			oPinSpy = this.spy(this.oDynamicPage, "_updateTitlePositioning"),
 			oDynamicPageTitle = this.oDynamicPage.getTitle(),
 			oDynamicPageHeader = this.oDynamicPage.getHeader(),
 			$oDynamicPage =  this.oDynamicPage.$(),
@@ -1939,112 +1929,33 @@ function (
 			"DynamicPage Scroll position is correct");
 	});
 
-	QUnit.test("DynamicPage _getScrollPosition() returns the correct scroll position upon custom scrollBar scroll", function (assert) {
-		var iExpectedScrollPosition = 500,
-			oDynamicPageScrollBar = this.oDynamicPage.getAggregation("_scrollBar");
-
-		//arrange
-		oDynamicPageScrollBar.setScrollPosition(iExpectedScrollPosition);
-
-		//act
-		this.oDynamicPage._onScrollBarScroll();
-
-		//assert
-		assert.equal(Math.ceil(this.oDynamicPage._getScrollPosition()), iExpectedScrollPosition, "DynamicPage Scroll position is correct");
-	});
-
-	QUnit.test("DynamicPage _getScrollPosition() returns the correct scroll position upon wrapper scroll", function (assert) {
-		var iExpectedScrollPosition = 500,
-			oDynamicPageScrollBar = this.oDynamicPage.getAggregation("_scrollBar");
-
-		//arrange
-		this.oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
-
-		//act
-		this.oDynamicPage._onWrapperScroll({target: {scrollTop: 500}});
-
-		//assert
-		assert.equal(oDynamicPageScrollBar.getScrollPosition(), iExpectedScrollPosition, "custom scrollBar scrollPosition is correct");
-	});
-
-	QUnit.test("DynamicPage scrollbar.setScrollPosition() is called once after wrapper scroll", function (assert) {
-		var iExpectedScrollPosition = 500,
-			oDynamicPage = this.oDynamicPage,
-			$wrapper = oDynamicPage.$wrapper,
-			oDynamicPageScrollBar = this.oDynamicPage.getAggregation("_scrollBar"),
-			oScrollPositionSpy = sinon.spy(oDynamicPageScrollBar, "setScrollPosition");
-
-		//arrange
-		$wrapper.scrollTop(iExpectedScrollPosition);
-
-		//act
-		oDynamicPage._onWrapperScroll({target: {scrollTop: 500}});
-
-		//assert
-		assert.equal(oDynamicPageScrollBar.getScrollPosition(), iExpectedScrollPosition, "ScrollBar Scroll position is correct");
-
-		//act
-		oDynamicPage._onScrollBarScroll();
-
-		//assert
-		assert.equal(oScrollPositionSpy.calledOnce, true, "scrollBar scrollPosition setter is not called again");
-	});
-
-	QUnit.test("DynamicPage scrollbar.setScrollPosition() is not called again after custom scrollBar scroll", function (assert) {
-		var iExpectedScrollPosition = 500,
-			oDynamicPage = this.oDynamicPage,
-			oDynamicPageScrollBar = this.oDynamicPage.getAggregation("_scrollBar"),
-			oScrollPositionSpy;
-
-		//arrange
-		oDynamicPageScrollBar.setScrollPosition(iExpectedScrollPosition);
-		oScrollPositionSpy = sinon.spy(oDynamicPageScrollBar, "setScrollPosition");
-
-		//act
-		oDynamicPage._onScrollBarScroll();
-
-		//assert
-		assert.equal(oDynamicPage._getScrollPosition(), iExpectedScrollPosition, "DynamicPage Scroll position is correct");
-
-		//act
-		oDynamicPage._onWrapperScroll({target: {scrollTop: 500}});
-
-		//assert
-		assert.equal(oScrollPositionSpy.called, false, "scrollBar scrollPosition setter is not called again");
-	});
-
 	QUnit.test("DynamicPage preserves scroll position after rerendering", function (assert) {
 		var iExpectedScrollPosition = 500,
-			oDynamicPage = this.oDynamicPage,
-			oSetScrollPositionSpy;
+			oDynamicPage = this.oDynamicPage;
 
 		//arrange
 		oDynamicPage.setHeaderExpanded(false);
 		oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
-		oDynamicPage._onWrapperScroll({target: {scrollTop: iExpectedScrollPosition}});
-		oSetScrollPositionSpy = this.spy(oDynamicPage, "_setScrollPosition");
 		//act
 		oDynamicPage.rerender();
 
 		//assert
-		assert.ok(oSetScrollPositionSpy.calledWith, iExpectedScrollPosition,
+		assert.ok(oDynamicPage.$wrapper.scrollTop, iExpectedScrollPosition,
 			"DynamicPage Scroll position is correct after rerender");
 	});
 
 	QUnit.test("DynamicPage preserves scroll position when navigating to another page and then comming back", function (assert) {
 		var iExpectedScrollPosition = 500,
-			oDynamicPage = this.oDynamicPage,
-			oStub = this.stub(this.oDynamicPage, "_getScrollPosition", function () {
-				return 0;
-			}); // Scroll position of wrapper is set to 0 when navigating to another page
+			oDynamicPage = this.oDynamicPage; // Scroll position of wrapper is set to 0 when navigating to another page
 
 		//arrange
 		oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
-		oDynamicPage._onWrapperScroll({target: {scrollTop: iExpectedScrollPosition}});
+		oDynamicPage.addStyleClass("sapMNavItem");
 
 		//act
-		oDynamicPage._offsetContentOnMoveHeader();
-		oStub.restore(); // restore getScrollPosition to return the real scroll value
+		oDynamicPage.toggleStyleClass("sapMNavItemHidden", true);
+		oDynamicPage.rerender();
+		oDynamicPage.toggleStyleClass("sapMNavItemHidden", false);
 
 		//assert
 		assert.equal(oDynamicPage._getScrollPosition(), iExpectedScrollPosition,
@@ -2342,6 +2253,21 @@ function (
 		assert.strictEqual(this.oDynamicPage._getMaxScrollPosition(), 0,
 			"no scrollbar needed");
 
+	});
+
+	QUnit.test("DynamicPage _updateFitContainer is called on reredering", function (assert) {
+		// Arrange
+		var oSpy = this.spy(this.oDynamicPage, "_updateFitContainer"),
+			done = assert.async();
+
+		// Act
+		this.oDynamicPage.rerender();
+
+		//Assert
+		setTimeout(function() {
+			assert.strictEqual(oSpy.callCount, 1, "update of fitContainer class is called");
+			done();
+		}, 0);
 	});
 
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */
