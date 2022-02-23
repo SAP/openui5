@@ -13,65 +13,149 @@
 	  "entities": [
 		{
 		  "id": "sap.ui.webc.main.ComboBox",
-		  "name": "ComboBox",
+		  "name": "Combo Box",
 		  "category": "Web Components",
-		  "since": "1.92.0",
+		  "since": "1.100.0",
 		  "samples": ["sap.ui.webc.main.sample.ComboBox"]
 		},
 		{
 		  "id": "sap.ui.webc.main.Input",
 		  "name": "Input",
 		  "category": "Web Components",
-		  "since": "1.92.0",
+		  "since": "1.100.0",
 		  "samples": ["sap.ui.webc.main.sample.Input"]
+		},
+		{
+		  "id": "sap.ui.webc.main.MessageStrip",
+		  "name": "Message Strip",
+		  "category": "Web Components",
+		  "since": "1.100.0",
+		  "samples": ["sap.ui.webc.main.sample.MessageStrip"]
 		},
 		{
 		  "id": "sap.ui.webc.main.MultiComboBox",
 		  "name": "Multi Combo Box",
 		  "category": "Web Components",
-		  "since": "1.92.0",
+		  "since": "1.100.0",
 		  "samples": ["sap.ui.webc.main.sample.MultiComboBox"]
 		},
 		{
 		  "id": "sap.ui.webc.main.MultiInput",
 		  "name": "Multi Input",
 		  "category": "Web Components",
-		  "since": "1.92.0",
+		  "since": "1.100.0",
 		  "samples": ["sap.ui.webc.main.sample.MultiInput"]
+		},
+		{
+		  "id": "sap.ui.webc.main.Panel",
+		  "name": "Panel",
+		  "category": "Web Components",
+		  "since": "1.100.0",
+		  "samples": ["sap.ui.webc.main.sample.Panel"]
+		},
+		{
+		  "id": "sap.ui.webc.main.RangeSlider",
+		  "name": "Range Slider",
+		  "category": "Web Components",
+		  "since": "1.100.0",
+		  "samples": ["sap.ui.webc.main.sample.RangeSlider"]
+		},
+		{
+		  "id": "sap.ui.webc.main.RatingIndicator",
+		  "name": "Rating Indicator",
+		  "category": "Web Components",
+		  "since": "1.100.0",
+		  "samples": ["sap.ui.webc.main.sample.RatingIndicator"]
+		},
+		{
+		  "id": "sap.ui.webc.main.Slider",
+		  "name": "Slider",
+		  "category": "Web Components",
+		  "since": "1.100.0",
+		  "samples": ["sap.ui.webc.main.sample.Slider"]
+		},
+		{
+		  "id": "sap.ui.webc.main.Table",
+		  "name": "Table",
+		  "category": "Web Components",
+		  "since": "1.100.0",
+		  "samples": ["sap.ui.webc.main.sample.Table"]
 		},
 		{
 		  "id": "sap.ui.webc.main.TextArea",
 		  "name": "Text Area",
 		  "category": "Web Components",
-		  "since": "1.92.0",
+		  "since": "1.100.0",
 		  "samples": ["sap.ui.webc.main.sample.TextArea"]
+		},
+		{
+		  "id": "sap.ui.webc.main.Toast",
+		  "name": "Toast",
+		  "category": "Web Components",
+		  "since": "1.100.0",
+		  "samples": ["sap.ui.webc.main.sample.Toast"]
 		}
 	  ],
 	  "samples": [
 		{
 		  "id": "sap.ui.webc.main.sample.ComboBox",
-		  "name": "ComboBox Freestyle Example",
+		  "name": "Combo Box",
 		  "description": "Demonstrates the basic usage of ComboBox"
 		},
 		{
 		  "id": "sap.ui.webc.main.sample.Input",
-		  "name": "Input Freestyle Example",
+		  "name": "Input",
 		  "description": "Demonstrates the basic usage of Input"
 		},
 		{
+		  "id": "sap.ui.webc.main.sample.MessageStrip",
+		  "name": "Message Strip",
+		  "description": "Demonstrates the basic usage of MessageStrip"
+		},
+		{
 		  "id": "sap.ui.webc.main.sample.MultiComboBox",
-		  "name": "MultiComboBox Freestyle Example",
+		  "name": "Multi Combo Box",
 		  "description": "Demonstrates the basic usage of MultiComboBox"
 		},
 		{
 		  "id": "sap.ui.webc.main.sample.MultiInput",
-		  "name": "MultiInput Freestyle Example",
+		  "name": "Multi Input",
 		  "description": "Demonstrates the basic usage of MultiInput"
 		},
 		{
+		  "id": "sap.ui.webc.main.sample.Panel",
+		  "name": "Panel",
+		  "description": "Demonstrates the basic usage of Panel"
+		},
+		{
+		  "id": "sap.ui.webc.main.sample.RangeSlider",
+		  "name": "Range Slider",
+		  "description": "Demonstrates the basic usage of RangeSlider"
+		},
+		{
+		  "id": "sap.ui.webc.main.sample.RatingIndicator",
+		  "name": "Rating Indicator",
+		  "description": "Demonstrates the basic usage of RatingIndicator"
+		},
+		{
+		  "id": "sap.ui.webc.main.sample.Slider",
+		  "name": "Slider",
+		  "description": "Demonstrates the basic usage of Slider"
+		},
+		{
+		  "id": "sap.ui.webc.main.sample.Table",
+		  "name": "Table",
+		  "description": "Demonstrates the basic usage of Table"
+		},
+		{
 		  "id": "sap.ui.webc.main.sample.TextArea",
-		  "name": "TextArea Freestyle Example",
+		  "name": "Text Area",
 		  "description": "Demonstrates the basic usage of TextArea"
+		},
+		{
+		  "id": "sap.ui.webc.main.sample.Toast",
+		  "name": "Toast",
+		  "description": "Demonstrates the basic usage of Toast"
 		}
 	  ]
 	}
