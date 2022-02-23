@@ -42,10 +42,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 		oRm.accessibilityState(oDynamicPage, oDynamicPage._formatLandmarkInfo(oLandmarkInfo, "Root"));
 		oRm.openEnd();
-		// Renders Dynamic Page Custom ScrollBar for Desktop mode
-		if (Device.system.desktop) {
-			oRm.renderControl(oDynamicPage._getScrollBar());
-		}
 
 		// Renders Dynamic Page Title.
 		oRm.openStart(sHeaderTag, oDynamicPage.getId() + "-header");

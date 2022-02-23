@@ -208,6 +208,10 @@ sap.ui.define([
 					$OffsetParent = $OffsetParent.offsetParent();
 				}
 
+				if (this._bAddOffsetForPaddingTop) {
+					oElementPosition.top -= parseInt(window.getComputedStyle(this._$Container.get(0)).paddingTop);
+				}
+
 				return oElementPosition;
 			},
 
@@ -364,6 +368,16 @@ sap.ui.define([
 
 					this._scrollTo(left, top);
 				}
+			},
+
+			/**
+			 * Hotfix helper method needed for proper scroll behavior after the removal
+			 * of the custom scrollbar in some container controls (e.g. sap.f.DynamicPage).
+			 * @param {boolean} bOffsetTop whether or not an offset top should be calculated when scrolling
+			 * @private
+			 */
+			_toggleOffsetForPaddings : function (bOffsetTop) {
+				this._bAddOffsetForPaddingTop = bOffsetTop;
 			}
 
 		});
