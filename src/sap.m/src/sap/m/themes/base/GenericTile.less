@@ -1483,6 +1483,18 @@ html[data-sap-ui-browser*='ff'] {
 	}
 }
 
+.TwoByHalf.sapMGTIconMode .sapMGTMoreIcon {
+	visibility: hidden;
+    bottom: auto;
+	right: 1.5rem;
+}
+
+.TwoByHalf.sapMGTIconMode.sapMGT:hover {
+	.sapMGTMoreIcon {
+		visibility: visible;
+	}
+}
+
 @media (min-width:320px) and (max-width:599px){
     .sapMGT.sapMGTOneByOne {
         width: 9rem;
@@ -1559,6 +1571,7 @@ html[data-sap-ui-browser*='ff'] {
 	padding-top: 0.25rem;
     padding-left: 1rem;
     height: initial;
+	max-width: 12.5rem;
 	align-items: center;
 }
 

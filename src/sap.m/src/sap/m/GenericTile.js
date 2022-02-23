@@ -292,7 +292,8 @@ sap.ui.define([
 
 	GenericTile._Action = {
 		Press: "Press",
-		Remove: "Remove"
+		Remove: "Remove",
+		More: "More"
 	};
 
 	GenericTile.LINEMODE_SIBLING_PROPERTIES = ["state", "subheader", "header", "scope"];
@@ -1485,6 +1486,9 @@ sap.ui.define([
 		if ((sScope === GenericTileScope.Actions || GenericTileScope.ActionRemove) && oEvent.target.id.indexOf("-action-remove") > -1) {//tap on icon remove in Actions scope
 			sAction = GenericTile._Action.Remove;
 			oDomRef = this._oRemoveButton.getPopupAnchorDomRef();
+		} else if ((sScope === GenericTileScope.Actions || sScope === GenericTileScope.ActionMore) && this._isIconMode && this._isIconMode() && oEvent.target.id.indexOf("-action-more") > -1) {
+			sAction = GenericTile._Action.More;
+			oDomRef = this._oMoreIcon.getDomRef();
 		} else if (sScope === GenericTileScope.Actions || sScope === GenericTileScope.ActionMore) {
 			oDomRef = this._oMoreIcon.getDomRef();
 		}
