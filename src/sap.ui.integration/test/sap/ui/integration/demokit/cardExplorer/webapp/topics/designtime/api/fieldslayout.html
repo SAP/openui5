@@ -554,6 +554,68 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 }</pre>
 						</td>
 					</tr>
+					<tr>
+						<td>Showing the fields in a sub group with panel.</td>
+						<td data-sample="12">
+							Loading...
+						</td>
+						<td>
+							<pre class="lang-js" data-sample="12" style="height:250px">
+	{
+		"param0": {
+			"manifestpath": "/sap.card/configuration/parameters/param0/value",
+			"label": "Parameter 0",
+			"type": "string"
+		},
+		"subGroup1": {
+			"type": "group",
+			"label": "Sub group 1",
+			"level": "1",
+			"expanded": true,
+			"visualization": {
+				"type": "Panel"
+			}
+		},
+		"param1": {
+			"manifestpath": "/sap.card/configuration/parameters/param1/value",
+			"label": "Parameter 1",
+			"type": "string"
+		}
+	}
+							</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Showing the fields in a sub group with tab.</td>
+						<td data-sample="13">
+							Loading...
+						</td>
+						<td>
+							<pre class="lang-js" data-sample="13" style="height:250px">
+	{
+		"param0": {
+			"manifestpath": "/sap.card/configuration/parameters/param0/value",
+			"label": "Parameter 0",
+			"type": "string"
+		},
+		"subGroup1": {
+			"type": "group",
+			"label": "Sub group 1",
+			"level": "1",
+			"expanded": true,
+			"visualization": {
+				"type": "Tab"
+			}
+		},
+		"param1": {
+			"manifestpath": "/sap.card/configuration/parameters/param1/value",
+			"label": "Parameter 1",
+			"type": "string"
+		}
+	}
+							</pre>
+						</td>
+					</tr>
 				</table>
 			</div>
 		</div>
