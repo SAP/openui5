@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/core/HTML',
 	'sap/m/CustomListItem',
-	"sap/base/security/encodeXML"
+	'sap/base/security/encodeXML',
+	'sap/base/util/UriParameters'
 ],
 	function(
 		BaseObject,
@@ -21,7 +22,8 @@ sap.ui.define([
 		ManagedObjectMetadata,
 		HTML,
 		CustomListItem,
-		encodeXML
+		encodeXML,
+		UriParameters
 	) {
 	"use strict";
 
@@ -66,6 +68,10 @@ sap.ui.define([
 			this._iTriggerTimer = 0;
 			this._aChunk = [];
 			this._oRM = null;
+
+			if (UriParameters.fromQuery(window.location.href).get("sap-ui-xx-enableItemsPool") === "true") {
+				this._aItemsPool = [];
+			}
 		},
 
 		/**
@@ -85,6 +91,9 @@ sap.ui.define([
 				this._oRM.destroy();
 				this._oRM = null;
 			}
+			this._aItemsPool && this._aItemsPool.forEach(function(oItem) {
+				oItem.destroy();
+			});
 
 			this._oControl.$("triggerList").remove();
 			this._oControl.bUseExtendedChangeDetection = false;
@@ -363,9 +372,27 @@ sap.ui.define([
 			}
 		},
 
+		fillItemsPool: function() {
+			if (!this._iLimit || this._iRenderedDataItems || this._aItemsPool.length) {
+				return;
+			}
+
+			var oBindingInfo = this._oControl.getBindingInfo("items");
+			if (oBindingInfo && oBindingInfo.template) {
+				for (var i = 0; i < this._iLimit; i++) {
+					this._aItemsPool.push(oBindingInfo.factory());
+				}
+			}
+		},
+
 		// creates list item from the factory
 		createListItem : function(oContext, oBindingInfo) {
 			this._iRenderedDataItems++;
+
+			if (this._aItemsPool && this._aItemsPool.length) {
+				return this._aItemsPool.pop().setBindingContext(oContext, oBindingInfo.model);
+			}
+
 			return GrowingEnablement.createItem(oContext, oBindingInfo);
 		},
 
@@ -461,10 +488,19 @@ sap.ui.define([
 			// set iItemCount to initial value if not set or no items at the control yet
 			if (!this._iLimit || this.shouldReset(sChangeReason) || !this._oControl.getItems(true).length) {
 				this._iLimit = this._oControl.getGrowingThreshold();
+
 			}
 
 			// send the request to get the context
-			this._oControl.getBinding("items").getContexts(0, this._iLimit);
+			var oBinding = this._oControl.getBinding("items");
+
+			if (this._aItemsPool) {
+				oBinding.attachEventOnce("dataRequested", function() {
+					setTimeout(this.fillItemsPool.bind(this));
+				}, this);
+			}
+
+			oBinding.getContexts(0, this._iLimit);
 		},
 
 		/**

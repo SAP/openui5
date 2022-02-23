@@ -11,9 +11,13 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/m/InputListItem",
+	"sap/m/CustomListItem",
+	"sap/m/Text",
+	"sap/m/VBox",
 	"sap/m/Input",
 	"sap/base/strings/capitalize",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/base/util/UriParameters"
 ], function(
 	MockServer,
 	ODataModel,
@@ -26,9 +30,13 @@ sap.ui.define([
 	List,
 	StandardListItem,
 	InputListItem,
+	CustomListItem,
+	Text,
+	VBox,
 	Input,
 	capitalize,
-	oCore
+	oCore,
+	UriParameters
 ) {
 	"use strict";
 
@@ -944,6 +952,72 @@ sap.ui.define([
 			assert.ok(oInvalidateSpy.notCalled, "The list is not invalidated");
 			oList.destroy();
 			oMockServer.stop();
+		});
+	});
+
+	QUnit.module("enableItemsPool", {
+		beforeEach: function() {
+			var oGetParameterStub = sinon.stub();
+			oGetParameterStub.withArgs("sap-ui-xx-enableItemsPool").returns("true");
+
+			this.oGetUriParametersStub = sinon.stub(UriParameters, "fromQuery").returns({
+				get: oGetParameterStub
+			});
+		},
+		afterEach: function() {
+			this.oGetUriParametersStub.restore();
+		}
+	});
+
+	QUnit.test("Items pool array should be available", function(assert) {
+		var done = assert.async();
+		var oMockServer = startMockServer();
+		var oModel = createODataModel(sServiceURI, {useBatch: false});
+		var fnDone, oControl, fnFillItemsPoolStub;
+		var pPromise = new Promise(function(resolve) {
+			fnDone = resolve;
+		});
+		var oList = createList({
+			growing: true,
+			growingThreshold: 8,
+			updateStarted: function(oEvent) {
+				oControl = oEvent.getSource();
+				assert.ok(oControl._oGrowingDelegate._aItemsPool, "itemsPool was created");
+				// reference to the original "fillItemsPool" function
+				var fnFillItemsPool = oControl._oGrowingDelegate.fillItemsPool;
+				// "fillItemsPool" is called in a timeout, which causes unstable unit tests due to timing issues,
+				// instead stub the function which calls the original function and also take care of assertions here
+				fnFillItemsPoolStub = sinon.stub(oControl._oGrowingDelegate, "fillItemsPool").callsFake(function() {
+					// simulate no items are rendered
+					oControl._oGrowingDelegate._iRenderedDataItems = 0;
+					// call the original function
+					fnFillItemsPool.call(oControl._oGrowingDelegate);
+					assert.strictEqual(oControl._oGrowingDelegate._aItemsPool.length, 8, "8 items are available in the itemsPool");
+					// inform that the "fillItemsPool" has done its job by resolving the promise
+					fnDone();
+				});
+			}
+		}, {
+			template: new CustomListItem({
+				content: [
+					new VBox({
+						items: [
+							new Text({text: "{ProductId}"}),
+							new Text({text: "{Name}"}),
+							new Text({text: "{Category}"})
+						]
+					})
+				]
+			})
+		},
+		oModel);
+
+		pPromise.then(function() {
+			// clean up
+			fnFillItemsPoolStub.restore();
+			oList.destroy();
+			oMockServer.stop();
+			done();
 		});
 	});
 });
