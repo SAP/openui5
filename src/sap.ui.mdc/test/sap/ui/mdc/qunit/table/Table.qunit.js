@@ -2326,33 +2326,55 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("noDataText - Table with FilterBar and bound", function(assert) {
-		return this.oTable._fullyInitialized().then(function() {
-			this.oTable.setFilter(new FilterBar());
-			return waitForBindingInfo(this.oTable);
-		}.bind(this)).then(function() {
-			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"),
-				"'No data found. Try adjusting the filter settings.' is displayed");
-		}.bind(this));
-	});
-
 	QUnit.test("noDataText - Table without FilterBar and not bound", function(assert) {
 		this.oTable.setAutoBindOnInit(false);
 
 		return this.oTable._fullyInitialized().then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No items available.' is displayed");
+			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
 		}.bind(this));
 	});
 
-	QUnit.test("noDataText - Table without FilterBar and bound", function(assert) {
+	QUnit.test("noDataText - Table with FilterBar without any filters and the table is bound", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
+			this.oTable.setFilter(new FilterBar());
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"),
+				"'No data available' is displayed");
+		}.bind(this));
+	});
+
+	QUnit.test("noDataText - Table with FilterBar with filters and the table is bound", function(assert) {
+		return this.oTable._fullyInitialized().then(function() {
+		var oFilterBar = new FilterBar("FB1");
+		oFilterBar.setFilterConditions({ key: [{ operator: "EQ", values: ["Pr"] }] });
+			this.oTable.setFilter(oFilterBar);
 			return waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"),
-				"'No data found. Try adjusting the filter settings.' is displayed");
+				"'No data available. Try adjusting the filter settings.' is displayed");
+		}.bind(this));
+	});
+
+	QUnit.test("noDataText - Table without FilterBar but with internal filters and the table is bound", function(assert) {
+		return this.oTable._fullyInitialized().then(function() {
+			this.oTable.setFilterConditions({ key: [{ operator: "EQ", values: ["Pr"] }] });
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available'");
+		}.bind(this));
+	});
+
+	QUnit.test("noDataText - Table without FilterBar and internal filters and the table is bound", function(assert) {
+		return this.oTable._fullyInitialized().then(function() {
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
 		}.bind(this));
 	});
 

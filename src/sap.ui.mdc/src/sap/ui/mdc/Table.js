@@ -1298,7 +1298,15 @@ sap.ui.define([
 			return oRb.getText("table.NO_DATA");
 		}
 
-		return oRb.getText("table.NO_RESULTS");
+	// Table is bound, but does not show any data
+	// If table-internal or external (for example FilterBar) filters are set, then show the message that the data not found and also ask to adjust the filters.
+		var oExternalFilter = Core.byId(this.getFilter());
+		if ((this.isFilteringEnabled() && getFilteredProperties(this).length > 0) ||  //internal filters check
+			(oExternalFilter && getFilteredProperties(oExternalFilter).length > 0)) { //external filters check
+			return oRb.getText("table.NO_RESULTS");
+		}
+		// If no filters set, show only message that the data are not found, and nothing about the filters.
+		return oRb.getText("table.NO_DATA");
 	};
 
 	Table.prototype._updateRowAction = function() {
@@ -1540,8 +1548,9 @@ sap.ui.define([
 		return this.getEngine().readXConfig(this);
 	};
 
-	function getFilteredProperties(oTable) {
-		var mFilterConditions = oTable.getFilterConditions();
+	// oControl can be a Table or FilterBar - any Control that is able to have Filter
+	function getFilteredProperties(oControl) {
+		var mFilterConditions = oControl.getFilterConditions();
 
 		return Object.keys(mFilterConditions).filter(function(sProperty) {
 			return mFilterConditions[sProperty].length > 0;
