@@ -6,10 +6,9 @@
 sap.ui.define([
 		"sap/ui/core/Element",
 		"sap/ui/core/Control",
-		"sap/base/strings/hyphenate",
-		"sap/base/strings/camelize"
+		"sap/base/strings/hyphenate"
 	],
-	function(Element, Control, hyphenate, camelize) {
+	function(Element, Control, hyphenate) {
 		"use strict";
 
 		/**
@@ -112,15 +111,14 @@ sap.ui.define([
 			}
 
 			var aAttributes = oDomRef.getAttributeNames();
-			var mProperties = oWebComponent.getMetadata().getAllProperties();
 			var aSkipList = ["id", "data-sap-ui", "style", "class"];
 			aAttributes.forEach(function(sAttr) {
 				if (aSkipList.indexOf(sAttr) !== -1) {
 					return; // Skip attributes, set by the framework
 				}
-				var sProp = camelize(sAttr);
-				if (mProperties[sProp] !== undefined) {
-					return; // Skip managed attributes/properties
+
+				if (oWebComponent.getMetadata().isManagedAttribute(sAttr)) {
+					return;
 				}
 
 				var sValue = oDomRef.getAttribute(sAttr); // Repeat the value from DOM
@@ -197,7 +195,7 @@ sap.ui.define([
 			for (var sAssocName in oAssociations) {
 				var oAssocData = oAssociations[sAssocName];
 				var vAssocValue = oAssocData.get(oWebComponent);
-				var sPropName = hyphenate(oAssocData._sMapTo); // The name of the property to be set with the association's ID value
+				var sAttrName = hyphenate(oAssocData._sMapTo); // The name of the attribute to be set with the association's ID value
 				if (oAssocData._fnMappingFormatter) {
 					vAssocValue = oWebComponent[oAssocData._fnMappingFormatter].call(oWebComponent, vAssocValue);
 				}
@@ -207,7 +205,7 @@ sap.ui.define([
 				}
 
 				if (vAssocValue) { // Only set the property, if the association is set
-					oRm.attr(sPropName, vAssocValue);
+					oRm.attr(sAttrName, vAssocValue);
 				}
 			}
 		};
