@@ -96,7 +96,8 @@ sap.ui.define([
     QUnit.test("check reaction to the FilterField 'submit' event", function(assert){
         var oFilterField = new FilterField();
         sinon.stub(this.oFilterBarBase, "triggerSearch");
-        sinon.stub(this.oFilterBarBase, "waitForInitialization").returns(Promise.resolve());
+        sinon.stub(this.oFilterBarBase, "getPropertyInfoSet").returns([]);
+        sinon.stub(this.oFilterBarBase, "initialized").returns(Promise.resolve());
 
         assert.ok(!oFilterField.hasListeners("submit"));
 
@@ -107,7 +108,7 @@ sap.ui.define([
         assert.ok(!this.oFilterBarBase.triggerSearch.called);
         oFilterField.fireSubmit({promise: Promise.resolve()});
 
-        return this.oFilterBarBase.waitForInitialization().then(function() {
+        return this.oFilterBarBase.initialized().then(function() {
             assert.ok(this.oFilterBarBase.triggerSearch.calledOnce);
 
             this.oFilterBarBase.removeFilterItem(oFilterField);
@@ -189,8 +190,6 @@ sap.ui.define([
     QUnit.test("Check 'valid' promise - do not provide parameter", function(assert){
         var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
 
-        sinon.stub(this.oFilterBarBase, "_hasMetadata").returns(true);
-
         var oValid = this.oFilterBarBase.validate();
 
         return oValid.then(function(){
@@ -201,7 +200,6 @@ sap.ui.define([
 
     QUnit.test("Check 'valid' promise - explicitly fire search", function(assert){
         var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
-        sinon.stub(this.oFilterBarBase, "_hasMetadata").returns(true);
 
         var oValid = this.oFilterBarBase.triggerSearch();
 
@@ -242,7 +240,7 @@ sap.ui.define([
     QUnit.test("Check validate without/with existing metadata", function(assert){
         var done = assert.async();
 
-        sinon.stub(this.oFilterBarBase, "_hasMetadata").returns(false);
+        sinon.stub(this.oFilterBarBase, "initialized").returns(Promise.resolve());
         sinon.stub(this.oFilterBarBase, "_retrieveMetadata").returns(Promise.resolve());
         sinon.stub(this.oFilterBarBase, '_validate').callsFake(function fakeFn() {
             this.oFilterBarBase._fResolvedSearchPromise();
@@ -250,8 +248,7 @@ sap.ui.define([
             this.oFilterBarBase._fResolvedSearchPromise = null;
         }.bind(this));
 
-
-
+        sinon.stub(this.oFilterBarBase, "isPropertyHelperFinal").returns(false);
         var oValidPromise = this.oFilterBarBase.validate();
 
         return oValidPromise.then(function(){
@@ -259,8 +256,8 @@ sap.ui.define([
 
 
             this.oFilterBarBase._retrieveMetadata.reset();
-            this.oFilterBarBase._hasMetadata.restore();
-            sinon.stub(this.oFilterBarBase, "_hasMetadata").returns(true);
+            this.oFilterBarBase.isPropertyHelperFinal.restore();
+            sinon.stub(this.oFilterBarBase, "isPropertyHelperFinal").returns(true);
 
             oValidPromise = this.oFilterBarBase.validate();
 
@@ -286,14 +283,10 @@ sap.ui.define([
 
     QUnit.test("Check cleanup for initial filters promise", function(assert){
 
-        var done = assert.async();
+        sinon.stub(this.oFilterBarBase, "awaitPropertyHelper").returns(Promise.resolve());
 
-        var oInitialFiltersPromise = this.oFilterBarBase._oInitialFiltersAppliedPromise;
-
-        oInitialFiltersPromise.then(function(){
+        return this.oFilterBarBase.initialized().then(function(){
             assert.ok(!this.oFilterBarBase._fResolveInitialFiltersApplied, "Initial filter resolve has been cleaned up");
-
-            done();
         }.bind(this));
 
     });

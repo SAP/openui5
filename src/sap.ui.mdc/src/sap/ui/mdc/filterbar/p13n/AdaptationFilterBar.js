@@ -49,11 +49,33 @@ sap.ui.define([
 		FilterBarBase.prototype.init.apply(this,arguments);
 		this.addStyleClass("sapUIAdaptationFilterBar");
 		this._bPersistValues = true;
+
+		this._fnResolveAdaptationControlPromise = null;
+		this._oAdaptationControlPromise = new Promise(function(resolve, reject) {
+			this._fnResolveAdaptationControlPromise = resolve;
+		}.bind(this));
+	};
+	AdaptationFilterBar.prototype.applySettings = function() {
+		FilterBarBase.prototype._applySettings.apply(this, arguments);
+		this._waitForAdaptControlAndPropertyHelper().then(function() {
+			this._initControlDelegate();
+		}.bind(this));
+	};
+
+	AdaptationFilterBar.prototype._waitForAdaptControlAndPropertyHelper = function(){
+		return this._oAdaptationControlPromise.then(function() {
+			return this.getAdaptationControl().awaitPropertyHelper().then(function(oPropertyHelper) {
+				this._bPropertyHelperFinal = this.getAdaptationControl().isPropertyHelperFinal();
+				this._oPropertyHelper = oPropertyHelper;
+			}.bind(this));
+		}.bind(this));
 	};
 
 	AdaptationFilterBar.prototype._initControlDelegate = function() {
-		this._retrieveMetadata().then(function() {
-			this._applyInitialFilterConditions();
+		this.initControlDelegate().then(function() {
+			if (!this._bIsBeingDestroyed) {
+				this._applyInitialFilterConditions();
+			}
 		}.bind(this));
 	};
 
@@ -84,6 +106,19 @@ sap.ui.define([
 		}.bind(this));
 
 		return this;
+	};
+
+	AdaptationFilterBar.prototype._retrieveMetadata = function() {
+
+		return this._oAdaptationControlPromise.then(function() {
+			return this.getAdaptationControl().awaitPropertyHelper().then(function(oPropertyHelper) {
+				if (this.isPropertyHelperFinal()) {
+					this._oMetadataAppliedPromise = Promise.resolve();
+				}
+
+				return FilterBarBase.prototype._retrieveMetadata.apply(this, arguments);
+			}.bind(this));
+		}.bind(this));
 	};
 
 	AdaptationFilterBar.prototype.createConditionChanges = function() {
@@ -131,13 +166,6 @@ sap.ui.define([
 	AdaptationFilterBar.prototype.applyConditionsAfterChangesApplied = function() {
 		FilterBarBase.prototype.applyConditionsAfterChangesApplied.apply(this, arguments);
 		this.triggerSearch();
-	};
-
-
-	AdaptationFilterBar.prototype.initPropertyHelper = function(){
-		return this.getAdaptationControl().awaitPropertyHelper().then(function(oPropertyHelper) {
-			this._oPropertyHelper = oPropertyHelper;
-		}.bind(this));
 	};
 
 	/**
@@ -289,6 +317,12 @@ sap.ui.define([
 	 * @param {boolean} bSuppressInvalidate suppress invalidation
 	 */
 	AdaptationFilterBar.prototype.setAdaptationControl = function(oControl, bSuppressInvalidate) {
+
+		if (this._fnResolveAdaptationControlPromise) {
+			this._fnResolveAdaptationControlPromise();
+			this._fnResolveAdaptationControlPromise = null;
+		}
+
 		this.setProperty("adaptationControl", oControl, bSuppressInvalidate);
 
 		//FIXME: remove once the UI has been decided
@@ -321,6 +355,9 @@ sap.ui.define([
 		}
 		this._mOriginalsForClone = null;
 		this.oAdaptationData = null;
+
+		this._fnResolveAdaptationControlPromise = null;
+		this._oAdaptationControlPromise = null;
 	};
 
 	return AdaptationFilterBar;

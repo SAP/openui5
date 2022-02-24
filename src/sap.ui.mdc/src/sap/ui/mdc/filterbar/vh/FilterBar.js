@@ -130,6 +130,10 @@ sap.ui.define(
 			this._waitForMetadata();
 		};
 
+		FilterBar.prototype._handleConditionModelPropertyChange = function() {
+			this.fireFiltersChanged({conditionsBased: true});
+		};
+
 
 		FilterBar.prototype.exit = function() {
 			if (this._oCollectiveSearch) { // do not destroy CollectiveSearch as it is owned by value help and might be reused there
