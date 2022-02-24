@@ -24,8 +24,17 @@
 	}
 }
 
-.sapFAvatarGroupMoreButton.sapMBtn:focus > .sapMFocusable.sapMBtnInner {
-	outline-offset: -0.125rem;
+html.sap-desktop .sapFAvatarGroupMoreButton.sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator):before {
+	border-radius: 1.375rem;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+}
+
+
+html.sap-desktop .sapFAvatarGroupMoreButton.sapMBtn:focus > .sapMBtnActive.sapMFocusable {
+	border-color: transparent;
 }
 
 .sapFAvatarGroupPopover .sapFCard {

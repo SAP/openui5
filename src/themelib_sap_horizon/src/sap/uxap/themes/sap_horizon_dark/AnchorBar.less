@@ -307,7 +307,9 @@ html.sap-desktop .sapMBtnBase.sapMBtn.sapUxAPAnchorBarButton:focus::after {
 	border-radius: 0.5rem;
 }
 
-.sapUxAPAnchorBar .sapMSB .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before {
+.sapUxAPAnchorBar .sapMSB .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before,
+html.sap-desktop .sapMBtnBase.sapMBtn.sapUxAPAnchorBarButton:focus .sapMBtnInner::before,
+html.sap-desktop .sapUxAPAnchorBarButton .sapMBtn:focus .sapMBtnInner::before {
 	content: none;
 }
 
