@@ -62,6 +62,9 @@ sap.ui.define([
 
 			var oFilterBar = oEvent.oSource;
 			var oCM = oFilterBar._getConditionModel();
+			if (!oCM) {
+				return;
+			}
 			var oConditions = oCM.getAllConditions();
 
 			var oTextArea = oView.byId("Cond");
