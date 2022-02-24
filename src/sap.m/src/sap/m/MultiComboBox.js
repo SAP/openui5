@@ -3808,6 +3808,7 @@ function(
 			this.setValue("");
 			this._sOldInput = "";
 
+			this.bOpenedByKeyboardOrButton ? this.clearFilter() : this.close();
 			this.setProperty("effectiveShowClearIcon", false);
 		}
 	};
