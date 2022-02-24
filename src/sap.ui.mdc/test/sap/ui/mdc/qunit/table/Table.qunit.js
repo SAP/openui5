@@ -2727,6 +2727,16 @@ sap.ui.define([
 			})
 		}));
 
+		this.oTable.addColumn(new Column({
+			id: "ignoreColumn",
+			header: "IgnoreColumn",
+			hAlign: "Begin",
+			dataProperty: "ignoreColumn",
+			template: new Text({
+				text: "This text will not appear in the export"
+			})
+		}));
+
 		var aExpectedOutput = [
 			{
 				columnId: "firstNameColumn",
@@ -2805,6 +2815,14 @@ sap.ui.define([
 				textAlign: "Begin",
 				type: "String",
 				width: 5
+			},
+			{
+				columnId: "noDataColumn2",
+				label: "NoDataColumn2",
+				property: "",
+				textAlign: "Begin",
+				type: "String",
+				width: ""
 			}
 		];
 
@@ -2827,7 +2845,7 @@ sap.ui.define([
 				label: "Full name",
 				propertyInfos: ["firstName", "lastName"]
 			}, {
-				name: "fullName2", // complex PropertyInfo withexportSettings => 1 spreadsheet column config will be created
+				name: "fullName2", // complex PropertyInfo with exportSettings => 1 spreadsheet column config will be created
 				label: "Name",
 				propertyInfos: ["firstName", "lastName"],
 				exportSettings: {
@@ -2881,6 +2899,10 @@ sap.ui.define([
 				label: "NoDataColumn2",
 				sortable: false,
 				filterable: false
+			}, {
+				name: "ignoreColumn",
+				label: "IgnoreColumn",
+				exportSettings: null
 			}
 		]);
 
@@ -2942,6 +2964,16 @@ sap.ui.define([
 			})
 		}));
 
+		this.oTable.addColumn(new Column({
+			id: "companyExportSettings",
+			header: "Company",
+			width: "10rem",
+			dataProperty: "companySplit",
+			template: new Text({
+				text: "{companyName} ({companyCode})"
+			})
+		}));
+
 		var aExpectedOutput = [
 			{
 				columnId: "product",
@@ -2982,6 +3014,24 @@ sap.ui.define([
 			},
 			{
 				columnId: "company-additionalProperty1",
+				displayUnit: false,
+				label: "Company Code",
+				property: "companyCode",
+				textAlign: "Begin",
+				type: "String",
+				width: 10
+			},
+			{
+				columnId: "companyExportSettings",
+				displayUnit: false,
+				label: "Company Name",
+				property: "companyName",
+				textAlign: "Begin",
+				type: "String",
+				width: 15
+			},
+			{
+				columnId: "companyExportSettings-additionalProperty1",
 				displayUnit: false,
 				label: "Company Code",
 				property: "companyCode",
@@ -3030,6 +3080,13 @@ sap.ui.define([
 				name: "companyCode",
 				path: "companyCode",
 				label: "Company Code"
+			}, {
+				name: "companySplit",
+				label: "Name",
+				propertyInfos: ["companyName", "companyCode"],
+				exportSettings: {
+					template: "{0}, {1}"
+				}
 			}
 		]);
 
