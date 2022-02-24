@@ -2,14 +2,17 @@
  * ${copyright}
  */
 sap.ui.define([
+	"../library",
 	"sap/ui/Device",
 	"../UIArea",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control"
 ],
-function(Device, UIArea, jQuery) {
+function(lib, Device, UIArea, jQuery) {
 	"use strict";
+
+	var RelativeDropPosition = lib.dnd.RelativeDropPosition;
 
 	/**
 	 * Contains classes and helpers related to drag & drop functionality.
@@ -265,7 +268,7 @@ function(Device, UIArea, jQuery) {
 			/**
 			 * Returns the calculated position of the drop action relative to the valid dropped control.
 			 *
-			 * @returns {string}
+			 * @returns {sap.ui.core.dnd.RelativeDropPosition}
 			 * @protected
 			 */
 			getDropPosition: function() {
@@ -321,7 +324,7 @@ function(Device, UIArea, jQuery) {
 			};
 
 		if (!sDropPosition || sDropPosition == "On") {
-			sRelativePosition = "On";
+			sRelativePosition = RelativeDropPosition.On;
 			sDropLayout = "";
 		} else if (sDropLayout == "Horizontal") {
 			var iCursorX = oEvent.pageX - mDropRect.left;
@@ -331,27 +334,27 @@ function(Device, UIArea, jQuery) {
 			if (sDropPosition == "Between") {
 				mStyle.width = "";
 				if (iCursorX < mDropRect.width * 0.5) {
-					sRelativePosition = "Before";
+					sRelativePosition = RelativeDropPosition.Before;
 					mStyle.left = mDropRect.left;
 				} else {
-					sRelativePosition = "After";
+					sRelativePosition = RelativeDropPosition.After;
 					mStyle.left = mDropRect.right;
 				}
 			} else if (sDropPosition == "OnOrBetween") {
 				if (iCursorX < mDropRect.width * 0.25) {
-					sRelativePosition = "Before";
+					sRelativePosition = RelativeDropPosition.Before;
 					mStyle.left = mDropRect.left;
 					mStyle.width = "";
 				} else if (iCursorX > mDropRect.width * 0.75) {
-					sRelativePosition = "After";
+					sRelativePosition = RelativeDropPosition.After;
 					mStyle.left = mDropRect.right;
 					mStyle.width = "";
 				} else {
-					sRelativePosition = "On";
+					sRelativePosition = RelativeDropPosition.On;
 				}
 			}
-			if (sRelativePosition != "On" && sap.ui.getCore().getConfiguration().getRTL()) {
-				sRelativePosition = (sRelativePosition == "After") ? "Before" : "After";
+			if (sRelativePosition != RelativeDropPosition.On && sap.ui.getCore().getConfiguration().getRTL()) {
+				sRelativePosition = (sRelativePosition == RelativeDropPosition.After) ? RelativeDropPosition.Before : RelativeDropPosition.After;
 			}
 		} else {
 			var iCursorY = oEvent.pageY - mDropRect.top;
@@ -361,23 +364,23 @@ function(Device, UIArea, jQuery) {
 			if (sDropPosition == "Between") {
 				mStyle.height = "";
 				if (iCursorY < mDropRect.height * 0.5) {
-					sRelativePosition = "Before";
+					sRelativePosition = RelativeDropPosition.Before;
 					mStyle.top = mDropRect.top;
 				} else {
-					sRelativePosition = "After";
+					sRelativePosition = RelativeDropPosition.After;
 					mStyle.top = mDropRect.bottom;
 				}
 			} else if (sDropPosition == "OnOrBetween") {
 				if (iCursorY < mDropRect.height * 0.25) {
-					sRelativePosition = "Before";
+					sRelativePosition = RelativeDropPosition.Before;
 					mStyle.top = mDropRect.top;
 					mStyle.height = "";
 				} else if (iCursorY > mDropRect.height * 0.75) {
-					sRelativePosition = "After";
+					sRelativePosition = RelativeDropPosition.After;
 					mStyle.top = mDropRect.bottom;
 					mStyle.height = "";
 				} else {
-					sRelativePosition = "On";
+					sRelativePosition = RelativeDropPosition.On;
 				}
 			}
 		}
@@ -386,7 +389,7 @@ function(Device, UIArea, jQuery) {
 			return sRelativePosition;
 		}
 
-		if (sRelativePosition == "On") {
+		if (sRelativePosition == RelativeDropPosition.On) {
 			mStyle.top = mDropRect.top;
 			mStyle.left = mDropRect.left;
 			mStyle.width = mDropRect.width;

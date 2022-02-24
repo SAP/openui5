@@ -410,7 +410,7 @@ sap.ui.define([
 				 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
 				 * @param {sap.ui.core.Element} oControlEvent.getParameters.draggedControl The element being dragged
 				 * @param {sap.ui.core.Element} oControlEvent.getParameters.droppedControl The element being dropped
-				 * @param {string} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the <code>droppedControl</code>, possible values are <code>Before</code>, <code>On</code>, <code>After</code>
+				 * @param {sap.ui.core.dnd.RelativeDropPosition} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the <code>droppedControl</code>.
 				 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
 				 * @public
 				 * @since 1.99
