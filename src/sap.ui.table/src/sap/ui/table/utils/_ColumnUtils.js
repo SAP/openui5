@@ -549,14 +549,7 @@ sap.ui.define([
 		 * @returns {int} The minimal possible column width in pixels.
 		 */
 		getMinColumnWidth: function() {
-			if (this._iColMinWidth) {
-				return this._iColMinWidth;
-			}
-			this._iColMinWidth = 48;
-			if (!Device.system.desktop) {
-				this._iColMinWidth = 88;
-			}
-			return this._iColMinWidth;
+			return Device.system.desktop ? 48 : 88;
 		},
 
 		/**

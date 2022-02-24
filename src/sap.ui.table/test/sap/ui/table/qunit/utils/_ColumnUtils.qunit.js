@@ -680,7 +680,6 @@ sap.ui.define([
 		var bDesktop = Device.system.desktop;
 		Device.system.desktop = true;
 		assert.equal(ColumnUtils.getMinColumnWidth(), 48, "Desktop column width");
-		ColumnUtils._iColMinWidth = null;
 		Device.system.desktop = false;
 		assert.equal(ColumnUtils.getMinColumnWidth(), 88, "Mobile column width");
 		Device.system.desktop = bDesktop;
