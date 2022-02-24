@@ -1271,7 +1271,7 @@ sap.ui.define([
 
 		var oSapUiTableCtrlScroll = oDomRef.querySelector(".sapUiTableCtrlScroll:not(.sapUiTableCHT)");
 		if (oSapUiTableCtrlScroll) {
-			oSizes.tableCtrlScrollWidth = oSapUiTableCtrlScroll.clientWidth;
+			oSizes.tableCtrlScrollWidth = oSapUiTableCtrlScroll.getBoundingClientRect().width;
 		}
 
 		var oSapUiTableRowHdrScr = oDomRef.querySelector(".sapUiTableRowHdrScr");
@@ -1281,7 +1281,7 @@ sap.ui.define([
 
 		var oCtrlScrDomRef = oDomRef.querySelector(".sapUiTableCtrlScr:not(.sapUiTableCHA)");
 		if (oCtrlScrDomRef) {
-			oSizes.tableCtrlScrWidth = oCtrlScrDomRef.clientWidth;
+			oSizes.tableCtrlScrWidth = oCtrlScrDomRef.getBoundingClientRect().width;
 		}
 
 		var oCtrlFixed = oDomRef.querySelector(".sapUiTableCtrlScrFixed:not(.sapUiTableCHA) > .sapUiTableCtrlFixed");
