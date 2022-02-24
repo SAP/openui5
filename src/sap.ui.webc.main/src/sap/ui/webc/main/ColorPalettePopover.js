@@ -6,7 +6,8 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
-	"./thirdparty/ColorPalettePopover"
+	"./thirdparty/ColorPalettePopover",
+	"./thirdparty/features/ColorPaletteMoreColors"
 ], function(WebComponent, library) {
 	"use strict";
 
@@ -83,7 +84,7 @@ sap.ui.define([
 				 * Defines the content of the component.
 				 */
 				colors: {
-					type: "sap.ui.core.Control",
+					type: "sap.ui.webc.main.IColorPaletteItem",
 					multiple: true
 				}
 			},

@@ -635,6 +635,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get overflowButtonText() {
 			return TabContainer.i18nBundle.getText(i18nDefaults.TABCONTAINER_END_OVERFLOW);
 		}
+		get popoverCancelButtonText() {
+			return TabContainer.i18nBundle.getText(i18nDefaults.TABCONTAINER_POPOVER_CANCEL_BUTTON);
+		}
 		get animate() {
 			return AnimationMode.getAnimationMode() !== AnimationMode__default.None;
 		}

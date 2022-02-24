@@ -246,7 +246,7 @@ sap.ui.define([
 		 */
 
 		/**
-		 * Interface for components that may be used inside a <code>ui5-color-palette</code>
+		 * Interface for components that may be used inside a <code>ui5-color-palette</code> or <code>ui5-color-palette-popover</code>
 		 *
 		 * @name sap.ui.webc.main.IColorPaletteItem
 		 * @interface

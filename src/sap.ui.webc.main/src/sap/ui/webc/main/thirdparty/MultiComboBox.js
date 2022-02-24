@@ -293,6 +293,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_handleTab(event) {
 			this.allItemsPopover.close();
 		}
+		_handleSelectAll(event) {
+			const filteredItems = this._filteredItems;
+			const allItemsSelected = filteredItems.every(item => item.selected);
+			filteredItems.forEach(item => {
+				item.selected = !allItemsSelected;
+			});
+			this.fireSelectionChange();
+		}
 		_onValueStateKeydown(event) {
 			const isArrowDown = Keys.isDown(event);
 			const isArrowUp = Keys.isUp(event);
@@ -315,6 +323,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				return;
 			}
 			event.preventDefault();
+			if (Keys.isCtrlA(event)) {
+				this._handleSelectAll(event);
+				return;
+			}
 			if (((Keys.isUp(event) && isFirstItem) || Keys.isHome(event)) && this.valueStateHeader) {
 				this.valueStateHeader.focus();
 			}
