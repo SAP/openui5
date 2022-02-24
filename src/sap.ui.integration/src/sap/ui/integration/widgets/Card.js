@@ -2171,7 +2171,6 @@ sap.ui.define([
 		var oContent = this.getCardContent(),
 			oLoadingProvider = this.getAggregation("_loadingProvider");
 
-		this._fireContentDataChange();
 		this.fireEvent("_cardReady");
 		this.hideLoadingPlaceholders(CardArea.Header);
 		this.hideLoadingPlaceholders(CardArea.Filters);
@@ -2183,6 +2182,8 @@ sap.ui.define([
 		if (oLoadingProvider) {
 			oLoadingProvider.setLoading(false);
 		}
+
+		this._fireContentDataChange();
 	};
 
 	/**

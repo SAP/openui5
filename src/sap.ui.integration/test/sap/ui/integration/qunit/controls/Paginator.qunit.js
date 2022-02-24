@@ -77,6 +77,7 @@ sap.ui.define([
 
 		this.oPaginator.$().find(".sapMCrslNext .sapUiIcon").trigger("click");
 		assert.strictEqual(this.oPaginator.getPageNumber(), 4, "page number stays the same");
+		assert.notOk(this.oPaginator.$().find(".sapFCardContentCloned, .sapFCardContentTransition, .sapFCardContentOriginal").length, "animations are cleared");
 	});
 
 	QUnit.test("navigate prev", function (assert) {
@@ -86,5 +87,6 @@ sap.ui.define([
 
 		this.oPaginator.$().find(".sapMCrslPrev .sapUiIcon").trigger("click");
 		assert.strictEqual(this.oPaginator.getPageNumber(), 0, "page number stays the same");
+		assert.notOk(this.oPaginator.$().find(".sapFCardContentCloned, .sapFCardContentTransition, .sapFCardContentOriginal, .sapFCardContentReverseAnim").length, "animations are cleared");
 	});
 });

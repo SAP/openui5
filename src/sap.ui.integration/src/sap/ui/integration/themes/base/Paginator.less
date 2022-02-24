@@ -56,3 +56,29 @@
 		}
 	}
 }
+
+.sapUiIntCard  {
+	.sapFCardContentCloned {
+		position: absolute;
+		left: 0;
+		right: 0;
+	}
+
+	.sapFCardContentTransition {
+		transition: transform 0.4s linear;
+	}
+
+	.sapFCardContentOriginal,
+	.sapFCardContentCloned.sapFCardContentTransition.sapFCardContentReverseAnim {
+		transform: translate(0, 100%);
+	}
+
+	.sapFCardContentOriginal.sapFCardContentReverseAnim,
+	.sapFCardContentCloned.sapFCardContentTransition {
+		transform: translate(0, -100%);
+	}
+
+	.sapFCardContentOriginal.sapFCardContentTransition {
+		transform: translate(0, 0);
+	}
+}

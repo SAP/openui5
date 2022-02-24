@@ -374,11 +374,12 @@ sap.ui.define([
 	 */
 	BaseContent.prototype.onDataRequestComplete = function () {
 		var oCard = this.getCardInstance();
+
+		this.fireEvent("_dataReady");
+
 		if (oCard) {
 			oCard._fireContentDataChange();
 		}
-
-		this.fireEvent("_dataReady");
 	};
 
 	/**

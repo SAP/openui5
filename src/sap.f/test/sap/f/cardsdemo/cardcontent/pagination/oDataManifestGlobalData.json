@@ -30,26 +30,37 @@
 				}
 			}
 		},
+		"data": {
+			"request": {
+				"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+				"parameters": {
+					"$format": "json",
+					"$count": true,
+					"$skip": "{paginator>/skip}",
+					"$top": "{parameters>/top/value}"
+				}
+			},
+			"path": "/value"
+		},
 		"header": {
-			"title": "Content Data",
+			"title": "Global Data",
 			"subTitle": "In Stock Information",
 			"icon": {
 				"src": "sap-icon://product"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/@odata.count"
+						]
+					}
+				}
 			}
 		},
 		"content": {
-			"data": {
-				"request": {
-					"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
-					"parameters": {
-						"$format": "json",
-						"$count": true,
-						"$skip": "{paginator>/skip}",
-						"$top": "{parameters>/top/value}"
-					}
-				},
-				"path": "/value"
-			},
 			"item": {
 				"title": "{ProductName}",
 				"description": "{UnitsInStock} units in stock",
