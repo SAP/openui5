@@ -851,6 +851,48 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[
+	{mCustomParams : "foo"},
+	{aApplicationFilters : ["foo"]},
+	{aFilters : ["foo"]},
+	{aSorters : ["foo"]}
+].forEach(function (oBindingEnhancement, i) {
+	[false, true].forEach(function (bSideEffects) {
+	var sTitle = "checkExpandedList: list read via side effects (sideEffects = " + bSideEffects
+			+ ") is refreshed #" + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = {_getObject : function () {}},
+			oBinding = {
+				aApplicationFilters : [],
+				oContext : "~oContext",
+				aFilters : [],
+				oModel : oModel,
+				sOperationMode : OperationMode.Server,
+				sPath : "~sPath",
+				aSorters : [],
+				_refresh : function () {},
+				isResolved : function () {}
+			},
+			aList = [];
+
+		Object.assign(oBinding, oBindingEnhancement);
+		aList.sideEffects = bSideEffects;
+
+		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_refresh").withExactArgs().exactly(bSideEffects ? 1 : 0);
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.checkExpandedList.call(oBinding),
+			bSideEffects ? undefined : false);
+		assert.strictEqual(oBinding.bUseExpandedList, false);
+		assert.strictEqual(oBinding.aExpandRefs, undefined);
+	});
+	});
+});
+
+	//*********************************************************************************************
 [true, false].forEach(function (bUseExpandedList) {
 	QUnit.test("checkExpandedList: expanded 'to N' navigation property; skip reload needed;"
 			+ " not read via side effect; bUseExpandedList=" + bUseExpandedList, function (assert) {
@@ -2449,4 +2491,40 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bLengthFinal, oFixture.bResult);
 	});
 });
+
+	//*********************************************************************************************
+[false, true].forEach(function (bExpandedList) {
+	QUnit.test("checkUpdate: bExpandedList = " + bExpandedList, function (assert) {
+		var oBinding = {
+				sChangeReason : "~sChangeReason",
+				aKeys : [],
+				_fireChange : function () {},
+				checkExpandedList : function () {},
+				useClientMode : function () {}
+			};
+
+		this.mock(oBinding).expects("checkExpandedList").withExactArgs(true).returns(bExpandedList);
+		this.mock(oBinding).expects("useClientMode").withExactArgs().exactly(bExpandedList ? 0 : 1);
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : "~sChangeReason"});
+
+		// code under test
+		ODataListBinding.prototype.checkUpdate.call(oBinding);
+
+		assert.strictEqual(oBinding.bNeedsUpdate, false);
+		assert.strictEqual(oBinding.sChangeReason, undefined);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate: bExpandedList = undefined stops processing", function (assert) {
+		var oBinding = {
+				aKeys : [],
+				checkExpandedList : function () {}
+			};
+
+		this.mock(oBinding).expects("checkExpandedList").withExactArgs(true).returns(undefined);
+
+		// code under test
+		ODataListBinding.prototype.checkUpdate.call(oBinding);
+	});
 });

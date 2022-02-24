@@ -13406,6 +13406,145 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: Request side effects also updates bindings with custom parameters.
+	// JIRA: CPOUI5MODELS-838
+	QUnit.test("Request side effects: updates bindings with custom parameters", function (assert) {
+		var oBinding, oTable,
+			oModel = createSalesOrdersModel({preliminaryContext : true}),
+			sView = '\
+<FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<t:Table id="table" rows="{\
+				path : \'ToSalesOrders\',\
+				parameters : {\
+					custom : {\
+						\'foo\' : \'bar\'\
+					}\
+				}\
+			}" visibleRowCount="5">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				requestUri : "BusinessPartnerSet('42')"
+			}, {
+				__metadata : {uri : "BusinessPartnerSet('42')"},
+				BusinessPartnerID : "42"
+			})
+			.expectRequest({
+				batchNo : 1,
+				requestUri : "BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=105&foo=bar"
+			}, {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					Note : "Sales Order 1"
+				}]
+			})
+			.expectValue("businessPartnerID", "42")
+			.expectValue("salesOrderID", ["1", "", "", "", ""])
+			.expectValue("note", ["Sales Order 1", "", "", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectValue("salesOrderID", ["", "1"])
+				.expectValue("note", ["Sales Order New 1", "Sales Order 1"]);
+
+			oBinding = oTable.getBinding("rows");
+			oBinding.create({Note : "Sales Order New 1"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 2,
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "Sales Order New 1"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					headers : {},
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						Note : "Sales Order New 1",
+						SalesOrderID : "2"
+					},
+					statusCode : 201
+				})
+				.expectValue("salesOrderID", "2", 0);
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("salesOrderID", ["", "1"], 1)
+				.expectValue("note", ["Sales Order New 2", "Sales Order 1"], 1);
+
+			oBinding.create({Note : "Sales Order New 2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 3,
+					requestUri : "BusinessPartnerSet('42')?$expand=ToSalesOrders"
+				}, {
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					ToSalesOrders : {
+						results : [{
+							__metadata : {uri : "SalesOrderSet('1')"},
+							Note : "Sales Order 1 - SideEffect",
+							SalesOrderID : "1"
+						}, {
+							__metadata : {uri : "SalesOrderSet('2')"},
+							Note : "Sales Order New 1 - SideEffect",
+							SalesOrderID : "2"
+						}, {
+							__metadata : {uri : "SalesOrderSet('42')"},
+							Note : "Added via side effect",
+							SalesOrderID : "42"
+						}]
+					}
+				})
+				.expectValue("note", "Sales Order New 1 - SideEffect", 0)
+				.expectValue("note", "Sales Order 1 - SideEffect", 2)
+				.expectRequest({
+					batchNo : 4,
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=105"
+						+ "&$filter=not(SalesOrderID%20eq%20%272%27)&foo=bar"
+				}, {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('1')"},
+						Note : "Sales Order 1 - SideEffect",
+						SalesOrderID : "1"
+					}, {
+						__metadata : {uri : "SalesOrderSet('42')"},
+						Note : "Added via side effect",
+						SalesOrderID : "42"
+					}]
+				})
+				.expectValue("salesOrderID", "42", 3)
+				.expectValue("note", "Added via side effect", 3);
+
+			// code under test
+			oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
+				urlParameters : {$expand : "ToSalesOrders"}
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: When enforcing the update of a relative list binding with a transient context via
 	// ODataModel#updateBindings(true), there is no backend request.
 	// JIRA: CPOUI5MODELS-755
