@@ -9,6 +9,7 @@ sap.ui.define([
     "sap/m/Button",
 	"sap/ui/core/ResizeHandler",
     "sap/ui/core/StashedControlSupport",
+	"sap/ui/base/ManagedObjectObserver",
     "./ObjectPageSubSection",
     "./library",
     "sap/m/library",
@@ -19,6 +20,7 @@ sap.ui.define([
 	Button,
 	ResizeHandler,
 	StashedControlSupport,
+	ManagedObjectObserver,
 	ObjectPageSubSection,
 	library,
 	mobileLibrary,
@@ -71,7 +73,7 @@ sap.ui.define([
 				/**
 				 * The list of Subsections.
 				 */
-				subSections: {type: "sap.uxap.ObjectPageSubSection", multiple: true, singularName: "subSection"},
+				subSections: {type: "sap.uxap.ObjectPageSubSection", multiple: true, singularName: "subSection", forwarding: {getter: "_getGrid", aggregation: "content"}},
 
 				/**
 				 * Section heading content.
@@ -138,6 +140,7 @@ sap.ui.define([
 		ObjectPageSectionBase.prototype.init.call(this);
 		this._sContainerSelector = ".sapUxAPObjectPageSectionContainer";
 		this._onResizeRef = this._onResize.bind(this);
+		this._oGridContentObserver = new ManagedObjectObserver(this._onGridContentChange.bind(this));
 	};
 
 	ObjectPageSection.prototype.exit = function () {
@@ -241,12 +244,61 @@ sap.ui.define([
 		this._detachMediaContainerWidthChange(this._updateImportance, this);
 
 		this._updateImportance();
+
+		this._applyLayout();
 	};
 
 	ObjectPageSection.prototype.onAfterRendering = function () {
 		this._updateMultilineContent();
 		this._attachMediaContainerWidthChange(this._updateImportance, this);
 		this._iResizeHandlerId = ResizeHandler.register(this, this._onResizeRef);
+	};
+
+	ObjectPageSection.prototype._applyLayout = function () {
+		var oLayoutConfig = {M: 2, L: 3, XL: 4},
+			aChildren = this.getSubSections();
+
+		this._resetLayoutData(aChildren);
+
+		this._assignLayoutData(aChildren, oLayoutConfig);
+
+		return this;
+	};
+
+	/**
+	 * Determines the minimal required number of columns that a child item
+	 * should take, based on the child content and own colspan
+	 * @override
+	 */
+	ObjectPageSection.prototype._getMinRequiredColspanForChild = function (oSubSection) {
+		return oSubSection ? oSubSection._getMinRequiredColspan() : 0;
+	};
+
+	/**
+	 * Determines if allowed to automatically extend the number of columns to span accross
+	 * (in case of unused columns on the side, in order to utilize that unused space
+	 * @override
+	 */
+	ObjectPageSection.prototype._allowAutoextendColspanForChild = function (oSubSection) {
+		return true;
+	};
+
+	ObjectPageSection.prototype._onGridContentChange = function (oEvent) {
+		var sMutation;
+		if (oEvent.type === "aggregation" && oEvent.name === "content") {
+			this.invalidate();
+			sMutation = oEvent.mutation;
+			if (sMutation === "add" || sMutation === "insert") {
+				this._oGridContentObserver.observe(oEvent.child, {
+					properties: ["visible"]
+				});
+			} else if (oEvent.mutation === "remove") {
+				this._oGridContentObserver.unobserve(oEvent.child);
+			}
+		}
+		if (oEvent.type === "property" && oEvent.name === "visible") {
+			this.invalidate();
+		}
 	};
 
 	/**

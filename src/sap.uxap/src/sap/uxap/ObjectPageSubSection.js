@@ -5,8 +5,6 @@
 // Provides control sap.uxap.ObjectPageSubSection.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/layout/Grid",
-	"sap/ui/layout/GridData",
 	"sap/ui/core/Core",
 	"./ObjectPageSectionBase",
 	"./ObjectPageLazyLoader",
@@ -25,8 +23,6 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Focusable"
 ], function(
 	jQuery,
-	Grid,
-	GridData,
 	Core,
 	ObjectPageSectionBase,
 	ObjectPageLazyLoader,
@@ -98,6 +94,8 @@ sap.ui.define([
 				 */
 				showTitle: {type: "boolean", group: "Appearance", defaultValue: true},
 
+				_columnSpan: {type: "string", group: "Appearance", defaultValue: "all", visibility: "hidden"},
+
 				/**
 				 * A mode property that will be passed to the controls in the blocks and moreBlocks aggregations. Only relevant if these aggregations use Object page blocks.
 				 */
@@ -114,11 +112,6 @@ sap.ui.define([
 			},
 			defaultAggregation: "blocks",
 			aggregations: {
-
-				/**
-				 * Internal grid aggregation
-				 */
-				_grid: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
 				/**
 				 * Controls to be displayed in the subsection
@@ -179,6 +172,24 @@ sap.ui.define([
 
 	ObjectPageSubSection.FIT_CONTAINER_CLASS = "sapUxAPObjectPageSubSectionFitContainer";
 
+	// determines the number of columns the subsection will span accross (inside a single row)
+	ObjectPageSubSection.COLUMN_SPAN = {
+		/* this is the default option
+		/* the subsection spans accross the entire row */
+		all: "all",
+
+		/* The columns span is based on the content:
+		the subsection takes as many columns as required
+		by the count and colspan of its visible blocks.
+
+		In addition, if there are unused empty cells
+		in the neighbouring columns,
+		the subsection is automatically extended
+		to span accross those empty cells
+		(in order to utilize the remaining unused space on the row) */
+		auto: "auto"
+	};
+
 	/**
 	 * Retrieves the resource bundle for the <code>sap.uxap</code> library.
 	 * @static
@@ -219,6 +230,47 @@ sap.ui.define([
 		this._initTitlePropagationSupport();
 		this._sBorrowedTitleDomId = false;
 		this._height = ""; // css height property
+	};
+
+	/**
+	 * Override the parent getter to preserve the externally visible parent-child relationship
+	 * @override
+	 * @returns {sap.ui.base.ManagedObject|null} The technical parent managed object or <code>null</code>
+	 */
+	ObjectPageSubSection.prototype.getParent = function () {
+		var oParent = ObjectPageSectionBase.prototype.getParent.apply(this, arguments);
+		if (oParent && oParent.isA("sap.ui.layout.Grid")) {
+			oParent = oParent.getParent();
+		}
+		return oParent;
+	};
+
+	/**
+	 * Getter for the private "_columnSpan" property
+	 * @returns {string}
+	 * @restricted
+	 */
+	 ObjectPageSubSection.prototype._getColumnSpan = function () {
+		return this.getProperty("_columnSpan");
+	};
+
+	/**
+	 * Setter for the private "_columnSpan" property
+	 * @param {string} sValue
+	 * @returns {object} this
+	 * @restricted
+	 */
+	ObjectPageSubSection.prototype._setColumnSpan = function (sValue) {
+		var sOldValue = this.getProperty("_columnSpan"),
+			oParent;
+		if (sOldValue === sValue) {
+			return;
+		}
+		this.setProperty("_columnSpan", sValue);
+		oParent = this.getParent();
+		oParent && oParent.invalidate(); // let parent section re-apply its layout
+
+		return this;
 	};
 
 	ObjectPageSubSection.prototype._getHeight = function () {
@@ -296,21 +348,6 @@ sap.ui.define([
 		var oParent = this.getParent();
 		oParent && typeof oParent._expandSection === "function" && oParent._expandSection();
 		return this;
-	};
-
-	ObjectPageSubSection.prototype._getGrid = function () {
-		if (!this.getAggregation("_grid")) {
-			this.setAggregation("_grid", new Grid({
-				id: this.getId() + "-innerGrid",
-				defaultSpan: "XL12 L12 M12 S12",
-				hSpacing: 1,
-				vSpacing: 1,
-				width: "100%",
-				containerQuery: true
-			}), true); // this is always called onBeforeRendering so suppress invalidate
-		}
-
-		return this.getAggregation("_grid");
 	};
 
 	ObjectPageSubSection.prototype._hasVisibleActions = function () {
@@ -558,7 +595,7 @@ sap.ui.define([
 			aVisibleBlocks = aBlocks;
 		}
 
-		this._calcBlockColumnLayout(aVisibleBlocks, this._oLayoutConfig);
+		this._assignLayoutData(aVisibleBlocks, oLayoutConfig);
 
 		try {
 			aVisibleBlocks.forEach(function (oBlock) {
@@ -684,97 +721,43 @@ sap.ui.define([
 	/*************************************************************************************
 	 * generic block layout calculation
 	 ************************************************************************************/
+	/**
+	 * Returns the minimum required count of columns that the subsection should span accross.
+	 * The number is derived from the value of the <code>_columnSpan</code> property
+	 * and the content of the subSection
+	 * @returns {number} the number
+	 */
+	ObjectPageSubSection.prototype._getMinRequiredColspan = function () {
+		var sColumnSpan = this._getColumnSpan(),
+			aAllBlocks,
+			aVisibleBlocks,
+			iColumnSpan;
+
+		if (sColumnSpan === ObjectPageSubSection.COLUMN_SPAN.auto) {
+			aAllBlocks = this.getBlocks().concat(this.getMoreBlocks());
+			aVisibleBlocks = aAllBlocks.filter(function (oBlock) {
+				return oBlock.getVisible && oBlock.getVisible();
+			});
+			return aVisibleBlocks.reduce(function(iSum, oBlock) {
+				return iSum + this._getMinRequiredColspanForChild(oBlock);
+			}.bind(this), 0);
+		}
+
+		iColumnSpan = parseInt(sColumnSpan);
+		if (iColumnSpan > 0 && iColumnSpan <= 4) {
+			return iColumnSpan;
+		}
+
+		// default case: ObjectPageSubSection.COLUMN_SPAN.all
+		return 4;
+	};
 
 	/**
-	 * calculate the layout data to use for subsection blocks
-	 * Aligned with PUX specifications as of Oct 14, 2014
+	 * Determines the minimal required number of columns that a child item
+	 * should take, based on the child content and own colspan
+	 * @override
 	 */
-	ObjectPageSubSection.prototype._calcBlockColumnLayout = function (aBlocks, oColumnConfig) {
-		var iGridSize = 12,
-			aVisibleBlocks,
-			M, L, XL,
-			aDisplaySizes;
-
-		M = {
-			iRemaining: oColumnConfig.M,
-			iColumnConfig: oColumnConfig.M
-		};
-
-		L = {
-			iRemaining: oColumnConfig.L,
-			iColumnConfig: oColumnConfig.L
-		};
-
-		XL = {
-			iRemaining: oColumnConfig.XL,
-			iColumnConfig: oColumnConfig.XL
-		};
-
-		aDisplaySizes = [XL, L, M];
-
-		//step 1: get only visible blocks into consideration
-		aVisibleBlocks = aBlocks.filter(function (oBlock) {
-			return oBlock.getVisible && oBlock.getVisible();
-		});
-
-		//step 2: set layout for each blocks based on their columnLayout configuration
-		//As of Oct 14, 2014, the default behavior is:
-		//on phone, blocks take always the full line
-		//on tablet, desktop:
-		//1 block on the line: takes 3/3 columns
-		//2 blocks on the line: takes 1/3 columns then 2/3 columns
-		//3 blocks on the line: takes 1/3 columns then 1/3 columns and last 1/3 columns
-
-		aVisibleBlocks.forEach(function (oBlock, iIndex) {
-
-			aDisplaySizes.forEach(function (oConfig) {
-				oConfig.iCalculatedSize = this._calculateBlockSize(oBlock, oConfig.iRemaining,
-					aVisibleBlocks, iIndex, oConfig.iColumnConfig);
-			}, this);
-
-			//set block layout based on resolution and break to a new line if necessary
-			oBlock.setLayoutData(new GridData(oBlock.getId() + "-layoutData", {
-				spanS: iGridSize,
-				spanM: M.iCalculatedSize * (iGridSize / M.iColumnConfig),
-				spanL: L.iCalculatedSize * (iGridSize / L.iColumnConfig),
-				spanXL: XL.iCalculatedSize * (iGridSize / XL.iColumnConfig),
-				linebreakM: (iIndex > 0 && M.iRemaining === M.iColumnConfig),
-				linebreakL: (iIndex > 0 && L.iRemaining === L.iColumnConfig),
-				linebreakXL: (iIndex > 0 && XL.iRemaining === XL.iColumnConfig)
-			}));
-
-			aDisplaySizes.forEach(function (oConfig) {
-				oConfig.iRemaining -= oConfig.iCalculatedSize;
-				if (oConfig.iRemaining < 1) {
-					oConfig.iRemaining = oConfig.iColumnConfig;
-				}
-			});
-
-		}, this);
-
-		return aVisibleBlocks;
-	};
-
-	ObjectPageSubSection.prototype._calculateBlockSize = function (oBlock, iRemaining, aVisibleBlocks, iCurrentIndex, iMax) {
-		var iCalc, iForewordBlocksToCheck = iMax, indexOffset;
-
-		if (!this._hasAutoLayout(oBlock)) {
-			return Math.min(iMax, parseInt(oBlock.getColumnLayout()));
-		}
-
-		for (indexOffset = 1; indexOffset <= iForewordBlocksToCheck; indexOffset++) {
-			iCalc = this._calcLayout(aVisibleBlocks[iCurrentIndex + indexOffset]);
-			if (iCalc < iRemaining) {
-				iRemaining -= iCalc;
-			} else {
-				break;
-			}
-		}
-
-		return iRemaining;
-	};
-
-	ObjectPageSubSection.prototype._calcLayout = function (oBlock) {
+	ObjectPageSubSection.prototype._getMinRequiredColspanForChild = function (oBlock) {
 		var iLayoutCols = 1;
 
 		if (!oBlock) {
@@ -784,6 +767,15 @@ sap.ui.define([
 		}
 
 		return iLayoutCols;
+	};
+
+	/**
+	 * Determines if allowed to automatically extend the number of columns to span accross
+	 * (in case of unused columns on the side, in order to utilize that unused space
+	 * @override
+	 */
+	ObjectPageSubSection.prototype._allowAutoextendColspanForChild = function (oBlock) {
+		return this._hasAutoLayout(oBlock);
 	};
 
 	ObjectPageSubSection.prototype._hasAutoLayout = function (oBlock) {
@@ -1108,20 +1100,6 @@ sap.ui.define([
 		var oObjectPageLayout = this._getObjectPageLayout();
 
 		return oObjectPageLayout && (oObjectPageLayout.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnLeft);
-	};
-
-	/**
-	 * If this is the first rendering and a layout has been defined by the subsection developer,
-	 * We remove it and let the built-in mechanism decide on the layouting aspects
-	 * @param aBlocks
-	 * @private
-	 */
-	ObjectPageSubSection.prototype._resetLayoutData = function (aBlocks) {
-		aBlocks.forEach(function (oBlock) {
-			if (oBlock.getLayoutData()) {
-				oBlock.destroyLayoutData();
-			}
-		}, this);
 	};
 
 	ObjectPageSubSection.prototype._updateShowHideState = function (bHide) {

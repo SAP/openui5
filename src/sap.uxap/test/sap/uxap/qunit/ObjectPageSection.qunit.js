@@ -938,4 +938,57 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 		assert.notOk($section.contains($strip), "Message strip is displayed correctly");
 	});
 
+	QUnit.module("Layout", {
+		beforeEach: function() {
+			this.oObjectPage = new ObjectPageLayout({
+				sections: new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSection({
+							title: "Title",
+							blocks: [new Text({text: "Test"})]
+						})
+					]
+				})
+			});
+
+			this.oObjectPage.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("updates to subsections aggregation invalidates the section", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSection = oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			oSpy = this.spy(oSection, "invalidate");
+
+		oSection.removeSubSection(oSubSection);
+		assert.equal(oSpy.callCount, 1, "parent section is invalidated");
+
+		oSpy.reset();
+		oSection.addSubSection(oSubSection);
+		assert.equal(oSpy.callCount, 1, "parent section is invalidated");
+
+		oSpy.reset();
+		oSection.insertSubSection(oSubSection.clone());
+		assert.equal(oSpy.callCount, 1, "parent section is invalidated");
+	});
+
+	QUnit.test("updates to subsections visibility invalidates the section", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSection = oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			oSpy = this.spy(oSection, "invalidate");
+
+		oSubSection.setVisible(false);
+		assert.equal(oSpy.callCount, 1, "parent section is invalidated");
+
+		oSpy.reset();
+		oSubSection.setVisible(true);
+		assert.equal(oSpy.callCount, 1, "parent section is invalidated");
+	});
+
 });

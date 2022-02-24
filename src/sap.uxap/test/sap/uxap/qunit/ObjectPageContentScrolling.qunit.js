@@ -767,8 +767,6 @@ function(Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, Object
 			sClosestSectionId,
 			done = assert.async();
 
-		oTargetSection.addSubSection(oTargetSubSection);
-
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			iPageHeight = oObjectPage.getDomRef().offsetHeight;
 			iTargetSubSectionScrollPosition = oObjectPage._computeScrollPosition(oTargetSubSection);

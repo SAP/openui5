@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
 
 		oRm.openEnd();
 
-		oControl.getSubSections().forEach(oRm.renderControl, oRm);
+		oRm.renderControl(oControl._getGrid());
 
 		oRm.close("div");
 

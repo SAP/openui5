@@ -12,9 +12,11 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Configuration",
+	"sap/ui/layout/Grid",
+	"sap/ui/layout/GridData",
 	// jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
-], function(InvisibleText, jQuery, Control, coreLibrary, library, Log, KeyCodes, Configuration) {
+], function(InvisibleText, jQuery, Control, coreLibrary, library, Log, KeyCodes, Configuration, Grid, GridData) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -90,7 +92,11 @@ sap.ui.define([
 				 *
 				 * If you want to change some of the button properties, you would need to bind them to a model.
 				 */
-				customAnchorBarButton: {type: "sap.m.Button", multiple: false}
+				customAnchorBarButton: {type: "sap.m.Button", multiple: false},
+				/**
+				 * Internal grid aggregation
+				 */
+				_grid: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 			}
 		},
 		renderer: null // control has no renderer (it is an abstract class)
@@ -114,6 +120,7 @@ sap.ui.define([
 		this._sInternalTitleLevel = TitleLevel.Auto;
 		//hidden status
 		this._isHidden = false;
+		this._oGridContentObserver = null;
 
 		this._bRtl = Configuration.getRTL();
 	};
@@ -136,6 +143,193 @@ sap.ui.define([
 			this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy(), true); // this is called onBeforeRendering, so suppress invalidate
 		}
 	};
+
+	ObjectPageSectionBase.prototype._getGrid = function () {
+		if (!this.getAggregation("_grid")) {
+			this.setAggregation("_grid", new Grid({
+				id: this.getId() + "-innerGrid",
+				defaultSpan: "XL12 L12 M12 S12",
+				hSpacing: 1,
+				vSpacing: 1,
+				width: "100%",
+				containerQuery: true
+			}), true); // this is always called onBeforeRendering so suppress invalidate
+
+			if (this._oGridContentObserver) {
+				this._oGridContentObserver.observe(this.getAggregation("_grid"), {
+					aggregations: [
+					"content"
+				]});
+			}
+		}
+
+		return this.getAggregation("_grid");
+	};
+
+	/**
+	 * Remove any existing layout data of grid-items
+	 * prior to running built-in mechanism to calculate the column layout of these items
+	 * @param aGridItems
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._resetLayoutData = function (aGridItems) {
+		aGridItems.forEach(function (oItem) {
+			if (oItem.getLayoutData()) {
+				oItem.destroyLayoutData();
+			}
+		}, this);
+	};
+
+	/**
+	 * Calculate the layout data to use for grid items
+	 * Aligned with PUX specifications as of Oct 14, 2014
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._assignLayoutData = function (aGridItems, oColumnConfig) {
+		var iGridSize = 12,
+			aVisibleItems = [],
+			aInvisibleItems = [],
+			M, L, XL,
+			aDisplaySizes;
+
+		M = {
+			iRemaining: oColumnConfig.M,
+			iColumnConfig: oColumnConfig.M
+		};
+
+		L = {
+			iRemaining: oColumnConfig.L,
+			iColumnConfig: oColumnConfig.L
+		};
+
+		XL = {
+			iRemaining: oColumnConfig.XL,
+			iColumnConfig: oColumnConfig.XL
+		};
+
+		aDisplaySizes = [XL, L, M];
+
+		//step 1: the visible blocks should be separated
+		// as only they should take space inside the grid
+		aGridItems.forEach(function(oItem) {
+			if (oItem.getVisible && oItem.getVisible()) {
+				aVisibleItems.push(oItem);
+			} else {
+				aInvisibleItems.push(oItem);
+			}
+		});
+
+		//step 2: set layout for each blocks based on their columnLayout configuration
+		//As of Oct 14, 2014, the default behavior is:
+		//on phone, blocks take always the full line
+		//on tablet, desktop:
+		//1 block on the line: takes 3/3 columns
+		//2 blocks on the line: takes 1/3 columns then 2/3 columns
+		//3 blocks on the line: takes 1/3 columns then 1/3 columns and last 1/3 columns
+
+		aVisibleItems.forEach(function (oItem, iIndex) {
+
+			aDisplaySizes.forEach(function (oConfig) {
+				oConfig.iCalculatedSize = this._getEffectiveColspanForGridItem(oItem, oConfig.iRemaining,
+					aVisibleItems, iIndex, oConfig.iColumnConfig);
+			}, this);
+
+			//set block layout based on resolution and break to a new line if necessary
+			oItem.setLayoutData(new GridData({
+				spanS: iGridSize,
+				spanM: M.iCalculatedSize * (iGridSize / M.iColumnConfig),
+				spanL: L.iCalculatedSize * (iGridSize / L.iColumnConfig),
+				spanXL: XL.iCalculatedSize * (iGridSize / XL.iColumnConfig),
+				linebreakM: (iIndex > 0 && M.iRemaining === M.iColumnConfig),
+				linebreakL: (iIndex > 0 && L.iRemaining === L.iColumnConfig),
+				linebreakXL: (iIndex > 0 && XL.iRemaining === XL.iColumnConfig)
+			}));
+
+			if (oItem.isA("sap.uxap.ObjectPageSubSection")) {
+				oItem._oLayoutConfig = {
+					M: M.iCalculatedSize,
+					L: L.iCalculatedSize,
+					XL: XL.iCalculatedSize
+				};
+			}
+
+			aDisplaySizes.forEach(function (oConfig) {
+				oConfig.iRemaining -= oConfig.iCalculatedSize;
+				if (oConfig.iRemaining < 1) {
+					oConfig.iRemaining = oConfig.iColumnConfig;
+				}
+			});
+
+		}, this);
+
+		aInvisibleItems.forEach(function(oItem) {
+			// ensure invisible blocks do not take space at all
+			oItem.setLayoutData(new GridData({
+				visibleS: false,
+				visibleM: false,
+				visibleL: false,
+				visibleXL: false
+			}));
+		});
+
+		return aVisibleItems;
+	};
+
+	/**
+	 * Obtains the optimal number of columns a grid item should span accross,
+	 * given the available columns count and the content of the item.
+	 *
+	 * The obtained value is the same or bigger than the minimal required colspan
+	 * for a grid item. It will be bigger if extra unused columns remained on the side
+	 * and the child is allowed to extend to span accross that extra unused space.
+	 *
+	 * @param {*} oGridItem , the grid-item
+	 * @param {*} iFreeColumnsCount , the current unused columns count
+	 * @param {*} aGridItems , all grid items
+	 * @param {*} iCurrentIndex , the index of the item among its sibling items
+	 * @param {*} iTotalColumnsCount , the total available column count in the current device size
+	 * @return {number} the count of columns the item should span accross
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._getEffectiveColspanForGridItem = function (oGridItem, iFreeColumnsCount, aGridItems, iCurrentIndex, iTotalColumnsCount) {
+		var iNextItemColspan,
+			iForewordItemsToCheck = iTotalColumnsCount,
+			indexOffset,
+			iMinColspan = this._getMinRequiredColspanForChild(oGridItem);
+
+		if (!this._allowAutoextendColspanForChild(oGridItem)) {
+			return Math.min(iTotalColumnsCount, iMinColspan);
+		}
+
+		for (indexOffset = 1; indexOffset <= iForewordItemsToCheck; indexOffset++) {
+			iNextItemColspan = this._getMinRequiredColspanForChild(aGridItems[iCurrentIndex + indexOffset]);
+			if (iNextItemColspan <= (iFreeColumnsCount - iMinColspan)) {
+				iFreeColumnsCount -= iNextItemColspan;
+			} else {
+				break;
+			}
+		}
+
+		return iFreeColumnsCount;
+	};
+
+	/**
+	 * To override in subclasses:
+	 * Determines the minimal required number of columns that a child item
+	 * should take, based on the child content and own colspan
+	 * @param {object} oChild
+	 * @return {number}
+	 */
+	ObjectPageSectionBase.prototype._getMinRequiredColspanForChild = function (oChild) {};
+
+	/**
+	 * To override in subclasses
+	 * Determines if allowed to automatically extend the number of columns to span accross
+	 * (in case of unused columns on the side, in order to utilize that unused space
+	 * @param {object} oChild
+	 * @return {boolean}
+	 */
+	ObjectPageSectionBase.prototype._allowAutoextendColspanForChild = function (oChild) {};
 
 	ObjectPageSectionBase.prototype.setCustomAnchorBarButton = function (oButton) {
 		var vResult = this.setAggregation("customAnchorBarButton", oButton, true);
@@ -499,7 +693,14 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The AROW-DOWN keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsapdown = function (oEvent) {
-		this._handleFocusing(oEvent, oEvent.currentTarget.nextSibling);
+		var oTarget = oEvent.currentTarget,
+			oNextSibling = oTarget.nextSibling;
+
+		if (oTarget.classList.contains('sapUxAPObjectPageSubSection')) {
+			// each subsection is wrapped in a div, so we need the subsection inside the sibling wrapper
+			oNextSibling = oTarget.parentElement.nextElementSibling.querySelector(".sapUxAPObjectPageSubSection");
+		}
+		this._handleFocusing(oEvent, oNextSibling);
 	};
 
 	ObjectPageSectionBase.prototype._handleFocusing = function (oEvent, oElementToReceiveFocus) {
@@ -533,7 +734,14 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The AROW-UP keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsapup = function (oEvent) {
-		this._handleFocusing(oEvent, oEvent.currentTarget.previousSibling);
+		var oTarget = oEvent.currentTarget,
+			oPreviousSibling = oTarget.previousSibling;
+
+		if (oTarget.classList.contains('sapUxAPObjectPageSubSection')) {
+			// each subsection is wrapped in a div, so we need the subsection inside the sibling wrapper
+			oPreviousSibling = oTarget.parentElement.previousElementSibling.querySelector(".sapUxAPObjectPageSubSection");
+		}
+		this._handleFocusing(oEvent, oPreviousSibling);
 	};
 
 	/**
@@ -550,7 +758,13 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The HOME keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsaphome = function (oEvent) {
-		this._handleFocusing(oEvent, oEvent.currentTarget.parentElement.firstChild);
+		var oTarget = oEvent.currentTarget,
+			oFirstChild = oTarget.parentElement.firstChild;
+		if (oTarget.classList.contains('sapUxAPObjectPageSubSection')) {
+			// each subsection is wrapped in a div, so we need the subsection inside the first wrapper
+			oFirstChild = oTarget.closest(".sapUxAPObjectPageSection").querySelector(".sapUxAPObjectPageSubSection");
+		}
+		this._handleFocusing(oEvent, oFirstChild);
 	};
 
 	/**
@@ -558,7 +772,15 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The END keyboard key event object
 	 */
 	ObjectPageSectionBase.prototype.onsapend = function (oEvent) {
-		this._handleFocusing(oEvent, oEvent.currentTarget.parentElement.lastChild);
+		var oTarget = oEvent.currentTarget,
+			oLastChild = oTarget.parentElement.lastChild,
+			aChildren;
+		if (oTarget.classList.contains('sapUxAPObjectPageSubSection')) {
+			// each subsection is wrapped in a div, so we need the subsection inside the last wrapper
+			aChildren = oTarget.closest(".sapUxAPObjectPageSection").querySelectorAll(".sapUxAPObjectPageSubSection");
+			oLastChild = aChildren[aChildren.length - 1];
+		}
+		this._handleFocusing(oEvent, oLastChild);
 	};
 
 	/**
@@ -573,9 +795,13 @@ sap.ui.define([
 
 		oEvent.preventDefault();
 
-		var iNextIndex;
-		var aSections = jQuery(oEvent.currentTarget).parent().children();
+		var iNextIndex, oTarget = oEvent.currentTarget;
+		var aSections = jQuery(oTarget).parent().children();
 		var focusedSectionId;
+
+		if (oTarget.classList.contains("sapUxAPObjectPageSubSection")) {
+			aSections = jQuery(oTarget.closest(".sapUxAPObjectPageSection")).find(".sapUxAPObjectPageSubSection");
+		}
 
 		aSections.each(function (iSectionIndex, oSection) {
 			if (jQuery(oSection).attr("id") === oEvent.currentTarget.id) {
@@ -610,9 +836,13 @@ sap.ui.define([
 
 		oEvent.preventDefault();
 
-		var iNextIndex;
-		var aSections = jQuery(oEvent.currentTarget).parent().children();
+		var iNextIndex, oTarget = oEvent.currentTarget;
+		var aSections = jQuery(oTarget).parent().children();
 		var focusedSectionId;
+
+		if (oTarget.classList.contains("sapUxAPObjectPageSubSection")) {
+			aSections = jQuery(oTarget.closest(".sapUxAPObjectPageSection")).find(".sapUxAPObjectPageSubSection");
+		}
 
 		aSections.each(function (iSectionIndex, oSection) {
 			if (jQuery(oSection).attr("id") === oEvent.currentTarget.id) {

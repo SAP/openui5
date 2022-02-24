@@ -765,7 +765,7 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 			generateBlockTest: function (oConfigToTest) {
 				QUnit.test(sConfiguration + oConfigToTest.configString, function (assert) {
 					var aBlocks = oHelpers.getBlocksByConfigString(oConfigToTest.configString);
-					ObjectPageSubSection._calcBlockColumnLayout(aBlocks, this.oLayoutConfig);
+					ObjectPageSubSection._assignLayoutData(aBlocks, this.oLayoutConfig);
 
 					aBlocks.forEach(function (oBlock, iIndex) {
 						var expected = oHelpers.generateLayoutObject(oConfigToTest.expectedBlockConfig[iIndex]),
@@ -1841,5 +1841,41 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 
 		// act
 		oSubSection._oSeeMoreButton.firePress();
+	});
+
+	QUnit.module("Column span", {
+		beforeEach: function() {
+			this.oObjectPage = new ObjectPageLayout({
+				sections: new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSectionClass({
+							title: "Title",
+							blocks: [new Text({text: "Test"})]
+						}),
+						new ObjectPageSubSectionClass({
+							title: "Title1",
+							blocks: [new Text({text: "Test1"})]
+						})
+					]
+				})
+			});
+
+			this.oObjectPage.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("_setColumnSpan", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSection = oObjectPage.getSections()[0],
+			oSpy = this.spy(oSection, "invalidate");
+
+		oSection.getSubSections().forEach(function(oSubSection) {
+			oSubSection._setColumnSpan(ObjectPageSubSectionClass.COLUMN_SPAN.auto);
+		});
+		assert.equal(oSpy.callCount, 2, "parent section is invalidated");
 	});
 });
