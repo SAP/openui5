@@ -36,9 +36,8 @@ sap.ui.define([
 		},
 		onDownload: function () {
 			sap.ui.require([
-				"sap/ui/thirdparty/jszip",
-				"sap/ui/core/util/File"
-			], function (JSZip, File) {
+				"sap/ui/thirdparty/jszip"
+			], function (JSZip) {
 				var oZipFile = new JSZip(),
 					sRef = ResourcesUtil.getResourceOriginPath(sap.ui.require.toUrl((this._sId).replace(/\./g, "/"))),
 					oData = this.oModel.getData(),

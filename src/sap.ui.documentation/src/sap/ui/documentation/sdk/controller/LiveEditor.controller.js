@@ -4,11 +4,10 @@
 
 sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/m/library",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/thirdparty/URI",
 		"sap/uxap/ThrottledTaskHelper"
-	], function (BaseController, mobileLibrary, JSONModel, URI, ThrottledTask) {
+	], function (BaseController, JSONModel, URI, ThrottledTask) {
 		"use strict";
 
 		var SRC_FILE_NAMES = {

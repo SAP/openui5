@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/documentation/sdk/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
@@ -13,12 +13,12 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/base/util/Version",
-	"sap/ui/thirdparty/jquery",
 	"sap/base/util/UriParameters",
 	"sap/ui/util/Storage",
 	"sap/ui/core/Core",
 	"sap/ui/documentation/sdk/controller/util/Highlighter",
-	"sap/ui/documentation/sdk/util/Resources"
+	"sap/ui/documentation/sdk/util/Resources",
+	"sap/m/BusyDialog"
 ], function(
 	jQuery,
 	Device,
@@ -30,12 +30,12 @@ sap.ui.define([
 	FilterOperator,
 	Sorter,
 	Version,
-	jQueryDOM,
 	UriParameters,
 	Storage,
 	Core,
 	Highlighter,
-	ResourcesUtil
+	ResourcesUtil,
+	BusyDialog
 ) {
 		"use strict";
 
@@ -255,7 +255,7 @@ sap.ui.define([
 
 				// Handle content density change
 				if (this._oViewSettings.densityMode !== sDensityMode) {
-					this._toggleContentDensityClasses(jQueryDOM(document.body), sDensityMode);
+					this._toggleContentDensityClasses(jQuery(document.body), sDensityMode);
 					this._oViewSettings.densityMode = sDensityMode;
 					bContentDensityChanged = true;
 				}
@@ -282,7 +282,7 @@ sap.ui.define([
 				// Apply theme and compact mode also to iframe samples if there is actually a change
 				if ((bRTLChanged || bContentDensityChanged || bThemeChanged) && !ResourcesUtil.getHasProxy()) {
 
-					$SampleFrame = jQueryDOM("#sampleFrame");
+					$SampleFrame = jQuery("#sampleFrame");
 					if ($SampleFrame.length > 0) {
 						oSampleFrameContent = $SampleFrame[0].contentWindow;
 						if (oSampleFrameContent) {
@@ -601,10 +601,10 @@ sap.ui.define([
 				aFilters.push(new Filter("searchTags", FilterOperator.Contains, this._sFilterValue));
 
 				// add filters for view settings
-				jQueryDOM.each(this._oListSettings.filter, function (sProperty, oValues) {
+				jQuery.each(this._oListSettings.filter, function (sProperty, oValues) {
 					var aPropertyFilters = [];
 
-					jQueryDOM.each(oValues, function (sKey, bValue) {
+					jQuery.each(oValues, function (sKey, bValue) {
 						var sOperator = (sProperty === "formFactors") ? FilterOperator.Contains : FilterOperator.EQ;
 						aPropertyFilters.push(new Filter(sProperty, sOperator, sKey));
 					});
@@ -660,7 +660,7 @@ sap.ui.define([
 				// calculate text
 				var aFilterTexts = [];
 
-				jQueryDOM.each(this._oListSettings.filter, function (sProperty, oValues) {
+				jQuery.each(this._oListSettings.filter, function (sProperty, oValues) {
 					aFilterTexts = aFilterTexts.concat(Object.keys(oValues));
 				});
 
@@ -713,8 +713,7 @@ sap.ui.define([
 			 * @public
 			 */
 			handleSaveAppSettings: function () {
-				var BusyDialog,
-					sDensityMode = this._oCore.byId('DensityModeSwitch').getSelectedKey(),
+				var sDensityMode = this._oCore.byId('DensityModeSwitch').getSelectedKey(),
 					sTheme = this._oCore.byId('ThemeSelect').getSelectedKey(),
 					bRTL = this._oCore.byId('RTLSwitch').getState();
 
@@ -722,9 +721,6 @@ sap.ui.define([
 
 				// Lazy loading of busy dialog
 				if (!this._oBusyDialog) {
-					//TODO: global jquery call found
-					jQuery.sap.require("sap.m.BusyDialog");
-					BusyDialog = sap.ui.require("sap/m/BusyDialog");
 					this._oBusyDialog = new BusyDialog();
 					this.getView().addDependent(this._oBusyDialog);
 				}

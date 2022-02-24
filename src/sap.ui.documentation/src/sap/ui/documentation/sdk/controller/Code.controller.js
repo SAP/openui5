@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/documentation/sdk/controller/SampleBaseController",
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 	"sap/ui/documentation/sdk/model/formatter",
@@ -11,7 +10,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/Component",
 	"sap/ui/core/Core"
-], function(jQuery, SampleBaseController, ControlsInfo, formatter, JSONModel, merge, Component, Core) {
+], function(SampleBaseController, ControlsInfo, formatter, JSONModel, merge, Component, Core) {
 		"use strict";
 
 		return SampleBaseController.extend("sap.ui.documentation.sdk.controller.Code", {

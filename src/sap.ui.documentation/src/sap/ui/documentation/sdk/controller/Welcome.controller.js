@@ -6,9 +6,8 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/Device",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/model/resource/ResourceModel",
 		"sap/base/Log"
-	], function (BaseController, Device, JSONModel, ResourceModel, Log) {
+	], function (BaseController, Device, JSONModel, Log) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Welcome", {

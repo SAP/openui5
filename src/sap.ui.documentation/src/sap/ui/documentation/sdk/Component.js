@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/UIComponent",
-	"sap/ui/VersionInfo",
 	"sap/ui/Device",
 	"sap/ui/documentation/sdk/model/models",
 	"sap/ui/documentation/sdk/controller/ErrorHandler",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/controller/util/ConfigUtil",
 	"sap/base/util/Version",
 	"sap/ui/documentation/sdk/util/Resources",
-	"sap/base/Log",
 	// used via manifest.json
 	"sap/ui/documentation/sdk/util/DocumentationRouter",
 	// implements sap.m.TablePopin
@@ -21,15 +19,13 @@ sap.ui.define([
 ], function(
 	jQuery,
 	UIComponent,
-	VersionInfo,
 	Device,
 	models,
 	ErrorHandler,
 	JSONModel,
 	ConfigUtil,
 	Version,
-	ResourcesUtil,
-	Log /*, DocumentationRouter, ColumnListItem*/
+	ResourcesUtil /*, DocumentationRouter, ColumnListItem*/
 ) {
 		"use strict";
 

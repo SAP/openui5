@@ -1,4 +1,6 @@
-sap.ui.define([], function () {
+sap.ui.define([
+	"sap/base/Log"
+], function (Log) {
 	"use strict";
 
 	function compareTwoItems(oOptions) {
@@ -15,7 +17,7 @@ sap.ui.define([], function () {
 
 
 		if (!bSorted) {
-			jQuery.sap.log.error("Item " + oOptions.currentText + " is not sorted compared with the previous one " + oOptions.previousText);
+			Log.error("Item " + oOptions.currentText + " is not sorted compared with the previous one " + oOptions.previousText);
 		}
 
 		return bSorted;
@@ -26,7 +28,7 @@ sap.ui.define([], function () {
 			return function (oList) {
 				var bSorted = true,
 					aGroupItems = oList.getItems().filter(function (oItem) {
-						return oItem.getMetadata().getName() === "sap.m.GroupHeaderListItem";
+						return oItem.isA("sap.m.GroupHeaderListItem");
 					});
 
 				aGroupItems.forEach(function (oItem, iIndex) {
@@ -62,12 +64,12 @@ sap.ui.define([], function () {
 					}
 
 					// skip the first item in a group
-					if (oPreviousItem.getMetadata().getName() === "sap.m.GroupHeaderListItem") {
+					if (oPreviousItem.isA("sap.m.GroupHeaderListItem")) {
 						return;
 					}
 
 					// skip the group headers
-					if (oItem.getMetadata().getName() === "sap.m.GroupHeaderListItem") {
+					if (oItem.isA("sap.m.GroupHeaderListItem")) {
 						return;
 					}
 

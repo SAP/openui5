@@ -10,11 +10,10 @@ sap.ui.define([
     'sap/ui/core/util/LibraryInfo',
     "sap/base/Log",
     "sap/ui/documentation/sdk/util/Resources",
-    "sap/base/util/Version",
     'sap/ui/core/library',
     'sap/m/library'
 ], // library dependency
-	function(jQuery, LibraryInfo, Log, ResourcesUtil, Version) {
+	function(jQuery, LibraryInfo, Log, ResourcesUtil) {
 
 	'use strict';
 

@@ -3,26 +3,20 @@
  */
 
 sap.ui.define([
-    "sap/ui/documentation/sdk/controller/BaseController",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/core/CustomData",
-    "sap/ui/documentation/sdk/controller/util/ControlsInfo",
-    "sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-    "sap/ui/documentation/sdk/controller/util/APIInfo",
-    "sap/ui/documentation/sdk/model/formatter",
-    "sap/ui/core/mvc/XMLView",
-    "sap/ui/core/library",
-    "sap/base/Log"
+	"sap/ui/documentation/sdk/controller/BaseController",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/CustomData",
+	"sap/ui/documentation/sdk/controller/util/APIInfo",
+	"sap/ui/documentation/sdk/model/formatter",
+	"sap/ui/core/mvc/XMLView",
+	"sap/base/Log"
 ], function(
     BaseController,
 	JSONModel,
 	CustomData,
-	ControlsInfo,
-	ToggleFullScreenHandler,
 	APIInfo,
 	formatter,
 	XMLView,
-	CoreLibrary,
 	Log
 ) {
 		"use strict";

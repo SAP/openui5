@@ -6,7 +6,7 @@ sap.ui.define([
     "sap/ui/documentation/sdk/controller/BaseController",
     "sap/ui/Device",
     "sap/ui/thirdparty/jquery"
-], function(BaseController, Device, jQuery0) {
+], function(BaseController, Device, jQuery) {
 		"use strict";
 
 		var GIT_HUB_URL = "https://github.com/SAP/openui5-docs";
@@ -33,7 +33,7 @@ sap.ui.define([
 			 * to show disclaimer message if such is available in the loaded json file.
 			 */
 			handleDocumentationDisclaimer: function () {
-				jQuery0.ajax(this.getConfig().docuPath + "disclaimer.json", {dataType: "json"}).then(function (oData) {
+				jQuery.ajax(this.getConfig().docuPath + "disclaimer.json", {dataType: "json"}).then(function (oData) {
 					var oView = this.getView();
 					if (oData.showDisclaimer && oData.message) {
 						oView.byId("disclaimerBlock").setVisible(true);

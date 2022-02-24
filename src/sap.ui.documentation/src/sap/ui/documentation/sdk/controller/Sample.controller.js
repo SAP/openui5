@@ -4,23 +4,21 @@
 
 
 sap.ui.define([
-    "sap/ui/thirdparty/jquery",
-    "sap/ui/documentation/sdk/controller/SampleBaseController",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/core/Component",
-    "sap/ui/core/ComponentContainer",
-    "sap/ui/documentation/sdk/controller/util/ControlsInfo",
-    "sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-    "sap/m/Text",
-    "sap/ui/core/HTML",
-    "sap/m/library",
-    "sap/base/Log",
+	"sap/ui/documentation/sdk/controller/SampleBaseController",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
+	"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
+	"sap/m/Text",
+	"sap/ui/core/HTML",
+	"sap/m/library",
+	"sap/base/Log",
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Fragment",
 	"sap/ui/documentation/sdk/util/Resources",
 	"./config/sampleForwardingConfig"
 ], function(
-    jQuery,
 	SampleBaseController,
 	JSONModel,
 	Component,

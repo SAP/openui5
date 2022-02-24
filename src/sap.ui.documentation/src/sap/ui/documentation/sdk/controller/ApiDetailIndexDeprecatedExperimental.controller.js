@@ -3,13 +3,11 @@
  */
 
 sap.ui.define([
-		"sap/ui/thirdparty/jquery",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/ui/documentation/sdk/model/formatter"
-	], function (jQuery, BaseController, JSONModel, JSDocUtil, APIInfo, globalFormatter) {
+	], function (BaseController, JSONModel, APIInfo, globalFormatter) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetailIndexDeprecatedExperimental", {

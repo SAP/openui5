@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/util/defaultLinkTypes",
 	'sap/ui/Device',
-	'sap/m/Toolbar',
 	'sap/m/Title'
-], function(coreLibrary, Renderer, defaultLinkTypes, Device, Toolbar, Title) {
+], function(coreLibrary, Renderer, defaultLinkTypes, Device, Title) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel

@@ -2,8 +2,10 @@ sap.ui.define([
 	'sap/ui/test/Opa5',
 	'sap/ui/test/matchers/PropertyStrictEquals',
 	'sap/ui/documentation/sdk/test/pageobjects/util/sortUtil',
-	'sap/ui/documentation/sdk/test/pageobjects/matchers'
-], function (Opa5, PropertyStrictEquals, sortCheck, matchers) {
+	'sap/ui/documentation/sdk/test/pageobjects/matchers',
+	'sap/ui/thirdparty/jquery',
+	'sap/base/util/extend'
+], function (Opa5, PropertyStrictEquals, sortCheck, matchers, jQuery, extend) {
 	"use strict";
 
 	var sListId = "exploredMasterList";
@@ -102,7 +104,7 @@ sap.ui.define([
 							oEvent.originalEvent = {newValue: sSearchTerm, id: oSearchField.getId()};
 							oEvent.target = oSearchField;
 							oEvent.srcElement = oSearchField;
-							jQuery.extend(oEvent, oEvent.originalEvent);
+							extend(oEvent, oEvent.originalEvent);
 
 							oSearchField.fireLiveChange(oEvent);
 						}

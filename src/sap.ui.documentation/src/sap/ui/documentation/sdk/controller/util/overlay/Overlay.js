@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/Log", "./shapes/ShapeFactory"], function (Log, ShapeFactory) {
+sap.ui.define(["./shapes/ShapeFactory"], function (ShapeFactory) {
 	"use strict";
 
 	var SVG_NAMESPACE = "http://www.w3.org/2000/svg";

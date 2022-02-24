@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"./BaseController",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI",
 	"sap/m/library"
 ], function (
 	BaseController,
+	jQuery,
 	URI,
 	mLib
 ) {
