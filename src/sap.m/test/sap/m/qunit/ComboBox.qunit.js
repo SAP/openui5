@@ -11448,7 +11448,7 @@ sap.ui.define([
 		assert.equal(selectedText, "", "There is no selected text when matching a suggestion");
 
 		// Act
-		this.comboBox._$input.blur();
+		this.comboBox.onsapfocusleave({});
 		this.clock.tick(500);
 		this.comboBox._$input.focus();
 		this.comboBox.onfocusin({});
