@@ -6,48 +6,158 @@
 	<title>SAPUI5 Navigation</title>
 	<script>
 
-		var sSampleId = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-id'),
-			sSamplePath = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-path'),
-			sOrigin = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-origin'),
-			sVersion = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-version'),
+		var getUrlParam = function(sParamName) {
+			return new window.URLSearchParams(window.location.search).get(sParamName);
+		};
 
-			oPath = {};
+		var encodeOrigin = function (sResourceOrigin) {
+			return sResourceOrigin
+					.replaceAll("&", "&amp;")
+					.replaceAll("<", "&lt;")
+					.replaceAll(">", "&gt;")
+					.replaceAll("\"", "&quot;")
+					.replaceAll("’", "&#x27;");
+		};
+
+		var sSampleId = getUrlParam('sap-ui-xx-sample-id'),
+				sOrigin = getUrlParam('sap-ui-xx-sample-origin'),
+				oPath = {};
+
 		if (!sOrigin || sOrigin == ".") {
 			sOrigin = window.location.origin + (window.location.pathname.includes("testsuite") ? "/testsuite" : "");
-		} else {
-			sOrigin = sOrigin + sVersion;
 		}
 
-		oPath[sSampleId.replace(/\./g, "/")] = sSamplePath;
 		oPath["sap/ui/demo/mock"] = sOrigin + "/test-resources/sap/ui/documentation/sdk";
 		oPath["test-resources/sap/ui/documentation/sdk"] = ".";
-		oPath["sap/uxap/sample"] = sOrigin + "/test-resources/sap/uxap/demokit/sample";
 
-
-
-		document.write("<script src=" + sOrigin  + '/resources/sap-ui-core.js' + " id='sap-ui-bootstrap' " +
-				"data-sap-ui-libs='sap.m' data-sap-ui-bindingSyntax='complex' data-sap-ui-compatVersion='edge'></scr" + "ipt>");
-		document.write("<base href=" + sOrigin + "/>");
-
+		document.write("<script src=" + encodeOrigin(sOrigin)  + '/resources/sap-ui-core.js' + " id='sap-ui-bootstrap' " +
+				"data-sap-ui-libs='sap.m' data-sap-ui-bindingSyntax='complex' data-sap-ui-compatVersion='edge' data-sap-ui-resourceroots=" + JSON.stringify(oPath) + "></scr" + "ipt>");
+		document.write("<base href=" + encodeOrigin(sOrigin) + "/>");
 	</script>
 </head>
 <body class="sapUiBody sapUiSizeCompact" id="content">
 <script>
 	sap.ui.getCore().attachInit(function () {
+		sap.ui.getCore().applyTheme("sap_fiori_3");
 		sap.ui.require([
-			"sap/ui/core/ComponentContainer"
-		], function (ComponentContainer) {
+			"sap/ui/core/ComponentContainer",
+			"sap/ui/core/Component",
+			"sap/ui/documentation/sdk/controller/util/ControlsInfo",
+			"sap/base/Log"
+		], function (ComponentContainer, Component, ControlsInfo, Log) {
 
-			sap.ui.loader.config({
-				paths: oPath
-			});
+			ControlsInfo.loadData().then(function(){
+				Log.info("Samples paths added successfully");
 
-			var oContainer = new ComponentContainer({
-				name : sSampleId,
-				height : "100%",
-				manifest: false
-			}).placeAt('content');
+				var sCompId = 'sampleComp-' + sSampleId;
+				var sCompName = sSampleId;
 
+				Promise.all([
+					sap.ui.getCore().loadLibrary("sap.ui.fl", {async: true}),
+					sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
+				]).then(function () {
+					sap.ui.require([
+						"sap/ui/fl/Utils",
+						"sap/ui/fl/FakeLrepConnectorLocalStorage",
+						"sap/ui/core/util/reflection/JsControlTreeModifier"
+					], function(Utils,
+							FakeLrepConnectorLocalStorage,
+							JsControlTreeModifier) {
+							// fake stable IDs
+							JsControlTreeModifier.checkControlId = function () {
+								return true;
+							};
+							Utils.checkControlId = function() {
+								return true;
+							};
+
+							FakeLrepConnectorLocalStorage.enableFakeConnector({
+								"isProductiveSystem": true
+							});
+							window.parent.postMessage({
+							type: "RTA",
+							data: {
+								"msg": "RTA is loaded"
+							}
+						}, getUrlParam('sap-ui-xx-dk-origin'))
+					});
+				});
+
+				Component.create({
+					id: sCompId,
+					name: sCompName,
+					manifest: false
+				}).then(function (oComponent) {
+
+					var oContainer = new ComponentContainer({component : oComponent, height: "100%"})
+							.placeAt("content");
+					var oMessage = {};
+					oMessage.type = "INIT";
+					oMessage.data = {
+						"msg": "fired after component container is placed in DOM"
+					};
+					oMessage.config = oComponent.getMetadata().getConfig();
+					window.parent.postMessage(oMessage, getUrlParam('sap-ui-xx-dk-origin'));
+
+					window.addEventListener("message", function(eMessage){
+						if (eMessage.data.type === "EXIT") {
+							oComponent.destroy();
+						} else if (eMessage.data.type === "RTA") {
+							enableRta();
+						} else if (eMessage.data.type === "SETTINGS") {
+							if (eMessage.data.reason === "get") {
+								window.parent.postMessage({
+								type: "SETTINGS",
+								data: {
+									"density": document.body.classList[1],
+									"theme": sap.ui.getCore().getConfiguration().getTheme(),
+									"RTL": sap.ui.getCore().getConfiguration().getRTL()
+								}
+							}, getUrlParam('sap-ui-xx-dk-origin'));
+							} else if (eMessage.data.reason === "set") {
+								var sBodyDensityClass = Array.prototype.find.call(document.body.classList, function(el){
+									return el.includes("sapUiSize");
+								});
+								sBodyDensityClass ? document.body.classList.replace(sBodyDensityClass, eMessage.data.data.density) :
+								document.body.classList.add(eMessage.data.data.density);
+								sap.ui.getCore().getConfiguration().setRTL(eMessage.data.data.RTL);
+								sap.ui.getCore().applyTheme(eMessage.data.data.theme);
+							}
+						}
+					});
+
+					function enableRta() {
+						sap.ui.require([
+							"sap/ui/rta/api/startKeyUserAdaptation"
+						], function (
+							startKeyUserAdaptation
+						) {
+							startKeyUserAdaptation({
+								rootControl: oContainer.getComponentInstance()
+							}).then(function (oRta) {
+								oContainer.$().css({
+									"padding-top": "2.5rem",
+									"box-sizing": "border-box"
+								});
+								oRta.attachStop(function () {
+									oContainer.$().css({
+										"padding-top": "0",
+										"box-sizing": "content-box"
+									});
+									oRta.destroy();
+								});
+							});
+						});
+					};
+				}).catch(function(err){
+					window.parent.postMessage({
+						type: "ERR",
+						data: {
+							"msg": err
+						}
+					}, getUrlParam('sap-ui-xx-dk-origin'));
+				});
+			})
 		});
 	});
 </script>

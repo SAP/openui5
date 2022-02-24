@@ -3,8 +3,8 @@
  */
 
 // Provides information about 'explored' samples.
-sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/base/Log"],
-	function(jQuery, library, Log) {
+sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/base/Log", "sap/ui/documentation/sdk/util/Resources"],
+	function(jQuery, library, Log, ResourcesUtil) {
 		"use strict";
 
 		var oPromise;
@@ -117,7 +117,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 						oDoc.explored.samplesRef.forEach(function (oItem) {
 							(function() {
 								var paths = {};
-								paths[oItem.namespace.replace(/\./g, "/")] = "" + oItem.ref || ".";
+								paths[oItem.namespace.replace(/\./g, "/")] = "" + ResourcesUtil.getResourceOriginPath(oItem.ref || ".");
 								sap.ui.loader.config({paths: paths});
 							}());
 						});
@@ -125,7 +125,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 						// register a single namespace
 						(function() {
 							var paths = {};
-							paths[oDoc.explored.samplesRef.namespace.replace(/\./g, "/")] = "" + oDoc.explored.samplesRef.ref || ".";
+							paths[oDoc.explored.samplesRef.namespace.replace(/\./g, "/")] = "" + ResourcesUtil.getResourceOriginPath(oDoc.explored.samplesRef.ref || ".");
 							sap.ui.loader.config({paths: paths});
 						}());
 					}
