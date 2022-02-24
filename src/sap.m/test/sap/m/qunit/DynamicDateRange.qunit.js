@@ -106,6 +106,25 @@ sap.ui.define([
 		assert.strictEqual(this.ddr._oInput.shouldSuggetionsPopoverOpenOnMobile(oCustomEvent), false, "the suggestions popover is not opened on mobile when the icon is clicked");
 	});
 
+	QUnit.test("value help popover should be closed when focus is moved to the control input field", function(assert) {
+		// arrange
+		this.ddr._createPopup();
+		this.stub(this.ddr._oPopup, "isOpen").returns(true);
+		var oPopupCloseSpy = this.spy(this.ddr._oPopup, "close");
+		this.ddr._oNavContainer = {
+			to: function() {},
+			getPages: function() {
+				return [];
+			}
+		};
+
+		// act
+		this.ddr._oInput.onfocusin();
+
+		// assert
+		assert.ok(oPopupCloseSpy.calledOnce, "The value help popover is closed");
+	});
+
 	QUnit.test("Setting value", function(assert) {
 		// arrange
 		var oCustomValue = { operator: "DATE", values: [new Date(2020, 2, 31)]};
