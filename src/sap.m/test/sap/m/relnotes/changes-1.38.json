@@ -6199,5 +6199,43 @@
         ]
       }
     ]
+  },
+  "1.38.53": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "fb402365657f7f291e2c7557591e9bbd8e70adfd",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Support KK display format",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170188015"
+          }
+        ]
+      },
+      {
+        "id": "6a4cf6520f43f02102702afe60df1e86821c6d95",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: fixed failing test/sap/m/qunit/ObjectListItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180375941"
+          }
+        ]
+      },
+      {
+        "id": "4a7acae84177073577f941b53591abe2e5e7a5d7",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: fixed failing test/sap/m/qunit/ObjectListItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180375941"
+          }
+        ]
+      }
+    ]
   }
 }
