@@ -968,7 +968,6 @@ sap.ui.define([
 		if (this._hasTransientParentContext()) {
 			return;
 		}
-		this.bPendingRefresh = false;
 		if (!bForceUpdate) {
 			if (mEntityTypes){
 				sResolvedPath = this.getResolvedPath();
@@ -1000,6 +999,7 @@ sap.ui.define([
 
 				return;
 			}
+			this.bPendingRefresh = false;
 			this.abortPendingRequest(true);
 			this.resetData();
 			this._fireRefresh({reason : ChangeReason.Refresh});
