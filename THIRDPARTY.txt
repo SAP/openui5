@@ -400,7 +400,7 @@ Contained in: src/sap.ui.mdc/test/sap/ui/mdc/sample/field/filterfieldwithoperato
 
 Library: sap.ui.webc.common:
 
-Component: UI5 Web Components, version: 1.0.0-rc.12
+Component: UI5 Web Components, version: 1.1.2
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
@@ -411,7 +411,7 @@ Contained in: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/base/*.*
 	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-tnt/*.*
 	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-business-suite/*.*
 
-Component: lit-html, version: 1.4.1
+Component: lit-html, version: 2.0.1
 Copyright: Google LLC
 License: BSD-3-Clause
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
@@ -420,7 +420,7 @@ Contained in: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/lit-html/
 
 Library: sap.ui.webc.fiori:
 
-Component: UI5 Web Components, version: 1.0.0-rc.12
+Component: UI5 Web Components, version: 1.1.2
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
@@ -429,7 +429,7 @@ Contained in: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/thirdparty/*.*
 
 Library: sap.ui.webc.main:
 
-Component: UI5 Web Components, version: 1.0.0-rc.12
+Component: UI5 Web Components, version: 1.1.2
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
