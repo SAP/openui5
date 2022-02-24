@@ -242,7 +242,7 @@ sap.ui.define([
 		var oHeader = this.getCardHeader(),
 			sAriaLabelledBy = "";
 
-		if (oHeader && oHeader._getTitle()) {
+		if (oHeader && oHeader._getTitle && oHeader._getTitle()) {
 			sAriaLabelledBy = oHeader._getTitle().getId();
 		}
 
