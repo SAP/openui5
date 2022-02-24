@@ -38,6 +38,8 @@ sap.ui.define([
 			this.renderStyleProperties(oRm, oWebComponent);
 			// Properties, managed by associations
 			this.renderAssociationProperties(oRm, oWebComponent);
+			// Tooltip aggregation
+			this.renderTooltipAggregation(oRm, oWebComponent);
 			// Hook for customization
 			this.customRenderInOpeningTag(oRm, oWebComponent);
 			// Attributes/Styles that the component sets internally
@@ -207,6 +209,19 @@ sap.ui.define([
 				if (vAssocValue) { // Only set the property, if the association is set
 					oRm.attr(sPropName, vAssocValue);
 				}
+			}
+		};
+
+		/**
+		 * Transforms the tooltip aggregation to a tooltip attribute - components that support this attribute will use it
+		 * @private
+		 * @param oRm
+		 * @param oWebComponent
+		 */
+		WebComponentRenderer.renderTooltipAggregation = function(oRm, oWebComponent) {
+			var sTooltipText = oWebComponent.getTooltip_Text();
+			if (sTooltipText) {
+				oRm.attr("tooltip", sTooltipText);
 			}
 		};
 
