@@ -10,13 +10,14 @@
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<RadioButtonGroup id="visibilityRadioButtonGroup" selectedIndex="{path: 'selectedContexts>/selected', formatter: '.formatSelectedIndex'}" >
-				<RadioButton id="publicRadioButton" text="{i18n>RADIO_BUTTON_PUBLIC}" select=".onSelectPublicRadioButton"/>
-				<RadioButton id="restrictedRadioButton" text="{i18n>RADIO_BUTTON_RESTRICTED}" select=".onSelectRestrictedRadioButton"/>
-			</RadioButtonGroup>
+			<MessageStrip 
+				id="visibilityMessageStrip" 
+				text="{i18n>VISIBILITY}" 
+				visible="{path: 'selectedContexts>/selected', formatter: '.isMessageStripVisible'}"
+				type="Information"
+				showIcon="true"/>
 			<List
 				id="selectedContextsList"
-				visible="false"
 				noDataText="{i18n>NO_SELECTED_ROLES}"
 				mode="Delete"
 				delete=".onDeleteContext"
@@ -24,7 +25,7 @@
 				items="{selectedContexts>/selected}">
 				<headerToolbar>
 					<Toolbar style="Clear" id="restrictedToolbar">
-						<Label labelFor="selectedContextsList" text="{i18n>SELECTED_CONTEXT_LIST_TITLE}" design="Bold" required="true" wrapping="true"/>
+						<Label labelFor="selectedContextsList" text="{i18n>SELECTED_CONTEXT_LIST_TITLE}" design="Bold" wrapping="true"/>
 						<ToolbarSpacer />
 						<Button id="removeAllButton" text="{i18n>REMOVE_ALL_BUTTON}" press=".removeAll" enabled="{path: 'selectedContexts>/selected', formatter: '.isRemoveAllEnabled'}"/>
 						<Button id="addContextsButton" ariaHasPopup="Dialog" text="{i18n>ADD_CONTEXTS_BUTTON}" press=".onAddContextsHandler"/>

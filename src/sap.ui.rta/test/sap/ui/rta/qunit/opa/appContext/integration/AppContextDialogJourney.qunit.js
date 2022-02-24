@@ -25,10 +25,6 @@ sap.ui.define(
 		});
 
 		var testData = {
-			radioButtons: {
-				forAllUsers: "For All Users",
-				onlyForSpecificUsers: "Only for Users in Specific Roles"
-			},
 			newAppContext: {
 				title: "New App Context Title",
 				description: "New App Context description"
@@ -181,7 +177,7 @@ sap.ui.define(
 			When.onTheAppContextSaveDialogPage.iEnterAppContextDescription(testData.editAppContext.description);
 			Then.onTheAppContextSaveDialogPage.iShouldSeeAppContextDescription(testData.editAppContext.description);
 
-			When.onTheContextSharingVisibilityFragmentPage.iSelectRadioButton(testData.radioButtons.onlyForSpecificUsers);
+
 			Then.onTheContextSharingVisibilityFragmentPage.iShouldSeeSelectedRolesSection();
 			When.onTheContextSharingVisibilityFragmentPage.iClickOnAddRoleButton();
 			Then.onTheAppContextRoleDialogPage.iShouldSeeRoleDialog();
@@ -202,7 +198,6 @@ sap.ui.define(
 
 			Then.onTheContextSharingVisibilityFragmentPage.iShouldSeeSelectedRoles("/TEST/ROLE/HGWRTS_TST");
 			When.onTheContextSharingVisibilityFragmentPage.iClickOnRemoveRoleButton("/TEST/ROLE/HGWRTS_TST");
-			When.onTheContextSharingVisibilityFragmentPage.iSelectRadioButton(testData.radioButtons.onlyForSpecificUsers);
 			Then.onTheContextSharingVisibilityFragmentPage.iShouldSeeSelectedRolesSection();
 			When.onTheContextSharingVisibilityFragmentPage.iClickOnAddRoleButton();
 

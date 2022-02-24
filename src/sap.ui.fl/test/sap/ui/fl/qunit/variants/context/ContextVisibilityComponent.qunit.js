@@ -27,39 +27,6 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	function fnShowErrorMessageStubs(bIsSelected) {
-		var oController = new ContextVisibilityController();
-		sandbox.stub(this.oComp, "getRootControl").returns({
-			byId: function(sId) {
-				return sId === "restrictedRadioButton" ? new RadioButton({selected: bIsSelected}) : new MessageStrip();
-			},
-			getController: function() {
-				oController.onInit();
-				return oController;
-			}
-		});
-
-		var fnResourceModelStub = {
-			getResourceBundle: function() {
-				return {
-					getText: function() {}
-				};
-			}
-		};
-
-		sandbox.stub(oController, "getView").returns({
-			getModel: function(sId) {
-				return sId === "i18n" ? fnResourceModelStub : new JSONModel();
-			},
-			getId: function() {
-				return "test";
-			}
-		});
-		sandbox.stub(oController, "byId").returns({
-			insertContent: function() {}
-		});
-	}
-
 
 	QUnit.module("Given a ContextVisibility component is given", {
 		beforeEach: function() {
@@ -80,25 +47,6 @@ sap.ui.define([
 			var aSelectedContexts = ["TEST1", "TEST2"];
 			this.oComp.setSelectedContexts({role: aSelectedContexts });
 			assert.equal(this.oComp.getSelectedContexts().role.length, 2, "then selected contexts array has two entries");
-		});
-
-		QUnit.test("when checking component state with selected restricted radio button and no selected roles", function(assert) {
-			fnShowErrorMessageStubs.call(this, true);
-			assert.equal(this.oComp.hasErrorsAndShowErrorMessage(), true, "then component has errors");
-			assert.equal(oCore.byId("test--noSelectedRolesError").getVisible(), true, "then error message stip is shown");
-		});
-
-		QUnit.test("when checking component state with selected public radio button and no selected roles", function(assert) {
-			fnShowErrorMessageStubs.call(this);
-			assert.equal(this.oComp.hasErrorsAndShowErrorMessage(), false, "then component has no errrors");
-			assert.equal(oCore.byId("test--noSelectedRolesError"), undefined, "then error message stip is not shown");
-		});
-
-		QUnit.test("when checking component state with selected restricted radio button and some selected roles", function(assert) {
-			fnShowErrorMessageStubs.call(this, true);
-			this.oComp.setSelectedContexts({role: ["TEST1", "TEST2"]});
-			assert.equal(this.oComp.hasErrorsAndShowErrorMessage(), false, "then component has no errrors");
-			assert.equal(oCore.byId("test--noSelectedRolesError"), undefined, "then error message stip is not shown");
 		});
 	});
 
