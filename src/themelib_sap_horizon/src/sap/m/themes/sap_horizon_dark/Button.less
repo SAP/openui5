@@ -270,48 +270,43 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 	border-color: @sapUiButtonLiteActiveBorderColor;
 }
 
-// text color for disabled buttons
-:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnAccept.sapMBtnActive {
-	color: @sapUiButtonAcceptTextColor;
-}
-
+// text color for enabled buttons
+:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnAccept.sapMBtnActive,
 :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnAccept.sapMBtnActive .sapMBtnIcon {
-	color: @sapUiButtonAcceptTextColor;
+	color: @sapUiButtonAcceptActiveTextColor;
 }
 
-:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnReject.sapMBtnActive {
-	color: @sapUiButtonRejectSelectedTextColor;
-}
-
+:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnReject.sapMBtnActive,
 :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnReject.sapMBtnActive .sapMBtnIcon {
-	color: @sapUiButtonRejectSelectedTextColor;
+	color: @sapUiButtonRejectActiveTextColor;
 }
 
-:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnAttention.sapMBtnActive {
-	color: @sapUiButtonAttentionTextColor;
-}
-
+:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnAttention.sapMBtnActive,
 :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnAttention.sapMBtnActive .sapMBtnIcon {
-	color: @sapUiButtonAttentionTextColor;
+	color: @sapUiButtonAttentionActiveTextColor;
 }
 
 // box shadow on hover
 .sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive) {
-	box-shadow: 0 0 0.125rem 0 fade(@sapContent_ShadowColor, 72);
+	box-shadow: @sapContent_Interaction_Shadow;
 }
 
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnEmphasized {
-	box-shadow: 0 0 0.125rem 0 fade(@sapInformativeColor, 72);
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnEmphasized,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnSuccess,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnNegative,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnNeutral,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnCritical {
+	box-shadow: none;
 }
 
 .sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnAccept {
-	box-shadow: 0 0 0.125rem 0 fade(@sapPositiveColor, 72);
+	box-shadow: @sapContent_Positive_Shadow;
 }
 
 .sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnReject {
-	box-shadow: 0 0 0.125rem 0 fade(@sapNegativeColor, 72);
+	box-shadow: @sapContent_Negative_Shadow;
 }
 
 .sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnAttention {
-	box-shadow: 0 0 0.125rem 0 fade(@sapCriticalColor, 72);
+	box-shadow: @sapContent_Critical_Shadow;
 }
