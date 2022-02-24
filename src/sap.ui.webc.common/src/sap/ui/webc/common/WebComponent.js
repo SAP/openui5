@@ -144,7 +144,8 @@ sap.ui.define([
 		 * @private
 		 */
 		WebComponent.prototype._setSlot = function(oElement, sAggregationName) {
-			if (oElement) {
+			var aDenyList = ["tooltip", "customData", "layoutData", "dependents", "dragDropConfig"];
+			if (oElement && !aDenyList.includes(sAggregationName)) {
 				var sSlot = this.getMetadata().getAggregationSlot(sAggregationName);
 				oElement.__slot = sSlot;
 			}
