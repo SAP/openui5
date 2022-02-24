@@ -15,4 +15,25 @@
 			}
 		}
 	}
+	.sapUiDtOverlayFocusable:focus:before {
+		border-radius: @sapUiFieldBorderCornerRadius;
+		outline: 0.0625rem dotted @sapUiSelected;
+		border: none;
+		outline-offset: -0.125rem;
+	}
+	&:not(.sapUiRtaVisualizationMode) {
+		.sapUiRtaOverlayHover:after {
+			border-radius: @sapUiFieldBorderCornerRadius;
+			border: none;
+			background: fade(@sapUiSelected, 5%);
+		}
+		.sapUiDtOverlaySelected {
+			box-shadow: none;
+			&:after {
+				border-radius: @sapUiFieldBorderCornerRadius;
+				transition: box-shadow 0.25s;
+				box-shadow: 0px 6px 12px 0px rgba(85, 107, 130, 0.3);
+			}
+		}
+	}
 }

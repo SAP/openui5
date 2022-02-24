@@ -37,18 +37,21 @@
 			&:focus .sapMSegBBtnInner {
 				outline: 0.0625rem solid @_sap_ui_rta_Toolbar_Base_BtnSelected; //1px
 				outline-offset: -0.0625rem; //1px
-				border-radius: @sapUiElementBorderCornerRadius;
+				border-radius: @sapUiButtonBorderCornerRadius;
 			}
 
 			&.sapMSegBBtnSel {
 
 				&:hover .sapMSegBBtnInner::after {
-					border-bottom: 0.125rem solid @_sap_ui_rta_Toolbar_Base_BtnHover; //2px
-					border-radius: 0;
+					content: none;
 				}
 
-				& .sapMSegBBtnInner::after {
-					border-radius: 0;
+				& .sapMSegBBtnInner{
+					background: @sapUiSelected;
+					color: @sapUiToolbarBackground;
+					&:after{
+						content: none;
+					}
 				}
 			}
 		}
@@ -72,7 +75,7 @@
 }
 
 .sapUiSizeCozy .sapUiRtaToolbar .sapMSegB .sapMSegBBtn .sapMSegBBtnInner {
-	line-height: 2rem; //32px
+	line-height: 2.25rem;
 }
 
 html.sap-desktop .sapUiRtaMode .sapMSegBBtnFocusable:focus .sapMSegBBtnInner:after {
