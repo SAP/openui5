@@ -29,6 +29,11 @@ html.sap-phone, html.sapUiMedia-Std-Phone {
 	}
 }
 
-.sapMInputBase.sapMDatePickerHiddenInput {
-	display: none;
+.sapMInputBase {
+	&.sapMDatePickerHiddenInput {
+		display: none;
+	}
+	.sapMInputBaseContentWrapper{
+		display: inline-flex;
+	}
 }
