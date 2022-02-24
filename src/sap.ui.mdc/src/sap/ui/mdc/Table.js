@@ -1006,19 +1006,8 @@ sap.ui.define([
 	};
 
 	Table.prototype._onModifications = function() {
-		var oMDCTable = this;
-		this.initialized().then(function() {
-			var oColumnWidth = oMDCTable.getCurrentState().xConfig;
-			var oColumnWidthContent = oColumnWidth.aggregations && oColumnWidth.aggregations.columns;
-			oMDCTable.getColumns().forEach(function(oColumn, iIndex) {
-				var sWidth = oColumnWidthContent && oColumnWidthContent[oColumn.getDataProperty()] && oColumnWidthContent[oColumn.getDataProperty()].width;
-				var oInnerColumn = oMDCTable._oTable.getColumns()[iIndex];
-				if (!sWidth && oInnerColumn.getWidth() !== oColumn.getWidth()) {
-					oInnerColumn.setWidth(oColumn.getWidth());
-				} else if (sWidth && sWidth !== oInnerColumn.getWidth()) {
-					oInnerColumn.setWidth(sWidth);
-				}
-			});
+		this.getColumns().forEach(function(oColumn) {
+			oColumn._onModifications();
 		});
 	};
 
@@ -1402,9 +1391,6 @@ sap.ui.define([
 
 		var pTableInit = this.initialized().then(function() {
 			this.initPropertyHelper();
-
-			//Make sure that in case of default xConfig appliance the state is initially read once
-			this._onModifications();
 
 			// add this to the micro task execution queue to enable consumers to handle this correctly
 			var oCreationRow = this.getCreationRow();
@@ -1939,7 +1925,6 @@ sap.ui.define([
 				]
 			});
 			this._oTemplate = ResponsiveTableType.createTemplate(this.getId() + "-innerTableRow", oRowSettings);
-			this._createColumn = Table.prototype._createMobileColumn;
 			this._sAggregation = "items";
 			// map bindItems to bindRows for Mobile Table to enable reuse of rebind mechanism
 			this._oTable.bindRows = this._oTable.bindItems;
@@ -1971,7 +1956,6 @@ sap.ui.define([
 				],
 				rowSettingsTemplate: oRowSettings
 			});
-			this._createColumn = Table.prototype._createColumn;
 			this._sAggregation = "rows";
 		}
 
@@ -2024,11 +2008,6 @@ sap.ui.define([
 		} else {
 			oTableType.disableColumnResizer(this, this._oTable);
 		}
-
-		var aMDCColumns = this.getColumns();
-		aMDCColumns.forEach(function(oColumn) {
-			oColumn.updateColumnResizing(bEnableColumnResizer);
-		}, this);
 	};
 
 	Table.prototype._updateSelectionBehavior = function() {
@@ -2209,34 +2188,20 @@ sap.ui.define([
 		TableSettings.createAggregation(this, sSortProperty);
 	};
 
-	Table.prototype._setColumnWidth = function(oMDCColumn) {
-		if (!this.getEnableAutoColumnWidth() || oMDCColumn.getWidth() || oMDCColumn.isBound("width")) {
-			return;
-		}
-
-		var oPropertyHelper = this._oPropertyHelper;
-		if (oPropertyHelper) {
-			oPropertyHelper.setColumnWidth(oMDCColumn);
-		} else {
-			this.awaitPropertyHelper().then(this._setColumnWidth.bind(this, oMDCColumn));
-		}
-	};
-
-	Table.prototype._insertInnerColumn = function(oMDCColumn, iIndex) {
+	Table.prototype._insertInnerColumn = function(oColumn, iIndex) {
 		if (!this._oTable) {
 			return;
 		}
 
-		this._setColumnWidth(oMDCColumn);
+		var oInnerColumn = oColumn.getInnerColumn();
 
-		var oColumn = this._createColumn(oMDCColumn);
-		setColumnTemplate(this, oMDCColumn, oColumn, iIndex);
+		this._setMobileColumnTemplate(oColumn, iIndex);
 		this._bForceRebind = true;
 
 		if (iIndex === undefined) {
-			this._oTable.addColumn(oColumn);
+			this._oTable.addColumn(oInnerColumn);
 		} else {
-			this._oTable.insertColumn(oColumn, iIndex);
+			this._oTable.insertColumn(oInnerColumn, iIndex);
 		}
 	};
 
@@ -2261,145 +2226,82 @@ sap.ui.define([
 		}, this);
 	};
 
-	function setColumnTemplate(oTable, oColumn, oInnerColumn, iIndex) {
-		var oCellTemplate = oColumn.getTemplate(true);
+	/**
+	 * Runtime API for JS flex change to avoid rebind.
+	 *
+	 * @param {object} oColumn - the mdc column instance which should be moved
+	 * @param {int} iIndex - the index to which the column should be moved to
+	 * @private
+	 */
+	Table.prototype.moveColumn = function(oColumn, iIndex) {
+		oColumn._bIsBeingMoved = true;
+		this.removeAggregation("columns", oColumn, true);
+		this.insertAggregation("columns", oColumn, iIndex, true);
+		delete oColumn._bIsBeingMoved;
 
-		if (!oTable._bMobileTable) {
-			var oCreationTemplateClone = oColumn.getCreationTemplate(true);
+		if (this._oTable) {
+			var oInnerColumn = oColumn.getInnerColumn();
 
-			// Grid Table content cannot be wrapped!
-			[oCellTemplate, oCreationTemplateClone].forEach(function(oTemplate) {
-				if (!oTemplate) {
-					return;
-				}
+			// move column in inner table
+			this._oTable.removeColumn(oInnerColumn);
+			this._oTable.insertColumn(oInnerColumn, iIndex);
 
-				if (oTemplate.setWrapping) {
-					oTemplate.setWrapping(false);
-				}
+			this._setMobileColumnOrder();
+			this._updateMobileColumnTemplate(oColumn, iIndex);
+		}
+	};
 
-				if (oTemplate.setRenderWhitespace) {
-					oTemplate.setRenderWhitespace(false);
-				}
-			});
+	Table.prototype.removeColumn = function(oColumn) {
+		oColumn = this.removeAggregation("columns", oColumn, true);
+		this._updateMobileColumnTemplate(oColumn, -1);
+		return oColumn;
+	};
 
-			oInnerColumn.setTemplate(oCellTemplate);
-			oInnerColumn.setCreationTemplate(oCreationTemplateClone);
-		} else if (iIndex >= 0) {
-			oTable._oTemplate.insertCell(oCellTemplate, iIndex);
-			oTable._oTable.getItems().forEach(function(oItem) {
+	Table.prototype.addColumn = function(oColumn) {
+		this.addAggregation("columns", oColumn, true);
+		this._insertInnerColumn(oColumn);
+		return this;
+	};
+
+	Table.prototype.insertColumn = function(oColumn, iIndex) {
+		this.insertAggregation("columns", oColumn, iIndex, true);
+		this._insertInnerColumn(oColumn, iIndex);
+		return this;
+	};
+
+	Table.prototype._setMobileColumnTemplate = function(oColumn, iIndex) {
+		if (!this._bMobileTable) {
+			return;
+		}
+
+		var oCellTemplate = oColumn.getTemplateClone();
+
+		if (iIndex >= 0) {
+			this._oTemplate.insertCell(oCellTemplate, iIndex);
+			this._oTable.getItems().forEach(function(oItem) {
 				// Add lightweight placeholders that can be rendered - if they cannot be rendered, there will be errors in the console.
 				// The actual cells are created after rebind.
 				oItem.insertAggregation("cells", new InvisibleText(), iIndex, true);
 			});
 		} else {
-			oTable._oTemplate.addCell(oCellTemplate);
-		}
-	}
-
-	/**
-	 * Creates and returns a Column that can be added to the grid table, based on the provided MDCColumn
-	 *
-	 * @param {object} oMDCColumn - the mdc column instance using which the GridTable column will be created
-	 * @private
-	 * @returns {object} the column that is created
-	 */
-	Table.prototype._createColumn = function(oMDCColumn) {
-		return GridTableType.createColumn(oMDCColumn.getId() + "-innerColumn", {
-			width: oMDCColumn.getWidth(),
-			minWidth: Math.round(oMDCColumn.getMinWidth() * parseFloat(MLibrary.BaseFontSize)),
-			hAlign: oMDCColumn.getHAlign(),
-			label: oMDCColumn.getColumnHeaderControl(this._bMobileTable, this.getEnableColumnResize()),
-			resizable: this.getEnableColumnResize(),
-			autoResizable: this.getEnableColumnResize()
-		});
-	};
-
-	/**
-	 * Creates and returns a MobileColumn that can be added to the mobile table, based on the provided MDCColumn
-	 *
-	 * @param {object} oMDCColumn - the mdc column instance using which the ResponsiveTable column will be created
-	 * @private
-	 * @returns {object} the column that is created
-	 */
-	Table.prototype._createMobileColumn = function(oMDCColumn) {
-		return ResponsiveTableType.createColumn(oMDCColumn.getId() + "-innerColumn", {
-			width: oMDCColumn.getWidth(),
-			autoPopinWidth: oMDCColumn.getMinWidth(),
-			hAlign: oMDCColumn.getHAlign(),
-			header: oMDCColumn.getColumnHeaderControl(this._bMobileTable, this.getEnableColumnResize()),
-			importance: oMDCColumn.getImportance(),
-			popinDisplay: "Inline"
-		});
-	};
-
-	/**
-	 * Runtime API for JS flex change to avoid rebind.
-	 *
-	 * @param {object} oMDCColumn - the mdc column instance which should be moved
-	 * @param {int} iIndex - the index to which the column should be moved to
-	 * @private
-	 */
-	Table.prototype.moveColumn = function(oMDCColumn, iIndex) {
-		var oColumn;
-		// move column in mdc Table
-		this.removeAggregation("columns", oMDCColumn, true);
-		this.insertAggregation("columns", oMDCColumn, iIndex, true);
-		if (this._oTable) {
-			// move column in inner table
-			oColumn = this._oTable.removeColumn(oMDCColumn.getId() + "-innerColumn");
-			this._oTable.insertColumn(oColumn, iIndex);
-
-			if (this._bMobileTable) {
-				// responsive table requires the column order to be updated.
-				this._setMobileColumnOrder();
-				// update template for ResponisveTable
-				this._updateColumnTemplate(oMDCColumn, iIndex);
-			}
+			this._oTemplate.addCell(oCellTemplate);
 		}
 	};
 
-	Table.prototype.removeColumn = function(oMDCColumn) {
-		oMDCColumn = this.removeAggregation("columns", oMDCColumn, true);
-		if (this._oTable) {
-			var oColumn = this._oTable.removeColumn(oMDCColumn.getId() + "-innerColumn");
-			oColumn.destroy("KeepDom");
-
-			// update template for ResponsiveTable
-			if (this._bMobileTable) {
-				this._updateColumnTemplate(oMDCColumn, -1);
-			}
-			this._onModifications();
+	Table.prototype._updateMobileColumnTemplate = function(oMDCColumn, iIndex) {
+		if (!this._bMobileTable) {
+			return;
 		}
-		return oMDCColumn;
-	};
 
-	Table.prototype.addColumn = function(oMDCColumn) {
-		this.addAggregation("columns", oMDCColumn, true);
-
-		this._insertInnerColumn(oMDCColumn);
-
-		return this;
-	};
-
-	Table.prototype.insertColumn = function(oMDCColumn, iIndex) {
-		this.insertAggregation("columns", oMDCColumn, iIndex, true);
-
-		this._insertInnerColumn(oMDCColumn, iIndex);
-		this._onModifications();
-		return this;
-	};
-
-	// ResponsiveTable
-	Table.prototype._updateColumnTemplate = function(oMDCColumn, iIndex) {
 		var oCellTemplate, iCellIndex;
 		// TODO: Check if this can be moved inside the m.Table.
 
 		// Remove cell template when column is hidden
 		// Remove template cell from ColumnListItem (template)
 		if (this._oTemplate) {
-			oCellTemplate = oMDCColumn.getTemplate(true);
+			oCellTemplate = oMDCColumn.getTemplateClone();
 			iCellIndex = this._oTemplate.indexOfCell(oCellTemplate);
-			Table._removeItemCell(this._oTemplate, iCellIndex, iIndex);
+			removeMobileItemCell(this._oTemplate, iCellIndex, iIndex);
 		}
 
 		// Remove cells from actual rendered items, as this is not done automatically
@@ -2407,7 +2309,7 @@ sap.ui.define([
 			this._oTable.getItems().forEach(function(oItem) {
 				// Grouping row (when enabled) will not have cells
 				if (oItem.removeCell) {
-					Table._removeItemCell(oItem, iCellIndex, iIndex);
+					removeMobileItemCell(oItem, iCellIndex, iIndex);
 				}
 			});
 		}
@@ -2418,22 +2320,25 @@ sap.ui.define([
 	 * Updating the responsive table's column order and invalidating avoid rebinds.
 	 * @private
 	 */
-	 Table.prototype._setMobileColumnOrder = function() {
-		this.getColumns().forEach(function(oMDCColumn) {
-			var oColumn = Core.byId(oMDCColumn.getId() + "-innerColumn");
-			if (!oColumn) {
+	Table.prototype._setMobileColumnOrder = function() {
+		if (!this._bMobileTable) {
+			return;
+		}
+
+		this.getColumns().forEach(function(oColumn) {
+			var oInnerColumn = oColumn.getInnerColumn();
+			if (!oInnerColumn) {
 				return;
 			}
 			// since we ensure correct index of the mdcColumn control we can set the same order to the inner responsive table columns
-			oColumn.setOrder(this.indexOfColumn(oMDCColumn));
+			oInnerColumn.setOrder(this.indexOfColumn(oColumn));
 		}, this);
 
 		// invalidate the inner table to apply the correct order on the UI. See sap.m.Column#setOrder
 		this._oTable.invalidate();
 	};
 
-	Table._removeItemCell = function(oItem, iRemoveIndex, iInsertIndex) {
-		// remove cell from index
+	function removeMobileItemCell(oItem, iRemoveIndex, iInsertIndex) {
 		var oCell = oItem.removeCell(iRemoveIndex);
 		if (oCell) {
 			// -1 index destroys the inner content
@@ -2443,7 +2348,7 @@ sap.ui.define([
 				oCell.destroy();
 			}
 		}
-	};
+	}
 
 	Table.prototype._onItemPress = function(oEvent) {
 		this.fireRowPress({
@@ -2692,9 +2597,9 @@ sap.ui.define([
 		var bMobileTable = this._bMobileTable;
 		var oPropertyHelper = this.getPropertyHelper();
 
-		aMDCColumns.forEach(function(oMDCColumn) {
-			var oInnerColumn = Core.byId(oMDCColumn.getId() + "-innerColumn");
-			var oProperty = oPropertyHelper.getProperty(oMDCColumn.getDataProperty());
+		aMDCColumns.forEach(function(oColumn) {
+			var oInnerColumn = oColumn.getInnerColumn();
+			var oProperty = oPropertyHelper.getProperty(oColumn.getDataProperty());
 			var aSortablePaths = oProperty ? oProperty.getSortableProperties().map(function(oProperty) {
 				return oProperty.path;
 			}) : [];
@@ -2890,5 +2795,4 @@ sap.ui.define([
 	};
 
 	return Table;
-
 });

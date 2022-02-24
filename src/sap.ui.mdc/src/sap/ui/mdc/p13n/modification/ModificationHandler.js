@@ -185,7 +185,8 @@ sap.ui.define([
 	 * @param {object} [oModificationPayload] An object providing a modification handler specific payload
 	 * @param {object} [oModificationPayload.propertyBag] Optional propertybag for different modification handler derivations
 	 *
-	 * @returns {Promise<object>|object} A promise resolving to the adapted xConfig object or the object directly
+	 * @returns {Promise<object>|object|null}
+	 *     A promise that resolves with the xConfig, the xConfig directly if it is already available, or <code>null</code> if there is no xConfig
 	 */
 	ModificationHandler.prototype.readConfig = function(oControl, oModificationPayload) {
 		var oConfig, oAggregationConfig;

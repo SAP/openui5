@@ -262,26 +262,27 @@ sap.ui.define([
 	}
 
 	/**
-	 * Sets the width of the provided column based on the <code>visualSettings</code> of the relevant <code>PropertyInfo</code>.
+	 * Calculates the width of the provided column based on the <code>visualSettings</code> of the relevant <code>PropertyInfo</code>.
 	 *
 	 * @param {sap.ui.mdc.table.Column} oMDCColumn The <code>Column</code> instance for which to set the width
-	 * @public
-	 * @since 1.95
+	 * @returns {sap.ui.core.CSSSize | null} The calculated width, or <code>null</code> if calculation wasn't possible
 	 */
-	PropertyHelper.prototype.setColumnWidth = function(oMDCColumn) {
+	PropertyHelper.prototype.calculateColumnWidth = function(oMDCColumn) {
 		var sPropertyName = oMDCColumn.getDataProperty();
 		var oProperty = this.getProperty(sPropertyName);
+
 		if (!oProperty) {
-			return;
+			return null;
 		}
 
 		var mPropertyInfoVisualSettings = oProperty.visualSettings;
 		if (mPropertyInfoVisualSettings && mPropertyInfoVisualSettings.widthCalculation === null) {
-			return;
+			return null;
 		}
 
 		var fWidth = this._calcColumnWidth(oProperty) + 1; // add 1rem extra for padding and border
-		oMDCColumn._updateColumnWidth(fWidth + "rem");
+
+		return fWidth + "rem";
 	};
 
 	/**

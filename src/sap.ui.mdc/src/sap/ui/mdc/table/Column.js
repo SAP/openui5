@@ -3,8 +3,24 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element", "sap/m/Label", "sap/ui/core/Core"
-], function(Element, Label, Core) {
+	"./GridTableType",
+	"./ResponsiveTableType",
+	"sap/m/library",
+	"sap/m/Label",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/base/ManagedObjectModel",
+	"sap/ui/core/Control",
+	"sap/ui/core/Core"
+], function(
+	GridTableType,
+	ResponsiveTableType,
+	MLibrary,
+	Label,
+	JSONModel,
+	ManagedObjectModel,
+	Control,
+	Core
+) {
 	"use strict";
 
 	/**
@@ -13,7 +29,7 @@ sap.ui.define([
 	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The column for the metadata-driven table with the template, which is shown if the rows have data.
-	 * @extends sap.ui.core.Element
+	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @private
 	 * @experimental
@@ -23,8 +39,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.table.Column
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-
-	var Column = Element.extend("sap.ui.mdc.table.Column", {
+	var Column = Control.extend("sap.ui.mdc.table.Column", {
 		metadata: {
 			library: "sap.ui.mdc",
 			defaultAggregation: "template",
@@ -90,7 +105,6 @@ sap.ui.define([
 					type: "string"
 				}
 			},
-			events: {},
 			aggregations: {
 				/**
 				 * Template for the column.
@@ -108,6 +122,17 @@ sap.ui.define([
 					multiple: false
 				}
 			}
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oColumn) {
+				oRm.openStart("div", oColumn);
+				oRm.openEnd();
+				if (oColumn._oColumnHeaderLabel) {
+					oRm.renderControl(oColumn._oColumnHeaderLabel.getLabel());
+				}
+				oRm.close("div");
+			}
 		}
 	});
 
@@ -117,52 +142,183 @@ sap.ui.define([
 			template: true,
 			creationTemplate: true
 		};
+
+		this._oManagedObjectModel = new ManagedObjectModel(this);
+		this._oSettingsModel = new JSONModel({
+			width: this.getWidth(),
+			calculatedWidth: null,
+			p13nWidth: null,
+			resizable: false
+		});
 	};
 
-	// Return the clone of the template set by the app on the column
-	Column.prototype.getTemplate = function(bClone) {
-		var oTemplate = this.getAggregation("template");
+	Column.prototype.getInnerColumn = function() {
+		var oTable = this.getTable();
 
-		if (bClone && this._oTemplateClone && this._oTemplateClone.bIsDestroyed) {
-			this._oTemplateClone = null;
+		if (oTable && (!this._oInnerColumn || this._oInnerColumn.isDestroyed())) {
+			this._oInnerColumn = this._createInnerColumn();
 		}
 
-		// clone the template control
-		if (!this._oTemplateClone && oTemplate) {
+		return this._oInnerColumn;
+	};
+
+	Column.prototype._createInnerColumn = function() {
+		var oTable = this.getTable();
+		var oColumn;
+
+		var oWidthBindingInfo = {
+			parts: [
+				{path: "$this>/width"},
+				{path: "$columnSettings>/calculatedWidth"},
+				{path: "$columnSettings>/p13nWidth"}
+			],
+			formatter: function(sWidth, sCalculatedWidth, sP13nWidth) {
+				return sP13nWidth || sCalculatedWidth || sWidth;
+			}
+		};
+
+		this._readP13nValues(); // XConfig might not have been available on init - depends on the order settings are applied in Table#applySettings.
+
+		if (oTable._bMobileTable) {
+			oColumn = ResponsiveTableType.createColumn(this.getId() + "-innerColumn", {
+				width: oWidthBindingInfo,
+				autoPopinWidth: "{$this>/minWidth}",
+				hAlign: "{$this>/hAlign}",
+				header: this._getColumnHeaderLabel(),
+				importance: "{$this>/importance}",
+				popinDisplay: "Inline"
+			});
+		} else {
+			oColumn = GridTableType.createColumn(this.getId() + "-innerColumn", {
+				width: oWidthBindingInfo,
+				minWidth: {
+					path: "$this>/minWidth",
+					formatter: function(fMinWidth) {
+						return Math.round(fMinWidth * parseFloat(MLibrary.BaseFontSize));
+					}
+				},
+				hAlign: "{$this>/hAlign}",
+				label: this._getColumnHeaderLabel(),
+				resizable: "{$columnSettings>/resizable}",
+				autoResizable: "{$columnSettings>/resizable}",
+				template: this.getTemplateClone()
+			});
+			oColumn.setCreationTemplate(this.getCreationTemplateClone());
+		}
+
+		oColumn.setModel(this._oManagedObjectModel, "$this");
+		oColumn.setModel(this._oSettingsModel, "$columnSettings");
+
+		return oColumn;
+	};
+
+	var ColumnHeaderLabel = Control.extend("sap.ui.mdc.table.ColumnHeaderLabel", {
+		metadata: {
+			"final": true,
+			aggregations: {
+				label: {type: "sap.m.Label", multiple: false}
+			},
+			associations: {
+				column: {type: "sap.ui.mdc.table.Column"}
+			}
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oColumnHeaderLabel) {
+				oRm.openStart("div", oColumnHeaderLabel);
+				oRm.style("width", "100%");
+				oRm.openEnd();
+				oRm.renderControl(Core.byId(oColumnHeaderLabel.getColumn()));
+				oRm.close("div");
+			}
+		},
+		getText: function() { // Used by tests in MDC and FE.
+			return this.getLabel().getText();
+		},
+		clone: function() { // For ResponsiveTable popin.
+			return this.getLabel().clone();
+		}
+	});
+
+	/**
+	 * Creates and returns the column header control.
+	 * If <code>headerVisible=false</code> then <code>width=0px</code> is applied to the <code>sap.m.Label</code> control for accessibility purposes.
+	 *
+	 * @returns {object} The column header control
+	 * @private
+	 */
+	Column.prototype._getColumnHeaderLabel = function() {
+		var oTable = this.getTable();
+
+		if (oTable && (!this._oColumnHeaderLabel || this._oColumnHeaderLabel.isDestroyed())) {
+			this._oColumnHeaderLabel = new ColumnHeaderLabel({
+				column: this,
+				label: new Label({
+					width: "{= ${$this>/headerVisible} ? null : '0px' }",
+					text: "{$this>/header}",
+					textAlign: "{$this>/hAlign}",
+					wrapping: {
+						parts: [
+							{path: "$this>/headerVisible"},
+							{path: "$columnSettings>/resizable"}
+						],
+						formatter: function(bHeaderVisible, bResizable) {
+							return oTable._bMobileTable && bHeaderVisible && !bResizable;
+						}
+					},
+					wrappingType: oTable._bMobileTable ? "Hyphenated" : null
+				})
+			});
+		}
+
+		return this._oColumnHeaderLabel;
+	};
+
+	Column.prototype.getTemplateClone = function() {
+		var oTable = this.getTable();
+		var oTemplate = this.getTemplate();
+
+		if (oTable && oTemplate && (!this._oTemplateClone || this._oTemplateClone.isDestroyed())) {
 			this._oTemplateClone = oTemplate.clone();
+
+			if (!oTable._bMobileTable) {
+				if (this._oTemplateClone.setWrapping) {
+					this._oTemplateClone.setWrapping(false);
+				}
+
+				if (this._oTemplateClone.setRenderWhitespace) {
+					this._oTemplateClone.setRenderWhitespace(false);
+				}
+			}
 		}
 
-		return bClone ? this._oTemplateClone : oTemplate;
+		return this._oTemplateClone;
 	};
 
-	Column.prototype.getCreationTemplate = function(bClone) {
-		var oCreationTemplate = this.getAggregation("creationTemplate");
+	Column.prototype.getCreationTemplateClone = function() {
+		var oTable = this.getTable();
+		var oCreationTemplate = this.getCreationTemplate();
 
-		if (bClone && this._oCreationTemplateClone && this._oCreationTemplateClone.bIsDestroyed) {
-			this._oCreationTemplateClone = null;
-		}
-
-		// clone the creationTemplate control
-		if (!this._oCreationTemplateClone && oCreationTemplate) {
+		if (oTable && oCreationTemplate && (!this._oCreationTemplateClone || this._oCreationTemplateClone.isDestroyed())) {
 			this._oCreationTemplateClone = oCreationTemplate.clone();
+
+			if (!oTable._bMobileTable) {
+				if (this._oCreationTemplateClone.setWrapping) {
+					this._oCreationTemplateClone.setWrapping(false);
+				}
+
+				if (this._oCreationTemplateClone.setRenderWhitespace) {
+					this._oCreationTemplateClone.setRenderWhitespace(false);
+				}
+			}
 		}
 
-		return bClone ? this._oCreationTemplateClone : oCreationTemplate;
-	};
-
-	Column.prototype.setHeaderVisible = function(bHeaderVisible) {
-		if (this.getHeaderVisible() === bHeaderVisible) {
-			return this;
-		}
-
-		this.setProperty("headerVisible", bHeaderVisible, true);
-		this._updateColumnHeaderControl();
-		return this;
+		return this._oCreationTemplateClone;
 	};
 
 	Column.prototype.setHeader = function(sHeader) {
 		this.setProperty("header", sHeader, true);
-		this._updateColumnHeaderControl();
+
 		var oLabelElement = this.getDomRef();
 		if (oLabelElement) {
 			oLabelElement.textContent = this.getHeader();
@@ -171,134 +327,117 @@ sap.ui.define([
 		return this;
 	};
 
-	Column.prototype.setHAlign = function(sHAlign) {
-		this.setProperty("hAlign", sHAlign, true);
-		this._updateColumnHeaderControl();
-		return this;
-	};
-
-	/**
-	 * Updates the width of the column based on the auto column width calculation.
-	 * @private
-	 */
-	Column.prototype._updateColumnWidth = function(sWidth) {
-		var oInnerColumn = Core.byId(this.getId() + "-innerColumn");
-		if (!oInnerColumn || !this.getWidth()) {
-			this.setProperty("width", sWidth);
-		}
-
-		// set the inner column width only if there is no user(flex) changes has been applied
-		if (oInnerColumn && !oInnerColumn.getWidth()) {
-			oInnerColumn.setWidth(sWidth);
+	Column.prototype._onTableChange = function(oEvent) {
+		if (oEvent.getParameter("name") === "enableColumnResize") {
+			this._readTableSettings();
 		}
 	};
 
-	/**
-	 * Updates the column header control based on the current column property settings.
-	 * @private
-	 */
-	Column.prototype._updateColumnHeaderControl = function() {
-		if (this._oColumnHeaderLabel) {
-			this._oColumnHeaderLabel.setWidth(this.getHeaderVisible() ? null : "0px");
-			this._oColumnHeaderLabel.setWrapping(this._bMobileTable && !this._bResizable && this.getHeaderVisible());
-			this._oColumnHeaderLabel.setText(this.getHeader());
-			this._oColumnHeaderLabel.setTextAlign(this.getHAlign());
-		}
-	};
+	Column.prototype._readTableSettings = function() {
+		var oTable = this.getTable();
 
-	/**
-	 * Updates the resizable state of the column.
-	 * @private
-	 */
-	Column.prototype.updateColumnResizing = function(bEnabled) {
-		this._bResizable = !!bEnabled;
-		this._updateColumnHeaderControl();
+		this._oSettingsModel.setProperty("/resizable", oTable.getEnableColumnResize());
 	};
 
 	Column.prototype.setParent = function(oParent) {
-		var oPrevParent = this.getParent();
-		Element.prototype.setParent.apply(this, arguments);
-		if (oParent && oParent.isA("sap.ui.mdc.Table")) {
-			if (oParent.getDomRef()) {
-				this._addAriaStaticDom();
-			} else {
-					this.oAfterRenderingDelegate = {
-					onAfterRendering: function () {
-						this._addAriaStaticDom();
-						this.getParent().removeDelegate(this.oAfterRenderingDelegate);
-					}
-				};
-				oParent.addDelegate(this.oAfterRenderingDelegate, this);
-			}
-		} else if (!oParent) {
-			oPrevParent.removeDelegate(this.oAfterRenderingDelegate);
-			this._removeAriaStaticDom();
+		var oPreviousTable = this.getTable();
+		Control.prototype.setParent.apply(this, arguments);
+
+		if (this._bIsBeingMoved) { // Set by the table when moving this column.
+			return;
+		}
+
+		this._disconnectFromTable(oPreviousTable);
+		this._connectToTable();
+	};
+
+	Column.prototype._connectToTable = function() {
+		var oTable = this.getTable();
+
+		if (!oTable) {
+			return;
+		}
+
+		this._calculateColumnWidth();
+		this._readP13nValues();
+		this._readTableSettings();
+		oTable.attachEvent("_change", this._onTableChange, this);
+	};
+
+	Column.prototype._disconnectFromTable = function(oTable) {
+		oTable = oTable || this.getTable();
+
+		if (!oTable) {
+			return;
+		}
+
+		if (this._oInnerColumn) {
+			this._oInnerColumn.destroy("KeepDom");
+			oTable.invalidate();
 		}
 	};
 
-	/**
-	 * Creates and returns the column header control.
-	 * If <code>headerVisible=false</code> then <code>width=0px</code> is applied to the <code>sap.m.Label</code> control for accessibility purposes.
-	 * @param {boolean} bMobileTable The type of the table
-	 * @param {boolean} bResizing Indicates whether the column is resizable
-	 * @returns {object} The column header control
-	 * @private
-	 */
-	Column.prototype.getColumnHeaderControl = function(bMobileTable, bResizing) {
-		if (this._oColumnHeaderLabel) {
-			this._oColumnHeaderLabel.destroy();
-		}
-
-		this._oColumnHeaderLabel = new Label(this.getId() + "-innerColumnHeader", {
-			wrappingType: bMobileTable ? "Hyphenated" : null
-		});
-		this._bMobileTable = bMobileTable;
-
-		this.updateColumnResizing(bResizing);
-
-		return this._oColumnHeaderLabel;
+	Column.prototype._onModifications = function() {
+		this._readP13nValues();
 	};
 
-	Column.prototype._removeAriaStaticDom = function() {
-		var oDomElement = this.getDomRef();
+	Column.prototype._calculateColumnWidth = function() {
+		var oTable = this.getTable();
 
-		if (oDomElement) {
-			oDomElement.parentNode.removeChild(oDomElement);
+		if (!oTable || !oTable.getEnableAutoColumnWidth() || !this.isPropertyInitial("width")) {
+			return;
+		}
+
+		var oPropertyHelper = oTable.getPropertyHelper();
+
+		if (oPropertyHelper) {
+			this._oSettingsModel.setProperty("/calculatedWidth", oPropertyHelper.calculateColumnWidth(this));
+		} else {
+			oTable.awaitPropertyHelper().then(this._calculateColumnWidth.bind(this));
 		}
 	};
 
-	Column.prototype._addAriaStaticDom = function() {
-		var oInvisibleDiv = document.createElement("div");
-		oInvisibleDiv.setAttribute("id", this.getId());
-		oInvisibleDiv.setAttribute("class", "sapUiInvisibleText");
-		oInvisibleDiv.setAttribute("aria-hidden", "true");
-		var oHeaderTextNode = document.createTextNode(this.getHeader());
-		oInvisibleDiv.appendChild(oHeaderTextNode);
-		var oStaticDiv = Core.getStaticAreaRef();
+	Column.prototype._readP13nValues = function() {
+		var oTable = this.getTable();
+		var vXConfig = oTable.getCurrentState().xConfig;
+		var sPropertyKey = this.getDataProperty();
 
-		if (oInvisibleDiv && oStaticDiv) {
-			oStaticDiv.appendChild(oInvisibleDiv);
+		if (vXConfig instanceof Promise) {
+			vXConfig.then(this._readP13nValues.bind(this));
+			return;
 		}
+
+		var sWidth = vXConfig &&
+					 vXConfig.aggregations &&
+					 vXConfig.aggregations.columns &&
+					 vXConfig.aggregations.columns[sPropertyKey] &&
+					 vXConfig.aggregations.columns[sPropertyKey].width;
+
+		this._oSettingsModel.setProperty("/p13nWidth", sWidth);
+	};
+
+	Column.prototype.getTable = function() {
+		var oParent = this.getParent();
+		return oParent && oParent.isA("sap.ui.mdc.Table") ? oParent : null;
 	};
 
 	Column.prototype.exit = function() {
-		if (this._oTemplateClone) {
-			this._oTemplateClone.destroy();
-			this._oTemplateClone = null;
-		}
+		this._disconnectFromTable();
 
-		if (this._oCreationTemplateClone) {
-			this._oCreationTemplateClone.destroy();
-			this._oCreationTemplateClone = null;
-		}
-
-		if (this._oColumnHeaderLabel) {
-			this._oColumnHeaderLabel.destroy();
-			this._oColumnHeaderLabel = null;
-		}
-		this._removeAriaStaticDom();
+		[
+			"_oManagedObjectModel",
+			"_oSettingsModel",
+			"_oInnerColumn",
+			"_oTemplateClone",
+			"_oCreationTemplateClone",
+			"_oColumnHeaderLabel"
+		].forEach(function(sObject) {
+			if (this[sObject]) {
+				this[sObject].destroy();
+				delete this[sObject];
+			}
+		}, this);
 	};
 
 	return Column;
-
 });
