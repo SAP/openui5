@@ -1579,12 +1579,36 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'encodeURIComponent',
+						target: 'exploreSamples',
+						title: 'EncodeURIComponent',
+						files: [
+							{
+								url: '/samples/formatters/encodeURIComponent/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							}
+						]
+					},
+					{
 						key: 'float',
 						target: 'exploreSamples',
 						title: 'Float',
 						files: [
 							{
 								url: '/samples/formatters/float/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							}
+						]
+					},
+					{
+						key: 'initials',
+						target: 'exploreSamples',
+						title: 'Initials',
+						files: [
+							{
+								url: '/samples/formatters/initials/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
 							}

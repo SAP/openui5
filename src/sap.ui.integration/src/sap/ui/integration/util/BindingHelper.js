@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/integration/formatters/DateTimeFormatter",
 	"sap/ui/integration/formatters/NumberFormatter",
 	"sap/ui/integration/formatters/TextFormatter",
-	"sap/ui/integration/bindingFeatures/DateRange"
+	"sap/ui/integration/bindingFeatures/DateRange",
+	"sap/ui/integration/formatters/InitialsFormatter"
 ], function (
 	BindingParser,
 	extend,
@@ -16,7 +17,8 @@ sap.ui.define([
 	DateTimeFormatter,
 	NumberFormatter,
 	TextFormatter,
-	DateRange
+	DateRange,
+	InitialsFormatter
 ) {
 	"use strict";
 
@@ -56,7 +58,8 @@ sap.ui.define([
 		integer: NumberFormatter.integer,
 		percent: NumberFormatter.percent,
 		text: TextFormatter.text,
-		unit: NumberFormatter.unit
+		unit: NumberFormatter.unit,
+		initials: InitialsFormatter.initials
 	};
 
 	BindingHelper.mLocals = {
