@@ -6,6 +6,8 @@ sap.ui.define([
 ], function (CodeEditor, Button, Core) {
 	"use strict";
 
+	var DOM_RENDER_LOCATION = "qunit-fixture";
+
 	QUnit.module("Init", {
 		beforeEach: function () {
 			this.oCodeEditor = new CodeEditor({
@@ -18,8 +20,8 @@ sap.ui.define([
 				text: "click"
 			});
 
-			this.oCodeEditor.placeAt("qunit-fixture");
-			this.oButton.placeAt("qunit-fixture");
+			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
+			this.oButton.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function () {
@@ -162,7 +164,7 @@ sap.ui.define([
 				tooltip: "Code editor control"
 			});
 
-			this.oCodeEditor.placeAt("qunit-fixture");
+			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function () {
@@ -179,7 +181,7 @@ sap.ui.define([
 	QUnit.test("ACE Editor should be destroyed on exit", function (assert) {
 		// Arrange
 		var oCodeEditor = new CodeEditor({});
-		oCodeEditor.placeAt("qunit-fixture");
+		oCodeEditor.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
 		// Act
@@ -193,7 +195,7 @@ sap.ui.define([
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
 			this.oCodeEditor = new CodeEditor();
-			this.oCodeEditor.placeAt("qunit-fixture");
+			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function () {
@@ -223,7 +225,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCodeEditor = new CodeEditor();
 
-			this.oCodeEditor.placeAt("qunit-fixture");
+			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function () {
@@ -258,4 +260,73 @@ sap.ui.define([
 
 		Core.applyTheme("sap_fiori_3");
 	});
+
+	QUnit.module("Worker", {
+		beforeEach: function () {
+			this.oCodeEditor = new CodeEditor();
+			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCodeEditor.destroy();
+		}
+	});
+
+	QUnit.test("Iframe is created upon worker initialization", function(assert) {
+		// Act
+		this.oCodeEditor.focus();
+
+		// Assert
+		assert.ok(document.querySelector("iframe[src$='aceWorkerProxy.html']"), "Iframe should be added to the DOM");
+	});
+
+	QUnit.test("Iframe is removed when all editors are destroyed", function(assert) {
+		// Arrange
+		this.oCodeEditor.focus();
+		var oAnotherCodeEditor = new CodeEditor();
+		oAnotherCodeEditor.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+		oAnotherCodeEditor.focus();
+
+		// Act
+		oAnotherCodeEditor.destroy();
+
+		// Assert
+		assert.ok(document.querySelector("iframe[src$='aceWorkerProxy.html']"), "Iframe should NOT be removed from the DOM");
+
+		// Act
+		this.oCodeEditor.destroy();
+
+		// Assert
+		assert.notOk(document.querySelector("iframe[src$='aceWorkerProxy.html']"), "Iframe should be removed from the DOM");
+	});
+
+	QUnit.module("Code validation", {
+		beforeEach: function () {
+			this.oCodeEditor = new CodeEditor();
+			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCodeEditor.destroy();
+		}
+	});
+
+	QUnit.test("Errors are reported for invalid JavaScript syntax", function(assert) {
+		// Arrange
+		var done = assert.async();
+		this.oCodeEditor._oEditor.getSession().once("changeAnnotation", function (e, session) {
+			var aErrors = session.getAnnotations();
+
+			// Assert
+			assert.ok(aErrors.length > 0, "There should be errors reported by the worker");
+
+			done();
+		});
+		this.oCodeEditor._oEditor.getSession().setUseWorker(true);
+
+		// Act
+		this.oCodeEditor.setValue("function () { some invalid JavaScript }");
+	});
+
 });

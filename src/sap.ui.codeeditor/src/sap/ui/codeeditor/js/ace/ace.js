@@ -12518,6 +12518,9 @@ var TokenIterator = require("./token_iterator").TokenIterator;
 
 var clipboard = require("./clipboard");
 var Editor = function(renderer, session, options) {
+     // #### BEGIN MODIFIED BY SAP
+     Editor._instancesCnt ++;
+     // #### END MODIFIED BY SAP
     this.$toDestroy = [];
     var container = renderer.getContainerElement();
     this.container = container;
@@ -12559,6 +12562,9 @@ var Editor = function(renderer, session, options) {
         this.setOptions(options);
     config._signal("editor", this);
 };
+// ##### BEGIN MODIFIED BY SAP
+Editor._instancesCnt = 0;
+// ##### END MODIFIED BY SAP
 
 Editor.$uid = 0;
 
@@ -14419,6 +14425,14 @@ Editor.$uid = 0;
         if (this._$emitInputEvent)
             this._$emitInputEvent.cancel();
         this.removeAllListeners();
+
+        // ##### BEGIN MODIFIED BY SAP
+        Editor._instancesCnt--;
+        var iframe = document.getElementById("sap-ui-codeeditor-ace-worker-proxy");
+        if (Editor._instancesCnt === 0 && iframe) {
+            iframe.remove();
+        }
+        // ##### END MODIFIED BY SAP
     };
     this.setAutoScrollEditorIntoView = function(enable) {
         if (!enable)
@@ -19090,16 +19104,85 @@ function $workerBlob(workerUrl) {
     }
 }
 
+// ##### BEGIN MODIFIED BY SAP
+var workersCnt = 0;
+
 function createWorker(workerUrl) {
     if (typeof Worker == "undefined")
         return { postMessage: function() {}, terminate: function() {} };
-    if (config.get("loadWorkerFromBlob")) {
-        var blob = $workerBlob(workerUrl);
-        var URL = window.URL || window.webkitURL;
-        var blobURL = URL.createObjectURL(blob);
-        return new Worker(blobURL);
+
+    var iframe = document.getElementById("sap-ui-codeeditor-ace-worker-proxy");
+    var iframeLoaded = true;
+    if (!iframe) {
+        iframeLoaded = false;
+        iframe = document.createElement("iframe");
+        iframe.id = "sap-ui-codeeditor-ace-worker-proxy";
+        iframe.src = sap.ui.require.toUrl("sap/ui/codeeditor/aceWorkerProxy.html");
+        iframe.hidden = true;
+        iframe.sandbox = "allow-scripts allow-same-origin";
+        document.body.appendChild(iframe);
+
+        // await for the iframe to load and then send to it the pending messages
+        iframe.onload = function () {
+            iframeLoaded = true;
+            messageQueue.forEach(function (entry) {
+                entry.workerProxy.postMessage(entry.message)
+            });
+        }
     }
-    return new Worker(workerUrl);
+
+    var iframeOrigin = new URL(iframe.src).origin;
+    var messageQueue = [];
+    var workerProxy = {
+        postMessage: function (message) {
+            if (!iframeLoaded) {
+                // enqueue the messages until the iframe is loaded
+                messageQueue.push({
+                    workerProxy: this,
+                    message: message
+                });
+                return;
+            }
+
+            var wrappedMessage = {
+                workerId: this._id,
+                message: message
+            }
+            // send message to worker
+            iframe.contentWindow.postMessage.call(iframe.contentWindow, wrappedMessage, iframeOrigin);
+        },
+        terminate: function () {
+            this.postMessage({
+                terminateWorker: true
+            });
+
+            window.removeEventListener("message", this._messageFromFrameListener);
+        },
+        set onmessage(cb) {
+            this._messageCb = cb;
+        },
+        _id: workersCnt++,
+        _listenForMessageFromFrame: function () {
+            this._messageFromFrameListener = function (event) {
+                if (!iframe || event.origin !== iframeOrigin || event.source !== iframe.contentWindow || event.data.workerId !== this._id) {
+                    return;
+                }
+    
+                this._messageCb.call(this._messageCb, event);
+            }.bind(this)
+            window.addEventListener("message", this._messageFromFrameListener);
+        }
+    }
+
+    workerProxy.postMessage({
+        createWorker: true,
+        workerUrl: workerUrl
+    });
+
+    workerProxy._listenForMessageFromFrame();
+
+    return workerProxy;
+    // ##### END MODIFIED BY SAP
 }
 
 var WorkerClient = function(worker) {

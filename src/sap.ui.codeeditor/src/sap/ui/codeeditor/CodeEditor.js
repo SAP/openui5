@@ -288,6 +288,7 @@ sap.ui.define([
 	CodeEditor.prototype.exit = function() {
 		this._deregisterResizeListener();
 		this._oEditor.destroy(); // clear ace intervals
+		this._oEditor.getSession().setUseWorker(false); // explicitly disable worker usage, in case the ace mode is still loading, to avoid worker initialization after destroy
 		jQuery(this._oEditorDomRef).remove(); // remove DOM node together with all event listeners
 		this._oEditorDomRef = null;
 		this._oEditor = null;
@@ -496,11 +497,6 @@ sap.ui.define([
 	 */
 	CodeEditor.prototype.prettyPrint = function () {
 		ace.require("ace/ext/beautify").beautify(this._oEditor.session);
-	};
-
-	CodeEditor.prototype.destroy = function (bSuppressInvalidate) {
-		this._oEditor.destroy(bSuppressInvalidate);
-		Control.prototype.destroy.call(this, bSuppressInvalidate);
 	};
 
 	CodeEditor.prototype.onfocusout = function () {
