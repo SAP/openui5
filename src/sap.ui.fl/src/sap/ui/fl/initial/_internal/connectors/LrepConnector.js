@@ -76,6 +76,9 @@ sap.ui.define([
 		 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to actual component
 		 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 		 * @param {string} [mPropertyBag.cacheKey] Cache buster token
+		 * @param {object} [mPropertyBag.preview] Preview data provided within the asyn hints
+		 * @param {string} [mPropertyBag.preview.reference] Reference of the base application for building the preview request
+		 * @param {sap.ui.fl.Layer} [mPropertyBag.preview.maxLayer] Limit to which layer the preview data has to be requested
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 * or resolves with undefined in case cache bustering determines that no data is present
 		 */
@@ -91,6 +94,14 @@ sap.ui.define([
 			if (mPropertyBag.appDescriptor && mPropertyBag.appDescriptor["sap.app"]) {
 				sAppDescriptorId = mPropertyBag.appDescriptor["sap.app"].id;
 			}
+
+			if (mPropertyBag.preview) {
+				// IDE may show a preview where only references in a lower app variant hierarchy are known by the back end
+				mPropertyBag.reference = mPropertyBag.preview.reference;
+				// higher layers are served by other connectors
+				mParameters.upToLayerType = mPropertyBag.preview.maxLayer;
+			}
+
 			var sDataUrl = Utils.getUrl(ROUTES.DATA, mPropertyBag, mParameters);
 			return Utils.sendRequest(sDataUrl, "GET", {
 				xsrfToken: this.xsrfToken,
