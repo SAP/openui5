@@ -979,6 +979,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_refresh: getResolvedPath is called", function (assert) {
 		var oBinding = {
+				bPendingRefresh : "~bPendingRefresh",
 				_hasTransientParentContext : function () {},
 				getResolvedPath : function () {}
 			};
@@ -989,19 +990,85 @@ sap.ui.define([
 		// code under test
 		ODataListBinding.prototype._refresh.call(oBinding, undefined, undefined, "~mEntityTypes");
 
-		assert.strictEqual(oBinding.bPendingRefresh, false);
+		assert.strictEqual(oBinding.bPendingRefresh, "~bPendingRefresh", "unchanged");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_refresh: parent context is transient", function (assert) {
-		var oBinding = {_hasTransientParentContext : function () {}};
+		var oBinding = {
+				bPendingRefresh : "~bPendingRefresh",
+				_hasTransientParentContext : function () {}
+			};
 
 		this.mock(oBinding).expects("_hasTransientParentContext").returns(true);
 
 		// code under test
 		ODataListBinding.prototype._refresh.call(oBinding);
 
-		assert.strictEqual(oBinding.bPendingRefresh, undefined);
+		assert.strictEqual(oBinding.bPendingRefresh, "~bPendingRefresh", "unchanged");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_refresh: suspended binding - change detected", function (assert) {
+		var oBinding = {
+				bIgnoreSuspend : false,
+				bPendingRefresh : false,
+				bSuspended : true,
+				_hasTransientParentContext : function () {}
+			};
+
+		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+
+		// code under test
+		ODataListBinding.prototype._refresh.call(oBinding);
+
+		assert.strictEqual(oBinding.bPendingRefresh, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_refresh: suspended binding and force update", function (assert) {
+		var oBinding = {
+				bIgnoreSuspend : false,
+				bPendingRefresh : true,
+				bSuspended : true,
+				_fireRefresh : function () {},
+				_hasTransientParentContext : function () {},
+				abortPendingRequest : function () {},
+				resetData : function () {}
+			};
+
+		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+		this.mock(oBinding).expects("abortPendingRequest").withExactArgs(true);
+		this.mock(oBinding).expects("resetData").withExactArgs();
+		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason : ChangeReason.Refresh});
+
+		// code under test
+		ODataListBinding.prototype._refresh.call(oBinding, true);
+
+		assert.strictEqual(oBinding.bPendingRefresh, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_refresh: suspended binding ignore suspended", function (assert) {
+		var oBinding = {
+				bIgnoreSuspend : true,
+				bPendingRefresh : true,
+				bSuspended : true,
+				_fireRefresh : function () {},
+				_hasTransientParentContext : function () {},
+				abortPendingRequest : function () {},
+				resetData : function () {}
+			};
+
+		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+		this.mock(oBinding).expects("abortPendingRequest").withExactArgs(true);
+		this.mock(oBinding).expects("resetData").withExactArgs();
+		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason : ChangeReason.Refresh});
+
+		// code under test
+		ODataListBinding.prototype._refresh.call(oBinding);
+
+		assert.strictEqual(oBinding.bPendingRefresh, false);
 	});
 
 	//*********************************************************************************************

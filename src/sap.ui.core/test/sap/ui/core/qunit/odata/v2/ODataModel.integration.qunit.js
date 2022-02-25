@@ -13542,4 +13542,128 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: There is a list binding which is initially suspended. In it's suspended state a
+	// parent context is set which refreshes the binding. After that for example a function call
+	// triggers indirectly a call to ODataListBinding#_refresh. Later the list binding is resumed
+	// and needs to trigger a request to get its data.
+	// BCP: 2280074593
+	QUnit.test("Refresh of a suspended binding must not clear the bPendingRefresh flag",
+		function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="objectPage" binding="{/SalesOrderSet(\'1\')}"/>\
+<t:Table id="lineItems" rows="{path : \'ToLineItems\', suspended : true}" visibleRowCount="1">\
+	<Text id="itemPosition" text="{ItemPosition}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				SalesOrderID : "1"
+			})
+			.expectValue("itemPosition", [""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("lineItems");
+
+			oBinding = oTable.getBinding("rows");
+			oTable.setBindingContext(that.oView.byId("objectPage").getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					encodeRequestUri : false,
+					method : "POST",
+					requestUri : "SalesOrder_Confirm?SalesOrderID='1'"
+				}, {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1"
+				});
+
+			return Promise.all([
+				oModel.callFunction("/SalesOrder_Confirm", {
+					method : "POST",
+					urlParameters : {SalesOrderID : "1"}
+				}).contextCreated(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=101", {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"
+						},
+						SalesOrderID : "1",
+						ItemPosition : "1"
+					}]
+				})
+				.expectValue("itemPosition", ["1"]);
+
+			// code under test
+			oBinding.resume();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A binding which already requested data gets suspended. The binding itself is not
+	// refreshed and it is not affected by other changes (refreshAfterChange) then the binding does
+	// not trigger a request if it gets resumed.
+	// BCP: 2280074593
+	QUnit.test("Resuming an unmodified binding does not fire a request while resuming",
+		function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" threshold="0" visibleRowCount="1">\
+	<Text id="itemPosition" text="{ItemPosition}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=1", {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='1')"
+					},
+					SalesOrderID : "1",
+					ItemPosition : "1"
+				}]
+			})
+			.expectValue("itemPosition", ["1"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("rows");
+
+			// code under test
+			oBinding.suspend();
+
+			that.expectRequest({
+					encodeRequestUri : false,
+					method : "POST",
+					requestUri : "SalesOrder_Confirm?SalesOrderID='2'"
+				}, {
+					__metadata : {uri : "SalesOrderSet('2')"},
+					SalesOrderID : "2"
+				});
+
+			return Promise.all([
+				oModel.callFunction("/SalesOrder_Confirm", {
+					method : "POST",
+					urlParameters : {SalesOrderID : "2"}
+				}).contextCreated(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// code under test - no requests expected
+			oBinding.resume();
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
