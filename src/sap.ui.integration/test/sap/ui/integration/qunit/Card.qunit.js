@@ -1173,7 +1173,7 @@ sap.ui.define([
 
 			this.oCard.createManifest(oManifest_ListCard);
 
-			this.oCard.destroyManifest();
+			this.oCard._destroyManifest();
 			this.oCard.createManifest(oManifest_ListCard);
 		});
 

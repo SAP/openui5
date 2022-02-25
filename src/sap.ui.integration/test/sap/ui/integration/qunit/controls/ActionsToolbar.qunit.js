@@ -3,11 +3,15 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/ActionDefinition",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/Host",
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/qunit/QUnitUtils"
 ], function (
 	Core,
 	ActionDefinition,
-	Card
+	Host,
+	Card,
+	QUnitUtils
 ) {
 	"use strict";
 
@@ -323,6 +327,128 @@ sap.ui.define([
 
 		// Act
 		this.oCard.addActionDefinition(oAI);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.module("Actions Toolbar in Card with Host ", {
+		beforeEach: function () {
+			var oManifest = {
+				"sap.app": {
+					"id": "test1"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Header sample",
+						"actions": [{
+							"type": "Navigation"
+						}]
+					}
+				}
+			};
+			this.oHost = new Host({
+				actions: [{
+					type: 'Custom',
+					text: 'Host action'
+				}]
+			});
+
+			this.oCard = new Card({
+				manifest: oManifest,
+				host: this.oHost
+			});
+			this.oCard.setHost(this.oHost);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+			this.oHost.destroy();
+			this.oHost = null;
+		}
+	});
+
+	QUnit.test("Click on actions toolbar", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oHeader = this.oCard.getCardHeader(),
+				fnHeaderPressStub = sinon.stub(),
+				oToolbar = oHeader.getToolbar();
+
+			oHeader.attachEvent("press", function () {
+				fnHeaderPressStub();
+			});
+
+			oToolbar.addEventDelegate({
+				"onAfterRendering": function () {
+					var oButton = oToolbar.getDomRef("overflowButton");
+
+					oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
+						// Assert
+						assert.ok(oToolbar.getAggregation("_actionSheet").isOpen(), "Action sheet is opened after overflow button is pressed.");
+						assert.ok(fnHeaderPressStub.notCalled, "Header press is not triggered.");
+						done();
+					});
+
+					// Act
+					QUnitUtils.triggerEvent("tap", oButton);
+					Core.applyChanges();
+				}
+			});
+		}.bind(this));
+
+		// Act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Remove action item from card by index", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oAI = new ActionDefinition({
+				text: "Card action item"
+			});
+
+		this.oCard.attachEvent("_ready", function () {
+			var oToolbar = this.oCard.getCardHeader().getToolbar(),
+				oActionSheet = oToolbar.getAggregation("_actionSheet");
+			Core.applyChanges();
+			assert.strictEqual(oActionSheet.getButtons()[0].getText(), "Card action item", "First button in the menu is the one added by the card");
+			assert.strictEqual(oActionSheet.getButtons()[1].getText(), "Host action", "Second button in the menu is the one added by the host");
+
+			// Act
+			this.oCard.removeActionDefinition(0);
+
+			assert.strictEqual(oActionSheet.getButtons()[0].getText(), "Host action", "Action added from the host is still there");
+
+			oAI.destroy();
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.addActionDefinition(oAI);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Action definition added by the card later should be placed before the host actions", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oToolbar = this.oCard.getCardHeader().getToolbar(),
+				oActionSheet = oToolbar.getAggregation("_actionSheet");
+			Core.applyChanges();
+
+			// Act
+			this.oCard.addActionDefinition(new ActionDefinition({ text: "New card action item" }));
+
+			assert.strictEqual(oActionSheet.getButtons()[0].getText(), "New card action item", "Action added by the card later should be at the top");
+			assert.strictEqual(oActionSheet.getButtons()[1].getText(), "Host action", "Host action should be after the card actions");
+
+			done();
+		}.bind(this));
+
+		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
