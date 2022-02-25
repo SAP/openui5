@@ -516,7 +516,7 @@ describe("sap.f.Card", function () {
 	});
 
 	it("Transparent Card", function () {
-		navigateTo("Transparent Card");
+		navigateTo("Transparent");
 		var aCardIds = ["containerCard", "list1", "object1", "todo3"];
 
 		aCardIds.forEach(function (sId) {
