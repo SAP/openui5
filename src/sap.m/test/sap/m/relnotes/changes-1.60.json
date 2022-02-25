@@ -3540,5 +3540,65 @@
         ]
       }
     ]
+  },
+  "1.60.39": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "d3ec72398498187084399f0b63310a4675724a6b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: optimization of a failing test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170227346"
+          }
+        ]
+      },
+      {
+        "id": "b440e7fa028db44ae8cd5ab49a941989604c0af8",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: fixed failing test/sap/m/qunit/ObjectListItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180375941"
+          }
+        ]
+      },
+      {
+        "id": "a3737b3066d131450e68356db6523dd3b9d297e2",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: fixed failing test/sap/m/qunit/ObjectListItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180375941"
+          }
+        ]
+      },
+      {
+        "id": "33fcef29166f8d925945584974dbda15344b2a75",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: wrong offsetWidth in Safari corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180367191"
+          }
+        ]
+      },
+      {
+        "id": "a81e43a4908c9f8851801df2e4ef64f08a41ef34",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Special character Curly braces in the file name disrupts the behavior.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970592551"
+          }
+        ]
+      }
+    ]
   }
 }

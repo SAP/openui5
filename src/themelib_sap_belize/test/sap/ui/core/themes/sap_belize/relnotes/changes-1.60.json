@@ -233,5 +233,21 @@
         ]
       }
     ]
+  },
+  "1.60.39": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "b633ecbb97791a15833c997c9a081ea27cce15e4",
+        "type": "FIX",
+        "text": " \"72\" font: add fallback font for glyphs with diacritics",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007217502021"
+          }
+        ]
+      }
+    ]
   }
 }
