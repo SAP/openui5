@@ -31,7 +31,7 @@ sap.ui.define([], function () {
 	 * @param {string} sInput The input string
 	 * @returns {string | *} The transformed string or the original input in case the input is not a string
 	 * @private
-	 * @ui5-restricted UI5 Controls, Smart Controls
+	 * @ui5-restricted UI5 Controls, Smart Controls, Fiori Elements
 	 */
 	var fnWhitespacesReplacer = function (sInput) {
 		var sWhitespace = " ",
