@@ -120,7 +120,7 @@ sap.ui.define([
 
 			// retrieve test config
 			this._oTestParameters = window["sap-ui-test-config"];
-			this._mObjectCapabilities = this._oTestParameters.objectCapabilities;
+			this._mObjectCapabilities = this._oTestParameters.objectCapabilities || {};
 			this._sLibName = this._oTestParameters.library;
 
 			return Utils.loadAllControls(this._oTestParameters, {

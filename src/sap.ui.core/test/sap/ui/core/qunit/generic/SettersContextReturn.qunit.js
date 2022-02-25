@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/test/generic/Utils",
 	"sap/base/util/each",
 	"sap/ui/test/generic/GenericTestCollection",
-	"sap/ui/base/DataType",
-	"sap/m/Text"
-], function(TestBase, Utils, each, GenericTestCollection, DataType, Text) {
+	"sap/ui/base/DataType"
+], function(TestBase, Utils, each, GenericTestCollection, DataType) {
 	"use strict";
 
 	function noop() {}
@@ -45,7 +44,7 @@ sap.ui.define([
 
 		createAggregatedElement: function(sAggregationType) {
 			if ( sAggregationType === "sap.ui.core.Control" ) {
-				return new Text();
+				sAggregationType = "sap.m.Text";
 			} else if (DataType.isInterfaceType(sAggregationType)) {
 				return null;
 			}
