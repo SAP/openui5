@@ -200,6 +200,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();// select time and close popover
 		expect(takeScreenshot(oPage)).toLookAs("fromdatetime_option_datepicker");
 
@@ -207,6 +208,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		aListItems.get(1).click(); // select To Date and Time
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select date and move to time part
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
