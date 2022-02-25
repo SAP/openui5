@@ -15,10 +15,14 @@ sap.ui.define([
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils",
 	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragAndDrop",
-	"sap/ui/base/Event"
+	"sap/ui/base/Event",
+	"sap/m/library"
 ], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library) {
 	"use strict";
+
+	// shortcut for sap.m.ListMode
+	var ListMode = Library.ListMode;
 
 	function getData() {
 		return {
@@ -605,6 +609,107 @@ sap.ui.define([
 		// assert
 		assert.ok(this.oUploadSet._processNewFileObjects.called, "Multiple files are uploaded with multiple property set to true");
 
+	});
+
+	QUnit.test("Test for MultiSelect in pending upload (not supported)", function(assert) {
+		//Act
+		this.oUploadSet.setInstantUpload(false);
+		this.oUploadSet.setMode(ListMode.MultiSelect);
+		//Assert
+		assert.equal(this.oUploadSet.getMode(), ListMode.None, "Mode after setting 'MultiSelect' in pending upload is 'None'");
+	});
+
+	QUnit.test("Test for method setMode)", function(assert) {
+		assert.equal(this.oUploadSet.getMode(), ListMode.MultiSelect, "Initial mode MultiSelect is set correctly");
+		this.oUploadSet.setMode(ListMode.SingleSelect);
+		assert.equal(this.oUploadSet.getMode(), ListMode.SingleSelect, "Mode is set to SingleSelect");
+	});
+
+	QUnit.test("Set and get selected items by Id", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadSet.getItems();
+		this.oUploadSet.setMode(ListMode.MultiSelect);
+
+		//Act
+		var oReturnedUploadSet = this.oUploadSet.setSelectedItemById(aAllItems[0].getId(), true);
+
+		//Assert
+		assert.ok(oReturnedUploadSet instanceof UploadSet, "Returned value is UploadSet");
+		assert.deepEqual(this.oUploadSet.getSelectedItems()[0], aAllItems[0], "Data of first selected item is correct");
+		assert.ok(this.oUploadSet.getSelectedItems()[0] instanceof UploadSetItem, "First item returned is UploadSetItem");
+	});
+
+	QUnit.test("Get selected items without selection", function(assert) {
+		//Assert
+		assert.equal(this.oUploadSet.getSelectedItems().length, 0, "0 items have been selected");
+	});
+
+	QUnit.test("Set and get selected item", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadSet.getItems();
+		this.oUploadSet.setMode(ListMode.SingleSelect);
+
+		//Act
+		this.oUploadSet.setSelectedItem(aAllItems[0], true);
+
+		//Assert
+		assert.deepEqual(this.oUploadSet.getSelectedItem()[0], aAllItems[0], "Selected item is correct");
+		assert.ok(this.oUploadSet.getSelectedItem()[0] instanceof UploadSetItem, "Item returned is UploadSetItem");
+	});
+
+	QUnit.test("Set and get selected item by Id", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadSet.getItems();
+		this.oUploadSet.setMode(ListMode.SingleSelectLeft);
+
+		//Act
+		var oReturnedUploadSet = this.oUploadSet.setSelectedItemById(aAllItems[0].getId(), true);
+
+		//Assert
+		assert.deepEqual(oReturnedUploadSet, this.oUploadSet, "Local UploadSet and returned element are deepEqual");
+		assert.deepEqual(this.oUploadSet.getSelectedItem()[0], aAllItems[0], "Selected item is correct");
+		assert.ok(oReturnedUploadSet.getItems()[0].getSelected(), "The getSelected of UploadSetItem has been set correctly");
+		assert.ok(this.oUploadSet.getSelectedItem()[0] instanceof UploadSetItem, "Item returned is UploadSetItem");
+	});
+
+	QUnit.test("Get selected item without selection", function(assert) {
+		//Assert
+		assert.equal(this.oUploadSet.getSelectedItem(), null, "Selected item is correct");
+	});
+
+	QUnit.test("Set all and get selected items", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadSet.getItems();
+		this.oUploadSet.setMode(ListMode.MultiSelect);
+
+		//Act
+		var oReturnedUploadSet = this.oUploadSet.selectAll();
+
+		//Assert
+		assert.ok(oReturnedUploadSet instanceof UploadSet, "Returned value is UploadSet");
+		assert.equal(this.oUploadSet.getSelectedItems().length, aAllItems.length, "Input and Output amount of items are equal");
+		assert.equal(oReturnedUploadSet.getSelectedItems().length, this.oUploadSet.getSelectedItems().length, "Return value of selectAll is equal to getSelectedItems");
+		assert.deepEqual(oReturnedUploadSet, this.oUploadSet, "Local UploadSet and returned element are deepEqual");
+		assert.deepEqual(this.oUploadSet.getSelectedItems()[0], aAllItems[0], "Data of first selected item is correct");
+		assert.ok(this.oUploadSet.getSelectedItems()[0] instanceof UploadSetItem, "First item returned is UploadSetItem");
+		assert.equal(this.oUploadSet.getSelectedItem()[0], aAllItems[0], "getSelectedItem() returns first selected item for multiple selection");
+	});
+
+	QUnit.test("Set and reset all items manually to check sync state of UploadSet Items and UploadSet.", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadSet.getItems();
+		this.oUploadSet.setMode(ListMode.MultiSelect);
+
+		//Act
+		for (var i = 0; i < aAllItems.length; i++) {
+			aAllItems[i].setSelected(true);
+		}
+		for (var i = 0; i < aAllItems.length; i++) {
+			aAllItems[i].setSelected(false);
+		}
+
+		//Assert
+		assert.equal(this.oUploadSet.getSelectedItems().length, 0, "0 items are selected");
 	});
 
 });

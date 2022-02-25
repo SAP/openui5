@@ -23,9 +23,10 @@ sap.ui.define([
 	"sap/m/upload/UploadSetRenderer",
 	"sap/m/upload/UploaderHttpRequestMethod",
 	"sap/ui/core/dnd/DragDropInfo",
-	"sap/ui/core/dnd/DropInfo"
+	"sap/ui/core/dnd/DropInfo",
+	"sap/m/library"
 ], function (Control, Icon, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
-			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod, DragDropInfo, DropInfo) {
+			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod, DragDropInfo, DropInfo, Library) {
 	"use strict";
 
 	/**
@@ -115,7 +116,15 @@ sap.ui.define([
 				 *
 				 * If multiple property is set to false, the control shows an error message if more than one file is chosen for drag & drop.
 				 */
-				 multiple: {type: "boolean", group: "Behavior", defaultValue: false}
+				 multiple: {type: "boolean", group: "Behavior", defaultValue: false},
+				 /**
+				 * Defines the selection mode of the control (e.g. None, SingleSelect, MultiSelect, SingleSelectLeft, SingleSelectMaster).
+				 * Since the UploadSet reacts like a list for attachments, the API is close to the ListBase Interface.
+				 * sap.m.ListMode.Delete mode is not supported and will be automatically set to sap.m.ListMode.None.
+				 * In addition, if instant upload is set to false the mode sap.m.ListMode.MultiSelect is not supported and will be automatically set to sap.m.ListMode.None.
+				 * @since 1.100.0
+				 */
+				mode: {type: "sap.m.ListMode", group: "Behavior", defaultValue: Library.ListMode.MultiSelect}
 				},
 			defaultAggregation: "items",
 			aggregations: {
@@ -706,6 +715,22 @@ sap.ui.define([
 		return this;
 	};
 
+	UploadSet.prototype.setMode = function(sMode) {
+		if (sMode === Library.ListMode.Delete) {
+			this.setProperty("mode", Library.ListMode.None);
+			Log.info("sap.m.ListMode.Delete is not supported by UploadSet. Value has been resetted to 'None'");
+		} else if (sMode === Library.ListMode.MultiSelect && !this.getInstantUpload()) {
+			this.setProperty("mode", Library.ListMode.None);
+			Log.info("sap.m.ListMode.MultiSelect is not supported by UploadSet for Pending Upload. Value has been reset to 'None'");
+		} else {
+			this.setProperty("mode", sMode);
+		}
+		if (this._oList) {
+			this._oList.setMode(this.getMode());
+		}
+		return this;
+	};
+
 	/* ============== */
 	/* Public methods */
 	/* ============== */
@@ -735,7 +760,8 @@ sap.ui.define([
 						dragEnter: [this._onDragEnterFile, this],
 						drop: [this._onDropFile, this]
 					})
-				]
+				],
+				mode: this.getMode()
 			});
 			this._oList.addStyleClass("sapMUCList");
 			this.addDependent(this._oList);
@@ -857,6 +883,72 @@ sap.ui.define([
 		oUploader.attachUploadProgressed(this._onUploadProgressed.bind(this));
 		oUploader.attachUploadCompleted(this._onUploadCompleted.bind(this));
 		oUploader.attachUploadAborted(this._onUploadAborted.bind(this));
+	};
+
+	/**
+	 * Returns an array containing the selected UploadSetItems.
+	 * @returns {sap.m.UploadSetItem[]} Array of all selected items
+	 * @public
+	 * @since 1.100.0
+	 */
+	 UploadSet.prototype.getSelectedItems = function() {
+		var aSelectedListItems = this._oList.getSelectedItems();
+		return this._getUploadSetItemsByListItems(aSelectedListItems);
+	};
+
+	/**
+	 * Retrieves the currently selected UploadSetItem.
+	 * @returns {sap.m.UploadSetItem | null} The currently selected item or null
+	 * @public
+	 * @since 1.100.0
+	 */
+	UploadSet.prototype.getSelectedItem = function() {
+		var oSelectedListItem = this._oList.getSelectedItem();
+		if (oSelectedListItem) {
+			return this._getUploadSetItemsByListItems([oSelectedListItem]);
+		}
+		return null;
+	};
+
+	/**
+	 * Sets an UploadSetItem to be selected by ID. In single selection mode, the method removes the previous selection.
+	 * @param {string} id The ID of the item whose selection is to be changed.
+	 * @param {boolean} [select=true] The selection state of the item.
+	 * @returns {this} this to allow method chaining
+	 * @public
+	 * @since 1.100.0
+	 */
+	 UploadSet.prototype.setSelectedItemById = function(id, select) {
+		this._oList.setSelectedItemById(id + "-listItem", select);
+		this._setSelectedForItems([this._getUploadSetItemById(id)], select);
+		return this;
+	};
+
+	/**
+	 * Selects or deselects the given list item.
+	 * @param {sap.m.UploadSetItem} uploadSetItem The item whose selection is to be changed. This parameter is mandatory.
+	 * @param {boolean} [select=true] The selection state of the item.
+	 * @returns {this} this to allow method chaining
+	 * @public
+	 * @since 1.100.0
+	 */
+	 UploadSet.prototype.setSelectedItem = function(uploadSetItem, select) {
+		return this.setSelectedItemById(uploadSetItem.getId(), select);
+	};
+
+	/**
+	 * Select all items in "MultiSelection" mode.
+	 * @returns {this} this to allow method chaining
+	 * @public
+	 * @since 1.100.0
+	 */
+	 UploadSet.prototype.selectAll = function() {
+		var aSelectedList = this._oList.selectAll();
+		if (aSelectedList.getItems().length !== this.getItems().length) {
+			Log.info("Internal 'List' and external 'UploadSet' are not in sync.");
+		}
+		this._setSelectedForItems(this.getItems(), true);
+		return this;
 	};
 
 	/* ============== */
@@ -1282,6 +1374,65 @@ sap.ui.define([
 
 	UploadSet.prototype._fireFilenameLengthExceed = function (oItem) {
 		this.fireFileNameLengthExceeded({item: oItem});
+	};
+
+	/**
+	 * Sets the selected value for elements in given array to state of the given parameter. It also handles list specific rules
+	 * @param {sap.m.ListItemBase[]} uploadSetItemsToUpdate The list items the selection state is to be set for
+	 * @param {boolean} selected The new selection state
+	 * @private
+	 */
+	 UploadSet.prototype._setSelectedForItems = function(uploadSetItemsToUpdate, selected) {
+		//Reset all 'selected' values in UploadSetItems
+		if (this.getMode() !== Library.ListMode.MultiSelect && selected) {
+			var aUploadSetItems = this.getItems();
+			for (var j = 0; j < aUploadSetItems.length; j++) {
+				aUploadSetItems[j].setSelected(false);
+			}
+		}
+		for (var i = 0; i < uploadSetItemsToUpdate.length; i++) {
+			uploadSetItemsToUpdate[i].setSelected(selected);
+		}
+	};
+
+	/**
+	 * Returns UploadSetItem based on the items aggregation
+	 * @param {string} uploadSetItemId used for finding the UploadSetItem
+	 * @returns {sap.m.UploadSetItem} The matching UploadSetItem
+	 * @private
+	 */
+	 UploadSet.prototype._getUploadSetItemById = function(uploadSetItemId) {
+		var aAllItems = this.getItems();
+		for (var i = 0; i < aAllItems.length; i++) {
+			if (aAllItems[i].getId() === uploadSetItemId) {
+				return aAllItems[i];
+			}
+		}
+		return null;
+	};
+
+	/**
+	 * Returns an array of UploadSet items based on the items aggregation
+	 * @param {sap.m.ListItemBase[]} listItems The list items used for finding the UploadSetItems
+	 * @returns {sap.m.UploadSetItem[]} The matching UploadSetItems
+	 * @private
+	 */
+	 UploadSet.prototype._getUploadSetItemsByListItems = function(listItems) {
+		var aUploadSetItems = [];
+		var aLocalUploadSetItems = this.getItems();
+
+		if (listItems) {
+			for (var i = 0; i < listItems.length; i++) {
+				for (var j = 0; j < aLocalUploadSetItems.length; j++) {
+					if (listItems[i].getId() === aLocalUploadSetItems[j].getId() + "-listItem") {
+						aUploadSetItems.push(aLocalUploadSetItems[j]);
+						break;
+					}
+				}
+			}
+			return aUploadSetItems;
+		}
+		return null;
 	};
 
 	return UploadSet;

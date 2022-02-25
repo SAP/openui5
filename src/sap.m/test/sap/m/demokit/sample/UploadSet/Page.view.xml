@@ -16,7 +16,8 @@
 				maxFileSize="200"
 				mediaTypes="text/plain,application/msword,image/jpeg"
 				uploadUrl="../../../../upload"
-				items="{path: '/items', templateShareable: false}">
+				items="{path: '/items', templateShareable: false}"
+				mode="MultiSelect">
 			<upload:toolbar>
 				<OverflowToolbar>
 					<Button
