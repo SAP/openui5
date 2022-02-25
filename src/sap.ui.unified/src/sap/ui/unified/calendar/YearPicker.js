@@ -202,7 +202,8 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> for method chaining
 	 */
 	YearPicker.prototype.setDate = function(oDate){
-		var oCalDate, iYear, iYears, iHalfRange;
+		var oMaxYear = CalendarUtils._maxDate(this.getProperty("primaryCalendarType")).getYear(),
+			oCalDate, iYear, iYears, iHalfRange;
 
 		// check the given object if it's a JS Date object
 		// null is a default value so it should not throw error but set it instead
@@ -221,7 +222,13 @@ sap.ui.define([
 		iYears = this.getYears();
 		iHalfRange = Math.floor(iYears / 2);
 
-		this._iSelectedIndex = iHalfRange;
+		if (oDate.getFullYear() < iHalfRange) {
+			this._iSelectedIndex = oDate.getFullYear() - 1;
+		} else if (oDate.getFullYear() > oMaxYear - iHalfRange) {
+			this._iSelectedIndex = oMaxYear + iYears - oDate.getFullYear() - 1;
+		} else {
+			this._iSelectedIndex = iHalfRange;
+		}
 		this.setProperty("_middleDate", oCalDate);
 
 		return this;

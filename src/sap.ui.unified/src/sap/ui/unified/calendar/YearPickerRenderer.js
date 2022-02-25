@@ -2,8 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText'],
-	function(CalendarDate, UniversalDate, InvisibleText) {
+sap.ui.define([
+		'sap/ui/unified/calendar/CalendarDate',
+		'sap/ui/unified/calendar/CalendarUtils',
+		'sap/ui/core/date/UniversalDate',
+		'sap/ui/core/InvisibleText'],
+	function(CalendarDate, CalendarUtils, UniversalDate, InvisibleText) {
 	"use strict";
 
 	/*
@@ -58,22 +62,24 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 	YearPickerRenderer.renderCells = function(oRm, oYP) {
 
 		var oDate = oYP.getProperty("_middleDate") ? oYP.getProperty("_middleDate") : oYP._getDate(),
-			oCurrentDate = new CalendarDate(oDate, oYP.getPrimaryCalendarType()),
+			oFirstDate = new CalendarDate(oDate, oYP.getPrimaryCalendarType()),
+			oMinYear = CalendarUtils._minDate(oYP.getProperty("primaryCalendarType")).getYear(),
+			oMaxYear = CalendarUtils._maxDate(oYP.getProperty("primaryCalendarType")).getYear(),
 			iYears = oYP.getYears(),
 			sId = oYP.getId(),
 			iColumns = oYP.getColumns(),
 			sWidth = "",
 			bEnabled = false,
-			oCurrentValidatedDate,
 			bApplySelection,
 			bApplySelectionBetween,
 			mAccProps, sYyyymmdd, i;
 
-		oCurrentDate.setYear(oCurrentDate.getYear() - Math.floor(iYears / 2));
-		oCurrentValidatedDate = oYP._checkFirstDate(oCurrentDate);
+		oFirstDate.setYear(oFirstDate.getYear() - Math.floor(iYears / 2));
 
-		if (!oCurrentValidatedDate.isSame(oCurrentDate)) {
-			oCurrentDate = oCurrentValidatedDate;
+		if (oFirstDate.getYear() < oMinYear) {
+			oFirstDate.setYear(oMinYear);
+		} else if (oFirstDate.getYear() + iYears > oMaxYear) {
+			oFirstDate.setYear(oMaxYear - iYears + 1);
 		}
 
 		if (iColumns > 0) {
@@ -83,11 +89,11 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 		}
 
 		for (i = 0; i < iYears; i++) {
-			sYyyymmdd = oYP._oFormatYyyymmdd.format(oCurrentDate.toUTCJSDate(), true);
+			sYyyymmdd = oYP._oFormatYyyymmdd.format(oFirstDate.toUTCJSDate(), true);
 			mAccProps = {
 				role: "gridcell"
 			};
-			bEnabled = oYP._checkDateEnabled(oCurrentDate);
+			bEnabled = oYP._checkDateEnabled(oFirstDate);
 
 			if (iColumns > 0 && i % iColumns == 0) {
 				// begin of row
@@ -99,8 +105,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 			oRm.openStart("div", sId + "-y" + sYyyymmdd);
 			oRm.class("sapUiCalItem");
 
-			bApplySelection = oYP._fnShouldApplySelection(oCurrentDate);
-			bApplySelectionBetween = oYP._fnShouldApplySelectionBetween(oCurrentDate);
+			bApplySelection = oYP._fnShouldApplySelection(oFirstDate);
+			bApplySelectionBetween = oYP._fnShouldApplySelectionBetween(oFirstDate);
 
 			if (bApplySelection) {
 				oRm.class("sapUiCalItemSel");
@@ -127,10 +133,10 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 			oRm.accessibilityState(null, mAccProps);
 			oRm.openEnd(); // div element
 			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
-			oRm.text(oYP._oYearFormat.format(UniversalDate.getInstance(oCurrentDate.toUTCJSDate(), oCurrentDate.getCalendarType()), true)); // to render era in Japanese
+			oRm.text(oYP._oYearFormat.format(UniversalDate.getInstance(oFirstDate.toUTCJSDate(), oFirstDate.getCalendarType()), true)); // to render era in Japanese
 			oRm.close("div");
 
-			oCurrentDate.setYear(oCurrentDate.getYear() + 1);
+			oFirstDate.setYear(oFirstDate.getYear() + 1);
 
 			if (iColumns > 0 && ((i + 1) % iColumns == 0)) {
 				// end of row

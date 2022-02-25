@@ -2326,6 +2326,11 @@ sap.ui.define([
 
 		oFocusedDate.setYear(oStartDate.getYear() + iRangeSize / 2);
 		oStartDate.setMonth(0, 1); // always use the first of the month to have stable year in Japanese calendar
+		if (oFocusedDate.isBefore(this._oMinDate)) {
+			oFocusedDate = new CalendarDate(this._oMinDate, this.getPrimaryCalendarType());
+		} else if (oFocusedDate.isAfter(this._oMaxDate)){
+			oFocusedDate = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+		}
 		this._setFocusedDate(oFocusedDate);
 
 		this._showYearPicker();
@@ -2531,13 +2536,19 @@ sap.ui.define([
 
 			var oDate = oYearPicker.getProperty("_middleDate") ? oYearPicker.getProperty("_middleDate") : oYearPicker._getDate(),
 				oFirstDate = new CalendarDate(oDate, sPrimaryCalendarType),
+				oMinYear = CalendarUtils._minDate(this.getPrimaryCalendarType()).getYear(),
+				oMaxYear = CalendarUtils._maxDate(this.getPrimaryCalendarType()).getYear(),
 				oSecondDate,
 				sFirstYear,
 				sSecondYear;
 
 				oFirstDate.setDate(1); // always use the first of the month to have stable year in Japanese calendar
 				oFirstDate.setYear(oFirstDate.getYear() - Math.floor(oYearPicker.getYears() / 2));
-				oFirstDate = oYearPicker._checkFirstDate(oFirstDate);
+				if (oFirstDate.getYear() < oMinYear) {
+					oFirstDate.setYear(oMinYear);
+				} else if (oFirstDate.getYear() + oYearPicker.getYears() > oMaxYear) {
+					oFirstDate.setYear(oMaxYear - oYearPicker.getYears() + 1);
+				}
 
 				oSecondDate = new CalendarDate(oFirstDate, sPrimaryCalendarType);
 				oSecondDate.setYear(oSecondDate.getYear() + oYearPicker.getYears() - 1);
