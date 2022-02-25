@@ -13587,4 +13587,101 @@ sap.ui.define([
 		oSetPropertySpy.restore();
 		oComboBox.destroy();
 	});
+
+	QUnit.test("Clear icon should clear the filter and close the suggestions dropdown when open while entering value", function(assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			showClearIcon: true,
+			items: [
+				new Item({
+					text: "Algeria"
+				}),
+
+				new Item({
+					text: "Argentina"
+				}),
+
+				new Item({
+					text: "Australia"
+				}),
+
+				new Item({
+					text: "Germany"
+				})
+			]
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+
+		// Act
+		oComboBox.focus();
+		oComboBox.getFocusDomRef().value = "A";
+		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
+
+
+		// Assert
+		assert.ok(oComboBox.isOpen(), "ComboBox is open");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 3, "The items are filtered");
+
+		// Act
+		oComboBox.handleClearIconPress();
+		oCore.applyChanges();
+
+		// Assert
+		assert.notOk(oComboBox.isOpen(), "ComboBox is closed");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 4, "The items are not filtered");
+
+		// Clean
+		oComboBox.destroy();
+	});
+
+	QUnit.test("Clear icon should clear the filter but not close the suggestions dropdown when open explicitly", function(assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			showClearIcon: true,
+			items: [
+				new Item({
+					text: "Algeria"
+				}),
+
+				new Item({
+					text: "Argentina"
+				}),
+
+				new Item({
+					text: "Australia"
+				}),
+
+				new Item({
+					text: "Germany"
+				})
+			]
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+
+		// Act
+		oComboBox.focus();
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		oComboBox.getFocusDomRef().value = "A";
+		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
+
+
+		// Assert
+		assert.ok(oComboBox.isOpen(), "ComboBox is open");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 3, "The items are filtered");
+
+		// Act
+		oComboBox.handleClearIconPress();
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oComboBox.isOpen(), "ComboBox remains open");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 4, "The items are not filtered");
+
+		// Clean
+		oComboBox.destroy();
+	});
 });

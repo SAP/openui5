@@ -1897,6 +1897,7 @@ sap.ui.define([
 
 			if (this.getValue() !== "") {
 				this.clearSelection();
+				this.bOpenedByKeyboardOrButton ? this.clearFilter() : this.close();
 				this.setProperty("effectiveShowClearIcon", false);
 			}
 		};
