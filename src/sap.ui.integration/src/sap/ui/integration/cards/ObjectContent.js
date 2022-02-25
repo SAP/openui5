@@ -448,7 +448,8 @@ sap.ui.define([
 			src: BindingHelper.formattedProperty(oTemplateConfig.icon.src, function (sValue) {
 				return this._oIconFormatter.formatSrc(sValue);
 			}.bind(this)),
-			initials: oTemplateConfig.icon.text
+			initials: oTemplateConfig.icon.text,
+			tooltip: oTemplateConfig.icon.alt
 		});
 
 		oIconGroup.bindAggregation("items", {
