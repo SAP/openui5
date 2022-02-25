@@ -2099,6 +2099,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Drop positions relative to a dropped element.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.100.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.dnd.RelativeDropPosition = {
+
+		/**
+		 * Drop on the control.
+		 * @public
+		 */
+		On : "On",
+
+		/**
+		 * Drop before the control.
+		 * @public
+		 */
+		Before : "Before",
+
+		/**
+		 * Drop after the control.
+		 * @public
+		 */
+		After : "After"
+	};
+
+	/**
 	 * Configuration options for the layout of the droppable controls.
 	 *
 	 * @enum {string}
