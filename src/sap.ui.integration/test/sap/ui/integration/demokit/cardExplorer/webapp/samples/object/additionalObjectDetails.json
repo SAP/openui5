@@ -40,13 +40,11 @@
 				"json": {
 					"contacts": [
 						{
-							"firstName": "Alain",
-							"lastName": "Chevalier",
+							"name": "Alain Chevalier",
 							"photo": "./AlainChevalier.png"
 						},
 						{
-							"firstName": "Donna",
-							"lastName": "Moore",
+							"name": "Donna Moore",
 							"photo": "./DonnaMoore.png"
 						}
 					]
@@ -91,13 +89,13 @@
 							"template": {
 								"icon": {
 									"src": "{photo}",
-									"text": "{= ${firstName}.substring(0, 1) + ${lastName}.substring(0, 1)}"
+									"text": "{= format.initials(${name})}"
 								},
 								"actions": [
 									{
 										"type": "Navigation",
 										"parameters": {
-											"url": "/contacts-service?firstName={firstName}&lastName={lastName}"
+											"url": "/contacts-service?name={= encodeURIComponent(${name}) }"
 										}
 									}
 								]
