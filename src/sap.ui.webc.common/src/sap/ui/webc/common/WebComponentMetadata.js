@@ -4,10 +4,11 @@
 
 // Provides class sap.ui.webc.common.WebComponentMetadata
 sap.ui.define([
-		'sap/ui/core/ElementMetadata',
-		'./WebComponentRenderer'
+		"sap/ui/core/ElementMetadata",
+		"./WebComponentRenderer",
+		"sap/base/strings/camelize"
 	],
-	function(ElementMetadata, WebComponentRenderer) {
+	function(ElementMetadata, WebComponentRenderer, camelize) {
 		"use strict";
 
 		var MAPPING_TYPES = ["attribute", "style", "textContent", "slot", "none"];
@@ -152,6 +153,35 @@ sap.ui.define([
 		WebComponentMetadata.prototype.getAggregationSlot = function(sAggregationName) {
 			var oAggregation = this._mAllAggregations[sAggregationName];
 			return oAggregation ? oAggregation._sSlot : undefined;
+		};
+
+		/**
+		 * Determines whether the attribute corresponds to a managed property
+		 * @param sAttr the attribute's name
+		 * @returns {boolean}
+		 */
+		WebComponentMetadata.prototype.isManagedAttribute = function(sAttr) {
+			var mProperties = this.getAllProperties();
+			for (var propName in mProperties) {
+				if (mProperties.hasOwnProperty(propName)) {
+					var propData = mProperties[propName];
+					if (propData._sMapping === "attribute" && (propData._sMapTo === sAttr || camelize(sAttr) === propName)) {
+						return true;
+					}
+				}
+			}
+
+			var mAssociations = this.getAllAssociations();
+			for (var sAssocName in mAssociations) {
+				if (mAssociations.hasOwnProperty(sAssocName)) {
+					var oAssocData = mAssociations[sAssocName];
+					if (oAssocData._sMapping === "property" && oAssocData._sMapTo === camelize(sAttr)) {
+						return true;
+					}
+				}
+			}
+
+			return false;
 		};
 
 		/**
