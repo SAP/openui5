@@ -730,7 +730,7 @@ sap.ui.define([
 
 				resolve();
 			}.bind(this), function (vErr) {
-				this._logFundamentalError("Failed to load " + sExtensionPath + ". Check if the path is correct. Reason: " + vErr);
+				this._logFundamentalError("Failed to load " + sFullExtensionPath + ". Check if the path is correct. Reason: " + vErr);
 				reject(vErr);
 			}.bind(this));
 		}.bind(this));
