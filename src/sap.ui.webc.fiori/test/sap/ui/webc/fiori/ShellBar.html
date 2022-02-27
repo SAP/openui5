@@ -1,295 +1,321 @@
 <!DOCTYPE HTML>
 <html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="utf-8">
 
-<head>
-    <meta charset="utf-8">
-    <title>ShellBar - sap.ui.webc.fiori</title>
-    <script src="shared-config.js"></script>
-    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.fiori, sap.ui.webc.main">
-    </script>
+        <title>sap.ui.webc.fiori.ShellBar</title>
 
-    <script>
+        <script src="../../../../../resources/sap-ui-core.js"
+            id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webc.fiori,sap.m,sap.ui.layout"
+            data-sap-ui-theme="sap_fiori_3"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-resourceroots='{
+                "images": "../../../../../test-resources/sap/ui/documentation/sdk/images",
+                "utils": "../../../../../test-resources/sap/ui/webc/main"
+            }'></script>
+
+
+        <script>
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
                 "sap/ui/webc/fiori/ShellBar",
                 "sap/ui/webc/fiori/ShellBarItem",
-                "sap/ui/webc/main/Avatar",
-                "sap/ui/webc/main/Button",
-                "sap/ui/webc/main/CustomListItem",
-                "sap/ui/webc/main/GroupHeaderListItem",
                 "sap/ui/webc/main/StandardListItem",
+                "sap/ui/webc/main/Select",
+                "sap/ui/webc/main/Option",
+                "sap/ui/webc/main/Title",
+                "sap/ui/webc/main/Label",
+                "sap/ui/webc/main/CheckBox",
+                "sap/ui/webc/main/Avatar",
                 "sap/ui/webc/main/Input",
-                "sap/ui/webc/main/Icon",
-                "sap/ui/webc/main/SuggestionGroupItem",
-                "sap/ui/webc/main/SuggestionItem"
-            ], function(
-                ShellBar, ShellBarItem, Avatar, Button, CustomListItem, GroupHeaderListItem, StandardListItem, Input, Icon, SuggestionGroupItem, SuggestionItem
-            ) {
+                "sap/ui/webc/main/Button",
+                "sap/m/Image",
+                "sap/m/VBox",
+                "sap/m/HBox",
+                "utils/layoutUtil"
+            ], function( ShellBar,
+            ShellBarItem,
+            StandardListItem,
+            Select,
+            Option,
+            Title,
+            Label,
+            CheckBox,
+            Avatar,
+            Input,
+            Button,
+            Image,
+            VBox,
+            HBox,
+            layoutUtil ) {
 
-                var oShellBar0Button = new Button({
-                    text: "closeOverflow",
-                    click: function(oEvent) {
-                        console.log("Calling closeOverflow...");
-                        var result = oShellBar.closeOverflow();
-                        console.log("... closeOverflow returned: ", result);
+            var aRows = [],
+                addLayoutOptions = layoutUtil.addLayoutOptions,
+                Row = layoutUtil.Row,
+                Cell = layoutUtil.Cell,
+                oShellBar = new ShellBar({}).addStyleClass("sapUiSmallMarginTop");
+
+
+            /**********************************************/
+            /*** ShellBar PRIMARY-TITLE property        ***/
+            /**********************************************/
+
+            aRows.push(new Row("primaryTitle", [
+                new Cell("", oShellBar.clone().setPrimaryTitle("This is the primary title"))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar SECONDARY-TITLE property      ***/
+            /**********************************************/
+
+            aRows.push(new Row("secondaryTitle", [
+                new Cell("", oShellBar.clone().setPrimaryTitle("This is the primary title").setSecondaryTitle("This is the secondary title"))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar SHOW-COPILOT property         ***/
+            /**********************************************/
+
+            var oShellBarWithCoPilot = oShellBar.clone()
+                .setPrimaryTitle("This is the primary title")
+                .setShowCoPilot(true),
+                oChangeShowCoPilot = new CheckBox({
+                    text: "showCoPilot",
+                    checked: true,
+                    change: function(oEvent) {
+                        oShellBarWithCoPilot.setShowCoPilot(oChangeShowCoPilot.getChecked());
                     }
                 });
-                oShellBar0Button.placeAt("methodButtons");
-
-
-
-                var oShellBar1Button = new Button({
-                    text: "getCopilotDomRef",
-                    click: function(oEvent) {
-                        console.log("Calling getCopilotDomRef...");
-                        var result = oShellBar.getCopilotDomRef();
-                        console.log("... getCopilotDomRef returned: ", result);
-                    }
-                });
-                oShellBar1Button.placeAt("methodButtons");
-
-
-
-                var oShellBar2Button = new Button({
-                    text: "getLogoDomRef",
-                    click: function(oEvent) {
-                        console.log("Calling getLogoDomRef...");
-                        var result = oShellBar.getLogoDomRef();
-                        console.log("... getLogoDomRef returned: ", result);
-                    }
-                });
-                oShellBar2Button.placeAt("methodButtons");
-
-
-
-                var oShellBar3Button = new Button({
-                    text: "getNotificationsDomRef",
-                    click: function(oEvent) {
-                        console.log("Calling getNotificationsDomRef...");
-                        var result = oShellBar.getNotificationsDomRef();
-                        console.log("... getNotificationsDomRef returned: ", result);
-                    }
-                });
-                oShellBar3Button.placeAt("methodButtons");
-
-
-
-                var oShellBar4Button = new Button({
-                    text: "getOverflowDomRef",
-                    click: function(oEvent) {
-                        console.log("Calling getOverflowDomRef...");
-                        var result = oShellBar.getOverflowDomRef();
-                        console.log("... getOverflowDomRef returned: ", result);
-                    }
-                });
-                oShellBar4Button.placeAt("methodButtons");
-
-
-
-                var oShellBar5Button = new Button({
-                    text: "getProductSwitchDomRef",
-                    click: function(oEvent) {
-                        console.log("Calling getProductSwitchDomRef...");
-                        var result = oShellBar.getProductSwitchDomRef();
-                        console.log("... getProductSwitchDomRef returned: ", result);
-                    }
-                });
-                oShellBar5Button.placeAt("methodButtons");
-
-
-
-                var oShellBar6Button = new Button({
-                    text: "getProfileDomRef",
-                    click: function(oEvent) {
-                        console.log("Calling getProfileDomRef...");
-                        var result = oShellBar.getProfileDomRef();
-                        console.log("... getProfileDomRef returned: ", result);
-                    }
-                });
-                oShellBar6Button.placeAt("methodButtons");
-
-
-                var oShellBar = new ShellBar({
+            aRows.push(new Row("showCoPilot", [
+                new Cell("", new VBox({
                     items: [
-                        new ShellBarItem({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for ShellBarItem with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new ShellBarItem({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for ShellBarItem with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new ShellBarItem({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for ShellBarItem with parameters: ", oEvent.getParameters());
-                            }
-                        })
-                    ],
-                    logo: new Avatar({
-                        icon: "employee",
-                        image: new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        click: function(oEvent) {
-                            console.log("Event click fired for Avatar with parameters: ", oEvent.getParameters());
-                        }
-                    }),
-                    menuItems: [
-                        new CustomListItem({
-                            content: [
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                }),
-                                new Button({
-                                    icon: "employee",
-                                    text: "Some text...",
-                                    click: function(oEvent) {
-                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                                    }
-                                })
-                            ],
-                            detailClick: function(oEvent) {
-                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new GroupHeaderListItem({
-                            text: "Some text..."
-                        }),
-                        new StandardListItem({
-                            additionalText: "Some text...",
-                            icon: "employee",
-                            text: "Some text...",
-                            detailClick: function(oEvent) {
-                                console.log("Event detailClick fired for StandardListItem with parameters: ", oEvent.getParameters());
-                            }
-                        })
-                    ],
-                    profile: new Avatar({
-                        icon: "employee",
-                        image: new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        click: function(oEvent) {
-                            console.log("Event click fired for Avatar with parameters: ", oEvent.getParameters());
-                        }
-                    }),
-                    searchField: new Input({
-                        placeholder: "This is my placeholder value",
-                        value: "Control value",
-                        valueState: "Warning",
-                        valueStateMessage: "Value State Message",
-                        icon: [
-                            new Icon({
-                                color: "blue",
-                                name: "add",
-                                click: function(oEvent) {
-                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-                                }
-                            }),
-                            new Icon({
-                                color: "blue",
-                                name: "add",
-                                click: function(oEvent) {
-                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-                                }
-                            }),
-                            new Icon({
-                                color: "blue",
-                                name: "add",
-                                click: function(oEvent) {
-                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
-                                }
-                            })
-                        ],
-                        suggestionItems: [
-                            new SuggestionGroupItem({
-                                text: "Some text..."
-                            }),
-                            new SuggestionItem({
-                                additionalText: "Some text...",
-                                icon: "employee",
-                                text: "Some text..."
-                            }),
-                            new SuggestionGroupItem({
-                                text: "Some text..."
-                            })
-                        ],
-                        change: function(oEvent) {
-                            console.log("Event change fired for Input with parameters: ", oEvent.getParameters());
-                        },
-                        input: function(oEvent) {
-                            console.log("Event input fired for Input with parameters: ", oEvent.getParameters());
-                        },
-                        suggestionItemPreview: function(oEvent) {
-                            console.log("Event suggestionItemPreview fired for Input with parameters: ", oEvent.getParameters());
-                        },
-                        suggestionItemSelect: function(oEvent) {
-                            console.log("Event suggestionItemSelect fired for Input with parameters: ", oEvent.getParameters());
-                        }
-                    }),
-                    startButton: new Button({
-                        icon: "employee",
-                        text: "Some text...",
-                        click: function(oEvent) {
-                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                        }
-                    }),
-                    coPilotClick: function(oEvent) {
-                        console.log("Event coPilotClick fired for ShellBar with parameters: ", oEvent.getParameters());
-                    },
-                    logoClick: function(oEvent) {
-                        console.log("Event logoClick fired for ShellBar with parameters: ", oEvent.getParameters());
-                    },
-                    menuItemClick: function(oEvent) {
-                        console.log("Event menuItemClick fired for ShellBar with parameters: ", oEvent.getParameters());
-                    },
-                    notificationsClick: function(oEvent) {
-                        console.log("Event notificationsClick fired for ShellBar with parameters: ", oEvent.getParameters());
-                    },
-                    productSwitchClick: function(oEvent) {
-                        console.log("Event productSwitchClick fired for ShellBar with parameters: ", oEvent.getParameters());
-                    },
-                    profileClick: function(oEvent) {
-                        console.log("Event profileClick fired for ShellBar with parameters: ", oEvent.getParameters());
+                        oChangeShowCoPilot,
+                        oShellBarWithCoPilot
+                    ]
+                }))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar SHOW-NOTIFICATIONS property         ***/
+            /**********************************************/
+
+            var oShellBarWithNotifications = oShellBar.clone()
+                .setPrimaryTitle("This is the primary title")
+                .setShowNotifications(true),
+                oChangeShowNotifications = new CheckBox({
+                    text: "showNotifications",
+                    checked: true,
+                    change: function(oEvent) {
+                        oShellBarWithNotifications.setShowNotifications(oChangeShowNotifications.getChecked());
                     }
                 });
-                oShellBar.placeAt("testControl");
+            aRows.push(new Row("showNotifications", [
+                new Cell("", new VBox({
+                    items: [
+                        oChangeShowNotifications,
+                        oShellBarWithNotifications
+                    ]
+                }))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar NOTIFICATIONS-COUNT property  ***/
+            /**********************************************/
+
+            aRows.push(new Row("notificationsCount", [
+                new Cell("", oShellBar.clone()
+                .setPrimaryTitle("This is the primary title")
+                .setShowNotifications(true)
+                .setNotificationsCount(5))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar SHOW-PRODUCT-SWITCH property  ***/
+            /**********************************************/
+
+            var oShellBarWithProductSwitch = oShellBar.clone()
+                .setPrimaryTitle("This is the primary title")
+                .setShowProductSwitch(true),
+                oChangeShowProductSwitch = new CheckBox({
+                    text: "showProductSwitch",
+                    checked: true,
+                    change: function(oEvent) {
+                        oShellBarWithProductSwitch.setShowProductSwitch(oChangeShowProductSwitch.getChecked());
+                    }
+                });
+            aRows.push(new Row("showProductSwitch", [
+                new Cell("", new VBox({
+                    items: [
+                        oChangeShowProductSwitch,
+                        oShellBarWithProductSwitch
+                    ]
+                }))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar LOGO aggregation  ***************/
+            /**********************************************/
+
+            aRows.push(new Row("logo", [
+                new Cell("", oShellBar.clone()
+                .setPrimaryTitle("This is the primary title")
+                .setLogo(new Avatar({
+                    image: new Image({src: sap.ui.require.toUrl("images/PF-1000.jpg")})
+                })))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar PROFILE aggregation  ************/
+            /**********************************************/
+
+            aRows.push(new Row("profile", [
+                new Cell("", oShellBar.clone()
+                .setPrimaryTitle("This is the primary title")
+                .setProfile(new Avatar({
+                    image: new Image({src: sap.ui.require.toUrl("images/Donna_Moore.jpg")})
+                })))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar SEARCH-FIELD aggregation  *******/
+            /**********************************************/
+
+            aRows.push(new Row("searchField", [
+                new Cell("", oShellBar.clone()
+                .setPrimaryTitle("This is the primary title")
+                .setSearchField(new Input()))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar START-BUTTON aggregation  *******/
+            /**********************************************/
+
+            aRows.push(new Row("startButton", [
+                new Cell("", oShellBar.clone()
+                .setPrimaryTitle("This is the primary title")
+                .setStartButton(new Button({ icon: "home"})))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar ITEMS aggregation  **************/
+            /**********************************************/
+
+            aRows.push(new Row("items", [
+                new Cell("", oShellBar.clone()
+                .setPrimaryTitle("This is the primary title")
+                .addItem(new ShellBarItem({ count: 2, icon: "feed", text: "unread  items"}))
+                .addItem(new ShellBarItem({ icon: "feedback", text: "send feedback"})))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar MENU-ITEMS aggregation  *********/
+            /**********************************************/
+
+            aRows.push(new Row("menuItems", [
+                new Cell("", oShellBar.clone()
+                .setPrimaryTitle("This is the primary title")
+                .addMenuItem(new StandardListItem({ text: "first menu item"}))
+                .addMenuItem(new StandardListItem({ text: "second menu item"})))
+            ]));
+
+            /**********************************************/
+            /*** ShellBar EVENTS  *************************/
+            /**********************************************/
+
+            var oShellBarWithEventListeners = oShellBar.clone()
+            .setPrimaryTitle("This is the primary title")
+            .setShowCoPilot(true)
+            .setShowNotifications(true)
+            .setNotificationsCount(5)
+            .setShowProductSwitch(true)
+            .setLogo(new Avatar({
+                image: new Image({src: sap.ui.require.toUrl("images/PF-1000.jpg")})
+            }))
+            .setProfile(new Avatar({
+                image: new Image({src: sap.ui.require.toUrl("images/Donna_Moore.jpg")})
+            }))
+            .addMenuItem(new StandardListItem({ text: "first menu item"}))
+            .addItem(new ShellBarItem({
+                count: 2,
+                icon: "feed",
+                text: "unread  items",
+                click: function() {
+                    oItemClickLabel.setText(++iItemClickCount);
+                }}))
+            .attachCoPilotClick(function() {
+                oCoPilotClickLabel.setText(++iCoPilotClickCount);
+            })
+            .attachLogoClick(function() {
+                oLogoClickLabel.setText(++iLogoClickCount);
+            })
+            .attachMenuItemClick(function() {
+                oMenuItemClickLabel.setText(++iMenuItemClickCount);
+            })
+            .attachNotificationsClick(function() {
+                oNotificationsClickLabel.setText(++iNotificationsClickCount);
+            })
+            .attachProductSwitchClick(function() {
+                oProductSwitchClickLabel.setText(++iProductSwitchClickCount);
+            })
+            .attachProfileClick(function() {
+                oProfileClickLabel.setText(++iProfileClickCount);
+            })
+            .addStyleClass("sapUiSmallMarginBottom"),
+            iCoPilotClickCount = 0,
+            iLogoClickCount = 0,
+            iMenuItemClickCount = 0,
+            iNotificationsClickCount = 0,
+            iProductSwitchClickCount = 0,
+            iProfileClickCount = 0,
+            iItemClickCount = 0,
+            oCoPilotClickLabel = new Label(),
+            oLogoClickLabel =  new Label(),
+            oMenuItemClickLabel =  new Label(),
+            oNotificationsClickLabel =  new Label(),
+            oProductSwitchClickLabel =  new Label(),
+            oProfileClickLabel =  new Label(),
+            oItemClickLabel =  new Label();
+
+            aRows.push(new Row("events", [
+                new Cell("", [
+                    oShellBarWithEventListeners,
+                    new HBox({
+                        items: [
+                            new VBox({
+                                items:[
+                                    new Label({text: "logo clicks count: "}),
+                                    new Label({text: "menuItem clicks count: "}),
+                                    new Label({text: "coPilot clicks count: "}),
+                                    new Label({text: "item clicks count: "}),
+                                    new Label({text: "notifications clicks count: "}),
+                                    new Label({text: "profile clicks count: "}),
+                                    new Label({text: "productSwitch clicks count: "})
+                                ]
+                            }),
+                            new VBox({
+                                    items:[
+                                    oLogoClickLabel,
+                                    oMenuItemClickLabel,
+                                    oCoPilotClickLabel,
+                                    oItemClickLabel,
+                                    oNotificationsClickLabel,
+                                    oProfileClickLabel,
+                                    oProductSwitchClickLabel
+                                ]
+                            })
+                        ]
+                    })
+                ])
+            ]));
+
+            addLayoutOptions(aRows, "content");
             });
         });
     </script>
-</head>
 
-<body id="body" class="sapUiBody">
-    <div id="methodButtons"></div>
-    <br><br>
-    <div id="testControl"></div>
-</body>
-
+    </head>
+    <body id="content" class="sapUiBody">
+    </body>
 </html>
