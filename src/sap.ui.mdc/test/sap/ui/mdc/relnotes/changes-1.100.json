@@ -3,6 +3,11 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "75130bc8293ab7d8c736ea7530992a240fd1be67",
+        "type": "FEATURE",
+        "text": " Field, FilterField, show whitespaces"
+      },
+      {
         "id": "5f366febc3aeed860d70a2c43e4611af50e0e29c",
         "type": "FEATURE",
         "text": " MDC Table: Navigation per Row"

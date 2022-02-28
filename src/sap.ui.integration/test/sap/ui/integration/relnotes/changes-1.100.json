@@ -3,6 +3,38 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "f654171214edea6c886c0c63133d6687911424e8",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: actionDefinitions order is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280054832"
+          }
+        ]
+      },
+      {
+        "id": "e17b310896ded70d6169f60d6623c5649ddf4c17",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: new formatter is introduced"
+      },
+      {
+        "id": "400877b1f20634854246daf5ed279ab6097a5d84",
+        "type": "FEATURE",
+        "text": " Integration cards: Object card now has a new experimental IconGroup item type"
+      },
+      {
+        "id": "e657308d09c66cd1e423766331312fa02045469d",
+        "type": "FIX",
+        "text": " Card Explorer: OData batch request sample now successfully receives data",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280063181"
+          }
+        ]
+      },
+      {
         "id": "52228598a007aa881e5bed04b68491dfbe8eb8a9",
         "type": "FIX",
         "text": " Integration card: Data is now correctly loaded",

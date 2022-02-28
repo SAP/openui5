@@ -3,9 +3,74 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "e44299cc0b5edb728519bb19659206360f022c1b",
+        "type": "FIX",
+        "text": " sap.m.ComboBox/MultiComboBox: Clear icon enhancements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180419029"
+          }
+        ]
+      },
+      {
+        "id": "9c75a599c644cf5b70b84e52ac2cfcc1b5fe109e",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: selectedSortItem value is retained",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000397612022"
+          }
+        ]
+      },
+      {
+        "id": "a9f0eca82e6d24a7012af3d12953eb925d454f93",
+        "type": "FIX",
+        "text": " sap.m.QuickViewCard: Sample fixed"
+      },
+      {
+        "id": "8a224c80a485fd91e2ff2ce18ece3506543b7883",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Announcing of hidden button is fixed"
+      },
+      {
+        "id": "245925f3bedd97609f12df89057943cad36a5361",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Associations can receive element ids",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000397612022"
+          }
+        ]
+      },
+      {
+        "id": "74ce6762def8b7f7e22b2ac4e121babd9c6576bb",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: handle inner input focus behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280043470"
+          }
+        ]
+      },
+      {
         "id": "232b3d44d2b4d5f07e059e2293afba3bdea9d29d",
         "type": "FEATURE",
         "text": " sap.m.QuickView: Placeholder for empty texts added"
+      },
+      {
+        "id": "72486d078c9600b350e54e7bfd734d10cf7df68d",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: position read only icon properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280050197"
+          }
+        ]
       },
       {
         "id": "d1f2348bc39fc655bbe3613415b047035270a5ce",

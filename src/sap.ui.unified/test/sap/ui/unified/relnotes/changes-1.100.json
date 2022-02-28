@@ -3,6 +3,17 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "e435c0f0be9ea1da2fea04837acdb553adc7e751",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: week numbers are displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280073689"
+          }
+        ]
+      },
+      {
         "id": "a652e257ce1cd042a99c8a89a3172bf18e96b877",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarDateInterval: now doesn't throw error when selecting and year after year range selection",

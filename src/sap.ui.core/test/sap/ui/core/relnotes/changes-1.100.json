@@ -3,6 +3,17 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "f450f247191e6344e818741d328412209ea36115",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#refresh: must not reset pending refresh flag as long as binding is suspended",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280074593"
+          }
+        ]
+      },
+      {
         "id": "a25f4ad7b4935ec46b15289f133ba869d2cb2325",
         "type": "FIX",
         "text": " DateFormat#format: date parameter check",

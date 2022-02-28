@@ -3,6 +3,27 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "426bd4fd45a73d5bfaa0a8558b12a6fcbca042fc",
+        "type": "FIX",
+        "text": " sap.m.Button: Fixed button focus styles in composite controls"
+      },
+      {
+        "id": "3172b02d0b2af52978d4d107b84bcf58be7a6daf",
+        "type": "FEATURE",
+        "text": " sap.m.Text, sap.m.Label: Horizon theme implemented"
+      },
+      {
+        "id": "e21c25b7e92078915fd81db51021331672207d3d",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Button's width in compact mode adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180431226"
+          }
+        ]
+      },
+      {
         "id": "ca70fae089df930e22d33e12c74b94612c469bc9",
         "type": "FEATURE",
         "text": " sap.ui.core.IconPool: Update icon font v5.01 and v4.13"

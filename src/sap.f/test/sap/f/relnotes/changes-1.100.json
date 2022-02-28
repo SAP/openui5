@@ -3,6 +3,44 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "af17db5801fce2d4ca282e0ef90bcd90d765c597",
+        "type": "FIX",
+        "text": " sap.f.Card: Custom headers no longer need to implement private _getTitle method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280078533"
+          }
+        ]
+      },
+      {
+        "id": "400877b1f20634854246daf5ed279ab6097a5d84",
+        "type": "FEATURE",
+        "text": " Integration cards: Object card now has a new experimental IconGroup item type"
+      },
+      {
+        "id": "3322e5761b564d3350acd1f8785ea5ffdafda712",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Wizard button on mobile correctly positioned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280067783"
+          }
+        ]
+      },
+      {
+        "id": "c89915c67cb7b870ba5f6e4ccf4e2a4e197725c1",
+        "type": "FIX",
+        "text": " sap.f.AvatarGroup: Prevent infinite invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280062549"
+          }
+        ]
+      },
+      {
         "id": "157064ec6fdc02f383fb618c32b8d6b6cafca880",
         "type": "FIX",
         "text": " CardExplorer: Remove older {{parameters.xxx}} syntax from samples"
