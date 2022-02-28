@@ -57,6 +57,31 @@ sap.ui.define([
 		assert.equal(document.querySelector(".sapMNCLoadingShimmer"), null, "Loading Shimmer absent on 'Loaded' state");
 	});
 
+	QUnit.test("Numeric Content - State test", function (assert) {
+		this.oNumericContent.setValue(200);
+
+		//Switch to Loading State
+		this.oNumericContent.setState(LoadState.Loading);
+		oCore.applyChanges();
+		assert.ok(document.querySelector(".sapMNCLoadingShimmer"), "Loading Shimmer present on 'Loading' state");
+		assert.equal(getComputedStyle(document.querySelector(".sapMNCLoadingShimmer")).opacity, "1" ,"Loading Shimmer Opacity is set correctly");
+		assert.equal(getComputedStyle(document.querySelector(".sapMNCValue.Good.Loading")).opacity, "1" ,"NumericContent Opacity is set correctly");
+
+		//Switch to Loaded State
+		this.oNumericContent.setState(LoadState.Loaded);
+		oCore.applyChanges();
+		assert.equal(document.querySelector(".sapMNCLoadingShimmer"), null, "Loading Shimmer absent on 'Loaded' state");
+		assert.equal(getComputedStyle(document.querySelector(".sapMNCValue.Good.Loaded")).opacity, "1" ,"NumericContent Opacity is set correctly");
+
+		//Switch to Failed State
+		this.oNumericContent.setState(LoadState.Failed);
+		oCore.applyChanges();
+		assert.equal(getComputedStyle(document.querySelector(".sapMNCValue.Good.Failed")).opacity, "0.25" ,"sapMNCValue Opacity is set correctly");
+		assert.equal(getComputedStyle(document.querySelector(".sapMNCIconImage.Failed")).opacity, "1" ,"sapMNCValue Opacity is set correctly");
+		assert.equal(getComputedStyle(document.querySelector(".sapMNCScale.Failed")).opacity, "1" ,"sapMNCScale Opacity is set correctly");
+
+	});
+
 	QUnit.test("Numeric Content has ARIA properties", function (assert) {
 		assert.strictEqual(this.oNumericContent.$().attr("role"), "img", "The role is set to 'img'");
 		assert.strictEqual(this.oNumericContent.$().attr("aria-label"), this.oNumericContent.getTooltip_AsString(), "The aria-label is set to numeric content's tooltip");
