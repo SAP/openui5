@@ -50,7 +50,7 @@
 			<Label id="InputUrlLabel" text="URL" labelFor="inputUrl" />
 			<Input
 				id="inputUrl"
-				type="Url"
+				type="URL"
 				placeholder="Enter URL"
 				ariaLabelledBy="InputUrlLabel"/>
 			<Label id="InputNoEditLabel" text="Readonly" labelFor="InputNoEdit"/>
