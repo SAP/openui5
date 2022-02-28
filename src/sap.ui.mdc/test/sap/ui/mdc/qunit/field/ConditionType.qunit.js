@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
-	"sap/ui/model/odata/type/String"
+	"sap/ui/model/odata/type/String",
+	"sap/base/strings/whitespaceReplacer"
 ], function (
 		ConditionType,
 		Condition,
@@ -30,7 +31,8 @@ sap.ui.define([
 		DateType,
 		FormatException,
 		ParseException,
-		StringType
+		StringType,
+		whitespaceReplacer
 		) {
 	"use strict";
 
@@ -77,6 +79,18 @@ sap.ui.define([
 		var oCondition = Condition.createItemCondition("A", "Test");
 		var sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "Test", "Result of formatting");
+
+	});
+
+	QUnit.test("Formatting: EQ - simple String with whitespaces", function(assert) {
+
+		var oCondition = Condition.createCondition("EQ", ["Test   Test"], undefined, undefined, ConditionValidated.Validated);
+		var sResult = oConditionType.formatValue(oCondition);
+		assert.equal(sResult, "Test   Test", "Result of formatting");
+
+		oConditionType.oFormatOptions.convertWhitespaces = true; // fake setting directly
+		sResult = oConditionType.formatValue(oCondition);
+		assert.equal(sResult, whitespaceReplacer("Test   Test"), "Result of formatting");
 
 	});
 

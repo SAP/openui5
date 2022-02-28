@@ -864,15 +864,16 @@ sap.ui.define([
 		var oContext = new Context(); // just dummy context
 		oField.setBindingContext(oContext);
 		oField.setFieldHelp("X"); // just need ID
-		oField.setDataType("sap.ui.model.type.Currency");
+		oField.setDataType("sap.ui.model.type.String");
+		oField.setEditMode(EditMode.Display);
 		oField.placeAt("content");
 		oCore.applyChanges();
 		var oFormatOptions = oField._getFormatOptions();
 		assert.ok(oFormatOptions, "FormatOptions returned");
-		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.Currency"), "valueType");
-		assert.ok(oFormatOptions.originalDateType.isA("sap.ui.model.type.Currency"), "originalDateType");
+		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.String"), "valueType");
+		assert.notOk(oFormatOptions.originalDateType, "no originalDateType");
 		assert.equal(oFormatOptions.display, FieldDisplay.Value, "display");
-		assert.notOk(oFormatOptions.fieldHelpID, "fieldHelpID");
+		assert.equal(oFormatOptions.fieldHelpID, "X", "fieldHelpID");
 		assert.deepEqual(oFormatOptions.operators, oField._getOperators(), "operators");
 		assert.equal(oFormatOptions.hideOperator, false, "hideOperator");
 		assert.equal(oFormatOptions.maxConditions, -1, "maxConditions");
@@ -885,6 +886,31 @@ sap.ui.define([
 		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
 		assert.equal(oFormatOptions.conditionModel, oCM, "conditionModel");
 		assert.equal(oFormatOptions.conditionModelName, "cm", "conditionModelName");
+		assert.ok(oFormatOptions.convertWhitespaces, "convertWhitespaces set");
+
+		oField.setDataType("sap.ui.model.type.Currency");
+		oField.setEditMode(EditMode.Editable);
+		oField.setMaxConditions(1);
+		oCore.applyChanges();
+		oFormatOptions = oField._getFormatOptions();
+		assert.ok(oFormatOptions, "FormatOptions returned");
+		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.Currency"), "valueType");
+		assert.ok(oFormatOptions.originalDateType.isA("sap.ui.model.type.Currency"), "originalDateType");
+		assert.equal(oFormatOptions.display, FieldDisplay.Value, "display");
+		assert.notOk(oFormatOptions.fieldHelpID, "fieldHelpID");
+		assert.deepEqual(oFormatOptions.operators, oField._getOperators(), "operators");
+		assert.equal(oFormatOptions.hideOperator, false, "hideOperator");
+		assert.equal(oFormatOptions.maxConditions, 1, "maxConditions");
+		assert.equal(oFormatOptions.bindingContext, oContext, "bindingContext");
+		assert.ok(oFormatOptions.asyncParsing, "asyncParsing set");
+		assert.notOk(oFormatOptions.navigateCondition, "no navigateCondition set");
+		assert.ok(oFormatOptions.delegate, "delegate set");
+		assert.equal(oFormatOptions.delegateName, "sap/ui/mdc/field/FieldBaseDelegate", "delegateName");
+		assert.deepEqual(oFormatOptions.payload, {}, "payload");
+		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
+		assert.equal(oFormatOptions.conditionModel, oCM, "conditionModel");
+		assert.equal(oFormatOptions.conditionModelName, "cm", "conditionModelName");
+		assert.notOk(oFormatOptions.convertWhitespaces, "convertWhitespaces not set");
 
 		oFormatOptions = oField._getUnitFormatOptions();
 		assert.ok(oFormatOptions, "FormatOptions returned");
@@ -904,6 +930,7 @@ sap.ui.define([
 		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
 		assert.equal(oFormatOptions.conditionModel, oCM, "conditionModel");
 		assert.equal(oFormatOptions.conditionModelName, "cm", "conditionModelName");
+		assert.notOk(oFormatOptions.convertWhitespaces, "convertWhitespaces not set");
 
 	});
 

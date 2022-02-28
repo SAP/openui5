@@ -6,14 +6,14 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/base/ListContent",
 	"sap/ui/mdc/util/loadModules",
 	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/model/ParseException",
-	"sap/ui/mdc/enum/SelectType"
+	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/model/ParseException"
 ], function(
 	ListContent,
 	loadModules,
 	ConditionValidated,
-	ParseException,
-	SelectType
+	SelectType,
+	ParseException
 ) {
 	"use strict";
 
@@ -116,7 +116,8 @@ sap.ui.define([
 				"sap/m/library",
 				"sap/ui/model/Filter",
 				"sap/ui/model/Sorter",
-				"sap/ui/model/base/ManagedObjectModel"
+				"sap/ui/model/base/ManagedObjectModel",
+				"sap/base/strings/whitespaceReplacer"
 			]).then(function (aModules) {
 					var List = aModules[0];
 					var DisplayListItem = aModules[1];
@@ -124,13 +125,14 @@ sap.ui.define([
 					var Filter = aModules[3];
 					var Sorter = aModules[4];
 					var ManagedObjectModel = aModules[5];
+					var whitespaceReplacer = aModules[6];
 
 					this._oManagedObjectModel = new ManagedObjectModel(this);
 
 					var oItemTemplate = new DisplayListItem(this.getId() + "-item", {
 						type: mLibrary.ListType.Active,
-						label: "{$help>text}",
-						value: "{$help>additionalText}",
+						label: {path: "$help>text", formatter: whitespaceReplacer},
+						value: {path: "$help>additionalText", formatter: whitespaceReplacer},
 						valueTextDirection: "{$help>textDirection}"
 					}).addStyleClass("sapMComboBoxNonInteractiveItem"); // to add focus outline to selected items
 
@@ -443,6 +445,7 @@ sap.ui.define([
 			if (oItem !== oSelectedItem || (bUseFirstMatch && !bLeaveFocus)) {
 				var oOriginalItem = _getOriginalItem.call(this, oItem);
 				var vKey = _getKey.call(this, oOriginalItem);
+				var sDescription = oOriginalItem.getText();
 
 				if (this.getParent().isOpen()) {
 					oList.scrollToIndex(iSelectedIndex); // only possible if open
@@ -451,7 +454,7 @@ sap.ui.define([
 				}
 
 				oItem.setSelected(true);
-				var oCondition = _setConditions.call(this, vKey, oItem.getLabel());
+				var oCondition = _setConditions.call(this, vKey, sDescription);
 				this.fireNavigated({condition: oCondition, itemId: oItem.getId(), leaveFocus: false});
 			} else if (bLeaveFocus) {
 				this.fireNavigated({condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus});
