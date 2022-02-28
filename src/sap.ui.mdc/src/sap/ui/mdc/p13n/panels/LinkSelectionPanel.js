@@ -5,14 +5,15 @@
 sap.ui.define([
     "sap/m/p13n/SelectionPanel",
     "sap/m/ColumnListItem",
-	"sap/m/HBox",
-	"sap/m/VBox",
+    "sap/m/HBox",
+    "sap/m/VBox",
     "sap/m/Link",
     "sap/m/Text",
     "sap/ui/core/Icon",
     "sap/m/library",
-    "sap/m/MessageBox"
-], function (SelectionPanel, ColumnListItem, HBox, VBox, Link, Text, Icon, mLibrary, MessageBox) {
+    "sap/m/OverflowToolbar",
+    "sap/ui/model/Filter"
+], function (SelectionPanel, ColumnListItem, HBox, VBox, Link, Text, Icon, mLibrary, OverflowToolbar, Filter) {
     "use strict";
 
     // shortcut for sap.m.ListType
@@ -38,23 +39,47 @@ sap.ui.define([
 			selected: "{" + this.P13N_MODEL + ">" + this.PRESENCE_ATTRIBUTE + "}",
 			type: ListType.Active,
 			cells: [
-				new VBox({
-					items: [
-						new Link({
-							tooltip: "{" + this.P13N_MODEL + ">tooltip}",
-							text: "{" + this.P13N_MODEL + ">text}",
-                            href: "{" + this.P13N_MODEL + ">href}",
-                            target: "{" + this.P13N_MODEL + ">target}",
-                            press: this._onLinkPressed.bind(this)
-						}),
-                        new Text({
-                            text: "{" + this.P13N_MODEL + ">description}",
-                            visible: "{= ${" + this.P13N_MODEL + ">description} ? true:false}"
+                new HBox({
+                    items: [
+                        new VBox({
+                            items: [
+                                new Link({
+                                    tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+                                    text: "{" + this.P13N_MODEL + ">text}",
+                                    href: "{" + this.P13N_MODEL + ">href}",
+                                    target: "{" + this.P13N_MODEL + ">target}",
+                                    press: this._onLinkPressed.bind(this)
+                                }),
+                                new Text({
+                                    text: "{" + this.P13N_MODEL + ">description}",
+                                    visible: "{= ${" + this.P13N_MODEL + ">description} ? true:false}"
+                                })
+                            ]
                         })
-					]
-				})
+                    ]
+                })
 			]
 		});
+	};
+
+    LinkSelectionPanel.prototype.setShowHeader = function(bShowHeader) {
+		if (bShowHeader){
+			this._oListControl.setHeaderToolbar(new OverflowToolbar({
+				content: [
+					this._getSearchField()
+				]
+			}));
+		}
+		this.setProperty("showHeader", bShowHeader);
+		return this;
+	};
+
+    LinkSelectionPanel.prototype._getSearchField = function() {
+		var oSearchField = SelectionPanel.prototype._getSearchField.apply(this, arguments);
+
+		oSearchField.getLayoutData().setMaxWidth(undefined);
+
+		return oSearchField;
 	};
 
     LinkSelectionPanel.prototype._onLinkPressed = function(oEvent) {
@@ -64,6 +89,17 @@ sap.ui.define([
     LinkSelectionPanel.prototype.setMultiSelectMode = function(sMultiSelectMode) {
         this._oListControl.setMultiSelectMode(sMultiSelectMode);
     };
+
+    SelectionPanel.prototype._filterList = function(bShowSelected, sSarch) {
+		var oSearchFilter = [], oSelectedFilter = [];
+		if (bShowSelected) {
+			oSelectedFilter = new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true);
+		}
+		if (sSarch) {
+			oSearchFilter = new Filter("text", "Contains", sSarch);
+		}
+		this._oListControl.getBinding("items").filter(new Filter([].concat(oSelectedFilter, oSearchFilter), true));
+	};
 
     return LinkSelectionPanel;
 
