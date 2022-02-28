@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/base/security/encodeXML', 'sap/ui/webc/common/thirdparty/base/util/generateHighlightedMarkup', '../List', '../ResponsivePopover', '../SuggestionItem', '../SuggestionGroupItem', '../Button', '../GroupHeaderListItem', '../SuggestionListItem', '../generated/i18n/i18n-defaults'], function (FeaturesRegistry, i18nBundle, encodeXML, generateHighlightedMarkup, List, ResponsivePopover, SuggestionItem, SuggestionGroupItem, Button, GroupHeaderListItem, SuggestionListItem, i18nDefaults) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/base/security/encodeXML', 'sap/ui/webc/common/thirdparty/base/util/generateHighlightedMarkup', '../List', '../ResponsivePopover', '../SuggestionItem', '../SuggestionGroupItem', '../Button', '../Icon', '../Popover', '../GroupHeaderListItem', '../SuggestionListItem', '../generated/i18n/i18n-defaults'], function (FeaturesRegistry, i18nBundle, encodeXML, generateHighlightedMarkup, List, ResponsivePopover, SuggestionItem, SuggestionGroupItem, Button, Icon, Popover, GroupHeaderListItem, SuggestionListItem, i18nDefaults) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -429,6 +429,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 				SuggestionListItem,
 				GroupHeaderListItem,
 				Button,
+				Icon,
+				Popover,
 			];
 		}
 		static async init() {

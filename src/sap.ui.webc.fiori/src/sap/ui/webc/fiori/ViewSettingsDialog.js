@@ -90,6 +90,27 @@ sap.ui.define([
 						 */
 						sortBy: {
 							type: "string"
+						},
+
+						/**
+						 * The currently selected <code>sap.ui.webc.fiori.SortItem</code>.
+						 */
+						sortByItem: {
+							type: "HTMLElement"
+						},
+
+						/**
+						 * The selected sort order (true = descending, false = ascending).
+						 */
+						sortDescending: {
+							type: "boolean"
+						},
+
+						/**
+						 * The selected filters items.
+						 */
+						filterItems: {
+							type: "Array"
 						}
 					}
 				},
@@ -111,6 +132,27 @@ sap.ui.define([
 						 */
 						sortBy: {
 							type: "string"
+						},
+
+						/**
+						 * The currently selected <code>sap.ui.webc.fiori.SortItem</code>.
+						 */
+						sortByItem: {
+							type: "HTMLElement"
+						},
+
+						/**
+						 * The selected sort order (true = descending, false = ascending).
+						 */
+						sortDescending: {
+							type: "boolean"
+						},
+
+						/**
+						 * The selected filters items.
+						 */
+						filterItems: {
+							type: "Array"
 						}
 					}
 				}

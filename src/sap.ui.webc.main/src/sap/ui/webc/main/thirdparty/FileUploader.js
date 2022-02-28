@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', './generated/i18n/i18n-defaults', './Input', './Popover', './generated/templates/FileUploaderTemplate.lit', './generated/templates/FileUploaderPopoverTemplate.lit', './generated/themes/FileUploader.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css'], function (UI5Element, ValueState, FeaturesRegistry, litRender, i18nBundle, Keys, i18nDefaults, Input, Popover, FileUploaderTemplate_lit, FileUploaderPopoverTemplate_lit, FileUploader_css, ResponsivePopoverCommon_css, ValueStateMessage_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', './generated/i18n/i18n-defaults', './Input', './Popover', './Icon', './generated/templates/FileUploaderTemplate.lit', './generated/templates/FileUploaderPopoverTemplate.lit', './generated/themes/FileUploader.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css'], function (UI5Element, ValueState, FeaturesRegistry, litRender, i18nBundle, Keys, i18nDefaults, Input, Popover, Icon, FileUploaderTemplate_lit, FileUploaderPopoverTemplate_lit, FileUploader_css, ResponsivePopoverCommon_css, ValueStateMessage_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -275,7 +275,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.shadowRoot.querySelector(".ui5-file-uploader-input");
 		}
 		static get dependencies() {
-			return [Input, Popover];
+			return [Input, Popover, Icon];
 		}
 		static async onDefine() {
 			FileUploader.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");

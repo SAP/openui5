@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/common/thirdparty/base/i18nBundle', './generated/templates/ProgressIndicatorTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/ProgressIndicator.css'], function (UI5Element, litRender, AnimationMode$1, ValueState, Integer, AnimationMode, i18nBundle, ProgressIndicatorTemplate_lit, i18nDefaults, ProgressIndicator_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/common/thirdparty/base/i18nBundle', './Icon', './generated/templates/ProgressIndicatorTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/ProgressIndicator.css'], function (UI5Element, litRender, AnimationMode$1, ValueState, Integer, AnimationMode, i18nBundle, Icon, ProgressIndicatorTemplate_lit, i18nDefaults, ProgressIndicator_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -46,6 +46,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		static get template() {
 			return ProgressIndicatorTemplate_lit;
+		}
+		static get dependencies() {
+			return [Icon];
 		}
 		constructor() {
 			super();

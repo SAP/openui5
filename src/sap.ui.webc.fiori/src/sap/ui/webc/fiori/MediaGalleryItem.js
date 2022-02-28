@@ -97,7 +97,7 @@ sap.ui.define([
 				 */
 				content: {
 					type: "sap.ui.core.Control",
-					multiple: true
+					multiple: false
 				},
 
 				/**
@@ -105,7 +105,7 @@ sap.ui.define([
 				 */
 				thumbnail: {
 					type: "sap.ui.core.Control",
-					multiple: true,
+					multiple: false,
 					slot: "thumbnail"
 				}
 			}

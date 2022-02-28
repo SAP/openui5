@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', './SliderBase', './generated/templates/SliderTemplate.lit', './generated/i18n/i18n-defaults'], function (Float, i18nBundle, Keys, SliderBase, SliderTemplate_lit, i18nDefaults) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', './SliderBase', './Icon', './generated/templates/SliderTemplate.lit', './generated/i18n/i18n-defaults'], function (Float, i18nBundle, Keys, SliderBase, Icon, SliderTemplate_lit, i18nDefaults) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -26,6 +26,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 			super();
 			this._stateStorage.value = null;
 			this._setInitialValue("value", null);
+		}
+		static get dependencies() {
+			return [Icon];
 		}
 		onBeforeRendering() {
 			if (!this.isCurrentStateOutdated()) {

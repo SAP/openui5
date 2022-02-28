@@ -1,4 +1,4 @@
-sap.ui.define(['./generated/templates/SegmentedButtonItemTemplate.lit', './ToggleButton', './types/ButtonDesign', './generated/i18n/i18n-defaults'], function (SegmentedButtonItemTemplate_lit, ToggleButton, ButtonDesign, i18nDefaults) { 'use strict';
+sap.ui.define(['./generated/templates/SegmentedButtonItemTemplate.lit', './ToggleButton', './types/ButtonDesign', './Icon', './generated/i18n/i18n-defaults'], function (SegmentedButtonItemTemplate_lit, ToggleButton, ButtonDesign, Icon, i18nDefaults) { 'use strict';
 
 	const metadata = {
 		tag: "ui5-segmented-button-item",
@@ -27,6 +27,9 @@ sap.ui.define(['./generated/templates/SegmentedButtonItemTemplate.lit', './Toggl
 		}
 		static get template() {
 			return SegmentedButtonItemTemplate_lit;
+		}
+		static get dependencies() {
+			return [Icon];
 		}
 		get ariaDescription() {
 			return SegmentedButtonItem.i18nBundle.getText(i18nDefaults.SEGMENTEDBUTTONITEM_ARIA_DESCRIPTION);
