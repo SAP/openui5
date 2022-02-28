@@ -65,18 +65,31 @@ sap.ui.define([
 	AdaptationFilterBar.prototype._waitForAdaptControlAndPropertyHelper = function(){
 		return this._oAdaptationControlPromise.then(function() {
 			return this.getAdaptationControl().awaitPropertyHelper().then(function(oPropertyHelper) {
-				this._bPropertyHelperFinal = this.getAdaptationControl().isPropertyHelperFinal();
 				this._oPropertyHelper = oPropertyHelper;
 			}.bind(this));
 		}.bind(this));
 	};
-
 	AdaptationFilterBar.prototype._initControlDelegate = function() {
-		this.initControlDelegate().then(function() {
+		return this.initControlDelegate().then(function() {
+			//this.getTypeUtil();
 			if (!this._bIsBeingDestroyed) {
 				this._applyInitialFilterConditions();
 			}
 		}.bind(this));
+	};
+
+	AdaptationFilterBar.prototype.initControlDelegate = function() {
+		return this._oAdaptationControlPromise.then(function() {
+			return this.getAdaptationControl().initControlDelegate();
+		}.bind(this));
+	};
+
+	AdaptationFilterBar.prototype.getTypeUtil = function() {
+		if (!this.getAdaptationControl()) {
+			throw new Error("No adaptation control assigned yet.");
+		}
+
+		return this.getAdaptationControl().getTypeUtil();
 	};
 
 	AdaptationFilterBar.prototype.setMessageStrip = function(oStrip) {
@@ -112,8 +125,9 @@ sap.ui.define([
 
 		return this._oAdaptationControlPromise.then(function() {
 			return this.getAdaptationControl().awaitPropertyHelper().then(function(oPropertyHelper) {
-				if (this.isPropertyHelperFinal()) {
-					this._oMetadataAppliedPromise = Promise.resolve();
+				this._oMetadataAppliedPromise = Promise.resolve();
+				if (!this.getAdaptationControl().isPropertyHelperFinal()) {
+					return this.finalizePropertyHelper();
 				}
 
 				return FilterBarBase.prototype._retrieveMetadata.apply(this, arguments);
@@ -122,20 +136,22 @@ sap.ui.define([
 	};
 
 	AdaptationFilterBar.prototype.createConditionChanges = function() {
-		var mConditions = this._getModelConditions(this._getConditionModel(), false, true);
-		if (this._bPersistValues) {
-			//this.getAdaptationControl(), "Filter", mConditions, true, true
-			return this.getEngine().createChanges({
-				control: this.getAdaptationControl(),
-				key: "Filter",
-				state: mConditions,
-				suppressAppliance: true
-			});
-		} else {
-			//TODO: currently only required once the parent FilterBar has p13nMode 'value' disabled.
-			this.getAdaptationControl()._setXConditions(mConditions, true);
-			return Promise.resolve(null);
-		}
+		return Promise.all([this._oAdaptationControlPromise, this.getAdaptationControl().awaitControlDelegate()]).then(function() {
+			var mConditions = this._getModelConditions(this._getConditionModel(), false, true);
+			if (this._bPersistValues) {
+				//this.getAdaptationControl(), "Filter", mConditions, true, true
+				return this.getEngine().createChanges({
+					control: this.getAdaptationControl(),
+					key: "Filter",
+					state: mConditions,
+					suppressAppliance: true
+				});
+			} else {
+				//TODO: currently only required once the parent FilterBar has p13nMode 'value' disabled.
+				this.getAdaptationControl()._setXConditions(mConditions, true);
+				return Promise.resolve(null);
+			}
+			}.bind(this));
 	};
 
 	/**
