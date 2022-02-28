@@ -1087,8 +1087,10 @@
 	 * When loading modules via script tag, only the onload handler knows the relationship between executed sap.ui.define calls and
 	 * module name. It then resolves the pending modules in the queue. Only one entry can get the name of the module
 	 * if there are more entries, then this is an error
+	 *
+	 * @param {boolean} [nested] Whether this is a nested queue used during sync execution of a module
 	 */
-	function ModuleDefinitionQueue() {
+	function ModuleDefinitionQueue(nested) {
 		var aQueue = [],
 			iRun = 0,
 			vTimer;
@@ -1099,16 +1101,18 @@
 					+ (document.currentScript ? " from " + document.currentScript.src : "")
 					+ " to define queue #" + iRun);
 			}
+
+			var sModule = document.currentScript && document.currentScript.getAttribute('data-sap-ui-module');
 			aQueue.push({
 				name: name,
 				deps: deps,
 				factory: factory,
 				_export: _export,
-				guess: document.currentScript && document.currentScript.getAttribute('data-sap-ui-module')
+				guess: sModule
 			});
 
 			// trigger queue processing via a timer in case the currently executing script is not managed by the loader
-			if ( !vTimer ) {
+			if ( !vTimer && !nested && sModule == null ) {
 				vTimer = setTimeout(this.process.bind(this, null, "timer"));
 			}
 		};
@@ -1584,7 +1588,7 @@
 			try {
 
 				bForceSyncDefines = !bAsync;
-				queue = new ModuleDefinitionQueue();
+				queue = new ModuleDefinitionQueue(true);
 
 				if ( bLoggable ) {
 					if ( typeof oModule.data === "string" ) {
