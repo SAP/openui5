@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/main/thirdparty/Dialog', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/main/thirdparty/Label', 'sap/ui/webc/main/thirdparty/GroupHeaderListItem', 'sap/ui/webc/main/thirdparty/List', 'sap/ui/webc/main/thirdparty/StandardListItem', 'sap/ui/webc/main/thirdparty/SegmentedButton', 'sap/ui/webc/main/thirdparty/SegmentedButtonItem', './Bar', './types/ViewSettingsDialogMode', 'sap/ui/webc/common/thirdparty/icons/sort', 'sap/ui/webc/common/thirdparty/icons/filter', 'sap/ui/webc/common/thirdparty/icons/nav-back', './generated/i18n/i18n-defaults', './generated/templates/ViewSettingsDialogTemplate.lit', './generated/themes/ViewSettingsDialog.css'], function (i18nBundle, Device, litRender, UI5Element, Dialog, Button, Label, GroupHeaderListItem, List, StandardListItem, SegmentedButton, SegmentedButtonItem, Bar, ViewSettingsDialogMode, sort, filter, navBack, i18nDefaults, ViewSettingsDialogTemplate_lit, ViewSettingsDialog_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/main/thirdparty/Dialog', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/main/thirdparty/Label', 'sap/ui/webc/main/thirdparty/GroupHeaderListItem', 'sap/ui/webc/main/thirdparty/List', 'sap/ui/webc/main/thirdparty/StandardListItem', 'sap/ui/webc/main/thirdparty/Title', 'sap/ui/webc/main/thirdparty/SegmentedButton', 'sap/ui/webc/main/thirdparty/SegmentedButtonItem', './Bar', './types/ViewSettingsDialogMode', 'sap/ui/webc/common/thirdparty/icons/sort', 'sap/ui/webc/common/thirdparty/icons/filter', 'sap/ui/webc/common/thirdparty/icons/nav-back', './generated/i18n/i18n-defaults', './generated/templates/ViewSettingsDialogTemplate.lit', './generated/themes/ViewSettingsDialog.css'], function (i18nBundle, Device, litRender, UI5Element, Dialog, Button, Label, GroupHeaderListItem, List, StandardListItem, Title, SegmentedButton, SegmentedButtonItem, Bar, ViewSettingsDialogMode, sort, filter, navBack, i18nDefaults, ViewSettingsDialogTemplate_lit, ViewSettingsDialog_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -10,6 +10,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 	var GroupHeaderListItem__default = /*#__PURE__*/_interopDefaultLegacy(GroupHeaderListItem);
 	var List__default = /*#__PURE__*/_interopDefaultLegacy(List);
 	var StandardListItem__default = /*#__PURE__*/_interopDefaultLegacy(StandardListItem);
+	var Title__default = /*#__PURE__*/_interopDefaultLegacy(Title);
 	var SegmentedButton__default = /*#__PURE__*/_interopDefaultLegacy(SegmentedButton);
 	var SegmentedButtonItem__default = /*#__PURE__*/_interopDefaultLegacy(SegmentedButtonItem);
 
@@ -53,6 +54,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 				detail: {
 					sortOrder: { type: String },
 					sortBy: { type: String },
+					sortByItem: { type: HTMLElement },
+					sortDescending: { type: Boolean },
 					filters: { type: Array },
 				},
 			},
@@ -60,6 +63,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 				detail: {
 					sortOrder: { type: String },
 					sortBy: { type: String },
+					sortByItem: { type: HTMLElement },
+					sortDescending: { type: Boolean },
 					filters: { type: Array },
 				},
 			},
@@ -103,6 +108,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			return [
 				Bar,
 				Button__default,
+				Title__default,
 				Dialog__default,
 				Label__default,
 				List__default,
@@ -219,10 +225,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			};
 		}
 		get initSortByItems() {
-			return this.sortItems.map(item => {
+			return this.sortItems.map((item, index) => {
 				return {
 					text: item.text,
 					selected: item.selected,
+					associatedItem: item,
+					index,
 				};
 			});
 		}
@@ -230,11 +238,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			return [
 				{
 					text: this._ascendingLabel,
-					selected: true,
+					selected: !this.sortDescending,
 				},
 				{
 					text: this._descendingLabel,
-					selected: false,
+					selected: this.sortDescending,
 				},
 			];
 		}
@@ -325,10 +333,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			const _currentSortOrderSelected = this._currentSettings.sortOrder.filter(item => item.selected)[0],
 				_currentSortBySelected = this._currentSettings.sortBy.filter(item => item.selected)[0],
 				sortOrder = _currentSortOrderSelected && _currentSortOrderSelected.text,
-				sortBy = _currentSortBySelected && _currentSortBySelected.text;
+				sortDescending = !this._currentSettings.sortOrder[0].selected,
+				sortBy = _currentSortBySelected && _currentSortBySelected.text,
+				sortByElementIndex = _currentSortBySelected && _currentSortBySelected.index,
+				initSortIByItem = this.initSortByItems.find((item, index) => index === sortByElementIndex),
+				sortByItem = initSortIByItem && initSortIByItem.associatedItem;
 			return {
 				sortOrder,
+				sortDescending,
 				sortBy,
+				sortByItem,
 				filters: this.selectedFilters,
 			};
 		}
@@ -373,9 +387,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			this._currentSettings = JSON.parse(JSON.stringify(this._currentSettings));
 		}
 		 _onSortByChange(event) {
+			const selectedItemIndex = Number(event.detail.item.getAttribute("data-ui5-external-action-item-index"));
 			this._recentlyFocused = this._sortBy;
-			this._currentSettings.sortBy = this.initSortByItems.map(item => {
-				item.selected = item.text === event.detail.item.innerText;
+			this._currentSettings.sortBy = this.initSortByItems.map((item, index) => {
+				item.selected = index === selectedItemIndex;
 				return item;
 			});
 			this._currentSettings = JSON.parse(JSON.stringify(this._currentSettings));

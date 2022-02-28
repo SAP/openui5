@@ -1,8 +1,8 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/localization/dates/CalendarDate', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/localization/getCachedLocaleDataInstance', 'sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/webc/common/thirdparty/localization/DateFormat', './CalendarDate', './CalendarPart', './CalendarHeader', './DayPicker', './MonthPicker', './YearPicker', './types/CalendarSelectionMode', 'sap/ui/webc/common/thirdparty/localization/features/calendar/Gregorian', './generated/templates/CalendarTemplate.lit', './generated/themes/Calendar.css'], function (CalendarDate, Render, Keys, getCachedLocaleDataInstance, getLocale, DateFormat, CalendarDate$1, CalendarPart, CalendarHeader, DayPicker, MonthPicker, YearPicker, CalendarSelectionMode, Gregorian, CalendarTemplate_lit, Calendar_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/localization/dates/CalendarDate', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/localization/getCachedLocaleDataInstance', 'sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/webc/common/thirdparty/localization/DateFormat', './CalendarDate', './CalendarPart', './CalendarHeader', './DayPicker', './MonthPicker', './YearPicker', './types/CalendarSelectionMode', 'sap/ui/webc/common/thirdparty/localization/features/calendar/Gregorian', './generated/templates/CalendarTemplate.lit', './generated/themes/Calendar.css'], function (CalendarDate$1, Render, Keys, getCachedLocaleDataInstance, getLocale, DateFormat, CalendarDate, CalendarPart, CalendarHeader, DayPicker, MonthPicker, YearPicker, CalendarSelectionMode, Gregorian, CalendarTemplate_lit, Calendar_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
-	var CalendarDate__default = /*#__PURE__*/_interopDefaultLegacy(CalendarDate);
+	var CalendarDate__default = /*#__PURE__*/_interopDefaultLegacy(CalendarDate$1);
 	var getCachedLocaleDataInstance__default = /*#__PURE__*/_interopDefaultLegacy(getCachedLocaleDataInstance);
 	var getLocale__default = /*#__PURE__*/_interopDefaultLegacy(getLocale);
 	var DateFormat__default = /*#__PURE__*/_interopDefaultLegacy(DateFormat);
@@ -77,7 +77,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/localization/dates/CalendarDate', 
 				this.removeChild(dateElement);
 			});
 			selectedValues.filter(value => !valuesInDOM.includes(value)).forEach(value => {
-				const dateElement = document.createElement("ui5-date");
+				const dateElement = document.createElement(CalendarDate.getMetadata().getTag());
 				dateElement.value = value;
 				this.appendChild(dateElement);
 			});
@@ -222,7 +222,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/localization/dates/CalendarDate', 
 		}
 		static get dependencies() {
 			return [
-				CalendarDate$1,
+				CalendarDate,
 				CalendarHeader,
 				DayPicker,
 				MonthPicker,

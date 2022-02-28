@@ -233,7 +233,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 			}
 		}
 		_onThumbnailClick(event) {
-			const item = event.target.closest("ui5-media-gallery-item");
+			const item = event.target.closest("[ui5-media-gallery-item]");
 			if (item.disabled) {
 				return;
 			}

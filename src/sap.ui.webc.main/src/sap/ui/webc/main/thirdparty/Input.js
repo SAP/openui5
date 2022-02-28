@@ -80,10 +80,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			focused: {
 				type: Boolean,
 			},
-			_isValueStateFocused: {
+			openOnMobile: {
 				type: Boolean,
 			},
 			open: {
+				type: Boolean,
+			},
+			_isValueStateFocused: {
 				type: Boolean,
 			},
 			_input: {
@@ -163,6 +166,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.highlightValue = "";
 			this.lastConfirmedValue = "";
 			this._backspaceKeyDown = false;
+			this.isTyping = false;
 			this.EVENT_CHANGE = "change";
 			this.EVENT_INPUT = "input";
 			this.EVENT_SUGGESTION_ITEM_SELECT = "suggestion-item-select";
@@ -183,8 +187,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.suggestionsTexts = this.Suggestions.defaultSlotProperties(this.highlightValue);
 			}
 			this.effectiveShowClearIcon = (this.showClearIcon && !!this.value && !this.readonly && !this.disabled);
-			this.open = this.open && (!!this.suggestionItems.length || this._isPhone);
 			const FormSupport = FeaturesRegistry.getFeature("FormSupport");
+			const hasItems = this.suggestionItems.length;
+			const hasValue = !!this.value;
+			const isFocused = this === document.activeElement;
+			if (this._isPhone) {
+				this.open = this.openOnMobile;
+			} else {
+				this.open = hasValue && hasItems && isFocused && this.isTyping;
+			}
 			if (FormSupport) {
 				FormSupport.syncNativeHiddenInput(this);
 			} else if (this.name) {
@@ -320,7 +331,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this._isValueStateFocused = false;
 				this.focused = true;
 			}
-			this.open = false;
 		}
 		async _onfocusin(event) {
 			await this.getInputDOMRef();
@@ -341,12 +351,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (toBeFocused && toBeFocused.classList.contains(this._id)) {
 				return;
 			}
-			this.closePopover();
+			this.open = false;
 			this._clearPopoverFocusAndSelection();
 			this.previousValue = "";
 			this.lastConfirmedValue = "";
 			this.focused = false;
-			this.open = false;
+			this.isTyping = false;
 		}
 		_clearPopoverFocusAndSelection() {
 			if (!this.showSuggestions || !this.Suggestions) {
@@ -360,7 +370,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_click(event) {
 			if (Device.isPhone() && !this.readonly && this.Suggestions) {
 				this.blur();
-				this.open = true;
+				this.openOnMobile = true;
 			}
 		}
 		_handleNativeInputChange() {
@@ -423,10 +433,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._isValueStateFocused = false;
 			if (this.Suggestions) {
 				this.Suggestions.updateSelectedItemPosition(null);
-				if (!this._isPhone) {
-					this.open = !!inputDomRef.value;
-				}
 			}
+			this.isTyping = true;
 		}
 		_handleResize() {
 			this._inputWidth = this.offsetWidth;
@@ -445,6 +453,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.blur();
 				this.focused = false;
 			}
+			this.isTyping = false;
+			this.openOnMobile = false;
+			this.open = false;
 		}
 		isValueStateOpened() {
 			return !!this._isPopoverOpen;
@@ -493,6 +504,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.valueBeforeItemPreview = "";
 			this.suggestionSelectionCanceled = false;
 			this.fireEvent(this.EVENT_SUGGESTION_ITEM_SELECT, { item });
+			this.isTyping = false;
+			this.openOnMobile = false;
 		}
 		previewSuggestion(item) {
 			this.valueBeforeItemSelection = this.value;

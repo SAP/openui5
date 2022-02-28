@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', './generated/templates/SplitButtonTemplate.lit', './types/ButtonDesign', './generated/i18n/i18n-defaults', './generated/themes/SplitButton.css'], function (UI5Element, Keys, i18nBundle, litRender, SplitButtonTemplate_lit, ButtonDesign, i18nDefaults, SplitButton_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', './generated/templates/SplitButtonTemplate.lit', './types/ButtonDesign', './Button', './generated/i18n/i18n-defaults', './generated/themes/SplitButton.css'], function (UI5Element, Keys, i18nBundle, litRender, SplitButtonTemplate_lit, ButtonDesign, Button, i18nDefaults, SplitButton_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -81,6 +81,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		static get template() {
 			return SplitButtonTemplate_lit;
+		}
+		static get dependencies() {
+			return [Button];
 		}
 		static async onDefine() {
 			SplitButton.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");

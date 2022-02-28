@@ -65,7 +65,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		}
 	};
 	createBlockingStyle();
-	const bodyScrollingBlockers = new Set();
+	const pageScrollingBlockers = new Set();
 	class Popup extends UI5Element__default {
 		constructor() {
 			super();
@@ -97,7 +97,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		}
 		onExitDOM() {
 			if (this.isOpen()) {
-				Popup.unblockBodyScrolling(this);
+				Popup.unblockPageScrolling(this);
 				this._removeOpenedPopup();
 			}
 			ResizeHandler__default.deregister(this, this._resizeHandler);
@@ -111,24 +111,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		_preventBlockLayerFocus(event) {
 			event.preventDefault();
 		}
-		static blockBodyScrolling(popup) {
-			bodyScrollingBlockers.add(popup);
-			if (bodyScrollingBlockers.size !== 1) {
+		static blockPageScrolling(popup) {
+			pageScrollingBlockers.add(popup);
+			if (pageScrollingBlockers.size !== 1) {
 				return;
 			}
-			if (window.pageYOffset > 0) {
-				document.body.style.top = `-${window.pageYOffset}px`;
-			}
-			document.body.classList.add("ui5-popup-scroll-blocker");
+			document.documentElement.classList.add("ui5-popup-scroll-blocker");
 		}
-		static unblockBodyScrolling(popup) {
-			bodyScrollingBlockers.delete(popup);
-			if (bodyScrollingBlockers.size !== 0) {
+		static unblockPageScrolling(popup) {
+			pageScrollingBlockers.delete(popup);
+			if (pageScrollingBlockers.size !== 0) {
 				return;
 			}
-			document.body.classList.remove("ui5-popup-scroll-blocker");
-			window.scrollTo(0, -parseFloat(document.body.style.top));
-			document.body.style.top = "";
+			document.documentElement.classList.remove("ui5-popup-scroll-blocker");
 		}
 		_scroll(e) {
 			this.fireEvent("scroll", {
@@ -209,7 +204,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			if (this.isModal && !this.shouldHideBackdrop) {
 				this.getStaticAreaItemDomRef();
 				this._blockLayerHidden = false;
-				Popup.blockBodyScrolling(this);
+				Popup.blockPageScrolling(this);
 			}
 			this._zIndex = PopupUtils.getNextZIndex();
 			this.style.zIndex = this._zIndex;
@@ -237,7 +232,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 			}
 			if (this.isModal) {
 				this._blockLayerHidden = true;
-				Popup.unblockBodyScrolling(this);
+				Popup.unblockPageScrolling(this);
 			}
 			this.hide();
 			this.opened = false;

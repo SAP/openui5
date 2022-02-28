@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/UI5Element', './types/BreadcrumbsDesign', './types/BreadcrumbsSeparatorStyle', './BreadcrumbsItem', './generated/i18n/i18n-defaults', './Link', './Label', './ResponsivePopover', './List', './StandardListItem', './Icon', './generated/templates/BreadcrumbsTemplate.lit', './generated/templates/BreadcrumbsPopoverTemplate.lit', './generated/themes/Breadcrumbs.css', './generated/themes/BreadcrumbsPopover.css'], function (ItemNavigation, litRender, Keys, Integer, i18nBundle, ResizeHandler, NavigationMode, UI5Element, BreadcrumbsDesign, BreadcrumbsSeparatorStyle, BreadcrumbsItem, i18nDefaults, Link, Label, ResponsivePopover, List, StandardListItem, Icon, BreadcrumbsTemplate_lit, BreadcrumbsPopoverTemplate_lit, Breadcrumbs_css, BreadcrumbsPopover_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/UI5Element', './types/BreadcrumbsDesign', './types/BreadcrumbsSeparatorStyle', './BreadcrumbsItem', './generated/i18n/i18n-defaults', './Link', './Label', './ResponsivePopover', './List', './StandardListItem', './Icon', './Button', './generated/templates/BreadcrumbsTemplate.lit', './generated/templates/BreadcrumbsPopoverTemplate.lit', './generated/themes/Breadcrumbs.css', './generated/themes/BreadcrumbsPopover.css'], function (ItemNavigation, litRender, Keys, Integer, i18nBundle, ResizeHandler, NavigationMode, UI5Element, BreadcrumbsDesign, BreadcrumbsSeparatorStyle, BreadcrumbsItem, i18nDefaults, Link, Label, ResponsivePopover, List, StandardListItem, Icon, Button, BreadcrumbsTemplate_lit, BreadcrumbsPopoverTemplate_lit, Breadcrumbs_css, BreadcrumbsPopover_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -334,6 +334,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 				List,
 				StandardListItem,
 				Icon,
+				Button,
 			];
 		}
 		static async onDefine() {
