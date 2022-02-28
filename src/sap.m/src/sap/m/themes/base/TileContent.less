@@ -191,3 +191,43 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 		}	
 	}
 }
+.sapMGTStateLoading {
+	.sapMTileCntContentShimmerPlaceholderItem {
+		.sapMTileCntContentShimmerPlaceholderRows {
+			.sapMTileCntContentShimmerPlaceholderItemTextFooter, .sapMTileCntContentShimmerPlaceholderItemBox {
+				top:1rem;
+			}
+		}
+	}
+	.sapMTileCntContentShimmerPlaceholderWithDescription {
+		padding: 1rem 0rem 0rem 0rem;
+	}
+}
+.sapMTileCntContentShimmerPlaceholderItem {
+	.sapMTileCntContentShimmerPlaceholderRows {
+		.sapMTileCntContentShimmerPlaceholderItemTextFooter, .sapMTileCntContentShimmerPlaceholderItemBox {
+			top:0.85rem;
+		}
+	}
+}
+
+.sapMGTStateLoaded.TwoByHalf, .sapMGTStateLoaded.OneByHalf,
+.sapMGTStateDisabled.TwoByHalf, .sapMGTStateDisabled.OneByHalf,
+.sapMGTStateFailed.TwoByHalf, .sapMGTStateFailed.OneByHalf  {
+	.sapMTileCntContentShimmerPlaceholderItem.sapMTileCntContentShimmerPlaceholderWithDescription {
+		padding: 0rem 1rem 0rem 1rem;
+	}
+
+}
+
+
+.sapMTileCnt.sapMTileCntDisabled {
+	position: relative;
+
+	&:after {
+		.sapMGTOverlayMixin();
+		display: block;
+		content: "";
+		background-color: fade(@sapUiTileBackground, 80);
+	}
+}

@@ -207,16 +207,10 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 					.openEnd()
 					.close("div");
 				if (!isHalfFrame) {
-					oRm.openStart("div")
-						.class("sapMGTContentShimmerPlaceholderItemBox")
-						.class("sapMGTLoadingShimmer")
-						.openEnd()
-						.close("div");
-					oRm.openStart("div")
-						.class("sapMGTContentShimmerPlaceholderItemTextFooter")
-						.class("sapMGTLoadingShimmer")
-						.openEnd()
-						.close("div");
+					for (var i = 0; i < iLength; i++) {
+						aTileContent[i].setProperty("state", LoadState.Loading, true);
+						oRm.renderControl(aTileContent[i]);
+					}
 				}
 				oRm.close("div");
 				oRm.close("div");
@@ -309,6 +303,11 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				}
 				oRm.openEnd();
 				for (var i = 0; i < iLength; i++) {
+					if (sState === LoadState.Disabled) {
+						aTileContent[i].setProperty("state", LoadState.Disabled, true);
+					} else if (sState === LoadState.Failed) {
+						aTileContent[i].setProperty("state", LoadState.Failed, true);
+					}
 					oRm.renderControl(aTileContent[i]);
 				}
 				oRm.close("div");
