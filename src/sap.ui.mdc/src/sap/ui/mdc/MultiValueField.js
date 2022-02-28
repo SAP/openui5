@@ -316,6 +316,16 @@ sap.ui.define([
 
 	};
 
+	Field.prototype._checkCreateInternalContent = function() {
+
+		if (!this.bIsDestroyed && this._oContentFactory.getDataType() && !this._isPropertyInitial("editMode")) {
+			// If DataType is provided via Binding and EditMode is set the internal control can be created
+			// TODO: no control needed if just template for cloning
+			FieldBase.prototype._checkCreateInternalContent.apply(this, arguments);
+		}
+
+	};
+
 	/**
 	 * Sets conditions to the property <code>conditions</code>.
 	 *

@@ -174,6 +174,18 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("internal control creation", function(assert) {
+
+		var fnDone = assert.async();
+		setTimeout(function() { // async control creation in applySettings
+			var aContent = oField.getAggregation("_content");
+			var oContent = aContent && aContent.length > 0 && aContent[0];
+			assert.notOk(oContent, "no content exist before rendering"); // as no data type can be determined
+			fnDone();
+		}, 0);
+
+	});
+
 	var oFieldEdit, oFieldDisplay;
 	var oModel;
 	var oType;
@@ -339,6 +351,67 @@ sap.ui.define([
 
 				fnDone();
 				});
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("internal control creation", function(assert) {
+
+		oField = new MultiValueField("F3", {
+			items: {path: "/items", template: oItemTemplate}
+		});
+
+		var fnDone = assert.async();
+		setTimeout(function() { // async control creation in applySettings
+			var aContent = oField.getAggregation("_content");
+			var oContent = aContent && aContent.length > 0 && aContent[0];
+			assert.notOk(oContent, "no content exist before rendering"); // as edit mode is not explicit defined
+
+			oField.setEditMode(EditMode.Display);
+			setTimeout(function() { // async control creation in observeChanges
+				aContent = oField.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent, "content exist after setting editMode and multipleLines");
+
+				oField.destroy();
+				oField = new MultiValueField("F3", {
+					items: {path: "/items", template: oItemTemplate},
+					editMode: EditMode.Editable
+				});
+
+				setTimeout(function() { // async control creation in applySettings
+					aContent = oField.getAggregation("_content");
+					oContent = aContent && aContent.length > 0 && aContent[0];
+					assert.ok(oContent, "content exist before rendering");
+
+					oField.destroy();
+					oField = new MultiValueField("F3", {
+						items: {path: "/items", template: oItemTemplate},
+						editMode: { path: "/editMode"}
+					});
+
+					setTimeout(function() { // async control creation in applySettings
+						aContent = oField.getAggregation("_content");
+						oContent = aContent && aContent.length > 0 && aContent[0];
+						assert.notOk(oContent, "content not exist before rendering"); // as editMode has not set by binding right now
+
+						oField.destroy();
+						oField = new MultiValueField("F3", {
+							items: {path: "/items", template: oItemTemplate},
+							editMode: { path: "/editMode"}
+						});
+						oField.setModel(oModel);
+
+						setTimeout(function() { // async control creation in applySettings
+							aContent = oField.getAggregation("_content");
+							oContent = aContent && aContent.length > 0 && aContent[0];
+							assert.ok(oContent, "content exist before rendering");
+							oField.destroy();
+							fnDone();
+						}, 0);
+					}, 0);
+				}, 0);
 			}, 0);
 		}, 0);
 

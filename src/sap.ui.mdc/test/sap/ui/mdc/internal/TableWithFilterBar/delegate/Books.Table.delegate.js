@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/enum/FieldDisplay",
+	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/mdc/odata/v4/util/DelegateUtil",
 	"sap/ui/core/Core",
@@ -11,7 +12,7 @@ sap.ui.define([
 	'sap/ui/model/FilterOperator',
 	"sap/ui/model/odata/type/Int32",
 	"sap/m/Text"
-], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
+], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, EditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 
@@ -105,52 +106,37 @@ sap.ui.define([
 	BooksTableDelegate._createColumnTemplate = function (oTable, oProperty) {
 
 		if (oProperty.name === "currency_code") { // Just use text to test rendering Text vs Field
-			return new Text({
+			return new Text(getFullId(oTable, "T_" + oProperty.name), {
 				text: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
 				width:"100%"
 			});
 		}
 
 		var oCtrlProperties = {
+			id: getFullId(oTable, "F_" + oProperty.name),
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
-			editMode: "Display",
+			editMode: EditMode.Display,
 			width:"100%",
-			multipleLines: false
+			multipleLines: false // set always to have property not initial
 		};
-
 
 		if (oProperty.name === "price") {
 			oCtrlProperties.value = "{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}";
-		}
-
-		if (["title", "descr"].indexOf(oProperty.name) != -1) {
+		} else if (oProperty.name === "descr") {
 			oCtrlProperties.multipleLines = true;
-		}
-
-		if (oProperty.name === "language_code") {
+		} else if (oProperty.name === "language_code") {
 			oCtrlProperties.additionalValue = "{language/name}";
 			oCtrlProperties.display = FieldDisplay.Description;
 			oCtrlProperties.fieldHelp = getFullId(oTable, "FHLanguage");
-		}
-
-		if (oProperty.name === "genre_code") {
+		} else if (oProperty.name === "genre_code") {
 			oCtrlProperties.display = FieldDisplay.Description;
 			oCtrlProperties.fieldHelp = getFullId(oTable, "FHGenreSingle");
-		}
-
-		if (oProperty.name === "subgenre_code") {
+		} else if (oProperty.name === "subgenre_code") {
 			oCtrlProperties.display = FieldDisplay.Description;
 			oCtrlProperties.fieldHelp = getFullId(oTable, "FHSubGenreSingle");
-		}
-
-		if (oProperty.name === "title") {
-
-			oCtrlProperties = {
-				id: "tFieldLinkTitle",
-				value: "{title}",
-				editMode: "Display",
-				multipleLines: true,
-				fieldInfo: new Link({
+		} else if (oProperty.name === "title") {
+			oCtrlProperties.multipleLines = true;
+			oCtrlProperties.fieldInfo = new Link({
 					sourceControl:"tFieldLinkTitle",
 					delegate: {
 						name: "sap/ui/mdc/flp/FlpLinkDelegate",
@@ -159,32 +145,18 @@ sap.ui.define([
 							mainSemanticObject: "FakeFlpSemanticObject"
 						}
 					}
-				})
-			};
-
-		}
-
-		if (oProperty.name === "author_ID") {
-
-			oCtrlProperties = {
-				id: "tFieldLinkAuthor",
-				value: {path: 'author_ID', type: new Int32Type({groupingEnabled: false}, {nullable: false})},
-				additionalValue:"{author/name}",
-				display: FieldDisplay.DescriptionValue,
-				editMode: "Display",
-				fieldInfo: new Link({
+				});
+		} else if (oProperty.name === "author_ID") {
+			oCtrlProperties.additionalValue = "{author/name}";
+			oCtrlProperties.display = FieldDisplay.DescriptionValue;
+			oCtrlProperties.multipleLines = true;
+			oCtrlProperties.fieldInfo = new Link({
 					delegate: { name: "sap/ui/v4demo/delegate/Books.Link.delegate" }
-				})
-			};
-
-		}
-
-		if (oProperty.name === "classification_code") {
+				});
+		} else if (oProperty.name === "classification_code") {
 			oCtrlProperties.additionalValue = "{classification/title}";
 			oCtrlProperties.display = FieldDisplay.Description;
-		}
-
-		if (oProperty.name === "detailgenre_code") {
+		} else if (oProperty.name === "detailgenre_code") {
 			oCtrlProperties.additionalValue = "{detailgenre/title}";
 			oCtrlProperties.display = FieldDisplay.Description;
 		}
@@ -311,6 +283,9 @@ sap.ui.define([
 			}
 
 		}
+
+		// always select fields needed as InParameters (only if corresponding field displayed?)
+		oBindingInfo.parameters.$select = ["classification_code", "genre_code"]; // Comment this out to test late loading of InParameters
 
 	};
 

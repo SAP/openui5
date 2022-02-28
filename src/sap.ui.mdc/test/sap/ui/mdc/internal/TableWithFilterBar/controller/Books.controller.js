@@ -7,8 +7,12 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/MessageToast",
 	"sap/m/Table",
-	"sap/m/Text"
-], function (Controller, UIComponent, FilterField, FilterBar, Column, ColumnListItem, MessageToast, Table, Text) {
+	"sap/m/Text",
+	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // to have it loaded before rendering starts
+	"sap/ui/mdc/field/FieldMultiInput", // to have it loaded before rendering starts
+	"sap/m/Token", // to have it loaded before rendering starts
+	"sap/m/ExpandableText" // to have it loaded before rendering starts
+], function (Controller, UIComponent, FilterField, FilterBar, Column, ColumnListItem, MessageToast, Table, Text, FieldBaseDelegate, FieldMultiInput, Token, ExpandableText) {
 
 	"use strict";
 

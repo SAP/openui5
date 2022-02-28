@@ -4,11 +4,13 @@
 sap.ui.define([
 	'sap/ui/mdc/field/FieldBase',
 	'sap/ui/mdc/field/FieldBaseRenderer',
+	'sap/ui/mdc/enum/FieldDisplay',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual'
 ], function(
 		FieldBase,
 		FieldBaseRenderer,
+		FieldDisplay,
 		merge,
 		deepEqual
 	) {
@@ -139,7 +141,9 @@ sap.ui.define([
 			// As ConditionModel triggers checkUpdate in forced mode on addCondition, setConditions... also unchanged conditions will be updated
 			// So e.g. if a variant is applied an error will be removed.
 			if (this._oContentFactory.getBoundProperty()) { // single value case
-				this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates (additionalValue will follow)
+				if (this._oManagedObjectModel) {
+					this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates (additionalValue will follow)
+				}
 			} else { // Multi value case - don't update tokens, initialize value
 				var oContent = this._getContent()[0];
 				if (oContent && oContent.setValue) {
@@ -339,6 +343,40 @@ sap.ui.define([
 		return this;
 	};
 
+	FilterField.prototype._checkCreateInternalContent = function() {
+
+		if (!this.bIsDestroyed && !this.isPropertyInitial("dataType")) {
+			// If DataType is set in applySettings we can assume it is final and DataTypeFormatOptions and DataTypeContraints are set too
+			// EditMode is not relevant as non editable FilterFields are not a use case in the moment.
+			// MultipleLines is also not used for FilterFields in the moment.
+			// MaxConditions should also be set on applySettings
+
+			var sId = this.getFieldHelp();
+			var oFieldHelp = sap.ui.getCore().byId(sId);
+			var oBindingInfo = this.getBindingInfo("conditions");
+			var oBinding = this.getBinding("conditions");
+			if (this.getDisplay() !== FieldDisplay.Value && sId && (!oFieldHelp || (oBindingInfo && !oBinding))) {
+				// FieldHelp might need ConditionModel to determine value of InParameters to get the description.
+				// So if FieldHelp not exists right now or binding to ConditionModel not already created, wait.
+				return;
+			}
+
+			this._oContentFactory.retrieveDataType();
+			FieldBase.prototype._checkCreateInternalContent.apply(this, arguments);
+		}
+
+	};
+
+	FilterField.prototype._handleModelContextChange = function(oEvent) {
+
+		FieldBase.prototype._handleModelContextChange.apply(this, arguments);
+
+		if (this._getContent().length === 0) {
+			// inner control not created, maybe it can be created bow (maybe ConditionModel assignment changed)
+			this._triggerCheckCreateInternalContent();
+		}
+
+	};
 
 	return FilterField;
 

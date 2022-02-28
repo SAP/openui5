@@ -84,6 +84,29 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("internal control creation", function(assert) {
+
+		var fnDone = assert.async();
+		setTimeout(function() { // async control creation in applySettings
+			var aContent = oFilterField.getAggregation("_content");
+			var oContent = aContent && aContent.length > 0 && aContent[0];
+			assert.notOk(oContent, "no content exist before rendering");
+
+			oFilterField.destroy();
+			oFilterField = new FilterField("FF1", {
+				dataType: "sap.ui.model.type.String"
+			});
+
+			setTimeout(function() { // async control creation in applySettings
+				aContent = oFilterField.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent, "content exist before rendering");
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
 	QUnit.module("Eventing", {
 		beforeEach: function() {
 			oFilterField = new FilterField("FF1", {
