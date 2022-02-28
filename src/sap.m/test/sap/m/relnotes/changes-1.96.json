@@ -899,5 +899,25 @@
         ]
       }
     ]
+  },
+  "1.96.6": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "b2c3c59b584f28a3ea2a3611c485a2166c6bdc73",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: aria role and description adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280013612"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400001343412022"
+          }
+        ]
+      }
+    ]
   }
 }

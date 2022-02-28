@@ -46,5 +46,21 @@
         ]
       }
     ]
+  },
+  "1.96.6": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "2c6bf0e0c9aa73bc868d94d8b670af6dcbe52fa6",
+        "type": "FIX",
+        "text": " Table: Flickering of horizontal scrollbar when in a dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001311102022"
+          }
+        ]
+      }
+    ]
   }
 }
