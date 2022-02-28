@@ -1136,11 +1136,6 @@ function(
 		if (oItem.getSelected()) {
 			this.setSelectedSortItem(oItem);
 		}
-
-		if (this.getSelectedSortItem() === oItem.getId() || this.getSelectedSortItem() === oItem.getKey()) {
-			oItem.setSelected(true);
-		}
-
 		return this;
 	};
 
@@ -1158,11 +1153,6 @@ function(
 		if (oItem.getSelected()) {
 			this.setSelectedGroupItem(oItem);
 		}
-
-		if (this.getSelectedGroupItem() === oItem.getId() || this.getSelectedGroupItem() === oItem.getKey()) {
-			oItem.setSelected(true);
-		}
-
 		return this;
 	};
 
@@ -1197,7 +1187,8 @@ function(
 			i = 0,
 			oItem = findViewSettingsItemByKey(
 				vItemOrKey,
-				aItems
+				aItems,
+				"Could not set selected sort item. Item is not found: '" + vItemOrKey + "'"
 			);
 
 		if (!oItem && (typeof vItemOrKey === "string")) {
@@ -1221,9 +1212,8 @@ function(
 			if (this._getDialog().isOpen()) {
 				this._updateListSelection(this._sortList, oItem);
 			}
+			this.setAssociation("selectedSortItem", oItem, true);
 		}
-
-		this.setAssociation("selectedSortItem", vItemOrKey, true);
 
 		return this;
 	};
@@ -1242,7 +1232,8 @@ function(
 			i = 0,
 			oItem = findViewSettingsItemByKey(
 				vItemOrKey,
-				aItems
+				aItems,
+				"Could not set selected group item. Item is not found: '" + vItemOrKey + "'"
 			);
 
 		if (!oItem && (typeof vItemOrKey === "string")) {
@@ -1253,10 +1244,7 @@ function(
 		// BCP: 1780536754
 		if (!oItem && !vItemOrKey) {
 			oItem = this._oGroupingNoneItem;
-			this.setAssociation("selectedGroupItem", oItem, true);
-			return this;
 		}
-
 		//change selected item only if it is found among the group items
 		if (validateViewSettingsItem(oItem)) {
 			// set selected = true for this item & selected = false for all others items
@@ -1270,9 +1258,8 @@ function(
 			if (this._getDialog().isOpen()) {
 				this._updateListSelection(this._groupList, oItem);
 			}
+			this.setAssociation("selectedGroupItem", oItem, true);
 		}
-
-		this.setAssociation("selectedGroupItem", vItemOrKey, true);
 
 		return this;
 	};
@@ -3379,8 +3366,7 @@ function(
 	 *
 	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The searched item or its key
 	 * @param {array} aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
-	 * @param {string} sErrorMessage If an error message is provided, it will be logged when the
-	 * item is not found
+	 * @param {string} sErrorMessage The error message that will be logged if the item is not found
 	 * @returns {*} The sap.m.ViewSettingsItem found in the list of items
 	 * @private
 	 */
@@ -3392,7 +3378,7 @@ function(
 			// find item with this key
 			oItem = getViewSettingsItemByKey(aViewSettingsItems, vItemOrKey);
 
-			if (!oItem && sErrorMessage) {
+			if (!oItem) {
 				Log.error(sErrorMessage);
 			}
 		} else {
