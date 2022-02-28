@@ -1561,7 +1561,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		oInfo = this.oTP.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		assert.strictEqual(oInfo.role, "combobox", "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value Placeholder", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
