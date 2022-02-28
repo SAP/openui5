@@ -535,7 +535,8 @@ sap.ui.define([
 
 			var oDraft = {
 				version: sap.ui.fl.Versions.Draft,
-				type: "draft"
+				type: "draft",
+				filenames: []
 			};
 
 			var aReturnedVersions = [
@@ -702,7 +703,8 @@ sap.ui.define([
 
 			var oDraft = {
 				version: sap.ui.fl.Versions.Draft,
-				type: "draft"
+				type: "draft",
+				filenames: []
 			};
 
 			var aReturnedBackendVersions = [
