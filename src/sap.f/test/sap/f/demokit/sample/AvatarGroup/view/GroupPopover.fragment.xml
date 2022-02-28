@@ -22,6 +22,7 @@
 								<f:Avatar class="sapUiTinyMarginEnd"
 										src="{groupedAvatars>src}"
 										initials="{groupedAvatars>initials}"
+										tooltip="{groupedAvatars>initials}"
 										fallbackIcon="{personData>/fallbackIcon}"
 										backgroundColor="{groupedAvatars>backgroundColor}"
 										press="onAvatarPress"/>

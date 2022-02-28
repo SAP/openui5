@@ -23,12 +23,17 @@ sap.ui.define(["sap/f/library"],
 		 * @param {sap.f.AvatarGroupItem} oAvatarGroupItem an object representation of the control that should be rendered
 		 */
 		AvatarGroupItemRenderer.render = function (oRm, oAvatarGroupItem) {
+			var sTooltip = oAvatarGroupItem.getTooltip_AsString();
 			oRm.openStart("div", oAvatarGroupItem)
 				.class("sapFAvatarGroupItem")
 				.class("sapFAvatarGroupItem" + oAvatarGroupItem._sAvatarDisplaySize);
 
 			if (oAvatarGroupItem._getInteractive() && oAvatarGroupItem._getGroupType() === "Individual") {
 				oRm.attr("tabindex", 0);
+			}
+
+			if (sTooltip) {
+				oRm.attr("title", sTooltip);
 			}
 
 			oRm.openEnd();
