@@ -25,7 +25,7 @@
 
 			<h2 id="manifestUrl">Using manifest URL</h2>
 			<p>
-				<b>Consumption in a XML View</b>
+				<b>Consumption in an XML View</b>
 			</p>
 			<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
@@ -43,15 +43,17 @@ someContainer.addContent(oCard);
 
 			<h2 id="baseUrl">Using manifest object and base URL</h2>
 			<p>
-				<b>Consumption in a XML View</b>
+				<b>Consumption in an XML View</b>
 			</p>
 			<p>
-				NOTE: For the example below the manifest object is saved inside an unnamed model which is then used with
+				For the example below the manifest object is saved inside a model with name "myModel", which is then used with
 				the standard UI5 binding syntax.
+				<br>
+				<b>Note:</b> Unnamed models can not be used for this scenario. Same applies for model names which are internally created by the card as "parameters", "filters", "i18n", etc.
 			</p>
 			<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
-	&lt;w:Card manifest="{/manifestObject}" baseUrl="./mycardbundle/" width="400px" height="auto"/&gt;
+	&lt;w:Card manifest="{myModel>/manifestObject}" baseUrl="./mycardbundle/" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;
 </pre>
 			<p>
