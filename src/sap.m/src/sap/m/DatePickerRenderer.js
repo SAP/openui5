@@ -42,10 +42,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'],
 		}
 	};
 
-	DatePickerRenderer.getAriaRole = function(oDP) {
-		return "combobox";
-	};
-
 	DatePickerRenderer.getDescribedByAnnouncement = function(oDP) {
 
 		var sBaseAnnouncement = InputBaseRenderer.getDescribedByAnnouncement.apply(this, arguments);

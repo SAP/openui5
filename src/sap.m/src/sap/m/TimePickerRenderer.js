@@ -66,16 +66,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		};
 
 		/**
-		 * Returns aria accessibility role for the control.
-		 *
-		 * @override
-		 * @returns {String}
-		 */
-		TimePickerRenderer.getAriaRole = function () {
-			return "combobox";
-		};
-
-		/**
 		 * Returns the inner aria labelledby announcement texts for the accessibility.
 		 *
 		 * @overrides sap.m.InputBaseRenderer.getLabelledByAnnouncement
