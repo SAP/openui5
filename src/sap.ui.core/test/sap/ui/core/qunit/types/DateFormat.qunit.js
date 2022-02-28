@@ -888,6 +888,25 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 01", "week number in Japanese calendar");
 		});
 
+		QUnit.test("format and parse weekYear/weekInYear pattern with language en-AU", function (assert) {
+			sap.ui.getCore().getConfiguration().setLanguage("en_AU");
+			var oDateFormat = DateFormat.getDateInstance({
+				pattern: "YYYY'-'ww'-'EE"
+			});
+
+			// first day of the week is Monday
+			var oSundayDate = new Date(2022, 1, 13);
+			var oMondayDate = new Date(2022, 1, 14);
+
+			assert.equal(oDateFormat.format(oSundayDate), "2022-07-Sun", "Date can be correctly formatted to '2022-07-Sun'");
+			assert.deepEqual(oDateFormat.parse("2022-07-Sun"), oSundayDate, "'2022-07-Sun' can be correctly parsed");
+
+			assert.equal(oDateFormat.format(oMondayDate), "2022-08-Mon", "Date can be correctly formatted to '2022-08-Mon'");
+			assert.deepEqual(oDateFormat.parse("2022-08-Mon"), oMondayDate, "'2022-08-Mon' can be correctly parsed");
+
+			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+		});
+
 		QUnit.test("format and parse weekYear/weekInYear pattern", function (assert) {
 			var oDateFormat;
 			var aLocales;
