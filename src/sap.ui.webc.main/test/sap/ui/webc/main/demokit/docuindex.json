@@ -30,6 +30,13 @@
 				]
 			},
 			{
+				"id": "sap.ui.webc.main.Button",
+				"name": "Button",
+				"category": "Web Components",
+				"since": "1.92.0",
+				"samples": ["sap.ui.webc.main.sample.Button"]
+			},
+			{
 				"id": "sap.ui.webc.main.Card",
 				"name": "Card",
 				"category": "Web Components",
@@ -248,6 +255,11 @@
 				"id": "sap.ui.webc.main.sample.BusyIndicator",
 				"name": "BusyIndicator",
 				"description": "Demonstrates the basic usage of Busy Indicator."
+			},
+			{
+				"id": "sap.ui.webc.main.sample.Button",
+				"name": "Button Freestyle Example",
+				"description": "Demonstrates the basic usage of Button"
 			},
 			{
 				"id": "sap.ui.webc.main.sample.Card",

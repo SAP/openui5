@@ -13,7 +13,7 @@ sap.ui.define([
 		},
 		handleClick: function(oEvent) {
 			var demoToast = this.getView().byId("demoToast");
-			demoToast.setText("Event click fired.");
+			demoToast.setText("You clicked button with text: " + oEvent.getSource().getText() + " and design: " + oEvent.getSource().getDesign());
 			demoToast.show();
 		}
 
