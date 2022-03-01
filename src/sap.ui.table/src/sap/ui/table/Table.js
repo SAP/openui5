@@ -200,11 +200,12 @@ sap.ui.define([
 			navigationMode : {type : "sap.ui.table.NavigationMode", group : "Behavior", defaultValue : NavigationMode.Scrollbar, deprecated: true},
 
 			/**
-			 * The <code>threshold</code> defines how many additional (not yet visible records) shall be pre-fetched to enable smooth
-			 * scrolling. The threshold is always added to the <code>visibleRowCount</code>. If the <code>visibleRowCount</code> is 10 and the
+			 * Defines how many additional (not yet visible) data records from the back-end system are pre-fetched to enable smooth scrolling.
+			 * The threshold is always added to the <code>visibleRowCount</code>. If the <code>visibleRowCount</code> is 10 and the
 			 * <code>threshold</code> is 100, there will be 110 records fetched with the initial load.
-			 * If the <code>threshold</code> is lower than the <code>visibleRowCount</code>, the <code>visibleRowCount</code> will be used as
-			 * the <code>threshold</code>. If the value is 0 then the thresholding is disabled.
+			 * If the <code>threshold</code> is lower than the number of rows in the scrollable area (<code>visibleRowCount</code> minus number of
+			 * fixed rows), this number is used as the <code>threshold</code>.
+			 * If the value is 0, thresholding is disabled.
 			 */
 			threshold : {type : "int", group : "Appearance", defaultValue : 100},
 
