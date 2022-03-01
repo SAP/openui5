@@ -222,9 +222,7 @@ sap.ui.define([
 					return false;
 				},
 				getContexts: function () {
-					return oListBinding && (oListBinding.aContexts || (oListBinding.aIndices && oListBinding.aIndices.map(function (iIndex) {
-						return oInnerTable.getContextByIndex(iIndex);
-					})) || oListBinding.getContexts());
+					return oListBinding && oListBinding.getAllCurrentContexts();
 				},
 				handleListBinding: function () {
 					oListBinding.attachEvent("change", this._handleUpdateFinished.bind(this));
