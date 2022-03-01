@@ -1,53 +1,53 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/dt/DesignTime",
-	"sap/ui/rta/RuntimeAuthoring",
-	"sap/m/InstanceManager",
-	"sap/m/Dialog",
-	"sap/m/Popover",
-	"sap/ui/core/Popup",
-	"sap/m/MessageToast",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/ComponentContainer",
-	"sap/m/Button",
-	"sap/ui/layout/form/Form",
-	"sap/ui/base/Event",
-	"sap/ui/dt/Overlay",
-	"sap/ui/core/Component",
-	"sap/ui/core/UIArea",
 	"sap/base/util/merge",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/dt/util/ZIndexManager",
+	"sap/m/Button",
+	"sap/m/Dialog",
+	"sap/m/InstanceManager",
+	"sap/m/MessageToast",
+	"sap/m/Popover",
+	"sap/ui/base/Event",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Component",
+	"sap/ui/core/Core",
+	"sap/ui/core/UIArea",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/Popup",
+	"sap/ui/dt/util/ZIndexManager",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/Overlay",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/layout/form/Form",
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	DesignTime,
-	RuntimeAuthoring,
-	InstanceManager,
-	Dialog,
-	Popover,
-	Popup,
-	MessageToast,
-	UIComponent,
-	ComponentContainer,
-	Button,
-	Form,
-	Event,
-	Overlay,
-	Component,
-	UIArea,
 	merge,
-	PersistenceWriteAPI,
-	ZIndexManager,
+	Button,
+	Dialog,
+	InstanceManager,
+	MessageToast,
+	Popover,
+	Event,
 	XMLView,
+	ComponentContainer,
+	Component,
+	oCore,
+	UIArea,
+	UIComponent,
+	Popup,
+	ZIndexManager,
+	DesignTime,
+	Overlay,
 	FlSettings,
+	PersistenceWriteAPI,
 	FlUtils,
-	sinon,
-	oCore
+	Form,
+	RuntimeAuthoring,
+	sinon
 ) {
 	"use strict";
 
@@ -74,7 +74,7 @@ sap.ui.define([
 		}
 	});
 	var oComp = new MockComponent("testComponent");
-	var oComponentContainer = new ComponentContainer("sap-ui-static", {
+	var oComponentContainer = new ComponentContainer({
 		component: oComp
 	});
 	oComponentContainer.placeAt("qunit-fixture");
