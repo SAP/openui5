@@ -13518,7 +13518,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectValue("note", "Sales Order New 1 - SideEffect", 0)
 				.expectValue("note", "Sales Order 1 - SideEffect", 2)
 				.expectRequest({
-					batchNo : 4,
+					batchNo : 3,
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=105"
 						+ "&$filter=not(SalesOrderID%20eq%20%272%27)&foo=bar"
 				}, {
