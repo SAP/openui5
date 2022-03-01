@@ -15,7 +15,8 @@
 			"libs": {
 				"sap.ui.core": {},
 				"sap.ui.webc.fiori": {},
-				"sap.ui.webc.main": {}
+				"sap.ui.webc.main": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {
@@ -23,7 +24,6 @@
 				"stretch": true,
 				"files": [
 					"V.view.xml",
-					"C.controller.js",
 					"manifest.json"
 				]
 			}

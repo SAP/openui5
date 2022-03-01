@@ -14,7 +14,8 @@
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {},
-				"sap.ui.webc.main": {}
+				"sap.ui.webc.main": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {

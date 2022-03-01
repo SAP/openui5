@@ -1,23 +1,11 @@
-<mvc:View controllerName="sap.ui.webc.main.sample.BusyIndicator.C" xmlns="sap.ui.webc.main" xmlns:fiori="sap.ui.webc.fiori" xmlns:mvc="sap.ui.core.mvc" height="100%">
-    <Toast id="demoToast" duration="1000"></Toast>
-
-    <fiori:Page>
-        <fiori:header>
-            <fiori:Bar>
-                <fiori:middleContent>
-                    <Title text="BusyIndicator"></Title>
-                </fiori:middleContent>
-            </fiori:Bar>
-        </fiori:header>
-
-        <fiori:content>
-            <BusyIndicator text="Some text...">
-                <content>
-                    <Button icon="employee" text="Some text..."></Button>
-                    <Button icon="employee" text="Some text..."></Button>
-                    <Button icon="employee" text="Some text..."></Button>
-                </content>
-            </BusyIndicator>
-        </fiori:content>
-    </fiori:Page>
+<mvc:View
+	xmlns="sap.ui.webc.main"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	height="100%">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<BusyIndicator text="... something is happening" active="true" size="Medium" width="200px" />
+		<BusyIndicator active="true" text="Large size" size="Large" width="200px" />
+		<BusyIndicator active="true" text="Small size" size="Small" width="200px" />
+	</l:VerticalLayout>
 </mvc:View>
