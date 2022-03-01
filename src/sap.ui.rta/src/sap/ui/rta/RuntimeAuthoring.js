@@ -1235,6 +1235,8 @@ sap.ui.define([
 			selector: oSelector,
 			layer: sLayer
 		}).then(function () {
+			// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
+			this.getCommandStack().removeAllCommands(true);
 			ReloadInfoAPI.removeInfoSessionStorage(oSelector);
 			var oReloadInfo = {
 				isDraftAvailable: ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer}, this._getUShellService("URLParsing")),
@@ -1335,10 +1337,7 @@ sap.ui.define([
 		}).then(function(sAction) {
 			if (sAction === MessageBox.Action.OK) {
 				RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
-				return this._deleteChanges()
-					.then(function () {
-						this.getCommandStack().removeAllCommands();
-					}.bind(this));
+				return this._deleteChanges();
 			}
 			return undefined;
 		}.bind(this));
