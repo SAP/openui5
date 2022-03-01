@@ -250,6 +250,12 @@ sap.ui.define(function() {
 				},
 				title: "sap.ui.model.analytics.odata4analytics - QUnit Tests"
 			},
+			"model/_Helper": {
+				title: "sap.ui.model._Helper"
+			},
+			"model/Binding": {
+				title: "sap.ui.model.Binding"
+			},
 			"model/Context": {
 				title: "sap.ui.model.Context"
 			},
