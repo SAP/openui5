@@ -3,33 +3,55 @@
 /* Base theme                                             */
 /* ====================================================== */
 
+@_sap_ui_integration_Paginator_IconOutlineOffset: -3px;
+
 .sapUiIntPaginator {
 	.sapMCrslControls {
 		.sapMCrslControlsContainer {
 			margin: 0;
-
-			.sapFCardFooterWithActionsStrip & {
-				justify-content: flex-start;
-			}
 		}
 
-
-		.sapMCrslPrev:hover,
-		.sapMCrslNext:hover {
-			background: @sapUiButtonHoverBackground;
-		}
-
-		.sapMCrslPrev:active,
-		.sapMCrslNext:active {
-			background: @sapUiButtonActiveBackground;
-			color: @sapUiButtonActiveTextColor;
+		.sapMCrslPrev,
+		.sapMCrslNext {
+			background: none;
+			border: none;
+			transition: opacity 0.25s ease-out;
 		}
 
 		.sapUiIcon {
 			pointer-events: auto;
+			border-radius: 50%;
+			background-color: @sapUiButtonBackground;
+			border: 1px solid @sapUiButtonBorderColor;
+
+			outline-offset: @_sap_ui_integration_Paginator_IconOutlineOffset;
 
 			&:focus {
 				outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+			}
+		}
+
+		.sapUiIcon:hover {
+			background: @sapUiButtonHoverBackground;
+		}
+
+		.sapUiIcon:active {
+			background: @sapUiButtonActiveBackground;
+			color: @sapUiButtonActiveTextColor;
+		}
+
+		.sap-desktop & {
+			.sapMCrslPrev,
+			.sapMCrslNext {
+				opacity: 0;
+			}
+		}
+
+		.sap-desktop &:hover,
+		.sap-desktop &:focus-within {
+			.sapMCrslPrev,
+			.sapMCrslNext {
+				opacity: 1;
 			}
 		}
 	}

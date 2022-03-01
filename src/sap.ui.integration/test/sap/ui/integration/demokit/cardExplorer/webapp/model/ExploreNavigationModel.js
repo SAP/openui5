@@ -1455,6 +1455,17 @@ sap.ui.define([
 										key: 'DataExtension.js'
 									}
 								]
+							},
+							{
+								title: 'Pagination and Actions',
+								key: "clientactions",
+								files: [
+									{
+										url: '/samples/pagination/clientactions/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},
