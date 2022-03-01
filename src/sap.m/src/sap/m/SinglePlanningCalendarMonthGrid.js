@@ -546,15 +546,15 @@ sap.ui.define([
 				oLastVisibleDay = aVisibleDays[aVisibleDays.length - 1],
 					// we do not need appointments without start and end dates
 				aApps = this.getAppointments().filter(function(app) {
-					var bValid = app.getStartDate() && app.getEndDate();
+					var bValid = app._getStartDateWithTimezoneAdaptation() && app._getEndDateWithTimezoneAdaptation();
 					if (!bValid) {
 						Log.warning("Appointment " + app.getId() + " has no start or no end date. It is ignored.");
 					}
 					return bValid;
 					// map to a structure ready for calculations
 				}).map(function(app) {
-					var oStart = CalendarDate.fromLocalJSDate(app.getStartDate()),
-						oEnd = CalendarDate.fromLocalJSDate(app.getEndDate());
+					var oStart = CalendarDate.fromLocalJSDate(app._getStartDateWithTimezoneAdaptation()),
+						oEnd = CalendarDate.fromLocalJSDate(app._getEndDateWithTimezoneAdaptation());
 					return {
 						data: app,
 						start: oStart,
@@ -687,8 +687,8 @@ sap.ui.define([
 						oAppointment = oDragSession.getDragControl(),
 						oPlaceholder = oDragSession.getDropControl(),
 						oCellCalStartDate = oPlaceholder.getDate(),
-						oAppCalStartDate = CalendarDate.fromLocalJSDate(oAppointment.getStartDate()),
-						oAppCalEndDate = CalendarDate.fromLocalJSDate(oAppointment.getEndDate()),
+						oAppCalStartDate = CalendarDate.fromLocalJSDate(oAppointment._getStartDateWithTimezoneAdaptation()),
+						oAppCalEndDate = CalendarDate.fromLocalJSDate(oAppointment._getEndDateWithTimezoneAdaptation()),
 						iOffset = CalendarUtils._daysBetween(oCellCalStartDate, oAppCalStartDate),
 						oStartDate = new CalendarDate(oAppCalStartDate),
 						oEndDate = new CalendarDate(oAppCalEndDate),
@@ -827,8 +827,8 @@ sap.ui.define([
 			var oUnifiedRB = Core.getLibraryResourceBundle("sap.ui.unified"),
 				sStartTime = oUnifiedRB.getText("CALENDAR_START_TIME"),
 				sEndTime = oUnifiedRB.getText("CALENDAR_END_TIME"),
-				sFormattedStartDate = this._oFormatAriaApp.format(oAppointment.getStartDate()),
-				sFormattedEndDate = this._oFormatAriaApp.format(oAppointment.getEndDate()),
+				sFormattedStartDate = this._oFormatAriaApp.format(oAppointment._getStartDateWithTimezoneAdaptation()),
+				sFormattedEndDate = this._oFormatAriaApp.format(oAppointment._getEndDateWithTimezoneAdaptation()),
 				sAppInfo = sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
 
 			return sAppInfo + "; " + PlanningCalendarLegend.findLegendItemForItem(Core.byId(this._sLegendId), oAppointment);

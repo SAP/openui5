@@ -10,6 +10,8 @@ sap.ui.define([
 		'sap/ui/core/Locale',
 		'sap/ui/core/InvisibleText',
 		'sap/ui/core/format/DateFormat',
+		'sap/ui/core/format/TimezoneUtil',
+		'sap/ui/core/Core',
 		'sap/ui/core/date/UniversalDate',
 		'sap/ui/core/dnd/DragInfo',
 		'sap/ui/core/dnd/DropInfo',
@@ -35,6 +37,8 @@ sap.ui.define([
 		Locale,
 		InvisibleText,
 		DateFormat,
+		TimezoneUtil,
+		Core,
 		UniversalDate,
 		DragInfo,
 		DropInfo,
@@ -438,7 +442,7 @@ sap.ui.define([
 					var oDragSession = oEvent.getParameter("dragSession"),
 						oAppointment = oDragSession.getDragControl(),
 						oDropTarget = oDragSession.getDropControl(),
-						bIsFullDay = this.isAllDayAppointment(oAppointment.getStartDate(), oAppointment.getEndDate()),
+						bIsFullDay = this.isAllDayAppointment(oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation()),
 						fnAlignIndicator = function () {
 							var $Indicator = jQuery(oDragSession.getIndicator()),
 								iAppHeight = oAppointment.$().outerHeight(),
@@ -471,17 +475,17 @@ sap.ui.define([
 						oEndDate,
 						oBrowserEvent = oEvent.getParameter("browserEvent"),
 						bCopy = (oBrowserEvent.metaKey || oBrowserEvent.ctrlKey),
-						bIsFullDay = this.isAllDayAppointment(oAppointment.getStartDate(), oAppointment.getEndDate());
+						bIsFullDay = this.isAllDayAppointment(oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation());
 
 					oEndDate = new Date(oStartDate);
 
 					if (bIsFullDay) {
-						oEndDate.setMilliseconds(oAppointment.getEndDate().getTime() - oAppointment.getStartDate().getTime());
+						oEndDate.setMilliseconds(oAppointment._getEndDateWithTimezoneAdaptation().getTime() - oAppointment._getStartDateWithTimezoneAdaptation().getTime());
 					}
 
 					this.$().find(".sapMSinglePCOverlay").removeClass("sapMSinglePCOverlayDragging");
 
-					if (bIsFullDay && oAppointment.getStartDate().getTime() === oStartDate.getTime()) {
+					if (bIsFullDay && oAppointment._getStartDateWithTimezoneAdaptation().getTime() === oStartDate.getTime()) {
 						return;
 					}
 
@@ -524,7 +528,7 @@ sap.ui.define([
 					var oDragSession = oEvent.getParameter("dragSession"),
 						oAppointment = oDragSession.getDragControl(),
 						oDropTarget = oDragSession.getDropControl(),
-						bIsFullDay = this.isAllDayAppointment(oAppointment.getStartDate(), oAppointment.getEndDate()),
+						bIsFullDay = this.isAllDayAppointment(oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation()),
 						fnAlignIndicator = function () {
 							var $Indicator = jQuery(oDragSession.getIndicator()),
 								iAppHeight = oAppointment.$().outerHeight(),
@@ -554,19 +558,19 @@ sap.ui.define([
 						oEndDate,
 						oBrowserEvent = oEvent.getParameter("browserEvent"),
 						bCopy = (oBrowserEvent.metaKey || oBrowserEvent.ctrlKey),
-						bIsFullDay = this.isAllDayAppointment(oAppointment.getStartDate(), oAppointment.getEndDate());
+						bIsFullDay = this.isAllDayAppointment(oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation());
 
 					oEndDate = new Date(oStartDate);
 
 					if (bIsFullDay) {
 						oEndDate.setHours(oEndDate.getHours() + 1);
 					} else {
-						oEndDate.setMilliseconds(oAppointment.getEndDate().getTime() - oAppointment.getStartDate().getTime());
+						oEndDate.setMilliseconds(oAppointment._getEndDateWithTimezoneAdaptation().getTime() - oAppointment._getStartDateWithTimezoneAdaptation().getTime());
 					}
 
 					this.$().find(".sapMSinglePCOverlay").removeClass("sapMSinglePCOverlayDragging");
 
-					if (!bIsFullDay && oAppointment.getStartDate().getTime() === oStartDate.getTime()) {
+					if (!bIsFullDay && oAppointment._getStartDateWithTimezoneAdaptation().getTime() === oStartDate.getTime()) {
 						return;
 					}
 
@@ -694,8 +698,8 @@ sap.ui.define([
 						newPos;
 
 					newPos = this._calcResizeNewHoursAppPos(
-						oAppointment.getStartDate(),
-						oAppointment.getEndDate(),
+						oAppointment._getStartDateWithTimezoneAdaptation(),
+						oAppointment._getEndDateWithTimezoneAdaptation(),
 						iIndex,
 						oDragSession.getComplexData("bottomHandle")
 					);
@@ -710,8 +714,8 @@ sap.ui.define([
 						opacity: 1
 					});
 
-					if (oAppointment.getEndDate().getTime() === newPos.endDate.getTime() &&
-							oAppointment.getStartDate().getTime() === newPos.startDate.getTime()) {
+					if (oAppointment._getEndDateWithTimezoneAdaptation().getTime() === newPos.endDate.getTime() &&
+							oAppointment._getStartDateWithTimezoneAdaptation().getTime() === newPos.startDate.getTime()) {
 						return;
 					}
 
@@ -881,8 +885,8 @@ sap.ui.define([
 				this._oAppointmentsToRender[sDate].oAppointmentsList.getIterator().forEach(function(oAppNode) {
 					oAppointment = oAppNode.getData();
 					oAppDomRef = this.getDomRef().querySelector("#" + oAppointment.getId() + "-" + iColumn + "_" + iRow);
-					oAppStartDate = oAppointment.getStartDate();
-					oAppEndDate = oAppointment.getEndDate();
+					oAppStartDate = oAppointment._getStartDateWithTimezoneAdaptation();
+					oAppEndDate = oAppointment._getEndDateWithTimezoneAdaptation();
 					bAppStartIsOutsideVisibleStartHour = oColumnStartDateAndHour.getTime() > oAppStartDate.getTime();
 					bAppEndIsOutsideVisibleEndHour = oColumnEndDateAndHour.getTime() < oAppEndDate.getTime();
 
@@ -1147,9 +1151,9 @@ sap.ui.define([
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._focusCellWithKeyboard = function (oAppointment, iDirection) {
-			var bFullDayApp = this.isAllDayAppointment(oAppointment.getStartDate(), oAppointment.getEndDate()),
+			var bFullDayApp = this.isAllDayAppointment(oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation()),
 				oFormat = this._getDateFormatter(),
-				oAppStartDate = new Date(oAppointment.getStartDate().getFullYear(), oAppointment.getStartDate().getMonth(), oAppointment.getStartDate().getDate(), oAppointment.getStartDate().getHours()),
+				oAppStartDate = new Date(oAppointment._getStartDateWithTimezoneAdaptation().getFullYear(), oAppointment._getStartDateWithTimezoneAdaptation().getMonth(), oAppointment._getStartDateWithTimezoneAdaptation().getDate(), oAppointment._getStartDateWithTimezoneAdaptation().getHours()),
 				oGridStartDate = new Date(this.getStartDate().getFullYear(), this.getStartDate().getMonth(), this.getStartDate().getDate(), this.getStartDate().getHours());
 
 			// If an appointment start hour is before the visible grid start date
@@ -1379,7 +1383,7 @@ sap.ui.define([
 		 */
 		SinglePlanningCalendarGrid.prototype._formatTimeAsString = function (oDate) {
 			var sPattern = this._getHoursPattern() + ":mm",
-				oFormat = DateFormat.getDateTimeInstance({pattern: sPattern }, new Locale(this._getCoreLocaleId()));
+				oFormat = DateFormat.getTimeInstance({pattern: sPattern }, new Locale(this._getCoreLocaleId()));
 
 			return oFormat.format(oDate);
 		};
@@ -1451,13 +1455,33 @@ sap.ui.define([
 			var $nowMarker = this.$("nowMarker"),
 				$nowMarkerText = this.$("nowMarkerText"),
 				$nowMarkerAMPM = this.$("nowMarkerAMPM"),
-				bCurrentHourNotVisible = !this._isVisibleHour(oDate.getHours());
+				bCurrentHourNotVisible = !this._isVisibleHour(oDate.getHours()),
+				oMarkerDate = new Date(oDate.getTime());
+
+			oMarkerDate = this._convertToTimezone(oMarkerDate);
 
 			$nowMarker.toggleClass("sapMSinglePCNowMarkerHidden", bCurrentHourNotVisible);
-			$nowMarker.css("top", this._calculateTopPosition(oDate) + "rem");
+			$nowMarker.css("top", this._calculateTopPosition(oMarkerDate) + "rem");
 			$nowMarkerText.text(this._formatTimeAsString(oDate));
 			$nowMarkerAMPM.text(this._addAMPM(oDate));
 			$nowMarkerText.append($nowMarkerAMPM);
+		};
+
+		/**
+		 * Aligns a date to the timezone from the configuration.
+		 *
+		 * @returns {Object} <code>oNewDate</code> aligned to the configured timezone.
+		 * @private
+		 */
+		SinglePlanningCalendarGrid.prototype._convertToTimezone = function(oDate) {
+			var sTimezone = Core.getConfiguration().getTimezone();
+			var oNewDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
+
+			oNewDate = new Date(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds());
+			oNewDate.setUTCFullYear(oDate.getUTCFullYear());
+			oNewDate = TimezoneUtil.convertToTimezone(oNewDate, sTimezone);
+
+			return oNewDate;
 		};
 
 		/**
@@ -1491,8 +1515,8 @@ sap.ui.define([
 			var that = this;
 
 			return aAppointments.reduce(function (oMap, oAppointment) {
-				var oAppStartDate = oAppointment.getStartDate(),
-					oAppEndDate = oAppointment.getEndDate(),
+				var oAppStartDate = oAppointment._getStartDateWithTimezoneAdaptation(),
+					oAppEndDate = oAppointment._getEndDateWithTimezoneAdaptation(),
 					oCurrentAppCalStartDate,
 					oCurrentAppCalEndDate,
 					sDay;
@@ -1563,8 +1587,8 @@ sap.ui.define([
 		 */
 		SinglePlanningCalendarGrid.prototype._isAppointmentFitInVisibleHours = function (oColumnCalDate) {
 			return function (oAppointment) {
-				var iAppStartTime = oAppointment.getStartDate().getTime(),
-					iAppEndTime = oAppointment.getEndDate().getTime(),
+				var iAppStartTime = oAppointment._getStartDateWithTimezoneAdaptation().getTime(),
+					iAppEndTime = oAppointment._getEndDateWithTimezoneAdaptation().getTime(),
 					iColumnStartTime = (new UniversalDate(oColumnCalDate.getYear(), oColumnCalDate.getMonth(), oColumnCalDate.getDate(), this._getVisibleStartHour())).getTime(),
 					iColumnEndTime = (new UniversalDate(oColumnCalDate.getYear(), oColumnCalDate.getMonth(), oColumnCalDate.getDate(), this._getVisibleEndHour(), 59, 59)).getTime();
 
@@ -1594,7 +1618,7 @@ sap.ui.define([
 
 				aAppointments.forEach(function (oCurrentAppointment) {
 					var oCurrentAppointmentNode = new SinglePlanningCalendarUtilities.node(oCurrentAppointment),
-						iCurrentAppointmentStart = oCurrentAppointment.getStartDate().getTime();
+						iCurrentAppointmentStart = oCurrentAppointment._getStartDateWithTimezoneAdaptation().getTime();
 
 					if (oAppointmentsList.getSize() === 0) {
 						oAppointmentsList.add(oCurrentAppointmentNode);
@@ -1604,8 +1628,8 @@ sap.ui.define([
 					oAppointmentsList.getIterator().forEach(function (oAppointmentNode) {
 						var bShouldBreak = true,
 							oAppointment = oAppointmentNode.getData(),
-							iAppointmentStart = oAppointment.getStartDate().getTime(),
-							iAppointmentEnd = oAppointment.getEndDate().getTime(),
+							iAppointmentStart = oAppointment._getStartDateWithTimezoneAdaptation().getTime(),
+							iAppointmentEnd = oAppointment._getEndDateWithTimezoneAdaptation().getTime(),
 							iAppointmentDuration = iAppointmentEnd - iAppointmentStart;
 
 						if (iAppointmentDuration < iDuration) {
@@ -1650,8 +1674,8 @@ sap.ui.define([
 				var oCurrentAppointment = oCurrentAppointmentNode.getData(),
 					iLevelFoundSpace = oCurrentAppointmentNode.level,
 					iCurrentAppointmentLevel = oCurrentAppointmentNode.level,
-					iCurrentAppointmentStart = oCurrentAppointment.getStartDate().getTime(),
-					iCurrentAppointmentEnd = oCurrentAppointment.getEndDate().getTime(),
+					iCurrentAppointmentStart = oCurrentAppointment._getStartDateWithTimezoneAdaptation().getTime(),
+					iCurrentAppointmentEnd = oCurrentAppointment._getEndDateWithTimezoneAdaptation().getTime(),
 					iCurrentAppointmentDuration = iCurrentAppointmentEnd - iCurrentAppointmentStart;
 
 				if (iCurrentAppointmentDuration < HALF_HOUR_MS) {
@@ -1663,8 +1687,8 @@ sap.ui.define([
 				new SinglePlanningCalendarUtilities.iterator(oAppointmentsList).forEach(function (oAppointmentNode) {
 					var oAppointment = oAppointmentNode.getData(),
 						iAppointmentLevel = oAppointmentNode.level,
-						iAppointmentStart = oAppointment.getStartDate().getTime(),
-						iAppointmentEnd = oAppointment.getEndDate().getTime(),
+						iAppointmentStart = oAppointment._getStartDateWithTimezoneAdaptation().getTime(),
+						iAppointmentEnd = oAppointment._getEndDateWithTimezoneAdaptation().getTime(),
 						iAppointmentDuration = iAppointmentEnd - iAppointmentStart;
 
 					if (iAppointmentDuration < HALF_HOUR_MS) {
@@ -1724,8 +1748,8 @@ sap.ui.define([
 		 */
 		SinglePlanningCalendarGrid.prototype._isBlockerVisible = function (oViewStart, oViewEnd) {
 			return function (oAppointment) {
-				var oAppStart = CalendarDate.fromLocalJSDate(oAppointment.getStartDate()),
-					oAppEnd = CalendarDate.fromLocalJSDate(oAppointment.getEndDate());
+				var oAppStart = CalendarDate.fromLocalJSDate(oAppointment._getStartDateWithTimezoneAdaptation()),
+					oAppEnd = CalendarDate.fromLocalJSDate(oAppointment._getEndDateWithTimezoneAdaptation());
 
 				var bIsBiggerThanView = oAppStart.isBefore(oViewStart) && oAppEnd.isAfter(oViewEnd),
 					bStartDateBetweenViewStartAndEnd = CalendarUtils._isBetween(oAppStart, oViewStart, oViewEnd, true),
@@ -1748,8 +1772,8 @@ sap.ui.define([
 
 			aVisibleBlockers.forEach(function (oCurrentBlocker) {
 				var oCurrentBlockerNode = new SinglePlanningCalendarUtilities.node(oCurrentBlocker),
-					oCurrentBlockerStart = CalendarDate.fromLocalJSDate(oCurrentBlocker.getStartDate()),
-					oCurrentBlockerEnd = CalendarDate.fromLocalJSDate(oCurrentBlocker.getEndDate());
+					oCurrentBlockerStart = CalendarDate.fromLocalJSDate(oCurrentBlocker._getStartDateWithTimezoneAdaptation()),
+					oCurrentBlockerEnd = CalendarDate.fromLocalJSDate(oCurrentBlocker._getEndDateWithTimezoneAdaptation());
 
 				oCurrentBlockerNode.width = CalendarUtils._daysBetween(oCurrentBlockerEnd, oCurrentBlockerStart);
 
@@ -1761,8 +1785,8 @@ sap.ui.define([
 				oBlockersList.getIterator().forEach(function (oBlockerNode) {
 					var bShouldBreak = true,
 						oBlocker = oBlockerNode.getData(),
-						oBlockerStart = CalendarDate.fromLocalJSDate(oBlocker.getStartDate()),
-						oBlockerEnd = CalendarDate.fromLocalJSDate(oBlocker.getEndDate());
+						oBlockerStart = CalendarDate.fromLocalJSDate(oBlocker._getStartDateWithTimezoneAdaptation()),
+						oBlockerEnd = CalendarDate.fromLocalJSDate(oBlocker._getEndDateWithTimezoneAdaptation());
 
 					if (oCurrentBlockerStart.isSameOrAfter(oBlockerStart) && oCurrentBlockerStart.isSameOrBefore(oBlockerEnd)) {
 						oCurrentBlockerNode.level++;
@@ -1999,8 +2023,8 @@ sap.ui.define([
 		SinglePlanningCalendarGrid.prototype._getAppointmentAnnouncementInfo = function (oAppointment) {
 			var sStartTime = this._oUnifiedRB.getText("CALENDAR_START_TIME"),
 				sEndTime = this._oUnifiedRB.getText("CALENDAR_END_TIME"),
-				sFormattedStartDate = this._oFormatStartEndInfoAria.format(oAppointment.getStartDate()),
-				sFormattedEndDate = this._oFormatStartEndInfoAria.format(oAppointment.getEndDate()),
+				sFormattedStartDate = this._oFormatStartEndInfoAria.format(oAppointment._getStartDateWithTimezoneAdaptation()),
+				sFormattedEndDate = this._oFormatStartEndInfoAria.format(oAppointment._getEndDateWithTimezoneAdaptation()),
 				sAppInfo = sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
 
 			return sAppInfo + "; " + PlanningCalendarLegend.findLegendItemForItem(sap.ui.getCore().byId(this._sLegendId), oAppointment);

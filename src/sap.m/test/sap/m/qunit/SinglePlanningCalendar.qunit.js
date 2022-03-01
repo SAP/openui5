@@ -2220,4 +2220,67 @@ sap.ui.define([
 		assert.equal(oView, null, "View with id 'myNonExistingId' is missing, null is returned");
 	});
 
+	QUnit.module("Behaviour in different timezone configurations", {
+		beforeEach: function () {
+			var oAppointment = new CalendarAppointment({
+				title: "Appointment",
+				text: "new appointment",
+				type: "Type01",
+				icon: "../ui/unified/images/m_01.png",
+				color: "#FF0000",
+				startDate: new Date(2022, 11, 24, 14, 30, 0),
+				endDate: new Date(2022, 11, 24, 15, 30, 0)
+			});
+			this.oSPC = new SinglePlanningCalendar( {
+				views: [
+					new SinglePlanningCalendarDayView({
+						key: "DayView",
+						title: "Day View"
+					})
+				],
+				appointments : [
+					oAppointment
+				]
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oSPC.destroy();
+		}
+	});
+
+	QUnit.test("Check the view start hour", function(assert) {
+		assert.strictEqual(this.oSPC.getAggregation("_grid")._getVisibleStartHour(), 0, "The daily view has a consistent start hour");
+
+		var sPrevTimezone = oCore.getConfiguration().getTimezone();
+
+		oCore.getConfiguration().setTimezone("Asia/Tokyo");
+		oCore.applyChanges();
+
+		assert.strictEqual(this.oSPC.getAggregation("_grid")._getVisibleStartHour(), 0, "The daily view has a consistent start hour");
+
+		oCore.getConfiguration().setTimezone(sPrevTimezone);
+	});
+
+	QUnit.test("Check the appointments start and end dates", function(assert) {
+		var oStartDate = new Date(2022, 11, 24, 14, 30, 0);
+		var oEndDate = new Date(2022, 11, 24, 15, 30, 0);
+		var sPrevTimezone = oCore.getConfiguration().getTimezone();
+		var iTimezoneOffset = oStartDate.getTimezoneOffset();
+		var iTokyoOffsetMinutes = 9 * 60 + iTimezoneOffset;
+
+		assert.strictEqual(this.oSPC.getAggregation("appointments")[0]._getStartDateWithTimezoneAdaptation().toString(), oStartDate.toString(), "The appointment StartDate changes accordingly");
+		assert.strictEqual(this.oSPC.getAggregation("appointments")[0]._getEndDateWithTimezoneAdaptation().toString(), oEndDate.toString(), "The appointment EndDate changes accordingly");
+
+		oCore.getConfiguration().setTimezone("Asia/Tokyo");
+		oCore.applyChanges();
+
+		var oTokyoStartDate = new Date(2022, 11, 24, 14, 30 + iTokyoOffsetMinutes, 0);
+		var oTokyoEndDate = new Date(2022, 11, 24, 15, 30 + iTokyoOffsetMinutes, 0);
+		assert.strictEqual(this.oSPC.getAggregation("appointments")[0]._getStartDateWithTimezoneAdaptation().toString(), oTokyoStartDate.toString(), "The appointment StartDate changes accordingly");
+		assert.strictEqual(this.oSPC.getAggregation("appointments")[0]._getEndDateWithTimezoneAdaptation().toString(), oTokyoEndDate.toString(), "The appointment EndDate changes accordingly");
+
+		oCore.getConfiguration().setTimezone(sPrevTimezone);
+	});
+
 });
