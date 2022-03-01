@@ -7329,6 +7329,57 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Selecting an item should not remove filtering", function (assert) {
+		var oSystem = {
+			desktop : true,
+			phone : false,
+			tablet : false
+		},
+		oMultiComboBox = new MultiComboBox({
+			items : [new Item({
+				key : "DZ",
+				text : "Algeria"
+			}), new Item({
+				key : "AR",
+				text : "Argentina"
+			}), new Item({
+				key : "AU",
+				text : "Australia"
+			})]
+		}), oInputEvent = {
+				target: {
+					value: "A"
+				},
+				srcControl: oMultiComboBox,
+				setMarked: function () {}
+		};
+
+		this.stub(Device, "system", oSystem);
+		this.stub(jQuery.device, "is", oSystem);
+
+		// arrange
+		oMultiComboBox.syncPickerContent();
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oMultiComboBox.oninput(oInputEvent);
+		this.clock.tick(500);
+
+		// arrange
+		var oSyncPickerContentSpy = this.spy(oMultiComboBox, "syncPickerContent");
+
+		// act - select item from list
+		oMultiComboBox._getList().setSelectedItem(oMultiComboBox._getList().getItems()[0], true, true);
+		this.clock.tick(500);
+
+		// assert
+		assert.notOk(oSyncPickerContentSpy.called, "syncPickerContent() should not be called when picker is opened.");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("Phone: Autocomplete + Item selection", function (assert) {
 		var oSystem = {
 			desktop : false,
