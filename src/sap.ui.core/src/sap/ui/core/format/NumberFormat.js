@@ -1828,8 +1828,8 @@ sap.ui.define([
 			return (oOptions.type === mNumberType.CURRENCY || oOptions.type === mNumberType.UNIT) ? null : NaN;
 		}
 
-		// Get rid of leading zeros
-		if (oOptions.parseAsString) {
+		// Get rid of leading zeros (percent was already shifted)
+		if (oOptions.parseAsString && !bPercent) {
 			vResult = NumberFormat._shiftDecimalPoint(sValue, 0);
 		}
 

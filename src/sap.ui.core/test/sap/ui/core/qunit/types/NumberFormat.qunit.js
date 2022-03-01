@@ -2501,7 +2501,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	});
 
 	QUnit.test("Percent format with string values", function(assert) {
-		var oFormat = sap.ui.core.format.NumberFormat.getPercentInstance({
+		var oFormat = NumberFormat.getPercentInstance({
 			maxFractionDigits: 3
 		});
 
@@ -2510,6 +2510,64 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format(".1234567"), "12.345%", ".1234567");
 		assert.equal(oFormat.format("-.1234567"), "-12.345%", ".1234567");
 		assert.equal(oFormat.format(".1234"), "12.34%", ".1234");
+	});
+
+	QUnit.test("Percent format with parseAsString (en_GB)", function(assert) {
+		var oFormat = NumberFormat.getPercentInstance({
+			parseAsString: true
+		}, new Locale("en_GB"));
+
+		[
+			{
+				numberValue: "0.01",
+				percentValue: "1%"
+			},
+			{
+				numberValue: "1.00",
+				percentValue: "100%"
+			},
+			{
+				numberValue: "1.23",
+				percentValue: "123%"
+			},
+			{
+				numberValue: "1.234567",
+				percentValue: "123.4567%"
+			}
+		].forEach(function (oFixture) {
+			var sFormatted = oFormat.format(oFixture.numberValue);
+			assert.equal(sFormatted, oFixture.percentValue, "format " + oFixture.numberValue);
+			assert.equal(oFormat.parse(sFormatted), oFixture.numberValue, "parse " + oFixture.percentValue);
+		});
+	});
+
+	QUnit.test("Percent format with parseAsString (de_DE)", function(assert) {
+		var oFormat = NumberFormat.getPercentInstance({
+			parseAsString: true
+		}, new Locale("de_DE"));
+
+		[
+			{
+				numberValue: "0.01",
+				percentValue: "1\xa0%"
+			},
+			{
+				numberValue: "1.00",
+				percentValue: "100\xa0%"
+			},
+			{
+				numberValue: "1.23",
+				percentValue: "123\xa0%"
+			},
+			{
+				numberValue: "1.234567",
+				percentValue: "123,4567\xa0%"
+			}
+		].forEach(function (oFixture) {
+			var sFormatted = oFormat.format(oFixture.numberValue);
+			assert.equal(sFormatted, oFixture.percentValue, "format " + oFixture.numberValue);
+			assert.equal(oFormat.parse(sFormatted), oFixture.numberValue, "parse " + oFixture.percentValue);
+		});
 	});
 
 	QUnit.test("Percent format with specific locale tr-TR", function (assert) {
