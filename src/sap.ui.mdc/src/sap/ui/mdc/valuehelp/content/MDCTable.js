@@ -9,9 +9,7 @@ sap.ui.define([
 	'sap/ui/mdc/enum/SelectType',
 	'sap/ui/mdc/library',
 	'sap/m/library',
-	"sap/ui/table/library",
-	"sap/ui/mdc/p13n/Engine",
-	"sap/ui/mdc/enum/PersistenceMode"
+	"sap/ui/table/library"
 
 ], function(
 	FilterableListContent,
@@ -20,9 +18,7 @@ sap.ui.define([
 	SelectType,
 	library,
 	mLibrary,
-	uiTableLibrary,
-	Engine,
-	PersistenceMode
+	uiTableLibrary
 ) {
 	"use strict";
 
@@ -433,14 +429,12 @@ sap.ui.define([
 		if (oChanges.name === "table") { // outer table
 			var oTable = oChanges.child;
 			if (oChanges.mutation === "remove") {
-				Engine.getInstance().defaultProviderRegistry.detach(oTable);
 				this._oObserver.unobserve(oTable);
 				this._oTable = null;
 				this._oTableHelper = null;
 				this._addPromise("listBinding");
 			} else {
 				this._oTable = oTable;
-				Engine.getInstance().defaultProviderRegistry.attach(oTable, PersistenceMode.Transient);
 				this._oObserver.observe(oTable, {aggregations: ["_content"]});
 				this._sTableType = _getMDCTableType(oTable);
 				oTable.addDelegate({ onmouseover: function (oEvent) {	// Fix m.Table itemPress
