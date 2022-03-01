@@ -8,7 +8,8 @@ sap.ui.define(
 		"sap/ui/mdc/filterbar/FilterBarBaseRenderer",
 		"sap/ui/mdc/filterbar/aligned/FilterItemLayout",
 		"sap/ui/mdc/filterbar/vh/FilterContainer",
-		"sap/m/Button"
+		"sap/m/Button",
+		"sap/ui/mdc/enum/PersistenceMode"
 	],
 	function (
 		mLibrary,
@@ -16,7 +17,8 @@ sap.ui.define(
 		FilterBarBaseRenderer,
 		FilterItemLayout,
 		FilterContainer,
-		Button
+		Button,
+		PersistenceMode
 	) {
 		"use strict";
 
@@ -69,6 +71,11 @@ sap.ui.define(
 		);
 
 		var ButtonType = mLibrary.ButtonType;
+
+		FilterBar.prototype.init = function() {
+			FilterBarBase.prototype.init.apply(this, arguments);
+			this.getEngine().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
+		};
 
 		FilterBar.prototype._createInnerLayout = function () {
 			this._cLayoutItem = FilterItemLayout;
@@ -136,6 +143,7 @@ sap.ui.define(
 
 
 		FilterBar.prototype.exit = function() {
+			this.getEngine().defaultProviderRegistry.detach(this);
 			if (this._oCollectiveSearch) { // do not destroy CollectiveSearch as it is owned by value help and might be reused there
 				this._oFilterBarLayout.removeControl(this._oCollectiveSearch);
 				this._oCollectiveSearch = null;

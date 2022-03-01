@@ -577,10 +577,14 @@ sap.ui.define([
 		theVariantManagementIsDirty: function (bIsDirty) {
 			return this.waitFor({
 				controlType: "sap.ui.fl.variants.VariantManagement",
-				matchers: new PropertyStrictEquals({
-					name: "modified",
-					value: bIsDirty
-				}),
+				matchers: {
+					properties: {
+						modified: bIsDirty
+					},
+					ancestor: {
+						controlType: "sap.m.App"
+					}
+				},
 				success: function (aVariantManagements) {
 					Opa5.assert.equal(aVariantManagements.length, 1, "Dirty VariantManagement found");
 				},
@@ -599,6 +603,11 @@ sap.ui.define([
 		iShouldSeeSelectedVariant: function (sVariantName) {
 			return this.waitFor({
 				controlType: "sap.ui.fl.variants.VariantManagement",
+				matchers: {
+					ancestor: {
+						controlType: "sap.m.App"
+					}
+				},
 				check: function (aVariantManagements) {
 					return !!aVariantManagements.length;
 				},

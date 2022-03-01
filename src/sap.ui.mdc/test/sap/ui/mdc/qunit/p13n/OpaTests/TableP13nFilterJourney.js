@@ -98,7 +98,36 @@ sap.ui.define([
 		Then.iShouldSeeP13nFilterItems(aFilterItems);
 	});
 
-	opaTest("Close and open the filter dialog to check if the value is still there", function (Given, When, Then) {
+	opaTest("Cancel and open the filter dialog to check if the values have been discarded", function (Given, When, Then) {
+		//close Dialog
+		When.iPressDialogCancel();
+
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Filter");
+
+		Then.thePersonalizationDialogOpens();
+		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
+
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Country",
+			index: 5,
+			values: [undefined]
+		});
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Founding Year",
+			index: 8,
+			values: [undefined]
+		});
+
+	});
+
+	opaTest("Confirm and open the filter dialog to check if the value is still there", function (Given, When, Then) {
+
+		When.iEnterTextInFilterDialog("Founding Year", "1989");
+		When.iEnterTextInFilterDialog("Country", "DE");
+
 		//close Dialog
 		When.iPressDialogOk();
 

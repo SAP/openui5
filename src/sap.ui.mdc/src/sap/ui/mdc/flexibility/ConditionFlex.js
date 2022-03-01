@@ -47,7 +47,7 @@ sap.ui.define([
 		var oFilterControl = fDetermineFilterControl(oControl);
 
 		if (oFilterControl && oFilterControl.applyConditionsAfterChangesApplied) {
-			oFilterControl.applyConditionsAfterChangesApplied();
+			oFilterControl.applyConditionsAfterChangesApplied(oControl);
 		}
 
 		return fnQueueChange(oControl, function(){
@@ -114,7 +114,7 @@ sap.ui.define([
 		var oFilterControl = fDetermineFilterControl(oControl);
 
 		if (oFilterControl && oFilterControl.applyConditionsAfterChangesApplied) {
-			oFilterControl.applyConditionsAfterChangesApplied();
+			oFilterControl.applyConditionsAfterChangesApplied(oControl);
 		}
 
 		return fnQueueChange(oControl, function(){

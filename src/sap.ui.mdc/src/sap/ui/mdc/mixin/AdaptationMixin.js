@@ -114,7 +114,9 @@ sap.ui.define(
          * @returns {object} The value returned by {@link sap.ui.mdc.AggregationBaseDelegate#validateState validateState}
          */
         AdaptationMixin.validateState = function(oTheoreticalState, sKey) {
-            return this.getControlDelegate().validateState(this, oTheoreticalState, sKey);
+            if (this.getControlDelegate().validateState instanceof Function) {
+                return this.getControlDelegate().validateState(this, oTheoreticalState, sKey);
+            }
         };
 
         AdaptationMixin.getInbuiltFilter = function() {
