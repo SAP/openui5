@@ -5,10 +5,11 @@
 sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/format/DateFormatTimezoneDisplay",
+	"sap/ui/model/_Helper",
 	"sap/ui/model/CompositeType",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException"
-], function (DateFormat, DateFormatTimezoneDisplay, CompositeType, FormatException,
+], function (DateFormat, DateFormatTimezoneDisplay, _Helper, CompositeType, FormatException,
 		ParseException) {
 	"use strict";
 
@@ -25,8 +26,11 @@ sap.ui.define([
 	 *   The formatter
 	 */
 	function getFormatter(oType) {
+		var oFormatOptions;
+
 		if (!oType.oFormat) {
-			oType.oFormat = DateFormat.getDateTimeWithTimezoneInstance(oType.oFormatOptions);
+			oFormatOptions = _Helper.extend({strictParsing : true}, oType.oFormatOptions);
+			oType.oFormat = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
 		}
 		return oType.oFormat;
 	}
@@ -36,8 +40,10 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions]
 	 *   Format options. For a list of all available options, see
-	 *   {@link sap.ui.core.format.DateFormat.getDateTimeWithTimezoneInstance DateFormat}.
-	 *   Format options are immutable, that is, they can only be set once on construction.
+	 *   {@link sap.ui.core.format.DateFormat.getDateTimeWithTimezoneInstance DateFormat}. The
+	 *   <code>strictParsing</code> format option is set to <code>true</code> by default and can be
+	 *   overwritten. Format options are immutable, that is, they can only be set once on
+	 *   construction.
 	 * @param {object} [oConstraints]
 	 *   Constraints are not supported
 	 * @throws {Error}

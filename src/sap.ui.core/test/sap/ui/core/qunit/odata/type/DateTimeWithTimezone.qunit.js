@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/format/DateFormatTimezoneDisplay",
+	"sap/ui/model/_Helper",
 	"sap/ui/model/CompositeType",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/test/TestUtils"
-], function (Log, DateFormat, DateFormatTimezoneDisplay, CompositeType, FormatException,
+], function (Log, DateFormat, DateFormatTimezoneDisplay, _Helper, CompositeType, FormatException,
 		ParseException, DateTimeWithTimezone, DecimalType, StringType, TestUtils) {
 	/*global sinon, QUnit*/
 	/*eslint max-nested-callbacks: 0*/
@@ -181,15 +182,18 @@ sap.ui.define([
 	{showTimezone : DateFormatTimezoneDisplay.Show}
 ].forEach(function (oFormatOptions) {
 	var sTitle = "formatValue: no Date given, sTargetType = 'string', oFormatOptions = "
-		+ (oFormatOptions === undefined ? "undefined" : JSON.stringify(oFormatOptions));
+		+ JSON.stringify(oFormatOptions);
 
 	QUnit.test(sTitle, function (assert) {
 		var oFormat = {format : function () {}},
 			oType = new DateTimeWithTimezone(oFormatOptions);
 
 		this.mock(oType).expects("getPrimitiveType").withExactArgs("~targetType").returns("string");
+		this.mock(_Helper).expects("extend")
+			.withExactArgs({strictParsing : true}, oFormatOptions)
+			.returns("~mergedFormatOptions");
 		this.mock(DateFormat).expects("getDateTimeWithTimezoneInstance")
-			.withExactArgs(oFormatOptions)
+			.withExactArgs("~mergedFormatOptions")
 			.returns(oFormat);
 		this.mock(oFormat).expects("format").withExactArgs(null, "~timezone").returns("~timezone");
 
@@ -224,8 +228,11 @@ sap.ui.define([
 		oType.oFormatOptions = "~formatOptions";
 
 		oTypeMock.expects("getPrimitiveType").withExactArgs("~targetType").returns("string");
+		this.mock(_Helper).expects("extend")
+			.withExactArgs({strictParsing : true}, "~formatOptions")
+			.returns("~mergedFormatOptions");
 		this.mock(DateFormat).expects("getDateTimeWithTimezoneInstance")
-			.withExactArgs("~formatOptions")
+			.withExactArgs("~mergedFormatOptions")
 			.returns(oFormat);
 		oFormatMock.expects("format").withExactArgs(oDate, "~timezone").returns("~formattedDate");
 
@@ -383,8 +390,11 @@ sap.ui.define([
 			oType = new DateTimeWithTimezone();
 
 		this.mock(oType).expects("getPrimitiveType").withExactArgs("~sourceType").returns("string");
+		this.mock(_Helper).expects("extend")
+			.withExactArgs({strictParsing : true}, {})
+			.returns("~mergedFormatOptions");
 		this.mock(DateFormat).expects("getDateTimeWithTimezoneInstance")
-			.withExactArgs({})
+			.withExactArgs("~mergedFormatOptions")
 			.returns(oFormat);
 		this.mock(oFormat).expects("parse")
 			.withExactArgs("invalidValue", "~timezone")
@@ -410,8 +420,11 @@ sap.ui.define([
 			oTypeMock = this.mock(oType);
 
 		oTypeMock.expects("getPrimitiveType").withExactArgs("~sourceType").returns("string");
+		this.mock(_Helper).expects("extend")
+			.withExactArgs({strictParsing : true}, {})
+			.returns("~mergedFormatOptions");
 		this.mock(DateFormat).expects("getDateTimeWithTimezoneInstance")
-			.withExactArgs({})
+			.withExactArgs("~mergedFormatOptions")
 			.returns(oFormat);
 		oFormatMock.expects("parse").withExactArgs("~sValue", "~timezone").returns(aParsedDate);
 
