@@ -936,7 +936,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling restore successfully", function(assert) {
-			assert.expect(4);
+			assert.expect(6);
+			var oRemoveStub = sandbox.spy(this.oRta.getCommandStack(), "removeAllCommands");
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
 					selector: oComp,
@@ -949,6 +950,8 @@ sap.ui.define([
 			window.sessionStorage.setItem("sap.ui.fl.info." + sFlexReference, JSON.stringify(oFlexInfoResponse));
 
 			return this.oRta.restore().then(function() {
+				assert.strictEqual(oRemoveStub.callCount, 1, "the command stack was cleared");
+				assert.ok(oRemoveStub.calledBefore(this.oHandleParametersOnExitSpy), "the command stack was cleared before the navigation is triggered");
 				assert.equal(this.oHandleParametersOnExitSpy.callCount, 1, "then delete draft url parameter");
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
 				var sFlexInfoFromSession = window.sessionStorage.getItem("sap.ui.fl.info." + sFlexReference);
