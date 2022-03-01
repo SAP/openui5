@@ -201,7 +201,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		-webkit-flex-direction: column;
 		justify-content: space-between;
 		-webkit-justify-content: space-between;
-		min-width: 0%;
+		min-width: 0;
 
 		.sapFDynamicPageTitleMainHeadingInner,
 		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {
@@ -241,12 +241,14 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 
 		&.sapFDynamicPageTitleMainContentHasContent {
 			min-width: 3rem;
+			flex-grow: 1;
 		}
 	}
 
 	.sapFDynamicPageTitleMainActions {
 		margin-left: auto;
 		min-width: 0.0625rem;
+		flex-grow: 1;
 
 		&.sapFDynamicPageTitleMainActionsHasContent {
 			min-width: 3rem;
