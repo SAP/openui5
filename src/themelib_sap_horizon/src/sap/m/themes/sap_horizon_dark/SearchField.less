@@ -9,93 +9,65 @@
 
 @_sap_m_SearchField_Height: 2.75rem;
 @_sap_m_SearchField_FormHeight: 2.25rem;
-@_sap_m_SearchField_InputHeight: 2.125rem;
-@_sap_m_SearchField_ButtonSize: 2.125rem;
+@_sap_m_SearchField_ButtonSize: 2.25rem;
 @_sap_m_SearchField_ButtonFontSize: 1rem;
+@_sap_m_SearchField_CompactButtonLineHeight: 1.625rem;
 @_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
 @_sap_m_SearchField_ResetIcon: "\e03e";
 @_sap_m_SearchField_Border: none;
 @_sap_m_SearchField_FocusOffset: 0;
 @_sap_m_SearchField_FocusBorderRadius: inherit;
-@_sap_m_SearchField_PlaceholderFontStyle: normal;
+@_sap_m_SearchField_PlaceholderFontStyle: italic;
 
 .sapMSFF {
 	border-radius: @sapUiFieldBorderCornerRadius;
-	align-items:center;
-
-	// bottom line
-	background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
-	background-size: 100% @sapField_BorderWidth;
-	background-repeat: repeat-x;
-	background-position: bottom;
 }
 
 .sapMSFDisabled {
-	opacity: 0.5;
+	opacity: @sapUiContentDisabledOpacity;
 }
 
 .sapMSFB {
-	height: 2.1875rem;
-	//center buttons
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
+	// don't overlap the bottom line
+	margin-bottom: 1px;
+	height: ~"calc(100% - 1px)";
 
-.sapMSFB:last-of-type {
-	border-radius: 0 @sapUiFieldBorderCornerRadius @sapUiFieldBorderCornerRadius 0;
-}
+	border-radius: @sapUiFieldBorderCornerRadius;
+	color: @sapUiButtonTextColor;
 
-.sapMSFB:focus {
-	outline: none;
-}
+	&:first-of-type {
+		margin-left: 0.25rem;
+	}
 
-.sapMBarChild > .sapMSFF > .sapMSFB {
-	text-shadow: none;
-}
+	&:focus {
+		outline: none;
+	}
 
-.sapMFocus > .sapMSFF > .sapMSFB {
-	color: @sapUiHighlight;
-}
+	&:hover {
+		box-shadow: @sapUiContentInteractionShadow;
+		background-color: @sapUiButtonLiteHoverBackground;
+	}
 
-.sapMSFB:hover {
-	box-shadow: @sapContent_Interaction_Shadow;
-}
-
-.sapMSFB:active {
-	box-shadow: @sapContent_Interaction_Shadow;
-
-	&::after {
-		color: @sapField_Focus_BorderColor;
+	&:active,
+	&.sapMSFBA // Firefox specific
+	{
+		box-shadow: @sapUiContentInteractionShadow;
+		color: @sapUiButtonSelectedTextColor;
+		background-color: @sapUiButtonLiteActiveBackground;
 	}
 }
 
-.sapMSFF > .sapMSFB:not(.sapMSFBF):active,
-.sapMSFF > .sapMSFB.sapMSFBA {
-	background-color: @sapUiButtonLiteActiveBackground;
-	color: @sapUiContentContrastIconColor;
-}
-
-.sapMSF.sapMFocus .sapMSFF {
-	background: @sapField_Hover_Background;
-	box-shadow: @sapContent_Interaction_Shadow;
-}
-
-.sapMSF.sapMFocus:hover .sapMSFF {
-	box-shadow: @sapContent_Interaction_Shadow;
-}
-
 .sapMSF:not(.sapMSFDisabled):hover .sapMSFF {
-	background: @sapField_Hover_Background;
-	box-shadow: @sapContent_Interaction_Shadow;
-
-	// bottom line
-	background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
-	background-size: 100% @sapField_BorderWidth;
-	background-repeat: repeat-x;
-	background-position: bottom;
+	box-shadow: @sapUiContentInteractionShadow;
+	background-color: @sapUiFieldHoverBackground;
 }
 
-.sapUiSizeCompact .sapMSFB {
-	height: 1.625rem;
+.sapMSF.sapMFocus {
+	.sapMSFF {
+		background-color: @sapUiFieldFocusBackground;
+	}
+
+	&:hover .sapMSFF {
+		box-shadow: none;
+	}
 }
