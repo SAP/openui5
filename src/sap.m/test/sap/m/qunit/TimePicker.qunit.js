@@ -1904,6 +1904,40 @@ sap.ui.define([
 		this.typeAndCheckValueForDisplayFormat("hh a", "01P", "01 PM");
 	});
 
+	QUnit.test("entering incomplete value updates the model only once", function(assert) {
+		// arrange
+		var oModel = new JSONModel({
+				timeValue: new Date(2000, 1, 2, 16, 35, 54)
+			}),
+			oTp = new TimePicker({
+				value: {
+					path: "/timeValue",
+					type: new Time({pattern: "HH:mm", strictParsing: true})
+				}
+			}).setModel(oModel),
+			iCallCount;
+
+		oTp.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oModel.attachEvent("propertyChange", function() {
+			iCallCount++;
+		});
+
+		iCallCount = 0;
+
+		//act
+		triggerMultipleKeypress(oTp, "12");
+		qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), KeyCodes.ENTER);
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(iCallCount, 1, "model uopdated only once");
+
+		//cleanup
+		oTp.destroy();
+	});
+
 	QUnit.test("on enter '15:--:--', autocomplete to '15:00:00'", function(assert) {
 		//system under test
 		var oTp = new TimePicker({

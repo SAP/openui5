@@ -2227,7 +2227,7 @@ function(
 		 * @param {string} sValue
 		 */
 		TimePicker.prototype._getAlteredUserInputValue = function (sValue) {
-			return sValue ? this._formatValue(this._parseValue(sValue), true) : sValue;
+			return sValue ? this._formatValue(this._parseValue(sValue, true), true) : sValue;
 		};
 
 		/**
