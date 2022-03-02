@@ -64,7 +64,7 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 				"priority" : {type: "sap.ui.core.Priority", group: "Misc", defaultValue: Priority.None},
 				/**
 				 * The load status.
-				 * @since 1.101.0
+				 * @since 1.100.0
 				 */
 				"state": {type: "sap.m.LoadState", group: "Misc", defaultValue: LoadState.Loaded}
 			},
