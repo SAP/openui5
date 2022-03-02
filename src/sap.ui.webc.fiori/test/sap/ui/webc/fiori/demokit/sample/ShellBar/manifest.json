@@ -15,7 +15,8 @@
 			"libs": {
 				"sap.ui.core": {},
 				"sap.ui.webc.fiori": {},
-				"sap.ui.webc.main": {}
+				"sap.ui.webc.main": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
@@ -24,6 +25,7 @@
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
+					"Component.js",
 					"manifest.json"
 				]
 			}

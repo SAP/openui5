@@ -23,6 +23,7 @@
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
+					"Component.js",
 					"manifest.json"
 				]
 			}
