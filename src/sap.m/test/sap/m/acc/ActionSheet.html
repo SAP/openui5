@@ -29,6 +29,7 @@
 			}),
 			oButton = new sap.m.Button("actionSheetButton", {
 				text: "Open ActionSheet",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Menu,
 				press: function () {
 					oActionSheet.openBy(this);
 				}
