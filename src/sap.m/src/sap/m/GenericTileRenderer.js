@@ -208,7 +208,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 					.close("div");
 				if (!isHalfFrame) {
 					for (var i = 0; i < iLength; i++) {
-						aTileContent[i].setProperty("state", LoadState.Loading, true);
 						oRm.renderControl(aTileContent[i]);
 					}
 				}
@@ -303,11 +302,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				}
 				oRm.openEnd();
 				for (var i = 0; i < iLength; i++) {
-					if (sState === LoadState.Disabled) {
-						aTileContent[i].setProperty("state", LoadState.Disabled, true);
-					} else if (sState === LoadState.Failed) {
-						aTileContent[i].setProperty("state", LoadState.Failed, true);
-					}
 					oRm.renderControl(aTileContent[i]);
 				}
 				oRm.close("div");

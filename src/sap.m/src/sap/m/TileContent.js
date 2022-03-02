@@ -83,10 +83,34 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	TileContent.prototype.init = function() {
 		this._bRenderFooter = true;
 		this._bRenderContent = true;
+		this._bStateSetManually = false;
 	};
 
 	TileContent.prototype.onBeforeRendering = function() {
-		this.setProperty("disabled", this.getState() === LoadState.Disabled, true);
+		var sState = this.mProperties.hasOwnProperty("state");
+		if (sState && !this._bStateSetManually) {
+			if (this.getParent() && this.getParent().isA("sap.m.GenericTile")) {
+				if (this.getParent().getState() === LoadState.Failed) {
+					this.setProperty("state", LoadState.Loaded, true);
+				} else if (this.getParent().getState() === LoadState.Disabled) {
+					this.setProperty("state", LoadState.Loaded, true);
+					this.setProperty("disabled", this.getState() === LoadState.Disabled, true);
+				}
+			}
+		} else {
+			if (this.getParent() && this.getParent().isA("sap.m.GenericTile")) {
+				if (this.getParent().getState() === LoadState.Failed) {
+					this.setProperty("state", LoadState.Loaded, true);
+				} else if (this.getParent().getState() === LoadState.Disabled) {
+					this.setProperty("state", LoadState.Loaded, true);
+					this.setProperty("disabled", this.getState() === LoadState.Disabled, true);
+				} else {
+					this.setProperty("state", this.getParent().getState(), true);
+				}
+			}
+			this._bStateSetManually = true;
+		}
+
 		if (this.getContent() && this._oDelegate) {
 			if (this.getDisabled()) {
 				this.getContent().addDelegate(this._oDelegate);
