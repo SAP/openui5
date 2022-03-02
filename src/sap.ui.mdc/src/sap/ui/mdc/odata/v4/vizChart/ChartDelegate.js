@@ -23,7 +23,8 @@ sap.ui.define([
     "sap/m/MessageStrip",
     "../TypeUtil",
     "../FilterBarDelegate",
-    "sap/ui/model/Filter"
+    "sap/ui/model/Filter",
+    "sap/ui/mdc/odata/v4/ChartPropertyHelper"
 ], function (
     V4ChartDelegate,
     loadModules,
@@ -45,7 +46,8 @@ sap.ui.define([
     MessageStrip,
     V4TypeUtil,
     V4FilterBarDelegate,
-    Filter
+    Filter,
+    PropertyHelper
 ) {
     "use strict";
     /**
@@ -294,6 +296,10 @@ sap.ui.define([
 
     ChartDelegate.getAdaptionUI = function(oMDCChart) {
 
+        return Promise.resolve(this._setupAdaptionUI(oMDCChart));
+    };
+
+    ChartDelegate._setupAdaptionUI = function(oMDCChart) {
         var oLayoutConfig = this.getChartTypeLayoutConfig().find(function(it){return it.key === oMDCChart.getChartType();});
 
         //Default case -> everything allowed
@@ -320,7 +326,7 @@ sap.ui.define([
             oPanel.setMessageStrip(new MessageStrip({text: MDCRb.getText("chart.PERSONALIZATION_DIALOG_MEASURE_WARNING"), type:"Warning"}));
         }
 
-        return Promise.resolve(oPanel);
+        return oPanel;
     };
 
     /**
@@ -404,9 +410,8 @@ sap.ui.define([
             this._updateColoring(oMDCChart, this._getChart(oMDCChart).getVisibleDimensions(), this._getChart(oMDCChart).getVisibleMeasures());
         }.bind(this));
 
-        this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
-            this._updateSemanticalPattern(oMDCChart, aProperties);
-        }.bind(this));
+        this._updateSemanticalPattern(oMDCChart);
+
     };
 
     /**
@@ -442,9 +447,8 @@ sap.ui.define([
 
         //Update coloring and semantical patterns on Item change
         this._updateColoring(oMDCChart, this._getChart(oMDCChart).getVisibleDimensions(), this._getChart(oMDCChart).getVisibleMeasures());
-        this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
-            this._updateSemanticalPattern(oMDCChart, aProperties);
-        }.bind(this));
+
+        this._updateSemanticalPattern(oMDCChart);
     };
 
     /**
@@ -459,29 +463,64 @@ sap.ui.define([
         if (oMDCChart.getModel) {
             return Promise.resolve(this._createMDCChartItem(sPropertyName, oMDCChart, sRole));
         }
-        return Promise.resolve(null);
     };
 
     ChartDelegate.removeItem = function (oProperty, oMDCChart) {
         return Promise.resolve(true);
     };
 
-    ChartDelegate._createMDCChartItem = function (sPropertyName, oMDCChart, sRole) {
-        return this.fetchProperties(oMDCChart).then(function (aProperties) {
+    /**
+     * This will iterate over all items of the MDC Chart to make sure all necessary information is available on them
+     * If something is missing, this method will update the item accordingly
+     * @param {sap.ui.mdc.Chart} oMDCChart the MDC Chart to check the items on
+     * @returns {Promise} resolves once check is complete
+     */
+    ChartDelegate.checkAndUpdateMDCItems = function(oMDCChart) {
+        return new Promise(function(resolve, reject){
+            var aPropPromises = [];
 
-            //Uses excact MDC Chart Item id
-            var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
-                return oCurrentPropertyInfo.name === sPropertyName;
+            oMDCChart.getItems().forEach(function(oMDCItem){
+                var bIsComplete = oMDCItem.getName() && oMDCItem.getLabel() && oMDCItem.getType() && oMDCItem.getRole();
+
+                if (!bIsComplete) {
+                    aPropPromises.push(this._getPropertyInfosByName(oMDCItem.getName(), oMDCChart).then(function(oPropertyInfo){
+                        oMDCItem.setLabel(oPropertyInfo.label);
+
+                        if (oPropertyInfo.groupable) {
+                            oMDCItem.setType("groupable");
+                            oMDCItem.setRole(oMDCItem.getRole() ? oMDCItem.getRole() : "category");
+                        } else if (oPropertyInfo.aggregatable) {
+                            oMDCItem.setType("aggregatable");
+                            oMDCItem.setRole(oMDCItem.getRole() ? oMDCItem.getRole() : "axis1");
+                        }
+                    }));
+                }
+            }.bind(this));
+
+            Promise.all(aPropPromises).then(function(){
+                resolve();
             });
+        }.bind(this));
 
+    };
+
+    ChartDelegate._createMDCChartItem = function (sPropertyName, oMDCChart, sRole) {
+
+        return this._getPropertyInfosByName(sPropertyName, oMDCChart).then(function(oPropertyInfo){
             if (!oPropertyInfo) {
                 return null;
             }
 
+            return this._createMDCItemFromProperty(oPropertyInfo, oMDCChart.getId(), sRole);
 
-            //TODO: Check for case: both aggegatable and groupable
+        }.bind(this));
+
+    };
+
+    ChartDelegate._createMDCItemFromProperty = function(oPropertyInfo, idPrefix, sRole) {
+
             if (oPropertyInfo.groupable) {
-                return new MDCChartItem(oMDCChart.getId() + "--GroupableItem--" + oPropertyInfo.name, {
+                return new MDCChartItem(idPrefix + "--GroupableItem--" + oPropertyInfo.name, {
                     name: oPropertyInfo.name,
                     label: oPropertyInfo.label,
                     type: "groupable",
@@ -491,14 +530,15 @@ sap.ui.define([
 
             if (oPropertyInfo.aggregatable) {
 
-                return new MDCChartItem(oMDCChart.getId() + "--AggregatableItem--" + oPropertyInfo.name, {
+                return new MDCChartItem(idPrefix + "--AggregatableItem--" + oPropertyInfo.name, {
                     name: oPropertyInfo.name,
                     label: oPropertyInfo.label,
                     type: "aggregatable",
                     role: sRole ? sRole : "axis1"
                 });
             }
-        });
+
+            return null;
     };
 
     /**
@@ -543,114 +583,121 @@ sap.ui.define([
     };
 
     ChartDelegate._createContentFromItems = function (oMDCChart) {
-        //This is done so the user doesn't have to specify property path & aggregation method in the XML
-        this.fetchProperties(oMDCChart).then(function (aProperties) {
+        return new Promise(function(resolve, reject){
+            //This is done so the user doesn't have to specify property path & aggregation method in the XML
             var aColorPromises = [];
+            var aPropPromises = [];
 
             var aVisibleDimensions = [];
             var aVisibleMeasures = [];
             oMDCChart.getItems().forEach(function (oItem, iIndex) {
 
                 //Uses excact mdc chart item id
-                var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
-                    return oCurrentPropertyInfo.name === oItem.getName();
-                });
-
-                //Skip a Item if there is no property representing the Item inside the backend
-                if (!oPropertyInfo){
-                    Log.error("sap.ui.mdc.Chart: Item " + oItem.getName() + " has no property info representing it in the metadata. Make sure the name is correct and the metadata is defined correctly. Skipping the item!");
-                    return;
-                }
-
-                switch (oItem.getType()) {
-                    case "groupable":
-                        aVisibleDimensions.push(this.getInternalChartNameFromPropertyNameAndKind(oItem.getName(), "groupable", oMDCChart));
-
-                        this._addInnerDimension(oMDCChart, oItem, oPropertyInfo);
-                        break;
-                    case "aggregatable":
-
-                        //TODO: Alias might be changing after backend request
-                        aVisibleMeasures.push(this._getAggregatedMeasureNameForMDCItem(oItem));
-
-                        this._addInnerMeasure(oMDCChart, oItem, oPropertyInfo);
-                        break;
-
-                    default:
-                        Log.error("MDC Chart Item " + oItem.getId() + " with label " + oItem.getLabel() + " has no known type. Supported typed are: \"groupable\" & \"aggregatable\"");
-                }
-
-                aColorPromises.push(this._prepareColoringForItem(oItem));
-            }.bind(this));
-
-            this._getState(oMDCChart).aColMeasures.forEach(function(sKey) {
-
-                if (this._getState(oMDCChart).aInSettings.indexOf(sKey) == -1) {
-
-                    var oPropertyInfo = oMDCChart.getPropertyHelper().getProperty(sKey); //this.getPropertyFromNameAndKind not used as the key is the name of the MDC Chart Item
-
-                    var aggregationMethod = oPropertyInfo.aggregationMethod;
-                    var propertyPath = oPropertyInfo.propertyPath;
-                    var sName = this.getInternalChartNameFromPropertyNameAndKind(sKey, "aggregatable", oMDCChart);
-
-                    var oMeasureSettings = {
-                        name: sName,
-                        label: oPropertyInfo.label,
-                        role: "axis1"
-                    };
-
-                    if (aggregationMethod && propertyPath) {
-                        oMeasureSettings.analyticalInfo = {
-                            propertyPath: propertyPath,
-                            "with": aggregationMethod
-                        };
+                aPropPromises.push(this._getPropertyInfosByName( oItem.getName(), oMDCChart).then(function(oPropertyInfo){
+                    //Skip a Item if there is no property representing the Item inside the backend
+                    if (!oPropertyInfo){
+                        Log.error("sap.ui.mdc.Chart: Item " + oItem.getName() + " has no property info representing it in the metadata. Make sure the name is correct and the metadata is defined correctly. Skipping the item!");
+                        return;
                     }
 
-                    var oMeasure = new Measure(oMeasureSettings);
+                    switch (oItem.getType()) {
+                        case "groupable":
+                            aVisibleDimensions.push(this.getInternalChartNameFromPropertyNameAndKind(oItem.getName(), "groupable", oMDCChart));
 
-                    aVisibleMeasures.push(oMeasure);
-                    this._getChart(oMDCChart).addMeasure(oMeasure);
-                }
+                            this._addInnerDimension(oMDCChart, oItem, oPropertyInfo);
+                            break;
+                        case "aggregatable":
+
+                            //TODO: Alias might be changing after backend request
+                            aVisibleMeasures.push(this._getAggregatedMeasureNameForMDCItem(oItem));
+
+                            this._addInnerMeasure(oMDCChart, oItem, oPropertyInfo);
+                            break;
+
+                        default:
+                            Log.error("MDC Chart Item " + oItem.getId() + " with label " + oItem.getLabel() + " has no known type. Supported typed are: \"groupable\" & \"aggregatable\"");
+                    }
+
+                    aColorPromises.push(this._prepareColoringForItem(oItem));
+                }.bind(this)));
 
             }.bind(this));
 
-            Promise.all(aColorPromises).then(function(){
-                this._getChart(oMDCChart).setVisibleDimensions(aVisibleDimensions);
-                this._getChart(oMDCChart).setVisibleMeasures(aVisibleMeasures);
+            Promise.all(aPropPromises).then(function(){
+                this._getState(oMDCChart).aColMeasures.forEach(function(sKey) {
 
-                var aInResultDimensions = oMDCChart.getDelegate().inResultDimensions; //TODO: Does this use internal name? If so, change _getPropertyInfosByName  below; Most likely not the case
-                if (aInResultDimensions && aInResultDimensions instanceof Array && aInResultDimensions.length != 0) {
+                    if (this._getState(oMDCChart).aInSettings.indexOf(sKey) == -1) {
 
-                    var aInResultPromises = [];
+                        aColorPromises.push(new Promise(function(resolve, reject){
+                            oMDCChart._getPropertyByNameAsync(sKey).then(function(oPropertyInfo){
+                                var aggregationMethod = oPropertyInfo.aggregationMethod;
+                                var propertyPath = oPropertyInfo.propertyPath;
+                                var sName = this.getInternalChartNameFromPropertyNameAndKind(sKey, "aggregatable", oMDCChart);
 
-                    aInResultDimensions.forEach(function(sInResultDim){
+                                var oMeasureSettings = {
+                                    name: sName,
+                                    label: oPropertyInfo.label,
+                                    role: "axis1"
+                                };
 
-                        aInResultPromises.push(this._getPropertyInfosByName(sInResultDim, oMDCChart).then(function(oPropertyInfos){
-                            var sName = this.getInternalChartNameFromPropertyNameAndKind(oPropertyInfos.name, "groupable", oMDCChart);
+                                if (aggregationMethod && propertyPath) {
+                                    oMeasureSettings.analyticalInfo = {
+                                        propertyPath: propertyPath,
+                                        "with": aggregationMethod
+                                    };
+                                }
 
-                            var oDim = new Dimension({
-                                name: sName,
-                                label: oPropertyInfos.label
-                            });
+                                var oMeasure = new Measure(oMeasureSettings);
 
-                            this._getState(oMDCChart).inResultDimensions.push(sName);
-                            this._getChart(oMDCChart).addDimension(oDim);
-                        }.bind(this)));
+                                aVisibleMeasures.push(oMeasure);
+                                this._getChart(oMDCChart).addMeasure(oMeasure);
+                                resolve();
+                            }); //this.getPropertyFromNameAndKind not used as the key is the name of the MDC Chart Item
 
-                    }.bind(this));
+                        }));
+                    }
 
-                    Promise.all(aInResultPromises).then(function(){
-                        this._getChart(oMDCChart).setInResultDimensions(this._getState(oMDCChart).inResultDimensions);
-                    }.bind(this));
+                }.bind(this));
 
-                }
+                Promise.all(aColorPromises).then(function(){
+                    this._getChart(oMDCChart).setVisibleDimensions(aVisibleDimensions);
+                    this._getChart(oMDCChart).setVisibleMeasures(aVisibleMeasures);
 
-                this._updateColoring(oMDCChart, aVisibleDimensions, aVisibleMeasures);
-                this._updateSemanticalPattern(oMDCChart, aProperties);
+                    var aInResultDimensions = oMDCChart.getDelegate().inResultDimensions; //TODO: Does this use internal name? If so, change _getPropertyInfosByName  below; Most likely not the case
+                    if (aInResultDimensions && aInResultDimensions instanceof Array && aInResultDimensions.length != 0) {
+
+                        var aInResultPromises = [];
+
+                        aInResultDimensions.forEach(function(sInResultDim){
+
+                            aInResultPromises.push(this._getPropertyInfosByName(sInResultDim, oMDCChart).then(function(oPropertyInfos){
+                                var sName = this.getInternalChartNameFromPropertyNameAndKind(oPropertyInfos.name, "groupable", oMDCChart);
+
+                                var oDim = new Dimension({
+                                    name: sName,
+                                    label: oPropertyInfos.label
+                                });
+
+                                this._getState(oMDCChart).inResultDimensions.push(sName);
+                                this._getChart(oMDCChart).addDimension(oDim);
+                            }.bind(this)));
+
+                        }.bind(this));
+
+                        Promise.all(aInResultPromises).then(function(){
+                            this._getChart(oMDCChart).setInResultDimensions(this._getState(oMDCChart).inResultDimensions);
+                        }.bind(this));
+
+                    }
+
+                    this._updateColoring(oMDCChart, aVisibleDimensions, aVisibleMeasures);
+                    this._updateSemanticalPattern(oMDCChart);
+
+                    resolve();
+                }.bind(this));
             }.bind(this));
 
         }.bind(this));
-
     };
 
     ChartDelegate.getInnerChart = function (oMDCChart) {
@@ -818,7 +865,7 @@ sap.ui.define([
      * @private
      * @ui5-restricted Fiori Elements, sap.ui.mdc
      */
-    ChartDelegate._updateSemanticalPattern = function (oMDCChart, aProperties) {
+    ChartDelegate._updateSemanticalPattern = function (oMDCChart) {
 
         var aVisibleMeasures = this._getChart(oMDCChart).getVisibleMeasures();
 
@@ -969,23 +1016,31 @@ sap.ui.define([
      */
     ChartDelegate.getSortedDimensions = function (oMDCChart) {
         return new Promise(function (resolve, reject) {
-            this.fetchProperties(oMDCChart).then(function (aProperties) {
 
-                var aDimensions = aProperties.filter(function (oItem) {
-                    return oItem.groupable; //Groupable means "Dimension" for sap.chart.Chart
-                });
-
-                if (aDimensions) {
-                    aDimensions.sort(function (a, b) {
-                        if (a.label && b.label) {
-                            return a.label.localeCompare(b.label);
-                        }
-                    });
-                }
-
-                resolve(aDimensions);
-            });
+            if (oMDCChart.isPropertyHelperFinal()){
+                resolve(this._sortPropertyDimensions(oMDCChart.getPropertyHelper().getProperties()));
+            } else {
+                oMDCChart.finalizePropertyHelper().then(function(){
+                    resolve(this._sortPropertyDimensions(oMDCChart.getPropertyHelper().getProperties()));
+                }.bind(this));
+            }
         }.bind(this));
+    };
+
+    ChartDelegate._sortPropertyDimensions = function(aProperties) {
+        var aDimensions = aProperties.filter(function (oItem) {
+            return oItem.groupable; //Groupable means "Dimension" for sap.chart.Chart
+        });
+
+        if (aDimensions) {
+            aDimensions.sort(function (a, b) {
+                if (a.label && b.label) {
+                    return a.label.localeCompare(b.label);
+                }
+            });
+        }
+
+        return aDimensions;
     };
 
     /**
@@ -1018,53 +1073,60 @@ sap.ui.define([
      */
     ChartDelegate.createInnerChartContent = function (oMDCChart, fnCallbackDataLoaded) {
 
-        this._setChart(oMDCChart, new Chart({
-            id: oMDCChart.getId() + "--innerChart",
-            chartType: "column",
-            width: "100%",
-            isAnalytical: true//,
-        }));
+        return new Promise(function(resolve,reject){
+            this._setChart(oMDCChart, new Chart({
+                id: oMDCChart.getId() + "--innerChart",
+                chartType: "column",
+                width: "100%",
+                isAnalytical: true//,
+            }));
 
-        //Initialize empty; will get filled later on
-        this._getState(oMDCChart).inResultDimensions = [];
+            //Initialize empty; will get filled later on
+            this._getState(oMDCChart).inResultDimensions = [];
 
-        if (oMDCChart.getHeight()){
-            this._getChart(oMDCChart).setHeight(this._calculateInnerChartHeight(oMDCChart));
-        }
-
-        //Set height correctly again if chart changes
-        ResizeHandler.register(oMDCChart, function(){
-            this.adjustChartHeight(oMDCChart);
-        }.bind(this));
-
-        var oState = this._getState(oMDCChart);
-        oState.aColMeasures = [];
-        oState.aInSettings = [];
-        this._setState(oMDCChart, oState);
-
-        //Create initial content during pre-processing
-        this._createContentFromItems(oMDCChart);
-
-        //Since zoom information is not yet available for sap.chart.Chart after data load is complete, do it on renderComplete instead
-        //This is a workaround which is hopefully not needed in other chart libraries
-        this._getChart(oMDCChart).attachRenderComplete(function () {
-            if (this._getState(oMDCChart).toolbarUpdateRequested){
-                oMDCChart._updateToolbar();
-                this._getState(oMDCChart).toolbarUpdateRequested = false;
+            if (oMDCChart.getHeight()){
+                this._getChart(oMDCChart).setHeight(this._calculateInnerChartHeight(oMDCChart));
             }
+
+            //Set height correctly again if chart changes
+            ResizeHandler.register(oMDCChart, function(){
+                this.adjustChartHeight(oMDCChart);
+            }.bind(this));
+
+            var oState = this._getState(oMDCChart);
+            oState.aColMeasures = [];
+            oState.aInSettings = [];
+            this._setState(oMDCChart, oState);
+
+            //Create initial content during pre-processing
+            this._createContentFromItems(oMDCChart).then(function(){
+                //Since zoom information is not yet available for sap.chart.Chart after data load is complete, do it on renderComplete instead
+                //This is a workaround which is hopefully not needed in other chart libraries
+                this._getChart(oMDCChart).attachRenderComplete(function () {
+                    if (this._getState(oMDCChart).toolbarUpdateRequested){
+                        oMDCChart._updateToolbar();
+                        this._getState(oMDCChart).toolbarUpdateRequested = false;
+                    }
+                }.bind(this));
+
+                this._getInnerStructure(oMDCChart).removeAllItems();
+                this._getInnerStructure(oMDCChart).setJustifyContent(FlexJustifyContent.Start);
+                this._getInnerStructure(oMDCChart).setAlignItems(FlexAlignItems.Stretch);
+                this._getInnerStructure(oMDCChart).addItem(this._getChart(oMDCChart));
+
+                oState.dataLoadedCallback = fnCallbackDataLoaded;
+
+                this._setState(oMDCChart, oState);
+                var oBindingInfo = this._getBindingInfo(oMDCChart);
+                this.updateBindingInfo(oMDCChart, oBindingInfo); //Applies filters
+                this.rebind(oMDCChart, oBindingInfo);
+
+                resolve();
+            }.bind(this));
+
+
         }.bind(this));
 
-        this._getInnerStructure(oMDCChart).removeAllItems();
-        this._getInnerStructure(oMDCChart).setJustifyContent(FlexJustifyContent.Start);
-        this._getInnerStructure(oMDCChart).setAlignItems(FlexAlignItems.Stretch);
-        this._getInnerStructure(oMDCChart).addItem(this._getChart(oMDCChart));
-
-        oState.dataLoadedCallback = fnCallbackDataLoaded;
-
-        this._setState(oMDCChart, oState);
-        var oBindingInfo = this._getBindingInfo(oMDCChart);
-        this.updateBindingInfo(oMDCChart, oBindingInfo); //Applies filters
-        this.rebind(oMDCChart, oBindingInfo);
     };
 
     ChartDelegate._calculateInnerChartHeight = function(oMDCChart) {
@@ -1111,32 +1173,18 @@ sap.ui.define([
         //TODO: Check for Hierachy and Time
         //TODO: Check for role annotation
 
-        this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
-
-            //Uses MDC Chart Item ID to identify preoperty, not internal chart id
-            var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
-                return oCurrentPropertyInfo.name === oMDCChartItem.getName();
-            });
-
-            this._addInnerDimension(oMDCChart, oMDCChartItem, oPropertyInfo);
-
+        this._getPropertyInfosByName(oMDCChartItem.getName(), oMDCChart).then(function(oPropInfo){
+            this._addInnerDimension(oMDCChart, oMDCChartItem, oPropInfo);
         }.bind(this));
+
 
     };
 
     ChartDelegate.createInnerMeasure = function (oMDCChart, oMDCChartItem) {
 
-        this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
-
-            //Uses MDC Chart Item ID to identify preoperty, not internal chart id
-            var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
-                return oCurrentPropertyInfo.name === oMDCChartItem.getName();
-            });
-
-            this._addInnerMeasure(oMDCChart, oMDCChartItem, oPropertyInfo);
-
+        this._getPropertyInfosByName(oMDCChartItem.getName(), oMDCChart).then(function(oPropInfo){
+            this._addInnerMeasure(oMDCChart, oMDCChartItem, oPropInfo);
         }.bind(this));
-
     };
 
     /**
@@ -1152,7 +1200,7 @@ sap.ui.define([
         if (oPropertyInfo.textProperty){
             oDimension.setTextProperty(oPropertyInfo.textProperty);
             if (oPropertyInfo.textFormatter){
-                oDimension.setTextFormatter(oPropertyInfo.textFormatter);
+                oDimension.setTextFormatter(this._formatText.bind(oPropertyInfo));
             }
             oDimension.setDisplayText(true);
         }
@@ -1358,41 +1406,6 @@ sap.ui.define([
         return oMDCChart.getPropertyHelper().getProperty(sName);
     };
 
-    /**
-     * This returns the layout options for a specific type of Item (measure/dimension,groupable/aggregatable)
-     * It is used by p13n to determine which layout options to show in the p13n panel
-     * @param {string} sType the type for which the layout options are requested
-     */
-    ChartDelegate._getLayoutOptionsForType = function(sType){
-        var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		var oAvailableRoles = {
-		    groupable: [
-				{
-					key: MDCLib.ChartItemRoleType.category,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY')
-				}, {
-					key: MDCLib.ChartItemRoleType.category2,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY2')
-				}, {
-					key: MDCLib.ChartItemRoleType.series,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_SERIES')
-				}
-			],
-			aggregatable: [
-				{
-					key: MDCLib.ChartItemRoleType.axis1,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS1')
-				}, {
-					key: MDCLib.ChartItemRoleType.axis2,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS2')
-				}, {
-					key: MDCLib.ChartItemRoleType.axis3,
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS3')
-				}
-			]
-		};
-		return oAvailableRoles[sType];
-    };
 
     /**
      * Adds an item to the inner chart (measure/dimension)
@@ -1470,44 +1483,24 @@ sap.ui.define([
     };
 
     /**
-     * Initializes a new table property helper for V4 analytics with the property extensions merged into the property infos.
-     *
-     * @param {sap.ui.mdc.Chart} oMDCChart reference to the MDC Chart
-     * @returns {Promise<sap.ui.mdc.table.V4AnalyticsPropertyHelper>} A promise that resolves with the property helper.
-     * @private
-     * @ui5-restricted sap.ui.mdc
+     * Returns the propertyHelper used for the chart delegate
+     * @returns {Promise} Promise with the property helper reference
      */
-    ChartDelegate.initPropertyHelper = function (oMDCChart) {
-        // TODO: Do this in the DelegateMixin, or provide a function in the base delegate to merge properties and extensions
-        return Promise.all([
-            this.fetchProperties(oMDCChart),
-            loadModules("sap/ui/mdc/odata/v4/ChartPropertyHelper")
-        ]).then(function (aResult) {
-            return Promise.all(aResult.concat(this.fetchPropertyExtensions(oMDCChart, aResult[0])));
-        }.bind(this)).then(function (aResult) {
-            var aProperties = aResult[0];
-            var PropertyHelper = aResult[1][0];
-            var mExtensions = aResult[2];
-            var iMatchingExtensions = 0;
-            var aPropertiesWithExtension = [];
-
-            for (var i = 0; i < aProperties.length; i++) {
-                aPropertiesWithExtension.push(Object.assign({}, aProperties[i], {
-                    extension: mExtensions[aProperties[i].name] || {}
-                }));
-
-                if (aProperties[i].name in mExtensions) {
-                    iMatchingExtensions++;
-                }
-            }
-
-            if (iMatchingExtensions !== Object.keys(mExtensions).length) {
-                throw new Error("At least one property extension does not point to an existing property");
-            }
-
-            return new PropertyHelper(aPropertiesWithExtension, oMDCChart);
-        });
+    ChartDelegate.getPropertyHelperClass = function () {
+        return PropertyHelper;
     };
+
+    /**
+     * This allows formatting for axis labels of the inner sap.chart.Chart.
+     * Note: As the inner chart has no association to the propertyInfo, "this" will be bound to the propertyInfo object when calling this method
+     * @param {string} sKey the key of the dimension
+     * @param {string} SDesc the description provided by the metadata
+     * @returns {string} the label which should be shown on the chart axis
+     */
+    ChartDelegate._formatText = function(sKey, SDesc) {
+        return sKey;
+    };
+
     /**
      * Returns the relevant propery infos based on the metadata used with the MDC Chart instance.
      *
@@ -1515,6 +1508,7 @@ sap.ui.define([
      * @returns {array} Array of the property infos to be used within MDC Chart
      */
     ChartDelegate.fetchProperties = function (oMDCChart) {
+
         var oModel = this._getModel(oMDCChart);
         var pCreatePropertyInfos;
 
@@ -1524,10 +1518,10 @@ sap.ui.define([
                     resolver: resolve
                 }, onModelContextChange, this);
             }.bind(this)).then(function (oModel) {
-                return this._createPropertyInfos(oMDCChart, oModel);
+                return this._createPropertyInfos(oMDCChart.getDelegate().payload, oModel);
             }.bind(this));
         } else {
-            pCreatePropertyInfos = this._createPropertyInfos(oMDCChart, oModel);
+            pCreatePropertyInfos = this._createPropertyInfos(oMDCChart.getDelegate().payload, oModel);
         }
 
         return pCreatePropertyInfos.then(function (aProperties) {
@@ -1548,10 +1542,10 @@ sap.ui.define([
         }
     }
 
-    ChartDelegate._createPropertyInfos = function (oMDCChart, oModel) {
-        var oMetadataInfo = oMDCChart.getDelegate().payload;
+    ChartDelegate._createPropertyInfos = function (oDelegatePayload, oModel) {
+        //var oMetadataInfo = oMDCChart.getDelegate().payload;
         var aProperties = [];
-        var sEntitySetPath = "/" + oMetadataInfo.collectionName;
+        var sEntitySetPath = "/" + oDelegatePayload.collectionName;
         var oMetaModel = oModel.getMetaModel();
 
         return Promise.all([
@@ -1600,13 +1594,13 @@ sap.ui.define([
                             aggregatable: false,
                             maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
                             sortKey: sKey,
-                            typeConfig: this.getTypeUtil().getTypeConfig(oObj.$Type, null, {}),
-                            kind:  "Groupable", //TODO: Rename in type; Only needed for P13n Item Panel
-                            availableRoles: this._getLayoutOptionsForType("groupable"), //for p13n
+                            dataType: oObj.$Type,
+                            //formatOptions: null,
+                            //constraints: {},
                             role: MDCLib.ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
                             criticality: null ,//To be implemented by FE
                             textProperty: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] ? oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path  : null //To be implemented by FE
-                            //textFormatter: function(){} -> can be used to provide a custom formatter for the textProperty
+                            //textFormatter: string-> can be used to provide a custom formatter for the textProperty
                         });
                     }
                 }
@@ -1630,14 +1624,10 @@ sap.ui.define([
                     aggregatable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"],
                     aggregationMethod: sAggregationMethod,
                     maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
-                    sortKey: oPropertyAnnotations["@Org.OData.Aggregation.V1.RecommendedAggregationMethod"] + sKey,
-                    typeConfig: this.getTypeUtil().getTypeConfig(oObj.$Type, null, {}),
-                    kind: "Aggregatable",//Only needed for P13n Item Panel
-                    availableRoles: this._getLayoutOptionsForType("aggregatable"), //for p13n
-                    role: MDCLib.ChartItemRoleType.axis1,
+                    dataType: oObj.$Type,
                     datapoint: null //To be implemented by FE
                 });
-            }.bind(this));
+            });
         }
 
         return aProperties;
@@ -1645,15 +1635,7 @@ sap.ui.define([
 
     //Gets internal property infos by excact property name
     ChartDelegate._getPropertyInfosByName = function(sName, oMDCChart){
-        return new Promise(function(resolve){
-            this.fetchProperties(oMDCChart).then(function(aProperties){
-                var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
-                    return oCurrentPropertyInfo.name === sName;
-                });
-
-                resolve(oPropertyInfo);
-            });
-        }.bind(this));
+        return oMDCChart._getPropertyByNameAsync(sName);
     };
 
 

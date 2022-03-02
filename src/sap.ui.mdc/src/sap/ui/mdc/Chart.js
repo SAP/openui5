@@ -223,6 +223,17 @@ sap.ui.define([
                         type: "boolean",
                         group: "Misc",
                         defaultValue: true
+                    },
+                    /**
+                     * Specifies the filter metadata.<br>
+                     * <b>Note</b>: This property must not be bound.<br>
+                     * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/ Fiori Elements. Do not use it otherwise.
+                     *
+                     * @since 1.99
+                     */
+                    propertyInfo: {
+                        type: "object",
+                        defaultValue: []
                     }
                 },
                 aggregations: {
@@ -342,6 +353,9 @@ sap.ui.define([
             this.setModel(this._oManagedObjectModel, "$mdcChart");
             this._bNewP13n = true;//TODO: remove with migration
             Control.prototype.init.apply(this, arguments);
+
+            this._setupPropertyInfoStore("propertyInfo");
+            this._setPropertyHelperClass(PropertyHelper);
         };
 
         Chart.prototype.setP13nMode = function(aMode) {
@@ -471,6 +485,7 @@ sap.ui.define([
                 aInitPromises.push(this.retrieveInbuiltFilter());
             }
 
+            //TODO: Refactor this so we use awaitPropertyHelper
             Promise.all(aInitPromises).then(function(){
                 this._initInnerControls();
             }.bind(this));
@@ -482,6 +497,7 @@ sap.ui.define([
          * Inner chart is initialized via the delegate
          */
         Chart.prototype._initInnerControls = function () {
+
             this.getControlDelegate().initializeInnerChart(this).then(function (oInnerChart) {
 
                 this.setBusyIndicatorDelay(0);
@@ -491,16 +507,14 @@ sap.ui.define([
 
                 if (this.getAutoBindOnInit()) {
                     this.setBusy(true);
-                    this._createContentfromPropertyInfos();
+                    this._createContentfromPropertyInfos(oInnerChart);
                 }
 
                 this.setAggregation("_innerChart", oInnerChart);
-
                 this._bInnerChartReady = true;
-
                 this._fnResolveInitialized();
-                // eslint-disable-next-line no-empty
                 this.invalidate();
+
             }.bind(this)).catch(function (error) {
                 this._fnRejectInitialized(error);
             }.bind(this));
@@ -517,27 +531,27 @@ sap.ui.define([
          *
          * Is called during init when autoBindOnInit = "true", if "false" then this is called by _rebind()
          */
-        Chart.prototype._createContentfromPropertyInfos = function () {
-            this.initPropertyHelper().then(function () {
+        Chart.prototype._createContentfromPropertyInfos = function (oInnerChart) {
+
+            //Make sure all MDC Items have the necessary information to create a chart
+            this.getControlDelegate().checkAndUpdateMDCItems(this).then(function(){
                 //Create content on inner chart instance
-                this.getControlDelegate().createInnerChartContent(this, this._innerChartDataLoadComplete.bind(this));
+                this.getControlDelegate().createInnerChartContent(this, this._innerChartDataLoadComplete.bind(this)).then(function(){
+                    this._createBreadcrumbs();
+                    //From now on, listen to changes on Items Aggregation and sync them with inner chart
+                    this._oObserver = new ManagedObjectObserver(this._propagateItemChangeToInnerChart.bind(this));
+                    this._oObserver.observe(this, {
+                        aggregations: [
+                            "items"
+                        ]
+                    });
 
-                this._createBreadcrumbs();
-                //From now on, listen to changes on Items Aggregation and sync them with inner chart
-                this._oObserver = new ManagedObjectObserver(this._propagateItemChangeToInnerChart.bind(this));
-                this._oObserver.observe(this, {
-                    aggregations: [
-                        "items"
-                    ]
-                });
+                    //Sync MDC Chart properties with inner chart
+                    this._propagatePropertiesToInnerChart();
 
-                //Sync MDC Chart properties with inner chart
-                this._propagatePropertiesToInnerChart();
-
-                this._fnResolveInnerChartBound();
-
+                    this._fnResolveInnerChartBound();
+                }.bind(this));
             }.bind(this));
-
         };
 
         Chart.prototype.setHeight = function(iHeight) {

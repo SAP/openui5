@@ -88,7 +88,7 @@ sap.ui.define([
 						control: oMDCChart,
 						key: "Item",
 						state: [{
-							name: oListItem.data("dim").name,
+							name: oListItem.data("dim").dim.name,
 							position: oMDCChart.getItems().length
 						}]
 					});
@@ -179,7 +179,7 @@ sap.ui.define([
 					type: ListType.Active
 				});
 
-				oListItem.data("dim", oDimension);
+				oListItem.data("dim", {dim: oDimension});
 
 				/*sTooltip = this._getFieldTooltip(oDimension.name);
 				if (sTooltip) {

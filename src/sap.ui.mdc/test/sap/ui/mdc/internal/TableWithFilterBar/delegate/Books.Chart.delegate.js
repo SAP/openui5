@@ -6,16 +6,143 @@ sap.ui.define([
     "sap/ui/mdc/odata/v4/ODataMetaModelUtil",
     "sap/ui/mdc/library",
     "./Books.FB.delegate",
-    "sap/ui/mdc/enum/FieldDisplay"
-], function(ChartDelegate, ODataMetaModelUtil, MDCLib, BooksFBDelegate, FieldDisplay) {
+    "sap/ui/mdc/enum/FieldDisplay",
+    "sap/base/Log"
+], function(ChartDelegate, ODataMetaModelUtil, MDCLib, BooksFBDelegate, FieldDisplay, Log) {
     "use strict";
 
     var SampleChartDelegate = Object.assign({}, ChartDelegate);
+    //Store the fetched properties during pre-processing in here
+    var aCachedProps;
 
-    SampleChartDelegate._createPropertyInfos = function (oMDCChart, oModel) {
-        var oMetadataInfo = oMDCChart.getDelegate().payload;
+    SampleChartDelegate.addItem = function(sDataPropertyName, oMDCChart, mPropertyBag, sRole){
+        //Pre-Processing -> Cache the needed propertyInfos
+        if (mPropertyBag.modifier.targets === "xmlTree") {
+			return this.checkPropertyInfo(sDataPropertyName, oMDCChart, mPropertyBag).then(function(){
+
+					return this.fetchProperties(oMDCChart, mPropertyBag).then(function(aFetchedProps){
+						if (aFetchedProps) {
+							var oMDCItem = this.getMDCItemPrePos(sDataPropertyName, oMDCChart, sRole, aFetchedProps, mPropertyBag);
+							return oMDCItem;
+						}
+
+						return ChartDelegate.addItem.call(this, sDataPropertyName, oMDCChart, mPropertyBag, sRole);
+					}.bind(this));
+			}.bind(this));
+
+		}
+
+        return ChartDelegate.addItem.call(this, sDataPropertyName, oMDCChart, mPropertyBag, sRole);
+    };
+
+    var fnGetFetchedPropertiesObject = function() {
+		return aCachedProps;
+	};
+	var fnSetFetchedPropertiesObject = function(aProperties) {
+		aCachedProps = aProperties;
+	};
+
+	var fnAddPropertyInfoEntry = function(oControl, sPropertyName, aPropertyInfo, aFetchedProperties, oModifier) {
+
+		if (aFetchedProperties) {
+			var nIdx = aFetchedProperties.findIndex(function(oEntry) {
+				return oEntry.name === sPropertyName;
+			});
+
+			if (nIdx >= 0) {
+				aPropertyInfo.push(aFetchedProperties[nIdx]);
+				oModifier.setProperty(oControl, "propertyInfo", aPropertyInfo);
+			} else {
+				Log.error("ChartItemFlex-ChangeHandler: no property info for '" + sPropertyName + "'");
+			}
+		}
+	};
+
+	SampleChartDelegate.getMDCItemPrePos = function(sPropertyName, oMDCChart, sRole, aProps, mPropertyBag){
+		var oModifier = mPropertyBag.modifier;
+		var oPropertyInfo = aProps.find(function(oEntry) {
+			return oEntry.name === sPropertyName;
+		});
+
+		if (!oPropertyInfo) {
+			return null;
+		}
+
+		return oModifier.getProperty(oMDCChart, "id").then(function(sId){
+			if (oPropertyInfo.groupable) {
+
+				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--GroupableItem--" + sPropertyName,{
+					name: oPropertyInfo.name,
+                    label: oPropertyInfo.label,
+                    type: "groupable",
+                    role: sRole ? sRole : "category"
+				});
+            }
+
+            if (oPropertyInfo.aggregatable) {
+
+				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--AggregatableItem--" + sPropertyName,{
+					name: oPropertyInfo.name,
+                    label: oPropertyInfo.label,
+                    type: "aggregatable",
+                    role: sRole ? sRole : "axis1"
+				});
+            }
+
+            return null;
+		});
+
+	};
+
+	SampleChartDelegate.checkPropertyInfo = function(sPropertyName, oControl, mPropertyBag){
+		var oModifier = mPropertyBag.modifier;
+		return oModifier.getProperty(oControl, "propertyInfo")
+		.then(function(aPropertyInfo) {
+			var nIdx = aPropertyInfo.findIndex(function(oEntry) {
+				return oEntry.name === sPropertyName;
+			});
+
+			if (nIdx < 0) {
+
+				var aFetchedProperties = fnGetFetchedPropertiesObject();
+				if (aFetchedProperties) {
+					fnAddPropertyInfoEntry(oControl, sPropertyName, aPropertyInfo, aFetchedProperties, oModifier);
+				} else {
+                    return this.fetchProperties(oControl, mPropertyBag)
+                    .then(function(aProperties) {
+                        fnSetFetchedPropertiesObject(aProperties);
+                        fnAddPropertyInfoEntry(oControl, sPropertyName, aPropertyInfo, aProperties, oModifier);
+                    });
+				}
+			}
+		}.bind(this));
+	};
+
+	/**
+     * Override for pre-processing case
+     */
+	SampleChartDelegate.fetchProperties = function (oMDCChart, mPropertyBag) {
+
+		//Custom handling for fetchProperties during pre-processing
+		if (mPropertyBag && mPropertyBag.modifier.targets === "xmlTree") {
+			var oModifier = mPropertyBag.modifier;
+
+			return oModifier.getProperty(oMDCChart, "delegate")
+					.then(function(oDelegate){
+						var sModelName =  oDelegate.payload.modelName === null ? undefined : oDelegate.payload.model;
+						var oModel = mPropertyBag.appComponent.getModel(sModelName);
+
+						return this._createPropertyInfos(oDelegate.payload, oModel);
+					}.bind(this));
+		}
+
+		return ChartDelegate.fetchProperties.call(this, oMDCChart);
+	};
+
+    SampleChartDelegate._createPropertyInfos = function (oDelegatePayload, oModel) {
+        //var oMetadataInfo = oMDCChart.getDelegate().payload;
         var aProperties = [];
-        var sEntitySetPath = "/" + oMetadataInfo.collectionName;
+        var sEntitySetPath = "/" + oDelegatePayload.collectionName;
         var oMetaModel = oModel.getMetaModel();
 
         return Promise.all([
@@ -70,9 +197,8 @@ sap.ui.define([
                             aggregatable: false,
                             maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
                             sortKey: sKey,
-                            typeConfig: this.getTypeUtil().getTypeConfig(oObj.$Type, null, {}),
-                            kind:  "Groupable", //TODO: Rename in type; Only needed for P13n Item Panel
-                            availableRoles: this._getLayoutOptionsForType("groupable"), //for p13n
+                            //typeConfig: this.getTypeUtil().getTypeConfig(oObj.$Type, null, {}),
+                            dataType: oObj.$Type,
                             role: MDCLib.ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
                             textProperty:  sTextProperty
                         });
