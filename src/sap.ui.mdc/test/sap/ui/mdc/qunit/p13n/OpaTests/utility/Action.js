@@ -692,6 +692,20 @@ sap.ui.define([
 				},
 				errorMessage: "Could not find VariantManagement"
 			});
+		},
+		iEnterValueInP13nSearchField: function(sValue) {
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				success: function(aDialogs) {
+					return this.waitFor({
+						controlType: "sap.m.SearchField",
+						matchers: new Ancestor(aDialogs[0], false),
+						actions: new EnterText({
+							text: sValue
+						})
+					});
+				}
+			});
 		}
 	});
 
