@@ -149,16 +149,18 @@ sap.ui.define([
 	GroupView.prototype._createGroupListTemplate = function() {
 		var oList = new List({
 			keyboardMode: ListKeyboardMode.Navigation,
-			selectionChange: function(oBindingInfo) {
-				var sPath = oBindingInfo.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
+			selectionChange: function(oEvent) {
+				var sPath = oEvent.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
 				var oItem = this._getP13nModel().getProperty(sPath);
 				var oP13nModel = this.getModel(this.P13N_MODEL);
 				//TODO: remove 'selected' condition enhance
 				if (oP13nModel && oItem) {
 					oP13nModel.setProperty(sPath + "/selected", oItem.visible);
 				}
+				var sSpecialChangeReason = this._checkSpecialChangeReason(oEvent.getParameter("selectAll"), oEvent.getParameter("listItems"));
+
 				this.fireChange({
-					reason: oItem.visible ? "Add" : "Remove",
+					reason: sSpecialChangeReason || (oItem.visible ? this.CHANGE_REASON_ADD : this.CHANGE_REASON_REMOVE),
 					item: oItem
 				});
 			}.bind(this),

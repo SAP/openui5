@@ -118,6 +118,7 @@ sap.ui.define([
 	BasePanel.prototype.CHANGE_REASON_MOVE = "Move";
 	BasePanel.prototype.CHANGE_REASON_SELECTALL = "SelectAll";
 	BasePanel.prototype.CHANGE_REASON_DESELECTALL = "DeselectAll";
+	BasePanel.prototype.CHANGE_REASON_RANGESELECT = "RangeSelect";
 
 	//defines the name of the attribute describing the presence/active state
 	BasePanel.prototype.PRESENCE_ATTRIBUTE = "visible";
@@ -481,28 +482,40 @@ sap.ui.define([
 	BasePanel.prototype._onSelectionChange = function(oEvent) {
 
 		var aListItems = oEvent.getParameter("listItems");
-		var bSelectAll = oEvent.getParameter("selectAll");
-		var bDeSelectAll = !bSelectAll && aListItems.length > 1;
+		var sSpecialChangeReason = this._checkSpecialChangeReason(oEvent.getParameter("selectAll"), oEvent.getParameter("listItems"));
 
 		aListItems.forEach(function(oTableItem) {
-			this._selectTableItem(oTableItem, bSelectAll || bDeSelectAll);
+			this._selectTableItem(oTableItem, !!sSpecialChangeReason);
 		}, this);
 
-		if (bSelectAll || bDeSelectAll) {
+		if (sSpecialChangeReason) {
 			this.fireChange({
-				reason: bSelectAll ? this.CHANGE_REASON_SELECTALL : this.CHANGE_REASON_DESELECTALL,
+				reason: sSpecialChangeReason,
 				item: undefined //No direct item is affected
 			});
 		}
 
-
 		// in case of 'deselect all', the move buttons for positioning are going to be disabled
-		if (bDeSelectAll) {
+		if (sSpecialChangeReason === this.CHANGE_REASON_DESELECTALL) {
 			this._getMoveTopButton().setEnabled(false);
 			this._getMoveUpButton().setEnabled(false);
 			this._getMoveDownButton().setEnabled(false);
 			this._getMoveBottomButton().setEnabled(false);
 		}
+	};
+
+	BasePanel.prototype._checkSpecialChangeReason = function(bSelectAll, aListItems) {
+		var sSpecialChangeReason;
+
+		if (bSelectAll) {
+			sSpecialChangeReason = this.CHANGE_REASON_SELECTALL;
+		} else if (!bSelectAll && aListItems.length > 1 && !aListItems[0].getSelected()) {
+			sSpecialChangeReason = this.CHANGE_REASON_DESELECTALL;
+		} else if (aListItems.length > 1 && aListItems.length < this._oListControl.getItems().length) {
+			sSpecialChangeReason = this.CHANGE_REASON_RANGESELECT;
+		}
+
+		return sSpecialChangeReason;
 	};
 
 	BasePanel.prototype._onItemPressed = function(oEvent) {
@@ -548,10 +561,10 @@ sap.ui.define([
 		oList.getBinding("items").filter(bShowSelected ? new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true) : []);
 	};
 
-	BasePanel.prototype._selectTableItem = function(oTableItem, bSelectAll) {
-		this._updateEnableOfMoveButtons(oTableItem, bSelectAll ? false : true);
+	BasePanel.prototype._selectTableItem = function(oTableItem, bSpecialChangeReason) {
+		this._updateEnableOfMoveButtons(oTableItem, bSpecialChangeReason ? false : true);
 		this._oSelectedItem = oTableItem;
-		if (!bSelectAll) {
+		if (!bSpecialChangeReason) {
 			var oItem = this._getP13nModel().getProperty(this._oSelectedItem.getBindingContext(this.P13N_MODEL).sPath);
 
 			this.fireChange({

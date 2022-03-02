@@ -206,4 +206,72 @@ sap.ui.define([
 		assert.equal(this.oBasePanel.getAggregation("_template").aDelegates.length, 0, "No hover event delegate registered");
 	});
 
+	QUnit.test("Check change event reason 'Add'", function(assert){
+
+		var done = assert.async();
+
+		this.oBasePanel.attachChange(function(oEvt){
+			assert.equal(oEvt.getParameter("reason"), this.oBasePanel.CHANGE_REASON_ADD, "P13n change event fired with correct reason");
+			done();
+		}.bind(this));
+
+		this.oBasePanel._oListControl.fireSelectionChange({
+			listItem: this.oBasePanel._oListControl.getItems()[0],
+			listItems: [this.oBasePanel._oListControl.getItems()[0]],
+			selectAll: false
+		});
+	});
+
+	QUnit.test("Check change event reason 'Remove'", function(assert){
+
+		var done = assert.async();
+
+		this.oBasePanel.attachChange(function(oEvt){
+			assert.equal(oEvt.getParameter("reason"), this.oBasePanel.CHANGE_REASON_REMOVE, "P13n change event fired with correct reason");
+			done();
+		}.bind(this));
+
+		this.oBasePanel.setP13nData([
+			{
+				label: "Test",
+				name: "test",
+				visible: false //mock user interaction by setting this to invisible
+			}, {
+				label: "Test2",
+				name: "test2",
+				visible: true
+			}, {
+				label: "Test3",
+				name: "test3",
+				visible: false
+			}, {
+				label: "Test4",
+				name: "test4",
+				visible: true
+			}
+		]);
+
+		this.oBasePanel._oListControl.fireSelectionChange({
+			listItem: this.oBasePanel._oListControl.getItems()[0],
+			listItems: [this.oBasePanel._oListControl.getItems()[0]],
+			selectAll: false
+		});
+	});
+
+	QUnit.test("Check change event reason 'SelectAll'", function(assert){
+
+		var done = assert.async();
+
+		this.oBasePanel.attachChange(function(oEvt){
+			assert.equal(oEvt.getParameter("reason"), this.oBasePanel.CHANGE_REASON_SELECTALL, "P13n change event fired with correct reason");
+			done();
+		}.bind(this));
+
+		this.oBasePanel._oListControl.fireSelectionChange({
+			listItem: this.oBasePanel._oListControl.getItems()[0],
+			listItems: this.oBasePanel._oListControl.getItems(),
+			selectAll: true
+		});
+	});
+
 });
