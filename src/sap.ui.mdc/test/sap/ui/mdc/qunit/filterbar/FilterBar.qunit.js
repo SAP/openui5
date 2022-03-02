@@ -1357,47 +1357,28 @@ sap.ui.define([
 
 	QUnit.test("check validate with not yet complete change appliance", function (assert) {
 
-		var fResolvePromise, oWaitPromise = new Promise(function(resolve) {
-			fResolvePromise = resolve;
-		});
 		var fnSearch = function(oEvent) {
-			fResolvePromise();
-
-			oWaitPromise = new Promise(function(resolve) {
-				fResolvePromise = resolve;
-			});
+			oFilterBar._onChangeAppliance();
+			oFilterBar._registerOnEngineOnModificationEnd();
 		};
 
 		var done = assert.async();
 
 		oFilterBar.attachSearch(fnSearch);
+		oFilterBar._registerOnEngineOnModificationEnd();
 
 		sinon.spy(oFilterBar, "_validate");
-		sinon.spy(oFilterBar, "_waitForChangeAppliance");
 
-		sinon.stub(oFilterBar, "waitForInitialization").returns(Promise.resolve());
+		setTimeout(function() {oFilterBar._fConditionChangeStartedPromiseResolve();}, 100);
 
-		oFilterBar.triggerSearch();
-		oWaitPromise.then(function() {
-
-			assert.ok(!oFilterBar._waitForChangeAppliance.called);
+		oFilterBar.triggerSearch().then(function() {
 			assert.ok(oFilterBar._validate.calledOnce);
 			oFilterBar._validate.reset();
 
-
-			var fResolveChangePromise, oChangePromise = new Promise(function(resolve) {
-				fResolveChangePromise = resolve;
-			});
-			oFilterBar._aCollectedChangePromises = [oChangePromise];
-
-			oFilterBar.triggerSearch();
-
-			var oTimeOut = setTimeout(fResolveChangePromise, 10);
-			Promise.all([oChangePromise, oWaitPromise]).then(function() {
-				clearTimeout(oTimeOut);
-				assert.ok(oFilterBar._waitForChangeAppliance.calledOnce);
-				assert.ok(oFilterBar._validate.calledTwice);
-			done();
+			setTimeout(function() {oFilterBar._fConditionChangeStartedPromiseResolve();}, 100);
+			oFilterBar.triggerSearch().then(function() {
+				assert.ok(oFilterBar._validate.calledOnce);
+				done();
 			});
 		});
 

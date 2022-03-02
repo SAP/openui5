@@ -678,17 +678,11 @@ sap.ui.define([
 
 	FilterBarBase.prototype._addConditionChange = function(mOrigConditions, sFieldPath) {
 
-		var oChangePromise = this.getEngine().createChanges({
+		this.getEngine().createChanges({
 			control: this,
 			key: "Filter",
-			//prependChanges: fCreateTypeInfoCallback,
 			state: mOrigConditions
 		});
-
-		if (!this._aCollectedChangePromises) {
-			this._aCollectedChangePromises = [];
-		}
-		this._aCollectedChangePromises.push(oChangePromise);
 	};
 
 	FilterBarBase.prototype._registerOnEngineOnModificationEnd = function() {
@@ -722,12 +716,13 @@ sap.ui.define([
 
 				if (this._bPersistValues && this._isPersistenceSupported()) {
 
+					this._registerOnEngineOnModificationEnd();
+
 					var aConditions = oEvent.getParameter("value");
 
 					if (this._getPropertyByName(sFieldPath)) {
 						fAddConditionChange(sFieldPath, aConditions);
 					} else {
-						this._registerOnEngineOnModificationEnd();
 						this._retrieveMetadata().then(function() {
 							fAddConditionChange(sFieldPath, aConditions);
 						});
@@ -997,19 +992,7 @@ sap.ui.define([
 		var oPromise = oEvent.getParameter("promise");
 		if (oPromise) {
 			oPromise.then(function() {
-
-				if (this._oConditionChangeStartedPromise) {
-					this._oConditionChangeStartedPromise.then(function() {
-						this.triggerSearch();
-					}.bind(this));
-				} else if (this._aCollectedChangePromises && this._aCollectedChangePromises.length > 0) {
-					var aChangePromises = this._aCollectedChangePromises.slice();
-					Promise.all(aChangePromises).then(function() {
-						this.triggerSearch();
-					}.bind(this));
-				} else {
-					this.triggerSearch();
-				}
+				this.triggerSearch();
 			}.bind(this)).catch(function(oEx) {
 				Log.error(oEx);
 			});
@@ -1093,18 +1076,6 @@ sap.ui.define([
 		}
 	};
 
-	FilterBarBase.prototype._waitForChangeAppliance = function(bFireSearch) {
-
-		var aChangePromises = this._aCollectedChangePromises.slice();
-		this._aCollectedChangePromises = null;
-
-		Promise.all(aChangePromises).then(function(aConditionsArray) {
-			this._validate(bFireSearch);
-		}.bind(this), function(aConditionsArray) {
-			this._validate(bFireSearch);
-		}.bind(this));
-	};
-
 	/**
 	 * Executes the search.
 	 * @private
@@ -1123,6 +1094,12 @@ sap.ui.define([
 			this._fResolvedSearchPromise = null;
 		}.bind(this);
 
+		var fnValidationSucceeds = function() {
+			fnCheckAndFireSearch();
+			this._fResolvedSearchPromise();
+			fnCleanup();
+		}.bind(this);
+
 		if (this.bIsDestroyed) {
 			fnCleanup();
 			return;
@@ -1136,22 +1113,13 @@ sap.ui.define([
 			return;
 		}
 
-		if (this._aCollectedChangePromises && (this._aCollectedChangePromises.length > 0)) {
-			this._waitForChangeAppliance(bFireSearch);
-			return;
-		}
-
 		if (vRetErrorState === ErrorState.NoError) {
-			if (this._isChangeApplying()) {
-				this._oFlexPromise.then(function() {
-					fnCheckAndFireSearch();
-					this._fResolvedSearchPromise();
-					fnCleanup();
-				}.bind(this));
+			if (this._oConditionChangeStartedPromise) {
+				this._oConditionChangeStartedPromise.then(function() {
+					fnValidationSucceeds();
+				});
 			} else {
-				fnCheckAndFireSearch();
-				this._fResolvedSearchPromise();
-				fnCleanup();
+				fnValidationSucceeds();
 			}
 		} else {
 			if (vRetErrorState === ErrorState.RequiredHasNoValue) {
@@ -1924,7 +1892,6 @@ sap.ui.define([
 		this._aBindings = null;
 
 		this._aFIChanges = null;
-		this._aCollectedChangePromises = null;
 
 		this._oConditionChangeStartedPromise = null;
 		this._fConditionChangeStartedPromiseResolve	= undefined;
