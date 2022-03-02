@@ -101,6 +101,44 @@ sap.ui.define([
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		});
+
+		QUnit.test("when 2 Changes get executed and one gets an error after execution", function(assert) {
+			var done = assert.async();
+
+			var iCounter = 0;
+			var aInputs = [this.oInput1, this.oInput2];
+			this.oCommandStack.attachCommandExecuted(function(oEvent) {
+				var bFirstCommand = oEvent.getParameter("command").getElement() === aInputs[0];
+				assert.ok(bFirstCommand, "then command number " + (iCounter + 1) + " gets executed");
+				iCounter++;
+
+				if (iCounter === 2) {
+					assert.ok(false, "then catch has not be called");
+					done();
+				}
+			});
+
+			// Create commands
+			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
+				removedElement: this.oInput1
+			}, this.oInputDesignTimeMetadata)
+				.then(function(oRemoveCommand) {
+					return this.oCommandStack.pushAndExecute(oRemoveCommand);
+				}.bind(this))
+				.then(CommandFactory.getCommandFor.bind(this, this.oInput2, "Remove", {
+					removedElement: this.oInput2
+				}, this.oInputDesignTimeMetadata))
+				.then(function(oRemoveCommand) {
+					//force an error
+					sandbox.stub(this.oCommandStack, "getSubCommands").returns(undefined);
+					return this.oCommandStack.pushAndExecute(oRemoveCommand);
+				}.bind(this))
+				.catch(function (oError) {
+					assert.ok(true, 'catch has be called during execution of second command - Error: ' + oError);
+					assert.equal(this.oCommandStack._toBeExecuted, -1, "the Variable '_toBeExecuted' is not descreased a second time");
+					done();
+				}.bind(this));
+		});
 	});
 
 	QUnit.module("Given an array of dirty changes...", {

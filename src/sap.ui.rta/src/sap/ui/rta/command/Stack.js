@@ -205,17 +205,18 @@ sap.ui.define([
 		}).then(function() {
 			var oCommand = this._getCommandToBeExecuted();
 			if (oCommand) {
+				var mParam = {
+					command: oCommand,
+					undo: false
+				};
 				return oCommand.execute()
+
+				.then(this._waitForCommandExecutionHandler.bind(this, mParam))
 
 				.then(function() {
 					this._toBeExecuted--;
-					var mParam = {
-						command: oCommand,
-						undo: false
-					};
 					this.fireCommandExecuted(mParam);
 					this.fireModified();
-					return this._waitForCommandExecutionHandler(mParam);
 				}.bind(this))
 
 				.catch(function(oError) {
