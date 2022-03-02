@@ -7,15 +7,12 @@ sap.ui.define([
 ], function (MobileLibrary, Controller, Item, JSONModel, Uploader) {
 	"use strict";
 
-	var ListMode = MobileLibrary.ListMode;
-
 	return Controller.extend("sap.m.sample.UploadSet.Page", {
 		onInit: function () {
 			var sPath = sap.ui.require.toUrl("sap/m/sample/UploadSet/items.json"),
 				oUploadSet = this.byId("UploadSet");
 
 			this.getView().setModel(new JSONModel(sPath));
-			oUploadSet.getList().setMode(ListMode.MultiSelect);
 
 			// Modify "add file" button
 			oUploadSet.getDefaultFileUploader().setButtonOnly(false);

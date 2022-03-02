@@ -87,7 +87,16 @@ sap.ui.define([
 				 * URL where the uploaded files will be stored. If empty, uploadUrl from the uploader is considered.
 				 * @since 1.90
 				 */
-				uploadUrl: {type: "string", defaultValue: null}
+				uploadUrl: {type: "string", defaultValue: null},
+				/**
+				 * Defines the selected state of the UploadSetItem.
+				 * @since 1.100.0
+				 */
+				 selected: {
+					type: "boolean",
+					group: "Behavior",
+					defaultValue: false
+				}
 			},
 			defaultAggregation: "attributes",
 			aggregations: {
@@ -358,6 +367,14 @@ sap.ui.define([
 					}
 				}
 			}
+		}
+		return this;
+	};
+
+	UploadSetItem.prototype.setSelected = function(selected) {
+		if (this.getSelected() !== selected) {
+			this.setProperty("selected", selected, true);
+			this.fireEvent("selected");
 		}
 		return this;
 	};
