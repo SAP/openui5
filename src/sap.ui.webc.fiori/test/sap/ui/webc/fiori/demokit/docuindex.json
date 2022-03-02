@@ -11,10 +11,32 @@
 		}
 	  ],
 	  "entities": [
-
+		{
+		  "id": "sap.ui.webc.fiori.Page",
+		  "name": "Page",
+		  "category": "Web Components",
+		  "since": "1.100.0",
+		  "samples": ["sap.ui.webc.fiori.sample.Page"]
+		},
+		{
+		  "id": "sap.ui.webc.fiori.Wizard",
+		  "name": "Wizard",
+		  "category": "Web Components",
+		  "since": "1.100.0",
+		  "samples": ["sap.ui.webc.fiori.sample.Wizard"]
+		}
 	  ],
 	  "samples": [
-
+		{
+		  "id": "sap.ui.webc.fiori.sample.Page",
+		  "name": "Page",
+		  "description": "Demonstrates the basic usage of Page"
+		},
+		{
+		  "id": "sap.ui.webc.fiori.sample.Wizard",
+		  "name": "Wizard",
+		  "description": "Demonstrates the basic usage of Wizard"
+		}
 	  ]
 	}
 }

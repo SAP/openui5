@@ -4,10 +4,8 @@ sap.ui.define([
 	"use strict";
 
 	return UIComponent.extend("sap.ui.webc.fiori.sample.Page.Component", {
-
 		metadata: {
 			manifest: "json"
 		}
-
 	});
 });

@@ -7,9 +7,9 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.webc.main.sample.Toast.C", {
 
-		onInit: function() {
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
-			this.getView().setModel(oModel);
+		clickHandler: function() {
+			var demoToast = this.getView().byId("demoToast");
+			demoToast.show();
 		}
 
 	});
