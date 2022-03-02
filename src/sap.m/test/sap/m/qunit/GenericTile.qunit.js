@@ -3871,8 +3871,6 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 					assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader was rendered successfully.");
 				}
 				assert.ok(document.getElementById("generic-tile-icon-image"), "Generic tile icon was rendered successfully.");
-			} else if (sGenericTileState === LoadState.Disabled) {
-				assert.ok(document.querySelector(".sapMTileCntDisabled"), "Tile disabled class added successfully.");
 			} else if (sGenericTileState === LoadState.Failed) {
 				assert.ok(document.querySelector(".sapMGenericTileFtrFld"), "Failed Container created.");
 				assert.ok(document.querySelector(".sapMGenericTileFtrFldIcn"), "Failed Icon created.");
