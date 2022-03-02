@@ -53,7 +53,9 @@ sap.ui.define([
 			.withExactArgs("path", sinon.match.same(oContext))
 			.returns("~deep");
 		this.mock(oModel).expects("checkFilterOperation").withExactArgs([]);
-		this.mock(ODataListBinding.prototype).expects("checkExpandedList").withExactArgs();
+		this.mock(ODataListBinding.prototype).expects("checkExpandedList")
+			.withExactArgs()
+			.returns(false);
 
 		oRemoveExpectation = this.mock(ODataListBinding.prototype)
 			.expects("_removePersistedCreatedContexts")
@@ -826,7 +828,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true,false].forEach(function (bIsResolved) {
+[true, false].forEach(function (bIsResolved) {
 	QUnit.test("checkExpandedList: isResolved=" + bIsResolved, function (assert) {
 		var oModel = {_getObject : function () {}},
 			oBinding = {
@@ -836,9 +838,10 @@ sap.ui.define([
 				isResolved : function () {}
 			};
 
-		this.mock(oBinding).expects("isResolved").withExactArgs().returns(bIsResolved);
-		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext")
+		this.mock(oModel).expects("_getObject")
+			.withExactArgs("~sPath", "~oContext")
 			.returns(bIsResolved ? undefined : []);
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(bIsResolved);
 
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype.checkExpandedList.call(oBinding), false);
