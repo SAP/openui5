@@ -476,7 +476,21 @@ sap.ui.define([
 			}
 		},
 
-        /**
+		/**
+		 * Gets the message to be displayed if the table contains no columns or no data.
+		 *
+		 * @param oTable Instance of the table.
+		 * @returns {Control | string} The no data control or text message.
+		 */
+		getNoContentMessage: function(oTable) {
+			if (oTable._getVisibleColumns().length > 0) {
+				return oTable.getNoData();
+			} else {
+				return oTable.getAggregation("_noColumnsMessage");
+			}
+		},
+
+		/**
 		 * Gets the text to be displayed as the "no data text".
 		 * If a control is set for the <code>noData</code> aggregation, <code>null</code> is returned.
 		 *
@@ -484,11 +498,11 @@ sap.ui.define([
 		 * @returns {string | null} The no data text.
 		 */
 		getNoDataText: function(oTable) {
-			if (TableUtils.getVisibleColumnCount(oTable) === 0) {
+			var vNoData = oTable.getNoData();
+
+			if (TableUtils.getVisibleColumnCount(oTable) === 0 && !TableUtils.isA(vNoData, "sap.m.IllustratedMessage")) {
 				return TableUtils.getResourceText("TBL_NO_COLUMNS");
 			}
-
-			var vNoData = oTable.getNoData();
 
 			if (TableUtils.isA(vNoData, "sap.ui.core.Control")) {
 				return null;

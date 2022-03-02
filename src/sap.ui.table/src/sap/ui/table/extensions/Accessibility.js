@@ -863,8 +863,22 @@ sap.ui.define([
 
 				case AccExtension.ELEMENTTYPES.NODATA: //The no data container
 					mAttributes["role"] = "gridcell";
-					var oNoData = oTable.getNoData();
-					mAttributes["aria-labelledby"] = [oNoData instanceof Control ? oNoData.getId() : (sTableId + "-noDataMsg")];
+					var oNoContentMessage = TableUtils.getNoContentMessage(oTable);
+					var aLabels = [];
+
+					if (oNoContentMessage instanceof Control) {
+						if (oNoContentMessage.isA("sap.m.IllustratedMessage")) {
+							var oAccRef = oNoContentMessage.getAccessibilityReferences();
+							aLabels.push(oAccRef.title);
+							aLabels.push(oAccRef.description);
+						} else {
+							aLabels.push(oNoContentMessage.getId());
+						}
+					} else {
+						aLabels.push(sTableId + "-noDataMsg");
+					}
+
+					mAttributes["aria-labelledby"] = aLabels;
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
