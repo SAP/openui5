@@ -90,7 +90,7 @@ sap.ui.define([
         this._oListControl.setMultiSelectMode(sMultiSelectMode);
     };
 
-    SelectionPanel.prototype._filterList = function(bShowSelected, sSarch) {
+    LinkSelectionPanel.prototype._filterList = function(bShowSelected, sSarch) {
 		var oSearchFilter = [], oSelectedFilter = [];
 		if (bShowSelected) {
 			oSelectedFilter = new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true);

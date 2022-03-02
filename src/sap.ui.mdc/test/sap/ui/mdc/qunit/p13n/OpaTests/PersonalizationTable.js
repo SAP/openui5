@@ -353,6 +353,13 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Created On", 6);
 	});
 
+	opaTest("check search", function (Given, When, Then) {
+		When.iEnterValueInP13nSearchField("name");
+
+		Then.iShouldSeeP13nItems([{p13nItem: "Name", selected: true}]);
+		Then.iShouldSeeP13nItem("Name", 0);
+	});
+
 	opaTest("check column header sort functionality: all previous sorters are deleted", function (Given, When, Then) {
 		//close Dialog
 		When.iPressDialogOk();
