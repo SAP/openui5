@@ -44,6 +44,7 @@
 
 			oButton = new sap.m.Button("popoverButton", {
 				text: "Open Grocery List in Popover ",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.ListBox,
 				press: function () {
 					oPopover.openBy(this);
 				}
