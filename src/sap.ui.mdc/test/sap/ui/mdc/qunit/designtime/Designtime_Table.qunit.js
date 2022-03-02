@@ -45,11 +45,11 @@ sap.ui.define([
 		this.fnExecuteWhenDesigntimeIsLoaded(assert, function(mDesignTimeMetadata, fnDone) {
 			assert.ok(Object.keys(mDesignTimeMetadata.aggregations).length > 0, "aggregations are defined in the DesignTime metadata");
 
-			var aAllowedAggregations = [];
+			var aAllowedAggregations = ["_content"];
 
 			for (var sKey in mDesignTimeMetadata.aggregations) {
 				if (aAllowedAggregations.includes(sKey)) {
-					assert.strictEqual(mDesignTimeMetadata.aggregations[sKey].ignore, false, sKey + " is allowed for DesignTime changes");
+					assert.ok(!mDesignTimeMetadata.aggregations[sKey].ignore, sKey + " is allowed for DesignTime changes");
 				} else {
 					assert.strictEqual(mDesignTimeMetadata.aggregations[sKey].ignore, true, sKey + " is ignored from DesignTime changes");
 				}

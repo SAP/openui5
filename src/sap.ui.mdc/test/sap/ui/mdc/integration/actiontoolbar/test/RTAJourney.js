@@ -70,96 +70,107 @@ sap.ui.define([
 
     var iComponent = 0;
 
-    QUnit.module("ActionToolbar RTA", {
-        afterEach: function() {
-            iComponent++;
+    var aTestSettings = [
+        {
+            name: "StandAlone",
+            id: "---app--actionToolbarId"
+        },
+        {
+            name: "Table",
+            id: "---app--actionToolbarTable-toolbar"
+        },
+        {
+            name: "Chart",
+            id: "---app--actionToolbarChart--toolbar"
         }
-    });
+    ];
 
-    opaTest("Check initial state", function(Given, When, Then) {
-        Given.iStartMyUIComponentInViewMode();
-        Given.iEnableTheLocalLRep();
-        Given.iClearTheLocalStorageFromRtaRestart();
-
-        Then.onTheApp.iShouldSeeActionToolbarWithActions("__component" + iComponent + "---app--actionToolbarId", {
-            "Test Action 1": {
-                alignment: ActionToolbarActionAlignment.Begin,
-                aggregationName: "end"
-            },
-            "Test Action 4": {
-                alignment: ActionToolbarActionAlignment.Begin,
-                aggregationName: "end"
-            },
-            "Test Action 5": {
-                alignment: ActionToolbarActionAlignment.Begin,
-                aggregationName: "end"
-            },
-            "Test Action 2": {
-                alignment: ActionToolbarActionAlignment.End,
-                aggregationName: "end"
-            },
-            "Test Action 3": {
-                alignment: ActionToolbarActionAlignment.End,
-                aggregationName: "end"
+    aTestSettings.forEach(function(oTestSetting) {
+        QUnit.module("ActionToolbar RTA - " + oTestSetting.name, {
+            after: function() {
+                iComponent++;
             }
         });
 
-        Then.iTeardownMyUIComponent();
-    });
+        opaTest("Check initial state", function(Given, When, Then) {
+            Given.iStartMyUIComponentInViewMode();
+            Given.iEnableTheLocalLRep();
+            Given.iClearTheLocalStorageFromRtaRestart();
 
-    opaTest("Hide 'Test Action 1'"/*, move 'Test Action 2' down, move 'Test Action 8' to top"*/, function(Given, When, Then) {
-        Given.iStartMyUIComponentInViewMode();
-        Given.iEnableTheLocalLRep();
-        Given.iClearTheLocalStorageFromRtaRestart();
-
-        When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("__component" + iComponent + "---app");
-        Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("__component" + iComponent + "---app", undefined);
-
-        // Open Context Menu of ActionToolbar
-        When.onTheApp.iOpenContextMenuOfActionToolbar("__component" + iComponent + "---app--actionToolbarId");
-
-        Then.onPageWithRTA.iShouldSeetheContextMenu();
-        When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Toolbar Actions");
-
-        // Check if Dialog opened (included in personalization)
-        // Do personalization
-        When.onTheApp.iSelectActions([
-            "Test Action 4",
-            "Test Action 5",
-            "Test Action 2",
-            "Test Action 3"
-        ]);
-
-        //When.onTheApp.iMoveActionDown("__component" + iComponent + "---app--idAction2");
-        //When.onTheApp.iMoveActionToTop("__component" + iComponent + "---app--idAction5");
-
-        // Close dialog
-        When.onTheApp.iPressOkButtonOnP13nDialog();
-
-        // Close RTA
-        When.onPageWithRTA.iExitRtaMode();
-
-        // Check button order
-        Then.onTheApp.iShouldSeeActionToolbarWithActions("__component" + iComponent + "---app--actionToolbarId", {
-            "Test Action 4": {
-                alignment: ActionToolbarActionAlignment.Begin,
-                aggregationName: "end"
-            },
-            "Test Action 5": {
-                alignment: ActionToolbarActionAlignment.Begin,
-                aggregationName: "end"
-            },
-            "Test Action 2": {
-                alignment: ActionToolbarActionAlignment.End,
-                aggregationName: "end"
-            },
-            "Test Action 3": {
-                alignment: ActionToolbarActionAlignment.End,
-                aggregationName: "end"
-            }
+            Then.onTheApp.iShouldSeeActionToolbarWithActions("__component" + iComponent + oTestSetting.id, {
+                "Action 1": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Action 4": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Action 5": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Action 2": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                },
+                "Action 3": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                }
+            });
         });
 
-        Then.iTeardownMyUIComponent();
+        opaTest("Hide 'Test Action 1'"/*, move 'Test Action 2' down, move 'Test Action 8' to top"*/, function(Given, When, Then) {
+            When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("__component" + iComponent + "---app");
+            Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("__component" + iComponent + "---app", undefined);
+
+            // Open Context Menu of ActionToolbar
+            When.onPageWithRTA.iRightClickOnAnElementOverlay("__component" + iComponent + oTestSetting.id);
+
+            Then.onPageWithRTA.iShouldSeetheContextMenu();
+            When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Toolbar Actions");
+
+            // Check if Dialog opened (included in personalization)
+            // Do personalization
+            When.onTheApp.iSelectActions([
+                "Action 4",
+                "Action 5",
+                "Action 2",
+                "Action 3"
+            ]);
+
+            //When.onTheApp.iMoveActionDown("__component" + iComponent + "---app--idAction2");
+            //When.onTheApp.iMoveActionToTop("__component" + iComponent + "---app--idAction5");
+
+            // Close dialog
+            When.onTheApp.iPressOkButtonOnP13nDialog();
+
+            // Close RTA
+            When.onPageWithRTA.iExitRtaMode();
+
+            // Check button order
+            Then.onTheApp.iShouldSeeActionToolbarWithActions("__component" + iComponent + oTestSetting.id, {
+                "Action 4": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Action 5": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Action 2": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                },
+                "Action 3": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                }
+            });
+
+            Then.iTeardownMyUIComponent();
+        });
     });
 
 });

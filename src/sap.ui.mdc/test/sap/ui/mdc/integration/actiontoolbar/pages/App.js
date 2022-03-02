@@ -126,22 +126,6 @@ sap.ui.require([
                         errorMessage: "The app is still busy.."
                     });
                 },
-                iOpenContextMenuOfActionToolbar: function(sActionToolbarId) {
-                    return this.waitFor({
-                        controlType: "sap.ui.mdc.ActionToolbar",
-                        id: sActionToolbarId,
-                        success: function(oActionToolbar) {
-                            Opa5.assert.ok(oActionToolbar, "ActionToolbar found");
-                            this.waitFor({
-                                controlType: "sap.ui.dt.ElementOverlay",
-                                matchers: function(oElementOverlay) {
-                                    return oElementOverlay.getElementInstance().getId() === oActionToolbar.getId();
-                                },
-                                actions: new OpenContextMenu()
-                            });
-                        }
-                    });
-                },
                 iSelectActions: function(aActions) {
                     return waitForP13nDialog.call(this, {
                         matchers: [
