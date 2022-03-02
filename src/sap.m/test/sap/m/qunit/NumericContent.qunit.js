@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/ResizeHandler",
 	"sap/m/library",
-	"sap/ui/util/Mobile"
-], function (jQuery, GenericTile, NumericContent, TileContent, TooltipBase, ResizeHandler, library, Mobile) {
+	"sap/ui/util/Mobile",
+	"sap/ui/core/Core"
+], function (jQuery, GenericTile, NumericContent, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore) {
 	"use strict";
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -42,6 +43,25 @@ sap.ui.define([
 		this.oNumericContent.setValue("12");
 		sap.ui.getCore().applyChanges();
 		fnAssertNumericContentHasRendered(assert);
+	});
+
+	QUnit.test("Numeric Content rendered with correct value and scale when formatterValue is set to true.", function (assert) {
+		var value = '12.2';
+		var scale = '%';
+
+		this.oNumericContent.setFormatterValue(true);
+
+		this.oNumericContent.setValue(value + scale);
+		oCore.applyChanges();
+		assert.strictEqual(document.getElementById("numeric-cnt-value-inner").innerText, value, "Value is rendered correctly");
+		assert.strictEqual(document.getElementById("numeric-cnt-scale").innerText, scale, "Scale is rendered correctly");
+
+		// for few countries metric representation is different
+		// for eg; in turkish % is written as %12.2 instead of 12.2%
+		this.oNumericContent.setValue(scale + value);
+		oCore.applyChanges();
+		assert.strictEqual(document.getElementById("numeric-cnt-value-inner").innerText, value, "Value is rendered correctly");
+		assert.strictEqual(document.getElementById("numeric-cnt-scale").innerText, scale, "Scale is rendered correctly");
 	});
 
 	QUnit.test("Numeric Content - Render Placeholder loading animation", function (assert) {
