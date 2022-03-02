@@ -120,37 +120,37 @@ sap.ui.define([
 				/**
 				 * If set to true, the change of the value will be animated.
 				 */
-				"animateTextChange": {type: "boolean", group: "Behavior", defaultValue: true},
+				"animateTextChange": { type: "boolean", group: "Behavior", defaultValue: true },
 
 				/**
 				 * If set to true, the value parameter contains a numeric value and scale. If set to false (default), the value parameter contains a numeric value only.
 				 */
-				"formatterValue": {type: "boolean", group: "Data", defaultValue: false},
+				"formatterValue": { type: "boolean", group: "Data", defaultValue: false },
 
 				/**
 				 * The icon to be displayed as a graphical element within the control. This can be an image or an icon from the icon font.
 				 */
-				"icon": {type: "sap.ui.core.URI", group: "Appearance", defaultValue: null},
+				"icon": { type: "sap.ui.core.URI", group: "Appearance", defaultValue: null },
 
 				/**
 				 * Description of an icon that is used in the tooltip.
 				 */
-				"iconDescription": {type: "string", group: "Accessibility", defaultValue: null},
+				"iconDescription": { type: "string", group: "Accessibility", defaultValue: null },
 
 				/**
 				 * The indicator arrow that shows value deviation.
 				 */
-				"indicator": {type: "sap.m.DeviationIndicator", group: "Appearance", defaultValue: "None"},
+				"indicator": { type: "sap.m.DeviationIndicator", group: "Appearance", defaultValue: "None" },
 
 				/**
 				 * If set to true, the omitted value property is set to 0.
 				 */
-				"nullifyValue": {type: "boolean", group: "Behavior", defaultValue: true},
+				"nullifyValue": { type: "boolean", group: "Behavior", defaultValue: true },
 
 				/**
 				 * The scaling prefix. Financial characters can be used for currencies and counters. The SI prefixes can be used for units. If the scaling prefix contains more than three characters, only the first three characters are displayed.
 				 */
-				"scale": {type: "string", group: "Appearance", defaultValue: null},
+				"scale": { type: "string", group: "Appearance", defaultValue: null },
 
 				/**
 				 * Updates the size of the control. If not set, then the default size is applied based on the device tile.
@@ -164,32 +164,32 @@ sap.ui.define([
 				 * <b>Note</b> If <code>adaptiveFontSize</code> is set to <code>true</code> the default value of this property will vary between languages.
 				 * If <code>adaptiveFontSize</code> is set to <code>false</code> the default value of this property is <code>4</code>.
 				 */
-				"truncateValueTo": {type: "int", group: "Appearance"},
+				"truncateValueTo": { type: "int", group: "Appearance" },
 
 				/**
 				 * The actual value.
 				 */
-				"value": {type: "string", group: "Data", defaultValue: null},
+				"value": { type: "string", group: "Data", defaultValue: null },
 
 				/**
 				 * The semantic color of the value.
 				 */
-				"valueColor": {type: "sap.m.ValueColor", group: "Appearance", defaultValue: "Neutral"},
+				"valueColor": { type: "sap.m.ValueColor", group: "Appearance", defaultValue: "Neutral" },
 
 				/**
 				 * The width of the control. If it is not set, the size of the control is defined by the 'size' property.
 				 */
-				"width": {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: null},
+				"width": { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: null },
 
 				/**
 				 * If the value is set to false, the content is adjusted to the whole size of the control.
 				 */
-				"withMargin": {type: "boolean", group: "Appearance", defaultValue: true},
+				"withMargin": { type: "boolean", group: "Appearance", defaultValue: true },
 
 				/**
 				 * Indicates the load status.
 				 */
-				"state": {type: "sap.m.LoadState", group: "Behavior", defaultValue: "Loaded"},
+				"state": { type: "sap.m.LoadState", group: "Behavior", defaultValue: "Loaded" },
 
 				/**
 				 * If set to its default value true this property applies the appropriate font style class based on the language. When set to false the font size will always be large
@@ -197,7 +197,7 @@ sap.ui.define([
 				 * @experimental As of version 1.73 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 * @since 1.73
 				 */
-				"adaptiveFontSize": {type: "boolean", group: "Appearance", defaultValue: true}
+				"adaptiveFontSize": { type: "boolean", group: "Appearance", defaultValue: true }
 
 
 			},
@@ -233,8 +233,8 @@ sap.ui.define([
 
 	NumericContent.prototype._getMaxDigitsData = function () {
 		var sFontClass = null,
-		  sLang = sap.ui.getCore().getConfiguration().getLanguage().toLowerCase(),
-		  iMaxLength = LANG_MAP[sLang] || 4;
+			sLang = sap.ui.getCore().getConfiguration().getLanguage().toLowerCase(),
+			iMaxLength = LANG_MAP[sLang] || 4;
 
 		if (this.getAdaptiveFontSize()) {
 			switch (iMaxLength) {
@@ -297,7 +297,7 @@ sap.ui.define([
 	 * Shows/hides icon depending if it fits or not.
 	 * @private
 	 */
-	NumericContent.prototype._checkIfIconFits = function() {
+	NumericContent.prototype._checkIfIconFits = function () {
 		//first check if parent tile is going to resize in the future so resize it now for our calculation
 		var oParentTile = this._getParentTile();
 		if (oParentTile && (oParentTile.isA("sap.m.GenericTile") || oParentTile.isA("sap.m.SlideTile"))) {
@@ -502,9 +502,17 @@ sap.ui.define([
 		// remove the invisible unicode character LTR and RTL mark before processing the regular expression.
 		var sTrimmedValue = sValue.replace(String.fromCharCode(8206), "").replace(String.fromCharCode(8207), "");
 
+		// extract value and scale information from string using regex.
+		var aValueMatches = sTrimmedValue.match(/([+-., \d]*)/g) || [];
+		var aScaleMatches = sTrimmedValue.match(/[^+-., \d]/g) || [];
+
 		return {
-			scale: sTrimmedValue.replace(/[+-., \d]*(.*)$/g, "$1").trim().replace(/\.$/, ""),
-			value: sTrimmedValue.replace(/([+-., \d]*).*$/g, "$1").trim()
+			value: aValueMatches.reduce(function (acc, curVal){
+						return acc + curVal;
+					}, '').trim(),
+			scale: aScaleMatches.reduce(function (acc, curVal){
+						return acc + curVal;
+					}, '').trim()
 		};
 	};
 
