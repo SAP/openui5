@@ -45,6 +45,25 @@ sap.ui.define([
 		fnAssertNumericContentHasRendered(assert);
 	});
 
+	QUnit.test("Numeric Content rendered with correct value and scale when formatterValue is set to true.", function (assert) {
+		var value = '12.2';
+		var scale = '%';
+
+		this.oNumericContent.setFormatterValue(true);
+
+		this.oNumericContent.setValue(value + scale);
+		oCore.applyChanges();
+		assert.strictEqual(document.getElementById("numeric-cnt-value-inner").innerText, value, "Value is rendered correctly");
+		assert.strictEqual(document.getElementById("numeric-cnt-scale").innerText, scale, "Scale is rendered correctly");
+
+		// for few countries metric representation is different
+		// for eg; in turkish % is written as %12.2 instead of 12.2%
+		this.oNumericContent.setValue(scale + value);
+		oCore.applyChanges();
+		assert.strictEqual(document.getElementById("numeric-cnt-value-inner").innerText, value, "Value is rendered correctly");
+		assert.strictEqual(document.getElementById("numeric-cnt-scale").innerText, scale, "Scale is rendered correctly");
+	});
+
 	QUnit.test("Numeric Content - Render Placeholder loading animation", function (assert) {
 		//Switch to Loading State
 		this.oNumericContent.setState(LoadState.Loading);
