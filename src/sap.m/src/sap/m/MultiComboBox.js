@@ -1187,7 +1187,7 @@ function(
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 		this._bInitialSelectedKeysSettersCompleted = true;
 		this.getAggregation("tokenizer").setEnabled(this.getEnabled());
-		if (this._getList()) {
+		if (this._getList() && !this.getPicker().isOpen()) {
 			this.syncPickerContent(true);
 		}
 		this._deregisterResizeHandler();
