@@ -4,14 +4,16 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/ButtonType",
+	"sap/m/library",
 	'sap/m/Text',
 	"sap/m/MessageToast",
 	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // to have it loaded before rendering starts
 	"sap/m/ExpandableText" // to have it loaded before rendering starts
-], function (Controller, UIComponent, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, FieldBaseDelegate, ExpandableText) {
+], function (Controller, UIComponent, JSONModel, Dialog, Button, mobileLibrary, Text, MessageToast, FieldBaseDelegate, ExpandableText) {
 
 	"use strict";
+
+	var ButtonType = mobileLibrary.ButtonType;
 
 	return Controller.extend("sap.ui.v4demo.controller.BookDetails", {
 		onInit: function () {

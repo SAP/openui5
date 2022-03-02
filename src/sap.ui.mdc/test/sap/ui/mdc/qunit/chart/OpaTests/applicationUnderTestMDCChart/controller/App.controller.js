@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/ButtonType",
 	'sap/m/Text',
 	"sap/m/MessageToast",
 	"sap/ui/core/UIComponent",
@@ -12,7 +11,7 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Core"
-], function (Controller, ConditionModel, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, oCore) {
+], function (Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, oCore) {
 	"use strict";
 
 	return Controller.extend("applicationUnderTestMDCChart.controller.App", {

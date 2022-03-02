@@ -8,13 +8,12 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/ButtonType",
 	'sap/m/Text',
 	"sap/m/MessageToast",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Core",
 	"../Operators"
-], function(Controller, ConditionModel, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, UIComponent, oCore) {
+], function(Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.v4demo.controller.App", {

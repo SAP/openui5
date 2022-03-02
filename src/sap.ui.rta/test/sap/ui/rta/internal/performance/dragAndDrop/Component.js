@@ -2,9 +2,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"dt/performance/PerformanceTestUtil",
 	"rta/performance/RtaPerformanceTestUtil",
-	"sap/m/FlexWrap",
 	"sap/m/HBox",
 	"sap/m/Label",
+	"sap/m/library",
 	"sap/ui/core/CustomData",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4",
@@ -13,15 +13,17 @@ sap.ui.define([
 	UIComponent,
 	DtPerformanceTestUtil,
 	RtaPerformanceTestUtil,
-	FlexWrap,
 	HBox,
 	Label,
+	mobileLibrary,
 	CustomData,
 	VerticalLayout,
 	sinon,
 	oCore
 ) {
 	"use strict";
+
+	var FlexWrap = mobileLibrary.FlexWrap;
 
 	return UIComponent.extend("rta.performance.dragAndDrop.Component", {
 		metadata: {

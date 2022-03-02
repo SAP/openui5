@@ -8,12 +8,14 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/ButtonType",
+	"sap/m/library",
 	'sap/m/Text',
 	"sap/m/MessageToast"
-], function (Controller, UIComponent, JSONModel, Dialog, Button, ButtonType, Text, MessageToast) {
+], function (Controller, UIComponent, JSONModel, Dialog, Button, mobileLibrary, Text, MessageToast) {
 
 	"use strict";
+
+	var ButtonType = mobileLibrary.ButtonType;
 
 	function uuidv4() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

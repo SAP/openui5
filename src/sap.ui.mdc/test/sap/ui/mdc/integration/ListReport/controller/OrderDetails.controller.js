@@ -10,12 +10,14 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/ButtonType",
+	"sap/m/library",
 	'sap/m/Text',
 	"sap/m/MessageToast"
-], function (Controller, UIComponent, JSONModel, ConditionModel, Condition, Dialog, Button, ButtonType, Text, MessageToast) {
+], function (Controller, UIComponent, JSONModel, ConditionModel, Condition, Dialog, Button, mobileLibrary, Text, MessageToast) {
 
 	"use strict";
+
+	var ButtonType = mobileLibrary.ButtonType;
 
 	function uuidv4() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

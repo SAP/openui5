@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/Text",
-	"sap/m/ListMode",
+	"sap/m/library",
 	"sap/m/ColumnListItem",
 	"sap/base/util/restricted/_merge",
 	"sap/ui/thirdparty/jquery",
@@ -21,13 +21,15 @@ sap.ui.define([
 	Column,
 	Label,
 	Text,
-	ListMode,
+	mobileLibrary,
 	ColumnListItem,
 	_merge,
 	jQuery,
 	sinon
 ) {
 	"use strict";
+
+	var ListMode = mobileLibrary.ListMode;
 
 	var sandbox = sinon.sandbox.create();
 	var oController;

@@ -1,11 +1,14 @@
 sap.ui.define([
+	"sap/ui/core/library",
 	"sap/ui/core/sample/common/Helper",
-	"sap/ui/core/ValueState",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	'sap/ui/test/Opa5'
-], function(Helper, ValueState, EnterText, Press, Opa5) {
+], function(coreLibrary, Helper, EnterText, Press, Opa5) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	Opa5.createPageObjects({
 		onMainPage : {
