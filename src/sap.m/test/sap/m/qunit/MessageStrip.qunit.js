@@ -442,7 +442,7 @@ sap.ui.define([
 		var link = this.oMessageStrip.getLink(),
 			linkDom = link.getDomRef(),
 			describedBy = linkDom.getAttribute("aria-describedby"),
-			sId = this.oMessageStrip.getId() + "-info" + " " + this.oMessageStrip.getId() + "-content";
+			sId = this.oMessageStrip.getId() + "-info" + " " + this.oMessageStrip.getAggregation("_text").getId();
 
 			//assert
 			assert.strictEqual(describedBy, sId, "link aria-describedby should point to the MessageStrip and Link id");
