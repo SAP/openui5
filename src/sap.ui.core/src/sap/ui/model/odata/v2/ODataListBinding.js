@@ -136,6 +136,8 @@ sap.ui.define([
 			}
 
 			if (!this.checkExpandedList()) {
+				// #checkExpandedList could only return undefined if within a side effects $batch a
+				// subsequent GET request has a success handler which affects this ODataListBinding
 				this._removePersistedCreatedContexts();
 				this.resetData();
 			}
@@ -465,6 +467,8 @@ sap.ui.define([
 				this.abortPendingRequest();
 				this._fireChange({reason : ChangeReason.Context});
 			} else {
+				// #checkExpandedList could only return undefined if within a side effects $batch a
+				// subsequent GET request has a success handler which affects this ODataListBinding
 				this._removePersistedCreatedContexts();
 				this._refresh();
 			}
@@ -472,11 +476,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check whether expanded list data is available and can be used
+	 * Checks whether expanded list data is available and can be used. In case a list binding uses
+	 * custom parameters or uses filters/sorters in <code>OperationMode.Server</code>, then lists
+	 * which are read via side effects are refreshed.
+	 *
+	 * @param {boolean} bSkipReloadNeeded
+	 *   Don't check whether reload of expanded data is needed
+	 * @return {boolean|undefined}
+	 *   Whether expanded data is available and is used, or <code>undefined</code> if the list is
+	 *   refreshed because data received via side effects cannot be used
 	 *
 	 * @private
-	 * @param {boolean} bSkipReloadNeeded Don't check whether reload of expanded data is needed
-	 * @return {boolean} Whether expanded data is available and will be used
 	 */
 	ODataListBinding.prototype.checkExpandedList = function(bSkipReloadNeeded) {
 		// if nested list is already available and no filters or sorters are set, use the data and
@@ -494,6 +504,12 @@ sap.ui.define([
 						|| this.aSorters.length > 0))) {
 			this.bUseExpandedList = false;
 			this.aExpandRefs = undefined;
+			if (aList && aList.sideEffects) {
+				this._refresh();
+
+				return undefined;
+			}
+
 			return false;
 		} else {
 			this.bUseExpandedList = true;
@@ -1148,7 +1164,7 @@ sap.ui.define([
 	ODataListBinding.prototype.checkUpdate = function (bForceUpdate, mChangedEntities) {
 		var aContexts, oCurrentData, bExpandedList, aLastKeys, aOldRefs,
 			bChangeDetected = false,
-			bChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
+			sChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
 			that = this;
 
 		if ((this.bSuspended && !this.bIgnoreSuspend && !bForceUpdate) || this.bPendingRequest) {
@@ -1157,7 +1173,8 @@ sap.ui.define([
 
 		if (this.bInitial) {
 			if (this.oContext && this.oContext.isUpdated()) {
-				this.initialize(); // If context changed from created to persisted we need to initialize the binding...
+				// If context changed from created to persisted we need to initialize the binding
+				this.initialize();
 			}
 			return;
 		}
@@ -1165,15 +1182,18 @@ sap.ui.define([
 		this.bIgnoreSuspend = false;
 
 		if (!bForceUpdate && !this.bNeedsUpdate) {
-
 			// check if expanded data has been changed
 			aOldRefs = this.aExpandRefs;
-
 
 			aLastKeys = this.aKeys.slice();
 			bExpandedList = this.checkExpandedList(true);
 
-			// apply sorting and filtering again, as the newly set entities may have changed in clientmode
+			if (bExpandedList === undefined) {
+				return;
+			}
+
+			// apply sorting and filtering again, as the newly set entities may have changed in
+			// clientmode
 			if (!bExpandedList && this.useClientMode()) {
 				this.applyFilter();
 				this.applySort();
@@ -1185,7 +1205,8 @@ sap.ui.define([
 				if (this.aKeys.length !== aLastKeys.length) {
 					bChangeDetected = true;
 				} else {
-					//iterate over keys from before and after filtering as new keys match the filter or existing keys match not anymore
+					//iterate over keys from before and after filtering as new keys match the filter
+					// or existing keys match not anymore
 					for (var sKey in mChangedEntities) {
 						if (this.aKeys.indexOf(sKey) > -1 || aLastKeys.indexOf(sKey) > -1) {
 							bChangeDetected = true;
@@ -1219,7 +1240,7 @@ sap.ui.define([
 		}
 		if (bForceUpdate || bChangeDetected || this.bNeedsUpdate) {
 			this.bNeedsUpdate = false;
-			this._fireChange({reason: bChangeReason});
+			this._fireChange({reason: sChangeReason});
 		}
 		this.sChangeReason = undefined;
 	};
