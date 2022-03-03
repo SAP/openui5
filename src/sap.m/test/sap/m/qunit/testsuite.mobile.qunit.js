@@ -246,6 +246,16 @@ sap.ui.define([
 					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
 			},
+			DateTimePickerOData: {
+				title: "DateTimePickerOData - sap.m",
+				coverage: {
+					only: ["sap/m/DateTimePicker"]
+				},
+				ui5: {
+					language: "en-US",
+					libs: ["sap.m", "sap.ui.unified"]
+				}
+			},
 			Dialog: {
 				title: "QUnit Page for sap.m.Dialog",
 				sinon: {

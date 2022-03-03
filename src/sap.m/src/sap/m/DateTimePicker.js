@@ -395,6 +395,31 @@ sap.ui.define([
 		this._bOnlyCalendar = false;
 	};
 
+	DateTimePicker.prototype.setValue = function(sValue) {
+		var sFallbackValue;
+
+		DatePicker.prototype.setValue.apply(this, arguments);
+
+		delete this._prefferedValue;
+
+		if (!this.getDateValue()) {
+			sFallbackValue = this._fallbackParse(sValue);
+
+			if (typeof sFallbackValue === "string") {
+				this._bValid = true;
+				this._prefferedValue = sFallbackValue;
+
+				// there is a re-render comming, but this updates the dom immediately to avoid flickering
+				if (this.getDomRef() && this._$input.val() !== sFallbackValue) {
+					this._$input.val(sFallbackValue);
+					this._curpos = this._$input.cursorPos();
+				}
+			}
+		}
+
+		return this;
+	};
+
 	DateTimePicker.prototype.setTimezone = function(sTimezone) {
 		var oCurrentDateValue,
 			sFormattedValue,
@@ -763,6 +788,24 @@ sap.ui.define([
 		}
 
 		return this._getFormatter(!bValueFormat).format(oDate, sTimezone || this._getTimezone(true));
+	};
+
+	/**
+	 * Tries to parse the value to see if it is a timezone only string.
+	 * @param {string} sValue A value string
+	 * @return {string|null} An empty string indicating success or null
+	 * @private
+	 */
+	DateTimePicker.prototype._fallbackParse = function(sValue) {
+		return this._getFallbackParser().parse(sValue) ? "" : null;
+	};
+
+	DateTimePicker.prototype._getFallbackParser = function() {
+		if (!this._fallbackParser) {
+			this._fallbackParser = DateFormat.getDateTimeWithTimezoneInstance({ showTimezone: "Only" });
+		}
+
+		return this._fallbackParser;
 	};
 
 	DateTimePicker.prototype._getLocaleBasedPattern = function(sPlaceholder) {

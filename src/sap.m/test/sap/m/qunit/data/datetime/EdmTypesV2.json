@@ -29,6 +29,8 @@
 			"String40" : "String Maxlength 40",
 			"Time" : "PT11H33M55S",
 			"TimeStampLong" : "\/Date(1395747235112)\/",
-			"TimeStampShort" : "\/Date(1395747235000)\/"
+			"TimeStampShort" : "\/Date(1395747235000)\/",
+			"TimezoneID": "America/New_York",
+			"EmptyDate": null
 	}
 }
