@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/MessageType",
+	"sap/ui/core/library",
 	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/appVariant/Feature",
@@ -15,7 +15,7 @@ sap.ui.define([
 	DateFormatter,
 	Core,
 	Fragment,
-	MessageType,
+	coreLibrary,
 	Layer,
 	JSONModel,
 	AppVariantFeature,
@@ -24,6 +24,8 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
+
+	var MessageType = coreLibrary.MessageType;
 
 	var sandbox = sinon.createSandbox();
 

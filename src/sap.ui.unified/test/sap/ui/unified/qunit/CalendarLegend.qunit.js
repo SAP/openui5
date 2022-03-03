@@ -9,18 +9,17 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/unified/StandardCalendarLegendItem",
 	"sap/base/Log",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(CalendarLegend, CalendarLegendRenderer, CalendarLegendItem,
-	unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, StandardCalendarLegendItem, Log, DateFormat, XMLView, jQuery, oCore) {
+	unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, Log, DateFormat, XMLView, jQuery, oCore) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
-	var StandardCalendarLegendItem = StandardCalendarLegendItem;
+	var StandardCalendarLegendItem = unifiedLibrary.StandardCalendarLegendItem;
 
 	var oFormatYyyymmdd = DateFormat.getInstance({
 		pattern: "yyyyMMdd"

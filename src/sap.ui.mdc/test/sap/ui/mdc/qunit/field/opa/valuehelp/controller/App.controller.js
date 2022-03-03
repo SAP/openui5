@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/ButtonType",
 	'sap/m/Text',
 	"sap/m/MessageToast",
 	"sap/ui/core/UIComponent",
@@ -15,7 +14,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Core"
-], function (Controller, ConditionModel, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, UriParameters, URI, Fragment, oCore) {
+], function (Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, UriParameters, URI, Fragment, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.v4demo.controller.App", {

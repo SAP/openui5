@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/OverflowToolbarButton",
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/ui/core/Core",
-	"sap/m/OverflowToolbarPriority",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	mLibrary,
@@ -14,10 +13,12 @@ sap.ui.define([
 	OverflowToolbarButton,
 	OverflowToolbarLayoutData,
 	Core,
-	OTBPriority,
 	sinon
 ) {
 	"use strict";
+
+	var OTBPriority = mLibrary.OverflowToolbarPriority;
+
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Private methods", {

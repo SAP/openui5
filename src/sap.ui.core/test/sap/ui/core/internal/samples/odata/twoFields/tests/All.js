@@ -3,13 +3,16 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/library",
 	"sap/ui/core/sample/common/Helper",
-	"sap/ui/core/ValueState",
 	"sap/ui/test/opaQunit"
-], function (Log, Helper, ValueState, opaTest) {
+], function (Log, coreLibrary, Helper, opaTest) {
 	"use strict";
 
 	/* global opaSkip */
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	var oComponentOptions = { // options to start UI component in each Opa test
 			componentConfig : {name : "sap.ui.core.internal.samples.odata.twoFields"}

@@ -8,13 +8,15 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/ButtonType",
+	"sap/m/library",
 	'sap/m/Text',
 	"sap/m/MessageToast"
 
-], function (Controller, UIComponent, JSONModel, Dialog, Button, ButtonType, Text, MessageToast) {
+], function (Controller, UIComponent, JSONModel, Dialog, Button, mobileLibrary, Text, MessageToast) {
 
 	"use strict";
+
+	var ButtonType = mobileLibrary.ButtonType;
 
 	return Controller.extend("sap.ui.v4demo.controller.BookDetails", {
 		onInit: function () {
