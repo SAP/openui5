@@ -107,6 +107,12 @@ sap.ui.define([
 				 */
 				 uploadButtonInvisible: {type: "boolean", group: "Appearance", defaultValue: false},
 				/**
+				 * Allows the user to use the same name for a file while editing the file name.
+				 *'Same name' refers to an already existing file name in the list.
+				 * @since 1.100.0
+				 */
+				 sameFilenameAllowed: {type: "boolean", group: "Behavior", defaultValue: false},
+				 /**
 				 * HTTP request method chosen for file upload.
 				 * @since 1.90
 				 */
@@ -157,6 +163,18 @@ sap.ui.define([
 					parameters: {
 						/**
 						 * The file that has just been added.
+						 */
+						item: {type: "sap.m.upload.UploadSetItem"}
+					}
+				},
+				/**
+				 * The event is triggered when the file name is changed.
+				 * @since 1.100.0
+				 */
+				fileRenamed: {
+					parameters: {
+						/**
+						 * The renamed UI element as an UploadSetItem.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					}
@@ -1027,22 +1045,55 @@ sap.ui.define([
 		var oEdit = oItem._getFileNameEdit(),
 			sNewFileName, sNewFullName,
 			sOrigFullFileName = oItem.getFileName(),
-			oFile = UploadSetItem._splitFileName(sOrigFullFileName);
+			oFile = UploadSetItem._splitFileName(sOrigFullFileName),
+			oSourceItem = UploadSetItem._findById(oItem.getId(), this._getAllItems());
 
-		sNewFileName = oEdit.getValue().trim();
+		// get new/changed file name and remove potential leading spaces
+		if (oEdit !== null) {
+			sNewFileName = oEdit.getValue().trim();
+		}
+		oEdit.focus();
+
 		if (!sNewFileName || sNewFileName.length === 0) {
 			oItem._setContainsError(true);
 			return;
 		}
 
-		if (oFile.name !== sNewFileName) {
+		if (oFile.name === sNewFileName) {
+			this._removeErrorStateFromItem(this, oSourceItem);
+			// nothing changed -> nothing to do!
+			oItem._setInEditMode(false);
+			this.fireAfterItemEdited({item: oItem});
+			this._oEditedItem = null;
+			return;
+		}
+
+		if (!this.getSameFilenameAllowed() && UploadSetItem._checkDoubleFileName(oEdit.getValue() + "." + oFile.extension, this._getAllItems())) {
+			oEdit.setValueStateText(this._oRb.getText("UPLOAD_SET_FILE_NAME_EXISTS"));
+			oEdit.setProperty("valueState", "Error", true);
+			oEdit.setShowValueStateMessage(true);
+		} else {
 			sNewFullName = oFile.extension ? sNewFileName + "." + oFile.extension : sNewFileName;
 			oItem.setFileName(sNewFullName);
+			this._removeErrorStateFromItem(this, oSourceItem);
+			oItem._setInEditMode(false);
+			this.fireFileRenamed({item: oItem});
 		}
-		oItem._setContainsError(false);
-		oItem._setInEditMode(false);
-		this.fireAfterItemEdited({item: oItem});
+
 		this._oEditedItem = null;
+		this.invalidate();
+	};
+
+	/**
+	 * Removes the error state from the list item. Used when the name of the file has been corrected.
+	 * @private
+	 * @param {object} oContext The UploadSet instance on which an attempt was made to save a new name of an existing List item.
+	 * @param {sap.m.UploadSetItem} oItem The List item on which the event was triggered.
+	 */
+	UploadSet.prototype._removeErrorStateFromItem = function(oContext, oItem) {
+		oItem.errorState = null;
+		oContext.sErrorState = null;
+		oContext.editModeItem = null;
 	};
 
 	/**

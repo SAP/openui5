@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/upload/Uploader",
-	"sap/m/StandardListItem"
-], function (MobileLibrary, Controller, Item, JSONModel, Uploader, ListItem) {
+	"sap/m/StandardListItem",
+	"sap/m/MessageToast"
+], function (MobileLibrary, Controller, Item, JSONModel, Uploader, ListItem, MessageToast) {
 	"use strict";
 
 	var ListMode = MobileLibrary.ListMode;
@@ -76,6 +77,9 @@ sap.ui.define([
 			oList.insertItem(new ListItem({
 				title: "Upload aborted: " + oItem.getFileName()
 			}));
+		},
+		onFileRenamed: function(oEvent) {
+			MessageToast.show("FileRenamed event triggered.");
 		}
 	});
 });
