@@ -17,6 +17,8 @@
 				mediaTypes="text/plain,application/msword,image/jpeg"
 				uploadUrl="../../../../upload"
 				uploadButtonInvisible="false"
+				fileRenamed="onFileRenamed"
+				sameFilenameAllowed="false"
 				items="{path: '/items', templateShareable: false}">
 			<upload:items>
 				<upload:UploadSetItem

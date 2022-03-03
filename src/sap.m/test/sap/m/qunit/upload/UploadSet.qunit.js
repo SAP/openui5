@@ -467,6 +467,83 @@ sap.ui.define([
 
 		return oEvent;
 	}
+
+	function getData1() {
+		return {
+			items: [
+				{
+					fileName: "Alice.mp4"
+				},
+				{
+					fileName: "Test.mp4"
+				},
+				{
+					fileName: "Brenda.mp4",
+					enabledRemove: false,
+					enabledEdit: false,
+					visibleRemove: false,
+					visibleEdit: false
+				}
+			]
+		};
+	}
+
+	QUnit.module("UploadSet general functionality", {
+		beforeEach: function () {
+			this.oUploadSet = new UploadSet("uploadSet", {
+				items: {
+					path: "/items",
+					template: TestUtils.createItemTemplate(),
+					templateShareable: false
+				}
+			}).setModel(new JSONModel(getData1()));
+			this.oUploadSet.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oUploadSet.destroy();
+			this.oUploadSet = null;
+		}
+	});
+
+	QUnit.test("SameFilenameAllowed set as false in uploadSet", function (assert) {
+		assert.expect(1);
+		var oItem = this.oUploadSet.getItems()[0];
+
+		// Set as false
+		this.oUploadSet.setSameFilenameAllowed(false);
+		this.oUploadSet.placeAt("qunit-fixture");
+
+		oItem._getEditButton().firePress();
+		oCore.applyChanges();
+
+		this.oUploadSet.getItems()[0].$("fileNameEdit-inner")[0].value = "Test";
+		oItem._getConfirmRenameButton().firePress();
+		oCore.applyChanges();
+
+		assert.equal(this.oUploadSet.getItems()[0].getFileName(), "Alice.mp4", "FileName will remain same");
+	});
+
+	QUnit.test("SameFilenameAllowed set as true in uploadSet", function (assert) {
+		assert.expect(2);
+		var oItem = this.oUploadSet.getItems()[0];
+
+		this.oUploadSet.setSameFilenameAllowed(true);
+		this.oUploadSet.placeAt("qunit-fixture");
+
+		oItem._getEditButton().firePress();
+		oCore.applyChanges();
+
+		this.oUploadSet.attachEventOnce("fileRenamed", function (oEvent) {
+			assert.ok(true, "FileRenamed event should have been called.");
+			assert.equal(oEvent.getParameter("item").getFileName(), "Test.mp4", "File name should be correct.");
+		});
+		this.oUploadSet.getItems()[0].$("fileNameEdit-inner")[0].value = "Test";
+
+		oItem._getConfirmRenameButton().firePress();
+		oCore.applyChanges();
+	});
+
 	QUnit.module("Rendering of UploadSet with hideUploadButton = true", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {
