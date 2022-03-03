@@ -759,7 +759,7 @@ sap.ui.define([
 	/**
 	 * Opens the popup's content at the position either specified here or beforehand via {@link #setPosition}.
 	 * Content must be capable of being positioned via "position:absolute;"
-	 * All parameters are optional (open() may be called without any parameters). iDuration may just be omitted, but if any of "at", "of", "offset", "collision" is given, also the preceding positioning parameters ("my", at",...) must be given.
+	 * All parameters are optional (open() may be called without any parameters). iDuration may just be omitted, but if any of "at", "of", "offset", "collision" is given, also the preceding positional parameters ("my", at",...) must be given.
 	 *
 	 * If the Popup's OpenState is different from "CLOSED" (i.e. if the Popup is already open, opening or closing), the call is ignored.
 	 *
@@ -770,7 +770,7 @@ sap.ui.define([
 	 * @param {string} [offset='0 0'] the offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "10 0" to move the popup 10 pixels to the right). If the docking of both "my" and "at" are both RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
 	 * @param {sap.ui.core.Collision} [collision='flip'] defines how the position of an element should be adjusted in case it overflows the within area in some direction.
 	 * @param {string | sap.ui.core.Element | Element | Window} [within=Window] defines the area the popup should be placed in. This affects the collision detection.
-	 * @param {boolean} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
+	 * @param {boolean | function | null} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
 	 * @public
 	 */
 	Popup.prototype.open = function(iDuration, my, at, of, offset, collision, within, followOf) {
