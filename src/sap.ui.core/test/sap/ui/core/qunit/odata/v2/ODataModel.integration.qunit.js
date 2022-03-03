@@ -10477,10 +10477,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					statusCode : 201
 				})
 				.expectValue("id", ["43"]);
+			oModel.submitChanges();
 
 			return Promise.all([
 				oCreatedContext0.created(),
-				that.oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -10624,11 +10624,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					statusCode : 201
 				})
 				.expectValue("id", ["44", "43"]);
+			oModel.submitChanges();
 
 			return Promise.all([
 				oCreatedContext0.created(),
 				oCreatedContext1.created(),
-				that.oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -10897,12 +10897,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					statusCode : 201
 				})
 				.expectValue("id", ["45", "44", "43"]);
+			oModel.submitChanges();
 
 			return Promise.all([
 				oCreatedContext0.created(),
 				oCreatedContext1.created(),
 				oCreatedContext2.created(),
-				that.oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -11015,11 +11015,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					statusCode : 201
 				})
 				.expectValue("id", ["43", "44"], 1);
+			oModel.submitChanges();
 
 			return Promise.all([
 				oCreatedContext0.created(),
 				oCreatedContext1.created(),
-				that.oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -11182,10 +11182,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					statusCode : 201
 				})
 				.expectValue("id", "43", 1);
+			oModel.submitChanges();
 
 			return Promise.all([
 				oCreatedContext0.created(),
-				that.oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -11345,12 +11345,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					statusCode : 201
 				})
 				.expectValue("id", ["43", "44", "45"], 1);
+			oModel.submitChanges();
 
 			return Promise.all([
 				oCreatedContext0.created(),
 				oCreatedContext1.created(),
 				oCreatedContext2.created(),
-				that.oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -11442,10 +11442,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					statusCode : 201
 				})
 				.expectValue("id", "43", 0);
+			oModel.submitChanges();
 
 			return Promise.all([
 				oCreatedContext0.created(),
-				that.oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -11686,11 +11686,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					statusCode : 201
 				})
 				.expectValue("id", ["43", "44"]);
+			oModel.submitChanges();
 
 			return Promise.all([
 				oCreatedContext0.created(),
 				oCreatedContext1.created(),
-				that.oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -11834,12 +11834,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					statusCode : 201
 				})
 				.expectValue("id", ["43", "44", "45"]);
+			oModel.submitChanges();
 
 			return Promise.all([
 				oCreatedContext0.created(),
 				oCreatedContext1.created(),
 				oCreatedContext2.created(),
-				that.oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -12117,11 +12117,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					statusCode : 201
 				})
 				.expectValue("id", ["44"]);
+			oModel.submitChanges();
 
 			return Promise.all([
 				oCreatedContext0.created(),
 				oCreatedContext1.created(),
-				that.oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -12240,11 +12240,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					statusCode : 201
 				})
 				.expectValue("id", ["44", "43"]);
+			oModel.submitChanges();
 
 			return Promise.all([
 				oCreatedContext0.created(),
 				oCreatedContext1.created(),
-				that.oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -12610,9 +12610,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectValue("id", "43", 1);
 
 			// code under test
+			oModel.submitChanges();
+
 			return Promise.all([
 				oCreatedContext.created(),
-				oModel.submitChanges(),
 				that.waitForChanges(assert)
 			]);
 		});
