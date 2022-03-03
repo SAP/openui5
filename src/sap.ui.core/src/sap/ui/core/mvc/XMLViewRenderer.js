@@ -94,7 +94,10 @@ sap.ui.define([
 					// apply RenderManagerAPI calls which might have been recorded during XML processing for all encountered HTML elements in an XMLView
 					if (Array.isArray(vRmInfo)) {
 						rm[vRmInfo[0]].apply(rm, vRmInfo[1]);
-					} else {
+					} else if (!vRmInfo._isExtensionPoint) {
+						// XMLView ExtensionPoint placeholder
+						// we need to ignore these placeholders during rendering, they will be resolved asynchronously later by the flexibility provider
+						// plain UI5 Control
 						rm.renderControl(vRmInfo);
 						// when the child control did not render anything, we add a placeholder to know where to render the child later
 						if ( !vRmInfo.bOutput ) {
@@ -122,7 +125,7 @@ sap.ui.define([
 			for (var i = 0; i < aParsedContent.length; i++) {
 				var vFragment = aParsedContent[i];
 				// if the parsed content does not have a corresponding _renderManagerAPICall, it's a control
-				if (!Array.isArray(vFragment)) {
+				if (!Array.isArray(vFragment) && !vFragment._isExtensionPoint) {
 					// render DOM string for child control
 					rm.renderControl(vFragment);
 

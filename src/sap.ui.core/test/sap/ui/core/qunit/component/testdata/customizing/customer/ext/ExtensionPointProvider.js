@@ -71,7 +71,7 @@ sap.ui.define(['sap/ui/core/Fragment'],
 				 * });
 				 */
 
-				pLoaded.then(function(vControls) {
+				pLoaded = pLoaded.then(function(vControls) {
 					if (!Array.isArray(vControls)) {
 						vControls = [vControls];
 					}

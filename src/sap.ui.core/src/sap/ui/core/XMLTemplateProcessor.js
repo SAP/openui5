@@ -335,35 +335,35 @@ function(
 	 * @private
 	 */
 	XMLTemplateProcessor.parseTemplatePromise = function(xmlNode, oView, bAsync, oParseConfig) {
-		return parseTemplate(xmlNode, oView, false, bAsync, oParseConfig).then(function() {
-			var p = SyncPromise.resolve(arguments[0]);
-			if (oView.isA("sap.ui.core.Fragment")) {
-				return p;
-			}
-			// args is the result array of the XMLTP's parsing.
+		return parseTemplate(xmlNode, oView, false, bAsync, oParseConfig).then(function(vResult) {
+			// vResult is the result array of the XMLTP's parsing.
 			// It contains strings like "tabs/linebreaks/..." AND control instances
 			// Additionally it also includes ExtensionPoint placeholder objects if an ExtensionPoint is present in the top-level of the View.
-			var args = arguments;
 
 			// we only trigger Flex for ExtensionPoints inside Views
 			// A potential ExtensionPoint provider will resolve any ExtensionPoints with their correct content (or the default content, if not flex changes exist)
 			if (oView.isA("sap.ui.core.mvc.View") && oView._epInfo && oView._epInfo.all.length > 0) {
-				p = fnTriggerExtensionPointProvider(bAsync, oView, {
+				// wait for ExtensionPoint Provider, but resolve with original render-content array ("aResult" in parseTemplate())
+				return fnTriggerExtensionPointProvider(bAsync, oView, {
 					"content": oView._epInfo.all
+				}).then(function() {
+					// For async views all ExtensionPoints have been resolved.
+					// Their resulting content needs to be spliced into the rendering array.
+					// We loop backwards so we don't have to deal with index shifts (EPs can have more than 1 result control).
+					if (Array.isArray(vResult)) {
+						for (var i = vResult.length - 1; i >= 0; i--) {
+							var vContent = vResult[i];
+							if (vContent && vContent._isExtensionPoint) {
+								var aSpliceArgs = [i, 1].concat(vContent._aControls);
+								Array.prototype.splice.apply(vResult, aSpliceArgs);
+							}
+						}
+					}
+					return vResult;
 				});
+			} else {
+				return vResult;
 			}
-
-			// We need to remove ExtensionPoint placeholders from result array,
-			// otherwise the XMLViewRenderer will stumble over them.
-			return p.then(function() {
-				// TODO: might be refactored into resolveResultPromises()?
-				if (Array.isArray(args[0])) {
-					 args[0] = args[0].filter(function(e) {
-						return e == null || !e._isExtensionPoint;
-					 });
-				 }
-				return args[0];
-			});
 		});
 	};
 
