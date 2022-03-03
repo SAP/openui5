@@ -1962,7 +1962,6 @@ sap.ui.define([
 	/**
 	 * Creates a new property binding for this model.
 	 *
-	 * @see sap.ui.model.Model.prototype.bindProperty
 	 * @param {string} sPath Path pointing to the property that should be bound;
 	 *                 either an absolute path or a path relative to a given <code>oContext</code>
 	 * @param {object} [oContext] A context object for the new binding
@@ -1981,7 +1980,10 @@ sap.ui.define([
 	 *   Whether the value of the created property binding is <code>undefined</code> if it is
 	 *   unresolved; if not set, its value is <code>null</code>. Supported since 1.100.0
 	 * @returns {sap.ui.model.PropertyBinding} The new property binding
+	 *
 	 * @public
+	 * @see sap.ui.model.Model#bindProperty
+	 * @see #getProperty
 	 */
 	ODataModel.prototype.bindProperty = function(sPath, oContext, mParameters) {
 		var oBinding = new ODataPropertyBinding(this, sPath, oContext, mParameters);
@@ -2811,18 +2813,27 @@ sap.ui.define([
 
 	/**
 	 * Returns the value for the property with the given <code>sPath</code>.
-	 *
-	 * If the path points to a navigation property which has been loaded via <code>$expand</code> then the <code>bIncludeExpandEntries</code>
-	 * parameter determines if the navigation property should be included in the returned value or not.
-	 * Please note that this currently works for 1..1 navigation properties only.
+	 * Since 1.100, a path starting with &quot;@$ui5.&quot; which represents an instance annotation
+	 * is supported. The following instance annotations are allowed; they return information on the
+	 * given <code>oContext<code>, which must be set and be an
+	 * {@link sap.ui.model.odata.v2.Context}:
+	 * <ul>
+	 *   <li><code>@$ui5.context.isInactive</code>: The return value of
+	 *     {@link sap.ui.model.odata.v2.Context#isInactive}</li>
+	 *   <li><code>@$ui5.context.isTransient</code>: The return value of
+	 *     {@link sap.ui.model.odata.v2.Context#isTransient}</li>
+	 * </ul>
 	 *
 	 * @param {string} sPath Path/name of the property
 	 * @param {object} [oContext] Context if available to access the property value
-	 * @param {boolean} [bIncludeExpandEntries=false] @deprecated Please use {@link #getObject} function with select/expand parameters instead.
-	 * This parameter should be set when a URI or custom parameter with a <code>$expand</code> system query option was used to retrieve associated entries embedded/inline.
-	 * If true then the <code>getProperty</code> function returns a desired property value/entry and includes the associated expand entries (if any).
-	 * Note: A copy and not a reference of the entry will be returned.
+	 * @param {boolean} [bIncludeExpandEntries=false]
+	 *   Deprecated, use {@link #getObject} function with 'select' and 'expand' parameters instead.
+	 *   Whether entities for navigation properties of this property which have been read via
+	 *   <code>$expand</code> are part of the return value.
 	 * @returns {any} Value of the property
+	 * @throws {Error}
+	 *   If the instance annotation is not supported
+	 *
 	 * @public
 	 */
 	ODataModel.prototype.getProperty = function(sPath, oContext, bIncludeExpandEntries) {
@@ -3033,6 +3044,8 @@ sap.ui.define([
 	 *   resolved path; if not set, the method returns <code>null</code>
 	 * @returns {any} vValue
 	 *   Value for the given path/context
+	 * @throws {Error}
+	 *   If the instance annotation is not supported
 	 *
 	 * @private
 	 */
@@ -3047,11 +3060,12 @@ sap.ui.define([
 		if (!sResolvedPath && this.bCanonicalRequests) {
 			sResolvedPath = this.resolve(sPath, oContext);
 		}
-
 		if (!sResolvedPath) {
 			return oNode;
 		}
-
+		if (sPath && sPath.startsWith("@$ui5.")) {
+			return this._getInstanceAnnotationValue(sPath, oContext);
+		}
 		//check for metadata path
 		if (this._isMetadataPath(sResolvedPath)) {
 			if (this.oMetadata && this.oMetadata.isLoaded())  {
@@ -3120,11 +3134,36 @@ sap.ui.define([
 				iIndex++;
 			}
 		}
-		//if we have a changed Entity/complex type we need to extend it with the backend data
+		// if we have a changed Entity/complex type we need to extend it with the backend data
 		if (isPlainObject(oChangedNode)) {
 			oNode =  bOriginalValue ? oOrigNode : merge({}, oOrigNode, oChangedNode);
 		}
 		return oNode;
+	};
+
+	/**
+	 * Gets the instance annotation value for the given path corresponding to the instance
+	 * annotation and the given context. The following instance annotations are supported:
+	 * <ul>
+	 *   <li><code>@$ui5.context.isInactive</code></li>
+	 *   <li><code>@$ui5.context.isTransient</code></li>
+	 * </ul>
+	 *
+	 * @param {string} sPath Binding path
+	 * @param {sap.ui.model.odata.v2.Context} oContext Binding context
+	 * @returns {any} The result of the processed instance annotation
+	 * @throws {Error} If the instance annotation is not supported
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._getInstanceAnnotationValue = function (sPath, oContext) {
+		if (sPath === "@$ui5.context.isInactive") {
+			return oContext.isInactive();
+		}
+		if (sPath === "@$ui5.context.isTransient") {
+			return oContext.isTransient();
+		}
+		throw new Error("Unsupported instance annotation: " + sPath);
 	};
 
 	/**
@@ -6255,15 +6294,23 @@ sap.ui.define([
 	/**
 	 * Sets a new value for the given property <code>sPath</code> in the model.
 	 *
-	 * If the <code>changeBatchGroup</code> for the changed entity type is set to {@link #setDeferredGroups deferred},
-	 * changes could be submitted with {@link #submitChanges}. Otherwise the change will be submitted directly.
+	 * If the <code>changeBatchGroup</code> for the changed entity type is set to
+	 * {@link #setDeferredGroups deferred}, changes could be submitted with {@link #submitChanges}.
+	 * Otherwise the change will be submitted directly.
 	 *
-	 * @param {string}  sPath Path of the property to set
-	 * @param {any}     oValue Value to set the property to
-	 * @param {sap.ui.model.Context} [oContext=null] The context which will be used to set the property
-	 * @param {boolean} [bAsyncUpdate] Whether to update other bindings dependent on this property asynchronously
-	 * @return {boolean} <code>true</code> if the value was set correctly and <code>false</code> if errors occurred
-	 *                   like the entry was not found or another entry was already updated.
+	 * @param {string} sPath
+	 *   Path of the property to set
+	 * @param {any} oValue
+	 *   Value to set the property to
+	 * @param {sap.ui.model.Context} [oContext=null]
+	 *   The context which will be used to set the property
+	 * @param {boolean} [bAsyncUpdate]
+	 *   Whether to update other bindings dependent on this property asynchronously
+	 * @returns {boolean}
+	 *   <code>true</code> if the value was set correctly and <code>false</code> if errors occurred
+	 *   like the entry was not found or another entry was already updated.
+	 * @throws {Error}
+	 *   If setting a value for an instance annotation starting with &quot;@$ui5&quot;
 	 * @public
 	 */
 	ODataModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
@@ -6300,6 +6347,10 @@ sap.ui.define([
 		}
 
 		sPropertyPath = sResolvedPath.substring(sResolvedPath.lastIndexOf("/") + 1);
+		if (sPropertyPath.startsWith("@$ui5.")) {
+			throw new Error("Setting a value for an instance annotation starting with '@$ui5' is "
+				+ "not allowed: " + sPropertyPath);
+		}
 		sKey = oEntityInfo.key;
 		oOriginalEntry = this._getObject('/' + sKey, null, true);
 		oOriginalValue = this._getObject(sPath, oContext, true);

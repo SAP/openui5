@@ -12717,6 +12717,85 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 
+	//*********************************************************************************************
+	// Scenario: The contexts status inactive, transient and created contexts can be retrieved via
+	// the instance annotation of the contexts.
+	// JIRA: CPOUI5MODELS-721
+	QUnit.test("Create inactive and transient entity and activate it", function (assert) {
+		var oCreatedContext, oTable,
+			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet}" threshold="0" visibleRowCount="2">\
+	<Input id="note" value="{Note}"/>\
+	<Text id="inactive" text="{= %{@$ui5.context.isInactive} }"/>\
+	<Text id="transient" text="{= %{@$ui5.context.isTransient} }"/>\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=2", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					Note : "SO1",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {uri : "SalesOrderSet('2')"},
+					Note : "SO2",
+					SalesOrderID : "2"
+				}]
+			})
+			.expectValue("note", ["SO1", "SO2"])
+			.expectValue("inactive", ["false", "false"])
+			.expectValue("transient", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectValue("note", ["", "SO1"])
+				.expectValue("inactive", ["true"])
+				.expectValue("transient", ["true"]);
+
+			// code under test
+			oCreatedContext = oTable.getBinding("rows").create({}, /*bAtEnd*/false,
+				{inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", ["SONew"])
+				.expectValue("inactive", ["false"]);
+
+			// code under test
+			oTable.getRows()[0].getCells()[0].setValue("SONew");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "SONew"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('3')"},
+						Note : "SONew",
+						SalesOrderID : "3"
+					},
+					statusCode : 201
+				})
+				.expectValue("transient", ["false"]);
+
+			// code under test
+			oModel.submitChanges();
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: On calling a function import (or using a different API to trigger a write request)

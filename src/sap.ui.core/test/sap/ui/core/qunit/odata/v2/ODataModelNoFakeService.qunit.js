@@ -4916,6 +4916,104 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("_getObject: call _getInstanceAnnotationValue", function (assert) {
+		var oModel = {
+				isLegacySyntax : function () {},
+				resolve : function () {},
+				_getInstanceAnnotationValue : function () {}
+			},
+			sPath = "@$ui5.~annotation";
+
+		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		this.mock(oModel).expects("resolve")
+			.withExactArgs(sPath, "~oContext", undefined)
+			.returns("~resolvedPath");
+		this.mock(oModel).expects("_getInstanceAnnotationValue")
+			.withExactArgs(sPath, "~oContext")
+			.returns("~value");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._getObject.call(oModel, sPath, "~oContext"),
+			"~value");
+	});
+
+	//*********************************************************************************************
+[undefined, "~sPath"].forEach(function (sPath) {
+	var sTitle = "_getObject: Don't call _getInstanceAnnotationValue for sPath: " + sPath;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = {
+				mChangedEntities : {},
+				_getEntity : function () {},
+				_isMetadataPath : function () {},
+				isLegacySyntax : function () {},
+				resolve : function () {}
+			};
+
+		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		this.mock(oModel).expects("resolve")
+			.withExactArgs(sPath, "~oContext", undefined)
+			.returns("/~resolvedPath");
+		this.mock(oModel).expects("_isMetadataPath").withExactArgs("/~resolvedPath").returns(false);
+		this.mock(oModel).expects("_getEntity").withExactArgs("~resolvedPath").returns("~Data");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._getObject.call(oModel, sPath, "~oContext"),
+			"~Data");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_getObject: propagate _getInstanceAnnotationValue error", function (assert) {
+		var oError = new Error("~Error"),
+			oModel = {
+				_getInstanceAnnotationValue : function () {},
+				isLegacySyntax : function () {},
+				resolve : function () {}
+			};
+
+		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("@$ui5.~annotation", "~oContext", undefined)
+			.returns("/~resolvedPath");
+		this.mock(oModel).expects("_getInstanceAnnotationValue")
+			.withExactArgs("@$ui5.~annotation", "~oContext")
+			.throws(oError);
+
+		// code under test
+		assert.throws(function () {
+				ODataModel.prototype._getObject.call(oModel,"@$ui5.~annotation", "~oContext");
+			}, oError);
+	});
+
+	//*********************************************************************************************
+[
+	{sPath : "@$ui5.context.isInactive", sFunctionName : "isInactive"},
+	{sPath : "@$ui5.context.isTransient", sFunctionName : "isTransient"}
+].forEach(function (oFixture) {
+	QUnit.test("_getInstanceAnnotationValue: " + oFixture.sPath, function (assert) {
+		var oContext = {};
+
+		oContext[oFixture.sFunctionName] = function () {};
+		this.mock(oContext).expects(oFixture.sFunctionName)
+			.withExactArgs()
+			.returns("~annotationValue");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._getInstanceAnnotationValue(oFixture.sPath,
+			oContext), "~annotationValue");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_getInstanceAnnotationValue: unsupported instance annotation", function (assert) {
+		// code under test
+		assert.throws(function () {
+			ODataModel.prototype._getInstanceAnnotationValue("@$ui5.~annotation", "~oContext");
+		}, new Error("Unsupported instance annotation: @$ui5.~annotation"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("annotationsLoaded", function (assert) {
 		var oModel = {pAnnotationsLoaded : "~pAnnotationsLoaded"};
 
@@ -5730,6 +5828,34 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("setProperty: setting a value for an instance annotation is not allowed",
+			function (assert) {
+		var oModel = {
+				resolve : function () {},
+				resolveDeep : function () {},
+				getEntityByPath : function () {}
+			};
+
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("@$ui5.~annotation", "~oContext")
+			.returns("/resolved/@$ui5.~annotation");
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("@$ui5.~annotation", "~oContext")
+			.returns("/resolved/deep/path/@$ui5.~annotation");
+		this.mock(oModel).expects("getEntityByPath")
+			.withExactArgs("/resolved/@$ui5.~annotation", null, /*by ref oEntityInfo*/{})
+			.returns("~oEntry");
+
+		// code under test
+		assert.throws(function () {
+			ODataModel.prototype.setProperty.call(oModel, "@$ui5.~annotation", "~oValue",
+				"~oContext", "~bAsyncUpdate");
+		}, new Error(
+			"Setting a value for an instance annotation starting with '@$ui5' is not allowed: "
+				+ "@$ui5.~annotation"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getObject: missing selected property for a created entity", function (assert) {
 		var oEntity = {
 				__metadata : {
@@ -5901,5 +6027,20 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(ODataModel.prototype.read.call(oModel, "~sPath", "~mParameters", "foo"),
 			"~oResult");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getProperty: propagate _getObject error", function (assert) {
+		var oError = new Error("~Error"),
+			oModel = {_getObject : function () {}};
+
+		this.mock(oModel).expects("_getObject")
+			.withExactArgs("@$ui5.~annotation", "~oContext")
+			.throws(oError);
+
+		// code under test
+		assert.throws(function() {
+				ODataModel.prototype.getProperty.call(oModel,"@$ui5.~annotation", "~oContext");
+			}, oError);
 	});
 });

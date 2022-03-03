@@ -189,7 +189,9 @@ sap.ui.define([
 	/**
 	 * Returns whether this context is inactive. An inactive context will only be sent to the
 	 * server after the first property update. From then on it behaves like any other created
-	 * context.
+	 * context. The result of this function can also be accessed via the
+	 * "@$ui5.context.isInactive" instance annotation at the entity, see
+	 * {@link sap.ui.model.odata.v2.ODataModel#getProperty} for details.
 	 *
 	 * @return {boolean} Whether this context is inactive
 	 *
@@ -231,7 +233,9 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v2.ODataListBinding#create}, the method returns <code>true</code>
 	 * if the context is transient or <code>false</code> if the context is not transient. A
 	 * transient context represents an entity created on the client which has not been persisted in
-	 * the back end.
+	 * the back end. The result of this function can also be accessed via the
+	 * "@$ui5.context.isInactive" instance annotation at the entity, see
+	 * {@link sap.ui.model.odata.v2.ODataModel#getProperty} for details.
 	 *
 	 * @returns {boolean}
 	 *   <ul>

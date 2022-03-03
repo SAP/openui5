@@ -283,7 +283,6 @@ sap.ui.define([
 
 			// use FilterType.Control to combine it with the filters defined in the Main.view.xml
 			oView.byId("SalesOrderSet").getBinding("items").filter(aFilter);
-			oView.getModel().updateBindings(true); // enforce update of status icon + text
 		},
 
 		onFixAllQuantities : function (oEvent) {
@@ -445,21 +444,15 @@ sap.ui.define([
 
 		onRefreshItems : function () {
 			this.getView().byId("ToLineItems").getBinding("rows").refresh();
-			this.getView().getModel().updateBindings(true); // enforce update of status icon + text
 		},
 
 		onRefreshSalesOrders : function () {
 			this.getView().byId("SalesOrderSet").getBinding("items").refresh();
-			this.getView().getModel().updateBindings(true); // enforce update of status icon + text
 		},
 
 		onResetChanges : function () {
-			var oModel = this.getView().getModel();
-
-			oModel.resetChanges(/*aPath*/undefined, /*bAll*/true, /*bDeleteCreatedEntities*/true)
-				.then(function () {
-					oModel.updateBindings(true); // enforce update of status icon + text
-				});
+			this.getView().getModel()
+				.resetChanges(/*aPath*/undefined, /*bAll*/true, /*bDeleteCreatedEntities*/true);
 		},
 
 		onSaveCreatedItem : function () {
@@ -586,7 +579,6 @@ sap.ui.define([
 				oListBinding = this.getView().byId("SalesOrderSet").getBinding("items");
 
 			oListBinding.sort(new Sorter("SalesOrderID", sKey === "desc"));
-			this.getView().getModel().updateBindings(true); // enforce update of status icon + text
 		},
 
 		onTransitionMessagesOnly : function (oEvent) {
@@ -611,12 +603,10 @@ sap.ui.define([
 
 		onTriggerCreateActivateLineItem : function () {
 			this.createInactiveLineItem();
-			this.getView().getModel().updateBindings(true); // enforce update of status icon + text
 		},
 
 		onTriggerCreateActivateSalesOrder : function () {
 			this.createInactiveSalesOrder(true);
-			this.getView().getModel().updateBindings(true); // enforce update of status icon + text
 		},
 
 		onUpdateSalesOrderItemsCount : function () {
