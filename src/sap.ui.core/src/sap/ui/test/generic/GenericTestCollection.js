@@ -29,7 +29,7 @@ sap.ui.define([], function() {
 	 *    Exceptions for known but not fixed issues
 	 * @param {boolean} knownIssues.Id
 	 *    Exception for known duplicate ID issues
-	 * @param {boolean} knownIssues.memoryLeak
+	 * @param {boolean} knownIssues.memoryLeaks
 	 *    Exception for known memory leak issues
 	 *
 	 * @private
