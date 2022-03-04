@@ -49,6 +49,16 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		"NumberFormat constructor is forbidden");
 	});
 
+	QUnit.test("parameter shifting", function (assert) {
+		var oLocale = new Locale("en");
+		assert.equal(oLocale.sLanguage, "en");
+		assert.notOk(NumberFormat.getInstance(oLocale).oFormatOptions.sLanguage, "there shouldn't be a sLanguage field");
+		assert.notOk(NumberFormat.getIntegerInstance(oLocale).oFormatOptions.sLanguage, "there shouldn't be a sLanguage field");
+		assert.notOk(NumberFormat.getFloatInstance(oLocale).oFormatOptions.sLanguage, "there shouldn't be a sLanguage field");
+		assert.notOk(NumberFormat.getUnitInstance(oLocale).oFormatOptions.sLanguage, "there shouldn't be a sLanguage field");
+		assert.notOk(NumberFormat.getCurrencyInstance(oLocale).oFormatOptions.sLanguage, "there shouldn't be a sLanguage field");
+	});
+
 	QUnit.test("integer default format", function (assert) {
 		assert.equal(oDefaultInteger.format(1), "1", "1");
 		assert.equal(oDefaultInteger.format(123), "123", "123");
