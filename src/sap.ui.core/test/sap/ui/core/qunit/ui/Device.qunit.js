@@ -20,6 +20,23 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		}
 	},
 	{
+		name: "Chrome 100",
+		navigator: {
+			userAgent: "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.1700.107 Safari/537.36"
+		},
+		expected: {
+			browser: {
+				webkit: true,
+				mozilla: undefined,
+				chrome: true,
+				safari: undefined,
+				firefox: undefined,
+				version: 100,
+				versionStr: "100"
+			}
+		}
+	},
+	{
 		name: "Firefox 27",
 		navigator: {
 			userAgent: "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0"
@@ -33,6 +50,23 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				firefox: true,
 				version: 27,
 				versionStr: "27"
+			}
+		}
+	},
+	{
+		name: "Firefox 100",
+		navigator: {
+			userAgent: "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/100.0"
+		},
+		expected: {
+			browser: {
+				webkit: undefined,
+				mozilla: true,
+				chrome: undefined,
+				safari: undefined,
+				firefox: true,
+				version: 100,
+				versionStr: "100"
 			}
 		}
 	},
@@ -52,6 +86,25 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				firefox: undefined,
 				version: 14,
 				versionStr: "14"
+			}
+		}
+	},
+	{
+		name: "Safari 100.1",
+		navigator: {
+			userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/100.1 Safari/605.1.15"
+		},
+		expected: {
+			browser: {
+				webkit: true,
+				mozilla: undefined,
+				chrome: undefined,
+				safari: true,
+				fullscreen: false,
+				webview: false,
+				firefox: undefined,
+				version: 100.1,
+				versionStr: "100.1"
 			}
 		}
 	},
