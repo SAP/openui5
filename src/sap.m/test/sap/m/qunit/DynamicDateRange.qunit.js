@@ -455,11 +455,7 @@ sap.ui.define([
 		assert.ok(aControls[2].isA("sap.m.Label"), "created the correct control");
 		assert.ok(aControls[3].isA("sap.m.RadioButtonGroup"), "created the correct control");
 
-		assert.strictEqual(aControls[0].getText(), "Value for X:", "label text is correct");
-		assert.strictEqual(aControls[2].getText(), "Time Periods:", "label text is correct");
 		assert.strictEqual(aControls[3].getButtons().length, 2, "two radio buttons are created");
-		assert.strictEqual(aControls[3].getButtons()[0].getText(), "Days", "two radio buttons are created");
-		assert.strictEqual(aControls[3].getButtons()[1].getText(), "Months", "two radio buttons are created");
 
 		oOptionLast.destroy();
 	});
