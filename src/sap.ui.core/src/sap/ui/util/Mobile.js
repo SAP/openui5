@@ -102,6 +102,23 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 				var iInnerWidthBefore = Device.resize.width;
 
 				sMeta = "width=device-width, initial-scale=1.0";
+
+				// Setting maximum-scale=1.0 and user-scalable=no has effect to the manual zoom (user can pinch zoom the
+				// UI) and auto zoom (browser zooms in the UI automatically under some circumtances, for example when an
+				// input gets the focus and the font-size of the input is less than 16px on iOS) functionalities on the
+				// mobile platform, but there's some difference between the mobile platforms:
+				//  * iOS: This does not disable manual zoom in Safari and it only disables the auto zoom function. In
+				//  Chrome browser on iOS, it does disable the manual zoom but since Chrome on iOS isn't in the support
+				//  matrix, we can ignore this.
+				//  * other mobile platform: it does disable the manual zoom option but there's no auto zoom function.
+				//  So we need to remove the maximum-scale=1.0:
+				//
+				//  Therefore we need to add the additional settings (maximum-scale and user-scalable) only for iOS
+				//  platform
+				if (Device.os.ios) {
+					sMeta += ", maximum-scale=1.0, user-scalable=no";
+				}
+
 				$head.append(jQuery('<meta name="viewport" content="' + sMeta + '">'));
 
 				// Update Device API resize info, which is necessary in some scenarios after setting the viewport info
