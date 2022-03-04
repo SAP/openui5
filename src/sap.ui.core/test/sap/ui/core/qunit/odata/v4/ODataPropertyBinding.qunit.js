@@ -844,7 +844,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["foo", false, undefined].forEach(function (vValue) {
+	["foo", false, null].forEach(function (vValue) {
 		QUnit.test("checkUpdateInternal(): with vValue parameter: " + vValue, function (assert) {
 			var oBinding = this.oModel.bindProperty("/absolute"),
 				oPromise,
@@ -870,6 +870,28 @@ sap.ui.define([
 
 			return oPromise;
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdateInternal(): with vValue parameter: undefined", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
+			oBinding = this.oModel.bindProperty("property/path", oContext);
+
+		oBinding.setType(null, "any");
+		oBinding.vValue = ""; // simulate a read
+		this.mock(oContext).expects("fetchValue")
+			.withExactArgs(oBinding.sReducedPath, sinon.match.same(oBinding))
+			.returns(SyncPromise.resolve("~value~"));
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
+			.callsFake(function () {
+				assert.strictEqual(oBinding.getValue(), "~value~");
+			});
+
+		// code under test
+		return oBinding.checkUpdateInternal(undefined, undefined, undefined, undefined)
+			.then(function () {
+				assert.strictEqual(oBinding.getValue(), "~value~");
+			});
 	});
 
 	//*********************************************************************************************

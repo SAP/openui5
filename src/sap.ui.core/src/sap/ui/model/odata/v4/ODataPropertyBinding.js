@@ -267,7 +267,8 @@ sap.ui.define([
 				&& !bIsMeta) {
 			vType = oMetaModel.fetchUI5Type(sResolvedPath);
 		}
-		if (arguments.length < 4) {
+		if (vValue === undefined) {
+			// if called via #onChange, we need to fetch implicit values
 			vValue = this.oCachePromise.then(function (oCache) {
 				var sDataPath, sMetaPath;
 

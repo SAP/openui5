@@ -1330,12 +1330,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateSelected: simple/complex and not wanted properties", function (assert) {
+	QUnit.test("updateSelected: simple/complex, unwanted, missing properties", function (assert) {
 		var oCacheBefore = {
 				Address : {
 					City : "Walldorf"
 				},
-				ComplexNullable : null
+				ComplexNullable : null,
+				MissingProperty : "foo",
+				Missing : {
+					Property : "bar"
+				}
 			},
 			oCacheAfter = {
 				PartnerId : "4711",
@@ -1352,6 +1356,10 @@ sap.ui.define([
 					bar : null,
 					baz : null,
 					foo : "foo"
+				},
+				MissingProperty : "foo",
+				Missing : {
+					Property : "bar"
 				}
 			},
 			oChangeListener = {},
@@ -1403,6 +1411,8 @@ sap.ui.define([
 			"ComplexNullable/bar",
 			"ComplexNullable/baz/belowBaz",
 			"ComplexNullable/foo",
+			"MissingProperty",
+			"Missing/Property",
 			"PartnerId"
 		]);
 
