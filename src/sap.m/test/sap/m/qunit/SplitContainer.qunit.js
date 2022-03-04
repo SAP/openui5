@@ -883,8 +883,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("showMaster/hideMaster doesn't crash when _oMasterNav hasn't been rendered", function (assert) {
-		var done = assert.async();
-
 		var oPage = new Page();
 		var oSplitContainer = new SplitContainer({
 			masterPages: [oPage]
@@ -897,7 +895,7 @@ sap.ui.define([
 		oSplitContainer.hideMaster();
 		assert.ok(true);
 
-		done();
+		oSplitContainer.destroy();
 	});
 	QUnit.module("SplitContainer Navigation test", {
 		beforeEach : function () {
