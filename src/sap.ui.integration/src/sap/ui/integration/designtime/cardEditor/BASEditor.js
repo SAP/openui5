@@ -101,6 +101,8 @@ sap.ui.define([
 				ObjectPath.set(["sap.card", "configuration", "parameters"], {}, oJson);
 			}
 			var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
+			var oViz = {};
+			var oValues = {};
 			if (oJson) {
 				//parameters content changed added, removed
 				var mParametersInDesigntime = ObjectPath.get(["sap.card", "configuration", "parameters"], this._oDesigntimeMetadataModel.getData());
@@ -155,26 +157,24 @@ sap.ui.define([
 					if (iIndex > -1) {
 						aCurrentKeys.splice(iIndex, 1);
 					}
-					var oViz;
 					if (mParameters[n].visualization) {
-						oViz = mParameters[n].visualization;
+						oViz[n] = mParameters[n].visualization;
 					}
-					var oValues;
 					if (mParameters[n].values) {
-						oValues = mParameters[n].values;
+						oValues[n] = mParameters[n].values;
 					}
 					oCopyConfig.form.items[n] = merge(oItem, mParameters[n]);
 					if (!mParametersInDesigntime[n].__value.visualization) {
 						delete oCopyConfig.form.items[n].visualization;
-					} else if (oViz) {
-						oCopyConfig.form.items[n].visualization = oViz;
-						oViz = null;
+					} else if (oViz[n]) {
+						oCopyConfig.form.items[n].visualization = oViz[n];
+						delete oViz[n];
 					}
 					if (!mParametersInDesigntime[n].__value.values) {
 						delete oCopyConfig.form.items[n].values;
-					} else if (oValues) {
-						oCopyConfig.form.items[n].values = oValues;
-						oValues = null;
+					} else if (oValues[n]) {
+						oCopyConfig.form.items[n].values = oValues[n];
+						delete oValues[n];
 					}
 					if (oItem.type === "group" || oItem.type === "separator") {
 						delete oCopyConfig.form.items[n].manifestpath;
@@ -216,13 +216,11 @@ sap.ui.define([
 							continue;
 						}
 						var oOriginalItem = oCopyConfig.form.items[sKey] || {};
-						var oViz;
 						if (oOriginalItem.visualization) {
-							oViz = oOriginalItem.visualization;
+							oViz[n] = oOriginalItem.visualization;
 						}
-						var oValues;
 						if (oOriginalItem.values) {
-							oValues = oOriginalItem.values;
+							oValues[n] = oOriginalItem.values;
 						}
 
 						oItem = merge(oOriginalItem, mParameters[sKey]);
@@ -247,13 +245,13 @@ sap.ui.define([
 							delete oItem.manifestpath;
 						}
 
-						if (oViz) {
-							oItem.visualization = oViz;
-							oViz = null;
+						if (oViz[sKey]) {
+							oItem.visualization = oViz[sKey];
+							delete oViz[sKey];
 						}
-						if (oValues) {
-							oItem.values = oValues;
-							oValues = null;
+						if (oValues[sKey]) {
+							oItem.values = oValues[sKey];
+							delete oValues[sKey];
 						}
 						oItem.__key = sKey;
 						aItems[oItem.position] = oItem;
@@ -397,7 +395,10 @@ sap.ui.define([
 			if (oItem.type === "array") {
 				oItem.type = "string[]";
 			}
-			if (oItem.type !== "string[]" && oItem.type != "string") {
+			if (oItem.type === "objectArray") {
+				oItem.type = "object[]";
+			}
+			if (oItem.type !== "string[]" && oItem.type != "string" && oItem.type !== "object[]" && oItem.type != "object") {
 				delete oItem.values;
 			}
 			delete oItem.value;

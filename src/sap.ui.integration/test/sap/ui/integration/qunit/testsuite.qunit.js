@@ -774,6 +774,42 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"editor/ObjectField": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/ObjectListFieldWithTypeDefinedOnly": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/ObjectListFieldWithPropertiesDefinedOnly": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/ObjectListFieldWithRequestValues": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
 			"editor/RequestValues": {
 				group: "Runtime Editor",
 				coverage: {

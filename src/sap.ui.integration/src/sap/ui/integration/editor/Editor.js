@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/base/Interface",
 	"sap/ui/integration/Designtime",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/Destinations",
 	"sap/ui/integration/util/DataProviderFactory",
@@ -59,6 +60,7 @@ sap.ui.define([
 	Interface,
 	Designtime,
 	JSONModel,
+	ODataModel,
 	Utils,
 	Destinations,
 	DataProviderFactory,
@@ -607,7 +609,7 @@ sap.ui.define([
 											]
 										});
 									}
-									//render lable and field for NotWrapping parameter
+									//render label and field for NotWrapping parameter
 									if (oItem._cols === 1) {
 										if (oSubGroup) {
 											if (oColFieldsOfSubGroup.length === 2) {
@@ -1457,8 +1459,22 @@ sap.ui.define([
 							if (oItem.valueItems) {
 								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueItems"] = oItem.valueItems;
 							}
-							if (oItem.type !== "string" || !oItem.translatable) {
-								mResult[oItem.manifestpath] = oItem.value;
+							switch (oItem.type) {
+								case "string":
+									if (!oItem.translatable) {
+										mResult[oItem.manifestpath] = oItem.value;
+									}
+									break;
+								case "group":
+									break;
+								case "object":
+								case "object[]":
+									if (oItem.value && oItem.value !== "") {
+										mResult[oItem.manifestpath] = oItem.value;
+									}
+									break;
+								default:
+									mResult[oItem.manifestpath] = oItem.value;
 							}
 						}
 					} else if (oItem.translatable && oItem.value) {
@@ -1698,12 +1714,14 @@ sap.ui.define([
 	//map editors for a specific type
 	Editor.fieldMap = {
 		"string": "sap/ui/integration/editor/fields/StringField",
+		"string[]": "sap/ui/integration/editor/fields/StringListField",
 		"integer": "sap/ui/integration/editor/fields/IntegerField",
 		"number": "sap/ui/integration/editor/fields/NumberField",
 		"boolean": "sap/ui/integration/editor/fields/BooleanField",
 		"date": "sap/ui/integration/editor/fields/DateField",
 		"datetime": "sap/ui/integration/editor/fields/DateTimeField",
-		"string[]": "sap/ui/integration/editor/fields/ListField",
+		"object": "sap/ui/integration/editor/fields/ObjectField",
+		"object[]": "sap/ui/integration/editor/fields/ObjectListField",
 		"destination": "sap/ui/integration/editor/fields/DestinationField"
 	};
 	Editor.Fields = null;
@@ -1945,6 +1963,10 @@ sap.ui.define([
 			}.bind(this));
 		}
 		if (oConfig.values) {
+			// load metadata
+			if (oConfig.values.metadata) {
+				this._addMetadataModel(oConfig, oField);
+			}
 			// for MultiInput used in string[] field with filter backend, do not request data when creating it
 			if (oConfig.type === "string[]" && oField.isFilterBackend() && oConfig.visualization && oConfig.visualization.type === "MultiInput") {
 				oField.setModel(new JSONModel({}), undefined);
@@ -2035,6 +2057,11 @@ sap.ui.define([
 			} else {
 				tResult = oData;
 			}
+			if (oConfig.type === "object" || oConfig.type === "object[]") {
+				tResult.forEach(function (oResult) {
+					oResult._editable = false;
+				});
+			}
 			if (this.getMode() === "content" && oConfig.pageAdminValues && oConfig.pageAdminValues.length > 0) {
 				var paValues = oConfig.pageAdminValues,
 				    selValues = oConfig.value,
@@ -2082,7 +2109,7 @@ sap.ui.define([
 					oData = results;
 				}
 			}
-			//add group property "Selected" to each record for MultiComboBox in ListField
+			//add group property "Selected" to each record for MultiComboBox in StringListField
 			//user configration of the field since its value maybe changed
 			var oFieldConfig = oField.getConfiguration();
 			if (oConfig.type === "string[]") {
@@ -2125,6 +2152,9 @@ sap.ui.define([
 			oValueModel.firePropertyChange();
 			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
 			oField._hideValueState(true, true);
+			if (oConfig.type === "object" || oConfig.type === "object[]") {
+				oField.mergeValueWithRequestResult(tResult);
+			}
 		}.bind(this)).catch(function (oError) {
 			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
 			var sError = this._oResourceBundle.getText("EDITOR_BAD_REQUEST");
@@ -2151,6 +2181,9 @@ sap.ui.define([
 			}
 			var oValueModel = oField.getModel();
 			oValueModel.firePropertyChange();
+			if (oConfig.type === "object" || oConfig.type === "object[]") {
+				oField.mergeValueWithRequestResult();
+			}
 			oField._showValueState("error", sError, true);
 		}.bind(this));
 	};
@@ -2295,6 +2328,48 @@ sap.ui.define([
 				//to carry the values.
 				oField.setModel(oValueModel, undefined);
 			}
+		}
+	};
+
+	/**
+	 * Creates a meta model if a values.metadata section exists in the configuration
+	 * @param {object} oConfig
+	 * @param {BaseField} oField
+	 */
+	 Editor.prototype._addMetadataModel = function (oConfig, oField) {
+		if (oConfig.values && oConfig.values.metadata) {
+			var oRequestDefaultParameters = {
+				"synchronizationMode": "None"
+			};
+			oRequestDefaultParameters = merge(oRequestDefaultParameters, oConfig.values.metadata.request);
+
+			var oRequest = {
+				url: oRequestDefaultParameters.serviceUrl
+			};
+			var pRequestChain = Promise.resolve(oRequest);
+			if (this._oDestinations) {
+				pRequestChain = this._oDestinations.process(oRequest);
+			}
+			pRequestChain.then(function(oData) {
+				if (!oData.url.endsWith("/")) {
+					oData.url = oData.url + "/";
+				}
+				oRequestDefaultParameters.serviceUrl = oData.url;
+				var oMetaDataModel = new ODataModel(oRequestDefaultParameters);
+				oMetaDataModel.oMetaModel.fetchData().then(function(oMetaData) {
+					if (oConfig.type === "object" || oConfig.type === "object[]") {
+						var sPath = oConfig.values.metadata.namespace + "." + oConfig.values.metadata.entityTypeName;
+						oMetaData[sPath] = Object.assign(oMetaData[sPath], {
+							_Actions: {
+								$kind: 'Property',
+								$Type: 'Actions',
+								$MaxLength: 15
+							}
+						});
+					}
+					oField.setModel(new JSONModel(oMetaData), "meta");
+				});
+			});
 		}
 	};
 
@@ -3152,6 +3227,8 @@ sap.ui.define([
 					case "integer":
 					case "number": oItem.value = 0; break;
 					case "string[]": oItem.value = []; break;
+					case "object": oItem.value = undefined; break;
+					case "object[]": oItem.value = undefined; break;
 					default: oItem.value = "";
 				}
 			}

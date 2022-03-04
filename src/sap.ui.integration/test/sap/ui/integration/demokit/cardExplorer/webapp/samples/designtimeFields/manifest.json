@@ -112,7 +112,17 @@
 				},
 				"dependentBoolean1": {
 					"value": "Editable changes depend on boolean1"
-				}
+				},
+				"object": {},
+				"objectWithPropertiesDefined": {},
+				"objectWithPropertiesDefinedAndValueFromJsonList": {},
+				"objectWithPropertiesDefinedAndValueFromRequestedFile": {},
+				"objectWithPropertiesDefinedAndValueFromODataRequest": {},
+				"objects": {},
+				"objectsWithPropertiesDefined": {},
+				"objectsWithPropertiesDefinedAndValueFromJsonList": {},
+				"objectsWithPropertiesDefinedAndValueFromRequestedFile": {},
+				"objectsWithPropertiesDefinedAndValueFromODataRequest": {}
 			},
 			"destinations": {
 				"local": {

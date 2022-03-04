@@ -561,8 +561,16 @@ sap.ui.define([
 					delete oEditorValue[sKey].visualization;
 				}
 
-				if (sNewType !== "array" && sNewType !== "string") {
+				if (sNewType !== "array" && sNewType !== "string" && sNewType !== "object" && sNewType !== "objectArray") {
 					delete oEditorValue[sKey].values;
+				}
+
+				if (sNewType === "object" && typeof oEditorValue[sKey].value !== "object") {
+					delete oEditorValue[sKey].value;
+				}
+
+				if (sNewType === "objectArray" && !(oEditorValue[sKey].value instanceof Array)) {
+					delete oEditorValue[sKey].value;
 				}
 
 				this._mTypes[sKey] = sNewType;
@@ -581,7 +589,7 @@ sap.ui.define([
 					} else {
 						delete oDesigntime[sKey].__value.visualization;
 					}
-					if (sNewType !== "array" && sNewType !== "string") {
+					if (sNewType !== "array" && sNewType !== "string" && sNewType !== "object" && sNewType !== "objectArray") {
 						delete oDesigntime[sKey].__value.values;
 					}
 					oDesigntime[sKey].__value.type = sNewType;

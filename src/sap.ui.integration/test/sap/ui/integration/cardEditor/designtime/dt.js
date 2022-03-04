@@ -12,6 +12,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"generalGroup": {
 						"type": "group",
 						"label": "All Data Type",
+						"expanded": false,
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
 					"cardTitle": {
@@ -174,7 +175,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"formatterGroup": {
 						"type": "group",
-						"label": "Formatter"
+						"label": "Formatter",
+						"expanded": false
 					},
 					"dateFormatter": {
 						"manifestpath": "/sap.card/configuration/parameters/dateFormatter/value",
@@ -264,7 +266,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"validationGroup": {
 						"type": "group",
-						"label": "Validation"
+						"label": "Validation",
+						"expanded": false
 					},
 					"stringphone": {
 						"manifestpath": "/sap.card/configuration/parameters/stringphone/value",
@@ -424,7 +427,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"lists": {
 						"type": "group",
-						"label": "Value Selection"
+						"label": "Value Selection",
+						"expanded": false
 					},
 					"stringWithStaticList": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithStaticList/value",
@@ -691,7 +695,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"group": {
 						"label": "Dependent",
-						"type": "group"
+						"type": "group",
+						"expanded": false
 					},
 					"subGroup1": {
 						"type": "group",
@@ -797,6 +802,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"subTabgroup": {
 						"label": "Sub Group (Tab)",
 						"type": "group",
+						"expanded": false,
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
 					"subGroup4": {
@@ -878,7 +884,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"filterBackendInStringArray": {
 						"label": "Filter backend by input in MultiComboBox or MultiInput",
-						"type": "group"
+						"type": "group",
+						"expanded": false
 					},
 					"CustomersWithMultiKeys": {
 						"manifestpath": "/sap.card/configuration/parameters/CustomersWithMultiKeys/value",
@@ -1017,7 +1024,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"filterBackendInString": {
 						"label": "Filter backend by input in ComboBox",
-						"type": "group"
+						"type": "group",
+						"expanded": false
 					},
 					"CustomerWithFilterParameter": {
 						"manifestpath": "/sap.card/configuration/parameters/CustomerWithFilterParameter/value",
@@ -1062,7 +1070,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"linkedParameters": {
 						"label": "Linked Parameters",
-						"type": "group"
+						"type": "group",
+						"expanded": false
 					},
 					"Customer": {
 						"manifestpath": "/sap.card/configuration/parameters/Customer/value",
@@ -1199,7 +1208,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"layoutGroup": {
 						"type": "group",
-						"label": "Layout"
+						"label": "Layout",
+						"expanded": false
 					},
 					"cardTitle1": {
 						"manifestpath": "/sap.card/configuration/parameters/cardTitle1/value",
@@ -1354,7 +1364,629 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"label-width": "30%",
 							"position": "field-label"
 						}
-					}
+					},
+					"objectFieldGroup": {
+						"type": "group",
+						"label": "Object Fields"
+					},
+					"object": {
+						"manifestpath": "/sap.card/configuration/parameters/object/value",
+						"type": "object",
+						"label": "Object Field"
+					},
+					"objectWithPropertiesDefined": {
+						"manifestpath": "/sap.card/configuration/parameters/objectWithPropertiesDefined/value",
+						"type": "object",
+						"label": "Object properties defined",
+						"properties": {
+							"key": {
+								"label": "Key"
+							},
+							"icon": {
+								"label": "Icon"
+							},
+							"text": {
+								"label": "Text"
+							},
+							"url": {
+								"label": "URL"
+							},
+							"editable": {
+								"label": "Editable",
+								"type": "boolean"
+							},
+							"int": {
+								"label": "Integer",
+								"type": "int",
+								"formatter": {
+									"minIntegerDigits": 1,
+									"maxIntegerDigits": 6,
+									"emptyString": ""
+								}
+							},
+							"number": {
+								"label": "Number",
+								"type": "number",
+								"formatter": {
+									"decimals": 1,
+									"style":"short"
+								}
+							}
+						}
+					},
+					"objectWithPropertiesDefinedAndValueFromJsonList": {
+						"manifestpath": "/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value",
+						"type": "object",
+						"label": "Object properties defined: value from Json list",
+						"values": {
+							"data": {
+								"json": {
+									"values": [
+										{ "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 },
+										{ "text": "text02", "key": "key02", "url": "http://sapui5.hana.ondemand.com/05", "icon": "sap-icon://cart", "iconcolor": "#64E4CE", "int": 2 },
+										{ "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3 },
+										{ "text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4 },
+										{ "text": "text05", "key": "key05", "url": "http://sapui5.hana.ondemand.com/02", "icon": "sap-icon://cart", "iconcolor": "#8875E7", "int": 5 },
+										{ "text": "text06", "key": "key06", "url": "https://sapui5.hana.ondemand.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 6 },
+										{ "text": "text07", "key": "key07", "url": "http://sapui5.hana.ondemand.com/02", "icon": "sap-icon://cart", "iconcolor": "#1C4C98", "int": 7 },
+										{ "text": "text08", "key": "key08", "url": "https://sapui5.hana.ondemand.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#8875E7", "int": 8 }
+									]
+								},
+								"path": "/values"
+							},
+							"allowCreateNew": true
+						},
+						"properties": {
+							"key": {
+								"label": "Key",
+								"column": {
+									"filterProperty": "key"
+								}
+							},
+							"icon": {
+								"label": "Icon",
+								"defaultValue": "sap-icon://add",
+								"column": {
+									"hAlign": "Center",
+									"width": "4rem"
+								},
+								"cell": {
+									"type": "Icon",
+									"color": "{iconcolor}"
+								}
+							},
+							"text": {
+								"label": "Text",
+								"defaultValue": "text",
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"url": {
+								"label": "URL",
+								"defaultValue": "http://",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"label": "URL Link",
+									"filterProperty": "url",
+									"defaultFilterOperator": "StartsWith"
+								},
+								"cell": {
+									"type": "Link",
+									"href": "{url}"
+								}
+							},
+							"editable": {
+								"label": "Editable",
+								"defaultValue": false,
+								"type": "boolean"
+							},
+							"int": {
+								"label": "Integer",
+								"defaultValue": 0,
+								"type": "int",
+								"formatter": {
+									"minIntegerDigits": 1,
+									"maxIntegerDigits": 6,
+									"emptyString": ""
+								},
+								"column": {
+									"hAlign": "Center",
+									"width": "5rem",
+									"label": "Integer",
+									"filterProperty": "int",
+									"defaultFilterOperator": "EQ",
+									"filterType": "sap.ui.model.type.Integer"   //sap.ui.model.type
+								}
+							},
+							"number": {
+								"label": "Number",
+								"defaultValue": 0.5,
+								"type": "number",
+								"formatter": {
+									"decimals": 1,
+									"style":"short"
+								}
+							}
+						}
+					},
+					"objectWithPropertiesDefinedAndValueFromRequestedFile": {
+						"manifestpath": "/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value",
+						"type": "object",
+						"label": "Object properties defined: value from requested file",
+						"values": {
+							"data": {
+								"request": {
+									"url": "./objectWithRequestList.json"
+								},
+								"path": "/values"
+							},
+							"allowCreateNew": true
+						},
+						"properties": {
+							"key": {
+								"label": "Key",
+								"column": {
+									"filterProperty": "key"
+								}
+							},
+							"icon": {
+								"label": "Icon",
+								"defaultValue": "sap-icon://add",
+								"column": {
+									"hAlign": "Center",
+									"width": "4rem"
+								},
+								"cell": {
+									"type": "Icon",
+									"color": "{iconcolor}"
+								}
+							},
+							"text": {
+								"label": "Text",
+								"defaultValue": "text",
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"additionalText": {
+								"label": "Additional Text",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							}
+						}
+					},
+					"objectWithPropertiesDefinedAndValueFromODataRequest": {
+						"manifestpath": "/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value",
+						"type": "object",
+						"label": "Object properties defined: value from OData Request",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									}
+								},
+								"path": "/value"
+							},
+							"allowCreateNew": true
+						},
+						"properties": {
+							"CustomerID": {
+								"label": "Customer ID",
+								"column": {
+									"filterProperty": "CustomerID",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"CompanyName": {
+								"label": "Company Name",
+								"column": {
+									"width": "10rem",
+									"filterProperty": "CompanyName",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"Country": {
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "Country",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"City": {
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "City",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"Address": {
+								"column": {
+									"width": "10rem",
+									"filterProperty": "Address",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							}
+						}
+					},/*
+					"objectWithMetadataDefinedAndValueFromODataRequest": {
+						"manifestpath": "/sap.card/configuration/parameters/objectWithMetadataDefinedAndValueFromODataRequest/value",
+						"type": "object",
+						"label": "OData metadata defined: value from OData request",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									}
+								},
+								"path": "/value"
+							},
+							// hide metadata now
+							"metadata": {
+								"request": {
+									"serviceUrl": "{{destinations.northwind}}"
+									//"serviceUrl": "https://services.odata.org/V4/Northwind/Northwind.svc/"
+									//"metadataUrlParams": {}
+									// see more parameters in online doc for mParameters of sap.ui.model.odata.v4.ODataMode
+								},
+								"namespace": "NorthwindModel",
+								"entityTypeName": "Customer"
+							}
+						}
+					},*/
+					"objectListFieldGroup": {
+						"type": "group",
+						"label": "Object List Fields"
+					},
+					"objects": {
+						"manifestpath": "/sap.card/configuration/parameters/objects/value",
+						"type": "object[]",
+						"label": "Object List Field"
+					},
+					"objectsWithPropertiesDefined": {
+						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefined/value",
+						"type": "object[]",
+						"label": "Object properties defined",
+						"properties": {
+							"key": {
+								"label": "Key",
+								"column": {
+									"filterProperty": "key"
+								}
+							},
+							"icon": {
+								"label": "Icon",
+								"defaultValue": "sap-icon://add",
+								"column": {
+									"hAlign": "Center",
+									"width": "4rem"
+								},
+								"cell": {
+									"type": "Icon",
+									"color": "{iconcolor}"
+								}
+							},
+							"text": {
+								"label": "Text",
+								"defaultValue": "text",
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"url": {
+								"label": "URL",
+								"defaultValue": "http://",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"label": "URL Link",
+									"filterProperty": "url",
+									"defaultFilterOperator": "StartsWith"
+								},
+								"cell": {
+									"type": "Link",
+									"href": "{url}"
+								}
+							},
+							"editable": {
+								"label": "Editable",
+								"defaultValue": false,
+								"type": "boolean"
+							},
+							"int": {
+								"label": "Integer",
+								"defaultValue": 0,
+								"type": "int",
+								"formatter": {
+									"minIntegerDigits": 1,
+									"maxIntegerDigits": 6,
+									"emptyString": ""
+								},
+								"column": {
+									"hAlign": "Center",
+									"width": "5rem",
+									"label": "Integer",
+									"filterProperty": "int",
+									"defaultFilterOperator": "EQ",
+									"filterType": "sap.ui.model.type.Integer"   //sap.ui.model.type
+								}
+							},
+							"number": {
+								"label": "Number",
+								"defaultValue": 0.5,
+								"type": "number",
+								"formatter": {
+									"decimals": 1,
+									"style":"short"
+								}
+							}
+						}
+					},
+					"objectsWithPropertiesDefinedAndValueFromJsonList": {
+						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromJsonList/value",
+						"type": "object[]",
+						"label": "Object properties defined: value from Json list",
+						"values": {
+							"data": {
+								"json": {
+									"values": [
+										{ "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 },
+										{ "text": "text02", "key": "key02", "url": "http://sapui5.hana.ondemand.com/05", "icon": "sap-icon://cart", "iconcolor": "#64E4CE", "int": 2 },
+										{ "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3 },
+										{ "text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4 },
+										{ "text": "text05", "key": "key05", "url": "http://sapui5.hana.ondemand.com/02", "icon": "sap-icon://cart", "iconcolor": "#8875E7", "int": 5 },
+										{ "text": "text06", "key": "key06", "url": "https://sapui5.hana.ondemand.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 6 },
+										{ "text": "text07", "key": "key07", "url": "http://sapui5.hana.ondemand.com/02", "icon": "sap-icon://cart", "iconcolor": "#1C4C98", "int": 7 },
+										{ "text": "text08", "key": "key08", "url": "https://sapui5.hana.ondemand.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#8875E7", "int": 8 }
+									]
+								},
+								"path": "/values"
+							},
+							"allowCreateNew": true
+						},
+						"properties": {
+							"key": {
+								"label": "Key",
+								"column": {
+									"filterProperty": "key"
+								}
+							},
+							"icon": {
+								"label": "Icon",
+								"defaultValue": "sap-icon://add",
+								"column": {
+									"hAlign": "Center",
+									"width": "4rem"
+								},
+								"cell": {
+									"type": "Icon",
+									"color": "{iconcolor}"
+								}
+							},
+							"text": {
+								"label": "Text",
+								"defaultValue": "text",
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"url": {
+								"label": "URL",
+								"defaultValue": "http://",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"label": "URL Link",
+									"filterProperty": "url",
+									"defaultFilterOperator": "StartsWith"
+								},
+								"cell": {
+									"type": "Link",
+									"href": "{url}aa"
+								}
+							},
+							"editable": {
+								"label": "Editable",
+								"defaultValue": false,
+								"type": "boolean",
+								"column": {
+									"hAlign": "Center"
+								},
+								"cell": {
+									"type": "Switch",
+									"customTextOn": "YES",
+									"customTextOff": "NO"
+								}
+							},
+							"int": {
+								"label": "Integer",
+								"defaultValue": 0,
+								"type": "int",
+								"formatter": {
+									"minIntegerDigits": 1,
+									"maxIntegerDigits": 6,
+									"emptyString": ""
+								},
+								"column": {
+									"hAlign": "Center",
+									"width": "5rem",
+									"label": "Integer",
+									"filterProperty": "int",
+									"defaultFilterOperator": "EQ",
+									"filterType": "sap.ui.model.type.Integer"   //sap.ui.model.type
+								}
+							},
+							"number": {
+								"label": "Number",
+								"defaultValue": 0.5,
+								"type": "number",
+								"formatter": {
+									"decimals": 1,
+									"style":"short"
+								}
+							}
+						}
+					},
+					"objectsWithPropertiesDefinedAndValueFromRequestedFile": {
+						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromRequestedFile/value",
+						"type": "object[]",
+						"label": "Object properties defined: value from requested file",
+						"values": {
+							"data": {
+								"request": {
+									"url": "./objectWithRequestList.json"
+								},
+								"path": "/values"
+							},
+							"allowCreateNew": true
+						},
+						"properties": {
+							"key": {
+								"label": "Key",
+								"column": {
+									"filterProperty": "key"
+								}
+							},
+							"icon": {
+								"label": "Icon",
+								"defaultValue": "sap-icon://add",
+								"column": {
+									"hAlign": "Center",
+									"width": "4rem"
+								},
+								"cell": {
+									"type": "Icon",
+									"color": "{iconcolor}"
+								}
+							},
+							"text": {
+								"label": "Text",
+								"defaultValue": "text",
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"additionalText": {
+								"label": "Additional Text",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							}
+						}
+					},
+					"objectsWithPropertiesDefinedAndValueFromODataRequest": {
+						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromODataRequest/value",
+						"type": "object[]",
+						"label": "Object properties defined: value from OData Request",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									}
+								},
+								"path": "/value"
+							},
+							"allowCreateNew": true
+						},
+						"properties": {
+							"CustomerID": {
+								"label": "Customer ID",
+								"column": {
+									"filterProperty": "CustomerID",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"CompanyName": {
+								"label": "Company Name",
+								"column": {
+									"width": "10rem",
+									"filterProperty": "CompanyName",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"Country": {
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "Country",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"City": {
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "City",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							},
+							"Address": {
+								"column": {
+									"width": "10rem",
+									"filterProperty": "Address",
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								}
+							}
+						}
+					}/*,
+					"objectsWithMetadataDefinedAndValueFromODataRequest": {
+						"manifestpath": "/sap.card/configuration/parameters/objectsWithMetadataDefinedAndValueFromODataRequest/value",
+						"type": "object[]",
+						"label": "OData metadata defined: value from OData request",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									}
+								},
+								"path": "/value"
+							},
+							"metadata": {
+								"request": {
+									"serviceUrl": "{{destinations.northwind}}"
+									//"serviceUrl": "https://services.odata.org/V4/Northwind/Northwind.svc/"
+									//"metadataUrlParams": {}
+									//see more parameters in online doc for mParameters of sap.ui.model.odata.v4.ODataMode
+								},
+								"namespace": "NorthwindModel",
+								"entityTypeName": "Customer"
+							},
+							"allowCreateNew": true
+						}
+					}*/
 				}
 			},
 			"preview": {

@@ -28,9 +28,9 @@ sap.ui.define([
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 	/**
-	 * @class
+	 * @class String List Field with string list value, such as ["value1", "value2"]
 	 * @extends sap.ui.integration.editor.fields.BaseField
-	 * @alias sap.ui.integration.editor.fields.ListField
+	 * @alias sap.ui.integration.editor.fields.StringListField
 	 * @author SAP SE
 	 * @since 1.83.0
 	 * @version ${version}
@@ -38,14 +38,14 @@ sap.ui.define([
 	 * @experimental since 1.83.0
 	 * @ui5-restricted
 	 */
-	var ListField = BaseField.extend("sap.ui.integration.editor.fields.ListField", {
+	var StringListField = BaseField.extend("sap.ui.integration.editor.fields.StringListField", {
 		metadata: {
 			library: "sap.ui.integration"
 		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
 
-	ListField.prototype.initVisualization = function (oConfig) {
+	StringListField.prototype.initVisualization = function (oConfig) {
 		if (oResourceBundle && oResourceBundle.sLocale !== Core.getConfiguration().getLanguage()) {
 			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 		}
@@ -55,44 +55,44 @@ sap.ui.define([
 		if (!oVisualization) {
 			if (oConfig.values) {
 				oItem = this.formatListItem(oConfig.values.item);
-					oVisualization = {
-						type: MultiComboBox,
-						settings: {
-							selectedKeys: {
-								path: 'currentSettings>value'
-							},
-							busy: { path: 'currentSettings>_loading' },
-							editable: oConfig.editable,
-							visible: oConfig.visible,
-							showSecondaryValues: true,
-							width: "100%",
-							items: {
-								path: "", //empty, because the bindingContext for the undefined model already points to the path
-								template: oItem,
-								sorter: [new Sorter({
-									path: 'Selected',
-									descending: false,
-									group: true
-								})],
-								groupHeaderFactory: that.getGroupHeader
+				oVisualization = {
+					type: MultiComboBox,
+					settings: {
+						selectedKeys: {
+							path: 'currentSettings>value'
+						},
+						busy: { path: 'currentSettings>_loading' },
+						editable: oConfig.editable,
+						visible: oConfig.visible,
+						showSecondaryValues: true,
+						width: "100%",
+						items: {
+							path: "", //empty, because the bindingContext for the undefined model already points to the path
+							template: oItem,
+							sorter: [new Sorter({
+								path: 'Selected',
+								descending: false,
+								group: true
+							})],
+							groupHeaderFactory: that.getGroupHeader
+						}
+					}
+				};
+				if (this.isFilterBackend()) {
+					oVisualization.settings.selectedKeys = {
+						parts: [
+							'currentSettings>value',
+							'currentSettings>suggestValue'
+						],
+						formatter: function(sValue, sSuggestValue) {
+							if (sSuggestValue) {
+								//set suggest value in the input field of the MultiComboBox
+								that.setSuggestValue();
 							}
+							return sValue;
 						}
 					};
-					if (this.isFilterBackend()) {
-						oVisualization.settings.selectedKeys = {
-							parts: [
-								'currentSettings>value',
-								'currentSettings>suggestValue'
-							],
-							formatter: function(sValue, sSuggestValue) {
-								if (sSuggestValue) {
-									//set suggest value in the input field of the MultiComboBox
-									that.setSuggestValue();
-								}
-								return sValue;
-							}
-						};
-					}
+				}
 			} else {
 				oVisualization = {
 					type: Input,
@@ -150,7 +150,7 @@ sap.ui.define([
 		this.attachAfterInit(this._afterInit);
 	};
 
-	ListField.prototype._afterInit = function () {
+	StringListField.prototype._afterInit = function () {
 		var oControl = this.getAggregation("_field");
 		var oConfig = this.getConfiguration();
 		var oModel = this.getModel();
@@ -188,7 +188,7 @@ sap.ui.define([
 		}
 	};
 
-	ListField.prototype.prepareFieldsInKey = function(oConfig) {
+	StringListField.prototype.prepareFieldsInKey = function(oConfig) {
 		//get field names in the item key
 		this._sKeySeparator = oConfig.values.keySeparator;
 		if (!this._sKeySeparator) {
@@ -207,7 +207,7 @@ sap.ui.define([
 		}
 	};
 
-	ListField.prototype.initTokens = function() {
+	StringListField.prototype.initTokens = function() {
 		var oControl = this.getAggregation("_field");
 		var oConfig = this.getConfiguration();
 		var aTokens = [];
@@ -240,7 +240,7 @@ sap.ui.define([
 		oControl.setTokens(aTokens);
 	};
 
-	ListField.prototype.getKeyFromItem = function(oItem) {
+	StringListField.prototype.getKeyFromItem = function(oItem) {
 		var sItemKey = "";
 		this._aFields.forEach(function (field) {
 			sItemKey += oItem[field].toString() + this._sKeySeparator;
@@ -251,7 +251,7 @@ sap.ui.define([
 		return sItemKey;
 	};
 
-	ListField.prototype.onPropertyChangeForFilterBackend = function(oEvent) {
+	StringListField.prototype.onPropertyChangeForFilterBackend = function(oEvent) {
 		var oConfig = this.getConfiguration();
 		if (!oConfig.valueItems) {
 			oConfig.valueItems = [];
@@ -280,7 +280,7 @@ sap.ui.define([
 		this.setSuggestValue();
 	};
 
-	ListField.prototype.onPropertyChange = function(oEvent) {
+	StringListField.prototype.onPropertyChange = function(oEvent) {
 		var oControl = this.getAggregation("_field");
 		//get the keys of the selected items
 		var aSelectedItemKeys = oControl.getSelectedItems().map(function (oSelectedItem) {
@@ -293,7 +293,7 @@ sap.ui.define([
 		oSettingsModel.setProperty(sSettingspath + "/value", aSelectedItemKeys);
 	};
 
-	ListField.prototype.mergeSelectedItems = function(oConfig, oData) {
+	StringListField.prototype.mergeSelectedItems = function(oConfig, oData) {
 		if (Array.isArray(oData)) {
 			//get keys of previous selected items
 			var aSelectedItemKeys = oConfig.valueItems.map(function (oSelectedItem) {
@@ -333,7 +333,7 @@ sap.ui.define([
 		return oData;
 	};
 
-	ListField.prototype.setSuggestValue = function() {
+	StringListField.prototype.setSuggestValue = function() {
 		var oControl = this.getAggregation("_field");
 		var sSettingspath = this.getBindingContext("currentSettings").sPath;
 		var oSettingsModel = this.getModel("currentSettings");
@@ -344,19 +344,19 @@ sap.ui.define([
 		}
 	};
 
-	ListField.prototype.getSuggestValue = function() {
+	StringListField.prototype.getSuggestValue = function() {
 		var sSettingspath = this.getBindingContext("currentSettings").sPath;
 		var oSettingsModel = this.getModel("currentSettings");
 		return oSettingsModel.getProperty(sSettingspath + "/suggestValue");
 	};
 
-	ListField.prototype.getGroupHeader = function(oGroup) {
+	StringListField.prototype.getGroupHeader = function(oGroup) {
 		return new SeparatorItem( {
 			text: oGroup.key
 		});
 	};
 
-	ListField.prototype.onSelectionChangeForFilterBackend = function(oEvent) {
+	StringListField.prototype.onSelectionChangeForFilterBackend = function(oEvent) {
 		var oField = oEvent.getSource().getParent();
 		var oConfig = oField.getConfiguration();
 		var oListItem = oEvent.getParameter("changedItem");
@@ -414,7 +414,7 @@ sap.ui.define([
 		}
 	};
 
-	ListField.prototype.onTokenChange = function(oEvent) {
+	StringListField.prototype.onTokenChange = function(oEvent) {
 		var oField = this.getParent();
 		var oConfig = oField.getConfiguration();
 		var oSettingsModel = oField.getModel("currentSettings");
@@ -511,7 +511,7 @@ sap.ui.define([
 		}
 	};
 
-	ListField.prototype.onSelectionChange = function(oEvent) {
+	StringListField.prototype.onSelectionChange = function(oEvent) {
 		var oField = oEvent.oSource.getParent();
 		var oConfig = oField.getConfiguration();
 		var oListItem = oEvent.getParameter("changedItem");
@@ -559,7 +559,7 @@ sap.ui.define([
 		this.getModel().checkUpdate(true);
 	};
 
-	ListField.prototype.onSelectionFinishForFilterBackend = function(oEvent) {
+	StringListField.prototype.onSelectionFinishForFilterBackend = function(oEvent) {
 		var oField = this.getParent();
 		var oConfig = oField.getConfiguration();
 
@@ -599,7 +599,7 @@ sap.ui.define([
 		}
 	};
 
-	ListField.prototype.onInputForMultiComboBox = function (oEvent) {
+	StringListField.prototype.onInputForMultiComboBox = function (oEvent) {
 		//get the suggestion value
 		var sTerm = oEvent.target.value;
 		var sSettingspath = this.getBindingContext("currentSettings").sPath;
@@ -611,7 +611,7 @@ sap.ui.define([
 		oEvent.srcControl._getSuggestionsPopover()._sTypedInValue = sTerm;
 	};
 
-	ListField.prototype.onInputForMultiInput = function (oEvent) {
+	StringListField.prototype.onInputForMultiInput = function (oEvent) {
 		var oControl = oEvent.srcControl;
 		MultiInput.prototype.oninput.apply(oControl, arguments);
 		//get the suggestion value
@@ -629,5 +629,5 @@ sap.ui.define([
 		}
 	};
 
-	return ListField;
+	return StringListField;
 });

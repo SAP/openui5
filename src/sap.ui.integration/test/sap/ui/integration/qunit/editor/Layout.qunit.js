@@ -149,7 +149,7 @@ sap.ui.define([
 						var oField6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oPanel.getContent()[6];
 						var oLabel7 = oHBox7.getItems()[0];
@@ -248,7 +248,7 @@ sap.ui.define([
 						var oField6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oPanel.getContent()[3].getItems()[0];
 						var oLabel7 = oHBox7.getItems()[0];
@@ -347,7 +347,7 @@ sap.ui.define([
 						var oLabel6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oPanel.getContent()[6];
 						var oField7 = oHBox7.getItems()[0];
@@ -446,7 +446,7 @@ sap.ui.define([
 						var oLabel6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oPanel.getContent()[3].getItems()[0];
 						var oField7 = oHBox7.getItems()[0];
@@ -556,7 +556,7 @@ sap.ui.define([
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
 						assert.ok(oLabel6.getTextAlign() === "End", "Label: Alignment End");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 						assert.ok(oField6.hasStyleClass("sapUiIntegrationEditorFieldAlignEnd"), "Field: Alignment End");
 
 						var oHBox7 = oPanel.getContent()[6];
@@ -671,7 +671,7 @@ sap.ui.define([
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
 						assert.ok(oLabel6.getTextAlign() === "End", "Label: Alignment End");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 						assert.ok(oField6.hasStyleClass("sapUiIntegrationEditorFieldAlignEnd"), "Field: Alignment End");
 
 						var oHBox7 = oPanel.getContent()[3].getItems()[0];
@@ -787,7 +787,7 @@ sap.ui.define([
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
 						assert.ok(oHBox6.getItems()[0].getLayoutData().getMaxWidth() === "59.5%", "Label HBox: Has max width from label");
 						assert.ok(oHBox6.getItems()[1].getLayoutData().getMaxWidth() === "39.5%", "Field HBox: Has max width from field HBox");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oPanel.getContent()[6];
 						var oLabel7 = oHBox7.getItems()[0];
@@ -900,7 +900,7 @@ sap.ui.define([
 						var oField6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 						assert.ok(oHBox6.getItems()[0].getLayoutData().getMaxWidth() === "60%", "Label HBox: Has max width from label");
 						assert.ok(oHBox6.getItems()[1].getLayoutData().getMaxWidth() === "40%", "Field HBox: Has max width from field HBox");
 
@@ -1040,7 +1040,7 @@ sap.ui.define([
 						var oField6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oSubPanel.getContent()[6];
 						var oLabel7 = oHBox7.getItems()[0];
@@ -1143,7 +1143,7 @@ sap.ui.define([
 						var oField6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oSubPanel.getContent()[3].getItems()[0];
 						var oLabel7 = oHBox7.getItems()[0];
@@ -1246,7 +1246,7 @@ sap.ui.define([
 						var oLabel6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oSubPanel.getContent()[6];
 						var oField7 = oHBox7.getItems()[0];
@@ -1349,7 +1349,7 @@ sap.ui.define([
 						var oLabel6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oSubPanel.getContent()[3].getItems()[0];
 						var oField7 = oHBox7.getItems()[0];
@@ -1463,7 +1463,7 @@ sap.ui.define([
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
 						assert.ok(oLabel6.getTextAlign() === "End", "Label: Alignment End");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 						assert.ok(oField6.hasStyleClass("sapUiIntegrationEditorFieldAlignEnd"), "Field: Alignment End");
 
 						var oHBox7 = oSubPanel.getContent()[6];
@@ -1582,7 +1582,7 @@ sap.ui.define([
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
 						assert.ok(oLabel6.getTextAlign() === "End", "Label: Alignment End");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 						assert.ok(oField6.hasStyleClass("sapUiIntegrationEditorFieldAlignEnd"), "Field: Alignment End");
 
 						var oHBox7 = oSubPanel.getContent()[3].getItems()[0];
@@ -1702,7 +1702,7 @@ sap.ui.define([
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
 						assert.ok(oHBox6.getItems()[0].getLayoutData().getMaxWidth() === "59.5%", "Label HBox: Has max width from label");
 						assert.ok(oHBox6.getItems()[1].getLayoutData().getMaxWidth() === "39.5%", "Field HBox: Has max width from field HBox");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oSubPanel.getContent()[6];
 						var oLabel7 = oHBox7.getItems()[0];
@@ -1819,7 +1819,7 @@ sap.ui.define([
 						var oField6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 						assert.ok(oHBox6.getItems()[0].getLayoutData().getMaxWidth() === "60%", "Label HBox: Has max width from label");
 						assert.ok(oHBox6.getItems()[1].getLayoutData().getMaxWidth() === "40%", "Field HBox: Has max width from field HBox");
 
@@ -1959,7 +1959,7 @@ sap.ui.define([
 						var oField6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oSubTabFilter.getContent()[6];
 						var oLabel7 = oHBox7.getItems()[0];
@@ -2062,7 +2062,7 @@ sap.ui.define([
 						var oField6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oSubTabFilter.getContent()[3].getItems()[0];
 						var oLabel7 = oHBox7.getItems()[0];
@@ -2165,7 +2165,7 @@ sap.ui.define([
 						var oLabel6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oSubTabFilter.getContent()[6];
 						var oField7 = oHBox7.getItems()[0];
@@ -2268,7 +2268,7 @@ sap.ui.define([
 						var oLabel6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oSubTabFilter.getContent()[3].getItems()[0];
 						var oField7 = oHBox7.getItems()[0];
@@ -2382,7 +2382,7 @@ sap.ui.define([
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
 						assert.ok(oLabel6.getTextAlign() === "End", "Label: Alignment End");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 						assert.ok(oField6.hasStyleClass("sapUiIntegrationEditorFieldAlignEnd"), "Field: Alignment End");
 
 						var oHBox7 = oSubTabFilter.getContent()[6];
@@ -2501,7 +2501,7 @@ sap.ui.define([
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
 						assert.ok(oLabel6.getTextAlign() === "End", "Label: Alignment End");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 						assert.ok(oField6.hasStyleClass("sapUiIntegrationEditorFieldAlignEnd"), "Field: Alignment End");
 
 						var oHBox7 = oSubTabFilter.getContent()[3].getItems()[0];
@@ -2621,7 +2621,7 @@ sap.ui.define([
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
 						assert.ok(oHBox6.getItems()[0].getLayoutData().getMaxWidth() === "59.5%", "Label HBox: Has max width from label");
 						assert.ok(oHBox6.getItems()[1].getLayoutData().getMaxWidth() === "39.5%", "Field HBox: Has max width from field HBox");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 
 						var oHBox7 = oSubTabFilter.getContent()[6];
 						var oLabel7 = oHBox7.getItems()[0];
@@ -2738,7 +2738,7 @@ sap.ui.define([
 						var oField6 = oHBox6.getItems()[1].getItems()[0];
 						assert.ok(oLabel6.isA("sap.m.Label"), "Label: VBox contains a Label");
 						assert.ok(oLabel6.getText() === "stringArray", "Label: Has stringArray label from label");
-						assert.ok(oField6.isA("sap.ui.integration.editor.fields.ListField"), "Field: ListField Field");
+						assert.ok(oField6.isA("sap.ui.integration.editor.fields.StringListField"), "Field: StringListField Field");
 						assert.ok(oHBox6.getItems()[0].getLayoutData().getMaxWidth() === "60%", "Label HBox: Has max width from label");
 						assert.ok(oHBox6.getItems()[1].getLayoutData().getMaxWidth() === "40%", "Field HBox: Has max width from field HBox");
 

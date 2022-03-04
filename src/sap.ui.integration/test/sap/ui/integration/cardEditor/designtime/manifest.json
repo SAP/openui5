@@ -25,6 +25,11 @@
 				"parameterSyntaxInValue": {
 					"value": "New title: {{parameters.stringWithTranslatedValueIni18nFormat}}"
 				},
+				"checkItemWithTabNotEditable": {
+					"value": {
+						"text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "editable": true
+					}
+				},
 				"contextModelSyntax": {
 					"value": []
 				},
@@ -289,7 +294,19 @@
 				},
 				"color2": {
 					"value": ""
-				}
+				},
+				"object": {},
+				"objectWithPropertiesDefined": {},
+				"objectWithPropertiesDefinedAndValueFromJsonList": {},
+				"objectWithPropertiesDefinedAndValueFromRequestedFile": {},
+				"objectWithPropertiesDefinedAndValueFromODataRequest": {},
+				"objectWithMetadataDefinedAndValueFromODataRequest": {},
+				"objects": {},
+				"objectsWithPropertiesDefined": {},
+				"objectsWithPropertiesDefinedAndValueFromJsonList": {},
+				"objectsWithPropertiesDefinedAndValueFromRequestedFile": {},
+				"objectsWithPropertiesDefinedAndValueFromODataRequest": {},
+				"objectsWithMetadataDefinedAndValueFromODataRequest": {}
 			},
 			"destinations": {
 				"string": {
