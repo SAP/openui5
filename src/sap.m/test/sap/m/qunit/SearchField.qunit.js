@@ -139,8 +139,6 @@ sap.ui.define([
 		assert.ok(/\uE010/.test(getIconId(this.sf3, "search")), "Third button icon is refresh");
 		// showSearchButton:false :
 		assert.ok(jQuery("#sf4-search").length == 0, "Search button is not rendered if showSearchButton == false");
-		var rightOffset = window.getComputedStyle(jQuery("#sf4-reset")[0]).getPropertyValue("right");
-		assert.strictEqual(rightOffset, "0px", "Reset button is right aligned if showSearchButton == false");
 	});
 
 	QUnit.test("Placeholder property - default value", function (assert) {
