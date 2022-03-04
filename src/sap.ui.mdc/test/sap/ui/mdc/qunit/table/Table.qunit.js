@@ -1435,18 +1435,19 @@ sap.ui.define([
 		Core.applyChanges();
 
 		oTable.initialized().then(function() {
-			var fnTableInvalidate = sinon.spy(oTable._oTable, "invalidate");
 			var oTest3MDCColumn = oTable.getColumns()[2];
 			var oTest3InnerColumn = Core.byId(oTest3MDCColumn.getId() + "-innerColumn");
+			var oTest3Cell = oTable._oTemplate.getCells()[oTable._oTable.indexOfColumn(oTest3InnerColumn)];
 			assert.strictEqual(oTest3MDCColumn.getHeader(), "Test3");
 			assert.strictEqual(oTable.indexOfColumn(oTest3MDCColumn), 2, "Column index is 2");
 			assert.strictEqual(oTest3InnerColumn.getOrder(), 2, "inner column has the correct order");
+			assert.strictEqual(oTest3Cell.getText(), "Test3", "correct cell template found");
 
 			// trigger moveColumn - Test3 column is moved to index 0
 			oTable.moveColumn(oTest3MDCColumn, 0);
 			assert.ok(fnSetMobileColumnOrderSpy.calledOnce);
-			assert.ok(fnTableInvalidate.calledOnce);
 			assert.strictEqual(oTable.indexOfColumn(oTest3MDCColumn), 0, "Test3 column is moved to index 0");
+			assert.strictEqual(oTable._oTable.indexOfColumn(oTest3InnerColumn), 0, "Inner table column aggregation also updated");
 			assert.strictEqual(oTest3InnerColumn.getOrder(), 0, "Test3 inner column is updated with the correct column order");
 
 			oTable.destroy();
