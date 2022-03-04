@@ -1323,7 +1323,7 @@ sap.ui.define([
 	/**
 	 * Removes the element at the given index from the given array, taking care of
 	 * <code>$byPredicate</code>, <code>$created</code>, the array's count, and a collection cache's
-	 * limit (if applicable).
+	 * limit and number of active elements (if applicable).
 	 *
 	 * @param {object[]} aElements
 	 *   The array of elements
@@ -1334,7 +1334,7 @@ sap.ui.define([
 	 *   The key predicate of the old element to be removed
 	 * @param {string} sPath
 	 *   The element collection's path within this cache (as used by change listeners), may be
-	 *   <code>""</code>
+	 *   <code>""</code> (only in a CollectionCache)
 	 * @returns {number} The index at which the element actually was (it might have moved due to
 	 *   parallel insert/delete)
 	 *
@@ -1359,13 +1359,14 @@ sap.ui.define([
 				this.iActiveElements -= 1;
 			}
 			delete aElements.$byPredicate[sTransientPredicate];
-		} else if (!sPath) {
+		}
+		if (!sPath && iIndex !== undefined) {
 			// Note: sPath is empty only in a CollectionCache, so we may use iLmit and
 			// adjustReadRequests
-			if (iIndex !== undefined) {
+			if (!sTransientPredicate) {
 				this.iLimit -= 1; // this doesn't change Infinity
-				this.adjustReadRequests(iIndex, -1);
 			}
+			this.adjustReadRequests(iIndex, -1);
 		}
 		return iIndex;
 	};
@@ -2111,6 +2112,7 @@ sap.ui.define([
 			}, bSharedRequest);
 
 		this.iActiveElements = 0; // number of active (client-side) created elements
+		this.oBackup = null; // see #reset
 		this.sContext = undefined; // the "@odata.context" from the responses
 		this.aElements = []; // the available elements
 		this.aElements.$byPredicate = {};
@@ -2311,7 +2313,7 @@ sap.ui.define([
 			}
 		}
 
-		return aKeyFilters.length ? "not (" + aKeyFilters.join(" or ") + ")" : undefined;
+		return aKeyFilters.length ? "not (" + aKeyFilters.sort().join(" or ") + ")" : undefined;
 	};
 
 	/**
@@ -2409,6 +2411,7 @@ sap.ui.define([
 			oElement,
 			oKeptElement,
 			iLimit = -1,
+			iOffset = 0,
 			iOld$count = this.aElements.$count,
 			sPredicate,
 			iResultLength = oResult.value.length,
@@ -2425,6 +2428,11 @@ sap.ui.define([
 					// we expect the server to always or never send an ETag for this entity
 					if (!oKeptElement["@odata.etag"]
 							|| oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
+						if (_Helper.hasPrivateAnnotation(oKeptElement, "transientPredicate")) {
+							// client-side filter for newly created persisted
+							iOffset += 1;
+							continue;
+						}
 						_Helper.updateNonExisting(oKeptElement, oElement);
 						oElement = oKeptElement;
 					} else if (this.hasPendingChangesForPath(sPredicate)) {
@@ -2434,8 +2442,12 @@ sap.ui.define([
 				}
 				this.aElements.$byPredicate[sPredicate] = oElement;
 			}
-			this.aElements[iStart + i] = oElement;
+			this.aElements[iStart + i - iOffset] = oElement;
 		}
+		// simulate #getFilterExcludingCreated for newly created persisted
+		iEnd -= iOffset;
+		iResultLength -= iOffset;
+
 		sCount = oResult["@odata.count"];
 		if (sCount) {
 			this.iLimit = iLimit = parseInt(sCount);
@@ -2510,6 +2522,7 @@ sap.ui.define([
 		var aElementsRange,
 			iEnd,
 			oPromise = this.oPendingRequestsPromise || this.aElements.$tail,
+			iTransientElements,
 			that = this;
 
 		if (iIndex < 0) {
@@ -2524,6 +2537,15 @@ sap.ui.define([
 				return that.read(iIndex, iLength, iPrefetchLength, oGroupLock, fnDataRequested);
 			});
 		}
+
+		// prepare for client-side filter for newly created persisted (see #handleResponse)
+		iTransientElements = this.aElements.slice(0, this.aElements.$created)
+			.filter(function (oElement) {
+				return _Helper.getPrivateAnnotation(oElement, "transient")
+					=== oGroupLock.getGroupId();
+			})
+			.length;
+		iPrefetchLength = Math.max(iPrefetchLength, iTransientElements);
 
 		ODataUtils._getReadIntervals(this.aElements, iIndex, iLength,
 				this.bServerDrivenPaging ? 0 : iPrefetchLength,
@@ -2555,12 +2577,13 @@ sap.ui.define([
 
 	/**
 	 * Refreshes the kept-alive elements. This needs to be called before the cache has filled the
-	 * collection. In that state the $byPredicate contains only the kept-alive elements.
+	 * collection. In that state the $byPredicate contains only the kept-alive and created elements.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID
-	 * @param {function} fnOnRemove
-	 *   A function which is called if a kept-alive element does no longer exist
+	 * @param {function(string,number)} fnOnRemove
+	 *   A function which is called with predicate and index if a kept-alive or created element does
+	 *   no longer exist after refresh; the index is undefined for a non-created element
 	 * @returns {sap.ui.base.SyncPromise|undefined}
 	 *   A promise resolving without a defined result, or rejecting with an error if the refresh
 	 *   fails, or <code>undefined</code> if there are no kept-alive elements.
@@ -2569,7 +2592,8 @@ sap.ui.define([
 	 */
 	_CollectionCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove) {
 		var that = this,
-			// Note: at this time only kept-alive and transient elements are in the cache
+			// Note: at this time only kept-alive and created elements are in the cache, but we
+			// don't care if $byPredicate still contains two entries for the same element
 			aPredicates = Object.keys(this.aElements.$byPredicate).filter(isRefreshNeeded).sort(),
 			mTypes;
 
@@ -2605,8 +2629,8 @@ sap.ui.define([
 		}
 
 		/*
-		 * Tells whether a refresh is needed for the element identified by the given predicate.
-		 * Transient elements and those with pending changes need no refresh.
+		 * Tells whether a refresh is needed for the given predicate. Transient predicates and
+		 * elements with pending changes need no refresh.
 		 *
 		 * @param {string} sPredicate - A key predicate
 		 * @returns {boolean} - Whether a refresh is needed
@@ -2614,7 +2638,7 @@ sap.ui.define([
 		function isRefreshNeeded(sPredicate) {
 			var oElement = that.aElements.$byPredicate[sPredicate];
 
-			return !_Helper.hasPrivateAnnotation(oElement, "transientPredicate")
+			return _Helper.getPrivateAnnotation(oElement, "predicate") === sPredicate
 				&& !that.hasPendingChangesForPath(sPredicate);
 		}
 
@@ -2632,13 +2656,20 @@ sap.ui.define([
 				mStillAliveElements = oResponse.value.$byPredicate || {};
 
 				aPredicates.forEach(function (sPredicate) {
+					var oElement, iIndex;
+
 					if (sPredicate in mStillAliveElements) {
 						_Helper.updateAll(that.mChangeListeners, sPredicate,
 							that.aElements.$byPredicate[sPredicate],
 							mStillAliveElements[sPredicate]);
 					} else {
-						delete that.aElements.$byPredicate[sPredicate];
-						fnOnRemove(sPredicate);
+						oElement = that.aElements.$byPredicate[sPredicate];
+						if (_Helper.getPrivateAnnotation(oElement, "transientPredicate")) {
+							iIndex = that.removeElement(that.aElements, -1, sPredicate, "");
+						} else {
+							delete that.aElements.$byPredicate[sPredicate];
+						}
+						fnOnRemove(sPredicate, iIndex);
 					}
 				});
 			});
@@ -2852,23 +2883,37 @@ sap.ui.define([
 	 *
 	 * @param {string[]} aKeptElementPredicates
 	 *   The key predicates for all kept-alive elements
+	 * @param {boolean} [bKeepCreated]
+	 *   Whether created persisted elements shall be kept in place and a backup shall be remembered
+	 *   for a later {@link #restore}
 	 *
 	 * @public
 	 * @see _Cache#hasPendingChangesForPath
 	 */
-	_CollectionCache.prototype.reset = function (aKeptElementPredicates) {
-		var mByPredicate = this.aElements.$byPredicate,
+	_CollectionCache.prototype.reset = function (aKeptElementPredicates, bKeepCreated) {
+		var sAnnotation = bKeepCreated ? "transientPredicate" : "transient",
+			mByPredicate = this.aElements.$byPredicate,
 			mChangeListeners = this.mChangeListeners,
 			oElement,
 			iTransient = 0,
 			i,
 			that = this;
 
+		if (bKeepCreated) {
+			this.oBackup = {};
+			this.oBackup.mChangeListeners = this.mChangeListeners;
+			this.oBackup.sContext = this.sContext;
+			this.oBackup.aElements = this.aElements.slice(this.aElements.$created);
+			this.oBackup.$byPredicate = mByPredicate;
+			this.oBackup.$count = this.aElements.$count;
+			this.oBackup.iLimit = this.iLimit;
+		}
+
 		for (i = 0; i < this.aElements.$created; i += 1) {
 			oElement = this.aElements[i];
-			if (_Helper.getPrivateAnnotation(oElement, "transient")) {
-				aKeptElementPredicates.push(
-					_Helper.getPrivateAnnotation(oElement, "transientPredicate"));
+			if (_Helper.getPrivateAnnotation(oElement, sAnnotation)) {
+				aKeptElementPredicates.push(_Helper.getPrivateAnnotation(oElement, "predicate")
+					|| _Helper.getPrivateAnnotation(oElement, "transientPredicate"));
 				this.aElements[iTransient] = oElement;
 				iTransient += 1;
 			} else { // Note: "created persisted" elements must be active
@@ -2890,6 +2935,30 @@ sap.ui.define([
 		aKeptElementPredicates.forEach(function (sPredicate) {
 			that.aElements.$byPredicate[sPredicate] = mByPredicate[sPredicate];
 		});
+	};
+
+	/**
+	 * Restores the last backup taken by {@link #reset} with <code>bKeepCreated</code>, if told to
+	 * really do so; drops the backup in any case to free memory.
+	 *
+	 * @param {boolean} bReally - Whether to really restore, not just drop the backup
+	 *
+	 * @public
+	 */
+	_CollectionCache.prototype.restore = function (bReally) {
+		if (bReally) {
+			this.mChangeListeners = this.oBackup.mChangeListeners;
+			this.sContext = this.oBackup.sContext;
+			// Note: do not change reference to this.aElements! It's kept in closures :-(
+			this.aElements.length = this.aElements.$created;
+			this.oBackup.aElements.forEach(function (oElement, i) {
+				this[this.$created + i] = oElement;
+			}, this.aElements);
+			this.aElements.$byPredicate = this.oBackup.$byPredicate;
+			this.aElements.$count = this.oBackup.$count;
+			this.iLimit = this.oBackup.iLimit;
+		}
+		this.oBackup = null;
 	};
 
 	//*********************************************************************************************

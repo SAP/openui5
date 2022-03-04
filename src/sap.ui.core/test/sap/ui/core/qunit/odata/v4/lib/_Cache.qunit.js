@@ -143,6 +143,7 @@ sap.ui.define([
 		mockRequestAndRead : function (oCache, iStartOffset, sUrl, iStart, iLength,
 				iResponseLength, fnSubmit, vCount) {
 			var oReadGroupLock = {
+					getGroupId : function () { return "unrelated"; },
 					getUnlockedCopy : function () {},
 					unlock : function () {}
 				},
@@ -600,10 +601,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bCreated) {
-	["", "EMPLOYEE_2_EQUIPMENTS"].forEach(function (sParentPath) {
+	["", "EMPLOYEE_2_EQUIPMENTS"].forEach(function (sPath) {
 		[false, true].forEach(function (bCount) {
 			var sTitle = "_Cache#removeElement, bCreated = " + bCreated + ", bCount = " + bCount
-					+ ", sParentPath = " + sParentPath;
+					+ ", sPath = " + sPath;
 
 			QUnit.test(sTitle, function (assert) {
 				var oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')"),
@@ -622,13 +623,13 @@ sap.ui.define([
 					iLimit = bCreated ? 1 : 3;
 
 				oCache.adjustReadRequests = function () {};
-				if (sParentPath === "") {
+				if (sPath === "") {
 					oCache.iLimit = iLimit;
 				}
 				aCacheData.$byPredicate = {"('1')" : aCacheData[1]};
 				aCacheData.$count = bCount ? 3 : undefined;
 				aCacheData.$created = bCreated ? 2 : 0;
-				oCache.iActiveElements = bCreated && !sParentPath ? 1 : 0;
+				oCache.iActiveElements = bCreated && !sPath ? 1 : 0;
 				if (bCreated) {
 					aCacheData[1]["@$ui5._"].transientPredicate = "($uid=id-1-23)";
 					aCacheData.$byPredicate["($uid=id-1-23)"] = aCacheData[1];
@@ -637,15 +638,14 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(aCacheData), "('1')", 2)
 					.returns(1);
 				this.mock(_Helper).expects("updateExisting").exactly(bCount ? 1 : 0)
-					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sParentPath,
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
 						sinon.match.same(aCacheData), {$count : 2})
 					.callThrough();
-				this.mock(oCache).expects("adjustReadRequests")
-					.exactly(sParentPath || bCreated ? 0 : 1)
+				this.mock(oCache).expects("adjustReadRequests").exactly(sPath ? 0 : 1)
 					.withExactArgs(1, -1);
 
 				// code under test
-				iIndex = oCache.removeElement(aCacheData, 2, "('1')", sParentPath);
+				iIndex = oCache.removeElement(aCacheData, 2, "('1')", sPath);
 
 				assert.strictEqual(aCacheData.$created, bCreated ? 1 : 0);
 				assert.strictEqual(oCache.iActiveElements, 0);
@@ -657,7 +657,7 @@ sap.ui.define([
 					"@odata.etag" : "after"
 				}]);
 				assert.deepEqual(aCacheData.$byPredicate, {});
-				if (sParentPath === "") {
+				if (sPath === "") {
 					assert.strictEqual(oCache.iLimit, bCreated ? 1 : 2);
 				} else {
 					assert.notOk("iLimit" in oCache);
@@ -668,31 +668,44 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#removeElement for a kept-alive context", function (assert) {
+[false, true].forEach(function (bCreated) {
+		var sTitle = "_Cache#removeElement for a kept-alive context, bCreated = " + bCreated;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
 			aCacheData = [{
 				"@$ui5._" : {predicate : "('2')"},
 				"@odata.etag" : "etag"
 			}],
+			oElement = {
+				"@$ui5._" : {predicate : "('1')"},
+				"@odata.etag" : "etag"
+			},
 			iIndex;
 
 		aCacheData.$byPredicate = {
-			"('1')" : {
-					"@$ui5._" : {predicate : "('1')"},
-					"@odata.etag" : "etag"
-				},
+			"('1')" : oElement,
 			"('2')" : aCacheData[0]
 		};
 		aCacheData.$count = 42;
+		aCacheData.$created = bCreated ? 23 : 0;
+		oCache.iActiveElements = bCreated ? 19 : 0;
 		oCache.iLimit = 42;
+		if (bCreated) {
+			oElement["@$ui5._"].transientPredicate = "($uid=id-1-23)";
+			aCacheData.$byPredicate["($uid=id-1-23)"] = oElement;
+		}
 		this.mock(_Cache).expects("getElementIndex").never();
-		this.mock(_Helper).expects("updateExisting").never();
+		this.mock(_Helper).expects("updateExisting").never(); // from addToCount()
+		assert.notOk("adjustReadRequests" in oCache, "must not be called anyway ;-)");
 
 		// code under test
 		iIndex = oCache.removeElement(aCacheData, undefined, "('1')", "");
 
 		assert.strictEqual(iIndex, undefined);
 		assert.strictEqual(aCacheData.$count, 42);
+		assert.strictEqual(aCacheData.$created, bCreated ? 22 : 0);
+		assert.strictEqual(oCache.iActiveElements, bCreated ? 18 : 0);
 		assert.strictEqual(oCache.iLimit, 42);
 		assert.deepEqual(aCacheData, [{
 			"@$ui5._" : {predicate : "('2')"},
@@ -700,6 +713,7 @@ sap.ui.define([
 		}]);
 		assert.deepEqual(aCacheData.$byPredicate, {"('2')" : aCacheData[0]});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#registerChange", function () {
@@ -4859,15 +4873,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#read w/ created element", function (assert) {
+[false, true].forEach(function (bTransient) {
+	[1, 3].forEach(function (iPrefetchLength) {
+		var sTitle = "CollectionCache#read w/ created element, transient = " + bTransient
+				+ ", prefetch = " + iPrefetchLength;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
 			fnDataRequested = function () {},
 			aElements = [{ // a created element (transient or not)
 				"@$ui5._" : {
+					transient : bTransient ? "group" : undefined,
 					transientPredicate : "($uid=id-17-4)"
 				}
 			}, { // a created element (transient or not)
 				"@$ui5._" : {
+					transient : bTransient ? "group" : undefined,
 					transientPredicate : "($uid=id-1-23)"
 				}
 			}, { // a "normal" element
@@ -4875,7 +4896,11 @@ sap.ui.define([
 					predicate : "('42')"
 				}
 			}],
-			oGroupLock = {unlock : function () {}},
+			iExpectedPrefetch = bTransient && iPrefetchLength < 2 ? 2 : iPrefetchLength,
+			oGroupLock = {
+				getGroupId : function () { return "group"; },
+				unlock : function () {}
+			},
 			oSyncPromise;
 
 		oCache.aElements = aElements;
@@ -4883,19 +4908,21 @@ sap.ui.define([
 		oCache.aElements.$created = 2;
 		oCache.iLimit = 1; // "the upper limit for the count": does not include created elements!
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(sinon.match.same(oCache.aElements), 0, 100, 0, 2 + 1)
+			.withExactArgs(sinon.match.same(oCache.aElements), 0, 100, iExpectedPrefetch, 2 + 1)
 			.returns([]);
 		this.mock(oCache).expects("requestElements").never();
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
-		oSyncPromise = oCache.read(0, 100, 0, oGroupLock, fnDataRequested);
+		oSyncPromise = oCache.read(0, 100, iPrefetchLength, oGroupLock, fnDataRequested);
 
 		assert.deepEqual(oSyncPromise.getResult(), {
 			"@odata.context" : undefined,
 			value : aElements
 		});
 	});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#read: wait for oPendingRequestsPromise", function (assert) {
@@ -5393,8 +5420,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bMultiple) {
-	var sTitle = "CollectionCache#getFilterExcludingCreated: one created entity, "
-			+ "multiple persisted entities: " + bMultiple;
+	var sTitle = "CollectionCache#getFilterExcludingCreated: multiple created entities: "
+			 + bMultiple;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees", {/*mQueryOptions*/}),
@@ -5403,7 +5430,7 @@ sap.ui.define([
 			oElement2 = {},
 			oElement3 = {},
 			sExclusiveFilter = bMultiple
-				? "not (EmployeeId eq '43' or EmployeeId eq '42')"
+				? "not (EmployeeId eq '42' or EmployeeId eq '43')" // export sorting
 				: "not (EmployeeId eq '42')",
 			oHelperMock = this.mock(_Helper),
 			mTypeForMetaPath = {};
@@ -5856,48 +5883,68 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, "same", "other"].forEach(function (sKeptETag) {
-	var sTitle = "CollectionCache#handleResponse: kept-alive element, kept eTag=" + sKeptETag;
+	[false, true].forEach(function (bShortRead) {
+	var sTitle = "CollectionCache#handleResponse: kept-alive element, kept eTag=" + sKeptETag
+			+ ", short read=" + bShortRead;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
-			oElement0 = {},
-			oElement1 = {
+			oElement0 = {}, // created persisted
+			oElement1 = { // newly created
+				"@odata.etag" : "same",
+				"@$ui5._" : {transientPredicate : "($uid=id-1-23)"}
+			},
+			oElement2 = { // newly created
+				"@odata.etag" : "same",
+				"@$ui5._" : {transientPredicate : "($uid=id-1-42)"}
+			},
+			oElement3 = { // kept alive
 				"@odata.etag" : "same"
 			},
-			aElements = [],
+			aElements = [0, 1, 2, 3, 4, 5, 6, 7], // could be promises...
 			oFetchTypesResult = {},
 			oKeptElement = {
 				"@odata.etag" : sKeptETag
 			},
 			oResult = {
-				value : [oElement0, oElement1]
+				value : [oElement0, oElement1, oElement2, oElement3]
 			};
 
 		aElements.$byPredicate = {
-			bar : oKeptElement
+			bar : oKeptElement,
+			new1 : oElement1,
+			new2 : oElement2
 		};
 		oCache.aElements = aElements;
+		oCache.aElements.$created = 2;
 
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
 				undefined, undefined, undefined, 2)
 			.callsFake(function () {
 				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
-				_Helper.setPrivateAnnotation(oElement1, "predicate", "bar");
+				_Helper.setPrivateAnnotation(oElement1, "predicate", "new1");
+				_Helper.setPrivateAnnotation(oElement2, "predicate", "new2");
+				_Helper.setPrivateAnnotation(oElement3, "predicate", "bar");
 			});
 		this.mock(_Helper).expects("updateNonExisting").exactly(sKeptETag === "other" ? 0 : 1)
-			.withExactArgs(sinon.match.same(oKeptElement), sinon.match.same(oElement1));
+			.withExactArgs(sinon.match.same(oKeptElement), sinon.match.same(oElement3));
 		this.mock(oCache).expects("hasPendingChangesForPath").exactly(sKeptETag === "other" ? 1 : 0)
 			.withExactArgs("bar").returns(false);
 
 		// code under test
-		oCache.handleResponse(2, 4, oResult, oFetchTypesResult);
+		oCache.handleResponse(2, bShortRead ? 8 : 6, oResult, oFetchTypesResult);
 
-		assert.strictEqual(oCache.aElements[2], oElement0);
-		assert.strictEqual(oCache.aElements[3], sKeptETag === "other" ? oElement1 : oKeptElement);
+		assert.deepEqual(oCache.aElements, bShortRead
+			? [0, 1, oElement0, sKeptETag === "other" ? oElement3 : oKeptElement]
+			: [0, 1, oElement0, sKeptETag === "other" ? oElement3 : oKeptElement, 4, 5, 6, 7]);
 		assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
+		assert.strictEqual(oCache.aElements.$byPredicate["new1"], oElement1);
+		assert.strictEqual(oCache.aElements.$byPredicate["new2"], oElement2);
 		assert.strictEqual(oCache.aElements.$byPredicate["bar"], oCache.aElements[3]);
-		assert.strictEqual(Object.keys(oCache.aElements.$byPredicate).length, 2);
+		assert.deepEqual(Object.keys(oCache.aElements.$byPredicate),
+			["bar", "new1", "new2", "foo"]);
+	});
 	});
 });
 
@@ -6614,7 +6661,10 @@ sap.ui.define([
 					sTransientPredicate, {}, null, false, function fnSubmitCallback() {});
 			})
 			.then(function () {
-				var oReadGroupLock = {unlock : function () {}};
+				var oReadGroupLock = {
+						getGroupId : function () { return "unrelated"; },
+						unlock : function () {}
+					};
 
 				that.mock(oReadGroupLock).expects("unlock").twice().withExactArgs();
 				assert.strictEqual(
@@ -7146,7 +7196,10 @@ sap.ui.define([
 			oPatchPromise2,
 			oPostResult = {},
 			oPostPromise,
-			oReadGroupLock = {unlock : function () {}},
+			oReadGroupLock = {
+				getGroupId : function () { return "unrelated"; },
+				unlock : function () {}
+			},
 			oReadPromise,
 			sTransientPredicate = "($uid=id-1-23)",
 			mTypeForMetaPath = {},
@@ -7793,6 +7846,7 @@ sap.ui.define([
 			oEntityData = {name : "John Doe"},
 			oGroupLock = {getGroupId : function () {}},
 			oReadGroupLock = {
+				getGroupId : function () { return "unrelated"; },
 				getUnlockedCopy : function () {},
 				unlock : function () {}
 			},
@@ -7822,6 +7876,7 @@ sap.ui.define([
 		// code under test
 		return oCache.read(0, 1, 2, oReadGroupLock).then(function (oResult) {
 			var oGroupLock0 = {
+					getGroupId : function () { return "unrelated"; },
 					getUnlockedCopy : function () {},
 					unlock : function () {}
 				},
@@ -8703,88 +8758,178 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [[], ["('3')"]].forEach(function (aKeptElementPredicates, i) {
-	QUnit.test("CollectionCache#reset; #" + i, function (assert) {
+	[false, true].forEach(function (bKeepCreated) {
+		var sTitle = "CollectionCache#reset/restore; #" + i + ", bKeepCreated = " + bKeepCreated;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
 			oCreated0 = {},
 			oCreated1 = {},
 			oCreated2 = {},
-			oElement = {},
+			mChangeListeners = {
+				"($uid=id-1-23)/bar" : "~listener[]~2~",
+				"($uid=id-1-42)/baz" : "~listener[]~3~",
+				"('0')/a" : "~listener[]~4~",
+				"('1')/b" : "~listener[]~5~",
+				"('2')/c" : "~listener[]~6~",
+				"('3')/bar/baz" : "~listener[]~0~",
+				"('3')/foo" : "~listener[]~1~"
+			},
+			oElement0 = {},
+			oElement1 = {},
+			oElement2 = {},
 			oTail = SyncPromise.resolve(),
 			oTransient0 = {},
 			oTransient1 = {},
-			aElements = [oCreated0, oTransient0, oCreated1, oTransient1, oCreated2, oElement];
+			mByPredicate = {
+				"($uid=id-1-23)" : oTransient0,
+				"($uid=id-1-42)" : oTransient1,
+				"('0')" : oCreated0,
+				"('1')" : oCreated1,
+				"('2')" : oCreated2,
+				"('3')" : oElement0
+			},
+			aElements = [
+				oCreated0, oTransient0, oCreated1, oTransient1, oCreated2, // created on client
+				oElement0, oElement1, oElement2 // read from server
+			];
 
 		_Helper.setPrivateAnnotation(oCreated0, "transientPredicate", "($uid=id-0-0)");
 		_Helper.setPrivateAnnotation(oCreated1, "transientPredicate", "($uid=id-0-1)");
 		_Helper.setPrivateAnnotation(oCreated2, "transientPredicate", "($uid=id-0-2)");
+		_Helper.setPrivateAnnotation(oCreated0, "predicate", "('0')");
+		_Helper.setPrivateAnnotation(oCreated1, "predicate", "('1')");
+		_Helper.setPrivateAnnotation(oCreated2, "predicate", "('2')");
 		_Helper.setPrivateAnnotation(oTransient0, "transientPredicate", "($uid=id-1-23)");
 		_Helper.setPrivateAnnotation(oTransient1, "transientPredicate", "($uid=id-1-42)");
 		_Helper.setPrivateAnnotation(oTransient0, "transient", "$auto");
 		_Helper.setPrivateAnnotation(oTransient1, "transient", "$auto");
 		if (!i) { // show that oElement is not treated as transient (because of $created)
-			_Helper.setPrivateAnnotation(oElement, "transient", "$auto");
-			_Helper.setPrivateAnnotation(oElement, "transientPredicate", "($uid=id-17-4)");
+			_Helper.setPrivateAnnotation(oElement0, "transient", "$auto");
+			_Helper.setPrivateAnnotation(oElement0, "transientPredicate", "($uid=id-17-4)");
 		}
+		_Helper.setPrivateAnnotation(oElement0, "predicate", "('3')");
+		_Helper.setPrivateAnnotation(oElement1, "predicate", "('4')");
+		_Helper.setPrivateAnnotation(oElement2, "predicate", "('5')");
 		oCache.iActiveElements = 4; // let's assume one transient is inactive
-		oCache.mChangeListeners = {
-			"($uid=id-0-0)/n/a" : "~listener[]~n/a~",
-			"($uid=id-0-1)/n/a" : "~listener[]~n/a~",
-			"($uid=id-0-2)/n/a" : "~listener[]~n/a~",
-			"($uid=id-1-23)/bar" : "~listener[]~2~",
-			"($uid=id-1-42)/baz" : "~listener[]~3~",
-			"('0')/n/a" : "~listener[]~n/a~",
-			"('1')/n/a" : "~listener[]~n/a~",
-			"('2')/n/a" : "~listener[]~n/a~",
-			"('3')/bar/baz" : "~listener[]~0~",
-			"('3')/foo" : "~listener[]~1~"
-		};
+		assert.strictEqual(oCache.oBackup, null, "be nice to V8");
+		oCache.oBackup = "~oBackup~";
+		oCache.mChangeListeners = Object.assign({
+				"($uid=id-0-0)/n/a" : "~listener[]~n/a~",
+				"($uid=id-0-1)/n/a" : "~listener[]~n/a~",
+				"($uid=id-0-2)/n/a" : "~listener[]~n/a~"
+			}, mChangeListeners);
 		oCache.sContext = "foo";
 		oCache.aElements = aElements;
-		oCache.aElements.$byPredicate = {
-			"($uid=id-1-23)" : oTransient0,
-			"($uid=id-1-42)" : oTransient1,
-			"('0')" : oCreated0,
-			"('1')" : oCreated1,
-			"('2')" : oCreated2,
-			"('3')" : oElement
-		};
-		oCache.aElements.$count = 1;
+		oCache.aElements.$byPredicate = Object.assign({
+			"('4')" : oElement1,
+			"('5')" : oElement2
+		}, mByPredicate);
+		oCache.aElements.$count = 23;
 		oCache.aElements.$created = 5;
 		oCache.aElements.$tail = oTail;
 		oCache.iLimit = 42;
 
 		// code under test
-		oCache.reset(aKeptElementPredicates);
+		oCache.reset(aKeptElementPredicates.slice(), bKeepCreated);
 
-		assert.strictEqual(oCache.iActiveElements, 1, "iActiveElements adjusted");
-		assert.deepEqual(oCache.mChangeListeners, i
-			? {
-				"('3')/bar/baz" : "~listener[]~0~",
-				"('3')/foo" : "~listener[]~1~",
-				"($uid=id-1-23)/bar" : "~listener[]~2~",
-				"($uid=id-1-42)/baz" : "~listener[]~3~"
-			} : {
-				"($uid=id-1-23)/bar" : "~listener[]~2~",
-				"($uid=id-1-42)/baz" : "~listener[]~3~"
-			});
+		if (!i) {
+			delete mChangeListeners["('3')/bar/baz"];
+			delete mChangeListeners["('3')/foo"];
+			delete mByPredicate["('3')"];
+		}
+		if (!bKeepCreated) {
+			delete mChangeListeners["('0')/a"];
+			delete mChangeListeners["('1')/b"];
+			delete mChangeListeners["('2')/c"];
+			delete mByPredicate["('0')"];
+			delete mByPredicate["('1')"];
+			delete mByPredicate["('2')"];
+
+			assert.strictEqual(oCache.oBackup, "~oBackup~");
+
+			// code under test (must not really restore anything)
+			oCache.restore();
+
+			assert.strictEqual(oCache.oBackup, null);
+		}
+		assert.strictEqual(oCache.iActiveElements, bKeepCreated ? 4 : 1, "iActiveElements changed");
+		assert.deepEqual(oCache.mChangeListeners, mChangeListeners);
 		assert.strictEqual(oCache.sContext, undefined);
 		assert.strictEqual(oCache.aElements, aElements, "reference unchanged");
-		assert.strictEqual(oCache.aElements.length, 2, "transient elements are kept");
-		assert.strictEqual(oCache.aElements[0], oTransient0);
-		assert.strictEqual(oCache.aElements[1], oTransient1);
-		assert.deepEqual(oCache.aElements.$byPredicate, i
-			? {"($uid=id-1-23)" : oTransient0, "($uid=id-1-42)" : oTransient1, "('3')" : oElement}
-			: {"($uid=id-1-23)" : oTransient0, "($uid=id-1-42)" : oTransient1});
+		assert.strictEqual(oCache.aElements.length, bKeepCreated ? 5 : 2, "transient ones kept");
+		if (bKeepCreated) {
+			assert.strictEqual(oCache.aElements[0], oCreated0);
+			assert.strictEqual(oCache.aElements[1], oTransient0);
+			assert.strictEqual(oCache.aElements[2], oCreated1);
+			assert.strictEqual(oCache.aElements[3], oTransient1);
+			assert.strictEqual(oCache.aElements[4], oCreated2);
+		} else {
+			assert.strictEqual(oCache.aElements[0], oTransient0);
+			assert.strictEqual(oCache.aElements[1], oTransient1);
+		}
+		assert.deepEqual(oCache.aElements.$byPredicate, mByPredicate);
 		assert.strictEqual(oCache.aElements.$byPredicate["($uid=id-1-23)"], oTransient0);
 		assert.strictEqual(oCache.aElements.$byPredicate["($uid=id-1-42)"], oTransient1);
 		if (i) {
-			assert.strictEqual(oCache.aElements.$byPredicate["('3')"], oElement);
+			assert.strictEqual(oCache.aElements.$byPredicate["('3')"], oElement0);
 		}
 		assert.strictEqual(oCache.aElements.$count, undefined);
 		assert.ok("$count" in oCache.aElements); // needed for setCount()
-		assert.strictEqual(oCache.aElements.$created, 2, "$created adjusted");
+		assert.strictEqual(oCache.aElements.$created, bKeepCreated ? 5 : 2, "$created adjusted");
 		assert.strictEqual(oCache.aElements.$tail, oTail, "$tail unchanged");
 		assert.strictEqual(oCache.iLimit, Infinity);
+
+		if (bKeepCreated) {
+			if (i) {
+				oCache.aElements[10] = "n/a"; // could be a promise
+				// just to be sure backup was complete
+				oCache.mChangeListeners = {};
+				oCache.aElements.$byPredicate = {};
+			}
+
+			// code under test
+			oCache.restore(true);
+
+			assert.strictEqual(oCache.oBackup, null);
+			assert.strictEqual(oCache.iActiveElements, 4);
+			assert.deepEqual(oCache.mChangeListeners, {
+				"($uid=id-0-0)/n/a" : "~listener[]~n/a~",
+				"($uid=id-0-1)/n/a" : "~listener[]~n/a~",
+				"($uid=id-0-2)/n/a" : "~listener[]~n/a~",
+				"($uid=id-1-23)/bar" : "~listener[]~2~",
+				"($uid=id-1-42)/baz" : "~listener[]~3~",
+				"('0')/a" : "~listener[]~4~",
+				"('1')/b" : "~listener[]~5~",
+				"('2')/c" : "~listener[]~6~",
+				"('3')/bar/baz" : "~listener[]~0~",
+				"('3')/foo" : "~listener[]~1~"
+			});
+			assert.strictEqual(oCache.sContext, "foo");
+			assert.strictEqual(oCache.aElements, aElements, "reference unchanged");
+			assert.strictEqual(oCache.aElements[0], oCreated0);
+			assert.strictEqual(oCache.aElements[1], oTransient0);
+			assert.strictEqual(oCache.aElements[2], oCreated1);
+			assert.strictEqual(oCache.aElements[3], oTransient1);
+			assert.strictEqual(oCache.aElements[4], oCreated2);
+			assert.strictEqual(oCache.aElements[5], oElement0);
+			assert.strictEqual(oCache.aElements[6], oElement1);
+			assert.strictEqual(oCache.aElements[7], oElement2);
+			assert.strictEqual(oCache.aElements.length, 8);
+			assert.strictEqual(oCache.aElements.$count, 23);
+			assert.deepEqual(oCache.aElements.$byPredicate, {
+				"($uid=id-1-23)" : oTransient0,
+				"($uid=id-1-42)" : oTransient1,
+				"('0')" : oCreated0,
+				"('1')" : oCreated1,
+				"('2')" : oCreated2,
+				"('3')" : oElement0,
+				"('4')" : oElement1,
+				"('5')" : oElement2
+			});
+			assert.strictEqual(oCache.iLimit, 42);
+		}
+	});
 	});
 });
 
@@ -10463,29 +10608,29 @@ sap.ui.define([
 [{
 	sTitle : "refreshKeptElements with one kept context",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : {key : "Foo"}
+		"('Foo')" : {key : "Foo", "@$ui5._" : {predicate : "('Foo')"}}
 	},
 	sFilter : "~Foo~"
 }, {
 	sTitle : "refreshKeptElements with two kept contexts",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : {key : "Foo"},
-		"('Bar')" : {key : "Bar"}
+		"('Foo')" : {key : "Foo", "@$ui5._" : {predicate : "('Foo')"}},
+		"('Bar')" : {key : "Bar", "@$ui5._" : {predicate : "('Bar')"}}
 	},
 	sFilter : "~Bar~ or ~Foo~",
 	iTop : 2
 }, {
 	sTitle : "refreshKeptElements with one kept context; after refresh kept element is deleted",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : {bDeleted : true, key : "Foo"}
+		"('Foo')" : {bDeleted : true, key : "Foo", "@$ui5._" : {predicate : "('Foo')"}}
 	},
 	sFilter : "~Foo~"
 }, {
 	sTitle : "refreshKeptElements with two kept contexts;"
 		+ " after refresh one kept element is deleted",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : {bDeleted : true, key : "Foo"},
-		"('Bar')" : {key : "Bar"}
+		"('Foo')" : {bDeleted : true, key : "Foo", "@$ui5._" : {predicate : "('Foo')"}},
+		"('Bar')" : {key : "Bar", "@$ui5._" : {predicate : "('Bar')"}}
 	},
 	sFilter : "~Bar~ or ~Foo~",
 	iTop : 2
@@ -10493,17 +10638,23 @@ sap.ui.define([
 	sTitle : "refreshKeptElements with two kept contexts;"
 		+ " after refresh all kept elements are deleted",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : {bDeleted : true, key : "Foo"},
-		"('Bar')" : {bDeleted : true, key : "Bar"}
+		"('Foo')" : {bDeleted : true, key : "Foo", "@$ui5._" : {predicate : "('Foo')"}},
+		"('Bar')" : {bDeleted : true, key : "Bar", "@$ui5._" : {predicate : "('Bar')"}}
 	},
 	sFilter : "~Bar~ or ~Foo~",
 	iTop : 2
 }, {
-	sTitle : "transient elements need to be ignored",
+	sTitle : "transient predicates need to be ignored",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : {key : "Foo"},
+		"('Foo')" : {key : "Foo", "@$ui5._" : {predicate : "('Foo')"}},
 		"($uid=id-1-23)" : {"@$ui5._" : {transientPredicate : "($uid=id-1-23)"}},
-		"('Bar')" : {key : "Bar"},
+		"('Bar')" : {
+			key : "Bar",
+			"@$ui5._" : {predicate : "('Bar')", transientPredicate : "($uid=id-1-00)"}
+		},
+		"($uid=id-1-00)" : {
+			"@$ui5._" : {predicate : "('Bar')", transientPredicate : "($uid=id-1-00)"}
+		},
 		"($uid=id-1-42)" : {"@$ui5._" : {transientPredicate : "($uid=id-1-42)"}}
 	},
 	sFilter : "~Bar~ or ~Foo~",
@@ -10511,12 +10662,22 @@ sap.ui.define([
 }, {
 	sTitle : "kept-alive elements w/ changes need to be ignored",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : {key : "Foo"},
-		"('Bar')" : {key : "Bar"},
-		"('Baz')" : {bChanges : true}
+		"('Foo')" : {key : "Foo", "@$ui5._" : {predicate : "('Foo')"}},
+		"('Bar')" : {key : "Bar", "@$ui5._" : {predicate : "('Bar')"}},
+		"('Baz')" : {bChanges : true, "@$ui5._" : {predicate : "('Baz')"}}
 	},
 	sFilter : "~Bar~ or ~Foo~",
 	iTop : 2
+}, {
+	sTitle : "a created element is deleted",
+	mKeptAliveElementsByPredicate : {
+		"('Foo')" : {
+			bDeleted : true,
+			key : "Foo",
+			"@$ui5._" : {predicate : "('Foo')", transientPredicate : "($uid=id-1-23)"}
+		}
+	},
+	sFilter : "~Foo~"
 }].forEach(function (oFixture) {
 	QUnit.test(oFixture.sTitle, function (assert) {
 		var mByPredicate = {},
@@ -10538,6 +10699,8 @@ sap.ui.define([
 			mTypes = {};
 
 		oCache.mLateQueryOptions = bHasLateQueryOptions ? mLateQueryOptions : undefined;
+		oHelperMock.expects("updateAll").never(); // except... see below
+		oCacheMock.expects("removeElement").never(); // except... see below
 		Object.keys(oFixture.mKeptAliveElementsByPredicate).forEach(function (sPredicate) {
 			var oElement = oFixture.mKeptAliveElementsByPredicate[sPredicate];
 
@@ -10559,6 +10722,11 @@ sap.ui.define([
 				oHelperMock.expects("updateAll")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPredicate,
 						sinon.match.same(oElement), sinon.match.same(oElement));
+			}
+			if (oElement.bDeleted && "transientPredicate" in oElement["@$ui5._"]) {
+				oCacheMock.expects("removeElement")
+					.withExactArgs(sinon.match.same(oCache.aElements), -1, sPredicate, "")
+					.returns(42);
 			}
 		});
 
@@ -10602,13 +10770,16 @@ sap.ui.define([
 
 			assert.deepEqual(oResult, undefined);
 			Object.keys(oFixture.mKeptAliveElementsByPredicate).forEach(function (sPredicate) {
-				var oElement = oFixture.mKeptAliveElementsByPredicate[sPredicate];
+				var oElement = oFixture.mKeptAliveElementsByPredicate[sPredicate],
+					bCreated = "transientPredicate" in oElement["@$ui5._"];
 
-				if (!oElement.bDeleted) {
+				if (!oElement.bDeleted || bCreated) {
 					mByPredicateAfterRefresh[sPredicate] = oElement;
-				} else if ("key" in oElement) {
+				}
+				if (oElement.bDeleted) {
 					iCallCount += 1;
-					sinon.assert.calledWithExactly(fnOnRemove, sPredicate);
+					sinon.assert.calledWithExactly(fnOnRemove, sPredicate,
+						bCreated ? 42 : undefined);
 				}
 			});
 			sinon.assert.callCount(fnOnRemove, iCallCount);
