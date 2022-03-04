@@ -21,8 +21,12 @@
 				"stretch": true,
 				"files": [
 					"Component.js",
+					"controller/FlexibleColumnLayout.controller.js",
 					"view/FlexibleColumnLayout.view.xml",
+					"controller/Master.controller.js",
 					"view/Master.view.xml",
+					"controller/Detail.controller.js",
+					"controller/DetailDetail.controller.js",
 					"view/Detail.view.xml",
 					"view/DetailDetail.view.xml",
 					"manifest.json"
