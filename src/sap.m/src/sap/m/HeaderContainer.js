@@ -336,9 +336,6 @@ sap.ui.define([
 							this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._handleBorderReached, this);
 							this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._handleAfterFocus, this);
 							this._oItemNavigation.attachEvent(ItemNavigation.Events.BeforeFocus, this._handleBeforeFocus, this);
-							if (Device.browser.msie || Device.browser.edge) {
-								this._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, this._handleFocusAgain, this);
-							}
 						}
 						this._oItemNavigation.setRootDomRef(oFocusRef);
 						this._oItemNavigation.setItemDomRefs(aDomRefs);
@@ -644,7 +641,7 @@ sap.ui.define([
 			if (!this._bRtl) {
 				iScrollLeft = oDomRef.scrollLeft;
 				iScrollWidth = oDomRef.scrollWidth;
-				iClientWidth = oDomRef.clientWidth + (Device.browser.msie ? 1 : 0);
+				iClientWidth = oDomRef.clientWidth;
 				iScrollTarget = iScrollLeft + delta;
 				iPaddingWidth = parseFloat(this.$("scroll-area").css("padding-left"));
 
@@ -925,7 +922,7 @@ sap.ui.define([
 				}
 				if (this._bRtl) {
 					var iScrollLeftRTL = jQuery(oBarHead).scrollLeftRTL();
-					if (iScrollLeftRTL > ((Device.browser.msie || Device.browser.edge) ? 1 : 0)) {
+					if (iScrollLeftRTL > 0) {
 						bScrollForward = true;
 					}
 				} else if (iScrollLeft > iFirst) {
@@ -1025,9 +1022,6 @@ sap.ui.define([
 		};
 
 		HeaderContainer.prototype._handleBorderReached = function (oEvt) {
-			if (Device.browser.msie && this.bScrollInProcess) {
-				return;
-			}
 			var iIndex = oEvt.getParameter("index");
 			if (iIndex === 0) {
 				this._scroll(this._getScrollValue(false), this.getScrollTime());
@@ -1037,14 +1031,6 @@ sap.ui.define([
 		};
 
 		HeaderContainer.prototype._handleAfterFocus = function (oEvt) {
-			//For Edge and IE on mousedown input element not getting focused.Hence setting focus manually.
-			var oSrcEvent = oEvt.getParameter("event");
-			if ((Device.browser.msie || Device.browser.edge) && oSrcEvent.type === "mousedown" && oSrcEvent.srcControl instanceof sap.m.Input) {
-				oSrcEvent.srcControl.focus();
-			}
-			if (Device.browser.msie && this.bScrollInProcess) {
-				return;
-			}
 			var iIndex = oEvt.getParameter("index");
 			if (iIndex === 0) {
 				this._scroll(this._getScrollValue(false), this.getScrollTime());
@@ -1055,11 +1041,6 @@ sap.ui.define([
 		};
 
 		HeaderContainer.prototype._handleFocusAgain = function (oEvt) {
-			//For Edge and IE on mousedown input element not getting focused.Hence setting focus manually.
-			var oSrcEvent = oEvt.getParameter("event");
-			if ((Device.browser.msie || Device.browser.edge) && oSrcEvent.type === "mousedown" && oSrcEvent.srcControl instanceof sap.m.Input) {
-				oSrcEvent.srcControl.focus();
-			}
 			oEvt.getParameter("event").preventDefault();
 		};
 
