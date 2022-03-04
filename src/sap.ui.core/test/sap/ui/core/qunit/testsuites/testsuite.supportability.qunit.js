@@ -32,6 +32,9 @@ sap.ui.define([], function() {
 			"performance/trace/FESR": {
 				title: "sap.ui.performance.FESR"
 			},
+			"performance/trace/FESRHelper": {
+				title: "sap.ui.performance.FESRHelper"
+			},
 			"performance/trace/InitFESR_metatag": {
 				page: "test-resources/sap/ui/core/qunit/performance/trace/InitFESR_metatag.qunit.html",
 				title: "sap.ui.performance.trace.FESR: Activation of FESR via meta-tag"

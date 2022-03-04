@@ -201,7 +201,7 @@ sap.ui.define([
 	}
 
 	function onInteractionFinished(oFinishedInteraction) {
-		var sStepName = oFinishedInteraction.trigger + "_" + oFinishedInteraction.event;
+		var sStepName = oFinishedInteraction.semanticStepName ? oFinishedInteraction.semanticStepName : oFinishedInteraction.trigger + "_" + oFinishedInteraction.event;
 		var oFESRHandle = FESR.onBeforeCreated({
 			stepName: sStepName,
 			appNameLong: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
