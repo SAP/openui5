@@ -41,6 +41,10 @@ sap.ui.define([
 		*	<li><code>aggregated</code> - Set to <code>false</code>  to remove an aggregation.</li>
 		*	</ul>
 		*
+		*	<b>Note:</b>To improve the performance, you should avoid additional calls of the control’s delegate.
+		*	To do this, the <code>propertyInfo</code> property of the relevant control can be enriched with the properties used in the provided state.
+		*
+		*
 		* @private
 		* @ui5-restricted sap.fe
 		* @MDC_PUBLIC_CANDIDATE
