@@ -315,42 +315,62 @@ sap.ui.define([
 	 * oFormat.format(1234.56); // "1.234,56"
 	 * </pre>
 	 *
-	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
-	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
-	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
-	 * @param {int} [oFormatOptions.minFractionDigits=0] defines minimal number of decimal digits
-	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines maximum number of decimal digits
+	 * @param {object} [oFormatOptions] The option object which support the following parameters.
+	 *   If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
+	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
+	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
+	 *   is parsed as, and what is formatted as an empty string. The allowed values are "" (empty string),
+	 *   NaN, <code>null</code>, or 0.
+	 *   The 'format' and 'parse' functions are done in a symmetric way. For example, when this
+	 *   parameter is set to NaN, an empty string is parsed as NaN, and NaN is formatted as an empty
+	 *   string.
+	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
+	 *   it is different from the grouping size (e.g. Indian grouping)
+	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
+	 *   (show the grouping separators)
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
+	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
+	 *   is <code>3</code>. It must be a positive number.
+	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines the maximum number of decimal digits
+	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines the maximum number of non-decimal digits.
+	 *   If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
+	 * @param {int} [oFormatOptions.minFractionDigits=0] defines the minimal number of decimal digits
+	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines the minimal number of non-decimal digits
+	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
+	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output
+	 *   the string from the parse function in order to keep the precision for big numbers. Numbers
+	 *   in scientific notation are parsed back to standard notation. For example, "5e-3" is parsed
+	 *   to "0.005".
+	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
+	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
+	 * @param {int} [oFormatOptions.precision] defines the numerical precision; the number of decimals
+	 *   is calculated dependent on the integer digits
+	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves
+	 *   decimal digits except trailing zeros in case there are more decimals than the
+	 *   <code>maxFractionDigits</code> format option allows.
+	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
+	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
+	 *   specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
+	 *   This can be assigned
+	 *   <ul>
+	 *     <li>by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode},</li>
+	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the number of decimal digits that should be reserved.</li>
+	 *   </ul>
 	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
 	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
-	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
-	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
-	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
-	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
-	 *   is <code>3</code>. It must be a positive number.
-	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
-	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
-	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
-	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
-	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
-	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
-	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits except trailing zeros
-	 *  in case there are more decimals than the <code>maxFractionDigits</code> format option allows.
-	 *  If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
-	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
-	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
-	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
-	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
-	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
-	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are "" (empty string), NaN, null or 0.
-	 *  The 'format' and 'parse' are done in a symmetric way. For example when this parameter is set to NaN, empty string is parsed as NaN and NaN is formatted as empty string.
+	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
+	 *   'short, 'long' or 'standard' (based on CLDR decimalFormat). When set to 'short' or 'long',
+	 *   numbers are formatted into compact forms. When this option is set, the default value of the
+	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
+	 *   decimals, shortDecimals, or the 'precision' option itself.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} float instance of the NumberFormat
 	 * @static
@@ -387,42 +407,62 @@ sap.ui.define([
 	 * oFormat.format(1234); // "1.234"
 	 * </pre>
 	 *
-	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
-	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
-	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
-	 * @param {int} [oFormatOptions.minFractionDigits=0] defines minimal number of decimal digits
-	 * @param {int} [oFormatOptions.maxFractionDigits=0] defines maximum number of decimal digits
+	 * @param {object} [oFormatOptions] The option object which support the following parameters.
+	 *   If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
+	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
+	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
+	 *   is parsed as, and what is formatted as an empty string. The allowed values are only NaN,
+	 *   null or 0.
+	 *   The 'format' and 'parse' functions are done in a symmetric way. For example, when this
+	 *   parameter is set to NaN, an empty string is parsed as NaN, and NaN is formatted as an empty
+	 *   string.
+	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
+	 *   it is different from the grouping size (e.g. Indian grouping)
+	 * @param {boolean} [oFormatOptions.groupingEnabled=false] defines whether grouping is enabled
+	 *   (show the grouping separators)
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
+	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
+	 *   is <code>3</code>. It must be a positive number.
+	 * @param {int} [oFormatOptions.maxFractionDigits=0] defines the maximum number of decimal digits
+	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines the maximum number of non-decimal digits.
+	 *   If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
+	 * @param {int} [oFormatOptions.minFractionDigits=0] defines the minimal number of decimal digits
+	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines the minimal number of non-decimal digits
+	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
+	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output
+	 *   the string from the parse function in order to keep the precision for big numbers. Numbers
+	 *   in scientific notation are parsed back to standard notation. For example, "5e+3" is parsed
+	 *   to "5000".
+	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
+	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
+	 * @param {int} [oFormatOptions.precision] defines the numerical precision; the number of decimals
+	 *   is calculated dependent on the integer digits
+	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves
+	 *   decimal digits except trailing zeros in case there are more decimals than the
+	 *   <code>maxFractionDigits</code> format option allows.
+	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
+	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=TOWARDS_ZERO]
+	 *   specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
+	 *   This can be assigned
+	 *   <ul>
+	 *     <li>by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode},</li>
+	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the number of decimal digits that should be reserved.</li>
+	 *   </ul>
 	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
 	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
-	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
-	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
-	 * @param {boolean} [oFormatOptions.groupingEnabled=false] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
-	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
-	 *   is <code>3</code>. It must be a positive number.
-	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
-	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
-	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
-	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
-	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
-	 *  back to the standard notation. For example "5e+3" is parsed to "5000".
-	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits except trailing zeros
-	 *  in case there are more decimals than the <code>maxFractionDigits</code> format option allows.
-	 *  If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
-	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
-	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
-	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=TOWARDS_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
-	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
-	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
-	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are only NaN, null or 0.
-	 *  The 'format' and 'parse' are done in a symmetric way. For example when this parameter is set to NaN, empty string is parsed as NaN and NaN is formatted as empty string.
+	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
+	 *   'short, 'long' or 'standard' (based on CLDR decimalFormat). When set to 'short' or 'long',
+	 *   numbers are formatted into compact forms. When this option is set, the default value of the
+	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
+	 *   decimals, shortDecimals, or the 'precision' option itself.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} integer instance of the NumberFormat
 	 * @static
@@ -491,41 +531,65 @@ sap.ui.define([
 	 * oFormat.format(777.888, "Bitcoin"); // "Bitcoin 777.89"
 	 * </pre>
 	 *
-	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
-	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
-	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
-	 * @param {int} [oFormatOptions.minFractionDigits] defines minimal number of decimal digits
-	 * @param {int} [oFormatOptions.maxFractionDigits] defines maximum number of decimal digits
+	 * @param {object} [oFormatOptions] The option object which support the following parameters.
+	 *   If no options is given, default values according to the type and locale settings are used.
+	 * @param {boolean} [oFormatOptions.currencyCode=true] defines whether the currency is shown as
+	 *   a code in currency format. The currency symbol is displayed when this option is set to
+	 *   <code>false</code> and a symbol has been defined for the given currency code.
+	 * @param {string} [oFormatOptions.currencyContext=standard] can be set either to 'standard'
+	 *   (the default value) or to 'accounting' for an accounting-specific currency display
+	 * @param {Object<string,object>} [oFormatOptions.customCurrencies] defines a set of custom currencies exclusive to this NumberFormat instance.
+	 *   Custom currencies must not only consist of digits.
+	 *   If custom currencies are defined on the instance, no other currencies can be formatted and parsed by this instance.
+	 *   Globally available custom currencies can be added via the global configuration.
+	 *   See the above examples.
+	 *   See also {@link sap.ui.core.Configuration.FormatSettings#setCustomCurrencies} and {@link sap.ui.core.Configuration.FormatSettings#addCustomCurrencies}.
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
+	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
+	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
+	 *   is parsed as, and what is formatted as an empty string. The allowed values are "" (empty string),
+	 *   NaN, <code>null</code>, or 0.
+	 *   The 'format' and 'parse' functions are done in a symmetric way. For example, when this
+	 *   parameter is set to NaN, an empty string is parsed as [NaN, undefined], and NaN is
+	 *   formatted as an empty string.
+	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
+	 *   it is different from the grouping size (e.g. Indian grouping)
+	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
+	 *   (show the grouping separators)
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
+	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
+	 *   is <code>3</code>. It must be a positive number.
+	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines the maximum number of decimal digits
+	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines the maximum number of non-decimal digits.
+	 *   If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
+	 * @param {int} [oFormatOptions.minFractionDigits=0] defines the minimal number of decimal digits
+	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines the minimal number of non-decimal digits
+	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
+	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output
+	 *   the string from the parse function in order to keep the precision for big numbers. Numbers
+	 *   in scientific notation are parsed back to standard notation. For example, "5e-3" is parsed
+	 *   to "0.005".
+	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
+	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
+	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves
+	 *   decimal digits except trailing zeros in case there are more decimals than the
+	 *   <code>maxFractionDigits</code> format option allows.
+	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
+	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
+	 *   specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
+	 *   This can be assigned
+	 *   <ul>
+	 *     <li>by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode},</li>
+	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the number of decimal digits that should be reserved.</li>
+	 *   </ul>
 	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
 	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
-	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
-	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
-	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
-	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
-	 *   is <code>3</code>. It must be a positive number.
-	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
-	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
-	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
-	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
-	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
-	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
-	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits except trailing zeros
-	 *  in case there are more decimals than the <code>maxFractionDigits</code> format option allows.
-	 *  If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
-	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
-	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
-	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
-	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
-	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
-	 * @param {boolean} [oFormatOptions.trailingCurrencyCode] Overrides the global configuration value {@link sap.ui.core.Configuration.FormatSettings#getTrailingCurrencyCode} whose default value is <code>true</>.
-	 *  This is ignored if <code>oFormatOptions.currencyCode</code> is set to <code>false</code> or if <code>oFormatOptions.pattern</code> is supplied
 	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the currency code/symbol is shown in the formatted string,
 	 *  e.g. true: "1.00 EUR", false: "1.00" for locale "en"
 	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
@@ -534,18 +598,20 @@ sap.ui.define([
 	 *      <code>NumberFormat.getCurrencyInstance({showNumber:true}).format(1, "EUR"); // "1.00 EUR"</code>
 	 *      <code>NumberFormat.getCurrencyInstance({showNumber:false}).format(1, "EUR"); // "EUR"</code>
 	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
-	 * @param {boolean} [oFormatOptions.currencyCode=true] defines whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there is a symbol defined
-	 *  for the given currency code.
-	 * @param {string} [oFormatOptions.currencyContext=standard] It can be set either with 'standard' (the default value) or with 'accounting' for an accounting specific currency display
-	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are "" (empty string), NaN, null or 0.
-	 *  The 'format' and 'parse' are done in a symmetric way. For example when this parameter is set to NaN, empty string is parsed as [NaN, undefined] and NaN is formatted as empty string.
-	 * @param {Object<string,object>} [oFormatOptions.customCurrencies] defines a set of custom currencies exclusive to this NumberFormat instance. Custom currencies must not only consist of digits.
-	 *  If custom currencies are defined on the instance, no other currencies can be formatted and parsed by this instance.
-	 *  Globally available custom currencies can be added via the global configuration.
-	 *  See the above examples.
-	 *  See also {@link sap.ui.core.Configuration.FormatSettings#setCustomCurrencies} and {@link sap.ui.core.Configuration.FormatSettings#addCustomCurrencies}.
+	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number.
+	 *   This option takes effect only when the 'style' options is set to either 'short' or 'long'.
+	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
+	 *   'short, 'long' or 'standard' (based on CLDR decimalFormat). When set to 'short' or 'long',
+	 *   numbers are formatted into compact forms. When this option is set, the default value of the
+	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
+	 *   decimals, shortDecimals, or the 'precision' option itself.
+	 * @param {boolean} [oFormatOptions.trailingCurrencyCode] overrides the global configuration
+	 *   value {@link sap.ui.core.Configuration.FormatSettings#getTrailingCurrencyCode}, which has a
+	 *   default value of <code>true</>.
+	 *   This is ignored if <code>oFormatOptions.currencyCode</code> is set to <code>false</code>,
+	 *   or if <code>oFormatOptions.pattern</code> is supplied.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
-	 * @return {sap.ui.core.format.NumberFormat} unit instance of the NumberFormat
+	 * @return {sap.ui.core.format.NumberFormat} currency instance of the NumberFormat
 	 * @static
 	 * @public
 	 */
@@ -593,49 +659,70 @@ sap.ui.define([
 	 * default value.
 	 * </p>
 	 *
-	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
-	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
-	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
-	 * @param {int} [oFormatOptions.minFractionDigits] defines minimal number of decimal digits
-	 * @param {int} [oFormatOptions.maxFractionDigits] defines maximum number of decimal digits
+	 * @param {object} [oFormatOptions] The option object which support the following parameters.
+	 *   If no options is given, default values according to the type and locale settings are used.
+	 * @param {array} [oFormatOptions.allowedUnits] defines the allowed units for formatting and parsing, e.g. ["size-meter", "volume-liter", ...]
+	 * @param {Object<string,object>} [oFormatOptions.customUnits] defines a set of custom units, e.g.
+	 *   {"electric-inductance": {
+	 *      "displayName": "henry",
+	 *      "unitPattern-count-one": "{0} H",
+	 *      "unitPattern-count-other": "{0} H",
+	 *      "perUnitPattern": "{0}/H",
+	 *      "decimals": 2,
+	 *      "precision": 4
+	 *   }}
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
-	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
-	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
-	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
-	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
-	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
-	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
-	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
-	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
-	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
+	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
+	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
+	 *   is parsed as, and what is formatted as an empty string. The allowed values are "" (empty string),
+	 *   NaN, <code>null</code>, or 0.
+	 *   The 'format' and 'parse' functions are done in a symmetric way. For example, when this
+	 *   parameter is set to NaN, an empty string is parsed as [NaN, undefined], and NaN is
+	 *   formatted as an empty string.
+	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
+	 *   it is different from the grouping size (e.g. Indian grouping)
+	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
+	 *   (show the grouping separators)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
 	 *   is <code>3</code>. It must be a positive number.
-	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
-	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
-	 * @param {Object<string,object>} [oFormatOptions.customUnits] defines a set of custom units, e.g. {"electric-inductance": {
-				"displayName": "henry",
-				"unitPattern-count-one": "{0} H",
-				"unitPattern-count-other": "{0} H",
-				"perUnitPattern": "{0}/H",
-				"decimals": 2,
-				"precision": 4
-			}}
-	 * @param {array} [oFormatOptions.allowedUnits] defines the allowed units for formatting and parsing, e.g. ["size-meter", "volume-liter", ...]
-	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
+	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines the maximum number of decimal digits
+	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines the maximum number of non-decimal digits.
+	 *   If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
+	 * @param {int} [oFormatOptions.minFractionDigits=0] defines the minimal number of decimal digits
+	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines the minimal number of non-decimal digits
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
-	 * @param {boolean} [oFormatOptions.parseAsString] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
-	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
-	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits except trailing zeros
-	 *  in case there are more decimals than the <code>maxFractionDigits</code> format option allows.
-	 *  If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
-	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
-	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
-	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
-	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
-	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
+	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output
+	 *   the string from the parse function in order to keep the precision for big numbers. Numbers
+	 *   in scientific notation are parsed back to standard notation. For example, "5e-3" is parsed
+	 *   to "0.005".
+	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
+	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
+	 * @param {int} [oFormatOptions.precision] defines the numerical precision; the number of decimals
+	 *   is calculated dependent on the integer digits
+	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves
+	 *   decimal digits except trailing zeros in case there are more decimals than the
+	 *   <code>maxFractionDigits</code> format option allows.
+	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
+	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
+	 *   specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
+	 *   This can be assigned
+	 *   <ul>
+	 *     <li>by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode},</li>
+	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the number of decimal digits that should be reserved.</li>
+	 *   </ul>
+	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimals in the shortened
+	 *   format string. If this option isn't specified, the 'decimals' option is used instead.
+	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
+	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the
+	 *   scale factor for the 'short' or 'long' style format is generated. The generated scale
+	 *   factor is used for all numbers which are formatted with this format instance. This option
+	 *   has effect only when the option 'style' is set to 'short' or 'long'. This option is by
+	 *   default set with <code>undefined</code> which means the scale factor is selected
+	 *   automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the unit of measure is shown in the formatted string,
 	 *  e.g. for input 1 and "duration-day" true: "1 day", false: "1".
 	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
@@ -647,8 +734,12 @@ sap.ui.define([
 	 *      <code>NumberFormat.getUnitInstance({showNumber:true}).format(2, "duration-day"); // "2 days"</code>
 	 *      <code>NumberFormat.getUnitInstance({showNumber:false}).format(2, "duration-day"); // "days"</code>
 	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
-	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are "" (empty string), NaN, null or 0.
-	 *  The 'format' and 'parse' are done in a symmetric way. For example when this parameter is set to NaN, empty string is parsed as [NaN, undefined] and NaN is formatted as empty string.
+	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
+	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
+	 *   'short, 'long' or 'standard' (based on CLDR decimalFormat). When set to 'short' or 'long',
+	 *   numbers are formatted into compact forms. When this option is set, the default value of the
+	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
+	 *   decimals, shortDecimals, or the 'precision' option itself.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} unit instance of the NumberFormat
 	 * @static
@@ -674,48 +765,68 @@ sap.ui.define([
 	 * default value.
 	 * </p>
 	 *
-	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
-	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
-	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits. If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
-	 * @param {int} [oFormatOptions.minFractionDigits=0] defines minimal number of decimal digits
-	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines maximum number of decimal digits
+	 * @param {object} [oFormatOptions] The option object which support the following parameters.
+	 *   If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
+	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
+	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
+	 *   is parsed as, and what is formatted as an empty string. The allowed values are "" (empty string),
+	 *   NaN, <code>null</code>, or 0.
+	 *   The 'format' and 'parse' functions are done in a symmetric way. For example, when this
+	 *   parameter is set to NaN, an empty string is parsed as NaN, and NaN is formatted as an empty
+	 *   string.
+	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
+	 *   it is different from the grouping size (e.g. Indian grouping)
+	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
+	 *   (show the grouping separators)
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
+	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
+	 *   is <code>3</code>. It must be a positive number.
+	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines the maximum number of decimal digits
+	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines the maximum number of non-decimal digits.
+	 *   If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
+	 * @param {int} [oFormatOptions.minFractionDigits=0] defines the minimal number of decimal digits
+	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines the minimal number of non-decimal digits
+	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
+	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output
+	 *   the string from the parse function in order to keep the precision for big numbers. Numbers
+	 *   in scientific notation are parsed back to standard notation. For example, "5e-3" is parsed
+	 *   to "0.005".
+	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
+	 * @param {string} [oFormatOptions.percentSign] defines the used percent symbol
+	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
+	 * @param {int} [oFormatOptions.precision] defines the numerical precision; the number of decimals
+	 *   is calculated dependent on the integer digits
+	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves
+	 *   decimal digits except trailing zeros in case there are more decimals than the
+	 *   <code>maxFractionDigits</code> format option allows.
+	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
+	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
+	 *   specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
+	 *   This can be assigned
+	 *   <ul>
+	 *     <li>by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode},</li>
+	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the number of decimal digits that should be reserved.</li>
+	 *   </ul>
 	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
 	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
-	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
-	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
-	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
-	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
-	 *   is <code>3</code>. It must be a positive number.
-	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
-	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
-	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
-	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
-	 * @param {string} [oFormatOptions.percentSign] defines the used percent symbol
-	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
-	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
-	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits except trailing zeros
-	 *  in case there are more decimals than the <code>maxFractionDigits</code> format option allows.
-	 *  If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
-	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
-	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
-	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
-	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
-	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
-	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are "" (empty string), NaN, null or 0.
-	 *  The 'format' and 'parse' are done in a symmetric way. For example when this parameter is set to NaN, empty string is parsed as NaN and NaN is formatted as empty string.
+	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
+	 *   'short, 'long' or 'standard' (based on CLDR decimalFormat). When set to 'short' or 'long',
+	 *   numbers are formatted into compact forms. When this option is set, the default value of the
+	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
+	 *   decimals, shortDecimals, or the 'precision' option itself.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} percentage instance of the NumberFormat
 	 * @static
 	 * @public
-	*/
+	 */
 	NumberFormat.getPercentInstance = function(oFormatOptions, oLocale) {
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.PERCENT);
