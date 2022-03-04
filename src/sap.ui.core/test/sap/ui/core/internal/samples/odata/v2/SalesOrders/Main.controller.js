@@ -315,8 +315,7 @@ sap.ui.define([
 			// SalesOrder_FixItems iterates the items and
 			// - sets the quantity of the item to at least 2 if the item's product is HT-1000
 			// - removes the item if the item's product is HT-1502 (works only for items that
-			//   have been read from the server; created persisted items are untouched, see also
-			//   CPOUI5MODELS-843)
+			//   have been read from the server)
 			// - replaces the item's product HT-1110 by the product HT-1111
 			oModel.callFunction("/SalesOrder_FixItems", {
 				groupId : "FixQuantity",

@@ -13692,6 +13692,222 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: A created persisted entity is not part of a side-effects response. Therefore this
+	// created persisted entity gets removed from the list and all related messages and pending
+	// changes are discarded.
+	// JIRA: CPOUI5MODELS-843
+	QUnit.test("Request side effects: Removes created persisted entities", function (assert) {
+		var oBinding, oTable,
+			oModel = createSalesOrdersModelMessageScope({defaultBindingMode : BindingMode.TwoWay}),
+			sView = '\
+<FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="2">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
+				headers : {"sap-message-scope" : "BusinessObject"},
+				requestUri : "BusinessPartnerSet('42')"
+			}, {
+				__metadata : {uri : "BusinessPartnerSet('42')"},
+				BusinessPartnerID : "42"
+			})
+			.expectRequest({
+				headers : {"sap-message-scope" : "BusinessObject"},
+				requestUri : "BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=102"
+			}, {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					Note : "Sales Order 1"
+				}]
+			})
+			.expectValue("businessPartnerID", "42")
+			.expectValue("salesOrderID", ["1", ""])
+			.expectValue("note", ["Sales Order 1", ""]);
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectValue("salesOrderID", ["", "1"])
+				.expectValue("note", ["Sales Order New 1", "Sales Order 1"]);
+
+			oBinding.create({Note : "Sales Order New 1"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oNoteError = that.createResponseMessage("Note");
+
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "gwsample_basic.SalesOrder"},
+						Note : "Sales Order New 1"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					headers : {
+						"sap-message-scope" : "BusinessObject"
+					},
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						Note : "Sales Order New 1",
+						SalesOrderID : "2"
+					},
+					statusCode : 201
+				}, {
+					location : "/SalesOrderSrv/SalesOrderSet('2')",
+					"sap-message" : getMessageHeader(oNoteError)
+				})
+				.expectValue("salesOrderID", "2", 0)
+				.expectMessage(oNoteError, "/SalesOrderSet('2')/",
+					"/BusinessPartnerSet('42')/ToSalesOrders('2')/");
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", "Sales Order New 1 - pending change", 0);
+
+			oTable.getRows()[0].getCells()[1].setValue("Sales Order New 1 - pending change");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('1')",
+					headers : {"sap-message-scope" : "BusinessObject"},
+					requestUri : "SalesOrderSet('1')?$expand=ToBusinessPartner"
+						+ "%2CToBusinessPartner%2FToSalesOrders"
+				}, {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					Note : "Sales Order 1 - SideEffect",
+					ToBusinessPartner : {
+						__metadata : {uri : "BusinessPartnerSet('42')"},
+						BusinessPartnerID : "42",
+						ToSalesOrders : {
+							results : [{
+								__metadata : {uri : "SalesOrderSet('1')"},
+								SalesOrderID : "1",
+								Note : "Sales Order 1 - SideEffect"
+							}]
+						}
+					}
+				})
+				.expectValue("salesOrderID", "", 0)
+				.expectValue("note", ["", "Sales Order 1 - SideEffect"])
+				.expectValue("salesOrderID", ["1", ""])
+				.expectValue("note", ["Sales Order 1 - SideEffect", ""])
+				.expectMessages([]);
+
+			// code under test: using a context NOT starting at root level ("objectPage") leads to a
+			// different deep path; this ensures the existing message is not removed via the usual
+			// business object lifecycle
+			oModel.requestSideEffects(/*SalesOrderSet('1')*/oBinding.getAllCurrentContexts()[1], {
+				urlParameters : {$expand : "ToBusinessPartner,ToBusinessPartner/ToSalesOrders"}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.notOk(oModel.hasPendingChanges());
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: An entity is created in an empty list. After submitting this entry and refreshing
+	// it via side effects, the entry is no longer contained in the side effects response. Therefore
+	// this created persisted entity and its bound context is removed from the table.
+	// JIRA: CPOUI5MODELS-843
+	QUnit.test("Request side effects: Removes created persisted entities (empty table)",
+			function (assert) {
+		var oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="2">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet('42')", {
+				__metadata : {uri : "BusinessPartnerSet('42')"},
+				BusinessPartnerID : "42"
+			})
+			.expectRequest("BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=102", {
+				results : []
+			})
+			.expectValue("businessPartnerID", "42")
+			.expectValue("salesOrderID", ["", ""])
+			.expectValue("note", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectValue("note", "Sales Order New 1", 0);
+
+			oTable.getBinding("rows").create({Note : "Sales Order New 1"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "Sales Order New 1"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						Note : "Sales Order New 1",
+						SalesOrderID : "2"
+					},
+					statusCode : 201
+				})
+				.expectValue("salesOrderID", "2", 0);
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerSet('42')?$expand=ToSalesOrders", {
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					ToSalesOrders : {
+						results : []
+					}
+				})
+				.expectValue("salesOrderID", "", 0)
+				.expectValue("note", "", 0);
+
+			// code under test
+			oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
+				urlParameters : {$expand : "ToSalesOrders"}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oTable.getRows()[0].getBindingContext(), null);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: When enforcing the update of a relative list binding with a transient context via
 	// ODataModel#updateBindings(true), there is no backend request.
 	// JIRA: CPOUI5MODELS-755
