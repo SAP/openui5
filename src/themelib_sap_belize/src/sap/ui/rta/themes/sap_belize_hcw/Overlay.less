@@ -1,10 +1,10 @@
 /******************************************************************
 	Style of the RTA Overlays - sap_belize_hcw Theme
 *******************************************************************/
-@_sap_ui_rta_Overlay_BorderColor: @sapUiAccent6; //#004ccb
-@_sap_ui_rta_Overlay_BoxShadowColor: @sapUiWhite; //#ffffff
-@_sap_ui_rta_Overlay_BGColor: @sapUiWhite; //#ffffff
-@_sap_ui_rta_Overlay_HoverBorder: @sapUiBlackBG; //#000000
+@_sap_ui_rta_Overlay_BorderColor: @sapUiIndication5; //#004ccb
+@_sap_ui_rta_Overlay_BoxShadowColor: @sapUiNeutralBG; //#ffffff
+@_sap_ui_rta_Overlay_ShellBG: @sapUiNeutralBG; //#fff
+@_sap_ui_rta_Overlay_HoverBorder: @sapUiNeutralElement; //#000000
 
 .sapUiRta {
 	.sapUiDtOverlayTargetZone {
@@ -62,15 +62,4 @@
 			}
 		}
 	}
-}
-
-.sapUiRtaMode .sapUiShellBackgroundImage.sapUiGlobalBackgroundImageForce.sapUshellShellBG {
-	background-color: @_sap_ui_rta_Overlay_BGColor;
-	background-image:  none;
-}
-
-.sapUiRtaMode .sapUshellViewPortCenter,
-.sapUiRtaMode .sapMShellBG,
-.sapUiRtaMode .sapUiRtaToolbar {
-	background-color: @_sap_ui_rta_Overlay_BGColor;
 }

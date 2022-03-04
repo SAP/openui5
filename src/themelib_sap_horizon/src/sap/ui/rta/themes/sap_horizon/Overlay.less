@@ -1,39 +1,20 @@
-/* =================================== */
-/* CSS for control sap.ui.rta/Overlay  */
-/* Horizon theme                       */
-/* =================================== */
-
-@_sap_ui_rta_Overlay_BaseBG: @sapUiShellBackground; //#f5f6f7
-@_sap_ui_rta_Overlay_BaseColor: @sapUiNotificationBarBG; //rgba(85,107,130,0.98)
-@_sap_ui_rta_Overlay_Base_PlaceholderBG: lighten(saturate(@sapUiShellBackground, 15%), 2%);
+/******************************************************************
+	Style of the RTA Overlays - Horizon Theme
+*******************************************************************/
+@_sap_ui_rta_Overlay_ShellBG: @sapUiNotificationBarBG; //rgba(85,107,130,0.98)
+@_sap_ui_rta_Overlay_PlaceholderBG: lighten(saturate(@sapUiShellBackground, 15%), 2%); // #fafbfc
+@_sap_ui_rta_Overlay_BorderRadius: @sapUiButtonBorderCornerRadius; // 0.5rem
+@_sap_ui_rta_Overlay_HoverBG: fade(@sapUiSelected, 5%); // rgba(0, 112, 242, 0.05)
+@_sap_ui_rta_Overlay_PersButtonBG: @sapUiSelected; //#0070f2
+@_sap_ui_rta_Overlay_PersButtonBorder: @sapUiShellBackground; // #f5f6f7
+@_sap_ui_rta_Overlay_PersButtonIcon: @sapUiShellBackground; // #f5f6f7
 
 .sapUiRta {
-	.sapUiDtOverlayDropZone {
-		> .sapUiDtOverlayChildren {
-			> .sapUiDtOverlayMovable {
-				background: inherit;
-			}
-		}
-	}
-	.sapUiDtOverlayFocusable:focus:before {
-		border-radius: @sapUiFieldBorderCornerRadius;
-		outline: 0.0625rem dotted @sapUiSelected;
-		border: none;
-		outline-offset: -0.125rem;
-	}
 	&:not(.sapUiRtaVisualizationMode) {
 		.sapUiRtaOverlayHover:after {
-			border-radius: @sapUiFieldBorderCornerRadius;
+			border-radius: @_sap_ui_rta_Overlay_BorderRadius;
 			border: none;
-			background: fade(@sapUiSelected, 5%);
-		}
-		.sapUiDtOverlaySelected {
-			box-shadow: none;
-			&:after {
-				border-radius: @sapUiFieldBorderCornerRadius;
-				transition: box-shadow 0.25s;
-				box-shadow: 0px 6px 12px 0px rgba(85, 107, 130, 0.3);
-			}
+			background: @_sap_ui_rta_Overlay_HoverBG;
 		}
 	}
 }

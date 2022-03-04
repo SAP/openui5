@@ -1,27 +1,22 @@
 /******************************************************************
 	Style of the RTA Toolbar (type: adaptation) - base Theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Adaptation_BaseColor: darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%); //435060
-@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiWhite; //#fff
-@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: #ffc847; //@sapAccentColor1 (on HCB)
-@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: #b2e484; //@sapAccentColor8 (on HCB)
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: darken(desaturate(@sapUiChart1, 48%), 14%); //#435060
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiTextInverted; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder: @sapUiTextInverted; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_BtnHoverBG: @sapUiSegmentedButtonHoverBackground; //#ec8b46
+@_sap_ui_rta_Toolbar_Adaptation_BorderColor: @sapUiLightBorder; //#808080
+@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: @sapUiHighlight; // #ec8b46
+@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: @sapUiPositiveText; // #b5e7a8
+@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_DarkColor: @sapUiDarkShadowTint; // #000
+@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_LightColor: @sapUiLightShadowTint; // #fff
+@_sap_ui_rta_Toolbar_Adaptation_BtnHoverText: @sapUiTextInverted; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverTextColor: @sapUiTextInverted; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol: @sapUiTextInverted; //#fff
 
 .sapUiRtaMode {
-	.sapUiRtaMarginTopForToolbar {
-		margin-top: 48px;
-	}
 
 	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
-		border: 0.125rem solid @_sap_ui_rta_Toolbar_Adaptation_TextColor; //2px
-		border-image: repeating-linear-gradient(-45deg, @_sap_ui_rta_Toolbar_Adaptation_BaseColor, @_sap_ui_rta_Toolbar_Adaptation_BaseColor 4px, @_sap_ui_rta_Toolbar_Adaptation_TextColor 4px, @_sap_ui_rta_Toolbar_Adaptation_TextColor 6px) 4;
-		box-shadow: 0 10px 20px fade(black, 19), 0 6px 6px fade(black, 23), 0 0 0 1px fade(white, 20), 0 1px 0 0 fade(white, 20);
-
-		.sapMFlexBox {
-			margin-left: 0;
-			margin-right: 0;
-			height: 2.5rem; //40px
-			background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
-		}
 
 		.sapMHBox.sapMFlexBox:first-child.sapMTBShrinkItem {
 			min-width: 0; /* Overrider '.sapMTBShrinkItem' */
@@ -35,6 +30,11 @@
 			}
 		}
 
+		.sapMFlexBox {
+			margin-left: 0;
+			height: 2.5rem; //40px
+		}
+
 		// Disable the right margin for Exit button
 		> .sapMFlexItem:last-child {
 			> .sapMFlexItem:last-child {
@@ -43,13 +43,132 @@
 				}
 			}
 		}
+
+		.sapMBtn {
+			padding: 0;
+			height: 2.5rem; //40px
+			margin: 0 0.25rem; //4px
+
+			&.sapMBtnDisabled .sapMBtnInner {
+				opacity: 0.5;
+			}
+
+			&:focus .sapMFocusable {
+				outline: none;
+				border: 0.0625rem dotted @_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder; //1px
+			}
+
+			&:hover:not(.sapMBtnDisabled) {
+				> .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized) {
+					background-color: @_sap_ui_rta_Toolbar_Adaptation_BtnHoverBG;
+
+					.sapUiIcon {
+						color: @_sap_ui_rta_Toolbar_Adaptation_BtnHoverText;
+					}
+				}
+			}
+
+			&:hover {
+				> .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) bdi {
+					color: @_sap_ui_rta_Toolbar_Adaptation_BtnHoverText;
+				}
+			}
+		}
+
+		.sapMTBStandard {
+			height: 2.5rem; //40px
+			border-bottom: none;
+			background: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
+		}
+
+		.sapMBtnTransparent,
+		:not(.sapMBtnDisabled) .sapMBtnTransparent > .sapMBtnIcon,
+		:not(.sapMBtnDisabled) .sapMBtnGhost > .sapMBtnIcon,
+		:not(.sapMBtnDisabled) .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
+			color: @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+		}
+
+		.sapMSegB {
+			.sapMSegBBtn {
+				&:not(:hover) {
+					.sapMSegBBtnInner {
+						background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
+					}
+				}
+
+				.sapMSegBBtnInner {
+					color: @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+					border: none;
+					position: relative;
+
+					.sapUiIcon {
+						color: @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+					}
+				}
+
+				&.sapMSegBBtnFocusable {
+					&:hover .sapMSegBBtnInner,
+					&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
+						color: @_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverTextColor;
+
+						.sapUiIcon {
+							color: @_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverTextColor;
+						}
+					}
+
+					&:focus .sapMSegBBtnInner {
+						outline: 0.0625rem dotted @_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol; //1px
+						outline-offset: -0.0625rem; //1px
+					}
+
+					&.sapMSegBBtnSel {
+						& .sapMSegBBtnInner::after {
+							position: absolute;
+							display: block;
+							content: '';
+							border-bottom: 0.125rem solid @_sap_ui_rta_Toolbar_Adaptation_TextColor; //2px
+							left: 0.375rem; //6px
+							right: 0.375rem; //6px
+							bottom: 0.125rem; //2px
+						}
+					}
+				}
+			}
+		}
+
+		.sapUiRtaVersionButton.sapUiRtaDraftVersionAccent > span > span > bdi {
+			color: @_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor;
+		}
+
+		.sapUiRtaVersionButton.sapUiRtaActiveVersionAccent > span > span > bdi {
+			color: @_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor;
+		}
+
+		.sapUiRtaToolbarVisualizationSelection li:first-child {
+			border-bottom: 0.0625rem solid @_sap_ui_rta_Toolbar_Adaptation_BorderColor; //1px
+		}
+
+		.sapUiRtaToolbarActionsSection > div:first-child {
+			width: 100%;
+		}
+
+		.sapUiRtaToolbarIconAndDraftSection > div {
+			width: 100%;
+		}
+
+		.sapUiRtaToolbarSwitcherSection > div {
+			width: 100% !important;
+		}
 	}
 
 	.sapUiRtaVersionHistory {
 		background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
 		border: 0.125rem solid @_sap_ui_rta_Toolbar_Adaptation_TextColor; //2px
-		border-image: repeating-linear-gradient(-45deg, @_sap_ui_rta_Toolbar_Adaptation_BaseColor, @_sap_ui_rta_Toolbar_Adaptation_BaseColor 4px, @_sap_ui_rta_Toolbar_Adaptation_TextColor 4px, @_sap_ui_rta_Toolbar_Adaptation_TextColor 6px) 4;
-		box-shadow: 0 10px 20px fade(black, 19), 0 6px 6px fade(black, 23), 0 0 0 1px fade(white, 20), 0 1px 0 0 fade(white, 20);
+		border-image: repeating-linear-gradient(-45deg, @_sap_ui_rta_Toolbar_Adaptation_BaseColor, @_sap_ui_rta_Toolbar_Adaptation_BaseColor 0.25rem, @_sap_ui_rta_Toolbar_Adaptation_TextColor 0.25rem, @_sap_ui_rta_Toolbar_Adaptation_TextColor 0.375rem) 4;
+		box-shadow: 0 0.625rem 1.25rem fade(@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_DarkColor, 19),
+		0 0.375rem 0.375rem fade(@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_DarkColor, 23),
+		0 0 0 0.0625rem fade(@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_LightColor, 20),
+		0 0.0625rem 0 0 fade(@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_LightColor, 20);
 
 		.sapMLIBHighlightWarning {
 			background: @_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor;
@@ -60,7 +179,7 @@
 		}
 
 		.sapMLIBHighlightSuccess {
-			background:@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor;
+			background: @_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor;
 		}
 
 		.sapUiRtaVersionsList {
@@ -96,32 +215,47 @@
 	}
 }
 
-.sapUiRtaToolbarSwitcherSection .sapMSegBBtn.sapMSegBBtnSel .sapMSegBBtnInner .sapUiIcon,
-.sapUiRtaToolbarSwitcherSection .sapMSegBBtn .sapUiIcon {
-	color: @_sap_ui_rta_Toolbar_Base_TextColor;
+.sapUiSizeCozy.sapUiRtaMode {
+	.sapUiRtaToolbar {
+		.sapMSegB {
+			.sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel {
+				& .sapMSegBBtnInner:after {
+					bottom: 0.375rem; //6px
+					left: 0.5625rem; //9px
+					right: 0.5625rem; //9px
+				}
+			}
+		}
+	}
 }
 
-.sapUiRtaVersionButton {
-	color: @_sap_ui_rta_Toolbar_Base_TextColor;
-}
-
-.sapUiRtaVersionButton.sapUiRtaDraftVersionAccent > span > span {
-	color: @_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor;
-}
-
-.sapUiRtaVersionButton.sapUiRtaActiveVersionAccent > span > span {
-	color: @_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor;
+// the default hbox width which is set via the element properties must be overruled
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarIconAndDraftSection,
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarActionsSection,
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarIconAndDraftSection,
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarActionsSection {
+	width: ~"calc(50% - 12.5rem) !important"; //200px
 }
 
 .sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaVersionButton,
 .sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaVersionButton {
-	max-width: ~"calc(90% - 160px)";
+	max-width: ~"calc(90% - 10rem)"; //160px
 }
 
 .sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaVersionButton {
-	max-width: ~"calc(100% - 100px)";
+	max-width: ~"calc(100% - 6.25rem)"; //100px
 }
 
-.sapUiRtaToolbarIconAndDraftSection > div {
-	width: 100%;
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarSwitcherSection,
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarSwitcherSection {
+	width: 25rem !important; //400px
+}
+
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarIconAndDraftSection,
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarActionsSection {
+	width: ~"calc(50% - 4.375rem) !important"; //70px
+}
+
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarSwitcherSection {
+	width: 8.75rem !important; //140px
 }

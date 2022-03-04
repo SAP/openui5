@@ -1,0 +1,25 @@
+/******************************************************************
+	Style of the RTA Contextmenu - base Theme
+*******************************************************************/
+@_sap_ui_rta_ContextMenu_Border_LightColor: @sapUiInvertedElement; //#fff
+@_sap_ui_rta_ContextMenu_Border_DarkColor: darken(desaturate(@sapUiChart1, 48%), 14%); //#435060
+@_sap_ui_rta_ContextMenu_BoxShadow_DarkColor: @sapUiDarkShadowTint; // #000
+@_sap_ui_rta_ContextMenu_BoxShadow_LightColor: @sapUiLightShadowTint; // #fff
+
+@_sap_ui_rta_ContextMenu_BoxShadow: 0.375rem 0.625rem 2rem fade(@_sap_ui_rta_ContextMenu_BoxShadow_DarkColor, 30),
+0.125rem 0.375rem 1rem fade(@_sap_ui_rta_ContextMenu_BoxShadow_DarkColor, 60),
+0 0 0 0.0625rem fade(@_sap_ui_rta_ContextMenu_BoxShadow_LightColor, 20),
+0 0.0625rem 0 0 fade(@_sap_ui_rta_ContextMenu_BoxShadow_LightColor, 20); //10px 20px 6px 6px 1px 1px
+
+.sapUiRtaMode {
+	.sapUiDtContextMenu {
+		&.sapMMenu {
+			border: 0.125rem solid @_sap_ui_rta_ContextMenu_Border_LightColor; //2px
+			border-image: repeating-linear-gradient(-45deg, @_sap_ui_rta_ContextMenu_Border_DarkColor,
+			@_sap_ui_rta_ContextMenu_Border_DarkColor 0.25rem,
+			@_sap_ui_rta_ContextMenu_Border_LightColor 0.25rem,
+			@_sap_ui_rta_ContextMenu_Border_LightColor 0.375rem) 4;
+			box-shadow: @_sap_ui_rta_ContextMenu_BoxShadow;
+		}
+	}
+}

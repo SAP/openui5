@@ -1,0 +1,19 @@
+/******************************************************************
+	Style of the RTA Change Visualization - Horizon Dark theme
+*******************************************************************/
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorLight: @sapUiChartPaletteSequentialHue1Light3; //#90c9ff
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorMedium: darken(@sapUiChartPaletteSequentialHue1Light1, 5%); //#4ea9ff
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark: @sapUiChartPaletteSequentialHue1Dark1; //#0874da
+@_sap_ui_rta_ChangeVisualization_BorderRadius: @sapUiButtonBorderCornerRadius; // 0.5rem
+
+.sapUiDtOverlay {
+	.sapUiRtaChangeIndicatorHovered {
+		&:after {
+			border-radius: @_sap_ui_rta_ChangeVisualization_BorderRadius;
+		}
+	}
+
+	&.sapUiRtaChangeIndicatorDependent {
+		border-radius: @_sap_ui_rta_ChangeVisualization_BorderRadius;
+	}
+}

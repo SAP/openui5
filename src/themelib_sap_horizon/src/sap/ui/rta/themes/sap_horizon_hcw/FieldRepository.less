@@ -1,22 +1,14 @@
-/* =========================================== */
-/* CSS for control sap.ui.rta/FieldRepository  */
-/* Horizon High Contrast White theme           */
-/* =========================================== */
-
-@_sap_ui_rta_FieldRepository_BGColor: @sapHC_HighlightBackground; //#ec8b46;
-
+/****************************************************************************
+	Style of the RTA Add Fields Dialog  - Horizon High Contrast White theme
+*****************************************************************************/
 .sapUiRtaMode {
-
 	.sapUIRtaFieldRepositoryDialog {
-		.sapMBtn:hover {
-			> .sapMBtnHoverable {
-				outline: none;
-			}
-		}
 		.sapMBtn:focus {
 			> .sapMFocusable {
-				outline: 0.125rem dotted @sapUiBlackBG; //2px
 				outline-offset: -0.125rem; //2px
+				&.sapMBtnEmphasized {
+					border: 0.125rem solid transparent;
+				}
 			}
 		}
 	}

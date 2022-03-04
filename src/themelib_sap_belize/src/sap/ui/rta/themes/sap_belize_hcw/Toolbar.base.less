@@ -1,8 +1,9 @@
 /******************************************************************
 	Style of the RTA Toolbar (all types) - belize_hcw Theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Base_BaseColor: @sapUiWhite; //#ffffff
-@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiBlackBG; //#000000
+@_sap_ui_rta_Toolbar_Base_BaseColor: @sapUiNeutralBG; //#ffffff
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiNeutralElement; //#000000
+@_sap_ui_rta_Toolbar_Base_HoverColor: @sapUiHcHighlightBackground; //#7a5100
 
 .sapUiRtaMode {
 
@@ -12,7 +13,7 @@
 
 			&:hover .sapMSegBBtnInner,
 			&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
-				background-color: @sapHC_HighlightBackground;
+				background-color: @_sap_ui_rta_Toolbar_Base_HoverColor;
 				color: @_sap_ui_rta_Toolbar_Base_TextColor;
 			}
 
@@ -45,7 +46,7 @@
 			border-left: none;
 		}
 		.sapMBtn:focus > .sapMFocusable {
-			outline: 0.125rem dotted @sapUiBlackBG; //2px
+			outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Base_TextColor; //2px
 			border-color: transparent;
 		}
 		.sapUiRtaToolbarSwitcherSection {

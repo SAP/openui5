@@ -1,0 +1,92 @@
+/******************************************************************
+	Style of the DT Contextmenu - sap_fiori_3 Theme
+*******************************************************************/
+@_sap_ui_dt_ContextMenu_OpenFocusColor: @sapUiContentFocusColor; //#000
+@_sap_ui_dt_ContextMenu_MnuItemColor: @sapUiButtonIconColor; // ##0854a0
+@_sap_ui_dt_ContextMenu_OpenSubMenuBG: @sapUiShellBackground; //#edeff0
+@_sap_ui_dt_ContextMenu_Border_Radius: @sapUiButtonBorderCornerRadius; // 0.25rem
+@_sap_ui_dt_ContextMenu_OpenSubMenuBorder: transparent;
+@_sap_ui_dt_ContextMenu_Disabled_Hover: @sapUiSelected; //#0854a0
+
+.sapUiDtContextMenu {
+	.sapUiMnuLst {
+		.sapUiMnuItm {
+			color: @_sap_ui_dt_ContextMenu_MnuItemColor;
+			border: 0.0625rem dotted transparent;
+
+			.sapUiMnuItmIco {
+				color: @_sap_ui_dt_ContextMenu_MnuItemColor;
+			}
+
+			.sapUiMnuItmSbMnu > div:after,
+			.sapUiMnuItm.sapUiMnuItmHov .sapUiMnuItmSbMnu > div:after {
+				color: @_sap_ui_dt_ContextMenu_MnuItemColor;
+			}
+
+			&:focus {
+				outline: none;
+				border: 0.0625rem dotted;
+				border-radius: @_sap_ui_dt_ContextMenu_Border_Radius;
+			}
+
+			&.sapUiMnuItmSubMnuOpen {
+				background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBG;
+				border-bottom: 0.0625rem solid @_sap_ui_dt_ContextMenu_OpenSubMenuBorder !important; //1px
+
+				&.sapUiMnuItm:focus:not(hover) {
+					border: 0.0625rem dotted @_sap_ui_dt_ContextMenu_OpenFocusColor !important;
+				}
+
+				&.sapUiMnuItm:focus:hover {
+					border: 0.0625rem dotted @_sap_ui_dt_ContextMenu_OpenFocusColor !important;
+				}
+			}
+
+			&.sapUiMnuItmDsbl.sapUiMnuItmHov {
+				color: @_sap_ui_dt_ContextMenu_Disabled_Hover;
+			}
+		}
+	}
+}
+
+.sapUiDtContextMenu.sapUiDtContextMiniMenu {
+	&:not(.sapUiSubmenu) {
+		.sapUiMnuLst {
+			.sapUiMnuItm {
+
+				&:focus {
+					outline: none;
+					border-color: transparent !important;
+
+					.sapUiIcon {
+						border-radius: @_sap_ui_dt_ContextMenu_Border_Radius;
+					}
+
+					&.sapUiMnuItmSubMnuOpen {
+						background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBorder !important;
+						border: 0.0625rem dotted @_sap_ui_dt_ContextMenu_OpenSubMenuBorder !important;
+
+						.sapUiIcon {
+							border-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBorder;
+						}
+					}
+
+					&:hover {
+						.sapUiIcon {
+							border-color: @_sap_ui_dt_ContextMenu_OpenFocusColor;
+						}
+					}
+				}
+
+				&.sapUiMnuItmSubMnuOpen {
+					background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBorder;
+					border: 0.0625rem dotted @_sap_ui_dt_ContextMenu_OpenSubMenuBorder !important;
+
+					.sapUiIcon {
+						background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBG;
+					}
+				}
+			}
+		}
+	}
+}
