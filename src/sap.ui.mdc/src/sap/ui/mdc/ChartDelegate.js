@@ -67,6 +67,64 @@ sap.ui.define([
     ChartDelegate.getZoomState = function () {
     };
 
+    ChartDelegate.getFilterDelegate = function() {
+		return {
+
+			/**
+			 * Creates an instance of a <code>sap.ui.mdc.FilterField</code>.
+			 *
+			 * @param {string} sPropertyName The property name
+			 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
+			 * @returns {Promise<sap.ui.mdc.FilterField>} <code>Promise</code> that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
+			 * @see sap.ui.mdc.AggregationBaseDelegate#addItem
+			 */
+		    addItem: function (sPropertyName, oControl) {
+				return Promise.resolve();
+		    },
+
+			/**
+			 * This methods is called during the appliance of the add condition change.
+			 * This intention is to update the propertyInfo property.
+			 *
+			 * @param {string} sPropertyName The name of a property.
+			 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
+			 * @param {Object} mPropertyBag Instance of property bag from Flex change API
+			 * @returns {Promise} Promise that resolves once the properyInfo property was updated
+			 */
+			addCondition: function(sPropertyName, oControl, mPropertyBag) {
+				return Promise.resolve();
+		    },
+
+			/**
+			 * This methods is called during the appliance of the remove condition change.
+			 * This intention is to update the propertyInfo property.
+			 *
+			 * @param {string} sPropertyName The name of a property.
+			 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
+			 * @param {Object} mPropertyBag Instance of property bag from Flex change API
+			 * @returns {Promise} Promise that resolves once the properyInfo property was updated
+			 */
+		    removeCondition: function(sPropertyName, oControl, mPropertyBag) {
+				return Promise.resolve();
+		    }
+		};
+	};
+
+    /**
+     * Creates a new MDC chart item for a given property name and updates the inner chart.
+     * <b>Note:</b> This does <b>not</b> add the MDC chart item to the <code>Items</code> aggregation of the MDC chart.
+     * Called and used by <code>p13n</code>.
+     * @param {string} sPropertyName Name of the property added
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart to which the item is added
+     * @returns {Promise<sap.ui.mdc.Chart.Item>} <code>Promise</code> that resolves with new MDC chart item as parameter
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.addItem = function (sPropertyName, oMDCChart, mPropertyBag, sRole) {
+    };
+
     /**
      * @typedef {object} SelectionDetails
      * @property {string} eventId  ID of the selection event
@@ -138,20 +196,7 @@ sap.ui.define([
     ChartDelegate.removeItemFromInnerChart = function (oMDCChartItem) {
     };
 
-    /**
-     * Creates a new MDC chart item for a given property name and updates the inner chart.
-     * <b>Note:</b> This does <b>not</b> add the MDC chart item to the <code>Items</code> aggregation of the MDC chart.
-     * Called and used by <code>p13n</code>.
-     * @param {string} sPropertyName Name of the property added
-     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart to which the item is added
-     * @returns {Promise<sap.ui.mdc.Chart.Item>} <code>Promise</code> that resolves with new MDC chart item as parameter
-     *
-     * @experimental
-     * @private
-     * @ui5-restricted sap.ui.mdc
-     */
-    ChartDelegate.addItem = function (sPropertyName, oMDCChart, mPropertyBag, sRole) {
-    };
+
 
     /**
      * Removes an existing MDC chart item for a given property name and updates the inner chart.

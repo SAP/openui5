@@ -96,6 +96,36 @@ sap.ui.define([
         return V4FilterBarDelegate;
     };
 
+	/**
+	 * This methods is called during the appliance of the add condition change.
+	 * This intention is to update the propertyInfo property.
+	 *
+	 * @param {string} sPropertyName The name of a property.
+	 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
+	 * @param {Object} mPropertyBag Instance of property bag from Flex change API
+	 * @returns {Promise} Promise that resolves once the properyInfo property was updated
+	 */
+    ChartDelegate.addCondition = function(sPropertyName, oControl, mPropertyBag) {
+		//return this.getFilterDelegate().addCondition(sPropertyName, oControl, mPropertyBag);
+        // will be activated, once mdc.Chart has the property propertyInfo.
+        return Promise.resolve();
+    };
+
+	/**
+	 * This methods is called during the appliance of the remove condition change.
+	 * This intention is to update the propertyInfo property.
+	 *
+	 * @param {string} sPropertyName The name of a property.
+	 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
+	 * @param {Object} mPropertyBag Instance of property bag from Flex change API
+	 * @returns {Promise} Promise that resolves once the properyInfo property was updated
+	 */
+    ChartDelegate.removeCondition = function(sPropertyName, oControl, mPropertyBag) {
+		//return this.getFilterDelegate().removeCondition(sPropertyName, oControl, mPropertyBag);
+        // will be activated, once mdc.Chart has the property propertyInfo.
+        return Promise.resolve();
+    };
+
     ChartDelegate._deleteState = function(oMDCChart) {
 
         if (this._getState(oMDCChart).vizTooltip) {

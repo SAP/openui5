@@ -98,11 +98,6 @@ sap.ui.define([
 				}
 
 				var aFilterConditionChanges = FlexUtil._diffConditionPath(sFieldPath, mNewConditionState[sFieldPath], mPreviousConditionState[sFieldPath], oAdaptationControl);
-
-				if (oAdaptationControl && oAdaptationControl.createPropertyInfoChanges && (aFilterConditionChanges.length > 0)) {
-					aFilterConditionChanges = oAdaptationControl.createPropertyInfoChanges(sFieldPath).concat(aFilterConditionChanges);
-				}
-
 				aConditionChanges = aConditionChanges.concat(aFilterConditionChanges);
 			}
 

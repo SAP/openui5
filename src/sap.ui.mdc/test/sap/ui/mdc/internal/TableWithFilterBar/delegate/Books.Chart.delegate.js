@@ -266,6 +266,12 @@ sap.ui.define([
 					}
 					return oFilterField;
 				});
+			},
+			addCondition: function(sPropertyName, oChart, mPropertyBag) {
+				return BooksFBDelegate.addCondition(sPropertyName, oChart, mPropertyBag);
+			},
+			removeCondition: function(sPropertyName, oChart, mPropertyBag) {
+				return BooksFBDelegate.removeCondition(sPropertyName, oChart, mPropertyBag);
 			}
 		};
 	};

@@ -144,7 +144,7 @@ sap.ui.define([
 				/**
 				 * Specifies the filter metadata.<br>
 				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility. Do not use it otherwise.
+				 * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/ Fiori Elements. Do not use it otherwise.
 				 *
 				 * @since 1.97
 				 */
@@ -623,56 +623,8 @@ sap.ui.define([
 		return this.getEngine().isModificationSupported(this);
 	};
 
-	FilterBarBase.prototype._hasPropertyInfo = function(sFieldName) {
-		var aPropertyInfo = this.getPropertyInfo();
-		var nIdx = aPropertyInfo.findIndex(function(oEntry) {
-			return oEntry.name === sFieldName;
-		});
-
-		return (nIdx >= 0);
-	};
-
 	FilterBarBase.prototype.getPropertyInfoSet = function() {
 		return this.getPropertyHelper() ? this.getPropertyHelper().getProperties() : [];
-	};
-
-	FilterBarBase.prototype._createPropertyInfoChange = function(oProperty) {
-		return {
-			changeSpecificData: {
-				changeType: "addPropertyInfo",
-				content: {
-					name: oProperty.name,
-					dataType: oProperty.typeConfig.className,
-					maxConditions: oProperty.maxConditions,
-					constraints: oProperty.constraints,
-					formatOption: oProperty.formatOptions,
-					required: oProperty.required,
-					caseSensitive: oProperty.caseSensitive,
-					display: oProperty.display,
-					hiddenFilter: oProperty.hiddenFilter,
-					label: oProperty.label
-				}
-			},
-			selectorElement: this
-		};
-	};
-
-	FilterBarBase.prototype.createPropertyInfoChanges = function(sFieldPath) {
-		var oProperty, oChange, aChanges = [];
-
-		var nIdx = this.getPropertyInfo().findIndex(function(oEntry) {
-			return oEntry.name === sFieldPath;
-		});
-
-		if (nIdx < 0) {
-			oProperty = this._getPropertyByName(sFieldPath);
-			if (oProperty) {
-				oChange = this._createPropertyInfoChange(oProperty);
-				aChanges.push(oChange);
-			}
-		}
-
-		return aChanges;
 	};
 
 
@@ -1177,6 +1129,10 @@ sap.ui.define([
 		return Promise.all([this._oInitialFiltersAppliedPromise, this._oMetadataAppliedPromise]);
 	};
 
+	FilterBarBase.prototype._initialized = function() {
+		return this.waitForInitialization();
+	};
+
 	FilterBarBase.prototype.initialized = function() {
 
 		if (!this._oMetadataAppliedPromise) {
@@ -1184,11 +1140,6 @@ sap.ui.define([
 		}
 		return this.waitForInitialization();
 	};
-
-	FilterBarBase.prototype._initialized = function() {
-		return this.waitForInitialization();
-	};
-
 
 	/**
 	 * Returns the conditions of the inner condition model.
