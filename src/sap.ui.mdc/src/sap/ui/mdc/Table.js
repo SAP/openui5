@@ -2288,14 +2288,16 @@ sap.ui.define([
 		this.removeAggregation("columns", oMDCColumn, true);
 		this.insertAggregation("columns", oMDCColumn, iIndex, true);
 		if (this._oTable) {
-			if (this._bMobileTable) {
-				// responsive table requires the column order to be updated.
-				this._setMobileColumnOrder();
-				return;
-			}
 			// move column in inner table
 			oColumn = this._oTable.removeColumn(oMDCColumn.getId() + "-innerColumn");
 			this._oTable.insertColumn(oColumn, iIndex);
+
+			if (this._bMobileTable) {
+				// responsive table requires the column order to be updated.
+				this._setMobileColumnOrder();
+				// update template for ResponisveTable
+				this._updateColumnTemplate(oMDCColumn, iIndex);
+			}
 		}
 	};
 
