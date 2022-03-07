@@ -5,12 +5,14 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/appVariant/AppVariant",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/base/util/merge"
 ], function(
 	AppVariant,
 	jQuery,
+	Layer,
 	Utils,
 	LrepConnector,
 	merge
@@ -100,7 +102,7 @@ sap.ui.define([
 
 			//default layer to CUSTOMER
 			if (!mPropertyBag.layer) {
-				mPropertyBag.layer = 'CUSTOMER';
+				mPropertyBag.layer = Layer.CUSTOMER;
 			} else {
 				Utils.checkParameterAndType(mPropertyBag, "layer", "string");
 			}
