@@ -39,10 +39,6 @@
 	right: 0;
 }
 
-.sapMRb[aria-disabled=true]:focus:before {
-  border: @sapUiContentFocusWidth dashed @sapUiContentFocusColor;
-}
-
 .sapMRb.sapMRbHasLabel .sapMRbBLabel .sapMLabelTextWrapper {
   color: @sapField_TextColor;
 }
@@ -52,7 +48,7 @@
 }
 
 /* Align RadioButton in Form with other controls */
-.sapUiForm.sapUiFormEdit-CTX{
+.sapUiForm.sapUiFormEdit-CTX {
 	.sapMRb > .sapMRbB {
 		width: 2.1875rem;
 	}
@@ -75,12 +71,18 @@
 		bottom: 0.25rem;
 		top: 0.25rem;
 		left: 0.25rem;
-		border-radius: 0.75rem;
 	}
+}
+
+.sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo):not(.sapMRbSucc) .sapMRbHoverable:hover {
+	filter: drop-shadow(0 0 0.125rem fade(@sapNeutralColor, 72)); //drop-shadow(@sapContent_Interaction_Shadow) doesn't work; Reason: Chrome, Safari and Opera, and maybe other browsers, do not support this 4th length; shadow will not render if added.
 }
 
 .sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo):not(.sapMRbSucc) .sapMRbHoverable:hover .sapMRbBOut {
 	stroke: @sapUiFieldHoverBorderColor;
+}
+
+.sapMRb:not(.sapMRbDis) .sapMRbHoverable:hover .sapMRbBOut {
 	fill: @sapUiFieldHoverBackground;
 }
 
@@ -90,7 +92,7 @@
 	top: 0.25rem;
 	left: 0.25rem;
 	right: 0.375rem;
-	border-radius: 0.75rem;
+	border-radius: 0.5rem;
 }
 
 .sapMLIBActive .sapMRbB .sapMRbBOut {
@@ -103,6 +105,14 @@
 
 .sapMRbDis {
 	opacity: @sapUiContentDisabledOpacity;
+}
+
+.sapMRbSel .sapMRbBInn {
+	fill: @sapUiContentSelectedForegroundColor;
+}
+
+.sapMRbB .sapMRbBInn {
+	r: 27.5%;
 }
 
 /* Value states */
@@ -120,13 +130,18 @@
 	.sapMRbB .sapMRbBOut {
 		stroke: @sapUiFieldInvalidColor;
 		fill: @sapUiFieldInvalidBackground;
+		stroke-width: @sapUiFieldInvalidBorderWidth;
 	}
+}
+
+.sapMRbErr:not(.sapMRbDis) .sapMRbHoverable:hover {
+	filter: drop-shadow(0 0 0.125rem fade(@sapNegativeColor, 72)); // @sapContent_Negative_Shadow; same as above
 }
 
 .sapMRbWarn.sapMRbSel,
 .sapMRbWarn.sapMRbSel.sapMRbRo {
 	.sapMRbBInn {
-		fill:  @sapCriticalTextColor;
+		fill:  @sapUiFieldTextColor;
 		stroke: none;
 	}
 }
@@ -136,7 +151,12 @@
 	.sapMRbB .sapMRbBOut {
 		stroke: @sapUiFieldWarningColor;
 		fill: @sapUiFieldWarningBackground;
+		stroke-width: @sapUiFieldWarningBorderWidth;
 	}
+}
+
+.sapMRbWarn:not(.sapMRbDis) .sapMRbHoverable:hover {
+	filter: drop-shadow(0 0 0.125rem fade(@sapCriticalColor, 72)); // @sapContent_Critical_Shadow; same as above
 }
 
 .sapMRbSucc.sapMRbSel,
@@ -152,7 +172,13 @@
 	.sapMRbB .sapMRbBOut {
 		stroke: @sapUiFieldSuccessColor;
 		fill: @sapUiFieldSuccessBackground;
+		stroke-width: @sapUiFieldSuccessBorderWidth;
 	}
+}
+
+
+.sapMRbSucc:not(.sapMRbDis) .sapMRbHoverable:hover {
+	filter: drop-shadow(0 0 0.125rem fade(@sapPositiveColor, 72)); // @sapContent_Positive_Shadow; same as above
 }
 
 .sapMRbInfo.sapMRbSel,
@@ -168,5 +194,36 @@
 	.sapMRbB .sapMRbBOut {
 		stroke: @sapUiFieldInformationColor;
 		fill: @sapUiFieldInformationBackground;
+		stroke-width: @sapUiFieldInformationBorderWidth;
+	}
+}
+
+.sapMRbInfo:not(.sapMRbDis) .sapMRbHoverable:hover {
+	filter: drop-shadow(0 0 0.125rem fade(@sapInformativeColor, 72)); // @sapContent_Informative_Shadow; same as above
+}
+
+.sapMRbRo .sapMRbBOut {
+	stroke-dasharray:  4,2; // parameter needed for the type of the dashes
+}
+
+.sapMRb.sapMRbRo.sapMRbSel .sapMRbBInn {
+	fill: @sapUiContentNonInteractiveIconColor;
+}
+
+html[data-sap-ui-browser^="sf"] {
+	// fix for blur caused by drop-shadow in Safari
+	.sapMRbHoverable:hover {
+		z-index: 1;
+	}
+
+	// fix for circle width on zoom in Safari
+	.sapMRb.sapMRbErr .sapMRbBOut,
+	.sapMRb.sapMRbWarn .sapMRbBOut,
+	.sapMRb.sapMRbInfo .sapMRbBOut {
+		stroke-width: 2px;
+	}
+	// fix for circle width on zoom in Safari
+	.sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo) .sapMRbBOut {
+		stroke-width: 1px;
 	}
 }

@@ -124,7 +124,6 @@ sap.ui.define([
 
 
 		oRM.openStart("circle")
-			.attr("r", "22%")
 			.attr("stroke-width", "10")
 			.class("sapMRbBInn")
 			.openEnd().close("circle");

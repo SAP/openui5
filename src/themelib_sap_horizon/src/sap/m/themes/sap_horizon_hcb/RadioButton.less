@@ -110,6 +110,10 @@
 	fill: @sapUiContentIconColor; // contrast themes specific
 }
 
+.sapMRbB .sapMRbBInn {
+	r: 27.5%;
+}
+
 /* Value states */
 .sapMRbErr, .sapMRbWarn, .sapMRbInfo{
 	.sapMRbB .sapMRbBOut {
@@ -178,5 +182,17 @@
 	.sapMRbB .sapMRbBOut {
 		stroke: @sapUiFieldInformationColor;
 		fill: @sapUiFieldInformationBackground;
+	}
+}
+
+html[data-sap-ui-browser^="sf"] {
+	// fix for circle width on zoom in Safari
+	.sapMRb.sapMRbErr .sapMRbBOut,
+	.sapMRb.sapMRbWarn .sapMRbBOut {
+		stroke-width: 2px;
+	}
+	// fix for circle width on zoom in Safari
+	.sapMRb:not(.sapMRbErr):not(.sapMRbWarn) .sapMRbBOut {
+		stroke-width: 1px;
 	}
 }
