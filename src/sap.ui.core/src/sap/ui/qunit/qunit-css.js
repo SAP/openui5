@@ -5,8 +5,8 @@
 (function() {
 	"use strict";
 
-	/*global jQuery */
-
-	var sUrl = jQuery.sap.getModulePath("sap.ui.thirdparty.qunit", ".css");
-	jQuery.sap.includeStyleSheet(sUrl);
+	var oLink = document.createElement("link");
+	oLink.rel = "stylesheet";
+	oLink.href = sap.ui.require.toUrl("sap/ui/thirdparty/qunit.css");
+	document.head.appendChild(oLink);
 }());

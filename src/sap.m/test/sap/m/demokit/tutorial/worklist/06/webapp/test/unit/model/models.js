@@ -14,7 +14,7 @@ sap.ui.define([
 
 	function isPhoneTestCase(assert, bIsPhone) {
 		// Arrange
-		this.stub(sap.ui.Device, "system", { phone : bIsPhone });
+		this.stub(Device, "system", { phone : bIsPhone });
 
 		// System under test
 		this.oDeviceModel = models.createDeviceModel();

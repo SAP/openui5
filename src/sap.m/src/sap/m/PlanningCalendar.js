@@ -2464,7 +2464,7 @@ sap.ui.define([
 			}
 			this._bDateRangeChanged = undefined;
 		} else {
-			if (oOrigin && oOrigin instanceof sap.m.PlanningCalendarView) {
+			if (oOrigin instanceof PlanningCalendarView) {
 				this._bCheckView = true; // update view setting onbeforerendering
 			}
 			Control.prototype.invalidate.apply(this, arguments);

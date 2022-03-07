@@ -430,7 +430,7 @@ function(
             oItemDomRef = oItem.getDomRef(),
             mPosition = this.getParent().getAccessbilityPosition(oItem);
 
-        if ( oItem instanceof sap.m.FeedListItem ) {
+        if ( oItem instanceof FeedListItem ) {
             oItemDomRef.setAttribute("aria-posinset", mPosition.posInset);
             oItemDomRef.setAttribute("aria-setsize", mPosition.setSize);
         }

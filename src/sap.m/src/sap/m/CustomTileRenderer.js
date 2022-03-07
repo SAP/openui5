@@ -32,7 +32,7 @@ sap.ui.define(['./TileRenderer', 'sap/ui/core/Renderer'],
 		}
 
 		/* WAI ARIA if in TileContainer context */
-		if (oControl.getParent() instanceof sap.m.TileContainer) {
+		if (oControl.getParent() && oControl.getParent().isA("sap.m.TileContainer")) {
 			// @ui5-non-local-rendering
 			oTileContainer = oControl.getParent();
 			aVisibleTiles = oTileContainer._getVisibleTiles();

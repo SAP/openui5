@@ -37,7 +37,7 @@ sap.ui.define([
                 press: this._addPressed.bind(this),
                 enabled: false
             });
-            oAddButton.setLayoutData(new sap.ui.layout.GridData({
+            oAddButton.setLayoutData(new GridData({
                 indent: "XL7 L7 M7 S7",
                 span: "XL1 L1 M1 S1"
             }));

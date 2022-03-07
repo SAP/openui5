@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/library",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device"
 ],
-function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuery) {
+function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuery, Device) {
 	"use strict";
 	var core, oFactory, helpers;
 
@@ -67,13 +68,13 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 		},
 		setMobile: function () {
 			jQuery("html").removeClass("sapUiMedia-Std-Desktop").addClass("sapUiMedia-Std-Phone");
-			sap.ui.Device.system.desktop = false;
-			sap.ui.Device.system.phone = true;
+			Device.system.desktop = false;
+			Device.system.phone = true;
 		},
 		resetMobile: function () {
 			jQuery("html").addClass("sapUiMedia-Std-Desktop").removeClass("sapUiMedia-Std-Phone");
-			sap.ui.Device.system.desktop = true;
-			sap.ui.Device.system.phone = false;
+			Device.system.desktop = true;
+			Device.system.phone = false;
 		},
 		setSmallScreenSize: function () {
 			jQuery("#qunit-fixture").css("width", "50px");

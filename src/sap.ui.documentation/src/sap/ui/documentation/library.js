@@ -72,7 +72,7 @@ sap.ui.define([
 	};
 
 	thisLibrary._getAppInfo = function(fnCallback) {
-		var sUrl = sap.ui.resource("", "sap-ui-version.json");
+		var sUrl = sap.ui.require.toUrl("sap-ui-version.json");
 			sUrl = ResourcesUtil.getResourceOriginPath(sUrl);
 
 		jQuery.ajax({

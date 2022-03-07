@@ -30,7 +30,8 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Panel',
 	'sap/base/Log',
-	'sap/ui/core/InvisibleMessage'
+	'sap/ui/core/InvisibleMessage',
+	'sap/ui/thirdparty/jquery'
 ], function(
 		Control,
 		ManagedObjectObserver,
@@ -60,7 +61,8 @@ sap.ui.define([
 		Button,
 		Panel,
 		Log,
-		InvisibleMessage
+		InvisibleMessage,
+		jQuery
 		) {
 	"use strict";
 

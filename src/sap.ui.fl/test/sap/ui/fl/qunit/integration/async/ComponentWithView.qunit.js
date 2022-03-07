@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/Device"
 ], function(
 	jQuery,
 	XMLHelper,
@@ -27,7 +28,8 @@ sap.ui.define([
 	sinon,
 	Utils,
 	StorageUtils,
-	oCore
+	oCore,
+	Device
 ) {
 	"use strict";
 
@@ -131,7 +133,7 @@ sap.ui.define([
 
 		if (!CacheManager._isSupportedEnvironment()) {
 			QUnit.test("All further tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function (assert) {
-				assert.ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
+				assert.ok(true, "Environment: system [" + JSON.stringify(Device.system) + "],  browser: " + JSON.stringify(Device.browser));
 			});
 		} else {
 			QUnit.test("working cache", function(assert) {

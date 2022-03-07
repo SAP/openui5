@@ -24,7 +24,8 @@ sap.ui.define([
     "../TypeUtil",
     "../FilterBarDelegate",
     "sap/ui/model/Filter",
-    "sap/ui/mdc/odata/v4/ChartPropertyHelper"
+    "sap/ui/mdc/odata/v4/ChartPropertyHelper",
+    "sap/ui/thirdparty/jquery"
 ], function (
     V4ChartDelegate,
     loadModules,
@@ -47,7 +48,8 @@ sap.ui.define([
     V4TypeUtil,
     V4FilterBarDelegate,
     Filter,
-    PropertyHelper
+    PropertyHelper,
+    jQuery
 ) {
     "use strict";
     /**

@@ -814,7 +814,7 @@ function(
 			return;
 		}
 
-		if (!(this.isMobileDevice() && this instanceof sap.m.MultiInput)) {
+		if (!(this.isMobileDevice() && this.isA("sap.m.MultiInput"))) {
 			this._closeSuggestionPopup();
 		}
 
@@ -1030,7 +1030,7 @@ function(
 			return;
 		}
 
-		if (!(this.isMobileDevice() && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
+		if (!(this.isMobileDevice() && this.isA("sap.m.MultiInput") && this._isMultiLineMode)) {
 			this.setSelectionUpdatedFromList(false);
 			this._closeSuggestionPopup();
 		}

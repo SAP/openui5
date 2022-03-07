@@ -14,7 +14,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/core/Core'
 ],
-function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer, Log, ManagedObjectObserver, Core) {
+function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer, Log, ManagedObjectObserver, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -154,11 +154,10 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 			sText = this.getAggregation('customContent') ? this.getAggregation('customContent').getText() : this.getText(),
 			sTextDir = this.getTextDirection(),
 			oParent = this.getParent(),
-			bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
+			bPageRTL = oCore.getConfiguration().getRTL(),
 			iMaxLines,
 			bWrap = true,
 			oppositeDirectionMarker = '',
-			oCore = sap.ui.getCore(),
 			sResult;
 		this._bEmptyIndicatorMode = this._isEmptyIndicatorMode();
 
@@ -190,7 +189,7 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 		oAttrAggregation.setProperty('textDirection', sTextDir, true);
 
 		//if attribute is used inside responsive ObjectHeader or in ObjectListItem - only 1 line
-		if (oParent instanceof sap.m.ObjectListItem) {
+		if (oParent && oParent.isA("sap.m.ObjectListItem")) {
 			bWrap = false;
 			iMaxLines = ObjectAttributeRenderer.MAX_LINES.SINGLE_LINE;
 		}

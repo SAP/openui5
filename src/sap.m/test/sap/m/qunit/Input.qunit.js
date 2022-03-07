@@ -4401,7 +4401,7 @@ sap.ui.define([
 	QUnit.test("Focus handling - Value Help Only 'tap' on Phone", function(assert) {
 		//Arrange
 		var bIsPhone = Device.system.phone;
-		sap.ui.Device.system.phone = true;
+		Device.system.phone = true;
 		var oDialog = new Dialog({});
 		var oInputValueHelpOnly = new Input({
 			showValueHelp: true,
@@ -4429,7 +4429,7 @@ sap.ui.define([
 		// Cleanup
 		oDialog.destroy();
 		oInputValueHelpOnly.destroy();
-		sap.ui.Device.system.phone = bIsPhone;
+		Device.system.phone = bIsPhone;
 	});
 
 	QUnit.test("Focus handling - Leaving the input field should trigger suggestions item selection", function(assert) {

@@ -137,7 +137,7 @@ sap.ui.define([
 	// comments if needed again...
 	//	this._lastDeviceName = "";
 	//	this._handleMediaChange(
-	//		sap.ui.Device.media.getCurrentRange(Device.media.RANGESETS.SAP_STANDARD)
+	//		Device.media.getCurrentRange(Device.media.RANGESETS.SAP_STANDARD)
 	//	);
 
 		this._applySecondaryContentSize();

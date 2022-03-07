@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/f/library"
+	"sap/f/library",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	ItemNavigation,
 	KeyCodes,
 	Log,
-	library
+	library,
+	jQuery
 ) {
 	"use strict";
 

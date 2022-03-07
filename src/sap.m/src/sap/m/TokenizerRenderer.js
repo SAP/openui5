@@ -23,7 +23,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 	 */
 	TokenizerRenderer.render = function(oRm, oControl){
 		//write the HTML into the render manager
-		if (oControl.getParent() && (oControl.getParent() instanceof sap.m.MultiInput || oControl.getParent() instanceof sap.m.MultiComboBox)) {
+		if (oControl.getParent() && oControl.getParent().isA(["sap.m.MultiInput", "sap.m.MultiComboBox"])) {
 			oRm.openStart("div", oControl);
 		} else {
 			oRm.openStart("div", oControl);

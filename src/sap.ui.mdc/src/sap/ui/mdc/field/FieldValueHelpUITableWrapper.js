@@ -6,12 +6,14 @@ sap.ui.define([
 	'sap/ui/mdc/field/FieldValueHelpTableWrapperBase',
 	'sap/ui/model/ChangeReason',
 	'sap/base/strings/capitalize',
-	"sap/ui/table/library"
+	"sap/ui/table/library",
+	'sap/ui/thirdparty/jquery'
 	], function(
 			FieldValueHelpTableWrapperBase,
 			ChangeReason,
 			capitalize,
-			library
+			library,
+			jQuery
 	) {
 	"use strict";
 

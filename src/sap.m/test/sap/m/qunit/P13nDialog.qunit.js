@@ -50,12 +50,12 @@ sap.ui.define([
 			this.oP13nDialog = null;
 		},
 		afterEach: function () {
-			sap.ui.Device.system.phone = false;
+			Device.system.phone = false;
 			this.oP13nDialog.destroy();
 		}
 	});
 	QUnit.test("Constructor (Desktop)", function (assert) {
-		sap.ui.Device.system.phone = false;
+		Device.system.phone = false;
 		this.oP13nDialog = new P13nDialog();
 
 		// assertions
@@ -83,7 +83,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 	QUnit.test("Constructor (Phone)", function (assert) {
-		sap.ui.Device.system.phone = true;
+		Device.system.phone = true;
 		this.oP13nDialog = new P13nDialog();
 
 		// assertions
@@ -111,14 +111,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destroy (Desktop)", function (assert) {
-		sap.ui.Device.system.phone = false;
+		Device.system.phone = false;
 		this.oP13nDialog = new P13nDialog({
 			panels: [new P13nFilterPanel(), new P13nSortPanel()]
 		});
 		fTest01(assert, this.oP13nDialog);
 	});
 	QUnit.test("Destroy (Phone)", function (assert) {
-		sap.ui.Device.system.phone = true;
+		Device.system.phone = true;
 		this.oP13nDialog = new P13nDialog({
 			panels: [new P13nFilterPanel(), new P13nSortPanel()]
 		});
@@ -142,14 +142,14 @@ sap.ui.define([
 	};
 
 	QUnit.test("Show reset (Desktop)", function (assert) {
-		sap.ui.Device.system.phone = false;
+		Device.system.phone = false;
 		this.oP13nDialog = new P13nDialog({
 			showReset: true
 		});
 		fTest02(assert, this.oP13nDialog);
 	});
 	QUnit.test("Show reset (Phone)", function (assert) {
-		sap.ui.Device.system.phone = true;
+		Device.system.phone = true;
 		this.oP13nDialog = new P13nDialog({
 			showReset: true
 		});
@@ -166,7 +166,7 @@ sap.ui.define([
 
 	QUnit.module("Add one Panel", {
 		beforeEach: function () {
-			sap.ui.Device.system.phone = false;
+			Device.system.phone = false;
 			this.oP13nDialog = null;
 		},
 		afterEach: function () {
@@ -272,7 +272,7 @@ sap.ui.define([
 
 	QUnit.module("Add more than one Panel", {
 		beforeEach: function () {
-			sap.ui.Device.system.phone = false;
+			Device.system.phone = false;
 			this.oP13nDialog = null;
 		},
 		afterEach: function () {
@@ -441,7 +441,7 @@ sap.ui.define([
 
 	QUnit.module("Switch Panel", {
 		beforeEach: function () {
-			sap.ui.Device.system.phone = false;
+			Device.system.phone = false;
 			this.oP13nDialog = null;
 		},
 		afterEach: function () {
@@ -478,7 +478,7 @@ sap.ui.define([
 
 	QUnit.module("Binding of 'title'", {
 		beforeEach: function () {
-			sap.ui.Device.system.phone = false;
+			Device.system.phone = false;
 			this.oP13nDialog = null;
 		},
 		afterEach: function () {
@@ -522,7 +522,7 @@ sap.ui.define([
 
 	QUnit.module("Validation dialog", {
 		beforeEach: function () {
-			sap.ui.Device.system.phone = false;
+			Device.system.phone = false;
 			this.oP13nDialog = new P13nDialog({
 				panels: [new P13nColumnsPanel(), new P13nGroupPanel()]
 			});
@@ -640,7 +640,7 @@ sap.ui.define([
 
 	QUnit.module("Stable IDs (Desktop)", {
 		beforeEach: function () {
-			sap.ui.Device.system.phone = false;
+			Device.system.phone = false;
 			this.oP13nDialog = new P13nDialog("PD1", {
 				panels: [this.oPanel1 = new P13nFilterPanel("P1", {}), this.oPanel2 = new P13nSortPanel("P2", {})]
 			});
@@ -649,7 +649,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oP13nDialog.destroy();
-			sap.ui.Device.system.phone = false;
+			Device.system.phone = false;
 		}
 	});
 	QUnit.test("test", function (assert) {
@@ -718,7 +718,7 @@ sap.ui.define([
 
 	QUnit.module("Stable IDs (Phone)", {
 		beforeEach: function () {
-			sap.ui.Device.system.phone = true;
+			Device.system.phone = true;
 			this.oP13nDialog = new P13nDialog("PD1", {
 				panels: [this.oPanel1 = new P13nFilterPanel("P1", {}), this.oPanel2 = new P13nSortPanel("P2", {})]
 			});
@@ -727,7 +727,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oP13nDialog.destroy();
-			sap.ui.Device.system.phone = false;
+			Device.system.phone = false;
 		}
 	});
 	QUnit.test("test", function (assert) {
@@ -808,7 +808,7 @@ sap.ui.define([
 
 	QUnit.module("Desktop: Dialog with initially one panel", {
 		beforeEach: function () {
-			sap.ui.Device.system.phone = false;
+			Device.system.phone = false;
 			this.oP13nDialog = new P13nDialog({
 				panels: [
 					new P13nColumnsPanel({
@@ -881,7 +881,7 @@ sap.ui.define([
 
 	QUnit.module("Phone: Dialog with initially one panel", {
 		beforeEach: function () {
-			sap.ui.Device.system.phone = true;
+			Device.system.phone = true;
 			this.oP13nDialog = new P13nDialog({
 				panels: [
 					new P13nColumnsPanel({
@@ -901,7 +901,7 @@ sap.ui.define([
 			});
 		},
 		afterEach: function () {
-			sap.ui.Device.system.phone = false;
+			Device.system.phone = false;
 			this.oP13nDialog.destroy();
 		}
 	});

@@ -54,7 +54,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/library", "sap/m/Hyphenation
 			oRm.style("text-align", sTextAlign);
 		}
 
-		if (oTitle.getParent() instanceof sap.m.Toolbar) {
+		if (oTitle.getParent() && oTitle.getParent().isA("sap.m.Toolbar")) {
 			oRm.class("sapMTitleTB");
 		}
 

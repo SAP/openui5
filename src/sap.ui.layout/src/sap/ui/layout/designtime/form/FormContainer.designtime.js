@@ -5,9 +5,11 @@
 // Provides the Design Time Metadata for the sap.ui.layout.form.FormContainer control
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/layout/form/Form'
+	"sap/ui/core/Element",
+	"sap/ui/layout/form/Form"
 ], function (
 	jQuery,
+	UI5Element,
 	Form
 ) {
 	"use strict";
@@ -88,7 +90,7 @@ sap.ui.define([
 						return oDomRef;
 					}
 					if (oFormContainer.getFormElements().length === 0 || _allFormElementsInvisible(oFormContainer)) {
-						if (oHeader instanceof sap.ui.core.Element) {
+						if (oHeader instanceof UI5Element) {
 							return oHeader.getDomRef();
 						}
 						if (typeof oHeader === "string") {

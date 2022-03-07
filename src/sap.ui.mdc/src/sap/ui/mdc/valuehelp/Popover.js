@@ -5,11 +5,13 @@
 sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/Container',
 	'sap/ui/mdc/util/loadModules',
-	"sap/ui/dom/units/Rem"
+	"sap/ui/dom/units/Rem",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Container,
 	loadModules,
-	Rem
+	Rem,
+	jQuery
 ) {
 	"use strict";
 

@@ -87,7 +87,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tile.prototype.onAfterRendering = function(){
-		if (this._rendered && !this._bIsDragged && this.getParent() instanceof sap.m.TileContainer) {
+		if (this._rendered && !this._bIsDragged && this.getParent() && this.getParent().isA("sap.m.TileContainer")) {
 			this.setPos(this._posX,this._posY);
 		}
 		this._rendered = true;
@@ -247,7 +247,7 @@ sap.ui.define([
 		if (!bVisible) {
 			this._rendered = false;
 		}
-		if (this.getParent() && this.getParent() instanceof sap.m.TileContainer) {
+		if (this.getParent() && this.getParent().isA("sap.m.TileContainer")) {
 			this.getParent().invalidate(); // Force rerendering of TileContainer, so the tiles can be rearanged
 		}
 		return this;

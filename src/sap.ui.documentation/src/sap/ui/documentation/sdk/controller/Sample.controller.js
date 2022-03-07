@@ -6,10 +6,12 @@
 sap.ui.define([
 	"sap/ui/documentation/sdk/controller/SampleBaseController",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/resources/ResourceModel",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 	"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
+	"sap/m/BusyDialog",
 	"sap/m/Text",
 	"sap/ui/core/HTML",
 	"sap/m/library",
@@ -22,10 +24,12 @@ sap.ui.define([
 ], function(
 	SampleBaseController,
 	JSONModel,
+	ResourceModel,
 	Component,
 	ComponentContainer,
 	ControlsInfo,
 	ToggleFullScreenHandler,
+	BusyDialog,
 	Text,
 	HTML,
 	mobileLibrary,
@@ -199,7 +203,7 @@ sap.ui.define([
 			handleSettings: function () {
 
 				if (!this._oMessageBundle) {
-					this._oMessageBundle = new sap.ui.model.resource.ResourceModel({
+					this._oMessageBundle = new ResourceModel({
 						bundleName: "sap.ui.documentation.messagebundle"
 					});
 				}
@@ -269,7 +273,7 @@ sap.ui.define([
 
 				// Lazy loading of busy dialog
 				if (!this._oBusyDialog) {
-					this._oBusyDialog = new sap.m.BusyDialog();
+					this._oBusyDialog = new BusyDialog();
 					// oView.addDependent(this._oBusyDialog);
 					this._handleBusyDialog();
 				} else {

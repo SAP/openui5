@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"./library",
-	"sap/ui/core/library"
-], function(library, coreLibrary) {
+	"sap/ui/core/library",
+	"sap/ui/core/Core"
+], function(library, coreLibrary, oCore) {
 	"use strict";
 	//shortcut for sap.m.GenericTagDesign
 	var GenericTagDesign = library.GenericTagDesign,
@@ -15,7 +16,6 @@ sap.ui.define([
 
 		//shortcut for sap.ui.core.ValueState
 		ValueState = coreLibrary.ValueState,
-		oCore = sap.ui.getCore(),
 		GenericTagRenderer = {
 			apiVersion: 2
 		};

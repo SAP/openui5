@@ -40,7 +40,7 @@ sap.ui.define(["sap/ui/support/library"],
 					var sElementId = oElement.getId(),
 						sElementName = oElement.getMetadata().getElementName();
 
-					if (oElement.getParent() instanceof sap.m.OverflowToolbar) {
+					if (oElement.getParent() && oElement.getParent().isA("sap.m.OverflowToolbar")) {
 						oIssueManager.addIssue({
 							severity: Severity.Medium,
 							details: "Breadcrumbs '" + sElementName + "' (" + sElementId + ") is placed inside an OverflowToolbar.",

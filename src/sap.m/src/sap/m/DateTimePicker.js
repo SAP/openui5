@@ -55,7 +55,7 @@ sap.ui.define([
 	// shortcut for sap.m.PlacementType and sap.m.ButtonType
 	var PlacementType = library.PlacementType,
 		ButtonType = library.ButtonType,
-		// From sap.ui.Device.media.RANGESETS.SAP_STANDARD - "Phone": For screens smaller than 600 pixels.
+		// From Device.media.RANGESETS.SAP_STANDARD - "Phone": For screens smaller than 600 pixels.
 		STANDART_PHONE_RANGESET = "Phone",
 		CalendarType = coreLibrary.CalendarType;
 

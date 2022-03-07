@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/enum/PersistenceMode",
 	"sap/ui/mdc/p13n/Engine",
-	'sap/ui/mdc/condition/FilterConverter'
+	'sap/ui/mdc/condition/FilterConverter',
+	"sap/ui/thirdparty/jquery"
 	], function(
 		FieldValueHelpTableWrapperBase,
 		loadModules,
@@ -17,7 +18,8 @@ sap.ui.define([
 		library,
 		PersistenceMode,
 		Engine,
-		FilterConverter
+		FilterConverter,
+		jQuery
 	) {
 	"use strict";
 

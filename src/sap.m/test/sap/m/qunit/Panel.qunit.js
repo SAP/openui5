@@ -784,7 +784,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Expandable panel with headerText and header toolbar", function(assert) {
-		this.stub(sap.ui.Device, "browser").value({ msie: false });
+		this.stub(Device, "browser").value({ msie: false });
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAccessibleRole(PanelAccessibleRole.Region);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
@@ -797,7 +797,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Expandable panel with headerText and reinitialized header toolbar", function(assert) {
-		this.stub(sap.ui.Device, "browser").value({ msie: false });
+		this.stub(Device, "browser").value({ msie: false });
 		var sHeaderToolbarTitleId, sNewHeaderToolbarTitleId;
 
 		this.oPanel.setExpandable(true);

@@ -954,18 +954,18 @@ sap.ui.define([
 			};
 		},
 		prepareSystem: function () {
-			sap.ui.Device.system.desktop = false;
-			sap.ui.Device.system.tablet = true;
-			sap.ui.Device.system.phone = false;
+			Device.system.desktop = false;
+			Device.system.tablet = true;
+			Device.system.phone = false;
 			jQuery("html").removeClass("sap-desktop");
 			jQuery("html").removeClass("sapUiMedia-Std-Desktop");
 			jQuery("html").addClass("sap-tablet");
 			jQuery("html").addClass("sapUiMedia-Std-Tablet");
 		},
 		restoreSystemValues: function () {
-			sap.ui.Device.system.desktop = this.oOriginalSysInfo.desktop;
-			sap.ui.Device.system.tablet = this.oOriginalSysInfo.tablet;
-			sap.ui.Device.system.phone = this.oOriginalSysInfo.phone;
+			Device.system.desktop = this.oOriginalSysInfo.desktop;
+			Device.system.tablet = this.oOriginalSysInfo.tablet;
+			Device.system.phone = this.oOriginalSysInfo.phone;
 			jQuery("html").removeClass("sap-tablet");
 			jQuery("html").removeClass("sapUiMedia-Std-Tablet");
 			jQuery("html").addClass("sap-desktop");

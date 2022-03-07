@@ -5,9 +5,10 @@
 sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/Device",
+		"sap/ui/VersionInfo",
 		"sap/ui/model/json/JSONModel",
 		"sap/base/Log"
-	], function (BaseController, Device, JSONModel, Log) {
+	], function (BaseController, Device, VersionInfo, JSONModel, Log) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Welcome", {
@@ -19,7 +20,7 @@ sap.ui.define([
 			onInit: function () {
 				this.getRouter().getRoute("welcome").attachPatternMatched(this._onMatched, this);
 
-				sap.ui.getVersionInfo({async: true}).then(function (oVersionInfo) {
+				VersionInfo.load().then(function (oVersionInfo) {
 					var oModel = new JSONModel({
 						isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
 					});
