@@ -258,6 +258,8 @@ sap.ui.define([
 					oVisualization.settings.change = fnChange;
 				}
 			}
+		} else if (oVisualization.type === "TextArea") {
+			oVisualization.type = "sap/m/TextArea";
 		}
 		this._visualization = oVisualization;
 		this.attachAfterInit(this._afterInit);

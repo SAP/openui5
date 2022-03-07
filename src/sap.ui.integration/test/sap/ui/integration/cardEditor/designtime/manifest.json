@@ -147,6 +147,9 @@
 				"string4inSubtab": {
 					"value": "abc"
 				},
+				"stringWithTextArea": {
+					"value": ""
+				},
 				"stringWithStaticList": {
 					"value": "key1"
 				},

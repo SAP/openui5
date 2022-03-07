@@ -28,6 +28,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"cols": 1,
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
+					"stringWithTextArea": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithTextArea/value",
+						"type": "string",
+						"label": "Use TextArea for a string field",
+						"visualization": {
+							"type": "TextArea",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"width": "100%",
+								"editable": "{config/editable}",
+								"placeholder": "{currentSettings>placeholder}",
+								"rows": 7
+							}
+						}
+					},
 					"stringLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",
 						"type": "string",

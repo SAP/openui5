@@ -39,6 +39,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "String",
 						"type": "string"
 					},
+					"stringWithTextArea": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithTextArea/value",
+						"type": "string",
+						"label": "Use TextArea for a string field",
+						"visualization": {
+							"type": "TextArea",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"width": "100%",
+								"editable": "{config/editable}",
+								"placeholder": "{currentSettings>placeholder}",
+								"rows": 7
+							}
+						}
+					},
 					"object": {
 						"manifestpath": "/sap.card/configuration/parameters/object/value",
 						"type": "object",

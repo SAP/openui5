@@ -1074,6 +1074,43 @@
 						</td>
 					</tr>
 					<tr>
+						<td>Showing a TextArea for a string field<br>Please define "TextArea" as type in your
+							designtime.js file.</td>
+						<td data-item="stringWithTextArea" data-sample>
+							Loading...
+						</td>
+						<td>
+							<pre class="lang-js" data-sample>
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
+	"use strict";
+	return function () {
+		return new Designtime({
+			"form": {
+				"items": {
+					"string": {
+						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"type": "string",
+						"visualization": {<mark>
+							"type": "TextArea",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"width": "100%",
+								"editable": "{config/editable}",
+								"placeholder": "{currentSettings>placeholder}",
+								"rows": 7
+							}</mark>
+						}
+					}
+				}
+			}
+		});
+	};
+});</pre>
+						</td>
+					</tr>
+					<tr>
 						<td>Showing a Slider for an integer field<br>Please define "Slider" as type in your
 							designtime.js file.</td>
 
