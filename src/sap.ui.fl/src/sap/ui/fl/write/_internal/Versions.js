@@ -90,7 +90,7 @@ sap.ui.define([
 
 					// add draft
 					if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
-						aVersions.splice(0, 0, {version: sap.ui.fl.Versions.Draft, type: "draft"});
+						aVersions.splice(0, 0, {version: sap.ui.fl.Versions.Draft, type: "draft", filenames: []});
 					}
 
 					// remove draft

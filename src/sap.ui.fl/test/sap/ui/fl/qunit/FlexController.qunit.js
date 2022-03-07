@@ -147,15 +147,24 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("when saveAll is called without versioning", function(assert) {
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
+			return this.oFlexController.saveAll(oComponent, undefined, false)
+				.then(function() {
+					assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, undefined, undefined), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
+				});
+		});
+
+
 		QUnit.test("when saveAll is called for a draft without filenames", function(assert) {
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
 				persistedVersion: sap.ui.fl.Versions.Draft,
-				versions: [{version: sap.ui.fl.Versions.Draft}]
+				versions: [{version: sap.ui.fl.Versions.Draft, filenames: []}]
 			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, undefined, true)
 				.then(function() {
-					assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, sap.ui.fl.Versions.Draft, undefined), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
+					assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, sap.ui.fl.Versions.Draft, []), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
 				});
 		});
 
