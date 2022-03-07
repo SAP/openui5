@@ -274,10 +274,11 @@ sap.ui.define([
 			return mPayload;
 		}, {});
 
+		var mPropertyBag = { appComponent: FlUtils.getAppComponentForControl(oAffectedElement) };
 		var oOverlay = Core.byId(this.getOverlayId());
 		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
 		var oVisualizationUtil = getVisualizationCategory(mChangeInformation.commandName);
-		var oDescription = oVisualizationUtil && oVisualizationUtil.getDescription(mPayload, sElementLabel);
+		var oDescription = oVisualizationUtil && oVisualizationUtil.getDescription(mPayload, sElementLabel, mPropertyBag);
 		var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 		sElementLabel = sElementLabel && "'" + sElementLabel + "'";
 		var sShortenedElementLabel = ChangeVisualizationUtils.shortenString(sElementLabel);

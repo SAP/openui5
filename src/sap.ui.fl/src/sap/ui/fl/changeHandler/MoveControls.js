@@ -414,9 +414,14 @@ function(
 
 	MoveControls.getChangeVisualizationInfo = function(oChange) {
 		var oChangeContent = oChange.getContent();
+		var oRevertData = oChange.getRevertData()[0];
 		return {
 			affectedControls: [oChangeContent.movedElements[0].selector],
-			dependentControls: [oChangeContent.source.selector]
+			dependentControls: [oChangeContent.source.selector],
+			payload: {
+				sourceParentContainer: oRevertData.sourceParent,
+				targetParentContainer: oChangeContent.target.selector
+			}
 		};
 	};
 	return MoveControls;
