@@ -94,18 +94,13 @@ sap.ui.define([
 						var fnDelegateAddCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().addCondition : Delegate.addCondition);
 						if (fnDelegateAddCondition) {
 							return fnDelegateAddCondition(oChangeContent.name, oControl, mPropertyBag)
-							.then(function() {
-								if (oFilterControl && oFilterControl.addCondition) {
-									return oFilterControl.addCondition(oChangeContent.name, oChangeContent.condition);
-								}
-							})
 							.catch(function(oEx) {
 								Log.error("Error during Delegate.addCondition call: " + oEx);
-								if (oFilterControl && oFilterControl.addCondition) {
-									return oFilterControl.addCondition(oChangeContent.name, oChangeContent.condition);
-								}
 							});
-						} else if (oFilterControl && oFilterControl.addCondition) {
+						}
+					})
+					.finally(function() {
+						if (oFilterControl && oFilterControl.addCondition) {
 							return oFilterControl.addCondition(oChangeContent.name, oChangeContent.condition);
 						}
 					});
@@ -166,18 +161,13 @@ sap.ui.define([
 								var fnDelegateRemoveCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().removeCondition : Delegate.removeCondition);
 								if (fnDelegateRemoveCondition) {
 									return fnDelegateRemoveCondition(oChangeContent.name, oControl, mPropertyBag)
-									.then(function() {
-										if (oFilterControl && oFilterControl.removeCondition) {
-											return oFilterControl.removeCondition(oChangeContent.name, oChangeContent.condition);
-										}
-									})
 									.catch(function(oEx) {
 										Log.error("Error during Delegate.removeCondition call: " + oEx);
-										if (oFilterControl && oFilterControl.removeCondition) {
-											return oFilterControl.removeCondition(oChangeContent.name, oChangeContent.condition);
-										}
 									});
-								} else if (oFilterControl && oFilterControl.removeCondition) {
+								}
+							})
+							.finally(function() {
+								if (oFilterControl && oFilterControl.removeCondition) {
 									return oFilterControl.removeCondition(oChangeContent.name, oChangeContent.condition);
 								}
 							});
