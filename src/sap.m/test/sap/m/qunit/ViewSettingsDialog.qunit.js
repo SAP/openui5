@@ -591,20 +591,15 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "The selected preset filter item should be null");
 	});
 
-	QUnit.test("setSelectedSortItem via string key throws error if the key is wrong, but does not prevent dialog open", function (assert) {
-		var oErrorLogSpy = this.spy(Log, "error"),
-			sErrorMessage,
-			sNonExistentItemKey = "non_existent_key";
+	QUnit.test("setSelectedSortItem with wrong id or key, does not prevent dialog open", function (assert) {
+		var sNonExistentItemKey = "non_existent_key_or_id";
 
 		//act
 		this.oVSD.setSelectedSortItem(sNonExistentItemKey);
-		//assert
-		assert.strictEqual(oErrorLogSpy.callCount, 1, "Item could not be set");
-		sErrorMessage = oErrorLogSpy.args[0][0];
-		assert.ok(sErrorMessage.indexOf(sNonExistentItemKey) > -1, "Error message shows the item key which is problematic");
 
 		//act
 		this.oVSD.open();
+
 		//assert
 		assert.ok(this.oVSD._getDialog().isOpen(), "Dialog is still functional");
 	});
@@ -616,6 +611,65 @@ sap.ui.define([
 		this.oVSD.setSelectedSortItem(undefined);
 		//assert
 		assert.strictEqual(oErrorLogSpy.callCount, 0, "setSelectedSortItem does not throw an error.");
+	});
+
+	QUnit.test("setSelectedSortItem, setSelectedGroupItem by item id", function(assert) {
+		// arrange
+		var oVSD = new ViewSettingsDialog({
+				selectedSortItem: "sortItem2",
+				selectedGroupItem: "groupItem1",
+				sortItems: [
+					new ViewSettingsItem("sortItem1", { text: "1", key: "s1" }),
+					new ViewSettingsItem("sortItem2", { text: "2", key: "s2" })
+				],
+				groupItems: [
+					new ViewSettingsItem("groupItem1", { text: "1", key: "g1" }),
+					new ViewSettingsItem("groupItem2", { text: "2", key: "g2" })
+				]
+			});
+
+		// assert
+		assert.strictEqual(oVSD.getSortItems()[1].getSelected(), true, "sort item selected via its id");
+		assert.strictEqual(oVSD.getGroupItems()[0].getSelected(), true, "group item selected via its id");
+
+		// clean
+		oVSD.destroy();
+	});
+
+	QUnit.test("selectedSortItem, selectedGroupItem when set before the items", function(assert) {
+		var done = assert.async();
+
+		// arrange
+		var oVSD = new ViewSettingsDialog({
+			selectedSortItem: "s2",
+			selectedGroupItem: "g2"
+		});
+
+		// act
+		oVSD.addSortItem(new ViewSettingsItem("id1", { text: "1", key: "s1" }));
+		oVSD.addSortItem(new ViewSettingsItem("id2", { text: "2", key: "s2" }));
+		oVSD.addGroupItem(new ViewSettingsItem("id3", { text: "1", key: "g1" }));
+		oVSD.addGroupItem(new ViewSettingsItem("id4", { text: "2", key: "g2" }));
+
+		// assert
+		assert.strictEqual(oVSD.getSortItems()[1].getSelected(), true, "the right sort item is selected");
+		assert.strictEqual(oVSD.getGroupItems()[1].getSelected(), true, "the right group item is selected");
+
+		oVSD.open();
+		oVSD.attachConfirm(function(oEvent) {
+			// assert
+			assert.strictEqual(oEvent.getParameter("sortItem").getId(), "id2", "confirm event has the correct sort item");
+			assert.strictEqual(oEvent.getParameter("groupItem").getId(), "id4", "confirm event has the correct group item");
+			assert.strictEqual(oVSD.getSelectedSortItem(), "id2", "confirm event has the correct sort item");
+			assert.strictEqual(oVSD.getSelectedGroupItem(), "id4", "confirm event has the correct group item");
+
+			// clean
+			oVSD.destroy();
+			done();
+		});
+
+		// act
+		oVSD._dialog.getBeginButton().firePress();
 	});
 
 	QUnit.test("setFilter count doe not throw an error when filter item type is sap.m.ViewSettingsCustomItem", function (assert) {

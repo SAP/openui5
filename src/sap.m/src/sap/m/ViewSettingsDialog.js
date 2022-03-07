@@ -5,6 +5,7 @@
 // Provides control sap.m.ViewSettingsDialog.
 sap.ui.define([
 	'./library',
+	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'./Toolbar',
@@ -35,6 +36,7 @@ sap.ui.define([
 ],
 function(
 	library,
+	Core,
 	Control,
 	IconPool,
 	Toolbar,
@@ -335,7 +337,7 @@ function(
 	ViewSettingsDialog.prototype.init = function() {
 		var sId = this.getId();
 
-		this._rb                            = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._rb                            = Core.getLibraryResourceBundle("sap.m");
 		this._sDialogWidth                  = "350px";
 		this._sDialogHeight                 = "434px";
 
@@ -412,8 +414,8 @@ function(
 		// sap.ui.core.Popup removes its content on close()/destroy() automatically from the static UIArea,
 		// but only if it added it there itself. As we did that, we have to remove it also on our own
 		if ( this._bAppendedToUIArea && this._dialog ) {
-			var oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			var oStatic = Core.getStaticAreaRef();
+			oStatic = Core.getUIArea(oStatic);
 			oStatic.removeContent(this._dialog, true);
 		}
 
@@ -1126,9 +1128,14 @@ function(
 	ViewSettingsDialog.prototype.addSortItem = function(oItem) {
 		this.addAggregation("sortItems", oItem);
 
-		if (oItem.getSelected()) {
-			this.setSelectedSortItem(oItem);
+		if (this.getSelectedSortItem() === oItem.getId() || this.getSelectedSortItem() === oItem.getKey()) {
+			oItem.setSelected(true);
 		}
+
+		if (oItem.getSelected()) {
+			this.setAssociation("selectedSortItem", oItem, true);
+		}
+
 		return this;
 	};
 
@@ -1143,9 +1150,14 @@ function(
 	ViewSettingsDialog.prototype.addGroupItem = function(oItem) {
 		this.addAggregation("groupItems", oItem);
 
-		if (oItem.getSelected()) {
-			this.setSelectedGroupItem(oItem);
+		if (this.getSelectedGroupItem() === oItem.getId() || this.getSelectedGroupItem() === oItem.getKey()) {
+			oItem.setSelected(true);
 		}
+
+		if (oItem.getSelected()) {
+			this.setAssociation("selectedGroupItem", oItem, true);
+		}
+
 		return this;
 	};
 
@@ -1167,11 +1179,12 @@ function(
 	};
 
 	/**
-	 * Sets the selected sort item (either by key or by item).
+	 * Sets the selected sort item (either by key, item id or item instance).
 	 *
 	 * @overwrite
 	 * @public
-	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The selected item or the item's key string
+	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The selected item, the item's string key
+	 * or the item id
 	 * @return {this} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.setSelectedSortItem = function(vItemOrKey) {
@@ -1179,9 +1192,12 @@ function(
 			i = 0,
 			oItem = findViewSettingsItemByKey(
 				vItemOrKey,
-				aItems,
-				"Could not set selected sort item. Item is not found: '" + vItemOrKey + "'"
+				aItems
 			);
+
+		if (!oItem && (typeof vItemOrKey === "string")) {
+			oItem = Core.byId(vItemOrKey);
+		}
 
 		//change selected item only if it is found among the sort items or if there is no selected item
 		if (!oItem || validateViewSettingsItem(oItem)) {
@@ -1200,18 +1216,20 @@ function(
 			if (this._getDialog().isOpen()) {
 				this._updateListSelection(this._sortList, oItem);
 			}
-			this.setAssociation("selectedSortItem", oItem, true);
 		}
+
+		this.setAssociation("selectedSortItem", oItem || vItemOrKey, true);
 
 		return this;
 	};
 
 	/**
-	 * Sets the selected group item (either by key or by item).
+	 * Sets the selected group item (either by key, item id or item instance).
 	 *
 	 * @overwrite
 	 * @public
-	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The selected item or the item's key string
+	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The selected item, the item's string key
+	 * or the item id
 	 * @return {this} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.setSelectedGroupItem = function(vItemOrKey) {
@@ -1219,15 +1237,21 @@ function(
 			i = 0,
 			oItem = findViewSettingsItemByKey(
 				vItemOrKey,
-				aItems,
-				"Could not set selected group item. Item is not found: '" + vItemOrKey + "'"
+				aItems
 			);
+
+		if (!oItem && (typeof vItemOrKey === "string")) {
+			oItem = Core.byId(vItemOrKey);
+		}
 
 		// if no Item is found and the key is empty set the default "None" item as selected
 		// BCP: 1780536754
 		if (!oItem && !vItemOrKey) {
 			oItem = this._oGroupingNoneItem;
+			this.setAssociation("selectedGroupItem", oItem, true);
+			return this;
 		}
+
 		//change selected item only if it is found among the group items
 		if (validateViewSettingsItem(oItem)) {
 			// set selected = true for this item & selected = false for all others items
@@ -1241,8 +1265,9 @@ function(
 			if (this._getDialog().isOpen()) {
 				this._updateListSelection(this._groupList, oItem);
 			}
-			this.setAssociation("selectedGroupItem", oItem, true);
 		}
+
+		this.setAssociation("selectedGroupItem", oItem || vItemOrKey, true);
 
 		return this;
 	};
@@ -1297,8 +1322,8 @@ function(
 		// add to static UI area manually because we don't have a renderer
 
 		if (!this.getParent() && !this._bAppendedToUIArea) {
-			var oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			var oStatic = Core.getStaticAreaRef();
+			oStatic = Core.getUIArea(oStatic);
 			// add as content the Dialog to the Static area and not the ViewSettingsDialog
 			// once the Static area is invalidated, the Dialog will be rendered and not the ViewSettingsDialog which has no renderer
 			// and uses the renderer of the Dialog
@@ -1316,11 +1341,11 @@ function(
 
 		// store the current dialog state to be able to reset it on cancel
 		this._oPreviousState = {
-			sortItem : sap.ui.getCore().byId(this.getSelectedSortItem()),
+			sortItem : Core.byId(this._getSelectedSortItem()),
 			sortDescending : this.getSortDescending(),
-			groupItem : sap.ui.getCore().byId(this.getSelectedGroupItem()),
+			groupItem : Core.byId(this._getSelectedGroupItem()),
 			groupDescending : this.getGroupDescending(),
-			presetFilterItem : sap.ui.getCore().byId(this.getSelectedPresetFilterItem()),
+			presetFilterItem : Core.byId(this.getSelectedPresetFilterItem()),
 			filterKeys : this.getSelectedFilterKeys(),
 			filterCompoundKeys: this.getSelectedFilterCompoundKeys(),
 			navPage : this._getNavContainer().getCurrentPage(),
@@ -1331,9 +1356,9 @@ function(
 		// store initial dialog state in order to be able to reset it on reset button click
 		if (!this._oInitialState) {
 			this._oInitialState = {
-				sortItem: this.getSelectedSortItem(),
+				sortItem: this._getSelectedSortItem(),
 				sortDescending: this.getSortDescending(),
-				groupItem: this.getSelectedGroupItem(),
+				groupItem: this._getSelectedGroupItem(),
 				groupDescending: this.getGroupDescending(),
 				presetFilterItem: this.getSelectedPresetFilterItem()
 			};
@@ -1423,7 +1448,7 @@ function(
 
 		if (oPresetFilterItem) {
 			// preset filter: add "filter name"
-			sFilterString = this._rb.getText("VIEWSETTINGS_FILTERTEXT").concat(" " + sap.ui.getCore().byId(oPresetFilterItem).getText());
+			sFilterString = this._rb.getText("VIEWSETTINGS_FILTERTEXT").concat(" " + Core.byId(oPresetFilterItem).getText());
 		} else { // standard & custom filters
 			for (; i < aFilterItems.length; i++) {
 				if (aFilterItems[i] instanceof sap.m.ViewSettingsCustomItem) {
@@ -1744,12 +1769,12 @@ function(
 				}
 
 				// check if the sortItem or sortDescending are different than initial
-				if (this._oInitialState.sortItem !== this.getSelectedSortItem() || this._oInitialState.sortDescending !== this.getSortDescending()) {
+				if (this._oInitialState.sortItem !== this._getSelectedSortItem() || this._oInitialState.sortDescending !== this.getSortDescending()) {
 					bChanges = true;
 				}
 
 				// check if the groupItem or groupDescending are different than initial
-				if ((this._oInitialState.groupItem && this._oInitialState.groupItem !== this.getSelectedGroupItem()) || this._oInitialState.groupDescending !== this.getGroupDescending()) {
+				if ((this._oInitialState.groupItem && this._oInitialState.groupItem !== this._getSelectedGroupItem()) || this._oInitialState.groupDescending !== this.getGroupDescending()) {
 					bChanges = true;
 				}
 
@@ -1779,12 +1804,12 @@ function(
 		this.clearFilters();
 
 		// clear sortItem/sortDescending
-		this.setSelectedSortItem(sap.ui.getCore().byId(this._oInitialState.sortItem));
+		this.setSelectedSortItem(Core.byId(this._oInitialState.sortItem));
 		this.setSortDescending(this._oInitialState.sortDescending);
 		this._updateListSelection(this._sortOrderList, this._oInitialState.sortDescending);
 
 		// clear groupItem/groupDescending
-		this._oInitialState.groupItem !== undefined && this.setSelectedGroupItem(sap.ui.getCore().byId(this._oInitialState.groupItem));
+		this._oInitialState.groupItem !== undefined && this.setSelectedGroupItem(Core.byId(this._oInitialState.groupItem));
 		this.setGroupDescending(this._oInitialState.groupDescending);
 		this._updateListSelection(this._groupOrderList, this._oInitialState.groupDescending);
 
@@ -2284,7 +2309,7 @@ function(
 			}, this);
 
 			if (!this._oGroupingNoneItem || this._oGroupingNoneItem.bIsDestroyed) {
-				bHasSelections = !!this.getSelectedGroupItem();
+				bHasSelections = !!this._getSelectedGroupItem();
 				this._oGroupingNoneItem = new ViewSettingsItem({
 					text: this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
 					selected: !bHasSelections,
@@ -2516,7 +2541,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype._getTabButton = function (oCustomTab, sButtonIdPrefix) {
 		var sButtonId = sButtonIdPrefix + oCustomTab.getId(),
-			oButton = sap.ui.getCore().byId(sButtonId);
+			oButton = Core.byId(sButtonId);
 
 		if (oButton) {
 			return oButton;
@@ -2915,7 +2940,7 @@ function(
 				}
 				// update status (something could have been changed on a detail filter
 				// page or by API
-				this._updateListSelection(this._presetFilterList, sap.ui.getCore()
+				this._updateListSelection(this._presetFilterList, Core
 					.byId(this.getSelectedPresetFilterItem()));
 				this._updateFilterCounters();
 				for (; i < this._filterContent.length; i++) {
@@ -3156,11 +3181,11 @@ function(
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._updateListSelections = function() {
-		this._updateListSelection(this._sortList, sap.ui.getCore().byId(this.getSelectedSortItem()));
+		this._updateListSelection(this._sortList, Core.byId(this._getSelectedSortItem()));
 		this._updateListSelection(this._sortOrderList, this.getSortDescending());
-		this._updateListSelection(this._groupList, sap.ui.getCore().byId(this.getSelectedGroupItem()));
+		this._updateListSelection(this._groupList, Core.byId(this._getSelectedGroupItem()));
 		this._updateListSelection(this._groupOrderList, this.getGroupDescending());
-		this._updateListSelection(this._presetFilterList, sap.ui.getCore().byId(this.getSelectedPresetFilterItem()));
+		this._updateListSelection(this._presetFilterList, Core.byId(this.getSelectedPresetFilterItem()));
 		this._updateFilterCounters();
 	};
 
@@ -3342,7 +3367,8 @@ function(
 	 *
 	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The searched item or its key
 	 * @param {array} aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
-	 * @param {string} sErrorMessage The error message that will be logged if the item is not found
+	 * @param {string} sErrorMessage If an error message is provided, it will be logged when the
+	 * item is not found
 	 * @returns {*} The sap.m.ViewSettingsItem found in the list of items
 	 * @private
 	 */
@@ -3354,7 +3380,7 @@ function(
 			// find item with this key
 			oItem = getViewSettingsItemByKey(aViewSettingsItems, vItemOrKey);
 
-			if (!oItem) {
+			if (!oItem && sErrorMessage) {
 				Log.error(sErrorMessage);
 			}
 		} else {
@@ -3393,22 +3419,22 @@ function(
 			that            = this,
 			fnAfterClose = function () {
 				var oSettingsState, vGroupItem,
-					sGroupItemId = that.getSelectedGroupItem();
+					sGroupItemId = that._getSelectedGroupItem();
 
 				// BCP: 1670245110 "None" should be undefined
 				if (!that._oGroupingNoneItem || sGroupItemId != that._oGroupingNoneItem.getId()) {
-					vGroupItem = sap.ui.getCore().byId(sGroupItemId);
+					vGroupItem = Core.byId(sGroupItemId);
 				}
 
 				// Reset the title on closing the dialog, since it will be needed for the next opening.
 				that._toggleDialogTitle(that._sTitleLabelId);
 
 				oSettingsState = {
-					sortItem            : sap.ui.getCore().byId(that.getSelectedSortItem()),
+					sortItem            : Core.byId(that._getSelectedSortItem()),
 					sortDescending      : that.getSortDescending(),
 					groupItem           : vGroupItem,
 					groupDescending     : that.getGroupDescending(),
-					presetFilterItem    : sap.ui.getCore().byId(that.getSelectedPresetFilterItem()),
+					presetFilterItem    : Core.byId(that.getSelectedPresetFilterItem()),
 					filterItems         : that.getSelectedFilterItems(),
 					filterKeys          : that.getSelectedFilterKeys(),
 					filterCompoundKeys  : that.getSelectedFilterCompoundKeys(),
@@ -3494,7 +3520,7 @@ function(
 			this._getSegmentedButton().setSelectedButton(this._getFilterButton());
 		}
 		// update preset list selection
-		this._updateListSelection(this._presetFilterList, sap.ui.getCore().byId(
+		this._updateListSelection(this._presetFilterList, Core.byId(
 			this.getSelectedPresetFilterItem()));
 
 		return this;
@@ -3532,6 +3558,38 @@ function(
 	 */
 	ViewSettingsDialog.prototype._applyContextualSettings = function () {
 		Control.prototype._applyContextualSettings.call(this);
+	};
+
+	/**
+	 * If there is selected sort item, returns its id,
+	 * unlike the original getter - that can return id or key.
+	 * @return {string} The selected ViewSettingsItem's id or any unknown string in the association
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getSelectedSortItem = function() {
+		var sSortItem = this.getSelectedSortItem(),
+			oItem = findViewSettingsItemByKey(sSortItem, this.getSortItems())
+				|| Core.byId(sSortItem);
+
+		if (validateViewSettingsItem(oItem)) {
+			return oItem.getId();
+		}
+	};
+
+	/**
+	 * If there is selected group item, returns its id,
+	 * unlike the original getter - that can return id or key.
+	 * @return {string} The selected ViewSettingsItem's id or any unknown string in the association
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getSelectedGroupItem = function() {
+		var sGroupItem = this.getSelectedGroupItem(),
+			oItem = findViewSettingsItemByKey(sGroupItem, this.getGroupItems())
+				|| Core.byId(sGroupItem);
+
+		if (validateViewSettingsItem(oItem)) {
+			return oItem.getId();
+		}
 	};
 
 	/**
