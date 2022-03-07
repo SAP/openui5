@@ -5721,7 +5721,7 @@ sap.ui.define([
 				});
 				that.getBindings().forEach(function (oBinding) {
 					if (oBinding.isA("sap.ui.model.odata.v2.ODataListBinding")) {
-						oBinding._refreshForSideEffects(oAffectedEntityTypes);
+						oBinding._refreshForSideEffects(oAffectedEntityTypes, mParameters.groupId);
 					}
 				});
 			}

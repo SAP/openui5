@@ -5839,7 +5839,8 @@ sap.ui.define([
 			.withExactArgs("sap.ui.model.odata.v2.ODataListBinding")
 			.returns(true);
 		this.mock(aBindings[1]).expects("_refreshForSideEffects")
-			.withExactArgs(sinon.match.set.deepEquals(new Set(["~type0", "~type1", undefined])));
+			.withExactArgs(sinon.match.set.deepEquals(new Set(["~type0", "~type1", undefined])),
+				"~groupId");
 
 		// code under test
 		oResult = ODataModel.prototype.requestSideEffects.call(oModel, "~oContext", mParameters);

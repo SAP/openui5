@@ -2591,10 +2591,16 @@ sap.ui.define([
 			.returns(oFixture.expandedListUsable);
 		this.mock(oBinding).expects("_refresh")
 			.withExactArgs()
+			.callsFake(function () {
+				assert.strictEqual(oBinding.sRefreshGroupId, "~sGroupId");
+			})
 			.exactly(oFixture.refreshExpected ? 1 : 0);
 
 		// code under test
-		ODataListBinding.prototype._refreshForSideEffects.call(oBinding, new Set(["~entityType"]));
+		ODataListBinding.prototype._refreshForSideEffects.call(oBinding,
+			new Set(["~entityType"]), "~sGroupId");
+
+		assert.strictEqual(oBinding.sRefreshGroupId, undefined);
 	});
 });
 });

@@ -2031,12 +2031,16 @@ sap.ui.define([
 	 *
 	 * @param {Set<object>} oAffectedEntityTypes
 	 *   Set of entity types that are affected by side-effects requests
+	 * @param {string} [sGroupId]
+	 *   The ID of a request group
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype._refreshForSideEffects = function (oAffectedEntityTypes) {
+	ODataListBinding.prototype._refreshForSideEffects = function (oAffectedEntityTypes, sGroupId) {
 		if (!this._isExpandedListUsable() && oAffectedEntityTypes.has(this.oEntityType)) {
+			this.sRefreshGroupId = sGroupId;
 			this._refresh();
+			this.sRefreshGroupId = undefined;
 		}
 	};
 

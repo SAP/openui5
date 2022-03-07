@@ -13537,6 +13537,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			// code under test
 			oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
+				groupId : "~groupId",
 				urlParameters : {$expand : "ToSalesOrders"}
 			});
 
