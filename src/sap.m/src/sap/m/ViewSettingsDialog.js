@@ -1133,9 +1133,14 @@ function(
 	ViewSettingsDialog.prototype.addSortItem = function(oItem) {
 		this.addAggregation("sortItems", oItem);
 
-		if (oItem.getSelected()) {
-			this.setSelectedSortItem(oItem);
+		if (this.getSelectedSortItem() === oItem.getId() || this.getSelectedSortItem() === oItem.getKey()) {
+			oItem.setSelected(true);
 		}
+
+		if (oItem.getSelected()) {
+			this.setAssociation("selectedSortItem", oItem, true);
+		}
+
 		return this;
 	};
 
@@ -1150,9 +1155,14 @@ function(
 	ViewSettingsDialog.prototype.addGroupItem = function(oItem) {
 		this.addAggregation("groupItems", oItem);
 
-		if (oItem.getSelected()) {
-			this.setSelectedGroupItem(oItem);
+		if (this.getSelectedGroupItem() === oItem.getId() || this.getSelectedGroupItem() === oItem.getKey()) {
+			oItem.setSelected(true);
 		}
+
+		if (oItem.getSelected()) {
+			this.setAssociation("selectedGroupItem", oItem, true);
+		}
+
 		return this;
 	};
 
@@ -1187,8 +1197,7 @@ function(
 			i = 0,
 			oItem = findViewSettingsItemByKey(
 				vItemOrKey,
-				aItems,
-				"Could not set selected sort item. Item is not found: '" + vItemOrKey + "'"
+				aItems
 			);
 
 		if (!oItem && (typeof vItemOrKey === "string")) {
@@ -1212,8 +1221,9 @@ function(
 			if (this._getDialog().isOpen()) {
 				this._updateListSelection(this._sortList, oItem);
 			}
-			this.setAssociation("selectedSortItem", oItem, true);
 		}
+
+		this.setAssociation("selectedSortItem", oItem || vItemOrKey, true);
 
 		return this;
 	};
@@ -1232,8 +1242,7 @@ function(
 			i = 0,
 			oItem = findViewSettingsItemByKey(
 				vItemOrKey,
-				aItems,
-				"Could not set selected group item. Item is not found: '" + vItemOrKey + "'"
+				aItems
 			);
 
 		if (!oItem && (typeof vItemOrKey === "string")) {
@@ -1244,7 +1253,10 @@ function(
 		// BCP: 1780536754
 		if (!oItem && !vItemOrKey) {
 			oItem = this._oGroupingNoneItem;
+			this.setAssociation("selectedGroupItem", oItem, true);
+			return this;
 		}
+
 		//change selected item only if it is found among the group items
 		if (validateViewSettingsItem(oItem)) {
 			// set selected = true for this item & selected = false for all others items
@@ -1258,8 +1270,9 @@ function(
 			if (this._getDialog().isOpen()) {
 				this._updateListSelection(this._groupList, oItem);
 			}
-			this.setAssociation("selectedGroupItem", oItem, true);
 		}
+
+		this.setAssociation("selectedGroupItem", oItem || vItemOrKey, true);
 
 		return this;
 	};
@@ -1333,9 +1346,9 @@ function(
 
 		// store the current dialog state to be able to reset it on cancel
 		this._oPreviousState = {
-			sortItem : Core.byId(this.getSelectedSortItem()),
+			sortItem : Core.byId(this._getSelectedSortItem()),
 			sortDescending : this.getSortDescending(),
-			groupItem : Core.byId(this.getSelectedGroupItem()),
+			groupItem : Core.byId(this._getSelectedGroupItem()),
 			groupDescending : this.getGroupDescending(),
 			presetFilterItem : Core.byId(this.getSelectedPresetFilterItem()),
 			filterKeys : this.getSelectedFilterKeys(),
@@ -1348,9 +1361,9 @@ function(
 		// store initial dialog state in order to be able to reset it on reset button click
 		if (!this._oInitialState) {
 			this._oInitialState = {
-				sortItem: this.getSelectedSortItem(),
+				sortItem: this._getSelectedSortItem(),
 				sortDescending: this.getSortDescending(),
-				groupItem: this.getSelectedGroupItem(),
+				groupItem: this._getSelectedGroupItem(),
 				groupDescending: this.getGroupDescending(),
 				presetFilterItem: this.getSelectedPresetFilterItem()
 			};
@@ -1761,12 +1774,12 @@ function(
 				}
 
 				// check if the sortItem or sortDescending are different than initial
-				if (this._oInitialState.sortItem !== this.getSelectedSortItem() || this._oInitialState.sortDescending !== this.getSortDescending()) {
+				if (this._oInitialState.sortItem !== this._getSelectedSortItem() || this._oInitialState.sortDescending !== this.getSortDescending()) {
 					bChanges = true;
 				}
 
 				// check if the groupItem or groupDescending are different than initial
-				if ((this._oInitialState.groupItem && this._oInitialState.groupItem !== this.getSelectedGroupItem()) || this._oInitialState.groupDescending !== this.getGroupDescending()) {
+				if ((this._oInitialState.groupItem && this._oInitialState.groupItem !== this._getSelectedGroupItem()) || this._oInitialState.groupDescending !== this.getGroupDescending()) {
 					bChanges = true;
 				}
 
@@ -2301,7 +2314,7 @@ function(
 			}, this);
 
 			if (!this._oGroupingNoneItem || this._oGroupingNoneItem.bIsDestroyed) {
-				bHasSelections = !!this.getSelectedGroupItem();
+				bHasSelections = !!this._getSelectedGroupItem();
 				this._oGroupingNoneItem = new ViewSettingsItem({
 					text: this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
 					selected: !bHasSelections,
@@ -3180,9 +3193,9 @@ function(
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._updateListSelections = function() {
-		this._updateListSelection(this._sortList, Core.byId(this.getSelectedSortItem()));
+		this._updateListSelection(this._sortList, Core.byId(this._getSelectedSortItem()));
 		this._updateListSelection(this._sortOrderList, this.getSortDescending());
-		this._updateListSelection(this._groupList, Core.byId(this.getSelectedGroupItem()));
+		this._updateListSelection(this._groupList, Core.byId(this._getSelectedGroupItem()));
 		this._updateListSelection(this._groupOrderList, this.getGroupDescending());
 		this._updateListSelection(this._presetFilterList, Core.byId(this.getSelectedPresetFilterItem()));
 		this._updateFilterCounters();
@@ -3366,7 +3379,8 @@ function(
 	 *
 	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The searched item or its key
 	 * @param {array} aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
-	 * @param {string} sErrorMessage The error message that will be logged if the item is not found
+	 * @param {string} sErrorMessage If an error message is provided, it will be logged when the
+	 * item is not found
 	 * @returns {*} The sap.m.ViewSettingsItem found in the list of items
 	 * @private
 	 */
@@ -3378,7 +3392,7 @@ function(
 			// find item with this key
 			oItem = getViewSettingsItemByKey(aViewSettingsItems, vItemOrKey);
 
-			if (!oItem) {
+			if (!oItem && sErrorMessage) {
 				Log.error(sErrorMessage);
 			}
 		} else {
@@ -3417,7 +3431,7 @@ function(
 			that            = this,
 			fnAfterClose = function () {
 				var oSettingsState, vGroupItem,
-					sGroupItemId = that.getSelectedGroupItem();
+					sGroupItemId = that._getSelectedGroupItem();
 
 				// BCP: 1670245110 "None" should be undefined
 				if (!that._oGroupingNoneItem || sGroupItemId != that._oGroupingNoneItem.getId()) {
@@ -3428,7 +3442,7 @@ function(
 				that._toggleDialogTitle(that._sTitleLabelId);
 
 				oSettingsState = {
-					sortItem            : Core.byId(that.getSelectedSortItem()),
+					sortItem            : Core.byId(that._getSelectedSortItem()),
 					sortDescending      : that.getSortDescending(),
 					groupItem           : vGroupItem,
 					groupDescending     : that.getGroupDescending(),
@@ -3556,6 +3570,38 @@ function(
 	 */
 	ViewSettingsDialog.prototype._applyContextualSettings = function () {
 		Control.prototype._applyContextualSettings.call(this);
+	};
+
+	/**
+	 * If there is selected sort item, returns its id,
+	 * unlike the original getter - that can return id or key.
+	 * @return {string} The selected ViewSettingsItem's id or any unknown string in the association
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getSelectedSortItem = function() {
+		var sSortItem = this.getSelectedSortItem(),
+			oItem = findViewSettingsItemByKey(sSortItem, this.getSortItems())
+				|| Core.byId(sSortItem);
+
+		if (validateViewSettingsItem(oItem)) {
+			return oItem.getId();
+		}
+	};
+
+	/**
+	 * If there is selected group item, returns its id,
+	 * unlike the original getter - that can return id or key.
+	 * @return {string} The selected ViewSettingsItem's id or any unknown string in the association
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getSelectedGroupItem = function() {
+		var sGroupItem = this.getSelectedGroupItem(),
+			oItem = findViewSettingsItemByKey(sGroupItem, this.getGroupItems())
+				|| Core.byId(sGroupItem);
+
+		if (validateViewSettingsItem(oItem)) {
+			return oItem.getId();
+		}
 	};
 
 	/**
