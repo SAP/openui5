@@ -314,12 +314,19 @@ sap.ui.define([
 		var oFetchEntityContainerExpectation
 			= this.mock(ODataMetaModel.prototype).expects("fetchEntityContainer")
 				.withExactArgs(true),
-			// code under test
-			oModel = new ODataModel({
-				earlyRequests : true,
-				serviceUrl : sServiceUrl,
-				synchronizationMode : "None"
-			});
+			oModel;
+
+		if (!TestUtils.isRealOData()) {
+			this.mock(_Requestor.prototype).expects("refreshSecurityToken").withExactArgs()
+				.resolves();
+		}
+
+		// code under test
+		oModel = new ODataModel({
+			earlyRequests : true,
+			serviceUrl : sServiceUrl,
+			synchronizationMode : "None"
+		});
 
 		assert.ok(oFetchEntityContainerExpectation.alwaysCalledOn(oModel.getMetaModel()));
 	});
