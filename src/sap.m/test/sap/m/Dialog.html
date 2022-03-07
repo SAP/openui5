@@ -88,6 +88,59 @@
 				]
 			});
 
+			var oDialogPadding;
+			var aButtons = [
+				new sap.m.Button({
+					text: "Hide header",
+					press: function () {
+						oDialogPadding.setShowHeader(false);
+					}
+				}),
+				new sap.m.Button({
+					text: "Hide footer",
+					press: function () {
+						oDialogPadding.removeAllButtons();
+					}
+				}),
+				new sap.m.Button({
+					text: "Close",
+					press: function () {
+						oDialogPadding.close();
+					}
+				}),
+			];
+			oDialogPadding = new sap.m.Dialog({
+				title: "Default Padding",
+				icon: "sap-icon://employee",
+				ariaDescribedBy: "p1",
+				afterClose: function () {
+					aButtons.forEach(function (oButton) {
+						oDialogPadding.addButton(oButton);
+					});
+					oDialogPadding.setShowHeader(true);
+					oDialogPadding.removeStyleClass("sapUiContentPadding sapUiResponsiveContentPadding")
+				},
+				content: [
+					new sap.m.List({
+						items: [
+							new sap.m.StandardListItem({
+								title: "Item 1",
+								description: "item 1"
+							}),
+							new sap.m.StandardListItem({
+								title: "Item 2",
+								description: "item 2"
+							}),
+							new sap.m.StandardListItem({
+								title: "Item 3",
+								description: "item 3"
+							})
+						]
+					})
+				],
+				buttons: aButtons
+			});
+
 			var oDialogErrorState = new sap.m.Dialog("dialogErrorState", {
 				title: "Error",
 				ariaDescribedBy: "p1",
@@ -458,15 +511,6 @@
 				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function () {
 					oDialogWithSelect.open();
-				}
-			});
-
-			var oButtonDialogResponsivePadding = new sap.m.Button("buttonDialogResponsivePadding", {
-				text: "Responsive Padding Enabled",
-				width: _buttonWidth,
-				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
-				press: function () {
-					oDialogWithResponsivePadding.open();
 				}
 			});
 
@@ -1653,7 +1697,6 @@
 						}
 					}),
 					oButton6,
-					oButtonDialogResponsivePadding,
 					new sap.ui.core.HTML({content: "<br>"}),
 					new sap.m.Button({
 						text: "Full-screen Form in Dialog",
@@ -1751,6 +1794,43 @@
 						}
 					}),
 					new sap.ui.core.HTML({content: "<br>"}),
+
+					new sap.ui.core.HTML({content: "<h1>Padding</h1>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
+					new sap.m.Button({
+						text: "Default (no padding)",
+						width: _buttonWidth,
+						ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+						press: function () {
+							oDialogPadding.open();
+						}
+					}),
+					new sap.m.Button({
+						text: "sapUiContentPadding",
+						width: _buttonWidth,
+						ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+						press: function () {
+							oDialogPadding.addStyleClass("sapUiContentPadding");
+							oDialogPadding.open();
+						}
+					}),
+					new sap.m.Button({
+						text: "sapUiResponsiveContentPadding",
+						width: _buttonWidth,
+						ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+						press: function () {
+							oDialogPadding.addStyleClass("sapUiResponsiveContentPadding");
+							oDialogPadding.open();
+						}
+					}),
+					new sap.m.Button("buttonDialogResponsivePadding", {
+						text: "Responsive Padding Enabled",
+						width: _buttonWidth,
+						ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+						press: function () {
+							oDialogWithResponsivePadding.open();
+						}
+					}),
 
 					new sap.ui.core.HTML({content: "<h1>States</h1>"}),
 					new sap.ui.core.HTML({content: "<br>"}),

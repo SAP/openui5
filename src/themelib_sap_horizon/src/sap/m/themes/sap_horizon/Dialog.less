@@ -11,17 +11,17 @@
 @_sap_m_Dialog_BarHeight: 2.75rem;
 @_sap_m_Dialog_SubHeaderCompactHeight: 2.25rem;
 
-@_sap_m_Dialog_NoStateHeaderShadow: none;
-@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.0625rem @sapUiSuccessBorder;
-@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.0625rem @sapUiErrorBorder;
-@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.0625rem @sapUiWarningBorder;
-@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.0625rem @sapUiInformationBorder;
+@_sap_m_Dialog_NoStateHeaderShadow: @sapUiContentHeaderShadow;
+@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.0625rem @sapUiSuccessBorder, @sapUiContentHeaderShadow;
+@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.0625rem @sapUiErrorBorder, @sapUiContentHeaderShadow;
+@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.0625rem @sapUiWarningBorder, @sapUiContentHeaderShadow;
+@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.0625rem @sapUiInformationBorder, @sapUiContentHeaderShadow;
 
 @_sap_m_Dialog_HeaderFocusBorderBottomOffset: 0px;
 @_sap_m_Dialog_HeaderFocusBorderTopOffset: 0px;
 @_sap_m_Dialog_HeaderFocusBorderLeftOffset: 0px;
 @_sap_m_Dialog_HeaderFocusBorderRightOffset: 0px;
-@_sap_m_Dialog_BorderRadius: @sapUiElementBorderCornerRadius;
+@_sap_m_Dialog_HeaderFocusBorderRadius: @sapUiElementBorderCornerRadius;
 
 // This parameter is used in sap.m.Select. TODO: remove it when it is removed from there.
 @_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
@@ -36,9 +36,14 @@
 	font-size: 1rem;
 }
 
-.sapMDialogResizeHandler::before {
-	content: attr(data-sap-ui-icon-content);
-	color: @sapUiButtonLiteTextColor;
+.sapMDialogResizeHandler {
+	right: 6px;
+	bottom: 3px;
+
+	&::before {
+		content: attr(data-sap-ui-icon-content);
+		color: @sapUiButtonLiteTextColor;
+	}
 }
 
 .sapMDialogBeginButton, .sapMDialogEndButton {
@@ -77,6 +82,7 @@ html.sap-phone .sapMDialog {
 	}
 }
 
+// Responsive paddings
 .sapMDialogTitle, .sapMDialogSubHeader {
 	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
 	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
@@ -105,18 +111,27 @@ html.sap-phone .sapMDialog {
 	}
 }
 
+.sapMDialog:not(.sapUiResponsiveContentPadding):not(.sapUiContentPadding) {
+	&.sapMDialog-NoHeader .sapMDialogScroll {
+		padding-top: 0.25rem;
 
-html.sap-desktop .sapMIBar.sapMFooter-CTX { // this should come from the BarBase. Test and delete later
-	border-top: none;
+		html.sap-phone .sapMDialogStretched& {
+			padding-top: 0;
+		}
+	}
+
+	&.sapMDialog-NoFooter .sapMDialogScroll {
+		padding-bottom: 0.25rem;
+
+		html.sap-phone .sapMDialogStretched& {
+			padding-bottom: 0;
+		}
+	}
 }
 
 .sapMDialog footer .sapMTB.sapMFooter-CTX {
 	// override for toolbar's top rounded corners
+	// TODO: toolbar shouldn't have rounded corners, remove this later
 	border-top-left-radius: 0px;
 	border-top-right-radius: 0px;
-}
-
-.sapMDialogResizeHandler {
-	right: 6px;
-	bottom: 3px;
 }
