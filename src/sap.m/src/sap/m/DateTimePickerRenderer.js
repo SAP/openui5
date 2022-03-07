@@ -13,6 +13,14 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', './InputBaseRende
 
 	DateTimePickerRenderer.apiVersion = 2;
 
+	DateTimePickerRenderer.writeInnerValue = function(oRm, oControl) {
+		if (!oControl.getDateValue() && typeof oControl._prefferedValue === "string") {
+			oRm.attr("value", oControl._prefferedValue);
+		} else {
+			DatePickerRenderer.writeInnerValue.apply(this, arguments);
+		}
+	};
+
 	DateTimePickerRenderer.getDescribedByAnnouncement = function(oDP) {
 
 		var sBaseAnnouncement = InputBaseRenderer.getDescribedByAnnouncement.apply(this, arguments);
