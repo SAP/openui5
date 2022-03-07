@@ -44,6 +44,7 @@ sap.ui.define([
 		 * @extends sap.ui.base.Object
 		 * @param {object} oConfiguration Properties of the operator
 		 * @param {string} oConfiguration.name Name of the operator used in the condition
+		 * @param {object} [oConfiguration.alias] Alias names based on <code>BaseType</code>, used to map to <code>DynamicDateOption</code> if <code>DynamicDateRange</code> is used
 		 * @param {string} oConfiguration.filterOperator The operator's default filter operator that is created as defined in {@link sap.ui.model.FilterOperator FilterOperator}
 		 * @param {string} oConfiguration.tokenParse The string representation of the regular expression that is used by the operator to parse a value
 		 *                 to eliminate the operator and get the data string. A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the
@@ -285,11 +286,12 @@ sap.ui.define([
 		 * @param {string} sFieldPath Path of filter
 		 * @param {sap.ui.model.Type} oType Data type of the used filter field
 		 * @param {boolean} [bCaseSensitive] creates a caseSensitive filter
+		 * @param {sap.ui.mdc.enum.BaseType} [sBaseType] Basic type
 		 * @returns {sap.ui.model.Filter} filter object
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		Operator.prototype.getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive) {
+		Operator.prototype.getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 
 			var vValue = oCondition.values[0];
 			var oFilter;

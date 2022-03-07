@@ -7,8 +7,14 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
 	"sap/m/Token",
-	"sap/m/DateTimePicker"
-], function(QUnit, DateTimeContent, Field, Text, FieldInput, FieldMultiInput, Token, DateTimePicker) {
+	"sap/m/DateTimePicker",
+	"sap/m/DynamicDateRange",
+	"sap/ui/mdc/condition/OperatorDynamicDateOption",
+	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
+	"sap/m/StandardDynamicDateRangeKeys",
+	"sap/m/DynamicDateUtil",
+	"sap/m/DynamicDateFormat"
+], function(QUnit, DateTimeContent, Field, Text, FieldInput, FieldMultiInput, Token, DateTimePicker, DynamicDateRange, OperatorDynamicDateOption, DynamicDateRangeConditionsType, StandardDynamicDateRangeKeys, DynamicDateUtil, DynamicDateFormat) {
 	"use strict";
 
 	var oControlMap = {
@@ -20,8 +26,8 @@ sap.ui.define([
 		},
 		"Edit": {
 			getPathsFunction: "getEdit",
-			paths: ["sap/ui/mdc/field/FieldInput"],
-			instances: [FieldInput],
+			paths: ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/StandardDynamicDateRangeKeys", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"],
+			instances: [DynamicDateRange, OperatorDynamicDateOption, DynamicDateRangeConditionsType, StandardDynamicDateRangeKeys, DynamicDateUtil, DynamicDateFormat],
 			createFunction: "createEdit"
 		},
 		"EditMultiValue": {
@@ -69,15 +75,16 @@ sap.ui.define([
 
 	QUnit.test("getControlNames", function(assert) {
 		/* no need to use oOperator here as there is no editOperator*/
-		assert.deepEqual(DateTimeContent.getControlNames(null), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for ContentMode null");
-		assert.deepEqual(DateTimeContent.getControlNames(undefined), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for ContentMode undefined");
-		assert.deepEqual(DateTimeContent.getControlNames("idghsoidpgdfhkfokghkl"), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for not specified ContentMode");
+		assert.deepEqual(DateTimeContent.getControlNames(null), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/StandardDynamicDateRangeKeys", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"], "Correct controls returned for ContentMode null");
+		assert.deepEqual(DateTimeContent.getControlNames(undefined), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/StandardDynamicDateRangeKeys", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"], "Correct controls returned for ContentMode undefined");
+		assert.deepEqual(DateTimeContent.getControlNames("idghsoidpgdfhkfokghkl"), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/StandardDynamicDateRangeKeys", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"], "Correct controls returned for not specified ContentMode");
 
-		assert.deepEqual(DateTimeContent.getControlNames("Edit"), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for ContentMode 'Edit'");
+		assert.deepEqual(DateTimeContent.getControlNames("Edit"), ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/StandardDynamicDateRangeKeys", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"], "Correct controls returned for ContentMode 'Edit'");
 		assert.deepEqual(DateTimeContent.getControlNames("Display"), ["sap/m/Text"], "Correct controls returned for ContentMode 'Display'");
 		assert.deepEqual(DateTimeContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(DateTimeContent.getControlNames("EditMultiLine"), [null], "Correct controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(DateTimeContent.getControlNames("EditOperator"), [null], "Correct controls returned for ContentMode 'EditOperator'");
+		assert.deepEqual(DateTimeContent.getControlNames("EditOperator", "EQ"), ["sap/m/DateTimePicker"], "Correct controls returned for ContentMode 'EditOperator' and 'EQ'");
 	});
 
 	QUnit.module("Content creation", {

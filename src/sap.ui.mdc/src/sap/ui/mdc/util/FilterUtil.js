@@ -130,7 +130,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 								var oProperty = FilterUtil.getPropertyByKey(aPropertiesMetadata, sFieldPath);
 								if (oProperty) {
 
-									mFilterTypes[sFieldPath] = { type: oProperty.typeConfig.typeInstance, caseSensitive: oProperty.caseSensitive };
+									mFilterTypes[sFieldPath] = { type: oProperty.typeConfig.typeInstance, caseSensitive: oProperty.caseSensitive, baseType: oProperty.typeConfig.baseType };
 									mInternalFilterConditions[sFieldPath] = [];
 
 									//convert from externalized to model-specific value representation

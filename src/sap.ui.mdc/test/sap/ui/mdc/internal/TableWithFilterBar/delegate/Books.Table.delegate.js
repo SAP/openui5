@@ -96,6 +96,8 @@ sap.ui.define([
 						oFilterField.setDisplay(FieldDisplay.Value);
 						oFilterField.setMaxConditions(1);
 						oFilterField.setOperators(["EQ"]);
+					} else if (sPropertyName === "createdAt") {
+						oFilterField.setMaxConditions(1); // to use DynamicDateRange
 					}
 					return oFilterField;
 				});

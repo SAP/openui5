@@ -985,7 +985,7 @@ sap.ui.define([
 			if (oOperator && oOperator.valueTypes[0] === Operator.ValueType.Static && (oCondition.values.length === 0 || bTypeChange)) {
 				// if type changed the text needs to be new formatted (setting of type and conditions might be async.)
 				if (oOperator.getStaticText) {
-					var sText = oOperator.getStaticText(oDataType);
+					var sText = oOperator.getStaticText(oDataType, _getBaseType.call(this, oDataType));
 					if (oCondition.values.length > 0) {
 						oCondition.values[0] = sText;
 					} else {

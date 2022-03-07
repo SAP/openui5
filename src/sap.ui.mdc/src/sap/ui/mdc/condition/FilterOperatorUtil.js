@@ -68,7 +68,7 @@ function(
 				_mOperators: {
 					equal: new Operator({
 						name: "EQ",
-						alias: "DATE",
+						alias: {Date: "DATE", DateTime: "DATETIME"},
 						filterOperator: ModelOperator.EQ,
 						tokenParse: "^=([^=].*)$",
 						tokenFormat: "{1} ({0})", // all placeholder should use the {x} format - the text could be store in the resourcebundel file.
@@ -205,7 +205,7 @@ function(
 					}),
 					between: new Operator({
 						name: "BT",
-						alias: "DATERANGE",
+						alias: {Date: "DATERANGE", DateTime:"DATETIMERANGE"},
 						filterOperator: ModelOperator.BT,
 						tokenParse: "^([^!].*)\\.\\.\\.(.+)$", // TODO: does this work?? At least also matches crap like ".....". I guess validation of value types needs to get rid of those.
 						tokenFormat: "{0}...{1}",
@@ -274,7 +274,7 @@ function(
 					}),
 					lessEqual: new Operator({
 						name: "LE",
-						alias: "TO",
+						alias: {Date: "TO", DateTime: "TODATETIME"},
 						filterOperator: ModelOperator.LE,
 						tokenParse: "^<=(.+)$",
 						tokenFormat: "<={0}",
@@ -290,7 +290,7 @@ function(
 					}),
 					greaterEqual: new Operator({
 						name: "GE",
-						alias: "FROM",
+						alias: {Date: "FROM", DateTime: "FROMDATETIME"},
 						filterOperator: ModelOperator.GE,
 						tokenParse: "^>=(.+)$",
 						tokenFormat: ">={0}",
@@ -363,7 +363,7 @@ function(
 						tokenParse: "^<#tokenText#>$",
 						tokenFormat: "<#tokenText#>",
 						valueTypes: [],
-						getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive) {
+						getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 							var isNullable = false;
 							if (oType) {
 								var vResult = oType.parseValue("", "string");
@@ -395,7 +395,7 @@ function(
 						tokenFormat: "!(<#tokenText#>)",
 						valueTypes: [],
 						exclude: true,
-						getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive) {
+						getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 							var isNullable = false;
 							if (oType) {
 								var vResult = oType.parseValue("", "string");
@@ -542,7 +542,6 @@ function(
 						}
 					}),
 					todayFromTo: new RangeOperator({
-						alias: "TODAYXYDAYS",
 						name: "TODAYFROMTO",
 						valueTypes: [
 							{name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }},
@@ -579,7 +578,6 @@ function(
 						}
 					}),
 					thisWeek: new RangeOperator({
-						alias: "CURRENTWEEK",
 						name: "THISWEEK",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
@@ -619,7 +617,6 @@ function(
 						}
 					}),
 					thisMonth: new RangeOperator({
-						alias: "CURRENTMONTH",
 						name: "THISMONTH",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
@@ -659,7 +656,6 @@ function(
 						}
 					}),
 					thisQuarter: new RangeOperator({
-						alias: "CURRENTQUARTER",
 						name: "THISQUARTER",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
@@ -692,7 +688,6 @@ function(
 						}
 					}),
 					quarter1: new RangeOperator({
-						alias: "FIRSTQUARTER",
 						name: "QUARTER1",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
@@ -700,7 +695,6 @@ function(
 						}
 					}),
 					quarter2: new RangeOperator({
-						alias: "SECONDQUARTER",
 						name: "QUARTER2",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
@@ -708,7 +702,6 @@ function(
 						}
 					}),
 					quarter3: new RangeOperator({
-						alias: "THIRDQUARTER",
 						name: "QUARTER3",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
@@ -716,7 +709,6 @@ function(
 						}
 					}),
 					quarter4: new RangeOperator({
-						alias: "FOURTHQUARTER",
 						name: "QUARTER4",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
@@ -731,7 +723,6 @@ function(
 						}
 					}),
 					thisYear: new RangeOperator({
-						alias: "CURRENTYEAR",
 						name: "THISYEAR",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
@@ -1221,14 +1212,7 @@ function(
 
 					for (var sName in FilterOperatorUtil._mOperators) {
 						var oOperator = FilterOperatorUtil._mOperators[sName];
-						if ( oOperator.name === sOperator) {
-							return oOperator;
-						}
-					}
-
-					for (var sName in FilterOperatorUtil._mOperators) {
-						var oOperator = FilterOperatorUtil._mOperators[sName];
-						if ( oOperator.alias === sOperator) {
+						if (oOperator.name === sOperator) {
 							return oOperator;
 						}
 					}
@@ -1475,6 +1459,81 @@ function(
 						oOperator.checkValidated(oCondition);
 					}
 
+				},
+
+				/**
+				 * Returns the operator object for the given <code>DynamicDateOption</code> name.
+				 * @param {string} sOption Name of the operator
+				 * @param {sap.ui.mdc.enum.BaseType} [sBaseType] Basic type
+				 * @returns {sap.ui.mdc.condition.Operator} the operator object, or undefined if the operator with the requested name does not exist
+				 *
+				 * @protected
+				 * @since: 1.100.0
+				 */
+				 getOperatorForDynamicDateOption: function(sOption, sBaseType) {
+
+					var oOperator;
+
+					// determine operator name if used as custom DynamicDateOption created in DateContent using getCustomDynamicDateOptionForOperator
+					if (sBaseType && sOption.startsWith(sBaseType)) {
+						oOperator = this.getOperator(sOption.slice(sBaseType.length + 1));
+					} else {
+						oOperator = this.getOperator(sOption);
+					}
+
+					if (!oOperator && sBaseType) {
+						for (var sName in FilterOperatorUtil._mOperators) {
+							var oCheckOperator = FilterOperatorUtil._mOperators[sName];
+							if (oCheckOperator.alias && oCheckOperator.alias[sBaseType] === sOption) {
+								oOperator = oCheckOperator;
+								break;
+							}
+						}
+					}
+
+					return oOperator;
+
+				},
+
+				/**
+				 * Determines the corresponding <code>DynamicDateOption</code> for an <code>Operator</code>
+				 * from a map of known keys
+				 *
+				 * @param {sap.ui.mdc.condition.Operator} oOperator Condition to check
+				 * @param {object} oDynamicDateRangeKeys Keys for <code>DynamicDateOption</code>
+				 * @param {sap.ui.mdc.enum.BaseType} sBaseType Basic type
+				 * @returns {string} <code>DynamicDateOption</code>
+				 * @protected
+				 * @since: 1.100.0
+				 */
+				 getDynamicDateOptionForOperator: function(oOperator, oDynamicDateRangeKeys, sBaseType) {
+
+					var sOption;
+					if (oOperator) {
+						if (oDynamicDateRangeKeys[oOperator.name]) {
+							sOption = oOperator.name;
+						} else if (oOperator.alias && oDynamicDateRangeKeys[oOperator.alias[sBaseType]]) {
+							sOption = oOperator.alias[sBaseType];
+						}
+					}
+
+					return sOption;
+
+				},
+
+				/**
+				 * Determines the corresponding custom <code>DynamicDateOption</code> for an <code>Operator</code>
+				 *
+				 * @param {sap.ui.mdc.condition.Operator} oOperator Condition to check
+				 * @param {sap.ui.mdc.enum.BaseType} sBaseType Basic type
+				 * @returns {string} <code>DynamicDateOption</code>
+				 * @protected
+				 * @since: 1.100.0
+				 */
+				 getCustomDynamicDateOptionForOperator: function(oOperator, sBaseType) {
+
+					return sBaseType + "-" + oOperator.name;
+
 				}
 		};
 
@@ -1589,7 +1648,56 @@ function(
 				 FilterOperatorUtil._mOperators.notLessThan,
 				 FilterOperatorUtil._mOperators.notLessEqual,
 				 FilterOperatorUtil._mOperators.notGreaterThan,
-				 FilterOperatorUtil._mOperators.notGreaterEqual
+				 FilterOperatorUtil._mOperators.notGreaterEqual,
+
+				 FilterOperatorUtil._mOperators.today,
+				 FilterOperatorUtil._mOperators.yesterday,
+				 FilterOperatorUtil._mOperators.tomorrow,
+				 FilterOperatorUtil._mOperators.firstDayWeek,
+				 FilterOperatorUtil._mOperators.lastDayWeek,
+				 FilterOperatorUtil._mOperators.firstDayMonth,
+				 FilterOperatorUtil._mOperators.lastDayMonth,
+				 FilterOperatorUtil._mOperators.firstDayQuarter,
+				 FilterOperatorUtil._mOperators.lastDayQuarter,
+				 FilterOperatorUtil._mOperators.firstDayYear,
+				 FilterOperatorUtil._mOperators.lastDayYear,
+				 FilterOperatorUtil._mOperators.todayFromTo,
+				 FilterOperatorUtil._mOperators.lastDays,
+				 FilterOperatorUtil._mOperators.nextDays,
+
+				 FilterOperatorUtil._mOperators.thisWeek,
+				 FilterOperatorUtil._mOperators.lastWeek,
+				 FilterOperatorUtil._mOperators.lastWeeks,
+				 FilterOperatorUtil._mOperators.nextWeek,
+				 FilterOperatorUtil._mOperators.nextWeeks,
+
+				 FilterOperatorUtil._mOperators.specificMonth,
+				 FilterOperatorUtil._mOperators.specificMonthInYear,
+				 FilterOperatorUtil._mOperators.thisMonth,
+				 FilterOperatorUtil._mOperators.lastMonth,
+				 FilterOperatorUtil._mOperators.lastMonths,
+				 FilterOperatorUtil._mOperators.nextMonth,
+				 FilterOperatorUtil._mOperators.nextMonths,
+
+				 FilterOperatorUtil._mOperators.thisQuarter,
+				 FilterOperatorUtil._mOperators.lastQuarter,
+				 FilterOperatorUtil._mOperators.lastQuarters,
+				 FilterOperatorUtil._mOperators.nextQuarter,
+				 FilterOperatorUtil._mOperators.nextQuarters,
+
+				 FilterOperatorUtil._mOperators.quarter1,
+				 FilterOperatorUtil._mOperators.quarter2,
+				 FilterOperatorUtil._mOperators.quarter3,
+				 FilterOperatorUtil._mOperators.quarter4,
+
+				 FilterOperatorUtil._mOperators.thisYear,
+				 FilterOperatorUtil._mOperators.lastYear,
+				 FilterOperatorUtil._mOperators.lastYears,
+				 FilterOperatorUtil._mOperators.nextYear,
+				 FilterOperatorUtil._mOperators.nextYears,
+
+				 FilterOperatorUtil._mOperators.yearToDate,
+				 FilterOperatorUtil._mOperators.dateToYear
 				]
 		);
 		FilterOperatorUtil.setOperatorsForType(

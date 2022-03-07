@@ -2,12 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
+	"sap/ui/mdc/field/FieldBaseDelegate",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/condition/OperatorDynamicDateOption",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/model/type/Date",
+	"sap/ui/model/type/DateTime",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
@@ -15,12 +17,14 @@ sap.ui.define([
 	"sap/m/DynamicDateUtil"
 ], function (
 		DynamicDateRangeConditionsType,
+		FieldBaseDelegate,
 		Condition,
 		FilterOperatorUtil,
 		Operator,
 		OperatorDynamicDateOption,
 		ConditionValidated,
 		DateType,
+		DateTimeType,
 		FilterOperator,
 		FormatException,
 		ParseException,
@@ -43,6 +47,7 @@ sap.ui.define([
 	});
 	FilterOperatorUtil.addOperator(oOperator);
 	var oOperatorDynamicDateOption = new OperatorDynamicDateOption({
+		key: "Date-MyDate",
 		operator: oOperator,
 		type: new DateType({style: "long", calendarType: "Gregorian", UTC: true}), // UTC to check conversion
 		valueTypes: ["custom"]
@@ -56,9 +61,14 @@ sap.ui.define([
 		oType = undefined;
 	};
 
-	var fnInit = function() {
+	var fnInitDate = function() {
 		oType = new DateType({style: "long", calendarType: "Gregorian", UTC: true}); // UTC to check conversion
 		oDynamicDateRangeConditionsType = new DynamicDateRangeConditionsType({valueType: oType, maxConditions: 1});
+	};
+
+	var fnInitDateTime = function() {
+		oType = new DateTimeType({style: "long", calendarType: "Gregorian", UTC: true}); // UTC to check conversion
+		oDynamicDateRangeConditionsType = new DynamicDateRangeConditionsType({valueType: oType, maxConditions: 1, delegate: FieldBaseDelegate, payload: {}});
 	};
 
 	function _createCondition(sOperator, aValues) {
@@ -67,8 +77,8 @@ sap.ui.define([
 		return oCondition;
 	}
 
-	QUnit.module("Formatting", {
-		beforeEach: fnInit,
+	QUnit.module("Formatting Date", {
+		beforeEach: fnInitDate,
 		afterEach: fnTeardown
 	});
 
@@ -211,12 +221,37 @@ sap.ui.define([
 
 		var oCondition = _createCondition("MyDate", [new Date(Date.UTC(2021, 9, 4))]);
 		var oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
-		assert.deepEqual(oResult, {operator: "MyDate", values: [new Date(Date.UTC(2021, 9, 4))]}, "Result of formatting: " + oCondition.operator); // original value is used as type is used formatting and parsing
+		assert.deepEqual(oResult, {operator: "Date-MyDate", values: [new Date(Date.UTC(2021, 9, 4))]}, "Result of formatting: " + oCondition.operator); // original value is used as type is used formatting and parsing
 
 	});
 
-	QUnit.module("Parsing", {
-		beforeEach: fnInit,
+	QUnit.module("Formatting DateTime", {
+		beforeEach: fnInitDateTime,
+		afterEach: fnTeardown
+	});
+
+	QUnit.test("normal operators", function(assert) {
+
+		var oCondition = _createCondition("EQ", [new Date(Date.UTC(2022, 1, 1, 9, 8, 30, 0))]);
+		var oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
+		assert.deepEqual(oResult, {operator: "DATETIME", values: [new Date(2022, 1, 1, 9, 8, 30, 0)]}, "Result of formatting: " + oCondition.operator);
+
+		oCondition = _createCondition("BT", [new Date(Date.UTC(2022, 1, 1, 9, 8, 30, 0)), new Date(Date.UTC(2022, 1, 2, 9, 8, 30, 999))]);
+		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
+		assert.deepEqual(oResult, {operator: "DATETIMERANGE", values: [new Date(2022, 1, 1, 9, 8, 30, 0), new Date(2022, 1, 2, 9, 8, 30, 999)]}, "Result of formatting: " + oCondition.operator);
+
+		oCondition = _createCondition("GE", [new Date(Date.UTC(2022, 1, 8, 12, 22, 30, 0))]);
+		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
+		assert.deepEqual(oResult, {operator: "FROMDATETIME", values: [new Date(2022, 1, 8, 12, 22, 30, 0)]}, "Result of formatting: " + oCondition.operator);
+
+		oCondition = _createCondition("LE", [new Date(Date.UTC(2022, 1, 8, 12, 22, 30, 999))]);
+		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
+		assert.deepEqual(oResult, {operator: "TODATETIME", values: [new Date(2022, 1, 8, 12, 22, 30, 999)]}, "Result of formatting: " + oCondition.operator);
+
+	});
+
+	QUnit.module("Parsing Date", {
+		beforeEach: fnInitDate,
 		afterEach: fnTeardown
 	});
 
@@ -324,13 +359,38 @@ sap.ui.define([
 	QUnit.test("custom operators", function(assert) {
 
 		var oCondition = _createCondition("MyDate", [new Date(Date.UTC(2021, 9, 4))]);
-		var aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "MyDate", values: [new Date(Date.UTC(2021, 9, 4))]});
+		var aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "Date-MyDate", values: [new Date(Date.UTC(2021, 9, 4))]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator); // original value is used as type is used formatting and parsing
 
 	});
 
+	QUnit.module("Parsing DateTime", {
+		beforeEach: fnInitDateTime,
+		afterEach: fnTeardown
+	});
+
+	QUnit.test("normal operators", function(assert) {
+
+		var oCondition = _createCondition("EQ", [new Date(Date.UTC(2022, 1, 1, 9, 21, 30, 0))]);
+		var aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATETIME", values: [new Date(2022, 1, 1, 9, 21, 30, 0)]});
+		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
+
+		oCondition = _createCondition("BT", [new Date(Date.UTC(2022, 1, 1, 9, 21, 30, 0)), new Date(Date.UTC(2022, 1, 1, 10, 21, 30, 999))]);
+		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATETIMERANGE", values: [new Date(2022, 1, 1, 9, 21, 30, 0), new Date(2022, 1, 1, 10, 21, 30, 999)]});
+		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
+
+		oCondition = _createCondition("GE", [new Date(Date.UTC(2022, 1, 8, 12, 22, 30, 0))]);
+		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "FROMDATETIME", values: [new Date(2022, 1, 8, 12, 22, 30, 0)]});
+		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
+
+		oCondition = _createCondition("LE", [new Date(Date.UTC(2022, 1, 8, 12, 22, 30, 999))]);
+		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "TODATETIME", values: [new Date(2022, 1, 8, 12, 22, 30, 999)]});
+		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
+
+	});
+
 	QUnit.module("Validating", {
-		beforeEach: fnInit,
+		beforeEach: fnInitDate,
 		afterEach: fnTeardown
 	});
 

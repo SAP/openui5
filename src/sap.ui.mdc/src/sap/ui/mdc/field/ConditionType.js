@@ -644,14 +644,14 @@ sap.ui.define([
 			throw new ValidateException(this._oResourceBundle.getText("field.VALUE_NOT_VALID"));
 		}
 
-		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator, aOperators);
+		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 
 		if (bIsUnit) {
 			// only use unit in condition
 			oOperator = FilterOperatorUtil.getEQOperator(); // as only EQ is allowed for unit
 		}
 
-		if (!oOperator) {
+		if (!oOperator || aOperators.indexOf(oOperator.name) === -1) {
 			throw new ValidateException("No valid condition provided, Operator wrong.");
 		}
 

@@ -127,6 +127,8 @@ sap.ui.define([
 		assert.deepEqual(DateContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(DateContent.getControlNames("EditMultiLine"), [null], "Correct controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(DateContent.getControlNames("EditOperator"), [null], "Correct controls returned for ContentMode 'EditOperator'");
+		assert.deepEqual(DateContent.getControlNames("EditOperator", "EQ"), ["sap/m/DatePicker"], "Correct controls returned for ContentMode 'EditOperator' and 'EQ'");
+		assert.deepEqual(DateContent.getControlNames("EditOperator", "BT"), ["sap/m/DateRangeSelection"], "Correct controls returned for ContentMode 'EditOperator' and 'BT'");
 		assert.deepEqual(DateContent.getControlNames("EditForHelp"), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for ContentMode 'Edit'");
 	});
 
@@ -305,8 +307,8 @@ sap.ui.define([
 		// TODAY ist just taken
 		assert.ok(aOptions.indexOf("TODAY") >= 0, "TODAY option created");
 		// NOTBT needs to be mapped as custom Option
-		assert.ok(aOptions.indexOf("NOTBT") >= 0, "NOTBT option created");
-		var oOption = DynamicDateUtil.getOption("NOTBT");
+		assert.ok(aOptions.indexOf("Date-NOTBT") >= 0, "NOTBT option created for Date");
+		var oOption = DynamicDateUtil.getOption("Date-NOTBT");
 		assert.ok(oOption.isA('sap.ui.mdc.condition.OperatorDynamicDateOption'), "OperatorDynmaicDateOption added for NOTBT");
 		assert.equal(oOption.getOperator().name, "NOTBT", "Operator assigned to Option");
 		assert.equal(oOption.getType().getMetadata().getName(), "sap.ui.model.type.Date", "Date type assigned to Option");
