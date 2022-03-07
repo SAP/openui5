@@ -53,7 +53,10 @@ sap.ui.define([
 						click: function(oEvent) {
 							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
 						}
-					})
+					}),
+					click: function(oEvent) {
+						// console.log("Event click fired for Avatar with parameters: ", oEvent.getParameters());
+					}
 				}),
 				menuItems: [
 					new CustomListItem({
@@ -104,7 +107,10 @@ sap.ui.define([
 						click: function(oEvent) {
 							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
 						}
-					})
+					}),
+					click: function(oEvent) {
+						// console.log("Event click fired for Avatar with parameters: ", oEvent.getParameters());
+					}
 				}),
 				searchField: new Input({
 					placeholder: "This is my placeholder value",

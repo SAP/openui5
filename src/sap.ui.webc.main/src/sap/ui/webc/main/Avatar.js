@@ -166,6 +166,15 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: false
 				}
+			},
+			events: {
+
+				/**
+				 * Fired when the user clicks the control
+				 */
+				click: {
+					parameters: {}
+				}
 			}
 		}
 	});
