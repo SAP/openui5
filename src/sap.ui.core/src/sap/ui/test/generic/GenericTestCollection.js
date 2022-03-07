@@ -52,6 +52,12 @@ sap.ui.define([], function() {
 		 */
 		ExcludeReason: {
 			/**
+			 * The property or aggregation can only be changed using a binding. Using setter is not allowed.
+			 * @private
+			 */
+			OnlyChangeableViaBinding: "OnlyChangeableViaBinding",
+
+			/**
 			 * The property or aggregation can only be set on initialisation. Using setter is not allowed.
 			 * @private
 			 */
