@@ -38,7 +38,10 @@ sap.ui.define([
 						click: function(oEvent) {
 							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
 						}
-					})
+					}),
+					click: function(oEvent) {
+						// console.log("Event click fired for Avatar with parameters: ", oEvent.getParameters());
+					}
 				}),
 				footnotes: [
 					new Button({
