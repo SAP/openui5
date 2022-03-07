@@ -317,5 +317,36 @@
         ]
       }
     ]
+  },
+  "1.90.12": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "1b195e7fcb8afea6de57c5343573d6a56e573fb4",
+        "type": "FIX",
+        "text": " PDFViewer - Handle sourceValidation error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2240085710"
+          }
+        ]
+      },
+      {
+        "id": "883d319b5d77c1fe90b60ef0dc9e5999467ca214",
+        "type": "FIX",
+        "text": " sap.m.Input: sTypedInValue initialy set to empty string",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280018709"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180196886"
+          }
+        ]
+      }
+    ]
   }
 }
