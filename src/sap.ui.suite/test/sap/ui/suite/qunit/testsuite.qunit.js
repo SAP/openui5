@@ -25,7 +25,10 @@ sap.ui.define(function() {
 		},
 		tests: {
 			TaskCircle: {},
-			VerticalProgressIndicator: {}
+			VerticalProgressIndicator: {},
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/suite/qunit/testsuite.generic.qunit.html"
+			}
 		}
 	};
 });

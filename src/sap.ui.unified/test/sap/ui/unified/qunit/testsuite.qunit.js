@@ -253,8 +253,8 @@ sap.ui.define(function() {
 				},
 				autostart: false
 			},
-			"EnforceSemanticRendering": {
-				title: "QUnit Page for Semantic Rendering Coverage"
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/unified/qunit/testsuite.generic.qunit.html"
 			},
 			// Design Time & RTA Enabling
 			"Designtime-Library": {

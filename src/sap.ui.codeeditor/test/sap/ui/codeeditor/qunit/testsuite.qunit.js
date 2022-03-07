@@ -29,8 +29,8 @@ sap.ui.define(function() {
 					only: ["sap/ui/codeeditor/CodeEditor"]
 				}
 			},
-			"EnforceSemanticRendering": {
-				title: "QUnit Page for Semantic Rendering Coverage"
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/codeeditor/qunit/testsuite.generic.qunit.html"
 			}
 		}
 	};

@@ -57,10 +57,6 @@ sap.ui.define([
 				autostart: false
 			},
 
-			"EnforceSemanticRendering": {
-				title: "QUnit Page for Semantic Rendering Coverage"
-			},
-
 			/* Control */
 			"Table": {
 				ui5: {
@@ -276,6 +272,9 @@ sap.ui.define([
 			"V4Aggregation": {
 				group: "Plugins",
 				module: "./plugins/{name}.qunit"
+			},
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/table/qunit/testsuite.generic.qunit.html"
 			}
 		}
 	};

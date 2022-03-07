@@ -311,6 +311,9 @@ sap.ui.define(function () {
 				coverage: {
 					only: ['sap/ui/dt/enablement']
 				}
+			},
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/dt/qunit/testsuite.generic.qunit.html"
 			}
 		}
 	};

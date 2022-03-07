@@ -752,6 +752,9 @@ sap.ui.define([
 						"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry"
 					]
 				}
+			},
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/rta/qunit/testsuite.generic.qunit.html"
 			}
 		}
 	};

@@ -37,10 +37,6 @@ sap.ui.define([], function() {
 				}
 			},
 
-			"EnforceSemanticRendering": {
-				title: "QUnit Page for Semantic Rendering Coverage"
-			},
-
 			"TopicDetailController": {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/controller/TopicDetail.controller"]
@@ -75,6 +71,9 @@ sap.ui.define([], function() {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/ObjectPageSubSection"]
 				}
+			},
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/documentation/sdk/qunit/testsuite.generic.qunit.html"
 			}
 
 			// "Forwarding": {

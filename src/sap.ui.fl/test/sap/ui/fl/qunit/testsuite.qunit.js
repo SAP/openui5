@@ -440,9 +440,6 @@ sap.ui.define([
 					}
 				}
 			},
-			EnforceSemanticRendering: {
-				title: "QUnit Page for Semantic Rendering Coverage"
-			},
 			"write/api/AppVariantWriteAPI": {
 				group: "Write API",
 				coverage: {
@@ -1196,6 +1193,9 @@ sap.ui.define([
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ovp/DeleteCard"]
 				}
+			},
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/fl/qunit/testsuite.generic.qunit.html"
 			}
 		}
 	};
