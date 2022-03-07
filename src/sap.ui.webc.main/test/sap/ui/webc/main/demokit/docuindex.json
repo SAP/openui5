@@ -26,6 +26,13 @@
 		  "samples": ["sap.ui.webc.main.sample.Input"]
 		},
 		{
+		  "id": "sap.ui.webc.main.Link",
+		  "name": "Link",
+		  "category": "Web Components",
+		  "since": "1.100.0",
+		  "samples": ["sap.ui.webc.main.sample.Link"]
+		},
+		{
 		  "id": "sap.ui.webc.main.MessageStrip",
 		  "name": "Message Strip",
 		  "category": "Web Components",
@@ -106,6 +113,11 @@
 		  "id": "sap.ui.webc.main.sample.Input",
 		  "name": "Input",
 		  "description": "Demonstrates the basic usage of Input"
+		},
+		{
+		  "id": "sap.ui.webc.main.sample.Link",
+		  "name": "Link",
+		  "description": "Demonstrates the basic usage of Link"
 		},
 		{
 		  "id": "sap.ui.webc.main.sample.MessageStrip",
