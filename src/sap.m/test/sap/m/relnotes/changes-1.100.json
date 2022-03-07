@@ -1,7 +1,39 @@
 {
   "1.100.0": {
-    "date": "February 2022",
+    "date": "March 2022",
     "notes": [
+      {
+        "id": "60dd867baa9474e41e817811674a80ff36c5125b",
+        "type": "FEATURE",
+        "text": " SameFilenameAllowed property added to uploadSet"
+      },
+      {
+        "id": "a04bb13c8fb2a0b3f69ff5ceea0d04765ccbce50",
+        "type": "FEATURE",
+        "text": " Mode property added to upload set"
+      },
+      {
+        "id": "195f79e69799e3f3ee773f04c1d301dcf90cca59",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: The autocompleted values update the model once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000146402022"
+          }
+        ]
+      },
+      {
+        "id": "32baaaf61034c3d17318ed952b98d2db5efa4742",
+        "type": "FIX",
+        "text": " core/m: fix viewport meta for iOS platform",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280037152"
+          }
+        ]
+      },
       {
         "id": "e44299cc0b5edb728519bb19659206360f022c1b",
         "type": "FIX",
