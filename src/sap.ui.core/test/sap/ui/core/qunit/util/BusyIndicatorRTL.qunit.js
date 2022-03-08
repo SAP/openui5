@@ -1,6 +1,9 @@
 /* global QUnit */
 
-sap.ui.define(["sap/ui/core/BusyIndicator"], function (BusyIndicator) {
+sap.ui.define([
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/thirdparty/jquery"
+], function (BusyIndicator, jQuery) {
 	"use strict";
 
 	QUnit.module("RTL-mode", {

@@ -1,6 +1,9 @@
 /* global sinon, QUnit */
 
-sap.ui.define(["sap/base/Log"], function(Log) {
+sap.ui.define([
+	"jquery.sap.global", // provides jQuery.sap.FrameOptions
+	"sap/base/Log"
+], function(jQuery, Log) {
 	"use strict";
 
 	function mockBrowserAPI(oTest, mOptions) {

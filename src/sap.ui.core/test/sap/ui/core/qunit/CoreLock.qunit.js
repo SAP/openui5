@@ -1,7 +1,8 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/m/Button"
-], function(Button) {
+	"sap/m/Button",
+	"sap/ui/thirdparty/jquery"
+], function(Button, jQuery) {
 	"use strict";
 
 	// Lock the Core.

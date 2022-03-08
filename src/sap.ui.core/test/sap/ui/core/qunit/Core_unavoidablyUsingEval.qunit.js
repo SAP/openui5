@@ -1,11 +1,12 @@
 /*global QUnit, sinon, testlibs*/
 
 sap.ui.require([
+	'jquery.sap.global',
 	'sap/base/util/ObjectPath',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/Log'
-], function(ObjectPath, LoaderExtensions, ResourceBundle, Log) {
+], function(jQuery, ObjectPath, LoaderExtensions, ResourceBundle, Log) {
 	"use strict";
 
 	QUnit.assert.isLibLoaded = function(libName) {

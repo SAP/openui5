@@ -347,13 +347,14 @@ sap.ui.define([
 			}, false);
 
 			window.addEventListener('keydown', _onArrowMove);
-			jQuery("#slideHandle").on('dblclick', _initSlider);
-			jQuery("#sapUiSupportPerfToggleRecordingBtn").on("click", _handlerTogglePlayButton).attr('data-state', 'Start recording');
+			document.getElementById("slideHandle").addEventListener('dblclick', _initSlider);
+			document.getElementById("sapUiSupportPerfToggleRecordingBtn").addEventListener("click", _handlerTogglePlayButton);
+			document.getElementById("sapUiSupportPerfToggleRecordingBtn").dataset.state = 'Start recording';
 		}
 
 		/* =============================================================================================================
 		 * Timeline overview
-		 ============================================================================================================= */
+		 ========1===================================================================================================== */
 
 		function _getTimelineOverViewBarTitle(duration, time) {
 			return 'Duration: ' + duration.toFixed(2) + ' ms.\nTime: ' + time.toFixed(2) + ' ms.';

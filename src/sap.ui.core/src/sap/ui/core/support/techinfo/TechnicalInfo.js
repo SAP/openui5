@@ -135,7 +135,7 @@ sap.ui.define([
 		 * Opens the currently loaded UI5 version info file in a new tab
 		 */
 		onShowVersion: function () {
-			mobileLibrary.URLHelper.redirect(sap.ui.resource("", "sap-ui-version.json"), true);
+			mobileLibrary.URLHelper.redirect(sap.ui.require.toUrl("sap-ui-version.json"), true);
 		},
 
 		/**

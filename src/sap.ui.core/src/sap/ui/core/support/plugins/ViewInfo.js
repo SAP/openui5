@@ -8,12 +8,12 @@ sap.ui.define([
 	'sap/ui/core/support/controls/TreeViewer',
 	'sap/ui/core/support/controls/ObjectViewer',
 	'sap/ui/Device',
-	"sap/base/Log",
-	"sap/base/security/encodeXML"
-], function(Plugin, TreeViewer, ObjectViewer, Device, Log, encodeXML) {
+	'sap/base/Log',
+	'sap/base/security/encodeXML',
+	'sap/ui/thirdparty/jquery'
+], function(Plugin, TreeViewer, ObjectViewer, Device, Log, encodeXML, $) {
 	"use strict";
 
-		var $ = jQuery;
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.ViewInfo.
 		 * @class This class represents the ViewInfo plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
@@ -40,7 +40,6 @@ sap.ui.define([
 							that.oCore = undefined;
 						}
 					});
-
 				}
 			}
 		});

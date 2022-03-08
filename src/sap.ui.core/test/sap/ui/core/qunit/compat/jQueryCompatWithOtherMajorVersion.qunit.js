@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, jQuery */
 (function() {
 	"use strict";
 

@@ -61,7 +61,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("UIArea via DomRef", function(assert) {
-		doTestPlaceAt(assert, jQuery("#uiArea2")[0], "uiArea2", true);
+		doTestPlaceAt(assert, document.getElementById("uiArea2"), "uiArea2", true);
 	});
 
 	QUnit.test("Container Control via Control reference", function(assert) {
@@ -114,7 +114,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("UIArea via DomRef", function(assert) {
-			doTestSetRoot(assert, jQuery("#uiArea4")[0], "uiArea4", true);
+			doTestSetRoot(assert, document.getElementById("uiArea4"), "uiArea4", true);
 		});
 
 		QUnit.test("Container Control via Control reference", function(assert) {

@@ -382,7 +382,6 @@ sap.ui.define([
 				libs: ["sap.m"]
 			},
 			module: "./OpaPlugin.qunit",
-			autostart: false,
 			loader: {
 				paths: {
 					"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"

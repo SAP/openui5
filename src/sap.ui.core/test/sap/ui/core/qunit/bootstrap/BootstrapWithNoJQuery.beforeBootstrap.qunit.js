@@ -1,1 +1,1 @@
-window.jQueryBeforeCoreBoot = jQuery;
+window.jQueryBeforeCoreBoot = window.jQuery;

@@ -16,6 +16,8 @@ sap.ui.define([
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/model/Binding',
 	'sap/ui/model/CompositeBinding',
+	'sap/base/util/each',
+	'sap/base/util/isEmptyObject',
 	'sap/base/util/ObjectPath',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
@@ -34,8 +36,10 @@ sap.ui.define([
 	XMLView,
 	Binding,
 	CompositeBinding,
+	each,
+	isEmptyObject,
 	ObjectPath,
-	jQueryDOM,
+	$,
 	KeyCodes,
 	encodeXML
 ) {
@@ -43,7 +47,6 @@ sap.ui.define([
 
 	/*global alert */
 
-		var $ = jQuery;
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.ControlTree.
 		 * @class This class represents the ControlTree plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
@@ -128,24 +131,24 @@ sap.ui.define([
 
 		function initInTools(oSupportStub) {
 			$(document)
-			.on("click", "li img.sapUiControlTreeIcon", $.proxy(this._onIconClick, this))
-			.on("click", "li.sapUiControlTreeElement div", $.proxy(this._onNodeClick, this))
-			.on("click", "li.sapUiControlTreeLink div", $.proxy(this._onControlTreeLinkClick, this))
-			.on("click", "#sapUiSupportControlTabProperties", $.proxy(this._onPropertiesTab, this))
-			.on("click", "#sapUiSupportControlTabBindingInfos", $.proxy(this._onBindingInfosTab, this))
-			.on("click", "#sapUiSupportControlTabBreakpoints", $.proxy(this._onMethodsTab, this))
-			.on("click", "#sapUiSupportControlTabExport", $.proxy(this._onExportTab, this))
-			.on("change", "[data-sap-ui-name]", $.proxy(this._onPropertyChange, this))
-			.on("change", "[data-sap-ui-method]", $.proxy(this._onPropertyBreakpointChange, this))
-			.on("keyup", '.sapUiSupportControlMethods input[type="text"]', $.proxy(this._autoComplete, this))
-			.on("blur", '.sapUiSupportControlMethods input[type="text"]', $.proxy(this._updateSelectOptions, this))
-			.on("change", '.sapUiSupportControlMethods select', $.proxy(this._selectOptionsChanged, this))
-			.on("click", '#sapUiSupportControlAddBreakPoint', $.proxy(this._onAddBreakpointClicked, this))
-			.on("click", '#sapUiSupportControlExportToXml', $.proxy(this._onExportToXmlClicked, this))
-			.on("click", '#sapUiSupportControlExportToHtml', $.proxy(this._onExportToHtmlClicked, this))
-			.on("click", '#sapUiSupportControlActiveBreakpoints img.remove-breakpoint', $.proxy(this._onRemoveBreakpointClicked, this))
-			.on("click", '#sapUiSupportControlPropertiesArea a.control-tree', $.proxy(this._onNavToControl, this))
-			.on("click", '#sapUiSupportControlPropertiesArea img.sapUiSupportRefreshBinding', $.proxy(this._onRefreshBinding, this));
+			.on("click", "li img.sapUiControlTreeIcon", this._onIconClick.bind(this))
+			.on("click", "li.sapUiControlTreeElement div", this._onNodeClick.bind(this))
+			.on("click", "li.sapUiControlTreeLink div", this._onControlTreeLinkClick.bind(this))
+			.on("click", "#sapUiSupportControlTabProperties", this._onPropertiesTab.bind(this))
+			.on("click", "#sapUiSupportControlTabBindingInfos", this._onBindingInfosTab.bind(this))
+			.on("click", "#sapUiSupportControlTabBreakpoints", this._onMethodsTab.bind(this))
+			.on("click", "#sapUiSupportControlTabExport", this._onExportTab.bind(this))
+			.on("change", "[data-sap-ui-name]", this._onPropertyChange.bind(this))
+			.on("change", "[data-sap-ui-method]", this._onPropertyBreakpointChange.bind(this))
+			.on("keyup", '.sapUiSupportControlMethods input[type="text"]', this._autoComplete.bind(this))
+			.on("blur", '.sapUiSupportControlMethods input[type="text"]', this._updateSelectOptions.bind(this))
+			.on("change", '.sapUiSupportControlMethods select', this._selectOptionsChanged.bind(this))
+			.on("click", '#sapUiSupportControlAddBreakPoint', this._onAddBreakpointClicked.bind(this))
+			.on("click", '#sapUiSupportControlExportToXml', this._onExportToXmlClicked.bind(this))
+			.on("click", '#sapUiSupportControlExportToHtml', this._onExportToHtmlClicked.bind(this))
+			.on("click", '#sapUiSupportControlActiveBreakpoints img.remove-breakpoint', this._onRemoveBreakpointClicked.bind(this))
+			.on("click", '#sapUiSupportControlPropertiesArea a.control-tree', this._onNavToControl.bind(this))
+			.on("click", '#sapUiSupportControlPropertiesArea img.sapUiSupportRefreshBinding', this._onRefreshBinding.bind(this));
 
 			this.renderContentAreas();
 		}
@@ -235,13 +238,13 @@ sap.ui.define([
 
 				if (mElement.aggregation.length > 0) {
 					rm.write("<ul>");
-					$.each(mElement.aggregation, renderNode);
+					each(mElement.aggregation, renderNode);
 					rm.write("</ul>");
 				}
 
 				if (mElement.association.length > 0) {
 					rm.write("<ul>");
-					$.each(mElement.association, function(iIndex, oValue) {
+					each(mElement.association, function(iIndex, oValue) {
 
 						if (oValue.isAssociationLink) {
 							var sType = basename(oValue.type);
@@ -261,7 +264,7 @@ sap.ui.define([
 				rm.write("</li>");
 			}
 
-			$.each(aControlTree, renderNode);
+			each(aControlTree, renderNode);
 
 			rm.flush(this.$().find("#sapUiSupportControlTreeArea > ul.sapUiSupportControlTreeList").get(0));
 			rm.destroy();
@@ -272,7 +275,7 @@ sap.ui.define([
 			var rm = sap.ui.getCore().createRenderManager();
 
 			rm.write('<ul class="sapUiSupportControlTreeList" data-sap-ui-controlid="' + encode(sControlId) + '">');
-			$.each(aControlProps, function(iIndex, oValue) {
+			each(aControlProps, function(iIndex, oValue) {
 
 				rm.write("<li>");
 
@@ -284,7 +287,7 @@ sap.ui.define([
 
 					rm.write("<div class=\"sapUiSupportControlProperties\"><table><colgroup><col width=\"50%\"><col width=\"50%\"></colgroup>");
 
-					$.each(oValue.properties, function(iIndex, oProperty) {
+					each(oValue.properties, function(iIndex, oProperty) {
 
 						rm.write("<tr><td>");
 						rm.write("<label class='sapUiSupportLabel'>" + encode(oProperty.name) + ((oProperty.isBound) ?
@@ -304,7 +307,7 @@ sap.ui.define([
 
 							rm.write("<div><select ");
 							rm.write("data-sap-ui-name='" + encode(oProperty.name) + "'>");
-							$.each(oProperty.enumValues, function(sKey, sValue) {
+							each(oProperty.enumValues, function(sKey, sValue) {
 								rm.write("<option");
 
 								if (sKey === oProperty.value) {
@@ -348,7 +351,7 @@ sap.ui.define([
 
 					});
 
-					$.each(oValue.aggregations, function(iIndex, oAggregation) {
+					each(oValue.aggregations, function(iIndex, oAggregation) {
 
 						rm.write("<tr><td>");
 
@@ -401,7 +404,7 @@ sap.ui.define([
 
 				rm.write('<ul class="sapUiSupportControlTreeList" data-sap-ui-controlid="' + encode(sControlId) + '">');
 
-				$.each(mBindingInfos.contexts, function(iContextIndex, oContext) {
+				each(mBindingInfos.contexts, function(iContextIndex, oContext) {
 
 					rm.write('<li>');
 
@@ -470,7 +473,7 @@ sap.ui.define([
 
 				rm.write('<ul class="sapUiSupportControlTreeList" data-sap-ui-controlid="' + encode(sControlId) + '">');
 
-				$.each(mBindingInfos.bindings, function(iBindingInfoIndex, oBindingInfo) {
+				each(mBindingInfos.bindings, function(iBindingInfoIndex, oBindingInfo) {
 
 					rm.write('<li data-sap-ui-binding-name="' + encode(oBindingInfo.name) + '">');
 
@@ -481,7 +484,7 @@ sap.ui.define([
 
 					rm.write('</span>');
 
-					$.each(oBindingInfo.bindings, function(iBindingIndex, oBinding) {
+					each(oBindingInfo.bindings, function(iBindingIndex, oBinding) {
 
 						rm.write('<div class="sapUiSupportControlProperties">');
 
@@ -669,7 +672,7 @@ sap.ui.define([
 
 			rm.write('<select id="sapUiSupportControlMethodsSelect" class="sapUiSupportAutocomplete sapUiSupportSelect"><option></option>');
 
-			$.each(aMethods, function(iIndex, oValue) {
+			each(aMethods, function(iIndex, oValue) {
 				if (!oValue.active) {
 					rm.write('<option>' + encode(oValue.name) + '</option>');
 				}
@@ -681,7 +684,7 @@ sap.ui.define([
 			rm.write('<button id="sapUiSupportControlAddBreakPoint" class="sapUiSupportRoundedButton ">Add breakpoint</button>');
 			rm.write('<hr class="no-border"><ul id="sapUiSupportControlActiveBreakpoints" class="sapUiSupportList sapUiSupportBreakpointList">');
 
-			$.each(aMethods, function(iIndex, oValue) {
+			each(aMethods, function(iIndex, oValue) {
 				if (!oValue.active) {
 					return;
 				}
@@ -772,7 +775,7 @@ sap.ui.define([
 			var mViews = JSON.parse(oEvent.getParameter("serializedViews"));
 			var sType = oEvent.getParameter("sType");
 
-			if (!$.isEmptyObject(mViews)) {
+			if (!isEmptyObject(mViews)) {
 				zip = new JSZip();
 				for (var oViewName in mViews) {
 					var data = mViews[oViewName];
@@ -1085,10 +1088,10 @@ sap.ui.define([
 
 			$(".sapUiControlTreeElement > div").removeClass("sapUiSupportControlTreeSelected");
 			var that = this;
-			jQueryDOM(document.getElementById("sap-debug-controltree-" + sControlId)).parents("[data-sap-ui-collapsed]").each(function(iIndex, oValue) {
+			$(document.getElementById("sap-debug-controltree-" + sControlId)).parents("[data-sap-ui-collapsed]").each(function(iIndex, oValue) {
 				that._onIconClick({ target: $(oValue).find("img:first").get(0) });
 			});
-			var oPosition = jQueryDOM(document.getElementById("sap-debug-controltree-" + sControlId)).children("div").addClass("sapUiSupportControlTreeSelected").position();
+			var oPosition = $(document.getElementById("sap-debug-controltree-" + sControlId)).children("div").addClass("sapUiSupportControlTreeSelected").position();
 			var iScrollTop = this.$().find("#sapUiSupportControlTreeArea").scrollTop();
 			this.$().find("#sapUiSupportControlTreeArea").scrollTop(iScrollTop + oPosition.top);
 
@@ -1262,7 +1265,7 @@ sap.ui.define([
 				if (oElement instanceof UIArea) {
 					mElement.library = "sap.ui.core";
 					mElement.type = "sap.ui.core.UIArea";
-					$.each(oElement.getContent(), function(iIndex, oElement) {
+					each(oElement.getContent(), function(iIndex, oElement) {
 						var mChild = serializeElement(oElement);
 						mElement.aggregation.push(mChild);
 					});
@@ -1274,8 +1277,8 @@ sap.ui.define([
 						for (var sAggrName in oElement.mAggregations) {
 							var oAggrElement = oElement.mAggregations[sAggrName];
 							if (oAggrElement) {
-								var aElements = $.isArray(oAggrElement) ? oAggrElement : [oAggrElement];
-								$.each(aElements, function(iIndex, oValue) {
+								var aElements = Array.isArray(oAggrElement) ? oAggrElement : [oAggrElement];
+								each(aElements, function(iIndex, oValue) {
 									// tooltips are also part of aggregations
 									if (oValue instanceof Element) {
 										var mChild = serializeElement(oValue);
@@ -1293,8 +1296,8 @@ sap.ui.define([
 							var sAssocId = oElement.mAssociations[sAssocName];
 							var sAssocType = (mAssocMetadata[sAssocName]) ? mAssocMetadata[sAssocName].type : null;
 							if (sAssocId && sAssocType) {
-								var aAssocIds = $.isArray(sAssocId) ? sAssocId : [sAssocId];
-								$.each(aAssocIds, function(iIndex, oValue) {
+								var aAssocIds = Array.isArray(sAssocId) ? sAssocId : [sAssocId];
+								each(aAssocIds, function(iIndex, oValue) {
 									mElement.association.push({ id: oValue, type: sAssocType, name: sAssocName, isAssociationLink: true });
 								});
 							}
@@ -1305,7 +1308,7 @@ sap.ui.define([
 				return mElement;
 			}
 
-			$.each(oCore.mUIAreas, function(iIndex, oUIArea) {
+			each(oCore.mUIAreas, function(iIndex, oUIArea) {
 				var mElement = serializeElement(oUIArea);
 				aControlTree.push(mElement);
 			});
@@ -1353,10 +1356,10 @@ sap.ui.define([
 				}
 				/*eslint-enable no-loop-func */
 
-				$.each(mElement.aggregation, serializeAssociations);
+				each(mElement.aggregation, serializeAssociations);
 			}
 
-			$.each(aControlTree, serializeAssociations);
+			each(aControlTree, serializeAssociations);
 
 			return aControlTree;
 		};
@@ -1391,9 +1394,9 @@ sap.ui.define([
 					};
 
 					var mProperties = oMetadata.getProperties();
-					$.each(mProperties, function(sKey, oProperty) {
+					each(mProperties, function(sKey, oProperty) {
 						var mProperty = {};
-						$.each(oProperty, function(sName, sValue) {
+						each(oProperty, function(sName, sValue) {
 
 							if (sName.substring(0, 1) !== "_" || (sName == '_sGetter' || sName == '_sMutator')) {
 								mProperty[sName] = sValue;
@@ -1418,10 +1421,10 @@ sap.ui.define([
 					});
 
 					var mAggregations = oMetadata.getAggregations();
-					$.each(mAggregations, function(sKey, oAggregation) {
+					each(mAggregations, function(sKey, oAggregation) {
 						if (oAggregation.altTypes && oAggregation.altTypes[0] && pSimpleType.test(oAggregation.altTypes[0]) && typeof (oControl.getAggregation(sKey)) !== 'object') {
 							var mAggregation = {};
-							$.each(oAggregation, function(sName, sValue) {
+							each(oAggregation, function(sName, sValue) {
 
 								if (sName.substring(0, 1) !== "_" || (sName == '_sGetter' || sName == '_sMutator')) {
 									mAggregation[sName] = sValue;
@@ -1475,7 +1478,7 @@ sap.ui.define([
 					var aBindings = [];
 					var aBindingInfoBuffer, aBindingBuffer = [];
 
-					if ($.isArray(mBindingInfo.parts)) {
+					if (Array.isArray(mBindingInfo.parts)) {
 						aBindingInfoBuffer = mBindingInfo.parts;
 					} else {
 						aBindingInfoBuffer = [ mBindingInfo ];
@@ -1487,7 +1490,7 @@ sap.ui.define([
 						aBindingBuffer = [ mBindingInfo.binding ];
 					}
 
-					$.each(aBindingInfoBuffer, function(iIndex, oInfo) {
+					each(aBindingInfoBuffer, function(iIndex, oInfo) {
 
 						var mData = {};
 

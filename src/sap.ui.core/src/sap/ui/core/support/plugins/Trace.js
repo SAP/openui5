@@ -206,18 +206,18 @@ sap.ui.define([
 		};
 
 		function log(oPlugin, oEntry){
-			var jContentRef = jQuery(".sapUiSupportTraceCntnt", oPlugin.$());
+			var oContentRef = oPlugin.$()[0].querySelector(".sapUiSupportTraceCntnt");
 			if (!oEntry) {
-				jContentRef.html("");
+				oContentRef.textContent = "";
 				oPlugin._aLogEntries = [];
 			} else if (typeof (oEntry) === "string") {
-				jContentRef.html(encodeXML(oEntry));
-				jContentRef[0].scrollTop = jContentRef[0].scrollHeight;
+				oContentRef.textContent = encodeXML(oEntry);
+				oContentRef.scrollTop = oContentRef.scrollHeight;
 			} else {
 				oEntry._levelInfo = getLevel(oEntry.level);
 				if (applyFilter(oPlugin._filter, oPlugin._iLogLevel, oEntry)) {
-					jContentRef.append(getEntryHTML(oPlugin, oEntry));
-					jContentRef[0].scrollTop = jContentRef[0].scrollHeight;
+					oContentRef.insertAdjacentHTML("beforeend", getEntryHTML(oPlugin, oEntry));
+					oContentRef.scrollTop = oContentRef.scrollHeight;
 				}
 				oPlugin._aLogEntries.push(oEntry);
 			}

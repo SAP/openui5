@@ -27,10 +27,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/table/Column",
 	"sap/ui/table/Table",
+	"sap/ui/thirdparty/jquery",
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService"
 ], function(Log, encodeURL, each, isEmptyObject, isPlainObject, Button, ListItem, HBox, Input,
 	Label, List, Panel, Text, Message, ChangeReason, ClientModel, Context, Filter, FilterOperator,
-	Sorter, JSONModel, MessageScope, ODataUtils, ODataModel, Column, Table, fakeService) {
+	Sorter, JSONModel, MessageScope, ODataUtils, ODataModel, Column, Table, jQuery, fakeService) {
 	"use strict";
 
 	//some view

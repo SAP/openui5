@@ -6,6 +6,7 @@
 sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/thirdparty/URI',
+	'sap/ui/VersionInfo',
 	'sap/base/util/Version',
 	'sap/base/Log',
 	'sap/ui/dom/includeStylesheet',
@@ -19,6 +20,7 @@ sap.ui.define([
 	function(
 		BaseObject,
 		URI,
+		VersionInfo,
 		Version,
 		Log,
 		includeStylesheet,
@@ -376,14 +378,14 @@ sap.ui.define([
 			if (sMinUI5Version &&
 				Log.isLoggable(Log.Level.WARNING) &&
 				sap.ui.getCore().getConfiguration().getDebug()) {
-				sap.ui.getVersionInfo({async: true}).then(function(oVersionInfo) {
+				VersionInfo.load().then(function(oVersionInfo) {
 					var oMinVersion = getVersionWithoutSuffix(sMinUI5Version);
 					var oVersion = getVersionWithoutSuffix(oVersionInfo && oVersionInfo.version);
 					if (oMinVersion.compareTo(oVersion) > 0) {
 						Log.warning("Component \"" + this.getComponentName() + "\" requires at least version \"" + oMinVersion.toString() + "\" but running on \"" + oVersion.toString() + "\"!");
 					}
 				}.bind(this), function(e) {
-					Log.warning("The validation of the version for Component \"" + this.getComponentName() + "\" failed! Reasion: " + e);
+					Log.warning("The validation of the version for Component \"" + this.getComponentName() + "\" failed! Reason: " + e);
 				}.bind(this));
 			}
 

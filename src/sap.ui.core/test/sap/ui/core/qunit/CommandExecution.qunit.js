@@ -655,7 +655,7 @@ sap.ui.define([
 			//get ComponentContainer
 			var oContainer = oParams[0].view;
 			//add a model to comp container to fore propagation on comp container exit
-			oContainer.setModel(new sap.ui.model.json.JSONModel());
+			oContainer.setModel(new JSONModel());
 			return oContainer.getComponentInstance().getRootControl().loaded().then(function() {
 				return oContainer.getComponentInstance();
 			});

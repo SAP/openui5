@@ -1,9 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
+	"jquery.sap.global", // provides jQuery.sap.Version
 	"sap/ui/core/Core",
 	"sap/ui/core/Configuration"
 ], function(
+	jQuery,
 	Core,
 	Configuration
 ) {

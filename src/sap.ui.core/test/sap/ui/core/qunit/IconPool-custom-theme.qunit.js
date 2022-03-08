@@ -4,12 +4,16 @@ sap.ui.define(["sap/ui/core/IconPool"],function(IconPool) {
 
 	QUnit.test("insertFontFaceStyle", function(assert) {
 
-		assert.equal(jQuery("head > link[type='text/css']").get(0), null, "Style should not have been inserted.");
+		function findLinkElement() {
+			return document.querySelector("head > link[type='text/css']");
+		}
+
+		assert.strictEqual(findLinkElement(), null, "Style should not have been inserted.");
 
 		IconPool.insertFontFaceStyle();
 
-		var oLinkElement = jQuery("head > link[type='text/css']");
-		assert.ok(oLinkElement.length === 0, "Link element isn't created because the font-face declaration is done in library.css");
+		assert.strictEqual(findLinkElement(), null,
+			"Link element still isn't created because the font-face declaration is done in library.css");
 	});
 
 });

@@ -1,5 +1,8 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/core/theming/Parameters"], function (Parameters) {
+sap.ui.define([
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/thirdparty/jquery"
+], function (Parameters, jQuery) {
 	"use strict";
 
 	/**

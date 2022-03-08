@@ -1,6 +1,7 @@
 /*global QUnit, sinon, hasher */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/deepExtend",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/JSView",
@@ -21,7 +22,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/m/VBox"
-], function (Log, UIComponent, Controller, JSView, View, ViewType, HashChanger, RouterHashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Component, ComponentContainer, VBox) {
+], function (Log, deepExtend, UIComponent, Controller, JSView, View, ViewType, HashChanger, RouterHashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Component, ComponentContainer, VBox) {
 	"use strict";
 
 	// This global namespace is used for creating custom component classes.
@@ -1118,7 +1119,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oRouter = fnCreateRouter();
 			this.oRouter.oHashChanger = {
-				setHash: jQuery.noop
+				setHash: function() {}
 			};
 		},
 		afterEach: function () {
@@ -2809,12 +2810,12 @@ sap.ui.define([
 		var oParentRouteMatchedEvent,
 			oParentRouteMatchedEventSpy = sinon.spy(function(oEvent) {
 				// save the oEvent because EventProvider will overwrite it otherwise
-				oParentRouteMatchedEvent = jQuery.extend(true, {}, oEvent);
+				oParentRouteMatchedEvent = deepExtend({}, oEvent);
 			}),
 			oParentRoutePatternMatchedEventSpy = sinon.spy(),
 			oChildRouteMatchedEvent,
 			oChildRouteMatchedEventSpy = sinon.spy(function(oEvent) {
-				oChildRouteMatchedEvent = jQuery.extend(true, {}, oEvent);
+				oChildRouteMatchedEvent = deepExtend({}, oEvent);
 			}),
 			oChildRoutePatternMatchedEventSpy = sinon.spy(),
 			oParentRoute = this.oParentComponent.getRouter().getRoute("category"),
@@ -2906,7 +2907,7 @@ sap.ui.define([
 			aRoutes[i] = oComponent.getRouter().getRoute("route" + i);
 			aRouteMatchedEventSpies[i] = sinon.spy(function(oEvent) {
 				// save the oEvent because EventProvider will overwrite it otherwise
-				aRouteMatchedEvents[i] = jQuery.extend(true, {}, oEvent);
+				aRouteMatchedEvents[i] = deepExtend({}, oEvent);
 			});
 			aRouteMatchedSpies[i] = sinon.spy(aRoutes[i], "_routeMatched");
 			aRoutePatternMatchedSpies[i] = sinon.spy();

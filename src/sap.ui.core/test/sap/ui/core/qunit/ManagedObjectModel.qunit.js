@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/m/ColumnListItem",
+	"sap/m/CustomListItem",
 	"sap/m/DatePicker",
 	"sap/m/Input",
 	"sap/m/List",
@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/VBox",
 	"sap/ui/core/Element",
+	"sap/ui/core/Item",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/model/json/JSONModel",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function (ColumnListItem, DatePicker, Input, List, Select, Text, VBox, Element, XMLView,
+], function (CustomListItem, DatePicker, Input, List, Select, Text, VBox, Element, Item, XMLView,
 			 ManagedObjectModel, JSONModel, DateType, Context, Filter, FilterOperator) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
@@ -1394,7 +1395,7 @@ sap.ui.define([
 					})
 				}
 			});
-			this.oMOModel = new sap.ui.model.base.ManagedObjectModel(this._oModelList);
+			this.oMOModel = new ManagedObjectModel(this._oModelList);
 		},
 		afterEach: function () {
 			this._oModelList.destroy();
@@ -1407,13 +1408,13 @@ sap.ui.define([
 			models: this.oMOModel,
 			items: {
 				path: "/selects",
-				template: new sap.m.CustomListItem({
+				template: new CustomListItem({
 					content: [
 						new Select({
 							selectedKey: "{selected}",
 							items: {
 								path: "items",
-								template: new sap.ui.core.Item({
+								template: new Item({
 									key: "{key}",
 									text: "{text}"
 								})
@@ -1471,7 +1472,7 @@ sap.ui.define([
 			growingThreshold: 50,
 			items: {
 				path: "/paging",
-				template: new sap.m.CustomListItem({
+				template: new CustomListItem({
 					content: [
 						new Text( {text: "{text}" })
 					]
@@ -1504,7 +1505,7 @@ sap.ui.define([
 			growingThreshold: 50,
 			items: {
 				path: "/assetPages",
-				template: new sap.m.CustomListItem({
+				template: new CustomListItem({
 					content: [
 						new Text( {text: "{text}" })
 					]
@@ -1537,7 +1538,7 @@ sap.ui.define([
 			growingThreshold: 50,
 			items: {
 				path: "/selects/2/pages",
-				template: new sap.m.CustomListItem({
+				template: new CustomListItem({
 					content: [
 						new Text( {text: "{text}" })
 					]
@@ -1570,7 +1571,7 @@ sap.ui.define([
 			growingThreshold: 50,
 			items: {
 				path: "/pageProp/pages/0/page",
-				template: new sap.m.CustomListItem({
+				template: new CustomListItem({
 					content: [
 						new Text( {text: "{text}" })
 					]

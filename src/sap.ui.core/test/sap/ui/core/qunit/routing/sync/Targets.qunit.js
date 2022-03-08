@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/deepExtend",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/routing/Targets",
 	"sap/ui/core/routing/Router",
@@ -8,7 +9,7 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Panel",
 	"sap/ui/model/json/JSONModel"
-], function (Log, View, Targets, Router, Views, App, Panel, JSONModel) {
+], function (Log, deepExtend, View, Targets, Router, Views, App, Panel, JSONModel) {
 	"use strict";
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
@@ -177,7 +178,7 @@ sap.ui.define([
 	QUnit.test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
+		var oStub = this.stub(Log, "error");
 
 		// Act
 		this.oTargets.addTarget("myParent", {
@@ -250,7 +251,7 @@ sap.ui.define([
 					}
 				}
 			},
-			oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
+			oErrorStub = this.stub(Log, "error");
 
 		// System under test + Act
 		this.oTargets = new Targets(oIncorrectConfig);
@@ -279,8 +280,8 @@ sap.ui.define([
 	QUnit.test("Should display one target", function (assert) {
 		// Arrange
 		// Replace display with an empty fn
-		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display").callsFake(jQuery.noop);
-		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display").callsFake(jQuery.noop);
+		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display");
+		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display");
 
 		// Act
 		this.oTargets.display("firstTarget");
@@ -293,8 +294,8 @@ sap.ui.define([
 	QUnit.test("Should display multiple targets", function (assert) {
 		// Arrange
 		// Replace display with an empty fn
-		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display").callsFake(jQuery.noop);
-		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display").callsFake(jQuery.noop);
+		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display");
+		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display");
 
 		// Act
 		this.oTargets.display(["firstTarget", "secondTarget"]);
@@ -307,7 +308,7 @@ sap.ui.define([
 	QUnit.test("Should log an error if user tries to display a non existing Target", function (assert) {
 
 		// Assert
-		var oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
+		var oErrorStub = this.stub(Log, "error");
 
 		// Act
 		this.oTargets.display("foo");
@@ -319,8 +320,8 @@ sap.ui.define([
 	QUnit.test("Should log an error if user tries to display a non existing Target, but should display existing ones", function (assert) {
 
 		// Assert
-		var oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
-		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display").callsFake(jQuery.noop);
+		var oErrorStub = this.stub(Log, "error");
+		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display");
 
 		// Act
 		this.oTargets.display(["foo", "firstTarget"]);
@@ -458,7 +459,7 @@ sap.ui.define([
 		assert.strictEqual(oParameters.control, this.oShell, "control was the shell");
 		assert.strictEqual(oParameters.data, oData, "data was passed");
 		assert.strictEqual(oParameters.name, "myTarget", "name was passed");
-		allPropertiesStrictEqual(jQuery.extend(true, { _name: "myTarget" }, this.oTargetsCofig.myTarget, this.oDefaultConfig), oParameters.config, assert);
+		allPropertiesStrictEqual(deepExtend({ _name: "myTarget" }, this.oTargetsCofig.myTarget, this.oDefaultConfig), oParameters.config, assert);
 	});
 
 	QUnit.test("Should fire the display event for multiple targets and children", function (assert) {
@@ -470,7 +471,7 @@ sap.ui.define([
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 				aTargetNames.push(oParameters.name);
-				allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, {}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig), assert);
+				allPropertiesStrictEqual(oParameters.config, deepExtend({}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig), assert);
 				assert.strictEqual(oParameters.view, that.oView, "view got passed to the event");
 				assert.strictEqual(oParameters.control, that.oShell, "control got passed to the event");
 				assert.strictEqual(oParameters.data, oData, "data was passed");
@@ -847,7 +848,7 @@ sap.ui.define([
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 				aTargetNames.push(oParameters.name);
-				allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, {}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig), assert);
+				allPropertiesStrictEqual(oParameters.config, deepExtend({}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig), assert);
 				assert.strictEqual(oParameters.view, that.oView, "view got passed to the event");
 				assert.strictEqual(oParameters.control, that.oApp, "control got passed to the event");
 				assert.strictEqual(oParameters.data, oData, "data was passed");

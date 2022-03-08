@@ -1,8 +1,9 @@
 /* global QUnit */
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/URI"
-], function(createAndAppendDiv, URI) {
+], function(jQuery, createAndAppendDiv, URI) {
 	"use strict";
 
 	/* !!! MOVE TO HEAD - DUE TO SAFARI ISSUES DURING TEST SETUP !!! */

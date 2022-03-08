@@ -788,7 +788,7 @@ sap.ui.define([
 			}
 
 			if (bForce && !logo) {
-				return sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif');
+				return sap.ui.require.toUrl('sap/ui/core/themes/base/img/1x1.gif');
 			}
 
 			return logo;

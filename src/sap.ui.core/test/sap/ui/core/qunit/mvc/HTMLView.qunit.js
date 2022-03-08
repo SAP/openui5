@@ -43,9 +43,9 @@ sap.ui.define([
 		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery("#htmlRoot").html(), "THIS IS A TEST" , "HTML at root level rendered");
-		assert.equal(jQuery("#htmlNested").html(), "NESTED WORKS AS WELL",   "HTML at nested level rendered");
-		assert.ok(jQuery("#htmlEmbeddedTable")[0], "HTML at embedded level rendered");
+		assert.equal(document.getElementById("htmlRoot").innerHTML, "THIS IS A TEST" , "HTML at root level rendered");
+		assert.equal(document.getElementById("htmlNested").innerHTML, "NESTED WORKS AS WELL",   "HTML at nested level rendered");
+		assert.ok(document.getElementById("htmlEmbeddedTable"), "HTML at embedded level rendered");
 		oView.destroy();
 	});
 

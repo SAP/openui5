@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/handlebars"
-], function(Template, JSONModel, jquery, Handlebars) {
+], function(Template, JSONModel, jQuery, Handlebars) {
 	"use strict";
 
 	QUnit.module("handlebars validation");

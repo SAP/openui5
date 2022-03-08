@@ -148,7 +148,7 @@ sap.ui.define(['sap/ui/security/FrameOptions'], function(FrameOptions) {
 
 			assert.ok(fnCallback.calledWith(false));
 
-			assert.ok(jQuery.contains(document.body, this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
+			assert.ok(document.body.contains(this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
 			assert.equal(this.oFrameOptions._lockDiv.style.zIndex, '2147483647', 'Block layer should have a high z-index');
 		});
 	}
@@ -189,7 +189,7 @@ sap.ui.define(['sap/ui/security/FrameOptions'], function(FrameOptions) {
 			assert.ok(fnCallback.calledOnce);
 			assert.ok(fnCallback.calledWith(false));
 
-			assert.ok(jQuery.contains(document.body, this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
+			assert.ok(document.body.contains(this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
 			assert.equal(this.oFrameOptions._lockDiv.style.zIndex, '2147483647', 'Block layer should have a high z-index');
 		});
 	}

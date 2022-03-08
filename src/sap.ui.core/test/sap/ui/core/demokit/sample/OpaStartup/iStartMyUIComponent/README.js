@@ -7,7 +7,7 @@ sap.ui.require(
 	], function(Panel, Text) {
 	"use strict";
 
-	jQuery("#readme").css({
+	Object.assign(document.getElementById("readme").style, {
 		top: "350px",
 		position: "fixed",
 		left: 0,
@@ -15,7 +15,7 @@ sap.ui.require(
 	});
 
 	QUnit.done(function () {
-		jQuery("#readme").css({
+		Object.assign(document.getElementById("readme").style, {
 			width: "100%",
 			top: "190px"
 		});

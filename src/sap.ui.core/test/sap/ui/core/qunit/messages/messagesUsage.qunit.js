@@ -1,5 +1,6 @@
 /* global sinon, QUnit*/
 sap.ui.define([
+	'sap/base/util/isPlainObject',
 	'sap/m/Input',
 	'sap/ui/model/Model',
 	'sap/ui/model/type/Integer',
@@ -11,7 +12,7 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/UIComponent',
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(Input, Model, Integer, Message, MessageManager, library, Component, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv){
+], function(isPlainObject, Input, Model, Integer, Message, MessageManager, library, Component, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv){
 	"use strict";
 
 	// create content div
@@ -127,7 +128,7 @@ sap.ui.define([
 		oCompZip.getBinding("value").attachDataStateChange(oValHandler);
 		sap.ui.getCore().attachValidationError(oValHandler);
 		oCompZip.setValue('123456');
-		assert.ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
+		assert.ok(isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 		sap.ui.getCore().detachValidationError(oValHandler);
 	});
 
@@ -148,7 +149,7 @@ sap.ui.define([
 		oCompZip.getBinding("value").attachDataStateChange(oChangeHandler);
 		sap.ui.getCore().attachValidationError(oValHandler);
 		oCompZip.setValue('123456');
-		assert.ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
+		assert.ok(isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 	});
 
 	QUnit.module("Component: handleValidation / registerObject", {

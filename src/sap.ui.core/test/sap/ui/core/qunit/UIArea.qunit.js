@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/testlib/TestButton",
 	"sap/ui/core/HTML",
-	"sap/base/Log"
-], function(createAndAppendDiv, UIArea, Control, TestButton, HTML, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(createAndAppendDiv, UIArea, Control, TestButton, HTML, Log, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");

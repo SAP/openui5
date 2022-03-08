@@ -1,7 +1,8 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/Element"
-], function(Element) {
+	"sap/ui/core/Element",
+	"sap/ui/thirdparty/jquery"
+], function(Element, jQuery) {
 	"use strict";
 
 	var testObject = { id: "testObject" };

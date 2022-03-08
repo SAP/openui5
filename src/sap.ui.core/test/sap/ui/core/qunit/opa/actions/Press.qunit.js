@@ -202,7 +202,7 @@ function(Press,
 
 		oFirstListItem.attachPress(function () {
 			assert.ok(true, "Press Event has been triggered");
-			assert.ok(jQuery(document.activeElement).is(oFirstListItem.$()), "List Item has focus");
+			assert.ok($(document.activeElement).is(oFirstListItem.$()), "List Item has focus");
 			//Call 'done' to resume qunit processing
 			done();
 		}, this);
@@ -326,7 +326,7 @@ function(Press,
 
 		oList.attachSelectionChange(function () {
 			assert.ok(true, "Selection change has been triggered");
-			assert.ok(jQuery(document.activeElement).is(oSecondListItem.$()), "Pressed List Item has focus");
+			assert.ok($(document.activeElement).is(oSecondListItem.$()), "Pressed List Item has focus");
 			assert.ok(oSecondListItem.getSelected(), "Pressed List Item is selected");
 			//Call 'done' to resume qunit processing
 			done();
@@ -364,7 +364,7 @@ function(Press,
 
 		oTabBar.attachSelect(function () {
 			assert.ok(true, "Select has been triggered");
-			assert.ok(jQuery(document.activeElement).is(oSecondTab.$()), "Pressed Tab has focus");
+			assert.ok($(document.activeElement).is(oSecondTab.$()), "Pressed Tab has focus");
 			assert.strictEqual(oTabBar.getSelectedKey(), "bar", "Pressed Tab is selected");
 			//Call 'done' to resume QUnit processing
 			done();
@@ -697,7 +697,7 @@ function(Press,
 		this.clock.tick(1000);
 
 		oPicker = this.oComboBox.getPicker();
-		var oOpenPickerDomRef = jQuery(oPicker.getDomRef());
+		var oOpenPickerDomRef = $(oPicker.getDomRef());
 		assert.ok(oPicker.isOpen(), "ComboBox's Popover is open");
 		assert.equal(oOpenPickerDomRef.css("visibility"), "visible", "Checking Popover's visibility css property");
 		assert.equal(oOpenPickerDomRef.css("display"), "block", "Checking Popover's display css property");
@@ -709,7 +709,7 @@ function(Press,
 
 		// on mobile devices the popover is removed from the DOM
 		if (oPicker.getDomRef()) {
-			var oClosedPickerDomRef = jQuery(oPicker.getDomRef());
+			var oClosedPickerDomRef = $(oPicker.getDomRef());
 			assert.ok(!oPicker.isOpen(), "ComboBox's Popover is closed");
 			assert.equal(oClosedPickerDomRef.css("visibility"), "hidden", "Checking Popover's visibility css property");
 			assert.equal(oClosedPickerDomRef.css("display"), "none", "Checking Popover's display css property");
