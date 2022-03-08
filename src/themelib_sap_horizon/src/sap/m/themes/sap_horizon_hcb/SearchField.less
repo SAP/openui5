@@ -9,65 +9,64 @@
 
 @_sap_m_SearchField_Height: 2.75rem;
 @_sap_m_SearchField_FormHeight: 2.25rem;
-@_sap_m_SearchField_InputHeight: 2.125rem;
-@_sap_m_SearchField_ButtonSize: 2.125rem;
+@_sap_m_SearchField_ButtonSize: 2.25rem;
 @_sap_m_SearchField_ButtonFontSize: 1rem;
 @_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
 @_sap_m_SearchField_ResetIcon: "\e03e";
+@_sap_m_SearchField_PlaceholderFontStyle: normal;
 
 .sapMSFF {
 	border-radius: @sapUiFieldBorderCornerRadius;
 }
 
 .sapMSFDisabled {
-	opacity: 0.5;
+	opacity: @sapUiContentDisabledOpacity;
 }
 
-html.sap-desktop .sapMFocus > .sapMSFF::before {
-	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-	position: absolute;
-	content: " ";
-	top: 1px;
-	right: 1px;
-	bottom: 1px;
-	left: 1px;
-	z-index: 2;
-	pointer-events: none;
+.sapMSFB {
+	border-radius: @sapUiFieldBorderCornerRadius;
+	color: @sapUiButtonTextColor;
+	line-height: @_sap_m_SearchField_ButtonSize - @sapUiFieldBorderWidth * 2; // center the icon vertically
+
+	&:first-of-type {
+		margin-left: 0.25rem;
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	&:hover {
+		box-shadow: @sapUiContentInteractionShadow;
+		background-color: @sapUiButtonLiteHoverBackground;
+		border-left: 1px solid @sapUiButtonHoverBorderColor; // contrast themes specific
+		border-right: 1px solid transparent;
+	}
+
+	&.sapMSFR:not(:last-child):hover { // if there is no search button the right border is not needed
+		border-right: 1px solid @sapUiButtonHoverBorderColor; // contrast themes specific
+	}
+
+	&:active,
+	&.sapMSFBA // Firefox specific
+	{
+		box-shadow: @sapUiContentInteractionShadow;
+		color: @sapUiButtonSelectedTextColor;
+		background-color: @sapUiButtonLiteActiveBackground;
+	}
 }
 
-/* custom buttons */
-.sapMSFB:focus {
-	outline: none;
+.sapMSF:not(.sapMSFDisabled):hover .sapMSFF {
+	box-shadow: @sapUiContentInteractionShadow;
+	background-color: @sapUiFieldHoverBackground;
 }
 
-.sapMBarChild > .sapMSFF > .sapMSFB {
-	text-shadow: none;
-}
+.sapMSF.sapMFocus {
+	.sapMSFF {
+		background-color: @sapUiFieldFocusBackground;
+	}
 
-.sapMFocus>.sapMSFF>.sapMSFB {
-	color: @sapUiContentContrastIconColor; // contrast themes specific
-}
-
-.sapMSFB:hover {
-	background-color: @sapUiButtonLiteHoverBackground;
-	border-left: 1px solid @sapUiListSelectionBorderColor; // contrast themes specific
-}
-
-.sapMSFB.sapMSFR:hover {
-	box-sizing: border-box; // contrast themes specific
-}
-
-.sapMSFB.sapMSFR:last-child:hover {
-	box-sizing: content-box; // contrast themes specific
-}
-
-
-.sapMSFB.sapMSFR:not(:last-child):hover { // if there is no search button the right border is not needed
-	border-right: 1px solid @sapUiListSelectionBorderColor; // contrast themes specific
-}
-
-.sapMSFF>.sapMSFB:not(.sapMSFBF):active,
-.sapMSFF>.sapMSFB.sapMSFBA {
-	background-color: @sapUiButtonLiteActiveBackground;
-	color: @sapUiContentContrastIconColor;
+	&:hover .sapMSFF {
+		box-shadow: none;
+	}
 }
