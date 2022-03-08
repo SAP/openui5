@@ -790,7 +790,7 @@ sap.ui.define([
 			(oXhr.requestBody ? "Request body is:\n" + oXhr.requestBody : "No request body.") + "\n",
 			sLogComponent);
 
-		if (oXhr.method === "POST" && /\$batch$/.test(oXhr.url)) {
+		if (oXhr.method === "POST" && /\$batch/.test(oXhr.url)) {
 			aResponse = handleBatchRequest(oXhr);
 		} else {
 			aResponse = handleDirectRequest(oXhr);
