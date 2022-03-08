@@ -281,6 +281,11 @@
 					"pattern": "transparent",
 					"name": "transparent",
 					"target": "transparent"
+				},
+				{
+					"pattern": "showCard",
+					"name": "showCard",
+					"target": "showCard"
 				}
 			],
 			"targets": {
@@ -491,6 +496,11 @@
 				"transparent": {
 					"id": "transparent",
 					"name": "Transparent",
+					"level": 1
+				},
+				"showCard": {
+					"id": "showCard",
+					"name": "ShowCard",
 					"level": 1
 				}
 			}

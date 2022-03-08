@@ -105,6 +105,12 @@
 		"group": "Card Actions"
 	},
 	{
+		"title": "Show Card Action",
+		"description": "Showing a card in a dialog for Bite and Snack scenario",
+		"route": "showCard",
+		"group": "Card Actions"
+	},
+	{
 		"title": "Min-height of the Card Content",
 		"description": "Examples of cards with no height provided (default value) or with specified height",
 		"route": "minHeight",

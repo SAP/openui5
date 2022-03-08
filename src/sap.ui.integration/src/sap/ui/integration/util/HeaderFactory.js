@@ -120,6 +120,11 @@ sap.ui.define([
 			oHeader.setVisible(oToolbar.getVisible());
 		}
 
+		if (oCard.getOpener()) {
+			// if card is in dialog - header shouldn't be focusable
+			oHeader.setProperty("focusable", false);
+		}
+
 		return oHeader;
 	};
 
