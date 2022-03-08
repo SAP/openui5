@@ -165,7 +165,8 @@ sap.ui.define([
 				}
 
 				if (sPropertyCapability !== GenericTestCollection.ExcludeReason.NotChangeableAfterInit &&
-					sPropertyCapability !== GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings) {
+					sPropertyCapability !== GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings &&
+					sPropertyCapability !== GenericTestCollection.ExcludeReason.OnlyChangeableViaBinding) {
 					try {
 						if (oProperty.type === "boolean") {
 							vValueToSet = false;

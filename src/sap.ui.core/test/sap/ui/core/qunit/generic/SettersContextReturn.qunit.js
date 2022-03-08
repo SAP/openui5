@@ -130,7 +130,8 @@ sap.ui.define([
 					var oObjectCapabilities = that.getObjectCapabilities(sClassName);
 					if ( oObjectCapabilities && oObjectCapabilities.properties &&
 						(oObjectCapabilities.properties[sPropertyName] === GenericTestCollection.ExcludeReason.NotChangeableAfterInit ||
-						oObjectCapabilities.properties[sPropertyName] === GenericTestCollection.ExcludeReason.CantSetDefaultValue)) {
+						oObjectCapabilities.properties[sPropertyName] === GenericTestCollection.ExcludeReason.CantSetDefaultValue ||
+						oObjectCapabilities.properties[sPropertyName] === GenericTestCollection.ExcludeReason.OnlyChangeableViaBinding)) {
 						assert.ok(true, "ignore property '" + sPropertyName + "'");
 						return;
 					}
@@ -172,7 +173,8 @@ sap.ui.define([
 					var oObjectCapabilities = that.getObjectCapabilities(sClassName);
 					if ( oObjectCapabilities && oObjectCapabilities.aggregations &&
 						(oObjectCapabilities.aggregations[sAggregationName] === GenericTestCollection.ExcludeReason.NotChangeableAfterInit ||
-						oObjectCapabilities.aggregations[sAggregationName] === GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings)) {
+						oObjectCapabilities.aggregations[sAggregationName] === GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings ||
+						oObjectCapabilities.aggregations[sAggregationName] === GenericTestCollection.ExcludeReason.OnlyChangeableViaBinding)) {
 						assert.ok(true, "ignore aggregation '" + sAggregationName + "'");
 						return;
 					}
