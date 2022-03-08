@@ -341,6 +341,7 @@ sap.ui.define([
 			delete aCollection.$byPredicate[sTransientPredicate];
 			if (!sPath) {
 				// Note: sPath is empty only in a CollectionCache, so we may call adjustReadRequests
+				// Note: index 0 is OK here (see "Must not request created element")
 				that.adjustReadRequests(0, -1);
 			}
 			oGroupLock.cancel();
