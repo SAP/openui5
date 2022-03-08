@@ -5658,7 +5658,10 @@ sap.ui.define([
 	/**
 	 * Requests side effects for the entity referred to by the given context using a GET request
 	 * with the given URL parameters, esp. <code>$expand</code> and <code>$select</code>, which
-	 * represent the paths affected by side effects on the entity.
+	 * represent the paths affected by side effects on the entity. List bindings which are affected
+	 * by the given <code>$expand</code>, and are using custom parameters or filters/sorters in
+	 * <code>OperationMode.Server</code> are refreshed with additional GET requests within the same
+	 * batch request.
 	 *
 	 * @param {sap.ui.model.odata.v2.Context} oContext
 	 *   The context referring to the entity to read side effects for
@@ -5694,6 +5697,9 @@ sap.ui.define([
 		}
 
 		return new Promise(function (resolve, reject) {
+			var oAffectedEntityTypes = new Set(),
+				sExpands = mParameters.urlParameters && mParameters.urlParameters["$expand"];
+
 			that._read("", {
 					// pass context to keep deep path information for message handling
 					context : oContext,
@@ -5705,6 +5711,20 @@ sap.ui.define([
 					updateAggregatedMessages : true,
 					urlParameters : mParameters.urlParameters
 				}, true);
+
+			if (sExpands) {
+				sExpands.split(",").forEach(function (sExpand) {
+					var oEntityType = that.oMetadata._getEntityTypeByPath(
+							that.resolve(sExpand, oContext));
+
+					oAffectedEntityTypes.add(oEntityType);
+				});
+				that.getBindings().forEach(function (oBinding) {
+					if (oBinding.isA("sap.ui.model.odata.v2.ODataListBinding")) {
+						oBinding._refreshForSideEffects(oAffectedEntityTypes, mParameters.groupId);
+					}
+				});
+			}
 		});
 	};
 

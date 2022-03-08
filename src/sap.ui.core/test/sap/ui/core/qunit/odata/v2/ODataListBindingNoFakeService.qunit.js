@@ -851,15 +851,9 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[
-	{mCustomParams : "foo"},
-	{aApplicationFilters : ["foo"]},
-	{aFilters : ["foo"]},
-	{aSorters : ["foo"]}
-].forEach(function (oBindingEnhancement, i) {
-	[false, true].forEach(function (bSideEffects) {
+[false, true].forEach(function (bSideEffects) {
 	var sTitle = "checkExpandedList: list read via side effects (sideEffects = " + bSideEffects
-			+ ") is refreshed #" + i;
+			+ ") returns undefined";
 
 	QUnit.test(sTitle, function (assert) {
 		var oModel = {_getObject : function () {}},
@@ -871,24 +865,22 @@ sap.ui.define([
 				sOperationMode : OperationMode.Server,
 				sPath : "~sPath",
 				aSorters : [],
-				_refresh : function () {},
+				_isExpandedListUsable : function () {},
 				isResolved : function () {}
 			},
 			aList = [];
 
-		Object.assign(oBinding, oBindingEnhancement);
 		aList.sideEffects = bSideEffects;
 
 		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
-		this.mock(oBinding).expects("_refresh").withExactArgs().exactly(bSideEffects ? 1 : 0);
+		this.mock(oBinding).expects("_isExpandedListUsable").withExactArgs().returns(false);
 
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype.checkExpandedList.call(oBinding),
 			bSideEffects ? undefined : false);
 		assert.strictEqual(oBinding.bUseExpandedList, false);
 		assert.strictEqual(oBinding.aExpandRefs, undefined);
-	});
 	});
 });
 
@@ -903,6 +895,7 @@ sap.ui.define([
 				sPath : "~sPath",
 				bUseExpandedList : bUseExpandedList,
 				_initSortersFilters : function () {},
+				_isExpandedListUsable : function () {},
 				applyFilter : function () {},
 				applySort : function () {},
 				isResolved : function () {}
@@ -911,6 +904,7 @@ sap.ui.define([
 
 		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_isExpandedListUsable").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
 		this.mock(oBinding).expects("applyFilter").withExactArgs();
 		this.mock(oBinding).expects("applySort").withExactArgs();
@@ -944,6 +938,7 @@ sap.ui.define([
 				bUseExpandedList : bUseExpandedList,
 				_getCreatedPersistedContexts : function () {},
 				_initSortersFilters : function () {},
+				_isExpandedListUsable : function () {},
 				applyFilter : function () {},
 				applySort : function () {},
 				isResolved : function () {}
@@ -955,6 +950,7 @@ sap.ui.define([
 
 		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_isExpandedListUsable").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_getCreatedPersistedContexts")
 			.withExactArgs()
 			.returns(["~Context0", "~Context1"]);
@@ -993,6 +989,7 @@ sap.ui.define([
 				bUseExpandedList : bUseExpandedList,
 				_getCreatedPersistedContexts : function () {},
 				_initSortersFilters : function () {},
+				_isExpandedListUsable : function () {},
 				applyFilter : function () {},
 				applySort : function () {},
 				isResolved : function () {}
@@ -1003,6 +1000,7 @@ sap.ui.define([
 
 		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_isExpandedListUsable").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_getCreatedPersistedContexts").withExactArgs().returns([]);
 		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
 		this.mock(oBinding).expects("applyFilter").withExactArgs();
@@ -2527,4 +2525,82 @@ sap.ui.define([
 		// code under test
 		ODataListBinding.prototype.checkUpdate.call(oBinding);
 	});
+
+	//*********************************************************************************************
+[
+	{mCustomParams : "foo", sOperationMode : "~notRelevant"},
+	{aApplicationFilters : ["foo"]},
+	{aFilters : ["foo"]},
+	{aSorters : ["foo"]}
+].forEach(function (oBindingEnhancement, i) {
+	QUnit.test("_isExpandedListUsable: returns false #" + i, function (assert) {
+		var oBinding = {
+				aApplicationFilters : [],
+				aFilters : [],
+				sOperationMode : OperationMode.Server,
+				aSorters : []
+			};
+
+		Object.assign(oBinding, oBindingEnhancement);
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype._isExpandedListUsable.call(oBinding), false);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	// no custom params and no filters/sorters
+}, {
+	sOperationMode : OperationMode.Server
+}, {
+	sOperationMode : "~notServer",
+	aApplicationFilters : ["foo"],
+	aFilters : ["foo"],
+	aSorters : ["foo"]
+}].forEach(function (oBindingEnhancement, i) {
+	QUnit.test("_isExpandedListUsable: returns true #" + i, function (assert) {
+		var oBinding = {
+				aApplicationFilters : [],
+				aFilters : [],
+				aSorters : []
+			};
+
+		Object.assign(oBinding, oBindingEnhancement);
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype._isExpandedListUsable.call(oBinding), true);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{expandedListUsable : false, entityType : "~wrongType", refreshExpected : false},
+	{expandedListUsable : true, entityType : "~entityType", refreshExpected : false},
+	{expandedListUsable : false, entityType : "~entityType", refreshExpected : true}
+].forEach(function (oFixture, i) {
+	QUnit.test("_refreshForSideEffects: " + i, function (assert) {
+		var oBinding = {
+				oEntityType : oFixture.entityType,
+				_isExpandedListUsable : function () {},
+				_refresh : function () {}
+			};
+
+		this.mock(oBinding).expects("_isExpandedListUsable")
+			.withExactArgs()
+			.returns(oFixture.expandedListUsable);
+		this.mock(oBinding).expects("_refresh")
+			.withExactArgs()
+			.callsFake(function () {
+				assert.strictEqual(oBinding.sRefreshGroupId, "~sGroupId");
+			})
+			.exactly(oFixture.refreshExpected ? 1 : 0);
+
+		// code under test
+		ODataListBinding.prototype._refreshForSideEffects.call(oBinding,
+			new Set(["~entityType"]), "~sGroupId");
+
+		assert.strictEqual(oBinding.sRefreshGroupId, undefined);
+	});
+});
 });

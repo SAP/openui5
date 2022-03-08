@@ -5786,7 +5786,18 @@ sap.ui.define([
 [true, false].forEach(function (bSuccess) {
 	QUnit.test("requestSideEffects: bSuccess=" + bSuccess, function (assert) {
 		var fnError, oResult, fnSuccess,
-			oModel = {_read : function () {}},
+			aBindings = [
+				{isA : function () {}},
+				{_refreshForSideEffects : function () {}, isA : function () {}}
+			],
+			oModel = {
+				oMetadata : {_getEntityTypeByPath : function () {}},
+				_read : function () {},
+				getBindings : function () {},
+				resolve : function () {}
+			},
+			oMetadataMock = this.mock(oModel.oMetadata),
+			oModelMock = this.mock(oModel),
 			mParameters = {
 				groupId : "~groupId",
 				urlParameters : {
@@ -5795,7 +5806,7 @@ sap.ui.define([
 				}
 			};
 
-		this.mock(oModel).expects("_read")
+		oModelMock.expects("_read")
 			.withExactArgs("", {
 				context : "~oContext",
 				error : sinon.match.func.and(sinon.match(function (fnError0) {
@@ -5812,6 +5823,24 @@ sap.ui.define([
 				updateAggregatedMessages : true,
 				urlParameters : sinon.match.same(mParameters.urlParameters)
 			}, /*bSideEffect*/true);
+		oModelMock.expects("resolve").withExactArgs("To0", "~oContext").returns("~resolved0");
+		oMetadataMock.expects("_getEntityTypeByPath").withExactArgs("~resolved0").returns("~type0");
+		oModelMock.expects("resolve").withExactArgs("To0/To1", "~oContext").returns("~resolved1");
+		oMetadataMock.expects("_getEntityTypeByPath").withExactArgs("~resolved1").returns("~type1");
+		oModelMock.expects("resolve").withExactArgs("To2", "~oContext").returns("~resolved2");
+		oMetadataMock.expects("_getEntityTypeByPath")
+			.withExactArgs("~resolved2")
+			.returns(undefined);
+		oModelMock.expects("getBindings").withExactArgs().returns(aBindings);
+		this.mock(aBindings[0]).expects("isA")
+			.withExactArgs("sap.ui.model.odata.v2.ODataListBinding")
+			.returns(false);
+		this.mock(aBindings[1]).expects("isA")
+			.withExactArgs("sap.ui.model.odata.v2.ODataListBinding")
+			.returns(true);
+		this.mock(aBindings[1]).expects("_refreshForSideEffects")
+			.withExactArgs(sinon.match.set.deepEquals(new Set(["~type0", "~type1", undefined])),
+				"~groupId");
 
 		// code under test
 		oResult = ODataModel.prototype.requestSideEffects.call(oModel, "~oContext", mParameters);

@@ -476,15 +476,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether expanded list data is available and can be used. In case a list binding uses
-	 * custom parameters or uses filters/sorters in <code>OperationMode.Server</code>, then lists
-	 * which are read via side effects are refreshed.
+	 * Checks whether expanded list data is available and can be used.
 	 *
 	 * @param {boolean} bSkipReloadNeeded
 	 *   Don't check whether reload of expanded data is needed
 	 * @return {boolean|undefined}
-	 *   Whether expanded data is available and is used, or <code>undefined</code> if the list is
-	 *   refreshed because data received via side effects cannot be used
+	 *   Whether expanded data is available and is used, or <code>undefined</code> if the list has
+	 *   to be refreshed because data received via side effects cannot be used
 	 *
 	 * @private
 	 */
@@ -498,15 +496,10 @@ sap.ui.define([
 			bOldUseExpandedList = this.bUseExpandedList,
 			that = this;
 
-		if (!this.isResolved() || aList === undefined || this.mCustomParams
-				|| (this.sOperationMode === OperationMode.Server
-					&& (this.aApplicationFilters.length > 0 || this.aFilters.length > 0
-						|| this.aSorters.length > 0))) {
+		if (!this.isResolved() || aList === undefined || !this._isExpandedListUsable()) {
 			this.bUseExpandedList = false;
 			this.aExpandRefs = undefined;
 			if (aList && aList.sideEffects) {
-				this._refresh();
-
 				return undefined;
 			}
 
@@ -2012,6 +2005,43 @@ sap.ui.define([
 	ODataListBinding.prototype._hasTransientParentContext = function () {
 		return this.isRelative()
 			&& !!(this.oContext && this.oContext.isTransient && this.oContext.isTransient());
+	};
+
+	/**
+	 * Returns whether this list binding uses the expanded list data.
+	 *
+	 * @returns {boolean} Whether this list binding uses the expanded list data
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._isExpandedListUsable = function () {
+		if (this.mCustomParams
+			|| (this.sOperationMode === OperationMode.Server
+				&& (this.aApplicationFilters.length > 0 || this.aFilters.length > 0
+					|| this.aSorters.length > 0))) {
+			return false;
+		}
+		return true;
+	};
+
+	/**
+	 * Refreshes a list binding if the list binding's entity type is contained in
+	 * <code>oAffectedEntityTypes</code> and if the list binding is not using the expanded list
+	 * data.
+	 *
+	 * @param {Set<object>} oAffectedEntityTypes
+	 *   Set of entity types that are affected by side-effects requests
+	 * @param {string} [sGroupId]
+	 *   The ID of a request group
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._refreshForSideEffects = function (oAffectedEntityTypes, sGroupId) {
+		if (!this._isExpandedListUsable() && oAffectedEntityTypes.has(this.oEntityType)) {
+			this.sRefreshGroupId = sGroupId;
+			this._refresh();
+			this.sRefreshGroupId = undefined;
+		}
 	};
 
 	return ODataListBinding;
