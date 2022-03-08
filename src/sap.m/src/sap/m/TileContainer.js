@@ -6,6 +6,7 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
+	'sap/ui/core/Core',
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
@@ -20,6 +21,7 @@ sap.ui.define([
 function(
 	library,
 	Control,
+	oCore,
 	IconPool,
 	Device,
 	ResizeHandler,
@@ -417,7 +419,7 @@ function(
 		}
 		this._oTileDimensionCalculator = new TileDimensionCalculator(this);
 
-		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRtl = oCore.getConfiguration().getRTL();
 		//Keeps info about the current page and total page count. In addition the old(previous) values of the same are kept.
 		this._oPagesInfo = (function (bRightToLeftMode) {
 			var iCurrentPage, iCount,
@@ -1986,7 +1988,7 @@ function(
 	 * @private
 	 */
 	TileContainer.prototype._renderTile = function(oTile, iIndex) {
-		var oRm = sap.ui.getCore().createRenderManager(),
+		var oRm = oCore.createRenderManager(),
 			oContent = this.$("cnt")[0];
 
 		oRm.renderControl(oTile);

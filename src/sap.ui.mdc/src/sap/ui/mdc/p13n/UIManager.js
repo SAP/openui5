@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/m/p13n/Container",
 	"sap/m/p13n/AbstractContainerItem",
 	"sap/base/util/UriParameters",
-	"sap/base/Log"
-], function (BaseObject, P13nBuilder, P13nContainer, AbstractContainerItem, SAPUriParameters, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function (BaseObject, P13nBuilder, P13nContainer, AbstractContainerItem, SAPUriParameters, Log, jQuery) {
 	"use strict";
 
 	var ERROR_INSTANCING = "UIManager: This class is a singleton and should not be used without an AdaptationProvider. Please use 'sap.ui.mdc.p13n.Engine.getInstance().uimanager' instead";
@@ -18,7 +19,7 @@ sap.ui.define([
 	var oUIManager;
 
 	//Used for experimental features (such as livemode)
-	var oURLParams = new SAPUriParameters(window.location.search);
+	var oURLParams = SAPUriParameters.fromQuery(window.location.search);
 
 	/**
 	 * Constructor for a new UIManager.
@@ -71,7 +72,7 @@ sap.ui.define([
 		this.bLiveMode = false;
 
 		//!!!Warning: experimental and only for testing purposes!!!----------
-		if (oURLParams.getAll("sap-ui-xx-p13nLiveMode")[0] === "true"){
+		if (oURLParams.get("sap-ui-xx-p13nLiveMode") === "true"){
 			this.bLiveMode = true;
 			Log.warning("Please note that the p13n liveMode is experimental");
 		}

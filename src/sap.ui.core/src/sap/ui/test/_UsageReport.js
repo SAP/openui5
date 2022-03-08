@@ -22,7 +22,7 @@ sap.ui.define([
             }
 
             // separate report enablement from the report logic: conditionally send XHRs if reporting is explicitly enabled
-            var oPrototype = sap.ui.test._UsageReport.prototype;
+            var oPrototype = _UsageReport.prototype;
             Object.keys(oPrototype).forEach(function (sKey) {
                 var bIsSpecialFunction = ["constructor", "getMetadata"].indexOf(sKey) > -1;
                 if (oPrototype.hasOwnProperty(sKey) && typeof oPrototype[sKey] === "function" && !bIsSpecialFunction) {

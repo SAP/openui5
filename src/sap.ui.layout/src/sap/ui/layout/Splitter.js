@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	'sap/ui/core/Control',
+	'sap/ui/core/CustomData',
 	'./library',
 	'sap/ui/core/library',
 	'sap/ui/core/ResizeHandler',
@@ -15,6 +16,7 @@ sap.ui.define([
 ],
 	function(
 		Control,
+		CustomData,
 		library,
 		coreLibrary,
 		ResizeHandler,
@@ -1147,7 +1149,7 @@ sap.ui.define([
 
 			// CustomData that needs to be updated in the DOM has been set on the splitter
 			// TODO: Programatically write CustomData on this control to the DOM
-		 || (oOrigin && oOrigin instanceof sap.ui.core.CustomData && oOrigin.getWriteToDom())
+		 || (oOrigin && oOrigin instanceof CustomData && oOrigin.getWriteToDom())
 
 			// We do not know where the invalidate originated from. We will pretty much have to rerender
 		 || (oOrigin === undefined);

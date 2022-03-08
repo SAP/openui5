@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/Breadcrumbs",
 	"sap/m/Link",
-	"sap/m/GenericTag"
+	"sap/m/GenericTag",
+	"sap/ui/Device"
 ],
 	function (
 	$,
@@ -36,7 +37,8 @@ sap.ui.define([
 	ToolbarSpacer,
 	Breadcrumbs,
 	Link,
-	GenericTag
+	GenericTag,
+	Device
 ) {
 	"use strict";
 
@@ -383,36 +385,36 @@ sap.ui.define([
 					.removeClass("sapUiMedia-Std-Desktop")
 					.removeClass("sapUiMedia-Std-Tablet")
 					.addClass("sapUiMedia-Std-Phone");
-			sap.ui.Device.system.desktop = false;
-			sap.ui.Device.system.tablet = false;
-			sap.ui.Device.system.phone = true;
+			Device.system.desktop = false;
+			Device.system.tablet = false;
+			Device.system.phone = true;
 		},
 		toTabletMode: function () {
 			$("html").removeClass("sapUiMedia-Std-Desktop-XL")
 					.removeClass("sapUiMedia-Std-Desktop")
 					.removeClass("sapUiMedia-Std-Phone")
 					.addClass("sapUiMedia-Std-Tablet");
-			sap.ui.Device.system.desktop = false;
-			sap.ui.Device.system.phone = false;
-			sap.ui.Device.system.tablet = true;
+			Device.system.desktop = false;
+			Device.system.phone = false;
+			Device.system.tablet = true;
 		},
 		toDesktopMode: function () {
 			$("html").addClass("sapUiMedia-Std-Desktop")
 					.removeClass("sapUiMedia-Std-Desktop-XL")
 					.removeClass("sapUiMedia-Std-Tablet")
 					.removeClass("sapUiMedia-Std-Phone");
-			sap.ui.Device.system.desktop = true;
-			sap.ui.Device.system.tablet = false;
-			sap.ui.Device.system.phone = false;
+			Device.system.desktop = true;
+			Device.system.tablet = false;
+			Device.system.phone = false;
 		},
 		toDesktopModeXL: function () {
 			$("html").addClass("sapUiMedia-Std-Desktop-XL")
 					.removeClass("sapUiMedia-Std-Desktop")
 					.removeClass("sapUiMedia-Std-Tablet")
 					.removeClass("sapUiMedia-Std-Phone");
-			sap.ui.Device.system.desktop = true;
-			sap.ui.Device.system.tablet = false;
-			sap.ui.Device.system.phone = false;
+			Device.system.desktop = true;
+			Device.system.tablet = false;
+			Device.system.phone = false;
 		},
 		testExpandedCollapsedARIA: function (assert, oDynamicPage, bShouldBeExpanded, sAriaLabelledBy, sMessage) {
 			var	$oFocusSpan = oDynamicPage.getTitle()._getFocusSpan(),
@@ -423,7 +425,7 @@ sap.ui.define([
 			assert.strictEqual(sAriaLabelledById, sAriaLabelledBy, sMessage);
 		},
 		getChildPosition: function(oElement, oContainer) {
-				var oTopmostContainer = document.documentElement,
+			var oTopmostContainer = document.documentElement,
 				oElementPosition = {
 					top: oElement.offsetTop,
 					left: oElement.offsetLeft},

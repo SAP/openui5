@@ -2247,7 +2247,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.core.ComponentLifecycle =  {
+	thisLib.ComponentLifecycle =  {
 
 		/**
 		 * Legacy lifecycle means that the <code>ComponentContainer</code> takes care
@@ -2284,7 +2284,7 @@ sap.ui.define([
 	 * @since 1.78
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.core.InvisibleMessageMode =  {
+	thisLib.InvisibleMessageMode =  {
 
 		/**
 		 * Indicates that updates to the region should be presented at the next graceful opportunity,

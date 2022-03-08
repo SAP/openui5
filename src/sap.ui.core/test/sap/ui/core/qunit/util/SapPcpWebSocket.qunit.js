@@ -1,8 +1,9 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/ws/SapPcpWebSocket"
-], function (SapPcpWebSocket) {
+	"sap/ui/core/ws/SapPcpWebSocket",
+	"sap/ui/Device"
+], function (SapPcpWebSocket, Device) {
 	"use strict";
 
 	QUnit.test("Serialize Pcp-Fields", function(assert) {
@@ -66,7 +67,7 @@ sap.ui.define([
 	QUnit.test("Protocol", function(assert) {
 		var done = assert.async();
 
-		if (sap.ui.Device.support.websocket) {
+		if (Device.support.websocket) {
 			assert.expect(1);
 		} else {
 			// skip test if browser doesn't support WebSockets
@@ -87,7 +88,7 @@ sap.ui.define([
 	QUnit.test("Wrong protocol", function(assert) {
 		var done = assert.async();
 
-		if (sap.ui.Device.support.websocket) {
+		if (Device.support.websocket) {
 			assert.expect(2);
 		} else {
 			// skip test if browser doesn't support WebSockets

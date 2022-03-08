@@ -385,8 +385,8 @@ sap.ui.define([
 			bOrigDesktop = Device.system.desktop;
 
 		// On a desktop (non-touch) device
-		sap.ui.Device.support.touch = false;
-		sap.ui.Device.system.desktop = true;
+		Device.support.touch = false;
+		Device.system.desktop = true;
 		qutils.triggerEvent("click", "DRS2-icon");
 		oCore.applyChanges();
 		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
@@ -400,8 +400,8 @@ sap.ui.define([
 		assert.equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after cancel");
 
 		// On a touch device
-		sap.ui.Device.support.touch = true;
-		sap.ui.Device.system.desktop = false;
+		Device.support.touch = true;
+		Device.system.desktop = false;
 		qutils.triggerEvent("click", "DRS2-icon");
 		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
 		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", KeyCodes.ENTER, false, false, false);
@@ -413,8 +413,8 @@ sap.ui.define([
 		jQuery("#DRS2-cal").control(0).fireCancel();
 		assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after cancel");
 
-		sap.ui.Device.system.desktop = bOrigDesktop;
-		sap.ui.Device.support.touch = bOrigTouch;
+		Device.system.desktop = bOrigDesktop;
+		Device.support.touch = bOrigTouch;
 	});
 
 	QUnit.test("Control destroy", function(assert) {

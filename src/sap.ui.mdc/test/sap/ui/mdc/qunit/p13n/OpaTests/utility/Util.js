@@ -12,8 +12,9 @@
  */
 sap.ui.define([
 	'sap/ui/base/Object',
-	'sap/ui/core/Core'
-], function(BaseObject, Core) {
+	'sap/ui/core/Core',
+	'sap/ui/Device'
+], function(BaseObject, Core, Device) {
 	"use strict";
 
 	var Util = BaseObject.extend("sap.ui.mdc.qunit.p13n.test.Util",
@@ -27,7 +28,7 @@ sap.ui.define([
 			return null;
 		}
 		var oNavigationItem = null;
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			oNavigationControl.getItems().some(function(oNavigationItem_) {
 				if (oNavigationItem_.getTitle() === sPanelName) {
 					oNavigationItem = oNavigationItem_;

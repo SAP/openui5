@@ -17,7 +17,8 @@ sap.ui.define([
 	"./Util",
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/Device"
 ], function(
 	Opa5,
 	Matcher,
@@ -33,7 +34,8 @@ sap.ui.define([
 	Util,
 	Log,
 	UriParameters,
-	oCore
+	oCore,
+	Device
 ) {
 	"use strict";
 

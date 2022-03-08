@@ -2,8 +2,12 @@
  * ${copyright}
  */
 /*global QUnit */
-sap.ui.define(["sap/ui/util/Storage"], function(Storage) {
+sap.ui.define([
+	"sap/ui/util/Storage",
+	"sap/ui/Device"
+], function(Storage, Device) {
 	"use strict";
+
 	var storageType = Storage.Type;
 
 	var setup = {};
@@ -220,15 +224,15 @@ sap.ui.define(["sap/ui/util/Storage"], function(Storage) {
 	QUnit.module("sap/ui/util/Storage");
 
 	QUnit.test("Default Storage", function(assert) {
-		setup.testStorage(null, null, sap.ui.Device.os.ios ? setup.SUPPORTED_CHECK_INACTIVE : setup.SUPPORTED_CHECK_EXPECT_SUPPORT, assert);
+		setup.testStorage(null, null, Device.os.ios ? setup.SUPPORTED_CHECK_INACTIVE : setup.SUPPORTED_CHECK_EXPECT_SUPPORT, assert);
 	});
 
 	QUnit.test("Session Storage", function(assert) {
-		setup.testStorage(storageType.session, "myprefix", sap.ui.Device.os.ios ? setup.SUPPORTED_CHECK_INACTIVE : setup.SUPPORTED_CHECK_EXPECT_SUPPORT, assert);
+		setup.testStorage(storageType.session, "myprefix", Device.os.ios ? setup.SUPPORTED_CHECK_INACTIVE : setup.SUPPORTED_CHECK_EXPECT_SUPPORT, assert);
 	});
 
 	QUnit.test("Local Storage", function(assert) {
-		setup.testStorage(storageType.local, "myprefix", sap.ui.Device.os.ios ? setup.SUPPORTED_CHECK_INACTIVE : setup.SUPPORTED_CHECK_EXPECT_SUPPORT, assert);
+		setup.testStorage(storageType.local, "myprefix", Device.os.ios ? setup.SUPPORTED_CHECK_INACTIVE : setup.SUPPORTED_CHECK_EXPECT_SUPPORT, assert);
 	});
 
 	QUnit.test("Custom Storage", function(assert) {

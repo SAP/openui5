@@ -3,7 +3,9 @@
  */
 
 // Provides the Design Time Metadata for the sap.ui.mdc.Link
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery"
+], function(jQuery) {
 	"use strict";
 
 	return {

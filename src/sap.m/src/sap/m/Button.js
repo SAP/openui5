@@ -758,7 +758,7 @@ sap.ui.define([
 				activeSrc : sActiveSrc,
 				densityAware : bIconDensityAware,
 
-				// do not use default tootip in icon as the button renders it's own tooltip
+				// do not use default tooltip in icon as the button renders it's own tooltip
 				useIconTooltip: false
 
 			}, sap.m.Image).addStyleClass("sapMBtnCustomIcon").setParent(this, null, true);

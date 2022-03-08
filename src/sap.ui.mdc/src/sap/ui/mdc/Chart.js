@@ -21,7 +21,8 @@ sap.ui.define([
         "sap/ui/mdc/p13n/subcontroller/SortController",
         "sap/ui/base/ManagedObjectObserver",
         "sap/ui/mdc/chart/DrillBreadcrumbs",
-        "sap/ui/mdc/actiontoolbar/ActionToolbarAction"
+        "sap/ui/mdc/actiontoolbar/ActionToolbarAction",
+        "sap/ui/thirdparty/jquery"
     ],
     function (
         Core,
@@ -42,7 +43,8 @@ sap.ui.define([
         SortController,
         ManagedObjectObserver,
         Breadcrumbs,
-        ActionToolbarAction
+        ActionToolbarAction,
+        jQuery
     ) {
         "use strict";
 

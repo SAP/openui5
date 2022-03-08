@@ -68,7 +68,7 @@ sap.ui.define(["sap/ui/core/library"],
 		// If the attribute is link (active or customContent is Link) only the "text" should be clickable,
 		// so render title, colon and text in different spans.
 		// For the ObjectHeader the rendering of the parts of the ObjectAttribute is always in separate spans, even when it is not active.
-		if (oOA._isClickable() || oParent instanceof sap.m.ObjectHeader) {
+		if (oOA._isClickable() || (oParent && oParent.isA("sap.m.ObjectHeader"))) {
 			this.renderActiveTitle(oRm, oOA);
 			this.renderActiveText(oRm, oOA, oParent);
 		} else {
@@ -136,7 +136,7 @@ sap.ui.define(["sap/ui/core/library"],
 		oRm.openEnd();
 
 		if (oAttrAggregation && oParent) {
-			if ((oParent instanceof sap.m.ObjectHeader) && !oOA.getParent().getResponsive()) {
+			if (oParent.isA("sap.m.ObjectHeader") && !oOA.getParent().getResponsive()) {
 				oOA._setControlWrapping(oAttrAggregation, true);
 			} else {
 				oOA._setControlWrapping(oAttrAggregation, false, ObjectAttributeRenderer.MAX_LINES.SINGLE_LINE);

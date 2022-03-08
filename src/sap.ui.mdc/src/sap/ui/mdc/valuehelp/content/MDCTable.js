@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/mdc/enum/SelectType',
 	'sap/ui/mdc/library',
 	'sap/m/library',
-	"sap/ui/table/library"
+	"sap/ui/table/library",
+	"sap/ui/thirdparty/jquery"
 
 ], function(
 	FilterableListContent,
@@ -18,7 +19,8 @@ sap.ui.define([
 	SelectType,
 	library,
 	mLibrary,
-	uiTableLibrary
+	uiTableLibrary,
+	jQuery
 ) {
 	"use strict";
 

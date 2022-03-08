@@ -420,7 +420,7 @@ function(
 		var oTitle = this.getAggregation("_titleControl");
 
 		if (sAssociationName === "ariaLabelledBy") {
-			if (this.getTitleActive() && oTitle instanceof sap.m.Link) {
+			if (this.getTitleActive() && oTitle instanceof Link) {
 				oTitle.addAssociation("ariaLabelledBy", sId, true);
 			}
 		}
@@ -433,7 +433,7 @@ function(
 		var oTitle = this.getAggregation("_titleControl");
 
 		if (sAssociationName === "ariaLabelledBy") {
-			if (this.getTitleActive() && oTitle instanceof sap.m.Link) {
+			if (this.getTitleActive() && oTitle instanceof Link) {
 				oTitle.removeAssociation("ariaLabelledBy", vObject, true);
 			}
 		}

@@ -4,11 +4,13 @@
 sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
 	"./GridItemNavigation",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	ItemNavigation,
 	GridItemNavigation,
-	containsOrEquals
+	containsOrEquals,
+	jQuery
 ) {
 	"use strict";
 

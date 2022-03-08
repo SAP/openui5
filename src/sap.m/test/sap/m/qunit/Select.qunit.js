@@ -477,25 +477,25 @@ sap.ui.define([
 			jQuery("html").removeClass("sapUiMedia-Std-Desktop")
 				.removeClass("sapUiMedia-Std-Tablet")
 				.addClass("sapUiMedia-Std-Phone");
-			sap.ui.Device.system.desktop = false;
-			sap.ui.Device.system.tablet = false;
-			sap.ui.Device.system.phone = true;
+			Device.system.desktop = false;
+			Device.system.tablet = false;
+			Device.system.phone = true;
 		};
 		var fnToDesktopMode = function () {
 			jQuery("html").removeClass("sapUiMedia-Std-Phone")
 				.removeClass("sapUiMedia-Std-Tablet")
 				.addClass("sapUiMedia-Std-Desktop");
-			sap.ui.Device.system.desktop = true;
-			sap.ui.Device.system.tablet = false;
-			sap.ui.Device.system.phone = false;
+			Device.system.desktop = true;
+			Device.system.tablet = false;
+			Device.system.phone = false;
 		};
 		var fnToTabletMode = function () {
 			$("html").removeClass("sapUiMedia-Std-Desktop")
 				.removeClass("sapUiMedia-Std-Phone")
 				.addClass("sapUiMedia-Std-Tablet");
-			sap.ui.Device.system.desktop = false;
-			sap.ui.Device.system.phone = false;
-			sap.ui.Device.system.tablet = true;
+			Device.system.desktop = false;
+			Device.system.phone = false;
+			Device.system.tablet = true;
 		};
 
 		QUnit.module("default values");

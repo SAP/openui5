@@ -39,7 +39,7 @@ sap.ui.define([],
 		}
 
 		/* WAI ARIA if in TileContainer context */
-		if (oControl.getParent() instanceof sap.m.TileContainer) {
+		if (oControl.getParent() && oControl.getParent().isA("sap.m.TileContainer")) {
 			oTileContainer = oControl.getParent();
 			aVisibleTiles = oTileContainer._getVisibleTiles();
 

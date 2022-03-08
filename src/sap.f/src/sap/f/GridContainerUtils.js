@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/InvisibleRenderer"
-], function (Log, InvisibleRenderer) {
+	"sap/ui/core/InvisibleRenderer",
+	"sap/ui/thirdparty/jquery"
+], function (Log, InvisibleRenderer, jQuery) {
 	"use strict";
 
 	return {

@@ -7,11 +7,12 @@
  * Code other than the UI5 core library must not introduce dependencies to this module.
  */
 sap.ui.define([
-	'sap/ui/thirdparty/URI',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/URI",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/Log"
 ],
-	function(URI, ResourceBundle, Log) {
+	function(jQuery, URI, ResourceBundle, Log) {
 		"use strict";
 
 		/**

@@ -22,8 +22,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/CustomData"
-], function (BasePanel, Label, ColumnListItem, Select, Text, Item, MDCLib, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData) {
+	"sap/ui/core/CustomData",
+	"sap/ui/thirdparty/jquery"
+], function (BasePanel, Label, ColumnListItem, Select, Text, Item, MDCLib, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery) {
 	"use strict";
 
     // shortcut for sap.m.FlexJustifyContent

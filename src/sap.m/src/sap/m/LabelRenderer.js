@@ -74,7 +74,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/m/library', 'sap
 			rm.accessibilityState({
 				label: oLabel.getText()
 			});
-		} else if (oLabel.getParent() instanceof sap.m.Toolbar) {
+		} else if (oLabel.getParent() && oLabel.getParent().isA("sap.m.Toolbar")) {
 			rm.class("sapMLabelTBHeader");
 		}
 

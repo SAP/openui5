@@ -1956,7 +1956,7 @@ function(
 			aHeaderContent = oHeaderAggregation.aAggregationContent;
 
 		for (var i = 0; i < aHeaderContent.length; i++) {
-			if (aHeaderContent[i] instanceof sap.m.Button && aHeaderContent[i].getVisible()
+			if (aHeaderContent[i] instanceof Button && aHeaderContent[i].getVisible()
 				&& (aHeaderContent[i].getType() == ButtonType.Back || (aHeaderContent[i].getType() == ButtonType.Up
 				&& aHeaderContent[i] !== this._oShowMasterBtn))) {
 				this._bDetailNavButton = true;
