@@ -55,7 +55,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'],
 
 		mAccessibilityState["autocomplete"] = "none";
 		mAccessibilityState["haspopup"] = true;
-		mAccessibilityState["expanded"] = false;
 		// aria-disabled is not necessary if we already have a native 'disabled' attribute
 		mAccessibilityState["disabled"] = null;
 

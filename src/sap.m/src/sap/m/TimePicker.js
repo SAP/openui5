@@ -447,9 +447,6 @@ function(
 
 			if (oSliders) {
 				oSliders.openFirstSlider();
-
-				//WAI-ARIA region
-				this._handleAriaOnExpandCollapse();
 			}
 		};
 
@@ -461,9 +458,6 @@ function(
 		 */
 		TimePicker.prototype.onAfterClose = function() {
 			this.$().removeClass(InputBase.ICON_PRESSED_CSS_CLASS);
-
-			//WAI-ARIA region
-			this._handleAriaOnExpandCollapse();
 		};
 
 		TimePicker.prototype._getValueHelpIcon = function () {
@@ -1265,15 +1259,6 @@ function(
 		};
 
 		/**
-		 * Handles the correct value for ARIA expanded attribute on the TimePicker's input field.
-		 *
-		 * @private
-		 */
-		TimePicker.prototype._handleAriaOnExpandCollapse = function () {
-			this.getFocusDomRef().setAttribute("aria-expanded", this._getPicker().isOpen());
-		};
-
-		/**
 		 * Changes the time value in the input field.
 		 *
 		 * @param {number} iNumber Number to be added to the existing value
@@ -1738,7 +1723,6 @@ function(
 				type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"),
 				description: [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim(),
 				autocomplete: "none",
-				expanded: false,
 				haspopup: true,
 				owns: this.getId() + "-sliders"
 			});
