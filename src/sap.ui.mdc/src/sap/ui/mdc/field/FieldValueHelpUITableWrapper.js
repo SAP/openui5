@@ -227,11 +227,9 @@ sap.ui.define([
 
 		if (!bNoVirtual) {
 			var oBinding = oTable.getBinding();
-			aResult = bSelectedOnly ? aSelectedContexts : oBinding && (oBinding.aContexts || (oBinding.aIndices && oBinding.aIndices.map(function (iIndex) {
-				return oTable.getContextByIndex(iIndex);
-			})) || oBinding.getContexts());
+			aResult = bSelectedOnly ? aSelectedContexts : oBinding && oBinding.getAllCurrentContexts();
 		} else {
-				aResult = oTable.getRows().filter(function (oRow) {
+			aResult = oTable.getRows().filter(function (oRow) {
 				var oRowBindingContext = oRow.getBindingContext();
 				return oRowBindingContext && oRowBindingContext.getObject();	// don't return empty rows
 			});
