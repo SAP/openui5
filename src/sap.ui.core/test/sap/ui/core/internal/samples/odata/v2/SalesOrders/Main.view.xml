@@ -112,16 +112,22 @@
 					<items>
 						<ColumnListItem>
 							<cells>
-								<!-- use fully qualified formatter name to make formatters "this"
-									the control -->
 								<core:Icon decorative="false"
 									src="{
-										formatter : 'sap.ui.core.internal.samples.odata.v2.SalesOrders.model.formatter.formatStatusIcon',
-										path : 'SalesOrders>SalesOrderID'
+										parts : [
+											'SalesOrders>@$ui5.context.isTransient',
+											'SalesOrders>@$ui5.context.isInactive',
+											{value : 'icon'}
+										],
+										formatter : 'formatter.formatContextStatus'
 									}"
 									tooltip="{
-										formatter : 'sap.ui.core.internal.samples.odata.v2.SalesOrders.model.formatter.formatStatusToolTip',
-										path : 'SalesOrders>SalesOrderID'
+										parts : [
+											'SalesOrders>@$ui5.context.isTransient',
+											'SalesOrders>@$ui5.context.isInactive',
+											{value : 'tooltip'}
+										],
+										formatter : 'formatter.formatContextStatus'
 									}" />
 								<Input editable="false" value="{SalesOrders>SalesOrderID}" />
 								<Input editable="false" value="{SalesOrders>CustomerName}" />
@@ -260,12 +266,20 @@
 							<t:template>
 								<core:Icon decorative="false"
 									src="{
-										formatter : 'sap.ui.core.internal.samples.odata.v2.SalesOrders.model.formatter.formatStatusIcon',
-										path : 'ItemPosition'
+										parts : [
+											'@$ui5.context.isTransient',
+											'@$ui5.context.isInactive',
+											{value : 'icon'}
+										],
+										formatter : 'formatter.formatContextStatus'
 									}"
 									tooltip="{
-										formatter : 'sap.ui.core.internal.samples.odata.v2.SalesOrders.model.formatter.formatStatusToolTip',
-										path : 'ItemPosition'
+										parts : [
+											'@$ui5.context.isTransient',
+											'@$ui5.context.isInactive',
+											{value : 'tooltip'}
+										],
+										formatter : 'formatter.formatContextStatus'
 									}" />
 							</t:template>
 						</t:Column>
