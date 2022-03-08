@@ -676,17 +676,17 @@ sap.ui.define([
 	 *         and the names of any registered custom transitions.
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
-	 * @param {object} data
+	 * @param {object} [data={}]
 	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page.
 	 *         The "BeforeShow" event on the target page will contain this data object as "data" property.
 
 	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
+	 *         When the <code>oTransitionParameters</code> parameter is used, this <code>data</code> parameter must also be given (either as object or as <code>null</code> or <code>undefined</code>) in order to have a proper parameter order.
+	 * @param {object} [oTransitionParameters={}]
 	 *         Since version 1.7.1. This optional object can contain additional information for the transition function, like the DOM element which triggered the transition or the desired transition duration.
 	 *
-	 *         For a proper parameter order, the "data" parameter must be given when the "transitionParameters" parameter is used. (it can be given as "null")
+	 *         For a proper parameter order, the <code>data</code> parameter must be given when the <code>oTransitionParameters</code> parameter is used (it can be given as <code>null</code> or <code>undefined</code>).
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 *         The "show", "slide", "baseSlide" and "fade" transitions do not use any parameter.
@@ -861,18 +861,18 @@ sap.ui.define([
 	 *
 	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "BeforeHide" pseudo event on the source page and "BeforeFirstShow" (if applicable) and"BeforeShow" on the target page. Later - after the transition has completed - the "AfterShow" pseudo event is triggered on the target page and "AfterHide" on the page which has been left. The given backData object is available in the "BeforeFirstShow", "BeforeShow" and "AfterShow" event object as "data" property. The original "data" object from the "to" navigation is also available in these event objects.
 	 *
-	 * @param {object} [backData]
+	 * @param {object} [backData={}]
 	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
 	 *
 	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
 	 *
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} [oTransitionParameters]
+	 *         When the <code>oTransitionParameters</code> parameter is used, this <code>backData</code> parameter must also be given (either as object or as <code>null</code> or <code>undefined</code>) in order to have a proper parameter order.
+	 * @param {object} [oTransitionParameters={}]
 	 *         Since version 1.7.1. This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
-	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
+	 *         In order to use the <code>oTransitionParameters<code> parameter, the <code>backData</code> parameter must be used (at least <code>null</code> or <code>undefined</code> must be given) for a proper parameter order.
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
@@ -893,15 +893,15 @@ sap.ui.define([
 	 *
 	 * @param {string} pageId
 	 *         The ID of the screen to which back navigation should happen. The ID or the control itself can be given. The nearest such page among the previous pages in the history stack will be used.
-	 * @param {object} backData
+	 * @param {object} [backData={}]
 	 *         This optional object can carry any payload data which should be made available to the target page of the "backToPage" navigation. The event on the target page will contain this data object as "backData" property.
 	 *
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
+	 *         When the <code>oTransitionParameters</code> parameter is used, this <code>backData</code> parameter must also be given (either as object or as <code>null</code> or <code>undefined</code>) in order to have a proper parameter order.
+	 * @param {object} [oTransitionParameters={}]
 	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
-	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
+	 *         In order to use the <code>oTransitionParameters<code> parameter, the <code>backData</code> parameter must be used (at least <code>null</code> or <code>undefined</code> must be given) for a proper parameter order.
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
@@ -921,15 +921,15 @@ sap.ui.define([
 	 *
 	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "BeforeHide" pseudo event on the source page and "BeforeFirstShow" (if applicable) and "BeforeShow" on the target page. Later - after the transition has completed - the "AfterShow" pseudo event is triggered on the target page and "AfterHide" on the page which has been left. The given backData object is available in the "BeforeFirstShow", "BeforeShow" and "AfterShow" event object as "data" property.
 	 *
-	 * @param {object} [backData]
+	 * @param {object} [backData={}]
 	 *         This optional object can carry any payload data which should be made available to the target page of the "backToTop" navigation. The event on the target page will contain this data object as "backData" property.
 	 *
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} [oTransitionParameters]
+	 *         When the <code>oTransitionParameters</code> parameter is used, this <code>backData</code> parameter must also be given (either as object or as <code>null</code> or <code>undefined</code>) in order to have a proper parameter order.
+	 * @param {object} [oTransitionParameters={}]
 	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
-	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
+	 *         In order to use the <code>oTransitionParameters<code> parameter, the <code>backData</code> parameter must be used (at least <code>null</code> or <code>undefined</code> must be given) for a proper parameter order.
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @type this
