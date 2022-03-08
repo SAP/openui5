@@ -119,6 +119,7 @@ sap.ui.define([
 		if (oCard) {
 			oCard.attachEvent("_contentDataChange", this._dataChangedHandler);
 		}
+		return this;
 	};
 
 	Paginator.prototype.sliceData = function() {

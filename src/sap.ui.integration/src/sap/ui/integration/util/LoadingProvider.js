@@ -43,10 +43,10 @@ sap.ui.define([
 
 	LoadingProvider.prototype.setLoading = function (bLoading) {
 		if (this.isDataProviderJson()) {
-			return;
+			return this;
 		}
 
-		this.setProperty("loading", bLoading);
+		return this.setProperty("loading", bLoading);
 	};
 
 	LoadingProvider.prototype.isDataProviderJson = function () {
