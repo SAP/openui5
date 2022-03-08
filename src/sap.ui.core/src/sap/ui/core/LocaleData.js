@@ -25,7 +25,9 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		constructor: function(oLocale) {
 			this.oLocale = oLocale;
 			BaseObject.apply(this);
-			this.mData = getData(oLocale);
+			var oDataLoaded = getData(oLocale);
+			this.mData = oDataLoaded.mData;
+			this.sCLDRLocaleId = oDataLoaded.sCLDRLocaleId;
 		},
 
 		/**
@@ -2080,7 +2082,13 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 			sLanguage = "sr_Latn";
 		}
 
-		var sId = sLanguage + "_" + sRegion; // the originally requested locale; this is the key under which the result (even a fallback one) will be stored in the end
+		// sId is the originally requested locale.
+		// this is the key under which the result (even a fallback one) will be stored in the end
+		var sId = sLanguage + "_" + sRegion;
+
+		// the locale of the loaded json file
+		var sCLDRLocaleId = sId;
+
 		// first try: load CLDR data for specific language / region combination
 		if ( sLanguage && sRegion ) {
 			mData = getOrLoad(sId);
@@ -2088,11 +2096,22 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		// second try: load data for language only
 		if ( !mData && sLanguage ) {
 			mData = getOrLoad(sLanguage);
+			sCLDRLocaleId = sLanguage;
 		}
 		// last try: load data for default language "en" (english)
-		mLocaleDatas[sId] = mData || getOrLoad("en");
+		if (!mData) {
+			mData = getOrLoad("en");
+			sCLDRLocaleId = "en";
+		}
 
-		return mLocaleDatas[sId];
+		// store in cache
+		mLocaleDatas[sId] = mData;
+
+		sCLDRLocaleId = sCLDRLocaleId.replace(/_/g, "-");
+		return {
+			mData: mData,
+			sCLDRLocaleId: sCLDRLocaleId
+		};
 	}
 
 

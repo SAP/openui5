@@ -200,6 +200,190 @@ sap.ui.define([
 			assert.ok(!oParsed, "result is not a date");
 		});
 
+		QUnit.test("Parse with case insensitivity", function (assert) {
+			[
+				// invalid locale, fallback to "en"
+				{
+					date: Date.UTC(2017, 2, 12),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "MarchSunday-12-2017-00",
+					otherCases: [
+						"MARCHSunday-12-2017-00",
+						"MARCHSUNDAy-12-2017-00"
+					],
+					locale: "invalid"
+				},
+				// locale, no -> nb, special character "ø"
+				{
+					date: Date.UTC(2017, 2, 12),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "marssøndag-12-2017-00",
+					otherCases: [
+						"MARSSØNDAG-12-2017-00"
+					],
+					locale: "no"
+				},
+				// locale, zh-Hant -> zh_TW, only one case
+				{
+					date: Date.UTC(2017, 2, 12),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "3月星期日-12-2017-00",
+					locale: "zh-Hant"
+				},
+				// locale, zh-Hans -> zh_CN, only one case
+				{
+					date: Date.UTC(2017, 2, 12),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "三月星期日-12-2017-00",
+					locale: "zh-Hans"
+				},
+				// locale, sh -> sr-Latn
+				{
+					date: Date.UTC(2017, 2, 12),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "martnedelja-12-2017-00",
+					otherCases: [
+						"MARTNEDELJA-12-2017-00"
+					],
+					locale: "sh"
+				},
+				// German locale, special character "ä"
+				{
+					date: Date.UTC(2017, 2, 12),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "MärzSonntag-12-2017-00",
+					otherCases: [
+						"märzSonntag-12-2017-00",
+						"MÄRZSonntag-12-2017-00"
+					],
+					locale: "de-DE"
+				},
+				// French locale, special character "é"
+				{
+					date: Date.UTC(2017, 1, 12),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "févrierdimanche-12-2017-00",
+					otherCases: [
+						"févrierdimanche-12-2017-00",
+						"FÉVRIERDIMANCHE-12-2017-00"
+					],
+					locale: "fr-FR"
+				},
+				// Serbian locale, special character "љ"
+				{
+					date: Date.UTC(2017, 11, 4),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "децембарпонедељак-04-2017-00",
+					otherCases: [
+						"ДЕЦЕМБАРПОНЕДЕЉАК-04-2017-00"
+					],
+					locale: "sr"
+				},
+				// Turkish locale, characters i and I are not the same letter
+				// I -> toLocaleLowerCase("tr") -> ı
+				// İ -> toLocaleLowerCase("tr") -> i
+				{
+					date: Date.UTC(2017, 7, 15),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "AğustosSalı-15-2017-00",
+					otherCases: [
+						"AĞUSTOSSALI-15-2017-00",
+						"ağustossalı-15-2017-00"
+					],
+					notMatching: [
+						"AğustosSali-15-2017-00" // has an "i" instead of "ı"
+					],
+					locale: "tr-TR"
+				},
+				// Turkish locale, longest match ("Cumartesi" starts with "Cuma")
+				// Friday - Cuma
+				// Saturday - Cumartesi
+				{
+					date: Date.UTC(2017, 7, 19),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "AğustosCumartesi-19-2017-00",
+					otherCases: [
+						"AĞUSTOSCUMARTESİ-19-2017-00"
+					],
+					notMatching: [
+						"AĞUSTOSCUMARTESI-19-2017-00" // has an "I" instead of "İ"
+					],
+					locale: "tr-TR"
+				},
+				// Lithuanian locale, characters I can have in lowercase length 2
+				// i\u0307 -> toLocaleUpperCase("lt") -> I
+				{
+					date: Date.UTC(2017, 9, 12),
+					pattern: "QQQ'-'QQQQ'-'dd'-'MMMM'-'yyyy'-'HH",
+					exactCase: "IV k.-IV ketvirtis-12-spalio-2017-00",
+					otherCases: [
+						"iv k.-iv ketvirtis-12-spalio-2017-00"
+					],
+					// length changes during case conversion
+					notMatching: [
+						"i\u0307V k.-IV ketvirtis-12-spalio-2017-00",
+						"i\u0307V k.-i\u0307V ketvirtis-12-spalio-2017-00",
+						"IV k.-i\u0307V ketvirtis-12-spalio-2017-00"
+					],
+					locale: "lt-LT"
+				},
+				// Greek locale, characters ς and σ are upper-cased to Σ
+				// σ -> toLocaleUpperCase("el") -> Σ
+				// ς -> toLocaleUpperCase("el") -> Σ (at the end of the word)
+
+				// Month (M) - Σεπτεμβρίου ("Σ" at the beginning of the word)
+				{
+					date: Date.UTC(2017, 8, 12),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "ΣεπτεμβρίουΤρίτη-12-2017-00",
+					otherCases: [
+						"σεπτεμβρίουτρίτη-12-2017-00",
+						"ΣΕΠΤΕΜΒΡΙΟΥΤΡΙΤΗ-12-2017-00"
+					],
+					locale: "el"
+				},
+
+				// Stand-Alone Month (L) - Σεπτέμβριος ("ς" at the end of the word)
+				{
+					date: Date.UTC(2017, 8, 12),
+					pattern: "LLLLEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "ΣεπτέμβριοςΤρίτη-12-2017-00",
+					otherCases: [
+						"ΣεπτέμβριοΣΤρίτη-12-2017-00",
+						"ΣΕΠΤΕΜΒΡΙΟΣΤΡΙΤΗ-12-2017-00"
+					],
+					locale: "el"
+				},
+				// Japanese locale, only one case
+				{
+					date: Date.UTC(2017, 8, 12),
+					pattern: "MMMMEEEE'-'dd'-'yyyy'-'HH",
+					exactCase: "9月火曜日-12-2017-00",
+					locale: "ja-JP"
+				}
+			].forEach(function(oFixture) {
+				var oFormat = DateFormat.getDateTimeInstance({
+					pattern: oFixture.pattern
+				}, new Locale(oFixture.locale));
+
+				var oDate = new Date(oFixture.date);
+				var sResult = oFormat.format(oDate);
+
+				assert.equal(sResult, oFixture.exactCase, "format matches exact case '" + oFixture.exactCase + "'");
+				assert.deepEqual(oFormat.parse(sResult), oDate, "parse formatted string back to '" + oDate + "'");
+				if (Array.isArray(oFixture.otherCases)) {
+					oFixture.otherCases.forEach(function(sOtherCase) {
+						assert.deepEqual(oFormat.parse(sOtherCase), oDate, "parse case: '" + sOtherCase + "'");
+					});
+				}
+				if (Array.isArray(oFixture.notMatching)) {
+					oFixture.notMatching.forEach(function(sNotMatching) {
+						assert.deepEqual(oFormat.parse(sNotMatching), null, "cannot parse '" + sNotMatching + "'");
+					});
+				}
+			});
+		});
+
 		QUnit.module("format Asia/Tokyo", {
 			beforeEach: function () {
 				sap.ui.getCore().getConfiguration().setTimezone("Asia/Tokyo");
