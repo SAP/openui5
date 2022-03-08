@@ -132,10 +132,6 @@ sap.ui.define([
 				return false;
 			}
 
-			if (oControl.getWrapping && !oControl.getWrapping() && oControl.getWrappingType() === WrappingType.Hyphenated) {
-				Log.warning("[UI5 Hyphenation] The property wrappingType=Hyphenated will not take effect unless wrapping=true.", oControl.getId());
-			}
-
 			return (!oControl.getWrapping || oControl.getWrapping()) && oControl.getWrappingType() === WrappingType.Hyphenated;
 		}
 
