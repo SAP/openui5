@@ -2375,7 +2375,7 @@ sap.ui.define([
 			oRefreshKeptElementsGroupLock = {},
 			oRefreshKeptElementsPromise = oFixture.refreshKeptElementsFails
 				? SyncPromise.reject(oError)
-				: SyncPromise.resolve({}),
+				: SyncPromise.resolve(),
 			oRefreshResult,
 			that = this;
 
@@ -2425,7 +2425,9 @@ sap.ui.define([
 				sinon.match.same(oError));
 		this.mock(oBinding).expects("createRefreshPromise").withExactArgs().callThrough();
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh, undefined);
-		this.mock(oBinding.oHeaderContext).expects("checkUpdate").withExactArgs()
+		this.mock(oBinding.oHeaderContext).expects("checkUpdateInternal")
+			.exactly(oFixture.success && !oFixture.refreshKeptElementsFails ? 1 : 0)
+			.withExactArgs()
 			.returns(oHeaderContextCheckUpdatePromise);
 
 		// code under test
@@ -2451,8 +2453,7 @@ sap.ui.define([
 			assert.ok(oFixture.success);
 			assert.notOk(oFixture.refreshKeptElementsFails);
 			assert.strictEqual(oBinding.oCachePromise.getResult(), oNewCache);
-			assert.strictEqual(oResult[1], oRefreshKeptElementsPromise.getResult());
-			assert.strictEqual(oResult[2], oHeaderContextCheckUpdatePromise.getResult());
+			assert.strictEqual(oResult, oHeaderContextCheckUpdatePromise.getResult());
 			assert.strictEqual(oBinding.mPreviousContextsByPath["/resolved/path('42')"],
 				oKeptContext);
 		}, function (oError0) {
@@ -2654,7 +2655,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh, false);
 		this.mock(this.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding)).returns([]);
-		this.mock(oBinding.oHeaderContext).expects("checkUpdate").withExactArgs();
+		this.mock(oBinding.oHeaderContext).expects("checkUpdateInternal").never();
 		oRefreshPromise.catch(function () {
 			var oResourcePathPromise = Promise.resolve("n/a");
 
@@ -2711,7 +2712,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh, false);
 		this.mock(this.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding)).returns([]);
-		this.mock(oBinding.oHeaderContext).expects("checkUpdate").withExactArgs();
+		this.mock(oBinding.oHeaderContext).expects("checkUpdate").never();
 
 		// code under test
 		return oBinding.refreshInternal("path", "myGroup", /*_bCheckUpdate*/false, true)

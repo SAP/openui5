@@ -33,11 +33,6 @@ sap.ui.define([
 				message : "Failed to request side effects",
 				details : "HTTP request was not processed because the previous request failed"
 			}, {
-				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-				level : Log.Level.ERROR,
-				message : "Failed to read path /SalesOrderList",
-				details : "HTTP request was not processed because the previous request failed"
-			}, {
 				component : "sap.ui.model.odata.v4.ODataListBinding",
 				level : Log.Level.ERROR,
 				message : "Failed to get contexts for",

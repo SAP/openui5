@@ -2394,62 +2394,52 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles a GET response by updating the cache data and the $count-values recursively.
+	 * Handles a GET response by updating $count and friends.
 	 *
-	 * @param {object} oResult - The result of the GET request
-	 * @param {number} iStart - The start index of the range
-	 * @param {number} iEnd - The index after the last element
-	 * @param {object} mTypeForMetaPath
-	 *   A map from meta path to the entity type (as delivered by {@link #fetchTypes})
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID, used only in case $count needs to be requested
+	 * @param {number} iTransientElements
+	 *   The number of transient elements within the given group before the GET request
+	 * @param {number} iStart - The start index of the read range (gap) in client coordinates
+	 * @param {number} iEnd - The exclusive end index
+	 * @param {object} oResult - The result of the GET request (only used for annotations)
+	 * @param {object[]} oResult.value - Only used to access the original length incl. iFiltered
+	 * @param {number} iFiltered - Number of newly created elements contained in the given result
+	 * @returns {Promise|undefined}
+	 *   A promise that resolves if the count has been determined or <code>undefined</code> if no
+	 *   request needed
 	 *
 	 * @private
 	 */
-	_CollectionCache.prototype.handleResponse = function (oResult, iStart, iEnd, mTypeForMetaPath) {
-		var sCount,
+	_CollectionCache.prototype.handleCount = function (oGroupLock, iTransientElements, iStart, iEnd,
+			oResult, iFiltered) {
+		var sCount = oResult["@odata.count"],
 			iCreated = this.aElements.$created,
-			oElement,
-			oKeptElement,
+			iFilteredCount,
 			iLimit = -1,
-			iOffset = 0,
 			iOld$count = this.aElements.$count,
-			sPredicate,
+			oRequestCountPromise,
 			iResultLength = oResult.value.length,
 			i;
 
-		this.sContext = oResult["@odata.context"];
-		this.visitResponse(oResult, mTypeForMetaPath, undefined, undefined, undefined, iStart);
-		for (i = 0; i < iResultLength; i += 1) {
-			oElement = oResult.value[i];
-			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
-			if (sPredicate) {
-				oKeptElement = this.aElements.$byPredicate[sPredicate];
-				if (oKeptElement) {
-					// we expect the server to always or never send an ETag for this entity
-					if (!oKeptElement["@odata.etag"]
-							|| oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
-						if (_Helper.hasPrivateAnnotation(oKeptElement, "transientPredicate")) {
-							// client-side filter for newly created persisted
-							iOffset += 1;
-							continue;
-						}
-						_Helper.updateNonExisting(oKeptElement, oElement);
-						oElement = oKeptElement;
-					} else if (this.hasPendingChangesForPath(sPredicate)) {
-						throw new Error("Modified on client and on server: "
-							+ this.sResourcePath + sPredicate);
-					}
-				}
-				this.aElements.$byPredicate[sPredicate] = oElement;
-			}
-			this.aElements[iStart + i - iOffset] = oElement;
-		}
 		// simulate #getFilterExcludingCreated for newly created persisted
-		iEnd -= iOffset;
-		iResultLength -= iOffset;
+		iEnd -= iFiltered;
+		iResultLength -= iFiltered;
 
-		sCount = oResult["@odata.count"];
 		if (sCount) {
-			this.iLimit = iLimit = parseInt(sCount);
+			iFilteredCount = parseInt(sCount) - iFiltered;
+			// client-side filter met all transient elements or we've seen everything there is
+			if (iFiltered === iTransientElements
+					|| iStart === iCreated && iResultLength === iFilteredCount) {
+				this.iLimit = iLimit = iFilteredCount;
+			} else {
+				if (this.oRequestor.getGroupSubmitMode(oGroupLock.getGroupId()) === "API") {
+					oGroupLock = this.oRequestor.lockGroup("$auto", this);
+				} else {
+					oGroupLock = oGroupLock.getUnlockedCopy();
+				}
+				oRequestCountPromise = this.requestCount(oGroupLock);
+			}
 		}
 		if (oResult["@odata.nextLink"]) { // server-driven paging
 			this.bServerDrivenPaging = true;
@@ -2482,6 +2472,59 @@ sap.ui.define([
 			setCount(this.mChangeListeners, "", this.aElements,
 				iLimit !== undefined ? iLimit + this.iActiveElements : undefined);
 		}
+
+		return oRequestCountPromise;
+	};
+
+	/**
+	 * Handles a GET response by updating the cache data; filters out newly created elements.
+	 *
+	 * @param {object} oResult - The result of the GET request
+	 * @param {number} iStart - The start index of the GET's range in this.aElements
+	 * @param {object} mTypeForMetaPath
+	 *   A map from meta path to the entity type (as delivered by {@link #fetchTypes})
+	 * @returns {number}
+	 *   The number of newly created elements filtered out from the given result
+	 *
+	 * @private
+	 */
+	_CollectionCache.prototype.handleResponse = function (oResult, iStart, mTypeForMetaPath) {
+		var oElement,
+			oKeptElement,
+			iOffset = 0,
+			sPredicate,
+			iResultLength = oResult.value.length,
+			i;
+
+		this.sContext = oResult["@odata.context"];
+		this.visitResponse(oResult, mTypeForMetaPath, undefined, undefined, undefined, iStart);
+		for (i = 0; i < iResultLength; i += 1) {
+			oElement = oResult.value[i];
+			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+			if (sPredicate) {
+				oKeptElement = this.aElements.$byPredicate[sPredicate];
+				if (oKeptElement) {
+					// we expect the server to always or never send an ETag for this entity
+					if (!oKeptElement["@odata.etag"]
+							|| oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
+						if (_Helper.hasPrivateAnnotation(oKeptElement, "transientPredicate")) {
+							// client-side filter for newly created persisted
+							iOffset += 1;
+							continue;
+						}
+						_Helper.updateNonExisting(oKeptElement, oElement);
+						oElement = oKeptElement;
+					} else if (this.hasPendingChangesForPath(sPredicate)) {
+						throw new Error("Modified on client and on server: "
+							+ this.sResourcePath + sPredicate);
+					} // else: if POST and GET are in the same $batch, ETag cannot differ!
+				}
+				this.aElements.$byPredicate[sPredicate] = oElement;
+			}
+			this.aElements[iStart + i - iOffset] = oElement;
+		}
+
+		return iOffset;
 	};
 
 	/**
@@ -2551,7 +2594,7 @@ sap.ui.define([
 				this.aElements.$created + this.iLimit)
 			.forEach(function (oInterval) {
 				that.requestElements(oInterval.start, oInterval.end, oGroupLock.getUnlockedCopy(),
-					fnDataRequested);
+					iTransientElements, fnDataRequested);
 				fnDataRequested = undefined;
 			});
 
@@ -2685,6 +2728,8 @@ sap.ui.define([
 	 *   The index after the last element
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID
+	 * @param {number} iTransientElements
+	 *   The number of transient elements within the given group
 	 * @param {function} [fnDataRequested]
 	 *   The function is called when the back-end requests have been sent.
 	 * @throws {Error}
@@ -2693,7 +2738,7 @@ sap.ui.define([
 	 * @private
 	 */
 	_CollectionCache.prototype.requestElements = function (iStart, iEnd, oGroupLock,
-			fnDataRequested) {
+			iTransientElements, fnDataRequested) {
 		var oPromise,
 			oReadRequest = {
 				iEnd : iEnd,
@@ -2708,10 +2753,15 @@ sap.ui.define([
 				undefined, undefined, fnDataRequested),
 			this.fetchTypes()
 		]).then(function (aResult) {
+			var iFiltered;
+
 			if (that.aElements.$tail === oPromise) {
 				that.aElements.$tail = undefined;
 			}
-			that.handleResponse(aResult[0], oReadRequest.iStart, oReadRequest.iEnd, aResult[1]);
+			iFiltered = that.handleResponse(aResult[0], oReadRequest.iStart, aResult[1]);
+
+			return that.handleCount(oGroupLock, iTransientElements, oReadRequest.iStart,
+				oReadRequest.iEnd, aResult[0], iFiltered);
 		}).catch(function (oError) {
 			that.fill(undefined, oReadRequest.iStart, oReadRequest.iEnd);
 			throw oError;

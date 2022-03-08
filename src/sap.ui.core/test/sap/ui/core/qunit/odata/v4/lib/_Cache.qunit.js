@@ -4898,6 +4898,7 @@ sap.ui.define([
 			iExpectedPrefetch = bTransient && iPrefetchLength < 2 ? 2 : iPrefetchLength,
 			oGroupLock = {
 				getGroupId : function () { return "group"; },
+				getUnlockedCopy : function () {},
 				unlock : function () {}
 			},
 			oSyncPromise;
@@ -4908,8 +4909,10 @@ sap.ui.define([
 		oCache.iLimit = 1; // "the upper limit for the count": does not include created elements!
 		this.mock(ODataUtils).expects("_getReadIntervals")
 			.withExactArgs(sinon.match.same(oCache.aElements), 0, 100, iExpectedPrefetch, 2 + 1)
-			.returns([]);
-		this.mock(oCache).expects("requestElements").never();
+			.returns([{start : 0, end : 23}]);
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~oUnlockedCopy~");
+		this.mock(oCache).expects("requestElements").withExactArgs(0, 23, "~oUnlockedCopy~",
+			bTransient ? 2 : 0, sinon.match.same(fnDataRequested));
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
@@ -5654,53 +5657,62 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[true, false].forEach(function (bWithCount) {
-		QUnit.test("CollectionCache#handleResponse: " + bWithCount, function (assert) {
-			var oCache = this.createCache("Employees"),
-				oCacheMock = this.mock(oCache),
-				mChangeListeners = {},
-				sDataContext = {/*string*/},
-				oElement0 = {},
-				oElement1 = {},
-				aElements = [],
-				oFetchTypesResult = {},
-				iLimit = {/*number*/},
-				oResult = {
-					"@odata.context" : sDataContext,
-					value : [oElement0, oElement1]
-				};
+	QUnit.test("CollectionCache#handleResponse", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oElement0 = {},
+			oElement1 = {},
+			oResult = {
+				"@odata.context" : "~context~",
+				value : [oElement0, oElement1]
+			};
 
-			oCache.mChangeListeners = mChangeListeners;
-			aElements.$byPredicate = {};
-			oCache.iActiveElements = aElements.$created = 2;
-			oCache.aElements = aElements;
-			oCache.iLimit = iLimit;
+		oCache.aElements = [];
+		oCache.aElements.$byPredicate = {};
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs(sinon.match.same(oResult), "~oFetchTypesResult~", undefined, undefined,
+				undefined, 2)
+			.callsFake(function () {
+				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
+			});
 
-			if (bWithCount) {
-				oResult["@odata.count"] = "4";
-			}
-			oCacheMock.expects("visitResponse")
-				.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
-					undefined, undefined, undefined, 2)
-				.callsFake(function () {
-					_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
-				});
-			this.mock(_Helper).expects("updateExisting")
-				.withExactArgs(sinon.match.same(mChangeListeners), "",
-					sinon.match.same(aElements), {$count : 6})
-				.exactly(bWithCount ? 1 : 0);
-
+		assert.strictEqual(
 			// code under test
-			oCache.handleResponse(oResult, 2, 4, oFetchTypesResult);
+			oCache.handleResponse(oResult, 2, "~oFetchTypesResult~"),
+			0);
 
-			assert.strictEqual(oCache.sContext, sDataContext);
-			assert.strictEqual(oCache.iLimit, bWithCount ? 4 : iLimit);
-			assert.strictEqual(oCache.aElements[2], oElement0);
-			assert.strictEqual(oCache.aElements[3], oElement1);
-			assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
-			assert.strictEqual(Object.keys(oCache.aElements.$byPredicate).length, 1);
-		});
+		assert.strictEqual(oCache.sContext, "~context~");
+		assert.strictEqual(oCache.aElements[2], oElement0);
+		assert.strictEqual(oCache.aElements[3], oElement1);
+		assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
+		assert.strictEqual(Object.keys(oCache.aElements.$byPredicate).length, 1);
 	});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bWithCount) {
+	QUnit.test("CollectionCache#handleCount: " + bWithCount, function (assert) {
+		var oCache = this.createCache("Employees"),
+			aElements = [],
+			oResult = {
+				"@odata.count" : bWithCount ? "4" : undefined,
+				value : [{}, {}] // only length is needed
+			};
+
+		oCache.mChangeListeners = "~mChangeListeners~";
+		oCache.iActiveElements = aElements.$created = 2;
+		oCache.aElements = aElements;
+		oCache.iLimit = "~iLimit~";
+		this.mock(_Helper).expects("updateExisting")
+			.withExactArgs("~mChangeListeners~", "", sinon.match.same(aElements), {$count : 6})
+			.exactly(bWithCount ? 1 : 0);
+
+		assert.strictEqual(
+			// code under test
+			oCache.handleCount(/*oGroupLock*/null, 0, 2, 4, oResult, 0),
+			undefined);
+
+		assert.strictEqual(oCache.iLimit, bWithCount ? 4 : "~iLimit~");
+	});
+});
 
 	//*********************************************************************************************
 	[{
@@ -5767,36 +5779,33 @@ sap.ui.define([
 		sTitle : "short read while created elements are present, @odata.count wrong",
 		vValue : [{}]
 	}].forEach(function (oFixture) {
-		QUnit.test("CollectionCache#handleResponse: " + oFixture.sTitle, function (assert) {
+		QUnit.test("CollectionCache#handleCount: " + oFixture.sTitle, function (assert) {
 			var oCache = this.createCache("Employees"),
-				oCacheMock = this.mock(oCache),
 				aElements = oFixture.aElements || [],
-				oFetchTypesResult = {},
-				oHelperMock = this.mock(_Helper),
 				oResult = {
 					"@odata.context" : "foo",
 					value : oFixture.vValue || []
 				};
 
-			oCache.mChangeListeners = {};
+			oCache.mChangeListeners = "~mChangeListeners~";
 			oCache.aElements = aElements;
 			oCache.aElements.$count = oFixture.iOldCount;
 			oCache.aElements.$created = oFixture.iCreated || 0;
 			oCache.iActiveElements = oFixture.iActive || oCache.aElements.$created;
-
 			if (oFixture.iCount) {
 				oResult["@odata.count"] = "" + oFixture.iCount;
 			}
-			oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oResult),
-				sinon.match.same(oFetchTypesResult), undefined, undefined, undefined,
-				oFixture.iStart);
-			oHelperMock.expects("updateExisting")
-				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+			this.mock(_Helper).expects("updateExisting")
+				.withExactArgs("~mChangeListeners~", "",
 					sinon.match.same(oCache.aElements), {$count : oFixture.iExpectedCount});
+			// prepare aElements for "short read without server length"
+			oCache.handleResponse(oResult, oFixture.iStart, {});
 
-			// code under test
-			oCache.handleResponse(oResult, oFixture.iStart, oFixture.iStart + 10,
-				oFetchTypesResult);
+			assert.strictEqual(
+				// code under test
+				oCache.handleCount(/*oGroupLock*/null, 0, oFixture.iStart, oFixture.iStart + 10,
+					oResult, 0),
+				undefined);
 
 			assert.strictEqual(oCache.aElements.length, oFixture.iExpectedLength, "length");
 			assert.strictEqual(oCache.iLimit, oFixture.iExpectedLimit, "iLimit");
@@ -5804,11 +5813,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#handleResponse: server-driven paging at end", function (assert) {
+	QUnit.test("CollectionCache#handleCount: server-driven paging at end", function (assert) {
 		var oCache = this.createCache("Employees"),
-			oCacheMock = this.mock(oCache),
 			oElement5 = {},
-			oFetchTypesResult = {},
 			oHelperMock = this.mock(_Helper),
 			i,
 			oReadPromise = {/* SyncPromise */}, // the promise for elements waiting to be read
@@ -5818,21 +5825,20 @@ sap.ui.define([
 				value : [oElement5]
 			};
 
-		oCache.mChangeListeners = {};
+		oCache.mChangeListeners = "~mChangeListeners~";
 		oCache.aElements = new Array(10);
 		oCache.aElements.fill(oReadPromise, 5, 10);
+		oCache.aElements[5] = oElement5; // simulates #handleResponse
 		oCache.aElements.$count = undefined;
-
-		oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oResult),
-			sinon.match.same(oFetchTypesResult), undefined, undefined, undefined, 5);
 		oHelperMock.expects("updateExisting").never();
 
-		// code under test
-		oCache.handleResponse(oResult, 5, 10, oFetchTypesResult);
+		assert.strictEqual(
+			// code under test
+			oCache.handleCount(/*oGroupLock*/null, 0, 5, 10, oResult, 0),
+			undefined);
 
 		assert.strictEqual(oCache.aElements.length, 6, "length");
 		assert.strictEqual(oCache.iLimit, Infinity, "iLimit");
-		assert.strictEqual(oCache.aElements[5], oElement5);
 		assert.strictEqual(oCache.bServerDrivenPaging, true);
 		for (i = 6; i < 10; i += 1) {
 			assert.strictEqual(oCache.aElements[i], undefined);
@@ -5841,12 +5847,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#handleResponse: server-driven paging for gap", function (assert) {
+	QUnit.test("CollectionCache#handleCount: server-driven paging for gap", function (assert) {
 		var oCache = this.createCache("Employees"),
-			oCacheMock = this.mock(oCache),
 			oElement10 = {},
 			oElement5 = {},
-			oFetchTypesResult = {},
 			oHelperMock = this.mock(_Helper),
 			i,
 			oReadPromise = {/* SyncPromise */}, // the promise for elements waiting to be read
@@ -5856,18 +5860,18 @@ sap.ui.define([
 				value : [oElement5]
 			};
 
-		oCache.mChangeListeners = {};
+		oCache.mChangeListeners = "~mChangeListeners~";
 		oCache.aElements = [];
 		oCache.aElements[10] = oElement10;
 		oCache.aElements.fill(oReadPromise, 5, 10);
+		oCache.aElements[5] = oElement5; // simulates #handleResponse
 		oCache.aElements.$count = undefined;
-
-		oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oResult),
-			sinon.match.same(oFetchTypesResult), undefined, undefined, undefined, 5);
 		oHelperMock.expects("updateExisting").never();
 
-		// code under test
-		oCache.handleResponse(oResult, 5, 10, oFetchTypesResult);
+		assert.strictEqual(
+			// code under test
+			oCache.handleCount(/*oGroupLock*/null, 0, 5, 10, oResult, 0),
+			undefined);
 
 		assert.strictEqual(oCache.aElements.length, 11, "length");
 		assert.strictEqual(oCache.iLimit, Infinity, "iLimit");
@@ -5882,9 +5886,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, "same", "other"].forEach(function (sKeptETag) {
-	[false, true].forEach(function (bShortRead) {
-	var sTitle = "CollectionCache#handleResponse: kept-alive element, kept eTag=" + sKeptETag
-			+ ", short read=" + bShortRead;
+	var sTitle = "CollectionCache#handleResponse: kept-alive element, kept eTag=" + sKeptETag;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
@@ -5915,8 +5917,6 @@ sap.ui.define([
 			new2 : oElement2
 		};
 		oCache.aElements = aElements;
-		oCache.aElements.$created = 2;
-
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
 				undefined, undefined, undefined, 2)
@@ -5931,12 +5931,13 @@ sap.ui.define([
 		this.mock(oCache).expects("hasPendingChangesForPath").exactly(sKeptETag === "other" ? 1 : 0)
 			.withExactArgs("bar").returns(false);
 
-		// code under test
-		oCache.handleResponse(oResult, 2, bShortRead ? 8 : 6, oFetchTypesResult);
+		assert.strictEqual(
+			// code under test
+			oCache.handleResponse(oResult, 2, oFetchTypesResult),
+			2);
 
-		assert.deepEqual(oCache.aElements, bShortRead
-			? [0, 1, oElement0, sKeptETag === "other" ? oElement3 : oKeptElement]
-			: [0, 1, oElement0, sKeptETag === "other" ? oElement3 : oKeptElement, 4, 5, 6, 7]);
+		assert.deepEqual(oCache.aElements,
+			[0, 1, oElement0, sKeptETag === "other" ? oElement3 : oKeptElement, 4, 5, 6, 7]);
 		assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
 		assert.strictEqual(oCache.aElements.$byPredicate["new1"], oElement1);
 		assert.strictEqual(oCache.aElements.$byPredicate["new2"], oElement2);
@@ -5944,6 +5945,98 @@ sap.ui.define([
 		assert.deepEqual(Object.keys(oCache.aElements.$byPredicate),
 			["bar", "new1", "new2", "foo"]);
 	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bShortRead) {
+	QUnit.test("CollectionCache#handleCount: short read=" + bShortRead, function (assert) {
+		var oCache = this.createCache("Employees"),
+			aElements = [0, 1, 2, 3, 4, 5, 6, 7], // could be promises...
+			oResult = {
+				value : [{}, {}, {}, {}] // only length is needed
+			};
+
+		oCache.aElements = aElements;
+		oCache.aElements.$created = 2;
+
+		assert.strictEqual(
+			// code under test
+			oCache.handleCount(/*oGroupLock*/null, 0, 2, bShortRead ? 8 : 6, oResult, 2),
+			undefined);
+
+		assert.deepEqual(oCache.aElements, bShortRead ? [0, 1, 2, 3] : [0, 1, 2, 3, 4, 5, 6, 7]);
+		assert.strictEqual(oCache.iLimit, bShortRead ? 2 : Infinity);
+		assert.strictEqual(oCache.aElements.$count, undefined);
+	});
+});
+
+	//*********************************************************************************************
+["Auto", "API", "Direct"].forEach(function (sSubmitMode) {
+	// Note: must be at least 2, see "newly created" below; if greater, not all "newly created" have
+	// been read (because iFiltered is fixed to 2)
+	[2, 3].forEach(function (iTransientElements) {
+		// Note: undefined means "almost", that is, the $count tells us that we've seen 'em all
+		[undefined, false, true].forEach(function (vShortRead) {
+			[2, 3].forEach(function (iStart) {
+				var bRequestCount = iTransientElements > 2 && (iStart > 2 || vShortRead === false),
+					sTitle = "CollectionCache#handleCount: submit mode=" + sSubmitMode
+						+ ", no. of transient=" + iTransientElements
+						+ ", short read=" + vShortRead
+						+ ", start=" + iStart;
+
+				if (!bRequestCount && sSubmitMode !== "Auto") {
+					return;
+				}
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = this.createCache("Employees"),
+			iEnd = iStart + (vShortRead === true ? 5 : 4),
+			oGroupLock = {
+				getGroupId : function () {},
+				getUnlockedCopy : function () {}
+			},
+			oResult = {
+				"@odata.count" : vShortRead === false ? "42" : "4",
+				value : [{}, {}, {}, {}] // only original length is needed
+			};
+
+		oCache.iActiveElements = 2;
+		oCache.aElements = []; // don't care
+		oCache.aElements.$count = 23;
+		oCache.aElements.$created = 2;
+		oCache.iLimit = "~iLimit~";
+		this.mock(oGroupLock).expects("getGroupId").exactly(bRequestCount ? 1 : 0)
+			.withExactArgs().returns("~groupId~");
+		this.oRequestorMock.expects("getGroupSubmitMode").exactly(bRequestCount ? 1 : 0)
+			.withExactArgs("~groupId~").returns(sSubmitMode);
+		this.oRequestorMock.expects("lockGroup")
+			.exactly(bRequestCount && sSubmitMode === "API" ? 1 : 0)
+			.withExactArgs("$auto", sinon.match.same(oCache)).returns("~groupLock~");
+		this.mock(oGroupLock).expects("getUnlockedCopy")
+			.exactly(bRequestCount && sSubmitMode !== "API" ? 1 : 0)
+			.withExactArgs().returns("~groupLock~");
+		this.mock(oCache).expects("requestCount").exactly(bRequestCount ? 1 : 0)
+			.withExactArgs("~groupLock~").returns("~oRequestCountPromise~");
+
+		assert.strictEqual(
+			// code under test
+			oCache.handleCount(oGroupLock, iTransientElements, iStart, iEnd, oResult,
+				/*iFiltered*/2),
+			bRequestCount ? "~oRequestCountPromise~" : undefined);
+
+		if (vShortRead === true) {
+			assert.strictEqual(oCache.iLimit, bRequestCount ? iStart : 4 - 2);
+			assert.strictEqual(oCache.aElements.$count, oCache.iLimit + 2);
+		} else if (bRequestCount) {
+			assert.strictEqual(oCache.aElements.$count, 23, "unchanged");
+			assert.strictEqual(oCache.iLimit, "~iLimit~", "unchanged");
+		} else {
+			assert.strictEqual(oCache.iLimit, (vShortRead === undefined ? 4 : 42) - 2);
+			assert.strictEqual(oCache.aElements.$count, oCache.iLimit + 2);
+		}
+	});
+			});
+		});
 	});
 });
 
@@ -5978,7 +6071,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oCache.handleResponse(oResult, 2, 4, oFetchTypesResult);
+			oCache.handleResponse(oResult, 2, oFetchTypesResult);
 		}, new Error("Modified on client and on server: Employees('foo')"));
 	});
 
@@ -6009,8 +6102,12 @@ sap.ui.define([
 				.returns(oRequestPromise);
 			oCacheMock.expects("fetchTypes").withExactArgs().returns(oFetchPromise);
 			oCacheMock.expects("handleResponse")
-				.withExactArgs(sinon.match.same(oResult), iStart, iEnd,
-					sinon.match.same(mTypeForMetaPath));
+				.withExactArgs(sinon.match.same(oResult), iStart,
+					sinon.match.same(mTypeForMetaPath))
+				.returns("~iFiltered~");
+			oCacheMock.expects("handleCount")
+				.withExactArgs(sinon.match.same(oGroupLock), "~iTransientElements~", iStart, iEnd,
+					sinon.match.same(oResult), "~iFiltered~"); // .returns(undefined)
 			oCacheMock.expects("fill")
 				.withExactArgs(sinon.match(function (oSyncPromise) {
 					oPromise = oSyncPromise;
@@ -6021,7 +6118,8 @@ sap.ui.define([
 				}), iStart, iEnd);
 
 			// code under test
-			oCache.requestElements(iStart, iEnd, oGroupLock, fnDataRequested);
+			oCache.requestElements(iStart, iEnd, oGroupLock, "~iTransientElements~",
+				fnDataRequested);
 
 			assert.strictEqual(oCache.bSentRequest, true);
 			assert.strictEqual(oCache.aElements.$tail, bTail ? oPromise : undefined);
@@ -6057,12 +6155,13 @@ sap.ui.define([
 			.returns(oRequestPromise);
 		oCacheMock.expects("fetchTypes").withExactArgs().returns(oFetchPromise);
 		oCacheMock.expects("handleResponse").never();
+		oCacheMock.expects("handleCount").never();
 		oExpectation = oCacheMock.expects("fill")
 			.withExactArgs(sinon.match.instanceOf(SyncPromise), iStart, iEnd);
 		oCacheMock.expects("fill").withExactArgs(undefined, iStart, iEnd);
 
 		// code under test
-		oCache.requestElements(iStart, iEnd, oGroupLock, fnDataRequested);
+		oCache.requestElements(iStart, iEnd, oGroupLock, 0, fnDataRequested);
 
 		assert.strictEqual(oCache.bSentRequest, true);
 
@@ -7889,7 +7988,7 @@ sap.ui.define([
 				.returns(oUnlockedCopy);
 			that.mock(oGroupLock0).expects("unlock").withExactArgs();
 			that.mock(oCache).expects("requestElements")
-				.withExactArgs(3, 13, oUnlockedCopy, undefined);
+				.withExactArgs(3, 13, sinon.match.same(oUnlockedCopy), 0, undefined);
 
 			// code under test
 			return oCache.read(0, 3, 10, oGroupLock0).then(function (oResult) {
