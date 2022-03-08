@@ -48,7 +48,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		mAccessibilityState["roledescription"] = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
 		mAccessibilityState["autocomplete"] = "none";
 		mAccessibilityState["haspopup"] = coreLibrary.aria.HasPopup.Grid.toLowerCase();
-		mAccessibilityState["expanded"] = false;
 		// aria-disabled is not necessary if we already have a native 'disabled' attribute
 		mAccessibilityState["disabled"] = null;
 

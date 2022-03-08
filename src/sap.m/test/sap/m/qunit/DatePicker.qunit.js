@@ -1943,7 +1943,7 @@ sap.ui.define([
 		//before opening the popup
 		assert.strictEqual(oDP.$("inner").attr("type"), "text", "DP input has correct type 'text'");
 		assert.ok(!oDP.$("inner").attr("aria-owns"), "DP input does not have 'aria-owns' until the picker gets open");
-		assert.equal(oDP.$("inner").attr("aria-expanded"), "false", "DP input has 'aria-expand' set to false when the picker is not open");
+		assert.notOk(oDP.$("inner").attr("aria-expanded"),  "DP input doesn't have 'aria-expanded' attrubyte set");
 
 		// open DatePicker
 		oDP.focus();
@@ -1951,7 +1951,6 @@ sap.ui.define([
 
 		//after opening popup
 		assert.equal(oDP.$("inner").attr("aria-owns"), "DP-cal", "DP input has correct 'aria-owns' when the picker is open");
-		assert.equal(oDP.$("inner").attr("aria-expanded"), "true", "DP input has 'aria-expand' set to true when the picker is open");
 
 		oDP.destroy();
 	});

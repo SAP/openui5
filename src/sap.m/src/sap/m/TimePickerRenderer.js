@@ -68,7 +68,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 			mAccessibilityState["roledescription"] = oControl._oResourceBundle.getText("ACC_CTR_TYPE_TIMEINPUT");
 			mAccessibilityState["autocomplete"] = "none";
 			mAccessibilityState["haspopup"] = coreLibrary.aria.HasPopup.Dialog.toLowerCase();
-			mAccessibilityState["expanded"] = "false";
 			mAccessibilityState["disabled"] = null; // aria-disabled not needed if there's already a native 'disabled' attribute
 			mAccessibilityState["owns"] = oControl.getId() + "-clocks";
 			if (oControl._isMobileDevice()) {

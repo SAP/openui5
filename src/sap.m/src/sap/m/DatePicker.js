@@ -1555,7 +1555,6 @@ sap.ui.define([
 		this._renderedDays = this._getCalendar().$("-Month0-days").find(".sapUiCalItem").length;
 
 		this.$("inner").attr("aria-owns", this.getId() + "-cal");
-		this.$("inner").attr("aria-expanded", true);
 
 		InstanceManager.addPopoverInstance(this._oPopup);
 
@@ -1567,7 +1566,6 @@ sap.ui.define([
 			this._oPopup.getBeginButton().setEnabled(false);
 		}
 		this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
-		this.$("inner").attr("aria-expanded", false);
 
 		this._getCalendar()._closePickers();
 
