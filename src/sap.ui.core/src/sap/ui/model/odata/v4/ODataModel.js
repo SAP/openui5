@@ -50,6 +50,8 @@ sap.ui.define([
 		// system query options allowed within a $expand query option
 		aExpandQueryOptions = ["$count", "$expand", "$filter", "$levels", "$orderby", "$search",
 			"$select"],
+		// binding-specific parameters allowed in getKeepAliveContext
+		aGetKeepAliveParameters = ["$$groupId", "$$patchWithoutSideEffects", "$$updateGroupId"],
 		rGroupID = /^(\$auto(\.\w+)?|\$direct|\w+)$/,
 		MessageType = coreLibrary.MessageType,
 		aMessageTypes = [
@@ -346,6 +348,8 @@ sap.ui.define([
 		}
 
 		this.aAllBindings = [];
+		// The bindings holding keep-alive contexts without a $$getKeepAlive binding
+		this.mKeepAliveBindingsByPath = {};
 		this.mSupportedBindingModes = {
 			OneTime : true,
 			OneWay : true
@@ -658,7 +662,10 @@ sap.ui.define([
 	 *   <code>true</code> is allowed.
 	 * @param {boolean} [mParameters.$$getKeepAliveContext]
 	 *   Whether this binding is considered for a match when {@link #getKeepAliveContext} is called;
-	 *   only the value <code>true</code> is allowed. Supported since 1.99.0
+	 *   only the value <code>true</code> is allowed. Must not be combined with <code>$apply</code>,
+	 *   <code>$$aggregation</code>, <code>$$canonicalPath</code>, or <code>$$sharedRequest</code>.
+	 *   If the binding is relative, <code>$$ownRequest</code> must be set as well.
+	 *   Supported since 1.99.0
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
@@ -1498,21 +1505,38 @@ sap.ui.define([
 	 * Returns a context with the given path belonging to a matching list binding that has been
 	 * marked with <code>$$getKeepAliveContext</code> (see {@link #bindList}). If such a matching
 	 * binding can be found, a context is returned and kept alive (see
-	 * {@link sap.ui.model.odata.v4.ODataListBinding#getKeepAliveContext}).
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#getKeepAliveContext}). Since 1.100.0 a
+	 * temporary binding is used if no such binding could be found. If such a binding is created or
+	 * resolved later, the context and its data are transferred to it, and the temporary binding is
+	 * destroyed again.
+	 *
+	 * A <code>$$getKeepAliveContext</code> binding matches if its resolved binding path is the
+	 * collection path of the context. If the context is created using a temporary binding and the
+	 * parameters of the <code>$$getKeepAliveContext</code> binding differ from the given
+	 * <code>mParameters</code> (except <code>$$groupId</code> which is especially used for the
+	 * context), that binding later runs into an error when trying to read data.
+	 *
+	 * <b>Note</b>: The context received by this function may change its
+	 * {@link sap.ui.model.odata.v4.Context#getBinding binding} during its lifetime.
 	 *
 	 * @param {string} sPath
 	 *   A list context path to an entity
 	 * @param {boolean} [bRequestMessages]
 	 *   Whether to request messages for the context's entity
 	 * @param {object} [mParameters]
-	 *   Parameters for the context; supported since 1.100.0. Only the following parameter is
-	 *   allowed:
+	 *   Parameters for the context or the temporary binding; supported since 1.100.0. All custom
+	 *   query options and the following binding-specific parameters for a list binding may be given
+	 *   (see {@link #bindList} for details).
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID used for read requests for the context's entity or its properties. If not
-	 *   given, the binding's {@link #sap.ui.model.odata.v4.ODataListBinding#getGroupId group ID} is
-	 *   used
+	 *   given, the model's {@link #getGroupId group ID} is used
+	 * @param {boolean} [mParameters.$$patchWithoutSideEffects]
+	 *   Whether implicit loading of side effects via PATCH requests is switched off
+	 * @param {string} [mParameters.$$updateGroupId]
+	 *   The group ID to be used for <b>update</b> requests triggered by the context's binding
 	 * @returns {sap.ui.model.odata.v4.Context|undefined}
-	 *   The context, or <code>undefined</code> if no matching binding can be found
+	 *   The context, or <code>undefined</code> if a binding with a suspended root binding matches
+	 *   and has no context with that path.
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the model does not use the <code>autoExpandSelect</code> parameter,
@@ -1526,9 +1550,9 @@ sap.ui.define([
 	 * @since 1.99.0
 	 */
 	ODataModel.prototype.getKeepAliveContext = function (sPath, bRequestMessages, mParameters) {
-		var aListBindings,
-			sListPath,
-			that = this;
+		var oListBinding,
+			aListBindings,
+			sListPath;
 
 		if (!this.bAutoExpandSelect) {
 			throw new Error("Missing parameter autoExpandSelect");
@@ -1539,23 +1563,32 @@ sap.ui.define([
 		mParameters = mParameters || {};
 		// Only excess parameters are rejected here; the correctness is checked by ODLB
 		Object.keys(mParameters).forEach(function (sParameter) {
-			if (sParameter !== "$$groupId") {
+			if (sParameter.startsWith("sap-") && !sParameter.startsWith("sap-valid-")
+					|| sParameter[0] === "$" && !aGetKeepAliveParameters.includes(sParameter)) {
 				throw new Error("Invalid parameter: " + sParameter);
 			}
 		});
 		sListPath = sPath.slice(0, this.getPredicateIndex(sPath));
-		aListBindings = this.aAllBindings.filter(function (oBinding) {
-			return oBinding.mParameters && oBinding.mParameters.$$getKeepAliveContext
-				&& that.resolve(oBinding.getPath(), oBinding.getContext()) === sListPath;
-		});
+		oListBinding = this.mKeepAliveBindingsByPath[sListPath];
+		if (!oListBinding) {
+			aListBindings = this.aAllBindings.filter(function (oBinding) {
+				if (oBinding.mParameters && oBinding.mParameters.$$getKeepAliveContext) {
+					oBinding.removeCachesAndMessages(sListPath.slice(1), true);
+				}
+				return oBinding.isKeepAliveBindingFor && oBinding.isKeepAliveBindingFor(sListPath);
+			});
+			if (aListBindings.length > 1) {
+				throw new Error("Multiple bindings with $$getKeepAliveContext for: " + sPath);
+			}
+			oListBinding = aListBindings[0];
+			if (!oListBinding) {
+				oListBinding = this.bindList(sListPath, undefined, undefined, undefined,
+					mParameters);
+				this.mKeepAliveBindingsByPath[sListPath] = oListBinding;
+			}
+		}
 
-		if (aListBindings.length > 1) {
-			throw new Error("Multiple bindings with $$getKeepAliveContext for: " + sPath);
-		}
-		if (aListBindings.length) {
-			return aListBindings[0].getKeepAliveContext(sPath, bRequestMessages,
-				mParameters.$$groupId);
-		}
+		return oListBinding.getKeepAliveContext(sPath, bRequestMessages, mParameters.$$groupId);
 	};
 
 	/**
@@ -1783,6 +1816,24 @@ sap.ui.define([
 				oBinding.refresh(oBinding.isSuspended() ? undefined : sGroupId);
 			}
 		});
+	};
+
+	/**
+	 * Returns and releases the temporary keep-alive binding for the given path.
+	 *
+	 * @param {string} sPath - The path
+	 * @returns {sap.ui.model.odata.v4.ODataListBinding|undefined}
+	 *   The binding or <code>undefined</code> if there is none
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.releaseKeepAliveBinding = function (sPath) {
+		var oBinding = this.mKeepAliveBindingsByPath[sPath];
+
+		if (oBinding) {
+			delete this.mKeepAliveBindingsByPath[sPath];
+			return oBinding;
+		}
 	};
 
 	/**

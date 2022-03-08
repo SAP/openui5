@@ -580,6 +580,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("applyParameters: $$getKeepAliveContext & $apply", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			// code under test
+			// Note: this is the same, no matter if both are supplied to c'tor or $apply is added
+			// later via #changeParameters
+			oBinding.applyParameters({$apply : "", $$getKeepAliveContext : true});
+		}, new Error("Cannot combine $$getKeepAliveContext and $apply"));
+		assert.notOk("$apply" in oBinding.mQueryOptions);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("applyParameters: buildApply fails", function (assert) {
 		var oAggregation = {},
 			oBinding = this.bindList("/EMPLOYEES"),
@@ -5716,9 +5729,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bWithOld) {
-	var sTitle = bWithOld
+	[false, true].forEach(function (bFromModel) {
+	var sTitle = (bWithOld
 		? "doCreateCache w/ old cache, but w/o kept-alive elements"
-		: "doCreateCache w/o old cache";
+		: "doCreateCache w/o old cache") + ", bFromModel=" + bFromModel;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
@@ -5744,7 +5758,10 @@ sap.ui.define([
 		}
 		this.mock(oBinding).expects("inheritQueryOptions")
 			.withExactArgs("~queryOptions~", "~context~").returns("~mergedQueryOptions~");
-		this.mock(_AggregationCache).expects("create")
+		this.mock(oBinding).expects("getCacheAndMoveKeepAliveContexts")
+			.withExactArgs("resource/path", "~mergedQueryOptions~")
+			.returns(bFromModel ? oCache : undefined);
+		this.mock(_AggregationCache).expects("create").exactly(bFromModel ? 0 : 1)
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", sinon.match.same(oBinding.mParameters.$$aggregation),
 				"~mergedQueryOptions~", "~autoExpandSelect~", "~sharedRequest~")
@@ -5755,6 +5772,7 @@ sap.ui.define([
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
 				"deep/resource/path", false, bWithOld ? oOldCache : undefined),
 			oCache);
+	});
 	});
 });
 
@@ -8066,14 +8084,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bKeepAlive) {
-	QUnit.test("doReplaceWith: existing Context, bKeepAlive = " + bKeepAlive, function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
+[undefined, 0, 42].forEach(function (iIndex) {
+	var bKeepAlive = iIndex === 42,
+		sTitle = "doReplaceWith: existing Context, bKeepAlive = " + bKeepAlive + ", index = "
+			+ iIndex;
+
+	QUnit.test(sTitle, function (assert) {
+		var oAddKeptElementExpectation,
+			oBinding = this.bindList("/EMPLOYEES"),
 			oDoReplaceWithExpectation,
 			oElement = {},
 			oExistingContext = {}, // no #setKeepAlive
 			oOldContext = {
-				iIndex : 42,
+				iIndex : iIndex,
 				getPath : function () {},
 				isKeepAlive : function () {}
 			},
@@ -8086,20 +8109,32 @@ sap.ui.define([
 		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
 			.returns("~header~context~path~");
 		this.mock(Context).expects("create").never();
+		oAddKeptElementExpectation = this.mock(oBinding.oCache).expects("addKeptElement")
+			.exactly(iIndex === undefined ? 1 : 0)
+			.withExactArgs(sinon.match.same(oElement));
 		oDoReplaceWithExpectation = this.mock(oBinding.oCache).expects("doReplaceWith")
-			.withExactArgs(42, sinon.match.same(oElement));
+			.exactly(iIndex === undefined ? 0 : 1)
+			.withExactArgs(iIndex, sinon.match.same(oElement));
 		this.mock(oBinding).expects("destroyLater").exactly(bKeepAlive ? 0 : 1)
 			.withExactArgs(sinon.match.same(oOldContext));
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
 			.callsFake(function () {
-				assert.ok(oDoReplaceWithExpectation.calledOnce);
-				assert.strictEqual(oExistingContext.iIndex, 42);
+				if (iIndex === undefined) {
+					assert.ok(oAddKeptElementExpectation.calledOnce);
+				} else {
+					assert.ok(oDoReplaceWithExpectation.calledOnce);
+				}
+				assert.strictEqual(oExistingContext.iIndex, iIndex);
 				assert.strictEqual(oOldContext.iIndex, undefined);
-				assert.strictEqual(oBinding.aContexts[42], oExistingContext);
-				assert.deepEqual(oBinding.mPreviousContextsByPath,
-					bKeepAlive ? {"~old~context~path~" : oOldContext} : {});
+				assert.strictEqual(oBinding.aContexts.indexOf(oExistingContext),
+					iIndex === undefined ? -1 : iIndex);
+
+				assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length,
+					iIndex === undefined || bKeepAlive ? 1 : 0);
 				assert.strictEqual(oBinding.mPreviousContextsByPath["~old~context~path~"],
 					bKeepAlive ? oOldContext : undefined);
+				assert.strictEqual(oBinding.mPreviousContextsByPath["~header~context~path~('1')"],
+					iIndex === undefined ? oExistingContext : undefined);
 			});
 
 		assert.strictEqual(
@@ -8133,24 +8168,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bKeepAlive) {
+[undefined, 0, 42].forEach(function (iIndex) {
 	[false, true].forEach(function (bHasOnBeforeDestroy) {
-		var sTitle = "doReplaceWith: new Context, bKeepAlive = " + bKeepAlive
-			+ ", bHasOnBeforeDestroy = " + bHasOnBeforeDestroy;
+		var bKeepAlive = iIndex === 42,
+			sTitle = "doReplaceWith: new Context, bKeepAlive = " + bKeepAlive
+				+ ", bHasOnBeforeDestroy = " + bHasOnBeforeDestroy + ", index = " + iIndex;
 
 		if (!bKeepAlive && bHasOnBeforeDestroy) {
 			return;
 		}
 
 	QUnit.test(sTitle, function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
+		var oAddKeptElementExpectation,
+			oBinding = this.bindList("/EMPLOYEES"),
 			oDoReplaceWithExpectation,
 			oElement = {},
 			oNewContext = {
 				setKeepAlive : function () {}
 			},
 			oOldContext = {
-				iIndex : 42,
+				iIndex : iIndex,
 				fnOnBeforeDestroy : bHasOnBeforeDestroy ? sinon.spy() : undefined,
 				getPath : function () {},
 				isKeepAlive : function () {}
@@ -8165,10 +8202,14 @@ sap.ui.define([
 			.returns("~header~context~path~");
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
-				"~header~context~path~('1')", 42)
+				"~header~context~path~('1')", iIndex)
 			.returns(oNewContext);
+		oAddKeptElementExpectation = this.mock(oBinding.oCache).expects("addKeptElement")
+			.exactly(iIndex === undefined ? 1 : 0)
+			.withExactArgs(sinon.match.same(oElement));
 		oDoReplaceWithExpectation = this.mock(oBinding.oCache).expects("doReplaceWith")
-			.withExactArgs(42, sinon.match.same(oElement));
+			.exactly(iIndex === undefined ? 0 : 1)
+			.withExactArgs(iIndex, sinon.match.same(oElement));
 		oSetKeepAliveExpectation = this.mock(oNewContext).expects("setKeepAlive")
 			.exactly(bKeepAlive ? 1 : 0)
 			.withExactArgs(true, bHasOnBeforeDestroy ? sinon.match.func : undefined);
@@ -8176,19 +8217,24 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oOldContext));
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
 			.callsFake(function () {
-				assert.ok(oDoReplaceWithExpectation.calledOnce);
+				if (iIndex === undefined) {
+					assert.ok(oAddKeptElementExpectation.calledOnce);
+				} else {
+					assert.ok(oDoReplaceWithExpectation.calledOnce);
+				}
 				if (bKeepAlive) {
 					assert.ok(oSetKeepAliveExpectation.calledOnce);
 					assert.ok(oSetKeepAliveExpectation.calledAfter(oDoReplaceWithExpectation));
 				}
 				assert.strictEqual(oOldContext.iIndex, undefined);
-				assert.strictEqual(oBinding.aContexts[42], oNewContext);
-				assert.deepEqual(
-					oBinding.mPreviousContextsByPath,
-					bKeepAlive ? {"~old~context~path~" : oOldContext} : {}
-				);
+				assert.strictEqual(oBinding.aContexts.indexOf(oNewContext),
+					iIndex === undefined ? -1 : iIndex);
+				assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length,
+					iIndex === undefined || bKeepAlive ? 1 : 0);
 				assert.strictEqual(oBinding.mPreviousContextsByPath["~old~context~path~"],
 					bKeepAlive ? oOldContext : undefined);
+				assert.strictEqual(oBinding.mPreviousContextsByPath["~header~context~path~('1')"],
+					iIndex === undefined ? oNewContext : undefined);
 			});
 
 		assert.strictEqual(
@@ -8432,6 +8478,7 @@ sap.ui.define([
 			};
 
 		oBinding.oCachePromise = bAsync ? Promise.resolve(oCache) : SyncPromise.resolve(oCache);
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(this.oModel).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
 		this.mock(this.oModel).expects("getPredicateIndex").withExactArgs(sPath).returns(10);
@@ -8482,6 +8529,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getKeepAliveContext: suspended, no context", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+		this.mock(Context).expects("create").never();
+
+		// code under test
+		assert.strictEqual(oBinding.getKeepAliveContext("/EMPLOYEES('1')"), undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getKeepAliveContext: not a valid context path", function (assert) {
 		var oParentContext = this.oModel.createBindingContext("/"),
 			oBinding = this.bindList("EMPLOYEES", oParentContext),
@@ -8494,6 +8552,129 @@ sap.ui.define([
 			// code under test
 			oBinding.getKeepAliveContext(sPath);
 		}, new Error(oBinding + ": Not a valid context path: " + sPath));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCacheAndMoveKeepAliveContexts", function (assert) {
+		var oBinding = this.bindList("/path", undefined, undefined, undefined,
+				{$$getKeepAliveContext : true}),
+			oCache = {
+				setQueryOptions : function () {}
+			},
+			oContext1 = {},
+			oContext2 = {},
+			oTemporaryBinding = {
+				destroy : function () {},
+				oCache : oCache,
+				mLateQueryOptions : "~mLateQueryOptions~",
+				mParameters : {},
+				mPreviousContextsByPath : {
+					"/path(1)" : oContext1,
+					"/path(2)" : oContext2
+				}
+			};
+
+		this.mock(this.oModel).expects("releaseKeepAliveBinding").withExactArgs("/path")
+			.returns(oTemporaryBinding);
+		this.mock(_Helper).expects("clone").withExactArgs("~mQueryOptions~")
+			.returns("~mQueryOptionsClone~");
+		this.mock(_Helper).expects("aggregateExpandSelect")
+			.withExactArgs("~mQueryOptionsClone~", "~mLateQueryOptions~");
+		this.mock(oCache).expects("setQueryOptions").withExactArgs("~mQueryOptions~");
+		this.mock(oTemporaryBinding).expects("destroy").withExactArgs().callsFake(function () {
+			assert.deepEqual(oTemporaryBinding.mPreviousContextsByPath, {});
+			assert.strictEqual(oTemporaryBinding.oCache, null);
+			assert.strictEqual(oTemporaryBinding.oCachePromise.getResult(), null);
+		});
+
+		// code under test
+		assert.strictEqual(oBinding.getCacheAndMoveKeepAliveContexts("path", "~mQueryOptions~"),
+			oCache);
+
+		assert.strictEqual(oBinding.mLateQueryOptions, "~mQueryOptionsClone~");
+		assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length, 2);
+		assert.strictEqual(oBinding.mPreviousContextsByPath["/path(1)"], oContext1);
+		assert.strictEqual(oBinding.mPreviousContextsByPath["/path(2)"], oContext2);
+		assert.strictEqual(oContext1.oBinding, oBinding);
+		assert.strictEqual(oContext2.oBinding, oBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCacheAndMoveKeepAliveContexts: no binding", function (assert) {
+		var oBinding = this.bindList("/path", undefined, undefined, undefined,
+				{$$getKeepAliveContext : true});
+
+		oBinding.mLateQueryOptions = "~mLateQueryOptions~";
+		this.mock(this.oModel).expects("releaseKeepAliveBinding").withExactArgs("/path")
+			.returns(undefined);
+
+		// code under test
+		assert.strictEqual(oBinding.getCacheAndMoveKeepAliveContexts("path"), undefined);
+
+		assert.strictEqual(oBinding.mLateQueryOptions, "~mLateQueryOptions~");
+		assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length, 0);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCacheAndMoveKeepAliveContexts: unmarked", function (assert) {
+		var oBinding = this.bindList("/path");
+
+		oBinding.mLateQueryOptions = "~mLateQueryOptions~";
+		this.mock(this.oModel).expects("releaseKeepAliveBinding").never();
+
+		// code under test
+		assert.strictEqual(oBinding.getCacheAndMoveKeepAliveContexts("path"), undefined);
+
+		assert.strictEqual(oBinding.mLateQueryOptions, "~mLateQueryOptions~");
+		assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length, 0);
+	});
+
+	//*********************************************************************************************
+["foo", "bar", "$$patchWithoutSideEffects", "$$updateGroupId"].forEach(function (sParameter) {
+	QUnit.test("getCacheAndMoveKeepAliveContexts: mismatch in" + sParameter, function (assert) {
+		var oBinding = this.bindList("/path"),
+			oTemporaryBinding = {};
+
+		this.mock(this.oModel).expects("releaseKeepAliveBinding").twice().withExactArgs("/path")
+			.returns(oTemporaryBinding);
+
+		assert.throws(function () {
+			oBinding.mParameters = {$$getKeepAliveContext : true, $count : true};
+			oTemporaryBinding.mParameters = {};
+			oTemporaryBinding.mParameters[sParameter] = "~";
+
+			// code under test
+			oBinding.getCacheAndMoveKeepAliveContexts("path");
+		}, new Error(oBinding + ": parameter does not match getKeepAliveContext: " + sParameter));
+
+		assert.throws(function () {
+			oBinding.mParameters = {$$getKeepAliveContext : true, $count : true};
+			oBinding.mParameters[sParameter] = "~";
+			oTemporaryBinding.mParameters = {};
+
+			// code under test
+			oBinding.getCacheAndMoveKeepAliveContexts("path");
+		}, new Error(oBinding + ": parameter does not match getKeepAliveContext: " + sParameter));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("isKeepAliveBindingFor", function (assert) {
+		var oBinding = this.bindList("/path");
+
+		assert.notOk(oBinding.isKeepAliveBindingFor("/path"));
+
+		oBinding = this.bindList("/path", undefined, undefined, undefined,
+			{$$getKeepAliveContext : true});
+		this.mock(oBinding).expects("isRootBindingSuspended").never();
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/path");
+		assert.ok(oBinding.isKeepAliveBindingFor("/path"));
+
+		oBinding = this.bindList("/other/path", undefined, undefined, undefined,
+			{$$getKeepAliveContext : true});
+		this.mock(oBinding).expects("isRootBindingSuspended").never();
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/other/path");
+		assert.notOk(oBinding.isKeepAliveBindingFor("/path"));
 	});
 
 	//*********************************************************************************************

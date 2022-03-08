@@ -1322,14 +1322,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bV4) {
-	var sTitle = "execute: bReplaceWithRVC throws because "
-			+ (bV4 ? "not in collection" : "of base context");
-
-	QUnit.test(sTitle, function (assert) {
-		var oContext = bV4
-				? Context.create(this.oModel, {/*oBinding*/}, "/EMPLOYEES('42')", undefined)
-				: this.oModel.createBindingContext("/EMPLOYEES('42')"),
+	QUnit.test("execute: bReplaceWithRVC throws because of base context", function (assert) {
+		var oContext = this.oModel.createBindingContext("/EMPLOYEES('42')"),
 			oBinding = this.bindContext("schema.Operation(...)", oContext);
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
@@ -1341,7 +1335,6 @@ sap.ui.define([
 			oBinding.execute("groupId", false, null, true);
 		}, new Error("Cannot replace this parent context: /EMPLOYEES('42')"));
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("execute: bReplaceWithRVC throws because of absolute binding", function (assert) {

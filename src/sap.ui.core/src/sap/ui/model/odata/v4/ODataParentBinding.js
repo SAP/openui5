@@ -814,7 +814,8 @@ sap.ui.define([
 
 				// Note: in operation bindings mAggregatedQueryOptions misses the options from
 				// $$inheritExpandSelect
-				if (oCache && !oCache.hasSentRequest() && !that.oOperation) {
+				// If the cache is immutable, only mLateQueryOptions may have changed
+				if (!bCacheImmutable && oCache && !oCache.hasSentRequest() && !that.oOperation) {
 					if (that.bSharedRequest) {
 						oCache.setActive(false);
 						oCache = that.createAndSetCache(that.mAggregatedQueryOptions,

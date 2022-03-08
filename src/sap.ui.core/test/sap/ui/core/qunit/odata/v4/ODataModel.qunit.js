@@ -2470,46 +2470,55 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getKeepAliveContext: no binding found", function (assert) {
-		var oModel = this.createModel("", {autoExpandSelect : true});
+[false, true].forEach(function (bFound) {
+	[undefined, {}, {$$groupId : "group"}].forEach(function (mParameters) {
+		var sTitle = "getKeepAliveContext: " + (bFound ? "one" : "no")
+				+ " binding found, mParameters=" + JSON.stringify(mParameters);
 
-		assert.strictEqual(
-			// code under test
-			oModel.getKeepAliveContext("/EMPLOYEES('1')", "~bRequestMessages~"),
-			undefined);
-	});
-
-	//*********************************************************************************************
-[false, true].forEach(function (bUseGroupId) {
-	QUnit.test("getKeepAliveContext: one binding found, group=" + bUseGroupId, function (assert) {
+	QUnit.test(sTitle, function (assert) {
 		// do not use real bindings because they become active asynchronously (esp. ODLB)
 		var oMatch = {
-				getPath : function () { return "Items"; },
-				getContext : function () { return "~oContext~"; },
 				getKeepAliveContext : function () {},
-				mParameters : {$$getKeepAliveContext : true}
+				isKeepAliveBindingFor : function () {},
+				mParameters : {$$getKeepAliveContext : true},
+				removeCachesAndMessages : function () {}
 			},
-			oNoMatch1 = { /* simulates a property binding w/o mParameters */ },
-			oNoMatch2 = { // simulates an unmarked ODLB with matching path
-				getPath : function () { return "Items"; },
-				getContext : function () { return "~oContext~"; },
-				mParameters : {}
+			oNoMatch1 = { /* simulates a ODCB/ODPB */ },
+			oNoMatch2 = { // simulates an non-matching ODLB
+				isKeepAliveBindingFor : function () {},
+				mParameters : {$$getKeepAliveContext : true},
+				removeCachesAndMessages : function () {}
 			},
-			oNoMatch3 = { // simulates a marked ODLB with non-matching path
-				getPath : function () { return "Items"; },
-				getContext : function () { return "~oYetAnotherContext~"; },
-				mParameters : {$$getKeepAliveContext : true}
+			oNoMatch3 = { // simulates an non-matching ODLB
+				isKeepAliveBindingFor : function () {},
+				mParameters : {$$getKeepAliveContext : true},
+				removeCachesAndMessages : function () {}
 			},
 			oModel = this.createModel("", {autoExpandSelect : true}),
-			oModelMock = this.mock(oModel);
+			bUseGroupId = mParameters && "$$groupId" in mParameters;
 
-		oModel.aAllBindings = [oNoMatch1, oNoMatch2, oNoMatch3, oMatch];
-		oModelMock.expects("getPredicateIndex").withExactArgs("/SalesOrders('1')/Items('2')")
+		oModel.aAllBindings = [oNoMatch1, oNoMatch2, oNoMatch3];
+		if (bFound) {
+			oModel.aAllBindings.push(oMatch);
+			this.mock(oMatch).expects("removeCachesAndMessages")
+				.withExactArgs("SalesOrders('1')/Items", true);
+			this.mock(oMatch).expects("isKeepAliveBindingFor")
+				.withExactArgs("/SalesOrders('1')/Items").returns(true);
+		}
+		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/SalesOrders('1')/Items('2')")
 			.returns(23);
-		oModelMock.expects("resolve").withExactArgs("Items", "~oContext~")
-			.returns("/SalesOrders('1')/Items");
-		oModelMock.expects("resolve").withExactArgs("Items", "~oYetAnotherContext~")
-			.returns("/SalesOrders('2')/Items");
+		this.mock(oNoMatch2).expects("removeCachesAndMessages")
+			.withExactArgs("SalesOrders('1')/Items", true);
+		this.mock(oNoMatch2).expects("isKeepAliveBindingFor")
+			.withExactArgs("/SalesOrders('1')/Items").returns(false);
+		this.mock(oNoMatch3).expects("removeCachesAndMessages")
+			.withExactArgs("SalesOrders('1')/Items", true);
+		this.mock(oNoMatch3).expects("isKeepAliveBindingFor")
+			.withExactArgs("/SalesOrders('1')/Items").returns(false);
+		this.mock(oModel).expects("bindList").exactly(bFound ? 0 : 1)
+			.withExactArgs("/SalesOrders('1')/Items", undefined, undefined, undefined,
+				mParameters ? sinon.match.same(mParameters) : {})
+			.returns(oMatch);
 		this.mock(oMatch).expects("getKeepAliveContext")
 			.withExactArgs("/SalesOrders('1')/Items('2')", "~bRequestMessages~",
 				bUseGroupId ? "group" : undefined)
@@ -2518,8 +2527,12 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oModel.getKeepAliveContext("/SalesOrders('1')/Items('2')", "~bRequestMessages~",
-				bUseGroupId ? {$$groupId : "group"} : undefined),
+				mParameters),
 			"~oContext~");
+
+		assert.strictEqual(oModel.mKeepAliveBindingsByPath["/SalesOrders('1')/Items"],
+			bFound ? undefined : oMatch);
+	});
 	});
 });
 
@@ -2527,27 +2540,68 @@ sap.ui.define([
 	QUnit.test("getKeepAliveContext: two bindings found", function (assert) {
 		// do not use real bindings because they become active asynchronously (esp. ODLB)
 		var oMatch1 = {
-				getPath : function () { return "EMPLOYEES"; },
-				getContext : function () { return "~oContext~"; },
-				mParameters : {$$getKeepAliveContext : true}
+				isKeepAliveBindingFor : function () {}
 			},
 			oMatch2 = {
-				getPath : function () { return "EMPLOYEES"; },
-				getContext : function () { return "~oContext~"; },
-				mParameters : {$$getKeepAliveContext : true}
+				isKeepAliveBindingFor : function () {}
 			},
 			oModel = this.createModel("", {autoExpandSelect : true});
 
 		oModel.aAllBindings = [oMatch1, oMatch2];
-		this.mock(oModel).expects("resolve").twice()
-			.withExactArgs("EMPLOYEES", "~oContext~")
-			.returns("/EMPLOYEES");
+		this.mock(oMatch1).expects("isKeepAliveBindingFor")
+			.withExactArgs("/EMPLOYEES").returns(true);
+		this.mock(oMatch2).expects("isKeepAliveBindingFor")
+			.withExactArgs("/EMPLOYEES").returns(true);
 
 		assert.throws(function () {
 			// code under test
 			oModel.getKeepAliveContext("/EMPLOYEES('1')", "~bRequestMessages~");
 		}, new Error("Multiple bindings with $$getKeepAliveContext for: /EMPLOYEES('1')"));
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bUseGroupId) {
+	QUnit.test("getKeepAliveContext: temporary binding, group=" + bUseGroupId, function (assert) {
+		// do not use real bindings because they become active asynchronously (esp. ODLB)
+		var oMatch = {
+				getKeepAliveContext : function () {}
+			},
+			oNoMatch = { // simulates an ODLB which should not be considered
+				isKeepAliveBindingFor : function () {}
+			},
+			oModel = this.createModel("", {autoExpandSelect : true}),
+			mParameters;
+
+		if (bUseGroupId) {
+			mParameters = {
+				foo : "bar",
+				bar : "baz",
+				"sap-valid-at" : "2020-02-02",
+				$$groupId : "group",
+				$$patchWithoutSideEffects : true,
+				$$updateGroupId : "update"
+			};
+		}
+		oModel.aAllBindings = [oNoMatch];
+		oModel.mKeepAliveBindingsByPath["/SalesOrders('1')/Items"] = oMatch;
+		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/SalesOrders('1')/Items('2')")
+			.returns(23);
+		this.mock(oNoMatch).expects("isKeepAliveBindingFor").never();
+		this.mock(oModel).expects("bindList").never();
+		this.mock(oMatch).expects("getKeepAliveContext")
+			.withExactArgs("/SalesOrders('1')/Items('2')", "~bRequestMessages~",
+				bUseGroupId ? "group" : undefined)
+			.returns("~oContext~");
+
+		assert.strictEqual(
+			// code under test
+			oModel.getKeepAliveContext("/SalesOrders('1')/Items('2')", "~bRequestMessages~",
+				mParameters),
+			"~oContext~");
+
+		assert.strictEqual(oModel.mKeepAliveBindingsByPath["/SalesOrders('1')/Items"], oMatch);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getKeepAliveContext: no autoExpandSelect", function (assert) {
@@ -2560,7 +2614,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// TODO remove with CPOUI5ODATAV4-1407 when the model creates an ODLB anyway?
 	QUnit.test("getKeepAliveContext: relative path", function (assert) {
 		var oModel = this.createModel("", {autoExpandSelect : true});
 
@@ -2571,7 +2624,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["foo", "$$updateGroupId", "$$patchWithoutSideEffects"].forEach(function (sParameter) {
+[
+	"sap-statistics", "$apply", "$count", "$expand", "$filter", "$levels", "$orderby", "$search",
+	"$select", "$$aggregation", "$$canonicalPath", "$$getKeepAliveContext", "$$operationMode",
+	"$$ownRequest", "$$sharedRequest"
+].forEach(function (sParameter) {
 	QUnit.test("getKeepAliveContext: invalid parameter " + sParameter, function (assert) {
 		var oModel = this.createModel("", {autoExpandSelect : true}),
 			mParameters = {};
@@ -2584,6 +2641,19 @@ sap.ui.define([
 		}, new Error("Invalid parameter: " + sParameter));
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("releaseKeepAliveBinding", function (assert) {
+		var oModel = this.createModel("", {autoExpandSelect : true});
+
+		oModel.mKeepAliveBindingsByPath["/EMPLOYEES"] = "~oBinding~";
+
+		// code under test
+		assert.strictEqual(oModel.releaseKeepAliveBinding("/foo"), undefined);
+		assert.strictEqual(oModel.releaseKeepAliveBinding("/EMPLOYEES"), "~oBinding~");
+
+		assert.notOk("/EMPLOYEES" in oModel.mKeepAliveBindingsByPath);
+	});
 });
 //TODO constructor: test that the service root URL is absolute?
 //TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId

@@ -421,6 +421,9 @@ sap.ui.define([
 			oOldAggregation = this.mParameters && this.mParameters.$$aggregation,
 			sOldApply = this.mQueryOptions && this.mQueryOptions.$apply;
 
+		if ("$$getKeepAliveContext" in mParameters && "$apply" in mParameters) {
+			throw new Error("Cannot combine $$getKeepAliveContext and $apply");
+		}
 		if ("$$aggregation" in mParameters) {
 			if ("$apply" in mParameters) {
 				throw new Error("Cannot combine $$aggregation and $apply");
@@ -1171,9 +1174,11 @@ sap.ui.define([
 			}
 		}
 
-		oCache = _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
-			this.mParameters.$$aggregation, this.inheritQueryOptions(mQueryOptions, oContext),
-			this.oModel.bAutoExpandSelect, this.bSharedRequest);
+		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
+		oCache = this.getCacheAndMoveKeepAliveContexts(sResourcePath, mQueryOptions)
+			|| _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
+				this.mParameters.$$aggregation, mQueryOptions, this.oModel.bAutoExpandSelect,
+				this.bSharedRequest);
 
 		if (aKeptElementPaths && aKeptElementPaths.length) {
 			oCache.setLateQueryOptions(oOldCache.getLateQueryOptions());
@@ -1241,8 +1246,13 @@ sap.ui.define([
 			bNew = true;
 		}
 		oOldContext.iIndex = undefined;
-		this.aContexts[iIndex] = oResult;
-		this.oCache.doReplaceWith(iIndex, oElement);
+		if (iIndex === undefined) {
+			this.mPreviousContextsByPath[sPath] = oResult;
+			this.oCache.addKeptElement(oElement);
+		} else {
+			this.aContexts[iIndex] = oResult;
+			this.oCache.doReplaceWith(iIndex, oElement);
+		}
 		if (bKeepAlive) {
 			this.mPreviousContextsByPath[oOldContext.getPath()] = oOldContext;
 			if (bNew) {
@@ -1825,6 +1835,62 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tries to get a cache from the model. This is only relevant for the $$getKeepAlive scenario
+	 * when the model created a temporary binding for this binding's path. If there is such a
+	 * binding, its contexts are moved here, it is destroyed and its cache is returned.
+	 *
+	 * @param {string} sResourcePath
+	 *   The resoure path for the cache
+	 * @param {object} mQueryOptions
+	 *   The query options for the cache
+	 * @returns {sap.ui.model.odata.v4.lib._CollectionCache|undefined}
+	 *   The cache or <code>undefined</code> if the model has no matching temporary binding
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getCacheAndMoveKeepAliveContexts = function (sResourcePath,
+			mQueryOptions) {
+		var oBinding,
+			oCache,
+			that = this;
+
+		if (!this.mParameters.$$getKeepAliveContext) {
+			return undefined;
+		}
+		// $$canonicalPath is not allowed, binding path and resource path are (almost) identical
+		oBinding = this.oModel.releaseKeepAliveBinding("/" + sResourcePath);
+		if (!oBinding) {
+			return undefined;
+		}
+
+		Object.keys(oBinding.mParameters).concat(Object.keys(this.mParameters))
+			.forEach(function (sParameter) {
+				if ((sParameter[0] !== "$" || sParameter === "$$patchWithoutSideEffects"
+						|| sParameter === "$$updateGroupId")
+						&& that.mParameters[sParameter] !== oBinding.mParameters[sParameter]) {
+					throw new Error(that + ": parameter does not match getKeepAliveContext: "
+						+ sParameter);
+				}
+			});
+		// createAndSetCache copies them to the cache later
+		this.mLateQueryOptions = _Helper.clone(mQueryOptions);
+		_Helper.aggregateExpandSelect(this.mLateQueryOptions, oBinding.mLateQueryOptions);
+		this.mPreviousContextsByPath = oBinding.mPreviousContextsByPath;
+		Object.values(this.mPreviousContextsByPath).forEach(function (oContext) {
+			oContext.oBinding = that;
+		});
+		oCache = oBinding.oCache;
+		oCache.setQueryOptions(mQueryOptions);
+		// avoid that the cache is set inactive or that contexts are destroyed
+		oBinding.oCache = null;
+		oBinding.oCachePromise = SyncPromise.resolve(null);
+		oBinding.mPreviousContextsByPath = {};
+		oBinding.destroy();
+
+		return oCache;
+	};
+
+	/**
 	 * Returns already created binding contexts for all entities in this list binding for the range
 	 * determined by the given start index <code>iStart</code> and <code>iLength</code>.
 	 * If at least one of the entities in the given range has not yet been loaded, fires a
@@ -2323,8 +2389,9 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID used for read requests for the context's entity or its properties. If not
 	 *   given, the binding's {@link #getGroupId group ID} is used. Supported since 1.100.0
-	 * @returns {sap.ui.model.odata.v4.Context}
-	 *   The kept-alive context
+	 * @returns {sap.ui.model.odata.v4.Context|undefined}
+	 *   The kept-alive context, or <code>undefined</code> if the binding's root binding is
+	 *   suspended and no context with the given path exists
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the group ID is invalid,
@@ -2349,6 +2416,9 @@ sap.ui.define([
 		if (!oContext) {
 			if (!sResolvedPath) {
 				throw new Error("Binding is unresolved: " + this);
+			}
+			if (this.isRootBindingSuspended()) {
+				return undefined;
 			}
 			if (sPath.slice(0, iPredicateIndex) !== sResolvedPath) {
 				throw new Error(this + ": Not a valid context path: " + sPath);
@@ -2489,6 +2559,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Check whether this binding is an active $$getKeepAliveContext binding for the given path.
+	 *
+	 * @param {string} sPath - An absolute binding path
+	 * @returns {boolean} - Whether this binding matches
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.isKeepAliveBindingFor = function (sPath) {
+		return this.mParameters.$$getKeepAliveContext && this.getResolvedPath() === sPath;
+	};
+
+		/**
 	 * Enhance the inherited query options by the given query options if this binding does not have
 	 * any binding parameters. If both have a '$orderby', the resulting '$orderby' is the
 	 * concatenation of both '$orderby' with the given one first. If both have a '$filter', the

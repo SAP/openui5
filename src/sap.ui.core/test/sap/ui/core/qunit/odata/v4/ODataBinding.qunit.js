@@ -2488,9 +2488,68 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkBindingParameters: $$getKeepAliveContext", function (assert) {
+		var aAllowedParams = [
+				"$$aggregation", "$$canonicalPath", "$$getKeepAliveContext", "$$sharedRequest"
+			],
+			oBinding = new ODataBinding({
+				isRelative : function () {}
+			});
+
+		this.mock(oBinding).expects("isRelative").atLeast(0).returns(false);
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$getKeepAliveContext : "foo"}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$getKeepAliveContext': foo"));
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$getKeepAliveContext : false}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$getKeepAliveContext': false"));
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$getKeepAliveContext : undefined}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$getKeepAliveContext': undefined"));
+
+		// code under test
+		oBinding.checkBindingParameters({$$getKeepAliveContext : true}, aAllowedParams);
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({
+				$$aggregation : {},
+				$$getKeepAliveContext : true
+			}, aAllowedParams);
+		}, new Error("Cannot combine $$getKeepAliveContext and $$aggregation"));
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({
+				$$canonicalPath : true,
+				$$getKeepAliveContext : true
+			}, aAllowedParams);
+		}, new Error("Cannot combine $$getKeepAliveContext and $$canonicalPath"));
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({
+				$$getKeepAliveContext : true,
+				$$sharedRequest : true
+			}, aAllowedParams);
+		}, new Error("Cannot combine $$getKeepAliveContext and $$sharedRequest"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkBindingParameters: $$getKeepAliveContext && $$ownRequest", function (assert) {
+		var oBinding = new ODataBinding({
+				isRelative : function () {}
+			});
+
+		this.mock(oBinding).expects("isRelative").returns(true);
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$getKeepAliveContext : true},
+				["$$getKeepAliveContext"]);
+		}, new Error("$$getKeepAliveContext requires $$ownRequest in a relative binding"));
+	});
+
+	//*********************************************************************************************
 [
-	"$$canonicalPath", "$$getKeepAliveContext", "$$noPatch", "$$ownRequest",
-	"$$patchWithoutSideEffects", "$$sharedRequest"
+	"$$canonicalPath", "$$noPatch", "$$ownRequest", "$$patchWithoutSideEffects", "$$sharedRequest"
 ].forEach(function (sName) {
 	QUnit.test("checkBindingParameters, " + sName, function (assert) {
 		var aAllowedParameters = [sName],

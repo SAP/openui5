@@ -78,11 +78,8 @@ sap.ui.define([
 			if (oContext && oContext !== this.oActiveContext) {
 				oContext.setKeepAlive(false);
 			}
-			oContext = oView.getModel().getKeepAliveContext(sPath);
-			if (!oContext) { // TODO needed because getKeepAliveContext is not finished
-				oContext = oView.getModel().bindContext(sPath, undefined,
-					{$$patchWithoutSideEffects : true}).getBoundContext();
-			}
+			oContext = oView.getModel().getKeepAliveContext(sPath, false,
+				{$$patchWithoutSideEffects : true});
 			oView.setBindingContext(oContext);
 			oView.setBusy(true);
 			oContext.requestProperty("ID").finally(function () {
