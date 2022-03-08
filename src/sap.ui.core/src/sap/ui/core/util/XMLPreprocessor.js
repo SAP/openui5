@@ -542,6 +542,7 @@ sap.ui.define([
 		 *   If visitor or namespace is invalid
 		 *
 		 * @private
+		 * @ui5-restricted sap.fe
 		 */
 		plugIn : function (fnVisitor, sNamespace, sLocalName) {
 			var fnOldVisitor = mVisitors[sNamespace];
