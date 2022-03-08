@@ -6,7 +6,7 @@
 sap.ui.define([
 	"sap/ui/documentation/sdk/controller/SampleBaseController",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/resources/ResourceModel",
+	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
