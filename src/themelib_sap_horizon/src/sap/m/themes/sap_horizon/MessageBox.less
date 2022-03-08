@@ -4,11 +4,11 @@
 /* ================================= */
 
 // header shadow - different states
-@_sap_m_MessageBox_InformationShadow: inset 0 -0.0625rem @sapUiInformationBorder;
-@_sap_m_MessageBox_WarningShadow: inset 0 -0.0625rem @sapUiWarningBorder;
-@_sap_m_MessageBox_ErrorShadow: inset 0 -0.0625rem @sapUiErrorBorder;
-@_sap_m_MessageBox_SuccessShadow: inset 0 -0.0625rem @sapUiSuccessBorder;
-@_sap_m_MessageBox_QuestionShadow: none;
+@_sap_m_MessageBox_InformationShadow: inset 0 -0.0625rem @sapUiInformationBorder, @sapUiContentHeaderShadow;
+@_sap_m_MessageBox_WarningShadow: inset 0 -0.0625rem @sapUiWarningBorder, @sapUiContentHeaderShadow;
+@_sap_m_MessageBox_ErrorShadow: inset 0 -0.0625rem @sapUiErrorBorder, @sapUiContentHeaderShadow;
+@_sap_m_MessageBox_SuccessShadow: inset 0 -0.0625rem @sapUiSuccessBorder, @sapUiContentHeaderShadow;
+@_sap_m_MessageBox_QuestionShadow: @sapUiContentHeaderShadow;
 
 .sapMDialog.sapMMessageBoxInfo .sapMDialogIcon.sapUiIcon {
 	color: @sapUiInformativeElement;
