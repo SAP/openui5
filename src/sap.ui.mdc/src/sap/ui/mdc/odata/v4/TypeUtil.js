@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enum/BaseType'], function(ODataTypeUtil, BaseType) {
+sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enum/BaseType',	'sap/base/util/merge'], function(ODataTypeUtil, BaseType, merge) {
 	"use strict";
 
 	/**
@@ -60,9 +60,7 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enum/BaseType'], functio
 		switch (sDataType) {
 			case "sap.ui.model.odata.type.DateTimeOffset":
 			case "Edm.DateTimeOffset":
-				if (!constraints) {
-					constraints = {};
-				}
+				constraints = merge({}, constraints);
 				constraints.V4 = true;
 				break;
 
