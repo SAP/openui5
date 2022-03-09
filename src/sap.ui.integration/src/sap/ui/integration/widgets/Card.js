@@ -959,6 +959,10 @@ sap.ui.define([
 	 * @since 1.95
 	 */
 	Card.prototype.refreshData = function () {
+		if (!this.isReady()) {
+			return;
+		}
+
 		var oHeader = this.getCardHeader(),
 			oContent = this.getCardContent(),
 			oFilterBar = this.getAggregation("_filterBar");
