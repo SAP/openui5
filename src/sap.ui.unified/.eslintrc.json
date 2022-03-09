@@ -1,0 +1,19 @@
+{
+	"overrides": [
+		/*
+		 * Productive code, sample and unit test code of sap.ui.unified has been cleaned up.
+		 * No more references to the global jQuery allowed
+		 */
+		{
+			"files": [
+				"src/**/*.js",
+				"test/sap/ui/unified/demokit/**/*.js",
+				"test/sap/ui/unified/sample/**/*.js",
+				"test/sap/ui/unified/qunit/**/*.js"
+			],
+			"globals": {
+				"jQuery": "off"
+			}
+		}
+	]
+}
