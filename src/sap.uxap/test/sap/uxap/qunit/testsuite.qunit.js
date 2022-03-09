@@ -243,6 +243,9 @@ sap.ui.define(function () {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/ObjectPageSubSection.qunit"
+			},
+			"Generic Testsuite": {
+				page: "test-resources/sap/uxap/qunit/testsuite.generic.qunit.html"
 			}
 		}
 	};

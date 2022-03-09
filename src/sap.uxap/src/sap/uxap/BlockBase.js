@@ -376,6 +376,7 @@ sap.ui.define([
 		/**
 		 * Set the column layout for this particular block.
 		 * @param {string} sLayout The column layout to apply to the control
+		 * @returns {*} this
 		 * @public
 		 */
 		BlockBase.prototype.setColumnLayout = function (sLayout) {
@@ -384,7 +385,7 @@ sap.ui.define([
 				/*the parent subsection needs to recalculate block layout data
 				 based on the changed block column layout */
 			}
-			this.setProperty("columnLayout", sLayout);
+			return this.setProperty("columnLayout", sLayout);
 		};
 
 		/**
