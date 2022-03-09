@@ -672,6 +672,47 @@ sap.ui.define([
 		oVSD._dialog.getBeginButton().firePress();
 	});
 
+	QUnit.test("item selection via bound key", function(assert) {
+		// arrange
+		var oVSD = new ViewSettingsDialog({
+			sortItems: {
+				path: "/media",
+				template: new ViewSettingsItem({
+					key: "{key}",
+					text: "{text}",
+					selected: {
+						parts: [
+							{ path: "key" },
+							{ path: "/selectedKey" }
+						],
+						formatter: function(sKey, sSelectedKey) {
+							return sKey === sSelectedKey;
+						}
+					}
+				})
+			}
+		}).setModel(new sap.ui.model.json.JSONModel({
+			selectedKey: "video",
+			media: [
+				{ key: "images", text: "images" },
+				{ key: "video", text: "video" },
+				{ key: "audio", text: "audio" }
+			]
+		})).placeAt("qunit-fixture"),
+		oSecondItem;
+
+		oCore.applyChanges();
+
+		oSecondItem = oVSD.getSortItems()[1];
+
+		// assert
+		assert.equal(oSecondItem.getSelected(), true, "the 2nd item is selected");
+		assert.equal(oVSD.getSelectedSortItem(), oSecondItem.getId(), "the 2nd item is selected");
+
+		// clean
+		oVSD.destroy();
+	});
+
 	QUnit.test("setFilter count doe not throw an error when filter item type is sap.m.ViewSettingsCustomItem", function (assert) {
 		var done = assert.async(),
 				oVSD = new ViewSettingsDialog({
