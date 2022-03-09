@@ -116,41 +116,65 @@ sap.ui.define([
 						success : function () {
 							var oOpaContext = Opa.getContext();
 
-							oOpaContext.optimisticBatchParameter = mParameter;
+							oOpaContext.mParameter = mParameter;
+							oOpaContext.fnProcessSecurityTokenHandlersSpy =
+								sinon.spy(_Requestor.prototype, "processSecurityTokenHandlers");
+
+							/*
+								Gets the current oRequestor instance from the productive code by
+								spying _Requestor#processSecurityTokenHandlers.
+								Depending on given parameter enablerResult and isFirstAppStart,
+								the sequence of _Requestor#request and _Requestor#sendRequest are
+								expected via spies and remembered in Opa context to be verified in
+								#checkOptimisticBatch below.
+							 */
+							function createSpies() {
+								var mParam = oOpaContext.mParameter;
+
+								oOpaContext.oRequestor =
+									oOpaContext.fnProcessSecurityTokenHandlersSpy.thisValues[0];
+
+								oOpaContext.fnProcessBatch = oOpaContext.fnFirst
+									= sinon.spy(oOpaContext.oRequestor, "processBatch");
+								oOpaContext.fnSendRequest = oOpaContext.fnSecond
+									= sinon.spy(oOpaContext.oRequestor, "sendRequest");
+
+								// enabled and n+1 App-tart
+								if (mParam.enablerResult === true && !mParam.isFirstAppStart) {
+									oOpaContext.fnFirst = oOpaContext.fnSendRequest;
+									oOpaContext.fnSecond = oOpaContext.fnProcessBatch;
+								}
+
+								return undefined; // default securityTokenHandler processing
+							}
+
+
 							Opa5.assert.ok(true, "Test: " + mParameter.title);
-							if (mParameter.deleteCache) {
+							if (mParameter.deleteCache) { // game starts here
 								sap.ui.getCore().getConfiguration()
 									.setSecurityTokenHandlers([function () {
+										oOpaContext.iExpectedSpies = 0;
+										oOpaContext.cacheKey =
+											"sap.ui.model.odata.v4.optimisticBatch:"
+											+ window.location.href;
 										// During runtime of a OPA test the window.location.href
-										// changes so we use the securityTokenHandler to have a
-										// point in time when the ODataModel is created in order to
-										// match the right CacheManager key
-										CacheManager.del("sap.ui.model.odata.v4.optimisticBatch:"
-											+ window.location.href);
+										// changes, so we use the securityTokenHandler as a
+										// "close in time" hook just before the ODataModel is
+										// created in order to match the right CacheManager key
+										CacheManager.del(oOpaContext.cacheKey);
+										createSpies();
 										sap.ui.getCore().getConfiguration()
-											.setSecurityTokenHandlers([]); //do it only once
-										return undefined;
+											.setSecurityTokenHandlers([createSpies]);
+										return undefined; // default securityToken handling
 									}
 								]);
 							}
+							oOpaContext.iExpectedSpiesCalls += 1;
 							if (mParameter.enablerResult !== undefined) {
 								TestUtils.setData("optimisticBatch", mParameter.enablerResult);
 							}
-							if (mParameter.enablerResult === true) { // enabled
-								oOpaContext.fnFirst = sinon.spy(_Requestor.prototype,
-									mParameter.isFirstAppStart ? "request" : "sendRequest");
-								oOpaContext.fnSecond = sinon.spy(_Requestor.prototype,
-									mParameter.isFirstAppStart ? "sendRequest" : "request");
-								oOpaContext.fnSendBatch = mParameter.isFirstAppStart
-									? oOpaContext.fnSecond
-									: oOpaContext.fnFirst;
-								if (mParameter.appChanged) {
-									TestUtils.setData("addSorter", true);
-								}
-							} else { // disabled or undefined (standard behavior)
-								oOpaContext.fnFirst = sinon.spy(_Requestor.prototype, "request");
-								oOpaContext.fnSecond = oOpaContext.fnSendBatch =
-									sinon.spy(_Requestor.prototype, "sendRequest");
+							if (mParameter.appChanged) {
+								TestUtils.setData("addSorter", true);
 							}
 						}
 					});
@@ -206,24 +230,33 @@ sap.ui.define([
 						}
 					});
 				},
-				checkOptimisticBatch : function (aExpected) {
+				checkOptimisticBatch : function (bCleanUp) {
 					this.waitFor({
 						success : function () {
 							var oOpaContext = Opa.getContext(),
-								mParameter = oOpaContext.optimisticBatchParameter,
-								sText = "expected sequence: " +
-									(mParameter.enablerResult
-									&& !mParameter.isFirstAppStart
-										? "sendRequest before request"
-										: "request before sendRequest");
+								mParameter = oOpaContext.mParameter;
 
-							Opa5.assert.ok(oOpaContext.fnFirst.firstCall.calledBefore(
-								oOpaContext.fnSecond.firstCall), sText);
-							Opa5.assert.strictEqual(oOpaContext.fnSendBatch.callCount,
-								mParameter.sendRequestCallCount || 1,
-								"sendRequest called: " + oOpaContext.fnSendBatch.callCount);
+							Opa5.assert.strictEqual(oOpaContext.fnProcessBatch.callCount, 1,
+								"#processBatch callCount");
+							Opa5.assert.strictEqual(oOpaContext.fnSendRequest.callCount,
+								mParameter.sendRequestCallCount || 1, "#sendRequest callCount");
+							Opa5.assert.ok(
+								oOpaContext.fnFirst.firstCall.calledBefore(
+									oOpaContext.fnSecond.firstCall),
+								oOpaContext.fnFirst.displayName + " - called before - " +
+									oOpaContext.fnSecond.displayName);
+							Opa5.assert.ok(oOpaContext.fnProcessBatch.alwaysCalledOn(
+								oOpaContext.oRequestor), "#processBatch alwaysCalledOn");
+							Opa5.assert.ok(oOpaContext.fnSendRequest.alwaysCalledOn(
+								oOpaContext.oRequestor), "#sendRequest alwaysCalledOn");
+
 							oOpaContext.fnFirst.restore();
 							oOpaContext.fnSecond.restore();
+							oOpaContext.fnProcessSecurityTokenHandlersSpy.restore();
+							if (bCleanUp) {
+								sap.ui.getCore().getConfiguration().setSecurityTokenHandlers([]);
+								CacheManager.del(oOpaContext.cacheKey);
+							}
 						}
 					});
 				},

@@ -24,6 +24,20 @@ sap.ui.define([
 		rTimeout = /^\d+$/;
 
 	/**
+	 * Clones the given headers and deletes the X-CSRF-Token within the returned cloned headers.
+	 *
+	 * @param {object} mHeaders The headers to be cloned
+	 * @returns {object} The cloned headers w/o X-CSRF-Token header
+	 */
+	function getHeadersWithoutCSRFToken(mHeaders) {
+		var oClone = Object.assign({}, mHeaders);
+
+		delete oClone["X-CSRF-Token"];
+
+		return oClone;
+	}
+
+	/**
 	 * The getResponseHeader() method imitates the jqXHR.getResponseHeader() method for a $batch
 	 * error response.
 	 *
@@ -83,7 +97,7 @@ sap.ui.define([
 	 */
 	function _Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface) {
 		this.mBatchQueue = {};
-		this.bFirstBatchSent = false;
+		this.bBatchSent = false;
 		this.mHeaders = mHeaders || {};
 		this.aLockedGroupLocks = [];
 		this.oModelInterface = oModelInterface;
@@ -871,14 +885,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if the first $batch request was already sent.
+	 * Returns <code>true</code> if a non-optimistic batch request was already sent.
 	 *
-	 * @returns {boolean} Whether the first $batch was already sent
+	 * @returns {boolean} Whether a non-optimistic batch was already sent
 	 *
 	 * @public
 	 */
-	_Requestor.prototype.isFirstBatchSent = function () {
-		return this.bFirstBatchSent;
+	_Requestor.prototype.isBatchSent = function () {
+		return this.bBatchSent;
 	};
 
 	/**
@@ -1235,7 +1249,6 @@ sap.ui.define([
 			});
 		}
 
-		this.bFirstBatchSent = true;
 		delete this.mBatchQueue[sGroupId];
 		onSubmit(aRequests);
 		bHasChanges = this.cleanUpChangeSets(aRequests);
@@ -1243,6 +1256,7 @@ sap.ui.define([
 			return Promise.resolve();
 		}
 
+		this.bBatchSent = true;
 		aRequests = this.mergeGetRequests(aRequests);
 		this.batchRequestSent(sGroupId, aRequests, bHasChanges);
 		return this.sendBatch(aRequests, sGroupId)
@@ -1315,25 +1329,25 @@ sap.ui.define([
 	/**
 	 * This function has two tasks:
 	 *   <ul>
-	 *     <li>We are in the 1st app start, no optimistic batch payload stored so far. If no
-	 *       optimistic batch was already sent and if optimistic batch handling is enabled via
+	 *     <li>We are in the 1st app start, no optimistic batch payload stored so far. If optimistic
+	 *       batch handling is enabled via
 	*        {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}, this function
 	 *       stores the current batch requests in cache.
-	 *     <li>If an optimistic batch was already sent, it returns its result.
+	 *     <li>If an optimistic batch was already sent, it returns its result promise.
 	 *   </ul>
 	 *
-	 * @param {object[]} aRequests The current batch GET requests
+	 * @param {object[]} aRequests The requests of the current batch
 	 * @param {string} sGroupId The group ID
 	 * @returns {Promise|undefined}
-	 *   The optimistic batch result or <code>undefined</code> if the $batch should be sent
+	 *   The optimistic batch result or <code>undefined</code> if the batch should be sent
 	 *   normally. <code>undefined</code> can have the following reasons:
 	 *   <ul>
 	 *     <li>We are in the 1st app start, no optimistic batch payload stored so far, or
 	 *     <li>the optimistic batch was sent, but its payload did not match to the current one, or
 	 *     <li>we are not in the first #sendBatch call within the _Requestors lifecycle, or
 	 *     <li>#sendBatch was called before first batch payload could be read via CacheManager or
-	 *     <li>we are in the first #sendBatch but the $batch is modifying, means contains others
-	 *       than GET requests.
+	 *     <li>we are in the first #sendBatch but the batch is modifying, means contains others than
+	 *       GET requests.
 	 *   </ul>
 	 *
 	 * @private
@@ -1345,7 +1359,7 @@ sap.ui.define([
 			fnOptimisticBatchEnabler,
 			that = this;
 
-		if (!this.oOptimisticBatch) {
+		if (!oOptimisticBatch) {
 			return;
 		}
 
@@ -1354,11 +1368,11 @@ sap.ui.define([
 		if (oOptimisticBatch.result) { // n+1 app start, consume optimistic batch result
 			if (_Requestor.matchesOptimisticBatch(aRequests, sGroupId,
 					oOptimisticBatch.firstBatch.requests, oOptimisticBatch.firstBatch.groupId)) {
-				Log.info("optimistic$batch: success, response consumed", sKey, sClassName);
+				Log.info("optimistic batch: success, response consumed", sKey, sClassName);
 				return oOptimisticBatch.result;
 			}
 			CacheManager.del(sCachePrefix + sKey).catch(this.oModelInterface.getReporter());
-			Log.warning("optimistic$batch: mismatch, response skipped", sKey, sClassName);
+			Log.warning("optimistic batch: mismatch, response skipped", sKey, sClassName);
 		}
 
 		fnOptimisticBatchEnabler = this.oModelInterface.getOptimisticBatchEnabler();
@@ -1367,7 +1381,7 @@ sap.ui.define([
 					return Array.isArray(oRequest) || oRequest.method !== "GET";
 				});
 			if (bIsModifyingBatch) {
-				Log.warning("optimistic$batch: modifying $batch not supported", sKey, sClassName);
+				Log.warning("optimistic batch: modifying batch not supported", sKey, sClassName);
 				return;
 			}
 
@@ -1377,17 +1391,17 @@ sap.ui.define([
 						groupId : sGroupId,
 						requests : aRequests.map(function (oRequest) {
 							return {
-								headers : oRequest.headers,
-								method : oRequest.method,
+								headers : getHeadersWithoutCSRFToken(oRequest.headers),
+								method : "GET",
 								url : oRequest.url
 							};
 						})
 					}).then(function () {
-						Log.info("optimistic$batch: enabled, $batch payload saved", sKey,
+						Log.info("optimistic batch: enabled, batch payload saved", sKey,
 							sClassName);
 					});
 				} else {
-					Log.info("optimistic$batch: disabled", sKey, sClassName);
+					Log.info("optimistic batch: disabled", sKey, sClassName);
 				}
 			}).catch(that.oModelInterface.getReporter());
 		}
@@ -1785,7 +1799,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether a first batch from a earlier app start was recorded and sends it immediately
+	 * Checks whether a first batch from an earlier app start was recorded and sends it immediately
 	 * out as optimistic batch in order to have its response at the earliest point in time.
 	 */
 	_Requestor.prototype.sendOptimisticBatch = function () {
@@ -1796,15 +1810,15 @@ sap.ui.define([
 			var oOptimisticBatch = {key : sKey};
 
 			if (oFirstBatch) {
-				if (that.isFirstBatchSent()) {
-					Log.error("optimistic$batch: #processBatch called before optimistic batch "
+				if (that.isBatchSent()) {
+					Log.error("optimistic batch: #sendBatch called before optimistic batch "
 						+ "payload could be read", undefined, sClassName);
 					return;
 				}
 				oOptimisticBatch.firstBatch = oFirstBatch;
 				oOptimisticBatch.result
 					= that.sendBatch(oFirstBatch.requests, oFirstBatch.groupId);
-				Log.info("optimistic$batch: sent ", sKey, sClassName);
+				Log.info("optimistic batch: sent ", sKey, sClassName);
 			}
 			that.oOptimisticBatch = oOptimisticBatch; // this has to be done after #sendBatch call
 		}).catch(this.oModelInterface.getReporter());
@@ -2032,14 +2046,14 @@ sap.ui.define([
 
 	/**
 	 * Checks whether the actual payload and group ID of a batch request matches to the optimistic
-	 * $batch payload and group ID.
+	 * batch payload and group ID.
 	 *
-	 * @param {object[]} aActualRequests The requests of the actual $batch
-	 * @param {string} sActualGroupId The group ID of the actual $batch
-	 * @param {object[]} aOptimisticRequests The requests of the optimistic $batch
-	 * @param {string} sOptimisticGroupId The group ID of the optimistic $batch
+	 * @param {object[]} aActualRequests The requests of the actual batch
+	 * @param {string} sActualGroupId The group ID of the actual batch
+	 * @param {object[]} aOptimisticRequests The requests of the optimistic batch
+	 * @param {string} sOptimisticGroupId The group ID of the optimistic batch
 	 * @returns {boolean}
-	 *   Whether the actual $batch requests and group ID matches to the optimistic one
+	 *   Whether the actual batch requests and group ID matches the optimistic one
 	 */
 	_Requestor.matchesOptimisticBatch = function (aActualRequests, sActualGroupId,
 		aOptimisticRequests, sOptimisticGroupId) {
@@ -2049,7 +2063,10 @@ sap.ui.define([
 			&& aActualRequests.every(function (oActual, i) {
 				// the payload is ignored because only GET requests are expected
 				return oActual.url === aOptimisticRequests[i].url
-					&& _Helper.deepEqual(oActual.headers, aOptimisticRequests[i].headers);
+					&& _Helper.deepEqual(
+						getHeadersWithoutCSRFToken(oActual.headers),
+						aOptimisticRequests[i].headers
+					);
 			});
 	};
 

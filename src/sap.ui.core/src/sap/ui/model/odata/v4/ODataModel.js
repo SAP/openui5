@@ -2165,7 +2165,7 @@ sap.ui.define([
 	 * @throws {Error} If
 	 * <ul>
 	 *   <li> the earlyRequests model parameter is not set,
-	 *   <li> the setter is called after the first $batch request is sent,
+	 *   <li> the setter is called after a non-optimistic batch is sent,
 	 *   <li> the given <code>fnOptimisticBatchEnabler</code> parameter is not a function
 	 *   <li> the setter is called more than once
 	 * </ul>
@@ -2178,8 +2178,8 @@ sap.ui.define([
 		if (!this.bEarlyRequests) {
 			throw new Error("The earlyRequests model parameter is not set");
 		}
-		if (this.oRequestor.isFirstBatchSent()) {
-			throw new Error("The setter is called after the first $batch request is sent");
+		if (this.oRequestor.isBatchSent()) {
+			throw new Error("The setter is called after a non-optimistic batch is sent");
 		}
 		if (typeof fnOptimisticBatchEnabler !== "function") {
 			throw new Error("The given fnOptimisticBatchEnabler parameter is not a function");

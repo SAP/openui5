@@ -24,10 +24,11 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.LateProperties.Main", {
 		onInit : function () {
-			var bOptimisticBatch = TestUtils.isOptimisticBatch();
+			var bOptimisticBatch = TestUtils.isOptimisticBatch(),
+				that = this;
 
 			if (bOptimisticBatch === undefined) {
-				// optimisticBatch enabled via OPA
+				// optimistic batch enabled via OPA
 				bOptimisticBatch = TestUtils.retrieveData("optimisticBatch");
 				if (TestUtils.retrieveData("addSorter")) {
 					// this changes the payload for the current 1st batch
@@ -41,6 +42,12 @@ sap.ui.define([
 					return Promise.resolve(bOptimisticBatch);
 				});
 			}
+
+			// simulate some UI initialization work in order to prevent failing OPA because of
+			// error log: "#sendBatch called before optimistic batch payload could be read"
+			setTimeout(function () {
+				that.oView.byId("SalesOrderList").getBinding("items").resume();
+			}, 20);
 		},
 
 		onOpenEditDeliveryDate : function (oEvent) {
