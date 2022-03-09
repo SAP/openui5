@@ -125,6 +125,9 @@ sap.ui.define(function() {
 			ToolPopup: {
 				title: "ToolPopup - sap.ui.ux3",
 				_alternativeTitle: "QUnit Page for sap.ui.ux3.ToolPopup"
+			},
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/ux3/qunit/testsuite.generic.qunit.html"
 			}
 		}
 	};

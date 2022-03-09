@@ -271,6 +271,11 @@ sap.ui.define([
 			this._oMoreMenu = null;
 		}
 
+		if (this._oMenu) {
+			this._oMenu.destroy();
+			this._oMenu = null;
+		}
+
 		if (this._oHoldItem) {
 			this._oHoldItem.destroy();
 		}
