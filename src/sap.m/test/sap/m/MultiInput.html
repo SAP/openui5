@@ -1169,6 +1169,14 @@
 			});
 		});
 
+		var oShowHideButton = new sap.m.Button({
+			id: "visibilityButton",
+			text: "Toggle Visibility",
+			press: function(){
+				oMinWidthMultiInput.setVisible(!oMinWidthMultiInput.getVisible());
+			}
+		})
+
 	   //******************************************
 		var app = new sap.m.App("myApp");
 
@@ -1243,8 +1251,13 @@
 					oMultiInputReadOnly,
 					new sap.m.Label({labelFor: multiInputWithSelectDialog.getId(), text : "MultiInput with SelectDialog", width: "100%"}),
 					multiInputWithSelectDialog,
-					new sap.m.Label({labelFor: oMinWidthMultiInput.getId(), text : "MultiInput with N-more and limited width", width: "100%"}),
-					oMinWidthMultiInput,
+					new sap.ui.layout.VerticalLayout({
+						content: [
+							new sap.m.Label({labelFor: oMinWidthMultiInput.getId(), text : "MultiInput with N-more and limited width", width: "100%"}),
+							oMinWidthMultiInput,
+							oShowHideButton
+						]
+					}),
 					new sap.m.Label({labelFor: multiInputWithDataBinding.getId(), text : "MultiInput with DataBinding", width: "100%"}),
 					multiInputWithDataBinding,
 					oCondensedTable
