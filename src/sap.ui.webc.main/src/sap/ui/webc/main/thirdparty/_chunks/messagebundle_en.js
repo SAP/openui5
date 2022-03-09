@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Previous",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Overflow Menu",
 		TABCONTAINER_END_OVERFLOW: "More",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Cancel",
 		TEXTAREA_CHARACTERS_LEFT: "{0} characters remaining",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} characters over limit",
 		TIMEPICKER_HOURS_LABEL: "Hours",

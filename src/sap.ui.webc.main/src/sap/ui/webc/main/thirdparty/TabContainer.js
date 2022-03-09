@@ -74,6 +74,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			_startOverflowText: {
 				type: String,
 				noAttribute: true,
+				defaultValue: "0",
 			},
 			_endOverflowText: {
 				type: String,

@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Sebelumnya",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Menu Limpahan",
 		TABCONTAINER_END_OVERFLOW: "Selanjutnya",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Batal",
 		TEXTAREA_CHARACTERS_LEFT: "{0} aksara yang tinggal",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} aksara melebihi had",
 		TIMEPICKER_HOURS_LABEL: "Jam",

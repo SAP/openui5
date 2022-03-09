@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Önceki",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Taşma menüsü",
 		TABCONTAINER_END_OVERFLOW: "Daha fazla",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "İptal et",
 		TEXTAREA_CHARACTERS_LEFT: "{0} karakter kaldı",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} karakter aşıldı",
 		TIMEPICKER_HOURS_LABEL: "Saat",

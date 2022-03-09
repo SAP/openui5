@@ -68,7 +68,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					"delete": isD,
 				});
 			}
-			if (Keys.isSpace(event)) {
+			if (Keys.isSpace(event) || Keys.isSpaceCtrl(event)) {
 				event.preventDefault();
 				this._handleSelect();
 			}

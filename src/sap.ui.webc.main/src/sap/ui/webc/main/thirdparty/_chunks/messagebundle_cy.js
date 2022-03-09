@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Blaenorol",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Dewislen Gorlif",
 		TABCONTAINER_END_OVERFLOW: "Mwy",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Canslo",
 		TEXTAREA_CHARACTERS_LEFT: "{0} nod ar ôl",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} nod dros yr uchafswm",
 		TIMEPICKER_HOURS_LABEL: "Awr",

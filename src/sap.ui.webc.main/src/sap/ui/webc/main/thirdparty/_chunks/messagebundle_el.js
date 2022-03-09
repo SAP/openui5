@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Προηγούμενο",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Μενού Υπερχείλισης",
 		TABCONTAINER_END_OVERFLOW: "Περισσότερα",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Ακύρωση",
 		TEXTAREA_CHARACTERS_LEFT: "{0} εναπομείναντες χαρακτήρες",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} Πλεονάζοντες χαρακτήρες",
 		TIMEPICKER_HOURS_LABEL: "Ωρες",

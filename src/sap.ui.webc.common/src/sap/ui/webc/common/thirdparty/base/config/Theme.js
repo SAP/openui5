@@ -19,9 +19,13 @@ sap.ui.define(['exports', '../InitialConfiguration', '../Render', '../theming/ap
 		const currentTheme = getTheme();
 		return currentTheme === _theme || currentTheme === `${_theme}_exp`;
 	};
+	const isThemeFamily = _theme => {
+		return getTheme().startsWith(_theme);
+	};
 
 	exports.getTheme = getTheme;
 	exports.isTheme = isTheme;
+	exports.isThemeFamily = isThemeFamily;
 	exports.setTheme = setTheme;
 
 	Object.defineProperty(exports, '__esModule', { value: true });

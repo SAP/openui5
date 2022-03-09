@@ -42,9 +42,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 				"ariaRoledescription": this.dateAriaDescription,
 				"ariaHasPopup": "dialog",
 				"ariaAutoComplete": "none",
-				"role": "combobox",
 				"ariaControls": `${this._id}-responsive-popover`,
-				"ariaExpanded": this.isOpen(),
 			};
 		}
 		get dateAriaDescription() {
