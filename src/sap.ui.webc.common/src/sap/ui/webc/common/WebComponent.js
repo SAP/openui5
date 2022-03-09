@@ -363,7 +363,12 @@ sap.ui.define([
 				return arg;
 			});
 
-			return this.getDomRef()[name].apply(this.getDomRef(), converted);
+			var vResult = this.getDomRef()[name].apply(this.getDomRef(), converted);
+			if (typeof vResult === "object") {
+				vResult = fnConvert(vResult);
+			}
+
+			return vResult;
 		};
 
 		WebComponent.prototype.__callPublicGetter = function(name) {
@@ -371,7 +376,12 @@ sap.ui.define([
 				throw new Error("Getter called before custom element has been created by: " + this.getId());
 			}
 
-			return this.getDomRef()[name];
+			var vResult = this.getDomRef()[name];
+			if (typeof vResult === "object") {
+				vResult = fnConvert(vResult);
+			}
+
+			return vResult;
 		};
 
 		WebComponent.prototype.destroy = function() {
