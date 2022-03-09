@@ -131,4 +131,14 @@ describe('sap.m.MultiInput', function() {
 			expect(takeScreenshot(element(by.id("dataBoundMultiInput")))).toLookAs("token-update-text");
 		});
 	});
+
+	//Show multi input with N-more and whole N-more label
+	it("should show multiInput with N-more and toggled visibility", function () {
+		var oMultiInputInner = element(by.id("minWidthMI-inner"));
+		oMultiInputInner.click();
+		var oVisibilityButton = element(by.id("visibilityButton"));
+		oVisibilityButton.click();
+		oVisibilityButton.click();
+		expect(takeScreenshot(element(by.id("minWidthMI")))).toLookAs("multiinput-toggled-visibility");
+	});
 });

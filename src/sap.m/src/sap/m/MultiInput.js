@@ -1069,7 +1069,6 @@ function(
 					return;
 				}
 
-				this._tokenizer._setAdjustable(false);
 				this._tokenizer._useCollapsedMode(false);
 				this._setValueVisible();
 				this._tokenizer.scrollToEnd();
