@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Prethodno",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Izbornik prekoračenja",
 		TABCONTAINER_END_OVERFLOW: "Više",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Otkaži",
 		TEXTAREA_CHARACTERS_LEFT: "{0} znakova preostalo",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} znakova prekoračeno",
 		TIMEPICKER_HOURS_LABEL: "Sati",

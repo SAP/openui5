@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "前",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "オーバーフローメニュー",
 		TABCONTAINER_END_OVERFLOW: "追加",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "キャンセル",
 		TEXTAREA_CHARACTERS_LEFT: "残り {0} 文字です",
 		TEXTAREA_CHARACTERS_EXCEEDED: "上限を {0} 文字超過しています",
 		TIMEPICKER_HOURS_LABEL: "時間",

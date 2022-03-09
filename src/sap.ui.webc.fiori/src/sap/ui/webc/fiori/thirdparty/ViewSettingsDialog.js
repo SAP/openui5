@@ -229,7 +229,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 				return {
 					text: item.text,
 					selected: item.selected,
-					associatedItem: item,
 					index,
 				};
 			});
@@ -275,7 +274,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			} else {
 				this._restoreSettings(this._confirmedSettings);
 			}
-			this._dialog.show();
+			this._dialog.show(true);
+			this._dialog.querySelector("[ui5-list]").focusFirstItem();
 		}
 		_handleModeChange(event) {
 			this._currentMode = ViewSettingsDialogMode[event.detail.selectedItem.getAttribute("mode")];
@@ -336,8 +336,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 				sortDescending = !this._currentSettings.sortOrder[0].selected,
 				sortBy = _currentSortBySelected && _currentSortBySelected.text,
 				sortByElementIndex = _currentSortBySelected && _currentSortBySelected.index,
-				initSortIByItem = this.initSortByItems.find((item, index) => index === sortByElementIndex),
-				sortByItem = initSortIByItem && initSortIByItem.associatedItem;
+				sortByItem = this.sortItems[sortByElementIndex];
 			return {
 				sortOrder,
 				sortDescending,

@@ -83,7 +83,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		get _closeDialogAriaLabel() {
 			return ResponsivePopover.i18nBundle.getText(i18nDefaults.RESPONSIVE_POPOVER_CLOSE_DIALOG_BUTTON);
 		}
-		_afterDialogOpen(event) {
+		_beforeDialogOpen(event) {
 			this.open = true;
 			this.opened = true;
 			this._propagateDialogEvent(event);

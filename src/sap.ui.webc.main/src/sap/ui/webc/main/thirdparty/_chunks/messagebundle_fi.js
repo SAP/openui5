@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Edellinen",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Ylivuotovalikko",
 		TABCONTAINER_END_OVERFLOW: "Enemmän",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Peruuta",
 		TEXTAREA_CHARACTERS_LEFT: "{0} merkkiä jäljellä",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} merkkiä yli rajan",
 		TIMEPICKER_HOURS_LABEL: "Tunnit",

@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Iepriekšējais",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Pārpildes izvēlne",
 		TABCONTAINER_END_OVERFLOW: "Vairāk",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Atcelt",
 		TEXTAREA_CHARACTERS_LEFT: "Atlikušas {0} rakstzīmes",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} rakstzīmes pārsniedz limitu",
 		TIMEPICKER_HOURS_LABEL: "Stundas",

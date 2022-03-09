@@ -83,7 +83,7 @@ sap.ui.define(['exports', '../getSharedResource', '../assets-meta/IconCollection
 		return Array.from(registry.keys());
 	};
 	const _getDefaultCollection = () => {
-		return Theme.isTheme("sap_horizon") ? "SAP-icons-v5" : "SAP-icons";
+		return Theme.isThemeFamily("sap_horizon") ? "SAP-icons-v5" : "SAP-icons";
 	};
 	const _normalizeCollection = collectionName => {
 		if (IconCollectionsAlias[collectionName]) {

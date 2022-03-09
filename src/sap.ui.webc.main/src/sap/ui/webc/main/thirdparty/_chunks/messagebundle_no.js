@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Tilbake",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Overflytmeny",
 		TABCONTAINER_END_OVERFLOW: "Mer",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Avbryt",
 		TEXTAREA_CHARACTERS_LEFT: "{0} tegn gjenstår",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} tegn over grensen",
 		TIMEPICKER_HOURS_LABEL: "Timer",

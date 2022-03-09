@@ -161,28 +161,33 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.fireEvent("token-delete", { ref: token });
 		}
 		_onkeydown(event) {
-			if (Keys.isSpace(event)) {
+			if (Keys.isSpaceShift(event)) {
+				event.preventDefault();
+			}
+			if (Keys.isSpace(event) || Keys.isSpaceCtrl(event)) {
 				event.preventDefault();
 				return this._handleTokenSelection(event, false);
+			}
+			if (Keys.isHomeShift(event)) {
+				this._handleHomeShift(event);
+			}
+			if (Keys.isEndShift(event)) {
+				this._handleEndShift(event);
 			}
 			this._handleItemNavigation(event, this.tokens);
 		}
 		_handleItemNavigation(event, tokens) {
 			const isCtrl = !!(event.metaKey || event.ctrlKey);
-			if (Keys.isLeftCtrl(event) || Keys.isRightCtrl(event)) {
-				event.preventDefault();
-				return this._handleArrowCtrl(event.target, tokens, Keys.isRightCtrl(event));
+			if (Keys.isLeftCtrl(event) || Keys.isRightCtrl(event) || Keys.isDownCtrl(event) || Keys.isUpCtrl(event)) {
+				return this._handleArrowCtrl(event, event.target, tokens, Keys.isRightCtrl(event) || Keys.isDownCtrl(event));
 			}
-			if (Keys.isLeftCtrl(event)) {
+			if (Keys.isLeftShift(event) || Keys.isRightShift(event) || Keys.isUpShift(event) || Keys.isDownShift(event) || Keys.isLeftShiftCtrl(event) || Keys.isRightShiftCtrl(event)) {
 				event.preventDefault();
-				return this._handleArrowCtrl(event.target, tokens, false);
+				return this._handleArrowShift(event.target, tokens, (Keys.isRightShift(event) || Keys.isRightShiftCtrl(event) || Keys.isDownShift(event)));
 			}
-			if (Keys.isLeftShift(event) || Keys.isRightShift(event) || Keys.isLeftShiftCtrl(event) || Keys.isRightShiftCtrl(event)) {
+			if (Keys.isHome(event) || Keys.isEnd(event) || Keys.isHomeCtrl(event) || Keys.isEndCtrl(event)) {
 				event.preventDefault();
-				return this._handleArrowShift(event.target, tokens, (Keys.isRightShift(event) || Keys.isRightShiftCtrl(event)));
-			}
-			if (Keys.isHome(event) || Keys.isEnd(event)) {
-				return this._handleHome(tokens, Keys.isEnd(event));
+				return this._handleHome(tokens, Keys.isEnd(event) || Keys.isEndCtrl(event));
 			}
 			if (isCtrl && event.key.toLowerCase() === "a") {
 				event.preventDefault();
@@ -196,6 +201,24 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const index = endKeyPressed ? tokens.length - 1 : 0;
 			tokens[index].focus();
 			this._itemNav.setCurrentItem(tokens[index]);
+		}
+		_handleHomeShift(event) {
+			const tokens = this.tokens;
+			const currentTokenIdx = tokens.indexOf(event.target);
+			tokens.filter((token, index) => index <= currentTokenIdx).forEach(token => {
+				token.selected = true;
+			});
+			tokens[0].focus();
+			this._itemNav.setCurrentItem(tokens[0]);
+		}
+		_handleEndShift(event) {
+			const tokens = this.tokens;
+			const currentTokenIdx = tokens.indexOf(event.target);
+			tokens.filter((token, index) => index >= currentTokenIdx).forEach(token => {
+				token.selected = true;
+			});
+			tokens[tokens.length - 1].focus();
+			this._itemNav.setCurrentItem(tokens[tokens.length - 1]);
 		}
 		_calcNextTokenIndex(focusedToken, tokens, backwards) {
 			if (!tokens.length) {
@@ -211,22 +234,24 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			return nextIndex;
 		}
-		_handleArrowCtrl(focusedToken, tokens, backwards) {
+		_handleArrowCtrl(event, focusedToken, tokens, backwards) {
 			const nextIndex = this._calcNextTokenIndex(focusedToken, tokens, backwards);
+			event.preventDefault();
 			if (nextIndex === -1) {
 				return;
 			}
-			tokens[nextIndex].focus();
+			setTimeout(() => tokens[nextIndex].focus(), 0);
 			this._itemNav.setCurrentItem(tokens[nextIndex]);
 		}
 		_handleArrowShift(focusedToken, tokens, backwards) {
-			const nextIndex = this._calcNextTokenIndex(focusedToken, tokens, backwards);
-			if (nextIndex === -1) {
+			const focusedTokenIndex = tokens.indexOf(focusedToken);
+			const nextIndex = backwards ? (focusedTokenIndex + 1) : (focusedTokenIndex - 1);
+			if (nextIndex === -1 || nextIndex === tokens.length) {
 				return;
 			}
 			focusedToken.selected = true;
 			tokens[nextIndex].selected = true;
-			tokens[nextIndex].focus();
+			setTimeout(() => tokens[nextIndex].focus(), 0);
 			this._itemNav.setCurrentItem(tokens[nextIndex]);
 		}
 		_click(event) {

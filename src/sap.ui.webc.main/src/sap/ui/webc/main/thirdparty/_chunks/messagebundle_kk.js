@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Алдыңғы",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Ашылмалы мәзір",
 		TABCONTAINER_END_OVERFLOW: "Қосымша",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Болдырмау",
 		TEXTAREA_CHARACTERS_LEFT: "{0} таңба қалды",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} таңба асып кетті",
 		TIMEPICKER_HOURS_LABEL: "Сағаттар",

@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Előző",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Overflow menü",
 		TABCONTAINER_END_OVERFLOW: "Több",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Mégse",
 		TEXTAREA_CHARACTERS_LEFT: "{0} karakter maradt",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} karakterrel túllépve",
 		TIMEPICKER_HOURS_LABEL: "óra",

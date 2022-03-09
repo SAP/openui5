@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "הקודם",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "תפריט משנה",
 		TABCONTAINER_END_OVERFLOW: "עוד",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "בטל",
 		TEXTAREA_CHARACTERS_LEFT: "{0} תווים נותרו",
 		TEXTAREA_CHARACTERS_EXCEEDED: "חריגה של {0} תווים",
 		TIMEPICKER_HOURS_LABEL: "שעות",

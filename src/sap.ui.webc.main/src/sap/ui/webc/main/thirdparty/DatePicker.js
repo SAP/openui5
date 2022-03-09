@@ -292,7 +292,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 				"ariaHasPopup": HasPopup.Grid,
 				"ariaAutoComplete": "none",
 				"ariaControls": `${this._id}-responsive-popover`,
-				"ariaExpanded": this.isOpen(),
 				"ariaRequired": this.required,
 				"ariaLabel": AriaLabelHelper.getEffectiveAriaLabelText(this),
 			};

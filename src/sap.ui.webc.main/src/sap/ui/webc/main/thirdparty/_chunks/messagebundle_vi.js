@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Trước",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Trình đơn tràn",
 		TABCONTAINER_END_OVERFLOW: "Thêm",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Hủy",
 		TEXTAREA_CHARACTERS_LEFT: "còn lại {0} ký tự",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} ký tự quá giới hạn",
 		TIMEPICKER_HOURS_LABEL: "Giờ",

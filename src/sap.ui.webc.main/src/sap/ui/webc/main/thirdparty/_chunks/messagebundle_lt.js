@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Ankstesnis",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Perpildos meniu",
 		TABCONTAINER_END_OVERFLOW: "Daugiau",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Atšaukti",
 		TEXTAREA_CHARACTERS_LEFT: "Liko simbolių: {0}",
 		TEXTAREA_CHARACTERS_EXCEEDED: "Viršytas simbolių skaičius: {0}",
 		TIMEPICKER_HOURS_LABEL: "Valandos",

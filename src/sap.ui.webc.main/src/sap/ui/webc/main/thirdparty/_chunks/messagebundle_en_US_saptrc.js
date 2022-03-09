@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "tlyjpjQlt22F3Q1RCYscxw_Previous",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "3xcnVA+Ez03aprilqIkpAw_Overflow Menu",
 		TABCONTAINER_END_OVERFLOW: "XkO9Zj1ZvILA5x5A4X/Zbg_More",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "ec1CoV3+vzRm2zQLr6PZ3Q_Cancel",
 		TEXTAREA_CHARACTERS_LEFT: "xgyJ76zueErBiq4pvSwylw_{0} characters remaining",
 		TEXTAREA_CHARACTERS_EXCEEDED: "UGc6/Cj6gpF6O2wCd1OgaA_{0} characters over limit",
 		TIMEPICKER_HOURS_LABEL: "46WY4C/mhlGQodDmk7XnRQ_Hours",

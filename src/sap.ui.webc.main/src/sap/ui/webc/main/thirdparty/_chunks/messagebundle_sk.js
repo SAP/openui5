@@ -87,6 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Predchádzajúce",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Menu Pretečenie",
 		TABCONTAINER_END_OVERFLOW: "Viac",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Zrušiť",
 		TEXTAREA_CHARACTERS_LEFT: "{0} znakov zostáva",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} znakov nad limit",
 		TIMEPICKER_HOURS_LABEL: "Hodiny",
