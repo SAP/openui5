@@ -302,6 +302,9 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				title: "ValueHelp Testsuite",
 				group: "Testsuite",
 				page: "test-resources/sap/ui/mdc/qunit/valuehelp/testsuite.valuehelp.qunit.html"
+			},
+			"Generic Testsuite": {
+				page: "test-resources/sap/ui/mdc/qunit/testsuite.generic.qunit.html"
 			}
 		}
 	};
