@@ -24,12 +24,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
 ], function (Log, JSTokenizer, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
 		BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, Model, PropertyBinding,
 		Sorter, OperationMode, AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType,
-		_Helper, TestUtils, URI) {
+		_Helper, URI) {
 	"use strict";
 
 	// Common := com.sap.vocabularies.Common.v1
@@ -6880,7 +6879,7 @@ sap.ui.define([
 				.then(function () {
 					assert.ok(false);
 				}, function (oError) {
-					TestUtils.checkError(assert, oError, Error, oFixture.sErrorMessage);
+					assert.strictEqual(oError.message, oFixture.sErrorMessage);
 
 					// code under test
 					return that.oMetaModel.requestCodeList("T€RM")
@@ -6940,8 +6939,7 @@ sap.ui.define([
 				.then(function () {
 					assert.ok(false);
 				}, function (oError0) {
-					TestUtils.checkError(assert, oError0, Error,
-						"Single key expected: /UnitsOfMeasure/");
+					assert.strictEqual(oError0.message, "Single key expected: /UnitsOfMeasure/");
 
 					// code under test
 					return that.oMetaModel.requestCodeList("T€RM")
