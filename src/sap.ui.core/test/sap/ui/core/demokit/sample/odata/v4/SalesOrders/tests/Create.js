@@ -95,9 +95,7 @@ sap.ui.define([
 			When.onTheSuccessInfo.confirm();
 			if (bRealOData) {
 				Then.onTheMainPage.checkButtonEnabled("confirmSalesOrder");
-				// TODO: TestUtils may support to provide JSON response/or generated keys...
 				Then.onTheMainPage.checkDifferentID(0, "");
-				// TODO: TestUtils does not support PATCH at all
 				When.onTheMainPage.changeNoteInSalesOrders(0, sModifiedNote + "_3");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 			}
