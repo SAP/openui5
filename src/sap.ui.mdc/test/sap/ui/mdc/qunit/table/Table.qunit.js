@@ -3522,6 +3522,22 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Toolbar style", function(assert) {
+		this.oTable.destroy();
+		this.oTable = new Table();
+		this.oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		return this.oTable.initialized().then(function() {
+			assert.strictEqual(this.oTable._oToolbar.getStyle(), "Clear", "Correct style applied to the toolbar according to the table type");
+			// simulate change table type at runtime
+			this.oTable.setType(new ResponsiveTableType());
+			return this.oTable._fullyInitialized();
+		}.bind(this)).then(function() {
+			assert.strictEqual(this.oTable._oToolbar.getStyle(), "Standard", "Toolbar style updated after table type is changed to Responsive table");
+		}.bind(this));
+	});
+
 	QUnit.module("Inbuilt filter initialization", {
 		createTable: function(mSettings) {
 			this.oTable = new Table(mSettings);
