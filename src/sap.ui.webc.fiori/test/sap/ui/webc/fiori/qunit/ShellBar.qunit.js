@@ -119,18 +119,21 @@ sap.ui.define([
 					valueStateMessage: "Value State Message",
 					icon: [
 						new Icon({
+							color: "blue",
 							name: "add",
 							click: function(oEvent) {
 								// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
 							}
 						}),
 						new Icon({
+							color: "blue",
 							name: "add",
 							click: function(oEvent) {
 								// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
 							}
 						}),
 						new Icon({
+							color: "blue",
 							name: "add",
 							click: function(oEvent) {
 								// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());

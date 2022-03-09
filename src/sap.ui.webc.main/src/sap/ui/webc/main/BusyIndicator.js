@@ -79,8 +79,8 @@ sap.ui.define([
 				 * Defines whether the control will be rendered as a block or inline HTML element
 				 */
 				display: {
-					type: "sap.ui.core.CSSSize",
-					defaultValue: null,
+					type: "string",
+					defaultValue: "inline-block",
 					mapping: "style"
 				},
 
