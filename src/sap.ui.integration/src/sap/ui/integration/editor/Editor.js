@@ -756,7 +756,9 @@ sap.ui.define([
 								if (oItem.isA("sap.m.Panel")) {
 									tItemLevel = oItem._level;
 								} else if (oItem.isA("sap.m.IconTabBar")) {
-									tItemLevel = oItem.getItems()[0]._level;
+									if (oItem.getItems().length > 0 && oItem.getItems()[0]._level) {
+										tItemLevel = oItem.getItems()[0]._level;
+									}
 								}
 								if (tItemLevel === "1") {
 									if (oItem.isA("sap.m.IconTabBar")) {
