@@ -81,7 +81,7 @@ sap.ui.define([
 				 * Defines the background color of the control
 				 */
 				backgroundColor: {
-					type: "sap.ui.core.CSSSize",
+					type: "sap.ui.core.CSSColor",
 					defaultValue: null,
 					mapping: "style"
 				},
@@ -90,7 +90,7 @@ sap.ui.define([
 				 * Defines the color of the control
 				 */
 				color: {
-					type: "sap.ui.core.CSSSize",
+					type: "sap.ui.core.CSSColor",
 					defaultValue: null,
 					mapping: "style"
 				},

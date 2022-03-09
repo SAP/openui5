@@ -12,6 +12,7 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			this.oIcon = new Icon({
+				color: "blue",
 				name: "add",
 				click: function(oEvent) {
 					// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());

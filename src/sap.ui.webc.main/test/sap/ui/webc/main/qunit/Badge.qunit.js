@@ -15,6 +15,7 @@ sap.ui.define([
 			this.oBadge = new Badge({
 				text: "Some text...",
 				icon: new Icon({
+					color: "blue",
 					name: "add",
 					click: function(oEvent) {
 						// console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
