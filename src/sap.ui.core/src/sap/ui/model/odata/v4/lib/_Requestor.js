@@ -10,13 +10,15 @@ sap.ui.define([
 	"./_V2Requestor",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/cache/CacheManager",
 	"sap/ui/thirdparty/jquery"
-], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, jQuery) {
+], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, CacheManager, jQuery) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
 			Accept : "multipart/mixed"
 		},
+		sCachePrefix = "sap.ui.model.odata.v4.optimisticBatch:",
 		sClassName = "sap.ui.model.odata.v4.lib._Requestor",
 		rSystemQueryOptionWithPlaceholder = /(\$\w+)=~/g,
 		rTimeout = /^\d+$/;
@@ -81,9 +83,11 @@ sap.ui.define([
 	 */
 	function _Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface) {
 		this.mBatchQueue = {};
+		this.bFirstBatchSent = false;
 		this.mHeaders = mHeaders || {};
 		this.aLockedGroupLocks = [];
 		this.oModelInterface = oModelInterface;
+		this.oOptimisticBatch = null; // optimistic batch processing off
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.mRunningChangeRequests = {}; // map from group ID to a SyncPromise[]
 		this.iSessionTimer = 0;
@@ -867,6 +871,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns <code>true</code> if the first $batch request was already sent.
+	 *
+	 * @returns {boolean} Whether the first $batch was already sent
+	 *
+	 * @public
+	 */
+	_Requestor.prototype.isFirstBatchSent = function () {
+		return this.bFirstBatchSent;
+	};
+
+	/**
 	 * Get the batch queue for the given group or create it if it does not exist yet.
 	 *
 	 * @param {string} sGroupId The group ID
@@ -1220,6 +1235,7 @@ sap.ui.define([
 			});
 		}
 
+		this.bFirstBatchSent = true;
 		delete this.mBatchQueue[sGroupId];
 		onSubmit(aRequests);
 		bHasChanges = this.cleanUpChangeSets(aRequests);
@@ -1294,6 +1310,87 @@ sap.ui.define([
 			this.aLockedGroupLocks.push(oGroupLock);
 		}
 		return oGroupLock;
+	};
+
+	/**
+	 * This function has two tasks:
+	 *   <ul>
+	 *     <li>We are in the 1st app start, no optimistic batch payload stored so far. If no
+	 *       optimistic batch was already sent and if optimistic batch handling is enabled via
+	*        {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}, this function
+	 *       stores the current batch requests in cache.
+	 *     <li>If an optimistic batch was already sent, it returns its result.
+	 *   </ul>
+	 *
+	 * @param {object[]} aRequests The current batch GET requests
+	 * @param {string} sGroupId The group ID
+	 * @returns {Promise|undefined}
+	 *   The optimistic batch result or <code>undefined</code> if the $batch should be sent
+	 *   normally. <code>undefined</code> can have the following reasons:
+	 *   <ul>
+	 *     <li>We are in the 1st app start, no optimistic batch payload stored so far, or
+	 *     <li>the optimistic batch was sent, but its payload did not match to the current one, or
+	 *     <li>we are not in the first #sendBatch call within the _Requestors lifecycle, or
+	 *     <li>#sendBatch was called before first batch payload could be read via CacheManager or
+	 *     <li>we are in the first #sendBatch but the $batch is modifying, means contains others
+	 *       than GET requests.
+	 *   </ul>
+	 *
+	 * @private
+	 */
+	_Requestor.prototype.processOptimisticBatch = function (aRequests, sGroupId) {
+		var bIsModifyingBatch,
+			sKey,
+			oOptimisticBatch = this.oOptimisticBatch,
+			fnOptimisticBatchEnabler,
+			that = this;
+
+		if (!this.oOptimisticBatch) {
+			return;
+		}
+
+		sKey = oOptimisticBatch.key;
+		this.oOptimisticBatch = null;
+		if (oOptimisticBatch.result) { // n+1 app start, consume optimistic batch result
+			if (_Requestor.matchesOptimisticBatch(aRequests, sGroupId,
+					oOptimisticBatch.firstBatch.requests, oOptimisticBatch.firstBatch.groupId)) {
+				Log.info("optimistic$batch: success, response consumed", sKey, sClassName);
+				return oOptimisticBatch.result;
+			}
+			CacheManager.del(sCachePrefix + sKey).catch(this.oModelInterface.getReporter());
+			Log.warning("optimistic$batch: mismatch, response skipped", sKey, sClassName);
+		}
+
+		fnOptimisticBatchEnabler = this.oModelInterface.getOptimisticBatchEnabler();
+		if (fnOptimisticBatchEnabler) { // 1st app start, or optimistic batch payload did not match
+			bIsModifyingBatch = aRequests.some(function (oRequest) {
+					return Array.isArray(oRequest) || oRequest.method !== "GET";
+				});
+			if (bIsModifyingBatch) {
+				Log.warning("optimistic$batch: modifying $batch not supported", sKey, sClassName);
+				return;
+			}
+
+			Promise.resolve(fnOptimisticBatchEnabler(sKey)).then(function (bEnabled) {
+				if (bEnabled) {
+					return CacheManager.set(sCachePrefix + sKey, {
+						groupId : sGroupId,
+						requests : aRequests.map(function (oRequest) {
+							return {
+								headers : oRequest.headers,
+								method : oRequest.method,
+								url : oRequest.url
+							};
+						})
+					}).then(function () {
+						Log.info("optimistic$batch: enabled, $batch payload saved", sKey,
+							sClassName);
+					});
+				} else {
+					Log.info("optimistic$batch: disabled", sKey, sClassName);
+				}
+			}).catch(that.oModelInterface.getReporter());
+		}
 	};
 
 	/**
@@ -1676,14 +1773,41 @@ sap.ui.define([
 					: "Group ID (API): " + sGroupId
 			);
 
-		return this.sendRequest("POST", "$batch" + this.sQueryParams,
-			Object.assign(oBatchRequest.headers, mBatchHeaders), oBatchRequest.body
-		).then(function (oResponse) {
-			if (oResponse.messages !== null) {
-				throw new Error("Unexpected 'sap-messages' response header for batch request");
+		return this.processOptimisticBatch(aRequests, sGroupId)
+			|| this.sendRequest("POST", "$batch" + this.sQueryParams,
+				Object.assign(oBatchRequest.headers, mBatchHeaders), oBatchRequest.body
+			).then(function (oResponse) {
+				if (oResponse.messages !== null) {
+					throw new Error("Unexpected 'sap-messages' response header for batch request");
+				}
+				return _Batch.deserializeBatchResponse(oResponse.contentType, oResponse.body);
+			});
+	};
+
+	/**
+	 * Checks whether a first batch from a earlier app start was recorded and sends it immediately
+	 * out as optimistic batch in order to have its response at the earliest point in time.
+	 */
+	_Requestor.prototype.sendOptimisticBatch = function () {
+		var sKey = window.location.href,
+			that = this;
+
+		CacheManager.get(sCachePrefix + sKey).then(function (oFirstBatch) {
+			var oOptimisticBatch = {key : sKey};
+
+			if (oFirstBatch) {
+				if (that.isFirstBatchSent()) {
+					Log.error("optimistic$batch: #processBatch called before optimistic batch "
+						+ "payload could be read", undefined, sClassName);
+					return;
+				}
+				oOptimisticBatch.firstBatch = oFirstBatch;
+				oOptimisticBatch.result
+					= that.sendBatch(oFirstBatch.requests, oFirstBatch.groupId);
+				Log.info("optimistic$batch: sent ", sKey, sClassName);
 			}
-			return _Batch.deserializeBatchResponse(oResponse.contentType, oResponse.body);
-		});
+			that.oOptimisticBatch = oOptimisticBatch; // this has to be done after #sendBatch call
+		}).catch(this.oModelInterface.getReporter());
 	};
 
 	/**
@@ -1907,6 +2031,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether the actual payload and group ID of a batch request matches to the optimistic
+	 * $batch payload and group ID.
+	 *
+	 * @param {object[]} aActualRequests The requests of the actual $batch
+	 * @param {string} sActualGroupId The group ID of the actual $batch
+	 * @param {object[]} aOptimisticRequests The requests of the optimistic $batch
+	 * @param {string} sOptimisticGroupId The group ID of the optimistic $batch
+	 * @returns {boolean}
+	 *   Whether the actual $batch requests and group ID matches to the optimistic one
+	 */
+	_Requestor.matchesOptimisticBatch = function (aActualRequests, sActualGroupId,
+		aOptimisticRequests, sOptimisticGroupId) {
+		// no deepEqual because actual requests have additional properties which are irrelevant
+		return sActualGroupId === sOptimisticGroupId
+			&& aActualRequests.length === aOptimisticRequests.length
+			&& aActualRequests.every(function (oActual, i) {
+				// the payload is ignored because only GET requests are expected
+				return oActual.url === aOptimisticRequests[i].url
+					&& _Helper.deepEqual(oActual.headers, aOptimisticRequests[i].headers);
+			});
+	};
+
+	/**
 	 * Creates a new <code>_Requestor</code> instance for the given service URL and default
 	 * headers.
 	 *
@@ -1925,6 +2072,13 @@ sap.ui.define([
 	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 	 *   returning the property value in question. Only 'submit' is supported for <code>
 	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
+	 * @param {function} oModelInterface.getOptimisticBatchEnabler
+	 *   A function that returns a callback function which controls the optimistic batch handling,
+	 *   see also {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}.
+	 * @param {function} oModelInterface.getReporter
+	 *   A catch handler function expecting an <code>Error</code> instance. This function will call
+	 *   {@link sap.ui.model.odata.v4.ODataModel#reportError} if the error has not been reported
+	 *   yet.
 	 * @param {function (string)} [oModelInterface.onCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group

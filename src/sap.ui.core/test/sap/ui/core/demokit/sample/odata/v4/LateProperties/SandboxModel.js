@@ -18,6 +18,9 @@ sap.ui.define([
 				"SalesOrderList?custom-option=value&$select=BuyerID,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {
 					source : "SalesOrderList_skip0_top5.json"
 				},
+				"SalesOrderList?custom-option=value&$select=BuyerID,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$orderby=SalesOrderID%20desc&$skip=0&$top=5" : {
+					source : "SalesOrderList_skip0_top5.json"
+				},
 				"SalesOrderList('0500000002')/SO_2_SCHDL?custom-option=value&$select=ItemKey,ScheduleKey&$skip=0&$top=100" : {
 					source : "SalesOrderList(0500000002)-SO_2_SCHDL.json"
 				},

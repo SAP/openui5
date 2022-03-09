@@ -31,6 +31,8 @@ sap.ui.define([
 		rODataHeaders = /^(OData-Version|DataServiceVersion)$/,
 		bRealOData = sRealOData === "true" || sRealOData === "direct",
 		iRequestCount = 0,
+		sOptimisticBatch = oUriParameters.get("optimisticBatch"),
+		bOptimisticBatch = sOptimisticBatch === null ? undefined : sOptimisticBatch === "true",
 		bSupportAssistant = oUriParameters.get("supportAssistant") === "true",
 		TestUtils;
 
@@ -795,6 +797,14 @@ sap.ui.define([
 			} finally {
 				oSandbox.verifyAndRestore();
 			}
+		},
+
+		/**
+		 * @returns {boolean|undefined}
+		 *   <code>true</code> if optimistic $batch should be used, undefined if not specified.
+		 */
+		isOptimisticBatch : function () {
+			return bOptimisticBatch;
 		},
 
 		/**
