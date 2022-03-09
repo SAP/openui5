@@ -66,9 +66,9 @@ sap.ui.define([
 	 */
 	Util.calcTypeWidth = (function() {
 		var fBooleanWidth = 0;
-		var aDateParameter = [2023, 9, 26, 22, 47, 58, 999];
-		var oUTCDate = new Date(Date.UTC.apply(0, aDateParameter));
-		var oLocalDate = new (Function.prototype.bind.apply(Date, [null].concat(aDateParameter)))();
+		var aDateParameters = [2023, 9, 26, 22, 47, 58, 999];
+		var oUTCDate = new Date(Date.UTC.apply(0, aDateParameters));
+		var oLocalDate = new (Function.prototype.bind.apply(Date, [null].concat(aDateParameters)))();
 		var mNumericLimits = { Byte: 3, SByte: 3, Int16: 5, Int32: 9, Int64: 12, Single: 6, Float: 12, Double: 13, Decimal: 15 };
 		Core.attachThemeChanged(function() { fBooleanWidth = 0; });
 
@@ -88,7 +88,7 @@ sap.ui.define([
 
 			if (sType == "String" || oType.isA("sap.ui.model.odata.type.String")) {
 				var iMaxWidth = mSettings && mSettings.maxWidth || 19;
-				var iMaxLength = oType.getConstraints().maxLength || 0;
+				var iMaxLength = parseInt(oType.getConstraints().maxLength) || 0;
 
 				if (!iMaxLength) {
 					return Math.max(Math.min(10, iMaxWidth), iMaxWidth * 0.75);
@@ -111,19 +111,22 @@ sap.ui.define([
 				var sSample = oDate.toLocaleDateString();
 
 				if (sType == "TimeOfDay") {
-					sSample = new Intl.DateTimeFormat('de', {hour: 'numeric', minute: 'numeric', second: 'numeric'}).format(oDate);
+					sSample = new Intl.DateTimeFormat("de", {hour: "numeric", minute: "numeric", second: "numeric"}).format(oDate);
 					sSample = oType.formatValue(sSample, "string");
 				} else if (oType.isA("sap.ui.model.odata.type.Time")) {
 					sSample = oType.formatValue({ __edmType: "Edm.Time", ms: oUTCDate.valueOf() }, "string");
 				} else {
 					sSample = oType.formatValue(oDate, "string");
+					((oType.oFormat && oType.oFormat.oFormatOptions && oType.oFormat.oFormatOptions.pattern) || "").replace(/[MELVec]{3,4}/, function(sWideFormat) {
+						sSample += (sWideFormat.length == 4 ? "---" : "-");
+					});
 				}
 				return Util.measureText(sSample);
 			}
 
 			if (mNumericLimits[sType]) {
-				var iScale = oType.getConstraints().scale || 0;
-				var iPrecision = oType.getConstraints().precision || 20;
+				var iScale = parseInt(oType.getConstraints().scale) || 0;
+				var iPrecision = parseInt(oType.getConstraints().precision) || 20;
 				iPrecision = Math.min(iPrecision, mNumericLimits[sType]);
 				var sNumber = 2 * Math.pow(10, iPrecision - iScale - 1);
 				sNumber = oType.formatValue(sNumber, "string");
