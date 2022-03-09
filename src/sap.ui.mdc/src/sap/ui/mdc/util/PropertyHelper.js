@@ -207,7 +207,7 @@ sap.ui.define([
 							}
 						},
 						gap: {
-							type: "int",
+							type: "float",
 							"default": {
 								value: 0
 							}
@@ -218,14 +218,14 @@ sap.ui.define([
 								value: true
 							}
 						},
-						excludeProperties: {
-							type: "PropertyReference[]"
-						},
 						verticalArrangement: {
 							type: "boolean",
 							"default": {
 								value: false
 							}
+						},
+						excludeProperties: {
+							type: "PropertyReference[]"
 						}
 					},
 					"default": {

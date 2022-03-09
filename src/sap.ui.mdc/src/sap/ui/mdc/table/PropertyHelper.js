@@ -45,6 +45,20 @@ sap.ui.define([
 	 *   This object contains all relevant properties for visual adjustments.
 	 * @property {object} [visualSettings.widthCalculation]
 	 *   This object contains all properties and their default values for the column width calculation
+	 * @property {integer} [visualSettings.widthCalculation.minWidth]
+	 *   The minimum content width in rem
+	 * @property {integer} [visualSettings.widthCalculation.maxWidth]
+	 *   The maximum content width in rem
+	 * @property {integer} [visualSettings.widthCalculation.defaultWidth]
+	 *   The default column content width when type check fails
+	 * @property {float} [visualSettings.widthCalculation.gap]
+	 *   The additional content width in rem
+	 * @property {boolean} [visualSettings.widthCalculation.includeLabel]
+	 *   Whether the label should be taken into account
+	 * @property {boolean} [visualSettings.widthCalculation.verticalArrangement]
+	 *   Whether the referenced properties are arranged vertically
+	 * @property {sap.ui.mdc.util.PropertyHelper[]} [visualSettings.widthCalculation.excludeProperties]
+	 *   A list of invisible referenced property names
 	 *
 	 * @private
 	 * @experimental
@@ -290,7 +304,7 @@ sap.ui.define([
 		var fWidth = 0;
 		var fLabelWidth = 0;
 		var mPropertyInfoWidthCalculation = oProperty.visualSettings.widthCalculation;
-		mWidthCalculation = Object.assign({}, mPropertyInfoWidthCalculation);
+		mWidthCalculation = Object.assign({}, mPropertyInfoWidthCalculation, mWidthCalculation || {});
 
 		var iMinWidth = Math.max(1, mWidthCalculation.minWidth);
 		var iMaxWidth = Math.max(iMinWidth, mWidthCalculation.maxWidth);
