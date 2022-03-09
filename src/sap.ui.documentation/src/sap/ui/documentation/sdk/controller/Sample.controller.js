@@ -419,7 +419,7 @@ sap.ui.define([
 						var fnMessage =  function (eMessage) {
 							if (eMessage.data.type === "INIT") {
 								var oConfiguration = sap.ui.getCore().getConfiguration();
-								if (eMessage.data.config && eMessage.data.config.sample.iframe) {
+								if (eMessage.data.config && eMessage.data.config.sample && eMessage.data.config.sample.iframe) {
 									sSampleId = this._sId;
 									vIframe = eMessage.data.config.sample.iframe;
 									sIframePath = this._resolveIframePath(sSampleId, vIframe);
