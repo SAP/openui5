@@ -3,6 +3,27 @@
     "date": "March 2022",
     "notes": [
       {
+        "id": "77e9201893374bf4f45ac5059c71a789ec253c03",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataModel: Support instance annotations \"@$ui5.context.isInactive\" and \"@$ui5.context.isTransient\""
+      },
+      {
+        "id": "959221613e7c57bdcff9be32cecb44edfca692eb",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.tutorial.odatav4 fix mockserver $batch detection"
+      },
+      {
+        "id": "413817186d9fb40c096051837973dd959460d544",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Allow case-insensitive inputs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180419798"
+          }
+        ]
+      },
+      {
         "id": "8a56b51c3988b963de37b41843e31bc9c0617aa2",
         "type": "FIX",
         "text": " sap.ui.core.format.DateFormat: Australian calendar change first day of week to Monday",

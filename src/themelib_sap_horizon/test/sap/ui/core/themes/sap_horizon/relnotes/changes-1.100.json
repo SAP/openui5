@@ -3,6 +3,11 @@
     "date": "March 2022",
     "notes": [
       {
+        "id": "bf3282f9b8bd3ee426dddf075e8d7d2d2f6aef42",
+        "type": "FEATURE",
+        "text": " sap.m.RadioButton: Horizon theme implemented"
+      },
+      {
         "id": "426bd4fd45a73d5bfaa0a8558b12a6fcbca042fc",
         "type": "FIX",
         "text": " sap.m.Button: Fixed button focus styles in composite controls"
