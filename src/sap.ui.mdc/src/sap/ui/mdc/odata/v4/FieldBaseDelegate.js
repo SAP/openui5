@@ -17,17 +17,19 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class Delegate class for sap.ui.mdc.field.FieldBase.<br>
+	 * Delegate for {@link sap.ui.mdc.field.FieldBase FieldBase}.<br>
 	 * <h3><b>Note:</b></h3>
 	 * The class is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
 	 *
+	 * @namespace
 	 * @author SAP SE
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @experimental As of version 1.74
 	 * @since 1.74.0
-	 * @alias sap.ui.mdc.odata.v4.FieldBaseDelegate
+	 * @extends module:sap/ui/mdc/field/FieldBaseDelegate
+	 * @alias module:sap/ui/mdc/odata/v4/FieldBaseDelegate
 	 */
 	var ODataFieldBaseDelegate = Object.assign({}, FieldBaseDelegate);
 
@@ -91,11 +93,11 @@ sap.ui.define([
 
 	};
 
-	ODataFieldBaseDelegate.enhanceValueForUnit = function(oPayload, aValue, oTypeInitialization) {
+	ODataFieldBaseDelegate.enhanceValueForUnit = function(oPayload, aValues, oTypeInitialization) {
 
-		if (oTypeInitialization && oTypeInitialization.bTypeInitialized && aValue.length === 2) {
-			aValue.push(oTypeInitialization.mCustomUnits);
-			return aValue;
+		if (oTypeInitialization && oTypeInitialization.bTypeInitialized && aValues.length === 2) {
+			aValues.push(oTypeInitialization.mCustomUnits);
+			return aValues;
 		}
 
 	};
