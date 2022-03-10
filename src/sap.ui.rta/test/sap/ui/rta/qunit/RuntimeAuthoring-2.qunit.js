@@ -1156,6 +1156,30 @@ sap.ui.define([
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsVisible"), true, "then the saveAs Button is visible");
 			}.bind(this));
 		});
+
+		QUnit.test("when save is triggered via the toolbar with an appdescriptor change", function(assert) {
+			var fnResolve;
+			var oPromise = new Promise(function(resolve) {
+				fnResolve = resolve;
+			});
+			var oSerializeStub = sandbox.stub(this.oRta, "_serializeAndSave").resolves();
+			var oCallbackStub = sandbox.stub().callsFake(function() {
+				fnResolve();
+			});
+
+			return this.oRta.start().then(function() {
+				sandbox.stub(this.oRta._oSerializer, "needsReload").resolves(true);
+				this.oRta.getToolbar().fireSave({
+					callback: oCallbackStub
+				});
+				return oPromise;
+			}.bind(this))
+			.then(function() {
+				assert.ok(this.oRta._bReloadNeeded, "the flag was set");
+				assert.strictEqual(oSerializeStub.callCount, 1, "the serialize function was called once");
+				assert.strictEqual(oCallbackStub.callCount, 1, "the callback function was called once");
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("_determineReload with FLP without versioning", {

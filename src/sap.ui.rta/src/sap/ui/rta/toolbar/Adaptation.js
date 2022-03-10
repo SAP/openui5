@@ -57,6 +57,7 @@ function(
 				undo: {},
 				redo: {},
 				exit: {},
+				save: {},
 				restore: {},
 				transport: {},
 				modeChange: {},
