@@ -40,7 +40,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/message/Message"
+	"sap/ui/core/message/Message",
+	"sap/m/IllustratedMessage"
 ], function(
 	TableQUnitUtils,
 	qutils,
@@ -81,7 +82,8 @@ sap.ui.define([
 	Log,
 	jQuery,
 	oCore,
-	Message
+	Message,
+	IllustratedMessage
 ) {
 	"use strict";
 
@@ -5858,6 +5860,22 @@ sap.ui.define([
 		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
 		});
+	});
+
+	QUnit.test("IllustratedMessage", function(assert) {
+		var oTable = this.oTable;
+
+		oTable.setNoData(new IllustratedMessage({
+			illustrationType: MLibrary.IllustratedMessageType.NoSearchResults,
+			title: "TABLE_NO_DATA_TITLE",
+			description: "TABLE_NO_DATA_DESCRIPTION"
+		}));
+
+		oTable.unbindRows();
+		oCore.applyChanges();
+		assert.ok(oTable.getDomRef("noDataCnt").firstChild.classList.contains("sapMIllustratedMessage"));
+		assert.equal(oTable.getDomRef("noDataCnt").querySelector("figure > svg > use").getAttribute("href"), "#sapIllus-Scene-NoSearchResults");
+		assert.equal(oTable.getDomRef("noDataCnt").innerText, "TABLE_NO_DATA_TITLE\nTABLE_NO_DATA_DESCRIPTION");
 	});
 
 	QUnit.module("Hierarchy modes", {

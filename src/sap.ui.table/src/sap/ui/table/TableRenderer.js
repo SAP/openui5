@@ -298,8 +298,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './library', "./Column", 
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "NODATA");
 		rm.openEnd();
 
-		if (oTable.getNoData() instanceof Control && oTable._getVisibleColumns().length > 0) {
-			rm.renderControl(oTable.getNoData());
+		var oNoContentMessage = TableUtils.getNoContentMessage(oTable);
+
+		if (oNoContentMessage instanceof Control) {
+			rm.renderControl(oNoContentMessage);
 		} else {
 			rm.openStart("span", oTable.getId() + "-noDataMsg");
 			rm.class("sapUiTableCtrlEmptyMsg");

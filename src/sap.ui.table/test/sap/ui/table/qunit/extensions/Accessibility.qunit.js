@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Control",
     "sap/ui/table/AnalyticalTable",
 	"sap/ui/table/Column",
     "sap/ui/table/RowAction",
@@ -16,8 +17,28 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(TableQUnitUtils, TableUtils, ManagedObject, AnalyticalTable, Column, RowAction, RowSettings, TreeTable, Library, JSONModel, Device, coreLibrary, Filter, FilterOperator, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/m/IllustratedMessage"
+], function(
+	TableQUnitUtils,
+	TableUtils,
+	ManagedObject,
+	Control,
+	AnalyticalTable,
+	Column,
+	RowAction,
+	RowSettings,
+	TreeTable,
+	Library,
+	JSONModel,
+	Device,
+	coreLibrary,
+	Filter,
+	FilterOperator,
+	jQuery,
+	oCore,
+	IllustratedMessage
+) {
 	"use strict";
 
 	var SelectionMode = Library.SelectionMode;
@@ -1649,6 +1670,24 @@ sap.ui.define([
 			$NoDataCoveredElements.each(function() {
 				assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
 			});
+
+			var $Elem = oTable.$("noDataCnt");
+			assert.equal($Elem.attr("aria-labelledby"), oTable.getId() + "-noDataMsg");
+
+			oTable.setNoData(new Control({id: "_noDataControl"}));
+			oCore.applyChanges();
+			assert.strictEqual($Elem.attr("aria-labelledby"), "_noDataControl");
+
+			oTable.setNoData(new IllustratedMessage({
+				illustrationType: "NoSearchResults",
+				title: "No Items found",
+				description: "Adjust your filter settings."
+			}));
+
+			oCore.applyChanges();
+			assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getDomRef("noDataCnt").querySelector("figcaption>div").getAttribute("id") +
+				" " + oTable.getDomRef("noDataCnt").querySelector("figcaption>span").getAttribute("id"));
+
 			oTable.setShowNoData(false);
 			oCore.applyChanges();
 			$NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");

@@ -448,6 +448,14 @@ sap.ui.define([
 			noData : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
 
 			/**
+			 * The control that is shown in case the Table has no visible columns.
+			 *
+			 * @private
+			 * @ui5-restricted sap.ui.mdc, sap.ui.comp
+			 */
+			_noColumnsMessage: {type : "sap.ui.core.Control", multiple : false, visibility: "hidden"},
+
+			/**
 			 * Template for row actions. A template is decoupled from the row or table. Each time
 			 * the template's properties or aggregations are changed, the template has to be applied again via
 			 * <code>setRowActionTemplate</code> for the changes to take effect.
@@ -3766,6 +3774,16 @@ sap.ui.define([
 		var sOldNoDataText = TableUtils.getNoDataText(this);
 		this.setAggregation("noData", vNoData, true);
 		var sNewNoDataText = TableUtils.getNoDataText(this);
+
+		if (TableUtils.isA(vNoData, "sap.m.IllustratedMessage")) {
+			var oNoColumnsMessage = this.getAggregation("_noColumnsMessage");
+			if (!oNoColumnsMessage) {
+				sap.ui.require(["sap/m/table/Util"], function(MTableUtil) {
+					oNoColumnsMessage = MTableUtil.getNoColumnsIllustratedMessage();
+					this.setAggregation("_noColumnsMessage", oNoColumnsMessage);
+				}.bind(this));
+			}
+		}
 
 		// Avoid table re-rendering if only the text is changed. If the NoData text was, or will be a control, the table must be re-rendered.
 		if (sOldNoDataText != null && sNewNoDataText != null) {
