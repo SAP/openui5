@@ -1785,7 +1785,7 @@ sap.ui.define([
 
 		this._loadExportLibrary().then(function() {
 			sap.ui.require(['sap/ui/export/ExportUtils'], function(ExportUtils) {
-				var bEnablePDFExport = new URL(window.location.href).search.indexOf("sap-ui-xx-enablePDFExport=true");
+				var bEnablePDFExport = new URL(window.location.href).search.indexOf("sap-ui-xx-enablePDFExport=true") > -1;
 				ExportUtils.getExportSettingsViaDialog(that._cachedExportSettings, that, undefined, bEnablePDFExport).then(function(oUserInput) {
 					that._cachedExportSettings = oUserInput;
 					that._onExport(oUserInput);
