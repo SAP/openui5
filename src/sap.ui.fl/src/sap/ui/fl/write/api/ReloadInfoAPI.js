@@ -6,19 +6,23 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/FlexInfoSession"
 ], function(
 	LayerUtils,
 	Layer,
 	Utils,
+	ManifestUtils,
 	Version,
 	VersionsAPI,
 	FeaturesAPI,
 	PersistenceWriteAPI,
+	CompVariantState,
 	FlexInfoSession
 ) {
 	"use strict";
@@ -77,7 +81,19 @@ sap.ui.define([
 			upToLayer: oReloadInfo.layer,
 			includeCtrlVariants: oReloadInfo.includeCtrlVariants,
 			includeDirtyChanges: true
+		})
+		.then(function(bResult) {
+			// not yet saved personalization on SmartVariantManagement controls is not tracked as a FlexObject,
+			// but it should be treated the same as already saved higher layer changes
+			return bResult || checkSVMControlsForDirty(oReloadInfo);
 		});
+	}
+
+	function checkSVMControlsForDirty(oReloadInfo) {
+		if (LayerUtils.isOverLayer(Layer.USER, oReloadInfo.layer)) {
+			return CompVariantState.checkSVMControlsForDirty((ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector)));
+		}
+		return false;
 	}
 
 	/**

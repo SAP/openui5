@@ -29,9 +29,10 @@ sap.ui.define([
 		return mMap[sPersistencyKey];
 	}
 
-	function initialize(mMap, sPersistencyKey, aVariants) {
+	function initialize(mMap, sPersistencyKey, aVariants, sSVMControlId) {
 		aVariants = aVariants || [];
 		var mMapOfKey = getOrCreate(mMap, sPersistencyKey);
+		mMapOfKey.controlId = sSVMControlId;
 
 		// clear all non-persisted variants in case of a reinitialization
 		mMapOfKey.nonPersistedVariants.forEach(function (oVariant) {

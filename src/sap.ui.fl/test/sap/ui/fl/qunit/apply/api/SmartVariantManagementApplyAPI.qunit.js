@@ -77,7 +77,8 @@ sap.ui.define([
 				variants: aVariants,
 				standardVariant: {
 					name: sStandardVariantTitle
-				}
+				},
+				controlId: "controlId1"
 			};
 			return SmartVariantManagementApplyAPI.loadVariants({
 				control: this.oControl,
