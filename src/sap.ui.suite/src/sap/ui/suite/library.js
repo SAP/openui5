@@ -10,9 +10,17 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], // library dependency
 
 	"use strict";
 
-
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	/**
+	 * Suite controls library.
+	 *
+	 * @namespace
+	 * @alias sap.ui.suite
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.1
+	 * @public
+	 */
+	var thisLibrary = sap.ui.getCore().initLibrary({
 		name : "sap.ui.suite",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
@@ -26,20 +34,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], // library dependency
 		],
 		elements: []
 	});
-
-	/* eslint-disable no-undef */
-	/**
-	 * Suite controls library.
-	 *
-	 * @namespace
-	 * @alias sap.ui.suite
-	 * @author SAP SE
-	 * @version ${version}
-	 * @since 1.1
-	 * @public
-	 */
-	var thisLibrary = sap.ui.suite;
-	/* eslint-enable no-undef */
 
 	/**
 	 * Defined color values for the Task Circle Control

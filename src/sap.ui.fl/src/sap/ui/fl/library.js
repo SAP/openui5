@@ -136,13 +136,13 @@ sap.ui.define([
 	/**
 	 * SAPUI5 Library for SAPUI5 Flexibility and Descriptor Changes, App Variants, Control Variants (Views) and Personalization.
 	 * @namespace
-	 * @name sap.ui.fl
+	 * @alias sap.ui.fl
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
 	 * @ui5-restricted UI5 controls, tools creating flexibility changes
 	 */
-	sap.ui.getCore().initLibrary({
+	var thisLib = sap.ui.getCore().initLibrary({
 		name: "sap.ui.fl",
 		version: "${version}",
 		controls: [
@@ -172,7 +172,7 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 */
-	sap.ui.fl.Scenario = {
+	thisLib.Scenario = {
 		AppVariant: "APP_VARIANT",
 		VersionedAppVariant: "VERSIONED_APP_VARIANT",
 		AdaptationProject: "ADAPTATION_PROJECT",
@@ -185,7 +185,7 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 */
-	sap.ui.fl.Versions = {
+	thisLib.Versions = {
 		Original: "-1",
 		Draft: "0",
 		UrlParameter: "sap-ui-fl-version"
@@ -196,7 +196,7 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 */
-	sap.ui.fl.condenser = {
+	thisLib.condenser = {
 		Classification: {
 			/**
 			 * All changes but the last one will be removed.
@@ -248,5 +248,5 @@ sap.ui.define([
 		}]);
 	}
 
-	return sap.ui.fl;
+	return thisLib;
 });

@@ -61,9 +61,17 @@ sap.ui.define([
 
 	"use strict";
 
-
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	/**
+	 * The main UI5 control library, with responsive controls that can be used in touch devices as well as desktop browsers.
+	 *
+	 * @namespace
+	 * @alias sap.m
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.4
+	 * @public
+	 */
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.m",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
@@ -587,21 +595,6 @@ sap.ui.define([
 			}
 		}
 	});
-
-	/* eslint-disable no-undef */
-	/**
-	 * The main UI5 control library, with responsive controls that can be used in touch devices as well as desktop browsers.
-	 *
-	 * @namespace
-	 * @alias sap.m
-	 * @author SAP SE
-	 * @version ${version}
-	 * @since 1.4
-	 * @public
-	 */
-	var thisLib = sap.m;
-	/* eslint-enable no-undef */
-
 
 	thisLib.upload = thisLib.upload || {};
 

@@ -13,15 +13,13 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 	 * SAPUI5 library with controls specialized for administrative applications.
 	 *
 	 * @namespace
-	 * @name sap.tnt
+	 * @alias sap.tnt
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.36
 	 * @public
 	 */
-
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.tnt",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],
@@ -57,7 +55,7 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.tnt.RenderMode = {
+	thisLib.RenderMode = {
 		/**
 		 * When type of the content of <code>InfoLabel</code> is numeric paddings are narrow
 		 * @public
@@ -81,6 +79,6 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
-	return sap.tnt;
+	return thisLib;
 
 });

@@ -2313,6 +2313,7 @@ sap.ui.define([
 	 * @param {boolean} [oLibInfo.noLibraryCSS=false] Indicates whether the library doesn't provide / use theming.
 	 *                        When set to true, no library.css will be loaded for this library
 	 * @param {object} [oLibInfo.extensions] Potential extensions of the library metadata; structure not defined by the UI5 core framework.
+	 * @return {object|undefined} As of version 1.101; returns the library namespace, based on the given library name. Returns 'undefined' if no library name is provided.
 	 * @public
 	 */
 	Core.prototype.initLibrary = function(oLibInfo) {
@@ -2330,8 +2331,12 @@ sap.ui.define([
 			Log.error("[Deprecated] library " + sLibName + " uses old fashioned initLibrary() call (rebuild with newest generator)");
 		}
 
-		if ( !sLibName || mLoadedLibraries[sLibName] ) {
+		if (!sLibName) {
+			Log.error("A library name must be provided.", null, METHOD);
 			return;
+
+		} else if (mLoadedLibraries[sLibName]) {
+			return ObjectPath.get(sLibName);
 		}
 
 		Log.debug("Analyzing Library " + sLibName, null, METHOD);
@@ -2370,7 +2375,7 @@ sap.ui.define([
 		}
 
 		// ensure namespace
-		ObjectPath.create(sLibName);
+		var oLib = ObjectPath.create(sLibName);
 
 		// Create lib info object or merge with existing 'adhoc' library
 		this.mLibraries[sLibName] = oLibInfo = extend(this.mLibraries[sLibName] || {
@@ -2445,6 +2450,7 @@ sap.ui.define([
 
 		this.fireLibraryChanged({name : sLibName, stereotype : "library", operation: "add", metadata : oLibInfo});
 
+		return oLib;
 	};
 
 	// helper to add the FOUC marker to the CSS for the given id

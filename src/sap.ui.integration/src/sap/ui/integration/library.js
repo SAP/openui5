@@ -14,8 +14,17 @@ sap.ui.define([
 ], function (DataType) {
 	"use strict";
 
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	/**
+	 * SAPUI5 library with controls specialized for SAP Fiori apps.
+	 *
+	 * @namespace
+	 * @alias sap.ui.integration
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.62
+	 * @public
+	 */
+	var thisLib = sap.ui.getCore().initLibrary({
 		name: "sap.ui.integration",
 		version: "${version}",
 		dependencies: ["sap.ui.core", "sap.f", "sap.m"],
@@ -40,18 +49,6 @@ sap.ui.define([
 			"card": "sap/ui/integration/customElements/CustomElementCard"
 		}
 	});
-
-	/**
-	 * SAPUI5 library with controls specialized for SAP Fiori apps.
-	 *
-	 * @namespace
-	 * @alias sap.ui.integration
-	 * @author SAP SE
-	 * @version ${version}
-	 * @since 1.62
-	 * @public
-	 */
-	var thisLib = sap.ui.integration;
 
 	/**
 	 * Enumeration of possible card action types.

@@ -28,8 +28,17 @@ sap.ui.define(["sap/ui/base/DataType",
 
 	"use strict";
 
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	/**
+	 * SAPUI5 library with controls specialized for SAP Fiori apps.
+	 *
+	 * @namespace
+	 * @alias sap.f
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.44
+	 * @public
+	 */
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.f",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m", "sap.ui.layout"],
@@ -130,18 +139,6 @@ sap.ui.define(["sap/ui/base/DataType",
 			}
 		}
 	});
-
-	/**
-	 * SAPUI5 library with controls specialized for SAP Fiori apps.
-	 *
-	 * @namespace
-	 * @alias sap.f
-	 * @author SAP SE
-	 * @version ${version}
-	 * @since 1.44
-	 * @public
-	 */
-	var thisLib = sap.f;
 
 	/**
 	* Defines the areas within the <code>sap.f.DynamicPageTitle</code> control.

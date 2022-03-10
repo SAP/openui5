@@ -20,17 +20,13 @@ sap.ui.define([
 	 * developers in creating integration and system tests.
 	 *
 	 * @namespace
-	 * @name sap.ui.testrecorder
+	 * @alias sap.ui.testrecorder
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.74
 	 * @public
 	 */
-
-	// library dependencies
-
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.ui.testrecorder",
 		dependencies : [
 			"sap.ui.core",
@@ -49,5 +45,5 @@ sap.ui.define([
 		}
 	});
 
-	return sap.ui.testrecorder;
+	return thisLib;
 });

@@ -12,8 +12,17 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 
 	"use strict";
 
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	/**
+	 * Table-like controls, mainly for desktop scenarios.
+	 *
+	 * @namespace
+	 * @alias sap.ui.table
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 0.8
+	 * @public
+	 */
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.ui.table",
 		version: "${version}",
 		dependencies : ["sap.ui.core","sap.ui.unified"],
@@ -65,18 +74,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 			}
 		}
 	});
-
-	/**
-	 * Table-like controls, mainly for desktop scenarios.
-	 *
-	 * @namespace
-	 * @alias sap.ui.table
-	 * @author SAP SE
-	 * @version ${version}
-	 * @since 0.8
-	 * @public
-	 */
-	var thisLib = sap.ui.table;
 
 	/**
 	 * Navigation mode of the table

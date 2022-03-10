@@ -18,31 +18,11 @@ sap.ui.define([
 
 	"use strict";
 
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
-		name : "sap.ui.webc.common",
-		version: "${version}",
-		dependencies : ["sap.ui.core"],
-		noLibraryCSS: true,
-		designtime: "sap/ui/webc/common/designtime/library.designtime",
-		interfaces: [
-		],
-		types: [
-		],
-		controls: [
-			"sap.ui.webc.common.WebComponent"
-		],
-		elements: [
-		],
-		extensions: {
-		}
-	});
-
 	/**
 	 * Namespace for UI5 Web Components Retrofit libraries
 	 *
 	 * @namespace
-	 * @alias sap.ui.webc
+	 * @name sap.ui.webc
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
@@ -61,7 +41,24 @@ sap.ui.define([
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0
 	 */
-	var thisLib = sap.ui.webc.common;
+	var thisLib = sap.ui.getCore().initLibrary({
+		name : "sap.ui.webc.common",
+		version: "${version}",
+		dependencies : ["sap.ui.core"],
+		noLibraryCSS: true,
+		designtime: "sap/ui/webc/common/designtime/library.designtime",
+		interfaces: [
+		],
+		types: [
+		],
+		controls: [
+			"sap.ui.webc.common.WebComponent"
+		],
+		elements: [
+		],
+		extensions: {
+		}
+	});
 
 	CustomElementsScope.setCustomElementsScopingSuffix("ui5");
 

@@ -19,16 +19,14 @@ function (
 	 * DesignTime library.
 	 *
 	 * @namespace
-	 * @name sap.ui.dt
+	 * @alias sap.ui.dt
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.30
 	 * @experimental This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @private
 	 */
-
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	var thisLib = sap.ui.getCore().initLibrary({
 		name: "sap.ui.dt",
 		version: "${version}",
 		dependencies: ["sap.ui.core"],
@@ -48,5 +46,5 @@ function (
 		"not-removable": "sap/ui/dt/designtime/notAdaptableVisibility.designtime"
 	});
 
-	return sap.ui.dt;
-}, /* bExport= */ true);
+	return thisLib;
+});
