@@ -57,6 +57,7 @@ sap.ui.define([
 ) {
 	"use strict";
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g;
 
 	/**
 	 * @class Object Field with object value such as {"key": "key1"}
@@ -292,6 +293,7 @@ sap.ui.define([
 		var that = this;
 		var oConfig = that.getConfiguration();
 		var aColumns = [];
+		var oCardResourceBundle = that.getModel("i18n").getResourceBundle();
 		for (var n in oConfig.properties) {
 			var oProperty = oConfig.properties[n];
 			var sDefaultLabel = oProperty.label || n;
@@ -305,6 +307,10 @@ sap.ui.define([
 			};
 			if (oProperty.column) {
 				oColumnSettings = merge(oColumnSettings, oProperty.column);
+			}
+			// change translate syntax {{KEY}} to {i18n>KEY}
+			if (oColumnSettings.label.match(REGEXP_TRANSLATABLE)) {
+				oColumnSettings.label = "{i18n>" + oColumnSettings.label.substring(2, oColumnSettings.label.length - 1);
 			}
 			oColumnSettings.tooltip = oColumnSettings.label;
 
@@ -331,6 +337,32 @@ sap.ui.define([
 						wrapping: false
 					};
 					oCellSettings = merge(oCellSettings, oCell);
+					var oText = oCellSettings.text;
+					if (typeof oText === "string") {
+						if (oText.match(REGEXP_TRANSLATABLE)) {
+							// check the text property, if it match syntax {{KEY}}, translate it
+							oCellSettings.text = oCardResourceBundle.getText(oText.substring(2, oText.length - 2));
+						} else if (oText.startsWith("{i18n>") && oText.endsWith('}')) {
+							// check the text property, if it match syntax {i18n>KEY}, translate it
+							oCellSettings.text = oCardResourceBundle.getText(oText.substring(6, oText.length - 1));
+						} else if (oText.startsWith('{') && oText.endsWith('}')) {
+							oCellSettings.text = {
+								path: oText.substring(1, oText.length - 1),
+								formatter: function(oValue) {
+									if (!oValue) {
+										return undefined;
+									} else if (oValue.match(REGEXP_TRANSLATABLE)) {
+										// check the text property, if it match syntax {{KEY}}, translate it
+										return oCardResourceBundle.getText(oValue.substring(2, oValue.length - 2));
+									} else if (oValue.startsWith("{i18n>") && oValue.endsWith('}')) {
+										// check the text property, if it match syntax {i18n>KEY}, translate it
+										return oCardResourceBundle.getText(oValue.substring(6, oValue.length - 1));
+									}
+									return oValue;
+								}
+							};
+						}
+					}
 					oCellTemplate = new Text(oCellSettings);
 					break;
 				case "Icon":
@@ -381,12 +413,21 @@ sap.ui.define([
 		return aColumns;
 	};
 
-	ObjectField.prototype.createTableToolbar = function(oConfig) {
-		var that = this;
+	ObjectField.prototype.checkHasFilter = function(oConfig) {
 		var bHasFilterDefined = true;
 		if (oConfig._propertiesParsedFromValue === true) {
 			bHasFilterDefined = false;
+		} else {
+			var sPropertiesString = JSON.stringify(oConfig.properties, null, "\t");
+			bHasFilterDefined = sPropertiesString.indexOf("filterProperty") > -1 ? true : false;
 		}
+		return bHasFilterDefined;
+	};
+
+	ObjectField.prototype.createTableToolbar = function(oConfig) {
+		var that = this;
+		// check if has filterProperty defined in each column of config.properties
+		var bHasFilterDefined = that.checkHasFilter(oConfig);
 		var bAddButtonVisible = oConfig.enabled !== false;
 		if (bAddButtonVisible && oConfig.values) {
 			bAddButtonVisible = oConfig.values.allowCreateNew === true;
@@ -576,11 +617,12 @@ sap.ui.define([
 		var oConfig = that.getConfiguration();
 		var oTable = that.getAggregation("_field");
 		if (oConfig.value && (typeof oConfig.value === "object") && !deepEqual(oConfig.value, {})) {
+			var oValue;
 			if (Array.isArray(tResult) && tResult.length > 0) {
 				if (oConfig.value._editable === false) {
 					var iSelectedIndex = -1;
 					for (var i = 0; i < tResult.length; i++) {
-						var oValue = tResult[i];
+						oValue = tResult[i];
 						if (deepEqual(oValue, oConfig.value)) {
 							iSelectedIndex = i;
 							break;
@@ -593,7 +635,7 @@ sap.ui.define([
 					oTable.setSelectedIndex(0);
 				}
 			} else {
-				var oValue = deepClone(oConfig.value, 500);
+				oValue = deepClone(oConfig.value, 500);
 				tResult = [oValue];
 				oTable.getModel().checkUpdate();
 				oTable.setSelectedIndex(0);
@@ -724,8 +766,14 @@ sap.ui.define([
 		}
 		for (var n in oProperties) {
 			var oProperty = oProperties[n];
+			var sLabelText = oProperty.label || n;
+			// change translate syntax {{KEY}} to {i18n>KEY}
+			if (sLabelText.match(REGEXP_TRANSLATABLE)) {
+				var sLabelKey = sLabelText.substring(2, sLabelText.length - 2);
+				sLabelText = "{i18n>" + sLabelKey + "}";
+			}
 			var oLable = new Label({
-				text: oProperty.label || n,
+				text: sLabelText,
 				visible: "{= ${/editMode} === 'Properties'}",
 				required: oProperty.required || false
 				//wrapping: false
@@ -997,6 +1045,7 @@ sap.ui.define([
 				})
 			}).addStyleClass("sapUiIntegrationEditorItemObjectFieldDetailsPopover");
 			that._oObjectDetailsPopover.setModel(oModel);
+			that._oObjectDetailsPopover.setModel(that.getModel("i18n"), "i18n");
 			that._oObjectDetailsPopover._oCreateButton = oCreateButton;
 			that._oObjectDetailsPopover._oUpdateButton = oUpdateButton;
 			that._oObjectDetailsPopover._openBy = oControl;

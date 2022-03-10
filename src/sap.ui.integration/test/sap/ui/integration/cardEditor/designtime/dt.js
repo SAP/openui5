@@ -453,9 +453,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"data": {
 								"json": {
 									"values": [
-										{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
-										{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
-										{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
+										{ "text": "{i18n>TRANSLATED_TEXT01}", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+										{ "text": "{i18n>TRANSLATED_TEXT02}", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+										{ "text": "{i18n>TRANSLATED_TEXT03}", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
 									]
 								},
 								"path": "/values"
@@ -1395,7 +1395,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "Object properties defined",
 						"properties": {
 							"key": {
-								"label": "Key"
+								"label": "{{TRANSLATED_KEY}}"
 							},
 							"icon": {
 								"label": "Icon"
@@ -1453,7 +1453,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						"properties": {
 							"key": {
-								"label": "Key",
+								"label": "{{TRANSLATED_KEY}}",
 								"column": {
 									"filterProperty": "key"
 								}
@@ -1544,7 +1544,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						"properties": {
 							"key": {
-								"label": "Key",
+								"label": "{i18n>TRANSLATED_KEY}",
 								"column": {
 									"filterProperty": "key"
 								}
@@ -1699,11 +1699,11 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								}
 							},
 							"text": {
-								"label": "Text",
+								"label": "{i18n>TRANSLATED_TEXT01}",
 								"defaultValue": "text",
 								"column": {
 									"hAlign": "Center",
-									"width": "6rem",
+									"width": "10rem",
 									"filterProperty": "text",
 									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
 								}
@@ -1781,10 +1781,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						"properties": {
 							"key": {
-								"label": "Key",
-								"column": {
-									"filterProperty": "key"
-								}
+								"label": "Key"
 							},
 							"icon": {
 								"label": "Icon",
@@ -1803,9 +1800,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"defaultValue": "text",
 								"column": {
 									"hAlign": "Center",
-									"width": "6rem",
-									"filterProperty": "text",
-									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+									"width": "6rem"
 								}
 							},
 							"url": {
@@ -1814,9 +1809,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"column": {
 									"hAlign": "Center",
 									"width": "10rem",
-									"label": "URL Link",
-									"filterProperty": "url",
-									"defaultFilterOperator": "StartsWith"
+									"label": "URL Link"
 								},
 								"cell": {
 									"type": "Link",
@@ -1848,10 +1841,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"column": {
 									"hAlign": "Center",
 									"width": "5rem",
-									"label": "Integer",
-									"filterProperty": "int",
-									"defaultFilterOperator": "EQ",
-									"filterType": "sap.ui.model.type.Integer"   //sap.ui.model.type
+									"label": "Integer"
 								}
 							},
 							"number": {
