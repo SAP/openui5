@@ -166,6 +166,7 @@ sap.ui.define([
 
 			sandbox.spy(URLHandler, "initialize");
 			sandbox.stub(VariantManagementState, "fillVariantModel").returns(this.oData);
+			sandbox.spy(VariantManagementState, "addUpdateStateListener");
 
 			this.oModel = new VariantModel({}, {
 				flexController: this.oFlexController,
@@ -185,15 +186,37 @@ sap.ui.define([
 		QUnit.test("when initializing a variant model instance", function(assert) {
 			assert.ok(URLHandler.initialize.calledOnce, "then URLHandler.initialize() called once");
 			assert.ok(URLHandler.initialize.calledWith({model: this.oModel}), "then URLHandler.initialize() called with the the VariantModel");
+			assert.strictEqual(VariantManagementState.addUpdateStateListener.callCount, 1, "the updateListener was added");
 		});
 
 		QUnit.test("when destroy() is called", function(assert) {
 			sandbox.stub(URLHandler, "update");
 			sandbox.stub(Switcher, "switchVariant").resolves();
 			sandbox.spy(VariantManagementState, "clearFakedStandardVariants");
+			sandbox.spy(VariantManagementState, "removeUpdateStateListener");
 
 			this.oModel.destroy();
 			assert.equal(VariantManagementState.clearFakedStandardVariants.callCount, 1, "then faked standard variants were reset");
+			assert.strictEqual(VariantManagementState.removeUpdateStateListener.callCount, 1, "the updateListener was removed");
+		});
+
+		QUnit.test("when the updateStateListener is called", function(assert) {
+			sandbox.stub(VariantManagementState, "getContent").returns("{}");
+			var oCheckStub = sandbox.stub(this.oModel, "checkDirtyStateForControlModels");
+			var oChange = {
+				getState: function() {return Change.states.NEW;},
+				getDefinition: function() {
+					return {fileType: "change"};
+				}
+			};
+			VariantManagementState.updateVariantsState({
+				reference: this.oComponent.name,
+				changeToBeAddedOrDeleted: oChange,
+				content: {}
+			});
+
+			assert.strictEqual(oCheckStub.callCount, 1, "the check function was called once");
+			assert.deepEqual(oCheckStub.firstCall.args[0], ["variantMgmtId1"], "an array of references is passed");
 		});
 
 		QUnit.test("when calling 'getData'", function(assert) {

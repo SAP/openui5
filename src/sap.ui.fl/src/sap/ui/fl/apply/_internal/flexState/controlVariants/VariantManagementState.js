@@ -47,6 +47,8 @@ sap.ui.define([
 	 */
 	var VariantManagementState = {};
 
+	var mUpdateStateListeners = {};
+
 	function getReferencedChanges(mPropertyBag) {
 		var aReferencedVariantChanges = [];
 		if (mPropertyBag.variantData.content.variantReference) {
@@ -119,6 +121,27 @@ sap.ui.define([
 			default:
 		}
 	}
+
+	/**
+	 * TODO: adapt as soon as the ChangePersistence is removed
+	 * Temporary function to inform the VariantModel about the state being updated, so that the dirty state can be updated.
+	 * The concept is fine, but the functionality will probably move somewhere else
+	 *
+	 * @param {string} sReference - Flex Reference
+	 * @param {function} fnListener - Function to call when the state changes
+	 */
+	VariantManagementState.addUpdateStateListener = function(sReference, fnListener) {
+		mUpdateStateListeners[sReference] = fnListener;
+	};
+
+	/**
+	 * Removes the listener registered for the given reference
+	 *
+	 * @param {string} sReference - Flex Reference
+	 */
+	VariantManagementState.removeUpdateStateListener = function(sReference) {
+		delete mUpdateStateListeners[sReference];
+	};
 
 	/**
 	 * Returns variant management state for the passed component reference.
@@ -543,6 +566,9 @@ sap.ui.define([
 					deleteChange(mPropertyBag.changeToBeAddedOrDeleted.getDefinition(), oFlexObjects);
 					break;
 				default:
+			}
+			if (mUpdateStateListeners[mPropertyBag.reference]) {
+				mUpdateStateListeners[mPropertyBag.reference]();
 			}
 		}
 	};

@@ -737,6 +737,10 @@ sap.ui.define([
 	 * therefore, the cache update of the current app is skipped
 	 */
 	ChangePersistence.prototype._updateCacheAndDirtyState = function(oDirtyChange, bSkipUpdateCache) {
+		this._aDirtyChanges = this._aDirtyChanges.filter(function(oExistingDirtyChange) {
+			return oDirtyChange.getId() !== oExistingDirtyChange.getId();
+		});
+
 		if (!bSkipUpdateCache) {
 			if (Utils.isChangeRelatedToVariants(oDirtyChange)) {
 				VariantManagementState.updateVariantsState({
@@ -759,10 +763,6 @@ sap.ui.define([
 				}
 			}
 		}
-
-		this._aDirtyChanges = this._aDirtyChanges.filter(function(oExistingDirtyChange) {
-			return oDirtyChange.getId() !== oExistingDirtyChange.getId();
-		});
 	};
 
 	/**

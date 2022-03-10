@@ -331,8 +331,13 @@ sap.ui.define([
 
 				this.setData(oData);
 			}
+			VariantManagementState.addUpdateStateListener(this.sFlexReference, updateModel.bind(this));
 		}
 	});
+
+	function updateModel() {
+		this.checkDirtyStateForControlModels(Object.keys(this.oData || {}));
+	}
 
 	/**
 	 * Gets the necessary UShell Services and initializes the URL Handler
@@ -1511,6 +1516,7 @@ sap.ui.define([
 	 */
 	VariantModel.prototype.destroy = function() {
 		VariantManagementState.clearFakedStandardVariants(this.sFlexReference, this.oAppComponent.getId());
+		VariantManagementState.removeUpdateStateListener(this.sFlexReference);
 		JSONModel.prototype.destroy.apply(this);
 	};
 

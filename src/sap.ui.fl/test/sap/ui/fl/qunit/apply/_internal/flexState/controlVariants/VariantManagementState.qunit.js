@@ -756,6 +756,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'updateVariantsState' is called to add variant related changes", function(assert) {
+			var oStub1 = sandbox.stub();
+			var oStub2 = sandbox.stub();
+			VariantManagementState.addUpdateStateListener(this.sReference, oStub1);
+			VariantManagementState.addUpdateStateListener("reference2", oStub2);
+			VariantManagementState.removeUpdateStateListener("reference2", oStub2);
+
 			var oVariantDependentControlChange = {
 				getState: function() {return Change.states.NEW;},
 				getDefinition: function() {
@@ -768,6 +774,8 @@ sap.ui.define([
 				content: {}
 			});
 			assert.deepEqual(this.oResponse.variantDependentControlChanges[0], oVariantDependentControlChange.getDefinition(), "then the variants related change was added to flex state response");
+			assert.strictEqual(oStub1.callCount, 1, "the listener was called");
+			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
 			var oVariant = {
 				getState: function() {return Change.states.NEW;},
@@ -781,6 +789,8 @@ sap.ui.define([
 				content: {}
 			});
 			assert.deepEqual(this.oResponse.variants[0], oVariant.getDefinition(), "then the variants related change was added to flex state response");
+			assert.strictEqual(oStub1.callCount, 2, "the listener was called");
+			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
 			var oVariantManagementChange = {
 				getState: function() {return Change.states.NEW;},
@@ -794,6 +804,8 @@ sap.ui.define([
 				content: {}
 			});
 			assert.deepEqual(this.oResponse.variantManagementChanges[0], oVariantManagementChange.getDefinition(), "then the variants related change was added to flex state response");
+			assert.strictEqual(oStub1.callCount, 3, "the listener was called");
+			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
 			var oVariantChange = {
 				getState: function() {return Change.states.NEW;},
@@ -807,6 +819,24 @@ sap.ui.define([
 				content: {}
 			});
 			assert.deepEqual(this.oResponse.variantChanges[0], oVariantChange.getDefinition(), "then the variants related change was added to flex state response");
+			assert.strictEqual(oStub1.callCount, 4, "the listener was called");
+			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
+
+			VariantManagementState.removeUpdateStateListener(this.sReference);
+			var oVariantDependentControlChange1 = {
+				getState: function() {return Change.states.NEW;},
+				getDefinition: function() {
+					return {fileType: "change"};
+				}
+			};
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				changeToBeAddedOrDeleted: oVariantDependentControlChange1,
+				content: {}
+			});
+			assert.deepEqual(this.oResponse.variantDependentControlChanges[0], oVariantDependentControlChange.getDefinition(), "then the variants related change was added to flex state response");
+			assert.strictEqual(oStub1.callCount, 4, "the listener was not called again");
+			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 		});
 
 		QUnit.test("when 'updateVariantsState' is called to delete variant related changes", function(assert) {
