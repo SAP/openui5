@@ -19,6 +19,7 @@ sap.ui.define([
         "sap/ui/mdc/p13n/subcontroller/ChartItemController",
         "sap/ui/mdc/p13n/subcontroller/FilterController",
         "sap/ui/mdc/p13n/subcontroller/SortController",
+        "sap/ui/mdc/p13n/subcontroller/ChartTypeController",
         "sap/ui/base/ManagedObjectObserver",
         "sap/ui/mdc/chart/DrillBreadcrumbs",
         "sap/ui/mdc/actiontoolbar/ActionToolbarAction",
@@ -41,6 +42,7 @@ sap.ui.define([
         ChartItemController,
         FilterController,
         SortController,
+        ChartTypeController,
         ManagedObjectObserver,
         Breadcrumbs,
         ActionToolbarAction,
@@ -381,6 +383,7 @@ sap.ui.define([
                 }
                 if (mKeys.Type) {
                     this._typeBtnActive = true;
+                    aSortedKeys.push("Type");
                 } else {
                     this._typeBtnActive = false;
                 }
@@ -403,7 +406,8 @@ sap.ui.define([
             var mRegistryOptions = {
                 Item: ChartItemController,
                 Sort: SortController,
-                Filter: FilterController
+                Filter: FilterController,
+                Type: ChartTypeController
             };
 
             if (aMode && aMode.length > 0) {
@@ -1054,6 +1058,10 @@ sap.ui.define([
 
                 if (aP13nMode.indexOf("Filter") > -1) {
                     oState.filter = this.getFilterConditions();
+                }
+
+                if (aP13nMode.indexOf("Type") > -1) {
+                    oState.chartType = this.getChartType();
                 }
             }
 

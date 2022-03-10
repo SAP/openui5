@@ -180,12 +180,21 @@ sap.ui.define([
 								sap.ui.require([
 									"sap/ui/mdc/p13n/FlexUtil", "sap/ui/mdc/flexibility/Chart.flexibility"
 								], function(FlexUtil,ChartFlex) {
-									var aChanges = [];
+									//var aChanges = [];
+
+									oMDCChart.getEngine().createChanges({
+										control: oMDCChart,
+										key: "Type",
+										state: {
+											type: oObj.key
+										}
+									});
+									/*
 									aChanges.push(ChartFlex["setChartType"].changeHandler.createChange({
 										control: oMDCChart,
 										chartType: oObj.key
 									}));
-									FlexUtil.handleChanges(aChanges);
+									FlexUtil.handleChanges(aChanges);*/
 								});
 							}
 						}

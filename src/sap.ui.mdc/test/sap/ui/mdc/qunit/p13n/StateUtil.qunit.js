@@ -919,120 +919,17 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	/* TO-Do: Check whether this is still needed with new MDC Chart
-	var _retrieveChartMetaData = function () {
-		return Promise.resolve({
-			chartType: "column",
-			properties: [
-				{
-					name: "CategoryName",
-					type: "string",
-					required: true,
-					label: "Category",
-					kind: "Dimension"
-				},
-				{
-					name: "SalesNumber",
-					propertyPath: "SalesNumber",
-					type: "Edm.Int32",
-					required: true,
-					label: "Sales Number",
-					kind: "Measure"
-				}, {
-					name: "agSalesAmount",
-					propertyPath: "SalesAmount",
-					type: "string",
-					required: true,
-					label: "Sales Amount",
-					kind: "Measure",
-					defaultAggregation: "sum",
-					supportedAggregations: ["sum", "min", "max", "average"]
-				}, {
-					name: "Name",
-					propertyPath: "Name",
-					type: "string",
-					required: true,
-					label: "Name",
-					kind: "Dimension"
-				}, {
-					name: "Industry",
-					type: "string",
-					required: true,
-					label: "Industry",
-					kind: "Dimension"
-				}, {
-					name: "Country",
-					type: "string",
-					required: true,
-					label: "Country",
-					kind: "Dimension"
-				}, {
-					name: "SomePropertyName",
-					type: "string",
-					required: true,
-					label: "SomeProperty",
-					kind: "Dimension"
-				}
-			]
-		});
-	};
-
-	var _modifyChartDelegate = function () {
-		ChartDelegate.retrieveAllMetaData = _retrieveChartMetaData;
-			ChartDelegate.fetchProperties = function () {
-				return _retrieveChartMetaData().then(function (oMetaData) {
-					return oMetaData.properties;
-				});
-			};
-			ChartDelegate.retrieveAggregationItem = function(sAggregationName, oMetadata) {
-				var oSettings;
-				var oAggregation = {
-					className: "",
-					settings: {
-						key: oMetadata.name,
-						label: oMetadata.label || oMetadata.name,
-						type: oMetadata.type
-					}
-				};
-				switch (oMetadata.kind) {
-
-					case "Dimension":
-						oAggregation.className = "sap.ui.mdc.chart.DimensionItem";
-						oSettings = {
-							textProperty: oMetadata.textProperty,
-							timeUnit: oMetadata.timeUnit,
-							displayText: true,
-							criticality: oMetadata.criticality
-						};
-						break;
-
-					case "Measure":
-						oAggregation.className = "sap.ui.mdc.chart.MeasureItem";
-						oSettings = {
-							propertyPath: oMetadata.propertyPath,
-							aggregationMethod: oMetadata.aggregationMethod
-						};
-						break;
-					// no default
-				}
-				oAggregation.settings = Object.assign(oAggregation.settings, oSettings);
-				return oAggregation;
-			};
-	};
-
-
 	QUnit.module("API tests for Chart", {
 		before: function(){
-			_modifyChartDelegate();
 			var sChartView = '<mvc:View' +
 				'\t\t  xmlns:mvc="sap.ui.core.mvc"\n' +
 				'\t\t  xmlns:chart="sap.ui.mdc.chart"\n' +
 				'\t\t  xmlns:mdc="sap.ui.mdc"\n' +
 				'\t\t  >\n' +
-				'\t\t\t\t<mdc:Chart id="mdcChart" p13nMode="{=[\'Sort\',\'Item\']}">\n' +
-				'\t\t\t\t\t\t<mdc:items><chart:DimensionItem id="item0" key="Name" label="Name" role="category"></chart:DimensionItem>\n' +
-				'\t\t\t\t\t\t<chart:MeasureItem id="item1" key="agSalesAmount" label="Depth" role="axis1"></chart:MeasureItem>\n' +
-				'\t\t\t\t\t\t<chart:MeasureItem id="item2" key="SalesNumber" label="Width" role="axis2"></chart:MeasureItem></mdc:items>\n' +
+				'\t\t\t\t<mdc:Chart id="mdcChart" p13nMode="{=[\'Sort\',\'Item\',\'Type\']}" delegate="{\'name\': \'test-resources/sap/ui/mdc/delegates/ChartDelegateStateUtil\',\'payload\': {}}" >\n' +
+				'\t\t\t\t\t\t<mdc:items><chart:Item id="item0" name="Name" label="Name" role="category"></chart:Item>\n' +
+				'\t\t\t\t\t\t<chart:Item id="item1" name="agSalesAmount" label="Depth" role="axis1"></chart:Item>\n' +
+				'\t\t\t\t\t\t<chart:Item id="item2" name="SalesNumber" label="Width" role="axis2"></chart:Item></mdc:items>\n' +
 				'\t\t\t\t</mdc:Chart>\n' +
 				'</mvc:View>';
 
@@ -1076,10 +973,10 @@ sap.ui.define([
 			var oRemoveState = {
 				items: [
 					{
-					  "name": "Industry",
-					  "visible": false
+						"name": "Industry",
+						"visible": false
 					}
-				  ],
+					],
 				sorters: []
 			};
 
@@ -1092,6 +989,7 @@ sap.ui.define([
 			}.bind(this));
 
 		}.bind(this));
+
 	});
 
 	QUnit.test("Change an items role via 'applyExternalState'", function(assert){
@@ -1158,7 +1056,45 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this));
 	});
-	*/
+
+
+	QUnit.test("Change chart type via 'applyExternalState'", function(assert){
+
+		var done = assert.async();
+
+		var oState = {
+			"supplementaryConfig": {
+				"properties": {
+					"chartType": "pie"
+				}
+			}
+		};
+
+		assert.equal(this.oChart.getChartType(), "column", "Chart has correct type");
+
+
+		StateUtil.applyExternalState(this.oChart, oState).then(function(aChanges){
+
+			assert.ok(aChanges.length === 1, "Correct amount of changes created for changed chart type: " + aChanges.length);
+			assert.equal(this.oChart.getChartType(), "pie", "Chart has correct type");
+
+			oState = {
+				"supplementaryConfig": {
+					"properties": {
+						"chartType": "column"
+					}
+				}
+			};
+
+			StateUtil.applyExternalState(this.oChart, oState).then(function(aChanges){
+				assert.ok(aChanges.length === 1, "Correct amount of changes created for changed chart type: " + aChanges.length);
+				assert.equal(this.oChart.getChartType(), "column", "Chart has correct type");
+				done();
+			}.bind(this));
+
+		}.bind(this));
+
+	});
 
 	QUnit.module("State event handling", {
 		beforeEach: function() {

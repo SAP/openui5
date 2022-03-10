@@ -161,13 +161,15 @@ sap.ui.define([
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
                     enabled: false,
                     press: function (oEvent) {
+                        var aP13nMode = oMDCChart.getP13nMode();
+                        aP13nMode.pop("Type");
 
                         //TODO: Move this to p13n functionality?
                         if (oMDCChart.isPropertyHelperFinal()){
-                            oMDCChart.getEngine().uimanager.show(oMDCChart, oMDCChart.getP13nMode());
+                            oMDCChart.getEngine().uimanager.show(oMDCChart, aP13nMode);
                         } else {
                             oMDCChart.finalizePropertyHelper().then(function(){
-                                oMDCChart.getEngine().uimanager.show(oMDCChart, oMDCChart.getP13nMode());
+                                oMDCChart.getEngine().uimanager.show(oMDCChart, aP13nMode);
                             });
                         }
                     }

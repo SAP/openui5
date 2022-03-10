@@ -115,6 +115,7 @@ sap.ui.define([
     ChartDelegate.initializeInnerChart = function (oMDCChart) {
         return new Promise(function (resolve, reject) {
 
+
             this._loadChart().then(function (aModules) {
                 this._oInnerChart = new Chart({});
                 resolve(this._oInnerChart);
