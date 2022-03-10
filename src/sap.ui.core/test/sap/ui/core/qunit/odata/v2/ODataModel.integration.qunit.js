@@ -14892,4 +14892,94 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: On rebinding a table with a relative binding and with transient contexts at the
+	// end, the table only shows data when the backend request returns in order to avoid that the
+	// transient contexts are first shown at the beginning of the table and then moved to the end
+	// when backend data is available ("flickering").
+	// JIRA: CPOUI5MODELS-884
+	QUnit.test("Don't show created contexts at end with pending data request", function (assert) {
+		var fnResolve, oTable,
+			oModel = createSalesOrdersModel(),
+			oResponse = {
+				statusCode : 200,
+				data : {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						},
+						Note : "Foo",
+						ItemPosition : "10",
+						SalesOrderID : "1"
+					}]
+				}
+			},
+			sView = '\
+<t:Table id="table" binding="{/SalesOrderSet(\'1\')}" rows="{ToLineItems}" visibleRowCount="2">\
+	<Text id="itemPosition" text="{ItemPosition}" />\
+	<Text id="itemNote" text="{Note}" />\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				SalesOrderID : "1"
+			})
+			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=102", oResponse)
+			.expectValue("itemPosition", ["10", ""])
+			.expectValue("itemNote", ["Foo", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			that.expectValue("itemNote", "New item", 1);
+
+			oTable.getBinding("rows").create({"Note" : "New item"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderSet('2')", {
+					SalesOrderID : "2"
+				}).expectRequest("SalesOrderSet('2')/ToLineItems?$skip=0&$top=102", {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='2',ItemPosition='22')"
+						},
+						Note : "Bar",
+						ItemPosition : "22",
+						SalesOrderID : "2"
+					}]
+				})
+				.expectValue("itemPosition", "22", 0)
+				.expectValue("itemNote", ["Bar", ""]);
+
+			oTable.bindElement("/SalesOrderSet('2')");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=102",
+					new Promise(function (resolve) { fnResolve = resolve; })
+				)
+				.expectValue("itemPosition", "", 0)
+				.expectValue("itemNote", "", 0);
+
+			// code under test: unbind + bind with already loaded entity
+			oTable.unbindElement();
+			oTable.bindElement({
+				path : "/SalesOrderSet('1')",
+				// prevent reload from server => same scenario as in SalesOrders app
+				parameters : {select : "SalesOrderID"}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("itemPosition", "10", 0)
+				.expectValue("itemNote", ["Foo", "New item"]);
+
+			// code under test: only backend response triggers UI update
+			fnResolve(oResponse);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
