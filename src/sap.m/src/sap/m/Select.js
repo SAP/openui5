@@ -195,6 +195,8 @@ function(
 					 * <li> Invalid or missing <code>selectedKey</code> leads to severe functional
 					 * issues in <code>sap.ui.table.Table</code>, when the <code>sap.m.Select</code> is used inside a
 					 * <code>sap.ui.table.Table</code> column.</li>
+					 * <li> If an item with the default key exists and we try to select it, it happens only if the
+					 * <code>forceSelection</code> property is set to <code>true</code>.</li>
 					 * </ul>
 					 *
 					 * @since 1.11
@@ -2826,7 +2828,8 @@ function(
 		 * an empty string <code>""</code> or <code>undefined</code>, the value of <code>sKey</code> is changed to match
 		 * the <code>key</code> of the first enabled item and the first enabled item is selected (if any items exist).
 		 *
-		 * In the case that an item has the default key value and <code>forceSelection</code> property is set to <code>true</code>, it is selected instead.
+		 * If an item with the default key exists and we try to select it, it happens only if the
+		 * <code>forceSelection</code> property is set to <code>true</code>.
 		 * If duplicate keys exist, the first item matching the key is selected.
 		 *
 		 * @returns {this} <code>this</code> to allow method chaining.
