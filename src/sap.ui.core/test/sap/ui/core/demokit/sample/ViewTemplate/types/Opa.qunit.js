@@ -118,6 +118,13 @@ sap.ui.getCore().attachInit(function () {
 			Then.onTheMainPage.checkInputIsDirty("Identification::String40", false,
 				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
 
+			// DateTimeOffset with timezone
+			When.onTheMainPage.enterInputValue("Identification::TimezoneID", "Europe/Berlin",
+				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
+			Then.onTheMainPage.checkInputValue("Identification::DateTimeOffset",
+				"Apr 19, 2029, 8:25:21 AM Europe/Berlin",
+				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
+
 			Then.onAnyPage.checkLog([{component : "sap.ui.model.odata.v4.ODataMetaModel",
 				level : Log.Level.WARNING,
 				message : "'Edm.Duration', using sap.ui.model.odata.type.Raw"}]);
