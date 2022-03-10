@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
+	"sap/ui/mdc/library",
 	"sap/ui/mdc/odata/TypeUtil",
 	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
@@ -63,6 +64,7 @@ sap.ui.define([
 	Link,
 	Control,
 	CoreLibrary,
+	MdcLibrary,
 	TypeUtil,
 	TestModificationHandler,
 	ActionToolbarAction,
@@ -79,6 +81,7 @@ sap.ui.define([
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
+	var P13nMode = MdcLibrary.TableP13nMode;
 	var aTestedTypes = ["Table", "ResponsiveTable"];
 	var sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
 	function wait(iMilliseconds) {
@@ -160,7 +163,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("sap.ui.mdc.Table", {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			this.oTable = new Table({
 				delegate: {
 					name: sDelegatePath,
@@ -1771,7 +1774,7 @@ sap.ui.define([
 		]);
 
 		return this.oTable._fullyInitialized().then(function() {
-			assert.ok(this.oTable._oTable.bActiveHeaders, true);
+			assert.ok(this.oTable._oTable.bActiveHeaders);
 
 			var oInnerColumn = this.oTable._oTable.getColumns()[0];
 			assert.ok(oInnerColumn.isA("sap.m.Column"));
@@ -1801,7 +1804,7 @@ sap.ui.define([
 		}.bind(this)).then(function(aResult) {
 			var TableSettings = aResult[1];
 			var fSortSpy = sinon.spy(TableSettings, "createSort");
-			var oInnerColumn = this.oTable._oTable.getColumns()[0];
+			var oInnerColumn;
 
 			assert.ok(this.oTable._oPopover);
 			assert.ok(this.oTable._oPopover.isA("sap.m.ColumnHeaderPopover"));
@@ -1889,7 +1892,7 @@ sap.ui.define([
 		}.bind(this)).then(function(aResult) {
 			var TableSettings = aResult[1];
 			var fSortSpy = sinon.spy(TableSettings, "createSort");
-			var oInnerColumn = this.oTable._oTable.getColumns()[0];
+			var oInnerColumn;
 
 			assert.ok(this.oTable._oPopover);
 			assert.ok(this.oTable._oPopover.isA("sap.m.ColumnHeaderPopover"));
@@ -3532,7 +3535,7 @@ sap.ui.define([
 
 	var fnCheckInbuiltInitialization = function(bInbuiltShouldBeActivated, assert) {
 		var done = assert.async();
-		this.oTable.initialized().then(function(){
+		this.oTable._fullyInitialized().then(function(){
 			if (bInbuiltShouldBeActivated) {
 				assert.ok(this.oTable.getInbuiltFilter().isA("sap.ui.mdc.filterbar.FilterBarBase"), "Inbuilt filtering initialized");
 			} else {
@@ -3545,7 +3548,10 @@ sap.ui.define([
 	QUnit.test("Check AdaptationFilterBar initialization with autoBindOnInit 'true'", function(assert){
 		this.createTable({
 			autoBindOnInit: true,
-			p13nMode: ["Filter"]
+			p13nMode: ["Filter"],
+			delegate: {
+				name: sDelegatePath
+			}
 		});
 		fnCheckInbuiltInitialization.call(this, true, assert);
 	});
@@ -3553,7 +3559,10 @@ sap.ui.define([
 	QUnit.test("Check AdaptationFilterBar initialization with autoBindOnInit 'false'", function(assert){
 		this.createTable({
 			autoBindOnInit: false,
-			p13nMode: ["Filter"]
+			p13nMode: ["Filter"],
+			delegate: {
+				name: sDelegatePath
+			}
 		});
 		fnCheckInbuiltInitialization.call(this, true, assert);
 	});
@@ -4117,8 +4126,8 @@ sap.ui.define([
 			var oTable = oMDCTable || this.oTable;
 			var aModes = oTable.getP13nMode();
 
-			assert.strictEqual(oTable.isSortingEnabled(), aModes.indexOf("Sort") > -1, "#isSortingEnabled");
-			assert.strictEqual(oTable.isFilteringEnabled(), aModes.indexOf("Filter") > -1, "#isFilteringEnabled");
+			assert.strictEqual(oTable.isSortingEnabled(), aModes.includes(P13nMode.Sort), "#isSortingEnabled");
+			assert.strictEqual(oTable.isFilteringEnabled(), aModes.includes(P13nMode.Filter), "#isFilteringEnabled");
 		},
 		assertColumnDnD: function(assert, oMDCTable) {
 			var oTable = oMDCTable || this.oTable;

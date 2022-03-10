@@ -250,14 +250,18 @@ sap.ui.define([
 		}
 	};
 
-	ResponsiveTableType.startColumnResize = function(oInnerTable, oColumn) {
+	ResponsiveTableType.startColumnResize = function(oInnerTable, oColumn, oColumnMenu) {
 		var oColumnResizer = ColumnResizer.getPlugin(oInnerTable);
 
 		if (!oColumnResizer) {
 			return;
 		}
 
-		return oColumnResizer.getColumnResizeButton(oColumn);
+		if (oColumnMenu && oColumnMenu.isA("sap.m.table.columnmenu.Menu")) {
+			return oColumnResizer.getColumnResizeQuickAction(oColumn, oColumnMenu);
+		} else {
+			return oColumnResizer.getColumnResizeButton(oColumn);
+		}
 	};
 
 	/**
@@ -318,15 +322,12 @@ sap.ui.define([
 	 */
 	ResponsiveTableType.prototype._getImportanceToHide = function() {
 		var aDetailsButtonSetting = this.getDetailsButtonSetting() || [];
-		var aImportanceToHide = [];
 
 		if (aDetailsButtonSetting.length) {
-			aImportanceToHide = aDetailsButtonSetting;
+			return aDetailsButtonSetting;
 		} else {
-			aImportanceToHide = Device.system.phone ? ["Low", "Medium"] : ["Low"];
+			return Device.system.phone ? ["Low", "Medium"] : ["Low"];
 		}
-
-		return aImportanceToHide;
 	};
 
 	/**

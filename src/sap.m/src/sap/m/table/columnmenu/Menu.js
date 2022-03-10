@@ -7,10 +7,13 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/library",
+	'sap/ui/Device',
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/events/ControlEvents",
 	"sap/base/strings/capitalize",
 	"sap/m/p13n/AbstractContainerItem",
 	"sap/m/p13n/Container",
@@ -21,10 +24,13 @@ sap.ui.define([
 	Toolbar,
 	ToolbarSpacer,
 	library,
+	Device,
 	Control,
 	Core,
 	coreLibrary,
 	jQuery,
+	containsOrEquals,
+	ControlEvents,
 	capitalize,
 	AbstractContainerItem,
 	Container,
@@ -77,6 +83,15 @@ sap.ui.define([
 
 	var DEFAULT_KEY = "$default";
 	var ARIA_POPUP_TYPE = HasPopup.Dialog;
+
+	Menu.prototype.init = function() {
+		this.fAnyEventHandlerProxy = jQuery.proxy(function(oEvent){
+			if (!this._oPopover.isOpen() || !this.getDomRef() || (oEvent.type != "mousedown" && oEvent.type != "touchstart")) {
+				return;
+			}
+			this.handleOuterEvent(this.getId(), oEvent);
+		}, this);
+	};
 
 	Menu.prototype.applySettings = function (mSettings) {
 		// Only works in JS views, but that's fine. This is only convenience for controls.
@@ -138,6 +153,7 @@ sap.ui.define([
 		if (this._oItemsContainer) {
 			delete this._oItemsContainer;
 		}
+		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 	};
 
 	Menu.prototype._addAllToPrivateAggregation = function (mSettings, sAggregationName) {
@@ -170,8 +186,51 @@ sap.ui.define([
 			"onAfterRendering": this._focusItem
 		}, this);
 
-		if (this.getItems().length == 0 && !this.getAggregation("_items")) {
+		if (this.getItems().length === 0 && !this.getAggregation("_items")) {
 			this._oPopover.attachAfterOpen(this._focusInitialQuickAction.bind(this));
+		}
+		this._oPopover._oControl.oPopup.setAutoClose(false);
+	};
+
+	Menu.prototype.onsapfocusleave = function(oEvent){
+		if (!this._oPopover.isOpen()) {
+			return;
+		}
+		this.handleOuterEvent(this.getId(), oEvent);
+	};
+
+	Menu.prototype.handleOuterEvent = function(oMenuId, oEvent) {
+		var isInMenuHierarchy = false,
+			touchEnabled = Device.support.touch || Device.system.combi;
+
+		if (oEvent.type == "mousedown" || oEvent.type == "touchstart") {
+			// Suppress the delayed mouse event from mobile browser
+			if (touchEnabled && (oEvent.isMarked("delayedMouseEvent") || oEvent.isMarked("cancelAutoClose"))) {
+				return;
+			}
+
+			if (!isInMenuHierarchy) {
+				if (containsOrEquals(this.getDomRef(), oEvent.target)) {
+					isInMenuHierarchy = true;
+				}
+			}
+		} else if (oEvent.type == "sapfocusleave") {
+			if (touchEnabled) {
+				return;
+			}
+
+			if (oEvent.relatedControlId) {
+				if (!isInMenuHierarchy) {
+					if (containsOrEquals(this.getDomRef(), jQuery(document.getElementById(oEvent.relatedControlId)).get(0)) ||
+						containsOrEquals(this.getDomRef(), oEvent.target)) {
+						isInMenuHierarchy = true;
+					}
+				}
+			}
+		}
+
+		if (!isInMenuHierarchy) {
+			this.close();
 		}
 	};
 
@@ -189,11 +248,11 @@ sap.ui.define([
 
 		aControlMenuItems.forEach(function (oColumnMenuItem, iIndex) {
 			this._addView(oColumnMenuItem);
-			iIndex == 0 && this._oItemsContainer.addSeparator();
+			iIndex === 0 && this._oItemsContainer.addSeparator();
 		}.bind(this));
 		aApplicationMenuItems.forEach(function (oColumnMenuItem, iIndex) {
 			this._addView(oColumnMenuItem);
-			iIndex == 0 && this._oItemsContainer.addSeparator();
+			iIndex === 0 && this._oItemsContainer.addSeparator();
 		}.bind(this));
 	};
 
@@ -243,7 +302,6 @@ sap.ui.define([
 				var sKey = oMenu._oItemsContainer.getCurrentViewKey();
 				if (oMenu._fireEvent(Core.byId(sKey), "cancel")) {
 					oMenu.close();
-					oMenu.exit();
 				}
 			}
 		});
@@ -273,9 +331,8 @@ sap.ui.define([
 				if (mParameters.target !== "$default") {
 					var oContainerItem = oMenu._oItemsContainer.getView(mParameters.target);
 					var oColumnMenuItem = oMenu._getItemFromContainerItem(oContainerItem);
-					if (oColumnMenuItem && oColumnMenuItem.firePress && !oMenu._fireEvent(oColumnMenuItem, "press")) {
+					if (oColumnMenuItem && !oMenu._fireEvent(oColumnMenuItem, "press")) {
 						oEvent.preventDefault();
-						return;
 					}
 				}
 			},
@@ -301,7 +358,8 @@ sap.ui.define([
 			text: this._getResourceText("table.COLUMNMENU_RESET"),
 			press: function () {
 				oMenu._fireEvent(Core.byId(oMenu._oItemsContainer.getCurrentViewKey()), "reset", false);
-			}
+				this._oPopover.invalidate();
+			}.bind(this)
 		}));
 		this._oPopover.addDependent(oMenu._oItemsContainer);
 		oMenu.addDependent(oMenu._oItemsContainer);
@@ -324,22 +382,36 @@ sap.ui.define([
 		return sText ? this.oResourceBundle.getText(sText, vValue) : this.oResourceBundle;
 	};
 
+	Menu.prototype._getAllEffectiveQuickActions = function() {
+		var aQuickActions = (this.getAggregation("_quickActions") || []).concat(this.getQuickActions());
+		return aQuickActions.reduce(function (a, oQuickAction) {
+			return a.concat(oQuickAction.getEffectiveQuickActions());
+		}, []);
+	};
+
+	Menu.prototype._getAllEffectiveItems = function() {
+		var aItems = (this.getAggregation("_items") || []).concat(this.getItems());
+		return aItems.reduce(function(a, oItem) {
+			return a.concat(oItem.getEffectiveItems());
+		}, []);
+	};
+
 	Menu.prototype._getItemFromContainerItem = function (oContainerItem) {
 		// Low performance as linear search has to be done
-		var oItem = this.getAggregation("_items") && this.getAggregation("_items").find(function(item) {
-			return item.getId() == oContainerItem.getKey();
+		return this._getAllEffectiveItems().find(function(item) {
+			return item.getId() === oContainerItem.getKey();
 		});
-		if (!oItem) {
-			oItem = this.getAggregation("items") && this.getAggregation("items").find(function(item) {
-				return item.getId() == oContainerItem.getKey();
-			});
-		}
-		return oItem;
 	};
 
 	Menu.prototype._updateButtonState = function (oItem) {
-		this._oItemsContainer.getHeader().getContentRight()[0].setEnabled(oItem.getButtonSettings()["reset"]["enabled"]);
+		if (!this._oItemsContainer) {
+			return;
+		}
+		if (this._oItemsContainer.getCurrentViewKey() === DEFAULT_KEY) {
+			return;
+		}
 		this._oItemsContainer.getHeader().getContentRight()[0].setVisible(oItem.getButtonSettings()["reset"]["visible"]);
+		this._oItemsContainer.getHeader().getContentRight()[0].setEnabled(oItem.getButtonSettings()["reset"]["enabled"]);
 		this._oBtnOk.setVisible(oItem.getButtonSettings()["confirm"]["visible"]);
 		this._oBtnCancel.setVisible(oItem.getButtonSettings()["cancel"]["visible"]);
 	};
@@ -357,7 +429,7 @@ sap.ui.define([
 
 	Menu.prototype._focusInitialQuickAction = function () {
 		// Does not work with content, which contains multiple items
-		if (this.getItems().length == 0 && !this.getAggregation("_items")) {
+		if (this.getItems().length === 0 && !this.getAggregation("_items")) {
 			var aQuickActions = [];
 			if (this.getAggregation("_quickActions")) {
 				aQuickActions = this.getAggregation("_quickActions")[0].getEffectiveQuickActions();

@@ -10,14 +10,14 @@ sap.ui.define([
 	Table,
 	ResponsiveTableType
 ) {
-    "use strict";
+	"use strict";
 
-    QUnit.module("popinLayout");
+	QUnit.module("popinLayout");
 
-    QUnit.test("default popinLayout - ResponsiveTable type (before table creation)", function(assert) {
+	QUnit.test("default popinLayout - ResponsiveTable type (before table creation)", function(assert) {
 		var oTable = new Table({
-            type: new ResponsiveTableType({
-                popinLayout: "Block"
+			type: new ResponsiveTableType({
+				popinLayout: "Block"
 			})
 		});
 
@@ -27,10 +27,10 @@ sap.ui.define([
 		});
 	});
 
-    QUnit.test("non-default popinLayout - ResponsiveTable type (before table creation)", function(assert) {
+	QUnit.test("non-default popinLayout - ResponsiveTable type (before table creation)", function(assert) {
 		var oTable = new Table({
-            type: new ResponsiveTableType({
-                popinLayout: "GridSmall"
+			type: new ResponsiveTableType({
+				popinLayout: "GridSmall"
 			})
 		});
 

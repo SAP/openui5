@@ -8,6 +8,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/Device",
 	"sap/m/ColumnPopoverActionItem",
+	"sap/m/table/columnmenu/QuickAction",
+	"sap/m/Button",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
 	"sap/ui/dom/jquery/Aria" // jQuery Plugin "aria"
@@ -16,6 +18,8 @@ sap.ui.define([
 	InvisibleText,
 	Device,
 	ColumnPopoverActionItem,
+	QuickAction,
+	Button,
 	jQuery
 ) {
 	"use strict";
@@ -485,9 +489,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns resizer quick action instance which on press calls the <code>startResizing</code> method.
+	 * @param {sap.m.Column} oColumn Column instance
+	 * @param {sap.m.table.columnmenu.Menu} oColumnMenu The column menu instance
+	 * @returns {sap.m.table.columnmenu.QuickAction | undefined} column resize quick action
+	 * @ui5-restricted
+	 * @private
+	 */
+	ColumnResizer.prototype.getColumnResizeQuickAction = function(oColumn, oColumnMenu) {
+		if (!oColumn || !window.matchMedia("(hover:none)").matches) {
+			return;
+		}
+
+		return new QuickAction({
+			label: Core.getLibraryResourceBundle("sap.m").getText("table.COLUMN_MENU_RESIZE"),
+			content: new Button({
+				icon: "sap-icon://resize-horizontal",
+				press: function() {
+					oColumnMenu.close();
+					this.startResizing(oColumn.getDomRef());
+				}.bind(this)
+			})
+		});
+	};
+
+	/**
 	 * Returns resizer button instance which on press calls the <code>startResizing</code> method.
 	 * @param {sap.m.Column} oColumn Column instance
-	 * @returns {sap.m.ColumnPopoverActionItem} column resize action item
+	 * @returns {sap.m.ColumnPopoverActionItem | undefined} column resize action item
 	 * @ui5-restricted
 	 * @private
 	 */

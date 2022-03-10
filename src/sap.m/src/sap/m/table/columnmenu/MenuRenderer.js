@@ -35,11 +35,8 @@ sap.ui.define([], function () {
 		}
 		oRm.openEnd();
 
-		var aQuickActions = (oMenu.getAggregation("_quickActions") || []).concat(oMenu.getQuickActions());
-		aQuickActions.forEach(function (oQuickAction) {
-			oQuickAction.getEffectiveQuickActions().forEach(function (oQuickAction) {
-				this.renderQuickAction(oRm, oQuickAction);
-			}, this);
+		oMenu._getAllEffectiveQuickActions().forEach(function (oQuickAction) {
+			this.renderQuickAction(oRm, oQuickAction);
 		}, this);
 
 		oRm.close("div");
