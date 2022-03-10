@@ -26,7 +26,6 @@ sap.ui.define([
                  * OPA5 test action
                  * This only works with the new chart personalization
                  * @param {sap.ui.core.Control | string} oChart Instance / ID of the <code>MDCChart</code> that is personalized
-                 * @param {string} sChartType String containing the type of chart that is displayed
                  * @param {ChartPersonalizationConfiguration[]} aConfigurations Array containing the chart personalization configuration objects
                  * @returns {Promise} OPA waitFor
                  * 1. Opens the personalization dialog of a given chart.
@@ -34,8 +33,8 @@ sap.ui.define([
                  * 3. Executes the given ChartPersonalizationConfigurations.
                  * 4. Closes the personalization dialog.
                  */
-                iPersonalizeChart: function(oChart, sChartType, aConfigurations){
-                    return p13nActions.iPersonalizeChart.call(this, oChart, sChartType, aConfigurations);
+                iPersonalizeChart: function(oChart, aConfigurations){
+                    return p13nActions.iPersonalizeChart.call(this, oChart, null, aConfigurations, true);
                 },
                 /**
                  * @typedef {object} SortPersonalizationConfiguration

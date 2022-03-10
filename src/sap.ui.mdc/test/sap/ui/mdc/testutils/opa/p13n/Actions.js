@@ -745,14 +745,17 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>SmartChart</code> that is personalized
 		 * @param {string} sChartType String containing the type of chart that is displayed
 		 * @param {ChartPersonalizationConfiguration[]} aItems Array containing the chart personalization configuration objects
+		 * @param {bool} bIsMDC indicates, that the action is called by the MDC framework instead of comp
 		 * @returns {Promise} OPA waitFor
 		 */
-		iPersonalizeChart: function(oControl, sChartType, aItems) {
+		iPersonalizeChart: function(oControl, sChartType, aItems, bIsMDC) {
 			return iPersonalize.call(this, oControl, Util.texts.chart, {
 				success: function(oP13nDialog) {
 
+					var sViewName = bIsMDC ? "Item" : "dimeasure";
+
 					//oP13nDialog.getContent()[0].getView("item") && oP13nDialog.getContent()[0].getView("item").getContent().isA("sap.m.p13n.SelectionPanel")
-					if (oP13nDialog.getContent()[0].getView("dimeasure").getContent().isA("sap.m.P13nDimMeasurePanel")){
+					if (oP13nDialog.getContent()[0].getView(sViewName).getContent().isA("sap.m.P13nDimMeasurePanel")){
 						iPersonalizeOldChartP13n.call(this, oControl, sChartType, aItems, oP13nDialog);
 					} else {
 						this.waitFor({
@@ -819,9 +822,20 @@ sap.ui.define([
 
 										var fnAddAllItems = function(oCurrentItem, aItems, fnFollowUp){
 											if (oCurrentItem.kind) {
+
+												var sKind = oCurrentItem.kind;
+
+												if (bIsMDC) {
+													if (sKind === "Dimension") {
+														sKind = "Groupable";
+													} else if (sKind === "Measure") {
+														sKind = "Aggregatable";
+													}
+												}
+
 												this.waitFor({
 													controlType: "sap.m.ComboBox",
-													id: "p13nPanel-templateComboBox-" + oCurrentItem.kind,
+													id: "p13nPanel-templateComboBox-" + sKind,
 													matchers: new Ancestor(oP13nDialog, false),
 													actions: function(oComboBox) {
 														iChangeComboBoxSelection.call(this, oComboBox, oCurrentItem.key);
