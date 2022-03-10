@@ -5,9 +5,12 @@
 //Provides class sap.ui.model.odata.v2.Context
 sap.ui.define([
 	"sap/ui/base/SyncPromise",
-	"sap/ui/model/Context"
-], function (SyncPromise, BaseContext) {
+	"sap/ui/model/Context",
+	"sap/ui/model/_Helper"
+], function (SyncPromise, BaseContext, _Helper) {
 	"use strict";
+
+	var aDeleteParametersAllowList = ["changeSetId", "groupId", "refreshAfterChange"];
 
 	/**
 	 * Do <strong>NOT</strong> call this private constructor.
@@ -148,6 +151,63 @@ sap.ui.define([
 		}
 
 		return this.oCreatePromise;
+	};
+
+	/**
+	 * Deletes the OData entity this context points to.
+	 * <b>Note:</b> The context must not be used anymore after successful deletion.
+	 *
+	 * @param {object} [mParameters]
+	 *   For a persistent context, a map of parameters as specified for
+	 *   {@link sap.ui.model.odata.v2.ODataModel#remove}
+	 * @param {string} [mParameters.groupId]
+	 *   ID of a request group; requests belonging to the same group will be bundled in one batch
+	 *   request
+	 * @param {string} [mParameters.changeSetId]
+	 *   ID of the <code>ChangeSet</code> that this request should belong to
+	 * @param {boolean} [mParameters.refreshAfterChange]
+	 *   Defines whether to update all bindings after submitting this change operation,
+	 *   see {@link #setRefreshAfterChange}. If given, this overrules the model-wide
+	 *   <code>refreshAfterChange</code> flag for this operation only.
+	 * @returns {Promise} A promise resolving with <code>undefined</code> in case of successful
+	 *   deletion or rejecting with an error in case the deletion failed
+	 * @throws {Error}
+	 *   If the given parameter map contains any other parameter than those documented above in case
+	 *   of a persistent context
+	 *
+	 * @public
+	 * @since 1.101
+	 */
+	Context.prototype.delete = function (mParameters) {
+		var sParameterKey,
+			oModel = this.getModel(),
+			that = this;
+
+		mParameters = mParameters || {};
+		for (sParameterKey in mParameters) {
+			if (!aDeleteParametersAllowList.includes(sParameterKey)) {
+				throw new Error("Parameter '" + sParameterKey + "' is not supported");
+			}
+		}
+
+		if (this.isInactive()) {
+			oModel._getCreatedContextsCache().findAndRemoveContext(this);
+			oModel.checkUpdate();
+
+			return Promise.resolve();
+		} else if (this.isTransient()) {
+			return oModel.resetChanges([this.getPath()], /*bAll=abort deferred requests*/false,
+				/*bDeleteCreatedEntities*/true);
+		}
+
+		return new Promise(function (resolve, reject) {
+			oModel.remove("",
+				_Helper.merge({
+					context : that,
+					error : reject,
+					success : function () {resolve();}
+				}, mParameters));
+		});
 	};
 
 	/**
