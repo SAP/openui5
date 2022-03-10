@@ -336,7 +336,7 @@
 		},
 		"header": {
 			"title": "{{parameters.cardTitle}}",
-			"subTitle": "Card Sub Title",
+			"subTitle": "{parameters>/objectsWithPropertiesDefined/value/0/text}",
 			"icon": {
 				"src": "sap-icon://accept",
 				"shape": "Circle",

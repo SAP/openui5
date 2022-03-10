@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
 	"sap/base/util/deepEqual",
-	"sap/ui/core/util/MockServer"
+	"sap/ui/core/util/MockServer",
+	"sap/ui/core/Core"
 ], function (
 	x,
 	Editor,
@@ -14,7 +15,8 @@ sap.ui.define([
 	sinon,
 	ContextHost,
 	deepEqual,
-	MockServer
+	MockServer,
+	Core
 ) {
 	"use strict";
 
@@ -61,6 +63,30 @@ sap.ui.define([
 		}
 	};
 
+	var oManifestForObjectFieldsWithTranslation = {
+		"sap.app": {
+			"id": "test.sample",
+			"i18n": "../i18n/i18n.properties"
+		},
+		"sap.card": {
+			"designtime": "designtime/objectWithTranslation",
+			"type": "List",
+			"configuration": {
+				"parameters": {
+					"objectWithPropertiesDefinedAndValueFromJsonList": {
+						"value": {"text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_editable": false}
+					}
+				},
+				"destinations": {
+					"local": {
+						"name": "local",
+						"defaultUrl": "./"
+					}
+				}
+			}
+		}
+	};
+
 	var oResponseData = {
 		"Customers": [
 			{"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1"},
@@ -71,6 +97,35 @@ sap.ui.define([
 			{"CustomerID": "f", "CompanyName": "F Company", "Country": "Country 6", "City": "City 6", "Address": "Address 5"}
 		]
 	};
+
+	function createEditor(sLanguage, oDesigtime) {
+		Core.getConfiguration().setLanguage(sLanguage);
+		var oEditor = new Editor({
+			designtime: oDesigtime
+		});
+		var oContent = document.getElementById("content");
+		if (!oContent) {
+			oContent = document.createElement("div");
+			oContent.style.position = "absolute";
+			oContent.style.top = "200px";
+			oContent.style.background = "white";
+
+			oContent.setAttribute("id", "content");
+			document.body.appendChild(oContent);
+			document.body.style.zIndex = 1000;
+		}
+		oEditor.placeAt(oContent);
+		return oEditor;
+	}
+
+	function destroyEditor(oEditor) {
+		oEditor.destroy();
+		var oContent = document.getElementById("content");
+		if (oContent) {
+			oContent.innerHTML = "";
+			document.body.style.zIndex = "unset";
+		}
+	}
 
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
@@ -1658,6 +1713,59 @@ sap.ui.define([
 							resolve();
 						});
 					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("no add and clearFilter buttons in table toolbar", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/objectWithoutAddAndClearFilterButtons",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"objectWithoutAddAndClearFilterButtons": {
+									"value": {}
+								}
+							},
+							"destinations": {
+								"local": {
+									"name": "local",
+									"defaultUrl": "./"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oField = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), {}), "Field 1: Value");
+					var oTable = oField.getAggregation("_field");
+					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+					assert.ok(!oTable.getEnableSelectAll(), "Table: SelectAll disabled");
+					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
+					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					var oToolbar = oTable.getToolbar();
+					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
+					var oCreateButton = oToolbar.getContent()[1];
+					assert.ok(!oCreateButton.getVisible(), "Table toolbar: create button not visible");
+					var oClearFilterButton = oToolbar.getContent()[2];
+					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
+					resolve();
 				}.bind(this));
 			}.bind(this));
 		});
@@ -6238,6 +6346,373 @@ sap.ui.define([
 					});
 				}.bind(this));
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("Table - object property translate", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+		},
+		afterEach: function () {
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+		}
+	}, function () {
+		QUnit.test("syntax {{KEY}}: en", function (assert) {
+			var that = this;
+			return new Promise(function (resolve, reject) {
+				that.oEditor = createEditor("en");
+				that.oEditor.setJson({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: oManifestForObjectFieldsWithTranslation
+				});
+				that.oEditor.attachReady(function () {
+					assert.ok(that.oEditor.isReady(), "Editor is ready");
+					var oLabel = that.oEditor.getAggregation("_formContent")[1];
+					var oField = that.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_editable": false }), "Field 1: Value");
+					var oTable = oField.getAggregation("_field");
+					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+					assert.ok(!oTable.getEnableSelectAll(), "Table: SelectAll disabled");
+					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
+					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					assert.ok(oTable.getSelectedIndex() === 2 && oTable.getSelectedIndices()[0] === 2, "Table: selected row");
+					var oToolbar = oTable.getToolbar();
+					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
+					var oCreateButton = oToolbar.getContent()[1];
+					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oKeyColumn = oTable.getColumns()[0];
+					assert.ok(oKeyColumn.getLabel().getText() === "translated key en", "Column key: key label text translated");
+					wait().then(function () {
+						oCreateButton.firePress();
+						wait().then(function () {
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
+							var oContents = oSimpleForm.getContent();
+							assert.ok(oContents.length === 16, "SimpleForm: length");
+							var oFormLabel = oContents[0];
+							var oFormField = oContents[1];
+							assert.ok(oFormLabel.getText() === "translated key en", "SimpleForm label1: key label text translated");
+							assert.ok(oFormLabel.getVisible(), "SimpleForm label1: Visible");
+							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field1: Input Field");
+							assert.ok(oFormField.getVisible(), "SimpleForm Field1: Visible");
+							assert.ok(oFormField.getEditable(), "SimpleForm Field1: Editable");
+							assert.ok(oFormField.getValue() === "", "SimpleForm field1: Has No value");
+							oFormLabel = oContents[4];
+							oFormField = oContents[5];
+							assert.ok(oFormLabel.getText() === "Text", "SimpleForm label3: Has label text");
+							assert.ok(oFormLabel.getVisible(), "SimpleForm label3: Visible");
+							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field3: Input Field");
+							assert.ok(oFormField.getVisible(), "SimpleForm Field3: Visible");
+							assert.ok(oFormField.getEditable(), "SimpleForm Field3: Editable");
+							assert.ok(oFormField.getValue() === "text", "SimpleForm field3: Has value");
+							oFormField.setValue("{{TRANSLATED_TEXT01}}");
+							oFormField.fireChange({ value: "{{TRANSLATED_TEXT01}}" });
+							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+							oCreateButtonInPopover.firePress();
+							wait().then(function () {
+								var oNewObject = {"icon": "sap-icon://add","text": "{{TRANSLATED_TEXT01}}","url": "http://","number": 0.5};
+								assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
+								assert.ok(deepEqual(oTable.getBinding().getContexts()[8].getObject(), oNewObject), "Table: new row data");
+								assert.ok(oTable.getSelectedIndex() === 2 && oTable.getSelectedIndices()[0] === 2, "Table: selected row not change");
+								assert.ok(deepEqual(oField._getCurrentProperty("value"), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_editable": false }), "Field 3: Value not change");
+								// scroll to the bottom
+								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
+								wait().then(function () {
+									var oNewRow = oTable.getRows()[4];
+									assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), oNewObject), "Table: new row in the bottom");
+									var oTextCell = oNewRow.getCells()[2];
+									assert.ok(oTextCell.getText() === "translated text01 en", "Row: Text cell value");
+									// select new row
+									oNewRow.getDomRefs(true).rowSelector.click();
+									assert.ok(oTable.getSelectedIndex() === 8 && oTable.getSelectedIndices()[0] === 8, "Table: SelectedIndex and SelectedIndices after selection change");
+									assert.ok(deepEqual(oField._getCurrentProperty("value"), oNewObject), "Field 1: Value after select the created one");
+
+									destroyEditor(that.oEditor);
+									resolve();
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+
+		QUnit.test("syntax {{KEY}}: fr", function (assert) {
+			var that = this;
+			return new Promise(function (resolve, reject) {
+				that.oEditor = createEditor("fr");
+				that.oEditor.setJson({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: oManifestForObjectFieldsWithTranslation
+				});
+				that.oEditor.attachReady(function () {
+					assert.ok(that.oEditor.isReady(), "Editor is ready");
+					var oLabel = that.oEditor.getAggregation("_formContent")[1];
+					var oField = that.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_editable": false }), "Field 1: Value");
+					var oTable = oField.getAggregation("_field");
+					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+					assert.ok(!oTable.getEnableSelectAll(), "Table: SelectAll disabled");
+					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
+					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					assert.ok(oTable.getSelectedIndex() === 2 && oTable.getSelectedIndices()[0] === 2, "Table: selected row");
+					var oToolbar = oTable.getToolbar();
+					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
+					var oCreateButton = oToolbar.getContent()[1];
+					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oKeyColumn = oTable.getColumns()[0];
+					assert.ok(oKeyColumn.getLabel().getText() === "translated key France", "Column key: key label text translated");
+					wait().then(function () {
+						oCreateButton.firePress();
+						wait().then(function () {
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
+							var oContents = oSimpleForm.getContent();
+							assert.ok(oContents.length === 16, "SimpleForm: length");
+							var oFormLabel = oContents[0];
+							var oFormField = oContents[1];
+							assert.ok(oFormLabel.getText() === "translated key France", "SimpleForm label1: key label text translated");
+							assert.ok(oFormLabel.getVisible(), "SimpleForm label1: Visible");
+							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field1: Input Field");
+							assert.ok(oFormField.getVisible(), "SimpleForm Field1: Visible");
+							assert.ok(oFormField.getEditable(), "SimpleForm Field1: Editable");
+							assert.ok(oFormField.getValue() === "", "SimpleForm field1: Has No value");
+							oFormLabel = oContents[4];
+							oFormField = oContents[5];
+							assert.ok(oFormLabel.getText() === "Text", "SimpleForm label3: Has label text");
+							assert.ok(oFormLabel.getVisible(), "SimpleForm label3: Visible");
+							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field3: Input Field");
+							assert.ok(oFormField.getVisible(), "SimpleForm Field3: Visible");
+							assert.ok(oFormField.getEditable(), "SimpleForm Field3: Editable");
+							assert.ok(oFormField.getValue() === "text", "SimpleForm field3: Has value");
+							oFormField.setValue("{{TRANSLATED_TEXT01}}");
+							oFormField.fireChange({ value: "{{TRANSLATED_TEXT01}}" });
+							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+							oCreateButtonInPopover.firePress();
+							wait().then(function () {
+								var oNewObject = {"icon": "sap-icon://add","text": "{{TRANSLATED_TEXT01}}","url": "http://","number": 0.5};
+								assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
+								assert.ok(deepEqual(oTable.getBinding().getContexts()[8].getObject(), oNewObject), "Table: new row data");
+								assert.ok(oTable.getSelectedIndex() === 2 && oTable.getSelectedIndices()[0] === 2, "Table: selected row not change");
+								assert.ok(deepEqual(oField._getCurrentProperty("value"), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_editable": false }), "Field 3: Value not change");
+								// scroll to the bottom
+								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
+								wait().then(function () {
+									var oNewRow = oTable.getRows()[4];
+									assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), oNewObject), "Table: new row in the bottom");
+									var oTextCell = oNewRow.getCells()[2];
+									assert.ok(oTextCell.getText() === "translated text01 France", "Row: Text cell value");
+									// select new row
+									oNewRow.getDomRefs(true).rowSelector.click();
+									assert.ok(oTable.getSelectedIndex() === 8 && oTable.getSelectedIndices()[0] === 8, "Table: SelectedIndex and SelectedIndices after selection change");
+									assert.ok(deepEqual(oField._getCurrentProperty("value"), oNewObject), "Field 1: Value after select the created one");
+
+									destroyEditor(that.oEditor);
+									resolve();
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+
+		QUnit.test("syntax {i18n>KEY}: en", function (assert) {
+			var that = this;
+			return new Promise(function (resolve, reject) {
+				that.oEditor = createEditor("en");
+				that.oEditor.setJson({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: oManifestForObjectFieldsWithTranslation
+				});
+				that.oEditor.attachReady(function () {
+					assert.ok(that.oEditor.isReady(), "Editor is ready");
+					var oLabel = that.oEditor.getAggregation("_formContent")[1];
+					var oField = that.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_editable": false }), "Field 1: Value");
+					var oTable = oField.getAggregation("_field");
+					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+					assert.ok(!oTable.getEnableSelectAll(), "Table: SelectAll disabled");
+					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
+					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					assert.ok(oTable.getSelectedIndex() === 2 && oTable.getSelectedIndices()[0] === 2, "Table: selected row");
+					var oToolbar = oTable.getToolbar();
+					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
+					var oCreateButton = oToolbar.getContent()[1];
+					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oIconColumn = oTable.getColumns()[1];
+					assert.ok(oIconColumn.getLabel().getText() === "translated icon en", "Column icon: icon label text translated");
+					wait().then(function () {
+						oCreateButton.firePress();
+						wait().then(function () {
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
+							var oContents = oSimpleForm.getContent();
+							assert.ok(oContents.length === 16, "SimpleForm: length");
+							var oFormLabel = oContents[2];
+							var oFormField = oContents[3];
+							assert.ok(oFormLabel.getText() === "translated icon en", "SimpleForm label2: icon label text translated");
+							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
+							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
+							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
+							assert.ok(oFormField.getValue() === "sap-icon://add", "SimpleForm field2: Has default value");
+							oFormLabel = oContents[4];
+							oFormField = oContents[5];
+							assert.ok(oFormLabel.getText() === "Text", "SimpleForm label3: Has label text");
+							assert.ok(oFormLabel.getVisible(), "SimpleForm label3: Visible");
+							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field3: Input Field");
+							assert.ok(oFormField.getVisible(), "SimpleForm Field3: Visible");
+							assert.ok(oFormField.getEditable(), "SimpleForm Field3: Editable");
+							assert.ok(oFormField.getValue() === "text", "SimpleForm field3: Has value");
+							oFormField.setValue("{i18n>TRANSLATED_TEXT02}");
+							oFormField.fireChange({ value: "{i18n>TRANSLATED_TEXT02}" });
+							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+							oCreateButtonInPopover.firePress();
+							wait().then(function () {
+								var oNewObject = {"icon": "sap-icon://add","text": "{i18n>TRANSLATED_TEXT02}","url": "http://","number": 0.5};
+								assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
+								assert.ok(deepEqual(oTable.getBinding().getContexts()[8].getObject(), oNewObject), "Table: new row data");
+								assert.ok(oTable.getSelectedIndex() === 2 && oTable.getSelectedIndices()[0] === 2, "Table: selected row not change");
+								assert.ok(deepEqual(oField._getCurrentProperty("value"), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_editable": false }), "Field 3: Value not change");
+								// scroll to the bottom
+								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
+								wait().then(function () {
+									var oNewRow = oTable.getRows()[4];
+									assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), oNewObject), "Table: new row in the bottom");
+									var oTextCell = oNewRow.getCells()[2];
+									assert.ok(oTextCell.getText() === "translated text02 en", "Row: Text cell value");
+									// select new row
+									oNewRow.getDomRefs(true).rowSelector.click();
+									assert.ok(oTable.getSelectedIndex() === 8 && oTable.getSelectedIndices()[0] === 8, "Table: SelectedIndex and SelectedIndices after selection change");
+									assert.ok(deepEqual(oField._getCurrentProperty("value"), oNewObject), "Field 1: Value after select the created one");
+
+									destroyEditor(that.oEditor);
+									resolve();
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+
+		QUnit.test("syntax {i18n>KEY}: fr", function (assert) {
+			var that = this;
+			return new Promise(function (resolve, reject) {
+				that.oEditor = createEditor("fr");
+				that.oEditor.setJson({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: oManifestForObjectFieldsWithTranslation
+				});
+				that.oEditor.attachReady(function () {
+					assert.ok(that.oEditor.isReady(), "Editor is ready");
+					var oLabel = that.oEditor.getAggregation("_formContent")[1];
+					var oField = that.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_editable": false }), "Field 1: Value");
+					var oTable = oField.getAggregation("_field");
+					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+					assert.ok(!oTable.getEnableSelectAll(), "Table: SelectAll disabled");
+					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
+					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					assert.ok(oTable.getSelectedIndex() === 2 && oTable.getSelectedIndices()[0] === 2, "Table: selected row");
+					var oToolbar = oTable.getToolbar();
+					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
+					var oCreateButton = oToolbar.getContent()[1];
+					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oIconColumn = oTable.getColumns()[1];
+					assert.ok(oIconColumn.getLabel().getText() === "translated icon France", "Column icon: icon label text translated");
+					wait().then(function () {
+						oCreateButton.firePress();
+						wait().then(function () {
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
+							var oContents = oSimpleForm.getContent();
+							assert.ok(oContents.length === 16, "SimpleForm: length");
+							var oFormLabel = oContents[2];
+							var oFormField = oContents[3];
+							assert.ok(oFormLabel.getText() === "translated icon France", "SimpleForm label2: icon label text translated");
+							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
+							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
+							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
+							assert.ok(oFormField.getValue() === "sap-icon://add", "SimpleForm field2: Has default value");
+							oFormLabel = oContents[4];
+							oFormField = oContents[5];
+							assert.ok(oFormLabel.getText() === "Text", "SimpleForm label3: Has label text");
+							assert.ok(oFormLabel.getVisible(), "SimpleForm label3: Visible");
+							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field3: Input Field");
+							assert.ok(oFormField.getVisible(), "SimpleForm Field3: Visible");
+							assert.ok(oFormField.getEditable(), "SimpleForm Field3: Editable");
+							assert.ok(oFormField.getValue() === "text", "SimpleForm field3: Has value");
+							oFormField.setValue("{i18n>TRANSLATED_TEXT02}");
+							oFormField.fireChange({ value: "{i18n>TRANSLATED_TEXT02}" });
+							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+							oCreateButtonInPopover.firePress();
+							wait().then(function () {
+								var oNewObject = {"icon": "sap-icon://add","text": "{i18n>TRANSLATED_TEXT02}","url": "http://","number": 0.5};
+								assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
+								assert.ok(deepEqual(oTable.getBinding().getContexts()[8].getObject(), oNewObject), "Table: new row data");
+								assert.ok(oTable.getSelectedIndex() === 2 && oTable.getSelectedIndices()[0] === 2, "Table: selected row not change");
+								assert.ok(deepEqual(oField._getCurrentProperty("value"), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_editable": false }), "Field 3: Value not change");
+								// scroll to the bottom
+								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
+								wait().then(function () {
+									var oNewRow = oTable.getRows()[4];
+									assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), oNewObject), "Table: new row in the bottom");
+									var oTextCell = oNewRow.getCells()[2];
+									assert.ok(oTextCell.getText() === "translated text02 France", "Row: Text cell value");
+									// select new row
+									oNewRow.getDomRefs(true).rowSelector.click();
+									assert.ok(oTable.getSelectedIndex() === 8 && oTable.getSelectedIndices()[0] === 8, "Table: SelectedIndex and SelectedIndices after selection change");
+									assert.ok(deepEqual(oField._getCurrentProperty("value"), oNewObject), "Field 1: Value after select the created one");
+
+									destroyEditor(that.oEditor);
+									resolve();
+								});
+							});
+						});
+					});
+				});
+			});
 		});
 	});
 

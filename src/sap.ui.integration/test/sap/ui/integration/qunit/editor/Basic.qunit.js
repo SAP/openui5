@@ -322,6 +322,45 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("1 string parameter using TextArea", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringUsingTextArea",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringWithTextArea": {
+									"value": "stringWithTextArea Value"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oField = this.oEditor.getAggregation("_formContent")[2];
+					var oControl = oField.getAggregation("_field");
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "Use TextArea for a string field", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oControl.isA("sap.m.TextArea"), "Content of Form contains: TextArea ");
+					assert.ok(oControl.getValue() === "stringWithTextArea Value", "Field: String Value");
+					oControl.setValue("stringWithTextArea new Value");
+					assert.ok(oField._getCurrentProperty("value") === "stringWithTextArea new Value", "Field: String Value updated");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("1 hint below a group (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
 				"sap.app": {
@@ -5238,6 +5277,46 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.ok(this.oEditor.getAggregation("_formContent")[2].getAggregation("_field").isA("sap.m.Slider"), "Content of Form contains: Slider ");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("TextArea is created from dt class inline", function (assert) {
+			var dt = function () {
+				return new Designtime(
+					{
+						"form": {
+							"items": {
+								"string": {
+									"manifestpath": "/sap.card/configuration/parameters/string/value",
+									"type": "string",
+									"visualization": {
+										"type": "TextArea", //NO CLASS ANYMORE
+										"settings": {
+											"value": "{currentSettings>value}",
+											"width": "100%",
+											"editable": "{config/editable}",
+											"placeholder": "{currentSettings>placeholder}",
+											"rows": 7
+										}
+									}
+								}
+							}
+						}
+					});
+			};
+
+			this.oEditor.setDesigntime(dt);
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oField = this.oEditor.getAggregation("_formContent")[2];
+					var oControl = oField.getAggregation("_field");
+					assert.ok(oControl.isA("sap.m.TextArea"), "Content of Form contains: TextArea ");
+					oControl.setValue("stringWithTextArea new Value");
+					assert.ok(oField._getCurrentProperty("value") === "stringWithTextArea new Value", "Field: String Value updated");
 					resolve();
 				}.bind(this));
 			}.bind(this));
