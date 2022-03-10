@@ -82,7 +82,6 @@ sap.ui.define([
 				 */
 				backgroundColor: {
 					type: "sap.ui.core.CSSColor",
-					defaultValue: null,
 					mapping: "style"
 				},
 
@@ -91,7 +90,6 @@ sap.ui.define([
 				 */
 				color: {
 					type: "sap.ui.core.CSSColor",
-					defaultValue: null,
 					mapping: "style"
 				},
 
@@ -100,7 +98,6 @@ sap.ui.define([
 				 */
 				height: {
 					type: "sap.ui.core.CSSSize",
-					defaultValue: null,
 					mapping: "style"
 				},
 
@@ -148,7 +145,6 @@ sap.ui.define([
 				 */
 				width: {
 					type: "sap.ui.core.CSSSize",
-					defaultValue: null,
 					mapping: "style"
 				}
 			},
