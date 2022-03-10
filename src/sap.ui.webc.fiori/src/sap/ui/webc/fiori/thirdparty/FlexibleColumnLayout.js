@@ -217,6 +217,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				midColumnVisible: this.midColumnVisible,
 				endColumnVisible: this.endColumnVisible,
 				arrowUsed,
+				arrowsUsed: arrowUsed,
 				resize,
 			});
 		}

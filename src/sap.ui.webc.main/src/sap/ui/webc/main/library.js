@@ -947,7 +947,7 @@ sap.ui.define([
 
 
 		/**
-		 * Defines the growing mode, used in the <code>ui5-List</code>.
+		 * Defines the growing mode, used in the <code>ui5-list</code>.
 		 *
 		 * @enum {string}
 		 * @public
@@ -955,7 +955,26 @@ sap.ui.define([
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		thisLib.ListGrowingMode = {};
+		thisLib.ListGrowingMode = {
+
+			/**
+			 * Component's <code>load-more</code> is fired upon pressing a "More" button. at the bottom.
+			 * @public
+			 */
+			Button: "Button",
+
+			/**
+			 * Component's growing is not enabled.
+			 * @public
+			 */
+			None: "None",
+
+			/**
+			 * Component's <code>load-more</code> is fired upon scroll.
+			 * @public
+			 */
+			Scroll: "Scroll"
+		};
 
 
 		/**
@@ -1393,7 +1412,26 @@ sap.ui.define([
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		thisLib.TableGrowingMode = {};
+		thisLib.TableGrowingMode = {
+
+			/**
+			 * Component's <code>load-more</code> is fired upon pressing a "More" button. at the bottom.
+			 * @public
+			 */
+			Button: "Button",
+
+			/**
+			 * Component's growing is not enabled.
+			 * @public
+			 */
+			None: "None",
+
+			/**
+			 * Component's <code>load-more</code> is fired upon scroll.
+			 * @public
+			 */
+			Scroll: "Scroll"
+		};
 
 
 		/**
