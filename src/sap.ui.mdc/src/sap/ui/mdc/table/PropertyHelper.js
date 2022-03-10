@@ -304,7 +304,7 @@ sap.ui.define([
 		var fWidth = 0;
 		var fLabelWidth = 0;
 		var mPropertyInfoWidthCalculation = oProperty.visualSettings.widthCalculation;
-		mWidthCalculation = Object.assign({}, mPropertyInfoWidthCalculation);
+		mWidthCalculation = Object.assign({}, mPropertyInfoWidthCalculation, mWidthCalculation || {});
 
 		var iMinWidth = Math.max(1, mWidthCalculation.minWidth);
 		var iMaxWidth = Math.max(iMinWidth, mWidthCalculation.maxWidth);
