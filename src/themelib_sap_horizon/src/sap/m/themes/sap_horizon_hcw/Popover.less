@@ -4,11 +4,26 @@
 /* ================================== */
 
 .sapMPopoverArr:after {
-	border-style: solid;
-	border-width: 2px;
+	background: @sapUiGroupContentBackground;
+	box-shadow: @sapUiContentShadow2;
 }
 
-.sapMPopoverWithBar > .sapMPopoverArr.sapMPopoverArrUp:after {
+.sapMPopoverWithBar > .sapMPopoverArr {
+	&.sapMPopoverArrUp:after,
+	&.sapMPopoverHeaderAlignArr:after {
+		background-color: @sapUiPageHeaderBackground;
+	}
+}
+
+.sapMPopoverWithFooter > .sapMPopoverArr.sapMPopoverFooterAlignArr:after {
+	background-color: @sapUiPageFooterBackground;
+}
+
+.sapMPopover .sapMIBar.sapMHeader-CTX {
+	background-color: @sapUiPageHeaderBackground;
+}
+
+.sapMPopover .sapMIBar.sapMSubHeader-CTX {
 	background-color: @sapUiPageHeaderBackground;
 }
 
@@ -106,4 +121,40 @@
 
 .sapMPopoverWithSubHeader .sapMPopoverHeader .sapMIBar-CTX {
 	box-shadow: none;
+}
+
+.sapMPopover {
+	border-radius: @sapUiElementBorderCornerRadius;
+
+	&.sapMPopoverWithoutBar .sapMPopoverCont,
+	.sapMIBar.sapMHeader-CTX {
+		border-top-right-radius: @sapUiElementBorderCornerRadius;
+		border-top-left-radius: @sapUiElementBorderCornerRadius;
+	}
+
+	&.sapMPopoverWithoutFooter .sapMPopoverCont,
+	.sapMIBar.sapMFooter-CTX {
+		border-bottom-right-radius: @sapUiElementBorderCornerRadius;
+		border-bottom-left-radius: @sapUiElementBorderCornerRadius;
+	}
+}
+
+/* pointing downward arrow */
+.sapMPopoverArrDown:after {
+	margin: -0.5rem 0 0 0.125rem;
+}
+
+/* pointing right arrow */
+.sapMPopoverArrRight:after {
+	margin: 0.1875rem 0 0 -0.5rem;
+}
+
+/* pointing upward arrow */
+.sapMPopoverArrUp:after {
+	margin: 0.3125rem 0 0 0.1875rem;
+}
+
+/* pointing left arrow */
+.sapMPopoverArrLeft:after {
+	margin: 0.125rem 0 0 0.3125rem;
 }

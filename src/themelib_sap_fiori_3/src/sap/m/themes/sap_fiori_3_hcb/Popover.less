@@ -3,6 +3,9 @@
 /* Quartz High Contrast Black theme  */
 /* ================================= */
 
+/* Arrow offset from the Popover's corners */
+@_sap_m_Popover_ArrowOffset: 8;
+
 .sapMPopoverArr:after {
 	border-style: solid;
 	border-width: 2px;
@@ -106,4 +109,19 @@
 
 .sapMPopoverWithSubHeader .sapMPopoverHeader .sapMIBar-CTX {
 	box-shadow: none;
+}
+
+/* pointing downward arrow */
+.sapMPopoverArrDown:after {
+	margin: -0.625rem 0 0 0.125rem;
+}
+
+/* pointing right arrow */
+.sapMPopoverArrRight:after {
+	margin: 0.1875rem 0 0 -0.625rem;
+}
+
+/* pointing left arrow */
+.sapMPopoverArrLeft:after {
+	margin: 0.125rem 0 0 0.1875rem;
 }

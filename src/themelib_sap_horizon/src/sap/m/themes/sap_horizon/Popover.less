@@ -2,14 +2,29 @@
 /* CSS for control sap.m/Popover  */
 /* Horizon theme                  */
 /* ============================== */
-
+@_sap_m_Popover_ArrowOffset: 16;
 
 .sapMPopoverArr:after {
 	background: @sapUiGroupContentBackground;
-	box-shadow: @sapUiShadowLevel2;
+	box-shadow: @sapUiContentShadow2;
 }
 
-.sapMPopoverWithBar > .sapMPopoverArr.sapMPopoverArrUp:after {
+.sapMPopoverWithBar > .sapMPopoverArr {
+	&.sapMPopoverArrUp:after,
+	&.sapMPopoverHeaderAlignArr:after {
+		background-color: @sapUiPageHeaderBackground;
+	}
+}
+
+.sapMPopoverWithFooter > .sapMPopoverArr.sapMPopoverFooterAlignArr:after {
+	background-color: @sapUiPageFooterBackground;
+}
+
+.sapMPopover .sapMIBar.sapMHeader-CTX {
+	background-color: @sapUiPageHeaderBackground;
+}
+
+.sapMPopover .sapMIBar.sapMSubHeader-CTX {
 	background-color: @sapUiPageHeaderBackground;
 }
 
@@ -114,13 +129,13 @@
 
 	&.sapMPopoverWithoutBar .sapMPopoverCont,
 	.sapMIBar.sapMHeader-CTX {
-		border-top-right-radius: 0.75rem;
-		border-top-left-radius: 0.75rem;
+		border-top-right-radius: @sapUiElementBorderCornerRadius;
+		border-top-left-radius: @sapUiElementBorderCornerRadius;
 	}
 
 	&.sapMPopoverWithoutFooter .sapMPopoverCont,
 	.sapMIBar.sapMFooter-CTX {
-		border-bottom-right-radius: 0.75rem;
-		border-bottom-left-radius: 0.75rem;
+		border-bottom-right-radius: @sapUiElementBorderCornerRadius;
+		border-bottom-left-radius: @sapUiElementBorderCornerRadius;
 	}
 }
