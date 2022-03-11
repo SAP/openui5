@@ -234,7 +234,7 @@ sap.ui.define([
 	 * if the context is transient or <code>false</code> if the context is not transient. A
 	 * transient context represents an entity created on the client which has not been persisted in
 	 * the back end. The result of this function can also be accessed via the
-	 * "@$ui5.context.isInactive" instance annotation at the entity, see
+	 * "@$ui5.context.isTransient" instance annotation at the entity, see
 	 * {@link sap.ui.model.odata.v2.ODataModel#getProperty} for details.
 	 *
 	 * @returns {boolean}
