@@ -477,7 +477,9 @@ sap.ui.define([
 	Patcher.prototype.close = function(sTagName) {
 		if (this._iTagOpenState) {
 			this._iTagOpenState = 0; /* Closed */
-			this._oCurrent.textContent = "";
+			if (this._oCurrent.lastChild) {
+				this._oCurrent.textContent = "";
+			}
 		} else {
 			var oParent = this._oCurrent.parentNode;
 			for (var oLastChild = oParent.lastChild; oLastChild && oLastChild != this._oCurrent; oLastChild = oParent.lastChild) {
