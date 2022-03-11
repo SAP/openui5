@@ -1712,10 +1712,10 @@ sap.ui.define([
 
 			// Act
 			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
 				var oHeader = this.oCard.getAggregation("_header"),
 					oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
-
-				Core.applyChanges();
 
 				// Assert aggregation mainIndicator
 				assert.ok(oMainIndicator.getDomRef(), "Card header main indicator aggregation should be set and rendered");
@@ -1738,10 +1738,10 @@ sap.ui.define([
 
 			// Act
 			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
 				var oHeader = this.oCard.getAggregation("_header"),
 					oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
-
-				Core.applyChanges();
 
 				// Assert aggregation _mainIndicator
 				assert.ok(oMainIndicator.getDomRef(), "Card header main indicator aggregation should be set and rendered");
@@ -1764,9 +1764,9 @@ sap.ui.define([
 
 			// Act
 			this.oCard.attachEvent("_ready", function () {
-				var oHeader = this.oCard.getAggregation("_header");
-
 				Core.applyChanges();
+
+				var oHeader = this.oCard.getAggregation("_header");
 
 				// Assert aggregation sideIndicators
 				assert.ok(oHeader.getAggregation("sideIndicators"), "Card header side indicators should be set.");
@@ -1794,22 +1794,16 @@ sap.ui.define([
 
 			// Act
 			this.oCard.attachEvent("_ready", function () {
-				var oHeader = this.oCard.getAggregation("_header");
-
 				Core.applyChanges();
 
 				// Assert
-				assert.notOk(oHeader.getAggregation("_details"), "Card header should have no Details.");
-				assert.notOk(oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator"), "Card header should have no Main indicators.");
-				assert.equal(oHeader.getAggregation("sideIndicators").length, 0, "Card header should have no Side indicators.");
-
 				assert.equal(document.getElementsByClassName("sapFCardHeaderDetails").length, 0, "Card header Details are not rendered.");
 				assert.equal(document.getElementsByClassName("sapFCardNumericIndicators").length, 0, "Card header Indicators are not rendered.");
 				assert.equal(document.getElementsByClassName("sapFCardNumericIndicatorsMain").length, 0, "Card header Main Indicator is not rendered.");
 				assert.equal(document.getElementsByClassName("sapFCardNumericIndicatorsSide").length, 0, "Card header Side Indicator is not rendered.");
 
 				done();
-			}.bind(this));
+			});
 			this.oCard.setManifest(oManifest_NumericHeader_OnlyTitleAndSubtitle);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();

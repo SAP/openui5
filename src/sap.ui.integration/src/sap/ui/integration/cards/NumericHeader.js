@@ -51,7 +51,9 @@ sap.ui.define([
 
 			var mSettings = {
 				title: mConfiguration.title,
+				titleMaxLines: mConfiguration.titleMaxLines,
 				subtitle: mConfiguration.subTitle,
+				subtitleMaxLines: mConfiguration.subTitleMaxLines,
 				dataTimestamp: mConfiguration.dataTimestamp
 			};
 
@@ -62,6 +64,7 @@ sap.ui.define([
 			extend(mSettings, {
 				unitOfMeasurement: mConfiguration.unitOfMeasurement,
 				details: mConfiguration.details,
+				detailsMaxLines: mConfiguration.detailsMaxLines,
 				sideIndicatorsAlignment: mConfiguration.sideIndicatorsAlignment
 			});
 

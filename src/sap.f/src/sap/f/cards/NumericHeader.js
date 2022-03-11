@@ -59,9 +59,21 @@ sap.ui.define([
 				title: { "type": "string", group: "Appearance" },
 
 				/**
+				 * Limits the number of lines for the title.
+				 * @experimental since 1.101
+				 */
+				titleMaxLines: { type: "int", defaultValue: 3 },
+
+				/**
 				 * The subtitle of the card
 				 */
 				subtitle: { "type": "string", group: "Appearance" },
+
+				/**
+				 * Limits the number of lines for the subtitle.
+				 * @experimental since 1.101
+				 */
+				subtitleMaxLines: { type: "int", defaultValue: 2 },
 
 				/**
 				 * Defines the status text.
@@ -102,6 +114,12 @@ sap.ui.define([
 				 * Additional text which adds more details to what is shown in the numeric header.
 				 */
 				details: { "type": "string", group: "Appearance" },
+
+				/**
+				 * Limits the number of lines for the details.
+				 * @experimental since 1.101
+				 */
+				detailsMaxLines: { type: "int", defaultValue: 1 },
 
 				/**
 				 * The alignment of the side indicators.
@@ -177,113 +195,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the title.
-	 *
-	 * @public
-	 * @param {string} sValue The text of the title
-	 * @return {this} <code>this</code> pointer for chaining
+	 * Called before the control is rendered.
+	 * @private
 	 */
-	NumericHeader.prototype.setTitle = function(sValue) {
-		this.setProperty("title", sValue, true);
-		this._getTitle().setText(sValue);
-		return this;
-	};
+	NumericHeader.prototype.onBeforeRendering = function () {
+		BaseHeader.prototype.onBeforeRendering.apply(this, arguments);
 
-	/**
-	 * Sets the subtitle.
-	 *
-	 * @public
-	 * @param {string} sValue The text of the subtitle
-	 * @return {this} <code>this</code> pointer for chaining
-	 */
-	NumericHeader.prototype.setSubtitle = function(sValue) {
-		this.setProperty("subtitle", sValue, true);
-		this._getSubtitle().setText(sValue);
-		return this;
-	};
+		this._getTitle()
+			.setText(this.getTitle())
+			.setMaxLines(this.getTitleMaxLines());
 
-	/**
-	 * Sets the general unit of measurement for the header. Displayed as side information to the subtitle.
-	 *
-	 * @public
-	 * @param {string} sValue The value of the unit of measurement
-	 * @return {this} <code>this</code> pointer for chaining
-	 */
-	NumericHeader.prototype.setUnitOfMeasurement = function(sValue) {
-		this.setProperty("unitOfMeasurement", sValue, true);
-		this._getUnitOfMeasurement().setText(sValue);
-		return this;
-	};
+		this._getSubtitle()
+			.setText(this.getSubtitle())
+			.setMaxLines(this.getSubtitleMaxLines());
 
-	/**
-	 * Sets additional text which adds more details to what is shown in the numeric header.
-	 *
-	 * @public
-	 * @param {string} sValue The text of the details
-	 * @return {this} <code>this</code> pointer for chaining
-	 */
-	NumericHeader.prototype.setDetails = function(sValue) {
-		this.setProperty("details", sValue, true);
-		this._getDetails().setText(sValue);
-		return this;
-	};
+		this._getUnitOfMeasurement().setText(this.getUnitOfMeasurement());
+		this._getDetails()
+			.setText(this.getDetails())
+			.setMaxLines(this.getDetailsMaxLines());
 
-	/**
-	 * Sets the value of the main number indicator.
-	 *
-	 * @public
-	 * @param {string} sValue A string representation of the number
-	 * @return {this} <code>this</code> pointer for chaining
-	 */
-	NumericHeader.prototype.setNumber = function(sValue) {
-		this.setProperty("number", sValue);
-		this._getNumericIndicators().setNumber(sValue);
-		return this;
-	};
-
-	/**
-	 * Sets the unit of measurement (scaling prefix) for the main indicator.
-	 *
-	 * @public
-	 * @param {string} sValue The text of the title
-	 * @return {this} <code>this</code> pointer for chaining
-	 */
-	NumericHeader.prototype.setScale = function(sValue) {
-		this.setProperty("scale", sValue, true);
-		this._getNumericIndicators().setScale(sValue);
-		return this;
-	};
-
-	/**
-	 * Sets the direction of the trend arrow.
-	 *
-	 * @public
-	 * @param {sap.m.DeviationIndicator} sValue The direction of the trend arrow
-	 * @return {this} <code>this</code> pointer for chaining
-	 */
-	NumericHeader.prototype.setTrend = function(sValue) {
-		this.setProperty("trend", sValue, true);
-		this._getNumericIndicators().setTrend(sValue);
-		return this;
-	};
-
-	/**
-	 * Sets the semantic color which represents the state of the main number indicator.
-	 *
-	 * @public
-	 * @param {sap.m.ValueColor} sValue The semantic color which represents the state
-	 * @return {this} <code>this</code> pointer for chaining
-	 */
-	NumericHeader.prototype.setState = function(sValue) {
-		this.setProperty("state", sValue, true);
-		this._getNumericIndicators().setState(sValue);
-		return this;
-	};
-
-	NumericHeader.prototype.setSideIndicatorsAlignment = function(sValue) {
-		this.setProperty("sideIndicatorsAlignment", sValue, true);
-		this._getNumericIndicators().setSideIndicatorsAlignment(sValue);
-		return this;
+		this._getNumericIndicators()
+			.setNumber(this.getNumber())
+			.setScale(this.getScale())
+			.setTrend(this.getTrend())
+			.setState(this.getState())
+			.setSideIndicatorsAlignment(this.getSideIndicatorsAlignment());
 	};
 
 	/**
@@ -299,7 +235,7 @@ sap.ui.define([
 			oControl = new Text({
 				id: this.getId() + "-title",
 				wrapping: true,
-				maxLines: 3
+				maxLines: this.getTitleMaxLines()
 			});
 			this.setAggregation("_title", oControl);
 		}
@@ -320,7 +256,7 @@ sap.ui.define([
 			oControl = new Text({
 				id: this.getId() + "-subtitle",
 				wrapping: true,
-				maxLines: 2
+				maxLines: this.getSubtitleMaxLines()
 			});
 			this.setAggregation("_subtitle", oControl);
 		}
@@ -359,8 +295,7 @@ sap.ui.define([
 
 		if (!oControl) {
 			oControl = new Text({
-				id: this.getId() + "-details",
-				wrapping: false
+				id: this.getId() + "-details"
 			});
 			this.setAggregation("_details", oControl);
 		}

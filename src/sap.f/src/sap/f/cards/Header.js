@@ -66,9 +66,21 @@ sap.ui.define([
 				title: { type: "string", defaultValue: "" },
 
 				/**
+				 * Limits the number of lines for the title.
+				 * @experimental since 1.101
+				 */
+				titleMaxLines: { type: "int", defaultValue: 3 },
+
+				/**
 				 * Defines the subtitle.
 				 */
 				subtitle: { type: "string", defaultValue: "" },
+
+				/**
+				 * Limits the number of lines for the subtitle.
+				 * @experimental since 1.101
+				 */
+				subtitleMaxLines: { type: "int", defaultValue: 2 },
 
 				/**
 				 * Defines the status text.
@@ -165,9 +177,7 @@ sap.ui.define([
 	Header.prototype._getTitle = function () {
 		var oTitle = this.getAggregation("_title");
 		if (!oTitle) {
-			oTitle = new Text({
-				maxLines: 3
-			}).addStyleClass("sapFCardTitle");
+			oTitle = new Text().addStyleClass("sapFCardTitle");
 			this.setAggregation("_title", oTitle);
 		}
 		return oTitle;
@@ -181,9 +191,7 @@ sap.ui.define([
 	Header.prototype._getSubtitle = function () {
 		var oSubtitle = this.getAggregation("_subtitle");
 		if (!oSubtitle) {
-			oSubtitle = new Text({
-				maxLines: 2
-			}).addStyleClass("sapFCardSubtitle");
+			oSubtitle = new Text().addStyleClass("sapFCardSubtitle");
 			this.setAggregation("_subtitle", oSubtitle);
 		}
 		return oSubtitle;
@@ -210,10 +218,15 @@ sap.ui.define([
 	Header.prototype.onBeforeRendering = function () {
 		BaseHeader.prototype.onBeforeRendering.apply(this, arguments);
 
-		var oAvatar = this._getAvatar();
+		this._getTitle()
+			.setText(this.getTitle())
+			.setMaxLines(this.getTitleMaxLines());
 
-		this._getTitle().setText(this.getTitle());
-		this._getSubtitle().setText(this.getSubtitle());
+		this._getSubtitle()
+			.setText(this.getSubtitle())
+			.setMaxLines(this.getSubtitleMaxLines());
+
+		var oAvatar = this._getAvatar();
 
 		oAvatar.setDisplayShape(this.getIconDisplayShape());
 		oAvatar.setSrc(this.getIconSrc());
