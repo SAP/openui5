@@ -4,15 +4,17 @@
 sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 	"use strict";
 	/**
-	 * @class Base delegate for {@link sap.ui.mdc.Link}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Link}.
+	 * Base delegate for {@link sap.ui.mdc.Link}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Link}.
 	 * <b>Note:</b>
-	 * The class is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
+	 * The delegate is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
 	 * @author SAP SE
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @namespace
+	 * @alias module:sap/ui/mdc/LinkDelegate
+	 * @extends module:sap/ui/mdc/BaseDelegate
 	 * @experimental As of version 1.74
 	 * @since 1.74
-	 * @alias sap.ui.mdc.LinkDelegate
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var LinkDelegate = Object.assign({}, BaseDelegate, {
