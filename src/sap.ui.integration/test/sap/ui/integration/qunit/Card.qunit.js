@@ -2778,6 +2778,45 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Not ready", function (assert) {
+			var bTypeError = false;
+
+			try {
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				this.oCard.setManifest({
+					"sap.app": {
+						"id": "test.card.refreshing.card1"
+					},
+					"sap.card": {
+						"configuration": {
+							"filters": {
+								"f1": {
+
+								},
+								"f2": {
+
+								}
+							}
+						},
+						"type": "List",
+						"header": {
+							"title": "L3 Request list content Card"
+						},
+						"content": {
+							"item": {
+								"title": "{Name}"
+							}
+						}
+					}
+				});
+				this.oCard.refreshData();
+			} catch (error) {
+				bTypeError = true;
+			}
+
+			assert.ok(!bTypeError, "There is no error"); // BCP 2280081647
+		});
+
 		QUnit.module("Refreshing data - invalid response", {
 			beforeEach: function () {
 				this.oServer = sinon.fakeServer.create();
