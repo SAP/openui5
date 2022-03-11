@@ -6171,28 +6171,20 @@ sap.ui.define([
 	 * Discards the changes for the given entity key, that means aborts internal requests, removes
 	 * the changes from the shadow cache, and removes all messages for that entity.
 	 *
-	 * If <code>bDeleteCreatedEntities</code> is set, remove the entry also from the data cache and
-	 * the corresponding context from the context cache, if the entity has been created
-	 * <ul>
-	 *   <li>via {@link #createEntry} and it is not yet persisted in the back end, or</li>
-	 *   <li>via {@link #callFunction}.</li>
-	 * </ul>
+	 * If <code>bDeleteEntity</code> is set, remove the entity also from the data cache and the
+	 * corresponding context from the contexts cache and from the created contexts cache if the
+	 * entity has been created via {@link sap.ui.model.odata.v2.ODataListBinding#create}.
 	 *
 	 * @param {string} sKey
 	 *   The entity key
-	 * @param {boolean} [bDeleteCreatedEntities=false]
-	 *   Whether to delete the entities created via {@link #createEntry} or {@link #callFunction}
-	 * @param {object} [oEntityMetadata]
-	 *   The entity metadata
+	 * @param {boolean} [bDeleteEntity=false]
+	 *   Whether to delete the entity also from the data cache and the created contexts cache
 	 * @returns {Promise}
 	 *   Resolves when all changes have been discarded
 	 * @private
 	 */
-	ODataModel.prototype._discardEntityChanges = function (sKey, bDeleteCreatedEntities,
-			oEntityMetadata) {
-		var // created either via #createEntry or via #callFunction
-			oCreated = oEntityMetadata && oEntityMetadata.created,
-			bExcludePersistent = true,
+	ODataModel.prototype._discardEntityChanges = function (sKey, bDeleteEntity) {
+		var oCreated,
 			// determine group synchronously otherwise #_resolveGroup might return a different group
 			// if for example the entity has been deleted already
 			sGroupId = this._resolveGroup(sKey).groupId,
@@ -6202,20 +6194,22 @@ sap.ui.define([
 		pMetaDataLoaded.then(function () {
 			that.abortInternalRequest(sGroupId, {requestKey : sKey});
 		});
-		if (bDeleteCreatedEntities && oCreated) {
+		if (bDeleteEntity) {
 			// remove context synchronously from the list of created contexts to avoid a temporary
 			// empty table row
 			this.oCreatedContextsCache.findAndRemoveContext(this.mContexts["/" + sKey]);
+			// remember created information before it is deleted in #_removeEntity
+			oCreated = this.mChangedEntities[sKey]
+				&& this.mChangedEntities[sKey].__metadata.created;
 			this._removeEntity(sKey);
-			if (oCreated.abort) {
+			if (oCreated && oCreated.abort) {
 				oCreated.abort(ODataModel._createAbortedError());
 			}
-			bExcludePersistent = false;
 		} else {
 			delete this.mChangedEntities[sKey];
 		}
 		sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(sKey,
-			bExcludePersistent));
+			/*bExcludePersistent*/!bDeleteEntity));
 
 		return pMetaDataLoaded;
 	};
@@ -6264,7 +6258,7 @@ sap.ui.define([
 		}
 		if (aPath) {
 			each(aPath, function (iIndex, sPath) {
-				var oChangedEntity, oEntityMetadata, i, sKey, sLastSegment, aPathSegments,
+				var oChangedEntity, i, sKey, sLastSegment, aPathSegments,
 					oEntityInfo = {};
 
 				if (that.getEntityByPath(sPath, null, oEntityInfo)) {
@@ -6287,23 +6281,19 @@ sap.ui.define([
 						if (oChangedEntity && oChangedEntity.hasOwnProperty(sLastSegment)) {
 							delete oChangedEntity[sLastSegment];
 						}
-
-						// delete metadata to check if object has changes
-						oEntityMetadata = that.mChangedEntities[sKey].__metadata;
-						delete that.mChangedEntities[sKey].__metadata;
-						if (isEmptyObject(that.mChangedEntities[sKey])
+						oChangedEntity = that.mChangedEntities[sKey];
+						if (ODataModel._isChangedEntityEmpty(oChangedEntity)
 								|| !oEntityInfo.propertyPath) {
-							that._discardEntityChanges(sKey, bDeleteCreatedEntities,
-								oEntityMetadata);
-						} else {
-							that.mChangedEntities[sKey].__metadata = oEntityMetadata;
+							that._discardEntityChanges(sKey,
+								oChangedEntity.__metadata.created && bDeleteCreatedEntities);
 						}
 					}
 				}
 			});
 		} else {
 			each(this.mChangedEntities, function (sKey, oChangedEntity) {
-				that._discardEntityChanges(sKey, bDeleteCreatedEntities, oChangedEntity.__metadata);
+				that._discardEntityChanges(sKey,
+					oChangedEntity.__metadata.created && bDeleteCreatedEntities);
 			});
 		}
 		this.checkUpdate(true);
@@ -8288,6 +8278,23 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._getCreatedContextsCache = function () {
 		return this.oCreatedContextsCache;
+	};
+
+	/**
+	 * Checks whether the given object does not contain any other property than a "__metadata"
+	 * property.
+	 *
+	 * @param {object} oEntity
+	 *   A changed entity object, see ODataModel#mChangedEntities
+	 * @returns {boolean}
+	 *   Whether the given entity is empty
+	 *
+	 * @private
+	 */
+	ODataModel._isChangedEntityEmpty = function (oEntity) {
+		return Object.keys(oEntity).every(function (sKey) {
+			return sKey === "__metadata";
+		});
 	};
 
 	return ODataModel;
