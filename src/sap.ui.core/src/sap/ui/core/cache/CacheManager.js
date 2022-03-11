@@ -108,7 +108,7 @@ sap.ui.define([
 				if (isSwitchedOn() && this._isSupportedEnvironment()) {
 					return LRUPersistentCache;
 				} else {
-					Log.warning("UI5 Cache Manager is switched off");
+					Log.debug("UI5 Cache Manager is switched off");
 					return CacheManagerNOP;
 				}
 			},
