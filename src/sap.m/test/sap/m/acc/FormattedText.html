@@ -10,8 +10,7 @@
 <script>
 	var fnOriginalSetHtmlText;
 
-	var htmlText = '<h1>Header 1</h1>\n';
-	htmlText += '<h3>Header 3</h3>\n';
+	var htmlText = '<h2>Header 2</h2>\n';
 	// link
 	htmlText += '<p><a HREF="//www.sap.com">link to sap.com</a> - links open in a new window.\n';
 	// list
@@ -27,6 +26,7 @@
 
 	var page = new sap.m.Page({
 		title : "sap.m.FormattedText Control",
+		titleLevel: "H1",
 		enableScrolling : true,
 		content : new sap.m.VBox({ items: [
 			oFT
