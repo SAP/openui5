@@ -98,6 +98,10 @@ sap.ui.define([
 				/**
 				 * Defines the icon to be displayed as a graphical element within the button.
 				 * It can be an image or an icon from the icon font.
+				 *
+				 * Note: If only an icon (without text) is provided when <code>buttonMode</code> is set to <code>Split</code>,
+				 * please provide icons for all menu items. Otherwise the action button will be displayed with no icon or text
+				 * after item selection since there is not enough space for a text.
 				 */
 				icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 

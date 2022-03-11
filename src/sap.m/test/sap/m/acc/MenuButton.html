@@ -27,6 +27,15 @@
 			})
 		}
 
+		function generateMenuIcons() {
+			return new sap.m.Menu({
+				items: [
+					new sap.m.MenuItem({text: "First dummy item", icon: "sap-icon://favorite"}),
+					new sap.m.MenuItem({text: "Second dummy item", icon: "sap-icon://heart"})
+				]
+			})
+		}
+
 		function getTitle(sText) {
 			return new sap.m.Title({
 				text: sText,
@@ -111,19 +120,19 @@
 				getTitle("Icon only - Split mode "),
 
 				getText("Default:"),
-				new sap.m.MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, menu: generateMenu() }),
+				new sap.m.MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }),
 
 				getText("Connected to a label:"),
 				new sap.m.Label({ text: "Label", labelFor: "iconOnlySplitModeWithLabel" }),
-				new sap.m.MenuButton("iconOnlySplitModeWithLabel", { icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, menu: generateMenu() }),
+				new sap.m.MenuButton("iconOnlySplitModeWithLabel", { icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }),
 
 				getText("Using ariaLabelledBy:"),
 				new sap.m.Text("iconOnlySplitLabelledBy", { text: "Label" }),
-				new sap.m.MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "iconOnlySplitLabelledBy", menu: generateMenu() }),
+				new sap.m.MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "iconOnlySplitLabelledBy", menu: generateMenuIcons() }),
 
 				getText("Using ariaDescribedBy:"),
 				new sap.m.Text("iconOnlySplitDescribedBy", { text: "Description" }),
-				new sap.m.MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "iconOnlySplitDescribedBy", menu: generateMenu() })
+				new sap.m.MenuButton({ icon: "sap-icon://add", buttonMode: MenuButtonMode.Split, ariaLabelledBy: "iconOnlySplitDescribedBy", menu: generateMenuIcons() })
 			]
 		}).addStyleClass("sapUiLargeMarginBeginEnd");
 
@@ -160,10 +169,10 @@
 		var oIconOnlySplitModeTypesLayoutTitle = getTitle("Types: Icon only - Regular mode ").addStyleClass("sapUiLargeMarginBeginEnd");
 		var oIconOnlySplitModeTypesLayout = new sap.m.OverflowToolbar({
 			content: [
-				new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Accept, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
-				new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Reject, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd"),
-				new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Emphasized, buttonMode: MenuButtonMode.Split, menu: generateMenu() }),
-				new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Attention, buttonMode: MenuButtonMode.Split, menu: generateMenu() }).addStyleClass("sapUiSmallMarginEnd")
+				new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Accept, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd"),
+				new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Reject, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd"),
+				new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Emphasized, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }),
+				new sap.m.MenuButton({ icon: "sap-icon://add", type: ButtonType.Attention, buttonMode: MenuButtonMode.Split, menu: generateMenuIcons() }).addStyleClass("sapUiSmallMarginEnd")
 			]
 		}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiLargeMarginBeginEnd");
 
