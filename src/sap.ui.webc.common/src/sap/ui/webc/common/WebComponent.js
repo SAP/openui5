@@ -298,7 +298,7 @@ sap.ui.define([
 				var vNewValue = oChangeInfo.newValue;
 				var oPropData = this.getMetadata().getProperty(sPropName);
 				if (oPropData) {
-					oPropData.set(this, vNewValue);
+					this.setProperty(sPropName, vNewValue, true); // must suppress invalidation as this is intended to only sync the managed object state, not to trigger a rerender
 				}
 			}
 		};
