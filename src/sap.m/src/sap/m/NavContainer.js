@@ -669,24 +669,24 @@ sap.ui.define([
 	 *
 	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "BeforeHide" pseudo event on the source page and "BeforeFirstShow" (if applicable) and"BeforeShow" on the target page. Later - after the transition has completed - the "AfterShow" pseudo event is triggered on the target page and "AfterHide" on the page which has been left. The given data object is available in the "BeforeFirstShow", "BeforeShow" and "AfterShow" event object as "data" property.
 	 *
-	 * @param {string} pageId
+	 * @param {string} vPageIdOrControl
 	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
-	 * @param {string} [transitionName=slide]
+	 * @param {string} [sTransitionName=slide]
 	 *         The type of the transition/animation to apply. Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show"
 	 *         and the names of any registered custom transitions.
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
-	 * @param {object} [data={}]
+	 * @param {object} [oData={}]
 	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page.
 	 *         The "BeforeShow" event on the target page will contain this data object as "data" property.
 
 	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *
-	 *         When the <code>oTransitionParameters</code> parameter is used, this <code>data</code> parameter must also be given (either as object or as <code>null</code> or <code>undefined</code>) in order to have a proper parameter order.
+	 *         When the <code>oTransitionParameters</code> parameter is used, this <code>oData</code> parameter must also be given (either as object or as <code>null</code> or <code>undefined</code>) in order to have a proper parameter order.
 	 * @param {object} [oTransitionParameters={}]
 	 *         Since version 1.7.1. This optional object can contain additional information for the transition function, like the DOM element which triggered the transition or the desired transition duration.
 	 *
-	 *         For a proper parameter order, the <code>data</code> parameter must be given when the <code>oTransitionParameters</code> parameter is used (it can be given as <code>null</code> or <code>undefined</code>).
+	 *         For a proper parameter order, the <code>oData</code> parameter must be given when the <code>oTransitionParameters</code> parameter is used (it can be given as <code>null</code> or <code>undefined</code>).
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 *         The "show", "slide", "baseSlide" and "fade" transitions do not use any parameter.
@@ -694,44 +694,44 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
-	NavContainer.prototype.to = function (pageId, transitionName, data, oTransitionParameters, bFromQueue) {
-		if (pageId instanceof Control) {
-			pageId = pageId.getId();
+	NavContainer.prototype.to = function (vPageIdOrControl, sTransitionName, oData, oTransitionParameters, bFromQueue) {
+		if (vPageIdOrControl instanceof Control) {
+			vPageIdOrControl = vPageIdOrControl.getId();
 		}
 
 		// fix parameters
-		if (typeof (transitionName) !== "string") {
-			// transitionName is omitted, shift parameters
-			oTransitionParameters = data;
-			data = transitionName;
+		if (typeof (sTransitionName) !== "string") {
+			// sTransitionName is omitted, shift parameters
+			oTransitionParameters = oData;
+			oData = sTransitionName;
 		}
-		transitionName = transitionName || this.getDefaultTransitionName();
+		sTransitionName = sTransitionName || this.getDefaultTransitionName();
 		oTransitionParameters = oTransitionParameters || {};
-		data = data || {};
-		var oFromPageInfo = {id: pageId, transition: transitionName, data: data};
+		oData = oData || {};
+		var oFromPageInfo = {id: vPageIdOrControl, transition: sTransitionName, data: oData};
 
 		// make sure the initial page is on the stack
-		this._ensurePageStackInitialized(data);
+		this._ensurePageStackInitialized(oData);
 
 		//add to the queue before checking the current page, because this might change
 		if (this._bNavigating) {
-			Log.info(this.toString() + ": Cannot navigate to page " + pageId + " because another navigation is already in progress. - navigation will be executed after the previous one");
+			Log.info(this.toString() + ": Cannot navigate to page " + vPageIdOrControl + " because another navigation is already in progress. - navigation will be executed after the previous one");
 
 			this._aQueue.push(jQuery.proxy(function () {
-				this.to(pageId, transitionName, data, oTransitionParameters, true);
+				this.to(vPageIdOrControl, sTransitionName, oData, oTransitionParameters, true);
 			}, this));
 
 			return this;
 		}
 
-		// If to is called before rendering, remember the data so we can pass it to the events as soon as the navContainer gets rendered
+		// If to is called before rendering, remember the oData so we can pass it to the events as soon as the navContainer gets rendered
 		if (this._bNeverRendered) {
-			this._oToDataBeforeRendering = data;
+			this._oToDataBeforeRendering = oData;
 		}
 
 		var oFromPage = this.getCurrentPage();
-		if (oFromPage && (oFromPage.getId() === pageId)) { // cannot navigate to the page that is already current
-			Log.warning(this.toString() + ": Cannot navigate to page " + pageId + " because this is the current page.");
+		if (oFromPage && (oFromPage.getId() === vPageIdOrControl)) { // cannot navigate to the page that is already current
+			Log.warning(this.toString() + ": Cannot navigate to page " + vPageIdOrControl + " because this is the current page.");
 			if (bFromQueue) {
 				this._dequeueNavigation();
 			}
@@ -744,11 +744,11 @@ sap.ui.define([
 			return this;
 		}
 
-		var oToPage = this.getPage(pageId);
+		var oToPage = this.getPage(vPageIdOrControl);
 
 		if (oToPage) {
 			if (!oFromPage) {
-				Log.warning("Navigation triggered to page with ID '" + pageId + "', but the current page is not known/aggregated by " + this);
+				Log.warning("Navigation triggered to page with ID '" + vPageIdOrControl + "', but the current page is not known/aggregated by " + this);
 				return this;
 			}
 
@@ -756,8 +756,8 @@ sap.ui.define([
 				from: oFromPage,
 				fromId: oFromPage.getId(),
 				to: oToPage,
-				toId: pageId,
-				firstTime: !this._mVisitedPages[pageId],
+				toId: vPageIdOrControl,
+				firstTime: !this._mVisitedPages[vPageIdOrControl],
 				isTo: true,
 				isBack: false,
 				isBackToTop: false,
@@ -779,27 +779,27 @@ sap.ui.define([
 				// TODO: let one of the pages also cancel navigation?
 				var oEvent = jQuery.Event("BeforeHide", oNavInfo);
 				oEvent.srcControl = this; // store the element on the event (aligned with jQuery syntax)
-				// no data needed for hiding
+				// no oData needed for hiding
 				oFromPage._handleEvent(oEvent);
 
-				if (!this._mVisitedPages[pageId]) { // if this page has not been shown before
+				if (!this._mVisitedPages[vPageIdOrControl]) { // if this page has not been shown before
 					oEvent = jQuery.Event("BeforeFirstShow", oNavInfo);
 					oEvent.srcControl = this;
-					oEvent.data = data || {};
+					oEvent.data = oData || {};
 					oEvent.backData = {};
 					oToPage._handleEvent(oEvent);
 				}
 
 				oEvent = jQuery.Event("BeforeShow", oNavInfo);
 				oEvent.srcControl = this;
-				oEvent.data = data || {};
+				oEvent.data = oData || {};
 				oEvent.backData = {};
 				oToPage._handleEvent(oEvent);
 
 
 				this._pageStack.push(oFromPageInfo); // this actually causes/is the navigation
-				Log.info(this.toString() + ": navigating to page '" + pageId + "': " + oToPage.toString());
-				this._mVisitedPages[pageId] = true;
+				Log.info(this.toString() + ": navigating to page '" + vPageIdOrControl + "': " + oToPage.toString());
+				this._mVisitedPages[vPageIdOrControl] = true;
 
 				if (!this.getDomRef()) { // the wanted animation has been recorded, but when the NavContainer is not rendered, we cannot animate, so just return
 					Log.info("'Hidden' 'to' navigation in not-rendered NavContainer " + this.toString());
@@ -824,33 +824,33 @@ sap.ui.define([
 					oToPage.addStyleClass("sapMNavItemHidden").removeStyleClass("sapMNavItemRendering");
 				}
 
-				var oTransition = NavContainer.transitions[transitionName] || NavContainer.transitions["slide"];
+				var oTransition = NavContainer.transitions[sTransitionName] || NavContainer.transitions["slide"];
 				// Track proper invocation of the callback  TODO: only do this during development?
 				var iCompleted = this._iTransitionsCompleted;
 				var that = this;
 				window.setTimeout(function () {
 					if (that && (that._iTransitionsCompleted < iCompleted + 1)) {
-						Log.warning("Transition '" + transitionName + "' 'to' was triggered five seconds ago, but has not yet invoked the end-of-transition callback.");
+						Log.warning("Transition '" + sTransitionName + "' 'to' was triggered five seconds ago, but has not yet invoked the end-of-transition callback.");
 					}
 				}, fnGetDelay(5000));
 
 				this._bNavigating = true;
 
 				// check both params since they might have shifted
-				var sTransitionDirection = (data.safeBackToPage || oTransitionParameters.safeBackToPage) ? "back" : "to";
+				var sTransitionDirection = (oData.safeBackToPage || oTransitionParameters.safeBackToPage) ? "back" : "to";
 
-				this._cacheTransitionInfo(transitionName, sTransitionDirection);
+				this._cacheTransitionInfo(sTransitionName, sTransitionDirection);
 
 				oTransition[sTransitionDirection].call(this, oFromPage, oToPage, jQuery.proxy(function () {
-					this._afterTransitionCallback(oNavInfo, data);
+					this._afterTransitionCallback(oNavInfo, oData);
 				}, this), oTransitionParameters); // trigger the transition
 
 			} else {
-				Log.info("Navigation to page with ID '" + pageId + "' has been aborted by the application");
+				Log.info("Navigation to page with ID '" + vPageIdOrControl + "' has been aborted by the application");
 			}
 
 		} else {
-			Log.warning("Navigation triggered to page with ID '" + pageId + "', but this page is not known/aggregated by " + this);
+			Log.warning("Navigation triggered to page with ID '" + vPageIdOrControl + "', but this page is not known/aggregated by " + this);
 		}
 		return this;
 	};
