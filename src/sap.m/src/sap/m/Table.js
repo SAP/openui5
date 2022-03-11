@@ -19,10 +19,11 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ListBaseRenderer",
 	"sap/ui/core/Icon",
+	"sap/m/table/Util",
 	// jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(Core, Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, BaseObject, ResizeHandler, PasteHelper, KeyCodes, jQuery, ListBaseRenderer, Icon) {
+	function(Core, Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, BaseObject, ResizeHandler, PasteHelper, KeyCodes, jQuery, ListBaseRenderer, Icon, Util) {
 	"use strict";
 
 
@@ -183,7 +184,12 @@ sap.ui.define([
 			/**
 			 * Defines the columns of the table.
 			 */
-			columns : {type : "sap.m.Column", multiple : true, singularName : "column", dnd : {draggable : true, droppable : true, layout : "Horizontal"} }
+			columns : {type : "sap.m.Column", multiple : true, singularName : "column", dnd : {draggable : true, droppable : true, layout : "Horizontal"} },
+
+			/**
+			 * Provides a message if no visible columns are available.
+			 */
+			_noColumnsMessage : {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 		},
 		events : {
 			/**
@@ -338,6 +344,19 @@ sap.ui.define([
 				contextualWidth : iWidth
 			});
 		}
+	};
+
+	Table.prototype.setNoData = function (vNoData) {
+		ListBase.prototype.setNoData.apply(this, arguments);
+
+		if (vNoData && typeof vNoData !== "string" && vNoData.isA("sap.m.IllustratedMessage")) {
+			var oNoColumns = this.getAggregation("_noColumnsMessage");
+			if (!oNoColumns) {
+				oNoColumns = Util.getNoColumnsIllustratedMessage();
+				this.setAggregation("_noColumnsMessage", oNoColumns);
+			}
+		}
+		return this;
 	};
 
 	Table.prototype._onResize = function(mParams) {
@@ -1006,6 +1025,16 @@ sap.ui.define([
 		this.updateInvisibleText(sAnnouncement);
 	};
 
+	Table.prototype._setNoColumnsMessageAnnouncement = function (oTarget) {
+		if (!this.shouldRenderItems()) {
+			var oNoData = this.getNoData();
+			if (oNoData && typeof oNoData !== "string" && oNoData.isA("sap.m.IllustratedMessage")) {
+				var sDescription = ListItemBase.getAccessibilityText(this.getAggregation("_noColumnsMessage"));
+				this.updateInvisibleText(sDescription, oTarget);
+			}
+		}
+	};
+
 	// keyboard handling
 	Table.prototype.onsapspace = function(oEvent) {
 		if (oEvent.isMarked()) {
@@ -1121,6 +1150,7 @@ sap.ui.define([
 		}
 
 		ListBase.prototype.onfocusin.call(this, oEvent);
+		this._setNoColumnsMessageAnnouncement(oTarget);
 	};
 
 	// event listener for theme changed

@@ -147,7 +147,9 @@ function(
 			showUnread : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * This text is displayed when the control contains no items.
+			 * This text is displayed if the control contains no items.
+			 * <b>Note:</b> If both a <code>noDataText</code> property and a <code>noData</code> aggregation are provided, the <code>noData</code> aggregation takes priority.
+			 * If the <code>noData</code> aggregation is undefined or set to null, the <code>noDataText</code> property is used instead.
 			 */
 			noDataText : {type : "string", group : "Misc", defaultValue : null},
 
@@ -305,7 +307,15 @@ function(
 			 * Defines the message strip to display binding-related messages.
 			 * @since 1.73
 			 */
-			_messageStrip: {type : "sap.m.MessageStrip", multiple : false, visibility : "hidden"}
+			_messageStrip: {type : "sap.m.MessageStrip", multiple : false, visibility : "hidden"},
+
+			/**
+			 * Defines the custom visualization if there is no data available.
+			 * <b>Note:</b> If both a <code>noDataText</code> property and a <code>noData</code> aggregation are provided, the <code>noData</code> aggregation takes priority.
+			 * If the <code>noData</code> aggregation is undefined or set to null, the <code>noDataText</code> property is used instead.
+			 * @since 1.101
+			 */
+			noData: {type: "sap.ui.core.Control", multiple: false, altTypes: ["string"]}
 		},
 		associations: {
 
@@ -818,9 +828,25 @@ function(
 		return this;
 	};
 
+	ListBase.prototype.setNoData = function (vNoData) {
+		this.setAggregation("noData", vNoData, true);
+
+		if (typeof vNoData === "string") {
+			this.$("nodata-text").text(vNoData);
+		} else if (vNoData) {
+			this.invalidate();
+		} else if (!vNoData) {
+			this.$("nodata-text").text(this.getNoDataText());
+		}
+		return this;
+	};
+
 	ListBase.prototype.setNoDataText = function(sNoDataText) {
 		this.setProperty("noDataText", sNoDataText, true);
-		this.$("nodata-text").text(this.getNoDataText());
+		if (!this.getNoData()) {
+			// only set noDataText, if noData aggregation is not specified
+			this.$("nodata-text").text(this.getNoDataText());
+		}
 		return this;
 	};
 
@@ -2401,7 +2427,12 @@ function(
 
 		var oTarget = oEvent.target;
 		if (oTarget.id == this.getId("nodata")) {
-			this.updateInvisibleText(this.getNoDataText(), oTarget);
+			var vNoData = this.getNoData();
+			var sDescription = vNoData || this.getNoDataText();
+			if (vNoData && typeof vNoData !== "string") {
+				sDescription = ListItemBase.getAccessibilityText(vNoData);
+			}
+			this.updateInvisibleText(sDescription, oTarget);
 		}
 
 		// handle only for backward navigation

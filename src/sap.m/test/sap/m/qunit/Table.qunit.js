@@ -25,14 +25,15 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/message/Message",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/m/IllustratedMessage"
 ], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, ListBase, Table, Column,
-	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery) {
+	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage) {
 	"use strict";
 
 	var oTable;
 
-	function createSUT(sId, bCreateColumns, bCreateHeader, sMode) {
+	function createSUT(sId, bCreateColumns, bCreateHeader, sMode, bNoDataIllustrated) {
 		var oData = {
 			items: [
 				{ name: "Michelle", color: "orange", number: 3.14 },
@@ -69,6 +70,14 @@ sap.ui.define([
 
 		if (sMode) {
 			sut.setMode(sMode);
+		}
+
+		if (bNoDataIllustrated) {
+			sut.setNoData(new IllustratedMessage("noDataIllustratedMessage", {
+				illustrationType: library.IllustratedMessageType.NoSearchResults,
+				title: "Custom Title",
+				description: "This is a custom description."
+			}));
 		}
 
 		sut.setModel(new JSONModel(oData));
@@ -2709,5 +2718,128 @@ sap.ui.define([
 		this.sut.setHiddenInPopin();
 		Core.applyChanges();
 		assert.strictEqual(fnFirePopinChanged.callCount, 4, "hiddenInPopin=undefined");
+	});
+
+	QUnit.module("No data aggregation");
+
+	QUnit.test("No Data Illustrated Message", function(assert) {
+		var sut = createSUT("tblNoDataIM", true, false, "None", true);
+		var oData = {
+			items: [],
+			cols: ["Name", "Color", "Number"]
+		};
+		sut.setModel(new JSONModel(oData));
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var $noData = sut.$("nodata");
+		var $noDataText = sut.$("nodata-text");
+		assert.ok(sut.getNoData().isA("sap.m.IllustratedMessage"), "noData aggregation is of type sap.m.IllustratedMessage");
+		assert.strictEqual($noDataText.children().get(0), Core.byId("noDataIllustratedMessage").getDomRef(), "Table's nodata-text contains figure's DOM element");
+
+		$noData.focus();
+		var sLabelledBy = $noData.attr("aria-labelledby");
+		assert.equal(Core.byId(sLabelledBy).getText(), "Illustrated Message Custom Title. This is a custom description.", "Accessbility text is set correctly");
+
+		sut.destroy();
+	});
+
+	QUnit.test("No Column Illustrated Message", function(assert) {
+		var sut = createSUT("tblNoDataIMNC", false, false, "None", true);
+		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var sTitle = oBundle.getText("TABLE_NO_COLUMNS_TITLE");
+		var sDescription = oBundle.getText("TABLE_NO_COLUMNS_DESCRIPTION");
+
+		var oNoColumnsMessage = sut.getAggregation("_noColumnsMessage");
+		assert.ok(oNoColumnsMessage, "_noColumnsMessage aggregation filled");
+		assert.equal(oNoColumnsMessage.getTitle(), sTitle, "Correct title for illustrated message");
+		assert.equal(oNoColumnsMessage.getDescription(), sDescription, "Correct description for illustrated message");
+
+		var $noData = sut.$("nodata");
+		var $noDataText = sut.$("nodata-text");
+		assert.ok(sut.getNoData().isA("sap.m.IllustratedMessage"), "noData aggregation is of type sap.m.IllustratedMessage");
+		assert.strictEqual($noDataText.children().get(0), oNoColumnsMessage.getDomRef(), "Table's nodata-text contains figure's DOM element");
+
+		$noData.focus();
+		var sLabelledBy = $noData.attr("aria-labelledby");
+		assert.equal(Core.byId(sLabelledBy).getText(), "Illustrated Message " + sTitle + ". " + sDescription, "Accessbility text is set correctly");
+
+		sut.setNoData(new Button({text: "Test Button"}));
+		Core.applyChanges();
+		assert.ok(sut.getNoData().isA("sap.m.Button"), "noData aggregation is of type sap.m.Button");
+		assert.strictEqual($noDataText.text(), oBundle.getText("TABLE_NO_COLUMNS"), "Table's nodata-text contains the text for no columns");
+
+		sut.destroy();
+	});
+
+	QUnit.test("No Data String", function(assert) {
+		var sNoData = "Example No Data Text";
+		var sut = createSUT("tblNoDataIMNC", true, false, "None", false);
+		var oData = {
+			items: [],
+			cols: ["Name", "Color", "Number"]
+		};
+		sut.setModel(new JSONModel(oData));
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var $noData = sut.$().find("#" + sut.getId() + "-nodata");
+		var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
+		assert.strictEqual($noDataText.text(), "No data", "Table's standard nodata-text contains correct string");
+
+		$noData.focus();
+		var sLabelledBy = $noData.attr("aria-labelledby");
+		assert.equal(Core.byId(sLabelledBy).getText(), "No data", "Accessbility text is set correctly");
+
+		sut.setNoData(sNoData);
+		Core.applyChanges();
+
+		assert.strictEqual(typeof sut.getNoData(), "string", "noData aggregation is of type string");
+		assert.strictEqual($noDataText.text(), sNoData, "Table's nodata-text contains correct string");
+
+		$noData.focus();
+		var sLabelledBy = $noData.attr("aria-labelledby");
+		assert.equal(Core.byId(sLabelledBy).getText(), sNoData, "Accessbility text is set correctly");
+
+		sut.destroy();
+	});
+
+	QUnit.test("No Data Control", function(assert) {
+		var sut = createSUT("tblNoDataIMNC", true, false, "None", false);
+		var oData = {
+			items: [],
+			cols: ["Name", "Color", "Number"]
+		};
+		sut.setModel(new JSONModel(oData));
+		sut.placeAt("qunit-fixture");
+
+		var oControl = new Button({text: "Button 1"});
+		sut.setNoData(oControl);
+		Core.applyChanges();
+
+		var $noData = sut.$().find("#" + sut.getId() + "-nodata");
+		var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
+		assert.ok(sut.getNoData().isA("sap.m.Button"), "Table's no data aggregation is a button");
+		assert.equal(sut.getNoData().getText(), oControl.getText(), "Table's no data aggregation has correct button text");
+		assert.strictEqual($noDataText.children().get(0), oControl.getDomRef(), "Table's nodata-text contains button's DOM element");
+
+		$noData.focus();
+		var sLabelledBy = $noData.attr("aria-labelledby");
+		assert.equal(Core.byId(sLabelledBy).getText(), "Button Button 1", "Accessbility text is set correctly");
+
+		oControl = new Text({text: "Text 1"});
+		sut.setNoData(oControl);
+		Core.applyChanges();
+
+		assert.ok(sut.getNoData().isA("sap.m.Text"), "Table's changed no data aggregation is a text");
+		assert.equal(sut.getNoData().getText(), oControl.getText(), "Table's changed no data aggregation has correct text");
+		assert.strictEqual($noDataText.children().get(0), oControl.getDomRef(), "Table's changed nodata-text contains text's DOM element");
+
+		$noData.focus();
+		var sLabelledBy = $noData.attr("aria-labelledby");
+		assert.equal(Core.byId(sLabelledBy).getText(), "Text 1", "Accessbility text is set correctly");
 	});
 });

@@ -63,6 +63,9 @@ sap.ui.define([],
 				},
 				contextMenu: {
 					ignore: true
+				},
+				noData: {
+					ignore: true
 				}
 			},
 			actions: {
