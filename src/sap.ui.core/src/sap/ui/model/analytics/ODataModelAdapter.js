@@ -123,7 +123,8 @@ sap.ui.define(['./AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata
 			this.oOData4SAPAnalyticsModel = new odata4analytics.Model(
 				new odata4analytics.Model.ReferenceByModel(this));
 		} catch (exception) {
-			throw "Failed to instantiate analytical extensions for given OData model: " + exception.message;
+			throw "Failed to instantiate analytical extensions for given OData model: "
+				+ (exception.message || exception);
 		}
 		return this.oOData4SAPAnalyticsModel;
 	};

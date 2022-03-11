@@ -62,6 +62,7 @@ sap.ui.require([
 		// "sap/ui/core/qunit/analytics/AnalyticalBinding.qunit",
 		"sap/ui/core/qunit/analytics/AnalyticalTreeBindingAdapter.qunit",
 		"sap/ui/core/qunit/analytics/odata4analytics.qunit",
+		"sap/ui/core/qunit/analytics/ODataModelAdapter.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses sinon 1
 		// test is contained in /sap.ui.table/test/sap/ui/table/qunit/testsuite.qunit.js
 		// "sap/ui/table/qunit/AnalyticalTable.qunit",
