@@ -14,15 +14,18 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class Delegate class for <code>sap.ui.mdc.field.FieldBase</code>.<br>
+	 * Delegate for {@link sap.ui.mdc.field.FieldBase FieldBase}.<br>
 	 * <b>Note:</b> The class is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
 	 *
+	 * @namespace
 	 * @author SAP SE
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @experimental As of version 1.72
 	 * @since 1.72.0
-	 * @alias sap.ui.mdc.field.FieldBaseDelegate
+	 * @extends module:sap/ui/mdc/BaseDelegate
+	 * @alias module:sap/ui/mdc/field/FieldBaseDelegate
 	 */
 	var FieldBaseDelegate = Object.assign({}, BaseDelegate);
 
@@ -96,15 +99,16 @@ sap.ui.define([
 	 * This function enhances the value with unit or currency information if needed by the data type.
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {any[]} aValue Value
+	 * @param {any[]} aValues Values
 	 * @param {object} oTypeInitialization Information needed to initialize internal type
+	 * @returns {any[]} Values
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since: 1.93.0
 	 */
-	FieldBaseDelegate.enhanceValueForUnit = function(oPayload, aValue, oTypeInitialization) {
+	FieldBaseDelegate.enhanceValueForUnit = function(oPayload, aValues, oTypeInitialization) {
 
-		return aValue;
+		return aValues;
 
 	};
 
