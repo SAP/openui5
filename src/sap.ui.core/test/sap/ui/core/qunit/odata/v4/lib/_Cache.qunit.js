@@ -10,10 +10,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
-	"sap/ui/model/odata/v4/lib/_Requestor",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/odata/v4/lib/_Requestor"
 ], function (Log, isEmptyObject, SyncPromise, ODataUtils, _Cache, _GroupLock, _Helper, _Parser,
-		_Requestor, TestUtils) {
+		_Requestor) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Cache",
@@ -8594,7 +8593,7 @@ sap.ui.define([
 						.then(function () {
 							assert.ok(false);
 						}, function (oError) {
-							TestUtils.checkError(assert, oError, Error,
+							assert.strictEqual(oError.message,
 								"Expected 1 row(s), but instead saw " + aData.length);
 						});
 				});
