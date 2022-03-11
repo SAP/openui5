@@ -2885,45 +2885,47 @@ sap.ui.define([
 	 * @param {string[]} aKeptElementPredicates
 	 *   The key predicates for all kept-alive elements
 	 * @param {boolean} [bKeepCreated]
-	 *   Whether created persisted elements shall be kept in place and a backup shall be remembered
-	 *   for a later {@link #restore}
+	 *   Whether created persisted elements that started as inactive shall be kept in place and a
+	 *   backup shall be remembered for a later {@link #restore}
 	 *
 	 * @public
 	 * @see _Cache#hasPendingChangesForPath
 	 */
 	_CollectionCache.prototype.reset = function (aKeptElementPredicates, bKeepCreated) {
-		var sAnnotation = bKeepCreated ? "transientPredicate" : "transient",
-			mByPredicate = this.aElements.$byPredicate,
+		var mByPredicate = this.aElements.$byPredicate,
 			mChangeListeners = this.mChangeListeners,
+			iCreated = 0, // index (and finally number) of created elements that we keep
 			oElement,
-			iTransient = 0,
 			i,
 			that = this;
 
 		if (bKeepCreated) {
 			this.oBackup = {};
+			this.oBackup.iActiveElements = this.iActiveElements;
 			this.oBackup.mChangeListeners = this.mChangeListeners;
 			this.oBackup.sContext = this.sContext;
-			this.oBackup.aElements = this.aElements.slice(this.aElements.$created);
+			this.oBackup.aElements = this.aElements.slice();
 			this.oBackup.$byPredicate = mByPredicate;
 			this.oBackup.$count = this.aElements.$count;
+			this.oBackup.$created = this.aElements.$created;
 			this.oBackup.iLimit = this.iLimit;
 		}
 
 		for (i = 0; i < this.aElements.$created; i += 1) {
 			oElement = this.aElements[i];
-			if (_Helper.getPrivateAnnotation(oElement, sAnnotation)) {
+			if (_Helper.getPrivateAnnotation(oElement, "transient")
+					|| bKeepCreated && "@$ui5.context.isInactive" in oElement) {
 				aKeptElementPredicates.push(_Helper.getPrivateAnnotation(oElement, "predicate")
 					|| _Helper.getPrivateAnnotation(oElement, "transientPredicate"));
-				this.aElements[iTransient] = oElement;
-				iTransient += 1;
+				this.aElements[iCreated] = oElement;
+				iCreated += 1;
 			} else { // Note: "created persisted" elements must be active
 				this.iActiveElements -= 1;
 			}
 		}
 		this.mChangeListeners = {};
 		this.sContext = undefined;
-		this.aElements.length = this.aElements.$created = iTransient;
+		this.aElements.length = this.aElements.$created = iCreated;
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined; // needed for setCount()
 		this.iLimit = Infinity;
@@ -2948,15 +2950,17 @@ sap.ui.define([
 	 */
 	_CollectionCache.prototype.restore = function (bReally) {
 		if (bReally) {
+			this.iActiveElements = this.oBackup.iActiveElements;
 			this.mChangeListeners = this.oBackup.mChangeListeners;
 			this.sContext = this.oBackup.sContext;
 			// Note: do not change reference to this.aElements! It's kept in closures :-(
-			this.aElements.length = this.aElements.$created;
+			this.aElements.length = this.oBackup.aElements.length;
 			this.oBackup.aElements.forEach(function (oElement, i) {
-				this[this.$created + i] = oElement;
+				this[i] = oElement;
 			}, this.aElements);
 			this.aElements.$byPredicate = this.oBackup.$byPredicate;
 			this.aElements.$count = this.oBackup.$count;
+			this.aElements.$created = this.oBackup.$created;
 			this.iLimit = this.oBackup.iLimit;
 		}
 		this.oBackup = null;

@@ -8763,9 +8763,9 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
-			oCreated0 = {},
-			oCreated1 = {},
-			oCreated2 = {},
+			oCreated0 = {"@$ui5.context.isInactive" : false}, // "inline creation row"
+			oCreated1 = {}, // ordinary created persisted => not kept!
+			oCreated2 = {"@$ui5.context.isInactive" : false}, // "inline creation row"
 			mChangeListeners = {
 				"($uid=id-1-23)/bar" : "~listener[]~2~",
 				"($uid=id-1-42)/baz" : "~listener[]~3~",
@@ -8779,7 +8779,7 @@ sap.ui.define([
 			oElement1 = {},
 			oElement2 = {},
 			oTail = SyncPromise.resolve(),
-			oTransient0 = {},
+			oTransient0 = {}, // "inline creation row" must not matter here
 			oTransient1 = {},
 			mByPredicate = {
 				"($uid=id-1-23)" : oTransient0,
@@ -8838,12 +8838,12 @@ sap.ui.define([
 			delete mChangeListeners["('3')/foo"];
 			delete mByPredicate["('3')"];
 		}
+		delete mChangeListeners["('1')/b"];
+		delete mByPredicate["('1')"];
 		if (!bKeepCreated) {
 			delete mChangeListeners["('0')/a"];
-			delete mChangeListeners["('1')/b"];
 			delete mChangeListeners["('2')/c"];
 			delete mByPredicate["('0')"];
-			delete mByPredicate["('1')"];
 			delete mByPredicate["('2')"];
 
 			assert.strictEqual(oCache.oBackup, "~oBackup~");
@@ -8853,17 +8853,16 @@ sap.ui.define([
 
 			assert.strictEqual(oCache.oBackup, null);
 		}
-		assert.strictEqual(oCache.iActiveElements, bKeepCreated ? 4 : 1, "iActiveElements changed");
+		assert.strictEqual(oCache.iActiveElements, bKeepCreated ? 3 : 1, "iActiveElements changed");
 		assert.deepEqual(oCache.mChangeListeners, mChangeListeners);
 		assert.strictEqual(oCache.sContext, undefined);
 		assert.strictEqual(oCache.aElements, aElements, "reference unchanged");
-		assert.strictEqual(oCache.aElements.length, bKeepCreated ? 5 : 2, "transient ones kept");
+		assert.strictEqual(oCache.aElements.length, bKeepCreated ? 4 : 2, "transient ones kept");
 		if (bKeepCreated) {
 			assert.strictEqual(oCache.aElements[0], oCreated0);
 			assert.strictEqual(oCache.aElements[1], oTransient0);
-			assert.strictEqual(oCache.aElements[2], oCreated1);
-			assert.strictEqual(oCache.aElements[3], oTransient1);
-			assert.strictEqual(oCache.aElements[4], oCreated2);
+			assert.strictEqual(oCache.aElements[2], oTransient1);
+			assert.strictEqual(oCache.aElements[3], oCreated2);
 		} else {
 			assert.strictEqual(oCache.aElements[0], oTransient0);
 			assert.strictEqual(oCache.aElements[1], oTransient1);
@@ -8876,7 +8875,7 @@ sap.ui.define([
 		}
 		assert.strictEqual(oCache.aElements.$count, undefined);
 		assert.ok("$count" in oCache.aElements); // needed for setCount()
-		assert.strictEqual(oCache.aElements.$created, bKeepCreated ? 5 : 2, "$created adjusted");
+		assert.strictEqual(oCache.aElements.$created, bKeepCreated ? 4 : 2, "$created adjusted");
 		assert.strictEqual(oCache.aElements.$tail, oTail, "$tail unchanged");
 		assert.strictEqual(oCache.iLimit, Infinity);
 
@@ -8917,6 +8916,8 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements[7], oElement2);
 			assert.strictEqual(oCache.aElements.length, 8);
 			assert.strictEqual(oCache.aElements.$count, 23);
+			assert.strictEqual(oCache.aElements.$created, 5);
+			assert.strictEqual(oCache.aElements.$tail, oTail, "$tail unchanged");
 			assert.deepEqual(oCache.aElements.$byPredicate, {
 				"($uid=id-1-23)" : oTransient0,
 				"($uid=id-1-42)" : oTransient1,

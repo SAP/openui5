@@ -980,20 +980,13 @@ sap.ui.define([
 			if (this.aContexts[iStart + i] === undefined && aResults[i]) {
 				bChanged = true;
 				i$skipIndex = iStart + i - this.iCreatedContexts; // index on server ($skip)
-				sPredicate = _Helper.getPrivateAnnotation(aResults[i], "predicate")
-					|| _Helper.getPrivateAnnotation(aResults[i], "transientPredicate");
+				sPredicate = _Helper.getPrivateAnnotation(aResults[i], "predicate");
 				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
 				oContext = this.mPreviousContextsByPath[sContextPath];
-				if (oContext && (!oContext.created() || oContext.isTransient())) {
-					// reuse the previous context, unless it is created and persisted
+				if (oContext && !oContext.created()) {
+					// reuse the previous context, unless it is created (and persisted)
 					delete this.mPreviousContextsByPath[sContextPath];
-					if (oContext.isTransient() && !this.iCreatedContexts) {
-						// this can only happen in bindings w/o cache, where all created contexts
-						// are active
-						this.iCreatedContexts = this.iActiveContexts = -oContext.iIndex;
-					} else {
-						oContext.iIndex = i$skipIndex;
-					}
+					oContext.iIndex = i$skipIndex;
 					oContext.checkUpdate();
 				} else {
 					oContext = Context.create(oModel, this, sContextPath, i$skipIndex);
@@ -2702,6 +2695,7 @@ sap.ui.define([
 		return this.oCachePromise.then(function (oCache) {
 			var iActiveContexts = that.iActiveContexts,
 				iCreatedContexts = that.iCreatedContexts,
+				aContexts = that.aContexts.slice(0, iCreatedContexts),
 				aDependentBindings,
 				oKeptElementsPromise,
 				oPromise = that.oRefreshPromise;
@@ -2730,6 +2724,8 @@ sap.ui.define([
 							throw oError;
 						}
 						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
+							var i;
+
 							if (!that.bRelative || oCache.getResourcePath() === sResourcePath) {
 								if (that.oCache === oCache) {
 									oCache.restore(true);
@@ -2740,6 +2736,11 @@ sap.ui.define([
 								}
 								that.iActiveContexts = iActiveContexts;
 								that.iCreatedContexts = iCreatedContexts;
+								for (i = 0; i < iCreatedContexts; i += 1) {
+									aContexts[i].iIndex = i - iCreatedContexts;
+									delete that.mPreviousContextsByPath[aContexts[i].getPath()];
+								}
+								that.aContexts = aContexts; // restore created contexts
 								that._fireChange({reason : ChangeReason.Change});
 							}
 							throw oError;
@@ -3146,8 +3147,9 @@ sap.ui.define([
 	 *   getContexts() fires a change event with this reason. Change reason "change" is ignored
 	 *   as long as the binding is still empty.
 	 * @param {boolean} [bDrop]
-	 *   By default, created persisted contexts are dropped while transient ones are not.
-	 *   <code>true</code> also drops transient ones, but <code>false</code> drops nothing.
+	 *   By default, all created persisted contexts are dropped while transient ones are not.
+	 *   <code>true</code> also drops transient ones, and <code>false</code> keeps created persisted
+	 *   that started as inactive.
 	 *
 	 * @private
 	 */
@@ -3166,22 +3168,19 @@ sap.ui.define([
 			this.aContexts.slice(this.iCreatedContexts).forEach(function (oContext) {
 				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 			});
-			if (bDrop === false) {
-				iTransient = this.iCreatedContexts; // keep 'em all
-			} else {
-				for (i = 0; i < this.iCreatedContexts; i += 1) {
-					oContext = this.aContexts[i];
-					if (oContext.isTransient()) {
-						this.aContexts[iTransient] = oContext;
-						iTransient += 1;
-					} else { // Note: "created persisted" elements must be active - drop 'em
-						this.iActiveContexts -= 1;
-						this.mPreviousContextsByPath[oContext.getPath()] = oContext;
-					}
+			for (i = 0; i < this.iCreatedContexts; i += 1) {
+				oContext = this.aContexts[i];
+				if (oContext.isTransient()
+						|| bDrop === false && oContext.isInactive() !== undefined) {
+					this.aContexts[iTransient] = oContext;
+					iTransient += 1;
+				} else { // Note: "created persisted" elements must be active - drop 'em
+					this.iActiveContexts -= 1;
+					this.mPreviousContextsByPath[oContext.getPath()] = oContext;
 				}
-				for (i = 0; i < iTransient; i += 1) {
-					this.aContexts[i].iIndex = i - iTransient;
-				}
+			}
+			for (i = 0; i < iTransient; i += 1) {
+				this.aContexts[i].iIndex = i - iTransient;
 			}
 			// Note: no strict need to keep the reference here
 			this.aContexts.length = this.iCreatedContexts = iTransient;
