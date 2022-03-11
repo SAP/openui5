@@ -142,7 +142,6 @@ sap.ui.define([
 	 *
 	 * Interface for valuehelp containers / contents supporting typeahead functionality
 	 *
-	 *
 	 * @since 1.95
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent
 	 * @interface

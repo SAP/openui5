@@ -62,6 +62,40 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * Modules for {@link sap.ui.mdc.ValueHelp ValueHelp}
+	 * @namespace
+	 * @name sap.ui.mdc.valuehelp
+	 * @since 1.95.0
+	 * @private
+	 * @experimental As of version 1.95
+	 * @ui5-restricted sap.ui.mdc
+	 */
+
+	/**
+	 * Base-modules for {@link sap.ui.mdc.ValueHelp ValueHelp}
+	 *
+	 * These modules are not to be used stand-alone.
+	 * @namespace
+	 * @name sap.ui.mdc.valuehelp.base
+	 * @since 1.95.0
+	 * @private
+	 * @experimental As of version 1.95
+	 * @ui5-restricted sap.ui.mdc
+	 */
+
+	/**
+	 * Content-modules to be used in {@link sap.ui.mdc.valueHelp.Popover Popover} or {@link sap.ui.mdc.valueHelp.Dialog Dialog}
+	 *
+	 * These modules are not to be used stand-alone.
+	 * @namespace
+	 * @name sap.ui.mdc.valuehelp.content
+	 * @since 1.95.0
+	 * @private
+	 * @experimental As of version 1.95
+	 * @ui5-restricted sap.ui.mdc
+	 */
+
+	/**
 	 * Constructor for a new <code>ValueHelp</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
