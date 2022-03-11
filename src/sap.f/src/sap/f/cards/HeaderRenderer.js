@@ -27,11 +27,15 @@ sap.ui.define([], function () {
 			bLoading = oHeader.isLoading(),
 			oError = oHeader.getAggregation("_error"),
 			oToolbar = oHeader.getToolbar(),
-			sTabIndex = oHeader._isFocusable() ? "0" : "-1";
+			sTabIndex;
 
 		oRm.openStart("div", oHeader)
-			.attr("tabindex", sTabIndex)
 			.class("sapFCardHeader");
+
+		if (oHeader.getProperty("focusable")) {
+			sTabIndex = oHeader._isInsideGridContainer() ? "-1" : "0";
+			oRm.attr("tabindex", sTabIndex);
+		}
 
 		if (bLoading) {
 			oRm.class("sapFCardHeaderLoading");

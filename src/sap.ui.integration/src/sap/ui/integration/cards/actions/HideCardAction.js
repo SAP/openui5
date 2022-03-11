@@ -25,9 +25,12 @@ sap.ui.define([
 
 		if (oDialog instanceof Dialog) {
 			oDialog.close();
+			oDialog.attachAfterClose(function () {
+				oCard.destroy();
+			});
+		} else {
+			oCard.destroy();
 		}
-
-		oCard.destroy();
 	};
 
 	return HideCardAction;
