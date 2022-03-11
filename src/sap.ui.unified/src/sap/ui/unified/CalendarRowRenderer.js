@@ -447,7 +447,8 @@ sap.ui.define([
 
 			mAttributes["id"] = sId + "-Icon";
 			mAttributes["title"] = null;
-			mAttributes["role"] = "img";
+			mAttributes["alt"] = null;
+			mAttributes["role"] = "presentation";
 			oRm.icon(sIcon, aClasses, mAttributes);
 		}
 
@@ -607,7 +608,8 @@ sap.ui.define([
 				var mAttributes = {};
 				mAttributes["id"] = sId + "-Icon";
 				mAttributes["title"] = null;
-				mAttributes["role"] = "img";
+				mAttributes["alt"] = null;
+				mAttributes["role"] = "presentation";
 				oRm.icon(sIcon, aClasses, mAttributes);
 			}
 			oRm.openStart("div");
