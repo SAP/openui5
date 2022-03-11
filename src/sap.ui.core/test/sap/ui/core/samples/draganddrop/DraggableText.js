@@ -3,7 +3,10 @@ sap.ui.define(['sap/m/Text'], function(Text) {
 
 	// Control extension
 	var DraggableText = Text.extend("my.DraggableText", {
-		renderer: {}
+		renderer: {},
+		metadata: {
+			dnd: true
+		}
 	});
 
 	// Control extension for custom ghost

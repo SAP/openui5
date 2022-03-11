@@ -23,7 +23,6 @@ sap.ui.define([
 	 * This feature enables a native HTML5 drag-and-drop API for the controls, therefore it is limited to browser support.
 	 * <h3>Restrictions</h3>
 	 * <ul>
-	 *   <li>There is no mobile device that supports drag and drop.</li>
 	 *   <li>There is no accessible alternative for drag and drop. Applications which use the drag-and-drop functionality must provide an
 	 *   accessible alternative UI (for example, action buttons or menus) to perform the same operations.</li>
 	 *   <li>Transparency of the drag ghost element and the cursor during drag-and-drop operations depends on the browser implementation.</li>

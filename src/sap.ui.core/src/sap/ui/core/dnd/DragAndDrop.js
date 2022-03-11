@@ -543,9 +543,9 @@ function(lib, Device, UIArea, jQuery) {
 			return;
 		}
 
-		// firefox needs data set to allow dragging
-		if (Device.browser.firefox && oEvent.originalEvent.dataTransfer.types.length === 0) {
-			oEvent.originalEvent.dataTransfer.setData("ui5/dummyDataForFirefox", "data");
+		// mobile devices needs text data set on the dataTransfer object to allow dragging
+		if (!Device.system.desktop && !oEvent.originalEvent.dataTransfer.getData("text")) {
+			oEvent.originalEvent.dataTransfer.setData("text", "");
 		}
 
 		// create the drag session object and attach to the event
