@@ -477,6 +477,22 @@ sap.ui.define([
 	UploadSet.prototype.exit = function () {
 		this._oNoDataIcon.destroy();
 		this._oNoDataIcon = null;
+		if (this._oList) {
+			this._oList.destroy();
+			this._oList = null;
+		}
+		if (this._oToolbar) {
+			this._oToolbar.destroy();
+			this._oToolbar = null;
+		}
+		if (this._oFileUploader) {
+			this._oFileUploader.destroy();
+			this._oFileUploader = null;
+		}
+		if (this._oUploader) {
+			this._oUploader.destroy();
+			this._oUploader = null;
+		}
 	};
 
 	/* ===================== */
@@ -619,11 +635,15 @@ sap.ui.define([
 	UploadSet.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
 		if (sAggregationName === "items") {
 			this.getItems().forEach(function (oItem) {
-				this.getList().removeAggregation("items", oItem._getListItem(), bSuppressInvalidate);
+				if (this._oList) {
+					this._oList.removeAggregation("items", oItem._getListItem(), bSuppressInvalidate);
+				}
 			}.bind(this));
 		} else if (sAggregationName === "incompleteItems") {
 			this.getIncompleteItems().forEach(function (oItem) {
-				this.getList().removeAggregation("items", oItem._getListItem(), bSuppressInvalidate);
+				if (this._oList) {
+					this._oList.removeAggregation("items", oItem._getListItem(), bSuppressInvalidate);
+				}
 			}.bind(this));
 		}
 		Control.prototype.removeAllAggregation.call(this, sAggregationName, bSuppressInvalidate);
@@ -633,8 +653,8 @@ sap.ui.define([
 		if (sAggregationName === "items" || sAggregationName === "incompleteItems") {
 			this.removeAllAggregation(sAggregationName, bSuppressInvalidate);
 		}
-		if (this.getList().getItems().length === 0) {
-			this.getList().destroyAggregation("items", bSuppressInvalidate);
+		if (this._oList && this._oList.getItems().length === 0) {
+			this._oList.destroyAggregation("items", bSuppressInvalidate);
 		}
 		Control.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
