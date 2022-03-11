@@ -245,7 +245,9 @@ sap.ui.define([
 	 * Returns a promise that is resolved without data when the entity represented by this context
 	 * has been created in the back end and all selected properties of this entity are available.
 	 * Expanded navigation properties are only available if the context's binding is refreshable.
-	 * {@link sap.ui.model.odata.v4.ODataBinding#refresh} describes which bindings are refreshable.
+	 * {@link sap.ui.model.odata.v4.ODataContextBinding#refresh} and
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#refresh}
+	 * describe which bindings are refreshable.
 	 *
 	 * As long as the promise is not yet resolved or rejected, the entity represented by this
 	 * context is transient.
