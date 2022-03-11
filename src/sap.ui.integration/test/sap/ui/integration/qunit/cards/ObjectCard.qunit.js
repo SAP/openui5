@@ -190,7 +190,15 @@ sap.ui.define([
 						"emailSubject": "Subject",
 						"website": "www.company_a.example.com",
 						"url": "http://www.company_a.example.com"
-					}
+					},
+					"team": [
+						{
+							"name": "SD"
+						},
+						{
+							"name": "GF"
+						}
+					]
 				}
 			},
 			"header": {
@@ -284,6 +292,40 @@ sap.ui.define([
 										}
 									}
 								]
+							},
+							{
+								"visible": "{visible}",
+								"type": "NumericData",
+								"mainIndicator": {
+									"number": "35",
+									"unit": "h",
+									"state": "Error",
+									"size": "S"
+								},
+								"sideIndicators": [
+									{
+										"title": "Target",
+										"number": "100",
+										"unit": "K"
+									},
+									{
+										"title": "Deviation",
+										"number": "34.7",
+										"unit": "%"
+									}
+								],
+								"details": "Project Nanga Prabat (Ingo) 0 hours recorded."
+							},
+							{
+								"visible": "{visible}",
+								"label": "Team",
+								"type": "IconGroup",
+								"path": "team",
+								"template": {
+									"icon": {
+										"text": "{/name}"
+									}
+								}
 							}
 						]
 					}
@@ -568,15 +610,20 @@ sap.ui.define([
 		var done = assert.async();
 
 		this.oCard.attachEvent("_ready", function () {
-			var oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+			var oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
+				aTestItems = oLayout.getContent()[1].getItems();
 
 			Core.applyChanges();
+
 			assert.ok(oLayout.getDomRef().children[0].classList.contains("sapFCardInvisibleContent"), "Group is hidden");
 			assert.notOk(oLayout.getDomRef().children[1].classList.contains("sapFCardInvisibleContent"), "Group should be visible");
-			assert.notOk(oLayout.getContent()[1].getItems()[1].getVisible(), "The group item should not be visible");
-			assert.notOk(oLayout.getContent()[1].getItems()[2].getVisible(), "The group item should not be visible");
-			assert.ok(oLayout.getContent()[1].getItems()[3].getVisible(), "The group item should be visible");
-			assert.ok(oLayout.getContent()[1].getItems()[4].getVisible(), "The group item should be visible");
+
+			assert.notOk(aTestItems[1].getVisible(), "The group item should not be visible");
+			assert.notOk(aTestItems[2].getVisible(), "The group item should not be visible");
+			assert.ok(aTestItems[3].getVisible(), "The group item should be visible");
+			assert.ok(aTestItems[4].getVisible(), "The group item should be visible");
+			assert.ok(aTestItems[5].getVisible(), "The numeric data group item should not be visible");
+			assert.ok(aTestItems[6].getVisible(), "The icon group group item should not be visible");
 			done();
 		}.bind(this));
 
