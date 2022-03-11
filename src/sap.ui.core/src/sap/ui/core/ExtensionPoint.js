@@ -234,7 +234,12 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 							next.index += aControls.length;
 							next = next._nextSibling;
 						}
+
+						this._aControls = aControls;
 					},
+
+					// the resolved controls of this ExtensionPoint
+					_aControls: [],
 
 					// only used internally to check for a marker object
 					_isExtensionPoint: true,

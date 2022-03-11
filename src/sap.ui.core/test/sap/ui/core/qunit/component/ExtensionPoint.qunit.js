@@ -27,9 +27,9 @@ sap.ui.define([
 		}
 
 		return Component.create({
-				name: "testdata.customizing.customer.ext",
-				id: "ExtComponent",
-				manifest: false
+			name: "testdata.customizing.customer.ext",
+			id: "ExtComponent",
+			manifest: false
 		}).then(function(_oComp) {
 			oComponent = _oComp;
 			oComponentContainer = new ComponentContainer({
@@ -95,7 +95,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ExtensionPoint on top-level of XMLView", function(assert) {
-		assert.expect(44);
+		assert.expect(48);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
@@ -153,6 +153,14 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[5].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
+
+			// check rendering result for top-level extension points
+			// EP0
+			assert.ok(oView.byId("zero--defaultButton").getDomRef(), "Default Button in EP_Zero is rendered");
+			// EP99
+			assert.ok(oView.byId("ep99--button0").getDomRef(), "Button 0 from EP99 is rendered");
+			assert.ok(oView.byId("ep99--input0").getDomRef(), "Input 0 from EP99 is rendered");
+			assert.ok(oView.byId("ep99--input1").getDomRef(), "Input 1 from EP99 is rendered");
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
@@ -232,7 +240,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(37);
+		assert.expect(39);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(!ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
@@ -283,6 +291,12 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[2].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[3].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
+
+			// check rendering result for top-level extension points
+			// EP0
+			assert.ok(oView.byId("zero--defaultButton").getDomRef(), "Default Button in EP_Zero is rendered");
+			// EP99
+			assert.ok(oView.byId("nine_nine--defaultButton").getDomRef(), "Default Button in EP99 is rendered");
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
