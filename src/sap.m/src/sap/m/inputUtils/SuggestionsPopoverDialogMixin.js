@@ -94,7 +94,8 @@ sap.ui.define([
 		/**
 		 * Sets Show More button to <code>SuggestionsPopover</code>'s Dialog.
 		 *
-	 	 * @param {sap.m.Button} oShowMoreButton The "Show More" button for the Dialog's <code>endButton</code> aggregation
+		 * @param {sap.m.Button} oShowMoreButton The "Show More" button for the Dialog's <code>endButton</code> aggregation
+		 * @returns {this} This instance for method chaining.
 		 * @public
 		 */
 		this.setShowMoreButton = function(oShowMoreButton) {
@@ -105,6 +106,7 @@ sap.ui.define([
 		/**
 		 * Destroys Show More button from <code>SuggestionsPopover<code>'s Dialog.
 		 *
+		 * @returns {this} This instance for method chaining.
 		 * @public
 		 */
 		this.removeShowMoreButton = function() {
@@ -114,8 +116,8 @@ sap.ui.define([
 
 		/**
 		 * @override
-		 * @param fnHandler
-		 * @returns {sap.m.Button|null}
+		 * @param {function} fnHandler The press handler function.
+		 * @returns {sap.m.Button|null} The cancel button instance or null.
 		 */
 		this.setOkPressHandler = function (fnHandler) {
 			var oOkButton = this.getOkButton();
@@ -126,8 +128,8 @@ sap.ui.define([
 
 		/**
 		 * @override
-		 * @param fnHandler
-		 * @returns {sap.m.Button|null}
+		 * @param {function} fnHandler The press handler function.
+		 * @returns {sap.m.Button|null} The cancel button instance or null.
 		 */
 		this.setCancelPressHandler = function (fnHandler) {
 			var oCancelButton = this.getCancelButton();
@@ -138,8 +140,8 @@ sap.ui.define([
 
 		/**
 		 * @override
-		 * @param fnHandler
-		 * @returns {sap.m.ToggleButton|sap.m.Button|null}
+		 * @param {function} fnHandler The press handler function.
+		 * @returns {sap.m.ToggleButton|sap.m.Button|null} The filter selected button instance or null.
 		 */
 		this.setShowSelectedPressHandler = function (fnHandler) {
 			var oFilterSelectedButton = this.getFilterSelectedButton();
@@ -152,14 +154,15 @@ sap.ui.define([
 		 * Instantiates the dialog.
 		 *
 		 * @override
-		 * @param oInput
-		 * @param mOptions
-		 * @returns {sap.m.Dialog}
+		 * @param {sap.m.Input} oInput The parent Input control.
+		 * @param {object} mOptions Options object map.
+		 * @param {sap.m.Input} Input The input class as dependency injection.
+		 * @returns {sap.m.Dialog} The newly created picker.
 		 */
-		this.createPopover = function (oInput, mOptions) {
+		this.createPopover = function (oInput, mOptions, InputClass) {
 			var oMessageBundle = Core.getLibraryResourceBundle("sap.m"),
 				that = this,
-				oPopupInput = new sap.m.Input(oInput.getId() + "-popup-input", {
+				oPopupInput = InputClass && new InputClass(oInput.getId() + "-popup-input", {
 					width: "100%",
 					showValueStateMessage: false
 				});
@@ -243,9 +246,9 @@ sap.ui.define([
 		/**
 		 * Dialog's header content
 		 *
-		 * @param mOptions
-		 * @param oPopupInput
-		 * @return {sap.m.Toolbar} The toolbar
+		 * @param {object} mOptions Options map object.
+		 * @param {sap.m.Input} oPopupInput The picker's internal Input.
+		 * @return {sap.m.Toolbar} The newly created toolbar.
 		 * @private
 		 */
 		function _createSubHeaderContent(mOptions, oPopupInput) {
@@ -276,6 +279,7 @@ sap.ui.define([
 		/**
 		 * Gets the Value State Header instance.
 		 *
+		 * @returns {sap.m.ValueStateHeader} The value state header.
 		 * @private
 		 */
 		this._getValueStateHeader = function () {

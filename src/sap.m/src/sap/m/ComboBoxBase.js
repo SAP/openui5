@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	'./Input',
 	'./ComboBoxTextField',
 	'./ComboBoxBaseRenderer',
 	'./SuggestionsPopover',
@@ -25,6 +26,7 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ],
 	function(
+		Input,
 		ComboBoxTextField,
 		ComboBoxBaseRenderer,
 		SuggestionsPopover,
@@ -1072,7 +1074,7 @@ sap.ui.define([
 
 			oSuggPopover.decorateParent(this);
 			// Creates the internal controls of the <code>SuggestionsPopover</code>
-			oSuggPopover.createSuggestionPopup(this, {showSelectedButton: this._hasShowSelectedButton()});
+			oSuggPopover.createSuggestionPopup(this, {showSelectedButton: this._hasShowSelectedButton()}, Input);
 			this._decoratePopupInput(oSuggPopover.getInput());
 			oSuggPopover.initContent(this.getId());
 			this.forwardEventHandlersToSuggPopover(oSuggPopover);
