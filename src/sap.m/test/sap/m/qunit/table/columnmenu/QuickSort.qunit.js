@@ -51,15 +51,14 @@ sap.ui.define([
 
 	QUnit.test("Content", function(assert) {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		var oContent = this.oQuickSort.getEffectiveQuickActions()[0].getContent();
-		assert.ok(oContent, "The quick sort has content");
+		var aContent = this.oQuickSort.getEffectiveQuickActions()[0].getContent();
+		assert.ok(aContent, "The quick sort has content");
 
-		var aItems = oContent.getItems();
-		assert.equal(aItems.length, 2, "The quick sort has 2 buttons");
-		assert.equal(aItems[0].getText(), oBundle.getText("table.COLUMNMENU_SORT_ASCENDING"), "Ascending button");
-		assert.ok(aItems[0].getPressed(), "The ascending button is pressed");
-		assert.equal(aItems[1].getText(), oBundle.getText("table.COLUMNMENU_SORT_DESCENDING"), "Descending button");
-		assert.ok(!aItems[1].getPressed(), "The descending button is not pressed");
+		assert.equal(aContent.length, 2, "The quick sort has 2 buttons");
+		assert.equal(aContent[0].getText(), oBundle.getText("table.COLUMNMENU_SORT_ASCENDING"), "Ascending button");
+		assert.ok(aContent[0].getPressed(), "The ascending button is pressed");
+		assert.equal(aContent[1].getText(), oBundle.getText("table.COLUMNMENU_SORT_DESCENDING"), "Descending button");
+		assert.ok(!aContent[1].getPressed(), "The descending button is not pressed");
 
 		var oItem = new QuickSortItem({
 			key: "propertyB",
@@ -82,8 +81,8 @@ sap.ui.define([
 			assert.equal(aItems[1].getPressed(), sortOrder === "Descending", "The descending button is not pressed");
 		}
 
-		testItems(aQuickActions[0].getContent().getItems(), "Ascending");
-		testItems(aQuickActions[1].getContent().getItems(), "Descending");
+		testItems(aQuickActions[0].getContent(), "Ascending");
+		testItems(aQuickActions[1].getContent(), "Descending");
 	});
 
 	QUnit.module("Events", {

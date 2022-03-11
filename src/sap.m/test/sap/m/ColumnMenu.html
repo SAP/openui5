@@ -66,7 +66,7 @@
 				});
 
 				var oQuickFilter = new QuickAction({
-					label: "Quick Filter:",
+					label: "Quick Filter",
 					content: new sap.m.ComboBox()
 				});
 
@@ -101,8 +101,40 @@
 				});
 
 				var oQuickCustomAction = new QuickAction({
-					label: "Quick Custom:",
+					label: "Quick Custom",
 					content: new sap.m.Button({ text: "Execute Custom Action" })
+				});
+
+				var oQuickCustomLayoutNormal = new QuickAction({
+					label: "Quick Custom Layout Long",
+					content: [
+						new sap.m.Button({ text: "Button 1", layoutData: new sap.ui.layout.GridData({spanS: 4, spanM: 3}) }),
+						new sap.m.Button({ text: "Button 2", layoutData: new sap.ui.layout.GridData({spanS: 4, spanM: 3}) }),
+						new sap.m.Button({ text: "Button 3", layoutData: new sap.ui.layout.GridData({spanS: 4, spanM: 2}) })
+					]
+				});
+
+				var oQuickCustomActionLong = new QuickAction({
+					label: "Quick Custom Long",
+					content: new sap.m.FlexBox({
+						items: [
+							new sap.m.Button({ text: "Execute Custom Action 1" }),
+							new sap.m.Button({ text: "Execute Custom Action 2" }),
+							new sap.m.Button({ text: "Execute Custom Action 3" })
+						],
+						wrap: sap.m.FlexWrap.Wrap
+					}),
+				});
+
+				var oQuickMultiCustomActionLong = new QuickAction({
+					label: "Quick Custom Long with HBox and just items",
+					content: [
+						new sap.m.Button({ text: "Standalone Button 1"}),
+						new sap.m.FlexBox({
+							items: [new sap.m.Button({ text: "Execute Custom Action 1" }), new sap.m.Button({ text: "Execute Custom Action 2" }), new sap.m.Button({ text: "Execute Custom Action 3" })],
+							wrap: sap.m.FlexWrap.Wrap
+						}),
+					],
 				});
 
 				var oBtnReset = new sap.m.Button({
@@ -197,35 +229,78 @@
 					}))
 				}
 
+				// Test Menu
 				var oMenu = new ColumnMenu({
 					_quickActions: [oQuickSort, oQuickFilter, oQuickGroup, oQuickTotal],
-					quickActions: [oQuickCustomAction],
+					quickActions: [oQuickCustomAction, oQuickCustomLayoutNormal, oQuickCustomActionLong, oQuickMultiCustomActionLong],
 					_items: [oReset, oItemFilter, oItemGroup, oItemTable, oActionItem],
 					items: aItems
 				});
 
 				var oButton = new sap.m.Button({
 					text: "Open ColumnMenu",
-					width: "200px"
+					width: "200px",
+					press: function () {
+						oMenu.openBy(this);
+					}
 				});
-
-				oButton.attachPress(function () {
-					oMenu.openBy(this);
-				});
-
 				oButton.addDependent(oMenu);
 				oButton.placeAt("body");
 
 				var oButton2 = new sap.m.Button({
 					text: "Toggle Reset Visibility",
-					width: "200px"
+					width: "200px",
+					press: function () {
+						oReset.setVisible(!oReset.getVisible());
+					}
 				});
-
-				oButton2.attachPress(function () {
-					oReset.setVisible(!oReset.getVisible());
-				});
-
 				oButton2.placeAt("body");
+
+				// Visual Design Example
+				var oSort = new Item({
+					label: "Sort",
+					icon: "sap-icon://sort",
+					content: oBtnReset
+				});
+				var oColumn = new Item({
+					label: "Column",
+					icon: "sap-icon://table-column",
+					content: new sap.m.Button({text: "Column Button"}),
+					resetButtonEnabled: false
+				});
+				var oVDMenu = new ColumnMenu({
+					_quickActions: [oQuickSort.clone(), oQuickFilter.clone(), oQuickGroup.clone(), oQuickTotal.clone()],
+					quickActions: [new QuickAction({
+						label: "App-specific quick action",
+						content: [new sap.m.Button({text: "Action A"}), new sap.m.Button({text: "Action B"})]
+					})],
+					_items: [oSort, oItemFilter.clone(), oItemGroup.clone(), oColumn],
+					items: [
+						new Item({
+							label: "App-specific menu entry 1",
+							icon: "sap-icon://pipeline-analysis",
+							content: new sap.m.Button({
+								text: "Sample Button"
+							})
+						}),
+						new Item({
+							label: "App-specific menu entry 2",
+							icon: "sap-icon://lab",
+							content: new sap.m.Button({
+								text: "Sample Button"
+							})
+						})
+					]
+				});
+
+				var oButton3 = new sap.m.Button({
+					text: "Open VisualDesign ColumnMenu",
+					press: function () {
+						oVDMenu.openBy(this);
+					}
+				});
+				oButton3.addDependent(oVDMenu);
+				oButton3.placeAt("body");
 			});
 		});
 	</script>

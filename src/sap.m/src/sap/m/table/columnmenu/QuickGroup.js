@@ -71,11 +71,11 @@ sap.ui.define([
 	};
 
 	QuickGroup.prototype.getContent = function() {
-		if (!this._oContent) {
-			this._oContent = this.createContent(this.getItems());
+		if (!this._aContent) {
+			this._aContent = this.createContent(this.getItems());
 		}
 
-		return this._oContent;
+		return this._aContent;
 	};
 
 	QuickGroup.prototype.addItem = function(oItem) {
@@ -104,21 +104,21 @@ sap.ui.define([
 	};
 
 	QuickGroup.prototype.createContent = function(aItems) {
-		return new HBox({
-			items: aItems.map(function(oItem) {
-				return new ToggleButton({
-					text: oItem.getLabel(),
-					pressed: oItem.getGrouped(),
-					press: [oItem, this.onChange, this]
-				});
-			}, this)
-		});
+		return aItems.map(function(oItem) {
+			return new ToggleButton({
+				text: oItem.getLabel(),
+				pressed: oItem.getGrouped(),
+				press: [oItem, this.onChange, this]
+			});
+		}, this);
 	};
 
 	QuickGroup.prototype.destroyContent = function() {
-		if (this._oContent) {
-			this._oContent.destroy();
-			delete this._oContent;
+		if (this._aContent) {
+			this._aContent.forEach(function (oContent) {
+				oContent.destroy();
+			});
+			delete this._aContent;
 		}
 	};
 

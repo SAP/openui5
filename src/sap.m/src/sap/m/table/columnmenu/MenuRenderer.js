@@ -11,7 +11,6 @@ sap.ui.define([], function () {
 	MenuRenderer.render = function (oRm, oMenu) {
 		oRm.openStart("div", oMenu);
 		oRm.class("sapMTCMenu");
-
 		oRm.openEnd();
 		this.renderQuickActions(oRm, oMenu);
 		this.renderItems(oRm, oMenu);
@@ -35,28 +34,8 @@ sap.ui.define([], function () {
 		}
 		oRm.openEnd();
 
-		oMenu._getAllEffectiveQuickActions().forEach(function (oQuickAction) {
-			this.renderQuickAction(oRm, oQuickAction);
-		}, this);
+		oRm.renderControl(oMenu._oForm);
 
-		oRm.close("div");
-	};
-
-	MenuRenderer.renderQuickAction = function (oRm, oQuickAction) {
-		oRm.openStart("div", oQuickAction);
-		oRm.class("sapMTCMenuQAction");
-		oRm.openEnd();
-		// Label
-		oRm.openStart("div");
-		oRm.class("sapMTCMenuQALabel");
-		oRm.openEnd();
-		oRm.text(oQuickAction.getLabel());
-		oRm.close("div");
-		// Content
-		oRm.openStart("div");
-		oRm.openEnd();
-		oRm.renderControl(oQuickAction.getContent());
-		oRm.close("div");
 		oRm.close("div");
 	};
 

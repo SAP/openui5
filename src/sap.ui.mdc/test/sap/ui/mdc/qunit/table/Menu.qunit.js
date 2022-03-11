@@ -176,9 +176,9 @@ sap.ui.define([
 
 			var TableSettings = aResult[1];
 			var fSortSpy = sinon.spy(TableSettings, "createSort");
-			var oSortItemContent =  oQuickAction.getItems()[0]._getAction().getContent();
+			var aSortItemContent =  oQuickAction.getItems()[0]._getAction().getContent();
 
-			oSortItemContent.getItems()[0].firePress();
+			aSortItemContent[0].firePress();
 			assert.ok(fSortSpy.calledOnce, "createSort is called");
 
 			fSortSpy.restore();
@@ -206,7 +206,7 @@ sap.ui.define([
 			var oColumnResizer = oTable._oTable.getDependents()[0];
 			oColumnResizer.startResizing = function() {};
 			var fnResizeSpy = sinon.spy(oColumnResizer, "startResizing");
-			oQuickAction.getContent().firePress();
+			oQuickAction.getContent()[0].firePress();
 			assert.ok(fnResizeSpy.calledOnce, "Resizing started");
 
 			oMatchMediaStub.restore();
@@ -239,9 +239,9 @@ sap.ui.define([
 
 			var TableSettings = aResult[1];
 			var fGroupSpy = sinon.spy(TableSettings, "createGroup");
-			var oGroupItemContent =  oQuickAction.getContent();
+			var aGroupItemContent =  oQuickAction.getContent();
 
-			oGroupItemContent.getItems()[0].firePress();
+			aGroupItemContent[0].firePress();
 			assert.ok(fGroupSpy.calledOnce, "createGroup is called");
 
 			fGroupSpy.restore();

@@ -16,10 +16,14 @@
 
 .sapMTCMenu .sapMTCMenuQAList{
 	display: grid;
-	grid-template-columns: minmax(min-content, max-content) 2fr;
-	column-gap: 10px;
-	row-gap: 5px;
-	padding: .5rem 1rem .5rem 1rem;
+
+	.sapUiRespGrid:not(.sapUiRespGridMedia-Std-Phone) .sapMTCMenuQALabel {
+		text-align: right !important;
+	}
+
+	.sapUiRespGrid {
+		width: auto;
+	}
 }
 
 .sapMTCMenu .sapMTCMenuQAListHidden {
