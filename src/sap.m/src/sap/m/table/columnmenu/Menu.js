@@ -222,7 +222,7 @@ sap.ui.define([
 			if (oEvent.relatedControlId) {
 				if (!isInMenuHierarchy) {
 					if (containsOrEquals(this.getDomRef(), jQuery(document.getElementById(oEvent.relatedControlId)).get(0)) ||
-						containsOrEquals(this.getDomRef(), oEvent.target)) {
+						isInControlTree(this, Core.byId(oEvent.relatedControlId))) {
 						isInMenuHierarchy = true;
 					}
 				}
@@ -233,6 +233,16 @@ sap.ui.define([
 			this.close();
 		}
 	};
+
+	function isInControlTree(oParent, oChild) {
+		var temp = oChild.getParent();
+		if (!temp) {
+			return false;
+		} else if (temp === oParent) {
+			return true;
+		}
+		return isInControlTree(oParent, temp);
+	}
 
 	Menu.prototype._initItemsContainer = function () {
 		var aControlMenuItems = (this.getAggregation("_items") || []).reduce(function (aItems, oItem) {
