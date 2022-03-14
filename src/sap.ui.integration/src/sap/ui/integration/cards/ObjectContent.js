@@ -276,13 +276,13 @@ sap.ui.define([
 
 		switch (oItem.type) {
 			case "NumericData":
-				oControl = this._createNumericDataItem(oItem);
+				oControl = this._createNumericDataItem(oItem, vVisible);
 				break;
 			case "Status":
 				oControl = this._createStatusItem(oItem, vVisible);
 				break;
 			case "IconGroup":
-				oControl = this._createIconGroupItem(oItem);
+				oControl = this._createIconGroupItem(oItem, vVisible);
 				break;
 
 			// deprecated types
@@ -338,8 +338,10 @@ sap.ui.define([
 		return oControl;
 	};
 
-	ObjectContent.prototype._createNumericDataItem = function (oItem) {
-		var oVbox = new VBox();
+	ObjectContent.prototype._createNumericDataItem = function (oItem, vVisible) {
+		var oVbox = new VBox({
+			visible: BindingHelper.reuse(vVisible)
+		});
 		var oNumericIndicators = new NumericIndicators({
 			number: oItem.mainIndicator.number,
 			numberSize: oItem.mainIndicator.size,
@@ -417,7 +419,7 @@ sap.ui.define([
 		return oControl;
 	};
 
-	ObjectContent.prototype._createIconGroupItem = function (oItem) {
+	ObjectContent.prototype._createIconGroupItem = function (oItem, vVisible) {
 		var oTemplateConfig = oItem.template;
 		if (!oTemplateConfig) {
 			return null;
@@ -425,7 +427,8 @@ sap.ui.define([
 
 		var oIconGroup = new AvatarGroup({
 			avatarDisplaySize: oItem.size || AvatarSize.XS,
-			groupType: AvatarGroupType.Individual
+			groupType: AvatarGroupType.Individual,
+			visible: BindingHelper.reuse(vVisible)
 		});
 
 		// Disable "show more" button
