@@ -60,6 +60,7 @@ sap.ui.define([
 		QUnit.test("Obtains the componentId from component instance and propagates even if there are no changes for the component", function(assert) {
 			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").resolves({});
 			sandbox.stub(Utils, "isApplicationComponent").returns(true);
+			var oClearStub = sandbox.stub(FlexState, "clearFilteredResponse");
 
 			var oComponent = {
 				getManifestObject: function() {
@@ -83,6 +84,7 @@ sap.ui.define([
 
 			return FlexControllerFactory.getChangesAndPropagate(oComponent, {asyncHints: true, id: "differentComponentId"})
 				.then(function() {
+					assert.strictEqual(oClearStub.callCount, 1, "the prepared stuff in FlexState was cleared");
 					assert.equal(oAddPropagationListenerStub.callCount, 1, "propagation was triggered");
 					assert.equal(this.oInitializeStub.callCount, 1, "FlexState was initialized");
 					assert.ok(this.oInitializeStub.calledWith({
@@ -172,6 +174,7 @@ sap.ui.define([
 
 		QUnit.test("when getChangesForPropagate() is called for an embedded component with a preexisting VariantModel on it's application component before it's done initializing", function(assert) {
 			assert.expect(5);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl");
 			sandbox.stub(FlexControllerFactory, "createForControl").returns({
 				_oChangePersistence: {
 					loadChangesMapForComponent: sandbox.stub().resolves(),
