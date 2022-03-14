@@ -1,0 +1,284 @@
+{
+  "1.101.0": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "977c8044fadddc6ed8d268a080837c988575d920",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: fixed ACC sample and added documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015334"
+          }
+        ]
+      },
+      {
+        "id": "9998573d967c85582ea50a67201ebede534a5037",
+        "type": "FEATURE",
+        "text": " noData aggregation for custom noData visualization added"
+      },
+      {
+        "id": "69cfbdc9fa79dd3478cdac12933e960bb0aef157",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: remove aria-expanded attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270013284"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270013285"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270004311"
+          }
+        ]
+      },
+      {
+        "id": "8ea6ff45abfc522cb5a585a6e2caff82ea4b4a0e",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: fixed titles in sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015336"
+          }
+        ]
+      },
+      {
+        "id": "e5913b4a6fed968db1f30b512937deb820050839",
+        "type": "FEATURE",
+        "text": " DragAndDrop: The mobile support is now enabled"
+      },
+      {
+        "id": "ca103b357853231feb99819bd294de8ec9bb16cb",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: fixed ACC sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015333"
+          }
+        ]
+      },
+      {
+        "id": "01503c649bc2c5d299c06329213fdacd0fbb3b60",
+        "type": "FIX",
+        "text": " Table: Column width calculation issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180413431"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280016497"
+          }
+        ]
+      },
+      {
+        "id": "cd56e4dc5c5dbdc241fe6a1639684d1265c7388b",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: selectedSortItem value is retained",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000397612022"
+          }
+        ]
+      },
+      {
+        "id": "bf3282f9b8bd3ee426dddf075e8d7d2d2f6aef42",
+        "type": "FEATURE",
+        "text": " sap.m.RadioButton: Horizon theme implemented"
+      },
+      {
+        "id": "60dd867baa9474e41e817811674a80ff36c5125b",
+        "type": "FEATURE",
+        "text": " SameFilenameAllowed property added to uploadSet"
+      },
+      {
+        "id": "a04bb13c8fb2a0b3f69ff5ceea0d04765ccbce50",
+        "type": "FEATURE",
+        "text": " Mode property added to upload set"
+      },
+      {
+        "id": "195f79e69799e3f3ee773f04c1d301dcf90cca59",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: The autocompleted values update the model once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000146402022"
+          }
+        ]
+      },
+      {
+        "id": "32baaaf61034c3d17318ed952b98d2db5efa4742",
+        "type": "FIX",
+        "text": " core/m: fix viewport meta for iOS platform",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280037152"
+          }
+        ]
+      },
+      {
+        "id": "e44299cc0b5edb728519bb19659206360f022c1b",
+        "type": "FIX",
+        "text": " sap.m.ComboBox/MultiComboBox: Clear icon enhancements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180419029"
+          }
+        ]
+      },
+      {
+        "id": "9c75a599c644cf5b70b84e52ac2cfcc1b5fe109e",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: selectedSortItem value is retained",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000397612022"
+          }
+        ]
+      },
+      {
+        "id": "a9f0eca82e6d24a7012af3d12953eb925d454f93",
+        "type": "FIX",
+        "text": " sap.m.QuickViewCard: Sample fixed"
+      },
+      {
+        "id": "8a224c80a485fd91e2ff2ce18ece3506543b7883",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Announcing of hidden button is fixed"
+      },
+      {
+        "id": "245925f3bedd97609f12df89057943cad36a5361",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Associations can receive element ids",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000397612022"
+          }
+        ]
+      },
+      {
+        "id": "74ce6762def8b7f7e22b2ac4e121babd9c6576bb",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: handle inner input focus behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280043470"
+          }
+        ]
+      },
+      {
+        "id": "232b3d44d2b4d5f07e059e2293afba3bdea9d29d",
+        "type": "FEATURE",
+        "text": " sap.m.QuickView: Placeholder for empty texts added"
+      },
+      {
+        "id": "72486d078c9600b350e54e7bfd734d10cf7df68d",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: position read only icon properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280050197"
+          }
+        ]
+      },
+      {
+        "id": "d1f2348bc39fc655bbe3613415b047035270a5ce",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Selecting sub item is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280041989"
+          }
+        ]
+      },
+      {
+        "id": "febe5b879625807628a92ba298cb01c867178a4e",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Last/Next X options are now with correct limits",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280024045"
+          }
+        ]
+      },
+      {
+        "id": "983020e2b65f326b4dc4ebc924cbd6f427cdd5ea",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Paddings fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280057765"
+          }
+        ]
+      },
+      {
+        "id": "7592607fb70b9827f86d9f0c03ce4623dbde5a98",
+        "type": "FEATURE",
+        "text": " Add property -multiple similar to upload collection"
+      },
+      {
+        "id": "42b9cc0579c2af510de23f66407df0a8c104a972",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Introduced new 'liveChange' event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170305445"
+          }
+        ]
+      },
+      {
+        "id": "b6d06443de6d5ef1fb7941727bc4b7ace41e9aec",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Tab indexes are now updated correctly on keyboard navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280017689"
+          }
+        ]
+      },
+      {
+        "id": "afae324894b7de6c3f80a4c3cfff59ca3295ded6",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Some binding options take priority",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280055168"
+          }
+        ]
+      },
+      {
+        "id": "092f4756c44cb2297fbb46c3a1c72b49ed59711f",
+        "type": "FIX",
+        "text": " FeedListItem : FeedListItemActionButton visibility check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170206153"
+          }
+        ]
+      }
+    ]
+  }
+}
