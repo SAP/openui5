@@ -1395,16 +1395,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "Object properties defined",
 						"properties": {
 							"key": {
-								"label": "{{TRANSLATED_KEY}}"
+								"label": "{{TRANSLATED_KEY}}",
+								"placeholder": "placeholder of key"
 							},
 							"icon": {
-								"label": "Icon"
+								"label": "Icon",
+								"placeholder": "placeholder of icon"
 							},
 							"text": {
-								"label": "Text"
+								"label": "Text",
+								"placeholder": "placeholder of text",
+								"translatable": false
 							},
 							"url": {
-								"label": "URL"
+								"label": "URL",
+								"placeholder": "placeholder of url"
 							},
 							"editable": {
 								"label": "Editable",
@@ -1412,6 +1417,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							},
 							"int": {
 								"label": "Integer",
+								"placeholder": "placeholder of int",
 								"type": "int",
 								"formatter": {
 									"minIntegerDigits": 1,
@@ -1421,6 +1427,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							},
 							"number": {
 								"label": "Number",
+								"placeholder": "placeholder of number",
 								"type": "number",
 								"formatter": {
 									"decimals": 1,
@@ -1433,7 +1440,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"objectWithPropertiesDefinedAndValueFromJsonList": {
 						"manifestpath": "/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value",
 						"type": "object",
-						"label": "Object properties defined: value from Json list",
+						"label": "Object - properties defined: value from Json list",
 						"values": {
 							"data": {
 								"json": {
@@ -1455,13 +1462,18 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"properties": {
 							"key": {
 								"label": "{{TRANSLATED_KEY}}",
+								"placeholder": "placeholder of key",
 								"column": {
 									"filterProperty": "key"
+								},
+								"cell": {
+									"text": "{{TRANSLATED_KEY}}"
 								}
 							},
 							"icon": {
 								"label": "Icon",
 								"defaultValue": "sap-icon://add",
+								"placeholder": "placeholder of icon",
 								"column": {
 									"hAlign": "Center",
 									"width": "4rem"
@@ -1474,9 +1486,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"text": {
 								"label": "Text",
 								"defaultValue": "text",
+								"placeholder": "placeholder of text",
 								"column": {
 									"hAlign": "Center",
-									"width": "6rem",
+									"width": "10rem",
 									"filterProperty": "text",
 									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
 								}
@@ -1484,6 +1497,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"url": {
 								"label": "URL",
 								"defaultValue": "http://",
+								"placeholder": "placeholder of url",
 								"column": {
 									"hAlign": "Center",
 									"width": "10rem",
@@ -1503,6 +1517,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							},
 							"int": {
 								"label": "Integer",
+								"placeholder": "placeholder of int",
 								"defaultValue": 0,
 								"type": "int",
 								"formatter": {
@@ -1528,7 +1543,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"style":"short"
 								}
 							}
-						}
+						},
+						"addButtonText": "Add a new step"
 					},
 					"objectWithPropertiesDefinedAndValueFromRequestedFile": {
 						"manifestpath": "/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value",
@@ -1679,17 +1695,22 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"objectsWithPropertiesDefined": {
 						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefined/value",
 						"type": "object[]",
-						"label": "Object properties defined",
+						"label": "Object List - properties defined",
 						"properties": {
 							"key": {
-								"label": "Key",
+								"label": "{{TRANSLATED_KEY}}",
+								"placeholder": "placeholder of key",
 								"column": {
 									"filterProperty": "key"
+								},
+								"cell": {
+									"text": "{{TRANSLATED_KEY}}"
 								}
 							},
 							"icon": {
 								"label": "Icon",
 								"defaultValue": "sap-icon://add",
+								"placeholder": "placeholder of icon",
 								"column": {
 									"hAlign": "Center",
 									"width": "4rem"
@@ -1700,18 +1721,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								}
 							},
 							"text": {
-								"label": "{i18n>TRANSLATED_TEXT01}",
+								"label": "Text",
 								"defaultValue": "text",
+								"placeholder": "placeholder of text",
 								"column": {
 									"hAlign": "Center",
 									"width": "10rem",
 									"filterProperty": "text",
 									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
-								}
+								},
+								"translatable": true
 							},
 							"url": {
 								"label": "URL",
 								"defaultValue": "http://",
+								"placeholder": "placeholder of url",
 								"column": {
 									"hAlign": "Center",
 									"width": "10rem",
@@ -1727,10 +1751,19 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"editable": {
 								"label": "Editable",
 								"defaultValue": false,
-								"type": "boolean"
+								"type": "boolean",
+								"column": {
+									"hAlign": "Center"
+								},
+								"cell": {
+									"type": "Switch",
+									"customTextOn": "YES",
+									"customTextOff": "NO"
+								}
 							},
 							"int": {
 								"label": "Integer",
+								"placeholder": "placeholder of int",
 								"defaultValue": 0,
 								"type": "int",
 								"formatter": {
@@ -1762,7 +1795,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"objectsWithPropertiesDefinedAndValueFromJsonList": {
 						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromJsonList/value",
 						"type": "object[]",
-						"label": "Object properties defined: value from Json list",
+						"label": "Object List - properties defined: value from Json list",
 						"values": {
 							"data": {
 								"json": {
@@ -1783,11 +1816,19 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						"properties": {
 							"key": {
-								"label": "Key"
+								"label": "{{TRANSLATED_KEY}}",
+								"placeholder": "placeholder of key",
+								"column": {
+									"filterProperty": "key"
+								},
+								"cell": {
+									"text": "{{TRANSLATED_KEY}}"
+								}
 							},
 							"icon": {
 								"label": "Icon",
 								"defaultValue": "sap-icon://add",
+								"placeholder": "placeholder of icon",
 								"column": {
 									"hAlign": "Center",
 									"width": "4rem"
@@ -1800,16 +1841,19 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"text": {
 								"label": "Text",
 								"defaultValue": "text",
+								"placeholder": "placeholder of text",
 								"column": {
 									"hAlign": "Center",
-									"width": "6rem",
+									"width": "10rem",
 									"filterProperty": "text",
-									"defaultFilterOperator": "Contains"
-								}
+									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+								},
+								"translatable": true
 							},
 							"url": {
 								"label": "URL",
 								"defaultValue": "http://",
+								"placeholder": "placeholder of url",
 								"column": {
 									"hAlign": "Center",
 									"width": "10rem",
@@ -1825,18 +1869,11 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"editable": {
 								"label": "Editable",
 								"defaultValue": false,
-								"type": "boolean",
-								"column": {
-									"hAlign": "Center"
-								},
-								"cell": {
-									"type": "Switch",
-									"customTextOn": "YES",
-									"customTextOff": "NO"
-								}
+								"type": "boolean"
 							},
 							"int": {
 								"label": "Integer",
+								"placeholder": "placeholder of int",
 								"defaultValue": 0,
 								"type": "int",
 								"formatter": {
@@ -1850,7 +1887,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"label": "Integer",
 									"filterProperty": "int",
 									"defaultFilterOperator": "EQ",
-									"filterType": "sap.ui.model.type.Integer"
+									"filterType": "sap.ui.model.type.Integer"   //sap.ui.model.type
 								}
 							},
 							"number": {
@@ -1868,7 +1905,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"objectsWithPropertiesDefinedAndValueFromRequestedFile": {
 						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromRequestedFile/value",
 						"type": "object[]",
-						"label": "Object properties defined: value from requested file",
+						"label": "Object List - properties defined: value from requested file",
 						"values": {
 							"data": {
 								"request": {

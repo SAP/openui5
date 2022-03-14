@@ -214,5 +214,20 @@ sap.ui.define([
 		return Utils._isBindingSyntaxComplex;
 	};
 
+	/**
+	 * Generates v4 uuid (based on random numbers).
+	 * @return {string} The generated v4 uuid
+	 */
+	Utils.generateUuidV4 = function () {
+		var sUuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (sPosition) {
+			var iRandom = Math.random() * 16 | 0;
+			if (sPosition === 'y') {
+				iRandom = iRandom & 0x3 | 0x8;
+			}
+			return iRandom.toString(16);
+		});
+		return sUuid;
+	};
+
 	return Utils;
 });

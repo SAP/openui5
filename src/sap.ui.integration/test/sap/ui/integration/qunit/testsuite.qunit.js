@@ -771,7 +771,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/ObjectField": {
+			"editor/objectField/ObjectField": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -780,7 +780,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/ObjectListField": {
+			"editor/objectField/PropertyTranslation": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -789,7 +789,88 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/ObjectListFieldWithRequestValues": {
+			"editor/objectField/PropertyTranslationWithChangesForSimpleForm": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/PropertyTranslationWithChangesForTable1": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/PropertyTranslationWithChangesForTable2": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/PropertyTranslationWithChangesForTable3": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/ObjectListField": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/RequestValues": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/PropertyTranslation": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/PropertyTranslationWithChanges1": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/PropertyTranslationWithChanges2": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/PropertyTranslationWithChanges3": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [

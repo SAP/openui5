@@ -71,7 +71,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"label": "Icon"
 							},
 							"text": {
-								"label": "Text"
+								"label": "Text",
+								"translatable": true
 							},
 							"url": {
 								"label": "URL"
@@ -143,6 +144,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"text": {
 								"label": "Text",
 								"defaultValue": "text",
+								"translatable": true,
 								"column": {
 									"hAlign": "Center",
 									"width": "6rem",
@@ -342,6 +344,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"text": {
 								"label": "Text",
 								"defaultValue": "text",
+								"translatable": true,
 								"column": {
 									"hAlign": "Center",
 									"width": "6rem",

@@ -1516,12 +1516,50 @@ sap.ui.define([
 			}
 		}
 		if (oSettings.texts) {
-			mResult.texts = {};
-			for (var language in oSettings.texts) {
-				mResult.texts[language] = {};
-				for (var translation in oSettings.texts[language]) {
-					mResult.texts[language][translation] = oSettings.texts[language][translation];
+			mResult.texts = deepClone(oSettings.texts, 500) || {};
+			// Clean the translations of object or object list field :
+			// - remove the translations if the object is not exist in value
+			for (var language in mResult.texts){
+				for (var key in mResult.texts[language]) {
+					if (typeof mResult.texts[language][key] === "object") {
+						var vValue = mResult[key];
+						if (!vValue || typeof vValue !== "object" || deepEqual(vValue, {}) || deepEqual(vValue, [])) {
+							delete mResult.texts[language][key];
+						} else if (Array.isArray(vValue)) {
+							// get all the uuids in value list of object list field
+							var aUUIDs = vValue.map(function (oObject) {
+								return oObject._dt ? oObject._dt._uuid || "" : "";
+							});
+							// delete translation texts if uuid not included in value list
+							for (var uuid in mResult.texts[language][key]) {
+								if (!includes(aUUIDs, uuid)) {
+									delete mResult.texts[language][key][uuid];
+								}
+							}
+						} else {
+							// get the uuid in the object value of object field
+							var sUUID = vValue._dt ? vValue._dt._uuid || "" : "";
+							if (sUUID !== "") {
+								// only save the translation texts of current uuid
+								var oTranslation = mResult.texts[language][key][sUUID];
+								if (!oTranslation) {
+									delete mResult.texts[language][key];
+								} else {
+									mResult.texts[language][key] = {};
+									mResult.texts[language][key][sUUID] = oTranslation;
+								}
+							} else {
+								delete mResult.texts[language][key];
+							}
+						}
+					}
 				}
+				if (deepEqual(mResult.texts[language], {})) {
+					delete mResult.texts[language];
+				}
+			}
+			if (deepEqual(mResult.texts, {})) {
+				delete mResult.texts;
 			}
 		}
 		//add a property ":multipleLanguage" for backward compatibility of multiple language feature
@@ -1954,8 +1992,8 @@ sap.ui.define([
 			}
 		}.bind(this)));
 		//listen to value changes on the settings
-		var oValueBinding = this._settingsModel.bindProperty(oConfig._settingspath + "/value");
-		oValueBinding.attachChange(function () {
+		oField._oValueBinding = this._settingsModel.bindProperty(oConfig._settingspath + "/value");
+		oField._oValueBinding.attachChange(function () {
 			if (!this._bIgnoreUpdates) {
 				oConfig._changed = true;
 				if (oConfig._dependentFields && oConfig._dependentFields.length > 0) {
@@ -2070,7 +2108,7 @@ sap.ui.define([
 			}
 			if (oConfig.type === "object" || oConfig.type === "object[]") {
 				tResult.forEach(function (oResult) {
-					oResult.dt = {
+					oResult._dt = {
 						_editable: false
 					};
 				});
@@ -2414,17 +2452,17 @@ sap.ui.define([
 		}
 	};
 
-	Editor.prototype.getBeforeLayerChange = function (sKey) {
+	Editor.prototype.getBeforeLayerChange = function (sManifestPath) {
 		if (!this._beforeLayerManifestChanges) {
 			this._beforeLayerManifestChanges = {};
 		}
-		return this._beforeLayerManifestChanges[sKey];
+		return this._beforeLayerManifestChanges[sManifestPath];
 	};
 
-	Editor.prototype.getTranslationValueInTexts = function (sLanguage, sKey) {
+	Editor.prototype.getTranslationValueInTexts = function (sLanguage, sManifestPath) {
 		var sTranslationPath = "/texts/" + sLanguage;
 		var oProperty = this._settingsModel.getProperty(sTranslationPath) || {};
-		return oProperty[sKey];
+		return oProperty[sManifestPath];
 	};
 
 	Editor.prototype._handleITBValidation = function (oEditor, sItem, sErrorType) {
@@ -2777,6 +2815,9 @@ sap.ui.define([
 		var oNewLabel = null;
 		var sLanguage = Core.getConfiguration().getLanguage().replaceAll('_', '-');
 		if (sMode === "translation") {
+			if (oConfig.type !== "string") {
+				return;
+			}
 			if ((typeof oConfig.value === "string" && oConfig.value.indexOf("{") === 0) || typeof oConfig.values !== "undefined") {
 				//do not show dynamic values for translation
 				return;
@@ -2851,10 +2892,13 @@ sap.ui.define([
 				oConfig.value = this._currentLayerManifestChanges[oConfig.manifestpath];
 				oConfig._beforeLayerChange = oConfig.value;
 			}
-			sLanguage = this._language;
-			var sTranslateText = this.getTranslationValueInTexts(sLanguage, oConfig.manifestpath);
-			if (sTranslateText) {
-				oConfig.value = sTranslateText;
+			//only get translations of string fields
+			if (oConfig.type === "string") {
+				sLanguage = this._language;
+				var sTranslateText = this.getTranslationValueInTexts(sLanguage, oConfig.manifestpath);
+				if (sTranslateText) {
+					oConfig.value = sTranslateText;
+				}
 			}
 			var oField = this._createField(oConfig);
 			this.addAggregation("_formContent",
@@ -3096,7 +3140,7 @@ sap.ui.define([
 					} else if (typeof oItem.value === "object" && oItem.type === "object") {
 						// backward compatibility for pre saved value
 						if (typeof oItem.value._editable === "boolean") {
-							oItem.value.dt = {
+							oItem.value._dt = {
 								"_editable" : oItem.value._editable
 							};
 							delete oItem.value._editable;
@@ -3105,7 +3149,7 @@ sap.ui.define([
 						// backward compatibility for pre saved value
 						oItem.value.forEach(function (oObject) {
 							if (typeof oObject._editable === "boolean") {
-								oObject.dt = {
+								oObject._dt = {
 									"_editable" : oObject._editable
 								};
 								delete oObject._editable;
