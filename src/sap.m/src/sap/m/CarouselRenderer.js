@@ -131,7 +131,8 @@ sap.ui.define([
 				.accessibilityState(oPage, {
 					role: "option",
 					posinset: iIndex + 1,
-					setsize: aArray.length
+					setsize: aArray.length,
+					selected: oCarousel.getActivePage() === oPage.getId() ? true : false
 				}).openEnd();
 
 			CarouselRenderer._renderPageInScrollContainer(oRM, oCarousel, oPage);

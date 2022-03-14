@@ -1660,4 +1660,55 @@ sap.ui.define([
 		assert.strictEqual(this.oInnerCarousel.$().find(sContentSelector).length > 0, true, "Inner carousel has visible active page after outer carousel page change");
 	});
 
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oCarousel = new Carousel({
+				id: "crsl",
+				height: '25%',
+				width: '50%'
+			});
+
+			var text1 = new Text({
+				id: "text1",
+				text: 'text1'
+			});
+			var text2 = new Text({
+				id: "text2",
+				text: 'text2'
+			});
+			var text3 = new Text({
+				id: "text3",
+				text: 'text3'
+			});
+
+			this.oCarousel.insertPage(text1);
+			this.oCarousel.insertPage(text3);
+			this.oCarousel.insertPage(text2);
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCarousel.destroy();
+		}
+	});
+
+	QUnit.test("aria-selected should be set correctly", function (assert) {
+		// Assert
+		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-selected"), "true", "Active page should have aria-selected = true");
+		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("role"), "option", "Role of a carousel item should be option");
+		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-posinset"), "1", "Posinset should be 1");
+		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-setsize"), "3", "Setsize should be 3");
+
+
+		// Act
+		this.oCarousel.next();
+		forceTransitionComplete(this.oCarousel);
+
+		// Assert
+		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-selected"), "false", "Non active page should have aria-selected = false");
+		assert.strictEqual(document.getElementById("crsl-text3-slide").getAttribute("aria-selected"), "true", "Active page should have aria-selected = true");
+		assert.strictEqual(document.getElementById("crsl-text3-slide").getAttribute("aria-posinset"), "2", "Posinset should be 2");
+
+
+	});
 });
