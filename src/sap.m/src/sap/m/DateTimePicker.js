@@ -436,15 +436,15 @@ sap.ui.define([
 	DateTimePicker.prototype.onAfterRendering = function() {
 		if (this._getShowTimezone()) {
 			waitForThemeApplied().then(function() {
-				var oDummyContentDomRef = document.querySelector("#" + this.getId() + " .sapMDummyContent"),
+				var oDummyContentDomRef = this.$().find(".sapMDummyContent"),
 					iDummyWidth;
 
-				if (!oDummyContentDomRef) {
+				if (!oDummyContentDomRef || !oDummyContentDomRef.length) {
 					return;
 				}
 
-				iDummyWidth = oDummyContentDomRef.getBoundingClientRect().width;
-				jQuery("#" + this.getId() + "-inner").css("max-width", (iDummyWidth + 2) + "px");
+				iDummyWidth = oDummyContentDomRef[0].getBoundingClientRect().width;
+				this.$("inner").css("max-width", (iDummyWidth + 2) + "px");
 			}.bind(this));
 		}
 	};
