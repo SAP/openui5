@@ -764,14 +764,17 @@ sap.ui.define([
 	/**
 	 * Resolve the path relative to the given context.
 	 *
-	 * If a relative path is given (not starting with a '/') but no context,
-	 * then the path can't be resolved and undefined is returned.
+	 * If a relative path is given (not starting with a '/') but no context, then the path can't be
+	 * resolved and undefined is returned.
 	 *
-	 * For backward compatibility, the behavior of this method can be changed by
-	 * setting the 'legacySyntax' property. Then an unresolvable, relative path
-	 * is automatically converted into an absolute path.
+	 * If a context is given but no path, the resolved path is the context's path, see
+	 * {@link sap.ui.model.Context#getPath}.
 	 *
-	 * @param {string} sPath Path to resolve
+	 * For backward compatibility, the behavior of this method can be changed by setting the
+	 * 'legacySyntax' property. Then an unresolvable, relative path is automatically converted into
+	 * an absolute path.
+	 *
+	 * @param {string} [sPath] Path to resolve
 	 * @param {sap.ui.model.Context} [oContext] Context to resolve a relative path against
 	 *
 	 * @return {string} Resolved path or undefined
