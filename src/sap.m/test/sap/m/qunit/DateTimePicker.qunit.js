@@ -1185,4 +1185,22 @@ sap.ui.define([
 		// act
 		oDTP.setValue("2022-02-17T17:16:33");
 	});
+
+	QUnit.test("when the displayFormat does not contain date part, the selected date is preserved", function(assert) {
+		// arrange
+		var oDTP = new DateTimePicker("dtp", {
+				value: "2022-02-11T07:16:33",
+				displayFormat: "HH:mm",
+				valueFormat: "yyyy-MM-ddTHH:mm:ss"
+			}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+		oDTP.toggleOpen();
+
+		// assert
+		assert.equal(oDTP._getSelectedDate().getTime(), new Date(2022, 1, 11, 7, 16, 33).getTime(), "the selected date is as expected");
+
+		// clean
+		oDTP.destroy();
+	});
 });

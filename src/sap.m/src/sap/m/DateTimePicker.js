@@ -1002,8 +1002,8 @@ sap.ui.define([
 			}
 		}
 
-		sFormattedDate = this._formatValue(oDate, false, Core.getConfiguration().getTimezone());
-		oDate = this._parseValue(sFormattedDate, true, this._getTimezone(true));
+		sFormattedDate = this._formatValue(oDate, true, Core.getConfiguration().getTimezone());
+		oDate = this._parseValue(sFormattedDate, false, this._getTimezone(true));
 
 		return oDate;
 	};
