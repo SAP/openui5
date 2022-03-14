@@ -31,14 +31,13 @@
 		oPath["test-resources/sap/ui/documentation/sdk"] = ".";
 
 		document.write("<script src=" + encodeOrigin(sOrigin)  + '/resources/sap-ui-core.js' + " id='sap-ui-bootstrap' " +
-				"data-sap-ui-libs='sap.m' data-sap-ui-bindingSyntax='complex' data-sap-ui-compatVersion='edge' data-sap-ui-resourceroots=" + JSON.stringify(oPath) + "></scr" + "ipt>");
+				"data-sap-ui-libs='sap.m' data-sap-ui-bindingSyntax='complex' data-sap-ui-theme='sap_fiori_3' data-sap-ui-compatVersion='edge' data-sap-ui-resourceroots=" + JSON.stringify(oPath) + "></scr" + "ipt>");
 		document.write("<base href=" + encodeOrigin(sOrigin) + "/>");
 	</script>
 </head>
 <body class="sapUiBody sapUiSizeCompact" id="content">
 <script>
 	sap.ui.getCore().attachInit(function () {
-		sap.ui.getCore().applyTheme("sap_fiori_3");
 		sap.ui.require([
 			"sap/ui/core/ComponentContainer",
 			"sap/ui/core/Component",
