@@ -1,0 +1,29 @@
+{
+  "1.101.0": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "1abad82cadcb4068b19562b96ef872e6073fbc4f",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: fixed role/alt of appointment icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015358"
+          }
+        ]
+      },
+      {
+        "id": "e435c0f0be9ea1da2fea04837acdb553adc7e751",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: week numbers are displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280073689"
+          }
+        ]
+      }
+    ]
+  }
+}
