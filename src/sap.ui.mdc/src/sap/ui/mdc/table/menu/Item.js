@@ -2,8 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/m/table/columnmenu/Item"
 ], function(
+	Core,
 	ItemBase
 ) {
 	"use strict";
@@ -51,7 +53,12 @@ sap.ui.define([
 
 	Item.prototype.onReset = function() {
 		var oTable = this.getTable();
-		oTable.getEngine().reset(oTable, [this.getKey()]);
+		var oColumn = Core.byId(this.getMenu().getParent().sId.replace('-innerColumn', ''));
+
+		oTable.getEngine().reset(oTable, [this.getKey()]).then(function() {
+			oTable._oQuickActionContainer.initializeQuickActions(oColumn);
+			oTable._oColumnHeaderMenu._oPopover.invalidate();
+		});
 	};
 
 	Item.prototype.destroyContent = function() {
