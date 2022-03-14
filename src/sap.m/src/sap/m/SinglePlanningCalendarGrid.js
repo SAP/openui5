@@ -827,11 +827,11 @@ sap.ui.define([
 				drop: function (oEvent) {
 					var oDragSession = oEvent.getParameter("dragSession"),
 						oDropControl = oDragSession.getDropControl(),
-						THIRTY_MINUTES = 30 * 60 * 1000,
+						iМillisecondsStep = (60 / (this.getScaleFactor() * 2)) * 60 * 1000, // calculating the duration of the appointment in milliseconds relative to the current scaleFactor
 						oStartDate = oDragSession.getComplexData("startingDropDate").getTime(),
 						oEndDate = oDropControl.getDate().getJSDate().getTime(),
 						iStartTime = Math.min(oStartDate, oEndDate),
-						iEndTime = Math.max(oStartDate, oEndDate) + THIRTY_MINUTES;
+						iEndTime = Math.max(oStartDate, oEndDate) + iМillisecondsStep;
 
 					this.fireAppointmentCreate({
 						startDate: new Date(iStartTime),
@@ -845,7 +845,7 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarGrid.prototype._calcResizeNewHoursAppPos = function(oAppStartDate, oAppEndDate, iIndex, bBottomHandle) {
-			var iMinutesStep = 30 * 60 * 1000, // 30 min
+			var iMinutesStep = (60 / (this.getScaleFactor() * 2)) * 60 * 1000, // calculating the duration of the appointment in milliseconds relative to the current scaleFactor
 				iPlaceholderStartTime = this.getAggregation("_intervalPlaceholders")[iIndex].getDate().getTime(),
 				iPlaceholderEndTime = iPlaceholderStartTime + iMinutesStep,
 				iVariableBoundaryTime = bBottomHandle ? oAppStartDate.getTime() : oAppEndDate.getTime(),
@@ -2071,9 +2071,14 @@ sap.ui.define([
 					var aDndForTheDay = this._dndPlaceholdersMap[oColumnCalDate],
 						iYear = oColumnCalDate.getYear(),
 						iMonth = oColumnCalDate.getMonth(),
-						iDate = oColumnCalDate.getDate();
-					aDndForTheDay.push(this._createAppointmentsDndPlaceHolder(new UniversalDate(iYear, iMonth, iDate, j)));
-					aDndForTheDay.push(this._createAppointmentsDndPlaceHolder(new UniversalDate(iYear, iMonth, iDate, j, 30)));
+						iDate = oColumnCalDate.getDate(),
+						iCurrentScale = this.getScaleFactor() * 2,
+						iTimeSlot = 60 / iCurrentScale * 60;
+
+					for (var y = 0; y < iCurrentScale; y++) {
+						aDndForTheDay.push(this._createAppointmentsDndPlaceHolder(new UniversalDate(iYear, iMonth, iDate, j, 0, iTimeSlot * y)));
+					}
+
 				}
 			}
 		};
