@@ -559,6 +559,11 @@ sap.ui.define([
                 this._recalculateRange();
             }
 
+            if (this.getShowAdvancedTooltip()) {
+                this._updateTooltipContent(this._mHandleTooltip.start.tooltip, fValue);
+                this.updateTooltipsPositionAndState(this._mHandleTooltip.start.tooltip, fValue);
+            }
+
             return this;
         };
 
@@ -571,6 +576,11 @@ sap.ui.define([
             this._updateRangePropertyDependencies(aRange);
             if (this._updateDOMAfterSetters(aRange[1], aRange, 1)) {
                 this._recalculateRange();
+            }
+
+            if (this.getShowAdvancedTooltip()) {
+                this._updateTooltipContent(this._mHandleTooltip.end.tooltip, fValue);
+                this.updateTooltipsPositionAndState(this._mHandleTooltip.end.tooltip, fValue);
             }
 
             return this;
