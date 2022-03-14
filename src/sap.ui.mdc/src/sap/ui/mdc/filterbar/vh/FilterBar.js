@@ -19,6 +19,27 @@ sap.ui.define(
 		Button
 	) {
 		"use strict";
+		/**
+		 * Modules for different filterbars
+		 * @namespace
+		 * @name sap.ui.mdc.filterbar
+		 * @since 1.80.0
+		 * @private
+		 * @experimental As of version 1.80
+		 * @ui5-restricted sap.ui.mdc
+		 */
+
+		/**
+		 * Base-modules for {@link sap.ui.mdc.filterbar.vh.FiterBar FilterBar}
+		 *
+		 * These modules are not to be used stand-alone.
+		 * @namespace
+		 * @name sap.ui.mdc.filterbar.vh
+		 * @since 1.84.0
+		 * @private
+		 * @experimental As of version 1.84
+		 * @ui5-restricted sap.ui.mdc
+		 */
 
 		/**
 		 * Constructor for a new FilterBar.
@@ -217,7 +238,9 @@ sap.ui.define(
 			this._oBasicSearchField = oBasicSearchField;
 
 			if (oBasicSearchField) {
-				this.setExpandFilterFields(false);
+				if (this.isPropertyInitial("expandFilterFields")) {
+					this.setExpandFilterFields(false);
+				}
 
 				if (this._oFilterBarLayout) {
 					this._oFilterBarLayout.insertControl(oBasicSearchField, this._oCollectiveSearch ? 1 : 0);

@@ -929,7 +929,7 @@
 						<mdcv:Dialog title="Genre">
 							<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
 								<mdcvc:filterBar>
-									<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
+									<vhfb:FilterBar liveMode="false" expandFilterFields="true" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:basicSearchField>
 											<mdc:FilterField
 												delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
