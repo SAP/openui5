@@ -672,6 +672,9 @@ sap.ui.define([
 			});
 		}
 
+			this._oMobifyCarousel.$items.each(function (iIndex, oPage) {
+				oPage.className.indexOf('sapMCrslActive') <= -1 ? oPage.setAttribute('aria-selected', false) : oPage.setAttribute('aria-selected', true);
+			});
 		// change the number in the page indicator
 		this.$('slide-number').text(sTextBetweenNumbers);
 	};
