@@ -226,7 +226,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		assert.ok(oObjectPage._isClosestScrolledSection(oFirstSection.getId()), "itentified current section");
 	});
 
-	QUnit.test("triggerPendingLayoutUpdates corrects invalid selection",function(assert) {
+	QUnit.test("selectedSection value correct after resize content in scroll overflow",function(assert) {
 		var oObjectPage = this.oObjectPage,
 			oFirstSection = oObjectPage.getSections()[0],
 			oFirstSubSection = oFirstSection.getSubSections()[0],
@@ -248,23 +248,29 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function(){
 			iScrollTopBeforeChange = oObjectPage._$opWrapper.scrollTop();
 
-			//act
+			//Act: change the height of the content inside the scroll overflow
+			//(i.e. the content above above the current scroll position)
 			item1.setVisible(true);
 			item2.setVisible(true);
 			item3.setVisible(true);
 			Core.applyChanges();
 
-			iExpectedScrollTopAfterChange = iScrollTopBeforeChange + (3 * item1.getDomRef().offsetHeight);
-			// synchronously call the result of the expected scroll event
-			// the browser fires that scroll event because the position of the selected section changed
-			oObjectPage._updateSelectionOnScroll(iExpectedScrollTopAfterChange);
-			// the page internally sets a wrong selected section
-			// because we do not yet update the cached positions of the sections
-			assert.notEqual(oObjectPage.getSelectedSection() , sSelectedSectionId, "selected section has changed");
+			// Simulate the expected scroll event from the browser, due to overflow anchoring
+			// (expected from all supported browsers except Safari which does not support overflow anchoring => does not fire scroll event)
+			if (!Device.browser.safari) {
+				iExpectedScrollTopAfterChange = iScrollTopBeforeChange + (3 * item1.getDomRef().offsetHeight);
+				// synchronously call the result of the expected scroll event
+				// the browser fires that scroll event because the position of the selected section changed
+				oObjectPage._updateSelectionOnScroll(iExpectedScrollTopAfterChange);
+				// the page internally sets a wrong selected section
+				// because we do not yet update the cached positions of the sections
+				assert.notEqual(oObjectPage.getSelectedSection() , sSelectedSectionId, "selected section has changed");
 
-			// act: request the page to update the positions of the sections and check its current selected section
-			oObjectPage.triggerPendingLayoutUpdates();
-			assert.strictEqual(oObjectPage.getSelectedSection() , sSelectedSectionId, "selected section is now corrected");
+				// act: request the page to update the positions of the sections and check its current selected section
+				oObjectPage.triggerPendingLayoutUpdates();
+			}
+
+			assert.strictEqual(oObjectPage.getSelectedSection() , sSelectedSectionId, "selected section is correct");
 			done();
 		});
 
