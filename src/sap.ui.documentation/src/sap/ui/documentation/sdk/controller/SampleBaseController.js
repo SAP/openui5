@@ -17,7 +17,7 @@ sap.ui.define([
 
 		var OPENUI5_LIBS = ["sap.ui.core", "sap.ui.dt", "sap.m", "sap.ui.fl", "sap.ui.layout", "sap.ui.mdc", "sap.ui.unified",
 			"sap.f", "sap.ui.rta", "sap.ui.commons", "sap.ui.codeeditor", "sap.ui.table", "sap.uxap", "sap.ui.integration",
-			"sap.tnt", "sap.ui.ux3", "sap.ui.suite"];
+			"sap.tnt", "sap.ui.ux3", "sap.ui.suite", "sap.ui.webc.common", "sap.ui.webc.fiori", "sap.ui.webc.main" ];
 		var SAPUI5_LIBS = ["sap.ushell", "sap.fe", "sap.viz", "sap.suite.ui.microchart", "sap.chart", "sap.ui.comp", "sap.ui.generic.app",
 			"sap.fe.navigation", "sap.suite.ui.generic.template", "sap.ui.richtexteditor", "sap.suite.ui.commons", "sap.ui.export",
 			"sap.ndc", "sap.me", "sap.fe.core", "sap.fe.macros", "sap.collaboration", "sap.fe.templates", "sap.ui.generic.template",
