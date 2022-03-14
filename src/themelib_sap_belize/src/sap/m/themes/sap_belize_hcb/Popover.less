@@ -3,6 +3,13 @@
 /* Belize HCB theme                   */
 /* ============================== */
 
+/* Arrow offset from the Popover's corners */
+@_sap_m_Popover_ArrowOffset: 4;
+
+.sapMPopover {
+	box-shadow: @sapUiShadowLevel2;
+}
+
 .sapMPopoverArr:after {
 	border-style: solid;
 	border-width: 2px;
@@ -10,7 +17,7 @@
 
 /* pointing upward arrow */
 .sapMPopoverArrUp {
-	top: -0.5625rem;
+	top: -0.5rem;
 	&:after {
 		margin: 0.23rem 0 0 0.04rem;
 	}
@@ -25,8 +32,8 @@
 
 /* pointing downward arrow */
 .sapMPopoverArrDown {
-	bottom: -0.5625rem;
+	bottom: -0.5rem;
 	&:after {
-		margin: -0.5625rem  0 0 0.03rem;
+		margin: -0.625rem  0 0 0.03rem;
 	}
 }
