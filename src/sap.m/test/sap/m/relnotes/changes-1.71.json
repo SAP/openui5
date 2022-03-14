@@ -3011,5 +3011,77 @@
         ]
       }
     ]
+  },
+  "1.71.44": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "bd9bd5be729f1c4d8edfba969683bb76633af257",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Tokens now rendered on toggled visibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700028168482022"
+          }
+        ]
+      },
+      {
+        "id": "0b93b271636ac727e8e252a6251d51937044a309",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: showMaster/hideMaster doesn't crash if control hasn't been placed in DOM",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970589924"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500000629702022"
+          }
+        ]
+      },
+      {
+        "id": "cebf5dae7fa4ef51c268fae60a57d6335221c64b",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: aria role and description adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280013612"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400001343412022"
+          }
+        ]
+      },
+      {
+        "id": "22d38b3066914fc2391db9f80a62f850adb04a60",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Adjust failing test in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280073651"
+          }
+        ]
+      },
+      {
+        "id": "382619c93f762419d7753964fef92fe0167ecfb2",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Single character suggestions highlighting fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980420890"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170022178"
+          }
+        ]
+      }
+    ]
   }
 }

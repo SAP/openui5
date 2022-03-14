@@ -1279,5 +1279,21 @@
         ]
       }
     ]
+  },
+  "1.71.44": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "fc924106dfe5f6692b420853cb8031dd0511ff6f",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Australian calendar change first day of week to Monday",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009303182021"
+          }
+        ]
+      }
+    ]
   }
 }
