@@ -1505,7 +1505,6 @@ sap.ui.define([
 			// Create Toolbar
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
 				design: ToolbarDesign.Transparent,
-				style: this._isOfType(TableType.ResponsiveTable) ? ToolbarStyle.Standard : ToolbarStyle.Clear,
 				begin: [
 					this._oTitle
 				],
@@ -1516,6 +1515,7 @@ sap.ui.define([
 				]
 			});
 		}
+		this._oToolbar.setStyle(this._bMobileTable ? ToolbarStyle.Standard : ToolbarStyle.Clear);
 		return this._oToolbar;
 	};
 
