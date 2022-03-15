@@ -3423,6 +3423,36 @@ sap.ui.define([
 		return false;
 	};
 
+	Editor.prototype.prepareFieldsInKey = function(oConfig) {
+		//get field names in the item key
+		this._sKeySeparator = oConfig.values.keySeparator;
+		if (!this._sKeySeparator) {
+			this._sKeySeparator = "#";
+		}
+		var sKey = oConfig.values.item.key;
+		this._aFields = sKey.split(this._sKeySeparator);
+		for (var n in this._aFields) {
+			//remove the {} in the field
+			if (this._aFields[n].startsWith("{")) {
+				this._aFields[n] = this._aFields[n].substring(1);
+			}
+			if (this._aFields[n].endsWith("}")) {
+				this._aFields[n] = this._aFields[n].substring(0, this._aFields[n].length - 1);
+			}
+		}
+	};
+
+	Editor.prototype.getKeyFromItem = function(oItem) {
+		var sItemKey = "";
+		this._aFields.forEach(function (field) {
+			sItemKey += oItem[field].toString() + this._sKeySeparator;
+		}.bind(this));
+		if (sItemKey.endsWith(this._sKeySeparator)) {
+			sItemKey = sItemKey.substring(0, sItemKey.length - this._sKeySeparator.length);
+		}
+		return sItemKey;
+	};
+
 	//create static context entries
 	Editor._contextEntries =
 	{
@@ -3493,36 +3523,6 @@ sap.ui.define([
 				document.body.style.setProperty("--" + n, mParams[n]);
 			}
 		}
-	};
-
-	Editor.prototype.prepareFieldsInKey = function(oConfig) {
-		//get field names in the item key
-		this._sKeySeparator = oConfig.values.keySeparator;
-		if (!this._sKeySeparator) {
-			this._sKeySeparator = "#";
-		}
-		var sKey = oConfig.values.item.key;
-		this._aFields = sKey.split(this._sKeySeparator);
-		for (var n in this._aFields) {
-			//remove the {} in the field
-			if (this._aFields[n].startsWith("{")) {
-				this._aFields[n] = this._aFields[n].substring(1);
-			}
-			if (this._aFields[n].endsWith("}")) {
-				this._aFields[n] = this._aFields[n].substring(0, this._aFields[n].length - 1);
-			}
-		}
-	};
-
-	Editor.prototype.getKeyFromItem = function(oItem) {
-		var sItemKey = "";
-		this._aFields.forEach(function (field) {
-			sItemKey += oItem[field].toString() + this._sKeySeparator;
-		}.bind(this));
-		if (sItemKey.endsWith(this._sKeySeparator)) {
-			sItemKey = sItemKey.substring(0, sItemKey.length - this._sKeySeparator.length);
-		}
-		return sItemKey;
 	};
 
 	//initializes global settings

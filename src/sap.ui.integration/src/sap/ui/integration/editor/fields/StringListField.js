@@ -25,7 +25,6 @@ sap.ui.define([
 ) {
 	"use strict";
 	var sDefaultSeperator = "#";
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 	/**
 	 * @class String List Field with string list value, such as ["value1", "value2"]
@@ -46,9 +45,6 @@ sap.ui.define([
 	});
 
 	StringListField.prototype.initVisualization = function (oConfig) {
-		if (oResourceBundle && oResourceBundle.sLocale !== Core.getConfiguration().getLanguage()) {
-			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-		}
 		var that = this,
 			oItem;
 		var oVisualization = oConfig.visualization;
@@ -294,6 +290,8 @@ sap.ui.define([
 	};
 
 	StringListField.prototype.mergeSelectedItems = function(oConfig, oData) {
+		var that = this;
+		var oResourceBundle = that.getResourceBundle();
 		if (Array.isArray(oData)) {
 			//get keys of previous selected items
 			var aSelectedItemKeys = oConfig.valueItems.map(function (oSelectedItem) {
@@ -359,6 +357,7 @@ sap.ui.define([
 	StringListField.prototype.onSelectionChangeForFilterBackend = function(oEvent) {
 		var oField = oEvent.getSource().getParent();
 		var oConfig = oField.getConfiguration();
+		var oResourceBundle = oField.getResourceBundle();
 		var oListItem = oEvent.getParameter("changedItem");
 		var sChangedItemKey = oListItem.getKey();
 		var bIsSelected = oEvent.getParameter("selected");
@@ -417,6 +416,7 @@ sap.ui.define([
 	StringListField.prototype.onTokenChange = function(oEvent) {
 		var oField = this.getParent();
 		var oConfig = oField.getConfiguration();
+		var oResourceBundle = oField.getResourceBundle();
 		var oSettingsModel = oField.getModel("currentSettings");
 		var sSettingspath = oField.getBindingContext("currentSettings").sPath;
 		var aValue = oSettingsModel.getProperty(sSettingspath + "/value");
@@ -514,6 +514,7 @@ sap.ui.define([
 	StringListField.prototype.onSelectionChange = function(oEvent) {
 		var oField = oEvent.oSource.getParent();
 		var oConfig = oField.getConfiguration();
+		var oResourceBundle = oField.getResourceBundle();
 		var oListItem = oEvent.getParameter("changedItem");
 		var sChangedItemKey = oListItem.getKey();
 		var bIsSelected = oEvent.getParameter("selected");
