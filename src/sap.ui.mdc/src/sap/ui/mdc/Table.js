@@ -1776,7 +1776,9 @@ sap.ui.define([
 			var mExportSettings = {
 				workbook: {
 					columns: aSheetColumns,
-					context: {title: that.getHeader()}
+					context: {
+						title: that.getHeader() || mCustomConfig.fileName
+					}
 				},
 				dataSource: oRowBinding,
 				fileType: mCustomConfig.selectedFileType,
