@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core", "./TableTypeBase", "../library", "sap/m/Button", "sap/ui/Device", "sap/m/plugins/ColumnResizer"
-], function(Core, TableTypeBase, library, Button, Device, ColumnResizer) {
+	"sap/ui/core/Core", "./TableTypeBase", "../library", "sap/m/Button", "sap/ui/Device", "sap/m/plugins/ColumnResizer", "sap/m/SegmentedButton", "sap/m/SegmentedButtonItem"
+], function(Core, TableTypeBase, library, Button, Device, ColumnResizer, SegmentedButton, SegmentedButtonItem) {
 	"use strict";
 
 	var InnerTable, InnerColumn, InnerRow;
@@ -112,7 +112,6 @@ sap.ui.define([
 		// avoid execution of the if and else if block if bValue has not changed
 		if (bValue && !this._oShowDetailsButton) {
 			oTable.getHeaderToolbar().insertEnd(this._getShowDetailsButton(), 0);
-			this._renderShowDetailsButton();
 			oTable.attachEvent("popinChanged", this._onPopinChanged, this);
 			oTable.setHiddenInPopin(this._getImportanceToHide());
 		} else if (!bValue && this._oShowDetailsButton) {
@@ -265,18 +264,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Renders the look and feel of the Show / Hide Details button
-	 *
-	 * @private
-	 */
-	ResponsiveTableType.prototype._renderShowDetailsButton = function() {
-		var oRb = Core.getLibraryResourceBundle("sap.ui.mdc"), sText;
-
-		sText = this.bHideDetails ? oRb.getText("table.SHOWDETAILS_TEXT") : oRb.getText("table.HIDEDETAILS_TEXT");
-		this._oShowDetailsButton.setText(sText);
-	};
-
-	/**
 	 * Toggles the visibility of the Show Details button.<br>
 	 * If {@param bValue} is set to <code>true</code>, it sets the <code>hiddenInPopin</code> property on the inner <code>ResponsiveTable</code> to
 	 * hide columns based on the <code>Table</code> configuration (<code>showDetailsButton</code> and <code>detailsButtonSetting</code> properties).
@@ -298,17 +285,37 @@ sap.ui.define([
 		} else {
 			oTable.setHiddenInPopin([]);
 		}
-		this._renderShowDetailsButton();
 	};
 
 	ResponsiveTableType.prototype._getShowDetailsButton = function() {
 		if (!this._oShowDetailsButton) {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			this.bHideDetails = true;
-			this._oShowDetailsButton = new Button(this.getId() + "-showHideDetails", {
+			this._oShowDetailsButton = new SegmentedButton(this.getId() + "-showHideDetails", {
 				visible: false,
-				press: [function() {
-					this._toggleShowDetails(!this.bHideDetails);
-				}, this]
+				selectedKey: "hideDetails",
+				items: [
+					new SegmentedButtonItem({
+						icon: "sap-icon://detail-more",
+						key: "showDetails",
+						tooltip: oRb.getText("table.SHOWDETAILS_TEXT"),
+						press: [
+							function() {
+								this._toggleShowDetails(false);
+							}, this
+						]
+					}),
+					new SegmentedButtonItem({
+						icon: "sap-icon://detail-less",
+						key: "hideDetails",
+						tooltip: oRb.getText("table.HIDEDETAILS_TEXT"),
+						press: [
+							function() {
+								this._toggleShowDetails(true);
+							}, this
+						]
+					})
+				]
 			});
 		}
 		return this._oShowDetailsButton;
