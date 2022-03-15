@@ -10,44 +10,59 @@ html.sap-desktop .sapMTBActive:focus {
 
 .sapMTB {
 	height: 2.75rem;
-	padding: 0 0.5rem 0 0.25rem;
+	padding: 0 0.5rem;
 	background: @sapUiToolbarBackground;
+
+	&.sapMTBActive {
+		background: @sapUiListHoverBackground;
+	}
 }
 
+.sapMTB-Transparent-CTX.sapMTB,
+.sapMIBar.sapMTB-Info-CTX.sapMTB {
+	padding: 0 0.5rem;
+}
 
 /* Transparent Toolbar Context */
 .sapMTB-Transparent-CTX.sapMTB {
-	padding: 0 0.5rem 0 0.75rem;
+	background: @sapUiToolbarBackground;
+
+	&.sapMTBActive {
+		background: @sapUiListHoverBackground;
+	}
 }
 
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
-	background: darken(@sapUiBaseColor, 10);
+	background: @sapUiInfobarNonInteractiveBackground;
+	color: @sapUiListTextColor;
+	height: 2rem;
 
 	> .sapUiIcon {
-		color: @sapUiBaseText;
+		width: 1rem;
+		height: 1rem;
+		color: @sapUiListTextColor;
 	}
 
 	> .sapUiIcon:focus {
-		color: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapContent_FocusColor;
+		color: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	}
 
 	&.sapMTBActive {
 		background: @sapUiInfobarBackground;
-		.generate-contrast-color-toolbar(@sapUiInfobarBackground);
+		color: @sapUiInfobarTextColor;
 
 		&:active {
-			.generate-contrast-color-toolbar(@sapUiInfobarActiveBackground);
+			background: @sapUiInfobarActiveBackground;
 		}
 
 		&:hover {
-			.generate-contrast-color-toolbar(@sapUiInfobarHoverBackground);
+			background: @sapUiInfobarHoverBackground;
 		}
 
 		.sapMText,
 		.sapMLabel,
-		> .sapMTitle,
-		> .sapUiIcon {
+		> .sapMTitle {
 			color: inherit;
 		}
 	}
@@ -57,25 +72,31 @@ html.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
 	outline-color: @sapUiContentContrastFocusColor;
 }
 
-.generate-contrast-color-toolbar(@backgroundColor) {
-	color: contrast(@backgroundColor, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-}
-
-// Border radius for default and solid states as they result in white color
-.sapMTB:not(.sapMTB-Info-CTX) {
-	border-top-right-radius: @sapElement_BorderCornerRadius;
-	border-top-left-radius: @sapElement_BorderCornerRadius;
+.sapMTB.sapMTBStandard {
+	border-bottom: solid 0.0625rem @sapUiGroupTitleBorderColor;
 }
 
 // =====================================
 // solid toolbar context
 // =====================================
+.sapMTB:hover,
+.sapMTB-Solid-CTX.sapMTB:hover {
+	background: @sapUiListHoverBackground;
+}
 
 .sapMTB-Solid-CTX.sapMTB {
 	background-color: @sapUiToolbarBackground;
+
+	&.sapMTBActive {
+		background: @sapUiListHoverBackground;
+	}
 }
 
 html.sap-desktop .sapMTBActive:focus {
 	outline: none;
-	box-shadow: inset 0px 0px 0px @sapContent_FocusWidth  @sapUiContentFocusColor;
+	box-shadow: inset 0px 0px 0px @sapUiContentFocusWidth  @sapUiContentFocusColor;
+}
+
+.sapMTB .sapMTBSeparator {
+	background: @sapUiToolbarSeparatorColor;
 }
