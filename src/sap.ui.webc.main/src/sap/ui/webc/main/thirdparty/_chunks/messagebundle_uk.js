@@ -87,7 +87,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		TABCONTAINER_PREVIOUS_ICON_ACC_NAME: "Назад",
 		TABCONTAINER_OVERFLOW_MENU_TITLE: "Меню переповнення",
 		TABCONTAINER_END_OVERFLOW: "Більше",
-		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Cancel",
+		TABCONTAINER_POPOVER_CANCEL_BUTTON: "Скасувати",
 		TEXTAREA_CHARACTERS_LEFT: "{0} символів залишилось",
 		TEXTAREA_CHARACTERS_EXCEEDED: "{0} символів за межею",
 		TIMEPICKER_HOURS_LABEL: "Години",

@@ -11,6 +11,7 @@ sap.ui.define(['../FeaturesRegistry', '../Keys', '../util/FocusableElements'], f
 			document.addEventListener("keydown", this.keydownHandler);
 		}
 		async _keydownHandler(event) {
+			event.preventDefault();
 			if (Keys.isF6Next(event)) {
 				this.updateGroups();
 				if (this.groups.length < 1) {

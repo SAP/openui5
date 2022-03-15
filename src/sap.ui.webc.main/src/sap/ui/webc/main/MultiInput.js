@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/library",
 	"./thirdparty/MultiInput",
-	"./thirdparty/features/InputElementsFormSupport"
+	"./thirdparty/features/InputElementsFormSupport",
+	"./thirdparty/features/InputSuggestions"
 ], function(WebComponent, library, EnabledPropagator, ManagedObjectObserver, coreLibrary) {
 	"use strict";
 
