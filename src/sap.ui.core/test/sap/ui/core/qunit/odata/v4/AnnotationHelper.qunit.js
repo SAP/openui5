@@ -76,12 +76,22 @@ sap.ui.define([
 							$AnnotationPath :
 								"tea_busi.TEAM/TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM/@UI.LineItem"
 						}
+					}],
+					"@UI.LineItem" : [{
+						Value : {
+							$Path : "LAST_MODIFIED_AT"
+						}
 					}]
 				},
 				"tea_busi.Worker/ID" : {
 					"@Common.Label" : "Worker's ID",
 					"@Common.Text" : {
 						$Path : "Name"
+					}
+				},
+				"tea_busi.Worker/LAST_MODIFIED_AT" : { // test requires full namespace
+					"@com.sap.vocabularies.Common.v1.Timezone" : {
+						$Path : "Timezone"
 					}
 				},
 				"tea_busi.Worker/Name" : {
@@ -158,9 +168,20 @@ sap.ui.define([
 					$Nullable : false,
 					$MaxLength : 4
 				},
+				LAST_MODIFIED_AT : {
+					$kind : "Property",
+					$Type : "Edm.DateTimeOffset",
+					$Nullable : false,
+					$Precision : 7
+				},
 				Name : {
 					$kind : "Property",
 					$Type : "Edm.String"
+				},
+				Timezone : {
+					$kind : "Property",
+					$Type : "Edm.String",
+					$Nullable : false
 				},
 				EMPLOYEE_2_TEAM : {
 					$kind : "NavigationProperty",
@@ -1032,6 +1053,47 @@ sap.ui.define([
 			+ ",{mode:'OneTime',path:'/##@@requestCurrencyCodes',targetType:'any'}]"
 			+ ",type:'sap.ui.model.odata.type.Currency'"
 			+ ",constraints:{'skipDecimalsValidation':true}}"
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: DateTimeWithTimezone", function (assert) {
+		var oMetaModel = new ODataMetaModel(),
+			oContext = {
+				getModel : function () {
+					return oMetaModel;
+				},
+				getPath : function () {
+					return "/tea_busi.Worker/@UI.LineItem/0/Value/";
+				}
+			},
+			vRawValue = {$Path : "LAST_MODIFIED_AT"};
+
+		this.mock(oMetaModel).expects("fetchEntityContainer").atLeast(1)
+			.withExactArgs().returns(SyncPromise.resolve(mScope));
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.format(vRawValue, {
+				arguments : [{$$noPatch : true}, {style : "long"}],
+				context : oContext
+			}),
+			("{"
+			+ "mode:'TwoWay',"
+			+ "parts:[{"
+			+ "    path:'LAST_MODIFIED_AT',"
+			+ "    type:'sap.ui.model.odata.type.DateTimeOffset',"
+			+ "    constraints:{'precision':7,'nullable':false},"
+			+ "    formatOptions:{'style':'long'},"
+			+ "    parameters:{'$$noPatch':true}"
+			+ "},{"
+			+ "    path:'Timezone',"
+			+ "    type:'sap.ui.model.odata.type.String',"
+			+ "    constraints:{'nullable':false},"
+			+ "    formatOptions:{'parseKeepsEmptyString':true,'style':'long'},"
+			+ "    parameters:{'$$noPatch':true}"
+			+ "}],"
+			+ "type:'sap.ui.model.odata.type.DateTimeWithTimezone'"
+			+ "}").replace(/ /g, "")
 		);
 	});
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_edm_types_v4/0001/">
+		<edmx:Include Namespace="com.sap.gateway.default.zui5_edm_types_v4.v0001"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="foo" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<Annotations Target="com.sap.gateway.default.zui5_edm_types_v4.v0001.EdmTypes/DateTimeOffset">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Timezone" Path="TimezoneID"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

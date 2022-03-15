@@ -374,6 +374,123 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchDateTimeWithTimezone: no timezone", function (assert) {
+		var oModel = {
+				getObject : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oPathValue = {
+				model : oModel,
+				path : "~path~"
+			};
+
+		oModelMock.expects("getObject")
+			.withExactArgs("~path~@com.sap.vocabularies.Common.v1.Timezone/$Path")
+			.returns(undefined);
+
+		// code under test
+		assert.strictEqual(
+			Expression.fetchDateTimeWithTimezone(oPathValue, "~value~", {}),
+			undefined
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchDateTimeWithTimezone", function (assert) {
+		var sAnnotationTargetPath = "~path~@com.sap.vocabularies.Common.v1.Timezone/$Path",
+			oBasicsMock = this.mock(Basics),
+			oExpressionMock = this.mock(Expression),
+			oModel = {
+				fetchObject : function () {},
+				getConstraints : function () {},
+				getObject : function () {}
+			},
+			oPathValue = {
+				model : oModel,
+				path : "~path~",
+				prefix : "~prefix~",
+				value : "n/a" // sValue must be used instead!
+			},
+			oTarget = {
+				$Type : "~type1~"
+			};
+
+		this.mock(oModel).expects("getObject")
+			.withExactArgs(sAnnotationTargetPath)
+			.returns("~timezone~");
+		this.mock(oModel).expects("fetchObject")
+			.withExactArgs(sAnnotationTargetPath + "/$")
+			.returns(SyncPromise.resolve(oTarget));
+		oExpressionMock.expects("pathResult")
+			.withExactArgs(sinon.match.same(oPathValue), "Edm.DateTimeOffset", "~value~",
+				"~constraints~")
+			.returns("~pathResult~");
+		oBasicsMock.expects("resultToString")
+			.withExactArgs("~pathResult~", false, true)
+			.returns("~binding0~");
+		this.mock(oModel).expects("getConstraints")
+			.withExactArgs(sinon.match.same(oTarget), sAnnotationTargetPath)
+			.returns("~timezoneConstraints~");
+		oExpressionMock.expects("pathResult")
+			.withExactArgs(sinon.match.same(oPathValue), "~type1~", "~timezone~",
+				"~timezoneConstraints~")
+			.returns("~pathResultTimezone~");
+		oBasicsMock.expects("resultToString")
+			.withExactArgs("~pathResultTimezone~", false, true)
+			.returns("~binding1~");
+
+		// code under test
+		Expression.fetchDateTimeWithTimezone(oPathValue, "~value~", "~constraints~")
+			.then(function (oResult) {
+				assert.deepEqual(oResult, {
+					result : "composite",
+					type : "sap.ui.model.odata.type.DateTimeWithTimezone",
+					value : "{mode:'TwoWay',parts:[~binding0~,~binding1~]"
+						+ ",type:'sap.ui.model.odata.type.DateTimeWithTimezone'}"
+				});
+			});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("path: with timezone, bAsync = " + bAsync, function (assert) {
+			var oMetaModel = {
+					fetchObject : function () {},
+					getConstraints : function () {}
+				},
+				sPath = "/ProductList/@UI.LineItem/0/Value/$Path",
+				oPathValue = {
+					complexBinding : true,
+					model : oMetaModel,
+					path : sPath
+				},
+				oPromise,
+				oProperty = {$Type : "Edm.DateTimeOffset"};
+
+			this.mock(Basics).expects("expectType")
+				.withExactArgs(sinon.match.same(oPathValue), "string");
+			this.mock(oMetaModel).expects("fetchObject")
+				.withExactArgs(sPath + "/$")
+				.returns(SyncPromise.resolve(oProperty));
+			this.mock(oMetaModel).expects("getConstraints")
+				.withExactArgs(sinon.match.same(oProperty), sPath)
+				.returns("~constraints~");
+			this.mock(Expression).expects("fetchDateTimeWithTimezone")
+				.withExactArgs(sinon.match.same(oPathValue), oPathValue.value, "~constraints~")
+				.returns(SyncPromise.resolve(bAsync ? Promise.resolve("~result~") : "~result~"));
+
+			// code under test
+			oPromise = Expression.path(oPathValue);
+
+			assert.strictEqual(oPromise.isPending(), bAsync);
+
+			return oPromise.then(function (oResult) {
+				assert.strictEqual(oResult, "~result~");
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("path fails sync, 'uncaught (in promise)' expected", function (assert) {
 		var oError = new Error("foo"),
 			fnListener = SyncPromise.listener,

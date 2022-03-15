@@ -106,6 +106,8 @@ sap.ui.define([
 		 *   <li> <code>type</code>:  the EDM data type (like "Edm.String") if it could be
 		 *      determined
 		 *   <li> <code>constraints</code>: {object} type constraints if result is "binding"
+		 *   <li> <code>formatOptions</code>: {object} format options if result is "binding"
+		 *   <li> <code>parameters</code>: {object} binding parameters if result is "binding"
 		 * </ul>
 		 *
 		 * @private
@@ -539,6 +541,52 @@ sap.ui.define([
 		},
 
 		/**
+		 * Fetch the result object for a date/time with timezone.
+		 * If <code>oPathValue.path</code> references a property which has a
+		 * <code>com.sap.vocabularies.Common.v1.Timezone</code> annotation, a composite result
+		 * object for a <code>sap.ui.model.odata.type.DateTimeWithTimezone</code> type with the
+		 * date/time and the timezone as parts is returned.
+		 *
+		 * @param {object} oPathValue
+		 *   model, path (and value) information pointing to the path (see Expression object)
+		 * @param {string} sValue
+		 *   use this value instead of <code>oPathValue.value</code>!
+		 * @param {object} mConstraints
+		 *   the type constraints for the property referenced by <code>oPathValue.path</code>
+		 * @returns {sap.ui.base.SyncPromise|undefined}
+		 *   a sync promise which resolves with a result object for the date/time with timezone, or
+		 *   is rejected with an error; <code>undefined</code> if there is no timezone annotation
+		 *   for the property referenced by <code>oPathValue.path</code>
+		 */
+		fetchDateTimeWithTimezone : function (oPathValue, sValue, mConstraints) {
+			var oModel = oPathValue.model,
+				sPath = oPathValue.path + "@com.sap.vocabularies.Common.v1.Timezone/$Path",
+				sTargetPath = oModel.getObject(sPath);
+
+			function formatPart(mConstraints0, sType, sPath0) {
+				return Basics.resultToString(
+					Expression.pathResult(oPathValue, sType, sPath0, mConstraints0),
+					false, true);
+			}
+
+			if (!sTargetPath) {
+				return undefined;
+			}
+			return oModel.fetchObject(sPath + "/$").then(function (oTarget) {
+				return {
+					result : "composite",
+					type : "sap.ui.model.odata.type.DateTimeWithTimezone",
+					value : "{mode:'TwoWay',parts:["
+						+ formatPart(mConstraints, "Edm.DateTimeOffset", sValue)
+						+ ","
+						+ formatPart(oModel.getConstraints(oTarget, sPath), oTarget.$Type,
+							sTargetPath)
+						+ "],type:'sap.ui.model.odata.type.DateTimeWithTimezone'}"
+				};
+			});
+		},
+
+		/**
 		 * Handling of "14.5.3.1.2 Function odata.fillUriTemplate".
 		 *
 		 * @param {object} oPathValue
@@ -770,6 +818,11 @@ sap.ui.define([
 		 * <code>Org.OData.Measures.V1.Unit</code> annotation, a composite result object for a
 		 * <code>sap.ui.model.odata.type.Unit</code> type with the measures, the unit and the unit
 		 * customizing as parts is returned.
+		 * If <code>oPathValue.path</code> references a property with type
+		 * <code>Edm.DateTimeOffset</code> and a
+		 * <code>com.sap.vocabularies.Common.v1.Timezone</code> annotation, a composite result
+		 * object for a <code>sap.ui.model.odata.type.DateTimeWithTimezone</code> type with the
+		 * date/time and the timezone as parts is returned.
 		 *
 		 * @param {object} oPathValue
 		 *   model, path and value information pointing to the path (see Expression object)
@@ -794,16 +847,17 @@ sap.ui.define([
 			}
 
 			return oPromise.then(function (oProperty) {
-				var mConstraints,
-					oCurrencyOrUnitPromise,
+				var oAnnotationBasedPromise,
+					mConstraints,
 					sType = oProperty && oProperty.$Type;
 
 				if (oProperty && oPathValue.complexBinding) {
 					mConstraints = oModel.getConstraints(oProperty, oPathValue.path);
-					oCurrencyOrUnitPromise
-						= Expression.fetchCurrencyOrUnit(oPathValue, sValue, sType, mConstraints);
+					oAnnotationBasedPromise = sType === "Edm.DateTimeOffset"
+						? Expression.fetchDateTimeWithTimezone(oPathValue, sValue, mConstraints)
+						: Expression.fetchCurrencyOrUnit(oPathValue, sValue, sType, mConstraints);
 				}
-				return oCurrencyOrUnitPromise
+				return oAnnotationBasedPromise
 					|| Expression.pathResult(oPathValue, sType, sValue, mConstraints);
 			});
 		},

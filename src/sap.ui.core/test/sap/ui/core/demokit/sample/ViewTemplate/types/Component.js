@@ -32,6 +32,7 @@ sap.ui.define([
 				oModelV2,
 				oModelV4,
 				bRealOData = TestUtils.isRealOData(),
+				sResourcePath = "sap/ui/core/sample/ViewTemplate/types/data",
 				oRootView,
 				sUriV2 = "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
 				sUriV4 = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_edm_types_v4/0001/",
@@ -46,8 +47,7 @@ sap.ui.define([
 				};
 
 			if (!bRealOData) {
-				TestUtils.useFakeServer(this.oSandbox,
-					"sap/ui/core/sample/ViewTemplate/types/data", {
+				TestUtils.useFakeServer(this.oSandbox, sResourcePath, {
 					"/sap/opu/odata/sap/ZUI5_EDM_TYPES/$metadata" : {
 						source : "metadataV2.xml"
 					},
@@ -64,13 +64,14 @@ sap.ui.define([
 			}
 
 			oModelV2 = new ODataModelV2({
-				annotationURI : sap.ui.require.toUrl("sap/ui/core/sample/ViewTemplate/types/data/annotationsV2.xml"),
+				annotationURI : sap.ui.require.toUrl(sResourcePath + "/annotationsV2.xml"),
 				defaultBindingMode : BindingMode.TwoWay,
 				serviceUrl : sUriV2,
 				useBatch : bRealOData
 			});
 
 			oModelV4 = new ODataModelV4({
+				annotationURI : sap.ui.require.toUrl(sResourcePath + "/annotationsV4.xml"),
 				serviceUrl : sUriV4,
 				synchronizationMode : "None",
 				updateGroupId : "EDMTypes"
