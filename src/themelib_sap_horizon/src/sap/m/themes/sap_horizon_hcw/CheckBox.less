@@ -5,187 +5,211 @@
 
 .sapMCb {
 	height: 2.75rem;
-	line-height: 2.75rem;
-	padding: 0 0 0 2.75rem;
+	padding-left: 2.75rem;
+	line-height: 44px;
 }
 
 .sapMCbBg {
-	left: 0.6875rem;
-	top: 0.6875rem;
 	height: 1.375rem;
 	width: 1.375rem;
-	line-height: 1.125rem;
-	border-width: 0.0625rem;
+	top: 0.6875rem;
+	left: 0.6875rem;
 	box-sizing: border-box;
+	border-radius: @sapField_BorderCornerRadius;
+	background-color: @sapField_Background;
+	border: @sapField_BorderWidth @sapField_BorderColor @sapField_BorderStyle;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	color: @sapContent_Selected_ForegroundColor;
 
-	&:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn) > & {
-		line-height: 1.25rem;
-	}
-}
-
-.sapMCb.sapMCbWarn .sapMCbBg {
-	background-color: @sapUiFieldWarningBackground;
-	border: 0.125rem dashed @sapUiFieldWarningColor;
 	&.sapMCbMarkChecked:before {
-		color: @sapUiFieldTextColor;
+		font-size: 1rem;
+		color: currentColor;
+	}
+
+	&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+		border-width: 0.25rem;
 	}
 }
 
-.sapMCb.sapMCbSucc .sapMCbBg {
-	background-color: @sapUiFieldSuccessBackground;
-	border: 0.0625rem solid @sapUiFieldSuccessColor;
-	&.sapMCbMarkChecked:before {
-		color: @sapUiFieldSuccessColor;
+.sapMCbBgDis .sapMCbBg {
+	opacity: @sapContent_DisabledOpacity;
+}
+
+.sapMCbRo .sapMCbBg {
+	background-color: @sapField_ReadOnly_Background;
+	border: @sapField_BorderWidth solid @sapField_ReadOnly_BorderColor;
+}
+
+.sapMCbRo > .sapMCbBg.sapMCbMarkChecked:before {
+	color: @sapContent_NonInteractiveIconColor;
+}
+
+.sapMCbHoverable:hover {
+	border: @sapField_BorderWidth @sapField_BorderStyle @sapField_Hover_BorderColor;
+	color: @sapContent_Selected_ForegroundColor;
+	box-shadow: @sapContent_Interaction_Shadow;
+	background-color: @sapSelectedColor;
+}
+
+// value state
+.sapMCbErr {
+	.sapMCbBg {
+		background-color: @sapField_InvalidBackground;
+		border: @sapField_InvalidBorderWidth @sapField_InvalidBorderStyle  @sapField_InvalidColor;
+		color: @sapField_InvalidColor;
+
+		&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+			border-width: 0.1875rem;
+		}
+	}
+
+	.sapMCbHoverable:hover {
+		box-shadow: @sapContent_Negative_Shadow;
+		background-color: @sapField_Hover_Background;
 	}
 }
 
-.sapMCb.sapMCbErr .sapMCbBg {
-	background-color: @sapUiFieldInvalidBackground;
-	border: 0.125rem dashed @sapUiFieldInvalidColor;
-	&.sapMCbMarkChecked:before {
-		color: @sapUiFieldInvalidColor;
+.sapMCbWarn {
+	.sapMCbBg {
+		background-color: @sapField_WarningBackground;
+		border: @sapField_WarningBorderWidth @sapField_WarningBorderStyle  @sapField_WarningColor;
+		color: @sapField_TextColor;
+
+		&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+			border-width: 0.1875rem;
+		}
+	}
+
+	.sapMCbHoverable:hover {
+		box-shadow: @sapContent_Critical_Shadow;
+		background-color: @sapField_Hover_Background;
 	}
 }
 
-.sapMCb.sapMCbInfo .sapMCbBg {
-	background-color: @sapUiFieldInformationBackground;
-	border: @sapUiFieldBorderWidth dashed @sapUiFieldInformationColor;
-	&.sapMCbMarkChecked:before {
-		color: @sapUiFieldInformationColor;
+.sapMCbInfo {
+	.sapMCbBg {
+		background-color: @sapField_InformationBackground;
+		border: @sapField_InformationBorderWidth @sapField_InformationBorderStyle  @sapField_InformationColor;
+		color: @sapField_InformationColor;
+
+		&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+			border-width: 0.25rem;
+		}
+	}
+
+	.sapMCbHoverable:hover {
+		box-shadow: @sapContent_Informative_Shadow;
+		background-color: @sapField_Hover_Background;
 	}
 }
 
-.sapUiForm .sapMCbBg { /* In forms, align left with '0.1875rem(3px)' ( the focus width) */
-	left: 3px; // Must be in pixels to behave correctly in IE
+.sapMCbSucc {
+	.sapMCbBg {
+		background-color: @sapField_SuccessBackground;
+		border: @sapField_SuccessBorderWidth @sapField_SuccessBorderStyle  @sapField_SuccessColor;
+		color: @sapField_SuccessColor;
+	}
+
+	.sapMCbHoverable:hover {
+		box-shadow: @sapContent_Positive_Shadow;
+		background-color: @sapField_Hover_Background;
+	}
 }
 
-.sapMCbBg.sapMCbMarkChecked:before {
-	color: @sapUiContentIconColor;
+.sapMCb.sapMCbDisplayOnly:not(.sapMCbBgDis) {
+	padding-left: 2.75rem;
 }
 
-.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
-	border: 0.25rem solid transparent;
+.sapMCbDisplayOnly .sapMCbBg {
+	top: 0.5625rem;
+	left: 0.5625rem;
+	&:not(.sapMCbMarkPartiallyChecked).sapMCbMarkChecked:before {
+		color: @sapTextColor;
+		font-size: 1rem;
+	}
+
+	&:not(.sapMCbMarkPartiallyChecked):before {
+		color: @sapTextColor;
+		font-size: 1rem;
+	}
+
+	&.sapMCbMark.sapMCbMarkChecked.sapMCbMarkPartiallyChecked {
+		width: 0.875rem;
+		height: 0.875rem;
+		border-radius: 0.0675rem;
+		top: 0.9375rem;
+		left: 0.9375rem;
+
+		&::before {
+			border-width: 0.125rem;
+		}
+	}
 }
 
-/* CheckBox focus */
-.sapMCb:focus {
+// FOCUS
+.sapMCb {
 	outline: none;
 }
 
-html.sap-desktop {
-	.sapMCbBg:focus,
-	.sapMCbBg:active,
-	.sap-desktop .sapMCbBg.sapMCbBgDis:focus {
-		-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-		outline: none;
+.sapMCb:focus:before {
+	content: "";
+	border: @sapContent_FocusColor @sapContent_FocusStyle @sapContent_FocusWidth;
+	inset: 5px;
+	position: absolute;
+	border-radius: @sapField_BorderCornerRadius;
+}
+
+.sapMCb.sapMCbHasLabel:focus:before {
+	content: "";
+	border: @sapContent_FocusColor @sapContent_FocusStyle @sapContent_FocusWidth;
+	top: 5px;
+	left: 5px;
+	bottom: 5px;
+	right: -6px;
+	position: absolute;
+	border-radius: 0.5rem;
+}
+
+.sapUiSizeCompact {
+	.sapMCb {
+		height: 2rem;
+		padding-left: 2rem;
+		line-height: 32px;
 	}
 
-	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
-		outline-width: 0.125rem;
-		outline-style: dotted;
-		outline-color: @sapUiContentFocusColor;
-	}
-
-	.sapMCb:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel {
-		&:focus:before {
-			content: "";
-			display: block;
-			position: absolute;
-			top: 0.5rem;
-			bottom: 0.5rem;
-			left: 0.5rem;
-			right: 0;
-			border: 0.125rem dotted @sapUiContentFocusColor;
-		}
-		&:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn):focus:before {
-			bottom: 0.5rem;
-		}
-	}
-
-	.sapUiForm .sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
-		left: 0px; /* Cb in SimpleForm: left border adjustment */
-	}
-}
-
-/* CheckBox in Footer Context */
-.sapMFooter-CTX .sapMCb:not(.sapMCbBgDis):focus > .sapMCbBg,
-.sapMFooter-CTX .sapMCb:not(.sapMCbBgDis)		> .sapMCbBg:focus {
-	outline-color: @sapUiContentContrastFocusColor;
-}
-
-.sapMLIBActive .sapMCbBg,
-.sapMLIBActive .sapMCbBg.sapMCbMarkChecked,
-.sapMLIBActive .sapMCbBg.sapMCbBgDis,
-.sapMLIBActive .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked{
-	border-color: @sapUiListActiveTextColor;
-}
-
-.sapMLIBActive .sapMCbBg{
-	background-color: @sapUiListActiveBackground;
-}
-
-.sapMCbHoverable:hover{
-	border-color: @sapUiFieldHoverBorderColor;
-	background: @sapUiSelected;
-}
-
-.sapMCbBgDis {
-	opacity: @sapUiContentDisabledOpacity;
-}
-
-.sapMLIBActive .sapMActive .sapMCbBg.sapMCbActiveStateOff.sapMCbMarkChecked:before,
-.sapMLIBActive .sapMCbBg:active.sapMCbActiveStateOff.sapMCbMarkChecked:before,
-.sapMLIBActive .sapMCbBg.sapMCbMarkChecked:before,
-.sapMLIBActive .sapMActive .sapMCbBg.sapMCbMarkChecked:before,
-.sapMLIBActive .sapMCbBg:active.sapMCbMarkChecked:before,
-.sapMLIBActive .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked:before{
-	color: @sapUiListActiveTextColor;
-}
-
-.sapMCbBg.sapMCbBgDis.sapMCbMarkChecked:before {
-	color: fade(@sapUiContentIconColor, 25);
-}
-
-/* Compact size */
-.sapUiSizeCompact{
-	.sapUiForm .sapMCbBg { /* In forms, align left with '0.1875rem(3px)' ( the focus width) */
-		left: 3px; // Must be in pixels to behave correctly in IE
-	}
 	.sapMCbBg {
-		border-radius: 0.125rem;
-	}
-}
+		height: 1rem;
+		width: 1rem;
+		top: 0.5rem;
+		left: 0.5rem;
+		border-radius: @sapField_BorderCornerRadius;
 
-html.sap-desktop {
-	.sapUiSizeCompact {
-		.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel {
-			&:focus:before {
-				top: 0.3025rem;
-				bottom: 0.3025rem;
-				left: 0.3025rem;
-			}
-
-			&:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn):focus:before {
-				bottom: 0.3025rem;
-			}
+		&.sapMCbMarkChecked:before {
+			font-size: 0.75rem;
 		}
 
-		.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
+		&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
 			border-width: 0.1875rem;
 		}
+	}
 
-		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
-			left: 0px;
-		}
+	.sapMCbErr .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before,
+	.sapMCbWarn .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+		border-width: 0.125rem;
+	}
 
-		.sapMCbBg {
-			height: 1rem;
-			width: 1rem;
-			box-sizing: border-box;
-		}
+	.sapMCbInfo .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
+		border-width: 0.1875rem;
+	}
 
-		.sapMCb:not(.sapMCbErr):not(.sapMCbWarn) > .sapMCbBg {
-			line-height: 0.875rem;
-		}
+	.sapMCbDisplayOnly .sapMCbBg:not(.sapMCbMarkPartiallyChecked) {
+		margin: 0;
+	}
+
+	.sapMCbDisplayOnly .sapMCbBg.sapMCbMark.sapMCbMarkChecked.sapMCbMarkPartiallyChecked {
+		top: 0.5625rem;
+		left: 0.5625rem;
 	}
 }
