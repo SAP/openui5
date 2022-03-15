@@ -3342,6 +3342,10 @@ sap.ui.define([
 			return SyncPromise.resolve();
 		}
 
+		if (this.oPromise.isRejected()) {
+			throw new Error(this + ": Cannot call requestSideEffects, cache is broken: "
+				+ this.oPromise.getResult().message);
+		}
 		mMergeableQueryOptions = _Helper.extractMergeableQueryOptions(mQueryOptions);
 		sResourcePath = (sResourcePath || this.sResourcePath)
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);

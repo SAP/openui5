@@ -9762,7 +9762,7 @@ sap.ui.define([
 			mQueryOptions = {},
 			mTypeForMetaPath = {};
 
-		oCache.oPromise = {/*from previous #fetchValue*/};
+		oCache.oPromise = SyncPromise.resolve({}); // from previous #fetchValue*
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
@@ -9836,7 +9836,9 @@ sap.ui.define([
 			aPaths = ["ROOM_ID"],
 			mQueryOptions = {};
 
-		oCache.oPromise = {/*from previous #fetchValue*/};
+		// a broken cache from a previous #fetchValue doesn't hurt
+		oCache.oPromise = SyncPromise.reject(new Error("read failure"));
+		oCache.oPromise.caught();
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
 				sinon.match.same(oCache.mLateQueryOptions))
@@ -9947,6 +9949,40 @@ sap.ui.define([
 			// code under test
 			oCache.requestSideEffects({/*group lock*/}, aPaths, mNavigationPropertyPaths);
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache#requestSideEffects: broken cache", function (assert) {
+		var oCache = this.createSingle("Employees('42')"),
+			oGroupLock = {},
+			mMergedQueryOptions = {},
+			mNavigationPropertyPaths = {},
+			aPaths = ["ROOM_ID"],
+			mQueryOptions = {},
+			oReadError = new Error("read failure");
+
+		oCache.oPromise = SyncPromise.reject(oReadError); // from previous #fetchValue
+		oCache.oPromise.caught();
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
+				sinon.match.same(oCache.mLateQueryOptions))
+			.returns(mQueryOptions);
+		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
+				"/Employees", sinon.match.same(mNavigationPropertyPaths))
+			.returns(mMergedQueryOptions);
+		this.mock(oCache).expects("fetchValue").never();
+		this.oRequestorMock.expects("buildQueryString").never();
+		this.oRequestorMock.expects("request").never();
+		this.mock(oCache).expects("fetchTypes").never();
+		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
+
+		// code under test
+		assert.throws(function () {
+			oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths);
+		}, new Error("/~/Employees('42'): Cannot call requestSideEffects, cache is broken:"
+			+ " read failure"));
 	});
 
 	//*********************************************************************************************

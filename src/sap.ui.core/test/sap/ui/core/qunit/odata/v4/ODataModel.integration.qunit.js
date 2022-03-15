@@ -38510,6 +38510,43 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: side effects request on a SingleCache that failed to load its data.
+	// BCP: 2280078004
+	QUnit.test("requestSideEffects: broken SingleCache", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
+	<Text text="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.oLogMock.expects("error").withArgs("Failed to read path /TEAMS('TEAM_01')/Name");
+		this.oLogMock.expects("error").withArgs("Failed to read path /TEAMS('TEAM_01')");
+		this.expectRequest("TEAMS('TEAM_01')", createErrorInsideBatch())
+			.expectMessages([{
+				code : "CODE",
+				message : "Request intentionally failed",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			}]);
+
+		return this.createView(assert, sView).then(function () {
+			// expect no request
+
+			return Promise.all([
+				that.oView.byId("form").getBindingContext().requestSideEffects(["Name"])
+					.catch(function (oError) {
+						assert.strictEqual(oError.message,
+							"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS('TEAM_01')"
+							+ ": Cannot call requestSideEffects, cache is broken:"
+							+ " Request intentionally failed");
+					}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: #getAllCurrentContexts returns contexts for all records that are available in the
 	// collection cache of a list binding.
 	// JIRA: CPOUI5ODATAV4-1402
