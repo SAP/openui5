@@ -47,7 +47,7 @@ sap.ui.define([
 	];
 
 	var fnHasVisibleLink = function(assert, oPanel, sText, bVisible) {
-		var aElements = oPanel.$().find("a:visible");
+		var aElements = oPanel.getAggregation("_content").$().find("a:visible");
 		var bFound = false;
 		aElements.each(function(iIndex) {
 			if (aElements[iIndex].text === sText) {
@@ -58,7 +58,7 @@ sap.ui.define([
 	};
 
 	var fnHasVisibleText = function(assert, oPanel, sText, bVisible) {
-		var aElements = oPanel.$().find("span:visible");
+		var aElements = oPanel.getAggregation("_content").$().find("span:visible");
 		var bFound = false;
 		aElements.each(function(iIndex) {
 			if (aElements[iIndex].textContent === sText) {
@@ -69,7 +69,7 @@ sap.ui.define([
 	};
 
 	var fnHasVisibleMoreLinksButton = function(assert, oPanel, bVisible) {
-		assert.equal(oPanel.$().find("button:visible").length, bVisible ? 1 : 0);
+		assert.equal(oPanel.getAggregation("_content").$().find("button:visible").length, bVisible ? 1 : 0);
 		// fnHasVisibleText(assert, oPanel, sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc", undefined, false).getText("info.POPOVER_DEFINE_LINKS"), bVisible);
 	};
 
@@ -592,7 +592,6 @@ sap.ui.define([
 			oPanel.getAggregation("_content") // VerticalLayout of panel
 				.getContent()[2] // VBox which includes the links
 				.getItems()[0] // First PanelListItem of the panel
-				.getAggregation("_content") // HorizontalLayout inside the PanelListItem
 				.getContent()[0] // HBox
 				.getItems()[1] // VBox containing link, label and a text
 				.getItems()[0] // Actuall sap.m.Link on the Panel
@@ -702,7 +701,9 @@ sap.ui.define([
 		var oNoContentText = oLinkNoContent._getNoContent().getContent()[0].getText();
 
 		oLinkNoContent.getContent().then(function(oPanel) {
-			assert.deepEqual(oPanel.getAdditionalContent()[0].getContent()[0].getText(), oNoContentText, "'No content available' SimpleForm displayed on Panel");
+			assert.deepEqual(oPanel.getAggregation("_content").getContent()[0].getItems()[0].getContent()[0].getText(), oNoContentText, "'No content available' SimpleForm displayed on Panel");
+			// AdditionalContent is now forwarded to a VBox
+			//assert.deepEqual(oPanel.getAdditionalContent()[0].getContent()[0].getText(), oNoContentText, "'No content available' SimpleForm displayed on Panel");
 			done();
 		});
 	});
