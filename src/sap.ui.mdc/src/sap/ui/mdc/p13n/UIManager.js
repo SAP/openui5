@@ -206,7 +206,11 @@ sap.ui.define([
 		}.bind(this));
 
 		return Promise.all(aPAdaptationUI).then(function(aUIs){
-			var oPopupContent = bUseP13nContainer ? new P13nContainer() : aUIs[0].panel;
+			var oPopupContent = bUseP13nContainer ? new P13nContainer({
+				afterViewSwitch: function(oEvt) {
+					this.oAdaptationProvider.validateP13n(oControl, oEvt.getParameter("target"), oEvt.getSource().getCurrentViewContent());
+				}.bind(this)
+			}) : aUIs[0].panel;
 			if (bUseP13nContainer) {
 				aUIs.forEach(function(mUI){
 					if (mUI.panel) {
