@@ -1,63 +1,68 @@
 <!DOCTYPE HTML>
 <html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="utf-8">
 
-<head>
-    <meta charset="utf-8">
-    <title>BarcodeScannerDialog - sap.ui.webc.fiori</title>
-    <script src="shared-config.js"></script>
-    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.fiori, sap.ui.webc.main">
-    </script>
+        <title>sap.ui.webc.fioti.BarcodeScannerDialog</title>
 
-    <script>
+        <script src="../../../../../resources/sap-ui-core.js"
+            id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webc.fiori,sap.m,sap.ui.layout"
+            data-sap-ui-theme="sap_fiori_3"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-resourceroots='{
+                "utils": "../../../../../test-resources/sap/ui/webc/main"
+            }'></script>
+
+
+        <script>
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
                 "sap/ui/webc/fiori/BarcodeScannerDialog",
-                "sap/ui/webc/main/Button"
-            ], function(
-                BarcodeScannerDialog, Button
-            ) {
+                "sap/ui/webc/main/Button",
+                "sap/ui/webc/main/Label",
+                "utils/layoutUtil"
+            ], function( BarcodeScannerDialog, Button, Label, layoutUtil ) {
 
-                var oBarcodeScannerDialog0Button = new Button({
-                    text: "close",
-                    click: function(oEvent) {
-                        console.log("Calling close...");
-                        var result = oBarcodeScannerDialog.close();
-                        console.log("... close returned: ", result);
-                    }
-                });
-                oBarcodeScannerDialog0Button.placeAt("methodButtons");
+            var aRows = [],
+                addLayoutOptions = layoutUtil.addLayoutOptions,
+                Row = layoutUtil.Row,
+                Cell = layoutUtil.Cell;
+
+            var oDialog = new BarcodeScannerDialog({
+                scanSuccess: function(oEvent) {
+                    oLabel2.setText(oEvent.getParameter("text"));
+                    oDialog.close();
+                },
+                scanError: function() {
+                    oLabel2.setText(oEvent.getParameter("message"));
+                    oDialog.close();
+                }
+            }),
+            oButton = new Button({
+                text: "Scan",
+                click: function () {
+                    oDialog.show();
+                }
+            }),
+            oLabel1 = new Label({text: "Result:"}),
+            oLabel2 = new Label();
 
 
-
-                var oBarcodeScannerDialog1Button = new Button({
-                    text: "show",
-                    click: function(oEvent) {
-                        console.log("Calling show...");
-                        var result = oBarcodeScannerDialog.show();
-                        console.log("... show returned: ", result);
-                    }
-                });
-                oBarcodeScannerDialog1Button.placeAt("methodButtons");
+            aRows.push(new Row("Events", [
+                new Cell("BarcodeScannerDialog", [
+                    oButton, oDialog, oLabel1, oLabel2
+                ])
+            ]));
 
 
-                var oBarcodeScannerDialog = new BarcodeScannerDialog({
-                    scanError: function(oEvent) {
-                        console.log("Event scanError fired for BarcodeScannerDialog with parameters: ", oEvent.getParameters());
-                    },
-                    scanSuccess: function(oEvent) {
-                        console.log("Event scanSuccess fired for BarcodeScannerDialog with parameters: ", oEvent.getParameters());
-                    }
-                });
-                oBarcodeScannerDialog.placeAt("testControl");
+            addLayoutOptions(aRows, "content");
             });
         });
     </script>
-</head>
 
-<body id="body" class="sapUiBody">
-    <div id="methodButtons"></div>
-    <br><br>
-    <div id="testControl"></div>
-</body>
-
+    </head>
+    <body id="content" class="sapUiBody">
+    </body>
 </html>

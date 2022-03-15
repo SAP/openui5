@@ -1,117 +1,255 @@
 <!DOCTYPE HTML>
 <html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="utf-8">
 
-<head>
-    <meta charset="utf-8">
-    <title>FlexibleColumnLayout - sap.ui.webc.fiori</title>
-    <script src="shared-config.js"></script>
-    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.fiori, sap.ui.webc.main">
-    </script>
+        <title>sap.ui.webc.fiori.FlexibleColumnLayout</title>
 
-    <script>
+        <script src="../../../../../resources/sap-ui-core.js"
+            id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.ui.webc.fiori,sap.m,sap.ui.layout"
+            data-sap-ui-theme="sap_fiori_3"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-resourceroots='{
+                "utils": "../../../../../test-resources/sap/ui/webc/main"
+            }'></script>
+
+
+        <script>
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
                 "sap/ui/webc/fiori/FlexibleColumnLayout",
-                "sap/ui/webc/main/Button"
-            ], function(
-                FlexibleColumnLayout, Button
-            ) {
+                "sap/ui/webc/fiori/FCLLayout",
+                "sap/ui/webc/fiori/Page",
+                "sap/ui/webc/main/List",
+                "sap/ui/webc/main/StandardListItem",
+                "sap/ui/webc/main/Select",
+                "sap/ui/webc/main/Option",
+                "sap/ui/webc/main/Title",
+                "sap/ui/webc/main/Label",
+                "sap/ui/webc/main/CheckBox",
+                "sap/m/VBox",
+                "sap/m/HBox",
+                "utils/layoutUtil"
+            ], function( FlexibleColumnLayout, FCLLayout, Page, List, StandardListItem, Select, Option, Title, Label, CheckBox, VBox, HBox, layoutUtil ) {
 
-                var oFlexibleColumnLayout0Button = new Button({
-                    text: "getColumnLayout",
-                    click: function(oEvent) {
-                        console.log("Calling getColumnLayout...");
-                        var result = oFlexibleColumnLayout.getColumnLayout();
-                        console.log("... getColumnLayout returned: ", result);
-                    }
-                });
-                oFlexibleColumnLayout0Button.placeAt("methodButtons");
-
-
-
-                var oFlexibleColumnLayout1Button = new Button({
-                    text: "getEndColumnVisible",
-                    click: function(oEvent) {
-                        console.log("Calling getEndColumnVisible...");
-                        var result = oFlexibleColumnLayout.getEndColumnVisible();
-                        console.log("... getEndColumnVisible returned: ", result);
-                    }
-                });
-                oFlexibleColumnLayout1Button.placeAt("methodButtons");
-
-
-
-                var oFlexibleColumnLayout2Button = new Button({
-                    text: "getMidColumnVisible",
-                    click: function(oEvent) {
-                        console.log("Calling getMidColumnVisible...");
-                        var result = oFlexibleColumnLayout.getMidColumnVisible();
-                        console.log("... getMidColumnVisible returned: ", result);
-                    }
-                });
-                oFlexibleColumnLayout2Button.placeAt("methodButtons");
-
-
-
-                var oFlexibleColumnLayout3Button = new Button({
-                    text: "getStartColumnVisible",
-                    click: function(oEvent) {
-                        console.log("Calling getStartColumnVisible...");
-                        var result = oFlexibleColumnLayout.getStartColumnVisible();
-                        console.log("... getStartColumnVisible returned: ", result);
-                    }
-                });
-                oFlexibleColumnLayout3Button.placeAt("methodButtons");
-
-
-
-                var oFlexibleColumnLayout4Button = new Button({
-                    text: "getVisibleColumns",
-                    click: function(oEvent) {
-                        console.log("Calling getVisibleColumns...");
-                        var result = oFlexibleColumnLayout.getVisibleColumns();
-                        console.log("... getVisibleColumns returned: ", result);
-                    }
-                });
-                oFlexibleColumnLayout4Button.placeAt("methodButtons");
-
-
-                var oFlexibleColumnLayout = new FlexibleColumnLayout({
-                    endColumn: new Button({
-                        icon: "employee",
-                        text: "Some text...",
-                        click: function(oEvent) {
-                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                        }
+            var aRows = [],
+                addLayoutOptions = layoutUtil.addLayoutOptions,
+                Row = layoutUtil.Row,
+                Cell = layoutUtil.Cell,
+                oFcl = new FlexibleColumnLayout({
+                    startColumn: new List({
+                        header: [
+                            new Title({
+                                text: "Master"
+                            })
+                        ],
+                        items: [
+                            new StandardListItem({text: "master item 1"}),
+                            new StandardListItem({text: "master item 2"}),
+                            new StandardListItem({text: "master item 3"})
+                        ]
                     }),
-                    midColumn: new Button({
-                        icon: "employee",
-                        text: "Some text...",
-                        click: function(oEvent) {
-                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                        }
+                    midColumn: new List({
+                        header: [
+                            new Title({
+                                text: "Detail"
+                            })
+                        ],
+                        items: [
+                            new StandardListItem({text: "detail item 1"}),
+                            new StandardListItem({text: "detail item 2"}),
+                            new StandardListItem({text: "detail item 3"})
+                        ]
                     }),
-                    startColumn: new Button({
-                        icon: "employee",
-                        text: "Some text...",
-                        click: function(oEvent) {
-                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                        }
-                    }),
-                    layoutChange: function(oEvent) {
-                        console.log("Event layoutChange fired for FlexibleColumnLayout with parameters: ", oEvent.getParameters());
+                    endColumn: new Page({
+                        content: [
+                            new Title({
+                                text: "DetailDetail"
+                            })
+                        ]
+                    })
+                }).addStyleClass("sapUiSmallMarginTop");
+
+
+            /**********************************/
+            /*** FCL LAYOUT property        ***/
+            /**********************************/
+
+            var oFcl1 = oFcl.clone(),
+                oSelectLayout = new Select({
+                    change: function(oEvent) {
+                        oFcl1.setLayout(oEvent.getParameter("selectedOption").getText());
                     }
                 });
-                oFlexibleColumnLayout.placeAt("testControl");
+
+            aRows.push(new Row("Layout", [
+                new Cell("", new VBox({
+                    width: "100%",
+                    items: [
+                        new HBox({
+                            alignItems: "Center",
+                            items: [
+                                new Label({ text: "Switch layout: "}), oSelectLayout
+                            ]
+                        }),
+                        oFcl1]
+                }))
+            ]));
+
+            Object.keys(FCLLayout).forEach(function(sKey) {
+                oSelectLayout.addOption(new Option({text: sKey}));
+            });
+            oSelectLayout.getOptions().find(function(oOption) {
+                return oOption.getText() === oFcl1.getLayout()
+            }).setSelected(true);
+
+
+            /**********************************/
+            /*** FCL WIDTH property        ***/
+            /**********************************/
+            var oFcl2 = oFcl.clone().setLayout("ThreeColumnsMidExpanded"),
+                oSelectWidth = new Select({
+                    options: [
+                        new Option({text: '"' + oFcl2.getWidth() + '" (default)', value: ""}),
+                        new Option({text: "500px (phone size)", value: "500px"}),
+                        new Option({text: "700px (tablet size)", value: "700px"}),
+                        new Option({text: "1050px (desktop size)", value: "1050px"})
+                    ],
+                    change: function(oEvent) {
+                        oFcl2.setWidth(oEvent.getParameter("selectedOption").getValue());
+                    }
+                });
+
+            aRows.push(new Row("Width", [
+                new Cell("", new VBox({
+                    items: [
+                        new HBox({
+                            alignItems: "Center",
+                            items: [
+                                new Label({ text: "Change width: "}), oSelectWidth
+                            ]
+                        }),
+                        oFcl2]
+                }))
+            ]));
+
+
+            /**********************************/
+            /*** FCL HEIGHT property        ***/
+            /**********************************/
+            var oFcl3 = oFcl.clone().setLayout("ThreeColumnsMidExpanded"),
+                oSelectHeight = new Select({
+                    options: [
+                        new Option({text: '"' + oFcl3.getHeight() + '" (default)', value: ""}),
+                        new Option({text: "300px", value: "300px"})
+                    ],
+                    change: function(oEvent) {
+                        oFcl3.setHeight(oEvent.getParameter("selectedOption").getValue());
+                    }
+                });
+
+            aRows.push(new Row("Height", [
+                new Cell("", new VBox({
+                    items: [
+                        new HBox({
+                            alignItems: "Center",
+                            items: [
+                                new Label({ text: "Change height: "}), oSelectHeight
+                            ]
+                        }),
+                        oFcl3]
+                }))
+            ]));
+
+
+            /***************************************/
+            /*** FCL HIDE-ARROWS property        ***/
+            /***************************************/
+            var oFcl4 = oFcl.clone().setLayout("ThreeColumnsMidExpanded").setHideArrows(true),
+                oChangeHideArrows = new CheckBox({
+                    text: "Hide Arrows",
+                    checked: true,
+                    change: function(oEvent) {
+                        oFcl4.setHideArrows(oChangeHideArrows.getChecked());
+                    }
+                });
+
+            aRows.push(new Row("HideArrows", [
+                new Cell("", new VBox({
+                    items: [
+                        oChangeHideArrows,
+                        oFcl4]
+                }))
+            ]));
+
+            /***************************************/
+            /*** FCL LAYOUT-CHANGE event         ***/
+            /***************************************/
+            var oFcl5 = oFcl.clone().setLayout("ThreeColumnsMidExpanded").attachLayoutChange(function(oEvent) {
+                    oCountLabel.setText(++iCount);
+                    oLayoutLabel.setText(oEvent.getParameter("layout"));
+                    oColumnLayoutLabel.setText(oEvent.getParameter("columnLayout"));
+                    oStartColumnVisibleLabel.setText(oEvent.getParameter("startColumnVisible"));
+                    oMidColumnVisibleLabel.setText(oEvent.getParameter("midColumnVisible"));
+                    oEndColumnVisibleLabel.setText(oEvent.getParameter("endColumnVisible"));
+                    oEndColumnVisibleLabel.setText(oEvent.getParameter("endColumnVisible"));
+                    oArrowsUsedLabel.setText(oEvent.getParameter("arrowUsed"));
+                    oResizeLabel.setText(oEvent.getParameter("resize"));
+                }),
+                iCount = 0,
+                oCountLabel = new Label({text: iCount}),
+                oLayoutLabel = new Label(),
+                oColumnLayoutLabel = new Label(),
+                oStartColumnVisibleLabel = new Label(),
+                oMidColumnVisibleLabel = new Label(),
+                oEndColumnVisibleLabel = new Label(),
+                oArrowsUsedLabel = new Label(),
+                oResizeLabel = new Label()
+
+            aRows.push(new Row('"layoutChange" event', [
+                new Cell("", new VBox({
+                    items: [
+                        new HBox({
+                            items: [
+                                new VBox({
+                                    items: [
+                                        new Label({text: "Event fired counter: "}),
+                                        new Label({text: "Layout: "}),
+                                        new Label({text: "ColumnLayout: "}),
+                                        new Label({text: "startColumnVisible: "}),
+                                        new Label({text: "midColumnVisible: "}),
+                                        new Label({text: "endColumnVisible: "}),
+                                        new Label({text: "arrowsUsed: "}),
+                                        new Label({text: "resize: "})
+                                    ]
+                                }),
+                                new VBox({
+                                    items: [
+                                        oCountLabel,
+                                        oLayoutLabel,
+                                        oColumnLayoutLabel,
+                                        oStartColumnVisibleLabel,
+                                        oMidColumnVisibleLabel,
+                                        oEndColumnVisibleLabel,
+                                        oArrowsUsedLabel,
+                                        oResizeLabel
+                                    ]
+                                })
+                            ]
+                        }),
+                        oFcl5]
+                }))
+            ]));
+
+
+            addLayoutOptions(aRows, "content");
             });
         });
     </script>
-</head>
 
-<body id="body" class="sapUiBody">
-    <div id="methodButtons"></div>
-    <br><br>
-    <div id="testControl"></div>
-</body>
-
+    </head>
+    <body id="content" class="sapUiBody">
+    </body>
 </html>
