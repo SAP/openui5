@@ -1141,6 +1141,11 @@ sap.ui.define([
 				modifier: XmlTreeModifier,
 				view: oView
 			};
+			sandbox.stub(ChangeUtils, "getChangeHandler").resolves({
+				applyChange: function() {},
+				revertChange: function() {},
+				completeChangeContent: function() {}
+			});
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -1314,6 +1319,147 @@ sap.ui.define([
 				assert.equal(this.oApplyChangeOnControlStub.secondCall.args[0].getId(), "a2", "the second change was applied second");
 				assert.equal(this.oApplyChangeOnControlStub.thirdCall.args[0].getId(), "a3", "the third change was applied third");
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("onAfterXMLChangeProcessing hook", {
+		beforeEach: function() {
+			this.oChange1 = new Change(getLabelChangeContent("c1", "label1"));
+			// Same control, same handler
+			this.oChange2 = new Change(getLabelChangeContent("c2", "label1"));
+			// Same control, different handler
+			this.oChange3 = new Change(Object.assign(
+				getLabelChangeContent("c2", "label1"),
+				{
+					changeType: "someOtherChangeType"
+				}
+			));
+			// Different control, same handler
+			this.oChange4 = new Change(getLabelChangeContent("c4", "label2"));
+
+			var oXmlString =
+				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'<Label id="label1" />' +
+					'<Label id="label2" />' +
+				'</mvc:View>';
+			var oView = new DOMParser().parseFromString(oXmlString, "application/xml").documentElement;
+			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl");
+			this.mPropertyBag = {
+				modifier: XmlTreeModifier,
+				view: oView
+			};
+			this.oOnAfterXMLChangeProcessingStub = sandbox.stub();
+			this.oOnAfterXMLChangeProcessingStub2 = sandbox.stub();
+			var oChangeHandler = {
+				applyChange: function() {},
+				revertChange: function() {},
+				completeChangeContent: function() {},
+				onAfterXMLChangeProcessing: this.oOnAfterXMLChangeProcessingStub
+			};
+			var oChangeHandler2 = {
+				applyChange: function() {},
+				revertChange: function() {},
+				completeChangeContent: function() {},
+				onAfterXMLChangeProcessing: this.oOnAfterXMLChangeProcessingStub2
+			};
+			sandbox.stub(ChangeUtils, "getChangeHandler").callsFake(function (oChange) {
+				return Promise.resolve(
+					oChange.getChangeType() === "labelChange"
+						? oChangeHandler
+						: oChangeHandler2
+				);
+			});
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when a change is applied", function(assert) {
+			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange1])
+				.then(function() {
+					assert.ok(
+						this.oOnAfterXMLChangeProcessingStub.calledOnce,
+						"then the hook is called"
+					);
+					assert.strictEqual(
+						this.oOnAfterXMLChangeProcessingStub.firstCall.args[0].id,
+						"label1",
+						"then the affected HTMLElement is passed to the hook"
+					);
+				}.bind(this));
+		});
+
+		QUnit.test("when multiple changes with the same handler are applied", function(assert) {
+			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange1, this.oChange2])
+				.then(function() {
+					assert.strictEqual(
+						this.oOnAfterXMLChangeProcessingStub.callCount,
+						1,
+						"then the hook is only called once"
+					);
+					assert.ok(
+						this.oApplyChangeOnControlStub.secondCall.calledBefore(
+							this.oOnAfterXMLChangeProcessingStub.firstCall
+						),
+						"then the hook is called after both changes are applied"
+					);
+				}.bind(this));
+		});
+
+		QUnit.test("when multiple changes with different handlers are applied", function(assert) {
+			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange1, this.oChange3])
+				.then(function() {
+					assert.ok(
+						this.oOnAfterXMLChangeProcessingStub.calledOnce,
+						"then the hook is called for the first handler"
+					);
+					assert.ok(
+						this.oOnAfterXMLChangeProcessingStub2.calledOnce,
+						"then the hook is called for the second handler"
+					);
+					assert.ok(
+						this.oApplyChangeOnControlStub.secondCall.calledBefore(
+							this.oOnAfterXMLChangeProcessingStub.firstCall
+						),
+						"then the hook is called after all changes are applied"
+					);
+				}.bind(this));
+		});
+
+		QUnit.test("when changes with the same handler are applied on multiple controls", function(assert) {
+			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange1, this.oChange4])
+			.then(function() {
+				assert.strictEqual(
+					this.oOnAfterXMLChangeProcessingStub.callCount,
+					2,
+					"then the hook is called for both controls"
+				);
+				assert.strictEqual(
+					this.oOnAfterXMLChangeProcessingStub.firstCall.args[0].id,
+					"label1",
+					"then the first affected HTMLElement is passed to the hook"
+				);
+				assert.strictEqual(
+					this.oOnAfterXMLChangeProcessingStub.secondCall.args[0].id,
+					"label2",
+					"then the second affected HTMLElement is passed to the hook"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("when a change handler throws an error", function(assert) {
+			this.oOnAfterXMLChangeProcessingStub.throws("Some error");
+			var oLogSpy = sandbox.spy(Log, "error");
+			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange1])
+				.then(function() {
+					assert.ok(
+						oLogSpy.calledOnce,
+						"then the error is displayed"
+					);
+				})
+				.catch(function() {
+					assert.ok(false, "then the apply process must not fail");
+				});
 		});
 	});
 
