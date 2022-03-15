@@ -7130,7 +7130,14 @@ sap.ui.define([
 
 			assertIndices(assert, oBinding.getCurrentContexts(), [-2, -1, 0]);
 
-			that.expectChange("note", ["new5", "new4", "new3", "new2", "new1", "#42"])
+			that.expectChange("note", ["new5", "new4", "new3"]) // 3x #create
+				// Note: The #create calls cause "change" events on the ODLB and then the table
+				// fetches the current contexts again, calling #setContext on ODPrB in the end.
+				// #checkUpdateInternal becomes async and then fires a "change" event to the
+				// formatter, so to say. At that point in time, ODLB#reset has been called
+				// (affecting iCreatedContexts) but bKeepCacheOnError's restore did not yet happen.
+				// Thus indices are off by 2 (no. of created persisted)!
+				.expectChange("note", [, "new2", "new1", "#42"])
 				.expectRequest({
 					method : "POST",
 					url : "SalesOrderList",
@@ -7141,11 +7148,7 @@ sap.ui.define([
 					url : "SalesOrderList",
 					payload : {Note : "new4"}
 				}/* response does not matter here */)
-				.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
-					+ "&$filter=SalesOrderID eq '43' or SalesOrderID eq '44'&$top=2"
-					/* response does not matter here */)
-				.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
-					+ "&$filter=not (SalesOrderID eq '43' or SalesOrderID eq '44')&$skip=0&$top=97"
+				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=99"
 					/* response does not matter here */)
 				.expectMessages([{
 					code : "CODE",
@@ -7163,9 +7166,6 @@ sap.ui.define([
 				.withExactArgs("Failed to get contexts for " + sSalesOrderService + "SalesOrderList"
 					+ " with start index 0 and length 100", sinon.match(sPreviousFailed),
 					"sap.ui.model.odata.v4.ODataListBinding");
-			that.oLogMock.expects("error")
-				.withExactArgs("Failed to refresh kept-alive elements",
-					sinon.match(sPreviousFailed), "sap.ui.model.odata.v4.ODataListBinding");
 
 			aCreatedContexts.push(oBinding.create({Note : "new3"}, /*bSkipRefresh*/true));
 			aCreatedContexts.push(oBinding.create({Note : "new4"}, /*bSkipRefresh*/true));
@@ -7221,7 +7221,7 @@ sap.ui.define([
 			that.expectChange("note", [, "new3", "new2", "new1", "#42"]);
 
 			return Promise.all([
-				// delete 2nd transient one
+				// delete 2nd transient one ("new4")
 				aCreatedContexts[3].delete(),
 				// handle rejection of created promise
 				aCreatedContexts[3].created().then(mustFail(assert), function (oError) {
@@ -38075,17 +38075,7 @@ sap.ui.define([
 					break;
 
 				case "sideEffectsRefresh":
-					that.expectRequest(sTeams + "?$select=Name,Team_Id"
-							+ "&$filter=Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B'&$top=2", {
-							value : [{
-								Name : "New 'A' Team!",
-								Team_Id : "TEAM_A"
-							}, {
-								Name : "New 'B' Team!",
-								Team_Id : "TEAM_B"
-							}]
-						})
-						.expectChange("name", [,, "New 'B' Team!", "New 'A' Team!"]);
+					that.expectRequest(sTeams + "?$select=Name,Team_Id&$skip=0&$top=2", oResult);
 
 					// code under test (JIRA: CPOUI5ODATAV4-1384)
 					oPromise = oBinding.getHeaderContext().requestSideEffects([""], "$auto");
@@ -38102,10 +38092,8 @@ sap.ui.define([
 				// no default
 			}
 
-			if (sMethod !== "sideEffectsRefresh") {
-				that.expectChange("id", [,, "TEAM_02", "TEAM_01"])
-					.expectChange("name", [,, "Team #2", "Team #1"]);
-			}
+			that.expectChange("id", [,, "TEAM_02", "TEAM_01"])
+				.expectChange("name", [,, "Team #2", "Team #1"]);
 
 			return Promise.all([
 				oPromise,
@@ -38143,11 +38131,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: A table shows a visible area with five persisted rows. Three transient ones are
-	// added at the start, inside the visible area. A side-effects refresh takes place and the GET
-	// is in the same $batch as those POSTs. Show that the newly created rows are kept in place and
-	// the persisted ones are properly refreshed. Expect no "short read" - length remains unknown!
-	// A 2nd side-effects refresh takes place, keeping the created rows in place and refreshing them
-	// separately, but one of them has been deleted on the server.
+	// added at the start, inside the visible area (two of them as inline creation rows, that is,
+	// initially inactive). A side-effects refresh takes place and the GET is in the same $batch as
+	// those POSTs. Show that the newly created rows are kept in place and the persisted ones are
+	// properly refreshed. Expect no "short read" - length remains unknown!
+	// A 2nd side-effects refresh takes place, keeping the inline creation rows in place and
+	// refreshing them separately, but one of them has been deleted on the server.
 	// JIRA: CPOUI5ODATAV4-1384
 	QUnit.test("CPOUI5ODATAV4-1384: side-effects refresh at top", function (assert) {
 		var oBinding,
@@ -38186,8 +38175,10 @@ sap.ui.define([
 				.expectChange("name",
 					["New Team C", "New Team B", "New Team A", "Team #1", "Team #2"]);
 
-			oContextA = oBinding.create({Name : "New Team A", Team_Id : "TEAM_A"}, true);
-			oContextB = oBinding.create({Name : "New Team B", Team_Id : "TEAM_B"}, true);
+			oContextA = oBinding.create({Team_Id : "TEAM_A"}, true, false, /*bInactive*/true);
+			oContextA.setProperty("Name", "New Team A"); // activate
+			oContextB = oBinding.create({Team_Id : "TEAM_B"}, true, false, /*bInactive*/true);
+			oContextB.setProperty("Name", "New Team B"); // activate
 			oContextC = oBinding.create({Name : "New Team C", Team_Id : "TEAM_C"}, true);
 
 			return that.waitForChanges(assert, "3x transient");
@@ -38262,32 +38253,31 @@ sap.ui.define([
 			]);
 
 			that.expectRequest("TEAMS?$select=Name,Team_Id"
-					+ "&$filter=Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B' or Team_Id eq 'TEAM_C'"
-					+ "&$top=3", {
+					+ "&$filter=Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B'&$top=2", {
 					value : [
-						{Name : "'A' Team", Team_Id : "TEAM_A"},
-						// {Name : "'B' Team", Team_Id : "TEAM_B"}, // deleted on server
-						{Name : "'C' Team", Team_Id : "TEAM_C"}
+						{Name : "'A' Team", Team_Id : "TEAM_A"}
+						// {Name : "'B' Team", Team_Id : "TEAM_B"} // deleted on server
 					]
 				})
-				.expectChange("name", [,, "'A' Team"]) // #refreshKeptElements updates "on the fly"
-				.expectRequest("TEAMS?$select=Name,Team_Id&$filter=not (Team_Id eq 'TEAM_A'"
-					+ " or Team_Id eq 'TEAM_B' or Team_Id eq 'TEAM_C')&$skip=0&$top=2", {
+				.expectChange("name", [, "'A' Team"]) // #refreshKeptElements updates "on the fly"
+				.expectRequest("TEAMS?$select=Name,Team_Id"
+					+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=0&$top=3", {
 					value : [
 						{Name : "'#1' Team *", Team_Id : "TEAM_01"},
-						{Name : "'#2' Team **", Team_Id : "TEAM_02"}
+						{Name : "'#2' Team **", Team_Id : "TEAM_02"},
+						{Name : "'#3' Team ***", Team_Id : "TEAM_03"}
 					]
 				})
-				.expectChange("name", ["'C' Team", "'A' Team", "'#1' Team *", "'#2' Team **"])
-				.expectChange("id", [, "TEAM_A", "TEAM_01", "TEAM_02"])
+				.expectChange("name", ["'A' Team", "'#1' Team *", "'#2' Team **", "'#3' Team ***"])
+				.expectChange("id", ["TEAM_A", "TEAM_01", "TEAM_02", "TEAM_03"])
 				//TODO one could avoid this request by increasing the prefetch above to compensate
 				// for the potential deletion of kept-alive contexts
-				.expectRequest("TEAMS?$select=Name,Team_Id&$filter=not (Team_Id eq 'TEAM_A'"
-					+ " or Team_Id eq 'TEAM_C')&$skip=2&$top=1", {
-					value : [{Name : "'#3' Team ***", Team_Id : "TEAM_03"}]
+				.expectRequest("TEAMS?$select=Name,Team_Id&$filter=not (Team_Id eq 'TEAM_A')"
+					+ "&$skip=3&$top=1", {
+					value : [{Name : "'#4' Team ****", Team_Id : "TEAM_04"}]
 				})
-				.expectChange("name", [,,,, "'#3' Team ***"])
-				.expectChange("id", [,,,, "TEAM_03"]);
+				.expectChange("name", [,,,, "'#4' Team ****"])
+				.expectChange("id", [,,,, "TEAM_04"]);
 
 			return Promise.all([
 				// code under test
@@ -38299,11 +38289,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: A table shows a visible area with five persisted rows. Three transient ones are
-	// added at the end, inside the visible area. A side-effects refresh takes place and the GET
-	// is in the same $batch as those POSTs. Show that the newly created rows are kept in place and
-	// the persisted ones are properly refreshed. Expect no "short read" - count remains accurate!
-	// A 2nd side-effects refresh takes place, keeping the created rows in place and refreshing them
-	// separately, but one of them has been deleted on the server.
+	// added at the end, inside the visible area (two of them as inline creation rows, that is,
+	// initially inactive). A side-effects refresh takes place and the GET is in the same $batch as
+	// those POSTs. Show that the newly created rows are kept in place and the persisted ones are
+	// properly refreshed. Expect no "short read" - count remains accurate!
+	// A 2nd side-effects refresh takes place, keeping the inline creation rows in place and
+	// refreshing them separately, but one of them has been deleted on the server.
 	// JIRA: CPOUI5ODATAV4-1384
 	QUnit.test("CPOUI5ODATAV4-1384: side-effects refresh at bottom", function (assert) {
 		var oBinding,
@@ -38355,9 +38346,11 @@ sap.ui.define([
 			assert.strictEqual(oBinding.isFirstCreateAtEnd(), undefined);
 
 			that.expectChange("count", "10");
-			oContextA = oBinding.create({Name : "New A", Team_Id : "TEAM_A"}, true, true);
+			oContextA = oBinding.create({Team_Id : "TEAM_A"}, true, true, /*bInactive*/true);
+			oContextA.setProperty("Name", "New A"); // activate
 			that.expectChange("count", "11");
-			oContextB = oBinding.create({Name : "New B", Team_Id : "TEAM_B"}, true, true);
+			oContextB = oBinding.create({Team_Id : "TEAM_B"}, true, true, /*bInactive*/true);
+			oContextB.setProperty("Name", "New B"); // activate
 			that.expectChange("count", "12");
 			oContextC = oBinding.create({Name : "New C", Team_Id : "TEAM_C"}, true, true);
 
@@ -38475,31 +38468,29 @@ sap.ui.define([
 			]);
 
 			that.expectRequest("TEAMS?$select=Name,Team_Id"
-					+ "&$filter=Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B' or Team_Id eq 'TEAM_C'"
-					+ "&$top=3", {
+					+ "&$filter=Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B'&$top=2", {
 					value : [
-						{Name : "Team 'A'", Team_Id : "TEAM_A"},
-						// {Name : "Team 'B'", Team_Id : "TEAM_B"}, // deleted on server
+						{Name : "Team 'A'", Team_Id : "TEAM_A"}
+						// {Name : "Team 'B'", Team_Id : "TEAM_B"} // deleted on server
+					]
+				})
+				.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
+					+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=7&$top=5", {
+					"@odata.count" : "10",
+					value : [
+						{Name : "Team no. 8", Team_Id : "TEAM_08"},
+						{Name : "Team no. 9", Team_Id : "TEAM_09"},
 						{Name : "Team 'C'", Team_Id : "TEAM_C"}
 					]
 				})
-				.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$filter=not "
-					+ "(Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B' or Team_Id eq 'TEAM_C')"
-					+ "&$skip=7&$top=5", {
-					"@odata.count" : "9",
-					value : [
-						{Name : "Team no. 8", Team_Id : "TEAM_08"},
-						{Name : "Team no. 9", Team_Id : "TEAM_09"}
-					]
-				})
 				.expectChange("count", "11")
-				.expectChange("id", [,,,,,,, "TEAM_08", "TEAM_09", "TEAM_A", "TEAM_C"])
-				.expectChange("name", [,,,,,,, "Team no. 8", "Team no. 9", "Team 'A'", "Team 'C'"])
+				.expectChange("id", [,,,,,,, "TEAM_08", "TEAM_09", "TEAM_C", "TEAM_A"])
+				.expectChange("name", [,,,,,,, "Team no. 8", "Team no. 9", "Team 'C'", "Team 'A'"])
 				//TODO one could avoid this request by increasing the prefetch above to compensate
 				// for the potential deletion of kept-alive contexts
-				.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$filter=not "
-					+ "(Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_C')&$skip=6&$top=1", {
-					"@odata.count" : "9",
+				.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
+					+ "&$filter=not (Team_Id eq 'TEAM_A')&$skip=6&$top=1", {
+					"@odata.count" : "10",
 					value : [{Name : "Team no. 7", Team_Id : "TEAM_07"}]
 				})
 				.expectChange("id", [,,,,,, "TEAM_07"])

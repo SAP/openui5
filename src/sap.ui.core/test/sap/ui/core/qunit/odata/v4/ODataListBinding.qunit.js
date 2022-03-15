@@ -867,24 +867,28 @@ sap.ui.define([
 [undefined, false, true].forEach(function (bDrop) {
 	QUnit.test("reset, bDrop=" + bDrop, function (assert) {
 		var oBinding,
-			oCreatedContext1 = { // "created persisted"
+			oCreatedContext1 = { // "created persisted" from "inline creation row"
 				getPath : function () { return "/EMPLOYEES('1')"; },
+				isInactive : function () { return false; },
 				isTransient : function () { return false; },
 				iIndex : -1
 			},
-			oCreatedContext2 = { // "created persisted"
+			oCreatedContext2 = { // ordinary "created persisted" => not kept!
 				getPath : function () { return "/EMPLOYEES('2')"; },
+				isInactive : function () { return undefined; },
 				isTransient : function () { return false; },
 				iIndex : -3
 			},
 			aPreviousContexts,
 			oTransientContext1 = {
 				getPath : function () { return "/EMPLOYEES($uid=id-1-23)"; },
+				isInactive : function () { throw new Error("don't ask!"); },
 				isTransient : function () { return true; },
 				iIndex : -2
 			},
 			oTransientContext2 = {
 				getPath : function () { return "/EMPLOYEES($uid=id-1-24)"; },
+				isInactive : function () { throw new Error("don't ask!"); },
 				isTransient : function () { return true; },
 				iIndex : -4
 			};
@@ -922,15 +926,16 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES/3"], aPreviousContexts[3]);
 
 		if (bDrop === false) {
-			assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length, 3);
+			assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES('2')"],
+				oCreatedContext2);
+			assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length, 4);
 			assert.strictEqual(oCreatedContext1.iIndex, -1);
 			assert.strictEqual(oTransientContext1.iIndex, -2);
-			assert.strictEqual(oCreatedContext2.iIndex, -3);
-			assert.strictEqual(oTransientContext2.iIndex, -4);
+			assert.strictEqual(oTransientContext2.iIndex, -3);
 			assert.deepEqual(oBinding.aContexts,
-				[oTransientContext2, oCreatedContext2, oTransientContext1, oCreatedContext1]);
-			assert.strictEqual(oBinding.iActiveContexts, 3);
-			assert.strictEqual(oBinding.iCreatedContexts, 4);
+				[oTransientContext2, oTransientContext1, oCreatedContext1]);
+			assert.strictEqual(oBinding.iActiveContexts, 2);
+			assert.strictEqual(oBinding.iCreatedContexts, 3);
 			assert.strictEqual(oBinding.bCreatedAtEnd, "~bCreatedAtEnd~");
 			return;
 		}
@@ -2488,13 +2493,31 @@ sap.ui.define([
 				refreshInternal : function () {}
 			},
 			oError = new Error(),
+			aCreatedContexts,
 			aPromises = [],
 			oReadPromise = Promise.reject(oError),
-			that = this;
+			that = this,
+			i;
+
+		function getPath(i) {
+			return "/EMPLOYEES/" + i;
+		}
 
 		oBinding.iActiveContexts = 40;
 		oBinding.iCreatedContexts = 42;
 		oBinding.iCurrentEnd = 1;
+		oBinding.aContexts = [];
+		oBinding.mPreviousContextsByPath = {
+			"/EMPLOYEES/99" : 99 // not parked by #reset
+		};
+		for (i = 0; i < oBinding.iCreatedContexts; i += 1) {
+			oBinding.aContexts[i] = { // dummy for a created context
+				// for simplicity, ignore bRelative here
+				getPath : getPath.bind(null, i)
+			};
+		}
+		aCreatedContexts = oBinding.aContexts.slice();
+		oBinding.aContexts.push("n/a"); // dummy for a non-created
 		this.mock(oBinding).expects("isRootBindingSuspended").exactly(iNoOfCalls).returns(false);
 		this.mock(oBinding).expects("refreshSuspended").never();
 		oReadPromise.catch(function () {
@@ -2518,22 +2541,45 @@ sap.ui.define([
 							assert.strictEqual(oBinding.iActiveContexts, 40);
 							assert.strictEqual(oBinding.iCreatedContexts, 42);
 							assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+							assert.strictEqual(oBinding.aContexts.length, 42);
+							aCreatedContexts.forEach(function (oCreatedContext, i) {
+								assert.strictEqual(oBinding.aContexts[i], oCreatedContext);
+								assert.strictEqual(oCreatedContext.iIndex, i - 42);
+							});
 						} else {
+							assert.notStrictEqual(oBinding.oCache, oCache);
+							assert.strictEqual(oBinding.iActiveContexts, 0);
 							assert.strictEqual(oBinding.iCreatedContexts, 0);
 							assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
+							assert.deepEqual(oBinding.aContexts, ["a", "b", "c"], "unchanged");
 						}
+						assert.deepEqual(oBinding.mPreviousContextsByPath, {
+							"/EMPLOYEES/99" : 99
+						});
 					});
 			});
 		});
-		if (bRestore) {
-			this.mock(oBinding).expects("fetchCache")
-				.withExactArgs(sinon.match.same(oContext), false, true, bKeepCacheOnError);
-		}
+		this.mock(oBinding).expects("fetchCache")
+			.withExactArgs(sinon.match.same(oContext), false, true, bKeepCacheOnError)
+			.callsFake(function () {
+				if (!bRestore) { // simulate creation of new cache
+					oBinding.oCache = {
+						refreshKeptElements : function () {} // don't care
+					};
+					oBinding.oCachePromise = SyncPromise.resolve(oBinding.oCache);
+				}
+			});
 		this.mock(oBinding).expects("reset").exactly(iNoOfCalls)
 			.withExactArgs(ChangeReason.Refresh, bKeepCacheOnError ? false : undefined)
 			.callsFake(function () {
 				oBinding.iActiveContexts = 0;
 				oBinding.iCreatedContexts = 0;
+				oBinding.aContexts = ["a", "b", "c"];
+				if (bKeepCacheOnError) {
+					for (i = 0; i < oBinding.iCreatedContexts; i += 1) {
+						oBinding.mPreviousContextsByPath[getPath(i)] = i;
+					}
+				}
 				if (!bAsync) {
 					// simulate #getContexts call sync to "Refresh" event
 					oBinding.resolveRefreshPromise(oReadPromise);
@@ -3777,30 +3823,20 @@ sap.ui.define([
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES('B')", 99),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES('C')", 1),
 			oContext3 = {},
-			oContextMinus1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
-				SyncPromise.resolve(Promise.resolve())), // transient context
-			oContextMinus2 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-42)", -2,
-				SyncPromise.resolve(Promise.resolve())), // transient context
 			oContextMock = this.mock(Context),
 			oTaskMock;
 
 		// must be mocked here, so that later bind grabs the mock
 		oBindingMock.expects("destroyPreviousContexts").never();
 		assert.deepEqual(oBinding.aContexts, [], "binding is reset");
-		assert.strictEqual(oBinding.iCreatedContexts, 0, "binding is reset");
+		oBinding.iCreatedContexts = 2; // reset might keep some
 		oBinding.mPreviousContextsByPath = {
 			"/EMPLOYEES('A')" : oContext0,
 			"/EMPLOYEES('B')" : oContext1,
-			"/EMPLOYEES($uid=id-1-23)" : oContextMinus1,
-			"/EMPLOYEES($uid=id-1-42)" : oContextMinus2,
 			"/EMPLOYEES('D')" : oContext3
 		};
 		this.mock(oContext1).expects("destroy").never();
 		this.mock(oContext1).expects("checkUpdate").withExactArgs();
-		this.mock(oContextMinus1).expects("destroy").never();
-		this.mock(oContextMinus1).expects("checkUpdate").withExactArgs();
-		this.mock(oContextMinus2).expects("destroy").never();
-		this.mock(oContextMinus2).expects("checkUpdate").withExactArgs();
 		oContextMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/EMPLOYEES('C')", 1)
@@ -3809,28 +3845,16 @@ sap.ui.define([
 			.withExactArgs(sinon.match.func);
 
 		// code under test
-		oBinding.createContexts(0, [{
-			"@$ui5._" : {transientPredicate : "($uid=id-1-42)"}
-		}, {
-			"@$ui5._" : {transientPredicate : "($uid=id-1-23)"}
-		}, {
+		oBinding.createContexts(2, [{
 			"@$ui5._" : {predicate : "('B')"}
 		}, {
 			"@$ui5._" : {predicate : "('C')"}
 		}]);
 
-		assert.strictEqual(oBinding.aContexts[0], oContextMinus2);
-		assert.strictEqual(oBinding.aContexts[1], oContextMinus1);
 		assert.strictEqual(oBinding.aContexts[2], oContext1);
 		assert.strictEqual(oBinding.aContexts[3], oContext2);
-		assert.strictEqual(oBinding.iActiveContexts, 2, "lost + found ;-)");
-		assert.strictEqual(oBinding.iCreatedContexts, 2, "lost + found ;-)");
-		assert.strictEqual(oContextMinus2.getModelIndex(), 0);
-		assert.strictEqual(oContextMinus1.getModelIndex(), 1);
 		assert.strictEqual(oContext1.getModelIndex(), 2);
 		assert.strictEqual(oContext2.getModelIndex(), 3);
-		assert.strictEqual(oContextMinus2.iIndex, -2);
-		assert.strictEqual(oContextMinus1.iIndex, -1);
 		assert.strictEqual(oContext1.iIndex, 0);
 		assert.strictEqual(oContext2.iIndex, 1);
 		assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length, 2);
@@ -3842,11 +3866,6 @@ sap.ui.define([
 
 		// code under test
 		oTaskMock.firstCall.args[0]();
-
-		return Promise.all([
-			oContextMinus1.created(),
-			oContextMinus2.created()
-		]);
 	});
 
 	//*********************************************************************************************
