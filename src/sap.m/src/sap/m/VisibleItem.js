@@ -66,7 +66,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item', "sap/ui/thirdparty/jquery"],
 		 */
 		VisibleItem.prototype.setVisible = function(bValue) {
 			if (this.getVisible() === bValue) {
-				return;
+				return this;
 			}
 
 			var $refs = this._getRefs();

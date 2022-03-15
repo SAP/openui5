@@ -46,7 +46,8 @@ function(
 	var NumericInput = Input.extend("sap.m.NumericInput", {
 		metadata: {
 			library: "sap.m"
-		}
+		},
+		renderer: NumericInputRenderer
 	});
 
 	NumericInput.prototype.onBeforeRendering = function() {

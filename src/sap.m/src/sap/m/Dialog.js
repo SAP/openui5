@@ -548,10 +548,13 @@ function(
 			this._createToolbarButtons();
 
 			if (Core.getConfiguration().getAccessibility() && this.getState() != ValueState.None) {
-				var oValueState = new InvisibleText({text: this.getValueStateString(this.getState())});
+				if (!this._oValueState) {
+					this._oValueState = new InvisibleText();
 
-				this.setAggregation("_valueState", oValueState);
-				this.addAriaLabelledBy(oValueState.getId());
+					this.setAggregation("_valueState", this._oValueState);
+					this.addAriaLabelledBy(this._oValueState.getId());
+				}
+				this._oValueState.setText(this.getValueStateString(this.getState()));
 			}
 
 			// title alignment
