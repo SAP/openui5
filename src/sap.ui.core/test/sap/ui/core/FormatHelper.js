@@ -28,7 +28,8 @@ var aLocales = [
 	"ru_RU",
 	"th_TH",
 	"tr_TR",
-	"zh_CN"
+	"zh_CN",
+	"zh_TW"
 ];
 
 var aRTLLocales = [
@@ -36,6 +37,12 @@ var aRTLLocales = [
 	"fa_IR",
 	"he_IL"
 ];
+
+var aTerritories = aLocales.map(function(sLocale) {
+	if (sLocale !== "zh_TW") {
+		return sLocale.substr(3);
+	}
+}).filter(Boolean);
 
 var LocaleListItem = sap.m.ListItemBase.extend("LocaleListItem", {
 	metadata: {
@@ -56,12 +63,19 @@ var LocaleListItem = sap.m.ListItemBase.extend("LocaleListItem", {
 				.style("height", "40px")
 				.openEnd();
 
-				oRM.voidStart("img")
-					.attr("title", sLocale)
-					.attr("src", "flags/" + sLocale.substr(3) + ".png")
-					.style("width", "30px")
-					.style("margin", "10px")
-					.voidEnd();
+				if (aTerritories.includes(sLocale.substr(3))) {
+					oRM.voidStart("img")
+						.attr("title", sLocale)
+						.attr("src", "flags/" + sLocale.substr(3) + ".png")
+						.style("width", "30px")
+						.style("margin", "10px")
+						.voidEnd();
+				} else {
+					oRM.voidStart("div")
+						.style("width", "30px")
+						.style("margin", "10px")
+						.voidEnd();
+				}
 				oRM.openStart("span")
 					.style("margin", "0 5px")
 					.openEnd()
@@ -230,7 +244,12 @@ var HashParams = sap.ui.model.CompositeType.extend("HashParams", {
 				vValue = new Date(parseFloat(vValue));
 			}
 			if (sName === "number") {
-				vValue = parseFloat(vValue);
+				vValue = sap.ui.core.format.NumberFormat.getFloatInstance({
+					groupingEnabled: false,
+					groupingSeparator: ",",
+					decimalSeparator: ".",
+					parseAsString: true
+				}).parse(vValue);
 			}
 			oParams[sName] = vValue;
 		});
