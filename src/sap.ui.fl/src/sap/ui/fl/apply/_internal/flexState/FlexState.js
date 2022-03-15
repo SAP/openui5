@@ -111,11 +111,6 @@ sap.ui.define([
 		variants: {}
 	};
 
-	function updateComponentData(mPropertyBag) {
-		var oComponent = Component.get(mPropertyBag.componentId);
-		_mInstances[mPropertyBag.reference].componentData = oComponent ? oComponent.getComponentData() : mPropertyBag.componentData;
-	}
-
 	function enhancePropertyBag(mPropertyBag) {
 		var oComponent = Component.get(mPropertyBag.componentId);
 		mPropertyBag.componentData = mPropertyBag.componentData || oComponent.getComponentData() || {};
@@ -129,6 +124,9 @@ sap.ui.define([
 		}
 
 		if (!_mInstances[sReference].preparedMaps[sMapName]) {
+			if (!_mInstances[sReference].storageResponse) {
+				_mInstances[sReference].storageResponse = filterByMaxLayer(_mInstances[sReference].unfilteredStorageResponse);
+			}
 			var mPropertyBag = {
 				unfilteredStorageResponse: _mInstances[sReference].unfilteredStorageResponse,
 				storageResponse: _mInstances[sReference].storageResponse,
@@ -345,11 +343,10 @@ sap.ui.define([
 
 				return loadFlexData(mPropertyBag);
 			})
-			.then(function(mPropertyBag, mResponse) {
-				// filtering should only be done once; can be reset via function
-				if (!_mInstances[mPropertyBag.reference].storageResponse) {
-					_mInstances[mPropertyBag.reference].storageResponse = filterByMaxLayer(mResponse);
-					updateComponentData(mPropertyBag);
+			.then(function(mPropertyBag) {
+				if (!_mInstances[mPropertyBag.reference].componentData) {
+					var oComponent = Component.get(mPropertyBag.componentId);
+					_mInstances[mPropertyBag.reference].componentData = oComponent ? oComponent.getComponentData() : mPropertyBag.componentData;
 				}
 			}.bind(null, mPropertyBag));
 	};

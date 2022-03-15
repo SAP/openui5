@@ -1,6 +1,8 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/util/merge",
+	"sap/base/Log",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
@@ -10,10 +12,10 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/base/Log",
-	"sap/base/util/merge",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	merge,
+	Log,
 	UIComponent,
 	FlexState,
 	Loader,
@@ -23,8 +25,6 @@ sap.ui.define([
 	LayerUtils,
 	Utils,
 	ChangePersistenceFactory,
-	Log,
-	merge,
 	sinon
 ) {
 	"use strict";
@@ -186,25 +186,32 @@ sap.ui.define([
 				componentId: sComponentId
 			})
 			.then(function() {
-				assert.equal(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was called twice");
-				assert.equal(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was not called again");
+				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 0, "the filtering was not yet started");
 
-				assert.equal(FlexState.getUIChanges(sReference), "changes", "the correct map is returned");
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was called once");
-				assert.equal(FlexState.getUIChanges(sReference), "changes", "the correct map is returned");
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was not called again");
+				assert.strictEqual(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was called once for the AppDescriptors");
+				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
+				assert.strictEqual(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was not called again");
+				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
+
+				assert.strictEqual(FlexState.getUIChanges(sReference), "changes", "the correct map is returned");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was called once for the UI Changes");
+				assert.strictEqual(FlexState.getUIChanges(sReference), "changes", "the correct map is returned");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was not called again");
+				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
 
 				assert.deepEqual(FlexState.getVariantsState(sReference), {variantsMap: "variants"}, "the correct map is returned");
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was called once");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was called once for the Variants");
 				assert.deepEqual(FlexState.getVariantsState(sReference), {variantsMap: "variants"}, "the correct map is returned");
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was not called again");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was not called again");
+				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
 
-				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was called once");
-				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was not called again");
+				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was called once for the CompVariants");
+				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was not called again");
+				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
 			}.bind(this));
 		});
 
@@ -379,6 +386,7 @@ sap.ui.define([
 				componentId: sComponentId
 			})
 			.then(function() {
+				FlexState.getAppDescriptorChanges(sReference);
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
 				assert.ok(this.oFilterStub.calledWith([], "DummyURLParsingService"), "then filtering was called with the right parameters");
 				assert.equal(this.oFilterStub.callCount, 9, "all filterable types got filtered");
@@ -388,6 +396,7 @@ sap.ui.define([
 				componentId: sComponentId
 			}))
 			.then(function() {
+				FlexState.getAppDescriptorChanges(sReference);
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was not made again");
 				assert.equal(this.oFilterStub.callCount, 9, "no additional filtering happened");
 			}.bind(this));
@@ -399,6 +408,7 @@ sap.ui.define([
 				componentId: sComponentId
 			})
 			.then(function() {
+				FlexState.getAppDescriptorChanges(sReference);
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
 				assert.equal(this.oFilterStub.callCount, 9, "all filterable types got filtered");
 
@@ -410,6 +420,7 @@ sap.ui.define([
 				componentId: sComponentId
 			}))
 			.then(function() {
+				FlexState.getAppDescriptorChanges(sReference);
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 2, "the check was made again");
 				assert.equal(this.oFilterStub.callCount, 18, "everything was filtered again");
 			}.bind(this));
