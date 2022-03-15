@@ -873,7 +873,9 @@ sap.ui.define([
 				'	</test:TestButton>',
 				'</mvc:View>'
 			].join(''),
-			sError = "Cannot add direct child without default aggregation defined for control sap.ui.testlib.TestButton";
+			sError = "Error found in View (id: 'erroneous_view_1').\n" +
+					"XML node: '<test:Error xmlns:test=\"sap.ui.testlib\"/>':\n" +
+					"Cannot add direct child without default aggregation defined for control sap.ui.testlib.TestButton";
 
 		assert.throws(function() {
 			sap.ui.xmlview("erroneous_view_1", {viewContent:sXml});
@@ -888,7 +890,9 @@ sap.ui.define([
 				'	</test:TestButton>',
 				'</mvc:View>'
 			].join(''),
-			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error";
+			sError = "Error found in View (id: 'erroneous_view_2').\n" +
+					"XML node: '\t\tError\t':\n" +
+					"Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed.";
 
 		assert.throws(function() {
 			sap.ui.xmlview("erroneous_view_2", {viewContent:sXml});
@@ -1243,14 +1247,15 @@ sap.ui.define([
 		}, /failed to load .{1}sap\/ui\/core\/mvc\/wrong\.js/, "xmlWithWrongAggregation: Error thrown for unknown aggregation");
 	});
 
-	QUnit.test("Error should be thrown when 'content' aggregation of View is bound", function(assert) {
+	QUnit.test("Error should be thrown when 'content' aggregation of View is bound and binding template contains HTML node", function(assert) {
 		var sXmlWithBoundContent = [
 			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml" ',
-			'  content="{path: \'Supplier\', templateShareable:false}">',
-			'  <core:Icon src="sap-icon://accept" />',
+			'  content="{path: \'/Supplier\', templateShareable:false}">',
+			'  <html:div id="div2">',
+			'    <core:Icon src="sap-icon://accept" />',
+			'  </html:div>',
 			'  <mvc:dependents>',
 			'    <test:TestButton id="dependentButton" />',
-			'    <html:div id="div2">test</html:div>',
 			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
 			'  </mvc:dependents>',
 			'</mvc:View>'
@@ -1262,15 +1267,17 @@ sap.ui.define([
 		}).then(function() {
 			assert.notOK(true, "The XMLView.create promise shouldn't resolve");
 		}, function(oError) {
-			assert.ok(oError.message.match(/Binding syntax is found in the 'content' aggregation of XMLView/), "Error thrown for bound 'content' aggregation");
+			assert.equal(oError.message, "Error found in View (id: 'xmlWithBoundContent').\nXML node: '<html:div xmlns:html=\"http://www.w3.org/1999/xhtml\" id=\"div2\"></html:div>':\nNo XHTML or SVG node is allowed because the 'content' aggregation is bound.", "Error thrown for having HTML nodes in the binding template of the bound 'content' aggregation");
 		});
 	});
 
-	QUnit.test("Error should be thrown when 'content' aggregation of View is bound (legacy factory)", function(assert) {
+	QUnit.test("Error should be thrown when 'content' aggregation of View is bound and binding template contains HTML node (legacy factory)", function(assert) {
 		var sXmlWithBoundContent = [
 			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml" ',
-			'  content="{path: \'Supplier\', templateShareable:false}">',
-			'  <core:Icon src="sap-icon://accept" />',
+			'  content="{path: \'/Supplier\', templateShareable:false}">',
+			'  <html:div id="div2">',
+			'    <core:Icon src="sap-icon://accept" />',
+			'  </html:div>',
 			'  <mvc:dependents>',
 			'    <test:TestButton id="dependentButton" />',
 			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
@@ -1278,11 +1285,17 @@ sap.ui.define([
 			'</mvc:View>'
 		].join('');
 
-		var logSpyError = this.spy(Log, "error");
-		var oView = sap.ui.xmlview("xmlWithBoundContent", { viewContent: sXmlWithBoundContent });
-		assert.equal(logSpyError.callCount, 1, "Error log is done once");
-		assert.ok(logSpyError.getCall(0).args[0].message.match(/Binding syntax is found in the 'content' aggregation of XMLView/), "Error thrown for bound 'content' aggregation");
-		oView.destroy();
+		var fnCreateViewSpy = sinon.spy(function() {
+			sap.ui.xmlview("xmlWithBoundContent", { viewContent: sXmlWithBoundContent });
+		});
+
+		try {
+			fnCreateViewSpy();
+		} catch (err) {
+			// do nothing
+		}
+
+		assert.equal(fnCreateViewSpy.getCall(0).exception.message, "Error found in View (id: 'xmlWithBoundContent').\nXML node: '<html:div xmlns:html=\"http://www.w3.org/1999/xhtml\" id=\"div2\"></html:div>':\nNo XHTML or SVG node is allowed because the 'content' aggregation is bound.", "Error thrown for having HTML nodes in the binding template of the bound 'content' aggregation");
 	});
 
 	QUnit.module("Preprocessor API", {

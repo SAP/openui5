@@ -64,7 +64,9 @@ sap.ui.define([
 				'	</m:Button>',
 				'</mvc:View>'
 			].join(''),
-			sError = "Cannot add direct child without default aggregation defined for control sap.m.Button";
+			sError = "Error found in View (id: 'erroneous_view_1').\n" +
+					"XML node: '<m:Error xmlns:m=\"sap.m\"/>':\n" +
+					"Cannot add direct child without default aggregation defined for control sap.m.Button";
 		var sId = "erroneous_view_1";
 
 		return sap.ui.xmlview(sId, {async:true, viewContent:sXml}).loaded().catch(function(error) {
@@ -81,7 +83,9 @@ sap.ui.define([
 			'	</m:Button>',
 			'</mvc:View>'
 			].join(''),
-			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error";
+			sError = "Error found in View (id: 'erroneous_view_2').\n" +
+					"XML node: '\t\tError\t':\n" +
+					"Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed.";
 		var sId = "erroneous_view_2";
 
 		return sap.ui.xmlview(sId, {async:true, viewContent:sXml}).loaded().catch(function(error) {

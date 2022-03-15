@@ -339,25 +339,28 @@ function(
 	XMLTemplateProcessor.parseTemplatePromise = function(xmlNode, oView, bAsync, oParseConfig) {
 		return parseTemplate(xmlNode, oView, false, bAsync, oParseConfig).then(function(vResult) {
 			// vResult is the result array of the XMLTP's parsing.
-			// It contains strings like "tabs/linebreaks/..." AND control instances
-			// Additionally it also includes ExtensionPoint placeholder objects if an ExtensionPoint is present in the top-level of the View.
+			// Elements in vResult can be:
+			//  * RenderManager Call (Array)
+			//  * Control instance (Object)
+			//  * ExtensionPoint placeholder (Object)
 
 			// we only trigger Flex for ExtensionPoints inside Views
-			// A potential ExtensionPoint provider will resolve any ExtensionPoints with their correct content (or the default content, if no flex change exists)
+			// A potential ExtensionPoint provider will resolve any ExtensionPoints with their correct content (or the default content, if no flex changes exist)
 			if (oView.isA("sap.ui.core.mvc.View")) {
+				var vContent, i;
 				// For async views all ExtensionPoints have been resolved.
 				// Their resulting content needs to be spliced into the rendering array.
 				// We loop backwards so we don't have to deal with index shifts (EPs can have more than 1 result control).
-				if (Array.isArray(vResult)) {
-					for (var i = vResult.length - 1; i >= 0; i--) {
-						var vContent = vResult[i];
-						if (vContent && vContent._isExtensionPoint) {
-							var aSpliceArgs = [i, 1].concat(vContent._aControls);
-							Array.prototype.splice.apply(vResult, aSpliceArgs);
-						}
+				for (i = vResult.length - 1; i >= 0; i--) {
+					vContent = vResult[i];
+
+					if (vContent && vContent._isExtensionPoint) {
+						var aSpliceArgs = [i, 1].concat(vContent._aControls);
+						Array.prototype.splice.apply(vResult, aSpliceArgs);
 					}
 				}
 			}
+
 			return vResult;
 		});
 	};
@@ -653,6 +656,13 @@ function(
 			return oView._oContainingView.createId(sId);
 		}
 
+		function createErrorInfo(node, vError) {
+			var sType = oView.getMetadata().isA("sap.ui.core.mvc.View") ? "View" : "Fragment";
+			var sNodeSerialization = node.outerHTML ? node.cloneNode(false).outerHTML : node.textContent;
+
+			return "Error found in " + sType + " (id: '" + oView.getId() + "').\nXML node: '" + sNodeSerialization + "':\n" + vError;
+		}
+
 		function normalizeRootNode(node) {
 			var sNodeName = localName(node),
 				oWrapper;
@@ -809,8 +819,12 @@ function(
 				if (node.namespaceURI === XHTML_NAMESPACE || node.namespaceURI === SVG_NAMESPACE ) {
 					if (bRootArea) {
 						if (oAggregation && oAggregation.name !== "content") {
-							Log.error("XHTML nodes '" + node.localName + "' can only be added to the 'content' aggregation and not to the '" + oAggregation.name + "' aggregation.");
+							Log.error(createErrorInfo(node, "XHTML nodes can only be added to the 'content' aggregation and not to the '" + oAggregation.name + "' aggregation."));
 							return SyncPromise.resolve([]);
+						}
+
+						if (oConfig && oConfig.contentBound) {
+							throw new Error(createErrorInfo(node, "No XHTML or SVG node is allowed because the 'content' aggregation is bound."));
 						}
 
 						var bXHTML = node.namespaceURI === XHTML_NAMESPACE;
@@ -968,7 +982,12 @@ function(
 					return pResult;
 				}
 			} else if (node.nodeType === 3 /* TEXT_NODE */ && bRenderingRelevant) {
-				rm.text(node.textContent);
+				if (!oConfig || !oConfig.contentBound) {
+					// content aggregation isn't bound
+					rm.text(node.textContent);
+				} else if (node.textContent.trim()) {
+					throw new Error(createErrorInfo(node, "Text node isn't allowed because the 'content' aggregation is bound."));
+				}
 			}
 
 			return SyncPromise.resolve([]);
@@ -1314,10 +1333,6 @@ function(
 					if (aCustomData.length > 0) {
 						mSettings.customData = aCustomData;
 					}
-
-					if (bViewRootNode && mSettings["content"] && typeof mSettings["content"].path === "string") {
-						throw new Error("Binding syntax is found in the 'content' aggregation of XMLView with id '" + oView.getId() + "', which isn't supported. You can use Typed View or JSView to achieve this.");
-					}
 				}
 
 				return oRequireModules;
@@ -1325,15 +1340,10 @@ function(
 				// Errors caught here are expected UI5 issues, e.g. DataType errors, broken BindingSyntax, missing event handler functions etc.
 				// we enrich the error message with XML information, e.g. the node causing the issue
 				if (!oError.isEnriched) {
-					var sType = oView.getMetadata().isA("sap.ui.core.mvc.View") ? "View" : "Fragment";
-					var sNodeSerialization = node && node.cloneNode(false).outerHTML;
 					// Logging the error like this cuts away the stack trace,
 					// but provides better information for applications.
 					// For Framework debugging, we would have to look at the error object anyway.
-					oError = new Error(
-						"Error found in " + sType + " (id: '" + oView.getId() + "').\nXML node: '" + sNodeSerialization + "':\n" +
-						oError
-					);
+					oError = new Error(createErrorInfo(node, oError));
 					oError.isEnriched = true;
 
 					// TODO: Can be enriched with additional info for a support rule (not yet implemented)
@@ -1439,13 +1449,19 @@ function(
 							setUI5Attribute(childNode, "invisible");
 						}
 
-						// whether the created controls will be the template for a list binding
 						if ( mSettings[oAggregation.name] &&
+							// whether the created controls will be the template for a list binding
 							typeof mSettings[oAggregation.name].path === "string") {
 							oClosestBinding = {
 								aggregation: oAggregation.name,
 								id: mSettings.id
 							};
+
+							// mark that the content aggregation of the View node is bound
+							if (bViewRootNode && oAggregation.name === "content") {
+								oConfig = oConfig || {};
+								oConfig.contentBound = true;
+							}
 						}
 
 						// child node name does not equal an aggregation name,
@@ -1500,7 +1516,7 @@ function(
 							return aControls;
 						});
 					} else {
-						throw new Error("Cannot add direct child without default aggregation defined for control " + oMetadata.getElementName());
+						throw new Error(createErrorInfo(childNode, "Cannot add direct child without default aggregation defined for control " + oMetadata.getElementName()));
 					}
 				} else if (childNode.nodeType === 3 /* TEXT_NODE */) {
 					if (oConfig && oConfig.rootArea) {
@@ -1508,7 +1524,7 @@ function(
 					} else {
 						var sTextContent = childNode.textContent || childNode.text;
 						if (sTextContent && sTextContent.trim()) { // whitespace would be okay
-							throw new Error("Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: " + sTextContent.trim());
+							throw new Error(createErrorInfo(childNode, "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed."));
 						}
 					}
 				} // other nodes types are silently ignored
