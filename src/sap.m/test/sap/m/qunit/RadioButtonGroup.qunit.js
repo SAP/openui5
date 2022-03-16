@@ -564,4 +564,54 @@ sap.ui.define([
 		// cleanup
 		oRBGroup.destroy();
 	});
+
+	QUnit.module("Navigation through Radio Button Groups");
+
+	QUnit.test("After mouse selection tab focus should be on the last pressed item.", function (assert) {
+
+		this.clock.restore();
+		// arrange
+		var oRBGroup = new RadioButtonGroup("RBG1"),
+			oRadioButton1 = new RadioButton("RB1"),
+			oRadioButton2 = new RadioButton("RB2"),
+			oRBGroup2 = new RadioButtonGroup("RBG2"),
+			oRadioButton3 = new RadioButton("RB3"),
+			oRadioButton4 = new RadioButton("RB4");
+
+		var done = assert.async();
+
+		oRBGroup.addButton(oRadioButton1);
+		oRBGroup.addButton(oRadioButton2);
+
+		oRBGroup2.addButton(oRadioButton3);
+		oRBGroup2.addButton(oRadioButton4);
+
+		oRadioButton1.setSelected(true);
+		oRadioButton3.setSelected(true);
+
+		oRBGroup.placeAt("qunit-fixture");
+		oRBGroup2.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		oRBGroup2.attachEventOnce("select", function() {
+			// assert 1
+			assert.strictEqual(oRadioButton4.$().attr("tabIndex"), "0", "TabIndex of currently selected element is 0");
+			assert.strictEqual(oRadioButton3.$().attr("tabIndex"), "-1", "TabIndex of previously selected element is -1");
+
+			oRBGroup.attachEventOnce("select", function() {
+				// assert 2
+				assert.strictEqual(oRadioButton2.$().attr("tabIndex"), "0", "TabIndex of currently selected element is '0'");
+				assert.strictEqual(oRadioButton1.$().attr("tabIndex"), "-1", "TabIndex of previously selected element is '-1'");
+				// cleanup
+				oRBGroup.destroy();
+				oRBGroup2.destroy();
+				done();
+			});
+			// act 2
+			qutils.triggerEvent("tap", "RB2");
+		});
+		// act 1
+		qutils.triggerEvent("tap", "RB4" );
+	});
 });

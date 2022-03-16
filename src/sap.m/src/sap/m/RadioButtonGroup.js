@@ -268,6 +268,7 @@ sap.ui.define([
 				// deselect old RadioButton
 				if (!isNaN(iIndexOld) && this.aRBs && this.aRBs[iIndexOld]) {
 					this.aRBs[iIndexOld].setSelected(false);
+					this.aRBs[iIndexOld].setTabIndex(-1);
 				}
 
 				// select new one
@@ -276,8 +277,8 @@ sap.ui.define([
 				}
 
 				if (this._oItemNavigation) {
-					this._oItemNavigation.setSelectedIndex(iSelectedIndex);
 					this._oItemNavigation.setFocusedIndex(iSelectedIndex);
+					this._oItemNavigation.setSelectedIndex(iSelectedIndex);
 				}
 
 				// if focus is in the group - focus the selected element
