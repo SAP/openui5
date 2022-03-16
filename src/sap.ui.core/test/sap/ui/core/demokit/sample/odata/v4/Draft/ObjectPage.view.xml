@@ -21,8 +21,6 @@
 					<Button enabled="{= !%{IsActiveEntity} }"
 							icon="sap-icon://sys-cancel-2" id="cancel" press="onCancel"
 							text="Cancel" tooltip="Cancel changes"/>
-					<Button icon="sap-icon://refresh" id="refreshProduct"
-							press="onRefreshProduct" tooltip="Refresh Product"/>
 				</Toolbar>
 			</form:toolbar>
 			<Label labelFor="Product::ID" text="Product ID"/>

@@ -88,15 +88,6 @@ sap.ui.define([
 			this.setShowList(!oEvent.getParameter("config").pattern.endsWith("?noList"));
 		},
 
-		onRefreshProduct : function () {
-			var oContext = this.byId("objectPage").getBindingContext();
-
-			if (this.hasPendingChanges(oContext, "refreshing")) {
-				return;
-			}
-			oContext.refresh(undefined, true);
-		},
-
 		onSave : function () {
 			this.toggleDraft("draftActivate").then(function (oDraftContext) {
 				oDraftContext.delete(null);

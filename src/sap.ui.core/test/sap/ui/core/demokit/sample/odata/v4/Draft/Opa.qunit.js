@@ -4,13 +4,6 @@
 /*global QUnit */
 QUnit.config.autostart = false;
 
-/*
- * CAUTION: Do not try to access the list report while the sub-object is visible. All three columns
- * plus the OPA column need a width of more than 1,600 pixels. If the window/frame does not have
- * this width, the list report will be hidden when showing the sub-object page. Then accessing its
- * controls in the OPA will fail.
- */
-
 sap.ui.getCore().attachInit(function () {
 	"use strict";
 

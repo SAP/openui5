@@ -4,28 +4,11 @@
 sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/core/sample/common/Controller",
-	"sap/ui/core/UIComponent",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/ui/model/Sorter"
-], function (MessageBox, Controller, UIComponent, Filter, FilterOperator, Sorter) {
+	"sap/ui/core/UIComponent"
+], function (MessageBox, Controller, UIComponent) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Draft.ListReport", {
-		getNextSortOrder : function (bDescending) {
-			var sNewIcon;
-
-			// choose next sort order: no sort => ascending <-> descending
-			if (bDescending) {
-				sNewIcon = "sap-icon://sort-ascending";
-				bDescending = false;
-			} else {
-				sNewIcon = "sap-icon://sort-descending";
-				bDescending = true;
-			}
-			return {bDescending : bDescending, sNewIcon : sNewIcon};
-		},
-
 		hasPendingChanges : function (vBindingOrContext, sVerb, bIgnoreKeptAlive) {
 			if (vBindingOrContext.hasPendingChanges(bIgnoreKeptAlive)) {
 				MessageBox.error(
@@ -37,20 +20,12 @@ sap.ui.define([
 			return false;
 		},
 
-		onFilterProducts : function (oEvent) {
-			var oBinding = this.byId("Products").getBinding("items"),
-				sQuery = oEvent.getParameter("query");
-
-			if (this.hasPendingChanges(oBinding, "filtering", true)) {
-				return;
-			}
-
-			oBinding.filter(sQuery ? new Filter("amount", FilterOperator.GT, sQuery) : null);
-		},
-
 		onInit : function () {
 			var oRouter = UIComponent.getRouterFor(this);
 
+			this.initMessagePopover("showMessages");
+			this.getView().setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
+				"messages");
 			oRouter.getRoute("objectPage").attachPatternMatched(this.onPatternMatched, this);
 			oRouter.getRoute("objectPageNoList").attachPatternMatched(this.onPatternMatched, this);
 
@@ -86,35 +61,6 @@ sap.ui.define([
 				sKey = sPath.slice(sPath.lastIndexOf("("));
 
 			UIComponent.getRouterFor(this).navTo("objectPage", {key : sKey});
-		},
-
-		onRefreshProducts : function () {
-			var oBinding = this.byId("Products").getBinding("items");
-
-			if (this.hasPendingChanges(oBinding, "refreshing", true)) {
-				return;
-			}
-			oBinding.refresh();
-		},
-
-		onSortByProductID : function () {
-			var oBinding = this.byId("Products").getBinding("items"),
-				oUIModel = this.oView.getModel("ui"),
-				bDescending = oUIModel.getProperty("/bSortProductIDDescending"),
-				oSortOrder;
-
-			if (this.hasPendingChanges(oBinding, "sorting", true)) {
-				return;
-			}
-
-			oSortOrder = this.getNextSortOrder(bDescending);
-			oBinding.sort(oSortOrder.bDescending === undefined
-				? undefined
-				: new Sorter("ID", oSortOrder.bDescending)
-			);
-
-			oUIModel.setProperty("/bSortProductIDDescending", oSortOrder.bDescending);
-			oUIModel.setProperty("/sSortProductIDIcon", oSortOrder.sNewIcon);
 		}
 	});
 });

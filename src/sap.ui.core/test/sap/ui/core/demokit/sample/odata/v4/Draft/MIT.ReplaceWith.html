@@ -1,130 +1,19 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 	<head>
-		<style type="text/css">
-			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		<style>
+			body {font-family: Arial, Helvetica, sans-serif;}
 		</style>
-		<title>Manual Integration Test: Flexible Column Layout - Replace-with Scenario</title>
+		<title>Manual Integration Test: Flexible Column Layout - Draft Application</title>
 	</head>
 	<body>
-		<h1>Manual Integration Test: Flexible Column Layout - Replace-with Scenario</h1>
+		<h1>Manual Integration Test: Flexible Column Layout - Draft Application</h1>
 		<h2>DESCRIPTION</h2>
-		This demo application is used to demonstrate how to synchronize data between a list report
-		(left column) and an object page (middle column) by using the
-		<code>ODataModel#getKeepAliveContext</code> API method. It also demonstrates how to replace
-		an active version with a draft and vice versa.
-		<h2>PREPARATION</h2>
+		<h3>PREPARATION</h3>
 			To check console errors open the developer tools before starting the application and
 			check at each step that there are no errors and warnings.
-
-		<h2>REALIZE and CHECK</h2>
-		<h3>Start Up</h3>
-		<ol>
-			<li>Start the Draft application URL (adjust host and port if necessary):
-				<ul>
-					<li> local:
-						<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft">
-							http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft
-						</a>
-					</li>
-				</ul>
-			</li>
-			<li>Select the first product in the list report.</li>
-			<li><b>Check:</b> An object page for the product appears, no input field is editable,
-				only the <code>Edit</code> and <code>Refresh</code> buttons are enabled.</li>
-		</ol>
-		<h3>Edit & Cancel</h3>
-		<ol>
-			<li>Press the <code>Edit</code> button.</li>
-			<li><b>Check:</b> Some input fields are now editable, all buttons but <code>Edit</code>
-			are enabled, and the list report shows that the first product is not an active entity.
-			</li>
-			<li>Enter 'Test' into the input field <code>Name</code> of the object page.</li>
-			<li><b>Check:</b> The list report shows the new name of the first product.</li>
-			<li>Press the <code>Cancel</code> button.</li>
-			<li><b>Check:</b> No input field is editable, only the <code>Edit</code> and
-			<code>Refresh</code> buttons are enabled, and the list report shows that the first
-			product is an active entity with its original name.
-			</li>
-		</ol>
-		<h3>Edit & Activate</h3>
-		<ol>
-			<li>Press the <code>Edit</code> button.</li>
-			<li><b>Check:</b> Some input fields are now editable, all buttons but <code>Edit</code>
-			are enabled, and the list report shows that the first product is not an active entity.
-			</li>
-			<li>Enter 'Test' into the input field <code>Name</code> of the object page.</li>
-			<li><b>Check:</b> The list report shows the new name of the first product.</li>
-			<li>Enter a new quantity like '123' into the <code>Quantity</code> input field of the
-			first part in the items table of the object page.</li>
-			<li>Press the <code>Save</code> button.</li>
-			<li><b>Check:</b> No input field is editable, only the <code>Edit</code> and
-			<code>Refresh</code> buttons are enabled, the list report shows that the first
-			product is an active entity with a new name, and the items table of the object page
-			shows the new quantity of the first part.
-			</li>
-		</ol>
-		<h3>Cancel Without Edit</h3>
-		<ol>
-			<li>Select the second product in the list report.</li>
-			<li><b>Check:</b> An object page for the product appears, some input fields are
-			editable, all buttons but <code>Edit</code> are enabled, and the list report shows that
-			the second product is not an active entity.
-			</li>
-			<li>Enter 'Test' into the input field <code>Name</code> of the object page.</li>
-			<li><b>Check:</b> The list report shows the new name of the second product.</li>
-			<li>Press the <code>Cancel</code> button.</li>
-			<li><b>Check:</b> No input field is editable, only the <code>Edit</code> and
-			<code>Refresh</code> buttons are enabled, and the list report shows that the second
-			product is an active entity with its original name.
-			</li>
-		</ol>
-
-		<h2>REALIZE and CHECK</h2>
-		<li> Start the Draft application URL (adjust host and port if necessary):
-			<ul>
-				<li> local:
-					<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)">
-						http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)
-					</a>
-				</li>
-			</ul>
-		</li>
-		<li><b>Check:</b> The list report and an object page for the product with ID 10 appears, no
-			input field is editable, only the <code>Edit</code> and <code>Refresh</code> buttons are
-			enabled in the object page.</li>
-		<li>Repeat the tests "Edit & Cancel" and "Edit & Activate" from above.</li>
-
-		<h2>REALIZE and CHECK</h2>
-		<li> Start the Draft application URL (adjust host and port if necessary):
-			<ul>
-				<li> local:
-					<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList">
-						http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList
-					</a>
-				</li>
-			</ul>
-		</li>
-		<li><b>Check:</b> An object page for the product with ID 10 appears, no input field is
-			editable, only the <code>Edit</code> and <code>Refresh</code> buttons are enabled.</li>
-		<li>Press the "Show List" button.</li>
-		<li><b>Check:</b> The list report appears.</li>
-		<li>Repeat the tests "Edit & Cancel" and "Edit & Activate" from above.</li>
-
-		<h2>REALIZE and CHECK</h2>
-		<li> Start the Draft application URL (adjust host and port if necessary):
-			<ul>
-				<li> local:
-					<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList">
-						http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)?noList
-					</a>
-				</li>
-			</ul>
-		</li>
-		<li><b>Check:</b> An object page for the product with ID 10 appears, no input field is
-			editable, only the <code>Edit</code> and <code>Refresh</code> buttons are enabled.</li>
-		<li>Repeat the tests "Edit & Cancel" and "Edit & Activate" from above.</li>
-		<li>Press the "Show List" button.</li>
-		<li><b>Check:</b> The list report appears.</li>
+		<h3>REALIZE and CHECK</h3>
+			Simply take the test description from <a href="README.html">here</a>
+			by replacing <code>Note:</code> with <code>Check:</code>.
 	</body>
 </html>
