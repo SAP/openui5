@@ -20,7 +20,6 @@ sap.ui.define([
 	includes
 ) {
 	"use strict";
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 	/**
 	 * @class Object List Field with object list value, such as [{"key": "key1"}, {"key": "key2"}]
@@ -167,6 +166,7 @@ sap.ui.define([
 
 	ObjectListField.prototype.onChangeOfTextArea = function (oEvent) {
 		var that = this;
+		var oResourceBundle = that.getResourceBundle();
 		var oTextArea = oEvent.getSource();
 		var sValue = oTextArea.getValue();
 		if (!sValue || sValue === "") {

@@ -171,6 +171,10 @@ sap.ui.define([
 		}
 	};
 
+	BaseField.prototype.getResourceBundle = function() {
+		return oResourceBundle;
+	};
+
 	BaseField.prototype.setConfiguration = function (oConfig, bSuppress) {
 		if (oResourceBundle && oResourceBundle.sLocale !== Core.getConfiguration().getLanguage()) {
 			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");

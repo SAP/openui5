@@ -398,7 +398,7 @@ sap.ui.define([
 			that._aOriginTranslatedValues = oField.getOriginTranslatedValues(oConfig);
 		}
 		var aTempTranslatedLanguages = deepClone(that._aOriginTranslatedValues, 500);
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		var oResourceBundle = oField.getResourceBundle();
 		//merge the value in texts or beforeLayerChange into the value list of i18n files
 		aTempTranslatedLanguages.forEach(function (translatedValue) {
 			var sTranslateText = oField.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);

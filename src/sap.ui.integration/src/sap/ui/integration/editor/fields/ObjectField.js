@@ -56,7 +56,6 @@ sap.ui.define([
 	merge
 ) {
 	"use strict";
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g;
 
 	/**
@@ -168,6 +167,7 @@ sap.ui.define([
 
 	ObjectField.prototype.createSimpleFormVisualization = function(oConfig) {
 		var that = this;
+		var oResourceBundle = that.getResourceBundle();
 		var fnChange = function() {
 			var oModel = this.getAggregation("_field").getModel();
 			oModel.checkUpdate(true);
@@ -333,7 +333,6 @@ sap.ui.define([
 				case "Text":
 					oCellSettings = {
 						text: sDefaultValue,
-						tooltip: sDefaultValue,
 						wrapping: false
 					};
 					oCellSettings = merge(oCellSettings, oCell);
@@ -363,6 +362,7 @@ sap.ui.define([
 							};
 						}
 					}
+					oCellSettings.tooltip = oCell.tooltip || oCellSettings.text;
 					oCellTemplate = new Text(oCellSettings);
 					break;
 				case "Icon":
@@ -426,6 +426,7 @@ sap.ui.define([
 
 	ObjectField.prototype.createTableToolbar = function(oConfig) {
 		var that = this;
+		var oResourceBundle = that.getResourceBundle();
 		// check if has filterProperty defined in each column of config.properties
 		var bHasFilterDefined = that.checkHasFilter(oConfig);
 		var bAddButtonVisible = oConfig.enabled !== false;
@@ -509,6 +510,7 @@ sap.ui.define([
 	ObjectField.prototype.createActionColumn = function() {
 		var that = this;
 		var oConfig = that.getConfiguration();
+		var oResourceBundle = that.getResourceBundle();
 		return new Column({
 			width: "5rem",
 			hAlign: "Center",
@@ -646,6 +648,7 @@ sap.ui.define([
 
 	ObjectField.prototype.onChangeOfTextArea = function (oEvent) {
 		var that = this;
+		var oResourceBundle = that.getResourceBundle();
 		var oTextArea = oEvent.getSource();
 		var sValue = oTextArea.getValue();
 		if (!sValue || sValue === "") {
@@ -668,6 +671,7 @@ sap.ui.define([
 
 	ObjectField.prototype.onChangeOfTextAreaInPopover = function (oEvent) {
 		var that = this;
+		var oResourceBundle = that.getResourceBundle();
 		var oTextArea = oEvent.getSource();
 		var sValue = oTextArea.getValue();
 		if (!sValue || sValue === "") {
@@ -915,6 +919,7 @@ sap.ui.define([
 	ObjectField.prototype.openObjectDetailsPopover = function (oItem, oControl, sMode) {
 		var that = this;
 		var oField = that.getAggregation("_field");
+		var oResourceBundle = that.getResourceBundle();
 		var oItemCloned = deepClone(oItem, 500);
 		var oModel;
 		if (!that._oObjectDetailsPopover) {
