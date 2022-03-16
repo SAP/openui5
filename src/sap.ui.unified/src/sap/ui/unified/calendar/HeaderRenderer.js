@@ -133,7 +133,6 @@ sap.ui.define([],
 
 			oRm.class("sapUiCalHeadB");
 			oRm.class("sapUiCalHeadToday");
-			oRm.attr('tabindex', "-1");
 			oRm.openEnd(); // button element
 			oRm.icon("sap-icon://appointment", null, { title: null });
 			oRm.close("button");
@@ -156,7 +155,6 @@ sap.ui.define([],
 			if (iLast === i) {
 				oRm.class("sapUiCalHeadBLast");
 			}
-			oRm.attr('tabindex', "-1");
 			if (this.getAriaLabelButton(oHead, i)) {
 				mAccProps["label"] = this.getAriaLabelButton(oHead, i);
 			}

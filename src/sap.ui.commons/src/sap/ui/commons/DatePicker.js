@@ -625,7 +625,6 @@ sap.ui.define([
 				oThis._oPopup.setContent(oThis._oCalendar);
 				// use compact design in commons
 				oThis._oCalendar.addStyleClass("sapUiSizeCompact");
-				oThis._oCalendar.setPopupMode(true);
 				oThis._oCalendar.setParent(oThis, undefined, true); // don't invalidate DatePicker
 			}
 

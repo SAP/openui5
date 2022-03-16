@@ -1246,7 +1246,6 @@ sap.ui.define([
 			this._getCalendar().addSelectedDate(this._oDateRange);
 			this._getCalendar()._setSpecialDatesControlOrigin(this);
 			this._getCalendar().attachCancel(_cancel, this);
-			this._getCalendar().setPopupMode(true);
 
 			if (this.$().closest(".sapUiSizeCompact").length > 0) {
 				this._getCalendar().addStyleClass("sapUiSizeCompact");

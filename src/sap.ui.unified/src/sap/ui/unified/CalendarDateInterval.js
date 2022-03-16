@@ -260,7 +260,6 @@ sap.ui.define([
 
 		if (!this._oCalendar) {
 			oCalendar = new Calendar(this.getId() + "--Cal");
-			oCalendar.setPopupMode(true);
 			oCalendar.attachEvent("select", this._handleCalendarPickerDateSelect, this);
 			oCalendar.attachEvent("cancel", function (oEvent) {
 				this._closeCalendarPicker(true);
@@ -386,14 +385,6 @@ sap.ui.define([
 
 		if (!bSkipFocus) {
 			this._renderMonth(); // to focus date
-
-			// restore tabindex
-			var aMonths = this.getAggregation("month");
-
-			for (var i = 0; i < aMonths.length; i++) {
-				var oMonth = aMonths[i];
-				oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()].setAttribute("tabindex", "0");
-			}
 		}
 
 		this._getCalendar()._closePickers();

@@ -66,9 +66,6 @@ sap.ui.define([],
 		}
 		oRm.openEnd(); // div element
 
-		var oHeader = oCal.getAggregation("header");
-		oRm.renderControl(oHeader);
-
 		oRm.openStart("div", sId + "-content");
 		oRm.class("sapUiCalContent");
 		oRm.openEnd();
@@ -102,6 +99,9 @@ sap.ui.define([],
 
 		oRm.close("div");
 
+		var oHeader = oCal.getAggregation("header");
+		oRm.renderControl(oHeader);
+
 		//when used in a DatePicker, in mobile there is no cancel button
 		if (!oCal._bSkipCancelButtonRendering) {
 			oRm.openStart("button", sId + "-cancel");
@@ -111,17 +111,6 @@ sap.ui.define([],
 			oRm.text(rb.getText("CALENDAR_CANCEL"));
 			oRm.close("button");
 		}
-
-		// dummy element to catch tabbing in from next element
-		oRm.openStart("div", sId + "-end");
-		oRm.attr("tabindex", "0");
-		oRm.style("position", "absolute");
-		oRm.style("width", "0");
-		oRm.style("height", "0");
-		oRm.style("right", "0");
-		oRm.style("bottom", "0");
-		oRm.openEnd();
-		oRm.close("div");
 
 		this.renderCalContentAndArrowsOverlay(oRm, oCal, sId);
 

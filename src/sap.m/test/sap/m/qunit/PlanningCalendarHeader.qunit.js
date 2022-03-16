@@ -33,10 +33,6 @@ sap.ui.define([
 		assert.ok(oCustomMonthPicker instanceof CustomMonthPicker, "CustomMonthPicker is instantiated");
 		assert.ok(oCustomYearPicker instanceof CustomYearPicker, "CustomYearPicker is instantiated");
 
-		assert.ok(oCalendar._bPoupupMode, "setPopupMode(true) is called for the Calendar instance");
-		assert.ok(oCustomMonthPicker._bPoupupMode, "setPopupMode(true) is called for the CustomMonthPicker instance");
-		assert.ok(oCustomYearPicker._bPoupupMode, "setPopupMode(true) is called for the CustomYearPicker instance");
-
 		// Clean
 		oPCHeader.destroy();
 	});
