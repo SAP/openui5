@@ -637,7 +637,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given variant management control is renamed", {
+	QUnit.module("Given variant management control rename is started", {
 		beforeEach: function (assert) {
 			var done = assert.async();
 
@@ -670,8 +670,7 @@ sap.ui.define([
 					});
 					this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 					this.oVariantManagementOverlay.setSelectable(true);
-					this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
-					this.oControlVariantPlugin._$oEditableControlDomRef = jQuery(this.oVariantManagementControl.getTitle().getDomRef("inner"));
+					this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -916,6 +915,84 @@ sap.ui.define([
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
 		});
 
+		QUnit.test("when stopEdit is called in non-error mode", function(assert) {
+			var oControl = this.oVariantManagementControl.getTitle();
+			var $oControl = jQuery(oControl.getDomRef("inner"));
+			var sOldText = "Title Old";
+			this.oControlVariantPlugin.setOldValue(sOldText);
+			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
+
+			$oControl.css("visibility", "hidden");
+			this.oControlVariantPlugin.stopEdit();
+
+			assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
+			assert.ok($oControl.css("visibility"), "visible", "then control visibility set back to visible");
+			assert.notOk(this._$oEditableControlDomRef);
+			assert.notOk(this._oEditedOverlay);
+		});
+
+		QUnit.test("when stopEdit is called in error mode", function(assert) {
+			var oControl = this.oVariantManagementControl.getTitle();
+			var $oControl = jQuery(oControl.getDomRef("inner"));
+			var sOldText = "Title Old";
+			this.oControlVariantPlugin.setOldValue(sOldText);
+			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
+			sandbox.stub(this.oVariantManagementOverlay, "hasStyleClass").returns(true);
+
+			$oControl.css("visibility", "hidden");
+			this.oControlVariantPlugin.stopEdit();
+
+			assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
+			assert.ok($oControl.css("visibility"), "visible", "then control visibility set back to visible");
+			assert.notOk(this._$oEditableControlDomRef);
+			assert.notOk(this._oEditedOverlay);
+		});
+	});
+
+	QUnit.module("Given variant management control is renamed", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
+
+			return FlexTestAPI.createVariantModel({
+				data: {variantManagementReference: {variants: []}},
+				appComponent: this.oMockedAppComponent
+			}).then(function(oInitializedModel) {
+				this.oModel = oInitializedModel;
+				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
+				this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
+				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+
+				var oVariantManagementDesignTimeMetadata = {
+					"sap.ui.fl.variants.VariantManagement": {
+						actions: {}
+					}
+				};
+				oCore.applyChanges();
+				this.oDesignTime = new DesignTime({
+					designTimeMetadata: oVariantManagementDesignTimeMetadata,
+					rootElements: [this.oVariantManagementControl]
+				});
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
+					this.oControlVariantPlugin = new ControlVariantPlugin({
+						commandFactory: new CommandFactory()
+					});
+					this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+					this.oVariantManagementOverlay.setSelectable(true);
+					done();
+				}.bind(this));
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oMockedAppComponent.destroy();
+			sandbox.restore();
+			this.oVariantManagementControl.destroy();
+			this.oDesignTime.destroy();
+		}
+	}, function () {
 		QUnit.test("when startEdit is called and renamed control's text container has overflow", function(assert) {
 			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
@@ -1047,39 +1124,6 @@ sap.ui.define([
 				assert.strictEqual(this.oVariantManagementControl.getTitle().getText(), "Standard Copy", "then calculated text set as variant control title");
 			}, this);
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
-		});
-
-		QUnit.test("when stopEdit is called in non-error mode", function(assert) {
-			var oControl = this.oVariantManagementControl.getTitle();
-			var $oControl = jQuery(oControl.getDomRef("inner"));
-			var sOldText = "Title Old";
-			this.oControlVariantPlugin.setOldValue(sOldText);
-			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
-
-			$oControl.css("visibility", "hidden");
-			this.oControlVariantPlugin.stopEdit();
-
-			assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
-			assert.ok($oControl.css("visibility"), "visible", "then control visibility set back to visible");
-			assert.notOk(this._$oEditableControlDomRef);
-			assert.notOk(this._oEditedOverlay);
-		});
-
-		QUnit.test("when stopEdit is called in error mode", function(assert) {
-			var oControl = this.oVariantManagementControl.getTitle();
-			var $oControl = jQuery(oControl.getDomRef("inner"));
-			var sOldText = "Title Old";
-			this.oControlVariantPlugin.setOldValue(sOldText);
-			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
-			sandbox.stub(this.oVariantManagementOverlay, "hasStyleClass").returns(true);
-
-			$oControl.css("visibility", "hidden");
-			this.oControlVariantPlugin.stopEdit();
-
-			assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
-			assert.ok($oControl.css("visibility"), "visible", "then control visibility set back to visible");
-			assert.notOk(this._$oEditableControlDomRef);
-			assert.notOk(this._oEditedOverlay);
 		});
 	});
 

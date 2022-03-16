@@ -375,10 +375,48 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when the Label gets renamed", function(assert) {
 			return triggerAndWaitForStartEdit(this.oRenamePlugin, this.oLayoutOverlay).then(function() {
-				assert.equal(this.oLayoutOverlay.getSelected(), true, "then the overlay is still selected");
+				var oTextMutatorSpy = sinon.spy(this.oRenamePlugin._$oEditableControlDomRef, "text");
+				assert.ok(this.oLayoutOverlay.getSelected(), "then the overlay is still selected");
 				this.oRenamePlugin.stopEdit(this.oLayoutOverlay);
-				assert.equal(this.oLayoutOverlay.getSelected(), true, "then the overlay is still selected");
+				assert.ok(this.oLayoutOverlay.getSelected(), "then the overlay is still selected");
+				assert.ok(oTextMutatorSpy.called, "then the label is changed via jQuery");
 			}.bind(this));
+		});
+
+		QUnit.test("when the designtime provides custom text mutators", function (assert) {
+			sandbox.stub(CommandFactory.prototype, "getCommandFor").resolves();
+			var oDesignTimeMetadata = this.oLayoutOverlay.getDesignTimeMetadata();
+			var oGetTextStub = sinon.stub();
+			var oSetTextStub = sinon.stub();
+			sandbox.stub(oDesignTimeMetadata, "getAction")
+				.callThrough()
+				.withArgs("rename")
+				.callsFake(function () {
+					return Object.assign(
+						{},
+						oDesignTimeMetadata.getAction.wrappedMethod.apply(this, arguments),
+						{
+							getTextMutators: function () {
+								return {
+									getText: oGetTextStub,
+									setText: oSetTextStub
+								};
+							}
+						}
+					);
+				});
+			var oTextMutatorSpy;
+			return triggerAndWaitForStartEdit(this.oRenamePlugin, this.oLayoutOverlay)
+				.then(function() {
+					oTextMutatorSpy = sinon.spy(this.oRenamePlugin._$oEditableControlDomRef, "text");
+					this.oRenamePlugin._$editableField.text("New text");
+					return triggerAndWaitForStopEdit(this.oRenamePlugin);
+				}.bind(this))
+				.then(function () {
+					assert.ok(oTextMutatorSpy.notCalled, "then the label is not changed via jQuery");
+					assert.ok(oGetTextStub.called, "then the custom getter is called");
+					assert.ok(oSetTextStub.called, "then the custom setter is called");
+				});
 		});
 
 		QUnit.test("when the Label gets renamed with a responsible element", function(assert) {

@@ -107,6 +107,18 @@ sap.ui.define([
 			}
 
 			this._$oEditableControlDomRef = jQuery(vEditableControlDomRef); /* Text Control */
+			var mMutators = typeof mPropertyBag.getTextMutators === "function"
+				? mPropertyBag.getTextMutators(oElement)
+				: {
+					getText: function () {
+						return this._$oEditableControlDomRef.text();
+					}.bind(this),
+					setText: function (sNewText) {
+						this._$oEditableControlDomRef.text(sNewText);
+					}.bind(this)
+				};
+			this._fnGetControlText = mMutators.getText;
+			this._fnSetControlText = mMutators.setText;
 			var iWidthDifference = 0;
 
 			// case where the editable control has it's own overlay
@@ -152,11 +164,12 @@ sap.ui.define([
 			this._$editableField = jQuery("<div contentEditable='true'></div>").appendTo(_$oWrapper);
 
 			// if label is empty, set a preliminary dummy text at the control to get an overlay
-			if (this._$oEditableControlDomRef.text() === "") {
-				this._$oEditableControlDomRef.text("_?_");
+			var sCurrentText = this._fnGetControlText();
+			if (sCurrentText === "") {
+				this._fnSetControlText("_?_");
 				this._$editableField.text("");
 			} else {
-				this._$editableField.text(this._$oEditableControlDomRef.text());
+				this._$editableField.text(sCurrentText);
 			}
 
 			this.setOldValue(RenameHandler._getCurrentEditableFieldText.call(this));
@@ -282,8 +295,8 @@ sap.ui.define([
 			this.setBusy(false);
 
 			// exchange the dummy text at the label with the genuine empty text (see start_edit function)
-			if (this._$oEditableControlDomRef.text() === "_?_") {
-				this._$oEditableControlDomRef.text("");
+			if (this._fnGetControlText() === "_?_") {
+				this._fnSetControlText("");
 			}
 
 			this._oEditedOverlay.$().find(".sapUiRtaEditableField").remove();
@@ -303,6 +316,8 @@ sap.ui.define([
 			delete this._$oEditableControlDomRef;
 			delete this._oEditedOverlay;
 			delete this._bBlurOrKeyDownStarted;
+			delete this._fnGetControlText;
+			delete this._fnSetControlText;
 
 			sap.ui.getCore().getEventBus().publish("sap.ui.rta", sPluginMethodName, {
 				overlay: oOverlay
