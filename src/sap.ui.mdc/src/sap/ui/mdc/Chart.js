@@ -1152,6 +1152,24 @@ sap.ui.define([
         };
 
         /**
+         * This sets the noDataText property.
+         * The noDataText is displayed when the chart has no data to show.
+         * @param {string} sText New value for "noDataText"
+         * @returns {sap.ui.mdc.Chart} Reference to the MDC Chart
+         */
+        Chart.prototype.setNoDataText = function(sText) {
+            this.setProperty("noDataText", sText);
+
+            try {
+                this.getControlDelegate().setNoDataText(this, sText);
+            } catch (error) {
+                //Nothing to do here as this is done during init
+            }
+
+            return this;
+        };
+
+        /**
 		 * Callback for when fuilters changed
 		 * Activates the overlay on the MDC Chart
 		 *
