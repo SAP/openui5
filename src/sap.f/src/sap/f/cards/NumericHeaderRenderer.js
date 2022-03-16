@@ -19,12 +19,16 @@ sap.ui.define([], function () {
 	NumericHeaderRenderer.render = function (oRm, oNumericHeader) {
 		var bLoading = oNumericHeader.isLoading(),
 			oError = oNumericHeader.getAggregation("_error"),
-			sTabIndex = oNumericHeader._isInsideGridContainer() ? "-1" : "0";
+			sTabIndex;
 
 		oRm.openStart("div", oNumericHeader)
 			.class("sapFCardHeader")
-			.class("sapFCardNumericHeader")
-			.attr("tabindex", sTabIndex);
+			.class("sapFCardNumericHeader");
+
+		if (oNumericHeader.getProperty("focusable")) {
+			sTabIndex = oNumericHeader._isInsideGridContainer() ? "-1" : "0";
+			oRm.attr("tabindex", sTabIndex);
+		}
 
 		if (bLoading) {
 			oRm.class("sapFCardHeaderLoading");

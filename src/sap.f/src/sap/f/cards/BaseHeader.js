@@ -249,12 +249,6 @@ sap.ui.define([
 		return this.hasListeners("press") ? this._oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER") : this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER");
 	};
 
-	BaseHeader.prototype._isFocusable = function() {
-		var bIsInsideGrid = this._isInsideGridContainer();
-
-		return this.getProperty("focusable") && !bIsInsideGrid;
-	};
-
 	/**
 	 * Returns if the control is inside a sap.f.GridContainer
 	 *

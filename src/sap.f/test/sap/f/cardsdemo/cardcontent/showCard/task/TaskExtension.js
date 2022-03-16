@@ -59,10 +59,12 @@ sap.ui.define([
 
 	TaskExtension.prototype._confirmReject = function () {
 		setTimeout(function () { // send http request
-			var oCard = this.getCard();
+			var oCard = this.getCard(),
+				oDetailsCard = oCard.getOpener(),
+				oMainCard = oDetailsCard.getOpener();
 			oCard.hide();
-			oCard.getOpener().hide();
-			// todo hide the main card
+			oDetailsCard.hide();
+			oMainCard.hide();
 		}.bind(this), 500);
 	};
 
