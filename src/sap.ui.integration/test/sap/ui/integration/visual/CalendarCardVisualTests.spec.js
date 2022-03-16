@@ -1,23 +1,16 @@
-/* global describe, it, element, by, takeScreenshot, browser, expect, protractor */
+/* eslint-env node */
+/* global describe, it, takeScreenshot, browser, expect, protractor */
 
-describe("sap.f.CalendarInCard", function () {
+var utils = require("./cardVisualTestUtils");
+
+describe("sap.ui.integration.CalendarCardVisualTests", function () {
 	"use strict";
 
-	browser.testrunner.currentSuite.meta.controlName = "sap.f.CalendarInCard";
-
-	function navigateTo(sTitle) {
-		element(by.control({
-			controlType: "sap.m.CustomListItem",
-			descendant: {
-				controlType: "sap.m.Title",
-				properties: { text: sTitle }
-			}
-		})).click();
-	}
+	browser.testrunner.currentSuite.meta.controlName = "sap.ui.integration.cards.CalendarContent";
 
 	// open calendar card sample
 	it("Calendar Card", function () {
-		navigateTo("Calendar Card");
+		utils.navigateTo("Calendar Card");
 
 		expect(takeScreenshot()).toLookAs("calendar_card_initialization");
 	});
