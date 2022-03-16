@@ -36521,6 +36521,86 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Flexible Column Layout, ODataModel#getKeepAliveContext
+	// An object page requests a kept-alive context matching an entity in a suspended list binding
+	// with $$getKeepAliveContext. Modify a property. Resume the list and see that list and object
+	// page are in sync.
+	// JIRA: CPOUI5ODATAV4-1525
+	QUnit.test("getKeepAliveContext: suspended", function (assert) {
+		var oContext,
+			oListBinding,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="list" items="{path : \'/Artists\', parameters : {$$getKeepAliveContext : true},\
+		suspended : \'true\'}">\
+	<Text id="listName" text="{Name}"/>\
+	<Text id="defaultChannel" text="{defaultChannel}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Input id="name" value="{Name}"/>\
+	<Text id="lastUsedChannel" text="{lastUsedChannel}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("listName", [])
+			.expectChange("defaultChannel", [])
+			.expectChange("name")
+			.expectChange("lastUsedChannel");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Name,lastUsedChannel", {
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "The Beatles",
+					lastUsedChannel : "02"
+				})
+				.expectChange("name", "The Beatles")
+				.expectChange("lastUsedChannel", "02");
+
+			oListBinding = that.oView.byId("list").getBinding("items");
+			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='1',IsActiveEntity=false)");
+			that.oView.byId("objectPage").setBindingContext(oContext);
+
+			return that.waitForChanges(assert, "getKeepAliveContext");
+		}).then(function () {
+			that.expectChange("name", "The Beatles (changed)")
+				.expectRequest({
+					method : "PATCH",
+					url : "Artists(ArtistID='1',IsActiveEntity=false)",
+					payload : {Name : "The Beatles (changed)"}
+				}); // no response required
+
+			that.oView.byId("name").getBinding("value").setValue("The Beatles (changed)");
+
+			return that.waitForChanges(assert, "change name");
+		}).then(function () {
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name,defaultChannel"
+					+ "&$skip=0&$top=100", {
+					value : [{
+						ArtistID : "1",
+						IsActiveEntity : false,
+						Name : "The Beatles (changed)",
+						defaultChannel : "01"
+					}]
+				})
+				.expectChange("listName", ["The Beatles (changed)"])
+				.expectChange("defaultChannel", ["01"]);
+
+			oListBinding.resume();
+
+			return that.waitForChanges(assert, "resume");
+		}).then(function () {
+			oListBinding.suspend();
+
+			assert.throws(function () {
+				oModel.getKeepAliveContext("/Artists(ArtistID='1',IsActiveEntity=false)");
+			}, new Error("Must not call method when the binding's root binding is suspended: "
+				+ oListBinding));
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: List report with absolute binding, object page with a late property. Ensure that
 	// the late property is not requested for all rows of the list, but only for the single row that
 	// needs it.

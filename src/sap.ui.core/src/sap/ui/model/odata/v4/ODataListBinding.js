@@ -2382,14 +2382,14 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID used for read requests for the context's entity or its properties. If not
 	 *   given, the binding's {@link #getGroupId group ID} is used. Supported since 1.100.0
-	 * @returns {sap.ui.model.odata.v4.Context|undefined}
-	 *   The kept-alive context, or <code>undefined</code> if the binding's root binding is
-	 *   suspended and no context with the given path exists
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   The kept-alive context
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the group ID is invalid,
 	 *     <li> the binding is unresolved,
 	 *     <li> the given context path does not match this binding,
+	 *     <li> the binding's root binding is suspended,
 	 *     <li> or {@link sap.ui.model.odata.v4.Context#setKeepAlive} fails
 	 *   </ul>
 	 *
@@ -2405,13 +2405,11 @@ sap.ui.define([
 			iPredicateIndex = this.oModel.getPredicateIndex(sPath),
 			sResolvedPath = this.getResolvedPath();
 
+		this.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
 		if (!oContext) {
 			if (!sResolvedPath) {
 				throw new Error("Binding is unresolved: " + this);
-			}
-			if (this.isRootBindingSuspended()) {
-				return undefined;
 			}
 			if (sPath.slice(0, iPredicateIndex) !== sResolvedPath) {
 				throw new Error(this + ": Not a valid context path: " + sPath);
@@ -2552,18 +2550,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check whether this binding is an active $$getKeepAliveContext binding for the given path.
-	 *
-	 * @param {string} sPath - An absolute binding path
-	 * @returns {boolean} - Whether this binding matches
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.isKeepAliveBindingFor = function (sPath) {
-		return this.mParameters.$$getKeepAliveContext && this.getResolvedPath() === sPath;
-	};
-
-		/**
 	 * Enhance the inherited query options by the given query options if this binding does not have
 	 * any binding parameters. If both have a '$orderby', the resulting '$orderby' is the
 	 * concatenation of both '$orderby' with the given one first. If both have a '$filter', the
@@ -2642,6 +2628,21 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.isFirstCreateAtEnd = function () {
 		return this.bCreatedAtEnd;
+	};
+
+	/**
+	 * Check whether this binding is an active $$getKeepAliveContext binding for the given path.
+	 *
+	 * @param {string} sPath - An absolute binding path
+	 * @returns {boolean} - Whether this binding matches
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.isKeepAliveBindingFor = function (sPath) {
+		// When suspended it matches if it already has contexts. Then its getKeepAliveContext fails.
+		return this.mParameters.$$getKeepAliveContext && this.getResolvedPath() === sPath
+			&& (!this.isRootBindingSuspended() || this.aContexts.length
+				|| Object.keys(this.mPreviousContextsByPath).length);
 	};
 
 	/**
