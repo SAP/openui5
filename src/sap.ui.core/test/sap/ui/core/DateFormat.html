@@ -88,10 +88,17 @@
 				values: ["wide", "short", "narrow"],
 				help: "Allowed values are \"wide\", \"short\" and \"narrow\""
 			},
+			showDate: {
+				type: "boolean",
+				help: "Show Date part"
+			},
+			showTime: {
+				type: "boolean",
+				help: "Show Time part"
+			},
 			showTimezone: {
-				type: "enum",
-				values: ["Hide", "Show", "Only"],
-				help: "Allowed values are \"Hide\", \"Show\" and \"Only\""
+				type: "boolean",
+				help: "Show Timezone part"
 			},
 			interval: {
 				type: "boolean",

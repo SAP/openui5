@@ -185,6 +185,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getCombinedDateTimePattern("long", "long"), "d. MMMM y 'um' HH:mm:ss z", "datetime pattern \"long\", \"long\"");
 			assert.equal(oLocaleData.getCombinedDateTimeWithTimezonePattern("long", "long"), "d. MMMM y 'um' HH:mm:ss z VV", "datetime pattern \"long\", \"long\"");
 			assert.equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "dd.MM.y, HH:mm", "datetime pattern \"medium\", \"short\"");
+			assert.equal(oLocaleData.applyTimezonePattern("y"), "y VV", "time zone pattern applied");
 			assert.equal(oLocaleData.getCombinedDateTimePattern("medium", "short", "Japanese"), "dd.MM.y G, HH:mm", "datetime pattern \"medium\", \"short\", \"Japanese\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("y"), "y", "datetime format \"y\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("y", "Japanese"), "y G", "datetime format \"y\"");
@@ -275,6 +276,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
 			assert.equal(oLocaleData.getDateTimePattern("long"), "{1} 'at' {0}", "datetime pattern \"long\"");
 			assert.equal(oLocaleData.getCombinedDateTimeWithTimezonePattern("long", "long"), "d MMMM y 'at' HH:mm:ss z VV", "datetime pattern \"long\", \"long\"");
+			assert.equal(oLocaleData.applyTimezonePattern("y"), "y VV", "time zone pattern applied");
 			assert.equal(oLocaleData.getCombinedDateTimePattern("long", "long"), "d MMMM y 'at' HH:mm:ss z", "datetime pattern \"long\", \"long\"");
 			assert.equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "d MMM y, HH:mm", "datetime pattern \"medium\", \"short\"");
 			assert.equal(oLocaleData.getCombinedDateTimePattern("medium", "short", "Japanese"), "MMM d, y G, HH:mm", "datetime pattern \"medium\", \"short\", \"Japanese\"");
