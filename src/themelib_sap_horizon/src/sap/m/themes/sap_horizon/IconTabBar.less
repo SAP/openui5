@@ -9,6 +9,12 @@
 
 @_sap_m_IconTabBar_TextColor: @sapTextColor;
 @_sap_m_IconTabBar_TextShadow: none;
+@_sap_m_IconTabBar_Separator_Icon: @sapUiContentNonInteractiveIconColor;
+@_sap_m_IconTabBar_Separator_Font_Size:@sapFontLargeSize;
+@_sap_m_IconTabBar_More_Button_Font_size: 1rem;
+@_sap_m_IconTabBar_More_Button_Focus_Offset: -0.3125rem;
+@_sap_m_IconTabBar_Arrow_SubItem_Left_Padding: 0.875rem;
+
 
 // ==================== Cozy size ====================
 
@@ -66,9 +72,10 @@
 
 // Header
 @_sap_m_IconTabBar_HeaderBackgroundTranslucent: @sapUiObjectHeaderBackground;
+@_sap_m_IconTabBar_HeaderBackground: @sapUiObjectHeaderBackground;
 
 @_sap_m_IconTabBar_HeaderBorderBottom: none;
-@_sap_m_IconTabBar_HeaderShadow: 0 0.25rem 0.25rem -0.25rem fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 @sapUiObjectHeaderBorderColor;
+@_sap_m_IconTabBar_HeaderShadow: @sapUiContentHeaderShadow;
 
 // Content
 @_sap_m_IconTabBar_ContentBackground: @sapUiBaseBG;
@@ -118,30 +125,47 @@
 @_sap_m_IconTabBar_Phone_TextOnlyContentArrowHeight: 0.5rem;
 @_sap_m_IconTabBar_Phone_Compact_TextOnlyContentArrowHeight: 0.75rem;
 
+// =========== Badge ===========
+@_sap_m_IconTabBar_Badge_Neutral_Background: @sapUiNeutralElement;
+@_sap_m_IconTabBar_Badge_Positive_Background: @sapUiPositiveElement;
+@_sap_m_IconTabBar_Badge_Critical_Background: @sapUiCriticalElement;
+@_sap_m_IconTabBar_Badge_Negative_Background: @sapUiNegativeElement;
+
 // ==========================================================================
 // Variables
 // ==========================================================================
 
-@_sap_m_IconTabBar_TextHoverColor: @sapUiSelected;
-@_sap_m_IconTabBar_SelectedTextColor: @sapUiSelected;
+@_sap_m_IconTabBar_TextHoverColor: @sapUiContentFocusColor;
+@_sap_m_IconTabBar_SelectedTextColor: @sapUiContentSelectedForegroundColor;
 @_sap_m_IconTabBar_SelectedTextHoverColor: darken(@sapUiSelected, 10);
 @_sap_m_IconTabBar_ArrowScroll_AfterHeight: 1px;
-@_sap_m_IconTabBar_HeaderFocusBorderTopOffset: -5px;
-@_sap_m_IconTabBar_HeaderFocusBorderBottomOffset: -5px;
+@_sap_m_IconTabBar_HeaderFocusBorderTopOffset: -4px;
+@_sap_m_IconTabBar_HeaderFocusBorderBottomOffset: -4px;
 @_sap_m_IconTabBar_HeaderFocusBorderRightOffset: -3px;
 @_sap_m_IconTabBar_HeaderFocusBorderLeftOffset: -3px;
-@_sap_m_IconTabBar_HeaderBorderRadius: 0.5rem;
+@_sap_m_IconTabBar_HeaderBorderRadius: 0.375rem;
+@_sap_m_IconTab_Bar_Separator_Line: @sapUiGroupTitleBorderColor;
+
+// =========== Overflow ===========
+@_sap_m_IconTabBar_Overflow_BorderColorHover: @sapUiButtonHoverBorderColor;
+@_sap_m_IconTabBar_Overflow_BackgroundColorHover: @sapUiButtonHoverBackground;
+@_sap_m_IconTabBar_Overflow_BoxShadowHover: @sapUiContentInteractionShadow;
+@_sap_m_IconTabBar_Overflow_TextColorHover: @sapUiButtonHoverTextColor;
+@_sap_m_IconTabBar_Overflow_Icon_ColorHover: @sapUiButtonHoverTextColor;
+
+@_sap_m_IconTabBar_Overflow_BackgroundColorPressed: @sapUiButtonActiveBackground;
+@_sap_m_IconTabBar_Overflow_BorderColorPressed: @sapUiButtonActiveBorderColor;
+@_sap_m_IconTabBar_Overflow_TextColorPressed: @sapUiButtonActiveTextColor;
+@_sap_m_IconTabBar_Overflow_Icon_ColorPressed: @sapUiButtonActiveTextColor;
 
 // =========== Shell ===========
 @_sap_m_IconTabBar_ShellHeaderShadow: @sapUiShellShadow;
-@_sap_m_IconTabBar_ShellSelectedTextColor: @sapContent_Selected_TextColor;
-@sapUiShellNavigationSelectedColor: @sapContent_Selected_TextColor;
+@_sap_m_IconTabBar_ShellSelectedTextColor: @sapUiShellNavigationSelectedTextColor;
 
 
 /* Head Container */
 .sapMITH {
 	z-index: 1; // shows the bottom shadow of the ITHeader over the content of the ITB
-
 	.sapMITBHead {
 		padding-top: 0.875rem;
 	}
@@ -169,6 +193,8 @@
 	.sapMITBDisabled {
 	  .sapMITHTextContent {
 		color: @sapTextColor;
+		font-family: @sapFontBoldFamily;
+		font-size: @sapFontSize;
 	  }
 	}
 
@@ -188,13 +214,15 @@
 	  .sapMITHShowSubItemsIcon {
 	   color: @sapButton_TextColor;
 	  }
-
-	  &:hover {
-		box-shadow: @sapContent_Interaction_Shadow;
-	  }
 	}
   }
 
+.sapMITHEndOverflow,
+.sapMITHStartOverflow {
+	.sapMITHShowSubItemsIcon {
+		padding-left: 0.375rem;
+	}
+}
   //Arrow button
   .sapMITBFilterWithItems .sapMITBFilterExpandBtn .sapMBtnIcon:hover  {
 	color: @_sap_m_IconTabBar_TextHoverColor !important;
@@ -285,7 +313,7 @@
 	margin-top: 0.125rem;
 
 	+ .sapMITBSep {
-		margin-top: 0.125rem;
+		margin-top: 0.25rem;
 	}
 }
 
@@ -315,6 +343,10 @@
 		color: @sapUiNeutralText;
 	}
 
+	.sapMITBFilterNeutral:hover .sapMITBText {
+	  color: darken(@sapUiNeutralText, 10);
+	}
+
 	.sapMITBFilterPositive .sapMITBText {
 		color: @sapUiPositiveText;
 	}
@@ -341,12 +373,12 @@
 }
 
 .sapMITBFilterIcon {
-	border: 2px solid @sapUiHighlight;
+	border: 2px solid @sapUiContentSelectedForegroundColor;
 }
 
 .sapMITBFilterDefault {
-	color: @sapUiHighlight;
-	border-color: @sapUiHighlight;
+  	border-color: @sapUiContentSelectedForegroundColor;
+	color: @sapUiContentSelectedForegroundColor;
 }
 
 .sapMITBFilterNeutral {
@@ -398,23 +430,28 @@
 
 	.sapMITBFilterNeutral {
 		background: @sapUiNeutralElement;
-		color: @sapUiGroupContentBackground;
+		color: @sapUiContentContrastIconColor;
 	}
 
 	.sapMITBFilterPositive {
 		background: @sapUiPositiveElement;
-		color: @sapUiGroupContentBackground;
+		color: @sapUiContentContrastIconColor;
 	}
 
 	.sapMITBFilterNegative {
 		background: @sapUiNegativeElement;
-		color: @sapUiGroupContentBackground;
+		color: @sapUiContentContrastIconColor;
 	}
 
 	.sapMITBFilterCritical {
 		background: @sapUiCriticalElement;
-		color: @sapUiGroupContentBackground;
+		color: @sapUiContentContrastIconColor;
 	}
+}
+
+.sapMITHShowSubItemsIcon {
+	bottom: -1.5px;
+	position: relative;
 }
 
 /* Phone device */
@@ -452,7 +489,7 @@
 
 	.sapMITBSepLine {
 		border: unset;
-		border-right: 1px solid @sapUiGroupTitleBorderColor;
+		border-right: 1px solid @_sap_m_IconTab_Bar_Separator_Line;
 		margin: 0.625rem 0.125rem 0 0.125rem;
 	}
 }
@@ -471,11 +508,21 @@
 			margin-top: 0.5rem;
 		}
 	}
+
+  .sapMITBCount {
+	  font-family: @sapFontBoldFamily;
+	  font-size: @sapFontHeader3Size;
+  }
+
+  .sapMITBText {
+	  font-family: @sapFontFamily;
+	  font-size: @sapFontSmallSize;
+  }
 }
 
 .sapMITBSepLine {
 	border: unset;
-	border-right: 1px solid @sapUiGroupTitleBorderColor;
+	border-right: 1px solid @_sap_m_IconTab_Bar_Separator_Line;
 }
 
 .sapUiMedia-Std-Phone {
@@ -495,8 +542,9 @@ html.sap-desktop {
 	}
 
 	.sapMITBFilter .sapMITBCount {
-		padding-left: 2px;
 		color: @sapContent_LabelColor;
+	  	font-family: @sapFontFamily;
+	  	font-size: @sapFontSize;
 	}
 
 	.sapMITH.sapUiSizeCompact {
@@ -513,7 +561,7 @@ html.sap-desktop {
 	.sapMITHEndOverflow {
 	  .sapMITBItem:not(.sapUiDnDDragging):focus {
 		&::after {
-		  border-radius: @_sap_m_IconTabBar_HeaderBorderRadius;
+		  border-radius: 1.75rem;
 		}
 	  }
 	}
@@ -531,21 +579,35 @@ html.sap-desktop {
 	}
 }
 
+.sapUiMedia-Std-Tablet,
+.sapUiMedia-Std-Desktop {
+
+	.sapMITHEndOverflow {
+		padding-left: 0.188rem;
+		margin-left: 0px;
+	}
+}
+
 html.sap-desktop {
 
-  .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBFilterIcon {
-	&::after {
-	  top: -5px;
-	  bottom: -5px;
-	  right: -5px;
-	  left: -5px;
-	  border-radius: inherit;
+	.sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBFilterIcon {
+		&::after {
+			top: -5px;
+			bottom: -5px;
+			right: -5px;
+			left: -5px;
+			border-radius: inherit;
+		}
 	}
-  }
-
 }
-.sapMITBTextOnly .sapMITBFilter .sapMITBCount  {
-  padding-bottom: 2px;
+
+.sapUiMedia-Std-Phone {
+	.sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll {
+		&::after {
+			right: 6px !important;
+			left: -1px !important;
+		}
+	}
 }
 
 .sapMITBFilter .sapMITBText {
@@ -555,7 +617,8 @@ html.sap-desktop {
 /* Shell overrides                        */
 /* ------------------------------------------------ */
 
-.sapUshellShellTabBar {
+.sapUshellShellTabBar .sapMITH,
+.sapUshellShellTabBar.sapMITH {
 
   //More Button
   .sapMITHStartOverflow,
@@ -563,7 +626,7 @@ html.sap-desktop {
 	.sapMITBItem {
 	  border: 1px solid @sapButton_BorderColor;
 	  color: @sapShell_Navigation_TextColor;
-	  background-color: @sapShell_InteractiveBackground !important;
+	  background-color: @sapUiShellInteractiveBackground;
 
 	  .sapMITHShowSubItemsIcon {
 		color: @sapShell_Navigation_TextColor;
@@ -577,19 +640,28 @@ html.sap-desktop {
 
   .sapMITH .sapMITBFilter.sapMITBSelected .sapMITBCount,
   .sapMITH .sapMITBFilter.sapMITBSelected .sapMITBCount {
-	color:  @sapShell_Navigation_SelectedColor;
+	color:  @sapUiShellNavigationSelectedColor;
   }
 
   .sapMITBSelected:not(sapMITBDisabled)  .sapMITBContentArrow::after {
-	background: @sapShell_Navigation_SelectedColor;
-  }
-
-  .sapMITBSelected:not(sapMITBDisabled) .sapMITHTextContent {
-	color: @sapShell_Navigation_Active_TextColor;
+	background: @sapUiShellNavigationSelectedColor;
   }
 
   .sapMITH .sapMITBFilterWithItems .sapMITBFilterExpandBtn {
-	margin-left: 0.135rem;
+	margin-left: 0.188rem;
+  }
+
+  .sapMITHStartOverflow,
+  .sapMITHEndOverflow {
+	.sapMITBItem {
+		background-color: @sapUiShellInteractiveBackground;
+
+	  &:hover {
+		background: @sapUiShellHoverBackground;
+		background-color: @sapUiShellHoverBackground;
+		border-color: @_sap_m_IconTabBar_ShellOverflowHoverBorderColor;
+	  }
+	}
   }
 
   html.sap-desktop & {
@@ -601,9 +673,24 @@ html.sap-desktop {
 	.sapMITHStartOverflow .sapMITBItem:not(.sapUiDnDDragging):focus,
 	.sapMITHEndOverflow .sapMITBItem:not(.sapUiDndDragging):focus {
 	  &::after {
-		border-color: @sapUiContentFocusColor !important;
+		border-color: @sapContent_FocusColor !important;
 	  }
 	}
   }
 }
 
+/* ------------------------------------------------ */
+/* IconTabBar Badge									*/
+/* ------------------------------------------------ */
+
+.sapMITH,
+.sapMITBFilterPopover {
+
+	.sapMITBText .sapMBadgeAttention {
+		right: -0.75rem;
+	}
+
+	.sapMITFExpandButtonBadge {
+		left: 0.5rem;
+	}
+}
