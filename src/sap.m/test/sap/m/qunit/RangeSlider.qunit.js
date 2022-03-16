@@ -267,6 +267,30 @@ sap.ui.define([
 		assert.strictEqual(this.rangeSlider.getValue2(), 0, "Value should be limited to the MIN properly");
 	});
 
+
+	QUnit.test("set/getValue() should update advanced tooltip state and visualization", function (assert) {
+		var fnUpdateTooltipsPositionAndStateSpy = this.spy(this.rangeSlider, "updateTooltipsPositionAndState");
+		var fnUpdateTooltipContentSpy;
+
+		this.rangeSlider.setShowAdvancedTooltip(true);
+		oCore.applyChanges();
+
+		this.rangeSlider.getAggregation("_tooltipContainer").show(this.rangeSlider);
+		fnUpdateTooltipContentSpy = this.spy(this.rangeSlider, "_updateTooltipContent");
+		this.rangeSlider.setValue(50);
+
+		oCore.applyChanges();
+
+		assert.strictEqual(fnUpdateTooltipContentSpy.callCount, 3, "UpdateTooltipContent is called when setValue is executed");
+		assert.ok(fnUpdateTooltipsPositionAndStateSpy.calledOnce, "UpdateTooltipContentSpy is called");
+
+		this.rangeSlider.setValue2(60);
+		oCore.applyChanges();
+
+		assert.strictEqual(fnUpdateTooltipContentSpy.callCount, 6, "UpdateTooltipContent is called when setValue2 is executed");
+		assert.ok(fnUpdateTooltipsPositionAndStateSpy.calledTwice, "UpdateTooltipContentSpy is called");
+	});
+
 	QUnit.test("set/getStep()", function (assert) {
 		//arrange
 		var aTooltips, fnWarningSpy = this.spy(Log, "warning");
@@ -1436,6 +1460,7 @@ sap.ui.define([
 		assert.strictEqual(oProgressHandle.getAttribute("aria-valuetext"), "From XXXXXXX-0 to XXXXXXX-2", "The aria-valuetext should be 'From XXXXXXX-0 to XXXXXXX-2'.");
 
 		// Act
+		oSlider.getAggregation("_tooltipContainer").show(oSlider);
 		oSlider.setValue(1);
 		oCore.applyChanges();
 		clock.tick(1000);
@@ -1609,6 +1634,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Tooltips: Setting a value when TooltipContainer is not visible", function (assert) {
+			this.oRangeSlider.getAggregation("_tooltipContainer").show(this.oRangeSlider);
 			this.oRangeSlider.setValue(4);
 			oCore.applyChanges();
 
