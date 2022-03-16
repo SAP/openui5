@@ -759,6 +759,7 @@ sap.ui.define([
 				$firstVisibleCol.width("");	// cover the space
 			}
 		} else {
+			$firstVisibleCol.removeClass("sapMTableLastColumn");
 			// set original width of columns
 			aVisibleColumns.each(function() {
 				this.style.width = this.getAttribute("data-sap-width") || "";

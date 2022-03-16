@@ -2492,10 +2492,73 @@ sap.ui.define([
 		oSmallColumn.setVisible(false);
 
 		window.setTimeout(function() {
-			assert.ok(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableLastColumn"), "sapMTableLastColumn class added to the table");
+			assert.ok(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableLastColumn"), "sapMTableLastColumn class added to the column");
 			assert.strictEqual(oBigColumn.getDomRef().style.width, "", "column occupies the available width and not bigger than the table");
 			done();
 		}.bind(this), 1);
+	});
+
+	QUnit.test("sapMTableLastColumn should be cleared if there are other columns visible", function(assert) {
+		this.sut.destroy();
+		var clock = sinon.useFakeTimers();
+
+		var oBigColumn = new Column({
+			width: "700px",
+			header: new Text({
+				text: "Column1"
+			})
+		});
+
+		var oSmallColumn = new Column({
+			width: "300px",
+			header: new Text({
+				text: "Column2"
+			})
+		});
+
+		this.sut = new Table({
+			contextualWidth: "1200px",
+			fixedLayout: "Strict",
+			autoPopinMode: true,
+			hiddenInPopin: ["None"],
+			columns: [
+				oBigColumn, oSmallColumn
+			],
+			items: [
+				new ColumnListItem({
+					cells: [
+						new Text({
+							text: "Cell1"
+						}),
+						new Text({
+							text: "Cell2"
+						})
+					]
+				})
+			]
+		});
+
+		this.sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.equal(this.sut.$("tblHeadDummyCell").length, 1, "DummyCol rendered");
+		// simulate changning of table width
+		this.sut.$().width("500px");
+		this.sut.setContextualWidth("500px");
+		Core.applyChanges();
+		clock.tick(10);
+
+		assert.ok(this.sut.$("tblHeader").find(".sapMTableLastColumn").length > 0, "sapMTableLastColumn class added to the column");
+		assert.strictEqual(oSmallColumn.getDomRef().style.display, "none", "this column is hidden due to the hiddenInPopin feature");
+		// simulate changing of table width
+		this.sut.$().width("");
+		this.sut.setContextualWidth("1200px");
+		Core.applyChanges();
+		clock.tick(10);
+
+		assert.notOk(this.sut.$("tblHeader").find(".sapMTableLastColumn").length, "sapMTableLastColumn not found and is removed from the column");
+		assert.strictEqual(oSmallColumn.getDomRef().style.display, "table-cell", "this column is visible again");
+		clock.restore();
 	});
 
 	QUnit.test("Table should update trigger button width when columns are hidden via onColumnResize and hiddenInPopin", function(assert) {
