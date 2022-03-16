@@ -1113,6 +1113,10 @@ sap.ui.define([
                 isAnalytical: true//,
             }));
 
+            this._getChart(oMDCChart).setCustomMessages({
+			    'NO_DATA': oMDCChart.getNoDataText()
+		    });
+
             //Initialize empty; will get filled later on
             this._getState(oMDCChart).inResultDimensions = [];
 
@@ -1531,6 +1535,17 @@ sap.ui.define([
      */
     ChartDelegate._formatText = function(sKey, SDesc) {
         return sKey;
+    };
+
+    /**
+     * Sets a "No Data" text for the inner chart.
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to mdc chart
+     * @param {string} sText Text to show when there is no data displayed on the chart
+     */
+    ChartDelegate.setNoDataText = function(oMDCChart, sText) {
+        this._getChart(oMDCChart).setCustomMessages({
+            'NO_DATA': sText
+        });
     };
 
     /**

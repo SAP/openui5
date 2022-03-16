@@ -316,6 +316,10 @@ sap.ui.define([
     };
 
 
+    ChartDelegate.setNoDataText = function() {
+        //Nothing to do here in test delegate
+    };
+
     /**
      * Initializes a new chart property helper.
      *

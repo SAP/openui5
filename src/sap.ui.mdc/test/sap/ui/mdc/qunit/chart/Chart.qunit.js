@@ -392,6 +392,21 @@ function(
 
 	});
 
+		QUnit.test("MDC Chart setNoDataText", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "setNoDataText");
+
+			this.oMDCChart.setNoDataText("Test Text 12345");
+			assert.ok(delegateSpy.calledOnce, "setNoDataText was called on delegate");
+			assert.equal(this.oMDCChart.getNoDataText(), "Test Text 12345", "No data text was updated");
+
+			done();
+		}.bind(this));
+	});
+
+
 	QUnit.module("sap.ui.mdc.Chart: Toolbar Actions", {
 
 		beforeEach: function() {
