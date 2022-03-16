@@ -8,7 +8,7 @@ describe("sap.m.IconTabHeaderResponsivePaddings", function() {
 	// initial loading
 	it("should load test page", function() {
 
-		browser.sleep(1000);
+		browser.sleep(2000);
 
 		browser.executeScript(function () {
 			return sap.ui.Device.system.phone;
