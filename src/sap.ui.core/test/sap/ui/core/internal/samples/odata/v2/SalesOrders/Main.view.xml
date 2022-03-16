@@ -168,7 +168,7 @@
 					<Input id="salesOrderID::objectPage" editable="false" value="{SalesOrderID}"
 						width="8em" />
 					<Label text="Note" />
-					<Input value="{Note}" />
+					<Input id="note::objectPage" value="{Note}" />
 					<Label text="Gross Amount" />
 					<Input editable="false" id="grossAmount::objectPage" value="{
 							parts : [{
@@ -530,7 +530,7 @@
 				<ToolbarSpacer />
 				<Button id="saveSalesOrder" press="onSaveSalesOrder" text="Save"
 					tooltip="Save the sales order" type="Emphasized" />
-				<Button press="onResetChanges" text="Reset Changes" />
+				<Button id="resetChanges" press="onResetChanges" text="Reset Changes" />
 			</OverflowToolbar>
 		</footer>
 	</Page>
