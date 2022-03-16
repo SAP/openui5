@@ -331,6 +331,14 @@ sap.ui.define([
 				// σ -> toLocaleUpperCase("el") -> Σ
 				// ς -> toLocaleUpperCase("el") -> Σ (at the end of the word)
 
+				// note about browser differences:
+				// Chrome/Edge/Safari:
+				//      "έ".toLocaleUpperCase("el") // Ε (charCode: 917)
+				//      "ί".toLocaleUpperCase("el") // Ι (charCode: 921)
+				// Firefox:
+				//      "έ".toLocaleUpperCase("el") // Έ (charCode: 904)
+				//      "ί".toLocaleUpperCase("el") // Ί (charCode: 906)
+
 				// Month (M) - Σεπτεμβρίου ("Σ" at the beginning of the word)
 				{
 					date: Date.UTC(2017, 8, 12),
@@ -338,7 +346,7 @@ sap.ui.define([
 					exactCase: "ΣεπτεμβρίουΤρίτη-12-2017-00",
 					otherCases: [
 						"σεπτεμβρίουτρίτη-12-2017-00",
-						"ΣΕΠΤΕΜΒΡΙΟΥΤΡΙΤΗ-12-2017-00"
+						"ΣΕΠΤΕΜΒΡίΟΥΤΡίΤΗ-12-2017-00"
 					],
 					locale: "el"
 				},
@@ -350,7 +358,7 @@ sap.ui.define([
 					exactCase: "ΣεπτέμβριοςΤρίτη-12-2017-00",
 					otherCases: [
 						"ΣεπτέμβριοΣΤρίτη-12-2017-00",
-						"ΣΕΠΤΕΜΒΡΙΟΣΤΡΙΤΗ-12-2017-00"
+						"ΣΕΠΤέΜΒΡΙΟΣΤΡίΤΗ-12-2017-00"
 					],
 					locale: "el"
 				},
