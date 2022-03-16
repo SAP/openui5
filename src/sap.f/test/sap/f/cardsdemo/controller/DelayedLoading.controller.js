@@ -73,6 +73,11 @@ sap.ui.define([
 			"key": "webPage",
 			"columns": 5,
 			"manifest": "./cardsdemo/cardcontent/delayedLoading/webPage/manifest.json"
+		},
+		{
+			"key": "footer",
+			"columns": 5,
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/footer.json"
 		}
 	];
 
