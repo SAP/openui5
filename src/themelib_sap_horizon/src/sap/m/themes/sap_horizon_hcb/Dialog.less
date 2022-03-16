@@ -11,11 +11,7 @@
 @_sap_m_Dialog_BarHeight: 2.75rem;
 @_sap_m_Dialog_SubHeaderCompactHeight: 2.25rem;
 
-@_sap_m_Dialog_NoStateHeaderShadow: @sapUiShadowHeader;
-@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.125rem @sapUiSuccessBorder;
-@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.125rem @sapUiErrorBorder;
-@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.125rem @sapUiWarningBorder;
-@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.125rem @sapUiInformationBorder;
+@_sap_m_Dialog_NoStateHeaderShadow: @sapUiContentHeaderShadow;
 
 .sapMDialogSubHeader .sapMIBar {
 	height: 100%;
@@ -27,13 +23,14 @@
 	font-size: 1rem;
 }
 
-.sapMDialogInformation > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
-	color: @sapUiInformativeElement;
-}
+.sapMDialogResizeHandler {
+	right: 6px;
+	bottom: 3px;
 
-.sapMDialogResizeHandler::before {
-	content: attr(data-sap-ui-icon-content);
-	color: @sapUiButtonLiteTextColor;
+	&::before {
+		content: attr(data-sap-ui-icon-content);
+		color: @sapUiButtonLiteTextColor;
+	}
 }
 
 .sapMDialogBeginButton, .sapMDialogEndButton {
@@ -72,6 +69,7 @@ html.sap-phone .sapMDialog {
 	}
 }
 
+// Responsive paddings
 .sapMDialogTitle, .sapMDialogSubHeader {
 	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
 	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
@@ -96,6 +94,24 @@ html.sap-phone .sapMDialog {
 					padding-left: 0.5rem;
 				}
 			}
+		}
+	}
+}
+
+.sapMDialog:not(.sapUiResponsiveContentPadding):not(.sapUiContentPadding) {
+	&.sapMDialog-NoHeader .sapMDialogScroll {
+		padding-top: 0.25rem;
+
+		html.sap-phone .sapMDialogStretched& {
+			padding-top: 0;
+		}
+	}
+
+	&.sapMDialog-NoFooter .sapMDialogScroll {
+		padding-bottom: 0.25rem;
+
+		html.sap-phone .sapMDialogStretched& {
+			padding-bottom: 0;
 		}
 	}
 }
