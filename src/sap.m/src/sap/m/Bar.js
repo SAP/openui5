@@ -338,10 +338,11 @@ sap.ui.define([
 			aContentLeftControls = this.getContentLeft().filter(function(oControl) { return oControl.getVisible(); }),
 			aContentRightControls = this.getContentRight().filter(function(oControl) { return oControl.getVisible(); }),
 			iContentLeftPadding = aContentLeftControls.length ? 0 : parseInt(this._$LeftBar.css('padding-' + sLeftOrRight)),
-			iContentRightPadding = aContentRightControls.length ? 0 : parseInt(this._$RightBar.css('padding-' + sRightOrLeft));
+			iContentRightPadding = aContentRightControls.length ? 0 : parseInt(this._$RightBar.css('padding-' + sRightOrLeft)),
+			iParentPaddingLeft = parseInt(this.$().css("padding-left")),
+			iParentPaddingRight = parseInt(this.$().css("padding-right"));
 
 		if (this.getEnableFlexBox()) {
-
 			iMidBarPlaceholderWidth = iBarWidth - iLeftBarWidth - iRightBarWidth - parseInt(this._$MidBarPlaceHolder.css('margin-left')) - parseInt(this._$MidBarPlaceHolder.css('margin-right'));
 
 			oMidBarCss.position = "absolute";
@@ -352,7 +353,7 @@ sap.ui.define([
 			return oMidBarCss;
 		}
 
-		var iSpaceBetweenLeftAndRight = iBarWidth - iLeftBarWidth - iRightBarWidth,
+		var iSpaceBetweenLeftAndRight = iBarWidth - iLeftBarWidth - iRightBarWidth - (bRtl ? iParentPaddingLeft : iParentPaddingRight),
 			iMidBarStartingPoint = (iBarWidth / 2) - (iMidBarPlaceholderWidth / 2),
 			bLeftContentIsOverlapping = iLeftBarWidth > iMidBarStartingPoint,
 			iMidBarEndPoint = (iBarWidth / 2) + (iMidBarPlaceholderWidth / 2),
@@ -370,7 +371,7 @@ sap.ui.define([
 			oMidBarCss.width = iSpaceBetweenLeftAndRight + iContentLeftPadding + iContentRightPadding + "px";
 
 			//Set left or right depending on LTR/RTL
-			oMidBarCss[sLeftOrRight] = iLeftBarWidth - iContentLeftPadding;
+			oMidBarCss[sLeftOrRight] = iLeftBarWidth - iContentLeftPadding + (bRtl ? iParentPaddingRight : iParentPaddingLeft);
 		}
 
 		return oMidBarCss;
