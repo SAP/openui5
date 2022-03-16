@@ -550,6 +550,11 @@ sap.ui.define([
 		iSelectVariant: function (sVariantName) {
 			return this.waitFor({
 				controlType: "sap.ui.fl.variants.VariantManagement",
+				matchers: {
+					ancestor: {
+						controlType: "sap.m.App"
+					}
+				},
 				check: function (aVariantManagements) {
 					return !!aVariantManagements.length;
 				},
@@ -580,6 +585,11 @@ sap.ui.define([
 		iSelectDefaultVariant: function(sVariant){
 			return this.waitFor({
 				controlType: "sap.ui.fl.variants.VariantManagement",
+				matchers: {
+					ancestor: {
+						controlType: "sap.m.App"
+					}
+				},
 				actions: new Press(),
 				success: function(aVM){
 					this.waitFor({
@@ -633,6 +643,11 @@ sap.ui.define([
 		iDestroyTheVariantManagement: function() {
 			return this.waitFor({
 				controlType: "sap.ui.fl.variants.VariantManagement",
+				matchers: {
+					ancestor: {
+						controlType: "sap.m.App"
+					}
+				},
 				success: function(aVM) {
 					aVM.forEach(function (oVM) {
 						oVM.destroy();
@@ -643,6 +658,11 @@ sap.ui.define([
 		iSaveVariantAs: function (sVariantNameOld, sVariantNameNew) {
 			return this.waitFor({
 				controlType: "sap.ui.fl.variants.VariantManagement",
+				matchers: {
+					ancestor: {
+						controlType: "sap.m.App"
+					}
+				},
 				check: function (aVariantManagements) {
 					return !!aVariantManagements.length;
 				},

@@ -282,6 +282,12 @@ sap.ui.define([
 
 		this._bPersistValues = false;
 
+		this.getEngine().registerAdaptation(this, {
+			controller: {
+				Filter: FilterController
+			}
+		});
+
 		this._fResolveInitialFiltersApplied = undefined;
 		this._oInitialFiltersAppliedPromise = new Promise(function(resolve) {
 			this._fResolveInitialFiltersApplied  = resolve;
@@ -1275,6 +1281,7 @@ sap.ui.define([
 			fPromiseResolve = resolve;
 		});
 
+		this._oConditionModel.detachPropertyChange(this._handleConditionModelPropertyChange, this);
 		var fApplyConditions = function(mConditionsData) {
 			for ( sFieldPath in mConditionsData) {
 				aConditions = mConditionsData[sFieldPath];
@@ -1297,6 +1304,7 @@ sap.ui.define([
 				}
 			}
 
+			this._oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
 			fPromiseResolve();
 		}.bind(this);
 

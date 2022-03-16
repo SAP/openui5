@@ -14,15 +14,19 @@ sap.ui.define([
 			controlType: "sap.m.Popover",
 			matchers: {
 				ancestor: {
-					controlType: "sap.ui.fl.variants.VariantManagement"
+					controlType: "sap.ui.fl.variants.VariantManagement",
+					ancestor: {
+						controlType: "sap.m.App"
+					}
 				}
 			}
 		};
 
 		oSettings = Object.assign(oDefaultSettings, oSettings);
 
+
+
 		return this.waitFor({
-			searchOpenDialogs: true, // search only visible controls inside the static area
 			controlType: oSettings.controlType,
 			properties: oSettings.properties,
 			matchers: oSettings.matchers,
