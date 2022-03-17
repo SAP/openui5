@@ -158,7 +158,9 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicPageHeader.prototype._setShowPinBtn = function (bValue) {
-			this._getPinButton().$().toggleClass("sapUiHidden", !bValue);
+			if (this._getPinButton().getDomRef()) {
+				this._getPinButton().getDomRef().classList.toggle("sapUiHidden", !bValue);
+			}
 		};
 
 		/**
@@ -280,7 +282,9 @@ sap.ui.define([
 		 */
 		DynamicPageHeader.prototype._toggleCollapseButton = function (bToggle) {
 			this._setShowCollapseButton(bToggle);
-			this._getCollapseButton().$().toggleClass("sapUiHidden", !bToggle);
+			if (this._getCollapseButton().getDomRef()) {
+				this._getCollapseButton().getDomRef().classList.toggle("sapUiHidden", !bToggle);
+			}
 		};
 
 		/**

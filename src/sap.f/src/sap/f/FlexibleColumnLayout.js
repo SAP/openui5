@@ -1168,6 +1168,11 @@ sap.ui.define([
 			bInsetMidColumn,
 			bRestoreFocusOnBackNavigation,
 			oPendingAnimationEnd = {};
+		var mColumnsDomRef = {
+			begin: this.getDomRef("beginColumn"),
+			mid: this.getDomRef("midColumn"),
+			end: this.getDomRef("endColumn")
+		};
 
 		// Stop here if the control isn't rendered yet
 		if (!this.isActive()) {
@@ -1198,10 +1203,11 @@ sap.ui.define([
 
 			aColumns.forEach(function (sColumn) {
 				var bShouldConcealColumn = this._shouldConcealColumn(iDefaultVisibleColumnsCount, sColumn),
-					bShouldRevealColumn = this._shouldRevealColumn(iDefaultVisibleColumnsCount, sColumn === sLastVisibleColumn),
-					oColumn = this._$columns[sColumn];
+					bShouldRevealColumn = this._shouldRevealColumn(iDefaultVisibleColumnsCount, sColumn === sLastVisibleColumn);
 
-				oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, bShouldConcealColumn || bShouldRevealColumn);
+				if (mColumnsDomRef[sColumn]) {
+					mColumnsDomRef[sColumn].classList.toggle(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, bShouldConcealColumn || bShouldRevealColumn);
+				}
 
 			}, this);
 
@@ -1258,10 +1264,14 @@ sap.ui.define([
 
 			if (!bShouldConcealColumn) { // do not remove the active class of the concealed column for now (it should remain visible until the end of animations for other columns)
 				// Add the active class to the column if it shows something
-				oColumn.toggleClass("sapFFCLColumnActive", iPercentWidth > 0);
+				if (mColumnsDomRef[sColumn]) {
+					mColumnsDomRef[sColumn].classList.toggle("sapFFCLColumnActive", iPercentWidth > 0);
+				}
 			}
 
-			oColumn.toggleClass("sapFFCLColumnInset", bInsetMidColumn && (sColumn === "mid"));
+			if (mColumnsDomRef[sColumn]) {
+				mColumnsDomRef[sColumn].classList.toggle("sapFFCLColumnInset", bInsetMidColumn && (sColumn === "mid"));
+			}
 
 			// Remove all the classes that are used for HCB theme borders, they will be set again later
 			oColumn.removeClass("sapFFCLColumnHidden");
@@ -1345,8 +1355,15 @@ sap.ui.define([
 			bShouldConcealColumn = oOptions.shouldConcealColumn,
 			iNewWidth = oOptions.iNewWidth,
 			bShouldRestoreFocus = oOptions.shouldRestoreFocus;
+		var mColumnsDomRef = {
+			begin: this.getDomRef("beginColumn"),
+			mid: this.getDomRef("midColumn"),
+			end: this.getDomRef("endColumn")
+		};
 
-		oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
+		if (mColumnsDomRef[sColumn]) {
+			mColumnsDomRef[sColumn].classList.toggle(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
+		}
 
 		if (bShouldConcealColumn) {
 			// The column does not show anything anymore, so we can remove the active class
@@ -1354,7 +1371,9 @@ sap.ui.define([
 		}
 
 		//BCP: 1980006195
-		oColumn.toggleClass("sapFFCLColumnHidden", iNewWidth === 0);
+		if (mColumnsDomRef[sColumn]) {
+			mColumnsDomRef[sColumn].classList.toggle("sapFFCLColumnHidden", iNewWidth === 0);
+		}
 
 		this._cacheColumnWidth(sColumn, iNewWidth);
 		if (bShouldRestoreFocus) {

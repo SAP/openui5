@@ -699,13 +699,16 @@ sap.ui.define([
 		bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 		if (exists(this.$contentFitContainer)) {
-			this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainerFooterVisible", bShow);
+			this.getDomRef("contentFitContainer").classList.toggle("sapFDynamicPageContentFitContainerFooterVisible", bShow);
 		}
 
 		if (bUseAnimations) {
 			this._toggleFooterAnimation(bShow, oFooter);
 		} else {
-			this.$footerWrapper.toggleClass("sapUiHidden", !bShow);
+			var oFooterWrapper = this.getDomRef("footerWrapper");
+			if (oFooterWrapper) {
+				oFooterWrapper.classList.toggle("sapUiHidden", !bShow);
+			}
 		}
 
 		this._updateScrollBar();
@@ -874,7 +877,7 @@ sap.ui.define([
 		}
 
 		if (exists(oDynamicPageHeader)) {
-			oDynamicPageHeader.$().toggleClass("sapFDynamicPageHeaderHidden", !bShow);
+			oDynamicPageHeader.getDomRef().classList.toggle("sapFDynamicPageHeaderHidden", !bShow);
 			this._updateScrollBar();
 		}
 	};
@@ -891,7 +894,10 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._toggleHeaderBackground = function (bShow) {
-		this.$headerInContentWrapper.toggleClass("sapFDynamicPageHeaderSolid", bShow);
+		var oHeaderInContentWrapper = this.getDomRef("headerWrapper");
+		if (oHeaderInContentWrapper) {
+			oHeaderInContentWrapper.classList.toggle("sapFDynamicPageHeaderSolid", bShow);
+		}
 	};
 
 	/**
@@ -1424,7 +1430,10 @@ sap.ui.define([
 			bFitContent = this.getFitContent(),
 			bToggleClass = bFitContent || bNoScrollBar;
 
-		this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainer", bToggleClass);
+		var oContentFitContainer = this.getDomRef("contentFitContainer");
+		if (oContentFitContainer) {
+			oContentFitContainer.classList.toggle("sapFDynamicPageContentFitContainer", bToggleClass);
+		}
 	};
 
 	/**
@@ -1620,7 +1629,9 @@ sap.ui.define([
 		var oTitle = this.getTitle(),
 			bTitleActive = this._hasVisibleTitleAndHeader() && this.getToggleHeaderOnTitleClick();
 
-		this.$().toggleClass("sapFDynamicPageTitleClickEnabled", bTitleActive && !Device.system.phone);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapFDynamicPageTitleClickEnabled", bTitleActive && !Device.system.phone);
+		}
 		if (exists(oTitle)) {
 			oTitle._toggleFocusableState(bTitleActive);
 		}

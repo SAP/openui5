@@ -109,9 +109,9 @@ sap.ui.define([
 		if (oCurrentRange) {
 			bPhoneRange = this.sCurrentRange === "Phone";
 
-			$Control.toggleClass("sapFShellBarSizeDesktop", this.sCurrentRange === "Desktop");
-			$Control.toggleClass("sapFShellBarSizeTablet", this.sCurrentRange === "Tablet");
-			$Control.toggleClass("sapFShellBarSizePhone", bPhoneRange);
+			this._oDomRef.classList.toggle("sapFShellBarSizeDesktop", this.sCurrentRange === "Desktop");
+			this._oDomRef.classList.toggle("sapFShellBarSizeTablet", this.sCurrentRange === "Tablet");
+			this._oDomRef.classList.toggle("sapFShellBarSizePhone", bPhoneRange);
 		}
 
 		/**
