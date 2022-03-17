@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/m/Button",
+	"sap/ui/integration/controls/LinkWithIcon",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarLayoutData",
@@ -22,6 +23,7 @@ sap.ui.define([
 	CardActions,
 	BindingHelper,
 	Button,
+	LinkWithIcon,
 	OverflowToolbarButton,
 	OverflowToolbar,
 	OverflowToolbarLayoutData,
@@ -129,42 +131,73 @@ sap.ui.define([
 					group: mConfig.overflowGroup,
 					priority: mConfig.overflowPriority
 				}),
-				oButton;
+				oControl;
 
-			if (mConfig.icon) {
-				oButton = new OverflowToolbarButton({
-					icon: mConfig.icon,
-					text: mConfig.text || mConfig.tooltip,
-					tooltip: mConfig.tooltip || mConfig.text,
-					type: mConfig.buttonType,
-					ariaHasPopup: mConfig.ariaHasPopup,
-					visible: mConfig.visible
-				});
-			} else {
-				oButton = new Button({
-					text: mConfig.text,
-					tooltip: mConfig.tooltip,
-					type: mConfig.buttonType,
-					ariaHasPopup: mConfig.ariaHasPopup,
-					visible: mConfig.visible
-				});
+			switch (mConfig.type) {
+				case "Link":
+					oControl = this._createLink(mConfig);
+				break;
+				case "Button":
+				default:
+					oControl = this._createButton(mConfig);
+				break;
 			}
 
-			oButton.setLayoutData(oOverflow);
+			oControl.setLayoutData(oOverflow);
 
 			oActions.attach({
 				area: ActionArea.ActionsStrip,
-				control: oButton,
+				control: oControl,
 				actions: aActions,
 				enabledPropertyName: "enabled"
 			});
 
-			oToolbar.addContent(oButton);
-		});
+			oToolbar.addContent(oControl);
+		}.bind(this));
 
 		if (!bHasSpacer) {
 			oToolbar.insertContent(new ToolbarSpacer(), 0);
 		}
+	};
+
+	ActionsStrip.prototype._createLink = function (mConfig) {
+		var oLink = new LinkWithIcon({
+			icon: mConfig.icon,
+			text: mConfig.text,
+			tooltip: mConfig.tooltip,
+			ariaHasPopup: mConfig.ariaHasPopup,
+			emphasized: mConfig.emphasized,
+			visible: mConfig.visible
+		});
+
+		return oLink;
+	};
+
+	ActionsStrip.prototype._createButton = function (mConfig) {
+		var oButton;
+
+		if (mConfig.icon) {
+			oButton = new OverflowToolbarButton({
+				icon: mConfig.icon,
+				text: mConfig.text || mConfig.tooltip,
+				tooltip: mConfig.tooltip || mConfig.text,
+				type: mConfig.buttonType,
+				ariaHasPopup: mConfig.ariaHasPopup,
+				visible: mConfig.visible
+			});
+
+			return oButton;
+		}
+
+		oButton = new Button({
+			text: mConfig.text,
+			tooltip: mConfig.tooltip,
+			type: mConfig.buttonType,
+			ariaHasPopup: mConfig.ariaHasPopup,
+			visible: mConfig.visible
+		});
+
+		return oButton;
 	};
 
 	ActionsStrip.create = function (oCard, aButtons) {
