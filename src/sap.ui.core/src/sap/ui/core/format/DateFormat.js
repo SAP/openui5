@@ -475,6 +475,8 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to ask for locale specific texts/settings
+	 * @param {object} [oInfo] Info information common to all instances of the created "type",
+	 *   e.g. default format options
 	 * @return {sap.ui.core.format.DateFormat} time instance of the DateFormat
 	 * @static
 	 * @private
@@ -650,10 +652,11 @@ sap.ui.define([
 	 *
 	 * @param {Object[]} aFallbackFormatOptions the options for creating the fallback DateFormat
 	 * @param {sap.ui.core.CalendarType} sCalendarType the type of the current calendarType
-	 * @param {sap.ui.core.LocaleData} oLocale Locale to ask for locale specific texts/settings
+	 * @param {sap.ui.core.Locale} oLocale Locale to ask for locale specific texts/settings
 	 * @param {Object} oInfo The default info object of the current date type
 	 * @param {object} oParentFormatOptions the format options, relevant are: interval, showDate, showTime and showTimezone
 	 * @return {sap.ui.core.DateFormat[]} an array of fallback DateFormat instances
+	 * @private
 	 */
 	DateFormat._createFallbackFormat = function(aFallbackFormatOptions, sCalendarType, oLocale, oInfo, oParentFormatOptions) {
 		return aFallbackFormatOptions.map(function(oOptions) {
