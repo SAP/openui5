@@ -2753,6 +2753,22 @@ sap.ui.define([
 		assert.strictEqual(this.stepInput._getInput().getValueStateText(), "Enter a number with a maximum value of 10", "value state text is correct");
 	});
 
+	QUnit.test("If maximum or minimum binding constraint is set to 0, _getMin and _getMax return 0 too", function(assert) {
+		// arrange
+		this.stepInput.setModel(new JSONModel({ value: 11 }));
+		this.stepInput.bindProperty("value", {
+			path: "/value",
+			type: new TypeFloat(null, {
+				maximum: 0,
+				minimum: 0
+			})
+		});
+
+		// assert
+		assert.strictEqual(this.stepInput._getMin(), 0, "returned min value is correct");
+		assert.strictEqual(this.stepInput._getMax(), 0, "returned max value is correct");
+	});
+
 	QUnit.test("_verifyValue calculates the value state correctly", function(assert) {
 		// arrange
 		this.stepInput.setMax(6000);
