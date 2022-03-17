@@ -85,7 +85,7 @@ sap.ui.define([
 
 			FNumericHeader.call(this, mSettings);
 
-			if (oActionsToolbar) {
+			if (oActionsToolbar && oActionsToolbar.isA("sap.ui.integration.controls.ActionsToolbar")) {
 				oActionsToolbar.attachVisibilityChange(this._handleToolbarVisibilityChange.bind(this));
 			}
 		},
