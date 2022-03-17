@@ -11,7 +11,6 @@ sap.ui.define([
 			this.getView().setModel(oCardManifests, "manifests");
 
 			this._createParamsModel();
-			// setTimeout((oController) => { debugger }, 3000, this);
 		},
 
 		_createParamsModel: function () {

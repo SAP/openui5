@@ -26,29 +26,29 @@
 		<Panel>
 			<w:Card
 				id="card1"
-				manifest="./cardsdemo/cardcontent/objectcontent/datahandling_manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/datahandling_manifest.json"
 				width="auto"
 				class="sapUiTinyMargin" />
 			<w:Card
-				manifest="./cardsdemo/cardcontent/objectcontent/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/manifest.json"
 				width="auto"
 				class="sapUiTinyMargin" />
 			<w:Card
-				manifest="./cardsdemo/cardcontent/objectcontent/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/manifest.json"
 				width="400px"
 				class="sapUiTinyMargin" />
 			<w:Card
-				manifest="./cardsdemo/cardcontent/objectcontent/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/manifest.json"
 				width="400px"
 				height="275px"
 				class="sapUiTinyMargin" />
 			<w:Card
 				id="card2"
-				manifest="./cardsdemo/cardcontent/objectcontent/staticData.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/staticData.json"
 				width="auto"
 				class="sapUiTinyMargin" />
 			<w:Card
-				manifest="./cardsdemo/cardcontent/objectcontent/object_snack.manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/object_snack.manifest.json"
 				width="auto"
 				class="sapUiTinyMargin" />
 		</Panel>

@@ -14,7 +14,7 @@
 
 		<Panel>
 			<HBox width="100%" renderType="Bare">
-				<w:Card id="calendarCard" manifest="{manifests>/calendarCard/calendarCard}" baseUrl="./" width="100%" height="auto">
+				<w:Card id="calendarCard" manifest="{manifests>/calendarCard/calendarCard}" baseUrl="{cardsPlayground>/playgroundBaseUrl}" width="100%" height="auto">
 					<w:layoutData>
 						<FlexItemData maxWidth="700px" />
 					</w:layoutData>

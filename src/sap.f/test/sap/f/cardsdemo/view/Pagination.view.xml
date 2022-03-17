@@ -5,17 +5,17 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page>
 		<f:GridContainer>
-			<w:Card id="card2" manifest="./cardsdemo/cardcontent/pagination/oDataManifest.json">
+			<w:Card id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/oDataManifest.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card3" manifest="./cardsdemo/cardcontent/pagination/oDataManifestGlobalData.json">
+			<w:Card id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/oDataManifestGlobalData.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card1" manifest="./cardsdemo/cardcontent/pagination/cardManifest.json">
+			<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/cardManifest.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

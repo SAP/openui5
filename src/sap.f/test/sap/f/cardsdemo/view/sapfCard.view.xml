@@ -76,7 +76,7 @@
 				<card:Header
 					title="Donna Moore"
 					subtitle="Sales executive"
-					iconSrc="./cardsdemo/images/Woman_avatar_01.png" />
+					iconSrc="{cardsPlayground>/playgroundBaseUrl}/images/Woman_avatar_01.png" />
 			</f:header>
 			<f:content>
 				<HBox>
@@ -92,7 +92,7 @@
 					<VBox class="sapUiMediumMargin">
 						<Title text="Organizational Details" class="sapUiTinyMarginBottom" />
 						<HBox>
-							<f:Avatar src="./cardsdemo/images/Woman_avatar_02.png" />
+							<f:Avatar src="{cardsPlayground>/playgroundBaseUrl}/images/Woman_avatar_02.png" />
 							<Text text="John Miller" />
 						</HBox>
 					</VBox>
@@ -115,7 +115,7 @@
 				<card:Header
 					title="Donna Moore"
 					subtitle="Sales executive"
-					iconSrc="./cardsdemo/images/Woman_avatar_01.png" />
+					iconSrc="{cardsPlayground>/playgroundBaseUrl}/images/Woman_avatar_01.png" />
 			</f:header>
 			<f:content>
 				<HBox>
@@ -136,7 +136,7 @@
 					<VBox class="sapUiMediumMargin">
 						<Title text="Organizational Details" class="sapUiTinyMarginBottom" />
 						<HBox>
-							<f:Avatar src="./cardsdemo/images/Woman_avatar_02.png" />
+							<f:Avatar src="{cardsPlayground>/playgroundBaseUrl}/images/Woman_avatar_02.png" />
 							<Text text="John Miller" />
 						</HBox>
 					</VBox>

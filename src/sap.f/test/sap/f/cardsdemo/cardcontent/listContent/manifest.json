@@ -16,7 +16,7 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/listContent/items.json"
+						"url": "./cardcontent/listContent/items.json"
 					}
 				},
 				"item": {
@@ -59,7 +59,7 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/someitems.json"
+						"url": "./cardcontent/someitems.json"
 					}
 				},
 				"item": {
@@ -99,7 +99,7 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/someitems.json"
+						"url": "./cardcontent/someitems.json"
 					}
 				},
 				"item": {
@@ -141,7 +141,7 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/someitems.json"
+						"url": "./cardcontent/someitems.json"
 					}
 				},
 				"item": {
@@ -221,7 +221,7 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/someitems.json"
+						"url": "./cardcontent/someitems.json"
 					}
 				},
 				"item": {

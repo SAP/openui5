@@ -4,32 +4,32 @@
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc">
 	<f:GridContainer>
-		<w:Card id="card1" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifest.json">
+		<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifest.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>
 		</w:Card>
-		<w:Card id="card2" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifestTokenPath.json">
+		<w:Card id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestTokenPath.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>
 		</w:Card>
-		<w:Card id="card3" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifestExpiringToken.json">
+		<w:Card id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestExpiringToken.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>
 		</w:Card>
-		<w:Card id="card4" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifestHost.json">
+		<w:Card id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestHost.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>
 		</w:Card>
-		<w:Card id="card5" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifestHostInvalidTokenURL.json">
+		<w:Card id="card5" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestHostInvalidTokenURL.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>
 		</w:Card>
-		<w:Card id="card6" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifestParams.json">
+		<w:Card id="card6" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestParams.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>

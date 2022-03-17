@@ -13,7 +13,7 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/tableitems.json"
+						"url": "./cardcontent/tableitems.json"
 					},
 					"path": "/names"
 				},
@@ -65,7 +65,7 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/tableitems.json"
+						"url": "./cardcontent/tableitems.json"
 					},
 					"path": "/tableCard2"
 				},
@@ -113,7 +113,7 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/tableitems.json"
+						"url": "./cardcontent/tableitems.json"
 					},
 					"path": "/tableCard3"
 				},

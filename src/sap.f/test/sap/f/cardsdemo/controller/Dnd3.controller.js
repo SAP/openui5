@@ -158,18 +158,18 @@ sap.ui.define([
 			this.byId("grid6").setModel(new JSONModel(this.addUniqueKey([
 				{ header: "Sales Fulfillment Application Title", subheader: "Subtitle", footer: "", numberValue: "3", icon: "sap-icon://home-share" },
 				{ header: "Manage Activity Master Data Type", subheader: "", footer: "", numberValue: "15", valueColor: "Critical", icon: "sap-icon://activities" },
-				{ type: "card", rows: 4, columns: 4, manifest: "./cardsdemo/bundles/analyticalLine/manifest.json" },
+				{ type: "card", rows: 4, columns: 4, manifest: "./bundles/analyticalLine/manifest.json" },
 				{ header: "Account", subheader: "Your personal information", footer: "", numberValue: "1", valueColor: "Good", icon: "sap-icon://account" },
-				{ type: "card", rows: 6, columns: 4, manifest: "manifests>/listContent/largeList" },
+				{ type: "card", rows: 6, columns: 4, manifest: "manifests>/listContent/largeList", isManifestObject: true },
 				{ header: "Appointments management", subheader: "", footer: "Current Quarter", numberValue: "240", icon: "sap-icon://appointment" },
 				{ header: "Jessica D. Prince Senior Consultant", subheader: "Department", footer: "Current Quarter", numberValue: "1", icon: "sap-icon://activity-individual" },
-				{ type: "card", rows: 4, columns: 4, manifest: "./cardsdemo/bundles/analyticalLine/manifest.json" }
+				{ type: "card", rows: 4, columns: 4, manifest: "./bundles/analyticalLine/manifest.json" }
 			])));
 
 			this.byId("grid7").setModel(new JSONModel(this.addUniqueKey([
-				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/listContent/largeList" },
-				{ type: "card", rows: 4, columns: 4, manifest: "./cardsdemo/bundles/analyticalLine/manifest.json" },
-				{ type: "card", rows: 4, columns: 4, manifest: "./cardsdemo/bundles/analyticalLine/manifest.json" }
+				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/listContent/largeList", isManifestObject: true },
+				{ type: "card", rows: 4, columns: 4, manifest: "./bundles/analyticalLine/manifest.json" },
+				{ type: "card", rows: 4, columns: 4, manifest: "./bundles/analyticalLine/manifest.json" }
 			])));
 
 			this.byId("links1").setModel(new JSONModel([
@@ -219,11 +219,19 @@ sap.ui.define([
 					layoutData: new GridContainerItemLayoutData({ rows: oItemData.rows, columns: oItemData.columns })
 				});
 
-				if (typeof oItemData.manifest === "string") {
-					oCard.setManifest(oItemData.manifest);
+				if (!oItemData.isManifestObject) {
+					oCard.bindProperty("manifest", {
+						parts: [
+							{ path: "cardsPlayground>/playgroundBaseUrl" },
+							{ value: oItemData.manifest }
+						],
+						formatter: function (sBaseUrl, sManifestUrl) {
+							return sBaseUrl + sManifestUrl;
+						}
+					});
 				} else {
-					oCard.bindProperty("manifest", oItemData.manifest);
-					oCard.setBaseUrl("./");
+					oCard.bindProperty("manifest", { path: oItemData.manifest });
+					oCard.bindProperty("baseUrl", { path: "cardsPlayground>/playgroundBaseUrl" });
 				}
 				return oCard;
 			} else {

@@ -29,24 +29,24 @@
 			<w:Card
 				id="donutChart"
 				manifest="{manifests>/minHeight/donut}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="400px"
 				class="sapUiTinyMargin" />
 			<w:Card
 				id="largeList"
 				manifest="{manifests>/minHeight/largeList}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="400px"
 				class="sapUiTinyMargin" />
 			<w:Card
 				id="staticData"
-				manifest="./cardsdemo/cardcontent/objectcontent/staticData.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/staticData.json"
 				width="400px"
 				class="sapUiTinyMargin" />
 			<w:Card
 				id="noContent"
 				manifest="{manifests>/minHeight/noContent}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="400px"
 				class="sapUiTinyMargin" />
 			<f:Card
@@ -60,7 +60,7 @@
 			<w:Card
 				id="webPageCard"
 				width="400px"
-				manifest="./cardsdemo/cardcontent/webpageMinHeight/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/webpageMinHeight/manifest.json"
 				class="sapUiTinyMargin">
 			</w:Card>
 		</Panel>

@@ -166,7 +166,7 @@
 			"sap.card": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/someitems.json"
+						"url": "./cardcontent/someitems.json"
 					}
 				},
 				"type": "List",
@@ -226,7 +226,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/someitems.json"
+							"url": "./cardcontent/someitems.json"
 						}
 					},
 					"maxItems": 7,
@@ -267,7 +267,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/tableitems.json"
+							"url": "./cardcontent/tableitems.json"
 						},
 						"path": "/names"
 					},
@@ -312,7 +312,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/tableitems.json"
+							"url": "./cardcontent/tableitems.json"
 						},
 						"path": "/tableCard2"
 					},
@@ -350,7 +350,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/tableitems.json"
+							"url": "./cardcontent/tableitems.json"
 						},
 						"path": "/tableCard3"
 					},
@@ -398,7 +398,7 @@
 					],
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/kpi.json"
+							"url": "./cardcontent/kpi.json"
 						},
 						"path": "/kpiInfos/kpi"
 					},
@@ -528,7 +528,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/someitems.json"
+							"url": "./cardcontent/someitems.json"
 						}
 					},
 					"item": {
@@ -571,7 +571,7 @@
 					"type": "Numeric",
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/kpi.json"
+							"url": "./cardcontent/kpi.json"
 						},
 						"path": "/kpiInfos/kpi"
 					},
@@ -605,7 +605,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/tableitems.json"
+							"url": "./cardcontent/tableitems.json"
 						},
 						"path": "/names"
 					},
@@ -635,7 +635,7 @@
 					"type": "Numeric",
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/kpi.json"
+							"url": "./cardcontent/kpi.json"
 						},
 						"path": "/kpiInfos/kpi"
 					},
@@ -646,7 +646,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/tableitems.json"
+							"url": "./cardcontent/tableitems.json"
 						},
 						"path": "/names"
 					},
@@ -702,7 +702,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/someitems.json"
+							"url": "./cardcontent/someitems.json"
 						}
 					},
 					"item": {
@@ -740,7 +740,7 @@
 					"maxItems": "7",
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/employees.json"
+							"url": "./cardcontent/employees.json"
 						},
 						"path": "/Employees"
 					},
@@ -795,7 +795,7 @@
 					"maxItems": "5",
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/employees.json"
+							"url": "./cardcontent/employees.json"
 						},
 						"path": "/Activities"
 					},
@@ -1406,7 +1406,7 @@
 			"sap.card": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/someitems.json"
+						"url": "./cardcontent/someitems.json"
 					}
 				},
 				"type": "List",
@@ -1767,7 +1767,7 @@
 					"dimensionAxis": "color",
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/cost.json"
+							"url": "./cardcontent/cost.json"
 						},
 						"path": "/milk"
 					},
@@ -1804,7 +1804,7 @@
 				"content": {
 					"data": {
 						"request": {
-							"url": "./cardsdemo/cardcontent/someitems.json"
+							"url": "./cardcontent/someitems.json"
 						}
 					},
 					"maxItems": 7,
@@ -1946,7 +1946,7 @@
 				"type": "List",
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/cost.json"
+						"url": "./cardcontent/cost.json"
 					}
 				},
 				"header": {
@@ -1984,7 +1984,7 @@
 			"sap.card": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/someitems.json"
+						"url": "./cardcontent/someitems.json"
 					}
 				},
 				"configuration": {
@@ -2039,7 +2039,7 @@
 			"sap.card": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/someitems.json"
+						"url": "./cardcontent/someitems.json"
 					}
 				},
 				"configuration": {
@@ -2103,7 +2103,7 @@
 			"sap.card": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/someitems.json"
+						"url": "./cardcontent/someitems.json"
 					}
 				},
 				"configuration": {
@@ -2174,7 +2174,7 @@
 			"sap.card": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/someitems.json"
+						"url": "./cardcontent/someitems.json"
 					}
 				},
 				"type": "List",

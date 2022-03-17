@@ -8,7 +8,7 @@
 		"header": {
 			"data": {
 				"request": {
-					"url": "./cardsdemo/cardcontent/delayedLoading/listData1.json"
+					"url": "./listData1.json"
 				},
 				"path": "/header"
 			},
@@ -22,7 +22,7 @@
           "maxItems": 3,
 			"data": {
 				"request": {
-					"url": "./cardsdemo/cardcontent/delayedLoading/listData1.json"
+					"url": "./listData1.json"
 				},
 				"path": "/content"
 			},

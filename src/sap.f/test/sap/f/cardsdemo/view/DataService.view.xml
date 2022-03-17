@@ -22,10 +22,10 @@
 				<HBox>
 					<w:Card
 						width="400px"
-						manifest="./cardsdemo/model/manifests/manifest_dataService.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/model/manifests/manifest_dataService.json"
 						class="sapUiMediumMargin" />
 					<w:Card
-						manifest="./cardsdemo/model/manifests/manifest_dataService2.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/model/manifests/manifest_dataService2.json"
 						width="400px"
 						class="sapUiMediumMargin" />
 				</HBox>
@@ -36,7 +36,7 @@
 				<HBox>
 					<w:Card
 						id="SalesOrdersCard"
-						manifest="./cardsdemo/model/manifests/manifest_refresh.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/model/manifests/manifest_refresh.json"
 						width="400px"
 						class="sapUiMediumMargin" />
 				</HBox>
@@ -45,7 +45,7 @@
 				</HBox>
 				<HBox>
 					<w:Card
-						manifest="./cardsdemo/model/manifests/manifest_updateInterval.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/model/manifests/manifest_updateInterval.json"
 						width="400px"
 						class="sapUiMediumMargin" />
 				</HBox>

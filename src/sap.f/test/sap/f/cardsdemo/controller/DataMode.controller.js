@@ -100,7 +100,7 @@ sap.ui.define([
 
 		onBeforeRendering: function () {
 			this.getView().byId("card").setManifest(oCardManifest);
-			this.getView().byId("card").setBaseUrl("./cardsdemo/cardcontent/objectcontent/");
+			this.getView().byId("card").setBaseUrl(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/objectcontent/"));
 		},
 
 		onSelectionChange: function (oEvent) {

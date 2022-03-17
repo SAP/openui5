@@ -15,12 +15,12 @@
 			</Toolbar>
 		</subHeader>
 		<f:GridContainer >
-			<w:Card id="card1" manifest="./cardsDemo/bundles/cardWithExtension/manifest.json" action="onCardAction">
+			<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/cardWithExtension/manifest.json" action="onCardAction">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4"/>
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card2" manifest="./cardsDemo/bundles/cardWithExtensionLegacyActions/manifest.json" action="onCardAction">
+			<w:Card id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/cardWithExtensionLegacyActions/manifest.json" action="onCardAction">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4"/>
 				</w:layoutData>

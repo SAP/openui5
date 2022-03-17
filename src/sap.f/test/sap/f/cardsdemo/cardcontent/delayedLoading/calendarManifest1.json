@@ -7,7 +7,7 @@
 		"type": "Calendar",
 		"data": {
 			"request": {
-				"url": "./cardsdemo/cardcontent/delayedLoading/calendarData.json"
+				"url": "./calendarData.json"
 			}
 		},
 		"header": {

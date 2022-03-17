@@ -26,12 +26,12 @@
 		<Panel>
 			<w:Card
 				id="comp"
-				manifest="./cardsdemo/cardcontent/componentCard/allInOne/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/componentCard/allInOne/manifest.json"
 				width="300px"
 				class="sapUiTinyMargin" />
 			<w:Card
 				id="ticket"
-				manifest="./cardsdemo/cardcontent/componentCard/booking/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/componentCard/booking/manifest.json"
 				width="300px"
 				class="sapUiTinyMargin" />
 		</Panel>

@@ -14,27 +14,27 @@
 		</subHeader>
 
 		<f:GridContainer class="sapUiSmallMargin">
-			<w:Card id="card1" manifest="./cardsdemo/cardcontent/analyticsCloud/manifestLine1.json">
+			<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/manifestLine1.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card2" manifest="./cardsdemo/cardcontent/analyticsCloud/manifestLine2.json">
+			<w:Card id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/manifestLine2.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="6" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card3" manifest="./cardsdemo/cardcontent/analyticsCloud/manifestArea.json">
+			<w:Card id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/manifestArea.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="6" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card4" manifest="./cardsdemo/cardcontent/analyticsCloud/manifestColumn.json">
+			<w:Card id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/manifestColumn.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="6" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card  id="card5" manifest="./cardsdemo/cardcontent/analyticsCloud/manifestBar.json">
+			<w:Card  id="card5" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/manifestBar.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="6" />
 				</w:layoutData>

@@ -9,21 +9,21 @@
 		<f:GridContainer class="sapUiSmallMargin">
 			<w:Card
 				id="showCard1"
-				manifest="./cardsdemo/cardcontent/showCard/order/manifest.json">
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/order/manifest.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
 			<w:Card
 				id="showCard2"
-				manifest="./cardsdemo/cardcontent/showCard/shareData/manifest.json">
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/shareData/manifest.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
 			<w:Card
 				id="showCard3"
-				manifest="./cardsdemo/cardcontent/showCard/task/manifest.json">
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/task/manifest.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

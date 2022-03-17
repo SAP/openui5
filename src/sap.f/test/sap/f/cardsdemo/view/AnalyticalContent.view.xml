@@ -17,46 +17,46 @@
 			<w:Card
 				id="line"
 				manifest="{analyticalContentManifests>/line}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				class="sapUiMediumMargin"
 				width="600px" />
 			<w:Card
 				id="lineSideIndRight"
 				manifest="{analyticalContentManifests>/lineSideIndRight}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				class="sapUiMediumMargin"
 				width="600px" />
 			<w:Card
 				id="stackedBar"
 				manifest="{analyticalContentManifests>/stackedColumn}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				class="sapUiMediumMargin"
 				height="500px"
 				width="600px" />
 			<w:Card
 				id="stackedColumn"
 				manifest="{analyticalContentManifests>/stackedBar}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				class="sapUiMediumMargin"
 				height="500px"
 				width="600px" />
 			<w:Card
 				id="donut"
 				manifest="{analyticalContentManifests>/donut}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				class="sapUiMediumMargin"
 				height="500px"
 				width="600px" />
 			<w:Card
 				manifest="{analyticalContentManifests>/heatmap}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				class="sapUiMediumMargin"
 				height="500px"
 				width="600px" />
 			<w:Card
 				id="bubble"
 				manifest="{analyticalContentManifests>/bubble}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				class="sapUiMediumMargin"
 				height="500px"
 				width="600px" />

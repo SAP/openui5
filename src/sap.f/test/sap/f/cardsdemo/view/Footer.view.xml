@@ -27,7 +27,7 @@
 
 		<Panel>
 			<f:GridContainer>
-				<w:Card id="card1" manifest="./cardsdemo/cardcontent/footer/card.json">
+				<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/footer/card.json">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="5" />
 					</w:layoutData>

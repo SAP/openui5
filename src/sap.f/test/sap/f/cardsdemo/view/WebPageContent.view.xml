@@ -27,7 +27,7 @@
 		<f:GridContainer class="sapUiSmallMargin">
 			<w:Card
 				id="webPageCardLocal"
-				manifest="./cardsdemo/cardcontent/webPageError/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/webPageError/manifest.json"
 				height="auto"
 				class="sapUiMediumMarginEnd">
 				<w:layoutData>
@@ -35,7 +35,7 @@
 				</w:layoutData>
 			</w:Card>
 			<w:Card
-				manifest="./cardsdemo/cardcontent/webPage/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/webPage/manifest.json"
 				height="auto"
 				class="sapUiMediumMarginEnd">
 				<w:layoutData>

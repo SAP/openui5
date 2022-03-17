@@ -16,21 +16,21 @@
 			<w:Card
 				id="adaptivecard1"
 				manifest="{manifests>/adaptiveCard/adaptive1}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="700px"
 				height="auto"
 				class="sapUiSmallMargin" />
 			<w:Card
 				id="adaptivecard2"
 				manifest="{manifests>/adaptiveCard/adaptive2}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="700px"
 				height="auto"
 				class="sapUiSmallMargin" />
 			<w:Card
 				id="adaptivecard3"
 				manifest="{manifests>/adaptiveCard/adaptive3}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="700px"
 				height="auto"
 				class="sapUiSmallMargin" />
