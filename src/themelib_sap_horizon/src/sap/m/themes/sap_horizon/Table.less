@@ -34,9 +34,22 @@
 .sapMListShowSeparatorsAll .sapMLIBShowSeparator:last-child > td.sapMListTblDummyCell,
 .sapMListShowSeparatorsAll .sapMListTblSubRow:last-child > td.sapMListTblDummyCell,
 :not(.sapMListHasGrowing):not(.sapMListShowSeparatorsInner):not(.sapMListShowSeparatorsNone) > .sapMTableTBody .sapMListTblRow:last-child > .sapMListTblDummyCell:last-child {
-    border-bottom: none;
+	border-bottom: none;
 }
 
 .sapMListTblDummyCell:last-child {
 	background-color: @sapUiListBackground;
+	border-left-color: @sapUiListTableFixedBorderColor;
+}
+
+/* overwrite text control styles */
+.sapUiSizeCompact .sapMListTblCell {
+	.sapMLnk,
+	.sapMText,
+	.sapMLabel,
+	.sapMObjectNumber,
+	.sapMObjectIdentifier,
+	.sapMObjStatus {
+		line-height: 1.5rem;
+	}
 }

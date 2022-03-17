@@ -427,12 +427,12 @@ sap.ui.define([
 		if (!bTextExpanded) {
 			oText.textContent = sText;
 			oThreeDots.textContent = " ";
-			oButton.textContent = oRb.getText("TEXT_SHOW_LESS");
+			oButton.textContent = oRb.getText("EXPANDABLE_TEXT_SHOW_LESS");
 			bTextExpanded = true;
 		} else {
 			oText.textContent = this._getCollapsedText(sText);
 			oThreeDots.textContent = " ... ";
-			oButton.textContent = oRb.getText("TEXT_SHOW_MORE");
+			oButton.textContent = oRb.getText("EXPANDABLE_TEXT_SHOW_MORE");
 			bTextExpanded = false;
 		}
 

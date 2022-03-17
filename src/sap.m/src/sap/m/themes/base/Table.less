@@ -276,6 +276,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 .sapMListTblDummyCell:last-child {
 	background-color: @sapBackgroundColor;
 	border-left: 1px solid @sapList_TableFooterBorder;
+	border-bottom: none;
 }
 
 :not(.sapMListHasGrowing):not(.sapMListShowSeparatorsInner):not(.sapMListShowSeparatorsNone) > .sapMTableTBody .sapMListTblRow:last-child > .sapMListTblDummyCell:last-child {
@@ -446,14 +447,16 @@ html[data-sap-ui-browser^='ff'] .sapMTableRowCustomFocus:focus > :not(.sapMListT
 }
 
 /* overwrite text control styles */
-.sapUiSizeCompact .sapMListTblCell > .sapMLnk,
-.sapUiSizeCompact .sapMListTblCell > .sapMText,
-.sapUiSizeCompact .sapMListTblCell > .sapMLabel,
-.sapUiSizeCompact .sapMListTblCell > .sapMObjectNumber,
-.sapUiSizeCompact .sapMListTblCell > .sapMObjectIdentifier,
-.sapUiSizeCompact .sapMListTblCell > .sapMObjStatus {
-	vertical-align: middle;
-	line-height: 1.4;
+.sapUiSizeCompact .sapMListTblCell {
+	.sapMLnk,
+	.sapMText,
+	.sapMLabel,
+	.sapMObjectNumber,
+	.sapMObjectIdentifier,
+	.sapMObjStatus {
+		vertical-align: middle;
+		line-height: 1.4;
+	}
 }
 
 /* special class name to add margin to multiline contents */

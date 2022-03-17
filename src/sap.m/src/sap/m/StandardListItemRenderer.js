@@ -246,7 +246,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 		rm.openStart("span", bTitle ? sId + "-titleButton" : sId + "-descriptionButton").class("sapMSLIExpandCollapse");
 		rm.attr("tabindex", "0").attr("role", "button").attr("aria-live", "polite");
 		rm.openEnd();
-		rm.text(oRb.getText(bTextExpanded ? "TEXT_SHOW_LESS" : "TEXT_SHOW_MORE"));
+		rm.text(oRb.getText(bTextExpanded ? "EXPANDABLE_TEXT_SHOW_LESS" : "EXPANDABLE_TEXT_SHOW_MORE"));
 		rm.close("span");
 	};
 
