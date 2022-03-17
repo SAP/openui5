@@ -99,7 +99,7 @@
 			display: none;
 		}
 
-		.sapFCardBaseContent.sapFCardContentLoading > :not(.sapFCardContentPlaceholder) {
+		.sapFCardBaseContent.sapFCardContentLoading:not(.sapFCardObjectContent) > :not(.sapFCardContentPlaceholder) {
 			display: none;
 		}
 
@@ -127,13 +127,22 @@
 			height: 100%;
 
 			.sapFCardLoadingShimmer {
-				width: 144px;
-				height: 144px;
+				max-width: 144px;
+				max-height: 144px;
+				height: ~"calc(100% - 4px)"; /* leave place for the focus */
 			}
 
 			.sapFCardSVG {
 				fill: @sapUiTileBackground;
 			}
+		}
+
+		.sapFCardBaseContent.sapFCardContentLoading.sapFCardObjectContent .sapFCardContentGenericPlaceholder {
+			position: absolute;
+			top: 0;
+    		left: 0;
+			z-index: 1;
+			background-color: @sapUiTileBackground;
 		}
 	}
 
