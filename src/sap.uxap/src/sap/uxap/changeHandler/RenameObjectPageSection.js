@@ -32,7 +32,9 @@ sap.ui.define([
 	var RenameObjectPageSection = BaseRename.createRenameChangeHandler(mRenameSettings);
 
 	RenameObjectPageSection._getControlForRename = function (oControl, oModifier) {
-		var aSubSections;
+		var aSubSections,
+			vTitle;
+
 		return Promise.resolve()
 			.then(function() {
 				return oModifier.getAggregation(oControl, "subSections");
@@ -52,10 +54,12 @@ sap.ui.define([
 			.then(function(aProperties) {
 				// due to specific logic in the Object Page Layout, the title of the Section is
 				// taken from its SubSection in case it is only one no matter if the Section has title itself.
+				vTitle = aProperties[0];
 
 				if (aSubSections
 					&& aSubSections.length === 1
-					&& aProperties[0]
+					&& vTitle
+					&& (typeof vTitle === "object") || (typeof vTitle === "string" && vTitle.trim() !== "")
 					&& aProperties[1] === "TitleOnTop"
 				) {
 					return aSubSections[0];
