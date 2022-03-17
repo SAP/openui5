@@ -186,20 +186,19 @@ sap.ui.define([
 				that = this;
 
 			function onConfirm(sCode) {
+				var bNonTransient = !oItemContext.isTransient();
+
 				if (sCode !== 'OK') {
 					return;
 				}
 
-				if (oItemContext.isTransient()) {
-					oItemContext.getModel().resetChanges([oItemContext.getPath()], undefined, true);
-				} else {
-					oItemContext.getModel().remove("", {
-						context : oItemContext,
-						success : function () {
-							MessageToast.show("Deleted sales order item " + sSalesOrderLineItem);
-							oTable.clearSelection();
-						}
-					});
+				oItemContext.delete().then(function () {
+					if (bNonTransient) {
+						MessageToast.show("Deleted sales order item " + sSalesOrderLineItem);
+						oTable.clearSelection();
+					}
+				});
+				if (bNonTransient) {
 					that.readSalesOrder();
 				}
 			}
@@ -219,21 +218,18 @@ sap.ui.define([
 				that = this;
 
 			function onConfirm(sCode) {
+				var bNonTransient = !oContext.isTransient();
+
 				if (sCode !== 'OK') {
 					return;
 				}
 
 				that.getView().byId("objectPage").unbindElement();
-				if (oContext.isTransient()) {
-					oContext.getModel().resetChanges([oContext.getPath()], undefined, true);
-				} else {
-					oContext.getModel().remove("", {
-						context : oContext,
-						success : function () {
-							MessageToast.show("Deleted sales order " + sSalesOrderID);
-						}
-					});
-				}
+				oContext.delete().then(function () {
+					if (bNonTransient) {
+						MessageToast.show("Deleted sales order " + sSalesOrderID);
+					}
+				});
 			}
 
 			sSalesOrderID = oContext.getProperty("SalesOrderID", true)

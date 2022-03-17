@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/util/extend"
-], function (extend) {
+	"sap/base/util/extend",
+	"sap/base/util/merge"
+], function (extend, merge) {
 	"use strict";
 
 	/**
@@ -11,9 +12,10 @@ sap.ui.define([
 	 * @private
 	 */
 	var _Helper = {
-		// Trampoline property to allow for mocking in unit tests.
-		// @see sap.base.util.extend
-		extend : extend
+		// Trampoline properties to allow for mocking in unit tests.
+		// @see sap.base.util.*
+		extend : extend,
+		merge : merge
 	};
 
 	return _Helper;

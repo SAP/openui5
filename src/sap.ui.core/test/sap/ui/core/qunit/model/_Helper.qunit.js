@@ -4,8 +4,9 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
+	"sap/base/util/merge",
 	"sap/ui/model/_Helper"
-], function (Log, extend, _Helper) {
+], function (Log, extend, merge, _Helper) {
 	/*global QUnit */
 	"use strict";
 
@@ -21,6 +22,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("trampoline properties", function (assert) {
 		assert.strictEqual(_Helper.extend, extend);
+		assert.strictEqual(_Helper.merge, merge);
 	});
 
 });

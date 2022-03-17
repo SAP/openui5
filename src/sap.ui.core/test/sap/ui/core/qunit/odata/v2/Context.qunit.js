@@ -5,10 +5,11 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
+	"sap/ui/model/_Helper",
 	"sap/ui/model/odata/v2/Context",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, BaseContext, Context, TestUtils) {
-	/*global QUnit*/
+], function (Log, SyncPromise, BaseContext, _Helper, Context, TestUtils) {
+	/*global QUnit, sinon*/
 	"use strict";
 
 	//*********************************************************************************************
@@ -269,5 +270,128 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(Context.prototype.isInactive.call(oContext), "~bInactive");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: inactive context", function (assert) {
+		var oPromise,
+			oCreatedContextsCache = {findAndRemoveContext : function () {}},
+			oModel = {
+				_getCreatedContextsCache : function () {},
+				checkUpdate : function () {}
+			},
+			oContext = new Context(oModel, "/~sPath");
+
+		this.mock(oContext).expects("getModel").withExactArgs().returns(oModel);
+		this.mock(oContext).expects("isInactive").withExactArgs().returns(true);
+		this.mock(oModel).expects("_getCreatedContextsCache")
+			.withExactArgs()
+			.returns(oCreatedContextsCache);
+		this.mock(oCreatedContextsCache).expects("findAndRemoveContext")
+			.withExactArgs(sinon.match.same(oContext));
+		this.mock(oModel).expects("checkUpdate").withExactArgs();
+
+		// code under test
+		oPromise = oContext.delete();
+
+		assert.ok(oPromise instanceof Promise);
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: transient context", function (assert) {
+		var oModel = {
+				resetChanges : function () {}
+			},
+			oContext = new Context(oModel, "/~sPath");
+
+		this.mock(oContext).expects("getModel").withExactArgs().returns(oModel);
+		this.mock(oContext).expects("isInactive").withExactArgs().returns(false);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/~ContextPath");
+		this.mock(oModel).expects("resetChanges")
+			.withExactArgs(["/~ContextPath"], /*bAll=abort deferred requests*/false,
+				/*bDeleteCreatedEntities*/true)
+			.returns("~oPromise");
+
+		// code under test
+		assert.strictEqual(oContext.delete(), "~oPromise");
+	});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bSuccess) {
+	QUnit.test("delete: persistent context, remove successful: " + bSuccess, function (assert) {
+		var fnError, fnSuccess, oPromise,
+			oModel = {
+				remove : function () {}
+			},
+			oContext = new Context(oModel, "/~sPath"),
+			mParameters = {
+				changeSetId : "~changeSetId",
+				groupId : "~groupId",
+				refreshAfterChange : "~refreshAfterChange"
+			};
+
+		this.mock(oContext).expects("getModel").withExactArgs().returns(oModel);
+		this.mock(oContext).expects("isInactive").withExactArgs().returns(false);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(_Helper).expects("merge")
+			.withExactArgs(sinon.match.object, sinon.match.same(mParameters))
+			.callsFake(function (mPresetParameters/*, mParameters*/) {
+				assert.strictEqual(mPresetParameters.context, oContext);
+				assert.strictEqual(typeof mPresetParameters.error, "function");
+				assert.strictEqual(typeof mPresetParameters.success, "function");
+				assert.strictEqual(Object.keys(mPresetParameters).length, 3);
+				fnError = mPresetParameters.error;
+				fnSuccess = mPresetParameters.success;
+
+				return "~mRemoveParameters";
+			});
+		// abort handler returned by ODataModel#remove is ignored
+		this.mock(oModel).expects("remove")
+			.withExactArgs("", "~mRemoveParameters")
+			.callsFake(function () {
+				if (bSuccess) {
+					// code under test
+					fnSuccess("~callbackArguments");
+				} else {
+					// code under test
+					fnError("~ErrorArgument");
+				}
+			});
+
+		// code under test
+		oPromise = oContext.delete(mParameters);
+
+		return oPromise.then(function (vResultSuccess) {
+			assert.strictEqual(vResultSuccess, undefined,
+				"Context#delete ignores success handler parameters");
+			assert.ok(bSuccess);
+		}, function (vResultError) {
+			assert.strictEqual(vResultError, "~ErrorArgument",
+				"Context#delete propagates error handler parameter");
+			assert.notOk(bSuccess);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("delete: persistent context, unsupported parameter", function (assert) {
+		var oContext = new Context("~oModel", "/~sPath"),
+			mParameters = {foo : "~bar"};
+
+		this.mock(Array.prototype).expects("includes").withExactArgs("foo")
+			.callsFake(function (/*sParameterKey*/) {
+				assert.deepEqual(this, ["changeSetId", "groupId", "refreshAfterChange"]);
+
+				return false;
+			});
+
+		assert.throws(function () {
+			// code under test
+			oContext.delete(mParameters);
+		 }, new Error("Parameter 'foo' is not supported"));
 	});
 });

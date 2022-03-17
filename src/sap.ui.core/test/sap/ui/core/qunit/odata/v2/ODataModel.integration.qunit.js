@@ -12799,6 +12799,72 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: In a table with an inactive, transient and persistent entry all entries are deleted
+	// via v2.Context#delete.
+	// JIRA: CPOUI5MODELS-806
+	QUnit.test("Delete inactive, transient and persisted entity", function (assert) {
+		var oTable, oTableBinding,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet}" threshold="0" visibleRowCount="3">\
+	<Text id="note" text="{Note}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=3", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					Note : "SO1",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectValue("note", ["SO1", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oTableBinding = oTable.getBinding("rows");
+
+			that.expectValue("note", ["SO active/transient", "SO inactive/transient", "SO1"]);
+
+			oTableBinding.create({Note : "SO inactive/transient"}, /*bAtEnd*/false,
+				{inactive : true});
+			oTableBinding.create({Note : "SO active/transient"}, /*bAtEnd*/false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", "", 0)
+				.expectValue("note", ["SO inactive/transient", "SO1", ""]);
+
+			return Promise.all([
+				// code under test
+				oTable.getRows()[0].getBindingContext().delete(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("note", ["SO1", ""]);
+
+			return Promise.all([
+				// code under test
+				oTable.getRows()[0].getBindingContext().delete(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					requestUri : "SalesOrderSet('1')"
+				}, NO_CONTENT)
+				.expectValue("note", [""]);
+
+			return Promise.all([
+				// code under test
+				oTable.getRows()[0].getBindingContext().delete({refreshAfterChange : false}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: On calling a function import (or using a different API to trigger a write request)
 	// and creating an entry synchronously in this order (and vice versa), the corresponding
 	// requests are in the same order in the change set in the $batch request.
