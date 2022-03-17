@@ -2674,8 +2674,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("set+getOptimisticBatchEnabler, success", function (assert) {
-		var oModel = this.createModel("", {earlyRequests : true}),
-			fnEnabler = function () {};
+		var fnEnabler = function () {},
+			oModel;
+
+		// prevent early requests during model creation
+		this.mock(ODataMetaModel.prototype).expects("fetchEntityContainer").withExactArgs(true);
+		this.mock(ODataModel.prototype).expects("initializeSecurityToken").withExactArgs();
+		oModel = this.createModel("", {earlyRequests : true});
 
 		assert.strictEqual(oModel.getOptimisticBatchEnabler(), null);
 
@@ -2697,9 +2702,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("setOptimisticBatchEnabler, other errors", function (assert) {
-		var oModel = this.createModel("", {earlyRequests : true}),
-			oRequestorMock = this.mock(oModel.oRequestor);
+		var oModel,
+			oRequestorMock;
 
+		// prevent early requests during model creation
+		this.mock(ODataMetaModel.prototype).expects("fetchEntityContainer").withExactArgs(true);
+		this.mock(ODataModel.prototype).expects("initializeSecurityToken").withExactArgs();
+		oModel = this.createModel("", {earlyRequests : true});
+
+		oRequestorMock = this.mock(oModel.oRequestor);
 		oRequestorMock.expects("isFirstBatchSent").thrice().withExactArgs().returns(false);
 
 		assert.throws(function () {
