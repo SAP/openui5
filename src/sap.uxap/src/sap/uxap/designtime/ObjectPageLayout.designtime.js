@@ -193,10 +193,6 @@ function(
 					return ["sections", "_anchorBar", "headerContent"];
 				}
 			}
-		}, {
-			domRef : function(oElement) {
-				return oElement.$("vertSB-sb").get(0);
-			}
 		}],
 		templates: {
 			create: "sap/uxap/designtime/ObjectPageLayout.create.fragment.xml"

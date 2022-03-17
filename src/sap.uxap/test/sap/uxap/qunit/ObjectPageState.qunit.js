@@ -388,6 +388,37 @@ function (
 		}, 1000); //dom calc delay
 	});
 
+	QUnit.module("update title size", {
+		beforeEach: function () {
+			this.oObjectPage = createPage("page1", true);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+			this.oObjectPage = null;
+		}
+	});
+
+	QUnit.test("updates the title positioning", function (assert) {
+		//setup
+		var oPage = this.oObjectPage,
+			oSpy = this.spy(oPage, "_adjustTitlePositioning"),
+			done = assert.async();
+
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oSpy.reset();
+
+			// act
+			oPage._adjustHeaderHeights();
+
+			// check
+			assert.equal(oSpy.callCount, 1, "update is called");
+			done();
+		});
+
+		oPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+	});
+
 	QUnit.module("update content size", {
 		beforeEach: function (assert) {
 			var done = assert.async();
