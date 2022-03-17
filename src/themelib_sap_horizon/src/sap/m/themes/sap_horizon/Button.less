@@ -265,6 +265,11 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 	color: @sapUiButtonAttentionActiveTextColor;
 }
 
+:not(.sapMBtnDisabled) .sapMBtnBack > .sapMBtnIcon,
+:not(.sapMBtnDisabled) .sapMBtnTransparent > .sapMBtnIcon {
+	color: @sapUiButtonLiteTextColor;
+}
+
 // box shadow on hover
 .sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive) {
 	box-shadow: @sapContent_Interaction_Shadow;
