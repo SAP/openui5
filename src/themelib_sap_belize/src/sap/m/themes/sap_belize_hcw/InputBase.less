@@ -2,14 +2,7 @@
 /* CSS for control sap.m/InputBase  */
 /* High Contrast White theme        */
 /* ================================ */
-
-.sapMInputBaseInner {
-	color: @sapUiFieldTextColor;
-}
-
 .sapMInputBaseContentWrapper {
-	border: 1px solid @sapUiFieldBorderColor;
-	background: @sapUiFieldBackground;
 	&.sapMInputBaseContentWrapperState {
 		border-width: 1px;
 	}
@@ -46,34 +39,14 @@
 	}
 }
 
-.sapMInputBaseContentWrapperWarning {
-	background: @sapUiFieldWarningBackground;
-	border-color: @sapUiFieldWarningColor;
-}
-
-.sapMInputBaseContentWrapperSuccess {
-	background: @sapUiFieldSuccessBackground;
-	border-color: @sapUiFieldSuccessColor;
-}
-
 .sapMILI-CTX .sapMInputBaseContentWrapperError,
 .sapMInputBaseContentWrapperError {
-	background: @sapUiFieldInvalidBackground;
-	border-color: @sapUiFieldInvalidColor;
 	& .sapMInputBaseInner {
 		font-weight: bold
 	}
 }
-
-.sapMInputBaseContentWrapperInformation {
-	background: @sapUiFieldBackground;
-	border-style: dashed;
-	border-color: @sapUiFieldWarningColor;
-}
-
 .sapMInputBaseContentWrapperWarning,
 .sapMInputBaseContentWrapperError {
-	border-style: dashed;
 	& .sapMInputBaseInner {
 		font-style: italic;
 	}
@@ -169,13 +142,6 @@
 .sapMInputBaseInner::selection {
 	background: @sapUiSelected;
 	color: @sapUiContentContrastTextColor;
-}
-
-.sapMFocus {
-	& .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) {
-		outline: 2px dotted @sapUiContentFocusColor;
-		outline-offset: -4px;
-	}
 }
 
 .sapMInputBaseContentWrapperState .sapMInputBaseInner {

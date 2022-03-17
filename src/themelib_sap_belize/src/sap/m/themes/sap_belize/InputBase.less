@@ -3,13 +3,7 @@
 /* Belize theme                     */
 /* ================================ */
 
-.sapMInputBaseInner {
-	color: @sapUiFieldTextColor;
-}
-
 .sapMInputBaseContentWrapper {
-	border: 1px solid @sapUiFieldBorderColor;
-	background: @sapUiFieldBackground;
 	&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 		border-width: 2px;
 		.sapMInputBaseIcon {
@@ -34,35 +28,9 @@
 	background-color: @sapUiButtonBackground;
 }
 
-.sapMInputBaseContentWrapperWarning {
-	background: @sapUiFieldWarningBackground;
-	border-color: @sapUiFieldWarningColor;
-}
-
-.sapMInputBaseContentWrapperSuccess {
-	background: @sapUiFieldSuccessBackground;
-	border-color: @sapUiFieldSuccessColor;
-}
-
-.sapMInputBaseContentWrapperError {
-	background: @sapUiFieldInvalidBackground;
-	border-color: @sapUiFieldInvalidColor;
-}
-
-.sapMInputBaseContentWrapperInformation {
-	background: @sapUiFieldInformationBackground;
-	border-color: @sapUiFieldInformationColor;
-}
-
 .sapMInputBaseReadonlyWrapper,
 .sapMInputBaseDisabledWrapper {
 	background: @sapUiFieldReadOnlyBackground;
-}
-
-.sapMFocus .sapMInputBaseContentWrapper {
-	&::before {
-		border: 1px dotted @sapUiContentFocusColor;
-	}
 }
 
 /* List specific styles */

@@ -6,3 +6,59 @@
 .sapMPseudoFocus {
 	outline-offset: -0.1875rem;
 }
+
+.sapMValueStateHeaderRoot {
+	padding-left: 1.875rem;
+}
+
+.sapMValueStateHeaderSuccess:before {
+	font-family: SAP-icons;
+	content: "\e1c1";
+	position: absolute;
+	top: 0.725rem;
+	left: 0rem;
+	vertical-align: middle;
+	font-size: 1rem;
+	color: @sapPositiveElementColor;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+.sapMValueStateHeaderError:before {
+	font-family: SAP-icons;
+	content: "\e1ec";
+	position: absolute;
+	top: 0.725rem;
+	left: 0rem;
+	vertical-align: middle;
+	font-size: 1rem;
+	color: @sapNegativeElementColor;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+.sapMValueStateHeaderWarning:before {
+	font-family: SAP-icons;
+	content: "\e053";
+	position: absolute;
+	top: 0.725rem;
+	left: 0rem;
+	vertical-align: middle;
+	font-size: 1rem;
+	color: @sapCriticalElementColor;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+.sapMValueStateHeaderInformation:before {
+	font-family: SAP-icons;
+	content: "\e289";
+	position: absolute;
+	top: 0.725rem;
+	left: 0rem;
+	vertical-align: middle;
+	font-size: 1rem;
+	color: @sapInformativeElementColor;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}

@@ -133,3 +133,30 @@ html.sap-tablet, html.sap-phone {
 		padding-right: 15px;
 	}
 }
+
+html.sap-desktop:not(.sapUiNativeScrollbars) .sapMTextArea .sapMInputBaseContentWrapper ::-webkit-scrollbar {
+	background: @sapUiFieldBackgroundStyle;
+	background-color: @sapUiScrollBarTrackColor;
+}
+
+html.sap-desktop:not(.sapUiNativeScrollbars) .sapMTextArea {
+	.sapMInputBaseContentWrapperWarning ::-webkit-scrollbar {
+		background: @sapUiFieldWarningBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+
+	.sapMInputBaseContentWrapperError ::-webkit-scrollbar {
+		background: @sapUiFieldInvalidBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+
+	.sapMInputBaseContentWrapperInformation ::-webkit-scrollbar {
+		background: @sapUiFieldInformationBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+
+	.sapMInputBaseContentWrapperSuccess ::-webkit-scrollbar {
+		background: @sapUiFieldSuccessBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+}
