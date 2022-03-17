@@ -306,6 +306,27 @@ sap.ui.define([
 			assert.notOk(oDesignTimeMetadata.getAssociatedDomRef(undefined, vDomRef), "then undefined is returned");
 		});
 
+		QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function throwing an error", function(assert) {
+			var oDesignTimeMetadata = new DesignTimeMetadata({
+				data: {
+					actions: {
+						rename: {
+							domRef: function () {
+								throw new Error("Something wrong");
+							}
+						}
+					}
+				}
+			});
+
+			var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
+			assert.strictEqual(
+				oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef),
+				undefined,
+				"then the error is silently caught and undefined is returned"
+			);
+		});
+
 		QUnit.test("when getAssociatedDomRef is called on an action with domRef as a string", function(assert) {
 			var oDesignTimeMetadata = new DesignTimeMetadata({
 				data: {

@@ -141,9 +141,12 @@ function(
 			}
 
 			if (typeof (vDomRef) === "function") {
-				var vRes = vDomRef.apply(null, aArguments);
-
-				return vRes ? jQuery(vRes) : vRes;
+				try {
+					var vRes = vDomRef.apply(null, aArguments);
+					return vRes && jQuery(vRes);
+				} catch (error) {
+					return undefined;
+				}
 			} else if (oElementDomRef && typeof (vDomRef) === "string") {
 				return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vDomRef);
 			}
