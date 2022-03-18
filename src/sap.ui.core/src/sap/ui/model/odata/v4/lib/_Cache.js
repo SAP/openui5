@@ -2396,17 +2396,15 @@ sap.ui.define([
 	/**
 	 * Handles a GET response by updating the cache data and the $count-values recursively.
 	 *
-	 * @param {number} iStart
-	 *   The start index of the range
-	 * @param {number} iEnd
-	 *   The index after the last element
-	 * @param {object} oResult The result of the GET request
-	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
-	 *   {@link #fetchTypes})
+	 * @param {object} oResult - The result of the GET request
+	 * @param {number} iStart - The start index of the range
+	 * @param {number} iEnd - The index after the last element
+	 * @param {object} mTypeForMetaPath
+	 *   A map from meta path to the entity type (as delivered by {@link #fetchTypes})
 	 *
 	 * @private
 	 */
-	_CollectionCache.prototype.handleResponse = function (iStart, iEnd, oResult, mTypeForMetaPath) {
+	_CollectionCache.prototype.handleResponse = function (oResult, iStart, iEnd, mTypeForMetaPath) {
 		var sCount,
 			iCreated = this.aElements.$created,
 			oElement,
@@ -2713,7 +2711,7 @@ sap.ui.define([
 			if (that.aElements.$tail === oPromise) {
 				that.aElements.$tail = undefined;
 			}
-			that.handleResponse(oReadRequest.iStart, oReadRequest.iEnd, aResult[0], aResult[1]);
+			that.handleResponse(aResult[0], oReadRequest.iStart, oReadRequest.iEnd, aResult[1]);
 		}).catch(function (oError) {
 			that.fill(undefined, oReadRequest.iStart, oReadRequest.iEnd);
 			throw oError;
