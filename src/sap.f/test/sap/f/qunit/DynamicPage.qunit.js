@@ -2247,6 +2247,21 @@ function (
 
 	});
 
+	QUnit.test("DynamicPage _updateFitContainer is called on reredering", function (assert) {
+		// Arrange
+		var oSpy = this.spy(this.oDynamicPage, "_updateFitContainer"),
+			done = assert.async();
+
+		// Act
+		this.oDynamicPage.rerender();
+
+		//Assert
+		setTimeout(function() {
+			assert.strictEqual(oSpy.callCount, 1, "update of fitContainer class is called");
+			done();
+		}, 0);
+	});
+
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */
 	QUnit.module("DynamicPage - Toggle Header On Scroll", {
 		beforeEach: function () {
