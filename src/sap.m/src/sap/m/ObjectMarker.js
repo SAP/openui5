@@ -547,16 +547,18 @@ sap.ui.define([
 	 */
 	ObjectMarker.prototype._createCustomLink = function () {
 		var oCustomLink = new CustomLink(this.getId() + "-link", {
-			wrapping: true
-		});
-
-		oCustomLink.attachPress(function(oEvent) {
-			this.firePress({
-				type: this.getType()
+				wrapping: true
 			});
-		}, this);
+
+		oCustomLink.attachPress(this._firePress, this);
 
 		return oCustomLink;
+	};
+
+	ObjectMarker.prototype._firePress = function() {
+		this.firePress({
+			type: this.getType()
+		});
 	};
 
 	/**
@@ -589,6 +591,16 @@ sap.ui.define([
 
 	CustomTextRenderer.apiVersion = 2;
 
+	CustomTextRenderer.render = function(oRm, oControl) {
+		if (oControl.getIconOnly()) {
+			var oIconControl = oControl._getIconAggregation();
+			oIconControl.setAlt(oControl.getTooltip_AsString());
+			oRm.renderControl(oIconControl);
+		} else {
+			TextRenderer.render.call(this, oRm, oControl);
+		}
+	};
+
 	CustomTextRenderer.renderText = function(oRm, oControl) {
 		oRm.renderControl(oControl._getIconAggregation());
 		TextRenderer.renderText(oRm, oControl);
@@ -598,7 +610,8 @@ sap.ui.define([
 		metadata: {
 			library: "sap.m",
 			properties: {
-				icon: {type : "sap.ui.core.URI", group : "Data", defaultValue : null}
+				icon: {type: "sap.ui.core.URI", group: "Data", defaultValue: null},
+				iconOnly: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			aggregations: {
 				_iconControl: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
@@ -641,6 +654,16 @@ sap.ui.define([
 
 	CustomLinkRenderer.apiVersion = 2;
 
+	CustomLinkRenderer.render = function(oRm, oControl) {
+		if (oControl.getIconOnly()) {
+			var oIconControl = oControl._getIconAggregation();
+			oIconControl.setAlt(oControl.getTooltip_AsString());
+			oRm.renderControl(oIconControl);
+		} else {
+			LinkRenderer.render.call(this, oRm, oControl);
+		}
+	};
+
 	CustomLinkRenderer.renderText = function(oRm, oControl) {
 		oRm.renderControl(oControl._getIconAggregation());
 		LinkRenderer.renderText(oRm, oControl);
@@ -650,7 +673,8 @@ sap.ui.define([
 		metadata: {
 			library: "sap.m",
 			properties: {
-				icon: {type : "sap.ui.core.URI", group : "Data", defaultValue : null}
+				icon: {type: "sap.ui.core.URI", group: "Data", defaultValue: null},
+				iconOnly: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			aggregations: {
 				_iconControl: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}

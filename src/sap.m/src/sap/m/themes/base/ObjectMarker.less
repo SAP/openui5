@@ -7,7 +7,6 @@
 	display: inline-block;
 	.sapUiIcon {
 		font-size: 1rem;
-		pointer-events: none;
 		color: @sapUiContentMarkerIconColor;
 		&:before {
 			vertical-align: middle;
@@ -15,6 +14,9 @@
 		&:not([data-sap-ui-icon-content]) {
 			display: none;
 		}
+	}
+	.sapUiIcon:not(.sapUiIconPointer) {
+		pointer-events: none;
 	}
 	.sapMLnk {
 		overflow: visible;
