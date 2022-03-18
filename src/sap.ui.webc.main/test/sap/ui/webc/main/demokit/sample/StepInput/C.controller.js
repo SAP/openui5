@@ -13,7 +13,7 @@ sap.ui.define([
 		},
 		handleChange: function(oEvent) {
 			var demoToast = this.getView().byId("demoToast");
-			demoToast.setText("Event change fired.");
+			demoToast.setText("Value changed to " + oEvent.getParameter("value"));
 			demoToast.show();
 		}
 

@@ -82,6 +82,13 @@
 		  "samples": ["sap.ui.webc.main.sample.Slider"]
 		},
 		{
+			"id": "sap.ui.webc.main.StepInput",
+			"name": "Step Input",
+			"category": "Web Components",
+			"since": "1.100.0",
+			"samples": ["sap.ui.webc.main.sample.StepInput"]
+		},
+		{
 		  "id": "sap.ui.webc.main.Table",
 		  "name": "Table",
 		  "category": "Web Components",
@@ -153,6 +160,11 @@
 		  "id": "sap.ui.webc.main.sample.Slider",
 		  "name": "Slider",
 		  "description": "Demonstrates the basic usage of Slider"
+		},
+		{
+		  "id": "sap.ui.webc.main.sample.StepInput",
+		  "name": "Step Input",
+		  "description": "Demonstrates the basic usage of Step Input"
 		},
 		{
 		  "id": "sap.ui.webc.main.sample.Table",
