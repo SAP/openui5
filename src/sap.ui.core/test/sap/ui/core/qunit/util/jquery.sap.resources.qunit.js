@@ -11,29 +11,9 @@ sap.ui.define([
 
 	QUnit.module("fallback", {
 		beforeEach: function () {
-			this.aLocales = [];
-
-			// Mock Properties factory
-			this.originalPropertiesCreate = Properties.create;
-			Properties.create = function (mParams) {
-				// just record the requested locales (by analyzing the URLs)
-				var sUrl = mParams.url;
-				var sLocale;
-				var m = /dummy([^.]*)\.properties/i.exec(sUrl);
-				if (m) {
-					sLocale = m[1];
-				}
-				this.aLocales.push(sLocale);
-				// return a dummy bag that never finds a key
-				// This ensures that the fallback sequence is followed to the end
-				return {
-					getProperty: function (sKey) {
-					}
-				};
-			}.bind(this);
-		},
-		afterEach: function () {
-			Properties.create = this.originalPropertiesCreate;
+			this.oPropertiesCreateStub = this.stub(Properties, "create").returns({
+				getProperty: function () {}
+			});
 		}
 	});
 
@@ -44,36 +24,34 @@ sap.ui.define([
 
 			// and for a text in it
 			oBundle.getText("DUMMY_KEY");
-			assert.deepEqual(this.aLocales, aExpected, "locale fallback should match for '" + sLocale + "'");
-
-			// Cleanup
-			this.aLocales = [];
-		}.bind(this);
+			// oBundle.aLocales contains the locales calculated by the fallback chain
+			assert.deepEqual(oBundle.aLocales, aExpected, "locale fallback should match for '" + sLocale + "'");
+		};
 
 		// simple test
-		checkSequence("de", ["_de", "_en", ""]);
+		checkSequence("de", ["de", "en", ""]);
 		// ensure that en is not requested twice
-		checkSequence("en", ["_en", ""]);
+		checkSequence("en", ["en", ""]);
 		// simple case with region
-		checkSequence("de-CH", ["_de_CH", "_de", "_en", ""]);
+		checkSequence("de-CH", ["de_CH", "de", "en", ""]);
 		// underscore instead of dash
-		checkSequence("fr_CH", ["_fr_CH", "_fr", "_en", ""]);
+		checkSequence("fr_CH", ["fr_CH", "fr", "en", ""]);
 		// JDK like language, region and variant
-		checkSequence("en_EN_Geekish", ["_en_EN_Geekish", "_en_EN", "_en", ""]);
+		checkSequence("en_EN_Geekish", ["en_EN_Geekish", "en_EN", "en", ""]);
 		// special case Hong Kong, should fallback to Taiwan
-		checkSequence("zh_HK", ["_zh_HK", "_zh_TW", "_zh", "_en", ""]);
+		checkSequence("zh_HK", ["zh_HK", "zh_TW", "zh", "en", ""]);
 		// special case BCP47 tag with private extension for 1Q/saptrc, must always map to en-US and variant saptrc
-		checkSequence("es-ES-x-saptrc", ["_en_US_saptrc", "_en_US", "_en", ""]);
+		checkSequence("es-ES-x-saptrc", ["en_US_saptrc", "en_US", "en", ""]);
 		// special case BCP47 tag with private extension for 2Q/sappsd, must always map to en-US and variant sappsd
-		checkSequence("es-ES-x-sappsd", ["_en_US_sappsd", "_en_US", "_en", ""]);
+		checkSequence("es-ES-x-sappsd", ["en_US_sappsd", "en_US", "en", ""]);
 		// special case BCP47 tag with private extension for 3Q/saprigi, must always map to en-US and variant saprigi
-		checkSequence("es-ES-x-saprigi", ["_en_US_saprigi", "_en_US", "_en", ""]);
+		checkSequence("es-ES-x-saprigi", ["en_US_saprigi", "en_US", "en", ""]);
 		// special case BCP47 tag with variant for 1Q/saptrc, must always map to en-US and variant saptrc
-		checkSequence("es-ES-saptrc", ["_en_US_saptrc", "_en_US", "_en", ""]);
+		checkSequence("es-ES-saptrc", ["en_US_saptrc", "en_US", "en", ""]);
 		// special case BCP47 tag with variant for 2Q/sappsd, must always map to en-US and variant sappsd
-		checkSequence("es-ES-sappsd", ["_en_US_sappsd", "_en_US", "_en", ""]);
+		checkSequence("es-ES-sappsd", ["en_US_sappsd", "en_US", "en", ""]);
 		// special case BCP47 tag with variant for 3Q/saprigi, must always map to en-US and variant saprigi
-		checkSequence("es-ES-saprigi", ["_en_US_saprigi", "_en_US", "_en", ""]);
+		checkSequence("es-ES-saprigi", ["en_US_saprigi", "en_US", "en", ""]);
 	});
 
 	function loadBundle(assert, mParams, fnDoWhenLoaded) {
