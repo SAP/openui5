@@ -933,6 +933,12 @@ sap.ui.define([
 			done();
 		};
 
+		var oModificationHandler = TestModificationHandler.getInstance();
+		oModificationHandler.processChanges = function(aChanges) {
+			return Promise.resolve();
+		};
+		this.oEngine._setModificationHandler(this.oControl, oModificationHandler);
+
 		this.oEngine._processChanges(this.oControl, [{
 			selectorElement: this.oControl,
 			changeSpecificData: {
