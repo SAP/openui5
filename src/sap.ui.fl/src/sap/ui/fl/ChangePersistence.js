@@ -872,6 +872,21 @@ sap.ui.define([
 		return (oObject.getRequest() === "$TMP" || oObject.getRequest() === "") && oObject.getLayer() === sLayer;
 	}
 
+	function isPersistedAndInLayer(sLayer, oObject) {
+		return oObject.getState() === Change.states.PERSISTED && oObject.getLayer() === sLayer;
+	}
+
+	function getAllCompVariantsEntities() {
+		var aCompVariantEntities = [];
+		return FlexState.getCompVariantsMap(this.getComponentName()).then(function (mCompVariantsMap) {
+			for (var sPersistencyKey in mCompVariantsMap) {
+				for (var sId in mCompVariantsMap[sPersistencyKey].byId) {
+					aCompVariantEntities.push(mCompVariantsMap[sPersistencyKey].byId[sId]);
+				}
+			}
+			return aCompVariantEntities;
+		});
+	}
 	/**
 	 * Transports all the UI changes and app variant descriptor (if exists) to the target system
 	 *
@@ -884,16 +899,10 @@ sap.ui.define([
 	ChangePersistence.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors) {
 		return Promise.all([
 			this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true}),
-			FlexState.getCompVariantsMap(this.getComponentName())// FIXME: also transport comp changes via compState
+			getAllCompVariantsEntities.call(this)// FIXME: also transport comp changes via compState
 		]).then(function(aResponses) {
 			var aLocalChanges = aResponses[0];
-			var mCompVariantsMap = aResponses[1];
-			var aCompVariantEntities = [];
-			for (var sPersistencyKey in mCompVariantsMap) {
-				for (var sId in mCompVariantsMap[sPersistencyKey].byId) {
-					aCompVariantEntities.push(mCompVariantsMap[sPersistencyKey].byId[sId]);
-				}
-			}
+			var aCompVariantEntities = aResponses[1];
 
 			aLocalChanges = aLocalChanges.concat(
 				aCompVariantEntities.filter(isLocalAndInLayer.bind(this, sLayer)));
@@ -987,10 +996,22 @@ sap.ui.define([
 		var bSelectorIdsProvided = aSelectorIds && aSelectorIds.length > 0;
 		var bChangeTypesProvided = aChangeTypes && aChangeTypes.length > 0;
 
-		return this.getChangesForComponent({
-			currentLayer: sLayer,
-			includeCtrlVariants: true
-		}).then(function(aChanges) {
+		//In case of application reset and PUBLIC layer available, also includes comp variant entities
+		var isPublicLayerAvailable = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().isPublicLayerAvailable();
+		var isApplicationReset = sGenerator === undefined && aSelectorIds === undefined && aChangeTypes === undefined;
+		var oGetAllCompVariantsEntriesPromise = Promise.resolve([]);
+		if (isPublicLayerAvailable && isApplicationReset) {
+			oGetAllCompVariantsEntriesPromise = getAllCompVariantsEntities.call(this).then(function (aChanges) {
+				return aChanges.filter(isPersistedAndInLayer.bind(this, sLayer));
+			});
+		}
+
+		return Promise.all([
+			this.getChangesForComponent({ currentLayer: sLayer, includeCtrlVariants: true}),
+			oGetAllCompVariantsEntriesPromise
+		]).then(function(aResponses) {
+			var aChanges = aResponses[0];
+			aChanges = aChanges.concat(aResponses[1]);
 			var mParams = {
 				reference: this.getComponentName(),
 				layer: sLayer,
