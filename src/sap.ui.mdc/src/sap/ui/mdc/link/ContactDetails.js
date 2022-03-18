@@ -2,7 +2,17 @@
  * ! ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/XMLComposite', 'sap/m/Text', 'sap/m/Link', 'sap/m/Label'], function(XMLComposite, Text, Link, Label) {
+sap.ui.define([
+	"sap/ui/core/Control",
+	"./ContactDetailsRenderer",
+	"sap/ui/core/Title",
+	"sap/m/VBox",
+	"sap/m/Text",
+	"sap/m/Link",
+	"sap/m/Label",
+	"sap/m/Image",
+	"sap/ui/layout/form/SimpleForm"
+], function(Control, ContactDetailsRenderer, Title, VBox, Text, Link, Label, Image, SimpleForm) {
 	"use strict";
 
 	/**
@@ -11,7 +21,7 @@ sap.ui.define(['sap/ui/core/XMLComposite', 'sap/m/Text', 'sap/m/Link', 'sap/m/La
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The ContactDetails control is used to show additional information like for example 'contact details'.
-	 * @extends sap.ui.core.XMLComposite
+	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
@@ -20,31 +30,105 @@ sap.ui.define(['sap/ui/core/XMLComposite', 'sap/m/Text', 'sap/m/Link', 'sap/m/La
 	 * @alias sap.ui.mdc.link.ContactDetails
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ContactDetails = XMLComposite.extend("sap.ui.mdc.link.ContactDetails", /** @lends sap.ui.mdc.link.ContactDetails.prototype */
-		{
-			metadata: {
-				library: "sap.ui.mdc",
-				defaultAggregation: "items",
-				aggregations: {
-					items: {
-						type: "sap.ui.mdc.link.ContactDetailsItem",
-						multiple: true,
-						singularName: "item"
-					}
+	var ContactDetails = Control.extend("sap.ui.mdc.link.ContactDetails", /** @lends sap.ui.mdc.link.ContactDetails.prototype */ {
+		metadata: {
+			library: "sap.ui.mdc",
+			defaultAggregation: "items",
+			aggregations: {
+				items: {
+					type: "sap.ui.mdc.link.ContactDetailsItem",
+					multiple: true,
+					singularName: "item"
+				},
+				_content: {
+					type: "sap.m.VBox",
+					visibility: "hidden",
+					multiple: false
 				}
 			}
-		});
+		},
+		renderer: ContactDetailsRenderer
+	});
 
+	var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	ContactDetails.prototype.applySettings = function() {
-		XMLComposite.prototype.applySettings.apply(this, arguments);
+		Control.prototype.applySettings.apply(this, arguments);
 
-		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		var oVBox = this._getCompositeAggregation();
-		oVBox.getItems().forEach(function(oSimpleForm, iIndex) {
-			this._addEmailsToSimpleForm(this.getItems()[iIndex], oSimpleForm, oRB);
-			this._addPhonesToSimpleForm(this.getItems()[iIndex], oSimpleForm, oRB);
-			this._addAddressesToSimpleForm(this.getItems()[iIndex], oSimpleForm, oRB);
-		}, this);
+		this._createContent();
+	};
+	ContactDetails.prototype._createContent = function() {
+		var aSimpleForms = [];
+		this.getItems().forEach(function(oContactDetailsItem) {
+			var oTitle = new Title({
+				text: oContactDetailsItem.getSectionTitle()
+			});
+			var oImage = new Image({
+				src: oContactDetailsItem.getPhoto(),
+				visible: !!oContactDetailsItem.getPhoto(),
+				decorative: false,
+				width: "5rem",
+				height: "5rem"
+			});
+			var oLabelImage = new Label({
+				text: "",
+				labelFor: oImage,
+				visible: !!oContactDetailsItem.getPhoto()
+			});
+			var oTextName = new Text({
+				text: oContactDetailsItem.getFormattedName(),
+				visible: !!oContactDetailsItem.getFormattedName()
+			});
+			var oLabelName = new Label({
+				text: oRB.getText("info.POPOVER_CONTACT_SECTION_NAME"),
+				labelFor: oTextName,
+				visible: !!oContactDetailsItem.getFormattedName()
+			});
+			var oTextRole = new Text({
+				text: oContactDetailsItem.getRole(),
+				visible: !!oContactDetailsItem.getRole()
+			});
+			var oLabelRole = new Label({
+				text: oRB.getText("info.POPOVER_CONTACT_SECTION_ROLE"),
+				labelFor: oTextRole,
+				visible: !!oContactDetailsItem.getRole()
+			});
+			var oTextTitle = new Text({
+				text: oContactDetailsItem.getTitle(),
+				visible: !!oContactDetailsItem.getTitle()
+			});
+			var oLabelTitle = new Label({
+				text: oRB.getText("info.POPOVER_CONTACT_SECTION_JOBTITLE"),
+				labelFor: oTextTitle,
+				visible: !!oContactDetailsItem.getTitle()
+			});
+			var oTextOrg = new Text({
+				text: oContactDetailsItem.getOrg(),
+				visible: !!oContactDetailsItem.getOrg()
+			});
+			var oLabelOrg = new Label({
+				text: oRB.getText("info.POPOVER_CONTACT_SECTION_DEPARTMENT"),
+				labelFor: oTextOrg,
+				visible: !!oContactDetailsItem.getOrg()
+			});
+
+			var oSimpleForm = new SimpleForm({
+				editable: false,
+				layout: "ColumnLayout",
+				content: [
+					oTitle, oLabelImage, oImage, oLabelName, oTextName, oLabelRole, oTextRole, oLabelTitle, oTextTitle, oLabelOrg, oTextOrg
+				]
+			});
+			this._addEmailsToSimpleForm(oContactDetailsItem, oSimpleForm, oRB);
+			this._addPhonesToSimpleForm(oContactDetailsItem, oSimpleForm, oRB);
+			this._addAddressesToSimpleForm(oContactDetailsItem, oSimpleForm, oRB);
+
+			aSimpleForms.push(oSimpleForm);
+		}.bind(this));
+
+		this.setAggregation("_content", new VBox({
+			//ariaLabelledBy: aSimpleForms.length ? aSimpleForms[0].getContent()[0] : undefined,
+			items: aSimpleForms
+		}));
 	};
 	ContactDetails.prototype._addEmailsToSimpleForm = function(oContactDetailsItem, oSimpleForm, oRB) {
 		// Show email(s) annotated with 'preferred' on top (independent on type e.g. 'work' or 'home' etc) and then non 'preferred' email(s) below.

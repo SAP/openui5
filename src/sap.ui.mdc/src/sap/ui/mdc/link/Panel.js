@@ -3,16 +3,27 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/XMLComposite',
-	'sap/base/Log',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/model/BindingMode',
-	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/core/Control",
+	"./PanelRenderer",
+	"sap/ui/layout/VerticalLayout",
+	"sap/base/Log",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/m/HBox",
+	"sap/m/VBox",
+	"sap/m/ImageContent",
+	"sap/m/Link",
+	"sap/m/Label",
+	"sap/m/Text",
+	"sap/m/Button",
+	"sap/m/FlexItemData",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/BindingMode",
+	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/mdc/p13n/subcontroller/LinkPanelController",
 	"sap/ui/mdc/p13n/Engine",
 	"sap/ui/mdc/mixin/AdaptationMixin",
 	"sap/ui/mdc/link/PanelItem"
-], function(XMLComposite, Log, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem) {
+], function(Control, PanelRenderer, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem) {
 	"use strict";
 
 	/**
@@ -22,7 +33,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The Panel control is used to show <code>items</code> and <code>additionalContent</code>. After providing of the <code>items</code> it is
 	 * supposed that the properties of the item structure is not changed.
-	 * @extends sap.ui.core.XMLComposite
+	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
@@ -31,8 +42,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.link.Panel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Panel = XMLComposite.extend("sap.ui.mdc.link.Panel", /** @lends sap.ui.mdc.link.Panel.prototype */
-	{
+	var Panel = Control.extend("sap.ui.mdc.link.Panel", /** @lends sap.ui.mdc.link.Panel.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/link/Panel.designtime",
@@ -76,11 +86,15 @@ sap.ui.define([
 				 */
 				additionalContent: {
 					type: "sap.ui.core.Control",
-					multiple: true,
-					forwarding: {
-						idSuffix: "--idSectionAdditionalContent",
-						aggregation: "items"
-					}
+					multiple: true
+				},
+				/**
+				 * Internal VerticalLayout which holds the content of the Panel
+				 */
+				_content: {
+					type: "sap.ui.layout.VerticalLayout",
+					visibility: "hidden",
+					multiple: false
 				}
 			},
 			events: {
@@ -93,10 +107,12 @@ sap.ui.define([
 				 */
 				afterSelectionDialogClose: {}
 			}
-		}
+		},
+		renderer: PanelRenderer
 	});
+
 	Panel.prototype.init = function() {
-		XMLComposite.prototype.init.call(this);
+		Control.prototype.init.call(this);
 
 		Engine.getInstance().registerAdaptation(this, {
 			controller: {
@@ -142,10 +158,13 @@ sap.ui.define([
 		});
 	};
 
+	var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+
 	Panel.prototype.applySettings = function() {
-		XMLComposite.prototype.applySettings.apply(this, arguments);
+		Control.prototype.applySettings.apply(this, arguments);
 		var oModel = this._getInternalModel();
 		oModel.setProperty("/countAdditionalContent", this.getAdditionalContent().length);
+		this._createContent();
 	};
 
 	Panel.prototype.exit = function(oControl) {
@@ -158,9 +177,148 @@ sap.ui.define([
 		}
 	};
 
+	Panel.prototype._createContent = function() {
+		var oVerticalLayout = new VerticalLayout({
+			content: [
+				this._createContentAdditionalContentArea(),
+				this._createSeparator(),
+				this._createLinkArea(),
+				this._createFooterArea()
+			]
+		});
+		oVerticalLayout.setWidth("calc(100% - 2rem)");
+		this.setAggregation("_content", oVerticalLayout);
+	};
+
+	Panel.prototype._createContentAdditionalContentArea = function() {
+		var oAdditionalContentAreay = new VBox({
+			fitContainer: false,
+			items: this.getAdditionalContent()
+		});
+
+		return oAdditionalContentAreay;
+	};
+
+	Panel.prototype._createSeparator = function() {
+		var oSeparator = new VBox({
+			fitContainer: false,
+			visible: {
+				parts: [
+					{ path: "$sapuimdclinkPanel>/countAdditionalContent" },
+					{ path: "$sapuimdcLink>/metadata" }
+				],
+				formatter: function(iAdditionalContentCount, aMetadata) {
+					return iAdditionalContentCount > 0 && aMetadata.length > 0;
+				}
+			}
+		});
+		oSeparator.addStyleClass("mdcbaseinfoPanelSeparator");
+		oSeparator.setModel(this._getInternalModel(), "$sapuimdclinkPanel");
+		oSeparator.setModel(this.getModel("$sapuimdcLink"), "$sapuimdcLink");
+
+		return oSeparator;
+	};
+
+	Panel.prototype._createLinkArea = function() {
+		var oLinkArea = new VBox({
+			fitContainer: false,
+			items: {
+				path: "$sapuimdclinkPanel>/runtimeItems",
+				templateShareable: false,
+				factory: this._fnLinkItemFactory.bind(this)
+			}
+		});
+		oLinkArea.addStyleClass("mdcbaseinfoPanelSectionLinks");
+		oLinkArea.setModel(this._getInternalModel(), "$sapuimdclinkPanel");
+
+		return oLinkArea;
+	};
+
+	Panel.prototype._fnLinkItemFactory = function(sId, oBindingContext) {
+		var oImageContent = new ImageContent({
+			src: "{$sapuimdclinkPanel>icon}",
+			visible: {
+				path: "$sapuimdclinkPanel>icon",
+				formatter: function(sIcon) {
+					return !!sIcon;
+				}
+			}
+		});
+		var oLink = new Link({
+			text: "{$sapuimdclinkPanel>text}",
+			href: "{$sapuimdclinkPanel>href}",
+			target: "{$sapuimdclinkPanel>target}",
+			visible: {
+				path: "$sapuimdclinkPanel>href",
+				formatter: function(sHref) {
+					return !!sHref;
+				}
+			},
+			press: this.onPressLink.bind(this),
+			wrapping: true
+		});
+		var oLabel = new Label({
+			text: "{$sapuimdclinkPanel>text}",
+			visible: {
+				path: "$sapuimdclinkPanel>href",
+				formatter: function(sHref) {
+					return !sHref;
+				}
+			},
+			wrapping: true
+		});
+		var oText = new Text({
+			text: "{$sapuimdclinkPanel>description}",
+			visible: {
+				path: "$sapuimdclinkPanel>description",
+				formatter: function(sDescription) {
+					return !!sDescription;
+				}
+			},
+			wrapping: true
+		});
+		var oVBox = new VBox({
+			items: [ oLink, oLabel, oText ]
+		});
+		var oHBox = new HBox({
+			layoutData: new FlexItemData({
+				styleClass: oBindingContext.getProperty("description") ? "mdcbaseinfoPanelItemsGroup" : "mdcbaseinfoPanelItemsWithoutGroup"
+			}),
+			items: [ oImageContent, oVBox ]
+		});
+		var oPanelListItem = new HorizontalLayout({
+			visible: "{$sapuimdclinkPanel>visible}",
+			content: [ oHBox ]
+		});
+		oPanelListItem.addStyleClass("mdcbaseinfoPanelListItem");
+
+		return oPanelListItem;
+	};
+
+	Panel.prototype._createFooterArea = function() {
+		var oResetButton = new Button({
+			type: "Transparent",
+			text: oRB.getText("info.POPOVER_DEFINE_LINKS"),
+			press: this.onPressLinkPersonalization.bind(this)
+		});
+		var oFooterArea = new HBox({
+			visible: {
+				path: "$sapuimdcLink>/metadata",
+				formatter: function(aMetadata) {
+					return aMetadata.length > 0;
+				}
+			},
+			justifyContent: "End",
+			items: [ oResetButton ]
+		});
+		oFooterArea.addStyleClass("mdcbaseinfoPanelPersonalizationButton");
+
+		return oFooterArea;
+	};
+
 	Panel.prototype.onPressLink = function(oEvent) {
-		if (this.getBeforeNavigationCallback() && oEvent.getParameter("target") !== "_blank") {
-			var sHref = oEvent.getParameter("href");
+		if (this.getBeforeNavigationCallback() && oEvent.getSource() && oEvent.getSource().getTarget() !== "_blank") {
+			var sHref = oEvent.getSource().getHref();
 			oEvent.preventDefault();
 			this.getBeforeNavigationCallback()(oEvent).then(function(bNavigate) {
 				if (bNavigate) {
