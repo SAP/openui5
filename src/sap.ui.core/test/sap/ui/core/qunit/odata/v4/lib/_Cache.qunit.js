@@ -5691,7 +5691,7 @@ sap.ui.define([
 				.exactly(bWithCount ? 1 : 0);
 
 			// code under test
-			oCache.handleResponse(2, 4, oResult, oFetchTypesResult);
+			oCache.handleResponse(oResult, 2, 4, oFetchTypesResult);
 
 			assert.strictEqual(oCache.sContext, sDataContext);
 			assert.strictEqual(oCache.iLimit, bWithCount ? 4 : iLimit);
@@ -5795,7 +5795,7 @@ sap.ui.define([
 					sinon.match.same(oCache.aElements), {$count : oFixture.iExpectedCount});
 
 			// code under test
-			oCache.handleResponse(oFixture.iStart, oFixture.iStart + 10, oResult,
+			oCache.handleResponse(oResult, oFixture.iStart, oFixture.iStart + 10,
 				oFetchTypesResult);
 
 			assert.strictEqual(oCache.aElements.length, oFixture.iExpectedLength, "length");
@@ -5828,7 +5828,7 @@ sap.ui.define([
 		oHelperMock.expects("updateExisting").never();
 
 		// code under test
-		oCache.handleResponse(5, 10, oResult, oFetchTypesResult);
+		oCache.handleResponse(oResult, 5, 10, oFetchTypesResult);
 
 		assert.strictEqual(oCache.aElements.length, 6, "length");
 		assert.strictEqual(oCache.iLimit, Infinity, "iLimit");
@@ -5867,7 +5867,7 @@ sap.ui.define([
 		oHelperMock.expects("updateExisting").never();
 
 		// code under test
-		oCache.handleResponse(5, 10, oResult, oFetchTypesResult);
+		oCache.handleResponse(oResult, 5, 10, oFetchTypesResult);
 
 		assert.strictEqual(oCache.aElements.length, 11, "length");
 		assert.strictEqual(oCache.iLimit, Infinity, "iLimit");
@@ -5932,7 +5932,7 @@ sap.ui.define([
 			.withExactArgs("bar").returns(false);
 
 		// code under test
-		oCache.handleResponse(2, bShortRead ? 8 : 6, oResult, oFetchTypesResult);
+		oCache.handleResponse(oResult, 2, bShortRead ? 8 : 6, oFetchTypesResult);
 
 		assert.deepEqual(oCache.aElements, bShortRead
 			? [0, 1, oElement0, sKeptETag === "other" ? oElement3 : oKeptElement]
@@ -5978,7 +5978,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oCache.handleResponse(2, 4, oResult, oFetchTypesResult);
+			oCache.handleResponse(oResult, 2, 4, oFetchTypesResult);
 		}, new Error("Modified on client and on server: Employees('foo')"));
 	});
 
@@ -6009,7 +6009,7 @@ sap.ui.define([
 				.returns(oRequestPromise);
 			oCacheMock.expects("fetchTypes").withExactArgs().returns(oFetchPromise);
 			oCacheMock.expects("handleResponse")
-				.withExactArgs(iStart, iEnd, sinon.match.same(oResult),
+				.withExactArgs(sinon.match.same(oResult), iStart, iEnd,
 					sinon.match.same(mTypeForMetaPath));
 			oCacheMock.expects("fill")
 				.withExactArgs(sinon.match(function (oSyncPromise) {

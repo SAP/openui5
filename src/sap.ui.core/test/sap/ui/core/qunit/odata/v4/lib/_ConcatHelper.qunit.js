@@ -89,7 +89,7 @@ sap.ui.define([
 		}
 
 		// code under test
-		oFirstLevelCache.handleResponse(42, 99, oResult, "~mTypeForMetaPath~");
+		oFirstLevelCache.handleResponse(oResult, "a", "b", "c", "...");
 
 		assert.notOk(oFirstLevelCache.hasOwnProperty("handleResponse"), "reverted to prototype");
 		if (fnLeaves) {
@@ -102,8 +102,7 @@ sap.ui.define([
 			fnGrandTotal.resetHistory(); // Note: fnGrandTotal is reused by inner forEach!
 		}
 		assert.strictEqual(fnHandleResponse.callCount, 1);
-		assert.ok(fnHandleResponse.calledWith(42, 99, sinon.match.same(oResult),
-			"~mTypeForMetaPath~"));
+		assert.ok(fnHandleResponse.calledWith(sinon.match.same(oResult), "a", "b", "c", "..."));
 		assert.strictEqual(oResult["@odata.count"], "26");
 		assert.strictEqual(oResult.value.length, 1, "extra rows removed");
 		assert.strictEqual(oResult.value[0], oDataRow);
