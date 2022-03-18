@@ -173,7 +173,7 @@ sap.ui.define([
 				&& oControl.getMetadata().getName() == oInfo.type
 				&& (oInfo.patching
 					|| (oControl.getFocusDomRef() != oFocusRef
-						&& (oControlFocusInfo || /*!oControlFocusInfo &&*/ oControl !== oInfo.control)))) {
+						&& (oControlFocusInfo || /*!oControlFocusInfo &&*/ oControl !== oInfo.control || oInfo.preserved)))) {
 				Log.debug("Apply focus info of control " + oInfo.id, null, "sap.ui.core.FocusHandler");
 				oInfo.control = oControl;
 				this.oLastFocusedControlInfo = oInfo;
@@ -298,6 +298,27 @@ sap.ui.define([
 				triggerFocusleave(this.oLast, null);
 			}
 			this.oLast = null;
+		};
+
+		/**
+		 * Tracks the focus before it is lost during DOM preserving.
+		 * Called by the RenderManager when a DOM element is moved to the preserved area.
+		 *
+		 * If the preserved Element contains the activeElement, the focus is set to the body.
+		 *
+		 * In case the currently activeElement is also the last known focus-ref, we need to track
+		 * this information, so the Focus can correctly restored later on.
+		 *
+		 * @param {Element} oCandidate the DOM element that will be preserved
+		 * @private
+		 * @ui5-restricted sap.ui.core.RenderManager
+		 */
+		FocusHandler.prototype.trackFocusForPreservedElement = function(oCandidate) {
+			if (oCandidate.contains(document.activeElement) &&
+				this.oLastFocusedControlInfo && document.activeElement === this.oLastFocusedControlInfo.focusref) {
+				// the 'preserved' flag will be read during restoreFocus
+				this.oLastFocusedControlInfo.preserved = true;
+			}
 		};
 
 
