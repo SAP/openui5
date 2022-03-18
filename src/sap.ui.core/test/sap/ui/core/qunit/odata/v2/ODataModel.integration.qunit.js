@@ -13048,6 +13048,76 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: If no expand parameter is provided when an entry is created via an ODataListBinding
+	// then the expand parameter of the ODataListBinding is used.
+	// JIRA: CPOUI5MODELS-695
+	QUnit.test("ODataListBinding#create: use expand from binding", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<Table id="table" items="{path : \'/ProductSet\',\
+		parameters : {\
+			expand : \'ToSupplier\',\
+			select : \'Name,ToSupplier/Company\'}}">\
+	<Text id="name" text="{Name}" />\
+	<Text id="companyName" text="{ToSupplier/CompanyName}" />\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("ProductSet?$skip=0&$top=100"
+					+ "&$expand=ToSupplier&$select=Name%2cToSupplier%2fCompany", {
+				results : [{
+					__metadata : {uri : "/ProductSet('1')"},
+					Name : "Laptop",
+					ToSupplier : {
+						__metadata : {uri : "BusinessPartnerSet('42')"},
+						CompanyName : "SAP"
+					}
+				}]
+			})
+			.expectValue("name", ["Laptop"])
+			.expectValue("companyName", ["SAP"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.Product"},
+						Name : "iPhone"
+					},
+					deepPath : "/ProductSet('~key~')",
+					headers : {"sap-messages": "transientOnly"},
+					method : "POST",
+					requestUri : "ProductSet"
+				}, {
+					data : {
+						__metadata : {uri : "ProductSet('2')"},
+						Name : "iPhone"
+					},
+					statusCode : 201
+				}).expectRequest({
+					deepPath : "/$~key~",
+					requestUri : "$~key~?$expand=ToSupplier&$select=ToSupplier"
+				}, {
+					__metadata : {uri : "ProductSet('2')"},
+					ToSupplier : {
+						__metadata : {uri : "BusinessPartnerSet('42')"},
+						CompanyName : "SAP"
+					}
+				})
+				.expectValue("name", ["iPhone", "Laptop"])
+				.expectValue("companyName", ["", "SAP"])
+				.expectValue("companyName", "SAP", 0);
+
+			that.oView.byId("table").getBinding("items").create({Name : "iPhone"});
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Request side effects for entities on object page properly read data for a table on
 	// the object page with creation-rows and its nested lists (Select controls). In the sample, the
 	// table has all kind of rows: transient, created and persisted and read from server. Following

@@ -1789,7 +1789,9 @@ sap.ui.define([
 	 *   The error callback function
 	 * @param {string} [mParameters.expand]
 	 *   A comma-separated list of navigation properties to be expanded for the newly created
-	 *   entity; see {@link sap.ui.model.odata.v2.ODataModel#createEntry}
+	 *   entity; see {@link sap.ui.model.odata.v2.ODataModel#createEntry}; <b>Note:</b> if no expand
+	 *   parameter is given, the expand parameter of this binding is used; see
+	 *   {@link sap.ui.model.odata.v2.ODataModel#bindList}
 	 * @param {string} [mParameters.groupId]
 	 *   The ID of a request group; requests belonging to the same group will be bundled in one
 	 *   batch request
@@ -1853,6 +1855,9 @@ sap.ui.define([
 		sResolvedPath = this.getResolvedPath();
 		oCreatedContextsCache = this.oModel._getCreatedContextsCache();
 		Object.assign(mCreateParameters, mParameters);
+		if (!("expand" in mCreateParameters) && this.mParameters) {
+			mCreateParameters.expand = this.mParameters.expand;
+		}
 		oCreatedContext = this.oModel.createEntry(this.sPath, mCreateParameters);
 		oCreatedContextsCache.addContext(oCreatedContext, sResolvedPath,
 			this.sCreatedEntitiesKey, bAtEnd);
