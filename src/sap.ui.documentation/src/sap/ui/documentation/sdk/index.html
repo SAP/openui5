@@ -23,8 +23,8 @@
 				sOrigin = getUrlParam('sap-ui-xx-sample-origin'),
 				oPath = {};
 
-		if (!sOrigin || sOrigin == ".") {
-			sOrigin = window.location.origin + (window.location.pathname.includes("testsuite") ? "/testsuite" : "");
+		if (window.location.pathname.includes("testsuite")) {
+			sOrigin = window.location.origin +  "/testsuite";
 		}
 
 		oPath["sap/ui/demo/mock"] = sOrigin + "/test-resources/sap/ui/documentation/sdk";
