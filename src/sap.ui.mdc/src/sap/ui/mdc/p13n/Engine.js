@@ -335,19 +335,19 @@ sap.ui.define([
 			return Promise.reject("Please do not use a PeristenceProvider in RTA.");
 		}
 
-		var oModificationHandler = this.getModificationHandler(oControl);
-		var fnInitialAppliance = oModificationHandler.processChanges;
+		var oOriginalModifHandler = this.getModificationHandler(oControl);
+		var oTemporaryRTAHandler = new FlexModificationHandler();
 
 		var oRTAPromise = new Promise(function(resolve, reject){
 			fResolveRTA = resolve;
 		});
 
-		oModificationHandler.processChanges = function(aChanges) {
+		oTemporaryRTAHandler.processChanges = function(aChanges) {
 			fResolveRTA(aChanges);
 			return Promise.resolve(aChanges);
 		};
 
-		this._setModificationHandler(oControl, oModificationHandler);
+		this._setModificationHandler(oControl, oTemporaryRTAHandler);
 
 		this.uimanager.show(oControl, aKeys).then(function(oContainer){
 			var oCustomHeader = oContainer.getCustomHeader();
@@ -361,8 +361,9 @@ sap.ui.define([
 		});
 
 		oRTAPromise.then(function(){
-			oModificationHandler.processChanges = fnInitialAppliance;
-		});
+			this._setModificationHandler(oControl, oOriginalModifHandler);
+			oTemporaryRTAHandler.destroy();
+		}.bind(this));
 
 		return oRTAPromise;
 
