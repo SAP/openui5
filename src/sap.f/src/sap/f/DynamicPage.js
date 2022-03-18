@@ -1227,10 +1227,7 @@ sap.ui.define([
 
 		this.toggleStyleClass("sapFDynamicPageWithScroll", bScrollBarNeeded);
 
-		if (!Device.system.desktop) {
-			setTimeout(this._updateFitContainer.bind(this), 0);
-			return;
-		}
+		setTimeout(this._updateFitContainer.bind(this), 0);
 	};
 
 	DynamicPage.prototype._updateFitContainer = function (bNeedsVerticalScrollBar) {
