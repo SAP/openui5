@@ -707,6 +707,16 @@ sap.ui.define([
 		$Target.css("transform", "translate(" + mPosition.left + "px, " + mPosition.top + "px)");
 	};
 
+	/**
+	 * Sets clip-path of specified DOM element
+	 * @param {jQuery} $Target - DOM element which will receive new clip-path property
+	 * @param {jQuery} $Source - DOM element from which the clip-path property will be copied
+	 */
+	Overlay.prototype._setClipPath = function($Target, $Source) {
+		var sClipPath = $Source.css("clip-path");
+		$Target.css("clip-path", sClipPath);
+	};
+
 	Overlay.prototype.attachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
 			if (typeof fnHandler === "function") { // also do nothing if the second parameter is not a function

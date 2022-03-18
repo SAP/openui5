@@ -394,6 +394,7 @@ sap.ui.define([
 				Overlay.prototype._setPosition.call(this, $ScrollContainerOverlayDomRef, mScrollContainerGeometry, this.$());
 				this._handleOverflowScroll(mScrollContainerGeometry, $ScrollContainerOverlayDomRef, this, bForceScrollbarSync);
 				this._setZIndex(mScrollContainerGeometry, $ScrollContainerOverlayDomRef);
+				this._setClipPath($ScrollContainerOverlayDomRef, $ScrollContainerDomRef);
 			} else {
 				$ScrollContainerOverlayDomRef.css("display", "none");
 			}
