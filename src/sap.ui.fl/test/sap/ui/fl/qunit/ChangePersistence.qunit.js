@@ -1268,7 +1268,7 @@ sap.ui.define([
 
 			var fnPublishStub = sandbox.stub(WriteStorage, "publish").resolves();
 			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oMockNewChange]);
-			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompVariantsMap").resolves({
+			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompVariantsMap").returns({
 				somePersistencyKey: {
 					byId: {
 						id1: oMockCompVariant1,
@@ -1588,13 +1588,13 @@ sap.ui.define([
 			assert.equal(this.oChangePersistence._aDirtyChanges[1], oVENDORChange3, "which is the third change");
 		});
 
-		QUnit.test("when calling resetChanges without aSelectorIds and aChangeTypes (application reset)", function(assert) {
+		QUnit.test("when calling resetChanges without generator, aSelectorIds and aChangeTypes (application reset)", function(assert) {
 			var done = assert.async();
 			// changes for the component
-			var oVENDORChange1 = new Change({
+			var oCUSTOMERChange1 = new Change({
 				fileType: "change",
-				layer: Layer.VENDOR,
-				fileName: "1",
+				layer: Layer.CUSTOMER,
+				fileName: "oCUSTOMERChange1",
 				namespace: "b",
 				packageName: "$TMP",
 				changeType: "labelChange",
@@ -1608,10 +1608,10 @@ sap.ui.define([
 				}
 			});
 
-			var oVENDORChange2 = new Change({
+			var oCUSTOMERChange2 = new Change({
 				fileType: "change",
-				layer: Layer.VENDOR,
-				fileName: "2",
+				layer: Layer.CUSTOMER,
+				fileName: "oCUSTOMERChange2",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -1624,21 +1624,76 @@ sap.ui.define([
 					something: "createNewVariant"
 				}
 			});
+			var oMockCompVariant1 = {
+				getRequest: function () {
+					return "$TMP";
+				},
+				getState: function () {
+					return Change.states.NEW;
+				},
+				getLayer: function () {
+					return Layer.CUSTOMER;
+				}
+			};
 
-			var aChanges = [oVENDORChange1, oVENDORChange2];
+			var oMockCompVariant2 = {
+				getRequest: function () {
+					return "some_transport_id";
+				},
+				getState: function () {
+					return Change.states.PERSISTED;
+				},
+				getLayer: function () {
+					return Layer.VENDOR;
+				}
+			};
+
+			var oMockCompVariant3 = {
+				getFileName: function() {
+					return "oMockCompVariant3";
+				},
+				getRequest: function () {
+					return "some_transport_id";
+				},
+				getState: function () {
+					return Change.states.PERSISTED;
+				},
+				getLayer: function () {
+					return Layer.CUSTOMER;
+				}
+			};
+
+			var aChanges = [oCUSTOMERChange1, oCUSTOMERChange2];
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves(aChanges);
 			var aDeletedChangeContentIds = {response: [{fileName: "1"}, {fileName: "2"}]};
 
 			var oResetChangesStub = sandbox.stub(WriteStorage, "reset").resolves(aDeletedChangeContentIds);
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
 			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").resolves();
-
-			this.oChangePersistence.resetChanges(Layer.VENDOR, "Change.createInitialFileContent").then(function(aChanges) {
+			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompVariantsMap").returns({
+				somePersistencyKey: {
+					byId: {
+						id1: oMockCompVariant1,
+						id2: oMockCompVariant2,
+						id3: oMockCompVariant3
+					}
+				}
+			});
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isPublicLayerAvailable: function() {
+					return true;
+				}
+			});
+			this.oChangePersistence.resetChanges(Layer.CUSTOMER).then(function(aChanges) {
+				assert.equal(fnGetCompEntitiesByIdMapStub.callCount, 1, "then getCompEntitiesByIdMap called once");
 				assert.equal(oResetChangesStub.callCount, 1, "Storage.reset is called once");
 				var oResetArgs = oResetChangesStub.getCall(0).args[0];
 				assert.equal(oResetArgs.reference, "MyComponent");
-				assert.equal(oResetArgs.layer, Layer.VENDOR);
-				assert.equal(oResetArgs.generator, "Change.createInitialFileContent");
+				assert.equal(oResetArgs.layer, Layer.CUSTOMER);
+				assert.equal(oResetArgs.changes.length, 3); //oCUSTOMERChange1, oCUSTOMERChange2, oMockCompVariant3
+				assert.equal(oResetArgs.changes[0].getFileName(), "oCUSTOMERChange1");
+				assert.equal(oResetArgs.changes[1].getFileName(), "oCUSTOMERChange2");
+				assert.equal(oResetArgs.changes[2].getFileName(), "oMockCompVariant3");
 				assert.equal(oCacheRemoveChangesStub.callCount, 0, "the Cache.removeChanges is not called");
 				assert.equal(oGetChangesFromMapByNamesStub.callCount, 0, "the getChangesFromMapByNames is not called");
 				assert.deepEqual(aChanges, [], "empty array is returned");
