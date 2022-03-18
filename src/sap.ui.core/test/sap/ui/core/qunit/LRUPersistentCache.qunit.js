@@ -316,6 +316,82 @@ sap.ui.define(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
 					});
 				});
 
+				QUnit.test("delete with filters - olderThan", function(assert) {
+					// arrange
+					var done = assert.async();
+					var pSet1 = oCache.set("a1", { value: "1" });
+					var pSet2 = oCache.set("a2", { value: "2" });
+					var pSet3 = oCache.set("b3", { value: "3" });
+
+					// act - get all 3 entries, after 50 ms get one of them, filter and delete them
+					// based on usage time, verify correct delete
+					Promise.all([ pSet1, pSet2, pSet3 ]).then(function() {
+						return Promise.all([ oCache.get("a1"), oCache.get("b3"), oCache.get("a2") ]);
+					}).then(function() {
+						var oFilterDate = new Date();
+						setTimeout(function() {
+							oCache.get("a2").then(function() {
+								return oCache.delWithFilters({ olderThan: oFilterDate });
+							}).then(function() {
+								return Promise.all([oCache.has("a1"), oCache.has("a2"), oCache.has("b3")]);
+							}).then(function(aResults) {
+								assert.strictEqual(aResults[0], false, "entry 1 was deleted");
+								assert.strictEqual(aResults[1], true, "entry 2 remained");
+								assert.strictEqual(aResults[2], false, "entry 3 was deleted");
+								done();
+							});
+						}, 50);
+					});
+				});
+
+				QUnit.test("delete with filters - prefix", function(assert) {
+					// arrange
+					var done = assert.async();
+					var pSet1 = oCache.set("a1", { value: "1" });
+					var pSet2 = oCache.set("a2", { value: "2" });
+					var pSet3 = oCache.set("b3", { value: "3" });
+
+					// act - delete based on key prefix, verify correct delete
+					Promise.all([ pSet1, pSet2, pSet3 ]).then(function() {
+						return oCache.delWithFilters({ prefix: "a" });
+					}).then(function() {
+						return Promise.all([oCache.has("a1"), oCache.has("a2"), oCache.has("b3")]);
+					}).then(function(aResults) {
+						assert.strictEqual(aResults[0], false, "entry 1 was deleted");
+						assert.strictEqual(aResults[1], false, "entry 2 was deleted");
+						assert.strictEqual(aResults[2], true, "entry 3 remained");
+						done();
+					});
+				});
+
+				QUnit.test("delete with filters - olderThan & prefix", function(assert) {
+					// arrange
+					var done = assert.async();
+					var pSet1 = oCache.set("a1", { value: "1" });
+					var pSet2 = oCache.set("a2", { value: "2" });
+					var pSet3 = oCache.set("b3", { value: "3" });
+
+					// act - get all 3 entries, after 50 ms get one of them, filter and delete them
+					// based on usage time & prefix, verify correct delete
+					Promise.all([ pSet1, pSet2, pSet3 ]).then(function() {
+						return Promise.all([ oCache.get("a1"), oCache.get("b3"), oCache.get("a2") ]);
+					}).then(function() {
+						var oFilterDate = new Date();
+						setTimeout(function() {
+							oCache.get("a2").then(function() {
+								return oCache.delWithFilters({ olderThan: oFilterDate, prefix: "a" });
+							}).then(function() {
+								return Promise.all([oCache.has("a1"), oCache.has("a2"), oCache.has("b3")]);
+							}).then(function(aResults) {
+								assert.strictEqual(aResults[0], false, "entry 1 was deleted");
+								assert.strictEqual(aResults[1], true, "entry 2 remained");
+								assert.strictEqual(aResults[2], true, "entry 3 remained");
+								done();
+							});
+						}, 50);
+					});
+				});
+
 				QUnit.module("Index", {
 					beforeEach: function() {
 					},

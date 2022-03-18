@@ -253,6 +253,12 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("#delWithFilters", function(assert) {
+			return this.executeMethodSuccessfully("delWithFilters", [{ prefix: "key1", olderThan: new Date() }]).then(function() {
+				return this.executeMethodWithError("delWithFilters", [{ prefix: "key1", olderThan: new Date() }], "Error: access denied");
+			}.bind(this));
+		});
+
 		QUnit.module("Switching on/off", {
 			afterEach: function() {
 				return deleteDatabaseEntries();

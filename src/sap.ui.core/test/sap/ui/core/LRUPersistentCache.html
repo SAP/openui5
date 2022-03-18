@@ -52,14 +52,35 @@
 				document.getElementById("output").innerHTML = output;
 			});
 		}
+
+		function delFilters() {
+			var oOptions = {};
+			var oInputTimestamp = document.getElementById("timestamp");
+			var iTimestamp;
+
+			if (oInputTimestamp.value) {
+				iTimestamp = parseInt(oInputTimestamp.value, 10);
+
+				if (!isNaN(iTimestamp)) {
+					oOptions.olderThan = new Date(iTimestamp);
+				}
+			}
+
+			oOptions.prefix = document.getElementById("prefix").value;
+
+			oCache.delWithFilters(oOptions);
+		}
 	</script>
 </head>
 <body>
-<input type="text" id="idValue" value="Some entry value....">
+<input type="text" id="idValue" placeholder="Some entry value...">
 <button onclick="addEntry('key1', 'idValue')">Add Entry</button>
 <button onclick="addLargeEntry()">Add large entry</button>
 <input type="text" id="idGetKey" value="">
 <button onclick="getEntry('idGetKey')">Get Entry</button>
+<input type="text" id="timestamp" placeholder="timestamp">
+<input type="text" id="prefix" placeholder="prefix">
+<button onclick="delFilters()">Delete with filters</button>
 <section id="output"></section>
 
 </body>
