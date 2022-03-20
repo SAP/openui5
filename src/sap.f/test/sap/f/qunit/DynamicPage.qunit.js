@@ -895,6 +895,25 @@ function (
 		Core.getConfiguration().setAnimationMode(sOriginalMode);
 	});
 
+	QUnit.test("Changing 'showFooter' property invalidates control", function (assert) {
+		// Arrange
+		var oSpy = this.spy(this.oDynamicPage, "invalidate"),
+			fnDone = assert.async();
+
+		assert.expect(1);
+
+		this.oDynamicPage.addEventDelegate({
+			"onAfterRendering": function() {
+				// Assert
+				assert.ok(oSpy.called, "DynamicPage is invalidated when 'showFooter' property is changed");
+				fnDone();
+			}
+		});
+
+		// Act
+		this.oDynamicPage.setShowFooter(false);
+	});
+
 	/* --------------------------- DynamicPage Mobile Rendering ---------------------------------- */
 	QUnit.module("DynamicPage - Rendering - Mobile", {
 		before: function() {

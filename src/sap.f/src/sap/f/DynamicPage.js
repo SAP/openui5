@@ -488,7 +488,7 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.setShowFooter = function (bShowFooter) {
-		var vResult = this.setProperty("showFooter", bShowFooter, true);
+		var vResult = this.setProperty("showFooter", bShowFooter);
 
 		this._toggleFooter(bShowFooter);
 
