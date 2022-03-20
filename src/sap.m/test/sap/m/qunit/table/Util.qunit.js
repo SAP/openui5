@@ -147,7 +147,6 @@ sap.ui.define([
 
 		var fSizeAfterThemeChanged = Util.calcHeaderWidth("Some Long Header Text", 9);
 		assert.ok(fSizeAfterThemeChanged > fSizeBeforeThemeChanged);
-		assert.equal(fSizeAfterThemeChanged, Util.measureText("Some Long Header Text", "bold 14px Arial"));
 
 		oThemeParametersStub.restore();
 		Core.notifyContentDensityChanged();

@@ -2103,7 +2103,10 @@ sap.ui.define([
 				title: "Test Page for sap.m.semantic.ShareMenu"
 			},
 			"table/Util": {
-				title: "Test Page for sap.m.table.Util"
+				title: "Test Page for sap.m.table.Util",
+				ui5: {
+					language: "en-US"
+				}
 			}
 		}
 	};
