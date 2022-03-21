@@ -4,7 +4,7 @@
 /* =================================== */
 
 .sapMMsgStrip {
-	border-radius: @sapUiElementBorderCornerRadius;
+	border-radius: @sapUiPopoverBorderCornerRadius;
 	border-width: 0.125rem;
 }
 
@@ -16,12 +16,7 @@
 	top: -0.0625rem;
 }
 
-.sapMMsgStripInformation {
-	background-color: @sapInformationBackground;
-	border-color: @sapInformationBorderColor;
-	color: @sapUiBaseText;
-
-	& .sapMMsgStripIcon {
-		color: @sapInformativeElementColor;
-	}
+.sapMMsgStripMessage>.sapMLnk {
+	padding-right: 0.25rem;
+	padding-left: 0.25rem;
 }
