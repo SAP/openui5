@@ -1252,5 +1252,47 @@
         ]
       }
     ]
+  },
+  "1.84.23": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "5877ff54fa024e260a5eb8a47182541b0de0faca",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: apply focus on the first focusable element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170287752"
+          }
+        ]
+      },
+      {
+        "id": "002495c234b24c314e5807921452ba09c93f9b7b",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Filter no longer cleared when selecting an item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001416502022"
+          }
+        ]
+      },
+      {
+        "id": "2fa65d827b7f03c7aa2dabb77de3e6f28a2a8d33",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: aria role and description adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280013612"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400001343412022"
+          }
+        ]
+      }
+    ]
   }
 }
