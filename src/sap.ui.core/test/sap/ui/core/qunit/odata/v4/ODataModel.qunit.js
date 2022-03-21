@@ -2711,7 +2711,7 @@ sap.ui.define([
 		oModel = this.createModel("", {earlyRequests : true});
 
 		oRequestorMock = this.mock(oModel.oRequestor);
-		oRequestorMock.expects("isFirstBatchSent").thrice().withExactArgs().returns(false);
+		oRequestorMock.expects("isBatchSent").thrice().withExactArgs().returns(false);
 
 		assert.throws(function () {
 			// code under test - not a function
@@ -2725,12 +2725,12 @@ sap.ui.define([
 			oModel.setOptimisticBatchEnabler(function () {});
 		}, new Error("The setter is called more than once"));
 
-		oRequestorMock.expects("isFirstBatchSent").withExactArgs().returns(true);
+		oRequestorMock.expects("isBatchSent").withExactArgs().returns(true);
 
 		assert.throws(function () {
 			// code under test - to late
 			oModel.setOptimisticBatchEnabler("n/a");
-		}, new Error("The setter is called after the first $batch request is sent"));
+		}, new Error("The setter is called after a non-optimistic batch is sent"));
 	});
 });
 //TODO constructor: test that the service root URL is absolute?

@@ -175,45 +175,52 @@ sap.ui.define([
 		assert.notOk(_Requestor.matchesOptimisticBatch(aActual, "", aOptimistic, ""));
 
 		aActual = [{url : "foo"}];
-		aOptimistic = [{url : "foo"}];
+		aOptimistic = [{headers : {}, url : "foo"}];
 
 		// code under test
 		assert.ok(_Requestor.matchesOptimisticBatch(aActual, "", aOptimistic, ""));
 
 		aActual = [{url : "foo"}];
-		aOptimistic = [{url : "bar"}];
+		aOptimistic = [{headers : {}, url : "bar"}];
 
 		// code under test
 		assert.notOk(_Requestor.matchesOptimisticBatch(aActual, "", aOptimistic, ""));
 
 		aActual = [{url : "foo"}, {url : "bar"}];
-		aOptimistic = [{url : "foo"}, {url : "bar"}];
+		aOptimistic = [
+			{headers : {}, url : "foo"},
+			{headers : {}, url : "bar"}
+		];
 
 		// code under test
 		assert.ok(_Requestor.matchesOptimisticBatch(aActual, "", aOptimistic, ""));
 
 		aActual = [{
-			headers : "~ActualHeaders0~", url : "foo"
+			headers : {foo : "actual0", "X-CSRF-Token" : "abc"}, url : "foo"
 		}, {
-			headers : "~ActualHeaders1~", url : "bar"
+			headers : {foo : "actual1", "X-CSRF-Token" : "xyz"}, url : "bar"
 		}];
 		aOptimistic = [{
-			headers : "~OptimisticHeaders0~", url : "foo"
+			headers : {foo : "optimistic0"}, url : "foo"
 		}, {
-			headers : "~OptimisticHeaders1~", url : "bar"
+			headers : {foo : "optimistic1"}, url : "bar"
 		}];
 
-		oHelperMock.expects("deepEqual").withExactArgs("~ActualHeaders0~", "~OptimisticHeaders0~")
+		oHelperMock.expects("deepEqual")
+			.withExactArgs({foo : "actual0"}, aOptimistic[0].headers)
 			.returns(true);
-		oHelperMock.expects("deepEqual").withExactArgs("~ActualHeaders1~", "~OptimisticHeaders1~")
+		oHelperMock.expects("deepEqual")
+			.withExactArgs({foo : "actual1"}, aOptimistic[1].headers)
 			.returns(true);
 
 		// code under test
 		assert.ok(_Requestor.matchesOptimisticBatch(aActual, "", aOptimistic, ""));
 
-		oHelperMock.expects("deepEqual").withExactArgs("~ActualHeaders0~", "~OptimisticHeaders0~")
+		oHelperMock.expects("deepEqual")
+			.withExactArgs({foo : "actual0"}, aOptimistic[0].headers)
 			.returns(true);
-		oHelperMock.expects("deepEqual").withExactArgs("~ActualHeaders1~", "~OptimisticHeaders1~")
+		oHelperMock.expects("deepEqual")
+			.withExactArgs({foo : "actual1"}, aOptimistic[1].headers)
 			.returns(false);
 
 		// code under test
@@ -250,7 +257,7 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.sServiceUrl, sServiceUrl);
 		assert.strictEqual(oRequestor.vStatistics, bStatistics ? vStatistics : undefined);
 		assert.strictEqual(oRequestor.oOptimisticBatch, null);
-		assert.strictEqual(oRequestor.isFirstBatchSent(), false);
+		assert.strictEqual(oRequestor.isBatchSent(), false);
 		assert.ok("vStatistics" in oRequestor);
 
 		oHelperMock.expects("buildQuery").withExactArgs(undefined).returns("");
@@ -1780,12 +1787,12 @@ sap.ui.define([
 				createResponse({})
 			]);
 
-		assert.notOk(oRequestor.isFirstBatchSent());
+		assert.notOk(oRequestor.isBatchSent());
 
 		// code under test
 		oPromise = oRequestor.processBatch("groupId");
 
-		assert.ok(oRequestor.isFirstBatchSent());
+		assert.ok(oRequestor.isBatchSent());
 
 		return oPromise;
 	});
@@ -4677,7 +4684,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("sendOptimisticBatch: w/o firstBatch", function (assert) {
+	QUnit.test("sendOptimisticBatch: w/o optimistic batch", function (assert) {
 		var oRequestor = _Requestor.create("/", oModelInterface),
 			oGetPromise = Promise.resolve(/*no first batch*/),
 			sKey = window.location.href;
@@ -4699,9 +4706,9 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("sendOptimisticBatch: with firstBatch", function (assert) {
-		var oFirstBatch = {requests : "~aRequests~", groupId : "~sGroupId~"},
-			oGetPromise = Promise.resolve(oFirstBatch),
+	QUnit.test("sendOptimisticBatch: with optimistic batch", function (assert) {
+		var oOptimisticBatch = {requests : "~aRequests~", groupId : "~sGroupId~"},
+			oGetPromise = Promise.resolve(oOptimisticBatch),
 			sKey = window.location.href,
 			oRequestor = _Requestor.create("/", oModelInterface);
 
@@ -4712,7 +4719,7 @@ sap.ui.define([
 			.withExactArgs("~aRequests~", "~sGroupId~")
 			.returns("~sendBatchResult~");
 		this.oLogMock.expects("info")
-			.withExactArgs("optimistic$batch: sent ", sKey, sClassName);
+			.withExactArgs("optimistic batch: sent ", sKey, sClassName);
 
 		// code under test
 		oRequestor.sendOptimisticBatch();
@@ -4721,7 +4728,7 @@ sap.ui.define([
 
 		return oGetPromise.then(function () {
 			assert.deepEqual(oRequestor.oOptimisticBatch, {key : sKey,
-				firstBatch : oFirstBatch,
+				firstBatch : oOptimisticBatch,
 				result : "~sendBatchResult~"});
 		});
 	});
@@ -4752,21 +4759,21 @@ sap.ui.define([
 
 	//*****************************************************************************************
 	QUnit.test("sendOptimisticBatch: #processBatch before read finished", function (assert) {
-		var oFirstBatch = {requests : "~aRequests~", groupId : "~sGroupId~"},
+		var oOptimisticBatch = {requests : "~aRequests~", groupId : "~sGroupId~"},
 			oRequestor = _Requestor.create("/", oModelInterface),
 			that = this,
 			oGetPromise = new Promise(function (fnResolve) {
 				that.mock(oRequestor).expects("sendBatch").never();
 				that.oLogMock.expects("error")
-					.withExactArgs("optimistic$batch: #processBatch called before optimistic "
+					.withExactArgs("optimistic batch: #sendBatch called before optimistic "
 						+ "batch payload could be read", undefined, sClassName);
-				fnResolve(oFirstBatch);
+				fnResolve(oOptimisticBatch);
 			});
 
 		this.mock(CacheManager).expects("get")
 			.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + window.location.href)
 			.resolves(oGetPromise);
-		this.mock(oRequestor).expects("isFirstBatchSent")
+		this.mock(oRequestor).expects("isBatchSent")
 			.withExactArgs()
 			.returns(true); // simulate #processBatch
 
@@ -4815,7 +4822,7 @@ sap.ui.define([
 		oModelInterfaceMock.expects("getOptimisticBatchEnabler").withExactArgs()
 			.returns("notCalled");
 		this.oLogMock.expects("warning")
-			.withExactArgs("optimistic$batch: modifying $batch not supported", sKey, sClassName);
+			.withExactArgs("optimistic batch: modifying batch not supported", sKey, sClassName);
 
 		// code under test
 		assert.strictEqual(oRequestor.processOptimisticBatch([
@@ -4828,7 +4835,7 @@ sap.ui.define([
 		oModelInterfaceMock.expects("getOptimisticBatchEnabler").withExactArgs()
 			.returns("notCalled");
 		this.oLogMock.expects("warning")
-			.withExactArgs("optimistic$batch: modifying $batch not supported", sKey, sClassName);
+			.withExactArgs("optimistic batch: modifying batch not supported", sKey, sClassName);
 
 		// code under test
 		assert.strictEqual(
@@ -4853,7 +4860,7 @@ sap.ui.define([
 			.withExactArgs()
 			.returns(fnEnabler);
 		that.oLogMock.expects("info")
-			.withExactArgs("optimistic$batch: disabled", sKey, sClassName);
+			.withExactArgs("optimistic batch: disabled", sKey, sClassName);
 
 		// code under test
 		assert.strictEqual(oRequestor.processOptimisticBatch([{method : "GET"}], "n/a"), undefined);
@@ -4878,12 +4885,12 @@ sap.ui.define([
 			sGroupId = "group",
 			sKey = window.location.href,
 			aRequests = [{
-				headers : "~headers0~",
+				headers : {header0 : "saved", "X-CSRF-Token" : "not saved"},
 				method : "GET",
 				url : "url0",
 				foo : "not saved"
 			}, {
-				headers : "~headers1~",
+				headers : {header1 : "saved", "X-CSRF-Token" : "not saved"},
 				method : "GET",
 				url : "url1",
 				bar : "not saved"
@@ -4896,7 +4903,7 @@ sap.ui.define([
 		//** enabler existing, and gets called with key, returns/resolves truthy, CacheManager.set
 		oSetPromise = new Promise(function (fnResolve) {
 			that.oLogMock.expects("info")
-				.withExactArgs("optimistic$batch: enabled, $batch payload saved", sKey,
+				.withExactArgs("optimistic batch: enabled, batch payload saved", sKey,
 					sClassName);
 			fnResolve();
 		});
@@ -4909,11 +4916,11 @@ sap.ui.define([
 		this.mock(CacheManager).expects("set")
 			.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey, {groupId : "group",
 				requests : [{
-					headers : "~headers0~",
+					headers : {header0 : "saved"},
 					method : "GET",
 					url : "url0"
 				}, {
-					headers : "~headers1~",
+					headers : {header1 : "saved"},
 					method : "GET",
 					url : "url1"
 			}]})
@@ -4971,7 +4978,7 @@ sap.ui.define([
 				return Promise.resolve(true);
 			},
 			aRequests = [{
-				headers : "~headers0~",
+				headers : {foo : "bar"},
 				method : "GET",
 				url : "url0",
 				foo : "foo0"
@@ -4993,12 +5000,14 @@ sap.ui.define([
 			.withExactArgs()
 			.returns(fnEnabler);
 		this.mock(CacheManager).expects("set")
-			.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey, {groupId : "group",
+			.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey, {
+				groupId : "group",
 				requests : [{
-					headers : "~headers0~",
+					headers : {foo : "bar"},
 					method : "GET",
 					url : "url0"
-			}]})
+				}]
+			})
 			.rejects(oError);
 
 		// code under test
@@ -5006,7 +5015,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("processOptimisticBatch: n+1 app start, optimisticBatch matches", function (assert) {
+	QUnit.test("processOptimisticBatch: n+1 start, optimistic batch matches", function (assert) {
 		var sKey = window.location.href,
 			oOptimisticBatch = {
 				firstBatch : {
@@ -5023,7 +5032,7 @@ sap.ui.define([
 			.withExactArgs("~requests~", "~group~", "~optimisticRequests~", "~optimisticGroup~")
 			.returns(true);
 		this.oLogMock.expects("info")
-			.withExactArgs("optimistic$batch: success, response consumed", sKey, sClassName);
+			.withExactArgs("optimistic batch: success, response consumed", sKey, sClassName);
 		this.mock(CacheManager).expects("set").never();
 		this.mock(oModelInterface).expects("getOptimisticBatchEnabler").never();
 
@@ -5061,7 +5070,7 @@ sap.ui.define([
 			.withExactArgs("~requests~", "~group~", "~optimisticRequests~", "~optimisticGroup~")
 			.returns(false);
 		this.oLogMock.expects("warning")
-			.withExactArgs("optimistic$batch: mismatch, response skipped", sKey, sClassName);
+			.withExactArgs("optimistic batch: mismatch, response skipped", sKey, sClassName);
 		oCacheManagerMock.expects("del")
 			.withExactArgs("sap.ui.model.odata.v4.optimisticBatch:" + sKey)
 			.rejects(oError);

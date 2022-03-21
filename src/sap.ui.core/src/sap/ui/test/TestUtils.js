@@ -801,7 +801,8 @@ sap.ui.define([
 
 		/**
 		 * @returns {boolean|undefined}
-		 *   <code>true</code> if optimistic $batch should be used, undefined if not specified.
+		 *   <code>true</code> if optimistic batch should be used, <code>undefined</code> if not
+		 *   specified.
 		 */
 		isOptimisticBatch : function () {
 			return bOptimisticBatch;

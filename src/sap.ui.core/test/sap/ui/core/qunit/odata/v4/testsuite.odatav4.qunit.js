@@ -98,6 +98,11 @@ sap.ui.define(function () {
 				module : ["sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/Opa.qunit"],
 				realOData : false // requires stable test data
 			},
+			"OPA.OptimisticBatch" : {
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/LateProperties/Opa.OptimisticBatch.qunit"],
+				realOData : false // works also with realOData, but this is not needed
+			},
 			"OPA.Products" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/Products/Opa.qunit"],

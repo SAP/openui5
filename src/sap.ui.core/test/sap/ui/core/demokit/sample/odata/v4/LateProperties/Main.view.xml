@@ -5,8 +5,9 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
-		<Table id="SalesOrderList" growing="true" growingThreshold="5" items="{/SalesOrderList}"
-			   mode="SingleSelectMaster" selectionChange="onSalesOrderSelect">
+		<Table id="SalesOrderList" growing="true" growingThreshold="5"
+				items="{path : '/SalesOrderList', suspended : true}"
+				mode="SingleSelectMaster" selectionChange="onSalesOrderSelect">
 			<headerToolbar>
 				<Toolbar>
 					<Title text="Sales Order" level="H1"/>
