@@ -1,8 +1,8 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/layout/library", "sap/ui/mdc/link/Panel", "sap/ui/mdc/link/PanelItem", "sap/ui/layout/form/SimpleForm", "sap/ui/core/Icon", "sap/ui/mdc/p13n/Engine", "sap/ui/core/Core"
-], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, Engine, oCore) {
+	"sap/ui/layout/library", "sap/ui/mdc/link/Panel", "sap/ui/mdc/link/PanelItem", "sap/ui/layout/form/SimpleForm", "sap/ui/core/Icon", "sap/ui/mdc/p13n/Engine", "sap/ui/core/Core", "sap/m/Text"
+], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, Engine, oCore, Text) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
@@ -361,6 +361,27 @@ sap.ui.define([
 		Panel.navigate(sBaseUrl + "#navigate");
 		assert.equal(window.location.href, sBaseUrl + "#navigate", "Navigation happened");
 		assert.equal(Panel.oNavigationPromise, undefined, "Navigation Promise is undefined");
+	});
+
+	QUnit.module("applySettings");
+
+	QUnit.test("with additionalContent", function(assert) {
+		var oText = new Text({ text: "Text" });
+		var oPanel = new Panel({
+			additionalContent: [ oText ]
+		});
+
+		// Check if additionalContent got forwarded
+		assert.deepEqual(oPanel.getAdditionalContent(), [], "additionalContent aggregation of Panel is empty");
+		assert.deepEqual(oPanel.getAggregation("_content").getContent()[0].getItems(), [oText], "additionalContent got forwarded to internal '_content' aggregation");
+	});
+
+	QUnit.test("enablePersonalization false", function(assert) {
+		var oPanel = new Panel({
+			enablePersonalization: false
+		});
+
+		assert.equal(oPanel.getAggregation("_content").getContent()[3].getItems()[0].getVisible(), false, "personalization buttons visibility set to false");
 	});
 
 });
