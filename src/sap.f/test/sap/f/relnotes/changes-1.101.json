@@ -3,6 +3,21 @@
     "date": "March 2022",
     "notes": [
       {
+        "id": "13b32005937846f03522ae289558ffd55b52e679",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Restore automatic fitContent management",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270032047"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270031933"
+          }
+        ]
+      },
+      {
         "id": "af17db5801fce2d4ca282e0ef90bcd90d765c597",
         "type": "FIX",
         "text": " sap.f.Card: Custom headers no longer need to implement private _getTitle method",

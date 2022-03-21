@@ -3,6 +3,132 @@
     "date": "March 2022",
     "notes": [
       {
+        "id": "7ed5aaadedcf18b4b3b33a09bbba3491a9ff6ca8",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Removed \"Z\" characters from illustration"
+      },
+      {
+        "id": "409f203c1cf42bd1cc5b115b97eb6347103e9892",
+        "type": "FIX",
+        "text": " sap.m.StepInput: accepts 0 as minimum or maximum binding constraint",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280080915"
+          }
+        ]
+      },
+      {
+        "id": "5152a8f79906a07a380d7fec190ff37af4472477",
+        "type": "FIX",
+        "text": " sap.m.Label: Asterisk is displayed properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270016372"
+          }
+        ]
+      },
+      {
+        "id": "f267cef0601220b28797659720b192699aab7755",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar:  Drag and drop actions with scale factor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280056370"
+          }
+        ]
+      },
+      {
+        "id": "2a69d0829bcd0825f050d0cf8a937da7fd97553f",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Tooltips state and visualization are now adjusted correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280076351"
+          }
+        ]
+      },
+      {
+        "id": "cc1aa0ef03b450fc79678cf7c2319214ea1cd417",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Fixed alignment on zoom out in Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270003188"
+          }
+        ]
+      },
+      {
+        "id": "b9fe66ea6bcfd46832f4329d7842b018936d8562",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: No error after rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270024795"
+          }
+        ]
+      },
+      {
+        "id": "4e4477bb6e13d311b00454b321ff4ee518ccbf13",
+        "type": "FIX",
+        "text": " sap.m.Bar: Bar used as Page header respects responsive paddings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280069199"
+          }
+        ]
+      },
+      {
+        "id": "f50ae2b488f18cd2d7823f36043dcf1402eae846",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: selected date is a constant",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001858302022"
+          }
+        ]
+      },
+      {
+        "id": "e20f61a0b820dcd59c3c59408d7072d0e5add149",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: fixed focus when placed in ObjectHeader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015351"
+          }
+        ]
+      },
+      {
+        "id": "67c064697d63f47d2c7acb56fdc7a74f89d1a6e5",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: fixed ACC sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270013288"
+          }
+        ]
+      },
+      {
+        "id": "da5387627fab462ff2ae3fe8f9df2cd744fe994e",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Aria-selected is now set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270006679"
+          }
+        ]
+      },
+      {
         "id": "977c8044fadddc6ed8d268a080837c988575d920",
         "type": "FIX",
         "text": " sap.m.MenuButton: fixed ACC sample and added documentation",
