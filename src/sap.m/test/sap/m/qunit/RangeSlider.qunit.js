@@ -291,6 +291,11 @@ sap.ui.define([
 		assert.ok(fnUpdateTooltipsPositionAndStateSpy.calledTwice, "UpdateTooltipContentSpy is called");
 	});
 
+	QUnit.test("set/getValue() should not throw if advanced tooltip is not passed", function (assert) {
+		this.rangeSlider._updateTooltipContent(null, 50);
+		assert.ok(true, "No error is thrown");
+	});
+
 	QUnit.test("set/getStep()", function (assert) {
 		//arrange
 		var aTooltips, fnWarningSpy = this.spy(Log, "warning");
