@@ -617,11 +617,6 @@ sap.ui.define([
 			} else {
 				this.$().removeClass("sapMTileSmallPhone");
 			}
-			if (this._isIconMode()) {
-				this.$().addClass("sapMTResponsiveIconMode");
-			} else {
-				this.$().removeClass("sapMTResponsiveIconMode");
-			}
 		}.bind(this);
 
 		jQuery(window).on("resize", fnCheckMedia);
