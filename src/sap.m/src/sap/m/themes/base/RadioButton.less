@@ -42,12 +42,18 @@
 	.sapMRbBOut {
 		height: 100%;
 		width: 100%;
-		transform: translate(50%, 50%);
+		transform: translate(0.675rem, 0.675rem);
 		margin: 0.825rem;
 		padding: 1px; /* using padding here so that margin won't collide */
 		stroke: @sapUiFieldBorderColor;
 		fill: @sapUiFieldBackground;
 	}
+}
+.sapUiSizeCompact {
+	.sapMRb .sapMRbB {
+	.sapMRbBOut {
+		transform: translate(0.5rem, 0.5rem);
+	}}
 }
 
 .sapMRbSvg {
@@ -94,12 +100,18 @@
 }
 
 .sapMRbB .sapMRbBInn {
-	transform: translate(50%, 50%);
+	transform: translate(0.675rem, 0.675rem);
 	stroke: transparent;
 	fill: none;
 	-webkit-user-select: none;
 	align-self: center;
 	r: 22%;
+}
+
+.sapUiSizeCompact {
+	.sapMRbBInn {
+		transform: translate(0.5rem, 0.5rem);
+	}
 }
 
 .sapMRbHasLabel.sapMRb:focus:before {
@@ -214,7 +226,13 @@
 html[dir="rtl"] {
 	.sapMRbB .sapMRbBInn,
 	.sapMRb .sapMRbB .sapMRbBOut {
-		transform: translate(-50%, 50%);
+		transform: translate(-0.675rem, 0.675rem);
+	}
+	.sapUiSizeCompact {
+		.sapMRbB .sapMRbBInn,
+		.sapMRb .sapMRbB .sapMRbBOut {
+			transform: translate(-0.675rem, 0.675rem);
+		}
 	}
 }
 
