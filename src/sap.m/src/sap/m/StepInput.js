@@ -1544,7 +1544,7 @@ function(
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
 				sBindingConstraintMin = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.minimum;
 
-			return sBindingConstraintMin ? parseFloat(sBindingConstraintMin) : this.getMin();
+			return sBindingConstraintMin !== undefined ? parseFloat(sBindingConstraintMin) : this.getMin();
 		};
 
 		StepInput.prototype._getMax = function() {
@@ -1552,7 +1552,7 @@ function(
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
 				sBindingConstraintMax = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.maximum;
 
-			return sBindingConstraintMax ? parseFloat(sBindingConstraintMax) : this.getMax();
+			return sBindingConstraintMax !== undefined ? parseFloat(sBindingConstraintMax) : this.getMax();
 		};
 
 		/**
