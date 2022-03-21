@@ -3,6 +3,17 @@
     "date": "March 2022",
     "notes": [
       {
+        "id": "377ef1f5377140ca125984b7c76e9b8964ac7860",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: No error after rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270024795"
+          }
+        ]
+      },
+      {
         "id": "01503c649bc2c5d299c06329213fdacd0fbb3b60",
         "type": "FIX",
         "text": " Table: Column width calculation issue",
