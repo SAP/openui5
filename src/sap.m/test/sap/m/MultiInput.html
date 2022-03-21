@@ -944,6 +944,19 @@
 						})
 					});
 
+					// MultiInput with placeholder and nMore
+					oPlaceholderMultiInput = new MultiInput("mi-placeholder", {
+						ariaLabelledBy: "placeholderLabel",
+						placeholder: "Placeholder - should appear when no tokens are present",
+						width: "50%",
+						tokens: [
+							new Token({ text: "Cras at eros eleifend, fringilla lectus eu, luctus justo. Mauris vehicula ac dui quis finibus." }),
+							new Token({ text: "Morbi pulvinar consectetur tortor sit amet luctus. Nullam condimentum justo sit amet diam malesuada, eu rutrum lorem facilisis." }),
+							new Token({ text: "Pellentesque a pellentesque lectus. Nullam consequat quam dapibus diam vulputate, iaculis sollicitudin lorem bibendum." }),
+							new Token({ text: "Lorem ipsum" })
+						]
+					});
+
 					//*******************************
 					var theCompactMode= new sap.m.CheckBox("compactMode", {
 						selected: false,
@@ -1022,7 +1035,9 @@
 							new Label("stickySuggestionsLabel", {text: "MultiInput with sticky suggestions header", labelFor: "multiInputWithStickySuggestions"}),
 							oMultiInputWithStickySuggestions,
 							new Label("longSuggestionsLabel", {text: "MultiInput with small width and long suggestions", width:"100%", labelFor: "mi-long-sugg-small-width"}),
-							oSuggMultiInputPopoverWidth
+							oSuggMultiInputPopoverWidth,
+							new Label("placeholderLabel", {text: "MultiInput with nMore and placeholder", width:"100%", labelFor: "mi-placeholder"}),
+							oPlaceholderMultiInput,
 						]
 					}).addStyleClass("sapUiContentPadding");
 
