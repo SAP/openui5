@@ -61,6 +61,12 @@
 					}
 				});
 			}
+
+			// Get Visibility Level Information
+			// "internal" will show APIs marked with "@public", "@protected" or "@ui5-restricted"
+			// anything else will show APIs marked with "@public" or "@protected"
+			var oUrlParams = new URLSearchParams(document.location.search);
+			window['sap-ui-documentation-config'].visibility = oUrlParams.get("visibility") || "external";
 		})();
 
 		sap.ui.getCore().attachInit(function () {
