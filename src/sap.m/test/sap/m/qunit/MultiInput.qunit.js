@@ -470,6 +470,77 @@ sap.ui.define([
 		assert.ok(true, "No exception is thrown");
 	});
 
+	QUnit.module("_useCollapsedMode");
+
+	QUnit.test("Should call '_useCollapsedMode' with false on initial rendering", function (assert) {
+		var oMultiInput = new MultiInput({
+			width: "200px",
+			tokens: [
+				new Token({text: "Token 1", key: "0001"}),
+				new Token({text: "Token 2", key: "0002"}),
+				new Token({text: "Token 3", key: "0003"}),
+				new Token({text: "Token 4", key: "0004"}),
+				new Token({text: "Token 5", key: "0005"}),
+				new Token({text: "Token 6", key: "0006"}),
+				new Token({text: "Token 7", key: "0007"})
+			]
+		});
+		var oSpy = this.spy(oMultiInput._tokenizer, "_useCollapsedMode");
+
+		oMultiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// 1st time from the Tokenizer itself
+		// 2nd call from the MultiInput control
+		assert.strictEqual(oSpy.callCount, 2, "The method was called 2 times.");
+		assert.strictEqual(oSpy.secondCall.args[0], true, "The call was made with correct parameter");
+
+		oSpy.restore();
+		oMultiInput.destroy();
+	});
+
+	QUnit.test("Should call '_useCollapsedMode' with false after focusin and invalidation", function (assert) {
+		var oMultiInput = new MultiInput({
+			width: "200px",
+			tokens: [
+				new Token({text: "Token 1", key: "0001"}),
+				new Token({text: "Token 2", key: "0002"}),
+				new Token({text: "Token 3", key: "0003"}),
+				new Token({text: "Token 4", key: "0004"}),
+				new Token({text: "Token 5", key: "0005"}),
+				new Token({text: "Token 6", key: "0006"}),
+				new Token({text: "Token 7", key: "0007"})
+			]
+		});
+		var oSpy = this.spy(oMultiInput._tokenizer, "_useCollapsedMode");
+		var oEventMock = {
+			target: {
+				classList: {
+					contains: function () {
+						return false;
+					}
+				}
+			}
+		};
+
+		oMultiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oMultiInput.onfocusin(oEventMock);
+		oSpy.reset();
+
+		oMultiInput.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// 1st time from the Tokenizer itself=
+		// 2nd call from the MultiInput control
+		assert.strictEqual(oSpy.callCount, 2, "The method was called 2 times.");
+		assert.strictEqual(oSpy.secondCall.args[0], false, "The call was made with correct parameter");
+
+		oSpy.restore();
+		oMultiInput.destroy();
+	});
+
 	QUnit.module("Validation", {
 		beforeEach: function() {
 			this.multiInput1 = new MultiInput();
@@ -2480,17 +2551,19 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1000);
 
-		assert.strictEqual(oSyncInput.callCount, 1);
+		assert.ok(oSyncInput.called, "The '_syncInputWidth' method was called");
 
+		oSyncInput.reset();
 		oMI.setSelectionItem(oItem1, true);
 		this.clock.tick(1000);
 
-		assert.strictEqual(oSyncInput.callCount, 2);
+		assert.ok(oSyncInput.called, "The '_syncInputWidth' method was called");
+		oSyncInput.reset();
 
 		oMI.setTokens([]);
 		this.clock.tick(1000);
 
-		assert.strictEqual(oSyncInput.callCount, 3);
+		assert.ok(oSyncInput.called, "The '_syncInputWidth' method was called");
 
 		oSyncInput.restore();
 		oMI.destroy();
