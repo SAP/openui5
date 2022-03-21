@@ -15,6 +15,7 @@ sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRend
 	 * @extends sap.ui.layout.VerticalLayout
 	 * @constructor
 	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.filterbar.aligned.FilterItemLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

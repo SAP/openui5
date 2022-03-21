@@ -13,6 +13,7 @@ sap.ui.define([
 	/**
 	 * Creates the inner layout for the IFilterContainer.
 	 * @protected
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
 	IFilterContainer.prototype.init = function() {
 		Element.prototype.init.apply(this, arguments);
@@ -23,6 +24,7 @@ sap.ui.define([
 	 * Getter for the inner layout item.
 	 * @returns {Control} Control instance of the inner layout item.
 	 * @protected
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
 	IFilterContainer.prototype.getInner = function(){
 		return this.oLayout;
@@ -39,6 +41,7 @@ sap.ui.define([
 	/**
 	 * Remove the inner content from the layout item.
 	 * @protected
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
 	IFilterContainer.prototype.removeFilterField = function(oControl) {
 		//remove the content from the inner layout this.oLayout
@@ -48,6 +51,7 @@ sap.ui.define([
 	 * Insert the inner content to the layout item.
 	 * @returns {Array} Array of all inner controls in the layout item.
 	 * @protected
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
 	IFilterContainer.prototype.getFilterFields = function() {
 		//return the inner controls as array
@@ -57,6 +61,7 @@ sap.ui.define([
 	 * Overwrite the default 'exit' to cleanup the created layout properly
 	 *
 	 * @protected
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
 	IFilterContainer.prototype.exit = function() {
 		Element.prototype.exit.apply(this, arguments);
