@@ -369,8 +369,7 @@ sap.ui.define([
 			text: this._getResourceText("table.COLUMNMENU_RESET"),
 			press: function () {
 				oMenu._fireEvent(Core.byId(oMenu._oItemsContainer.getCurrentViewKey()), "reset", false);
-				this._oPopover.invalidate();
-			}.bind(this)
+			}
 		}));
 		this._oPopover.addDependent(oMenu._oItemsContainer);
 		oMenu.addDependent(oMenu._oItemsContainer);
