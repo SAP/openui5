@@ -133,6 +133,26 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		oObjectPage.setSelectedSection(oSection);
 	});
 
+	QUnit.test("ObjectPage Content CustomScrollBar visibility", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			fnDone = assert.async();
+
+		assert.expect(2);
+		// assert default
+		assert.strictEqual(oObjectPage._hasVerticalScrollBar(), false,
+		"CustomScrollBar visibility is false initialy");
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				assert.strictEqual(oObjectPage._hasVerticalScrollBar(), true,
+				"CustomScrollBar visibility is true after rendering");
+
+				fnDone();
+		});
+
+		// act
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("scroll position", {
 		beforeEach: function () {
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10);
@@ -210,7 +230,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		var oObjectPage = this.oObjectPage,
 			oFirstSection = oObjectPage.getSections()[0],
 			oFirstSubSection = oFirstSection.getSubSections()[0],
-			sSelectedSectionId = oObjectPage.getSections()[3].getId(),
+			sSelectedSectionId = oObjectPage.getSections()[1].getId(),
 			item1 = new sap.m.Button({text: "content", visible: false}),
 			item2 = new sap.m.Button({text: "content", visible: false}),
 			item3 = new sap.m.Button({text: "content", visible: false}),
