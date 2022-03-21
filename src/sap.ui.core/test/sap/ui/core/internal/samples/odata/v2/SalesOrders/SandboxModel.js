@@ -255,6 +255,12 @@ sap.ui.define([
 					},
 					source : "metadata.xml"
 				},
+				"SAP__Currencies?$skip=0&$top=5000" : {
+					source : "../../data/SAP__Currencies.json"
+				},
+				"SAP__UnitsOfMeasure?$skip=0&$top=5000" : {
+					source : "../../data/SAP__UnitsOfMeasure.json"
+				},
 
 				/* Messages: Test Case I */
 				"SalesOrderSet('101')" : {
@@ -838,14 +844,29 @@ sap.ui.define([
 				"SalesOrderSet('205')" : {
 					source : "ODLB.create/TC3/SalesOrder('205').json"
 				},
-				"GET SalesOrderSet('205')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
+				"SalesOrderSet('205')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
 					source : "ODLB.create/TC3/SalesOrder('205')_ToLineItems_0_4_count.json"
 				},
 				"SalesOrderSet('240')" : {
 					source : "ODLB.create/TC3/SalesOrderSet_240.json"
 				},
-				"GET SalesOrderSet('240')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
+				"SalesOrderSet('240')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
 					message : { "d" : {"__count" : "0", "results" : []}}
+				},
+
+				/* ODataListBinding#create: Test Case IV */
+				"SalesOrderSet('245')" : {
+					source : "ODLB.create/TC4/SalesOrderSet('245').json"
+				},
+				"SalesOrderSet('245')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
+					source : "ODLB.create/TC4/SalesOrderSet('245')_ToLineItems_0_4_count.json"
+				},
+				"POST SalesOrderSet('245')/ToLineItems" : {
+					code : 201,
+					source : "ODLB.create/TC4/SalesOrderLineItemSet(SalesOrderID='245',ItemPosition='020').json"
+				},
+				"SalesOrderSet('245')?$select=ChangedAt,GrossAmount,SalesOrderID" : {
+					source : "ODLB.create/TC4/SalesOrderSet('245')_after_save.json"
 				}
 			},
 			aRegExpFixture : [{

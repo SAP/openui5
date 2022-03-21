@@ -3,6 +3,22 @@
 	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
 	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
 	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value"
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value"
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value"
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value"
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+	</edmx:Reference>
 	<edmx:DataServices m:DataServiceVersion="2.0">
 		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en"
 			sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
@@ -409,6 +425,33 @@
 					MaxLength="16" sap:unicode="false" sap:label="Name" sap:creatable="false"
 					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
 			</EntityType>
+			<EntityType Name="SAP__Currency" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CurrencyCode"/>
+				</Key>
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false" MaxLength="5"
+					sap:label="Currency" sap:semantics="currency-code"/>
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false" MaxLength="3"
+					sap:label="ISO Code"/>
+				<Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="15"
+					sap:label="Short Text"/>
+				<Property Name="DecimalPlaces" Type="Edm.Byte" Nullable="false"
+					sap:label="Decimals"/>
+			</EntityType>
+			<EntityType Name="SAP__UnitOfMeasure" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="UnitCode"/>
+				</Key>
+				<Property Name="UnitCode" Type="Edm.String" Nullable="false" MaxLength="3"
+					sap:label="Internal UoM" sap:semantics="unit-of-measure"/>
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false" MaxLength="3"
+					sap:label="ISO Code"/>
+				<Property Name="ExternalCode" Type="Edm.String" Nullable="false" MaxLength="3"
+					sap:label="Commercial"/>
+				<Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="30"
+					sap:label="UoM Text"/>
+				<Property Name="DecimalPlaces" Type="Edm.Int16" sap:label="Decimal Places"/>
+			</EntityType>
 			<ComplexType Name="CT_Address">
 				<Property Name="City" Type="Edm.String" MaxLength="40"
 					sap:label="City" sap:semantics="city" />
@@ -758,6 +801,10 @@
 				<EntitySet Name="VH_LanguageSet" EntityType="GWSAMPLE_BASIC.VH_Language"
 					sap:creatable="false" sap:updatable="false" sap:deletable="false"
 					sap:pageable="false" sap:content-version="1" />
+				<EntitySet Name="SAP__Currencies" EntityType="GWSAMPLE_BASIC.SAP__Currency"
+					sap:content-version="1"/>
+				<EntitySet Name="SAP__UnitsOfMeasure" EntityType="GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+					sap:content-version="1"/>
 				<AssociationSet Name="Assoc_VH_Language_Contacts_AssocSet"
 					Association="GWSAMPLE_BASIC.Assoc_VH_Language_Contacts"
 					sap:creatable="false" sap:updatable="false" sap:deletable="false"
@@ -957,6 +1004,56 @@
 					<Parameter Name="ItemPosition" Type="Edm.String" Mode="In" MaxLength="10" />
 				</FunctionImport>
 			</EntityContainer>
+			<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Org.OData.Capabilities.V1.BatchSupport">
+					<Record Type="Org.OData.Capabilities.V1.BatchSupportType">
+						<PropertyValue Property="ReferencesAcrossChangeSetsSupported" Bool="true"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__CodeList.CurrencyCodes">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata"/>
+						<PropertyValue Property="CollectionPath" String="SAP__Currencies"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__CodeList.UnitsOfMeasure">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata"/>
+						<PropertyValue Property="CollectionPath" String="SAP__UnitsOfMeasure"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.SAP__Currency/CurrencyCode"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.Text" Path="Text"/>
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="DecimalPlaces"/>
+				<Annotation Term="SAP__CodeList.StandardCode" Path="ISOCode"/>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.SAP__UnitOfMeasure/UnitCode"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.Text" Path="Text"/>
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="DecimalPlaces"/>
+				<Annotation Term="SAP__CodeList.StandardCode" Path="ISOCode"/>
+				<Annotation Term="SAP__CodeList.ExternalCode" Path="ExternalCode"/>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__core.AlternateKeys">
+					<Collection>
+						<Record>
+							<PropertyValue Property="Key">
+								<Collection>
+									<Record>
+										<PropertyValue Property="Name" Path="ExternalCode"/>
+										<PropertyValue Property="Alias" String="ExternalCode"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>
