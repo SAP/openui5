@@ -89,7 +89,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this);
 
-			HistoryUtils.check();
+			return HistoryUtils.check();
 		},
 		afterEach: function() {
 			this.oExtendedHashChanger.setHash("");
