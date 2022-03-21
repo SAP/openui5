@@ -55,6 +55,8 @@ sap.ui.define([
 				}
 			});
 
+		oDialog.addStyleClass("sapUiIntCardDialog");
+
 		oParentCard.addDependent(oDialog);
 
 		oChildCard.startManifestProcessing();

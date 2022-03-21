@@ -6,3 +6,14 @@
 .sapUiIntCard {
 	min-height: 5rem;
 }
+
+.sapUiIntCardDialog{
+	.sapUiIntCard {
+		border-radius: @sapUiElementBorderCornerRadius;
+	}
+
+	&.sapMDialog:not(.sapUiResponsiveContentPadding):not(.sapUiContentPadding) .sapMDialogScroll {
+		padding-bottom: 0px;
+		padding-top: 0px;
+	}
+}
