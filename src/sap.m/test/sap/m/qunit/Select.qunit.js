@@ -10136,6 +10136,13 @@ sap.ui.define([
 			assert.strictEqual(oHiddenSelect.attr("aria-haspopup"), "listbox", "aria-haspopup is correct");
 			assert.ok(oHiddenSelect.attr("aria-roledescription") !== undefined, "aria-roledescription is correct");
 
+			// act
+			oSelect.setType(SelectType.IconOnly);
+			Core.applyChanges();
+
+			// assert
+			assert.ok(oHiddenSelect.attr("aria-roledescription") === undefined, "aria-roledescription is correct");
+
 			oSelect.setEditable(false);
 			Core.applyChanges();
 

@@ -127,8 +127,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 */
 		 SelectRenderer.renderFocusElement = function (oRm, oSelect) {
 			var oSelectedItem = oSelect.getSelectedItem(),
-				sTooltip = oSelect.getTooltip_AsString(),
-				sType = oSelect.getType();
+				bIconOnly = oSelect.getType() === SelectType.IconOnly;
 
 			oRm.openStart("div", oSelect.getId() + "-hiddenSelect");
 
@@ -143,23 +142,48 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				oRm.attr("tabindex", "0");
 			}
 
-			if (sTooltip) {
-				oRm.attr("title", sTooltip);
-			} else if (sType === SelectType.IconOnly) {
-				var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
-
-				if (oIconInfo) {
-					oRm.attr("title", oIconInfo.text);
-				}
-			}
+			this.renderTooltip(oRm, oSelect);
 
 			oRm.openEnd();
 
-			if (oSelectedItem) {
+			if (oSelectedItem && !bIconOnly) {
+				// if icon only mode, the control is announced as standard
+				// button and the selected value is not rendered
 				oRm.text(oSelectedItem.getText());
 			}
 
 			oRm.close('div');
+		};
+
+		/**
+		 * Generates and renders the tooltip text. Icon only aware.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.m.Select} oSelect An object representation of the Select control.
+		 * @private
+		 */
+		SelectRenderer.renderTooltip = function (oRm, oSelect) {
+			var oIconInfo,
+				sTooltip = oSelect.getTooltip_AsString(),
+				bIconOnly = oSelect.getType() === SelectType.IconOnly;
+
+			if (!sTooltip && bIconOnly) {
+				oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
+				if (oIconInfo) {
+					sTooltip = oIconInfo.text;
+				}
+			}
+
+			if (!sTooltip) {
+				return;
+			}
+
+			oRm.attr("title", sTooltip);
+
+			if (bIconOnly) {
+				// if in IconOnly mode, similarly to sap.m.Button the tooltip should also be part of the accessibleName
+				oRm.attr("aria-label", sTooltip);
+			}
 		};
 
 		/**
@@ -424,7 +448,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 
 			oRm.accessibilityState(null, {
 				role: this.getAriaRole(oSelect),
-				roledescription: oSelect._sAriaRoleDescription,
+				roledescription: bIconOnly ? undefined : oSelect._sAriaRoleDescription,
 				readonly: bIconOnly ? undefined : oSelect.getEnabled() && !oSelect.getEditable(),
 				required: oSelect._isRequired() || undefined,
 				disabled: !oSelect.getEnabled() || undefined,
