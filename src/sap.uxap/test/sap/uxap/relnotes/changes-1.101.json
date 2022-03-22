@@ -3,6 +3,17 @@
     "date": "March 2022",
     "notes": [
       {
+        "id": "f76d4ff0c49b9b6cdd9f4b6b15c819bcb0dfbc17",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected qunit on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015865"
+          }
+        ]
+      },
+      {
         "id": "77a91972ba628d2fade8e3d295eb949e3fd117e9",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Add check for section validity",
