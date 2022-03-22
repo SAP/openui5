@@ -15,8 +15,18 @@ sap.ui.define([
 
 		"use strict";
 
-		// delegate further initialization of this library to the Core
-		sap.ui.getCore().initLibrary({
+		/**
+		 * SAPUI5 library with controls based on UI5 Web Components
+		 *
+		 * @namespace
+		 * @alias sap.ui.webc.fiori
+		 * @author SAP SE
+		 * @version ${version}
+		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 */
+		var thisLib = sap.ui.getCore().initLibrary({
 			name: "sap.ui.webc.fiori",
 			version: "${version}",
 			dependencies: ["sap.ui.core", "sap.ui.webc.common"],
@@ -92,20 +102,6 @@ sap.ui.define([
 				}
 			}
 		});
-
-		/**
-		 * SAPUI5 library with controls based on UI5 Web Components
-		 *
-		 * @namespace
-		 * @alias sap.ui.webc.fiori
-		 * @author SAP SE
-		 * @version ${version}
-		 * @public
-		 * @since 1.92.0
-		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 */
-		var thisLib = sap.ui.webc.fiori;
-
 
 		/**
 		 * Interface for components that may be slotted inside <code>ui5-page</code> as header and footer.

@@ -20,8 +20,17 @@ sap.ui.define([
 
 	"use strict";
 
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	/**
+	 * Unified controls intended for both, mobile and desktop scenarios
+	 *
+	 * @namespace
+	 * @alias sap.ui.unified
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.28
+	 * @public
+	 */
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.ui.unified",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
@@ -89,18 +98,6 @@ sap.ui.define([
 			}
 		}
 	});
-
-	/**
-	 * Unified controls intended for both, mobile and desktop scenarios
-	 *
-	 * @namespace
-	 * @alias sap.ui.unified
-	 * @author SAP SE
-	 * @version ${version}
-	 * @since 1.28
-	 * @public
-	 */
-	var thisLib = sap.ui.unified;
 
 	/**
 	 * Types of a calendar day used for visualization.

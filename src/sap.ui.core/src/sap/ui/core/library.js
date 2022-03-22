@@ -14,141 +14,6 @@ sap.ui.define([
 	function(DataType, ViewType) {
 	"use strict";
 
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
-		name : "sap.ui.core",
-		version: "${version}",
-		designtime: "sap/ui/core/designtime/library.designtime",
-		types: [
-
-			// builtin types
-			"any",
-			"boolean",
-			"float",
-			"int",
-			"object",
-			"string",
-			"void",
-
-			// simple types and enums
-			"sap.ui.core.AbsoluteCSSSize",
-			"sap.ui.core.AccessibleRole",
-			"sap.ui.core.AccessibleLandmarkRole",
-			"sap.ui.core.aria.HasPopup",
-			"sap.ui.core.BarColor",
-			"sap.ui.core.BusyIndicatorSize",
-			"sap.ui.core.CalendarType",
-			"sap.ui.core.CSSColor",
-			"sap.ui.core.CSSSize",
-			"sap.ui.core.CSSSizeShortHand",
-			"sap.ui.core.Collision",
-			"sap.ui.core.ComponentLifecycle",
-			"sap.ui.core.Design",
-			"sap.ui.core.Dock",
-			"sap.ui.core.HorizontalAlign",
-			"sap.ui.core.ID",
-			"sap.ui.core.IconColor",
-			"sap.ui.core.ImeMode",
-			"sap.ui.core.IndicationColor",
-			"sap.ui.core.MessageType",
-			"sap.ui.core.OpenState",
-			"sap.ui.core.Orientation",
-			"sap.ui.core.Percentage",
-			"sap.ui.core.Priority",
-			"sap.ui.core.ScrollBarAction",
-			"sap.ui.core.Scrolling",
-			"sap.ui.core.SortOrder",
-			"sap.ui.core.TextAlign",
-			"sap.ui.core.TextDirection",
-			"sap.ui.core.TitleLevel",
-			"sap.ui.core.URI",
-			"sap.ui.core.ValueState",
-			"sap.ui.core.VerticalAlign",
-			"sap.ui.core.Wrapping",
-			"sap.ui.core.InvisibleMessageMode",
-			"sap.ui.core.dnd.DropEffect",
-			"sap.ui.core.dnd.DropLayout",
-			"sap.ui.core.dnd.DropPosition",
-			"sap.ui.core.mvc.ViewType",
-			"sap.ui.core.routing.HistoryDirection"
-		],
-		interfaces: [
-			"sap.ui.core.IShrinkable",
-			"sap.ui.core.Label",
-			"sap.ui.core.PopupInterface",
-			"sap.ui.core.Toolbar",
-			"sap.ui.core.IContextMenu",
-			"sap.ui.core.IFormContent",
-			"sap.ui.core.dnd.IDragInfo",
-			"sap.ui.core.dnd.IDropInfo",
-			"sap.ui.core.IDScope",
-			"sap.ui.core.ITitleContent",
-			"sap.ui.core.IAsyncContentCreation",
-			"sap.ui.core.IPlaceholderSupport",
-			"sap.ui.core.IColumnHeaderMenu"
-		],
-		controls: [
-			"sap.ui.core.ComponentContainer",
-			"sap.ui.core.Control",
-			"sap.ui.core.HTML",
-			"sap.ui.core.Icon",
-			"sap.ui.core.InvisibleText",
-			"sap.ui.core.LocalBusyIndicator",
-			"sap.ui.core.ScrollBar",
-			"sap.ui.core.TooltipBase",
-			"sap.ui.core.XMLComposite",
-			"sap.ui.core.mvc.HTMLView",
-			"sap.ui.core.mvc.JSONView",
-			"sap.ui.core.mvc.JSView",
-			"sap.ui.core.mvc.TemplateView",
-			"sap.ui.core.mvc.View",
-			"sap.ui.core.mvc.XMLView",
-			"sap.ui.core.tmpl.DOMElement",
-			"sap.ui.core.tmpl.TemplateControl",
-			"sap.ui.core.util.Export"
-		],
-		elements: [
-			"sap.ui.core.CustomData",
-			"sap.ui.core.Element",
-			"sap.ui.core.Item",
-			"sap.ui.core.LayoutData",
-			"sap.ui.core.ListItem",
-			"sap.ui.core.Message",
-			"sap.ui.core.SeparatorItem",
-			"sap.ui.core.Title",
-			"sap.ui.core.VariantLayoutData",
-			"sap.ui.core.dnd.DragDropBase",
-			"sap.ui.core.dnd.DragInfo",
-			"sap.ui.core.dnd.DropInfo",
-			"sap.ui.core.dnd.DragDropInfo",
-			"sap.ui.core.search.OpenSearchProvider",
-			"sap.ui.core.search.SearchProvider",
-			"sap.ui.core.tmpl.DOMAttribute",
-			"sap.ui.core.util.ExportCell",
-			"sap.ui.core.InvisibleMessage"
-		],
-		extensions: {
-			"sap.ui.support" : {
-				diagnosticPlugins: [
-					"sap/ui/core/support/plugins/TechInfo",
-					"sap/ui/core/support/plugins/ControlTree",
-					"sap/ui/core/support/plugins/Debugging",
-					"sap/ui/core/support/plugins/Trace",
-					"sap/ui/core/support/plugins/Selector",
-					"sap/ui/core/support/plugins/Breakpoint",
-					"sap/ui/core/support/plugins/ViewInfo",
-					"sap/ui/core/support/plugins/LocalStorage",
-					"sap/ui/core/support/plugins/Interaction",
-					"sap/ui/core/support/plugins/Performance"
-				],
-				//Configuration used for rule loading of Support Assistant
-				publicRules:true,
-				internalRules:true
-			}
-		}
-	});
-
-	/* eslint-disable no-undef */
 	/**
 	 * The SAPUI5 Core Runtime.
 	 *
@@ -162,8 +27,138 @@ sap.ui.define([
 	 * @since 0.8
 	 * @public
 	 */
-	var thisLib = sap.ui.core;
-	/* eslint-enable no-undef */
+	 var thisLib = sap.ui.getCore().initLibrary({
+		 name : "sap.ui.core",
+		 version: "${version}",
+		 designtime: "sap/ui/core/designtime/library.designtime",
+		 types: [
+
+			 // builtin types
+			 "any",
+			 "boolean",
+			 "float",
+			 "int",
+			 "object",
+			 "string",
+			 "void",
+
+			 // simple types and enums
+			 "sap.ui.core.AbsoluteCSSSize",
+			 "sap.ui.core.AccessibleRole",
+			 "sap.ui.core.AccessibleLandmarkRole",
+			 "sap.ui.core.aria.HasPopup",
+			 "sap.ui.core.BarColor",
+			 "sap.ui.core.BusyIndicatorSize",
+			 "sap.ui.core.CalendarType",
+			 "sap.ui.core.CSSColor",
+			 "sap.ui.core.CSSSize",
+			 "sap.ui.core.CSSSizeShortHand",
+			 "sap.ui.core.Collision",
+			 "sap.ui.core.ComponentLifecycle",
+			 "sap.ui.core.Design",
+			 "sap.ui.core.Dock",
+			 "sap.ui.core.HorizontalAlign",
+			 "sap.ui.core.ID",
+			 "sap.ui.core.IconColor",
+			 "sap.ui.core.ImeMode",
+			 "sap.ui.core.IndicationColor",
+			 "sap.ui.core.MessageType",
+			 "sap.ui.core.OpenState",
+			 "sap.ui.core.Orientation",
+			 "sap.ui.core.Percentage",
+			 "sap.ui.core.Priority",
+			 "sap.ui.core.ScrollBarAction",
+			 "sap.ui.core.Scrolling",
+			 "sap.ui.core.SortOrder",
+			 "sap.ui.core.TextAlign",
+			 "sap.ui.core.TextDirection",
+			 "sap.ui.core.TitleLevel",
+			 "sap.ui.core.URI",
+			 "sap.ui.core.ValueState",
+			 "sap.ui.core.VerticalAlign",
+			 "sap.ui.core.Wrapping",
+			 "sap.ui.core.InvisibleMessageMode",
+			 "sap.ui.core.dnd.DropEffect",
+			 "sap.ui.core.dnd.DropLayout",
+			 "sap.ui.core.dnd.DropPosition",
+			 "sap.ui.core.mvc.ViewType",
+			 "sap.ui.core.routing.HistoryDirection"
+		 ],
+		 interfaces: [
+			 "sap.ui.core.IShrinkable",
+			 "sap.ui.core.Label",
+			 "sap.ui.core.PopupInterface",
+			 "sap.ui.core.Toolbar",
+			 "sap.ui.core.IContextMenu",
+			 "sap.ui.core.IFormContent",
+			 "sap.ui.core.dnd.IDragInfo",
+			 "sap.ui.core.dnd.IDropInfo",
+			 "sap.ui.core.IDScope",
+			 "sap.ui.core.ITitleContent",
+			 "sap.ui.core.IAsyncContentCreation",
+			 "sap.ui.core.IPlaceholderSupport",
+			 "sap.ui.core.IColumnHeaderMenu"
+		 ],
+		 controls: [
+			 "sap.ui.core.ComponentContainer",
+			 "sap.ui.core.Control",
+			 "sap.ui.core.HTML",
+			 "sap.ui.core.Icon",
+			 "sap.ui.core.InvisibleText",
+			 "sap.ui.core.LocalBusyIndicator",
+			 "sap.ui.core.ScrollBar",
+			 "sap.ui.core.TooltipBase",
+			 "sap.ui.core.XMLComposite",
+			 "sap.ui.core.mvc.HTMLView",
+			 "sap.ui.core.mvc.JSONView",
+			 "sap.ui.core.mvc.JSView",
+			 "sap.ui.core.mvc.TemplateView",
+			 "sap.ui.core.mvc.View",
+			 "sap.ui.core.mvc.XMLView",
+			 "sap.ui.core.tmpl.DOMElement",
+			 "sap.ui.core.tmpl.TemplateControl",
+			 "sap.ui.core.util.Export"
+		 ],
+		 elements: [
+			 "sap.ui.core.CustomData",
+			 "sap.ui.core.Element",
+			 "sap.ui.core.Item",
+			 "sap.ui.core.LayoutData",
+			 "sap.ui.core.ListItem",
+			 "sap.ui.core.Message",
+			 "sap.ui.core.SeparatorItem",
+			 "sap.ui.core.Title",
+			 "sap.ui.core.VariantLayoutData",
+			 "sap.ui.core.dnd.DragDropBase",
+			 "sap.ui.core.dnd.DragInfo",
+			 "sap.ui.core.dnd.DropInfo",
+			 "sap.ui.core.dnd.DragDropInfo",
+			 "sap.ui.core.search.OpenSearchProvider",
+			 "sap.ui.core.search.SearchProvider",
+			 "sap.ui.core.tmpl.DOMAttribute",
+			 "sap.ui.core.util.ExportCell",
+			 "sap.ui.core.InvisibleMessage"
+		 ],
+		 extensions: {
+			 "sap.ui.support" : {
+				 diagnosticPlugins: [
+					 "sap/ui/core/support/plugins/TechInfo",
+					 "sap/ui/core/support/plugins/ControlTree",
+					 "sap/ui/core/support/plugins/Debugging",
+					 "sap/ui/core/support/plugins/Trace",
+					 "sap/ui/core/support/plugins/Selector",
+					 "sap/ui/core/support/plugins/Breakpoint",
+					 "sap/ui/core/support/plugins/ViewInfo",
+					 "sap/ui/core/support/plugins/LocalStorage",
+					 "sap/ui/core/support/plugins/Interaction",
+					 "sap/ui/core/support/plugins/Performance"
+				 ],
+				 //Configuration used for rule loading of Support Assistant
+				 publicRules:true,
+				 internalRules:true
+			 }
+		 }
+	 });
 
 	/**
 	 * @classdesc A string type that represents non-relative CSS size values.
@@ -2350,6 +2345,6 @@ sap.ui.define([
 		each("sap.ui.core.service.", ["ServiceFactory", "Service"]);
 	}());
 
-	return sap.ui.core;
+	return thisLib;
 
 });

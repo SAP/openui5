@@ -15,17 +15,13 @@ sap.ui.define([
 	 * UI5 library: sap.ui.codeeditor.
 	 *
 	 * @namespace
-	 * @name sap.ui.codeeditor
+	 * @alias sap.ui.codeeditor
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.48
 	 * @public
 	 */
-
-	// library dependencies
-
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.ui.codeeditor",
 		dependencies : ["sap.ui.core"],
 		types: [],
@@ -38,5 +34,5 @@ sap.ui.define([
 		version: "${version}"
 	});
 
-	return sap.ui.codeeditor;
+	return thisLib;
 });

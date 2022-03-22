@@ -9,10 +9,25 @@
 	"sap/ui/core/Core", // provides sap.ui.getCore()
 	"sap/ui/core/library", // library dependency
 	"sap/m/library" // library dependency
-], function () {
+], function (Core) {
 	"use strict";
 
-	sap.ui.getCore().initLibrary({
+	/**
+	 * The SAPUI5 library that contains the metadata-driven controls and other entities.
+	 *
+	 * SAP Internal
+	 * This library is restricted to use by SAP internal projects only.
+	 *
+	 * @namespace
+	 * @alias sap.ui.mdc
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.80
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @experimental As of version 1.54 Disclaimer: Usage Restrictions: The components of this library are under development and documented as private. Their APIs are subject to change and should not be used in productive scenarios without further agreement. A general availability of sap.ui.mdc will be announced via the usual channels.
+	 */
+	 var thisLib = Core.initLibrary({
 		version: "${version}",
 		name: "sap.ui.mdc",
 		dependencies: ["sap.ui.core", "sap.m"],
@@ -119,25 +134,6 @@
 		},
 		noLibraryCSS: false
 	});
-
-	/* eslint-disable no-undef */
-	/**
-	 * The SAPUI5 library that contains the metadata-driven controls and other entities.
-	 *
-	 * SAP Internal
-	 * This library is restricted to use by SAP internal projects only.
-	 *
-	 * @namespace
-	 * @alias sap.ui.mdc
-	 * @author SAP SE
-	 * @version ${version}
-	 * @since 1.80
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @experimental As of version 1.54 Disclaimer: Usage Restrictions: The components of this library are under development and documented as private. Their APIs are subject to change and should not be used in productive scenarios without further agreement. A general availability of sap.ui.mdc will be announced via the usual channels.
-	 */
-	 var thisLib = sap.ui.mdc;
-	 /* eslint-enable no-undef */
 
 	 /**
 	 *

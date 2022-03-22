@@ -17,8 +17,17 @@ sap.ui.define([
 
 	'use strict';
 
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	/**
+	 * SAPUI5 library with controls specialized for administrative applications.
+	 *
+	 * @namespace
+	 * @alias sap.ui.documentation
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.48
+	 * @public
+	 */
+	var thisLibrary = sap.ui.getCore().initLibrary({
 		name : 'sap.ui.documentation',
 		version: '${version}',
 		dependencies : ['sap.ui.core','sap.m'],
@@ -39,18 +48,6 @@ sap.ui.define([
 			"sap.ui.documentation.WebPageTitleUtil"
 		]
 	});
-
-	/**
-	 * SAPUI5 library with controls specialized for administrative applications.
-	 *
-	 * @namespace
-	 * @name sap.ui.documentation
-	 * @author SAP SE
-	 * @version ${version}
-	 * @since 1.48
-	 * @public
-	 */
-	var thisLibrary = sap.ui.documentation;
 
 	var _libraryInfoSingleton;
 

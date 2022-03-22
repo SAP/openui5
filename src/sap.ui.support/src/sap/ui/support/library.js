@@ -19,17 +19,13 @@ sap.ui.define(["sap/ui/core/library"],
 	 * rules to check all aspects of an application.
 	 *
 	 * @namespace
-	 * @name sap.ui.support
+	 * @alias sap.ui.support
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.50
 	 * @public
 	 */
-
-	// library dependencies
-
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.ui.support",
 		dependencies : ["sap.ui.core"],
 		types: [
@@ -54,7 +50,7 @@ sap.ui.define(["sap/ui/core/library"],
 	 * @since ${version}
 	 * @public
 	 */
-	sap.ui.support.Severity = {
+	thisLib.Severity = {
 		/**
 		 * Medium issue severity.
 		 * @public
@@ -78,7 +74,7 @@ sap.ui.define(["sap/ui/core/library"],
 	 * @since ${version}
 	 * @public
 	 */
-	sap.ui.support.Audiences = {
+	thisLib.Audiences = {
 		/**
 		 * Audience just on Control level.
 		 * @public
@@ -102,7 +98,7 @@ sap.ui.define(["sap/ui/core/library"],
 	 * @since ${version}
 	 * @public
 	 */
-	sap.ui.support.Categories = {
+	thisLib.Categories = {
 		/**
 		 * Accessibility issue category.
 		 * @public
@@ -171,7 +167,7 @@ sap.ui.define(["sap/ui/core/library"],
 	 * @since ${version}
 	 * @public
 	 */
-	sap.ui.support.HistoryFormats = {
+	thisLib.HistoryFormats = {
 		/**
 		 * ABAP history format.
 		 * @public
@@ -190,7 +186,7 @@ sap.ui.define(["sap/ui/core/library"],
 	 * @since ${version}
 	 * @public
 	 */
-	sap.ui.support.SystemPresets = {
+	thisLib.SystemPresets = {
 		/**
 		 * The accessibility preset.
 		 *
@@ -224,5 +220,5 @@ sap.ui.define(["sap/ui/core/library"],
 		}
 	};
 
-	return sap.ui.support;
+	return thisLib;
 });

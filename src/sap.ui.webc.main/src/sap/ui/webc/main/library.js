@@ -14,9 +14,18 @@ sap.ui.define([
 	function(commonLibrary, CSP) {
 
 		"use strict";
-
-		// delegate further initialization of this library to the Core
-		sap.ui.getCore().initLibrary({
+		/**
+		 * SAPUI5 library with controls based on UI5 Web Components
+		 *
+		 * @namespace
+		 * @alias sap.ui.webc.main
+		 * @author SAP SE
+		 * @version ${version}
+		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 */
+		var thisLib = sap.ui.getCore().initLibrary({
 			name: "sap.ui.webc.main",
 			version: "${version}",
 			dependencies: ["sap.ui.core", "sap.ui.webc.common"],
@@ -186,20 +195,6 @@ sap.ui.define([
 				}
 			}
 		});
-
-		/**
-		 * SAPUI5 library with controls based on UI5 Web Components
-		 *
-		 * @namespace
-		 * @alias sap.ui.webc.main
-		 * @author SAP SE
-		 * @version ${version}
-		 * @public
-		 * @since 1.92.0
-		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 */
-		var thisLib = sap.ui.webc.main;
-
 
 		/**
 		 * Interface for components that represent an avatar and may be slotted in numerous higher-order components such as <code>ui5-avatar-group</code>

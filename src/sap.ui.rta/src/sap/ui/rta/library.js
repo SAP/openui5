@@ -19,17 +19,14 @@ function() {
 	 * SAPUI5 library with RTA controls.
 	 *
 	 * @namespace
-	 * @name sap.ui.rta
+	 * @alias sap.ui.rta
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.50
 	 * @private
 	 * @experimental This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-
-
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	var thisLib = sap.ui.getCore().initLibrary({
 		name: "sap.ui.rta",
 		version: "${version}",
 		dependencies: ["sap.ui.core", "sap.m", "sap.ui.fl", "sap.ui.dt"],
@@ -39,7 +36,7 @@ function() {
 		elements: []
 	});
 
-	sap.ui.rta.GENERATOR_NAME = "sap.ui.rta.command";
+	thisLib.GENERATOR_NAME = "sap.ui.rta.command";
 
-	return sap.ui.rta;
+	return thisLib;
 });

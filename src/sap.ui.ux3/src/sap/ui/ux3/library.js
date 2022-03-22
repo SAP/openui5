@@ -16,16 +16,14 @@ sap.ui.define([
 	 * Controls that implement the SAP User Experience (UX) Guidelines 3.0
 	 *
 	 * @namespace
-	 * @name sap.ui.ux3
+	 * @alias sap.ui.ux3
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
 	 * @since 0.13
 	 * @deprecated Since 1.38
 	 */
-
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.ui.ux3",
 		version: "${version}",
 		dependencies : ["sap.ui.core","sap.ui.commons"],
@@ -90,7 +88,7 @@ sap.ui.define([
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated Since 1.38
 	 */
-	sap.ui.ux3.ActionBarSocialActions = {
+	thisLib.ActionBarSocialActions = {
 
 		/**
 		 * Standard action 'Create an update' (Feed)
@@ -147,7 +145,7 @@ sap.ui.define([
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated Since 1.38
 	 */
-	sap.ui.ux3.ExactOrder = {
+	thisLib.ExactOrder = {
 
 		/**
 		 * The order of the sub lists is defined by the selection order of the user.
@@ -174,7 +172,7 @@ sap.ui.define([
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated Since 1.38
 	 */
-	sap.ui.ux3.FeederType = {
+	thisLib.FeederType = {
 
 		/**
 		 * large Feeder
@@ -205,7 +203,7 @@ sap.ui.define([
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated Since 1.38
 	 */
-	sap.ui.ux3.FollowActionState = {
+	thisLib.FollowActionState = {
 
 		/**
 		 * follow state
@@ -237,7 +235,7 @@ sap.ui.define([
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated Since 1.38
 	 */
-	sap.ui.ux3.NotificationBarStatus = {
+	thisLib.NotificationBarStatus = {
 
 		/**
 		 * Default height for the bar
@@ -276,7 +274,7 @@ sap.ui.define([
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated Since 1.38
 	 */
-	sap.ui.ux3.ShellDesignType = {
+	thisLib.ShellDesignType = {
 
 		/**
 		 * The standard Shell design (dark).
@@ -315,7 +313,7 @@ sap.ui.define([
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated Since 1.38
 	 */
-	sap.ui.ux3.ShellHeaderType = {
+	thisLib.ShellHeaderType = {
 
 		/**
 		 * The standard Shell header.
@@ -354,7 +352,7 @@ sap.ui.define([
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated Since 1.38
 	 */
-	sap.ui.ux3.ThingViewerHeaderType = {
+	thisLib.ThingViewerHeaderType = {
 
 		/**
 		 * The standard ThingViewer header.
@@ -379,7 +377,7 @@ sap.ui.define([
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated Since 1.38
 	 */
-	sap.ui.ux3.VisibleItemCountMode = {
+	thisLib.VisibleItemCountMode = {
 
 		/**
 		 * The FacetFilter always has as many items in the FacetFilterList as defined in the visibleItemCount property.
@@ -395,6 +393,6 @@ sap.ui.define([
 
 	};
 
-	return sap.ui.ux3;
+	return thisLib;
 
 });
