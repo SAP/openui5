@@ -143,26 +143,6 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		oObjectPage.setSelectedSection(oSection);
 	});
 
-	QUnit.test("ObjectPage Content CustomScrollBar visibility", function (assert) {
-		var oObjectPage = this.oObjectPage,
-			fnDone = assert.async();
-
-		assert.expect(2);
-		// assert default
-		assert.strictEqual(oObjectPage._hasVerticalScrollBar(), false,
-		"CustomScrollBar visibility is false initialy");
-
-		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-				assert.strictEqual(oObjectPage._hasVerticalScrollBar(), true,
-				"CustomScrollBar visibility is true after rendering");
-
-				fnDone();
-		});
-
-		// act
-		helpers.renderObject(oObjectPage);
-	});
-
 	QUnit.module("scroll position", {
 		beforeEach: function () {
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10);
@@ -240,7 +220,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		var oObjectPage = this.oObjectPage,
 			oFirstSection = oObjectPage.getSections()[0],
 			oFirstSubSection = oFirstSection.getSubSections()[0],
-			sSelectedSectionId = oObjectPage.getSections()[1].getId(),
+			sSelectedSectionId = oObjectPage.getSections()[3].getId(),
 			item1 = new Button({text: "content", visible: false}),
 			item2 = new Button({text: "content", visible: false}),
 			item3 = new Button({text: "content", visible: false}),
@@ -979,7 +959,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	QUnit.module("ObjectPage scrolling without view");
 
 	QUnit.test("auto-scroll on resize of last section", function (assert) {
-		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 2 /* two sections */),
+		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 10) /* enough sections to allow scrolling even on big screens */,
 			oLastSection = oObjectPageLayout.getSections()[1],
 			oLastSubSection = oLastSection.getSubSections()[0],
 			oResizableControl = new GenericDiv({height: "100px"}),
