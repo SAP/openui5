@@ -16,9 +16,9 @@
 	font-size: @sapMFontMediumSize;
 	padding-left: @_sap_m_Token_LeftPadding;
 	height: 1.625rem;
-	background: @sapUiButtonBackground;
-	border: 1px solid @sapUiButtonBorderColor;
-	border-radius: 0.125rem;
+	background: @sapUiButtonTokenBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonTokenBorderColor;
+	border-radius: @sapUiButtonBorderCornerRadius;
 	color: @sapUiButtonTextColor;
 }
 
@@ -33,7 +33,7 @@
 
 html.sap-desktop .sapMToken:hover {
 	background: @sapUiButtonHoverBackground;
-	border: 1px solid @sapUiButtonHoverBorderColor;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonHoverBorderColor;
 }
 
 .sapMTokenText {
@@ -71,10 +71,10 @@ html.sap-desktop .sapMToken:hover {
 .sapMTokenIcon {
 	vertical-align: top;
 	display: inline-block;
-	line-height: 1.5rem;
+	line-height: 1.5625rem;
 	padding: 0 0.5rem;
 	color: @sapUiContentIconColor;
-	font-size: @sapMFontLargeSize;
+	font-size: 0.75rem;
 	box-sizing: border-box;
 	touch-action: none;
 }
@@ -93,10 +93,10 @@ html.sap-desktop .sapMToken:hover {
 	line-height: 1.125rem;
 }
 
-.sapUiSizeCompact .sapMTokenIcon {
+.sapUiSizeCompact .sapMToken .sapMTokenIcon {
 	font-size: @sapMFontSmallSize;
 	padding: 0 0.25rem;
-	line-height: 1.125rem;
+	line-height: 1.1875rem;
 }
 
 html.sap-desktop .sapMToken.sapMTokenSelected:hover {
@@ -106,13 +106,14 @@ html.sap-desktop .sapMToken.sapMTokenSelected:hover {
 
 .sapMTokenSelected,
 .sapMToken.sapMTokenReadOnly.sapMTokenSelected {
-	color: @sapUiToggleButtonPressedTextColor;
-	background: @sapUiToggleButtonPressedBackground;
-	border: 1px solid @sapUiToggleButtonPressedBorderColor;
+	color: @sapUiButtonSelectedTextColor;
+	background: @sapUiButtonSelectedBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedBorderColor;
 }
 
-.sapMTokenSelected .sapMTokenIcon {
-	color: @sapUiToggleButtonPressedTextColor;
+.sapMTokenSelected .sapMTokenIcon,
+.sapMTokenSelected .sapMTokenText {
+	color: @sapUiButtonSelectedTextColor;
 }
 
 .sapUiSizeCompact .sapMListTbl .sapMToken .sapUiIcon:not(.sapMLIBImgNav) {
