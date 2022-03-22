@@ -141,7 +141,7 @@ sap.ui.define([
 					},
 					/**
 					 * Defines how the steps of the Wizard would be visualized.
-					 * @experimental since 1.84
+					 * @since 1.84
 					 */
 					renderMode: {
 						type: "sap.m.WizardRenderMode",
@@ -184,6 +184,18 @@ sap.ui.define([
 							 * The index of the activated step as a parameter. One-based.
 							 */
 							index: {type: "int"}
+						}
+					},
+					/**
+					 * This event is fired when the the current visible step is changed by either taping on the <code>WizardProgressNavigator</code> or scrolling through the steps.
+					 * @since 1.101
+					 */
+					navigationChange: {
+						parameters: {
+							/**
+							* The newly selected step.
+							*/
+							step: {type: "sap.m.WizardStep"}
 						}
 					},
 					/**
@@ -786,7 +798,7 @@ sap.ui.define([
 				oProgressNavigator.incrementProgress();
 
 				this._handleStepActivated(oProgressNavigator.getProgress());
-				this._handleStepChanged(oProgressNavigator.getProgress());
+				this._handleStepChanged(oProgressNavigator.getProgress(), true);
 			}
 		};
 
@@ -841,14 +853,16 @@ sap.ui.define([
 		/**
 		 * Handler for the stepChanged event. The event comes from the WizardProgressNavigator.
 		 * @param {jQuery.Event} oEvent The event object
+		 * @param {boolean} bSupressEvent Whether event should be suppressed.
 		 * @private
 		 */
-		Wizard.prototype._handleStepChanged = function (oEvent) {
+		Wizard.prototype._handleStepChanged = function (oEvent, bSupressEvent) {
 			var iPreviousStepIndex = ((typeof oEvent === "number") ? oEvent : oEvent.getParameter("current")) - 2,
 				oPreviousStep = this._aStepPath[iPreviousStepIndex],
 				oSubsequentStep = this._getNextStep(oPreviousStep, iPreviousStepIndex),
 				bFocusFirstElement = Device.system.desktop ? true : false;
 
+			!bSupressEvent && this.fireNavigationChange({step: oSubsequentStep});
 			this.goToStep(oSubsequentStep, bFocusFirstElement);
 		};
 
@@ -1132,6 +1146,7 @@ sap.ui.define([
 			var iScrollTop = oEvent.target.scrollTop,
 				oProgressNavigator = this._getProgressNavigator(),
 				oCurrentStep = this._aStepPath[oProgressNavigator.getCurrentStep() - 1],
+				oSubsequentStep = this._aStepPath[oProgressNavigator.getCurrentStep()],
 				oCurrentStepDOM = oCurrentStep && oCurrentStep.getDomRef();
 
 			if (!oCurrentStepDOM) {
@@ -1144,6 +1159,7 @@ sap.ui.define([
 
 			if (iScrollTop + iStepChangeThreshold >= iStepOffset + iStepHeight && oProgressNavigator._isActiveStep(oProgressNavigator._iCurrentStep + 1)) {
 				oProgressNavigator.nextStep();
+				this.fireNavigationChange({step: oSubsequentStep});
 			}
 
 			var aSteps = this.getSteps();
@@ -1155,6 +1171,8 @@ sap.ui.define([
 					// update the currentStep reference
 					oCurrentStep = this._aStepPath[oProgressNavigator.getCurrentStep() - 1];
 					oCurrentStepDOM = oCurrentStep && oCurrentStep.getDomRef();
+
+					this.fireNavigationChange({step: oCurrentStep});
 
 					if (!oCurrentStepDOM) {
 						break;

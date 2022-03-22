@@ -27,6 +27,7 @@
 				<Wizard id="CreateProductWizard"
 						class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
 						showNextButton="false"
+						navigationChange="handleNavigationChange"
 						renderMode="Page">
 					<WizardStep id="ProductTypeStep"
 								title="Product Type"
