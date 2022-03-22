@@ -1,12 +1,9 @@
 /*!
  * ${copyright}
  */
-
-/* Provides a sandbox for this component:
- * For the "realOData" (realOData=true) case when the component runs with backend, the v2.ODataModel
- * constructor is wrapped so that the URL is adapted to a proxy URL.
- * For the case realOData=false a mockserver will be set up. Unknown values default to false.
- */
+// The SandboxModel is used in the manifest instead of OData V2 model for the following purposes:
+// Certain constructor parameters are taken from URL parameters. For the "non-realOData" case, a
+// mock server for the back-end requests is set up.
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/UriParameters",

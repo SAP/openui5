@@ -21,17 +21,17 @@ sap.ui.define([
 		init : function () {
 			var bRealOData = TestUtils.isRealOData(),
 				sServicePrefix = "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/",
-				sURLPrefix = "test-resources/sap/ui/core/internal/samples/odata/v2/Products/data/";
+				sURLPrefix = "test-resources/sap/ui/core/internal/samples/odata/v2/data/";
 
 			UIComponent.prototype.init.apply(this, arguments);
 
 			this.setModel(new JSONModel({
 				realOData : bRealOData,
 				currenciesURL : bRealOData
-					? TestUtils.proxy(sServicePrefix + "SAP__Currencies?$format=json")
+					? sServicePrefix + "SAP__Currencies?$format=json"
 					: sURLPrefix + "SAP__Currencies.json",
 				unitsOfMeasureURL : bRealOData
-					? TestUtils.proxy(sServicePrefix + "SAP__UnitsOfMeasure?$format=json")
+					? sServicePrefix + "SAP__UnitsOfMeasure?$format=json"
 					: sURLPrefix + "SAP__UnitsOfMeasure.json"
 			}), "ui");
 		}
