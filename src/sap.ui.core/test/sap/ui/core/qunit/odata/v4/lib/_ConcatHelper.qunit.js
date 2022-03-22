@@ -32,7 +32,9 @@ sap.ui.define([
 			},
 			oDataRow = {},
 			// handleResponse must be at the prototype
-			oFirstLevelCache = Object.assign(Object.create({handleResponse : sinon.spy()}), {
+			oFirstLevelCache = Object.assign(Object.create({
+				handleResponse : sinon.stub().returns("~result~")
+			}), {
 				sMetaPath : "/meta/path",
 				mQueryOptions : {"sap-client" : "123"},
 				oRequestor : {
@@ -88,8 +90,10 @@ sap.ui.define([
 			oResult.value.unshift(oLeavesRow);
 		}
 
-		// code under test
-		oFirstLevelCache.handleResponse(oResult, "a", "b", "c", "...");
+		assert.strictEqual(
+			// code under test
+			oFirstLevelCache.handleResponse(oResult, "a", "b", "c", "..."),
+			"~result~");
 
 		assert.notOk(oFirstLevelCache.hasOwnProperty("handleResponse"), "reverted to prototype");
 		if (fnLeaves) {

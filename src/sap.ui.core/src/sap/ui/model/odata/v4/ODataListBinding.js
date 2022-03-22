@@ -2758,10 +2758,12 @@ sap.ui.define([
 			 // this may reset that.oRefreshPromise
 			that.reset(ChangeReason.Refresh, bKeepCacheOnError ? false : undefined);
 			return SyncPromise.all(
-				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise,
-					// Update after refresh event, otherwise $count is fetched before the request
-					that.oHeaderContext.checkUpdate()) // this is NOT done by refreshAll!
-			);
+				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise)
+			).then(function () {
+				// Update after refresh event, otherwise $count is fetched before the request.
+				// Avoid update in case bKeepCacheOnError needs to roll back.
+				return that.oHeaderContext.checkUpdateInternal(); // this is NOT done by refreshAll!
+			});
 		});
 	};
 

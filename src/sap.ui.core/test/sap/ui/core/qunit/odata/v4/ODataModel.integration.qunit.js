@@ -29553,7 +29553,9 @@ sap.ui.define([
 	// contexts.
 	// JIRA: CPOUI5ODATAV4-37
 	//
-	// Keep all created contexts during a side-effects refresh (JIRA: CPOUI5ODATAV4-1384)
+	// Keep all created contexts during a side-effects refresh, make sure $count is correct even
+	// when a filter is involved. (Note: for simplicity, $filter is not really shown here.)
+	// JIRA: CPOUI5ODATAV4-1384
 [false, true].forEach(function (bEmpty) {
 	[false, true].forEach(function (bSuccess) {
 		[false, true].forEach(function (bFound) {
@@ -29570,10 +29572,13 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			oNewContext,
 			oTableBinding,
+			// image we had a $filter : \'NoteLanguage ne null\' or similar for the table
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Input id="soCurrencyCode" value="{CurrencyCode}"/>\
-	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+	<Text id="count" text="{headerContext>$count}"/>\
+	<Table id="table" growing="true" growingThreshold="2" items="{path : \'SO_2_SOITEM\',\
+			parameters : {$$ownRequest : true, $count : true}}">\
 		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>\
@@ -29586,22 +29591,38 @@ sap.ui.define([
 				CurrencyCode : "EUR",
 				SalesOrderID : "1"
 			})
-			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Note,SalesOrderID"
-				+ "&$skip=0&$top=100", {
+			.expectChange("soCurrencyCode", "EUR")
+			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$count=true"
+				+ "&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=2", {
+				"@odata.count" : bEmpty ? 0 : 3,
 				value : bEmpty ? [] : [{
 					ItemPosition : "10",
 					Note : "Foo",
 					SalesOrderID : "1"
+				}, {
+					ItemPosition : "20",
+					Note : "Bar",
+					SalesOrderID : "1"
 				}]
 			})
-			.expectChange("note", bEmpty ? [] : ["Foo"])
-			.expectChange("soCurrencyCode", "EUR")
+			.expectChange("note", bEmpty ? [] : ["Foo", "Bar"])
+			.expectChange("count")
 			.expectChange("creationRow::note");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oTableBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("count", bEmpty ? "0" : "3");
+
+			// code under test
+			that.oView.setModel(that.oView.getModel(), "headerContext");
+			that.oView.byId("count").setBindingContext(oTableBinding.getHeaderContext(),
+				"headerContext");
+
+			return that.waitForChanges(assert, "$count");
+		}).then(function () {
 			var oCreationRowListBinding;
 
-			oTableBinding = that.oView.byId("table").getBinding("items");
 			oCreationRowListBinding = oModel.bindList(oTableBinding.getPath(),
 				oTableBinding.getContext(), undefined, undefined,
 				{$$updateGroupId : "doNotSubmit"});
@@ -29612,14 +29633,12 @@ sap.ui.define([
 			oCreationRowContext = oCreationRowListBinding.create({Note : "New item note"});
 			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "creationRow");
 		}).then(function () {
 			var aItems;
 
-			that.expectChange("note", ["First new row"]);
-			if (!bEmpty) {
-				that.expectChange("note", [, "Foo"]);
-			}
+			that.expectChange("count", bEmpty ? "1" : "4")
+				.expectChange("note", ["First new row"]);
 			that.expectRequest({
 					batchNo : 2,
 					method : "POST",
@@ -29646,7 +29665,7 @@ sap.ui.define([
 					.withArgs("Failed to request side effects");
 				that.oLogMock.expects("error")
 					.withArgs("Failed to get contexts for " + sSalesOrderService
-						+ "SalesOrderList('1')/SO_2_SOITEM with start index 0 and length 100");
+						+ "SalesOrderList('1')/SO_2_SOITEM with start index 0 and length 2");
 			}
 
 			// add transient row to items table
@@ -29656,6 +29675,10 @@ sap.ui.define([
 				ItemPosition : "10",
 				Note : "Foo - side effect",
 				SalesOrderID : "1"
+			}, {
+				ItemPosition : "20",
+				Note : "Bar - side effect",
+				SalesOrderID : "1"
 			}];
 			if (bFound) {
 				aItems.unshift({
@@ -29663,18 +29686,36 @@ sap.ui.define([
 					Note : "n/a",
 					SalesOrderID : "1"
 				});
-			} // else: let's assume "First new row" would be filtered out
+				aItems.length = 2;
+			} // else: "First new row" not part of this read range
 			that.expectRequest({
 					batchNo : 2,
 					url : "SalesOrderList('1')/SO_2_SOITEM"
-						+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100"
-				}, bSuccess ? {value : aItems} : undefined);
+						+ "?$count=true&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=2"
+				}, { // ignored if !bSuccess; else bEmpty does not play a role anymore
+					"@odata.count" : 4,
+					value : aItems
+				});
 			if (bSuccess) {
 				that.expectChange("note", ["First *new* row", "Foo - side effect"]);
-			}
-
-			if (bSuccess) { // see /*bSkipRefresh*/false
-				that.expectRequest({
+				if (bFound) {
+					if (bEmpty) { // now we see this $count for the 1st time
+						that.expectChange("count", "4");
+					}
+				} else {
+					// we cannot tell if "First new row" is affected by our imaginative $filter...
+					that.expectRequest({
+							batchNo : 3,
+							url : "SalesOrderList('1')/SO_2_SOITEM?$count=true"
+								+ "&$filter=not (SalesOrderID eq '1' and ItemPosition eq '0')"
+								+ "&$top=0"
+						}, {
+							"@odata.count" : 4, ///... looks like it is
+							value : []
+						})
+						.expectChange("count", "5");
+				}
+				that.expectRequest({ // see /*bSkipRefresh*/false
 						batchNo : 3,
 						url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0')"
 							+ "?$select=ItemPosition,Note,SalesOrderID"
@@ -29720,8 +29761,11 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("creationRow::note", null);
-			if (!bSuccess && !bEmpty) {
-				that.expectChange("note", ["Foo"]);
+			if (!bSuccess) {
+				that.expectChange("count", bEmpty ? "0" : "3"); // @see oNewContext.delete() below
+				if (!bEmpty) {
+					that.expectChange("note", [, "Bar"]);
+				}
 			}
 
 			return Promise.all([
@@ -38288,7 +38332,7 @@ sap.ui.define([
 					method : "POST",
 					url : "TEAMS",
 					payload : {Name : "New Team B", Team_Id : "TEAM_B"}
-				}, {Name : "New 'B' Team", Team_Id : "TEAM_B"})
+				}, {"@odata.etag" : "b", Name : "New 'B' Team", Team_Id : "TEAM_B"})
 				.expectRequest({
 					batchNo : 2,
 					method : "POST",
@@ -38303,7 +38347,7 @@ sap.ui.define([
 					value : [
 						{Name : "n/a", Team_Id : "TEAM_A"},
 						{Name : "'#1' Team", Team_Id : "TEAM_01"},
-						{Name : "n/b", Team_Id : "TEAM_B"},
+						{"@odata.etag" : "b", Name : "n/b", Team_Id : "TEAM_B"},
 						{Name : "'#2' Team", Team_Id : "TEAM_02"},
 						{Name : "n/c", Team_Id : "TEAM_C"}
 					]
@@ -38484,7 +38528,7 @@ sap.ui.define([
 					method : "POST",
 					url : "TEAMS",
 					payload : {Name : "New B", Team_Id : "TEAM_B"}
-				}, {Name : "'B' Team", Team_Id : "TEAM_B"})
+				}, {"@odata.etag" : "b", Name : "'B' Team", Team_Id : "TEAM_B"})
 				.expectChange("name", [, "'B' Team"])
 				.expectRequest({
 					batchNo : 3,
@@ -38506,7 +38550,7 @@ sap.ui.define([
 						{Name : "'#7' Team", Team_Id : "TEAM_07"},
 						{Name : "n/a", Team_Id : "TEAM_A"},
 						{Name : "'#8' Team", Team_Id : "TEAM_08"},
-						{Name : "n/b", Team_Id : "TEAM_B"},
+						{"@odata.etag" : "b", Name : "n/b", Team_Id : "TEAM_B"},
 						{Name : "'#9' Team", Team_Id : "TEAM_09"},
 						{Name : "n/c", Team_Id : "TEAM_C"}
 					]

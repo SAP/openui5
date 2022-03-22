@@ -256,11 +256,6 @@ sap.ui.define([
 				message : "Failed to request side effects",
 				details : "HTTP request was not processed because the previous request failed"
 			}, {
-				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-				level : Log.Level.ERROR,
-				message : "Failed to read path /SalesOrderList('0500000004')/SO_2_SCHDL/$count",
-				details : "HTTP request was not processed because the previous request failed"
-			}, {
 				component : "sap.ui.model.odata.v4.ODataListBinding",
 				level : Log.Level.ERROR,
 				message : "Failed to get contexts for /sap/opu/odata4/sap/zui5_testv4/default/sap"

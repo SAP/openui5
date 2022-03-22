@@ -17,12 +17,6 @@ sap.ui.define([
 						/Failed to drill-down into \('[0-9]*'\), invalid segment: \('[0-9]*'\)/
 				},
 				aExpectedLogs = [],
-				oReadCountFailLog = {
-					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-					level : Log.Level.ERROR,
-					message : "Failed to read path /SalesOrderList",
-					details : "HTTP request was not processed because the previous request failed"
-				},
 				oReadSchedulesFailLog = {
 					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
@@ -120,7 +114,7 @@ sap.ui.define([
 				aExpectedLogs.push(oUpdateFailLog);
 				When.onTheMainPage.changeQuantityInLineItem(0, "0.0");
 				aExpectedLogs.push(oSideEffectsFailLog1, oSideEffectsFailLog1,
-					oSideEffectsFailLog2, oReadCountFailLog, oReadSchedulesFailLog);
+					oSideEffectsFailLog2, oReadSchedulesFailLog);
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
 				When.onTheMainPage.changeQuantityInLineItem(0, "2.0");
@@ -148,7 +142,7 @@ sap.ui.define([
 				When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 2");
 				aExpectedLogs.push(oSideEffectsFailLog1, oSideEffectsFailLog1,
 					oSideEffectsFailLog2, oSideEffectsFailLog2, oSideEffectsFailLog2,
-					oReadCountFailLog, oReadSchedulesFailLog);
+					oReadSchedulesFailLog);
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
 

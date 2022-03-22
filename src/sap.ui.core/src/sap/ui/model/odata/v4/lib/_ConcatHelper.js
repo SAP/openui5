@@ -64,12 +64,9 @@ sap.ui.define([
 			};
 
 			/**
-			 * Handles a GET response by updating the cache data and the $count-values
-			 * recursively.
-			 *
-			 * @param {object} oResult - The result of the GET request
+			 * @override
+			 * @see sap.ui.model.odata.v4.lib._CollectionCache#handleResponse
 			 */
-			// @override sap.ui.model.odata.v4.lib._CollectionCache#handleResponse
 			oCache.handleResponse = function (oResult) {
 				aAdditionalRowHandlers.forEach(function (fnHandler) {
 					var oAdditionalRow;
@@ -85,7 +82,8 @@ sap.ui.define([
 
 				// revert to prototype and call it
 				delete this.handleResponse;
-				this.handleResponse.apply(this, arguments);
+
+				return this.handleResponse.apply(this, arguments);
 			};
 		}
 	};
