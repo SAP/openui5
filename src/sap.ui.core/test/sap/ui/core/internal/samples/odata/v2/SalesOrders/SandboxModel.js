@@ -707,6 +707,12 @@ sap.ui.define([
 					},
 					code : 201,
 					source : "ODLB.create/TC1/SalesOrderSet_220.json"
+				}, { // used in ODataListBinding#create: Test Case III
+					ifMatch : function (oRequest) {
+						return JSON.parse(oRequest.requestBody).Note === "C";
+					},
+					code : 201,
+					source : "ODLB.create/TC3/SalesOrderSet_240.json"
 				}],
 				"SalesOrderSet('222')" : {
 					source : "ODLB.create/TC1/SalesOrderSet_222.json"
@@ -826,6 +832,20 @@ sap.ui.define([
 				},
 				"SalesOrderSet('230.1')?$select=ChangedAt,GrossAmount,SalesOrderID" : {
 					source : "ODLB.create/TC2/SalesOrder('230.1').json"
+				},
+
+				/* ODataListBinding#create: Test Case III */
+				"SalesOrderSet('205')" : {
+					source : "ODLB.create/TC3/SalesOrder('205').json"
+				},
+				"GET SalesOrderSet('205')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
+					source : "ODLB.create/TC3/SalesOrder('205')_ToLineItems_0_4_count.json"
+				},
+				"SalesOrderSet('240')" : {
+					source : "ODLB.create/TC3/SalesOrderSet_240.json"
+				},
+				"GET SalesOrderSet('240')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
+					message : { "d" : {"__count" : "0", "results" : []}}
 				}
 			},
 			aRegExpFixture : [{

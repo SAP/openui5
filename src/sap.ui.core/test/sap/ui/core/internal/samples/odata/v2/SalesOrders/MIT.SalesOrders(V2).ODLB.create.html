@@ -21,9 +21,17 @@
 		to the following URLs depending on your development setup.<br /><br />
 		Start the Sales Orders V2 application with the English locale:
 		<ul>
-			<li><a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&realOData=true">
-			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&amp;realOData=true
-			</a></li>
+			<li>
+				<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&realOData=true">
+					http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&amp;realOData=true
+				</a>
+			</li>
+			<li>For tests with inline creation rows append the URL parameter
+				<code>&inlineCreationRows=1</code> to the URL:
+				<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&realOData=true&inlineCreationRows=1">
+					http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&amp;realOData=true&amp;inlineCreationRows=1
+				</a>
+			</li>
 		</ul>
 		<h3>Testing with mock data</h3>
 		Configure your IDE to be able to execute the Sales Orders application locally or use a
@@ -35,9 +43,17 @@
 		to the following URLs depending on your development setup.<br /><br />
 		Start the Sales Orders V2 application with the English locale:
 		<ul>
-			<li><a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en">
-			http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en
-			</a></li>
+			<li>
+				<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en">
+					http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en
+				</a>
+			</li>
+			<li>For tests with inline creation rows append the URL parameter
+				<code>&inlineCreationRows=1</code> to the URL:
+				<a href="http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&inlineCreationRows=1">
+					http://localhost:8080/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&amp;inlineCreationRows=1
+				</a>
+			</li>
 		</ul>
 		<h2>REALIZE and CHECK</h2>
 		<h3>(I) Create new sales orders inline</h3>
@@ -126,7 +142,7 @@
 				<b>Check:</b> Only the three transient sales orders and sales orders with the
 				customer name <code>Talpa</code> are shown.</li>
 			<li>Remember the number of sales orders.</li>
-			<li>Press the <code>Save</code> button on the bottom of the page.<br />
+			<li>Press the <code>Save</code> button at the bottom of the page.<br />
 				<b>Check:</b> The count has not been changed.<br />
 				<b>Check:</b> The three sales orders have the status <code>Persisted</code> and all
 				three sales orders have a sales order ID.<br />
@@ -303,7 +319,7 @@
 				<b>Check:</b> The three transient sales order items in the
 				<code>Sales Order Items</code> table and one persisted sales order item are
 				displayed.</li>
-			<li>Press the <code>Save</code> button on the bottom of the page.</li>
+			<li>Press the <code>Save</code> button at the bottom of the page.</li>
 			<li>Confirm the successful creation for the three new items.<br />
 				<b>Check:</b> The count has not been changed.<br />
 				<b>Check:</b> The three sales order items have the status <code>Persisted</code> and
@@ -343,6 +359,129 @@
 					based on the given (descending) sort order.<br />
 				<b>Check:</b> The status of the two newly created and persisted sales order items
 					has changed to <code>From Server</code>.
+			</li>
+		</ol>
+		<hr />
+
+		<!-- *********************************************************************************** -->
+		<h3>(III) Create new sales order with inline creation rows</h3>
+		<h4>Start the sales orders application with 1 inline creation row</h4>
+		<ol>
+			<li>Start the application with the URL parameter <code>&inlineCreationRows=1</code></li>
+			<li>Click the <code>Use Table</code> button on the top right side to display the Sales
+				Orders table.<br />
+				<b>Check:</b> An empty table row for a new sales order is displayed at the top of
+				the table at position one.<br />
+				<b>Check:</b> The empty table row is marked as inactive in the first column. Hover
+				over the icon to see the status text.<br />
+				<b>Check:</b> The inactive row is not considered in the sales orders count at the
+				top of the <code>Sales Orders</code> table.
+			</li>
+			<li>Remember the number of sales orders for further testing. The number can be found in
+				the header line of the <code>Sales Orders</code> table.<br />
+				<b>Check:</b> The number of rows in the table is 1 greater than the number of sales
+				orders (e.g. see text of the <code>More</code> button). The inactive row is not
+				counted.
+			</li>
+		</ol>
+		<h4>Edit inactive rows</h4>
+		<ol>
+			<li>Enter <code>A</code> in the <code>Note</code> input field of the inactive row.<br />
+				<b>Check:</b> The modified table row is now marked as transient in the first column.
+				Hover over the icon to see the status text.<br />
+				<b>Check:</b> An empty table row for a new sales order is displayed as the second
+				row.<br />
+				<b>Check:</b> The second row is marked as inactive in the first column. Hover
+				over the icon to see the status text.<br />
+				<b>Check:</b> The sales orders count (and also the table row count) has been
+				increased by one.<br />
+				<b>Check:</b> The inactive row is not considered in the sales orders count at the
+				top of the <code>Sales Orders</code> table.
+			</li>
+			<li>Enter <code>B</code> in the <code>Note</code> input field of the inactive row.<br />
+				<b>Check:</b> The modified table row is now marked as transient in the first column.
+				Hover over the icon to see the status text.<br />
+				<b>Check:</b> An empty table row for a new sales order is displayed as the third
+				row.<br />
+				<b>Check:</b> The third row is marked as inactive in the first column. Hover
+				over the icon to see the status text.<br />
+				<b>Check:</b> The sales orders count (and also the table row count) has been
+				increased by one.<br />
+				<b>Check:</b> The inactive row is not considered in the sales orders count at the
+				top of the <code>Sales Orders</code> table.
+			</li>
+		</ol>
+		<h4><code>Reset Changes</code> removes only transient entries</h4>
+		<ol>
+			<li>Press the <code>Reset Changes</code> button.<br />
+				<b>Check:</b> The the first and second transient rows have been removed.<br />
+				<b>Check:</b> The empty table row for a new sales order is displayed as the first
+				row.<br />
+				<b>Check:</b> The first row is marked as inactive in the first column. Hover over
+				the icon to see the status text.<br />
+				<b>Check:</b> The sales orders count (and also the table row count) has been
+				decreased by two.<br />
+				<b>Check:</b> The inactive row is not considered in the sales orders count at the
+				top of the <code>Sales Orders</code> table.
+			</li>
+		</ol>
+		<h4>Modify inactive entry in the object page</h4>
+		<ol>
+			<li>Select the inactive sales order.<br />
+				<b>Check:</b> The <code>Sales Order Items</code> table is empty.
+			</li>
+			<li>Enter <code>C</code> in the <code>Note</code> input field in the
+				<code>Sales Order Details</code> section.<br />
+				<b>Check:</b> The first row in the <code>Sales Orders</code> table is now marked as
+				transient in the first column. Hover over the icon to see the status text.<br />
+				<b>Check:</b> The <code>Note</code> field of the first sales orders has the value
+				<code>C</code>.<br />
+				<b>Check:</b> An empty table row for a new sales order is displayed as the second
+				row.<br />
+				<b>Check:</b> The second row is marked as inactive in the first column. Hover
+				over the icon to see the status text.<br />
+				<b>Check:</b> The count of the <code>Sales Orders</code> table has been increased by
+				one.<br />
+				<b>Check:</b> The inactive row is not considered in the sales orders count at the
+				top of the <code>Sales Orders</code> table.
+			</li>
+			<li>Select the inactive sales order at Row 2.<br />
+				<b>Check:</b> The <code>Sales Order Items</code> table is empty.
+			</li>
+			<li>Press the <code>Save</code> button at the bottom of the page.<br />
+				<b>Check:</b> The first row in the <code>Sales Orders</code> table is now marked as
+				persisted in the first column. Hover over the icon to see the status text.<br />
+			</li>
+			<li>Enter <code>D</code> in the <code>Note</code> input field of the inactive row.<br />
+				<b>Check:</b> The modified table row is now marked as transient in the first column.
+				Hover over the icon to see the status text.<br />
+				<b>Check:</b> An empty table row for a new sales order is displayed as the third
+				row.<br />
+				<b>Check:</b> The third row is marked as inactive in the first column. Hover
+				over the icon to see the status text.<br />
+				<b>Check:</b> The sales orders count (and also the table row count) has been
+				increased by one.<br />
+				<b>Check:</b> The inactive row is not considered in the sales orders count at the
+				top of the <code>Sales Orders</code> table.
+			</li>
+		</ol>
+		<h4>Empty <code>Sales Order Items</code> table for inactive and transient sales orders</h4>
+		<ol>
+			<li>Select the inactive sales order in the third row.<br />
+				<b>Check:</b> The <code>Sales Order Items</code> table is empty.
+			</li>
+			<li>Select the transient sales order in second row.<br />
+				<b>Check:</b> The <code>Sales Order Items</code> table is empty.
+			</li>
+			<li>Select the 4th sales order which has been read from server.<br />
+				<b>Check:</b> The <code>Sales Order Items</code> table contains items.<br />
+				<b>Check:</b> The last item in the <code>Sales Order Items</code> table is an
+				inactive entry.
+			</li>
+			<li>Select the first sales order which has been created on the client and which has been
+				persisted.<br />
+				<b>Check:</b> The <code>Sales Order Items</code> table contains a single inactive
+				row.
 			</li>
 		</ol>
 	</body>

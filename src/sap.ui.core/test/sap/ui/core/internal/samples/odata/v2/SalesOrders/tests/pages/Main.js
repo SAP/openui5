@@ -183,6 +183,18 @@ sap.ui.define([
 					});
 				},
 				/*
+				 * Changes the note of the sales order on the object page.
+				 *
+				 * @param {string} sNewNote The new note value
+				 */
+				changeSalesOrderNoteOnObjectPage : function (sNewNote) {
+					this.waitFor({
+						actions : new EnterText({text : sNewNote}),
+						id : "note::objectPage",
+						viewName : sViewName
+					});
+				},
+				/*
 				 * Changes the filter value for the sales orders table.
 				 *
 				 * @param {string} sFilterValue The new filter value
@@ -404,6 +416,12 @@ sap.ui.define([
 				 */
 				pressSalesOrderSaveButton : function () {
 					pressButton(this, "saveSalesOrder");
+				},
+				/*
+				 * Presses the Reset Changes button at the bottom of the page.
+				 */
+				pressResetChangesButton : function () {
+					pressButton(this, "resetChanges");
 				},
 				/*
 				 * Presses the "Use Table" button at the top of the page.
@@ -782,7 +800,9 @@ sap.ui.define([
 										sExpectedValue = mExpectedValues[sColumn] || "";
 										break;
 									case "Unit":
-										sExpectedValue = mExpectedValues[sColumn] || "EA";
+										sExpectedValue = mExpectedValues.hasOwnProperty("Unit")
+											? mExpectedValues[sColumn]
+											: "EA";
 										break;
 									default:
 										return;
@@ -1100,6 +1120,19 @@ sap.ui.define([
 					});
 				},
 				/*
+				 * Checks wheter the sales order items table is empty.
+				 */
+				checkSalesOrderItemsTableIsEmpty : function () {
+					this.waitFor({
+						id : "ToLineItems",
+						success : function (oTable) {
+							Opa5.assert.strictEqual(oTable.getBinding("rows").getLength(), 0,
+								"The sales order items table is empty");
+						},
+						viewName : sViewName
+					});
+				},
+				/*
 				 * Checks if the line items to the given sales order have been loaded. Does that by
 				 * comparing the first line items <code>SalesOrderID</code> property in the table.
 				 *
@@ -1151,6 +1184,27 @@ sap.ui.define([
 							iCurrentSalesOrdersCount += iDelta;
 							Opa5.assert.equal(iCount, iCurrentSalesOrdersCount,
 								"Sales orders count has changed by " + iDelta + " to " + iCount);
+						},
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Checks if the sales orders count (rememberSalesOrdersCount) differs by the given
+				 * delta from the corresponding bindings length.
+				 *
+				 * @param {number} iDelta
+				 *   The supposed difference between the current sales orders count and the bindings
+				 *   length.
+				 */
+				checkSalesOrdersTableLengthDiffersBy : function (iDelta) {
+					this.waitFor({
+						id : "SalesOrderSet",
+						success : function (oTable) {
+							var iCount = oTable.getGrowingInfo().total;
+
+							Opa5.assert.equal(iCount, iCurrentSalesOrdersCount + iDelta,
+								"Sales orders count differs by " + iDelta
+								+ " from the bindings length");
 						},
 						viewName : sViewName
 					});
