@@ -49,18 +49,22 @@ sap.ui.define([
 		this.oColumn.setTemplate(oTemplate);
 		this.oColumn.setCreationTemplate(oCreationTemplate);
 
-		var oTemplateClone = this.oColumn.getTemplate(true);
-		var oCreationTemplateClone = this.oColumn.getCreationTemplate(true);
+		assert.strictEqual(this.oColumn.getTemplateClone(), undefined, "No template clone created if not a child of a table");
+		assert.strictEqual(this.oColumn.getCreationTemplateClone(), undefined, "No creation template clone created if not a child of a table");
+
+		var oTable = new Table({columns: this.oColumn});
+		var oTemplateClone = this.oColumn.getTemplateClone();
+		var oCreationTemplateClone = this.oColumn.getCreationTemplateClone();
 		var oTemplateCloneDestroySpy = sinon.spy(oTemplateClone, "destroy");
 		var oCreationTemplateCloneDestroySpy = sinon.spy(oCreationTemplateClone, "destroy");
 
 		assert.strictEqual(this.oColumn._oTemplateClone, oTemplateClone, "Reference to the template clone is saved");
-		assert.strictEqual(this.oColumn.getTemplate(true), oTemplateClone, "Existing template clone is returned");
+		assert.strictEqual(this.oColumn.getTemplateClone(), oTemplateClone, "Existing template clone is returned");
 		assert.strictEqual(this.oColumn.getTemplate(), oTemplate, "Template is returned");
 		assert.notStrictEqual(this.oColumn.getTemplate(), oTemplateClone, "Template and clone are different instances");
 
 		assert.strictEqual(this.oColumn._oCreationTemplateClone, oCreationTemplateClone, "Reference to the creationTemplate clone is saved");
-		assert.strictEqual(this.oColumn.getCreationTemplate(true), oCreationTemplateClone, "Existing creationTemplate clone is returned");
+		assert.strictEqual(this.oColumn.getCreationTemplateClone(), oCreationTemplateClone, "Existing creationTemplate clone is returned");
 		assert.strictEqual(this.oColumn.getCreationTemplate(), oCreationTemplate, "CreationTemplate is returned");
 		assert.notStrictEqual(this.oColumn.getCreationTemplate(), oCreationTemplateClone, "CreationTemplate and clone are different instances");
 
@@ -70,6 +74,8 @@ sap.ui.define([
 		assert.ok(oCreationTemplateCloneDestroySpy.calledOnce, "The creationTemplate clone was destroyed");
 		assert.ok(!this.oColumn._oTemplateClone, "Reference to the template clone is removed");
 		assert.ok(!this.oColumn._oCreationTemplateClone, "Reference to the creationTemplate clone is removed");
+
+		oTable.destroy();
 	});
 
 	QUnit.test("Column Header Settings - ResponsiveTable", function(assert) {
@@ -78,40 +84,39 @@ sap.ui.define([
 		assert.ok(this.oColumn.getHeaderVisible(), "Default headerVisible property");
 		assert.strictEqual(this.oColumn.getHAlign(), "Begin", "Default hAlign property");
 
-		this.oColumn._addAriaStaticDom();
-
 		this.oColumn.setHeader("Text1");
 
 		assert.ok(!this.oColumn._oColumnHeaderLabel, "Still no Column Header Label defined so far.");
-		this.oColumn.getColumnHeaderControl(true);
-		assert.ok(!!this.oColumn._oColumnHeaderLabel, "Column Header Label is initialized");
+		assert.strictEqual(this.oColumn._getColumnHeaderLabel(), undefined, "No column header label created if not a child of a table");
 
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrappingType(), "Hyphenated", "wrapping type of label control");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), this.oColumn.getHeaderVisible(), "wrapping set on label control according to according to headerVisible");
-		assert.ok(!this.oColumn._oColumnHeaderLabel.getWidth(), "width set on label control according to according to headerVisible");
-		var oLabelElement = this.oColumn.getDomRef();
-		assert.strictEqual(oLabelElement && oLabelElement.textContent, this.oColumn.getHeader(), "header text forwarded to ACC label");
+		var oTable = new Table({type: "ResponsiveTable", columns: this.oColumn, enableColumnResize: false});
 
-		this.oColumn.setHeader("Text2");
-		this.oColumn.setHeaderVisible(false);
-		this.oColumn.setHAlign("End");
+		return oTable.initialized().then(function() {
+			var oColumnHeaderLabel = this.oColumn._getColumnHeaderLabel().getLabel();
 
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), this.oColumn.getHeaderVisible(), "wrapping set on label control according to according to headerVisible");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to according to headerVisible");
-		oLabelElement = this.oColumn.getDomRef();
-		assert.strictEqual(oLabelElement && oLabelElement.textContent, this.oColumn.getHeader(), "header text forwarded to ACC label");
+			assert.strictEqual(oColumnHeaderLabel.getWrappingType(), "Hyphenated", "wrapping type of label control");
+			assert.strictEqual(oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
+			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
+			assert.strictEqual(oColumnHeaderLabel.getWrapping(), true, "wrapping set on label control according to headerVisible");
+			assert.ok(!oColumnHeaderLabel.getWidth(), "width set on label control according to headerVisible");
 
-		this.oColumn.setHeaderVisible(true);
-		this.oColumn.updateColumnResizing(true);
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "wrapping on label control is disabled when resizing is activated");
-		this.oColumn.updateColumnResizing(false);
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), true, "wrapping on label control is enabled when resizing is deactivated");
+			this.oColumn.setHeader("Text2");
+			this.oColumn.setHeaderVisible(false);
+			this.oColumn.setHAlign("End");
 
-		this.oColumn._removeAriaStaticDom();
+			assert.strictEqual(oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
+			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
+			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "wrapping set on label control according to headerVisible");
+			assert.strictEqual(oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to headerVisible");
+
+			this.oColumn.setHeaderVisible(true);
+			oTable.setEnableColumnResize(true);
+			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "wrapping on label control is disabled when resizing is activated");
+			oTable.setEnableColumnResize(false);
+			assert.strictEqual(oColumnHeaderLabel.getWrapping(), true, "wrapping on label control is enabled when resizing is deactivated");
+
+			oTable.destroy();
+		}.bind(this));
 	});
 
 	QUnit.test("Column Header Settings - GridTable", function(assert) {
@@ -120,40 +125,38 @@ sap.ui.define([
 		assert.ok(this.oColumn.getHeaderVisible(), "Default headerVisible property");
 		assert.strictEqual(this.oColumn.getHAlign(), "Begin", "Default hAlign property");
 
-		this.oColumn._addAriaStaticDom();
-
 		this.oColumn.setHeader("Text1");
 
 		assert.ok(!this.oColumn._oColumnHeaderLabel, "Still no Column Header Label defined so far.");
-		this.oColumn.getColumnHeaderControl(false);
-		assert.ok(!!this.oColumn._oColumnHeaderLabel, "Column Header Label is initialized");
+		assert.strictEqual(this.oColumn._getColumnHeaderLabel(), undefined, "No column header label created if not a child of a table");
 
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrappingType(), "Normal" /*Default*/, "wrapping type of label control");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
-		assert.ok(!this.oColumn._oColumnHeaderLabel.getWidth(), "width set on label control according to according to headerVisible");
-		var oLabelElement = this.oColumn.getDomRef();
-		assert.strictEqual(oLabelElement && oLabelElement.textContent, this.oColumn.getHeader(), "header text forwarded to ACC label");
+		var oTable = new Table({columns: this.oColumn});
 
-		this.oColumn.setHeader("Text2");
-		this.oColumn.setHeaderVisible(false);
-		this.oColumn.setHAlign("End");
+		return oTable.initialized().then(function() {
+			var oColumnHeaderLabel = this.oColumn._getColumnHeaderLabel().getLabel();
 
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to according to headerVisible");
-		oLabelElement = this.oColumn.getDomRef();
-		assert.strictEqual(oLabelElement && oLabelElement.textContent, this.oColumn.getHeader(), "header text forwarded to ACC label");
+			assert.strictEqual(oColumnHeaderLabel.getWrappingType(), "Normal" /*Default*/, "wrapping type of label control");
+			assert.strictEqual(oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
+			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
+			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
+			assert.ok(!oColumnHeaderLabel.getWidth(), "width set on label control according to headerVisible");
 
-		this.oColumn.setHeaderVisible(true);
-		this.oColumn.updateColumnResizing(true);
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "wrapping on label control is disabled when resizing is activated");
-		this.oColumn.updateColumnResizing(false);
-		assert.strictEqual(this.oColumn._oColumnHeaderLabel.getWrapping(), false, "wrapping on label control is disabled when resizing is deactivated");
+			this.oColumn.setHeader("Text2");
+			this.oColumn.setHeaderVisible(false);
+			this.oColumn.setHAlign("End");
 
-		this.oColumn._removeAriaStaticDom();
+			assert.strictEqual(oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
+			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
+			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
+			assert.strictEqual(oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to headerVisible");
+
+			this.oColumn.setHeaderVisible(true);
+			oTable.setEnableColumnResize(false);
+			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "wrapping on label control is disabled when resizing is deactivated");
+			oTable.setEnableColumnResize(true);
+			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "wrapping on label control is disabled when resizing is activated");
+
+			oTable.destroy();
+		}.bind(this));
 	});
-
 });

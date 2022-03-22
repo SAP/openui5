@@ -411,13 +411,14 @@ sap.ui.define([
 	 * @param {object} [mEnhanceConfig.propertyBag] Optional propertybag for different modification handler derivations
 	 * @param {boolean} [bSync] If the method should be executed synchronously; e.g. for the Table
 	 *
-	 * @returns {Promise<object>} Promise resolving with the adapted xConfig object
+	 * @returns {Promise<object>|object|null}
+	 *     A promise that resolves with the xConfig, the xConfig directly if it is already available, or <code>null</code> if there is no xConfig
 	 */
 	Engine.prototype.readXConfig = function(vControl, mEnhanceConfig, bSync) {
 
 		var oControl = Engine.getControlInstance(vControl);
 		var oModificationHandler = this.getModificationHandler(vControl);
-		return oModificationHandler.readConfig(oControl, mEnhanceConfig, bSync) || Promise.resolve({});
+		return oModificationHandler.readConfig(oControl, mEnhanceConfig, bSync) || null;
 
 	};
 
