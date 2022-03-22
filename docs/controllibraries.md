@@ -120,12 +120,9 @@ One example `library.js` file of a small control library, the `sap.ui.suite` lib
 /**
  * Initialization Code and shared classes of library sap.ui.suite.
  */
-sap.ui.define(['jquery.sap.global', 
-	'sap/ui/core/library'], // library dependency
-	function(jQuery) {
-
-	"use strict";
-
+sap.ui.define([
+	'sap/ui/core/library'
+], function () {
 	/**
 	 * Suite controls library.
 	 *
@@ -137,6 +134,7 @@ sap.ui.define(['jquery.sap.global',
 	 */
 	
 	// delegate further initialization of this library to the Core
+	// note the full api reference notation due to the Core not being "booted" yet!
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.suite",
 		version: "${version}",
@@ -191,7 +189,7 @@ sap.ui.define(['jquery.sap.global',
 
 	return sap.ui.suite;
 
-}, /* bExport= */ false);
+});
 ```
 
 ### Translation file (messagebundle.properties) and translation
@@ -283,9 +281,8 @@ sap.ui.define([dependency1Name, dependency2Name,...], function(dependency1, depe
 
 One example control implementation using this syntax (but not containing any documentation or further functionality):
 ```js
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
-	function(jQuery, ListItemBase, library) {
-	"use strict";
+sap.ui.define(['./ListItemBase', './library'],
+	function(ListItemBase, library) {
 
 	var MyListItem = ListItemBase.extend("sap.m.MyListItem", /** @lends sap.m.MyListItem.prototype */ { metadata : {
 		library : "sap.m",
@@ -297,12 +294,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 }, /* bExport= */ true);
 ```
 
-You see the two standard dependencies:
-
--   ```jquery.sap.global``` providing jQuery itself, enriched with additional UI5 plugins
--   ```./library``` providing the library definition in the `library.js` file
-
-as well as another very common dependency, the base class:
+You see the standard dependency ```./library``` providing the library definition in the `library.js` file as well as another very common dependency, the base class:
 
 -   ```./ListItemBase``` the base class of this specific ListItem type
 
@@ -439,61 +431,60 @@ The code within the `render()` method is the same as in "notepad controls".
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
-	"use strict";
-
+sap.ui.define([
+], function () {
 
 	/**
-	 * @class NavContainer renderer. 
+	 * @class NavContainer renderer, using the faster new api version 
 	 * @static
 	 */
 	var NavContainerRenderer = {
+		apiVersion: 2
 	};
 	
 	
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * 
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	NavContainerRenderer.render = function(rm, oControl) {
+	NavContainerRenderer.render = function (oRm, oControl) {
 		// return immediately if control is invisible, do not render any HTML
 		if (!oControl.getVisible()) {
 			return;
 		}
 		
-		rm.write("<div");
-		rm.writeControlData(oControl);
+		oRm.openStart("div");
+		oRm.writeControlData(oControl);
 		
-		rm.addClass("sapMNav");
-		rm.addStyle("width", oControl.getWidth());
-		rm.addStyle("height", oControl.getHeight());
+		oRm.class("sapMNav");
+		oRm.style("width", oControl.getWidth());
+		oRm.style("height", oControl.getHeight());
 	
 		if (this.renderAttributes) {
-			this.renderAttributes(rm, oControl); // may be used by inheriting renderers, but DO NOT write class or style attributes! Instead, call addClass/addStyle.
+			this.renderAttributes(oRm, oControl); // may be used by inheriting renderers, but DO NOT write class or style attributes! Instead, call class/style.
 		}
 		
-		rm.writeClasses();
-		rm.writeStyles();
+		oRm.writeClasses();
+		oRm.writeStyles();
 		
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
+			oRm.writeAttributeEscaped("title", sTooltip);
 		}
-		rm.write(">"); // div element
+		oRm.openEnd(); // div element
 	
 		if (this.renderBeforeContent) {
-			this.renderBeforeContent(rm, oControl); // hook method; may be used by inheriting renderers
+			this.renderBeforeContent(oRm, oControl); // hook method; may be used by inheriting renderers
 		}
 		
 		var oContent = oControl.getCurrentPage();
 		if (oContent) {
-			rm.renderControl(oContent);
+			oRm.renderControl(oContent);
 		}
 	
-		rm.write("</div>");
+		oRm.close("div");
 	};
 	
 
@@ -509,20 +500,21 @@ Note that the `.extend(...)` method used here is different from the normal UI5 i
 Documentation omitted to keep this example short:
 ```js
 // Provides default renderer for control sap.ui.commons.ToggleButton
-sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, ButtonRenderer, Renderer) {
-	"use strict";
+sap.ui.define([
+	'./ButtonRenderer', 
+	'sap/ui/core/Renderer'
+], function (ButtonRenderer, Renderer) {
 
 	var ToggleButtonRenderer = Renderer.extend(ButtonRenderer);
 
-	ToggleButtonRenderer.renderButtonAttributes = function(rm, oToggleButton) {
+	ToggleButtonRenderer.renderButtonAttributes = function (oRm, oToggleButton) {
 		var bPressed = oToggleButton.getPressed();
 	
 		if (bPressed) {
-			rm.addClass("sapMToggleBtnPressed");
+			oRm.class("sapMToggleBtnPressed");
 		}
 	
-		rm.writeAttribute('pressed', bPressed);
+		oRm.attr('pressed', bPressed);
 	};
 
 	return ToggleButtonRenderer;
