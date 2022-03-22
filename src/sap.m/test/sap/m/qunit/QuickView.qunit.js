@@ -995,14 +995,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test navigation with sap.m.QuickViewGroupElementType.pageLink", function (assert) {
-		// Arrange
-		var done = assert.async();
-
 		// Act
 		this.oButton.firePress();
-		this.clock.tick(500);
-
-		this.clock.restore(); // restore the timer so we can use the real setTimeout temporary
+		Core.applyChanges();
 
 		var oLink = this.oQuickView.getPages()[0].getPageContent().form.getContent().find(function(item){
 			return item.isA("sap.m.Link");
@@ -1011,11 +1006,9 @@ sap.ui.define([
 		assert.notEqual(this.oQuickView._oPopover.getDomRef().getElementsByTagName("a")[2].href.slice(-1), "#", " href don't have unnecessary #");
 
 		oLink.firePress();
+		Core.applyChanges();
 
 		// Assert
-		setTimeout(function(){
-			assert.ok(this.oQuickView._oPopover.isOpen(), "After a link is clicked, the popup should stay opened with the content of the linked page.");
-			done();
-		}.bind(this), 1000);
+		assert.ok(this.oQuickView._oPopover.isOpen(), "After a link is clicked, the popup should stay opened with the content of the linked page.");
 	});
 });
