@@ -123,6 +123,17 @@ function (
 		assert.strictEqual(oAvatar.getFallbackIcon(), sNewFallbackIcon, "fallbackIcon of Avatar is changed correctly");
 	});
 
+
+	QUnit.test("Avatar Group Item tooltip", function (assert) {
+		// Arrange
+
+		this.oAvatarGroupItem.setTooltip("New Tooltip");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oAvatarGroupItem.$().attr("title"), "New Tooltip", "Avatar tooltip was correctly attached tp AvatarGroupItem");
+	});
+
 	QUnit.module("Private API", {
 		beforeEach: setupFunction,
 		afterEach: teardownFunction

@@ -9,6 +9,7 @@
 				<HBox alignItems="Center">
 					<f:Avatar src="{personData>/src}"
 							initials="{personData>/initials}"
+							tooltip="{personData>/initials}"
 							fallbackIcon="{personData>/fallbackIcon}"
 							backgroundColor="{personData>/backgroundColor}" />
 					<VBox class="sapUiTinyMarginBegin">
