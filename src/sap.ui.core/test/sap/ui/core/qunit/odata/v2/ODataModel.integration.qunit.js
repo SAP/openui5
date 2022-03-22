@@ -9112,6 +9112,48 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: If operation mode auto and a threshold is set as binding parameter and a count
+	// request returns a count smaller than the threshold then this count is used as the $top
+	// value for requesting the complete tree data.
+	// BCP: 2270014869
+	QUnit.test("ODataTreeBinding: _loadCompleteTreeWithAnnotations sets $top URL parameter",
+			function (assert) {
+		var oModel = createSpecialCasesModel(),
+			sView = '\
+<t:TreeTable rows="{\
+			parameters : {\
+				countMode : \'Inline\',\
+				numberOfExpandedLevels : 2,\
+				operationMode : \'Auto\',\
+				rootLevel : 0,\
+				threshold : 200,\
+				treeAnnotationProperties : {\
+					hierarchyDrillStateFor : \'OrderOperationIsExpanded\',\
+					hierarchyLevelFor : \'OrderOperationRowLevel\',\
+					hierarchyNodeFor : \'OrderOperationRowID\',\
+					hierarchyParentNodeFor : \'OrderOperationParentRowID\'\
+				}\
+			},\
+			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
+		}"\
+		visibleRowCount="2"\
+		visibleRowCountMode="Fixed" \>\
+	<Text text="{MaintenanceOrder}" />\
+</t:TreeTable>';
+
+		this.expectHeadRequest()
+			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$top=0&$inlinecount=allpages", {
+				__count : "150",
+				results : []
+			})
+			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$top=150", {
+				results : [/*data not neccessary*/]
+			});
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
 	// Scenario: If the OData service works with code list for units, the OData Unit type uses this
 	// information for formatting and parsing.
 	// JIRA: CPOUI5MODELS-437

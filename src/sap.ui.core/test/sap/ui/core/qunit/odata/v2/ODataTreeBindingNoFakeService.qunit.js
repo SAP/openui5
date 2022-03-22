@@ -1050,4 +1050,65 @@ sap.ui.define([
 		// code under test
 		ODataTreeBinding.prototype._applyAdapter.call(oBinding, function () {});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_loadCompleteTreeWithAnnotations: add $top to URLParams", function (assert) {
+		var oBinding = {
+				sGroupId : "~groupId",
+				oModel : {read : function () {}},
+				mRequestHandles : {},
+				bSkipDataEvents : true,
+				aSorters : "~sorters",
+				iTotalCollectionCount : "~count",
+				getResolvedPath : function () {}
+			},
+			aUrlParams = ["~custom"];
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding.oModel).expects("read")
+			.withExactArgs("~resolvedPath", {
+				urlParameters : sinon.match.same(aUrlParams)
+					.and(sinon.match(["~custom", "$top=~count"])),
+				success : sinon.match.func,
+				error : sinon.match.func,
+				sorters : "~sorters",
+				groupId : "~groupId"
+			});
+
+		// code under test
+		ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations.call(oBinding, aUrlParams);
+	});
+
+	//*********************************************************************************************
+[null, 0].forEach(function (vTotalCollectionCount) {
+	var sTitle = "_loadCompleteTreeWithAnnotations: don't add $top to URLParams: "
+			+ "TotalCollectionCount = " + vTotalCollectionCount;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				sGroupId : "~groupId",
+				oModel : {read : function () {}},
+				mRequestHandles : {},
+				bSkipDataEvents : true,
+				aSorters : "~sorters",
+				iTotalCollectionCount : vTotalCollectionCount,
+				getResolvedPath : function () {}
+			},
+			aUrlParams = ["~custom"];
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding.oModel).expects("read")
+			.withExactArgs("~resolvedPath", {
+				urlParameters : sinon.match.same(aUrlParams)
+					.and(sinon.match(["~custom"])),
+				success : sinon.match.func,
+				error : sinon.match.func,
+				sorters : "~sorters",
+				groupId : "~groupId"
+			});
+
+		// code under test
+		ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations.call(oBinding, aUrlParams);
+	});
+});
 });
