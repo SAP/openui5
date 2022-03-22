@@ -8445,6 +8445,7 @@ sap.ui.define([
 		oBinding.createContexts(3, createData(3, 3, true, 6, true)); // simulate a read
 		oContext = oBinding.aContexts[4];
 		oContext.fnOnBeforeDestroy = "~fnOnBeforeDestroy~";
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("setKeepAlive")
 			.withExactArgs(true, "~fnOnBeforeDestroy~", "~bRequestMessages~");
 
@@ -8462,6 +8463,7 @@ sap.ui.define([
 
 		oBinding.mPreviousContextsByPath[sPath] = oContext;
 		oContext.fnOnBeforeDestroy = "~fnOnBeforeDestroy~";
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("setKeepAlive")
 			.withExactArgs(true, "~fnOnBeforeDestroy~", "~bRequestMessages~");
 
@@ -8497,7 +8499,7 @@ sap.ui.define([
 			};
 
 		oBinding.oCachePromise = bAsync ? Promise.resolve(oCache) : SyncPromise.resolve(oCache);
-		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(this.oModel).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
 		this.mock(this.oModel).expects("getPredicateIndex").withExactArgs(sPath).returns(10);
@@ -8545,17 +8547,6 @@ sap.ui.define([
 			// code under test
 			oBinding.getKeepAliveContext("/EMPLOYEES('1')");
 		}, new Error("Binding is unresolved: " + oBinding));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getKeepAliveContext: suspended, no context", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES");
-
-		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
-		this.mock(Context).expects("create").never();
-
-		// code under test
-		assert.strictEqual(oBinding.getKeepAliveContext("/EMPLOYEES('1')"), undefined);
 	});
 
 	//*********************************************************************************************
@@ -8678,22 +8669,80 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("isKeepAliveBindingFor", function (assert) {
+	QUnit.test("isKeepAliveBindingFor: no $$getKeepAliveContext", function (assert) {
 		var oBinding = this.bindList("/path");
 
+		this.mock(oBinding).expects("getResolvedPath").never();
+		this.mock(oBinding).expects("isRootBindingSuspended").never();
+
+		// code under test
 		assert.notOk(oBinding.isKeepAliveBindingFor("/path"));
+	});
 
-		oBinding = this.bindList("/path", undefined, undefined, undefined,
+	//*********************************************************************************************
+	QUnit.test("isKeepAliveBindingFor: wrong path", function (assert) {
+		var oBinding = this.bindList("/other/path", undefined, undefined, undefined,
 			{$$getKeepAliveContext : true});
-		this.mock(oBinding).expects("isRootBindingSuspended").never();
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/path");
-		assert.ok(oBinding.isKeepAliveBindingFor("/path"));
 
-		oBinding = this.bindList("/other/path", undefined, undefined, undefined,
-			{$$getKeepAliveContext : true});
-		this.mock(oBinding).expects("isRootBindingSuspended").never();
+		oBinding.aContexts = [{}];
+		oBinding.mPreviousContextsByPath["/other/path(1)"] = {};
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/other/path");
+		this.mock(oBinding).expects("isRootBindingSuspended").never();
+
+		// code under test
 		assert.notOk(oBinding.isKeepAliveBindingFor("/path"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isKeepAliveBindingFor: not suspended", function (assert) {
+		var oBinding = this.bindList("/path", undefined, undefined, undefined,
+			{$$getKeepAliveContext : true});
+
+		oBinding.aContexts = [{}];
+		oBinding.mPreviousContextsByPath["/path(1)"] = {};
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/path");
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+
+		// code under test
+		assert.ok(oBinding.isKeepAliveBindingFor("/path"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isKeepAliveBindingFor: suspended, no contexts", function (assert) {
+		var oBinding = this.bindList("/path", undefined, undefined, undefined,
+			{$$getKeepAliveContext : true});
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/path");
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+
+		// code under test
+		assert.notOk(oBinding.isKeepAliveBindingFor("/path"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isKeepAliveBindingFor: suspended, context in aContexts", function (assert) {
+		var oBinding = this.bindList("/path", undefined, undefined, undefined,
+			{$$getKeepAliveContext : true});
+
+		oBinding.aContexts = [{}];
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/path");
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+
+		// code under test
+		assert.ok(oBinding.isKeepAliveBindingFor("/path"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isKeepAliveBindingFor: suspended, kept-alive context", function (assert) {
+		var oBinding = this.bindList("/path", undefined, undefined, undefined,
+			{$$getKeepAliveContext : true});
+
+		oBinding.mPreviousContextsByPath["/path(1)"] = {};
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/path");
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+
+		// code under test
+		assert.ok(oBinding.isKeepAliveBindingFor("/path"));
 	});
 
 	//*********************************************************************************************

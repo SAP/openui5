@@ -1539,15 +1539,15 @@ sap.ui.define([
 	 *   Whether implicit loading of side effects via PATCH requests is switched off
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by the context's binding
-	 * @returns {sap.ui.model.odata.v4.Context|undefined}
-	 *   The context, or <code>undefined</code> if a binding with a suspended root binding matches
-	 *   and has no context with that path.
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   The kept-alive context
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the model does not use the <code>autoExpandSelect</code> parameter,
 	 *     <li> an invalid parameter was supplied,
 	 *     <li> the path is not a list context path to an entity,
-	 *     <li> multiple list bindings with <code>$$getKeepAliveContext</code> match, or
+	 *     <li> multiple list bindings with <code>$$getKeepAliveContext</code> match,
+	 *     <li> a suspended binding already having contexts matches, or
 	 *     <li> {@link sap.ui.model.odata.v4.Context#setKeepAlive} fails
 	 *   </ul>
 	 *
