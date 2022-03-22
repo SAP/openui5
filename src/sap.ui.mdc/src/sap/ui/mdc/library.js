@@ -9,7 +9,7 @@
 	"sap/ui/core/Core", // provides sap.ui.getCore()
 	"sap/ui/core/library", // library dependency
 	"sap/m/library" // library dependency
-], function (Core) {
+], function () {
 	"use strict";
 
 	/**
@@ -27,7 +27,7 @@
 	 * @ui5-restricted sap.fe
 	 * @experimental As of version 1.54 Disclaimer: Usage Restrictions: The components of this library are under development and documented as private. Their APIs are subject to change and should not be used in productive scenarios without further agreement. A general availability of sap.ui.mdc will be announced via the usual channels.
 	 */
-	 var thisLib = Core.initLibrary({
+	 var thisLib = sap.ui.getCore().initLibrary({
 		version: "${version}",
 		name: "sap.ui.mdc",
 		dependencies: ["sap.ui.core", "sap.m"],
