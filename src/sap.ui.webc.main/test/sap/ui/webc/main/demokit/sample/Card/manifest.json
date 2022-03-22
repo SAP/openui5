@@ -14,7 +14,8 @@
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {},
-				"sap.ui.webc.main": {}
+				"sap.ui.webc.main": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {
@@ -23,7 +24,13 @@
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"assets/avatars/man_avatar_3.png",
+					"assets/avatars/man_avatar_4.png",
+					"assets/avatars/man_avatar_5.png",
+					"assets/avatars/woman_avatar_3.png",
+					"assets/avatars/woman_avatar_4.png",
+					"assets/avatars/woman_avatar_5.png"
 				]
 			}
 		}

@@ -12,11 +12,38 @@
 	  ],
 	  "entities": [
 		{
+			"id": "sap.ui.webc.fiori.NotificationListItem",
+			"name": "Notification List Item",
+			"category": "Web Components",
+			"since": "1.101.0",
+			"samples": [
+				"sap.ui.webc.fiori.sample.NotificationListItem"
+			]
+		},
+		{
 		  "id": "sap.ui.webc.fiori.Page",
 		  "name": "Page",
 		  "category": "Web Components",
 		  "since": "1.100.0",
 		  "samples": ["sap.ui.webc.fiori.sample.Page"]
+		},
+		{
+			"id": "sap.ui.webc.fiori.SideNavigation",
+			"name": "Side Navigation",
+			"category": "Web Components",
+			"since": "1.101.0",
+			"samples": [
+				"sap.ui.webc.fiori.sample.SideNavigation"
+			]
+		},
+		{
+			"id": "sap.ui.webc.fiori.UploadCollection",
+			"name": "Upload Collection",
+			"category": "Web Components",
+			"since": "1.101.0",
+			"samples": [
+				"sap.ui.webc.fiori.sample.UploadCollection"
+			]
 		},
 		{
 		  "id": "sap.ui.webc.fiori.Wizard",
@@ -28,9 +55,24 @@
 	  ],
 	  "samples": [
 		{
-		  "id": "sap.ui.webc.fiori.sample.Page",
-		  "name": "Page",
-		  "description": "Demonstrates the basic usage of Page"
+			"id": "sap.ui.webc.fiori.sample.NotificationListItem",
+			"name": "Notification List Item",
+			"description": "Demonstrates the basic usage of NotificationListItem"
+		},
+		{
+			"id": "sap.ui.webc.fiori.sample.Page",
+			"name": "Page",
+			"description": "Demonstrates the basic usage of Page"
+		},
+		{
+			"id": "sap.ui.webc.fiori.sample.SideNavigation",
+			"name": "Side Navigation",
+			"description": "Demonstrates the basic usage of SideNavigation"
+		},
+		{
+		  "id": "sap.ui.webc.fiori.sample.UploadCollection",
+		  "name": "Upload Collection",
+		  "description": "Demonstrates the basic usage of UploadCollection"
 		},
 		{
 		  "id": "sap.ui.webc.fiori.sample.Wizard",

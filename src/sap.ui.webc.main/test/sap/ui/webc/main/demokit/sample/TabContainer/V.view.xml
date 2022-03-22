@@ -1,43 +1,18 @@
-<mvc:View controllerName="sap.ui.webc.main.sample.TabContainer.C" xmlns="sap.ui.webc.main" xmlns:fiori="sap.ui.webc.fiori" xmlns:mvc="sap.ui.core.mvc" height="100%">
-    <Toast id="demoToast" duration="1000"></Toast>
-
-    <fiori:Page>
-        <fiori:header>
-            <fiori:Bar>
-                <fiori:middleContent>
-                    <Title text="TabContainer"></Title>
-                </fiori:middleContent>
-            </fiori:Bar>
-        </fiori:header>
-
-        <fiori:content>
-            <TabContainer tabSelect="handleTabSelect">
-                <items>
-                    <Tab additionalText="Some text..." icon="employee" text="Some text...">
-                        <content>
-                            <Button icon="employee" text="Some text..."></Button>
-                            <Button icon="employee" text="Some text..."></Button>
-                            <Button icon="employee" text="Some text..."></Button>
-                        </content>
-                    </Tab>
-                    <Tab additionalText="Some text..." icon="employee" text="Some text...">
-                        <content>
-                            <Button icon="employee" text="Some text..."></Button>
-                            <Button icon="employee" text="Some text..."></Button>
-                            <Button icon="employee" text="Some text..."></Button>
-                        </content>
-                    </Tab>
-                    <Tab additionalText="Some text..." icon="employee" text="Some text...">
-                        <content>
-                            <Button icon="employee" text="Some text..."></Button>
-                            <Button icon="employee" text="Some text..."></Button>
-                            <Button icon="employee" text="Some text..."></Button>
-                        </content>
-                    </Tab>
-                </items>
-                <overflowButton><Button icon="employee" text="Some text..."></Button></overflowButton>
-                <startOverflowButton><Button icon="employee" text="Some text..."></Button></startOverflowButton>
-            </TabContainer>
-        </fiori:content>
-    </fiori:Page>
+<mvc:View
+	xmlns="sap.ui.webc.main"
+	xmlns:mvc="sap.ui.core.mvc"
+	height="100%">
+	<TabContainer>
+		<Tab additionalText="5" icon="menu2" text="Computers">
+			<Button icon="laptop" text="Laptops" />
+			<Button icon="popup-window" text="Desktops" />
+		</Tab>
+		<Tab additionalText="12" icon="menu2" text="Monitors">
+			<Button icon="sys-monitor" text="Monitors" />
+			<Button icon="my-view" text="HD Monitors" />
+		</Tab>
+		<Tab additionalText="7" icon="menu2" text="Keyboards">
+			<Button icon="keyboard-and-mouse" text="Keyboards" />
+		</Tab>
+	</TabContainer>
 </mvc:View>
