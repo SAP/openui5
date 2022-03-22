@@ -23,8 +23,9 @@
 				sOrigin = getUrlParam('sap-ui-xx-sample-origin'),
 				oPath = {};
 
-		if (window.location.pathname.includes("testsuite")) {
-			sOrigin = window.location.origin +  "/testsuite";
+		if (sOrigin === "" || sOrigin === ".") {
+			var sHref = document.location.href;
+			sOrigin = sHref.substring(0, sHref.lastIndexOf('resources/sap/ui/documentation/sdk/') - 1);
 		}
 
 		oPath["sap/ui/demo/mock"] = sOrigin + "/test-resources/sap/ui/documentation/sdk";
