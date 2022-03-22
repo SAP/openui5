@@ -410,7 +410,9 @@ sap.ui.define([
         RangeSlider.prototype._updateTooltipContent = function (oTooltip, fNewValue) {
             var sNewValue = this.toFixed(fNewValue, this._iDecimalPrecision);
 
-            oTooltip.setValue(parseFloat(sNewValue));
+            if (oTooltip) {
+                oTooltip.setValue(parseFloat(sNewValue));
+            }
         };
 
         RangeSlider.prototype._swapTooltips = function (aRange) {
