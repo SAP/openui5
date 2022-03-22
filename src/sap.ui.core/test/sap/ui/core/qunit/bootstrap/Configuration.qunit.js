@@ -46,7 +46,7 @@ sap.ui.define([
 
 	QUnit.test("Settings", function(assert) {
 		var oCfg = new Configuration();
-		assert.equal(oCfg.theme, "sap_belize", "tag config should override global config");
+		assert.equal(oCfg.theme, "SapSampleTheme2", "tag config should override global config");
 		assert.deepEqual(oCfg.modules, ["sap.ui.core.library"], "Module List in configuration matches configured modules/libraries");
 	});
 

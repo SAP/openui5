@@ -23,7 +23,7 @@
 			testresults.sThemeBefore = sap.ui.getCore().getConfiguration().getTheme();
 			testresults.oLinksBefore = document.querySelectorAll('head > link[id^="sap-ui-theme-"]');
 			try {
-				sap.ui.getCore().applyTheme("sap_bluecrystal");
+				sap.ui.getCore().applyTheme("SapSampleTheme2");
 				testresults.oLinksAfter = document.querySelectorAll('head > link[id^="sap-ui-theme-"]');
 				testresults.sThemeAfter = sap.ui.getCore().getConfiguration().getTheme();
 				testresults.bApplyThemeFails = false;
