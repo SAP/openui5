@@ -12,15 +12,60 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 		browser.executeScript("arguments[0].focus()", oElement.getWebElement());
 	}
 
-	it("No Header / No Content", function () {
+	it("No Header", function () {
 		utils.navigateTo("No Header / No Content");
+
 		var aCards = [
 			{ id: "i1" },
-			{ id: "i2", focus: true },
 			{ id: "f3" },
-			{ id: "i4", focus: true },
+			{ id: "i4", focus: true }
+		];
+
+		aCards.forEach(function (oCard) {
+			var oElement = {
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "NoHeaderNoContent",
+					interaction: "root",
+					id: oCard.id
+				}
+			};
+
+			if (oCard.focus) {
+				focusElement(oElement);
+			}
+
+			utils.takePictureOfElement(oElement, "1_NoHeader_" + oCard.id);
+		});
+	});
+
+	it("No Content", function () {
+		var aCards = [
+			{ id: "i2", focus: true },
 			{ id: "i5", focus: true },
-			{ id: "i6-error", focus: true },
+			{ id: "i6-error", focus: true }
+		];
+
+		aCards.forEach(function (oCard) {
+			var oElement = {
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "NoHeaderNoContent",
+					interaction: "root",
+					id: oCard.id
+				}
+			};
+
+			if (oCard.focus) {
+				focusElement(oElement);
+			}
+
+			utils.takePictureOfElement(oElement, "2_NoContent_" + oCard.id);
+		});
+	});
+
+	it("Error Messages", function () {
+		var aCards = [
 			{ id: "i7-error", focus: true },
 			{ id: "ListNodata-error", focus: true },
 			{ id: "TableNodata-error", focus: true },
@@ -42,7 +87,7 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 				focusElement(oElement);
 			}
 
-			utils.takePictureOfElement(oElement, "1_NoHeader_NoContent_" + oCard.id);
+			utils.takePictureOfElement(oElement, "3_ErrorMessage_" + oCard.id);
 		});
 
 		utils.navigateBack();
@@ -58,7 +103,7 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 				interaction: "root",
 				id: "card"
 			}
-		}, "2_Translations");
+		}, "4_Translations");
 
 		utils.navigateBack();
 	});
@@ -72,7 +117,7 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 				viewName: "Badges",
 				id: "badgesPage"
 			}
-		}, "3_Badges");
+		}, "5_Badges");
 
 		utils.navigateBack();
 	});
@@ -86,7 +131,7 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 				viewName: "Preview",
 				id: "previewPage"
 			}
-		}, "4_Preview");
+		}, "6_Preview");
 
 		utils.navigateBack();
 	});
@@ -101,7 +146,7 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 				interaction: "root",
 				id: "card"
 			}
-		}, "5_Filters");
+		}, "7_Filters");
 
 		utils.navigateBack();
 	});
@@ -118,7 +163,7 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 					interaction: "root",
 					id: sId
 				}
-			}, "6_Pagination_" + sId);
+			}, "8_Pagination_" + sId);
 		});
 
 		utils.navigateBack();
@@ -136,7 +181,7 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 					interaction: "root",
 					id: sId
 				}
-			}, "7_Transparent_Card_" + sId);
+			}, "9_Transparent_Card_" + sId);
 		});
 	});
 });
