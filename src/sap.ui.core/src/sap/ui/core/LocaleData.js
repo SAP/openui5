@@ -320,17 +320,30 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		 *   it falls back to the calendar type either set in the configuration or calculated from
 		 *   the locale.
 		 * @returns {string} the combined pattern with datetime and timezone
+		 * @private
+		 * @ui5-restricted sap.ui.core.format.DateFormat
+		 * @since 1.101
 		 */
 		getCombinedDateTimeWithTimezonePattern: function(sDateStyle, sTimeStyle, sCalendarType) {
-			assert(sDateStyle == "short" || sDateStyle == "medium" || sDateStyle == "long" || sDateStyle == "full", "sStyle must be short, medium, long or full");
-			assert(sTimeStyle == "short" || sTimeStyle == "medium" || sTimeStyle == "long" || sTimeStyle == "full", "sStyle must be short, medium, long or full");
-			var aPatterns = [this.getCombinedDateTimePattern(sDateStyle, sTimeStyle, sCalendarType)];
+			return this.applyTimezonePattern(this.getCombinedDateTimePattern(sDateStyle, sTimeStyle, sCalendarType));
+		},
+
+		/**
+		 * Applies the timezone to the pattern
+		 *
+		 * @param {string} sPattern pattern, e.g. <code>y</code>
+		 * @returns {string} applied timezone, e.g. <code>y VV</code>
+		 * @private
+		 * @ui5-restricted sap.ui.core.format.DateFormat
+		 * @since 1.101
+		 */
+		applyTimezonePattern: function(sPattern) {
+			var aPatterns = [sPattern];
 			var aMissingTokens = [{
 				group: "Timezone",
 				length: 2,
 				field: "zone",
 				symbol: "V"
-
 			}];
 			this._appendItems(aPatterns, aMissingTokens);
 			return aPatterns[0];

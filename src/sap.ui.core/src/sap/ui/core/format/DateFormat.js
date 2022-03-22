@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/format/TimezoneUtil',
-	'sap/ui/core/format/DateFormatTimezoneDisplay',
 	"sap/base/util/deepEqual",
 	"sap/base/strings/formatMessage",
 	"sap/base/Log",
@@ -21,7 +20,6 @@ sap.ui.define([
 		LocaleData,
 		UniversalDate,
 		TimezoneUtil,
-		DateFormatTimezoneDisplay,
 		deepEqual,
 		formatMessage,
 		Log,
@@ -141,36 +139,49 @@ sap.ui.define([
 		aIntervalCompareFields: ["Era", "FullYear", "Quarter", "Month", "Week", "Date", "DayPeriod", "Hours", "Minutes", "Seconds"]
 	};
 
-	DateFormat.oDateTimeWithTimezoneInfo = Object.assign({}, DateFormat.oDateTimeInfo, {
-		type: mDateFormatTypes.DATETIME_WITH_TIMEZONE,
-		// This function is used to transform the pattern of the fallbackFormatOptions to a timezone pattern
-		// based on the showTimezone format option.
-		getTimezonePattern: function(sPattern, sShowTimezone) {
-			if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
-				return "VV";
-			} else if (sShowTimezone === DateFormatTimezoneDisplay.Hide) {
-				return sPattern;
-			} else {
-				return sPattern + " VV";
-			}
-		},
-		getPattern: function(oLocaleData, sStyle, sCalendarType, sShowTimezone) {
-			if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
-				return "VV";
-			}
-			if (sShowTimezone === DateFormatTimezoneDisplay.Hide) {
-				return DateFormat.oDateTimeInfo.getPattern(oLocaleData, sStyle, sCalendarType);
-			}
+	/**
+	 * Retrieves info object for timezone instance
+	 *
+	 * @param {object} oFormatOptions the format options, relevant are: showDate, showTime and showTimezone
+	 * @returns {object} info object
+	 * @private
+	 */
+	DateFormat._getDateTimeWithTimezoneInfo = function(oFormatOptions) {
+		var bShowDate = oFormatOptions.showDate === undefined || oFormatOptions.showDate;
+		var bShowTime = oFormatOptions.showTime === undefined || oFormatOptions.showTime;
+		var bShowTimezone = oFormatOptions.showTimezone === undefined || oFormatOptions.showTimezone;
 
-			// If style is mixed ("medium/short") split it and pass both parts separately
-			var iSlashIndex = sStyle.indexOf("/");
-			if (iSlashIndex > 0) {
-				return oLocaleData.getCombinedDateTimeWithTimezonePattern(sStyle.substr(0, iSlashIndex), sStyle.substr(iSlashIndex + 1), sCalendarType);
-			} else {
-				return oLocaleData.getCombinedDateTimeWithTimezonePattern(sStyle, sStyle, sCalendarType);
-			}
+		var oBaselineType = DateFormat.oDateTimeInfo;
+		if (bShowDate && !bShowTime) {
+			oBaselineType = DateFormat.oDateInfo;
+		} else if (!bShowDate && bShowTime) {
+			oBaselineType = DateFormat.oTimeInfo;
 		}
-	});
+		return Object.assign({}, oBaselineType, {
+			type: mDateFormatTypes.DATETIME_WITH_TIMEZONE,
+			// This function is used to transform the pattern of the fallbackFormatOptions to a timezone pattern.
+			getTimezonePattern: function(sPattern) {
+				if (!bShowDate && !bShowTime && bShowTimezone) {
+					return "VV";
+				} else if (!bShowTimezone) {
+					return sPattern;
+				} else {
+					return sPattern + " VV";
+				}
+			},
+			getPattern: function(oLocaleData, sStyle, sCalendarType) {
+				if (!bShowDate && !bShowTime && bShowTimezone) {
+					return "VV";
+				}
+				if (!bShowTimezone) {
+					return oBaselineType.getPattern(oLocaleData, sStyle, sCalendarType);
+				}
+
+				var sPattern = oBaselineType.getPattern(oLocaleData, sStyle, sCalendarType);
+				return oLocaleData.applyTimezonePattern(sPattern);
+			}
+		});
+	};
 
 	DateFormat.oTimeInfo = {
 		type: mDateFormatTypes.TIME,
@@ -278,7 +289,7 @@ sap.ui.define([
 	/**
 	 * Format a date object to a string according to the given timezone and format options.
 	 *
-	 * @example <caption>Format option showTimezone: Show (default)</caption>
+	 * @example <caption>Format option showTimezone: true (default)</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
 	 *
 	 * DateFormat.getDateTimeWithTimezoneInstance().format(oDate, "Europe/Berlin");
@@ -287,14 +298,14 @@ sap.ui.define([
 	 * DateFormat.getDateTimeWithTimezoneInstance().format(oDate, "America/New_York");
 	 * // output: "Dec 24, 2021, 8:37:00 AM America/New_York"
 	 *
-	 * @example <caption>Format option showTimezone: Hide</caption>
+	 * @example <caption>Format option showTimezone: false</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
-	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Hide"}).format(oDate, "America/New_York");
+	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: false}).format(oDate, "America/New_York");
 	 * // output: "Dec 24, 2021, 8:37:00 AM"
 	 *
-	 * @example <caption>Format option showTimezone: Only</caption>
+	 * @example <caption>Format option showDate: false and showTime:false</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
-	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Only"}).format(oDate, "America/New_York");
+	 * DateFormat.getDateTimeWithTimezoneInstance({showDate: false, showTime: false}).format(oDate, "America/New_York");
 	 * // output: "America/New_York"
 	 *
 	 * @param {Date} oJSDate The date to format
@@ -315,7 +326,7 @@ sap.ui.define([
 	 * Parse a string which is formatted according to the given format options to an array
 	 * containing a date object and the timezone.
 	 *
-	 * @example <caption>Format option showTimezone: Show (default)</caption>
+	 * @example <caption>Format option showTimezone: true (default)</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
 	 *
 	 * DateFormat.getDateTimeWithTimezoneInstance().parse("Dec 24, 2021, 2:37:00 PM Europe/Berlin", "Europe/Berlin");
@@ -324,13 +335,13 @@ sap.ui.define([
 	 * DateFormat.getDateTimeWithTimezoneInstance().parse("Dec 24, 2021, 8:37:00 AM America/New_York", "America/New_York");
 	 * // output: [oDate, "America/New_York"]
 	 *
-	 * @example <caption>Format option showTimezone: Hide</caption>
+	 * @example <caption>Format option showTimezone: false</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
-	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Hide"}).parse("Dec 24, 2021, 8:37:00 AM", "America/New_York");
+	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: false}).parse("Dec 24, 2021, 8:37:00 AM", "America/New_York");
 	 * // output: [oDate, undefined]
 	 *
-	 * @example <caption>Format option showTimezone: Only</caption>
-	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Only"}).parse("America/New_York", "America/New_York");
+	 * @example <caption>Format option showDate: false and showTime: false</caption>
+	 * DateFormat.getDateTimeWithTimezoneInstance({showDate: false, showTime: false}).parse("America/New_York", "America/New_York");
 	 * // output: [undefined, "America/New_York"]
 	 *
 	 * @param {string} sValue the string containing a formatted date/time value
@@ -341,14 +352,19 @@ sap.ui.define([
 	 * e.g. for a month pattern of <code>MM</code> and a value range of [1-12]
 	 * <code>strict</code> ensures that the value is within the range;
 	 * if it is larger than <code>12</code> it cannot be parsed and <code>null</code> is returned
-	 * @throws {TypeError} Thrown if the parameter <code>sTimezone</code> is provided and has the wrong type.
+	 * @throws {TypeError} Thrown if one of the following applies:
+	 *   <ul>
+	 *       <li>the <code>sTimezone</code> parameter is provided and has the wrong type</li>
+	 *       <li>only the time is shown (<code>showDate</code> is <code>false</code>), or only the
+	 *       date is shown (<code>showTime</code> is <code>false</code>)</li>
+	 *   </ul>
 	 * @return {Array} the parsed values
 	 * <ul>
-	 *   <li>An array containing datetime and timezone depending on the showTimezone option
+	 *   <li>An array containing datetime and timezone depending on the showDate, showTime and showTimezone options
 	 *     <ul>
-	 *         <li>"Show": [Date, string], e.g. [new Date("2021-11-13T13:22:33Z"), "America/New_York"]</li>
-	 *         <li>"Hide": [Date, undefined], e.g. [new Date("2021-11-13T13:22:33Z"), undefined]</li>
-	 *         <li>"Only": [undefined, string], e.g. [undefined, "America/New_York"]</li>
+	 *         <li>(Default): [Date, string], e.g. [new Date("2021-11-13T13:22:33Z"), "America/New_York"]</li>
+	 *         <li><code>showTimezone: false</code>: [Date, undefined], e.g. [new Date("2021-11-13T13:22:33Z"), undefined]</li>
+	 *         <li><code>showDate: false, showTime: false</code>: [undefined, string], e.g. [undefined, "America/New_York"]</li>
 	 *     </ul>
 	 *   </li>
 	 * </ul>
@@ -369,21 +385,23 @@ sap.ui.define([
 	 *  The symbols must be in canonical order, that is: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w), Day-Of-Week (E/e/c), Day (d), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
 	 *  See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
 	 * @param {string} [oFormatOptions.pattern] a datetime pattern in LDML format. It is not verified whether the pattern represents a full datetime.
-	 * @param {sap.ui.core.format.DateFormatTimezoneDisplay} [oFormatOptions.showTimezone="Show"] Specifies the display of the timezone:
-	 *   <ul>
-	 *     <li>"Show": display both datetime and timezone</li>
-	 *     <li>"Hide": display only datetime</li>
-	 *     <li>"Only": display only timezone</li>
-	 *   </ul>
+	 * @param {boolean} [oFormatOptions.showDate=true] Specifies if the date should be displayed.
+	 *   It is ignored for formatting when an options pattern or a format are supplied.
+	 * @param {boolean} [oFormatOptions.showTime=true] Specifies if the time should be displayed.
+	 *   It is ignored for formatting when an options pattern or a format are supplied.
+	 * @param {boolean} [oFormatOptions.showTimezone=true] Specifies if the timezone should be displayed.
 	 *   It is ignored for formatting when an options pattern or a format are supplied.
 	 * @param {string} [oFormatOptions.style] Can be either 'short, 'medium', 'long' or 'full'. For datetime you can also define mixed styles, separated with a slash, where the first part is the date style and the second part is the time style (e.g. "medium/short"). If no pattern is given, a locale-dependent default datetime pattern of that style from the LocaleData class is used.
 	 * @param {boolean} [oFormatOptions.strictParsing] Whether to check by parsing if the value is a valid datetime
 	 * @param {boolean} [oFormatOptions.relative] Whether the date is formatted relatively to today's date if it is within the given day range, e.g. "today", "yesterday", "in 5 days"
 	 * @param {int[]} [oFormatOptions.relativeRange] The day range used for relative formatting. If <code>oFormatOptions.relativeScale</code> is set to the default value 'day', the <code>relativeRange<code> is by default [-6, 6], which means that only the previous 6 and the following 6 days are formatted relatively. If <code>oFormatOptions.relativeScale</code> is set to 'auto', all dates are formatted relatively.
-	 * @param {string} [oFormatOptions.relativeScale="day"] If 'auto' is set, a new relative time format is switched on for all Date/Time instances.
+	 * @param {string} [oFormatOptions.relativeScale] If 'auto' is set, a new relative time format is switched on for all Date/Time instances. The default value depends on <code>showDate</code> and <code>showTime</code> options.
 	 * @param {string} [oFormatOptions.relativeStyle="wide"] The style of the relative format. The valid values are "wide", "short", "narrow"
 	 * @param {sap.ui.core.CalendarType} [oFormatOptions.calendarType] The calendar type which is used to format and parse the date. This value is by default either set in the configuration or calculated based on the current locale.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to ask for locale-specific texts/settings
+	 * @throws {TypeError} If an invalid configuration was supplied, i.e. when the
+	 *   <code>showDate</code>, <code>showTime</code>, and <code>showTimezone</code> format options
+	 *   are all <code>false</code>
 	 * @return {sap.ui.core.format.DateFormat.DateTimeWithTimezone} dateTimeWithTimezone instance of the DateFormat
 	 * @static
 	 * @public
@@ -391,7 +409,29 @@ sap.ui.define([
 	 * @experimental As of 1.99.0 certain aspects of this API are not settled yet, i.e. the defaulting for the timezone parameter might change.
 	 */
 	DateFormat.getDateTimeWithTimezoneInstance = function(oFormatOptions, oLocale) {
-		return this.createInstance(oFormatOptions, oLocale, this.oDateTimeWithTimezoneInfo);
+		// do not modify the input format options
+		if (oFormatOptions && !(oFormatOptions instanceof Locale)) {
+			oFormatOptions = Object.assign({}, oFormatOptions);
+			// translate old showTimezone values (backward compatibility)
+			if (typeof oFormatOptions.showTimezone === "string") {
+				var sShowTimezone = oFormatOptions.showTimezone;
+				if (oFormatOptions.showDate === undefined && oFormatOptions.showTime === undefined) {
+					if (sShowTimezone === "Hide") {
+						oFormatOptions.showTimezone = false;
+					} else if (sShowTimezone === "Only") {
+						oFormatOptions.showDate = false;
+						oFormatOptions.showTime = false;
+					}
+				}
+				oFormatOptions.showTimezone = sShowTimezone !== "Hide";
+			}
+			if (oFormatOptions.showDate === false
+				&& oFormatOptions.showTime === false
+				&& oFormatOptions.showTimezone === false) {
+				throw new TypeError("Invalid Configuration. One of the following format options must be true: showDate, showTime or showTimezone.");
+			}
+		}
+		return this.createInstance(oFormatOptions, oLocale, DateFormat._getDateTimeWithTimezoneInfo(oFormatOptions || {}));
 	};
 
 	/**
@@ -467,6 +507,8 @@ sap.ui.define([
 			oFormat.oFormatOptions.UTC = false;
 		} else {
 			oFormat.oFormatOptions.showTimezone = undefined;
+			oFormat.oFormatOptions.showDate = undefined;
+			oFormat.oFormatOptions.showTime = undefined;
 		}
 
 		// type cannot be changed and should be an instance property instead of a format option
@@ -480,7 +522,7 @@ sap.ui.define([
 			if (oFormat.oFormatOptions.format) {
 				oFormat.oFormatOptions.pattern = oFormat.oLocaleData.getCustomDateTimePattern(oFormat.oFormatOptions.format, oFormat.oFormatOptions.calendarType);
 			} else {
-				oFormat.oFormatOptions.pattern = oInfo.getPattern(oFormat.oLocaleData, oFormat.oFormatOptions.style, oFormat.oFormatOptions.calendarType, oFormat.oFormatOptions.showTimezone);
+				oFormat.oFormatOptions.pattern = oInfo.getPattern(oFormat.oLocaleData, oFormat.oFormatOptions.style, oFormat.oFormatOptions.calendarType);
 			}
 		}
 
@@ -537,7 +579,7 @@ sap.ui.define([
 				aFallbackFormatOptions = oInfo.aFallbackFormatOptions;
 				// Add two fallback patterns for locale-dependent short format without delimiters
 				if (oInfo.bShortFallbackFormatOptions) {
-					sPattern = oInfo.getPattern(oFormat.oLocaleData, "short", undefined, oFormat.oFormatOptions.showTimezone);
+					sPattern = oInfo.getPattern(oFormat.oLocaleData, "short");
 					// add the options of fallback formats without delimiters to the fallback options array
 					aFallbackFormatOptions = aFallbackFormatOptions.concat(DateFormat._createFallbackOptionsWithoutDelimiter(sPattern));
 				}
@@ -549,7 +591,7 @@ sap.ui.define([
 				}
 
 				oFallbackFormats = DateFormat._createFallbackFormat(
-					aFallbackFormatOptions, sCalendarType, oLocale, oInfo, oFormat.oFormatOptions.interval, oFormat.oFormatOptions.showTimezone
+					aFallbackFormatOptions, sCalendarType, oLocale, oInfo, oFormat.oFormatOptions
 				);
 			}
 
@@ -610,26 +652,28 @@ sap.ui.define([
 	 * @param {sap.ui.core.CalendarType} sCalendarType the type of the current calendarType
 	 * @param {sap.ui.core.LocaleData} oLocale Locale to ask for locale specific texts/settings
 	 * @param {Object} oInfo The default info object of the current date type
-	 * @param {boolean} bInterval Is an interval
-	 * @param {sap.ui.core.format.DateFormatTimezoneDisplay} sShowTimezone The showTimezone format option
+	 * @param {object} oParentFormatOptions the format options, relevant are: interval, showDate, showTime and showTimezone
 	 * @return {sap.ui.core.DateFormat[]} an array of fallback DateFormat instances
 	 */
-	DateFormat._createFallbackFormat = function(aFallbackFormatOptions, sCalendarType, oLocale, oInfo, bInterval, sShowTimezone) {
+	DateFormat._createFallbackFormat = function(aFallbackFormatOptions, sCalendarType, oLocale, oInfo, oParentFormatOptions) {
 		return aFallbackFormatOptions.map(function(oOptions) {
 			// The format options within the aFallbackFormatOptions array are static
 			// and shouldn't be manipulated. Hence, cloning each format option is required.
 			var oFormatOptions = Object.assign({}, oOptions);
 
-			// Pass the showTimezone format option to the fallback instance.
-			oFormatOptions.showTimezone = sShowTimezone;
+			// Pass the showDate, showTime and showTimezone format options to the fallback instance.
+			oFormatOptions.showDate = oParentFormatOptions.showDate;
+			oFormatOptions.showTime = oParentFormatOptions.showTime;
+			oFormatOptions.showTimezone = oParentFormatOptions.showTimezone;
 
-			// the timezone instance's fallback patterns depend on the showTimezone format option which means they cannot be static,
+			// the timezone instance's fallback patterns depend on the showDate, showTime and
+			// showTimezone format option which means they cannot be static,
 			// therefore they are generated using the getTimezonePattern function
 			if (typeof oInfo.getTimezonePattern === "function" && oFormatOptions.pattern) {
-				oFormatOptions.pattern = oInfo.getTimezonePattern(oFormatOptions.pattern, sShowTimezone);
+				oFormatOptions.pattern = oInfo.getTimezonePattern(oFormatOptions.pattern);
 			}
 
-			if (bInterval) {
+			if (oParentFormatOptions.interval) {
 				oFormatOptions.interval = true;
 			}
 			oFormatOptions.calendarType = sCalendarType;
@@ -2299,6 +2343,16 @@ sap.ui.define([
 	 * @public
 	 */
 	DateFormat.prototype.parse = function(sValue, bUTC, bStrict) {
+		// in order to convert a datetime to a timezone both the date and the time part are required.
+		// If only one is present it cannot be guaranteed that the parsed result is correct, due to
+		// daylight saving time which might shift hours and the timezone difference which might shift
+		// days. For now only the date and time can be parsed using a timezone.
+		var bShowDate = this.oFormatOptions.showDate === undefined || this.oFormatOptions.showDate;
+		var bShowTime = this.oFormatOptions.showTime === undefined || this.oFormatOptions.showTime;
+		if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE
+			&& (bShowDate && !bShowTime || !bShowDate && bShowTime)) {
+			throw new TypeError("The input can only be parsed back to date if both date and time are supplied.");
+		}
 		var sTimezone;
 		if (bUTC === undefined && this.type !== mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
 			bUTC = this.oFormatOptions.UTC;
@@ -2352,10 +2406,11 @@ sap.ui.define([
 
 			if (oJSDate) {
 				if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
-					// fill fields according to showTimezone option and parsed values
-					if (this.oFormatOptions.showTimezone === DateFormatTimezoneDisplay.Hide) {
+					var bShowTimezone = this.oFormatOptions.showTimezone === undefined || this.oFormatOptions.showTimezone;
+					// fill fields according to showDate, showTime and showTimezone options and parsed values
+					if (!bShowTimezone && bShowDate && bShowTime) {
 						return [oJSDate, undefined];
-					} else if (this.oFormatOptions.showTimezone === DateFormatTimezoneDisplay.Only) {
+					} else if (bShowTimezone && !bShowDate && !bShowTime) {
 						return [undefined, oDateValue.timezone];
 					}
 					return [oJSDate, oDateValue.timezone || undefined];

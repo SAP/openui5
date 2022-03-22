@@ -15,6 +15,9 @@ sap.ui.define([], function() {
 	 * @since 1.99.0
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @alias sap.ui.core.format.DateFormatTimezoneDisplay
+	 * @deprecated As of version 1.101, replaced by
+	 *   <code>DateFormat#getDateTimeWithTimezoneInstance</code> with the <code>showDate</code>,
+	 *   <code>showTime</code> and <code>showTimezone</code> format options.
 	 */
 	var DateFormatTimezoneDisplay = {
 
