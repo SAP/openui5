@@ -2,23 +2,33 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"./BaseFactory",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/library",
+	"sap/m/library",
 	"sap/ui/integration/cards/NumericHeader",
 	"sap/ui/integration/cards/Header",
-	"sap/base/strings/formatMessage"
+	"sap/base/strings/formatMessage",
+	"sap/m/Button"
 ], function (
+	Core,
 	BaseFactory,
 	CardActions,
 	library,
+	mLibrary,
 	NumericHeader,
 	Header,
-	formatMessage
+	formatMessage,
+	Button
 ) {
 	"use strict";
 
 	var ActionArea = library.CardActionArea;
+
+	var ButtonType = mLibrary.ButtonType;
+
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 	/**
 	 * Binds the statusText of a header to the provided format configuration.
@@ -76,9 +86,14 @@ sap.ui.define([
 
 	HeaderFactory.prototype.create = function (mConfiguration, oToolbar) {
 		var oCard = this._oCard,
+			bIsInDialog = oCard.getOpener(),
 			oHeader;
 
 		mConfiguration = this.createBindingInfos(mConfiguration, oCard.getBindingNamespaces());
+
+		if (bIsInDialog) {
+			oToolbar = this._createCloseButton();
+		}
 
 		switch (mConfiguration.type) {
 			case "Numeric":
@@ -120,12 +135,28 @@ sap.ui.define([
 			oHeader.setVisible(oToolbar.getVisible());
 		}
 
-		if (oCard.getOpener()) {
+		if (bIsInDialog) {
 			// if card is in dialog - header shouldn't be focusable
 			oHeader.setProperty("focusable", false);
 		}
 
 		return oHeader;
+	};
+
+	HeaderFactory.prototype._createCloseButton = function () {
+		var oButton = new Button({
+			type: ButtonType.Transparent,
+			tooltip: oResourceBundle.getText("CARD_DIALOG_CLOSE_BUTTON"),
+			icon: "sap-icon://decline",
+			press: function () {
+				this._oCard.hide();
+			}.bind(this)
+		});
+
+		oButton
+			.addStyleClass("sapUiIntCardCloseButton");
+
+		return oButton;
 	};
 
 	return HeaderFactory;

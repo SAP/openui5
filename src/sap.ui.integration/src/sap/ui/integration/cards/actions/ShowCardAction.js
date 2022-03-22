@@ -4,7 +4,9 @@
 sap.ui.define([
 	"./BaseAction",
 	"sap/m/Dialog",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
 ], function (
 	BaseAction,
 	Dialog,
@@ -65,9 +67,31 @@ sap.ui.define([
 			oDialog.open();
 		});
 
+		oChildCard.attachEvent("_ready", function () {
+			setTimeout(function () {
+				this._setFocus(oChildCard, oDialog);
+			}.bind(this), 0); // wait for loading animation to stop
+		}.bind(this));
+
 		oDialog.attachAfterClose(function () {
 			oDialog.destroy();
 		});
+	};
+
+	ShowCardAction.prototype._setFocus = function (oCard, oDialog) {
+		var oFilters = oCard.getAggregation("_filter"),
+			oContent = oCard.getAggregation("_content"),
+			oFooter = oCard.getAggregation("_footer"),
+			oFirstFocusable;
+
+		oFirstFocusable = oFilters && oFilters.$().firstFocusableDomRef()
+			|| oContent && oContent.$().firstFocusableDomRef()
+			|| oFooter && oFooter.$().firstFocusableDomRef();
+
+		if (oFirstFocusable) {
+			oDialog.setInitialFocus(oFirstFocusable.id);
+			oFirstFocusable.focus();
+		}
 	};
 
 	return ShowCardAction;
