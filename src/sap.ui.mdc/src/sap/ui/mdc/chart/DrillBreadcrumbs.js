@@ -24,6 +24,8 @@ sap.ui.define([
 
     DrillBreadcrumbs.prototype.init = function(){
         Breadcrumbs.prototype.init.apply(this, arguments);
+
+        this.addStyleClass("sapUiMDCChartBreadcrumbs");
     };
 
 
