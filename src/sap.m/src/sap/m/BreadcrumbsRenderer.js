@@ -60,11 +60,6 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 		oRm.openStart("li");
 		oRm.class("sapMBreadcrumbsItem");
 		oRm.class(sAdditionalItemClass);
-		if (iVisibleItemsCount && iIndex >= 0) {
-			// override the default size of the list to include the links count only
-			oRm.attr("aria-posinset", iIndex + 1);
-			oRm.attr("aria-setsize", iVisibleItemsCount);
-		}
 		oRm.openEnd();
 		oRm.renderControl(oControl);
 		if (!bSkipSeparator) {
