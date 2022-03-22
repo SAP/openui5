@@ -391,7 +391,7 @@ sap.ui.define([
 				oDomRef.detachInvalidate(this.__onInvalidationBound);
 			}
 
-			return Control.prototype.destroy.call(this, arguments);
+			return Control.prototype.destroy.apply(this, arguments);
 		};
 
 		/**
