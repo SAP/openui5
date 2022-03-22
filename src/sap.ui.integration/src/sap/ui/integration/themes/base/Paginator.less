@@ -4,6 +4,15 @@
 /* ====================================================== */
 
 @_sap_ui_integration_Paginator_IconOutlineOffset: -3px;
+@_sap_ui_integration_Paginator_BulletActiveBackground: @sapUiSelected;
+@_sap_ui_integration_Paginator_BulletActiveBorder: @_sap_ui_integration_Paginator_BulletActiveBackground;
+
+@_sap_ui_integration_Paginator_BulletInactiveBackground: @sapUiContentNonInteractiveIconColor;
+@_sap_ui_integration_Paginator_BulletInactiveBorderColor: @sapUiContentNonInteractiveIconColor;
+@_sap_ui_integration_Paginator_BulletInactiveHoverBackground: none;
+
+@_sap_ui_integration_Paginator_BulletInactiveWidth: 0.25rem;
+@_sap_ui_integration_Paginator_BulletInactivePadding: 0.375rem;
 
 .sapUiIntPaginator {
 	.sapMCrslControls {
@@ -52,6 +61,57 @@
 			.sapMCrslPrev,
 			.sapMCrslNext {
 				opacity: 1;
+			}
+		}
+
+		.sapMCrslBulleted > span {
+			width: 1rem;
+			height: 1rem;
+			background: none;
+			border: none;
+			margin: 0;
+
+			padding: @_sap_ui_integration_Paginator_BulletInactivePadding;
+			transition: padding 0.2s;
+
+			&:after {
+				content: "";
+				box-sizing: border-box;
+				display: block;
+
+				width: @_sap_ui_integration_Paginator_BulletInactiveWidth;
+				height: @_sap_ui_integration_Paginator_BulletInactiveWidth;
+				transition: width 0.2s, height 0.2s;
+
+				border-radius: 50%;
+				background-color: @_sap_ui_integration_Paginator_BulletInactiveBackground;
+				border: 1px solid @_sap_ui_integration_Paginator_BulletInactiveBorderColor;
+				pointer-events: none;
+			}
+
+			&.sapMCrslActive {
+				padding: 0.25rem;
+
+				&:after {
+					width: 0.5rem;
+					height: 0.5rem;
+					background-color: @_sap_ui_integration_Paginator_BulletActiveBackground;
+					border: 1px solid @_sap_ui_integration_Paginator_BulletActiveBorder;
+				}
+			}
+
+			&:not(.sapMCrslActive) {
+				cursor: pointer;
+
+				&:hover {
+					padding: 0.25rem;
+
+					&:after {
+						background-color: @_sap_ui_integration_Paginator_BulletInactiveHoverBackground;
+						width: 0.5rem;
+						height: 0.5rem;
+					}
+				}
 			}
 		}
 	}

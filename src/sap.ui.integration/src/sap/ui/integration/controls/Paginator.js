@@ -357,5 +357,15 @@ sap.ui.define([
 		this.sliceData();
 	};
 
+	Paginator.prototype.onmousedown = function(oEvent) {
+		var oTarget = oEvent.target,
+			sDataSlide = oTarget.getAttribute("data-slide");
+
+		if (sDataSlide && !oTarget.classList.contains("sapMCrslActive")) {
+			this.setPageNumber(parseInt(sDataSlide) - 1);
+			this.sliceData();
+		}
+	};
+
 	return Paginator;
 });
