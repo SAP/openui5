@@ -6,19 +6,48 @@
 .sapMValueStateMessageError,
 .sapMValueStateMessageWarning,
 .sapMValueStateMessageInformation {
-	background: @sapUiFieldBackground;
-	border: 2px solid @sapUiFieldBorderColor;
+	border: 2 * @sapUiFieldBorderWidth solid @sapUiFieldBorderColor;
 	color: @sapUiBaseText;
 }
-
-.sapMValueStateMessageTop {
-	border-top-left-radius: 0.25rem;
-	border-top-right-radius: 0.25rem;
-	margin-bottom: -0.125rem;
+.sapMValueStateMessage {
+	padding-left: 1.875 * @sapContent_GridSize;
 }
 
-.sapMValueStateMessageBottom {
-	border-bottom-left-radius: 0.25rem;
-	border-bottom-right-radius: 0.25rem;
-	margin-top: -0.125rem;
+.sapMValueStateMessageError:before {
+	font-family: SAP-icons;
+	content: "\e1ec";
+	position: absolute;
+	top: 0.313rem;
+	left: 0rem;
+	vertical-align: middle;
+	font-size: 1rem;
+	color: @sapNegativeElementColor;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+.sapMValueStateMessageWarning:before {
+	font-family: SAP-icons;
+	content: "\e053s";
+	position: absolute;
+	top: 0.313rem;
+	left: 0rem;
+	vertical-align: middle;
+	font-size: 1rem;
+	color: @sapCriticalElementColor;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+.sapMValueStateMessageInformation:before {
+	font-family: SAP-icons;
+	content: "\e289";
+	position: absolute;
+	top: 0.313rem;
+	left: 0rem;
+	vertical-align: middle;
+	font-size: 1rem;
+	color: @sapInformativeElementColor;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
 }

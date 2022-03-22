@@ -15,14 +15,7 @@
 @_sap_m_InputBase_IconWidth: 2.125rem;
 @_sap_m_InputBase_IconMinWidth: 2.125rem;
 
-.sapMInputBaseInner {
-	color: @sapUiFieldTextColor;
-}
-
 .sapMInputBaseContentWrapper {
-	border: 1px solid @sapUiFieldBorderColor;
-	background: @sapUiFieldBackground;
-	border-radius: @sapUiFieldBorderCornerRadius;
 
 	&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess):not(.sapMInputBaseContentWrapperInformation) {
 
@@ -66,27 +59,6 @@
 	}
 }
 
-.sapMInputBaseContentWrapperWarning {
-	background: @sapUiFieldWarningBackground;
-	border: @sapField_WarningBorderWidth @sapField_WarningBorderStyle @sapUiFieldWarningColor;
-}
-
-.sapMInputBaseContentWrapperSuccess {
-	background: @sapUiFieldSuccessBackground;
-	border: @sapField_SuccessBorderWidth @sapField_SuccessBorderStyle @sapUiFieldSuccessColor;
-}
-
-.sapMILI-CTX .sapMInputBaseContentWrapperError,
-.sapMInputBaseContentWrapperError {
-	background: @sapUiFieldInvalidBackground;
-	border: @sapField_InvalidBorderWidth @sapField_InvalidBorderStyle @sapUiFieldInvalidColor;
-}
-
-.sapMInputBaseContentWrapperInformation {
-	background: @sapUiFieldInformationBackground;
-	border: @sapField_InformationBorderWidth @sapField_InformationBorderStyle @sapUiFieldInformationColor;
-}
-
 .sapMInputBaseContentWrapperWarning, .sapMInputBaseContentWrapperError {
 	.sapMInputBaseInner {
 		font-style: italic;
@@ -100,6 +72,14 @@
 
 .sapMInputBaseInner::-moz-placeholder {
 	font-style: normal;
+}
+
+.sapMInputBaseContentWrapperError .sapMInputBaseInner::-webkit-input-placeholder {
+	color: @sapUiFieldTextColor;
+}
+
+.sapMInputBaseContentWrapperError .sapMInputBaseInner::-moz-placeholder {
+	color: @sapUiFieldTextColor;
 }
 
 .sapUiSizeCompact .sapMInputBaseContentWrapper.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) .sapMInputBaseIcon {
