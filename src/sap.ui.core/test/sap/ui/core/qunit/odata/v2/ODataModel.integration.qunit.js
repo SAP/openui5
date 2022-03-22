@@ -13908,6 +13908,169 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: When a table with created persisted entries is refreshed, then the created
+	// persisted entries are removed from the creation area and are inserted in the order as given
+	// in the response of the refresh. If a side-effects request is within the same batch, the order
+	// of the requests (requestSideEffects and then refresh, and vice versa) has no impact on the
+	// final result.
+	// JIRA: CPOUI5MODELS-844
+[
+	["refresh", "requestSideEffects"],
+	["requestSideEffects", "refresh"]
+].forEach(function (aOrderedFunctions) {
+	var sTitle = "Request side effects: refresh overrules the side-effects response; applied "
+			+ "order: " + JSON.stringify(aOrderedFunctions);
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel({preliminaryContext : true}),
+			sView = '\
+<FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="5">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				requestUri : "BusinessPartnerSet('42')"
+			}, {
+				__metadata : {uri : "BusinessPartnerSet('42')"},
+				BusinessPartnerID : "42"
+			})
+			.expectValue("businessPartnerID", "42")
+			.expectRequest({
+				batchNo : 1,
+				requestUri : "BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=105"
+			}, {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					Note : "Sales Order 1"
+				}]
+			})
+			.expectValue("salesOrderID", ["1", "", "", "", ""])
+			.expectValue("note", ["Sales Order 1", "", "", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("rows");
+
+			that.expectRequest({
+					batchNo : 2,
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "Sales Order New: created persisted"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					headers : {},
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						SalesOrderID : "2",
+						Note : "Sales Order New: created persisted"
+					},
+					statusCode : 201
+				})
+				.expectValue("salesOrderID", ["", "1"])
+				.expectValue("note", ["Sales Order New: created persisted", "Sales Order 1"])
+				.expectValue("salesOrderID", "2", 0);
+
+			// code under test: new created persisted entity
+			oBinding.create({Note : "Sales Order New: created persisted"}, false);
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("salesOrderID", ["", "1"], 1)
+				.expectValue("note", ["Sales Order New: transient", "Sales Order 1"], 1);
+
+			// code under test: new transient entity
+			oBinding.create({Note : "Sales Order New: transient"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var mFunctions = {
+					refresh : function () {
+						oBinding.refresh();
+					},
+					requestSideEffects : function () {
+						oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(),
+							{urlParameters : {$expand : "ToSalesOrders"}});
+					}
+				};
+
+			that.expectRequest({
+					batchNo : 3,
+					requestNo : (aOrderedFunctions.indexOf("requestSideEffects") + 1),
+					requestUri : "BusinessPartnerSet('42')?$expand=ToSalesOrders"
+				}, {
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					ToSalesOrders : {
+						results : [{
+							__metadata : {uri : "SalesOrderSet('1')"},
+							SalesOrderID : "1",
+							Note : "Sales Order 1 - SideEffect"
+						}, {
+							__metadata : {uri : "SalesOrderSet('2')"},
+							SalesOrderID : "2",
+							Note : "Sales Order New: created persisted - SideEffect"
+						}, {
+							__metadata : {uri : "SalesOrderSet('3')"},
+							SalesOrderID : "3",
+							Note : "Added via side effect - but unused due to refresh"
+						}]
+					}
+				})
+				.expectValue("note", "Sales Order New: created persisted - SideEffect", 0)
+				.expectValue("note", "Sales Order 1 - SideEffect", 2)
+				.expectRequest({
+					batchNo : 3,
+					requestNo : (aOrderedFunctions.indexOf("refresh") + 1),
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=105"
+				}, {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('43')"},
+						SalesOrderID : "43",
+						Note : "Sales Order 43"
+					}, {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						SalesOrderID : "2",
+						Note : "Sales Order New: created persisted - SideEffect"
+					}, {
+						__metadata : {uri : "SalesOrderSet('42')"},
+						SalesOrderID : "42",
+						Note : "Sales Order 42"
+					}, {
+						__metadata : {uri : "SalesOrderSet('1')"},
+						SalesOrderID : "1",
+						Note : "Sales Order 1 - SideEffect"
+					}]
+				})
+				.expectValue("salesOrderID", ["", "43", "2", "42", "1"])
+				.expectValue("note", ["Sales Order New: transient", "Sales Order 43",
+					"Sales Order New: created persisted - SideEffect", "Sales Order 42",
+					"Sales Order 1 - SideEffect"]);
+
+			// code under test: calling refresh and requestSideEffects (and vice versa) in one batch
+			// leads to the same result (refresh response wins)
+			aOrderedFunctions.forEach(function (sFunction) {
+				mFunctions[sFunction]();
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: When enforcing the update of a relative list binding with a transient context via
 	// ODataModel#updateBindings(true), there is no backend request.
 	// JIRA: CPOUI5MODELS-755
