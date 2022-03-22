@@ -38,6 +38,20 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", selected: false}
 	];
 
+	var aFilterItems = [
+		{p13nItem: "artistUUID", value: null},
+		{p13nItem: "Breakout Year", value: null},
+		{p13nItem: "Changed By", value: null},
+		{p13nItem: "Changed On", value: null},
+		{p13nItem: "City of Origin", value: null},
+		{p13nItem: "Country", value: null},
+		{p13nItem: "Created By", value: null},
+		{p13nItem: "Created On", value: null},
+		{p13nItem: "Founding Year", value: null},
+		{p13nItem: "Name", value: null},
+		{p13nItem: "regionOfOrigin_code", value: null}
+	];
+
 	// ----------------------------------------------------------------
 	// initialize application
 	// ----------------------------------------------------------------
@@ -98,6 +112,75 @@ sap.ui.define([
 
 		//check dirty flag
 		Then.theVariantManagementIsDirty(false);
+	});
+
+	// ----------------------------------------------------------------
+	// Enter a filter value and cancel the Dialog --> variant should not be dirty
+	// ----------------------------------------------------------------
+	opaTest("Open and cancel the filter dialog to check if the values have been discarded", function (Given, When, Then) {
+		//Reopen the dialog
+		//as the Table overlay is still marked as selected, we need to click it twice..
+		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
+		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
+		Then.onPageWithRTA.iShouldSeetheContextMenu();
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
+
+		When.iSwitchToP13nTab("Filter");
+
+		When.iEnterTextInFilterDialog("Founding Year", "1989");
+		When.iEnterTextInFilterDialog("Country", "DE");
+
+		Then.iShouldSeeP13nFilterItems(aFilterItems);
+
+		//discard the changes
+		When.iPressDialogCancel();
+
+		//there should not be any changes stored by the KeyUser
+		Then.theVariantManagementIsDirty(false);
+	});
+
+	// ----------------------------------------------------------------
+	// Enter a filter value and confirm the Dialog --> variant is dirty
+	// ----------------------------------------------------------------
+	opaTest("Open and confirm the filter dialog to check if the values have been saved", function (Given, When, Then) {
+		//Reopen the dialog
+		//as the Table overlay is still marked as selected, we need to click it twice..
+		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
+		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
+		Then.onPageWithRTA.iShouldSeetheContextMenu();
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
+
+		When.iSwitchToP13nTab("Filter");
+
+		When.iEnterTextInFilterDialog("Founding Year", "1989");
+		When.iEnterTextInFilterDialog("Country", "DE");
+
+		Then.iShouldSeeP13nFilterItems(aFilterItems);
+
+		When.iPressDialogOk();
+
+		//The dialog has been confirmed --> the variant should be dirty
+		Then.theVariantManagementIsDirty(true);
+
+		//Reopen the dialog
+		//as the Table overlay is still marked as selected, we need to click it twice..
+		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
+		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
+		Then.onPageWithRTA.iShouldSeetheContextMenu();
+		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
+
+		aFilterItems[5].value = ["DE"];
+		aFilterItems[8].value = ["1989"];
+
+		When.iSwitchToP13nTab("Filter");
+
+		//Check the filter values in the dialog
+		Then.iShouldSeeP13nFilterItems(aFilterItems);
+
+		When.iPressDialogOk();
 	});
 
 	// ----------------------------------------------------------------
