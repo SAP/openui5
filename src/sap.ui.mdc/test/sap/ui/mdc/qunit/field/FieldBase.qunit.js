@@ -4335,11 +4335,16 @@ sap.ui.define([
 
 	QUnit.test("Select currency", function(assert) {
 
+		var oIntType = new IntegerType();
+		var oStringType = new StringType();
+		oField._oContentFactory.setCompositeTypes([oIntType, oStringType]); // fake composite types
+
 		var oIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content");
 		oCore.applyChanges();
 
 		var fnDone = assert.async();
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		sinon.spy(oFieldHelp, "connect");
 
 		var aContent = oField.getAggregation("_content");
 		var oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -4348,6 +4353,9 @@ sap.ui.define([
 		assert.ok(oContent2.getShowValueHelp(), "Currency Input has value help");
 
 		oContent2.focus(); // as FieldHelp is connected with focus
+		assert.ok(oFieldHelp.connect.calledOnce, "FieldHelp connected");
+		assert.equal(oFieldHelp.connect.args[0][0], oField, "FieldHelp connected to Field");
+		assert.equal(oFieldHelp.connect.args[0][1].dataType, oStringType, "Type of currency part used for FieldHelp");
 		// simulate select event to see if field is updated
 		var oCondition = Condition.createCondition("EQ", ["EUR", "EUR"], {inTest: "X"}, {outTest: "Y"});
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
@@ -4383,6 +4391,9 @@ sap.ui.define([
 					assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
 					assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
 
+					oField._oContentFactory.setCompositeTypes();
+					oIntType.destroy();
+					oStringType.destroy();
 					oIcon.destroy();
 					fnDone();
 				}, 0);
