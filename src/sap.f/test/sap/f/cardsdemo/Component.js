@@ -1,8 +1,10 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/f/cardsdemo/localService/mockserver"
+	"sap/f/cardsdemo/localService/mockserver",
+	"sap/f/cardsdemo/model/CardPlaygroundModel"
 ], function (UIComponent,
-			 mockserver) {
+			 mockserver,
+			 CardsPlayground) {
 	"use strict";
 
 	return UIComponent.extend("sap.f.cardsdemo.Component", {
@@ -19,6 +21,7 @@ sap.ui.define([
 			this.getRouter().initialize();
 
 			mockserver.init();
+			this.setModel(CardsPlayground, "cardsPlayground");
 		}
 	});
 });

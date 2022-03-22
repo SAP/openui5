@@ -15,7 +15,7 @@
 
 		<f:GridContainer id="grid1" class="sapUiSmallMargin">
 			<w:Card manifest="{manifests>/listContent/card13}"
-				baseUrl="./">
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:customData>
 					<BadgeCustomData value="30940" />
 				</w:customData>
@@ -25,7 +25,7 @@
 			</w:Card>
 
 			<w:Card manifest="{manifests>/listContent/card13}"
-				baseUrl="./">
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:customData>
 					<BadgeCustomData value="Very long badge title Very long badge title Very long badge title Very long badge title Very long badge title" />
 				</w:customData>
@@ -34,7 +34,7 @@
 				</w:layoutData>
 			</w:Card>
 
-			<w:Card manifest="./cardsdemo/bundles/analyticalLine/manifest.json">
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/analyticalLine/manifest.json">
 				<w:customData>
 					<BadgeCustomData value="121" />
 				</w:customData>

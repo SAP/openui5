@@ -12,72 +12,72 @@ sap.ui.define([
 		{
 			"key": "filter",
 			"columns": 6,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/filterManifest.json"
+			"manifest": "./cardcontent/delayedLoading/filterManifest.json"
 		},
 		{
 			"key": "list1",
 			"columns": 6,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifest1.json"
+			"manifest": "./cardcontent/delayedLoading/listManifest1.json"
 		},
 		{
 			"key": "list2",
 			"columns": 6,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifest2.json"
+			"manifest": "./cardcontent/delayedLoading/listManifest2.json"
 		},
 		{
 			"key": "list3",
 			"columns": 5,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifestAll.json"
+			"manifest": "./cardcontent/delayedLoading/listManifestAll.json"
 		},
 		{
 			"key": "list4",
 			"columns": 4,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifestDescriptionTitle.json"
+			"manifest": "./cardcontent/delayedLoading/listManifestDescriptionTitle.json"
 		},
 		{
 			"key": "list5",
 			"columns": 3,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifestIconTitle.json"
+			"manifest": "./cardcontent/delayedLoading/listManifestIconTitle.json"
 		},
 		{
 			"key": "list6",
 			"columns": 2,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifestTitle.json"
+			"manifest": "./cardcontent/delayedLoading/listManifestTitle.json"
 		},
 		{
 			"key": "table1",
 			"columns": 4,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/tableManifest.json"
+			"manifest": "./cardcontent/delayedLoading/tableManifest.json"
 		},
 		{
 			"key": "analytical1",
 			"columns": 6,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/analyticalManifest.json"
+			"manifest": "./cardcontent/delayedLoading/analyticalManifest.json"
 		},
 		{
 			"key": "object1",
 			"columns": 6,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/objectManifest.json"
+			"manifest": "./cardcontent/delayedLoading/objectManifest.json"
 		},
 		{
 			"key": "calendar1",
 			"columns": 5,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/calendarManifest1.json"
+			"manifest": "./cardcontent/delayedLoading/calendarManifest1.json"
 		},
 		{
 			"key": "listError",
 			"columns": 5,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifestError.json"
+			"manifest": "./cardcontent/delayedLoading/listManifestError.json"
 		},
 		{
 			"key": "webPage",
 			"columns": 5,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/webPage/manifest.json"
+			"manifest": "./cardcontent/delayedLoading/webPage/manifest.json"
 		},
 		{
 			"key": "footer",
 			"columns": 5,
-			"manifest": "./cardsdemo/cardcontent/delayedLoading/footer.json"
+			"manifest": "./cardcontent/delayedLoading/footer.json"
 		}
 	];
 
@@ -90,7 +90,8 @@ sap.ui.define([
 			// preload manifests
 			for (var iInd in aSamples) {
 				oSample = aSamples[iInd];
-				oView.setModel(new JSONModel(oSample.manifest), oSample.key);
+				var sManifestUrl = sap.ui.require.toUrl("sap/f/cardsdemo/" + oSample.manifest);
+				oView.setModel(new JSONModel(sManifestUrl), oSample.key);
 			}
 
 			oView.setModel(new JSONModel({
@@ -120,28 +121,29 @@ sap.ui.define([
 				oContainer = this.byId("cardsContainer"),
 				bPreloadManifests = this.byId("preloadManifests").getSelected(),
 				bDataModeAuto = this.byId("dataMode").getSelected(),
-				oSample,
-				vManifest;
+				oSample;
 
 			oContainer.destroyItems();
 
 			for (var i = 0; i < iNumberOfCards; i++) {
 				oSample = aSamples[i % aSamples.length];
 
-				if (bPreloadManifests) {
-					vManifest = oView.getModel(oSample.key).getData();
-				} else {
-					vManifest = oSample.manifest;
-				}
-
-				oContainer.addItem(new Card({
-					baseUrl: "./",
-					manifest: vManifest,
+				var oCard = new Card({
 					layoutData: new GridContainerItemLayoutData({
 						columns: oSample.columns
 					}),
 					dataMode: bDataModeAuto ? "Auto" : "Active"
-				}));
+				});
+
+				// manifest as object
+				if (bPreloadManifests) {
+					oCard.setManifest(oView.getModel(oSample.key).getData());
+					oCard.setBaseUrl(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/delayedLoading/"));
+				} else { // manifest as url
+					oCard.setManifest(sap.ui.require.toUrl("sap/f/cardsdemo/" + oSample.manifest));
+				}
+
+				oContainer.addItem(oCard);
 			}
 		},
 

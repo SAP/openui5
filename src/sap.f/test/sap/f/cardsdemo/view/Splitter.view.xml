@@ -20,25 +20,25 @@
 					<w:Card
 						id="default2x2"
 						manifest="{manifests>/splitter/card1}"
-						baseUrl="./"
+						baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 						width="100%"
 						height="100%" />
 					<w:Card
 						id="default4x2withcomponent"
-						manifest="./cardsdemo/cardcontent/listcomponent/manifest.json" />
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/listcomponent/manifest.json" />
 				</l:Splitter>
 
 				<l:Splitter orientation="Vertical">
 					<w:Card
 						id="default1x1"
 						manifest="{manifests>/splitter/card2}"
-						baseUrl="./"
+						baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 						width="100%"
 						height="100%" />
 					<w:Card
 						id="default2x1"
 						manifest="{manifests>/splitter/card3}"
-						baseUrl="./"
+						baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 						width="100%"
 						height="100%" />
 				</l:Splitter>

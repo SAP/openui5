@@ -15,12 +15,12 @@
 		</subHeader>
 
 		<f:GridContainer id="grid1" class="sapUiSmallMargin">
-			<w:Card id="card" manifest="{manifests>/filters/filter}" baseUrl="./">
+			<w:Card id="card" manifest="{manifests>/filters/filter}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card manifest="{manifests>/filters/dateRangeFilter}" baseUrl="./">
+			<w:Card manifest="{manifests>/filters/dateRangeFilter}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
@@ -32,7 +32,7 @@
 				width="{settings>/cardWidth}%"
 			
 				manifest="{manifests>/filters/multipleFilters}"
-				baseUrl="./">
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

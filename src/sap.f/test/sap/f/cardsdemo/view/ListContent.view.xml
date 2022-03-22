@@ -37,42 +37,42 @@
 			class="sapUiSmallMargin"
 			inlineBlockLayout="true"
 		>
-			<w:Card id="card1" baseUrl="./" manifest="{listContentManifests>/tasksContent}">
+			<w:Card id="card1" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/tasksContent}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card2" baseUrl="./" manifest="{listContentManifests>/listWithAvatars}">
+			<w:Card id="card2" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/listWithAvatars}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card3" baseUrl="./" manifest="{listContentManifests>/listCardWithProducts}">
+			<w:Card id="card3" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/listCardWithProducts}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card manifest="./cardsdemo/bundles/listQuickActions/manifest.json" action=".onAction">
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/listQuickActions/manifest.json" action=".onAction">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="4" />
 			</w:layoutData>
 			</w:Card>
-			<w:Card id="card4" manifest="./cardsdemo/cardcontent/listContent/quickActions.json" action=".onAction">
+			<w:Card id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/listContent/quickActions.json" action=".onAction">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card5" baseUrl="./" manifest="{listContentManifests>/listAttributes}">
+			<w:Card id="card5" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/listAttributes}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card baseUrl="./" manifest="{listContentManifests>/listAttributesIconChart}">
+			<w:Card baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/listAttributesIconChart}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card6" baseUrl="./" manifest="{listContentManifests>/listAttributesActions}">
+			<w:Card id="card6" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/listAttributesActions}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

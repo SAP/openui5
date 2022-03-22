@@ -15,23 +15,23 @@
 		</subHeader>
 
 		<f:GridContainer class="sapUiSmallMargin">
-			<w:Card id="card1" manifest="{manifests>/preview/list}" baseUrl="./">
+			<w:Card id="card1" manifest="{manifests>/preview/list}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card2" manifest="{manifests>/preview/general}" baseUrl="./">
+			<w:Card id="card2" manifest="{manifests>/preview/general}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card3" manifest="{manifests>/preview/numeric}" baseUrl="./">
+			<w:Card id="card3" manifest="{manifests>/preview/numeric}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
 
-			<w:Card id="card4" manifest="{manifests>/preview/listWithActionsStrip}" baseUrl="./">
+			<w:Card id="card4" manifest="{manifests>/preview/listWithActionsStrip}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>

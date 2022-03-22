@@ -22,22 +22,22 @@
 				<HBox wrap="Wrap">
 					<w:Card
 						action=".onActionLog"
-						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationService.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationService.json"
 						width="400px"
 						class="sapUiSmallMargin" />
 					<w:Card
 						action=".onActionLog"
-						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationService2.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationService2.json"
 						width="400px"
 						class="sapUiSmallMargin" />
 					<w:Card
 						action=".onActionLog"
-						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationService3.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationService3.json"
 						width="400px"
 						class="sapUiSmallMargin" />
 					<w:Card
 						action=".onActionLog"
-						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationService4.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationService4.json"
 						width="400px"
 						class="sapUiSmallMargin" />
 				</HBox>
@@ -48,17 +48,17 @@
 					<w:Card
 						width="400px"
 						action=".onActionLog"
-						manifest="./cardsdemo/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_list.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_list.json"
 						class="sapUiSmallMargin" />
 					<w:Card
 						width="400px"
 						action=".onActionLog"
-						manifest="./cardsdemo/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_table.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_table.json"
 						class="sapUiSmallMargin" />
 					<w:Card
 						width="400px"
 						action=".onActionLog"
-						manifest="./cardsdemo/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_timeline.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_timeline.json"
 						class="sapUiSmallMargin" />
 				</HBox>
 				<VBox class="sapUiMediumMarginLeft">
@@ -67,12 +67,12 @@
 				<HBox wrap="Wrap">
 					<w:Card
 						class="sapUiSmallMargin"
-						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationAction_url_analyticalContent.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationAction_url_analyticalContent.json"
 						height="500px"
 						width="500px" />
 					<w:Card
 						class="sapUiSmallMargin"
-						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationAction_service_analyticalContent.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationAction_service_analyticalContent.json"
 						height="500px"
 						width="500px" />
 				</HBox>
@@ -81,13 +81,13 @@
 				</VBox>
 				<HBox wrap="Wrap">
 					<w:Card
-						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigation_objectContent.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigation_objectContent.json"
 						height="500px"
 						width="500px"
 						class="sapUiSmallMargin" />
 					<w:Card
 						class="sapUiMediumMargin"
-						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigation_object_service.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigation_object_service.json"
 						width="auto"
 						height="500px" />
 				</HBox>
@@ -98,12 +98,12 @@
 					<w:Card
 						action=".onAction"
 						width="400px"
-						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationAction.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationAction.json"
 						class="sapUiSmallMargin" />
 					<w:Card
 						action=".onAction"
 						width="400px"
-						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationActionTable.json"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationActionTable.json"
 						class="sapUiSmallMargin" />
 				</HBox>
 				<VBox class="sapUiMediumMarginLeft">
@@ -114,7 +114,7 @@
 						id="timeline"
 						class="sapUiSmallMargin"
 						manifest="{manifests>/timelineContent/card0}"
-						baseUrl="./"
+						baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 						width="300px" />
 				</HBox>
 			</VBox>

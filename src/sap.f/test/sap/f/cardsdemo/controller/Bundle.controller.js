@@ -23,16 +23,16 @@ sap.ui.define([
 			}
 		},
 		_createCardsWithoutBaseUrl: function () {
-			this._createCardWithoutBaseUrl("./cardsdemo/bundles/listbundle/manifest.json", 3);
-			this._createCardWithoutBaseUrl("./cardsdemo/bundles/objectbundle/manifest.json", 5);
-			this._createCardWithoutBaseUrl("./cardsdemo/bundles/tablebundle/manifest.json", 4);
-			this._createCardWithoutBaseUrl("./cardsdemo/bundles/timelinebundle/manifest.json", 4);
+			this._createCardWithoutBaseUrl(sap.ui.require.toUrl("sap/f/cardsdemo/bundles/listbundle/manifest.json"), 3);
+			this._createCardWithoutBaseUrl(sap.ui.require.toUrl("sap/f/cardsdemo/bundles/objectbundle/manifest.json"), 5);
+			this._createCardWithoutBaseUrl(sap.ui.require.toUrl("sap/f/cardsdemo/bundles/tablebundle/manifest.json"), 4);
+			this._createCardWithoutBaseUrl(sap.ui.require.toUrl("sap/f/cardsdemo/bundles/timelinebundle/manifest.json"), 4);
 		},
 		_createCardsWithBaseUrl: function () {
-			this._createCardWithBaseUrl("./cardsdemo/bundles/listbundle/", 3);
-			this._createCardWithBaseUrl("./cardsdemo/bundles/objectbundle/", 5);
-			this._createCardWithBaseUrl("./cardsdemo/bundles/tablebundle/", 4);
-			this._createCardWithBaseUrl("./cardsdemo/bundles/timelinebundle/", 4);
+			this._createCardWithBaseUrl(sap.ui.require.toUrl("sap/f/cardsdemo/bundles/listbundle/"), 3);
+			this._createCardWithBaseUrl(sap.ui.require.toUrl("sap/f/cardsdemo/bundles/objectbundle/"), 5);
+			this._createCardWithBaseUrl(sap.ui.require.toUrl("sap/f/cardsdemo/bundles/tablebundle/"), 4);
+			this._createCardWithBaseUrl(sap.ui.require.toUrl("sap/f/cardsdemo/bundles/timelinebundle/"), 4);
 		},
 		_createCardWithBaseUrl: function (sBaseUrl, iColumns) {
 			var oGrid = this.getView().byId("grid");

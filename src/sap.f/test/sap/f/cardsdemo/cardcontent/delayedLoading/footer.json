@@ -11,12 +11,12 @@
 		}
 	},
 	"sap.card": {
-        "type": "Object",
-        "data": {
-            "request": {
-                "url": "./cardsdemo/cardcontent/delayedLoading/listData1.json"
-            }
-        },
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "./listData1.json"
+			}
+		},
 		"header": {
 			"title": "{/header/title}",
 			"subTitle": "{/header/subTitle}"

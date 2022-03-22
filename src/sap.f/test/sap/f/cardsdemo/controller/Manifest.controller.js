@@ -7,7 +7,7 @@ sap.ui.define([
 
 		onInit: function () {
 			this._createCardExample("card1", {
-				xmlUsage: "<f:Card manifest='./cardsdemo/model/manifests/manifest_card1.json' width='500px' height='auto'/>"
+				xmlUsage: "<f:Card manifest='./model/manifests/manifest_card1.json' width='500px' height='auto'/>"
 			});
 			this._createCardExample("card2", {
 				xmlUsage: "<f:Card manifest='{manifests>/manifestTests/manifest}' width='500px' height='auto'/>"

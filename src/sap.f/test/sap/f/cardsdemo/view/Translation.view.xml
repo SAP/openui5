@@ -15,7 +15,7 @@
 		<Panel>
 			<w:Card
 				id="card"
-				manifest="./cardsdemo/cardcontent/translation/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/translation/manifest.json"
 				width="400px"
 				class="sapUiMediumMargin" />
 		</Panel>

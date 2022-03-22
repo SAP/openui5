@@ -16,7 +16,7 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/listContent/tasks.json"
+						"url": "./cardcontent/listContent/tasks.json"
 					},
 					"path": "/"
 				},
@@ -574,7 +574,7 @@
 		"sap.card": {
 			"data": {
 				"request": {
-					"url": "./cardsdemo/cardcontent/someitems.json"
+					"url": "./cardcontent/someitems.json"
 				}
 			},
 			"type": "List",

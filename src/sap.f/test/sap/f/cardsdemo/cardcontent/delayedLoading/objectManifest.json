@@ -7,7 +7,7 @@
 		"type": "Object",
 		"data": {
 			"request": {
-				"url": "./cardsdemo/cardcontent/objectcontent/employee.json"
+				"url": "../objectcontent/employee.json"
 			}
 		},
 		"header": {

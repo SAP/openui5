@@ -23,7 +23,7 @@
 					<HBox>
 						<w:Card
 							id="card1"
-							manifest="./cardsdemo/model/manifests/manifest_card1.json"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/model/manifests/manifest_card1.json"
 							width="500px"
 							height="auto">
 							<w:layoutData>
@@ -62,7 +62,7 @@
 						<w:Card
 							id="card2"
 							manifest="{manifests>/manifestTests/manifest}"
-							baseUrl="./"
+							baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 							width="500px"
 							height="auto">
 							<w:layoutData>

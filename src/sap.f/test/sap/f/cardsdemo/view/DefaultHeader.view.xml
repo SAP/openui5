@@ -15,32 +15,32 @@
 			<w:Card
 				id="card1"
 				manifest="{manifests>/defaultHeader/card1}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="300px"
 				class="sapUiSmallMargin" />
 			<w:Card
 				id="card2"
 				manifest="{manifests>/defaultHeader/card2}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="300px"
 				class="sapUiSmallMargin" />
 			<w:Card
 				id="card3"
 				manifest="{manifests>/defaultHeader/card3}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="300px"
 				height="200px"
 				class="sapUiSmallMargin" />
 			<w:Card
 				id="card4"
 				manifest="{manifests>/defaultHeader/card4}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="320px"
 				class="sapUiSmallMargin" />
 			<w:Card
 				id="defaultDataTimestamp"
 				manifest="{manifests>/defaultHeader/defaultDataTimestamp}"
-				baseUrl="./"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="320px"
 				class="sapUiSmallMargin" />
 		</Panel>

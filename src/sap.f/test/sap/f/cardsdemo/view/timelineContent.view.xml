@@ -22,14 +22,14 @@
 						<w:Card id="timeline"
 								class="sapUiMediumMargin"
 								manifest="{manifests>/timelineContent/card0}"
-								baseUrl="./"
+								baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 								width="300px"
 								height="auto"
 								action=".onAction" />
 						<w:Card id="timeline1"
 								class="sapUiMediumMargin"
 								manifest="{manifests>/timelineContent/card1}"
-								baseUrl="./"
+								baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 								width="300px"
 								height="auto"
 								action=".onAction" />

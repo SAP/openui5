@@ -10,7 +10,7 @@
 				"type": "Numeric",
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/kpi.json"
+						"url": "./cardcontent/kpi.json"
 					},
 					"path": "/kpiInfos/kpi"
 				},
@@ -57,7 +57,7 @@
 				"dimensionAxis": "categoryAxis",
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/revenue.json"
+						"url": "./cardcontent/revenue.json"
 					},
 					"path": "/list"
 				},
@@ -91,7 +91,7 @@
 				"type": "Numeric",
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/kpi.json"
+						"url": "./cardcontent/kpi.json"
 					},
 					"path": "/kpiInfos/kpi"
 				},
@@ -139,7 +139,7 @@
 				"dimensionAxis": "categoryAxis",
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/revenue.json"
+						"url": "./cardcontent/revenue.json"
 					},
 					"path": "/list"
 				},
@@ -222,7 +222,7 @@
 				"dimensionAxis": "categoryAxis",
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/revenue.json"
+						"url": "./cardcontent/revenue.json"
 					},
 					"path": "/list"
 				},
@@ -302,7 +302,7 @@
 				"dimensionAxis": "categoryAxis",
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/revenue.json"
+						"url": "./cardcontent/revenue.json"
 					},
 					"path": "/list"
 				},
@@ -374,7 +374,7 @@
 				"dimensionAxis": "color",
 				"data": {
 					"request": {
-						"url": "./cardsdemo/cardcontent/cost.json"
+						"url": "./cardcontent/cost.json"
 					},
 					"path": "/milk"
 				},
