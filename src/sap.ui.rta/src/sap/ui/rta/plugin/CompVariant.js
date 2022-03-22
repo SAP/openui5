@@ -34,13 +34,9 @@ sap.ui.define([
 		}
 	});
 
-	function isVariantManagementControl(oOverlay) {
-		return oOverlay.getElement().getMetadata().getName() === "sap.ui.comp.smartvariants.SmartVariantManagement";
-	}
-
-	function createCommandAndFireEvent(oOverlay, sName, mProperties) {
+	function createCommandAndFireEvent(oOverlay, sName, mProperties, oElement) {
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-		var oTargetElement = oOverlay.getElement();
+		var oTargetElement = oElement || oOverlay.getElement();
 
 		return this.getCommandFactory().getCommandFor(oTargetElement, sName, mProperties, oDesignTimeMetadata)
 
@@ -165,83 +161,106 @@ sap.ui.define([
 		}.bind(this), oContextSharingComponentContainer);
 	}
 
+	// ------ change content ------
+	function changeContent(aOverlays) {
+		var oControl = aOverlays[0].getElementInstance();
+		var oAction = this.getAction(aOverlays[0]);
+		oAction.handler(oControl, {styleClass: Utils.getRtaStyleClassName()}).then(function(aData) {
+			createCommandAndFireEvent.call(this, aOverlays[0], "compVariantContent", {
+				variantId: aData[0].changeSpecificData.content.key,
+				newContent: aData[0].changeSpecificData.content.content,
+				persistencyKey: aData[0].changeSpecificData.content.persistencyKey
+			}, oControl.getVariantManagement());
+		}.bind(this));
+	}
+
 	CompVariant.prototype._isEditable = function(oOverlay) {
-		return isVariantManagementControl(oOverlay) && this.hasStableId(oOverlay);
+		return this.hasStableId(oOverlay) && !!this.getAction(oOverlay);
 	};
 
 	CompVariant.prototype.getMenuItems = function(aElementOverlays) {
 		var oElementOverlay = aElementOverlays[0];
 		var oVariantManagementControl = oElementOverlay.getElement();
 		var aMenuItems = [];
-
-		if (this._isEditable(oElementOverlay)) {
-			var sLayer = this.getCommandFactory().getFlexSettings().layer;
-			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-			var aVariants = getAllVariants(oElementOverlay);
-			var oCurrentVariant = aVariants.find(function(oVariant) {
-				return oVariant.getId() === oVariantManagementControl.getPresentVariantId();
-			});
-
-			if (oCurrentVariant.isRenameEnabled(sLayer)) {
+		if (this.isAvailable([oElementOverlay])) {
+			if (this.getAction(oElementOverlay).changeType === "variantContent") {
 				aMenuItems.push({
-					id: "CTX_COMP_VARIANT_RENAME",
-					text: oLibraryBundle.getText("CTX_RENAME"),
-					handler: renameVariant.bind(this),
+					id: "CTX_COMP_VARIANT_CONTENT",
+					text: this.getActionText(oElementOverlay, this.getAction(oElementOverlay)),
+					handler: changeContent.bind(this),
 					enabled: true,
-					rank: 210,
-					icon: "sap-icon://edit"
+					rank: 250,
+					icon: "sap-icon://key-user-settings"
 				});
-			}
+			} else {
+				var sLayer = this.getCommandFactory().getFlexSettings().layer;
+				var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+				var aVariants = getAllVariants(oElementOverlay);
+				var oCurrentVariant = aVariants.find(function(oVariant) {
+					return oVariant.getId() === oVariantManagementControl.getPresentVariantId();
+				});
 
-			if (oCurrentVariant.isEditEnabled(sLayer)) {
+				if (oCurrentVariant.isRenameEnabled(sLayer)) {
+					aMenuItems.push({
+						id: "CTX_COMP_VARIANT_RENAME",
+						text: oLibraryBundle.getText("CTX_RENAME"),
+						handler: renameVariant.bind(this),
+						enabled: true,
+						rank: 210,
+						icon: "sap-icon://edit"
+					});
+				}
+
+				if (oCurrentVariant.isEditEnabled(sLayer)) {
+					aMenuItems.push({
+						id: "CTX_COMP_VARIANT_SAVE",
+						text: oLibraryBundle.getText("CTX_VARIANT_SAVE"),
+						handler: saveVariant.bind(this),
+						enabled: isSaveEnabled,
+						rank: 220,
+						icon: "sap-icon://save"
+					});
+				}
+
 				aMenuItems.push({
-					id: "CTX_COMP_VARIANT_SAVE",
-					text: oLibraryBundle.getText("CTX_VARIANT_SAVE"),
-					handler: saveVariant.bind(this),
-					enabled: isSaveEnabled,
-					rank: 220,
-					icon: "sap-icon://save"
+					id: "CTX_COMP_VARIANT_SAVE_AS",
+					text: oLibraryBundle.getText("CTX_VARIANT_SAVEAS"),
+					handler: saveAsNewVariant.bind(this),
+					enabled: true,
+					rank: 230,
+					icon: "sap-icon://duplicate"
+				});
+
+				aMenuItems.push({
+					id: "CTX_COMP_VARIANT_MANAGE",
+					text: oLibraryBundle.getText("CTX_VARIANT_MANAGE"),
+					handler: configureVariants.bind(this),
+					enabled: true,
+					rank: 240,
+					icon: "sap-icon://action-settings"
+				});
+
+				var aSubmenuItems = aVariants.map(function(oVariant) {
+					var bCurrentItem = oVariantManagementControl.getPresentVariantId() === oVariant.getId();
+					var oItem = {
+						id: oVariant.getId(),
+						text: oVariant.getText("variantName"),
+						icon: bCurrentItem ? "sap-icon://accept" : "blank",
+						enabled: !bCurrentItem
+					};
+					return oItem;
+				});
+
+				aMenuItems.push({
+					id: "CTX_COMP_VARIANT_SWITCH",
+					text: oLibraryBundle.getText("CTX_VARIANT_SWITCH"),
+					handler: switchVariant.bind(this),
+					enabled: isSwitchEnabled,
+					submenu: aSubmenuItems,
+					rank: 250,
+					icon: "sap-icon://switch-views"
 				});
 			}
-
-			aMenuItems.push({
-				id: "CTX_COMP_VARIANT_SAVE_AS",
-				text: oLibraryBundle.getText("CTX_VARIANT_SAVEAS"),
-				handler: saveAsNewVariant.bind(this),
-				enabled: true,
-				rank: 230,
-				icon: "sap-icon://duplicate"
-			});
-
-			aMenuItems.push({
-				id: "CTX_COMP_VARIANT_MANAGE",
-				text: oLibraryBundle.getText("CTX_VARIANT_MANAGE"),
-				handler: configureVariants.bind(this),
-				enabled: true,
-				rank: 240,
-				icon: "sap-icon://action-settings"
-			});
-
-			var aSubmenuItems = aVariants.map(function(oVariant) {
-				var bCurrentItem = oVariantManagementControl.getPresentVariantId() === oVariant.getId();
-				var oItem = {
-					id: oVariant.getId(),
-					text: oVariant.getText("variantName"),
-					icon: bCurrentItem ? "sap-icon://accept" : "blank",
-					enabled: !bCurrentItem
-				};
-				return oItem;
-			});
-
-			aMenuItems.push({
-				id: "CTX_COMP_VARIANT_SWITCH",
-				text: oLibraryBundle.getText("CTX_VARIANT_SWITCH"),
-				handler: switchVariant.bind(this),
-				enabled: isSwitchEnabled,
-				submenu: aSubmenuItems,
-				rank: 250,
-				icon: "sap-icon://switch-views"
-			});
 		}
 
 		return aMenuItems;
