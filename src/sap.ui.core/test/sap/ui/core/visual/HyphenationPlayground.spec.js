@@ -17,7 +17,7 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 		"fi",
 		"fr",
 		"de",
-		"el",
+		"el-monoton",
 		"hi",
 		"hu",
 		"it",
@@ -47,7 +47,7 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 		"fi": "350px",
 		"fr" : "340px",
 		"de" : "350px",
-		"el" : "350px",
+		"el-monoton" : "350px",
 		"hi" : "280px",
 		"hu" : "350px",
 		"it" : "350px",
@@ -66,41 +66,17 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 	};
 
 	var fnTakePictures = function(sLang, n) {
-		var sNameOfTestNat = "should visualize hyphenation for language: " + sLang + "Native(CSS)";
-		var sNameOfTest = "should visualize hyphenation for language: " + sLang;
+		it("should visualize hyphenation for language: " + sLang, function () {
+			var oForm = element(by.id("formWithTexts-" + sLang));
 
-		var sNameOfImageNat = n + "_Nat" + "_hyph_" + sLang;
-		var sNameOfImage = n + "_3rd-party_hyph_" + sLang;
+			browser.executeScript("sap.ui.getCore().byId('formWithTexts-" + sLang + "').setWidth('" + aFormWidth[sLang] + "')");
+			browser.executeScript("document.getElementById('formWithTexts-" + sLang + "').scrollIntoView()");
 
-		var sIdNat = 'txt-' + sLang;
-		var sId = 'hyph-' + sLang;
-
-		var textNat = element(by.id(sIdNat));
-		var text = element(by.id(sId));
-
-		var scriptNat = "document.getElementById('" + sIdNat + "').scrollIntoView()";
-		var script = "document.getElementById('" + sId + "').scrollIntoView()";
-		var scriptFormWidth = 'sap.ui.getCore().byId("formWitTexts-' + sLang + '").setWidth("' + aFormWidth[sLang] + '")';
-
-		// with css native hyphenation
-		it(sNameOfTestNat, function () {
-			browser.executeScript(scriptFormWidth);
-			browser.executeScript(scriptNat).then(function() {
-				expect(takeScreenshot(textNat)).toLookAs(sNameOfImageNat);
-			});
+			expect(takeScreenshot(oForm)).toLookAs(n + "_language_" + sLang);
 		});
-
-		// with third-party hyphenation
-		if ((sLang != "cs") && (sLang != "pl") && (sLang != "sr")) { // cs, pl and sr don't have 3rd party samples
-			it(sNameOfTest, function () {
-				browser.executeScript(script).then(function() {
-					expect(takeScreenshot(text)).toLookAs(sNameOfImage);
-				});
-			});
-		}
 	};
 
-	for ( var index = 0; index < aLangCodes.length; index++) {
+	for (var index = 0; index < aLangCodes.length; index++) {
 		fnTakePictures(aLangCodes[index], index + 1);
 	}
 });
