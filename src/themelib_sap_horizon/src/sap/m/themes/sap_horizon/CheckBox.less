@@ -6,7 +6,7 @@
 .sapMCb {
 	height: 2.75rem;
 	padding-left: 2.75rem;
-	line-height: 44px;
+	line-height: 2.7rem;
 }
 
 .sapMCbBg {
@@ -15,13 +15,13 @@
 	top: 0.6875rem;
 	left: 0.6875rem;
 	box-sizing: border-box;
-	border-radius: @sapField_BorderCornerRadius;
-	background-color: @sapField_Background;
-	border: @sapField_BorderWidth @sapField_BorderColor @sapField_BorderStyle;
+	border-radius: @sapUiFieldBorderCornerRadius;
+	background-color: @sapUiFieldBackground;
+	border: @sapUiFieldBorderWidth @sapUiFieldBorderColor solid;
 	display: flex;
     align-items: center;
     justify-content: center;
-	color: @sapContent_Selected_ForegroundColor;
+	color: @sapUiContentSelectedForegroundColor;
 
 	&.sapMCbMarkChecked:before {
 		font-size: 1rem;
@@ -34,31 +34,31 @@
 }
 
 .sapMCbBgDis .sapMCbBg {
-	opacity: @sapContent_DisabledOpacity;
+	opacity: @sapUiContentDisabledOpacity;
 }
 
 .sapMCbRo .sapMCbBg {
-	background-color: @sapField_ReadOnly_Background;
-	border: @sapField_BorderWidth  dashed @sapField_ReadOnly_BorderColor;
+	background-color: @sapUiFieldReadOnlyBackground;
+	border: @sapUiElementBorderWidth dashed @sapUiFieldReadOnlyBorderColor;
 }
 
 .sapMCbRo > .sapMCbBg.sapMCbMarkChecked:before {
-	color: @sapContent_NonInteractiveIconColor;
+	color: @sapUiContentNonInteractiveIconColor;
 }
 
 .sapMCbHoverable:hover {
-	border: @sapField_BorderWidth @sapField_BorderStyle @sapField_Hover_BorderColor;
-	color: @sapContent_Selected_ForegroundColor;
-	box-shadow: @sapContent_Interaction_Shadow;
-	background-color: @sapField_Hover_Background;
+	border: @sapUiFieldBorderWidth @sapField_BorderStyle @sapUiFieldHoverBorderColor;
+	color: @sapUiContentSelectedForegroundColor;
+	box-shadow: @sapUiContentInteractionShadow;
+	background-color: @sapUiFieldHoverBackground;
 }
 
 // value state
 .sapMCbErr {
 	.sapMCbBg {
-		background-color: @sapField_InvalidBackground;
-		border: @sapField_InvalidBorderWidth @sapField_InvalidBorderStyle  @sapField_InvalidColor;
-		color: @sapField_InvalidColor;
+		background-color: @sapUiFieldInvalidBackground;
+		border: @sapUiFieldInvalidBorderWidth solid  @sapUiFieldInvalidColor;
+		color: @sapUiFieldInvalidColor;
 
 		&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
 			border-width: 0.1875rem;
@@ -66,16 +66,16 @@
 	}
 
 	.sapMCbHoverable:hover {
-		box-shadow: @sapContent_Negative_Shadow;
-		background-color: @sapField_Hover_Background;
+		box-shadow: @sapUiContentNegativeShadow;
+		background-color: @sapUiFieldHoverBackground;
 	}
 }
 
 .sapMCbWarn {
 	.sapMCbBg {
-		background-color: @sapField_WarningBackground;
-		border: @sapField_WarningBorderWidth @sapField_WarningBorderStyle  @sapField_WarningColor;
-		color: @sapField_TextColor;
+		background-color: @sapUiFieldWarningBackground;
+		border: @sapUiFieldWarningBorderWidth solid @sapUiFieldWarningColor;
+		color: @sapUiFieldTextColor;
 
 		&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
 			border-width: 0.1875rem;
@@ -83,16 +83,16 @@
 	}
 
 	.sapMCbHoverable:hover {
-		box-shadow: @sapContent_Critical_Shadow;
-		background-color: @sapField_Hover_Background;
+		box-shadow: @sapUiContentCriticalShadow;
+		background-color: @sapUiFieldHoverBackground;
 	}
 }
 
 .sapMCbInfo {
 	.sapMCbBg {
-		background-color: @sapField_InformationBackground;
-		border: @sapField_InformationBorderWidth @sapField_InformationBorderStyle  @sapField_InformationColor;
-		color: @sapField_InformationColor;
+		background-color: @sapUiFieldInformationBackground;
+		border: @sapUiFieldInformationBorderWidth solid @sapUiFieldInformationColor;
+		color: @sapUiFieldInformationColor;
 
 		&.sapMCbMarkChecked.sapMCbMarkPartiallyChecked::before {
 			border-width: 0.1875rem;
@@ -100,21 +100,21 @@
 	}
 
 	.sapMCbHoverable:hover {
-		box-shadow: @sapContent_Informative_Shadow;
-		background-color: @sapField_Hover_Background;
+		box-shadow: @sapUiContentInformativeShadow;
+		background-color: @sapUiFieldHoverBackground;
 	}
 }
 
 .sapMCbSucc {
 	.sapMCbBg {
-		background-color: @sapField_SuccessBackground;
-		border: @sapField_SuccessBorderWidth @sapField_SuccessBorderStyle  @sapField_SuccessColor;
-		color: @sapField_SuccessColor;
+		background-color: @sapUiFieldSuccessBackground;
+		border: @sapUiFieldSuccessBorderWidth solid @sapUiFieldSuccessColor;
+		color: @sapUiFieldSuccessColor;
 	}
 
 	.sapMCbHoverable:hover {
-		box-shadow: @sapContent_Positive_Shadow;
-		background-color: @sapField_Hover_Background;
+		box-shadow: @sapUiContentPositiveShadow;
+		background-color: @sapUiFieldHoverBackground;
 	}
 }
 
@@ -155,19 +155,23 @@
 
 .sapMCb:focus:before {
 	content: "";
-	border: @sapContent_FocusColor @sapContent_FocusStyle @sapContent_FocusWidth;
-	inset: 5px;
+	border: @sapUiContentFocusColor @sapUiContentFocusStyle @sapUiContentFocusWidth;
+	inset: 0.3125rem;
 	position: absolute;
-	border-radius: @sapField_BorderCornerRadius;
+	border-radius: @sapUiFieldBorderCornerRadius;
+}
+
+.sapMCb.sapMCbHasLabel {
+	padding-right: 0.3125rem;
 }
 
 .sapMCb.sapMCbHasLabel:focus:before {
 	content: "";
-	border: @sapContent_FocusColor @sapContent_FocusStyle @sapContent_FocusWidth;
-	top: 5px;
-	left: 5px;
-	bottom: 5px;
-	right: -6px;
+	border: @sapUiContentFocusColor @sapUiContentFocusStyle @sapUiContentFocusWidth;
+	top: 0.3125rem;
+	left: 0.3125rem;
+	bottom: 0.3125rem;
+	right: 0;
 	position: absolute;
 	border-radius: 0.5rem;
 }
@@ -176,7 +180,7 @@
 	.sapMCb {
 		height: 2rem;
 		padding-left: 2rem;
-		line-height: 32px;
+		line-height: 2rem;
 	}
 
 	.sapMCbBg {
@@ -184,7 +188,7 @@
 		width: 1rem;
 		top: 0.5rem;
 		left: 0.5rem;
-		border-radius: @sapField_BorderCornerRadius;
+		border-radius: @sapUiFieldBorderCornerRadius;
 
 		&.sapMCbMarkChecked:before {
 			font-size: 0.75rem;
