@@ -222,7 +222,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	ODataListBinding.prototype.getContexts = function(iStartIndex, iLength, iThreshold) {
-		var aContexts, oInterval, aIntervals, iLimit, oSkipAndTop,
+		var aContexts, oSkipAndTop,
 			aContextData = [];
 
 		if (this.bInitial || this._hasTransientParentContext()) {
@@ -274,16 +274,12 @@ sap.ui.define([
 				aContexts.dataRequested = true;
 			}
 		} else {
-			iLimit = this.bLengthFinal ? this.iLength : undefined;
-			oSkipAndTop = this._getSkipAndTop(iStartIndex, iLength);
-			aIntervals = ODataUtils._getReadIntervals(this.aKeys, oSkipAndTop.skip, oSkipAndTop.top,
-				iThreshold, iLimit);
-			oInterval = ODataUtils._mergeIntervals(aIntervals);
+			oSkipAndTop = this._getSkipAndTop(iStartIndex, iLength, iThreshold);
 			// check if metadata are already available
 			if (this.oModel.getServiceMetadata()) {
 				// If rows are missing send a request
-				if (!this.bPendingRequest && oInterval) {
-					this.loadData(oInterval.start, oInterval.end - oInterval.start);
+				if (!this.bPendingRequest && oSkipAndTop) {
+					this.loadData(oSkipAndTop.skip, oSkipAndTop.top);
 					aContexts.dataRequested = true;
 				}
 			}
@@ -1962,28 +1958,38 @@ sap.ui.define([
 
 	/**
 	 * Gets an object with the values for system query options $skip and $top based on the given
-	 * start index and length, both from control point of view. The number of entities created via
-	 * {@link #create} is considered for the <code>$skip</code> value if created at the beginning,
-	 * but it is not considered for the <code>$top</code> value.
+	 * start index (from control point of view), length and threshold. The number of entities
+	 * created via {@link #create} is considered for the <code>$skip</code> value if created at the
+	 * beginning, but it is not considered for the <code>$top</code> value.
 	 *
 	 * @param {number} iStartIndex The start index from control point of view
 	 * @param {number} iLength The length
+	 * @param {number} iThreshold The threshold
 	 * @returns {object}
 	 *   An object containing the properties <code>skip</code> and <code>top</code>; the values
-	 *   correspond to the system query options <code>$skip</code> and <code>$top</code>
+	 *   correspond to the system query options <code>$skip</code> and <code>$top</code>.
+	 *   <code>undefined</code>, if no read is required.
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype._getSkipAndTop = function (iStartIndex, iLength) {
-		var iCreatedContextsLength = this._getCreatedContexts().length,
-			iSkip = this.isFirstCreateAtEnd()
-				? iStartIndex
-				: Math.max(0, iStartIndex - iCreatedContextsLength),
-			iTop = this.bLengthFinal && iSkip + iLength >= this.iLength
-				? Math.max(0, this.iLength - iSkip)
-				: iLength;
+	ODataListBinding.prototype._getSkipAndTop = function (iStartIndex, iLength, iThreshold) {
+		var oInterval, aIntervals,
+			aCreatedContexts = this._getCreatedContexts(),
+			bFirstCreateAtStart = this.isFirstCreateAtEnd() === false,
+			aKeys = bFirstCreateAtStart && this.aKeys.length
+				? aCreatedContexts.concat(this.aKeys)
+				: this.aKeys;
 
-		return {skip : iSkip, top : iTop};
+		aIntervals = ODataUtils._getReadIntervals(aKeys, iStartIndex, iLength, iThreshold,
+			/*iLimit*/this.bLengthFinal ? this.iLength : undefined);
+		oInterval = ODataUtils._mergeIntervals(aIntervals);
+
+		if (oInterval && bFirstCreateAtStart && this.aKeys.length) {
+			oInterval.start -= aCreatedContexts.length;
+			oInterval.end -= aCreatedContexts.length;
+		}
+
+		return oInterval && {skip : oInterval.start, top : oInterval.end - oInterval.start};
 	};
 
 	/**

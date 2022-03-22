@@ -1476,9 +1476,7 @@ sap.ui.define([
 				loadData : function () {},
 				useClientMode : function () {}
 			},
-			aContexts = [],
-			oInterval = {start : 0, end : 110},
-			aIntervals = [{start : 0, end : 110}];
+			aContexts = [];
 
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getLength").withExactArgs().exactly(bLengthFinal ? 0 : 1);
@@ -1487,19 +1485,11 @@ sap.ui.define([
 			.returns(aContexts);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getSkipAndTop")
-			.withExactArgs(0, 10)
+			.withExactArgs(0, 10, 100)
 			.returns({skip : "~skip", top : "~top"});
-		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(oBinding.aKeys , "~skip", "~top", 100,
-				bLengthFinal ? oBinding.iLength : undefined)
-			.returns(aIntervals);
-		this.mock(ODataUtils).expects("_mergeIntervals")
-			.withExactArgs(sinon.match.same(aIntervals))
-			.returns(oInterval);
 		this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns(true);
 		this.mock(oBinding).expects("loadData")
-			.withExactArgs(sinon.match.same(oInterval.start),
-				sinon.match.same(oInterval.end - oInterval.start));
+			.withExactArgs("~skip", "~top");
 
 		// code under test
 		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0, 10, 100),
@@ -1535,13 +1525,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{pendingRequest : false, interval : {start : 0, end : 110}, expectLoad : true},
-	{pendingRequest : true, interval : {start : 0, end : 110}, expectLoad : false},
-	{pendingRequest : true, interval : undefined, expectLoad : false},
-	{pendingRequest : false, interval : undefined, expectLoad : false}
+	{pendingRequest : false, bSkipTop : true, expectLoad : true},
+	{pendingRequest : true, bSkipTop : true, expectLoad : false},
+	{pendingRequest : true, bSkipTop : false, expectLoad : false},
+	{pendingRequest : false, bSkipTop : false, expectLoad : false}
 ].forEach(function (oFixture) {
-	var sTitle = "getContexts: use ODataUtils: pendingRequest = " + oFixture.pendingRequest
-			+ ", interval = " + oFixture.interval;
+	var sTitle = "getContexts: calls loadData with pendingRequest = " + oFixture.pendingRequest
+			+ ", has skip/top = " + oFixture.bSkipTop;
 	QUnit.test(sTitle, function (assert) {
 		var oModel = {getServiceMetadata : function () {}},
 			oBinding = {
@@ -1557,8 +1547,7 @@ sap.ui.define([
 				loadData : function () {},
 				useClientMode : function () {}
 			},
-			aContexts = [],
-			aIntervals = [{start : 0, end : 110}];
+			aContexts = [];
 
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getContexts")
@@ -1566,19 +1555,12 @@ sap.ui.define([
 			.returns(aContexts);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getSkipAndTop")
-			.withExactArgs(0, 10)
-			.returns({skip : "~skip", top : "~top"});
-		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(oBinding.aKeys , "~skip", "~top", 100, oBinding.iLength)
-			.returns(aIntervals);
-		this.mock(ODataUtils).expects("_mergeIntervals")
-			.withExactArgs(sinon.match.same(aIntervals))
-			.returns(oFixture.interval);
+			.withExactArgs(0, 10, 100)
+			.returns(oFixture.bSkipTop ? {skip : "~skip", top : "~top"} : undefined);
 		this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns(true);
-		if (oFixture.interval) {
+		if (oFixture.bSkipTop) {
 			this.mock(oBinding).expects("loadData")
-				.withExactArgs(oFixture.interval.start,
-					oFixture.interval.end - oFixture.interval.start)
+				.withExactArgs( "~skip",  "~top")
 				.exactly(oFixture.expectLoad ? 1 : 0);
 		}
 
@@ -1872,97 +1854,152 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[{
-	iCreated : 0, iLength : 10, iStartIndex : 3, oResult : {skip : 3, top : 10}
-}, {
-	iCreated : 4, iLength : 10, iStartIndex : 4, oResult : {skip : 0, top : 10}
-}, {
-	iCreated : 4, iLength : 10, iStartIndex : 6, oResult : {skip : 2, top : 10}
-}, {
-	iCreated : 6, iLength : 10, iStartIndex : 4, oResult : {skip : 0, top : 10}
-}, {
-	iCreated : 20, iLength : 5, iStartIndex : 4, oResult : {skip : 0, top : 5}
-}].forEach(function (oFixture, i) {
-	QUnit.test("_getSkipAndTop, creation area at start: #" + i, function (assert) {
+	QUnit.test("_getSkipAndTop, creation at start, no data in binding", function (assert) {
 		var oBinding = {
+				aKeys : [],
+				bLengthFinal : true,
+				iLength : "~length",
+				_getCreatedContexts : function () {},
+				isFirstCreateAtEnd : function () {}
+			};
+
+		this.mock(oBinding).expects("_getCreatedContexts").withExactArgs(); // return value unused
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(sinon.match.same(oBinding.aKeys), "~startIndex", "~length", "~threshold",
+				 "~length")
+			.returns("~aIntervals");
+		this.mock(ODataUtils).expects("_mergeIntervals")
+			.withExactArgs("~aIntervals")
+			.returns({start : 222, end : 333});
+
+		// code under test
+		assert.deepEqual(
+			ODataListBinding.prototype._getSkipAndTop.call(oBinding, "~startIndex","~length",
+				"~threshold"),
+			{skip : 222, top : 111});
+	});
+
+	//*********************************************************************************************
+[
+	{interval : {start : 222, end : 333}, result : {skip : 222 - 1, top : 111}},
+	{interval : undefined, result : undefined}
+].forEach(function (oFixture, i) {
+	QUnit.test("_getSkipAndTop, creation at start, binding has data: #" + i, function (assert) {
+		var oBinding = {
+				aKeys : ["key0", "key1"],
+				bLengthFinal : true,
+				iLength : "~length",
 				_getCreatedContexts : function () {},
 				isFirstCreateAtEnd : function () {}
 			};
 
 		this.mock(oBinding).expects("_getCreatedContexts")
 			.withExactArgs()
-			.returns(Array(oFixture.iCreated));
+			.returns(["created0"]);
 		this.mock(oBinding).expects("isFirstCreateAtEnd")
 			.withExactArgs()
 			.returns(false);
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(["created0", "key0", "key1"], "~startIndex", "~length", "~threshold",
+				"~length")
+			.returns("~aIntervals");
+		this.mock(ODataUtils).expects("_mergeIntervals")
+			.withExactArgs("~aIntervals")
+			.returns(oFixture.interval);
 
 		// code under test
 		assert.deepEqual(
-			ODataListBinding.prototype._getSkipAndTop.call(oBinding, oFixture.iStartIndex,
-				oFixture.iLength),
-			oFixture.oResult);
+			ODataListBinding.prototype._getSkipAndTop.call(oBinding, "~startIndex",
+				"~length", "~threshold"),
+			oFixture.result);
 	});
 });
 
 	//*********************************************************************************************
-[{ // created contexts, length not final
-	iBindingLength : 1,
-	iCreated : 1,
-	iLength : 10,
-	bLengthFinal : false,
-	iStartIndex : 5,
-	oResult : {skip : 5, top : 10}
-}, { // created contexts, length final, start index > binding length (nothing to read)
-	iBindingLength : 1,
-	iCreated : 1,
-	iLength : 10,
-	bLengthFinal : true,
-	iStartIndex : 5,
-	oResult : {skip : 5, top : 0}
-}, { // created contexts, length final, start index === binding length (nothing to read)
-	iBindingLength : 5,
-	iCreated : 1,
-	iLength : 10,
-	bLengthFinal : true,
-	iStartIndex : 5,
-	oResult : {skip : 5, top : 0}
-}, { // created contexts, length final, requested contexts are all on server (read all)
-	iBindingLength : 42,
-	iCreated : 1,
-	iLength : 10,
-	bLengthFinal : true,
-	iStartIndex : 5,
-	oResult : {skip : 5, top : 10}
-}, { // created contexts, length final, requested contexts are partially on server
-	iBindingLength : 12,
-	iCreated : 1,
-	iLength : 10,
-	bLengthFinal : true,
-	iStartIndex : 5,
-	oResult : {skip : 5, top : 7}
-}].forEach(function (oFixture, i) {
-	QUnit.test("_getSkipAndTop: creation area at end: #" + i, function (assert) {
+[
+	{bLengthFinal : false, iLimit : undefined},
+	{bLengthFinal : true, iLimit : "~length"}
+].forEach(function (oFixture, i) {
+	QUnit.test("_getSkipAndTop, length final and limit: #" + i, function (assert) {
 		var oBinding = {
+				aKeys : [],
+				bLengthFinal : oFixture.bLengthFinal,
+				iLength : "~length",
+				_getCreatedContexts : function () {},
+				isFirstCreateAtEnd : function () {}
+			};
+
+		this.mock(oBinding).expects("_getCreatedContexts").withExactArgs().returns([]);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(undefined);
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(sinon.match.same(oBinding.aKeys) , 0, 10, "~threshold", oFixture.iLimit)
+			.returns("~aIntervals");
+		this.mock(ODataUtils).expects("_mergeIntervals")
+			.withExactArgs("~aIntervals")
+			.returns({start : 222, end : 333});
+
+		// code under test
+		assert.deepEqual(
+			ODataListBinding.prototype._getSkipAndTop.call(oBinding, 0, 10, "~threshold"),
+			{skip : 222, top : 111});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_getSkipAndTop, no read interval", function (assert) {
+		var oBinding = {
+				aKeys : [],
+				bLengthFinal : true,
+				iLength : "~length",
+				_getCreatedContexts : function () {},
+				isFirstCreateAtEnd : function () {}
+			};
+
+		this.mock(oBinding).expects("_getCreatedContexts").withExactArgs().returns([]);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(sinon.match.same(oBinding.aKeys) , 0, 10, "~threshold", "~length")
+			.returns("~aIntervals");
+		this.mock(ODataUtils).expects("_mergeIntervals")
+			.withExactArgs("~aIntervals")
+			.returns(undefined);
+
+		// code under test
+		assert.deepEqual(
+			ODataListBinding.prototype._getSkipAndTop.call(oBinding, 0, 10, "~threshold"),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getSkipAndTop: creation area at end", function (assert) {
+		var oBinding = {
+				aKeys : "~keys",
 				_getCreatedContexts : function () {},
 				isFirstCreateAtEnd : function () {},
-				iLength : oFixture.iBindingLength,
-				bLengthFinal : oFixture.bLengthFinal
+				iLength : "~bindingLength",
+				bLengthFinal : true
 			};
 
 		this.mock(oBinding).expects("_getCreatedContexts")
 			.withExactArgs()
-			.returns(Array(oFixture.iCreated));
+			.returns([0, 1, 2]);
 		this.mock(oBinding).expects("isFirstCreateAtEnd")
 			.withExactArgs()
 			.returns(true);
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs("~keys" , "~startIndex", "~length", "~threshold", "~bindingLength")
+			.returns("~aIntervals");
+		this.mock(ODataUtils).expects("_mergeIntervals")
+			.withExactArgs("~aIntervals")
+			.returns({start : 222, end : 333});
 
 		// code under test
 		assert.deepEqual(
-			ODataListBinding.prototype._getSkipAndTop.call(oBinding, oFixture.iStartIndex,
-				oFixture.iLength),
-			oFixture.oResult);
+			ODataListBinding.prototype._getSkipAndTop.call(oBinding, "~startIndex",
+				"~length", "~threshold"),
+			{skip : 222, top : 111});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_getCreatedContexts:", function (assert) {

@@ -14168,4 +14168,72 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: When growing a responsive table with created items using the requestItems API
+	// there is no unnecessary data request.
+	// CPOUI5MODELS-845
+	QUnit.test("No unnecessary data request after requestItems", function (assert) {
+		var oBinding, oTable,
+			oModel = createSalesOrdersModel({defaultCountMode : CountMode.Inline}),
+			sView = '\
+<Table growing="true" growingThreshold="1" id="table" items="{/SalesOrderSet}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Input id="note" value="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=1&$inlinecount=allpages", {
+				__count : "0",
+				results : []
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			assert.deepEqual(oTable.getGrowingInfo(), {actual : 0, total : 0});
+			that.expectValue("note", ["created"]);
+
+			oBinding.create({Note : "created"}, /*bAtEnd*/false);
+
+			assert.deepEqual(oTable.getGrowingInfo(), {actual : 1, total : 1});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", ["created - changed"]);
+
+			oTable.getItems()[0].getCells()[1].setValue("created - changed");
+			// code under test: no request, length 0 is final
+			oTable.requestItems(1);
+
+			assert.deepEqual(oTable.getGrowingInfo(), {actual : 1, total : 1});
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderSet?$skip=0&$top=1&$inlinecount=allpages", {
+					__count : "17",
+					results : [
+						{__metadata : {uri : "SalesOrderSet('42')"},
+						SalesOrderID : "42",
+						Note : "note42"}
+					]
+				});
+
+			// code under test: collection in backend has updated to 17 sales orders
+			oBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(oTable.getGrowingInfo(), {actual : 1, total : 18});
+			that.expectValue("id", ["42"], 1)
+				.expectValue("note", ["note42"], 1);
+
+			// code under test: still no request
+			oTable.requestItems(1);
+
+			assert.deepEqual(oTable.getGrowingInfo(), {actual : 2, total : 18});
+			return that.waitForChanges(assert);
+		});
+	});
 });

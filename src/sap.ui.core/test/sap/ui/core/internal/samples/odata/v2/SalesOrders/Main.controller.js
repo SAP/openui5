@@ -602,6 +602,7 @@ sap.ui.define([
 
 		onTriggerCreateActivateSalesOrder : function () {
 			this.createInactiveSalesOrder(true);
+			this.getView().byId("SalesOrderSet").requestItems(1);
 		},
 
 		onUpdateSalesOrderItemsCount : function () {
