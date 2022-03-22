@@ -1,0 +1,21 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='245',ItemPosition='020')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='245',ItemPosition='020')",
+			"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+		},
+		"SalesOrderID" : "245",
+		"ItemPosition" : "020",
+		"ProductID" : "HT-1020",
+		"Note" : "G",
+		"NoteLanguage" : "EN",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "546.21",
+		"NetAmount" : "459.00",
+		"TaxAmount" : "87.21",
+		"DeliveryDate" : "\/Date(1649067490563)\/",
+		"Quantity" : "1",
+		"QuantityUnit" : "EA"
+	}
+}

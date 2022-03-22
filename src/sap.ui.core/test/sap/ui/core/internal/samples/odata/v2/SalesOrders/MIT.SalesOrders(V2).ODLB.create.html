@@ -188,7 +188,7 @@
 			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
 				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
-					the <code>Sales Order Details</code> section.
+				the <code>Sales Order Details</code> section.
 			</li>
 			<li>Remember the number of sales order items for further testing. The number can be
 				found in the header line of the <code>Sales Order Items</code> table.</li>
@@ -214,7 +214,7 @@
 				<b>Check:</b> The <code>Unit</code> is <code>EA</code>.<br />
 				<b>Check:</b> The <code>Note</code> is <code>1</code>.<br />
 				<b>Check:</b> The <code>Item Position</code>, <code>Gross Amount</code> and
-					<code>Currency</code> fields are empty.<br />
+				<code>Currency</code> fields are empty.<br />
 				<b>Check:</b> The count has been increased by one.
 			</li>
 			<li>Repeat steps 3 to 5; use <code>HT-1060</code> for the <code>Product ID</code> and
@@ -246,7 +246,7 @@
 				the persisted sales order items.<br />
 				<b>Check:</b> All other sales order items have smaller gross amount than 1000.<br />
 				<b>Check:</b> The count has been decreased to the number of sales orders with
-					smaller gross amount than 1000 plus the two transient sales order items.
+				smaller gross amount than 1000 plus the two transient sales order items.
 			</li>
 			<li>Click on the <code>Gross Amount</code> column, clear the filter input field and
 				press enter.<br />
@@ -288,9 +288,9 @@
 				data <code>230.1</code>, into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
 				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
-					the <code>Sales Order Details</code> section.<br />
+				the <code>Sales Order Details</code> section.<br />
 				<b>Check:</b> There are no transient sales order items in the
-					<code>Sales Order Items</code> table.
+				<code>Sales Order Items</code> table.
 			</li>
 			<li>Switch back to the sales order for which you created new entries by entering that
 				sales order ID, in case of mock data <code>230</code>, into the
@@ -301,8 +301,9 @@
 			</li>
 			<li>Scroll to the end of the table.<br />
 				<b>Check:</b> The three transient sales order items in the
-					<code>Sales Order Items</code> table are restored in the same order as before
-					the context switch.</li>
+				<code>Sales Order Items</code> table are restored in the same order as before the
+				context switch.
+			</li>
 		</ol>
 		<h4>Save the sales order</h4>
 		<ol>
@@ -323,7 +324,7 @@
 			<li>Confirm the successful creation for the three new items.<br />
 				<b>Check:</b> The count has not been changed.<br />
 				<b>Check:</b> The three sales order items have the status <code>Persisted</code> and
-					all three sales order items have an item position.<br />
+				all three sales order items have an item position.<br />
 				<b>Check:</b> The three sales order items keep their positions.
 			</li>
 		</ol>
@@ -344,21 +345,21 @@
 				mock data <code>230.1</code>, into the <code>Sales Order</code> input field and
 				press <code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
 				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
-					the <code>Sales Order Details</code> section.<br />
+				the <code>Sales Order Details</code> section.<br />
 				<b>Check:</b> There are no transient sales order items in the
-					<code>Sales Order Items</code> table.
+				<code>Sales Order Items</code> table.
 			</li>
 			<li>Switch back to the sales order for which you created new entries by entering that
 				sales order ID, in case of mock data <code>230</code>, into the
 				<code>Sales Order</code> input field and press <code>Enter</code> or click the
 				<code>Show Sales Order</code> button.<br />
 				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
-					the <code>Sales Order Details</code> section.<br />
+				the <code>Sales Order Details</code> section.<br />
 				<b>Check:</b> The newly created and persisted sales order items in the
-					<code>Sales Order Items</code> table are now inserted at the right position
-					based on the given (descending) sort order.<br />
+				<code>Sales Order Items</code> table are now inserted at the right position based on
+				the given (descending) sort order.<br />
 				<b>Check:</b> The status of the two newly created and persisted sales order items
-					has changed to <code>From Server</code>.
+				has changed to <code>From Server</code>.
 			</li>
 		</ol>
 		<hr />
@@ -482,6 +483,102 @@
 				persisted.<br />
 				<b>Check:</b> The <code>Sales Order Items</code> table contains a single inactive
 				row.
+			</li>
+		</ol>
+
+		<!-- *********************************************************************************** -->
+		<h3>(IV) Create new sales order item with inline creation rows</h3>
+		Search for a sales order with one sale order item. In case of mock data: Use sales order
+		<code>245</code>.<br />
+		<h4>Start the sales orders application with 1 inline creation row</h4>
+		<ol>
+			<li>Start the application with the URL parameter <code>&inlineCreationRows=1</code></li>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+				the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> An empty table row for a new sales order item is displayed as the
+				last entry in the <code>Sales Order Items</code> table.<br />
+				<b>Check:</b> The empty table row is marked as inactive in the first column. Hover
+				over the icon to see the status text.<br />
+				<b>Check:</b> The inactive row is not considered in the sales order items count at
+				the top of the <code>Sales Order Items</code> table.
+			</li>
+			<li>Remember the number of sales order items for further testing. The number can be
+				found in the header line of the <code>Sales Order Items</code> table.<br />
+				<b>Check:</b> The number of rows in the table is 1 greater than the number of sales
+				order items. The inactive row is not counted.
+			</li>
+		</ol>
+		<h4>Edit inactive rows</h4>
+		<ol>
+			<li>Enter <code>E</code> in the <code>Note</code> input field of the inactive row.<br />
+				<b>Check:</b> The modified table row is now marked as transient in the first column.
+				Hover over the icon to see the status text.<br />
+				<b>Check:</b> An empty table row for a new sales order item is displayed at the end
+				of the table (third row).<br />
+				<b>Check:</b> The third row is marked as inactive in the first column. Hover
+				over the icon to see the status text.<br />
+				<b>Check:</b> The sales order items count (and also the table row count) has been
+				increased by one.<br />
+				<b>Check:</b> The inactive row is not considered in the sales order itmes count at
+				the top of the <code>Sales Order Items</code> table.
+			</li>
+			<li>Enter <code>F</code> in the <code>Note</code> input field of the inactive row.<br />
+				<b>Check:</b> The modified table row is now marked as transient in the first column.
+				Hover over the icon to see the status text.<br />
+				<b>Check:</b> An empty table row for a new sales order item is displayed at the end
+				of the table (4th row).<br />
+				<b>Check:</b> The 4th row is marked as inactive in the first column. Hover
+				over the icon to see the status text.<br />
+				<b>Check:</b> The sales order items count (and also the table row count) has been
+				increased by one.<br />
+				<b>Check:</b> The inactive row is not considered in the sales order itmes count at
+				the top of the <code>Sales Order Items</code> table.
+			</li>
+		</ol>
+		<h4><code>Reset Changes</code> removes only transient entries</h4>
+		<ol>
+			<li>Press the <code>Reset Changes</code> button.<br />
+				<b>Check:</b> The two transient items in the second and third row have been removed.
+				<br />
+				<b>Check:</b> The empty table row for a new sales order item is displayed as the
+				last item in the second row.<br />
+				<b>Check:</b> The second row is marked as inactive in the first column. Hover over
+				the icon to see the status text.<br />
+				<b>Check:</b> The sales order items count (and also the table row count) has been
+				decreased by two.<br />
+				<b>Check:</b> The inactive row is not considered in the sales order items count at
+				the top of the <code>Sales Order Items</code> table.
+			</li>
+		</ol>
+		<h4>Inactive rows are not sent to the server</h4>
+		<ol>
+			<li>Enter <code>G</code> in the <code>Note</code> input field of the inactive row.<br />
+				<b>Check:</b> The modified table row is now marked as transient in the first column.
+				Hover over the icon to see the status text.<br />
+				<b>Check:</b> An empty table row for a new sales order item is displayed at the end
+				of the table (third row).<br />
+				<b>Check:</b> The third row is marked as inactive in the first column. Hover
+				over the icon to see the status text.<br />
+				<b>Check:</b> The sales order items count (and also the table row count) has been
+				increased by one.<br />
+				<b>Check:</b> The inactive row is not considered in the sales order itmes count at
+				the top of the <code>Sales Order Items</code> table.
+			</li>
+			<li>Enter following values in the corresponding input fields of the sales order item
+				with the <code>Note</code> <code>G</code>: <code>Product ID</code>
+				<code>HT-1020</code>, <code>Quantity</code> <code>1</code> and <code>Unit</code>
+				<code>EA</code>.<br />
+				<b>Check:</b> There is still only on inactive row at the end of the
+				<code>Sales Order Items</code> table.
+			</li>
+			<li>Press the <code>Save</code> button at the bottom of the page.<br />
+				<b>Check:</b> The second row in the <code>Sales Order Items</code> table is now
+				marked as persisted in the first column. Hover over the icon to see the status
+				text.<br />
+				<b>Check:</b> The properties <code>Item Position</code>, <code>Gross Amount</code>
+				and <code>Currency</code> are filled from the server.
 			</li>
 		</ol>
 	</body>

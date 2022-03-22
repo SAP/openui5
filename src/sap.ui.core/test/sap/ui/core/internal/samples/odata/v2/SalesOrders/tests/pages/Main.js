@@ -98,12 +98,13 @@ sap.ui.define([
 			actions : {
 				/*
 				 * Changes the note of the item at the given position to a message from
-				 * <code>mNoteShort2Note</code>.
+				 * <code>mNoteShort2Note</code> or to the given value.
 				 *
 				 * @param {number} iRow
 				 *   The item position in the table, with the top being 0
 				 * @param {string} sNewNote
-				 *   A message shortcut refering to <code>mNoteShort2Note</code>
+				 *   A message shortcut refering to <code>mNoteShort2Note</code>; if it is not
+				 *   contained use the given note value
 				 */
 				changeItemNote : function (iRow, sNewNote) {
 					this.waitFor({
@@ -111,7 +112,7 @@ sap.ui.define([
 						matchers : function (oTable) {
 							return oTable.getRows()[iRow].getCells()[mColumn.Note];
 						},
-						actions : new EnterText({text : mNoteShort2Note[sNewNote]}),
+						actions : new EnterText({text : mNoteShort2Note[sNewNote] || sNewNote}),
 						viewName : sViewName
 					});
 				},
@@ -129,6 +130,26 @@ sap.ui.define([
 							return oTable.getRows()[iRow].getCells()[mColumn.Quantity];
 						},
 						viewName : sViewName
+					});
+				},
+				/*
+				 * Changes the values of an item to the given values.
+				 *
+				 * @param {number} iRow The items position in the table
+				 * @param {Object<string,string>} mValues Maps the property name to the new value
+				 */
+				changeItemValues : function (iRow, mValues) {
+					var that = this;
+
+					Object.keys(mValues).forEach(function (sPropertyName) {
+						that.waitFor({
+							actions : new EnterText({text : mValues[sPropertyName]}),
+							id : "ToLineItems",
+							matchers : function (oTable) {
+								return oTable.getRows()[iRow].getCells()[mColumn[sPropertyName]];
+							},
+							viewName : sViewName
+						});
 					});
 				},
 				/*
@@ -873,6 +894,27 @@ sap.ui.define([
 									sItemPosition + " has a correct value state.");
 							}
 						}
+					});
+				},
+				/*
+				 * Checks if the sales order items count (rememberCurrentItemCount) differs by the
+				 * given delta from the corresponding bindings length.
+				 *
+				 * @param {number} iDelta
+				 *   The supposed difference between the current sales order items count and the
+				 *   bindings length.
+				 */
+				checkItemsTableLengthDiffersBy : function (iDelta) {
+					this.waitFor({
+						id : "ToLineItems",
+						success : function (oTable) {
+							var iLength = oTable.getBinding("rows").getLength();
+
+							Opa5.assert.equal(iLength, iCurrentItemCount + iDelta,
+								"Sales order items count differs by " + iDelta
+								+ " from the bindings length");
+						},
+						viewName : sViewName
 					});
 				},
 				/*
