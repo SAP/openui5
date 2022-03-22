@@ -267,6 +267,41 @@ sap.ui.define([
 				}.bind(this));
 		});
 
+		QUnit.test("when a move change indicator is created", function(assert) {
+			var oPayloadInsideGroup = {
+				sourceParentContainer: { id: "Group1" },
+				targetParentContainer: { id: "Group1" }
+			};
+			var oPayloadOutsideGroup = {
+				sourceParentContainer: { id: "Group1" },
+				targetParentContainer: { id: "Group2" }
+			};
+
+			this.oChangeIndicator.getModel().setData({
+				changes: [
+					createMockChange("someChangeId", this.oButton.getId(), "move", {}, oPayloadInsideGroup),
+					createMockChange("someOtherChangeId", this.oButton.getId(), "move", {}, oPayloadOutsideGroup)
+				]
+			});
+			oCore.applyChanges();
+
+			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
+			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
+
+			return oOpenPopoverPromise
+				.then(function() {
+					var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems();
+					assert.ok(
+						aItems[0].getCells()[1].getItems()[1].getVisible(),
+						"then the show details button is visible if the element was moved outside its group"
+					);
+					assert.notOk(
+						aItems[1].getCells()[1].getItems()[1].getVisible(),
+						"then the show details button is not visible if the element was moved in the same group"
+					);
+				}.bind(this));
+		});
+
 		QUnit.test("when a change indicator with two changes is created", function(assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [
@@ -298,10 +333,6 @@ sap.ui.define([
 						aItems.length,
 						2,
 						"then both changes are displayed"
-					);
-					assert.ok(
-						aItems[1].getCells()[1].getItems()[1].getVisible(),
-						"then the show details button is visible when dependent selectors exist"
 					);
 					assert.notOk(
 						aItems[0].getCells()[1].getItems()[1].getVisible(),
