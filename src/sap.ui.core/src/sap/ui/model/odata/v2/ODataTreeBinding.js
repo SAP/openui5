@@ -1376,6 +1376,9 @@ sap.ui.define([
 		}
 		var sAbsolutePath = this.getResolvedPath();
 		if (sAbsolutePath) {
+			if (this.iTotalCollectionCount) {
+				aURLParams.push("$top=" + this.iTotalCollectionCount);
+			}
 			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
 				urlParameters: aURLParams,
 				success: fnSuccess,
