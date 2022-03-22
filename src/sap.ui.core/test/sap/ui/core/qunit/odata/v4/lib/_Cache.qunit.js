@@ -5363,15 +5363,27 @@ sap.ui.define([
 	QUnit.test("CollectionCache#getValue " + i, function (assert) {
 		var oCache = this.createCache("Employees");
 
-		this.mock(oCache).expects("drillDown")
-			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key",
-				sinon.match.same(_GroupLock.$cached))
-			.returns(SyncPromise.resolve(oFixture.oPromise));
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "('c')/key")
+			.returns(oFixture.oPromise);
+		this.mock(oFixture.oPromise).expects("caught").withExactArgs().exactly(i);
 
 		// code under test
 		assert.strictEqual(oCache.getValue("('c')/key"), oFixture.vValue);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#getValue: sPath undefined", function (assert) {
+		var oCache = this.createCache("Employees"),
+			aElements = [];
+
+		oCache.aElements = aElements;
+		this.mock(oCache).expects("fetchValue").never();
+
+		// code under test
+		assert.strictEqual(oCache.getValue(), aElements);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#requestElements: clean up $tail again", function (assert) {
@@ -9177,12 +9189,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_SingleCache#getValue: drillDown asynchronous", function (assert) {
 		var oCache = this.createSingle("Employees('1')"),
-			oData = {};
+			oData = {},
+			oDrillDownPromise = SyncPromise.resolve(Promise.resolve());
 
 		oCache.oPromise = SyncPromise.resolve(oData);
 		this.mock(oCache).expects("drillDown")
 			.withExactArgs(sinon.match.same(oData), "foo", sinon.match.same(_GroupLock.$cached))
-			.returns(SyncPromise.resolve(Promise.resolve()));
+			.returns(oDrillDownPromise);
+		this.mock(oDrillDownPromise).expects("isFulfilled").withExactArgs().returns(false);
+		this.mock(oDrillDownPromise).expects("caught").withExactArgs();
 
 		// code under test
 		assert.strictEqual(oCache.getValue("foo"), undefined);
@@ -10931,6 +10946,28 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(oCache.refreshKeptElements({/*GroupLock*/}), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCreatedElements", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees"),
+			oCacheMock = this.mock(oCache),
+			aCollection = ["a", "b", "c"],
+			aReturnedCollection;
+
+		oCacheMock.expects("getValue").withExactArgs("~some/path~").returns(undefined);
+
+		// code under test
+		assert.deepEqual(oCache.getCreatedElements("~some/path~"), []);
+
+		aCollection.$created = 2;
+		oCacheMock.expects("getValue").withExactArgs("~some/path~").returns(aCollection);
+
+		// code under test
+		aReturnedCollection = oCache.getCreatedElements("~some/path~");
+
+		assert.deepEqual(aCollection, ["a", "b", "c"], "unchanged");
+		assert.deepEqual(aReturnedCollection, ["a", "b"]);
 	});
 });
 //TODO: resetCache if error in update?

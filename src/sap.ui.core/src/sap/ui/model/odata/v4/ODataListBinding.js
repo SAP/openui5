@@ -843,7 +843,7 @@ sap.ui.define([
 			throw new Error(
 				"Must know the final length to create at the end. Consider setting $count");
 		}
-		if (this.bCreatedAtEnd && !bAtEnd) {
+		if (this.bFirstCreateAtEnd && !bAtEnd) {
 			throw new Error("Cannot create at the start after creation at end");
 		}
 		if (bInactive) {
@@ -855,12 +855,17 @@ sap.ui.define([
 			this.iActiveContexts += 1;
 		}
 
-		if (this.bCreatedAtEnd === undefined) {
-			this.bCreatedAtEnd = bAtEnd;
+		if (this.bFirstCreateAtEnd === undefined) {
+			this.bFirstCreateAtEnd = bAtEnd;
 		}
 
 		// only for createInCache
 		oGroupLock = this.lockGroup(sGroupId, true, true, function () {
+			if (!that.aContexts.includes(oContext)) { // #setContext changed the parent context
+				oContext.destroy();
+				return;
+			}
+
 			that.destroyCreated(oContext);
 			return Promise.resolve().then(function () {
 				// Fire the change asynchronously so that Cache#delete is finished and #getContexts
@@ -869,7 +874,7 @@ sap.ui.define([
 			});
 		});
 		oCreatePromise = this.createInCache(oGroupLock, oCreatePathPromise, sResolvedPath,
-			sTransientPredicate, oInitialData, this.bCreatedAtEnd !== bAtEnd,
+			sTransientPredicate, oInitialData, this.bFirstCreateAtEnd !== bAtEnd,
 			function (oError) { // error callback
 				that.oModel.reportError("POST on '" + oCreatePathPromise
 					+ "' failed; will be repeated automatically", sClassName, oError);
@@ -879,7 +884,7 @@ sap.ui.define([
 			function () { // submit callback
 				that.fireEvent("createSent", {context : oContext});
 			}
-		).then(function (oCreatedEntity) {
+		).then(function (oCreatedEntity) { // the entity was created on the server
 			var sGroupId, sPredicate;
 
 			if (!(oInitialData && oInitialData["@$ui5.keepTransientPath"])) {
@@ -910,7 +915,15 @@ sap.ui.define([
 		oContext = Context.create(this.oModel, this, sTransientPath, -this.iCreatedContexts,
 			oCreatePromise, bInactive);
 
-		if (this.bCreatedAtEnd !== bAtEnd) {
+		oContext.fetchValue("", null, true).then(function (oElement) {
+			if (oElement) {
+				_Helper.setPrivateAnnotation(oElement, "context", oContext);
+				_Helper.setPrivateAnnotation(oElement, "firstCreateAtEnd",
+					that.bFirstCreateAtEnd);
+			} // else: context already destroyed
+		});
+
+		if (this.bFirstCreateAtEnd !== bAtEnd) {
 			this.aContexts.splice(this.iCreatedContexts - 1, 0, oContext);
 			for (i = this.iCreatedContexts - 1; i >= 0; i -= 1) {
 				this.aContexts[i].iIndex = i - this.iCreatedContexts;
@@ -1081,7 +1094,7 @@ sap.ui.define([
 			this.aContexts[i].iIndex += 1;
 		}
 		if (!this.iCreatedContexts) {
-			this.bCreatedAtEnd = undefined;
+			this.bFirstCreateAtEnd = undefined;
 		}
 		this.aContexts.splice(iIndex, 1);
 		this.destroyLater(oContext);
@@ -1114,7 +1127,8 @@ sap.ui.define([
 	 *
 	 * @param {string[]} [aPathsToDelete]
 	 *   If given, only contexts with paths in this list except kept-alive ones are removed and
-	 *   destroyed; otherwise all contexts in the list are removed and destroyed
+	 *   destroyed (transient contexts are removed only); otherwise all contexts in the list are
+	 *   removed and destroyed
 	 *
 	 * @private
 	 */
@@ -1129,7 +1143,9 @@ sap.ui.define([
 					if (aPathsToDelete && oContext.isKeepAlive()) {
 						oContext.iIndex = undefined;
 					} else {
-						oContext.destroy();
+						if (!oContext.isTransient()) {
+							oContext.destroy();
+						}
 						delete mPreviousContextsByPath[sPath];
 					}
 				}
@@ -1357,7 +1373,7 @@ sap.ui.define([
 		var oPromise,
 			that = this;
 
-		if (this.bCreatedAtEnd) {
+		if (this.bFirstCreateAtEnd) {
 			// Note: We still have to read iLength rows in this case to get all entities from
 			// the server. The created entities then are placed behind using the calculated or
 			// estimated length.
@@ -1813,7 +1829,7 @@ sap.ui.define([
 
 		this.withCache(function (oCache, sPath) {
 				aElements = oCache.getAllElements(sPath);
-			}, "", /*bSync=*/true);
+			}, "", /*bSync*/true);
 
 		if (this.createContexts(0, aElements)) {
 			// In the case that a control has requested new data and the data request is already
@@ -2016,7 +2032,7 @@ sap.ui.define([
 		if (!this.oDiff) { // w/o E.C.D there won't be a diff
 			// make sure "refresh" is followed by async "change"
 			oPromise = this.fetchContexts(iStart, iLength, iMaximumPrefetchSize, oGroupLock,
-				/*bAsync=*/bRefreshEvent, function () {
+				/*bAsync*/bRefreshEvent, function () {
 					bDataRequested = true;
 					that.fireDataRequested();
 				});
@@ -2087,7 +2103,7 @@ sap.ui.define([
 	ODataListBinding.prototype.getContextsInViewOrder = function (iStart, iLength) {
 		var aContexts, iCount, i;
 
-		if (this.bCreatedAtEnd) {
+		if (this.bFirstCreateAtEnd) {
 			aContexts = [];
 			iCount = Math.min(iLength, this.getLength() - iStart);
 			for (i = 0; i < iCount; i += 1) {
@@ -2358,7 +2374,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.getModelIndex = function (iViewIndex) {
-		if (!this.bCreatedAtEnd) {
+		if (!this.bFirstCreateAtEnd) {
 			return iViewIndex;
 		}
 		if (!this.bLengthFinal) { // created at end, but the read is pending and $count unknown yet
@@ -2627,7 +2643,7 @@ sap.ui.define([
 	 * @since 1.99.0
 	 */
 	ODataListBinding.prototype.isFirstCreateAtEnd = function () {
-		return this.bCreatedAtEnd;
+		return this.bFirstCreateAtEnd;
 	};
 
 	/**
@@ -3193,7 +3209,7 @@ sap.ui.define([
 		if (!this.iCreatedContexts) {
 			// true if contexts have been created at the end, false if contexts have been created at
 			// the start, undefined if there are no created contexts
-			this.bCreatedAtEnd = undefined;
+			this.bFirstCreateAtEnd = undefined;
 		}
 		// the range of array indices for getCurrentContexts
 		this.iCurrentBegin = this.iCurrentEnd = 0;
@@ -3229,6 +3245,28 @@ sap.ui.define([
 			reset(mPreviousContextsByPath[sPath]);
 		});
 		this.aContexts.forEach(reset);
+	};
+
+	/**
+	 * Restores all created elements, the bFirstCreateAtEnd flag and the iCreatedContexts,
+	 * iActiveContexts counters from cache to this list binding.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.restoreCreated = function () {
+		var that = this;
+
+		this.withCache(function (oCache, sPath) {
+			oCache.getCreatedElements(sPath).forEach(function (oElement, i) {
+				that.aContexts[i] = _Helper.getPrivateAnnotation(oElement, "context");
+				that.bFirstCreateAtEnd
+					= _Helper.getPrivateAnnotation(oElement, "firstCreateAtEnd");
+				that.iCreatedContexts += 1;
+				if (!oElement["@$ui5.context.isInactive"]) {
+					that.iActiveContexts += 1;
+				}
+			});
+		}).catch(this.oModel.getReporter());
 	};
 
 	/**
@@ -3401,35 +3439,25 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, or for relative bindings containing transient
-	 *   entities
+	 *   If the binding's root binding is suspended
 	 *
 	 * @private
 	 */
 	// @override sap.ui.model.Binding#setContext
 	ODataListBinding.prototype.setContext = function (oContext) {
-		var sResolvedPath,
-			i,
-			that = this;
+		var sResolvedPath;
 
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.checkSuspended(true);
-				for (i = 0; i < that.iCreatedContexts; i += 1) {
-					if (that.aContexts[i].isTransient()) {
-						// to allow switching the context for new created entities (transient or
-						// not), we first have to implement a store/restore mechanism for them
-						throw new Error("setContext on relative binding is forbidden if a "
-							+ "transient entity exists: " + that);
-					}
-				}
 				// Keep the header context even if we lose the parent context, so that the header
 				// context remains unchanged if the parent context is temporarily dropped during a
 				// refresh.
-				this.reset();
+				this.reset(/*sChangeReason*/undefined, /*bDropTransient*/true);
 				this.resetKeepAlive(); // before fetchCache to avoid that it copies data
 				this.fetchCache(oContext);
 				if (oContext) {
+					this.restoreCreated();
 					sResolvedPath = this.oModel.resolve(this.sPath, oContext);
 					// Note: oHeaderContext is missing only if called from c'tor
 					if (this.oHeaderContext && this.oHeaderContext.getPath() !== sResolvedPath) {

@@ -436,6 +436,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Nothing to do here, we have no created elements.
+	 *
+	 * @param {string} [_sPath]
+	 *   Relative path to drill-down into
+	 * @returns {object[]}
+	 *   An empty array
+	 *
+	 * @public
+	 */
+	// @override sap.ui.model.odata.v4.lib._Cache#getCreatedElements
+	_AggregationCache.prototype.getCreatedElements = function (_sPath) {
+		return [];
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.lib._Cache#getDownloadQueryOptions
 	 */

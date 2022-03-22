@@ -1003,18 +1003,18 @@ sap.ui.define([
 	//*********************************************************************************************
 [{
 	cache : null,
-	cacheImmmutable : true,
+	cacheImmutable : true,
 	fetchIfChildCanUseCacheCallCount : 1,
 	title : "no cache"
 }, {
 	cache : null,
-	cacheImmmutable : true,
+	cacheImmutable : true,
 	fetchIfChildCanUseCacheCallCount : 1,
 	rejected : true,
 	title : "no cache, parent rejects"
 }, {
 	cache : undefined,
-	cacheImmmutable : undefined,
+	cacheImmutable : undefined,
 	fetchIfChildCanUseCacheCallCount : 0,
 	title : "cache pending"
 }, {
@@ -1022,7 +1022,7 @@ sap.ui.define([
 		hasSentRequest : function () { return true; },
 		setLateQueryOptions : function () {}
 	},
-	cacheImmmutable : true,
+	cacheImmutable : true,
 	fetchIfChildCanUseCacheCallCount : 0,
 	title : "immutable cache"
 }, {
@@ -1030,7 +1030,7 @@ sap.ui.define([
 		hasSentRequest : function () { return false; },
 		setLateQueryOptions : function () {}
 	},
-	cacheImmmutable : true,
+	cacheImmutable : true,
 	fetchIfChildCanUseCacheCallCount : 0,
 	index : 42,
 	title : "non-virtual row context"
@@ -1039,7 +1039,7 @@ sap.ui.define([
 		hasSentRequest : function () { return false; },
 		setLateQueryOptions : function () {}
 	},
-	cacheImmmutable : true,
+	cacheImmutable : true,
 	fetchIfChildCanUseCacheCallCount : 0,
 	keptAlive : true,
 	title : "kept-alive context"
@@ -1061,6 +1061,7 @@ sap.ui.define([
 					getBinding : function () {}
 				},
 				doFetchQueryOptions : function () {},
+				isFirstCreateAtEnd : function () {},
 				oModel : {
 					getMetaModel : function () { return oMetaModel; },
 					oInterface : {
@@ -1112,7 +1113,7 @@ sap.ui.define([
 				sinon.match.same(mChildLocalQueryOptions), sinon.match.same(fnFetchMetadata))
 			.returns({});
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs({}, "/Set/navigation", oFixture.cacheImmmutable, "~bIsProperty~")
+			.withExactArgs({}, "/Set/navigation", oFixture.cacheImmutable, "~bIsProperty~")
 			.callsFake(function () {
 				oBinding.mLateQueryOptions = mLateQueryOptions;
 				return true;
@@ -1276,6 +1277,7 @@ sap.ui.define([
 				oContext : {},
 				wrapChildQueryOptions : function () {},
 				doFetchQueryOptions : function () {},
+				isFirstCreateAtEnd : function () {},
 				aggregateQueryOptions : function () {},
 				oModel : {
 					getMetaModel : function () { return oMetaModel; },
@@ -1850,6 +1852,7 @@ sap.ui.define([
 					getPath : function () { return "/SalesOrderList('42')"; }
 				},
 				doFetchQueryOptions : function () {},
+				isFirstCreateAtEnd : function () {},
 				oModel : {
 					getMetaModel : function () { return oMetaModel; },
 					oInterface : {

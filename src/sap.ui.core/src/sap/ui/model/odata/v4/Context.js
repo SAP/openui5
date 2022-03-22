@@ -644,7 +644,7 @@ sap.ui.define([
 	 * new entity is added via {@link sap.ui.model.odata.v4.ODataListBinding#create} without
 	 * <code>bAtEnd</code>, and when a context representing a created entity is deleted again.
 	 *
-	 * @returns {number}
+	 * @returns {number|undefined}
 	 *   The context's index within the binding's collection. It is <code>undefined</code> if
 	 *   <ul>
 	 *     <li> it does not belong to a list binding,
@@ -655,7 +655,10 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	Context.prototype.getIndex = function () {
-		if (this.oBinding.bCreatedAtEnd) {
+		if (this.iIndex === undefined) {
+			return undefined;
+		}
+		if (this.oBinding.isFirstCreateAtEnd()) {
 			if (this.iIndex < 0) { // this does not include undefined for a kept-alive context
 				return this.oBinding.bLengthFinal
 					? this.oBinding.iMaxLength - this.iIndex - 1

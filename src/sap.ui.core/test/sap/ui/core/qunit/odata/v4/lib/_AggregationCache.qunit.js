@@ -2340,4 +2340,10 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oCache.getDownloadQueryOptions(mQueryOptions), mDownloadQueryOptions);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getCreatedElements", function (assert) {
+		// code under test
+		assert.deepEqual(_AggregationCache.prototype.getCreatedElements(), []);
+	});
 });
