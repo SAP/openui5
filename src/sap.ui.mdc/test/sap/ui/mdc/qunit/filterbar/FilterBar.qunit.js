@@ -308,7 +308,7 @@ sap.ui.define([
 	QUnit.test("check _handleConditionModelPropertyChange with liveMode=false and p13nValue=true", function (assert) {
 
 		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
-		sinon.stub(oFilterBar.getEngine(), "createChanges");
+		sinon.spy(oFilterBar.getEngine(), "createChanges");
 		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
         sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
@@ -330,7 +330,7 @@ sap.ui.define([
 
 		sinon.spy(oFilterBar, "triggerSearch");
 		sinon.stub(oFilterBar, "getAssignedFilterNames").returns([]);
-		sinon.stub(oFilterBar.getEngine(), "createChanges");
+		sinon.spy(oFilterBar.getEngine(), "createChanges");
         sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
 
@@ -362,7 +362,7 @@ sap.ui.define([
 	QUnit.test("check _handleConditionModelPropertyChange with liveMode=true and p13nValue=true", function (assert) {
 
 		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
-		sinon.stub(oFilterBar.getEngine(), "createChanges");
+		sinon.spy(oFilterBar.getEngine(), "createChanges");
 		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
         sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
@@ -1290,6 +1290,7 @@ sap.ui.define([
 		oFilterBar.setP13nMode(["Value"]);
 		sinon.stub(oFilterBar.getEngine(), "createChanges").callsFake(function(mConfig) {
 			oCondition = mConfig.state;
+			return Promise.resolve();
 		});
 
 		oFilterBar._handleConditionModelPropertyChange(oEvent1);
@@ -1341,26 +1342,29 @@ sap.ui.define([
 
 	QUnit.test("check validate with not yet complete change appliance", function (assert) {
 
-		var fnSearch = function(oEvent) {
-			oFilterBar._onChangeAppliance();
-			oFilterBar._registerOnEngineOnModificationEnd();
-		};
+		var fnFunction = null;
+		var oPromise = new Promise(function(resolve) {
+			fnFunction = resolve;
+		});
 
 		var done = assert.async();
 
-		oFilterBar.attachSearch(fnSearch);
-		oFilterBar._registerOnEngineOnModificationEnd();
-
 		sinon.spy(oFilterBar, "_validate");
+		sinon.spy(oFilterBar, "_handleOngoingChangeAppliance");
 
-		setTimeout(function() {oFilterBar._fConditionChangeStartedPromiseResolve();}, 100);
+		oFilterBar._aOngoingChangeAppliance = [oPromise];
+		setTimeout(function() {fnFunction();}, 200);
 
 		oFilterBar.triggerSearch().then(function() {
-			assert.ok(oFilterBar._validate.calledOnce);
+			assert.ok(oFilterBar._handleOngoingChangeAppliance.calledOnce);
+			oFilterBar._handleOngoingChangeAppliance.reset();
+
+			assert.ok(oFilterBar._validate.calledTwice);
 			oFilterBar._validate.reset();
 
-			setTimeout(function() {oFilterBar._fConditionChangeStartedPromiseResolve();}, 100);
+
 			oFilterBar.triggerSearch().then(function() {
+				assert.ok(!oFilterBar._handleOngoingChangeAppliance.called);
 				assert.ok(oFilterBar._validate.calledOnce);
 				done();
 			});

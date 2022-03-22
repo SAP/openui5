@@ -258,7 +258,8 @@ sap.ui.define([
 			NoError: -1,
 			RequiredHasNoValue: 0,
 			FieldInErrorState: 1,
-			AsyncValidation: 2
+			AsyncValidation: 2,
+			OngoingChangeAppliance: 3
 	};
 
 	FilterBarBase.prototype.init = function() {
@@ -636,25 +637,17 @@ sap.ui.define([
 
 	FilterBarBase.prototype._addConditionChange = function(mOrigConditions, sFieldPath) {
 
-		this.getEngine().createChanges({
+		if (!this._aOngoingChangeAppliance) {
+			this._aOngoingChangeAppliance = [];
+		}
+
+		this._aOngoingChangeAppliance.push(this.getEngine().createChanges({
 			control: this,
 			key: "Filter",
 			state: mOrigConditions
-		});
+		}));
 	};
 
-	FilterBarBase.prototype._registerOnEngineOnModificationEnd = function() {
-		this._oConditionChangeStartedPromise = new Promise(function(resolve) {
-			this._fConditionChangeStartedPromiseResolve = resolve;
-		}.bind(this));
-	};
-
-	FilterBarBase.prototype._onChangeAppliance = function() {
-		if (this._fConditionChangeStartedPromiseResolve) {
-			this._fConditionChangeStartedPromiseResolve();
-			this._fConditionChangeStartedPromiseResolve = null;
-		}
-	};
 
 	FilterBarBase.prototype._handleConditionModelPropertyChange = function(oEvent) {
 
@@ -673,8 +666,6 @@ sap.ui.define([
 				var sFieldPath = sPath.substring("/conditions/".length);
 
 				if (this._bPersistValues && this._isPersistenceSupported()) {
-
-					this._registerOnEngineOnModificationEnd();
 
 					var aConditions = oEvent.getParameter("value");
 
@@ -908,6 +899,16 @@ sap.ui.define([
 		return vRetErrorState;
 	};
 
+	FilterBarBase.prototype._checkOngoingChangeAppliance = function() {
+		var vRetErrorState = ErrorState.NoError;
+
+		if (this._aOngoingChangeAppliance && this._aOngoingChangeAppliance.length > 0) {
+			vRetErrorState = ErrorState.OngoingChangeAppliance;
+		}
+
+		return vRetErrorState;
+	};
+
 
 	FilterBarBase.prototype._checkRequiredFields = function() {
 		var vRetErrorState = ErrorState.NoError;
@@ -982,6 +983,11 @@ sap.ui.define([
 			return vRetErrorState;
 		}
 
+		var vRetErrorState = this._checkOngoingChangeAppliance();
+		if (vRetErrorState !== ErrorState.NoError) {
+			return vRetErrorState;
+		}
+
 		vRetErrorState = this._checkRequiredFields();
 		if (vRetErrorState !== ErrorState.NoError) {
 			return vRetErrorState;
@@ -1034,6 +1040,20 @@ sap.ui.define([
 		}
 	};
 
+	FilterBarBase.prototype._handleOngoingChangeAppliance = function(bFireSearch) {
+		if (this._aOngoingChangeAppliance && (this._aOngoingChangeAppliance.length > 0)) {
+
+			var aChangePromises = this._aOngoingChangeAppliance.slice();
+			this._aOngoingChangeAppliance = null;
+
+			Promise.all(aChangePromises).then(function() {
+				this._validate(bFireSearch);
+			}.bind(this), function() {
+				this._validate(bFireSearch);
+			}.bind(this));
+		}
+	};
+
 	/**
 	 * Executes the search.
 	 * @private
@@ -1052,12 +1072,6 @@ sap.ui.define([
 			this._fResolvedSearchPromise = null;
 		}.bind(this);
 
-		var fnValidationSucceeds = function() {
-			fnCheckAndFireSearch();
-			this._fResolvedSearchPromise();
-			fnCleanup();
-		}.bind(this);
-
 		if (this.bIsDestroyed) {
 			fnCleanup();
 			return;
@@ -1071,14 +1085,15 @@ sap.ui.define([
 			return;
 		}
 
+		if (vRetErrorState === ErrorState.OngoingChangeAppliance) {
+			this._handleOngoingChangeAppliance(bFireSearch);
+			return;
+		}
+
 		if (vRetErrorState === ErrorState.NoError) {
-			if (this._oConditionChangeStartedPromise) {
-				this._oConditionChangeStartedPromise.then(function() {
-					fnValidationSucceeds();
-				});
-			} else {
-				fnValidationSucceeds();
-			}
+			fnCheckAndFireSearch();
+			this._fResolvedSearchPromise();
+			fnCleanup();
 		} else {
 			if (vRetErrorState === ErrorState.RequiredHasNoValue) {
 				sErrorMessage = this._oRb.getText("filterbar.REQUIRED_CONDITION_MISSING");
@@ -1852,8 +1867,7 @@ sap.ui.define([
 
 		this._aFIChanges = null;
 
-		this._oConditionChangeStartedPromise = null;
-		this._fConditionChangeStartedPromiseResolve	= undefined;
+		this._aOngoingChangeAppliance = null;
 	};
 
 	return FilterBarBase;

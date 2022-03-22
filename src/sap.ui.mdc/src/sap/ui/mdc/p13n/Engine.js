@@ -184,6 +184,7 @@ sap.ui.define([
 		var aNewState = mDiffParameters.state;
 		var bApplyAbsolute = !!mDiffParameters.applyAbsolute;
 		var bSuppressCallback = !!mDiffParameters.suppressAppliance;
+
 		if (!sKey || !vControl || !aNewState) {
 			throw new Error("To create changes via Engine, atleast a 1)Control 2)Key and 3)State needs to be provided.");
 		}
@@ -211,7 +212,7 @@ sap.ui.define([
 			var aChanges = oController.getDelta(mDeltaConfig);
 
 			if (!bSuppressCallback) {
-				this._processChanges(vControl, aChanges);
+				return this._processChanges(vControl, aChanges);
 			}
 
 			return aChanges || [];
@@ -301,9 +302,6 @@ sap.ui.define([
 			.then(function(aChanges){
 				var oControl = Engine.getControlInstance(vControl);
 				this.stateHandlerRegistry.fireChange(oControl);
-				if (oControl._onChangeAppliance instanceof Function) {
-					oControl._onChangeAppliance.call(oControl);
-				}
 				return aChanges;
 			}.bind(this));
 		} else {

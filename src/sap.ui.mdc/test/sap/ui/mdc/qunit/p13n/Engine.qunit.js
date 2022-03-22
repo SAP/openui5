@@ -424,12 +424,17 @@ sap.ui.define([
 			state: []
 		});
 
+        sinon.stub(this.oEngine, '_processChanges').callsFake(function fakeFn(vControl, aChanges) {
+			return Promise.resolve(aChanges);
+        });
+
 		assert.ok(oChangeCreation instanceof Promise, "Engine#createChanges returns a Promise");
 
 		oChangeCreation.then(function(aChanges){
 			assert.equal(aChanges.length, 1, "One change created");
+			this.oEngine._processChanges.restore();
 			done();
-		});
+		}.bind(this));
 	});
 
 	QUnit.test("Check 'createChanges' parameter 'suppressAppliance' (false)", function(assert){
@@ -924,28 +929,4 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Check '_onChangeAppliance' hook execution", function(assert){
-
-		var done = assert.async();
-
-		this.oControl._onChangeAppliance = function() {
-			assert.ok(true, "Hook executed");
-			done();
-		};
-
-		var oModificationHandler = TestModificationHandler.getInstance();
-		oModificationHandler.processChanges = function(aChanges) {
-			return Promise.resolve();
-		};
-		this.oEngine._setModificationHandler(this.oControl, oModificationHandler);
-
-		this.oEngine._processChanges(this.oControl, [{
-			selectorElement: this.oControl,
-			changeSpecificData: {
-				changeType: "someTestChange",
-				content: {}
-			}
-		}]);
-
-	});
 });

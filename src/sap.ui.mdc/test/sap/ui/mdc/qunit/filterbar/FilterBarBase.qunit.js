@@ -155,13 +155,12 @@ sap.ui.define([
         sinon.stub(this.oFilterBarBase, "_retrieveMetadata").returns(Promise.resolve());
         this.oFilterBarBase._addConditionChange = function() {
             assert.equal(++nIdx, 1);
-            this.oFilterBarBase._onChangeAppliance();
-        }.bind(this);
+        };
         this.oFilterBarBase.triggerSearch = function() {
             assert.equal(++nIdx, 2);
             fTestPromiseResolve();
         };
-        var oRegisterModigicationSpy = sinon.spy(this.oFilterBarBase, "_registerOnEngineOnModificationEnd");
+
 
         this.oFilterBarBase.setBasicSearchField(oFilterField);
 
@@ -179,8 +178,6 @@ sap.ui.define([
                 }];
             }
         }});
-        assert.ok(oRegisterModigicationSpy.calledOnce);
-        assert.ok(this.oFilterBarBase._oConditionChangeStartedPromise);
 
         oFilterField.fireSubmit({promise: Promise.resolve()});
 

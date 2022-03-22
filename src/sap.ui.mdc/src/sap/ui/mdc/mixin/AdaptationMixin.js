@@ -59,14 +59,6 @@ sap.ui.define(
         };
 
         /**
-         * Hook which is executed whenever a set of enduser changes being processed during runtime.
-         *
-         */
-        AdaptationMixin._onChangeAppliance = function() {
-            //
-        };
-
-        /**
          * Initializes the <code>AdaptationFilterBar</code> used for inbuilt filtering.
          *
          * @private
@@ -161,7 +153,6 @@ sap.ui.define(
             this.getInbuiltFilter = AdaptationMixin.getInbuiltFilter;
             this.validateState = AdaptationMixin.validateState;
             this._onModifications = AdaptationMixin._onModifications;
-            this._onChangeAppliance = AdaptationMixin._onChangeAppliance;
             this._getWaitForChangesPromise = AdaptationMixin._getWaitForChangesPromise;
             this.getEngine = AdaptationMixin.getEngine;
             this.exit = AdaptationMixin.exit(this.exit);
