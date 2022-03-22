@@ -12620,6 +12620,70 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: A created inactive entity is activated. In its triggered createActivate-event the
+	// modified data which has led to the activation can already be accessed via the model; the
+	// model has now pending changes. The same entity value can be overwritten in this event again.
+	// JIRA: CPOUI5MODELS-805
+	QUnit.test("Inactive entity is accessible while activation", function (assert) {
+		var oBinding, oCreatedContext, oTable,
+			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
+			sView = '\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
+	<Text id="id" text="{BusinessPartnerID}"/>\
+	<Input id="company" value="{CompanyName}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet?$skip=0&$top=102", {
+				results : [{
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					CompanyName : "SAP"
+				}]
+			})
+			.expectValue("id", ["42", ""])
+			.expectValue("company", ["SAP", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectValue("company", "Initial", 1);
+
+			// code under test
+			oCreatedContext = oBinding.create({
+				CompanyName : "Initial"
+			}, /*bAtEnd*/true, {inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oCreatedItemCompanyInput = oTable.getRows()[1].getCells()[1],
+				oEntityData = oModel.getObject(oCreatedContext.getPath());
+
+			assert.strictEqual(oEntityData.CompanyName, "Initial");
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+
+			that.expectValue("company", "Activation", 1);
+
+			// code under test
+			oBinding.attachEvent("createActivate", function () {
+				oEntityData = oModel.getObject(oCreatedContext.getPath());
+
+				assert.strictEqual(oEntityData.CompanyName, "Activation");
+				assert.strictEqual(oModel.hasPendingChanges(), true);
+
+				that.expectValue("company", "Activation - modified", 1);
+
+				oCreatedItemCompanyInput.setValue("Activation - modified");
+			});
+			oCreatedItemCompanyInput.setValue("Activation");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: After creation of an inactive entity with a complex type, the first valid edit
 	// within the complex type activates the inactive entity.
 	// JIRA: CPOUI5MODELS-717
