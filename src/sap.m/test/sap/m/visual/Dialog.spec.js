@@ -147,7 +147,7 @@ describe('sap.m.Dialog', function() {
 		});
 	});
 
-	it('should open dialog with responsive paddings enabled (SAP Quartz themes only)', function () {
+	it('should open dialog with responsive paddings enabled (SAP Quartz and Horizon themes only)', function () {
 		browser.executeScript('document.getElementById("buttonDialogResponsivePadding").scrollIntoView()').then(function() {
 			element(by.id("buttonDialogResponsivePadding")).click();
 			var oDialogResponsivePadding = element(by.id("dialogResponsivePadding"));

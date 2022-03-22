@@ -202,8 +202,8 @@ sap.ui.define([
 		onResponsivePaddingDialogPress: function () {
 			if (!this.oResponsivePaddingDialog) {
 				this.oResponsivePaddingDialog = new Dialog({
-					title: "On SAP Quartz themes, the padding will adjust based on the width of the Dialog",
-					contentWidth: "680px",
+					title: "On SAP Quartz and Horizon themes, the padding will adjust based on the width of the Dialog",
+					contentWidth: "760px",
 					contentHeight: "450px",
 					resizable: true,
 					draggable: true,

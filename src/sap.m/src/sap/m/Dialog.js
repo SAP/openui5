@@ -162,7 +162,7 @@ function(
 		* <li>If the <code>contentWidth</code> and/or <code>contentHeight</code> properties are set, the Dialog will try to fill those sizes.</li>
 		* <li>If there is no specific sizing, the Dialog will try to adjust its size to its content.</li>
 		* </ul>
-		* When using the <code>sap.m.Dialog</code> in SAP Quartz themes, the breakpoints and layout paddings could be determined by the Dialog's width. To enable this concept and add responsive paddings to an element of the Dialog control, you have to add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--subHeader</code>, <code>sapUiResponsivePadding--content</code>, <code>sapUiResponsivePadding--footer</code>.
+		* When using the <code>sap.m.Dialog</code> in SAP Quartz and Horizon themes, the breakpoints and layout paddings could be determined by the Dialog's width. To enable this concept and add responsive paddings to an element of the Dialog control, you have to add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--subHeader</code>, <code>sapUiResponsivePadding--content</code>, <code>sapUiResponsivePadding--footer</code>.
 		* <h4>Smartphones</h4>
 		* If the Dialog has one or two actions, they will cover the entire footer. If there are more actions, they will overflow.
 		* <h4>Tablets</h4>
@@ -323,13 +323,23 @@ function(
 					customHeader: {type: "sap.m.IBar", multiple: false},
 
 					/**
-					 * The button which is rendered to the left side (right side in RTL mode) of the <code>endButton</code> in the footer area inside the Dialog. As of version 1.21.1, there's a new aggregation <code>buttons</code> created with which more than 2 buttons can be added to the footer area of the Dialog. If the new <code>buttons</code> aggregation is set, any change made to this aggregation has no effect anymore. With the Belize themes when running on a phone, this <code>button</code> (and the <code>endButton</code> together when set) is (are) rendered at the center of the footer area. While with the Quartz themes when running on a phone, this <code>button</code> (and the <code>endButton</code> together when set) is (are) rendered on the right side of the footer area. When running on other platforms, this <code>button</code> (and the <code>endButton</code> together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
+					 * The button which is rendered to the left side (right side in RTL mode) of the <code>endButton</code> in the footer area inside the Dialog.
+					 * As of version 1.21.1, there's a new aggregation <code>buttons</code> created with which more than 2 buttons can be added to the footer area of the Dialog.
+					 * If the new <code>buttons</code> aggregation is set, any change made to this aggregation has no effect anymore.
+					 * With the Belize themes when running on a phone, this <code>button</code> (and the <code>endButton</code> together when set) is (are) rendered at the center of the footer area.
+					 * While with the Quartz themes when running on a phone, this <code>button</code> (and the <code>endButton</code> together when set) is (are) rendered on the right side of the footer area.
+					 * When running on other platforms, this <code>button</code> (and the <code>endButton</code> together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
 					 * @since 1.15.1
 					 */
 					beginButton: {type: "sap.m.Button", multiple: false},
 
 					/**
-					 * The button which is rendered to the right side (left side in RTL mode) of the <code>beginButton</code> in the footer area inside the Dialog. As of version 1.21.1, there's a new aggregation <code>buttons</code> created with which more than 2 buttons can be added to the footer area of Dialog. If the new <code>buttons</code> aggregation is set, any change made to this aggregation has no effect anymore. With the Belize themes when running on a phone, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered at the center of the footer area. While with the Quartz themes when running on a phone, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered on the right side of the footer area. When running on other platforms, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
+					 * The button which is rendered to the right side (left side in RTL mode) of the <code>beginButton</code> in the footer area inside the Dialog.
+					 * As of version 1.21.1, there's a new aggregation <code>buttons</code> created with which more than 2 buttons can be added to the footer area of Dialog.
+					 * If the new <code>buttons</code> aggregation is set, any change made to this aggregation has no effect anymore.
+					 * With the Belize themes when running on a phone, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered at the center of the footer area.
+					 * While with the Quartz themes when running on a phone, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered on the right side of the footer area.
+					 * When running on other platforms, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
 					 * @since 1.15.1
 					 */
 					endButton: {type: "sap.m.Button", multiple: false},
