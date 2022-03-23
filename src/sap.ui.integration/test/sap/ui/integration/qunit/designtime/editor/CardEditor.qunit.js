@@ -291,6 +291,29 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
+
+		QUnit.test("Check if the resource bundles both in the user's card and card editor are loaded.", function (assert) {
+			var oCard = new Card({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oCardEditor.setCard(oCard);
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					var oGeneralPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					assert.ok(oGeneralPanel.getHeaderText() === "General Settings", "The header text of General group is correct, the resource bundle in the card editor is loaded correctly.");
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text, the resource bundle in the user's card is loaded.");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					oField._descriptionIcon.onmouseover();
+					var oDescriptionText = this.oCardEditor._getPopover().getContent()[0];
+					assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
+					assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
+					oField._descriptionIcon.onmouseout();
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("Get data via extension", {
