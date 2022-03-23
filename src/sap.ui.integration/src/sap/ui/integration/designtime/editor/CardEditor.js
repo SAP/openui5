@@ -167,15 +167,16 @@ sap.ui.define([
 		}
 		//add a context model
 		this._createContextModel();
-		if (this._oEditorManifest.getResourceBundle()) {
+		if (this._oEditorManifest && this._oEditorManifest.getResourceBundle()) {
 			var oResourceBundle = this._oEditorManifest.getResourceBundle();
 			var oResourceModel = new ResourceModel({
 				bundle: oResourceBundle
 			});
 			this.setModel(oResourceModel, "i18n");
-			this._oResourceBundle = oResourceBundle;
-		} else {
-			this._loadDefaultTranslations();
+			if (this._oResourceBundle) {
+				oResourceModel.enhance(this._oResourceBundle);
+			}
+			this._oResourceBundle = oResourceModel.getResourceBundle();
 		}
 
 		return this._loadExtension().then(function() {
