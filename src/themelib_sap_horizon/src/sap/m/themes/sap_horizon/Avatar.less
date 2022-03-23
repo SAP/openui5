@@ -10,10 +10,10 @@
 @_sap_m_Avatar_Font_Size_XS: 1rem;
 
 .sapFAvatarSquare {
-	border-radius: @sapElement_BorderCornerRadius;
+	border-radius: @sapUiElementBorderCornerRadius;
 
 	.sapFAvatarImageHolder {
-		border-radius: @sapElement_BorderCornerRadius;
+		border-radius: @sapUiElementBorderCornerRadius;
 	}
 }
 
@@ -27,8 +27,8 @@
 }
 
 .sapFAvatarColorTileIcon {
-	background-color: @sapTile_Background;
-	color: @sapTile_IconColor;
+	background-color: @sapUiTileBackground;
+	color: @sapUiTileIconColor;
 
 	.sapFAvatarInitialsHolder {
 		color: currentColor;
@@ -45,8 +45,8 @@
 
 .generateColor (@accentIndex) {
 	@css-selector: ~"sapFAvatarColorAccent@{accentIndex}"; // Create the css selector string
-	@background-param: ~"sapAvatar_@{accentIndex}_Background"; // Build the color param which is a sapUiAccent
-	@color-param: ~"sapAvatar_@{accentIndex}_TextColor";
+	@background-param: ~"sapUiAvatar@{accentIndex}Background"; // Build the color param which is a sapUiAccent
+	@color-param: ~"sapUiAvatar@{accentIndex}TextColor";
 
 	// Build the real CSS selector.
 	// The output would be something like this: .sapFAvatar.sapFAvatarColorAccent6 {background-color: #0092d1;}
