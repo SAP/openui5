@@ -21,7 +21,9 @@ sap.ui.define([
 	'./Link',
 	'./PlanningCalendarLegend',
 	'./SinglePlanningCalendarMonthGridRenderer',
-	'sap/ui/thirdparty/jquery'
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/core/InvisibleMessage',
+	'sap/ui/core/library'
 	],
 	function (
 		Control,
@@ -41,7 +43,9 @@ sap.ui.define([
 		Link,
 		PlanningCalendarLegend,
 		SinglePlanningCalendarMonthGridRenderer,
-		jQuery
+		jQuery,
+		InvisibleMessage,
+		coreLibrary
 	) {
 		"use strict";
 
@@ -49,6 +53,7 @@ sap.ui.define([
 		var CELL_HEADER_HEIGHT_COMPACT = 1.5; //rem
 		var APP_HEIGHT_COZY = 2.125; //rem
 		var CELL_HEADER_HEIGHT_COZY = 1.75; //rem
+		var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
 		/**
 		 * Constructor for a new <code>SinglePlanningCalendarMonthGrid</code>.
@@ -250,6 +255,7 @@ sap.ui.define([
 
 			this._oAppointmentsToRender = this._calculateAppointmentsNodes(oStartDate);
 			this._createAppointmentsDndPlaceholders(oStartDate);
+			this._oInvisibleMessage = InvisibleMessage.getInstance();
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype.onAfterRendering = function() {
@@ -314,6 +320,12 @@ sap.ui.define([
 		SinglePlanningCalendarMonthGrid.prototype.onkeydown = function(oEvent) {
 			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 				this._fireSelectionEvent(oEvent);
+
+				var oControl = this._findSrcControl(oEvent);
+				if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment")) {
+					var sBundleKey = oControl.getSelected() ? "APPOINTMENT_SELECTED" : "APPOINTMENT_UNSELECTED";
+					this._oInvisibleMessage.announce(this._oUnifiedRB.getText(sBundleKey), InvisibleMessageMode.Polite);
+				}
 
 				// Prevent scrolling
 				oEvent.preventDefault();
