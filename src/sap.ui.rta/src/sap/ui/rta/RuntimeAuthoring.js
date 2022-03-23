@@ -1071,8 +1071,8 @@ sap.ui.define([
 				oProperties.activate = this._onActivate.bind(this);
 				oProperties.discardDraft = this._onDiscardDraft.bind(this);
 				oProperties.switchVersion = this._onSwitchVersion.bind(this);
-				oProperties.onCommandCategorySelection = this.getChangeVisualization
-					? this.getChangeVisualization().onCommandCategorySelection.bind(this.getChangeVisualization())
+				oProperties.openChangeCategorySelectionPopover = this.getChangeVisualization
+					? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
 					: function () {};
 			}
 
