@@ -275,20 +275,20 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("delete: inactive context", function (assert) {
 		var oPromise,
-			oCreatedContextsCache = {findAndRemoveContext : function () {}},
 			oModel = {
-				_getCreatedContextsCache : function () {},
+				_discardEntityChanges : function () {},
+				_getKey : function () {},
 				checkUpdate : function () {}
 			},
 			oContext = new Context(oModel, "/~sPath");
 
 		this.mock(oContext).expects("getModel").withExactArgs().returns(oModel);
 		this.mock(oContext).expects("isInactive").withExactArgs().returns(true);
-		this.mock(oModel).expects("_getCreatedContextsCache")
-			.withExactArgs()
-			.returns(oCreatedContextsCache);
-		this.mock(oCreatedContextsCache).expects("findAndRemoveContext")
-			.withExactArgs(sinon.match.same(oContext));
+		this.mock(oModel).expects("_getKey")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns("~sKey");
+		this.mock(oModel).expects("_discardEntityChanges")
+			.withExactArgs("~sKey", /*bDeleteEntity*/true);
 		this.mock(oModel).expects("checkUpdate").withExactArgs();
 
 		// code under test

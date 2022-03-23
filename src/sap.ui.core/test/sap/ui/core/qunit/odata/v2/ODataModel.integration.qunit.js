@@ -12855,7 +12855,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// via v2.Context#delete.
 	// JIRA: CPOUI5MODELS-806
 	QUnit.test("Delete inactive, transient and persisted entity", function (assert) {
-		var oTable, oTableBinding,
+		var oContext, sContextPath, oTable, oTableBinding,
 			oModel = createSalesOrdersModel(),
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderSet}" threshold="0" visibleRowCount="3">\
@@ -12885,20 +12885,29 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			oContext = oTable.getRows()[0].getBindingContext();
 			that.expectValue("note", "", 0)
 				.expectValue("note", ["SO inactive/transient", "SO1", ""]);
 
-			return Promise.all([
-				// code under test
-				oTable.getRows()[0].getBindingContext().delete(),
-				that.waitForChanges(assert)
-			]);
-		}).then(function () {
-			that.expectValue("note", ["SO1", ""]);
+			sContextPath = oContext.getPath();
 
 			return Promise.all([
 				// code under test
-				oTable.getRows()[0].getBindingContext().delete(),
+				oContext.delete(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			oContext = oTable.getRows()[0].getBindingContext();
+			that.expectValue("note", "", 0)
+				.expectValue("note", ["SO1", ""]);
+			assert.strictEqual(oModel.getObject(sContextPath), undefined,
+				"data of active/transient context removed");
+
+			sContextPath = oContext.getPath();
+
+			return Promise.all([
+				// code under test
+				oContext.delete(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -12907,6 +12916,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					requestUri : "SalesOrderSet('1')"
 				}, NO_CONTENT)
 				.expectValue("note", [""]);
+			assert.strictEqual(oModel.getObject(sContextPath), undefined,
+				"data of inactive/transient context removed");
 
 			return Promise.all([
 				// code under test
