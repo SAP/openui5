@@ -561,7 +561,7 @@ sap.ui.define([
                 this._recalculateRange();
             }
 
-            if (this.getShowAdvancedTooltip()) {
+            if (this.getShowAdvancedTooltip() && this._mHandleTooltip.start.tooltip) {
                 this._updateTooltipContent(this._mHandleTooltip.start.tooltip, fValue);
                 this.updateTooltipsPositionAndState(this._mHandleTooltip.start.tooltip, fValue);
             }
@@ -580,7 +580,7 @@ sap.ui.define([
                 this._recalculateRange();
             }
 
-            if (this.getShowAdvancedTooltip()) {
+            if (this.getShowAdvancedTooltip() && this._mHandleTooltip.end.tooltip) {
                 this._updateTooltipContent(this._mHandleTooltip.end.tooltip, fValue);
                 this.updateTooltipsPositionAndState(this._mHandleTooltip.end.tooltip, fValue);
             }

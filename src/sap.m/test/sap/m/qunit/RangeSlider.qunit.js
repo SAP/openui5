@@ -292,7 +292,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("set/getValue() should not throw if advanced tooltip is not passed", function (assert) {
-		this.rangeSlider._updateTooltipContent(null, 50);
+		this.rangeSlider.setShowAdvancedTooltip(true);
+		oCore.applyChanges();
+
+		this.rangeSlider._mHandleTooltip.start.tooltip = null;
+		this.rangeSlider._mHandleTooltip.end.tooltip = null;
+
+		this.rangeSlider.setValue(10);
+		this.rangeSlider.setValue2(20);
+
 		assert.ok(true, "No error is thrown");
 	});
 
