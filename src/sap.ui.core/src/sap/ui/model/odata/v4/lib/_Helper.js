@@ -1259,7 +1259,7 @@ sap.ui.define([
 			}
 
 			if (aPaths.indexOf("*") >= 0) {
-				aSelects = mCacheQueryOptions && mCacheQueryOptions.$select || [];
+				aSelects = (mCacheQueryOptions && mCacheQueryOptions.$select || []).slice();
 			} else if (mCacheQueryOptions && mCacheQueryOptions.$select
 					&& mCacheQueryOptions.$select.indexOf("*") < 0) {
 				_Helper.addChildrenWithAncestor(aPaths, mCacheQueryOptions.$select, mSelects);
