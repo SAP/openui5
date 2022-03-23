@@ -130,14 +130,13 @@ sap.ui.define(['jquery.sap.global',
 	 * Suite controls library.
 	 *
 	 * @namespace
-	 * @name sap.ui.suite
+	 * @alias sap.ui.suite
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
 	 */
 	
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.ui.suite",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
@@ -161,7 +160,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.ui.suite.TaskCircleColor = {
+	thisLib.TaskCircleColor = {
 	
 		/**
 		 * Red
@@ -189,9 +188,9 @@ sap.ui.define(['jquery.sap.global',
 	
 	};
 
-	return sap.ui.suite;
+	return thisLib;
 
-}, /* bExport= */ false);
+});
 ```
 
 ### Translation file (messagebundle.properties) and translation
