@@ -2546,7 +2546,8 @@ sap.ui.define([
 				},
 				fnFetchMetadata = getFetchMetadata(mMetaPath2Type),
 				oHelperMock = this.mock(_Helper),
-				mNavigationPropertyPaths = {};
+				mNavigationPropertyPaths = {},
+				mResult;
 
 			if (o.mSelectKeyProperties) {
 				Object.keys(o.mSelectKeyProperties).forEach(function (sEntityPath) {
@@ -2555,12 +2556,14 @@ sap.ui.define([
 							sinon.match.same(mMetaPath2Type[sEntityPath]));
 				});
 			}
-			assert.deepEqual(
-				// code under test
-				_Helper.intersectQueryOptions(mCacheQueryOptions, o.aPaths, fnFetchMetadata, "/Me",
-					mNavigationPropertyPaths),
-				o.mResult);
+			// code under test
+			mResult = _Helper.intersectQueryOptions(mCacheQueryOptions, o.aPaths, fnFetchMetadata,
+				"/Me", mNavigationPropertyPaths);
 
+			assert.deepEqual(mResult, o.mResult);
+			if (mResult) {
+				mResult.$select.length = 0; // show that this doesn't change mCacheQueryOptions
+			}
 			assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
 				"unmodified");
 			assert.deepEqual(mNavigationPropertyPaths, {});
