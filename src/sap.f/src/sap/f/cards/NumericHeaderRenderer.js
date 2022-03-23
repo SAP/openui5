@@ -188,7 +188,7 @@ sap.ui.define([], function () {
 	 * @param {sap.f.cards.NumericHeader} oNH An object representation of the control that should be rendered
 	 */
 	NumericHeaderRenderer.renderIndicators = function(oRm, oNH) {
-		if (!oNH.getNumber() && oNH.getSideIndicators().length === 0) {
+		if (!oNH.getNumber() && !oNH.isBound("number") && oNH.getSideIndicators().length === 0) {
 			return;
 		}
 

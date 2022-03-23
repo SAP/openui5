@@ -66,25 +66,17 @@ function (
 
 	QUnit.module("Headers");
 
-	QUnit.test("Press is fired on sapselect for default header", function (assert) {
+	QUnit.test("NumericHeader renderer", function (assert) {
 		// Arrange
-		var oHeader = new CardHeader({ title: "Title" }),
-			oCard = new Card({
-				header: oHeader
-			}),
-			fnPressHandler = this.stub();
-
-		oHeader.attachPress(fnPressHandler);
-
+		var oHeader = new CardNumericHeader({ title: "Title", number: "{Number}" });
 		// Act
-		oCard.placeAt(DOM_RENDER_LOCATION);
+		oHeader.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
-		oHeader.onsapselect(new jQuery.Event("sapselect"));
 
 		// Assert
-		assert.ok(fnPressHandler.calledOnce, "The press event is fired on sapselect");
+		assert.strictEqual(oHeader.$().find(".sapFCardNumericIndicators").length, 1, "NumericIndicators are rendered.");
 
-		oCard.destroy();
+		oHeader.destroy();
 	});
 
 	QUnit.test("Press is fired on sapselect for numeric header", function (assert) {
