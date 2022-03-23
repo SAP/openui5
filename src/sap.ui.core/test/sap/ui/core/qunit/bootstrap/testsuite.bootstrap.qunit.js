@@ -4,9 +4,6 @@ sap.ui.define(function() {
 	return {
 		name: "TestSuite for sap.ui.core: GTP testcase CORE/BOOTSTRAP",
 		defaults: {
-			ui5: {
-				theme: "sap_belize"
-			},
 			loader:{
 				paths:{
 					"polyfill": "test-resources/sap/ui/core/qunit/polyfill"
@@ -171,6 +168,7 @@ sap.ui.define(function() {
 				group: "Bootstrap",
 				title: "Test Page for Bootstrap with a Custom Boot Task",
 				ui5: {
+					theme: "SapSampleTheme1",
 					libs: "sap.ui.core"
 				},
 				beforeBootstrap: "./BootstrapWithCustomBootTask.beforeBootstrap.qunit"
@@ -266,6 +264,7 @@ sap.ui.define(function() {
 			"Configuration": {
 				group: "Configuration",
 				ui5: {
+					theme: "SapSampleTheme2",
 					language: "en",
 					calendarType: "islamic",
 					logLevel: "WARNING",

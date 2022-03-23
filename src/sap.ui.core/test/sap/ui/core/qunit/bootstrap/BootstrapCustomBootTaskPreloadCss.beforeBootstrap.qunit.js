@@ -7,8 +7,8 @@
 		sap.ui.getCore().loadLibrary("sap.ui.testlib", "test-resources/sap/ui/core/qunit/testdata/uilib");
 		callback();
 	};
-	window["sap-ui-config"]["themeroots"] = {
-		"sap_belize": "foo/bar"
-	};
+	window["sap-ui-config"]["themeroots"] = {};
+	// Define theme root for current theme for testing purposes
+	window["sap-ui-config"]["themeroots"][window["sap-ui-config"].theme] = "foo/bar";
 
 }());
