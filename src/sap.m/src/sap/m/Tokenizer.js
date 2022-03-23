@@ -901,6 +901,7 @@ sap.ui.define([
 		var aTokens = this._getVisibleTokens();
 
 		if (!aTokens.length) {
+			this._setHiddenTokensCount(0);
 			return;
 		}
 
