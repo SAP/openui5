@@ -107,6 +107,7 @@
 			"subTitle": "Today"
 		},
 		"content": {
+			"maxItems": 9,
 			"row": {
 				"columns": [{
 						"title": "Sales Order",
