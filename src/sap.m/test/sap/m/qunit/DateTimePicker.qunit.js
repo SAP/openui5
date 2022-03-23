@@ -136,7 +136,6 @@ sap.ui.define([
 		oCalendar = oDTP._getCalendar();
 
 		//Assert
-		assert.ok(oDTP._getCalendar()._bPoupupMode, "Popup mode is set");
 		assert.ok(oCalendar.hasListeners("cancel"), "Cancel event listener is added");
 
 		//Clean
@@ -625,7 +624,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("When tab is pressed on year button the focus should go to first clock", function(assert) {
+	QUnit.test("_focusActiveButton method: moves the focus to the first clock", function(assert) {
 		//Prepare
 		var done = assert.async();
 
@@ -638,12 +637,9 @@ sap.ui.define([
 		oDTP._openPopup();
 
 		setTimeout(function() {
-			var oYearButton = oDTP._oPopup.getContent()[1].getCalendar().getAggregation("header").getDomRef("B2"),
-				oHoursClock = oDTP._oPopup.getContent()[1].getClocks().getAggregation("_buttons")[0];
-			oYearButton.focus();
-			oCore.applyChanges();
-			qutils.triggerKeydown(oYearButton, KeyCodes.TAB);
-			oCore.applyChanges();
+			var oHoursClock = oDTP._oPopup.getContent()[1].getClocks().getAggregation("_buttons")[0];
+			oDTP._oPopupContent.getClocks()._focusActiveButton();
+
 			// Assert
 			assert.strictEqual(oHoursClock.getDomRef(), document.activeElement, "The clock's value is focused after a tap");
 
@@ -718,7 +714,6 @@ sap.ui.define([
 						var $selectedDate = jQuery("#DTP5-cal--Month0-20211101");
 						$selectedDate.trigger("focus");
 						qutils.triggerKeydown($selectedDate, KeyCodes.ENTER);
-						oCore.applyChanges();
 						assert.strictEqual(jQuery("#DTP5-cal").css("display"), "none", "Calendar is not visible");
 						assert.strictEqual(jQuery("#DTP5-Clocks").css("display"), "block", "Clocks are visible");
 						assert.strictEqual(document.activeElement.id,

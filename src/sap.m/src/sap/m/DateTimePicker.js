@@ -311,19 +311,14 @@ sap.ui.define([
 			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone") || this.getForcePhoneView()) {
 				oSwitcher.setVisible(true);
 				oSwitcher.setSelectedKey("Cal");
+				this.getCalendar().addDelegate({
+					onAfterRendering: function() {
+						this._switchVisibility(oSwitcher.getSelectedKey());
+					}.bind(this)
+				});
 			} else {
 				oSwitcher.setVisible(false);
 			}
-
-		},
-
-		onAfterRendering: function() {
-			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone") || this.getForcePhoneView()) {
-				var oSwitcher = this.getAggregation("_switcher");
-				var sKey = oSwitcher.getSelectedKey();
-				this._switchVisibility(sKey);
-			}
-
 		},
 
 		_handleSelect: function(oEvent) {
@@ -347,7 +342,7 @@ sap.ui.define([
 			}
 
 			if (sKey === "Cal") {
-				oCalendar.$().css("display", "");
+				oCalendar.$().css("display", "flex");
 				oClocks.$().css("display", "none");
 				oCalendar.getFocusDomRef() && oCalendar.getFocusDomRef().focus();
 			} else {
@@ -371,21 +366,6 @@ sap.ui.define([
 
 			return this._oDateTimePicker.getSpecialDates();
 
-		},
-
-		onkeydown: function(oEvent) {
-			var bIsTabForward = oEvent.keyCode === KeyCodes.TAB && !oEvent.shiftKey;
-			var bIsTabBackward = oEvent.keyCode === KeyCodes.TAB && oEvent.shiftKey;
-			if (bIsTabForward) {
-				if (oEvent.target.classList.contains('sapUiCalHeadToday')
-					|| (oEvent.target.classList.contains('sapUiCalHeadBLast') && !this._oDateTimePicker._oCalendar.getShowCurrentDateButton())) {
-					this.getAggregation('clocks').getDomRef().children[0].children[0].focus();
-				}
-			}
-			if (bIsTabBackward && oEvent.target.classList.contains('sapUiCalItem')) {
-				var iLastElementIndex = this.oParent.getAggregation("footer").getAggregation("content").length - 1;
-				this.oParent.getAggregation("footer").getAggregation("content")[iLastElementIndex].focus();
-			}
 		}
 	});
 
@@ -1051,7 +1031,7 @@ sap.ui.define([
 		} else {
 			oSwitcher.setVisible(false);
 			oClocks.$().css("display", "");
-			oCalendar.$().css("display", "");
+			oCalendar.$().css("display", "flex");
 		}
 	};
 
@@ -1104,15 +1084,9 @@ sap.ui.define([
 	}
 
 	function _handleCalendarSelect(oEvent) {
-		var oDelegate = {
-			onAfterRendering: function () {
-				this._oPopupContent.getCalendar().getAggregation("month")[0].removeEventDelegate(oDelegate, this);
-				this._oPopupContent.switchToTime();
-				this._oPopupContent.getClocks()._focusActiveButton();
-			}
-		};
+		this._oPopupContent.switchToTime();
+		this._oPopupContent.getClocks()._focusActiveButton();
 		this._oOKButton.setEnabled(true);
-		this._oPopupContent.getCalendar().getAggregation("month")[0].addEventDelegate(oDelegate, this);
 	}
 
 	return DateTimePicker;

@@ -388,7 +388,6 @@ sap.ui.define([
 
 		if (!this._oCalendar) {
 			oCalendar = new Calendar(this.getId() + "--Cal", {});
-			oCalendar.setPopupMode(true);
 			oCalendar.attachEvent("select", _handleCalendarDateSelect, this);
 			oCalendar.attachEvent("cancel", function (oEvent) {
 				this._oPopup.close();
@@ -937,183 +936,6 @@ sap.ui.define([
 		}
 	};
 
-	CalendarTimeInterval.prototype.onsaptabnext = function(oEvent){
-		var oHeader = this.getAggregation("header"),
-			oMonthPicker, oYearPicker, oTimesRow;
-
-		// if tab was pressed on a day it should jump to the month and then to the year button
-
-		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
-			if (this.getPickerPopup() && oHeader.getDomRef("B1")){
-				oHeader.getDomRef("B1").focus();
-			} else if (!this.getPickerPopup() && oHeader.getDomRef("B0")){
-				oHeader.getDomRef("B0").focus();
-			}
-
-			if (!this._bPoupupMode) {
-				// remove Tabindex from day, month, year - to break cycle
-				oTimesRow = this.getAggregation("timesRow");
-
-				jQuery(oTimesRow._oItemNavigation.getItemDomRefs()[oTimesRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-				if (!this.getPickerPopup()) {
-					oMonthPicker = this._getMonthPicker();
-					oYearPicker = this._getYearPicker();
-					if (oMonthPicker.getDomRef()) {
-						jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-					}
-					if (oYearPicker.getDomRef()) {
-						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-					}
-				}
-			}
-
-			oEvent.preventDefault();
-
-		} else if (oEvent.target.id == oHeader.getId() + "-B0") {
-			if (oHeader.getDomRef("B1")){
-				oHeader.getDomRef("B1").focus();
-			}
-			oEvent.preventDefault();
-		} else if (!this.getPickerPopup() && (oEvent.target.id == oHeader.getId() + "-B1")) {
-			if (oHeader.getDomRef("B2")){
-				oHeader.getDomRef("B2").focus();
-			}
-			oEvent.preventDefault();
-		}
-
-	};
-
-	CalendarTimeInterval.prototype.onsaptabprevious = function(oEvent){
-
-		var oHeader = this.getAggregation("header"),
-			oMonthPicker, oYearPicker, oTimesRow;
-
-		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
-			// tab from day or year -> go to header
-
-			if (this._bPoupupMode) {
-				if (oHeader.getDomRef("B2")){
-					oHeader.getDomRef("B2").focus();
-				}
-				oEvent.preventDefault();
-			}
-		} else if (oEvent.target.id == oHeader.getId() + "-B0") {
-			// focus day or year
-			oTimesRow = this.getAggregation("timesRow");
-
-			switch (this._iMode) {
-			case 0: // day picker
-				oTimesRow._oItemNavigation.focusItem(oTimesRow._oItemNavigation.getFocusedIndex());
-				break;
-
-			case 2: // month picker
-				if (!this.getPickerPopup()) {
-					oMonthPicker = this._getMonthPicker();
-					oMonthPicker._oItemNavigation.focusItem(oMonthPicker._oItemNavigation.getFocusedIndex());
-				}
-				break;
-
-			case 3: // year picker
-				if (!this.getPickerPopup()) {
-					oYearPicker = this._getYearPicker();
-					oYearPicker._oItemNavigation.focusItem(oYearPicker._oItemNavigation.getFocusedIndex());
-				}
-				break;
-				// no default
-			}
-
-			oEvent.preventDefault();
-		} else if (oEvent.target.id == oHeader.getId() + "-B2") {
-			if (oHeader.getDomRef("B1")){
-				oHeader.getDomRef("B1").focus();
-			}
-
-			oEvent.preventDefault();
-		} else if (oEvent.target.id == oHeader.getId() + "-B1") {
-			if (!this.getPickerPopup()) {
-				if (oHeader.getDomRef("B0")){
-					oHeader.getDomRef("B0").focus();
-				}
-			} else {
-				oTimesRow = this.getAggregation("timesRow");
-				oTimesRow._oItemNavigation.focusItem(oTimesRow._oItemNavigation.getFocusedIndex());
-			}
-			oEvent.preventDefault();
-		}
-	};
-
-	CalendarTimeInterval.prototype.onfocusin = function(oEvent){
-
-		if (oEvent.target.id == this.getId() + "-end") {
-			// focus via tab+shift (otherwise not possible to go to this element)
-			var oHeader = this.getAggregation("header"),
-				oTimesRow, oMonthPicker, oYearPicker;
-
-			if (this.getPickerPopup() && oHeader.getDomRef("B1")) {
-				oHeader.getDomRef("B1").focus();
-			} else if (!this.getPickerPopup() && oHeader.getDomRef("B2")){
-				oHeader.getDomRef("B2").focus();
-			}
-
-			if (!this._bPoupupMode) {
-				// remove Tabindex from day, month, year - to break cycle
-				oTimesRow = this.getAggregation("timesRow");
-				jQuery(oTimesRow._oItemNavigation.getItemDomRefs()[oTimesRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-
-				if (!this.getPickerPopup()) {
-					oMonthPicker = this._getMonthPicker();
-					oYearPicker = this._getYearPicker();
-					if (oMonthPicker.getDomRef()) {
-						jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-					}
-					if (oYearPicker.getDomRef()) {
-						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-					}
-				}
-			}
-		}
-
-		// remove tabindex of dummy element if focus is inside calendar
-		this.$("end").attr("tabindex", "-1");
-
-	};
-
-	CalendarTimeInterval.prototype.onsapfocusleave = function(oEvent){
-
-		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
-			// put dummy element back to tab-chain
-			this.$("end").attr("tabindex", "0");
-
-			if (!this._bPoupupMode) {
-				// restore Tabindex from day and year
-				var oTimesRow, oMonthPicker, oYearPicker;
-
-				switch (this._iMode) {
-				case 0: // time picker
-					oTimesRow = this.getAggregation("timesRow");
-					jQuery(oTimesRow._oItemNavigation.getItemDomRefs()[oTimesRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
-					break;
-
-				case 2: // month picker
-					if (!this.getPickerPopup()) {
-						oMonthPicker = this._getMonthPicker();
-						jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
-					}
-					break;
-
-				case 3: // year picker
-					if (!this.getPickerPopup()) {
-						oYearPicker = this._getYearPicker();
-						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
-					}
-					break;
-					// no default
-				}
-			}
-		}
-
-	};
-
 	CalendarTimeInterval.prototype.setProperty = function () {
 		var sPropName = arguments[0],
 			sPropValue = arguments[1];
@@ -1398,10 +1220,6 @@ sap.ui.define([
 		this._hideOverlay();
 		if (!bSkipFocus) {
 			_renderTimesRow.call(this); // to focus date
-
-			// restore tabindex because if date not changed in _renderTimesRow only the focused date is updated
-			var oTimesRow = this.getAggregation("timesRow");
-			jQuery(oTimesRow._oItemNavigation.getItemDomRefs()[oTimesRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
 		}
 
 		this._getCalendar()._closePickers();
@@ -1442,13 +1260,6 @@ sap.ui.define([
 		// set start date and focus date
 		_setDateInDatesRow.call(this, oDate);
 
-		if (this._iMode == 0) {
-			// remove tabindex from item
-			var oTimesRow = this.getAggregation("timesRow");
-
-			jQuery(oTimesRow._oItemNavigation.getItemDomRefs()[oTimesRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-		}
-
 		this._iMode = 1;
 
 	}
@@ -1473,13 +1284,6 @@ sap.ui.define([
 		oMonthPicker.setMonth(oDate.getUTCMonth());
 		_setDisabledMonths.call(this, oDate.getUTCFullYear(), oMonthPicker);
 
-		if (this._iMode == 0) {
-			// remove tabindex from item
-			var oTimesRow = this.getAggregation("timesRow");
-
-			jQuery(oTimesRow._oItemNavigation.getItemDomRefs()[oTimesRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-		}
-
 		this._iMode = 2;
 
 		_togglePrevNext.call(this);
@@ -1503,13 +1307,6 @@ sap.ui.define([
 		this._showOverlay();
 
 		oYearPicker.setDate(oDate.getJSDate());
-
-		if (this._iMode == 0) {
-			// remove tabindex from item
-			var oTimesRow = this.getAggregation("timesRow");
-
-			jQuery(oTimesRow._oItemNavigation.getItemDomRefs()[oTimesRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-		}
 
 		_togglePrevNexYearPicker.call(this);
 

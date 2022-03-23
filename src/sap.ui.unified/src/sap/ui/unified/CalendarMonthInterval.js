@@ -323,7 +323,6 @@ sap.ui.define([
 
 		if (!this._oCustomYearPicker) {
 			oCustomYearPicker = new CustomYearPicker(this.getId() + "--Cal");
-			oCustomYearPicker.setPopupMode(true);
 			oCustomYearPicker.attachEvent("select", _handleCalendarDateSelect, this);
 			oCustomYearPicker.attachEvent("cancel", function (oEvent) {
 				this._oPopup.close();
@@ -790,127 +789,6 @@ sap.ui.define([
 		}
 	};
 
-	CalendarMonthInterval.prototype.onsaptabnext = function(oEvent){
-
-		// if tab was pressed on a day it should jump to the year button
-		var oHeader = this.getAggregation("header"),
-			oYearPicker, oMonthsRow;
-
-		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
-			if (oHeader.getDomRef("B2")){
-				oHeader.getDomRef("B2").focus();
-			}
-
-			if (!this._bPoupupMode) {
-				// remove Tabindex from day, month, year - to break cycle
-				oMonthsRow = this.getAggregation("monthsRow");
-				jQuery(oMonthsRow._oItemNavigation.getItemDomRefs()[oMonthsRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-
-				if (!this.getPickerPopup()) {
-					oYearPicker = this.getAggregation("yearPicker");
-					if (oYearPicker.getDomRef()) {
-						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-					}
-				}
-			}
-
-			oEvent.preventDefault();
-		}
-
-	};
-
-	CalendarMonthInterval.prototype.onsaptabprevious = function(oEvent){
-
-		var oHeader = this.getAggregation("header"),
-			oMonthsRow, oYearPicker;
-
-		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
-			// tab from day or year -> go to header
-
-			if (this._bPoupupMode) {
-				if (oHeader.getDomRef("B2")){
-					oHeader.getDomRef("B2").focus();
-				}
-				oEvent.preventDefault();
-			}
-		} else if (oEvent.target.id == oHeader.getId() + "-B2") {
-
-			switch (this._iMode) {
-			case 0: // day picker
-				oMonthsRow = this.getAggregation("monthsRow");
-				oMonthsRow._oItemNavigation.focusItem(oMonthsRow._oItemNavigation.getFocusedIndex());
-				break;
-			case 1: // year picker
-				if (!this.getPickerPopup()) {
-					oYearPicker = this.getAggregation("yearPicker");
-					oYearPicker._oItemNavigation.focusItem(oYearPicker._oItemNavigation.getFocusedIndex());
-				}
-				break;
-				// no default
-			}
-
-			oEvent.preventDefault();
-		}
-	};
-
-	CalendarMonthInterval.prototype.onfocusin = function(oEvent){
-
-		if (oEvent.target.id == this.getId() + "-end") {
-			// focus via tab+shift (otherwise not possible to go to this element)
-			var oHeader = this.getAggregation("header"),
-				oMonthsRow, oYearPicker;
-			if (oHeader.getDomRef("B2")){
-				oHeader.getDomRef("B2").focus();
-			}
-
-			if (!this._bPoupupMode) {
-				oMonthsRow = this.getAggregation("monthsRow");
-				// remove Tabindex from day, month, year - to break cycle
-				jQuery(oMonthsRow._oItemNavigation.getItemDomRefs()[oMonthsRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-
-				if (!this.getPickerPopup()) {
-					oYearPicker = this.getAggregation("yearPicker");
-
-					if (oYearPicker.getDomRef()) {
-						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-					}
-				}
-			}
-		}
-
-		// remove tabindex of dummy element if focus is inside calendar
-	this.$("end").attr("tabindex", "-1");
-
-	};
-
-	CalendarMonthInterval.prototype.onsapfocusleave = function(oEvent){
-		var oMonthsRow,
-			oYearPicker;
-
-		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
-			// put dummy element back to tab-chain
-			this.$("end").attr("tabindex", "0");
-
-			if (!this._bPoupupMode) {
-				// restore Tabindex from day and year
-				switch (this._iMode) {
-				case 0: // day picker
-					oMonthsRow = this.getAggregation("monthsRow");
-					jQuery(oMonthsRow._oItemNavigation.getItemDomRefs()[oMonthsRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
-					break;
-				case 1: // year picker
-					if (!this.getPickerPopup()) {
-						oYearPicker = this.getAggregation("yearPicker");
-						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
-					}
-					break;
-					// no default
-				}
-			}
-		}
-
-	};
-
 	CalendarMonthInterval.prototype._handlePrevious = function(oEvent){
 		var oFocusedDate,
 			iMonths,
@@ -1116,13 +994,6 @@ sap.ui.define([
 
 		oYearPicker.setDate(oDate.toLocalJSDate());
 
-		if (this._iMode == 0) {
-			// remove tabindex from month
-			var oMonthsRow = this.getAggregation("monthsRow");
-
-			jQuery(oMonthsRow._oItemNavigation.getItemDomRefs()[oMonthsRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-		}
-
 		_togglePrevNexYearPicker.call(this);
 		this._iMode = 1;
 	}
@@ -1136,10 +1007,6 @@ sap.ui.define([
 
 		if (!bNoFocus) {
 			_renderMonthsRow.call(this); // to focus date
-
-			// restore tabindex because if date not changed in _renderMonthsRow only the focused date is updated
-			var oMonthsRow = this.getAggregation("monthsRow");
-			jQuery(oMonthsRow._oItemNavigation.getItemDomRefs()[oMonthsRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
 		}
 
 	}
@@ -1332,10 +1199,6 @@ sap.ui.define([
 		this._hideOverlay();
 		if (!bNoFocus) {
 			_renderMonthsRow.call(this); // to focus date
-
-			// restore tabindex because if date not changed in _renderMonthsRow only the focused date is updated
-			var oMonthsRow = this.getAggregation("monthsRow");
-			jQuery(oMonthsRow._oItemNavigation.getItemDomRefs()[oMonthsRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
 		}
 	}
 
