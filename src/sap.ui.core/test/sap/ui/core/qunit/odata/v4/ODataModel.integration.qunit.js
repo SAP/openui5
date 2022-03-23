@@ -13003,6 +13003,123 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A new instance is created and the POST returns instance annotations, both for
+	// missing and existing properties, w/ and w/o updates. Check that these are properly updated in
+	// the client's data. Check that a late property request also updates instance annotations.
+	//
+	// BCP: 2270023075
+	QUnit.test("BCP: 2270023075 - creation POST returns instance annotations", function (assert) {
+		var oContext,
+			oListBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			fnRespond,
+			sView = '\
+<Table id="table" items="{/TEAMS}">\
+	<Text id="budget" text="{Budget}"/>\
+	<Text id="budgetCurrency" text="{BudgetCurrency}"/>\
+	<Text id="name" text="{Name}"/>\
+	<Text id="instanceAnnotation" text="{= %{@a.b} }"/>\
+	<Text id="propertyAnnotation" text="{= %{BudgetCurrency@foo.bar} }"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Budget,BudgetCurrency,Name,Team_Id&$skip=0&$top=100", {
+				value : []
+			})
+			.expectChange("budget", [])
+			.expectChange("budgetCurrency", [])
+			.expectChange("name", [])
+			.expectChange("instanceAnnotation", [])
+			.expectChange("propertyAnnotation", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("budget", ["42.1"])
+				.expectChange("budgetCurrency", [""])
+				.expectChange("name", ["New Team"])
+				.expectChange("instanceAnnotation", [undefined])
+				.expectChange("propertyAnnotation", [undefined])
+				.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {Budget : "42.1", Name : "New Team"}
+				}, {
+					"@a.b" : "A & B",
+					"@x.y.z" : "X, Y, Z",
+					Budget : "42", // update
+					"Budget@some.annotation" : "hello, world!",
+					// BudgetCurrency missing
+					"BudgetCurrency@foo.bar" : "love & peace!",
+					MEMBER_COUNT : 0, // MUST be ignored
+					"MEMBER_COUNT@n.a" : "n/a",
+					Name : "New Team", // no update
+					"Name@my.comment" : "Please choose a new name",
+					Team_Id : "Team_00"
+				})
+				.expectChange("budget", ["42"])
+				.expectChange("instanceAnnotation", ["A & B"])
+				.expectChange("propertyAnnotation", ["love & peace!"])
+				// Note: For an Edm.Stream property, this would not happen. Other properties should
+				// not be missing. Still, we can nicely use this to check a "late property request"
+				// (because all _dependent_ bindings are refreshed due to bSkipRefresh === true)
+				.expectRequest("TEAMS('Team_00')?$select=BudgetCurrency",
+					new Promise(function (resolve) {
+						fnRespond = resolve.bind(null, {
+							"@a.b" : "A & B",
+							"@x.y.z" : "X, Y, Z",
+							// BudgetCurrency still missing
+							"BudgetCurrency@a.b" : "A/B",
+							"BudgetCurrency@foo.bar" : "peace on earth"
+						});
+					}));
+
+			// code under test
+			oContext = oListBinding.create({Budget : "42.1", Name : "New Team"},
+				/*bSkipRefresh*/true);
+
+			// oContext.created() waits for the refresh of the dependent bindings which includes the
+			// late property request
+			return that.waitForChanges(assert, "create");
+		}).then(function () {
+			assert.deepEqual(oContext.getObject(), {
+					"@$ui5.context.isTransient" : false,
+					"@a.b" : "A & B",
+					"@x.y.z" : "X, Y, Z",
+					Budget : "42",
+					"Budget@some.annotation" : "hello, world!",
+					"BudgetCurrency@foo.bar" : "love & peace!",
+					Name : "New Team",
+					"Name@my.comment" : "Please choose a new name",
+					Team_Id : "Team_00"
+			});
+
+			that.expectChange("budgetCurrency", [null])
+				.expectChange("propertyAnnotation", ["peace on earth"]);
+
+			fnRespond();
+
+			return Promise.all([
+				oContext.created(),
+				that.waitForChanges(assert, "late property request")
+			]);
+		}).then(function () {
+			assert.deepEqual(oContext.getObject(), {
+					"@$ui5.context.isTransient" : false,
+					"@a.b" : "A & B",
+					"@x.y.z" : "X, Y, Z",
+					Budget : "42",
+					"Budget@some.annotation" : "hello, world!",
+					"BudgetCurrency@a.b" : "A/B",
+					"BudgetCurrency@foo.bar" : "peace on earth",
+					Name : "New Team",
+					"Name@my.comment" : "Please choose a new name",
+					Team_Id : "Team_00"
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: update a quantity. The corresponding unit of measure must be sent, too.
 	QUnit.test("Update quantity", function (assert) {
 		var sView = '\
@@ -29006,7 +29123,7 @@ sap.ui.define([
 
 			that.oLogMock.expects("error").withExactArgs(
 				"Failed to drill-down into MEMBER_COUNT, invalid segment: MEMBER_COUNT",
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS('TEAM_02')",
+				sTeaBusi + "TEAMS('TEAM_02')",
 				"sap.ui.model.odata.v4.lib._Cache");
 
 			// code under test
@@ -31199,14 +31316,12 @@ sap.ui.define([
 			that = this;
 
 		function securityTokenHandler0(sServiceUrl) {
-			assert.strictEqual(sServiceUrl,
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
+			assert.strictEqual(sServiceUrl, sTeaBusi);
 			return undefined; // not responsible
 		}
 
 		function securityTokenHandler1(sServiceUrl) {
-			assert.strictEqual(sServiceUrl,
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
+			assert.strictEqual(sServiceUrl, sTeaBusi);
 			return Promise.resolve({
 				SomeSecurityTokenHeader : "foo",
 				SomeOtherSecurityTokenHeader : "bar"
@@ -38898,7 +39013,7 @@ sap.ui.define([
 				that.oView.byId("form").getBindingContext().requestSideEffects(["Name"])
 					.catch(function (oError) {
 						assert.strictEqual(oError.message,
-							"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS('TEAM_01')"
+							sTeaBusi + "TEAMS('TEAM_01')"
 							+ ": Cannot call requestSideEffects, cache is broken:"
 							+ " Request intentionally failed");
 					}),

@@ -276,6 +276,36 @@ sap.ui.define([
 		},
 
 		/**
+		 * Converts the select paths into an object where each of the selected properties has the
+		 * value <code>true</code>, unless a (complex) parent property is also selected.
+		 *
+		 * @param {string[]} aSelect - The list of selected paths
+		 * @returns {object} - An object marking the selected properties
+		 */
+		buildSelect : function (aSelect) {
+			var oSelect = {};
+
+			aSelect.forEach(function (sPath) {
+				var aSegments = sPath.split("/"),
+					iLast = aSegments.length - 1,
+					oSubSelect = oSelect;
+
+				aSegments.some(function (sSegment, i) {
+					if (i === iLast) {
+						oSubSelect[sSegment] = true;
+						return true;
+					}
+					if (oSubSelect[sSegment] === true) {
+						return true; // no need to descend when the complex property is selected
+					}
+					oSubSelect = oSubSelect[sSegment] = oSubSelect[sSegment] || {};
+				});
+			});
+
+			return oSelect;
+		},
+
+		/**
 		 * Returns a clone of the given value, according to the rules of
 		 * <code>JSON.stringify</code>.
 		 * <b>Warning: <code>Date</code> objects will be turned into strings</b>
@@ -2037,7 +2067,9 @@ sap.ui.define([
 		 * {@link #updateExisting}). If a property is missing in the new value, the old value
 		 * remains unchanged. If no selected properties are given or if "*" is contained in the
 		 * selected properties, then all properties are selected. Fires change events for all
-		 * changed properties.
+		 * changed properties. An instance annotation is updated if the instance (which would be a
+		 * complex-valued structural property then) or one of its properties is selected, a property
+		 * annotation is updated if the property itself is selected.
 		 *
 		 * Restrictions:
 		 * - oOldValue and oNewValue are expected to have the same structure: when there is an
@@ -2049,7 +2081,7 @@ sap.ui.define([
 		 *
 		 * @param {object} mChangeListeners
 		 *   A map of change listeners by path
-		 * @param {string} sPath
+		 * @param {string} sBasePath
 		 *   The path of oOldValue in mChangeListeners
 		 * @param {object} oOldValue
 		 *   The old value
@@ -2059,58 +2091,96 @@ sap.ui.define([
 		 *   The relative paths to properties to be updated in oOldValue; default is all properties
 		 *   from oNewValue
 		 */
-		updateSelected : function (mChangeListeners, sPath, oOldValue, oNewValue, aSelect) {
+		updateSelected : function (mChangeListeners, sBasePath, oOldValue, oNewValue, aSelect) {
 			/*
-			 * Take over the property value from source to target and fires an event if the property
-			 * is changed
-			 * @param {string} sPropertyPath The property path
-			 * @param {object} oSource The source object
-			 * @param {object} oTarget The target object
+			 * Gets the property's value in vSelect. Instance annotations are always selected,
+			 * property annotations only if the property is selected.
+			 * @param {object|boolean} vSelect
+			 *   The result from _Helper.buildSelect or true if the complex structure is selected
+			 * @param {string} sProperty
+			 *   The property name
+			 * @returns {object|boolean|undefined}
+			 *   undefined to ignore, {} to update it w/o event, true to update w/ event
 			 */
-			function copyPathValue(sPropertyPath, oSource, oTarget) {
-				var aSegments = sPropertyPath.split("/");
+			function getSelect(vSelect, sProperty) {
+				var iAt;
 
-				aSegments.every(function (sSegment, iIndex) {
-					var vSourceProperty = oSource[sSegment],
-						vTargetProperty = oTarget[sSegment];
+				if (vSelect === true) {
+					return true;
+				}
+				if (vSelect[sProperty]) {
+					return vSelect[sProperty];
+				}
+				iAt = sProperty.indexOf("@");
+				if (iAt === 0 || iAt > 0 && vSelect[sProperty.slice(0, iAt)]) {
+					return true; // always fire changes for selected annotations
+				}
+			}
 
-					if (!(sSegment in oSource)) {
-						return false; // ignore missing property
+			/*
+			 * The recursive update function.
+			 * @param {string} sPath - The path of oTarget in the cache
+			 * @param {object|boolean} vSelect
+			 *   The result from _Helper.buildSelect or true if the complex structure is selected
+			 * @param {object} oTarget - The update target
+			 * @param {object} oSource - The update source
+			 * @returns {object} oTarget
+			 */
+			function update(sPath, vSelect, oTarget, oSource) {
+				// Remove annotations that are selected, but not in oSource anymore; except client
+				// annotations
+				Object.keys(oTarget).forEach(function (sProperty) {
+					if (!(sProperty in oSource) && sProperty.includes("@")
+							&& !sProperty.startsWith("@$ui5.") && getSelect(vSelect, sProperty)) {
+						delete oTarget[sProperty];
+						_Helper.fireChange(mChangeListeners, _Helper.buildPath(sPath, sProperty),
+							undefined);
+					}
+				});
+
+				// The actual update loop
+				Object.keys(oSource).forEach(function (sProperty) {
+					var sPropertyPath = _Helper.buildPath(sPath, sProperty),
+						vSelected = getSelect(vSelect, sProperty),
+						vSourceProperty = oSource[sProperty],
+						vTargetProperty = oTarget[sProperty];
+
+					if (!vSelected) {
+						return;
+					}
+					if (sProperty === "@$ui5._") {
+						_Helper.setPrivateAnnotation(oTarget, "predicate",
+							_Helper.getPrivateAnnotation(oSource, "predicate"));
+						// There should be nothing else, but we must avoid calling fireChanges on
+						// the target because it may contain non-JSON annotations
 					} else if (Array.isArray(vSourceProperty)) {
 						// copy complete collection; no change events as long as collection-valued
 						// properties are not supported
-						oTarget[sSegment] = vSourceProperty;
-					} else if (vSourceProperty && typeof vSourceProperty === "object") {
-						oTarget = oTarget[sSegment] = vTargetProperty || {};
-						oSource = vSourceProperty;
-						return true;
+						oTarget[sProperty] = vSourceProperty;
+					} else if (vSourceProperty && typeof vSourceProperty === "object"
+							&& !sProperty.includes("@")) {
+						oTarget[sProperty] = update(sPropertyPath, vSelected, vTargetProperty || {},
+							vSourceProperty);
 					} else if (vTargetProperty !== vSourceProperty) {
-						oTarget[sSegment] = vSourceProperty;
+						oTarget[sProperty] = vSourceProperty;
 						if (vTargetProperty && typeof vTargetProperty === "object") {
-							_Helper.fireChanges(mChangeListeners,
-								_Helper.buildPath(sPath, aSegments.slice(0, iIndex + 1).join("/")),
-								vTargetProperty, true);
-						} else if (iIndex === aSegments.length - 1) {
-							_Helper.fireChange(mChangeListeners,
-								_Helper.buildPath(sPath, sPropertyPath), vSourceProperty);
+							// a complex property is replaced by null
+							_Helper.fireChanges(mChangeListeners, sPropertyPath, vTargetProperty,
+								true);
+						} else if (vSelected === true) {
+							_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty);
 						}
-						// else a change from undefined to null where an object is expected along a
-						// property path from aSelect
 					}
-					return false;
 				});
+
+				return oTarget;
 			}
 
-			if (!aSelect || aSelect.indexOf("*") >= 0) {
-				// no individual properties selected, fetch all properties of the new value
-				_Helper.updateAll(mChangeListeners, sPath, oOldValue, oNewValue);
-				return;
+			if (aSelect && !aSelect.includes("*")) {
+				update(sBasePath, _Helper.buildSelect(aSelect), oOldValue, oNewValue);
+			} else { // no individual properties selected, fetch all properties of the new value
+				_Helper.updateAll(mChangeListeners, sBasePath, oOldValue, oNewValue);
 			}
-
-			// take over properties from the new value and fire change events
-			aSelect.forEach(function (sProperty) {
-				copyPathValue(sProperty, oNewValue, oOldValue);
-			});
 		},
 
 		/**

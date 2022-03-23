@@ -1330,260 +1330,234 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateSelected: simple/complex, unwanted, missing properties", function (assert) {
-		var oCacheBefore = {
-				Address : {
-					City : "Walldorf"
-				},
-				ComplexNullable : null,
-				MissingProperty : "foo",
-				Missing : {
-					Property : "bar"
-				}
+	QUnit.test("updateSelected: properties & annotations", function (assert) {
+		var oCacheValue = {
+				"@$ui5._" : {predicate : "('1')"}, // must not get lost
+				nested : {}
 			},
-			oCacheAfter = {
-				PartnerId : "4711",
-				Address : {
-					City : "Walldorf",
-					GeoLocation : {
-						Latitude : "49.3",
-						Longitude : "8.6"
-					},
-					PostalCode : "69190",
-					Nullable : null
-				},
-				ComplexNullable : {
-					bar : null,
-					baz : null,
-					foo : "foo"
-				},
-				MissingProperty : "foo",
-				Missing : {
-					Property : "bar"
-				}
+			oHelperMock = this.mock(_Helper),
+			oNewValue = {
+				ignore : {}, // nothing selected here
+				nested : {}
 			},
-			oChangeListener = {},
-			oHelperMock = this.mock(_Helper);
+			oNewValueJSON,
+			aSelect = [],
+			aSelectJSON,
+			oUpdatedValue = {
+				"@$ui5._" : {predicate : "('1')"},
+				nested : {}
+			};
 
-		oHelperMock.expects("fireChange")
-			.withExactArgs(oChangeListener, "SO_2_BP/Address/GeoLocation/Latitude", "49.3");
-		oHelperMock.expects("fireChange")
-			.withExactArgs(oChangeListener, "SO_2_BP/Address/GeoLocation/Longitude", "8.6");
-		oHelperMock.expects("fireChange")
-			.withExactArgs(oChangeListener, "SO_2_BP/Address/Nullable", null);
-		oHelperMock.expects("fireChange")
-			.withExactArgs(oChangeListener, "SO_2_BP/Address/PostalCode", "69190");
-		oHelperMock.expects("fireChange")
-			.withExactArgs(oChangeListener, "SO_2_BP/ComplexNullable/bar", null);
-		oHelperMock.expects("fireChange")
-			.withExactArgs(oChangeListener, "SO_2_BP/ComplexNullable/foo", "foo");
-		oHelperMock.expects("fireChange")
-			.withExactArgs(oChangeListener, "SO_2_BP/PartnerId", "4711");
-		oHelperMock.expects("fireChange")
-			.withExactArgs(oChangeListener, "SO_2_BP/@$ui5._/predicate", "('4711')").never();
+		function set(oObject, sName, sValue) {
+			if (sValue !== undefined) {
+				oObject[sName] = sValue;
+				oObject.nested[sName] = sValue;
+			}
+		}
+
+		function property(sName, sOld, sNew, sUpdated, bFire) {
+			set(oCacheValue, sName, sOld);
+			set(oNewValue, sName, sNew);
+			set(oUpdatedValue, sName, sUpdated);
+			if (bFire) {
+				oHelperMock.expects("fireChange")
+					.withExactArgs("~mChangeListener~", "base/path/" + sName, sUpdated);
+				oHelperMock.expects("fireChange")
+					.withExactArgs("~mChangeListener~", "base/path/nested/" + sName, sUpdated);
+			}
+		}
+
+		function selected(sName, sOld, sNew, sUpdated, bFire) {
+			property(sName, sOld, sNew, sUpdated, bFire);
+			aSelect.push(sName);
+			aSelect.push("nested/" + sName);
+		}
+
+		selected("changed", "old", "new1", "new1", true);
+		selected("fromNull", null, "new2", "new2", true);
+		selected("missing", "keep", undefined, "keep");
+		selected("toNull", "old", null, null, true);
+		selected("unchanged", "same", "same", "same");
+		// TODO no change events as long as collection-valued properties are not supported
+		selected("collection", [], ["a", "b"], ["a", "b"]);
+		property("unselected", "keep", "new", "keep");
+		property("unselectedCollection", ["a", "b"], [], ["a", "b"]);
+		property("@odata.etag", "old", "new3", "new3", true);
+		property("@new.annotation", undefined, "new4", "new4", true);
+		property("@old.annotation", "old", undefined, undefined, true);
+		property("@$ui5.client.annotation", "keep", undefined, "keep");
+		property("changed@new.annotation", undefined, {value : "new"}, {value : "new"}, true);
+		property("changed@old.annotation", {value : "old"}, undefined, undefined, true);
+		property("unchanged@new.annotation", undefined, "new5", "new5", true);
+		property("unchanged@old.annotation", "old", undefined, undefined, true);
+		property("unselected@new.annotation", undefined, "new", undefined);
+		property("unselected@old.annotation", "keep", undefined, "keep");
+		selected("abc", "old", "new6", "new6", true);
+		property("abcd", "keep", "new", "keep"); // "abcd".slice(0, "abcd".indexOf("@")) === "abc"
+
+		oNewValueJSON = JSON.stringify(oNewValue);
+		aSelectJSON = JSON.stringify(aSelect);
+		oHelperMock.expects("buildSelect").withExactArgs(sinon.match.same(aSelect))
+			.callThrough(); // no use in showing the resulting oSelect here
 
 		// code under test
-		_Helper.updateSelected(oChangeListener, "SO_2_BP", oCacheBefore, {
-			PartnerId : "4711",
-			Address : {
-				City : "Walldorf",
-				GeoLocation : {
-					Latitude : "49.3",
-					Longitude : "8.6"
-				},
-				notWanted : "foo",
-				Nullable : null,
-				PostalCode : "69190"
-			},
-			ComplexNullable : {
-				bar : null,
-				baz : null,
-				foo : "foo"
-			},
-			notWanted : "bar"
-		}, [
-			"Address/City",
-			"Address/Foo/Bar",
-			"Address/GeoLocation/Latitude",
-			"Address/GeoLocation/Longitude",
-			"Address/Nullable",
-			"Address/PostalCode",
-			"ComplexNullable/bar",
-			"ComplexNullable/baz/belowBaz",
-			"ComplexNullable/foo",
-			"MissingProperty",
-			"Missing/Property",
-			"PartnerId"
-		]);
+		_Helper.updateSelected("~mChangeListener~", "base/path", oCacheValue, oNewValue, aSelect);
 
-		assert.deepEqual(oCacheBefore, oCacheAfter);
-
-		oHelperMock.expects("fireChange")
-			.withExactArgs(oChangeListener, "SO_2_BP/CompanyName", "SAP");
-		oHelperMock.expects("fireChange")
-			.withExactArgs(oChangeListener, "SO_2_BP/@$ui5._/predicate", "('4711')").never();
-		oCacheBefore = {};
-		oCacheAfter = {CompanyName : "SAP"};
-
-		// code under test (without predicate)
-		_Helper.updateSelected(oChangeListener, "SO_2_BP", oCacheBefore, {CompanyName : "SAP"},
-			["CompanyName"]);
-
-		assert.deepEqual(oCacheBefore, oCacheAfter);
+		assert.deepEqual(oCacheValue, oUpdatedValue);
+		assert.strictEqual(JSON.stringify(oNewValue), oNewValueJSON);
+		assert.strictEqual(JSON.stringify(aSelect), aSelectJSON);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateSelected", function (assert) {
-		var mChangeListener = {},
+	QUnit.test("updateSelected: empty base path", function (assert) {
+		var oOldValue = {};
+
+		this.mock(_Helper).expects("fireChange").withExactArgs("~mChangeListener~", "foo", "bar");
+
+		// code under test
+		_Helper.updateSelected("~mChangeListener~", "", oOldValue, {foo : "bar"}, ["foo"]);
+
+		assert.deepEqual(oOldValue, {foo : "bar"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateSelected: private annotations", function (assert) {
+		var oBinding = {},
+			oContext = {oBinding : oBinding},
+			// oContext is recursive and must not be descended into
+			oOldValue = {"@$ui5._" : {context : oContext}};
+
+		oBinding.oContext = oContext;
+		this.mock(_Helper).expects("fireChange").never();
+
+		// code under test
+		_Helper.updateSelected("~mChangeListener~", "", oOldValue,
+			{"@$ui5._" : {predicate : "(1)"}},
+			["foo"]); // "foo" is just selected so that we do not jump to updateAll
+
+		assert.deepEqual(oOldValue, {"@$ui5._" : {context : oContext, predicate : "(1)"}});
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bNull) {
+	var sTitle = "updateSelected: complex type was " + (bNull ? "null" : "missing") + " in cache";
+
+	QUnit.test(sTitle, function (assert) {
+		var oCacheValue = {},
 			oHelperMock = this.mock(_Helper),
 			oNewValue = {
-				changed : "new",
-				unchanged : "same",
-				fromNull : "new",
-				toNull : null,
-				unselected : "new",
-				collection : [],
-				nested : {
-					changed : "new",
-					unchanged : "same",
-					fromNull : "new",
-					toNull : null,
-					unselected : "new"
-				},
-				structuredFromNull : {
-					changed : "new",
-					toNull : null,
-					nested : {
-						changed : "new"
-					},
-					structuredToNull : null,
-					unselected : "new",
-					collection : []
-				},
-				structuredNull : null,
-				structuredToNull : null
-			},
-			oOldValue = {
-				changed : "old",
-				unchanged : "same",
-				fromNull : null,
-				toNull : "old",
-				collection : [],
-				nested : {
-					changed : "old",
-					unchanged : "same",
-					fromNull : null,
-					toNull : "old"
-				},
-				structuredFromNull : null,
-				structuredNull : null,
-				structuredToNull : {
-					changed : "old",
-					fromNull : null,
-					nested : {
-						changed : "old"
-					}
+				complex : {
+					simple1 : "new1",
+					simple2 : "new2",
+					complex : null
 				}
 			},
-			aSelect = [
-				"changed",
-				"collection",
-				"fromNull",
-				"toNull",
-				"unchanged",
-				"nested/changed",
-				"nested/fromNull",
-				"nested/toNull",
-				"nested/unchanged",
-				"structuredFromNull/changed",
-				"structuredFromNull/collection",
-				"structuredFromNull/toNull",
-				"structuredFromNull/structuredToNull/unseen",
-				"structuredFromNull/nested/changed",
-				"structuredNull/unseen",
-				"structuredToNull/changed",
-				"structuredToNull/fromNull",
-				"structuredToNull/nested/changed",
-				"structuredToNull/nested/unseen"
-			],
-			oUpdatedValue = {
-				changed : "new",
-				unchanged : "same",
-				fromNull : "new",
-				toNull : null,
-				collection : [],
-				nested : {
-					changed : "new",
-					unchanged : "same",
-					fromNull : "new",
-					toNull : null
-				},
-				structuredFromNull : {
-					changed : "new",
-					toNull : null,
-					collection : [],
+			oNewValueJSON = JSON.stringify(oNewValue),
+			aSelect = ["complex/simple1", "complex/simple2", "complex/complex/unseen"],
+			aSelectJSON = JSON.stringify(aSelect);
+
+		if (bNull) {
+			oCacheValue.complex = null;
+		}
+		oHelperMock.expects("fireChange")
+			.withExactArgs("~mChangeListener~", "base/path/complex/simple1", "new1");
+		oHelperMock.expects("fireChange")
+			.withExactArgs("~mChangeListener~", "base/path/complex/simple2", "new2");
+
+		// code under test
+		_Helper.updateSelected("~mChangeListener~", "base/path", oCacheValue, oNewValue, aSelect);
+
+		assert.deepEqual(oCacheValue, oNewValue);
+		assert.strictEqual(JSON.stringify(oNewValue), oNewValueJSON);
+		assert.strictEqual(JSON.stringify(aSelect), aSelectJSON);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("updateSelected: complex type becomes null in cache", function (assert) {
+		var oCacheValue = {
+				toNull : {}
+			},
+			oHelperMock = this.mock(_Helper),
+			oNewValue = {
+				toNull : null
+			},
+			oNewValueJSON = JSON.stringify(oNewValue),
+			aSelect = ["toNull/property"],
+			aSelectJSON = JSON.stringify(aSelect);
+
+		oHelperMock.expects("fireChanges")
+			.withExactArgs("~mChangeListener~", "base/path/toNull",
+				sinon.match.same(oCacheValue.toNull), true);
+
+		// code under test
+		_Helper.updateSelected("~mChangeListener~", "base/path", oCacheValue, oNewValue, aSelect);
+
+		assert.deepEqual(oCacheValue, oNewValue);
+		assert.strictEqual(JSON.stringify(oNewValue), oNewValueJSON);
+		assert.strictEqual(JSON.stringify(aSelect), aSelectJSON);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateSelected: complex type is selected", function (assert) {
+		var oCacheValue = {
+				selected : {
+					changed : "old",
 					nested : {
-						changed : "new"
+						changed : "old",
+						unchanged : "same"
 					},
-					structuredToNull : null
-				},
-				structuredNull : null,
-				structuredToNull : null
-			};
+					unchanged : "same"
+				}
+			},
+			oHelperMock = this.mock(_Helper),
+			oNewValue = {
+				selected : {
+					changed : "new1",
+					nested : {
+						changed : "new3",
+						newComplex : {new : "new4"},
+						newSimple : "new5",
+						unchanged : "same"
+					},
+					new : "new2",
+					unchanged : "same"
+				}
+			},
+			oNewValueJSON = JSON.stringify(oNewValue),
+			aSelect = ["selected"],
+			aSelectJSON = JSON.stringify(aSelect);
 
 		function expectChange(sPath, vValue) {
 			oHelperMock.expects("fireChange")
-				.withExactArgs(sinon.match.same(mChangeListener), "base/path/" + sPath, vValue);
+				.withExactArgs("~mChangeListener~", "base/path/" + sPath, vValue);
 		}
 
-		expectChange("changed", "new");
-		expectChange("fromNull", "new");
-		expectChange("toNull", null);
-		expectChange("nested/changed", "new");
-		expectChange("nested/fromNull", "new");
-		expectChange("nested/toNull", null);
-		expectChange("structuredFromNull/changed", "new");
-		expectChange("structuredFromNull/toNull", null);
-		expectChange("structuredFromNull/nested/changed", "new");
-		expectChange("structuredToNull", undefined); // side effect from _Helper.fireChanges
-		expectChange("structuredToNull/changed", undefined);
-		expectChange("structuredToNull/fromNull", undefined);
-		expectChange("structuredToNull/nested", undefined); // side effect from _Helper.fireChanges
-		expectChange("structuredToNull/nested/changed", undefined);
+		expectChange("selected/changed", "new1");
+		expectChange("selected/new", "new2");
+		expectChange("selected/nested/changed", "new3");
+		expectChange("selected/nested/newComplex/new", "new4");
+		expectChange("selected/nested/newSimple", "new5");
 
 		// code under test
-		_Helper.updateSelected(mChangeListener, "base/path", oOldValue, oNewValue, aSelect);
+		_Helper.updateSelected("~mChangeListener~", "base/path", oCacheValue, oNewValue, aSelect);
 
-		assert.deepEqual(oOldValue, oUpdatedValue);
-		assert.strictEqual(oOldValue.collection, oNewValue.collection);
-		assert.strictEqual(oOldValue.structuredFromNull.collection,
-			oNewValue.structuredFromNull.collection);
+		assert.deepEqual(oCacheValue, oNewValue);
+		assert.strictEqual(JSON.stringify(oNewValue), oNewValueJSON);
+		assert.strictEqual(JSON.stringify(aSelect), aSelectJSON);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateSelected: no predicate", function (assert) {
-		var oCache = {foo : "bar"};
-
-		_Helper.updateSelected({}, "base/path", oCache, {foo : "baz"}, ["foo"]);
-
-		assert.deepEqual(oCache, {foo : "baz"});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateSelected: update all", function () {
-		var mChangeListeners = {},
-			oSource = {},
-			oTarget = {};
-
-		this.mock(_Helper).expects("updateAll").twice()
-			.withExactArgs(sinon.match.same(mChangeListeners), "base/path",
-				sinon.match.same(oTarget), sinon.match.same(oSource));
+[undefined, ["foo", "bar", "*", "baz"]].forEach(function (aSelect) {
+	QUnit.test("updateSelected: update all, aSelect=" + aSelect, function () {
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs("~mChangeListeners~", "base/path", "~oTarget~", "~oSource~");
 
 		// code under test
-		_Helper.updateSelected(mChangeListeners, "base/path", oTarget, oSource);
-		_Helper.updateSelected(mChangeListeners, "base/path", oTarget, oSource,
-			["foo", "bar", "*", "baz"]);
+		_Helper.updateSelected("~mChangeListeners~", "base/path", "~oTarget~", "~oSource~",
+			aSelect);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("updateAll: properties", function (assert) {
@@ -4320,5 +4294,34 @@ sap.ui.define([
 		assert.strictEqual(aMessages.length, 1);
 		assert.strictEqual(aMessages[0].message, "target: message");
 		assert.notOk("target" in aMessages[0]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildSelect", function (assert) {
+		assert.deepEqual(
+			// code under test
+			_Helper.buildSelect([
+				"simple1",
+				"simple2",
+				"complex/simple",
+				"complex/all",
+				"complex/all/simple", // sub-path in the list -> ignore
+				"complex/complex/simple1",
+				"complex/complex/simple2",
+				"all/simple", // sub-path in the list -> ignore
+				"all"
+			]), {
+				all : true,
+				complex : {
+					all : true,
+					complex : {
+						simple1 : true,
+						simple2 : true
+					},
+					simple : true
+				},
+				simple1 : true,
+				simple2 : true
+			});
 	});
 });
