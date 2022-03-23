@@ -564,19 +564,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks the text of the 'More' button for a sap.m.Table with the given ID.
-		 *
-		 * @param {object} assert The QUnit assert object
-		 * @param {string} sTableID The ID of the sap.m.Table
-		 * @param {string} sExpected The expected count as text w/o "More" without spaces,
-		 *    e.g. "[5/10]"
-		 */
-		 checkMoreButton : function (assert, sTableID, sExpected) {
-			assert.strictEqual(this.oView.byId(sTableID + "-trigger").getDomRef().innerText
-				.replace(/\s/g, ""), "More" + sExpected, "check More button: " + sExpected);
-		},
-
-		/**
 		 * Checks that the given value is the expected one for the control.
 		 *
 		 * @param {object} assert The QUnit assert object
@@ -12374,7 +12361,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			+ " are displayed; count mode: " + sCountMode;
 
 	QUnit.test(sTitle, function (assert) {
-		var oBinding,
+		var oBinding, oTable,
 			bInlineCount = sCountMode !== CountMode.Request,
 			oModel = createSalesOrdersModel({defaultCountMode : sCountMode}),
 			oResponse = {
@@ -12398,15 +12385,16 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectValue("id", ["42"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oBinding = that.oView.byId("table").getBinding("items");
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
 
-			that.checkMoreButton(assert, "table", "[1/17]");
+			assert.deepEqual(oTable.getGrowingInfo(), {actual : 1, total : 17});
 
 			that.expectValue("id", [""]);
 
 			oBinding.create({}, false);
 
-			that.checkMoreButton(assert, "table", "[1/18]");
+			assert.deepEqual(oTable.getGrowingInfo(), {actual : 1, total : 18});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -12428,7 +12416,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(oBinding.getCount(), 12);
-			that.checkMoreButton(assert, "table", "[1/12]");
+			assert.deepEqual(oTable.getGrowingInfo(), {actual : 1, total : 12});
 
 			return that.waitForChanges(assert);
 		});
