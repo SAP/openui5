@@ -1250,7 +1250,7 @@ sap.ui.define([
 
 			var fnPublishStub = sandbox.stub(WriteStorage, "publish").resolves();
 			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oMockNewChange]);
-			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompVariantsMap").resolves({
+			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompVariantsMap").returns({
 				somePersistencyKey: {
 					byId: {
 						id1: oMockCompVariant1,
@@ -1652,7 +1652,7 @@ sap.ui.define([
 			var oResetChangesStub = sandbox.stub(WriteStorage, "reset").resolves(aDeletedChangeContentIds);
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
 			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").resolves();
-			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompVariantsMap").resolves({
+			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompVariantsMap").returns({
 				somePersistencyKey: {
 					byId: {
 						id1: oMockCompVariant1,
