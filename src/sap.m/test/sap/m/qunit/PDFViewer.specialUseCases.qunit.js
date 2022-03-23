@@ -15,7 +15,7 @@ sap.ui.define( [
 	});
 
 	// if the environment does not have pdf plugin, then it is not possible to run standard test suite
-	if (!PDFViewerRenderer._isPdfPluginEnabled()) {
+	if (!PDFViewerRenderer._isPdfPluginEnabled() || /HeadlessChrome/.test(window.navigator.userAgent)) {
 		return;
 	}
 
@@ -214,7 +214,7 @@ sap.ui.define( [
 
 	QUnit.test("Desktop View Emulated from Mobile", function (assert) {
 		this.stub(Device, "system").value({desktop: true});
-		this.stub(window.navigator.mimeTypes, "namedItem").value(function() { return null; });
+		this.stub(window.navigator, "pdfViewerEnabled").value(false);
 
 		oPDFViewer = TestUtils.createPdfViewer({
 			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"

@@ -482,7 +482,7 @@ sap.ui.define([
 		 */
 		PDFViewer.prototype._isEmbeddedModeAllowed = function () {
 			//Allow Embedding only if PDFViewer plugin is present
-			return this._isDisplayTypeAuto() ? Device.system.desktop && PDFViewerRenderer._isPdfPluginEnabled() : this._isDisplayTypeEmbedded();
+			return this._isDisplayTypeAuto() ? Device.system.desktop : this._isDisplayTypeEmbedded();
 		};
 
 		/**
