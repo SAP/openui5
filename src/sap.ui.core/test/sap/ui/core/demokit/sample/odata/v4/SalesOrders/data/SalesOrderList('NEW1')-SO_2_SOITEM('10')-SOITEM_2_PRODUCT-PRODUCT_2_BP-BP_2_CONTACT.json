@@ -1,0 +1,27 @@
+{
+	"SalesOrderID" : "NEW1",
+	"ItemPosition" : "10",
+	"SOITEM_2_PRODUCT" : {
+		"@odata.etag" : "W/\"20210219080913.0000000 \"",
+		"ProductID" : "HT-1000",
+		"PRODUCT_2_BP" : {
+			"@odata.etag" : "W/\"20210219080913.0000000 \"",
+			"BusinessPartnerID" : "0100000046",
+			"BP_2_CONTACT" : [{
+				"ContactGUID" : "00000000-0000-0000-0000-000000000689",
+				"FirstName" : "Karl",
+				"LastName" : "Möller",
+				"PhoneNumber" : "0622734567",
+				"EmailAddress" : "supplier-do.not.reply@sap.com",
+				"DateOfBirth" : null
+			}, {
+				"ContactGUID" : "00000000-0000-0000-0000-000000000690",
+				"FirstName" : "Harald",
+				"LastName" : "Gahn",
+				"PhoneNumber" : "0622746358",
+				"EmailAddress" : "hjg@sap.com",
+				"DateOfBirth" : null
+			}]
+		}
+	}
+}
