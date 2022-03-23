@@ -525,7 +525,10 @@ sap.ui.define([
 		if (this.getFrameType() === FrameType.Auto) {
 			this.setProperty("frameType", FrameType.OneByOne, true);
 		}
-
+		//sets the maxlines for the appshortcut and systeminfo in different tile sizes
+		if (this.getMode() !== GenericTileMode.LineMode && (this.getAppShortcut() || this.getSystemInfo())) {
+			this._setMaxLines();
+		}
 		//Set Navigate Action Button Text - Only in Article Mode
 		if (this._isNavigateActionEnabled()) {
 			var sButtonText = this.getNavigationButtonText() ? this.getNavigationButtonText() : this._oRb.getText("ACTION_READ_MORE");
@@ -557,7 +560,6 @@ sap.ui.define([
 				}
 			}
 		}
-
 		// triggers update of all adjacent GenericTile LineMode siblings
 		// this is needed for their visual update if this tile's properties change causing it to expand or shrink
 		if (sMode === GenericTileMode.LineMode && this._bUpdateLineTileSiblings) {
@@ -577,7 +579,26 @@ sap.ui.define([
 
 		this.onDragComplete();
 	};
+	GenericTile.prototype._setMaxLines = function() {
+		var sFrameType = this.getFrameType(),
+			iLines = sFrameType === FrameType.OneByOne || sFrameType === FrameType.TwoByHalf ? 1 : 2;
 
+		//Default maxLines
+		this._oAppShortcut.setProperty("maxLines", iLines, true);
+		this._oSystemInfo.setProperty("maxLines", iLines, true);
+
+		if (this.getFrameType() === FrameType.TwoByHalf) {
+			var bAppShortcutMore = this.getAppShortcut().length > 11,
+				bSystemInfoMore = this.getSystemInfo().length > 11;
+
+			// Line break to happen after 11 characters, App Shortcut to have more priority in display
+			if ((bAppShortcutMore && bSystemInfoMore) || bAppShortcutMore) {
+				this._oAppShortcut.setProperty("maxLines", 2, true);
+			} else if (bSystemInfoMore) {
+				this._oSystemInfo.setProperty("maxLines", 2, true);
+			}
+		}
+	};
 	/**
 	 * Update Hover Overlay, Generic tile to remove Active Press state of generic Tile.
 	 * @private
@@ -1310,6 +1331,8 @@ sap.ui.define([
 		} else if (frameType === FrameType.TwoByHalf && (aTileCnt !== null || this.getSubheader())) {
 			tileContent.setRenderFooter(false);
 		} else if (frameType === FrameType.OneByHalf && ((aTileCnt !== null && aTileCnt.getMetadata().getName() !== "sap.m.ImageContent") || this.getSubheader())) {
+			tileContent.setRenderFooter(false);
+		} else if (!this._isNavigateActionEnabled() && !tileContent.getFooter() && !tileContent.getUnit()) {
 			tileContent.setRenderFooter(false);
 		} else {
 			tileContent.setRenderFooter(true);

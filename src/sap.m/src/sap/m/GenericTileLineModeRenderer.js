@@ -89,6 +89,12 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 				oRm.style("padding-right", "2.25rem");
 		}
 		oRm.class("sapMGTLineMode");
+		if (oControl.getSystemInfo() || oControl.getAppShortcut()) {
+			oRm.class("sapMGTInfoRendered");
+			if (!bIsScreenLarge){
+				oRm.class("sapMGTLineModeSmall");
+			}
+		}
 		this._writeDirection(oRm);
 		if (sTooltipText) {
 			oRm.attr("title", sTooltipText);
@@ -121,11 +127,21 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.close("div");
 
 			this._renderFailedIcon(oRm, oControl);
+			oRm.openStart("span", oControl.getId() + "-lineWrapper");
+			oRm.class("sapMGTLineWrapper");
+			oRm.openEnd();
+			oRm.openStart("span", oControl.getId() + "-headerWrapper");
+			oRm.class("sapMGTHeaderWrapper");
+			oRm.openEnd();
 			this._renderHeader(oRm, oControl);
 			if (oControl.getSubheader()) {
 				this._renderSubheader(oRm, oControl);
 			}
-
+			oRm.close("span");
+			if (oControl.getSystemInfo() || oControl.getAppShortcut()) {
+				this._renderInfoContainer(oRm,oControl);
+			}
+			oRm.close("span");
 			oRm.openStart("div", oControl.getId() + "-endMarker");
 			oRm.class("sapMGTEndMarker");
 			oRm.openEnd();
@@ -142,6 +158,34 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.openEnd();
 			oRm.close("div");
 
+		} else if (oControl.getSystemInfo() || oControl.getAppShortcut()){
+			oRm.openStart("div", oControl.getId() + "-touchArea");
+			oRm.class("sapMGTTouchArea");
+			oRm.openEnd();
+			this._renderFailedIcon(oRm, oControl);
+
+			oRm.openStart("span",oControl.getId() + "-lineModeHelpContainer");
+			oRm.class("sapMGTLineModeHelpContainer");
+			oRm.openEnd();
+			oRm.openStart("span", oControl.getId() + "-headerWrapper");
+			oRm.class("sapMGTHeaderWrapper");
+			oRm.openEnd();
+			this._renderHeader(oRm, oControl);
+
+			if (oControl.getSubheader()) {
+				this._renderSubheader(oRm, oControl);
+			}
+			oRm.close("span");
+			if (oControl.getSystemInfo() || oControl.getAppShortcut()) {
+				this._renderInfoContainer(oRm,oControl);
+			}
+			oRm.close("span"); //.sapMGTLineModeHelpContainer
+
+			if (oControl._isInActionScope()) {
+				this._renderActionsScope(oRm, oControl, bIsSingleAction);
+			}
+
+			oRm.close("div"); //.sapMGTTouchArea
 		} else {
 			oRm.openStart("div", oControl.getId() + "-touchArea");
 			oRm.class("sapMGTTouchArea");
@@ -173,13 +217,43 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.close("span"); //.sapMGT
 		}
 	};
-
+	GenericTileLineModeRenderer._renderInfoContainer = function(oRm,oControl){
+				oRm.openStart("span",oControl.getId() + "-sapMGTTInfoWrapper");
+				oRm.class("sapMGTTInfoWrapper").openEnd();
+				oRm.openStart("span",oControl.getId() + "-sapMGTTInfo");
+				oRm.class("sapMGTTInfo");
+				if (!(oControl.getSystemInfo() && oControl.getAppShortcut())){
+					oRm.class("sapMGTInfoNotContainsSeperator");
+				}
+				oRm.openEnd();
+				if (oControl.getAppShortcut()) {
+					oRm.openStart("span", oControl.getId() + "-appShortcut");
+					oRm.class("sapMGTAppShortcutText").openEnd();
+					oRm.renderControl(oControl._oAppShortcut);
+					oRm.close("span");
+				}
+				if (oControl.getSystemInfo()) {
+					this._renderSystemInfo(oRm,oControl);
+				}
+				oRm.close("span");
+				oRm.close("span");
+	};
 	GenericTileLineModeRenderer._writeDirection = function(oRm) {
 		if (this._bRTL) {
 			oRm.attr("dir", "rtl");
 		}
 	};
-
+	GenericTileLineModeRenderer._renderSystemInfo = function(oRm,oControl){
+		oRm.openStart("span",oControl.getId() + "-systemInfoText");
+		this._writeDirection(oRm);
+		oRm.class("sapMGTSystemInfoText");
+		if (oControl.getSystemInfo() && oControl.getAppShortcut()){
+			oRm.class("sapMGTSeperatorPresent");
+		}
+		oRm.openEnd();
+		oRm.text(oControl._oSystemInfo.getText());
+		oRm.close("span");
+	};
 	GenericTileLineModeRenderer._renderFailedIcon = function(oRm, oControl) {
 		if (oControl.getState() === LoadState.Failed) {
 			if (oControl._isCompact()) {

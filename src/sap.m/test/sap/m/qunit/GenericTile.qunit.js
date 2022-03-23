@@ -3103,6 +3103,31 @@ QUnit.test("App shortcut and System info only rendered in OneByOne", function(as
 	assert.equal(this.oGenericTile._oSystemInfo.getDomRef(), null);
 });
 
+QUnit.test("App shortcut and System info only rendered in TwoByOne", function(assert) {
+	this.oGenericTile.setFrameType("TwoByOne");
+	this.oGenericTile.setAppShortcut("app shortcut");
+	this.oGenericTile.setSystemInfo("system info");
+	oCore.applyChanges();
+	assert.equal(this.oGenericTile.getAppShortcut(), "app shortcut");
+	assert.equal(this.oGenericTile.getSystemInfo(),"system info" );
+});
+QUnit.test("App shortcut and System info only rendered in TwoByHalf", function(assert) {
+	this.oGenericTile.setFrameType("TwoByHalf");
+	this.oGenericTile.setAppShortcut("app shortcut");
+	this.oGenericTile.setSystemInfo("system info");
+	oCore.applyChanges();
+	assert.equal(this.oGenericTile.getAppShortcut(), "app shortcut");
+	assert.equal(this.oGenericTile.getSystemInfo(),"system info" );
+});
+QUnit.test("App shortcut and System info only rendered in Linemode", function(assert) {
+	this.oGenericTile.setMode(GenericTileMode.LineMode);
+	this.oGenericTile.setAppShortcut("app shortcut");
+	this.oGenericTile.setSystemInfo("system info");
+	oCore.applyChanges();
+	assert.equal(this.oGenericTile.getAppShortcut(), "app shortcut");
+	assert.equal(this.oGenericTile.getSystemInfo(),"system info" );
+});
+
 QUnit.test("Check the padding classes of the 2*1 small tile", function(assert) {
 	this.oGenericTile.setFrameType("OneByHalf");
 	oCore.applyChanges();
