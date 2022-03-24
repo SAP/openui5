@@ -82,7 +82,8 @@
 								"manifest": "./detailsManifest.json",
 								"data": {
 									"productsData": "{/}"
-								}
+								},
+								"width": "480px"
 							}
 						}
 					]

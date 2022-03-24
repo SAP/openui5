@@ -4,6 +4,7 @@
 	xmlns:f="sap.f"
 	xmlns:cards="sap.f.cards"
 	xmlns:w="sap.ui.integration.widgets"
+	controllerName="sap.f.cardsdemo.controller.NumericHeader"
 	displayBlock="true">
 	<Page title="{i18n>appTitle}">
 		<subHeader>
@@ -96,6 +97,11 @@
 					</w:layoutData>
 				</w:Card>
 				<w:Card id="kpicard5" manifest="{manifests>/kpiManifests/kpicard5}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="kpicard6" manifest="{manifests>/kpiManifests/kpicard6}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="4" />
 					</w:layoutData>

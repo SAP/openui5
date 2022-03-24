@@ -31,7 +31,8 @@
 			"icon": {
 				"src": "sap-icon://sap-ui5"
 			},
-			"title": "Sharing data between details card and opener"
+			"title": "Sharing data between details card and opener",
+			"titleMaxLines": 1
 		},
 		"content": {
 			"data": {

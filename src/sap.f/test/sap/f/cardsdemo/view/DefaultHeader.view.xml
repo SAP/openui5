@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:w="sap.ui.integration.widgets"
+	controllerName="sap.f.cardsdemo.controller.DefaultHeader"
 	displayBlock="true">
 	<Page title="{i18n>appTitle}">
 		<subHeader>
@@ -34,6 +35,12 @@
 			<w:Card
 				id="card4"
 				manifest="{manifests>/defaultHeader/card4}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="320px"
+				class="sapUiSmallMargin" />
+			<w:Card
+				id="card5"
+				manifest="{manifests>/defaultHeader/card5}"
 				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="320px"
 				class="sapUiSmallMargin" />

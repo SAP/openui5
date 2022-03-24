@@ -80,6 +80,28 @@
 				"content": {}
 			}
 		},
+		"card5": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.card5",
+				"type": "card"
+			},
+			"sap.card": {
+				"header": {
+					"title": "This Line is the Title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
+					"titleMaxLines": 1,
+					"subTitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+					"subTitleMaxLines": 1,
+					"icon": {
+						"text": "GK"
+					},
+					"status": {
+						"text": "Count"
+					}
+				},
+				"type": "List",
+				"content": {}
+			}
+		},
 		"defaultDataTimestamp": {
 			"sap.app": {
 				"id": "cardsdemo.defaultHeader.defaultDataTimestamp",
@@ -557,6 +579,54 @@
 				"header": {
 					"title": "Numeric card with data timestamp",
 					"dataTimestamp": "{{parameters.NOW_ISO}}"
+				}
+			}
+		},
+		"kpicard6": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.kpicard3",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+					"titleMaxLines": 1,
+					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"subTitleMaxLines": 1,
+					"status": {
+						"text": "On Track"
+					},
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+					"detailsMaxLines": 1,
+					"sideIndicators": [
+						{
+							"title": "Target Long Target Long Target Long Target Long",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"title": "Deviation Long Deviation Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
 				}
 			}
 		},

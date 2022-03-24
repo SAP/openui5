@@ -84,6 +84,7 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 .sapFCard .sapFCardHeader {
 	position: relative;
 	flex-shrink: 0;
+	justify-content: space-between;
 	background: @sapUiTileBackground;
 	border-bottom: @_sap_f_Card_HeaderBorder;
 	z-index: 2;
@@ -94,7 +95,8 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 
 	.sapFCardHeaderWrapper {
 		display: flex;
-		width: 100%;
+		min-width: 0;
+		flex: 1;
 		height: fit-content;
 	}
 
