@@ -191,7 +191,7 @@ sap.ui.define([
 		}
 
 		if (this.isInactive()) {
-			oModel._getCreatedContextsCache().findAndRemoveContext(this);
+			oModel._discardEntityChanges(oModel._getKey(this), true);
 			oModel.checkUpdate();
 
 			return Promise.resolve();
