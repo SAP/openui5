@@ -161,10 +161,10 @@ sap.ui.define([
 	var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 	Panel.prototype.applySettings = function() {
-		Control.prototype.applySettings.apply(this, arguments);
 		var oModel = this._getInternalModel();
-		oModel.setProperty("/countAdditionalContent", this.getAdditionalContent().length);
 		this._createContent();
+		Control.prototype.applySettings.apply(this, arguments);
+		oModel.setProperty("/countAdditionalContent", this.getAdditionalContent().length);
 	};
 
 	Panel.prototype.exit = function(oControl) {
@@ -180,7 +180,7 @@ sap.ui.define([
 	Panel.prototype._createContent = function() {
 		var oVerticalLayout = new VerticalLayout({
 			content: [
-				this._createContentAdditionalContentArea(),
+				this._createAdditionalContentArea(),
 				this._createSeparator(),
 				this._createLinkArea(),
 				this._createFooterArea()
@@ -190,13 +190,13 @@ sap.ui.define([
 		this.setAggregation("_content", oVerticalLayout);
 	};
 
-	Panel.prototype._createContentAdditionalContentArea = function() {
-		var oAdditionalContentAreay = new VBox({
+	Panel.prototype._createAdditionalContentArea = function() {
+		var oAdditionalContentArea = new VBox({
 			fitContainer: false,
 			items: this.getAdditionalContent()
 		});
 
-		return oAdditionalContentAreay;
+		return oAdditionalContentArea;
 	};
 
 	Panel.prototype._createSeparator = function() {
@@ -296,7 +296,7 @@ sap.ui.define([
 	};
 
 	Panel.prototype._createFooterArea = function() {
-		var oResetButton = new Button({
+		var oResetButton = new Button(this.getId() + "--idSectionPersonalizationButton", {
 			type: "Transparent",
 			text: oRB.getText("info.POPOVER_DEFINE_LINKS"),
 			press: this.onPressLinkPersonalization.bind(this)
@@ -465,6 +465,19 @@ sap.ui.define([
 			switch (oChanges.name) {
 				case "additionalContent":
 					var aAdditionalContent = oChanges.child ? [ oChanges.child ] : oChanges.children;
+					aAdditionalContent.forEach(function(oAdditionalContent) {
+						switch (oChanges.mutation) {
+							case "insert":
+								// "forward" additional content to the additionalContentArea
+								this.getAggregation("_content").getContent()[0].addItem(oAdditionalContent);
+								break;
+							case "remove":
+								// Don't remove additional content as this will also be called when we forward it to the additionalContentArea
+								break;
+							default:
+								Log.error("Mutation '" + oChanges.mutation + "' is not supported yet.");
+						}
+					}.bind(this));
 					oModel.setProperty("/countAdditionalContent", aAdditionalContent.length);
 					break;
 				case "items":
@@ -513,7 +526,7 @@ sap.ui.define([
 					}, this);
 					break;
 				case "enablePersonalization":
-					this.byId("idSectionPersonalizationButton").setVisible(oChanges.current);
+					this._getPersonalizationButton().setVisible(oChanges.current);
 					break;
 				default:
 					Log.error("The property or aggregation '" + oChanges.name + "' has not been registered.");
@@ -593,7 +606,7 @@ sap.ui.define([
 	Panel.prototype._updateContentTitle = function() {
 		var oModel = this._getInternalModel();
 		var aAdditionalContent = this.getAdditionalContent();
-		var oContentTitle = "idSectionPersonalizationButton";
+		var oContentTitle = this._getPersonalizationButton().getId();
 
 		if (aAdditionalContent.length > 0) {
 			oContentTitle = aAdditionalContent[0];
@@ -605,6 +618,10 @@ sap.ui.define([
 		}
 
 		oModel.setProperty("/contentTitle", oContentTitle);
+	};
+
+	Panel.prototype._getPersonalizationButton = function() {
+		return this.getAggregation("_content").getContent()[3].getItems()[0];
 	};
 
 	return Panel;
