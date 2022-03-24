@@ -105,7 +105,11 @@ function(
 									sReplace = vValue;
 								}
 
-								sTokenText = sReplace == null ? null : sTokenText.replace(new RegExp("\\$" + i + "|" + i + "\\$" + "|" + "\\{" + i + "\\}", "g"), sReplace);
+								if (sReplace === null) {
+									sTokenText = null; // some types (like Unit) return null if no value is given, in this case stop formating and return null
+									break;
+								}
+								sTokenText = sTokenText.replace(new RegExp("\\$" + i + "|" + i + "\\$" + "|" + "\\{" + i + "\\}", "g"), sReplace);
 							}
 
 							return sTokenText;
