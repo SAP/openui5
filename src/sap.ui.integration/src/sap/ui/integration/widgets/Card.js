@@ -578,7 +578,6 @@ sap.ui.define([
 				"To enable it, set the 'compatVersion' configuration option to 'edge', e.g.: data-sap-ui-compatVersion='edge' - " +
 				"sap.ui.integration.widgets.Card"
 			);
-			return;
 		}
 
 		if (this._bApplyManifest || this._bApplyParameters) {
