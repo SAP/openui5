@@ -3525,7 +3525,7 @@ sap.ui.define([
 	 *
 	 * @returns {int} The actual fixed column count computed based on the column spans of the header, the width of the
 	 * table and the width of the columns.
-	 * @protected
+	 * @private
 	 */
 	Table.prototype.getComputedFixedColumnCount = function() {
 		if (this._bIgnoreFixedColumnCount) {

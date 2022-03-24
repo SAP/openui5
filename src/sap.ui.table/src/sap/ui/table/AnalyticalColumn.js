@@ -361,11 +361,13 @@ sap.ui.define([
 	 *   <li>The column's <code>leadingProperty</code> must be a sortable and filterable dimension.</li>
 	 * </ul>
 	 *
-	 * @protected
+	 * @private
+	 * @ui5-restricted sap.ui.comp
 	 * @return {boolean} <code>true</code> if the column is groupable
 	 */
-	AnalyticalColumn.prototype.isGroupable = function() {
+	AnalyticalColumn.prototype.isGroupableByMenu = function() {
 		var oParent = this.getParent();
+
 		if (isInstanceOfAnalyticalTable(oParent)) {
 			var oBinding = oParent.getBinding();
 			if (oBinding) {
@@ -380,6 +382,8 @@ sap.ui.define([
 
 		return false;
 	};
+
+	AnalyticalColumn.prototype.isGroupable = AnalyticalColumn.prototype.isGroupableByMenu; // TODO: Remove after changing sap.ui.comp
 
 	// This column sets its own cell content visibility settings.
 	AnalyticalColumn.prototype._setCellContentVisibilitySettings = function() {};
