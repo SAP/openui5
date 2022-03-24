@@ -92,7 +92,7 @@ sap.ui.define([
 					 * An object containing information about the specific item that has been changed.
 					 */
 					item: {
-						type: "object"
+						type: "sap.m.p13n.Item|sap.m.p13n.Item[]"
 					}
 				}
 			}
@@ -489,9 +489,15 @@ sap.ui.define([
 		}, this);
 
 		if (sSpecialChangeReason) {
+
+			var aModelItems = [];
+			aListItems.forEach(function(oTableItem) {
+				aModelItems.push(this._getModelEntry(oTableItem));
+			}, this);
+
 			this.fireChange({
 				reason: sSpecialChangeReason,
-				item: undefined //No direct item is affected
+				item: aModelItems
 			});
 		}
 
