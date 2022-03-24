@@ -30,8 +30,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
-		sBuildInViz = "sap/ui/integration/editor/fields/viz";
+	var sBuildInViz = "sap/ui/integration/editor/fields/viz";
 
 	/**
 	 * @class
@@ -172,13 +171,10 @@ sap.ui.define([
 	};
 
 	BaseField.prototype.getResourceBundle = function() {
-		return oResourceBundle;
+		return this.getModel("i18n").getResourceBundle();
 	};
 
 	BaseField.prototype.setConfiguration = function (oConfig, bSuppress) {
-		if (oResourceBundle && oResourceBundle.sLocale !== Core.getConfiguration().getLanguage()) {
-			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-		}
 		if (oConfig !== this.getConfiguration()) {
 			//sanitize configuration
 			this._sanitizeValidationSettings(oConfig);
@@ -409,9 +405,9 @@ sap.ui.define([
 			}
 			if (!sError) {
 				if (oSettings._txt) {
-					sError = oResourceBundle.getText(oValidations[oSettings._txt], [oSettings[n]]);
+					sError = this.getResourceBundle().getText(oValidations[oSettings._txt], [oSettings[n]]);
 				} else {
-					sError = oResourceBundle.getText(oValidations[n + "Txt"], [oSettings[n]]);
+					sError = this.getResourceBundle().getText(oValidations[n + "Txt"], [oSettings[n]]);
 				}
 			}
 			this._showValueState(oSettings.type || "error", sError);
