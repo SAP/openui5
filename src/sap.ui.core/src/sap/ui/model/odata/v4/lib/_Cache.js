@@ -792,6 +792,10 @@ sap.ui.define([
 	_Cache.prototype.fetchType = function (mTypeForMetaPath, sMetaPath) {
 		var that = this;
 
+		if (sMetaPath in mTypeForMetaPath) {
+			return SyncPromise.resolve(mTypeForMetaPath[sMetaPath]);
+		}
+
 		return this.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
 			var oMessageAnnotation,
 				aPromises = [];

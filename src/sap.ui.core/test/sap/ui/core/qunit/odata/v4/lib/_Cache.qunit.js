@@ -2299,6 +2299,9 @@ sap.ui.define([
 		return oCache.fetchType(mTypeForMetaPath, "/TEAMS").then(function (oResult) {
 			assert.strictEqual(oResult, oType);
 			assert.strictEqual(mTypeForMetaPath["/TEAMS"], oType);
+
+			// code under test (already there)
+			assert.strictEqual(oCache.fetchType(mTypeForMetaPath, "/TEAMS").getResult(), oType);
 		});
 	});
 
