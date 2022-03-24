@@ -211,7 +211,7 @@ sap.ui.define([
 			value,
 			addTarget = tagName === "a";
 		// add UI5 specific classes when appropriate
-		var cssClass = this._renderingRules.ELEMENTS[tagName].cssClass || "";
+		var cssClass = (this._renderingRules.ELEMENTS[tagName] && this._renderingRules.ELEMENTS[tagName].cssClass) ? this._renderingRules.ELEMENTS[tagName].cssClass : "";
 		for (var i = 0; i < attribs.length; i += 2) {
 			// attribs[i] is the name of the tag's attribute.
 			// attribs[i+1] is its corresponding value.
