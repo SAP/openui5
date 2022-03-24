@@ -98,13 +98,19 @@ sap.ui.define([
 	 * Returns the configuration of a manifest section or the value for a
 	 * specific path. If no section or key is specified, the return value is null.
 	 *
+	 * <b>Note:</b>
+	 * This function is a local variant of sap.ui.core.ComponentMetadata#_getManifestEntry.
+	 * This function allows to access manifest information on an instance-specific manifest
+	 * first, before then looking up the inheritance chain.
+	 * All Components using the default manifest will rely on the above default implementation.
+	 *
 	 * @param {sap.ui.core.ComponentMetadata} oMetadata the Component metadata
 	 * @param {sap.ui.core.Manifest} oManifest the manifest
 	 * @param {string} sKey Either the manifest section name (namespace) or a concrete path
 	 * @param {boolean} [bMerged] Indicates whether the manifest entry is merged with the manifest entries of the parent component.
 	 * @return {any|null} Value of the manifest section or the key (could be any kind of value)
 	 * @private
-	 * @see {@link sap.ui.core.Component#getManifestEntry}
+	 * @see {@link sap.ui.core.Component#_getManifestEntry}
 	 */
 	function getManifestEntry(oMetadata, oManifest, sKey, bMerged) {
 		var oData = oManifest.getEntry(sKey);
@@ -118,7 +124,7 @@ sap.ui.define([
 		// the configuration of the static component metadata will be ignored
 		var oParent, oParentData;
 		if (bMerged && (oParent = oMetadata.getParent()) instanceof ComponentMetadata) {
-			oParentData = oParent.getManifestEntry(sKey, bMerged);
+			oParentData = oParent._getManifestEntry(sKey, bMerged);
 		}
 
 		// only extend / clone if there is data
@@ -152,20 +158,30 @@ sap.ui.define([
 
 		// copy all functions from the metadata object except of the
 		// manifest related functions which will be instance specific now
+		// we proxy private core restricted manifest related API, as well as older public/deprecated API (for compatibility)
 		for (var m in oMetadata) {
-			if (!/^(getManifest|getManifestObject|getManifestEntry|getMetadataVersion)$/.test(m) && typeof oMetadata[m] === "function") {
+			if (!/^(getManifest|_getManifest|getManifestObject|getManifestEntry|_getManifestEntry|getMetadataVersion)$/.test(m) && typeof oMetadata[m] === "function") {
 				oMetadataProxy[m] = oMetadata[m].bind(oMetadata);
 			}
 		}
 
-		// return the content of the manifest instead of the static metadata
+		// @public & @deprecated on ComponentMetadata, kept for compatibility
 		oMetadataProxy.getManifest = function() {
+			return this._getManifest();
+		};
+		// @public & @deprecated on ComponentMetadata, kept for compatibility
+		oMetadataProxy.getManifestEntry = function(sKey, bMerged) {
+			return this._getManifestEntry(sKey, bMerged);
+		};
+
+		oMetadataProxy._getManifest = function() {
+			// return the content of the manifest instead of the static metadata
 			return oManifest && oManifest.getJson();
 		};
 		oMetadataProxy.getManifestObject = function() {
 			return oManifest;
 		};
-		oMetadataProxy.getManifestEntry = function(sKey, bMerged) {
+		oMetadataProxy._getManifestEntry = function(sKey, bMerged) {
 			return getManifestEntry(oMetadata, oManifest, sKey, bMerged);
 		};
 		oMetadataProxy.getMetadataVersion = function() {
@@ -469,7 +485,7 @@ sap.ui.define([
 	 */
 	Component.prototype.getManifest = function() {
 		if (!this._oManifest) {
-			return this.getMetadata().getManifest();
+			return this.getMetadata()._getManifest();
 		} else {
 			return this._oManifest.getJson();
 		}
@@ -526,8 +542,11 @@ sap.ui.define([
 	 */
 	Component.prototype._getManifestEntry = function(sKey, bMerged) {
 		if (!this._oManifest) {
-			return this.getMetadata().getManifestEntry(sKey, bMerged);
+			// get entry via standard component metadata
+			return this.getMetadata()._getManifestEntry(sKey, bMerged);
 		} else {
+			// get entry via instance-specific manifest
+			// this.getMetadata() returns the instance-specific ComponentMetadata Proxy
 			return getManifestEntry(this.getMetadata(), this._oManifest, sKey, bMerged);
 		}
 	};
@@ -1584,10 +1603,10 @@ sap.ui.define([
 			while (oMeta instanceof ComponentMetadata) {
 				var oCurrentManifest = oMeta.getManifestObject();
 
-				var mCurrentDataSources = oMeta.getManifestEntry("/sap.app/dataSources");
+				var mCurrentDataSources = oMeta._getManifestEntry("/sap.app/dataSources");
 				mergeDefinitionSource(mConfig.dataSources, mConfig.origin.dataSources, mCurrentDataSources, oCurrentManifest);
 
-				var mCurrentModelConfigs = oMeta.getManifestEntry("/sap.ui5/models");
+				var mCurrentModelConfigs = oMeta._getManifestEntry("/sap.ui5/models");
 				mergeDefinitionSource(mConfig.models, mConfig.origin.models, mCurrentModelConfigs, oCurrentManifest);
 
 				oMeta = oMeta.getParent();
@@ -2467,7 +2486,7 @@ sap.ui.define([
 			 * register for messaging: register if either handleValidation is set in metadata
 			 * or if not set in metadata and set on instance
 			 */
-			var bHandleValidation = oInstance.getMetadata().getManifestEntry("/sap.ui5/handleValidation");
+			var bHandleValidation = oInstance.getMetadata()._getManifestEntry("/sap.ui5/handleValidation");
 			if (bHandleValidation !== undefined || vConfig.handleValidation) {
 				sap.ui.getCore().getMessageManager().registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
 			}
