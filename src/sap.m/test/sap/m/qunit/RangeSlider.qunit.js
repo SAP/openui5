@@ -275,7 +275,6 @@ sap.ui.define([
 		this.rangeSlider.setShowAdvancedTooltip(true);
 		oCore.applyChanges();
 
-		this.rangeSlider.getAggregation("_tooltipContainer").show(this.rangeSlider);
 		fnUpdateTooltipContentSpy = this.spy(this.rangeSlider, "_updateTooltipContent");
 		this.rangeSlider.setValue(50);
 
@@ -1345,7 +1344,7 @@ sap.ui.define([
 
 		// act
 		oSlider.focus();
-		clock.tick(1);
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oSlider.getDomRef("handle1").getAttribute("aria-controls"), 'The "aria-controls" should be set');
