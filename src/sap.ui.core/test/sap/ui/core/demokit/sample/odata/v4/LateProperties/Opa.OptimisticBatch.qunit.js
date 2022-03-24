@@ -37,7 +37,11 @@ sap.ui.getCore().attachInit(function () {
 
 		oSkipPromise.then(function (bUnsupported) {
 			if (bUnsupported) {
-				QUnit.skip("Test runs only within CacheManager supported environment");
+				QUnit.test("Test within unsupported CacheManager environment", function (assert) {
+					// OPA below works only in supported environments, but each test module has to
+					// provide at least one test result
+					assert.ok(true);
+				});
 				QUnit.start();
 
 				return;
