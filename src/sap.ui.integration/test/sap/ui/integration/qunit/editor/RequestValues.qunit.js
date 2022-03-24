@@ -1716,6 +1716,59 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
+
+		QUnit.test("Backward Compatability for valueItems saved by MultiComboBox", function (assert) {
+			var adminchanges = {
+				"/sap.card/configuration/parameters/CustomersWithFilterParameter/value": ["a", "b", "d"],
+				"/sap.card/configuration/parameters/CustomersWithFilterParameter/valueItems": [
+					{"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1"},
+					{"CustomerID": "b", "CompanyName": "B Company", "Country": "Country 2", "City": "City 2", "Address": "Address 2"},
+					{"CustomerID": "d", "CompanyName": "C2 Company", "Country": "Country 4", "City": "City 4", "Address": "Address 4"}
+				],
+				":layer": 0,
+				":errors": false
+			};
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: oManifestForFilterBackendInMultiInput,
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersLabel.getText() === "Customers with filter parameter", "Label: Has static label text");
+					assert.ok(oCustomersField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
+					var oCustomersMultiInput = oCustomersField.getAggregation("_field");
+					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers is MultiInput");
+					var oTokens = oCustomersMultiInput.getTokens();
+					assert.ok(oTokens.length === 3, "Field: token lenght is OK");
+					assert.ok(oTokens[0].getText() === "A Company", "Field: token1 text is OK");
+					assert.ok(oTokens[1].getText() === "B Company", "Field: token2 text is OK");
+					assert.ok(oTokens[2].getText() === "C2 Company", "Field: token3 text is OK");
+					setTimeout(function () {
+						oCustomersMultiInput.setValue("c");
+						oCustomersMultiInput._openSuggestionsPopover();
+						var oFakeEvent = {
+							isMarked: function(){},
+							setMarked:function(){},
+							"target": {
+								"value": "c"
+							},
+							"srcControl": oCustomersMultiInput
+						};
+						oCustomersField.onInputForMultiInput(oFakeEvent);
+						setTimeout(function () {
+							assert.ok(oCustomersMultiInput._getSuggestionsList().getItems().length === 6, "Field: Customers lenght is OK");
+							resolve();
+						}, 2 * iWaitTimeout);
+					}, 2 * iWaitTimeout);
+				}.bind(this));
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("Get data from extension", {

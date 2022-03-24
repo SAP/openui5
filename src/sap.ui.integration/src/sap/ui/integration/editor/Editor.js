@@ -1461,6 +1461,9 @@ sap.ui.define([
 							if (oItem.valueItems) {
 								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueItems"] = oItem.valueItems;
 							}
+							if (oItem.valueTokens) {
+								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTokens"] = oItem.valueTokens;
+							}
 							switch (oItem.type) {
 								case "string":
 									if (!oItem.translatable) {
