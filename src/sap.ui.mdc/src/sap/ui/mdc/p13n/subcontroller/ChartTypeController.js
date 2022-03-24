@@ -18,6 +18,10 @@ sap.ui.define([
 		return {properties: {chartType: this.getAdaptationControl().getChartType()}};
 	};
 
+    ChartTypeController.prototype.getStateKey = function() {
+		return "supplementaryConfig";
+	};
+
     ChartTypeController.prototype.getDelta = function(mPropertyBag) {
 
         var sType = mPropertyBag.changedState.type ? mPropertyBag.changedState.type : mPropertyBag.changedState.properties.chartType;

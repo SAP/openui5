@@ -8,8 +8,8 @@ sap.ui.define([
 
     var AggregateController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.AggregateController");
 
-    AggregateController.prototype.getCurrentState = function () {
-        return this.getAdaptationControl().getCurrentState().aggregations;
+    AggregateController.prototype.getStateKey = function () {
+        return "aggregations";
     };
 
     AggregateController.prototype.sanityCheck = function(change) {

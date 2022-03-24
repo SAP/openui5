@@ -655,7 +655,7 @@ sap.ui.define([
 
 		sinon.stub(AggregationBaseDelegate, "validateState").callsFake(function(oControl, oState){
 			assert.ok(oControl.isA("sap.ui.mdc.Control"), "Check that the control instance has been provided");
-			assert.equal(oState.Test2.length, 1, "Check that the (theortical) state object has been provided");
+			assert.equal(oState.items.length, 1, "Check that the (theortical) state object has been provided");
 
 			return {
 				validation: coreLibrary.MessageType.Warning,
@@ -689,7 +689,7 @@ sap.ui.define([
 
 		sinon.stub(AggregationBaseDelegate, "validateState").callsFake(function(oControl, oState){
 			assert.ok(oControl.isA("sap.ui.mdc.Control"), "Check that the control instance has been provided");
-			assert.equal(oState.Test2.length, 1, "Check that the (theortical) state object has been provided");
+			assert.equal(oState.items.length, 1, "Check that the (theortical) state object has been provided");
 
 			return {
 				validation: coreLibrary.MessageType.None,

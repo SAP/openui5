@@ -14,8 +14,8 @@ sap.ui.define([
 		}
     });
 
-    SortController.prototype.getCurrentState = function() {
-        return this.getAdaptationControl().getCurrentState().sorters;
+    SortController.prototype.getStateKey = function() {
+        return "sorters";
     };
 
     SortController.prototype.getUISettings = function() {

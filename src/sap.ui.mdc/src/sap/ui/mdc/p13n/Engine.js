@@ -10,12 +10,11 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/modification/FlexModificationHandler",
 	"sap/m/MessageStrip",
 	"sap/ui/core/library",
-	"sap/ui/mdc/p13n/StateUtil",
 	"sap/ui/core/Element",
 	"sap/ui/mdc/p13n/modules/DefaultProviderRegistry",
 	"sap/ui/mdc/p13n/UIManager",
 	"sap/ui/mdc/p13n/modules/StateHandlerRegistry"
-], function (AdaptationProvider, merge, Log, PropertyHelper, FlexModificationHandler, MessageStrip, coreLibrary, StateUtil, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry) {
+], function (AdaptationProvider, merge, Log, PropertyHelper, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry) {
 	"use strict";
 
 	var ERROR_INSTANCING = "Engine: This class is a singleton. Please use the getInstance() method instead.";
@@ -421,6 +420,48 @@ sap.ui.define([
 	};
 
 	/**
+	 * The Engine is processing state via the internal key registry.
+	 * The external state representation might differ from the internal registration.
+	 * <b>Note:</b> This will only replace the keys to the external StateUtil representation, but not transform the state content itself.
+	 *
+	 * @private
+	 * @param {string|sap.ui.mdc.Control} vControl The registered control instance
+	 * @param {object} oInternalState The internal state
+	 * @returns {object} The externalized state
+	 */
+	Engine.prototype.externalizeKeys = function(vControl, oInternalState) {
+		var oExternalState = {};
+		Object.keys(oInternalState).forEach(function(sInternalKey){
+			var oController = this.getController(Engine.getControlInstance(vControl), sInternalKey);
+			if (oController) {
+				oExternalState[oController.getStateKey()] = oInternalState[sInternalKey];
+			}
+		}.bind(this));
+		return oExternalState;
+	};
+
+	/**
+	 * The Engine is processing state via the internal key registry.
+	 * The external state representation might differ from the internal registration.
+	 * <b>Note:</b> This will only replace the keys to the internal Engine registry, but not transform the state content itself.
+	 *
+	 * @private
+	 * @param {string|sap.ui.mdc.Control} vControl The registered control instance
+	 * @param {object} oExternalState The external state
+	 * @returns {object} The internalized state
+	 */
+	Engine.prototype.internalizeKeys = function (vControl, oExternalState) {
+		var aControllerKeys = this.getRegisteredControllers(vControl), oInternalState = {};
+		aControllerKeys.forEach(function(sInternalRegistryKey){
+			var sExternalStateKey = this.getController(vControl, sInternalRegistryKey).getStateKey();
+			if (oExternalState.hasOwnProperty(sExternalStateKey)) {
+				oInternalState[sInternalRegistryKey] = oExternalState[sExternalStateKey];
+			}
+		}.bind(this));
+		return oInternalState;
+	};
+
+	/**
 	 * Apply a State on a control by passing an object that contains the
 	 * registered controller key and an object matching the innter subcontroller housekeeping.
 	 *
@@ -442,7 +483,7 @@ sap.ui.define([
 			var aStatePromise = [], aChanges = [], mInfoState = {};
 
 			if (oControl.validateState instanceof Function) {
-				mInfoState = oControl.validateState(StateUtil._externalizeKeys(oState));
+				mInfoState = oControl.validateState(this.externalizeKeys(oControl, oState));
 			}
 
 			if (mInfoState.validation === MessageType.Error){
@@ -908,7 +949,7 @@ sap.ui.define([
 		if (oController.model2State instanceof Function) {
 			oTheoreticalState[sKey] = oController.model2State();
 
-			var mInfoState = oControl.validateState(StateUtil._externalizeKeys(oTheoreticalState), sKey);
+			var mInfoState = oControl.validateState(this.externalizeKeys(oControl, oTheoreticalState), sKey);
 
 			var oMessageStrip;
 
