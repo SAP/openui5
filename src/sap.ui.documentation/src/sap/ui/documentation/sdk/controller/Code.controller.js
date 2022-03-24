@@ -240,7 +240,14 @@ sap.ui.define([
 
 			_getFileType : function (sFileName) {
 				var sFileExtension = sFileName.split('.').pop();
-				return sFileExtension === "js" ? "javascript" : sFileExtension;
+				switch (sFileExtension) {
+					case "js":
+						return "javascript";
+					case "feature":
+						return "text";
+					default:
+						return sFileExtension;
+				}
 			},
 
 			_getInitialFileName : function() {

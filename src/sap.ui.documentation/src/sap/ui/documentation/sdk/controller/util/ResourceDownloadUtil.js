@@ -55,7 +55,7 @@ sap.ui.define([], function() {
 			},
 
 			_getExpectedResponseType: function(sResourceUrl, bTreatAsText) {
-				if (sResourceUrl.match(/.+(.js|.json|.less|.xml|.html|.properties|.css|.svg|.md|.txt|.yaml|.yml)$/i) || bTreatAsText) { // supported text types
+				if (sResourceUrl.match(/.+(.js|.json|.less|.xml|.html|.properties|.css|.svg|.md|.txt|.feature|.yaml|.yml)$/i) || bTreatAsText) { // supported text types
 					return "text";
 				}
 
