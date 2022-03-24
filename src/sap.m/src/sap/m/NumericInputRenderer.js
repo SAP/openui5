@@ -39,6 +39,18 @@ sap.ui.define(["sap/ui/core/Renderer", "./InputRenderer", "sap/ui/Device", "sap/
 		}
 	};
 
+	/**
+	 * Returns aria accessibility role for the control.
+	 *
+	 * @protected
+	 * @override
+	 * @param {sap.m.Input} oControl An object representation of the control
+	 * @returns {string}
+	 */
+	 NumericInputRenderer.getAriaRole = function (oControl) {
+		return "spinbutton";
+	};
+
 	//Accessibility behavior of the Input needs to be extended
 	/**
 	* Overwrites the accessibility state using the <code>getAccessibilityState</code> method of the <code>InputBaseRenderer</code>.
@@ -47,7 +59,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./InputRenderer", "sap/ui/Device", "sap/
 	* @returns {Array} mAccessibilityState
 	*/
 	NumericInputRenderer.getAccessibilityState = function(oNumericInput) {
-		var mAccessibilityState = InputRenderer.getAccessibilityState(oNumericInput),
+		var mAccessibilityState = InputRenderer.getAccessibilityState.apply(this, arguments),
 			fMin,
 			fMax,
 			fNow,
