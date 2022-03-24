@@ -26,8 +26,15 @@ sap.ui.define([
     GroupController.prototype.getAdaptationUI = function(oPropertyHelper){
         var oGroupPanel = new GroupPanel();
         var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+		var oAdaptationControl = this.getAdaptationControl();
+
+		if (oAdaptationControl.isA("sap.ui.mdc.Table") && oAdaptationControl._getStringType() === "ResponsiveTable") {
+			oGroupPanel.setQueryLimit(1);
+		}
+
         oGroupPanel.setP13nData(oAdaptationData.items);
         this._oPanel = oGroupPanel;
+
         return Promise.resolve(oGroupPanel);
     };
 

@@ -21,6 +21,9 @@
 			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1" />
 	</edmx:Reference>
+	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/cs02/vocabularies/Org.OData.Aggregation.V1.xml">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema Namespace="com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001"
 				Alias="SAP__self">
@@ -33,7 +36,11 @@
 				<Property Name="TypeCode" Type="Edm.String" Nullable="false"
 						  MaxLength="2" />
 				<Property Name="Category" Type="Edm.String" Nullable="false"
-						  MaxLength="20" />
+						  MaxLength="20">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+				</Property>
 				<Property Name="Name" Type="Edm.String" Nullable="false"
 						  MaxLength="30" />
 				<Property Name="NameLanguage" Type="Edm.String" Nullable="false"

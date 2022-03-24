@@ -106,17 +106,6 @@ sap.ui.define([
 		return this.fetchPropertyExtensions(oTable, aProperties);
 	};
 
-	/**
-	 * Formats the title text of a group header row of the table.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @param {sap.ui.model.Context} oContext Binding context
-	 * @param {string} sProperty The name of the grouped property
-	 * @returns {string | undefined} The group header title. If <code>undefined</code> is returned, the default group header title is set.
-	 * @private
-	 */
-	Delegate.formatGroupHeader = function(oTable, oContext, sProperty) {};
-
 	Delegate.preInit = function(oTable) {
 		if (!TableMap.has(oTable)) {
 			TableMap.set(oTable, {});
@@ -261,7 +250,7 @@ sap.ui.define([
 			return [];
 		}
 
-		if (oTable.isGroupingEnabled() && supportsGrouping(oTable)) {
+		if (oTable.isGroupingEnabled()) {
 			var aGroupProperties = oProperty.getGroupableProperties();
 
 			if (aGroupProperties.length > 0) {
@@ -269,7 +258,7 @@ sap.ui.define([
 			}
 		}
 
-		if (oTable.isAggregationEnabled() && supportsAggregation(oTable)) {
+		if (oTable.isAggregationEnabled()) {
 			var aAggregateProperties = oProperty.getAggregatableProperties();
 
 			if (aAggregateProperties.length > 0) {
@@ -300,7 +289,12 @@ sap.ui.define([
 		var aSupportedModes = TableDelegate.getSupportedP13nModes(oTable);
 
 		if (oTable._getStringType() === TableType.Table) {
-			aSupportedModes = aSupportedModes.concat([P13nMode.Group, P13nMode.Aggregate]);
+			if (!aSupportedModes.includes(P13nMode.Group)) {
+				aSupportedModes.push(P13nMode.Group);
+			}
+			if (!aSupportedModes.includes(P13nMode.Aggregate)) {
+				aSupportedModes.push(P13nMode.Aggregate);
+			}
 		}
 
 		return aSupportedModes;
@@ -589,26 +583,6 @@ sap.ui.define([
 		} else {
 			return oValidationState;
 		}
-	}
-
-	/**
-	 * Checks whether the inner table supports grouping.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @returns {boolean} Whether the inner table supports grouping
-	 */
-	function supportsGrouping(oTable) {
-		return oTable._isOfType(TableType.Table);
-	}
-
-	/**
-	 * Checks whether the inner table supports aggregation.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @returns {boolean} Whether the inner table supports aggregation
-	 */
-	function supportsAggregation(oTable) {
-		return oTable._isOfType(TableType.Table);
 	}
 
 	/**

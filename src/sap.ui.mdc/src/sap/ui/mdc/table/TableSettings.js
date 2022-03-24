@@ -116,7 +116,7 @@ sap.ui.define([
 		},
 
 		showUIColumns: function(oControl, oSource) {
-			oControl.getEngine().uimanager.show(oControl, oControl.getP13nMode(), oSource);
+			oControl.getEngine().uimanager.show(oControl, oControl.getActiveP13nModes(), oSource);
 		},
 
 		showUIFilter: function(oControl, oSource) {
@@ -162,7 +162,7 @@ sap.ui.define([
 				control: oControl,
 				key: "Group",
 				state: aGroup,
-				applyAbsolute: false
+				applyAbsolute: oControl._bMobileTable
 			});
 		},
 
