@@ -410,7 +410,8 @@ sap.ui.define([
 
 					this.sIFrameUrl = ResourcesUtil.getResourceOrigin() +
 						"/resources/sap/ui/documentation/sdk/index.html" +
-						"?sap-ui-xx-sample-id=" + sSampleId
+						(new URL(document.location.href).search ? new URL(document.location.href).search + "&" : "?") +
+						"sap-ui-xx-sample-id=" + sSampleId
 						+ "&sap-ui-xx-sample-origin=" + sSampleOrigin + sSampleVersion
 						+ "&sap-ui-xx-dk-origin=" + window.location.origin;
 
