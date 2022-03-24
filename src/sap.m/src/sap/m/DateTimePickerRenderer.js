@@ -60,8 +60,8 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', './InputBaseRende
 
 		// try to choose the date that is the longest when formatted
 		oRm.text(oControl._getFormatter(true).format(
-			new Date(2000, 10, 20, 10, 10, 10),
-			sap.ui.getCore().getConfiguration().getTimezone()));
+			new Date(Date.UTC(2000, 10, 20, 10, 10, 10)),
+			"UTC"));
 		oRm.close("span");
 	};
 
