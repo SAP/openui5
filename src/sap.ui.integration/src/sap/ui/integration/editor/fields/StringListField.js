@@ -4,27 +4,39 @@
 sap.ui.define([
 	"sap/ui/integration/editor/fields/BaseField",
 	"sap/m/Input",
-	"sap/m/Text",
 	"sap/m/MultiComboBox",
 	"sap/m/MultiInput",
-	"sap/ui/core/ListItem",
-	"sap/base/util/each",
 	"sap/base/util/restricted/_debounce",
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/includes",
 	"sap/base/util/merge",
 	"sap/ui/core/SeparatorItem",
-	"sap/ui/core/Core",
 	"sap/ui/model/Sorter",
 	"sap/m/Token",
 	"sap/m/Tokenizer",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/util/BindingResolver"
 ], function (
-	BaseField, Input, Text, MultiComboBox, MultiInput, ListItem, each, _debounce, _isEqual, ObjectPath, includes, merge, SeparatorItem, Core, Sorter, Token, Tokenizer, deepClone
+	BaseField,
+	Input,
+	MultiComboBox,
+	MultiInput,
+	_debounce,
+	_isEqual,
+	ObjectPath,
+	includes,
+	merge,
+	SeparatorItem,
+	Sorter,
+	Token,
+	Tokenizer,
+	deepClone,
+	JSONModel,
+	BindingResolver
 ) {
 	"use strict";
-	var sDefaultSeperator = "#";
 
 	/**
 	 * @class String List Field with string list value, such as ["value1", "value2"]
@@ -148,11 +160,7 @@ sap.ui.define([
 
 	StringListField.prototype._afterInit = function () {
 		var oControl = this.getAggregation("_field");
-		var oConfig = this.getConfiguration();
 		var oModel = this.getModel();
-		if (oConfig.values) {
-			this.prepareFieldsInKey(oConfig);
-		}
 		if (oControl instanceof MultiComboBox) {
 			if (this.isFilterBackend()) {
 				this.onInputForMultiComboBox = _debounce(this.onInputForMultiComboBox, 500);
@@ -184,25 +192,6 @@ sap.ui.define([
 		}
 	};
 
-	StringListField.prototype.prepareFieldsInKey = function(oConfig) {
-		//get field names in the item key
-		this._sKeySeparator = oConfig.values.keySeparator;
-		if (!this._sKeySeparator) {
-			this._sKeySeparator = sDefaultSeperator;
-		}
-		var sKey = oConfig.values.item.key;
-		this._aFields = sKey.split(this._sKeySeparator);
-		for (var n in this._aFields) {
-			//remove the {} in the field
-			if (this._aFields[n].startsWith("{")) {
-				this._aFields[n] = this._aFields[n].substring(1);
-			}
-			if (this._aFields[n].endsWith("}")) {
-				this._aFields[n] = this._aFields[n].substring(0, this._aFields[n].length - 1);
-			}
-		}
-	};
-
 	StringListField.prototype.initTokens = function() {
 		var oControl = this.getAggregation("_field");
 		var oConfig = this.getConfiguration();
@@ -214,17 +203,16 @@ sap.ui.define([
 			});
 		} else if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && Array.isArray(oConfig.valueItems) && oConfig.valueItems.length > 0) {
 			// backward compatibility for old changes
-			// init tokens from valueItems saved by MultiComboBox
+			// init tokens from valueItems saved before
 			oConfig.valueTokens = [];
-			var oValueItemKeys = oConfig.valueItems.map(function (oValueItem) {
-				return this.getKeyFromItem(oValueItem);
-			}.bind(this));
-			oConfig.value.forEach(function (sValuekey) {
-				if (includes(oValueItemKeys, sValuekey)) {
-					var oSuggestionItem = oControl.getSuggestionItemByKey(sValuekey);
-					var sText = oSuggestionItem ? oSuggestionItem.getText() : sValuekey;
+			oConfig.valueItems.forEach(function (oValueItem) {
+				var oModel = new JSONModel();
+				oModel.setData(oValueItem);
+				var sKey = BindingResolver.resolveValue(oConfig.values.item.key, oModel);
+				if (includes(oConfig.value, sKey)) {
+					var sText = BindingResolver.resolveValue(oConfig.values.item.text, oModel);
 					var oItem = {
-						key: sValuekey,
+						key: sKey,
 						text: sText
 					};
 					var token = new Token(oItem);
@@ -237,14 +225,10 @@ sap.ui.define([
 	};
 
 	StringListField.prototype.getKeyFromItem = function(oItem) {
-		var sItemKey = "";
-		this._aFields.forEach(function (field) {
-			sItemKey += oItem[field].toString() + this._sKeySeparator;
-		}.bind(this));
-		if (sItemKey.endsWith(this._sKeySeparator)) {
-			sItemKey = sItemKey.substring(0, sItemKey.length - this._sKeySeparator.length);
-		}
-		return sItemKey;
+		var oConfig = this.getConfiguration();
+		var oModel = new JSONModel();
+		oModel.setData(oItem);
+		return BindingResolver.resolveValue(oConfig.values.item.key, oModel);
 	};
 
 	StringListField.prototype.onPropertyChangeForFilterBackend = function(oEvent) {
@@ -508,6 +492,7 @@ sap.ui.define([
 			//save the selected keys as field value
 			oSettingsModel.setProperty(sSettingspath + "/value", oConfig.value);
 			oSettingsModel.setProperty(sSettingspath + "/valueItems", oConfig.valueItems);
+			oSettingsModel.setProperty(sSettingspath + "/valueTokens", oConfig.valueTokens);
 		}
 	};
 
