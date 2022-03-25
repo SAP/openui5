@@ -1198,4 +1198,34 @@ sap.ui.define([
 		// clean
 		oDTP.destroy();
 	});
+
+	QUnit.module("Different application timezone", {
+		before: function() {
+			var sTZ1 = "Europe/Sofia";
+			var sTZ2 = "Europe/Berlin";
+
+			this.localTimezone = oCore.getConfiguration().getTimezone();
+			oCore.getConfiguration().setTimezone(this.localTimezone === sTZ1 ? sTZ2 : sTZ1);
+			oCore.applyChanges();
+		},
+		after: function() {
+			oCore.getConfiguration().setTimezone(this.localTimezone);
+			oCore.applyChanges();
+		}
+	});
+
+	QUnit.test("measure label renders always the same UTC date and time", function(assert) {
+		// arrange
+		var oDTP = new DateTimePicker("dtp", {
+			showTimezone: true
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oDTP.$().find(".sapMDummyContent").text(), "Nov 20, 2000, 10:10:10 AM",
+			"the correct formatted date and time is used to measure the input width");
+
+		// clean
+		oDTP.destroy();
+	});
 });
