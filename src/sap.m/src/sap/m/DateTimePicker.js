@@ -556,6 +556,7 @@ sap.ui.define([
 		var oResourceBundle;
 
 		if (this._oTimezonePopup) {
+			this._oTimezonePopup.setTitle(this._getTimezone(true));
 			return this._oTimezonePopup;
 		}
 
