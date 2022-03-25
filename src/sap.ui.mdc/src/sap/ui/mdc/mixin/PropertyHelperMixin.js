@@ -60,6 +60,12 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 			if (fnApplySettings) {
 				fnApplySettings.apply(this, arguments);
 			}
+
+			// initialize propertyHelper also, when store is initially empty
+			if (this._sPropertyInfoStore && (!arguments[0] || !arguments[0].hasOwnProperty(this._sPropertyInfoStore))) {
+				_createOrUpdatePropertyHelper.call(this, [], false);
+			}
+
 			this._oApplySettingsDeferred.resolve(this);	// We want to make sure all other initial properties are set before initializing propertyHelper (e.g. delegate)
 			return this;
 		};

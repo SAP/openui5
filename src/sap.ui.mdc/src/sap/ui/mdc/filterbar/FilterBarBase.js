@@ -377,7 +377,6 @@ sap.ui.define([
 		this._setPropertyHelperClass(PropertyHelper);
 		this._setupPropertyInfoStore("propertyInfo");
 		this._applySettings(mSettings, oScope);
-		//this._initControlDelegate();
 		Promise.all([this.awaitPropertyHelper()]).then(function() {
 			if (!this._bIsBeingDestroyed) {
 				this._applyInitialFilterConditions();
@@ -392,14 +391,6 @@ sap.ui.define([
 
 		this._oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
 	};
-
-//	FilterBarBase.prototype._initControlDelegate = function() {
-//		Promise.all([this.awaitPropertyHelper()]).then(function() {
-//			if (!this._bIsBeingDestroyed) {
-//				this._applyInitialFilterConditions();
-//			}
-//		}.bind(this));
-//	};
 
 	FilterBarBase.prototype._waitForMetadata = function() {
 		return this._retrieveMetadata().then(function() {
@@ -827,6 +818,10 @@ sap.ui.define([
 		return this.validate();
 	};
 
+	FilterBarBase.prototype._hasRetrieveMetadataToBeCalled = function() {
+		return ((this.getPropertyHelper() === null) || ((this.getPropertyHelper().getProperties().length === 0) && !this.isPropertyHelperFinal()));
+	};
+
 	/**
 	 * Returns a promise for the asynchronous validation of filters.
 	 *
@@ -859,8 +854,8 @@ sap.ui.define([
 			return this._oValidationPromise;
 		}.bind(this);
 
-		return this.initialized().then(function() {
-			if (!this.isPropertyHelperFinal()) {
+		return this.waitForInitialization().then(function() {
+			if (this._hasRetrieveMetadataToBeCalled()) {
 				return this._retrieveMetadata().then(function() {
 					return fValidateFc();
 				});

@@ -1347,7 +1347,7 @@ sap.ui.define([
 			fnFunction = resolve;
 		});
 
-		var done = assert.async();
+		sinon.stub(oFilterBar, "waitForInitialization").returns(Promise.resolve());
 
 		sinon.spy(oFilterBar, "_validate");
 		sinon.spy(oFilterBar, "_handleOngoingChangeAppliance");
@@ -1355,7 +1355,7 @@ sap.ui.define([
 		oFilterBar._aOngoingChangeAppliance = [oPromise];
 		setTimeout(function() {fnFunction();}, 200);
 
-		oFilterBar.triggerSearch().then(function() {
+		return oFilterBar.triggerSearch().then(function() {
 			assert.ok(oFilterBar._handleOngoingChangeAppliance.calledOnce);
 			oFilterBar._handleOngoingChangeAppliance.reset();
 
@@ -1363,10 +1363,9 @@ sap.ui.define([
 			oFilterBar._validate.reset();
 
 
-			oFilterBar.triggerSearch().then(function() {
+			return oFilterBar.triggerSearch().then(function() {
 				assert.ok(!oFilterBar._handleOngoingChangeAppliance.called);
 				assert.ok(oFilterBar._validate.calledOnce);
-				done();
 			});
 		});
 
@@ -1433,6 +1432,8 @@ sap.ui.define([
 		sinon.spy(oFilterBar, "_validate");
 
 		var oTriggerSearchPromise = null;
+
+		sinon.stub(oFilterBar, "waitForInitialization").returns(Promise.resolve());
 
 		var fOriginalTriggerSearch = oFilterBar.triggerSearch;
 		oFilterBar.triggerSearch = function() {
