@@ -299,8 +299,15 @@ function(
 		this._oStepNavigation = new ItemNavigation();
 		this._oStepNavigation.setCycling(false);
 		this._oStepNavigation.setDisabledModifiers({
-			sapnext: ["alt"],
-			sapprevious: ["alt"]
+			// Alt + arrow keys are reserved for browser navigation
+			sapnext: [
+				"alt", // Windows and Linux
+				"meta" // Apple (⌘)
+			],
+			sapprevious: [
+				"alt",
+				"meta"
+			]
 		});
 		this._oStepNavigation.attachEvent("AfterFocus", function (params) {
 			var oEvent = params.mParameters.oEvent;
