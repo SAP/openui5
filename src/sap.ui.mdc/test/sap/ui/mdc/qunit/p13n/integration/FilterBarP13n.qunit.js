@@ -211,6 +211,10 @@ sap.ui.define([
 			item3: [{operator: "EQ", values:["Test"]}]
 		};
 
+        sinon.stub(Engine.getInstance(), '_processChanges').callsFake(function fakeFn(vControl, aChanges) {
+			return Promise.resolve(aChanges);
+        });
+
 		Engine.getInstance().createChanges({
 			control: this.oFilterBar,
 			key: "Filter",
