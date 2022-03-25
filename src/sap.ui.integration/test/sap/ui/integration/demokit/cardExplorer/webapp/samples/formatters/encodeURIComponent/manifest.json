@@ -29,7 +29,7 @@
 	"type": "Table",
 	"configuration": {
 	  "parameters": {
-		"to": {
+		"toDate": {
 		  "value": "{{parameters.TODAY_ISO}}",
 		  "type": "date",
 		  "label": "To",
@@ -46,7 +46,7 @@
 	"content": {
 	  "data": {
 		"request": {
-		  "url": "https://services.odata.org/V4/Northwind/Northwind.svc/Orders?filter=encodeURIComponent('OrderDate gt {parameters>/fromDate/value}')",
+		  "url": "https://services.odata.org/V4/Northwind/Northwind.svc/Orders?filter={=encodeURIComponent('OrderDate gt  ' + ${parameters>/toDate/value})}",
 		  "parameters": {
 			"$format": "json",
 			"$orderby": "CustomerID"
