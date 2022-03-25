@@ -271,9 +271,9 @@ sap.ui.define([
 			if (this.isFilterBackend()) {
 				this.onInput = _debounce(this.onInput, 500);
 				//if need to filter backend by input value, need to hook the onInput function which only support filter locally.
-				oControl.oninput = this.onInput;
+				oControl.oninput = this.onInput.bind(this);
 				//listen to the selectionChange event of Combobox
-				oControl.attachSelectionChange(this.onSelectionChange);
+				oControl.attachSelectionChange(this.onSelectionChange.bind(this));
 			}
 		}
 		this._settingsModel = this.getModel("currentSettings");
