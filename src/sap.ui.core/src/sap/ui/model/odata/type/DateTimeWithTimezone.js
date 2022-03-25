@@ -4,18 +4,16 @@
 
 sap.ui.define([
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/format/DateFormatTimezoneDisplay",
 	"sap/ui/model/_Helper",
 	"sap/ui/model/CompositeType",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException"
-], function (DateFormat, DateFormatTimezoneDisplay, _Helper, CompositeType, FormatException,
-		ParseException) {
+], function (DateFormat, _Helper, CompositeType, FormatException, ParseException) {
 	"use strict";
 
-	var oDemoDateTime = new Date(Date.UTC(new Date().getFullYear(), 11, 31, 23, 59, 58)),
-		sObjectNotOnly = "For type 'object', the format option 'showTimezone' must not be set to "
-			+ "sap.ui.core.format.DateFormatTimezoneDisplay.Only";
+	var sDateOrTimeRequired = "For type 'object', at least one of the format options 'showDate' or"
+			+ " 'showTime' must be enabled",
+		oDemoDateTime = new Date(Date.UTC(new Date().getFullYear(), 11, 31, 23, 59, 58));
 
 	/*
 	 * Returns the formatter. Creates it lazily.
@@ -75,6 +73,31 @@ sap.ui.define([
 				this.bParseWithValues = true;
 				this.bUseInternalValues = true;
 				this.vEmptyTimezoneValue = null;
+				// handle legacy format options; no support for mixture of old and new options
+				switch (oFormatOptions.showTimezone) {
+					case "Hide":
+						this.bShowDate = true;
+						this.bShowTime = true;
+						this.bShowTimezone = false;
+						break;
+					case "Only":
+						this.bShowDate = false;
+						this.bShowTime = false;
+						this.bShowTimezone = true;
+						break;
+					case "Show":
+						this.bShowDate = true;
+						this.bShowTime = true;
+						this.bShowTimezone = true;
+						break;
+					default:
+						this.bShowDate = oFormatOptions.showDate === undefined
+							|| oFormatOptions.showDate;
+						this.bShowTime = oFormatOptions.showTime === undefined
+							|| oFormatOptions.showTime;
+						this.bShowTimezone = oFormatOptions.showTimezone === undefined
+							|| oFormatOptions.showTimezone;
+				}
 
 				// must not overwrite setConstraints and setFormatOptions on prototype as they are
 				// called in SimpleType constructor
@@ -97,7 +120,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DateTimeWithTimezone.prototype._getErrorMessage = function () {
-		var sMessageKey = this.oFormatOptions.showTimezone === DateFormatTimezoneDisplay.Only
+		var sMessageKey = !this.bShowDate && !this.bShowTime
 				? "EnterDateTimeTimezone"
 				: "EnterDateTime";
 
@@ -125,7 +148,7 @@ sap.ui.define([
 	 *     <li>if the time zone or timestamp in <code>aValues</code> is <code>undefined</code>, or
 	 *     </li>
 	 *     <li>if the timestamp in <code>aValues</code> is not set and the <code>showTimezone</code>
-	 *       format option is set to <code>sap.ui.core.format.DateFormatTimezoneDisplay.Hide</code>
+	 *       format option is set to <code>false</code>
 	 *     </li>
 	 *   </ul>
 	 * @throws {sap.ui.model.FormatException}
@@ -135,21 +158,20 @@ sap.ui.define([
 	 *     <li>a timestamp is given in <code>aValues</code> that is not an instance of
 	 *       <code>Date</code>,</li>
 	 *     <li>the <code>sTargetType</code> is "object" or an equivalent primitive type, and the
-	 *       <code>showTimezone</code> format option is
-	 *       <code>sap.ui.core.format.DateFormatTimezoneDisplay.Only</code></li>
+	 *       <code>showTimezone</code> format option is enabled, but <code>showDate</code> and
+	 *       <code>showTime</code> are both <code>false</code></li>
 	 *   </ul>
 	 * @public
 	 */
 	DateTimeWithTimezone.prototype.formatValue = function (aValues, sTargetType) {
-		var sShowTimezone = this.oFormatOptions.showTimezone,
-			oTimestamp = aValues && aValues[0],
+		var oTimestamp = aValues && aValues[0],
 			sTimezone = aValues && aValues[1];
 
 		if (!aValues
 				|| sTimezone === undefined // data is not yet available
 				|| oTimestamp === undefined // data is not yet available
 				// if time zone is not shown falsy timestamps cannot be formatted -> return null
-				|| (!oTimestamp && sShowTimezone === DateFormatTimezoneDisplay.Hide)) {
+				|| (!oTimestamp && !this.bShowTimezone)) {
 			return null;
 		}
 
@@ -160,8 +182,8 @@ sap.ui.define([
 
 		switch (this.getPrimitiveType(sTargetType)) {
 			case "object":
-				if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
-					throw new FormatException(sObjectNotOnly);
+				if (!this.bShowDate && !this.bShowTime) {
+					throw new FormatException(sDateOrTimeRequired);
 				}
 
 				return oTimestamp;
@@ -190,13 +212,12 @@ sap.ui.define([
 	 * Gets an array of indices that determine which parts of this type shall not propagate their
 	 * model messages to the attached control. Prerequisite is that the corresponding binding
 	 * supports this feature, see {@link sap.ui.model.Binding#supportsIgnoreMessages}. If the
-	 * <code>showTimezone</code> format option is set to
-	 * <code>sap.ui.core.format.DateFormatTimezoneDisplay.Hide</code> and the time zone is not shown
-	 * in the control, the part for the time zone shall not propagate model messages to the control.
-	 * Analogously, if the format option <code>showTimezone</code> is set to
-	 * <code>sap.ui.core.format.DateFormatTimezoneDisplay.Only</code>, the date and time are not
-	 * shown in the control and the parts for the date and time shall not propagate model messages
-	 * to the control.
+	 * <code>showTimezone</code> format option is set to <code>false</code> that means the time zone
+	 * is not shown in the control, the part for the time zone shall not propagate model messages to
+	 * the control.
+	 * Analogously, if the format option <code>showDate</code> and <code>showTime</code> are both
+	 * set to <code>false</code>, that means the date and time are not shown in the control, the
+	 * parts for the date and time shall not propagate model messages to the control.
 	 *
 	 * @return {number[]}
 	 *   An array of indices that determine which parts of this type shall not propagate their
@@ -207,11 +228,9 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.CompositeType#getPartsIgnoringMessages
 	DateTimeWithTimezone.prototype.getPartsIgnoringMessages = function () {
-		var sShowTimezone = this.oFormatOptions.showTimezone;
-
-		if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
+		if (!this.bShowDate && !this.bShowTime) {
 			return [0];
-		} else if (sShowTimezone === DateFormatTimezoneDisplay.Hide) {
+		} else if (!this.bShowTimezone) {
 			return [1];
 		}
 
@@ -245,8 +264,8 @@ sap.ui.define([
 	 *     <li>the value is not parsable,</li>
 	 *     <li><code>aCurrentValues</code> is not given,</li>
 	 *     <li>the <code>sSourceType</code> is "object" or an equivalent primitive type, and the
-	 *       <code>showTimezone</code> format option is
-	 *       <code>sap.ui.core.format.DateFormatTimezoneDisplay.Only</code>,</li>
+	 *       <code>showTimezone</code> format option is enabled, but <code>showDate</code> and
+	 *       <code>showTime</code> are both <code>false</code>,</li>
 	 *     <li>the <code>sSourceType</code> is "object" or an equivalent primitive type, and the
 	 *       value is not an instance of <code>Date</code></li>
 	 *   </ul>
@@ -254,8 +273,7 @@ sap.ui.define([
 	 * @public
 	 */
 	DateTimeWithTimezone.prototype.parseValue = function (vValue, sSourceType, aCurrentValues) {
-		var aDateWithTimezone,
-			sShowTimezone = this.oFormatOptions.showTimezone;
+		var aDateWithTimezone;
 
 		if (!aCurrentValues) {
 			throw new ParseException("'aCurrentValues' is mandatory");
@@ -263,8 +281,8 @@ sap.ui.define([
 
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "object":
-				if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
-					throw new ParseException(sObjectNotOnly);
+				if (!this.bShowDate && !this.bShowTime) {
+					throw new ParseException(sDateOrTimeRequired);
 				}
 
 				if (!vValue) {
@@ -278,7 +296,7 @@ sap.ui.define([
 				return [vValue, undefined];
 			case "string":
 				if (!vValue) {
-					if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
+					if (!this.bShowDate && !this.bShowTime) {
 						return [/*unchanged*/undefined, this.vEmptyTimezoneValue];
 					}
 
