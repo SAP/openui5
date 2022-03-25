@@ -90,6 +90,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * updates the card preview
+	 */
+	 CardEditor.prototype._updatePreview = function () {
+		var oPreview = this.getAggregation("_preview");
+		if (oPreview && oPreview.update && oPreview._getCurrentMode() !== "None") {
+			oPreview.update();
+		}
+	};
+
+	/**
 	 * Sets the card property as a string, object {manifest:{}, baseUrl:{}} or a reference to a card instance
 	 * @param {any} vCardIdOrSettings
 	 * @param {boolean} bSuppressRerendering
