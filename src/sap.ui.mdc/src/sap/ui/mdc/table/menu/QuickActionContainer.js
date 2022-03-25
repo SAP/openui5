@@ -36,15 +36,18 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc",
 			associations: {
-				table: {type: "sap.ui.mdc.Table"}
+				table: {type: "sap.ui.mdc.Table"},
+				column: {type: "sap.ui.mdc.table.Column"}
 			}
 		}
 	});
 
-	QuickActionContainer.prototype.initializeQuickActions = function(oColumn) {
+	QuickActionContainer.prototype.initializeQuickActions = function() {
 		var oTable = this.getTable();
+		var oColumn = this.getColumn();
 		var oPropertyHelper = oTable.getPropertyHelper();
 		var pCreateContent = Promise.resolve();
+
 		this.destroyQuickActions(); // TODO: More efficient update would be good
 
 		if (oTable.isSortingEnabled()) {
@@ -136,6 +139,10 @@ sap.ui.define([
 
 	QuickActionContainer.prototype.getTable = function() {
 		return Core.byId(this.getAssociation("table"));
+	};
+
+	QuickActionContainer.prototype.getColumn = function() {
+		return Core.byId(this.getAssociation("column"));
 	};
 
 	return QuickActionContainer;

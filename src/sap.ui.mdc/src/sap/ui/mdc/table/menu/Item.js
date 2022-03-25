@@ -53,10 +53,9 @@ sap.ui.define([
 
 	Item.prototype.onReset = function() {
 		var oTable = this.getTable();
-		var oColumn = Core.byId(this.getMenu().getParent().sId.replace('-innerColumn', ''));
 
 		oTable.getEngine().reset(oTable, [this.getKey()]).then(function() {
-			oTable._oQuickActionContainer.initializeQuickActions(oColumn);
+			oTable._oQuickActionContainer.initializeQuickActions();
 			oTable._oColumnHeaderMenu._oPopover.invalidate();
 		});
 	};
