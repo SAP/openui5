@@ -14,7 +14,6 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/core/format/DateFormat',
-	'sap/ui/core/format/DateFormatTimezoneDisplay',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/Core',
 	'sap/ui/core/format/TimezoneUtil',
@@ -38,7 +37,6 @@ sap.ui.define([
 	Control,
 	Device,
 	DateFormat,
-	DateFormatTimezoneDisplay,
 	LocaleData,
 	Core,
 	TimezoneUtil,
@@ -639,7 +637,7 @@ sap.ui.define([
 
 		if (bDisplayFormat || !this._getTimezone() ||
 			(oBindingType && !oBindingType.isA(["sap.ui.model.odata.type.DateTimeWithTimezone"]))) {
-			oFormatOptions.showTimezone = DateFormatTimezoneDisplay.Hide;
+			oFormatOptions.showTimezone = false;
 		}
 
 		if (oFormatOptions.relative === undefined) {
@@ -683,7 +681,7 @@ sap.ui.define([
 			oBindingType = oBinding && oBinding.getType();
 
 		if (this.getShowTimezone() === undefined && oBindingType && oBindingType.isA(["sap.ui.model.odata.type.DateTimeWithTimezone"])) {
-			return oBindingType.getFormatOptions().showTimezone !== DateFormatTimezoneDisplay.Hide;
+			return oBindingType.getFormatOptions().showTimezone !== false;
 		}
 
 		return this.getShowTimezone();
@@ -784,7 +782,11 @@ sap.ui.define([
 
 	DateTimePicker.prototype._getFallbackParser = function() {
 		if (!this._fallbackParser) {
-			this._fallbackParser = DateFormat.getDateTimeWithTimezoneInstance({ showTimezone: "Only" });
+			this._fallbackParser = DateFormat.getDateTimeWithTimezoneInstance({
+				showDate: false,
+				showTime: false,
+				showTimezone: true
+			});
 		}
 
 		return this._fallbackParser;

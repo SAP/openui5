@@ -56,7 +56,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("showTimezone: 'Show'", function(assert) {
+	QUnit.test("showTimezone: true", function(assert) {
 		var done = assert.async();
 
 		XMLView.create({
