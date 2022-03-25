@@ -147,6 +147,10 @@ function(
 		 * @public
 		 */
 		SliderTooltipContainer.prototype.repositionTooltips = function () {
+			if (!this._oParentSlider) {
+				return;
+			}
+
 			var bParentRangeSlider = this._oParentSlider instanceof sap.m.RangeSlider,
 				aTooltips = this._oParentSlider.getUsedTooltips(),
 				// we are considering that both tooltips have the same rendering
