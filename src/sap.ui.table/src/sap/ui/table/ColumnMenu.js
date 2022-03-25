@@ -255,7 +255,7 @@ sap.ui.define([
 	ColumnMenu.prototype._addGroupMenuItem = function() {
 		var oColumn = this._oColumn;
 
-		if (oColumn.isGroupable()) {
+		if (oColumn.isGroupableByMenu()) {
 			var oTable = this._oTable;
 
 			this.addItem(this._createMenuItem(

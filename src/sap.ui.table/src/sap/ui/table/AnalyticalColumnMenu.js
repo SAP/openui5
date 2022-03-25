@@ -57,7 +57,7 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './library', "sap/
 		var oColumn = this._oColumn,
 			oTable = this._oTable;
 
-		if (oColumn.isGroupable()) {
+		if (oColumn.isGroupableByMenu()) {
 			this._oGroupIcon = this._createMenuItem(
 				"group",
 				"TBL_GROUP",

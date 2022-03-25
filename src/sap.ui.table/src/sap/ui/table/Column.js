@@ -613,7 +613,7 @@ sap.ui.define([
 						   || (oTable ? oTable.getShowColumnVisibilityMenu() : false)
 						   || this.isSortableByMenu()
 						   || this.isFilterableByMenu()
-						   || this.isGroupable();
+						   || this.isGroupableByMenu();
 
 		if (bHasOwnItems) {
 			return true;
@@ -663,7 +663,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean}
 	 */
-	Column.prototype.isGroupable = function() {
+	Column.prototype.isGroupableByMenu = function() {
 		var oTable = this.getParent();
 		return !!(oTable && oTable.getEnableGrouping && oTable.getEnableGrouping() && this.getSortProperty());
 	};
