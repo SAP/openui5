@@ -21,17 +21,33 @@ sap.ui.define([],
 				getLabel: function (oControl) {
 					return oControl.getHeaderText() || oControl.getId();
 				}
+			},
+			rename: {
+				changeType: "rename",
+				domRef: function (oControl) {
+					return oControl.getDomRef().shadowRoot.querySelector(".ui5-panel-header-title");
+				},
+				getTextMutators: function (oControl) {
+					return {
+						getText: function () {
+							return oControl.getDomRef().getAttribute("header-text");
+						},
+						setText: function (sNewText) {
+							oControl.getDomRef().setAttribute("header-text", sNewText);
+						}
+					};
+				}
 			}
 		},
 		aggregations: {
 			header: {
 				domRef: function (oControl) {
-					return oControl.getDomRef() && oControl.getDomRef().shadowRoot.querySelector(".ui5-panel-header");
+					return oControl.getDomRef().shadowRoot.querySelector(".ui5-panel-header");
 				}
 			},
 			content: {
 				domRef: function (oControl) {
-					return oControl.getDomRef() && oControl.getDomRef().shadowRoot.querySelector(".ui5-panel-content");
+					return oControl.getDomRef().shadowRoot.querySelector(".ui5-panel-content");
 				},
 				actions: {
 					move: "moveControls"

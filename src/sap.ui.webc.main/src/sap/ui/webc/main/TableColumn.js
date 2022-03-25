@@ -90,7 +90,8 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/TableColumn.designtime"
 		}
 	});
 
