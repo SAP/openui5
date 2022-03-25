@@ -17,6 +17,7 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormatTimezoneDisplay',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/Core',
+	'sap/ui/core/format/TimezoneUtil',
 	'./TimePickerClocks',
 	'./DateTimePickerRenderer',
 	'./SegmentedButton',
@@ -40,6 +41,7 @@ sap.ui.define([
 	DateFormatTimezoneDisplay,
 	LocaleData,
 	Core,
+	TimezoneUtil,
 	TimePickerClocks,
 	DateTimePickerRenderer,
 	SegmentedButton,
@@ -788,6 +790,14 @@ sap.ui.define([
 		return this._fallbackParser;
 	};
 
+	DateTimePicker.prototype._getPickerParser = function() {
+		if (!this._clocksParser) {
+			this._clocksParser = DateFormat.getDateTimeWithTimezoneInstance({ showTimezone: false });
+		}
+
+		return this._clocksParser;
+	};
+
 	DateTimePicker.prototype._getLocaleBasedPattern = function(sPlaceholder) {
 		var oLocaleData = LocaleData.getInstance(
 				Core.getConfiguration().getFormatSettings().getFormatLocale()
@@ -944,6 +954,10 @@ sap.ui.define([
 			this._oOKButton.setEnabled(false);
 		}
 
+		// convert the date to local date for the calendar and the clocks
+		sFormattedDate = this._getPickerParser().format(oDate, this._getTimezone(true));
+		oDate = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[0];
+
 		this._oCalendar.focusDate(oDate);
 
 		if (bDateFound) {
@@ -952,8 +966,6 @@ sap.ui.define([
 			}
 		}
 
-		sFormattedDate = this._formatValue(oDate, false);
-		oDate = this._parseValue(sFormattedDate, true, Core.getConfiguration().getTimezone());
 		this._oClocks._setTimeValues(oDate);
 	};
 
@@ -982,8 +994,8 @@ sap.ui.define([
 			}
 		}
 
-		sFormattedDate = this._formatValue(oDate, true, Core.getConfiguration().getTimezone());
-		oDate = this._parseValue(sFormattedDate, false, this._getTimezone(true));
+		sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
+		oDate = this._getPickerParser().parse(sFormattedDate, this._getTimezone(true))[0];
 
 		return oDate;
 	};
