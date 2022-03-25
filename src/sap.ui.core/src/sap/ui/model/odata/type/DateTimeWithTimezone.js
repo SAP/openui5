@@ -267,7 +267,9 @@ sap.ui.define([
 	 *       <code>showTimezone</code> format option is enabled, but <code>showDate</code> and
 	 *       <code>showTime</code> are both <code>false</code>,</li>
 	 *     <li>the <code>sSourceType</code> is "object" or an equivalent primitive type, and the
-	 *       value is not an instance of <code>Date</code></li>
+	 *       value is not an instance of <code>Date</code>,</li>
+	 *     <li>the <code>sSourceType</code> is "string" or an equivalent primitive type, and either
+	 *       <code>showDate</code> or <code>showTime</code> format option is <code>false</code></li>
 	 *   </ul>
 	 *
 	 * @public
@@ -303,7 +305,11 @@ sap.ui.define([
 					return [null, /*unchanged*/undefined];
 				}
 
-				aDateWithTimezone = getFormatter(this).parse(vValue, aCurrentValues[1]);
+				try {
+					aDateWithTimezone = getFormatter(this).parse(vValue, aCurrentValues[1]);
+				} catch (oError) { // wrap technical error to show the error at the control
+					throw new ParseException(oError.message);
+				}
 				if (!aDateWithTimezone) {
 					throw new ParseException(this._getErrorMessage());
 				}

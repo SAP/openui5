@@ -122,6 +122,10 @@ sap.ui.define([
 					.setType(new DateTimeOffset());
 				oView.byId("I75").getBinding("dateValue").getBindings()[0]
 					.setType(new DateTimeOffset());
+				oView.byId("I79").getBinding("value").getBindings()[0]
+					.setType(new DateTimeOffset());
+				oView.byId("I80").getBinding("value").getBindings()[0]
+					.setType(new DateTimeOffset());
 			}
 		}
 	});

@@ -183,7 +183,7 @@
 			<Label labelFor="I63" text="Edm.DateTime (2 fields)" visible="{ui>/v2}" />
 			<Input id="I63"
 				value="{
-					formatOptions : {showTimezone : 'Hide'},
+					formatOptions : {showTimezone : false},
 					parts : [
 						{path : 'v2>DateTime', parameters : {useUndefinedIfUnresolved : true}},
 						{path : 'TimezoneID', parameters : {useUndefinedIfUnresolved : true}}
@@ -193,20 +193,48 @@
 			<Input id="I64"
 				tooltip="The timezone of the date and time field"
 				value="{
-					formatOptions : {showTimezone : 'Only'},
+					formatOptions : {showDate : false, showTime : false},
 					parts : [
 						{path : 'v2>DateTime', parameters : {useUndefinedIfUnresolved : true}},
 						{path : 'TimezoneID', parameters : {useUndefinedIfUnresolved : true}}
 					],
 					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}"
-				visible="{ui>/v2}">
-				<layoutData><layout:GridData span="XL4 L4 M4 S4"/></layoutData>
-			</Input>
-			<Label labelFor="I72" text="Edm.DateTime (showTimezone:'Hide') - DateTimePicker (value)"
+				visible="{ui>/v2}" />
+			<Label labelFor="I76" text="Edm.DateTime (3 fields)" visible="{ui>/v2}" />
+			<Input editable="false" id="I76"
+				value="{
+					formatOptions : {showTime : false, showTimezone : false},
+					parts : [
+						{path : 'v2>DateTime', parameters : {useUndefinedIfUnresolved : true}},
+						{path : 'TimezoneID', parameters : {useUndefinedIfUnresolved : true}}
+					],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}"
+				visible="{ui>/v2}" />
+			<Input editable="false" id="I77"
+				tooltip="The time for the date and timezone"
+				value="{
+					formatOptions : {showDate : false, showTimezone : false},
+					parts : [
+						{path : 'v2>DateTime', parameters : {useUndefinedIfUnresolved : true}},
+						{path : 'TimezoneID', parameters : {useUndefinedIfUnresolved : true}}
+					],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}"
+				visible="{ui>/v2}" />
+			<Input editable="false" id="I78"
+				tooltip="The timezone of the date and time field"
+				value="{
+					formatOptions : {showDate : false, showTime : false},
+					parts : [
+						{path : 'v2>DateTime', parameters : {useUndefinedIfUnresolved : true}},
+						{path : 'TimezoneID', parameters : {useUndefinedIfUnresolved : true}}
+					],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}"
+				visible="{ui>/v2}" />
+			<Label labelFor="I72" text="Edm.DateTime (showTimezone: false) - DateTimePicker (value)"
 				visible="{ui>/v2}" />
 			<DateTimePicker id="I72"
 				value="{
-					formatOptions : {showTimezone : 'Hide'},
+					formatOptions : {showTimezone : false},
 					parts : [
 						{
 							path : 'v2>DateTime',
@@ -222,21 +250,19 @@
 				visible="{ui>/v2}" />
 			<Text
 				text="{
-					formatOptions : {showTimezone : 'Only'},
+					formatOptions : {showDate : false, showTime : false},
 					parts : [
 						{path : 'v2>DateTime', parameters : {useUndefinedIfUnresolved : true}},
 						{path : 'TimezoneID', parameters : {useUndefinedIfUnresolved : true}}
 					],
 					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}"
-				visible="{ui>/v2}">
-				<layoutData><layout:GridData span="XL4 L4 M4 S4"/></layoutData>
-			</Text>
+				visible="{ui>/v2}" />
 			<Label labelFor="I73"
-				text="Edm.DateTime (showTimezone:'Hide') - DateTimePicker (dateValue)"
+				text="Edm.DateTime (showTimezone: false) - DateTimePicker (dateValue)"
 				visible="{ui>/v2}" />
 			<DateTimePicker
 				dateValue="{
-					formatOptions : {showTimezone : 'Hide'},
+					formatOptions : {showTimezone : false},
 					parts : [
 						{
 							path : 'v2>DateTime',
@@ -252,20 +278,18 @@
 				id="I73" visible="{ui>/v2}" />
 			<Text
 				text="{
-					formatOptions : {showTimezone : 'Only'},
+					formatOptions : {showDate : false, showTime : false},
 					parts : [
 						{path : 'v2>DateTime', parameters : {useUndefinedIfUnresolved : true}},
 						{path : 'TimezoneID', parameters : {useUndefinedIfUnresolved : true}}
 					],
 					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}"
-				visible="{ui>/v2}">
-				<layoutData><layout:GridData span="XL4 L4 M4 S4"/></layoutData>
-			</Text>
+				visible="{ui>/v2}" />
 			<Label labelFor="I65" text="Edm.DateTime (hide time zone, with types for parts)"
 				visible="{ui>/v2}" />
 			<Input id="I65"
 				value="{
-					formatOptions : {showTimezone : 'Hide'},
+					formatOptions : {showTimezone : false},
 					parts : [
 						{
 							path : 'v2>DateTime',
@@ -284,7 +308,7 @@
 				visible="{ui>/v2}" />
 			<Input id="I66"
 				value="{
-					formatOptions : {showTimezone : 'Hide'},
+					formatOptions : {showTimezone : false},
 					parts : [
 						{
 							constraints : {nullable : false},
@@ -313,12 +337,12 @@
 							parameters : {useUndefinedIfUnresolved : true}
 						}
 					],
-					formatOptions : {showTimezone : 'Hide'},
+					formatOptions : {showTimezone : false},
 					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}" />
 			<Input id="I68"
 				tooltip="The timezone of the date and time field"
 				value="{
-					formatOptions : {showTimezone : 'Only'},
+					formatOptions : {showDate : false, showTime : false},
 					parts : [
 						{
 							path : 'DateTimeOffset',
@@ -330,15 +354,61 @@
 							parameters : {useUndefinedIfUnresolved : true}
 						}
 					],
-					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}" >
-				<layoutData><layout:GridData span="XL4 L4 M4 S4"/></layoutData>
-			</Input>
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}" />
+			<Label labelFor="I79" text="Edm.DateTimeOffset (3 fields, with types for parts)" />
+			<Input editable="false" id="I79"
+				value="{
+					formatOptions : {showTime : false, showTimezone : false},
+					parts : [
+						{
+							path : 'DateTimeOffset',
+							type : 'sap.ui.model.odata.type.DateTimeOffset',
+							parameters : {useUndefinedIfUnresolved : true}
+						}, {
+							path : 'TimezoneID',
+							type : 'sap.ui.model.odata.type.String',
+							parameters : {useUndefinedIfUnresolved : true}
+						}
+					],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}" />
+			<Input editable="false" id="I80"
+				tooltip="The time for the date and timezone"
+				value="{
+					formatOptions : {showDate : false, showTimezone : false},
+					parts : [
+						{
+							path : 'DateTimeOffset',
+							type : 'sap.ui.model.odata.type.DateTimeOffset',
+							parameters : {useUndefinedIfUnresolved : true}
+						}, {
+							path : 'TimezoneID',
+							type : 'sap.ui.model.odata.type.String',
+							parameters : {useUndefinedIfUnresolved : true}
+						}
+					],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}" />
+			<Input editable="false" id="I81"
+				tooltip="The timezone of the date and time field"
+				value="{
+					formatOptions : {showDate : false, showTime : false},
+					parts : [
+						{
+							path : 'DateTimeOffset',
+							type : 'sap.ui.model.odata.type.DateTimeOffset',
+							parameters : {useUndefinedIfUnresolved : true}
+						}, {
+							path : 'TimezoneID',
+							type : 'sap.ui.model.odata.type.String',
+							parameters : {useUndefinedIfUnresolved : true}
+						}
+					],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}" />
 			<Label labelFor="I69"
 				text="Edm.DateTimeOffset (show time zone, with types for parts, nullable : false)"
 			/>
 			<Input id="I69"
 				value="{
-					formatOptions : {showTimezone : 'Show'},
+					formatOptions : {showDate : true, showTime : true, showTimezone : true},
 					parts : [
 						{
 							constraints : {nullable : false},
@@ -352,10 +422,10 @@
 						}
 					],
 					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}" />
-			<Label labelFor="I74" text="Edm.DateTimeOffset ('Show') - DateTimePicker (value)" />
+			<Label labelFor="I74"
+				text="Edm.DateTimeOffset (show all parts) - DateTimePicker (value)" />
 			<DateTimePicker id="I74"
 				value="{
-					formatOptions : {showTimezone : 'Show'},
 					parts : [
 						{
 							path : 'DateTimeOffset',
@@ -368,10 +438,11 @@
 						}
 					],
 					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}" />
-			<Label labelFor="I75" text="Edm.DateTimeOffset ('Hide') - DateTimePicker (dateValue)" />
+			<Label labelFor="I75"
+				text="Edm.DateTimeOffset (hide time zone) - DateTimePicker (dateValue)" />
 			<DateTimePicker
 				dateValue="{
-					formatOptions : {showTimezone : 'Hide'},
+					formatOptions : {showTimezone : false},
 					parts : [
 						{
 							path : 'DateTimeOffset',

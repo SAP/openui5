@@ -470,14 +470,32 @@ sap.ui.define([
 			.returns(null);
 		this.mock(oType).expects("_getErrorMessage").withExactArgs().returns("~errorMessage");
 
-		try {
+		assert.throws(function () {
 			// code under test
 			oType.parseValue("invalidValue", "~sourceType", ["~timestamp", "~timezone"]);
-			assert.ok(false);
-		} catch (e) {
-			assert.ok(e instanceof ParseException);
-			assert.strictEqual(e.message, "~errorMessage");
-		}
+		}, new ParseException("~errorMessage"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseValue: to string; DateFormat throws error", function (assert) {
+		var oFormat = {parse : function () {}},
+			oType = new DateTimeWithTimezone();
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~sourceType").returns("string");
+		this.mock(_Helper).expects("extend")
+			.withExactArgs({strictParsing : true}, {})
+			.returns("~mergedFormatOptions");
+		this.mock(DateFormat).expects("getDateTimeWithTimezoneInstance")
+			.withExactArgs("~mergedFormatOptions")
+			.returns(oFormat);
+		this.mock(oFormat).expects("parse")
+			.withExactArgs("~value", "~timezone")
+			.throws(new Error("~errorMessage"));
+
+		assert.throws(function () {
+			// code under test
+			oType.parseValue("~value", "~sourceType", ["~timestamp", "~timezone"]);
+		}, new ParseException("~errorMessage"));
 	});
 
 	//*********************************************************************************************
@@ -623,12 +641,26 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseValue: Integrative failing tests", function (assert) {
-		var oType = new DateTimeWithTimezone();
+		assert.throws(function () {
+			// code under test
+			new DateTimeWithTimezone().parseValue(0, "int", []);
+		}, new ParseException("Don't know how to parse " + sClassName + " from int"));
 
 		assert.throws(function () {
 			// code under test
-			oType.parseValue(0, "int", []);
-		}, new ParseException("Don't know how to parse " + sClassName + " from int"));
+			new DateTimeWithTimezone({showDate : true, showTime : false})
+				.parseValue("Dec 30, 2021", "string", ["~DateOrNull", null]);
+		}, function (oError) {
+			return oError instanceof ParseException; // original message text is given by DateFormat
+		});
+
+		assert.throws(function () {
+			// code under test
+			new DateTimeWithTimezone({showDate : false, showTime : true})
+				.parseValue("8:00:00 AM", "string", ["~DateOrNull", null]);
+		}, function (oError) {
+			return oError instanceof ParseException; // original message text is given by DateFormat
+		});
 	});
 
 	//*********************************************************************************************
