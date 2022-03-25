@@ -225,8 +225,15 @@ sap.ui.define([
 			this._oItemNavigation.setPageSize(5);
 
 			this._oItemNavigation.setDisabledModifiers({
-				sapnext: ["alt"],
-				sapprevious: ["alt"]
+				// Alt + arrow keys are reserved for browser navigation
+				sapnext: [
+					"alt", // Windows and Linux
+					"meta" // Apple (⌘)
+				],
+				sapprevious: [
+					"alt",
+					"meta"
+				]
 			});
 
 		}
