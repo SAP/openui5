@@ -160,9 +160,13 @@ sap.ui.define([
 				DocumentDescriptionReference: "../../../../default/iwbep/common/0001/$metadata",
 				DocumentDescriptionCollection: "MyDocumentDescriptions",
 				ArchiveFormat: true,
-				Signature: true,
+				Border: true,
 				CoverPage: true,
-				FitToPage: false,
+				FitToPage: true,
+				FontName: true,
+				FontSize: true,
+				Margin: true,
+				Signature: true,
 				ResultSizeDefault: 5000,
 				ResultSizeMaximum: 20000
 			};
