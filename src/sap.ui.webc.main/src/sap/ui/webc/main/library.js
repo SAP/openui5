@@ -163,6 +163,7 @@ sap.ui.define([
 			elements: [],
 			extensions: {
 				flChangeHandlers: {
+					"sap.ui.webc.main.Button": "sap/ui/webc/main/flexibility/Button",
 					"sap.ui.webc.main.Input": {
 						"hideControl": "default",
 						"unhideControl": "default"
@@ -192,6 +193,7 @@ sap.ui.define([
 						"hideControl": "default",
 						"unhideControl": "default"
 					}
+
 				}
 			}
 		});
