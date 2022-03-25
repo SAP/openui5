@@ -17,7 +17,9 @@ sap.ui.define([
 	"./CalendarRowRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/unified/CalendarAppointment"
+	"sap/ui/unified/CalendarAppointment",
+	'sap/ui/core/InvisibleMessage',
+	'sap/ui/core/library'
 ], function(
 	Control,
 	Device,
@@ -32,7 +34,9 @@ sap.ui.define([
 	CalendarRowRenderer,
 	containsOrEquals,
 	jQuery,
-	CalendarAppointment
+	CalendarAppointment,
+	InvisibleMessage,
+	corelibrary
 ) {
 	"use strict";
 
@@ -53,6 +57,8 @@ sap.ui.define([
 
 	// shortcut for sap.ui.unified.CalendarAppointmentRoundWidth
 	var CalendarAppointmentRoundWidth = library.CalendarAppointmentRoundWidth;
+
+	var InvisibleMessageMode = corelibrary.InvisibleMessageMode;
 
 	/*
 	 * <code>UniversalDate</code> objects are used inside the <code>CalendarRow</code>, whereas JavaScript dates are used in the API.
@@ -401,6 +407,7 @@ sap.ui.define([
 			}.bind(this));
 		}
 
+		this._oInvisibleMessage = InvisibleMessage.getInstance();
 	};
 
 	CalendarRow.prototype.onAfterRendering = function(){
@@ -590,16 +597,21 @@ sap.ui.define([
 
 	CalendarRow.prototype.onsapselect = function(oEvent){
 		// focused appointment must be selected
-		var aVisibleAppointments = this._getVisibleAppointments();
+		var aVisibleAppointments = this._getVisibleAppointments(),
+			sBundleKey;
+
 
 		for (var i = 0; i < aVisibleAppointments.length; i++) {
 			var oAppointment = aVisibleAppointments[i].appointment;
 			if (containsOrEquals(oAppointment.getDomRef(), oEvent.target)) {
 				var bRemoveOldSelection = !(this.getMultipleAppointmentsSelection() || oEvent.ctrlKey || oEvent.metaKey);
 				_selectAppointment.call(this, oAppointment, bRemoveOldSelection);
+				sBundleKey = oAppointment.getSelected() ? "APPOINTMENT_SELECTED" : "APPOINTMENT_UNSELECTED";
 				break;
 			}
 		}
+
+		this._oInvisibleMessage.announce(this._oRb.getText(sBundleKey), InvisibleMessageMode.Polite);
 
 		//To prevent bubbling into PlanningCalendar.
 		//For appointments, this will prevent tap event on ColumnListItem, which in turn fires rowSelectionChange.

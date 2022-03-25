@@ -24,7 +24,9 @@ sap.ui.define([
 		'./SinglePlanningCalendarGridRenderer',
 		'sap/ui/core/delegate/ItemNavigation',
 		"sap/ui/thirdparty/jquery",
-		'./PlanningCalendarLegend'
+		'./PlanningCalendarLegend',
+		'sap/ui/core/InvisibleMessage',
+		'sap/ui/core/library'
 	],
 	function (
 		SinglePlanningCalendarUtilities,
@@ -47,7 +49,9 @@ sap.ui.define([
 		SinglePlanningCalendarGridRenderer,
 		ItemNavigation,
 		jQuery,
-		PlanningCalendarLegend
+		PlanningCalendarLegend,
+		InvisibleMessage,
+		coreLibrary
 	) {
 		"use strict";
 
@@ -61,7 +65,9 @@ sap.ui.define([
 			// 3px height the marker itself + 2x2px on its top and bottom both on cozy & compact
 			DAY_MARKER_HEIGHT = 0.4375, // Unit in rem, equals 7px with default font size
 			FIRST_HOUR_OF_DAY = 0,
-			LAST_HOUR_OF_DAY = 24;
+			LAST_HOUR_OF_DAY = 24,
+			InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
+
 
 		/**
 		 * Constructor for a new SinglePlanningCalendarGrid.
@@ -390,6 +396,7 @@ sap.ui.define([
 				this._createAppointmentsDndPlaceholders(oStartDate, iColumns);
 			}
 
+			this._oInvisibleMessage = InvisibleMessage.getInstance();
 		};
 
 		SinglePlanningCalendarGrid.prototype.onmousedown = function(oEvent) {
@@ -1204,6 +1211,12 @@ sap.ui.define([
 		SinglePlanningCalendarGrid.prototype.onkeydown = function (oEvent) {
 			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 				this._fireSelectionEvent(oEvent);
+
+				var oControl = this._findSrcControl(oEvent);
+				if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment")) {
+					var sBundleKey = oControl.getSelected() ? "APPOINTMENT_SELECTED" : "APPOINTMENT_UNSELECTED";
+					this._oInvisibleMessage.announce(this._oUnifiedRB.getText(sBundleKey), InvisibleMessageMode.Polite);
+				}
 
 				// Prevent scrolling
 				oEvent.preventDefault();
