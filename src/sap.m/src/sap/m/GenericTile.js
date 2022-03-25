@@ -1332,8 +1332,6 @@ sap.ui.define([
 			tileContent.setRenderFooter(false);
 		} else if (frameType === FrameType.OneByHalf && ((aTileCnt !== null && aTileCnt.getMetadata().getName() !== "sap.m.ImageContent") || this.getSubheader())) {
 			tileContent.setRenderFooter(false);
-		} else if (!this._isNavigateActionEnabled() && !tileContent.getFooter() && !tileContent.getUnit()) {
-			tileContent.setRenderFooter(false);
 		} else {
 			tileContent.setRenderFooter(true);
 			return true;
@@ -1616,7 +1614,7 @@ sap.ui.define([
 	 * @returns {boolean} - true if Navigate Action Button is enabled
 	 * @private
 	 */
-	GenericTile.prototype._isNavigateActionEnabled = function() {
+GenericTile.prototype._isNavigateActionEnabled = function() {
 		return this.getMode() === GenericTileMode.ArticleMode && this.getUrl() && this.getEnableNavigationButton();
 	};
 

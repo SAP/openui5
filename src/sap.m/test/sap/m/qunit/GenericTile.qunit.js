@@ -3829,6 +3829,33 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.ok(document.getElementById("generic-tile-navigateActionContainer"), "navigateAction Container is rendered");
 	});
 
+	QUnit.test("Generic Tile - Render footer div even if there are no footer elements", function(assert) {
+		this.oCustomTile = new GenericTile({
+			subheader: "GenericTile SubHeader",
+			frameType: "OneByOne",
+			header: "GenericTile Header",
+			headerImage: IMAGE_PATH + "female_BaySu.jpg",
+			state: "Loaded",
+			tileContent: new TileContent({
+				content: new NumericContent({
+					state: LoadState.Loaded,
+					scale: "M",
+					indicator: DeviationIndicator.Up,
+					truncateValueTo: 4,
+					value: 20,
+					nullifyValue: true,
+					formatterValue: false,
+					valueColor: ValueColor.Good,
+					icon: "sap-icon://customer-financial-fact-sheet"
+				})
+			})
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		assert.ok(document.querySelector("div[id*=footer]"), "Footer is rendered");
+		this.oCustomTile.destroy();
+	});
+
 	QUnit.module("GenericTile with TileContent", {
 		afterEach: function() {
 			this.oGenericTile.destroy();
