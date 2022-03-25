@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
-	"sap/ui/core/CustomData"
+	"sap/ui/core/CustomData",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	ManagedObjectMetadata,
 	ManagedObject,
 	Element,
-	CustomData
+	CustomData,
+	jQuery
 ) {
 	"use strict";
 
@@ -558,8 +560,7 @@ function(
 			}.bind(this);
 			sap.ui.getCore().registerPlugin(this.TestCorePlugin);
 			this.oldCfgPreload = this.oRealCore.oConfiguration.preload;
-			var oClass = sap.ui.core.CustomData;
-			this.oMetadata = oClass.getMetadata();
+			this.oMetadata = CustomData.getMetadata();
 			this.vOldDesigntime = this.oMetadata._oDesignTime;
 			//create a preload
 			var aString = [];

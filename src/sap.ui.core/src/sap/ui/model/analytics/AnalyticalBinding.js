@@ -147,7 +147,7 @@ sap.ui.define([
 	 */
 	function logUnsupportedPropertyInSelect(sPath, sSelectedProperty, oDimensionOrMeasure) {
 		var sDimensionOrMeasure = oDimensionOrMeasure
-				instanceof sap.ui.model.analytics.odata4analytics.Dimension
+				instanceof odata4analytics.Dimension
 					? "dimension" : "measure";
 
 		if (oDimensionOrMeasure.getName() === sSelectedProperty) {

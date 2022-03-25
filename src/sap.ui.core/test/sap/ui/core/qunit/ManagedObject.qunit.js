@@ -141,7 +141,7 @@ sap.ui.define([
 
 	function toId(v) {
 		if (Array.isArray(v)) {
-			return jQuery.map(v, toId);
+			return v.map(toId);
 		} else {
 			return v && v.getId();
 		}

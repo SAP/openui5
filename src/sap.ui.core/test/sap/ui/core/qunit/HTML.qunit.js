@@ -410,7 +410,7 @@ sap.ui.define([
 		assert.ok(!oCore.byId("html3").getUIArea(), "html3 must no longer be part of UIArea");
 		assert.equal(jQuery("#html3").length, 1, "html3 DOM must still exist");
 		assert.equal(jQuery("#html3")[0], oldDomRef, "html3 DOM must be the same as before the removal");
-		assert.ok(sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must have been moved to preserve area");
+		assert.ok(RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must have been moved to preserve area");
 		assert.equal(jQuery("#sap-ui-dummy-html3").length, 0, "no dummy must exist");
 
 		// add it again to an UIArea and rerender
@@ -420,7 +420,7 @@ sap.ui.define([
 		assert.equal(oCore.byId("html3").getUIArea().getId(), "uiAreaB", "html3 must be part of UIArea uiAreaB");
 		assert.equal(jQuery("#html3").length, 1, "html3 DOM must exist");
 		assert.equal(jQuery("#html3")[0], oldDomRef, "html3 DOM still must be the same as before the removal");
-		assert.ok(!sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must no longer be part of preserve area");
+		assert.ok(!RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must no longer be part of preserve area");
 		assert.equal(jQuery("#sap-ui-dummy-html3").length, 0, "no dummy must exist");
 
 	});

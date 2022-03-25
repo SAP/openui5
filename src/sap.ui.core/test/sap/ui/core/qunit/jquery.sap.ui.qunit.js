@@ -1,5 +1,8 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/core/Control"], function(Control){
+sap.ui.define([
+	"jquery.sap.ui",
+	"sap/ui/core/Control"
+], function(jQuery, Control) {
 	"use strict";
 
 	var TestControl = Control.extend("sap.jsunittest.Test", {

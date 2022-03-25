@@ -5,18 +5,12 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/UIComponentMetadata",
 	"sap/ui/core/Manifest",
-	'sap/base/util/LoaderExtensions'
-], function(jQuery, Log, Component, UIComponent, UIComponentMetadata, Manifest, LoaderExtensions) {
+	"sap/base/util/Deferred",
+	"sap/base/util/LoaderExtensions"
+], function(jQuery, Log, Component, UIComponent, UIComponentMetadata, Manifest, Deferred, LoaderExtensions) {
 
 	"use strict";
 	/*global sinon, QUnit*/
-
-	function Deferred() {
-		this.promise = new Promise(function(resolve, reject) {
-			this.resolve = resolve;
-			this.reject = reject;
-		}.bind(this));
-	}
 
 	// used to get access to the non-public core parts
 	var oRealCore;
@@ -26,6 +20,14 @@ sap.ui.define([
 	};
 	sap.ui.getCore().registerPlugin(new TestCorePlugin());
 
+	/**
+	 * Checks whether the given (JavaScript) resource has been loaded
+	 * and executed.
+	 */
+	function hasBeenLoadedAndExecuted(sResourceName) {
+		return sap.ui.loader._.getModuleState(sResourceName) === 4 /* READY */;
+	}
+
 	function unloadResources() {
 		// unload libs and components (not an API)
 		sap.ui.loader._.unloadResources('sap.test.lib2.library-preload', true, true, true);
@@ -34,10 +36,13 @@ sap.ui.define([
 		sap.ui.loader._.unloadResources('sap/test/lib3/library-preload.js', false, true, true);
 		sap.ui.loader._.unloadResources('sap.test.lib4.library-preload', true, true, true);
 		sap.ui.loader._.unloadResources('sap/test/lib4/library-preload.js', false, true, true);
+		sap.ui.loader._.unloadResources('sap/test/mycomp/Component.js', false, true, true);
 		sap.ui.loader._.unloadResources('sap/test/mycomp/Component-preload', true, true, true);
 		sap.ui.loader._.unloadResources('sap/test/mycomp/Component-preload.js', false, true, true);
+		sap.ui.loader._.unloadResources('sap/test/mysubcomp/Component.js', false, true, true);
 		sap.ui.loader._.unloadResources('sap/test/mysubcomp/Component-preload', true, true, true);
 		sap.ui.loader._.unloadResources('sap/test/mysubcomp/Component-preload.js', false, true, true);
+		sap.ui.loader._.unloadResources('sap/test/manifestcomp/Component.js', false, true, true);
 		sap.ui.loader._.unloadResources('sap/test/manifestcomp/Component-preload', true, true, true);
 		sap.ui.loader._.unloadResources('sap/test/manifestcomp/Component-preload.js', false, true, true);
 		// undo module path registration (official API)
@@ -486,7 +491,6 @@ sap.ui.define([
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 			this.oLoadLibrariesSpy = sinon.spy(sap.ui.getCore(), "loadLibraries");
 			this.oLoadLibrarySpy = sinon.spy(sap.ui.getCore(), "loadLibrary");
-			this.oRegisterPreloadedModulesSpy = sinon.spy(jQuery.sap, "registerPreloadedModules");
 			this.oManifestLoad = sinon.spy(Manifest, "load");
 		},
 		afterEach: function() {
@@ -497,7 +501,6 @@ sap.ui.define([
 			this.oLogWarningSpy.restore();
 			this.oLoadLibrariesSpy.restore();
 			this.oLoadLibrarySpy.restore();
-			this.oRegisterPreloadedModulesSpy.restore();
 			this.oManifestLoad.restore();
 
 			// remove registered callbacks
@@ -530,17 +533,12 @@ sap.ui.define([
 			});
 
 			// Verify that all expected components have been preloaded
-			sinon.assert.calledWithMatch(this.oRegisterPreloadedModulesSpy, {
-				name: "sap/test/manifestcomp/Component-preload"
-			});
-			sinon.assert.calledWithMatch(this.oRegisterPreloadedModulesSpy, {
-				name: "sap/test/mycomp/Component-preload"
-			});
+			assert.ok(hasBeenLoadedAndExecuted("sap/test/manifestcomp/Component-preload.js"));
 
-			// "lazy" component should not get preloaded automatically
-			sinon.assert.neverCalledWithMatch(this.oRegisterPreloadedModulesSpy, {
-				name: "sap/test/mysubcomp/Component-preload"
-			});
+			assert.ok(hasBeenLoadedAndExecuted("sap/test/mycomp/Component-preload.js"));
+
+			// "lazy" component should not have been preloaded automatically
+			assert.notOk(hasBeenLoadedAndExecuted("sap/test/mysubcomp/Component-preload.js"));
 
 			// Make sure that the component dependencies are available after creating the instance
 			assert.ok(sap.ui.require("sap/test/mycomp/Component"), "mycomp Component class should be loaded");
@@ -574,17 +572,11 @@ sap.ui.define([
 			sinon.assert.calledWithExactly(this.oLoadLibrarySpy, "sap.test.lib4", { async: true});
 
 			// Verify that all expected components have been preloaded
-			sinon.assert.calledWithMatch(this.oRegisterPreloadedModulesSpy, {
-				name: "sap/test/manifestcomp/Component-preload"
-			});
-			sinon.assert.calledWithMatch(this.oRegisterPreloadedModulesSpy, {
-				name: "sap/test/mycomp/Component-preload"
-			});
+			assert.ok(hasBeenLoadedAndExecuted("sap/test/manifestcomp/Component-preload.js"));
+			assert.ok(hasBeenLoadedAndExecuted("sap/test/mycomp/Component-preload.js"));
 
 			// "lazy" component should not get preloaded automatically
-			sinon.assert.neverCalledWithMatch(this.oRegisterPreloadedModulesSpy, {
-				name: "sap/test/mysubcomp/Component-preload"
-			});
+			assert.notOk(hasBeenLoadedAndExecuted("sap/test/mysubcomp/Component-preload.js"));
 
 			// Make sure that the component dependencies are available after creating the instance
 			assert.ok(sap.ui.require("sap/test/mycomp/Component"), "mycomp Component class should be loaded");

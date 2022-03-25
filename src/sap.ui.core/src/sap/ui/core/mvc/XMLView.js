@@ -16,6 +16,8 @@ sap.ui.define([
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/util/XMLHelper",
+	"sap/ui/Global",
+	"sap/ui/VersionInfo",
 	"sap/base/strings/hash",
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions",
@@ -35,6 +37,8 @@ sap.ui.define([
 		Cache,
 		ResourceModel,
 		XMLHelper,
+		Global,
+		VersionInfo,
 		hash,
 		Log,
 		LoaderExtensions,
@@ -454,10 +458,10 @@ sap.ui.define([
 	}
 
 	function getVersionInfo() {
-		return sap.ui.getVersionInfo({async:true}).then(function(oInfo) {
+		return VersionInfo.load().then(function(oInfo) {
 			var sTimestamp = "";
 			if (!oInfo.libraries) {
-				sTimestamp = sap.ui.buildinfo.buildtime;
+				sTimestamp = Global.buildinfo.buildtime;
 			} else {
 				oInfo.libraries.forEach(function(oLibrary) {
 					sTimestamp += oLibrary.buildTimestamp;
@@ -466,7 +470,7 @@ sap.ui.define([
 			return sTimestamp;
 		}).catch(function(error) {
 			// Do not populate the cache if the version info could not be retrieved.
-			Log.warning("sap.ui.getVersionInfo could not be retrieved", "sap.ui.core.mvc.XMLView");
+			Log.warning("version info could not be retrieved", "sap.ui.core.mvc.XMLView");
 			Log.debug(error);
 			return "";
 		});

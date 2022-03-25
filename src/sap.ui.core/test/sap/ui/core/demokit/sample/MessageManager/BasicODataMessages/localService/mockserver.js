@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/core/util/MockServer"
-], function (MockServer) {
+	"sap/ui/core/util/MockServer",
+	"sap/ui/thirdparty/jquery"
+], function (MockServer, jQuery) {
 	"use strict";
 
 	return {
@@ -32,7 +33,14 @@ sap.ui.define([
 			aRequests = oMockServer.getRequests();
 
 			// JSON response containing the OData error(s)
-			oErrorResponse = jQuery.sap.syncGetJSON(sLocalServicePath + "/response/ODataErrorResponse.json").data;
+			jQuery.ajax({
+				url: sLocalServicePath + "/response/ODataErrorResponse.json",
+				async: false,
+				dataType: "json",
+				success: function(data) {
+					oErrorResponse = data;
+				}
+			});
 
 			// mock all DELETE requests for Employees with the error response/message from above
 			aRequests.forEach(function(aRequest) {

@@ -3,12 +3,14 @@ sap.ui.define([
 	"sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/v2/ODataAnnotations",
-	"sap/ui/model/odata/v2/ODataModel"
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	fakeService,
 	ODataMetadata,
 	ODataAnnotations,
-	ODataModel
+	ODataModel,
+	jQuery
 ) {
 	"use strict";
 

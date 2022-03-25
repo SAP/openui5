@@ -4,7 +4,12 @@
 /**
  * Defines Application related support rules.
  */
-sap.ui.define(["sap/ui/support/library", "sap/ui/core/mvc/View", "sap/ui/core/mvc/Controller"], function(SupportLib, View, Controller) {
+sap.ui.define([
+	"sap/ui/support/library",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/thirdparty/jquery"
+], function(SupportLib, View, Controller, jQuery) {
 	"use strict";
 
 	// shortcuts

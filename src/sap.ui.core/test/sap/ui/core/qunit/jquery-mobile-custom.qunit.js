@@ -4,7 +4,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 	QUnit.module("Test Touch Support");
 
-	QUnit.test("Should detect the touch capibilities correctly on touch devices", function (assert) {
+	QUnit.test("Should detect the touch capabilities correctly on touch devices", function (assert) {
 		// Preparation
 		var done = assert.async();
 
@@ -12,14 +12,14 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		this.stub(Device, "support").value({ touch: true });
 
 		// load and boot the core
-		sap.ui.require(["sap/ui/core/Core"], function (core) {
+		sap.ui.require(["sap/ui/core/Core", "sap/ui/thirdparty/jquery"], function (core, jQuery) {
 			sap.ui.getCore().attachInit(function () {
 				assert.ok(true, "Core should initialize after loading and booting it");
 
 				// its a touch device (tablet, hybrid)
 				assert.ok(Device.support.touch, "Device is recognized correctly as touch screen");
 
-				// jQuery.mobile.support.touch should be overriden by Device.support.touch
+				// jQuery.mobile.support.touch should be overridden by Device.support.touch
 				assert.ok(jQuery.mobile.support.touch, "The 'ontouchend' event is available on the browser");
 
 				done();

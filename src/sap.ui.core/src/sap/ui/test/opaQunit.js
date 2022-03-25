@@ -3,23 +3,24 @@
  */
 /*global QUnit */
 sap.ui.define([
-	'sap/ui/thirdparty/URI',
+	'sap/base/util/each',
 	'sap/ui/test/Opa',
 	'sap/ui/test/Opa5',
-	"sap/ui/thirdparty/jquery",
-	'sap/ui/test/qunitPause'
-], function(URI, Opa, Opa5, jQueryDOM, QUnitPause) {
+	'sap/ui/test/qunitPause',
+	'sap/ui/thirdparty/jquery'
+], function(each, Opa, Opa5, QUnitPause, jQuery) {
 	"use strict";
 
 	QUnitPause.setupAfterQUnit();
 
 	QUnit.begin(function (oDetails) {
 		// add ui5 version in the user agent string bar
-		if (sap && sap.ui && jQueryDOM('#qunit-userAgent').length > 0) {
-			jQueryDOM('#qunit-userAgent')[0].innerText += "; UI5: " + sap.ui.version;
+		var oQUnitUserAgent = document.getElementById("#qunit-userAgent");
+		if (sap && sap.ui && oQUnitUserAgent) {
+			oQUnitUserAgent.innerText += "; UI5: " + sap.ui.version;
 		}
 
-		Opa._usageReport.begin({uri: new URI().toString(), totalTests: oDetails.totalTests});
+		Opa._usageReport.begin({uri: window.location.href, totalTests: oDetails.totalTests});
 	});
 
 	QUnit.moduleStart(function (oDetails) {
@@ -118,10 +119,10 @@ sap.ui.define([
 				QUnitPause.emitPause();
 			}
 
-			var oPauseDeferred = jQueryDOM.Deferred();
+			var oPauseDeferred = jQuery.Deferred();
 			QUnitPause.onResume(function () {
 				// let OPA finish before QUnit starts executing the next test
-				// call fnStart only if QUnit did not timeout
+				// call fnDone only if QUnit did not timeout
 				if (!oOptions.qunitTimeout) {
 					setTimeout(fnDone, 0);
 				}
@@ -282,7 +283,7 @@ sap.ui.define([
 		var oParams = oEvent.getParameters();
 		if (oParams.extension.getAssertions) {
 			var oAssertions = oParams.extension.getAssertions();
-			jQueryDOM.each(oAssertions,function(sName,fnAssertion) {
+			each(oAssertions, function(sName,fnAssertion) {
 				QUnit.assert[sName] = function() {
 					var qunitThis = this;
 					// call the assertion in the app window

@@ -1,7 +1,21 @@
 sap.ui.define([
-	"sap/ui/core/util/MockServer"
-], function (MockServer) {
+	"sap/ui/core/util/MockServer",
+	"sap/ui/thirdparty/jquery"
+], function (MockServer, jQuery) {
 	"use strict";
+
+	function syncGetJSON(sURL) {
+		var sResult;
+		jQuery.ajax({
+			url: sURL,
+			async: false,
+			dataType: "json",
+			success: function(data) {
+				sResult = data;
+			}
+		});
+		return sResult;
+	}
 
 	return {
 
@@ -31,14 +45,14 @@ sap.ui.define([
 			// ##########################################
 
 			// JSON response containing the OData error(s)
-			var oErrorResponseTemplate = jQuery.sap.syncGetJSON(sLocalServicePath + "/response/ODataErrorResponseTemplate.json").data;
+			var oErrorResponseTemplate = syncGetJSON(sLocalServicePath + "/response/ODataErrorResponseTemplate.json").data;
 
 			// sap-message header data
-			var oSapMessageHeaderValue = jQuery.sap.syncGetJSON(sLocalServicePath + "/response/SAP-Message-Header.json").data;
+			var oSapMessageHeaderValue = syncGetJSON(sLocalServicePath + "/response/SAP-Message-Header.json").data;
 
 			// pre-fetch the mockdata
-			//var aEmployees = jQuery.sap.syncGetJSON(sLocalServicePath + "/mockdata/Employees.json").data;
-			var oEmployee = jQuery.sap.syncGetJSON(sLocalServicePath + "/mockdata/Employees_3.json").data;
+			//var aEmployees = syncGetJSON(sLocalServicePath + "/mockdata/Employees.json").data;
+			var oEmployee = syncGetJSON(sLocalServicePath + "/mockdata/Employees_3.json").data;
 
 			var aRequests = oMockServer.getRequests();
 

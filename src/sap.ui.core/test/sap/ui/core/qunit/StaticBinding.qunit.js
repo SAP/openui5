@@ -197,7 +197,7 @@ sap.ui.define([
 		oBinding = object.getBinding("value");
 		assert.equal(iFormatterCount, 1, "Formatter called once after creating the static binding");
 
-		object.setModel(new sap.ui.model.json.JSONModel({}));
+		object.setModel(new JSONModel({}));
 		assert.ok(object.getBinding("value") === oBinding, "Binding instance is still the same");
 		assert.equal(iFormatterCount, 1, "Formatter not called again after setting a model");
 	});

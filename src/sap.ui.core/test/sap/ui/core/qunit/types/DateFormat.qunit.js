@@ -1,11 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
+		"sap/base/util/extend",
 		"sap/ui/core/format/DateFormat",
 		"sap/ui/core/Locale",
 		"sap/ui/core/LocaleData",
 		"sap/ui/core/date/UniversalDate",
 		"sap/ui/core/library"],
-	function (DateFormat, Locale, LocaleData, UniversalDate, library) {
+	function (extend, DateFormat, Locale, LocaleData, UniversalDate, library) {
 		"use strict";
 
 		// shortcut for sap.ui.core.CalendarType
@@ -583,7 +584,7 @@ sap.ui.define([
 
 
 		function getExpectedRelativeDate(iDiff, iTarget, oFormatOptions, sLocale) {
-			oFormatOptions = jQuery.extend({}, oFormatOptions);
+			oFormatOptions = extend({}, oFormatOptions);
 			oFormatOptions.relative = false;
 
 			var oFormat = DateFormat.getDateInstance(oFormatOptions, new Locale(sLocale)),
@@ -602,7 +603,7 @@ sap.ui.define([
 		function doTestRelative(assert, bFormat, oFormatOptions, sLocale, sTestInfo) {
 			[undefined, 'wide', 'short', 'narrow'].forEach(function (sStyle) {
 				oFormatOptions.relativeStyle = sStyle;
-				var oFormat1 = DateFormat.getDateInstance(jQuery.extend({ relative: true }, oFormatOptions), new Locale(sLocale)),
+				var oFormat1 = DateFormat.getDateInstance(extend({ relative: true }, oFormatOptions), new Locale(sLocale)),
 					oFormat2 = DateFormat.getDateInstance(oFormatOptions, new Locale(sLocale)),
 					oToday = new Date(),
 					iToday = oToday.getTime(),

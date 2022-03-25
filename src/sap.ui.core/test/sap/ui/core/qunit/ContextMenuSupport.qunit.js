@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/core/ContextMenuSupport",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
-	"sap/ui/qunit/QUnitUtils"
-], function(ContextMenuSupport, Control, Element, QUnitUtils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/thirdparty/jquery"
+], function(ContextMenuSupport, Control, Element, QUnitUtils, jQuery) {
 	"use strict";
 
 	var MyControl = Control.extend("my.lib.MyControl", {

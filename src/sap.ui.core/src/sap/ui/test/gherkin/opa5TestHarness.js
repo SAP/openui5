@@ -13,10 +13,19 @@ if (!window.QUnit || !window.QUnit.test) {
 
 // put qunit-coverage last so library files don't get measured
 sap.ui.define([
-  "jquery.sap.global", "sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/test/opaQunit", "sap/ui/test/Opa5",
-  "sap/ui/test/gherkin/GherkinTestGenerator", "sap/ui/test/gherkin/dataTableUtils", "sap/ui/test/gherkin/StepDefinitions",
-  "sap/ui/test/launchers/componentLauncher", "sap/ui/test/launchers/iFrameLauncher", "sap/ui/qunit/qunit-css",
-  "sap/ui/qunit/qunit-junit", "sap/ui/qunit/qunit-coverage"
+  "jquery.sap.global",
+  "sap/base/Log",
+  "sap/base/util/ObjectPath",
+  "sap/ui/test/opaQunit",
+  "sap/ui/test/Opa5",
+  "sap/ui/test/gherkin/GherkinTestGenerator",
+  "sap/ui/test/gherkin/dataTableUtils",
+  "sap/ui/test/gherkin/StepDefinitions",
+  "sap/ui/test/launchers/componentLauncher",
+  "sap/ui/test/launchers/iFrameLauncher",
+  "sap/ui/qunit/qunit-css",
+  "sap/ui/qunit/qunit-junit",
+  "sap/ui/qunit/qunit-coverage"
 ], function($, Log, ObjectPath, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions, componentLauncher,
   iFrameLauncher) {
   "use strict";
@@ -29,7 +38,7 @@ sap.ui.define([
   });
 
   QUnit.done(function() {
-    if (jQuery.sap.getUriParameters().get("closeFrame")) {
+    if (new URLSearchParams(window.location.search).has("closeFrame")) {
       Opa5.emptyQueue();
     }
   });

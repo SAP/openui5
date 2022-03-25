@@ -15,9 +15,10 @@ sap.ui.require([
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/autowaiter/_timeoutWaiter",
+	"sap/base/Log",
 	"sap/ui/qunit/qunit-junit",
 	"sap/ui/qunit/qunit-coverage"
-], function (Opa5, Opa, _OpaLogger, opaTest, PropertyStrictEquals, _timeoutWaiter) {
+], function (Opa5, Opa, _OpaLogger, opaTest, PropertyStrictEquals, _timeoutWaiter, Log) {
 	"use strict";
 
 	QUnit.module("Timeouts");
@@ -42,7 +43,7 @@ sap.ui.require([
 	opaTest("Should add a log message from the 3rd test it must not appear in test 4", function (oOpa) {
 		oOpa.waitFor({
 			check: function () {
-				jQuery.sap.log.debug("Log message that should not appear in the error", "", "sap.ui.test.MyTest");
+				Log.debug("Log message that should not appear in the error", "", "sap.ui.test.MyTest");
 				return true;
 			},
 			success: function () {

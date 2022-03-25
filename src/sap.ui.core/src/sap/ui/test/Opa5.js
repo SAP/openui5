@@ -23,7 +23,9 @@ sap.ui.define([
 		'sap/ui/dom/includeStylesheet',
 		'sap/ui/thirdparty/jquery',
 		'sap/ui/test/_OpaUriParameterParser',
-		"sap/ui/test/_ValidationParameters"
+		'sap/ui/test/_ValidationParameters',
+		'sap/base/util/extend',
+		'sap/base/util/isPlainObject'
 ],
 	function (Opa,
 			OpaPlugin,
@@ -45,7 +47,9 @@ sap.ui.define([
 			includeStylesheet,
 			$,
 			_OpaUriParameterParser,
-			_ValidationParameters) {
+			_ValidationParameters,
+			extend,
+			isPlainObject) {
 		"use strict";
 
 		var oLogger = _OpaLogger.getLogger("sap.ui.test.Opa5"),
@@ -1388,9 +1392,9 @@ sap.ui.define([
 		function _getPathToExpansion(options) {
 			var aPath;
 			["ancestor", "descendant", "sibling"].forEach(function (sMatcher) {
-				if (options[sMatcher] && jQuery.isPlainObject(options[sMatcher])) {
+				if (options[sMatcher] && isPlainObject(options[sMatcher])) {
 					aPath = [sMatcher];
-				} else if (options.matchers && options.matchers[sMatcher] && jQuery.isPlainObject(options.matchers[sMatcher])) {
+				} else if (options.matchers && options.matchers[sMatcher] && isPlainObject(options.matchers[sMatcher])) {
 					aPath = ["matchers", sMatcher];
 				}
 			});
@@ -1414,7 +1418,7 @@ sap.ui.define([
 		// return a new object ("options" remains unchanged)
 		function _substituteExpansion(options, aPath, oControl) {
 			if (aPath) {
-				var oResult = jQuery.extend({}, options);
+				var oResult = extend({}, options);
 				var oPath = oResult;
 				var i = 0;
 				while (i < aPath.length - 1) {

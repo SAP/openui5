@@ -137,7 +137,7 @@ sap.ui.define([
 		bOk = bOk && oFocusHandler.oCurrent == "oControl2";
 		oControls["oControl3"].focus();
 		bOk = bOk && oFocusHandler.oCurrent == "oControl3";
-		jQuery("#customInput").get(0).focus();
+		document.getElementById("customInput").focus();
 		bOk = bOk && oFocusHandler.oCurrent == null;
 		assert.ok(bOk, "Changes successfully reverted");
 	});

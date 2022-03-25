@@ -6,7 +6,8 @@ sap.ui.define([
 	//This is only needed to simulate creation of flex changes
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
-	"sap/m/MessageBox"
+	"sap/m/MessageBox",
+	"sap/ui/thirdparty/jquery"
 	],
 	function(
 		Controller,
@@ -15,7 +16,8 @@ sap.ui.define([
 		ReuseExtension,
 		FlexControllerFactory,
 		FlexUtils,
-		MessageBox
+		MessageBox,
+		jQuery
 	) {
 	"use strict";
 
@@ -87,20 +89,22 @@ sap.ui.define([
 		// Only needed to simulate changes as done in Web IDE with UI Adaptation Editor, not part of regular controller logic
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		addChanges: function(){
-			var sFragment = jQuery.sap.loadResource(
-				"sap/ui/core/sample/ControllerExtension/CustomerExtension.fragment.xml",
-				{
-					dataType: "text"
+			jQuery.ajax({
+				url: "sap/ui/core/sample/ControllerExtension/CustomerExtension.fragment.xml",
+				async: false,
+				dataType: "text",
+				success: function(sFragment) {
+					this._addFragmentToTableToolbar(sFragment, "sap.my");
 				}
-			);
-			this._addFragmentToTableToolbar(sFragment, "sap.my");
-			var sCode = jQuery.sap.loadResource(
-				"sap/ui/core/sample/ControllerExtension/CustomerExtension.js",
-				{
-					dataType: "text"
+			});
+			jQuery.ajax({
+				url: "sap/ui/core/sample/ControllerExtension/CustomerExtension.js",
+				async: false,
+				dataType: "text",
+				success: function(sCode) {
+					this._addControllerExtension(sCode, "sap.my");
 				}
-			);
-			this._addControllerExtension(sCode, "sap.my");
+			});
 			MessageBox.confirm("We will reload the page to apply the controller extension", {
 				onClose: function(){
 					window.location.reload();
@@ -108,20 +112,22 @@ sap.ui.define([
 			});
 		},
 		addOtherChanges: function(){
-			var sFragment = jQuery.sap.loadResource(
-				"sap/ui/core/sample/ControllerExtension/OtherCustomerExtension.fragment.xml",
-				{
-					dataType: "text"
+			jQuery.ajax({
+				url: "sap/ui/core/sample/ControllerExtension/OtherCustomerExtension.fragment.xml",
+				async: false,
+				dataType: "text",
+				success: function(sFragment) {
+					this._addFragmentToTableToolbar(sFragment, "sap.other");
 				}
-			);
-			this._addFragmentToTableToolbar(sFragment, "sap.other");
-			var sCode = jQuery.sap.loadResource(
-				"sap/ui/core/sample/ControllerExtension/OtherCustomerExtension.js",
-				{
-					dataType: "text"
+			});
+			jQuery.ajax({
+				url: "sap/ui/core/sample/ControllerExtension/OtherCustomerExtension.js",
+				async: false,
+				dataType: "text",
+				success: function(sCode) {
+					this._addControllerExtension(sCode, "sap.other");
 				}
-			);
-			this._addControllerExtension(sCode, "sap.other");
+			});
 			MessageBox.confirm("We will reload the page to apply the controller extension", {
 				onClose: function(){
 					window.location.reload();

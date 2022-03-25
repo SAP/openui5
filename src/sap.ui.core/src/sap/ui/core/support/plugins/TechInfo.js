@@ -4,7 +4,9 @@
 
 // Provides class sap.ui.core.support.plugins.TechInfo (TechInfo support plugin)
 sap.ui.define([
+	'jquery.sap.global',
 	'sap/base/Log',
+	'sap/base/util/each',
 	'sap/base/util/isEmptyObject',
 	'sap/base/util/isPlainObject',
 	'../Plugin',
@@ -12,7 +14,7 @@ sap.ui.define([
 	'../ToolsAPI',
 	'sap/base/security/encodeXML'
 ],
-	function(Log, isEmptyObject, isPlainObject, Plugin, Support, ToolsAPI, encodeXML) {
+	function(jQuery, Log, each, isEmptyObject, isPlainObject, Plugin, Support, ToolsAPI, encodeXML) {
 	"use strict";
 
 
@@ -114,7 +116,7 @@ sap.ui.define([
 			}
 			multiline(html, true, true, "Loaded Libraries", oData.loadedLibraries);
 			line(html, true, true, "Loaded Modules", function(buffer){
-				jQuery.each(oData.modules, function(i,v){
+				each(oData.modules, function(i,v){
 					if (v.indexOf("sap.ui.core.support") < 0) {
 						buffer.push("<span>", encode(v), "</span>");
 						if (i < oData.modules.length - 1) {

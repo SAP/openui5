@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/JSONView",
 	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/mvc/HTMLView"
-], function(ObjectPath, View, JSONView, JSView, XMLView, HTMLView) {
+	"sap/ui/core/mvc/HTMLView",
+	"sap/ui/thirdparty/jquery"
+], function(ObjectPath, View, JSONView, JSView, XMLView, HTMLView, jQuery) {
 	"use strict";
 
 	// create content div

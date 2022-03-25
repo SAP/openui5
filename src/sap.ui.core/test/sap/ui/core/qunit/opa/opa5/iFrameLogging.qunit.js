@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"../utils/browser",
 	"sap/ui/test/actions/Press",
+	"sap/ui/thirdparty/jquery",
 	"../utils/customQUnitAssertions"
-], function (Opa5, opaTest, browser, Press) {
+], function (Opa5, opaTest, browser, Press, jQuery) {
 	"use strict";
 
 	var UNCAUGHT_ERROR_URL = "test-resources/sap/ui/core/qunit/opa/fixture/uncaughtError.html";

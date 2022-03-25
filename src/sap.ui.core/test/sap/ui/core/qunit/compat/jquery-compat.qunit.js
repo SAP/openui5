@@ -1,5 +1,8 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/qunit/utils/createAndAppendDiv"], function(createAndAppendDiv) {
+sap.ui.define([
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/thirdparty/jquery"
+], function(createAndAppendDiv, jQuery) {
 	"use strict";
 
 	QUnit.module("jQuery.fn.width/height/...");

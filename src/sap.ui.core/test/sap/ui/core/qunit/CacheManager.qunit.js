@@ -57,10 +57,8 @@ sap.ui.define([
 	} else {
 		QUnit.module("Instantiation", {
 			beforeEach: function() {
-				this.oBrowserBackup = {};
-				this.oSystemBackup = {};
-				jQuery.extend(this.oBrowserBackup, Device.browser);
-				jQuery.extend(this.oSystemBackup, Device.system);
+				this.oBrowserBackup = Object.assign({}, Device.browser);
+				this.oSystemBackup = Object.assign({}, Device.system);
 
 			},
 			afterEach: function() {

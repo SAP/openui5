@@ -5,9 +5,10 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/ObjectPath',
 	'sap/ui/Device',
+	'sap/ui/core/Core',
 	'sap/ui/core/Element',
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Element, createAndAppendDiv) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, oCore, Element, createAndAppendDiv) {
 	"use strict";
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
@@ -38,7 +39,7 @@ sap.ui.define([
 
 	QUnit.assert.isLibLoaded = function(libName) {
 		this.ok(ObjectPath.get(libName), "namespace for " + libName + " should exist");
-		this.ok(sap.ui.getCore().getLoadedLibraries()[libName], "Core should know and list " + libName + " as 'loaded'");
+		this.ok(oCore.getLoadedLibraries()[libName], "Core should know and list " + libName + " as 'loaded'");
 	};
 
 	// used to get access to the non-public core parts
@@ -47,7 +48,7 @@ sap.ui.define([
 	TestCorePlugin.prototype.startPlugin = function(oCore, bOnInit) {
 		oRealCore = oCore;
 	};
-	sap.ui.getCore().registerPlugin(new TestCorePlugin());
+	oCore.registerPlugin(new TestCorePlugin());
 
 
 	// ---------------------------------------------------------------------------
@@ -57,29 +58,30 @@ sap.ui.define([
 	QUnit.module("Basic");
 
 	QUnit.test("facade", function(assert) {
-		this.spy(Log, 'error');
-
 		assert.notStrictEqual(sap.ui.getCore(), oRealCore, "Facade should be different from the implementation");
 		assert.notOk(sap.ui.getCore() instanceof oRealCore.constructor, "Facade should not be an instance of sap.ui.core.Core");
 		assert.strictEqual(sap.ui.getCore(), sap.ui.getCore(), "consecutive calls to sap.ui.getCore() should return the exact same facade");
+	});
 
-		Log.error.resetHistory();
+	QUnit.test("repeated instantiation", function(assert) {
+		this.spy(Log, 'error');
+
 		assert.strictEqual(new oRealCore.constructor(), sap.ui.getCore(), "consecutive calls to the constructor should return the facade");
 		sinon.assert.calledWith(Log.error, sinon.match(/Only.*must create an instance of .*Core/).and(sinon.match(/use .*sap.ui.getCore\(\)/)));
 	});
 
 	QUnit.test("loadLibrary", function(assert) {
-		assert.equal(typeof sap.ui.getCore().loadLibrary, "function", "Core has method loadLibrary");
+		assert.equal(typeof oCore.loadLibrary, "function", "Core has method loadLibrary");
 		assert.ok(sap.ui.loader._.getModuleState("sap/ui/testlib/library.js") === 0, "testlib lib has not been loaded yet");
 		assert.ok(!ObjectPath.get("sap.ui.testlib"), "testlib namespace doesn't exists");
-		assert.ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 0, "style sheet doesn't exist");
-		return sap.ui.getCore().loadLibrary("sap.ui.testlib", {
+		assert.strictEqual(document.querySelectorAll("head > link[id='sap-ui-theme-sap.ui.testlib']").length, 0, "style sheet doesn't exist");
+		return oCore.loadLibrary("sap.ui.testlib", {
 			url: "test-resources/sap/ui/core/qunit/testdata/uilib",
 			async: true
 		}).then(function() {
 			assert.ok(sap.ui.loader._.getModuleState("sap/ui/testlib/library.js") !== 0, "testlib lib has been loaded");
 			assert.ok(ObjectPath.get("sap.ui.testlib"), "testlib namespace exists");
-			assert.ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 1, "style sheets have been added");
+			assert.strictEqual(document.querySelectorAll("head > link[id='sap-ui-theme-sap.ui.testlib']").length, 1, "style sheets have been added");
 
 			return new Promise(function(resolve, reject) {
 				// load TestButton class
@@ -96,10 +98,10 @@ sap.ui.define([
 	 */
 	QUnit.test("testCreateUIArea", function(assert) {
 		createAndAppendDiv("uiArea1");
-		var oUIArea = sap.ui.getCore().createUIArea("uiArea1");
+		var oUIArea = oCore.createUIArea("uiArea1");
 		assert.ok(!!oUIArea, "UIArea must be created and returned");
 		assert.ok(_providesPublicMethods(oUIArea, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
-		var oUIAreaCheck = sap.ui.getCore().getUIArea("uiArea1");
+		var oUIAreaCheck = oCore.getUIArea("uiArea1");
 		assert.ok(!!oUIAreaCheck, "UIArea must be returned");
 		assert.ok(_providesPublicMethods(oUIAreaCheck, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
 		assert.equal(oUIAreaCheck, oUIArea, "Returned UIArea must be the same as the one created before");
@@ -111,8 +113,8 @@ sap.ui.define([
 	QUnit.test("testSetRoot", function(assert) {
 		var oButton = new TestButton("test2Button", {text:"Hallo JSUnit"});
 		createAndAppendDiv("uiArea2");
-		sap.ui.getCore().setRoot("uiArea2", oButton);
-		var oUIAreaCheck = sap.ui.getCore().getUIArea("uiArea2");
+		oCore.setRoot("uiArea2", oButton);
+		var oUIAreaCheck = oCore.getUIArea("uiArea2");
 		assert.ok(oUIAreaCheck, "UIArea must be returned");
 		assert.ok(_providesPublicMethods(oUIAreaCheck, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
 	});
@@ -124,7 +126,7 @@ sap.ui.define([
 		var oButton = new TestButton("test3Button", {text:"Hallo JSUnit"});
 		createAndAppendDiv("uiArea3");
 		oButton.placeAt("uiArea3");
-		var oButtonCheck = sap.ui.getCore().getElementById("test3Button");
+		var oButtonCheck = oCore.getElementById("test3Button");
 		assert.ok(oButtonCheck, "Button must be returned");
 		assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
 	});
@@ -138,20 +140,20 @@ sap.ui.define([
 		var oBtn = new TestButton("testMyButton", {text:"Hallo JSUnit"});
 		oBtn.onThemeChanged = function(oCtrlEvent) {
 			assert.ok(oCtrlEvent, "TestButton#onThemeChanged is called");
-			assert.equal(oCtrlEvent.theme, sap.ui.getCore().getConfiguration().getTheme(), "Default theme is passed along control event");
+			assert.equal(oCtrlEvent.theme, oCore.getConfiguration().getTheme(), "Default theme is passed along control event");
 		};
 
 		function handler(oEvent) {
 			assert.ok(oEvent, "attachThemeChanged is called");
-			assert.equal(oEvent.getParameter("theme"), sap.ui.getCore().getConfiguration().getTheme(), "Default theme is passed along Core event");
+			assert.equal(oEvent.getParameter("theme"), oCore.getConfiguration().getTheme(), "Default theme is passed along Core event");
 		}
-		sap.ui.getCore().attachThemeChanged(handler);
+		oCore.attachThemeChanged(handler);
 
 		//call to #notifyContentDensityChanged
-		sap.ui.getCore().notifyContentDensityChanged();
+		oCore.notifyContentDensityChanged();
 
 		// cleanup
-		sap.ui.getCore().detachThemeChanged(handler);
+		oCore.detachThemeChanged(handler);
 		oBtn.destroy();
 	});
 
@@ -162,15 +164,15 @@ sap.ui.define([
 		var oButton = new TestButton("test4Button", {text:"Hallo JSUnit"});
 		createAndAppendDiv("uiArea4");
 		oButton.placeAt("uiArea4");
-		var oButtonCheck = sap.ui.getCore().getControl("test4Button");
+		var oButtonCheck = oCore.getControl("test4Button");
 		assert.ok(oButtonCheck, "Button must be returned");
 		assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
 	});
 
 	QUnit.test("testSetThemeRoot", function(assert) {
-		sap.ui.getCore().setThemeRoot("my_theme", ["sap.ui.core"], "http://core.something.corp");
-		sap.ui.getCore().setThemeRoot("my_theme", "http://custom.something.corp");
-		sap.ui.getCore().setThemeRoot("my_theme", ["sap.m"], "http://mobile.something.corp");
+		oCore.setThemeRoot("my_theme", ["sap.ui.core"], "http://core.something.corp");
+		oCore.setThemeRoot("my_theme", "http://custom.something.corp");
+		oCore.setThemeRoot("my_theme", ["sap.m"], "http://mobile.something.corp");
 
 		var corePath = oRealCore._getThemePath("sap.ui.core", "my_theme");
 		var mobilePath = oRealCore._getThemePath("sap.m", "my_theme");
@@ -197,7 +199,7 @@ sap.ui.define([
 		assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/img/x.png", "path should be as configured");
 
 		// Set theme root for all libs with forceUpdate
-		sap.ui.getCore().setThemeRoot("test_theme", "/foo/", true);
+		oCore.setThemeRoot("test_theme", "/foo/", true);
 
 		corePath = oRealCore._getThemePath("sap.ui.core", "test_theme");
 		var oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
@@ -206,7 +208,7 @@ sap.ui.define([
 		assert.equal(oCoreLink.getAttribute("href"), "/foo/sap/ui/core/themes/test_theme/library.css", "Stylesheet should have been updated");
 
 		// Set theme root for sap.ui.core lib with forceUpdate
-		sap.ui.getCore().setThemeRoot("test_theme", ["sap.ui.core"], "/bar/", true);
+		oCore.setThemeRoot("test_theme", ["sap.ui.core"], "/bar/", true);
 
 		corePath = oRealCore._getThemePath("sap.ui.core", "test_theme");
 		oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
@@ -242,7 +244,7 @@ sap.ui.define([
 	QUnit.test("Browser Version Test", function(assert) {
 		assert.expect(4);
 		var browser = Device.browser;
-		var value = jQuery("html").attr("data-sap-ui-browser");
+		var value = document.documentElement.getAttribute("data-sap-ui-browser");
 		assert.ok(typeof value === "string" && value, "Data attribute is set and is not empty");
 
 		var version = browser.version;
@@ -273,23 +275,22 @@ sap.ui.define([
 	// now check the locale configuration to be applied as lang attribute
 	QUnit.test("Locale configuration", function(assert) {
 
-		var $html = jQuery("html");
-		var oConfig = sap.ui.getCore().getConfiguration();
+		var oHtml = document.documentElement;
+		var oConfig = oCore.getConfiguration();
 		var oLocale = oConfig.getLocale();
 		var sLocale = oLocale && oLocale.toString();
 
-		assert.equal($html.attr("lang"), sLocale, "lang attribute matches locale");
+		assert.equal(oHtml.getAttribute("lang"), sLocale, "lang attribute matches locale");
 
 		sLocale = "de";
 		oConfig.setLanguage(sLocale);
-		assert.equal($html.attr("lang"), sLocale, "lang attribute matches locale");
+		assert.equal(oHtml.getAttribute("lang"), sLocale, "lang attribute matches locale");
 
 	});
 
 	QUnit.test("prerendering tasks", function (assert) {
 		var bCalled1 = false,
-			bCalled2 = false,
-			oCore = sap.ui.getCore();
+			bCalled2 = false;
 
 		function task1 () {
 			bCalled1 = true;
@@ -314,8 +315,7 @@ sap.ui.define([
 
 	QUnit.test("prerendering tasks: reverse order", function (assert) {
 		var bCalled1 = false,
-			bCalled2 = false,
-			oCore = sap.ui.getCore();
+			bCalled2 = false;
 
 		function task1 () {
 			bCalled1 = true;
@@ -343,7 +343,7 @@ sap.ui.define([
 
 	QUnit.test("async: testGetLibraryResourceBundle", function(assert) {
 		var oSpy = this.spy(ResourceBundle, 'create'),
-			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", "en", true);
+			pBundle = oCore.getLibraryResourceBundle("sap.ui.core", "en", true);
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
@@ -356,9 +356,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with already loaded bundle", function(assert) {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", "de", true).then(function() {
+		return oCore.getLibraryResourceBundle("sap.ui.core", "de", true).then(function() {
 			var oSpy = this.spy(ResourceBundle, 'create'),
-				pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", "de", true);
+				pBundle = oCore.getLibraryResourceBundle("sap.ui.core", "de", true);
 
 			assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
@@ -383,7 +383,7 @@ sap.ui.define([
 			}
 		});
 
-		var pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de", true);
+		var pBundle = oCore.getLibraryResourceBundle("sap.test1", "de", true);
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
@@ -412,7 +412,7 @@ sap.ui.define([
 		});
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test.i18ntrue", "de", true),
+			pBundle = oCore.getLibraryResourceBundle("sap.test.i18ntrue", "de", true),
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -433,7 +433,7 @@ sap.ui.define([
 		this.stub(LoaderExtensions, 'loadResource').returns(undefined);
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test.i18nmissing", "fr", true),
+			pBundle = oCore.getLibraryResourceBundle("sap.test.i18nmissing", "fr", true),
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -470,7 +470,7 @@ sap.ui.define([
 		});
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test.i18nstring", "en", true),
+			pBundle = oCore.getLibraryResourceBundle("sap.test.i18nstring", "en", true),
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -521,7 +521,7 @@ sap.ui.define([
 		});
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test.i18nobject", "en", true),
+			pBundle = oCore.getLibraryResourceBundle("sap.test.i18nobject", "en", true),
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -543,7 +543,7 @@ sap.ui.define([
 
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
-			assert.notOk(sap.ui.getCore().getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
+			assert.notOk(oCore.getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
 			this.oldCfgPreload = oRealCore.oConfiguration.preload;
 			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
 		},
@@ -561,7 +561,7 @@ sap.ui.define([
 
 		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
 			sap.ui.predefine("testlibs/scenario9/lib1/library", function() {
-				sap.ui.getCore().initLibrary({
+				oCore.initLibrary({
 					name: 'testlibs.scenario9.lib1',
 					noLibraryCSS: true
 				});
@@ -570,7 +570,7 @@ sap.ui.define([
 			return Promise.resolve(true);
 		});
 
-		var loaded = sap.ui.getCore().loadLibrary("testlibs.scenario9.lib1", {
+		var loaded = oCore.loadLibrary("testlibs.scenario9.lib1", {
 			async: true,
 			url: "./some/fancy/path"
 		});
@@ -589,7 +589,7 @@ sap.ui.define([
 
 		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
 			sap.ui.predefine("testlibs/scenario10/lib1/library", function() {
-				sap.ui.getCore().initLibrary({
+				oCore.initLibrary({
 					name: 'testlibs.scenario10.lib1',
 					noLibraryCSS: true
 				});
@@ -598,7 +598,7 @@ sap.ui.define([
 			return Promise.resolve(true);
 		});
 
-		var loaded = sap.ui.getCore().loadLibrary("testlibs.scenario10.lib1", true);
+		var loaded = oCore.loadLibrary("testlibs.scenario10.lib1", true);
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
 		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario10\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 
@@ -615,8 +615,7 @@ sap.ui.define([
 			return Promise.reject(new Error());
 		});
 		this.stub(sap.ui, "require").callsFake(function(name, callback) {
-			jQuery.sap.declare('testlibs.scenario11.lib1.library');
-			sap.ui.getCore().initLibrary({
+			oCore.initLibrary({
 				name: 'testlibs.scenario11.lib1',
 				noLibraryCSS: true
 			});
@@ -625,7 +624,7 @@ sap.ui.define([
 			}, 0);
 		});
 
-		var loaded = sap.ui.getCore().loadLibrary("testlibs.scenario11.lib1", true);
+		var loaded = oCore.loadLibrary("testlibs.scenario11.lib1", true);
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
 		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario11\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 
@@ -648,7 +647,7 @@ sap.ui.define([
 			return Promise.reject(new Error());
 		});
 
-		var loaded = sap.ui.getCore().loadLibrary("testlibs.scenario12.lib1", true);
+		var loaded = oCore.loadLibrary("testlibs.scenario12.lib1", true);
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
 		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario12\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 
@@ -672,7 +671,7 @@ sap.ui.define([
 
 		// make lib4 already loaded
 		sap.ui.predefine('testlibs/scenario14/lib4/library', [], function() {
-			sap.ui.getCore().initLibrary({
+			oCore.initLibrary({
 				name: 'testlibs.scenario14.lib4'
 			});
 			return testlibs.scenario14.lib4;
@@ -691,7 +690,7 @@ sap.ui.define([
 			this.spy(sap.ui, 'require');
 			this.spy(sap.ui, 'requireSync');
 
-			var vResult = sap.ui.getCore().loadLibraries(['testlibs.scenario14.lib8']);
+			var vResult = oCore.loadLibraries(['testlibs.scenario14.lib8']);
 			// initial request for lib 8 preload
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib8\/library-preload\.js$/));
 
@@ -737,7 +736,7 @@ sap.ui.define([
 		var oCoreInternals;
 		var oErrorLogSpy = this.spy(Log, "error");
 
-		sap.ui.getCore().registerPlugin({
+		oCore.registerPlugin({
 			startPlugin : function(oCore) {
 				oCoreInternals = oCore;
 			}

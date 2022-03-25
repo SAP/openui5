@@ -6,9 +6,10 @@
 sap.ui.define([
 	'sap/ui/core/support/Plugin',
 	"sap/base/security/encodeXML",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Plugin, encodeXML, KeyCodes) {
+	function(Plugin, encodeXML, KeyCodes, jQuery) {
 		"use strict";
 
 

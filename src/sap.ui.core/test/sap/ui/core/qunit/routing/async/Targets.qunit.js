@@ -5,11 +5,12 @@ sap.ui.define([
 	"sap/ui/core/routing/Views",
 	"sap/ui/core/routing/Router",
 	"sap/base/Log",
+	"sap/base/util/deepExtend",
 	"./AsyncViewModuleHook",
 	"sap/m/App",
 	"sap/m/Panel",
 	"sap/ui/model/json/JSONModel"
-], function(View, Targets, Views, Router, Log, ModuleHook, App, Panel, JSONModel){
+], function(View, Targets, Views, Router, Log, deepExtend, ModuleHook, App, Panel, JSONModel){
 	"use strict";
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
@@ -175,7 +176,7 @@ sap.ui.define([
 
 	QUnit.test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function (assert) {
 		// Arrange
-		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
+		var oStub = this.stub(Log, "error");
 
 		// Act
 		this.oTargets.addTarget("myParent", {
@@ -248,7 +249,7 @@ sap.ui.define([
 					}
 				}
 			},
-			oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
+			oErrorStub = this.stub(Log, "error");
 
 		// System under test + Act
 		this.oTargets = new Targets(oIncorrectConfig);
@@ -284,7 +285,7 @@ sap.ui.define([
 		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget(sName), "_display").callsFake(function() {
 			return Promise.resolve({name:sName});
 		});
-		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "_display").callsFake(jQuery.noop);
+		var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "_display");
 
 		// Act
 		return this.oTargets.display("firstTarget").then(function(oViewInfo) {
@@ -337,7 +338,7 @@ sap.ui.define([
 
 	QUnit.test("Should log an error if user tries to display a non existing Target", function (assert) {
 		// Assert
-		var oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
+		var oErrorStub = this.stub(Log, "error");
 
 		// Act
 		return this.oTargets.display("foo").then(function(aViewInfos) {
@@ -350,7 +351,7 @@ sap.ui.define([
 
 	QUnit.test("Should log an error if user tries to display a non existing Target, but should display existing ones", function (assert) {
 		// Assert
-		var oErrorStub = this.stub(Log, "error").callsFake(jQuery.noop);
+		var oErrorStub = this.stub(Log, "error");
 		// Replace display with an empty fn
 		var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "_display").callsFake(function() {
 			return Promise.resolve({name:"firstTarget"});
@@ -461,7 +462,7 @@ sap.ui.define([
 			return that.oView;
 		});
 
-		var oExtendedConfig = jQuery.extend(true, { _name: "myTarget" }, this.oTargetsConfig.myTarget, this.oDefaultConfig);
+		var oExtendedConfig = deepExtend({ _name: "myTarget" }, this.oTargetsConfig.myTarget, this.oDefaultConfig);
 
 		this.oTargets.attachDisplay(fnEventSpy);
 
@@ -495,7 +496,7 @@ sap.ui.define([
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 				aTargetNames.push(oParameters.name);
-				assert.propEqual(oParameters.config, jQuery.extend(true, {}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig), "configuration should have been merged");
+				assert.propEqual(oParameters.config, deepExtend({}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig), "configuration should have been merged");
 				assert.strictEqual(oParameters.view, that.oView, "view got passed to the event");
 				assert.strictEqual(oParameters.control, that.oShell, "control got passed to the event");
 				assert.strictEqual(oParameters.data, oData, "data was passed");
@@ -1109,7 +1110,7 @@ sap.ui.define([
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 				aTargetNames.push(oParameters.name);
-				assert.propEqual(oParameters.config, jQuery.extend(true, {}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig), "configuration should have been merged");
+				assert.propEqual(oParameters.config, deepExtend({}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig), "configuration should have been merged");
 				assert.strictEqual(oParameters.view, that.oView, "view got passed to the event");
 				assert.strictEqual(oParameters.control, that.oApp, "control got passed to the event");
 				assert.strictEqual(oParameters.data, oData, "data was passed");

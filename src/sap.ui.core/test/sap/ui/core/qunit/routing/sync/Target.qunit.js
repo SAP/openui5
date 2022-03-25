@@ -147,7 +147,7 @@ sap.ui.define([
 	QUnit.test("Should log an error if the target parent is not found", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
+		var oStub = this.stub(Log, "error");
 
 		this.oTarget._oOptions.rootView = "foo";
 
@@ -161,7 +161,7 @@ sap.ui.define([
 	QUnit.test("Should log an error if the target control does not have an nonexistion aggregation specified", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
+		var oStub = this.stub(Log, "error");
 
 		this.oTarget._oOptions.controlAggregation = "foo";
 
@@ -175,7 +175,7 @@ sap.ui.define([
 	QUnit.test("Should log an error if the target control does not have an aggregation specified", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
+		var oStub = this.stub(Log, "error");
 
 		this.oTarget._oOptions.controlAggregation = undefined;
 
@@ -189,7 +189,7 @@ sap.ui.define([
 	QUnit.test("Should log an error if the target control could not be found", function (assert) {
 
 		// Arrange
-		var oStub = this.stub(Log, "error").callsFake(jQuery.noop);
+		var oStub = this.stub(Log, "error");
 
 		this.oTarget._oOptions.controlId = "foo";
 

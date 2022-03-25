@@ -1,6 +1,9 @@
 /* global QUnit */
-sap.ui.define(["jquery.sap.mobile"],function(/*jQuerySapMobile*/){
+sap.ui.define([
+	"jquery.sap.mobile"
+], function(jQuery){
 	"use strict";
+
 	QUnit.test("Test initMobile with custom settings", function (assert) {
 		jQuery.sap.initMobile({
 			viewport: false,

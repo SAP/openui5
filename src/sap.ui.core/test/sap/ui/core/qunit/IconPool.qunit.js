@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Icon",
 	"sap/m/Image",
-	"sap/base/Log"
-], function(IconPool, Icon, Image, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(IconPool, Icon, Image, Log, jQuery) {
 	"use strict";
 
 	QUnit.module("Basic");

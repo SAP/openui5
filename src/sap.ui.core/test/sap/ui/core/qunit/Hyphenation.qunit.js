@@ -121,7 +121,7 @@ var sSingleLangTest = "de",
 	].join("");
 
 	function canUseNativeHyphenationRaw() {
-		var sLanguageOnThePage = jQuery("html").attr("lang").toLowerCase();
+		var sLanguageOnThePage = document.documentElement.getAttribute("lang").toLowerCase();
 		var sMappedLanguage = sap.ui.getCore().getConfiguration().getLocale().getLanguage().toLowerCase();
 
 		// adjustment of the language to correspond to Hyphenopoly pattern files (.hpb files)

@@ -11,7 +11,7 @@ sap.ui.define([
 	// to be more focus independent (-> More test stability)
 	F6Navigation.handleF6GroupNavigation_orig = F6Navigation.handleF6GroupNavigation;
 
-	jQuery.sap.handleF6GroupNavigation = F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
+	F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
 		oSettings = oSettings ? oSettings : {};
 		if (!oSettings.scope) {
 			oSettings.scope = document.getElementById("scope");
@@ -71,7 +71,7 @@ sap.ui.define([
 		QUnit.module("Fast Navigation");
 
 		QUnit.test("Page initialized", function(assert) {
-			assert.ok(jQuery("#content").children().length > 0, "Page initialized");
+			assert.ok(document.getElementById("content").children.length > 0, "Page initialized");
 		});
 
 		QUnit.test("Forward Navigation using F6", function(assert) {

@@ -1,5 +1,8 @@
 /*global QUnit, sinon */
-sap.ui.define(["sap/m/Button"], function(Button) {
+sap.ui.define([
+	"sap/m/Button",
+	"sap/ui/thirdparty/jquery"
+], function(Button, jQuery) {
 	"use strict";
 
 	QUnit.module("Spies");

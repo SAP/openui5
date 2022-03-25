@@ -2,7 +2,11 @@
  * ${copyright}
  */
 /*global QUnit */
-sap.ui.define(["sap/ui/util/Mobile", "sap/ui/Device"], function(Mobile, Device) {
+sap.ui.define([
+	"sap/ui/util/Mobile",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function(Mobile, Device, jQuery) {
 	"use strict";
 
 	var fnRemoveViewort = function(){

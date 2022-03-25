@@ -1,3 +1,4 @@
+/*global jQuery */
 (function(jQuery) {
 	"use strict";
 	jQuery.fn.jquery = "4.0.0";

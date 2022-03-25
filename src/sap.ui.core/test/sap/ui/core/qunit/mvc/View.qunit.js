@@ -1,5 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
+	"sap/base/util/deepExtend",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/XMLPreprocessor",
@@ -7,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"./testdata/TestPreprocessor",
 	"sap/base/Log"
-], function(View, XMLView, XMLPreprocessor, JSONModel, coreLibrary, TestPreprocessor, Log) {
+], function(deepExtend, View, XMLView, XMLPreprocessor, JSONModel, coreLibrary, TestPreprocessor, Log) {
 	"use strict";
 
 	var ViewType = coreLibrary.mvc.ViewType;
@@ -33,7 +34,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.mock = sinon.mock(XMLPreprocessor);
 			this.expectProcess = this.mock.expects("process");
-			this._mPreprocessors = jQuery.extend(true, {}, View._mPreprocessors);
+			this._mPreprocessors = deepExtend({}, View._mPreprocessors);
 			View.PreprocessorType = { "Foo": "foo" };
 		},
 		afterEach: function() {
@@ -61,7 +62,7 @@ sap.ui.define([
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
 				foo: {
-					preprocessor: jQuery.noop, // replace below once we have a mock in place!
+					preprocessor: function() {}, // replace below once we have a mock in place!
 					bindingContexts: {},
 					models: {}
 				}
@@ -225,7 +226,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.mock = sinon.mock(XMLPreprocessor);
 			this.expectProcess = this.mock.expects("process");
-			this._mPreprocessors = jQuery.extend(true, {}, View._mPreprocessors);
+			this._mPreprocessors = deepExtend({}, View._mPreprocessors);
 			View.PreprocessorType = { "Foo": "foo" };
 		},
 		afterEach: function() {
@@ -259,7 +260,7 @@ sap.ui.define([
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
 				foo: {
-					preprocessor: jQuery.noop, // replace below once we have a mock in place!
+					preprocessor: function() {}, // replace below once we have a mock in place!
 					bindingContexts: {},
 					models: {}
 				}
@@ -433,7 +434,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.core.mvc.View#registerPreprocessor", {
 		beforeEach: function(assert) {
-			this._mPreprocessors = jQuery.extend(true, {}, View._mPreprocessors);
+			this._mPreprocessors = deepExtend({}, View._mPreprocessors);
 			this.sViewContent = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
 			].join('');

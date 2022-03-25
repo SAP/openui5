@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/_OpaUriParameterParser",
 	"../utils/sinon"
-], function (Opa5, Opa, URI, $, _OpaUriParameterParser, sinonUtils) {
+], function (Opa5, Opa, URI, jQuery, _OpaUriParameterParser, sinonUtils) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {

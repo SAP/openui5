@@ -47,11 +47,21 @@ sap.ui.define(function() {
 	// loadJSResourceAsync
 	//****************************************************
 
+	/**
+	 * @deprecated since 1.58
+	 */
 	QUnit.module("loadJSResourceAsync");
 
 	QUnit.test("legacy API", function(assert) {
-		assert.strictEqual(jQuery.sap._loadJSResourceAsync, sap.ui.loader._.loadJSResourceAsync,
-			"Legacy API 'jQuery.sap._loadJSResourceAsync' just should be an alias for the new private loader API");
+		var done = assert.async();
+		sap.ui.require(["jquery.sap.global"], function(jQuery) {
+			assert.strictEqual(jQuery.sap._loadJSResourceAsync, sap.ui.loader._.loadJSResourceAsync,
+				"Legacy API 'jQuery.sap._loadJSResourceAsync' just should be an alias for the new private loader API");
+			done();
+		}, function() {
+			assert.ok(false, "failed to load jquery.sap.global");
+			done();
+		});
 	});
 
 });

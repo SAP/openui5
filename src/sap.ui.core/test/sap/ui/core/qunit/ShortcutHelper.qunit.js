@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/CommandExecution",
 	"sap/ui/core/Control",
-	"sap/m/Panel"
+	"sap/m/Panel",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	QUtils,
 	ShortcutHelper,
 	Component,
 	CommandExecution,
 	Control,
-	Panel
+	Panel,
+	jQuery
 ) {
 	"use strict";
 

@@ -1224,9 +1224,6 @@ sap.ui.define([
 		assert.ok(!oMatchingWrongFragment, "Should not match with wrong fragmentID");
 	}
 
-	jQuery(function () {
-		// hack for IE - dialog introduces a global when opened so i open it before the test starts
-		new Dialog().open().destroy();
-		QUnit.start();
-	});
+	// hack for IE - dialog introduces a global when opened so i open it before the test starts
+	new Dialog().open().destroy();
 });

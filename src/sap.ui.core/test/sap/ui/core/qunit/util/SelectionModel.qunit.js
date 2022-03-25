@@ -17,7 +17,7 @@ sap.ui.define([
 			var aIndicesBefore;
 
 			function listener(oEvent) {
-				oEventParams = jQuery.extend({}, oEvent.getParameters());
+				oEventParams = Object.assign({}, oEvent.getParameters());
 			}
 
 			if ( fnChange ) {

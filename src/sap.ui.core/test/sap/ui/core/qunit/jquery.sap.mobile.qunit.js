@@ -1,6 +1,10 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/Device", "jquery.sap.mobile"],function(Device /*, jquery.sap.mobile*/){
+sap.ui.define([
+	"sap/ui/Device",
+	"jquery.sap.mobile"
+],function(Device, jQuery) {
 	"use strict";
+
 	QUnit.module("Test initMobile");
 
 	QUnit.test("Test initMobile with default settings", function (assert) {
