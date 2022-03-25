@@ -26,12 +26,18 @@ sap.ui.define([
 	ShowCardAction.prototype.execute = function () {
 		var oParameters = this.getParameters() || {},
 			oParentCard = this.getCardInstance(),
+			oHost = oParentCard.getHostInstance(),
 			oChildCard;
 
 		if (oParameters._cardId) {
 			oChildCard = Core.byId(oParameters._cardId);
 		} else {
 			oChildCard = oParentCard._createChildCard(oParameters);
+		}
+
+		if (oHost && oHost.onShowCard) {
+			oHost.onShowCard(oChildCard, oParameters);
+			return;
 		}
 
 		this._openDialog(oChildCard, oParentCard);

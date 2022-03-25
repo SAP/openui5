@@ -117,6 +117,18 @@
 		"group": "Layout Examples"
 	},
 	{
+		"title": "Manifest Resolver",
+		"description": "Play around with manifest resolving",
+		"route": "manifestResolver",
+		"group": "Mobile SDK Examples"
+	},
+	{
+		"title": "Show Card With Resolved Manifest",
+		"description": "The show card action when handled by Mobile SDK",
+		"route": "showCardWithResolvedManifest",
+		"group": "Mobile SDK Examples"
+	},
+	{
 		"title": "Default Header",
 		"description": "Example page for Card with Default Header",
 		"route": "defaultHeader",
@@ -210,12 +222,6 @@
 		"title": "Parameters",
 		"description": "Card Parameters",
 		"route": "parameters",
-		"group": "Other Card Examples"
-	},
-	{
-		"title": "Manifest Resolver",
-		"description": "Play around with manifest resolving",
-		"route": "manifestResolver",
 		"group": "Other Card Examples"
 	},
 	{

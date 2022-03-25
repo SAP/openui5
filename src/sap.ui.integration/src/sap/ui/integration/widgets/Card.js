@@ -2455,7 +2455,7 @@ sap.ui.define([
 		var vManifest = oParameters.manifest,
 			sBaseUrl = oParameters.baseUrl,
 			oData = oParameters.data,
-			oChildCard = new Card({
+			oChildCard = this._createCard({
 				width: oParameters.width,
 				host: this.getHostInstance(),
 				parameters: oParameters.parameters
@@ -2481,6 +2481,17 @@ sap.ui.define([
 		}
 
 		return oChildCard;
+	};
+
+	/**
+	 * Creates a card with the given settings.
+	 *
+	 * @private
+	 * @param {Object} oSettings The settings for the card.
+	 * @returns {sap.ui.integration.widgets.Card} The result card.
+	 */
+	Card.prototype._createCard = function (oSettings) {
+		return new Card(oSettings);
 	};
 
 	return Card;

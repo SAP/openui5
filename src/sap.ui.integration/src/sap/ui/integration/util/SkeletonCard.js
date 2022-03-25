@@ -44,5 +44,13 @@ sap.ui.define([
 		return true;
 	};
 
+	/**
+	 * @override
+	 * @returns {sap.ui.integration.util.SkeletonCard} The result card.
+	 */
+	SkeletonCard.prototype._createCard = function (oSettings) {
+		return new SkeletonCard(oSettings);
+	};
+
 	return SkeletonCard;
 });
