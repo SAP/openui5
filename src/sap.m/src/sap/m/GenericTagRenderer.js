@@ -107,9 +107,11 @@ sap.ui.define([
 	GenericTagRenderer._getAriaLabelledBy = function(oControl) {
 		var aLabelledBy = oControl.getAriaLabelledBy().slice(),
 			sId = oControl.getId(),
-			sTagValueId = this._getTagValueId(oControl);
+			sTagValueId = this._getTagValueId(oControl),
+			sTagValueState = this._getTagValueState(oControl),
+			sStatus = oControl.getStatus();
 
-		if (oControl.getStatus() !== ValueState.None) {
+		if (sStatus !== ValueState.None && sStatus !== sTagValueState) {
 			aLabelledBy.push(sId + "-status");
 		}
 
@@ -150,6 +152,12 @@ sap.ui.define([
 		var oValue = oControl.getValue();
 
 		return oValue ? oValue.getId() : "";
+	};
+
+	GenericTagRenderer._getTagValueState = function(oControl) {
+		var oValue = oControl.getValue();
+
+		return oValue ? oValue.getState() : "";
 	};
 
 	return GenericTagRenderer;

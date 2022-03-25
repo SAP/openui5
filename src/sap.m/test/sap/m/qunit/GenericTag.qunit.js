@@ -745,6 +745,23 @@ sap.ui.define([
 		oText.destroy();
 	});
 
+	QUnit.test(
+		"GenericTag has the correct ARIA state - value's state and generic tag value state don't conflict", function(assert){
+		//arrange
+		var $genericTag,
+			sControlStatusId = this.oGenericTag.getId() + "-status";
+
+		//act
+		this.oGenericTag.setStatus('Information');
+		this.oGenericTag.getValue().setState("Information");
+
+		oCore.applyChanges();
+		$genericTag = this.oGenericTag.$();
+
+		//assert
+		assert.strictEqual($genericTag.attr("aria-labelledby").indexOf(sControlStatusId) === -1, true, "GenericTag doesn't have the status id in labelledby");
+	});
+
 	QUnit.module("Test behavior in overflow toolbar", {
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
