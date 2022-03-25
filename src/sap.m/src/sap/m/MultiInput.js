@@ -245,6 +245,7 @@ function(
 		this._bIsValidating = false;
 		this._tokenizer = new Tokenizer();
 		this._tokenizer._setAdjustable(true);
+		this._setTokenizerCollapsed(true);
 
 		this.setAggregation("tokenizer", this._tokenizer);
 		this._tokenizer.attachTokenChange(this._onTokenChange, this);
@@ -306,9 +307,9 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.onAfterRendering = function () {
-		this._tokenizer.scrollToEnd();
 		this._registerResizeHandler();
 		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
+		this._tokenizer._useCollapsedMode(this._getTokenizerCollapsed());
 		this._handleInnerVisibility();
 		this._syncInputWidth(this._tokenizer);
 		Input.prototype.onAfterRendering.apply(this, arguments);
@@ -387,6 +388,7 @@ function(
 		this.invalidate();
 
 		if (args.getParameter("type") === "removed") {
+			this._setTokenizerCollapsed(false);
 			this._tokenizer._useCollapsedMode(false);
 		}
 
@@ -1004,6 +1006,7 @@ function(
 		}
 
 		if (!bFocusIsInSelectedItemPopup && !bNewFocusIsInTokenizer) {
+			this._setTokenizerCollapsed(true);
 			this._tokenizer._useCollapsedMode(true);
 		}
 
@@ -1069,6 +1072,7 @@ function(
 					return;
 				}
 
+				this._setTokenizerCollapsed(false);
 				this._tokenizer._useCollapsedMode(false);
 				this._setValueVisible();
 				this._tokenizer.scrollToEnd();
@@ -1436,6 +1440,7 @@ function(
 				that._updatePickerHeaderTitle();
 			})
 			.attachAfterClose(function(){
+				that._setTokenizerCollapsed(true);
 				that._tokenizer._useCollapsedMode(true);
 				that._bShowListWithTokens = false;
 			});
@@ -1505,6 +1510,7 @@ function(
 	MultiInput.prototype._onAfterCloseTokensPicker = function() {
 		if (this._oSuggPopover && !this.getValue()) {
 			this._tokenizer._useCollapsedMode(true);
+			this._setTokenizerCollapsed(true);
 			this._setValueInvisible();
 		}
 	};
@@ -1883,6 +1889,28 @@ function(
 	 */
 	MultiInput.prototype.isValueHelpOnlyOpener = function (oTarget) {
 		return [this._$input[0], this._getValueHelpIcon().getDomRef()].indexOf(oTarget) > -1;
+	};
+
+	/**
+	 * Sets the property _bTokenizerCollapsed with the current state of the internal Tokenizer.
+	 *
+	 * @private
+	 * @param {boolean} bCollapsed True if the tokenizer is collapsed.
+	 * @returns {sap.m.MultiInput} Pointer to the control instance for chaining.
+	 */
+	MultiInput.prototype._setTokenizerCollapsed = function (bCollapsed) {
+		this._bTokenizerCollapsed = bCollapsed;
+		return this;
+	};
+
+	/**
+	 * Gets the property _bTokenizerCollapsed.
+	 *
+	 * @private
+	 * @returns {boolean} True if the tokenizer is collapsed.
+	 */
+	MultiInput.prototype._getTokenizerCollapsed = function () {
+		return this._bTokenizerCollapsed;
 	};
 
 
