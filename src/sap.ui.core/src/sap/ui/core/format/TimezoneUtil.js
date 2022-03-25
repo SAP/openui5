@@ -232,7 +232,7 @@ sap.ui.define([], function() {
 	 *
 	 * @returns {string} The local IANA timezone ID of the browser, e.g <code>"Europe/Berlin"</code>
 	 * @private
-	 * @ui5-restricted sap.ui.core.Configuration
+	 * @ui5-restricted sap.ui.core.Configuration,sap.m.DateTimeField
 	 */
 	TimezoneUtil.getLocalTimezone = function() {
 		if (sLocalTimezone) {

@@ -35,6 +35,12 @@
 							width: "100%",
 							dateValue: new Date(Date.UTC(2000, 10, 20, 8, 10, 10)),
 							timezone: "America/Argentina/Buenos_Aires"
+						}),
+						new sap.m.DateTimePicker("DTP3", {
+							displayFormat: "medium",
+							width: "100%",
+							dateValue: new Date(Date.UTC(2021, 2, 24, 22, 30)),
+							showTimezone: true
 						})
 					]
 				}),
@@ -80,6 +86,29 @@
 					press: function() {
 						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
 						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
+					}
+				}),
+				new sap.m.Button("BTNLASTTIME", {
+					text: "Etc/GMT+12",
+					press: function() {
+						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
+						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
+					}
+				}),
+				new sap.m.Button("BTNCHANGEAPPTIMEZONE", {
+					text: "change app timezone",
+					press: function() {
+						var sTZ1 = "Europe/Sofia",
+							sTZ2 = "Europe/Berlin",
+							oCore = sap.ui.getCore(),
+							sCurrentTimezone = oCore.getConfiguration().getTimezone();
+
+						oCore.getConfiguration().setTimezone(sCurrentTimezone === sTZ1 ? sTZ2 : sTZ1);
+						oCore.applyChanges();
+
+						oCore.byId("DTP1").rerender();
+						oCore.byId("DTP2").rerender();
+						oCore.byId("DTP3").rerender();
 					}
 				})
 			],

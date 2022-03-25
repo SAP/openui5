@@ -40,4 +40,18 @@ describe("sap.m.DateTimePickerWithTimezone", function() {
 
 		expect(takeScreenshot(oDTP1Popover)).toLookAs("picker_displays_20_Nov_2000_5_10_10");
 	});
+
+	it("picker displays the correct date when the app timezone is different", function() {
+		var oDTP3Popover,
+			oBtnChangeAppTimezone = element(by.id("BTNCHANGEAPPTIMEZONE")),
+			oValueHelpIcon = element(by.id("DTP3-icon"));
+
+		// open the picker
+		oBtnChangeAppTimezone.click();
+		oValueHelpIcon.click();
+
+		oDTP3Popover = element(by.id("DTP3-RP-popover"));
+
+		expect(takeScreenshot(oDTP3Popover)).toLookAs("picker_displays_24_Mar_2021_23_30_00");
+	});
 });
