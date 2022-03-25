@@ -444,6 +444,19 @@ sap.ui.define([
 		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
 		this._oColumnWithColumnMenu._openMenu();
 		assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
+
+		this._oColumnWithColumnMenu.setFilterProperty("myFilterPropertyName");
+		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
+		this._oColumnWithColumnMenu._openMenu();
+		this._oColumnWithColumnMenu.setShowFilterMenuEntry(false);
+		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
+
+		this._oColumnWithColumnMenu._openMenu();
+		this._oColumnWithColumnMenu.setSortProperty("mySortPropertyName");
+		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
+		this._oColumnWithColumnMenu._openMenu();
+		this._oColumnWithColumnMenu.setShowSortMenuEntry(false);
+		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
 	});
 
 	QUnit.module("Changes that affect rows", {

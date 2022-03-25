@@ -1016,8 +1016,8 @@ sap.ui.define([
 		oColumn = oTable.getColumns()[6];
 		oMenu = oColumn.getMenu();
 		oMenu.open();
-		assert.ok(oRemoveAggregationSpy.withArgs("items", oTable._oColumnVisibilityMenuItem, true).calledOnce,
-			"The items aggregation is being removed before updating the visibility submenu");
+		assert.ok(oRemoveAggregationSpy.withArgs("items", oTable._oColumnVisibilityMenuItem, true).notCalled,
+			"The items aggregation is not removed, the visibility submenu is only updated");
 		oMenu.close();
 	});
 
