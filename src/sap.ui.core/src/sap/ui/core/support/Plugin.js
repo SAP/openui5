@@ -177,6 +177,34 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/
 	};
 
 	/**
+	 * Returns a specific DOM element from the DOM tree of this plugin.
+	 *
+	 * If the parameter <code>sSuffixOrSelector</code> is omitted or nullish,
+	 * then the root of the plugin's DOM tree is returned. If a non-empty string is given that
+	 * qualifies as an identifier, the child element with the ID this.getId() + "-" + sSuffixOrSelector is returned.
+	 * Any other string is interpreted as a selector and the first element matching that selector is returned.
+	 *
+	 * If this is the application-side of the plugin (stub), then undefined is returned.
+	 * @param {string} [sSuffixOrSelector] ID suffix or selector describing the element to retrieve
+	 * @returns {HTMLElement|null} The DOM element
+	 * @private
+	 * @ui5-restricted
+	 */
+	Plugin.prototype.dom = function(sSuffixOrSelector) {
+		if (this.isToolPlugin()) {
+			var oDomRef = document.getElementById(this.getId());
+			if ( sSuffixOrSelector == null ) {
+				return oDomRef;
+			}
+			if ( /^[\w-]+$/.test(sSuffixOrSelector) ) {
+				return document.getElementById(this.getId() + "-" + sSuffixOrSelector);
+			}
+			return oDomRef && oDomRef.querySelector(sSuffixOrSelector);
+		}
+		return null;
+	};
+
+	/**
 	 * Adds the given stylesheet to the Support Tool's HTML page.
 	 *
 	 * A &lt;link&gt; tag will be added to the head of the HTML page, referring to the given

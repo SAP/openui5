@@ -21,7 +21,6 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/base/security/encodeXML",
 	'sap/ui/core/mvc/Controller' // provides sap.ui.controller
 ], function(
 	Plugin,
@@ -40,8 +39,7 @@ sap.ui.define([
 	isEmptyObject,
 	ObjectPath,
 	$,
-	KeyCodes,
-	encodeXML
+	KeyCodes
 ) {
 	"use strict";
 
@@ -190,26 +188,24 @@ sap.ui.define([
 			return s.slice(1 + s.lastIndexOf('.'));
 		}
 
-		function encode(s) {
-			return s == null ? "" : encodeXML(String(s));
-		}
-
 		ControlTree.prototype.renderContentAreas = function() {
 			var rm = sap.ui.getCore().createRenderManager();
 
-			rm.write('<div class="sapUiSupportControlTreeTitle">You can find a control in this tree by clicking it in the application UI while pressing the Ctrl+Alt+Shift keys.</div>');
+			rm.openStart("div").class("sapUiSupportControlTreeTitle").openEnd().text("You can find a control in this tree by clicking it in the application UI while pressing the Ctrl+Alt+Shift keys.").close("div");
 
-			rm.write('<div id="sapUiSupportControlTreeArea"><ul class="sapUiSupportControlTreeList"></ul></div>');
+			rm.openStart("div", "sapUiSupportControlTreeArea").openEnd();
+				rm.openStart("ul").class("sapUiSupportControlTreeList").openEnd().close("ul");
+			rm.close("div");
 
-			rm.write('<div id="sapUiSupportControlTabs" class="sapUiSupportControlTabsHidden">');
-				rm.write('<button id="sapUiSupportControlTabProperties" class="sapUiSupportBtn sapUiSupportTab sapUiSupportTabLeft">Properties</button>');
-				rm.write('<button id="sapUiSupportControlTabBindingInfos" class="sapUiSupportBtn sapUiSupportTab">Binding Infos</button>');
-				rm.write('<button id="sapUiSupportControlTabBreakpoints" class="sapUiSupportBtn sapUiSupportTab">Breakpoints</button>');
-				rm.write('<button id="sapUiSupportControlTabExport" class="sapUiSupportBtn sapUiSupportTab sapUiSupportTabRight">Export</button>');
-			rm.write('</div>');
+			rm.openStart("div", "sapUiSupportControlTabs").class("sapUiSupportControlTabsHidden").openEnd();
+				rm.openStart("button", "sapUiSupportControlTabProperties").class("sapUiSupportBtn").class("sapUiSupportTab").class("sapUiSupportTabLeft").openEnd().text("Properties").close("button");
+				rm.openStart("button", "sapUiSupportControlTabBindingInfos").class("sapUiSupportBtn").class("sapUiSupportTab").openEnd().text("Binding Infos").close("button");
+				rm.openStart("button", "sapUiSupportControlTabBreakpoints").class("sapUiSupportBtn").class("sapUiSupportTab").openEnd().text("Breakpoints").close("button");
+				rm.openStart("button", "sapUiSupportControlTabExport").class("sapUiSupportBtn").class("sapUiSupportTab").class("sapUiSupportTabRight").openEnd().text("Export").close("button");
+			rm.close("div");
 
-			rm.write('<div id="sapUiSupportControlPropertiesArea"></div>');
-			rm.flush(this.$().get(0));
+			rm.openStart("div", "sapUiSupportControlPropertiesArea").openEnd().close("div");
+			rm.flush(this.dom());
 			rm.destroy();
 		};
 
@@ -219,54 +215,57 @@ sap.ui.define([
 
 			function renderNode (iIndex, mElement) {
 				var bHasChildren = mElement.aggregation.length > 0 || mElement.association.length > 0;
-				rm.write("<li id=\"sap-debug-controltree-" + encode(mElement.id) + "\" class=\"sapUiControlTreeElement\">");
+				rm.openStart("li", "sap-debug-controltree-" + mElement.id).class("sapUiControlTreeElement").openEnd();
 				var sImage = bHasChildren ? "minus" : "space";
-				rm.write("<img class=\"sapUiControlTreeIcon\" src=\"../../debug/images/" + sImage + ".gif\">");
+				rm.voidStart("img").class("sapUiControlTreeIcon").attr("src", "../../debug/images/" + sImage + ".gif").voidEnd();
 
 				if (mElement.isAssociation) {
-					rm.write("<img title=\"Association\" class=\"sapUiControlTreeIcon\" src=\"../../debug/images/link.gif\">");
+					rm.voidStart("img").attr("title", "Association").class("sapUiControlTreeIcon").attr("src", "../../debug/images/link.gif").voidEnd();
 				}
 
 				var sClass = basename(mElement.type);
 
-				rm.write('<div>');
+				rm.openStart("div").openEnd();
 
-				rm.write('<span class="name" title="' + encode(mElement.type) + '">' + encode(sClass) + ' - ' + encode(mElement.id) + '</span>');
-				rm.write('<span class="sapUiSupportControlTreeBreakpointCount sapUiSupportItemHidden" title="Number of active breakpoints / methods"></span>');
+				rm.openStart("span").class("name").attr("title", mElement.type).openEnd().text(sClass + ' - ' + mElement.id).close("span");
+				rm.openStart("span").class("sapUiSupportControlTreeBreakpointCount").class("sapUiSupportItemHidden").attr("title", "Number of active breakpoints / methods").openEnd().close("span");
 
-				rm.write('</div>');
+				rm.close("div");
 
 				if (mElement.aggregation.length > 0) {
-					rm.write("<ul>");
+					rm.openStart("ul").openEnd();
 					each(mElement.aggregation, renderNode);
-					rm.write("</ul>");
+					rm.close("ul");
 				}
 
 				if (mElement.association.length > 0) {
-					rm.write("<ul>");
+					rm.openStart("ul").openEnd();
 					each(mElement.association, function(iIndex, oValue) {
 
 						if (oValue.isAssociationLink) {
 							var sType = basename(oValue.type);
-							rm.write("<li data-sap-ui-controlid=\"" + encode(oValue.id) + "\" class=\"sapUiControlTreeLink\">");
-							rm.write("<img class=\"sapUiControlTreeIcon\" align=\"middle\" src=\"../../debug/images/space.gif\">");
-							rm.write("<img class=\"sapUiControlTreeIcon\" align=\"middle\" src=\"../../debug/images/link.gif\">");
-							rm.write("<div><span title=\"Association '" + encode(oValue.name) + "' to '" + encode(oValue.id) + "' with type '" + encode(oValue.type) + "'\">" +
-								encode(sType) + " - " + encode(oValue.id) + " (" + encode(oValue.name) + ")</span></div>");
-							rm.write("</li>");
+							rm.openStart("li").attr("data-sap-ui-controlid", oValue.id).class("sapUiControlTreeLink").openEnd();
+							rm.voidStart("img").class("sapUiControlTreeIcon").attr("align", "middle").attr("src", "../../debug/images/space.gif").voidEnd();
+							rm.voidStart("img").class("sapUiControlTreeIcon").attr("align", "middle").attr("src", "../../debug/images/link.gif").voidEnd();
+							rm.openStart("div").openEnd();
+								rm.openStart("span").attr("title", "Association '" + oValue.name + "' to '" + oValue.id + "' with type '" + oValue.type).openEnd();
+								rm.text(sType + " - " + oValue.id + " (" + oValue.name + ")");
+								rm.close("span");
+							rm.close("div");
+							rm.close("li");
 						} else {
 							renderNode(0 /* not used */, oValue);
 						}
 
 					});
-					rm.write("</ul>");
+					rm.close("ul");
 				}
-				rm.write("</li>");
+				rm.close("li");
 			}
 
 			each(aControlTree, renderNode);
 
-			rm.flush(this.$().find("#sapUiSupportControlTreeArea > ul.sapUiSupportControlTreeList").get(0));
+			rm.flush(this.dom("#sapUiSupportControlTreeArea > ul.sapUiSupportControlTreeList"));
 			rm.destroy();
 		};
 
@@ -274,122 +273,162 @@ sap.ui.define([
 
 			var rm = sap.ui.getCore().createRenderManager();
 
-			rm.write('<ul class="sapUiSupportControlTreeList" data-sap-ui-controlid="' + encode(sControlId) + '">');
+			rm.openStart("ul").class("sapUiSupportControlTreeList").attr("data-sap-ui-controlid", sControlId).openEnd();
 			each(aControlProps, function(iIndex, oValue) {
 
-				rm.write("<li>");
+				rm.openStart("li").openEnd();
 
-				rm.write("<span><label class='sapUiSupportLabel'>BaseType:</label> <code>" + encode(oValue.control) + "</code></span>");
+				rm.openStart("span").openEnd()
+						.openStart("label").class("sapUiSupportLabel").openEnd().text("BaseType").close("label")
+						.text(" ")
+						.openStart("code").openEnd().text(oValue.control).close("code")
+					.close("span");
 
 				if (oValue.properties.length > 0 || oValue.aggregations.length > 0) {
 
-					rm.write('<div class="get" title="Activate debugger for get-method">G</div><div class="set" title="Activate debugger for set-method">S</div>');
+					rm.openStart("div").class("get").attr("title", "Activate debugger for get-method").openEnd().text("G").close("div");
+					rm.openStart("div").class("set").attr("title", "Activate debugger for set-method").openEnd().text("S").close("div");
 
-					rm.write("<div class=\"sapUiSupportControlProperties\"><table><colgroup><col width=\"50%\"><col width=\"50%\"></colgroup>");
+					rm.openStart("div").class("sapUiSupportControlProperties").openEnd();
+						rm.openStart("table").openEnd();
+							rm.openStart("colgroup").openEnd();
+								rm.voidStart("col").attr("width", "50%").voidEnd();
+								rm.voidStart("col").attr("width", "50%").voidEnd();
+							rm.close("colgroup");
 
 					each(oValue.properties, function(iIndex, oProperty) {
 
-						rm.write("<tr><td>");
-						rm.write("<label class='sapUiSupportLabel'>" + encode(oProperty.name) + ((oProperty.isBound) ?
-								'<img title="Value is bound (see Binding Infos)" src="../../debug/images/link.gif">' : "") + "</label>");
-						rm.write("</td><td>");
+						rm.openStart("tr").openEnd();
+
+						rm.openStart("td").openEnd();
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text(oProperty.name);
+								if (oProperty.isBound) {
+									rm.voidStart("img").attr("title", "Value is bound (see Binding Infos)").attr("src", "../../debug/images/link.gif").voidEnd();
+								}
+							rm.close("label");
+						rm.close("td");
+
+						rm.openStart("td").openEnd();
 
 						if (oProperty.type === "boolean") {
 
-							rm.write("<input type='checkbox' ");
-							rm.write("data-sap-ui-name='" + encode(oProperty.name) + "' ");
+							rm.voidStart("input").attr("type", "checkbox");
+							rm.attr("data-sap-ui-name", oProperty.name);
 							if (oProperty.value == true) {
-								rm.write("checked='checked'");
+								rm.attr("checked", "checked");
 							}
-							rm.write(">");
+							rm.voidEnd();
 
 						} else if (oProperty.enumValues) {
 
-							rm.write("<div><select ");
-							rm.write("data-sap-ui-name='" + encode(oProperty.name) + "'>");
+							rm.openStart("div").openEnd();
+							rm.openStart("select");
+							rm.attr("data-sap-ui-name", oProperty.name).openEnd();
 							each(oProperty.enumValues, function(sKey, sValue) {
-								rm.write("<option");
+								rm.openStart("option");
 
 								if (sKey === oProperty.value) {
-									rm.write(" selected");
+									rm.attr("selected", "selected");
 								}
 
-								rm.write(">");
-								rm.writeEscaped("" + sKey);
-								rm.write("</option>");
+								rm.openEnd();
+								rm.text(sKey);
+								rm.close("option");
 							});
-							rm.write("</select></div>");
+							rm.close("select");
+							rm.close("div");
 
 						} else {
 
-							rm.write("<div><input type='text' ");
-							rm.write("data-sap-ui-name='" + encode(oProperty.name) + "' ");
+							rm.openStart("div").openEnd();
+							rm.voidStart("input").attr("type", "text");
+							rm.attr("data-sap-ui-name", oProperty.name);
 							if (oProperty.value) {
-								rm.write("value='");
-								rm.writeEscaped("" + oProperty.value);
-								rm.write("'");
+								rm.attr("value", oProperty.value);
 							}
-							rm.write("></div>");
+							rm.voidEnd();
+							rm.close("div");
 
 						}
 
-						rm.write("</td>");
+						rm.close("td");
 
-						rm.write('<td><input type="checkbox" data-sap-ui-method="' + encode(oProperty._sGetter) + '" title="Activate debugger for ' + encode(oProperty._sGetter) + '"');
-						if (oProperty.bp_sGetter) {
-							rm.write("checked='checked'");
-						}
-						rm.write('></td>');
+						rm.openStart("td").openEnd();
+							rm.voidStart("input")
+								.attr("type", "checkbox")
+								.attr("data-sap-ui-method", oProperty._sGetter)
+								.attr("title", "Activate debugger for '" + oProperty._sGetter + "'");
+							if (oProperty.bp_sGetter) {
+								rm.attr("checked", "checked");
+							}
+							rm.voidEnd();
+						rm.close("td");
 
-						rm.write('<td><input type="checkbox" data-sap-ui-method="' + encode(oProperty._sMutator) + '" title="Activate debugger for ' + encode(oProperty._sMutator) + '"');
-						if (oProperty.bp_sMutator) {
-							rm.write("checked='checked'");
-						}
-						rm.write('></td>');
+						rm.openStart("td").openEnd();
+							rm.voidStart("input")
+								.attr("type", "checkbox")
+								.attr("data-sap-ui-method", oProperty._sMutator)
+								.attr("title", "Activate debugger for '" + oProperty._sMutator + "'");
+							if (oProperty.bp_sMutator) {
+								rm.attr("checked", "checked");
+							}
+							rm.voidEnd();
+						rm.close("td");
 
-						rm.write("</tr>");
+						rm.close("tr");
 
 					});
 
 					each(oValue.aggregations, function(iIndex, oAggregation) {
 
-						rm.write("<tr><td>");
+						rm.openStart("tr").openEnd();
 
-						rm.write("<label class='sapUiSupportLabel'>" + encode(oAggregation.name) + "</label>");
-						rm.write("</td><td>");
+							rm.openStart("td").openEnd();
+								rm.openStart("label").class("sapUiSupportLabel").openEnd().text(oAggregation.name).close("label");
+							rm.close("td");
 
-						rm.write(encode(oAggregation.value));
+							rm.openStart("td").openEnd();
+							rm.text(oAggregation.value);
+							rm.close("td");
 
-						rm.write("</td>");
+							rm.openStart("td").openEnd();
+							rm.voidStart("input")
+								.attr("type", "checkbox")
+								.attr("data-sap-ui-method", oAggregation._sGetter)
+								.attr("title", "Activate debugger for '" + oAggregation._sGetter + "'");
+							if (oAggregation.bp_sGetter) {
+								rm.attr("checked", "checked");
+							}
+							rm.voidEnd();
+							rm.close("td");
 
-						rm.write('<td><input type="checkbox" data-sap-ui-method="' + encode(oAggregation._sGetter) + '" title="Activate debugger for ' + encode(oAggregation._sGetter) + '"');
-						if (oAggregation.bp_sGetter) {
-							rm.write("checked='checked'");
-						}
-						rm.write('></td>');
+							rm.openStart("td").openEnd();
+							rm.voidStart("input")
+								.attr("type", "checkbox")
+								.attr("data-sap-ui-method", oAggregation._sMutator)
+								.attr("title", "Activate debugger for '" + oAggregation._sMutator + "'");
+							if (oAggregation.bp_sMutator) {
+								rm.attr("checked", "checked");
+							}
+							rm.voidEnd();
+							rm.close("td");
 
-						rm.write('<td><input type="checkbox" data-sap-ui-method="' + encode(oAggregation._sMutator) + '" title="Activate debugger for ' + encode(oAggregation._sMutator) + '"');
-						if (oAggregation.bp_sMutator) {
-							rm.write("checked='checked'");
-						}
-						rm.write('></td>');
-
-						rm.write("</tr>");
+						rm.close("tr");
 
 					});
 
-					rm.write("</table></div>");
+					rm.close("table").close("div");
 
 				}
 
-				rm.write("</li>");
+				rm.close("li");
 
 			});
-			rm.write("</ul>");
-			rm.flush(this.$().find("#sapUiSupportControlPropertiesArea").get(0));
+			rm.close("ul");
+			rm.flush(this.dom("#sapUiSupportControlPropertiesArea"));
 			rm.destroy();
 
-			this.$().find("#sapUiSupportControlTabs").removeClass("sapUiSupportControlTabsHidden");
+			this.dom("#sapUiSupportControlTabs").classList.remove("sapUiSupportControlTabsHidden");
 
 			this.selectTab(this._tab.properties);
 		};
@@ -400,267 +439,307 @@ sap.ui.define([
 
 			if (mBindingInfos.contexts.length > 0) {
 
-				rm.write('<h2>Contexts</h2>');
+				rm.openStart("h2").openEnd().text("Contexts").close("h2");
 
-				rm.write('<ul class="sapUiSupportControlTreeList" data-sap-ui-controlid="' + encode(sControlId) + '">');
+				rm.openStart("ul").class("sapUiSupportControlTreeList").attr("data-sap-ui-controlid", sControlId).openEnd();
 
 				each(mBindingInfos.contexts, function(iContextIndex, oContext) {
 
-					rm.write('<li>');
+					rm.openStart("li").openEnd();
 
-					rm.write('<span><label class="sapUiSupportLabel">Model Name: ' + encode(oContext.modelName) + '</label></span>');
+					rm.openStart("span").openEnd();
+						rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Model Name: " + oContext.modelName).close("label");
+					rm.close("span");
 
-					rm.write('<div class="sapUiSupportControlProperties">');
+					rm.openStart("div").class("sapUiSupportControlProperties").openEnd();
 
-					rm.write('<table><colgroup><col width="15%"><col width="35%"><col width="50%"></colgroup>');
-					rm.write('<tbody>');
+					rm.openStart("table").openEnd()
+						.openStart("colgroup").openEnd()
+							.voidStart("col").attr("width", "15%").voidEnd()
+							.voidStart("col").attr("width", "35%").voidEnd()
+							.voidStart("col").attr("width", "50%").voidEnd()
+						.close("colgroup");
+					rm.openStart("tbody").openEnd();
 
 					// Path
-					rm.write('<tr><td colspan="2">');
+					rm.openStart("tr").openEnd();
 
-					rm.write('<label class="sapUiSupportLabel">Path</label>');
+						rm.openStart("td").attr("colspan", "2").openEnd();
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Path").close("label");
+						rm.close("td");
 
-					rm.write('</td><td>');
+						rm.openStart("td").openEnd();
+							rm.openStart("div").openEnd();
+								rm.openStart("span");
 
-					rm.write('<div><span');
+								if (oContext.invalidPath) {
+									rm.class("sapUiSupportModelPathInvalid");
+								} else if (oContext.unverifiedPath) {
+									rm.class("sapUiSupportModelPathUnverified");
+								}
 
-					if (oContext.invalidPath) {
-						rm.write(' class="sapUiSupportModelPathInvalid"');
-					} else if (oContext.unverifiedPath) {
-						rm.write(' class="sapUiSupportModelPathUnverified"');
-					}
+								rm.openEnd().text(oContext.path);
 
-					rm.write('>' + encode(oContext.path));
+								if (oContext.invalidPath) {
+									rm.text(" (invalid)");
+								} else if (oContext.unverifiedPath) {
+									rm.text(" (unverified)");
+								}
 
-					if (oContext.invalidPath) {
-						rm.write(' (invalid)');
-					} else if (oContext.unverifiedPath) {
-						rm.write(' (unverified)');
-					}
+								rm.close("span");
+							rm.close("div");
+						rm.close("td");
 
-					rm.write('</span></div>');
-
-					rm.write('</td></tr>');
+					rm.close("tr");
 
 					if (oContext.location) {
 
 						// Inherited from
-						rm.write('<tr><td colspan="2">');
+						rm.openStart("tr").openEnd();
 
-						rm.write('<label class="sapUiSupportLabel">Inherited from</label>');
+						rm.openStart("td").attr("colspan", "2").openEnd();
+						rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Inherited from").close("label");
+						rm.close("td");
 
-						rm.write('</td><td>');
+						rm.openStart("td").openEnd();
+							rm.openStart("div").openEnd();
+								rm.openStart("a")
+									.class("control-tree")
+									.class("sapUiSupportLink")
+									.attr("title", oContext.location.name)
+									.attr("data-sap-ui-control-id", oContext.location.id)
+									.attr("href", "#")
+									.openEnd()
+										.text(basename(oContext.location.name))
+										.text(" (" + oContext.location.id + ")")
+								.close("a")
+							.close("div");
+						rm.close("td");
 
-						rm.write('<div><a class="control-tree sapUiSupportLink" title="' + encode(oContext.location.name) + '" data-sap-ui-control-id="' + encode(oContext.location.id) + '" href="#">' +
-								encode(basename(oContext.location.name)) +
-								' (' + encode(oContext.location.id) + ')</a></div>');
-
-						rm.write('</td></tr>');
+						rm.close("tr");
 
 					}
 
-					rm.write('</tbody></table></div></li>');
+					rm.close("tbody").close("table").close("div").close("li");
 
 				});
 
-				rm.write('</ul>');
+				rm.close("ul");
 
 			}
 
 			if (mBindingInfos.bindings.length > 0) {
 
-				rm.write('<h2>Bindings</h2>');
+				rm.openStart("h2").openEnd().text("Bindings").close("h2");
 
-				rm.write('<ul class="sapUiSupportControlTreeList" data-sap-ui-controlid="' + encode(sControlId) + '">');
+				rm.openStart("ul").class("sapUiSupportControlTreeList").attr("data-sap-ui-controlid", sControlId).openEnd();
 
 				each(mBindingInfos.bindings, function(iBindingInfoIndex, oBindingInfo) {
 
-					rm.write('<li data-sap-ui-binding-name="' + encode(oBindingInfo.name) + '">');
+					rm.openStart("li").attr("data-sap-ui-binding-name", oBindingInfo.name).openEnd();
 
-					rm.write('<span>');
-
-					rm.write('<label class="sapUiSupportLabel">' + encode(oBindingInfo.name) + '</label>');
-					rm.write('<img class="sapUiSupportRefreshBinding" title="Refresh Binding" src="../../debug/images/refresh.gif">');
-
-					rm.write('</span>');
+					rm.openStart("span").openEnd();
+						rm.openStart("label").class("sapUiSupportLabel").openEnd().text(oBindingInfo.name).close("label");
+						rm.voidStart("img").class("sapUiSupportRefreshBinding").attr("title", "Refresh Binding").attr("src", "../../debug/images/refresh.gif").voidEnd();
+					rm.close("span");
 
 					each(oBindingInfo.bindings, function(iBindingIndex, oBinding) {
 
-						rm.write('<div class="sapUiSupportControlProperties">');
+						rm.openStart("div").class("sapUiSupportControlProperties").openEnd();
 
-						rm.write('<table><colgroup><col width="15%"><col width="35%"><col width="50%"></colgroup>');
-						rm.write('<tbody>');
+						rm.openStart("table").openEnd()
+							.openStart("colgroup").openEnd()
+								.voidStart("col").attr("width", "15%").voidEnd()
+								.voidStart("col").attr("width", "35%").voidEnd()
+								.voidStart("col").attr("width", "50%").voidEnd()
+							.close("colgroup");
+						rm.openStart("tbody").openEnd();
 
 						// Path
-						rm.write('<tr><td colspan="2">');
+						rm.openStart("tr").openEnd();
 
-						rm.write('<label class="sapUiSupportLabel">Path</label>');
+							rm.openStart("td").attr("colspan", "2").openEnd();
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Path").close("label");
+							rm.close("td");
 
-						rm.write('</td><td>');
+							rm.openStart("td").openEnd();
 
-						rm.write('<div><span');
+							rm.openStart("div").openEnd().openStart("span");
 
-						if (oBinding.invalidPath) {
-							rm.write(' class="sapUiSupportModelPathInvalid"');
-						} else if (oBinding.unverifiedPath) {
-							rm.write(' class="sapUiSupportModelPathUnverified"');
-						}
+							if (oBinding.invalidPath) {
+								rm.class("sapUiSupportModelPathInvalid");
+							} else if (oBinding.unverifiedPath) {
+								rm.class("sapUiSupportModelPathUnverified");
+							}
 
-						rm.write('>' + encode(oBinding.path));
+							rm.openEnd().text(oBinding.path);
 
-						if (oBinding.invalidPath) {
-							rm.write(' (invalid)');
-						} else if (oBinding.unverifiedPath) {
-							rm.write(' (unverified)');
-						}
+							if (oBinding.invalidPath) {
+								rm.text(' (invalid)');
+							} else if (oBinding.unverifiedPath) {
+								rm.text(' (unverified)');
+							}
 
-						rm.write('</span></div>');
+							rm.close("span").close("div");
 
-						rm.write('</td></tr>');
+							rm.close("td");
+						rm.close("tr");
 
 						// Absolute-Path
-						rm.write('<tr><td colspan="2">');
+						rm.openStart("tr").openEnd();
+							rm.openStart("td").attr("colspan", "2").openEnd();
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Absolute Path").close("label");
+							rm.close("td");
 
-						rm.write('<label class="sapUiSupportLabel">Absolute Path</label>');
-
-						rm.write('</td><td>');
-
-						if (typeof oBinding.absolutePath !== 'undefined') {
-							rm.write('<div>' + encode(oBinding.absolutePath) + '</div>');
-						} else {
-							rm.write('<div>No binding</div>');
-						}
-
-						rm.write('</td></tr>');
+							rm.openStart("td").openEnd();
+							if (typeof oBinding.absolutePath !== 'undefined') {
+								rm.openStart("div").openEnd().text(oBinding.absolutePath).close("div");
+							} else {
+								rm.openStart("div").openEnd().text("No binding").close("div");
+							}
+							rm.close("td");
+						rm.close("tr");
 
 						// Relative
-						rm.write('<tr><td colspan="2">');
+						rm.openStart("tr").openEnd();
+							rm.openStart("td").attr("colspan", "2").openEnd();
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Relative").close("label");
+							rm.close("td");
 
-						rm.write('<label class="sapUiSupportLabel">Relative</label>');
-
-						rm.write('</td><td>');
-
-						if (typeof oBinding.isRelative !== 'undefined') {
-							rm.write('<div>' + encode(oBinding.isRelative) + '</div>');
-						} else {
-							rm.write('<div>No binding</div>');
-						}
-
-						rm.write('</td></tr>');
+							rm.openStart("td").openEnd();
+							if (typeof oBinding.isRelative !== 'undefined') {
+								rm.openStart("div").openEnd().text(oBinding.isRelative).close("div");
+							} else {
+								rm.openStart("div").openEnd().text("No binding").close("div");
+							}
+							rm.close("td");
+						rm.close("tr");
 
 						// Binding-Type
-						rm.write('<tr><td colspan="2">');
+						rm.openStart("tr").openEnd();
+							rm.openStart("td").attr("colspan", "2").openEnd();
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Binding Type").close("label");
+							rm.close("td");
 
-						rm.write('<label class="sapUiSupportLabel">Binding Type</label>');
-
-						rm.write('</td><td>');
-
-						if (!oBindingInfo.type) {
-							rm.write('<div>No binding</div>');
-						} else {
-							rm.write('<div title="' + encode(oBindingInfo.type) + '">' + encode(basename(oBindingInfo.type)) + '</div>');
-						}
-
-						rm.write('</td></tr>');
+							rm.openStart("td").openEnd();
+							if (!oBindingInfo.type) {
+								rm.openStart("div").openEnd().text("No binding").close("div");
+							} else {
+								rm.openStart("div").attr("title", oBindingInfo.type).openEnd().text(basename(oBindingInfo.type)).close("div");
+							}
+							rm.close("td");
+						rm.close("tr");
 
 						// Binding-Mode
 						if (oBinding.mode) {
-							rm.write('<tr><td colspan="2">');
+							rm.openStart("tr").openEnd().openStart("td").attr("colspan", "2").openEnd();
 
-							rm.write('<label class="sapUiSupportLabel">Binding Mode</label>');
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Binding Mode").close("label");
 
-							rm.write('</td><td>');
+							rm.close("td");
+							rm.openStart("td").openEnd();
 
-							rm.write('<div>' + encode(oBinding.mode) + '</div>');
+							rm.openStart("div").openEnd().text(oBindingInfo.mode).close("div");
 
-							rm.write('</td></tr>');
+							rm.close("td").close("tr");
 						}
 
 						// Model-Name
-						rm.write('<tr><td>');
+						rm.openStart("tr").openEnd();
+							rm.openStart("td").openEnd();
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Model").close("label");
+							rm.close("td");
 
-						rm.write('<label class="sapUiSupportLabel">Model</label>');
+							rm.openStart("td").openEnd();
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Name").close("label");
+							rm.close("td");
 
-						rm.write('</td><td>');
-
-						rm.write('<label class="sapUiSupportLabel">Name</label>');
-
-						rm.write('</td><td>');
-
-						if (oBinding.model && oBinding.model.name) {
-							rm.write('<div>' + encode(oBinding.model.name) + '</div>');
-						} else {
-							rm.write('<div>No binding</div>');
-						}
-
-						rm.write('</td></tr>');
+							rm.openStart("td").openEnd();
+							if (oBinding.model && oBinding.model.name) {
+								rm.openStart("div").openEnd().text(oBinding.model.name).close("div");
+							} else {
+								rm.openStart("div").openEnd().text("No binding").close("div");
+							}
+							rm.close("td");
+						rm.close("tr");
 
 						// Model-Type
-						rm.write('<tr><td>');
-						rm.write('</td><td>');
+						rm.openStart("tr").openEnd();
+							rm.openStart("td").openEnd().close("td");
 
-						rm.write('<label class="sapUiSupportLabel">Type</label>');
+							rm.openStart("td").openEnd();
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Type").close("label");
+							rm.close("td");
 
-						rm.write('</td><td>');
-
-						if (oBinding.model && oBinding.model.type) {
-							rm.write('<div><span title="' + encode(oBinding.model.type) + '">' + encode(basename(oBinding.model.type)) + '</span></div>');
-						} else {
-							rm.write('<div><span>No binding</span></div>');
-						}
-
-						rm.write('</td></tr>');
+							rm.openStart("td").openEnd();
+							if (oBinding.model && oBinding.model.type) {
+								rm.openStart("div").openEnd().openStart("span").attr("title", oBinding.model.type).openEnd().text(basename(oBinding.model.type)).close("span").close("div");
+							} else {
+								rm.openStart("div").openEnd().openStart("span").openEnd().text("No binding").close("span").close("div");
+							}
+							rm.close("td");
+						rm.close("tr");
 
 						// Model-DefaultBindingMode
-						rm.write('<tr><td>');
-						rm.write('</td><td>');
+						rm.openStart("tr").openEnd();
+							rm.openStart("td").openEnd().close("td");
 
-						rm.write('<label class="sapUiSupportLabel">Default Binding Mode</label>');
+							rm.openStart("td").openEnd();
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Default Binding Mode").close("label");
+							rm.close("td");
 
-						rm.write('</td><td>');
-
-						if (oBinding.model && oBinding.model.bindingMode) {
-							rm.write('<div><span>' + encode(oBinding.model.bindingMode) + '</span></div>');
-						} else {
-							rm.write('<div><span>No binding</span></div>');
-						}
-
-						rm.write('</td></tr>');
+							rm.openStart("td").openEnd();
+							if (oBinding.model && oBinding.model.bindingMode) {
+								rm.openStart("div").openEnd().openStart("span").openEnd().text(oBinding.model.bindingMode).close("span").close("div");
+							} else {
+								rm.openStart("div").openEnd().openStart("span").openEnd().text("No binding").close("span").close("div");
+							}
+							rm.close("td");
+						rm.close("tr");
 
 						// Model-Location
-						rm.write('<tr><td>');
-						rm.write('</td><td>');
+						rm.openStart("tr").openEnd();
+							rm.openStart("td").openEnd().close("td");
 
-						rm.write('<label class="sapUiSupportLabel">Location</label>');
+							rm.openStart("td").openEnd();
+							rm.openStart("label").class("sapUiSupportLabel").openEnd().text("Location").close("label");
+							rm.close("td");
 
-						rm.write('</td><td>');
-
-						if (oBinding.model && oBinding.model.location && oBinding.model.location.type) {
-							if (oBinding.model.location.type === 'control') {
-								rm.write('<div><a class="control-tree sapUiSupportLink" title="' + encode(oBinding.model.location.name) + '" data-sap-ui-control-id="' + encode(oBinding.model.location.id) + '" href="#">' +
-										encode(basename(oBinding.model.location.name)) +
-										' (' + encode(oBinding.model.location.id) + ')</a></div>');
+							rm.openStart("td").openEnd();
+							if (oBinding.model && oBinding.model.location && oBinding.model.location.type) {
+								if (oBinding.model.location.type === 'control') {
+									rm.openStart("div").openEnd();
+									rm.openStart("a")
+										.class("control-tree")
+										.class("sapUiSupportLink")
+										.attr("title", oBinding.model.location.name)
+										.attr("data-sap-ui-control-id", oBinding.model.location.id)
+										.attr("href", "#").openEnd()
+											.text(basename(oBinding.model.location.name))
+											.text(" (" + oBinding.model.location.id + ")")
+										.close("a");
+									rm.close("div");
+								} else {
+									rm.openStart("div").openEnd().openStart("span").attr("title", "sap.ui.getCore()").openEnd().text("Core").close("span").close("div");
+								}
 							} else {
-								rm.write('<div><span title="sap.ui.getCore()">Core</span></div>');
+								rm.openStart("div").openEnd().openStart("span").openEnd().text("No binding").close("span").close("div");
 							}
-						} else {
-							rm.write('<div><span>No binding</span></div>');
-						}
+							rm.close("td");
+						rm.close("tr");
 
-						rm.write('</td></tr>');
-
-						rm.write('</tbody></table></div>');
+						rm.close("tbody").close("table").close("div");
 
 					});
 
-					rm.write('</li>');
+					rm.close("li");
 				});
 
-				rm.write('</ul>');
+				rm.close("ul");
 
 			}
 
-			rm.flush(this.$().find("#sapUiSupportControlPropertiesArea").get(0));
+			rm.flush(this.dom("#sapUiSupportControlPropertiesArea"));
 			rm.destroy();
 		};
 
@@ -668,50 +747,55 @@ sap.ui.define([
 
 			var rm = sap.ui.getCore().createRenderManager();
 
-			rm.write('<div class="sapUiSupportControlMethods" data-sap-ui-controlid="' + encode(sControlId) + '">');
+			rm.openStart("div").class("sapUiSupportControlMethods").attr("data-sap-ui-controlid", sControlId).openEnd();
 
-			rm.write('<select id="sapUiSupportControlMethodsSelect" class="sapUiSupportAutocomplete sapUiSupportSelect"><option></option>');
+			rm.openStart("select", "sapUiSupportControlMethodsSelect").class("sapUiSupportAutocomplete").class("sapUiSupportSelect").openEnd();
+			rm.openStart("option").openEnd().close("option");
 
 			each(aMethods, function(iIndex, oValue) {
 				if (!oValue.active) {
-					rm.write('<option>' + encode(oValue.name) + '</option>');
+					rm.openStart("option").openEnd().text("oValue.name").close("option");
 				}
 			});
 
-			rm.write('</select>');
+			rm.close("select");
 
-			rm.write('<input class="sapUiSupportControlBreakpointInput sapUiSupportAutocomplete" type="text">');
-			rm.write('<button id="sapUiSupportControlAddBreakPoint" class="sapUiSupportRoundedButton ">Add breakpoint</button>');
-			rm.write('<hr class="no-border"><ul id="sapUiSupportControlActiveBreakpoints" class="sapUiSupportList sapUiSupportBreakpointList">');
+			rm.voidStart("input").class("sapUiSupportControlBreakpointInput").class("sapUiSupportAutocomplete").attr("type", "text").voidEnd();
+			rm.openStart("button", "sapUiSupportControlAddBreakPoint").class("sapUiSupportRoundedButton").openEnd().text("Add breakpoint").close("button");
+			rm.voidStart("hr").class("no-border").voidEnd();
+			rm.openStart("ul", "sapUiSupportControlActiveBreakpoints").class("sapUiSupportList").class("sapUiSupportBreakpointList").openEnd();
 
 			each(aMethods, function(iIndex, oValue) {
 				if (!oValue.active) {
 					return;
 				}
 
-				rm.write('<li><span>' + encode(oValue.name) + '</span>' +
-						 '<img class="remove-breakpoint"  src="../../debug/images/delete.gif"></li>');
+				rm.openStart("li").openEnd()
+					.openStart("span").openEnd().text(oValue.name).close("span")
+					.voidStart("img").class("remove-breakpoint").attr("src", "../../debug/images/delete.gif").voidEnd()
+					.close("li");
 			});
 
-			rm.write('</ul></div>');
+			rm.close("ul").close("div");
 
-			rm.flush(this.$().find("#sapUiSupportControlPropertiesArea").get(0));
+			rm.flush(this.dom("#sapUiSupportControlPropertiesArea"));
 			rm.destroy();
 
 			this.selectTab(this._tab.breakpoints);
 
-			this.$().find('.sapUiSupportControlBreakpointInput').trigger("focus");
+			this.dom('.sapUiSupportControlBreakpointInput').focus();
 		};
 
 		ControlTree.prototype.renderExportTab = function() {
 
 			var rm = sap.ui.getCore().createRenderManager();
 
-			rm.write('<button id="sapUiSupportControlExportToXml" class="sapUiSupportRoundedButton sapUiSupportExportButton">Export To XML</button>');
-			rm.write('<br><br>');
-			rm.write('<button id="sapUiSupportControlExportToHtml" class="sapUiSupportRoundedButton sapUiSupportExportButton">Export To HTML</button>');
+			rm.openStart("button", "sapUiSupportControlExportToXml").class("sapUiSupportRoundedButton").class("sapUiSupportExportButton").openEnd().text("Export To XML").close("button");
+			rm.voidStart("br").voidEnd();
+			rm.voidStart("br").voidEnd();
+			rm.openStart("button", "sapUiSupportControlExportToHtml").class("sapUiSupportRoundedButton").class("sapUiSupportExportButton").openEnd().text("Export To HTML").close("button");
 
-			rm.flush(this.$().find("#sapUiSupportControlPropertiesArea").get(0));
+			rm.flush(this.dom("#sapUiSupportControlPropertiesArea"));
 			rm.destroy();
 
 			this.selectTab(this._tab.exports);
@@ -958,11 +1042,11 @@ sap.ui.define([
 
 		ControlTree.prototype._onAddBreakpointClicked = function (oEvent) {
 
-			var $select = this.$().find("#sapUiSupportControlMethodsSelect");
+			var oSelect = this.dom("#sapUiSupportControlMethodsSelect");
 
 			this._oStub.sendEvent(this._breakpointId + "ChangeInstanceBreakpoint", {
-				controlId: $select.closest("[data-sap-ui-controlid]").attr("data-sap-ui-controlid"),
-				methodName: $select.val(),
+				controlId: oSelect.closest("[data-sap-ui-controlid]").dataset.sapUiControlid,
+				methodName: oSelect.value,
 				active: true,
 				callback: this.getId() + "ReceiveMethods"
 			});
@@ -1057,14 +1141,14 @@ sap.ui.define([
 
 		ControlTree.prototype.selectTab = function(sTab) {
 
-			var $button = this.$().find("#sapUiSupportControlTab" + sTab);
+			var oButton = this.dom("#sapUiSupportControlTab" + sTab);
 
-			if ($button.hasClass("active")) {
+			if (oButton.classList.contains("active")) {
 				return false;
 			}
 
 			this.$().find("#sapUiSupportControlTabs button").removeClass("active");
-			$button.addClass("active");
+			oButton.classList.add("active");
 
 			this._currentTab = sTab;
 
@@ -1409,8 +1493,8 @@ sap.ui.define([
 							}
 
 							var oType = DataType.getType(oProperty.type);
-							if (oType && !(oType instanceof DataType)) {
-								mProperty["enumValues"] = oType;
+							if (oType && oType.isEnumType()) {
+								mProperty["enumValues"] = oType.getEnumValues();
 							}
 						});
 						mProperty.value = oControl.getProperty(sKey);

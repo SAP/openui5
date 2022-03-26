@@ -97,13 +97,7 @@ sap.ui.define([
 		};
 
 		function initInTools(oSupportStub) {
-			var rm = Core.createRenderManager();
-
-			//create the initial html for the performance tool
-			rm.write(_getPerformanceToolHTML());
-			rm.flush(this.$().get(0));
-			rm.destroy();
-
+			this.$().get(0).innerHTML = _getPerformanceToolHTML();
 			//create all event listeners
 			_registerEventListeners();
 		}
@@ -680,8 +674,7 @@ sap.ui.define([
 				className = 'renderingType';
 			}
 
-			//escaping is not needed
-			return encodeXML(className);
+			return className;
 		}
 
 		function _getBarColor(time) {
@@ -953,6 +946,9 @@ sap.ui.define([
 		}
 
 		function _calculateSliderSize() {
+			if (_sliderVars.nodes.handle == null ||  _sliderVars.nodes.slider == null) {
+				return;
+			}
 			var handleComputedWidth = window.getComputedStyle(_sliderVars.nodes.handle).width;
 			var oldSliderWidth = _sliderVars.sizes.width;
 
