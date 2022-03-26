@@ -155,10 +155,6 @@ span.sapMBtnInner.sapMBtnEmphasized {
 /* Custom focus border:                                                 */
 /* ---------------------------------------------------------------------*/
 
-html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
-	border-color:    @sapUiContentContrastFocusColor;
-}
-
 html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMBtnActive.sapMFocusable {
 	border-color:    @sapUiContentFocusColor;
 }
@@ -241,12 +237,6 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 
 .sapMTB-Transparent-CTX .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnDefault.sapMBtnActive {
 	background-color: @sapUiButtonActiveBackground;
-}
-
-:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnIconFirst.sapMBtnTransparent.sapMBtnActive,
-:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnIconLast.sapMBtnTransparent.sapMBtnActive {
-	background-color: @sapUiButtonLiteActiveBackground;
-	border-color: @sapUiButtonLiteActiveBorderColor;
 }
 
 // text color for enabled buttons
