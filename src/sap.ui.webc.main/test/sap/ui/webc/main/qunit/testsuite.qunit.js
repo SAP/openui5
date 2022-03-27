@@ -305,6 +305,14 @@ sap.ui.define(function() {
 					only: ["sap/ui/webc/main/Tree"]
 				}
 			},
+			"designtime/Button": {
+				title: "QUnit Page for sap.ui.webc.main.Button design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.main","sap.ui.rta"]
+				},
+				sinon: false,
+				group: "Designtime"
+			},
 			"designtime/Input": {
 				title: "QUnit Page for sap.ui.webc.main.Input design time and rta enabling",
 				ui5: {
