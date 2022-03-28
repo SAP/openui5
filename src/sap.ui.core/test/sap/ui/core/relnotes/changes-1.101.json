@@ -3,6 +3,38 @@
     "date": "March 2022",
     "notes": [
       {
+        "id": "abfd4f563569dcf7d00c979ddff918ffd1871190",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Picker time is correct when the app timezone is different",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040747"
+          }
+        ]
+      },
+      {
+        "id": "d7fee916b74393b2319ab7ab1c390a9ac4505ac3",
+        "type": "FEATURE",
+        "text": " Prevent overwrite SAP themes from OS high contrast settings"
+      },
+      {
+        "id": "f20db76e5f0ebec69137c3c9c7c86cdf1228798f",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat.DateTimeWithTimezone: Format Date only and Time only"
+      },
+      {
+        "id": "a1cf9f4f69f59df95dd4601f07eb95413b0147f6",
+        "type": "FIX",
+        "text": " routing.qunit.History: wait for History state API throttling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "2361eb5dbdb2923a81c550b7547858c135ffecb1",
         "type": "FEATURE",
         "text": " sap.ui.model.odata.v2.Context#delete: API to delete a context"

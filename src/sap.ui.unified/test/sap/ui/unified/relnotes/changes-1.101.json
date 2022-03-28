@@ -3,6 +3,28 @@
     "date": "March 2022",
     "notes": [
       {
+        "id": "10221263268c555fa6885681ff434023e4c6c156",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adjust appointments selected state announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015360"
+          }
+        ]
+      },
+      {
+        "id": "d09957cc3e5de0ebecc4cef8db489eb3a53ef0ae",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: refactor focus handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270014669"
+          }
+        ]
+      },
+      {
         "id": "1abad82cadcb4068b19562b96ef872e6073fbc4f",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarRow: fixed role/alt of appointment icons",

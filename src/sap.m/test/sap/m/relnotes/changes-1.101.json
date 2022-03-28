@@ -3,6 +3,104 @@
     "date": "March 2022",
     "notes": [
       {
+        "id": "a68b18ff81551e0d338de5a1ae1e2bd64bd2bb0d",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Prevent tooltip reposition attemps if Slider is not rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270029757"
+          }
+        ]
+      },
+      {
+        "id": "218e131d1eea875586d3476483545ad60c7d9360",
+        "type": "FIX",
+        "text": " sap.m.StepInput: adjust input role",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015355"
+          }
+        ]
+      },
+      {
+        "id": "abfd4f563569dcf7d00c979ddff918ffd1871190",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Picker time is correct when the app timezone is different",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040747"
+          }
+        ]
+      },
+      {
+        "id": "d3da86e6cdb1276c772df14ceae20a1b530afcee",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Time is not truncated with different app timezone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040792"
+          }
+        ]
+      },
+      {
+        "id": "10221263268c555fa6885681ff434023e4c6c156",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adjust appointments selected state announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015360"
+          }
+        ]
+      },
+      {
+        "id": "d09957cc3e5de0ebecc4cef8db489eb3a53ef0ae",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: refactor focus handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270014669"
+          }
+        ]
+      },
+      {
+        "id": "f8079c1f7775360bc5223cfc1fced6b23aac5c1c",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: setValue() error fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270029757"
+          }
+        ]
+      },
+      {
+        "id": "b79fbaecfb647627ea717e7fbec1bfc1a44c26fa",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Removed \"Z\" characters from illustration"
+      },
+      {
+        "id": "bbb2326a4454ab08ac01a510a37d7e82cc471bb0",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Hidden tokens count on empty Tokenizer fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280081171"
+          }
+        ]
+      },
+      {
+        "id": "ad38b21e3fc441db6c81af9ab7b4099de83c37c3",
+        "type": "FEATURE",
+        "text": " sap.m.Wizard: Additional API for Page Mode"
+      },
+      {
         "id": "7ed5aaadedcf18b4b3b33a09bbba3491a9ff6ca8",
         "type": "FIX",
         "text": " sap.m.IllustratedMessage: Removed \"Z\" characters from illustration"
