@@ -4,6 +4,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/Input",
+	"sap/m/List",
+	"sap/m/CustomListItem",
 	"sap/ui/core/Title",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -18,12 +20,15 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Rename",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function (
 	Button,
 	Label,
 	Input,
+	List,
+	CustomListItem,
 	Title,
 	DesignTime,
 	OverlayRegistry,
@@ -38,6 +43,7 @@ sap.ui.define([
 	Plugin,
 	Remove,
 	Rename,
+	JSONModel,
 	sinon,
 	oCore
 ) {
@@ -339,13 +345,22 @@ sap.ui.define([
 	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable stubbed asynchronous", {
 		beforeEach: function(assert) {
 			var done = assert.async();
+			var oModel = new JSONModel([{text: "item1"}, {text: "item2"}, {text: "item3"}]);
+			this.oCustomListItemTemplate = new CustomListItem("boundListItem", {content: [new Button("boundListItem-btn", {text: "{text}"})]});
+			this.oBoundList = new List("boundlist").setModel(oModel);
+			this.oBoundList.bindAggregation("items", {
+				path: "/",
+				template: this.oCustomListItemTemplate,
+				templateShareable: false
+			});
 
 			this.oButton = new Button("button");
 			this.oInvisibleButton = new Button("invisibleButton", { visible: false });
 			this.oLayout = new VerticalLayout({
 				content: [
 					this.oInvisibleButton,
-					this.oButton
+					this.oButton,
+					this.oBoundList
 				]
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -439,7 +454,7 @@ sap.ui.define([
 			assert.equal(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
 			assert.equal(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
 			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
-			assert.equal(this.oLayoutOverlay.getRelevantOverlays().length, 3, "then three overlays are relevant");
+			assert.equal(this.oLayoutOverlay.getRelevantOverlays().length, 4, "then four overlays are relevant");
 		});
 
 		QUnit.test("when the event elementModified is thrown with afterRendering", function(assert) {
@@ -455,6 +470,11 @@ sap.ui.define([
 			assert.equal(oGetRelevantSpy.callCount, 0, "then getRelevantOverlays is not called");
 			assert.equal(oEvaluateSpy.callCount, 1, "then only evaluateEditable is called");
 			assert.deepEqual(oEvaluateSpy.args[0], [[this.oLayoutOverlay], {onRegistration: false}], "then evaluateEditable is called with the correct parameters");
+		});
+
+		QUnit.test("when _getRelevantOverlays is called for an Overlay that is part of a binding template", function(assert) {
+			var oCustomListItemTemplateOverlay = OverlayRegistry.getOverlay(this.oCustomListItemTemplate);
+			assert.equal(this.oRenamePlugin._getRelevantOverlays(oCustomListItemTemplateOverlay).length, 0, "then no overlays are returned");
 		});
 
 		QUnit.test("when the event elementModified is thrown but the plugin is busy", function(assert) {

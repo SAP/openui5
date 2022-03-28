@@ -1283,26 +1283,49 @@ sap.ui.define([
 		});
 	});
 
+	// *Controls*
+	// VerticalLayout
+	//	List -> with aggregation binding on items aggregation: "root-list"
+	//		[items]
+	//			CustomListItem: "outer-template" -> (template) without binding
+	//				Button: "inner-top-button"
+	//				List -> with aggregation binding on items
+	//					[items]
+	//						CustomListItem: "inner-template" (nested template)
+	//							Button: "deep-button"
+	//				Button: "inner-bottom-button"
+	//		[headerToolbar]
+	//			Toolbar -> without binding
+	// 				Button
+
+	// *Overlays* EO = ElementOverlay; AO = AggregationOverlay; TO = TemplateOverlay
+	// VerticalLayout (EO)
+	//  [content] (AO)
+	//		List (EO)
+	//          [aggregationBindingTemplateOverlays]
+	//				[items] (AO/TO) "root-list"
+	//					"outer-template" (EO/TO)
+	//						[content] (AO/TO)
+	//							"inner-top-button" (EO/TO)
+	//							"inner-list" (EO/TO)
+	//								[aggregationBindingTemplateOverlays]
+	//									[items] (AO/TO)
+	//									"inner-template" (EO/TO)
+	//										[content] (AO/TO)
+	//										"deep-button" (EO/TO)
+	//								[headerToolBar] (AO/TO)
+	//								[infoToolbar] (AO/TO)
+	//							"inner-bottom-button" (EO/TO)
+	//				root-list (EO)
+	//                 ... (clones from the templates above)
+	//				[headerToolbar] (AO)
+	//				[infoToolbar] (AO)
 	QUnit.module("Given that the DesignTime is initialized with controls including aggregation binding and nested aggregation binding", {
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			// create list with bound items
 			var oRootModel = getJsonModelWithData(2, "outer", "");
 			var oInnerModel = getJsonModelWithData(3, "inner", "");
-
-			// VerticalLayout
-			//	List -> with aggregation binding on items aggregation
-			//		[items]
-			//			CustomListItem -> (template) without binding
-			//				Button
-			//				List -> with aggregation binding on items
-			//					[items]
-			//						CustomListItem (nested template)
-			//							Button
-			//				Button
-			//		[headerToolbar]
-			//			Toolbar -> without binding
-			// 				Button
 
 			this.oInnerTemplate = new CustomListItem("inner-template", {
 				content: [new Button("deep-button", {text: "deep"})]
@@ -1364,9 +1387,13 @@ sap.ui.define([
 			assert.strictEqual(oVerticalLayoutOverlay.getElement().getId(), "verticalLayout",
 				"then overlay is created for vertical layout");
 			assert.strictEqual(oVerticalLayoutOverlay.getAggregationBindingTemplateOverlays().length, 0,
-				"then thera are no templates attached to the vertical layout overlay");
+				"then there are no templates attached to the vertical layout overlay");
+			assert.notOk(oVerticalLayoutOverlay.getIsPartOfTemplate(),
+				"and it is not marked as part of an aggregation binding template");
 			assert.strictEqual(oOuterAggregationBindingTemplateOverlay.getElement().getId(), "root-list",
 				"then overlay is created for aggregation binding template and attached to the List overlay");
+			assert.ok(oOuterAggregationBindingTemplateOverlay.getIsPartOfTemplate(),
+				"and it is marked as part of an aggregation binding template");
 			assert.strictEqual(oExternalListToolbarOverlay.getElement().getId(), "external-toolbar",
 				"then overlay for not bound item on an additional aggregation exists");
 			assert.strictEqual(oExternalListToolbarOverlay.getAggregationBindingTemplateOverlays().length, 0,
@@ -1378,12 +1405,18 @@ sap.ui.define([
 			var oBottomButtonInsideOuterTemplateOverlay = OverlayRegistry.getOverlay("inner-bottom-button");
 
 			assert.ok(oTopButtonInsideOuterTemplateOverlay,	"then overlay is created for first item inside aggregation binding template");
+			assert.ok(oTopButtonInsideOuterTemplateOverlay.getIsPartOfTemplate(),
+				"and it marked as part of an aggregation binding template");
 			assert.strictEqual(oTopButtonInsideOuterTemplateOverlay.getAggregationBindingTemplateOverlays().length, 0,
 				"then there are no templates attached to the top button inside aggregation binding template");
 			assert.ok(oListInsideOuterTemplateOverlay, "then overlay for first bound item exists");
 			assert.strictEqual(oListInsideOuterTemplateOverlay.getAggregationBindingTemplateOverlays()[0].getElement().getId(), "inner-list",
 				"then there is a template attached (nested) to the list inside aggregation binding template");
+			assert.ok(oListInsideOuterTemplateOverlay.getAggregationBindingTemplateOverlays()[0].getIsPartOfTemplate(),
+				"and it is marked as part of an aggregation binding template");
 			assert.ok(oBottomButtonInsideOuterTemplateOverlay, "then overlay is created for second item inside aggregation binding template");
+			assert.ok(oBottomButtonInsideOuterTemplateOverlay.getIsPartOfTemplate(),
+				"and it is marked as part of an aggregation binding template");
 			assert.strictEqual(oBottomButtonInsideOuterTemplateOverlay.getAggregationBindingTemplateOverlays().length, 0,
 				"then there are no templates attached to the bottom button inside aggregation binding template");
 
@@ -1392,8 +1425,12 @@ sap.ui.define([
 			var oButtonInsideInnerTemplateOverlay = oInnerTemplateOverlay.getChildren()[0].getChildren()[0];
 
 			assert.ok(oInnerTemplateOverlay, "then overlay is created for the inner (nested) aggregation binding template");
+			assert.ok(oInnerTemplateOverlay.getIsPartOfTemplate(),
+				"and it is marked as part of an aggregation binding template");
 			assert.strictEqual(oButtonInsideInnerTemplateOverlay.getElement().getId(), "deep-button",
 				"then overlay is created for nested aggregation binding template and attached to the List overlay");
+			assert.ok(oButtonInsideInnerTemplateOverlay.getIsPartOfTemplate(),
+				"and it is marked as part of an aggregation binding template");
 			assert.strictEqual(oButtonInsideInnerTemplateOverlay.getAggregationBindingTemplateOverlays().length, 0,
 				"then there are no templates attached to the button inside the inner (nested) aggregation binding template");
 
@@ -1403,10 +1440,14 @@ sap.ui.define([
 
 			assert.strictEqual(oFirstAggregationBindingInstanceOverlay.getElement().getId(), "outer-template-root-list-0",
 				"then overlay for first bound item exists");
+			assert.notOk(oFirstAggregationBindingInstanceOverlay.getIsPartOfTemplate(),
+				"and it is not marked as part of an aggregation binding template");
 			assert.strictEqual(oFirstAggregationBindingInstanceOverlay.getAggregationBindingTemplateOverlays().length, 0,
 				"then there are no templates attached to the first instance from template");
 			assert.strictEqual(oSecondAggregationBindingInstanceOverlay.getElement().getId(), "outer-template-root-list-1",
 				"then overlay for second bound item exists");
+			assert.notOk(oSecondAggregationBindingInstanceOverlay.getIsPartOfTemplate(),
+				"and it is not marked as part of an aggregation binding template");
 			assert.strictEqual(oSecondAggregationBindingInstanceOverlay.getAggregationBindingTemplateOverlays().length, 0,
 				"then there are no templates attached to the second instance from template");
 
@@ -1436,6 +1477,8 @@ sap.ui.define([
 				"then there are no templates attached to the inner template instance ");
 			assert.strictEqual(oButtonInsideInnerInstanceOverlay.getElement().getId(), "deep-button-root-list-0-inner-list-root-list-0-0",
 				"then overlay is created for nested aggregation binding instance of the button and attached to the List overlay");
+			assert.notOk(oButtonInsideInnerInstanceOverlay.getIsPartOfTemplate(),
+				"and it is not marked as part of an aggregation binding template");
 			assert.strictEqual(oButtonInsideInnerInstanceOverlay.getAggregationBindingTemplateOverlays().length, 0,
 				"then there are no templates attached to the button inside the inner (nested) aggregation binding instance");
 			assert.strictEqual(oButtonInsideInnerInstanceOverlay.getChildren().length, 0,
