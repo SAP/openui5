@@ -42,11 +42,70 @@
 		sap.ui.require([
 			"sap/ui/core/ComponentContainer",
 			"sap/ui/core/Component",
+			"sap/ui/documentation/library",
 			"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 			"sap/base/Log"
-		], function (ComponentContainer, Component, ControlsInfo, Log) {
+		], function (ComponentContainer, Component, library, ControlsInfo, Log) {
 
-			ControlsInfo.loadData().then(function(){
+			var loadInfo = function() {
+				return new Promise(function (resolve) {
+					var fnCallback = function(oAppInfo) {
+						if (oAppInfo && oAppInfo.libraries) {
+							var aLibPromises = [];
+							oAppInfo.libraries.forEach(function(oLib) {
+								var oLibPromise = new Promise(function(innResolve) {
+									library._getLibraryInfoSingleton()._getDocuIndex(oLib.name, function(oDoc) {
+									if (!oDoc.explored) {
+										innResolve();
+										return;
+									}
+
+									if (Array.isArray(oDoc.explored.samplesRef)) {
+										// register an array of namespaces
+										oDoc.explored.samplesRef.forEach(function (oItem) {
+											var paths = {};
+											paths[oItem.namespace.replace(/\./g, "/")] = "" + (oItem.ref || ".");
+											sap.ui.loader.config({paths: paths});
+										});
+									} else {
+										// register a single namespace
+
+										var paths = {};
+										paths[oDoc.explored.samplesRef.namespace.replace(/\./g, "/")] = "" + (oDoc.explored.samplesRef.ref || ".");
+										sap.ui.loader.config({paths: paths});
+									}
+									innResolve();
+									});
+								});
+								aLibPromises.push(oLibPromise);
+							});
+						}
+						Promise.all(aLibPromises).then(function(){
+							resolve();
+						})
+					};
+
+					jQuery.ajax({
+						url: sap.ui.require.toUrl("sap-ui-version.json"),
+						dataType: "json",
+						error: function(xhr, status, e) {
+							Log.error("failed to load library list from '" + sUrl + "': " + status + ", " + e);
+							resolve();
+						},
+						success : function(oAppInfo, sStatus, oXHR) {
+							if (!oAppInfo) {
+								Log.error("failed to load library list from '" + sUrl + "': " + sStatus + ", Data: " + oAppInfo);
+								resolve();
+								return;
+							}
+
+							fnCallback(oAppInfo);
+						}
+					});
+				});
+			}
+			loadInfo().then(function(){
+
 				Log.info("Samples paths added successfully");
 
 				var sCompId = 'sampleComp-' + sSampleId;
@@ -156,7 +215,8 @@
 						}
 					}, getUrlParam('sap-ui-xx-dk-origin'));
 				});
-			})
+
+			});
 		});
 	});
 </script>
