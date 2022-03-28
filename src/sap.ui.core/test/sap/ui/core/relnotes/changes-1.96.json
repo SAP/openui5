@@ -379,5 +379,32 @@
         ]
       }
     ]
+  },
+  "1.96.7": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "9f5a0e2c2f00d950282c1bbfcec366f70a46e4ee",
+        "type": "FIX",
+        "text": " core/m: fix viewport meta for iOS platform",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280037152"
+          }
+        ]
+      },
+      {
+        "id": "1c0a34b2a09b39419f1519609cac9eebfee14764",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Australian calendar change first day of week to Monday",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009303182021"
+          }
+        ]
+      }
+    ]
   }
 }

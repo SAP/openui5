@@ -919,5 +919,54 @@
         ]
       }
     ]
+  },
+  "1.96.7": {
+    "date": "March 2022",
+    "notes": [
+      {
+        "id": "9f5a0e2c2f00d950282c1bbfcec366f70a46e4ee",
+        "type": "FIX",
+        "text": " core/m: fix viewport meta for iOS platform",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280037152"
+          }
+        ]
+      },
+      {
+        "id": "ae7740d1a6dd1401f785c7351b7aa5fe5c495a16",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: apply focus on the first focusable element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170287752"
+          }
+        ]
+      },
+      {
+        "id": "16f5689fc32ef6969b205494bf6827d9b947ffbe",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: selectedSortItem value is retained",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000397612022"
+          }
+        ]
+      },
+      {
+        "id": "ecd602950357ab9b7e9e4fffb1b9b12790004dd4",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: The autocompleted values update the model once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000146402022"
+          }
+        ]
+      }
+    ]
   }
 }
