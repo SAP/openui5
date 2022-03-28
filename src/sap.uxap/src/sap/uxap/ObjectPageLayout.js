@@ -3160,7 +3160,7 @@ sap.ui.define([
 		var iScrollTop = Math.max(Math.ceil(oEvent.target.scrollTop), 0), // top of the visible page
 			$wrapper = this._$opWrapper.length && this._$opWrapper[0],
 			$spacer = this._$spacer.length && this._$spacer[0],
-			iSpacerHeight = $spacer.offsetHeight,
+			iSpacerHeight = this._$spacer.height(),
 			iPageHeight,
 			oHeader = this.getHeaderTitle(),
 			bShouldStick = this._shouldSnapHeaderOnScroll(iScrollTop),
