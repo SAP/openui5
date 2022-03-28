@@ -666,17 +666,17 @@ ul.sapUiSupportBreakpointList li:hover img {
 
 /* DEBUGGING */
 
-#sapUiSupportDebugging > #sapUiSupportDebuggingRebootContainer {
+#sapUiSupportDebugging > #sapUiSupportDebugging-RebootContainer {
 	box-sizing: border-box;
 	width: 100%;
 }
 
-#sapUiSupportDebuggingRebootSelect {
+#sapUiSupportDebugging-RebootSelect {
 	width: 100%;
 	margin: 6px 0;
 }
 
-#sapUiSupportDebuggingRebootInput {
+#sapUiSupportDebugging-RebootInput {
 	font-size: 14px;
 	padding: 4px;
 	box-sizing: border-box;
@@ -685,75 +685,75 @@ ul.sapUiSupportBreakpointList li:hover img {
 	border-width: 1px;
 }
 
-#sapUiSupportDebuggingMethodContainer {
+#sapUiSupportDebugging-MethodContainer {
 	float: right;
 }
 
-#sapUiSupportDebuggingClassSelect {
+#sapUiSupportDebugging-ClassSelect {
 	width: 228px;
 }
 
-#sapUiSupportDebuggingClassInput {
+#sapUiSupportDebugging-ClassInput {
 	margin-left: -225px;
 	width: 204px;
 }
 
-#sapUiSupportDebuggingMethodSelect {
+#sapUiSupportDebugging-MethodSelect {
 	width: 150px;
 }
 
-html[data-sap-ui-browser^="sf"] #sapUiSupportDebuggingMethodSelect {
+html[data-sap-ui-browser^="sf"] #sapUiSupportDebugging-MethodSelect {
 	width: 140px;
 }
 
-#sapUiSupportDebuggingMethodInput {
+#sapUiSupportDebugging-MethodInput {
 	margin-left: -148px;
 	width: 119px;
 }
 
-html[data-sap-ui-browser^="sf"] #sapUiSupportDebuggingMethodInput {
+html[data-sap-ui-browser^="sf"] #sapUiSupportDebugging-MethodInput {
 	margin-left: -139px;
 	width: 110px;
 }
 
-#sapUiSupportDebuggingAddBreakpoint {
+#sapUiSupportDebugging-AddBreakpoint {
 	margin-left: 32px;
 }
 
-#sapUiSupportDebuggingAddClass {
+#sapUiSupportDebugging-AddClass {
 	margin-left: 25px;
 }
 
-html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddClass,
-html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
+html[data-sap-ui-browser^="ff"] #sapUiSupportDebugging-AddClass,
+html[data-sap-ui-browser^="ff"] #sapUiSupportDebugging-AddBreakpoint {
 	margin-left: 28px;
 }
 
-#sapUiSupportDebuggingClassList li div {
+#sapUiSupportDebugging-ClassList li div {
 	padding: 7px 0 7px 10px;
 	margin-right: 35px;
 	font-weight: bold;
 }
 
-#sapUiSupportDebuggingClassList li img.remove-class {
+#sapUiSupportDebugging-ClassList li img.remove-class {
 	top: 7px;
 	right: 10px;
 	position: absolute;
 	display: none;
 }
 
-#sapUiSupportDebuggingClassList li.selected div,
-#sapUiSupportDebuggingClassList li div:hover {
+#sapUiSupportDebugging-ClassList li.selected div,
+#sapUiSupportDebugging-ClassList li div:hover {
 	color: #fff;
 	background-color: #427CAC;
 	cursor: pointer;
 }
 
-#sapUiSupportDebuggingClassList li:hover img.remove-class {
+#sapUiSupportDebugging-ClassList li:hover img.remove-class {
 	display: inline;
 }
 
-#sapUiSupportDebuggingClassList li span.breakpoints {
+#sapUiSupportDebugging-ClassList li span.breakpoints {
 	float: right;
 	margin-right: 10px;
 }
@@ -1452,12 +1452,12 @@ html[data-sap-ui-browser^="cr"] .sapUiSupportIntFupInputMask > input {
 	vertical-align: middle;
 }
 
-#sapUiSupportDebuggingClassContainer .sapUISupportLabel,
-#sapUiSupportDebuggingMethodContainer .sapUISupportLabel {
+#sapUiSupportDebugging-ClassContainer .sapUISupportLabel,
+#sapUiSupportDebugging-MethodContainer .sapUISupportLabel {
 	margin-right: 5px;
 }
 
-#sapUiSupportDebuggingMethodContainer p {
+#sapUiSupportDebugging-MethodContainer p {
 	text-align: center;
 	font-weight: bold;
 }

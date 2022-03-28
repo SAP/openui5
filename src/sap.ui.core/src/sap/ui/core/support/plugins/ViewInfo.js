@@ -64,7 +64,7 @@ sap.ui.define([
 				this.$().get(0).innerHTML =
 					"<div class='sapUISupportLabel'>" +
 						"View Info Support Tool is only available in <b>Support Mode.</b>" +
-						"<br>Turn it on by adding '<b>sap-ui-support=true</b>' to the url or your application." +
+						"<br>Turn it on by adding '<b>sap-ui-support=true</b>' to the URL of your application." +
 					"</div>";
 				return;
 			}
@@ -80,7 +80,7 @@ sap.ui.define([
 				this.$().get(0).innerHTML = "View Info Support Tool did not record any information on the current page.<br>" +
 						"Possible reasons:<br>" +
 						"There are no XML Views defined in the current app.<br>" +
-						"Views where not loaded before the Diagnistics tool was started.";
+						"Views where not loaded before the Diagnostics tool was started.";
 			}
 			if (this.runsAsToolPlugin()) {
 				initInTools.call(this, oSupportStub);
@@ -207,7 +207,11 @@ sap.ui.define([
 				this.aDataTrees = [];
 				this.aObjectViewers = [];
 				var i = 0;
-				rm.write('<div class="viewxmlmain"><div class="settingscontainer"><span class="settings" raise="_onClearAllBreakpoints">Clear all breakpoints</span><span class="settings" raise="_onClearAllXMLModifications">Clear all XML modifications</span></div>');
+				rm.openStart("div").class("viewxmlmain").openEnd();
+				rm.openStart("div").class("settingscontainer").openEnd();
+				rm.openStart("span").class("settings").attr("raise", "_onClearAllBreakpoints").openEnd().text("Clear all breakpoints").close("span");
+				rm.openStart("span").class("settings").attr("raise", "_onClearAllXMLModifications").openEnd().text("Clear all XML modifications").close("span");
+				rm.close("div");
 				this.aMetamodels = [];
 				if (this.aOdataModels) {
 					for (var j = 0; j < this.aOdataModels.length; j++) {
@@ -216,12 +220,34 @@ sap.ui.define([
 							this.aMetamodels.push(oMetadata);
 							var oTree = this.createTree(oMetadata, i);
 							this.aTrees[i] = oTree;
-							rm.write('<div class="viewxmlheader" collapsed="true"><span class="toggle"></span><span class="info">Metadata: ' + encodeXML(oMetadata.env.settings.response.requestUri) + '</span><div class="settingscontainer"><span class="settings sapUiSupportViewInfoElementHidden" raise="_onToggleDebugNodes" idx="' + i + '">Expand debugged nodes</span><span class="settings sapUiSupportViewInfoElementHidden" raise="_onToggleRealIds" idx="' + i + '"><span selected="false"></span>Show XML View Ids</span><span class="settings" raise="_onToggleNamespace" idx="' + i + '" ><span selected="false"></span>Hide tag namespace</span><span class="settings" raise="_onToggleInactive" idx="' + i + '" ><span selected="false"></span>Hide inactive</span></div></div>');
-							rm.write('<div class="sapUiSupportViewInfoElementHidden"><div id="treecontent_' + i + '"></div>');
-							rm.write('<div class="viewxmlsplitter">');
-							rm.write('</div>');
-							rm.write('<div class="viewxmlinfo"><div class="title sapUiSupportViewInfoElementHidden" id="objectHeader' + i + '">Header</div><div class="toolbar sapUiSupportViewInfoElementHidden" id="objectToolbar' + i + '">Toolbar</div><div class="content" id="selectedcontent_' + i + '">');
-							rm.write('</div></div></div>');
+							rm.openStart("div").class("viewxmlheader").attr("collapsed", "true").openEnd();
+								rm.openStart("span").class("toggle").openEnd().close("span");
+								rm.openStart("span").class("info").openEnd().text("Metadata: " + oMetadata.env.settings.response.requestUri).close("span");
+								rm.openStart("div").class("settingscontainer").openEnd();
+									rm.openStart("span").class("settings").class("sapUiSupportViewInfoElementHidden").attr("raise", "_onToggleDebugNodes").attr("idx", i).openEnd().text("Expand debugged nodes").close("span");
+									rm.openStart("span").class("settings").class("sapUiSupportViewInfoElementHidden").attr("raise", "_onToggleRealIds").attr("idx", i).openEnd();
+										rm.openStart("span").attr("selected", "false").openEnd().close("span");
+										rm.text("Show XML View Ids");
+									rm.close("span");
+									rm.openStart("span").class("settings").attr("raise", "_onToggleNamespace").attr("idx", i).openEnd();
+										rm.openStart("span").attr("selected", "false").openEnd().close("span");
+										rm.text("Hide tag namespace");
+									rm.close("span");
+									rm.openStart("span").class("settings").attr("raise", "_onToggleInactive").attr("idx", i).openEnd();
+										rm.openStart("span").attr("selected", "false").openEnd().close("span");
+										rm.text("Hide inactive");
+									rm.close("span");
+								rm.close("div");
+							rm.close("div");
+							rm.openStart("div").class("sapUiSupportViewInfoElementHidden").openEnd();
+								rm.openStart("div", "treecontent_" + i).openEnd().close("div");
+								rm.openStart("div").class("viewxmlsplitter").openEnd().close("div");
+								rm.openStart("div").class("viewxmlinfo").openEnd();
+									rm.openStart("div", "objectHeader" + i).class("title").class("sapUiSupportViewInfoElementHidden").openEnd().text("Header").close("div");
+									rm.openStart("div", "objectToolbar" + i).class("toolbar").class("sapUiSupportViewInfoElementHidden").openEnd().text("Toolbar").close("div");
+									rm.openStart("div", "selectedcontent_" + i).class("content").openEnd().close("div");
+								rm.close("div");
+							rm.close("div");
 						}
 						oMetadata.env.tree = oTree;
 						i++;
@@ -273,7 +299,25 @@ sap.ui.define([
 						}
 
 						if (oView.env.type === "template") {
-							rm.write('<div class="viewxmlheader" collapsed="true"><span class="toggle"></span><span class="info">' + sId + ' (' + oView.env.type + ')</span><div class="settingscontainer"><span class="settings" raise="_onToggleDebugNodes" idx="' + i + '">Expand debugged nodes</span><span class="settings sapUiSupportViewInfoElementHidden" raise="_onToggleRealIds" idx="' + i + '"><span selected="false"></span>Show XML View Ids</span><span class="settings" raise="_onToggleNamespace" idx="' + i + '" ><span selected="false"></span>Hide tag namespace</span><span class="settings" raise="_onToggleInactive" idx="' + i + '" ><span selected="false"></span>Hide inactive</span></div></div>');
+							rm.openStart("div").class("viewxmlheader").attr("collapsed", "true").openEnd();
+								rm.openstart("span").class("toggle").openEnd().close("span");
+								rm.openStart("span").class("info").openEnd().text(sId + ' (' + oView.env.type + ')').close("span");
+								rm.openStart("div").class("settingscontainer").openEnd();
+									rm.openStart("span").class("settings").attr("raise", "_onToggleDebugNodes").attr("idx", i).openEnd().text("Expand debugged nodes").close("span");
+									rm.openStart("span").class("settings").class("sapUiSupportViewInfoElementHidden").attr("raise", "_onToggleRealIds").attr("idx", i).openEnd();
+										rm.openStart("span").attr("selected", "false").openEnd().close("span");
+										rm.text("Show XML View Ids");
+									rm.close("span");
+									rm.openStart("span").class("settings").attr("raise", "_onToggleNamespace").attr("idx", i).openEnd();
+										rm.openStart("span").attr("selected", "false").openEnd().close("span");
+										rm.text("Hide tag namespace");
+									rm.close("span");
+									rm.openStart("span").class("settings").attr("raise", "_onToggleInactive").attr("idx", i).openEnd();
+										rm.openStart("span").attr("selected", "false").openEnd().close("span");
+										rm.text("Hide inactive");
+									rm.close("span");
+								rm.close("div");
+							rm.close("div");
 						} else {
 							var sTemplatedBy = "";
 							if (oView.env.metamodels) {
@@ -287,13 +331,32 @@ sap.ui.define([
 							if (oView.env.settings.cache) {
 								sCache += " from client cache " + JSON.stringify(oView.env.settings.cache);
 							}
-							rm.write('<div class="viewxmlheader" collapsed="true"><span class="toggle"></span><span class="info">' + sId + ' (' + oView.env.type + encodeXML(String(sTemplatedBy)) + ') ' + encodeXML(String(sCache)) + '</span><div class="settingscontainer"><span class="settings" raise="_onToggleDebugNodes" idx="' + i + '">Expand debugged nodes</span><span class="settings" raise="_onToggleRealIds" idx="' + i + '" ><span selected="false"></span>Show XML View Ids</span><span class="settings" raise="_onToggleNamespace" idx="' + i + '" ><span selected="false"></span>Hide tag namespace</span></div></div>');
+							rm.openStart("div").class("viewxmlheader").attr("collapsed", "true").openEnd();
+								rm.openStart("span").class("toggle").openEnd().close("span");
+								rm.openStart("span").class("info").openEnd().text(sId + ' (' + oView.env.type + sTemplatedBy + ') ' + sCache).close("span");
+								rm.openStart("div").class("settingscontainer").openEnd();
+									rm.openStart("span").class("settings").attr("raise", "_onToggleDebugNodes").attr("idx", i).openEnd().text("Expand debugged nodes").close("span");
+									rm.openStart("span").class("settings").attr("raise", "_onToggleRealIds").attr("idx", i).openEnd();
+										rm.openStart("span").attr("selected", "false").openEnd().close("span");
+										rm.text("Show XML View Ids");
+									rm.close("span");
+									rm.openStart("span").class("settings").attr("raise", "_onToggleNamespace").attr("idx", i).openEnd();
+										rm.openStart("span").attr("selected", "false").openEnd().close("span");
+										rm.text("Hide tag namespace");
+									rm.close("span");
+								rm.close("div");
+							rm.close("div");
 						}
-						rm.write('<div class="sapUiSupportViewInfoElementHidden"><div id="treecontent_' + i + '"></div>');
-						rm.write('<div class="viewxmlsplitter">');
-						rm.write('</div>');
-						rm.write('<div class="viewxmlinfo"><div class="title sapUiSupportViewInfoElementHidden" id="objectHeader' + i + '">Header</div><div class="toolbar sapUiSupportViewInfoElementHidden" id="objectToolbar' + i + '">Toolbar</div><div class="content" id="selectedcontent_' + i + '">');
-						rm.write('</div></div></div></div>');
+						rm.openStart("div").class("sapUiSupportViewInfoElementHidden").openEnd();
+							rm.openStart("div", "treecontent_" + i).openEnd().close("div");
+							rm.openStart("div").class("viewxmlsplitter").openEnd().close("div");
+							rm.openStart("div").class("viewxmlinfo").openEnd();
+								rm.openStart("div", "objectHeader" + i).class("title").class("sapUiSupportViewInfoElementHidden").openEnd().text("Header").close("div");
+								rm.openStart("div", "objectToolbar" + i).class("toolbar").class("sapUiSupportViewInfoElementHidden").openEnd().text("Toolbar").close("div");
+								rm.openStart("div", "selectedcontent_" + i).class("content").openEnd().close("div");
+							rm.close("div");
+						rm.close("div");
+						rm.close("div");
 						i++;
 					}
 				}
