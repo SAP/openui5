@@ -587,6 +587,25 @@ sap.ui.define([
 		this.ddr.setValue({ operator: "LASTDAYS", values:[1] });
 
 		// assert
+		assert.deepEqual(this.ddr.getValue(), { operator: "LASTDAYS", values: [1] }, "the value is correctly substituted");
+		assert.equal(this.ddr._oInput.getValue().indexOf("Yesterday"), -1, "the formatted value is correct");
+
+		// act
+		this.ddr.setValue({ operator: "NEXTDAYS", values:[1] });
+
+		// assert
+		assert.deepEqual(this.ddr.getValue(), { operator: "NEXTDAYS", values: [1] }, "the value is correctly substituted");
+		assert.equal(this.ddr._oInput.getValue().indexOf("Tomorrow"), -1, "the formatted value is correct");
+	});
+
+	QUnit.test("Last/Next 1 days values when tomorrow and yesterday are included", function(assert) {
+		// arrange
+		this.ddr.setOptions(["LASTDAYS", "NEXTDAYS", "TOMORROW", "YESTERDAY"]);
+
+		// act
+		this.ddr.setValue({ operator: "LASTDAYS", values:[1] });
+
+		// assert
 		assert.deepEqual(this.ddr.getValue(), { operator: "YESTERDAY", values: [] }, "the value is correctly substituted");
 		assert.equal(this.ddr._oInput.getValue().indexOf("Yesterday"), 0, "the formatted value is correct");
 

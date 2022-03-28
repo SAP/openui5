@@ -664,7 +664,7 @@ sap.ui.define([
 		};
 
 		StandardDynamicDateOption.prototype.format = function(oObj, oFormatter) {
-			return oFormatter.format(oObj);
+			return oFormatter.format(oObj, true);
 		};
 
 		StandardDynamicDateOption.prototype.parse = function(sValue, oFormatter) {
