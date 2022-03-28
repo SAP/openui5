@@ -19,7 +19,17 @@
             "Width": 30,
             "Depth": 18,
             "Height": 3,
-            "DimUnit": "cm"
+            "DimUnit": "cm",
+            "Active": [
+                {
+                    "key": "1",
+                    "text": "Active"
+                },
+                {
+                    "key": "2",
+                    "text": "Inactive"
+                }
+            ]
         },
         {
             "ProductId": "HT-1001",
@@ -40,7 +50,21 @@
             "Width": 29,
             "Depth": 17,
             "Height": 3.1,
-            "DimUnit": "cm"
+            "DimUnit": "cm",
+            "Active": [
+                {
+                    "key": "1",
+                    "text": "Active"
+                },
+                {
+                    "key": "2",
+                    "text": "Inactive"
+                },
+                {
+                    "key": "3",
+                    "text": "Partially Active"
+                }
+            ]
         },
         {
             "ProductId": "HT-1002",
@@ -61,7 +85,17 @@
             "Width": 28,
             "Depth": 19,
             "Height": 2.5,
-            "DimUnit": "cm"
+            "DimUnit": "cm",
+            "Active": [
+                {
+                    "key": "1",
+                    "text": "Active"
+                },
+                {
+                    "key": "2",
+                    "text": "Inactive"
+                }
+            ]
         },
         {
             "ProductId": "HT-1003",
@@ -82,7 +116,17 @@
             "Width": 32,
             "Depth": 21,
             "Height": 4,
-            "DimUnit": "cm"
+            "DimUnit": "cm",
+            "Active": [
+                {
+                    "key": "1",
+                    "text": "Active"
+                },
+                {
+                    "key": "2",
+                    "text": "Inactive"
+                }
+            ]
         },
         {
             "ProductId": "HT-1007",
@@ -103,7 +147,17 @@
             "Width": 32,
             "Depth": 22,
             "Height": 3,
-            "DimUnit": "cm"
+            "DimUnit": "cm",
+            "Active": [
+                {
+                    "key": "1",
+                    "text": "Active"
+                },
+                {
+                    "key": "2",
+                    "text": "Inactive"
+                }
+            ]
         },
         {
             "ProductId": "HT-1010",
@@ -124,7 +178,17 @@
             "Width": 33,
             "Depth": 20,
             "Height": 3,
-            "DimUnit": "cm"
+            "DimUnit": "cm",
+            "Active": [
+                {
+                    "key": "1",
+                    "text": "Active"
+                },
+                {
+                    "key": "2",
+                    "text": "Inactive"
+                }
+            ]
         },
         {
             "ProductId": "HT-1011",
@@ -145,7 +209,17 @@
             "Width": 33,
             "Depth": 23,
             "Height": 2,
-            "DimUnit": "cm"
+            "DimUnit": "cm",
+            "Active": [
+                {
+                    "key": "1",
+                    "text": "Active"
+                },
+                {
+                    "key": "2",
+                    "text": "Inactive"
+                }
+            ]
         },
         {
             "ProductId": "HT-1020",
@@ -166,7 +240,17 @@
             "Width": 10,
             "Depth": 1.8,
             "Height": 17,
-            "DimUnit": "cm"
+            "DimUnit": "cm",
+            "Active": [
+                {
+                    "key": "1",
+                    "text": "Active"
+                },
+                {
+                    "key": "2",
+                    "text": "Inactive"
+                }
+            ]
         },
         {
             "ProductId": "HT-1021",
@@ -187,7 +271,17 @@
             "Width": 11,
             "Depth": 1.7,
             "Height": 18,
-            "DimUnit": "cm"
+            "DimUnit": "cm",
+            "Active": [
+                {
+                    "key": "1",
+                    "text": "Active"
+                },
+                {
+                    "key": "2",
+                    "text": "Inactive"
+                }
+            ]
         }
     ]
 }

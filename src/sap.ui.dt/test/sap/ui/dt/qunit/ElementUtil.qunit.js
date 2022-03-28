@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/IconTabBar",
 	"sap/m/InputListItem",
 	"sap/m/ObjectAttribute",
+	"sap/m/Select",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/form/Form",
@@ -22,6 +23,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
+	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/dt/Util",
 	"sap/f/DynamicPage",
@@ -43,6 +45,7 @@ sap.ui.define([
 	IconTabBar,
 	InputListItem,
 	ObjectAttribute,
+	Select,
 	VerticalLayout,
 	HorizontalLayout,
 	Form,
@@ -51,6 +54,7 @@ sap.ui.define([
 	UIComponent,
 	ComponentContainer,
 	Element,
+	Item,
 	JSONModel,
 	DtUtil,
 	DynamicPage,
@@ -1165,6 +1169,82 @@ sap.ui.define([
 			assert.equal(mAggregationInfo.aggregation, undefined, "... and undefined as bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, undefined, "... and the template id is not set");
 			assert.equal(mAggregationInfo.stack.length, 4, "... and the traversed stack containing 4 objects");
+		});
+	});
+
+	QUnit.module("Given a bound list control with a bound Select control inside it", {
+		beforeEach: function() {
+			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
+			var aItemTexts = [{key: "item1", text: "Item Text 1"}, {key: "item2", text: "Item Text 2"}, {key: "item3", text: "Item Text 3"}];
+			var oModel = new JSONModel({
+				texts: aTexts,
+				itemTexts: aItemTexts
+			});
+
+			this.oSelectItemTemplate = new Item("selectItem", {
+				key: "{key}",
+				text: "{text}"
+			});
+
+			this.oItemTemplate = new CustomListItem("item", {
+				content: [
+					new VBox("vbox1", {
+						items: [
+							new Button("button", {text: "{text}"}),
+							new Select("select", {items: {
+								path: "/itemTexts",
+								template: this.oSelectItemTemplate,
+								templateShareable: false
+							}})
+						]
+					})
+				]
+			});
+
+			this.oList = new List("list", {
+				items: {
+					path: "/texts",
+					template: this.oItemTemplate
+				}
+			}).setModel(oModel);
+
+			this.oList.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
+			this.oVBox1 = this.oList.getItems()[1].getContent()[0];
+			this.oVBox2 = this.oList.getItems()[2].getContent()[0];
+			this.oButton = this.oVBox1.getItems()[0];
+			this.oItem1Select1 = this.oVBox1.getItems()[1].getSelectableItems()[0];
+			this.oItem2Select1 = this.oVBox1.getItems()[1].getSelectableItems()[1];
+			this.oItem1Select2 = this.oVBox2.getItems()[1].getSelectableItems()[0];
+		},
+		afterEach: function () {
+			this.oList.destroy();
+			this.oItemTemplate.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when extractTemplateId() is called for a control on the list template", function(assert) {
+			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oButton);
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "button", "... then the id of the bound template control is returned");
+		});
+
+		QUnit.test("when extractTemplateId() and isElementInTemplate() are called for the first item inside the first Select", function(assert) {
+			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oItem1Select1);
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "selectItem-list-1", "... then the id of the first bound template control is returned");
+			assert.ok(ElementUtil.isElementInTemplate(this.oItem1Select1), "... then the element is found in the template");
+		});
+
+		QUnit.test("when extractTemplateId() and isElementInTemplate() are called for the second item inside the first Select", function(assert) {
+			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oItem2Select1);
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "selectItem-list-1", "... then the id of the first bound template control is returned");
+			assert.ok(ElementUtil.isElementInTemplate(this.oItem2Select1), "... then the element is found in the template");
+		});
+
+		QUnit.test("when extractTemplateId() and isElementInTemplate() are called for the first item inside the second Select", function(assert) {
+			var mAggregationInfo = ElementUtil.getAggregationInformation(this.oItem1Select2);
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "selectItem-list-2", "... then the id of the second bound template control is returned");
+			assert.ok(ElementUtil.isElementInTemplate(this.oItem1Select2), "... then the element is found in the template");
 		});
 	});
 
