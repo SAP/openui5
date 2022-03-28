@@ -200,6 +200,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			return {
 				"Error": RadioButton.i18nBundle.getText(i18nDefaults.VALUE_STATE_ERROR),
 				"Warning": RadioButton.i18nBundle.getText(i18nDefaults.VALUE_STATE_WARNING),
+				"Success": RadioButton.i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
+				"Information": RadioButton.i18nBundle.getText(i18nDefaults.VALUE_STATE_INFORMATION),
 			};
 		}
 		get classes() {

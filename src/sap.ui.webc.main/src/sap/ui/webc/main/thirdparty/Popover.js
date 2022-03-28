@@ -150,6 +150,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 				&& openerRect.left === 0
 				&& openerRect.right === 0;
 		}
+		isOpenerOutsideViewport(openerRect) {
+			return openerRect.bottom < 0
+				|| openerRect.top > window.innerHeight
+				|| openerRect.right < 0
+				|| openerRect.left > window.innerWidth;
+		}
 		_resize() {
 			super._resize();
 			if (this.opened) {
@@ -174,7 +180,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 				placement = this.calcPlacement(this._openerRect, popoverSize);
 			}
 			const stretching = this.horizontalAlign === PopoverHorizontalAlign.Stretch;
-			if (this._preventRepositionAndClose) {
+			if (this._preventRepositionAndClose || this.isOpenerOutsideViewport(this._openerRect)) {
 				return this.close();
 			}
 			this._oldPlacement = placement;

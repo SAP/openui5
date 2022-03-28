@@ -14,6 +14,7 @@ sap.ui.define([
 	function(commonLibrary, CSP) {
 
 		"use strict";
+
 		/**
 		 * SAPUI5 library with controls based on UI5 Web Components
 		 *
@@ -189,7 +190,6 @@ sap.ui.define([
 						"hideControl": "default",
 						"unhideControl": "default"
 					}
-
 				}
 			}
 		});

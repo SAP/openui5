@@ -31,8 +31,10 @@ sap.ui.define([
 	 * The <code>sap.ui.webc.main.TabContainer</code> can hold two types of entities:
 	 * <ul>
 	 *     <li><code>sap.ui.webc.main.Tab</code> - contains all the information on an item (text and icon)</li>
-	 *     <li><code>sap.ui.webc.main.TabSeparator</code> - used to separate tabs with a vertical line</li>
+	 *     <li><code>sap.ui.webc.main.TabSeparator</code> - used to separate tabs with a line</li>
 	 * </ul>
+	 *
+	 * <h3>Hierarchies</h3> Multiple sub tabs could be placed underneath one main tab. Nesting allows deeper hierarchies with indentations to indicate the level of each nested tab. When a tab has both sub tabs and own content its click area is split to allow the user to display the content or alternatively to expand / collapse the list of sub tabs.
 	 *
 	 * <h3>CSS Shadow Parts</h3>
 	 *

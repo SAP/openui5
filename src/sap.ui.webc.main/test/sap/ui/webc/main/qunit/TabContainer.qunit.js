@@ -42,6 +42,121 @@ sap.ui.define([
 									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
 								}
 							})
+						],
+						subTabs: [
+							new Tab({
+								additionalText: "Some text...",
+								icon: "employee",
+								text: "Some text...",
+								content: [
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								subTabs: [
+									new Tab({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										content: [
+
+										],
+										subTabs: [
+
+										]
+									}),
+									new TabSeparator({
+
+									}),
+									new Tab({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										content: [
+
+										],
+										subTabs: [
+
+										]
+									})
+								]
+							}),
+							new TabSeparator({
+
+							}),
+							new Tab({
+								additionalText: "Some text...",
+								icon: "employee",
+								text: "Some text...",
+								content: [
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								subTabs: [
+									new Tab({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										content: [
+
+										],
+										subTabs: [
+
+										]
+									}),
+									new TabSeparator({
+
+									}),
+									new Tab({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										content: [
+
+										],
+										subTabs: [
+
+										]
+									})
+								]
+							})
 						]
 					}),
 					new TabSeparator({
@@ -72,6 +187,121 @@ sap.ui.define([
 								click: function(oEvent) {
 									// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
 								}
+							})
+						],
+						subTabs: [
+							new Tab({
+								additionalText: "Some text...",
+								icon: "employee",
+								text: "Some text...",
+								content: [
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								subTabs: [
+									new Tab({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										content: [
+
+										],
+										subTabs: [
+
+										]
+									}),
+									new TabSeparator({
+
+									}),
+									new Tab({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										content: [
+
+										],
+										subTabs: [
+
+										]
+									})
+								]
+							}),
+							new TabSeparator({
+
+							}),
+							new Tab({
+								additionalText: "Some text...",
+								icon: "employee",
+								text: "Some text...",
+								content: [
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									}),
+									new Button({
+										icon: "employee",
+										text: "Some text...",
+										click: function(oEvent) {
+											// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+										}
+									})
+								],
+								subTabs: [
+									new Tab({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										content: [
+
+										],
+										subTabs: [
+
+										]
+									}),
+									new TabSeparator({
+
+									}),
+									new Tab({
+										additionalText: "Some text...",
+										icon: "employee",
+										text: "Some text...",
+										content: [
+
+										],
+										subTabs: [
+
+										]
+									})
+								]
 							})
 						]
 					})

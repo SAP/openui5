@@ -134,6 +134,8 @@ sap.ui.define([
 				 *     <li><code>None</code></li>
 				 *     <li><code>Error</code></li>
 				 *     <li><code>Warning</code></li>
+				 *     <li><code>Success</code></li>
+				 *     <li><code>Information</code></li>
 				 * </ul>
 				 */
 				valueState: {

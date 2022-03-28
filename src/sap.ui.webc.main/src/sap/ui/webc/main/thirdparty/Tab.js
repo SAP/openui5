@@ -8,9 +8,24 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 
 	const metadata = {
 		tag: "ui5-tab",
+		managedSlots: true,
+		languageAware: true,
 		slots:  {
 			"default": {
 				type: Node,
+				propertyName: "content",
+				invalidateOnChildChange: {
+					properties: true,
+					slots: false,
+				},
+			},
+			subTabs: {
+				type: HTMLElement,
+				individualSlots: true,
+				invalidateOnChildChange: {
+					properties: true,
+					slots: false,
+				},
 			},
 		},
 		properties:  {
@@ -39,6 +54,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				noAttribute: true,
 			},
 			_selected: {
+				type: Boolean,
+			},
+			_realTab: {
+				type: Object,
+			},
+			_isTopLevelTab: {
 				type: Boolean,
 			},
 		},
@@ -89,6 +110,25 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get stableDomRef() {
 			return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;
 		}
+		get requiresExpandButton() {
+			return this.subTabs.length > 0 && this._isTopLevelTab && this._hasOwnContent;
+		}
+		get isSingleClickArea() {
+			return this.subTabs.length > 0 && this._isTopLevelTab && !this._hasOwnContent;
+		}
+		get isOnSelectedTabPath() {
+			return this._realTab === this || this.tabs.some(subTab => subTab.isOnSelectedTabPath);
+		}
+		get _effectiveSlotName() {
+			return this.isOnSelectedTabPath ? this._individualSlot : "disabled-slot";
+		}
+		get _defaultSlotName() {
+			return this._realTab === this ? "" : "disabled-slot";
+		}
+		get _hasOwnContent() {
+			return this.content.some(node => (node.nodeType !== Node.COMMENT_NODE
+					&& (node.nodeType !== Node.TEXT_NODE || node.nodeValue.trim().length !== 0)));
+		}
 		getTabInStripDomRef() {
 			return this._getTabInStripDomRef;
 		}
@@ -112,10 +152,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.disabled || undefined;
 		}
 		get effectiveSelected() {
-			return this.selected || this._selected;
+			const subItemSelected = this.tabs.some(elem => elem.effectiveSelected);
+			return this.selected || this._selected || subItemSelected;
 		}
 		get effectiveHidden() {
 			return !this.effectiveSelected;
+		}
+		get tabs() {
+			return this.subTabs.filter(tab => !tab.isSeparator);
 		}
 		get ariaLabelledBy() {
 			const labels = [];
@@ -156,6 +200,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.design !== SemanticColor.Default) {
 				classes.push(`ui5-tab-strip-item--${this.design.toLowerCase()}`);
 			}
+			if (this.isSingleClickArea) {
+				classes.push(`ui5-tab-strip-item--singleClickArea`);
+			}
 			return classes.join(" ");
 		}
 		get headerSemanticIconClasses() {
@@ -173,10 +220,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.disabled) {
 				classes.push("ui5-tab-overflow-item--disabled");
 			}
+			if (this.selected) {
+				classes.push("ui5-tab-overflow-item--selectedSubTab");
+			}
 			return classes.join(" ");
 		}
 		get overflowState() {
-			return this.disabled ? "Inactive" : "Active";
+			return (this.disabled || this.isSingleClickArea) ? "Inactive" : "Active";
 		}
 	}
 	Tab.define();

@@ -42,7 +42,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/u
 			return ListItemBase_css;
 		}
 		_onfocusin(event) {
-			if (event.isMarked === "button" || event.isMarked === "link") {
+			if (event.target !== this.getFocusDomRef()) {
 				return;
 			}
 			this.focused = true;
@@ -63,7 +63,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/u
 		_handleTabNext(event) {
 			const target = event.target;
 			if (this.shouldForwardTabAfter(target)) {
-				this.fireEvent("_forward-after", { item: target });
+				if (!this.fireEvent("_forward-after", { item: target }, true)) {
+					event.preventDefault();
+				}
 			}
 		}
 		_handleTabPrevious(event) {
