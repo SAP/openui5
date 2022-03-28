@@ -312,7 +312,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.41.0
 	 */
-	Context.prototype.delete = function (sGroupId, bDoNotRequestCount) {
+	Context.prototype.delete = function (sGroupId, bDoNotRequestCount/*, bRejectIfNotFound*/) {
 		var oGroupLock = null,
 			oModel = this.oModel,
 			that = this;

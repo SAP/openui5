@@ -2672,6 +2672,35 @@ sap.ui.define([
 
 	/**
 	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#onDelete
+	 */
+	ODataListBinding.prototype.onDelete = function (sCanonicalPath) {
+		var oContext,
+			aKeptAliveContexts = Object.values(this.mPreviousContextsByPath)
+				.filter(function (oCandidate) {
+					return oCandidate.isKeepAlive();
+				});
+
+		function check(aContexts) {
+			return aContexts.find(function (oCandidate) {
+				var oPromise;
+
+				if (oCandidate) {
+					oPromise = oCandidate.fetchCanonicalPath();
+					oPromise.caught();
+					return oPromise.getResult() === sCanonicalPath;
+				}
+			});
+		}
+
+		oContext = check(aKeptAliveContexts) || check(this.aContexts);
+		if (oContext) {
+			this._delete(null, sCanonicalPath.slice(1), oContext);
+		}
+	};
+
+	/**
+	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataListBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,

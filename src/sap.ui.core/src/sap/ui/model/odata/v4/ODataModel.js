@@ -1254,6 +1254,72 @@ sap.ui.define([
 	};
 
 	/**
+	 * Deletes the entity with the given canonical path on the server and in all bindings.
+	 *
+	 * Deleting in the bindings is only possible if the given path is a canonical path, and all
+	 * paths follow these rules in addition to the OData 4.0 specification:
+	 * <ul>
+	 *   <li> Key properties are ordered just as in the metadata,
+	 *   <li> for single key properties, the name of the key is omitted,
+	 *   <li> for collection-valued navigation properties, all keys are present,
+	 *   <li> the key-value pairs are encoded via encodeURIComponent.
+	 * </ul>
+	 *
+	 * @param {string} sCanonicalPath
+	 *   The canonical path of the entity to delete, starting with a '/'
+	 * @param {string} [sGroupId]
+	 *   The group ID that is used for the DELETE request; if not specified, the model's
+	 *   {@link #getUpdateGroupId update group ID} is used; the resulting group ID must not have
+	 *   {@link sap.ui.model.odata.v4.SubmitMode.API}
+	 * @param {boolean} [bRejectIfNotFound]
+	 *   If <code>true</code>, deletion fails if the entity does not exist (HTTP status code 404 or
+	 *   412 due to the <code>If-Match: *</code> header); otherwise we assume that it has already
+	 *   been deleted by someone else and report success
+	 * @returns {Promise}
+	 *   A promise resolving when the delete succeeded, and rejecting with an instance of Error
+	 *   otherwise. In the latter case the HTTP status code of the response is given in the error's
+	 *   property <code>status</code>.
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the path does not start with a '/',
+	 *     <li> the given group ID is invalid,
+	 *     <li> the resulting group ID has {@link sap.ui.model.odata.v4.SubmitMode.API},
+	 *     <li> there are pending changes.
+	 *   </ul>
+	 *
+	 * @public
+	 * @since 1.103.0
+	 */
+	ODataModel.prototype.delete = function (sCanonicalPath, sGroupId, bRejectIfNotFound) {
+		var that = this;
+
+		if (sCanonicalPath[0] !== "/") {
+			throw new Error("Invalid path: " + sCanonicalPath);
+		}
+		this.checkGroupId(sGroupId);
+		sGroupId = sGroupId || this.getUpdateGroupId();
+		if (this.isApiGroup(sGroupId)) {
+			throw new Error("Illegal update group ID: " + sGroupId);
+		}
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot delete due to pending changes");
+		}
+
+		return this.oRequestor.request("DELETE", sCanonicalPath.slice(1),
+			this.lockGroup(sGroupId, this, true, true),
+			{"If-Match" : "*"}
+		).catch(function (oError) {
+			if (oError.status !== 404 && oError.status !== 412 || bRejectIfNotFound) {
+				throw oError;
+			} // else: map 404/412 to 200
+		}).then(function () {
+			that.aAllBindings.forEach(function (oBinding) {
+				oBinding.onDelete(sCanonicalPath);
+			});
+		});
+	};
+
+	/**
 	 * Destroys this model, its requestor and its meta model.
 	 *
 	 * @public

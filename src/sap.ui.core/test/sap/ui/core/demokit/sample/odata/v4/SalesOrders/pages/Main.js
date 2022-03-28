@@ -406,12 +406,12 @@ sap.ui.define([
 
 							oCreated.created().then(function () {
 								var aCreatedEntityPaths = Opa.getContext().aCreatedEntityPaths,
-									sPath = oCreated.getPath().slice(1);
+									sPath = oCreated.getPath();
 
 								if (!aCreatedEntityPaths) {
 									Opa.getContext().aCreatedEntityPaths = aCreatedEntityPaths = [];
 								}
-								aCreatedEntityPaths.push(oCreated.getPath().slice(1));
+								aCreatedEntityPaths.push(sPath);
 								Opa5.assert.ok(true, "Remembered SalesOrder: " + sPath);
 							});
 						}});

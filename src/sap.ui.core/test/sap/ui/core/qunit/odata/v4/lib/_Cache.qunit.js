@@ -407,8 +407,7 @@ sap.ui.define([
 			});
 		this.mock(oCache).expects("requestCount").never();
 		this.mock(oCache).expects("removeElement").exactly(oFixture.iStatus === 500 ? 0 : 1)
-			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')",
-				"EMPLOYEE_2_EQUIPMENTS")
+			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')", "EMPLOYEE_2_EQUIPMENTS")
 			.returns(1);
 
 		// code under test
@@ -459,7 +458,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#_delete: nested entity", function () {
+[false, true].forEach(function (bLock) {
+	QUnit.test("_Cache#_delete: nested entity" + (bLock ? "" : ", no lock"), function () {
 		var oCache = new _Cache(this.oRequestor, "Equipments(Category='foo',ID='0815')",
 				{$expand : {EQUIPMENT_2_EMPLOYEE : {EMPLOYEE_2_TEAM : true}}}),
 			sEtag = 'W/"19770724000000.0000000"',
@@ -472,8 +472,8 @@ sap.ui.define([
 				}
 			},
 			fnCallback = this.spy(),
-			oGroupLock = new _GroupLock("group", "owner", true),
-			oGroupLockCopy = {},
+			oGroupLock = bLock ? new _GroupLock("group", "owner", true) : null,
+			oGroupLockCount = {},
 			oUpdateData = {},
 			that = this;
 
@@ -481,18 +481,29 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EQUIPMENT_2_EMPLOYEE")
 			.returns(SyncPromise.resolve(oCacheData));
-		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
-		this.oRequestorMock.expects("request")
-			.withExactArgs("DELETE", "TEAMS('23')", sinon.match.same(oGroupLockCopy), {
-					"If-Match" : sinon.match.same(oCacheData["EMPLOYEE_2_TEAM"])
-				}, undefined, undefined, undefined, undefined,
-				"Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM")
-			.returns(Promise.resolve().then(function () {
-				that.oModelInterfaceMock.expects("reportStateMessages")
-					.withExactArgs(oCache.sResourcePath, {},
-						["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
-			}));
-		this.mock(oCache).expects("requestCount").withExactArgs(sinon.match.same(oGroupLock));
+		if (bLock) {
+			this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
+				.returns("~oGroupLockCopy~");
+			this.oRequestorMock.expects("request")
+				.withExactArgs("DELETE", "TEAMS('23')", "~oGroupLockCopy~", {
+						"If-Match" : sinon.match.same(oCacheData["EMPLOYEE_2_TEAM"])
+					}, undefined, undefined, undefined, undefined,
+					"Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM")
+				.returns(Promise.resolve().then(function () {
+					that.oModelInterfaceMock.expects("reportStateMessages")
+						.withExactArgs(oCache.sResourcePath, {},
+							["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
+				}));
+			oGroupLockCount = oGroupLock;
+		} else {
+			this.oRequestorMock.expects("request").never();
+			this.oRequestorMock.expects("lockGroup")
+				.withExactArgs("$auto", sinon.match.same(oCache))
+				.returns(oGroupLockCount);
+			this.oModelInterfaceMock.expects("reportStateMessages")
+				.withExactArgs(oCache.sResourcePath, {}, ["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
+		}
+		this.mock(oCache).expects("requestCount").withExactArgs(sinon.match.same(oGroupLockCount));
 		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["EMPLOYEE_2_TEAM"], null)
 			.returns(oUpdateData);
 		this.mock(_Helper).expects("updateExisting")
@@ -507,6 +518,7 @@ sap.ui.define([
 				sinon.assert.calledWithExactly(fnCallback);
 			});
 	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bDoNotRequestCount) {
@@ -561,7 +573,49 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#_delete: no lock", function () {
+	QUnit.test("_Cache#_delete: from collection, no lock", function (assert) {
+		var that = this,
+			oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')"),
+			aCacheData = [{}, {
+				"@$ui5._" : {predicate : "('1')"}
+			}, {}],
+			fnCallback = this.spy(),
+			oPromise;
+
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+		this.mock(oCache).expects("addPendingRequest").withExactArgs();
+		oCache.fetchValue = function () {};
+		// no need for different tests for top level or nested collections because
+		// fetchValue takes care to deliver corresponding elements
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
+			.returns(SyncPromise.resolve(aCacheData));
+		this.mock(_Cache).expects("from$skip")
+			.withExactArgs("1", sinon.match.same(aCacheData))
+			.returns(1);
+		// not interested in buildQueryString
+		this.oRequestorMock.expects("request").never();
+		this.mock(oCache).expects("requestCount").never();
+		this.mock(oCache).expects("removeElement")
+			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')", "EMPLOYEE_2_EQUIPMENTS")
+			.returns(1);
+		that.oModelInterfaceMock.expects("reportStateMessages")
+			.withExactArgs(oCache.sResourcePath, {}, ["EMPLOYEE_2_EQUIPMENTS('1')"]);
+		that.mock(oCache).expects("removePendingRequest").withExactArgs();
+
+		// code under test
+		oPromise = oCache._delete(null, "Equipments('1')", "EMPLOYEE_2_EQUIPMENTS/1", {}, false,
+			fnCallback);
+
+		assert.ok(oPromise.isFulfilled());
+		sinon.assert.calledOnce(fnCallback);
+		sinon.assert.calledWithExactly(fnCallback, 1, sinon.match.same(aCacheData));
+
+		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#_delete: kept-alive context not in collection, no lock", function () {
 		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
 			aCacheData = [],
 			fnCallback = this.spy();
@@ -579,7 +633,8 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(aCacheData));
 		this.oRequestorMock.expects("request").never();
 		this.mock(oCache).expects("requestCount").never();
-		this.mock(oCache).expects("removeElement").withExactArgs(aCacheData, undefined, "('1')", "")
+		this.mock(oCache).expects("removeElement")
+			.withExactArgs(sinon.match.same(aCacheData), undefined, "('1')", "")
 			// in real life, returns undefined, but symbolic value leads to stronger test
 			.returns("iIndex");
 
@@ -9762,7 +9817,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache#_delete, followed by _fetchValue: root entity", function (assert) {
+[false, true].forEach(function (bLock) {
+	var sTitle = "SingleCache#_delete, followed by _fetchValue: root entity"
+			+ (bLock ? "" : ", no lock");
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createSingle("Employees('42')"),
 			oData = {"@odata.etag" : 'W/"19770724000000.0000000"'},
 			oFetchGroupLock = {},
@@ -9775,21 +9834,31 @@ sap.ui.define([
 
 		return oCache.fetchValue(oFetchGroupLock).then(function (oEntity) {
 			var fnCallback = that.spy(),
-				oDeleteGroupLock = new _GroupLock("group", "owner", true),
-				oDeleteGroupLockCopy = {};
+				oCountGroupLock,
+				oDeleteGroupLock = bLock ? new _GroupLock("group", "owner", true) : null;
 
-			that.mock(oDeleteGroupLock).expects("getUnlockedCopy").withExactArgs()
-				.returns(oDeleteGroupLockCopy);
-			that.oRequestorMock.expects("request")
-				.withExactArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLockCopy),
-					{"If-Match" : sinon.match.same(oEntity)},
-					undefined, undefined, undefined, undefined, "Employees('42')")
-				.returns(Promise.resolve().then(function () {
-					that.oModelInterfaceMock.expects("reportStateMessages")
-						.withExactArgs(oCache.sResourcePath, {}, [""]);
-				}));
+			if (bLock) {
+				that.mock(oDeleteGroupLock).expects("getUnlockedCopy").withExactArgs()
+					.returns("~oDeleteGroupLockCopy~");
+				that.oRequestorMock.expects("request")
+					.withExactArgs("DELETE", "Employees('42')", "~oDeleteGroupLockCopy~",
+						{"If-Match" : sinon.match.same(oEntity)},
+						undefined, undefined, undefined, undefined, "Employees('42')")
+					.returns(Promise.resolve().then(function () {
+						that.oModelInterfaceMock.expects("reportStateMessages")
+							.withExactArgs(oCache.sResourcePath, {}, [""]);
+					}));
+				oCountGroupLock = oDeleteGroupLock;
+			} else {
+				that.oRequestorMock.expects("lockGroup")
+					.withExactArgs("$auto", sinon.match.same(oCache))
+					.returns(oCountGroupLock);
+				that.oRequestorMock.expects("request").never();
+				that.oModelInterfaceMock.expects("reportStateMessages")
+					.withExactArgs(oCache.sResourcePath, {}, [""]);
+			}
 			that.mock(oCache).expects("requestCount")
-				.withExactArgs(sinon.match.same(oDeleteGroupLock));
+				.withExactArgs(sinon.match.same(oCountGroupLock));
 
 			// code under test
 			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", null, false, fnCallback)
@@ -9809,6 +9878,7 @@ sap.ui.define([
 				});
 		});
 	});
+});
 
 	//*********************************************************************************************
 [null, {}].forEach(function (mLateQueryOptions) {

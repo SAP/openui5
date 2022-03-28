@@ -29128,6 +29128,270 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Delete an entity via the model. There is a list binding having a context for this
+	// entity. This context must be destroyed and the count adjusted.
+	// A relative ODCB w/o cache and with a path ending in a single-valued navigation property
+	// depends on the deleted context. Its onDelete is then called after the ODLB has already
+	// deleted the context, but before the destruction (which is done in a prerendering task). In
+	// order to determine its canonical path the bound context of the ODCB must take the key
+	// predicate from the cache data which is already gone. Ensure that this problem does not end up
+	// in the message manager.
+	// JIRA: CPOUI5ODATAV4-1511
+[false, true].forEach(function (bKeepAlive) {
+	QUnit.test("CPOUI5ODATAV4-1511: ODLB, kept=" + bKeepAlive, function (assert) {
+		var oContext,
+			oListBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			fnOnDelete = sinon.spy(),
+			oTable,
+			sView = '\
+<Text id="count" text="{$count}"/>\
+<Table growing="true" growingThreshold="2" id="table" items="{path : \'/SalesOrderList\', \
+		parameters : {$count : true, $select : \'Messages\'}}">\
+	<Text id="listId" text="{SalesOrderID}"/>\
+</Table>\
+<FlexBox id="objectPage" binding="{SO_2_BP}">\
+	<Text id="id" text="{BusinessPartnerID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$count=true&$select=Messages,SalesOrderID"
+				+ "&$skip=0&$top=2", {
+				"@odata.count" : "4",
+				value : [{
+					Messages : [{
+						message : "To be deleted",
+						numericSeverity : 2,
+						target : ""
+					}],
+					SalesOrderID : "1"
+				}, {
+					Messages : [],
+					SalesOrderID : "2"
+				}]
+			})
+			.expectChange("listId", ["1", "2"])
+			.expectChange("count")
+			.expectChange("id")
+			.expectMessages([{
+				code : undefined,
+				message : "To be deleted",
+				target : "/SalesOrderList('1')",
+				type : "Information"
+			}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("count", "4")
+				.expectRequest("SalesOrderList('1')?$select=SO_2_BP"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID)",
+					{SO_2_BP : {BusinessPartnerID : "B1"}}
+				)
+				.expectChange("id", "B1");
+
+			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("items");
+			oContext = oTable.getItems()[0].getBindingContext();
+			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+			that.oView.byId("objectPage").setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			if (bKeepAlive) {
+				that.expectRequest("SalesOrderList?$count=true&$select=Messages,SalesOrderID"
+						+ "&$orderby=SalesOrderID desc&$skip=0&$top=2", {
+						"@odata.count" : "4",
+						value : [
+							{Messages : [], SalesOrderID : "4"},
+							{Messages : [], SalesOrderID : "3"}
+						]
+					})
+					.expectChange("listId", ["4", "3"])
+					.expectMessages([]);
+
+				oContext.setKeepAlive(true, fnOnDelete);
+				oListBinding.sort(new Sorter("SalesOrderID", true));
+
+				return that.waitForChanges(assert);
+			}
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					headers : {"If-Match" : "*"},
+					url : "SalesOrderList('1')"
+				});
+			if (bKeepAlive) {
+				that.expectRequest("SalesOrderList?$count=true&$top=0", {
+					"@odata.count" : "3",
+					value : []
+				});
+			} else {
+				that.expectRequest("SalesOrderList?$count=true&$select=Messages,SalesOrderID"
+						+ "&$skip=1&$top=1", {
+						"@odata.count" : "3",
+						value : [{Messages : [], SalesOrderID : "3"}]
+					})
+					.expectChange("listId", [, "3"]);
+				that.oLogMock.expects("error")
+					.withArgs("Failed to drill-down into ('1')/SO_2_BP, invalid segment: ('1')");
+			}
+			that.expectChange("count", "3")
+				.expectChange("id", null)
+				.expectMessages([]);
+
+			return Promise.all([
+				// code under test
+				oModel.delete("/SalesOrderList('1')"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// wait for the prerendering task which was triggered by delete after all expectations
+			// were fulfilled
+			return that.waitForChanges(assert);
+		}).then(function () {
+			if (bKeepAlive) {
+				sinon.assert.called(fnOnDelete);
+			}
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Delete an entity via the model. The bound context of a context binding points to
+	// this entity.
+	// JIRA: CPOUI5ODATAV4-1511
+	QUnit.test("CPOUI5ODATAV4-1511: ODCB, bound context", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{\
+		path : \'/Artists(ArtistID=\\\'1\\\',IsActiveEntity=true)/BestFriend\',\
+		parameters : {$select : \'Messages\'}}">\
+	<Text id="id" text="{ArtistID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=true)/BestFriend"
+				+ "?$select=ArtistID,IsActiveEntity,Messages", {
+				ArtistID : "2",
+				IsActiveEntity : true,
+				Messages : [{
+					message : "To be deleted",
+					numericSeverity : 2,
+					target : ""
+				}]
+			})
+			.expectChange("id", "2")
+			.expectMessages([{
+				code : undefined,
+				message : "To be deleted",
+				target : "/Artists(ArtistID='1',IsActiveEntity=true)/BestFriend",
+				type : "Information"
+			}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+				method : "DELETE",
+				headers : {"If-Match" : "*"},
+				url : "Artists(ArtistID='2',IsActiveEntity=true)"
+			})
+			.expectChange("id", null)
+			.expectMessages([]);
+
+			return Promise.all([
+				// code under test
+				oModel.delete("/Artists(ArtistID='2',IsActiveEntity=true)"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete an entity via the model. The return value context of a context binding
+	// points to this entity.
+	// JIRA: CPOUI5ODATAV4-1511
+	QUnit.test("CPOUI5ODATAV4-1511: ODCB, return value context", function (assert) {
+		var oForm,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form">\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="active" text="{IsActiveEntity}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id")
+			.expectChange("active");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = oModel.bindContext("/Artists(ArtistID='1',IsActiveEntity=true)",
+				undefined, {$select : ["Messages"]});
+
+			that.expectRequest("Artists(ArtistID='1',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity,Messages", {
+				ArtistID : "1",
+				IsActiveEntity : true,
+				Messages : []
+			})
+			.expectChange("id", "1")
+			.expectChange("active", "Yes");
+
+			oForm = that.oView.byId("form");
+			oForm.setBindingContext(oBinding.getBoundContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oOperationBinding = oModel.bindContext("special.cases.EditAction(...)",
+					oForm.getBindingContext(), {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+					method : "POST",
+					payload : {},
+					url : "Artists(ArtistID='1',IsActiveEntity=true)/special.cases.EditAction"
+						+ "?$select=ArtistID,IsActiveEntity,Messages"
+				}, {
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Messages : [{
+						message : "To be deleted",
+						numericSeverity : 2,
+						target : ""
+					}]
+				})
+				.expectMessages([{
+					code : undefined,
+					message : "To be deleted",
+					target : "/Artists(ArtistID='1',IsActiveEntity=false)",
+					type : "Information"
+				}]);
+
+			return Promise.all([
+				oOperationBinding.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResult) {
+			that.expectChange("active", "No");
+
+			that.oView.byId("form").setBindingContext(aResult[0]); // return value context
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					headers : {"If-Match" : "*"},
+					url : "Artists(ArtistID='1',IsActiveEntity=false)"
+				})
+				.expectChange("id", null)
+				.expectChange("active", null)
+				.expectMessages([]);
+
+			return Promise.all([
+				// code under test
+				oModel.delete("/Artists(ArtistID='1',IsActiveEntity=false)"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Declarative event handlers can refer to property bindings.
 	// JIRA: CPOUI5UISERVICESV3-1912
 	QUnit.test("Declarative event handlers", function (assert) {

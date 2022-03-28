@@ -4883,4 +4883,108 @@ sap.ui.define([
 			assert.strictEqual(bDependent1Refreshed, true);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("onDelete: unresolved", function () {
+		var oBinding = this.bindContext("unresolved");
+
+		this.mock(oBinding).expects("_delete").never();
+
+		// code under test
+		oBinding.onDelete("/BusinessPartner('2')");
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bMatch) {
+	QUnit.test("onDelete: match=" + bMatch, function () {
+		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP"),
+			sCanonicalPath = bMatch ? "/BusinessPartner('2')" : "/BusinessPartner('3')";
+
+		this.mock(oBinding.oElementContext).expects("getValue").withExactArgs()
+			.returns({"@$ui5._" : {predicate : "1"}});
+		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.resolve(sCanonicalPath));
+		this.mock(oBinding).expects("_delete").exactly(bMatch ? 1 : 0)
+			.withExactArgs(null, "BusinessPartner('2')",
+				sinon.match.same(oBinding.oElementContext));
+
+		// code under test
+		oBinding.onDelete("/BusinessPartner('2')");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("onDelete: operation w/o RVC", function () {
+		var oBinding = this.bindContext("/Operation(...)");
+
+		this.mock(oBinding.oElementContext).expects("getValue").never();
+		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").never();
+		this.mock(oBinding).expects("_delete").never();
+
+		// code under test
+		oBinding.onDelete("/BusinessPartner('2')");
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bMatch) {
+	QUnit.test("onDelete: operation w/ RVC, match=" + bMatch, function () {
+		var oBinding = this.bindContext("/Operation(...)"),
+			sCanonicalPath = bMatch ? "/BusinessPartner('2')" : "/BusinessPartner('3')",
+			oReturnValueContext = {
+				fetchCanonicalPath : function () {},
+				getValue : function () {}
+			};
+
+		oBinding.oReturnValueContext = oReturnValueContext;
+		this.mock(oBinding.oElementContext).expects("getValue").never();
+		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").never();
+		this.mock(oBinding.oReturnValueContext).expects("getValue").withExactArgs()
+			.returns({"@$ui5._" : {predicate : "1"}});
+		this.mock(oReturnValueContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.resolve(sCanonicalPath));
+		this.mock(oBinding).expects("_delete").exactly(bMatch ? 1 : 0)
+			.withExactArgs(null, "BusinessPartner('2')", sinon.match.same(oReturnValueContext));
+
+		// code under test
+		oBinding.onDelete("/BusinessPartner('2')");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("onDelete: fetchCanonicalPath fails", function () {
+		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP");
+
+		this.mock(oBinding.oElementContext).expects("getValue").withExactArgs()
+			.returns({"@$ui5._" : {predicate : "1"}});
+		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.reject(new Error()));
+		this.mock(oBinding).expects("_delete").never();
+
+		// code under test
+		oBinding.onDelete("/BusinessPartner('2')");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onDelete: no entity data in cache", function () {
+		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP");
+
+		this.mock(oBinding.oElementContext).expects("getValue").withExactArgs().returns(undefined);
+		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").never();
+		this.mock(oBinding).expects("_delete").never();
+
+		// code under test
+		oBinding.onDelete("/BusinessPartner('2')");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onDelete: no key predicate", function () {
+		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP");
+
+		this.mock(oBinding.oElementContext).expects("getValue").withExactArgs().returns({});
+		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").never();
+		this.mock(oBinding).expects("_delete").never();
+
+		// code under test
+		oBinding.onDelete("/BusinessPartner('2')");
+	});
 });

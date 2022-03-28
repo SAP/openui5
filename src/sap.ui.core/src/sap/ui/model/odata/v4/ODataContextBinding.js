@@ -1265,6 +1265,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#onDelete
+	 */
+	ODataContextBinding.prototype.onDelete = function (sCanonicalPath) {
+		var oContext = this.oOperation ? this.oReturnValueContext : this.oElementContext,
+			oEntity,
+			oPromise;
+
+		if (oContext) {
+			oEntity = oContext.getValue();
+
+			// avoid problems in fetchCanonicalPath (leading to an ODM#reportError)
+			if (oEntity && _Helper.getPrivateAnnotation(oEntity, "predicate")) {
+				oPromise = oContext.fetchCanonicalPath();
+				oPromise.caught();
+				if (oPromise.getResult() === sCanonicalPath) {
+					this._delete(null, sCanonicalPath.slice(1), oContext);
+				}
+			}
+		}
+	};
+
+	/**
 	 * Refreshes all dependent bindings with the given parameters and waits for them to have
 	 * finished.
 	 *

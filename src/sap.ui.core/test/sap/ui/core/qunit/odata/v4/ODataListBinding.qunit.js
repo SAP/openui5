@@ -8890,6 +8890,94 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iCreatedContexts, 3);
 		assert.strictEqual(oBinding.iActiveContexts, 2);
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bMatch) {
+	QUnit.test("onDelete: aContexts, match=" + bMatch, function () {
+		var oBinding = this.bindList("/TEAM('1')/TEAM_2_EMPLOYEES"),
+			oContext1 = {
+				fetchCanonicalPath : function () {}
+			},
+			oContext2 = {
+				fetchCanonicalPath : function () {}
+			},
+			oContext3 = {
+				fetchCanonicalPath : function () {}
+			};
+
+		oBinding.aContexts = [oContext1, undefined, oContext2, oContext3];
+		this.mock(oContext1).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.resolve("/EMPLOYEES('1')"));
+		this.mock(oContext2).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.resolve("/EMPLOYEES('2')"));
+		this.mock(oContext3).expects("fetchCanonicalPath").exactly(bMatch ? 0 : 1).withExactArgs()
+			.returns(SyncPromise.resolve("/EMPLOYEES('3')"));
+		this.mock(oBinding).expects("_delete").exactly(bMatch ? 1 : 0)
+			.withExactArgs(null, "EMPLOYEES('2')", sinon.match.same(oContext2));
+
+		// code under test
+		oBinding.onDelete(bMatch ? "/EMPLOYEES('2')" : "/EMPLOYEES('99')");
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bMatch) {
+	QUnit.test("onDelete: mPreviousContextsByPath, match=" + bMatch, function () {
+		var oBinding = this.bindList("/TEAM('1')/TEAM_2_EMPLOYEES"),
+			oContext1 = {
+				fetchCanonicalPath : function () {},
+				isKeepAlive : function () {}
+			},
+			oContext2 = {
+				fetchCanonicalPath : function () {},
+				isKeepAlive : function () {}
+			},
+			oContext3 = {
+				fetchCanonicalPath : function () {},
+				isKeepAlive : function () {}
+			},
+			oContext4 = {
+				isKeepAlive : function () {}
+			};
+
+		oBinding.mPreviousContextsByPath = {
+			"/TEAM('1')/TEAM_2_EMPLOYEES('1')" : oContext1,
+			"/TEAM('2')/TEAM_2_EMPLOYEES('2')" : oContext4,
+			"/TEAM('1')/TEAM_2_EMPLOYEES('2')" : oContext2
+		};
+		oBinding.aContexts = [oContext3];
+		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oContext1).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.resolve("/EMPLOYEES('1')"));
+		this.mock(oContext4).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oContext2).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.resolve("/EMPLOYEES('2')"));
+		this.mock(oContext3).expects("fetchCanonicalPath").exactly(bMatch ? 0 : 1).withExactArgs()
+			.returns(SyncPromise.resolve("/EMPLOYEES('3')"));
+		this.mock(oBinding).expects("_delete").exactly(bMatch ? 1 : 0)
+			.withExactArgs(null, "EMPLOYEES('2')", sinon.match.same(oContext2));
+
+		// code under test
+		oBinding.onDelete(bMatch ? "/EMPLOYEES('2')" : "/EMPLOYEES('99')");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("onDelete: fetchCanonicalPath fails", function () {
+		var oBinding = this.bindList("/TEAM('1')/TEAM_2_EMPLOYEES"),
+			oContext1 = {
+				fetchCanonicalPath : function () {}
+			};
+
+		oBinding.aContexts = [oContext1];
+		this.mock(oContext1).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.reject(new Error()));
+		this.mock(oBinding).expects("_delete").never();
+
+		// code under test
+		oBinding.onDelete("/EMPLOYEES('2')");
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select

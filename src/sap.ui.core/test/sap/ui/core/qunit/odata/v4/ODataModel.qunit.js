@@ -1203,7 +1203,7 @@ sap.ui.define([
 		oModel.checkGroupId("myGroup", true);
 
 		// invalid group IDs
-		["", "$invalid", 42].forEach(function (vGroupId) {
+		["", "$invalid", 42, null].forEach(function (vGroupId) {
 			assert.throws(function () {
 				oModel.checkGroupId(vGroupId);
 			}, new Error("Invalid group ID: " + vGroupId));
@@ -3019,6 +3019,125 @@ sap.ui.define([
 			oModel.normalizeMessageTarget("foo($uid=...)/bar(propertyA='200')", sResourcePath),
 			"foo($uid=...)/bar(propertyA='200')"
 		);
+	});
+
+	//*********************************************************************************************
+[undefined, "group"].forEach(function (sGroupId) {
+	QUnit.test("delete: groupId=" + sGroupId, function (assert) {
+		var aAllBindings = [{
+				onDelete : function () {}
+			}, {
+				onDelete : function () {}
+			}],
+			oModel = this.createModel(),
+			oPromise;
+
+		oModel.aAllBindings = aAllBindings;
+		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId);
+		this.mock(oModel).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
+			.withExactArgs().returns("group");
+		this.mock(oModel).expects("isApiGroup").withExactArgs("group").returns(false);
+		this.mock(oModel).expects("hasPendingChanges").withExactArgs().returns(false);
+		this.mock(oModel).expects("lockGroup")
+			.withExactArgs("group", sinon.match.same(oModel), true, true)
+			.returns("~groupLock~");
+		this.mock(oModel.oRequestor).expects("request")
+			.withExactArgs("DELETE", "Entity('key')", "~groupLock~", {"If-Match" : "*"})
+			.resolves();
+		this.mock(aAllBindings[0]).expects("onDelete").withExactArgs("/Entity('key')");
+		this.mock(aAllBindings[1]).expects("onDelete").withExactArgs("/Entity('key')");
+
+		// code under test
+		oPromise = oModel.delete("/Entity('key')", sGroupId);
+
+		assert.ok(oPromise instanceof Promise);
+
+		return oPromise;
+	});
+});
+
+	//*********************************************************************************************
+[
+	{iStatus : 404, bSuccess : true},
+	{iStatus : 412, bSuccess : true},
+	{iStatus : 500, bSuccess : false},
+	{bRejectIfNotFound : true, iStatus : 404, bSuccess : false},
+	{bRejectIfNotFound : true, iStatus : 412, bSuccess : false}
+].forEach(function (oFixture) {
+	QUnit.test("delete: failed request " + JSON.stringify(oFixture), function (assert) {
+		var aAllBindings = [{
+				onDelete : function () {}
+			}],
+			oError = new Error(),
+			oModel = this.createModel();
+
+		oError.status = oFixture.iStatus;
+		oModel.aAllBindings = aAllBindings;
+		this.mock(oModel).expects("isApiGroup").withExactArgs("group").returns(false);
+		this.mock(oModel).expects("hasPendingChanges").withExactArgs().returns(false);
+		this.mock(oModel).expects("lockGroup")
+			.withExactArgs("group", sinon.match.same(oModel), true, true)
+			.returns("~groupLock~");
+		this.mock(oModel.oRequestor).expects("request")
+			.withExactArgs("DELETE", "Entity('key')", "~groupLock~", {"If-Match" : "*"})
+			.rejects(oError);
+		this.mock(aAllBindings[0]).expects("onDelete").exactly(oFixture.bSuccess ? 1 : 0)
+			.withExactArgs("/Entity('key')");
+
+		// code under test
+		return oModel.delete("/Entity('key')", "group", oFixture.bRejectIfNotFound)
+			.then(function () {
+				assert.ok(oFixture.bSuccess);
+			}, function (oResult) {
+				assert.notOk(oFixture.bSuccess);
+				assert.strictEqual(oResult, oError);
+			});
+	});
+});
+
+	//*********************************************************************************************
+[undefined, "group"].forEach(function (sGroupId) {
+	QUnit.test("delete: API group " + sGroupId, function (assert) {
+		var oModel = this.createModel();
+
+		this.mock(oModel).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
+			.withExactArgs().returns("group");
+		this.mock(oModel).expects("isApiGroup").withExactArgs("group").returns(true);
+		this.mock(oModel.oRequestor).expects("request").never();
+
+		assert.throws(function () {
+			// code under test
+			oModel.delete("/Entity('key')", sGroupId);
+		}, new Error("Illegal update group ID: group"));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("delete: pending changes", function (assert) {
+		var oModel = this.createModel();
+
+		this.mock(oModel).expects("isApiGroup").withExactArgs("group").returns(false);
+		this.mock(oModel).expects("hasPendingChanges").withExactArgs().returns(true);
+		this.mock(oModel.oRequestor).expects("request").never();
+
+		assert.throws(function () {
+			// code under test
+			oModel.delete("/Entity('key')", "group");
+		}, new Error("Cannot delete due to pending changes"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: not an absolute path", function (assert) {
+		var oModel = this.createModel();
+
+		this.mock(oModel).expects("isApiGroup").never();
+		this.mock(oModel).expects("hasPendingChanges").never();
+		this.mock(oModel.oRequestor).expects("request").never();
+
+		assert.throws(function () {
+			// code under test
+			oModel.delete("Entity('key')", "group");
+		}, new Error("Invalid path: Entity('key')"));
 	});
 });
 //TODO constructor: test that the service root URL is absolute?

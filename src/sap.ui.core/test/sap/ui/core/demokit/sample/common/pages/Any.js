@@ -182,24 +182,16 @@ sap.ui.define([
 						success : function (oTable) {
 							var aCreatedEntityPaths = Opa.getContext().aCreatedEntityPaths || [],
 								oModel = oTable.getModel(),
-								aPromises,
-								// use private requestor to prevent additional read requests(ETag)
-								// which need additional mockdata
-								oRequestor = oModel.oRequestor;
+								aPromises;
 
 							Opa5.assert.ok(true, "cleanUp created entities");
 							aPromises = aCreatedEntityPaths.map(function (sPath) {
-								return oRequestor.request("DELETE", sPath,
-									oModel.lockGroup("$direct", "Any.js"), {"If-Match" : "*"}
-								).then(function () {
+								// use "$direct" to delete all entities even if some lead to a 404
+								return oModel.delete(sPath, "$direct").then(function () {
 									Opa5.assert.ok(true, "deleted: " + sPath);
 								}, function (oError) {
-									if (oError.status !== 404) {
-										Opa5.assert.ok(false, "cleanUp failed: " + sPath
-											+ " error: " + oError.message);
-									} else {
-										Opa5.assert.ok(true, "already deleted: " + sPath);
-									}
+									Opa5.assert.ok(false, "cleanUp failed: " + sPath
+										+ " error: " + oError.message);
 								});
 							});
 							delete Opa.getContext().aCreatedEntityPaths;
