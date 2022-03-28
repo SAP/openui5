@@ -2425,6 +2425,35 @@ function (
 		}
 	});
 
+	QUnit.test("safe-check _adjustLayoutAndUxRules", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPageLayout,
+			oSection,
+			oSubSection,
+			oSelectedSection;
+
+		for (var i = 0; i < 2; i++) {
+			oSection = oFactory.getSection(i);
+			oSubSection = oFactory.getSubSection(i, oFactory.getBlocks());
+			oSection.addSubSection(oSubSection);
+			oObjectPage.addSection(oSection);
+		}
+
+		oSelectedSection = oObjectPage.getSections()[1];
+		oObjectPage.setSelectedSection(oSelectedSection);
+
+		try {
+			// act
+			// call the function before ObjectPageLayout is rendered
+			oObjectPage._adjustLayoutAndUxRules();
+			// assert
+			assert.ok(true, "No error is thrown");
+		} catch (e) {
+			// assert
+			assert.notOk(e, "Error should not be thrown");
+		}
+	});
+
 	QUnit.test("_onModifyHeaderTitle", function (assert) {
 		var oHeaderContent = this.oObjectPageLayout.getAggregation("_headerContent"),
 			oHeaderTitle = this.oObjectPageLayout.getAggregation("headerTitle"),

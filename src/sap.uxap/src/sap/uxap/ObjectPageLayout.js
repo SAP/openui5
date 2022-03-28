@@ -1982,9 +1982,11 @@ sap.ui.define([
 				this._setCurrentTabSection(oSelectedSection);
 				this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oSelectedSection);
 			}
-			this._oLazyLoading.doLazyLoading();
+			if (this.getEnableLazyLoading() && this._oLazyLoading) {
+				this._oLazyLoading.doLazyLoading();
+			}
 			// if the current scroll position is not at the selected section OR the ScrollEnablement is still scrolling due to an animation
-			if (!this._isClosestScrolledSection(sSelectedSectionId) || this._oScroller._$Container.is(":animated")) {
+			if (!this._isClosestScrolledSection(sSelectedSectionId) || (this._oScroller._$Container && this._oScroller._$Container.is(":animated"))) {
 				// then change the selection to match the correct section
 				this.scrollToSection(sSelectedSectionId, null, 0, false, true /* redirect scroll */);
 			}
