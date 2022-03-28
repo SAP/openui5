@@ -25,6 +25,7 @@ sap.ui.define(function() {
 					"qunit": "test-resources/sap/ui/webc/main/qunit/"
 				}
 			},
+			runAfterLoader: "qunit/ResizeObserverErrorHandler",
 			page: "test-resources/sap/ui/webc/main/qunit/testsandbox.qunit.html?test={name}",
 			autostart: true
 		},
