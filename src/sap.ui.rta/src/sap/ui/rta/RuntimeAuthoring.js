@@ -803,6 +803,9 @@ sap.ui.define([
 	RuntimeAuthoring.prototype.transport = function() {
 		return this._onTransport();
 	};
+	RuntimeAuthoring.prototype.transportVersion = function() {
+		return this._onTransportVersion();
+	};
 
 	// ---- backward compatibility API
 	RuntimeAuthoring.prototype.undo = function() {
@@ -1074,6 +1077,7 @@ sap.ui.define([
 
 			if (!bUserLayer) {
 				oProperties.transport = this._onTransport.bind(this);
+				oProperties.transportVersion = this._onTransportVersion.bind(this);
 				oProperties.undo = this._onUndo.bind(this);
 				oProperties.redo = this._onRedo.bind(this);
 				oProperties.modeChange = this._onModeChange.bind(this);
@@ -1211,6 +1215,32 @@ sap.ui.define([
 		ManagedObject.prototype.destroy.apply(this, arguments);
 	};
 
+	RuntimeAuthoring.prototype._onTransportVersion = function() {
+		this.getPluginManager().handleStopCutPaste();
+
+		return VersionsAPI.publish({
+			selector: this.getRootControlInstance(),
+			styleClass: Utils.getRtaStyleClassName(),
+			layer: this.getLayer(),
+			version: this._oVersionsModel.getProperty("/displayedVersion")
+		})
+		.then(function(sMessage) {
+			if (sMessage !== "Error" && sMessage !== "Cancel") {
+				MessageToast.show(sMessage);
+				if (this.getShowToolbars()) {
+					PersistenceWriteAPI.getResetAndPublishInfo({
+						selector: this.getRootControlInstance(),
+						layer: this.getLayer()
+					})
+					.then(function(oPublishAndResetInfo) {
+						this._oToolbarControlsModel.setProperty("/publishEnabled", oPublishAndResetInfo.isPublishEnabled);
+						this._oToolbarControlsModel.setProperty("/restoreEnabled", oPublishAndResetInfo.isResetEnabled);
+					}.bind(this));
+				}
+			}
+		}.bind(this));
+	};
+
 	/**
 	 * Function to handle ABAP transport of the changes
 	 * @return {Promise} Returns a Promise processing the transport of changes
@@ -1237,21 +1267,21 @@ sap.ui.define([
 						layer: this.getLayer(),
 						appVariantDescriptors: aAppVariantDescriptor
 					})
-						.then(function(sMessage) {
-							if (sMessage !== "Error" && sMessage !== "Cancel") {
-								MessageToast.show(sMessage);
-								if (this.getShowToolbars()) {
-									PersistenceWriteAPI.getResetAndPublishInfo({
-										selector: this.getRootControlInstance(),
-										layer: this.getLayer()
-									})
-									.then(function(oPublishAndResetInfo) {
-										this._oToolbarControlsModel.setProperty("/publishEnabled", oPublishAndResetInfo.isPublishEnabled);
-										this._oToolbarControlsModel.setProperty("/restoreEnabled", oPublishAndResetInfo.isResetEnabled);
-									}.bind(this));
-								}
+					.then(function(sMessage) {
+						if (sMessage !== "Error" && sMessage !== "Cancel") {
+							MessageToast.show(sMessage);
+							if (this.getShowToolbars()) {
+								PersistenceWriteAPI.getResetAndPublishInfo({
+									selector: this.getRootControlInstance(),
+									layer: this.getLayer()
+								})
+								.then(function(oPublishAndResetInfo) {
+									this._oToolbarControlsModel.setProperty("/publishEnabled", oPublishAndResetInfo.isPublishEnabled);
+									this._oToolbarControlsModel.setProperty("/restoreEnabled", oPublishAndResetInfo.isResetEnabled);
+								}.bind(this));
 							}
-						}.bind(this));
+						}
+					}.bind(this));
 				}.bind(this));
 		}.bind(this))["catch"](showTechnicalError);
 	};

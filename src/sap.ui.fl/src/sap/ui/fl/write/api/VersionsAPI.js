@@ -247,5 +247,29 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Publish a version.
+	 *
+	 * @param {object} mPropertyBag - Property bag
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
+	 * @param {string} [mPropertyBag.styleClass] - Style class name that will be added to the transport dialog
+	 * @param {string} mPropertyBag.layer - Working layer
+	 * @param {string} mPropertyBag.version - ID of version which need to be published
+	 * @returns {Promise<string>} Promise that can resolve to the following strings:
+	 * - "Cancel" if publish process was canceled
+	 * - <sMessage> when all the version is successfully transported fl will return the message to show
+	 * - "Error" in case of a problem
+	 */
+	VersionsAPI.publish = function (mPropertyBag) {
+		if (!mPropertyBag.selector) {
+			return Promise.reject("No selector was provided");
+		}
+		mPropertyBag.styleClass = mPropertyBag.styleClass || "";
+		mPropertyBag.reference = getFlexReferenceForControl(mPropertyBag.selector);
+		mPropertyBag.appComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+
+		return Versions.publish(mPropertyBag);
+	};
+
 	return VersionsAPI;
 });

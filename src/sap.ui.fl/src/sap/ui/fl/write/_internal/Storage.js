@@ -409,6 +409,11 @@ sap.ui.define([
 		discardDraft: function (mPropertyBag) {
 			return _getWriteConnectors()
 				.then(_executeActionByName.bind(undefined, "versions.discardDraft", mPropertyBag));
+		},
+
+		publish: function (mPropertyBag) {
+			return _getWriteConnectors()
+			.then(_executeActionByName.bind(undefined, "versions.publish", mPropertyBag));
 		}
 	};
 
