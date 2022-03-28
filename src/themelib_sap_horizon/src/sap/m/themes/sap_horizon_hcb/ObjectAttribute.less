@@ -27,14 +27,9 @@
 	outline: 2px dotted @sapUiContentFocusColor;
 }
 
-.sapMObjectAttributeActive .sapMObjectAttributeText:focus {
-	text-decoration: none;
-}
-
 .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMObjectAttributeActive .sapMObjectAttributeText:hover {
 	text-decoration: none;
-	color: @sapUiLinkHover;
 }
 
 /*=========================================== */
@@ -44,8 +39,8 @@
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
-	text-decoration: none;
-	color: @sapUiLinkHover;
+	text-decoration: underline;
+	color: @sapUiLinkHoverColor;
 }
 
 /*=========================================== */
@@ -53,9 +48,13 @@
 /*=========================================== */
 
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,
-.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover {
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	text-decoration: underline;
+}
+
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:focus:hover {
 	text-decoration: none;
-	color: @sapUiLinkHover;
 }
 
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText,
