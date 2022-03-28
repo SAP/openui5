@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Themes', 'sa
 
 	Themes.registerThemePropertiesLoader("@ui5/webcomponents-theming", "sap_fiori_3", () => defaultThemeBase__default);
 	Themes.registerThemePropertiesLoader("@ui5/webcomponents", "sap_fiori_3", () => parametersBundle_css);
-	var breadcrumbsPopoverCss = {packageName:"@ui5/webcomponents",fileName:"themes/BreadcrumbsPopover.css",content:".ui5-breadcrumbs-popover-footer{display:flex;justify-content:flex-end;width:100%;padding-right:.5rem}"};
+	var breadcrumbsPopoverCss = {packageName:"@ui5/webcomponents",fileName:"themes/BreadcrumbsPopover.css",content:".ui5-breadcrumbs-popover::part(content){padding:0}.ui5-breadcrumbs-popover-footer{display:flex;justify-content:flex-end;width:100%;padding-right:.5rem}"};
 
 	return breadcrumbsPopoverCss;
 

@@ -116,11 +116,22 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * Defines the tab content.
+				 * Holds the content associated with this tab.
 				 */
 				content: {
 					type: "sap.ui.core.Control",
 					multiple: true
+				},
+
+				/**
+				 * Defines hierarchies with nested sub tabs. <br>
+				 * <br>
+				 * <b>Note:</b> Use <code>sap.ui.webc.main.Tab</code> and <code>sap.ui.webc.main.TabSeparator</code> for the intended design.
+				 */
+				subTabs: {
+					type: "sap.ui.webc.main.ITab",
+					multiple: true,
+					slot: "subTabs"
 				}
 			},
 			methods: ["getTabInStripDomRef"]

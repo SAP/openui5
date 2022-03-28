@@ -442,6 +442,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.focused && this.hasValueStateText && !this._iconPressed
 				&& !this._isPickerOpen && !this._isPhone;
 		}
+		get _ariaRoleDescription() {
+			return Select.i18nBundle.getText(i18nDefaults.SELECT_ROLE_DESCRIPTION);
+		}
 		get _isPhone() {
 			return Device.isPhone();
 		}

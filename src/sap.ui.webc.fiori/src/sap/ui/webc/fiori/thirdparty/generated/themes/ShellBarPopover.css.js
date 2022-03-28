@@ -5,9 +5,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Themes', 'sa
 	var defaultThemeBase__default = /*#__PURE__*/_interopDefaultLegacy(defaultThemeBase);
 
 	Themes.registerThemePropertiesLoader("@ui5/webcomponents-theming", "sap_fiori_3", () => defaultThemeBase__default);
-	Themes.registerThemePropertiesLoader("@ui5/webcomponents", "sap_fiori_3", () => parametersBundle_css);
-	var overflowCss = {packageName:"@ui5/webcomponents",fileName:"themes/TabSeparatorInOverflow.css",content:".ui5-tc__separator{min-height:.25rem;border-bottom:.0625rem solid var(--sapGroup_TitleBorderColor);margin-left:calc(var(--_ui5-indentation-level, 0)*1rem);margin-right:.5rem}[ui5-list]>.ui5-tc__separator:first-child{min-height:.5rem}"};
+	Themes.registerThemePropertiesLoader("@ui5/webcomponents-fiori", "sap_fiori_3", () => parametersBundle_css);
+	var ShellBarPopoverCss = {packageName:"@ui5/webcomponents-fiori",fileName:"themes/ShellBarPopover.css",content:".ui5-shellbar-menu-popover::part(content),.ui5-shellbar-overflow-popover::part(content){padding:0}"};
 
-	return overflowCss;
+	return ShellBarPopoverCss;
 
 });

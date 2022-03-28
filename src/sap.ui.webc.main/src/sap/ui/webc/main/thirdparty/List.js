@@ -365,8 +365,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this._loadMoreActive = true;
 			}
 			if (Keys.isTabNext(event)) {
-				this.setPreviouslyFocusedItem(event.target);
 				this.focusAfterElement();
+			}
+			if (Keys.isTabPrevious(event)) {
+				if (this.getPreviouslyFocusedItem()) {
+					this.focusPreviouslyFocusedItem();
+				} else {
+					this.focusFirstItem();
+				}
+				event.preventDefault();
 			}
 		}
 		_onLoadMoreKeyup(event) {
@@ -412,16 +419,26 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_onfocusin(event) {
-			if (!this.isForwardElement(this.getNormalizedTarget(event.target))) {
+			const target = this.getNormalizedTarget(event.target);
+			if (!this.isForwardElement(target)) {
 				event.stopImmediatePropagation();
 				return;
 			}
 			if (!this.getPreviouslyFocusedItem()) {
-				this.focusFirstItem();
+				if (this.growsWithButton && this.isForwardAfterElement(target)) {
+					this.focusGrowingButton();
+				} else {
+					this.focusFirstItem();
+				}
 				event.stopImmediatePropagation();
 				return;
 			}
 			if (!this.getForwardingFocus()) {
+				if (this.growsWithButton && this.isForwardAfterElement(target)) {
+					this.focusGrowingButton();
+					event.stopImmediatePropagation();
+					return;
+				}
 				this.focusPreviouslyFocusedItem();
 				event.stopImmediatePropagation();
 			}
@@ -429,11 +446,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		isForwardElement(node) {
 			const nodeId = node.id;
-			const afterElement = this.getAfterElement();
 			const beforeElement = this.getBeforeElement();
 			if (this._id === nodeId || (beforeElement && beforeElement.id === nodeId)) {
 				return true;
 			}
+			return this.isForwardAfterElement(node);
+		}
+		isForwardAfterElement(node) {
+			const nodeId = node.id;
+			const afterElement = this.getAfterElement();
 			return afterElement && afterElement.id === nodeId;
 		}
 		onItemFocused(event) {
@@ -484,6 +505,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.setPreviouslyFocusedItem(event.target);
 			if (!this.growsWithButton) {
 				this.focusAfterElement();
+			} else {
+				this.focusGrowingButton();
+				event.preventDefault();
 			}
 		}
 		focusBeforeElement() {
@@ -493,6 +517,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		focusAfterElement() {
 			this.setForwardingFocus(true);
 			this.getAfterElement().focus();
+		}
+		focusGrowingButton() {
+			const growingBtn = this.getGrowingButton();
+			if (growingBtn) {
+				growingBtn.focus();
+			}
+		}
+		getGrowingButton() {
+			return this.shadowRoot.querySelector(`#${this._id}-growing-btn`);
 		}
 		focusFirstItem() {
 			const firstItem = this.getFirstItem(x => !x.disabled);

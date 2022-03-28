@@ -9,7 +9,6 @@ sap.ui.define(['exports', '../locale/languageChange', '../locale/getLocale', '..
 		"iw": "he",
 		"ji": "yi",
 		"in": "id",
-		"sh": "sr",
 	};
 	const _showAssetsWarningOnce = localeId => {
 		if (warningShown) {
@@ -31,6 +30,10 @@ sap.ui.define(['exports', '../locale/languageChange', '../locale/getLocale', '..
 			} else if (script === "Hant") {
 				region = "TW";
 			}
+		}
+		if (language === "sh" || (language === "sr" && script === "Latn")) {
+			language = "sr";
+			region = "Latn";
 		}
 		let localeId = `${language}_${region}`;
 		if (AssetParameters.SUPPORTED_LOCALES.includes(localeId)) {

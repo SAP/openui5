@@ -255,8 +255,26 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 				item._getRealDomRef = () => this.getDomRef().querySelector(`[data-ui5-stable*=${item.stableDomRef}]`);
 			});
 		}
+		_getItemPositionText(position, size) {
+			return Breadcrumbs.i18nBundle.getText(i18nDefaults.BREADCRUMB_ITEM_POS, position, size);
+		}
+		_getItemAccessibleName(item, position, size) {
+			const positionText = this._getItemPositionText(position, size);
+			let text = "";
+			if (item.accessibleName) {
+				text = `${item.textContent.trim()} ${item.accessibleName} ${positionText}`;
+			} else {
+				text = `${item.textContent.trim()} ${positionText}`;
+			}
+			return text;
+		}
 		getCurrentLocationLabelWrapper() {
 			return this.shadowRoot.querySelector(".ui5-breadcrumbs-current-location > span");
+		}
+		get _visibleItems() {
+			return this.getSlottedNodes("items")
+				.slice(this._overflowSize)
+				.filter(i => this._isItemVisible(i));
 		}
 		get _endsWithCurrentLocationLabel() {
 			return this.design === BreadcrumbsDesign.Standard;
@@ -295,11 +313,28 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 				.reverse();
 		}
 		get _linksData() {
-			const items = this.getSlottedNodes("items").slice(this._overflowSize);
+			const items = this._visibleItems;
+			const itemsCount = items.length;
 			if (this._endsWithCurrentLocationLabel) {
 				items.pop();
 			}
-			return items.filter(item => this._isItemVisible(item));
+			return items
+				.map((item, index) => {
+					item._accessibleNameText = this._getItemAccessibleName(item, index + 1, itemsCount);
+					return item;
+				});
+		}
+		get _currentLocationAccName() {
+			const items = this._visibleItems;
+			const positionText = this._getItemPositionText(items.length, items.length);
+			const lastItem = items[items.length - 1];
+			if (!lastItem) {
+				return positionText;
+			}
+			if (lastItem.accessibleName) {
+				return `${lastItem.textContent.trim()} ${lastItem.accessibleName} ${positionText}`;
+			}
+			return `${lastItem.textContent.trim()} ${positionText}`;
 		}
 		get _links() {
 			return Array.from(this.shadowRoot.querySelectorAll(".ui5-breadcrumbs-link-wrapper [ui5-link]"));

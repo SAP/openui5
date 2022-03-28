@@ -219,7 +219,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.fireSelectionChange();
 		}
 		get _getPlaceholder() {
-			if (this._tokenizer && this._tokenizer.tokens.length) {
+			if (this._getSelectedItems().length) {
 				return "";
 			}
 			return this.placeholder;
