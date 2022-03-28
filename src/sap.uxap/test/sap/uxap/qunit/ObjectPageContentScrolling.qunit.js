@@ -866,19 +866,17 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
-			setTimeout(function() {
 				iScrollTopBeforeResize = oObjectPageLayout._$opWrapper.scrollTop();
 				// make the height of the last section smaller
 				oResizableControl.getDomRef().style.height = "10px";
+				iScrollTopAfterResize = oObjectPageLayout._$opWrapper.scrollTop();
+				// call the listener for the scroll event synchronously to speed up the test
+				oObjectPageLayout._onScroll({target: {scrollTop: iScrollTopAfterResize}});
 
-				setTimeout(function() {
-					iScrollTopAfterResize = oObjectPageLayout._$opWrapper.scrollTop();
-					assert.strictEqual(oObjectPageLayout.getSelectedSection(), oLastSection.getId(), "Selection is preserved");
-					assert.strictEqual(iScrollTopBeforeResize, iScrollTopAfterResize, "scrollTop is preserved");
-					oObjectPageLayout.destroy();
-					done();
-				}, 500); // allow the page to scroll to the position of the selected section
-			}, 500);
+				assert.strictEqual(oObjectPageLayout.getSelectedSection(), oLastSection.getId(), "Selection is preserved");
+				assert.strictEqual(oObjectPageLayout._$opWrapper.scrollTop(), iScrollTopBeforeResize, "scrollTop is restored");
+				oObjectPageLayout.destroy();
+				done();
 		});
 
 		// arrange
