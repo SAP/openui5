@@ -477,6 +477,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oRestoreSpy = this.spy(oObjectPage, "_restoreScrollPosition"),
 			oScrollSpy = this.spy(oObjectPage, "_scrollTo"),
 			iScrollPositionBeforeRerender,
+			iExpectedScrollPositionAfterRerender,
 			done = assert.async();
 
 		oObjectPage.setSelectedSection(oSecondSection.getId());
@@ -485,6 +486,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 		setTimeout(function() {
 			iScrollPositionBeforeRerender = oObjectPage._$opWrapper[0].scrollTop;
+			iExpectedScrollPositionAfterRerender = Math.ceil(iScrollPositionBeforeRerender); //the page ceils the obtained DOM positions
 
 			oObjectPage.addEventDelegate({ onBeforeRendering: function() {
 					assert.ok(oStoreSpy.called, "_storeScrollLocation is called on beforeRenderingf");
@@ -492,7 +494,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 				assert.ok(oRestoreSpy.called, "_restoreScrollPosition is called on afterRendering");
-				assert.ok(oScrollSpy.calledWithMatch(iScrollPositionBeforeRerender), "scroll position is preserved");
+				assert.ok(oScrollSpy.calledWithMatch(iExpectedScrollPositionAfterRerender), "scroll position is preserved");
 				done();
 			});
 			oObjectPage.rerender();
@@ -534,7 +536,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		setTimeout(function() {
 			oObjectPage.scrollToSection(sTargetSectionId, 0);
 			setTimeout(function() {
-				iScrollPosition = oObjectPage._$opWrapper[0].scrollTop;
+				iScrollPosition = Math.ceil(oObjectPage._$opWrapper[0].scrollTop);
 				iExpectedPosition =  oObjectPage._oSectionInfo[sTargetSectionId].positionTop;
 				assert.strictEqual(iScrollPosition, iExpectedPosition, "scrollPosition is correct");
 				done();
@@ -931,6 +933,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oLastSubSection = oLastSection.getSubSections()[0],
 			oResizableControl = new GenericDiv({height: "100px"}),
 			iScrollTopBeforeResize,
+			iExpectedScrollTopAfterResize,
 			oSpy = this.spy(oObjectPageLayout, "_scrollTo"),
 			done = assert.async();
 
@@ -946,13 +949,14 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 
 				iScrollTopBeforeResize = oObjectPageLayout._$opWrapper.scrollTop();
+				iExpectedScrollTopAfterResize = Math.ceil(iScrollTopBeforeResize); //the page ceils the obtained DOM positions
 				// make the height of the last section smaller
 				oResizableControl.getDomRef().style.height = "10px";
 
 				oSpy.resetHistory();
 				oObjectPageLayout._onScroll({ target: { scrollTop: 0 }}); // call synchronously to avoid another timeout
 				assert.strictEqual(oObjectPageLayout.getSelectedSection(), oLastSection.getId(), "Selection is preserved");
-				assert.ok(oSpy.calledWith(iScrollTopBeforeResize), "scrollTop is preserved");
+				assert.ok(oSpy.calledWith(iExpectedScrollTopAfterResize), "scrollTop is preserved");
 				oObjectPageLayout.destroy();
 				done();
 			}, 500);
