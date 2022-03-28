@@ -1869,6 +1869,7 @@ sap.ui.define([
 				this.oNumericHeaderCard.destroy();
 				this.oNumericHeaderCard = null;
 				this.oRb = null;
+				Core.applyChanges();
 			}
 		});
 
@@ -1885,25 +1886,31 @@ sap.ui.define([
 				var oCardDomRef = this.oCard.getDomRef(),
 					oHeader = this.oCard.getAggregation("_header"),
 					oHeaderDomRef = oHeader.getDomRef(),
+					oHeaderFocusDomRef = oHeader.getDomRef("focusable"),
+					oHeaderTitleDomRef = oHeaderDomRef.querySelector(".sapFCardTitle"),
 					oContentDomRef = document.getElementsByClassName("sapFCardContent")[0],
 					sAriaLabelledByIds = this.oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
 
 				// Assert Card Container
-				assert.equal(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
-				assert.equal(oCardDomRef.getAttribute("aria-labelledby"), this.oCard._getAriaLabelledIds(), "Card container should have aria-lebelledby - pointing to the static text '[Type of Card] Card' id and title id");
-
+				assert.strictEqual(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
+				assert.strictEqual(oCardDomRef.getAttribute("aria-labelledby"), this.oCard._getAriaLabelledIds(), "Card container should have aria-lebelledby - pointing to the static text '[Type of Card] Card' id and title id");
 
 				// Assert Card Header
-				assert.equal(oHeaderDomRef.getAttribute("role"), "heading", "Card header should have a role - heading");
-				assert.equal(oHeaderDomRef.getAttribute("aria-level"), "3", "Card header should have a aria-level - 3");
-				assert.equal(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");
-				assert.equal(oHeaderDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
-				assert.equal(oHeaderDomRef.getAttribute("tabindex"), 0, "Card header should have tabindex=0");
+				assert.strictEqual(oHeaderDomRef.getAttribute("role"), "group", "Card header should have a role - group");
+				assert.strictEqual(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");
+
+				// Assert Card Header's focusable element
+				assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header's focusable element should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
+				assert.strictEqual(oHeaderFocusDomRef.getAttribute("tabindex"), "0", "Card header's focusable element should have tabindex=0");
+
+				// Assert Card Header Title
+				assert.strictEqual(oHeaderTitleDomRef.getAttribute("role"), "heading", "Card header Title should have a role - heading");
+				assert.strictEqual(oHeaderTitleDomRef.getAttribute("aria-level"), "3", "Card header Title should have a aria-level - 3");
 
 				// Assert Card Content
-				assert.equal(oContentDomRef.getAttribute("role"), "group", "Card content should have a role - group");
-				assert.equal(oContentDomRef.getAttribute("aria-labelledby"), this.oCard.getId() + "-ariaContentText", "Card container should have aria-labelledby with the correct id");
-				assert.equal(this.oCard.getDomRef("ariaContentText").innerText, this.oRb.getText("ARIA_LABEL_CARD_CONTENT"), "ARIA content hidden text should have the correct value");
+				assert.strictEqual(oContentDomRef.getAttribute("role"), "group", "Card content should have a role - group");
+				assert.strictEqual(oContentDomRef.getAttribute("aria-labelledby"), this.oCard.getId() + "-ariaContentText", "Card container should have aria-labelledby with the correct id");
+				assert.strictEqual(this.oCard.getDomRef("ariaContentText").innerText, this.oRb.getText("ARIA_LABEL_CARD_CONTENT"), "ARIA content hidden text should have the correct value");
 				done();
 			}.bind(this));
 
@@ -1924,14 +1931,15 @@ sap.ui.define([
 				// Assert
 				var oHeader = this.oCard.getAggregation("_header"),
 					oHeaderDomRef = oHeader.getDomRef(),
+					oHeaderFocusDomRef = oHeader.getDomRef("focusable"),
 					sAriaLabelledByIds = this.oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
 
 				// Assert Card Header
-				assert.equal(oHeaderDomRef.getAttribute("role"), "button", "Card header should have a role - button");
-				assert.notOk(oHeaderDomRef.getAttribute("aria-level"), "Card header should not have aria-level");
-				assert.equal(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");
-				assert.equal(oHeaderDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card container should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
-				assert.equal(oHeaderDomRef.getAttribute("tabindex"), 0, "Card header should have tabindex=0");
+				assert.strictEqual(oHeaderDomRef.getAttribute("role"), "group", "Card header should have a role - group");
+				assert.strictEqual(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");
+				assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header's focusable element should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
+				assert.strictEqual(oHeaderFocusDomRef.getAttribute("tabindex"), "0", "Card header's focusable element should have tabindex=0");
+				assert.strictEqual(oHeaderFocusDomRef.getAttribute("role"), "button", "Card header's focusable element should have role=button");
 				done();
 			}.bind(this));
 
@@ -1952,6 +1960,7 @@ sap.ui.define([
 				Core.applyChanges();
 
 				var oHeaderDomRef = oHeader.getDomRef(),
+					oHeaderFocusDomRef = oHeader.getDomRef("focusable"),
 					sAriaLabelledByIds = this.oNumericHeaderCard._ariaText.getId() + " " +
 										oHeader._getTitle().getId() + " " +
 										oHeader._getSubtitle().getId() + " " +
@@ -1961,10 +1970,11 @@ sap.ui.define([
 										oHeader._getSideIndicatorIds() + " " +
 										oHeader._getDetails().getId();
 
-				assert.equal(oHeaderDomRef.getAttribute("role"), "heading", "Card header should have a role - heading");
-				assert.equal(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");
-				assert.equal(oHeaderDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card container should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
-				assert.equal(oHeaderDomRef.getAttribute("tabindex"), 0, "Card header should have tabindex=0");
+				assert.strictEqual(oHeaderDomRef.getAttribute("role"), "group", "Card header should have a role - group");
+				assert.strictEqual(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");
+
+				assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header's focusable element should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
+				assert.strictEqual(oHeaderFocusDomRef.getAttribute("tabindex"), "0", "Card header should have tabindex=0");
 				done();
 			}.bind(this));
 
@@ -3385,7 +3395,7 @@ sap.ui.define([
 				// Assert
 				assert.strictEqual(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "New", "Badge indicator is correctly rendered");
 				assert.strictEqual($badgeIndicator.attr("aria-label"), "New", "Badge aria-label correctly rendered");
-				assert.ok(this.oCard.getCardHeader().$().attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) > -1, "aria-labelledby contains the badge indicator id");
+				assert.ok(this.oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) > -1, "aria-labelledby contains the badge indicator id");
 
 				done();
 
@@ -3417,7 +3427,7 @@ sap.ui.define([
 
 				assert.equal(this.oCard._isBadgeAttached, false, "Badge indicator is not rendered");
 				assert.notOk($badgeIndicator.attr("aria-label"), "Badge aria-label is removed");
-				assert.ok(this.oCard.getCardHeader().$().attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
+				assert.ok(this.oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
 
 				this.oCard.addCustomData(new BadgeCustomData({value: "New"}));
 				Core.applyChanges();

@@ -95,6 +95,8 @@ sap.ui.define([
 
 			HyphenationSupport.writeHyphenationClass(oRm, oText);
 
+			oRm.accessibilityState(oText);
+
 			// finish writing html
 			oRm.openEnd();
 

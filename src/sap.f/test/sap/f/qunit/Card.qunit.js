@@ -273,15 +273,19 @@ function (
 		Core.applyChanges();
 	});
 
-	QUnit.module("Headers ACC roles");
+	QUnit.module("Accessibility");
 
 	QUnit.test("Header", function (assert) {
 
 		// Arrange
 		var oCard = createCard(CardHeader);
 
+		var oTitleDomRef = oCard.getDomRef().querySelector(".sapFCardTitle");
+		assert.strictEqual(oTitleDomRef.getAttribute("role"), "heading", "Card title's role is correct.");
+		assert.strictEqual(oTitleDomRef.getAttribute("aria-level"), "3", "Card title's heading level is correct.");
+
 		var $header = oCard.getHeader().$();
-		assert.strictEqual($header.attr("role"), "heading" , "Header role is correct.");
+		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
 		assert.notOk($header.hasClass("sapFCardClickable"), "sapFCardClickable class is not set");
 
 		oCard.getHeader().attachPress(function () { });
@@ -290,7 +294,7 @@ function (
 		Core.applyChanges();
 
 		$header = oCard.getHeader().$();
-		assert.strictEqual($header.attr("role"), "button" , "Header role is correct.");
+		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
 		assert.ok($header.hasClass("sapFCardClickable"), "sapFCardClickable class is set");
 
 		oCard.destroy();
@@ -301,8 +305,12 @@ function (
 		// Arrange
 		var oCard = createCard(CardNumericHeader);
 
+		var oTitleDomRef = oCard.getDomRef().querySelector(".sapFCardTitle");
+		assert.strictEqual(oTitleDomRef.getAttribute("role"), "heading", "Card title's role is correct.");
+		assert.strictEqual(oTitleDomRef.getAttribute("aria-level"), "3", "Card title's heading level is correct.");
+
 		var $header = oCard.getHeader().$();
-		assert.strictEqual($header.attr("role"), "heading" , "Header role is correct.");
+		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
 		assert.notOk($header.hasClass("sapFCardClickable"), "sapFCardClickable class is not set");
 
 		oCard.getHeader().attachPress(function () { });
@@ -311,7 +319,7 @@ function (
 		Core.applyChanges();
 
 		$header = oCard.getHeader().$();
-		assert.strictEqual($header.attr("role"), "button" , "Header role is correct.");
+		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
 		assert.ok($header.hasClass("sapFCardClickable"), "sapFCardClickable class is set");
 
 		oCard.destroy();
@@ -329,14 +337,14 @@ function (
 		Core.applyChanges();
 
 		// Assert
-		assert.equal(oCard.getCardHeader().$().attr("aria-labelledby").indexOf("mainIndicator"), -1, "'aria-labelledby' does not contain main indicator id");
+		assert.equal(oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf("mainIndicator"), -1, "'aria-labelledby' does not contain main indicator id");
 
 		// Act
 		oCard.getCardHeader().setNumber("22");
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(oCard.getCardHeader().$().attr("aria-labelledby").indexOf("mainIndicator") > -1, "'aria-labelledby' contains main indicator id");
+		assert.ok(oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf("mainIndicator") > -1, "'aria-labelledby' contains main indicator id");
 
 		// Clean up
 		oCard.destroy();
@@ -391,7 +399,7 @@ function (
 		// Assert
 		assert.strictEqual($badgeIndicator.attr("data-badge"), "New", "Badge indicator is correctly rendered");
 		assert.strictEqual($badgeIndicator.attr("aria-label"), "New", "Badge aria-label correctly rendered");
-		assert.ok(oCard.getCardHeader().$().attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) > -1, "aria-labelledby contains the badge indicator id");
+		assert.ok(oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) > -1, "aria-labelledby contains the badge indicator id");
 
 		oCard.destroy();
 	});
@@ -415,7 +423,7 @@ function (
 
 		assert.equal(oCard._isBadgeAttached, false, "Badge indicator is not rendered");
 		assert.notOk($badgeIndicator.attr("aria-label"), "Badge aria-label is removed");
-		assert.ok(oCard.getCardHeader().$().attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
+		assert.ok(oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
 
 		oCard.addCustomData(new BadgeCustomData({value: "New"}));
 		Core.applyChanges();

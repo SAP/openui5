@@ -3,15 +3,19 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/core/Core",
 	"sap/ui/core/IntervalTrigger",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
+	"sap/ui/core/InvisibleText",
 	"sap/m/Text"
 ], function (
 	Control,
+	Core,
 	IntervalTrigger,
 	DateFormat,
 	UniversalDate,
+	InvisibleText,
 	Text
 ) {
 	"use strict";
@@ -91,8 +95,23 @@ sap.ui.define([
 		}
 	});
 
+	BaseHeader.prototype.init = function () {
+		this._oRb = Core.getLibraryResourceBundle("sap.f");
+
+		this._oToolbarDelegate = {
+			onfocusin: this._onToolbarFocusin,
+			onfocusout: this._onToolbarFocusout
+		};
+	};
+
 	BaseHeader.prototype.exit = function () {
 		this._removeTimestampListener();
+
+		if (this._oToolbarDelegate) {
+			this._oToolbarDelegate = null;
+		}
+
+		this._oRb = null;
 	};
 
 	BaseHeader.prototype.onBeforeRendering = function () {
@@ -100,6 +119,42 @@ sap.ui.define([
 
 		if (oToolbar) {
 			oToolbar.addStyleClass("sapFCardHeaderToolbar");
+			oToolbar.removeEventDelegate(this._oToolbarDelegate, this);
+		}
+	};
+
+	BaseHeader.prototype.onAfterRendering = function () {
+		var oToolbar = this.getToolbar();
+
+		if (oToolbar) {
+			oToolbar.addEventDelegate(this._oToolbarDelegate, this);
+		}
+	};
+
+	BaseHeader.prototype.getFocusDomRef = function () {
+		return this.getDomRef("focusable");
+	};
+
+	/**
+	 * Adds a CSS class on the header which removes its focus outline
+	 * to prevent drawing two focuses when the toolbar is focused.
+	 * @private
+	 */
+	BaseHeader.prototype._onToolbarFocusin = function () {
+		var oDomRef = this.getDomRef();
+		if (oDomRef) {
+			this.getDomRef().classList.add("sapFCardHeaderToolbarFocused");
+		}
+	};
+
+	/**
+	 * Removes a CSS class on the header which allows the header to show its focus outline.
+	 * @private
+	 */
+	BaseHeader.prototype._onToolbarFocusout = function () {
+		var oDomRef = this.getDomRef();
+		if (oDomRef) {
+			this.getDomRef().classList.remove("sapFCardHeaderToolbarFocused");
 		}
 	};
 
@@ -232,14 +287,28 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	BaseHeader.prototype.getAriaRole = function () {
-		return this.hasListeners("press") ? "button" : "heading";
+		return "group";
+	};
+
+	/**
+	 * @ui5-restricted
+	 */
+	BaseHeader.prototype.getTitleAriaRole = function () {
+		return "heading";
+	};
+
+	/**
+	 * @ui5-restricted
+	 */
+	BaseHeader.prototype.getFocusableElementAriaRole = function () {
+		return this.hasListeners("press") ? "button" : null;
 	};
 
 	/**
 	 * @ui5-restricted
 	 */
 	BaseHeader.prototype.getAriaHeadingLevel = function () {
-		return this.hasListeners("press") ? undefined : "3";
+		return "3";
 	};
 
 	/**

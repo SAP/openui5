@@ -25,11 +25,6 @@ sap.ui.define([], function () {
 			.class("sapFCardHeader")
 			.class("sapFCardNumericHeader");
 
-		if (oNumericHeader.getProperty("focusable")) {
-			sTabIndex = oNumericHeader._isInsideGridContainer() ? "-1" : "0";
-			oRm.attr("tabindex", sTabIndex);
-		}
-
 		if (bLoading) {
 			oRm.class("sapFCardHeaderLoading");
 		}
@@ -45,15 +40,25 @@ sap.ui.define([], function () {
 		//Accessibility state
 		oRm.accessibilityState(oNumericHeader, {
 			role: oNumericHeader.getAriaRole(),
-			labelledby: { value: oNumericHeader._getAriaLabelledBy(), append: true },
-			roledescription: { value: oNumericHeader.getAriaRoleDescription(), append: true },
-			level: { value: oNumericHeader.getAriaHeadingLevel() }
+			roledescription: { value: oNumericHeader.getAriaRoleDescription(), append: true }
 		});
 		oRm.openEnd();
 
 		oRm.openStart("div")
-			.class("sapFCardHeaderContent")
-			.openEnd();
+			.attr("id", oNumericHeader.getId() + "-focusable")
+			.class("sapFCardHeaderContent");
+
+		if (oNumericHeader.getProperty("focusable")) {
+			sTabIndex = oNumericHeader._isInsideGridContainer() ? "-1" : "0";
+			oRm.attr("tabindex", sTabIndex);
+		}
+
+		oRm.accessibilityState({
+			labelledby: { value: oNumericHeader._getAriaLabelledBy(), append: true },
+			role: oNumericHeader.getFocusableElementAriaRole()
+		});
+
+		oRm.openEnd();
 
 		if (oError) {
 			oRm.renderControl(oError);
@@ -121,7 +126,7 @@ sap.ui.define([], function () {
 		}
 
 		if (sStatus) {
-			oRm.openStart("span", oNumericHeader.getId() + '-status')
+			oRm.openStart("span", oNumericHeader.getId() + "-status")
 				.class("sapFCardStatus");
 
 			if (oBindingInfos.statusText) {

@@ -151,12 +151,10 @@ sap.ui.define([
 	Header.prototype.init = function () {
 		BaseHeader.prototype.init.apply(this, arguments);
 
-		this._oRb = Core.getLibraryResourceBundle("sap.f");
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
 		this._oAriaAvatarText = new InvisibleText({id: this.getId() + "-ariaAvatarText"});
 		this._oAriaAvatarText.setText(this._oRb.getText("ARIA_HEADER_AVATAR_TEXT"));
-
 	};
 
 	Header.prototype.exit = function () {
@@ -166,7 +164,6 @@ sap.ui.define([
 			this._oAriaAvatarText.destroy();
 			this._oAriaAvatarText = null;
 		}
-		this._oRb = null;
 	};
 
 	/**
@@ -233,6 +230,23 @@ sap.ui.define([
 		oAvatar.setInitials(this.getIconInitials());
 		oAvatar.setTooltip(this.getIconAlt());
 		oAvatar.setBackgroundColor(this.getIconBackgroundColor());
+	};
+
+	/**
+	 * This method is a hook for the RenderManager that gets called
+	 * during the rendering of child Controls. It allows to add,
+	 * remove and update existing accessibility attributes (ARIA) of
+	 * those controls.
+	 *
+	 * @param {sap.ui.core.Control} oElement - The Control that gets rendered by the RenderManager
+	 * @param {object} mAriaProps - The mapping of "aria-" prefixed attributes
+	 * @protected
+	 */
+	 Header.prototype.enhanceAccessibilityState = function (oElement, mAriaProps) {
+		if (oElement === this.getAggregation("_title")) {
+			mAriaProps.role = this.getTitleAriaRole();
+			mAriaProps.level = this.getAriaHeadingLevel();
+		}
 	};
 
 	/**
