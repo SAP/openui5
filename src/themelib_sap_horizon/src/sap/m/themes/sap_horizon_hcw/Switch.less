@@ -3,19 +3,14 @@
 /* Horizon High Contrast White theme  */
 /* ================================== */
 
-@_sap_m_Switch_OffBorderColor: @sapUiButtonBorderColor;
-
 /* ------------------------------ */
 /* Switch container               */
 /* ------------------------------ */
 
 .sapMSwtCont {
 	overflow: hidden;
-	//in order to have a touchable area of 2.75rem
-	padding-top: 0.6875rem;
-	padding-bottom: 0.6875rem;
-	padding-left: 0.125rem;
-	width: 4.125rem;
+	//in order to have a touchable area of 2.75rem height and 3.5rem width
+	padding: 0.625rem 0.5rem;
 }
 
 /* focus */
@@ -25,20 +20,16 @@ html.sap-desktop {
 		content: " ";
 		position: absolute;
 		display: block;
-		top: -0.375rem;
-		left: -0.125rem;
-		bottom: -0.375rem;
-		right: -0.125rem;
-		outline: 2px dotted @sapUiContentFocusColor;
+		top: -0.3125rem;
+		left: -0.3125rem;
+		bottom: -0.3125rem;
+		right: -0.3125rem;
+		border: 0.125rem solid @sapUiContentFocusColor;
+		border-radius: 1rem;
 	}
 	.sapUiSizeCompact {
 		.sapMSwtCont:focus > .sapMSwt:before {
-			top: -0.25rem;
-			bottom: -0.25rem;
-		}
-		.sapMSwtCont:focus > .sapMSwt.sapMSwtNoLabel:before {
-			top: -0.375rem;
-			bottom: -0.375rem;
+			border-radius: 0.875rem;
 		}
 	}
 }
@@ -48,60 +39,102 @@ html.sap-desktop {
 /* ------------------------------ */
 
 .sapMSwt {
-	width: 3.75rem;
-	height: 1.25rem;
+	width: 2.875rem;
+	height: 1.5rem;
 	overflow: visible;
-	border: @sapUiButtonBorderWidth solid;
-	border-top-left-radius: 0.75rem;
-	border-top-right-radius: 0.75rem;
-	border-bottom-right-radius: 0.75rem;
-	border-bottom-left-radius: 0.75rem;
-	&.sapMSwtNoLabel {
-		width: 3.25rem;
-		height: 1.25rem;
-		outline-offset: -8px; // ON state handle movement limit correction in pixels for no-label switches, because of reduced width
-		&.sapMSwtOn .sapMSwtInner {
-			left: -0.5rem;
+	border: none;
+	margin: 0;
+	border-radius: 0.75rem;
+	&.sapMSwtNoLabel,
+	&.sapMSwtAcceptReject {
+		width: 2.5rem;
+		height: 1.5rem;
+		.sapMSwtText {
+			&.sapMSwtTextOn {
+				left: 1.8rem;
+			}
+			&.sapMSwtTextOff {
+				left: 2rem;
+			}
+		}
+		&.sapMSwtOn .sapMSwtHandle {
+			left: 1.5rem;
 		}
 	}
 }
 
-/* background */
-
-.sapMSwtOff:not(.sapMSwtAcceptReject) {
-	background: @sapUiButtonTrackBackground;
-	border-color: @sapUiContentForegroundBorderColor;
-}
-
-.sapMSwt.sapMSwtOff.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
-	border-color: @sapUiContentForegroundBorderColor;
-}
-
-
 /* disabled */
 
-.sapMSwtDisabled {
-	opacity: @sapUiContentDisabledOpacity;
+.sapMSwtDisabled.sapMSwt {
+	&.sapMSwtOn:not(.sapMSwtAcceptReject) {
+		background: @sapUiHcReducedBackground;
+		border-color: @sapUiHcReducedForeground;
+		.sapMSwtText.sapMSwtText .sapMSwtLabel,
+		.sapMSwtText.sapMSwtText .sapMSwtLabel:before {
+			color: @sapUiHcReducedForeground;
+		}
+		.sapMSwtHandle {
+			background: @sapUiHcReducedBackground;
+			border-color: @sapUiHcReducedForeground;
+		}
+	}
+	&.sapMSwtOff:not(.sapMSwtAcceptReject) {
+		border-color: @sapUiHcReducedForeground;
+		.sapMSwtText.sapMSwtText .sapMSwtLabel,
+		.sapMSwtText.sapMSwtText .sapMSwtLabel:before {
+			color: @sapUiHcReducedForeground;
+		}
+		.sapMSwtHandle {
+			border-color: @sapUiHcReducedBackground;
+		}
+	}
+	&.sapMSwtAcceptReject {
+		&.sapMSwtOn {
+			background: @sapUiHcReducedBackground;
+			border-color: @sapUiHcReducedForeground;
+			.sapMSwtText.sapMSwtText .sapMSwtLabel,
+			.sapMSwtText.sapMSwtText .sapMSwtLabel:before {
+				color: @sapUiHcReducedForeground;
+			}
+			.sapMSwtHandle {
+				background: @sapUiHcReducedBackground;
+				border-color: @sapUiHcReducedForeground;
+			}
+		}
+		&.sapMSwtOff {
+			border-color: @sapUiHcReducedForeground;
+			.sapMSwtText.sapMSwtText .sapMSwtLabel,
+			.sapMSwtText.sapMSwtText .sapMSwtLabel:before {
+				color: @sapUiHcReducedForeground;
+			}
+			.sapMSwtHandle {
+				border-color: @sapUiHcReducedBackground;
+			}
+		}
+	}
 }
 
 /* ------------------------------ */
 /* Text                           */
 /* ------------------------------ */
 .sapMSwtText {
-	line-height: 1.25rem;
+	line-height: 1.5rem;
 	width: 1.75rem;
 	&.sapMSwtTextOn {
-		margin: 0 0 0 0.125rem;
-		color: @sapUiBaseText;
+		color: @sapUiButtonHandleSelectedTextColor;
+		left: 2.125rem;
+		z-index: 1;
 	}
 	&.sapMSwtTextOff {
-		margin: 0 0.125rem 0 0;
-		color: @sapUiBaseText;
-		left: 3.8rem;
+		color: @sapUiButtonHandleTextColor;
+		left: 2.125rem;
+		z-index: 1;
 	}
 	.sapMSwtLabel {
-		height: 1.25rem;
+		height: 1.5rem;
+		line-height: 1.375rem;
 		padding: 0;
+		font-family: "72-Condensed-Bold" , "72" , "72full" , Arial, Helvetica, sans-serif;
 	}
 }
 
@@ -109,32 +142,44 @@ html.sap-desktop {
 /* Switch handler                 */
 /* ------------------------------ */
 
-.sapMSwtOn .sapMSwtHandle,
-.sapMSwtOff .sapMSwtHandle {
-	height: 1.875rem;
-	width: 1.875rem;
-	border-top-left-radius: 1rem;
-	border-top-right-radius: 1rem;
-	border-bottom-right-radius: 1rem;
-	border-bottom-left-radius: 1rem;
+.sapMSwt .sapMSwtHandle {
+	height: 1.25rem;
+	width: 1.75rem;
+	border-radius: 1rem;
 	border: @sapUiButtonBorderWidth solid;
-	left: 1.9375rem;
+	left: 2.0625rem;
+}
+
+.sapMSwt.sapMSwtOn .sapMSwtHandle {
+	left: 2.1875rem;
+}
+
+.sapUiSizeCompact .sapMSwt .sapMSwtHandle,
+.sapMSwtCont .sapMSwt.sapMSwtNoLabel.sapMSwtOn .sapMSwtHandle,
+.sapMSwtCont .sapMSwt.sapMSwtAcceptReject.sapMSwtOn .sapMSwtHandle {
+	left: 2.0625rem;
+}
+
+.sapMSwt.sapMSwtNoLabel .sapMSwtHandle,
+.sapMSwt.sapMSwtAcceptReject .sapMSwtHandle {
+	width: 1.5rem;
 }
 
 //on
 .sapMSwt.sapMSwtOn:not(.sapMSwtAcceptReject) {
 	background: @sapUiButtonTrackSelectedBackground;
-	border-color: @sapUiButtonSelectedBorderColor;
+	border: 0.0625rem solid @sapUiButtonTrackSelectedBorderColor;
+	box-sizing: border-box;
 	.sapMSwtHandle {
-		box-sizing: border-box;
-		background: @sapUiButtonTrackSelectedBackground;
-		border-color: @sapUiButtonSelectedBorderColor;
+		background: @sapUiButtonHandleSelectedBackground;
+		border: 0.125rem solid @sapUiButtonHandleSelectedBorderColor;
 	}
 	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
-	  border-color: @sapUiButtonSelectedHoverBorderColor;
+		background: @sapUiButtonTrackSelectedHoverBackground;
+		border: 0.0625rem solid @sapUiButtonTrackSelectedHoverBorderColor;
 		.sapMSwtHandle {
-			background: @sapUiButtonSelectedHoverBackground;
-			border-color: @sapUiButtonSelectedHoverBorderColor;
+			background: @sapUiButtonHandleSelectedHoverBackground;
+			box-shadow: 0 0 0 0.125rem @sapUiButtonHandleSelectedHoverBorderColor;
 		}
 	}
 }
@@ -142,16 +187,18 @@ html.sap-desktop {
 //off
 .sapMSwt.sapMSwtOff:not(.sapMSwtAcceptReject) {
 	background: @sapUiButtonTrackBackground;
-	border-color: @sapUiContentForegroundBorderColor;
+	border: 0.0625rem solid @sapUiButtonTrackBorderColor;
+	box-sizing: border-box;
 	.sapMSwtHandle {
-		background: @sapUiButtonBackground;
-		border-color: @sapUiContentForegroundBorderColor;
+		background: @sapUiButtonHandleBackground;
+		border: 0.125rem solid @sapUiButtonHandleBorderColor;
 	}
 	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
-		border-color: @sapUiButtonHoverBorderColor;
+		background: @sapUiButtonTrackHoverBackground;
+		border: 0.0625rem solid @sapUiButtonTrackHoverBorderColor;
 		.sapMSwtHandle {
-			background: @sapUiButtonHoverBackground;
-			border-color: @sapUiButtonHoverBorderColor;
+			background: @sapUiButtonHandleHoverBackground;
+			box-shadow: 0 0 0 0.125rem @sapUiButtonHandleHoverBorderColor;
 		}
 	}
 }
@@ -165,36 +212,39 @@ html.sap-desktop {
 /* ------------------------------ */
 
 .sapMSwtAcceptReject.sapMSwt {
-	background: @sapUiButtonTrackBackground;
 	//on
 	&.sapMSwtOn {
-		background: @sapUiSuccessBG;
-		border-color: @sapUiSuccessBorder;
+		background: @sapUiButtonTrackPositiveBackground;
+		border: 0.0625rem solid @sapUiButtonTrackPositiveBorderColor;
+		box-sizing: border-box;
 		.sapMSwtHandle {
-			background: @sapUiButtonBackground;
-			border-color: @sapUiSuccessBorder;
+			background: @sapUiButtonHandlePositiveBackground;
+			border: 2px solid @sapUiButtonHandlePositiveBorderColor;
 		}
 		&.sapMSwtHoverable:hover {
-			border-color: @sapUiButtonSelectedHoverBorderColor;
+			background: @sapUiButtonTrackPositiveHoverBackground;
+			border: 0.0625rem solid @sapUiButtonTrackPositiveHoverBorderColor;
 			.sapMSwtHandle {
-				background: @sapUiButtonSelectedHoverBackground;
-				border-color: @sapUiButtonSelectedHoverBorderColor;
+				background: @sapUiButtonHandlePositiveHoverBackground;
+				box-shadow: 0 0 0 0.125rem @sapUiButtonHandlePositiveHoverBorderColor;
 			}
 		}
 	}
 	//off
 	&.sapMSwtOff {
-		background: @sapUiErrorBG;
-		border-color: @sapUiErrorBorder;
+		background: @sapUiButtonTrackNegativeBackground;
+		border: 0.0625rem solid @sapUiButtonTrackNegativeBorderColor;
+		box-sizing: border-box;
 		.sapMSwtHandle {
-			background: @sapUiButtonBackground;
-			border-color: @sapUiErrorBorder;
+			background: @sapUiButtonHandleNegativeBackground;
+			border: 2px solid @sapUiButtonHandleNegativeBorderColor;
 		}
 		&.sapMSwtHoverable:hover {
-			border-color: @sapUiButtonSelectedHoverBorderColor;
+			background: @sapUiButtonTrackNegativeHoverBackground;
+			border: 0.0625rem solid @sapUiButtonTrackNegativeHoverBorderColor;
 			.sapMSwtHandle {
-				background: @sapUiButtonSelectedHoverBackground;
-				border-color: @sapUiButtonSelectedHoverBorderColor;
+				background: @sapUiButtonHandleNegativeHoverBackground;
+				box-shadow: 0 0 0 0.125rem @sapUiButtonHandleNegativeHoverBorderColor;
 			}
 		}
 	}
@@ -204,26 +254,61 @@ html.sap-desktop {
 /* Switch handler                 */
 /* ------------------------------ */
 
-.sapMSwt.sapMSwtAcceptReject.sapMSwtOff.sapMSwtHoverable:hover {
-	border-color: @sapUiButtonHoverBorderColor;
-}
-
-.sapMSwt.sapMSwtAcceptReject.sapMSwtOn.sapMSwtHoverable:hover {
-	border-color: @sapUiButtonHoverBorderColor;
-}
-
-.sapMSwtAcceptReject.sapMSwtHoverable:hover .sapMSwtLabel::before {
-	color: @sapUiContentIconColor;
+.sapMSwtAcceptReject .sapMSwtWebKit537-35.sapMSwtHandle {
+	border: none;
 }
 
 .sapMSwt.sapMSwtAcceptReject.sapMSwtOn .sapMSwtLabel {
-	color: @sapUiPositiveElement;
-	font-size: 0.75rem;
+	color: @sapPositiveTextColor;
 }
 
 .sapMSwt.sapMSwtAcceptReject.sapMSwtOff .sapMSwtLabel {
-	color: @sapUiNegativeElement;
-	font-size: 0.75rem;
+	color: @sapNegativeTextColor;
+}
+
+.sapMSwtOn.sapMSwtNoLabel .sapMSwtLabelOn::before {
+	font-family: @sapUiContentIconFontFamily;
+	content: "\e05b";
+	position: absolute;
+	right: 0.375rem;
+	overflow: hidden;
+	vertical-align: middle;
+	font-size: @sapMFontLargeSize;
+	color: @sapUiButtonHandleSelectedTextColor;
+}
+
+.sapMSwtOff.sapMSwtNoLabel .sapMSwtLabelOff::before {
+	font-family: @sapUiContentIconFontFamily;
+	content: "\e069";
+	position: absolute;
+	right: 0.5rem;
+	overflow: hidden;
+	vertical-align: middle;
+	font-size: @sapMFontLargeSize;
+	color: @sapUiButtonHandleTextColor;
+}
+
+.sapMSwtOn.sapMSwtAcceptReject .sapMSwtLabelOn::before,
+.sapMSwtOff.sapMSwtAcceptReject .sapMSwtLabelOff::before {
+	position: absolute;
+	right: 0.375rem;
+	font-size: @sapMFontLargeSize;
+}
+
+.sapMSwtOff.sapMSwtAcceptReject .sapMSwtLabelOff::before {
+	right: 0.625rem;
+}
+
+.sapMSwtOn > .sapMSwtInner {
+	left: -1.25rem;
+}
+
+.sapMSwtOn .sapMSwtTextOff {
+	display: none;
+}
+
+.sapMSwtOff .sapMSwtTextOn {
+	display: none;
 }
 
 /* ------------------------------ */
@@ -232,37 +317,64 @@ html.sap-desktop {
 
 .sapUiSizeCompact {
 	.sapMSwtCont {
-		width: 3.75rem;
-	  //in order to have a touchable area of 2rem
-		padding-top: 0.3125rem;
-		padding-bottom: 0.3125rem;
+		//in order to have a touchable area of 2rem height and 3rem width
+		padding-top: 0.375rem;
+		padding-bottom: 0.375rem;
 		.sapMSwt {
-			width: 3.375rem;
+			width: 2.75rem;
 			height: 1.25rem;
-			&.sapMSwtNoLabel {
-				width: 2.5rem;
-				height: 1rem;
-				margin-top: 0.125rem;
-				margin-bottom: 0.125rem;
-				outline-offset: -14px; // ON state handle movement limit correction in pixels for no-label switches, because of reduced width
-				&.sapMSwtOn .sapMSwtInner {
-					left: -0.88rem;
-				}
-			}
 			.sapMSwtHandle {
-				height: 1.625rem;
-				width: 1.625rem;
-				left: 1.88rem;
+				height: 1rem;
+				width: 1.75rem;
 			}
 			.sapMSwtText {
 				line-height: 1.25rem;
+				&.sapMSwtTextOn {
+					left: 2.0625rem;
+				}
 				&.sapMSwtTextOff {
-					left: 3.5rem;
+					left: 2.0625rem;
 				}
 				.sapMSwtLabel {
 					width: 1.75rem;
+					line-height: 1.125rem;
+				}
+			}
+			.sapMSwtOn .sapMSwtHandle {
+				left: 2.125rem;
+			}
+			&.sapMSwtNoLabel,
+			&.sapMSwtAcceptReject {
+				width: 2rem;
+				height: 1.25rem;
+				.sapMSwtHandle {
+					width: 1.25rem;
+				}
+				&.sapMSwtOn .sapMSwtHandle{
+					left: 1.88rem;
+				}
+				.sapMSwtText {
+					&.sapMSwtTextOn {
+						left: 1.325rem;
+					}
+					&.sapMSwtTextOff {
+						left: 1.625rem;
+					}
+				}
+				&.sapMSwtOn .sapMSwtHandle {
+					left: 1.8125rem;
 				}
 			}
 		}
+	}
+	.sapMSwtOn.sapMSwtNoLabel .sapMSwtLabelOn::before,
+	.sapMSwtOn.sapMSwtAcceptReject .sapMSwtLabelOn::before,
+	.sapMSwtOff.sapMSwtNoLabel .sapMSwtLabelOff::before,
+	.sapMSwtOff.sapMSwtAcceptReject .sapMSwtLabelOff::before {
+		font-size: @sapMFontMediumSize;
+		right: 0.3125rem;
+	}
+	.sapMSwtOff.sapMSwtAcceptReject .sapMSwtLabelOff::before {
+		right: 0.4375rem;
 	}
 }
