@@ -95,4 +95,37 @@ sap.ui.define([
 		afterUndo: fnConfirmPanelIsInvisible,
 		afterRedo: fnConfirmPanelIsVisible
 	});
+
+
+	var fnConfirmPanelHeaderTextRenamedWithNewValue = function (oUiComponent, oViewAfterAction, assert) {
+		assert.strictEqual(oViewAfterAction.byId("myPanelId").getHeaderText(),
+			"New Header Text",
+			"then the panel header text has been renamed to the new value (New Header Text)");
+	};
+
+	var fnConfirmPanelHeaderTextIsRenamedWithOldValue = function (oUiComponent, oViewAfterAction, assert) {
+		assert.strictEqual(oViewAfterAction.byId("myPanelId").getHeaderText(),
+			"Old Header Text",
+			"then the panel header text has been renamed to the old value (Old Header Text)");
+	};
+
+	elementActionTest("Checking the rename action for a Panel header text", {
+		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
+			'<Panel headerText="Old Header Text" id="myPanelId" />' +
+		'</mvc:View>'
+		,
+		action: {
+			name: "rename",
+			controlId: "myPanelId",
+			parameter: function (oView) {
+				return {
+					newValue: "New Header Text",
+					renamedElement: oView.byId("myPanelId")
+				};
+			}
+		},
+		afterAction: fnConfirmPanelHeaderTextRenamedWithNewValue,
+		afterUndo: fnConfirmPanelHeaderTextIsRenamedWithOldValue,
+		afterRedo: fnConfirmPanelHeaderTextRenamedWithNewValue
+	});
 });

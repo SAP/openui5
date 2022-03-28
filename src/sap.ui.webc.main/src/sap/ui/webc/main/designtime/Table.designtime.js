@@ -14,12 +14,12 @@ sap.ui.define([],
 		aggregations: {
 			columns: {
 				domRef: function (oControl) {
-					return oControl.getDomRef() && oControl.getDomRef().shadowRoot.querySelector(".ui5-table-header-row");
+					return oControl.getDomRef().shadowRoot.querySelector(".ui5-table-header-row");
 				}
 			},
 			rows: {
 				domRef: function (oControl) {
-					return oControl.getDomRef() && oControl.getDomRef().shadowRoot.querySelector("tbody");
+					return oControl.getDomRef().shadowRoot.querySelector("tbody");
 				}
 			}
 		},
