@@ -32,11 +32,28 @@ describe("sap.f.GridListItem", function() {
 		expect(takeScreenshot(oGrid)).toLookAs("3_mode_multiSelect");
 	});
 
-	it("GridListItem with mode 'MultiSelect'", function() {
+	it("GridListItem with mode 'SingleSelectMaster'", function() {
 		var oGrid = element(by.id("gridList")),
 			oModeSwitchButton = element(by.id("singleSelectMasterMode-button"));
 
 		oModeSwitchButton.click();
 		expect(takeScreenshot(oGrid)).toLookAs("4_mode_singleSelectMaster");
+	});
+
+	it("Selected GridListItem should have selection border", function() {
+		var oGrid = element(by.id("gridList"));
+
+		element(by.control({
+			controlType: "sap.f.GridListItem",
+			bindingPath: {
+				path: "/0",
+				propertyPath: "counter"
+			},
+			interaction: {
+				idSuffix: "content"
+			}
+		})).click();
+
+		expect(takeScreenshot(oGrid)).toLookAs("5_selected_item");
 	});
 });

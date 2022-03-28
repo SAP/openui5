@@ -54,6 +54,9 @@
 					<IconTabFilter id="GridList14" text="Responsive Column Layout" key="GridList14">
 						<mvc:XMLView viewName="sap.f.gridlist.view.examples.ResponsiveColumnLayout" async="true"/>
 					</IconTabFilter>
+					<IconTabFilter id="GridList15" text="Various List Items" key="GridList15">
+						<mvc:XMLView viewName="sap.f.gridlist.view.examples.VariousListItems" async="true"/>
+					</IconTabFilter>
 				</items>
 			</IconTabBar>
 		</Page>
