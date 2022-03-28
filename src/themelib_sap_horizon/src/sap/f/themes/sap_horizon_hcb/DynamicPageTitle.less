@@ -3,11 +3,6 @@
 /* Horizon High Contrast Black theme       */
 /* ======================================= */
 
-.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle:focus,
-.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle:focus {
-	box-shadow: none;
-}
-
 html.sap-desktop .sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 	outline-width: 0.125rem;
 	outline-offset: -0.25rem; // due to bottom border overlapping
@@ -21,7 +16,8 @@ html.sap-desktop .sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 	padding: 0.5rem 2rem;
 	word-wrap: break-word;
 
-	&.sapFDynamicPageTitleTransparent {
+	&.sapFDynamicPageTitleTransparent,
+	&.sapFDynamicPageTitleTranslucent {
 		background: @sapUiObjectHeaderBackground;
 	}
 }
@@ -108,6 +104,11 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 }
 
-.sapFDynamicPageNavigation .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle {
-	box-shadow: none;
+.sapFDynamicPageNavigation .sapFDynamicPageTitleWrapper {
+	&.sapFDynamicPageTitleSnapped,
+	&.sapFDynamicPageTitleOnly {
+		& > .sapFDynamicPageTitle {
+			box-shadow: none;
+		}
+	}
 }
