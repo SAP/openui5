@@ -663,8 +663,10 @@ sap.ui.define([
 			var oModifiers = oActionSheet._oItemNavigation.getDisabledModifiers();
 			assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
 			assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
-			assert.equal(oModifiers["sapnext"][0], "alt", "alt is not handled when right is pressed");
-			assert.equal(oModifiers["sapprevious"][0], "alt", "alt is not handled when left is pressed");
+			assert.ok(oModifiers["sapnext"].indexOf("alt") !== -1, "forward item navigation is not handled when altKey is pressed");
+			assert.ok(oModifiers["sapnext"].indexOf("meta") !== -1, "forward item navigation on MacOS is not handled when metaKey is pressed");
+			assert.ok(oModifiers["sapprevious"].indexOf("alt") !== -1, "backward item navigation is not handled when altKey is pressed");
+			assert.ok(oModifiers["sapprevious"].indexOf("meta") !== -1, "backward item navigation on MacOS is not handled when metaKey is pressed");
 
 			done();
 			oActionSheet.close();
