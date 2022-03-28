@@ -1383,22 +1383,6 @@ sap.ui.define([
 		oChangeToWarningBtn.destroy();
 	});
 
-	QUnit.test("Cloning the items should clone the bindings as well", function(assert){
-		var oItem = new MessageItem({title: "MessageItem", type: "Error"});
-		var oItemSpy = this.spy(oItem, "clone");
-		var oMessagePopover = new MessagePopover();
-
-		oMessagePopover.insertItem(oItem);
-
-		oMessagePopover.openBy(this.oButton2);
-		Core.applyChanges();
-
-		assert.ok(oItemSpy.firstCall.args[2].cloneBindings, "The bindings were cloned");
-		oItemSpy.restore();
-		oItem.destroy();
-		oMessagePopover.destroy();
-	});
-
 	QUnit.module("Refactoring", {
 		beforeEach: function () {
 			var oMessageTemplate = new MessagePopoverItem({
@@ -1450,7 +1434,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Model set via addDependent method - before the MessagePopover is opened", function (assert) {
+	QUnit.test("Model set via addDependent method", function (assert) {
 		//System under test
 		this.oButton.addDependent(this.oMessagePopover);
 		this.oButton.setModel(this.oModel);
@@ -1459,8 +1443,7 @@ sap.ui.define([
 		//Act
 		var aMVItems = this.oMessagePopover._oMessageView.getItems();
 		//Assert
-		assert.ok(Array.isArray(aMVItems), "Items array exists in the MessageView");
-		assert.strictEqual(aMVItems.length, 0, "The items array is empty");
+		assert.strictEqual(aMVItems.length, 3, "Items are forwarded to the MessageView items aggregation");
 	});
 
 	QUnit.test("Model set via addDependent method - after the MessagePopover is opened", function (assert) {
@@ -1482,7 +1465,7 @@ sap.ui.define([
 		assert.strictEqual(aMVItems.length, aMPItems.length, "The items in the MessageView are the same number as in the MessagePopover");
 	});
 
-	QUnit.test("Model set directly on the MessagePopover - before it is opened", function (assert) {
+	QUnit.test("Model set directly on the MessagePopover and items are forwarded to the MessageView", function (assert) {
 		//System under test
 		this.oMessagePopover.setModel(this.oModel);
 		Core.applyChanges();
@@ -1490,8 +1473,7 @@ sap.ui.define([
 		//Act
 		var aMVItems = this.oMessagePopover._oMessageView.getItems();
 		//Assert
-		assert.ok(Array.isArray(aMVItems), "Items array exists in the MessageView");
-		assert.strictEqual(aMVItems.length, 0, "The items array is empty");
+		assert.strictEqual(aMVItems.length, 3, "The items array is empty");
 	});
 
 	QUnit.test("After the MessagePopover is opened - there are items in the MessageView", function (assert) {
@@ -1508,6 +1490,7 @@ sap.ui.define([
 				aMPItems = this.oMessagePopover.getItems();
 
 		//Assert
+		assert.strictEqual(aMVItems[0].mBindingInfos, aMPItems[0].mBindingInfos, "The Binding information is the same for the MessagePopover and the MessageView items");
 		assert.ok(Array.isArray(aMVItems), "There is an array of items in the MessageView");
 		assert.strictEqual(aMVItems.length, aMPItems.length, "The items in the MessageView are the same number as in the MessagePopover");
 	});
@@ -1528,7 +1511,6 @@ sap.ui.define([
 		Core.applyChanges();
 
 		//Assert
-		assert.strictEqual(spyInvalidate.callCount, 1, "The MessagePopover is invalidated once");
 		assert.strictEqual(this.oMessagePopover.getItems()[0].getTitle() , "Test", "The title of the first item of the MessagePopover is changed");
 		assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[0].getTitle() , "Test", "The title of the first item of the MessageView is changed");
 
