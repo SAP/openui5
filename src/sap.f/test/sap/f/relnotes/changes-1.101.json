@@ -3,6 +3,22 @@
     "date": "March 2022",
     "notes": [
       {
+        "id": "94e5cfa3e710dce059d2ef747b15878c565f1b92",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix unnecessary scrollbar when footer is shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270030291"
+          }
+        ]
+      },
+      {
+        "id": "0aa66d4694a4774a7d44d1be5af30b58723e7cc6",
+        "type": "FEATURE",
+        "text": " sap.f.AvatarGroupItem: AvatarGroupItem tooltip activated"
+      },
+      {
         "id": "13b32005937846f03522ae289558ffd55b52e679",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Restore automatic fitContent management",

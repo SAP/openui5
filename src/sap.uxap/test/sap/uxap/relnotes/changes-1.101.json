@@ -3,6 +3,17 @@
     "date": "March 2022",
     "notes": [
       {
+        "id": "625452aad37498f2717c6b6d2d00e221aad39cf6",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed inconsistent rename information",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280080989"
+          }
+        ]
+      },
+      {
         "id": "f76d4ff0c49b9b6cdd9f4b6b15c819bcb0dfbc17",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Corrected qunit on Safari",
