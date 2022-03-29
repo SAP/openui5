@@ -136,8 +136,6 @@ sap.ui.define([
 			}
 
 			if (!this.checkExpandedList()) {
-				// #checkExpandedList could only return undefined if within a side effects $batch a
-				// subsequent GET request has a success handler which affects this ODataListBinding
 				this._removePersistedCreatedContexts();
 				this.resetData();
 			}
@@ -463,8 +461,6 @@ sap.ui.define([
 				this.abortPendingRequest();
 				this._fireChange({reason : ChangeReason.Context});
 			} else {
-				// #checkExpandedList could only return undefined if within a side effects $batch a
-				// subsequent GET request has a success handler which affects this ODataListBinding
 				this._removePersistedCreatedContexts();
 				this._refresh();
 			}
@@ -473,37 +469,31 @@ sap.ui.define([
 
 	/**
 	 * In side-effects scenarios, iterates all created persisted contexts of this list binding and
-	 * removes those entities (with its context, pending changes, messages, ...) which are not given
-	 * as entity key in <code>aList</code>.
+	 * removes those entities (with its context, pending changes, messages, ...) which are not
+	 * included in the latest back-end response for an expanded list.
 	 *
-	 * @param {string[]} [aList]
-	 *   An array of entity keys from the latest back-end response for an expanded list
-	 * @returns {string[]|undefined}
-	 *   An array of entity keys of the remaining created persisted contexts which have not been
-	 *   removed; <code>undefined</code> if this function was not called in a side-effects scenario
+	 * @returns {boolean}
+	 *   Whether created persisted contexts have been removed
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype._cleanupCreatedPersisted = function (aList) {
-		var aCreatedPersistedContextKeys = [],
+	ODataListBinding.prototype._cleanupCreatedPersisted = function () {
+		var bCreatedPersistedRemoved = false,
+			aList = this.oModel._getObject(this.sPath, this.oContext),
 			that = this;
 
-		if (!aList || !aList.sideEffects) {
-			return undefined;
+		if (aList && aList.sideEffects) {
+			this._getCreatedPersistedContexts().forEach(function (oContext) {
+				var sEntityKey = that.oModel.getKey(oContext);
+
+				if (!aList.includes(sEntityKey)) { // entity has been deleted on the server
+					that.oModel._discardEntityChanges(sEntityKey, true);
+					bCreatedPersistedRemoved = true;
+				}
+			});
 		}
 
-		this._getCreatedPersistedContexts().forEach(function (oContext) {
-			var sEntityKey = that.oModel.getKey(oContext);
-
-			if (aList.includes(sEntityKey)) {
-				aCreatedPersistedContextKeys.push(sEntityKey);
-			} else { // entity has been deleted on the server
-				that.oModel._discardEntityChanges(sEntityKey, true);
-				that.bNeedsUpdate = true;
-			}
-		});
-
-		return aCreatedPersistedContextKeys;
+		return bCreatedPersistedRemoved;
 	};
 
 	/**
@@ -511,9 +501,8 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bSkipReloadNeeded
 	 *   Don't check whether reload of expanded data is needed
-	 * @return {boolean|undefined}
-	 *   Whether expanded data is available and is used, or <code>undefined</code> if the list has
-	 *   to be refreshed because data received via side effects cannot be used
+	 * @return {boolean}
+	 *   Whether expanded data is available and is used
 	 *
 	 * @private
 	 */
@@ -522,16 +511,14 @@ sap.ui.define([
 		// don't send additional requests
 		// $expand loads all associated entities, no paging parameters possible, so we can safely
 		// assume all data is available
-		var aList = this.oModel._getObject(this.sPath, this.oContext),
-			aCreatedPersistedKeys = this._cleanupCreatedPersisted(aList),
-			bOldUseExpandedList = this.bUseExpandedList;
+		var aCreatedPersistedKeys,
+			aList = this.oModel._getObject(this.sPath, this.oContext),
+			bOldUseExpandedList = this.bUseExpandedList,
+			that = this;
 
 		if (!this.isResolved() || aList === undefined || !this._isExpandedListUsable()) {
 			this.bUseExpandedList = false;
 			this.aExpandRefs = undefined;
-			if (aCreatedPersistedKeys) {
-				return undefined;
-			}
 
 			return false;
 		} else {
@@ -547,10 +534,16 @@ sap.ui.define([
 					return false;
 				}
 				this.aExpandRefs = aList;
-				if (aCreatedPersistedKeys && aCreatedPersistedKeys.length) {
-					aList = aList.filter(function (sEntityKey) {
-						return !aCreatedPersistedKeys.includes(sEntityKey);
-					});
+				if (aList.sideEffects) {
+					aCreatedPersistedKeys = this._getCreatedPersistedContexts()
+						.map(function (oContext) {
+							return that.oModel.getKey(oContext);
+						});
+					if (aCreatedPersistedKeys.length) {
+						aList = aList.filter(function (sEntityKey) {
+							return !aCreatedPersistedKeys.includes(sEntityKey);
+						});
+					}
 				}
 				this.aAllKeys = aList;
 				this.iLength = aList.length;
@@ -1179,7 +1172,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.checkUpdate = function (bForceUpdate, mChangedEntities) {
-		var aContexts, oCurrentData, bExpandedList, aLastKeys, aOldRefs,
+		var aContexts, bCreatedPersistedRemoved, oCurrentData, bExpandedList, aLastKeys, aOldRefs,
 			bChangeDetected = false,
 			sChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
 			that = this;
@@ -1197,17 +1190,13 @@ sap.ui.define([
 		}
 
 		this.bIgnoreSuspend = false;
-
+		bCreatedPersistedRemoved = this._cleanupCreatedPersisted();
 		if (!bForceUpdate && !this.bNeedsUpdate) {
 			// check if expanded data has been changed
 			aOldRefs = this.aExpandRefs;
 
 			aLastKeys = this.aKeys.slice();
 			bExpandedList = this.checkExpandedList(true);
-
-			if (bExpandedList === undefined) {
-				return;
-			}
 
 			// apply sorting and filtering again, as the newly set entities may have changed in
 			// clientmode
@@ -1255,7 +1244,7 @@ sap.ui.define([
 				}
 			}
 		}
-		if (bForceUpdate || bChangeDetected || this.bNeedsUpdate) {
+		if (bForceUpdate || bChangeDetected || this.bNeedsUpdate || bCreatedPersistedRemoved) {
 			this.bNeedsUpdate = false;
 			this._fireChange({reason: sChangeReason});
 		}

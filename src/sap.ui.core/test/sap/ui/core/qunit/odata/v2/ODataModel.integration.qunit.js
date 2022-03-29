@@ -14091,6 +14091,316 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: An entity is created in an empty list. After submitting this entry and refreshing
+	// it via side effects, the entry is no longer contained in the side effects response, but
+	// another new entity is contained in this response. Therefore this created persisted entity is
+	// replaced with the new responded entity from back end.
+	// JIRA: CPOUI5MODELS-844
+	QUnit.test("Request side effects: Remove created persisted entity, response with new entity",
+			function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="2">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet('42')", {
+				__metadata : {uri : "BusinessPartnerSet('42')"},
+				BusinessPartnerID : "42"
+			})
+			.expectRequest("BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=102", {
+				results : []
+			})
+			.expectValue("businessPartnerID", "42")
+			.expectValue("salesOrderID", ["", ""])
+			.expectValue("note", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectValue("note", "Sales Order New 1", 0);
+
+			that.oView.byId("table").getBinding("rows").create({Note : "Sales Order New 1"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "Sales Order New 1"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						SalesOrderID : "2",
+						Note : "Sales Order New 1"
+					},
+					statusCode : 201
+				})
+				.expectValue("salesOrderID", "2", 0);
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerSet('42')?$expand=ToSalesOrders", {
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					ToSalesOrders : {
+						results : [{
+							__metadata : {uri : "SalesOrderSet('3')"},
+							SalesOrderID : "3",
+							Note : "Sales Order 3 - SideEffect"
+						}]
+					}
+				})
+				.expectValue("salesOrderID", "", 0)
+				.expectValue("note", "", 0)
+				.expectValue("salesOrderID", "3", 0)
+				.expectValue("note", "Sales Order 3 - SideEffect", 0);
+
+			// code under test
+			oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
+				urlParameters : {$expand : "ToSalesOrders"}
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A created persisted entity is added in a table, but the entity is not visible
+	// because its creation was at the end of the list. The created persisted entity is not part of
+	// a side-effects response. Therefore this created persisted entity gets removed from the list.
+	// Change events are triggered as expected.
+	// JIRA: CPOUI5MODELS-844
+	QUnit.test("Request side effects: Removed created persisted entity not visible",
+			function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel(),
+			oUiModel = new JSONModel({itemsCount : 0}),
+			sView = '\
+<FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<Text id="count" text="{ui>/itemsCount}"/>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="2">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet('42')", {
+				__metadata : {uri : "BusinessPartnerSet('42')"},
+				BusinessPartnerID : "42"
+			})
+			.expectRequest("BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=102", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					Note : "Sales Order 1"
+				}, {
+					__metadata : {uri : "SalesOrderSet('2')"},
+					SalesOrderID : "2",
+					Note : "Sales Order 2"
+				}]
+			})
+			.expectValue("businessPartnerID", "42")
+			.expectValue("count", "0")
+			.expectValue("salesOrderID", ["1", "2"])
+			.expectValue("note", ["Sales Order 1", "Sales Order 2"]);
+
+		return this.createView(assert, sView, {undefined : oModel, ui : oUiModel}).then(
+				function () {
+			oBinding = that.oView.byId("table").getBinding("rows");
+
+			oBinding.attachChange(function () {
+				that.oView.byId("count").getBinding("text").getModel()
+					.setProperty("/itemsCount", oBinding.getCount());
+			});
+		}).then(function () {
+			that.expectValue("count", "3");
+
+			oBinding.create({Note : "Sales Order New 1"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "Sales Order New 1"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('42')"},
+						SalesOrderID : "42",
+						Note : "Sales Order New 1"
+					},
+					statusCode : 201
+				});
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("count", "2");
+
+			that.expectRequest("BusinessPartnerSet('42')?$expand=ToSalesOrders", {
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					ToSalesOrders : {
+						results : [{
+							__metadata : {uri : "SalesOrderSet('1')"},
+							SalesOrderID : "1",
+							Note : "Sales Order 1"
+						}, {
+							__metadata : {uri : "SalesOrderSet('2')"},
+							SalesOrderID : "2",
+							Note : "Sales Order 2"
+						}]
+					}
+				});
+
+			// code under test
+			oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
+				urlParameters : {$expand : "ToSalesOrders"}
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A created persisted entity is added in a table using custom parameters, but the
+	// entity is not visible because its creation was at the end of the list. The created persisted
+	// entity is not part of a side-effects response. Therefore this created persisted entity gets
+	// removed from the list.
+	// JIRA: CPOUI5MODELS-844
+	QUnit.test("Request side effects: Removed created persisted entity not visible (custom params)",
+			function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<t:Table id="table" rows="{\
+				path : \'ToSalesOrders\',\
+				parameters : {\
+					custom : {\
+						\'foo\' : \'bar\'\
+					}\
+				}\
+			}" visibleRowCount="2">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet('42')", {
+				__metadata : {uri : "BusinessPartnerSet('42')"},
+				BusinessPartnerID : "42"
+			})
+			.expectRequest("BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=102&foo=bar", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					Note : "Sales Order 1"
+				}, {
+					__metadata : {uri : "SalesOrderSet('2')"},
+					SalesOrderID : "2",
+					Note : "Sales Order 2"
+				}]
+			})
+			.expectValue("businessPartnerID", "42")
+			.expectValue("salesOrderID", ["1", "2"])
+			.expectValue("note", ["Sales Order 1", "Sales Order 2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("rows");
+
+			oBinding.create({Note : "Sales Order New 1"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "Sales Order New 1"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('42')"},
+						SalesOrderID : "42",
+						Note : "Sales Order New 1"
+					},
+					statusCode : 201
+				});
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 3);
+
+			that.expectRequest("BusinessPartnerSet('42')?$expand=ToSalesOrders", {
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					ToSalesOrders : {
+						results : [{
+							__metadata : {uri : "SalesOrderSet('1')"},
+							SalesOrderID : "1",
+							Note : "Sales Order 1"
+						}, {
+							__metadata : {uri : "SalesOrderSet('2')"},
+							SalesOrderID : "2",
+							Note : "Sales Order 2"
+						}]
+					}
+				})
+				.expectRequest("BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=102"
+						+ "&$filter=not(SalesOrderID%20eq%20%2742%27)&foo=bar", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('1')"},
+						SalesOrderID : "1",
+						Note : "Sales Order 1"
+					}, {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						SalesOrderID : "2",
+						Note : "Sales Order 2"
+					}]
+				});
+
+			// code under test
+			oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
+				urlParameters : {$expand : "ToSalesOrders"}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 2);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: When a table with created persisted entries is refreshed, then the created
 	// persisted entries are removed from the creation area and are inserted in the order as given
 	// in the response of the refresh. If a side-effects request is within the same batch, the order
