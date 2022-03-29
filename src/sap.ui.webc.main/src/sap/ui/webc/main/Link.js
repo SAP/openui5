@@ -188,7 +188,8 @@ sap.ui.define([
 				click: {
 					parameters: {}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/Link.designtime"
 		}
 	});
 
