@@ -4,6 +4,7 @@
 /* ============================= */
 
 @_sap_m_Dialog_NoStateHeaderShadow: inset 0 -0.0625rem darken(@sapUiGroupContentBackground, 8);
+@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.125rem @sapUiNeutralBorder;
 
 // This parameter is used in sap.m.Select. TODO: remove it when it is removed from there.
 @_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
@@ -13,12 +14,19 @@
 	background-color: @sapUiGroupContentBackground;
 }
 
-.sapMDialog.sapMMessageDialog > .sapMDialogTitle .sapMIBar {
+.sapMDialog.sapMMessageDialog:not(.sapMDialogError):not(.sapMDialogWarning):not(.sapMDialogSuccess):not(.sapMDialogInformation):not(.sapMMessageBoxError):not(.sapMMessageBoxWarning):not(.sapMMessageBoxSuccess):not(.sapMMessageBoxInfo):not(.sapMMessageBoxQuestion) > .sapMDialogTitle .sapMIBar {
 	box-shadow: inset 0 -0.125rem darken(@sapUiGroupContentBackground, 8);
 }
 
 .sapMDialog > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
 	font-size: 1rem;
+}
+
+.sapMDialogInformation > header {
+
+	&.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
+		color: @sapUiNeutralElement;
+	}
 }
 
 .sapMDialogResizeHandler::before {
