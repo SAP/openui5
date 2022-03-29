@@ -96,17 +96,6 @@ sap.ui.define([
 				oRm.close("button");
 			}
 
-			// dummy element to catch tabbing in from next element
-			oRm.openStart("div", sId + "-end");
-			oRm.attr("tabindex", "0");
-			oRm.style("position", "absolute");
-			oRm.style("width", "0");
-			oRm.style("height", "0");
-			oRm.style("right", "0");
-			oRm.style("bottom", "0");
-			oRm.openEnd();
-			oRm.close("div");
-
 			this.renderCalContentAndArrowsOverlay(oRm, oCal, sId);
 
 			oRm.close("div");
