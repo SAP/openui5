@@ -22889,124 +22889,124 @@ sap.ui.define([
 							"for the 'clone', we need the context to distinguish");
 					});
 				});
-			} else { // cancel
-				oInput = oTable.getItems()[0].getCells()[2];
+			}
+			// cancel
+			oInput = oTable.getItems()[0].getCells()[2];
+
+			that.expectMessages([{
+					message : sMessage1,
+					target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
+					type : "Success"
+				}, {
+					message : sMessage2,
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+					type : "Success"
+				}, {
+					message : sMessage,
+					persistent : false,
+					target : oInput.getId() + "/value",
+					technical : false,
+					type : "Error"
+				}]);
+
+			// Note: Because the invalid value has to be set via control, changes for that
+			// control cannot be observed via expectChange
+			oInput.setValue(sValue);
+
+			assert.strictEqual(oInput.getValue(), sValue);
+			assert.strictEqual(oInput.getBinding("value").getValue(), "Missy Eliot");
+
+			return Promise.all([
+				that.checkValueState(assert, oInput, "Error", sMessage),
+				that.waitForChanges(assert)
+			]).then(function () {
+				var oSiblingEntity;
 
 				that.expectMessages([{
+					message : sMessage1,
+					target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
+					type : "Success"
+				}, {
+					message : sMessage2,
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+					type : "Success"
+				}]);
+
+				if (bWithActive) {
+					that.expectChange("isActiveEntity", ["Yes"]);
+
+					// code under test
+					oInactiveArtistContext.replaceWith(oActiveArtistContext);
+
+					return that.waitForChanges(assert, "replaceWith");
+				}
+
+				oSiblingEntity = that.oModel.bindContext("SiblingEntity(...)",
+					oInactiveArtistContext, {$$inheritExpandSelect : true});
+
+				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
+					+ "/SiblingEntity?$select=ArtistID,IsActiveEntity,Messages,Name", {
+					"@odata.etag" : "activETag*",
+					ArtistID : "42",
+					IsActiveEntity : true,
+					Messages : [{
 						message : sMessage1,
-						target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
-						type : "Success"
-					}, {
-						message : sMessage2,
-						target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
-						type : "Success"
-					}, {
-						message : sMessage,
-						persistent : false,
-						target : oInput.getId() + "/value",
-						technical : false,
-						type : "Error"
-					}]);
-
-				// Note: Because the invalid value has to be set via control, changes for that
-				// control cannot be observed via expectChange
-				oInput.setValue(sValue);
-
-				assert.strictEqual(oInput.getValue(), sValue);
-				assert.strictEqual(oInput.getBinding("value").getValue(), "Missy Eliot");
+						numericSeverity : 1,
+						target : "Name"
+					}],
+					Name : "Missy Eliot"
+				})
+				.expectChange("isActiveEntity", ["Yes"]);
 
 				return Promise.all([
-					that.checkValueState(assert, oInput, "Error", sMessage),
-					that.waitForChanges(assert)
-				]).then(function () {
-					var oSiblingEntity;
+					// code under test
+					oSiblingEntity.execute("$auto", /*bIgnoreETag*/false,
+						/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
+					that.waitForChanges(assert, "SiblingEntity")
+				]);
+			}).then(function (aResults) {
+				if (!bWithActive) {
+					that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+							+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+							value : [{
+								Price : "13.99",
+								PublicationID : "42-0"
+							}]
+						});
+				}
+				that.expectChange("price", [bWithActive ? "9.99" : "13.99"]);
 
-					that.expectMessages([{
+				that.oView.byId("items").setBindingContext(
+					bWithActive ? oActiveArtistContext : aResults[0]);
+
+				return that.waitForChanges(assert, "items for old active");
+			}).then(function () {
+				assert.strictEqual(oInput.getValue(), "Missy Eliot");
+
+				return Promise.all([
+					that.checkValueState(assert, oInput, "Success", sMessage1),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				that.expectRequest({
+						headers : {
+							"If-Match" : "inactivETag"
+						},
+						method : "DELETE",
+						url : "Artists(ArtistID='42',IsActiveEntity=false)"
+					}) // 204 No Content
+					.expectMessages([{
 						message : sMessage1,
 						target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
 						type : "Success"
-					}, {
-						message : sMessage2,
-						target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
-						type : "Success"
 					}]);
 
-					if (bWithActive) {
-						that.expectChange("isActiveEntity", ["Yes"]);
-
-						// code under test
-						oInactiveArtistContext.replaceWith(oActiveArtistContext);
-
-						return that.waitForChanges(assert, "replaceWith");
-					}
-
-					oSiblingEntity = that.oModel.bindContext("SiblingEntity(...)",
-						oInactiveArtistContext, {$$inheritExpandSelect : true});
-
-					that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
-						+ "/SiblingEntity?$select=ArtistID,IsActiveEntity,Messages,Name", {
-						"@odata.etag" : "activETag*",
-						ArtistID : "42",
-						IsActiveEntity : true,
-						Messages : [{
-							message : sMessage1,
-							numericSeverity : 1,
-							target : "Name"
-						}],
-						Name : "Missy Eliot"
-					})
-					.expectChange("isActiveEntity", ["Yes"]);
-
-					return Promise.all([
-						// code under test
-						oSiblingEntity.execute("$auto", /*bIgnoreETag*/false,
-							/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
-						that.waitForChanges(assert, "SiblingEntity")
-					]);
-				}).then(function (aResults) {
-					if (!bWithActive) {
-						that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
-								+ "?$select=Price,PublicationID&$skip=0&$top=100", {
-								value : [{
-									Price : "13.99",
-									PublicationID : "42-0"
-								}]
-							});
-					}
-					that.expectChange("price", [bWithActive ? "9.99" : "13.99"]);
-
-					that.oView.byId("items").setBindingContext(
-						bWithActive ? oActiveArtistContext : aResults[0]);
-
-					return that.waitForChanges(assert, "items for old active");
-				}).then(function () {
-					assert.strictEqual(oInput.getValue(), "Missy Eliot");
-
-					return Promise.all([
-						that.checkValueState(assert, oInput, "Success", sMessage1),
-						that.waitForChanges(assert)
-					]);
-				}).then(function () {
-					that.expectRequest({
-							headers : {
-								"If-Match" : "inactivETag"
-							},
-							method : "DELETE",
-							url : "Artists(ArtistID='42',IsActiveEntity=false)"
-						}) // 204 No Content
-						.expectMessages([{
-							message : sMessage1,
-							target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
-							type : "Success"
-						}]);
-
-					return Promise.all([
-						// code under test
-						oInactiveArtistContext.delete("$auto", /*bDoNotRequestCount*/true),
-						that.waitForChanges(assert, "DELETE")
-					]);
-				});
-			}
+				return Promise.all([
+					// code under test
+					oInactiveArtistContext.delete("$auto", /*bDoNotRequestCount*/true),
+					that.waitForChanges(assert, "DELETE")
+				]);
+			});
 		});
 	});
 			});
@@ -34059,57 +34059,54 @@ sap.ui.define([
 				assert.strictEqual(oBinding.iCreatedContexts, 1);
 
 				return that.waitForChanges(assert, "(2a) add ICRs (throws)");
-			} else {
+			}
+			// code under test
+			oContext1 = oBinding.create({Note : "Second"}, true, oFixture.secondInsertAtEnd, true);
+			oContext2 = oBinding.create({Note : "Third"}, true, oFixture.secondInsertAtEnd, true);
+
+			assert.strictEqual(oBinding.iCreatedContexts, 3);
+
+			// code under test
+			assert.strictEqual(oBinding.isFirstCreateAtEnd(), oFixture.firstInsertAtEnd);
+
+			return that.waitForChanges(assert, "(2b) add ICRs").then(function () {
+				that.expectChange("note", ["Note 43"])
+					.expectRequest("SalesOrderList('43')/SO_2_SOITEM?"
+						+ "$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=110", {
+						value : [{SalesOrderID : "43", Note : "Note 43"}]
+					});
+
 				// code under test
-				oContext1 = oBinding.create({Note : "Second"}, true, oFixture.secondInsertAtEnd,
-					true);
-				oContext2 = oBinding.create({Note : "Third"}, true, oFixture.secondInsertAtEnd,
-					true);
+				oBinding.setContext(oModel.createBindingContext("/SalesOrderList('43')"));
+
+				assert.strictEqual(oBinding.iCreatedContexts, 0);
+
+				return that.waitForChanges(assert, "(3) switch binding context");
+			}).then(function () {
+				that.expectChange("note", oFixture.fourthExpectChange);
+
+				// code under test
+				oBinding.setContext(oBindingContext);
+
+				return that.waitForChanges(assert, "(4) switch binding context back");
+			}).then(function () {
+				that.expectChange("note", oFixture.fifthExpectChange);
 
 				assert.strictEqual(oBinding.iCreatedContexts, 3);
 
-				// code under test
-				assert.strictEqual(oBinding.isFirstCreateAtEnd(), oFixture.firstInsertAtEnd);
+				oContext0.delete();
+				oContext1.delete();
+				oContext2.delete();
 
-				return that.waitForChanges(assert, "(2b) add ICRs").then(function () {
-					that.expectChange("note", ["Note 43"])
-						.expectRequest("SalesOrderList('43')/SO_2_SOITEM?"
-							+ "$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=110", {
-							value : [{SalesOrderID : "43", Note : "Note 43"}]
-						});
+				assert.strictEqual(oBinding.iCreatedContexts, 0);
 
-					// code under test
-					oBinding.setContext(oModel.createBindingContext("/SalesOrderList('43')"));
-
-					assert.strictEqual(oBinding.iCreatedContexts, 0);
-
-					return that.waitForChanges(assert, "(3) switch binding context");
-				}).then(function () {
-					that.expectChange("note", oFixture.fourthExpectChange);
-
-					// code under test
-					oBinding.setContext(oBindingContext);
-
-					return that.waitForChanges(assert, "(4) switch binding context back");
-				}).then(function () {
-					that.expectChange("note", oFixture.fifthExpectChange);
-
-					assert.strictEqual(oBinding.iCreatedContexts, 3);
-
-					oContext0.delete();
-					oContext1.delete();
-					oContext2.delete();
-
-					assert.strictEqual(oBinding.iCreatedContexts, 0);
-
-					return Promise.all([
-						checkCanceled(assert, oContext0.created()),
-						checkCanceled(assert, oContext1.created()),
-						checkCanceled(assert, oContext2.created()),
-						that.waitForChanges(assert, "(5) delete inline creation rows")
-					]);
-				});
-			}
+				return Promise.all([
+					checkCanceled(assert, oContext0.created()),
+					checkCanceled(assert, oContext1.created()),
+					checkCanceled(assert, oContext2.created()),
+					that.waitForChanges(assert, "(5) delete inline creation rows")
+				]);
+			});
 		});
 	});
 });
@@ -34754,9 +34751,8 @@ sap.ui.define([
 				return that.waitForChanges(assert, "await rendering").then(function () {
 					sinon.assert.called(fnOnBeforeDestroy);
 				});
-			} else {
-				sinon.assert.called(fnOnBeforeDestroy);
 			}
+			sinon.assert.called(fnOnBeforeDestroy);
 		});
 	});
 });
