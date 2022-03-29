@@ -1623,23 +1623,31 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	changeSetId : "~changeSetId",
-	error : "~error",
-	expand : "~expand",
-	groupId : "~groupId",
-	inactive : "~inactive",
-	success : "~success"
+	bindingParameters : {expand : "~bindingExpand"},
+	parameters : {
+		changeSetId : "~changeSetId",
+		error : "~error",
+		expand : "~parametersExpand",
+		groupId : "~groupId",
+		inactive : "~inactive",
+		success : "~success"
+	},
+	expectedExpand : "~parametersExpand"
 }, {
-	success : undefined
-},
-	undefined
-].forEach(function (mParameters, i) {
+	bindingParameters : {expand : "~bindingExpand"},
+	parameters : {success : undefined},
+	expectedExpand : "~bindingExpand"
+}, {
+	bindingParameters : undefined,
+	parameters : undefined,
+	expectedExpand : undefined
+}].forEach(function (oFixture, i) {
 	QUnit.test("create: calls ODataModel#createEntry with parameters, #" + i, function (assert) {
 		var fnResolveActivatedPromise,
 			oActivatedPromise = new Promise(function (resolve) {
 				fnResolveActivatedPromise = resolve;
 			}),
-			bInactive = mParameters && mParameters.inactive,
+			bInactive = oFixture.parameters && oFixture.parameters.inactive,
 			oModel = {
 				oMetadata : {isLoaded : function () {}},
 				_getCreatedContextsCache : function () {},
@@ -1650,6 +1658,7 @@ sap.ui.define([
 				sCreatedEntitiesKey : "~sCreatedEntitiesKey",
 				bLengthFinal : true,
 				oModel : oModel,
+				mParameters : oFixture.bindingParameters,
 				sPath : "~sPath",
 				_fireChange : function () {},
 				_hasTransientParentContext : function () {},
@@ -1673,20 +1682,22 @@ sap.ui.define([
 			.withExactArgs()
 			.returns(oCreatedContextsCache);
 		this.mock(Object).expects("assign")
-			.withExactArgs(sinon.match(function (mParam0) {
-				assert.deepEqual(mParam0, {
+			.withExactArgs(sinon.match(function (mParams0) {
+				assert.deepEqual(mParams0, {
 					context : "~oContext",
 					properties : "~oInitialData",
 					refreshAfterChange : false
 				});
-				mCreateParameters = mParam0;
+				mCreateParameters = mParams0;
 
 				return true;
-			}), sinon.match.same(mParameters))
+			}), sinon.match.same(oFixture.parameters))
 			.callThrough();
 		this.mock(oModel).expects("createEntry")
-			.withExactArgs("~sPath", sinon.match(function (mParam) {
-				return mParam === mCreateParameters;
+			.withExactArgs("~sPath", sinon.match(function (mParams) {
+				assert.strictEqual(mParams.expand, oFixture.expectedExpand);
+
+				return mParams === mCreateParameters;
 			}))
 			.returns(oCreatedContext);
 		this.mock(oCreatedContextsCache).expects("addContext")
@@ -1701,7 +1712,7 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype.create.call(oBinding, "~oInitialData",
-			"~bAtEnd", mParameters), oCreatedContext);
+			"~bAtEnd", oFixture.parameters), oCreatedContext);
 
 		oBindingMock.expects("fireEvent")
 			.withExactArgs("createActivate")
