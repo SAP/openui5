@@ -534,7 +534,7 @@ sap.ui.define([
 					assert.ok(oGetCommandForSpy.calledWith(oColumn0Element, "resize", {
 						changeType: "myChangeType",
 						content: {
-							resizedElement: oColumn0Element,
+							resizedElementId: oColumn0Element.getId(),
 							newWidth: iNewWidth
 						}
 					}, undefined, sVariantManagementReference), "then getCommandFor is called with the right parameters for the resize command");

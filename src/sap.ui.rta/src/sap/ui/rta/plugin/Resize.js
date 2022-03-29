@@ -151,7 +151,7 @@ sap.ui.define([
 					changeSpecificData: {
 						changeType: oAction.changeType,
 						content: {
-							resizedElement: oElement,
+							resizedElementId: oElement.getId(),
 							newWidth: iNewWidth
 						}
 					},
