@@ -154,6 +154,7 @@ sap.ui.define([
 				Filter: "filter",
 				Item: "items",
 				Column: "items",
+				Type: "supplementaryConfig",
 				ColumnWidth: "supplementaryConfig"
 			};
 			var oTransformedState = {};
@@ -173,7 +174,7 @@ sap.ui.define([
 				aggregations: ["Aggregate"],
 				filter: ["Filter"],
 				items: ["Item", "Column"],
-				supplementaryConfig: ["ColumnWidth"]
+				supplementaryConfig: ["ColumnWidth", "Type"]
 			};
 
 			var oTransformedState = {};
