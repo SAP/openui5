@@ -2047,13 +2047,14 @@ sap.ui.define([
 		this._fullyInitialized().then(function() {
 			if (this._bUseColumnMenu) {
 				if (!this._oColumnHeaderMenu) {
-					this._oQuickActionContainer = new QuickActionContainer({table: this, column: oMDCColumn});
+					this._oQuickActionContainer = new QuickActionContainer({table: this});
 					this._oItemContainer = new ItemContainer({table: this});
 					this._oColumnHeaderMenu = new ColumnMenu({
 						_quickActions: [this._oQuickActionContainer],
 						_items: [this._oItemContainer]
 					});
 				}
+				this._oQuickActionContainer.setAssociation("column", oMDCColumn);
 
 				Promise.all([
 					this._oQuickActionContainer.initializeQuickActions(),
