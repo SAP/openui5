@@ -516,6 +516,11 @@ sap.ui.define([
 			this._sParentResizeListenerId = null;
 		}
 
+		//sets the extra width of 0.5rem when the grid container has 1rem gap for the TwoByxxxx tiles
+		if (this.getParent() && this.getParent().isA("sap.f.GridContainer")){
+			this._applyExtraWidth();
+		}
+
 		Device.media.detachHandler(this._handleMediaChange, this, DEVICE_SET);
 
 		if (this._$RootNode) {
@@ -1618,6 +1623,20 @@ GenericTile.prototype._isNavigateActionEnabled = function() {
 		return this.getMode() === GenericTileMode.ArticleMode && this.getUrl() && this.getEnableNavigationButton();
 	};
 
+	/**
+	 * An extra width of 0.5rem would be applied when the gap is 1rem(16px) in the grid container for the TwoByOne and TwoByHalf tiles
+	 * @private
+	 */
+	GenericTile.prototype._applyExtraWidth = function() {
+		var	sGap = this.getParent().getActiveLayoutSettings().getGap(),
+			bisLargeTile = this.getFrameType() === FrameType.TwoByHalf || this.getFrameType() === FrameType.TwoByOne,
+			bisGap16px = sGap === "16px" || sGap === "1rem";
+		if (bisGap16px && bisLargeTile){
+			this.addStyleClass("sapMGTWidthForGridContainer");
+		} else if (!bisGap16px && this.hasStyleClass("sapMGTWidthForGridContainer")){
+			this.removeStyleClass("sapMGTWidthForGridContainer");
+		}
+	};
 	/**
 	 * Returns true if the GenericTile is in ActionMode and frameType is TwoByOne.
 	 * @returns {boolean} - true if the GenericTile is in ActionMode
