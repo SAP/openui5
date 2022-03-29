@@ -230,7 +230,14 @@ sap.ui.define([
 
 	Container.prototype._addToNavigator = function (oContainerItem) {
 
-		var sKey = oContainerItem.getKey(), sText = oContainerItem.getText(), sIcon = oContainerItem.getIcon();
+		var sKey = oContainerItem.getKey(), oContainerItemTextBindingInfo = oContainerItem.getBindingInfo("text"), vText = oContainerItem.getText(), sIcon = oContainerItem.getIcon();
+
+		//In case the text of the Abstract container item is bound, the binding should be forwarded instead of the value
+		if (oContainerItemTextBindingInfo && oContainerItemTextBindingInfo.parts) {
+			vText = {
+				parts: oContainerItemTextBindingInfo.parts
+			};
+		}
 
 		if (sKey == this.DEFAULT_KEY) {
 			return;
@@ -241,14 +248,14 @@ sap.ui.define([
 			var oItem =  new StandardListItem({
 				type: ListItemType.Navigation,
 				icon: sIcon,
-				title: sText
+				title: vText
 			});
 			oItem._key = sKey;
 			this._getNavigationList().addItem(oItem);
 		} else {
 			this._getTabBar().addItem(new IconTabFilter({
 				key: sKey,
-				text: sText || sKey
+				text: vText || sKey
 			}));
 		}
 	};
