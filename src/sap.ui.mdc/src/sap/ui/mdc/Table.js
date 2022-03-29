@@ -1778,7 +1778,9 @@ sap.ui.define([
 				doEnableAccessibility: mCustomConfig.doEnableAccessibility,
 				signature: mCustomConfig.signature,
 				signatureReason: mCustomConfig.signatureReason,
-				orientation: mCustomConfig.selectedOrientation
+				orientation: mCustomConfig.selectedOrientation,
+				fitToPage: mCustomConfig.fitToPage,
+				pdfArchive: mCustomConfig.pdfArchive
 			};
 
 			if (mExportSettings.fileType === "PDF") {
