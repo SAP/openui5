@@ -20,8 +20,8 @@ sap.ui.define([
 		 * Instrantiates the Popover
 		 *
 		 * @override
-		 * @param oInput
-		 * @returns {sap.m.Popover}
+		 * @param {sap.m.Input} oInput The parent Input control
+		 * @returns {sap.m.Popover} The newly created picker.
 		 */
 		this.createPopover = function (oInput) {
 			var that = this,
@@ -83,6 +83,7 @@ sap.ui.define([
 		 * Sets Show More button to <code>SuggestionsPopover</code>'s Popover.
 		 *
 	 	 * @param {sap.m.Toolbar} oButtonToolbar The "Show More" button toolbar for the Popover's <code>footer</code> aggregation
+		 * @return {this} This instance for method chaining.
 		 * @public
 		 */
 		this.setShowMoreButton = function(oButtonToolbar) {
@@ -94,6 +95,7 @@ sap.ui.define([
 		 * Destroys Show More button from <code>SuggestionsPopover</code>'s Popover.
 		 *
 		 * @public
+		 * @return {this} This instance for method chaining.
 		 */
 		this.removeShowMoreButton = function() {
 			this.getPopover().destroyAggregation("footer");
@@ -102,6 +104,10 @@ sap.ui.define([
 
 		/**
 		 * Helper function that overwrites popover in the Input.
+		 *
+		 * @param {sap.m.Popover} oPopover The picker popover's instance.
+		 * @param {sap.m.Input} oInput The parent input's instance.
+		 * @return {sap.m.Popover} The popover picker's instance.
 		 */
 		function _patchPopover(oPopover, oInput) {
 			oPopover.open = function () {
@@ -122,6 +128,7 @@ sap.ui.define([
 		 * Gets the Value State Header instance.
 		 *
 		 * @private
+		 * @returns {sap.m.ValueStateHeader} The value state header's instance.
 		 */
 		this._getValueStateHeader = function () {
 			var oPopover = this.getPopover();
@@ -138,6 +145,7 @@ sap.ui.define([
 		 * Creates the Value State Header instance.
 		 *
 		 * @private
+		 * @returns {sap.m.ValueStateHeader} The newly created value state header's instance.
 		 */
 		this._createValueStateHeader = function () {
 			var oValueStateHeader = new ValueStateHeader();
