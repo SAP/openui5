@@ -1,11 +1,15 @@
 /* eslint-env node */
-/* global describe, it, browser */
+/* global describe, it, browser, expect, takeScreenshot */
 
 var utils = require("./cardVisualTestUtils");
 
 describe("sap.ui.integration.ObjectCardVisualTests", function () {
 	"use strict";
 	browser.testrunner.currentSuite.meta.controlName = "sap.ui.integration.widgets.Card";
+
+	it("test initial page loading", function () {
+		expect(takeScreenshot()).toLookAs("0_test_page");
+	});
 
 	var aCardIds = ["card1", "card2"];
 
