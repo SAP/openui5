@@ -182,6 +182,10 @@ sap.ui.define([
 		},
 		exportSettings: { // Export settings as specified by sap.ui.export.Spreadsheet.
 			type: "object",
+			"default": {
+				value: {},
+				ignoreIfNull: true
+			},
 			allowedForComplexProperty: true
 		},
 		visualSettings: { // This object contains all relevant properties for visual adjustments

@@ -14,10 +14,10 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @typedef {object} sap.ui.mdc.table.PropertyInfo
+	 * @typedef {Object} sap.ui.mdc.table.PropertyInfo
 	 * @extends sap.ui.mdc.util.PropertyInfo
 	 *
-	 * @property {object} [exportSettings]
+	 * @property {Object} [exportSettings]
 	 *   Object that contains information about the export settings, see {@link sap.ui.export.Spreadsheet}.
 	 * @property {int} [maxConditions]
 	 *   Defines the maximum number of filter conditions for the property. Possible values that can be used:
@@ -41,9 +41,9 @@ sap.ui.define([
 	 *   Name of the text property that is related to this property in a 1:1 relation.
 	 * @property {boolean} [required]
 	 *   Defines whether a filter condition for this property is required.
-	 * @property {object} [visualSettings]
+	 * @property {Object} [visualSettings]
 	 *   This object contains all relevant properties for visual adjustments.
-	 * @property {object} [visualSettings.widthCalculation]
+	 * @property {Object} [visualSettings.widthCalculation]
 	 *   This object contains all properties and their default values for the column width calculation
 	 * @property {integer} [visualSettings.widthCalculation.minWidth]
 	 *   The minimum content width in rem
@@ -69,15 +69,15 @@ sap.ui.define([
 	/**
 	 * Constructor for a new table property helper.
 	 *
-	 * @param {object[]} aProperties
+	 * @param {Object[]} aProperties
 	 *     The properties to process in this helper
-	 * @param {Object<string, object>} [mExtensions]
+	 * @param {Object<string, Object>} [mExtensions]
 	 *     Key-value map, where the key is the name of the property and the value is the extension containing mode-specific information.
 	 *     The extension of a property is stored in a reserved <code>extension</code> attribute, and its attributes must be specified with
 	 *     <code>mExtensionAttributeMetadata</code>.
 	 * @param {sap.ui.base.ManagedObject} [oParent]
 	 *     A reference to an instance that will act as the parent of this helper
-	 * @param {object} [mExtensionAttributeMetadata]
+	 * @param {Object} [mExtensionAttributeMetadata]
 	 *     The attribute metadata for the model-specific property extension
 	 *
 	 * @class
@@ -132,35 +132,42 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.table.Column} oColumn The column for which to get the export settings
 	 * @param {boolean} [bSplitCells=false] Whether the <code>splitCells</code> configuration is enabled
-	 * @returns {null|object} Export setting object for the provided column
+	 * @returns {Object[]} Array of export setting objects for the provided column. Will return more than one object if it is complex property and if <code>splitCells=true</code>
 	 * @public
 	 */
 	PropertyHelper.prototype.getColumnExportSettings = function(oColumn, bSplitCells) {
+		var aColumnExportSettings = [];
+
 		if (!isMdcColumnInstance(oColumn)) {
-			return null;
+			return aColumnExportSettings;
 		}
 
 		var oProperty = this.getProperty(oColumn.getDataProperty());
 
 		if (!oProperty) {
-			return null;
+			return aColumnExportSettings;
+		}
+
+		var oExportSettings = oProperty.exportSettings;
+
+		// exportSettings have been set explicitly to null by the application for this column to exclude it from the export
+		if (oExportSettings === null) {
+			return aColumnExportSettings;
 		}
 
 		bSplitCells = bSplitCells === true;
 
-		var	aColumnExportSettings = [];
-		var aPropertiesFromComplexProperty;
-		var oExportSettings = oProperty.exportSettings;
-		var oColumnExportSettings;
 		var aPaths = [];
 		var sAdditionalPath;
 		var oAdditionalProperty;
+		var oColumnExportSettings;
 		var oAdditionExportSettings;
+		var aPropertiesFromComplexProperty;
 		var oAdditionalColumnExportSettings;
 
 		if (oProperty.isComplex()) {
 			aPropertiesFromComplexProperty = oProperty.getReferencedProperties();
-			if (!bSplitCells && oExportSettings) {
+			if (!bSplitCells && Object.keys(oExportSettings).length) {
 				oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings, bSplitCells);
 				aPropertiesFromComplexProperty.forEach(function(oProperty) {
 					aPaths.push(oProperty.path);
@@ -181,20 +188,13 @@ sap.ui.define([
 					}
 				}, this);
 			}
-		} else if (!bSplitCells && oExportSettings) {
-			// called for basic PropertyInfo having exportSettings
-			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings, bSplitCells);
-			oColumnExportSettings.property = oProperty.path;
-			aColumnExportSettings.push(oColumnExportSettings);
 		} else {
 			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings, bSplitCells);
 			oColumnExportSettings.property = oProperty.path;
-			if (oColumnExportSettings.property) {
-				aColumnExportSettings.push(oColumnExportSettings);
-			}
+			aColumnExportSettings.push(oColumnExportSettings);
 
 			// get Additional path in case of split cells
-			sAdditionalPath = bSplitCells && oExportSettings && oExportSettings.unitProperty ? oExportSettings.unitProperty : null;
+			sAdditionalPath = bSplitCells && oExportSettings.unitProperty ? oExportSettings.unitProperty : null;
 
 			if (sAdditionalPath) {
 				oAdditionalProperty = getAdditionalProperty(this, sAdditionalPath);
@@ -216,7 +216,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.table.PropertyHelper} oPropertyHelper Property helper instance
 	 * @param {string} sPath The value of the <code>path</code> attribute of the property
-	 * @returns {object} The property
+	 * @returns {Object} The property
 	 * @public
 	 */
 	function getAdditionalProperty(oPropertyHelper, sPath) {
@@ -239,10 +239,10 @@ sap.ui.define([
 	 * Sets defaults to export settings and returns a new export settings object.
 	 *
 	 * @param {sap.ui.mdc.table.Column} oColumn The column from which to get default values
-	 * @param {object} oProperty The property from which to get default values
-	 * @param {object} oExportSettings The export settings for which to set defaults
+	 * @param {Object} oProperty The property from which to get default values
+	 * @param {Object} oExportSettings The export settings for which to set defaults
 	 * @param {boolean} bSplitCells Whether the <code>splitCells</code> configuration is enabled
-	 * @returns {object} The new export settings object
+	 * @returns {Object} The new export settings object
 	 * @private
 	 */
 	function getColumnExportSettingsObject(oColumn, oProperty, oExportSettings, bSplitCells) {
@@ -288,8 +288,8 @@ sap.ui.define([
 	/**
 	 * Calculates the column width based on the provided <code>PropertyInfo</code>.
 	 *
-	 * @param {object} oProperty The properties of <code>PropertyInfo</code> of <code>Column</code> instance for which to set the width
-	 * @param {object} [mWidthCalculation] The configuration object for the width calculation
+	 * @param {Object} oProperty The properties of <code>PropertyInfo</code> of <code>Column</code> instance for which to set the width
+	 * @param {Object} [mWidthCalculation] The configuration object for the width calculation
 	 * @param {int} [mWidthCalculation.minWidth=2] The minimum content width in rem
 	 * @param {int} [mWidthCalculation.maxWidth=19] The maximum content width in rem
 	 * @param {int} [mWidthCalculation.defaultWidth=8] The default column content width when type check fails

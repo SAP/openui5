@@ -799,7 +799,7 @@ sap.ui.define([
 				unit: "",
 				group: "",
 				groupLabel: "",
-				exportSettings: null,
+				exportSettings: {},
 				caseSensitive: true,
 				maxConditions: -1,
 				typeConfig: null,
@@ -815,7 +815,7 @@ sap.ui.define([
 				path: null,
 				group: "",
 				groupLabel: "",
-				exportSettings: null,
+				exportSettings: {},
 				maxConditions: null,
 				typeConfig: null
 			};

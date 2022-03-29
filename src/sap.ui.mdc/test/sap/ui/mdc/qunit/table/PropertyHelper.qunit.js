@@ -160,9 +160,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("getColumnExportSettings", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.getColumnExportSettings(), null, "No parameter");
-		assert.strictEqual(this.oPropertyHelper.getColumnExportSettings({}), null, "Empty property object");
-		assert.strictEqual(this.oPropertyHelper.getColumnExportSettings(this.oInvalidColumn), null, "mdc.Column pointing to invalid property info");
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(), [], "No parameter");
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings({}), [], "Empty property object");
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oInvalidColumn), [], "mdc.Column pointing to invalid property info");
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnPropA), [{
 			columnId: "propAColumn",
 			label: "Export label",
@@ -214,8 +214,14 @@ sap.ui.define([
 			type: "String",
 			width: 5
 		}], "Expected column export settings returned");
-		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oNoDataColumn2), [],
-			"Expected column export settings returned");
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oNoDataColumn2), [{
+			columnId: "noDataColumn2",
+			label: "NoDataColumn2",
+			property: "",
+			textAlign: "Begin",
+			type: "String",
+			width: ""
+		}], "Expected column export settings returned");
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropC), [{
 			columnId: "columnComplexPropC",
 			label: "Complex export label C",
@@ -297,6 +303,14 @@ sap.ui.define([
 			textAlign: "Begin",
 			type: "String",
 			width: 5
+		}, {
+			columnId: "columnComplexPropC-additionalProperty1",
+			label: "NoDataColumn2",
+			displayUnit: false,
+			property: "",
+			textAlign: "Begin",
+			type: "String",
+			width: ""
 		}], "Expected column export settings returned");
 	});
 });
