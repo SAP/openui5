@@ -13,13 +13,13 @@ sap.ui.define([
 	}, {
 		changeType: "resize",
 		content: {
-			resizedElement: "myElement",
+			resizedElementId: "myElementId",
 			newWidth: 200
 		}
 	}, {
 		changeType: "resize",
 		content: {
-			resizedElement: "myElement",
+			resizedElementId: "myElementId",
 			newWidth: 200
 		}
 	});
