@@ -2256,7 +2256,7 @@ function(
 
 		// Aria - used to label the sort order list
 		this._ariaSortOrderInvisibleText = new InvisibleText(this.getId() + "-sortOrderLabel", {
-			text: this._rb.getText("VIEWSETTINGS_SORT_DIRECTION")
+			text: this._rb.getText("VIEWSETTINGS_SORT_BY")
 		});
 
 		this._sortOrderList = new List(this.getId() + "-sortorderlist", {
@@ -2281,7 +2281,7 @@ function(
 
 		// Aria - used to label the sort list
 		this._ariaSortListInvisibleText = new InvisibleText(this.getId() + "-sortListLabel", {
-			text: this._rb.getText("VIEWSETTINGS_TITLE_SORT")
+			text: this._rb.getText("VIEWSETTINGS_SORT_OBJECT")
 		});
 
 		this._sortList.addAriaLabelledBy(this._ariaSortListInvisibleText);
@@ -2347,7 +2347,6 @@ function(
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._initGroupContent = function() {
-		var sTitleGroupBy = this._rb.getText("VIEWSETTINGS_GROUP_BY");
 
 		if (this._groupContent) {
 			return;
@@ -2356,7 +2355,7 @@ function(
 
 		// Aria - used to label the group order
 		this._ariaGroupOrderInvisibleText = new InvisibleText(this.getId() + "-groupOrderLabel", {
-			text: this._rb.getText("VIEWSETTINGS_GROUP_DIRECTION")
+			text: this._rb.getText("VIEWSETTINGS_GROUP_BY")
 		});
 
 		this._groupOrderList = new List(this.getId() + "-grouporderlist", {
@@ -2370,7 +2369,7 @@ function(
 			ariaLabelledBy: this._ariaGroupOrderInvisibleText
 		});
 
-		this._groupOrderList.addItem(new GroupHeaderListItem({title: sTitleGroupBy}));
+		this._groupOrderList.addItem(new GroupHeaderListItem({title: this._rb.getText("VIEWSETTINGS_GROUP_BY")}));
 		this._groupOrderList.addItem(new StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
 		}).data("item", false).setSelected(true));
@@ -2380,7 +2379,7 @@ function(
 
 		// Aria - used to label the group list
 		this._ariaGroupListInvisibleText = new InvisibleText(this.getId() + "-groupListLabel", {
-			text: this._rb.getText("VIEWSETTINGS_TITLE_GROUP")
+			text: this._rb.getText("VIEWSETTINGS_GROUP_OBJECT")
 		});
 
 		this._groupList = new List(this.getId() + "-grouplist",
@@ -2482,7 +2481,7 @@ function(
 
 		// Aria - used to label the filter by list
 		this._ariaFilterByInvisibleText = new InvisibleText(this.getId() + "-filterByLabel", {
-			text: this._rb.getText("VIEWSETTINGS_TITLE_FILTER")
+			text: this._rb.getText("VIEWSETTINGS_FILTER_BY")
 		});
 
 		this._presetFilterList = new List(
