@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/m/ScrollContainer",
 	"sap/m/NotificationListGroup",
 	"sap/m/NotificationListItem",
 	"sap/m/Button",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library"
 ], function(
+	ScrollContainer,
 	NotificationListGroup,
 	NotificationListItem,
 	Button,
@@ -71,13 +73,12 @@ sap.ui.define([
 	});
 
 	QUnit.test('initial rendering', function(assert) {
-
 		var $item = this.notificationListGroup.$();
 
 		assert.ok(this.notificationListGroup.getDomRef(), 'Group is rendered');
 
 		assert.ok($item.hasClass('sapMNLGroupUnread'), 'unread class is set');
-		assert.strictEqual($item.find('.sapMNLGroupTitle').text(), 'Notification List Group Title', 'title is rendered');
+		assert.strictEqual($item.find('.sapMNLGroupTitle').text(), 'Notification List Group Title (2)', 'title is rendered');
 		assert.strictEqual($item.find('.sapMNLGroupCollapseButton button').attr('title'), oResourceBundleM.getText("NOTIFICATION_LIST_GROUP_COLLAPSE"), 'collapse button is rendered');
 		assert.strictEqual($item.find('.sapMNLIItem.sapMNLICloseBtn button').attr('title'), oResourceBundleM.getText("NOTIFICATION_LIST_GROUP_CLOSE"), 'close button is rendered');
 		assert.ok(this.notificationListGroup.$('overflowToolbar'), 'overflow toolbar is rendered');
@@ -217,19 +218,14 @@ sap.ui.define([
 		// ACC  text result: "Notification group unread. High Priority. Counter 2"
 	});
 
-	QUnit.module('Action and close buttons - non mobile', {
+	QUnit.module('Action and close buttons - M size', {
 		beforeEach: function() {
-
-			this.isPhone = Device.system.phone;
-			Device.system.phone = false;
-
 			this.notificationListGroup = createNotificationListGroup();
 			this.notificationListGroup.placeAt(RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.notificationListGroup.destroy();
-			Device.system.phone = this.isPhone;
 		}
 	});
 
@@ -244,35 +240,34 @@ sap.ui.define([
 		this.notificationListGroup.setCollapsed(true);
 		Core.applyChanges();
 
-		assert.strictEqual($notificationListGroup.find('.sapMNLIItem.sapMNLIActions')[0].style.display, 'none', "overflow toolbar is hideen");
+		assert.ok($notificationListGroup.find('.sapMNLIItem.sapMNLIActions')[0].classList.contains("sapMNLIActionsHidden"), "overflow toolbar is hideen");
 	});
 
 	QUnit.test('Close button destruction', function(assert) {
-
 		var notificationListGroup = createNotificationListGroup();
 		notificationListGroup.placeAt(RENDER_LOCATION);
+		Core.applyChanges();
 		var closeButton = notificationListGroup._getCloseButton();
 		var closeButtonId = closeButton.sId;
 
 		notificationListGroup.destroy();
 		assert.strictEqual(Core.byId(closeButtonId), undefined, "close button is destroyed");
-
 	});
 
-	QUnit.module('Action and close buttons - mobile', {
+	QUnit.module('Action and close buttons - S Size', {
 		beforeEach: function() {
-
-			this.isPhone = Device.system.phone;
-			Device.system.phone = true;
-
 			this.notificationListGroup = createNotificationListGroup();
-			this.notificationListGroup.placeAt(RENDER_LOCATION);
+			this.scrollContainer = new ScrollContainer({
+				width: "500px",
+				vertical: false,
+				content: this.notificationListGroup
+			});
+
+			this.scrollContainer.placeAt(RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function() {
-			this.notificationListGroup.destroy();
-
-			Device.system.phone = this.isPhone;
+			this.scrollContainer.destroy();
 		}
 	});
 
@@ -298,6 +293,9 @@ sap.ui.define([
 
 		assert.ok(buttons[0].hasStyleClass('sapMNLIBHiddenButton'), 'button is hidden');
 		assert.ok(buttons[1].hasStyleClass('sapMNLIBHiddenButton'), 'button is hidden');
+
+		closeButton = this.notificationListGroup._getCloseButton();
+		toolbarSeparator = this.notificationListGroup._getToolbarSeparator();
 
 		assert.strictEqual(closeButton.getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'close button overflow priority is ok');
 		assert.notOk(toolbarSeparator.getVisible(), 'toolbar separator is not visible');

@@ -7,7 +7,6 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'./NotificationListBase',
 	'sap/ui/core/InvisibleText',
-	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/library',
 	'sap/m/Link',
 	'sap/m/Avatar',
@@ -19,7 +18,6 @@ function(
 	Core,
 	NotificationListBase,
 	InvisibleText,
-	ResizeHandler,
 	coreLibrary,
 	Link,
 	Avatar,
@@ -153,23 +151,16 @@ function(
 	 */
 	NotificationListItem.prototype.onBeforeRendering = function() {
 		NotificationListBase.prototype.onBeforeRendering.call(this);
-
-		if (this._resizeListenerId) {
-			ResizeHandler.deregister(this._resizeListenerId);
-			this._resizeListenerId = null;
-		}
 	};
 
 	NotificationListItem.prototype.onAfterRendering = function() {
+		NotificationListBase.prototype.onAfterRendering.call(this);
+
 		if (this.getHideShowMoreButton()) {
 			return;
 		}
 
 		this._updateShowMoreButtonVisibility();
-
-		if (this.getDomRef()) {
-			this._resizeListenerId = ResizeHandler.register(this.getDomRef(),  this._onResize.bind(this));
-		}
 	};
 
 	NotificationListItem.prototype.onkeydown = function(event) {
@@ -211,10 +202,6 @@ function(
 
 	NotificationListItem.prototype.exit = function() {
 		NotificationListBase.prototype.exit.apply(this, arguments);
-		if (this._resizeListenerId) {
-			ResizeHandler.deregister(this._resizeListenerId);
-			this._resizeListenerId = null;
-		}
 
 		if (this._footerIvisibleText) {
 			this._footerIvisibleText.destroy();
@@ -228,6 +215,8 @@ function(
 	};
 
 	NotificationListItem.prototype._onResize = function () {
+		NotificationListBase.prototype._onResize.apply(this, arguments);
+
 		this._updateShowMoreButtonVisibility();
 	};
 

@@ -318,7 +318,6 @@ function(
 	 * @private
 	 */
 	NotificationListGroup.prototype.onBeforeRendering = function () {
-
 		NotificationListBase.prototype.onBeforeRendering.apply(this, arguments);
 
 		this._getCollapseButton().setVisible(this.getEnableCollapseButtonWhenEmpty() || this._getVisibleItemsCount() > 0);

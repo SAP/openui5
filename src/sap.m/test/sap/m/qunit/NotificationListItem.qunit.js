@@ -45,17 +45,14 @@ sap.ui.define([
 	function createNotificatoinListItem() {
 		return new NotificationListItem({
 			unread : true,
-
-			title: 'Notification List Item Title Title Title',
+			title: 'Notification List Item Title Title TitleNotification List Item Title Title TitleNotification List Item Title Title TitleNotification List Item Title Title Title',
 			priority: Priority.High,
 			showCloseButton : true,
 			showButtons: true,
 			datetime : '3 days',
 			authorName : 'John Smith',
 			authorPicture : 'sap-icon://group',
-
-			description: 'Notification List Item Description',
-
+			description: 'Notification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item Description',
 			buttons: [
 				new Button({
 					text: 'Accept'
@@ -100,7 +97,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.notificationListItem = createNotificatoinListItem();
 			this.list = new NotificationList({
-				width: '300px',
+				width: '610px',
 				items: [
 					this.notificationListItem
 				]
@@ -115,13 +112,12 @@ sap.ui.define([
 	});
 
 	QUnit.test('initial rendering', function(assert) {
-
 		var $item = this.notificationListItem.$();
 
 		assert.ok(this.notificationListItem.getDomRef(), 'Item is rendered');
 
 		assert.ok($item.hasClass('sapMNLIUnread'), 'unread class is set');
-		assert.strictEqual($item.find('.sapMNLITitle .sapMNLITitleText').text(), 'Notification List Item Title Title Title' , 'title is rendered');
+		assert.strictEqual($item.find('.sapMNLITitle .sapMNLITitleText').text(), this.notificationListItem.getTitle(), 'title is rendered');
 
 		assert.notOk($item.find('.sapMNLIBPriorityHigh span').attr('title') , 'no tooltip is rendered');
 		assert.ok($item.find('.sapMNLIBPriorityHigh span'), 'priority High icon is rendered');
@@ -137,7 +133,7 @@ sap.ui.define([
 
 		assert.strictEqual($item.find('.sapFAvatar').length > 0, true, 'author avatar is rendered');
 
-		assert.strictEqual($item.find('.sapMNLIDescription').text(), 'Notification List Item Description', 'description is rendered');
+		assert.strictEqual($item.find('.sapMNLIDescription').text(), this.notificationListItem.getDescription(), 'description is rendered');
 
 		assert.strictEqual($item.attr('role'), 'listitem', 'acc role is correct');
 	});
@@ -162,11 +158,34 @@ sap.ui.define([
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIFooterBullet').length, 0, 'footer separator is not rendered');
 	});
 
+	QUnit.module('Rendering - S size', {
+		beforeEach: function() {
+			this.notificationListItem = createNotificatoinListItem();
+			this.list = new NotificationList({
+				width: '500px',
+				items: [
+					this.notificationListItem
+				]
+			});
+
+			this.list.placeAt(RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.list.destroy();
+		}
+	});
+
+	QUnit.test('avatar rendering', function(assert) {
+		var $item = this.notificationListItem.$();
+		assert.strictEqual(window.getComputedStyle($item.find('.sapMNLIImage')[0])['display'], 'none', 'author avatar is not displayed');
+	});
+
 	QUnit.module('Interaction', {
 		beforeEach: function() {
 			this.notificationListItem = createNotificatoinListItem();
 			this.list = new NotificationList({
-				width: '300px',
+				width: '610px',
 				items: [
 					this.notificationListItem
 				]
@@ -181,7 +200,6 @@ sap.ui.define([
 	});
 
 	QUnit.test('show more', function(assert) {
-
 		var $item = this.notificationListItem.$();
 		var showMoreButton = $item.find('.sapMNLIFooter .sapMNLIShowMore a').control()[0];
 		showMoreButton.firePress();
@@ -208,7 +226,6 @@ sap.ui.define([
 	});
 
 	QUnit.test('close button', function(assert) {
-
 		var fnSpy = sinon.spy(this.notificationListItem, 'fireClose'),
 			$item = this.notificationListItem.$(),
 			closeButton = $item.find('.sapMNLIItem:last-child button').control()[0];
@@ -222,7 +239,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.notificationListItem = createNotificatoinListItem();
 			this.list = new NotificationList({
-				width: '300px',
+				width: '610px',
 				items: [
 					this.notificationListItem
 				]
@@ -306,7 +323,6 @@ sap.ui.define([
 	QUnit.module('Cloning');
 
 	QUnit.test('cloning without bindings', function(assert) {
-
 		var notificationListItem = new NotificationListItem();
 
 		// arrange
@@ -325,7 +341,6 @@ sap.ui.define([
 
 		assert.strictEqual((secondNotification.getAggregation('_overflowToolbar') instanceof OverflowToolbar),
 			true, 'The overflow bar should be cloned.');
-
 
 		secondNotification.destroy();
 		notificationListItem.destroy();
@@ -388,11 +403,8 @@ sap.ui.define([
 		notification.destroy();
 	});
 
-	QUnit.test('cloning with bindings - on mobile. When"showCloseButton" is false the separator and the "close" button should not be visible', function(assert) {
+	QUnit.test('cloning with bindings - on S size. When"showCloseButton" is false the separator and the "close" button should not be visible', function(assert) {
 		// arrange
-		this.isPhone = Device.system.phone;
-		Device.system.phone = true;
-
 		var model = new JSONModel({
 			actions: [
 				{
@@ -402,7 +414,9 @@ sap.ui.define([
 			]
 		});
 
-		var list = new NotificationList();
+		var list = new NotificationList({
+			width: "500px"
+		});
 
 		list.setModel(model);
 		list.bindObject("/");
@@ -434,22 +448,22 @@ sap.ui.define([
 
 		// cleanup
 		list.destroy();
-		Device.system.phone = this.isPhone;
 	});
 
-	QUnit.module('Action and close buttons - non mobile', {
+	QUnit.module('Action and close buttons - M Size', {
 		beforeEach: function() {
-
-			this.isPhone = Device.system.phone;
-			Device.system.phone = false;
-
 			this.notificationListItem = createNotificatoinListItem();
-			this.notificationListItem.placeAt(RENDER_LOCATION);
+			this.list = new NotificationList({
+				width: '610px',
+				items: [
+					this.notificationListItem
+				]
+			});
+			this.list.placeAt(RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function() {
-			this.notificationListItem.destroy();
-			Device.system.phone = this.isPhone;
+			this.list.destroy();
 		}
 	});
 
@@ -471,9 +485,9 @@ sap.ui.define([
 	});
 
 	QUnit.test('Close button destruction', function(assert) {
-
 		var notificationListItem = createNotificatoinListItem();
 		notificationListItem.placeAt(RENDER_LOCATION);
+		Core.applyChanges();
 		var closeButton = notificationListItem._getCloseButton();
 		var closeButtonId = closeButton.sId;
 
@@ -481,20 +495,20 @@ sap.ui.define([
 		assert.strictEqual(Core.byId(closeButtonId), undefined, "close button is destroyed");
 	});
 
-	QUnit.module('Action and close buttons - mobile', {
+	QUnit.module('Action and close buttons - S Size', {
 		beforeEach: function() {
-
-			this.isPhone = Device.system.phone;
-			Device.system.phone = true;
-
 			this.notificationListItem = createNotificatoinListItem();
-			this.notificationListItem.placeAt(RENDER_LOCATION);
+			this.list = new NotificationList({
+				width: '500px',
+				items: [
+					this.notificationListItem
+				]
+			});
+			this.list.placeAt(RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function() {
-			this.notificationListItem.destroy();
-
-			Device.system.phone = this.isPhone;
+			this.list.destroy();
 		}
 	});
 
@@ -521,6 +535,9 @@ sap.ui.define([
 		assert.ok(buttons[0].hasStyleClass('sapMNLIBHiddenButton'), 'button is hidden');
 		assert.ok(buttons[1].hasStyleClass('sapMNLIBHiddenButton'), 'button is hidden');
 
+		closeButton = this.notificationListItem._getCloseButton();
+		toolbarSeparator = this.notificationListItem._getToolbarSeparator();
+
 		assert.strictEqual(closeButton.getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'close button overflow priority is ok');
 		assert.notOk(toolbarSeparator.getVisible(), 'toolbar separator is not visible');
 
@@ -528,6 +545,8 @@ sap.ui.define([
 		this.notificationListItem.setShowCloseButton(false);
 		Core.applyChanges();
 
+		closeButton = this.notificationListItem._getCloseButton();
+		toolbarSeparator = this.notificationListItem._getToolbarSeparator();
 
 		assert.notOk(closeButton.getVisible(), 'close button is not visible');
 		assert.notOk(toolbarSeparator.getVisible(), 'toolbar separator is not visible');
@@ -536,6 +555,9 @@ sap.ui.define([
 		this.notificationListItem.removeButton(buttons[0]);
 		this.notificationListItem.removeButton(buttons[1]);
 		Core.applyChanges();
+
+		closeButton = this.notificationListItem._getCloseButton();
+		toolbarSeparator = this.notificationListItem._getToolbarSeparator();
 
 		assert.ok(closeButton.getVisible(), 'close button is visible');
 		assert.strictEqual(closeButton.getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'close button overflow priority is ok');
