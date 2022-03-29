@@ -7,6 +7,11 @@ describe("sap.m.IconTabBarResponsivePaddings", function() {
 
 	// initial loading
 	it("should load test page", function() {
+		browser.executeScript(function () {
+			setTimeout(function () {
+			}, 5000);
+		});
+
 		expect(takeScreenshot()).toLookAs("0_initial");
 	});
 });
