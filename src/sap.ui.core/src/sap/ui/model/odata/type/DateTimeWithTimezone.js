@@ -212,12 +212,12 @@ sap.ui.define([
 	 * Gets an array of indices that determine which parts of this type shall not propagate their
 	 * model messages to the attached control. Prerequisite is that the corresponding binding
 	 * supports this feature, see {@link sap.ui.model.Binding#supportsIgnoreMessages}. If the
-	 * <code>showTimezone</code> format option is set to <code>false</code> that means the time zone
-	 * is not shown in the control, the part for the time zone shall not propagate model messages to
+	 * <code>showTimezone</code> format option is set to <code>false</code>, the time zone is not
+	 * shown in the control, and the part for the time zone shall not propagate model messages to
 	 * the control.
 	 * Analogously, if the format option <code>showDate</code> and <code>showTime</code> are both
-	 * set to <code>false</code>, that means the date and time are not shown in the control, the
-	 * parts for the date and time shall not propagate model messages to the control.
+	 * set to <code>false</code>, the date and time are not shown in the control, and the parts for
+	 * the date and time shall not propagate model messages to the control.
 	 *
 	 * @return {number[]}
 	 *   An array of indices that determine which parts of this type shall not propagate their
