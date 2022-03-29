@@ -160,20 +160,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Rename.prototype._isEditable = function(oOverlay) {
-		var oElement = oOverlay.getElement();
-		var oRenameAction = this.getAction(oOverlay);
-		if (oRenameAction && oRenameAction.changeType) {
-			if (oRenameAction.changeOnRelevantContainer) {
-				oElement = oOverlay.getRelevantContainer();
-			}
-			return this.hasChangeHandler(oRenameAction.changeType, oElement)
-				.then(function(bHasChangeHandler) {
-					return bHasChangeHandler
-						&& this._checkRelevantContainerStableID(oRenameAction, oOverlay)
-						&& this.hasStableId(oOverlay);
-				}.bind(this));
-		}
-		return false;
+		return this._checkChangeHandlerAndStableId(oOverlay);
 	};
 
 	/**

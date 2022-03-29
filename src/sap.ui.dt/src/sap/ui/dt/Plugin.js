@@ -321,7 +321,7 @@ function(
 	 * Checks if the plugin is available for an overlay
 	 * Method to be overwritten by the different plugins
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Overlays to be checked
-	 * @returns {boolean} Returns false by default
+	 * @returns {boolean} <code>false</code> by default
 	 */
 	Plugin.prototype.isAvailable = function () {
 		return false;
@@ -338,12 +338,29 @@ function(
 
 	/**
 	 * Checks if the plugin is enabled for a set of overlays
-	 * Method to be overwritten by the different plugins
+	 * Method can be overwritten by the different plugins
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
-	 * @returns {boolean} Returns false by default
+	 * @returns {boolean} <code>true</code> if plugin is enabled
 	 */
-	Plugin.prototype.isEnabled = function () {
-		return false;
+	Plugin.prototype.isEnabled = function (aElementOverlays) {
+		// The default implementation considers only one overlay
+		if (!Array.isArray(aElementOverlays) || aElementOverlays.length > 1) {
+			return false;
+		}
+		var oElementOverlay = aElementOverlays[0];
+		var vAction = this.getAction(oElementOverlay);
+		if (!vAction) {
+			return false;
+		}
+
+		var oElement = oElementOverlay.getElement();
+		if (vAction.isEnabled === undefined) {
+			return true;
+		}
+		if (typeof vAction.isEnabled === "function") {
+			return vAction.isEnabled(oElement);
+		}
+		return vAction.isEnabled;
 	};
 
 	/**

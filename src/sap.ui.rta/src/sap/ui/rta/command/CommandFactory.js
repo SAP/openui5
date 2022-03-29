@@ -349,6 +349,9 @@ sap.ui.define([
 			configure: configureSplitCommand,
 			adjustForBinding: adjustSplitCommand
 		},
+		resize: {
+			clazz: "sap/ui/rta/command/Resize"
+		},
 		"switch": {
 			clazz: "sap/ui/rta/command/ControlVariantSwitch"
 		},

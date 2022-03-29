@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/Log"
-], function (
+], function(
 	merge,
 	Log
 ) {
@@ -334,6 +334,17 @@ sap.ui.define([
 					}
 				}
 			},
+			"command/Resize": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/Resize"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
+				}
+			},
 			"command/Reveal": {
 				group: "Command",
 				coverage: {
@@ -558,6 +569,21 @@ sap.ui.define([
 				group: "Plugin",
 				coverage: {
 					only: ["sap/ui/rta/plugin/Rename"]
+				}
+			},
+			"plugin/Resize": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/Resize"]
+				}
+			},
+			"plugin/ResizeRTL": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/Resize"]
+				},
+				ui5: {
+					rtl: true
 				}
 			},
 			"plugin/Selection": {

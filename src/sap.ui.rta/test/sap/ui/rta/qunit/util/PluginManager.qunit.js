@@ -60,6 +60,7 @@ function(
 				"localReset",
 				"remove",
 				"rename",
+				"resize",
 				"selection",
 				"settings",
 				"split",

@@ -39,21 +39,15 @@ sap.ui.define([
 
 	/**
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay to be checked for editable
-	 * @return {Promise.<boolean>|boolean} <code>true</code> if it's editable wrapped in a promise.
+	 * @return {Promise.<boolean>} <code>true</code> if it's editable wrapped in a promise.
 	 * @private
 	 */
 	Split.prototype._isEditable = function (oOverlay) {
 		var oSplitAction = this.getAction(oOverlay);
-		if (oSplitAction && oSplitAction.changeType && oSplitAction.changeOnRelevantContainer) {
-			var oRelevantContainer = oOverlay.getRelevantContainer();
-			return this.hasChangeHandler(oSplitAction.changeType, oRelevantContainer)
-				.then(function(bHasChangeHandler) {
-					return bHasChangeHandler
-						&& this.hasStableId(oOverlay)
-						&& this._checkRelevantContainerStableID(oSplitAction, oOverlay);
-				}.bind(this));
+		if (oSplitAction && oSplitAction.changeOnRelevantContainer) {
+			return this._checkChangeHandlerAndStableId(oOverlay);
 		}
-		return false;
+		return Promise.resolve(false);
 	};
 
 	/**
