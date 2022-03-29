@@ -383,8 +383,6 @@ sap.ui.define([
 		return false;
 	};
 
-	AnalyticalColumn.prototype.isGroupable = AnalyticalColumn.prototype.isGroupableByMenu; // TODO: Remove after changing sap.ui.comp
-
 	// This column sets its own cell content visibility settings.
 	AnalyticalColumn.prototype._setCellContentVisibilitySettings = function() {};
 
