@@ -19,10 +19,14 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
+	"sap/f/GridContainerItemLayoutData",
+	"sap/f/GridContainerSettings",
+	"sap/f/GridContainer",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
-			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, coreLibrary, isEmptyObject, KeyCodes, oCore) {
+			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, coreLibrary, isEmptyObject, KeyCodes, oCore,GridContainerItemLayoutData,
+			GridContainerSettings,GridContainer) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -4175,5 +4179,94 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 	QUnit.test("GenericTile - Failed/Stretch", function(assert) {
 		this.fnCreateGenericTile(LoadState.Failed, LoadState.Loaded, FrameType.Stretch);
 		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
+	});
+
+	QUnit.module("Width Getting Increased when the Gap is 1rem only for TwoByOne and TwoByHalf tiles in the Grid container", {
+		afterEach: function() {
+			this.oGrid.destroy();
+			this.oTile1.destroy();
+			this.oTile2.destroy();
+			this.oTile3.destroy();
+			this.oGrid = null;
+			this.oTile1 = null;
+			this.oTile2 = null;
+			this.oTile3 = null;
+		},
+		fnCreateGridContainer: function(sGap){
+			var oSettings = new GridContainerSettings({columns: 6, rowSize: "80px", columnSize: "80px", gap: sGap});
+
+			this.oGrid = new GridContainer({
+				layout: oSettings,
+				items: [
+					this.oTile1 = new GenericTile({
+						header: "headerText 1",
+						subheader: "subheaderText",
+						frameType : FrameType.TwoByOne,
+						state:"Loaded",
+						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
+					}),
+					this.oTile2 = new GenericTile({
+						header: "headerText 2",
+						subheader: "subheaderText",
+						frameType : FrameType.TwoByHalf,
+						state:"Loaded",
+						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
+					}),
+					this.oTile3 = new GenericTile({
+						header: "headerText 2",
+						subheader: "subheaderText",
+						frameType : FrameType.OneByOne,
+						state:"Loaded",
+						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
+					})
+				]
+			});
+
+			this.oGrid.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		}
+	});
+
+	QUnit.test("Checking if the width has been applied only for TwoByOne and TwoByHalf tiles when the gap is 1rem", function (assert) {
+		// Arrange
+		this.fnCreateGridContainer("1rem");
+		var aItems = this.oGrid.getItems();
+
+		// Assert
+		assert.ok(aItems[0].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem for TwoByOne tile");
+		assert.ok(aItems[1].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem for TwoByHalf tile");
+		assert.notOk(aItems[2].hasStyleClass("sapMGTWidthForGridContainer"),"Width has not been applied when the gap is 1rem for OneByOne tile");
+
+
+		//small tiles
+		aItems[0].setSizeBehavior("Small");
+		aItems[1].setSizeBehavior("Small");
+		aItems[2].setSizeBehavior("Small");
+
+		//Assert
+		assert.ok(aItems[0].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem for small TwoByOne tile");
+		assert.ok(aItems[1].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem for small TwoByHalf tile");
+		assert.notOk(aItems[2].hasStyleClass("sapMGTWidthForGridContainer"),"Width has not been applied when the gap is 1rem for small OneByOne tile");
+
+	});
+
+	QUnit.test("Checking if the width has not been applied for the tiles when the gap is not 1rem", function (assert) {
+		// Arrange
+		this.fnCreateGridContainer("0.5rem");
+		var aItems = this.oGrid.getItems();
+		// Assert
+		assert.notOk(aItems[0].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for TwoByOne tile");
+		assert.notOk(aItems[1].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for TwoByHalf tile");
+		assert.notOk(aItems[2].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for OneByOne tile");
+
+		//small tiles
+		aItems[0].setSizeBehavior("Small");
+		aItems[1].setSizeBehavior("Small");
+		aItems[2].setSizeBehavior("Small");
+
+		//Assert
+		assert.notOk(aItems[0].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for small TwoByOne tile");
+		assert.notOk(aItems[1].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for small TwoByHalf tile");
+		assert.notOk(aItems[2].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for small OneByOne tile");
 	});
 });
