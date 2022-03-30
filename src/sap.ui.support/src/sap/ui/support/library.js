@@ -47,7 +47,7 @@ sap.ui.define(["sap/ui/core/library"],
 	/**
 	 * Defines severity types.
 	 * @enum {string}
-	 * @since ${version}
+	 * @since 1.50
 	 * @public
 	 */
 	thisLib.Severity = {
@@ -71,7 +71,7 @@ sap.ui.define(["sap/ui/core/library"],
 	/**
 	 * Defines the Audiences.
 	 * @enum {string}
-	 * @since ${version}
+	 * @since 1.50
 	 * @public
 	 */
 	thisLib.Audiences = {
@@ -95,7 +95,7 @@ sap.ui.define(["sap/ui/core/library"],
 	/**
 	 * Issue Categories.
 	 * @enum {string}
-	 * @since ${version}
+	 * @since 1.50
 	 * @public
 	 */
 	thisLib.Categories = {
@@ -126,6 +126,7 @@ sap.ui.define(["sap/ui/core/library"],
 		Consistency: "Consistency",
 		/**
 		 * Fiori Guidelines issue category.
+		 * @since 1.58
 		 * @public
 		 */
 		FioriGuidelines : "FioriGuidelines",
@@ -146,6 +147,7 @@ sap.ui.define(["sap/ui/core/library"],
 		DataModel: "DataModel",
 		/**
 		 * Modularization issue category.
+		 * @since 1.60
 		 * @public
 		 */
 		Modularization: "Modularization",
@@ -164,7 +166,7 @@ sap.ui.define(["sap/ui/core/library"],
 	/**
 	 * Analysis history formats.
 	 * @enum {string}
-	 * @since ${version}
+	 * @since 1.58
 	 * @public
 	 */
 	thisLib.HistoryFormats = {
@@ -183,7 +185,7 @@ sap.ui.define(["sap/ui/core/library"],
 	/**
 	 * Contains the available system presets.
 	 * @enum {object}
-	 * @since ${version}
+	 * @since 1.60
 	 * @public
 	 */
 	thisLib.SystemPresets = {
