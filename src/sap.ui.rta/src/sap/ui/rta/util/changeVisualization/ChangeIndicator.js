@@ -140,6 +140,9 @@ sap.ui.define([
 
 			this._fnHoverTrue = this._toggleHoverStyleClasses.bind(this, true);
 			this._fnHoverFalse = this._toggleHoverStyleClasses.bind(this, false);
+			// is needed to prevent that multiple events listeners are attached
+			// to the same overlay because setVisible is called multiple times
+			this._bEventAttachedToElement = false;
 		}
 	});
 
@@ -173,10 +176,13 @@ sap.ui.define([
 		var oOverlay = Core.byId(this.getOverlayId());
 		// needed because the change indicator cleanup is only triggered on save and exit
 		if (oOverlay) {
-			if (bVisible) {
+			if (bVisible && !this._bEventAttachedToElement) {
 				handleBrowserEventsOnElement.call(this, oOverlay, "attachBrowserEvent");
-			} else {
+				this._bEventAttachedToElement = true;
+			}
+			if (!bVisible) {
 				handleBrowserEventsOnElement.call(this, oOverlay, "detachBrowserEvent");
+				this._bEventAttachedToElement = false;
 				if (this.getAggregation("_popover")) {
 					this.getAggregation("_popover").destroy();
 				}

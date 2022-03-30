@@ -531,13 +531,11 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when a command category is selected", function(assert) {
-			var fnDone = assert.async();
 			prepareChanges(this.aMockChanges);
 			this.oRta.setMode("visualization");
-			waitForMethodCall(this.oRta.getToolbar(), "setModel")
+			return waitForMethodCall(this.oRta.getToolbar(), "setModel")
 				.then(function() {
 					oCore.applyChanges();
-					//startChangeVisualization(this.oVisualizationButton, this.oChangeVisualization);
 					var aIndicators = collectIndicatorReferences();
 					assert.strictEqual(
 						aIndicators.length,
@@ -550,15 +548,13 @@ sap.ui.define([
 						}),
 						"then all indicators are visible 2/2"
 					);
-					fnDone();
 				});
 		});
 
 		QUnit.test("when change visualization is deactivated and activated again", function(assert) {
-			var fnDone = assert.async();
 			prepareChanges(this.aMockChanges);
 			this.oRta.setMode("visualization");
-			waitForMethodCall(this.oRta.getToolbar(), "setModel")
+			return waitForMethodCall(this.oRta.getToolbar(), "setModel")
 				.then(function() {
 					oCore.applyChanges();
 					assert.strictEqual(
@@ -592,8 +588,75 @@ sap.ui.define([
 								2,
 								"then all indicators are visible again after reactivation"
 							);
-							fnDone();
 						}.bind(this));
+				}.bind(this));
+		});
+
+		QUnit.test("when the popover menu with dirty changes is opened and closed multiple times", function(assert) {
+			prepareChanges(this.aMockChanges);
+			this.oRta.setMode("visualization");
+			return waitForMethodCall(this.oRta.getToolbar(), "setModel")
+				.then(function() {
+					oCore.applyChanges();
+					assert.strictEqual(
+						collectIndicatorReferences().filter(function(oIndicator) {
+							return oIndicator.getVisible();
+						}).length,
+						3,
+						"then the indicators are visible"
+					);
+
+					this.oRta.setMode("adaptation");
+					this.aMockChanges.push(createMockChange("testMove", "move", "Comp1---idMain1--lb2"));
+					oCore.applyChanges();
+					this.oRta.setMode("visualization");
+
+					return waitForMethodCall(this.oToolbar, "setModel")
+						.then(function() {
+							assert.strictEqual(
+								collectIndicatorReferences().filter(function(oIndicator) {
+									return oIndicator.getVisible();
+								}).length,
+								4,
+								"then the indicator for the dirty change is added"
+							);
+
+							function waitForEvent(oElement, sEvent) {
+								return new Promise(function(resolve) {
+									oElement.attachEventOnce(sEvent, resolve);
+								});
+							}
+
+							var oChangeIndicator = collectIndicatorReferences().filter(function(oIndicator) {
+								return oIndicator.mProperties.selectorId === "Comp1---idMain1--lb2";
+							})[0];
+							var oOverlay = oCore.byId(oChangeIndicator.getOverlayId()).getDomRef();
+							var oCreatePopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
+							QUnitUtils.triggerEvent("click", oOverlay);
+
+							return oCreatePopoverPromise
+								.then(function() {
+									oCore.applyChanges();
+									var oPopover = oChangeIndicator.getAggregation("_popover");
+									assert.ok(oPopover.isOpen(), "after the first click the popover is opened");
+									var oClosePopoverPromise = waitForEvent(oPopover, "afterClose");
+									QUnitUtils.triggerEvent("click", oOverlay);
+									return oClosePopoverPromise;
+								})
+								.then(function() {
+									oCore.applyChanges();
+									var oPopover = oChangeIndicator.getAggregation("_popover");
+									assert.notOk(oPopover.isOpen(), "after the second click the popover is closed");
+									var oOpenPopoverPromise = waitForEvent(oPopover, "afterOpen");
+									QUnitUtils.triggerEvent("click", oOverlay);
+									return oOpenPopoverPromise;
+								})
+								.then(function() {
+									oCore.applyChanges();
+									var oPopover = oChangeIndicator.getAggregation("_popover");
+									assert.ok(oPopover.isOpen(), "after the third click the popover is opened again");
+								});
+						});
 				}.bind(this));
 		});
 
@@ -883,11 +946,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the change visualization is created a second time", function(assert) {
-			var fnDone = assert.async();
 			this.oRta.setMode("adaptation");
 			oCore.applyChanges();
 			this.oRta.setMode("visualization");
-			waitForMethodCall(this.oToolbar, "setModel")
+			return waitForMethodCall(this.oToolbar, "setModel")
 				.then(function() {
 					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
 				}.bind(this))
@@ -895,7 +957,6 @@ sap.ui.define([
 					oCore.applyChanges();
 					assert.strictEqual(collectIndicatorReferences().length, 1, "then indicators are created again");
 					this.oChangeVisualization.destroy();
-					fnDone();
 				}.bind(this));
 		});
 
