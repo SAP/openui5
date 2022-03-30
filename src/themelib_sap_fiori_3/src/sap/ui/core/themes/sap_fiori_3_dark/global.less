@@ -194,7 +194,7 @@
 @sapUiLinkActiveColor: @sapLink_Active_Color;
 @sapUiLinkVisitedColor: @sapLink_Visited_Color;
 @sapUiLinkInvertedColor: @sapLink_InvertedColor;
-@sapUiLinkSubtle: @sapLink_SubtleColor;
+@sapUiLinkSubtleColor: @sapLink_SubtleColor;
 
 @sapUiShellBackground: @sapShell_Background;
 @sapUiShellBackgroundImage: @sapShell_BackgroundImage;
@@ -1092,10 +1092,11 @@
 @sapUiUx3ExactLstContentTop: 25px;
 
 // Link
-@sapUiLinkActive: @sapUiLink;
-@sapUiLinkVisited: @sapUiLink;
-@sapUiLinkHover: lighten(@sapUiLink, 10);
-@sapUiLinkInverted: darken(@sapUiLink, 48);
+@sapUiLinkActive: @sapUiLinkActiveColor;
+@sapUiLinkVisited: @sapUiLinkVisitedColor;
+@sapUiLinkHover: @sapUiLinkHoverColor;
+@sapUiLinkInverted: @sapUiLinkInvertedColor;
+@sapUiLinkSubtle: @sapUiLinkSubtleColor;
 
 // Notification Bar
 @sapUiNotificationBarBG: fade(@sapUiPrimary7, 98);
