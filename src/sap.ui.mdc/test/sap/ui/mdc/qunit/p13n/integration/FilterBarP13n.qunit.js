@@ -61,6 +61,8 @@ sap.ui.define([
 					conditions: "{$filters>/conditions/" + sKey + "}"
 				}));
 			});
+
+			return this.oFilterBar.initialized();
 		},
 		destroyTestObjects: function() {
 			this.oFilterBar.destroy();

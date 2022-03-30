@@ -388,7 +388,7 @@ sap.ui.define([
 
 		oSomeInstance = fnCreateInstance();
         assert.notOk(oSomeInstance._oPropertyHelper, "property helper not available");
-		assert.notOk(oSomeInstance._bPropertyHelperInitializing, "property helper not initializing");
+		assert.ok(oSomeInstance._bPropertyHelperInitializing, "property helper initializing without initial properties");
 		oSomeInstance.destroy();
 
 
