@@ -1,0 +1,55 @@
+<mvc:View
+	controllerName="sap.f.cardsdemo.controller.ShowCardWithResolvedManifest"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:editor="sap.ui.codeeditor"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}" enableScrolling="false">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Show Card With Resolve Manifest" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<VBox renderType="Bare" height="100%">
+			<HBox>
+				<Button class="sapUiSmallMargin" text="Simulate Show Card Pressed" press=".simulateShowCardButtonPress" />
+				<Button class="sapUiSmallMargin" text="Simulate Hide Card Pressed and closing of page/dilaog" press=".simulateHideCardButtonPress" />
+			</HBox>
+			<HBox>
+				<layoutData>
+					<FlexItemData minHeight="0" growFactor="1"></FlexItemData>
+				</layoutData>
+				<VBox class="sapUiSmallMargin">
+					<Title text="Output main card" class="sapUiTinyMargin" />
+					<editor:CodeEditor
+						id="output1"
+						type="json">
+						<editor:layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</editor:layoutData>
+					</editor:CodeEditor>
+					<layoutData>
+						<FlexItemData growFactor="1"></FlexItemData>
+					</layoutData>
+				</VBox>
+				<VBox class="sapUiSmallMargin">
+					<Title text="Output child card" class="sapUiTinyMargin" />
+					<editor:CodeEditor
+						id="output2"
+						type="json">
+						<editor:layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</editor:layoutData>
+					</editor:CodeEditor>
+					<layoutData>
+						<FlexItemData growFactor="1"></FlexItemData>
+					</layoutData>
+				</VBox>
+			</HBox>
+		</VBox>
+	</Page>
+</mvc:View>

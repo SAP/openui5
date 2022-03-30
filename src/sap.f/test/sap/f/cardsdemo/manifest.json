@@ -258,6 +258,11 @@
 					"target": "manifestResolver"
 				},
 				{
+					"pattern": "showCardWithResolvedManifest",
+					"name": "showCardWithResolvedManifest",
+					"target": "showCardWithResolvedManifest"
+				},
+				{
 					"pattern": "csrfToken",
 					"name": "csrfToken",
 					"target": "csrfToken"
@@ -472,6 +477,11 @@
 				"manifestResolver": {
 					"id": "manifestResolver",
 					"name": "ManifestResolver",
+					"level": 1
+				},
+				"showCardWithResolvedManifest": {
+					"id": "showCardWithResolvedManifest",
+					"name": "ShowCardWithResolvedManifest",
 					"level": 1
 				},
 				"csrfToken": {

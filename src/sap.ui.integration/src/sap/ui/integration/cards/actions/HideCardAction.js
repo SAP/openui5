@@ -21,7 +21,13 @@ sap.ui.define([
 	 */
 	HideCardAction.prototype.execute = function () {
 		var oCard = this.getCardInstance(),
-			oDialog = oCard.getParent();
+			oDialog = oCard.getParent(),
+			oHost = oCard.getHostInstance();
+
+		if (oHost && oHost.onHideCard) {
+			oHost.onHideCard(oCard);
+			return; // @todo should we wait for host and then destroy
+		}
 
 		if (oDialog instanceof Dialog) {
 			oDialog.close();
