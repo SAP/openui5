@@ -1199,6 +1199,36 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.test("when the timezone is updated via value binding, the timezone popup is updated", function(assert) {
+		// arrange
+		var oDTP = new DateTimePicker("dtp", {
+				timezone: "America/New_York"
+			}).placeAt("qunit-fixture"),
+			oTimezonePopup;
+
+		// act
+		oTimezonePopup = oDTP._getTimezoneNamePopup();
+
+		// assert
+		assert.equal(oTimezonePopup.getTitle(), "America/New_York",
+			"the popup shows the correct timezone");
+
+		// act
+		// simulate timezone change, not using the timezone setter
+		this.stub(oDTP, "_getTimezone").callsFake(function() {
+			return "America/Chicago";
+		});
+		// act
+		oTimezonePopup = oDTP._getTimezoneNamePopup();
+
+		// assert
+		assert.equal(oTimezonePopup.getTitle(), "America/Chicago",
+			"the popup shows the correct timezone");
+
+		// clean
+		oDTP.destroy();
+	});
+
 	QUnit.module("Different application timezone", {
 		before: function() {
 			var sTZ1 = "Europe/Sofia";
