@@ -701,6 +701,7 @@ sap.ui.define([
 			// Reattach files to the input field if already selected
 			/*eslint strict: [2, "never"]*/
 			this.oFileUpload.files = aFiles;
+			this._cacheDOMEls();
 		}
 	};
 
