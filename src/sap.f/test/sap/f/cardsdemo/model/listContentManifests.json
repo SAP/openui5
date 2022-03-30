@@ -223,6 +223,7 @@
 						"value": "{infoState}",
 						"state": "{infoState}"
 					},
+					"highlight": "{infoState}",
 					"attributesLayoutType": "{attributesLayoutType}",
 					"attributes": [
 						{
@@ -251,6 +252,22 @@
 						}
 					],
 					"actionsStrip": [
+						{
+							"type": "Link",
+							"text": "Link to Meal",
+							"icon": "sap-icon://action",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "http://sap.com"
+									}
+								}
+							]
+						},
+						{
+							"type": "ToolbarSpacer"
+						},
 						{
 							"text": "Add",
 							"actions": [
