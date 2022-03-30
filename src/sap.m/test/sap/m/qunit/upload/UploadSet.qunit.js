@@ -16,9 +16,10 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragAndDrop",
 	"sap/ui/base/Event",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/model/Sorter"
 ], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -787,6 +788,49 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(this.oUploadSet.getSelectedItems().length, 0, "0 items are selected");
+	});
+
+	QUnit.module("Grouping tests", {
+		beforeEach: function() {
+			this.oUploadSet = new UploadSet({
+				items: {
+					path: "/items",
+					templateShareable: false,
+					template: TestUtils.createItemTemplate(),
+					sorter: new Sorter("fileName", false, function(oContext) {
+						return {
+							key: oContext.getProperty("fileName"),
+							upperCase: false
+						};
+					})
+				}
+			}).setModel(new JSONModel(getData()));
+			this.oUploadSet.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oUploadSet.destroy();
+			this.oUploadSet = null;
+		}
+	});
+
+	QUnit.test("Test for adding Groups", function(assert) {
+		//Arrange
+		this.spy(this.oUploadSet._oList, "addItemGroup");
+		var aList = this.oUploadSet._oList,
+			aItems = aList.getItems();
+
+		//Act
+		this.oUploadSet.rerender();
+
+		//Assert
+		assert.equal(this.oUploadSet._oList.addItemGroup.callCount, 2, "Two groups were added");
+		assert.equal(aItems.length, 4, "Each item is part of a separate group (we have inside 2 group items, each with 1 UploadSet item)");
+		aItems.forEach(function(oItem) {
+			if (oItem._bGroupHeader) {
+				assert.ok(oItem.getTitle().length > 0, "The group item has title property");
+			}
+		});
 	});
 
 });

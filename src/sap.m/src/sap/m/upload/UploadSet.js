@@ -472,6 +472,8 @@ sap.ui.define([
 		this._$Body = null;
 		this._$DragDropArea = null;
 		this._oLastEnteredTarget = null;
+
+		this._aGroupHeadersAdded = [];
 	};
 
 	UploadSet.prototype.exit = function () {
@@ -499,7 +501,10 @@ sap.ui.define([
 	/* Overriden API methods */
 	/* ===================== */
 
-	UploadSet.prototype.onBeforeRendering = function () {
+	UploadSet.prototype.onBeforeRendering = function (oEvent) {
+		this._aGroupHeadersAdded = [];
+		this._clearList();
+		this._fillListWithUploadSetItems(this.getItems());
 	};
 
 	UploadSet.prototype.onAfterRendering = function () {
@@ -599,18 +604,10 @@ sap.ui.define([
 
 	UploadSet.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
 		Control.prototype.addAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
-		if (oObject && (sAggregationName === "items" || sAggregationName === "incompleteItems")) {
-			this._projectToNewListItem(oObject);
-			this._refreshInnerListStyle();
-		}
 	};
 
 	UploadSet.prototype.insertAggregation = function (sAggregationName, oObject, iIndex, bSuppressInvalidate) {
 		Control.prototype.insertAggregation.call(this, sAggregationName, oObject, iIndex, bSuppressInvalidate);
-		if (oObject && (sAggregationName === "items" || sAggregationName === "incompleteItems")) {
-			this._projectToNewListItem(oObject, iIndex || 0);
-			this._refreshInnerListStyle();
-		}
 	};
 
 	UploadSet.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
@@ -1352,11 +1349,11 @@ sap.ui.define([
 	UploadSet.prototype._projectToNewListItem = function (oItem, iIndex) {
 		var oListItem = oItem._getListItem();
 		this._mListItemIdToItemMap[oListItem.getId()] = oItem; // TODO: Probably unnecessary
-		if (iIndex || iIndex === 0) {
-			this.getList().insertAggregation("items", oListItem, iIndex, true);
-		} else {
-			this.getList().addAggregation("items", oListItem, true);
+		if (oItem.sParentAggregationName === 'items') {
+			// maps groups for each item if group configuration provided
+			this._mapGroupForItem(oItem);
 		}
+		this.getList().addAggregation("items", oListItem, true);
 		this._checkRestrictionsForItem(oItem);
 	};
 
@@ -1504,6 +1501,59 @@ sap.ui.define([
 			return aUploadSetItems;
 		}
 		return null;
+	};
+
+	/**
+	 * Destroy the items in the List.
+	 * @private
+	 */
+	 UploadSet.prototype._clearList = function() {
+		if (this._oList) {
+			this.getList().destroyAggregation("items", true);	// note: suppress re-rendering
+		}
+	};
+
+	/**
+	 * Map group for item.
+	 * @param {sap.m.UploadSetItem} item The UploadSetItem to map group
+	 * @private
+	 */
+	 UploadSet.prototype._mapGroupForItem = function(item) {
+		var oItemsBinding = this.getBinding("items"),
+			sModelName = this.getBindingInfo("items") ? this.getBindingInfo("items").oModel : undefined,
+			fnGroupHeader = this.getBindingInfo("items") ? this.getBindingInfo("items").groupHeaderFactory : null;
+		var fnGroup = function(oItem) {
+			//Added sModelName to consider named model cases if empty default model is picked without checking model bind to items.
+			return oItem.getBindingContext(sModelName) ? oItemsBinding.getGroup(oItem.getBindingContext(sModelName)) : null;
+		};
+		var fnGroupKey = function(item) {
+			return fnGroup(item) && fnGroup(item).key;
+		};
+
+		if (oItemsBinding && oItemsBinding.isGrouped() && item) {
+			if ( !this._aGroupHeadersAdded.some( function(group){ return group === fnGroupKey(item);} ) ) {
+				if (fnGroupHeader) {
+					this.getList().addItemGroup(fnGroup(item), fnGroupHeader(fnGroup(item)), true);
+				} else if (fnGroup(item)) {
+					this.getList().addItemGroup(fnGroup(item), null, true);
+				}
+				this._aGroupHeadersAdded.push(fnGroupKey(item));
+			}
+		}
+	};
+
+	/**
+	 * Fills list with uploadSet items.
+	 * @param {sap.m.UploadSetItem[]} aItems The UploadSetItems the internal list is to be filled with
+	 * @private
+	 */
+	UploadSet.prototype._fillListWithUploadSetItems = function (aItems){
+		var that = this;
+		aItems.forEach(function(item, index) {
+			item._reset();
+			that._projectToNewListItem(item, index, true);
+			that._refreshInnerListStyle();
+		});
 	};
 
 	return UploadSet;

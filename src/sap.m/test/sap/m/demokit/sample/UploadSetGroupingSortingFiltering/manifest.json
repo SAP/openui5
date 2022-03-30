@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.UploadSetGroupingSortingFiltering",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.UploadSetGroupingSortingFiltering.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Dialog.fragment.xml",
+					"Page.view.xml",
+					"Page.controller.js",
+					"items.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

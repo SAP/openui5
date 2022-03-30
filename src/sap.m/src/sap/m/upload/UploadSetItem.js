@@ -1045,5 +1045,15 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Resets item flags to initial state, that can be used to recreate the item
+	 * @private
+	 */
+	UploadSetItem.prototype._reset = function() {
+		this._oListItem = null;
+		this._oIcon = null;
+		this._oDynamicContent = null;
+	};
+
 	return UploadSetItem;
 });
