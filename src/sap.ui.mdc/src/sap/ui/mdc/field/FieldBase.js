@@ -22,7 +22,6 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/base/Log',
 	'sap/ui/dom/containsOrEquals',
-	'sap/ui/model/Filter',
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
@@ -53,7 +52,6 @@ sap.ui.define([
 	merge,
 	Log,
 	containsOrEquals,
-	Filter,
 	BindingMode,
 	FormatException,
 	ParseException,
@@ -2544,6 +2542,9 @@ sap.ui.define([
 					if (aNewConditions[0].outParameters) {
 						aConditions[i].outParameters = aNewConditions[0].outParameters;
 					}
+					if (aNewConditions[0].payload) {
+						aConditions[i].payload = aNewConditions[0].payload;
+					}
 				}
 			} else {
 				var oOperator = FilterOperatorUtil.getEQOperator(this._getOperators());
@@ -2571,7 +2572,7 @@ sap.ui.define([
 				}
 
 				// take what ever comes from field help as valid - even if it is an empty key
-				var iIndex = bAdd ? -1 : FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
+				var iIndex = bAdd ? -1 : FilterOperatorUtil.indexOfCondition(oCondition, aConditions);	// Why?
 				if (iIndex === -1) { // check if already exist
 					aConditions.push(oCondition);
 				} else if (oCondition.values[1] !== aConditions[iIndex].values[1] && aConditions[iIndex].values[1]) {
@@ -2632,6 +2633,7 @@ sap.ui.define([
 		}
 
 		var aConditionsOld = this.getConditions();
+
 		if (!deepEqual(aConditions, aConditionsOld)) {
 			this._oNavigateCondition = undefined;
 			this._oContentFactory.updateConditionType();
@@ -2641,13 +2643,11 @@ sap.ui.define([
 			if (!FilterOperatorUtil.compareConditionsArray(aConditions, aConditionsOld)) { // update only if real change
 				// handle out-parameters
 				oFieldHelp.onControlChange();
-
 				_triggerChange.call(this, aConditions, true);
 			}
 		} else if (bChangeAfterError) { // last valif value choosen again
 			_triggerChange.call(this, aConditions, true);
 		}
-
 	}
 
 	function _handleFieldHelpNavigated(oEvent) {
@@ -2948,8 +2948,9 @@ sap.ui.define([
 			preventGetDescription: this._bPreventGetDescription,
 			conditionModel: oConditionModelInfo.model,
 			conditionModelName: oConditionModelInfo.name,
-			defaultOperatorName: this.getDefaultOperator ? this.getDefaultOperator() : null,
-			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getMaxConditions() !== 1 // also replace whitespaces in tokens
+			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getMaxConditions() !== 1, // also replace whitespaces in tokens
+			control: this,
+			defaultOperatorName : this.getDefaultOperator ? this.getDefaultOperator() : null
 		};
 
 	};
@@ -3024,8 +3025,9 @@ sap.ui.define([
 			preventGetDescription: this._bPreventGetDescription,
 			conditionModel: oConditionModelInfo.model,
 			conditionModelName : oConditionModelInfo.name,
-			getConditions: this.getConditions.bind(this), // TODO: better solution to update unit in all conditions
-			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getEditMode() === EditMode.EditableDisplay
+			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getEditMode() === EditMode.EditableDisplay,
+			control: this,
+			getConditions: this.getConditions.bind(this) // TODO: better solution to update unit in all conditions
 		};
 
 	};

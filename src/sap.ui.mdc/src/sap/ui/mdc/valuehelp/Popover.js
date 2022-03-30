@@ -175,10 +175,11 @@ sap.ui.define([
 
 		var oContent = this._getContent();
 		var oContentPromise = oContent && oContent.getContent();
+		var oBeforeShowPromise = oContent && oContent.onBeforeShow();
 		var oContainerConfig = this._getContainerConfig(oContent);
 		var oFooterContentPromise = oContainerConfig && oContainerConfig.getFooter && oContainerConfig.getFooter();
 
-		return Promise.all([oContentPromise, oFooterContentPromise]).then(function (aContents) {
+		return Promise.all([oContentPromise, oFooterContentPromise, oBeforeShowPromise]).then(function (aContents) {
 			this._oCurrentContent = aContents[0];
 			var oFooterContent = aContents[1];
 

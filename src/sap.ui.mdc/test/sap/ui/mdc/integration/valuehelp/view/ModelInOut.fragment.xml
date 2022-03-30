@@ -1,0 +1,145 @@
+<layout:VerticalLayout id="notSuspendedLayout"
+	xmlns:layout="sap.ui.layout"
+	width="100%"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:f2="sap.f"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
+	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:mdct="sap.ui.mdc.table"
+	xmlns:ui="sap.ui"
+	xmlns:uit="sap.ui.table"
+	xmlns:variants="sap.ui.fl.variants"
+	xmlns:types="sap.ui.v4demo.types"
+	xmlns:demo="sap.ui.v4demo.controls">
+
+	<Title class="sapUiSmallMarginBottom" level="H3" text="Inparameter Filterbar" />
+	<Title class="sapUiSmallMarginBottom" level="H3" text="Supported Table Types" />
+	<mdc:FilterBar class="sapUiLargeMarginBottom" id="FB0" p13nMode="Item,Value" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/FB0.delegate', payload: {collectionName: 'Books'}}">
+		<mdc:dependents>
+			<mdc:ValueHelp
+				id="FH-Books"
+				delegate="{name: 'sap/ui/v4demo/delegate/modelinout/Books-ValueHelp.delegate', payload: {}}">
+				<mdc:typeahead>
+					<mdcv:Popover title="Test2">
+						<mdcvc:MTable keyPath="ID" descriptionPath="title" useAsValueHelp="false" filterFields="$search">
+							<Table items='{path : "/Books", length: 10}' width="30rem" mode="SingleSelectMaster">
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="createdAt" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="metricsSyllables" />
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{ID}" />
+											<Text text="{createdAt}" />
+											<Text text="{metricsSyllables}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog title="MDC Table with m.Table">
+							<mdcvc:MDCTable title="Books" keyPath="ID" descriptionPath="title" filterFields="$search" group="tables">
+								<mdcvc:filterBar>
+									<vhfb:FilterBar id="mdcFilterbar-listcollection-2" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+										<vhfb:basicSearchField>
+											<mdc:FilterField
+												delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+												dataType= "Edm.String"
+												conditions= "{$filters>/conditions/$search}"
+												width="50%"
+												maxConditions="1"
+												placeholder="Search" />
+										</vhfb:basicSearchField>
+										<vhfb:filterItems>
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="CreatedAt" dataType="Edm.DateTimeOffset" dataTypeConstraints="{precision: 7, V4: true}" conditions="{path: '$filters>/conditions/createdAt'}" />
+										</vhfb:filterItems>
+										<vhfb:filterItems>
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="metricsSyllables" dataType="Edm.Decimal" dataTypeConstraints="{scale: 1, precision: 9}" conditions="{path: '$filters>/conditions/metricsSyllables'}" />
+										</vhfb:filterItems>
+									</vhfb:FilterBar>
+								</mdcvc:filterBar>
+
+								<mdc:Table autoBindOnInit="true"
+									id="mdcTable-listcollection-1"
+									width="100%"
+									height="100%"
+									headerVisible="true"
+									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+									p13nMode="Column,Sort"
+									delegate="{name: 'sap/ui/v4demo/delegate/ResponsiveTable.delegate', payload: {collectionName: 'Books'}}"
+									threshold="50">
+									<mdc:type>
+										<mdc:table.ResponsiveTableType growingMode="Scroll" />
+									</mdc:type>
+									<mdc:columns>
+										<mdc:table.Column id="mdcTable-listcollection-1_col_ID" header="ID" dataProperty="ID">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+										</mdc:table.Column>
+										<mdc:table.Column id="mdcTable-listcollection-1_col_title" header="title" dataProperty="title">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display"/>
+										</mdc:table.Column>
+										<mdc:table.Column id="mdcTable-listcollection-1_col_syllables" header="metricsSyllables" dataProperty="metricsSyllables">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{metricsSyllables}" editMode="Display"/>
+										</mdc:table.Column>
+										<mdc:table.Column id="mdcTable-listcollection-1_col_created" header="createdAt" dataProperty="createdAt">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{createdAt}" editMode="Display"/>
+										</mdc:table.Column>
+									</mdc:columns>
+								</mdc:Table>
+							</mdcvc:MDCTable>
+							<mdcvc:Conditions label="Conditions"></mdcvc:Conditions>
+					</mdcv:Dialog>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+		</mdc:dependents>
+		<mdc:filterItems>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF1-11"
+				label="Books"
+				conditions="{$filters>/conditions/ID}"
+				dataType="Edm.Int32"
+				required="false"
+				fieldHelp="FH-Books"
+				display="DescriptionValue"
+				maxConditions="{settings>/maxConditions}" />
+		</mdc:filterItems>
+	</mdc:FilterBar>
+
+
+	<mdc:FilterBar class="sapUiLargeMarginBottom" id="FB1" p13nMode="Item,Value" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/FB0.delegate', payload: {collectionName: 'Books'}}">
+		<mdc:filterItems>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB1-FF1-11"
+				label="Receives Externalized State"
+				conditions="{$filters>/conditions/ID}"
+				dataType="Edm.Int32"
+				required="false"
+				display="DescriptionValue"
+				maxConditions="{settings>/maxConditions}" />
+		</mdc:filterItems>
+	</mdc:FilterBar>
+
+</layout:VerticalLayout>

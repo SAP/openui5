@@ -125,6 +125,10 @@ sap.ui.define([
 			oBindingInfo.model = oBindingInfo.model || oDelegatePayload.model;
 		}
 
+		if (oDelegatePayload && oDelegatePayload.collectionName === "Authors") {
+			oBindingInfo.parameters.$expand = "countryOfOrigin";
+		}
+
 		var oFilterBar = Core.byId(oTable.getFilter());
 		// var bTableFilterEnabled = oTable.isFilteringEnabled();
 		var mConditions;

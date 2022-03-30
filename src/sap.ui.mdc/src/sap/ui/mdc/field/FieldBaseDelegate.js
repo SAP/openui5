@@ -7,9 +7,9 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/odata/TypeUtil' // TODO: FieldBase & Field currently expect odata types in default delegate!
+	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/odata/TypeUtil'/* TODO: FieldBase & Field currently expect odata types in default delegate! */, 'sap/ui/model/FormatException'
 ], function(
-	BaseDelegate, TypeUtil
+	BaseDelegate, TypeUtil, FormatException
 ) {
 	"use strict";
 
@@ -171,14 +171,16 @@ sap.ui.define([
 	 *
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.mdc.field.FieldHelpBase} oFieldHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
-	 * @param {any} vValue Value as entered by user
-	 * @param {any} vParsedValue Value parsed by data type to fit the data type of the key
-	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>FieldHelp</code> element might be connected to a different row.
-	 * @param {boolean} bCheckKeyFirst If set, it first should be checked if the value fits a key
-	 * @param {boolean} bCheckKey If set, it should be checked if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
-	 * @param {boolean} bCheckDescription If set, it should be checked if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
-	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, if bound to one
-	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, if bound to one
+	 * @param {object} [oConfig] Configuration
+	 * @param {any} oConfig.value Value as entered by user
+	 * @param {any} oConfig.parsedValue Value parsed by data type to fit the data type of the key
+	 * @param {sap.ui.model.Context} oConfig.bindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>FieldHelp</code> element might be connected to a different row.
+	 * @param {boolean} oConfig.checkKeyFirst If set, it first should be checked if the value fits a key
+	 * @param {boolean} oConfig.checkKey If set, it should be checked if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
+	 * @param {boolean} oConfig.checkDescription If set, it should be checked if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
+	 * @param {sap.ui.mdc.condition.ConditionModel} [oConfig.conditionModel] <code>ConditionModel</code>, if bound to one
+	 * @param {string} [oConfig.conditionModelName] Name of the <code>ConditionModel</code>, if bound to one
+	 * @param {sap.ui.core.Control} oConfig.control Instance if the calling control
 	 * @returns {object|Promise} Object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.ParseException} if item cannot be determined
 	 * @since: 1.78.0
@@ -221,6 +223,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>FieldHelp</code> element might be connected to a different row.
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, if bound to one
 	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, if bound to one
+	 * @param {object} oConditionPayload Additional context information for this key
+	 * @param {sap.ui.core.Control} [oControl] Instance if the calling control
 	 * @returns {string|object|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.FormatException} if the description cannot be determined
 	 * @since: 1.78.0
@@ -228,9 +232,23 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	FieldBaseDelegate.getDescription = function(oPayload, oFieldHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName) {
-
-		if (oFieldHelp) {
+	FieldBaseDelegate.getDescription = function(oPayload, oFieldHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName, oConditionPayload, oControl) {
+		if (oFieldHelp && oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
+			var oConfig = {
+				value: vKey,
+				parsedValue: vKey,
+				context: {inParameters: oInParameters, outParameters: oOutParameters, payload: oConditionPayload},
+				bindingContext: oBindingContext,
+				conditionModel: oConditionModel,
+				conditionModelName: sConditionModelName,
+				checkKey: true,
+				checkDescription: false,
+				caseSensitive: true, // case sensitive as used to get description for known key
+				exception: FormatException,
+				control: oControl
+			};
+			return oFieldHelp.getItemForValue(oConfig);
+		} else if (oFieldHelp) {
 			return oFieldHelp.getTextForKey(vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName);
 		}
 

@@ -99,6 +99,10 @@ sap.ui.define(
 					return !!oPromiseConfig._isSettled;
 				};
 
+				oPromiseConfig.promise.isPending = function () {
+					return !oPromiseConfig._isSettled && !oPromiseConfig._isCanceled;
+				};
+
 				oPromiseConfig.promise.isCanceled = function () {
 					return !!oPromiseConfig._isCanceled;
 				};

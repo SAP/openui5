@@ -429,12 +429,12 @@
 			<mdc:ValueHelp
 				id="FB0-FH-Region"
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH-Region-ValueHelp.delegate', payload: {}}">
-					<mdc:inParameters>
+				<!-- <mdc:inParameters>
 						<mdcf:InParameter id="FB0-FH-Region-In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
 					</mdc:inParameters>
 					<mdc:outParameters>
 						<mdcf:OutParameter id="FB0-FH-Region-Out-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
-					</mdc:outParameters>
+					</mdc:outParameters> -->
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-Region-Popover" title="Region">
 						<mdcvc:MTable  id="FB0-FH-Region-Popover-MTable" keyPath="code" descriptionPath="text" filterFields="$search" title="Region" useAsValueHelp="false">
@@ -507,14 +507,15 @@
 			<mdc:ValueHelp
 				id="FB0-FH-City"
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH-City-ValueHelp.delegate', payload: {}}">
-					<mdc:inParameters>
+				<!-- <mdc:inParameters>
 						<mdcf:InParameter id="FB0-FH-City-In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
 						<mdcf:InParameter id="FB0-FH-City-In-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" />
 					</mdc:inParameters>
 					<mdc:outParameters>
 						<mdcf:OutParameter id="FB0-FH-City-Out-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
 						<mdcf:OutParameter id="FB0-FH-City-Out-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" />
-					</mdc:outParameters>
+					</mdc:outParameters> -->
+
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-City-Popover" title="City">
 						<mdcvc:MTable  id="FB0-FH-City-Popover-MTable" keyPath="city" descriptionPath="text" filterFields="$search" title="City" useAsValueHelp="false">

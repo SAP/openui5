@@ -39,7 +39,8 @@ sap.ui.define([
 		isOpen: function() {
 			return bIsOpen;
 		},
-		invalidate: function () {}
+		invalidate: function () {},
+		getValueHelpDelegate: function () {}
 	};
 
 	var _teardown = function() {

@@ -26,9 +26,9 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>Content</code>.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element.
+	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new element
+	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 * @constructor
@@ -93,6 +93,14 @@ sap.ui.define([
 					type: "object",
 					defaultValue: {}//,
 //					visibility: "hidden"
+				},
+				 /**
+				 * Hide content temporary.
+				 */
+				visible: {
+					type: "boolean",
+					group : "Appearance",
+					defaultValue: true
 				}
 
 			},
@@ -142,10 +150,7 @@ sap.ui.define([
 				 * Fired if the change is cancelled.
 				 */
 				cancel: {},
-				/**
-				 * Fired if the content requests the delegate content.
-				 */
-				requestDelegateContent: {},
+
 				/**
 				 * Fired if the value help should switch to dialog mode.
 				 */
@@ -243,6 +248,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Finalize content before it is shown
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 */
+	Content.prototype.onBeforeShow = function () {
+
+	};
+
+	/**
 	 * Called if the content will be shown.
 	 *
 	 * @private
@@ -283,6 +298,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConfig.conditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {string} [oConfig.conditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {boolean} [oConfig.caseSensitive] If set, the check is done case sensitive
+	 * @param {sap.ui.core.Control} oConfig.control Instance of the calling control
 	 * @returns {Promise<sap.ui.mdc.field.FieldHelpItem>} Promise returning object containing description, key, in and out parameters.
 	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *
@@ -339,14 +355,13 @@ sap.ui.define([
 	 *
 	 * @param {string} vValue Value of the condition. For item conditions this must be the key.
 	 * @param {string} [sDescription] Description of the operator
-	 * @param {object} [oInParameters] In parameters of the condition
-	 * @param {object} [oOutParameters] Out parameters of the condition
+	 * @param {object} [oPayload] payload
 	 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the maintained operator along with <code>sKey</code> and <code>sDescription</code> as <code>aValues</code>
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	Content.prototype._createCondition = function(vValue, sDescription, oInParameters, oOutParameters) {
+	Content.prototype._createCondition = function(vValue, sDescription, oPayload) {
 
 		var oOperator = _getOperator.call(this);
 
@@ -356,8 +371,7 @@ sap.ui.define([
 			aValues.push(sDescription);
 		}
 
-		return Condition.createCondition(oOperator.name, aValues, oInParameters, oOutParameters, ConditionValidated.Validated); // Conditions from help are always validated
-
+		return Condition.createCondition(oOperator.name, aValues, undefined, undefined, ConditionValidated.Validated, oPayload); // Conditions from help are always validated
 	};
 
 	/**
@@ -433,7 +447,7 @@ sap.ui.define([
 
 	/**
 	 * Determines if the the content needs to provide a scrolling mechanism like a
-	 * <code>ScrollContainer</code>
+	 * {@link sap.m.ScrollContainer ScrollContainer}
 	 *
 	 * <b>Note:</b> This function is used by the content and must not be used from outside
 	 *
@@ -477,6 +491,11 @@ sap.ui.define([
 		return oContainer && oContainer.isValueHelpDelegateInitialized();
 	};
 
+	Content.prototype._getControl = function () {
+		var oContainer = this.getParent();
+		return oContainer && oContainer._getControl();
+	};
+
 	Content.prototype.getCount = function (aConditions) {
 		return 0;
 	};
@@ -486,7 +505,7 @@ sap.ui.define([
 	 *
 	 * <b>Note</b> This function needs only to be implemented for <code>Content</code>
 	 * implementing the <code>sap.ui.mdc.valuehelp.Popover</code> container.
-	 * On dialogs the <code>Dialog</code> container defines the icon, as it could have multiple contents.
+	 * On dialogs the <code>sap.ui.mdc.valuehelp.Dialog</code> container defines the icon, as it could have multiple contents.
 	 *
 	 * @returns {string} Name of the icon
 	 * @private
@@ -608,7 +627,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Determines the title used in the TabBar of the dialog.
+	 * Determines the title used in the <code>TabBar</code> of the dialog.
 	 *
 	 * <b>Note:</b> This function is used by the container and must not be used from outside
 	 *

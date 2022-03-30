@@ -1977,6 +1977,38 @@ sap.ui.define([
 		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
 		assert.notOk(bEqual, "2 arrays with different conditions are not equal");
 
+		// check In/OutParameter
+		aConditions1 = [Condition.createItemCondition("X", "Y", {in1: "X"}, {out1: "Y"})];
+		aConditions2 = [Condition.createItemCondition("X", "Y")];
+		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
+		assert.ok(bEqual, "2 Conditions, one with in/out one withot are equal");
+
+		aConditions1 = [Condition.createItemCondition("X", "Y", {in1: "X"}, {out1: "Y"})];
+		aConditions2 = [Condition.createItemCondition("X", "Y", {in1: "X"}, {out1: "Y"})];
+		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
+		assert.ok(bEqual, "2 Conditions, with same in/out are equal");
+
+		aConditions1 = [Condition.createItemCondition("X", "Y", {in1: "X"}, {out1: "Y"})];
+		aConditions2 = [Condition.createItemCondition("X", "Y", {in1: "A"}, {out1: "B"})];
+		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
+		assert.notOk(bEqual, "2 Conditions, with different in/out are not equal");
+
+		// check payload
+		aConditions1 = [Condition.createItemCondition("X", "Y", undefined, undefined, {in1: "X", out1: "Y"})];
+		aConditions2 = [Condition.createItemCondition("X", "Y")];
+		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
+		assert.ok(bEqual, "2 Conditions, one with payload one withot are equal");
+
+		aConditions1 = [Condition.createItemCondition("X", "Y", undefined, undefined, {in1: "X", out1: "Y"})];
+		aConditions2 = [Condition.createItemCondition("X", "Y", undefined, undefined, {in1: "X", out1: "Y"})];
+		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
+		assert.ok(bEqual, "2 Conditions, with same payload are equal");
+
+		aConditions1 = [Condition.createItemCondition("X", "Y", undefined, undefined, {in1: "X", out1: "Y"})];
+		aConditions2 = [Condition.createItemCondition("X", "Y", undefined, undefined, {in2: "A", out2: "B"})];
+		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
+		assert.notOk(bEqual, "2 Conditions, with different payload are not equal");
+
 	});
 
 	QUnit.test("checkConditionValidated", function(assert) {

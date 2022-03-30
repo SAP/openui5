@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/m/FlexItemData',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/mdc/util/Common',
-	'sap/ui/mdc/enum/SelectType'
+	'sap/ui/mdc/enum/SelectType',
+	'sap/base/strings/formatMessage'
 ], function(
 	Container,
 	DialogTab,
@@ -21,12 +22,13 @@ sap.ui.define([
 	FlexItemData,
 	ResourceModel,
 	Common,
-	SelectType
+	SelectType,
+	formatMessage
 ) {
 	"use strict";
 
 	var MDialog, MLibrary, Button, ManagedObjectModel, IconTabBar, IconTabFilter;
-	var Panel, HBox, Tokenizer, Token, formatMessage;
+	var Panel, HBox, Tokenizer, Token;
 
 	/**
 	 * Constructor for a new <code>Dialog</code> container.
@@ -61,6 +63,15 @@ sap.ui.define([
 					type: "boolean",
 					visibility: "hidden",
 					defaultValue: false
+				},
+				_selectableContents: {
+					type: "object[]",
+					visibility: "hidden",
+					defaultValue: []
+				},
+				groupConfig: {
+					type: "object",
+					defaultValue: {}
 				}
 			},
 			defaultAggregation: "content"
@@ -84,6 +95,34 @@ sap.ui.define([
 			return Device.orientation.landscape ? "920px" : "600px";
 		}
 	}
+
+	function _isValidContentGroup(sName) {
+		var aContent = this.getContent();
+		return aContent.filter(function (oContent) {
+			return !!oContent.getVisible() && oContent.getGroup && oContent.getGroup() === sName;
+		}).length > 1;
+	}
+
+	Dialog.prototype._handleContentSelectionChange = function (sNextId) {
+		this.fireRequestDelegateContent({container: this.getId(), contentId: sNextId});
+		this._getRetrieveDelegateContentPromise().then(function () {
+			var sCurrentContentKey = this.getProperty("_selectedContentKey");
+			var aContents = this.getContent();
+			var oCurrentContent = sCurrentContentKey && aContents && aContents.find(function (oContent) {
+				return oContent.getId() === sCurrentContentKey;
+			});
+			if (oCurrentContent) {
+				oCurrentContent.onHide();
+			}
+			this._renderSelectedContent(sNextId);
+		}.bind(this));
+	};
+
+	Dialog.prototype._onTabBarSelect = function (oEvent) {
+		var oNextKey = oEvent && oEvent.getParameter("key");
+		this._handleContentSelectionChange(oNextKey);
+	};
+
 	Dialog.prototype.invalidate = function(oOrigin) {
 
 		if (oOrigin) {
@@ -116,14 +155,14 @@ sap.ui.define([
 
 	Dialog.prototype._handleClosed = function (oEvent) {
 
-		var aContents = this.getContent();
-		var oContent = this._sSelectedKey && aContents && aContents.find(function (oContent) {
-			return oContent.getId() === this._sSelectedKey;
-		}.bind(this));
+		var oContent = this.getSelectedContent();
 
 		if (oContent) {
 			oContent.onHide();
 		}
+
+		// Reset selection to initial key for retrieveContent calls before it is opened again.
+		this.setProperty("_selectedContentKey", this._sInitialContentKey);
 
 		Container.prototype._handleClosed.apply(this, arguments);
 	};
@@ -243,36 +282,130 @@ sap.ui.define([
 			this.setProperty("_quickSelectEnabled", aContent && aContent.every(function (oContent) {
 				return oContent.isQuickSelectSupported && oContent.isQuickSelectSupported();
 			}));
+
+			this._updateInitialContentKey();
+
+			if (oChanges.mutation === "insert" && !this.getProperty("_selectedContentKey")) {
+				this.setProperty("_selectedContentKey", this._sInitialContentKey);
+			}
+
+			this.setProperty("_selectableContents", this._getSelectableContents());
 		}
 		Container.prototype._observeChanges.apply(this, arguments);
 	};
 
-	Dialog.prototype._onTabBarSelect = function (oEvent) {
-		var aContents = this.getContent();
-		var oNextKey = oEvent && oEvent.getParameter("key");
-		var oPreviouslyShownContent = this._sSelectedKey && aContents && aContents.find(function (oContent) {
-			return oContent.getId() === this._sSelectedKey;
+	Dialog.prototype._updateInitialContentKey = function () {
+		var oFirstVisibleContent = this.getContent().find(function (oContent) {
+			return !!oContent.getVisible();
+		});
+		this._sInitialContentKey = oFirstVisibleContent && oFirstVisibleContent.getId();
+	};
+
+	Dialog.prototype.getSelectedContent = function () {
+		var sSelectedKey = this.getProperty("_selectedContentKey");
+		return this.getContent().find(function (oContent) {
+			return oContent.getId() === sSelectedKey;
+		});
+	};
+
+	Dialog.prototype._getSelectableContents = function () {
+		var oSelectedContent = this.getSelectedContent();
+		var oSelectedContentGroup = oSelectedContent && oSelectedContent.getGroup && oSelectedContent.getGroup();
+		var sSelectedGroup = oSelectedContent ? oSelectedContentGroup : "";
+		var aVisibleGroups = [sSelectedGroup];
+		return this.getContent().filter(function (oContent) {
+			if (!oContent.getVisible()) {
+				return false;
+			}
+			var sGroup = oContent.getGroup && oContent.getGroup();
+			var bValidContentGroup = sGroup && _isValidContentGroup.call(this, sGroup);
+
+			if (bValidContentGroup && (oContent !== oSelectedContent)) {
+				if (aVisibleGroups.indexOf(sGroup) >= 0) {
+					return false;
+				} else {
+					aVisibleGroups.push(sGroup);
+				}
+			}
+			return true;
 		}.bind(this));
-		if (oPreviouslyShownContent) {
-			oPreviouslyShownContent.onHide();
-		}
-		this._sSelectedKey = oNextKey || this._oIconTabBar && this._oIconTabBar.getSelectedKey();
-		if (!this._sSelectedKey) {
-			// in the initial usecase the selectedKey is undefined
-			var oFirstItem = this._oIconTabBar.getItems()[0];
-			this._sSelectedKey = oFirstItem && oFirstItem.getKey();
-			if (this._sSelectedKey) {
-				this.setProperty("_selectedContentKey", this._sSelectedKey);
+	};
+
+	Dialog.prototype._updateGroupSelectModel = function () {
+		if (this._oGroupSelectModel) {
+			var oSelectedContent = this.getSelectedContent();
+			var oSelectedContentGroup = oSelectedContent && oSelectedContent.getGroup && oSelectedContent.getGroup();
+			var aRelevantContents = oSelectedContentGroup ? this.getContent().filter(function (oContent) {
+				return !!oContent.getVisible() && oContent.getGroup && oContent.getGroup() === oSelectedContentGroup;
+			}) : [];
+			this._oGroupSelectModel.setData(aRelevantContents.reduce(
+				function (oResult, oControl) {
+					oResult.entries.push({
+						key: oControl.getId(),
+						text: oControl.getFormattedTitle()
+					});
+					return oResult;
+				},
+				{ entries: [] }
+			));
+			if (this._oGroupSelect) {	// Update selected key, if current one cannot be found in relevant contents
+				var sSelectedItemKey = this._oGroupSelect.getSelectedItemKey();
+				var aRelevantKeys = aRelevantContents.map(function (oContent) {
+					return oContent.getId();
+				});
+
+				var sSelectedKey = this.getProperty("_selectedContentKey");
+
+				if (aRelevantKeys.indexOf(sSelectedItemKey) == -1 || (sSelectedItemKey !== sSelectedKey)) {
+					this._oGroupSelect.setSelectedItemKey(aRelevantContents[0].getId());
+				}
 			}
 		}
-		var oShownContent = this._sSelectedKey ? aContents && aContents.find(function (oContent) {
-			return oContent.getId() === this._sSelectedKey;
-		}.bind(this)) : aContents[0];
-		if (oShownContent) {
-			Promise.all([this._retrievePromise("open"), oShownContent.getContent()]).then(function () {
-				oShownContent.onShow();
-			});
-		}
+	};
+
+	Dialog.prototype._retrieveGroupSelect = function () {
+		return this._retrievePromise("collectiveSearchSelect", function (){
+			return loadModules([
+				"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect",
+				"sap/ui/core/Item",
+				"sap/ui/model/json/JSONModel"
+			]).then(
+				function (aModules) {
+					var CollectiveSearchSelect = aModules[0];
+					var Item = aModules[1];
+					var JSONModel = aModules[2];
+
+					if (!this._oGroupSelectModel) {
+						this._oGroupSelectModel = new JSONModel();
+					}
+					if (!this._oGroupSelect) {
+						var oItemTemplate = new Item(
+							this.getId() + "-collSearchItem",
+							{
+								key: "{$select>key}",
+								text: "{$select>text}",
+								enabled: true
+								/*textDirection: "{$contenthelp>textDirection}" */
+							}
+						);
+						this._oGroupSelect = new CollectiveSearchSelect(this.getId() + "--Select",
+							{
+								items: {
+									path: "$select>/entries",
+									template: oItemTemplate
+								},
+								select: function (oEvent) {
+									this._handleContentSelectionChange(oEvent.getParameter("key"));
+								}.bind(this),
+								selectedItemKey: this.getSelectedContent().getId()
+							}
+						);
+						this._oGroupSelect.setModel(this._oGroupSelectModel, "$select");
+					}
+					return this._oGroupSelect;
+				}.bind(this)
+			);
+		}.bind(this));
 	};
 
 	Dialog.prototype._getIconTabBar = function (oDialog) {
@@ -291,8 +424,8 @@ sap.ui.define([
 						headerMode: IconTabHeaderMode.Inline,
 						select: this._onTabBarSelect.bind(this),
 						layoutData: new FlexItemData({growFactor: 1}),
-						selectedKey: "{$help>/_selectedContentKey}",
-						visible: {parts : ['$help>/content'], formatter:
+						selectedKey: "{path: '$help>/_selectedContentKey', mode: 'OneWay'}",
+						visible: {parts : ['$help>/_selectableContents'], formatter:
 							function(aContent) {
 								if (aContent && aContent.length == 1) {
 									this.addStyleClass("sapMdcNoHeader"); // hide the IconTabBar header
@@ -313,16 +446,32 @@ sap.ui.define([
 						content: new DialogTab(this.getId() + "-DT", {content: {path: "$help>displayContent"}}),
 						text: {parts: ['$help>', '$valueHelp>/conditions'], formatter:
 							function(oContent, aConditions) {
-								return oContent ? oContent.getFormattedTitle(oContent.getCount(aConditions)) : "none";
-							}
+								var sTitle = "none";
+								if (oContent) {
+									var sGroup = oContent.getGroup && oContent.getGroup();
+									var iCount = oContent.getCount(aConditions, sGroup);
+									sTitle = sGroup ? this._getFormattedContentGroupLabel(sGroup, iCount) : oContent.getFormattedTitle(iCount);
+								}
+								return sTitle;
+							}.bind(this)
 						}
 					});
 
-					this._oIconTabBar.bindAggregation("items", {path: "/content", model: "$help", templateShareable: false, template: oITF});
+					this._oIconTabBar.bindAggregation("items", {path: "/_selectableContents", model: "$help", templateShareable: false, template: oITF});
 					return this._oIconTabBar;
 			}.bind(this));
 		}
 		return this._oIconTabBar;
+	};
+
+
+	Dialog.prototype._getFormattedContentGroupLabel = function(sGroup, iCount) {
+		var oGroupConfig = this.getGroupConfig();
+		var oGroupConfigSegment = oGroupConfig && oGroupConfig[sGroup];
+		var sTitle = oGroupConfigSegment && (iCount ? oGroupConfigSegment.label : oGroupConfigSegment.nnLabel);
+		sTitle = sTitle && formatMessage(sTitle, iCount ? iCount : "");
+		sTitle = sTitle || this._oResourceBundle.getText(iCount ? "valuehelp.SELECTFROMLIST" : "valuehelp.SELECTFROMLISTNONUMBER", iCount);
+		return sTitle;
 	};
 
 	Dialog.prototype._getTokenizerPanel = function (oDialog) {
@@ -333,7 +482,6 @@ sap.ui.define([
 				'sap/m/VBox',
 				'sap/m/Tokenizer',
 				'sap/m/Token',
-				'sap/base/strings/formatMessage',
 				'sap/ui/model/Filter',
 				'sap/ui/mdc/field/ConditionType'
 			]).then(function (aModules) {
@@ -343,9 +491,8 @@ sap.ui.define([
 				VBox = aModules[2];
 				Tokenizer = aModules[3];
 				Token = aModules[4];
-				formatMessage = aModules[5];
-				var Filter = aModules[6];
-				var ConditionType = aModules[7];
+				var Filter = aModules[5];
+				var ConditionType = aModules[6];
 				var BackgroundDesign = MLibrary.BackgroundDesign;
 				var ButtonType = MLibrary.ButtonType;
 
@@ -446,10 +593,51 @@ sap.ui.define([
 	};
 
 	Dialog.prototype._open = function (oContainer) {
-		this._onTabBarSelect();
 		if (oContainer) {
-			oContainer.open();
+			this._updateInitialContentKey(); // Update initial key as visibilities might change during content retrieval
+			this._renderSelectedContent(this._sInitialContentKey, function () {
+				oContainer.open();
+			});
 		}
+	};
+
+	Dialog.prototype._renderSelectedContent = function (sNextContentId, fnBeforeShow) {
+		var oNextContent = this.getContent().find(function (oContent) {
+			return oContent.getId() === sNextContentId;
+		});
+
+		if (!oNextContent) {
+			throw new Error("sap.ui.mdc.ValueHelp: No content found.");
+		}
+
+		var aNecessaryPromises = [oNextContent.getContent(), oNextContent.onBeforeShow()];
+		var sSelectedContentGroup = oNextContent.getGroup && oNextContent.getGroup();
+		var oGroupSelectPromise;
+		if (sSelectedContentGroup && _isValidContentGroup.call(this, sSelectedContentGroup)) {
+			oGroupSelectPromise = this._retrieveGroupSelect();
+			aNecessaryPromises.push(oGroupSelectPromise);
+		}
+		return Promise.all(aNecessaryPromises).then(function (aPromiseResults) {
+
+			this.setProperty("_selectedContentKey", sNextContentId);
+			this.setProperty("_selectableContents", this._getSelectableContents());
+
+			if (oGroupSelectPromise) {
+				this._updateGroupSelectModel();
+			}
+			if (oNextContent.setCollectiveSearchSelect) {
+				oNextContent.setCollectiveSearchSelect(oGroupSelectPromise ? this._oGroupSelect : undefined);
+			}
+
+			if (fnBeforeShow) {
+				fnBeforeShow();
+			}
+
+			return this._retrievePromise("open").then(function () {
+				oNextContent.onShow();
+				return oNextContent;
+			});
+		}.bind(this));
 	};
 
 	Dialog.prototype._close = function () {
@@ -474,7 +662,6 @@ sap.ui.define([
 			role: null, // TODO: use "combobox" role here? But Input and MultiInput don't set a role if valueHelp is available
 			roleDescription: null // TODO: is it needed in multiselect case?
 		};
-
 	};
 
 	Dialog.prototype.isMultiSelect = function() {
@@ -491,7 +678,10 @@ sap.ui.define([
 			"oButtonCancel",
 			"oTokenizerPanel",
 			"oTokenizer",
-			"_oIconTabBar"
+			"_oIconTabBar",
+			"_oGroupSelect",
+			"_oGroupSelectModel",
+			"_sInitialContentKey"
 		]);
 	};
 

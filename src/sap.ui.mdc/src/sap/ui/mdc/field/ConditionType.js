@@ -73,6 +73,7 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.conditionModelName] Name of the <code>ConditionModel</code>, if bound to one
 	 * @param {string} [oFormatOptions.defaultOperatorName] Name of the default <code>Operator</code>
 	 * @param {boolean} [oFormatOptions.convertWhitespaces] If set, whitespaces will be replaced by special characters to display whitespaces in HTML
+	 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance if the calling control
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.ConditionType
 	 */
@@ -142,7 +143,7 @@ sap.ui.define([
 					var vKey = bIsUnit ? oCondition.values[0][1] : oCondition.values[0];
 
 					return SyncPromise.resolve().then(function() {
-						return _getDescription.call(this, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName);
+						return _getDescription.call(this, vKey, oCondition, oBindingContext, oConditionModel, sConditionModelName);
 					}.bind(this)).then(function(vDescription) { // if description needs to be requested -> return if it is resolved
 						if (vDescription) {
 							oCondition = merge({}, oCondition); // do not manipulate original object
@@ -489,7 +490,7 @@ sap.ui.define([
 					// description is supported
 					aValues.push(oResult.description);
 				}
-				return Condition.createCondition(oOperator.name, aValues, oResult.inParameters, oResult.outParameters, ConditionValidated.Validated);
+				return Condition.createCondition(oOperator.name, aValues, oResult.inParameters, oResult.outParameters, ConditionValidated.Validated, oResult.payload);
 			} else if (vValue === "") {
 				// no empty key -> no condition
 				return null;
@@ -870,6 +871,7 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
+		var oControl = this.oFormatOptions.control;
 		var oConfig = {
 				value: vValue,
 				parsedValue: vParsedValue,
@@ -881,7 +883,8 @@ sap.ui.define([
 				checkDescription: bCheckDescription,
 				conditionModel: oConditionModel,
 				conditionModelName: sConditionModelName,
-				exception: ParseException
+				exception: ParseException,
+				control: oControl
 		};
 
 		if (oDelegate) {
@@ -894,16 +897,33 @@ sap.ui.define([
 
 	}
 
-	function _getDescription(vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName) {
+	function _getDescription(vKey, oCondition, oBindingContext, oConditionModel, sConditionModelName) {
 
 		var oFieldHelp = _getFieldHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
-
+		var oControl = this.oFormatOptions.control;
 		if (oDelegate) {
-			return oDelegate.getDescription(oPayload, oFieldHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName);
+			return oDelegate.getDescription(oPayload, oFieldHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName, oCondition.payload, oControl);
 		} else if (oFieldHelp) {
-			return oFieldHelp.getTextForKey(vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName);
+			if (oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
+					var oConfig = {
+						value: vKey,
+						parsedValue: vKey,
+						context: {inParameters: oCondition.inParameters, outParameters: oCondition.outParameters, payload: oCondition.payload},
+						bindingContext: oBindingContext,
+						conditionModel: oConditionModel,
+						conditionModelName: sConditionModelName,
+						checkKey: true,
+						checkDescription: false,
+						caseSensitive: true, // case sensitive as used to get description for known key
+						exception: FormatException,
+						control: oControl
+					};
+					return oFieldHelp.getItemForValue(oConfig);
+				} else {
+				return oFieldHelp.getTextForKey(vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName);
+			}
 		}
 
 	}
