@@ -37,7 +37,7 @@ sap.ui.define([
 			this.addItem(new Item({key: "Group", icon: "sap-icon://group-2"}));
 		}
 
-		if (oTable.getP13nMode().includes("Column") && oTable.getSupportedP13nModes().includes("Column")) {
+		if (oTable.getActiveP13nModes().includes("Column")) {
 			this.addItem(new Item({key: "Column", icon: "sap-icon://table-column"}));
 		}
 

@@ -157,7 +157,7 @@ sap.ui.define([
 			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
 			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
 
-			var oGroupHeaderFormatter = sinon.spy(oTable.getControlDelegate(), "formatGroupHeader");
+			var oGroupHeaderFormatter = sinon.stub(oTable.getControlDelegate(), "formatGroupHeader");
 			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
 			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
 			oGroupHeaderFormatter.restore();
@@ -267,7 +267,7 @@ sap.ui.define([
 			assert.notEqual(oPlugin, oOldPlugin, "V4Aggregation plugin is not the same instance");
 			assert.ok(oOldPlugin.bIsDestroyed, "Old V4Aggregation plugin is destroyed");
 
-			var oGroupHeaderFormatter = sinon.spy(that.oTable.getControlDelegate(), "formatGroupHeader");
+			var oGroupHeaderFormatter = sinon.stub(that.oTable.getControlDelegate(), "formatGroupHeader");
 			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
 			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(that.oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
 			oGroupHeaderFormatter.restore();
@@ -319,7 +319,7 @@ sap.ui.define([
 			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
 			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
 
-			var oGroupHeaderFormatter = sinon.spy(that.oTable.getControlDelegate(), "formatGroupHeader");
+			var oGroupHeaderFormatter = sinon.stub(that.oTable.getControlDelegate(), "formatGroupHeader");
 			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
 			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(that.oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
 			oGroupHeaderFormatter.restore();

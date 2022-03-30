@@ -664,17 +664,18 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Table.prototype.init = function() {
-
 		Control.prototype.init.apply(this, arguments);
-
-		// indicates whether binding the table is inevitable or not
-		this._bForceRebind = true;
-		this._updateAdaptation(this.getP13nMode());
 
 		// Skip propagation of properties (models and bindingContexts)
 		this.mSkipPropagation = {
 			rowSettings: true
 		};
+
+		// indicates whether binding the table is inevitable or not
+		this._bForceRebind = true;
+
+		this._aSupportedP13nModes = Object.keys(P13nMode);
+		this._updateAdaptation();
 	};
 
 	/**
@@ -999,7 +1000,7 @@ sap.ui.define([
 
 		if (this.getEnableColumnResize() !== bOldEnableColumnResize) {
 			this._updateColumnResizer();
-			this._updateAdaptation(this.getP13nMode());
+			this._updateAdaptation();
 		}
 
 		return this;
@@ -1043,7 +1044,7 @@ sap.ui.define([
 
 		this.setProperty("p13nMode", aSortedKeys, true);
 
-		this._updateAdaptation(this.getP13nMode());
+		this._updateAdaptation();
 
 		if (!deepEqual(aOldP13nMode.sort(), this.getP13nMode().sort())) {
 			updateP13nSettings(this);
@@ -1052,11 +1053,10 @@ sap.ui.define([
 		return this;
 	};
 
-	Table.prototype._updateAdaptation = function(aMode) {
+	Table.prototype._updateAdaptation = function() {
 		var oRegisterConfig = {
 			controller: {}
 		};
-
 		var mRegistryOptions = {
 			Column: ColumnController,
 			Sort: SortController,
@@ -1066,13 +1066,7 @@ sap.ui.define([
 			ColumnWidth: ColumnWidthController
 		};
 
-		if (this._aSupportedP13nModes) {
-			aMode = aMode.filter(function(sMode) {
-				return this._aSupportedP13nModes.includes(sMode);
-			}.bind(this));
-		}
-
-		aMode.forEach(function(sMode){
+		this.getActiveP13nModes().forEach(function(sMode){
 			oRegisterConfig.controller[sMode] = mRegistryOptions[sMode];
 		});
 
@@ -1094,7 +1088,7 @@ sap.ui.define([
 		if (oTable._oTable) {
 			var oDnDColumns = oTable._oTable.getDragDropConfig()[0];
 			if (oDnDColumns) {
-				oDnDColumns.setEnabled(oTable.getP13nMode().indexOf("Column") > -1);
+				oDnDColumns.setEnabled(oTable.getActiveP13nModes().indexOf("Column") > -1);
 			}
 		}
 
@@ -1330,7 +1324,6 @@ sap.ui.define([
 			oType.loadTableModules()
 		];
 
-		this._aSupportedP13nModes = ["Sort", "Filter", "Column", "Group", "Aggregate"];
 		if (this.isFilteringEnabled()) {
 			aInitPromises.push(this.retrieveInbuiltFilter());
 		}
@@ -1344,7 +1337,7 @@ sap.ui.define([
 
 			var oDelegate = this.getControlDelegate();
 			this._aSupportedP13nModes = oDelegate.getSupportedP13nModes(this);
-			this._updateAdaptation(this.getP13nMode());
+			this._updateAdaptation();
 
 			if (oDelegate.preInit) {
 				// Call after libraries are loaded, but before initializing controls.
@@ -1564,7 +1557,7 @@ sap.ui.define([
 	 */
 	Table.prototype.getCurrentState = function() {
 		var oState = {};
-		var aP13nMode = this.getP13nMode();
+		var aP13nMode = this.getActiveP13nModes();
 
 		if (aP13nMode.indexOf("Column") > -1) {
 			oState.items = this._getVisibleProperties();
@@ -1600,7 +1593,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether filter personalization is enabled
 	 */
 	Table.prototype.isFilteringEnabled = function() {
-		return this.getP13nMode().includes(P13nMode.Filter) && this.getSupportedP13nModes().includes(P13nMode.Filter);
+		return this.getActiveP13nModes().includes(P13nMode.Filter);
 	};
 
 	/**
@@ -1610,7 +1603,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether sort personalization is enabled
 	 */
 	Table.prototype.isSortingEnabled = function() {
-		return this.getP13nMode().includes(P13nMode.Sort) && this.getSupportedP13nModes().includes(P13nMode.Sort);
+		return this.getActiveP13nModes().includes(P13nMode.Sort);
 	};
 
 	/**
@@ -1620,7 +1613,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether group personalization is enabled
 	 */
 	Table.prototype.isGroupingEnabled = function () {
-		return this.getP13nMode().includes(P13nMode.Group) && this.getSupportedP13nModes().includes(P13nMode.Group);
+		return this.getActiveP13nModes().includes(P13nMode.Group);
 	};
 
 	/**
@@ -1630,15 +1623,26 @@ sap.ui.define([
 	 * @returns {boolean} Whether aggregation personalization is enabled
 	 */
 	Table.prototype.isAggregationEnabled = function () {
-		return this.getP13nMode().includes(P13nMode.Aggregate) && this.getSupportedP13nModes().includes(P13nMode.Aggregate);
+		return this.getActiveP13nModes().includes(P13nMode.Aggregate);
 	};
 
 	Table.prototype.getSupportedP13nModes = function() {
 		return this._aSupportedP13nModes || [];
 	};
 
+	Table.prototype.getActiveP13nModes = function() {
+		var aP13nModes = this.getP13nMode();
+		var aSupportedP13nModes = this.getSupportedP13nModes();
+
+		aP13nModes = aP13nModes.filter(function(sMode) {
+			return aSupportedP13nModes.includes(sMode);
+		});
+
+		return aP13nModes;
+	};
+
 	Table.prototype._getP13nButtons = function() {
-		var aP13nMode = this.getP13nMode();
+		var aP13nMode = this.getActiveP13nModes();
 		var aButtons = [];
 
 		// Note: 'Aggregate' does not have a p13n UI, if only 'Aggregate' is enabled no settings icon is necessary
@@ -1974,7 +1978,7 @@ sap.ui.define([
 			sourceAggregation: "columns",
 			targetAggregation: "columns",
 			dropPosition: "Between",
-			enabled: this.getP13nMode().indexOf("Column") > -1,
+			enabled: this.getActiveP13nModes().includes(P13nMode.Column),
 			drop: [
 				this._onColumnRearrange, this
 			]
