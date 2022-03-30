@@ -2467,15 +2467,9 @@ sap.ui.define([
 			 * register for messaging: register if either handleValidation is set in metadata
 			 * or if not set in metadata and set on instance
 			 */
-			var bHandleValidation = oInstance.getMetadata().handleValidation() !== undefined || vConfig.handleValidation;
-			if (bHandleValidation) {
-				// calculate handleValidation for registration
-				if (oInstance.getMetadata().handleValidation() !== undefined) {
-					bHandleValidation = oInstance.getMetadata().handleValidation();
-				} else {
-					bHandleValidation = vConfig.handleValidation;
-				}
-				sap.ui.getCore().getMessageManager().registerObject(oInstance, bHandleValidation);
+			var bHandleValidation = oInstance.getMetadata().getManifestEntry("/sap.ui5/handleValidation");
+			if (bHandleValidation !== undefined || vConfig.handleValidation) {
+				sap.ui.getCore().getMessageManager().registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
 			}
 
 			// Some services may demand immediate startup

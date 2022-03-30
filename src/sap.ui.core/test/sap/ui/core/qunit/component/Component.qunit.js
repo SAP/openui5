@@ -191,6 +191,124 @@ sap.ui.define([
 		oComponent.destroy();
 	});
 
+	QUnit.module("Special Cases & Compatibility Check", {
+		before: function() {
+			// Root View
+			sap.ui.predefine("sap/test/HandleValidationRootView", ["sap/ui/core/mvc/View", "sap/m/Button"], function(View, Button) {
+				return View.extend("sap.test.HandleValidationRootView", {
+					createContent: function() {
+						return Promise.resolve(new Button());
+					}
+				});
+			});
+
+			// Component Class
+			sap.ui.predefine("sap/test/handleValidation/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+				return UIComponent.extend("sap.test.handleValidation.Component", {
+					metadata: {
+						manifest: {
+							"sap.ui5": {
+								"dependencies": {
+									"libs": {
+										"sap.ui.core": {},
+										"sap.m": {}
+									}
+								},
+								"handleValidation": false,
+								"rootView": {
+									"viewName": "module:sap/test/HandleValidationRootView",
+									"async": true
+								}
+							}
+						}
+					}
+				});
+			});
+		},
+		afterEach: function() {
+			// Clear all messages so the tests don't interfere with eachother
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+		}
+	});
+
+	QUnit.test("handleValidation - Standard Component Manifest", function(assert) {
+		var oComponentGeneric;
+
+		return Component.create({
+			name: "sap.test.handleValidation",
+			id: "componentGeneric"
+		}).then(function(oComp) {
+			oComponentGeneric = oComp;
+			assert.ok(oComp, "Component created.");
+			assert.strictEqual(false, oComp.getManifestEntry("/sap.ui5/handleValidation"), "Correct handleValidation value was returned on instance: false");
+
+			// fire a validation error -> should NOT create a Message via the global MessageManager
+			// the Component has set "handleValidation" to <false> and thus is not registered to the
+			// global MessageManager
+			oComp.fireValidationError({
+				element: oComp,
+				property: "handleValidationTest",
+				newValue: false
+			});
+
+			var oMM = sap.ui.getCore().getMessageManager();
+			var aMessages = oMM.getMessageModel().getData();
+
+			assert.equal(aMessages.length, 0, "No messages must be created. The Component should not be registered to the MessageManager.");
+
+		}).finally(function() {
+			oComponentGeneric.destroy();
+		});
+	});
+
+	QUnit.test("handleValidation - Instance-Specific Manifest", function(assert) {
+		var oComponentInstanceSpecific;
+
+		return Component.create({
+			id: "componentSpecific",
+			manifest: {
+				"sap.app": {
+					id: "sap.test.handleValidation",
+					type: "application"
+				},
+				"sap.ui5": {
+					"dependencies": {
+						"libs": {
+							"sap.ui.core": {},
+							"sap.m": {}
+						}
+					},
+					"handleValidation": true,
+					"rootView": {
+						"viewName": "module:sap/test/HandleValidationRootView",
+						"async": true
+					}
+				}
+			}
+		}).then(function(oComp) {
+			oComponentInstanceSpecific = oComp;
+			assert.ok(oComp, "Component created.");
+			assert.strictEqual(true, oComp.getManifestEntry("/sap.ui5/handleValidation"), "Correct handleValidation value was returned on instance: true");
+
+			// fire a validation error -> should create a Message via the global MessageManager
+			// the Component has set "handleValidation" to <true> and thus is automatically registered to the
+			// global MessageManager
+			oComp.fireValidationError({
+				element: oComp,
+				property: "handleValidationTest",
+				newValue: true
+			});
+
+			var oMM = sap.ui.getCore().getMessageManager();
+			var aMessages = oMM.getMessageModel().getData();
+
+			assert.equal(aMessages.length, 1, "One messages must be created. The Component is automatically registered to the MessageManager.");
+
+		}).finally(function() {
+			oComponentInstanceSpecific.destroy();
+		});
+	});
+
 	QUnit.module("Factory Error Handling");
 
 	QUnit.test("Component.js error handling (manifestFirst)", function(assert) {
