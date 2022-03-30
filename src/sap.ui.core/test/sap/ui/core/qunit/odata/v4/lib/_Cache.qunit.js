@@ -6921,8 +6921,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bDropTransientElement) {
 	[undefined, false, true].forEach(function (bKeepTransientPath) {
-		QUnit.test("_Cache#create: bKeepTransientPath: " + bKeepTransientPath, function (assert) {
+		var sTitle = "_Cache#create: bKeepTransientPath: " + bKeepTransientPath
+				+ ", bDropTransientElement: " + bDropTransientElement;
+
+		if (bKeepTransientPath !== false && bDropTransientElement) {
+			return;
+		}
+
+		QUnit.test(sTitle, function (assert) {
 			var oCache = new _Cache(this.oRequestor, "TEAMS", {/*mQueryOptions*/}),
 				oCacheMock = this.mock(oCache),
 				aCollection = [],
@@ -6997,7 +7005,7 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oEntityDataCleaned), "predicate", sPredicate);
 			}
 			if (bKeepTransientPath === false) {
-				oHelperMock.expects("updateTransientPaths")
+				oHelperMock.expects("updateTransientPaths").exactly(bDropTransientElement ? 0 : 1)
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 						sPredicate)
 					.callThrough();
@@ -7042,6 +7050,10 @@ sap.ui.define([
 				}
 			});
 
+			if (bDropTransientElement) { // side-effects refresh might drop transient element
+				delete aCollection.$byPredicate[sTransientPredicate];
+			}
+
 			this.spy(_Helper, "removeByPath");
 			return oCreatePromise.then(function (oEntityData) {
 				var oExpectedPrivateAnnotation = {};
@@ -7059,17 +7071,24 @@ sap.ui.define([
 				assert.strictEqual(aCollection[0].ID, "7", "from Server");
 				assert.strictEqual(aCollection.$count, 1);
 				assert.deepEqual(aSelectForPath, ["ID", "Name"], "$select unchanged");
-				if (bKeepTransientPath === false) {
-					assert.strictEqual(aCollection.$byPredicate[sPredicate], oEntityDataCleaned);
+				if (bDropTransientElement) {
+					assert.notOk(sPredicate in aCollection.$byPredicate);
+					assert.notOk(sTransientPredicate in aCollection.$byPredicate);
+				} else {
+					assert.strictEqual(aCollection.$byPredicate[sTransientPredicate],
+						oEntityDataCleaned, "still need access via transient predicate");
+					if (bKeepTransientPath === false) {
+						assert.strictEqual(aCollection.$byPredicate[sPredicate],
+							oEntityDataCleaned);
+					}
 				}
-				assert.strictEqual(aCollection.$byPredicate[sTransientPredicate],
-					oEntityDataCleaned, "still need access via transient predicate");
 				sinon.assert.calledWithExactly(_Helper.removeByPath,
 					sinon.match.same(oCache.mPostRequests), sPathInCache,
 					sinon.match.same(oEntityDataCleaned));
 			});
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#create: with given sPath and delete before submit", function (assert) {
@@ -8871,14 +8890,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [[], ["('3')"]].forEach(function (aKeptElementPredicates, i) {
-	[false, true].forEach(function (bKeepCreated) {
-		var sTitle = "CollectionCache#reset/restore; #" + i + ", bKeepCreated = " + bKeepCreated;
+	[undefined, "myGroup", "$auto"].forEach(function (sGroupId) {
+		var sTitle = "CollectionCache#reset/restore; #" + i + ", sGroupId = " + sGroupId;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
-			oCreated0 = {"@$ui5.context.isInactive" : false}, // "inline creation row"
-			oCreated1 = {}, // ordinary created persisted => not kept!
-			oCreated2 = {"@$ui5.context.isInactive" : false}, // "inline creation row"
+			oInactive = {"@$ui5.context.isInactive" : true}, // "inline creation row"
+			oCreated = {}, // ordinary created persisted => not kept!
+			oActive = {"@$ui5.context.isInactive" : false}, // "inline creation row"
 			mChangeListeners = {
 				"($uid=id-1-23)/bar" : "~listener[]~2~",
 				"($uid=id-1-42)/baz" : "~listener[]~3~",
@@ -8892,27 +8911,27 @@ sap.ui.define([
 			oElement1 = {},
 			oElement2 = {},
 			oTail = SyncPromise.resolve(),
-			oTransient0 = {}, // "inline creation row" must not matter here
+			oTransient0 = {}, // "inline creation row" does not matter here
 			oTransient1 = {},
 			mByPredicate = {
 				"($uid=id-1-23)" : oTransient0,
 				"($uid=id-1-42)" : oTransient1,
-				"('0')" : oCreated0,
-				"('1')" : oCreated1,
-				"('2')" : oCreated2,
+				"('0')" : oInactive,
+				"('1')" : oCreated,
+				"('2')" : oActive,
 				"('3')" : oElement0
 			},
 			aElements = [
-				oCreated0, oTransient0, oCreated1, oTransient1, oCreated2, // created on client
+				oInactive, oTransient0, oCreated, oTransient1, oActive, // created on client
 				oElement0, oElement1, oElement2 // read from server
 			];
 
-		_Helper.setPrivateAnnotation(oCreated0, "transientPredicate", "($uid=id-0-0)");
-		_Helper.setPrivateAnnotation(oCreated1, "transientPredicate", "($uid=id-0-1)");
-		_Helper.setPrivateAnnotation(oCreated2, "transientPredicate", "($uid=id-0-2)");
-		_Helper.setPrivateAnnotation(oCreated0, "predicate", "('0')");
-		_Helper.setPrivateAnnotation(oCreated1, "predicate", "('1')");
-		_Helper.setPrivateAnnotation(oCreated2, "predicate", "('2')");
+		_Helper.setPrivateAnnotation(oInactive, "transientPredicate", "($uid=id-0-0)");
+		_Helper.setPrivateAnnotation(oCreated, "transientPredicate", "($uid=id-0-1)");
+		_Helper.setPrivateAnnotation(oActive, "transientPredicate", "($uid=id-0-2)");
+		_Helper.setPrivateAnnotation(oInactive, "predicate", "('0')");
+		_Helper.setPrivateAnnotation(oCreated, "predicate", "('1')");
+		_Helper.setPrivateAnnotation(oActive, "predicate", "('2')");
 		_Helper.setPrivateAnnotation(oTransient0, "transientPredicate", "($uid=id-1-23)");
 		_Helper.setPrivateAnnotation(oTransient1, "transientPredicate", "($uid=id-1-42)");
 		_Helper.setPrivateAnnotation(oTransient0, "transient", "$auto");
@@ -8924,7 +8943,7 @@ sap.ui.define([
 		_Helper.setPrivateAnnotation(oElement0, "predicate", "('3')");
 		_Helper.setPrivateAnnotation(oElement1, "predicate", "('4')");
 		_Helper.setPrivateAnnotation(oElement2, "predicate", "('5')");
-		oCache.iActiveElements = 4; // let's assume one transient is inactive
+		oCache.iActiveElements = 4;
 		assert.strictEqual(oCache.oBackup, null, "be nice to V8");
 		oCache.oBackup = "~oBackup~";
 		oCache.mChangeListeners = Object.assign({
@@ -8944,7 +8963,7 @@ sap.ui.define([
 		oCache.iLimit = 42;
 
 		// code under test
-		oCache.reset(aKeptElementPredicates.slice(), bKeepCreated);
+		oCache.reset(aKeptElementPredicates.slice(), sGroupId);
 
 		if (!i) {
 			delete mChangeListeners["('3')/bar/baz"];
@@ -8953,7 +8972,7 @@ sap.ui.define([
 		}
 		delete mChangeListeners["('1')/b"];
 		delete mByPredicate["('1')"];
-		if (!bKeepCreated) {
+		if (!sGroupId) {
 			delete mChangeListeners["('0')/a"];
 			delete mChangeListeners["('2')/c"];
 			delete mByPredicate["('0')"];
@@ -8965,34 +8984,48 @@ sap.ui.define([
 			oCache.restore();
 
 			assert.strictEqual(oCache.oBackup, null);
+			assert.strictEqual(oCache.iActiveElements, 1, "iActiveElements changed");
+			assert.strictEqual(oCache.aElements.$created, 2, "$created adjusted");
+			assert.strictEqual(oCache.aElements.length, 2, "transient ones kept");
+			assert.strictEqual(oCache.aElements[0], oTransient0);
+			assert.strictEqual(oCache.aElements[1], oTransient1);
+		} else if (sGroupId === "$auto") {
+			delete mChangeListeners["($uid=id-1-23)/bar"];
+			delete mChangeListeners["($uid=id-1-42)/baz"];
+			delete mByPredicate["($uid=id-1-23)"];
+			delete mByPredicate["($uid=id-1-42)"];
+
+			assert.strictEqual(oCache.iActiveElements, 1);
+			assert.strictEqual(oCache.aElements.$created, 2);
+			assert.strictEqual(oCache.aElements.length, 2, "only inline creation rows kept");
+			assert.strictEqual(oCache.aElements[0], oInactive);
+			assert.strictEqual(oCache.aElements[1], oActive);
+		} else {
+			assert.strictEqual(oCache.iActiveElements, 3);
+			assert.strictEqual(oCache.aElements.$created, 4);
+			assert.strictEqual(oCache.aElements.length, 4);
+			assert.strictEqual(oCache.aElements[0], oInactive);
+			assert.strictEqual(oCache.aElements[1], oTransient0);
+			assert.strictEqual(oCache.aElements[2], oTransient1);
+			assert.strictEqual(oCache.aElements[3], oActive);
 		}
-		assert.strictEqual(oCache.iActiveElements, bKeepCreated ? 3 : 1, "iActiveElements changed");
 		assert.deepEqual(oCache.mChangeListeners, mChangeListeners);
 		assert.strictEqual(oCache.sContext, undefined);
 		assert.strictEqual(oCache.aElements, aElements, "reference unchanged");
-		assert.strictEqual(oCache.aElements.length, bKeepCreated ? 4 : 2, "transient ones kept");
-		if (bKeepCreated) {
-			assert.strictEqual(oCache.aElements[0], oCreated0);
-			assert.strictEqual(oCache.aElements[1], oTransient0);
-			assert.strictEqual(oCache.aElements[2], oTransient1);
-			assert.strictEqual(oCache.aElements[3], oCreated2);
-		} else {
-			assert.strictEqual(oCache.aElements[0], oTransient0);
-			assert.strictEqual(oCache.aElements[1], oTransient1);
-		}
 		assert.deepEqual(oCache.aElements.$byPredicate, mByPredicate);
-		assert.strictEqual(oCache.aElements.$byPredicate["($uid=id-1-23)"], oTransient0);
-		assert.strictEqual(oCache.aElements.$byPredicate["($uid=id-1-42)"], oTransient1);
+		if (sGroupId !== "$auto") {
+			assert.strictEqual(oCache.aElements.$byPredicate["($uid=id-1-23)"], oTransient0);
+			assert.strictEqual(oCache.aElements.$byPredicate["($uid=id-1-42)"], oTransient1);
+		}
 		if (i) {
 			assert.strictEqual(oCache.aElements.$byPredicate["('3')"], oElement0);
 		}
 		assert.strictEqual(oCache.aElements.$count, undefined);
 		assert.ok("$count" in oCache.aElements); // needed for setCount()
-		assert.strictEqual(oCache.aElements.$created, bKeepCreated ? 4 : 2, "$created adjusted");
 		assert.strictEqual(oCache.aElements.$tail, oTail, "$tail unchanged");
 		assert.strictEqual(oCache.iLimit, Infinity);
 
-		if (bKeepCreated) {
+		if (sGroupId) {
 			if (i) {
 				oCache.aElements[10] = "n/a"; // could be a promise
 				// just to be sure backup was complete
@@ -9019,11 +9052,11 @@ sap.ui.define([
 			});
 			assert.strictEqual(oCache.sContext, "foo");
 			assert.strictEqual(oCache.aElements, aElements, "reference unchanged");
-			assert.strictEqual(oCache.aElements[0], oCreated0);
+			assert.strictEqual(oCache.aElements[0], oInactive);
 			assert.strictEqual(oCache.aElements[1], oTransient0);
-			assert.strictEqual(oCache.aElements[2], oCreated1);
+			assert.strictEqual(oCache.aElements[2], oCreated);
 			assert.strictEqual(oCache.aElements[3], oTransient1);
-			assert.strictEqual(oCache.aElements[4], oCreated2);
+			assert.strictEqual(oCache.aElements[4], oActive);
 			assert.strictEqual(oCache.aElements[5], oElement0);
 			assert.strictEqual(oCache.aElements[6], oElement1);
 			assert.strictEqual(oCache.aElements[7], oElement2);
@@ -9034,9 +9067,9 @@ sap.ui.define([
 			assert.deepEqual(oCache.aElements.$byPredicate, {
 				"($uid=id-1-23)" : oTransient0,
 				"($uid=id-1-42)" : oTransient1,
-				"('0')" : oCreated0,
-				"('1')" : oCreated1,
-				"('2')" : oCreated2,
+				"('0')" : oInactive,
+				"('1')" : oCreated,
+				"('2')" : oActive,
 				"('3')" : oElement0,
 				"('4')" : oElement1,
 				"('5')" : oElement2

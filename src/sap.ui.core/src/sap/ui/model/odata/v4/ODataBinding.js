@@ -264,8 +264,8 @@ sap.ui.define([
 	 *   The resource path
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, undefined for absolute bindings
-	 * @param {boolean} [bKeepCreated]
-	 *   Whether created persisted elements shall be kept in place
+	 * @param {string} [sGroupId]
+	 *   The group ID used for a side-effects refresh, if applicable
 	 * @param {sap.ui.model.odata.v4.lib._Cache} [oOldCache]
 	 *   The old cache, in case it may be reused
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
@@ -275,7 +275,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.createAndSetCache = function (mQueryOptions, sResourcePath, oContext,
-			bKeepCreated, oOldCache) {
+			sGroupId, oOldCache) {
 		var oCache, sDeepResourcePath, iGeneration;
 
 		this.mCacheQueryOptions = Object.assign({}, this.oModel.mUriParameters, mQueryOptions);
@@ -299,7 +299,7 @@ sap.ui.define([
 			} else {
 				sDeepResourcePath = this.oModel.resolve(this.sPath, oContext).slice(1);
 				oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions, oContext,
-					sDeepResourcePath, bKeepCreated, oOldCache);
+					sDeepResourcePath, sGroupId, oOldCache);
 				if (!(this.mParameters && this.mParameters.$$sharedRequest)) {
 					this.mCacheByResourcePath = this.mCacheByResourcePath || {};
 					this.mCacheByResourcePath[sResourcePath] = oCache;
@@ -309,7 +309,7 @@ sap.ui.define([
 			}
 		} else { // absolute binding
 			oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions, undefined,
-				undefined, bKeepCreated, oOldCache);
+				undefined, sGroupId, oOldCache);
 		}
 		if (oOldCache && oOldCache !== oCache) {
 			oOldCache.setActive(false);
@@ -356,8 +356,8 @@ sap.ui.define([
 	 *   The context instance to be used, must be <code>undefined</code> for absolute bindings
 	 * @param {string} [sDeepResourcePath=sResourcePath]
 	 *   The deep resource path to be used to build the target path for bound messages
-	 * @param {boolean} [bKeepCreated]
-	 *   Whether created persisted elements shall be kept in place
+	 * @param {string} [sGroupId]
+	 *   The group ID used for a side-effects refresh, if applicable
 	 * @param {sap.ui.model.odata.v4.lib._Cache} [oOldCache]
 	 *   The old cache, in case it may be reused
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
@@ -410,8 +410,8 @@ sap.ui.define([
 	 * @param {boolean} [bKeepQueryOptions]
 	 *   Whether to keep existing (late) query options and not to run auto-$expand/$select again
 	 *   (cannot be combined with <code>bIgnoreParentCache</code>!)
-	 * @param {boolean} [bKeepCreated]
-	 *   Whether created persisted elements shall be kept in place
+	 * @param {string} [sGroupId]
+	 *   The group ID used for a side-effects refresh, if applicable
 	 * @throws {Error}
 	 *   If auto-$expand/$select is still running and query options shall be kept (this case is just
 	 *   not yet implemented and should not be needed)
@@ -419,7 +419,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.fetchCache = function (oContext, bIgnoreParentCache, bKeepQueryOptions,
-		bKeepCreated) {
+			sGroupId) {
 		var oCache = this.oCache,
 			oCallToken = {
 				// propagate old cache from first call of fetchCache to the latest call
@@ -445,7 +445,7 @@ sap.ui.define([
 			// asynchronously re-create an equivalent cache, but skip auto-$expand/$select
 			this.oCachePromise = SyncPromise.resolve(Promise.resolve()).then(function () {
 				return that.createAndSetCache(that.mCacheQueryOptions, oCache.getResourcePath(),
-					oContext, bKeepCreated, oCache);
+					oContext, sGroupId, oCache);
 			});
 			return;
 		}
@@ -472,7 +472,7 @@ sap.ui.define([
 						throw oError;
 					}
 					return that.createAndSetCache(mQueryOptions, sResourcePath, oContext,
-						bKeepCreated, oCallToken.oOldCache);
+						sGroupId, oCallToken.oOldCache);
 				});
 			}
 			that.oCache = null;

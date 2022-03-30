@@ -1063,11 +1063,11 @@ sap.ui.define([
 			.returns(SyncPromise.resolve("absolute"));
 		oBindingMock.expects("createAndSetCache")
 			.withExactArgs(sinon.match.same(mLocalQueryOptions), "absolute", undefined,
-				"~bKeepCacheOnError~", sinon.match.same(oOldCache))
+				"~sGroupId~", sinon.match.same(oOldCache))
 			.returns(oNewCache);
 
 		// code under test
-		oBinding.fetchCache(oContext, bIgnoreParentCache, undefined, "~bKeepCacheOnError~");
+		oBinding.fetchCache(oContext, bIgnoreParentCache, undefined, "~sGroupId~");
 
 		assert.strictEqual(oBinding.mLateQueryOptions, mLateQueryOptions);
 		assert.ok(oBinding.oCachePromise.isPending());
@@ -1317,11 +1317,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bKeepCacheOnError) {
-	var sTitle = "fetchCache: later calls to fetchCache exist => discard cache"
-			+ "; bKeepCacheOnError = " + bKeepCacheOnError;
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("fetchCache: later calls to fetchCache exist => discard cache", function (assert) {
 		var oOldCache = {},
 			oBinding = new ODataBinding({
 				oCache : oOldCache,
@@ -1385,11 +1381,11 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(Promise.resolve("resourcePath1")));
 		oBindingMock.expects("createAndSetCache")
 			.withExactArgs(sinon.match.same(mLocalQueryOptions), "resourcePath1",
-				sinon.match.same(oContext1), bKeepCacheOnError, sinon.match.same(oOldCache))
+				sinon.match.same(oContext1), "~sGroupId~", sinon.match.same(oOldCache))
 			.returns(oNewCache);
 
 		// code under test - create new cache for this binding while other cache creation is pending
-		oBinding.fetchCache(oContext1, undefined, undefined, bKeepCacheOnError);
+		oBinding.fetchCache(oContext1, undefined, undefined, "~sGroupId~");
 
 		return SyncPromise.all([
 			oPromise.then(function () {
@@ -1406,7 +1402,6 @@ sap.ui.define([
 			assert.strictEqual(oBinding.sReducedPath, "/reduced/path/2");
 		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("fetchCache: fetchResourcePath fails", function (assert) {
@@ -1455,11 +1450,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bKeepCacheOnError) {
-	var sTitle = "fetchCache: bKeepQueryOptions and own cache; bKeepCacheOnError = "
-			+ bKeepCacheOnError;
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("fetchCache: bKeepQueryOptions and own cache", function (assert) {
 		var oCache = {
 				getResourcePath : function () {}
 			},
@@ -1485,7 +1476,7 @@ sap.ui.define([
 		this.mock(oCache).expects("getResourcePath").withExactArgs().returns("~resourcePath~");
 		this.mock(oBinding).expects("createAndSetCache")
 			.withExactArgs(sinon.match.same(oBinding.mCacheQueryOptions), "~resourcePath~",
-				sinon.match.same(oContext), bKeepCacheOnError, sinon.match.same(oCache))
+				sinon.match.same(oContext), "~sGroupId~", sinon.match.same(oCache))
 			.returns(oNewCache);
 		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache").never();
 		this.mock(oBinding.oModel.oRequestor).expects("ready").never();
@@ -1493,7 +1484,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchResourcePath").never();
 
 		// code under test
-		oBinding.fetchCache(oContext, undefined, true, bKeepCacheOnError);
+		oBinding.fetchCache(oContext, undefined, true, "~sGroupId~");
 
 		assert.strictEqual(oBinding.oCache, undefined);
 		assert.deepEqual(oBinding.oFetchCacheCallToken, {
@@ -1508,7 +1499,6 @@ sap.ui.define([
 			assert.strictEqual(oBinding.mLateQueryOptions, mLateQueryOptions);
 		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("fetchCache: bKeepQueryOptions and no cache", function (assert) {
@@ -1614,7 +1604,7 @@ sap.ui.define([
 			.returns(mMergedQueryOptions);
 		this.mock(oBinding).expects("doCreateCache")
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions), undefined,
-				undefined, "~bKeepCreated~", sinon.match.same(oOldCache))
+				undefined, "~sGroupId~", sinon.match.same(oOldCache))
 			.returns(oNewCache);
 		this.mock(oOldCache).expects("setActive").exactly(bOldCacheIsReused ? 0 : 1)
 			.withExactArgs(false);
@@ -1628,7 +1618,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.createAndSetCache(mQueryOptions, "/resource/path", /*oContext*/undefined,
-				"~bKeepCreated~", oOldCache),
+				"~sGroupId~", oOldCache),
 			oNewCache
 		);
 
@@ -1690,7 +1680,7 @@ sap.ui.define([
 			.returns("/deep/resource/path");
 		this.mock(oBinding).expects("doCreateCache")
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions),
-				sinon.match.same(oContext), "deep/resource/path", "~bKeepCreated~",
+				sinon.match.same(oContext), "deep/resource/path", "~sGroupId~",
 				sinon.match.same(oOldCache))
 			.returns(oCache);
 		this.mock(oCache).expects("setLateQueryOptions").exactly(bHasLateQueryOptions ? 1 : 0)
@@ -1700,7 +1690,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.createAndSetCache(mQueryOptions, "/resource/path", oContext,
-				"~bKeepCreated~", oOldCache),
+				"~sGroupId~", oOldCache),
 			oCache
 		);
 
@@ -1841,7 +1831,7 @@ sap.ui.define([
 			.returns("/deep/resource/path");
 		this.mock(oBinding).expects("doCreateCache")
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions),
-				sinon.match.same(oContext), "deep/resource/path", "~bKeepCreated~",
+				sinon.match.same(oContext), "deep/resource/path", "~sGroupId~",
 				sinon.match.same(oOldCache))
 			.returns(oCache1);
 		this.mock(oOldCache).expects("setActive").withExactArgs(false);
@@ -1849,7 +1839,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.createAndSetCache(mQueryOptions, "/resource/path", oContext,
-				"~bKeepCreated~", oOldCache),
+				"~sGroupId~", oOldCache),
 			oCache1
 		);
 
