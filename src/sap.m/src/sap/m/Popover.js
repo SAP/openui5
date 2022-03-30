@@ -421,7 +421,6 @@ sap.ui.define([
 				height: 32
 			};
 
-			this._$window = jQuery(window);
 			this._initialWindowDimensions = {};
 
 			this.oPopup = new Popup();
@@ -541,10 +540,11 @@ sap.ui.define([
 				}
 
 				var oRect = jQuery(oPosition.of).rect();
+				var $popoverWithinArea = jQuery(that.getWithinAreaDomRef());
 				// if openBy Dom element is complete out of viewport after resize event, close the popover. But close it only if virtualkeyboard is not opened.
 				if (bFromResize
-					&& that._$window.height() == that._initialWindowDimensions.height
-					&& (oRect.top + oRect.height <= 0 || oRect.top >= that._$window.height() || oRect.left + oRect.width <= 0 || oRect.left >= that._$window.width())) {
+					&& $popoverWithinArea.height() == that._initialWindowDimensions.height
+					&& (oRect.top + oRect.height <= 0 || oRect.top >= $popoverWithinArea.height() || oRect.left + oRect.width <= 0 || oRect.left >= $popoverWithinArea.width())) {
 					that.close();
 					return;
 				}
@@ -601,22 +601,37 @@ sap.ui.define([
 		};
 
 		/**
+		 * Gets the area to which the Popover is restricted.
+		 *
+		 * @returns {HTMLElement|Window}
+		 * @private
+		 */
+		Popover.prototype.getWithinAreaDomRef = function () {
+			return Popup.getWithinAreaDomRef();
+		};
+
+		/**
 		 * Required adaptations before rendering of the Popover.
 		 *
 		 * @private
 		 */
 		Popover.prototype.onBeforeRendering = function () {
-			var oNavContent, oPageContent,
+			var oNavContent, oPageContent, $popoverWithinArea,
 				bHorScrolling = this.getHorizontalScrolling(),
 				bVerScrolling = this.getVerticalScrolling(),
 				bHorScrollingNotApplied = !bHorScrolling || this.isPropertyInitial("horizontalScrolling"),
 				bVerScrollingNotApplied = !bVerScrolling || this.isPropertyInitial("verticalScrolling"),
 				oHeader = this.getCustomHeader() || this._internalHeader;
 
+			if (this.hasStyleClass("sapUiPopupWithPadding")) {
+				Log.warning("Usage of CSS class 'sapUiPopupWithPadding' is deprecated. Use 'sapUiContentPadding' instead", null, "sap.m.Popover");
+			}
+
 			if (!this._initialWindowDimensions.width || !this._initialWindowDimensions.height) {
+				$popoverWithinArea = jQuery(this.getWithinAreaDomRef());
 				this._initialWindowDimensions = {
-					width: this._$window.width(),
-					height: this._$window.height()
+					width: $popoverWithinArea.width(),
+					height: $popoverWithinArea.height()
 				};
 			}
 
@@ -993,15 +1008,16 @@ sap.ui.define([
 				sContentHeight = this.getContentHeight(),
 				$arrow = this.$("arrow"),
 				iWindowWidth,
-				iWindowHeight;
+				iWindowHeight,
+				$popoverWithinArea = jQuery(this.getWithinAreaDomRef());
 
 			if (sContentWidth.indexOf("%") > 0) {
-				iWindowWidth = this._$window.width();
+				iWindowWidth = $popoverWithinArea.width();
 				sContentWidth = PopupHelper.calcPercentageSize(sContentWidth, iWindowWidth);
 			}
 
 			if (sContentHeight.indexOf("%") > 0) {
-				iWindowHeight = this._$window.height();
+				iWindowHeight = $popoverWithinArea.height();
 				sContentHeight = PopupHelper.calcPercentageSize(sContentHeight, iWindowHeight);
 			}
 
@@ -1413,9 +1429,10 @@ sap.ui.define([
 
 		Popover.prototype._getDocHeight = function () {
 			var body = document.body,
-				html = document.documentElement;
+				html = document.documentElement,
+				oOffset = jQuery(this.getWithinAreaDomRef()).offset() || {top: 0};
 
-			return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.offsetHeight);
+			return oOffset.top + Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.offsetHeight);
 		};
 
 		Popover.prototype._calcVertical = function () {
@@ -1471,7 +1488,8 @@ sap.ui.define([
 			var iOffsetX = this._getOffsetX();
 			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
 			var iParentRight = iParentLeft + iParentWidth;
-			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
+			var $popoverWithinArea = jQuery(this.getWithinAreaDomRef());
+			var iRightSpace = $popoverWithinArea.width() - iParentRight - this._marginRight - iOffsetX;
 			var iPopoverWidth = this.$().outerWidth();
 			var bPreferredLeftOrFlip = this.getPlacement() === PlacementType.PreferredLeftOrFlip;
 			var bPreferredRightOrFlip = this.getPlacement() === PlacementType.PreferredRightOrFlip;
@@ -1507,8 +1525,9 @@ sap.ui.define([
 		};
 
 		Popover.prototype._calcAuto = function () {
+			var $popoverWithinArea = jQuery(this.getWithinAreaDomRef());
 			//calculate which position is the best
-			if (this._$window.width() > this._$window.height()) {
+			if ($popoverWithinArea.width() > $popoverWithinArea.height()) {
 				//in "landscape" mode horizontal is preferred, therefore it is checked first
 				if (this._checkHorizontal()) {
 					this._calcHorizontal();
@@ -1538,7 +1557,8 @@ sap.ui.define([
 			var iOffsetX = this._getOffsetX();
 			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
 			var iParentRight = iParentLeft + iParentWidth;
-			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
+			var $popoverWithinArea = jQuery(this.getWithinAreaDomRef());
+			var iRightSpace = $popoverWithinArea.width() - iParentRight - this._marginRight - iOffsetX;
 
 			var $this = this.$();
 			var iWidth = $this.outerWidth() + this._arrowOffset;
@@ -1585,23 +1605,24 @@ sap.ui.define([
 			var iBottomSpace = this._getDocHeight() - $parent.offset().top - iParentHeight - this._marginBottom - iOffsetY;
 			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
 			var iParentRight = iParentLeft + iParentWidth;
-			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
+			var $popoverWithinArea = jQuery(this.getWithinAreaDomRef());
+			var iRightSpace = $popoverWithinArea.width() - iParentRight - this._marginRight - iOffsetX;
 
 			//calculation for every possible position how many percent of the popover can be covered
 			var fPopoverSize = iHeight * iWidth;
 			var fAvailableHeight;
 			var fAvaliableWidth;
 
-			if ((this._$window.height() - this._marginTop - this._marginBottom) >= iHeight) {
+			if (($popoverWithinArea.height() - this._marginTop - this._marginBottom) >= iHeight) {
 				fAvailableHeight = iHeight;
 			} else {
-				fAvailableHeight = this._$window.height() - this._marginTop - this._marginBottom;
+				fAvailableHeight = $popoverWithinArea.height() - this._marginTop - this._marginBottom;
 			}
 
-			if ((this._$window.width() - this._marginLeft - this._marginRight) >= iWidth) {
+			if (($popoverWithinArea.width() - this._marginLeft - this._marginRight) >= iWidth) {
 				fAvaliableWidth = iWidth;
 			} else {
-				fAvaliableWidth = this._$window.width() - this._marginLeft - this._marginRight;
+				fAvaliableWidth = $popoverWithinArea.width() - this._marginLeft - this._marginRight;
 			}
 
 			var fLeftCoverage = (fAvailableHeight * (iLeftSpace)) / fPopoverSize;
@@ -1626,7 +1647,7 @@ sap.ui.define([
 					this._oCalcedPos = PlacementType.Bottom;
 				}
 			} else if (fMaxCoverageVertical === fMaxCoverageHorizontal) {
-				if (this._$window.height() > this._$window.width()) {
+				if ($popoverWithinArea.height() > $popoverWithinArea.width()) {
 					// in portrait vertical is preferred
 					if (fMaxCoverageVertical === fTopCoverage) {
 						this._oCalcedPos = PlacementType.Top;
@@ -1676,7 +1697,10 @@ sap.ui.define([
 		Popover.prototype._getPositionParams = function ($popover, $arrow, $content, $scrollArea) {
 			var oComputedStyle = window.getComputedStyle($popover[0]),
 				oContentComputedStyle = window.getComputedStyle($content[0]),
-				fScrollWidth = this.getDomRef().clientHeight != this.getDomRef().scrollHeight ? getScrollbarSize().width : 0,
+				$window = jQuery(window),
+				fScrollWidth = this.getDomRef().clientHeight !== this.getDomRef().scrollHeight ? getScrollbarSize().width : 0,
+				$popoverWithinArea = jQuery(this.getWithinAreaDomRef()),
+				oWithinOffset = $popoverWithinArea.offset() || {top: 0, left: 0},
 				oPosParams = {};
 
 			oPosParams._$popover = $popover;
@@ -1690,30 +1714,36 @@ sap.ui.define([
 
 			oPosParams._$footer = $popover.children(".sapMPopoverFooter");
 
-			oPosParams._fWindowTop = this._$window.scrollTop();
-			oPosParams._fWindowRight = this._$window.width();
-			oPosParams._fWindowBottom = (Popover._bIOS7 && Device.orientation.landscape && window.innerHeight) ? window.innerHeight : this._$window.height();
-			oPosParams._fWindowLeft = this._$window.scrollLeft();
+			// Window dimensions
+			oPosParams._fWindowTop = $window.scrollTop();
+			oPosParams._fWindowRight = $window.width();
+			oPosParams._fWindowBottom = (Popover._bIOS7 && Device.orientation.landscape && window.innerHeight) ? window.innerHeight : $window.height();
+			oPosParams._fWindowLeft = $window.scrollLeft();
+			oPosParams._fWindowWidth = window.innerWidth;
+			oPosParams._fWindowHeight = window.innerHeight;
+
+			oPosParams._fWithinAreaWidth = Math.min($popoverWithinArea.outerWidth(), oPosParams._fWindowWidth);
+			oPosParams._fWithinAreaHeight = Math.min($popoverWithinArea.outerHeight(), oPosParams._fWindowHeight);
 
 			oPosParams._fDocumentWidth = oPosParams._fWindowLeft + oPosParams._fWindowRight;
 			oPosParams._fDocumentHeight = oPosParams._fWindowTop + oPosParams._fWindowBottom;
 
 			oPosParams._fArrowHeight = $arrow.outerHeight(true);
-			oPosParams._fWidth = Popover.outerWidth($popover[0]);
-			oPosParams._fWidthInner = oPosParams._$scrollArea ? (oPosParams._$scrollArea.width() + fScrollWidth) : 0;
-			oPosParams._fHeight = Popover.outerHeight($popover[0]);
+			oPosParams._fPopoverWidth = Popover.outerWidth($popover[0]);
+			oPosParams._fPopoverInnerWidth = oPosParams._$scrollArea ? (oPosParams._$scrollArea.width() + fScrollWidth) : 0;
+			oPosParams._fPopoverHeight = Popover.outerHeight($popover[0]);
 			oPosParams._fHeaderHeight = oPosParams._$header.length > 0 ? oPosParams._$header.outerHeight(true) : 0;
 			oPosParams._fSubHeaderHeight = oPosParams._$subHeader.length > 0 ? oPosParams._$subHeader.outerHeight(true) : 0;
 			oPosParams._fFooterHeight = oPosParams._$footer.length > 0 ? oPosParams._$footer.outerHeight(true) : 0;
 
-			oPosParams._fOffset = $popover.offset();
-			oPosParams._fOffsetX = this._getOffsetX();
-			oPosParams._fOffsetY = this._getOffsetY();
+			oPosParams._fPopoverOffset = $popover.offset();
+			oPosParams._fPopoverOffsetX = this._getOffsetX();
+			oPosParams._fPopoverOffsetY = this._getOffsetY();
 
-			oPosParams._fMarginTop = oPosParams._fWindowTop + this._marginTop;
-			oPosParams._fMarginRight = this._marginRight;
-			oPosParams._fMarginBottom = this._marginBottom;
-			oPosParams._fMarginLeft = oPosParams._fWindowLeft + this._marginLeft;
+			oPosParams._fPopoverMarginTop = oPosParams._fWindowTop + this._marginTop + oWithinOffset.top;
+			oPosParams._fPopoverMarginLeft = oPosParams._fWindowLeft + this._marginLeft + oWithinOffset.left;
+			oPosParams._fPopoverMarginRight = oPosParams._fWindowWidth - oWithinOffset.left - oPosParams._fWithinAreaWidth + this._marginRight;
+			oPosParams._fPopoverMarginBottom = oPosParams._fWindowHeight - oWithinOffset.top - oPosParams._fWithinAreaHeight + this._marginBottom;
 
 			oPosParams._fPopoverBorderTop = parseFloat(oComputedStyle.borderTopWidth);
 			oPosParams._fPopoverBorderRight = parseFloat(oComputedStyle.borderRightWidth);
@@ -1734,31 +1764,35 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype._recalculateMargins = function (sCalculatedPlacement, oPosParams) {
+			var fNewCalc;
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
 			//make the popover never cover the control or dom node that opens the popover
 			switch (sCalculatedPlacement) {
 				case PlacementType.Left:
 					if (bRtl) {
-						oPosParams._fMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset - oPosParams._fOffsetX;
+						oPosParams._fPopoverMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset - oPosParams._fPopoverOffsetX;
 					} else {
-						oPosParams._fMarginRight = oPosParams._fDocumentWidth - oPosParams._$parent.offset().left + this._arrowOffset - oPosParams._fOffsetX;
+						oPosParams._fPopoverMarginRight = oPosParams._fWindowWidth - oPosParams._$parent.offset().left + this._arrowOffset - oPosParams._fPopoverOffsetX;
 					}
 					break;
 				case PlacementType.Right:
 					if (bRtl) {
-						oPosParams._fMarginRight = oPosParams._fDocumentWidth - Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$parent.offset().left + this._arrowOffset;
+						oPosParams._fPopoverMarginRight = oPosParams._fWindowWidth - Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$parent.offset().left + this._arrowOffset;
 					} else {
-						oPosParams._fMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fOffsetX;
+						oPosParams._fPopoverMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fPopoverOffsetX;
 					}
 					break;
 				case PlacementType.Top:
-					oPosParams._fMarginBottom = oPosParams._fDocumentHeight - oPosParams._$parent.offset().top + this._arrowOffset - oPosParams._fOffsetY;
+					fNewCalc = oPosParams._fWindowHeight - oPosParams._$parent.offset().top + this._arrowOffset - oPosParams._fPopoverOffsetY;
+					oPosParams._fPopoverMarginBottom = fNewCalc > oPosParams._fPopoverMarginBottom ? fNewCalc : oPosParams._fPopoverMarginBottom;
 					break;
 				case PlacementType.Bottom:
-					oPosParams._fMarginTop = oPosParams._$parent.offset().top + Popover.outerHeight(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fOffsetY;
+					oPosParams._fPopoverMarginTop = oPosParams._$parent.offset().top + Popover.outerHeight(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fPopoverOffsetY;
 					break;
 			}
+
+			return oPosParams;
 		};
 
 		/**
@@ -1773,25 +1807,25 @@ sap.ui.define([
 				iRight,
 				iTop,
 				iBottom,
-				iPosToRightBorder = oPosParams._fDocumentWidth - oPosParams._fOffset.left - oPosParams._fWidth,
-				iPosToBottomBorder = oPosParams._fDocumentHeight - oPosParams._fOffset.top - oPosParams._fHeight,
-				bExceedHorizontal = (oPosParams._fDocumentWidth - oPosParams._fMarginRight - oPosParams._fMarginLeft) < oPosParams._fWidth,
-				bExceedVertical = (oPosParams._fDocumentHeight - oPosParams._fMarginTop - oPosParams._fMarginBottom) < oPosParams._fHeight,
-				bOverLeft = oPosParams._fOffset.left < oPosParams._fMarginLeft,
+				iPosToRightBorder = oPosParams._fDocumentWidth - oPosParams._fPopoverOffset.left - oPosParams._fPopoverWidth,
+				iPosToBottomBorder = oPosParams._fDocumentHeight - oPosParams._fPopoverOffset.top - oPosParams._fPopoverHeight,
+				bExceedHorizontal = (oPosParams._fDocumentWidth - oPosParams._fPopoverMarginRight - oPosParams._fPopoverMarginLeft) < oPosParams._fPopoverWidth,
+				bExceedVertical = (oPosParams._fDocumentHeight - oPosParams._fPopoverMarginTop - oPosParams._fPopoverMarginBottom) < oPosParams._fPopoverHeight,
+				bOverLeft = oPosParams._fPopoverOffset.left < oPosParams._fPopoverMarginLeft,
 				//Include Scrollbar's width in these calculations
-				fScrollbarSize = this.getVerticalScrolling() && (oPosParams._fWidth !== oPosParams._fWidthInner) ?
+				fScrollbarSize = this.getVerticalScrolling() && (oPosParams._fPopoverWidth !== oPosParams._fPopoverInnerWidth) ?
 					getScrollbarSize().width : 0,
-				bOverRight = iPosToRightBorder < (oPosParams._fMarginRight + fScrollbarSize),
-				bOverTop = oPosParams._fOffset.top < oPosParams._fMarginTop,
-				bOverBottom = iPosToBottomBorder < oPosParams._fMarginBottom,
+				bOverRight = iPosToRightBorder < (oPosParams._fPopoverMarginRight + fScrollbarSize),
+				bOverTop = oPosParams._fPopoverOffset.top < oPosParams._fPopoverMarginTop,
+				bOverBottom = iPosToBottomBorder < oPosParams._fPopoverMarginBottom,
 				bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
 			if (bExceedHorizontal) {
-				iLeft = oPosParams._fMarginLeft;
-				iRight = oPosParams._fMarginRight;
+				iLeft = oPosParams._fPopoverMarginLeft;
+				iRight = oPosParams._fPopoverMarginRight;
 			} else {
 				if (bOverLeft) {
-					iLeft = oPosParams._fMarginLeft;
+					iLeft = oPosParams._fPopoverMarginLeft;
 					if (bRtl) {
 						// when only one side of the popover goes beyond the defined border make sure that
 						// only one from the iLeft and iRight is set because Popover has a fixed size and
@@ -1799,7 +1833,7 @@ sap.ui.define([
 						iRight = "";
 					}
 				} else if (bOverRight) {
-					iRight = oPosParams._fMarginRight;
+					iRight = oPosParams._fPopoverMarginRight;
 					// when only one side of the popover goes beyond the defined border make sure that
 					// only one from the iLeft and iRight is set because Popover has a fixed size and
 					// can't react to content size change when both are set
@@ -1808,13 +1842,13 @@ sap.ui.define([
 			}
 
 			if (bExceedVertical) {
-				iTop = oPosParams._fMarginTop;
-				iBottom = oPosParams._fMarginBottom;
+				iTop = oPosParams._fPopoverMarginTop;
+				iBottom = oPosParams._fPopoverMarginBottom;
 			} else {
 				if (bOverTop) {
-					iTop = oPosParams._fMarginTop;
+					iTop = oPosParams._fPopoverMarginTop;
 				} else if (bOverBottom) {
-					iBottom = oPosParams._fMarginBottom;
+					iBottom = oPosParams._fPopoverMarginBottom;
 					// when only one side of the popover goes beyond the defined border make sure that
 					// only one from the iLeft and iRight is set because Popover has a fixed size and
 					// can't react to content size change when both are set
@@ -1870,7 +1904,10 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype._getMaxContentWidth = function (oPosParams) {
-			return oPosParams._fDocumentWidth - oPosParams._fMarginLeft - oPosParams._fMarginRight - oPosParams._fPopoverBorderLeft - oPosParams._fPopoverBorderRight;
+			var fPopoverInnerElementsSpacing = oPosParams._fPopoverBorderLeft + oPosParams._fPopoverBorderRight;
+
+			return oPosParams._fDocumentWidth - oPosParams._fPopoverMarginLeft -
+				oPosParams._fPopoverMarginRight - fPopoverInnerElementsSpacing;
 		};
 
 		/**
@@ -1881,7 +1918,12 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype._getMaxContentHeight = function (oPosParams) {
-			return oPosParams._fDocumentHeight - oPosParams._fMarginTop - oPosParams._fMarginBottom - oPosParams._fHeaderHeight - oPosParams._fSubHeaderHeight - oPosParams._fFooterHeight - oPosParams._fContentMarginTop - oPosParams._fContentMarginBottom - oPosParams._fPopoverBorderTop - oPosParams._fPopoverBorderBottom;
+			var fPopoverInnerElementsHeight = oPosParams._fHeaderHeight + oPosParams._fSubHeaderHeight +
+				oPosParams._fFooterHeight + oPosParams._fContentMarginTop + oPosParams._fContentMarginBottom +
+				oPosParams._fPopoverBorderTop + oPosParams._fPopoverBorderBottom;
+
+			return oPosParams._fDocumentHeight - oPosParams._fPopoverMarginTop -
+				oPosParams._fPopoverMarginBottom - fPopoverInnerElementsHeight;
 		};
 
 		/**
@@ -1912,25 +1954,25 @@ sap.ui.define([
 				bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
 			// Recalculate Popover width and height because they can be changed after position adjustments
-			oPosParams._fWidth = oPosParams._$popover.outerWidth();
-			oPosParams._fHeight = oPosParams._$popover.outerHeight();
+			oPosParams._fPopoverWidth = oPosParams._$popover.outerWidth();
+			oPosParams._fPopoverHeight = oPosParams._$popover.outerHeight();
 
 			// Set arrow offset
 			if (sCalculatedPlacement === PlacementType.Left || sCalculatedPlacement === PlacementType.Right) {
-				iPosArrow = oPosParams._$parent.offset().top - oPosParams._$popover.offset().top - oPosParams._fPopoverBorderTop + oPosParams._fOffsetY + 0.5 * (Popover.outerHeight(oPosParams._$parent[0], false) - oPosParams._$arrow.outerHeight(false));
+				iPosArrow = oPosParams._$parent.offset().top - oPosParams._$popover.offset().top - oPosParams._fPopoverBorderTop + oPosParams._fPopoverOffsetY + 0.5 * (Popover.outerHeight(oPosParams._$parent[0], false) - oPosParams._$arrow.outerHeight(false));
 				iPosArrow = Math.max(iPosArrow, this._arrowOffsetThreshold);
-				iPosArrow = Math.min(iPosArrow, oPosParams._fHeight - this._arrowOffsetThreshold - oPosParams._$arrow.outerHeight());
+				iPosArrow = Math.min(iPosArrow, oPosParams._fPopoverHeight - this._arrowOffsetThreshold - oPosParams._$arrow.outerHeight());
 				return {"top": iPosArrow};
 			} else if (sCalculatedPlacement === PlacementType.Top || sCalculatedPlacement === PlacementType.Bottom) {
 				if (bRtl) {
-					iPosArrow = oPosParams._$popover.offset().left + Popover.outerWidth(oPosParams._$popover[0], false) - (oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false)) + oPosParams._fPopoverBorderRight + oPosParams._fOffsetX + 0.5 * (Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$arrow.outerWidth(false));
+					iPosArrow = oPosParams._$popover.offset().left + Popover.outerWidth(oPosParams._$popover[0], false) - (oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false)) + oPosParams._fPopoverBorderRight + oPosParams._fPopoverOffsetX + 0.5 * (Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$arrow.outerWidth(false));
 					iPosArrow = Math.max(iPosArrow, this._arrowOffsetThreshold);
-					iPosArrow = Math.min(iPosArrow, oPosParams._fWidth - this._arrowOffsetThreshold - oPosParams._$arrow.outerWidth(false));
+					iPosArrow = Math.min(iPosArrow, oPosParams._fPopoverWidth - this._arrowOffsetThreshold - oPosParams._$arrow.outerWidth(false));
 					return {"right": iPosArrow};
 				} else {
-					iPosArrow = oPosParams._$parent.offset().left - oPosParams._$popover.offset().left - oPosParams._fPopoverBorderLeft + oPosParams._fOffsetX + 0.5 * (Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$arrow.outerWidth(false));
+					iPosArrow = oPosParams._$parent.offset().left - oPosParams._$popover.offset().left - oPosParams._fPopoverBorderLeft + oPosParams._fPopoverOffsetX + 0.5 * (Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$arrow.outerWidth(false));
 					iPosArrow = Math.max(iPosArrow, this._arrowOffsetThreshold);
-					iPosArrow = Math.min(iPosArrow, oPosParams._fWidth - this._arrowOffsetThreshold - oPosParams._$arrow.outerWidth(false));
+					iPosArrow = Math.min(iPosArrow, oPosParams._fPopoverWidth - this._arrowOffsetThreshold - oPosParams._$arrow.outerWidth(false));
 					return {"left": iPosArrow};
 				}
 			}
@@ -2023,7 +2065,7 @@ sap.ui.define([
 				sCalculatedPlacement = this._getCalculatedPlacement(),
 				oPosParams = this._getPositionParams($popover, $arrow, $content, $scrollArea);
 
-			this._recalculateMargins(sCalculatedPlacement, oPosParams);
+			oPosParams = this._recalculateMargins(sCalculatedPlacement, oPosParams);
 
 			var oPopoverPosition = this._getPopoverPositionCss(oPosParams),
 				oContentSize = this._getContentDimensionsCss(oPosParams),

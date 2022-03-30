@@ -106,11 +106,13 @@ sap.ui.define([
 			} else {
 				oPopup.getContent().style.maxWidth = "";
 			}
+
 			oPopup.open(
 				this.getOpenDuration(),
 				mDock.BeginTop,
 				mDock.BeginBottom,
 				oControl.getDomRefForValueStateMessage(),
+				null,
 				null,
 				null,
 				Device.system.phone ? true : Popup.CLOSE_ON_SCROLL

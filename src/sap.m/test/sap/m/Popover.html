@@ -10,7 +10,19 @@
 			overflow: hidden;
 		}
 
-		/*			bottom */
+		#within {
+			display: none;
+			position: absolute;
+			width: 50%;
+			height: 80%;
+			background-color: rgba(255, 0, 0, 0.5);
+			z-index: 1;
+			pointer-events: none;
+			top: 20px;
+			left: 20px;
+		}
+
+		/* bottom */
 		.positioned {
 			position: absolute !important;
 			top: 10px;
@@ -693,18 +705,51 @@
 			items: aPopoverContent
 		});
 		oOverflowingPopover.addStyleClass("positioned11");
+		// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
+		var oCustomCssButton = new sap.m.Button ("customCssButton",{
+			text: "Toggle custom CSS for visual test",
+			press: function() {
+				var $body = jQuery("body");
 
+				$body.toggleClass("customClassForVisualTests");
+			}
+		});
 		var page1 = new sap.m.Page("page1", {
-			title: "Page 1",
+			headerContent: [
+				new sap.m.CheckBox("customWithin", {
+					text: "Custom Within",
+					selected : false,
+					select : function(event) {
+						var oWithin = document.getElementById("within");
+
+						if (event.getParameter("selected")) {
+							oWithin.style.display = "block";
+							sap.ui.core.Popup.setWithinArea(oWithin);
+						} else {
+							oWithin.style.display = "none";
+							sap.ui.core.Popup.setWithinArea(null);
+						}
+					}
+				}).addStyleClass("sapUiSmallMarginEnd"),
+				new sap.m.Title({
+					text: "sap.m.Popover"
+				}),
+				new sap.m.ToolbarSpacer({
+					width: "600px"
+				}),
+				oCustomCssButton,
+			],
 			content: [
 				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton14, oButton15, oChangeToFioriTheme, oChangeToBelizeTheme
 			]
 		});
 
 		app.addPage(page1);
-		app.placeAt("body");
+		app.placeAt("div");
 	</script>
 </head>
-<body id="body" class="sapUiBody">
+<body class="sapUiBody">
+	<div id="within"></div>
+	<div id="div"></div>
 </body>
 </html>
