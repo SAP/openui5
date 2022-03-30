@@ -561,8 +561,6 @@ sap.ui.define([
 
 	QUnit.module("SortPanel API only tests", {
 		beforeEach: function(){
-
-
 			this.oChartItemPanel = new ChartItemPanel();
 			this.oChartItemPanel.placeAt("qunit-fixture");
 		}.bind(this),
@@ -572,11 +570,24 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("_getTemplateComboBox", function(assert){
+	QUnit.test("Template ComboBox tests", function(assert){
 		var oComboBox = this.oChartItemPanel._getTemplateComboBox("Measure");
+		var mockEvent = {getSource: function(){return oComboBox;}};
+
+		//Override for test
+		this.oChartItemPanel._getCleanP13nItems = function(){return [];};
 
 		assert.ok(oComboBox.isA("sap.m.ComboBox"), "ComboBox is returned");
 		assert.ok(oComboBox.getPlaceholder() == MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER'), "ComboBox has correct placeholder");
+
+		oComboBox.setValue("1234");
+		this.oChartItemPanel.onChangeOfTemplateName(mockEvent);
+		assert.equal(oComboBox.getValueState(), sap.ui.core.ValueState.Error, "Template ComboBox has error state");
+
+		oComboBox.setValue("");
+		this.oChartItemPanel.onChangeOfTemplateName(mockEvent);
+		assert.equal(oComboBox.getValueState(), sap.ui.core.ValueState.None, "Error state is reset");
+
 
 	}.bind(this));
 
