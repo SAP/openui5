@@ -6119,6 +6119,9 @@ sap.ui.define([
 		oMultiComboBox.syncPickerContent();
 
 		var oSelectedButton = oMultiComboBox._getSuggestionsPopover().getFilterSelectedButton();
+		var oSelectButtonTooltipText = oResourceBundle.getText("SHOW_SELECTED_BUTTON");
+
+		assert.strictEqual(oSelectedButton.getTooltip(), oSelectButtonTooltipText, "Button's tooltip is set correctly");
 
 		var oFakeEvent = {
 			target: {
