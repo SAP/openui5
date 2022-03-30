@@ -566,9 +566,9 @@ sap.ui.define([
 			// update the internal structure of the rows
 			updateRows(this);
 
-			if (this._resizeHandlerFullLengthID) {
-				ResizeHandler.deregister(this._resizeHandlerFullLengthID);
-				delete this._resizeHandlerFullLengthID;
+			if (this._resizeHandlerComputeWidthsID) {
+				ResizeHandler.deregister(this._resizeHandlerComputeWidthsID);
+				delete this._resizeHandlerComputeWidthsID;
 			}
 		};
 
