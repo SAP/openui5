@@ -49,6 +49,7 @@ sap.ui.define([
 	AdaptationFilterBar.prototype.init = function() {
 		FilterBarBase.prototype.init.apply(this,arguments);
 		this.addStyleClass("sapUIAdaptationFilterBar");
+		this.getEngine().defaultProviderRegistry.attach(this, "Transient");
 		this._bPersistValues = true;
 		this.getEngine().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
 		this._fnResolveAdaptationControlPromise = null;

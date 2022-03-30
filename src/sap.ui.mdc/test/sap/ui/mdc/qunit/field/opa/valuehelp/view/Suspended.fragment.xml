@@ -6,7 +6,7 @@
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB0-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MDCUITableValueHelp.delegate', payload: {}}">
                 <mdcf:filterBar>
-                    <vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+                    <vhfb:FilterBar id="FB0-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:filterItems>
                             <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
                         </vhfb:filterItems>
@@ -29,7 +29,7 @@
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB1-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MDCUITableValueHelp.delegate', payload: {}}">
                 <mdcf:filterBar>
-                    <vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+                    <vhfb:FilterBar id="FB1-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:basicSearchField>
                             <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" dataType="Edm.String" conditions="{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" />
                         </vhfb:basicSearchField>
@@ -92,7 +92,7 @@
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB2-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MDCMTableValueHelp.delegate', payload: {}}">
                 <mdcf:filterBar>
-                    <vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+                    <vhfb:FilterBar id="FB2-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:basicSearchField>
                             <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" dataType="Edm.String" conditions="{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" />
                         </vhfb:basicSearchField>
@@ -119,7 +119,7 @@
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB3-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MDCUITableValueHelp.delegate', payload: {}}">
                 <mdcf:filterBar>
-                    <vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+                    <vhfb:FilterBar id="FB3-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:basicSearchField>
                             <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" dataType="Edm.String" conditions="{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" />
                         </vhfb:basicSearchField>
@@ -183,7 +183,7 @@
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB7-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MTableValueHelp.delegate', payload: {}}">
                 <mdcf:filterBar>
-                    <vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+                    <vhfb:FilterBar id="FB7-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:filterItems>
                             <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
                         </vhfb:filterItems>
@@ -203,7 +203,7 @@
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB8-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
                 <mdcf:filterBar>
-                    <vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+                    <vhfb:FilterBar id="FB8-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:filterItems>
                             <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
                         </vhfb:filterItems>
@@ -278,7 +278,7 @@
             <mdcf:InParameter value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
         </mdcf:inParameters>
         <mdcf:filterBar>
-            <vhfb:FilterBar liveMode="false">
+            <vhfb:FilterBar id="FB10-FH2-FB" liveMode="false">
                 <mdc:FilterField label="Classification" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/classification_code}"></mdc:FilterField>
             </vhfb:FilterBar>
         </mdcf:filterBar>
@@ -322,7 +322,7 @@
             <mdcf:InParameter value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
         </mdcf:inParameters>
         <mdcf:filterBar>
-            <vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: 'Genres'}}">
+            <vhfb:FilterBar id="FB10-FH3-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: 'Genres'}}">
                 <mdc:FilterField label="Classification" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/classification_code}"></mdc:FilterField>
             </vhfb:FilterBar>
         </mdcf:filterBar>

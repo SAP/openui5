@@ -15,6 +15,15 @@ sap.ui.define([
 	 */
 	var GenericVhFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 
+	GenericVhFilterBarDelegate.addCondition = function() {
+		return Promise.resolve();
+	};
+
+	GenericVhFilterBarDelegate.removeCondition = function() {
+		return Promise.resolve();
+	};
+
+
 	/**
 	 * Fetches the relevant metadata (from the FilterItems of the FiterBar) for the FilterBar and returns property info array
 	 *
