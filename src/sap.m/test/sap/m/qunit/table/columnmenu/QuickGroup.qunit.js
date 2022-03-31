@@ -44,6 +44,8 @@ sap.ui.define([
 	QUnit.test("Content", function(assert) {
 		var aContent = this.oQuickGroup.getContent();
 		assert.ok(aContent, "The quick group has content");
+		assert.strictEqual(aContent[0].getParent(), this.oQuickGroup, "The content is in the control tree");
+		assert.strictEqual(aContent[1].getParent(), this.oQuickGroup, "The content is in the control tree");
 
 		assert.equal(aContent.length, 2, "The quick group has the correct number of items");
 		assert.equal(aContent[0].getText(), "A", "The first button text is correct");
@@ -102,6 +104,9 @@ sap.ui.define([
 			assert.ok(oItem.getGrouped(), "The grouped property of the item is correct");
 			assert.ok(aItems[0].getPressed(), "The first button is pressed");
 			assert.ok(aItems[1].getPressed(), "The second button is pressed");
+
+			oItem.setGrouped(false);
+			assert.ok(!aItems[1].getPressed(), "Calling setGrouped updates the pressed state of the button.");
 			done();
 		});
 

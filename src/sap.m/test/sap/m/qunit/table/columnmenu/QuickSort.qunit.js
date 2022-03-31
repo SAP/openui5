@@ -132,6 +132,10 @@ sap.ui.define([
 			assert.equal(oItem.getSortOrder(), "Descending", "The sortOrder property of the item is correct");
 			assert.ok(!isButtonPressed(aButtons[0]), "After pressing the descending button, the state of the ascending button has changed.");
 			assert.ok(isButtonPressed(aButtons[1]), "The descending button is pressed");
+
+			oItem.setSortOrder("None");
+			assert.ok(!isButtonPressed(aButtons[0]), "Calling setSortOrder updates the pressed state of the buttons.");
+			assert.ok(!isButtonPressed(aButtons[1]), "Calling setSortOrder updates the pressed state of the buttons.");
 			done();
 		});
 

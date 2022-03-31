@@ -73,6 +73,9 @@ sap.ui.define([
 	QuickTotal.prototype.getContent = function() {
 		if (!this._aContent) {
 			this._aContent = this.createContent(this.getItems());
+			this._aContent.forEach(function(oItem) {
+				this.addDependent(oItem);
+			}.bind(this));
 		}
 
 		return this._aContent;
@@ -120,6 +123,18 @@ sap.ui.define([
 			});
 			delete this._aContent;
 		}
+	};
+
+	QuickTotal.prototype._onItemChange = function(oQuickTotalItem, bTotaled) {
+		var sLabel = oQuickTotalItem.getLabel();
+
+		this.getContent().forEach(function(oButton) {
+			if (oButton.getText() === sLabel) {
+				oButton.setPressed(bTotaled);
+			} else if (bTotaled) {
+				oButton.setPressed(false);
+			}
+		});
 	};
 
 	QuickTotal.prototype.onChange = function(oEvent, oItem) {
