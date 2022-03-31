@@ -835,15 +835,11 @@ sap.ui.define([
 				oContext : "~oContext",
 				oModel : oModel,
 				sPath : "~sPath",
-				_cleanupCreatedPersisted : function () {},
 				isResolved : function () {}
 			},
 			aList = bIsResolved ? undefined : [];
 
 		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
-		this.mock(oBinding).expects("_cleanupCreatedPersisted")
-			.withExactArgs(sinon.match.same(aList))
-			.returns(undefined);
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(bIsResolved);
 
 		// code under test
@@ -854,17 +850,12 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bSideEffects) {
-	var sTitle = "checkExpandedList: list read via side effects (sideEffects = " + bSideEffects
-			+ ") returns undefined";
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("checkExpandedList: expanded list is not usable", function (assert) {
 		var oModel = {_getObject : function () {}},
 			oBinding = {
 				oContext : "~oContext",
 				oModel : oModel,
 				sPath : "~sPath",
-				_cleanupCreatedPersisted : function () {},
 				_isExpandedListUsable : function () {},
 				isResolved : function () {}
 			};
@@ -872,19 +863,14 @@ sap.ui.define([
 		this.mock(oModel).expects("_getObject")
 			.withExactArgs("~sPath", "~oContext")
 			.returns("~aList");
-		this.mock(oBinding).expects("_cleanupCreatedPersisted")
-			.withExactArgs("~aList")
-			.returns(bSideEffects ? "~keys" : undefined);
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_isExpandedListUsable").withExactArgs().returns(false);
 
 		// code under test
-		assert.strictEqual(ODataListBinding.prototype.checkExpandedList.call(oBinding),
-			bSideEffects ? undefined : false);
+		assert.strictEqual(ODataListBinding.prototype.checkExpandedList.call(oBinding), false);
 		assert.strictEqual(oBinding.bUseExpandedList, false);
 		assert.strictEqual(oBinding.aExpandRefs, undefined);
 	});
-});
 
 	//*********************************************************************************************
 [true, false].forEach(function (bUseExpandedList) {
@@ -896,7 +882,6 @@ sap.ui.define([
 				oModel : oModel,
 				sPath : "~sPath",
 				bUseExpandedList : bUseExpandedList,
-				_cleanupCreatedPersisted : function () {},
 				_initSortersFilters : function () {},
 				_isExpandedListUsable : function () {},
 				applyFilter : function () {},
@@ -906,9 +891,6 @@ sap.ui.define([
 			aList = ["path0"];
 
 		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
-		this.mock(oBinding).expects("_cleanupCreatedPersisted")
-			.withExactArgs(sinon.match.same(aList))
-			.returns(undefined);
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_isExpandedListUsable").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
@@ -932,29 +914,35 @@ sap.ui.define([
 [true, false].forEach(function (bUseExpandedList) {
 	QUnit.test("checkExpandedList: expanded 'to N' navigation property; skip reload needed;"
 			+ " read via side effect; bUseExpandedList=" + bUseExpandedList, function (assert) {
-		var oModel = {_getObject : function () {}},
+		var oModel = {
+				_getObject : function () {},
+				getKey : function () {}
+			},
 			oBinding = {
 				oContext : "~oContext",
 				oModel : oModel,
 				sPath : "~sPath",
 				bUseExpandedList : bUseExpandedList,
-				_cleanupCreatedPersisted : function () {},
+				_getCreatedPersistedContexts : function () {},
 				_initSortersFilters : function () {},
 				_isExpandedListUsable : function () {},
 				applyFilter : function () {},
 				applySort : function () {},
 				isResolved : function () {}
 			},
+			oModelMock = this.mock(oModel),
 			aList = ["path0", "path1", "path2"];
 
 		aList.sideEffects = true;
 
 		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
-		this.mock(oBinding).expects("_cleanupCreatedPersisted")
-			.withExactArgs(sinon.match.same(aList))
-			.returns(["path0", "path1"]);
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_isExpandedListUsable").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_getCreatedPersistedContexts")
+			.withExactArgs()
+			.returns(["~Context0", "~Context1"]);
+		oModelMock.expects("getKey").withExactArgs("~Context0").returns("path0");
+		oModelMock.expects("getKey").withExactArgs("~Context1").returns("path1");
 		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
 		this.mock(oBinding).expects("applyFilter").withExactArgs();
 		this.mock(oBinding).expects("applySort").withExactArgs();
@@ -986,7 +974,7 @@ sap.ui.define([
 				oModel : oModel,
 				sPath : "~sPath",
 				bUseExpandedList : bUseExpandedList,
-				_cleanupCreatedPersisted : function () {},
+				_getCreatedPersistedContexts : function () {},
 				_initSortersFilters : function () {},
 				_isExpandedListUsable : function () {},
 				applyFilter : function () {},
@@ -998,11 +986,9 @@ sap.ui.define([
 		aList.sideEffects = true;
 
 		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext").returns(aList);
-		this.mock(oBinding).expects("_cleanupCreatedPersisted")
-			.withExactArgs(sinon.match.same(aList))
-			.returns([]);
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_isExpandedListUsable").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_getCreatedPersistedContexts").withExactArgs().returns([]);
 		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
 		this.mock(oBinding).expects("applyFilter").withExactArgs();
 		this.mock(oBinding).expects("applySort").withExactArgs();
@@ -2545,11 +2531,13 @@ sap.ui.define([
 		var oBinding = {
 				sChangeReason : "~sChangeReason",
 				aKeys : [],
+				_cleanupCreatedPersisted : function () {},
 				_fireChange : function () {},
 				checkExpandedList : function () {},
 				useClientMode : function () {}
 			};
 
+		this.mock(oBinding).expects("_cleanupCreatedPersisted").withExactArgs().returns(false);
 		this.mock(oBinding).expects("checkExpandedList").withExactArgs(true).returns(bExpandedList);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().exactly(bExpandedList ? 0 : 1);
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : "~sChangeReason"});
@@ -2563,16 +2551,32 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate: bExpandedList = undefined stops processing", function (assert) {
+	QUnit.test("checkUpdate: #_cleanupCreatedPersisted=true fires change event", function (assert) {
 		var oBinding = {
+				sChangeReason : "~sChangeReason",
 				aKeys : [],
+				aLastContextData : [],
+				aLastContexts : [],
+				iLastLength : "~iLastLength",
+				iLastStartIndex : "~iLastStartIndex",
+				_cleanupCreatedPersisted : function () {},
+				_fireChange : function () {},
+				_getContexts : function () {},
 				checkExpandedList : function () {}
 			};
 
-		this.mock(oBinding).expects("checkExpandedList").withExactArgs(true).returns(undefined);
+		this.mock(oBinding).expects("_cleanupCreatedPersisted").withExactArgs().returns(true);
+		this.mock(oBinding).expects("checkExpandedList").withExactArgs(true).returns(true);
+		this.mock(oBinding).expects("_getContexts")
+			.withExactArgs("~iLastStartIndex", "~iLastLength")
+			.returns([]);
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : "~sChangeReason"});
 
 		// code under test
 		ODataListBinding.prototype.checkUpdate.call(oBinding);
+
+		assert.strictEqual(oBinding.bNeedsUpdate, false);
+		assert.strictEqual(oBinding.sChangeReason, undefined);
 	});
 
 	//*********************************************************************************************
@@ -2656,17 +2660,22 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_cleanupCreatedPersisted: all keys in aList", function (assert) {
 		var oBinding = {
+				oContext : "~oContext",
 				oModel : {
+					_getObject : function () {},
 					getKey : function () {}
 				},
 				bNeedsUpdate : "foo",
+				sPath : "~sPath",
 				_getCreatedPersistedContexts : function () {}
 			},
-			aList = ["~sEntityKey"],
-			aResult;
+			aList = ["~sEntityKey"];
 
 		aList.sideEffects = true;
 
+		this.mock(oBinding.oModel).expects("_getObject")
+			.withExactArgs("~sPath", "~oContext")
+			.returns(aList);
 		this.mock(oBinding).expects("_getCreatedPersistedContexts")
 			.withExactArgs()
 			.returns(["~oContext"]);
@@ -2675,28 +2684,31 @@ sap.ui.define([
 			.returns("~sEntityKey");
 
 		// code under test
-		aResult = ODataListBinding.prototype._cleanupCreatedPersisted.call(oBinding, aList);
-
-		assert.deepEqual(aResult, ["~sEntityKey"]);
-		assert.notStrictEqual(aList, aResult);
-		assert.strictEqual(oBinding.bNeedsUpdate, "foo");
+		assert.strictEqual(
+			ODataListBinding.prototype._cleanupCreatedPersisted.call(oBinding),
+			false);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_cleanupCreatedPersisted: some keys not in aList", function (assert) {
 		var oBinding = {
+				oContext : "~oContext",
 				oModel : {
 					_discardEntityChanges : function () {},
+					_getObject : function () {},
 					getKey : function () {}
 				},
+				sPath : "~sPath",
 				_getCreatedPersistedContexts : function () {}
 			},
 			oModelMock = this.mock(oBinding.oModel),
-			aList = ["~key0"],
-			aResult;
+			aList = ["~key0"];
 
 		aList.sideEffects = true;
 
+		this.mock(oBinding.oModel).expects("_getObject")
+			.withExactArgs("~sPath", "~oContext")
+			.returns(aList);
 		this.mock(oBinding).expects("_getCreatedPersistedContexts")
 			.withExactArgs()
 			.returns(["~oContext0", "~oContext1"]);
@@ -2705,39 +2717,30 @@ sap.ui.define([
 		oModelMock.expects("_discardEntityChanges").withExactArgs("~key1", true);
 
 		// code under test
-		aResult = ODataListBinding.prototype._cleanupCreatedPersisted.call(oBinding, aList);
-
-		assert.deepEqual(aResult, ["~key0"]);
-		assert.notStrictEqual(aList, aResult);
-		assert.strictEqual(oBinding.bNeedsUpdate, true);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_cleanupCreatedPersisted: no created persisted contexts", function (assert) {
-		var oBinding = {_getCreatedPersistedContexts : function () {}},
-			aList = ["foo"];
-
-		aList.sideEffects = true;
-
-		this.mock(oBinding).expects("_getCreatedPersistedContexts").withExactArgs().returns([]);
-
-		// code under test
-		assert.deepEqual(
-			ODataListBinding.prototype._cleanupCreatedPersisted.call(oBinding, aList),
-			[]);
+		assert.strictEqual(
+			ODataListBinding.prototype._cleanupCreatedPersisted.call(oBinding),
+			true);
 	});
 
 	//*********************************************************************************************
 [undefined, ["foo"]].forEach(function (aList, i) {
 	QUnit.test("_cleanupCreatedPersisted: no side effects scenario #" + i, function (assert) {
-		var oBinding = {_getCreatedPersistedContexts : function () {}};
+		var oBinding = {
+				oContext : "~oContext",
+				oModel : {_getObject : function () {}},
+				sPath : "~sPath",
+				_getCreatedPersistedContexts : function () {}
+			};
 
+		this.mock(oBinding.oModel).expects("_getObject")
+			.withExactArgs("~sPath", "~oContext")
+			.returns(aList);
 		this.mock(oBinding).expects("_getCreatedPersistedContexts").never();
 
 		// code under test
 		assert.strictEqual(
-			ODataListBinding.prototype._cleanupCreatedPersisted.call(oBinding, aList),
-			undefined);
+			ODataListBinding.prototype._cleanupCreatedPersisted.call(oBinding),
+			false);
 	});
 });
 });
