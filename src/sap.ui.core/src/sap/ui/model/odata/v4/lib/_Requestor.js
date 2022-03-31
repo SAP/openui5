@@ -1400,9 +1400,8 @@ sap.ui.define([
 						Log.info("optimistic batch: enabled, batch payload saved", sKey,
 							sClassName);
 					});
-				} else {
-					Log.info("optimistic batch: disabled", sKey, sClassName);
 				}
+				Log.info("optimistic batch: disabled", sKey, sClassName);
 			}).catch(that.oModelInterface.getReporter());
 		}
 	};

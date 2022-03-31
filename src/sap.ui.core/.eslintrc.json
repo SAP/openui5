@@ -40,6 +40,7 @@
 				"jsx-quotes": "error", // let's see...
 				"key-spacing": ["error", {"beforeColon": true}],
 				"lines-between-class-members": "error",
+				"no-else-return" : "error",
 				"no-lonely-if": "error", // override "warn"
 				"no-multiple-empty-lines": ["error", {"max": 1}],
 				"no-multi-spaces": "error",
