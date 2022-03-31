@@ -211,4 +211,33 @@ sap.ui.define([
 		assert.ok(oSelectOfNewRow.getFocusDomRef() === nActiveElement, "The select control is focused");
 	});
 
+	QUnit.test("Check 'queryLimit' when setting more items than allowed", function(assert){
+
+		//Limit query amount to max 1
+		this.oQueryPanel.setQueryLimit(1);
+
+		//set data which provides more than 1 query allowed
+		this.oQueryPanel.setP13nData([
+			{
+				name: "key1",
+				visible: true
+			},
+			{
+				name: "key2",
+				visible: true
+			},
+			{
+				name: "key3",
+				visible: false
+			},
+			{
+				name: "key4",
+				visible: false
+			}
+		]);
+
+		assert.equal(this.oQueryPanel._oListControl.getItems().length, 2, "Two items in the panel");
+		assert.ok(this.oQueryPanel._oListControl.getItems()[0].getContent()[0].getContent()[0].getEnabled(), "The first select control is enabled");//First select control is enabled
+		assert.notOk(this.oQueryPanel._oListControl.getItems()[1].getContent()[0].getContent()[0].getEnabled(), "The second select control is disabled");//Higher rows than the query limit are disabled
+	});
 });

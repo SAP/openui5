@@ -108,14 +108,21 @@ sap.ui.define([
 	};
 
 	QueryPanel.prototype._moveTableItem = function (oItem, iNewIndex) {
-		// Rules for the movement for the $_none row:
-		// 1) disable the $_none row for reordering
-		// 2) in case all entries are used there is no $_none row and the movement is allowed
-		if (this._oListControl.getItems().indexOf(oItem) !== (this._oListControl.getItems().length - 1)  || this._allEntriesUsed()) {
+		var iCurrentIndex = this._oListControl.getItems().indexOf(oItem);
+		var iMaxListLength = this._oListControl.getItems().length - 1;
+		var iQueryLimit = this.getQueryLimit();
+
+		// Rules for the movement:
+		// 1) The row is not the template row
+		// 2) in case all entries are used, allow reordering for all rows
+		// 3) in case a query limit is provided, limit the movement to the allowed limit
+		if ((iCurrentIndex !== iMaxListLength || this._allEntriesUsed()) && (iQueryLimit === -1 || iNewIndex < iQueryLimit)) {
 			this._oListControl.removeItem(oItem);
 			this._oListControl.insertItem(oItem, iNewIndex);
 
 			this._updateEnableOfMoveButtons(oItem, false);
+
+			this._getP13nModel().checkUpdate(true);
 
 			this.fireChange({
 				reason: this.CHANGE_REASON_MOVE,
@@ -178,9 +185,9 @@ sap.ui.define([
 	QueryPanel.prototype._addQueryRow = function (oItem) {
 
 		var bLimitedQueries = this.getQueryLimit() > -1;
-		var bQueryLimitReached = this.getQueryLimit() === this._oListControl.getItems().length;
+		var bQueryLimitReached = this.getQueryLimit() <= this._oListControl.getItems().length;
 
-		if ((bLimitedQueries && bQueryLimitReached) || this._allEntriesUsed()) {
+		if ((bLimitedQueries && bQueryLimitReached && !oItem) || this._allEntriesUsed()) {
 			return;
 		}
 
@@ -198,7 +205,11 @@ sap.ui.define([
 		//We only need 'move' buttons if:
 		// 1) Reordering is enabled
 		// 2) At least 2 queries can be made
-		if (this.getEnableReorder() && (this.getQueryLimit() === -1 || this.getQueryLimit() > 1)){
+		// 3) The row is not exeeding the query limit
+		if (
+				this.getEnableReorder() &&
+				(this.getQueryLimit() === -1 || (this.getQueryLimit() > 1 && this._oListControl.getItems().length < this.getQueryLimit()))
+			){
 			this._addHover(oRow);
 		}
 
@@ -240,8 +251,25 @@ sap.ui.define([
 	};
 
 	QueryPanel.prototype._createKeySelect = function (sKey) {
+		var that = this;
 		var oKeySelect = new Select({
 			width: "14rem",
+			enabled: {
+				path: this.P13N_MODEL + ">/items/",
+				formatter: function(aItems) {
+
+					if (that.getQueryLimit() < 0) {
+						return true;
+					}
+
+					var aPresentKeys = that.getP13nData(true).map(function(oItem){
+						return oItem.name;
+					});
+					var sKey = this._key; //'this' is the select control passed by the formatter
+					var iPositon = aPresentKeys.indexOf(sKey) + 1;
+					return iPositon <= that.getQueryLimit();
+				}
+			},
 			items: this._getAvailableItems(sKey),
 			selectedKey: sKey,
 			change: this._selectKey.bind(this)
@@ -310,6 +338,8 @@ sap.ui.define([
 							var iLastIndex = this._oListControl.getItems().length - 1;
 							this._oListControl.getItems()[iLastIndex].getContent()[0].getContent()[0].focus();
 						}
+
+						this._getP13nModel().checkUpdate(true);
 					}.bind(this)
 				})
 			]
