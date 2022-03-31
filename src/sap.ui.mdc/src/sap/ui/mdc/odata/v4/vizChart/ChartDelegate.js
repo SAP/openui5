@@ -1348,6 +1348,8 @@ sap.ui.define([
         var aFilters = createInnerFilters.call(this, oMDCChart).concat(createOuterFilters.call(this, oMDCChart));
         addSearchParameter(oMDCChart, oBindingInfo);
 		oBindingInfo.filters = new Filter(aFilters, true);
+        oBindingInfo.sorter = this.getSorters(oMDCChart);
+
     };
 
     function createInnerFilters(oChart) {
@@ -1412,6 +1414,46 @@ sap.ui.define([
 
 		oBindingInfo.parameters["$search"] = sSearchText || undefined;
 	}
+
+    /**
+     * Returns sorters available for the data
+     *
+     * @returns {array} Array containing available sorters
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+    */
+    ChartDelegate.getSorters = function (oMDCChart) {
+        var aSorters;
+        var aSorterProperties = oMDCChart.getSortConditions() ? oMDCChart.getSortConditions().sorters : [];
+
+        aSorterProperties.forEach(function (oSortProp) {
+
+            var oMDCItem = oMDCChart.getItems().find(function (oProp) {
+                return oProp.getName() === oSortProp.name;
+            });
+
+            //Ignore not visible Items
+            if (!oMDCItem) {
+                return;
+            }
+
+            //TODO: Check for inResultDimensions
+            var oSorter = this.getSorterForItem(oMDCItem, oSortProp);
+
+            if (aSorters) {
+                aSorters.push(oSorter);
+            } else {
+                aSorters = [
+                    oSorter
+                ];//[] has special meaning in sorting
+            }
+        }.bind(this));
+
+        return aSorters;
+
+    };
 
     ChartDelegate._getAggregatedMeasureNameForMDCItem = function(oMDCItem){
         return this.getInternalChartNameFromPropertyNameAndKind(oMDCItem.getName(), "aggregatable", oMDCItem.getParent());

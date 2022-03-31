@@ -688,10 +688,6 @@ sap.ui.define([
 
             var oBindingInfo = this.getControlDelegate()._getBindingInfo(this);
 
-            if (oBindingInfo) {
-                oBindingInfo.sorter = this._getSorters();
-            }
-
             this.getControlDelegate().updateBindingInfo(this, oBindingInfo); //Applies filters
             this.getControlDelegate().rebind(this, oBindingInfo);
         };
@@ -1096,46 +1092,6 @@ sap.ui.define([
          */
         Chart.prototype._getSortedProperties = function () {
             return this.getSortConditions() ? this.getSortConditions().sorters : [];
-        };
-
-        /**
-         * Returns sorters available for the data
-         *
-         * @returns {array} Array containing available sorters
-         *
-         * @experimental
-         * @private
-         * @ui5-restricted sap.ui.mdc
-         */
-        Chart.prototype._getSorters = function () {
-            var aSorters;
-            var aSorterProperties = this.getSortConditions() ? this.getSortConditions().sorters : [];
-
-            aSorterProperties.forEach(function (oSortProp) {
-
-                var oMDCItem = this.getItems().find(function (oProp) {
-                    return oProp.getName() === oSortProp.name;
-                });
-
-                //Ignore not visible Items
-                if (!oMDCItem) {
-                    return;
-                }
-
-                //TODO: Check for inResultDimensions
-                var oSorter = this.getControlDelegate().getSorterForItem(oMDCItem, oSortProp);
-
-                if (aSorters) {
-                    aSorters.push(oSorter);
-                } else {
-                    aSorters = [
-                        oSorter
-                    ];//[] has special meaning in sorting
-                }
-            }.bind(this));
-
-            return aSorters;
-
         };
 
         /**
