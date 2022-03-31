@@ -12,8 +12,8 @@
   The page has two modes. As a default ("full mode") all tests are run except those with
   'integration'.
 
-  With "integrationTestsOnly", all tests are run except those with 'full'. Coverage is measured for
-  all tests, but no specific coverage is expected. This mode can be used to see which code is
+  With "integrationTestsOnly=true", all tests are run except those with 'full'. Coverage is measured
+  for all tests, but no specific coverage is expected. This mode can be used to see which code is
   actually covered via integration tests. It can also be used to verify a POC (probably in
   combination with realOData=true to overcome "No Mockdata found" errors)
 
@@ -37,7 +37,15 @@
 */
 (function () {
 	"use strict";
-	var mParameters = getQueryParameters();
+	var mParameters = getQueryParameters(),
+		sServiceDocument = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
+		mVariants = {
+			"All tests" : {},
+			"Integration tests only" : {integrationTestsOnly : true},
+			"POC verification" : {integrationTestsOnly : true, realOData : true},
+			"No realOData" : {realOData : false},
+			"Only realOData" : {realOData : true}
+		};
 
 	// returns an array of tests according to the given flags
 	function filterTests(mTests, bIntegration, bRealOData) {
@@ -95,6 +103,7 @@
 	function getQueryParameters() {
 		var mParameters = {};
 
+		// eslint-disable-next-line no-restricted-globals
 		location.search.slice(1).split("&").forEach(function (sParameter) {
 			var aParts = sParameter.split("=", 2);
 
@@ -119,7 +128,7 @@
 			iRunningTests = 0,
 			oSelectedTest,
 			iStart = Date.now(),
-			aTests = filterTests(mTests, mParameters.integrationTestsOnly, bRealOData),
+			aTests = filterTests(mTests, mParameters.integrationTestsOnly !== "false", bRealOData),
 			iTop = 10000,
 			oTotal,
 			bVisible;
@@ -153,6 +162,7 @@
 					select(oFirstFailedTest);
 				}
 			}
+			return undefined;
 		}
 
 		// runs a test: creates its frame (out of sight), registers first at the frame's page, then
@@ -273,7 +283,6 @@
 		setStatus();
 		iFrames = getFrameCount();
 		bVisible = !iFrames;
-		document.getElementById("buttons").classList.add("hidden");
 		document.getElementById("list").classList.remove("hidden");
 		aTests = aTests.map(function (sUrl) {
 			return createTest(sUrl, "test-resources/sap/ui/core/" + sUrl);
@@ -315,23 +324,43 @@
 		oElement.firstChild.textContent = sTitle;
 	}
 
+	// Shows a list of links to the most common variants
+	function variants() {
+		var oList = document.getElementById("variants"),
+			mQueryOptions = {
+				team : mParameters.team,
+				frames : mParameters.frames || 4
+			};
+
+		Object.keys(mVariants).forEach(function (sTitle) {
+			var oAnchor = document.createElement("a"),
+				oItem = document.createElement("li"),
+				mVariantQueryOptions = Object.assign({}, mQueryOptions, mVariants[sTitle]),
+				sQuery = Object.keys(mVariantQueryOptions).map(function (sKey) {
+						return sKey + "=" + mVariantQueryOptions[sKey];
+					}).join("&");
+
+			oAnchor.setAttribute("href",
+				"test-resources/sap/ui/core/qunit/internal/BeforePush.html?" + sQuery);
+			oAnchor.appendChild(document.createTextNode(sTitle));
+			oItem.appendChild(oAnchor);
+			oList.appendChild(oItem);
+		});
+	}
+
 	// For the onload handler and the button "Run"
 	function verifyConnectionAndRun(mTests, bRealOData) {
-		var oLoginRequest = new XMLHttpRequest();
-
 		// send a request to the service document from the v4 sample service to ensure that
 		// the credentials are known before running the test suite.
-		oLoginRequest.open("GET",
-			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");
-		oLoginRequest.addEventListener("load", function () {
-			if (oLoginRequest.status === 200) {
+		fetch(sServiceDocument, {method : "HEAD"}).then(function (oResponse) {
+			if (oResponse.ok) {
 				runTests(mTests, bRealOData);
 			} else {
 				setStatus("Could not access the real OData server: "
-					+ oLoginRequest.status + " " + oLoginRequest.statusText);
+					+ oResponse.status + " " + oResponse.statusText);
+				variants();
 			}
 		});
-		oLoginRequest.send();
 	}
 
 	// configure the UI5 loader
@@ -351,11 +380,11 @@
 			return;
 		}
 		setTitle(mParameters.team);
+		if (mParameters.variants) {
+			variants();
+			return;
+		}
 		sap.ui.require([sTestsScript], function (mTests) {
-			document.getElementById("run")
-				.addEventListener("click", verifyConnectionAndRun.bind(null, mTests));
-			document.getElementById("runWithoutRealOData")
-				.addEventListener("click", runTests.bind(null, mTests, false));
 			switch (mParameters.realOData) {
 				case "false":
 					runTests(mTests, false);
