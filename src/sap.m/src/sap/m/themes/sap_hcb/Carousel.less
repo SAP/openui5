@@ -3,6 +3,9 @@
 /* High Contrast Black theme       */
 /* =============================== */
 
+@_sap_m_Carousel_FocusBorderOffsetArrow: -0.25rem;
+@_sap_m_Carousel_ContrastFocusBorder: @sapUiContentFocusWidth solid @sapUiBaseBG;
+
 /* Carousel controls: Bulleted */
 .sapMCrslBulleted > span {
 	border: 1px solid @sapUiContentForegroundBorderColor;
@@ -33,11 +36,4 @@
 .sapMCrslControls .sapMCrslPrev,
 .sapMCrslControls .sapMCrslNext {
 	border: 2px solid @sapUiButtonBorderColor;
-}
-
-.sapMCrslPrev:focus, .sapMCrslNext:focus {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-}
-.sapMCrslHud a:focus {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
 }
