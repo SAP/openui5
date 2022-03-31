@@ -397,6 +397,30 @@ sap.ui.define([
         return this._oAdaptationModel;
     };
 
+    BaseController.prototype.changesToState = function(aChanges) {
+
+        var aState = [];
+
+        aChanges.forEach(function(oChange){
+            var oStateDiffContent = merge({}, oChange.changeSpecificData.content);
+            var iIndex = oStateDiffContent.index;
+            delete oStateDiffContent.index;
+
+            //set the position attribute in case to an explicit move
+            if (oChange.changeSpecificData.changeType === this.getChangeOperations()["move"]) {
+                oStateDiffContent.position = iIndex;
+            }
+
+            //set the presence attribute to false in case of an explicit remove
+            if (oChange.changeSpecificData.changeType === this.getChangeOperations()["remove"]) {
+                oStateDiffContent[this._getPresenceAttribute()] = false;
+            }
+
+            aState.push(oStateDiffContent);
+        }.bind(this));
+
+        return aState;
+    };
 
     BaseController.prototype.destroy = function() {
 		BaseObject.prototype.destroy.apply(this, arguments);

@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc
 	 * @experimental As of version 1.89
 	 * @since 1.89
-	 * @alias sap.ui.mdc.p13n.DefaultProviderRegistry
+	 * @alias sap.ui.mdc.p13n.modules.DefaultProviderRegistry
 	 */
 	var DefaultProviderRegistry = BaseObject.extend("sap.ui.mdc.p13n.modules.DefaultProviderRegistry", {
 		constructor: function() {

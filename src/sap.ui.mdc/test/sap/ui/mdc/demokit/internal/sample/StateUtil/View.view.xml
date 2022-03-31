@@ -1,0 +1,135 @@
+<mvc:View
+		xmlns:mdc="sap.ui.mdc"
+		xmlns:mdcTable="sap.ui.mdc.table"
+		xmlns="sap.m"
+		xmlns:fl="sap.ui.fl.variants"
+		xmlns:mdcf="sap.ui.mdc.field"
+		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+		xmlns:core="sap.ui.core"
+		xmlns:mdcc="sap.ui.mdc.chart"
+		xmlns:mvc="sap.ui.core.mvc"
+		controllerName="sap.ui.mdc.sample.StateUtil.Controller">
+
+	<OverflowToolbar>
+		<fl:VariantManagement for="mdcFilterBar,mdcTable,mdcChart"/>
+		<Title text="StateUtil overview"></Title>
+	</OverflowToolbar>
+
+	<Panel headerText="FilterBar" class="sapUiSmallMarginTop" expandable="true">
+		<mdc:FilterBar
+		id="mdcFilterBar"
+		liveMode="false"
+		p13nMode="Item,Value"
+		delegate="{name: 'sap/ui/mdc/sample/TableWithFilterBar/FilterBar.delegate', payload: {collectionName: 'Books'}}">
+
+		<mdc:basicSearchField>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
+			dataType="Edm.String"
+			placeholder= "Search"
+			conditions="{$filters>/conditions/$search}"
+			maxConditions="1"
+			width="100%"/>
+		</mdc:basicSearchField>
+
+		<mdc:filterItems>
+			<mdc:FilterField
+				delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="ff1"
+				label="Author ID"
+				conditions="{$filters>/conditions/author_ID}"
+				dataType="Edm.Int32"
+				required="false"
+				fieldHelp="FH1"
+				display="DescriptionValue"
+				width="100%"/>
+
+			<mdc:FilterField
+				delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="ff2"
+				label="Title"
+				conditions="{$filters>/conditions/title}"
+				fieldHelp="FH2"
+				width="100%"/>
+
+		</mdc:filterItems>
+	</mdc:FilterBar>
+
+	<infoToolbar>
+		<Toolbar>
+			<content>
+				<Button type="Neutral" press=".retrieveFilterBarState" text="Modify state"/>
+				<Button type="Neutral" press=".showFBDiff" text="Show state diff to Standard variant"/>
+				<Button type="Success" press=".changeFBItems" text="Add/Remove FilterFields"/>
+				<Button type="Success" press=".changeFBValues" text="Add/Remove Value"/>
+			</content>
+		</Toolbar>
+	</infoToolbar>
+	</Panel>
+
+	<Panel headerText="Chart" class="sapUiSmallMarginTop" expandable="true">
+		<mdc:Chart id="mdcChart" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
+			'name':  'sap/ui/mdc/odata/v4/vizChart/ChartDelegate',
+			'payload': {
+				collectionName: 'Books'
+			}
+		}" chartType="column" header="Books Chart" height="400px" width="100%">
+
+			<mdc:items>
+				<mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
+				<mdcc:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (avg)"/>
+			</mdc:items>
+		</mdc:Chart>
+
+		<infoToolbar>
+			<Toolbar>
+				<content>
+					<Button type="Neutral" press=".retrieveChartState" text="Modify state"/>
+					<Button type="Neutral" press=".showChartDiff" text="Show state diff to Standard variant"/>
+					<Button type="Success" press=".changeChartItems" text="Add/Remove Item"/>
+					<Button type="Success" press=".changeChartSorting" text="Add/Remove Sort"/>
+					<Button type="Emphasized" press=".changeChartRole" text="Change item role"/>
+				</content>
+			</Toolbar>
+		</infoToolbar>
+	</Panel>
+
+
+	<Panel headerText="Table" class="sapUiSmallMarginTop" expandable="true">
+		<mdc:Table
+			id="mdcTable"
+			filter="FilterBar"
+			header="Books"
+			showRowCount="false"
+			delegate="{ name: 'sap/ui/mdc/sample/TableWithFilterBar/Books.Table.delegate', payload: {collectionName: 'Books'}}"
+			p13nMode="Column,Sort,Filter,Group"
+			selectionMode="Multi"
+			height="100%">
+			<mdc:columns>
+				<mdcTable:Column id="_ID" header="ID" dataProperty="ID">
+					<Text text="{ID}"/>
+				</mdcTable:Column>
+				<mdcTable:Column id="_title" header="Title" dataProperty="title">
+					<Text text="{title}"/>
+				</mdcTable:Column>
+				<mdcTable:Column id="_author" header="Author" dataProperty="author_ID">
+					<Text text="{author_ID}"/>
+				</mdcTable:Column>
+			</mdc:columns>
+		</mdc:Table>
+
+		<infoToolbar>
+			<Toolbar>
+				<content>
+					<Button type="Neutral" press=".retrieveTableState" text="Modify state"/>
+					<Button type="Neutral" press=".showTableDiff" text="Show state diff to Standard variant"/>
+					<Button type="Success" press=".changeTableColumns" text="Add/Remove Column"/>
+					<Button type="Success" press=".changeTableSorting" text="Add/Remove Sort"/>
+					<Button type="Success" press=".changeTableFiltering" text="Add/Remove Filter"/>
+					<Button type="Success" press=".changeTableGrouping" text="Add/Remove Grouping"/>
+					<Button type="Emphasized" press=".changeColumnWidth" text="Change column width"/>
+				</content>
+			</Toolbar>
+		</infoToolbar>
+	</Panel>
+
+</mvc:View>

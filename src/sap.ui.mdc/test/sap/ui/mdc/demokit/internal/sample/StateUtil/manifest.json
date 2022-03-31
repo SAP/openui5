@@ -1,6 +1,6 @@
 {
   "sap.app": {
-	"id": "sap.ui.mdc.sample.TableWithFilterBar",
+	"id": "sap.ui.mdc.sample.StateUtil",
 	"type": "application",
 	"applicationVersion": {
 	  "version": "1.0.0"
@@ -8,7 +8,7 @@
   },
   "sap.ui5": {
 	"rootView": {
-	  "viewName": "sap.ui.mdc.sample.TableWithFilterBar.View",
+	  "viewName": "sap.ui.mdc.sample.StateUtil.View",
 	  "type": "XML",
 	  "async": true
 	},

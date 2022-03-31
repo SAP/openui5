@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/mdc/p13n/modules/DefaultProviderRegistry",
 	"sap/ui/mdc/p13n/UIManager",
-	"sap/ui/mdc/p13n/modules/StateHandlerRegistry"
-], function (AdaptationProvider, merge, Log, PropertyHelper, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry) {
+	"sap/ui/mdc/p13n/modules/StateHandlerRegistry",
+	"sap/ui/mdc/p13n/modules/xConfigAPI"
+], function (AdaptationProvider, merge, Log, PropertyHelper, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI) {
 	"use strict";
 
 	var ERROR_INSTANCING = "Engine: This class is a singleton. Please use the getInstance() method instead.";
@@ -169,6 +170,7 @@ sap.ui.define([
 	 * @param {string} mDiffParameters.key The key used to retrieve the corresponding Controller.
 	 * @param {object} mDiffParameters.state The state which should be applied on the provided control instance
 	 * @param {boolean} [mDiffParameters.applyAbsolute] Decides whether unmentioned entries should be affected,
+	 * @param {boolean} [mDiffParameters.stateBefore] In case the state should be diffed manually
 	 * for example if "A" is existing in the control state, but not mentioned in the new state provided in the
 	 * mDiffParameters.state then the absolute appliance decides whether to remove "A" or to keep it.
 	 * @param {boolean} [mDiffParameters.suppressAppliance] Decides whether the change should be applied directly.
@@ -198,7 +200,7 @@ sap.ui.define([
 			var oPriorState = merge(oCurrentState instanceof Array ? [] : {}, oCurrentState);
 
 			var mDeltaConfig = {
-				existingState: oPriorState,
+				existingState: mDiffParameters.stateBefore || oPriorState,
 				applyAbsolute: bApplyAbsolute,
 				changedState: aNewState,
 				control: oController.getAdaptationControl(),
@@ -389,15 +391,14 @@ sap.ui.define([
 
 		return Promise.resolve()
 			.then(function() {
-				var oModificationHandler = this.getModificationHandler(vControl);
-				return oModificationHandler.enhanceConfig(oControl, mEnhanceConfig)
+				return xConfigAPI.enhanceConfig(oControl, mEnhanceConfig)
 					.then(function(oConfig){
 						if (oRegistryEntry) {
 							//to simplify debugging
 							oRegistryEntry.xConfig = oConfig;
 						}
 					});
-			}.bind(this));
+			});
 	};
 
 	/**
@@ -406,17 +407,14 @@ sap.ui.define([
 	 * @param {sap.ui.core.Element} vControl The according element which should be checked
 	 * @param {object} [mEnhanceConfig] An object providing a modification handler specific payload
 	 * @param {object} [mEnhanceConfig.propertyBag] Optional propertybag for different modification handler derivations
-	 * @param {boolean} [bSync] If the method should be executed synchronously; e.g. for the Table
 	 *
-	 * @returns {Promise<object>|object|null}
+	 * @returns {Promise<object>|object}
 	 *     A promise that resolves with the xConfig, the xConfig directly if it is already available, or <code>null</code> if there is no xConfig
 	 */
-	Engine.prototype.readXConfig = function(vControl, mEnhanceConfig, bSync) {
+	Engine.prototype.readXConfig = function(vControl, mEnhanceConfig) {
 
 		var oControl = Engine.getControlInstance(vControl);
-		var oModificationHandler = this.getModificationHandler(vControl);
-		return oModificationHandler.readConfig(oControl, mEnhanceConfig, bSync) || null;
-
+		return xConfigAPI.readConfig(oControl, mEnhanceConfig) || {};
 	};
 
 	/**
@@ -518,6 +516,39 @@ sap.ui.define([
 				});
 				return this._processChanges(oControl, aChanges);
 			}.bind(this));
+
+		}.bind(this));
+	};
+
+	Engine.prototype.diffState = function(oControl, oOld, oNew) {
+
+		var aDiffCreation = [], oDiffState = {};
+		oOld = merge({}, oOld);
+		oNew = merge({}, oNew);
+
+		this.getRegisteredControllers(oControl).forEach(function(sKey){
+
+			aDiffCreation.push(this.createChanges({
+				control: oControl,
+				stateBefore: oOld[sKey],
+				state: oNew[sKey],
+				applyAbsolute: true,
+				key: sKey,
+				suppressAppliance: true
+			}));
+
+		}.bind(this));
+
+		return Promise.all(aDiffCreation)
+		.then(function(aChanges){
+			this.getRegisteredControllers(oControl).forEach(function(sKey, i){
+
+				var aState = this.getController(oControl, sKey).changesToState(aChanges[i], oOld[sKey], oNew[sKey]);
+				oDiffState[sKey] = aState;
+
+			}.bind(this));
+
+			return oDiffState;
 
 		}.bind(this));
 	};

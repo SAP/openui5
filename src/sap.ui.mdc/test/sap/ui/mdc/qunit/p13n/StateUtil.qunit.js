@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil", "sap/ui/mdc/p13n/modules/StateHandlerRegistry", "sap/ui/core/Core"
-], function (createAppEnvironment, TableDelegate, Column, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil, StateHandlerRegistry, oCore) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil", "sap/ui/mdc/p13n/modules/StateHandlerRegistry", "sap/ui/core/Core", "sap/base/util/merge"
+], function (createAppEnvironment, TableDelegate, Column, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil, StateHandlerRegistry, oCore, merge) {
 	"use strict";
 
 	oCore.loadLibrary("sap.ui.fl");
@@ -1117,5 +1117,173 @@ sap.ui.define([
 		StateUtil.detachStateChange(fnHandler1);
 		StateUtil.detachStateChange(fnHandler2);
 		assert.notOk(this.stateHandlerRegistry.mEventRegistry.hasOwnProperty("stateChange"), "Event listeners detached");
+	});
+
+	QUnit.module("State diff calculation", {
+		getSampleState: function() {
+			return {
+				sorters: [
+					{
+						name: "String",
+						descending: true
+					}
+				],
+				items: [
+					{
+						name: "Decimal"
+					},
+					{
+						name: "Double"
+					}
+				],
+				supplementaryConfig: {
+					aggregations : {
+						columns: {
+							String: {
+								width: "150px"
+							}
+						}
+					}
+				},
+				filter: {
+					String: [{
+						operator: "Contains",
+						values: [
+							"Test"
+						]
+					}],
+					Boolean: [{
+						operator: "EQ",
+						values: [
+							true
+						]
+					}]
+				},
+				groupLevels: [
+					{
+						name: "String"
+					}
+				]
+			};
+		},
+		before: function(){
+			TableDelegate.fetchProperties = fetchProperties;
+			TableDelegate.getSupportedP13nModes = function() {
+				return ["Column","Sort","Filter","Group"];
+			};
+			TableDelegate.addItem = function(sPropertyName) {
+				return Promise.resolve(new Column({dataProperty: sPropertyName}));
+			};
+			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable2" p13nMode="Column,Sort,Filter,Group"></mdc:Table></mvc:View>';
+
+			return createAppEnvironment(sTableView, "StateDiff").then(function(mCreatedApp){
+				this.oView = mCreatedApp.view;
+				this.oUiComponentContainer = mCreatedApp.container;
+			}.bind(this));
+		},
+		beforeEach: function(){
+			this.oTable = this.oView.byId('mdcTable2');
+			this.oTable.removeAllColumns();
+
+			return this.oTable.retrieveInbuiltFilter().then(function(){
+				sinon.stub(this.oTable.getInbuiltFilter(), "_toInternal").callsFake(function(oProperty, oXCondition) {
+					return oXCondition;
+				});
+			}.bind(this));
+		},
+		afterEach: function(){
+			this.oTable.getInbuiltFilter()._toInternal.restore();
+		},
+		after: function(){
+			this.oUiComponentContainer = null;
+			this.oTable.destroy();
+			this.oView = null;
+		}
+	});
+
+	QUnit.test("Ceck empty diff between identical states", function(assert) {
+
+		var done = assert.async();
+
+		StateUtil.retrieveExternalState(this.oTable).then(function(oInitialState){
+			// 1) Store the initial state before appliance begins
+			return oInitialState;
+		})
+		.then(function(oInitialState){
+			// 2) Diff two idential states
+			return StateUtil.diffState(this.oTable, oInitialState, oInitialState);
+		}.bind(this))
+		.then(function(oStateDiff){
+			// 3) Check state diff --> no changes should be diffed
+			assert.equal(oStateDiff.items.length, 0, "No item changes found");
+			assert.equal(oStateDiff.groupLevels.length, 0, "No group changes found");
+			assert.deepEqual(oStateDiff.supplementaryConfig, {}, "No supplementaryConfig changes found");
+			assert.deepEqual(oStateDiff.filter, {}, "No filter changes found");
+
+			done();
+		});
+
+	});
+
+	QUnit.test("Ceck empty diff after appliance", function(assert) {
+
+		var done = assert.async();
+
+		var oSampleState = this.getSampleState();
+
+		var oInitialState;
+
+		StateUtil.retrieveExternalState(this.oTable).then(function(oState){
+			// 1) Store the initial state before appliance begins
+			oInitialState = oState;
+			return oState;
+		})
+		.then(function(){
+			return StateUtil.applyExternalState(this.oTable, oSampleState).then(function(aChanges){
+				// 1) Check initial change appliance
+				assert.equal(aChanges.length, 7, "Correct amount of changes created");
+				return aChanges;
+			});
+		}.bind(this))
+		.then(function(){
+			return StateUtil.retrieveExternalState(this.oTable);
+		}.bind(this))
+		.then(function(oNewState){
+			return StateUtil.diffState(this.oTable, oInitialState, oNewState);
+		}.bind(this))
+		.then(function(oStateDiff){
+			assert.deepEqual(oStateDiff, oSampleState, "The state diff is identical to the applied state");
+			done();
+		});
+
+	});
+
+	QUnit.test("Ceck only diff returned between two different states", function(assert) {
+
+		var done = assert.async();
+
+		var oInitialState = this.getSampleState();
+
+		//1) initial state has one less item
+		oInitialState.items.pop();
+
+		//2) initial state has one less filter
+		delete oInitialState.filter.String;
+
+		//--> oNewState has one item change and one filter change in addition, the two changes done above should be the diff
+		var oNewState = this.getSampleState();
+
+		var oInitialState;
+
+		StateUtil.diffState(this.oTable, oInitialState, oNewState)
+		.then(function(oStateDiff){
+
+			assert.equal(oStateDiff.items.length, 1, "One item diffed in state");
+			assert.equal(Object.keys(oStateDiff.filter).length, 1, "One filter diffed in state");
+			assert.equal(oStateDiff.sorters.length, 0, "No sorter diffed in state");
+			assert.equal(oStateDiff.groupLevels.length, 0, "No grouping diffed in state");
+			done();
+		});
+
 	});
 });

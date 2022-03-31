@@ -50,7 +50,7 @@ sap.ui.define([
 		* @ui5-restricted sap.fe
 		* @MDC_PUBLIC_CANDIDATE
 		*
-		* @param {object} oControl The control that is used to create changes and to which changes are made
+		* @param {sap.ui.mdc.Control} oControl The control that is used to create changes and to which changes are made
 		* @param {object} oState The state in which the control is represented
 		*
 		* @example
@@ -112,13 +112,33 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.fe
 		 * @MDC_PUBLIC_CANDIDATE
-		 * @param {object} oControl The control instance implementing IxState to retrieve the externalized state
+		 * @param {sap.ui.mdc.Control} oControl The control instance implementing IxState to retrieve the externalized state
 		 *
 		 * @returns {Promise} <code>Promise</code> that resolves after the current state has been retrieved
 		 */
 		retrieveExternalState: function(oControl) {
 			return Engine.getInstance().retrieveState(oControl).then(function(oEngineState){
 				return Engine.getInstance().externalizeKeys(oControl, oEngineState);
+			});
+		},
+
+		/**
+		 * Creates a delta between two states.
+		 *
+		 * @private
+		 * @ui5-restricted sap.fe
+		 *
+		 * @MDC_PUBLIC_CANDIDATE
+		 * @param {sap.ui.mdc.Control} oControl The control instance implementing IxState
+		 * @param {object} oOldState The prior state
+		 * @param {object} oNewState The new state
+		 *
+		 * @returns {Promise} <code>Promise</code> that resolves after the current state has been diffed
+		 */
+		diffState: function(oControl, oOldState, oNewState) {
+			return sap.ui.mdc.p13n.Engine.getInstance().diffState(oControl, Engine.getInstance().internalizeKeys(oControl, oOldState), Engine.getInstance().internalizeKeys(oControl, oNewState))
+			.then(function(oEngineStateDiff){
+				return Engine.getInstance().externalizeKeys(oControl, oEngineStateDiff);
 			});
 		},
 
