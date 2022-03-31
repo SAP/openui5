@@ -7803,12 +7803,11 @@ sap.ui.define([
 						.exactly(bDataRequested ? 1 : 0).withExactArgs({});
 
 					return iCount;
-				} else {
-					that.mock(oBinding).expects("fireDataReceived").exactly(bDataRequested ? 1 : 0)
-						.withExactArgs({error : sinon.match.same(oError)});
-
-					throw oError;
 				}
+				that.mock(oBinding).expects("fireDataReceived").exactly(bDataRequested ? 1 : 0)
+					.withExactArgs({error : sinon.match.same(oError)});
+
+				throw oError;
 			}));
 
 		// code under test
