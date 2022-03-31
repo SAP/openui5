@@ -14,9 +14,8 @@ sap.ui.define([
 		}
     });
 
-    FilterController.prototype.getCurrentState = function() {
-        var oControlState = this.getAdaptationControl().getCurrentState();
-        return oControlState.hasOwnProperty("filter") ? oControlState.filter : {};
+    FilterController.prototype.getStateKey = function() {
+        return "filter";
     };
 
     FilterController.prototype.getUISettings = function() {

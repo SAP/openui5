@@ -15,13 +15,13 @@ sap.ui.define([
 		}
 	});
 
-	ColumnWidthController.prototype.sanityCheck = function(oChange) {
+	ColumnWidthController.prototype.sanityCheck = function(oState) {
         var aColumnWidth = [];
-		if (oChange.hasOwnProperty("aggregations") && oChange.aggregations.hasOwnProperty("columns")) {
-			Object.keys(oChange.aggregations.columns).forEach(function(sItem) {
+		if (oState && oState.hasOwnProperty("aggregations") && oState.aggregations.hasOwnProperty("columns")) {
+			Object.keys(oState.aggregations.columns).forEach(function(sItem) {
 				var oColumnWidth = {
 					name: sItem,
-					width: oChange.aggregations.columns[sItem].width
+					width: oState.aggregations.columns[sItem].width
 				};
 				aColumnWidth.push(oColumnWidth);
 			});
@@ -31,6 +31,10 @@ sap.ui.define([
 
 	ColumnWidthController.prototype.getCurrentState = function() {
 		return this.getAdaptationControl().getCurrentState().xConfig;
+	};
+
+	ColumnWidthController.prototype.getStateKey = function() {
+		return "supplementaryConfig";
 	};
 
 	ColumnWidthController.prototype.getDelta = function(mPropertyBag) {

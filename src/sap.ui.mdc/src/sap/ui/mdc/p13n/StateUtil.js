@@ -2,7 +2,8 @@
 * ! ${copyright}
 */
 sap.ui.define([
-], function() {
+	"sap/ui/mdc/p13n/Engine"
+], function(Engine) {
 	"use strict";
 
 	/**
@@ -97,7 +98,8 @@ sap.ui.define([
 		* @returns {Promise} <code>Promise</code> that resolves after all changes have been applied
 		*/
 		applyExternalState: function(oControl, oState){
-			return oControl.getEngine().applyState(oControl, StateUtil._internalizeKeys(oState));
+			var oInternalState = Engine.getInstance().internalizeKeys(oControl, oState);
+			return Engine.getInstance().applyState(oControl, oInternalState);
 		},
 
 		/**
@@ -115,8 +117,8 @@ sap.ui.define([
 		 * @returns {Promise} <code>Promise</code> that resolves after the current state has been retrieved
 		 */
 		retrieveExternalState: function(oControl) {
-			return oControl.getEngine().retrieveState(oControl).then(function(oEngineState){
-				return StateUtil._externalizeKeys(oEngineState);
+			return Engine.getInstance().retrieveState(oControl).then(function(oEngineState){
+				return Engine.getInstance().externalizeKeys(oControl, oEngineState);
 			});
 		},
 
@@ -130,7 +132,7 @@ sap.ui.define([
 		 * @param {function} fnListener fnFunction The handler function to call when the event occurs
 		 */
 		attachStateChange: function(fnListener) {
-			sap.ui.mdc.p13n.Engine.getInstance().stateHandlerRegistry.attachChange(fnListener);
+			Engine.getInstance().stateHandlerRegistry.attachChange(fnListener);
 		},
 
 		/**
@@ -143,51 +145,7 @@ sap.ui.define([
 		 * @param {function} fnListener fnFunction The handler function to detach from the event
 		 */
 		detachStateChange: function(fnListener) {
-			sap.ui.mdc.p13n.Engine.getInstance().stateHandlerRegistry.detachChange(fnListener);
-		},
-
-		_externalizeKeys: function(oInternalState) {
-			var mKeysForState = {
-				Sort: "sorters",
-				Group: "groupLevels",
-				Aggregate: "aggregations",
-				Filter: "filter",
-				Item: "items",
-				Column: "items",
-				Type: "supplementaryConfig",
-				ColumnWidth: "supplementaryConfig"
-			};
-			var oTransformedState = {};
-
-			Object.keys(oInternalState).forEach(function(sProvidedEngineKey){
-				var sExternalKey = mKeysForState[sProvidedEngineKey];
-				var sTransformedKey = sExternalKey || sProvidedEngineKey;//no external key --> provide internal key
-				oTransformedState[sTransformedKey] = oInternalState[sProvidedEngineKey];
-			});
-			return oTransformedState;
-		},
-
-		_internalizeKeys: function(oExternalState) {
-			var mKeysForEngine = {
-				sorters: ["Sort"],
-				groupLevels: ["Group"],
-				aggregations: ["Aggregate"],
-				filter: ["Filter"],
-				items: ["Item", "Column"],
-				supplementaryConfig: ["ColumnWidth", "Type"]
-			};
-
-			var oTransformedState = {};
-
-			Object.keys(oExternalState).forEach(function(sProvidedEngineKey){
-				if (mKeysForEngine[sProvidedEngineKey]) {
-					mKeysForEngine[sProvidedEngineKey].forEach(function(sTransformedKey){
-						oTransformedState[sTransformedKey] = oExternalState[sProvidedEngineKey];
-					});
-				}
-			});
-
-			return oTransformedState;
+			Engine.getInstance().stateHandlerRegistry.detachChange(fnListener);
 		}
 
 	};

@@ -8,8 +8,8 @@ sap.ui.define([
 
     var GroupController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.GroupController");
 
-    GroupController.prototype.getCurrentState = function () {
-        return this.getAdaptationControl().getCurrentState().groupLevels;
+    GroupController.prototype.getStateKey = function () {
+        return "groupLevels";
     };
 
     GroupController.prototype.getUISettings = function () {

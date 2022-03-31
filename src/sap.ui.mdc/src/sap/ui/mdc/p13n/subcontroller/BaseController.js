@@ -126,8 +126,12 @@ sap.ui.define([
     };
 
     BaseController.prototype.getCurrentState = function(){
-        return this._oAdaptationControl.getCurrentState().items;
+        return this._oAdaptationControl.getCurrentState()[this.getStateKey()];
     };
+
+	BaseController.prototype.getStateKey = function(){
+		return "items";
+	};
 
     BaseController.prototype.getDelta = function(mPropertyBag) {
         var sPresenceAttribute = this._getPresenceAttribute(mPropertyBag.externalAppliance);

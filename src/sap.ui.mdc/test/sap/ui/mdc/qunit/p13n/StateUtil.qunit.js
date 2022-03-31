@@ -641,9 +641,9 @@ sap.ui.define([
 		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
 			assert.equal(aChanges.length, 3, "Correct amount of changes created: " + aChanges.length);
 
-			assert.equal(aChanges[0].getChangeType(), "addSort", "Correct change type created");
+			assert.equal(aChanges[0].getChangeType(), "addColumn", "Correct change type created");
 			assert.equal(aChanges[1].getChangeType(), "addColumn", "Correct change type created");
-			assert.equal(aChanges[2].getChangeType(), "addColumn", "Correct change type created");
+			assert.equal(aChanges[2].getChangeType(), "addSort", "Correct change type created");
 
 			assert.equal(this.oTable.getColumns().length, oState.items.length, "Number of created columns correct");
 			assert.deepEqual(this.oTable.getSortConditions().sorters, oState.sorters, "Correct sort object created");
