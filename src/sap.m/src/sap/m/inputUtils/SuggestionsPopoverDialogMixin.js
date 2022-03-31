@@ -270,9 +270,11 @@ sap.ui.define([
 		 */
 		function _createFilterSelectedButton() {
 			var sIconURI = IconPool.getIconURI("multiselect-all");
+			var sSelectedItemsIconText = Core.getLibraryResourceBundle("sap.m").getText("SHOW_SELECTED_BUTTON");
 
 			return new ToggleButton({
-				icon: sIconURI
+				icon: sIconURI,
+				tooltip: sSelectedItemsIconText
 			});
 		}
 
