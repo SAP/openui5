@@ -27,6 +27,8 @@ sap.ui.define([
 		oDateTimeFormatMs,
 		oDateTimeOffsetFormat,
 		rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
+		// URL might be encoded, "(" becomes %28
+		rSegmentAfterCatalogService = /\/(Annotations|ServiceNames|ServiceCollection)(\(|%28)/,
 		oTimeFormat,
 		rTrailingDecimal = /\.$/,
 		rTrailingZeroes = /0+$/;
@@ -352,21 +354,17 @@ sap.ui.define([
 	ODataUtils.setAnnotationOrigin = function(sAnnotationURL, vParameters){
 
 		var sFinalAnnotationURL;
-		var iAnnotationIndex = sAnnotationURL.indexOf("/Annotations(");
+		var iSegmentAfterCatalogServiceIndex = sAnnotationURL.search(rSegmentAfterCatalogService);
 		var iHanaXsSegmentIndex = vParameters && vParameters.preOriginBaseUri ? vParameters.preOriginBaseUri.indexOf(".xsodata") : -1;
 
-		if (iAnnotationIndex === -1){ // URL might be encoded, "(" becomes %28
-			iAnnotationIndex = sAnnotationURL.indexOf("/Annotations%28");
-		}
-
-		if (iAnnotationIndex >= 0) { // annotation path is there
-			if (sAnnotationURL.indexOf("/$value", iAnnotationIndex) === -1) { // $value missing
+		if (iSegmentAfterCatalogServiceIndex >= 0) {
+			if (sAnnotationURL.indexOf("/$value", iSegmentAfterCatalogServiceIndex) === -1) { // $value missing
 				Log.warning("ODataUtils.setAnnotationOrigin: Annotation url is missing $value segment.");
 				sFinalAnnotationURL = sAnnotationURL;
 			} else {
 				// if the annotation URL is an SAP specific annotation url, we add the origin path segment...
-				var sAnnotationUrlBase =  sAnnotationURL.substring(0, iAnnotationIndex);
-				var sAnnotationUrlRest =  sAnnotationURL.substring(iAnnotationIndex, sAnnotationURL.length);
+				var sAnnotationUrlBase =  sAnnotationURL.substring(0, iSegmentAfterCatalogServiceIndex);
+				var sAnnotationUrlRest =  sAnnotationURL.substring(iSegmentAfterCatalogServiceIndex, sAnnotationURL.length);
 				var sAnnotationWithOrigin = ODataUtils.setOrigin(sAnnotationUrlBase, vParameters);
 				sFinalAnnotationURL = sAnnotationWithOrigin + sAnnotationUrlRest;
 			}
