@@ -237,7 +237,8 @@ sap.ui.define([
 					parameters: {}
 				}
 			},
-			methods: ["applyFocus", "close", "isOpen", "show"]
+			methods: ["applyFocus", "close", "isOpen", "show"],
+			designtime: "sap/ui/webc/main/designtime/Dialog.designtime"
 		}
 	});
 

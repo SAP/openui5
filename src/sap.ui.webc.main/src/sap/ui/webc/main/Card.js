@@ -105,7 +105,8 @@ sap.ui.define([
 						formatter: "_getAriaLabelledByForRendering"
 					}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/Card.designtime"
 		}
 	});
 

@@ -301,7 +301,8 @@ sap.ui.define([
 					parameters: {}
 				}
 			},
-			methods: ["applyFocus", "close", "isOpen", "showAt"]
+			methods: ["applyFocus", "close", "isOpen", "showAt"],
+			designtime: "sap/ui/webc/main/designtime/Popover.designtime"
 		}
 	});
 

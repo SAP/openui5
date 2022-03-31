@@ -113,7 +113,8 @@ sap.ui.define([
 						to: "for"
 					}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/Label.designtime"
 		}
 	});
 

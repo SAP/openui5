@@ -167,7 +167,8 @@ sap.ui.define([
 					}
 				}
 			},
-			methods: ["navigateTo"]
+			methods: ["navigateTo"],
+			designtime: "sap/ui/webc/main/designtime/Carousel.designtime"
 		}
 	});
 

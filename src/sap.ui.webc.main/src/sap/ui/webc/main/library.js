@@ -164,8 +164,21 @@ sap.ui.define([
 			elements: [],
 			extensions: {
 				flChangeHandlers: {
+					"sap.ui.webc.main.Badge": "sap/ui/webc/main/flexibility/Badge",
+					"sap.ui.webc.main.BusyIndicator": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
 					"sap.ui.webc.main.Button": "sap/ui/webc/main/flexibility/Button",
 					"sap.ui.webc.main.DatePicker": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
+					"sap.ui.webc.main.Card": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
+					"sap.ui.webc.main.Carousel": {
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
@@ -173,10 +186,12 @@ sap.ui.define([
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
+					"sap.ui.webc.main.Dialog": "sap/ui/webc/main/flexibility/Dialog",
 					"sap.ui.webc.main.Input": {
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
+					"sap.ui.webc.main.Label": "sap/ui/webc/main/flexibility/Label",
 					"sap.ui.webc.main.Link": "sap/ui/webc/main/flexibility/Link",
 					"sap.ui.webc.main.MultiInput": {
 						"hideControl": "default",
@@ -187,18 +202,27 @@ sap.ui.define([
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
+					"sap.ui.webc.main.Popover": "sap/ui/webc/main/flexibility/Popover",
+					"sap.ui.webc.main.RadioButton": "sap/ui/webc/main/flexibility/RadioButton",
 					"sap.ui.webc.main.RatingIndicator": {
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
+					"sap.ui.webc.main.ResponsivePopover": "sap/ui/webc/main/flexibility/ResponsivePopover",
 					"sap.ui.webc.main.Slider": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
+					"sap.ui.webc.main.Tab": "sap/ui/webc/main/flexibility/Tab",
+					"sap.ui.webc.main.TabContainer": {
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
 					"sap.ui.webc.main.Table": {
 						"hideControl": "default",
 						"unhideControl": "default"
-					}
+					},
+					"sap.ui.webc.main.Title": "sap/ui/webc/main/flexibility/Title"
 				}
 			}
 		});
