@@ -282,7 +282,12 @@ sap.ui.define([
 				}
 			}
 		}
-
+		// Do not return created contexts at end if data request is pending
+		if (this.isFirstCreateAtEnd()
+				&& this.bPendingRequest
+				&& aContexts.length && aContexts[0].isTransient() !== undefined) {
+			aContexts.length = 0; // only reset length => still keep properties like dataRequested
+		}
 		if (this.bRefresh) {
 			this.bRefresh = false;
 			// if we do not need to load data after a refresh event (e.g. we have enough created

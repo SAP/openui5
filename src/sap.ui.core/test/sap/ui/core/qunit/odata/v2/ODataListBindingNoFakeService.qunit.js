@@ -1398,6 +1398,7 @@ sap.ui.define([
 				_fireChange : function () {},
 				_getContexts : function () {},
 				_hasTransientParentContext : function () {},
+				isFirstCreateAtEnd : function () {},
 				useClientMode : function () {}
 			},
 			aContexts = ["~V2Context0", "~V2Context1"],
@@ -1409,6 +1410,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns(aContexts);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change})
 			.exactly(bDataRequested ? 0 : 1);
@@ -1433,12 +1435,14 @@ sap.ui.define([
 				_fireChange : function () {},
 				_getContexts : function () {},
 				_hasTransientParentContext : function () {},
+				isFirstCreateAtEnd : function () {},
 				useClientMode : function () {}
 			};
 
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns([]);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_fireChange").never();
 
 		// code under test
@@ -1450,8 +1454,6 @@ sap.ui.define([
 	QUnit.test("getContexts: use ODataUtils, bLengthFinal = " + bLengthFinal, function (assert) {
 		var oModel = {getServiceMetadata : function () {}},
 			oBinding = {
-				aKeys : [],
-				iLength : 550,
 				bLengthFinal : bLengthFinal,
 				oModel : oModel,
 				bPendingRequest : false,
@@ -1459,6 +1461,7 @@ sap.ui.define([
 				_getLength : function () {},
 				_getSkipAndTop : function () {},
 				_hasTransientParentContext : function () {},
+				isFirstCreateAtEnd : function () {},
 				loadData : function () {},
 				useClientMode : function () {}
 			},
@@ -1476,6 +1479,7 @@ sap.ui.define([
 		this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns(true);
 		this.mock(oBinding).expects("loadData")
 			.withExactArgs("~skip", "~top");
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 
 		// code under test
 		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0, 10, 100),
@@ -1493,6 +1497,7 @@ sap.ui.define([
 				_getContexts : function () {},
 				_getMaximumLength : function () {},
 				_hasTransientParentContext : function () {},
+				isFirstCreateAtEnd : function () {},
 				useClientMode : function () {}
 			};
 
@@ -1502,6 +1507,7 @@ sap.ui.define([
 			.withExactArgs(0, "~iLength")
 			.returns("~aContexts");
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
@@ -1521,15 +1527,13 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oModel = {getServiceMetadata : function () {}},
 			oBinding = {
-				aKeys : [],
-				iLength : 550,
 				bLengthFinal : true,
 				oModel : oModel,
 				bPendingRequest : oFixture.pendingRequest,
 				_getContexts : function () {},
-				_getLength : function () {},
 				_getSkipAndTop : function () {},
 				_hasTransientParentContext : function () {},
+				isFirstCreateAtEnd : function () {},
 				loadData : function () {},
 				useClientMode : function () {}
 			},
@@ -1549,10 +1553,105 @@ sap.ui.define([
 				.withExactArgs( "~skip",  "~top")
 				.exactly(oFixture.expectLoad ? 1 : 0);
 		}
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 
 		// code under test
 		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0, 10, 100),
 			aContexts);
+	});
+});
+
+	//*********************************************************************************************
+[{ // no created contexts
+	isFirstCreateAtEnd : undefined, // return value of isFirstCreateAtEnd call
+	bPendingRequest : true, // whether the call to getContexts causes a pending request
+	sAvailableContexts : "backend", // kind of contexts already avail in requested ranged
+	bExpectIsTransient : false, // whether a call to isTransient on the avail context is expected
+	iExpectedLength : 1 // expected length of returned contexts array
+},{ // created contexts at start
+	isFirstCreateAtEnd : false,
+	bPendingRequest : true,
+	sAvailableContexts : "backend",
+	bExpectIsTransient : false,
+	iExpectedLength : 1
+}, { // created contexts at end, no pending request
+	isFirstCreateAtEnd : true,
+	bPendingRequest : false,
+	sAvailableContexts : "backend",
+	bExpectIsTransient : false,
+	iExpectedLength : 1
+}, { // created contexts at end, pending request, no contexts to return
+	isFirstCreateAtEnd : true,
+	bPendingRequest : true,
+	sAvailableContexts : "none",
+	bExpectIsTransient : false,
+	iExpectedLength : 0
+}, { // created contexts at end, pending request, contexts to return are from backend
+	isFirstCreateAtEnd : true,
+	bPendingRequest : true,
+	sAvailableContexts : "backend",
+	bExpectIsTransient : true,
+	iExpectedLength : 1
+}, { // created contexts at end, pending request, contexts to return are created => empty array
+	isFirstCreateAtEnd : true,
+	bPendingRequest : true,
+	sAvailableContexts : "created",
+	bExpectIsTransient : true,
+	iExpectedLength : 0
+}].forEach(function (oFixture, i) {
+	var sTitle = "getContexts: Return [] if created contexts are at end and pending request," + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var aResult,
+			oModel = {getServiceMetadata : function () {}},
+			oBinding = {
+				bLengthFinal : true,
+				oModel : oModel,
+				bPendingRequest : false, // no pending request initially; changed in #loadData
+				_getContexts : function () {},
+				_getSkipAndTop : function () {},
+				_hasTransientParentContext : function () {},
+				getContextData : function () {},
+				isFirstCreateAtEnd : function () {},
+				loadData : function () {},
+				useClientMode : function () {}
+			},
+			oContext = {
+				isTransient : function () {}
+			},
+			aContexts = oFixture.sAvailableContexts === "none" ? [] : [oContext];
+
+		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_getContexts")
+			.withExactArgs(0, 10)
+			.returns(aContexts);
+		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_getSkipAndTop")
+			.withExactArgs(0, 10, 100)
+			.returns({skip : "~skip", top : "~top"});
+		this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns(true);
+		this.mock(oBinding).expects("loadData")
+			.withExactArgs("~skip",  "~top")
+			.callsFake(function () {
+				oBinding.bPendingRequest = oFixture.bPendingRequest;
+			});
+		this.mock(oBinding).expects("isFirstCreateAtEnd")
+			.withExactArgs()
+			.returns(oFixture.isFirstCreateAtEnd);
+		this.mock(oContext).expects("isTransient")
+			.withExactArgs()
+			.exactly(oFixture.bExpectIsTransient ? 1 : 0)
+			.returns(oFixture.sAvailableContexts === "created" ? false : undefined);
+		this.mock(oBinding).expects("getContextData")
+			.withExactArgs(sinon.match.same(oContext))
+			.exactly(oFixture.iExpectedLength);
+
+		// code under test
+		aResult = ODataListBinding.prototype.getContexts.call(oBinding, 0, 10, 100);
+
+		assert.strictEqual(aResult, aContexts);
+		assert.strictEqual(aResult.dataRequested, true);
+		assert.strictEqual(aResult.length, oFixture.iExpectedLength);
 	});
 });
 
