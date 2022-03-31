@@ -39,8 +39,8 @@ sap.ui.define([
 	});
 
 	elementActionTest("Checking the rename action for a Button", {
-		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
-		'<m:Button text="Option 1" id="button" />' +
+		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:wc="sap.ui.webc.main">"' +
+		'<wc:Button text="Option 1" id="button" />' +
 		'</mvc:View>'
 		,
 		action: {
