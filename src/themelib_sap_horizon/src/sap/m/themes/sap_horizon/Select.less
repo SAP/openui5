@@ -13,31 +13,40 @@
 
 /* IconOnly Hover */
 
-.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
+.sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
 	background: @sapUiButtonLiteHoverBackground;
+    border: none;
 
 	&.sapMSltWithIcon {
-		border: 0.0625rem solid @sapUiButtonLiteHoverBorderColor;
+        box-shadow: inset 0px 0px 0px @sapUiContentFocusWidth @sapUiFieldActiveBorderColor;
 	}
-}
-
-// Prevent jumping of icon only select when hover
-.sapMSltIconOnly.sapMSltHoverable:not(.sapMSltState) {
-	border: 0.0625rem solid transparent;
 }
 
 /*IconOnly Pressed */
 .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 	background: @sapUiToggleButtonPressedBackground;
-	border: 0.0625rem solid @sapUiToggleButtonPressedBorderColor;
+    .sapMSltIcon {
+        color: @sapUiFieldTextColor;;
+    }
 }
 
 .sapMSlt:not(.sapMSltIconOnly) {
-	border-radius: 0.25rem;
+	border-radius: @sapUiFieldBorderCornerRadius;
 }
 
 .sapMSlt {
+    font-family: @sapFontFamily;
+    font-size: @sapFontSize;
 	height: 2.25rem;
+    border: none;
+    background-image: linear-gradient(0deg, @sapUiFieldBorderColor 0, @sapUiFieldBorderColor 100%);
+    background-size: 100% @sapUiFieldBorderWidth;
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+.sapUiSizeCompact .sapMSlt {
+	height: 1.625rem;
 }
 
 .sapMSlt > .sapMSltLabel {
@@ -48,8 +57,8 @@
 	line-height: 2rem;
 }
 
-.sapMSltPressed > .sapMSltArrow::before {
-	color: @sapUiButtonActiveTextColor;
+.sapMSlt:not(.sapMSltState).sapMSltPressed > .sapMSltArrow::before {
+	color: @sapUiButtonSelectedTextColor;
 }
 
 .sapMSlt.sapMSltPressed,
@@ -72,9 +81,11 @@ html.sap-desktop .sapMSltIconOnly.focus:not(.sapMSltExpanded):not(.sapMSltDisabl
 
 .sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
 	background: @sapUiFieldHoverBackground;
+    border-color: @sapUiFieldHoverBorderColor;
+    box-shadow: @sapUiContentInteractionShadow;
 
 	.sapMSltArrow {
-		border-radius: 0.25rem;
+		border-radius: @sapUiFieldBorderCornerRadius;
 	}
 }
 
@@ -98,7 +109,12 @@ html.sap-desktop .sapMSltIconOnly.focus:not(.sapMSltExpanded):not(.sapMSltDisabl
 /* disabled */
 
 .sapMSltDisabled {
-	opacity: 0.5;
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+.sapMSlt.sapMSltReadonly {
+    background: @sapUiFieldReadOnlyBackground;
+    border-bottom: dashed @sapUiElementBorderWidth @sapUiFieldReadOnlyBorderColor;
 }
 
 div.sapMSltPicker .sapMSltPickerValueState {
@@ -109,33 +125,34 @@ div.sapMSltPicker .sapMSltPickerValueState {
 	line-height: 1.375rem;
 }
 
-.sapMSlt {
-    border: none;
-    background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
-    background-size: 100% @sapField_BorderWidth;
-    background-repeat: repeat-x;
-    background-position: bottom;
+.sapMSltMinWidth {
+    min-width: 2.75rem;
+}
+
+.sapUiSizeCompact .sapMSltMinWidth {
+    min-width: 2rem;
 }
 
 .sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
     border:none;
-    box-shadow: @sapContent_Interaction_Shadow;
+    box-shadow: @sapUiContentInteractionShadow;
 	border: none;
-    background-image: linear-gradient(0deg, @sapField_BorderColor 0, @sapField_BorderColor 100%);
-    background-size: 100% @sapField_BorderWidth;
+    background-image: linear-gradient(0deg, @sapUiFieldBorderColor 0, @sapUiFieldBorderColor 100%);
+    background-size: 100% @sapUiFieldBorderWidth;
     background-repeat: repeat-x;
     background-position: bottom;
 }
 
 .sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState),
 .sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
-    border:none;
-    box-shadow: inset 0px 0px 0px 2px @sapContent_FocusColor;
+    background: @sapUiFieldFocusBackground;
+    border: none;
+    box-shadow: inset 0px 0px 0px @sapUiContentFocusWidth @sapUiFieldActiveBorderColor;
 }
 
 .sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):active {
     border:none;
-    box-shadow: inset 0px 0px 0px 2px @sapField_Active_BorderColor;
+    box-shadow: inset 0px 0px 0px 2px @sapUiFieldActiveBorderColor;
 }
 
 .sapMSltArrow {
@@ -153,9 +170,9 @@ div.sapMSltPicker .sapMSltPickerValueState {
 }
 
 .sapMSltPressed >.sapMSltArrow {
-    background-color: @sapButton_Active_Background;
-    color: @sapButton_Active_TextColor;
-    box-shadow: @sapContent_Interaction_Shadow;
+    background-color: @sapUiButtonActiveBackground;
+    color: @sapUiButtonActiveTextColor;
+    box-shadow: @sapUiContentInteractionShadow;
     overflow: none;
     border-radius: 0.125rem;
 }
@@ -164,7 +181,7 @@ div.sapMSltPicker .sapMSltPickerValueState {
 /* focus */
 html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled) {
     &:before {
-        box-shadow: inset 0px 0px 0px 2px @sapField_Focus_BorderColor;
+        box-shadow: inset 0px 0px 0px 2px @sapUiFieldFocusBorderColor;
     }
 }
 
@@ -173,24 +190,38 @@ html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisab
 // =====================================
 .sapMSltInformation {
     border: none;
-    background-image: linear-gradient(0deg, @sapField_InformationColor 0, @sapField_InformationColor 100%);
-    background-size: 100% @sapField_InformationBorderWidth;
+    background-image: linear-gradient(0deg, @sapUiFieldInformationColor 0, @sapUiFieldInformationColor 100%);
+    background-size: 100% @sapUiFieldInformationBorderWidth;
     background-repeat: repeat-x;
     background-position: bottom;
+    background-color: @sapUiFieldInformationBackground;
 }
 
 .sapMSltInformation.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover {
-    background-color: @sapField_Hover_Background;
+    border-color: @sapUiFieldInformationColor;
+    box-shadow: @sapUiContentInformativeShadow;
+    background-color: @sapUiFieldHoverBackground;
 
     &:not(.sapMSltFocused) {
-        box-shadow: @sapContent_Informative_Shadow; // NEW Parameter
+        box-shadow: @sapUiContentInformativeShadow; // NEW Parameter
     }
 }
 
 .sapMSltHoverable.sapMSltInformation:not(.sapMSltIconOnly):active,
 .sapMSltFocused.sapMSltInformation {
-    box-shadow: inset 0px 0px 0px 2px @sapField_Active_BorderColor;
-    background-color: @sapField_Focus_Background;
+    border-bottom: none;
+    box-shadow: inset 0px 0px 0px 2px @sapUiFieldInformationColor;
+    background-color: @sapUiFieldFocusBackground;
+}
+
+.sapMSltInformation.sapMSltPressed {
+    .sapMSltArrow {
+        color: @sapUiButtonSelectedTextColor;
+        box-shadow: @sapUiContentInformativeShadow;
+    }
+    > .sapMSltArrow::before {
+        color: inherit;
+    }
 }
 
 // =====================================
@@ -199,26 +230,40 @@ html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisab
 
 .sapMSltSuccess {
     border: none;
-    background-image: linear-gradient(0deg, @sapField_SuccessColor 0, @sapField_SuccessColor 100%);
-    background-size: 100% @sapField_SuccessBorderWidth;
+    background-image: linear-gradient(0deg, @sapUiFieldSuccessColor 0, @sapUiFieldSuccessColor 100%);
+    background-size: 100% @sapUiFieldSuccessBorderWidth;
     background-repeat: repeat-x;
     background-position: bottom;
+    background-color: @sapUiFieldSuccessBackground;
 }
 
 .sapMSltSuccess.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover  {
-    background-color: @sapField_Hover_Background;
+    border-color: @sapUiFieldSuccessColor;
+    box-shadow: @sapUiContentPositiveShadow;
+    background-color: @sapUiFieldHoverBackground;
 
     &:not(.sapMSltFocused) {
-        box-shadow: @sapContent_Positive_Shadow; // New Parameter
+        box-shadow: @sapUiContentPositiveShadow; // New Parameter
     }
 }
 
 // Field Success Focus - Experimental
 .sapMSltHoverable.sapMSltSuccess:not(.sapMSltIconOnly):active,
 .sapMSltFocused.sapMSltSuccess {
-    box-shadow: inset 0px 0px 0px 2px @sapField_SuccessColor;
-    border-radius: @sapField_BorderCornerRadius;
-    background-color: @sapField_Focus_Background;
+    border-bottom: none;
+    box-shadow: inset 0px 0px 0px 2px @sapUiFieldSuccessColor;
+    border-radius: @sapUiFieldBorderCornerRadius;
+    background-color: @sapUiFieldFocusBackground;
+}
+
+.sapMSltSuccess.sapMSltPressed {
+    .sapMSltArrow {
+        color: @sapUiButtonAcceptSelectedTextColor;
+        box-shadow: @sapUiContentPositiveShadow;
+    }
+    > .sapMSltArrow::before {
+        color: inherit;
+    }
 }
 
 // =====================================
@@ -227,27 +272,40 @@ html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisab
 
 .sapMSltWarning {
     border: none;
-    background-image: linear-gradient(0deg, @sapField_WarningColor 0, @sapField_WarningColor 100%);
-    background-size: 100% @sapField_WarningBorderWidth;
+    background-image: linear-gradient(0deg, @sapUiFieldWarningColor 0, @sapUiFieldWarningColor 100%);
+    background-size: 100% @sapUiFieldWarningBorderWidth;
     background-repeat: repeat-x;
     background-position: bottom;
+    background-color: @sapUiFieldWarningBackground;
 }
 
 .sapMSltWarning.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover {
-    background-color: @sapField_Hover_Background;
+    border-color: @sapUiFieldWarningColor;
+    box-shadow: @sapUiContentCriticalShadow;
+    background-color: @sapUiFieldHoverBackground;
 
     &:not(.sapMSltFocused) {
-        box-shadow: @sapContent_Critical_Shadow; // NEW Parameter
+        box-shadow: @sapUiContentCriticalShadow; // NEW Parameter
     }
 }
 
 // Field Warning Focus - Experimental
 .sapMSltHoverable.sapMSltWarning:not(.sapMSltIconOnly):active,
 .sapMSltFocused.sapMSltWarning {
-    box-shadow: inset 0px 0px 0px 2px @sapField_WarningColor; // Experimental
-    background-color: @sapField_Focus_Background;
+    border-bottom: none;
+    box-shadow: inset 0px 0px 0px 2px @sapUiFieldWarningColor; // Experimental
+    background-color: @sapUiFieldFocusBackground;
 }
 
+.sapMSltWarning.sapMSltPressed {
+    .sapMSltArrow {
+        color: @sapUiButtonAttentionSelectedTextColor;
+        box-shadow: @sapUiContentCriticalShadow;
+    }
+    > .sapMSltArrow::before {
+        color: inherit;
+    }
+}
 
 // =====================================
 // Input Error state
@@ -255,23 +313,37 @@ html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisab
 
 .sapMSltError {
     border: none;
-    background-image: linear-gradient(0deg, @sapField_InvalidColor 0, @sapField_InvalidColor 100%);
+    background-image: linear-gradient(0deg, @sapUiFieldInvalidColor 0, @sapUiFieldInvalidColor 100%);
     background-size: 100% @sapField_InvalidBorderWidth;
     background-repeat: repeat-x;
     background-position: bottom;
+    background-color: @sapUiFieldInvalidBackgroundStyle;
 }
 
 .sapMSltError.sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltPressed):hover {
-    background-color: @sapField_Hover_Background;
+    border-color: @sapUiFieldInvalidColor;
+    box-shadow: @sapUiContentNegativeShadow;
+    background-color: @sapUiFieldHoverBackground;
 
     &:not(.sapMSltFocused) {
-        box-shadow: @sapContent_Negative_Shadow; // New Parameter
+        box-shadow: @sapUiContentNegativeShadow; // NEW Parameter
     }
 }
 
 // Field Error Focus - Experimental
 .sapMSltHoverable.sapMSltError:not(.sapMSltIconOnly):active,
 .sapMSltFocused.sapMSltError {
-    box-shadow: inset 0px 0px 0px 2px @sapField_InvalidColor;
-    background-color: @sapField_Focus_Background;
+    border-bottom: none;
+    box-shadow: inset 0px 0px 0px 2px @sapUiFieldInvalidColor;
+    background-color: @sapUiFieldFocusBackground;
+}
+
+.sapMSltError.sapMSltPressed {
+    .sapMSltArrow {
+        color: @sapUiFieldInvalidColor;
+        box-shadow: @sapUiContentNegativeShadow;
+    }
+    > .sapMSltArrow::before {
+        color: inherit;
+    }
 }

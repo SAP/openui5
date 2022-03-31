@@ -13,6 +13,10 @@
 
 /* hover and focus */
 
+.sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
+	border-width: 0.125rem;
+}
+
 .sapMSlt.sapMSltDefault.sapMSltFocused:not(.sapMSltIconOnly):not(.sapMSltPressed) {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.25rem;
@@ -44,12 +48,22 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt.sapMSltFocused {
 	background: @sapUiToggleButtonPressedHoverBackground;
 }
 
+.sapMSlt:not(.sapMSltInformation):not(.sapMSltReadonly):not(.sapMSltDisabled) {
+	border-width: 0.125rem;
+}
+
 /* value state */
 
 .sapMSltWarning,
 .sapMSltError,
 .sapMSltInformation {
 	border-style: dashed;
+}
+
+.sapMSlt.sapMSltWarning > .sapMSltLabel,
+.sapMSlt.sapMSltError > .sapMSltLabel {
+	font-style: italic;
+	font-weight: bold;
 }
 
 .sapMSltInformation {
@@ -59,10 +73,9 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt.sapMSltFocused {
 /* disabled */
 
 .sapMSltDisabled {
-	background: @sapUiHcReducedBackground;
-	border-color: @sapUiHcReducedForeground;
-	color: @sapUiContentDisabledTextColor;
+	opacity: 0.5;
 }
+
 /* ------------------------------ */
 /* picker                         */
 /* ------------------------------ */
@@ -108,25 +121,6 @@ div.sapMSltPicker {
 	}
 }
 
-/* ------------------------------ */
-/* label                          */
-/* ------------------------------ */
-
-/* value state */
-
-.sapMSltLabelWarning,
-.sapMSltLabelError {
-	font-style: italic;
-}
-
-.sapMSltLabelError {
-	font-weight: bold;
-}
-
-/* ------------------------------ */
-/* arrow                          */
-/* ------------------------------ */
-
 /* hover */
 
 .sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
@@ -163,4 +157,13 @@ html.sap-desktop .sapMFooter-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not
 html.sap-desktop .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt) {
 	color: @sapUiContentIconColor;
 	background-color: @sapUiButtonLiteHoverBackground;
+}
+
+.sapMSltHoverable:not(.sapMSltError):not(.sapMSltPressed):hover > .sapMSltArrow,
+.sapMSltPressed.sapMSltError > .sapMSltArrow {
+	background-color: @sapUiButtonLiteHoverBackground;
+}
+
+.sapMSltPressed:not(.sapMSltError) > .sapMSltArrow {
+	background: @sapUiListSelectionBackgroundColor;
 }
