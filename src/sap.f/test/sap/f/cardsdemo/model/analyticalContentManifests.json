@@ -968,5 +968,172 @@
 				]
 			}
 		}
+	},
+	"timeseries_line": {
+		"_version": "1.14.0",
+		"sap.app": {
+			"id": "cardsdemo.analytical.timeseries.line",
+			"type": "card",
+			"title": "Sample of a Timeseries Line Chart",
+			"subTitle": "Sample of a Timeseries Line Chart",
+			"applicationVersion": {
+				"version": "1.0.0"
+			},
+			"shortTitle": "A short title for this Card",
+			"info": "Additional information about this Card",
+			"description": "A long description for this Card",
+			"tags": {
+				"keywords": [
+					"Analytical",
+					"Card",
+					"Line",
+					"Sample"
+				]
+			}
+		},
+		"sap.ui": {
+			"technology": "UI5",
+			"icons": {
+				"icon": "sap-icon://line-chart"
+			}
+		},
+		"sap.card": {
+			"type": "Analytical",
+			"header": {
+				"type": "Numeric",
+				"data": {
+					"json": {
+						"number": "65.34",
+						"unit": "K",
+						"trend": "Down",
+						"state": "Error",
+						"target": {
+							"number": 100,
+							"unit": "K"
+						},
+						"deviation": {
+							"number": 34.7,
+							"state": "Critical"
+						},
+						"details": "Q1, 2018"
+					}
+				},
+				"title": "Project Cloud Transformation",
+				"subTitle": "Revenue",
+				"unitOfMeasurement": "EUR",
+				"mainIndicator": {
+					"number": "{number}",
+					"unit": "{unit}",
+					"trend": "{trend}",
+					"state": "{state}"
+				},
+				"details": "{details}",
+				"sideIndicators": [
+					{
+						"title": "Target",
+						"number": "{target/number}",
+						"unit": "{target/unit}"
+					},
+					{
+						"title": "Deviation",
+						"number": "{deviation/number}",
+						"unit": "%",
+						"state": "{deviation/state}"
+					}
+				]
+			},
+			"content": {
+				"chartType": "timeseries_line",
+				"chartProperties": {
+					"title": {
+						"text": "time series Line chart",
+						"visible": true,
+						"alignment": "left"
+					},
+					"legend": {
+						"visible": "{legend/visible}"
+					},
+					"legendGroup": {
+						"layout": {
+							"position": "{legend/position}",
+							"alignment": "{legend/alignment}"
+						}
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true
+						}
+					},
+					"categoryAxis": {
+						"title": {
+							"visible": false
+						}
+					},
+					"valueAxis": {
+						"title": {
+							"visible": false
+						}
+					}
+				},
+				"data": {
+					"json": {
+						"dimensions": {
+							"weekLabel": "Weeks"
+						},
+						"measures": {
+							"revenueLabel": "Revenue",
+							"costLabel": "Costs"
+						},
+						"legend": {
+							"visible": true,
+							"position": "bottom",
+							"alignment": "topLeft"
+						},
+						"list": [
+							{ "DDateTime": "2016-07-16", "DateTime": "2016-07-16T21:05:24+0530", "BrewTank": 71.1815, "AssetUtil1": 88.7063, "CylTemp1": 3.1685, "EngineTemp": 0.0000, "AssetUtil2": 85.5555, "AssetUtil3": 84.8486, "RowFlag": "Y" },
+							{ "DDateTime": "2016-07-16", "DateTime": "2016-07-16T21:11:24+0530", "BrewTank": 150.2721, "AssetUtil1": 89.1099, "CylTemp1": 27.3121, "EngineTemp": 4.3822, "AssetUtil2": 86.6893, "AssetUtil3": 85.1935, "RowFlag": "N" },
+							{ "DDateTime": "2016-07-16", "DateTime": "2016-07-16T21:17:24+0530", "BrewTank": 229.3627, "AssetUtil1": 90.0118, "CylTemp1": 39.4398, "EngineTemp": 0.0000, "AssetUtil2": 86.4508, "AssetUtil3": 86.3550, "RowFlag": "Y" },
+							{ "DDateTime": "2016-07-16", "DateTime": "2016-07-16T21:23:24+0530", "BrewTank": 308.4533, "AssetUtil1": 90.6187, "CylTemp1": 52.3022, "EngineTemp": 59.4807, "AssetUtil2": 88.8271, "AssetUtil3": 86.2878, "RowFlag": "N" },
+							{ "DDateTime": "2016-07-16", "DateTime": "2016-07-16T21:29:24+0530", "BrewTank": 387.5438, "AssetUtil1": 90.6383, "CylTemp1": 66.4295, "EngineTemp": 38.8787, "AssetUtil2": 87.8927, "AssetUtil3": 87.7560, "RowFlag": "Y" },
+							{ "DDateTime": "2016-07-16", "DateTime": "2016-07-16T21:35:24+0530", "BrewTank": 466.6344, "AssetUtil1": 92.4183, "CylTemp1": 84.4895, "EngineTemp": 84.9541, "AssetUtil2": 88.6052, "AssetUtil3": 89.0901, "RowFlag": "N" },
+							{ "DDateTime": "2016-07-16", "DateTime": "2016-07-16T21:41:24+0530", "BrewTank": 545.7250, "AssetUtil1": 93.9197, "CylTemp1": 90.0476, "EngineTemp": 62.6526, "AssetUtil2": 90.6323, "AssetUtil3": 89.0517, "RowFlag": "Y" },
+							{ "DDateTime": "2016-07-16", "DateTime": "2016-07-16T21:47:24+0530", "BrewTank": 624.8157, "AssetUtil1": 94.0380, "CylTemp1": 111.4455, "EngineTemp": 57.3265, "AssetUtil2": 89.6101, "AssetUtil3": 91.4876, "RowFlag": "N" },
+							{ "DDateTime": "2016-07-16", "DateTime": "2016-07-16T21:53:24+0530", "BrewTank": 703.9063, "AssetUtil1": 94.6953, "CylTemp1": 119.4405, "EngineTemp": 98.6591, "AssetUtil2": 89.9762, "AssetUtil3": 91.2325, "RowFlag": "Y" },
+							{ "DDateTime": "2016-07-16", "DateTime": "2016-07-16T21:59:24+0530", "BrewTank": 782.9969, "AssetUtil1": 95.0000, "CylTemp1": 136.8504, "EngineTemp": 112.5370, "AssetUtil2": 91.9065, "AssetUtil3": 92.2390, "RowFlag": "N" }
+						]
+					},
+					"path": "/list"
+				},
+				"dimensions": [
+					{
+						"name": "DateTime",
+						"value": "{DateTime}",
+						"dataType":"date"
+					}
+				],
+				"measures": [
+					{
+						"name": "AssetUtil1",
+						"value": "{AssetUtil1}"
+					}
+				],
+				"feeds": [
+					{
+						"uid": "valueAxis",
+						"type": "Measure",
+						"values": [
+							"AssetUtil1"
+						]
+					},
+					{
+						"uid": "timeAxis",
+						"type": "Dimension",
+						"values": [
+							"DateTime"
+						]
+					}
+				]
+			}
+		}
 	}
 }

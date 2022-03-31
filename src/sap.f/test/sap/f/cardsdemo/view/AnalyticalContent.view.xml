@@ -60,6 +60,13 @@
 				class="sapUiMediumMargin"
 				height="500px"
 				width="600px" />
+			<w:Card
+				id="timeseries_line"
+				manifest="{analyticalContentManifests>/timeseries_line}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				class="sapUiMediumMargin"
+				height="500px"
+				width="600px" />
 		</Panel>
 	</Page>
 </mvc:View>
