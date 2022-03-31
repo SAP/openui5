@@ -4440,20 +4440,24 @@ sap.ui.define([
 			return waitForBinding(this.oTable);
 		}.bind(this)).then(function() {
 			var clock = sinon.useFakeTimers();
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 
 			assert.ok(this.oType._oShowDetailsButton, "button is created");
 			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no popins");
-			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
+			assert.strictEqual(this.oType._oShowDetailsButton.getButtons()[0].getIcon(), "sap-icon://detail-more", "correct icon is set on the button");
+			assert.strictEqual(this.oType._oShowDetailsButton.getButtons()[0].getTooltip(), oRb.getText("table.SHOWDETAILS_TEXT"), "Correct tooltip");
+			assert.strictEqual(this.oType._oShowDetailsButton.getButtons()[1].getIcon(), "sap-icon://detail-less", "correct icon is set on the button");
+			assert.strictEqual(this.oType._oShowDetailsButton.getButtons()[1].getTooltip(), oRb.getText("table.HIDEDETAILS_TEXT"), "Correct tooltip");
 
 			this.oTable._oTable.setContextualWidth("600px");
 			clock.tick(100);
 			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
-			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
+			assert.strictEqual(this.oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "hideDetails button selected");
 
-			this.oType._oShowDetailsButton.firePress();
+			this.oType._oShowDetailsButton.getButtons()[0].firePress();
 			Core.applyChanges();
 			clock.tick(1);
-			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Hide Details", "correct text is set on the button");
+			assert.strictEqual(this.oType._oShowDetailsButton.getSelectedKey(), "showDetails", "showDetails button selected");
 
 			this.oTable._oTable.setContextualWidth("4444px");
 			Core.applyChanges();
@@ -4558,9 +4562,9 @@ sap.ui.define([
 		this.oType.setDetailsButtonSetting(["Medium", "High"]);
 
 		return this.oTable.initialized().then(function() {
-			this.oType._oShowDetailsButton.firePress();
+			this.oType._oShowDetailsButton.getButtons()[0].firePress();
 			clock.tick(1);
-			this.oType._oShowDetailsButton.firePress();
+			this.oType._oShowDetailsButton.getButtons()[1].firePress();
 			clock.tick(1);
 
 			var aImportance = this.oTable._oTable.getHiddenInPopin();
