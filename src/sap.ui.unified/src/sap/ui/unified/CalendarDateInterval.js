@@ -648,8 +648,11 @@ sap.ui.define([
 	 */
 	CalendarDateInterval.prototype._focusDateExtend = function(oDate, bOtherMonth, bNoEvent) {
 		if (bOtherMonth) {
-			var oOldStartDate = this._getStartDate(),
-				oNewStartDate = new CalendarDate(oDate.getYear(), oDate.getMonth(), oOldStartDate.getDate(), this.getPrimaryCalendarType());
+			var oMonth = this.getAggregation("month")[0],
+				iFocusDayIndex = oMonth._oItemNavigation ? oMonth._oItemNavigation.getFocusedIndex() : 0,
+				oNewStartDate = new CalendarDate(oDate, this.getPrimaryCalendarType());
+
+			oNewStartDate.setDate(oNewStartDate.getDate() - iFocusDayIndex);
 
 			this._setStartDate(oNewStartDate, false, true);
 
@@ -659,7 +662,6 @@ sap.ui.define([
 		}
 
 		return false;
-
 	};
 
 	/**
