@@ -73,27 +73,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	oFormatOptions : {showTimezone : "Show"},
-	oResult : {bShowDate : true, bShowTime : true, bShowTimezone : true}
-}, {
-	oFormatOptions : {showTimezone : "Hide"},
-	oResult : {bShowDate : true, bShowTime : true, bShowTimezone : false}
-}, {
-	oFormatOptions : {showTimezone : "Only"},
-	oResult : {bShowDate : false, bShowTime : false, bShowTimezone : true}
-}].forEach(function (oFixture, i) {
-	QUnit.test("constructor: legacy format options #" + i, function (assert) {
-		// code under test
-		var oType = new DateTimeWithTimezone(oFixture.oFormatOptions);
-
-		assert.strictEqual(oType.bShowDate, oFixture.oResult.bShowDate);
-		assert.strictEqual(oType.bShowTime, oFixture.oResult.bShowTime);
-		assert.strictEqual(oType.bShowTimezone, oFixture.oResult.bShowTimezone);
-	});
-});
-
-	//*********************************************************************************************
 [true, false, "foo", null].forEach(function (vValue, i) {
 	QUnit.test("constructor: new format options, #" + i, function (assert) {
 		var oType;

@@ -73,31 +73,10 @@ sap.ui.define([
 				this.bParseWithValues = true;
 				this.bUseInternalValues = true;
 				this.vEmptyTimezoneValue = null;
-				// handle legacy format options; no support for mixture of old and new options
-				switch (oFormatOptions.showTimezone) {
-					case "Hide":
-						this.bShowDate = true;
-						this.bShowTime = true;
-						this.bShowTimezone = false;
-						break;
-					case "Only":
-						this.bShowDate = false;
-						this.bShowTime = false;
-						this.bShowTimezone = true;
-						break;
-					case "Show":
-						this.bShowDate = true;
-						this.bShowTime = true;
-						this.bShowTimezone = true;
-						break;
-					default:
-						this.bShowDate = oFormatOptions.showDate === undefined
-							|| oFormatOptions.showDate;
-						this.bShowTime = oFormatOptions.showTime === undefined
-							|| oFormatOptions.showTime;
-						this.bShowTimezone = oFormatOptions.showTimezone === undefined
-							|| oFormatOptions.showTimezone;
-				}
+				this.bShowDate = oFormatOptions.showDate === undefined || oFormatOptions.showDate;
+				this.bShowTime = oFormatOptions.showTime === undefined || oFormatOptions.showTime;
+				this.bShowTimezone = oFormatOptions.showTimezone === undefined
+					|| oFormatOptions.showTimezone;
 
 				// must not overwrite setConstraints and setFormatOptions on prototype as they are
 				// called in SimpleType constructor
