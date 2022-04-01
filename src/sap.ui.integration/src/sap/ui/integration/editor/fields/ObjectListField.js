@@ -223,7 +223,7 @@ sap.ui.define([
 		var oNewValue = [];
 		var aSelectedIndicesCloned;
 		switch (sMode) {
-			case "create":
+			case "add":
 				// update the selections
 				aSelectedIndices.forEach(function(iSelectedIndex) {
 					oControl.addSelectionInterval(iSelectedIndex, iSelectedIndex);

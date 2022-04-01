@@ -430,8 +430,9 @@ sap.ui.define([
 		// check if has filterProperty defined in each column of config.properties
 		var bHasFilterDefined = that.checkHasFilter(oConfig);
 		var bAddButtonVisible = oConfig.enabled !== false;
+		var sAddButtonTooltip = oConfig.addButtonTooltip || oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_ADD_TOOLTIP");
 		if (bAddButtonVisible && oConfig.values) {
-			bAddButtonVisible = oConfig.values.allowCreateNew === true;
+			bAddButtonVisible = oConfig.values.allowAdd === true;
 		}
 		return new OverflowToolbar({
 			content: [
@@ -439,7 +440,7 @@ sap.ui.define([
 				new Button({
 					icon: "sap-icon://add",
 					visible: bAddButtonVisible,
-					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_ADD_TOOLTIP"),
+					tooltip: sAddButtonTooltip,
 					press: that.createNewObject.bind(that)
 				}),
 				new Button({
@@ -611,7 +612,7 @@ sap.ui.define([
 	ObjectField.prototype.createNewObject = function (oEvent) {
 		var that = this;
 		var oControl = oEvent.getSource();
-		that.openObjectDetailsPopover(that._newObjectTemplate, oControl, "create");
+		that.openObjectDetailsPopover(that._newObjectTemplate, oControl, "add");
 	};
 
 	ObjectField.prototype.mergeValueWithRequestResult = function (tResult) {
@@ -923,9 +924,9 @@ sap.ui.define([
 		var oItemCloned = deepClone(oItem, 500);
 		var oModel;
 		if (!that._oObjectDetailsPopover) {
-			var oCreateButton = new Button({
-				text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_CREATE"),
-				visible: sMode === "create",
+			var oAddButton = new Button({
+				text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_ADD"),
+				visible: sMode === "add",
 				enabled: {
 					path: '/value',
 					formatter: function(vValue) {
@@ -951,6 +952,20 @@ sap.ui.define([
 				},
 				press: that.onUpdate.bind(that)
 			});
+			var oCancelButton = new Button({
+				text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_CANCEL"),
+				visible: sMode !== "view",
+				press: function () {
+					that._oObjectDetailsPopover.close();
+				}
+			});
+			var oCloseButton = new Button({
+				text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_CLOSE"),
+				visible: sMode === "view",
+				press: function () {
+					that._oObjectDetailsPopover.close();
+				}
+			});
 			oModel = new JSONModel({
 				"value": oItemCloned,
 				"editMode": "Properties"
@@ -961,9 +976,9 @@ sap.ui.define([
 				oModel.checkUpdate(true);
 				var oNewObject = oModel.getProperty("/value");
 				if (oNewObject && oNewObject !== "" && typeof oNewObject === "object" && !deepEqual(oNewObject, {})) {
-					oCreateButton.setEnabled(true);
+					oAddButton.setEnabled(true);
 				} else {
-					oCreateButton.setEnabled(false);
+					oAddButton.setEnabled(false);
 				}
 			};
 			var fnChange = function() {};
@@ -1038,34 +1053,38 @@ sap.ui.define([
 				footer: new OverflowToolbar({
 					content: [
 						new ToolbarSpacer(),
-						oCreateButton,
+						oAddButton,
 						oUpdateButton,
-						new Button({
-							text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_CLOSE"),
-							press: function () {
-								that._oObjectDetailsPopover.close();
-							}
-						})
+						oCancelButton,
+						oCloseButton
 					]
 				})
 			}).addStyleClass("sapUiIntegrationEditorItemObjectFieldDetailsPopover");
 			that._oObjectDetailsPopover.setModel(oModel);
 			that._oObjectDetailsPopover.setModel(that.getModel("i18n"), "i18n");
-			that._oObjectDetailsPopover._oCreateButton = oCreateButton;
+			that._oObjectDetailsPopover._oAddButton = oAddButton;
 			that._oObjectDetailsPopover._oUpdateButton = oUpdateButton;
+			that._oObjectDetailsPopover._oCancelButton = oCancelButton;
+			that._oObjectDetailsPopover._oCloseButton = oCloseButton;
 			that._oObjectDetailsPopover._openBy = oControl;
 		} else {
 			oModel = that._oObjectDetailsPopover.getModel();
 			oModel.setProperty("/value", oItemCloned);
-			if (sMode === "create") {
-				that._oObjectDetailsPopover._oCreateButton.setVisible(true);
+			if (sMode === "add") {
+				that._oObjectDetailsPopover._oAddButton.setVisible(true);
 				that._oObjectDetailsPopover._oUpdateButton.setVisible(false);
+				that._oObjectDetailsPopover._oCancelButton.setVisible(true);
+				that._oObjectDetailsPopover._oCloseButton.setVisible(false);
 			} else if (sMode === "update") {
-				that._oObjectDetailsPopover._oCreateButton.setVisible(false);
+				that._oObjectDetailsPopover._oAddButton.setVisible(false);
 				that._oObjectDetailsPopover._oUpdateButton.setVisible(true);
+				that._oObjectDetailsPopover._oCancelButton.setVisible(true);
+				that._oObjectDetailsPopover._oCloseButton.setVisible(false);
 			} else {
-				that._oObjectDetailsPopover._oCreateButton.setVisible(false);
+				that._oObjectDetailsPopover._oAddButton.setVisible(false);
 				that._oObjectDetailsPopover._oUpdateButton.setVisible(false);
+				that._oObjectDetailsPopover._oCancelButton.setVisible(false);
+				that._oObjectDetailsPopover._oCloseButton.setVisible(true);
 			}
 			that._oObjectDetailsPopover._openBy = oControl;
 		}
@@ -1092,7 +1111,7 @@ sap.ui.define([
 
 		// restore the selections since the selections are lost, BCP: 2280048930, JIRA: CPOUIFTEAMB-252
 		if (bHasBeforeValue) {
-			that.applyBeforeValueAndSelections("create", oParameter);
+			that.applyBeforeValueAndSelections("add", oParameter);
 		}
 	};
 
@@ -1169,7 +1188,7 @@ sap.ui.define([
 		var sPath = oControl.getBinding("rows").getPath();
 		var iRealIndexOfFilteredOut;
 		switch (sMode) {
-			case "create":
+			case "add":
 				if (iSelectedIndex > -1) {
 					oControl.setSelectedIndex(iSelectedIndex);
 					oControl._sPathOfFilteredOut = null;

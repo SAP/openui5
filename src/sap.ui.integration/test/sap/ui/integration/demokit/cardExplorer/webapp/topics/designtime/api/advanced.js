@@ -119,7 +119,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								},
 								"path": "/values"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"key": {
@@ -210,7 +210,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								},
 								"path": "/values"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"key": {
@@ -267,7 +267,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								},
 								"path": "/value"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"CustomerID": {
@@ -417,7 +417,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								},
 								"path": "/values"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"key": {
@@ -516,7 +516,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								},
 								"path": "/values"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"key": {
@@ -573,7 +573,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								},
 								"path": "/value"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"CustomerID": {

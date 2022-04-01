@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								},
 								"path": "/values"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"key": {
