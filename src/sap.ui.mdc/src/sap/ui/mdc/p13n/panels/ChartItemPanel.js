@@ -23,8 +23,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/CustomData",
-	"sap/ui/thirdparty/jquery"
-], function (BasePanel, Label, ColumnListItem, Select, Text, Item, MDCLib, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/ValueState"
+], function (BasePanel, Label, ColumnListItem, Select, Text, Item, MDCLib, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, ValueState) {
 	"use strict";
 
     // shortcut for sap.m.FlexJustifyContent
@@ -164,18 +165,26 @@ sap.ui.define([
 		this.setEnableReorder(true); //We always want reordering to be active in this panel
 
 		oTable.addEventDelegate({
-			onAfterRendering: this._checkFocusAfterTableRerender.bind(this)
+			onAfterRendering: this._onAfterTableRender.bind(this)
 		});
 
 		return oTable;
 	};
 
-	ChartItemPanel.prototype._checkFocusAfterTableRerender = function(){
+	ChartItemPanel.prototype._onAfterTableRender = function(){
 
 		if (this._oFocusInfo && this._oFocusInfo.tableItem){
 			//Focus table item directly
 			this._oFocusInfo.tableItem.focus();
 		}
+
+		//Restore invalid selections
+		this._mInvalidMap.forEach(function(sValue, sKeyName){
+			if (this._mNamesMap.has(sKeyName)){
+				this._mNamesMap.get(sKeyName).setValueState(ValueState.Error);
+				this._mNamesMap.get(sKeyName).setValue(sValue);
+			}
+		}.bind(this));
 
 		//Reset focus info
 		this._oFocusInfo = null;
@@ -222,6 +231,8 @@ sap.ui.define([
 
 			var oFactoryFunction;
 			this._mTemplatesMap = new Map();
+			this._mNamesMap = new Map();
+			this._mInvalidMap = new Map();
 			if (this._bMobileMode) {
 				oFactoryFunction = this._createListItemMobile;
 			} else {
@@ -335,7 +346,15 @@ sap.ui.define([
 		if (oObject.getObject() && oObject.getObject().template){
 			aCells.push(this._getTemplateComboBox(oObject.getObject().kind));
 		} else {
-			aCells.push(this._getNameComboBox(oObject.getObject().kind, oObject.getObject().name));
+			var oNameComboBox;
+
+			//When user had selected an incorrect value, correct it
+			if (oObject.getObject().name != oObject.getObject().tempName){
+				oObject.getObject().tempName = oObject.getObject().name;
+			}
+
+			oNameComboBox = this._getNameComboBox(oObject.getObject().kind, oObject.getObject().name);
+			aCells.push(oNameComboBox);
 			aCells.push(this._getRoleSelect());
 			sRemoveBtnId = this.getId() + oObject.getObject().kind + "-RemoveBtn-" + oObject.getObject().name;
 
@@ -352,6 +371,9 @@ sap.ui.define([
 								 new CustomData({key: "propertyKind", value: "{" + this.P13N_MODEL + ">kind}"})]
 				})
 			]}));
+
+			this._mNamesMap.set(oObject.getObject().name, oNameComboBox);
+
 		}
 
 		var oListItem;
@@ -532,9 +554,26 @@ sap.ui.define([
 			oNewItem.role = oPrevItem.role;
 			this._moveItemsByIndex(this._getItemIndex(oNewItem), this._getItemIndex(oPrevItem));
 
-			this._getP13nModel().refresh(true);
+			this._refreshP13nModel();
 
 			this._fireChangeItems();
+			this._updateVisibleIndexes();
+
+			this._mInvalidMap.delete(sPrevName);
+			this._mInvalidMap.delete(sNewName);
+
+			/*
+			var oOldBox = this._mNamesMap.get(sPrevName);
+			this._mNamesMap.delete(sPrevName);
+			this._mNamesMap.set(sNewName, oOldBox);
+			oEvent.getSource().setValueState(ValueState.None);
+			*/
+		} else if (oEvent.getSource() && oEvent.getSource() instanceof ComboBox) {
+
+			//Save ivalid states to restore after table render
+			this._mInvalidMap.set(oEvent.getSource().data("prevName"), oEvent.getSource().getValue());
+			oEvent.getSource().setValueState(ValueState.Error);
+
 		}
 
 	};
@@ -591,7 +630,7 @@ sap.ui.define([
 
         var bIgnore = this._getP13nModel().getProperty(oTableItem.getBindingContextPath()) ? this._getP13nModel().getProperty(oTableItem.getBindingContextPath()).template : true;
 
-        if (!bIgnore){
+        if (oTableItem.getCells() && (oTableItem.getCells().length === 2 || oTableItem.getCells().length === 3) && !bIgnore){
 			if (this._bMobileMode){
 				oTableItem.getCells()[1].insertItem(this._getMoveDownButton(), 0);
 				oTableItem.getCells()[1].insertItem(this._getMoveUpButton(), 0);
@@ -632,7 +671,7 @@ sap.ui.define([
 		});
 
 		this._getP13nModel().setProperty("/items", aItems);
-		this._getP13nModel().refresh(true);
+		this._refreshP13nModel();
 	};
 
 	ChartItemPanel.prototype._onPressHide = function(oEvent, oRemoveBtn) {
@@ -655,7 +694,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this._getP13nModel().setProperty("/items", aItems);
-		this._getP13nModel().refresh(true);
+		this._refreshP13nModel();
 		this._fireChangeItems();
 		this._updateVisibleIndexes();
 	};
@@ -738,7 +777,7 @@ sap.ui.define([
 			oSelectedItem.visible = true;
 
 			oEvent.getSource().setSelectedKey(undefined);
-			this._getP13nModel().refresh(true);
+			this._refreshP13nModel();
 
 			var aIndexes = this._mVisibleIndexes.has(oSelectedItem.kind) ? this._mVisibleIndexes.get(oSelectedItem.kind) : [];
 			var iOldIndex = this._getItemIndexByNameAndKind(oSelectedItem.name, oSelectedItem.kind);
@@ -754,12 +793,32 @@ sap.ui.define([
 				this._fireChangeItems(); //Otherwise already fired by _moveItemsByIndex
 			}
 
-
+			this._mInvalidMap.delete(oEvent.getSource().getValue());
 			this._updateVisibleIndexes();
-		} else {
-			oEvent.getSource().setSelectedKey(undefined);
+		} else if (oEvent.getSource() && oEvent.getSource() instanceof ComboBox) {
+
+			if (oEvent.getSource().getValue() != "") {
+				oEvent.getSource().setValueState(ValueState.Error);
+			} else {
+				oEvent.getSource().setValueState(ValueState.None);
+			}
+
 		}
 
+	};
+
+	ChartItemPanel.prototype._refreshP13nModel = function() {
+		/*
+		//Save ivalid states to restore after table render
+		this._mInvalidMap = new Map();
+
+		this._mNamesMap.forEach(function(oCombo){
+			if (oCombo.getValueState() === ValueState.Error) {
+				this._mInvalidMap.set(oCombo.data("prevName"), oCombo.getValue());
+			}
+		}.bind(this));*/
+
+		this._getP13nModel().refresh(true);
 	};
 
 	ChartItemPanel.prototype._getTemplateItems = function() {
@@ -1098,7 +1157,7 @@ sap.ui.define([
 
 		this._moveItemsByIndex(iDraggedIndex, iDroppedIndex);
 
-		this._getP13nModel().refresh(true);
+		this._refreshP13nModel();
 		this._updateVisibleIndexes();
 
 	};
