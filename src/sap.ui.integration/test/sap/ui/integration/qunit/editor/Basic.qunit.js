@@ -5914,14 +5914,14 @@ sap.ui.define([
 						var oSubTab = oPanel.getContent()[1];
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab");
 						assert.ok(oSubTab.getExpanded(), "Tab expanded by setting");
-						assert.ok(oSubTab.getItems().length === 2, "Icon tab bar contains 1 icon tab filter.");
+						assert.ok(oSubTab.getItems().length === 3, "Icon tab bar contains 1 icon tab filter.");
 						var oSubTabFilter = oSubTab.getItems()[0];
 						assert.ok(oSubTabFilter.getText() === "Sub group 1", "Find 'Sub group 1' tab filter.");
 						assert.ok(oSubTabFilter.getContent().length === 2, "Icon tab filter contains 2 elements.");
 						assert.ok(oSubTabFilter.getContent()[0].getItems()[0].getText() === "stringParameter1", "Lable of item 1 of Sub Group correct");
 						assert.ok(oSubTabFilter.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group is a String field");
 						assert.ok(oSubTabFilter.getContent()[1].getAggregation("_field").getValue() === "stringParameter1 Value", "Value of item 2 of Sub Group correct");
-						var oSubTabFilter3 = oSubTab.getItems()[1];
+						var oSubTabFilter3 = oSubTab.getItems()[2];
 						assert.ok(oSubTabFilter3.getText() === "Sub group 3", "Find 'Sub group 3' tab filter.");
 						assert.ok(oSubTabFilter3.getContent().length === 2, "Icon tab filter contains 2 elements.");
 						assert.ok(oSubTabFilter3.getContent()[0].getItems()[0].getText() === "stringParameter2", "Lable of item 1 of Sub Group correct");
