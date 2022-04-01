@@ -187,13 +187,13 @@
 								</f:content>
 								<f:dependents>
 									<mdc:ValueHelp id="FHGenre"
-										delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
-										<mdc:inParameters>
+										delegate="{name: 'sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate', payload: {}}">
+										<!-- <mdc:inParameters>
 											<mdcf:InParameter id="IOFFVHGenre-In-Class" value="{classification_code}" helpPath="classification_code" />
 										</mdc:inParameters>
 										<mdc:outParameters>
 											<mdcf:OutParameter id="IOFFVHGenre-Out-Class" value="{classification_code}" helpPath="classification_code" />
-										</mdc:outParameters>
+										</mdc:outParameters> -->
 										<mdc:typeahead>
 											<mdcv:Popover title="Genre">
 												<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
@@ -264,18 +264,27 @@
 										</mdc:dialog>
 									</mdc:ValueHelp>
 									<mdc:ValueHelp id="FHSubGenre"
-										delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
-										<mdc:inParameters>
+										delegate="{name: 'sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate', payload: {
+											inParameters: [ {contentId:'container-v4demo---bookdetails--subGenre', sourceFieldId:'container-v4demo---bookdetails--fGenre', target:'genre_code'},
+															{contentId:'container-v4demo---bookdetails--subGenreTypeAhead', sourceFieldId:'container-v4demo---bookdetails--fGenre', target:'genre_code'}
+															],
+											outParameters: [{source: 'genre_code', targetFieldId: 'container-v4demo---bookdetails--fGenre', mode:'Always'}
+															],
+											payloadInfos: [ {contentId:'container-v4demo---bookdetails--subGenre', path:['classification_code', 'genre_code']},
+															{contentId:'container-v4demo---bookdetails--subGenreTypeAhead', path:['classification_code', 'genre_code']}
+															]
+										}}">
+										<!-- <mdc:inParameters>
 											<mdcf:InParameter id="IOFFVHSub-In-Class" value="{classification_code}" helpPath="classification_code" />
 											<mdcf:InParameter id="IOFFVHSub-In-Genre" value="{genre_code}" helpPath="genre_code" />
 										</mdc:inParameters>
 										<mdc:outParameters>
 											<mdcf:OutParameter id="IOFFVHSub-Out-Class" value="{classification_code}" helpPath="classification_code" />
 											<mdcf:OutParameter id="IOFFVHSub-Out-Genre" value="{genre_code}" helpPath="genre_code" />
-										</mdc:outParameters>
+										</mdc:outParameters> -->
 										<mdc:typeahead>
 											<mdcv:Popover title="Sub Genre">
-												<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
+												<mdcvc:MTable id="subGenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search">
 													<Table id="mTable1_subgenre" items='{path : "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="30rem" mode="SingleSelectMaster">
 														<columns>
 															<Column width="10rem">
@@ -315,7 +324,26 @@
 										</mdc:typeahead>
 										<mdc:dialog>
 											<mdcv:Dialog title="Sub Genre">
-												<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
+												<mdcvc:MTable id="subGenre" keyPath="code" descriptionPath="title" filterFields="$search">
+													<mdcvc:filterBar>
+														<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+															<vhfb:basicSearchField>
+																<mdc:FilterField
+																	delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+																	dataType= "Edm.String"
+																	conditions= "{$filters>/conditions/$search}"
+																	width="50%"
+																	maxConditions="1"
+																	placeholder="Search" />
+															</vhfb:basicSearchField>
+															<vhfb:filterItems>
+																<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
+																<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
+																<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" fieldHelp="FHClassification"/>
+																<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" display="Description" fieldHelp="FHGenre"/>
+															</vhfb:filterItems>
+														</vhfb:FilterBar>
+													</mdcvc:filterBar>
 													<Table id="mTable2_subgenre" items='{path : "/SubGenres", parameters: {$select: ["classification_code", "genre_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
 														<columns>
 															<Column width="10rem">

@@ -196,11 +196,15 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog id="FH1-Dialog" title="Author ID">
-										<mdcvc:MTable id="FH1-Dialog-MTable" keyPath="ID" descriptionPath="name" filterFields="$search">
+										<!-- <mdcvc:MTable id="FH1-Dialog-MTable" keyPath="ID" descriptionPath="name" filterFields="$search">
 											<mdcvc:collectiveSearchItems>
 												<core:Item text="Default" key="default"/>
 												<core:Item text="with Country" key="template1"/>
 											</mdcvc:collectiveSearchItems>
+										</mdcvc:MTable> -->
+										<mdcvc:MTable id="FH1-Dialog-MTable_default" title="Default" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch">
+										</mdcvc:MTable>
+										<mdcvc:MTable id="FH1-Dialog-MTable_withCountry" title="with Country" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch">
 										</mdcvc:MTable>
 										<mdcvc:Conditions label="Author ID"/>
 									</mdcv:Dialog>
@@ -316,18 +320,30 @@
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHSubGenre"
-								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
-								<mdc:inParameters>
+								delegate="{name: 'sap/ui/v4demo/delegate/FilterbarInOutValueHelp.delegate', payload: {
+									inParameters: [ {contentId:'container-v4demo---books--subGenre', source:'classification_code', target:'classification_code'},
+													{contentId:'container-v4demo---books--subGenre', source:'genre_code', target:'genre_code'},
+													{contentId:'container-v4demo---books--subGenreTypeAhead', source:'classification_code', target:'classification_code'},
+													{contentId:'container-v4demo---books--subGenreTypeAhead', source:'genre_code', target:'genre_code'}
+													],
+									outParameters: [{source: 'classification_code', target: 'classification_code', mode:'Always'},
+													{source: 'genre_code', target: 'genre_code', mode:'Always'}
+													],
+									payloadInfos: [ {contentId:'container-v4demo---books--subGenre', path:['classification_code', 'genre_code']},
+										   			{contentId:'container-v4demo---books--subGenreTypeAhead', path:['classification_code', 'genre_code']}
+													]
+								}}">
+								<!-- <mdc:inParameters>
 									<mdcf:InParameter id="IOFFVHSub-In-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
 									<mdcf:InParameter id="IOFFVHSub-In-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
 								</mdc:inParameters>
 								<mdc:outParameters>
 									<mdcf:OutParameter id="IOFFVHSub-Out-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
 									<mdcf:OutParameter id="IOFFVHSub-Out-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
-								</mdc:outParameters>
+								</mdc:outParameters> -->
 								<mdc:typeahead>
 									<mdcv:Popover title="Sub Genre">
-										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
+										<mdcvc:MTable id="subGenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search">
 											<Table id="mTable1_subgenre" items='{path: "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="30rem" mode="MultiSelect">
 												<columns>
 													<Column width="10rem">
@@ -367,7 +383,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Sub Genre">
-										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
+										<mdcvc:MTable id="subGenre" keyPath="code" descriptionPath="title" filterFields="$search">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 													<vhfb:basicSearchField>
@@ -428,8 +444,24 @@
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHDetailGenre"
-								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
-								<mdc:inParameters>
+								delegate="{name: 'sap/ui/v4demo/delegate/FilterbarInOutValueHelp.delegate', payload: {
+									inParameters: [ {contentId:'container-v4demo---books--detailGenre', source:'classification_code', target:'classification_code'},
+													{contentId:'container-v4demo---books--detailGenre', source:'genre_code', target:'genre_code'},
+													{contentId:'container-v4demo---books--detailGenre', source:'subgenre_code', target:'subgenre_code'},
+													{contentId:'container-v4demo---books--detailGenreTypeAhead', source:'classification_code', target:'classification_code'},
+													{contentId:'container-v4demo---books--detailGenreTypeAhead', source:'genre_code', target:'genre_code'},
+													{contentId:'container-v4demo---books--detailGenreTypeAhead', source:'subgenre_code', target:'subgenre_code'}
+													],
+									outParameters: [{source: 'classification_code', target: 'classification_code', mode:'Always'},
+													{source: 'genre_code', target: 'genre_code', mode:'Always'},
+													{source: 'subgenre_code', target: 'subgenre_code', mode:'Always'}
+													],
+									payloadInfos: [{contentId:'container-v4demo---books--detailGenre', path:['classification_code', 'genre_code', 'subgenre_code']},
+										   			{contentId:'container-v4demo---books--detailGenreTypeAhead', path:['classification_code', 'genre_code', 'subgenre_code']}
+													]
+
+								}}">
+								<!-- <mdc:inParameters>
 									<mdcf:InParameter id="IOFFVHDetail-In-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
 									<mdcf:InParameter id="IOFFVHDetail-In-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
 									<mdcf:InParameter id="IOFFVHDetail-In-SubGenre" value="{$filters>/conditions/subgenre_code}" helpPath="subgenre_code" />
@@ -438,10 +470,10 @@
 									<mdcf:OutParameter id="IOFFVHDetail-Out-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
 									<mdcf:OutParameter id="IOFFVHDetail-Out-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
 									<mdcf:OutParameter id="IOFFVHDetail-Out-SubGenre" value="{$filters>/conditions/subgenre_code}" helpPath="subgenre_code" />
-								</mdc:outParameters>
+								</mdc:outParameters> -->
 								<mdc:typeahead>
 									<mdcv:Popover title="Detail Genre">
-										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
+										<mdcvc:MTable id="detailGenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search">
 											<Table id="mTable1_detailgenre" items='{path: "/DetailGenres", length: 10, parameters: {$select: ["classification_code", "genre_code", "subgenre_code"]}}' width="30rem" mode="MultiSelect">
 												<columns>
 													<Column width="10rem">
@@ -487,7 +519,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Detail Genre">
-										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
+										<mdcvc:MTable id="detailGenre" keyPath="code" descriptionPath="title" filterFields="$search">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 													<vhfb:basicSearchField>
@@ -784,18 +816,23 @@
 						</mdc:type>
 						<mdc:dependents>
 							<mdc:ValueHelp id="FHSubGenreSingle"
-								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
-								<mdc:inParameters>
+								delegate="{name: 'sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate', payload: {
+									inParameters: [
+													{contentId:'container-v4demo---books--FHSubGenreSingle-MTable', source:'genre_code', target:'genre_code'},
+													{contentId:'container-v4demo---books--FHSubGenreSingle-MTable', source:'classification_code', target:'classification_code'}
+												  ]
+								}}">
+								<!-- <mdc:inParameters>
 									<mdcf:InParameter id="IOFFVHSub-In-Class-Single" value="{classification_code}" helpPath="classification_code" />
 									<mdcf:InParameter id="IOFFVHSub-In-Genre-Single" value="{genre_code}" helpPath="genre_code" />
 								</mdc:inParameters>
 								<mdc:outParameters>
 									<mdcf:OutParameter id="IOFFVHSub-Out-Class-Single" value="{classification_code}" helpPath="classification_code" />
 									<mdcf:OutParameter id="IOFFVHSub-Out-Genre-Single" value="{genre_code}" helpPath="genre_code" />
-								</mdc:outParameters>
+								</mdc:outParameters> -->
 								<mdc:typeahead>
-									<mdcv:Popover title="Sub Genre">
-										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="true">
+									<mdcv:Popover id="FHSubGenreSingle-Popover" title="Sub Genre">
+										<mdcvc:MTable id="FHSubGenreSingle-MTable" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="true">
 											<Table items='{path : "/SubGenres", parameters: {$select: ["classification_code", "genre_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectMaster">
 												<columns>
 													<Column>
@@ -835,16 +872,20 @@
 								</mdc:typeahead>
 							</mdc:ValueHelp>
 							<mdc:ValueHelp id="FHGenreSingle"
-								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
-								<mdc:inParameters>
+								delegate="{name: 'sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate', payload: {
+									inParameters: [
+													{contentId:'container-v4demo---books--FHSubGenreSingle-MTable', source:'classification_code', target:'classification_code'}
+  												  ]
+								}}">
+								<!-- <mdc:inParameters>
 									<mdcf:InParameter id="IOFFVHGenre-In-Class-Single" value="{classification_code}" helpPath="classification_code" />
 								</mdc:inParameters>
 								<mdc:outParameters>
 									<mdcf:OutParameter id="IOFFVHGenre-Out-Class-Single" value="{classification_code}" helpPath="classification_code" />
-								</mdc:outParameters>
+								</mdc:outParameters> -->
 								<mdc:typeahead>
-									<mdcv:Popover title="Genre">
-										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="true">
+									<mdcv:Popover id="FHGenreSingle-Popover" title="Genre">
+										<mdcvc:MTable id="FHGenreSingle-MTable" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="true">
 											<Table items='{path : "/Genres", parameters: {$select: "classification_code"}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectMaster">
 												<columns>
 													<Column>
@@ -884,16 +925,22 @@
 			<f2:dependents>
 
 				<mdc:ValueHelp id="FHGenre"
-					delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
-					<mdc:inParameters>
+					delegate="{name: 'sap/ui/v4demo/delegate/FilterbarInOutValueHelp.delegate', payload: {
+							inParameters: [{contentId:'container-v4demo---books--genre', source:'classification_code', target:'classification_code'},
+											{contentId:'container-v4demo---books--genreTypeAhead', source:'classification_code', target:'classification_code'}],
+							outParameters: [{source: 'classification_code', target: 'classification_code', mode:'Always'}],
+							payloadInfos: [{contentId:'container-v4demo---books--genre', path:'classification_code'},
+										   {contentId:'container-v4demo---books--genreTypeAhead', path:'classification_code'}]
+					}}">
+					<!-- <mdc:inParameters>
 						<mdcf:InParameter id="IOFFVHGenre-In-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
 					</mdc:inParameters>
 					<mdc:outParameters>
 						<mdcf:OutParameter id="IOFFVHGenre-Out-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
-					</mdc:outParameters>
+					</mdc:outParameters> -->
 					<mdc:typeahead>
 						<mdcv:Popover title="Genre">
-							<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
+							<mdcvc:MTable id="genreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search">
 								<Table id="mTable1_genre" items='{path : "/Genres", length: 10, parameters: {$select: "classification_code"}}' width="30rem" mode="MultiSelect">
 									<columns>
 										<Column width="10rem">
@@ -927,7 +974,7 @@
 					</mdc:typeahead>
 					<mdc:dialog>
 						<mdcv:Dialog title="Genre">
-							<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
+							<mdcvc:MTable id="genre" keyPath="code" descriptionPath="title" filterFields="$search">
 								<mdcvc:filterBar>
 									<vhfb:FilterBar liveMode="false" expandFilterFields="true" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:basicSearchField>

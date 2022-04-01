@@ -149,7 +149,6 @@ sap.ui.define(
 				press: this._onShowAllFilters.bind(this),
 				text: this._oRb.getText("valuehelp.SHOWALLFILTERS")
 			});
-
 			this._oFilterBarLayout.addEndContent(this._oShowAllFiltersBtn);
 		};
 
@@ -159,9 +158,16 @@ sap.ui.define(
 		};
 
 		FilterBar.prototype._handleConditionModelPropertyChange = function() {
+			FilterBarBase.prototype._handleConditionModelPropertyChange.apply(this, arguments);
 			this.fireFiltersChanged({conditionsBased: true});
 		};
 
+
+		FilterBar.prototype.init = function() {
+			FilterBarBase.prototype.init.apply(this, arguments);
+			this._bPersistValues = true;
+			this.getEngine().defaultProviderRegistry.attach(this, "Transient");
+		};
 
 		FilterBar.prototype.exit = function() {
 			this.getEngine().defaultProviderRegistry.detach(this);
