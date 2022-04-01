@@ -327,6 +327,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton1.onAfterRendering = function(oEvent) {
+						oEditButton1.onAfterRendering = function () {};
 						wait(2000).then(function () {
 							oRow1.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [1, 2, 3]), "Table: selected rows changed");
@@ -469,6 +470,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton2.onAfterRendering = function(oEvent) {
+						oEditButton2.onAfterRendering = function () {};
 						wait(2000).then(function () {
 							oRow2.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 2, 3]), "Table: selected rows changed");
@@ -611,6 +613,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton3.onAfterRendering = function(oEvent) {
+						oEditButton3.onAfterRendering = function () {};
 						wait(2000).then(function () {
 							oRow3.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 3]), "Table: selected rows changed");
@@ -753,6 +756,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton4.onAfterRendering = function(oEvent) {
+						oEditButton4.onAfterRendering = function () {};
 						wait(2000).then(function () {
 							oRow4.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 2]), "Table: selected rows changed");
@@ -926,6 +930,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton1.onAfterRendering = function(oEvent) {
+						oEditButton1.onAfterRendering = function () {};
 						wait(2000).then(function () {
 							oRow1.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [1, 2, 3]), "Table: selected rows changed");
@@ -1024,6 +1029,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton2.onAfterRendering = function(oEvent) {
+						oEditButton2.onAfterRendering = function () {};
 						wait(2000).then(function () {
 							oRow1.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [1, 2, 3]), "Table: selected rows changed");
@@ -1129,6 +1135,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton2.onAfterRendering = function(oEvent) {
+						oEditButton2.onAfterRendering = function () {};
 						wait(2000).then(function () {
 							oRow1.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [1, 2, 3]), "Table: selected rows changed");
@@ -1240,6 +1247,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton2.onAfterRendering = function(oEvent) {
+						oEditButton2.onAfterRendering = function () {};
 						wait(2000).then(function () {
 							oRow1.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [1, 2, 3]), "Table: selected rows changed");
@@ -1377,6 +1385,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -1531,6 +1540,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -1684,6 +1694,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -1843,6 +1854,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -2032,6 +2044,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -2191,6 +2204,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -2345,6 +2359,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -2510,6 +2525,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -2709,6 +2725,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton1.onAfterRendering = function(oEvent) {
+						oDeleteButton1.onAfterRendering = function () {};
 						oDeleteButton1.firePress();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === (aObjectsParameterValue.length - 1), "Table: value length is " + (aObjectsParameterValue.length - 1));
@@ -2798,6 +2815,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton2.onAfterRendering = function(oEvent) {
+						oDeleteButton2.onAfterRendering = function () {};
 						oDeleteButton2.firePress();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === (aObjectsParameterValue.length - 1), "Table: value length is " + (aObjectsParameterValue.length - 1));
@@ -2887,6 +2905,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton3.onAfterRendering = function(oEvent) {
+						oDeleteButton3.onAfterRendering = function () {};
 						oDeleteButton3.firePress();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === (aObjectsParameterValue.length - 1), "Table: value length is " + (aObjectsParameterValue.length - 1));
@@ -2976,6 +2995,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						oDeleteButton4.firePress();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === (aObjectsParameterValue.length - 1), "Table: value length is " + (aObjectsParameterValue.length - 1));
@@ -3065,6 +3085,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton1.onAfterRendering = function(oEvent) {
+						oDeleteButton1.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row1
 							oRow2.getDomRefs(true).rowSelector.click();
@@ -3163,6 +3184,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton2.onAfterRendering = function(oEvent) {
+						oDeleteButton2.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow3.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -3260,6 +3282,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton3.onAfterRendering = function(oEvent) {
+						oDeleteButton3.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow4.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -3357,6 +3380,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow1.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -3454,6 +3478,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton1.onAfterRendering = function(oEvent) {
+						oDeleteButton1.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row4
 							oRow4.getDomRefs(true).rowSelector.click();
@@ -3552,6 +3577,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton2.onAfterRendering = function(oEvent) {
+						oDeleteButton2.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row1
 							oRow1.getDomRefs(true).rowSelector.click();
@@ -3650,6 +3676,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton3.onAfterRendering = function(oEvent) {
+						oDeleteButton3.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row2
 							oRow2.getDomRefs(true).rowSelector.click();
@@ -3748,6 +3775,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row3
 							oRow3.getDomRefs(true).rowSelector.click();
@@ -3846,6 +3874,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton1.onAfterRendering = function(oEvent) {
+						oDeleteButton1.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row1
 							oRow1.getDomRefs(true).rowSelector.click();
@@ -3945,6 +3974,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton2.onAfterRendering = function(oEvent) {
+						oDeleteButton2.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow2.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -4043,6 +4073,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton3.onAfterRendering = function(oEvent) {
+						oDeleteButton3.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow3.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -4141,6 +4172,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow4.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -4239,6 +4271,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton1.onAfterRendering = function(oEvent) {
+						oDeleteButton1.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row1
 							oRow1.getDomRefs(true).rowSelector.click();
@@ -4346,6 +4379,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton2.onAfterRendering = function(oEvent) {
+						oDeleteButton2.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow2.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -4451,6 +4485,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton3.onAfterRendering = function(oEvent) {
+						oDeleteButton3.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow3.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -4556,6 +4591,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow4.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -4661,6 +4697,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton1.onAfterRendering = function(oEvent) {
+						oDeleteButton1.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row1
 							oRow1.getDomRefs(true).rowSelector.click();
@@ -4768,6 +4805,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton2.onAfterRendering = function(oEvent) {
+						oDeleteButton2.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow2.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -4873,6 +4911,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton3.onAfterRendering = function(oEvent) {
+						oDeleteButton3.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow3.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -4978,6 +5017,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow4.getDomRefs(true).rowSelector.click();
 							assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);

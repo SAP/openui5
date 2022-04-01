@@ -142,6 +142,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -303,6 +304,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -525,6 +527,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -743,6 +746,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -906,6 +910,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -1121,6 +1126,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -1409,6 +1415,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 5: Delete button visible");
 
 					oEditButton5.onAfterRendering = function(oEvent) {
+						oEditButton5.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow1.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [1, 2, 3, 4, 5, 6, 7]), "Table: selected rows changed");
@@ -1590,6 +1597,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 5: Delete button visible");
 
 					oEditButton5.onAfterRendering = function(oEvent) {
+						oEditButton5.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow3.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 3, 4, 5, 6, 7]), "Table: selected rows changed");
@@ -1771,6 +1779,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 5: Delete button visible");
 
 					oEditButton5.onAfterRendering = function(oEvent) {
+						oEditButton5.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow5.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 5, 6, 7]), "Table: selected rows changed");
@@ -1952,6 +1961,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 5: Delete button visible");
 
 					oEditButton5.onAfterRendering = function(oEvent) {
+						oEditButton5.onAfterRendering = function () {};
 						wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
@@ -2141,6 +2151,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 5: Delete button visible");
 
 					oEditButton5.onAfterRendering = function(oEvent) {
+						oEditButton5.onAfterRendering = function () {};
 						wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
@@ -2306,6 +2317,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 1: Delete button visible");
 
 					oEditButton1.onAfterRendering = function(oEvent) {
+						oEditButton1.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow1.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [1, 2, 3, 4, 5, 6, 7]), "Table: selected rows changed");
@@ -2362,6 +2374,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 3: Delete button visible");
 
 					oEditButton3.onAfterRendering = function(oEvent) {
+						oEditButton3.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow3.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 3, 4, 5, 6, 7]), "Table: selected rows changed");
@@ -2418,6 +2431,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 5: Delete button visible");
 
 					oEditButton5.onAfterRendering = function(oEvent) {
+						oEditButton5.onAfterRendering = function () {};
 						wait().then(function () {
 							oRow5.getDomRefs(true).rowSelector.click();
 							assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 5, 6, 7]), "Table: selected rows changed");
@@ -2474,6 +2488,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 1: Delete button visible");
 
 					oEditButton1.onAfterRendering = function(oEvent) {
+						oEditButton1.onAfterRendering = function () {};
 						wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
@@ -2545,6 +2560,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 1: Delete button visible");
 
 					oEditButton1.onAfterRendering = function(oEvent) {
+						oEditButton1.onAfterRendering = function () {};
 						wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
@@ -2644,6 +2660,7 @@ sap.ui.define([
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -2787,6 +2804,7 @@ sap.ui.define([
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -2910,6 +2928,7 @@ sap.ui.define([
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -3114,6 +3133,7 @@ sap.ui.define([
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -3289,6 +3309,7 @@ sap.ui.define([
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -3496,6 +3517,7 @@ sap.ui.define([
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -3708,6 +3730,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Table: Delete button visible");
 
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -3852,6 +3875,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Table: Delete button visible");
 
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -3993,6 +4017,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Table: Delete button visible");
 
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -4140,6 +4165,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Table: Delete button visible");
 
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -4315,6 +4341,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Table: Delete button visible");
 
 					oDeleteButton.onAfterRendering = function(oEvent) {
+						oDeleteButton.onAfterRendering = function () {};
 						oDeleteButton.firePress();
 						wait().then(function () {
 							assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue2, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value updated");
@@ -4361,6 +4388,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Table: Delete button visible");
 
 					oDeleteButton.onAfterRendering = function(oEvent) {
+						oDeleteButton.onAfterRendering = function () {};
 						oDeleteButton.firePress();
 						wait().then(function () {
 							assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue1, oValue2, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value updated");
@@ -4407,6 +4435,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row: Delete button visible");
 
 					oDeleteButton.onAfterRendering = function(oEvent) {
+						oDeleteButton.onAfterRendering = function () {};
 						oDeleteButton.firePress();
 						wait().then(function () {
 							assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue1, oValue2, oValue3, oValue4, oValue6, oValue7, oValue8]), "Field 1: Value updated");
@@ -4447,6 +4476,7 @@ sap.ui.define([
 					var oEditButton = oActionHBox.getItems()[0];
 
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
@@ -4503,6 +4533,7 @@ sap.ui.define([
 					var oEditButton = oActionHBox.getItems()[0];
 
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
@@ -4572,6 +4603,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton2.getVisible(), "Row 2: Delete button visible");
 
 					oDeleteButton1.onAfterRendering = function(oEvent) {
+						oDeleteButton1.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row2
 							oRow2.getDomRefs(true).rowSelector.click();
@@ -4635,6 +4667,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton5.getVisible(), "Row 5: Delete button visible");
 
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row5
 							oRow5.getDomRefs(true).rowSelector.click();
@@ -4688,6 +4721,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton4.getVisible(), "Row 4: Delete button visible");
 
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
@@ -4755,6 +4789,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 1: Delete button visible");
 
 					oDeleteButton.onAfterRendering = function(oEvent) {
+						oDeleteButton.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row1
 							oRow1.getDomRefs(true).rowSelector.click();
@@ -4810,6 +4845,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 3: Delete button visible");
 
 					oDeleteButton.onAfterRendering = function(oEvent) {
+						oDeleteButton.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row5
 							oRow3.getDomRefs(true).rowSelector.click();
@@ -4865,6 +4901,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton.getVisible(), "Row 5: Delete button visible");
 
 					oDeleteButton.onAfterRendering = function(oEvent) {
+						oDeleteButton.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row5
 							oRow5.getDomRefs(true).rowSelector.click();
@@ -4920,6 +4957,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton4.getVisible(), "Row 4: Delete button visible");
 
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
@@ -4985,6 +5023,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton4.getVisible(), "Row 4: Delete button visible");
 
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
@@ -5060,6 +5099,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton2.getVisible(), "Row 2: Delete button visible");
 
 					oDeleteButton.onAfterRendering = function(oEvent) {
+						oDeleteButton.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row1
 							oRow1.getDomRefs(true).rowSelector.click();
@@ -5131,6 +5171,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton5.getVisible(), "Row 5: Delete button visible");
 
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						wait().then(function () {
 							// unselect row4
 							oRow4.getDomRefs(true).rowSelector.click();
@@ -5192,6 +5233,7 @@ sap.ui.define([
 					assert.ok(oDeleteButton4.getVisible(), "Row 4: Delete button visible");
 
 					oDeleteButton4.onAfterRendering = function(oEvent) {
+						oDeleteButton4.onAfterRendering = function () {};
 						wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
