@@ -21,7 +21,7 @@ sap.ui.define([
 	{});
 
 	/**
-	 * @param {sap.m.SegmentedButton || sap.m.List} oNavigationControl
+	 * @param {sap.m.SegmentedButton | sap.m.List} oNavigationControl
 	 */
 	Util.getNavigationItem = function(oNavigationControl, sPanelName) {
 		if (!oNavigationControl || sPanelName === "") {

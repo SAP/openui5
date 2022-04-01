@@ -1511,6 +1511,9 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a new <code>RenderManager</code> instance for use by the caller.
+	 *
+	 * @returns {sap.ui.core.RenderManager} A newly createdRenderManeger
 	 * @public
 	 * @deprecated Since version 0.15.0. Replaced by <code>createRenderManager()</code>
 	 */
@@ -1795,10 +1798,10 @@ sap.ui.define([
 	}
 
 	/**
-	 * Preprocessed given dependencies
+	 * Preprocess the given dependencies.
 	 *
-	 * @param {object} oDependencies - Dependencies to preprocess
-	 * @returns {object} oDependencies - Proprocessed dependencies
+	 * @param {object} dependencies - Dependencies to preprocess
+	 * @returns {object} Preprocessed dependencies
 	 */
 	function preprocessDependencies(dependencies) {
 		if (Array.isArray(dependencies)) {
@@ -2192,7 +2195,7 @@ sap.ui.define([
 	 * @param {string} [sId] the ID for the component instance
 	 * @param {object} [mSettings] the settings object for the component
 	 * @public
-	 * @returns {sap.ui.core.Component} the created Component instance
+	 * @returns {sap.ui.core.Component|Promise<sap.ui.core.Component>} The created component instance or a promise on it in the async use case
 	 * @deprecated Since 1.95. Please use {@link sap.ui.core.Component.create Component.create} instead.
 	 */
 	Core.prototype.createComponent = function(vComponent, sUrl, sId, mSettings) {
@@ -3215,6 +3218,9 @@ sap.ui.define([
 
 	/**
 	 * Register a listener for the {@link sap.ui.core.Core#event:libraryChanged} event.
+	 *
+	 * @param {function} fnFunction Callback to be called when the <code>libraryChanged</code> event is fired
+	 * @param {object} [oListener] Optional context object to call the callback on
 	 */
 	Core.prototype.attachLibraryChanged = function(fnFunction, oListener) {
 		_oEventProvider.attachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
@@ -3222,6 +3228,9 @@ sap.ui.define([
 
 	/**
 	 * Unregister a listener from the {@link sap.ui.core.Core#event:libraryChanged} event.
+	 *
+	 * @param {function} fnFunction function to unregister
+	 * @param {object} [oListener] context object given during registration
 	 */
 	Core.prototype.detachLibraryChanged = function(fnFunction, oListener) {
 		_oEventProvider.detachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
@@ -3443,10 +3452,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Used to find out whether a certain DOM element is the static area
+	 * Checks whether the given DOM element is the root of the static area.
 	 *
-	 * @param {object} oDomRef
-	 * @return {boolean} whether the given DomRef is the StaticAreaRef
+	 * @param {Element} oDomRef DOM element to check
+	 * @returns {boolean} Whether the given DOM element is the root of the static area
 	 * @protected
 	 */
 	Core.prototype.isStaticAreaRef = function(oDomRef) {

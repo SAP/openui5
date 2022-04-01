@@ -41,6 +41,7 @@ sap.ui.define([
 	 */
 	var Popup = Control.extend("sap.m.p13n.Popup", {
 		metadata: {
+			library: "sap.m",
 			properties: {
 				/**
 				 * Text describing the personalization popup.

@@ -28,6 +28,7 @@ sap.ui.define([
 	 */
 	var GroupPanel = QueryPanel.extend("sap.m.p13n.GroupPanel", {
 		metadata: {
+			library: "sap.m",
 			properties: {
 				/**
 				 * Toggles an additional checkbox in the group panel to define whether items are made visible.

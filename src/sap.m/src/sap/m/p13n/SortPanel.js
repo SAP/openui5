@@ -28,6 +28,9 @@ sap.ui.define([
 	 */
 
 	var SortPanel = QueryPanel.extend("sap.m.p13n.SortPanel", {
+		metadata: {
+			library: "sap.m"
+		},
 		renderer: {
 			apiVersion: 2
 		}

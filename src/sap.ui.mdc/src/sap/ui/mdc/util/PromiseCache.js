@@ -50,7 +50,7 @@ sap.ui.define(
 		 * @experimental
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		var PromiseCache = BaseObject.extend("sap.ui.mdc.util.PromiseCache", {
+		var PromiseCache = BaseObject.extend("sap.ui.mdc.util.PromiseCache", /** @lends sap.ui.mdc.util.PromiseCache.prototype */ {
 			/**
 			 * Constructor.
 			 */

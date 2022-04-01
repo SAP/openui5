@@ -60,16 +60,17 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 
 		FNClass["registry"] = Object.freeze({
 
-			/*
+			/**
 			 * Returns the number of existing objects.
 			 *
 			 * @returns {int} Number of currently existing objects.
+			 * @private
 			 */
 			get size() {
 				return iInstancesCount;
 			},
 
-			/*
+			/**
 			 * Return an object with all registered object instances, keyed by their ID.
 			 *
 			 * Each call creates a new snapshot object. Depending on the size of the UI,
@@ -81,17 +82,19 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 			 * so it doesn't have a prototype and therefore no <code>toString</code> method.
 			 *
 			 * @returns {object} Object with all elements, keyed by their ID
+			 * @private
 			 */
 			all: function() {
 				var mResults = Object.create(null);
 				return Object.assign(mResults, mInstances);
 			},
 
-			/*
+			/**
 			 * Retrieves an object by its ID.
 			 *
 			 * @param {sap.ui.core.ID|null|undefined} ID of the object to retrieve.
 			 * @returns {sap.ui.core.Element|undefined} Object with the given ID or <code>undefined</code>
+			 * @private
 			 */
 			get: function(id) {
 				assert(id == null || typeof id === "string", "id must be a string when defined");
@@ -100,7 +103,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 				return id == null ? undefined : mInstances[id];
 			},
 
-			/*
+			/**
 			 * Calls the given <code>callback</code> for each object.
 			 *
 			 * If objects are created or destroyed during the <code>forEach</code> loop, then the behavior
@@ -119,6 +122,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 			 * @param {Object} [thisArg=undefined]
 			 *        Context object to provide as <code>this</code> in each call of <code>callback</code>
 			 * @throws {TypeError} If <code>callback</code> is not a function
+			 * @private
 			 */
 			forEach: function(callback, thisArg) {
 				if (typeof callback !== "function") {
@@ -132,7 +136,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 				}
 			},
 
-			/*
+			/**
 			 * Collects all elements for which the given <code>callback</code> returns a value that coerces
 			 * to <code>true</code>.
 			 *
@@ -156,6 +160,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 			 * @returns {sap.ui.core.Element[]}
 			 *        Array of elements matching the predicate; order is undefined and might change in newer versions of UI5
 			 * @throws {TypeError} If <code>callback</code> is not a function
+			 * @private
 			 */
 			filter: function(callback, thisArg) {
 				if (typeof callback !== "function") {

@@ -25,7 +25,11 @@ sap.ui.define([
 	 * @since 1.98
 	 * @alias sap.ui.integration.util.SkeletonCard
 	 */
-	var SkeletonCard = Card.extend("sap.ui.integration.util.SkeletonCard");
+	var SkeletonCard = Card.extend("sap.ui.integration.util.SkeletonCard", {
+		metadata: {
+			library: "sap.ui.integration"
+		}
+	});
 
 	/**
 	 * Resolves the card manifest to a static manifest.

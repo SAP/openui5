@@ -922,7 +922,7 @@ sap.ui.define([
 
 	/**
 	 * Returns an array containing the selected UploadSetItems.
-	 * @returns {sap.m.UploadSetItem[]} Array of all selected items
+	 * @returns {sap.m.upload.UploadSetItem[]} Array of all selected items
 	 * @public
 	 * @since 1.100.0
 	 */
@@ -933,7 +933,7 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the currently selected UploadSetItem.
-	 * @returns {sap.m.UploadSetItem | null} The currently selected item or null
+	 * @returns {sap.m.upload.UploadSetItem | null} The currently selected item or null
 	 * @public
 	 * @since 1.100.0
 	 */
@@ -961,7 +961,7 @@ sap.ui.define([
 
 	/**
 	 * Selects or deselects the given list item.
-	 * @param {sap.m.UploadSetItem} uploadSetItem The item whose selection is to be changed. This parameter is mandatory.
+	 * @param {sap.m.upload.UploadSetItem} uploadSetItem The item whose selection is to be changed. This parameter is mandatory.
 	 * @param {boolean} [select=true] The selection state of the item.
 	 * @returns {this} this to allow method chaining
 	 * @public
