@@ -143,6 +143,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._invalidate = function() {
+		this._removeColumnVisibilityFromAggregation();
+		this.destroyItems();
 		this._bInvalidated = true;
 	};
 
@@ -154,8 +156,6 @@ sap.ui.define([
 	ColumnMenu.prototype.open = function() {
 		if (this._bInvalidated) {
 			this._bInvalidated = false;
-			this._removeColumnVisibilityFromAggregation();
-			this.destroyItems();
 			this._addMenuItems();
 		} else if (this._oColumn) {
 			this._addColumnVisibilityMenuItem();

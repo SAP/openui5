@@ -3654,7 +3654,7 @@ sap.ui.define([
 	Table.prototype._invalidateColumnMenus = function() {
 		var aCols = this.getColumns();
 		for (var i = 0, l = aCols.length; i < l; i++) {
-			aCols[i].invalidateMenu();
+			aCols[i]._invalidateMenu();
 		}
 	};
 
