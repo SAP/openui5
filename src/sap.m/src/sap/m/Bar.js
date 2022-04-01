@@ -333,12 +333,9 @@ sap.ui.define([
 		var iMidBarPlaceholderWidth = this._$MidBarPlaceHolder.outerWidth(true),
 			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
 			sLeftOrRight = bRtl ? "right" : "left",
-			sRightOrLeft = bRtl ? "left" : "right",
 			oMidBarCss = { visibility : "" },
-			aContentLeftControls = this.getContentLeft().filter(function(oControl) { return oControl.getVisible(); }),
-			aContentRightControls = this.getContentRight().filter(function(oControl) { return oControl.getVisible(); }),
-			iContentLeftPadding = aContentLeftControls.length ? 0 : parseInt(this._$LeftBar.css('padding-' + sLeftOrRight)),
-			iContentRightPadding = aContentRightControls.length ? 0 : parseInt(this._$RightBar.css('padding-' + sRightOrLeft)),
+			iContentLeftPadding = parseInt(this._$LeftBar.css('padding-left')),
+			iContentRightPadding = parseInt(this._$RightBar.css('padding-left')),
 			iParentPaddingLeft = parseInt(this.$().css("padding-left")),
 			iParentPaddingRight = parseInt(this.$().css("padding-right"));
 
