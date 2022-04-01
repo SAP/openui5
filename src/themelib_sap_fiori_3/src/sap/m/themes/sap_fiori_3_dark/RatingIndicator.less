@@ -4,6 +4,8 @@
 /* ====================================== */
 
 .sapMRI {
+	text-shadow: @sapUiContentTextShadow;
+
 	.sapMRIUnsel {
 		color: @sapUiContentUnratedColor;
 	}
@@ -18,12 +20,15 @@
 }
 
 .sapMRI.sapMRIDisplayOnly {
+	text-shadow: none;
+
 	.sapMRIIconSel {
 		color: @sapUiBaseText;
 	}
 }
 
 .sapMRIDisabled {
+	text-shadow: none;
 	opacity: 0.4;
 }
 
