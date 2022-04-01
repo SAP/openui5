@@ -82,6 +82,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the owner.
+	 *
+	 * @returns {object}
+	 *   The lock's owner for debugging
+	 *
+	 * @public
+	 */
+	_GroupLock.prototype.getOwner = function () {
+		return this.oOwner;
+	};
+
+	/**
 	 * Returns the serial number.
 	 *
 	 * @returns {number}

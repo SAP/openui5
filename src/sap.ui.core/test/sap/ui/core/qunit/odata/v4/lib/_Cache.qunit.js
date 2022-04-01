@@ -85,6 +85,7 @@ sap.ui.define([
 					return oModelInterface;
 				},
 				getServiceUrl : function () { return "/~/"; },
+				getUnlockedAutoCopy : function () {},
 				hasChanges : function () {},
 				isActionBodyOptional : function () {},
 				lockGroup : function () { throw new Error("lockGroup mock missing"); },
@@ -93,7 +94,8 @@ sap.ui.define([
 				removePatch : function () {},
 				removePost : function () {},
 				reportTransitionMessages : function () {},
-				request : function () {}
+				request : function () {},
+				waitForBatchResponseReceived : function () {}
 			};
 			this.oRequestorMock = this.mock(this.oRequestor);
 		},
@@ -4877,11 +4879,17 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bTransient) {
 	[1, 3].forEach(function (iPrefetchLength) {
-		var sTitle = "CollectionCache#read w/ created element, transient = " + bTransient
-				+ ", prefetch = " + iPrefetchLength;
+		[0, 2, 3].forEach(function (iStart) {
+			var sTitle = "CollectionCache#read w/ created element, transient = " + bTransient
+					+ ", prefetch = " + iPrefetchLength + ", start = " + iStart;
+
+			if (iStart && !bTransient) {
+				return;
+			}
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
+			iCount = iStart <= 2 ? 1 : 0, // call count in case no delay needed
 			fnDataRequested = function () {},
 			aElements = [{ // a created element (transient or not)
 				"@$ui5._" : {
@@ -4904,30 +4912,131 @@ sap.ui.define([
 				getUnlockedCopy : function () {},
 				unlock : function () {}
 			},
-			oSyncPromise;
+			oSyncPromise,
+			oUnlockExpectation,
+			that = this;
 
 		oCache.aElements = aElements;
 		oCache.aElements.$count = 1;
 		oCache.aElements.$created = 2;
 		oCache.iLimit = 1; // "the upper limit for the count": does not include created elements!
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(sinon.match.same(oCache.aElements), 0, 100, iExpectedPrefetch, 2 + 1)
-			.returns([{start : 0, end : 23}]);
-		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~oUnlockedCopy~");
-		this.mock(oCache).expects("requestElements").withExactArgs(0, 23, "~oUnlockedCopy~",
-			bTransient ? 2 : 0, sinon.match.same(fnDataRequested));
-		this.mock(oGroupLock).expects("unlock").withExactArgs();
+			.withExactArgs(sinon.match.same(aElements), 0, 100, iExpectedPrefetch, 2 + 1)
+			.returns([{start : iStart, end : 23}]);
+		this.oRequestorMock.expects("waitForBatchResponseReceived").exactly(1 - iCount)
+			.withExactArgs("group")
+			.callsFake(function () {
+				assert.ok(oUnlockExpectation.calledOnce, "unlocked");
+				that.oRequestorMock.expects("getUnlockedAutoCopy")
+					.withExactArgs(sinon.match.same(oGroupLock)).returns("~oUnlockedAutoCopy~");
+				that.mock(oCache).expects("read")
+					.withExactArgs(0, 100, iPrefetchLength, "~oUnlockedAutoCopy~",
+						sinon.match.same(fnDataRequested))
+					.returns("~oReadPromise~");
+				// no special timing needed, #read fails if called before mocked
+				return SyncPromise.resolve();
+			});
+		this.mock(oGroupLock).expects("getUnlockedCopy").exactly(iCount).withExactArgs()
+			.returns("~oUnlockedCopy~");
+		this.mock(oCache).expects("requestElements").exactly(iCount)
+			.withExactArgs(iStart, 23, "~oUnlockedCopy~", bTransient ? 2 : 0,
+				sinon.match.same(fnDataRequested));
+		oUnlockExpectation = this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
 		oSyncPromise = oCache.read(0, 100, iPrefetchLength, oGroupLock, fnDataRequested);
 
-		assert.deepEqual(oSyncPromise.getResult(), {
-			"@odata.context" : undefined,
-			value : aElements
+		if (iCount) {
+			assert.deepEqual(oSyncPromise.getResult(), {
+				"@odata.context" : undefined,
+				value : aElements
+			});
+		} else {
+			return oSyncPromise.then(function (vResult) {
+				assert.strictEqual(vResult, "~oReadPromise~");
+			});
+		}
+	});
 		});
 	});
-	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: no intervals", function (assert) {
+		var oCache = this.createCache("Employees"),
+			aElements = [{ // a transient element
+				"@$ui5._" : {
+					transient : "group",
+					transientPredicate : "($uid=id-17-4)"
+				}
+			}],
+			oGroupLock = {
+				getGroupId : function () { return "group"; },
+				unlock : function () {}
+			};
+
+		oCache.aElements = aElements;
+		oCache.aElements.$count = 0;
+		oCache.aElements.$created = 1;
+		oCache.iLimit = 0; // "the upper limit for the count": does not include created elements!
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(sinon.match.same(aElements), 0, 100, 42, 1).returns([]);
+		this.oRequestorMock.expects("waitForBatchResponseReceived").never();
+		this.mock(oCache).expects("requestElements").never();
+		this.mock(oGroupLock).expects("unlock").withExactArgs();
+
+		// code under test
+		return oCache.read(0, 100, 42, oGroupLock).then(function (oResult) {
+			assert.deepEqual(oResult, {
+				"@odata.context" : undefined,
+				value : aElements
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: delay due to multiple intervals", function (assert) {
+		var oCache = this.createCache("Employees"),
+			aElements = [{ // a transient element
+				"@$ui5._" : {
+					transient : "group",
+					transientPredicate : "($uid=id-17-4)"
+				}
+			}],
+			oGroupLock = {
+				getGroupId : function () { return "group"; },
+				getUnlockedCopy : function () {},
+				unlock : function () {}
+			},
+			oUnlockExpectation,
+			that = this;
+
+		oCache.aElements = aElements;
+		oCache.aElements.$count = 0;
+		oCache.aElements.$created = 1;
+		oCache.iLimit = 0; // "the upper limit for the count": does not include created elements!
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(sinon.match.same(aElements), 0, 100, 42, 1).returns([{}, {}]);
+		this.oRequestorMock.expects("waitForBatchResponseReceived")
+			.withExactArgs("group")
+			.callsFake(function () {
+				assert.ok(oUnlockExpectation.calledOnce, "unlocked");
+				that.oRequestorMock.expects("getUnlockedAutoCopy")
+					.withExactArgs(sinon.match.same(oGroupLock)).returns("~oUnlockedAutoCopy~");
+				that.mock(oCache).expects("read")
+					.withExactArgs(0, 100, 42, "~oUnlockedAutoCopy~", "~fnDataRequested~")
+					.returns("~oReadPromise~");
+				// no special timing needed, #read fails if called before mocked
+				return SyncPromise.resolve();
+			});
+		this.mock(oCache).expects("requestElements").never();
+		oUnlockExpectation = this.mock(oGroupLock).expects("unlock").withExactArgs();
+
+		// code under test
+		return oCache.read(0, 100, 42, oGroupLock, "~fnDataRequested~").then(function (vResult) {
+			assert.strictEqual(vResult, "~oReadPromise~");
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#read: wait for oPendingRequestsPromise", function (assert) {
@@ -6020,16 +6129,8 @@ sap.ui.define([
 		oCache.aElements.$count = 23;
 		oCache.aElements.$created = 2;
 		oCache.iLimit = "~iLimit~";
-		this.mock(oGroupLock).expects("getGroupId").exactly(bRequestCount ? 1 : 0)
-			.withExactArgs().returns("~groupId~");
-		this.oRequestorMock.expects("getGroupSubmitMode").exactly(bRequestCount ? 1 : 0)
-			.withExactArgs("~groupId~").returns(sSubmitMode);
-		this.oRequestorMock.expects("lockGroup")
-			.exactly(bRequestCount && sSubmitMode === "API" ? 1 : 0)
-			.withExactArgs("$auto", sinon.match.same(oCache)).returns("~groupLock~");
-		this.mock(oGroupLock).expects("getUnlockedCopy")
-			.exactly(bRequestCount && sSubmitMode !== "API" ? 1 : 0)
-			.withExactArgs().returns("~groupLock~");
+		this.oRequestorMock.expects("getUnlockedAutoCopy").exactly(bRequestCount ? 1 : 0)
+			.withExactArgs(sinon.match.same(oGroupLock)).returns("~groupLock~");
 		this.mock(oCache).expects("requestCount").exactly(bRequestCount ? 1 : 0)
 			.withExactArgs("~groupLock~").returns("~oRequestCountPromise~");
 

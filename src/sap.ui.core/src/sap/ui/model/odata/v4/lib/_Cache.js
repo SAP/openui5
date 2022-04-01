@@ -2458,12 +2458,8 @@ sap.ui.define([
 					|| iStart === iCreated && iResultLength === iFilteredCount) {
 				this.iLimit = iLimit = iFilteredCount;
 			} else {
-				if (this.oRequestor.getGroupSubmitMode(oGroupLock.getGroupId()) === "API") {
-					oGroupLock = this.oRequestor.lockGroup("$auto", this);
-				} else {
-					oGroupLock = oGroupLock.getUnlockedCopy();
-				}
-				oRequestCountPromise = this.requestCount(oGroupLock);
+				oRequestCountPromise
+					= this.requestCount(this.oRequestor.getUnlockedAutoCopy(oGroupLock));
 			}
 		}
 		if (oResult["@odata.nextLink"]) { // server-driven paging
@@ -2589,6 +2585,7 @@ sap.ui.define([
 		var aElementsRange,
 			iEnd,
 			oPromise = this.oPendingRequestsPromise || this.aElements.$tail,
+			aReadIntervals,
 			iTransientElements,
 			that = this;
 
@@ -2612,12 +2609,22 @@ sap.ui.define([
 					=== oGroupLock.getGroupId();
 			})
 			.length;
-		iPrefetchLength = Math.max(iPrefetchLength, iTransientElements);
 
-		ODataUtils._getReadIntervals(this.aElements, iIndex, iLength,
-				this.bServerDrivenPaging ? 0 : iPrefetchLength,
-				this.aElements.$created + this.iLimit)
-			.forEach(function (oInterval) {
+		aReadIntervals = ODataUtils._getReadIntervals(this.aElements, iIndex, iLength,
+				this.bServerDrivenPaging ? 0 : Math.max(iPrefetchLength, iTransientElements),
+				this.aElements.$created + this.iLimit);
+		if (iTransientElements
+			 && (aReadIntervals.length > 1
+				|| aReadIntervals.length && aReadIntervals[0].start > this.aElements.$created)) {
+			oGroupLock.unlock();
+
+			return this.oRequestor.waitForBatchResponseReceived(oGroupLock.getGroupId())
+				.then(function () {
+					return that.read(iIndex, iLength, iPrefetchLength,
+						that.oRequestor.getUnlockedAutoCopy(oGroupLock), fnDataRequested);
+				});
+		}
+		aReadIntervals.forEach(function (oInterval) {
 				that.requestElements(oInterval.start, oInterval.end, oGroupLock.getUnlockedCopy(),
 					iTransientElements, fnDataRequested);
 				fnDataRequested = undefined;

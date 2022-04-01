@@ -885,17 +885,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if a non-optimistic batch request was already sent.
-	 *
-	 * @returns {boolean} Whether a non-optimistic batch was already sent
-	 *
-	 * @public
-	 */
-	_Requestor.prototype.isBatchSent = function () {
-		return this.bBatchSent;
-	};
-
-	/**
 	 * Get the batch queue for the given group or create it if it does not exist yet.
 	 *
 	 * @param {string} sGroupId The group ID
@@ -1000,6 +989,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns an unlocked copy of the given group lock if the corresponding group ID has submit
+	 * mode "Auto" (or "Direct"); else returns a new group lock for "$auto" with the same owner.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock - The original
+	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
+	 *   An unlocked copy w/ submit mode "Auto", see above
+	 *
+	 * @public
+	 */
+	_Requestor.prototype.getUnlockedAutoCopy = function (oGroupLock) {
+		if (this.getGroupSubmitMode(oGroupLock.getGroupId()) !== "API") {
+			return oGroupLock.getUnlockedCopy();
+		}
+
+		return this.lockGroup("$auto", oGroupLock.getOwner());
+	};
+
+	/**
 	 * Tells whether there are changes (that is, updates via PATCH or bound actions via POST) for
 	 * the given group ID and given entity.
 	 *
@@ -1078,6 +1085,17 @@ sap.ui.define([
 	 */
 	_Requestor.prototype.isActionBodyOptional = function () {
 		return false;
+	};
+
+	/**
+	 * Returns <code>true</code> if a non-optimistic batch request was already sent.
+	 *
+	 * @returns {boolean} Whether a non-optimistic batch was already sent
+	 *
+	 * @public
+	 */
+	_Requestor.prototype.isBatchSent = function () {
+		return this.bBatchSent;
 	};
 
 	/**
@@ -2018,6 +2036,23 @@ sap.ui.define([
 			});
 			return that.processBatch(sGroupId);
 		});
+	};
+
+	/**
+	 * Waits until a batch response has been received for the given group ID.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise that resolves without a defined result when a batch response has been received
+	 *   for the given group ID, no matter if the batch succeeded or failed
+	 *
+	 * @public
+	 * @see #batchResponseReceived
+	 */
+	_Requestor.prototype.waitForBatchResponseReceived = function (sGroupId) {
+		// Note: this currently works only in case there is at least one change request already
+		return this.mBatchQueue[sGroupId][0][0].$promise;
 	};
 
 	/**

@@ -23,7 +23,7 @@ sap.ui.define([
 
 		assert.strictEqual(oGroupLock.isCanceled(), false);
 		assert.strictEqual(oGroupLock.getGroupId(), "foo");
-		assert.strictEqual(oGroupLock.oOwner, oOwner);
+		assert.strictEqual(oGroupLock.getOwner(), oOwner);
 		assert.strictEqual(oGroupLock.isLocked(), false);
 		assert.strictEqual(oGroupLock.waitFor("foo"), undefined);
 
@@ -48,7 +48,7 @@ sap.ui.define([
 		oGroupLock = new _GroupLock("foo", oOwner, true);
 
 		assert.strictEqual(oGroupLock.getGroupId(), "foo");
-		assert.strictEqual(oGroupLock.oOwner, oOwner);
+		assert.strictEqual(oGroupLock.getOwner(), oOwner);
 		assert.strictEqual(oGroupLock.isLocked(), true);
 
 		// code under test
@@ -90,7 +90,7 @@ sap.ui.define([
 		oGroupLock2 = oGroupLock1.getUnlockedCopy();
 
 		assert.strictEqual(oGroupLock2.getGroupId(), oGroupLock1.getGroupId());
-		assert.strictEqual(oGroupLock2.oOwner, oGroupLock1.oOwner);
+		assert.strictEqual(oGroupLock2.getOwner(), oGroupLock1.getOwner());
 		assert.strictEqual(oGroupLock2.isLocked(), false);
 		assert.strictEqual(oGroupLock2.isModifying(), false);
 		assert.strictEqual(oGroupLock2.getSerialNumber(), oGroupLock1.getSerialNumber());
@@ -114,7 +114,7 @@ sap.ui.define([
 			"sap.ui.model.odata.v4.lib._GroupLock(group=group, owner=owner, locked, modifying)");
 
 		oGroupLock = new _GroupLock("group", oOwner, false);
-		assert.strictEqual(oGroupLock.oOwner, oOwner);
+		assert.strictEqual(oGroupLock.getOwner(), oOwner);
 		assert.strictEqual(oGroupLock.toString(),
 			"sap.ui.model.odata.v4.lib._GroupLock(group=group, owner=owner)");
 
@@ -133,7 +133,7 @@ sap.ui.define([
 		assert.strictEqual(_GroupLock.$cached.getGroupId(), "$cached");
 		assert.strictEqual(_GroupLock.$cached.isLocked(), false);
 		assert.strictEqual(_GroupLock.$cached.isModifying(), false);
-		assert.strictEqual(_GroupLock.$cached.oOwner, "sap.ui.model.odata.v4.lib._GroupLock");
+		assert.strictEqual(_GroupLock.$cached.getOwner(), "sap.ui.model.odata.v4.lib._GroupLock");
 
 		// ensure that $cached can be unlocked several times
 		_GroupLock.$cached.unlock();
