@@ -2582,11 +2582,14 @@ sap.ui.define([
 	 */
 	_CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
-		var aElementsRange,
+		var iCreatedPersisted = 0,
+			oElement,
+			aElementsRange,
 			iEnd,
 			oPromise = this.oPendingRequestsPromise || this.aElements.$tail,
 			aReadIntervals,
-			iTransientElements,
+			iTransientElements = 0,
+			i,
 			that = this;
 
 		if (iIndex < 0) {
@@ -2602,17 +2605,26 @@ sap.ui.define([
 			});
 		}
 
-		// prepare for client-side filter for newly created persisted (see #handleResponse)
-		iTransientElements = this.aElements.slice(0, this.aElements.$created)
-			.filter(function (oElement) {
-				return _Helper.getPrivateAnnotation(oElement, "transient")
-					=== oGroupLock.getGroupId();
-			})
-			.length;
-
+		for (i = 0; i < this.aElements.$created; i += 1) {
+			oElement = this.aElements[i];
+			if (_Helper.getPrivateAnnotation(oElement, "transient") === oGroupLock.getGroupId()) {
+				// prepare for client-side filter for newly created persisted (see #handleResponse)
+				iTransientElements += 1;
+			}
+			if (that.oBackup && !oElement["@$ui5.context.isTransient"]) {
+				// count persisted inline creation rows which are refreshed separately during a
+				// side-effects refresh (see #refreshKeptElements) and might be deleted on server;
+				// increase prefetch to compensate for our exclusive filter (see
+				// #getFilterExcludingCreated) (JIRA: CPOUI5ODATAV4-1521)
+				iCreatedPersisted += 1;
+			}
+		}
 		aReadIntervals = ODataUtils._getReadIntervals(this.aElements, iIndex, iLength,
-				this.bServerDrivenPaging ? 0 : Math.max(iPrefetchLength, iTransientElements),
+				this.bServerDrivenPaging
+				? 0
+				: Math.max(iPrefetchLength, iTransientElements, iCreatedPersisted),
 				this.aElements.$created + this.iLimit);
+
 		if (iTransientElements
 			 && (aReadIntervals.length > 1
 				|| aReadIntervals.length && aReadIntervals[0].start > this.aElements.$created)) {
@@ -2624,6 +2636,7 @@ sap.ui.define([
 						that.oRequestor.getUnlockedAutoCopy(oGroupLock), fnDataRequested);
 				});
 		}
+
 		aReadIntervals.forEach(function (oInterval) {
 				that.requestElements(oInterval.start, oInterval.end, oGroupLock.getUnlockedCopy(),
 					iTransientElements, fnDataRequested);
@@ -2982,15 +2995,16 @@ sap.ui.define([
 			that = this;
 
 		if (sGroupId) {
-			this.oBackup = {};
-			this.oBackup.iActiveElements = this.iActiveElements;
-			this.oBackup.mChangeListeners = this.mChangeListeners;
-			this.oBackup.sContext = this.sContext;
-			this.oBackup.aElements = this.aElements.slice();
-			this.oBackup.$byPredicate = mByPredicate;
-			this.oBackup.$count = this.aElements.$count;
-			this.oBackup.$created = this.aElements.$created;
-			this.oBackup.iLimit = this.iLimit;
+			this.oBackup = {
+				iActiveElements : this.iActiveElements,
+				mChangeListeners : this.mChangeListeners,
+				sContext : this.sContext,
+				aElements : this.aElements.slice(),
+				$byPredicate : mByPredicate,
+				$count : this.aElements.$count,
+				$created : this.aElements.$created,
+				iLimit : this.iLimit
+			};
 		}
 
 		for (i = 0; i < this.aElements.$created; i += 1) {

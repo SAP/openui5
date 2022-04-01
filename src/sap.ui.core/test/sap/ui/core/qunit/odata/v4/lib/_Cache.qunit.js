@@ -4962,6 +4962,55 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[false, true].forEach(function (bSideEffectsRefresh) {
+	var sTitle = "CollectionCache#read: persisted inline creation rows; side-effects refresh = "
+			+ bSideEffectsRefresh;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = this.createCache("Employees"),
+			aElements = [{
+				"@$ui5._" : {transient : "other"},
+				"@$ui5.context.isTransient" : true
+			}, {
+				"@$ui5.context.isTransient" : false
+			}, {
+				"@$ui5.context.isTransient" : false
+			}, {
+				"@$ui5._" : {transient : "other"},
+				"@$ui5.context.isTransient" : true
+			}, {
+				"@$ui5.context.isTransient" : false
+			}],
+			iExpectedPrefetch = bSideEffectsRefresh ? 3 : 0,
+			oGroupLock = {
+				getGroupId : function () { return "group"; },
+				unlock : function () {}
+			};
+
+		oCache.aElements = aElements; // 3x persisted, 2x transient
+		oCache.aElements.$created = 5;
+		oCache.iLimit = 0; // "the upper limit for the count": does not include created elements!
+		if (bSideEffectsRefresh) {
+			oCache.oBackup = {};
+		}
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(sinon.match.same(aElements), 0, 100, iExpectedPrefetch, 5 + 0)
+			.returns([]); // test is all about iExpectedPrefetch, skip the rest...
+		this.oRequestorMock.expects("waitForBatchResponseReceived").never();
+		this.mock(oCache).expects("requestElements").never();
+		this.mock(oGroupLock).expects("unlock").withExactArgs();
+
+		// code under test
+		return oCache.read(0, 100, 0, oGroupLock).then(function (oResult) {
+			assert.deepEqual(oResult, {
+				"@odata.context" : undefined,
+				value : aElements
+			});
+		});
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("CollectionCache#read: no intervals", function (assert) {
 		var oCache = this.createCache("Employees"),
 			aElements = [{ // a transient element
