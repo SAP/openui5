@@ -1852,16 +1852,16 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Table.prototype._onExportAs = function(mCustomConfig) {
+	Table.prototype._onExportAs = function() {
 		var that = this;
 
 		this._loadExportLibrary().then(function() {
 			sap.ui.require(['sap/ui/export/ExportUtils'], function(ExportUtils) {
-				that.getControlDelegate().fetchExportCapabilities().then(function(oExportCapabilities) {
-					ExportUtils.getExportSettingsViaDialog(that._cachedExportSettings, oExportCapabilities, that).then(function(oUserInput) {
-						that._cachedExportSettings = oUserInput;
-						that._onExport(oUserInput);
-					});
+				that.getControlDelegate().fetchExportCapabilities(that).then(function(oExportCapabilities) {
+					return ExportUtils.getExportSettingsViaDialog(that._cachedExportSettings, oExportCapabilities, that);
+				}).then(function(oUserInput) {
+					that._cachedExportSettings = oUserInput;
+					that._onExport(oUserInput);
 				});
 			});
 		});

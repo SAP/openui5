@@ -213,7 +213,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Export Capabilities", function(assert) {
-		return TableDelegate.fetchExportCapabilities().then(function(oExportCapabilities) {
+		return TableDelegate.fetchExportCapabilities(this.oTable).then(function(oExportCapabilities) {
 			assert.ok(typeof oExportCapabilities === 'object', 'Function fetchExportCapabilities returns an object');
 			assert.ok(oExportCapabilities.hasOwnProperty('XLSX'), 'Default export type XLSX is provided');
 			assert.notOk(oExportCapabilities.hasOwnProperty('PDF'), 'Export type PDF is not provided');
