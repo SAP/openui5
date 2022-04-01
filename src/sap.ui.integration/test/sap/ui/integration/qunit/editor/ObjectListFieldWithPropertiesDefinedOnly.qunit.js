@@ -94,7 +94,7 @@ sap.ui.define([
 			}
 		}
 	}, function () {
-		QUnit.test("no value, create with default property values in popover", function (assert) {
+		QUnit.test("no value, add with default property values in popover", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -137,11 +137,11 @@ sap.ui.define([
 					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oCreateButton.onAfterRendering = function(oEvent) {
+					oAddButton.onAfterRendering = function(oEvent) {
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -152,7 +152,7 @@ sap.ui.define([
 						assert.ok(oColumns[4].getLabel().getText() === "Editable", "Table: column 'Editable'");
 						assert.ok(oColumns[5].getLabel().getText() === "Integer", "Table: column 'Integer'");
 						assert.ok(oColumns[6].getLabel().getText() === "Number", "Table: column 'Number'");
-						oCreateButton.firePress();
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -222,13 +222,15 @@ sap.ui.define([
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							oCreateButtonInPopover.firePress();
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 1, "Table: value length is 1");
 								var oNewObject = {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5};
@@ -253,7 +255,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("no value, create with property fields in popover", function (assert) {
+		QUnit.test("no value, add with property fields in popover", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -296,11 +298,11 @@ sap.ui.define([
 					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oCreateButton.onAfterRendering = function(oEvent) {
+					oAddButton.onAfterRendering = function(oEvent) {
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -311,7 +313,7 @@ sap.ui.define([
 						assert.ok(oColumns[4].getLabel().getText() === "Editable", "Table: column 'Editable'");
 						assert.ok(oColumns[5].getLabel().getText() === "Integer", "Table: column 'Integer'");
 						assert.ok(oColumns[6].getLabel().getText() === "Number", "Table: column 'Number'");
-						oCreateButton.firePress();
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -432,13 +434,15 @@ sap.ui.define([
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
 								assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-								assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								oCreateButtonInPopover.firePress();
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
+								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === 1, "Table: value length is 1");
 									var oNewObject = {"icon": "sap-icon://accept", "text": "text01", "url": "https://sapui5.hana.ondemand.com/06", "number": 0.55, "key": "key01", "editable": true, "int": 1};
@@ -473,7 +477,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("no value, create with TextArea field in popover", function (assert) {
+		QUnit.test("no value, add with TextArea field in popover", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -516,11 +520,11 @@ sap.ui.define([
 					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oCreateButton.onAfterRendering = function(oEvent) {
+					oAddButton.onAfterRendering = function(oEvent) {
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -531,7 +535,7 @@ sap.ui.define([
 						assert.ok(oColumns[4].getLabel().getText() === "Editable", "Table: column 'Editable'");
 						assert.ok(oColumns[5].getLabel().getText() === "Integer", "Table: column 'Integer'");
 						assert.ok(oColumns[6].getLabel().getText() === "Number", "Table: column 'Number'");
-						oCreateButton.firePress();
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -655,13 +659,15 @@ sap.ui.define([
 								var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
 								oFormField.setValue(sNewValue);
 								oFormField.fireChange({ value: sNewValue});
-								var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-								assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								oCreateButtonInPopover.firePress();
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
+								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === 1, "Table: value length is 1");
 									var oNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sapui5.hana.ondemand.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55};
@@ -687,7 +693,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("[] as value, create with default property values in popover", function (assert) {
+		QUnit.test("[] as value, add with default property values in popover", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -732,11 +738,11 @@ sap.ui.define([
 					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oCreateButton.onAfterRendering = function(oEvent) {
+					oAddButton.onAfterRendering = function(oEvent) {
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -747,7 +753,7 @@ sap.ui.define([
 						assert.ok(oColumns[4].getLabel().getText() === "Editable", "Table: column 'Editable'");
 						assert.ok(oColumns[5].getLabel().getText() === "Integer", "Table: column 'Integer'");
 						assert.ok(oColumns[6].getLabel().getText() === "Number", "Table: column 'Number'");
-						oCreateButton.firePress();
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -817,13 +823,15 @@ sap.ui.define([
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							oCreateButtonInPopover.firePress();
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 1, "Table: value length is 1");
 								var oNewObject = {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5};
@@ -848,7 +856,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("[] as value, create with property fields in popover", function (assert) {
+		QUnit.test("[] as value, add with property fields in popover", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -893,11 +901,11 @@ sap.ui.define([
 					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oCreateButton.onAfterRendering = function(oEvent) {
+					oAddButton.onAfterRendering = function(oEvent) {
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -908,7 +916,7 @@ sap.ui.define([
 						assert.ok(oColumns[4].getLabel().getText() === "Editable", "Table: column 'Editable'");
 						assert.ok(oColumns[5].getLabel().getText() === "Integer", "Table: column 'Integer'");
 						assert.ok(oColumns[6].getLabel().getText() === "Number", "Table: column 'Number'");
-						oCreateButton.firePress();
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -1029,13 +1037,15 @@ sap.ui.define([
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
 								assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-								assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								oCreateButtonInPopover.firePress();
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
+								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === 1, "Table: value length is 1");
 									var oNewObject = {"icon": "sap-icon://accept", "text": "text01", "url": "https://sapui5.hana.ondemand.com/06", "number": 0.55, "key": "key01", "editable": true, "int": 1};
@@ -1061,7 +1071,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("[] as value, create with TextArea field in popover", function (assert) {
+		QUnit.test("[] as value, add with TextArea field in popover", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -1106,11 +1116,11 @@ sap.ui.define([
 					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oCreateButton.onAfterRendering = function(oEvent) {
+					oAddButton.onAfterRendering = function(oEvent) {
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -1121,7 +1131,7 @@ sap.ui.define([
 						assert.ok(oColumns[4].getLabel().getText() === "Editable", "Table: column 'Editable'");
 						assert.ok(oColumns[5].getLabel().getText() === "Integer", "Table: column 'Integer'");
 						assert.ok(oColumns[6].getLabel().getText() === "Number", "Table: column 'Number'");
-						oCreateButton.firePress();
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -1245,13 +1255,15 @@ sap.ui.define([
 								var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
 								oFormField.setValue(sNewValue);
 								oFormField.fireChange({ value: sNewValue});
-								var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-								assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								oCreateButtonInPopover.firePress();
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
+								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === 1, "Table: value length is 1");
 									var oNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sapui5.hana.ondemand.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55};
@@ -1341,8 +1353,8 @@ sap.ui.define([
 					assert.ok(oColumns[6].getLabel().getText() === "Number", "Table: column 'Number'");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
@@ -1522,8 +1534,8 @@ sap.ui.define([
 					assert.ok(oColumns[6].getLabel().getText() === "Number", "Table: column 'Number'");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
@@ -1703,8 +1715,8 @@ sap.ui.define([
 					assert.ok(oColumns[6].getLabel().getText() === "Number", "Table: column 'Number'");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
@@ -1884,8 +1896,8 @@ sap.ui.define([
 					assert.ok(oColumns[6].getLabel().getText() === "Number", "Table: column 'Number'");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
@@ -2073,8 +2085,8 @@ sap.ui.define([
 					assert.ok(oColumns[6].getLabel().getText() === "Number", "Table: column 'Number'");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
@@ -2571,7 +2583,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("create", {
+	QUnit.module("add", {
 		beforeEach: function () {
 			this.oHost = new Host("host");
 			this.oContextHost = new ContextHost("contexthost");
@@ -2601,7 +2613,7 @@ sap.ui.define([
 			}
 		}
 	}, function () {
-		QUnit.test("create with default property values in popover", function (assert) {
+		QUnit.test("add with default property values in popover", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -2626,13 +2638,13 @@ sap.ui.define([
 
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
-					oCreateButton.onAfterRendering = function(oEvent) {
-						oCreateButton.firePress();
+					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -2702,13 +2714,15 @@ sap.ui.define([
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							oCreateButtonInPopover.firePress();
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								var oNewObject = {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5};
 								assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
@@ -2742,7 +2756,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("create with default property values in popover but cancel", function (assert) {
+		QUnit.test("add with default property values in popover but cancel", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -2767,13 +2781,13 @@ sap.ui.define([
 
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
-					oCreateButton.onAfterRendering = function(oEvent) {
-						oCreateButton.firePress();
+					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -2843,12 +2857,14 @@ sap.ui.define([
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -2863,7 +2879,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("create with property fields in popover", function (assert) {
+		QUnit.test("add with property fields in popover", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -2888,13 +2904,13 @@ sap.ui.define([
 
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
-					oCreateButton.onAfterRendering = function(oEvent) {
-						oCreateButton.firePress();
+					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -3015,13 +3031,15 @@ sap.ui.define([
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
 								assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-								assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								oCreateButtonInPopover.firePress();
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
+								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									var oNewObject = {"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1};
 									assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
@@ -3065,7 +3083,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("create with property fields in popover but cancel", function (assert) {
+		QUnit.test("add with property fields in popover but cancel", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -3090,13 +3108,13 @@ sap.ui.define([
 
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
-					oCreateButton.onAfterRendering = function(oEvent) {
-						oCreateButton.firePress();
+					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -3217,12 +3235,14 @@ sap.ui.define([
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
 								assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-								assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oCancelButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -3238,7 +3258,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("create with TextArea field in popover", function (assert) {
+		QUnit.test("add with TextArea field in popover", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -3263,13 +3283,13 @@ sap.ui.define([
 
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
-					oCreateButton.onAfterRendering = function(oEvent) {
-						oCreateButton.firePress();
+					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -3393,13 +3413,15 @@ sap.ui.define([
 								var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
 								oFormField.setValue(sNewValue);
 								oFormField.fireChange({ value: sNewValue});
-								var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-								assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								oCreateButtonInPopover.firePress();
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
+								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									var oNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sapui5.hana.ondemand.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55};
 									assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
@@ -3443,7 +3465,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("create with TextArea field in popover but cancel", function (assert) {
+		QUnit.test("add with TextArea field in popover but cancel", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -3468,13 +3490,13 @@ sap.ui.define([
 
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
-					oCreateButton.onAfterRendering = function(oEvent) {
-						oCreateButton.firePress();
+					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -3598,12 +3620,14 @@ sap.ui.define([
 								var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
 								oFormField.setValue(sNewValue);
 								oFormField.fireChange({ value: sNewValue});
-								var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-								assert.ok(oCreateButtonInPopover.getVisible(), "Popover: create button visible");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
 								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oCancelButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
@@ -3686,12 +3710,14 @@ sap.ui.define([
 					oEditButton.onAfterRendering = function(oEvent) {
 						oEditButton.firePress();
 						wait().then(function () {
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							assert.ok(!oCreateButtonInPopover.getVisible(), "Popover: create button not visible");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 							assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
 							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -3828,12 +3854,14 @@ sap.ui.define([
 					oEditButton.onAfterRendering = function(oEvent) {
 						oEditButton.firePress();
 						wait().then(function () {
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							assert.ok(!oCreateButtonInPopover.getVisible(), "Popover: create button not visible");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 							assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
 							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -3967,12 +3995,14 @@ sap.ui.define([
 					oEditButton.onAfterRendering = function(oEvent) {
 						oEditButton.firePress();
 						wait().then(function () {
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							assert.ok(!oCreateButtonInPopover.getVisible(), "Popover: create button not visible");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 							assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
 							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -4112,12 +4142,14 @@ sap.ui.define([
 					oEditButton.onAfterRendering = function(oEvent) {
 						oEditButton.firePress();
 						wait().then(function () {
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							assert.ok(!oCreateButtonInPopover.getVisible(), "Popover: create button not visible");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 							assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
 							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -5345,8 +5377,8 @@ sap.ui.define([
 					assert.ok(deepEqual(oTable.getSelectedIndices(), aSelectedIndices), "Table: all rows selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-					var oCreateButton = oToolbar.getContent()[1];
-					assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 
@@ -5586,7 +5618,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("create 01 - match the filter key", function (assert) {
+		QUnit.test("add 01 - match the filter key", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -5624,9 +5656,9 @@ sap.ui.define([
 
 						var oToolbar = oTable.getToolbar();
 						assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-						var oCreateButton = oToolbar.getContent()[1];
-						assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
-						oCreateButton.firePress();
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -5648,8 +5680,8 @@ sap.ui.define([
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Visible");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "https://",\n\t"number": 0.5\n}', "SimpleForm field8: Has updated value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							oCreateButtonInPopover.firePress();
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								// scroll to bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
@@ -5681,7 +5713,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("create 02 - not match the filter key", function (assert) {
+		QUnit.test("add 02 - not match the filter key", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				host: "contexthost",
@@ -5719,9 +5751,9 @@ sap.ui.define([
 
 						var oToolbar = oTable.getToolbar();
 						assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-						var oCreateButton = oToolbar.getContent()[1];
-						assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
-						oCreateButton.firePress();
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -5741,8 +5773,8 @@ sap.ui.define([
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Visible");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field8: Has updated value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							oCreateButtonInPopover.firePress();
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 5, "Table: value length is 5");
 								assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4]), "Table: selected row");
@@ -5807,9 +5839,9 @@ sap.ui.define([
 
 						var oToolbar = oTable.getToolbar();
 						assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-						var oCreateButton = oToolbar.getContent()[1];
-						assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
-						oCreateButton.firePress();
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -5828,8 +5860,8 @@ sap.ui.define([
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Visible");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field8: Has Default value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							oCreateButtonInPopover.firePress();
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 4, "Table: value length is 4");
 								assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 2]), "Table: selected row");
@@ -5842,12 +5874,14 @@ sap.ui.define([
 								var oEditButton = oActionHBox.getItems()[0];
 								oEditButton.firePress();
 								wait().then(function () {
-									var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-									assert.ok(!oCreateButtonInPopover.getVisible(), "Popover: create button not visible");
+									var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+									assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 									var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 									assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
 									var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 									assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+									var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+									assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 									var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 									assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 									var oContents = oSimpleForm.getContent();
@@ -5986,9 +6020,9 @@ sap.ui.define([
 
 						var oToolbar = oTable.getToolbar();
 						assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-						var oCreateButton = oToolbar.getContent()[1];
-						assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
-						oCreateButton.firePress();
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -6007,8 +6041,8 @@ sap.ui.define([
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Visible");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field8: Has Default value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							oCreateButtonInPopover.firePress();
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 4, "Table: value length is 4");
 								assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 2]), "Table: selected row");
@@ -6021,12 +6055,14 @@ sap.ui.define([
 								var oEditButton = oActionHBox.getItems()[0];
 								oEditButton.firePress();
 								wait().then(function () {
-									var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-									assert.ok(!oCreateButtonInPopover.getVisible(), "Popover: create button not visible");
+									var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+									assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 									var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 									assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
 									var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 									assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+									var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+									assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 									var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 									assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 									var oContents = oSimpleForm.getContent();
@@ -6173,9 +6209,9 @@ sap.ui.define([
 
 						var oToolbar = oTable.getToolbar();
 						assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-						var oCreateButton = oToolbar.getContent()[1];
-						assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
-						oCreateButton.firePress();
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -6194,8 +6230,8 @@ sap.ui.define([
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Visible");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field8: Has Default value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							oCreateButtonInPopover.firePress();
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								var oNewObject = {"icon": "sap-icon://add", "text": "text", "url": "http://", "number": 0.5};
 								assert.ok(oTable.getBinding().getCount() === 4, "Table: value length is 4");
@@ -6211,12 +6247,14 @@ sap.ui.define([
 								assert.ok(oEditButton.getVisible(), "Table: Edit button visible");
 								oEditButton.firePress();
 								wait().then(function () {
-									var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-									assert.ok(!oCreateButtonInPopover.getVisible(), "Popover: create button not visible");
+									var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+									assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 									var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 									assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
 									var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 									assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+									var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+									assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 									var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 									assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 									var oContents = oSimpleForm.getContent();
@@ -6354,9 +6392,9 @@ sap.ui.define([
 
 						var oToolbar = oTable.getToolbar();
 						assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-						var oCreateButton = oToolbar.getContent()[1];
-						assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
-						oCreateButton.firePress();
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -6375,8 +6413,8 @@ sap.ui.define([
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Visible");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field8: Has Default value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							oCreateButtonInPopover.firePress();
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								var oNewObject = {"icon": "sap-icon://add", "text": "text", "url": "http://", "number": 0.5};
 								assert.ok(oTable.getBinding().getCount() === 4, "Table: value length is 4");
@@ -6392,12 +6430,14 @@ sap.ui.define([
 								assert.ok(oEditButton.getVisible(), "Table: Edit button visible");
 								oEditButton.firePress();
 								wait().then(function () {
-									var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-									assert.ok(!oCreateButtonInPopover.getVisible(), "Popover: create button not visible");
+									var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+									assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 									var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
 									assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
 									var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
 									assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
+									var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+									assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 									var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 									assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 									var oContents = oSimpleForm.getContent();
@@ -6547,9 +6587,9 @@ sap.ui.define([
 
 						var oToolbar = oTable.getToolbar();
 						assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-						var oCreateButton = oToolbar.getContent()[1];
-						assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
-						oCreateButton.firePress();
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -6568,8 +6608,8 @@ sap.ui.define([
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Visible");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field8: Has Default value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							oCreateButtonInPopover.firePress();
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 4, "Table: value length is 4");
 								assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 2]), "Table: selected row");
@@ -6642,9 +6682,9 @@ sap.ui.define([
 
 						var oToolbar = oTable.getToolbar();
 						assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-						var oCreateButton = oToolbar.getContent()[1];
-						assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
-						oCreateButton.firePress();
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -6663,8 +6703,8 @@ sap.ui.define([
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Visible");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field8: Has Default value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							oCreateButtonInPopover.firePress();
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 4, "Table: value length is 4");
 								assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 2]), "Table: selected row");
@@ -6737,9 +6777,9 @@ sap.ui.define([
 
 						var oToolbar = oTable.getToolbar();
 						assert.ok(oToolbar.getContent().length === 3, "Table toolbar: content length");
-						var oCreateButton = oToolbar.getContent()[1];
-						assert.ok(oCreateButton.getVisible(), "Table toolbar: create button visible");
-						oCreateButton.firePress();
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -6768,8 +6808,8 @@ sap.ui.define([
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Visible");
 							assert.ok(oFormField.getValue() === '{\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5,\n\t"int": 1\n}', "SimpleForm field8: Has Default value");
-							var oCreateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
-							oCreateButtonInPopover.firePress();
+							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 4, "Table: value length is 4");
 								assert.ok(deepEqual(oTable.getSelectedIndices(), [0, 1, 2]), "Table: selected row");

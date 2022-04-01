@@ -1427,7 +1427,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"style":"short"
 								}
 							}
-						}
+						},
+						"addButtonTooltip": "Add a new step"
 					},
 					"objectWithPropertiesDefinedAndValueFromJsonList": {
 						"manifestpath": "/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value",
@@ -1449,7 +1450,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								},
 								"path": "/values"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"key": {
@@ -1540,7 +1541,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								},
 								"path": "/values"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"key": {
@@ -1596,7 +1597,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								},
 								"path": "/value"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"CustomerID": {
@@ -1755,7 +1756,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"style":"short"
 								}
 							}
-						}
+						},
+						"addButtonTooltip": "Add a new step"
 					},
 					"objectsWithPropertiesDefinedAndValueFromJsonList": {
 						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromJsonList/value",
@@ -1777,7 +1779,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								},
 								"path": "/values"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"key": {
@@ -1853,7 +1855,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"style":"short"
 								}
 							}
-						}
+						},
+						"addButtonTooltip": "Add a new step"
 					},
 					"objectsWithPropertiesDefinedAndValueFromRequestedFile": {
 						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromRequestedFile/value",
@@ -1865,8 +1868,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"url": "./objectWithRequestList.json"
 								},
 								"path": "/values"
-							},
-							"allowCreateNew": true
+							}
 						},
 						"properties": {
 							"key": {
@@ -1906,7 +1908,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
 								}
 							}
-						}
+						},
+						"addButtonTooltip": "Add a new step"
 					},
 					"objectsWithPropertiesDefinedAndValueFromODataRequest": {
 						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromODataRequest/value",
@@ -1922,7 +1925,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								},
 								"path": "/value"
 							},
-							"allowCreateNew": true
+							"allowAdd": false
 						},
 						"properties": {
 							"CustomerID": {
@@ -1989,7 +1992,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"namespace": "NorthwindModel",
 								"entityTypeName": "Customer"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						}
 					}*/
 				}

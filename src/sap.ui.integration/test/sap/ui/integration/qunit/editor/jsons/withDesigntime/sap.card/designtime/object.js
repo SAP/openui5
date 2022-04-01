@@ -70,7 +70,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								},
 								"path": "/values"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"key": {
@@ -214,7 +214,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								},
 								"path": "/value"
 							},
-							"allowCreateNew": true
+							"allowAdd": true
 						},
 						"properties": {
 							"CustomerID": {
