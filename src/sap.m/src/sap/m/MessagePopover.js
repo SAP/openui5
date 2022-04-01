@@ -150,7 +150,16 @@ function(
 					/**
 					 * A list with message items.
 					 */
-					items: {type: "sap.m.MessageItem", altTypes: ["sap.m.MessagePopoverItem"], multiple: true, singularName: "item"},
+					items: {
+						type: "sap.m.MessageItem",
+						altTypes: ["sap.m.MessagePopoverItem"],
+						multiple: true,
+						singularName: "item",
+						forwarding: {
+							getter: "_getMessageView",
+							aggregation: "items"
+						}
+					},
 
 					/**
 					 * Sets a custom header button.
@@ -413,6 +422,7 @@ function(
 				var sMutation = oChange.mutation;
 				var oItem = oChange.child;
 
+
 				switch (sMutation) {
 
 					case "insert":
@@ -427,7 +437,7 @@ function(
 				}
 			}.bind(this));
 
-			oItemsObserver.observe(this, {
+			oItemsObserver.observe(this._oMessageView, {
 				aggregations: ["items"]
 			});
 		};
@@ -445,39 +455,6 @@ function(
 		 * @private
 		 */
 		MessagePopover.prototype.onBeforeRenderingPopover = function () {
-			// If there is no item's binding given - it should happen automatically in the MessageView
-			// However for backwards compatibility we need to have the same binding on the MessagePopover
-			// TODO: Decide what to do in this case
-			/*if (!this.getBinding("items") && this._oMessageView.getBinding("items")) {
-				this.bindAggregation("items", this._oMessageView.getBindingInfo("items"));
-			}*/
-
-			// Update MV only if 'items' aggregation is changed
-			if (this._oMessageView && this._bItemsChanged) {
-				var items = this.getItems();
-				var sModelName = this.getBindingInfo("items") && this.getBindingInfo("items").model;
-				var that = this;
-
-				this._oMessageView.destroyItems();
-
-				items.forEach(function (item) {
-					// we need to know if the MessagePopover's item was changed so to
-					// update the MessageView's items as well
-					item._updateProperties(function () {
-						that._bItemsChanged = true;
-					});
-
-					// we need to clone the item along with its bindings and aggregations
-					this._oMessageView.addItem(item.clone("", "", {
-						cloneChildren: true,
-						cloneBindings: true
-					}));
-				}, this);
-
-				this._oMessageView.setModel(this.getModel(sModelName), sModelName);
-				this._bItemsChanged = false;
-			}
-
 			this._setInitialFocus();
 
 			// If for some reason the control that opened the popover
@@ -755,6 +732,11 @@ function(
 				this._oMessageView.setProperty("groupItems", this.getGroupItems(), false);
 			}
 		};
+
+		MessagePopover.prototype._getMessageView = function () {
+			return this._oMessageView;
+		};
+
 
 		/*
 		 * =========================================
