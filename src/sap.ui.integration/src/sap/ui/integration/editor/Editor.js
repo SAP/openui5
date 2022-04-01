@@ -378,7 +378,7 @@ sap.ui.define([
 								if (oItem.isA("sap.m.Panel")) {
 									oItemLevel = oItem._level;
 								} else if (oItem.isA("sap.m.IconTabBar")) {
-									oItemLevel = oItem.getItems()[0]._level;
+									oItemLevel = "1";
 								}
 								if (oItemLevel === "1") {
 									if (oColFields.length > 0) {
@@ -387,11 +387,13 @@ sap.ui.define([
 									}
 									if (oItem.isA("sap.m.IconTabBar")) {
 										var subItems = oPanel.getContent(),
-										    iconTabBarExist = false;
+										    iconTabBarExist = false,
+											nIconTabBar;
 										if (subItems.length > 0) {
 											for (var j = 0; j < subItems.length; j++) {
 												if (subItems[j].isA("sap.m.IconTabBar")) {
 													iconTabBarExist = true;
+													nIconTabBar = subItems[j];
 												}
 											}
 										}
@@ -407,6 +409,10 @@ sap.ui.define([
 										} else {
 											oSubGroup = oItem.getItems()[0];
 											oSubGroup._subItems = [];
+											//add the iconTabFilter into the existed iconTabBar
+											nIconTabBar.addItem(oItem.getItems()[0]);
+											//remove the unnecessary iconTabBar
+											oItem.destroy();
 										}
 									} else {
 										oSubGroup = oItem;
@@ -2504,6 +2510,7 @@ sap.ui.define([
 			if (oConfig.visualization && oConfig.visualization.type === "Tab") {
 				var oIconTabBar = new IconTabBar({
 					expandable: oConfig.expandable !== false,
+					visible: oConfig.visible,
 					expanded: "{currentSettings>expanded}",
 					objectBindings: {
 						currentSettings: {
