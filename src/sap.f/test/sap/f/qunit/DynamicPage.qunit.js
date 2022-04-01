@@ -2856,35 +2856,6 @@ function (
 		}
 	});
 
-	QUnit.test("Test flex-basis styles are set", function(assert) {
-		// arrange
-		var oTitle = Core.byId("comp---view--DynamicPageTitle");
-
-		// assert
-		assert.notEqual(oTitle.$("content").css("flex-basis"), "auto", "FlexBasis must be set on 'content' div.");
-		assert.notEqual(oTitle.$("mainActions").css("flex-basis"), "auto", "FlexBasis must be set on 'mainActions' div.");
-	});
-
-	QUnit.test("Test flex-basis styles change when an action is added", function(assert) {
-		// arrange
-		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
-			nOldFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis")),
-			nNewFlexBasis;
-
-		// act
-		oTitle.addAction(new OverflowToolbarButton({
-			type: "Transparent",
-			icon: "sap-icon://copy"
-		}));
-
-		Core.applyChanges();
-
-		nNewFlexBasis = parseInt(oTitle.$("mainActions").css("flex-basis"));
-
-		// assert
-		assert.ok(nNewFlexBasis > nOldFlexBasis, "New flex-basis value should be greater since an action was added.");
-	});
-
 	QUnit.module("Title responsiveness shrink factors", {
 		beforeEach: function(assert) {
 

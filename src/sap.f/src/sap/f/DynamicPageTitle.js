@@ -1286,8 +1286,6 @@ sap.ui.define([
 			hasTopContent: bHasTopContent,
 			hasOnlyBreadcrumbs: bHasOnlyBreadcrumbs,
 			hasOnlyNavigationActions: bHasOnlyNavigationActions,
-			contentAreaFlexBasis: this._sContentAreaFlexBasis,
-			actionsAreaFlexBasis: this._sActionsAreaFlexBasis,
 			contentAreaHasContent: this._bContentAreaHasContent,
 			actionsAreaHasContent: this._bActionsAreaHasContent,
 			isFocusable: this._bIsFocusable,
@@ -1398,23 +1396,15 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._setContentAreaFlexBasis = function (iContentSize, $node) {
-		var sFlexBasis,
-			sFlexBasisCachedValue,
-			bAreaHasContent;
+		var bAreaHasContent;
 
 		iContentSize = parseInt(iContentSize);
 		bAreaHasContent = iContentSize && iContentSize > 1;
-		sFlexBasis = iContentSize ? iContentSize + "px" : "auto";
-		sFlexBasisCachedValue = sFlexBasis !== "auto" ? sFlexBasis : undefined;
-
-		$node.css({ "flex-basis": sFlexBasis });
 
 		if ($node.hasClass("sapFDynamicPageTitleMainContent")) {
-			this._sContentAreaFlexBasis = sFlexBasisCachedValue;
 			this._bContentAreaHasContent = bAreaHasContent;
 			$node.toggleClass("sapFDynamicPageTitleMainContentHasContent", bAreaHasContent);
 		} else if ($node.hasClass("sapFDynamicPageTitleMainActions")) {
-			this._sActionsAreaFlexBasis = sFlexBasisCachedValue;
 			this._bActionsAreaHasContent = bAreaHasContent;
 			$node.toggleClass("sapFDynamicPageTitleMainActionsHasContent", bAreaHasContent);
 		}

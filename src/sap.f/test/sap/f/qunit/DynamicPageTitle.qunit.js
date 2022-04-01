@@ -965,28 +965,6 @@ function (
 		assert.strictEqual(oDynamicPageTitle.$("mainActions").css("flex-shrink"), "0", "actions area shrink factor is correct");
 	});
 
-	QUnit.test("Adding an OverflowToolbar to the content sets flex-basis and removing it resets it", function (assert) {
-		var oToolbar = oFactory.getOverflowToolbar();
-
-		// Act
-		this.oDynamicPageTitle.addContent(oToolbar);
-		Core.applyChanges();
-		this.clock.tick(1000);
-
-		// Assert
-		var sFlexBasis = this.oDynamicPageTitle.$("content").css("flex-basis");
-		assert.notEqual(sFlexBasis, "auto", "Adding an OverflowToolbar sets flex-basis");
-
-		// Act
-		this.oDynamicPageTitle.removeAllContent();
-		Core.applyChanges();
-		this.clock.tick(1000);
-
-		// Assert
-		var sFlexBasis = this.oDynamicPageTitle.$("content").css("flex-basis");
-		assert.equal(sFlexBasis, "auto", "Removing an OverflowToolbar resets flex-basis");
-	});
-
 	QUnit.test("Adding a control, other than OverflowToolbar to the content does not set flex-basis", function (assert) {
 		var oLabel = oFactory.getLabel("test");
 
@@ -1017,42 +995,6 @@ function (
 		// Assert
 		var sMinWidth = this.oDynamicPageTitle.$("mainActions").css("min-width");
 		assert.notEqual(sMinWidth, sOrigMinWidth, "Adding an OverflowToolbar's content with NeverOverflow sets min-width");
-	});
-
-	QUnit.test("Actions toolbar is extended when its label content extends", function (assert) {
-		var oLabel = oFactory.getLabel("");
-		this.oDynamicPageTitle.addAction(oLabel);
-		Core.applyChanges();
-		this.clock.tick(1000);
-
-		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
-
-		// Act
-		oLabel.setText("Some non-empty text");
-		Core.applyChanges();
-		this.clock.tick(1000);
-
-		// Assert
-		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
-		assert.ok(sFlexBasisAfter > iFlexBasisBefore + 50, "Flex-basis increased to show the new text");
-	});
-
-	QUnit.test("Actions toolbar is extended when its link content extends", function (assert) {
-		var oLink = new Link();
-		this.oDynamicPageTitle.addAction(oLink);
-		Core.applyChanges();
-		this.clock.tick(1000);
-
-		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
-
-		// Act
-		oLink.setText("Some non-empty text");
-		Core.applyChanges();
-		this.clock.tick(1000);
-
-		// Assert
-		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"));
-		assert.ok(sFlexBasisAfter > iFlexBasisBefore + 50, "Flex-basis increased to show the new text");
 	});
 
 	QUnit.test("DynamicPage Title - backgroundDesign", function(assert) {
@@ -1150,12 +1092,9 @@ function (
 	QUnit.test("Adding an OverflowToolbar to the content with GenericTag in it", function (assert) {
 		var oToolbar = oFactory.getOverflowToolbar(),
 			oGenericTag = oFactory.getGenericTag("Test 1"),
-			oDynamicPageTitle = this.oDynamicPageTitle,
-			fnDone = assert.async(),
-			sInitialFlexBasis,
-			sNewFlexBasis;
+			fnDone = assert.async();
 
-		assert.expect(2);
+		assert.expect(1);
 
 		// Act
 		oToolbar.addContent(oGenericTag);
@@ -1163,7 +1102,6 @@ function (
 		Core.applyChanges();
 
 		setTimeout(function () {
-			sInitialFlexBasis = oDynamicPageTitle.$("content").css("flex-basis");
 
 			// Act
 			oGenericTag.setText("Looooooooooooooooooooooooooonger text");
@@ -1171,10 +1109,7 @@ function (
 
 			setTimeout(function () {
 				// Assert
-				sNewFlexBasis = oDynamicPageTitle.$("content").css("flex-basis");
-				assert.ok(sNewFlexBasis > sInitialFlexBasis, "Setting longer text to a GenericTag in the OFT expands the flex-basis area");
 				assert.notOk(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is not visible when width is enough");
-
 				fnDone();
 			}, 600);
 		}, 600);
@@ -1183,10 +1118,11 @@ function (
 	QUnit.test("GenericTag in the OFT content gets out of the Popover", function (assert) {
 		var oToolbar = oFactory.getOverflowToolbar(),
 			$qunitDOMLocation =  $("#qunit-fixture"),
+			sInitialWidth = $qunitDOMLocation.width(),
 			// sInitialWidth = $qunitDOMLocation.width(),
 			fnDone = assert.async();
 
-		assert.expect(1);
+		assert.expect(2);
 
 		// Act
 		$qunitDOMLocation.width("200px");
@@ -1197,15 +1133,13 @@ function (
 		setTimeout(function () {
 			// Assert
 			assert.ok(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is visible when width is not enough");
-			fnDone();
-			// TODO: Due to sudden failing of the second assertion it will be temporary commented until refactoring si done
-			// // Act - restoring the initial width of the Qunit-fixture
-			// $qunitDOMLocation.width(sInitialWidth);
-			// setTimeout(function () {
-			// 	// Assert
-			// 	assert.notOk(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is not visible when width is enough");
-			// 	fnDone();
-			// }, 600);
+			// Act - restoring the initial width of the Qunit-fixture
+			$qunitDOMLocation.width(sInitialWidth);
+			setTimeout(function () {
+				// Assert
+				assert.notOk(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is not visible when width is enough");
+				fnDone();
+			}, 600);
 		}, 600);
 	});
 
@@ -1215,11 +1149,9 @@ function (
 			oGenericTag = oFactory.getGenericTag("Test 1"),
 			oDynamicPageTitle = this.oDynamicPageTitle,
 			fnDone = assert.async(),
-			oSpy = this.spy(oDynamicPageTitle, "_setContentAreaFlexBasis"),
-			iInitialFlexBasis,
-			iNewFlexBasis;
+			oSpy = this.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
 
-		assert.expect(4);
+		assert.expect(1);
 
 		// Act
 		oToolbar.addContent(oGenericTag);
@@ -1232,10 +1164,6 @@ function (
 
 			setTimeout(function () {
 				oSpy.resetHistory();
-				iInitialFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
-
-				// Assert
-				assert.strictEqual(iInitialFlexBasis, 16 + 1, "flex-basis is equal to OFT paddings + 1 for rounding Browser issues");
 
 				// Act
 				oGenericTag.setVisible(true);
@@ -1243,13 +1171,8 @@ function (
 
 				setTimeout(function () {
 					// Assert
-					iNewFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
-					assert.ok(iNewFlexBasis > iInitialFlexBasis, "Revealing the GenericTag in the OFT expands the flex-basis area");
 					assert.strictEqual(oSpy.firstCall.args[0], null,
 						"_setContentAreaFlexBasis is called first with null value to reset the flex-basis");
-					assert.strictEqual(oSpy.lastCall.args[0], iNewFlexBasis,
-						"_setContentAreaFlexBasis is called second time with width value, needed for the GenericTag");
-
 					// Clean up
 					fnDone();
 				}, 600);
@@ -1262,9 +1185,7 @@ function (
 		var oToolbar = oFactory.getEmptyOverflowToolbar(),
 			oGenericTag = oFactory.getGenericTag("Test 1"),
 			oDynamicPageTitle = this.oDynamicPageTitle,
-			oSpy,
-			iInitialFlexBasis,
-			iNewFlexBasis;
+			oSpy;
 
 		// Act
 		oToolbar.addContent(oGenericTag);
@@ -1273,18 +1194,12 @@ function (
 
 		// Act
 		oSpy = this.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
-		iInitialFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
 		oGenericTag.setText("New looooooooooooooonger text");
 		Core.applyChanges();
 
 		// Assert
-		iNewFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
-		assert.ok(iNewFlexBasis > iInitialFlexBasis,
-			"Setting longer text of the GenericTag expands the flex-basis area");
 		assert.strictEqual(oSpy.firstCall.args[0], null,
 			"_setContentAreaFlexBasis is called first with null value to reset the flex-basis");
-		assert.strictEqual(oSpy.lastCall.args[0], iNewFlexBasis,
-			"_setContentAreaFlexBasis is called second time with width value, needed for the GenericTag");
 	});
 
 	QUnit.test("Changing GenericTag value aggregation", function (assert) {
@@ -1292,9 +1207,7 @@ function (
 		var oToolbar = oFactory.getEmptyOverflowToolbar(),
 			oGenericTag = oFactory.getGenericTag("Test 1"),
 			oDynamicPageTitle = this.oDynamicPageTitle,
-			oSpy,
-			iInitialFlexBasis,
-			iNewFlexBasis;
+			oSpy;
 
 		// Act
 		oToolbar.addContent(oGenericTag);
@@ -1303,18 +1216,12 @@ function (
 
 		// Act
 		oSpy = this.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
-		iInitialFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
 		oGenericTag.setValue(new ObjectNumber({ number: "22222222222222222222222" }));
 		Core.applyChanges();
 
 		// Assert
-		iNewFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
-		assert.ok(iNewFlexBasis > iInitialFlexBasis,
-			"Setting value aggregation of the GenericTag expands the flex-basis area");
 		assert.strictEqual(oSpy.firstCall.args[0], null,
 			"_setContentAreaFlexBasis is called first with null value to reset the flex-basis");
-		assert.strictEqual(oSpy.lastCall.args[0], iNewFlexBasis,
-			"_setContentAreaFlexBasis is called second time with width value, needed for the GenericTag");
 	});
 
 	QUnit.test("Hiding DynamicPageTitle will not trigger caching controls info", function (assert) {
