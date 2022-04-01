@@ -1,0 +1,138 @@
+<layout:VerticalLayout id="notSuspendedLayout"
+	xmlns:layout="sap.ui.layout"
+	width="100%"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:f2="sap.f"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
+	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:mdct="sap.ui.mdc.table"
+	xmlns:ui="sap.ui"
+	xmlns:uit="sap.ui.table"
+	xmlns:variants="sap.ui.fl.variants"
+	xmlns:types="sap.ui.v4demo.types"
+	xmlns:demo="sap.ui.v4demo.controls">
+
+	<Title class="sapUiSmallMarginBottom" level="H3" text="Inparameter Filterbar" />
+	<Title class="sapUiSmallMarginBottom" level="H3" text="Supported Table Types" />
+	<mdc:FilterBar class="sapUiLargeMarginBottom" id="FB0" p13nMode="Item,Value" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/FB0.delegate', payload: {collectionName: 'Authors'}}">
+		<mdc:dependents>
+			<mdcf:FieldValueHelp title="Author ID" id="FB0-FH1-11" noDialog="false"
+								keyPath="ID" descriptionPath="name"
+								filterFields="$search"
+								showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorVH.delegate', payload: {}}"
+								caseSensitive="false">
+								<mdcf:inParameters>
+									<mdcf:InParameter id="FB0-FH1-11-In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="countryOfOrigin_code" />
+								</mdcf:inParameters>
+								<mdcf:collectiveSearchItems>
+									<core:Item text="Default Search Template" key="default"/>
+									<core:Item text="Search Template 1" key="template1"/>
+								</mdcf:collectiveSearchItems>
+								<mdcf:filterBar>
+									<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
+										<vhfb:basicSearchField>
+											<mdc:FilterField
+												delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+												dataType= "Edm.String"
+												conditions= "{$filters>/conditions/$search}"
+												width="50%"
+												maxConditions="1"
+												placeholder="Search" />
+										</vhfb:basicSearchField>
+										<vhfb:filterItems>
+											<!-- <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" dataType= "Edm.String" conditions= "{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" /> -->
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="myID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Country of origin" dataType="Edm.String" maxConditions="-1" conditions= "{$filters>/conditions/countryOfOrigin_code}"/>
+											<!-- <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 2" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 3" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 4" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 5" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 6" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 7" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" /> -->
+										</vhfb:filterItems>
+									</vhfb:FilterBar>
+								</mdcf:filterBar>
+								<mdcf:suggestContent>
+									<mdcf:FieldValueHelpMTableWrapper></mdcf:FieldValueHelpMTableWrapper>
+								</mdcf:suggestContent>
+								<mdcf:content>
+									<mdcf:FieldValueHelpMTableWrapper>
+										<!-- <mdcf:table>
+											<Table items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+												<columns>
+													<Column width="5rem">
+														<header>
+															<Text text="ID" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="Name" />
+														</header>
+													</Column>
+													<Column width="8rem">
+														<header>
+															<Text text="Date of Birth" />
+														</header>
+													</Column>
+												</columns>
+												<items>
+													<ColumnListItem type="Active">
+														<cells>
+															<Text text="{ID}" />
+															<Text text="{name}" />
+															<Text text="{dateOfBirth}" />
+														</cells>
+													</ColumnListItem>
+												</items>
+											</Table>
+										</mdcf:table> -->
+									</mdcf:FieldValueHelpMTableWrapper>
+								</mdcf:content>
+							</mdcf:FieldValueHelp>
+
+		</mdc:dependents>
+		<mdc:filterItems>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF6"
+				label="Country of origin"
+				conditions="{$filters>/conditions/countryOfOrigin_code}"
+				dataType="sap.ui.model.odata.type.String"
+				fieldHelp="FB0-FH-Country"
+				display="ValueDescription"
+				maxConditions="{settings>/maxConditions}"/>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF1-11"
+				label="FieldValueHelp"
+				conditions="{$filters>/conditions/ID}"
+				dataType="Edm.Int32"
+				required="false"
+				fieldHelp="FB0-FH1-11"
+				display="DescriptionValue"
+				maxConditions="{settings>/maxConditions}" />
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF7"
+				label="Region of origin"
+				conditions="{$filters>/conditions/regionOfOrigin_code}"
+				dataType="sap.ui.model.odata.type.String"
+				fieldHelp="FB0-FH-Region"
+				display="ValueDescription"
+				maxConditions="{settings>/maxConditions}"/>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF8"
+				label="City of origin"
+				conditions="{$filters>/conditions/cityOfOrigin_city}"
+				dataType="sap.ui.model.odata.type.String"
+				fieldHelp="FB0-FH-City"
+				display="ValueDescription"
+				maxConditions="{settings>/maxConditions}"/>
+		</mdc:filterItems>
+	</mdc:FilterBar>
+</layout:VerticalLayout>

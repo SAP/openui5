@@ -19,7 +19,11 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/base/util/UriParameters",
-	"sap/ui/core/Item"
+	"sap/ui/core/Item",
+	'sap/m/library',
+	"sap/ui/core/Core",
+	'sap/ui/mdc/condition/Condition'
+
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
@@ -37,7 +41,9 @@ sap.ui.define([
 	ColumnListItem,
 	Text,
 	UriParameters,
-	Item
+	Item,
+	Core,
+	Condition
 ) {
 	"use strict";
 
@@ -54,6 +60,9 @@ sap.ui.define([
 		var oCurrentContent = aCurrentContent && aCurrentContent[0];
 
 		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
+
+
+		var oReturnPromise = Promise.resolve();
 
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
@@ -233,10 +242,35 @@ sap.ui.define([
 					});
 					break;
 			}
+
+			// Set initial filterbar conditions
+			if (oCurrentContent) {
+				var oFilterBar = oCurrentContent.getFilterBar();
+
+				if (oFilterBar) {
+					oReturnPromise = oFilterBar.awaitPropertyHelper().then(function (oPropertyHelper) {
+						var bHasCountryOfOrigin = oPropertyHelper.getProperties().some(function (oProp) {
+							return oProp.name === "countryOfOrigin_code";
+						});
+						if (bHasCountryOfOrigin) {
+							var aCountryConditions = Core.byId("FB0-FF6").getConditions();
+							var oConditions = {
+								"countryOfOrigin_code": aCountryConditions
+							};
+						}
+						var sFilterValue = oCurrentContent.getFilterValue();
+						if (sFilterValue) {
+							oConditions['$search'] = [Condition.createCondition("StartsWith", [sFilterValue])];
+						}
+						oFilterBar.setInternalConditions(oConditions);
+					});
+				}
+			}
+
 			oCurrentContent.setTable(oCollectiveSearchContent);
 		}
 
-		return Promise.resolve();
+		return oReturnPromise;
 	};
 
 	return ValueHelpDelegate;

@@ -16,9 +16,9 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>Bool</code> content.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element to provide a value help for boolean fields.
+	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new element
+	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element to provide a value help for boolean fields.
 	 * @extends sap.ui.mdc.valuehelp.content.FixedList
 	 * @version ${version}
 	 * @constructor

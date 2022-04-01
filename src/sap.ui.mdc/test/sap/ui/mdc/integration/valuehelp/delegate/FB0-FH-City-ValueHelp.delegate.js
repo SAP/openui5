@@ -16,9 +16,11 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/base/util/UriParameters"
-]
-, function(
+	"sap/base/util/UriParameters",
+	"sap/ui/core/Core",
+	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/enum/ConditionValidated'
+], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
 	MDCTable,
@@ -32,7 +34,10 @@ sap.ui.define([
 	Column,
 	ColumnListItem,
 	Text,
-	UriParameters
+	UriParameters,
+	Core,
+	Condition,
+	ConditionValidated
 ) {
 	"use strict";
 
@@ -164,6 +169,24 @@ sap.ui.define([
 		}
 
 		return Promise.resolve();
+	};
+
+	ValueHelpDelegate.getInitialFilterConditions = function (oPayload, oContent, oControl) {
+		var oConditions = ODataV4ValueHelpDelegate.getInitialFilterConditions(oPayload, oContent, oControl);
+
+		var oCountry = Core.byId("FB0-FF6");
+		var aCountryConditions = oCountry && oCountry.getConditions();
+		if (aCountryConditions && aCountryConditions.length) {
+			oConditions["country_code"] = aCountryConditions;
+		}
+
+		var oRegion = Core.byId("FB0-FF7");
+		var aRegionConditions = oRegion && oRegion.getConditions();
+		if (aRegionConditions && aRegionConditions.length) {
+			oConditions["region_code"] = aRegionConditions;
+		}
+
+		return oConditions;
 	};
 
 	return ValueHelpDelegate;

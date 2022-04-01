@@ -328,24 +328,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("requestDelegateContent event", function(assert) {
-
-		var iRequestDelegateContent = 0;
-		var oEventContainer;
-		oContainer.attachEvent("requestDelegateContent", function(oEvent) {
-			iRequestDelegateContent++;
-			oEventContainer = oEvent.getParameter("container");
-		});
-
-		// add
-		var oContent = new Content("Content1");
-		oContainer.addContent(oContent);
-		oContent.fireRequestDelegateContent();
-		assert.equal(iRequestDelegateContent, 1, "RequestDelegateContent event fired");
-		assert.equal(oEventContainer, oContainer, "RequestDelegateContent event container");
-
-	});
-
 	QUnit.test("requestSwitchToDialog event", function(assert) {
 
 		var iRequestSwitchToDialog = 0;

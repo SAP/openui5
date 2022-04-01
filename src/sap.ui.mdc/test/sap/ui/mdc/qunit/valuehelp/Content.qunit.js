@@ -57,7 +57,10 @@ sap.ui.define([
 		isValueHelpDelegateInitialized: function () {
 			return true;
 		},
-		invalidate: function () {}
+		invalidate: function () {},
+		_getControl: function () {
+			return "Control"; // just to test forwarding
+		}
 	};
 
 	var _teardown = function() {
@@ -153,28 +156,26 @@ sap.ui.define([
 
 		oContent.setConfig({operators: ["GT", "LT", oOperator.name]});
 
-		var oCondition = oContent._createCondition("1", "Text1", {inParameter: "2"}, undefined);
+		var oCondition = oContent._createCondition("1", "Text1", {myPayload: true});
 		assert.ok(oCondition, "Condition created");
 		if (oCondition) {
 			assert.equal(oCondition && oCondition.operator, "MyTest", "Condition Operator");
 			assert.equal(oCondition.values.length, 1, "Condition values length");
 			assert.equal(oCondition.values[0], "1", "Condition values[0]");
-			assert.deepEqual(oCondition.inParameters, {inParameter: "2"}, "Condition in-parameters");
-			assert.notOk(oCondition.outParameters, "Condition no out-parameters");
+			assert.deepEqual(oCondition.payload, {myPayload: true}, "Condition payload");
 			assert.equal(oCondition.validated, ConditionValidated.Validated, "Condition is validated");
 		}
 
 		oContent.setConfig({operators: []}); // use all
 
-		oCondition = oContent._createCondition("1", "Text1", undefined, {outParameter: "x"});
+		oCondition = oContent._createCondition("1", "Text1");
 		assert.ok(oCondition, "Condition created");
 		if (oCondition) {
 			assert.equal(oCondition && oCondition.operator, "EQ", "Condition Operator");
 			assert.equal(oCondition.values.length, 2, "Condition values length");
 			assert.equal(oCondition.values[0], "1", "Condition values[0]");
 			assert.equal(oCondition.values[1], "Text1", "Condition values[1]");
-			assert.notOk(oCondition.inParameters, "Condition no in-parameters");
-			assert.deepEqual(oCondition.outParameters, {outParameter: "x"}, "Condition out-parameters");
+			assert.notOk(oCondition.hasOwnProperty("payload"), "Condition has no payload");
 			assert.equal(oCondition.validated, ConditionValidated.Validated, "Condition is validated");
 		}
 
@@ -345,6 +346,13 @@ sap.ui.define([
 
 		oContent.setShortTitle("ShortTitle");
 		assert.equal(oContent.getFormattedShortTitle(), "ShortTitle", "formatted shortTitle");
+
+	});
+
+	QUnit.test("_getControl", function(assert) {
+
+		var oControl = oContent._getControl();
+		assert.equal(oControl, "Control", "Delegate returned");
 
 	});
 

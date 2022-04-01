@@ -19,7 +19,12 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/base/util/UriParameters",
-	"sap/ui/core/Item"
+	"sap/ui/core/Item",
+	"sap/ui/core/Core",
+	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/p13n/StateUtil',
+	'sap/base/util/deepEqual'
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
@@ -37,13 +42,18 @@ sap.ui.define([
 	ColumnListItem,
 	Text,
 	UriParameters,
-	Item
+	Item,
+	Core,
+	Condition,
+	ConditionValidated,
+	StateUtil,
+	deepEqual
 ) {
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 
-	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer) {
+	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer, sContentId) {
 		var oValueHelp = oContainer && oContainer.getParent();
 
 		var oParams = UriParameters.fromQuery(location.search);
@@ -138,72 +148,153 @@ sap.ui.define([
 					oContainer.addContent(oAdditionalContent);
 				}
 			}
-
-			var sCollectiveSearchKey = oCurrentContent.getCollectiveSearchKey() || "";
-
-			var oCurrentTable = oCurrentContent.getTable();
-
-			if (oCurrentTable) {
-				oCurrentContent.setTable();
-				oCurrentTable.destroy();
-			}
-
-
-			var oCollectiveSearchContent;
-
-			switch (sCollectiveSearchKey) {
-				case "template1":
-					oCollectiveSearchContent = new mdcTable(oValueHelp.getId() + "--mdcTable--template1", {
-						header: "",
-						p13nMode: ['Column','Sort'],
-						autoBindOnInit: !bSuspended,
-						showRowCount: true,
-						width: "100%",
-						height: "100%",
-						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}",
-						type: new ResponsiveTableType({growingMode: "Scroll"}),
-						delegate: {
-							name: "sap/ui/v4demo/delegate/ResponsiveTable.delegate",
-							payload: {
-								collectionName: "Authors"
-							}
-						},
-						columns: [
-							new mdcColumn({importance: "High", header: "ID", dataProperty: "ID", template: new Field({value: "{ID}", editMode: "Display"})}),
-							new mdcColumn({importance: "High", header: "Name", dataProperty: "name", template: new Field({value: "{name}", editMode: "Display"})}),
-							new mdcColumn({importance: "Low", header: "Country", dataProperty: "countryOfOrigin_code", template: new Field({value: "{countryOfOrigin_code}", additionalValue: "{countryOfOrigin/descr}", display: "Description", editMode: "Display"})}),
-							new mdcColumn({importance: "Low", header: "Region", dataProperty: "regionOfOrigin_code", template: new Field({value: "{regionOfOrigin_code}", additionalValue: "{regionOfOrigin/text}", display: "Description", editMode: "Display"})}),
-							new mdcColumn({importance: "Low", header: "City", dataProperty: "cityOfOrigin_city", template: new Field({value: "{cityOfOrigin_city}", additionalValue: "{cityOfOrigin/text}", display: "Description", editMode: "Display"})})
-						]
-					});
-					break;
-				default:
-					oCollectiveSearchContent = new mdcTable(oValueHelp.getId() + "--mdcTable--default", {
-						header: "",
-						p13nMode: ['Column','Sort'],
-						autoBindOnInit: !bSuspended,
-						showRowCount: true,
-						width: "100%",
-						height: "100%",
-						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}",
-						type: new ResponsiveTableType({growingMode: "Scroll"}),
-						delegate: {
-							name: "sap/ui/v4demo/delegate/ResponsiveTable.delegate",
-							payload: {
-								collectionName: "Authors"
-							}
-						},
-						columns: [
-							new mdcColumn({importance: "High", header: "ID", dataProperty: "ID", template: new Field({value: "{ID}", editMode: "Display"})}),
-							new mdcColumn({importance: "High", header: "Name", dataProperty: "name", template: new Field({value: "{name}", editMode: "Display"})})
-						]
-					});
-					break;
-			}
-			oCurrentContent.setTable(oCollectiveSearchContent);
 		}
 
+		// Example for slow fulfilling promise
+		/* return new Promise(function (resolve) {
+			setTimeout(function () {
+				console.log("FB0-FH1-11-ValueHelp.delegate.retrieveContent", sContentId);
+				resolve();
+			},1500);
+		}); */
 		return Promise.resolve();
+	};
+
+	ValueHelpDelegate.getInitialFilterConditions = function (oPayload, oContent, oControl) {
+		var oConditions = ODataV4ValueHelpDelegate.getInitialFilterConditions(oPayload, oContent, oControl);
+
+		var oFilterBar = oContent.getFilterBar();
+
+		if (oFilterBar) {
+
+			var bHasCountryFilter = oFilterBar.getFilterItems().find(function (oFilterItem) {
+				return oFilterItem.getBinding("conditions").sPath.indexOf("countryOfOrigin_code") >= 0;
+			});
+
+			if (bHasCountryFilter) {
+				var oCountry = Core.byId("FB0-FF6");
+				var aCountryConditions = oCountry && oCountry.getConditions();
+				if (aCountryConditions && aCountryConditions.length) {
+					oConditions["countryOfOrigin_code"] = aCountryConditions;
+					return oConditions;
+				}
+			}
+		}
+
+		return oConditions;
+	};
+
+	// Exemplatory implementation of a condition merge strategy (shared condition between multiple collectiveSearch lists)
+	ValueHelpDelegate.modifySelectionBehaviour = function (oPayload, oContent, oChange) {
+
+		var oChangeCondition = oChange.conditions[0];
+		var oCurrentConditions = oContent.getConditions();
+
+		// Replace typeahead condition with existing one - we do not want duplicates in this scenario
+		if (oContent.isTypeahead() && oChange.type === "Set") {
+			return {
+				type: "Set",
+				conditions: oChange.conditions.map(function (oCondition) {
+					var oExisting = oCurrentConditions.find(function (oCurrentCondition) {
+						return oCurrentCondition.values[0] === oCondition.values[0];
+					});
+
+					return oExisting || oCondition;
+				})
+			};
+		}
+
+		var oExistingCondition = oCurrentConditions.find(function (oCondition) {
+			return oCondition.values[0] === oChangeCondition.values[0];
+		});
+
+		// reuse and apply payload to existing condition for this value
+		if (oChange.type === "Add" && oExistingCondition) {
+			return {
+				type: "Set",
+				conditions: oCurrentConditions.slice().map(function (oCondition) {
+					if (oCondition === oExistingCondition) {
+						oChangeCondition.payload = Object.assign({}, oExistingCondition.payload, oChangeCondition.payload);
+						return oChangeCondition;
+					}
+					return oCondition;
+				})
+			};
+		}
+		// remove payload from existing condition for this value, or delete the condition if it doesn't contain another payload
+		if (oChange.type === "Remove" && oExistingCondition) {
+			return {
+				type: "Set",
+				conditions: oCurrentConditions.slice().filter(function (oCondition) {
+					return oCondition === oExistingCondition ? oExistingCondition.payload && Object.keys(oExistingCondition.payload).length > 1 : true; // keep existing condition if another payload exists
+				}).map(function (oCondition) {
+					if (oCondition === oExistingCondition) {
+						delete oExistingCondition.payload[oContent.getId()];	// delete existing payload for this content
+						return oExistingCondition;
+					}
+					return oCondition;
+				})
+			};
+		}
+		return oChange;
+	};
+
+	// Exemplatory implementation of a condition payload
+	ValueHelpDelegate.createConditionPayload = function (oPayload, oContent, aValues, vContext) {
+		var sIdentifier = oContent.getId();
+		var oConditionPayload = {};
+		oConditionPayload[sIdentifier] = {};
+
+		var oListBinding = oContent.getListBinding();
+			var oContext = oListBinding && oListBinding.aContexts && oListBinding.aContexts.find(function (oContext) {
+				return oContext.getObject(oContent.getKeyPath()) === aValues[0];
+			});
+			if (oContext) {
+				var aDataProperties = oContent.getTable().getColumns().map(function (oColumn) {
+					return oColumn.getDataProperty && oColumn.getDataProperty();
+				});
+
+				if (aDataProperties.indexOf("countryOfOrigin_code") !== -1) {
+					oConditionPayload[sIdentifier]["countryOfOrigin_code"] = oContext.getProperty("countryOfOrigin_code");
+				}
+
+				if (aDataProperties.indexOf("dateOfBirth") !== -1) {
+					oConditionPayload[sIdentifier]["dateOfBirth"] = oContext.getProperty("dateOfBirth");	// TODO: Do we actually need to convert anything, when storing only raw context data?
+				}
+			}
+		return oConditionPayload;
+	};
+
+	// Exemplatory implementation of outparameter update
+	ValueHelpDelegate.onConditionPropagation = function (oPayload, oValueHelp, sReason, oConfig) {
+		// find all conditions carrying country information
+		var aAllConditionCountries = oValueHelp.getConditions().reduce(function (aResult, oCondition) {
+			if (oCondition.payload) {
+				Object.values(oCondition.payload).forEach(function (oSegment) {
+					if (oSegment["countryOfOrigin_code"] && aResult.indexOf(oSegment["countryOfOrigin_code"]) === -1) {
+						aResult.push(oSegment["countryOfOrigin_code"]);
+					}
+				});
+			}
+			return aResult;
+		}, []);
+
+		if (aAllConditionCountries && aAllConditionCountries.length) {
+			var oFilterBar = Core.byId("FB0");
+			StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
+				aAllConditionCountries.forEach(function(sCountry) {
+					var bExists = oState.filter && oState.filter['countryOfOrigin_code'] && oState.filter['countryOfOrigin_code'].find(function (oCondition) {
+						return oCondition.values[0] === sCountry;
+					});
+					if (!bExists) {
+						var oNewCondition = Condition.createCondition("EQ", [sCountry], undefined, undefined, ConditionValidated.Validated);
+						oState.filter['countryOfOrigin_code'] = oState.filter && oState.filter['countryOfOrigin_code'] || [];
+						oState.filter['countryOfOrigin_code'].push(oNewCondition);
+					}
+				});
+				StateUtil.applyExternalState(oFilterBar, oState);
+			});
+		}
 	};
 
 	return ValueHelpDelegate;

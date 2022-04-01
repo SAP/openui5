@@ -742,6 +742,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition1 Condition to check
 		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition2 Condition to check
+
 		 * @returns {boolean} <code>true</code> if conditions are equal
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
@@ -755,6 +756,9 @@ sap.ui.define([
 				var oCheckValue1 = this.getCheckValue(oCondition1);
 				var oCheckValue2 = this.getCheckValue(oCondition2);
 
+
+				// In/outParameter logic still used as long as old FiledValueHelp is supported
+				// Also may exist in older variants
 				if (oCondition1.inParameters && oCondition2.inParameters) {
 					// TODO: also compare in-parameters (but only of set on both)
 					oCheckValue1.inParameters = oCondition1.inParameters;
@@ -764,6 +768,12 @@ sap.ui.define([
 					// TODO: also compare out-parameters (but only of set on both)
 					oCheckValue1.outParameters = oCondition1.outParameters;
 					oCheckValue2.outParameters = oCondition2.outParameters;
+				}
+
+				if (oCondition1.payload && oCondition2.payload) {
+					// TODO: check payload also if only set on one condition?
+					oCheckValue1.payload = oCondition1.payload;
+					oCheckValue2.payload = oCondition2.payload;
 				}
 
 				if (oCondition1.validated && oCondition2.validated) {

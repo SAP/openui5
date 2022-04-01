@@ -58,12 +58,13 @@ sap.ui.define([
 
 				// convert using "normalized" data type
 				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-				var aValues = _valuesToString(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil, oTypeConfig, oOperator) || oTypeConfig, oOperator);
+				var aValues = _valuesToString(oCondition.values, _getLocalTypeConfig(oTypeUtil, oTypeConfig, oOperator) || oTypeConfig, oOperator);
 
 				// inParameter, OutParameter
 				// TODO: we need the types of the in/out parameter
 				var oInParameters;
 				var oOutParameters;
+				var oPayload;
 
 				if (oCondition.inParameters) {
 					oInParameters = merge({}, oCondition.inParameters);
@@ -72,7 +73,11 @@ sap.ui.define([
 					oOutParameters = merge({}, oCondition.outParameters);
 				}
 
-				var oResult = Condition.createCondition(oCondition.operator, aValues, oInParameters, oOutParameters, oCondition.validated);
+				if (oCondition.payload) {
+					oPayload = merge({}, oCondition.payload);
+				}
+
+				var oResult = Condition.createCondition(oCondition.operator, aValues, oInParameters, oOutParameters, oCondition.validated, oPayload);
 				return oResult;
 
 			},
@@ -95,12 +100,13 @@ sap.ui.define([
 			toType: function(oCondition, oTypeConfig, oTypeUtil) {
 				// convert using "normalized" data type
 				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-				var aValues = _stringToValues(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil, oTypeConfig, oOperator) || oTypeConfig);
+				var aValues = _stringToValues(oCondition.values, _getLocalTypeConfig(oTypeUtil, oTypeConfig, oOperator) || oTypeConfig);
 
 				// inParameter, OutParameter
 				// TODO: we need the types of the in/out parameter
 				var oInParameters;
 				var oOutParameters;
+				var oPayload;
 
 				if (oCondition.inParameters) {
 					oInParameters = merge({}, oCondition.inParameters);
@@ -109,7 +115,11 @@ sap.ui.define([
 					oOutParameters = merge({}, oCondition.outParameters);
 				}
 
-				var oResult = Condition.createCondition(oCondition.operator, aValues, oInParameters, oOutParameters, oCondition.validated);
+				if (oCondition.payload) {
+					oPayload = merge({}, oCondition.payload);
+				}
+
+				var oResult = Condition.createCondition(oCondition.operator, aValues, oInParameters, oOutParameters, oCondition.validated, oPayload);
 
 				if (oResult.validated !== ConditionValidated.Validated && oOperator.validateInput) {
 					// let the operator check if the condition could be validated. (Use result to not change original condition.)
@@ -118,10 +128,52 @@ sap.ui.define([
 
 				return oResult;
 
+			},
+			/**
+			 * creates a Condition from internal values
+			 *
+			 * @param {string} sOperator Name of operator
+			 * @param {any[]} aValues values
+			 * @param {sap.ui.mdc.enum.ConditionValidated} sValidated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the <code>DefineConditionPanel</code> control
+			 * @param {object} [oPayload] payload of condition
+			 * @param {sap.ui.model.Type} oType Data type of the values
+			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent <code>TypeUtil</code> implementation
+			 * @returns {sap.ui.mdc.condition.ConditionObject} stringified condition
+			 * @private
+			 * @ui5-restricted sap.ui.mdc
+			 * @MDC_PUBLIC_CANDIDATE
+			 * @since 1.100.0
+			 */
+			 createExternalCondition: function(sOperator, aValues, sValidated, oPayload, oType, oTypeUtil) {
+				// convert using "normalized" data type
+				var oOperator = FilterOperatorUtil.getOperator(sOperator);
+				var oTypeConfig = oTypeUtil.getTypeConfig(oType);
+				aValues = _valuesToString(aValues, _getLocalTypeConfig(oTypeUtil, oTypeConfig, oOperator) || oTypeConfig, oOperator);
+				var oCondition = Condition.createCondition(sOperator, aValues, undefined, undefined, sValidated); // TODO_ add payload
+				return oCondition;
+			},
+			/**
+			 * gets internal values from stringified condition
+			 *
+			 * @param {sap.ui.mdc.condition.ConditionObject} oCondition stringified condition
+			 * @param {sap.ui.model.Type} oType Data type of the values
+			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent <code>TypeUtil</code> implementation
+			 * @returns {any[]} internal values
+			 * @private
+			 * @ui5-restricted sap.ui.mdc
+			 * @MDC_PUBLIC_CANDIDATE
+			 * @since 1.100.0
+			 */
+			 getInternalValues: function(oCondition, oType, oTypeUtil) {
+				// convert using "normalized" data type
+				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+				var oTypeConfig = oTypeUtil.getTypeConfig(oType);
+				var aValues = _stringToValues(oCondition.values, _getLocalTypeConfig(oTypeUtil, oTypeConfig, oOperator) || oTypeConfig);
+				return aValues;
 			}
 		};
 
-		function _getLocalTypeConfig (oCondition, oTypeUtil, oTypeConfig, oOperator) {
+		function _getLocalTypeConfig (oTypeUtil, oTypeConfig, oOperator) {
 			if (oOperator && oOperator.valueTypes[0] && (oOperator.valueTypes[0] !== Operator.ValueType.Self && oOperator.valueTypes[0] !== Operator.ValueType.Static)) {
 				// we have to create the type instance for the values
 				return oTypeUtil.getTypeConfig(oOperator._createLocalType(oOperator.valueTypes[0], oTypeConfig && oTypeConfig.typeInstance)); // TODO type for all values must be the same})

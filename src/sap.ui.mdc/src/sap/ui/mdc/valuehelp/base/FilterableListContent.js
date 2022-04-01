@@ -6,31 +6,23 @@ sap.ui.define([
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/mdc/valuehelp/base/ListContent',
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/condition/FilterConverter',
 	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/base/util/deepEqual',
-	'sap/ui/mdc/util/Common',
-	'sap/ui/model/base/ManagedObjectModel',
-	'sap/m/MessageToast'
+	'sap/ui/mdc/util/Common'
 ], function(
 	loadModules,
 	ListContent,
 	Condition,
-	FilterConverter,
 	ConditionValidated,
-	deepEqual,
-	Common,
-	ManagedObjectModel,
-	MessageToast
+	Common
 ) {
 	"use strict";
 
 	/**
 	 * Constructor for a new <code>FilterableListContent</code>.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element.
+	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new element
+	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element.
 	 * @extends sap.ui.mdc.valuehelp.base.ListContent
 	 * @version ${version}
 	 * @constructor
@@ -82,23 +74,10 @@ sap.ui.define([
 					type: "string",
 					defaultValue: ""
 				},
-				/**
-				 * Internal property to allow to bind the conditions created by InParameters to content
-				 */
-				inConditions: {
-					type: "object",
-					defaultValue: {},
-					byValue: true//,
-					//visibility: "hidden"
-				},
-				/**
-				 * Internal property to allow to bind the paths used by OutParameters to content
-				 */
-				outParameterNames: {
-					type: "string[]",
-					defaultValue: [],
-					byValue: true//,
-					//visibility: "hidden"
+
+				group: {
+					type: "string",
+					defaultValue: ""
 				}
 			},
 			aggregations: {
@@ -126,6 +105,12 @@ sap.ui.define([
 					visibility: "hidden"
 				}
 			},
+			associations: {
+				filters: {
+					type: "sap.ui.mdc.IFilter",
+					multiple: true
+				}
+			},
 			events: {
 			}
 		}
@@ -138,12 +123,8 @@ sap.ui.define([
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 		this._oObserver.observe(this, {
-			aggregations: ["_defaultFilterBar", "filterBar"],
-			properties: ["inConditions"]
+			aggregations: ["_defaultFilterBar", "filterBar"]
 		});
-
-		this.bindProperty("inConditions", { path: "/_inConditions", model: "$valueHelp"}); // inherit from ValueHelp
-		this.bindProperty("outParameterNames", { path: "/_outParameters", model: "$valueHelp"}); // inherit from ValueHelp
 	};
 
 	FilterableListContent.prototype._handleFilterValueUpdate = function (oChanges) {
@@ -153,8 +134,14 @@ sap.ui.define([
 		}
 	};
 
-	FilterableListContent.prototype.applyFilters = function (sSearch) {
+	FilterableListContent.prototype._reduceIFilterConditions = function (oConditions) {
+		var oDelegate = this._getValueHelpDelegate();
+		var oPayload = this._getValueHelpDelegatePayload();
+		return oDelegate ? oDelegate.reduceIFilterConditions(oPayload, this, oConditions) : oConditions;
+	};
 
+	FilterableListContent.prototype.applyFilters = function (sSearch) {
+		this.applyFilterConditions();
 	};
 
 
@@ -198,65 +185,42 @@ sap.ui.define([
 		var sDescriptionPath = (oOptions && oOptions.descriptionPath) || this.getDescriptionPath();
 		var vKey;
 		var sDescription;
-		var sPath;
+		//var sPath;
 
 		if (!sKeyPath) {
 			throw new Error("KeyPath missing"); // as we cannot determine key without keyPath
 		}
 
-		var aInParameters = oOptions && oOptions.inParameters || [];
-		if (aInParameters.length === 0) {
-			for (sPath in this.getProperty("inConditions")) {
-				aInParameters.push(sPath);
-			}
-		}
-
-		var aOutParameters = oOptions && oOptions.outParameters || this.getProperty("outParameterNames");
-		var oInParameters = aInParameters.length > 0 ? {} : null;
-		var oOutParameters = aOutParameters.length > 0 ? {} : null;
-
 		if (oBindingContext) {
 			vKey = sKeyPath ? oBindingContext.getProperty(sKeyPath) : undefined;
 			sDescription = sDescriptionPath ? oBindingContext.getProperty(sDescriptionPath) : undefined;
-			var i = 0;
-			for (i = 0; i < aInParameters.length; i++) {
-				sPath = aInParameters[i];
-				oInParameters[sPath] = oBindingContext.getProperty(sPath);
-			}
-			for (i = 0; i < aOutParameters.length; i++) {
-				sPath = aOutParameters[i];
-				oOutParameters[sPath] = oBindingContext.getProperty(sPath);
-			}
 		}
 
 		if (vKey === null || vKey === undefined) {
 			return false;
 		}
 
-		return {key: vKey, description: sDescription, inParameters: oInParameters, outParameters: oOutParameters};
+		var oPayload = this._createConditionPayload([vKey, sDescription], oBindingContext);
+
+
+		return {key: vKey, description: sDescription, payload: oPayload};
+	};
+
+	FilterableListContent.prototype._createConditionPayload = function(aValues, vContext) {
+		var oConditionPayload;
+		var oDelegate = this._getValueHelpDelegate();
+
+		if (oDelegate) {
+			var oDelegatePayload = this._getValueHelpDelegatePayload();
+			oConditionPayload = {};
+			oConditionPayload = oDelegate.createConditionPayload(oDelegatePayload, this, aValues, vContext);
+		}
+		return oConditionPayload;
 	};
 
 	FilterableListContent.prototype._isItemSelected = function (oItem, aConditions) {
-
-		var oContext = oItem && oItem.getBindingContext();
-		var oItemData = this._getItemFromContext(oContext);
-
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			if (oCondition.validated === ConditionValidated.Validated && oItemData.key === oCondition.values[0]) { // TODO: check for specific EQ operator
-				//check for inParameters and outParameters
-				if (oCondition.inParameters && oItemData.inParameters && !deepEqual(oCondition.inParameters, oItemData.inParameters)) {
-					continue;
-				}
-				if (oCondition.outParameters && oItemData.outParameters && !deepEqual(oCondition.outParameters, oItemData.outParameters)) {
-					continue;
-				}
-				return true;
-			}
-		}
-
-		return false;
-
+		var oDelegate = this._isValueHelpDelegateInitialized() && this._getValueHelpDelegate();
+		return oDelegate ? oDelegate.isFilterableListItemSelected(this._getValueHelpDelegatePayload(), this, oItem, aConditions) : false;
 	};
 
 	FilterableListContent.prototype._createDefaultFilterBar = function() {
@@ -268,91 +232,54 @@ sap.ui.define([
 				liveMode: false, // !oWrapper.isSuspended(), // if suspended, no live search
 				showGoButton: false
 			});
+			_setBasicSearch.call(this, oFilterBar);
 			this.setAggregation("_defaultFilterBar", oFilterBar, true);
 			return oFilterBar;
 		}.bind(this));
 	};
 
-	FilterableListContent.prototype._assignCollectiveSearch = function(bInitializeKey) {
-		bInitializeKey = typeof bInitializeKey !== "undefined" ? bInitializeKey : !this._oCollectiveSearchSelect;
-		_createCollectiveSearch.call(this, bInitializeKey).then(function(oCollectiveSearchSelect) {
-			var oFilterBar = this._getPriorityFilterBar();
-			if (oFilterBar.setCollectiveSearch) {
-				oFilterBar.setCollectiveSearch(oCollectiveSearchSelect);
-			}
-		}.bind(this));
+	FilterableListContent.prototype._handleSearch = function (oEvent) {
+		// to be implemented by MTable and MDCTable
 	};
 
-	function _createCollectiveSearch(bInitializeKey) {
-
-		return loadModules([
-			"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect",
-			"sap/ui/core/Item"
-		]).then(function(aModules) {
-			var CollectiveSearchSelect = aModules[0];
-			var Item = aModules[1];
-
-			_createCollectiveSearchSelect.call(this, CollectiveSearchSelect, Item);
-
-			var aCollectiveSearchItems = this.getCollectiveSearchItems();
-			if (aCollectiveSearchItems.length <= 1) {
-				return null;
-			} else {
-				if (bInitializeKey) {
-					this._oCollectiveSearchSelect.setSelectedItemKey(aCollectiveSearchItems[0].getKey());
-				}
-				return this._oCollectiveSearchSelect;
+	function _setBasicSearch(oFilterBar) {
+		var oExistingBasicSearchField = oFilterBar.getBasicSearchField();
+		var sFilterFields =  this.getFilterFields();
+		if (!oExistingBasicSearchField && sFilterFields) { // TODO: use isSearchSupported but here Delegate needs to be loaded
+			if (!this._oSearchField) {
+				return loadModules([
+					"sap/ui/mdc/FilterField"
+				]).then(function (aModules){
+					if (!oFilterBar.bIsDestroyed) {
+						var FilterField = aModules[0];
+						this._oSearchField = new FilterField(this.getId() + "-search", {
+							conditions: "{$filters>/conditions/" + sFilterFields + "}",
+							placeholder:"{$i18n>filterbar.SEARCH}",
+							label:"{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
+							maxConditions: 1,
+							width: "50%"
+						});
+						this._oSearchField._bCreatedByValueHelp = true;
+						_setBasicSearch.call(this, oFilterBar);
+					}
+				}.bind(this));
 			}
-		}.bind(this));
-
-	}
-
-	function _handleCollectiveSearchSelect(oEvent) {
-
-		var sKey = oEvent.getParameter("key");
-		MessageToast.show("ColSearch: " + sKey);
-
-		this.fireRequestDelegateContent();
-	}
-
-	function _createCollectiveSearchSelect(CollectiveSearchSelect, Item) {
-
-		if (!this._oCollectiveSearchSelect) {
-
-			this._oObserver.observe(this, {
-				properties: ["filterFields"],
-				aggregations: ["collectiveSearchItems"]
-			});
-
-			this._oManagedObjectModel = new ManagedObjectModel(this);
-			this.setModel(this._oManagedObjectModel, "$contenthelp");
-
-			var oItemTemplate = new Item(this.getId() + "-collSearchItem", {
-				key: "{$contenthelp>key}",
-				text: "{$contenthelp>text}",
-				enabled: "{$contenthelp>enabled}",
-				textDirection: "{$contenthelp>textDirection}"
-			});
-
-			this._oCollectiveSearchSelect = new CollectiveSearchSelect(this.getId() + "-collSearch", {
-				title: "{$i18n>COL_SEARCH_SEL_TITLE}",
-				items: {path: "$contenthelp>/collectiveSearchItems", template: oItemTemplate},
-				select: _handleCollectiveSearchSelect.bind(this)
-			});
+			oFilterBar.setBasicSearchField(this._oSearchField);
+		} else if (oExistingBasicSearchField) {
+			oExistingBasicSearchField.setConditions([]);
 		}
-
-		return this._oCollectiveSearchSelect;
-
 	}
 
 	FilterableListContent.prototype.onShow = function () {
 		ListContent.prototype.onShow.apply(this, arguments);
 
-		var oListBinding = this._getListBinding();
+		var oListBinding = this.getListBinding();
 		var oListBindingInfo = this._getListBindingInfo();
 
 		var bBindingSuspended = oListBinding && oListBinding.isSuspended();
 		var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
+
+		this._applyInitialConditions(this._getPriorityFilterBar()); // to set incomming condition on FilterBar
 
 		if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) {
 			return; // in dialog case do not resume suspended table on opening
@@ -361,49 +288,9 @@ sap.ui.define([
 		this.applyFilters(this.getFilterValue());
 	};
 
-	FilterableListContent.prototype._formatConditions = function(aConditions) {
-		// map in/outParameters to help paths
-
-		var aInParameters = this.getModel("$valueHelp").getProperty("/inParameters");
-		var aOutParameters = this.getModel("$valueHelp").getProperty("/outParameters");
-
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			if (oCondition.inParameters) {
-				oCondition.inParameters = _mapParametersToHelp.call(this, oCondition.inParameters, aInParameters);
-			}
-			if (oCondition.outParameters) {
-				oCondition.outParameters = _mapParametersToHelp.call(this, oCondition.outParameters, aOutParameters);
-			}
-		}
-
-		return aConditions;
-
+	FilterableListContent.prototype.onHide = function () {
+		ListContent.prototype.onHide.apply(this, arguments);
 	};
-
-	function _mapParametersToHelp(oParameters, aParameters) {
-
-		var oHelpParameters;
-
-		if (aParameters.length > 0) {
-			for (var sMyFieldPath in oParameters) {
-				for (var i = 0; i < aParameters.length; i++) {
-					var oParameter = aParameters[i];
-					var sHelpPath = oParameter.getHelpPath();
-					var sFieldPath = oParameter.getFieldPath();
-					if (sFieldPath && (sFieldPath === sMyFieldPath || sFieldPath === "conditions/" + sMyFieldPath) && sHelpPath) { // support also old saved conditions without "conditions/" in name
-						if (!oHelpParameters) {
-							oHelpParameters = {};
-						}
-						oHelpParameters[sHelpPath] = oParameters[sMyFieldPath];
-					}
-				}
-			}
-		}
-
-		return oHelpParameters;
-
-	}
 
 	FilterableListContent.prototype._getPriorityFilterBar = function () {
 		return this.getFilterBar() || this.getAggregation("_defaultFilterBar");
@@ -412,74 +299,53 @@ sap.ui.define([
 	FilterableListContent.prototype._observeChanges = function (oChanges) {
 		if (oChanges.object == this) {
 
-			if (oChanges.name === "collectiveSearchItems") {
+			/* if (oChanges.name === "collectiveSearchItems") {
 				this._assignCollectiveSearch(true);
-			}
-			if (oChanges.name === "inConditions") {
-				_addInParameterToFilterBar.call(this, this._getPriorityFilterBar(), oChanges.current);
-			}
+			} */
 
 			if (["_defaultFilterBar", "filterBar"].indexOf(oChanges.name) !== -1) {
 				var oFilterBar = oChanges.child;
-				var oExistingBasicSearchField = oFilterBar.getBasicSearchField();
+				var oDefaultFilterBar;
 				if (oChanges.mutation === "insert") {
-					var sFilterFields =  this.getFilterFields();
-					if (!oExistingBasicSearchField && sFilterFields) { // TODO: use isSearchSupported but here Delegate needs to be loaded
-						return loadModules([
-							"sap/ui/mdc/FilterField"
-						]).then(function (aModules){
-							if (!oFilterBar.bIsDestroyed) {
-								var FilterField = aModules[0];
-								var oSearchField = new FilterField(this.getId() + "-search", {
-									conditions: "{$filters>/conditions/" + sFilterFields + "}",
-									placeholder:"{$i18n>filterbar.SEARCH}",
-									label:"{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
-									maxConditions: 1,
-									width: "50%"
-								});
-								oSearchField._bCreatedByValueHelp = true;
-								oFilterBar.setBasicSearchField(oSearchField);
-							}
-						}.bind(this));
-					} else if (oExistingBasicSearchField) {
-						oExistingBasicSearchField.setConditions([]);
+					_setBasicSearch.call(this, oFilterBar);
+					this._assignCollectiveSearchSelect();
+
+					if (oChanges.name !== "_defaultFilterBar" || !this.getFilterBar()) { // DefaultFilterBar only used if no other FilterBar assigned
+						oFilterBar.attachSearch(this._handleSearch, this);
 					}
-					this._assignCollectiveSearch();
-					_addInParameterToFilterBar.call(this, oFilterBar, this.getProperty("inConditions"));
-					_addFilterValueToFilterBar.call(this, oFilterBar, this.getFilterValue());
-				} else if (oChanges.name === "filterBar") {
+					if (oChanges.name === "filterBar") {
+						oDefaultFilterBar = this.getAggregation("_defaultFilterBar");
+						if (oDefaultFilterBar) {
+							oDefaultFilterBar.detachSearch(this._handleSearch, this);
+						}
+					}
+				} else { // remove case
+					var oExistingBasicSearchField = oFilterBar.getBasicSearchField();
 					if (oExistingBasicSearchField && oExistingBasicSearchField._bCreatedByValueHelp) {
-						oExistingBasicSearchField.destroy(); // TODO: reuse for default FilterBar?
+						oFilterBar.setBasicSearchField(); // remove to reuse on other FilterBar
 					}
-					this._createDefaultFilterBar();
+
+					oFilterBar.detachSearch(this._handleSearch, this);
+
+					if (oChanges.name === "filterBar") {
+						oDefaultFilterBar = this.getAggregation("_defaultFilterBar");
+						if (oDefaultFilterBar) {
+							oDefaultFilterBar.attachSearch(this._handleSearch, this);
+						} else {
+							this._createDefaultFilterBar();
+						}
+					}
 				}
 			}
 		}
 		ListContent.prototype._observeChanges.apply(this, arguments);
 	};
 
-	FilterableListContent.prototype.exit = function () {
-
-		Common.cleanup(this, [
-			"_oCollectiveSearchSelect","_oManagedObjectModel"
-		]);
-
-		ListContent.prototype.exit.apply(this, arguments);
-	};
-
 	FilterableListContent.prototype.getCollectiveSearchKey = function () {
 		return this._oCollectiveSearchSelect && this._oCollectiveSearchSelect.getSelectedItemKey();
 	};
 
-	FilterableListContent.prototype._getFiltersForFilterBar = function () {
-		var oFilterBar = this._getPriorityFilterBar();
-		var oCurrentFilterBarConditions = oFilterBar.getConditions();
-		var oConditionTypes = this._getTypesForConditions(oCurrentFilterBarConditions);
-		var oCreatedFBFilters = oCurrentFilterBarConditions && oConditionTypes && FilterConverter.createFilters(oCurrentFilterBarConditions, oConditionTypes, undefined, this.getCaseSensitive());
-		return oCreatedFBFilters ? [].concat(oCreatedFBFilters) : [];
-	};
-
-	FilterableListContent.prototype._getListBinding = function () {
+	FilterableListContent.prototype.getListBinding = function () {
 		throw new Error("FilterableListContent: Every filterable listcontent must implement this method.");
 	};
 
@@ -488,50 +354,10 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype._getTypesForConditions = function (oConditions) {
-
-		var oFilterBar = this._getPriorityFilterBar();
-		var aInParameters = this.getInParameters();
-		var oConditionTypes;
-		var sFieldPath;
-
-		if (oFilterBar) {
-			oConditionTypes = FilterConverter.createConditionTypesMapFromFilterBar( oConditions, oFilterBar);
-		} else {
-			// collect condition Fieldpaths here
-			oConditionTypes = {};
-			for (sFieldPath in oConditions) {
-				oConditionTypes[sFieldPath] = {type: null};
-			}
-		}
-
-		// try to find missing type from InParameter
-		for (sFieldPath in oConditionTypes) {
-			if (!oConditionTypes[sFieldPath].type) {
-				for (var i = 0; i < aInParameters.length; i++) {
-					var oInParameter = aInParameters[i];
-					if (oInParameter.getHelpPath() === sFieldPath) {
-						oConditionTypes[sFieldPath].type = oInParameter.getDataType();
-						break;
-					}
-				}
-			}
-		}
-
-		return oConditionTypes;
-
+		var oDelegate = this._getValueHelpDelegate();
+		var oDelegatePayload = this._getValueHelpDelegatePayload();
+		return oDelegate ? oDelegate.getTypesForConditions(oDelegatePayload, this, oConditions) : {};
 	};
-
-	function _addInParameterToFilterBar(oFilterBar, oInConditions) {
-		if (oFilterBar) {
-			// add inParameters to FilterBar
-			var oConditions = oFilterBar.getInternalConditions();
-			for ( var sFilterPath in oInConditions) {
-				oConditions[sFilterPath] = oInConditions[sFilterPath];
-			}
-			oFilterBar.setInternalConditions(oConditions); // TODO: remove on hide?
-		}
-
-	}
 
 	function _addFilterValueToFilterBar(oFilterBar, sFilterValue) {
 		var sFilterFields = this.getFilterFields();
@@ -565,17 +391,68 @@ sap.ui.define([
 
 	FilterableListContent.prototype.isSearchSupported = function () {
 
-		var sFilterFields =  this.getFilterFields();
+		var sFilterFields = this.getFilterFields();
 		var bSearchSupported = !!sFilterFields;
 		if (sFilterFields === "$search") {
-			var oListBinding = this._getListBinding();
+			var oListBinding = this.getListBinding();
 			var oDelegate = this._getValueHelpDelegate();
 			var oDelegatePayload = this._getValueHelpDelegatePayload();
 			bSearchSupported = oDelegate && oDelegate.isSearchSupported(oDelegatePayload, this, oListBinding);
 		}
 
 		return bSearchSupported;
+	};
 
+	FilterableListContent.prototype.setCollectiveSearchSelect = function (oDropdown) {
+		this._oCollectiveSearchSelect = oDropdown;
+		this._assignCollectiveSearchSelect();
+	};
+
+	FilterableListContent.prototype._assignCollectiveSearchSelect = function () {
+		var oFilterBar = this._getPriorityFilterBar();
+		if (oFilterBar.setCollectiveSearch && this._oCollectiveSearchSelect) {
+			oFilterBar.setCollectiveSearch(this._oCollectiveSearchSelect);
+		}
+	};
+
+	FilterableListContent.prototype.onBeforeShow = function() {
+		var oDelegate = this._getValueHelpDelegate();
+		return Promise.resolve(oDelegate && oDelegate.getInitialFilterConditions(this._getValueHelpDelegatePayload(), this, this._getControl())).then(function (oConditions) {
+			this._oInitialFilterConditions = oConditions;
+		}.bind(this));
+	};
+
+	FilterableListContent.prototype._applyInitialConditions = function (oFilterBar) {
+		return oFilterBar && oFilterBar.setInternalConditions(this._oInitialFilterConditions);
+	};
+
+	FilterableListContent.prototype._fireSelect = function (oChange) {
+		var oDelegate = this._getValueHelpDelegate();
+		var oDelegatePayload = this._getValueHelpDelegatePayload();
+		var oModifiedSelectionChange = oDelegate && oDelegate.modifySelectionBehaviour ? oDelegate.modifySelectionBehaviour(oDelegatePayload, this, oChange) : oChange;
+		if (oModifiedSelectionChange) {
+			this.fireSelect(oModifiedSelectionChange);
+		}
+	};
+
+	FilterableListContent.prototype.exit = function () {
+
+		Common.cleanup(this, [
+			"_oCollectiveSearchSelect", "_oInitialFilterConditions"
+		]);
+
+		if (this._oSearchField && !this._oSearchField.getParent()) {
+			this._oSearchField.destroy();
+			delete this._oSearchField;
+		}
+
+		ListContent.prototype.exit.apply(this, arguments);
+	};
+
+	FilterableListContent.prototype.getCount = function (aConditions, sGroup) {
+		var oDelegate = this._isValueHelpDelegateInitialized() && this._getValueHelpDelegate();
+		var oDelegatePayload = oDelegate && this._getValueHelpDelegatePayload();
+		return oDelegate && oDelegate.getCount ? oDelegate.getCount(oDelegatePayload, this, aConditions, sGroup) : ListContent.prototype.getCount.apply(this, arguments);
 	};
 
 	return FilterableListContent;

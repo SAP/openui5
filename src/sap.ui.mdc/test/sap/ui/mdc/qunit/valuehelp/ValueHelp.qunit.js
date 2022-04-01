@@ -182,16 +182,15 @@ sap.ui.define([
 
 		var vKey = "A";
 		var oConfig = {
-				parsedValue: vKey,
-				value: vKey,
-				inParameters: undefined,
-				outParameters: undefined,
-				bindingContext: undefined,
-				conditionModel: undefined,
-				conditionModelName: undefined,
-				checkKey: true,
-				exception: FormatException,
-				caseSensitive: true
+			parsedValue: vKey,
+			value: vKey,
+			bindingContext: undefined,
+			conditionModel: undefined,
+			conditionModelName: undefined,
+			checkKey: true,
+			exception: FormatException,
+			caseSensitive: true,
+			context: undefined
 		};
 
 		var oPromise = oValueHelp.getTextForKey(vKey);
@@ -218,7 +217,7 @@ sap.ui.define([
 		var sText = "A";
 		var oConfig = {
 				value: sText,
-				inParameters: undefined,
+				context: undefined,
 				checkDescription: true,
 				exception: ParseException,
 				caseSensitive: true
@@ -462,8 +461,6 @@ sap.ui.define([
 		var oConfig = {
 				parsedValue: "A",
 				value: "a",
-				inParameters: "in",
-				outParameters: "out",
 				bindingContext: "BC",
 				conditionModel: "CM",
 				conditionModelName: "Name",
@@ -474,8 +471,6 @@ sap.ui.define([
 		var oCheckConfig = {
 				parsedValue: "A",
 				value: "a",
-				inParameters: null,
-				outParameters: null,
 				bindingContext: "BC",
 				conditionModel: "CM",
 				conditionModelName: "Name",
@@ -758,38 +753,42 @@ sap.ui.define([
 						   Condition.createCondition("BT", ["A", "C"], undefined, undefined, ConditionValidated.NotValidated),
 						   Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated)
 						   ];
-		oValueHelp.setConditions(aConditions);
-		oContainer.fireConfirm({});
-		assert.equal(iSelect, 1, "Select event fired");
-		assert.deepEqual(aSelectConditions, aCheckConditions, "conditions");
-		assert.ok(bSelectAdd, "'add' property");
-		assert.notOk(bSelectClose, "'close' property");
-		assert.notOk(oValueHelp.close.called, "ValueHelp close not called");
 
-		sinon.stub(oContainer, "isMultiSelect").returns(true);
-		oContainer.fireConfirm({close: true});
-		assert.equal(iSelect, 2, "Select event fired");
-		assert.deepEqual(aSelectConditions, aCheckConditions, "conditions");
-		assert.notOk(bSelectAdd, "'add' property");
-		assert.ok(bSelectClose, "'close' property");
-		assert.ok(oValueHelp.close.called, "ValueHelp close called");
-		oValueHelp.close.reset();
+		var fnDone = assert.async();
+		oValueHelp.initControlDelegate().then(function () {
+			oValueHelp.setConditions(aConditions);
+			oContainer.fireConfirm({});
+			assert.equal(iSelect, 1, "Select event fired");
+			assert.deepEqual(aSelectConditions, aCheckConditions, "conditions");
+			assert.ok(bSelectAdd, "'add' property");
+			assert.notOk(bSelectClose, "'close' property");
+			assert.notOk(oValueHelp.close.called, "ValueHelp close not called");
 
-		// single-select
-		oContainer.isMultiSelect.restore();
-		oValueHelp.setProperty("_config", {maxConditions: 1});
-		oContainer.fireConfirm({});
-		assert.equal(iSelect, 3, "Select event fired");
-		assert.deepEqual(aSelectConditions, aCheckConditions, "conditions");
-		assert.notOk(bSelectAdd, "'add' property");
-		assert.ok(bSelectClose, "'close' property");
-		assert.ok(oValueHelp.close.called, "ValueHelp close called");
+			sinon.stub(oContainer, "isMultiSelect").returns(true);
+			oContainer.fireConfirm({close: true});
+			assert.equal(iSelect, 2, "Select event fired");
+			assert.deepEqual(aSelectConditions, aCheckConditions, "conditions");
+			assert.notOk(bSelectAdd, "'add' property");
+			assert.ok(bSelectClose, "'close' property");
+			assert.ok(oValueHelp.close.called, "ValueHelp close called");
+			oValueHelp.close.reset();
 
-		// no event is state is invalid
-		oValueHelp.setProperty("_valid", false);
-		oContainer.fireConfirm({});
-		assert.equal(iSelect, 3, "Select event not fired");
+			// single-select
+			oContainer.isMultiSelect.restore();
+			oValueHelp.setProperty("_config", {maxConditions: 1});
+			oContainer.fireConfirm({});
+			assert.equal(iSelect, 3, "Select event fired");
+			assert.deepEqual(aSelectConditions, aCheckConditions, "conditions");
+			assert.notOk(bSelectAdd, "'add' property");
+			assert.ok(bSelectClose, "'close' property");
+			assert.ok(oValueHelp.close.called, "ValueHelp close called");
 
+			// no event is state is invalid
+			oValueHelp.setProperty("_valid", false);
+			oContainer.fireConfirm({});
+			assert.equal(iSelect, 3, "Select event not fired");
+			fnDone();
+		});
 	});
 
 	QUnit.test("Cancelling handling", function(assert) {
@@ -967,8 +966,6 @@ sap.ui.define([
 		var oConfig = {
 				parsedValue: "A",
 				value: "a",
-				inParameters: "in",
-				outParameters: "out",
 				bindingContext: "BC",
 				conditionModel: "CM",
 				conditionModelName: "Name",
@@ -1123,14 +1120,17 @@ sap.ui.define([
 	QUnit.test("Confirmation handling", function(assert) {
 
 		// Just test event is processed, Details are tested in TypeAhead (there is no check for kind of content)
-		sinon.spy(oValueHelp, "close");
-		oContainer.fireConfirm({});
-		assert.equal(iSelect, 1, "Select event fired");
-		assert.deepEqual(aSelectConditions, [], "conditions");
-		assert.ok(bSelectAdd, "'add' property");
-		assert.notOk(bSelectClose, "'close' property");
-		assert.notOk(oValueHelp.close.called, "ValueHelp close not called");
-
+		var fnDone = assert.async();
+		oValueHelp.initControlDelegate().then(function () {
+			sinon.spy(oValueHelp, "close");
+			oContainer.fireConfirm({});
+			assert.equal(iSelect, 1, "Select event fired");
+			assert.deepEqual(aSelectConditions, [], "conditions");
+			assert.ok(bSelectAdd, "'add' property");
+			assert.notOk(bSelectClose, "'close' property");
+			assert.notOk(oValueHelp.close.called, "ValueHelp close not called");
+			fnDone();
+		});
 	});
 
 	QUnit.test("Cancelling handling", function(assert) {
@@ -1141,7 +1141,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("In/OutParameter bound to standard model", {
+	/* QUnit.module("In/OutParameter bound to standard model", {
 		beforeEach: function() {
 			oModel = new JSONModel({
 				inParameter: "in",
@@ -1871,7 +1871,7 @@ sap.ui.define([
 			}, 0);
 		}, 0);
 
-	});
+	}); */
 
 	// TODO: Test Operator determination on Content
 	// TODO: Test condition creation on Content

@@ -18,9 +18,9 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>Container</code>.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Container for the <code>ValueHelp</code> element.
+	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new element
+	 * @class Container for the {@link sap.ui.mdc.ValueHelp ValueHelp} element.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 * @constructor
@@ -110,7 +110,10 @@ sap.ui.define([
 				 */
 				requestDelegateContent: {
 					parameters: {
-						container: { type: "sap.ui.mdc.valuehelp.base.Container" }
+						/**
+						 * Content wrapper id for which contents are requested
+						 */
+						contentId: { type: "string" }
 					}
 				},
 				/**
@@ -153,44 +156,50 @@ sap.ui.define([
 		if (oChanges.name === "content") {
 			var oContent = oChanges.child;
 			if (oChanges.mutation === "remove") {
-				oContent.unbindProperty("filterValue");
-				oContent.unbindProperty("conditions");
-				oContent.unbindProperty("config");
-				oContent.detachConfirm(this._handleConfirmed, this);
-				oContent.detachCancel(this._handleCanceled, this);
-				oContent.detachSelect(this._handleSelect, this);
-				oContent.detachRequestDelegateContent(this._handleRequestDelegateContent, this);
-
-				if (oContent.detachNavigated) {
-					oContent.detachNavigated(this._handleNavigated, this);
-				}
-
-				if (oContent.detachRequestSwitchToDialog) {
-					oContent.detachRequestSwitchToDialog(this._handleRequestSwitchToDialog, this);
-				}
+				this._unbindContent(oContent);
 
 			} else {
-				oContent.bindProperty("filterValue", { path: "/filterValue", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
-				var oBindingOptions = { path: "/conditions", model: "$valueHelp", mode: BindingMode.OneWay};
-				if (oContent._formatConditions) {
-					oBindingOptions.formatter = oContent._formatConditions.bind(oContent);
-				}
-				oContent.bindProperty("conditions", oBindingOptions); // inherit from ValueHelp
-				oContent.bindProperty("config", { path: "/_config", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
-
-				oContent.attachConfirm(this._handleConfirmed, this);
-				oContent.attachCancel(this._handleCanceled, this);
-				oContent.attachSelect(this._handleSelect, this);
-				oContent.attachRequestDelegateContent(this._handleRequestDelegateContent, this);
-
-				if (oContent.attachNavigated) {
-					oContent.attachNavigated(this._handleNavigated, this);
-				}
-
-				if (oContent.attachRequestSwitchToDialog) {
-					oContent.attachRequestSwitchToDialog(this._handleRequestSwitchToDialog, this);
-				}
+				this._bindContent(oContent);
 			}
+		}
+	};
+
+	Container.prototype._bindContent = function (oContent) {
+		oContent.bindProperty("filterValue", { path: "/filterValue", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
+		var oBindingOptions = { path: "/conditions", model: "$valueHelp", mode: BindingMode.OneWay};
+		if (oContent._formatConditions) {
+			oBindingOptions.formatter = oContent._formatConditions.bind(oContent);
+		}
+		oContent.bindProperty("conditions", oBindingOptions); // inherit from ValueHelp
+		oContent.bindProperty("config", { path: "/_config", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
+
+		oContent.attachConfirm(this._handleConfirmed, this);
+		oContent.attachCancel(this._handleCanceled, this);
+		oContent.attachSelect(this._handleSelect, this);
+
+		if (oContent.attachNavigated) {
+			oContent.attachNavigated(this._handleNavigated, this);
+		}
+
+		if (oContent.attachRequestSwitchToDialog) {
+			oContent.attachRequestSwitchToDialog(this._handleRequestSwitchToDialog, this);
+		}
+	};
+
+	Container.prototype._unbindContent = function (oContent) {
+		oContent.unbindProperty("filterValue");
+		oContent.unbindProperty("conditions");
+		oContent.unbindProperty("config");
+		oContent.detachConfirm(this._handleConfirmed, this);
+		oContent.detachCancel(this._handleCanceled, this);
+		oContent.detachSelect(this._handleSelect, this);
+
+		if (oContent.detachNavigated) {
+			oContent.detachNavigated(this._handleNavigated, this);
+		}
+
+		if (oContent.detachRequestSwitchToDialog) {
+			oContent.detachRequestSwitchToDialog(this._handleRequestSwitchToDialog, this);
 		}
 	};
 
@@ -303,10 +312,6 @@ sap.ui.define([
 		this.fireCancel();
 	};
 
-	Container.prototype._handleRequestDelegateContent = function (oEvent) {
-		this.fireRequestDelegateContent({container: this});
-	};
-
 	Container.prototype._handleSelect = function (oEvent) {
 		this.fireSelect({type: oEvent.getParameter("type"), conditions: oEvent.getParameter("conditions")});
 	};
@@ -353,8 +358,6 @@ sap.ui.define([
 	 * @param {object} oConfig Configuration
 	 * @param {any} oConfig.value Value as entered by user
 	 * @param {any} [oConfig.parsedValue] Value parsed by type to fit the data type of the key
-	 * @param {object} [oConfig.inParameters] In parameters for the key (as a key must not be unique.)
-	 * @param {object} [oConfig.outParameters] Out parameters for the key (as a key must not be unique.)
 	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
 	 * @param {boolean} [oConfig.checkKeyFirst] If set, the container checks first if the value fits a key // TODO: not longer needed?
 	 * @param {boolean} oConfig.checkKey If set, the container checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
@@ -362,6 +365,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConfig.conditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {string} [oConfig.conditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {boolean} [oConfig.caseSensitive] If set, the check is done case sensitive
+	 * @param {sap.ui.core.Control} oConfig.control Instance of the calling control
 	 * @returns {Promise<sap.ui.mdc.field.FieldHelpItem>} Promise returning object containing description, key, in and out parameters.
 	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *
@@ -454,7 +458,7 @@ sap.ui.define([
 
 	/**
 	 * Determines if the container provides a own scroll functionality.
-	 * If not, the <code>Content</code> needs to provide a scrolling solution like a <code>ScrollContainer</code>.
+	 * If not, the <code>Content</code> needs to provide a scrolling solution like a {@link sap.m.ScrollContainer ScrollContainer}.
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
 	 *
@@ -473,7 +477,7 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
 	 *
-	 * @returns {sap.ui.mdc.BaseDelegate} <code>typeUtil</code> made available by a delegate module
+	 * @returns {sap.ui.mdc.BaseDelegate} <code>Delegate</code> module
 	 * @throws Throws an error if the delegate module is not available
 	 *
 	 * @private
@@ -506,7 +510,7 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
 	 *
-	 * @returns {Promise} Returns a <code>Promise</code> reflecting the delegate initialization
+	 * @returns {Promise} <code>Promise</code> reflecting the delegate initialization
 	 * @throws Throws an error if the delegate module is not available
 	 *
 	 * @private
@@ -566,7 +570,7 @@ sap.ui.define([
 	/**
 	 * Returns the aria attributes the field needs from the value help
 	 *
-	 * @param {int} iMaxConditions maximal conditions allowed (as FieldHelp might not be connected to a field)
+	 * @param {int} iMaxConditions maximal conditions allowed (as <code>ValueHelp</code> might not be connected to a field)
 	 * @returns {object} object with the aria-attibutes
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
@@ -658,6 +662,17 @@ sap.ui.define([
 		}
 
 		return oResult;
+	};
+
+
+	Container.prototype._getRetrieveDelegateContentPromise = function () {
+		var oValueHelp = this.getParent();
+		return 	oValueHelp && oValueHelp._retrievePromise("delegateContent");
+	};
+
+	Container.prototype.getSelectedContent = function () {
+		var oContent = this.getContent();
+		return oContent && oContent[0];
 	};
 
 	Container.prototype.exit = function() {

@@ -20,9 +20,9 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>FixedList</code> content.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element showing a list with fix values.
+	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new element
+	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element showing a list with fix values.
 	 * @extends sap.ui.mdc.valuehelp.base.ListContent
 	 * @version ${version}
 	 * @constructor

@@ -4,18 +4,46 @@
 			<customHeader>
 				<Toolbar>
 					<core:Icon src="sap-icon://dimension" />
-					<Title text="ValueHelps using Tables" />
-					<Label text="Toggle maxConditions 1 / -1" labelFor="switchMaxConditions" />
-					<Switch id="switchMaxConditions" state="{= ${settings>/maxConditions} === -1}" change=".onMaxConditionsSwitchChange" />
-					<Label text="Toggle suspended" labelFor="switchSuspended" />
+					<Title text="MDC.ValueHelp"/>
+					<Label text="maxConditions 1 / -1" labelFor="switchMaxConditions" />
+					<Switch id="switchMaxConditions" state="{= ${settings>/maxConditions} === -1}" change=".onMaxConditionsSwitchChange" blocked="{settings>/maxConditionsBlocked}" />
+					<Label text="suspended" labelFor="switchSuspended" />
 					<Switch id="switchSuspended" state="{settings>/isSuspended}" change=".onSuspendedSwitchChange" />
-					<Label text="Disable XML Content" labelFor="switchXML" />
-					<Switch id="switchXML" state="{settings>/noXML}" change=".onXMLSwitchChange" />
+
+						<ToolbarSpacer />
+					<Label text="SelectionStrategy:"/>
+					<Label text="by Payload Key" labelFor="swList"/>
+					<Switch id="swList" state="{settings>/selectionConsidersList}"/>
+					<Label text="by Payload Content" labelFor="swPayload"/>
+					<Switch id="swPayload" state="{settings>/selectionConsidersPayload}"/>
+						<ToolbarSpacer />
+					<Label text="Creation Strategy" labelFor="conditionCreationStrategies" />
+					<Select id="conditionCreationStrategies" forceSelection="false" selectedKey="{settings>/conditionCreationStrategy}" items="{
+						path: 'settings>/conditionCreationStrategies',
+						sorter: { path: 'key' }
+					}">
+						<core:Item key="{settings>key}" text="{settings>key}" />
+					</Select>
+
+
+
 					<ToolbarSpacer />
+					<Label text="View" labelFor="viewSwitch" />
+					<Select id="viewSwitch" forceSelection="false" selectedKey="{settings>/selectedView/path}" items="{
+						path: 'settings>/views',
+						sorter: { path: 'path' }
+					}" change=".onViewSwitch">
+						<core:Item key="{settings>path}" text="{settings>text}" />
+					</Select>
 					<variants:VariantManagement id="VM" for="P0" />
 				</Toolbar>
 			</customHeader>
 			<content></content>
+			<footer>
+				<Toolbar id="footerTB" height="75vh">
+					<TextArea id="footerTA" width="100%" height="73vh" value="yooooo"/>
+				</Toolbar>
+			</footer>
 		</Page>
 	</App>
 </mvc:View>

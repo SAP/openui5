@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/field/FieldHelpBase",
 	"sap/ui/mdc/field/FieldBaseDelegate",
+	"sap/ui/mdc/ValueHelp",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enum/ConditionValidated",
@@ -22,6 +23,7 @@ sap.ui.define([
 		Condition,
 		FieldHelpBase,
 		FieldBaseDelegate,
+		ValueHelp,
 		FilterOperatorUtil,
 		Operator,
 		ConditionValidated,
@@ -477,7 +479,7 @@ sap.ui.define([
 		}
 	};
 
-	QUnit.module("Key/Description", {
+	QUnit.module("Key/Description using FieldHelpBase", {
 		beforeEach: function() {
 			oFieldHelp = new FieldHelpBase("FH1");
 			var oStub = sinon.stub(oFieldHelp, "getTextForKey");
@@ -512,7 +514,8 @@ sap.ui.define([
 				delegate: FieldBaseDelegate,
 				bindingContext: "BC", // just dummy to test forwarding to fieldHelp
 				conditionModel: "CM", // just dummy to test forwarding to fieldHelp
-				conditionModelName: "Name" // just dummy to test forwarding to fieldHelp
+				conditionModelName: "Name", // just dummy to test forwarding to fieldHelp
+				control: "Control" // just dummy to test forwarding to fieldHelp
 			});
 		},
 		afterEach: function() {
@@ -749,7 +752,7 @@ sap.ui.define([
 		assert.deepEqual(oCondition.inParameters, {in1: "I2"} , "in-parameters returned");
 		assert.deepEqual(oCondition.outParameters, {out1: "I2"} , "out-parameters returned");
 		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-		assert.ok(oFieldHelp.getItemForValue.calledWith({value: "I2", parsedValue: "I2", inParameters: undefined, outParameters: undefined, bindingContext: "BC", checkKeyFirst: true, checkKey: true, checkDescription: true, conditionModel: "CM", conditionModelName: "Name", exception: ParseException}), "getTextForKey called");
+		assert.ok(oFieldHelp.getItemForValue.calledWith({value: "I2", parsedValue: "I2", inParameters: undefined, outParameters: undefined, bindingContext: "BC", checkKeyFirst: true, checkKey: true, checkDescription: true, conditionModel: "CM", conditionModelName: "Name", exception: ParseException, control: "Control"}), "getItemForValue called");
 
 		oCondition = oConditionType.parseValue("Item3");
 		assert.ok(oCondition, "Result returned");
@@ -1505,7 +1508,12 @@ sap.ui.define([
 
 	QUnit.test("Parsing: empty string -> key and description with not found", function(assert) {
 
-		oFieldHelp.getItemForValue.withArgs("").throws(new ParseException("not found"));
+		oFieldHelp.getItemForValue.restore();
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.parsedValue === "" && oConfig.value === "") {
+				throw new ParseException("not found");
+			}
+		});
 
 		var oException;
 		var oCondition;
@@ -1526,7 +1534,12 @@ sap.ui.define([
 		var oType = new StringType({}, {maxLength: 6, isDigitSequence: true, nullable: false}); // use digsequencce to test internal format for check
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
 
-		oFieldHelp.getItemForValue.withArgs("", "000000").throws(new ParseException("not found"));
+		oFieldHelp.getItemForValue.restore();
+		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.parsedValue === "000000" && oConfig.value === "") {
+				throw new ParseException("not found");
+			}
+		});
 
 		var oException;
 		var oCondition;
@@ -2704,6 +2717,127 @@ sap.ui.define([
 			assert.notOk(true, "Promise Catch must not be called");
 			fnDone();
 		});
+
+	});
+
+	// Just test usage of API. Interaction is already tested with FieldHelpBase
+	var oValueHelp;
+	QUnit.module("Key/Description using ValueHelp", {
+		beforeEach: function() {
+			oValueHelp = new ValueHelp("VH1");
+			sinon.spy(oValueHelp, "getTextForKey");
+			sinon.spy(oValueHelp, "getKeyForText");
+			var fnGetItemsForValue = function(oConfig) {
+				if (oConfig.value === "I1" || oConfig.value === "Item1") {
+					return {key: "I1", description: "Item1"};
+				} else if (oConfig.value === "I2" || oConfig.value === "Item2") {
+					return {key: "i2", description: "Item 2", payload: {in1: "I2", out1: "I2"}};
+				} else if (oConfig.value === "I3" || oConfig.value === "Item3") {
+					return {key: "I3", description: "Item3"};
+				} else if (oConfig.value === "YY") {
+					throw new Error("myError");
+				} else if (oConfig.value === "ZZZ") {
+					throw new ParseException("myParseException");
+				}
+				return null;
+			};
+			sinon.stub(oValueHelp, "getItemForValue").callsFake(fnGetItemsForValue);
+			sinon.stub(oValueHelp, "isValidationSupported").returns(true);
+
+			oConditionType = new ConditionType({
+				display: FieldDisplay.Description,
+				fieldHelpID: "VH1",
+				operators: ["EQ"],
+				asyncParsing: fnAsync,
+				delegate: FieldBaseDelegate,
+				bindingContext: "BC", // just dummy to test forwarding to fieldHelp
+				conditionModel: "CM", // just dummy to test forwarding to fieldHelp
+				conditionModelName: "Name", // just dummy to test forwarding to fieldHelp
+				control: "Control" // just dummy to test forwarding to fieldHelp
+			});
+		},
+		afterEach: function() {
+			oValueHelp.destroy();
+			oValueHelp = undefined;
+			oConditionType.destroy();
+			oConditionType = undefined;
+			bAsyncCalled = undefined;
+		}
+	});
+
+	QUnit.test("Formatting: key -> description (from help)", function(assert) {
+
+		var oCondition = Condition.createCondition("EQ", ["I1"], undefined, undefined, ConditionValidated.Validated);
+		var oConfig = { // to compare
+			value: "I1",
+			parsedValue: "I1",
+			checkKey: true,
+			checkDescription: false,
+			context: {inParameters: undefined, outParameters: undefined, payload: undefined},
+			bindingContext: "BC",
+			conditionModel: "CM",
+			conditionModelName: "Name",
+			control: "Control",
+			caseSensitive: true,
+			exception: FormatException
+		};
+		var sResult = oConditionType.formatValue(oCondition);
+		assert.equal(sResult, "Item1", "Result of formatting");
+		assert.notOk(oValueHelp.getTextForKey.called, "getTextForKey not called");
+		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
+		oValueHelp.getItemForValue.resetHistory();
+		sResult = oConditionType.formatValue(oCondition);
+		assert.equal(sResult, "Item1", "Result of formatting");
+		assert.notOk(oValueHelp.getTextForKey.called, "getTextForKey not called");
+		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+	});
+
+	QUnit.test("Parsing: key and description -> key and Description (from help)", function(assert) {
+
+		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
+
+		var oCondition = oConditionType.parseValue("I2 (X)");
+		var oConfig = { // to compare
+			value: "I2",
+			parsedValue: "I2",
+			checkKey: true,
+			checkKeyFirst: true,
+			checkDescription: true,
+			inParameters: undefined, // TODO: needed?
+			outParameters: undefined, // TODO: needed?
+			bindingContext: "BC",
+			conditionModel: "CM",
+			conditionModelName: "Name",
+			control: "Control",
+			exception: ParseException
+		};
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 2, "Values length");
+		assert.equal(oCondition.values[0], "i2", "Values entry0");
+		assert.equal(oCondition.values[1], "Item 2", "Values entry1");
+		assert.deepEqual(oCondition.payload, {in1: "I2", out1: "I2"} , "payload returned");
+		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
+		oValueHelp.getItemForValue.resetHistory();
+		oCondition = oConditionType.parseValue("I2 (X)");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 2, "Values length");
+		assert.equal(oCondition.values[0], "i2", "Values entry0");
+		assert.equal(oCondition.values[1], "Item 2", "Values entry1");
+		assert.deepEqual(oCondition.payload, {in1: "I2", out1: "I2"} , "payload returned");
+		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
 
 	});
 

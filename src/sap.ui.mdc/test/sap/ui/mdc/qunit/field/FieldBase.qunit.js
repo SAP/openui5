@@ -911,6 +911,7 @@ sap.ui.define([
 		assert.equal(oFormatOptions.conditionModel, oCM, "conditionModel");
 		assert.equal(oFormatOptions.conditionModelName, "cm", "conditionModelName");
 		assert.notOk(oFormatOptions.convertWhitespaces, "convertWhitespaces not set");
+		assert.equal(oFormatOptions.control, oField, "control");
 
 		oFormatOptions = oField._getUnitFormatOptions();
 		assert.ok(oFormatOptions, "FormatOptions returned");
@@ -931,6 +932,7 @@ sap.ui.define([
 		assert.equal(oFormatOptions.conditionModel, oCM, "conditionModel");
 		assert.equal(oFormatOptions.conditionModelName, "cm", "conditionModelName");
 		assert.notOk(oFormatOptions.convertWhitespaces, "convertWhitespaces not set");
+		assert.equal(oFormatOptions.control, oField, "control");
 
 	});
 

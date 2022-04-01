@@ -45,9 +45,9 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>MTable</code> content.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Content for the <code>sap.ui.mdc.valuehelp.base.Container</code> element using a sap.m.Table.
+	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new element
+	 * @class Content for the {@link sap.ui.mdc.valuehelp.base.Container Container} element using a {@link sap.m.Table}.
 	 * @extends sap.ui.mdc.valuehelp.base.FilterableListContent
 	 * @version ${version}
 	 * @constructor
@@ -75,7 +75,7 @@ sap.ui.define([
 				 * Table to be used in value help
 				 *
 				 * <b>Note:</b> Set the right selection mode (multiple selection or single selection) as it cannot be determined automatically
-				 * for every case. (In type-ahead also for multi-value <code>FilterField</code> controls only single selection from table might be wanted.)
+				 * for every case. (In type-ahead also for multi-value {@link sap.ui.mdc.FilterField FilterField} controls only single selection from table might be wanted.)
 				 */
 				table: {
 					type: "sap.m.Table",
@@ -128,17 +128,11 @@ sap.ui.define([
 			}
 		}
 	}
-
-//	function _getListItemKey(oListItem) {
-//		var oContext = oListItem.getBindingContext();
-//		var oContextValue = oContext && oContext.getObject();
-//		return oContextValue && oContextValue[this.getKeyPath()];
-//	}
 	MTable.prototype.applyFilters = function(sFieldSearch) {
-		var oListBinding = this._getListBinding();
+		var oListBinding = this.getListBinding();
 		var bValueHelpDelegateInitialized = this._isValueHelpDelegateInitialized();
 
-		if ((!oListBinding || !bValueHelpDelegateInitialized) && (this.isContainerOpening() || this.isTypeahead())) {
+		if ((!oListBinding || !bValueHelpDelegateInitialized)/* && (this.isContainerOpening() || this.isTypeahead())*/) {
 				Promise.all([this._retrievePromise("listBinding"), this._awaitValueHelpDelegate()]).then(function () {
 					if (!this.bIsDestroyed) {
 						this.applyFilters(sFieldSearch);
@@ -156,7 +150,7 @@ sap.ui.define([
 
 		var sFilterFields = this.getFilterFields();
 		var oFilterBar = this._getPriorityFilterBar();
-		var oConditions = oFilterBar ? oFilterBar.getInternalConditions() : this.getProperty("inConditions"); // use InParameter if no FilterBar
+		var oConditions = oFilterBar ? oFilterBar.getInternalConditions() : this._oInitialFilterConditions;
 
 		if (!oFilterBar && sFieldSearch && sFilterFields && sFilterFields !== "$search") {
 			// add condition for Search value
@@ -211,15 +205,17 @@ sap.ui.define([
 	};
 
 	MTable.prototype._handleSelectionChange = function (oEvent) {
+		var sModelName = oEvent.getSource().getBindingInfo("items").model;
 		var bIsTypeahead = this.isTypeahead();
 		if (!bIsTypeahead || !this._isSingleSelect()) {
 			var oParams = oEvent.getParameters();
 			var aListItems = oParams.listItems || oParams.listItem && [oParams.listItem];
 			var aConditions = aListItems.map(function (oItem) {
-				var oValues = this._getItemFromContext(oItem.getBindingContext());
-				return oValues && this._createCondition(oValues.key, oValues.description, oValues.inParameters, oValues.outParameters);
+				var oItemContext = oItem.getBindingContext(sModelName);
+				var oValues = this._getItemFromContext(oItemContext);
+				return oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
 			}.bind(this));
-			this.fireSelect({type: oParams.selected ? SelectType.Add : SelectType.Remove, conditions: aConditions});
+			this._fireSelect({type: oParams.selected ? SelectType.Add : SelectType.Remove, conditions: aConditions});
 			if (bIsTypeahead) {
 				this.fireConfirm();
 			}
@@ -227,8 +223,10 @@ sap.ui.define([
 	};
 
 	MTable.prototype._handleItemPress = function (oEvent) {
+		var sModelName = oEvent.getSource().getBindingInfo("items").model;
 		var oItem = oEvent.getParameter("listItem");
-		var oValues = this._getItemFromContext(oItem.getBindingContext());
+		var oItemContext = oItem.getBindingContext(sModelName);
+		var oValues = this._getItemFromContext(oItemContext);
 		var bIsSingleSelect = this._isSingleSelect();
 		var bSelected = bIsSingleSelect ? true : !oItem.getSelected();
 		var sSelectType = SelectType.Set;
@@ -237,8 +235,8 @@ sap.ui.define([
 			oItem.setSelected(bSelected);
 			sSelectType = bSelected ? SelectType.Add : SelectType.Remove;
 		}
-		var oCondition = this._createCondition(oValues.key, oValues.description, oValues.inParameters, oValues.outParameters);
-		this.fireSelect({type: sSelectType, conditions: [oCondition]});
+		var oCondition = this._createCondition(oValues.key, oValues.description, oValues.payload);
+		this._fireSelect({type: sSelectType, conditions: [oCondition]});
 		if (this.isTypeahead()) {
 			this.fireConfirm({close: true});
 		}
@@ -378,22 +376,92 @@ sap.ui.define([
 		*/
 		oConfig.caseSensitive = oConfig.caseSensitive || this.getCaseSensitive();
 
-		return _checkListBindingPending.call(this).then(function(bPending) {
+		var oPromise1 = _checkListBindingPending.call(this);
+		var oDelegate = this._getValueHelpDelegate();
+		var oDelegatePayload = this._getValueHelpDelegatePayload();
+		var oPromise2 = oDelegate && oDelegate.getInitialFilterConditions(oDelegatePayload, this, oConfig.control);
+
+		return Promise.all([oPromise1, oPromise2]).then(function(aResult) {
+			var bPending = aResult[0];
+			var oInitialConditions = aResult[1];
 			var oResult;
 
 			if (!bPending) {
 				var oTable = this.getTable();
-				oResult = _filterItems.call(this, oConfig, oTable.getItems());
+				oResult = _filterItems.call(this, oConfig, oTable.getItems(), oInitialConditions);
 			}
 
 			if (!oResult) {
-				oResult = this._loadItemForValue(oConfig);
+				oResult = this._loadItemForValue(oConfig, oInitialConditions);
 			}
 
 			return oResult;
 		}.bind(this));
 
 	};
+
+	function _filterItems(oConfig, aItems, oInitialConditions) {
+
+		if (aItems.length === 0) {
+			return;
+		}
+
+		var oBindingInfo = this._getListBindingInfo();
+		var sModelName = oBindingInfo.model;
+
+		var _getFilterValue = function(oItem, sPath) {
+			var oBindingContext = oItem.isA("sap.ui.model.Context") ? oItem : oItem.getBindingContext(sModelName);
+			return oBindingContext.getProperty(sPath);
+		};
+
+		var aInParameters;
+		var aOutParameters;
+
+		var oFilter = _createItemFilters.call(this, oConfig, oInitialConditions);
+
+		var aFilteredItems = FilterProcessor.apply(aItems, oFilter, _getFilterValue);
+		if (aFilteredItems.length === 1) {
+			var oBindingContext = aFilteredItems[0].getBindingContext(sModelName);
+			var oValue = this._getItemFromContext(oBindingContext, {inParameters: aInParameters, outParameters: aOutParameters});
+			return {key: oValue.key, description: oValue.description, payload: oValue.payload};
+		} else if (aFilteredItems.length > 1) {
+			if (!oConfig.caseSensitive) {
+				// try with case sensitive search
+				var oNewConfig = merge({}, oConfig);
+				oNewConfig.caseSensitive = true;
+				return _filterItems.call(this, oNewConfig, aItems, oInitialConditions);
+			}
+			throw _createException.call(this, oConfig.exception, true, oConfig.parsedValue || oConfig.value);
+		}
+
+	}
+
+	function _createItemFilters(oConfig, oInitialConditions) {
+
+		var bCaseSensitive = oConfig.caseSensitive;
+		var sKeyPath = this.getKeyPath();
+		var sDescriptionPath = this.getDescriptionPath();
+		var aFilters = [];
+		if (oConfig.checkKey && oConfig.hasOwnProperty("parsedValue")) { // empty string or false could be key too
+			aFilters.push(new Filter({ path: sKeyPath, operator: FilterOperator.EQ, value1: oConfig.parsedValue, caseSensitive: bCaseSensitive}));
+		}
+		if (oConfig.checkDescription && oConfig.value) {
+			aFilters.push(new Filter({path: sDescriptionPath, operator: FilterOperator.EQ, value1: oConfig.value, caseSensitive: bCaseSensitive}));
+		}
+
+		var oFilter = aFilters.length > 1 ? new Filter({filters: aFilters, and: false}) : aFilters[0];
+
+		if (oInitialConditions) {
+			var oConditionTypes = this._getTypesForConditions(oInitialConditions);
+			var oConditionsFilter = FilterConverter.createFilters(oInitialConditions, oConditionTypes, undefined, this.getCaseSensitive());
+			if (oConditionsFilter) {
+				oFilter = new Filter({filters: [oFilter, oConditionsFilter], and: true});
+			}
+		}
+
+		return 	oFilter;
+
+	}
 
 	function _checkListBindingPending() {
 		return this._retrievePromise("listBinding").then(function (oListBinding) {
@@ -408,82 +476,7 @@ sap.ui.define([
 		}.bind(this));
 	}
 
-	function _filterItems(oConfig, aItems) {
-
-		if (aItems.length === 0) {
-			return;
-		}
-
-		var aFields = [];
-
-		if (oConfig.checkKey && oConfig.hasOwnProperty("parsedValue")) { // empty string or false could be key too
-			aFields.push({path: this.getKeyPath(), value: oConfig.parsedValue});
-		}
-		if (oConfig.checkDescription && oConfig.value) {
-			aFields.push({path: this.getDescriptionPath(), value: oConfig.value});
-		}
-
-		var _getFilterValue = function(oItem, sPath) {
-			var oBindingContext = oItem.isA("sap.ui.model.Context") ? oItem : oItem.getBindingContext();
-			return oBindingContext.getProperty(sPath);
-		};
-
-		var oFilter;
-		var aFilters = [];
-		var aInParameters;
-		var aOutParameters;
-		var i = 0;
-
-		for (i = 0; i < aFields.length; i++) {
-			if (!aFields[i].path) {
-				throw new Error("path for filter missing"); // as we cannot filter key or description without path
-			}
-			aFilters.push(new Filter({path: aFields[i].path, operator: FilterOperator.EQ, value1: aFields[i].value, caseSensitive: oConfig.caseSensitive}));
-		}
-		if (aFilters.length === 1) {
-			oFilter = aFilters[0];
-		} else {
-			oFilter = new Filter({filters: aFilters, and: false}); // key OR description
-		}
-
-		if (oConfig.inParameters/* || oConfig.outParameters*/) {
-			aFilters = [oFilter];
-			if (oConfig.inParameters) {
-				aFilters.push(oConfig.inParameters);
-				aInParameters = []; // TODO: maybe provide paths from outside? No need to analyze Filters backwards
-				if (!oConfig.inParameters.aFilters) {
-					aInParameters.push(oConfig.inParameters.sPath);
-				} else {
-					for (i = 0; i < oConfig.inParameters.aFilters.length; i++) {
-						if (aInParameters.indexOf(oConfig.inParameters.aFilters[i].sPath) < 0) {
-							aInParameters.push(oConfig.inParameters.aFilters[i].sPath);
-						}
-					}
-				}
-			}
-//			if (oConfig.outParameters) {
-//				aFilters.push(oConfig.outParameters);
-//			}
-			oFilter = new Filter({filters: aFilters, and: true});
-		}
-
-		var aFilteredItems = FilterProcessor.apply(aItems, oFilter, _getFilterValue);
-		if (aFilteredItems.length === 1) {
-			var oValue = this._getItemFromContext(aFilteredItems[0].getBindingContext(), {inParameters: aInParameters, outParameters: aOutParameters});
-			return {key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters};
-		} else if (aFilteredItems.length > 1) {
-			if (!oConfig.caseSensitive) {
-				// try with case sensitive search
-				var oNewConfig = merge({}, oConfig);
-				oNewConfig.caseSensitive = true;
-				return _filterItems.call(this, oNewConfig, aItems);
-			}
-			throw _createException.call(this, oConfig.exception, true, aFields[0].value);
-		}
-
-	}
-
-	MTable.prototype._getListBinding = function () {
+	MTable.prototype.getListBinding = function () {
 		var oTable = this._getTable();
 		return oTable && oTable.getBinding("items");
 	};
@@ -493,7 +486,7 @@ sap.ui.define([
 		return oTable && oTable.getBindingInfo("items");
 	};
 
-	MTable.prototype._loadItemForValue = function (oConfig) {
+	MTable.prototype._loadItemForValue = function (oConfig, oInitialConditions) {
 
 		if (!oConfig.checkKey && oConfig.parsedValue && !oConfig.checkDescription) {
 			return null;
@@ -506,7 +499,6 @@ sap.ui.define([
 		var sKeyPath = this.getKeyPath();
 		var sDescriptionPath = this.getDescriptionPath();
 		var bUseFirstMatch = this.getUseFirstMatch();
-		var bCaseSensitive = oConfig.caseSensitive;
 
 		var oTable = this._getTable();
 		var oListBinding = oTable && oTable.getBinding("items"); //this.getListBinding();
@@ -520,66 +512,7 @@ sap.ui.define([
 		var sPromiseKey = ["loadItemForValue", sPath, sKeyPath, oConfig.parsedValue || oConfig.value].join("_");
 
 		return this._retrievePromise(sPromiseKey, function () {
-
-			var aFilters = [];
-
-			if (oConfig.checkKey && oConfig.hasOwnProperty("parsedValue")) { // empty string or false could be key too
-				aFilters.push(new Filter({ path: sKeyPath, operator: FilterOperator.EQ, value1: oConfig.parsedValue, caseSensitive: bCaseSensitive}));
-			}
-			if (oConfig.checkDescription && oConfig.value) {
-				aFilters.push(new Filter({path: sDescriptionPath, operator: FilterOperator.EQ, value1: oConfig.value, caseSensitive: bCaseSensitive}));
-			}
-
-			var oFilter = aFilters.length > 1 ? new Filter({filters: aFilters, and: false}) : aFilters[0];
-			aFilters = [oFilter];
-
-			var aInParameters;
-			if (oConfig.inParameters) {
-				// use in-parameters as additional filters
-				aFilters.push(oConfig.inParameters);
-				aInParameters = []; // TODO: maybe provide paths from outside? No need to analyze Filters backwards
-				if (!oConfig.inParameters.aFilters) {
-					aInParameters.push(oConfig.inParameters.sPath);
-				} else {
-					for (var i = 0; i < oConfig.inParameters.aFilters.length; i++) {
-						var oInFilter = oConfig.inParameters.aFilters[i];
-						if (oInFilter.aFilters) {
-							for (var j = 0; j < oInFilter.aFilters.length; j++) {
-								if (oInFilter.aFilters[j].sPath && aInParameters.indexOf(oInFilter.aFilters[j].sPath) < 0) {
-									aInParameters.push(oInFilter.aFilters[j].sPath);
-								}
-							}
-						} else if (oInFilter.sPath && aInParameters.indexOf(oInFilter.sPath) < 0) {
-							aInParameters.push(oInFilter.sPath);
-						}
-					}
-				}
-			}
-//			if (oConfig.oOutParameters) {
-//				// use out-parameters as additional filters (only if not already set by InParameter
-//				if (oConfig.oInParameters) {
-//					var aOutFilters = oConfig.oOutParameters.aFilters ? oConfig.oOutParameters.aFilters : [oConfig.oOutParameters];
-//					var aInFilters = oConfig.oInParameters.aFilters ? oConfig.oInParameters.aFilters : [oConfig.oInParameters];
-//					for (var i = 0; i < aOutFilters.length; i++) {
-//						var oOutFilter = aOutFilters[i];
-//						var bFound = false;
-//						for (var j = 0; j < aInFilters.length; j++) {
-//							var oInFilter = aInFilters[j];
-//							if (oInFilter.sPath === oOutFilter.sPath && oInFilter.oValue1 === oOutFilter.oValue1 && oInFilter.oValue2 === oOutFilter.oValue2) {
-//								bFound = true;
-//								break;
-//							}
-//						}
-//						if (!bFound) {
-//							aFilters.push(oOutFilter);
-//						}
-//					}
-//				} else {
-//					aFilters.push(oConfig.oOutParameters);
-//				}
-//			}
-
-			oFilter = aFilters.length > 1 ? new Filter({filters: aFilters, and: true}) : aFilters[0];
+			var oFilter = _createItemFilters.call(this, oConfig, oInitialConditions);
 			var oFilterListBinding = oModel.bindList(sPath, oBindingContext);
 
 			return oDelegate.executeFilter(oDelegatePayload, oFilterListBinding, oFilter, 2).then(function (oBinding) {
@@ -590,7 +523,7 @@ sap.ui.define([
 				}, 0);
 
 				if (aContexts.length && (aContexts.length < 2 || bUseFirstMatch)) {
-					return this._getItemFromContext(aContexts[0], {keyPath: sKeyPath, descriptionPath: sDescriptionPath, inParameters: aInParameters});
+					return this._getItemFromContext(aContexts[0], {keyPath: sKeyPath, descriptionPath: sDescriptionPath, inParameters: undefined});
 				} else if (oConfig.checkKey && oConfig.parsedValue === "" && aContexts.length === 0) {
 					// nothing found for empty key -> this is not an error
 					return null;
@@ -622,7 +555,7 @@ sap.ui.define([
 
 	MTable.prototype.navigate = function (iStep) {
 
-		var oListBinding = this._getListBinding();
+		var oListBinding = this.getListBinding();
 
 		if (!oListBinding || !oListBinding.getLength()) {
 			return _checkListBindingPending.call(this).then(function (bPending) {
@@ -697,8 +630,11 @@ sap.ui.define([
 			if (oItem !== oSelectedItem) {
 				oItem.setSelected(true);
 
-				var oValues = this._getItemFromContext(oItem.getBindingContext());
-				oCondition = oValues && this._createCondition(oValues.key, oValues.description, oValues.inParameters, oValues.outParameters);
+				var oBindingInfo = this._getListBindingInfo();
+				var sModelName = oBindingInfo.model;
+				var oItemContext = oItem.getBindingContext(sModelName);
+				var oValues = this._getItemFromContext(oItemContext);
+				oCondition = oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
 				this.setProperty("conditions", [oCondition], true);
 
 				if (this._bVisible) {
@@ -805,40 +741,11 @@ sap.ui.define([
 		_adjustTable.call(this);
 	};
 
-	var _handleSearch = function () {
+	MTable.prototype._handleSearch = function (oEvent) {
 		return this.applyFilters(this.getFilterValue());
 	};
 
 	MTable.prototype._observeChanges = function (oChanges) {
-
-		var oFilterBar, oDefaultFilterBar;
-		if (oChanges.name === "_defaultFilterBar") {
-			oDefaultFilterBar = oChanges.child;
-			if (oChanges.mutation === "insert") {
-				oFilterBar = this.getFilterBar();
-				if (!oFilterBar) {
-					oDefaultFilterBar.attachSearch(_handleSearch, this);
-				}
-			} else {
-				oDefaultFilterBar.detachSearch(_handleSearch, this);
-			}
-		}
-
-		if (oChanges.name === "filterBar") {
-			oFilterBar = oChanges.child;
-			oDefaultFilterBar = this.getAggregation("_defaultFilterBar");
-			if (oChanges.mutation === "insert") {
-				if (oDefaultFilterBar) {
-					oDefaultFilterBar.detachSearch(_handleSearch, this);
-				}
-				oFilterBar.attachSearch(_handleSearch, this);
-			} else {
-				if (oDefaultFilterBar) {
-					oDefaultFilterBar.attachSearch(_handleSearch, this);
-				}
-				oFilterBar.detachSearch(_handleSearch, this);
-			}
-		}
 
 		if (oChanges.name === "config") {
 			_adjustTable.call(this);
