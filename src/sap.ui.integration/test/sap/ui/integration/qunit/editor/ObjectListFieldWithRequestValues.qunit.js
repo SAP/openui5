@@ -180,6 +180,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -348,6 +349,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -576,6 +578,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -811,6 +814,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -990,6 +994,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
@@ -1221,6 +1226,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[2];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Table: selectAll checkbox is not checked");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");

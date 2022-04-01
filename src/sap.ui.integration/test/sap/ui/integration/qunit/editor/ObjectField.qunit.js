@@ -1953,6 +1953,7 @@ sap.ui.define([
 					var oDeleteButton = oActionHBox.getItems()[1];
 					assert.ok(oDeleteButton.getVisible(), "Table: Delete button visible");
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -2211,6 +2212,7 @@ sap.ui.define([
 					var oDeleteButton = oActionHBox.getItems()[1];
 					assert.ok(!oDeleteButton.getVisible(), "Table: Delete button not visible");
 					oViewButton.onAfterRendering = function(oEvent) {
+						oViewButton.onAfterRendering = function () {};
 						oViewButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -2491,6 +2493,7 @@ sap.ui.define([
 					var oAddButton1 = oToolbar1.getContent()[1];
 					assert.ok(!oAddButton1.getVisible(), "Table toolbar 1: add button not visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -2634,6 +2637,7 @@ sap.ui.define([
 					var oAddButton1 = oToolbar1.getContent()[1];
 					assert.ok(!oAddButton1.getVisible(), "Table toolbar 1: add button not visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -2757,6 +2761,7 @@ sap.ui.define([
 					var oAddButton1 = oToolbar1.getContent()[1];
 					assert.ok(!oAddButton1.getVisible(), "Table toolbar 1: add button not visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -2947,6 +2952,7 @@ sap.ui.define([
 					var oAddButton1 = oToolbar1.getContent()[1];
 					assert.ok(!oAddButton1.getVisible(), "Table toolbar 1: add button not visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -3122,6 +3128,7 @@ sap.ui.define([
 					var oAddButton1 = oToolbar1.getContent()[1];
 					assert.ok(!oAddButton1.getVisible(), "Table toolbar 1: add button not visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -3315,6 +3322,7 @@ sap.ui.define([
 					var oAddButton1 = oToolbar1.getContent()[1];
 					assert.ok(!oAddButton1.getVisible(), "Table toolbar 1: add button not visible");
 					oAddButton.onAfterRendering = function(oEvent) {
+						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
 						wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
@@ -3572,6 +3580,7 @@ sap.ui.define([
 					var oDeleteButton = oActionHBox.getItems()[1];
 					assert.ok(oDeleteButton.getVisible(), "Table: Delete button visible");
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -3749,6 +3758,7 @@ sap.ui.define([
 					var oDeleteButton = oActionHBox.getItems()[1];
 					assert.ok(oDeleteButton.getVisible(), "Table: Delete button visible");
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -3925,6 +3935,7 @@ sap.ui.define([
 					var oDeleteButton = oActionHBox.getItems()[1];
 					assert.ok(oDeleteButton.getVisible(), "Table: Delete button visible");
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
@@ -4105,6 +4116,7 @@ sap.ui.define([
 					var oDeleteButton = oActionHBox.getItems()[1];
 					assert.ok(oDeleteButton.getVisible(), "Table: Delete button visible");
 					oEditButton.onAfterRendering = function(oEvent) {
+						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
 						wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
