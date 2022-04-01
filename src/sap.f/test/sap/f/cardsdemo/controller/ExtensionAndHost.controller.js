@@ -35,6 +35,15 @@ sap.ui.define([
 			});
 
 			this.byId("card1").setHost(oHost);
+			this.byId("card3").setHost(oHost);
+			this.byId("card4").setHost(oHost);
+
+			// Simulate library location for the shared extension
+			sap.ui.loader.config({
+				paths: {
+					"sap/f/cardsdemo/testLib": sap.ui.require.toUrl("sap/f/cardsdemo/testLib")
+				}
+			});
 		},
 		onCardAction: function (oEvent) {
 			Log.error("Action handled in the Card:" + JSON.stringify(oEvent.getParameters().parameters));

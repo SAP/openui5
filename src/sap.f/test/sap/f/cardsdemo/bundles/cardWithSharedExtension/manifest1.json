@@ -1,0 +1,53 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "cardWithSharedExtension1"
+	},
+	"sap.ui5": {
+		"dependencies": {
+		  "libs": {
+			"sap/f/cardsdemo/testLib": {}
+		  }
+		}
+	},
+	"sap.card": {
+		"extension": "module:sap/f/cardsdemo/testLib/SharedExtension",
+		"configuration": {
+			"parameters": {
+				"city": {
+					"value": "Berlin"
+				}
+			},
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind"
+				}
+			}
+		},
+		"data": {
+			"extension": {
+				"method": "getData",
+				"args": ["{parameters>/city/value}", "arg2", "arg3", "arg4"]
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "List Card Shared Extension 1",
+			"subTitle": "City {parameters>/city/value}"
+		},
+		"content": {
+			"item": {
+				"title": "{= extension.formatters.toUpperCase(${city})}",
+				"description": "{= extension.formatters.distance(${parameters>/city/value}, ${description})}",
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"city": "{city}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

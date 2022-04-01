@@ -115,6 +115,8 @@ sap.ui.define([
 
 	var FlexAlignItems = mLibrary.FlexAlignItems;
 
+	var MODULE_PREFIX = "module:";
+
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -728,13 +730,18 @@ sap.ui.define([
 	 * @returns {Promise|null} Null if there is no need to load extension, else a promise.
 	 */
 	Card.prototype._loadExtension = function () {
-		var sExtensionPath = this._oCardManifest.get("/sap.card/extension");
+		var sExtensionPath = this._oCardManifest.get("/sap.card/extension"),
+			sFullExtensionPath;
 
 		if (!sExtensionPath) {
 			return null;
 		}
 
-		var sFullExtensionPath = this._oCardManifest.get("/sap.app/id").replace(/\./g, "/") + "/" + sExtensionPath;
+		if (sExtensionPath.startsWith(MODULE_PREFIX)) {
+			sFullExtensionPath = sExtensionPath.replace(MODULE_PREFIX, "");
+		} else {
+			sFullExtensionPath = this._oCardManifest.get("/sap.app/id").replace(/\./g, "/") + "/" + sExtensionPath;
+		}
 
 		return new Promise(function (resolve, reject) {
 			sap.ui.require([sFullExtensionPath], function (ExtensionSubclass) {
