@@ -531,7 +531,7 @@ sap.ui.define([
 
 	/**
 	 * Static method for generating command
-	 * @param {sap.ui.Element|string} vElement - Could be either an element or a slector for the element for which the command is to be created
+	 * @param {sap.ui.core.Element|string} vElement - Could be either an element or a slector for the element for which the command is to be created
 	 * @param {string} sCommand - Command type
 	 * @param {object} mSettings -  Initial settings for the new command (command specific settings, looks diffrent for each and every command)
 	 * @param {sap.ui.dt.DesignTimeMetadata} oDesignTimeMetadata - Contains the action used in the command

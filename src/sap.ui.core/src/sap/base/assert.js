@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["./Log"], function(Log) {
+sap.ui.define([], function() {
 	"use strict";
 
 	// TODO-evo:assert on node throws an error if the assertion is violated

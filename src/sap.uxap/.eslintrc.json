@@ -1,0 +1,18 @@
+{
+	"overrides": [
+		/*
+		 * Productive code, sample and unit test code of sap.uxap has been cleaned up.
+		 * No more references to the global jQuery allowed
+		 */
+		{
+			"files": [
+				"src/**/*.js",
+				"test/sap/uxap/demokit/**/*.js",
+				"test/sap/uxap/qunit/**/*.js"
+			],
+			"globals": {
+				"jQuery": "off"
+			}
+		}
+	]
+}

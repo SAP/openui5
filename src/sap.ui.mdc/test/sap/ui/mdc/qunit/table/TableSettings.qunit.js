@@ -4,10 +4,13 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/mdc/library",
 	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/mdc/table/RowActionItem"
-], function(Core, XMLView, JSONModel, RowSettings, RowActionItem) {
+], function(Core, XMLView, JSONModel, mdcLibrary, RowSettings, RowActionItem) {
 	'use strict';
+
+	var RowAction = mdcLibrary.RowAction;
 
 	function formatNavigated(sDescription) {
 		return sDescription === "item 1";
@@ -193,7 +196,7 @@ sap.ui.define([
 				assert.equal(that.oTable.getRowSettings().getRowActions().length, 1, "The row settings contain 1 row action");
 				var oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
 				assert.equal(oRowActionItems.length, 1, "The table has row action template with one row action item");
-				assert.equal(oRowActionItems[0].getType(), sap.ui.mdc.RowAction.Navigation, "Row action item is of type navigation");
+				assert.equal(oRowActionItems[0].getType(), RowAction.Navigation, "Row action item is of type navigation");
 				oRowActionItems[0].firePress({item: oRowActionItems[0], row: oTest});
 				assert.equal(iCalled, 1, "Event was fired once");
 				iCalled = 0;
@@ -221,9 +224,9 @@ sap.ui.define([
 				assert.equal(that.oTable.getRowSettings().getRowActions().length, 2, "The row settings contain 2 row action");
 				oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
 				assert.equal(oRowActionItems.length, 2, "The table has row action template with two row action items");
-				assert.equal(oRowActionItems[0].getType(), sap.ui.mdc.RowAction.Navigation, "Row action item is of type navigation");
+				assert.equal(oRowActionItems[0].getType(), RowAction.Navigation, "Row action item is of type navigation");
 				assert.equal(oRowActionItems[0].getText(), "Test1", "Row action item has text 'Test1'");
-				assert.equal(oRowActionItems[1].getType(), sap.ui.mdc.RowAction.Navigation, "Row action item is of type navigation");
+				assert.equal(oRowActionItems[1].getType(), RowAction.Navigation, "Row action item is of type navigation");
 				assert.equal(oRowActionItems[1].getText(), "Test2", "Row action item has text 'Test2'");
 				oRowActionItems[0].firePress({item: oRowActionItems[0], row: oTest});
 				oRowActionItems[1].firePress({item: oRowActionItems[1], row: oTest});
@@ -251,7 +254,7 @@ sap.ui.define([
 
 				oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
 				that.oTable._oTable.getRowActionTemplate().setModel(oModel);
-				assert.equal(oRowActionItems[0].getType(), sap.ui.mdc.RowAction.Navigation, "Row action item is of type navigation");
+				assert.equal(oRowActionItems[0].getType(), RowAction.Navigation, "Row action item is of type navigation");
 				assert.equal(oRowActionItems[0].getText(), "item test", "Row action item has text 'item test'");
 				oRowActionItems[0].firePress({item: oRowActionItems[0], row: oTest});
 				assert.equal(iCalled, 1, "Event was fired once");
@@ -280,9 +283,9 @@ sap.ui.define([
 				that.oTable._oTable.attachEventOnce("rowsUpdated", function() {
 					oRowActionItems = that.oTable._oTable.getRows()[0].getAggregation("_rowAction").getItems();
 					assert.equal(oRowActionItems.length, 2, "The table has row action template with one row action item");
-					assert.equal(oRowActionItems[0].getType(), sap.ui.mdc.RowAction.Navigation, "Row action item is of type navigation");
+					assert.equal(oRowActionItems[0].getType(), RowAction.Navigation, "Row action item is of type navigation");
 					assert.equal(oRowActionItems[0].getText(), "item 1", "Row action item has text 'item 1'");
-					assert.equal(oRowActionItems[1].getType(), sap.ui.mdc.RowAction.Navigation, "Row action item is of type navigation");
+					assert.equal(oRowActionItems[1].getType(), RowAction.Navigation, "Row action item is of type navigation");
 					assert.equal(oRowActionItems[1].getText(), "item 2", "Row action item has text 'item 2'");
 
 					oRowActionItems[0].firePress({item: oRowActionItems[0], row: oTest});

@@ -1,9 +1,10 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/p13n/panels/ChartItemPanel", "sap/ui/model/json/JSONModel", "sap/m/VBox", "sap/ui/thirdparty/sinon", "sap/ui/test/actions/Press", "sap/ui/core/Core"
-], function (ChartItemPanel, JSONModel, VBox, sinon, Press, oCore) {
+	"sap/ui/mdc/p13n/panels/ChartItemPanel", "sap/ui/model/json/JSONModel", "sap/m/VBox", "sap/ui/thirdparty/sinon", "sap/ui/test/actions/Press", "sap/ui/core/Core", "sap/ui/core/library"
+], function (ChartItemPanel, JSONModel, VBox, sinon, Press, oCore, coreLibrary) {
 	"use strict";
 
+	var ValueState = coreLibrary.ValueState;
 	var MDCRb = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var oChartConfig = {
@@ -582,11 +583,11 @@ sap.ui.define([
 
 		oComboBox.setValue("1234");
 		this.oChartItemPanel.onChangeOfTemplateName(mockEvent);
-		assert.equal(oComboBox.getValueState(), sap.ui.core.ValueState.Error, "Template ComboBox has error state");
+		assert.equal(oComboBox.getValueState(), ValueState.Error, "Template ComboBox has error state");
 
 		oComboBox.setValue("");
 		this.oChartItemPanel.onChangeOfTemplateName(mockEvent);
-		assert.equal(oComboBox.getValueState(), sap.ui.core.ValueState.None, "Error state is reset");
+		assert.equal(oComboBox.getValueState(), ValueState.None, "Error state is reset");
 
 
 	}.bind(this));

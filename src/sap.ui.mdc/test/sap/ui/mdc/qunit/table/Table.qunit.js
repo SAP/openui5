@@ -38,7 +38,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/mdc/table/RowActionItem",
-	"sap/ui/mdc/table/RowSettings"
+	"sap/ui/mdc/table/RowSettings",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	MDCQUnitUtils,
 	QUtils,
@@ -76,7 +77,8 @@ sap.ui.define([
 	ODataModel,
 	ThemeParameters,
 	RowActionItem,
-	RowSettings
+	RowSettings,
+	jQuery
 ) {
 	"use strict";
 

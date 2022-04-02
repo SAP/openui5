@@ -341,7 +341,7 @@ sap.ui.define([
 	// it is set in the init function and is used inside _updateAlphaBackground() function
 	var sBrowserPrefix = "",
 		// get the background image of the slider
-		sBgSrc = sap.ui.resource('sap.ui.unified', 'img/ColorPicker/Alphaslider_BG.png'),
+		sBgSrc = sap.ui.require.toUrl("sap/ui/unified/img/ColorPicker/Alphaslider_BG.png"),
 		// get resource bundle
 		oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 		// Constants object

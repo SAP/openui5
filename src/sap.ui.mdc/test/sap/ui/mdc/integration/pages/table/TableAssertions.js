@@ -70,7 +70,7 @@ sap.ui.define(
 				theTableOnlyPageHasAViewSettingsDialogOpen: function (sTitle) {
 					return this.waitFor({
 						controlType: "sap.m.Label",
-						matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: sTitle
 						}),

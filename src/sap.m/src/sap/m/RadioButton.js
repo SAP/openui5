@@ -461,7 +461,7 @@ function(
 	 * Determines next focusable item
 	 *
 	 * @param {enum} sNavigation any item from KH_NAVIGATION
-	 * @returns {RadioButton} Control instance for method chaining
+	 * @returns {sap.m.RadioButton} Next focusable radio button
 	 * @private
 	 */
 	RadioButton.prototype._getNextFocusItem = function(sNavigation) {

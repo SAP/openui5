@@ -36,9 +36,9 @@
 			"sap.ui.mdc.TableType",
 			"sap.ui.mdc.TableP13Mode",
 			"sap.ui.mdc.GrowingMode",
+			"sap.ui.mdc.RowAction",
 			"sap.ui.mdc.RowCountMode",
 			"sap.ui.mdc.SelectionMode",
-			"sap.ui.mdc.TableRowAction",
 			"sap.ui.mdc.FilterExpression",
 			"sap.ui.mdc.MultiSelectMode"
 			],

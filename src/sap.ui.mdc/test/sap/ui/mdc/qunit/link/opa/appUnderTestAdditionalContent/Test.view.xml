@@ -1,4 +1,4 @@
-<core:View height="100%" controllerName="appUnderTestAdditionalContent.Test" xmlns:m="sap.m" xmlns:mdcField="sap.ui.mdc.field" xmlns:mdc="sap.ui.mdc" xmlns:l="sap.ui.layout" xmlns:mdcLink="sap.ui.mdc.link" xmlns:core="sap.ui.core">
+<mvc:View height="100%" controllerName="appUnderTestAdditionalContent.Test" xmlns:m="sap.m" xmlns:mdcField="sap.ui.mdc.field" xmlns:mdc="sap.ui.mdc" xmlns:l="sap.ui.layout" xmlns:mdcLink="sap.ui.mdc.link" xmlns:mvc="sap.ui.core.mvc">
 	<m:App id="MyApp" defaultTransitionName="show">
 		<m:ScrollContainer height="100%" width="100%" horizontal="true" vertical="true" focusable="true">
 			<l:VerticalLayout class="sapUiContentPadding" width="100%">
@@ -26,4 +26,4 @@
 			</l:VerticalLayout>
 		</m:ScrollContainer>
 	</m:App>
-</core:View>
+</mvc:View>

@@ -1,19 +1,20 @@
 /*global QUnit sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	'sap/base/Log',
 	'sap/tnt/InfoLabel',
 	'sap/tnt/library',
 	"sap/ui/core/Core",
 	"sap/ui/core/IconPool",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	log,
 	InfoLabel,
 	tntLibrary,
 	Core,
 	IconPool,
-	coreLibrary) {
+	coreLibrary,
+	jQuery) {
 	'use strict';
 
 	// shortcut for sap.tnt.RenderMode

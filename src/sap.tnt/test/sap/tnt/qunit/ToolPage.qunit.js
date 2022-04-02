@@ -1,5 +1,4 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/Device',
@@ -63,7 +62,7 @@ sap.ui.define([
 					icon: 'sap-icon://menu2',
 					type: ButtonType.Transparent,
 					press: function () {
-						toolPage.setSideExpanded(!toolPage.getSideExpanded());
+						oPage.setSideExpanded(!oPage.getSideExpanded());
 					},
 					layoutData: new OverflowToolbarLayoutData({
 						priority: OverflowToolbarPriority.NeverOverflow
@@ -444,7 +443,7 @@ sap.ui.define([
 		var sideNavigation = new SideNavigation({
 			expanded: false,
 			itemSelect: function (event) {
-				navContainer.to(event.getParameter('item').getKey());
+				// navContainer.to(event.getParameter('item').getKey());
 			},
 			item: new NavigationList({
 				items: {

@@ -15,7 +15,7 @@ sap.ui.define([
 
 	/**
 	 * This class is used to maintain all the accessibility roles, tooltips, etc., needed for the ShellBar control life cycle.
-	 * @alias sap/f/shellBar/Accessibility
+	 * @alias module:sap/f/shellBar/Accessibility
 	 * @since 1.64
 	 * @private
 	 */

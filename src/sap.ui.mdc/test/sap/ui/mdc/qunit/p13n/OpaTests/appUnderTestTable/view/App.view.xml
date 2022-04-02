@@ -1,4 +1,4 @@
-<core:View xmlns:core="sap.ui.core.mvc"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
 		   xmlns:mdc="sap.ui.mdc"
 		   xmlns="sap.ui.mdc.table"
 		   xmlns:fl="sap.ui.fl.variants"
@@ -8,4 +8,4 @@
 	<m:App id="FlexTestApp">
 		<m:Page id="FlexTestPage"/>
 	</m:App>
-</core:View>
+</mvc:View>

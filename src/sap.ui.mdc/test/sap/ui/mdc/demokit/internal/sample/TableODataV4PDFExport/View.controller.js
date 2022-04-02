@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/m/Text",
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI"
 ], function(
 	Controller,
@@ -17,6 +18,7 @@ sap.ui.define([
 	HBox,
 	Text,
 	VariantManagement,
+	jQuery,
 	URI
 ) {
 	"use strict";

@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/unified/ColorPicker",
 	"sap/ui/unified/ColorPickerDisplayMode",
+	"sap/ui/unified/library",
 	"sap/m/InputBase",
 	"sap/m/Label",
 	"sap/m/RadioButtonGroup",
@@ -17,6 +18,7 @@ sap.ui.define([
 ], function(
 	ColorPicker,
 	ColorPickerDisplayMode,
+	library,
 	InputBase,
 	Label,
 	RadioButtonGroup,
@@ -31,6 +33,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
+		var ColorPickerMode = library.ColorPickerMode;
 		var CONSTANTS = new ColorPicker()._getConstants(), // Get control constants
 			applyChanges = oCore.applyChanges;
 
@@ -43,22 +46,22 @@ sap.ui.define([
 				oSlider;
 
 			// Assert - Properties
-			oAssert.strictEqual(sap.ui.unified.ColorPickerHelper.isResponsive(), true, "Helper should be in responsive mode");
-			oAssert.ok(sap.ui.unified.ColorPickerHelper.bFinal, "All further overwriting of this object is prohibited");
+			oAssert.strictEqual(library.ColorPickerHelper.isResponsive(), true, "Helper should be in responsive mode");
+			oAssert.ok(library.ColorPickerHelper.bFinal, "All further overwriting of this object is prohibited");
 
 			// Assert - Factory
-			oAssert.ok(sap.ui.unified.ColorPickerHelper.factory.createLabel() instanceof Label,
+			oAssert.ok(library.ColorPickerHelper.factory.createLabel() instanceof Label,
 				"Factory label control should be instance of sap.m.Label");
 
-			oInput = sap.ui.unified.ColorPickerHelper.factory.createInput("MYCUSTOMINPUTID");
+			oInput = library.ColorPickerHelper.factory.createInput("MYCUSTOMINPUTID");
 			oAssert.ok(oInput instanceof InputBase,
 				"Factory input control should be instance of sap.m.InputBase");
 			oAssert.strictEqual(oInput.getId(), "MYCUSTOMINPUTID",
 				"Factory input control should have 'MYCUSTOMINPUTID' assigned as ID");
 
 			// RadioButton group and RadioButtonItem
-			oRBGroup = sap.ui.unified.ColorPickerHelper.factory.createRadioButtonGroup({
-				buttons: sap.ui.unified.ColorPickerHelper.factory.createRadioButtonItem()
+			oRBGroup = library.ColorPickerHelper.factory.createRadioButtonGroup({
+				buttons: library.ColorPickerHelper.factory.createRadioButtonItem()
 			});
 			oAssert.ok(oRBGroup instanceof RadioButtonGroup,
 				"Factory RadioButtonGroup control should be instance of sap.m.RadioButtonGroup");
@@ -68,7 +71,7 @@ sap.ui.define([
 				"sap.m.RadioButton");
 
 			// Slider
-			oSlider = sap.ui.unified.ColorPickerHelper.factory.createSlider("MYCUSTOMSLIDERID", {step: 0.1});
+			oSlider = library.ColorPickerHelper.factory.createSlider("MYCUSTOMSLIDERID", {step: 0.1});
 			oAssert.ok(oSlider instanceof Slider, "Factory Slider control should be instance of sap.m.Slider");
 			oAssert.strictEqual(oSlider.getId(), "MYCUSTOMSLIDERID",
 				"Factory Slider control should have 'MYCUSTOMSLIDERID' assigned as ID");
@@ -86,14 +89,14 @@ sap.ui.define([
 
 		QUnit.test("mode property", function (oAssert) {
 			// Assert
-			oAssert.strictEqual(this.oCP.getMode(), sap.ui.unified.ColorPickerMode.HSV,
+			oAssert.strictEqual(this.oCP.getMode(), ColorPickerMode.HSV,
 				"By default the control should be in HSV mode");
 
 			// Act - change mode to HSL
-			this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+			this.oCP.setMode(ColorPickerMode.HSL);
 
 			// Assert
-			oAssert.strictEqual(this.oCP.getMode(), sap.ui.unified.ColorPickerMode.HSL,
+			oAssert.strictEqual(this.oCP.getMode(), ColorPickerMode.HSL,
 				"Control mode property should be set to HSL");
 		});
 
@@ -131,7 +134,7 @@ sap.ui.define([
 			oAssert.strictEqual(this.oCP._bHSLMode, false, "Internal _bHSLMode property should be set to false");
 
 			// Act - change mode to HSL
-			this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+			this.oCP.setMode(ColorPickerMode.HSL);
 
 			// Assert
 			oAssert.strictEqual(this.oCP._bHSLMode, true, "Internal _bHSLMode property should be set to true");
@@ -157,7 +160,7 @@ sap.ui.define([
 				"By default method should be a reference to _processHSVChanges");
 
 			// Act - change control mode
-			this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+			this.oCP.setMode(ColorPickerMode.HSL);
 
 			// Assert
 			oAssert.strictEqual(this.oCP._processChanges, this.oCP._processHSLChanges,
@@ -170,7 +173,7 @@ sap.ui.define([
 				oPRGBCSpy = sinon.spy(this.oCP, "_processRGBChanges");
 
 			this.oCP.setColorString("427cac");
-			this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+			this.oCP.setMode(ColorPickerMode.HSL);
 			this.oCP.Color.formatHSL = false; // Mock RGB output mode
 			this.oCP.placeAt("qunit-fixture");
 			applyChanges();
@@ -209,7 +212,7 @@ sap.ui.define([
 		QUnit.test("Alpha fields and alpha slider are in sync", function (oAssert) {
 			// Arrange
 			this.oCP.setColorString("427cac");
-			this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+			this.oCP.setMode(ColorPickerMode.HSL);
 			this.oCP.placeAt("qunit-fixture");
 			applyChanges();
 
@@ -421,7 +424,7 @@ sap.ui.define([
 				'The grid should not have class "' + CONSTANTS.HSLClass + '"');
 
 			// Act - switch to HSL mode
-			this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+			this.oCP.setMode(ColorPickerMode.HSL);
 			this.oCP._updateControlVisualState();
 
 			// Assert

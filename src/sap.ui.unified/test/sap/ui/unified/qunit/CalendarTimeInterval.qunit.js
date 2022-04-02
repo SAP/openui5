@@ -1087,7 +1087,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "CalP--Head-B1");
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
 
-		sap.ui.test.qunit.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
 		assert.strictEqual(oSpyCancel.callCount, 1, "CalendarTimeInterval 'fireCancel' was called once");
 
@@ -1143,7 +1143,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 9999, "max year is set to 9999");
 
 		// close calendarPicker
-		sap.ui.test.qunit.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		oCore.applyChanges();
 
 		// change the pickerPopup to false
@@ -1164,7 +1164,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMinDate.getYear(), 2015, "min year is set to 2015");
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 2017, "max year is set to 2017");
 
-		sap.ui.test.qunit.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		// clean
 		oCalP.destroy();
 	});
@@ -1181,7 +1181,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "CalP--Head-B1");
 
 		// close calendarPicker
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
 
 		// check if the triggering button receives the focus after picker close
 		assert.strictEqual(document.activeElement.id, oCalP.getAggregation("header").getDomRef("B1").id, "After picker close the triggering button receives the focus");
@@ -1205,7 +1205,7 @@ sap.ui.define([
 		assert.strictEqual(oCalP.$("contentOver").get(0).style.display, "", "After opening the picker overlay is shown");
 
 		// close calendarPicker
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
 
 		// clean
 		oCalP.destroy();

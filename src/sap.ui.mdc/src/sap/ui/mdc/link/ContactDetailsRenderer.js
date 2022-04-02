@@ -1,7 +1,7 @@
 /*
  * ! ${copyright}
  */
-sap.ui.define([], function(VerticalLayoutRenderer) {
+sap.ui.define([], function() {
 	"use strict";
 
 	var ContactDetailsRenderer = {
