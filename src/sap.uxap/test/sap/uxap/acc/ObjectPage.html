@@ -16,6 +16,8 @@
 	</script>
 
 	<script>
+		new sap.ui.core.InvisibleText("phone-inv-text", {text: "Phone"}).toStatic();
+
 		var ObjectPageLayout = new sap.uxap.ObjectPageLayout({
 			showEditHeaderButton: true,
 			headerTitle:
@@ -34,7 +36,7 @@
 				new sap.m.Label({text:"Hello! I am Denise and I use UxAP", wrapping: true}),
 				new sap.m.ObjectAttribute({
 					title: "Phone",
-					customContent: new sap.m.Link({text: "+33 6 4512 5158"}),
+					customContent: new sap.m.Link({text: "+33 6 4512 5158", ariaLabelledBy: ["phone-inv-text"] }),
 					active: true
 				})
 				],
