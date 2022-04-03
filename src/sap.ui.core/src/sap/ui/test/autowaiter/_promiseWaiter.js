@@ -114,7 +114,7 @@ sap.ui.define([
 		return false;
 	}
 
-	var WrappedPromise = function (fnOriginalExecutor) {
+	var WrappedPromise = function (fnOriginalExecutor, tracking) {
 		var mPendingPromise;
 
 		var fnWrappedExecutor = function (fnOriginalResolve, fnOriginalReject) {
@@ -125,6 +125,9 @@ sap.ui.define([
 				return fnOriginalExecutor(fnOriginalResolve, fnOriginalReject);
 			} else if (sArguments === "'function () { [native code] }'") {
 				oPromiseWaiter._oLogger.trace("Ignoring internal Promise constructor");
+				return fnOriginalExecutor(fnOriginalResolve, fnOriginalReject);
+			} else if (tracking === "PROMISE_WAITER_IGNORE") {
+				oPromiseWaiter._oLogger.trace("Ignoring Promise marked to ignore");
 				return fnOriginalExecutor(fnOriginalResolve, fnOriginalReject);
 			} else {
 				mPendingPromise = _trackPromise(sArguments);

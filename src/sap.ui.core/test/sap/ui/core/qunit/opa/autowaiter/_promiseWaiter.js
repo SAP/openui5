@@ -242,4 +242,18 @@ sap.ui.define([
 		createPromise(0);
 		assert.ok(_promiseWaiter.hasPending(), "Has pending promises - one is started");
 	});
+
+	QUnit.test("Should ignore promises marked with 'ignore' tracking flag", function (assert) {
+		var fnDone = assert.async();
+		var oPromise = new Promise(function (resolve) {
+			setTimeout(function () {
+				resolve(mResolveValue);
+			}, 50);
+		}, "PROMISE_WAITER_IGNORE").then(function (vData) {
+			assert.strictEqual(vData, mResolveValue, "Should resolve with the expected value");
+			fnDone();
+		}, fnDone);
+		assert.ok(!_promiseWaiter.hasPending(), "Has no pending promises");
+		return oPromise;
+	});
 });
