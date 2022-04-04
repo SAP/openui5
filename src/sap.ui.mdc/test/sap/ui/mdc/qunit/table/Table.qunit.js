@@ -1109,14 +1109,18 @@ sap.ui.define([
 		]);
 
 		return this.oTable._fullyInitialized().then(function() {
-			var oSortConditions = {
+			var aInnerColumns = this.oTable._oTable.getColumns();
+
+			this.oTable.setSortConditions({
 				sorters: [
 					{name: "age", descending: false}
 				]
-			};
-			var aInnerColumns = this.oTable._oTable.getColumns();
-
-			this.oTable.setSortConditions(oSortConditions);
+			});
+			this.oTable.setGroupConditions({
+				groupLevels: [
+					{name: "name"}
+				]
+			});
 			this.oTable.rebind();
 
 			assert.equal(aInnerColumns[0].getSortIndicator(), "None");
