@@ -3314,6 +3314,26 @@ sap.ui.define([
 		oTp2.destroy();
 	});
 
+	QUnit.test("afterValueHelpOpen and afterValueHelpClose event fire when value help opens and closes", function(assert) {
+		var tp = new TimePicker(),
+			spyOpen = this.spy(tp, "fireAfterValueHelpOpen"),
+			spyClose = this.spy(tp, "fireAfterValueHelpClose");
+
+		tp.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		var oPopup = tp._createPicker(tp._getDisplayFormatPattern());
+		oPopup.fireAfterOpen();
+		oPopup.fireAfterClose();
+
+		assert.ok(spyOpen.calledOnce, "afterValueHelpOpen event fired");
+		assert.ok(spyClose.calledOnce, "afterValueHelpClose event fired");
+
+		spyOpen = null;
+		spyClose = null;
+		tp.destroy();
+	});
+
 	QUnit.module("Private methods", {
 		beforeEach: function () {
 			this.oTP = new TimePicker();
@@ -3340,7 +3360,6 @@ sap.ui.define([
 		assert.ok(oPopupContent[0].isA("sap.m.ValueStateHeader"), "There is a sap.m.ValueStateHeader created in the popup content");
 		assert.ok(oPopupContent[1].isA("sap.m.TimePickerClocks"), "There is a sap.m.TimePickerClocks created in the popup content");
 	});
-
 
 	function triggerMultipleKeypress(timePicker, sFeed) {
 		var aFeed = sFeed.split(""),

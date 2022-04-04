@@ -271,7 +271,23 @@ function(
 					 * Internal aggregation that contains the inner numeric _picker pop-up.
 					 */
 					 _numPicker: { type: "sap.m.Popover", multiple: false, visibility: "hidden" }
-					},
+				},
+				events: {
+
+					/**
+					 * Fired when <code>value help</code> dialog opens.
+					 * @since 1.102.0
+					 */
+					afterValueHelpOpen: {},
+
+					/**
+					 * Fired when <code>value help</code> dialog closes.
+					 * @since 1.102.0
+					 */
+					afterValueHelpClose: {}
+
+				},
+
 				dnd: { draggable: false, droppable: true }
 		}});
 
@@ -599,6 +615,7 @@ function(
 				oClocks.showFirstClock();
 				oClocks._focusActiveButton();
 			}
+			this.fireAfterValueHelpOpen();
 		};
 
 		/**
@@ -610,6 +627,7 @@ function(
 		 TimePicker.prototype.onAfterClose = function() {
 			this.$().removeClass(InputBase.ICON_PRESSED_CSS_CLASS);
 			this._getClocks().showFirstClock(); // prepare for the next opening
+			this.fireAfterValueHelpClose();
 		};
 
 		/**
