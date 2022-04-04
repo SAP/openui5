@@ -271,6 +271,7 @@ sap.ui.define([
 	QUnit.test("set/getValue() should update advanced tooltip state and visualization", function (assert) {
 		var fnUpdateTooltipsPositionAndStateSpy = this.spy(this.rangeSlider, "updateTooltipsPositionAndState");
 		var fnUpdateTooltipContentSpy;
+		var fnFireChange = this.spy(this.rangeSlider, "fireChange");
 
 		this.rangeSlider.setShowAdvancedTooltip(true);
 		oCore.applyChanges();
@@ -288,6 +289,7 @@ sap.ui.define([
 
 		assert.strictEqual(fnUpdateTooltipContentSpy.callCount, 6, "UpdateTooltipContent is called when setValue2 is executed");
 		assert.ok(fnUpdateTooltipsPositionAndStateSpy.calledTwice, "UpdateTooltipContentSpy is called");
+		assert.notOk(fnFireChange.called, "fireChange is not called");
 	});
 
 	QUnit.test("set/getValue() should not throw if advanced tooltip is not passed", function (assert) {

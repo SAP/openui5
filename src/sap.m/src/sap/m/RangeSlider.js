@@ -481,7 +481,7 @@ sap.ui.define([
          * @private
          * @ui5-restricted sap.m.SliderTooltipBase
          */
-        RangeSlider.prototype.updateTooltipsPositionAndState = function (oTooltip, fValue) {
+        RangeSlider.prototype.updateTooltipsPositionAndState = function (oTooltip, fValue, bPreventStateUpdate) {
             var oHandle, oActiveTooltip,
                 bTooltipsInitialPositionTouched = this._mHandleTooltip.bTooltipsSwapped;
 
@@ -499,7 +499,10 @@ sap.ui.define([
                 oActiveTooltip.focus();
             }
 
-            this._fireChangeAndLiveChange({ range: this.getRange() });
+            if (!bPreventStateUpdate) {
+                this._fireChangeAndLiveChange({ range: this.getRange() });
+            }
+
             this.updateAdvancedTooltipDom();
         };
 
@@ -563,7 +566,7 @@ sap.ui.define([
 
             if (this.getShowAdvancedTooltip() && this._mHandleTooltip.start.tooltip) {
                 this._updateTooltipContent(this._mHandleTooltip.start.tooltip, fValue);
-                this.updateTooltipsPositionAndState(this._mHandleTooltip.start.tooltip, fValue);
+                this.updateTooltipsPositionAndState(this._mHandleTooltip.start.tooltip, fValue, true);
             }
 
             return this;
@@ -582,7 +585,7 @@ sap.ui.define([
 
             if (this.getShowAdvancedTooltip() && this._mHandleTooltip.end.tooltip) {
                 this._updateTooltipContent(this._mHandleTooltip.end.tooltip, fValue);
-                this.updateTooltipsPositionAndState(this._mHandleTooltip.end.tooltip, fValue);
+                this.updateTooltipsPositionAndState(this._mHandleTooltip.end.tooltip, fValue, true);
             }
 
             return this;
