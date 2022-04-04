@@ -6,7 +6,7 @@
 @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark: @sapUiChartPaletteSequentialHue11Dark2;
 @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorTransparent: @sapUiGroupTitleBackground;
 
-.sapUiRtaChangeIndicator{
+.sapUiRtaChangeIndicator {
 	height: 0.8rem;
 	width: 0.8rem;
 	position: relative;
@@ -17,38 +17,38 @@
 	cursor: pointer;
 }
 
-.sapUiRtaChangeIndicator:focus{
+.sapUiRtaChangeIndicator:focus {
 	outline: 0;
 }
 
-.sapUiRtaChangeIndicatorColorLight{
+.sapUiRtaChangeIndicatorColorLight {
 	background-color: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorLight;
 	opacity: 0.6;
 }
 
-.sapUiRtaChangeIndicatorColorMedium{
+.sapUiRtaChangeIndicatorColorMedium {
 	background-color: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorMedium;
 	opacity: 0.75;
 }
 
-.sapUiRtaChangeIndicatorColorDark{
+.sapUiRtaChangeIndicatorColorDark {
 	background-color: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark;
 	opacity: 0.75;
 }
 
-.sapUiRtaChangeIndicatorVerticallyCentered{
+.sapUiRtaChangeIndicatorVerticallyCentered {
 	top: 50%;
 	transform: translateY(-50%);
 	margin-top: 0;
 }
 
-.sapUiRtaHover{
+.sapUiRtaHover {
 	height: 0.9rem;
 	width: 0.9rem;
 	box-shadow: 0 0 0.25rem @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark;
 }
 
-.sapUiRtaChangeIndicatorDependent{
+.sapUiRtaChangeIndicatorDependent {
 	height: 100%;
 	width: auto;
 	display: block;
@@ -59,10 +59,11 @@
 	animation-fill-mode: forwards;
 
 	@keyframes fadeOut {
-		66%{
+		66% {
 			box-shadow: inset 0 0 0 3px @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark, @_sap_ui_rta_Overlay_BoxShadow;
 			background-color: fade(@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark, 25%);
 		}
+
 		100% {
 			box-shadow: none;
 			background-color: fade(@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark, 0%);
@@ -71,28 +72,24 @@
 }
 
 .sapUiRtaChangeIndicatorHovered {
-	cursor: pointer!important;
+	cursor: pointer !important;
+
 	&:after {
 		content: " ";
-		border: 0.0625rem solid @_sap_ui_rta_Overlay_HoverBorder!important; //1px
+		border: 0.0625rem solid @_sap_ui_rta_Overlay_HoverBorder !important; //1px
 		transition: box-shadow .25s;
 		box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
-		outline: 0.0625rem solid @_sap_ui_rta_Overlay_Border!important; //1px
+		outline: 0.0625rem solid @_sap_ui_rta_Overlay_Border !important; //1px
 		outline-offset: -0.0625rem; //1px
 	}
 }
 
 .sapUiRtaMode {
-	.sapUiRtaPopover {
-		.sapUiRtaChangesList {
-			// Visualize Changes: Total Count bold
-			ul > li:first-child .sapMLIBCounter {
-				font-weight: bold;
-			}
-			// Visualize Changes: gray out items with no changes
-			li.sapMLIBTypeInactive{
-				opacity: 0.5;
-			}
+	.sapUiRtaChangesList {
+
+		// Visualize Changes: gray out items with no changes
+		li.sapMLIBTypeInactive {
+			opacity: 0.5;
 		}
 	}
 }

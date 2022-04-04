@@ -100,30 +100,16 @@
 						<OverflowToolbarLayoutData priority="Low" />
 					</toolbar:layoutData>
 				</toolbar:OverflowToolbarButton>
-				<MenuButton
+				<Button
 						id="sapUiRta_toggleChangeVisualizationMenuButton"
 						visible="{= ${controls>/modeSwitcher} === 'visualization'}"
 						text="{visualizationModel>/commandCategoryText}"
 						type="Transparent"
+						icon="sap-icon://slim-arrow-down"
+						iconFirst="false"
+						press=".openChangeCategorySelectionPopover"
 						tooltip="{i18n>BUT_CHANGEVISUALIZATION_SELECTCHANGES}">
-					<menu>
-						<Menu
-								id="sapUiRta_changesList"
-								items="{visualizationModel>/commandCategories/}"
-								itemSelected=".onCommandCategorySelection"
-								class="sapUiRtaToolbarVisualizationSelection">
-							<MenuItem
-									id="sapUiRta_changesListItem"
-									text="{visualizationModel>title}"
-									key="{visualizationModel>key}"
-									icon="{visualizationModel>icon}"
-									enabled="{= ${visualizationModel>count} > 0}"/>
-						</Menu>
-					</menu>
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" />
-					</layoutData>
-				</MenuButton>
+				</Button>
 				<Button
 						id="sapUiRta_undo"
 						icon="sap-icon://undo"

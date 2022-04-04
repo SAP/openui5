@@ -64,7 +64,7 @@ function(
 				activate: {},
 				discardDraft: {},
 				switchVersion: {},
-				onCommandCategorySelection: {}
+				openChangeCategorySelectionPopover: {}
 			}
 		}
 	});
@@ -334,7 +334,7 @@ function(
 				showTranslationPopover: this.showTranslationPopover.bind(this),
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
-				onCommandCategorySelection: this.eventHandler.bind(this, "OnCommandCategorySelection"),
+				openChangeCategorySelectionPopover: this.eventHandler.bind(this, "OpenChangeCategorySelectionPopover"),
 				manageApps: onManageAppsPressed.bind(this),
 				appVariantOverview: onOverviewPressed.bind(this),
 				saveAs: onSaveAsPressed.bind(this),

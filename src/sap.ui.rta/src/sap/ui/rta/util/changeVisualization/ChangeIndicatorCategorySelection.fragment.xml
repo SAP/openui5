@@ -1,0 +1,25 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout">
+	<Popover
+		showHeader="false"
+		placement="Bottom">
+		<MessageStrip
+			text="{visualizationModel>/popupInfoMessage}"
+			type="Information"
+			showIcon="true"
+			visible="{visualizationModel>/hasHiddenChanges}">
+		</MessageStrip>
+		<List
+			class="sapUiRtaChangesList"
+			items="{visualizationModel>/commandCategories/}">
+			<StandardListItem
+				title="{visualizationModel>title}"
+				counter="{visualizationModel>count}"
+				type="{= ${visualizationModel>count} > 0 ? 'Active' : 'Inactive'}"
+				icon="{visualizationModel>icon}"
+				press=".onCommandCategorySelection"/>
+		</List>
+	</Popover>
+</core:FragmentDefinition>
