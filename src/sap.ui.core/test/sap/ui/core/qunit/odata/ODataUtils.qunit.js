@@ -519,6 +519,25 @@ sap.ui.define([
 			alias: "Bla1234"
 		}), "/path/path2/annotations/anno.xml;o=Bla1234?parameter1=Test&parameter2=123");
 
+		assert.equal(ODataUtils.setAnnotationOrigin("/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceNames(Namespace='IWBEP',Name='TEA_TEST_APPLICATION',Version='0001')/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value", {
+			alias: "Alias"
+		}), "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2;o=Alias/ServiceNames(Namespace='IWBEP',Name='TEA_TEST_APPLICATION',Version='0001')/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
+			"segment after service starts with '/ServiceNames('");
+
+		assert.equal(ODataUtils.setAnnotationOrigin("/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceNames%28Namespace='IWBEP',Name='TEA_TEST_APPLICATION',Version='0001'%29/Annotations%28TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001'%29/$value", {
+			alias: "Alias"
+		}), "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2;o=Alias/ServiceNames%28Namespace='IWBEP',Name='TEA_TEST_APPLICATION',Version='0001'%29/Annotations%28TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001'%29/$value",
+			"segment after service starts with '/ServiceNames%28'");
+
+		assert.equal(ODataUtils.setAnnotationOrigin("/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection('ZTEA_TEST_APPLICATION_0001')/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value", {
+			alias: "Alias"
+		}), "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2;o=Alias/ServiceCollection('ZTEA_TEST_APPLICATION_0001')/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
+			"segment after service starts with '/ServiceCollection('");
+
+		assert.equal(ODataUtils.setAnnotationOrigin("/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection%28'ZTEA_TEST_APPLICATION_0001'%29/Annotations%28TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001'%29/$value", {
+			alias: "Alias"
+		}), "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2;o=Alias/ServiceCollection%28'ZTEA_TEST_APPLICATION_0001'%29/Annotations%28TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001'%29/$value",
+			"segment after service starts with '/ServiceCollection%28'");
 	});
 
 	QUnit.test("createFilterParams: Brackets should be correct", function(assert) {
