@@ -103,11 +103,22 @@
 			display: flex;
 			align-items: center;
 		}
+
+		.sapUiIntActionsStrip {
+			margin: 0 -0.5rem 0 -0.5rem;
+		}
 	}
 
 	&:not(.sapUiIntCardWithFooter) {
 		.sapMListItems li:last-child {
 			border-bottom: 1px solid transparent;
+		}
+	}
+
+	.sapMListHighlight {
+		.sapUiIntLCIAttrs,
+		.sapUiIntLCIFooter {
+			margin-left: 0.375rem;
 		}
 	}
 }

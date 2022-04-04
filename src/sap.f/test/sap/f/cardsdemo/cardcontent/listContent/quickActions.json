@@ -21,9 +21,6 @@
 			},
 			"maxItems": 3,
 			"item": {
-				"icon": {
-					"src": "{icon}"
-				},
 				"title": {
 					"value": "{Name}"
 				},
@@ -35,6 +32,22 @@
 					"state": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Error' : 'Success' }"
 				},
 				"actionsStrip": [
+					{
+						"type": "Link",
+						"text": "Link to Meal",
+						"icon": "sap-icon://action",
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"url": "http://sap.com"
+								}
+							}
+						]
+					},
+					{
+						"type": "ToolbarSpacer"
+					},
 					{
 						"buttonType": "Reject",
 						"overflowPriority": "High",
@@ -107,6 +120,22 @@
 		},
 		"footer": {
 			"actionsStrip": [
+				{
+					"type": "Link",
+					"text": "Link to Meal",
+					"icon": "sap-icon://action",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "http://sap.com"
+							}
+						}
+					]
+				},
+				{
+					"type": "ToolbarSpacer"
+				},
 				{
 					"buttonType": "Reject",
 					"overflowPriority": "High",
