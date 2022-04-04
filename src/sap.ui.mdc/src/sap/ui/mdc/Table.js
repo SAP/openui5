@@ -2503,7 +2503,7 @@ sap.ui.define([
 			Table._addBindingListener(oBindingInfo, "dataReceived", this._onDataReceived.bind(this));
 			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
 
-			this._updateColumnsBeforeBinding(oBindingInfo);
+			this._updateColumnsBeforeBinding();
 			this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding());
 			this._updateInnerTableNoDataText();
 			this._bForceRebind = false;
@@ -2597,32 +2597,27 @@ sap.ui.define([
 		}
 	};
 
-	Table.prototype._updateColumnsBeforeBinding = function(oBindingInfo) {
-		var aSorters = [].concat(oBindingInfo.sorter || []);
-		var aMDCColumns = this.getColumns();
-		var bMobileTable = this._bMobileTable;
+	Table.prototype._updateColumnsBeforeBinding = function() {
+		var aColumns = this.getColumns();
 		var oPropertyHelper = this.getPropertyHelper();
 
-		aMDCColumns.forEach(function(oColumn) {
+		aColumns.forEach(function(oColumn) {
 			var oInnerColumn = oColumn.getInnerColumn();
 			var oProperty = oPropertyHelper.getProperty(oColumn.getDataProperty());
-			var aSortablePaths = oProperty ? oProperty.getSortableProperties().map(function(oProperty) {
-				return oProperty.path;
+			var aSortableProperties = oProperty ? oProperty.getSortableProperties().map(function(oProperty) {
+				return oProperty.name;
 			}) : [];
+			var oSortCondition = this._getSortedProperties().find(function(oSortCondition) {
+				return aSortableProperties.includes(oSortCondition.name);
+			});
+			var sSortOrder = oSortCondition && oSortCondition.descending ? SortOrder.Descending : SortOrder.Ascending;
 
-			if (aSortablePaths.length > 0) {
-				var oSorter = aSorters.find(function(oSorter) {
-					return aSortablePaths.indexOf(oSorter.sPath) > -1;
-				});
-				var sSortOrder = oSorter && oSorter.bDescending ? SortOrder.Descending : SortOrder.Ascending;
-
-				if (bMobileTable) {
-					oInnerColumn.setSortIndicator(oSorter ? sSortOrder : SortOrder.None);
-				} else {
-					oInnerColumn.setSorted(!!oSorter).setSortOrder(sSortOrder);
-				}
+			if (this._bMobileTable) {
+				oInnerColumn.setSortIndicator(oSortCondition ? sSortOrder : SortOrder.None);
+			} else {
+				oInnerColumn.setSorted(!!oSortCondition).setSortOrder(sSortOrder);
 			}
-		});
+		}, this);
 	};
 
 	/**
