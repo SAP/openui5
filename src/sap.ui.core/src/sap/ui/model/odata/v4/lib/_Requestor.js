@@ -20,6 +20,7 @@ sap.ui.define([
 		},
 		sCachePrefix = "sap.ui.model.odata.v4.optimisticBatch:",
 		sClassName = "sap.ui.model.odata.v4.lib._Requestor",
+		sMessagesAnnotation = "@com.sap.vocabularies.Common.v1.Messages",
 		rSystemQueryOptionWithPlaceholder = /(\$\w+)=~/g,
 		rTimeout = /^\d+$/;
 
@@ -820,6 +821,54 @@ sap.ui.define([
 				// nothing to do
 			}
 			fnResultHandler(sKey, vValue);
+		});
+	};
+
+	/**
+	 * Fetches the type for the given path and puts it into mTypeForMetaPath. Recursively fetches
+	 * the key properties' parent types if they are complex.
+	 *
+	 * @param {object} mTypeForMetaPath
+	 *   A map from resource path and entity path to the type
+	 * @param {string} sMetaPath
+	 *   The meta path of the resource + navigation or key path (which may lead to an entity or
+	 *   complex type)
+	 * @returns {SyncPromise<object>}
+	 *   A promise resolving with the type
+	 */
+	 _Requestor.prototype.fetchType = function (mTypeForMetaPath, sMetaPath) {
+		var that = this;
+
+		if (sMetaPath in mTypeForMetaPath) {
+			return SyncPromise.resolve(mTypeForMetaPath[sMetaPath]);
+		}
+
+		return this.fetchTypeForPath(sMetaPath).then(function (oType) {
+			var oMessageAnnotation,
+				aPromises = [];
+
+			if (oType) {
+				oMessageAnnotation = that.getModelInterface()
+					.fetchMetadata(sMetaPath + "/" + sMessagesAnnotation).getResult();
+				if (oMessageAnnotation) {
+					oType = Object.create(oType);
+					oType[sMessagesAnnotation] = oMessageAnnotation;
+				}
+
+				mTypeForMetaPath[sMetaPath] = oType;
+
+				(oType.$Key || []).forEach(function (vKey) {
+					if (typeof vKey === "object") {
+						// key has an alias
+						vKey = vKey[Object.keys(vKey)[0]];
+						aPromises.push(that.fetchType(mTypeForMetaPath,
+							sMetaPath + "/" + vKey.slice(0, vKey.lastIndexOf("/"))));
+					}
+				});
+				return SyncPromise.all(aPromises).then(function () {
+					return oType;
+				});
+			}
 		});
 	};
 

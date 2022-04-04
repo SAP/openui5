@@ -3544,6 +3544,112 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchType", function (assert) {
+		var oRequestor = _Requestor.create("/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			mTypeForMetaPath = {},
+			oType = {};
+
+		oRequestorMock.expects("fetchTypeForPath")
+			.withExactArgs("/TEAMS").returns(SyncPromise.resolve(Promise.resolve(oType)));
+		this.mock(oRequestor.getModelInterface()).expects("fetchMetadata")
+			.withExactArgs("/TEAMS/@com.sap.vocabularies.Common.v1.Messages")
+			.returns(SyncPromise.resolve(undefined));
+
+		// code under test
+		return oRequestor.fetchType(mTypeForMetaPath, "/TEAMS").then(function (oResult) {
+			assert.strictEqual(oResult, oType);
+			assert.strictEqual(mTypeForMetaPath["/TEAMS"], oType);
+
+			// code under test (already there)
+			assert.strictEqual(oRequestor.fetchType(mTypeForMetaPath, "/TEAMS").getResult(), oType);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchType: no type", function (assert) {
+		var oRequestor = _Requestor.create("/", oModelInterface),
+			mTypeForMetaPath = {};
+
+		this.mock(oRequestor).expects("fetchTypeForPath")
+			.withExactArgs("/TEAMS/Unknown").returns(SyncPromise.resolve(undefined));
+		this.mock(oRequestor.getModelInterface()).expects("fetchMetadata").never();
+
+		// code under test
+		return oRequestor.fetchType(mTypeForMetaPath, "/TEAMS/Unknown").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+			assert.notOk("/TEAMS/Unknown" in mTypeForMetaPath);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchType: message annotation", function (assert) {
+		var oRequestor = _Requestor.create("/", oModelInterface),
+			oMessageAnnotation = {},
+			mTypeForMetaPath = {},
+			oType = {};
+
+		this.mock(oRequestor).expects("fetchTypeForPath")
+			.withExactArgs("/TEAMS").returns(SyncPromise.resolve(Promise.resolve(oType)));
+		this.mock(oRequestor.getModelInterface()).expects("fetchMetadata")
+			.withExactArgs("/TEAMS/@com.sap.vocabularies.Common.v1.Messages")
+			.returns(SyncPromise.resolve(oMessageAnnotation));
+
+		// code under test
+		return oRequestor.fetchType(mTypeForMetaPath, "/TEAMS").then(function (oResult) {
+			assert.strictEqual(mTypeForMetaPath["/TEAMS"], oResult);
+			assert.ok(oType.isPrototypeOf(oResult));
+			assert.strictEqual(oResult["@com.sap.vocabularies.Common.v1.Messages"],
+				oMessageAnnotation);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchType: complex key", function (assert) {
+		var oRequestor = _Requestor.create("/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			bKey1Done = false,
+			bKey2Done = false,
+			mTypeForMetaPath = {},
+			oType = {$Key : [{key1 : "a/b/id"}, "key2", {key3 : "c/id"}]},
+			oTypeKey1Promise = new SyncPromise(function (resolve) {
+				setTimeout(function () {
+					bKey1Done = true;
+					resolve({});
+				});
+			}),
+			oTypeKey2Promise = new SyncPromise(function (resolve) {
+				setTimeout(function () {
+					bKey2Done = true;
+					resolve({});
+				});
+			});
+
+		oRequestorMock.expects("fetchType")
+			.withExactArgs(sinon.match.same(mTypeForMetaPath), "/TEAMS")
+			.callThrough(); // start the recursion
+		oRequestorMock.expects("fetchTypeForPath")
+			.withExactArgs("/TEAMS").returns(SyncPromise.resolve(Promise.resolve(oType)));
+		this.mock(oRequestor.getModelInterface()).expects("fetchMetadata")
+			.withExactArgs("/TEAMS/@com.sap.vocabularies.Common.v1.Messages")
+			.returns(SyncPromise.resolve(undefined));
+		oRequestorMock.expects("fetchType")
+			.withExactArgs(sinon.match.same(mTypeForMetaPath), "/TEAMS/a/b")
+			.returns(oTypeKey1Promise);
+		oRequestorMock.expects("fetchType")
+			.withExactArgs(sinon.match.same(mTypeForMetaPath), "/TEAMS/c")
+			.returns(oTypeKey2Promise);
+
+		// code under test
+		return oRequestor.fetchType(mTypeForMetaPath, "/TEAMS").then(function (oResult) {
+			assert.strictEqual(oResult, oType);
+			assert.strictEqual(mTypeForMetaPath["/TEAMS"], oType);
+			assert.ok(bKey1Done);
+			assert.ok(bKey2Done);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchTypeForPath", function (assert) {
 		var oPromise = {},
 			oRequestor = _Requestor.create("/", oModelInterface);

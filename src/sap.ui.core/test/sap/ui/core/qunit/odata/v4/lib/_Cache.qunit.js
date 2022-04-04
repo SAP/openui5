@@ -72,11 +72,14 @@ sap.ui.define([
 
 			this.oRequestor = {
 				buildQueryString : function () { return ""; },
-				fetchTypeForPath : function () {
-					return SyncPromise.resolve({
+				fetchType : function (mTypeForMetaPath, sMetaPath) {
+					var oType = {
 						$Key : ["key"],
 						key : {$Type : "Edm.String"}
-					});
+					};
+
+					mTypeForMetaPath[sMetaPath] = oType;
+					return SyncPromise.resolve(oType);
 				},
 				getGroupSubmitMode : function (sGroupId) {
 					return defaultGetGroupProperty(sGroupId);
@@ -106,23 +109,11 @@ sap.ui.define([
 		 *
 		 * @param {string} sResourcePath The resource path
 		 * @param {object} [mQueryOptions] The query options
-		 * @param {boolean} [bWithKeyPredicates] Whether key predicates are calculated
 		 * @param {string} [sDeepResourcePath] The deep resource path
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */
-		createCache : function (sResourcePath, mQueryOptions, bWithKeyPredicates,
-				sDeepResourcePath) {
-			if (bWithKeyPredicates) {
-				this.oRequestor.fetchTypeForPath = function () { // enables key predicates
-					return SyncPromise.resolve({
-						$Key : ["key"],
-						key : {
-							$Type : "Edm.String"
-						}
-					});
-				};
-			}
+		createCache : function (sResourcePath, mQueryOptions, sDeepResourcePath) {
 			return _Cache.create(this.oRequestor, sResourcePath, mQueryOptions, false,
 					sDeepResourcePath);
 		},
@@ -342,7 +333,7 @@ sap.ui.define([
 		assert.strictEqual(oSingleCache.sMetaPath, sMetaPath);
 		assert.strictEqual(oSingleCache.oPromise, null);
 
-		this.mock(oSingleCache).expects("fetchType").withExactArgs(sinon.match.object, sMetaPath)
+		this.oRequestorMock.expects("fetchType").withExactArgs(sinon.match.object, sMetaPath)
 			.returns(SyncPromise.resolve());
 
 		// code under test
@@ -2286,111 +2277,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#fetchType", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
-			mTypeForMetaPath = {},
-			oType = {};
-
-		this.oRequestorMock.expects("fetchTypeForPath")
-			.withExactArgs("/TEAMS").returns(SyncPromise.resolve(Promise.resolve(oType)));
-		this.mock(this.oRequestor.getModelInterface()).expects("fetchMetadata")
-			.withExactArgs("/TEAMS/@com.sap.vocabularies.Common.v1.Messages")
-			.returns(SyncPromise.resolve(undefined));
-
-		// code under test
-		return oCache.fetchType(mTypeForMetaPath, "/TEAMS").then(function (oResult) {
-			assert.strictEqual(oResult, oType);
-			assert.strictEqual(mTypeForMetaPath["/TEAMS"], oType);
-
-			// code under test (already there)
-			assert.strictEqual(oCache.fetchType(mTypeForMetaPath, "/TEAMS").getResult(), oType);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Cache#fetchType: no type", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
-			mTypeForMetaPath = {};
-
-		this.oRequestorMock.expects("fetchTypeForPath")
-			.withExactArgs("/TEAMS/Unknown").returns(SyncPromise.resolve(undefined));
-		this.mock(this.oRequestor.getModelInterface()).expects("fetchMetadata").never();
-
-		// code under test
-		return oCache.fetchType(mTypeForMetaPath, "/TEAMS/Unknown").then(function (oResult) {
-			assert.strictEqual(oResult, undefined);
-			assert.notOk("/TEAMS/Unknown" in mTypeForMetaPath);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Cache#fetchType: message annotation", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
-			oMessageAnnotation = {},
-			mTypeForMetaPath = {},
-			oType = {};
-
-		this.oRequestorMock.expects("fetchTypeForPath")
-			.withExactArgs("/TEAMS").returns(SyncPromise.resolve(Promise.resolve(oType)));
-		this.mock(this.oRequestor.getModelInterface()).expects("fetchMetadata")
-			.withExactArgs("/TEAMS/@com.sap.vocabularies.Common.v1.Messages")
-			.returns(SyncPromise.resolve(oMessageAnnotation));
-
-		// code under test
-		return oCache.fetchType(mTypeForMetaPath, "/TEAMS").then(function (oResult) {
-			assert.strictEqual(mTypeForMetaPath["/TEAMS"], oResult);
-			assert.ok(oType.isPrototypeOf(oResult));
-			assert.strictEqual(oResult["@com.sap.vocabularies.Common.v1.Messages"],
-				oMessageAnnotation);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Cache#fetchType: complex key", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
-			oCacheMock = this.mock(oCache),
-			bKey1Done = false,
-			bKey2Done = false,
-			mTypeForMetaPath = {},
-			oType = {$Key : [{key1 : "a/b/id"}, "key2", {key3 : "c/id"}]},
-			oTypeKey1Promise = new SyncPromise(function (resolve) {
-				setTimeout(function () {
-					bKey1Done = true;
-					resolve({});
-				});
-			}),
-			oTypeKey2Promise = new SyncPromise(function (resolve) {
-				setTimeout(function () {
-					bKey2Done = true;
-					resolve({});
-				});
-			});
-
-		oCacheMock.expects("fetchType")
-			.withExactArgs(sinon.match.same(mTypeForMetaPath), "/TEAMS")
-			.callThrough(); // start the recursion
-		this.oRequestorMock.expects("fetchTypeForPath")
-			.withExactArgs("/TEAMS").returns(SyncPromise.resolve(Promise.resolve(oType)));
-		this.mock(this.oRequestor.getModelInterface()).expects("fetchMetadata")
-			.withExactArgs("/TEAMS/@com.sap.vocabularies.Common.v1.Messages")
-			.returns(SyncPromise.resolve(undefined));
-		oCacheMock.expects("fetchType")
-			.withExactArgs(sinon.match.same(mTypeForMetaPath), "/TEAMS/a/b")
-			.returns(oTypeKey1Promise);
-		oCacheMock.expects("fetchType")
-			.withExactArgs(sinon.match.same(mTypeForMetaPath), "/TEAMS/c")
-			.returns(oTypeKey2Promise);
-
-		// code under test
-		return oCache.fetchType(mTypeForMetaPath, "/TEAMS").then(function (oResult) {
-			assert.strictEqual(oResult, oType);
-			assert.strictEqual(mTypeForMetaPath["/TEAMS"], oType);
-			assert.ok(bKey1Done);
-			assert.ok(bKey2Done);
-		});
-	});
-
-	//*********************************************************************************************
 	[{
 		options : undefined,
 		types : ["/TEAMS"]
@@ -2421,10 +2307,11 @@ sap.ui.define([
 	}].forEach(function (oFixture, i) {
 		QUnit.test("Cache#fetchTypes #" + i, function (assert) {
 			var oCache = new _Cache(this.oRequestor, "TEAMS('42')", oFixture.options),
-				oCacheMock = this.mock(oCache),
 				iCount = 0,
+				that = this,
 				aExpectations = oFixture.types.map(function (sPath) {
-					return oCacheMock.expects("fetchType").withExactArgs(sinon.match.object, sPath)
+					return that.oRequestorMock.expects("fetchType")
+						.withExactArgs(sinon.match.object, sPath)
 						.returns(new Promise(function (resolve) {
 							setTimeout(function () {
 								iCount += 1;
@@ -3957,7 +3844,7 @@ sap.ui.define([
 		oHelperMock.expects("buildPath").withExactArgs(undefined, "@odata.etag")
 			.returns("@odata.etag");
 		oHelperMock.expects("buildPath").withExactArgs("~metaPath~", undefined).returns("~2~");
-		this.mock(oCache).expects("fetchType").never();
+		this.oRequestorMock.expects("fetchType").never();
 		oHelperMock.expects("buildPath")
 			.withExactArgs(oCache.sResourcePath, "")
 			.returns("~/");
@@ -4041,7 +3928,7 @@ sap.ui.define([
 			.returns("/Employees/entity/path");
 		oHelperMock.expects("buildPath").withExactArgs("/Employees/entity/path", undefined)
 			.returns("/entity/meta/path");
-		this.mock(oCache).expects("fetchType").never();
+		this.oRequestorMock.expects("fetchType").never();
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/Employees/entity/path", sinon.match.same(mQueryOptions), false,
 				true)
@@ -4081,7 +3968,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("Cache#fetchLateProperty: $expand", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees", {}),
-			oCacheMock = this.mock(oCache),
 			oData = {
 				foo : {
 					bar : "baz"
@@ -4165,13 +4051,13 @@ sap.ui.define([
 			.returns("foo/bar/@odata.etag");
 		oHelperMock.expects("buildPath").withExactArgs("foo/bar/baz", "@odata.etag")
 			.returns("foo/bar/baz/@odata.etag");
-		oCacheMock.expects("fetchType").never();
+		this.oRequestorMock.expects("fetchType").never();
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath + "/entity/path", undefined)
 			.returns("~");
 		oHelperMock.expects("buildPath").withExactArgs(undefined, "foo").returns("foo");
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath + "/entity/path", "foo")
 			.returns(oCache.sMetaPath + "/entity/path/foo");
-		oCacheMock.expects("fetchType")
+		this.oRequestorMock.expects("fetchType")
 			.withExactArgs(sinon.match.same(mTypeForMetaPath),
 				oCache.sMetaPath + "/entity/path/foo")
 			.returns(SyncPromise.resolve(oTypeFoo));
@@ -4180,7 +4066,7 @@ sap.ui.define([
 		oHelperMock.expects("buildPath").withExactArgs("foo", "bar").returns("foo/bar");
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath + "/entity/path", "foo/bar")
 			.returns(oCache.sMetaPath + "/entity/path/foo/bar");
-		oCacheMock.expects("fetchType")
+		this.oRequestorMock.expects("fetchType")
 			.withExactArgs(sinon.match.same(mTypeForMetaPath),
 				oCache.sMetaPath + "/entity/path/foo/bar")
 			.returns(SyncPromise.resolve(oTypeBar));
@@ -4188,7 +4074,7 @@ sap.ui.define([
 		oHelperMock.expects("buildPath")
 			.withExactArgs(oCache.sMetaPath + "/entity/path", "foo/bar/baz")
 			.returns(oCache.sMetaPath + "/entity/path/foo/bar/baz");
-		oCacheMock.expects("fetchType")
+		this.oRequestorMock.expects("fetchType")
 			.withExactArgs(sinon.match.same(mTypeForMetaPath),
 				oCache.sMetaPath + "/entity/path/foo/bar/baz")
 			.returns(SyncPromise.resolve(oTypeBaz));
@@ -6343,7 +6229,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#read: infinite prefetch, $skip=0", function (assert) {
-		var oCache = this.createCache("Employees", undefined, undefined, "deep/resource/path"),
+		var oCache = this.createCache("Employees", undefined, "deep/resource/path"),
 			oGroupLock = {
 				getUnlockedCopy : function () {},
 				unlock : function () {}
@@ -7403,7 +7289,7 @@ sap.ui.define([
 			.withExactArgs("/Employees", sinon.match.same(mQueryOptions), false, false)
 			.returns(sQueryParams);
 
-		oCache = this.createCache(sResourcePath, mQueryOptions, false);
+		oCache = this.createCache(sResourcePath, mQueryOptions);
 
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oUnlockedCopy);
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
@@ -8447,7 +8333,7 @@ sap.ui.define([
 				iFillStart = iStart < 10 ? 0 : iStart, // some old values due to previous paging
 				iReceivedLength = oFixture.aValues.length,
 				sResourcePath = "TEAMS('42')/Foo",
-				oCache = this.createCache(sResourcePath, {}, true),
+				oCache = this.createCache(sResourcePath),
 				that = this,
 				i;
 
@@ -8674,7 +8560,7 @@ sap.ui.define([
 			mQueryOptions = {},
 			sResourcePath = "TEAMS('42')/Foo",
 			mTypeForMetaPath = {},
-			oCache = this.createCache(sResourcePath, {}, true);
+			oCache = this.createCache(sResourcePath);
 
 		// cache preparation
 		oCache.aElements = aElements;
@@ -8712,7 +8598,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#requestSideEffects: no data to update", function (assert) {
 		var sResourcePath = "TEAMS('42')/Foo",
-			oCache = this.createCache(sResourcePath, null, true),
+			oCache = this.createCache(sResourcePath),
 			that = this;
 
 		// Note: fill cache with more than just "visible" rows
@@ -8760,7 +8646,7 @@ sap.ui.define([
 			aPaths = ["n/a", "EMPLOYEE_2_TEAM", "EMPLOYEE"],
 			mQueryOptions = {},
 			sResourcePath = "TEAMS('42')/Foo",
-			oCache = this.createCache(sResourcePath, {}, true),
+			oCache = this.createCache(sResourcePath),
 			that = this;
 
 		// Note: fill cache with more than just "visible" rows
@@ -8833,7 +8719,7 @@ sap.ui.define([
 				aPaths = [],
 				mQueryOptions = {},
 				sResourcePath = "TEAMS('42')/Foo",
-				oCache = this.createCache(sResourcePath, {}, true),
+				oCache = this.createCache(sResourcePath),
 				that = this;
 
 			// Note: fill cache with more than just "visible" rows
@@ -8912,7 +8798,7 @@ sap.ui.define([
 				mTypeForMetaPath = {"/TEAMS/Foo" : "~type~"},
 				oUpdateAllExpectation,
 				oVisitResponseExpectation,
-				oCache = this.createCache(sResourcePath, {}, true);
+				oCache = this.createCache(sResourcePath);
 
 			oCache.aElements.push(oElement);
 			oCache.aElements.$byPredicate["('c')"] = oElement;
