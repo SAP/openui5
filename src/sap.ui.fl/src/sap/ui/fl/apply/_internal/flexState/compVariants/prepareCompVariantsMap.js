@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger"
 ], function(
-	CompVariant,
+	FlexObjectFactory,
 	States,
 	UpdatableChange,
 	CompVariantMerger
@@ -52,16 +52,23 @@ sap.ui.define([
 	}
 
 	function buildSectionMap(mCompSection, sSubSection, mCompVariants) {
-		var Class = sSubSection === "variants" ? CompVariant : UpdatableChange;
 		var aFlexObjects = mCompSection[sSubSection].map(function (oCompVariantChangeDefinition) {
-			var oFlexObject = new Class(oCompVariantChangeDefinition);
+			var oFlexObject;
+			if (sSubSection === "variants") {
+				oFlexObject = FlexObjectFactory.createCompVariant(oCompVariantChangeDefinition);
+			} else {
+				oFlexObject = new UpdatableChange(oCompVariantChangeDefinition);
+			}
 			oFlexObject.setState(States.PERSISTED); // prevent persisting these anew
 			return oFlexObject;
 		});
 
 		aFlexObjects.forEach(function (oFlexObject) {
-			var sPersistencyKey = oFlexObject.getSelector().persistencyKey;
-			getOrCreate(mCompVariants, sPersistencyKey).byId[oFlexObject.getId()] = oFlexObject;
+			var sPersistencyKey = oFlexObject.getPersistencyKey ? oFlexObject.getPersistencyKey() : oFlexObject.getSelector().persistencyKey;
+			getOrCreate(
+				mCompVariants,
+				sPersistencyKey
+			).byId[oFlexObject.getId()] = oFlexObject;
 
 			switch (sSubSection) {
 				case "standardVariants":

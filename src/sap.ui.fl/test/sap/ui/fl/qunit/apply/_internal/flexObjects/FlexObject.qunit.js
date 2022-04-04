@@ -247,6 +247,10 @@ sap.ui.define([
 			});
 			assert.ok(this.oFlexObject.isUserDependent(), "then isUserDependent retuns true");
 		});
+
+		QUnit.test("when calling getNamespace function", function(assert) {
+			assert.strictEqual(this.oFlexObject.getNamespace(), oFileContent.namespace, "then namespace is returned");
+		});
 	});
 
 	QUnit.module("State handling", {
@@ -391,14 +395,14 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when trying to update the fileName", function(assert) {
+		QUnit.test("when trying to update the fileName/id", function(assert) {
 			this.oFlexObject.update({
-				fileName: "someNewid"
+				fileName: "someNewId"
 			});
 			assert.strictEqual(
 				this.oFlexObject.getId(),
 				"foo",
-				"then the update is ignored"
+				"then the property is not updated"
 			);
 		});
 
@@ -422,6 +426,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when exporting file content of a FlexObject", function (assert) {
+			// fileName is assigned to the id upon creation
+			var oExpectedFileContent = Object.assign({}, oFileContent);
+			oExpectedFileContent.id = oExpectedFileContent.fileName;
+			delete oExpectedFileContent.fileName;
 			assert.deepEqual(
 				this.oFlexObject.convertToFileContent(),
 				oFileContent,

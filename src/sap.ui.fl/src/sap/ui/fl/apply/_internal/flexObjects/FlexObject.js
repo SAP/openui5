@@ -33,6 +33,7 @@ sap.ui.define([
 	 * @static
 	 * @constant
 	 * @typedef {object} sap.ui.fl.apply._internal.flexObjects.FlexObject.FlexObjectMetadata
+	 * @property {string} changeType - Type of the flexObject
 	 * @property {string} reference - Application component name
 	 * @property {string} namespace - Namespace of the flex object file
 	 * @property {string} creation - Timestamp of creation date
@@ -119,7 +120,8 @@ sap.ui.define([
 				 * Content of the flex object that is used to apply the flex object.
 				 */
 				content: {
-					type: "any"
+					type: "any",
+					defaultValue: {}
 				},
 				/**
 				 * Map of texts that should be translated.
@@ -163,6 +165,7 @@ sap.ui.define([
 	 */
 	FlexObject.getMappingInfo = function () {
 		return Object.assign({}, {
+			"flexObjectMetadata.changeType": "changeType",
 			"flexObjectMetadata.reference": "reference",
 			"flexObjectMetadata.namespace": "namespace",
 			"flexObjectMetadata.creation": "creation",
@@ -182,8 +185,8 @@ sap.ui.define([
 			"supportInformation.originalLanguage": "originalLanguage",
 			layer: "layer",
 			fileType: "fileType",
-			content: "content",
 			id: "fileName",
+			content: "content",
 			texts: "texts"
 		});
 	};
@@ -200,11 +203,14 @@ sap.ui.define([
 	/**
 	 * Sets the content of the flex object and marks the state as DIRTY.
 	 * @param {any} oContent - Flex object content
+	 * @param {boolean} [bSkipStateChange] - If set to true, doesn't set the state to dirty
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} <code>this</code> for chaining
 	 */
-	FlexObject.prototype.setContent = function (oContent) {
+	FlexObject.prototype.setContent = function (oContent, bSkipStateChange) {
 		this.setProperty("content", oContent);
-		this.setState(States.DIRTY);
+		if (!bSkipStateChange) {
+			this.setState(States.DIRTY);
+		}
 		return this;
 	};
 
@@ -293,6 +299,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Getter for the namespace from the FlexObjectMetadata.
+	 * @returns {string} Namespace
+	 */
+	FlexObject.prototype.getNamespace = function() {
+		return this.getFlexObjectMetadata().namespace;
+	};
+
+	/**
+	 * Getter for the change type from the FlexObjectMetadata.
+	 * @returns {string} Change type
+	 */
+	FlexObject.prototype.getChangeType = function() {
+		return this.getFlexObjectMetadata().changeType;
+	};
+
+	/**
 	 * Returns <code>true</code> if the flex object is user dependent.
 	 * @returns {boolean} <code>true</code> if the flex object is only relevant for the current user
 	 */
@@ -311,18 +333,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the new text for the given text ID.
+	 * Sets the new text for the given text ID or creates new text with the given ID.
 	 * @param {string} sTextId - Text ID which was used as part of the <code>texts</code> property
 	 * @param {string} sNewText - New text for the given text ID
+	 * @param {boolean} [bSkipStateChange] - If set to <code>true</code>, doesn't set the state to dirty
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} <code>this</code> context for chaining
 	 */
-	FlexObject.prototype.setText = function (sTextId, sNewText) {
+	FlexObject.prototype.setText = function (sTextId, sNewText, bSkipStateChange) {
 		var oTexts = Object.assign({}, this.getTexts());
-		if (oTexts[sTextId]) {
-			oTexts[sTextId] = Object.assign({}, oTexts[sTextId], {
-				value: sNewText
-			});
-			this.setTexts(oTexts);
+		oTexts[sTextId] = Object.assign({}, oTexts[sTextId], {
+			value: sNewText
+		});
+		this.setTexts(oTexts);
+		if (!bSkipStateChange) {
 			this.setState(States.DIRTY);
 		}
 		return this;
@@ -427,8 +450,9 @@ sap.ui.define([
 	 * @param {object} oFileContent - File content of the flex object
 	 */
 	FlexObject.prototype.update = function (oFileContent) {
-		var oFilteredFileContent = _omit(oFileContent, ["fileName"]);
-		var mProperties = FlexObject.mapFileContent(oFilteredFileContent, this.getMappingInfo());
+		// filename is mapped to id and this is not updatable
+		var oNewFileContent = _omit(oFileContent, ["fileName"]);
+		var mProperties = FlexObject.mapFileContent(oNewFileContent, this.getMappingInfo());
 		Object.entries(mProperties).forEach(function (aProperty) {
 			updateProperty.call(this, aProperty[0], aProperty[1]);
 		}.bind(this));
