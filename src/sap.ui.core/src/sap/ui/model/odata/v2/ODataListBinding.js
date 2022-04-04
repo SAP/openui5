@@ -118,6 +118,7 @@ sap.ui.define([
 			this.bTransitionMessagesOnly = !!(mParameters
 				&& mParameters.transitionMessagesOnly);
 			this.sCreatedEntitiesKey = mParameters && mParameters.createdEntitiesKey || "";
+			this.oCreatedPersistedToRemove = new Set();
 
 			// check filter integrity
 			this.oModel.checkFilterOperation(this.aApplicationFilters);
@@ -475,7 +476,9 @@ sap.ui.define([
 	/**
 	 * In side-effects scenarios, iterates all created persisted contexts of this list binding and
 	 * removes those entities (with its context, pending changes, messages, ...) which are not
-	 * included in the latest back-end response for an expanded list.
+	 * included in the latest back-end response for an expanded list. If this list binding is
+	 * suspended, the affected entity keys are temporarily stored to remove those entities later
+	 * after the list binding has been resumed.
 	 *
 	 * @returns {boolean}
 	 *   Whether created persisted contexts have been removed
@@ -487,13 +490,25 @@ sap.ui.define([
 			aList = this.oModel._getObject(this.sPath, this.oContext),
 			that = this;
 
+		function removeItem(sEntityKey) {
+			that.oModel._discardEntityChanges(sEntityKey, true);
+			bCreatedPersistedRemoved = true;
+		}
+
+		if (this.oCreatedPersistedToRemove.size && !this.bSuspended) {
+			this.oCreatedPersistedToRemove.forEach(removeItem);
+			this.oCreatedPersistedToRemove.clear();
+		}
 		if (aList && aList.sideEffects) {
 			this._getCreatedPersistedContexts().forEach(function (oContext) {
 				var sEntityKey = that.oModel.getKey(oContext);
 
 				if (!aList.includes(sEntityKey)) { // entity has been deleted on the server
-					that.oModel._discardEntityChanges(sEntityKey, true);
-					bCreatedPersistedRemoved = true;
+					if (that.bSuspended) {
+						that.oCreatedPersistedToRemove.add(sEntityKey);
+					} else {
+						removeItem(sEntityKey);
+					}
 				}
 			});
 		}
@@ -1177,9 +1192,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.checkUpdate = function (bForceUpdate, mChangedEntities) {
-		var aContexts, bCreatedPersistedRemoved, oCurrentData, bExpandedList, aLastKeys, aOldRefs,
+		var aContexts, oCurrentData, bExpandedList, aLastKeys, aOldRefs,
 			bChangeDetected = false,
 			sChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
+			bCreatedPersistedRemoved = this._cleanupCreatedPersisted(),
 			that = this;
 
 		if ((this.bSuspended && !this.bIgnoreSuspend && !bForceUpdate) || this.bPendingRequest) {
@@ -1195,7 +1211,6 @@ sap.ui.define([
 		}
 
 		this.bIgnoreSuspend = false;
-		bCreatedPersistedRemoved = this._cleanupCreatedPersisted();
 		if (!bForceUpdate && !this.bNeedsUpdate) {
 			// check if expanded data has been changed
 			aOldRefs = this.aExpandRefs;

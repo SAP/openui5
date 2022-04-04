@@ -266,6 +266,74 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("constructor: defaulting w/o mParameters", function (assert) {
+		var oBinding,
+			oModel = {
+				sDefaultCountMode : "~sDefaultCountMode",
+				sDefaultOperationMode : "~sDefaultOperationMode",
+				bPreliminaryContext : "~bPreliminaryContext",
+				checkFilterOperation : function () {},
+				createCustomParams : function () {},
+				resolveDeep : function () {}
+			};
+
+		this.mock(oModel).expects("createCustomParams").withExactArgs(undefined).returns("~custom");
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("~sPath", "~oContext")
+			.returns("~sDeepPath");
+		this.mock(oModel).expects("checkFilterOperation").withExactArgs([]);
+		this.mock(ODataListBinding.prototype).expects("checkExpandedList")
+			.withExactArgs()
+			.returns(true);
+
+		// code under test
+		oBinding = new ODataListBinding(oModel, "~sPath", "~oContext");
+
+		assert.strictEqual(oBinding.sFilterParams, null);
+		assert.strictEqual(oBinding.sSortParams, null);
+		assert.strictEqual(oBinding.sRangeParams, null);
+		assert.strictEqual(oBinding.sCustomParams, "~custom");
+		assert.strictEqual(oBinding.mCustomParams, undefined);
+		assert.strictEqual(oBinding.iStartIndex, 0);
+		assert.strictEqual(oBinding.iLength, 0);
+		assert.strictEqual(oBinding.bPendingChange, false);
+		assert.strictEqual(oBinding.aAllKeys, null);
+		assert.deepEqual(oBinding.aKeys, []);
+		assert.strictEqual(oBinding.sCountMode, "~sDefaultCountMode");
+		assert.strictEqual(oBinding.sOperationMode, "~sDefaultOperationMode");
+		assert.strictEqual(oBinding.bCreatePreliminaryContext, "~bPreliminaryContext");
+		assert.strictEqual(oBinding.bUsePreliminaryContext, "~bPreliminaryContext");
+		assert.strictEqual(oBinding.bRefresh, false);
+		assert.strictEqual(oBinding.bNeedsUpdate, false);
+		assert.strictEqual(oBinding.bDataAvailable, false);
+		assert.strictEqual(oBinding.bIgnoreSuspend, false);
+		assert.strictEqual(oBinding.bPendingRefresh, false);
+		assert.strictEqual(oBinding.sGroupId, undefined);
+		assert.strictEqual(oBinding.sRefreshGroupId, undefined);
+		assert.strictEqual(oBinding.bLengthRequested, false);
+		assert.strictEqual(oBinding.bUseExtendedChangeDetection, true);
+		assert.strictEqual(oBinding.bFaultTolerant, undefined);
+		assert.strictEqual(oBinding.bLengthFinal, false);
+		assert.strictEqual(oBinding.iLastEndIndex, 0);
+		assert.strictEqual(oBinding.aLastContexts, null);
+		assert.strictEqual(oBinding.aLastContextData, null);
+		assert.strictEqual(oBinding.bInitial, true);
+		assert.deepEqual(oBinding.mRequestHandles, {});
+		assert.strictEqual(oBinding.oCountHandle, null);
+		assert.strictEqual(oBinding.bSkipDataEvents, false);
+		assert.strictEqual(oBinding.bUseExpandedList, false);
+		assert.strictEqual(oBinding.oCombinedFilter, null);
+		assert.strictEqual(oBinding.sDeepPath, "~sDeepPath");
+		assert.strictEqual(oBinding.bCanonicalRequest, undefined);
+		assert.deepEqual(oBinding.mNormalizeCache, {});
+		assert.strictEqual(oBinding.bTransitionMessagesOnly, false);
+		assert.strictEqual(oBinding.sCreatedEntitiesKey, "");
+		assert.deepEqual(oBinding.oCreatedPersistedToRemove, new Set());
+		assert.strictEqual(oBinding.iThreshold, 0);
+		assert.strictEqual(oBinding.bThresholdRejected, false);
+	});
+
+	//*********************************************************************************************
 ["resolvedPath", undefined, null].forEach(function (sResolvedPath) {
 	QUnit.test("_checkDataStateMessages: with deepPath: " + sResolvedPath, function (assert) {
 		var oModel = {
@@ -2680,6 +2748,32 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
+	{bSuspended : true},
+	{bPendingRequest : true},
+	{bInitial : true}
+].forEach(function (oBindingProperties) {
+	var sTitle = "checkUpdate: #_cleanupCreatedPersisted is called without change event: "
+			+ JSON.stringify(oBindingProperties);
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = Object.assign({
+				bNeedsUpdate : true,
+				_cleanupCreatedPersisted : function () {},
+				_fireChange : function () {}
+			}, oBindingProperties);
+
+		this.mock(oBinding).expects("_cleanupCreatedPersisted")
+			.withExactArgs()
+			.returns(/*value not relevant*/ "~bCreatedPersistedRemoved");
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		ODataListBinding.prototype.checkUpdate.call(oBinding);
+	});
+});
+
+	//*********************************************************************************************
+[
 	{mCustomParams : "foo", sOperationMode : "~notRelevant"},
 	{aApplicationFilters : ["foo"]},
 	{aFilters : ["foo"]},
@@ -2760,11 +2854,11 @@ sap.ui.define([
 	QUnit.test("_cleanupCreatedPersisted: all keys in aList", function (assert) {
 		var oBinding = {
 				oContext : "~oContext",
+				oCreatedPersistedToRemove : new Set(),
 				oModel : {
 					_getObject : function () {},
 					getKey : function () {}
 				},
-				bNeedsUpdate : "foo",
 				sPath : "~sPath",
 				_getCreatedPersistedContexts : function () {}
 			},
@@ -2792,6 +2886,7 @@ sap.ui.define([
 	QUnit.test("_cleanupCreatedPersisted: some keys not in aList", function (assert) {
 		var oBinding = {
 				oContext : "~oContext",
+				oCreatedPersistedToRemove : new Set(),
 				oModel : {
 					_discardEntityChanges : function () {},
 					_getObject : function () {},
@@ -2826,6 +2921,7 @@ sap.ui.define([
 	QUnit.test("_cleanupCreatedPersisted: no side effects scenario #" + i, function (assert) {
 		var oBinding = {
 				oContext : "~oContext",
+				oCreatedPersistedToRemove : new Set(),
 				oModel : {_getObject : function () {}},
 				sPath : "~sPath",
 				_getCreatedPersistedContexts : function () {}
@@ -2835,6 +2931,94 @@ sap.ui.define([
 			.withExactArgs("~sPath", "~oContext")
 			.returns(aList);
 		this.mock(oBinding).expects("_getCreatedPersistedContexts").never();
+
+		// code under test
+		assert.strictEqual(
+			ODataListBinding.prototype._cleanupCreatedPersisted.call(oBinding),
+			false);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_cleanupCreatedPersisted: bSuspended=true", function (assert) {
+		var oBinding = {
+				oContext : "~oContext",
+				oCreatedPersistedToRemove : new Set(),
+				oModel : {
+					_discardEntityChanges : function () {},
+					_getObject : function () {},
+					getKey : function () {}
+				},
+				sPath : "~sPath",
+				bSuspended : true,
+				_getCreatedPersistedContexts : function () {}
+			},
+			aList = ["~key0"],
+			oModelMock = this.mock(oBinding.oModel);
+
+		aList.sideEffects = true;
+
+		oModelMock.expects("_getObject")
+			.withExactArgs("~sPath", "~oContext")
+			.returns(aList);
+		this.mock(oBinding).expects("_getCreatedPersistedContexts")
+			.withExactArgs()
+			.returns(["~oContext0", "~oContext1"]);
+		oModelMock.expects("getKey").withExactArgs("~oContext0").returns("~key0");
+		oModelMock.expects("getKey").withExactArgs("~oContext1").returns("~key1");
+		this.mock(oBinding.oCreatedPersistedToRemove).expects("add").withExactArgs("~key1");
+		oModelMock.expects("_discardEntityChanges").never();
+
+		// code under test
+		assert.strictEqual(
+			ODataListBinding.prototype._cleanupCreatedPersisted.call(oBinding),
+			false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_cleanupCreatedPersisted: resume after suspended", function (assert) {
+		var oBinding = {
+				oContext : "~oContext",
+				oCreatedPersistedToRemove : new Set(["~key0", "~key1"]),
+				oModel : {
+					_discardEntityChanges : function () {},
+					_getObject : function () {}
+				},
+				sPath : "~sPath",
+				bSuspended : false,
+				_getCreatedPersistedContexts : function () {}
+			},
+			oModelMock = this.mock(oBinding.oModel);
+
+		oModelMock.expects("_getObject").withExactArgs("~sPath", "~oContext").returns(undefined);
+		oModelMock.expects("_discardEntityChanges").withExactArgs("~key0", true);
+		oModelMock.expects("_discardEntityChanges").withExactArgs("~key1", true);
+		this.mock(oBinding.oCreatedPersistedToRemove).expects("clear").withExactArgs();
+
+		// code under test
+		assert.strictEqual(
+			ODataListBinding.prototype._cleanupCreatedPersisted.call(oBinding),
+			true);
+	});
+
+	//*********************************************************************************************
+[
+	{oCreatedPersistedToRemove : new Set(), bSuspended : false},
+	{oCreatedPersistedToRemove : new Set("~key"), bSuspended : true}
+].forEach(function (oBindingProperties, i) {
+	var sTitle = "_cleanupCreatedPersisted: no reset of oCreatedPersistedToRemove needed #" + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = Object.assign({
+				oContext : "~oContext",
+				oModel : {_getObject : function () {}},
+				sPath : "~sPath"
+			}, oBindingProperties);
+
+		this.mock(oBinding.oModel).expects("_getObject")
+			.withExactArgs("~sPath", "~oContext")
+			.returns(undefined);
+		this.mock(oBinding.oCreatedPersistedToRemove).expects("clear").never();
 
 		// code under test
 		assert.strictEqual(
