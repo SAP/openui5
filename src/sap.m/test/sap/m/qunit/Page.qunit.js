@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/m/Button",
 	"sap/m/Page",
+	"sap/m/PageAccessibleLandmarkInfo",
 	"sap/m/Bar",
 	"sap/m/SearchField",
 	"sap/m/library",
@@ -20,6 +21,7 @@ sap.ui.define([
 	HTML,
 	Button,
 	Page,
+	PageAccessibleLandmarkInfo,
 	Bar,
 	SearchField,
 	mobileLibrary,
@@ -660,6 +662,35 @@ sap.ui.define([
 
 		// cleanup
 		oPage.destroy();
+	});
+
+	QUnit.module("LandmarkInfo", {
+		beforeEach: function () {
+			this.oPage = new Page();
+		},
+		testElementTag: function (sPropertyName, sLandmark, sTagGeter, sExtectedTag, assert) {
+			var oSetting = {};
+
+			oSetting[sPropertyName] = sLandmark;
+
+			oPage.setLandmarkInfo(new PageAccessibleLandmarkInfo(oSetting));
+
+			oCore.applyChanges();
+
+			assert.ok(oPage[sTagGeter](), sExtectedTag);
+		}
+	});
+
+	QUnit.test("Div element should be rendered for header landmark info is provided", function(assert) {
+		this.testElementTag("headerRole", coreLibrary.AccessibleLandmarkRole.Region, "_getHeaderTag", "div", assert);
+	});
+
+	QUnit.test("Div element should be rendered for subheader landmark info is provided", function(assert) {
+		this.testElementTag("subHeaderRole", coreLibrary.AccessibleLandmarkRole.Region, "_getSubHeaderTag", "div", assert);
+	});
+
+	QUnit.test("Div element should be rendered for footer landmark info is provided", function(assert) {
+		this.testElementTag("footerRole", coreLibrary.AccessibleLandmarkRole.Region, "_getFooterTag", "div", assert);
 	});
 
 	return pStyleLoaded;
