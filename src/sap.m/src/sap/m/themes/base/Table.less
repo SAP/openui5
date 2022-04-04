@@ -74,6 +74,13 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	display: none;
 }
 
+.sapMListTblCell {
+	padding: .25rem .5rem;
+	font-size: @sapUiListTableTextSize;
+	overflow: hidden;
+	overflow: clip;
+}
+
 .sapMListTblSelCol,
 .sapMListTblCell,
 .sapMListTblNavCol {
@@ -160,13 +167,6 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 
 .sapMListTbl .sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon):not(.sapFAvatarTypeIcon) {
 	font-size: @sapUiListTableIconSize;
-}
-
-.sapMListTblCell {
-	padding: .875rem .5rem;
-	font-size: @sapUiListTableTextSize;
-	overflow: hidden;
-	overflow: clip;
 }
 
 /* Ensuring that the row height is not smaller that 3rem in Cozy mode */
@@ -440,12 +440,6 @@ html[data-sap-ui-browser^='ff'] .sapMTableRowCustomFocus:focus > :not(.sapMListT
 }
 
 /********** COMPACT DESIGN ************/
-
-/* overwite cell style */
-.sapUiSizeCompact .sapMListTblCell {
-	padding-top: 0.25rem;
-	padding-bottom: 0.25rem;
-}
 
 .sapUiSizeCompact .sapMListTblCell.sapMListTblCellNoData {
 	font-size: @sapUiListTableTextSize;
