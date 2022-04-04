@@ -326,7 +326,7 @@
 											<mdcv:Dialog title="Sub Genre">
 												<mdcvc:MTable id="subGenre" keyPath="code" descriptionPath="title" filterFields="$search">
 													<mdcvc:filterBar>
-														<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+														<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 															<vhfb:basicSearchField>
 																<mdc:FilterField
 																	delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
