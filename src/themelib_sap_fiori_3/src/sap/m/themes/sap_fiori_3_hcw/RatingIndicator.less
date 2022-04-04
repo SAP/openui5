@@ -4,6 +4,8 @@
 /* ====================================== */
 
 .sapMRI {
+	text-shadow: @sapUiContentTextShadow;
+
 	.sapMRISel, .sapMRIHov {
 		color: @sapUiContentRatedColor;
 	}
@@ -15,12 +17,16 @@
 	}
 
 	&.sapMRIDisplayOnly {
+		text-shadow: none;
+
 		.sapMRIIconSel {
 			color: @sapUiContentIconColor;
 		}
 	}
 
 	&.sapMRIDisabled {
+		text-shadow: none;
+
 		.sapMRIUnsel, .sapMRISel {
 			color: @sapUiContentDisabledTextColor;
 		}
