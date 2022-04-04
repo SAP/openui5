@@ -31,7 +31,7 @@ sap.ui.define([
 
 	QUnit.test("Return content", function(assert) {
 		assert.ok(this.oQuickAction.getContent());
-		assert.ok(this.oQuickAction.getContent().isA("sap.m.Button"));
-		assert.equal(this.oQuickAction.getContent().getText(), sText);
+		assert.ok(this.oQuickAction.getContent()[0].isA("sap.m.Button"));
+		assert.equal(this.oQuickAction.getContent()[0].getText(), sText);
 	});
 });

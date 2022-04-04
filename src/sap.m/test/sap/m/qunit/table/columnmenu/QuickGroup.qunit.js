@@ -42,15 +42,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Content", function(assert) {
-		var oContent = this.oQuickGroup.getContent();
-		assert.ok(oContent, "The quick group has content");
+		var aContent = this.oQuickGroup.getContent();
+		assert.ok(aContent, "The quick group has content");
 
-		var aItems = oContent.getItems();
-		assert.equal(aItems.length, 2, "The quick group has the correct number of items");
-		assert.equal(aItems[0].getText(), "A", "The first button text is correct");
-		assert.ok(aItems[0].getPressed(), "The first button is pressed");
-		assert.equal(aItems[1].getText(), "B", "The second button text is correct");
-		assert.ok(!aItems[1].getPressed(), "The second button is not pressed");
+		assert.equal(aContent.length, 2, "The quick group has the correct number of items");
+		assert.equal(aContent[0].getText(), "A", "The first button text is correct");
+		assert.ok(aContent[0].getPressed(), "The first button is pressed");
+		assert.equal(aContent[1].getText(), "B", "The second button text is correct");
+		assert.ok(!aContent[1].getPressed(), "The second button is not pressed");
 	});
 
 	QUnit.module("Events", {
@@ -94,7 +93,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oQuickGroup = this.oColumnMenu.getAggregation("quickActions")[0];
-		var aItems = oQuickGroup.getContent().getItems();
+		var aItems = oQuickGroup.getContent();
 
 		oQuickGroup.attachChange(function(oEvent) {
 			assert.ok(true, "Change event has been fired");

@@ -42,15 +42,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Content", function(assert) {
-		var oContent = this.oQuickTotal.getContent();
-		assert.ok(oContent, "The quick total has content");
+		var aContent = this.oQuickTotal.getContent();
+		assert.ok(aContent, "The quick total has content");
 
-		var aItems = oContent.getItems();
-		assert.equal(aItems.length, 2, "The quick total has the correct number of items");
-		assert.equal(aItems[0].getText(), "A", "The first button text is correct");
-		assert.ok(!aItems[0].getPressed(), "The first button is not pressed");
-		assert.equal(aItems[1].getText(), "B", "The second button text is correct");
-		assert.ok(aItems[1].getPressed(), "The second button is pressed");
+		assert.equal(aContent.length, 2, "The quick total has the correct number of items");
+		assert.equal(aContent[0].getText(), "A", "The first button text is correct");
+		assert.ok(!aContent[0].getPressed(), "The first button is not pressed");
+		assert.equal(aContent[1].getText(), "B", "The second button text is correct");
+		assert.ok(aContent[1].getPressed(), "The second button is pressed");
 	});
 
 	QUnit.module("Events", {
@@ -94,7 +93,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oQuickTotal = this.oColumnMenu.getAggregation("quickActions")[0];
-		var aItems = oQuickTotal.getContent().getItems();
+		var aItems = oQuickTotal.getContent();
 
 		oQuickTotal.attachChange(function(oEvent) {
 			assert.ok(true, "Change event has been fired");

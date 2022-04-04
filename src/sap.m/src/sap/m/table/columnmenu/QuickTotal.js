@@ -71,11 +71,11 @@ sap.ui.define([
 	};
 
 	QuickTotal.prototype.getContent = function() {
-		if (!this._oContent) {
-			this._oContent = this.createContent(this.getItems());
+		if (!this._aContent) {
+			this._aContent = this.createContent(this.getItems());
 		}
 
-		return this._oContent;
+		return this._aContent;
 	};
 
 	QuickTotal.prototype.addItem = function(oItem) {
@@ -104,28 +104,28 @@ sap.ui.define([
 	};
 
 	QuickTotal.prototype.createContent = function(aItems) {
-		return new HBox({
-			items: aItems.map(function(oItem) {
-				return new ToggleButton({
-					text: oItem.getLabel(),
-					pressed: oItem.getTotaled(),
-					press: [oItem, this.onChange, this]
-				});
-			}, this)
-		});
+		return aItems.map(function(oItem) {
+			return new ToggleButton({
+				text: oItem.getLabel(),
+				pressed: oItem.getTotaled(),
+				press: [oItem, this.onChange, this]
+			});
+		}, this);
 	};
 
 	QuickTotal.prototype.destroyContent = function() {
-		if (this._oContent) {
-			this._oContent.destroy();
-			delete this._oContent;
+		if (this._aContent) {
+			this._aContent.forEach(function (oContent) {
+				oContent.destroy();
+			});
+			delete this._aContent;
 		}
 	};
 
 	QuickTotal.prototype.onChange = function(oEvent, oItem) {
 		if (oEvent.getParameters().pressed) {
 			var sButtonId = oEvent.getSource().sId;
-			oEvent.getSource().getParent().getItems().forEach(function(oButton) {
+			this.getContent().forEach(function(oButton) {
 				if (oButton.sId != sButtonId) {
 					oButton.setPressed(false);
 				}

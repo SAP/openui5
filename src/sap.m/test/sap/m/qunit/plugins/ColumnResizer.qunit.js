@@ -680,10 +680,10 @@ sap.ui.define([
 		var oResizerQuickAction = this.oColumnResizer.getColumnResizeQuickAction(oColumn, oColumnMenu);
 		assert.ok(oResizerQuickAction.isA("sap.m.table.columnmenu.QuickAction"), "sap.m.table.columnmenu.QuickAction instance returned");
 		assert.strictEqual(oResizerQuickAction.getLabel(), Core.getLibraryResourceBundle("sap.m").getText("table.COLUMN_MENU_RESIZE"), "correct label set");
-		assert.strictEqual(oResizerQuickAction.getContent().getIcon(), "sap-icon://resize-horizontal", "correct icon set");
-		assert.ok(oResizerQuickAction.getContent().hasListeners("press"), "press event registered");
+		assert.strictEqual(oResizerQuickAction.getContent()[0].getIcon(), "sap-icon://resize-horizontal", "correct icon set");
+		assert.ok(oResizerQuickAction.getContent()[0].hasListeners("press"), "press event registered");
 
-		oResizerQuickAction.getContent().firePress(oColumn);
+		oResizerQuickAction.getContent()[0].firePress(oColumn);
 
 		assert.ok(fnMenuCloseSpy.calledOnce, "menu close called once");
 		assert.ok(fnStartResizingSpy.calledOnce, "startResizing called once");

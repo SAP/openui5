@@ -60,7 +60,7 @@ sap.ui.define([
 		} else {
 			oQuickAction = new QuickAction({
 				label: sLabel,
-				content: this._createContent()
+				content: [this._createContent()]
 			});
 		}
 
@@ -79,28 +79,24 @@ sap.ui.define([
 
 	QuickSortItem.prototype._createContent = function() {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		return new HBox({
-			items: [
-				new ToggleButton({
-					text: oBundle.getText("table.COLUMNMENU_SORT_ASCENDING"),
-					icon: "sap-icon://sort-ascending",
-					pressed: this.getSortOrder() === SortOrder.Ascending,
-					press: [{item: this, sortOrder: SortOrder.Ascending}, this._onSortChange, this]
-				}),
-				new ToggleButton({
-					text: oBundle.getText("table.COLUMNMENU_SORT_DESCENDING"),
-					icon: "sap-icon://sort-descending",
-					pressed: this.getSortOrder() === SortOrder.Descending,
-					press: [{item: this, sortOrder: SortOrder.Descending}, this._onSortChange, this]
-				})
-			]
-		});
+		return [
+			new ToggleButton({
+				text: oBundle.getText("table.COLUMNMENU_SORT_ASCENDING"),
+				pressed: this.getSortOrder() === SortOrder.Ascending,
+				press: [{item: this, sortOrder: SortOrder.Ascending}, this._onSortChange, this]
+			}),
+			new ToggleButton({
+				text: oBundle.getText("table.COLUMNMENU_SORT_DESCENDING"),
+				pressed: this.getSortOrder() === SortOrder.Descending,
+				press: [{item: this, sortOrder: SortOrder.Descending}, this._onSortChange, this]
+			})
+		];
 	};
 
 	QuickSortItem.prototype._onSortChange = function (oEvent, mSortInfo) {
 		if (oEvent.getParameters().pressed) {
 			var sButtonId = oEvent.getSource().sId;
-			oEvent.getSource().getParent().getItems().forEach(function(oButton) {
+			oEvent.getSource().getParent().getContent().forEach(function(oButton) {
 				if (oButton.sId != sButtonId) {
 					oButton.setPressed(false);
 				}
