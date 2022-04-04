@@ -88,6 +88,17 @@
 						}
 					]
 				}
+			],
+			"actions": [
+				{
+					"type": "ShowCard",
+					"parameters": {
+						"manifest": "./detailsManifest.json",
+						"parameters": {
+							"orderId": "{parameters>/orderId/value}"
+						}
+					}
+				}
 			]
 		},
 		"footer": {
