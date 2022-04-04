@@ -318,7 +318,8 @@ sap.ui.define([
 			aDimensions = oConfiguration.dimensions.map(function (oDimension, i) {
 				return {
 					name: oResolvedConfiguration.dimensions[i].name || oResolvedConfiguration.dimensions[i].label, // .label for backwards compatibility
-					value: oDimension.value
+					value: oDimension.value,
+					dataType: oDimension.dataType
 				};
 			});
 		}
