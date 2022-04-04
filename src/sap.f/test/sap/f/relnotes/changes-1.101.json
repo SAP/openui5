@@ -1,7 +1,33 @@
 {
   "1.101.0": {
-    "date": "March 2022",
+    "date": "April 2022",
     "notes": [
+      {
+        "id": "7a5f1475b2550f1b3b635b4ca107738958940fd9",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fix elements overlapping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280073506"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270025164"
+          }
+        ]
+      },
+      {
+        "id": "6d96e013cea11380aa2ff829a81884bde5ea2b51",
+        "type": "FIX",
+        "text": " sap.f.cards.NumericHeader: Browser no longer crashes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270027920"
+          }
+        ]
+      },
       {
         "id": "94e5cfa3e710dce059d2ef747b15878c565f1b92",
         "type": "FIX",

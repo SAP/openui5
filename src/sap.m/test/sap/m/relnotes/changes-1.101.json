@@ -1,7 +1,67 @@
 {
   "1.101.0": {
-    "date": "March 2022",
+    "date": "April 2022",
     "notes": [
+      {
+        "id": "c52be440b6e3efb7cfd95e51bd222d6a2c7d6e1b",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: icon-only markers announcement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280079826"
+          }
+        ]
+      },
+      {
+        "id": "9c1aecffc63747fa96d9c306527d6996e7a0e69c",
+        "type": "FEATURE",
+        "text": " Grouping and sorting support in Uploadset is now available"
+      },
+      {
+        "id": "d5004c6ad1d8047f0377d7c78cbab61f19a31c92",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: adjust sort, filter and group lists labes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001976842022"
+          }
+        ]
+      },
+      {
+        "id": "eef780ffb4e6a2123736f06842887c060e1c0fdf",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Timezone popup is always updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042565"
+          }
+        ]
+      },
+      {
+        "id": "999cf88de3d9180f5adecae7d314dbd22d283e07",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Fixed browser navigation with alt/cmd + arrow keys",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042448"
+          }
+        ]
+      },
+      {
+        "id": "42ae4a7d0c8e7f3a09a15b3b24f60aff25fefe43",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Fixed browser navigation with alt/cmd + arrow keys",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042443"
+          }
+        ]
+      },
       {
         "id": "a68b18ff81551e0d338de5a1ae1e2bd64bd2bb0d",
         "type": "FIX",
