@@ -6,9 +6,9 @@
 <script id='sap-ui-bootstrap'
 	src='../../../../../../resources/sap-ui-core.js'
 	data-sap-ui-xx-bindingSyntax="complex"
-	data-sap-ui-theme="sap_belize"
+	data-sap-ui-theme="sap_horizon_dark"
 	data-sap-ui-libs="sap.m"></script>
-	
+
 <style>
 .highlight {
 	outline: 2px solid darkmagenta;
@@ -39,7 +39,7 @@ sap.ui.getCore().setModel(oModel);
 var oIconList = new sap.m.List({
 	headerText: "Icons",
 	noDataText: "Well Done!",
-	width: "25rem",
+	width: "22rem",
 	growing: true,
 	inset: true,
 	dragDropConfig: new sap.ui.core.dnd.DragInfo({
@@ -66,7 +66,7 @@ var oIconList = new sap.m.List({
 
 var oDescList = new sap.m.List({
 	headerText: "Descriptions",
-	width: "25rem",
+	width: "22rem",
 	inset: true,
 	dragDropConfig: [
 		new sap.ui.core.dnd.DragInfo({
@@ -118,6 +118,7 @@ var oDescList = new sap.m.List({
 var oFileList = new sap.m.List({
 	headerText: "File List",
 	inset: true,
+	width: "44rem",
 	noDataText: "Drop some files here!",
 	dragDropConfig: [
 		new sap.ui.core.dnd.DropInfo({
@@ -156,6 +157,8 @@ var oFileList = new sap.m.List({
 
 var oNamesTable = new sap.m.Table({
 	inset: true,
+	width: "44rem",
+	mode: "MultiSelect",
 	headerText: "Export to Excel - Draggable Columns",
 	columns: [
 		new sap.m.Column({header: new sap.m.Text({text: "Last Name"})}),
@@ -163,6 +166,19 @@ var oNamesTable = new sap.m.Table({
 		new sap.m.Column({header: new sap.m.Text({text: "Birthday"}), hAlign: "End"}),
 	],
 	dragDropConfig: [
+		new sap.ui.core.dnd.DragDropInfo({
+			sourceAggregation: "items",
+			targetAggregation: "items",
+			drop: function(oEvent) {
+				var iSourceIndex = oNamesTable.indexOfItem(oEvent.getParameter("draggedControl"));
+				var iTargetIndex = oNamesTable.indexOfItem(oEvent.getParameter("droppedControl"));
+				var aData = oModel.getObject("/names");
+				var oMovedData = aData.splice(iSourceIndex, 1)[0];
+				aData.splice(iTargetIndex, 0, oMovedData);
+				oModel.refresh();
+				oNamesTable.getItems()[iTargetIndex].focus();
+			}
+		}),
 		new sap.ui.core.dnd.DragDropInfo({
 			dropPosition: "Between",
 			sourceAggregation: "columns",
@@ -184,13 +200,15 @@ var oNamesTable = new sap.m.Table({
 		new sap.ui.core.dnd.DragInfo({
 			dragStart: function(oEvent) {
 				var oDragSession = oEvent.getParameter("dragSession");
-				oDragSession.setData("text/html", oNamesTable.$().find("table").clone().find(":empty").remove().end()[0]["outerHTML"]);
+				oDragSession.setData("text/html", oNamesTable.$().find("table").clone().find(":empty").remove().end()[0].outerHTML);
+				oDragSession.setData("text/plain", oNamesTable.$().find("table").clone().find(":empty").remove().end()[0].innerText);
 			}
 		})
 	]
 }).bindItems({
 	path : "/names",
 	template : new sap.m.ColumnListItem({
+		type: "Navigation",
 		cells: [
 			new sap.m.Text({text: "{lastName}"}),
 			new sap.m.Text({text: "{firstName}"}),
@@ -199,9 +217,14 @@ var oNamesTable = new sap.m.Table({
 	})
 });
 
+var oTextArea = new sap.m.TextArea({
+	placeholder: "Drop table data on me",
+	width: "42rem"
+});
+
 var oIconList2 = new sap.m.List({
 	headerText: "Icons",
-	width: "25rem",
+	width: "22rem",
 	inset: true,
 	dragDropConfig: new sap.ui.core.dnd.DragInfo({
 		groupName: "icons2descriptions",
@@ -228,13 +251,14 @@ var oHeaderToolbar = new sap.m.Toolbar({
 
 var oDescList2 = new sap.m.List({
 	noDataText: "Drop on Me",
-	width: "25rem",
+	width: "22rem",
 	inset: true,
 	headerToolbar: oHeaderToolbar,
 	dragDropConfig: [
 		new sap.ui.core.dnd.DropInfo({
 			groupName: "icons2descriptions",
 			targetAggregation: "items",
+			dropEffect: "Copy",
 			dragEnter: function(oEvent) {
 				var oDragSession = oEvent.getParameter("dragSession");
 				oDragSession.setDropControl(oHeaderToolbar);
@@ -242,7 +266,7 @@ var oDescList2 = new sap.m.List({
 			dragOver: function(oEvent) {
 				var oBrowserEvent = oEvent.getParameter("browserEvent");
 				var bCopy = (oBrowserEvent.metaKey || oBrowserEvent.ctrlKey);
-				oEvent.getSource().setDropEffect(bCopy? "Copy": "Move");
+				// oEvent.getSource().setDropEffect(bCopy? "Copy": "Move");
 			},
 			drop: function(oEvent) {
 				var oDraggedItem = oEvent.getParameter("draggedControl");
@@ -262,11 +286,17 @@ var oDescList2 = new sap.m.List({
 
 var oHBox1 = new sap.m.HBox({
 	items : [oIconList, oDescList, oFileList],
-	renderType: "Bare"
+	renderType: "Bare",
+	wrap: "Wrap"
 });
 var oHBox2 = new sap.m.HBox({
-	items : [oIconList2, oDescList2, oNamesTable],
-	renderType: "Bare"
+	items : [oIconList2, oDescList2, new sap.m.VBox({
+		items: [oNamesTable, oTextArea],
+		alignItems: "Center",
+		renderType: "Bare"
+	})],
+	renderType: "Bare",
+	wrap: "Wrap"
 });
 
 var oPage = new sap.m.Page({

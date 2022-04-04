@@ -12,7 +12,8 @@ sap.ui.define(['sap/m/Text'], function(Text) {
 	// Control extension for custom ghost
 	DraggableText.prototype.getDragGhost = function (oEvent) {
 		var oGhost = document.createElement("span");
-		oGhost.innerText = this.getText();
+		oGhost.innerText = "Yeees I am a custom ghost";
+		oGhost.style.fontSize = "2rem";
 		oGhost.style.border = "3px solid red";
 		oGhost.style.backgroundColor = "pink";
 		return oGhost;

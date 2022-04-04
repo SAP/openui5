@@ -181,7 +181,8 @@ function(
 			 */
 			detailPress : {}
 		},
-		designtime: "sap/m/designtime/ListItemBase.designtime"
+		designtime: "sap/m/designtime/ListItemBase.designtime",
+		dnd: true
 	}});
 
 	ListItemBase.getAccessibilityText = function(oControl, bDetectEmpty) {
