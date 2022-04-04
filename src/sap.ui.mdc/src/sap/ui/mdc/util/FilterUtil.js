@@ -33,7 +33,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 					var oPropertyInfo = null;
 
 					aPropertiesMetadata.some(function(oProp) {
-						if (IdentifierUtil.getPropertyKeyByPath(oProp) === sKey) {
+						if (IdentifierUtil.getPropertyPath(oProp) === sKey) {
 							oPropertyInfo = oProp;
 						}
 

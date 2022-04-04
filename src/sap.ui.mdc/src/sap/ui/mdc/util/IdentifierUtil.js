@@ -53,15 +53,15 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 		/**
 		 * Static function that determines the key of the property<br>
 		 *
-		 * @param {Object} oProperty - contains the meta dada
-		 * @returns {string} the key of the property path/name
+		 * @param {Object} oProperty - contains the metadata
+		 * @returns {string} the key of the property name
 		 * @protected
 		 */
 		getPropertyKey:  function(oProperty) {
 			return oProperty.name;
 		},
 
-		getPropertyKeyByPath:  function(oProperty) {
+		getPropertyPath:  function(oProperty) {
 			return oProperty.path;
 		},
 
