@@ -93,11 +93,6 @@ sap.ui.define(
 
 		var ButtonType = mLibrary.ButtonType;
 
-		FilterBar.prototype.init = function() {
-			FilterBarBase.prototype.init.apply(this, arguments);
-			this.getEngine().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
-		};
-
 		FilterBar.prototype._createInnerLayout = function () {
 			this._cLayoutItem = FilterItemLayout;
 
@@ -166,7 +161,7 @@ sap.ui.define(
 		FilterBar.prototype.init = function() {
 			FilterBarBase.prototype.init.apply(this, arguments);
 			this._bPersistValues = true;
-			this.getEngine().defaultProviderRegistry.attach(this, "Transient");
+			this.getEngine().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
 		};
 
 		FilterBar.prototype.exit = function() {
