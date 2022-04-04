@@ -598,7 +598,7 @@ sap.ui.define([
 				oDataRequestSpy.restore();
 				oCard.destroy();
 				done();
-			}.bind(oCard), 100));
+			}.bind(oCard), 200));
 		});
 
 		QUnit.test("Templating with $data", function (assert) {
@@ -642,7 +642,7 @@ sap.ui.define([
 				oDataRequestSpy.restore();
 				oCard.destroy();
 				done();
-			}.bind(oCard), 200));
+			}.bind(oCard), 300));
 		});
 
 		QUnit.test("Templating with empty $data", function (assert) {
@@ -685,7 +685,7 @@ sap.ui.define([
 				oDataRequestSpy.restore();
 				oCard.destroy();
 				done();
-			}.bind(oCard), 300));
+			}.bind(oCard), 400));
 		});
 
 		QUnit.test("Templating with $data and incorrect templating", function (assert) {
@@ -703,7 +703,7 @@ sap.ui.define([
 				// Cleanup
 				oCard.destroy();
 				done();
-			}, 400));
+			}, 500));
 		});
 
 		QUnit.test("Templating with data feature on content level - request", function (assert) {
@@ -749,7 +749,7 @@ sap.ui.define([
 				oDataRequestSpy.restore();
 				oCard.destroy();
 				done();
-			}.bind(oCard), 500));
+			}.bind(oCard), 600));
 		});
 
 		QUnit.test("Templating with data feature on card level - request", function (assert) {
@@ -793,7 +793,7 @@ sap.ui.define([
 				oDataRequestSpy.restore();
 				oCard.destroy();
 				done();
-			}, 600 ));
+			}, 700 ));
 		});
 
 		QUnit.test("Templating with data feature on card level", function (assert) {
@@ -836,7 +836,7 @@ sap.ui.define([
 				oDataRequestSpy.restore();
 				oCard.destroy();
 				done();
-			}, 700 ));
+			}, 800 ));
 		});
 
 		QUnit.test("Templating - mixed usage (full)", function (assert) {
@@ -855,7 +855,7 @@ sap.ui.define([
 				// Cleanup
 				oCard.destroy();
 				done();
-			}, 800 ));
+			}, 900 ));
 		});
 
 		QUnit.test("Templating - mixed usage (data feature)", function (assert) {
@@ -874,7 +874,7 @@ sap.ui.define([
 			// Cleanup
 			oCard.destroy();
 			done();
-			}, 900));
+			}, 1000));
 		});
 
 		QUnit.module("Adaptive Card Markdown Support");
