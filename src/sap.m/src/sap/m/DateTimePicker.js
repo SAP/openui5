@@ -1054,6 +1054,7 @@ sap.ui.define([
 		this._oCalendar.focus();
 
 		Device.media.attachHandler(this._handleWindowResize, this);
+		this.fireAfterValueHelpOpen();
 	}
 
 	function _handleAfterClose(){
@@ -1061,6 +1062,7 @@ sap.ui.define([
 
 		this._oCalendar._closePickers();
 		Device.media.detachHandler(this._handleWindowResize, this);
+		this.fireAfterValueHelpClose();
 	}
 
 	function _getTimePattern(){

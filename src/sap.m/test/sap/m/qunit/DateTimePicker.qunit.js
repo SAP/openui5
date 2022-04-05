@@ -1258,4 +1258,29 @@ sap.ui.define([
 		// clean
 		oDTP.destroy();
 	});
+
+	QUnit.module("Events");
+
+	QUnit.test("afterValueHelpOpen and afterValueHelpClose event fire when value help opens and closes", function(assert) {
+		var oDTP = new DateTimePicker(),
+			spyOpen = this.spy(oDTP, "fireAfterValueHelpOpen"),
+			spyClose = this.spy(oDTP, "fireAfterValueHelpClose");
+
+		oDTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oDTP._createPopup();
+		oDTP._createPopupContent();
+		oDTP._oPopup.fireAfterOpen();
+		oDTP._oPopup.fireAfterClose();
+
+		assert.ok(spyOpen.calledOnce, "afterValueHelpOpen event fired");
+		assert.ok(spyClose.calledOnce, "afterValueHelpClose event fired");
+
+		spyOpen = null;
+		spyClose = null;
+		oDTP.destroy();
+	});
+
+
 });

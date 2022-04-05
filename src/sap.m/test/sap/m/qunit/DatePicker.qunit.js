@@ -2239,6 +2239,27 @@ sap.ui.define([
 		assert.notOk(this.fnFireNavigate.getCall(1).args[0].afterPopupOpened, "Event isn't fired after opening");
 	});
 
+	QUnit.test("afterValueHelpOpen and afterValueHelpClose event fire when value help opens and closes", function(assert) {
+		var oDP = new DatePicker(),
+			spyOpen = this.spy(oDP, "fireAfterValueHelpOpen"),
+			spyClose = this.spy(oDP, "fireAfterValueHelpClose");
+
+		oDP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oDP._createPopup();
+		oDP._createPopupContent();
+		oDP._oPopup.fireAfterOpen();
+		oDP._oPopup.fireAfterClose();
+
+		assert.ok(spyOpen.calledOnce, "afterValueHelpOpen event fired");
+		assert.ok(spyClose.calledOnce, "afterValueHelpClose event fired");
+
+		spyOpen = null;
+		spyClose = null;
+		oDP.destroy();
+	});
+
 	QUnit.module("SpecialDates - lazy loading", {
 		beforeEach: function (assert) {
 			this.oDP = new DatePicker("SDP", {
