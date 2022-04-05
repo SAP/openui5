@@ -1580,9 +1580,9 @@ sap.ui.define([
     };
 
     /**
-     * Sets a "No Data" text for the inner chart.
-     * @param {sap.ui.mdc.Chart} oMDCChart Reference to mdc chart
-     * @param {string} sText Text to show when there is no data displayed on the chart
+     * Defines a <code>noDataText</code>text for the inner chart.
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to chart
+     * @param {string} sText Text to show if no data is displayed in the chart
      */
     ChartDelegate.setNoDataText = function(oMDCChart, sText) {
         this._getChart(oMDCChart).setCustomMessages({
