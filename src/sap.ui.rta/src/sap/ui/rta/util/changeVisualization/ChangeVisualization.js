@@ -212,7 +212,6 @@ sap.ui.define([
 		this._updateVisualizationModel({
 			commandCategories: aCommandData,
 			hiddenChanges: aHiddenChanges,
-			hasHiddenChanges: aHiddenChanges.length !== 0,
 			popupInfoMessage: this._oTextBundle.getText(
 				"MSG_CHANGEVISUALIZATION_HIDDEN_CHANGES_INFO",
 				[aHiddenChanges.length]
