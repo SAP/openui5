@@ -16,12 +16,11 @@ sap.ui.define([
 
 		onInit : function () {
 			this.oUIModel = new JSONModel({
+				iMessages : 0,
 				oProductsTable : null,
 				bShowList : true,
 				sShowListIcon : "sap-icon://close-command-field",
-				sShowListTooltip : "Hide List",
-				bSortProductIDDescending : undefined,
-				sSortProductIDIcon : ""
+				sShowListTooltip : "Hide List"
 			});
 			this.getView().setModel(this.oUIModel, "ui");
 		}

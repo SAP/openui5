@@ -21,22 +21,17 @@
 							<ToolbarLayoutData shrinkable="false"/>
 						</layoutData>
 					</Title>
-					<SearchField id="filterAmount" search="onFilterProducts"
-							placeholder="Amount greater than" width="50%">
-						<layoutData>
-							<ToolbarLayoutData shrinkable="false"/>
-						</layoutData>
-					</SearchField>
-					<Button enabled="true" icon="sap-icon://refresh"
-							id="refreshProducts" press="onRefreshProducts"
-							tooltip="Refresh Product List"/>
+					<Button id="showMessages" icon="sap-icon://message-popup"
+							tooltip="Show messages" press="onToggleMessagePopover"
+							text="{ui>/iMessages}"
+							type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+					<Link text="Read Me" target="_blank"
+							href="test-resources/sap/ui/core/demokit/sample/odata/v4/Draft/README.html"/>
 				</Toolbar>
 			</headerToolbar>
 			<columns>
-				<Column hAlign="Right" width="9em">
-					<Button iconFirst="false" icon="{ui>/sSortProductIDIcon}"
-							id="sortByProductId" press="onSortByProductID"
-							text="Product ID"/>
+				<Column demandPopin="true">
+					<Text text="Product ID"/>
 				</Column>
 				<Column demandPopin="true">
 					<Text text="Is Active Entity"/>
