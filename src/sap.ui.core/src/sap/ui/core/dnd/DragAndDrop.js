@@ -457,9 +457,11 @@ function(lib, Device, UIArea, jQuery) {
 		// allow dropping
 		oEvent.preventDefault();
 
-		// set visual drop indicator from drop info
-		var sDropEffect = oDropInfo.getDropEffect().toLowerCase();
-		oEvent.originalEvent.dataTransfer.dropEffect = sDropEffect;
+		// set visual drop indicator from the drop info in case of the dragged source is a control
+		if (oDragControl) {
+			var sDropEffect = oDropInfo.getDropEffect().toLowerCase();
+			oEvent.originalEvent.dataTransfer.dropEffect = sDropEffect;
+		}
 	}
 
 	function showDropPosition(oEvent, oDropInfo, oValidDropControl) {
