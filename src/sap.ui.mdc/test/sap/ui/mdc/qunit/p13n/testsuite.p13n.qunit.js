@@ -422,9 +422,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
-			"AggregationConfigFlex": {
+			"xConfigFlex": {
 				group: "xConfig tests",
-				module: "./AggregationConfigFlex.qunit",
+				module: "./xConfigFlex.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.fl", "sap.ui.mdc"

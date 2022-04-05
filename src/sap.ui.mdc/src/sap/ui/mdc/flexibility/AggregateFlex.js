@@ -1,17 +1,19 @@
 /*
  * ! ${copyright}
  */
-sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeInfoAPI) {
+sap.ui.define([
+	"sap/ui/mdc/p13n/Engine",
+	"sap/ui/mdc/flexibility/Util"
+], function(Engine, Util) {
 	"use strict";
+
 	var fRebindControl = function (oControl) {
 		var bExecuteRebindForTable = oControl && oControl.isA && oControl.isA("sap.ui.mdc.Table") && oControl.isTableBound();
 		var bExecuteRebindForChart = oControl && oControl.isA && (oControl.isA("sap.ui.mdc.Chart"));
 		if (bExecuteRebindForTable || bExecuteRebindForChart) {
 			if (!oControl._bWaitForBindChanges) {
 				oControl._bWaitForBindChanges = true;
-				FlexRuntimeInfoAPI.waitForChanges({
-					element: oControl
-				}).then(function () {
+				Engine.getInstance().waitForChanges(oControl).then(function () {
 					if (bExecuteRebindForTable) {
 						oControl.rebind();
 					} else if (bExecuteRebindForChart) {
@@ -36,8 +38,9 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		fRebindControl(oControl);
 	};
 
-	var fAddAggregate = function (oChange, oControl, mPropertyBag, bIsRevert) {
+	var fAddAggregate = function (oChange, oControl, mPropertyBag, sChangeReason) {
 		return new Promise(function (resolve, reject) {
+			var bIsRevert = (sChangeReason === Util.REVERT);
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
@@ -58,8 +61,9 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		});
 	};
 
-	var fRemoveAggregate = function (oChange, oControl, mPropertyBag, bIsRevert) {
+	var fRemoveAggregate = function (oChange, oControl, mPropertyBag, sChangeReason) {
 		return new Promise(function (resolve, reject) {
+			var bIsRevert = (sChangeReason === Util.REVERT);
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
@@ -84,39 +88,16 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 	};
 
 	var Aggregate = {};
-	Aggregate.removeAggregate = {
-		"changeHandler": {
-			applyChange: function (oChange, oControl, mPropertyBag) {
-				return fRemoveAggregate(oChange, oControl, mPropertyBag, false);
-			},
-			completeChangeContent: function (oChange, mChangeSpecificInfo, mPropertyBag) {
-				// Not used, but needs to be there
-			},
-			revertChange: function (oChange, oControl, mPropertyBag) {
-				return fAddAggregate(oChange, oControl, mPropertyBag, true);
-			}
-		},
-		"layers": {
-			"USER": true
-		}
-	};
 
-	Aggregate.addAggregate = {
-		"changeHandler": {
-			applyChange: function (oChange, oControl, mPropertyBag) {
-				return fAddAggregate(oChange, oControl, mPropertyBag, false);
-			},
-			completeChangeContent: function (oChange, mChangeSpecificInfo, mPropertyBag) {
-				// Not used, but needs to be there
-			},
-			revertChange: function (oChange, oControl, mPropertyBag) {
-				return fRemoveAggregate(oChange, oControl, mPropertyBag, true);
-			}
-		},
-		"layers": {
-			"USER": true
-		}
-	};
+	Aggregate.addAggregate = Util.createChangeHandler({
+		apply: fAddAggregate,
+		revert: fRemoveAggregate
+	});
+
+	Aggregate.removeAggregate = Util.createChangeHandler({
+		apply: fRemoveAggregate,
+		revert: fAddAggregate
+	});
 
 	return Aggregate;
 });
