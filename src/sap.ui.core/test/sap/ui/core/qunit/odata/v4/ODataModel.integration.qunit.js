@@ -38346,6 +38346,10 @@ sap.ui.define([
 	// A 2nd side-effects refresh takes place, keeping the inline creation rows in place and
 	// refreshing them separately, but one of them has been deleted on the server.
 	// JIRA: CPOUI5ODATAV4-1384
+	//
+	// Prefetch compensates for exclusive filter, so that no extra GET is needed to replace the
+	// deleted one inside the table's visible area.
+	// JIRA: CPOUI5ODATAV4-1521
 	QUnit.test("CPOUI5ODATAV4-1384: side-effects refresh at top", function (assert) {
 		var oBinding,
 			oContextA,
@@ -38471,24 +38475,20 @@ sap.ui.define([
 					]
 				})
 				.expectChange("name", [, "'A' Team"]) // #refreshKeptElements updates "on the fly"
+				// prefetch compensates for exclusive filter (JIRA: CPOUI5ODATAV4-1521)
 				.expectRequest("TEAMS?$select=Name,Team_Id"
-					+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=0&$top=3", {
+					+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=0&$top=5", {
 					value : [
 						{Name : "'#1' Team *", Team_Id : "TEAM_01"},
 						{Name : "'#2' Team **", Team_Id : "TEAM_02"},
-						{Name : "'#3' Team ***", Team_Id : "TEAM_03"}
+						{Name : "'#3' Team ***", Team_Id : "TEAM_03"},
+						{Name : "'#4' Team ****", Team_Id : "TEAM_04"},
+						{Name : "'#5' Team *****", Team_Id : "TEAM_05"}
 					]
 				})
-				.expectChange("name", ["'A' Team", "'#1' Team *", "'#2' Team **", "'#3' Team ***"])
-				.expectChange("id", ["TEAM_A", "TEAM_01", "TEAM_02", "TEAM_03"])
-				//TODO one could avoid this request by increasing the prefetch above to compensate
-				// for the potential deletion of kept-alive contexts
-				.expectRequest("TEAMS?$select=Name,Team_Id&$filter=not (Team_Id eq 'TEAM_A')"
-					+ "&$skip=3&$top=1", {
-					value : [{Name : "'#4' Team ****", Team_Id : "TEAM_04"}]
-				})
-				.expectChange("name", [,,,, "'#4' Team ****"])
-				.expectChange("id", [,,,, "TEAM_04"]);
+				.expectChange("name",
+					["'A' Team", "'#1' Team *", "'#2' Team **", "'#3' Team ***", "'#4' Team ****"])
+				.expectChange("id", ["TEAM_A", "TEAM_01", "TEAM_02", "TEAM_03", "TEAM_04"]);
 
 			return Promise.all([
 				// code under test
@@ -38509,6 +38509,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1384
 	//
 	// Do not sent GET in same $batch as POSTs (JIRA: CPOUI5ODATAV4-1515)
+	//
+	// Prefetch compensates for exclusive filter, so that no extra GET is needed to replace the
+	// deleted one inside the table's visible area.
+	// JIRA: CPOUI5ODATAV4-1521
 	QUnit.test("CPOUI5ODATAV4-1384: side-effects refresh at bottom", function (assert) {
 		var oBinding,
 			oContextA,
@@ -38638,10 +38642,12 @@ sap.ui.define([
 					// Note: expect no separate refresh immediately after creation
 					// Note: TEAM_C is not an inline creation row!
 					url : "TEAMS?$count=true&$select=Name,Team_Id"
-						+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=7&$top=5"
+						+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=5&$top=9"
 				}, {
 					"@odata.count" : "10",
 					value : [
+						{Name : "'#6' Team", Team_Id : "TEAM_06"},
+						{Name : "'#7' Team", Team_Id : "TEAM_07"},
 						{Name : "'#8' Team", Team_Id : "TEAM_08"},
 						{Name : "'C' Team", Team_Id : "TEAM_C"}, // this position matters!
 						{Name : "'#9' Team", Team_Id : "TEAM_09"}
@@ -38670,6 +38676,8 @@ sap.ui.define([
 				"/TEAMS('TEAM_B')",
 				"/TEAMS('TEAM_A')",
 				// Note: the gap is not visible here
+				"/TEAMS('TEAM_06')",
+				"/TEAMS('TEAM_07')",
 				"/TEAMS('TEAM_08')",
 				"/TEAMS('TEAM_C')",
 				"/TEAMS('TEAM_09')"
@@ -38693,33 +38701,26 @@ sap.ui.define([
 						// {Name : "Team 'B'", Team_Id : "TEAM_B"} // deleted on server
 					]
 				})
-				// Note: 2nd GET not yet processed, binding still "empty"
-				.expectChange("name", ["Team 'A'"])
+				// prefetch compensates for exclusive filter (JIRA: CPOUI5ODATAV4-1521)
 				.expectRequest({
 					batchNo : 5,
 					groupId : "$auto",
 					url : "TEAMS?$count=true&$select=Name,Team_Id"
-					+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=7&$top=5"
+					+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=5&$top=9"
 				}, {
 					"@odata.count" : "10",
 					value : [
+						{Name : "Team no. 6", Team_Id : "TEAM_06"},
+						{Name : "Team no. 7", Team_Id : "TEAM_07"},
 						{Name : "Team no. 8", Team_Id : "TEAM_08"},
 						{Name : "Team 'C'", Team_Id : "TEAM_C"},
 						{Name : "Team no. 9", Team_Id : "TEAM_09"}
 					]
 				})
 				.expectChange("count", "11")
-				.expectChange("id", [,,,,,,, "TEAM_08", "TEAM_C", "TEAM_09", "TEAM_A"])
-				.expectChange("name", [,,,,,,, "Team no. 8", "Team 'C'", "Team no. 9", "Team 'A'"])
-				//TODO one could avoid this request by increasing the prefetch above to compensate
-				// for the potential deletion of kept-alive contexts
-				.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
-					+ "&$filter=not (Team_Id eq 'TEAM_A')&$skip=6&$top=1", {
-					"@odata.count" : "10",
-					value : [{Name : "Team no. 7", Team_Id : "TEAM_07"}]
-				})
-				.expectChange("id", [,,,,,, "TEAM_07"])
-				.expectChange("name", [,,,,,, "Team no. 7"]);
+				.expectChange("id", [,,,,,, "TEAM_07", "TEAM_08", "TEAM_C", "TEAM_09", "TEAM_A"])
+				.expectChange("name",
+					[,,,,,, "Team no. 7", "Team no. 8", "Team 'C'", "Team no. 9", "Team 'A'"]);
 
 			return Promise.all([
 				// code under test
@@ -38735,6 +38736,7 @@ sap.ui.define([
 				// Note: created ones are at the top here
 				"/TEAMS('TEAM_A')",
 				// Note: the gap is not visible here
+				"/TEAMS('TEAM_06')",
 				"/TEAMS('TEAM_07')",
 				"/TEAMS('TEAM_08')",
 				"/TEAMS('TEAM_C')",
