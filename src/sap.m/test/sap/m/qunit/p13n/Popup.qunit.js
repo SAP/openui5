@@ -4,8 +4,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Element",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core"
-], function(P13nPopup, Button, Element, Control, oCore) {
+	"sap/ui/core/Core",
+	"sap/m/p13n/SelectionPanel",
+	"sap/ui/model/json/JSONModel"
+], function(P13nPopup, Button, Element, Control, oCore, SelectionPanel, JSONModel) {
 	"use strict";
 
 	QUnit.module("p13n.Popup API tests", {
@@ -174,6 +176,29 @@ sap.ui.define([
 		//3) confirm warning
 		oMessageBox.getButtons()[0].firePress();
 		oCore.applyChanges();
+
+	});
+
+	QUnit.test("Bind inner panel's title property", function(assert){
+
+		var oTestModel = new JSONModel({
+			myCustomTitle: "Bound Title"
+		});
+
+		var oSelectionPanel = new SelectionPanel({
+			title: "{testModel>/myCustomTitle}"
+		});
+
+		this.oPopup.addPanel(oSelectionPanel);
+
+		this.oPopup.setModel(oTestModel, "testModel");
+
+		var oContainer = this.oPopup._getContainer();
+
+		var oPopupContainerBindingInfo = oContainer._getTabBar().getItems()[0].getBindingInfo("text").parts;
+		var oSelectionPanelBindingInfo = oSelectionPanel.getBindingInfo("title").parts;
+
+		assert.deepEqual(oPopupContainerBindingInfo, oSelectionPanelBindingInfo, "The provided binding info has been propagated to the inner p13n.Container used in the Popup");
 
 	});
 
