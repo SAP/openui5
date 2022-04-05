@@ -1807,7 +1807,6 @@ sap.ui.define([
 
 			if (typeof vRequest === "string") {
 				vRequest = {
-					method : "GET",
 					url : vRequest
 				};
 			}
@@ -36105,7 +36104,6 @@ sap.ui.define([
 		function initializeList(iBatchNo) {
 			that.expectRequest({
 					batchNo : iBatchNo,
-					method : "GET",
 					url : "Artists"
 						+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel,sendsAutographs"
 						+ "&$skip=0&$top=100"
@@ -36153,7 +36151,6 @@ sap.ui.define([
 			} else { // if not late, the list's properties are also part of the request
 				that.expectRequest({
 						batchNo : iBatchNo,
-						method : "GET",
 						url : "Artists(ArtistID='A1',IsActiveEntity=true)"
 							+ "?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages,Name,"
 							+ "defaultChannel,lastUsedChannel"
@@ -36480,7 +36477,6 @@ sap.ui.define([
 				.expectChange("listName", ["The Who", "The Rolling Stones"])
 				.expectRequest({
 					groupId : "$auto.heroes",
-					method : "GET",
 					url : "Artists(ArtistID='3',IsActiveEntity=false)"
 						+ "?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages,Name,"
 						+ "lastUsedChannel"
@@ -38432,7 +38428,6 @@ sap.ui.define([
 				.expectChange("name", "New 'C' Team", -1)
 				.expectRequest({
 					batchNo : 2,
-					method : "GET",
 					url : "TEAMS?$select=Name,Team_Id&$skip=0&$top=5"
 				}, {
 					value : [
@@ -38512,6 +38507,8 @@ sap.ui.define([
 	// A 2nd side-effects refresh takes place, keeping the inline creation rows in place and
 	// refreshing them separately, but one of them has been deleted on the server.
 	// JIRA: CPOUI5ODATAV4-1384
+	//
+	// Do not sent GET in same $batch as POSTs (JIRA: CPOUI5ODATAV4-1515)
 	QUnit.test("CPOUI5ODATAV4-1384: side-effects refresh at bottom", function (assert) {
 		var oBinding,
 			oContextA,
@@ -38609,6 +38606,8 @@ sap.ui.define([
 
 			that.expectRequest({
 					batchNo : 3,
+					changeSetNo : 1,
+					groupId : "update",
 					method : "POST",
 					url : "TEAMS",
 					payload : {Name : "New A", Team_Id : "TEAM_A"}
@@ -38617,6 +38616,8 @@ sap.ui.define([
 				.expectChange("name", ["'A' Team"])
 				.expectRequest({
 					batchNo : 3,
+					changeSetNo : 1,
+					groupId : "update",
 					method : "POST",
 					url : "TEAMS",
 					payload : {Name : "New B", Team_Id : "TEAM_B"}
@@ -38624,26 +38625,26 @@ sap.ui.define([
 				.expectChange("name", [, "'B' Team"])
 				.expectRequest({
 					batchNo : 3,
+					changeSetNo : 1,
+					groupId : "update",
 					method : "POST",
 					url : "TEAMS",
 					payload : {Name : "New C", Team_Id : "TEAM_C"}
 				}, {Name : "n/c", Team_Id : "TEAM_C"})
 				.expectChange("name", [,, "'C' Team"])
 				.expectRequest({
-					batchNo : 3,
-					method : "GET",
-					// $skip=7&$top=5 with a prefetch of 2 in each direction
-					url : "TEAMS?$count=true&$select=Name,Team_Id&$skip=5&$top=9"
+					batchNo : 4,
+					groupId : "$auto",
+					// Note: expect no separate refresh immediately after creation
+					// Note: TEAM_C is not an inline creation row!
+					url : "TEAMS?$count=true&$select=Name,Team_Id"
+						+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=7&$top=5"
 				}, {
-					"@odata.count" : "12",
+					"@odata.count" : "10",
 					value : [
-						{Name : "'#6' Team", Team_Id : "TEAM_06"},
-						{Name : "'#7' Team", Team_Id : "TEAM_07"},
-						{Name : "n/a", Team_Id : "TEAM_A"},
 						{Name : "'#8' Team", Team_Id : "TEAM_08"},
 						{Name : "'C' Team", Team_Id : "TEAM_C"}, // this position matters!
-						{Name : "'#9' Team", Team_Id : "TEAM_09"},
-						{"@odata.etag" : "b", Name : "n/b", Team_Id : "TEAM_B"}
+						{Name : "'#9' Team", Team_Id : "TEAM_09"}
 					]
 				})
 				.expectChange("id", [,,,,,,,, "TEAM_C", "TEAM_09", "TEAM_A", "TEAM_B"])
@@ -38669,8 +38670,6 @@ sap.ui.define([
 				"/TEAMS('TEAM_B')",
 				"/TEAMS('TEAM_A')",
 				// Note: the gap is not visible here
-				"/TEAMS('TEAM_06')",
-				"/TEAMS('TEAM_07')",
 				"/TEAMS('TEAM_08')",
 				"/TEAMS('TEAM_C')",
 				"/TEAMS('TEAM_09')"
@@ -38683,25 +38682,35 @@ sap.ui.define([
 				"/TEAMS('TEAM_B')"
 			]);
 
-			that.expectRequest("TEAMS?$select=Name,Team_Id"
-					+ "&$filter=Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B'&$top=2", {
+			that.expectRequest({
+					batchNo : 5,
+					groupId : "$auto",
+					url : "TEAMS?$select=Name,Team_Id"
+					+ "&$filter=Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B'&$top=2"
+				}, {
 					value : [
 						{Name : "Team 'A'", Team_Id : "TEAM_A"}
 						// {Name : "Team 'B'", Team_Id : "TEAM_B"} // deleted on server
 					]
 				})
-				.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
-					+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=7&$top=5", {
+				// Note: 2nd GET not yet processed, binding still "empty"
+				.expectChange("name", ["Team 'A'"])
+				.expectRequest({
+					batchNo : 5,
+					groupId : "$auto",
+					url : "TEAMS?$count=true&$select=Name,Team_Id"
+					+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=7&$top=5"
+				}, {
 					"@odata.count" : "10",
 					value : [
 						{Name : "Team no. 8", Team_Id : "TEAM_08"},
-						{Name : "Team no. 9", Team_Id : "TEAM_09"},
-						{Name : "Team 'C'", Team_Id : "TEAM_C"}
+						{Name : "Team 'C'", Team_Id : "TEAM_C"},
+						{Name : "Team no. 9", Team_Id : "TEAM_09"}
 					]
 				})
 				.expectChange("count", "11")
-				.expectChange("id", [,,,,,,, "TEAM_08", "TEAM_09", "TEAM_C", "TEAM_A"])
-				.expectChange("name", [,,,,,,, "Team no. 8", "Team no. 9", "Team 'C'", "Team 'A'"])
+				.expectChange("id", [,,,,,,, "TEAM_08", "TEAM_C", "TEAM_09", "TEAM_A"])
+				.expectChange("name", [,,,,,,, "Team no. 8", "Team 'C'", "Team no. 9", "Team 'A'"])
 				//TODO one could avoid this request by increasing the prefetch above to compensate
 				// for the potential deletion of kept-alive contexts
 				.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
@@ -38722,6 +38731,22 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getLength(), 11);
 			assert.ok(oBinding.isLengthFinal());
 			assert.strictEqual(oBinding.isFirstCreateAtEnd(), true);
+			assert.deepEqual(oBinding.getAllCurrentContexts().map(getNormalizedPath), [
+				// Note: created ones are at the top here
+				"/TEAMS('TEAM_A')",
+				// Note: the gap is not visible here
+				"/TEAMS('TEAM_07')",
+				"/TEAMS('TEAM_08')",
+				"/TEAMS('TEAM_C')",
+				"/TEAMS('TEAM_09')"
+			]);
+			assert.deepEqual(oTable.getRows().map(getBindingContextPath), [
+				"/TEAMS('TEAM_07')",
+				"/TEAMS('TEAM_08')",
+				"/TEAMS('TEAM_C')",
+				"/TEAMS('TEAM_09')",
+				"/TEAMS('TEAM_A')"
+			]);
 		});
 	});
 

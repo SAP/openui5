@@ -291,6 +291,32 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+["API", "Auto", "Direct"].forEach(function (sSubmitMode) {
+	QUnit.test("getUnlockedAutoCopy: sSubmitMode=" + sSubmitMode, function (assert) {
+		var iCount = sSubmitMode === "API" ? 1 : 0, // call count in case new lock needed
+			oGroupLock = {
+				getGroupId : function () {},
+				getOwner : function () {},
+				getUnlockedCopy : function () {}
+			},
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("myGroup");
+		this.mock(oRequestor).expects("getGroupSubmitMode").withExactArgs("myGroup")
+			.returns(sSubmitMode);
+		this.mock(oGroupLock).expects("getUnlockedCopy").exactly(1 - iCount).withExactArgs()
+			.returns("~result~");
+		this.mock(oGroupLock).expects("getOwner").exactly(iCount).withExactArgs()
+			.returns("~owner~");
+		this.mock(oRequestor).expects("lockGroup").exactly(iCount)
+			.withExactArgs("$auto", "~owner~").returns("~result~");
+
+		// code under test
+		assert.strictEqual(oRequestor.getUnlockedAutoCopy(oGroupLock), "~result~");
+	});
+});
+
+	//*********************************************************************************************
 	[{
 		groupId : "$direct", submitMode : "Direct"
 	}, {
@@ -4161,6 +4187,18 @@ sap.ui.define([
 			oRequestor.destroy();
 			oClock.restore();
 		});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("waitForBatchResponseReceived", function (assert) {
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		oRequestor.mBatchQueue = {
+			myGroup : [[{$promise : "~promise~"}]]
+		};
+
+		// code under test
+		assert.strictEqual(oRequestor.waitForBatchResponseReceived("myGroup"), "~promise~");
 	});
 
 	//*****************************************************************************************
