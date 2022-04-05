@@ -176,6 +176,14 @@ sap.ui.define([
 	CompVariant.STANDARD_VARIANT_ID = "*standard*";
 
 	/**
+	 * Returns the id of the variant object
+	 * @returns {string} the id of the variant object.
+	 */
+	CompVariant.prototype.getVariantId = function () {
+		return this.getId();
+	};
+
+	/**
 	 * Checks whenever the variant can be renamed updating the entity or crating an <code>updateChange</code>.
 	 *
 	 * @param {sap.ui.fl.Layer} [sLayer] - Layer in which the edition may take place
