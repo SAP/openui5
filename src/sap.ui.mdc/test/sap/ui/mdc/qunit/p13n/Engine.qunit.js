@@ -395,6 +395,50 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Check 'createChanges' sequential appliance", function(assert){
+
+		var done = assert.async(4);
+
+		var oChangeCreation1 = this.oEngine.createChanges({
+			control: this.oControl,
+			key: "Test",
+			suppressAppliance: true,
+			applySequentially: true,
+			state: []
+		}).then(function(){
+			done(1);
+		});
+
+		var oChangeCreation2 = this.oEngine.createChanges({
+			control: this.oControl,
+			key: "Test",
+			suppressAppliance: true,
+			applySequentially: true,
+			state: []
+		}).then(function(){
+			done(2);
+		});
+
+		var oChangeCreation3 = this.oEngine.createChanges({
+			control: this.oControl,
+			key: "Test",
+			suppressAppliance: true,
+			applySequentially: true,
+			state: []
+		}).then(function(){
+			done(3);
+		});
+
+		assert.ok(this.oControl._pModificationQueue instanceof Promise, "Promise queue started");
+
+		Promise.all([oChangeCreation1, oChangeCreation2, oChangeCreation3])
+		.then(function(){
+			assert.ok(!this.oControl.hasOwnProperty("_pModificationQueue"), "Promise queue finished and cleared");
+			done(4);
+		}.bind(this));
+
+	});
+
 	QUnit.test("Check 'createChanges' parameter 'applyAbsolute' (false)", function(assert){
 
 		var done = assert.async();
@@ -453,6 +497,8 @@ sap.ui.define([
 			this.oEngine._setModificationHandler(this.oControl, FlexModificationHandler.getInstance());
 
 			done();
+			return Promise.resolve();
+
 		}.bind(this);
 
 		this.oEngine._setModificationHandler(this.oControl, oModificationHandler);

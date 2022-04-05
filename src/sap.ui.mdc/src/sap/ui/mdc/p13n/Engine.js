@@ -159,6 +159,19 @@ sap.ui.define([
 		this._getRegistryEntry(vControl).modification = oModificationSetting;
 	};
 
+	var fnQueue = function(oControl, fTask) {
+		var fCleanupPromiseQueue = function(pOriginalPromise) {
+			if (oControl._pModificationQueue === pOriginalPromise){
+				delete oControl._pModificationQueue;
+			}
+		};
+
+		oControl._pModificationQueue = oControl._pModificationQueue instanceof Promise ? oControl._pModificationQueue.then(fTask) : fTask();
+		oControl._pModificationQueue.then(fCleanupPromiseQueue.bind(null, oControl._pModificationQueue));
+
+		return oControl._pModificationQueue;
+	};
+
 	/**
 	 * <code>Engine#createChanges</code> can be used to programmatically trigger the creation
 	 * of a set of changes based on the current control state and the provided state.
@@ -174,52 +187,63 @@ sap.ui.define([
 	 * for example if "A" is existing in the control state, but not mentioned in the new state provided in the
 	 * mDiffParameters.state then the absolute appliance decides whether to remove "A" or to keep it.
 	 * @param {boolean} [mDiffParameters.suppressAppliance] Decides whether the change should be applied directly.
+	 * @param {boolean} [mDiffParameters.applySequentially] Decides whether the appliance should be queued or processed in parallel.
 	 * Controller
 	 *
 	 * @returns {Promise} A Promise resolving in the according delta changes.
 	 */
 	Engine.prototype.createChanges = function(mDiffParameters) {
 
-		var vControl = mDiffParameters.control;
 		var sKey = mDiffParameters.key;
 		var aNewState = mDiffParameters.state;
 		var bApplyAbsolute = !!mDiffParameters.applyAbsolute;
 		var bSuppressCallback = !!mDiffParameters.suppressAppliance;
+		var bApplySequentially = !!mDiffParameters.applySequentially;
 
-		if (!sKey || !vControl || !aNewState) {
+		if (!sKey || !mDiffParameters.control || !aNewState) {
 			throw new Error("To create changes via Engine, atleast a 1)Control 2)Key and 3)State needs to be provided.");
 		}
 
-		return this.initAdaptation(vControl, sKey).then(function(){
+		var oControl = Engine.getControlInstance(mDiffParameters.control);
 
-			var oController = this.getController(vControl, sKey);
-			var mChangeOperations = oController.getChangeOperations();
+		var fDeltaHandling = function() {
+			return this.initAdaptation(oControl, sKey).then(function(){
 
-			var oRegistryEntry = this._getRegistryEntry(vControl);
-			var oCurrentState = oController.getCurrentState();
-			var oPriorState = merge(oCurrentState instanceof Array ? [] : {}, oCurrentState);
+				var oController = this.getController(oControl, sKey);
+				var mChangeOperations = oController.getChangeOperations();
 
-			var mDeltaConfig = {
-				existingState: mDiffParameters.stateBefore || oPriorState,
-				applyAbsolute: bApplyAbsolute,
-				changedState: aNewState,
-				control: oController.getAdaptationControl(),
-				changeOperations: mChangeOperations,
-				deltaAttributes: ["name"],
-				propertyInfo: oRegistryEntry.helper.getProperties().map(function(a){return {name: a.name};})
-			};
+				var oRegistryEntry = this._getRegistryEntry(oControl);
+				var oCurrentState = oController.getCurrentState();
+				var oPriorState = merge(oCurrentState instanceof Array ? [] : {}, oCurrentState);
 
-			//Only execute change calculation in case there is a difference (--> example: press 'Ok' without a difference)
-			var aChanges = oController.getDelta(mDeltaConfig);
+				var mDeltaConfig = {
+					existingState: mDiffParameters.stateBefore || oPriorState,
+					applyAbsolute: bApplyAbsolute,
+					changedState: aNewState,
+					control: oController.getAdaptationControl(),
+					changeOperations: mChangeOperations,
+					deltaAttributes: ["name"],
+					propertyInfo: oRegistryEntry.helper.getProperties().map(function(a){return {name: a.name};})
+				};
 
-			if (!bSuppressCallback) {
-				return this._processChanges(vControl, aChanges);
-			}
+				//Only execute change calculation in case there is a difference (--> example: press 'Ok' without a difference)
+				var aChanges = oController.getDelta(mDeltaConfig);
 
-			return aChanges || [];
+				if (!bSuppressCallback) {
+					return this._processChanges(oControl, aChanges);
+				}
 
-		}.bind(this));
+				return aChanges || [];
 
+			}.bind(this));
+
+		}.bind(this);
+
+		if (bApplySequentially) {
+			return fnQueue(oControl, fDeltaHandling);
+		} else {
+			return fDeltaHandling.apply(this);
+		}
 	};
 
 	/**

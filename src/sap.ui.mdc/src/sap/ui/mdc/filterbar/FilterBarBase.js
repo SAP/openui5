@@ -630,6 +630,7 @@ sap.ui.define([
 
 		this._aOngoingChangeAppliance.push(this.getEngine().createChanges({
 			control: this,
+			applySequentially: true,
 			key: "Filter",
 			state: mOrigConditions
 		}));

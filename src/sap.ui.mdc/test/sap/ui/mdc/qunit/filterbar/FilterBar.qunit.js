@@ -626,6 +626,8 @@ sap.ui.define([
 							assert.ok(FlexUtil.handleChanges.calledTwice);
 							done();
 						}
+
+						return Promise.resolve(aChanges);
 					};
 
 					oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
@@ -681,6 +683,7 @@ sap.ui.define([
 						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["conditions/in"]);
 						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["conditions/in"], "INTEST");
 						done();
+						return Promise.resolve(aChanges);
 					};
 
 					oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
@@ -747,6 +750,7 @@ sap.ui.define([
 							assert.ok(FlexUtil.handleChanges.calledTwice);
 							done();
 						}
+						return Promise.resolve(aChanges);
 					};
 
 					oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
@@ -805,6 +809,7 @@ sap.ui.define([
 						assert.equal(aResultingChanges[0].changeSpecificData.content.name, "key");
 						assert.deepEqual(aResultingChanges[0].changeSpecificData.content.condition, { operator: "EQ", values: ["foo"], validated: undefined});
 						done();
+						return Promise.resolve(aChanges);
 					};
 
 					oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
@@ -883,6 +888,7 @@ sap.ui.define([
 							assert.equal(aCallbackChanges[0].changeSpecificData.changeType, "addCondition");
 							assert.ok(!aCallbackChanges[0].changeSpecificData.content.condition.inParameters);
 							done();
+							return Promise.resolve(aChanges);
 						};
 
 						oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
