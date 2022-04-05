@@ -258,11 +258,54 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("BasePanel API change special reasoning", {
+		beforeEach: function() {
+			this.oBasePanel = new BasePanel();
+			this.oBasePanel.setP13nData([
+				{
+					label: "Test",
+					name: "test",
+					visible: true
+				}, {
+					label: "Test2",
+					name: "test2",
+					visible: true
+				}, {
+					label: "Test3",
+					name: "test3",
+					visible: false
+				}, {
+					label: "Test4",
+					name: "test4",
+					visible: false
+				}
+			]);
+			var oTemplate = new StandardListItem({
+				title: "{" + this.oBasePanel.P13N_MODEL  + ">label}"
+			});
+
+			this.oBasePanel._setTemplate(oTemplate);
+			this.oBasePanel._setPanelColumns([
+				"Field"
+			]);
+			this.oBasePanel.placeAt("qunit-fixture");
+			oCore.applyChanges();
+			this.oBtnShowSelected = this.oBasePanel._oListControl.getHeaderToolbar().getContent()[6];
+		},
+		afterEach: function() {
+			this.oBasePanel.destroy();
+		}
+	});
+
 	QUnit.test("Check change event reason 'SelectAll'", function(assert){
 
 		var done = assert.async();
 
 		this.oBasePanel.attachChange(function(oEvt){
+			assert.equal(oEvt.getParameter("item")[0].name, "test", "correct item found");
+			assert.equal(oEvt.getParameter("item")[1].name, "test2", "correct item found");
+			assert.equal(oEvt.getParameter("item")[2].name, "test3", "correct item found");
+			assert.equal(oEvt.getParameter("item")[3].name, "test4", "correct item found");
 			assert.equal(oEvt.getParameter("reason"), this.oBasePanel.CHANGE_REASON_SELECTALL, "P13n change event fired with correct reason");
 			done();
 		}.bind(this));
@@ -271,6 +314,30 @@ sap.ui.define([
 			listItem: this.oBasePanel._oListControl.getItems()[0],
 			listItems: this.oBasePanel._oListControl.getItems(),
 			selectAll: true
+		});
+	});
+
+	QUnit.test("RangeSelect reason", function(assert){
+
+		var done = assert.async();
+
+		this.oBasePanel.attachChange(function(oEvt){
+			assert.equal(oEvt.getParameter("item")[0].name, "test3", "correct item found");
+			assert.equal(oEvt.getParameter("item")[1].name, "test4", "correct item found");
+			assert.equal(oEvt.getParameter("reason"), this.oBasePanel.CHANGE_REASON_RANGESELECT);
+			done();
+		}.bind(this));
+
+		var oThirdItem = this.oBasePanel._oListControl.getItems()[2];
+		oThirdItem.setSelected(true);
+		var oFourthItem = this.oBasePanel._oListControl.getItems()[3];
+		oFourthItem.setSelected(true);
+
+		var aEventRangeParameterFake = [oThirdItem, oFourthItem];
+
+		this.oBasePanel._oListControl.fireSelectionChange({
+			selectAll: false,
+			listItems: aEventRangeParameterFake
 		});
 	});
 
