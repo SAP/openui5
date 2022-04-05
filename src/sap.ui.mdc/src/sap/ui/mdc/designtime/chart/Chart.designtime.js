@@ -12,16 +12,7 @@ sap.ui.define([
 				//RTA expects the settings to be returned as function
 				return {
 					handler: function (oControl, mPropertyBag) {
-						var aP13nMode = oControl.getP13nMode();
-                        aP13nMode.pop("Type");
-
-						if (oControl.isPropertyHelperFinal()){
-                            return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, aP13nMode);
-                        } else {
-                            return oControl.finalizePropertyHelper().then(function(){
-                                return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, aP13nMode);
-                            });
-                        }
+						return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, oControl.getP13nMode());
 					}
 				};
 			}
