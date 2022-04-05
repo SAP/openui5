@@ -1160,7 +1160,6 @@ sap.ui.define([
 			sDeepResourcePath, sGroupId, oOldCache) {
 		var sBindingPath,
 			aKeptElementPaths,
-			oCache,
 			that = this;
 
 		if (oOldCache && oOldCache.getResourcePath() === sResourcePath
@@ -1170,7 +1169,7 @@ sap.ui.define([
 				return that.mPreviousContextsByPath[sPath].isKeepAlive();
 			});
 
-			if (this.iCreatedContexts || !sGroupId && aKeptElementPaths.length) {
+			if (this.iCreatedContexts || aKeptElementPaths.length) {
 				oOldCache.reset(aKeptElementPaths.map(function (sPath) {
 					return _Helper.getRelativePath(sPath, sBindingPath);
 				}), sGroupId);
@@ -1183,21 +1182,11 @@ sap.ui.define([
 		}
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
-		oCache = this.getCacheAndMoveKeepAliveContexts(sResourcePath, mQueryOptions)
+
+		return this.getCacheAndMoveKeepAliveContexts(sResourcePath, mQueryOptions)
 			|| _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
 				this.mParameters.$$aggregation, mQueryOptions, this.oModel.bAutoExpandSelect,
 				this.bSharedRequest);
-
-		if (aKeptElementPaths && aKeptElementPaths.length) {
-			oCache.setLateQueryOptions(oOldCache.getLateQueryOptions());
-			aKeptElementPaths.forEach(function (sPath) {
-				oCache.addKeptElement(
-					oOldCache.getValue(_Helper.getRelativePath(sPath, sBindingPath)));
-				that.mPreviousContextsByPath[sPath].checkUpdate(); // add change listeners
-			});
-		}
-
-		return oCache;
 	};
 
 	/**

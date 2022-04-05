@@ -5831,22 +5831,19 @@ sap.ui.define([
 		this.mock(oContext0).expects("isKeepAlive").withExactArgs().returns(true);
 		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(false);
 		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(true);
-		this.mock(oOldCache).expects("reset").withExactArgs(["('0')", "('2')"], false);
+		this.mock(oOldCache).expects("reset").withExactArgs(["('0')", "('2')"], "myGroup");
 		this.mock(oOldCache).expects("setQueryOptions").withExactArgs("~queryOptions~", true);
 		this.mock(_AggregationCache).expects("create").never();
 
 		assert.strictEqual(
 			// code under test
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
-				"deep/resource/path", false, oOldCache),
+				"deep/resource/path", "myGroup", oOldCache),
 			oOldCache);
 	});
 
 	//*********************************************************************************************
-[undefined, "myGroup"].forEach(function (sGroupId) {
-	var sTitle = "doCreateCache w/ old cache, iCreatedContexts; sGroupId=" + sGroupId;
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("doCreateCache w/ old cache, iCreatedContexts", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oOldCache = {
 				$deepResourcePath : "deep/resource/path",
@@ -5857,17 +5854,16 @@ sap.ui.define([
 
 		oBinding.iCreatedContexts = 1;
 		this.mock(oOldCache).expects("getResourcePath").withExactArgs().returns("resource/path");
-		this.mock(oOldCache).expects("reset").withExactArgs([], sGroupId);
+		this.mock(oOldCache).expects("reset").withExactArgs([], "myGroup");
 		this.mock(oOldCache).expects("setQueryOptions").withExactArgs("~queryOptions~", true);
 		this.mock(_AggregationCache).expects("create").never();
 
 		assert.strictEqual(
 			// code under test
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
-				"deep/resource/path", sGroupId, oOldCache),
+				"deep/resource/path", "myGroup", oOldCache),
 			oOldCache);
 	});
-});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bWithOld) {
@@ -5912,7 +5908,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
-				"deep/resource/path", false, bWithOld ? oOldCache : undefined),
+				"deep/resource/path", undefined, bWithOld ? oOldCache : undefined),
 			oCache);
 	});
 	});
@@ -5949,88 +5945,10 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
-				"deep/resource/path", false, oOldCache),
+				"deep/resource/path", undefined, oOldCache),
 			oCache);
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("doCreateCache: keep created", function (assert) {
-		var oAddKeptElementExpectation0,
-			oAddKeptElementExpectation2,
-			oBinding = this.bindList("/EMPLOYEES"),
-			oCache = {
-				addKeptElement : function () {},
-				setLateQueryOptions : function () {}
-			},
-			oCacheMock = this.mock(oCache),
-			oCheckUpdateExpectation0,
-			oCheckUpdateExpectation2,
-			oContext0 = {
-				checkUpdate : function () {},
-				isKeepAlive : function () {}
-			},
-			oContext1 = {
-				// #checkUpdate must not be called
-				isKeepAlive : function () {}
-			},
-			oContext2 = {
-				checkUpdate : function () {},
-				isKeepAlive : function () {}
-			},
-			oHelperMock = this.mock(_Helper),
-			oOldCache = {
-				$deepResourcePath : "deep/resource/path",
-				getLateQueryOptions : function () {},
-				getResourcePath : function () {},
-				getValue : function () {}
-				// #reset, #setQueryOptions must no be called
-			},
-			oOldCacheMock = this.mock(oOldCache);
-
-		this.oModel.bAutoExpandSelect = "~autoExpandSelect~";
-		oBinding.mPreviousContextsByPath = {
-			"/EMPLOYEES('0')" : oContext0,
-			"/EMPLOYEES('1')" : oContext1,
-			"/EMPLOYEES('2')" : oContext2
-		};
-		oBinding.bSharedRequest = "~sharedRequest~";
-		oOldCacheMock.expects("getResourcePath").atMost(1).withExactArgs()
-			.returns("resource/path");
-		this.mock(oContext0).expects("isKeepAlive").withExactArgs().returns(true);
-		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(true);
-		this.mock(oBinding).expects("inheritQueryOptions")
-			.withExactArgs("~queryOptions~", "~context~").returns("~mergedQueryOptions~");
-		this.mock(_AggregationCache).expects("create")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
-				"deep/resource/path", sinon.match.same(oBinding.mParameters.$$aggregation),
-				"~mergedQueryOptions~", "~autoExpandSelect~", "~sharedRequest~")
-			.returns(oCache);
-		oHelperMock.expects("getRelativePath").withExactArgs("/EMPLOYEES('0')", "/EMPLOYEES")
-			.returns("~('0')~");
-		oOldCacheMock.expects("getValue").withExactArgs("~('0')~").returns("~value0~");
-		oAddKeptElementExpectation0
-			= oCacheMock.expects("addKeptElement").withExactArgs("~value0~");
-		oCheckUpdateExpectation0 = this.mock(oContext0).expects("checkUpdate").withExactArgs();
-		oHelperMock.expects("getRelativePath").withExactArgs("/EMPLOYEES('2')", "/EMPLOYEES")
-			.returns("~('2')~");
-		oOldCacheMock.expects("getValue").withExactArgs("~('2')~").returns("~value2~");
-		oAddKeptElementExpectation2
-			= oCacheMock.expects("addKeptElement").withExactArgs("~value2~");
-		oCheckUpdateExpectation2 = this.mock(oContext2).expects("checkUpdate").withExactArgs();
-		oOldCacheMock.expects("getLateQueryOptions").withExactArgs().returns("~mLateQueryOptions~");
-		oCacheMock.expects("setLateQueryOptions").withExactArgs("~mLateQueryOptions~");
-
-		assert.strictEqual(
-			// code under test
-			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
-				"deep/resource/path", "myGroup", oOldCache),
-			oCache);
-
-		assert.ok(oCheckUpdateExpectation0.calledImmediatelyAfter(oAddKeptElementExpectation0));
-		assert.ok(oCheckUpdateExpectation2.calledImmediatelyAfter(oAddKeptElementExpectation2));
-	});
 
 	//*********************************************************************************************
 	QUnit.test("getQueryOptionsFromParameters", function (assert) {
