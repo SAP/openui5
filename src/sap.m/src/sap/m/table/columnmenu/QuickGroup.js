@@ -73,6 +73,9 @@ sap.ui.define([
 	QuickGroup.prototype.getContent = function() {
 		if (!this._aContent) {
 			this._aContent = this.createContent(this.getItems());
+			this._aContent.forEach(function(oItem) {
+				this.addDependent(oItem);
+			}.bind(this));
 		}
 
 		return this._aContent;
@@ -120,6 +123,16 @@ sap.ui.define([
 			});
 			delete this._aContent;
 		}
+	};
+
+	QuickGroup.prototype._onItemChange = function(oQuickGroupItem, bGrouped) {
+		var sLabel = oQuickGroupItem.getLabel();
+
+		var oButton = this.getContent().find(function(oBtn) {
+			return oBtn.getText() === sLabel;
+		});
+
+		oButton.setPressed(bGrouped);
 	};
 
 	QuickGroup.prototype.onChange = function(oEvent, oItem) {
