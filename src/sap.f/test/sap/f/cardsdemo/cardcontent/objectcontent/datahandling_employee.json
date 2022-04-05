@@ -44,6 +44,38 @@
 					"lastName": "Miller"
 				}
 			],
+			"attachments": [
+				{
+					"title": "Schedule",
+					"icon": "sap-icon://excel-attachment",
+					"url": "./somefile.csv"
+				},
+				{
+					"title": "Attachment 2",
+					"icon": "sap-icon://attachment",
+					"url": "./somefile.csv"
+				},
+				{
+					"title": "Attachment 3",
+					"icon": "sap-icon://pdf-attachment",
+					"url": "./somefile.csv"
+				},
+				{
+					"title": "Attachment 4",
+					"icon": "sap-icon://ppt-attachment",
+					"url": "./somefile.csv"
+				},
+				{
+					"title": "Attachment 5",
+					"icon": "sap-icon://documents",
+					"url": "./somefile.csv"
+				},
+				{
+					"title": "Attachment 6",
+					"icon": "sap-icon://attachment-html",
+					"url": "./somefile.csv"
+				}
+			],
 			"company": {
 				"name": "Company A",
 				"address": "481 West Street, Anytown OH 45066, USA",

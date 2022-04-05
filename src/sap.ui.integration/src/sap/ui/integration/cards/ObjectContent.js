@@ -26,7 +26,9 @@ sap.ui.define([
 	"sap/f/AvatarGroupItem",
 	"sap/f/cards/NumericIndicators",
 	"sap/f/cards/NumericSideIndicator",
-	"sap/f/library"
+	"sap/f/library",
+	"sap/m/OverflowToolbar",
+	"sap/m/OverflowToolbarButton"
 ], function (
 	BaseContent,
 	ObjectContentRenderer,
@@ -52,7 +54,9 @@ sap.ui.define([
 	AvatarGroupItem,
 	NumericIndicators,
 	NumericSideIndicator,
-	fLibrary
+	fLibrary,
+	OverflowToolbar,
+	OverflowToolbarButton
 ) {
 	"use strict";
 
@@ -70,6 +74,8 @@ sap.ui.define([
 	var ActionArea = library.CardActionArea;
 
 	var AvatarGroupType = fLibrary.AvatarGroupType;
+
+	var ToolbarStyle = mLibrary.ToolbarStyle;
 
 	/**
 	 * Constructor for a new <code>ObjectContent</code>.
@@ -284,6 +290,9 @@ sap.ui.define([
 			case "IconGroup":
 				oControl = this._createIconGroupItem(oItem, vVisible);
 				break;
+			case "ButtonGroup":
+				oControl = this._createButtonGroupItem(oItem, vVisible);
+				break;
 
 			// deprecated types
 			case "link":
@@ -417,6 +426,51 @@ sap.ui.define([
 		}
 
 		return oControl;
+	};
+
+	ObjectContent.prototype._createButtonGroupItem = function (oItem, vVisible) {
+		var oTemplateConfig = oItem.template;
+		if (!oTemplateConfig) {
+			return null;
+		}
+
+		var oButtonGroup = new OverflowToolbar({
+			visible: BindingHelper.reuse(vVisible),
+			style: ToolbarStyle.Clear
+		});
+
+		oButtonGroup.addStyleClass("sapUiIntCardObjectButtonGroup");
+
+		var oItemTemplate = new OverflowToolbarButton({
+			icon: BindingHelper.formattedProperty(oTemplateConfig.icon, function (sValue) {
+				return this._oIconFormatter.formatSrc(sValue);
+			}.bind(this)),
+			text: oTemplateConfig.text || oTemplateConfig.tooltip,
+			tooltip: oTemplateConfig.tooltip || oTemplateConfig.text,
+			type: ButtonType.Transparent,
+			visible: oTemplateConfig.visible
+		});
+
+		if (oTemplateConfig.actions) {
+			oItemTemplate.attachPress(function (oEvent) {
+				this._onButtonGroupPress(oEvent, oTemplateConfig.actions);
+			}.bind(this));
+		}
+
+		oButtonGroup.bindAggregation("content", {
+			path: oItem.path || "/",
+			template: oItemTemplate,
+			templateShareable: false // destroy the template when the AvatarGroup is destroyed
+		});
+
+		return oButtonGroup;
+	};
+
+	ObjectContent.prototype._onButtonGroupPress = function (oEvent, oActionTemplate) {
+		var oItem = oEvent.getSource();
+		var aResolvedActions = BindingResolver.resolveValue(oActionTemplate, oItem, oItem.getBindingContext().getPath());
+		var oAction = aResolvedActions[0];
+		this.getActions().fireAction(this, oAction.type, oAction.parameters);
 	};
 
 	ObjectContent.prototype._createIconGroupItem = function (oItem, vVisible) {

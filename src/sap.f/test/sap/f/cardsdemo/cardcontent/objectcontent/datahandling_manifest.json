@@ -40,6 +40,23 @@
 						{
 							"label": "{{phone}}",
 							"value": "{phone}"
+						},
+						{
+							"label": "Attachments",
+							"type": "ButtonGroup",
+							"path": "attachments",
+							"template": {
+								"icon": "{icon}",
+								"text": "{title}",
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "{url}"
+										}
+									}
+								]
+							}
 						}
 					]
 				},
