@@ -26,7 +26,7 @@
 .sapUiSizeCompact .sapUxAPObjectPageNavigation,
 .sapUxAPObjectPageNavigation {
 	.sapUxAPObjectChildPage {
-		height: @sapElement_LineHeight;
+		height: @sapUiElementLineHeight;
 	}
 }
 
@@ -64,6 +64,7 @@
 	color: @sapUiPageFooterTextColor;
 	box-shadow: @sapUiShadowLevel1;
 	border: none;
+	border-radius: @sapUiElementBorderCornerRadius;
 }
 
 .title-hover(@backgroundColor) {
@@ -76,12 +77,8 @@
 // Delta Styles for Horizon
 // =====================================
 
-.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutNoAnchorBar) .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
-    box-shadow: inset 0 -0.0625rem 0 0 @sapObjectHeader_BorderColor;
-}
-
 .sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutNoAnchorBar)>.sapUxAPObjectPageHeaderStickied>.sapFDynamicPageTitle {
-    box-shadow: inset 0 -0.0625rem 0 0 @sapObjectHeader_BorderColor;
+    box-shadow: none;
 }
 
 .sapUxAPObjectPageLayout .sapMList {
@@ -90,8 +87,8 @@
 
 
 .sapUxAPObjectPageLayout-Std-Phone .sapMSltPressed>.sapMSltArrow, html.sap-phone .sapMSltPressed>.sapMSltArrow {
-    border-radius: @sapButton_BorderCornerRadius;
-    background: @sapButton_Active_Background        ;
+    border-radius: @sapUiButtonBorderCornerRadius;
+    background: @sapUiButtonActiveBackground;
 }
 
 // =====================================
@@ -99,7 +96,7 @@
 // =====================================
 
 .sapSmartTemplatesObjectPage .sapSmartTemplatesObjectPageContactsImage {
-    color: @sapContent_NonInteractiveIconColor;
+    color: @sapUiContentNonInteractiveIconColor;
 }
 
 // =====================================
