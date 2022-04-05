@@ -12,7 +12,9 @@ sap.ui.define([
 				return {
 					name: "filterbar.ADAPT_TITLE",
 					handler: function (oControl, mPropertyBag) {
-						return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "Item");
+						return oControl.initialized().then(function() {
+							return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "Item");
+						});
 					}
 				};
 			}
