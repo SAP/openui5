@@ -150,7 +150,6 @@ sap.ui.define([
 		if (!this._oItemsContainer) {
 			this._initItemsContainer();
 		}
-		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
 		this._oPopover.openBy(oAnchor);
 	};
 
@@ -175,7 +174,6 @@ sap.ui.define([
 		if (this._oPopover) {
 			this._oPopover.close();
 		}
-		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 	};
 
 	Menu.prototype.exit = function () {
