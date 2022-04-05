@@ -278,11 +278,6 @@ sap.ui.define([
 		this._oRowActionItem.firePress({
 			bindingContext: oRow.getBindingContext()
 		});
-		if (this._oTableRowAction) {
-			this.fireRowPress({
-				bindingContext: oRow.getBindingContext()
-			});
-		}
 	};
 
 	return GridTableType;

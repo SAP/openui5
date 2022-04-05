@@ -95,7 +95,6 @@ sap.ui.define([
 
 	var SelectionMode = library.SelectionMode;
 	var TableType = library.TableType;
-	var RowAction = library.RowAction;
 	var P13nMode = library.TableP13nMode;
 	var ToolbarDesign = MLibrary.ToolbarDesign;
 	var ToolbarStyle = MLibrary.ToolbarStyle;
@@ -169,16 +168,6 @@ sap.ui.define([
 					group: "Dimension",
 					defaultValue: null,
 					invalidate: true
-				},
-				/**
-				 * Actions available for a table row.
-				 *
-				 * @since 1.60
-				 * @deprecated as of version 1.98, use row settings instead.
-				 */
-				rowAction: {
-					type: "sap.ui.mdc.RowAction[]",
-					defaultValue: []
 				},
 				/**
 				 * Personalization options for the table.<br>
@@ -887,11 +876,6 @@ sap.ui.define([
 	// ----End Type----
 
 	Table.prototype.setRowSettings = function(oRowSettings) {
-		if (this._oTableRowAction) {
-			if (oRowSettings.getRowActions().length == 0) {
-				oRowSettings.addRowAction(this._oTableRowAction);
-			}
-		}
 		this.setAggregation("rowSettings", oRowSettings, true);
 
 		if (this._oTable) {
@@ -963,24 +947,6 @@ sap.ui.define([
 		if (this._oTable && sOldMultiSelectMode != this.getMultiSelectMode()) {
 			this._updateMultiSelectMode();
 		}
-		return this;
-	};
-
-	// TODO: Temporary solution until apps adapted changes. Remove this, as this is replaced by rowSettings
-	Table.prototype.setRowAction = function(aActions) {
-		this.setProperty("rowAction", aActions, true);
-
-		var oRowSettings = this.getRowSettings() || new RowSettings();
-
-		oRowSettings.destroyRowActions();
-		if (this.getRowAction().indexOf(RowAction.Navigation) > -1) {
-			this._oTableRowAction = new RowActionItem({
-				type: RowAction.Navigation
-			});
-			oRowSettings.addRowAction(this._oTableRowAction);
-		}
-		this.setRowSettings(oRowSettings);
-
 		return this;
 	};
 
