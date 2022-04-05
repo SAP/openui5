@@ -12,7 +12,19 @@ sap.ui.define([
 				//RTA expects the settings to be returned as function
 				return {
 					handler: function (oControl, mPropertyBag) {
-						return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, oControl.getP13nMode());
+						var aP13nMode = oControl.getP13nMode();
+                        var iIdx = aP13nMode.indexOf("Type");
+						if (iIdx > -1) {
+							aP13nMode.splice(iIdx, 1);
+						}
+
+						if (oControl.isPropertyHelperFinal()){
+                            return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, aP13nMode);
+                        } else {
+                            return oControl.finalizePropertyHelper().then(function(){
+                                return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, aP13nMode);
+                            });
+                        }
 					}
 				};
 			}
