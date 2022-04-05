@@ -2509,7 +2509,10 @@ sap.ui.define([
 		var oFilterBar = this._getFilterBar();
 		if (oFilterBar) {
 			// remove old conditions
-			oFilterBar.setInternalConditions({});
+			oFilterBar.setInternalConditions(Object.keys(oFilterBar.getConditions()).reduce(function (oResult, sKey) {
+				oResult[sKey] = [];
+				return oResult;
+			}, {}));
 		}
 
 		// add conditions from In-Parameters and Filter
@@ -2571,9 +2574,8 @@ sap.ui.define([
 		}
 
 		if (oFilterBar) {
-			oConditions = oFilterBar.setInternalConditions(oConditions);
+			oFilterBar.setInternalConditions(oConditions);
 		}
-
 	}
 
 	/* if search is supported a SearchField is needed on the Dialog. (not on the suggest-popover)

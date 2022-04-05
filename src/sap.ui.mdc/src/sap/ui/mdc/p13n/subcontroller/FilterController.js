@@ -112,7 +112,12 @@ sap.ui.define([
 
     FilterController.prototype.update = function(){
         BaseController.prototype.update.apply(this, arguments);
-        this.getAdaptationControl().getInbuiltFilter().createFilterFields();
+        var oAdaptationControl = this.getAdaptationControl();
+        var oInbuiltFilter = oAdaptationControl && oAdaptationControl.getInbuiltFilter();
+
+        if (oInbuiltFilter) {
+            oInbuiltFilter.createFilterFields();
+        }
     };
 
     FilterController.prototype.getDelta = function(mPropertyBag) {
