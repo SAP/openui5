@@ -9,7 +9,12 @@
 			text="{visualizationModel>/popupInfoMessage}"
 			type="Information"
 			showIcon="true"
-			visible="{visualizationModel>/hasHiddenChanges}">
+			visible="{= ${visualizationModel>/hiddenChanges}.length > 0 }">
+			<link>
+				<Link text="{i18n>BUT_CHANGEVISUALIZATION_LEARNMORE}"
+					target="_blank"
+					href="https://ui5.sap.com/1.101.0/#/topic/35274280504f42cd87cc4fd3d403ca91.html#loio35274280504f42cd87cc4fd3d403ca91/visualization" />
+			</link>
 		</MessageStrip>
 		<List
 			class="sapUiRtaChangesList"
