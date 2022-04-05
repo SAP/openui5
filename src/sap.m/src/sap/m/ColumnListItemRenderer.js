@@ -110,7 +110,7 @@ sap.ui.define([
 
 	// Returns aria accessibility role
 	ColumnListItemRenderer.getAriaRole = function(oLI) {
-		return "";
+		return "row";
 	};
 
 	ColumnListItemRenderer.renderLIAttributes = function(rm, oLI) {
