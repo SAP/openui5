@@ -107,12 +107,12 @@
 	}
 
 	&:before {
-		background-image: linear-gradient(to left, @sapUiHighlight, fade(@sapUiHighlight, 0));
+		background-image: linear-gradient(to left, @sapUiObjectHeaderBorderColor, transparent);
 		right: 100%;
 	}
 
 	&:after {
-		background-image: linear-gradient(to right, @sapUiHighlight, fade(@sapUiHighlight, 0));
+		background-image: linear-gradient(to right, @sapUiObjectHeaderBorderColor, transparent);
 		left: 100%;
 	}
 }
@@ -145,11 +145,19 @@ html[data-sap-ui-browser^="cr"] .sapFDynamicPageHeaderPinButton {
 // The footer selector can`t be nested in the sapFDynamicPage less structure,
 // because the contrast container would not work, as the theme generates css like ".sapContrast.sapFDynamicPageFooter"
 // and will never match ".sapFDynamicPage .sapFDynamicPageFooter"
-.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
+.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl.sapMTB {
 	background: @sapUiPageFooterBackground;
 	color: @sapUiPageFooterTextColor;
-	box-shadow: @sapUiShadowLevel1;
+	box-shadow: @sapUiContentShadow1;
+	border-radius: @sapUiElementBorderCornerRadius;
 	border: none;
+}
+
+.sapFDynamicPage-Std-Tablet,
+.sapFDynamicPage-Std-Phone {
+	.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl.sapMIBar {
+		height: 2.75rem;
+	}
 }
 
 .title-hover(@backgroundColor) {
@@ -170,14 +178,6 @@ To be used in Comparison pattern scenario. */
     border-radius: @sapButton_BorderCornerRadius;
     box-shadow: @sapContent_Shadow0;
     background-color: @sapObjectHeader_Background;
-}
-
-.sapFDynamicPageToggleHeaderIndicator:after, .sapFDynamicPageHeaderPinButton:after {
-    background-image: none;
-}
-
-.sapFDynamicPageToggleHeaderIndicator:before, .sapFDynamicPageHeaderPinButton:before {
-    background-image: none;
 }
 
 .sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive)>.sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnDefault .sapUiIcon, .sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive)>.sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnBack .sapUiIcon, .sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive)>.sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnGhost .sapUiIcon {

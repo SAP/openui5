@@ -56,6 +56,32 @@
 			line-height: 2rem;
 		}
 	}
+
+	overflow: visible; // enforcement needed for IE11
+
+	&:before,
+	&:after {
+		content: "";
+		position: absolute;
+		width: 4rem;
+		top: 50%; // enforcement needed for IE11
+		height: 0.0625rem;
+	}
+
+	&:before {
+		background-image: linear-gradient(to left, @sapUiObjectHeaderBorderColor, transparent);
+		right: 100%;
+	}
+
+	&:after {
+		background-image: linear-gradient(to right, @sapUiObjectHeaderBorderColor, transparent);
+		left: 100%;
+	}
+}
+
+// when we have both pin and toggle header indicator, pseudo-elements overlap siblings on EDGE
+html[data-sap-ui-browser^="ed"] .sapFDynamicPageToggleHeaderIndicator ~ .sapFDynamicPageHeaderPinButton:before {
+	display: none;
 }
 
 /* Compact */
@@ -138,8 +164,18 @@
 		opacity: 1;
 
 		.sapFDynamicPageActualFooterControl.sapMTB {
-			box-shadow: @sapUiShadowLevel2;
-			border-bottom: 0 none;
+			background: @sapUiPageFooterBackground;
+			color: @sapUiPageFooterTextColor;
+			box-shadow: @sapUiContentShadow1;
+			border-radius: @sapUiElementBorderCornerRadius;
+			border: none;
+		}
+	}
+
+	&.sapFDynamicPage-Std-Tablet,
+	&.sapFDynamicPage-Std-Phone {
+		.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl.sapMIBar {
+			height: 2.75rem;
 		}
 	}
 }

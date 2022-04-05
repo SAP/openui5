@@ -87,15 +87,15 @@
 
 .sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle {
     font-size: @sapFontHeader2Size;
-    font-family: @sapFontBlackFamily;
+    font-family: @sapUiObjectHeaderTitleFontFamily;
 }
 
 
 // Expanded Header title is small on small screens
 
 .sapFDynamicPage-Std-Phone .sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle {
-    font-size: 1.5rem;
-    font-family: @sapFontBlackFamily;
+    font-size: @sapUiObjectHeaderTitleSnappedFontSize;
+    font-family: @sapUiObjectHeaderTitleFontFamily;
 }
 
 
@@ -103,13 +103,13 @@
 
 .sapFDynamicPageTitleSnapped .sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle {
     font-size: @sapFontHeader3Size;
-    font-family: @sapFontBlackFamily;
+    font-family: @sapUiObjectHeaderTitleFontFamily;
 }
 
 // Overview Page using Dynamic page Header
 .ovpApplication .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped>.sapFDynamicPageTitle,
 .ovpApplication .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly>.sapFDynamicPageTitle {
-    box-shadow: @sapContent_HeaderShadow;
+    box-shadow: @sapUiContentHeaderShadow;
 }
 
 // Dynamic page Title Focus - Experimental
@@ -145,9 +145,5 @@ html.sap-desktop {
 
 	.sapFDynamicPageTitleMain .sapMGenericTag.sapMBarChild {
 		margin-top: 0;
-	}
-
-	.sapFDynamicPageTitleSnapped .sapMGenericTag.sapMBarChild  {
-		margin-bottom: 1rem;
 	}
 }

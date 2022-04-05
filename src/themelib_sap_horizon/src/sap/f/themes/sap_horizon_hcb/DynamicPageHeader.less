@@ -3,13 +3,18 @@
 /* Horizon High Contrast Black theme        */
 /* ======================================== */
 
-.sapFDynamicPage-Std-Desktop .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
-	padding: 1rem 2rem;
-}
-
 .sapFDynamicPageHeader {
+    &.sapFDynamicPageHeaderSolid,
     &.sapFDynamicPageHeaderTransparent,
     &.sapFDynamicPageHeaderTranslucent {
         background: @sapUiObjectHeaderBackground;
     }
+}
+
+.sapFDynamicPageNavigation .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
+	box-shadow: none;
+}
+
+.sapFDynamicPageToggleHeaderIndicator:not(.sapUiHidden) + .sapFDynamicPageHeaderPinButton:before {
+	display: none;
 }
