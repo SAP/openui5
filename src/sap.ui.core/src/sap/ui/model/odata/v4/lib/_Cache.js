@@ -380,13 +380,13 @@ sap.ui.define([
 					_Helper.setPrivateAnnotation(oEntityData, "predicate", sPredicate);
 					if (bKeepTransientPath) {
 						sPredicate = sTransientPredicate;
-					} else {
+					} else if (sTransientPredicate in aCollection.$byPredicate) {
 						aCollection.$byPredicate[sPredicate] = oEntityData;
 						_Helper.updateTransientPaths(that.mChangeListeners, sTransientPredicate,
 							sPredicate);
 						// Do not remove transient predicate from aCollection.$byPredicate; some
 						// contexts still use the transient predicate to access the data
-					}
+					} // else: transient element was not kept by #reset, leave it like that!
 				}
 				// update the cache with the POST response (note that a deep create is not supported
 				// because updateSelected does not handle key predicates, ETags and $count)
@@ -2957,22 +2957,24 @@ sap.ui.define([
 	 *
 	 * @param {string[]} aKeptElementPredicates
 	 *   The key predicates for all kept-alive elements
-	 * @param {boolean} [bKeepCreated]
-	 *   Whether created persisted elements that started as inactive shall be kept in place and a
+	 * @param {string} [sGroupId]
+	 *   The group ID used for a side-effects refresh; if given, only inline creation
+	 *   rows and transient elements with a different batch group shall be kept in place and a
 	 *   backup shall be remembered for a later {@link #restore}
 	 *
 	 * @public
 	 * @see _Cache#hasPendingChangesForPath
 	 */
-	_CollectionCache.prototype.reset = function (aKeptElementPredicates, bKeepCreated) {
+	_CollectionCache.prototype.reset = function (aKeptElementPredicates, sGroupId) {
 		var mByPredicate = this.aElements.$byPredicate,
 			mChangeListeners = this.mChangeListeners,
 			iCreated = 0, // index (and finally number) of created elements that we keep
 			oElement,
+			sTransientGroup,
 			i,
 			that = this;
 
-		if (bKeepCreated) {
+		if (sGroupId) {
 			this.oBackup = {};
 			this.oBackup.iActiveElements = this.iActiveElements;
 			this.oBackup.mChangeListeners = this.mChangeListeners;
@@ -2986,13 +2988,16 @@ sap.ui.define([
 
 		for (i = 0; i < this.aElements.$created; i += 1) {
 			oElement = this.aElements[i];
-			if (_Helper.getPrivateAnnotation(oElement, "transient")
-					|| bKeepCreated && "@$ui5.context.isInactive" in oElement) {
+			sTransientGroup = _Helper.getPrivateAnnotation(oElement, "transient");
+			if (sGroupId
+					? "@$ui5.context.isInactive" in oElement
+						|| sTransientGroup && sTransientGroup !== sGroupId
+					: sTransientGroup) {
 				aKeptElementPredicates.push(_Helper.getPrivateAnnotation(oElement, "predicate")
 					|| _Helper.getPrivateAnnotation(oElement, "transientPredicate"));
 				this.aElements[iCreated] = oElement;
 				iCreated += 1;
-			} else { // Note: "created persisted" elements must be active
+			} else { // Note: inactive elements are always kept
 				this.iActiveElements -= 1;
 			}
 		}
@@ -3014,7 +3019,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Restores the last backup taken by {@link #reset} with <code>bKeepCreated</code>, if told to
+	 * Restores the last backup taken by {@link #reset} with <code>sGroupId</code>, if told to
 	 * really do so; drops the backup in any case to free memory.
 	 *
 	 * @param {boolean} bReally - Whether to really restore, not just drop the backup

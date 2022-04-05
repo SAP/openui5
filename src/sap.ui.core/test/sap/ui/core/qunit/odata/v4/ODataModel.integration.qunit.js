@@ -7134,14 +7134,17 @@ sap.ui.define([
 
 			assertIndices(assert, oBinding.getCurrentContexts(), [-2, -1, 0]);
 
-			that.expectChange("note", ["new5", "new4", "new3"]) // 3x #create
+			that.expectChange("note", ["new5"]) // Note: inline creation row is kept
 				// Note: The #create calls cause "change" events on the ODLB and then the table
 				// fetches the current contexts again, calling #setContext on ODPrB in the end.
 				// #checkUpdateInternal becomes async and then fires a "change" event to the
 				// formatter, so to say. At that point in time, ODLB#reset has been called
 				// (affecting iCreatedContexts) but bKeepCacheOnError's restore did not yet happen.
-				// Thus indices are off by 2 (no. of created persisted)!
-				.expectChange("note", [, "new2", "new1", "#42"])
+				// Thus indices are off by 4 (no. of created which were never inactive)!
+				.expectChange("note", "new4", -3)
+				.expectChange("note", "new3", -2)
+				.expectChange("note", "new2", -1)
+				.expectChange("note", ["new1", "#42"])
 				.expectRequest({
 					method : "POST",
 					url : "SalesOrderList",
@@ -29530,7 +29533,7 @@ sap.ui.define([
 	// contexts.
 	// JIRA: CPOUI5ODATAV4-37
 	//
-	// Keep all created contexts during a side-effects refresh, make sure $count is correct even
+	// Keep all inline creation rows during a side-effects refresh; make sure $count is correct even
 	// when a filter is involved. (Note: for simplicity, $filter is not really shown here.)
 	// JIRA: CPOUI5ODATAV4-1384
 [false, true].forEach(function (bEmpty) {
@@ -29646,7 +29649,9 @@ sap.ui.define([
 			}
 
 			// add transient row to items table
-			oNewContext = oTableBinding.create({Note : "First new row"}, /*bSkipRefresh*/false);
+			oNewContext = oTableBinding.create({}, /*bSkipRefresh*/false, /*bAtEnd*/false,
+				/*bInactive*/true);
+			oNewContext.setProperty("Note", "First new row"); // activate
 
 			aItems = [{
 				ItemPosition : "10",
@@ -30185,6 +30190,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1764 (now: CPOUI5ODATAV4-1361)
 	QUnit.test("requestSideEffects keeps invisible transient contexts", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oNewContext,
 			oTable,
 			oTableBinding,
 			sView = '\
@@ -30226,7 +30232,7 @@ sap.ui.define([
 
 			oTable = that.oView.byId("table");
 			oTableBinding = oTable.getBinding("rows");
-			oTableBinding.create({Note : "Created"}, /*bSkipRefresh*/true);
+			oNewContext = oTableBinding.create({Note : "Created"}, /*bSkipRefresh*/true);
 
 			return that.waitForChanges(assert, "creation fails");
 		}).then(function () {
@@ -30260,9 +30266,7 @@ sap.ui.define([
 				}, oError)
 				.expectRequest({
 					batchNo : 3,
-					// Because of the transient row in the first context the skip has to be adapted
-					// to 0 => CPOUI5UISERVICESV3-1764
-					url : "SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2"
+					url : "SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=2"
 				}) // no response required
 				.expectMessages([{
 					code : "CODE",
@@ -30280,8 +30284,19 @@ sap.ui.define([
 					assert.strictEqual(oError0.message,
 						"HTTP request was not processed because the previous request failed");
 				}),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "repeat POST but fail again")
 			]);
+		}).then(function () {
+			oNewContext.setProperty("Note", "Updated", null); // do not trigger POST again
+			assert.strictEqual(oNewContext.getProperty("Note"), "Updated");
+
+			that.expectChange("id", ["", "0500000001"])
+				.expectChange("note", ["Updated", "Test 1"]);
+
+			// scroll up
+			oTable.setFirstVisibleRow(0);
+
+			return that.waitForChanges(assert, "scroll up");
 		});
 	});
 
@@ -38330,7 +38345,7 @@ sap.ui.define([
 	// Scenario: A table shows a visible area with five persisted rows. Three transient ones are
 	// added at the start, inside the visible area (two of them as inline creation rows, that is,
 	// initially inactive). A side-effects refresh takes place and the GET is in the same $batch as
-	// those POSTs. Show that the newly created rows are kept in place and the persisted ones are
+	// those POSTs. Show that the inline creation rows are kept in place and the persisted ones are
 	// properly refreshed. Expect no "short read" - length remains unknown!
 	// A 2nd side-effects refresh takes place, keeping the inline creation rows in place and
 	// refreshing them separately, but one of them has been deleted on the server.
@@ -38400,18 +38415,21 @@ sap.ui.define([
 					url : "TEAMS",
 					payload : {Name : "New Team A", Team_Id : "TEAM_A"}
 				}, {Name : "New 'A' Team", Team_Id : "TEAM_A"})
+				.expectChange("name", [, "New 'A' Team"])
 				.expectRequest({
 					batchNo : 2,
 					method : "POST",
 					url : "TEAMS",
 					payload : {Name : "New Team B", Team_Id : "TEAM_B"}
 				}, {"@odata.etag" : "b", Name : "New 'B' Team", Team_Id : "TEAM_B"})
+				.expectChange("name", ["New 'B' Team"])
 				.expectRequest({
 					batchNo : 2,
 					method : "POST",
 					url : "TEAMS",
 					payload : {Name : "New Team C", Team_Id : "TEAM_C"}
-				}, {Name : "New 'C' Team", Team_Id : "TEAM_C"})
+				}, {Name : "n/c", Team_Id : "TEAM_C"})
+				.expectChange("name", "New 'C' Team", -1)
 				.expectRequest({
 					batchNo : 2,
 					method : "GET",
@@ -38422,11 +38440,12 @@ sap.ui.define([
 						{Name : "'#1' Team", Team_Id : "TEAM_01"},
 						{"@odata.etag" : "b", Name : "n/b", Team_Id : "TEAM_B"},
 						{Name : "'#2' Team", Team_Id : "TEAM_02"},
-						{Name : "n/c", Team_Id : "TEAM_C"}
+						{Name : "New 'C' Team", Team_Id : "TEAM_C"}
 					]
 				})
+				.expectChange("id", ["TEAM_B", "TEAM_A", "TEAM_01", "TEAM_02", "TEAM_C"])
 				.expectChange("name",
-					["New 'C' Team", "New 'B' Team", "New 'A' Team", "'#1' Team", "'#2' Team"]);
+					["New 'B' Team", "New 'A' Team", "'#1' Team", "'#2' Team", "New 'C' Team"]);
 
 			return Promise.all([
 				// code under test
@@ -38442,11 +38461,11 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getLength(), 15);
 			assert.notOk(oBinding.isLengthFinal());
 			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
-				"/TEAMS('TEAM_C')",
 				"/TEAMS('TEAM_B')",
 				"/TEAMS('TEAM_A')",
 				"/TEAMS('TEAM_01')",
-				"/TEAMS('TEAM_02')"
+				"/TEAMS('TEAM_02')",
+				"/TEAMS('TEAM_C')"
 			]);
 
 			that.expectRequest("TEAMS?$select=Name,Team_Id"
@@ -38488,7 +38507,7 @@ sap.ui.define([
 	// Scenario: A table shows a visible area with five persisted rows. Three transient ones are
 	// added at the end, inside the visible area (two of them as inline creation rows, that is,
 	// initially inactive). A side-effects refresh takes place and the GET is in the same $batch as
-	// those POSTs. Show that the newly created rows are kept in place and the persisted ones are
+	// those POSTs. Show that the inline creation rows are kept in place and the persisted ones are
 	// properly refreshed. Expect no "short read" - count remains accurate!
 	// A 2nd side-effects refresh takes place, keeping the inline creation rows in place and
 	// refreshing them separately, but one of them has been deleted on the server.
@@ -38608,27 +38627,28 @@ sap.ui.define([
 					method : "POST",
 					url : "TEAMS",
 					payload : {Name : "New C", Team_Id : "TEAM_C"}
-				}, {Name : "'C' Team", Team_Id : "TEAM_C"})
+				}, {Name : "n/c", Team_Id : "TEAM_C"})
 				.expectChange("name", [,, "'C' Team"])
 				.expectRequest({
 					batchNo : 3,
 					method : "GET",
-					// $skip=7&$top=5 with a prefetch of 3 in each direction
-					url : "TEAMS?$count=true&$select=Name,Team_Id&$skip=4&$top=11"
+					// $skip=7&$top=5 with a prefetch of 2 in each direction
+					url : "TEAMS?$count=true&$select=Name,Team_Id&$skip=5&$top=9"
 				}, {
 					"@odata.count" : "12",
 					value : [
-						{Name : "'#5' Team", Team_Id : "TEAM_05"},
 						{Name : "'#6' Team", Team_Id : "TEAM_06"},
 						{Name : "'#7' Team", Team_Id : "TEAM_07"},
 						{Name : "n/a", Team_Id : "TEAM_A"},
 						{Name : "'#8' Team", Team_Id : "TEAM_08"},
-						{"@odata.etag" : "b", Name : "n/b", Team_Id : "TEAM_B"},
+						{Name : "'C' Team", Team_Id : "TEAM_C"}, // this position matters!
 						{Name : "'#9' Team", Team_Id : "TEAM_09"},
-						{Name : "n/c", Team_Id : "TEAM_C"}
+						{"@odata.etag" : "b", Name : "n/b", Team_Id : "TEAM_B"}
 					]
 				})
-				.expectChange("name", [,,,,,,, "'#8' Team", "'#9' Team"]);
+				.expectChange("id", [,,,,,,,, "TEAM_C", "TEAM_09", "TEAM_A", "TEAM_B"])
+				.expectChange("name",
+					[,,,,,,, "'#8' Team", "'C' Team", "'#9' Team", "'A' Team", "'B' Team"]);
 
 			return Promise.all([
 				// code under test
@@ -38646,22 +38666,21 @@ sap.ui.define([
 			assert.strictEqual(oBinding.isFirstCreateAtEnd(), true);
 			assert.deepEqual(oBinding.getAllCurrentContexts().map(getNormalizedPath), [
 				// Note: created ones are at the top here
-				"/TEAMS('TEAM_C')",
 				"/TEAMS('TEAM_B')",
 				"/TEAMS('TEAM_A')",
 				// Note: the gap is not visible here
-				"/TEAMS('TEAM_05')",
 				"/TEAMS('TEAM_06')",
 				"/TEAMS('TEAM_07')",
 				"/TEAMS('TEAM_08')",
+				"/TEAMS('TEAM_C')",
 				"/TEAMS('TEAM_09')"
 			]);
 			assert.deepEqual(oTable.getRows().map(getBindingContextPath), [
 				"/TEAMS('TEAM_08')",
+				"/TEAMS('TEAM_C')",
 				"/TEAMS('TEAM_09')",
 				"/TEAMS('TEAM_A')",
-				"/TEAMS('TEAM_B')",
-				"/TEAMS('TEAM_C')"
+				"/TEAMS('TEAM_B')"
 			]);
 
 			that.expectRequest("TEAMS?$select=Name,Team_Id"
