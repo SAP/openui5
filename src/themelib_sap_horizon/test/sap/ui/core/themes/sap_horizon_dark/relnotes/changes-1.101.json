@@ -1,7 +1,12 @@
 {
   "1.101.0": {
-    "date": "March 2022",
+    "date": "April 2022",
     "notes": [
+      {
+        "id": "c766bb542ac29bba7c0791563a4253d45521a63a",
+        "type": "FEATURE",
+        "text": " sap.m.Switch: Horizon themes implemented"
+      },
       {
         "id": "09c1081accc756542ff18d1f2b9c4ecf33c47e7f",
         "type": "FIX",
@@ -31,6 +36,32 @@
           {
             "type": "BCP",
             "reference": "2270006716"
+          }
+        ]
+      },
+      {
+        "id": "bf3282f9b8bd3ee426dddf075e8d7d2d2f6aef42",
+        "type": "FEATURE",
+        "text": " sap.m.RadioButton: Horizon theme implemented"
+      },
+      {
+        "id": "426bd4fd45a73d5bfaa0a8558b12a6fcbca042fc",
+        "type": "FIX",
+        "text": " sap.m.Button: Fixed button focus styles in composite controls"
+      },
+      {
+        "id": "3172b02d0b2af52978d4d107b84bcf58be7a6daf",
+        "type": "FEATURE",
+        "text": " sap.m.Text, sap.m.Label: Horizon theme implemented"
+      },
+      {
+        "id": "e21c25b7e92078915fd81db51021331672207d3d",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Button's width in compact mode adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180431226"
           }
         ]
       }

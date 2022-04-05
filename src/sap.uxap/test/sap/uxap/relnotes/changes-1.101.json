@@ -1,7 +1,23 @@
 {
   "1.101.0": {
-    "date": "March 2022",
+    "date": "April 2022",
     "notes": [
+      {
+        "id": "bf5e3bbae65e985f20d908984bdf613ee3d44024",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Correct rounding issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270033630"
+          }
+        ]
+      },
+      {
+        "id": "43e86cda17fe103008963e8c30b8705741fe598b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected qunit"
+      },
       {
         "id": "625452aad37498f2717c6b6d2d00e221aad39cf6",
         "type": "FIX",

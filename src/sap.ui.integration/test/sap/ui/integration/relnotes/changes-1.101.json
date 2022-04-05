@@ -1,7 +1,18 @@
 {
   "1.101.0": {
-    "date": "March 2022",
+    "date": "April 2022",
     "notes": [
+      {
+        "id": "854ac81156cc2ebb20a9e3d0ad72647cd6a1f7bc",
+        "type": "FIX",
+        "text": " Integration Card: \"encodeURIComponent\" example is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270002879"
+          }
+        ]
+      },
       {
         "id": "6f6bc1e96f800bc135b8beb97492b22b816d5647",
         "type": "FIX",

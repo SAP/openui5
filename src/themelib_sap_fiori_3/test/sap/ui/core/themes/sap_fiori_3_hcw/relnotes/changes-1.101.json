@@ -28,17 +28,6 @@
             "reference": "2270006716"
           }
         ]
-      },
-      {
-        "id": "9cf92a18719b4b2ad84d72d246bc436f2869cf28",
-        "type": "FIX",
-        "text": " sap.m.ObjectNumber: removed unwanted global parameter overrides",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2280014012"
-          }
-        ]
       }
     ]
   }

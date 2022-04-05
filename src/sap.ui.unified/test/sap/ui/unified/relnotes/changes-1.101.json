@@ -1,7 +1,18 @@
 {
   "1.101.0": {
-    "date": "March 2022",
+    "date": "April 2022",
     "notes": [
+      {
+        "id": "fbe7ef882396c0edb920985b2c4e97eb72e677e1",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: recache elements on setter usage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280039646"
+          }
+        ]
+      },
       {
         "id": "10221263268c555fa6885681ff434023e4c6c156",
         "type": "FIX",
