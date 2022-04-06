@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/base/util/restricted/_pick"
+	"sap/base/util/restricted/_pick",
+	"sap/base/util/UriParameters"
 ], function(
 	merge,
 	BackendConnector,
 	InitialConnector,
 	InitialUtils,
 	WriteUtils,
-	_pick
+	_pick,
+	UriParameters
 ) {
 	"use strict";
 
@@ -78,6 +80,12 @@ sap.ui.define([
 			mPropertyBag.dataType = "json";
 			mPropertyBag.contentType = "application/json; charset=utf-8";
 			return WriteUtils.sendRequest(sContextsUrl, "POST", mPropertyBag);
+		},
+
+		isContextSharingEnabled: function () {
+			var oUriParameters = new UriParameters(window.location.href);
+			var sAppContextsEnabled = oUriParameters.get("sap-ui-fl-cf-contextsharing");
+			return Promise.resolve(sAppContextsEnabled === "true");
 		}
 	});
 
