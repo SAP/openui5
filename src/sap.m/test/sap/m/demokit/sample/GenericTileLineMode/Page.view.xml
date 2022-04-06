@@ -97,7 +97,8 @@
 					             scope="{/scope}"
 					             mode="LineMode"
 					             press="press"
-					             sizeBehavior="{/sizeBehavior}">
+					             sizeBehavior="{/sizeBehavior}"
+								 class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
 						<TileContent footer="{footer}">
 							<NumericContent withMargin="false"
 							                value="{kpivalue}"
