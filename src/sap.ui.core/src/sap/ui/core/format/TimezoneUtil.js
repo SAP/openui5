@@ -102,7 +102,7 @@ sap.ui.define([], function() {
 	 * @param {string} sTargetTimezone The target IANA timezone ID, e.g <code>"Europe/Berlin"</code>
 	 * @returns {Date} The new date in the target timezone.
 	 * @private
-	 * @ui5-restricted sap.ui.core.format.DateFormat
+	 * @ui5-restricted sap.ui.core.format.DateFormat, sap.ui.unified, sap.m
 	 */
 	TimezoneUtil.convertToTimezone = function(oDate, sTargetTimezone) {
 		var oFormatParts = this._getParts(oDate, sTargetTimezone);

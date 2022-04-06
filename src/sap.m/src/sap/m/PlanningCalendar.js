@@ -3976,15 +3976,15 @@ sap.ui.define([
 				if (oSourceTimeline.hasListeners("appointmentDragEnter")) {
 
 					if (sIntervalType === CalendarIntervalType.Hour) {
-						newPos = this._calcNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+						newPos = this._calcNewHoursAppPos(oRowStartDate, oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation(), iIndex);
 					} else if (sIntervalType === CalendarIntervalType.Day
 						|| sIntervalType === CalendarIntervalType.Week
 						|| ((sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth") && !oTargetTimeline._isOneMonthsRowOnSmallSizes())) {
 
-						newPos = this._calcNewDaysAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+						newPos = this._calcNewDaysAppPos(oRowStartDate, oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation(), iIndex);
 					} else if (sIntervalType === CalendarIntervalType.Month) {
 
-						newPos = this._calcNewMonthsAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+						newPos = this._calcNewMonthsAppPos(oRowStartDate, oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation(), iIndex);
 					}
 
 					var bDropabbleArea = oSourceTimeline.fireAppointmentDragEnter({
@@ -4029,20 +4029,20 @@ sap.ui.define([
 					bCopy = (oBrowserEvent.metaKey || oBrowserEvent.ctrlKey);
 
 				if (sIntervalType === CalendarIntervalType.Hour) {
-					newPos = this._calcNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+					newPos = this._calcNewHoursAppPos(oRowStartDate, oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation(), iIndex);
 				} else if (sIntervalType === CalendarIntervalType.Day
 					|| sIntervalType === CalendarIntervalType.Week
 					|| ((sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth") && !oTargetTimeline._isOneMonthsRowOnSmallSizes())) {
 
-					newPos = this._calcNewDaysAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+					newPos = this._calcNewDaysAppPos(oRowStartDate, oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation(), iIndex);
 				} else if (sIntervalType === CalendarIntervalType.Month) {
 
-					newPos = this._calcNewMonthsAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+					newPos = this._calcNewMonthsAppPos(oRowStartDate, oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation(), iIndex);
 				}
 
 				oTargetTimeline.$().find(".sapUiCalendarRowAppsOverlay").removeClass("sapUiCalendarRowAppsOverlayDragging");
 
-				if (oAppointment.getStartDate().getTime() === newPos.startDate.getTime()
+				if (oAppointment._getStartDateWithTimezoneAdaptation().getTime() === newPos.startDate.getTime()
 					&& oAppointment.getParent() === getRow(oTargetTimeline.getParent())) {
 
 					return;
@@ -4192,15 +4192,15 @@ sap.ui.define([
 						newPos;
 
 					if (sIntervalType === CalendarIntervalType.Hour) {
-						newPos = this._calcResizeNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+						newPos = this._calcResizeNewHoursAppPos(oRowStartDate, oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation(), iIndex);
 					} else if (sIntervalType === CalendarIntervalType.Day
 						|| sIntervalType === CalendarIntervalType.Week
 						|| ((sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth") && !oTimeline._isOneMonthsRowOnSmallSizes())) {
 
-						newPos = this._calcResizeNewDaysAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+						newPos = this._calcResizeNewDaysAppPos(oRowStartDate, oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation(), iIndex);
 					} else if (sIntervalType === CalendarIntervalType.Month) {
 
-						newPos = this._calcResizeNewMonthsAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+						newPos = this._calcResizeNewMonthsAppPos(oRowStartDate, oAppointment._getStartDateWithTimezoneAdaptation(), oAppointment._getEndDateWithTimezoneAdaptation(), iIndex);
 					}
 
 					oTimeline.$().find(".sapUiCalendarRowAppsOverlay").removeClass("sapUiCalendarRowAppsOverlayDragging");
@@ -4213,7 +4213,7 @@ sap.ui.define([
 						opacity: 1
 					});
 
-					if (oAppointment.getEndDate().getTime() === newPos.endDate.getTime() ) {
+					if (oAppointment._getEndDateWithTimezoneAdaptation().getTime() === newPos.endDate.getTime() ) {
 						return;
 					}
 
@@ -4627,7 +4627,7 @@ sap.ui.define([
 		switch (sType) {
 			case "sapup":
 				oAppointment = oTimeline.getFocusedAppointment();
-				oDate = oAppointment.getStartDate();
+				oDate = oAppointment._getStartDateWithTimezoneAdaptation();
 
 				// get nearest appointment in row above
 				if (iIndex > 0) {
@@ -4641,7 +4641,7 @@ sap.ui.define([
 
 			case "sapdown":
 				oAppointment = oTimeline.getFocusedAppointment();
-				oDate = oAppointment.getStartDate();
+				oDate = oAppointment._getStartDateWithTimezoneAdaptation();
 
 				// get nearest appointment in row above
 				if (iIndex < aRows.length - 1) {

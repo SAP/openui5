@@ -8,6 +8,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/LocaleData',
 	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/core/format/TimezoneUtil',
+	'sap/ui/core/Core',
 	'sap/ui/core/date/UniversalDate',
 	'./library',
 	'sap/ui/core/InvisibleText',
@@ -25,6 +27,8 @@ sap.ui.define([
 	Device,
 	LocaleData,
 	CalendarUtils,
+	TimezoneUtil,
+	Core,
 	UniversalDate,
 	library,
 	InvisibleText,
@@ -706,6 +710,8 @@ sap.ui.define([
 
 		this._sUpdateCurrentTime = undefined;
 
+		oNowDate = this._convertToTimezone(oNowDate);
+
 		if (oNowDate.getTime() <= iEndTime && oNowDate.getTime() >= iStartTime) {
 			var iBegin = _calculateBegin.call(this, sIntervalType, iIntervals, oStartDate, oEndDate, iStartTime, oNowDate);
 			var iTime = 0;
@@ -745,6 +751,23 @@ sap.ui.define([
 
 		return this;
 
+	};
+
+	/**
+	 * Aligns a date to the timezone from the configuration.
+	 *
+	 * @returns {Object} <code>oNewDate</code> aligned to the configured timezone.
+	 * @private
+	 */
+	CalendarRow.prototype._convertToTimezone = function(oDate) {
+		var sTimezone = Core.getConfiguration().getTimezone();
+		var oNewDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
+
+		oNewDate = new Date(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds());
+		oNewDate.setUTCFullYear(oDate.getUTCFullYear());
+		oNewDate = TimezoneUtil.convertToTimezone(oNewDate, sTimezone);
+
+		return oNewDate;
 	};
 
 	/**
@@ -826,7 +849,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aAppointments.length; i++) {
 			oNextAppointment = aAppointments[i];
-			if (oNextAppointment.getStartDate() > oDate) {
+			if (oNextAppointment._getStartDateWithTimezoneAdaptation() > oDate) {
 				if (i > 0) {
 					oPrevAppointment = aAppointments[i - 1];
 				} else {
@@ -837,7 +860,7 @@ sap.ui.define([
 		}
 
 		if (oNextAppointment) {
-			if (oPrevAppointment && Math.abs(oNextAppointment.getStartDate() - oDate) >= Math.abs(oPrevAppointment.getStartDate() - oDate)) {
+			if (oPrevAppointment && Math.abs(oNextAppointment._getStartDateWithTimezoneAdaptation() - oDate) >= Math.abs(oPrevAppointment._getStartDateWithTimezoneAdaptation() - oDate)) {
 				oAppointment = oPrevAppointment;
 			} else {
 				oAppointment = oNextAppointment;
@@ -936,8 +959,8 @@ sap.ui.define([
 			};
 		}
 
-		var oAppStartDate = oAppointment.getStartDate(),
-			oAppEndDate = oAppointment.getEndDate(),
+		var oAppStartDate = oAppointment._getStartDateWithTimezoneAdaptation(),
+			oAppEndDate = oAppointment._getEndDateWithTimezoneAdaptation(),
 			oUniversalAppStartDate = new UniversalDate(oAppStartDate.getFullYear(), oAppStartDate.getMonth(), oAppStartDate.getDate(), oAppStartDate.getHours(), oAppStartDate.getMinutes()),
 			oUniversalAppEndDate = new UniversalDate(oAppEndDate.getFullYear(), oAppEndDate.getMonth(), oAppEndDate.getDate(), oAppEndDate.getHours(), oAppEndDate.getMinutes()),
 			sIntervalType = this.getIntervalType(),
@@ -1146,12 +1169,12 @@ sap.ui.define([
 
 		for (i = 0; i < aAppointments.length; i++) {
 			oAppointment = aAppointments[i];
-			var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment.getStartDate(), undefined, true);
+			var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment._getStartDateWithTimezoneAdaptation(), undefined, true);
 			var oAppointmentStartDateTime = oAppointmentStartDate.getTime();
 			oAppointmentStartDate.setUTCSeconds(0); // ignore seconds
 			oAppointmentStartDate.setUTCMilliseconds(0); // ignore milliseconds
-			var oAppointmentEndDate = oAppointment.getEndDate()
-				? CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), undefined, true)
+			var oAppointmentEndDate = oAppointment._getEndDateWithTimezoneAdaptation()
+				? CalendarUtils._createUniversalUTCDate(oAppointment._getEndDateWithTimezoneAdaptation(), undefined, true)
 				: CalendarUtils._createUniversalUTCDate(new Date(864000000000000), undefined, true); //max date
 			var oAppointmentEndDateTime = oAppointmentEndDate.getTime();
 			oAppointmentEndDate.setUTCSeconds(0); // ignore seconds
@@ -1190,7 +1213,7 @@ sap.ui.define([
 					// in month mode, group appointment < one week
 
 					oGroupAppointment = _getGroupAppointment.call(this, oAppointmentStartDate, oAppointment, sIntervalType, iIntervals, oStartDate, oEndDate, iStartTime, aVisibleAppointments);
-					var oGroupEndDate = CalendarUtils._createUniversalUTCDate(oGroupAppointment.getEndDate(), undefined, true);
+					var oGroupEndDate = CalendarUtils._createUniversalUTCDate(oGroupAppointment._getEndDateWithTimezoneAdaptation(), undefined, true);
 
 					if (oAppointmentEndDate.getTime() > oGroupEndDate.getTime()) {
 						// appointment ends in next group
@@ -1319,7 +1342,7 @@ sap.ui.define([
 
 		for (var j = 0; j < aGroupAppointments.length; j++) {
 			oGroupAppointment = aGroupAppointments[j];
-			var oGroupAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oGroupAppointment.getStartDate(), undefined, true);
+			var oGroupAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oGroupAppointment._getStartDateWithTimezoneAdaptation(), undefined, true);
 			if (oGroupAppointmentStartDate.getTime() == oGroupStartDate.getTime()) {
 				break;
 			}
@@ -1443,11 +1466,11 @@ sap.ui.define([
 
 			for (i = 0; i < aAppointments.length; i++) {
 				oAppointment = aAppointments[i];
-				var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment.getStartDate(), undefined, true);
+				var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment._getStartDateWithTimezoneAdaptation(), undefined, true);
 				oAppointmentStartDate.setUTCSeconds(0); // ignore seconds
 				oAppointmentStartDate.setUTCMilliseconds(0); // ignore milliseconds
-				var oAppointmentEndDate = oAppointment.getEndDate()
-					? CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), undefined, true)
+				var oAppointmentEndDate = oAppointment._getEndDateWithTimezoneAdaptation()
+					? CalendarUtils._createUniversalUTCDate(oAppointment._getEndDateWithTimezoneAdaptation(), undefined, true)
 					: CalendarUtils._createUniversalUTCDate(new Date(864000000000000), undefined, true); //max date;
 				oAppointmentEndDate.setUTCSeconds(0); // ignore seconds
 				oAppointmentEndDate.setUTCMilliseconds(0); // ignore milliseconds
@@ -1773,13 +1796,13 @@ sap.ui.define([
 		var iNewStartHour,
 			iNewEndHour;
 
-			iNewStartHour = oAppointment.getStartDate().getHours() - oAppointment.getStartDate().getHours() % iRound;
+			iNewStartHour = oAppointment._getStartDateWithTimezoneAdaptation().getHours() - oAppointment._getStartDateWithTimezoneAdaptation().getHours() % iRound;
 			oAppointmentStartDate.setUTCHours(iNewStartHour);
 			oAppointmentStartDate.setUTCMinutes(0);
 			oAppointmentStartDate.setUTCSeconds(0);
 			oAppointmentStartDate.setUTCMilliseconds(0);
 
-			iNewEndHour = oAppointment.getEndDate().getHours() - oAppointment.getEndDate().getHours() % iRound + iRound;
+			iNewEndHour = oAppointment._getEndDateWithTimezoneAdaptation().getHours() - oAppointment._getEndDateWithTimezoneAdaptation().getHours() % iRound + iRound;
 			oAppointmentEndDate.setUTCHours(iNewEndHour);
 			oAppointmentEndDate.setUTCMinutes(0);
 			oAppointmentEndDate.setUTCSeconds(0);
@@ -1940,7 +1963,7 @@ sap.ui.define([
 
 				if (oAppointment) {
 					this._sFocusedAppointmentId = oAppointment.getId();
-					var oUTCStartDate = _calculateStartDate.call(this, oAppointment.getStartDate());
+					var oUTCStartDate = _calculateStartDate.call(this, oAppointment._getStartDateWithTimezoneAdaptation());
 					this.setStartDate(CalendarUtils._createLocalDate(oUTCStartDate, true));
 					if (!containsOrEquals(this.getDomRef(), document.activeElement)) {
 						// focus is outside control -> set focus after rerendering
@@ -2050,13 +2073,13 @@ sap.ui.define([
 		var oLocalStartDate = CalendarUtils._createLocalDate(oStartDate, true);
 		var oLocalEndDate = CalendarUtils._createLocalDate(oEndDate, true);
 		for (var i = 0; i < aAppointments.length; i++) {
-			if (aAppointments[i].getStartDate() >= oLocalStartDate && aAppointments[i].getStartDate() <= oLocalEndDate) {
+			if (aAppointments[i]._getStartDateWithTimezoneAdaptation() >= oLocalStartDate && aAppointments[i]._getStartDateWithTimezoneAdaptation() <= oLocalEndDate) {
 				oAppointment = aAppointments[i];
 				sId = oAppointment.getId();
 				if (oEvent.type == "saphome") {
 					break;
 				}
-			} else if (aAppointments[i].getStartDate() > oLocalEndDate) {
+			} else if (aAppointments[i]._getStartDateWithTimezoneAdaptation() > oLocalEndDate) {
 				break;
 			}
 		}
@@ -2157,10 +2180,10 @@ sap.ui.define([
 	}
 
 	function _fnDefaultAppointmentsSorter(oApp1, oApp2) {
-		var iResult = oApp1.getStartDate() - oApp2.getStartDate();
+		var iResult = oApp1._getStartDateWithTimezoneAdaptation() - oApp2._getStartDateWithTimezoneAdaptation();
 		if (iResult == 0) {
 			// same start date -> longest appointment should be on top
-			iResult = oApp2.getEndDate() - oApp1.getEndDate();
+			iResult = oApp2._getEndDateWithTimezoneAdaptation() - oApp1._getEndDateWithTimezoneAdaptation();
 		}
 		return iResult;
 	}
