@@ -344,6 +344,16 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"TableColumnMenuPersonalization": {
+				group: "Table UI Test",
+				autostart: false,
+				module: "./OpaTests/P13nOpa.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
 			"AdaptFiltersJourneyGeneral": {
 				group: "FilterBar UI Test",
 				autostart: false,

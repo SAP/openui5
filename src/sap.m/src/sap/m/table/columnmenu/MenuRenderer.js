@@ -22,7 +22,7 @@ sap.ui.define([], function () {
 			return;
 		}
 
-		oRm.openStart("div", oMenu.getId() + "-quickActions");
+		oRm.openStart("div");
 		if (oMenu._oItemsContainer) {
 			if (oMenu._oItemsContainer.getCurrentViewKey() === "$default") {
 				oRm.class("sapMTCMenuQAList");

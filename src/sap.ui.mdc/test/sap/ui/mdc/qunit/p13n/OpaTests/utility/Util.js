@@ -55,5 +55,18 @@ sap.ui.define([
 		return oBundle.getText("info/" + sChartType);
 	};
 
+	Util.waitForColumnMenu = function(mConfig) {
+		return this.waitFor({
+			searchOpenDialogs: true,
+			controlType: "sap.m.table.columnmenu.Menu",
+			success: function(aColumnMenu) {
+				if (mConfig && mConfig.success) {
+					mConfig.success.call(this, mConfig.findAll ? aColumnMenu : aColumnMenu[0]);
+				}
+			},
+			errorMessage: "No column menu is open"
+		});
+	};
+
 	return Util;
 });
