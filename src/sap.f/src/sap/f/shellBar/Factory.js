@@ -47,7 +47,7 @@ sap.ui.define([
 	/**
 	 * Factory class which is used to create internal controls used by the ShellBar control and care for their
 	 * lifecycle.
-	 * @alias sap/f/shellBar/Factory
+	 * @alias module:sap/f/shellBar/Factory
 	 * @since 1.63
 	 * @private
 	 */

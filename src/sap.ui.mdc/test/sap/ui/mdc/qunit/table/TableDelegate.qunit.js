@@ -1,5 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
+	"sap/m/Text",
 	"sap/ui/mdc/Table",
 	"../QUnitUtils",
 	"sap/ui/core/Core",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Context"
 ], function(
+	Text,
 	Table,
 	MDCQUnitUtils,
 	Core,

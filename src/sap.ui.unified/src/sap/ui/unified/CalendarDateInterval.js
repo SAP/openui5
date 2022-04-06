@@ -16,6 +16,7 @@ sap.ui.define([
 	"./CalendarDateIntervalRenderer",
 	"sap/base/util/deepEqual",
 	"sap/m/Popover",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/Core",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
@@ -33,6 +34,7 @@ sap.ui.define([
 	CalendarDateIntervalRenderer,
 	deepEqual,
 	Popover,
+	CalendarType,
 	Core,
 	Log,
 	jQuery,
@@ -40,11 +42,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var CalendarType = sap.ui.core.CalendarType;
 	/*
-	* Inside the CalendarDateInterval CalendarDate objects are used. But in the API JS dates are used.
-	* So conversion must be done on API functions.
-	*/
+	 * Inside the CalendarDateInterval CalendarDate objects are used. But in the API JS dates are used.
+	 * So conversion must be done on API functions.
+	 */
 
 	/**
 	 * Constructor for a new <code>CalendarDateInterval</code>.

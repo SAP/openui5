@@ -2889,7 +2889,7 @@ function(
 	/**
 	 * Switches to a dialog page (0 = sort, 1 = group, 2 = filter, 3 = subfilter and custom pages).
 	 * @param {int|string} vWhich The page to be navigated to
-	 * @param {sap.m.FilterItem} oItem The filter item for the detail page (optional, only used for page 3).
+	 * @param {sap.m.ViewSettingsFilterItem} oItem The filter item for the detail page (optional, only used for page 3).
 	 *
 	 * @private
 	 */

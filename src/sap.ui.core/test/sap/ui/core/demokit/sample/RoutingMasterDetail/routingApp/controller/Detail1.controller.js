@@ -1,4 +1,4 @@
-sap.ui.define( ["sap/ui/core/mvc/Controller","sap/ui/core/routing/History", "sap/ui/Device"], function (Controller, History, Device) {
+sap.ui.define( ["sap/ui/core/mvc/Controller","sap/ui/core/routing/History"], function (Controller, History) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.RoutingMasterDetail.routingApp.controller.Detail1", {

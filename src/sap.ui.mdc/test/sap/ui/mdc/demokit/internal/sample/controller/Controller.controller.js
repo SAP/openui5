@@ -1,5 +1,6 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
+	'sap/ui/mdc/library',
 	'sap/ui/mdc/table/ResponsiveTableType',
 	'sap/ui/mdc/table/RowSettings',
 	'sap/ui/core/Fragment',
@@ -7,27 +8,30 @@ sap.ui.define([
 	'sap/m/MessageBox',
 	'sap/m/MessageToast',
 	'sap/ui/core/Core',
-	"sap/ui/mdc/table/RowActionItem"
-], function(Controller, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, oCore, RowActionItem) {
+	"sap/ui/mdc/table/RowActionItem",
+	"sap/ui/model/json/JSONModel"
+], function(Controller, mdcLibrary, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, oCore, RowActionItem, JSONModel) {
 	"use strict";
+
+	var RowAction = mdcLibrary.RowAction;
 
 	return Controller.extend("sap.ui.mdc.sample.controller.Controller", {
 
 		onInit: function() {
 			StateUtil.attachStateChange(this._onStateChange.bind(this));
 			var oTable = this.byId("mdcTable");
-			var oTempModel = new sap.ui.model.json.JSONModel({
+			var oTempModel = new JSONModel({
 				data: [
-					{name: "Navigation", type: sap.ui.mdc.RowAction.Navigation},
+					{name: "Navigation", type: RowAction.Navigation},
 					{name: "Test", type: "Navigation"}
 				]
 			});
 			oTable.setModel(oTempModel, "actions");
 
-			oTable.setModel(new sap.ui.model.json.JSONModel({
+			oTable.setModel(new JSONModel({
 				data: {
 					name: "Navigation",
-					type: sap.ui.mdc.RowAction.Navigation
+					type: RowAction.Navigation
 				}
 			}), "actionsResp");
 		},
@@ -138,7 +142,7 @@ sap.ui.define([
 			if (oEvent.getSource().getSelected()) {
 				//oTable.setRowAction(['Navigation']);
 				oSettings.addRowAction(new RowActionItem({
-					type: "Navigation",
+					type: RowAction.Navigation,
 					text: "Navigation",
 					visible: true,
 					press: this.onRowActionPress

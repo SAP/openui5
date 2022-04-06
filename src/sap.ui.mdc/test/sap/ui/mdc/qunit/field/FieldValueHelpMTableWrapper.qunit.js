@@ -1795,7 +1795,7 @@ sap.ui.define([
 			oFocusedElement = document.activeElement;
 			assert.equal(iNavigate, 0, "Navigate event not fired");
 			assert.notOk(oField.focus.called, "focus not set on Field");
-			assert.ok(jQuery(oFocusedElement).hasClass("sapMListTblHeader"), "Focus is set on table-header");
+			assert.ok(oFocusedElement && oFocusedElement.classList.contains("sapMListTblHeader"), "Focus is set on table-header");
 
 			oFieldHelp.close();
 			oClock.tick(iDialogDuration); // fake closing time

@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageDynamicHeaderTitle",
+	"sap/m/Button",
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/Panel",
+	"sap/m/VBox",
 	"sap/uxap/testblocks/GenericDiv",
 	"sap/ui/Device",
 	"sap/ui/core/mvc/XMLView",
 	"sap/uxap/library"],
-function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Text, Title, Panel, GenericDiv, Device, XMLView, lib) {
+function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Button, Text, Title, Panel, VBox, GenericDiv, Device, XMLView, lib) {
 
 	"use strict";
 
@@ -231,14 +233,14 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oFirstSection = oObjectPage.getSections()[0],
 			oFirstSubSection = oFirstSection.getSubSections()[0],
 			sSelectedSectionId = oObjectPage.getSections()[1].getId(),
-			item1 = new sap.m.Button({text: "content", visible: false}),
-			item2 = new sap.m.Button({text: "content", visible: false}),
-			item3 = new sap.m.Button({text: "content", visible: false}),
+			item1 = new Button({text: "content", visible: false}),
+			item2 = new Button({text: "content", visible: false}),
+			item3 = new Button({text: "content", visible: false}),
 			iScrollTopBeforeChange,
 			iExpectedScrollTopAfterChange,
 			done = assert.async();
 
-			oFirstSubSection.addBlock(sap.m.VBox({
+			oFirstSubSection.addBlock(new VBox({
 				items: [item1, item2, item3]
 			}));
 

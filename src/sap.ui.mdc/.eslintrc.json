@@ -1,0 +1,19 @@
+{
+	"overrides": [
+		/*
+		 * Productive code, sample and unit test code of sap.ui.mdc has been cleaned up.
+		 * No more references to the global jQuery allowed
+		 */
+		{
+			"files": [
+				"src/**/*.js",
+				"test/sap/ui/mdc/demokit/**/*.js",
+				"test/sap/ui/mdc/integration/**/*.js",
+				"test/sap/ui/mdc/qunit/**/*.js"
+			],
+			"globals": {
+				"jQuery": "off"
+			}
+		}
+	]
+}

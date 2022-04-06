@@ -310,7 +310,7 @@ sap.ui.define([
 				}
 
 			} else if (FNClass === Element) {
-				// This aggregation accepts any sap.ui.Element?? Strange. Give an Item, then.
+				// This aggregation accepts any sap.ui.core.Element?? Strange. Give an Item, then.
 				oElement = new Item();
 
 			} else if (FNClass.getMetadata().isAbstract() ) {

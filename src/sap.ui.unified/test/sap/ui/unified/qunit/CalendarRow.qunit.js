@@ -205,7 +205,7 @@ sap.ui.define([
 		height: "100px",
 		width: "500px",
 		intervals: 5,
-		intervalType: sap.ui.unified.CalendarIntervalType.Day,
+		intervalType: CalendarIntervalType.Day,
 		tooltip: "Row tooltip",
 		showIntervalHeaders: false,
 		select: handleSelect,
@@ -257,7 +257,7 @@ sap.ui.define([
 		assert.ok(nbItems > 0, "CalendarRow 1: groupAppointments aggregation has " + nbItems + " items.");
 
 		//Act
-		oRow1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Expanded);
+		oRow1.setGroupAppointmentsMode(GroupAppointmentsMode.Expanded);
 		oCore.applyChanges();
 		assert.ok(true, "Set the groupAppointmentsMode to Expanded");
 

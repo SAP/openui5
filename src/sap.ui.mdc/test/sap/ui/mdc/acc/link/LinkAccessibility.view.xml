@@ -1,4 +1,4 @@
-<core:View xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:l="sap.ui.layout"
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout"
 		   xmlns:mdc="sap.ui.mdc" xmlns:mdcField="sap.ui.mdc.field"
 		   controllerName="sap.ui.mdc.acc.link.LinkAccessibility">
 	<App defaultTransitionName="show">
@@ -16,4 +16,4 @@
 			</l:VerticalLayout>
 		</ScrollContainer>
 	</App>
-</core:View>
+</mvc:View>

@@ -2032,7 +2032,7 @@ sap.ui.define([
 	/**
 	 * request data via data provider in RT
 	 * @param {object} oConfig
-	 * @param {BaseField} oField
+	 * @param {sap.ui.integration.editor.fields.BaseField} oField
 	 */
 	Editor.prototype._requestData = function (oConfig, oField) {
 		var oDataProvider = this._oDataProviderFactory.create(oConfig.values.data);
@@ -2280,7 +2280,7 @@ sap.ui.define([
 	/**
 	 * Creates a unnamed model if a values.data section exists in the configuration
 	 * @param {object} oConfig
-	 * @param {BaseField} oField
+	 * @param {sap.ui.integration.editor.fields.BaseField} oField
 	 */
 	Editor.prototype._addValueListModel = function (oConfig, oField, nTimeout) {
 		if (oConfig.values) {
@@ -2345,7 +2345,7 @@ sap.ui.define([
 	/**
 	 * Creates a meta model if a values.metadata section exists in the configuration
 	 * @param {object} oConfig
-	 * @param {BaseField} oField
+	 * @param {sap.ui.integration.editor.fields.BaseField} oField
 	 */
 	 Editor.prototype._addMetadataModel = function (oConfig, oField) {
 		if (oConfig.values && oConfig.values.metadata) {

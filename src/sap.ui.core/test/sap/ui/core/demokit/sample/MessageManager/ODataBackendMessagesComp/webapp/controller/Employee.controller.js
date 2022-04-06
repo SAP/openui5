@@ -2,8 +2,8 @@ sap.ui.define([
 	"sap/ui/core/sample/MessageManager/ODataBackendMessagesComp/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
-	"sap/ui/model/Binding"
-], function (BaseController, JSONModel, MessageToast, Binding) {
+	"sap/ui/model/BindingMode"
+], function (BaseController, JSONModel, MessageToast, BindingMode) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.controller.Employee", {
@@ -14,7 +14,7 @@ sap.ui.define([
 			var oViewModel = new JSONModel({
 				busy : false
 			});
-			oViewModel.setDefaultBindingMode("TwoWay");
+			oViewModel.setDefaultBindingMode(BindingMode.TwoWay);
 			this.getView().setModel(oViewModel, "view");
 
 			this.getRouter().getRoute("employee").attachMatched(this._onRouteMatched, this);

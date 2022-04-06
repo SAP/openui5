@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/mdc/FilterBar",
-	"sap/ui/mdc/FilterField"
+	"sap/ui/mdc/FilterField",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Controller,
 	MessageBox,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Text,
 	VariantManagement,
 	FilterBar,
-	FilterField
+	FilterField,
+	jQuery
 ) {
 	"use strict";
 

@@ -511,7 +511,7 @@ sap.ui.define([
 	/**
 	 * FIXME: backwards compatibility, remove when possible
 	 * Returns an instance of the Element, which is associated with this Overlay
-	 * @return {sap.ui.Element} associated Element
+	 * @return {sap.ui.core.Element} associated Element
 	 * @public
 	 * @deprecated
 	 */
@@ -521,7 +521,7 @@ sap.ui.define([
 
 	/**
 	 * Returns an instance of the Element, which is associated with this Overlay
-	 * @return {sap.ui.Element} associated Element
+	 * @return {sap.ui.core.Element} associated Element
 	 * @public
 	 */
 	Overlay.prototype.getElement = function() {

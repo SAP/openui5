@@ -1581,7 +1581,7 @@ sap.ui.define([
 		/**
 		 * Determines if an appointment fits in the visible hours of the grid.
 		 *
-		 * @param {CalendarDate} oColumnCalDate the start date of the grid
+		 * @param {sap.ui.unified.calendar.CalendarDate} oColumnCalDate the start date of the grid
 		 * @returns {boolean} true if the appointment is in the visible hours
 		 * @private
 		 */
@@ -1725,7 +1725,7 @@ sap.ui.define([
 		 * Selects the clusters of all-day appointments which are in the visual port of the grid.
 		 *
 		 * @param {object} aBlockers the all-day appointments in the corresponding aggregation
-		 * @param {CalendarDate} oCalStartDate the start date of the grid
+		 * @param {sap.ui.unified.calendar.CalendarDate} oCalStartDate the start date of the grid
 		 * @param {int} iColumns the number of columns to be displayed in the grid
 		 * @returns {object} the clusters of all-day appointments in the visual port of the grid
 		 * @private
@@ -1741,8 +1741,8 @@ sap.ui.define([
 		/**
 		 * Determines whether the blocker is in the visible grid area.
 		 *
-		 * @param {CalendarDate} oViewStart The start date of the view
-		 * @param {CalendarDate} oViewEnd The end date of the view
+		 * @param {sap.ui.unified.calendar.CalendarDate} oViewStart The start date of the view
+		 * @param {sap.ui.unified.calendar.CalendarDate} oViewEnd The end date of the view
 		 * @returns {boolean} true if the blocker is visible
 		 * @private
 		 */

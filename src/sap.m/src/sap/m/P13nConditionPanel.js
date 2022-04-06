@@ -1165,11 +1165,11 @@ sap.ui.define([
 	 * appends a new condition grid with all containing controls in the main grid
 	 *
 	 * @private
-	 * @param {grid} oTargetGrid the main grid in which the new condition grid will be added
+	 * @param {sap.ui.layout.Grid} oTargetGrid the main grid in which the new condition grid will be added
 	 * @param {object} oConditionGridData the condition data for the new added condition grid controls
 	 * @param {string} sKey the key for the new added condition grid
 	 * @param {int} iPos the index of the new condition in the targetGrid
-         * @param {boolean} bUseRowFromAbove use the key from the row above for creating a new row
+	 * @param {boolean} bUseRowFromAbove use the key from the row above for creating a new row
 	 */
 	P13nConditionPanel.prototype._createConditionRow = function(oTargetGrid, oConditionGridData, sKey, iPos, bUseRowFromAbove) {
 		var oGrid,
@@ -1529,7 +1529,7 @@ sap.ui.define([
 	 * returns the selectedKeyFields item from the KeyField control.
 	 *
 	 * @private
-	 * @param {control} oKeyFieldCtrl the Select/ComboBox
+	 * @param {sap.ui.core.Control} oKeyFieldCtrl the Select/ComboBox
 	 * @returns {object} the selected Keyfields object
 	 */
 	P13nConditionPanel.prototype._getCurrentKeyFieldItem = function(oKeyFieldCtrl) {
@@ -1766,7 +1766,7 @@ sap.ui.define([
 	 * fill all operations from the aOperation array into the select control items list
 	 *
 	 * @private
-	 * @param {control} oCtrl the select control which should be filled
+	 * @param {sap.ui.core.Control} oCtrl the select control which should be filled
 	 * @param {array} aOperations array of operations
 	 * @param {string} sType the type prefix for resource access
 	 */
@@ -1810,7 +1810,7 @@ sap.ui.define([
 	 * fill all KeyFieldItems from the aItems array into the select control items list
 	 *
 	 * @private
-	 * @param {control} oCtrl the select control which should be filled
+	 * @param {sap.m.ComboBox} oCtrl the select control which should be filled
 	 * @param {array} aItems array of keyfields
 	 */
 	P13nConditionPanel.prototype._fillKeyFieldListItems = function(oCtrl, aItems) {
