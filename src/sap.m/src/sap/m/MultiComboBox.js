@@ -3139,7 +3139,8 @@ function(
 			oListItem.addDelegate(this._oListItemEnterEventDelegate, true, this, true);
 
 			// add the mapped item type of sap.m.StandardListItem to the list
-			this._getList().addAggregation("items", oListItem, true);
+			// do not prevent invalidation as invalidations will stack
+			this._getList().addItem(oListItem);
 
 			// add active state to the selected item
 			if (this.isItemSelected(aItems[i])) {
