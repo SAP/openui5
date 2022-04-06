@@ -792,9 +792,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				}
 			}
 		}
-		_readonlyIconClick() {
-			this._inputDom.focus();
-		}
 		get editable() {
 			return !this.readonly;
 		}

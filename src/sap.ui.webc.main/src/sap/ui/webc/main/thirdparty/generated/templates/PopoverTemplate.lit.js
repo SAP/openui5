@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], funct
 	const block2 = (context, tags, suffix) => litRender.html`<slot name="header"></slot>`;
 	const block3 = (context, tags, suffix) => litRender.html`<h2 class="ui5-popup-header-text">${litRender.ifDefined(context.headerText)}</h2>`;
 	const block4 = (context, tags, suffix) => litRender.html`${ context.footer.length ? block5() : undefined }`;
-	const block5 = (context, tags, suffix) => litRender.html`<footer class="ui5-popup-footer-root"  part="footer"><slot name="footer"></slot></footer>`;
+	const block5 = (context, tags, suffix) => litRender.html`<footer class="ui5-popup-footer-root" part="footer"><slot name="footer"></slot></footer>`;
 
 	return block0;
 

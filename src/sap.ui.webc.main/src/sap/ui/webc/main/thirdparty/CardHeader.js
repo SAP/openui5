@@ -109,12 +109,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		_headerClick(event) {
 			event.stopImmediatePropagation();
-			if (this.interactive) {
+			if (this.interactive && event.target === event.currentTarget) {
 				this.fireEvent("click");
 			}
 		}
 		_headerKeydown(event) {
-			if (!this.interactive) {
+			if (!this.interactive || event.target !== event.currentTarget) {
 				return;
 			}
 			const enter = Keys.isEnter(event);
@@ -129,7 +129,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_headerKeyup(event) {
-			if (!this.interactive) {
+			if (!this.interactive || event.target !== event.currentTarget) {
 				return;
 			}
 			const space = Keys.isSpace(event);

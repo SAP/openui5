@@ -39,6 +39,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			},
 			_filterStepTwo: {
 				type: Boolean,
+				noAttribute: true,
 			},
 		},
 		slots:  {
@@ -148,8 +149,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			return `${ViewSettingsDialog.i18nBundle.getText(i18nDefaults.VSD_FILTER_BY)}: ${this._selectedFilter.text}`;
 		}
 		get _dialogTitle() {
-			const currentModeText = this._currentMode === ViewSettingsDialogMode.Sort ? i18nDefaults.VSD_DIALOG_TITLE_SORT : i18nDefaults.VSD_FILTER_BY;
-			return ViewSettingsDialog.i18nBundle.getText(currentModeText);
+			return ViewSettingsDialog.i18nBundle.getText(i18nDefaults.VSD_DIALOG_TITLE_SORT);
 		}
 		get _okButtonLabel() {
 			return ViewSettingsDialog.i18nBundle.getText(i18nDefaults.VSD_SUBMIT_BUTTON);
@@ -180,6 +180,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 		}
 		get _sortAscending() {
 			return !this.sortDescending;
+		}
+		get _title() {
+			return this.showBackButton
+				? this._filterByTitle
+				: this._dialogTitle;
 		}
 		get _disableResetButton() {
 			return this._dialog && this._sortSetttingsAreInitial && this._filteresAreInitial;
@@ -244,6 +249,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 					selected: this.sortDescending,
 				},
 			];
+		}
+		get expandContent() {
+			return this._filterStepTwo || !this.hasPagination;
 		}
 		get isModeSort() {
 			return this._currentMode === ViewSettingsDialogMode.Sort;

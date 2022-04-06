@@ -227,9 +227,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._resetFilter();
 			this._toggleRespPopover();
 		}
-		_readonlyIconClick() {
-			this.inner.focus();
-		}
 		_input(event) {
 			const { value } = event.target;
 			if (event.target === this.inner) {

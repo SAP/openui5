@@ -340,10 +340,18 @@ sap.ui.define([
 					parameters: {}
 				}
 			},
+			methods: ["openPicker"],
 			getters: ["previewItem"],
 			designtime: "sap/ui/webc/main/designtime/MultiInput.designtime"
 		}
 	});
+
+	/**
+	 * Manually opens the suggestions popover, assuming suggestions are enabled. Items must be preloaded for it to open.
+	 * @public
+	 * @name sap.ui.webc.main.MultiInput#openPicker
+	 * @function
+	 */
 
 	/**
 	 * Returns the the suggestion item on preview.

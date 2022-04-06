@@ -1,4 +1,4 @@
-sap.ui.define(['./StaticArea', './updateShadowRoot', './Render', './util/getEffectiveContentDensity', './CustomElementsScope', './locale/getEffectiveDir'], function (StaticArea, updateShadowRoot, Render, getEffectiveContentDensity, CustomElementsScope, getEffectiveDir) { 'use strict';
+sap.ui.define(['./StaticArea', './updateShadowRoot', './Render', './util/getEffectiveContentDensity', './CustomElementsScopeUtils', './locale/getEffectiveDir'], function (StaticArea, updateShadowRoot, Render, getEffectiveContentDensity, CustomElementsScopeUtils, getEffectiveDir) { 'use strict';
 
 	class StaticAreaItem extends HTMLElement {
 		constructor() {
@@ -48,7 +48,7 @@ sap.ui.define(['./StaticArea', './updateShadowRoot', './Render', './util/getEffe
 		}
 		static getTag() {
 			const pureTag = "ui5-static-area-item";
-			const suffix = CustomElementsScope.getEffectiveScopingSuffixForTag(pureTag);
+			const suffix = CustomElementsScopeUtils.getEffectiveScopingSuffixForTag(pureTag);
 			if (!suffix) {
 				return pureTag;
 			}

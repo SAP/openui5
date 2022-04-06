@@ -117,8 +117,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (valid && normalizeValue) {
 				value = this.normalizeValue(value);
 			}
-			this.value = "";
-			this.value = value;
+			if (!events.includes("input")) {
+				this.value = "";
+				this.value = value;
+			}
 			this.tempValue = value;
 			this._updateValueState();
 			events.forEach(event => {

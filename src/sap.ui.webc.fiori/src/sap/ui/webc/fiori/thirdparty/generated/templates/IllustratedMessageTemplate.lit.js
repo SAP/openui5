@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (litRender) { 'use strict';
 
 	const block0 = (context, tags, suffix) => litRender.html`<div class="ui5-illustrated-message-root"><div class="ui5-illustrated-message-illustration">${litRender.unsafeHTML(context.effectiveIllustration)}</div>${ context.hasTitle ? block1(context, tags, suffix) : undefined }${ context.hasSubtitle ? block2(context) : undefined }${ context.hasActions ? block5() : undefined }<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="ui5-illustrated-message-util">${blockSVG1()}</svg></div>`;
-	const block1 = (context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-title", tags, suffix)} level="H2" class="ui5-illustrated-message-title" wrapping-type="Normal">${litRender.ifDefined(context.effectiveTitleText)}</${litRender.scopeTag("ui5-title", tags, suffix)}>`;
+	const block1 = (context, tags, suffix) => suffix ? litRender.html`<${litRender.scopeTag("ui5-title", tags, suffix)} level="H2" class="ui5-illustrated-message-title" wrapping-type="Normal">${litRender.ifDefined(context.effectiveTitleText)}</${litRender.scopeTag("ui5-title", tags, suffix)}>` : litRender.html`<ui5-title level="H2" class="ui5-illustrated-message-title" wrapping-type="Normal">${litRender.ifDefined(context.effectiveTitleText)}</ui5-title>`;
 	const block2 = (context, tags, suffix) => litRender.html`<div class="ui5-illustrated-message-subtitle">${ context.hasFormattedSubtitle ? block3() : block4(context) }</div>`;
 	const block3 = (context, tags, suffix) => litRender.html`<slot name="subtitle"></slot>`;
 	const block4 = (context, tags, suffix) => litRender.html`${litRender.ifDefined(context.effectiveSubitleText)}`;

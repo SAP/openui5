@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Themes', 'sa
 
 	Themes.registerThemePropertiesLoader("@ui5/webcomponents-theming", "sap_fiori_3", () => defaultThemeBase__default);
 	Themes.registerThemePropertiesLoader("@ui5/webcomponents-fiori", "sap_fiori_3", () => parametersBundle_css);
-	var SideNavigationPopoverCss = {packageName:"@ui5/webcomponents-fiori",fileName:"themes/SideNavigationPopover.css",content:".ui5-side-navigation-popover [ui5-li][focused]:first-child::part(native-li):after{border-top-left-radius:var(--_ui5_side_navigation_overflow_border_radius);border-top-right-radius:var(--_ui5_side_navigation_overflow_border_radius)}.ui5-side-navigation-popover [ui5-li][focused]:last-child::part(native-li):after{border-bottom-left-radius:var(--_ui5_side_navigation_overflow_border_radius);border-bottom-right-radius:var(--_ui5_side_navigation_overflow_border_radius)}"};
+	var SideNavigationPopoverCss = {packageName:"@ui5/webcomponents-fiori",fileName:"themes/SideNavigationPopover.css",content:".ui5-side-navigation-popover [ui5-li][focused]:first-child::part(native-li):after{border-top-left-radius:var(--_ui5_side_navigation_overflow_border_radius);border-top-right-radius:var(--_ui5_side_navigation_overflow_border_radius)}.ui5-side-navigation-popover [ui5-li][focused]:last-child::part(native-li):after{border-bottom-left-radius:var(--_ui5_side_navigation_overflow_border_radius);border-bottom-right-radius:var(--_ui5_side_navigation_overflow_border_radius)}.ui5-side-navigation-popover::part(content){padding:0}"};
 
 	return SideNavigationPopoverCss;
 

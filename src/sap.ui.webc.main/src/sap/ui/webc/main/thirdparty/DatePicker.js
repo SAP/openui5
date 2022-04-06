@@ -125,7 +125,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			} else if (this.name) {
 				console.warn(`In order for the "name" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`);
 			}
-			this.value = this.normalizeValue(this.value);
+			this.value = this.normalizeValue(this.value) || this.value;
 			this.liveValue = this.value;
 		}
 		get _calendarSelectionMode() {

@@ -6,8 +6,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Themes', 'sa
 
 	Themes.registerThemePropertiesLoader("@ui5/webcomponents-theming", "sap_fiori_3", () => defaultThemeBase__default);
 	Themes.registerThemePropertiesLoader("@ui5/webcomponents-fiori", "sap_fiori_3", () => parametersBundle_css);
-	var NotifactionOverflowActionsPopoverCss = {packageName:"@ui5/webcomponents-fiori",fileName:"themes/NotifactionOverflowActionsPopover.css",content:".ui5-notification-overflow-list{display:flex;flex-direction:column;padding:0 .5rem}"};
+	var NotificationOverflowActionsPopoverCss = {packageName:"@ui5/webcomponents-fiori",fileName:"themes/NotificationOverflowActionsPopover.css",content:".ui5-notification-overflow-list{display:flex;flex-direction:column}.ui5-notification-overflow-popover::part(content){padding:var(--_ui5-notification-overflow-popover-padding)}"};
 
-	return NotifactionOverflowActionsPopoverCss;
+	return NotificationOverflowActionsPopoverCss;
 
 });

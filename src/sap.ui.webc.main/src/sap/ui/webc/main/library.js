@@ -177,7 +177,7 @@ sap.ui.define([
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
-					"sap.ui.webc.main.Link":  "sap/ui/webc/main/flexibility/Link",
+					"sap.ui.webc.main.Link": "sap/ui/webc/main/flexibility/Link",
 					"sap.ui.webc.main.MultiInput": {
 						"hideControl": "default",
 						"unhideControl": "default"

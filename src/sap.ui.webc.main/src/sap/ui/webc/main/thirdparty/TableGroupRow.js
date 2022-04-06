@@ -34,6 +34,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				noAttribute: true,
 			},
 		},
+		events:  {
+			_focused: {},
+		},
 	};
 	class TableGroupRow extends UI5Element__default {
 		static get metadata() {
@@ -78,7 +81,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._colSpan = this.visibleColCount();
 		}
 		_onfocusin(event) {
-			this.parentElement._itemNavigation.setCurrentItem(this);
+			this.fireEvent("_focused", event);
 		}
 		static async onDefine() {
 			TableGroupRow.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");

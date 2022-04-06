@@ -80,6 +80,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap
 					"ui5-dt-cal--hidden": this.phone && this.showTimeView,
 					"ui5-dt-time--hidden": this.phone && this.showDateView,
 				},
+				footer: {
+					"ui5-dt-picker-footer-time-hidden": (this.phone && this.showTimeView) || (this.phone && this.showDateView),
+				},
 			};
 		}
 		get _formatPattern() {

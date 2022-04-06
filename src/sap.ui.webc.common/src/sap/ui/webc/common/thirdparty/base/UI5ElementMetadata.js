@@ -1,4 +1,4 @@
-sap.ui.define(['./types/DataType', './util/isDescendantOf', './util/StringHelper', './util/SlotsHelper', './CustomElementsScope'], function (DataType, isDescendantOf, StringHelper, SlotsHelper, CustomElementsScope) { 'use strict';
+sap.ui.define(['./types/DataType', './util/isDescendantOf', './util/StringHelper', './util/SlotsHelper', './CustomElementsScopeUtils'], function (DataType, isDescendantOf, StringHelper, SlotsHelper, CustomElementsScopeUtils) { 'use strict';
 
 	class UI5ElementMetadata {
 		constructor(metadata) {
@@ -54,7 +54,7 @@ sap.ui.define(['./types/DataType', './util/isDescendantOf', './util/StringHelper
 		}
 		getTag() {
 			const pureTag = this.metadata.tag;
-			const suffix = CustomElementsScope.getEffectiveScopingSuffixForTag(pureTag);
+			const suffix = CustomElementsScopeUtils.getEffectiveScopingSuffixForTag(pureTag);
 			if (!suffix) {
 				return pureTag;
 			}
@@ -65,7 +65,7 @@ sap.ui.define(['./types/DataType', './util/isDescendantOf', './util/StringHelper
 			if (!pureAltTag) {
 				return;
 			}
-			const suffix = CustomElementsScope.getEffectiveScopingSuffixForTag(pureAltTag);
+			const suffix = CustomElementsScopeUtils.getEffectiveScopingSuffixForTag(pureAltTag);
 			if (!suffix) {
 				return pureAltTag;
 			}

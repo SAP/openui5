@@ -39,7 +39,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		FILEUPLOAD_BROWSE: "Browse...",
 		FILEUPLOADER_TITLE: "Upload File",
 		GROUP_HEADER_TEXT: "Group Header",
-		SELECT_ROLE_DESCRIPTION: "Select ComboBox",
+		SELECT_ROLE_DESCRIPTION: "Select Combo Box",
 		SELECT_OPTIONS: "Select Options",
 		INPUT_SUGGESTIONS: "Suggestions Available",
 		INPUT_SUGGESTIONS_TITLE: "Select",

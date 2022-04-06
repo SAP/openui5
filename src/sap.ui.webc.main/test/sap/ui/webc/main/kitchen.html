@@ -1052,6 +1052,18 @@
 
 
                 var oInput0Button = new Button({
+                    text: "openPicker",
+                    click: function(oEvent) {
+                        console.log("Calling openPicker...");
+                        var result = oInput.openPicker();
+                        console.log("... openPicker returned: ", result);
+                    }
+                });
+                oInput0Button.placeAt("methodsInput");
+
+
+
+                var oInput1Button = new Button({
                     text: "getPreviewItem",
                     click: function(oEvent) {
                         console.log("Calling getPreviewItem...");
@@ -1059,7 +1071,7 @@
                         console.log("... getPreviewItem returned: ", result);
                     }
                 });
-                oInput0Button.placeAt("methodsInput");
+                oInput1Button.placeAt("methodsInput");
 
                 var oInput = new Input({
                     placeholder: "This is my placeholder value",
@@ -1292,6 +1304,18 @@
 
 
                 var oMultiInput0Button = new Button({
+                    text: "openPicker",
+                    click: function(oEvent) {
+                        console.log("Calling openPicker...");
+                        var result = oMultiInput.openPicker();
+                        console.log("... openPicker returned: ", result);
+                    }
+                });
+                oMultiInput0Button.placeAt("methodsMultiInput");
+
+
+
+                var oMultiInput1Button = new Button({
                     text: "getPreviewItem",
                     click: function(oEvent) {
                         console.log("Calling getPreviewItem...");
@@ -1299,7 +1323,7 @@
                         console.log("... getPreviewItem returned: ", result);
                     }
                 });
-                oMultiInput0Button.placeAt("methodsMultiInput");
+                oMultiInput1Button.placeAt("methodsMultiInput");
 
                 var oMultiInput = new MultiInput({
                     placeholder: "This is my placeholder value",

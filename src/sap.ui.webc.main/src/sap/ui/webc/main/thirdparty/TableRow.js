@@ -1,9 +1,10 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', './CheckBox', './types/TableMode', './types/TableRowType', './generated/templates/TableRowTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/TableRow.css'], function (UI5Element, i18nBundle, litRender, Keys, CheckBox, TableMode, TableRowType, TableRowTemplate_lit, i18nDefaults, TableRow_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/util/getActiveElement', 'sap/ui/webc/common/thirdparty/base/util/TabbableElements', './CheckBox', './types/TableMode', './types/TableRowType', './generated/templates/TableRowTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/TableRow.css'], function (UI5Element, i18nBundle, litRender, Keys, getActiveElement, TabbableElements, CheckBox, TableMode, TableRowType, TableRowTemplate_lit, i18nDefaults, TableRow_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
+	var getActiveElement__default = /*#__PURE__*/_interopDefaultLegacy(getActiveElement);
 
 	const metadata = {
 		tag: "ui5-table-row",
@@ -46,18 +47,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				defaultValue: "",
 				noAttribute: true,
 			},
-			_tabbableElements: {
-				type: Object,
-				multiple: true,
-			},
-			_tabMarked: {
-				type: Boolean,
-			},
 		},
 		events:  {
 			"row-click": {},
 			_focused: {},
 			"selection-requested": {},
+			"f7-pressed": {},
 		},
 	};
 	class TableRow extends UI5Element__default {
@@ -80,16 +75,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.deactivate();
 		}
 		_onkeydown(event) {
+			const activeElement = getActiveElement__default();
 			const itemActive = this.type === TableRowType.Active;
 			const isSingleSelect = this.isSingleSelect;
 			const itemSelectable = isSingleSelect || this.isMultiSelect;
 			const isRowFocused = this._activeElementHasAttribute("ui5-table-row");
 			const checkboxPressed = event.target.classList.contains("ui5-multi-select-checkbox");
-			if (Keys.isTabNext(event) || Keys.isTabPrevious(event)) {
-				this._tabMarked = true;
+			if (Keys.isTabNext(event) && activeElement === (TabbableElements.getLastTabbableElement(this) || this.root)) {
+				this.fireEvent("_forward-after", { target: activeElement });
 			}
-			if (Keys.isTabNext(event) || Keys.isTabPrevious(event)) {
-				this._tabMarked = true;
+			if (Keys.isTabPrevious(event) && activeElement === this.root) {
+				this.fireEvent("_forward-before", { target: activeElement });
 			}
 			if (Keys.isSpace(event) && event.target.tagName.toLowerCase() === "tr") {
 				event.preventDefault();
@@ -107,7 +103,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			if (Keys.isF7(event)) {
 				event.preventDefault();
-				this._handleF7(event.target);
+				this.fireEvent("f7-pressed", { row: this });
 			}
 		}
 		_onkeyup(event) {
@@ -121,21 +117,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_ontouchend() {
 			this.deactivate();
 		}
-		_onfocusout(event) {
+		_onfocusout() {
 			this.deactivate();
-			if (!this._tabMarked) {
-				this._tabbableElements.forEach(el => el.setAttribute("tabindex", -1));
-			} else {
-				this._tabMarked = false;
-			}
 		}
 		_onfocusin(event, forceSelfFocus = false) {
-			const tableRowRoot = this.shadowRoot.querySelector(".ui5-table-row-root");
 			if (forceSelfFocus || this._activeElementHasAttribute("ui5-table-cell")) {
-				tableRowRoot.focus();
+				this.root.focus();
 				this.activate();
 			}
-			this._tabbableElements.forEach(el => el.setAttribute("tabindex", 0));
 			this.fireEvent("_focused", event);
 		}
 		_onrowclick(event) {
@@ -158,31 +147,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		_handleSelection() {
 			this.fireEvent("selection-requested", { row: this });
-		}
-		_handleF7(activeElement) {
-			const elements = this._tabbableElements;
-			if (!elements.length) {
-				return;
-			}
-			const table = this.parentElement;
-			const tableRowRoot = this.shadowRoot.querySelector(".ui5-table-row-root");
-			const prevFocusedIdx = table._prevNestedElementIndex;
-			if (activeElement === tableRowRoot) {
-				const lastFocusedElement = elements[prevFocusedIdx];
-				if (lastFocusedElement) {
-					lastFocusedElement.focus();
-				} else {
-					elements[0].focus();
-				}
-				return;
-			}
-			const shadowRoot = activeElement.shadowRoot;
-			const target = shadowRoot ? shadowRoot.activeElement : activeElement;
-			const targetIndex = elements.indexOf(target);
-			if (targetIndex > -1) {
-				table._prevNestedElementIndex = targetIndex;
-				tableRowRoot.focus();
-			}
 		}
 		_activeElementHasAttribute(attr) {
 			return this.getRootNode().activeElement.hasAttribute(attr);
@@ -263,6 +227,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get isMultiSelect() {
 			return this.mode === "MultiSelect";
+		}
+		get root() {
+			return this.shadowRoot.querySelector(".ui5-table-row-root");
 		}
 		getCellText(cell) {
 			return this.getNormilzedTextContent(cell.textContent);

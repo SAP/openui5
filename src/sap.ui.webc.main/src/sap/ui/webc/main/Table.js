@@ -50,7 +50,7 @@ sap.ui.define([
 	 *     <li>[ALT]+[DOWN]/[UP] - Switches focus between header, last focused item, and More button (if applies) in either direction.</li>
 	 *     <li>[SHIFT]+[DOWN]/[UP] - Selects the next/previous item in a MultiSelect table, if the current item is selected (Range selection). Otherwise, deselects them (Range deselection).</li>
 	 *     <li>[SHIFT]+[HOME]/[END] - Range selection to the first/last item of the List.</li>
-	 *     <li>[CTRL]+[HOME]/[END] - Same behavior as HOME & END.</li> *
+	 *     <li>[CTRL]+[HOME]/[END] - Same behavior as HOME & END.</li>
 	 * </ul>
 	 *
 	 * @author SAP SE
@@ -68,6 +68,13 @@ sap.ui.define([
 			library: "sap.ui.webc.main",
 			tag: "ui5-table-ui5",
 			properties: {
+
+				/**
+				 * Defines the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string"
+				},
 
 				/**
 				 * Defines if the table is in busy state. <b>
@@ -225,6 +232,21 @@ sap.ui.define([
 				rows: {
 					type: "sap.ui.webc.main.ITableRow",
 					multiple: true
+				}
+			},
+			associations: {
+
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						type: "property",
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {

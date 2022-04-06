@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/main/thirdparty/ListItemBase', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/main/thirdparty/types/Priority', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/message-success', 'sap/ui/webc/common/thirdparty/icons/message-error', 'sap/ui/webc/common/thirdparty/icons/message-warning', 'sap/ui/webc/common/thirdparty/icons/overflow', './generated/templates/NotifactionOverflowActionsPopoverTemplate.lit', './generated/themes/NotifactionOverflowActionsPopover.css'], function (Keys, i18nBundle, ListItemBase, Integer, Priority, decline, messageSuccess, messageError, messageWarning, overflow, NotifactionOverflowActionsPopoverTemplate_lit, NotifactionOverflowActionsPopover_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/main/thirdparty/ListItemBase', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/main/thirdparty/types/Priority', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/message-success', 'sap/ui/webc/common/thirdparty/icons/message-error', 'sap/ui/webc/common/thirdparty/icons/message-warning', 'sap/ui/webc/common/thirdparty/icons/overflow', './generated/templates/NotificationOverflowActionsPopoverTemplate.lit', './generated/themes/NotificationOverflowActionsPopover.css'], function (Keys, i18nBundle, ListItemBase, Integer, Priority, decline, messageSuccess, messageError, messageWarning, overflow, NotificationOverflowActionsPopoverTemplate_lit, NotificationOverflowActionsPopover_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -44,10 +44,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 			return metadata;
 		}
 		static get staticAreaTemplate() {
-			return NotifactionOverflowActionsPopoverTemplate_lit;
+			return NotificationOverflowActionsPopoverTemplate_lit;
 		}
 		static get staticAreaStyles() {
-			return NotifactionOverflowActionsPopover_css;
+			return NotificationOverflowActionsPopover_css;
 		}
 		static priorityIconsMappings() {
 			return {

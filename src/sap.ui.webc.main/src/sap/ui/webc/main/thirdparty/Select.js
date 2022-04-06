@@ -337,12 +337,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_beforeOpen() {
 			this._selectedIndexBeforeOpen = this._selectedIndex;
 			this._lastSelectedOption = this._filteredItems[this._selectedIndex];
+			this.focused = false;
 		}
 		_afterOpen() {
 			this.opened = true;
 		}
 		_afterClose() {
 			this.opened = false;
+			this.focused = true;
 			this._iconPressed = false;
 			this._listWidth = 0;
 			if (this._escapePressed) {

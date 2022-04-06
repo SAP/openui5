@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/webc/common/thirdparty/localization/DateFormat', 'sap/ui/webc/common/thirdparty/localization/getCachedLocaleDataInstance', 'sap/ui/webc/common/thirdparty/localization/features/calendar/Gregorian', 'sap/ui/webc/common/thirdparty/base/asset-registries/LocaleData', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/icons/time-entry-request', './generated/templates/TimeSelectionTemplate.lit', './WheelSlider', './timepicker-utils/TimeSlider', './generated/i18n/i18n-defaults', './generated/themes/TimeSelection.css'], function (UI5Element, Integer, litRender, Device, i18nBundle, getLocale, DateFormat, getCachedLocaleDataInstance, Gregorian, LocaleData, Keys, timeEntryRequest, TimeSelectionTemplate_lit, WheelSlider, TimeSlider, i18nDefaults, TimeSelection_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/webc/common/thirdparty/localization/DateFormat', 'sap/ui/webc/common/thirdparty/localization/getCachedLocaleDataInstance', 'sap/ui/webc/common/thirdparty/localization/features/calendar/Gregorian', 'sap/ui/webc/common/thirdparty/base/types/CalendarType', 'sap/ui/webc/common/thirdparty/base/asset-registries/LocaleData', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/icons/time-entry-request', './generated/templates/TimeSelectionTemplate.lit', './WheelSlider', './timepicker-utils/TimeSlider', './generated/i18n/i18n-defaults', './generated/themes/TimeSelection.css'], function (UI5Element, Integer, litRender, Device, i18nBundle, getLocale, DateFormat, getCachedLocaleDataInstance, Gregorian, CalendarType, LocaleData, Keys, timeEntryRequest, TimeSelectionTemplate_lit, WheelSlider, TimeSlider, i18nDefaults, TimeSelection_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -8,6 +8,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	var getLocale__default = /*#__PURE__*/_interopDefaultLegacy(getLocale);
 	var DateFormat__default = /*#__PURE__*/_interopDefaultLegacy(DateFormat);
 	var getCachedLocaleDataInstance__default = /*#__PURE__*/_interopDefaultLegacy(getCachedLocaleDataInstance);
+	var CalendarType__default = /*#__PURE__*/_interopDefaultLegacy(CalendarType);
 
 	const capitalizeFirst = str => str.substr(0, 1).toUpperCase() + str.substr(1);
 	const metadata = {
@@ -51,6 +52,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			_currentSlider: {
 				type: String,
 				defaultValue: "hours",
+			},
+			_calendarType: {
+				type: CalendarType__default,
 			},
 		},
 		events:  {
@@ -278,10 +282,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			let dateFormat;
 			if (this._isPattern) {
 				dateFormat = DateFormat__default.getInstance({
+					calendarType: this._calendarType,
 					pattern: this._formatPattern,
 				});
 			} else {
 				dateFormat = DateFormat__default.getInstance({
+					calendarType: this._calendarType,
 					style: this._formatPattern,
 				});
 			}

@@ -12,6 +12,7 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 		Render.renderDeferred(this);
 		this._eventProvider.fireEvent("invalidate", { ...changeInfo, target: this });
 	}
+	let metadata = {};
 	class UI5Element extends HTMLElement {
 		constructor() {
 			super();
@@ -497,7 +498,10 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 			}
 		}
 		static get metadata() {
-			return {};
+			return metadata;
+		}
+		static set metadata(newMetadata) {
+			metadata = newMetadata;
 		}
 		static get styles() {
 			return "";

@@ -86,6 +86,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			open: {
 				type: Boolean,
 			},
+			_forceOpen: {
+				type: Boolean,
+			},
 			_isValueStateFocused: {
 				type: Boolean,
 			},
@@ -193,6 +196,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const isFocused = this === document.activeElement;
 			if (this._isPhone) {
 				this.open = this.openOnMobile;
+			} else if (this._forceOpen) {
+				this.open = true;
 			} else {
 				this.open = hasValue && hasItems && isFocused && this.isTyping;
 			}
@@ -357,6 +362,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.lastConfirmedValue = "";
 			this.focused = false;
 			this.isTyping = false;
+			this._forceOpen = false;
 		}
 		_clearPopoverFocusAndSelection() {
 			if (!this.showSuggestions || !this.Suggestions) {
@@ -456,6 +462,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.isTyping = false;
 			this.openOnMobile = false;
 			this.open = false;
+			this._forceOpen = false;
 		}
 		isValueStateOpened() {
 			return !!this._isPopoverOpen;
@@ -474,6 +481,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		async _getPopover() {
 			const staticAreaItem = await this.getStaticAreaItemDomRef();
 			return staticAreaItem && staticAreaItem.querySelector("[ui5-popover]");
+		}
+		openPicker() {
+			if (!this.suggestionItems.length || this.disabled || this.readonly) {
+				return;
+			}
+			this._forceOpen = true;
 		}
 		enableSuggestions() {
 			if (this.Suggestions) {
@@ -506,6 +519,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.fireEvent(this.EVENT_SUGGESTION_ITEM_SELECT, { item });
 			this.isTyping = false;
 			this.openOnMobile = false;
+			this._forceOpen = false;
 		}
 		previewSuggestion(item) {
 			this.valueBeforeItemSelection = this.value;

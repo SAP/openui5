@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], funct
 	const block2 = (context, tags, suffix) => litRender.html`<slot name="header"></slot>`;
 	const block3 = (context, tags, suffix) => litRender.html`<h2 id="ui5-popup-header-text" class="ui5-popup-header-text">${litRender.ifDefined(context.headerText)}</h2>`;
 	const block4 = (context, tags, suffix) => litRender.html`<footer class="ui5-popup-footer-root" part="footer"><slot name="footer"></slot></footer>`;
-	const block5 = (context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-icon", tags, suffix)} name="resize-corner" dir="${litRender.ifDefined(context.effectiveDir)}" class="ui5-popup-resize-handle" @mousedown="${context._onResizeMouseDown}"></${litRender.scopeTag("ui5-icon", tags, suffix)}>`;
+	const block5 = (context, tags, suffix) => suffix ? litRender.html`<${litRender.scopeTag("ui5-icon", tags, suffix)} name="resize-corner" dir="${litRender.ifDefined(context.effectiveDir)}" class="ui5-popup-resize-handle" @mousedown="${context._onResizeMouseDown}"></${litRender.scopeTag("ui5-icon", tags, suffix)}>` : litRender.html`<ui5-icon name="resize-corner" dir="${litRender.ifDefined(context.effectiveDir)}" class="ui5-popup-resize-handle" @mousedown="${context._onResizeMouseDown}"></ui5-icon>`;
 
 	return block0;
 

@@ -12,7 +12,7 @@ sap.ui.define(['./renderer/executeTemplate', './theming/getConstructableStyle', 
 		} else if (!isLegacyBrowser()) {
 			styleStrOrHrefsArr = getEffectiveStyle(element.constructor, forStaticArea);
 		}
-		element.constructor.render(renderResult, shadowRoot, styleStrOrHrefsArr, { host: element });
+		element.constructor.render(renderResult, shadowRoot, styleStrOrHrefsArr, forStaticArea, { host: element });
 	};
 
 	return updateShadowRoot;
