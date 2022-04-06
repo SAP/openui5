@@ -317,7 +317,8 @@ sap.ui.define([
 				}
 			},
 			methods: ["closePicker", "formatValue", "isInValidRange", "isOpen", "isValid", "openPicker"],
-			getters: ["dateValue"]
+			getters: ["dateValue"],
+			designtime: "sap/ui/webc/main/designtime/DatePicker.designtime"
 		}
 	});
 

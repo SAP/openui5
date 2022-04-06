@@ -165,6 +165,14 @@ sap.ui.define([
 			extensions: {
 				flChangeHandlers: {
 					"sap.ui.webc.main.Button": "sap/ui/webc/main/flexibility/Button",
+					"sap.ui.webc.main.DatePicker": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
+					"sap.ui.webc.main.DateTimePicker": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
 					"sap.ui.webc.main.Input": {
 						"hideControl": "default",
 						"unhideControl": "default"
