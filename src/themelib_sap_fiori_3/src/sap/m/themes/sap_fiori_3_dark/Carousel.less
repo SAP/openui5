@@ -7,6 +7,7 @@
 // Variables overriding
 // ==========================================================================
 
+@_sap_m_Carousel_BackgroundColor: @sapBackgroundColor;
 @_sap_m_Carousel_MinWidth: 15.5rem;
 @_sap_m_Carousel_ControlsNoArrowsHeight: 2.75rem;
 @_sap_m_Carousel_NumericIndicatorTextColor: @sapUiPageFooterTextColor;
@@ -17,51 +18,3 @@
 @_sap_m_Carousel_PageIndicatorWidthSizeL: @_sap_m_Carousel_PageIndicatorWidthSizeS;
 @_sap_m_Carousel_PageIndicatorWidthSizeXL: @_sap_m_Carousel_PageIndicatorWidthSizeS;
 @_sap_m_Carousel_PageIndicatorContainerPadding: 0.5rem;
-
-.sapMCrsl {
-	background-color: @sapUiBaseBG;
-}
-
-/* Carousel controls: HUD */
-.sapMCrslHud a {
-	opacity: 0.5;
-	box-shadow: @sapUiShadowLevel1;
-}
-
-.sapMCrsl .sapMCrslHud a:hover,
-.sapMCrsl .sapMCrslHud a:focus {
-	box-shadow: @sapUiShadowLevel1;
-	border: 1px solid @sapUiButtonBorderColor;
-	background: @sapUiButtonHoverBackground;
-}
-
-.sapMCrsl .sapMCrslHud a:active {
-	box-shadow: @sapUiShadowLevel1;
-	background-color: @sapUiButtonActiveBackground;
-}
-
-.sapMCrsl:focus {
-	&:before {
-		border: 1px solid @sapUiContentFocusColor;
-		position: absolute;
-		content: " ";
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: 2;
-		pointer-events: none;
-	}
-
-	&:after {
-		border: 1px dotted @sapUiContentContrastFocusColor;
-		position: absolute;
-		content: " ";
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: 2;
-		pointer-events: none;
-	}
-}
