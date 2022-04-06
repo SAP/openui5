@@ -3,6 +3,21 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "7649b46c58ade1f2895139c9557f51cde9971bc6",
+        "type": "FEATURE",
+        "text": " sap.m.Link: Horizon themes implemented"
+      },
+      {
+        "id": "34a155a4a00645ed882daa60132b48255a8bc46f",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Width of the ouer circle edited for Contrast Horizon themes"
+      },
+      {
+        "id": "b7500aca46bbef101c66896d11b377e265ff7fc1",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Horizon themes implemented"
+      },
+      {
         "id": "c766bb542ac29bba7c0791563a4253d45521a63a",
         "type": "FEATURE",
         "text": " sap.m.Switch: Horizon themes implemented"

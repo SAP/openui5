@@ -3,6 +3,22 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "1f31a000e877a83e09aba354f521e7f42d7d2d54",
+        "type": "FIX",
+        "text": " sap.ui.integration.AdaptiveContent: Stabilize qunit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270052261"
+          }
+        ]
+      },
+      {
+        "id": "ad0418762f49595d421d4a4132295c430feea771",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.CalendarCard: Horizon themes implemented"
+      },
+      {
         "id": "854ac81156cc2ebb20a9e3d0ad72647cd6a1f7bc",
         "type": "FIX",
         "text": " Integration Card: \"encodeURIComponent\" example is now fixed",

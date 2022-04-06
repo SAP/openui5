@@ -3,6 +3,22 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "4a91759bf1865d93dd28c4af832f2a6d42439c73",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Invalidate List when new items are received and picker is open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270024984"
+          }
+        ]
+      },
+      {
+        "id": "7649b46c58ade1f2895139c9557f51cde9971bc6",
+        "type": "FEATURE",
+        "text": " sap.m.Link: Horizon themes implemented"
+      },
+      {
         "id": "c52be440b6e3efb7cfd95e51bd222d6a2c7d6e1b",
         "type": "FIX",
         "text": " sap.m.ObjectMarker: icon-only markers announcement fixed",
@@ -10,6 +26,17 @@
           {
             "type": "BCP",
             "reference": "2280079826"
+          }
+        ]
+      },
+      {
+        "id": "3a3c7ff07e16900a82a6e26bc1780b13ce157fb9",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Initial focus is on selected radio button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280077967"
           }
         ]
       },
