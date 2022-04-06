@@ -3485,6 +3485,12 @@ sap.ui.define([
 			dataProperty: "noWidthCalculation"
 		}));
 
+		this.oTable.addColumn(new Column({
+			id: "complexNoWidthCalculation",
+			header: "Complex No Width Calculation",
+			dataProperty: "complexNoWidthCalculation"
+		}));
+
 		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "firstName",
@@ -3561,6 +3567,16 @@ sap.ui.define([
 				visualSettings: {
 					widthCalculation: null
 				}
+			}, {
+				name: "complexNoWidthCalculation",
+				label: "Complex with no width calculation",
+				typeConfig: TypeUtil.getTypeConfig("Edm.String"),
+				propertyInfos: ["lastName", "noWidthCalculation"],
+				visualSettings: {
+					widthCalculation: {
+						includeLabel: false
+					}
+				}
 			}
 		]);
 
@@ -3587,9 +3603,9 @@ sap.ui.define([
 			var sPropertyName = aColumns[3].getDataProperty();
 			var oProperty = oPropertyHelper.getProperty(sPropertyName);
 
-			var fWidth = oPropertyHelper._calcColumnWidth(oProperty);
-			assert.equal((parseFloat(getInnerColumnWidth(aColumns[3])) - fPadding) + "rem", fWidth + "rem",
-				"Column numberValue width is " + fWidth + "rem");
+			var sWidth = oPropertyHelper._calcColumnWidth(oProperty);
+			assert.equal(sWidth, aColumns[3]._oSettingsModel.getProperty("/calculatedWidth"), "calculatedWidth for numberValue width is " + sWidth);
+			assert.equal(sWidth, getInnerColumnWidth(aColumns[3]), "Column numberValue width is " + sWidth);
 
 			// 5th column is in correct range due of type boolean
 			assert.ok(check("Yes", parseFloat(getInnerColumnWidth(aColumns[4])) - fPadding),
@@ -3604,6 +3620,9 @@ sap.ui.define([
 
 			// visualSettings.widthCalculation=null
 			assert.notOk(getInnerColumnWidth(aColumns[7]), "There is no width set since visualSettings.widthCalculation=null");
+
+			// complex property with visualSettings.widthCalculation=null
+			assert.equal(getInnerColumnWidth(aColumns[8]), getInnerColumnWidth(aColumns[1]), "Width calculation in complex property with visualSettings.widthCalculation=null is ignored");
 		}.bind(this));
 	});
 

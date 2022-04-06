@@ -21,6 +21,18 @@ sap.ui.define([
 	"use strict";
 	/* global QUnit,sinon */
 
+	function Str(iMaxLength) {
+		return new StringType(null, {maxLength: iMaxLength});
+	}
+
+	function Chars(iLength) {
+		return "A".repeat(iLength);
+	}
+
+	function Size(iLength) {
+		return Util.measureText(Chars(iLength));
+	}
+
 	QUnit.test("measureText", function(assert) {
 		assert.ok(Util.measureText("aaa") > Util.measureText("aa"));
 		assert.ok(Util.measureText("w".repeat(50)) > 30);
@@ -59,13 +71,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("calcTypeWidth - String", function(assert) {
-
-		function Str(iMaxLength) {
-			return new StringType(null, {maxLength: iMaxLength});
-		}
-		function Size(iLength) {
-			return Util.measureText("A".repeat(iLength));
-		}
 
 		assert.equal(Util.calcTypeWidth(Str()), 19 * 0.75);
 		assert.equal(Util.calcTypeWidth(Str(), {maxWidth: 40}), 30);
@@ -150,6 +155,38 @@ sap.ui.define([
 
 		oThemeParametersStub.restore();
 		Core.notifyContentDensityChanged();
+	});
+
+	QUnit.test("calcColumnWidth", function(assert) {
+		var ccw = Util.calcColumnWidth.bind(Util);
+		assert.equal(ccw(new Byte()), "3rem", "Byte Type < Min width");
+		assert.equal(ccw(new BooleanType()), "3rem", "BooleanType Type < Min width");
+
+		assert.ok(parseFloat(ccw(new SByte())) < parseFloat(ccw(new Byte(), Chars(4))), "Byte type width < 4 character column header width");
+		assert.ok(parseFloat(ccw(new SByte(), Chars(1000))) < 8, "Long column headers can only push small column widths logarithmically ");
+
+		[new BooleanType(), new Byte(), new Int16(), new Int32(), new Int64(), new Double(), new Decimal(), Str(10), new Time(), new DateType(), new Guid()].forEach(function(oType) {
+			var fWidth = parseFloat(ccw(oType, "", {padding: 0}));
+			assert.equal(parseFloat(ccw(oType, "", {padding: 4})), fWidth + 4, "Field Padding: " + oType);
+
+			assert.equal(parseFloat(ccw(oType, "", {maxWidth: 2, padding: 0})), 2, "Field Max Width: " + oType);
+			assert.equal(parseFloat(ccw(oType, "", {maxWidth: 2, padding: 0, gap: 4})), 2, "Field Max Width With Gap: " + oType);
+			assert.equal(parseFloat(ccw(oType, "", {maxWidth: 2, padding: 4, gap: 0})), 6, "Field Max Width With Padding: " + oType);
+			assert.equal(parseFloat(ccw(oType, "", {maxWidth: 2, padding: 4, gap: 4})), 6, "Field Max Width With Padding and Gap: " + oType);
+
+			assert.equal(parseFloat(ccw(oType, "", {minWidth: 20, padding: 0})), 20, "Field Min Width: " + oType);
+			assert.equal(parseFloat(ccw(oType, "", {minWidth: 20, padding: 0, gap: 4})), 20, "Field Min Width With Gap: " + oType);
+			assert.equal(parseFloat(ccw(oType, "", {minWidth: 20, padding: 4, gap: 0})), 24, "Field Min Width With Padding: " + oType);
+			assert.equal(parseFloat(ccw(oType, "", {minWidth: 20, padding: 4, gap: 4})), 24, "Field Min Width With Padding and Gap: " + oType);
+
+			assert.ok(parseFloat(ccw([oType, oType], "", {padding: 0})) < 2 * fWidth + 0.52, "2 Complex Fields: " + oType);
+			assert.ok(parseFloat(ccw([oType, oType], "", {padding: 0, gap: -0.52})) < 2 * fWidth, "2 Complex Fields With Gap: " + oType);
+			assert.equal(parseFloat(ccw([oType, oType], "", {padding: 0, verticalArrangement: true})), fWidth, "Complex Fields Vertical: " + oType);
+		});
+
+		assert.equal(ccw([[Str(10), {maxWidth: 3}], [Str(10), {maxWidth: 2}]]), "6.5rem", "Type related settings");
+		assert.equal(ccw([[Str(10), {maxWidth: 3}], [Str(10), {maxWidth: 2}]], "", {minWidth: 10, padding: 0}), "10rem", "Type related and column related settings");
+
 	});
 
 });
