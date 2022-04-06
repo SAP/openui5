@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.core.mvc.HTMLView.
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'./View',
 	'./HTMLViewRenderer',
 	'./ViewType',
@@ -15,7 +14,6 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions'
 ],
 	function(
-		jQuery,
 		View,
 		HTMLViewRenderer,
 		ViewType,
@@ -257,18 +255,20 @@ sap.ui.define([
 			var oProperties = that.getMetadata().getAllProperties();
 
 			if (oMetaElement) {
-				jQuery.each(oMetaElement.attributes, function(iIndex, oAttr) {
-					var sName = DeclarativeSupport.convertAttributeToSettingName(oAttr.name, that.getId());
-					var sValue = oAttr.value;
-					var oProperty = oProperties[sName];
-					if (!mSettings[sName]) {
+				var aAttributes = oMetaElement.getAttributeNames();
+				for (var j = 0; j < aAttributes.length; j++) {
+					var sAttributeName = aAttributes[j];
+					var sSettingName = DeclarativeSupport.convertAttributeToSettingName(sAttributeName, that.getId());
+					var sValue = oMetaElement.getAttribute(sAttributeName);
+					var oProperty = oProperties[sSettingName];
+					if (!mSettings[sSettingName]) {
 						if (oProperty) {
-							mSettings[sName] = DeclarativeSupport.convertValueToType(DeclarativeSupport.getPropertyDataType(oProperty),sValue);
-						} else if (HTMLView._mAllowedSettings[sName]) {
-							mSettings[sName] = sValue;
+							mSettings[sSettingName] = DeclarativeSupport.convertValueToType(DeclarativeSupport.getPropertyDataType(oProperty),sValue);
+						} else if (HTMLView._mAllowedSettings[sSettingName]) {
+							mSettings[sSettingName] = sValue;
 						}
 					}
-				});
+				}
 				that._oTemplate = oMetaElement;
 			}
 

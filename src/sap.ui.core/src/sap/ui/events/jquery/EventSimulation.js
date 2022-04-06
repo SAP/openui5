@@ -392,7 +392,7 @@ sap.ui.define([
 	}
 
 	if (!oEventSimulation.disableTouchToMouseHandling) {
-		oEventSimulation.disableTouchToMouseHandling = jQuery.noop;
+		oEventSimulation.disableTouchToMouseHandling = function() {};
 	}
 
 	// touch events natively supported

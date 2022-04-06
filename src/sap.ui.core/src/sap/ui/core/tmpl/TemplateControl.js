@@ -381,7 +381,7 @@ sap.ui.define([
 		// sap.ui.core.Element.create doesn't work because there is no type
 		// conversion for the values done (would be the better approach)
 		var mHTMLSettings = {};
-		jQuery.each(mSettings, function(sKey, oValue) {
+		jQuery.each(mSettings, function(sKey, oValue) { // @legacy-relevant: jQuery usage in deprecated code
 			mHTMLSettings["data-" + hyphenate(sKey)] = oValue;
 		});
 		var $control = jQuery("<div></div>", mHTMLSettings);

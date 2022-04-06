@@ -7,11 +7,11 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/Object",
 	"sap/base/Log",
+	"sap/base/util/each",
 	"sap/ui/dom/includeStylesheet",
-	"sap/ui/thirdparty/jquery",
 	"./theming/ThemeHelper"
 ],
-	function(Device, BaseObject, Log, includeStylesheet, jQuery, ThemeHelper) {
+	function(Device, BaseObject, Log, each, includeStylesheet, ThemeHelper) {
 	"use strict";
 
 
@@ -156,7 +156,7 @@ sap.ui.define([
 				var aOldStyles = document.querySelectorAll("link[data-sap-ui-foucmarker='" + sPrefix + sLib + "']");
 				if (aOldStyles.length > 0) {
 					for (var i = 0, l = aOldStyles.length; i < l; i++) {
-						aOldStyles[i].parentNode.removeChild(aOldStyles[i]);
+						aOldStyles[i].remove();
 					}
 					Log.debug("ThemeCheck: Old stylesheets removed for library: " + sLib);
 				}
@@ -199,9 +199,9 @@ sap.ui.define([
 					}	else {
 						// remove stylesheet once the particular class is not available (e.g. after theme switch)
 						/*check for custom theme was not successful, so we need to make sure there are no custom style sheets attached*/
-						var customCssLink = jQuery("LINK[id='" +  oThemeCheck._CUSTOMID + "']");
-						if (customCssLink.length > 0) {
-							customCssLink.remove();
+						var oCustomCssLink = document.querySelector("LINK[id='" +  oThemeCheck._CUSTOMID + "']");
+						if (oCustomCssLink) {
+							oCustomCssLink.remove();
 							Log.debug("ThemeCheck: Custom CSS removed");
 						}
 						oThemeCheck._customCSSAdded = false;
@@ -226,7 +226,7 @@ sap.ui.define([
 
 		}
 
-		jQuery.each(mLibs, checkLib);
+		each(mLibs, checkLib);
 
 		// Try to load a fallback theme for all libs that couldn't be loaded
 		if (aFailedLibs.length > 0) {

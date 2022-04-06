@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], function(Device, Log, jQuery) {
+sap.ui.define(['sap/ui/Device', 'sap/base/Log', 'sap/base/util/extend', 'sap/ui/dom/_ready'], function(Device, Log, extend, _ready) {
 	"use strict";
 
 	/**
@@ -17,6 +17,25 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 	var Mobile = {};
 
 	var _bInitTriggered = false;
+
+	function addElementToHead(sTag, mAttributes) {
+		mAttributes = mAttributes || {};
+
+		var oTag = document.createElement(sTag);
+		for (var key in mAttributes) {
+			if (mAttributes[key]) {
+				oTag.setAttribute(key, mAttributes[key]);
+			}
+		}
+		document.head.appendChild(oTag);
+	}
+
+	function removeFromHead(sSelector) {
+		var aElements = document.head.querySelectorAll(sSelector);
+		for (var i = 0, l = aElements.length; i < l; i++) {
+			aElements[i].remove(aElements[i]);
+		}
+	}
 
 	/**
 	 * Does some basic modifications to the HTML page that make it more suitable for mobile apps.
@@ -70,12 +89,10 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 	 * @public
 	 */
 	Mobile.init = function(options) {
-		var $head = jQuery("head");
-
 		if (!_bInitTriggered) { // only one initialization per HTML page
 			_bInitTriggered = true;
 
-			options = jQuery.extend({}, { // merge in the default values
+			options = extend({}, { // merge in the default values
 				viewport: true,
 				statusBar: "default",
 				hideBrowser: true,
@@ -89,10 +106,10 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			// en-/disable automatic link generation for phone numbers
 			if (options.preventPhoneNumberDetection) {
 				// iOS specific meta tag
-				$head.append(jQuery('<meta name="format-detection" content="telephone=no">')); // this only works
-																							   // for all DOM
-																							   // created
-																							   // afterwards
+				addElementToHead("meta", {
+					name: "format-detection",
+					content: "telephone=no"
+				});// this only works for all DOM created afterwards
 			}
 
 			// initialize viewport
@@ -119,7 +136,10 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 					sMeta += ", maximum-scale=1.0, user-scalable=no";
 				}
 
-				$head.append(jQuery('<meta name="viewport" content="' + sMeta + '">'));
+				addElementToHead("meta", {
+					name: "viewport",
+					content: sMeta
+				});
 
 				// Update Device API resize info, which is necessary in some scenarios after setting the viewport info
 				if ((iInnerHeightBefore !== window.innerHeight || iInnerWidthBefore !== window.innerWidth) && Device.resize._update){
@@ -128,13 +148,13 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			}
 
 			if (options.useFullScreenHeight) {
-				jQuery(function() {
+				_ready().then(function() {
 					document.documentElement.style.height = "100%"; // set html root tag to 100% height
 				});
 			}
 
 			if (options.preventScroll && (Device.os.ios || (Device.os.mac && Device.browser.mobile))) {
-				jQuery(function() {
+				_ready().then(function() {
 					document.documentElement.style.position = "fixed";
 					document.documentElement.style.overflow = "hidden";
 					document.documentElement.style.height = "100%";
@@ -143,29 +163,27 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			}
 		}
 
-		if (options) {
-			if (options.homeIcon) {
-				var oIcons;
+		if (options.homeIcon) {
+			var oIcons;
 
-				if (typeof options.homeIcon === "string") {
-					oIcons = {
-						phone: options.homeIcon,
-						favicon: options.homeIcon
-					};
-				} else {
-					oIcons = jQuery.extend({}, options.homeIcon);
-					oIcons.phone = options.homeIcon.phone || options.homeIcon.icon || oIcons.favicon;
-					oIcons.favicon = oIcons.favicon || options.homeIcon.icon || options.homeIcon.phone;
-					oIcons.icon = undefined;
-				}
-
-				oIcons.precomposed = options.homeIconPrecomposed || oIcons.precomposed;
-				Mobile.setIcons(oIcons);
+			if (typeof options.homeIcon === "string") {
+				oIcons = {
+					phone: options.homeIcon,
+					favicon: options.homeIcon
+				};
+			} else {
+				oIcons = Object.assign({}, options.homeIcon);
+				oIcons.phone = options.homeIcon.phone || options.homeIcon.icon || oIcons.favicon;
+				oIcons.favicon = oIcons.favicon || options.homeIcon.icon || options.homeIcon.phone;
+				oIcons.icon = undefined;
 			}
 
-			if (options.hasOwnProperty("mobileWebAppCapable")) {
-				Mobile.setWebAppCapable(options.mobileWebAppCapable, options.statusBar);
-			}
+			oIcons.precomposed = options.homeIconPrecomposed || oIcons.precomposed;
+			Mobile.setIcons(oIcons);
+		}
+
+		if (options.hasOwnProperty("mobileWebAppCapable")) {
+			Mobile.setWebAppCapable(options.mobileWebAppCapable, options.statusBar);
 		}
 	};
 
@@ -224,8 +242,7 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			return;
 		}
 
-		var $head = jQuery("head"),
-			precomposed = oIcons.precomposed ? "-precomposed" : "",
+		var precomposed = oIcons.precomposed ? "-precomposed" : "",
 			getBestFallback = function(res) {
 				return oIcons[res] || oIcons['tablet@2'] || oIcons['phone@2'] || oIcons['phone'] || oIcons['tablet']; // fallback logic
 			},
@@ -239,30 +256,31 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 		// desktop icon
 		if (oIcons["favicon"]) {
 			// remove any other favicons
-			var $fav = $head.find("[rel=icon]");
-			$fav.each(function() {
-				if (this.rel === "icon") {
-					jQuery(this).remove();
-				}
-			});
+			removeFromHead("link[rel=icon]");
 
 			// create favicon
-			$head.append(jQuery('<link rel="icon" href="' + oIcons["favicon"] + '">'));
+			addElementToHead("link", {
+				rel: "icon",
+				href: oIcons["favicon"]
+			});
 		}
 
 		// mobile home screen icons
 		if (getBestFallback("phone")) {
 
 			// if any home icon is given remove old ones
-			$head.find("[rel=apple-touch-icon]").remove();
-			$head.find("[rel=apple-touch-icon-precomposed]").remove();
+			removeFromHead("[rel=apple-touch-icon]");
+			removeFromHead("[rel=apple-touch-icon-precomposed]");
 		}
 
 		for (var platform in mSizes) {
 			oIcons[platform] = oIcons[platform] || getBestFallback(platform);
 			if (oIcons[platform]) {
-				var size = mSizes[platform];
-				$head.append(jQuery('<link rel="apple-touch-icon' + precomposed + '" ' + (size ? 'sizes="' + size + '"' : "") + ' href="' + oIcons[platform] + '">'));
+				addElementToHead("link", {
+					rel: "apple-touch-icon" + precomposed,
+					href: oIcons[platform],
+					sizes: mSizes[platform]
+				});
 			}
 		}
 	};
@@ -291,22 +309,28 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			return;
 		}
 
-		var $Head = jQuery("head"),
-			aPrefixes = ["", "apple"],
+		var aPrefixes = ["", "apple"],
 			sNameBase = "mobile-web-app-capable",
 			sContent = bValue ? "yes" : "no",
-			i, sName, $WebAppMeta;
+			i, sName, oWebAppMetaTag;
 
 		for (i = 0; i < aPrefixes.length; i++) {
 			sName = aPrefixes[i] ? (aPrefixes[i] + "-" + sNameBase) : sNameBase;
-			$WebAppMeta = $Head.children('meta[name="' + sName + '"]');
-			if ($WebAppMeta.length) {
-				$WebAppMeta.attr("content", sContent);
+			oWebAppMetaTag = document.head.querySelector('meta[name="' + sName + '"]');
+
+			if (oWebAppMetaTag) {
+				oWebAppMetaTag.setAttribute("content", sContent);
 			} else {
-				$Head.append(jQuery('<meta name="' + sName + '" content="' + sContent + '">'));
+				addElementToHead("meta", {
+					name: sName,
+					content: sContent
+				});
 				if (aPrefixes[i] === "apple") {
 					// iOS specific meta tag should be added only first time the corresponding apple-mobile-web-app-capable is added
-					$Head.append(jQuery('<meta name="apple-mobile-web-app-status-bar-style" content="' + (sAppleStatusBarStyle ? sAppleStatusBarStyle : 'default') + '">'));
+					addElementToHead("meta", {
+						name: "apple-mobile-web-app-status-bar-style",
+						content: sAppleStatusBarStyle ? sAppleStatusBarStyle : 'default'
+					});
 				}
 			}
 		}

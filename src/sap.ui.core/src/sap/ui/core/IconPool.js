@@ -5,10 +5,8 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	'sap/ui/core/_IconRegistry',
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
 	'./Core' // provides sap.ui.getCore()
-],
-	function(Icon, _IconRegistry, Log, jQuery) {
+], function(Icon, _IconRegistry, Log) {
 		"use strict";
 
 		/**

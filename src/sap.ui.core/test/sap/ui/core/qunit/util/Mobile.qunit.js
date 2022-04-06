@@ -13,6 +13,8 @@ sap.ui.define([
 		jQuery("meta").filter("[name=viewport]").remove();
 	};
 
+	QUnit.config.reorder = false;
+
 	// TESTS
 	QUnit.module("sap/ui/util/Mobile", {
 		beforeEach: fnRemoveViewort,

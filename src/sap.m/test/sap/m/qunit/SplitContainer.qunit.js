@@ -1331,11 +1331,11 @@ sap.ui.define([
 		assert.ok(oSplitContainer.$("Master").hasClass("sapMSplitContainerMasterHidden"), "Master is hidden");
 
 		oSplitContainer._onWindowScroll({
-			srcElement: oDetailPage
+			srcElement: oDetailPage.getDomRef()
 		});
 
 		oSplitContainer.ontouchend({
-			target: oDetailPage
+			target: oDetailPage.getDomRef()
 		});
 
 		oSplitContainer.onswiperight();

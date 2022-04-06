@@ -23,6 +23,8 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/selectText",// jQuery Plugin "selectText"
+	"sap/ui/dom/jquery/cursorPos",// jQuery Plugin "cursorPos"
 	'sap/ui/core/mvc/Controller' // provides sap.ui.controller
 ], function(
 	Plugin,

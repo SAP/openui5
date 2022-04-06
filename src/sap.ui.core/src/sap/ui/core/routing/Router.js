@@ -12,6 +12,7 @@ sap.ui.define([
 	'./History',
 	'sap/ui/thirdparty/crossroads',
 	"sap/base/util/UriParameters",
+	"sap/base/util/each",
 	"sap/base/util/deepEqual",
 	"sap/base/util/isEmptyObject",
 	"sap/base/Log",
@@ -29,6 +30,7 @@ sap.ui.define([
 		History,
 		crossroads,
 		UriParameters,
+		each,
 		deepEqual,
 		isEmptyObject,
 		Log,
@@ -286,7 +288,7 @@ sap.ui.define([
 					});
 				}
 
-				jQuery.each(oRoutes, function(sRouteName, oRouteConfig) {
+				each(oRoutes, function(sRouteName, oRouteConfig) {
 					if (oRouteConfig.name === undefined) {
 						oRouteConfig.name = sRouteName;
 					}
@@ -590,7 +592,7 @@ sap.ui.define([
 				this._oRouter.removeAllRoutes();
 				this._oRouter = null;
 
-				jQuery.each(this._oRoutes, function(iRouteIndex, oRoute) {
+				each(this._oRoutes, function(iRouteIndex, oRoute) {
 					oRoute.destroy();
 				});
 				this._oRoutes = null;

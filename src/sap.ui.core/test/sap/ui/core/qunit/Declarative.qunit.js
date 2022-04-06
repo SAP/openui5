@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel"
 ], function(jQuery, oCore, DeclarativeSupport, JSONModel) {
 	"use strict";
+	QUnit.config.reorder = false;
 	QUnit.module("Basic");
 
 

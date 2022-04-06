@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'../base/ManagedObject',
 	'./Element',
 	'./DeclarativeSupport',
@@ -11,11 +10,11 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/merge',
+	'sap/ui/util/XMLHelper',
 	'sap/ui/core/Component',
 	'sap/ui/core/mvc/XMLProcessingMode'
 ],
 function(
-	jQuery,
 	ManagedObject,
 	Element,
 	DeclarativeSupport,
@@ -23,6 +22,7 @@ function(
 	Log,
 	LoaderExtensions,
 	merge,
+	XMLHelper,
 	Component,
 	XMLProcessingMode
 ) {
@@ -769,7 +769,7 @@ function(
 			// use specified content or load the content definition
 			if (mSettings.fragmentContent) {
 				if (typeof (mSettings.fragmentContent) === "string") {
-					this._xContent = jQuery.parseXML(mSettings.fragmentContent).documentElement;
+					this._xContent = XMLHelper.parse(mSettings.fragmentContent).documentElement;
 				} else {
 					this._xContent = mSettings.fragmentContent;
 				}
@@ -980,18 +980,21 @@ function(
 
 				if (oMetaElement) {
 					var that = this;
-					jQuery.each(oMetaElement.attributes, function(iIndex, oAttr) {
-						var sName = DeclarativeSupport.convertAttributeToSettingName(oAttr.name, that.getId());
-						var sValue = oAttr.value;
-						var oProperty = oProperties[sName];
-						if (!mSettings[sName]) {
+					var aAttributes = oMetaElement.getAttributeNames();
+					for (var i = 0; i < aAttributes.length - 1; i++) {
+						var sAttributeName = aAttributes[i];
+						var sSettingName = DeclarativeSupport.convertAttributeToSettingName(sAttributeName, that.getId());
+						var sValue = oMetaElement.getAttribute(sAttributeName);
+
+						var oProperty = oProperties[sSettingName];
+						if (!mSettings[sSettingName]) {
 							if (oProperty) {
-								mSettings[sName] = DeclarativeSupport.convertValueToType(DeclarativeSupport.getPropertyDataType(oProperty),sValue);
-							} else if (sap.ui.core.mvc.HTMLView._mAllowedSettings[sName]) {
-								mSettings[sName] = sValue;
+								mSettings[sSettingName] = DeclarativeSupport.convertValueToType(DeclarativeSupport.getPropertyDataType(oProperty),sValue);
+							} else if (sap.ui.core.mvc.HTMLView._mAllowedSettings[sSettingName]) {
+								mSettings[sSettingName] = sValue;
 							}
 						}
-					});
+					}
 					this._oTemplate = oMetaElement;
 				}
 				// This is a fix for browsers that support web components
