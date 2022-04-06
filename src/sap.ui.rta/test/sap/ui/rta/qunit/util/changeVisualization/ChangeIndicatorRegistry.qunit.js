@@ -62,9 +62,9 @@ function(
 
 		QUnit.test("when a change with an invalid command type is registered", function (assert) {
 			this.oRegistry.registerChange(createMockChange("bazChange"), "baz");
-			assert.notOk(
+			assert.ok(
 				this.oRegistry.getChange("bazChange"),
-				"then it is not added to the registry"
+				"then it is added to the registry"
 			);
 		});
 

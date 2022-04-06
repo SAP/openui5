@@ -166,11 +166,6 @@ sap.ui.define([
 			}
 		};
 
-		// Only register changes that are valid for visualization
-		if (oNewChangeInformation.commandCategory === undefined) {
-			return;
-		}
-
 		this._oChanges[oChange.getId()] = oNewChangeInformation;
 	};
 
