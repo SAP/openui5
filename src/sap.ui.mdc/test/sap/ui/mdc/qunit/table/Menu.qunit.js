@@ -180,6 +180,7 @@ sap.ui.define([
 
 			aSortItemContent[0].firePress();
 			assert.ok(fSortSpy.calledOnce, "createSort is called");
+			assert.ok(fSortSpy.calledWithExactly(oTable, "test", "None", true), "createSort is called with the correct parameters");
 
 			fSortSpy.restore();
 		});
@@ -243,6 +244,7 @@ sap.ui.define([
 
 			aGroupItemContent[0].firePress();
 			assert.ok(fGroupSpy.calledOnce, "createGroup is called");
+			assert.ok(fGroupSpy.calledWithExactly(oTable, "test"), "createGroup is called with the correct parameters");
 
 			fGroupSpy.restore();
 		});

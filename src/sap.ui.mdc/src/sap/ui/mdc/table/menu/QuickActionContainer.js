@@ -73,7 +73,7 @@ sap.ui.define([
 					}),
 					change: function(oEvent) {
 						var oItem = oEvent.getParameter("item");
-						TableSettings.createSort(oTable, oItem.getKey(), oItem.getSortOrder(), false);
+						TableSettings.createSort(oTable, oItem.getKey(), oItem.getSortOrder(), true);
 					}
 				}));
 			}

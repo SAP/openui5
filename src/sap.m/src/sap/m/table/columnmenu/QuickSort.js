@@ -72,6 +72,7 @@ sap.ui.define([
 
 	QuickSort.prototype.onChange = function(oItem) {
 		this.fireChange({item: oItem});
+		this.getMenu().close();
 	};
 
 	return QuickSort;

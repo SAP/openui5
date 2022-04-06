@@ -125,30 +125,10 @@ sap.ui.define([
 		}
 	};
 
-	QuickTotal.prototype._onItemChange = function(oQuickTotalItem, bTotaled) {
-		var sLabel = oQuickTotalItem.getLabel();
-
-		this.getContent().forEach(function(oButton) {
-			if (oButton.getText() === sLabel) {
-				oButton.setPressed(bTotaled);
-			} else if (bTotaled) {
-				oButton.setPressed(false);
-			}
-		});
-	};
-
 	QuickTotal.prototype.onChange = function(oEvent, oItem) {
-		if (oEvent.getParameters().pressed) {
-			var sButtonId = oEvent.getSource().sId;
-			this.getContent().forEach(function(oButton) {
-				if (oButton.sId != sButtonId) {
-					oButton.setPressed(false);
-				}
-			});
-		}
-
 		oItem.setProperty("totaled", oEvent.getParameters().pressed, true);
 		this.fireChange({item: oItem});
+		this.getMenu().close();
 	};
 
 	return QuickTotal;

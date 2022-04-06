@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickGroup",
 	"sap/m/table/columnmenu/QuickGroupItem",
-	"sap/m/Button"
-], function (QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button) {
+	"sap/m/Button",
+	"sap/ui/core/Core"
+], function (QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button, Core) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -36,7 +37,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Label", function(assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_GROUP");
 		assert.equal(this.oQuickGroup.getLabel(), sLabel, "QuickGroup label is correct.");
 	});
@@ -81,7 +82,7 @@ sap.ui.define([
 				})]
 			});
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -91,10 +92,10 @@ sap.ui.define([
 
 	QUnit.test("Change", function(assert) {
 		var done = assert.async();
-		this.oColumnMenu.openBy(this.oButton);
-		sap.ui.getCore().applyChanges();
+		var oMenu = this.oColumnMenu;
+		oMenu.openBy(this.oButton);
 
-		var oQuickGroup = this.oColumnMenu.getAggregation("quickActions")[0];
+		var oQuickGroup = oMenu.getAggregation("quickActions")[0];
 		var aItems = oQuickGroup.getContent();
 
 		oQuickGroup.attachChange(function(oEvent) {
@@ -102,16 +103,13 @@ sap.ui.define([
 			var oItem = oEvent.getParameter("item");
 			assert.equal(oItem.getKey(), "propertyB", "The item is passed as event parameter");
 			assert.ok(oItem.getGrouped(), "The grouped property of the item is correct");
-			assert.ok(aItems[0].getPressed(), "The first button is pressed");
-			assert.ok(aItems[1].getPressed(), "The second button is pressed");
 
-			oItem.setGrouped(false);
-			assert.ok(!aItems[1].getPressed(), "Calling setGrouped updates the pressed state of the button.");
-			done();
+			setTimeout(function() {
+				assert.ok(!oMenu._oPopover.isOpen(), "The popover closes");
+				done();
+			}, 1000);
 		});
 
-		assert.ok(aItems[0].getPressed(), "The first button is initially pressed");
-		assert.ok(!aItems[1].getPressed(), "The second button is initially not pressed");
 		this.triggerClickEvent(aItems[1].getId());
 	});
 

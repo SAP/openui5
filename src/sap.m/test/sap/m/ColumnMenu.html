@@ -272,7 +272,20 @@
 					_quickActions: [oQuickSort.clone(), oQuickFilter.clone(), oQuickGroup.clone(), oQuickTotal.clone()],
 					quickActions: [new QuickAction({
 						label: "App-specific quick action",
-						content: [new sap.m.Button({text: "Action A"}), new sap.m.Button({text: "Action B"})]
+						content: [
+							new sap.m.Button({
+								text: "Action A",
+								press: function() {
+									oVDMenu.close();
+								}
+							}),
+							new sap.m.Button({
+								text: "Action B",
+								press: function() {
+									oVDMenu.close();
+								}
+							})
+						]
 					})],
 					_items: [oSort, oItemFilter.clone(), oItemGroup.clone(), oColumn],
 					items: [

@@ -18,7 +18,7 @@ sap.ui.define([], function () {
 	};
 
 	MenuRenderer.renderQuickActions = function (oRm, oMenu) {
-		if (oMenu.getQuickActions().length === 0 && !oMenu.getAggregation("_quickActions")) {
+		if (oMenu._getAllEffectiveQuickActions().length === 0) {
 			return;
 		}
 
@@ -40,7 +40,7 @@ sap.ui.define([], function () {
 	};
 
 	MenuRenderer.renderItems = function (oRm, oMenu) {
-		if (oMenu.getItems().length === 0 && !oMenu.getAggregation("_items")) {
+		if (oMenu._getAllEffectiveItems().length === 0) {
 			return;
 		}
 

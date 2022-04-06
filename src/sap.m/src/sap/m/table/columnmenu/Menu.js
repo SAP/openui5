@@ -284,24 +284,20 @@ sap.ui.define([
 	}
 
 	Menu.prototype._initItemsContainer = function () {
-		var aControlMenuItems = (this.getAggregation("_items") || []).reduce(function (aItems, oItem) {
-			return aItems.concat(oItem.getEffectiveItems());
-		}, []);
-		var aApplicationMenuItems = this.getItems().reduce(function (aItems, oItem) {
-			return aItems.concat(oItem.getEffectiveItems());
-		}, []);
+		var aMenuItems = this._getAllEffectiveItems();
+		var bHasQuickActions = this._hasQuickActions();
+		var bHasitems =  this._hasItems();
 
 		if (!this._oItemsContainer) {
 			this._createItemsContainer();
 		}
 
-		aControlMenuItems.forEach(function (oColumnMenuItem, iIndex) {
+		aMenuItems.forEach(function (oColumnMenuItem, iIndex) {
 			this._addView(oColumnMenuItem);
-			iIndex === 0 && this._oItemsContainer.addSeparator();
-		}.bind(this));
-		aApplicationMenuItems.forEach(function (oColumnMenuItem, iIndex) {
-			this._addView(oColumnMenuItem);
-			iIndex === 0 && this._oItemsContainer.addSeparator();
+
+			if (bHasQuickActions && bHasitems && iIndex === 0) {
+				this._oItemsContainer.addSeparator();
+			}
 		}.bind(this));
 	};
 
@@ -356,6 +352,7 @@ sap.ui.define([
 		});
 		this._oBtnOk = new Button({
 			text: this._getResourceText("table.COLUMNMENU_CONFIRM"),
+			type: library.ButtonType.Emphasized,
 			press: function () {
 				var sKey = oMenu._oItemsContainer.getCurrentViewKey();
 				if (oMenu._fireEvent(Core.byId(sKey), "confirm")) {
@@ -437,11 +434,19 @@ sap.ui.define([
 		}, []);
 	};
 
+	Menu.prototype._hasQuickActions = function() {
+		return this._getAllEffectiveQuickActions().length > 0;
+	};
+
 	Menu.prototype._getAllEffectiveItems = function() {
 		var aItems = (this.getAggregation("_items") || []).concat(this.getItems());
 		return aItems.reduce(function(a, oItem) {
 			return a.concat(oItem.getEffectiveItems());
 		}, []);
+	};
+
+	Menu.prototype._hasItems = function() {
+		return this._getAllEffectiveItems().length > 0;
 	};
 
 	Menu.prototype._getItemFromContainerItem = function (oContainerItem) {
