@@ -56,7 +56,8 @@
 					"sap.uxap.sample.ObjectPageFormLayout",
 					"sap.uxap.sample.ObjectPageFormFocusableInput",
 					"sap.uxap.sample.ObjectPageBlockViewTypes",
-					"sap.uxap.sample.ObjectPageWithHeaderContainer"
+					"sap.uxap.sample.ObjectPageWithHeaderContainer",
+					"sap.uxap.sample.ObjectPageResetSelectedSection"
 				]
 			},
 			{
@@ -316,6 +317,11 @@
 				"id": "sap.uxap.sample.ObjectPageSectionShowTitle",
 				"name": "ObjectPage with Hidden Section Titles",
 				"description": "ObjectPage sample that demonstrates the combination of header facets and showTitle properties of sections and subsections."
+			},
+			{
+				"id": "sap.uxap.sample.ObjectPageResetSelectedSection",
+				"name": "Object Page reseting the selected section to the first visible section",
+				"description": "Object Page sample showing how to ensure the page is always scrolled to the top on any subsequent navigation to the page, regardless of its previously selected section in the preceding navigation."
 			}
 		]
 	}

@@ -1,0 +1,200 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+	xmlns:connections="sap.uxap.sample.SharedBlocks.connections"
+	controllerName="sap.uxap.sample.ObjectPageResetSelectedSection.controller.ObjectPageResetSelectedSection"
+	height="100%">
+	<m:NavContainer id="navigationContainer"
+		navigate="onNavigate">
+		<m:Page id="page1" title="Page 1">
+			<layout:VerticalLayout
+				class="sapUiContentPadding"
+				width="100%">
+				<m:MessageStrip showIcon="true"
+					text="This example shows how to reset the selected section of the ObjectPage to the first visible and scroll to the top upon revisiting the page."/>
+				<m:List>
+					<m:StandardListItem
+						press="onListItemPress"
+						title="To ObjectPage"
+						type="Navigation" />
+				</m:List>
+				<m:CheckBox id="resetCheck" selected="true" text="reset its selected section to the first visible and scroll to the top"/>
+			</layout:VerticalLayout>
+		</m:Page>
+		<m:Page id="page2" title="Page 2"
+			showNavButton="true"
+			navButtonPress="onBackButtonPress">
+			<ObjectPageLayout id="ObjectPageLayout"
+				enableLazyLoading="true"
+				showTitleInHeaderContent="true"
+				upperCaseAnchorBar="false">
+				<headerTitle>
+					<ObjectPageDynamicHeaderTitle>
+						<expandedHeading>
+							<m:Title text="Denise Smith" wrapping="true"/>
+						</expandedHeading>
+
+						<snappedHeading>
+							<m:FlexBox fitContainer="true" alignItems="Center">
+								<m:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" class="sapUiTinyMarginEnd"/>
+								<m:Title text="Denise Smith" wrapping="true" />
+							</m:FlexBox>
+						</snappedHeading>
+
+						<expandedContent>
+							<m:Text text="Senior UI Developer"/>
+						</expandedContent>
+
+						<snappedContent>
+							<m:Text text="Senior UI Developer"/>
+						</snappedContent>
+
+						<snappedTitleOnMobile>
+							<m:Title text="Senior UI Developer"/>
+						</snappedTitleOnMobile>
+
+						<actions>
+							<m:Button text="Edit" type="Emphasized"/>
+							<m:Button type="Transparent" text="Delete"/>
+							<m:Button type="Transparent" text="Copy"/>
+							<m:OverflowToolbarButton icon="sap-icon://action" type="Transparent" text="Share" tooltip="action"/>
+						</actions>
+					</ObjectPageDynamicHeaderTitle>
+				</headerTitle>
+
+				<headerContent>
+					<m:FlexBox wrap="Wrap" fitContainer="true">
+						<m:Avatar class="sapUiSmallMarginEnd" src="./test-resources/sap/uxap/images/imageID_275314.png" displaySize="L" />
+
+						<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+							<m:Link text="+33 6 4512 5158"/>
+							<m:Link text="DeniseSmith@sap.com"/>
+						</layout:VerticalLayout>
+
+						<layout:HorizontalLayout class="sapUiSmallMarginBeginEnd">
+							<m:Image src="./test-resources/sap/uxap/images/linkedin.png"/>
+							<m:Image src="./test-resources/sap/uxap/images/Twitter.png" class="sapUiSmallMarginBegin"/>
+						</layout:HorizontalLayout>
+
+						<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+							<m:Label text="Hello! I am Denise and I use UxAP"/>
+							<m:VBox>
+								<m:Label text="Achieved goals"/>
+								<m:ProgressIndicator percentValue="30" displayValue="30%"/>
+							</m:VBox>
+						</layout:VerticalLayout>
+
+						<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+							<m:Label text="San Jose, USA"/>
+						</layout:VerticalLayout>
+					</m:FlexBox>
+				</headerContent>
+
+				<sections>
+					<ObjectPageSection titleUppercase="false" id="goals" title="2014 Goals Plan">
+					<subSections>
+						<ObjectPageSubSection id="goalsSS1" titleUppercase="false">
+							<blocks>
+								<goals:GoalsBlock id="goalsblock"/>
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection titleUppercase="false" id="personal" title="Personal">
+						<subSections>
+							<ObjectPageSubSection id="personalSS1" title="Connect" titleUppercase="false">
+								<blocks>
+									<personal:BlockPhoneNumber id="phone"/>
+									<personal:BlockSocial id="social"/>
+									<personal:BlockAdresses id="adresses"/>
+									<personal:BlockMailing id="mailing" columnLayout="1"/>
+								</blocks>
+							</ObjectPageSubSection>
+
+							<ObjectPageSubSection id="personalSS2" title="Payment information" titleUppercase="false">
+								<blocks>
+									<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
+								</blocks>
+								<moreBlocks>
+									<personal:PersonalBlockPart2 id="part2" columnLayout="1"/>
+								</moreBlocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection titleUppercase="false" id="employment" title="Employment">
+						<subSections>
+							<ObjectPageSubSection id="employmentSS1" title="Job information" titleUppercase="false">
+								<blocks>
+									<employment:BlockJobInfoPart1 id="jobinfopart1"/>
+									<employment:BlockJobInfoPart2 id="jobinfopart2"/>
+									<employment:BlockJobInfoPart3 id="jobinfopart3"/>
+								</blocks>
+							</ObjectPageSubSection>
+
+							<ObjectPageSubSection id="employmentSS2" title="Employee Details" titleUppercase="false">
+								<blocks>
+									<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
+								</blocks>
+								<moreBlocks>
+									<employment:BlockEmpDetailPart2 id="empdetailpart2" columnLayout="1"/>
+									<employment:BlockEmpDetailPart3 id="empdetailpart3" columnLayout="1"/>
+								</moreBlocks>
+							</ObjectPageSubSection>
+
+							<ObjectPageSubSection id="employmentSS3" title="Job Relationship" titleUppercase="false">
+								<blocks>
+									<employment:EmploymentBlockJob id="employmentblockjob" showSubSectionMore="true">
+										<employment:mappings>
+											<ModelMapping externalModelName="data" internalModelName="emp1"
+														externalPath="/Employee/0"/>
+											<ModelMapping externalModelName="data" internalModelName="emp2"
+														externalPath="/Employee/1"/>
+											<ModelMapping externalModelName="data" internalModelName="emp3"
+														externalPath="/Employee/2"/>
+											<ModelMapping externalModelName="data" internalModelName="emp4"
+														externalPath="/Employee/3"/>
+											<ModelMapping externalModelName="data" internalModelName="emp5"
+														externalPath="/Employee/4"/>
+											<ModelMapping externalModelName="data" internalModelName="emp6"
+														externalPath="/Employee/5"/>
+										</employment:mappings>
+									</employment:EmploymentBlockJob>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+					<ObjectPageSection titleUppercase="false" id="connections" title="Connections">
+						<subSections>
+							<ObjectPageSubSection id="connectionsSS1" titleUppercase="false">
+								<blocks>
+									<connections:ConnectionsBlock id="connectionsblock">
+										<connections:mappings>
+											<ModelMapping externalModelName="data" internalModelName="emp1"
+														externalPath="/Employee/0"/>
+											<ModelMapping externalModelName="data" internalModelName="emp2"
+														externalPath="/Employee/1"/>
+											<ModelMapping externalModelName="data" internalModelName="emp3"
+														externalPath="/Employee/2"/>
+											<ModelMapping externalModelName="data" internalModelName="emp4"
+														externalPath="/Employee/3"/>
+											<ModelMapping externalModelName="data" internalModelName="emp5"
+														externalPath="/Employee/4"/>
+											<ModelMapping externalModelName="data" internalModelName="emp6"
+														externalPath="/Employee/5"/>
+										</connections:mappings>
+									</connections:ConnectionsBlock>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+				</sections>
+			</ObjectPageLayout>
+		</m:Page>
+	</m:NavContainer>
+</mvc:View>
