@@ -70,26 +70,7 @@ sap.ui.define([
 	 *   A map of query parameters as described in
 	 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF token
 	 * @param {object} oModelInterface
-	 *   A interface allowing to call back to the owning model
-	 * @param {function} oModelInterface.fetchEntityContainer
-	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
-	 *   container is fully available, or rejected with an error.
-	 * @param {function} oModelInterface.fetchMetadata
-	 *   A function that returns a SyncPromise which resolves with the metadata instance for a
-	 *   given meta path
-	 * @param {function} oModelInterface.getGroupProperty
-	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
-	 *   returning the property value in question. Only 'submit' is supported for <code>
-	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
-	 * @param {function} oModelInterface.reportStateMessages
-	 *   A function for reporting state messages; see {@link #reportStateMessages} for the signature
-	 *   of this function
-	 * @param {function} oModelInterface.reportTransitionMessages
-	 *   A function called with parameters <code>sResourcePath</code> and <code>sMessages</code>
-	 *   reporting OData transition messages to the {@link sap.ui.core.message.MessageManager}.
-	 * @param {function (string)} [oModelInterface.onCreateGroup]
-	 *   A callback function that is called with the group name as parameter when the first
-	 *   request is added to a group
+	 *   An interface allowing to call back to the owning model (see {@link .create})
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._Requestor
 	 * @constructor
@@ -901,9 +882,7 @@ sap.ui.define([
 			aChangeSet.iSerialNumber = 0;
 			aRequests = this.mBatchQueue[sGroupId] = [aChangeSet];
 			aRequests.iChangeSet = 0; // the index of the current change set in this queue
-			if (this.oModelInterface.onCreateGroup) {
-				this.oModelInterface.onCreateGroup(sGroupId);
-			}
+			this.oModelInterface.onCreateGroup(sGroupId);
 		}
 		return aRequests;
 	};
@@ -2119,6 +2098,9 @@ sap.ui.define([
 	 * @param {function} oModelInterface.fetchMetadata
 	 *   A function that returns a SyncPromise which resolves with the metadata instance for a
 	 *   given meta path
+	 * @param {function} oModelInterface.fireSessionTimeout
+	 *   A function that fires the 'sessionTimeout' event (when the server has created a session for
+	 *   the model and this session ran into a timeout due to inactivity).
 	 * @param {function} oModelInterface.getGroupProperty
 	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 	 *   returning the property value in question. Only 'submit' is supported for <code>
@@ -2130,12 +2112,12 @@ sap.ui.define([
 	 *   A catch handler function expecting an <code>Error</code> instance. This function will call
 	 *   {@link sap.ui.model.odata.v4.ODataModel#reportError} if the error has not been reported
 	 *   yet.
-	 * @param {function (string)} [oModelInterface.onCreateGroup]
+	 * @param {function} oModelInterface.onCreateGroup
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
 	 * @param {function} oModelInterface.reportStateMessages
 	 *   A function to report OData state messages
-	 * @param {function (object[])} oModelInterface.reportTransitionMessages
+	 * @param {function} oModelInterface.reportTransitionMessages
 	 *   A function to report OData transition messages
 	 * @param {object} [mHeaders={}]
 	 *   Map of default headers; may be overridden with request-specific headers; certain
@@ -2161,9 +2143,7 @@ sap.ui.define([
 	 */
 	_Requestor.create = function (sServiceUrl, oModelInterface, mHeaders, mQueryParams,
 			sODataVersion) {
-		var oRequestor = new _Requestor(sServiceUrl, mHeaders, mQueryParams,
-			oModelInterface
-		);
+		var oRequestor = new _Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface);
 
 		if (sODataVersion === "2.0") {
 			asV2Requestor(oRequestor);

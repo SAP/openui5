@@ -7243,7 +7243,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_Cache#create: with given sPath and delete before submit", function (assert) {
 		var // real requestor to avoid reimplementing callback handling of _Requestor.request
-			oRequestor = _Requestor.create("/~/", {getGroupProperty : defaultGetGroupProperty}),
+			oRequestor = _Requestor.create("/~/", {
+				getGroupProperty : defaultGetGroupProperty,
+				onCreateGroup : function () {}
+			}),
 			oCache = new _Cache(oRequestor, "TEAMS"),
 			oCacheMock = this.mock(oCache),
 			aCollection = [],
@@ -8195,7 +8198,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: create and delete transient entry", function (assert) {
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
-		var oRequestor = _Requestor.create("/~/", {getGroupProperty : defaultGetGroupProperty}),
+		var oRequestor = _Requestor.create("/~/", {
+				getGroupProperty : defaultGetGroupProperty,
+				onCreateGroup : function () {}
+			}),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			oCreatePromise,
 			oDeletePromise,
@@ -8256,7 +8262,8 @@ sap.ui.define([
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
 		var oRequestor = _Requestor.create("/~/", {
 				getGroupProperty : defaultGetGroupProperty,
-				reportStateMessages : function () {}
+				reportStateMessages : function () {},
+				onCreateGroup : function () {}
 			}),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCallback = this.spy(),

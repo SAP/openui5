@@ -419,7 +419,6 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl, "parameter sServiceUrl");
 		assert.deepEqual(oRequestor.mHeaders, {}, "parameter mHeaders");
 		assert.strictEqual(oRequestor.sQueryParams, "", "parameter mQueryParams");
-		assert.strictEqual(oRequestor.onCreateGroup, undefined, "parameter onCreateGroup");
 		// OData version specific header maps
 		assert.deepEqual(oRequestor.mFinalHeaders, mFinalHeaders, "mFinalHeaders");
 		assert.deepEqual(oRequestor.mPredefinedPartHeaders, mPredefinedPartHeaders,
@@ -987,15 +986,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("request, getGroupProperty", function () {
 		var oGroupLock = this.createGroupLock(),
-			oModelInterface = {
-				getGroupProperty : defaultGetGroupProperty,
-				onCreateGroup : null // optional
-			},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
 		this.mock(oModelInterface).expects("getGroupProperty")
 			.withExactArgs("groupId", "submit")
 			.returns("API");
+		this.mock(oModelInterface).expects("onCreateGroup").withExactArgs("groupId");
 
 		// code under test
 		oRequestor.request("GET", "SalesOrders", oGroupLock);
@@ -3767,8 +3763,7 @@ sap.ui.define([
 	//*****************************************************************************************
 	QUnit.test("getOrCreateBatchQueue", function (assert) {
 		var aBatchQueue,
-			oInterface = {},
-			oRequestor = _Requestor.create("/", oInterface);
+			oRequestor = _Requestor.create("/", oModelInterface);
 
 		function checkBatchQueue(oBatchQueue0, sGroupId) {
 			assert.strictEqual(oRequestor.mBatchQueue[sGroupId], oBatchQueue0);
@@ -3786,8 +3781,7 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oRequestor.getOrCreateBatchQueue("group"), aBatchQueue);
 
-		oInterface.onCreateGroup = function () {};
-		this.mock(oInterface).expects("onCreateGroup").withExactArgs("group2");
+		this.mock(oModelInterface).expects("onCreateGroup").withExactArgs("group2");
 
 		// code under test
 		checkBatchQueue(oRequestor.getOrCreateBatchQueue("group2"), "group2");
