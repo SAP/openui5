@@ -357,8 +357,15 @@ sap.ui.define([
 		this._oListControl.getItems().forEach(function(oItem){
 			var oContext = oItem.getBindingContext(this.P13N_MODEL);
 			var oField = this.getItemFactory().call(this, oContext);
-			var oCell = oItem.getCells()[0];
-			oCell.addItem(oField);
+
+			//set 'labelFor'
+			var oFirstCell = oItem.getCells()[0];
+			var oLabel = oFirstCell.getItems()[0];
+			if (oLabel) {
+				oLabel.setLabelFor(oField);
+			}
+
+			oFirstCell.addItem(oField);
 		}.bind(this));
 		this.addStyleClass("sapUiMDCAFLabelMarkingList");
 	};
