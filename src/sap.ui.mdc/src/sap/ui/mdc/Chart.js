@@ -10,7 +10,6 @@ sap.ui.define([
         "./ChartRenderer",
         "sap/ui/mdc/library",
         "sap/m/Text",
-        "sap/m/VBox",
         "sap/base/Log",
         "./chart/ChartToolbar",
         "./chart/PropertyHelper",
@@ -33,7 +32,6 @@ sap.ui.define([
         ChartRenderer,
         MDCLib,
         Text,
-        VBox,
         Log,
         ChartToolbar,
         PropertyHelper,
@@ -560,28 +558,10 @@ sap.ui.define([
             }.bind(this));
         };
 
-        Chart.prototype.setHeight = function(iHeight) {
-            try {
-                this.getControlDelegate().adjustChartHeight(this);
-            } catch (oError) {
-                //No need to do anything as correct height will be calculated anyways once inner chart is ready
-            }
-
-            this.setProperty("height", iHeight);
-
-            return this;
-        };
-
         Chart.prototype._createBreadcrumbs = function () {
             this._oBreadcrumbs = new Breadcrumbs(this.getId() + "--breadcrumbs");
             this._oBreadcrumbs.updateDrillBreadcrumbs(this, this.getControlDelegate().getDrillableItems(this));
             this.setAggregation("_breadcrumbs", this._oBreadcrumbs);
-
-            this._oBreadcrumbs.addEventDelegate({
-                onAfterRendering: function() {
-                    this.getControlDelegate().adjustChartHeight(this);
-                }.bind(this)
-            });
         };
 
         /**
