@@ -162,7 +162,10 @@ sap.ui.define([
                     enabled: false,
                     press: function (oEvent) {
                         var aP13nMode = oMDCChart.getP13nMode();
-                        aP13nMode.pop("Type");
+                        var iIdx = aP13nMode.indexOf("Type");
+						if (iIdx > -1) {
+							aP13nMode.splice(iIdx, 1);
+						}
 
                         //TODO: Move this to p13n functionality?
                         if (oMDCChart.isPropertyHelperFinal()){
