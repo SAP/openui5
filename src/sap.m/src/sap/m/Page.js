@@ -597,7 +597,7 @@ function(
 		 * @private
 		 */
 		Page.prototype._getHeaderTag = function (oLandmarkInfo) {
-			if (oLandmarkInfo && oLandmarkInfo.getHeaderRole() !== AccessibleLandmarkRole.None) {
+			if (oLandmarkInfo && oLandmarkInfo.getHeaderRole()) {
 				return DIV;
 			}
 
@@ -612,7 +612,7 @@ function(
 		 * @private
 		 */
 		Page.prototype._getSubHeaderTag = function (oLandmarkInfo) {
-			if (oLandmarkInfo && oLandmarkInfo.getSubHeaderRole() !== AccessibleLandmarkRole.None) {
+			if (oLandmarkInfo && oLandmarkInfo.getSubHeaderRole()) {
 				return DIV;
 			}
 
@@ -627,7 +627,7 @@ function(
 		 * @private
 		 */
 		Page.prototype._getFooterTag = function (oLandmarkInfo) {
-			if (oLandmarkInfo && oLandmarkInfo.getFooterRole() !== AccessibleLandmarkRole.None) {
+			if (oLandmarkInfo && oLandmarkInfo.getFooterRole()) {
 				return DIV;
 			}
 
