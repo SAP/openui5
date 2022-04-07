@@ -192,9 +192,19 @@ sap.ui.define([
 		WebComponentMetadata.prototype.getPropertiesByMapping = function(sMapping) {
 			var mFiltered = {};
 			var mProperties = this.getAllProperties();
+			var mPrivateProperties = this.getAllPrivateProperties();
 			for (var propName in mProperties) {
 				if (mProperties.hasOwnProperty(propName)) {
 					var propData = mProperties[propName];
+					if (propData._sMapping === sMapping) {
+						mFiltered[propName] = propData;
+					}
+				}
+			}
+
+			for (var propName in mPrivateProperties) {
+				if (mPrivateProperties.hasOwnProperty(propName)) {
+					var propData = mPrivateProperties[propName];
 					if (propData._sMapping === sMapping) {
 						mFiltered[propName] = propData;
 					}

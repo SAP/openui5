@@ -116,11 +116,24 @@ sap.ui.define([
 			metadata : {
 				stereotype : "webcomponent",
 				"abstract" : true,
-				library : "sap.ui.core"
+				library : "sap.ui.core",
+				properties: {
+					__isBusy: {
+						type: "boolean",
+						visibility: "hidden",
+						defaultValue: false,
+						mapping: {
+							type: "attribute",
+							to: "__is-busy"
+						}
+					}
+				}
 			},
 
 			constructor : function(sId, mSettings) {
 				Control.apply(this, arguments);
+
+				this.__busyIndicatorTimeout = null;
 
 				this.__onInvalidationBound = this.__onInvalidation.bind(this);
 				this.__handleCustomEventBound = this.__handleCustomEvent.bind(this);
@@ -285,6 +298,25 @@ sap.ui.define([
 					oDomRef[sWebComponentPropName] = vPropValue;
 				}
 			}
+		};
+
+		WebComponent.prototype.setBusy = function(bBusy) {
+			var bCurrentBusyState = this.getBusy();
+
+			this.setProperty("busy", bBusy, true);
+
+			if (bCurrentBusyState !== bBusy) {
+				if (bBusy) {
+					this.__busyIndicatorTimeout = setTimeout(function() {
+						this.setProperty("__isBusy", bBusy);
+					}.bind(this), this.getBusyIndicatorDelay());
+				} else {
+					this.setProperty("__isBusy", bBusy);
+					clearTimeout(this.__busyIndicatorTimeout);
+				}
+			}
+
+			return this;
 		};
 
 		/**
