@@ -107,7 +107,7 @@ describe('sap.m.MultiInput', function() {
 	it("Should visualize MultiInput after navigating with arrow key", function () {
 		var oMultiInput = element(by.id("multiInputWithOneLongToken"));
 		browser.executeScript("document.getElementById('multiInputWithOneLongToken').scrollIntoView()").then(function() {
-			oMultiInput.click();
+			element(by.id("multiInputWithOneLongToken-inner")).click();
 			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_one_long_token_focused_in");
 
 			browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
