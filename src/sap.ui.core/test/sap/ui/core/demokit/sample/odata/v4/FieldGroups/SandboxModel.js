@@ -11,10 +11,8 @@ sap.ui.define([
 	"use strict";
 
 	var oMockData = {
+			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 			mFixture : {
-				"$metadata?sap-language=EN" : {
-					source : "metadata.xml"
-				},
 				"ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)?$select=ContactGUID,EmailAddress,FirstName,LastName" : {
 					message : {
 						"ContactGUID" : "42010aef-0de5-1eea-af8f-5bce865f0879",
@@ -33,7 +31,6 @@ sap.ui.define([
 					}
 				}
 			},
-			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 			sSourceBase : "sap/ui/core/sample/odata/v4/FieldGroups/data"
 		};
 

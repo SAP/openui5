@@ -20,12 +20,6 @@ sap.ui.define([
 					source : "EdmTypesV2_SingleEntity.json"
 				}
 			},
-			aRegExps : [{
-				regExp : /^GET [\w\/]+\/ZUI5_EDM_TYPES\/\$metadata\?sap-language=..$/,
-				response : {
-					source : "metadataV2.xml"
-				}
-			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/ConsumeV2Service/data"
 		};
 

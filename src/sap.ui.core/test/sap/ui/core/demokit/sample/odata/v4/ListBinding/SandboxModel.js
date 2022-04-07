@@ -11,6 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	var oMockData = {
+			sFilterBase : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 			mFixture : {
 				"Equipments?$count=true&$orderby=Category,Name&$select=Category,ID,Name,EmployeeId&$skip=0&$top=5" : {
 					source : "equipments.json"
@@ -21,9 +22,6 @@ sap.ui.define([
 				"GetEmployeeMaxAge()" : {
 					message : {"value" : 56}
 				},
-				"$metadata?sap-language=EN" : {source : "metadata.xml"},
-				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-language=EN" : {source : "metadata_product.xml"},
-				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_supplier/0001/$metadata?sap-language=EN" : {source : "metadata_supplier.xml"},
 				"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS($expand=EQUIPMENT_2_PRODUCT($expand=PRODUCT_2_CATEGORY,PRODUCT_2_SUPPLIER));$orderby=LOCATION/City/CITYNAME),TEAM_2_MANAGER&$skip=0&$top=100" : {
 					source : "TEAMS.json"
 				},
@@ -55,7 +53,16 @@ sap.ui.define([
 					message : {"value" : []}
 				}
 			},
-			sFilterBase : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+			aRegExps : [{
+				regExp : /^GET [\w\/]+\/TEA_BUSI\/0001\/\$metadata\?sap-language=..$/,
+				response : {source : "metadata.xml"}
+			}, {
+				regExp : /^GET [\w\/]+\/tea_busi_product\/0001\/\$metadata\?sap-language=..$/,
+				response : {source : "metadata_product.xml"}
+			}, {
+				regExp : /^GET [\w\/]+\/tea_busi_supplier\/0001\/\$metadata\?sap-language=..$/,
+				response : {source : "metadata_supplier.xml"}
+			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/ListBinding/data"
 		};
 

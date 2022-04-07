@@ -11,10 +11,8 @@ sap.ui.define([
 	"use strict";
 
 	var oMockData = {
+			sFilterBase : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/",
 			mFixture : {
-				"$metadata?sap-language=EN" : {
-					source : "metadataV2.xml"
-				},
 				"SEPM_C_SLSORDER_TP_100?$inlinecount=allpages&$expand=to_Item&$filter=SalesOrder%20ge%20'500000000'&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID,to_Item/GrossAmount,to_Item/Product,to_Item/SalesOrder,to_Item/SalesOrderItem,to_Item/SalesOrderItemUUID,to_Item/SalesOrderUUID&$skip=0&$top=5" : {
 					source : "SEPM_C_SLSORDER_TP_100_Skip0_Top5_V2.json"
 				},
@@ -22,7 +20,6 @@ sap.ui.define([
 					source : "SEPM_C_SLSORDER_TP_100_Skip5_Top5_V2.json"
 				}
 			},
-			sFilterBase : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/",
 			sSourceBase : "sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/data"
 		};
 

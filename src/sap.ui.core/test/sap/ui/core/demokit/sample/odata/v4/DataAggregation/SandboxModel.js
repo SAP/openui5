@@ -12,10 +12,8 @@ sap.ui.define([
 
 	// Note: DO NOT reuse the same source file with a different $top if that leads to a short read!
 	var oMockData = {
+			sFilterBase : "/odata/v4/sap.fe.managepartners.ManagePartnersService/",
 			mFixture : {
-				"$metadata?sap-language=EN" : {
-					source : "metadata.xml"
-				},
 				"BusinessPartners?$apply=concat(aggregate(SalesAmountLocalCurrency,LocalCurrency),groupby((Country_Code,Country),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Country%20desc)/concat(aggregate($count%20as%20UI5__count),top(4)))" : {
 					source : "BusinessPartners_L1.json"
 				},
@@ -59,7 +57,6 @@ sap.ui.define([
 					source : "BusinessPartners_M_Carol_L3.json"
 				}
 			},
-			sFilterBase : "/odata/v4/sap.fe.managepartners.ManagePartnersService/",
 			sSourceBase : "sap/ui/core/sample/odata/v4/DataAggregation/data"
 		};
 

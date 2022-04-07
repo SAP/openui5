@@ -11,8 +11,8 @@ sap.ui.define([
 	"use strict";
 
 	var oMockData = {
+		sFilterBase : "/sap/opu/odata4/sap/sadl_gw_appmusic_draft/srvd/sap/sadl_gw_appmusicdr_definition/0001/",
 		mFixture : {
-			"$metadata" : {source : "metadata.xml"},
 			"Artists?$orderby=CreatedAt&$filter=IsActiveEntity%20eq%20true&$select=ArtistUUID,CountryOfOrigin_Text,FoundingYear,HasDraftEntity,IsActiveEntity,Name&$skip=0&$top=10" : {
 				source : "ArtistsList_0.json"
 			},
@@ -59,7 +59,6 @@ sap.ui.define([
 				source : "Elvis_Publication_0_draft.json"
 			}
 		},
-		sFilterBase : "//sap/opu/odata4/sap/sadl_gw_appmusic_draft/srvd/sap/sadl_gw_appmusicdr_definition/0001/",
 		sSourceBase : "sap/ui/core/sample/odata/v4/MusicArtists/data"
 	};
 

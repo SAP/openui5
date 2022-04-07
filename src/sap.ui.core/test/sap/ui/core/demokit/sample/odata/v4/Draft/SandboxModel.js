@@ -77,12 +77,6 @@ sap.ui.define([
 					source : "Products_10_true_PATCHed.json"
 				}
 			},
-			aRegExps : [{
-				regExp : /^GET \/MyProducts\/\$metadata\?sap-language=..$/,
-				response : {
-					source : "metadata.xml"
-				}
-			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/Draft/data"
 	};
 
