@@ -194,7 +194,7 @@ builder:
               - sap/ui/test/TestEnv.js
               - sap/ui/test/ControlTree.js
               - sap/ui/debug/Highlighter.js
-              - jquery.sap.strings
+              - jquery.sap.strings.js
             resolve: false
           - mode: require
             filters:
