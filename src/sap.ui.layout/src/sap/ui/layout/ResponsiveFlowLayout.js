@@ -546,13 +546,6 @@ sap.ui.define([
 							this._rows[i].oRect = oTmpRect;
 						}
 					}
-
-					if (this._rows.length === 0) {
-						if (this._resizeHandlerComputeWidthsID) {
-							ResizeHandler.deregister(this._resizeHandlerComputeWidthsID);
-							delete this._resizeHandlerComputeWidthsID;
-						}
-					}
 				}
 			}
 		};
@@ -565,11 +558,6 @@ sap.ui.define([
 		ResponsiveFlowLayout.prototype.onBeforeRendering = function() {
 			// update the internal structure of the rows
 			updateRows(this);
-
-			if (this._resizeHandlerComputeWidthsID) {
-				ResizeHandler.deregister(this._resizeHandlerComputeWidthsID);
-				delete this._resizeHandlerComputeWidthsID;
-			}
 		};
 
 		/**
@@ -589,11 +577,6 @@ sap.ui.define([
 					// are handled in the on after rendering hook the same way as the initial width calculations.
 					this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.rerender.bind(this));
 				}
-			} else {
-				if (this._resizeHandlerComputeWidthsID) {
-					ResizeHandler.deregister(this._resizeHandlerComputeWidthsID);
-					delete this._resizeHandlerComputeWidthsID;
-				}
 			}
 		};
 
@@ -601,7 +584,7 @@ sap.ui.define([
 			if (oEvent.type === "LayoutDataChange") {
 				this._bLayoutDataChanged = true;
 			}
-			if (!this._resizeHandlerComputeWidthsID) {
+			if (this.getResponsive() && !this._resizeHandlerComputeWidthsID) {
 				// Trigger rerendering when the control is resized so width recalculations
 				// are handled in the on after rendering hook the same way as the initial width calculations.
 				this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.rerender.bind(this));
@@ -609,6 +592,21 @@ sap.ui.define([
 
 			updateRows(this);
 			this._proxyComputeWidths();
+		};
+
+		ResponsiveFlowLayout.prototype.setResponsive = function(bResponsive) {
+			Control.prototype.setProperty.call(this, "responsive", bResponsive);
+			if (bResponsive && !this._resizeHandlerComputeWidthsID) {
+				// Trigger rerendering when the control is resized so width recalculations
+				// are handled in the on after rendering hook the same way as the initial width calculations.
+				this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.rerender.bind(this));
+			} else if (this._resizeHandlerComputeWidthsID) {
+				if (this._resizeHandlerComputeWidthsID) {
+					ResizeHandler.deregister(this._resizeHandlerComputeWidthsID);
+					delete this._resizeHandlerComputeWidthsID;
+				}
+			}
+			return this;
 		};
 
 		/**
