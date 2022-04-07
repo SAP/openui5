@@ -3395,6 +3395,31 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("getAccessibilityInfo method", function (assert) {
+		// arrange
+		var aDefaultContent = [
+				new Button({width: "150px", layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow})}),
+				new Button({width: "150px", layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow})})
+			],
+			oOverflowTB = createOverflowToolbar({width: '500px'}, aDefaultContent);
+
+		// assert
+		assert.strictEqual(oOverflowTB.getAccessibilityInfo().children.length, 2, "children property of accessibility info object contains correct amount of visible children");
+
+		oOverflowTB.getContent()[1].getLayoutData().setPriority(OverflowToolbarPriority.AlwaysOverflow);
+		oCore.applyChanges();
+
+		assert.strictEqual(oOverflowTB.getAccessibilityInfo().children.length, 2, "children property of accessibility info object contains correct amount of visible children and more button");
+
+		oOverflowTB.getContent()[0].getLayoutData().setPriority(OverflowToolbarPriority.AlwaysOverflow);
+		oCore.applyChanges();
+
+		assert.strictEqual(oOverflowTB.getAccessibilityInfo().children.length, 1, "children property of accessibility info object contains correct amount of visible children and more button");
+
+		// clean
+		oOverflowTB.destroy();
+	});
+
 	QUnit.module("Special cases", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;
@@ -3501,7 +3526,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//Assert
-		assert.equal(oTable.getItems()[0].getContentAnnouncement(), "Test Button More", "here");
+		assert.equal(oTable.getItems()[0].getContentAnnouncement(), "Button Test Button Button More", "here");
 	});
 
 	QUnit.module("Associative popover");

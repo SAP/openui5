@@ -213,6 +213,25 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
+	QUnit.module("Accessiblity");
+
+	QUnit.test("getAccessibilityInfo method", function(assert) {
+		var aDefaultContent = [
+			new Button({width: "150px"}),
+			new Button({width: "150px"})
+		],
+		oTB = new Toolbar({
+			content : aDefaultContent
+		});
+
+		oTB.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(oTB.getAccessibilityInfo().children.length, oTB.getContent().length, "children property of accessibility info object contains correct amount of children");
+
+		oTB.destroy();
+	});
+
 	QUnit.module("ARIA");
 
 	QUnit.test("Default ARIA attributes", function(assert) {

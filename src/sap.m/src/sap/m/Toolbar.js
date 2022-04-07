@@ -417,6 +417,12 @@ function(
 		return sRole;
 	};
 
+	Toolbar.prototype.getAccessibilityInfo = function () {
+		return {
+			children: this.getContent()
+		};
+	};
+
 	/*
 	 * Augment design property setter.
 	 * 2nd parameter can be used to define auto design context.

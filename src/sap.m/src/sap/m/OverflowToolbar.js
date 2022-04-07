@@ -1583,6 +1583,22 @@ sap.ui.define([
 		return null;
 	};
 
+	OverflowToolbar.prototype.getAccessibilityInfo = function () {
+		var aContent = [],
+			aVisibleContent = this._getVisibleAndNonOverflowContent();
+
+		if (aVisibleContent.length > 0) {
+			aContent = aContent.concat(aVisibleContent);
+		}
+
+		if (this._getOverflowButtonNeeded()) {
+			aContent.push(this._getOverflowButton());
+		}
+
+		return {
+			children: aContent
+		};
+	};
 
 	/**
 	 * Returns the control group based on the layout data
