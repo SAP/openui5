@@ -81,7 +81,8 @@ sap.ui.define([
 		 * @public
 		 */
 		SinglePlanningCalendarMonthView.prototype.calculateStartDate = function(oStartDate) {
-			return CalendarUtils.getFirstDateOfMonth(oStartDate).getJSDate();
+			var oReturnDate = CalendarUtils.getFirstDateOfMonth(CalendarUtils._createUTCDate(oStartDate, true)).getJSDate();
+			return CalendarUtils._createLocalDate(oReturnDate, true);
 		};
 
 		return SinglePlanningCalendarMonthView;

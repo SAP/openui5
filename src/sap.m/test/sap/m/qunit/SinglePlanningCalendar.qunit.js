@@ -249,6 +249,25 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("calculateStartDate of month view should return the first date of the month", function (assert) {
+		var oSPC = new SinglePlanningCalendar({
+				views: new SinglePlanningCalendarMonthView({
+					key: "MonthView",
+					title: "Month View"
+				})
+			}),
+			oTestDate = new Date(2020, 2, 31, 0, 0, 0),
+			oExpectedDate = new Date(2020, 2, 1, 0, 0, 0);
+
+		//act
+		var oCalculatedDate = oSPC.getAggregation("views")[0].calculateStartDate(oTestDate);
+
+		//assert
+		assert.deepEqual(oExpectedDate, oCalculatedDate, "The correct date was calculated");
+		//clean up
+		oSPC.destroy();
+	});
+
 	QUnit.module("Events");
 
 	QUnit.test("appointmentSelect: select a single appointment in day-based view", function (assert) {
