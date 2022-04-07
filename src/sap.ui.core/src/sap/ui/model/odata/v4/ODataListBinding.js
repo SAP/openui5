@@ -793,8 +793,7 @@ sap.ui.define([
 	 *   contexts within this list.
 	 * @param {boolean} [bInactive]
 	 *   Create an inactive context. Such a context will only be sent to the server after the first
-	 *   property update. From then on it behaves like any other created context. This parameter is
-	 *   experimental and its implementation may still change. Do not use it in productive code yet.
+	 *   property update. From then on it behaves like any other created context.
 	 *   Supported since 1.97.0
 	 *   <p>
 	 *   Since 1.98.0, when the first property updates happens, the context is no longer
