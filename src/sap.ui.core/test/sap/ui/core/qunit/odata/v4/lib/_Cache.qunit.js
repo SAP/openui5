@@ -6063,19 +6063,24 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
-			oElement0 = {}, // created persisted
+			oElement0 = { // persisted
+				"@my.name" : "oElement0" // to facilitate deepEqual below!
+			},
 			oElement1 = { // newly created
-				"@odata.etag" : "same",
-				"@$ui5._" : {transientPredicate : "($uid=id-1-23)"}
-			},
-			oElement2 = { // newly created
-				"@odata.etag" : "same",
-				"@$ui5._" : {transientPredicate : "($uid=id-1-42)"}
-			},
-			oElement3 = { // kept alive
+				"@my.name" : "oElement1",
 				"@odata.etag" : "same"
 			},
-			aElements = [0, 1, 2, 3, 4, 5, 6, 7], // could be promises...
+			oElement2 = { // newly created
+				"@my.name" : "oElement2",
+				"@odata.etag" : "same"
+			},
+			oElement3 = { // kept alive
+				"@my.name" : "oElement3",
+				"@odata.etag" : "same"
+			},
+			// oElement0 is placed in an unrealistic position here to make sure that newly created
+			// ones are not searched for everywhere, but only in the range [0, $created[
+			aElements = [oElement1, oElement2, 3, 4, 5, 6, 7, oElement0], // could be promises...
 			oFetchTypesResult = {},
 			oKeptElement = {
 				"@odata.etag" : sKeptETag
@@ -6089,6 +6094,7 @@ sap.ui.define([
 			new1 : oElement1,
 			new2 : oElement2
 		};
+		aElements.$created = 2;
 		oCache.aElements = aElements;
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
@@ -6109,8 +6115,9 @@ sap.ui.define([
 			oCache.handleResponse(oResult, 2, oFetchTypesResult),
 			2);
 
-		assert.deepEqual(oCache.aElements,
-			[0, 1, oElement0, sKeptETag === "other" ? oElement3 : oKeptElement, 4, 5, 6, 7]);
+		// Note: for each newly created, one undefined is written at the end of oResult, so to say
+		assert.deepEqual(oCache.aElements, [oElement1, oElement2, oElement0,
+			sKeptETag === "other" ? oElement3 : oKeptElement, undefined, undefined, 7, oElement0]);
 		assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
 		assert.strictEqual(oCache.aElements.$byPredicate["new1"], oElement1);
 		assert.strictEqual(oCache.aElements.$byPredicate["new2"], oElement2);
@@ -6119,6 +6126,30 @@ sap.ui.define([
 			["bar", "new1", "new2", "foo"]);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#handleResponse: kept-alive element", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oElement = { // kept alive
+				"@my.name" : "oElement",
+				"@odata.etag" : "same"
+			},
+			// oElement is placed in an unrealistic position here to make sure that newly created
+			// ones are not searched for everywhere, but only in the range [0, $created[
+			aElements = [1, 2, 3, 4, 5, 6, 7, oElement]; // could be promises...
+
+		_Helper.setPrivateAnnotation(oElement, "predicate", "bar");
+		aElements.$byPredicate = {bar : oElement};
+		aElements.$created = 0;
+		oCache.aElements = aElements;
+		this.mock(oCache).expects("visitResponse"); // args do not matter for this test
+		this.mock(_Helper).expects("updateNonExisting"); // args do not matter for this test
+
+		assert.strictEqual(
+			// code under test
+			oCache.handleResponse({value : [oElement]}, 2, {/*oFetchTypesResult*/}),
+			0);
+	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bShortRead) {

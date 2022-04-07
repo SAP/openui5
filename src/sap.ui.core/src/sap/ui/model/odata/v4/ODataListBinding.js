@@ -995,8 +995,9 @@ sap.ui.define([
 				sPredicate = _Helper.getPrivateAnnotation(aResults[i], "predicate");
 				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
 				oContext = this.mPreviousContextsByPath[sContextPath];
-				if (oContext && !oContext.created()) {
-					// reuse the previous context, unless it is created (and persisted)
+				if (oContext && (!oContext.created() || oContext.isKeepAlive())) {
+					// reuse the previous context, unless it is created (and persisted), but not
+					// kept alive
 					delete this.mPreviousContextsByPath[sContextPath];
 					oContext.iIndex = i$skipIndex;
 					oContext.checkUpdate();
@@ -2760,7 +2761,7 @@ sap.ui.define([
 			}
 			// Note: after reset the dependent bindings cannot be found any more
 			aDependentBindings = that.getDependentBindings();
-			 // this may reset that.oRefreshPromise
+			// this may reset that.oRefreshPromise
 			that.reset(ChangeReason.Refresh, bKeepCacheOnError ? false : undefined, sGroupId);
 			return SyncPromise.all(
 				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise)

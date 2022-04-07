@@ -377,6 +377,10 @@ sap.ui.define([
 			oDependentBinding.setContext(undefined);
 		});
 		this.oBinding = undefined;
+		this.oCreatedPromise = undefined;
+		this.oSyncCreatePromise = undefined;
+		this.bInactive = undefined;
+		this.bKeepAlive = undefined;
 		// When removing oModel, ManagedObject#getBindingContext does not return the destroyed
 		// context although the control still refers to it
 		this.oModel = undefined;

@@ -1364,12 +1364,14 @@ sap.ui.define([
 				setContext : function () {}
 			},
 			bCallbackCalled,
+			iGeneration,
 			oGetDependentBindingsCall,
 			oModel = {
 				getDependentBindings : function () {}
 			},
 			oParentBinding = {},
-			oContext = Context.create(oModel, oParentBinding, "/EMPLOYEES/42", 42);
+			oContext = Context.create(oModel, oParentBinding, "/EMPLOYEES/42", 42,
+				SyncPromise.resolve(), "~bInactive~");
 
 		if (bfnOnBeforeDestroy) {
 			oContext.fnOnBeforeDestroy = function () {
@@ -1380,6 +1382,9 @@ sap.ui.define([
 				assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 			};
 		}
+		oContext.bKeepAlive = "~bKeepAlive~";
+		oContext.setNewGeneration();
+		iGeneration = oContext.getGeneration(true);
 
 		oGetDependentBindingsCall = this.mock(oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oContext))
@@ -1392,9 +1397,15 @@ sap.ui.define([
 		oContext.destroy();
 
 		assert.strictEqual(oContext.oBinding, undefined);
-		assert.strictEqual(oContext.oModel, undefined/*TODO oModel*/);
+		assert.strictEqual(oContext.oModel, undefined);
 		assert.strictEqual(oContext.sPath, "/EMPLOYEES/42");
-		assert.strictEqual(oContext.iIndex, 42);
+		assert.strictEqual(oContext.iIndex, 42); // Note: sPath and iIndex mainly define #toString
+		assert.strictEqual(oContext.bKeepAlive, undefined);
+		assert.strictEqual(oContext.created(), undefined);
+		assert.strictEqual(oContext.getGeneration(true), iGeneration, "generation is kept");
+		assert.strictEqual(oContext.isInactive(), undefined);
+		assert.strictEqual(oContext.isTransient(), undefined);
+		assert.strictEqual(oContext.toString(), "/EMPLOYEES/42[42]");
 
 		if (bfnOnBeforeDestroy) {
 			assert.ok(bCallbackCalled);
