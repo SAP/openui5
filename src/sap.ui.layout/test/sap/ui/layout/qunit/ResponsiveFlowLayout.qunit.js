@@ -155,6 +155,11 @@ sap.ui.define([
 		}, 100);
 	});
 
+	QUnit.test("ResizeHandler registration", function(assert) {
+		assert.ok(this.oRFL._resizeHandlerComputeWidthsID, "ResizeHandler is registered after initialisation.");
+		this.oRFL.setResponsive(false);
+		assert.notOk(this.oRFL._resizeHandlerComputeWidthsID, "ResizeHandler is deregistered when responsive property is set to false.");
+	});
 
 
 	QUnit.module("Private functions", {
