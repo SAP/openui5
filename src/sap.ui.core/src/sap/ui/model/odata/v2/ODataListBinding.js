@@ -55,9 +55,10 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.faultTolerant] Turns on the fault tolerance mode, data is not reset if a back-end request returns an error
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] Defines the operation mode of this binding
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which is included in the request
-	 * @param {int} [mParameters.threshold] Threshold that defines how many entries should be fetched at least
-	 *                                      by the binding if <code>operationMode</code> is set to <code>Auto</code>
-	 *                                      (See documentation for {@link sap.ui.model.odata.OperationMode.Auto})
+	 * @param {int} [mParameters.threshold]
+	 *   Deprecated since 1.102.0, as {@link sap.ui.model.odata.OperationMode.Auto} is deprecated;
+	 *   the threshold that defines how many entries should be fetched at least by the binding if
+	 *   <code>operationMode</code> is set to <code>Auto</code>
 	 * @param {boolean} [mParameters.transitionMessagesOnly]
 	 *   Whether this list binding only requests transition messages from the back end. If messages
 	 *   for entities of this collection need to be updated, use
