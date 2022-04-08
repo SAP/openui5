@@ -2456,12 +2456,17 @@ function(
 
 	// this gets called when items up arrow key is pressed for the edit keyboard mode
 	ListBase.prototype.onItemArrowUpDown = function(oListItem, oEvent) {
-		var aItems = this.getItems(true),
-			iIndex = aItems.indexOf(oListItem) + (oEvent.type == "sapup" ? -1 : 1),
+		if (this.getKeyboardMode() !== ListKeyboardMode.Edit || oEvent.target instanceof HTMLTextAreaElement) {
+			return;
+		}
+
+		var aItems = this.getVisibleItems(true),
+			iDirection = (oEvent.type == "sapup" || oEvent.type == "sapupmodifiers" ? -1 : 1),
+			iIndex = aItems.indexOf(oListItem) + iDirection,
 			oItem = aItems[iIndex];
 
 		if (oItem && oItem.isGroupHeader()) {
-			oItem = aItems[iIndex + (oEvent.type == "sapup" ? -1 : 1)];
+			oItem = aItems[iIndex + iDirection];
 		}
 
 		if (!oItem) {
@@ -2473,6 +2478,7 @@ function(
 			$Element = $Tabbables.eq($Tabbables[iFocusPos] ? iFocusPos : -1);
 
 		$Element[0] ? $Element.trigger("focus") : oItem.focus();
+		$Element[0] && $Element[0].select && $Element[0].select();
 		oEvent.preventDefault();
 		oEvent.setMarked();
 	};
@@ -2503,6 +2509,13 @@ function(
 	};
 
 	ListBase.prototype.onItemUpDownModifiers = function(oItem, oEvent, iDirection) {
+		if (oEvent.srcControl != oItem) {
+			if (!oEvent.shiftKey && (oEvent.metaKey || oEvent.ctrlKey)) {
+				this.onItemArrowUpDown(oItem, oEvent);
+			}
+			return;
+		}
+
 		if (!this._mRangeSelection) {
 			return;
 		}

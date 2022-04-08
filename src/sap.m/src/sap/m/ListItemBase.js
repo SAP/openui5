@@ -1208,7 +1208,7 @@ function(
 	};
 
 	ListItemBase.prototype.onsapupmodifiers = function(oEvent) {
-		if (oEvent.isMarked() || oEvent.srcControl !== this) {
+		if (oEvent.isMarked()) {
 			return;
 		}
 
@@ -1216,7 +1216,7 @@ function(
 	};
 
 	ListItemBase.prototype.onsapdownmodifiers = function(oEvent) {
-		if (oEvent.isMarked() || oEvent.srcControl !== this) {
+		if (oEvent.isMarked()) {
 			return;
 		}
 
@@ -1293,7 +1293,8 @@ function(
 	ListItemBase.prototype.onsapup = function(oEvent) {
 		if (oEvent.isMarked() ||
 			oEvent.srcControl === this ||
-			this.getListProperty("keyboardMode") === ListKeyboardMode.Navigation) {
+			oEvent.target instanceof HTMLInputElement ||
+			oEvent.target instanceof HTMLTextAreaElement) {
 			return;
 		}
 

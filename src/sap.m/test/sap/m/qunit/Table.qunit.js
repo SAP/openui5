@@ -26,9 +26,14 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/message/Message",
 	"sap/ui/thirdparty/jquery",
-	"sap/m/IllustratedMessage"
+	"sap/m/IllustratedMessage",
+	"sap/m/ComboBox",
+	"sap/m/CheckBox",
+	"sap/m/RatingIndicator",
+	"sap/ui/core/Item",
+	"sap/m/TextArea"
 ], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, ListBase, Table, Column,
-	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage) {
+	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
 	"use strict";
 
 	var oTable;
@@ -87,6 +92,52 @@ sap.ui.define([
 			})
 		}));
 
+
+		return sut;
+	}
+
+	function createVarietyTable() {
+		var sut = new Table({
+			columns: [
+				new Column({header: new Label({text: "Last Name"})}),
+				new Column({header: new Label({text: "First Name"})}),
+				new Column({header: new Label({text: "Checked"})}),
+				new Column({header: new Label({text: "Web Site"})}),
+				new Column({header: new Label({text: "Rating"})}),
+				new Column({header: new Label({text: "Text Area"})})
+			],
+			keyboardMode: "Edit"
+		});
+		sut.bindItems({
+			path : "/modelData",
+			template : new ColumnListItem({
+				cells: [
+					new Input({value: "{lastName}"}),
+					new ComboBox({
+						value: "{name}",
+						items: {
+							path: '/modelData',
+							sorter: { path: 'name'},
+							template: new Item({key:"{lastName}", text:"{name}"})
+						}
+					}),
+					new CheckBox({selected:"{checked}"}),
+					new Link({text:"{linkText}", href:"{href}"}),
+					new RatingIndicator({value:"{rating}"}),
+					new TextArea({value:"Test1\nTest2"})
+				]
+			})
+		});
+
+		var aData = [
+			{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", rating: 4},
+			{lastName: "Friese", name: "Andy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", rating: 2},
+			{lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", rating: 3}
+		];
+
+		var oModel = new JSONModel();
+		oModel.setData({modelData: aData, editable: false});
+		sut.setModel(oModel);
 
 		return sut;
 	}
@@ -2904,5 +2955,256 @@ sap.ui.define([
 		$noData.focus();
 		var sLabelledBy = $noData.attr("aria-labelledby");
 		assert.equal(Core.byId(sLabelledBy).getText(), "Text 1", "Accessbility text is set correctly");
+	});
+
+	QUnit.module("Keyboard Navigation for Cells", {
+		beforeEach: function() {
+			this.vt = createVarietyTable();
+			this.vt.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.vt.destroy();
+		},
+		testNavigationEdit: function(assert, sKey, oSourceCell, oTargetCell, sSource, sTarget, bCtrlPressed) {
+			if (bCtrlPressed == undefined) {
+				bCtrlPressed = false;
+			}
+			oSourceCell.focus();
+			qutils.triggerKeydown(document.activeElement, sKey, false, false, bCtrlPressed);
+			assert.deepEqual(
+				jQuery(document.activeElement).closest(".sapMListTblCell").get(0),
+				oTargetCell.$().closest(".sapMListTblCell").get(0),
+				"Navigation from Cell " + sSource + " to expected cell " + sTarget + " in keyboardMode Edit"
+			);
+		},
+		testNavigationDefault: function (assert, sKey, oSourceCell, sSource, bCtrlPressed) {
+			if (bCtrlPressed == undefined) {
+				bCtrlPressed = false;
+			}
+			oSourceCell.focus();
+			qutils.triggerKeydown(document.activeElement, sKey, false, false, bCtrlPressed);
+			assert.deepEqual(
+				jQuery(document.activeElement).closest(".sapMListTblCell").get(0),
+				oSourceCell.$().closest(".sapMListTblCell").get(0),
+				"No navigation from cell " + sSource + " in keyboardMode Navigation"
+			);
+		},
+		testNavigation: function (assert, sKey, oSourceCell, oTargetCell, sSource, sTarget, bCtrlPressed) {
+			this.vt.setKeyboardMode("Edit");
+			this.testNavigationEdit(assert, sKey, oSourceCell, oTargetCell, sSource, sTarget, bCtrlPressed);
+			this.vt.setKeyboardMode("Navigation");
+			this.testNavigationDefault(assert, sKey, oSourceCell, sSource, bCtrlPressed);
+		}
+	});
+
+	QUnit.test("Navigate with CTRL + ARROW_UP", function(assert) {
+		var sKey = "ARROW_UP";
+		for (var iColumn = 0; iColumn < this.vt.getItems()[0].getCells().length - 1; iColumn++) {
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[0].getCells()[iColumn],
+				this.vt.getItems()[0].getCells()[iColumn],
+				0 + "," + iColumn,
+				0 + "," + iColumn,
+				true
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[1].getCells()[iColumn],
+				this.vt.getItems()[0].getCells()[iColumn],
+				1 + "," + iColumn,
+				0 + "," + iColumn,
+				true
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[2].getCells()[iColumn],
+				this.vt.getItems()[1].getCells()[iColumn],
+				2 + "," + iColumn,
+				1 + "," + iColumn,
+				true
+			);
+		}
+		// No Navigation when TextArea is focused
+		this.testNavigation(
+			assert,
+			sKey,
+			this.vt.getItems()[1].getCells()[5],
+			this.vt.getItems()[1].getCells()[5],
+			1 + "," + 5,
+			1 + "," + 5,
+			true
+		);
+	});
+
+	QUnit.test("Navigate with CTRL + ARROW_DOWN", function(assert) {
+		var sKey = "ARROW_DOWN";
+		for (var iColumn = 0; iColumn < this.vt.getItems()[0].getCells().length - 1; iColumn++) {
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[0].getCells()[iColumn],
+				this.vt.getItems()[1].getCells()[iColumn],
+				0 + "," + iColumn,
+				1 + "," + iColumn,
+				true
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[1].getCells()[iColumn],
+				this.vt.getItems()[2].getCells()[iColumn],
+				1 + "," + iColumn,
+				2 + "," + iColumn,
+				true
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[2].getCells()[iColumn],
+				this.vt.getItems()[2].getCells()[iColumn],
+				2 + "," + iColumn,
+				2 + "," + iColumn,
+				true
+			);
+		}
+		// No Navigation when TextArea
+		this.testNavigation(
+			assert,
+			sKey,
+			this.vt.getItems()[1].getCells()[5],
+			this.vt.getItems()[1].getCells()[5],
+			1 + "," + 5,
+			1 + "," + 5,
+			true
+		);
+	});
+
+	QUnit.test("Navigate with ARROW_UP", function(assert) {
+		var sKey = "ARROW_UP";
+		// Input, ComboBox, RatingIndicator, TextArea
+		var aNoNavColumns = [0, 1, 4, 5];
+		// CheckBox, Link
+		var aNavColumns = [2, 3];
+
+		aNoNavColumns.forEach(function (iColumn) {
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[0].getCells()[iColumn],
+				this.vt.getItems()[0].getCells()[iColumn],
+				0 + "," + iColumn,
+				0 + "," + iColumn
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[1].getCells()[iColumn],
+				this.vt.getItems()[1].getCells()[iColumn],
+				1 + "," + iColumn,
+				1 + "," + iColumn
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[2].getCells()[iColumn],
+				this.vt.getItems()[2].getCells()[iColumn],
+				2 + "," + iColumn,
+				2 + "," + iColumn
+			);
+		}, this);
+
+		aNavColumns.forEach(function (iColumn) {
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[0].getCells()[iColumn],
+				this.vt.getItems()[0].getCells()[iColumn],
+				0 + "," + iColumn,
+				0 + "," + iColumn
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[1].getCells()[iColumn],
+				this.vt.getItems()[0].getCells()[iColumn],
+				1 + "," + iColumn,
+				0 + "," + iColumn
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[2].getCells()[iColumn],
+				this.vt.getItems()[1].getCells()[iColumn],
+				2 + "," + iColumn,
+				1 + "," + iColumn
+			);
+		}, this);
+	});
+
+	QUnit.test("Navigate with ARROW_DOWN", function(assert) {
+		var sKey = "ARROW_DOWN";
+		// Input, ComboBox, RatingIndicator, TextArea
+		var aNoNavColumns = [0, 1, 4, 5];
+		// CheckBox, Link
+		var aNavColumns = [2, 3];
+
+		aNoNavColumns.forEach(function (iColumn) {
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[0].getCells()[iColumn],
+				this.vt.getItems()[0].getCells()[iColumn],
+				0 + "," + iColumn,
+				0 + "," + iColumn
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[1].getCells()[iColumn],
+				this.vt.getItems()[1].getCells()[iColumn],
+				1 + "," + iColumn,
+				1 + "," + iColumn
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[2].getCells()[iColumn],
+				this.vt.getItems()[2].getCells()[iColumn],
+				2 + "," + iColumn,
+				2 + "," + iColumn
+			);
+		}, this);
+
+		aNavColumns.forEach(function (iColumn) {
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[0].getCells()[iColumn],
+				this.vt.getItems()[1].getCells()[iColumn],
+				0 + "," + iColumn,
+				1 + "," + iColumn
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[1].getCells()[iColumn],
+				this.vt.getItems()[2].getCells()[iColumn],
+				1 + "," + iColumn,
+				2 + "," + iColumn
+			);
+			this.testNavigation(
+				assert,
+				sKey,
+				this.vt.getItems()[2].getCells()[iColumn],
+				this.vt.getItems()[2].getCells()[iColumn],
+				2 + "," + iColumn,
+				2 + "," + iColumn
+			);
+		}, this);
 	});
 });
