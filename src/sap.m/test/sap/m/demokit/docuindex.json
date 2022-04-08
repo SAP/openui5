@@ -28,45 +28,6 @@
 				"config": "test-resources/sap/m/demokit/tutorial/quickstart/demoapp.json"
 			},
 			{
-				"icon": "task",
-				"text": "Worklist",
-				"desc": "Best-practice starting point for a worklist app (standalone)",
-				"ref" : "test-resources/sap/m/demokit/worklist/webapp/test/mockServer.html",
-				"links": {
-					"View Documentation": "#/topic/a77f2d29299247f8a3e30226507b1765",
-					"Run Integration Tests": "test-resources/sap/m/demokit/worklist/webapp/test/integration/opaTests.qunit.html",
-					"Run Unit Tests": "test-resources/sap/m/demokit/worklist/webapp/test/unit/unitTests.qunit.html"
-				},
-				"category": "Template",
-				"config": "test-resources/sap/m/demokit/worklist/demoapp.json"
-			},
-			{
-				"icon": "screen-split-one",
-				"text": "Master-Detail",
-				"desc": "Best-practice starting point for a master-detail app (standalone)",
-				"ref": "test-resources/sap/m/demokit/master-detail/webapp/test/mockServer.html",
-				"links": {
-					"View Documentation": "#/topic/8ed9339f3a99418e82a02f0fb4b5d6b9",
-					"Run Integration Tests": "test-resources/sap/m/demokit/master-detail/webapp/test/integration/opaTests.qunit.html",
-					"Run Unit Tests": "test-resources/sap/m/demokit/master-detail/webapp/test/unit/unitTests.qunit.html"
-				},
-				"category": "Template",
-				"config": "test-resources/sap/m/demokit/master-detail/demoapp.json"
-			},
-			{
-				"icon": "begin",
-				"text": "Basic Template",
-				"desc": "Blank app as starting point for your app development",
-				"ref" : "test-resources/sap/m/demokit/basicTemplate/webapp/index.html",
-				"links": {
-					"View Documentation": "#/topic/7a4d93c0b0bb439b9d889ffc5b02eac9",
-					"Run Integration Tests": "test-resources/sap/m/demokit/basicTemplate/webapp/test/integration/opaTests.qunit.html",
-					"Run Unit Tests": "test-resources/sap/m/demokit/basicTemplate/webapp/test/unit/unitTests.qunit.html"
-				},
-				"category": "Template",
-				"config": "test-resources/sap/m/demokit/basicTemplate/demoapp.json"
-			},
-			{
 				"icon": "legend",
 				"text": "Bulletin Board",
 				"desc": "Worklist app created with the 'Testing' tutorial" ,

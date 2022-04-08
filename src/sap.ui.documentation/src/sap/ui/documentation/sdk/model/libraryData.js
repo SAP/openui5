@@ -10,6 +10,10 @@ sap.ui.define([
 ],function(library, Log, extend, isPlainObject) {
 	"use strict";
 
+	var IGNORED_GATEGORIES = {
+		Template: "Template"
+	};
+
 	// function to compute the app objects for a demo object
 	function createDemoAppData(oDemoAppMetadata, sLibUrl, sLibNamespace) {
 		// transform simple demo app link to a configuration object
@@ -89,6 +93,11 @@ sap.ui.define([
 			if (oDemo.links && oDemo.links.length > 0) {
 				for (var j = 0; j < oDemo.links.length; j++) {
 					var oDemoAppData = createDemoAppData(oDemo.links[j], oDocIndicies[aLibs[i]].libraryUrl, oDemo.text);
+
+					if (IGNORED_GATEGORIES[oDemoAppData.category]) {
+						continue;
+					}
+
 					oData.demoApps.push(oDemoAppData);
 
 					// push demo app into helper structure

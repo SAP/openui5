@@ -53,8 +53,7 @@ sap.ui.define([
 				return new FakeI18n({
 					"DEMO_APPS_CATEGORY_SHOWCASE": 1,
 					"DEMO_APPS_CATEGORY_TUTORIAL": 2,
-					"DEMO_APPS_CATEGORY_TEMPLATE": 3,
-					"DEMO_APPS_CATEGORY_MISC": 4
+					"DEMO_APPS_CATEGORY_MISC": 3
 				});
 			}
 		};
@@ -73,12 +72,8 @@ sap.ui.define([
 		categoryNameTestCase.call(this, assert, "Tutorial", 2);
 	});
 
-	QUnit.test("Should provide 'Template' category text", function (assert) {
-		categoryNameTestCase.call(this, assert, "Template", 3);
-	});
-
 	QUnit.test("Should provide 'Misc' category text", function (assert) {
-		categoryNameTestCase.call(this, assert, "Misc", 4);
+		categoryNameTestCase.call(this, assert, "Misc", 3);
 	});
 
 });
