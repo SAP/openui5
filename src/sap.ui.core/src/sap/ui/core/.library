@@ -232,6 +232,7 @@
         <exclude name="sap.ui.test.ControlTree" />
         <exclude name="sap.ui.test.TestEnv" />
         <exclude name="sap.ui.test.TestUtils" />
+        <exclude name="sap.ui.test.starter.runTest" />
         <exclude name="sap.ui.thirdparty." />
     </jscoverage>
     <!-- Thirdparty references -->
