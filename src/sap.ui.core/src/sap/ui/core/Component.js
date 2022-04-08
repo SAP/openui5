@@ -3697,7 +3697,7 @@ sap.ui.define([
 				oExtensionComponent = this.getExtensionComponent && this.getExtensionComponent();
 
 			if (oExtensionComponent && oExtensionComponent.getLocalId) {
-				sComponentIdSuffix = "#" + oExtensionComponent.getLocalId(this.getId());
+				sComponentIdSuffix = "#" + (oExtensionComponent.getLocalId(this.getId()) || this.getId());
 			}
 			this._mComputedCommands = merge({}, oOwnCommands, oCommandExtensions[sComponentName], oCommandExtensions[sComponentName + sComponentIdSuffix]);
 		}
