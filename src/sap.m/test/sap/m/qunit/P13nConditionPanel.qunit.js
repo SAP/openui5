@@ -814,6 +814,46 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
+		QUnit.test("testing remove all conditions when more than 20 filters are available", function (assert) {
+			// Arrange
+			var oP13nConditionPanel = new P13nConditionPanel(),
+			oCore = sap.ui.getCore(),
+			oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""},
+			oCondition1 = { "key": "i1", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "1234567890123456789012", "value2": ""},
+			oCondition2 = { "key": "i2", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "int16", "value1": 30000, "value2": ""},
+			oCondition3 = { "key": "i3", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "single", "value1": 1.5, "value2": ""},
+			oCondition4 = { "key": "i4", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "double", "value1": 15000.67, "value2": ""},
+			oCondition5 = { "key": "i5", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "decimal", "value1": "15000.67", "value2": ""},
+			oCondition6 = { "key": "i6", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "date", "value1": new Date(0), "value2": ""},
+			oCondition7 = { "key": "i7", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "time", "value1": new Date(0), "value2": ""},
+			oCondition8 = { "key": "i8", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "numc", "value1": "0000000011", "value2": ""},
+			oCondition9 = { "key": "i9", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "boolean", "value1": true, "value2": ""},
+			oCondition10 = { "key": "i10", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "odatabool", "value1": true, "value2": ""},
+			oCondition11 = { "key": "i11", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "datetime", "value1": new Date(0), "value2": ""},
+			oCondition12 = { "key": "i12", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "datetime", "value1": new Date(0), "value2": ""},
+			oCondition13 = { "key": "i13", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "datetime", "value1": new Date(0), "value2": ""},
+			oCondition14 = { "key": "i14", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "datetime", "value1": new Date(0), "value2": ""},
+			oCondition15 = { "key": "i15", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "datetime", "value1": new Date(0), "value2": ""},
+			oCondition16 = { "key": "i16", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "datetime", "value1": new Date(0), "value2": ""};
+
+			oP13nConditionPanel.setConditions([oCondition0, oCondition1, oCondition2, oCondition3, oCondition4, oCondition5, oCondition6, oCondition7, oCondition8, oCondition9,
+				oCondition10, oCondition11, oCondition12, oCondition13, oCondition14, oCondition15, oCondition16]);
+
+			oP13nConditionPanel.placeAt("content");
+			oCore.applyChanges();
+
+			// Assert
+			assert.strictEqual(oP13nConditionPanel.getConditions().length, 17, "Conditions are all set");
+
+			// Act
+			oP13nConditionPanel._oRemoveAllButton.firePress();
+
+			// Assert
+			assert.strictEqual(oP13nConditionPanel.getConditions().length, 0, "Conditions are all removed");
+
+		});
+
+
 		QUnit.module("Date Format Options BCP: 0020751294 0000389830 2019", {
 			beforeEach: function () {
 				this.oCP = new P13nConditionPanel();
@@ -885,4 +925,6 @@ sap.ui.define([
 		});
 
 	}());
+
+
 });
