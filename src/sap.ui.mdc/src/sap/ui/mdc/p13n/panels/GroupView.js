@@ -230,6 +230,7 @@ sap.ui.define([
 			return new CustomListItem({
 				selected: "{" + this.P13N_MODEL + ">visible}",
 				tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+				accDescription: "{" + this.P13N_MODEL + ">label}",
 				content: aInnerListItemContent
 			});
 
