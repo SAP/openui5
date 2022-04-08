@@ -11,8 +11,8 @@
 		padding-right: 0;
 	}
 
-	.sapMNLICloseBtn {
-		margin-left: 0.5rem
+	.sapMNLICloseBtn:not(:empty) {
+		margin-left: 0.5rem;
 	}
 }
 
@@ -37,7 +37,7 @@ html.sap-desktop {
 // Priority icons
 
 .sapMNLIBPriority {
-	padding-right: 0.5rem;
+	padding-right: 0.625rem;
 
 	.sapUiIcon {
 		font-size: 1rem;
@@ -69,12 +69,12 @@ html.sap-desktop {
 	}
 }
 
-.sap-phone {
-	.sapMNLIBPriority {
-		padding-right: 0.25rem;
-	}
+.sapMNLIBHiddenButton {
+	display: none;
+}
 
-	.sapMNLIBHiddenButton {
-		display: none;
+.sapUiSizeCompact {
+	.sapMNLIBPriority {
+		padding-right: 0.5rem;
 	}
 }

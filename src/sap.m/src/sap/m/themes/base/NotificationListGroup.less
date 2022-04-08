@@ -15,40 +15,38 @@
 		border-bottom: none;
 	}
 
+	&.sapMNLGroupCollapsed .sapMNLGroupChildren {
+		display: none;
+	}
+
 	.sapMNLGroupHeader {
 		min-height: 2.75rem;
 		background: @_sap_m_NotificationListGroup_Background;
 		border-bottom: 0.0625rem solid @sapUiListGroupHeaderBorderColor;
 		box-sizing: border-box;
-		padding: 0.75rem 0.5rem 0 0.75rem;
+		padding: 0.75rem 0.5rem 0 1rem;
 		display: flex;
-		align-items: center;
-	}
+		align-items: flex-start;
 
-	.sapMNLGroupTitle {
-		color: @_sap_m_NotificationListGroup_HeaderColor;
-		font-size: @sapMFontHeader6Size;
-		font-family: @sapUiFontHeaderFamily;
-		font-weight: @sapUiFontHeaderWeight;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		white-space: nowrap;
-	}
+		.sapMNLIBPriority {
+			padding-top: 0.75rem;
+		}
 
-	.sapMNLGroupHeaderSpacer {
-		flex: 1;
+		.sapMNLGroupTitle {
+			padding: 0.75rem 0;
+			color: @_sap_m_NotificationListGroup_HeaderColor;
+			font-size: @sapMFontHeader6Size;
+			font-family: @sapUiFontHeaderFamily;
+			font-weight: bold;
+			overflow-wrap: break-word;
+			flex: 1;
+			min-width: 0;
+		}
 	}
 
 	.sapMNLGroupChildren {
 		margin: 0;
 		padding: 0;
-	}
-
-	&.sapMNLGroupUnread {
-		.sapMNLGroupTitle,
-		.sapMNLGroupCount {
-			font-weight: bold;
-		}
 	}
 
 	.sapMNLGroupCollapseButton {
@@ -77,34 +75,22 @@
 	}
 }
 
-.sapMNLGroup.sapMNLGroupCollapsed .sapMNLGroupChildren {
+.sapMNLIActionsHidden {
 	display: none;
-}
-
-.sapMNLGroupCount {
-	margin-left: 0.25rem;
-	margin-right: 1rem;
-
-	color: @_sap_m_NotificationListGroup_HeaderColor;
-	font-size: @sapMFontHeader6Size;
-	font-family: @sapUiFontHeaderFamily;
-}
-
-.sap-phone {
-	.sapMNLGroup .sapMNLGroupHeader {
-		padding: 0 0.5rem
-	}
-
-	.sapMNLGroupCollapseButton {
-		margin-right: 0.75rem;
-	}
 }
 
 .sapUiSizeCompact {
 	.sapMNLGroup {
-		.sapMNLGroupCollapseButton {
-			margin-right: 1rem;
-			width: 2rem;
+		.sapMNLGroupHeader {
+			padding: 0.5rem 0.5rem 0 0.75rem;
+
+			.sapMNLIBPriority {
+				padding-top: 0.5rem;
+			}
+
+			.sapMNLGroupTitle {
+				padding: 0.5rem 0;
+			}
 		}
 	}
 }

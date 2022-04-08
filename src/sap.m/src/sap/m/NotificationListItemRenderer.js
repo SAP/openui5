@@ -102,7 +102,6 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 
 		// close button
 		if (control._shouldRenderCloseButton()) {
-
 			rm.openStart('div')
 				.class('sapMNLIItem')
 				.class('sapMNLICloseBtn')

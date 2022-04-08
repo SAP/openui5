@@ -103,30 +103,18 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			.openEnd();
 
 		rm.text(control.getTitle());
-		rm.close('div');
-
 		if (bShowItemsCounter) {
-			rm.openStart('div')
-				.class('sapMNLGroupCount')
-				.openEnd();
-
-			rm.text('(' + visibleItemsCount + ')');
-			rm.close('div');
+			rm.text(' (' + visibleItemsCount + ')');
 		}
-
-		// group header spacer
-		rm.openStart('div')
-			.class('sapMNLGroupHeaderSpacer')
-			.openEnd()
-			.close('div');
+		rm.close('div');
 
 		// actions
 		rm.openStart('div')
 			.class('sapMNLIItem')
 			.class('sapMNLIActions');
 
-		if (!control._shouldRenderOverflowToolbar() || (isCollapsed && !Device.system.phone)) {
-			rm.style('display', 'none');
+		if (!control._shouldRenderOverflowToolbar() || (isCollapsed && !control._isSmallSize())) {
+			rm.class("sapMNLIActionsHidden");
 		}
 
 		rm.openEnd();
