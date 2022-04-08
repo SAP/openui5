@@ -9908,6 +9908,65 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("valueState change is postponed when the picker is closing", function (assert) {
+
+			// system under test,
+			var oItem,
+				oSelect = new Select({
+					items: [
+						new Item({
+							text: "lorem ipsum foo"
+						}),
+						oItem = new Item({
+							text: "lorem ipsum bar"
+						})
+					]
+				}),
+				oPicker = oSelect.getPicker(),
+				oPickerCloseSpy = this.spy(oSelect.getPicker(), "fireAfterClose"),
+				fnDone = assert.async(),
+				oFinishSettingValueStateStub = this.stub(oSelect, "_finishSettingValueState", function() {
+					oFinishSettingValueStateStub.restore(); // avoid endless recursion
+					// assert
+					assert.ok(oPickerCloseSpy.calledOnce, "after close event is fired once");
+					assert.ok(true, "_finishSettingValueState is called after the picker closing animation is done");
+
+					// cleanup
+					oPickerCloseSpy.restore();
+					oSelect.destroy();
+					fnDone();
+				});
+
+			oSelect.attachEventOnce("change", function(oEvent) {
+				// act
+				// change value state on change / while closing picker
+				oSelect.setValueState(ValueState.Error);
+
+			}, this);
+
+			oPicker.attachEventOnce("afterOpen", function(oEvent) {
+				// act
+				// Close the Select's picker by mocking user click selection on a new item
+				oSelect.getList()._activateItem(oItem);
+
+			}, this);
+
+			oPicker.attachEventOnce("beforeClose", function(oEvent) {
+				// assert
+				assert.strictEqual(oFinishSettingValueStateStub.callCount, 0,
+					"_finishSettingValueState isn't called before the picker closing animation is finished.");
+			}, this);
+
+			// act
+			// Open the Select's picker
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// act
+			oSelect.open();
+			this.clock.tick(1000); // give some time for the picker to open
+		});
+
 		QUnit.module("Picker's header", {
 			beforeEach: function () {
 				fnToMobileMode(); // Enter mobile mode
