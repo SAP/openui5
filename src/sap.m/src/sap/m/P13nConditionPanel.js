@@ -825,17 +825,14 @@ sap.ui.define([
 			//icon: sap.ui.core.IconPool.getIconURI("decline"),
 			//tooltip: "Remove All",
 			visible: true,
-			press: function(oEvent) {
-
-				that._aConditionKeys.forEach(function(sKey, iIndex) {
-					if (iIndex >= 0) {
+			press: function() {
+				that._aConditionKeys.forEach(function(sKey) {
 						this.fireDataChange({
 							key: sKey,
-							index: iIndex,
+							index: 0,
 							operation: "remove",
 							newData: null
 						});
-					}
 				}, that);
 
 				this._iFirstConditionIndex = 0;
