@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/DynamicDateUtil",
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/Icon"
+	"sap/ui/core/Icon",
+	"sap/m/Label"
 ], function(
 	DynamicDateRange,
 	CustomDynamicDateOption,
@@ -16,7 +17,8 @@ sap.ui.define([
 	DynamicDateUtil,
 	DateRange,
 	DateFormat,
-	Icon
+	Icon,
+	Label
 ) {
 	"use strict";
 
@@ -919,6 +921,46 @@ sap.ui.define([
 
 		// assert
 		assert.ok(aValueHelpUITypes1[0].isDestroyed(), "the UI types are destroyed with the option");
+	});
+
+	QUnit.test("labels are redirected to the inner input", function (assert) {
+		// Prepare
+		var oDynamicDateRange = new DynamicDateRange(),
+			oLabel = new Label({
+				labelFor: oDynamicDateRange.getId(),
+				text: "Label text",
+				required: true
+			}),
+			oDynamicDateRangeInput;
+
+
+		oLabel.placeAt("qunit-fixture");
+		oDynamicDateRange.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oDynamicDateRangeInput = oDynamicDateRange.getDomRef().querySelector("input");
+
+		// Assert
+		assert.strictEqual(
+			oLabel.getDomRef().getAttribute("for"),
+			oDynamicDateRangeInput.getAttribute("id"),
+			"External label is referenced to the innter input field");
+
+		assert.strictEqual(
+			oDynamicDateRangeInput.getAttribute("aria-labelledby"),
+			oLabel.getId(),
+			"Internal input has reference to the external label"
+		);
+
+		assert.strictEqual(
+			oDynamicDateRangeInput.getAttribute("aria-required"),
+			"true",
+			"Internal input has aria-required attribute set"
+		);
+
+		// Cleanup
+		oLabel.destroy();
+		oDynamicDateRange.destroy();
 	});
 
 });

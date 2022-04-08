@@ -1223,10 +1223,30 @@ sap.ui.define([
 			return oNewValue ? oNewValue : oValue;
 		};
 
+		/**
+		 * Returns the DOMNode Id to be used for the "labelFor" attribute of the label.
+		 *
+		 * By default, this is the Id of the control itself.
+		 *
+		 * @return {string} Id to be used for the <code>labelFor</code>
+		 * @public
+		 */
+		DynamicDateRange.prototype.getIdForLabel = function () {
+			// The DynamicDateRangeInput inherits from the Input
+			return this.getAggregation("_input").getIdForLabel();
+		};
+
 		var DynamicDateRangeInputRenderer = Renderer.extend(InputRenderer);
+
 		DynamicDateRangeInputRenderer.apiVersion = 2;
 
 		DynamicDateRangeInputRenderer.writeInnerAttributes = function(oRm, oControl) {
+			var oDynamicDateRange = oControl._getControlOrigin ? oControl._getControlOrigin() : null,
+				mAccAttributes = this.getAccessibilityState(oControl);
+
+			if (oDynamicDateRange && oDynamicDateRange.isA("sap.m.DynamicDateRange")) {
+				oRm.accessibilityState(oDynamicDateRange, mAccAttributes);
+			}
 			oRm.attr("type", "text");
 		};
 
