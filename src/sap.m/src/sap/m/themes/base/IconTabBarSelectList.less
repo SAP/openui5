@@ -6,6 +6,7 @@
 @_sap_m_IconTabBar_SelectListItem_PaddingLeft: 0.5rem;
 @_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional: 0;
 @_sap_m_IconTabBar_ListBorderRadius: 0px;
+@_sap_m_IconTabBar_List_Focus_Offset: 1px;
 
 .sapMITBSelectList {
 	margin: 0;
@@ -182,10 +183,10 @@
 	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	position: absolute;
 	content: " ";
-	top: 1px;
-	right: 1px;
-	bottom: 1px;
-	left: 1px;
+	top: @_sap_m_IconTabBar_List_Focus_Offset;
+	right:  @_sap_m_IconTabBar_List_Focus_Offset;
+	bottom:  @_sap_m_IconTabBar_List_Focus_Offset;
+	left:  @_sap_m_IconTabBar_List_Focus_Offset;
 	z-index: 2;
 	border-radius: @_sap_m_IconTabBar_ListBorderRadius;
 	pointer-events: none;
