@@ -2,12 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
@@ -19,12 +20,13 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(
 	sinon,
-	Storage,
+	Version,
 	Change,
 	Layer,
 	Variant,
+	Utils,
+	Storage,
 	StorageUtils,
-	FlUtils,
 	StaticFileConnector,
 	LrepConnector,
 	JsObjectConnector,
@@ -33,7 +35,7 @@ sap.ui.define([
 	ObjectPathConnector,
 	ObjectStorageUtils,
 	merge,
-	oCore
+	Core
 ) {
 	"use strict";
 
@@ -73,7 +75,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given 2 connectors provide their own cacheKey values", function (assert) {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},
 				{connector: "PersonalizationConnector", layers: [Layer.USER]}
 			]);
@@ -82,12 +84,12 @@ sap.ui.define([
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: "abc123"}));
-				oCore.getConfiguration().getFlexibilityServices.restore();
+				Core.getConfiguration().getFlexibilityServices.restore();
 			});
 		});
 
 		QUnit.test("Given 2 connectors provide url and path properties", function (assert) {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "ObjectPathConnector", path: "path/to/data"},
 				{connector: "PersonalizationConnector", url: "url/to/something"}
 			]);
@@ -97,7 +99,7 @@ sap.ui.define([
 			return Storage.loadFlexData({reference: "app.id"}).then(function () {
 				assert.equal(oObjectStorageStub.lastCall.args[0].path, "path/to/data", "the path parameter was passed");
 				assert.equal(oPersoStub.lastCall.args[0].url, "url/to/something", "the url parameter was passed");
-				oCore.getConfiguration().getFlexibilityServices.restore();
+				Core.getConfiguration().getFlexibilityServices.restore();
 			});
 		});
 
@@ -621,7 +623,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of all layers and a draft layer is set", function (assert) {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector", layers: []},
 				{connector: "LrepConnector", layers: ["ALL"]}
 			]);
@@ -632,16 +634,16 @@ sap.ui.define([
 
 			return Storage.loadFlexData({
 				reference: "app.id",
-				version: sap.ui.fl.Versions.Draft
+				version: Version.Number.Draft
 			}).then(function () {
 				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].version, undefined, "the StaticFileConnector has the version property NOT set");
 				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].version, undefined, "the connector NOT in charge for draft layer has the version property NOT set");
-				assert.equal(oLrepConnectorStub.getCall(0).args[0].version, sap.ui.fl.Versions.Draft.toString(), "the connector for draft layer has the version property set");
+				assert.equal(oLrepConnectorStub.getCall(0).args[0].version, Version.Number.Draft, "the connector for draft layer has the version property set");
 			});
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of a draft layer provided by a url parameter", function (assert) {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},
 				{connector: "JsObjectConnector", layers: [Layer.USER]}
 			]);
@@ -650,19 +652,19 @@ sap.ui.define([
 			var oKeyUserConnectorStub = sandbox.stub(KeyUserConnector, "loadFlexData").resolves();
 			var oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
 
-			sandbox.stub(FlUtils, "getUrlParameter").returns(sap.ui.fl.Versions.Draft.toString());
+			sandbox.stub(Utils, "getUrlParameter").returns(Version.Number.Draft);
 
 			return Storage.loadFlexData({
 				reference: "app.id"
 			}).then(function () {
 				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].version, undefined, "the StaticFileConnector has the version property NOT set");
-				assert.equal(oKeyUserConnectorStub.getCall(0).args[0].version, sap.ui.fl.Versions.Draft.toString(), "the connector for draft layer has the version number set");
+				assert.equal(oKeyUserConnectorStub.getCall(0).args[0].version, Version.Number.Draft, "the connector for draft layer has the version number set");
 				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].version, undefined, "the connector NOT in charge for draft layer has the version property NOT set");
 			});
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of all layers and a draft layer provided by a url parameter", function (assert) {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector", layers: []},
 				{connector: "LrepConnector", layers: ["ALL"]}
 			]);
@@ -671,19 +673,19 @@ sap.ui.define([
 			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves();
 			var oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
 
-			sandbox.stub(FlUtils, "getUrlParameter").returns(sap.ui.fl.Versions.Draft.toString());
+			sandbox.stub(Utils, "getUrlParameter").returns(Version.Number.Draft);
 
 			return Storage.loadFlexData({
 				reference: "app.id"
 			}).then(function () {
 				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].version, undefined, "the StaticFileConnector has the version property NOT set");
 				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].version, undefined, "the connector NOT in charge for draft layer has the version property NOT set");
-				assert.equal(oLrepConnectorStub.getCall(0).args[0].version, sap.ui.fl.Versions.Draft.toString(), "the connector for draft layer has the version property set");
+				assert.equal(oLrepConnectorStub.getCall(0).args[0].version, Version.Number.Draft, "the connector for draft layer has the version property set");
 			});
 		});
 
 		QUnit.test("Given one connector are provided version parameter are not set in url parameter", function (assert) {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]}
 			]);
 
@@ -744,12 +746,12 @@ sap.ui.define([
 
 	QUnit.module("Storage with a custom & broken connector", {
 		beforeEach: function() {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([{
 				loadConnector: "my/connectors/BrokenInitialConnector",
 				layers: []}
 			]);
 			// enforce the bundle loading by simulating the no-preload scenario
-			sandbox.stub(oCore.getConfiguration(), "getComponentPreload").returns("off");
+			sandbox.stub(Core.getConfiguration(), "getComponentPreload").returns("off");
 		},
 		afterEach: function() {
 			sandbox.restore();

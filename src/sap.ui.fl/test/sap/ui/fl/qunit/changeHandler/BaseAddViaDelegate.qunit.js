@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/BaseAddViaDelegate",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Utils",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/layout/form/Form",
 	"sap/ui/thirdparty/sinon-4",
@@ -12,6 +13,7 @@ sap.ui.define([
 	BaseAddViaDelegate,
 	DelegateMediatorAPI,
 	Change,
+	Utils,
 	JsControlTreeModifier,
 	Form,
 	sinon,
@@ -45,7 +47,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.changeHandler.BaseAddViaDelegate - Condensing", {
 		beforeEach: function () {
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			sandbox.stub(DelegateMediatorAPI, "getDelegateForControl").callsFake(function () {
 				return Promise.resolve({instance: this.oDelegate});
 			}.bind(this));

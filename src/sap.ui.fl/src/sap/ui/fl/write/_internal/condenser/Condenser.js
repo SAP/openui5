@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Core",
+	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/write/_internal/condenser/classifications/LastOneWins",
 	"sap/ui/fl/write/_internal/condenser/classifications/Reverse",
@@ -22,6 +23,7 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	Core,
+	CondenserClassification,
 	ChangesUtils,
 	LastOneWins,
 	Reverse,
@@ -65,8 +67,8 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the 'move' subtype has been added to the data structure before 'create' subtype
 	 */
 	function isCreateAfterMoveSubtype(mSubtypes, oCondenserInfo) {
-		var aMoveSubType = mSubtypes[sap.ui.fl.condenser.Classification.Move];
-		return oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Create
+		var aMoveSubType = mSubtypes[CondenserClassification.Move];
+		return oCondenserInfo.classification === CondenserClassification.Create
 			&& aMoveSubType
 			&& aMoveSubType[aMoveSubType.length - 1].targetContainer === oCondenserInfo.targetContainer;
 	}
@@ -79,7 +81,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the 'destroy' subtype has been added to the data structure before 'move' subtype
 	 */
 	function isMoveAfterDestroySubtype(mSubtypes, oCondenserInfo) {
-		return oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Move && mSubtypes[sap.ui.fl.condenser.Classification.Destroy];
+		return oCondenserInfo.classification === CondenserClassification.Move && mSubtypes[CondenserClassification.Destroy];
 	}
 
 	/**
@@ -90,7 +92,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the 'move' subtype has been added to the data structure before 'create' subtype
 	 */
 	function isCreateAfterDestroySubtype(mClassifications, oCondenserInfo) {
-		return oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Create && mClassifications[sap.ui.fl.condenser.Classification.Destroy];
+		return oCondenserInfo.classification === CondenserClassification.Create && mClassifications[CondenserClassification.Destroy];
 	}
 
 	/**
@@ -122,17 +124,17 @@ sap.ui.define([
 			isCreateAfterMoveSubtype(mClassifications, oCondenserInfo)
 			|| isCreateAfterDestroySubtype(mClassifications, oCondenserInfo)
 		) {
-			if (mClassifications[sap.ui.fl.condenser.Classification.Move]) {
-				mClassifications[sap.ui.fl.condenser.Classification.Move].forEach(function(oCondenserInfo) {
+			if (mClassifications[CondenserClassification.Move]) {
+				mClassifications[CondenserClassification.Move].forEach(function(oCondenserInfo) {
 					oCondenserInfo.change.condenserState = "delete";
 				});
-				delete mClassifications[sap.ui.fl.condenser.Classification.Move];
+				delete mClassifications[CondenserClassification.Move];
 			}
-			if (mClassifications[sap.ui.fl.condenser.Classification.Destroy]) {
-				mClassifications[sap.ui.fl.condenser.Classification.Destroy].forEach(function(oCondenserInfo) {
+			if (mClassifications[CondenserClassification.Destroy]) {
+				mClassifications[CondenserClassification.Destroy].forEach(function(oCondenserInfo) {
 					oCondenserInfo.change.condenserState = "delete";
 				});
-				delete mClassifications[sap.ui.fl.condenser.Classification.Destroy];
+				delete mClassifications[CondenserClassification.Destroy];
 			}
 		}
 		return UIReconstruction.addChange(mUIReconstructions, oCondenserInfo);

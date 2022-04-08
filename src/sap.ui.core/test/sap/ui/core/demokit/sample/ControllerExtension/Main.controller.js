@@ -161,7 +161,7 @@ sap.ui.define([
 				changeType: "codeExt",
 				content: {
 					codeRef: sProjectId + "my.code.ref.doesnt.matter.in.simulation.js",
-					code: sap.ui.fl.Utils.stringToAscii(sCode)
+					code: FlexUtils.stringToAscii(sCode)
 				},
 				selector: {
 					controllerName : "sap.ui.core.sample.ControllerExtension.Main"

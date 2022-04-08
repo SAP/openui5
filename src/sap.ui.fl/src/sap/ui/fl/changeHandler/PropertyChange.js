@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/base/Log"
 ], function(
 	jQuery,
 	FlexUtils,
+	CondenserClassification,
 	Log
 ) {
 	"use strict";
@@ -137,7 +139,7 @@ sap.ui.define([
 	PropertyChange.getCondenserInfo = function(oChange) {
 		return {
 			affectedControl: oChange.getSelector(),
-			classification: sap.ui.fl.condenser.Classification.LastOneWins,
+			classification: CondenserClassification.LastOneWins,
 			uniqueKey: oChange.getContent().property
 		};
 	};

@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/base/Log"
 ], function(
 	ChangeHandlerStorage,
+	Version,
 	Utils,
 	Layer,
 	Change,
@@ -474,7 +476,7 @@ sap.ui.define([
 			var aVersions = oVersionModel.getProperty("/versions");
 			if (aVersions && aVersions.length > 0) {
 				var oLatestVersion = aVersions[0];
-				aDraftFilenames = oLatestVersion.version === sap.ui.fl.Versions.Draft ? oLatestVersion.filenames : undefined;
+				aDraftFilenames = oLatestVersion.version === Version.Number.Draft ? oLatestVersion.filenames : undefined;
 			}
 		}
 		return this._removeOtherLayerChanges(oAppComponent, sLayer, bRemoveOtherLayerChanges)

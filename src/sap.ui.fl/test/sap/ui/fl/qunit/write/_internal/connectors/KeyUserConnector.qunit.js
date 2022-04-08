@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/Utils"
 ], function(
 	sinon,
+	Version,
 	Layer,
 	KeyUserConnector,
 	InitialConnector,
@@ -476,14 +478,14 @@ sap.ui.define([
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN
 			}, mPropertyBag);
 			var aReturnedVersions = [{
-				versionNumber: sap.ui.fl.Versions.Draft
+				versionNumber: Version.Number.Draft
 			}, {
 				versionNumber: 1
 			}];
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: aReturnedVersions});
 			return KeyUserConnector.versions.load(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, [{
-					version: sap.ui.fl.Versions.Draft
+					version: Version.Number.Draft
 				}, {
 					version: "1"
 				}], "the versions list is returned correctly");
@@ -500,7 +502,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("activate draft", function (assert) {
-			var sActivateVersion = sap.ui.fl.Versions.Draft;
+			var sActivateVersion = Version.Number.Draft;
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "com.sap.test.app",
@@ -564,7 +566,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("reactivate original app", function (assert) {
-			var sActivateVersion = sap.ui.fl.Versions.Original;
+			var sActivateVersion = Version.Number.Original;
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "com.sap.test.app",

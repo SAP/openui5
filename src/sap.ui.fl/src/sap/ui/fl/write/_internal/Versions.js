@@ -6,15 +6,17 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/api/Version",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode"
 ], function(
 	Settings,
 	ChangePersistenceFactory,
 	Storage,
-	JSONModel,
 	Utils,
+	Version,
+	JSONModel,
 	BindingMode
 ) {
 	"use strict";
@@ -28,11 +30,11 @@ sap.ui.define([
 	function createModel(mPropertyBag, bVersioningEnabled, aVersions) {
 		var bBackendDraft = _doesDraftExistInVersions(aVersions);
 
-		var sActiveVersion = sap.ui.fl.Versions.Original;
+		var sActiveVersion = Version.Number.Original;
 		aVersions.forEach(function (oVersion) {
-			if (oVersion.version === sap.ui.fl.Versions.Draft) {
+			if (oVersion.version === Version.Number.Draft) {
 				oVersion.type = "draft";
-			} else if (sActiveVersion === sap.ui.fl.Versions.Original) {
+			} else if (sActiveVersion === Version.Number.Original) {
 				// no active version found yet; the first non-draft version is always the active version
 				oVersion.type = "active";
 				sActiveVersion = oVersion.version;
@@ -44,14 +46,14 @@ sap.ui.define([
 		return Utils.getUShellService("URLParsing")
 			.then(function (oURLParsingService) {
 				var sPersistedBasisForDisplayedVersion = Utils.getParameter(
-					sap.ui.fl.Versions.UrlParameter,
+					Version.Number.UrlParameter,
 					oURLParsingService
 				);
 				if (!sPersistedBasisForDisplayedVersion) {
 					if (aVersions.length > 0) {
 						sPersistedBasisForDisplayedVersion = aVersions[0].version;
 					} else {
-						sPersistedBasisForDisplayedVersion = sap.ui.fl.Versions.Original;
+						sPersistedBasisForDisplayedVersion = Version.Number.Original;
 					}
 				}
 
@@ -85,12 +87,12 @@ sap.ui.define([
 					var bDraftAvailable = bVersioningEnabled && (bDirtyChanges || bBackendDraft);
 					oModel.setProperty("/draftAvailable", bDraftAvailable);
 
-					var sDisplayedVersion = bDirtyChanges ? sap.ui.fl.Versions.Draft : oModel.getProperty("/persistedVersion");
+					var sDisplayedVersion = bDirtyChanges ? Version.Number.Draft : oModel.getProperty("/persistedVersion");
 					oModel.setProperty("/displayedVersion", sDisplayedVersion);
 
 					// add draft
 					if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
-						aVersions.splice(0, 0, {version: sap.ui.fl.Versions.Draft, type: "draft", filenames: []});
+						aVersions.splice(0, 0, {version: Version.Number.Draft, type: "draft", filenames: []});
 					}
 
 					// remove draft
@@ -146,7 +148,7 @@ sap.ui.define([
 
 	function _doesDraftExistInVersions(aVersions) {
 		return aVersions.some(function(oVersion) {
-			return oVersion.version === sap.ui.fl.Versions.Draft;
+			return oVersion.version === Version.Number.Draft;
 		});
 	}
 

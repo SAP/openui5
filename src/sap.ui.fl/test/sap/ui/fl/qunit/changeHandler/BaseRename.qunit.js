@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/BaseRename",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Utils",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/m/Button",
@@ -16,6 +17,7 @@ sap.ui.define([
 	BaseRename,
 	Base,
 	Change,
+	Utils,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Button,
@@ -39,7 +41,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oButton = new Button(oComponent.createId("myButton"));
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 			this.oBaseHandler = Base;
 

@@ -4,14 +4,16 @@
 
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/initial/_internal/StorageResultMerger",
-	"sap/ui/fl/initial/_internal/storageResultDisassemble"
+	"sap/ui/fl/initial/_internal/storageResultDisassemble",
+	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/Utils"
 ], function(
 	StorageUtils,
-	FlUtils,
 	StorageResultMerger,
-	storageResultDisassemble
+	storageResultDisassemble,
+	Version,
+	Utils
 ) {
 	"use strict";
 
@@ -27,7 +29,7 @@ sap.ui.define([
 			return oConnectorSpecificPropertyBag;
 		}
 
-		var sVersion = FlUtils.getUrlParameter(sap.ui.fl.Versions.UrlParameter);
+		var sVersion = Utils.getUrlParameter(Version.UrlParameter);
 		if (sVersion === null) {
 			// url parameter is not present --> remove an existing version entry copied from the original mPropertyBag
 			delete oConnectorSpecificPropertyBag.version;

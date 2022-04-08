@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Change",
@@ -40,6 +41,7 @@ sap.ui.define([
 	Settings,
 	Condenser,
 	WriteStorage,
+	Version,
 	Cache,
 	ChangePersistence,
 	Change,
@@ -2160,7 +2162,7 @@ sap.ui.define([
 					originalLanguage: "DE"
 				};
 				var aDirtyChanges = [this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance), this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance)];
-				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aDirtyChanges, sap.ui.fl.Versions.Draft, aFilenames);
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aDirtyChanges, Version.Number.Draft, aFilenames);
 			}.bind(this))
 			.then(function() {
 				assert.equal(this.oWriteStub.callCount, 0);
@@ -2203,7 +2205,7 @@ sap.ui.define([
 					originalLanguage: "DE"
 				};
 				var aDirtyChanges = [this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance), this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance)];
-				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aDirtyChanges, sap.ui.fl.Versions.Draft, aFilenames);
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aDirtyChanges, Version.Number.Draft, aFilenames);
 			}.bind(this))
 			.then(function() {
 				assert.equal(this.oWriteStub.callCount, 0);
@@ -2246,7 +2248,7 @@ sap.ui.define([
 					originalLanguage: "DE"
 				};
 				var aDirtyChanges = [this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance), this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance)];
-				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aDirtyChanges, sap.ui.fl.Versions.Draft, aFilenames);
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aDirtyChanges, Version.Number.Draft, aFilenames);
 			}.bind(this))
 			.then(function() {
 				assert.equal(this.oWriteStub.callCount, 0);
@@ -2273,7 +2275,7 @@ sap.ui.define([
 			};
 			var aChanges = [this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance)];
 			var aFilenames = ["filename", "not", "in", "draft"];
-			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aChanges, sap.ui.fl.Versions.Draft, aFilenames).then(function() {
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aChanges, Version.Number.Draft, aFilenames).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1, "the write function was called");
 				assert.equal(this.oStorageCondenseStub.callCount, 0, "the condense route of the storage is not called");
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
@@ -2572,9 +2574,9 @@ sap.ui.define([
 
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, undefined, sap.ui.fl.Versions.Draft).then(function() {
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, undefined, Version.Number.Draft).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1, "the Connector was called once");
-				assert.equal(this.oWriteStub.getCall(0).args[0].parentVersion, sap.ui.fl.Versions.Draft, "the draft version number was passed");
+				assert.equal(this.oWriteStub.getCall(0).args[0].parentVersion, Version.Number.Draft, "the draft version number was passed");
 			}.bind(this));
 		});
 
@@ -3077,12 +3079,12 @@ sap.ui.define([
 
 			var aDirtyChanges = [this.oChangePersistence._aDirtyChanges[0], this.oChangePersistence._aDirtyChanges[2]];
 
-			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges, undefined, sap.ui.fl.Versions.Original).then(function() {
+			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges, undefined, Version.Number.Original).then(function() {
 				assert.equal(this.oWriteStub.callCount, 2, "the create method of the connector is called for each selected change");
 				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0], oChangeContent1, "the first change was processed first");
-				assert.equal(this.oWriteStub.getCall(0).args[0].parentVersion, sap.ui.fl.Versions.Original, "the (original) version parameter was passed");
+				assert.equal(this.oWriteStub.getCall(0).args[0].parentVersion, Version.Number.Original, "the (original) version parameter was passed");
 				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0], oChangeContent3, "the second change was processed afterwards");
-				assert.equal(this.oWriteStub.getCall(1).args[0].parentVersion, sap.ui.fl.Versions.Draft, "the version parameter is set to draft for further requests");
+				assert.equal(this.oWriteStub.getCall(1).args[0].parentVersion, Version.Number.Draft, "the version parameter is set to draft for further requests");
 			}.bind(this));
 		});
 	});

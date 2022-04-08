@@ -6,12 +6,16 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Scenario",
+	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/core/library", // library dependency
 	"sap/m/library" // library dependency
 ], function(
 	RegistrationDelegator,
 	Utils,
-	Layer
+	Layer,
+	Scenario,
+	CondenserClassification
 ) {
 	"use strict";
 
@@ -168,64 +172,16 @@ sap.ui.define([
 	});
 
 	/**
-	 * Available scenarios
-	 *
-	 * @enum {string}
-	 */
-	thisLib.Scenario = {
-		AppVariant: "APP_VARIANT",
-		VersionedAppVariant: "VERSIONED_APP_VARIANT",
-		AdaptationProject: "ADAPTATION_PROJECT",
-		FioriElementsFromScratch: "FE_FROM_SCRATCH",
-		UiAdaptation: "UI_ADAPTATION"
-	};
-
-	/**
-	 * Specific Versions of key user adaptations
-	 *
-	 * @enum {string}
-	 */
-	thisLib.Versions = {
-		Original: "-1",
-		Draft: "0",
-		UrlParameter: "sap-ui-fl-version"
-	};
-
-	/**
 	 * Available classification types for the condenser
 	 *
+	 * @deprecated as of version 1.102. Use the {@link sap.ui.fl.changeHandler.condenser.Classification} instead.
 	 * @enum {string}
 	 */
 	thisLib.condenser = {
-		Classification: {
-			/**
-			 * All changes but the last one will be removed.
-			 * Example: rename
-			 */
-			LastOneWins: "lastOneWins",
-
-			/**
-			 * Two change types reverse each other like a toggle. Only one or no change will be left.
-			 * Example: hide/unhide
-			 */
-			Reverse: "reverse",
-
-			/**
-			 * Moving a control inside a container. For a control there will only be one move change left.
-			 */
-			Move: "move",
-
-			/**
-			 * Creating a new control (not only changing the visibility) that was previously not in the container.
-			 */
-			Create: "create",
-
-			/**
-			 * Destroying a control or removing it from the container.
-			 */
-			Destroy: "destroy"
-		}
+		Classification: CondenserClassification
 	};
+
+	thisLib.Scenario = Scenario;
 
 	RegistrationDelegator.registerAll();
 

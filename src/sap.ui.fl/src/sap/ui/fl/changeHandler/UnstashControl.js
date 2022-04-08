@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/ui/fl/changeHandler/condenser/Classification"
+], function(
+	CondenserClassification
+) {
 	"use strict";
 
 	/**
@@ -94,7 +98,7 @@ sap.ui.define([], function() {
 	UnstashControl.getCondenserInfo = function(oChange) {
 		return {
 			affectedControl: oChange.getSelector(),
-			classification: sap.ui.fl.condenser.Classification.Reverse,
+			classification: CondenserClassification.Reverse,
 			uniqueKey: "stashed"
 		};
 	};

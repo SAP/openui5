@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/library",
+	"sap/ui/fl/Scenario",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/m/Button",
@@ -23,7 +23,7 @@ sap.ui.define([
 	Change,
 	Layer,
 	Variant,
-	library,
+	Scenario,
 	VerticalLayout,
 	HorizontalLayout,
 	Button,
@@ -38,8 +38,6 @@ sap.ui.define([
 	jQuery
 ) {
 	"use strict";
-
-	var Scenario = library.Scenario;
 
 	var sandbox = sinon.createSandbox();
 
@@ -827,17 +825,14 @@ sap.ui.define([
 
 		QUnit.test("when complex scenario with exception with chained FakePromises", function(assert) {
 			var sInitialErrorValue1 = "Error1";
-			var fnScenario = function() {
-				return new Utils.FakePromise(undefined, new Error(sInitialErrorValue1))
-					.catch(function(oErrorValue) {
-						var aWrongType = "should be an array";
-						assert.strictEqual(oErrorValue.message, sInitialErrorValue1, "then the correct error parameter is passed to the 'catch' method");
-						// provoke exception
-						aWrongType.some(function() {});
-					});
-			};
 
-			fnScenario()
+			new Utils.FakePromise(undefined, new Error(sInitialErrorValue1))
+			.catch(function(oErrorValue) {
+				var aWrongType = "should be an array";
+				assert.strictEqual(oErrorValue.message, sInitialErrorValue1, "then the correct error parameter is passed to the 'catch' method");
+				// provoke exception
+				aWrongType.some(function() {});
+			})
 			.then(function() {
 				assert.notOk(true, "then the 'then' method shouldn't be called");
 			})

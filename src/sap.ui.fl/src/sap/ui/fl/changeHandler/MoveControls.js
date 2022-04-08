@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/Utils"
 ],
 function(
 	Log,
+	CondenserClassification,
 	FlUtils
 ) {
 	"use strict";
@@ -397,7 +399,7 @@ function(
 		var oRevertData = oChange.getRevertData()[0];
 		return {
 			affectedControl: oChangeContent.movedElements[0].selector,
-			classification: sap.ui.fl.condenser.Classification.Move,
+			classification: CondenserClassification.Move,
 			sourceContainer: oRevertData.sourceParent,
 			targetContainer: oChangeContent.target.selector,
 			sourceIndex: oRevertData.index,
