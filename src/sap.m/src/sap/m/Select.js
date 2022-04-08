@@ -77,6 +77,9 @@ function(
 		// shortcut for sap.ui.core.TextAlign
 		var TextAlign = coreLibrary.TextAlign;
 
+		// shortcut for sap.ui.core.OpenState
+		var OpenState = coreLibrary.OpenState;
+
 		// shortcut for sap.m.SelectType
 		var SelectType = library.SelectType;
 
@@ -2832,11 +2835,26 @@ function(
 		};
 
 		Select.prototype.setValueState = function(sValueState) {
-			var sOldValueState = this.getValueState();
+			var sOldValueState = this.getValueState(),
+				oPicker;
 
 			if (sValueState === sOldValueState) {
 				return this;
 			}
+
+			oPicker = this.getPicker();
+
+			if (oPicker && oPicker.isA("sap.m.Popover") && oPicker.isOpen() && oPicker.oPopup.getOpenState() === OpenState.CLOSING) {
+				oPicker.attachEventOnce("afterClose", function(oEvent) {
+					return this._finishSettingValueState(sValueState);
+				}, this);
+			} else {
+				return this._finishSettingValueState(sValueState);
+			}
+
+		};
+
+		Select.prototype._finishSettingValueState = function(sValueState) {
 
 			this.setProperty("valueState", sValueState);
 
