@@ -410,6 +410,14 @@ sap.ui.define([
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
+			var oExpectedActivatedVersion = {
+				activatedBy: "qunit",
+				activatedAt: "just now",
+				version: sActiveVersion,
+				isPublished: false,
+				type: "active"
+			};
+
 			return Versions.initialize(mPropertyBag)
 				.then(Versions.activate.bind(undefined, mPropertyBag))
 				.then(function () {
@@ -419,9 +427,9 @@ sap.ui.define([
 				.then(function (oResponse) {
 					var aVersions = oResponse.getProperty("/versions");
 					assert.equal(aVersions.length, 3, "with three versions");
-					assert.equal(aVersions[0], oActivatedVersion, "and the newly activated is the first");
-					assert.equal(aVersions[1], oSecondVersion, "where the old version is the second");
-					assert.equal(aVersions[2], oFirstVersion, "where the older version is the third");
+					assert.deepEqual(aVersions[0], oExpectedActivatedVersion, "and the newly activated is the first");
+					assert.deepEqual(aVersions[1], oSecondVersion, "where the old version is the second");
+					assert.deepEqual(aVersions[2], oFirstVersion, "where the older version is the third");
 					assert.equal(oResponse.getProperty("/backendDraft"), false, "backendDraft property was set to false");
 					assert.equal(oResponse.getProperty("/displayedVersion"), sActiveVersion, ", a displayedVersion property set to the active version");
 					assert.equal(oResponse.getProperty("/activeVersion"), sActiveVersion, ", the active version was determined correct");
@@ -538,7 +546,8 @@ sap.ui.define([
 			var oDraft = {
 				version: Version.Number.Draft,
 				type: "draft",
-				filenames: []
+				filenames: [],
+				isPublished: false
 			};
 
 			var aReturnedVersions = [
@@ -706,7 +715,8 @@ sap.ui.define([
 			var oDraft = {
 				version: Version.Number.Draft,
 				type: "draft",
-				filenames: []
+				filenames: [],
+				isPublished: false
 			};
 
 			var aReturnedBackendVersions = [

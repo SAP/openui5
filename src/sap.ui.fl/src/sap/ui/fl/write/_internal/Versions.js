@@ -27,13 +27,14 @@ sap.ui.define([
 	// ensure sufficient data is present even if a draft was returned and later discarded
 	var BACKEND_REQUEST_LIMIT = MODEL_SIZE_LIMIT + 1;
 
-	function createModel(mPropertyBag, bVersioningEnabled, aVersions) {
+	function createModel(bVersioningEnabled, aVersions) {
 		var bBackendDraft = _doesDraftExistInVersions(aVersions);
 
 		var sActiveVersion = Version.Number.Original;
 		aVersions.forEach(function (oVersion) {
 			if (oVersion.version === Version.Number.Draft) {
 				oVersion.type = "draft";
+				oVersion.isPublished = false;
 			} else if (sActiveVersion === Version.Number.Original) {
 				// no active version found yet; the first non-draft version is always the active version
 				oVersion.type = "active";
@@ -92,7 +93,7 @@ sap.ui.define([
 
 					// add draft
 					if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
-						aVersions.splice(0, 0, {version: Version.Number.Draft, type: "draft", filenames: []});
+						aVersions.splice(0, 0, {version: Version.Number.Draft, type: "draft", filenames: [], isPublished: false});
 					}
 
 					// remove draft
@@ -182,7 +183,7 @@ sap.ui.define([
 				var aVersionsPromise = bVersionsEnabled ? Storage.versions.load(mPropertyBag) : Promise.resolve([]);
 				return aVersionsPromise
 					.then(function (aVersions) {
-						return createModel(mPropertyBag, bVersionsEnabled, aVersions);
+						return createModel(bVersionsEnabled, aVersions);
 					})
 					.then(function (oModel) {
 						_mInstances[sReference] = _mInstances[sReference] || {};
@@ -279,6 +280,7 @@ sap.ui.define([
 				oVersionEntry.type = "inactive";
 			});
 			oVersion.type = "active";
+			oVersion.isPublished = false;
 			if (bDraftExists) {
 				aVersions.shift();
 			}
