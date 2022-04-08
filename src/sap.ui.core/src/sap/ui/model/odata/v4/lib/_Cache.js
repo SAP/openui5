@@ -689,7 +689,7 @@ sap.ui.define([
 				sExpand;
 
 			if (!oEntityType) {
-				oEntityType = that.fetchType(mTypeForMetaPath, sMetaPath).getResult();
+				oEntityType = that.oRequestor.fetchType(mTypeForMetaPath, sMetaPath).getResult();
 			}
 			if (sBasePath) {
 				// Key properties and predicate must only be copied from the result for nested
@@ -778,54 +778,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fetches the type for the given path and puts it into mTypeForMetaPath. Recursively fetches
-	 * the key properties' parent types if they are complex.
-	 *
-	 * @param {object} mTypeForMetaPath
-	 *   A map from resource path and entity path to the type
-	 * @param {string} sMetaPath
-	 *   The meta path of the resource + navigation or key path (which may lead to an entity or
-	 *   complex type)
-	 * @returns {SyncPromise<object>}
-	 *   A promise resolving with the type
-	 */
-	_Cache.prototype.fetchType = function (mTypeForMetaPath, sMetaPath) {
-		var that = this;
-
-		if (sMetaPath in mTypeForMetaPath) {
-			return SyncPromise.resolve(mTypeForMetaPath[sMetaPath]);
-		}
-
-		return this.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
-			var oMessageAnnotation,
-				aPromises = [];
-
-			if (oType) {
-				oMessageAnnotation = that.oRequestor.getModelInterface()
-					.fetchMetadata(sMetaPath + "/" + sMessagesAnnotation).getResult();
-				if (oMessageAnnotation) {
-					oType = Object.create(oType);
-					oType[sMessagesAnnotation] = oMessageAnnotation;
-				}
-
-				mTypeForMetaPath[sMetaPath] = oType;
-
-				(oType.$Key || []).forEach(function (vKey) {
-					if (typeof vKey === "object") {
-						// key has an alias
-						vKey = vKey[Object.keys(vKey)[0]];
-						aPromises.push(that.fetchType(mTypeForMetaPath,
-							sMetaPath + "/" + vKey.slice(0, vKey.lastIndexOf("/"))));
-					}
-				});
-				return SyncPromise.all(aPromises).then(function () {
-					return oType;
-				});
-			}
-		});
-	};
-
-	/**
 	 * Fetches the type from the metadata for the root entity plus all types for $expand and puts
 	 * them into a map from meta path to type. Checks the types' key properties and puts their types
 	 * into the map, too, if they are complex. If a type has a
@@ -853,7 +805,7 @@ sap.ui.define([
 
 					sNavigationPath.split("/").forEach(function (sSegment) {
 						sMetaPath += "/" + sSegment;
-						aPromises.push(that.fetchType(mTypeForMetaPath, sMetaPath));
+						aPromises.push(that.oRequestor.fetchType(mTypeForMetaPath, sMetaPath));
 					});
 					fetchExpandedTypes(sMetaPath, mQueryOptions.$expand[sNavigationPath]);
 				});
@@ -863,7 +815,7 @@ sap.ui.define([
 		if (!this.oTypePromise) {
 			aPromises = [];
 			mTypeForMetaPath = {};
-			aPromises.push(this.fetchType(mTypeForMetaPath, this.sMetaPath));
+			aPromises.push(this.oRequestor.fetchType(mTypeForMetaPath, this.sMetaPath));
 			fetchExpandedTypes(this.sMetaPath, this.mQueryOptions);
 			this.oTypePromise = SyncPromise.all(aPromises).then(function () {
 				return mTypeForMetaPath;
