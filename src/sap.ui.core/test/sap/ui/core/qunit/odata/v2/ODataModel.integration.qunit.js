@@ -15097,4 +15097,147 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: User interactions (filter, sort, refresh) for a list binding in "Client" mode
+	// behave the same as in "Server" mode. During user interactions, transient entries are kept in
+	// the creation area. When these entries become created persisted, they are removed from the
+	// creation area and are handled as normal persisted entries.
+	// JIRA: CPOUI5MODELS-780
+[{
+	action : "refresh",
+	expectedNoteValuesAfterInteraction : []
+}, {
+	action : "filter",
+	expectedNoteValuesAfterInteraction : ["Note 2"]
+}, {
+	action : "sort",
+	expectedNoteValuesAfterInteraction : ["Note 2", "Note 1"]
+}].forEach(function (oFixture) {
+	var fnQUnit = QUnit[oFixture.action === "refresh" ? "test" : "skip"];
+
+	fnQUnit("#create with OperationMode.Client: " + oFixture.action, function (assert) {
+		var oBinding, oContext,
+			oModel = createSalesOrdersModel({defaultOperationMode : "Client"}),
+			sView = '\
+<Table id="table" items="{/SalesOrderSet}">\
+	<Input id="note" value="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					Note : "Note 1"
+				}, {
+					__metadata : {uri : "SalesOrderSet('2')"},
+					SalesOrderID : "2",
+					Note : "Note 2"
+				}]
+			})
+			.expectValue("note", ["Note 1", "Note 2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectValue("note", ["transient", "Note 1", "Note 2"]);
+
+			oContext = oBinding.create({Note : "transient"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", ["inactive", "Note 1", "Note 2"], 1);
+
+			oBinding.create({Note : "inactive"}, true, {inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", oFixture.expectedNoteValuesAfterInteraction, 2);
+
+			if (oFixture.action === "refresh") {
+				that.expectRequest("SalesOrderSet", {
+						results : [{
+							__metadata : {uri : "SalesOrderSet('1')"},
+							SalesOrderID : "1",
+							Note : "Note 1"
+						}, {
+							__metadata : {uri : "SalesOrderSet('2')"},
+							SalesOrderID : "2",
+							Note : "Note 2"
+						}]
+					});
+
+				// code under test
+				oBinding.refresh();
+			} else if (oFixture.action === "filter") {
+				// code under test
+				oBinding.filter(new Filter("SalesOrderID", FilterOperator.EQ, "2"));
+			} else if (oFixture.action === "sort") {
+				// code under test
+				oBinding.sort(new Sorter("SalesOrderID", /*bDescending*/true));
+			}
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "transient"
+					},
+					deepPath : "/SalesOrderSet('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('3')"},
+						SalesOrderID : "3",
+						Note : "persisted"
+					},
+					statusCode : 201
+				})
+				.expectValue("note", "persisted", 0);
+
+			oModel.submitChanges();
+
+			return Promise.all([
+				oContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("note", ["inactive", "Note 1", "Note 2", "persisted"]);
+
+			if (oFixture.action === "refresh") {
+				that.expectRequest("SalesOrderSet", {
+						results : [{
+							__metadata : {uri : "SalesOrderSet('1')"},
+							SalesOrderID : "1",
+							Note : "Note 1"
+						}, {
+							__metadata : {uri : "SalesOrderSet('2')"},
+							SalesOrderID : "2",
+							Note : "Note 2"
+						}, {
+							__metadata : {uri : "SalesOrderSet('3')"},
+							SalesOrderID : "3",
+							Note : "persisted"
+						}]
+					});
+
+				// code under test
+				oBinding.refresh();
+			} else if (oFixture.action === "filter") {
+				// code under test
+				oBinding.filter();
+			} else if (oFixture.action === "sort") {
+				// code under test
+				oBinding.sort();
+			}
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
 });
