@@ -65,34 +65,3 @@
 		pointer-events: none;
 	}
 }
-
-.sapMCrslPrev:focus,
-.sapMCrslNext:focus,
-.sapMCrslPrev .sapUiIcon:focus,
-.sapMCrslNext .sapUiIcon:focus {
-  outline: none;
-}
-
-html.sap-desktop .sapMCrslHud .sapMCrslPrev:focus,
-html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
-  	&::before {
-		content: "";
-		position: absolute;
-		top: -0.125rem;
-		right: -0.125rem;
-		bottom: -0.125rem;
-		left: -0.125rem;
-		pointer-events: none;
-	}
-
-  	&::after {
-		content: "";
-		position: absolute;
-		top: -0.125rem;
-		right: -0.125rem;
-		bottom: -0.125rem;
-		left: -0.125rem;
-		pointer-events: none;
-		border: 1px dotted @sapUiContentFocusColor;
-	}
-}

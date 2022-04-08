@@ -22,7 +22,8 @@
 @_sap_m_Carousel_BulletActiveBorder: @sapUiContentForegroundBorderColor;
 @_sap_m_Carousel_BulletInactiveWidth: 0.5rem;
 @_sap_m_Carousel_BulletInactiveMargin: 0 0.25rem;
-@_sap_m_Carousel_FocusBorderOffsetArrow: -0.25rem;
+@_sap_m_Carousel_FocusBorderOffsetArrow: -0.3125rem;
+@_sap_m_Carousel_ContrastFocusBorder: @sapUiContentFocusWidth solid @sapUiBaseBG;
 
 .sapMCrsl {
 	background-color: @sapUiBaseBG;
@@ -64,11 +65,4 @@
 .sapMCrsl .sapMCrslHud a:active {
 	box-shadow: @sapUiShadowLevel1;
 	background-color: @sapUiButtonActiveBackground;
-}
-
-.sapMCrslPrev:focus,
-.sapMCrslNext:focus,
-.sapMCrslPrev .sapUiIcon:focus,
-.sapMCrslNext .sapUiIcon:focus {
-	outline: none;
 }
