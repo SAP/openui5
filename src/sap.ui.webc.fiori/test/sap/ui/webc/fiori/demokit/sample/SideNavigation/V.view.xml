@@ -4,14 +4,6 @@
 	xmlns:fiori="sap.ui.webc.fiori"
 	xmlns:mvc="sap.ui.core.mvc"
 	height="100%">
-	<fiori:Page>
-		<fiori:header>
-			<fiori:Bar>
-				<fiori:startContent>
-					<Button text="Collapse" click=".handleClick" />
-				</fiori:startContent>
-			</fiori:Bar>
-		</fiori:header>
 		<fiori:SideNavigation id="sideNavigation">
 			<fiori:header text="Work" />
 			<fiori:SideNavigationItem icon="home" text="Home" />
@@ -33,5 +25,5 @@
 				<fiori:SideNavigationItem icon="history" text="History" />
 			</fiori:fixedItems>
 		</fiori:SideNavigation>
-	</fiori:Page>
+	<Button text="Collapse" click=".handleClick" />
 </mvc:View>

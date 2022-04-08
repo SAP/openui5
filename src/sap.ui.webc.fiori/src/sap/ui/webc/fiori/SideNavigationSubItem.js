@@ -71,7 +71,8 @@ sap.ui.define([
 					type: "string",
 					defaultValue: ""
 				}
-			}
+			},
+			designtime: "sap/ui/webc/fiori/designtime/SideNavigationSubItem.designtime"
 		}
 	});
 

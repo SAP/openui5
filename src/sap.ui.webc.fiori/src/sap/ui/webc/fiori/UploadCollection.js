@@ -178,7 +178,8 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/fiori/designtime/UploadCollection.designtime"
 		}
 	});
 

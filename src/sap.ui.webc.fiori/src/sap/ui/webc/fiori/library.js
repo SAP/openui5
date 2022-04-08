@@ -96,8 +96,23 @@ sap.ui.define([
 			elements: [],
 			extensions: {
 				flChangeHandlers: {
+					"sap.ui.webc.fiori.NotificationListItem": {
+						"moveControls": "default",
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
 					"sap.ui.webc.fiori.Page": {
 						"moveControls": "default"
+					},
+					"sap.ui.webc.fiori.SideNavigation": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
+					"sap.ui.webc.fiori.SideNavigationItem": "sap/ui/webc/fiori/flexibility/SideNavigationItem",
+					"sap.ui.webc.fiori.SideNavigationSubItem": "sap/ui/webc/fiori/flexibility/SideNavigationSubItem",
+					"sap.ui.webc.fiori.UploadCollection": {
+						"hideControl": "default",
+						"unhideControl": "default"
 					}
 				}
 			}
