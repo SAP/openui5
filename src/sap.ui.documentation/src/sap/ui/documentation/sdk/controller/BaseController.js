@@ -109,7 +109,7 @@ sap.ui.define([
 			 * @returns {object} the configuration of the component
 			 */
 			getConfig : function () {
-				return this.getOwnerComponent().getMetadata().getConfig();
+				return this.getOwnerComponent().getManifestEntry("/sap.ui5/config") || {};
 			},
 
 			/**

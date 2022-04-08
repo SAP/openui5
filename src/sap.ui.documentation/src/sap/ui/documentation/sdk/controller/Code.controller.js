@@ -69,9 +69,8 @@ sap.ui.define([
 					// get component and data when sample is changed or nothing exists so far
 					this._createComponent().then(function (oComponent) {
 						// create data object
-						var oMetadata = oComponent.getMetadata();
 						var aPromises = [];
-						var oConfig = (oMetadata) ? oMetadata.getConfig() : null;
+						var oConfig = oComponent.getManifestEntry("/sap.ui5/config") || {};
 						this._oData = {
 							id: oSample.id,
 							title: "Code: " + oSample.name,
@@ -85,7 +84,7 @@ sap.ui.define([
 
 						// retrieve files
 						// (via the 'Orcish maneuver': Use XHR to retrieve and cache code)
-						if (oConfig && oConfig.sample && oConfig.sample.files) {
+						if (oConfig.sample && oConfig.sample.files) {
 							var sRef = sap.ui.require.toUrl((oSample.id).replace(/\./g, "/"));
 							for (var i = 0; i < oConfig.sample.files.length; i++) {
 								var sFile = oConfig.sample.files[i];
