@@ -1119,28 +1119,28 @@ function (
 		var oToolbar = oFactory.getOverflowToolbar(),
 			$qunitDOMLocation =  $("#qunit-fixture"),
 			sInitialWidth = $qunitDOMLocation.width(),
-			// sInitialWidth = $qunitDOMLocation.width(),
-			fnDone = assert.async();
+			oInvalidateSpy = sinon.spy(oToolbar, "invalidate");
 
-		assert.expect(2);
+		assert.expect(3);
 
 		// Act
 		$qunitDOMLocation.width("200px");
 		oToolbar.addContent(oFactory.getGenericTag("Loooooong test"));
 		this.oDynamicPageTitle.addContent(oToolbar);
 		Core.applyChanges();
+		oInvalidateSpy.reset();
 
-		setTimeout(function () {
-			// Assert
-			assert.ok(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is visible when width is not enough");
-			// Act - restoring the initial width of the Qunit-fixture
-			$qunitDOMLocation.width(sInitialWidth);
-			setTimeout(function () {
-				// Assert
-				assert.notOk(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is not visible when width is enough");
-				fnDone();
-			}, 600);
-		}, 600);
+		// Assert
+		assert.ok(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is visible when width is not enough");
+
+		// Act - restoring the initial width of the Qunit-fixture
+		$qunitDOMLocation.width(sInitialWidth);
+		oToolbar._handleResize(); // call the resize listener synchronously to speed up the test
+		assert.ok(oInvalidateSpy.calledOnce, "toolbar invalidated when overflow should to change");
+		Core.applyChanges(); // trigger rerendering of the invalidated controls synchronously to speed up the test
+
+		// Assert
+		assert.notOk(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is not visible when width is enough");
 	});
 
 	QUnit.test("Changing visibility of GenericTag", function (assert) {
