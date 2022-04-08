@@ -430,7 +430,7 @@ sap.ui.define([
 		// check if has filterProperty defined in each column of config.properties
 		var bHasFilterDefined = that.checkHasFilter(oConfig);
 		var bAddButtonVisible = oConfig.enabled !== false;
-		var sAddButtonTooltip = oConfig.addButtonTooltip || oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_ADD_TOOLTIP");
+		var sAddButtonTooltip = oConfig.addButtonText || oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_ADD_TOOLTIP");
 		if (bAddButtonVisible && oConfig.values) {
 			bAddButtonVisible = oConfig.values.allowAdd === true;
 		}

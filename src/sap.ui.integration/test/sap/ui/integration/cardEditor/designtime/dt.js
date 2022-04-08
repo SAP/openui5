@@ -1428,7 +1428,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								}
 							}
 						},
-						"addButtonTooltip": "Add a new step"
+						"addButtonText": "Add a new step"
 					},
 					"objectWithPropertiesDefinedAndValueFromJsonList": {
 						"manifestpath": "/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value",
@@ -1757,7 +1757,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								}
 							}
 						},
-						"addButtonTooltip": "Add a new step"
+						"addButtonText": "Add a new step"
 					},
 					"objectsWithPropertiesDefinedAndValueFromJsonList": {
 						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromJsonList/value",
@@ -1856,7 +1856,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								}
 							}
 						},
-						"addButtonTooltip": "Add a new step"
+						"addButtonText": "Add a new step"
 					},
 					"objectsWithPropertiesDefinedAndValueFromRequestedFile": {
 						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromRequestedFile/value",
@@ -1909,7 +1909,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								}
 							}
 						},
-						"addButtonTooltip": "Add a new step"
+						"addButtonText": "Add a new step"
 					},
 					"objectsWithPropertiesDefinedAndValueFromODataRequest": {
 						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromODataRequest/value",
