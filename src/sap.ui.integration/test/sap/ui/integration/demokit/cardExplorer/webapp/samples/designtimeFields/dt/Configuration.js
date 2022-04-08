@@ -584,7 +584,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"style":"short"
 								}
 							}
-						}
+						},
+						"addButtonText": "Add a new step"
 					},
 					"objectWithPropertiesDefinedAndValueFromRequestedFile": {
 						"manifestpath": "/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value",
@@ -779,7 +780,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"style":"short"
 								}
 							}
-						}
+						},
+						"addButtonText": "Add a new step"
 					},
 					"objectsWithPropertiesDefinedAndValueFromJsonList": {
 						"manifestpath": "/sap.card/configuration/parameters/objectsWithPropertiesDefinedAndValueFromJsonList/value",
