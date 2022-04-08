@@ -847,6 +847,46 @@ sap.ui.define([
 			});
 
 
+		QUnit.module("Internal ItemNavigation", function() {
+			QUnit.test("alt/meta key + right/left or + home/end is not handled", function (assert) {
+				// Prepare
+				var oColorPalette = new ColorPalette();
+
+				// Act
+				oColorPalette._ensureItemNavigation();
+
+				// Assert
+				var oModifiers = oColorPalette._oPaletteColorItemNavigation.getDisabledModifiers();
+				assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
+				assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
+				assert.ok(oModifiers["saphome"], "saphome has disabled modifiers");
+				assert.ok(oModifiers["sapend"], "sapend has disabled modifiers");
+				assert.ok(oModifiers["sapnext"].indexOf("alt") !== -1, "right is not handled when alt is pressed");
+				assert.ok(oModifiers["sapnext"].indexOf("meta") !== -1, "right is not handled when meta key is pressed");
+				assert.ok(oModifiers["sapprevious"].indexOf("alt") !== -1, "left is not handled when alt is pressed");
+				assert.ok(oModifiers["sapprevious"].indexOf("meta") !== -1, "left is not handled when meta key is pressed");
+				assert.ok(oModifiers["saphome"].indexOf("alt") !== -1, "home is not handled when alt is pressed");
+				assert.ok(oModifiers["saphome"].indexOf("meta") !== -1, "home is not handled when meta key is pressed");
+				assert.ok(oModifiers["sapend"].indexOf("meta") !== -1, "end is not handled when meta key is pressed");
+
+				var oModifiersRecentColors = oColorPalette._oRecentColorItemNavigation.getDisabledModifiers();
+				assert.ok(oModifiersRecentColors["sapnext"], "sapnext has disabled modifiers");
+				assert.ok(oModifiersRecentColors["sapprevious"], "sapprevious has disabled modifiers");
+				assert.ok(oModifiersRecentColors["saphome"], "saphome has disabled modifiers");
+				assert.ok(oModifiersRecentColors["sapend"], "sapend has disabled modifiers");
+				assert.ok(oModifiersRecentColors["sapnext"].indexOf("alt") !== -1, "right is not handled when alt is pressed");
+				assert.ok(oModifiersRecentColors["sapnext"].indexOf("meta") !== -1, "right is not handled when meta key is pressed");
+				assert.ok(oModifiersRecentColors["sapprevious"].indexOf("alt") !== -1, "left is not handled when alt is pressed");
+				assert.ok(oModifiersRecentColors["sapprevious"].indexOf("meta") !== -1, "left is not handled when meta key is pressed");
+				assert.ok(oModifiersRecentColors["saphome"].indexOf("alt") !== -1, "home is not handled when alt is pressed");
+				assert.ok(oModifiersRecentColors["saphome"].indexOf("meta") !== -1, "home is not handled when meta key is pressed");
+				assert.ok(oModifiersRecentColors["sapend"].indexOf("meta") !== -1, "end is not handled when meta key is pressed");
+
+				// Cleanup
+				oColorPalette.destroy();
+			});
+		});
+
 		QUnit.module("Internal ItemNavigationHomeEnd", function() {
 			QUnit.test("ItemNavigationHomeEnd._getIndexOfTheFirstItemInLastRow", function (assert) {
 				// Prepare

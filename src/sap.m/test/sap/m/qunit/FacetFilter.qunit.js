@@ -1937,6 +1937,33 @@ sap.ui.define([
 		oFacetFilter.destroy();
 	});
 
+	QUnit.test("alt/meta key + right/left or + home/end is not handled", function (assert) {
+		// Prepare
+		var oFF = new FacetFilter();
+		oFF.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oFF._startItemNavigation();
+
+		// Assert
+		var oModifiers = oFF.oItemNavigation.getDisabledModifiers();
+		assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
+		assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
+		assert.ok(oModifiers["saphome"], "saphome has disabled modifiers");
+		assert.ok(oModifiers["sapend"], "sapend has disabled modifiers");
+		assert.ok(oModifiers["sapnext"].indexOf("alt") !== -1, "right is not handled when alt is pressed");
+		assert.ok(oModifiers["sapnext"].indexOf("meta") !== -1, "right is not handled when meta key is pressed");
+		assert.ok(oModifiers["sapprevious"].indexOf("alt") !== -1, "left is not handled when alt is pressed");
+		assert.ok(oModifiers["sapprevious"].indexOf("meta") !== -1, "left is not handled when meta key is pressed");
+		assert.ok(oModifiers["saphome"].indexOf("alt") !== -1, "home is not handled when alt is pressed");
+		assert.ok(oModifiers["saphome"].indexOf("meta") !== -1, "home is not handled when meta key is pressed");
+		assert.ok(oModifiers["sapend"].indexOf("meta") !== -1, "end is not handled when meta key is pressed");
+
+		// Cleanup
+		oFF.destroy();
+	});
+
 	QUnit.module("Public API");
 
 	QUnit.test("FacetFilterItem.setCount", function(assert) {

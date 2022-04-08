@@ -192,8 +192,10 @@ function(
 		this._oItemNavigation.setCycling(false);
 		//this way we do not hijack the browser back/forward navigation
 		this._oItemNavigation.setDisabledModifiers({
-			sapnext: ["alt"],
-			sapprevious: ["alt"]
+			sapnext: ["alt", "meta"],
+			sapprevious: ["alt", "meta"],
+			saphome : ["alt", "meta"],
+			sapend : ["meta"]
 		});
 		this.addDelegate(this._oItemNavigation);
 

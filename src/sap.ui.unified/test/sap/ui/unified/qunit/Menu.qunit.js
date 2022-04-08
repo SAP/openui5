@@ -658,6 +658,51 @@ sap.ui.define([
 		closeAllMenusAndCheck(assert);
 	});
 
+	QUnit.test("alt/meta key + right/left or + home/end is not handled", function(assert) {
+		// Prepare
+		var oMenuItem = new MenuItem({
+				text:"WSL"
+			}),
+			oMenu = new Menu({
+				items: oMenuItem
+			}),
+			oEvent = {
+				metaKey: true
+			};
+
+		// Act
+		oMenu.onsapprevious(oEvent);
+
+		// Assert
+		assert.ok(true, "left is not handled when meta key is pressed");
+
+		// Act
+		oMenu.onsapnext(oEvent);
+
+		// Assert
+		assert.ok(true, "right is not handled when meta key is pressed");
+
+		// Prepare
+		oEvent = {
+			altKey: true
+		};
+
+		// Act
+		oMenu.onsapprevious(oEvent);
+
+		// Assert
+		assert.ok(true, "left is not handled when alt key is pressed");
+
+		// Act
+		oMenu.onsapnext(oEvent);
+
+		// Assert
+		assert.ok(true, "right is not handled when alt key is pressed");
+
+		// Cleanup
+		oMenu.destroy();
+	});
+
 	QUnit.module("Mouse");
 
 	Menu._DELAY_SUBMENU_TIMER = 10;

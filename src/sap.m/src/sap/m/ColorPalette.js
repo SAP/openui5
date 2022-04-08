@@ -592,6 +592,12 @@ sap.ui.define([
 				this._oPaletteColorItemNavigation.setCycling(false);
 				this.addDelegate(this._oPaletteColorItemNavigation);
 				this._oPaletteColorItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._onSwatchContainerBorderReached, this);
+				this._oPaletteColorItemNavigation.setDisabledModifiers({
+					sapnext: ["alt", "meta"],
+					sapprevious: ["alt", "meta"],
+					saphome : ["alt", "meta"],
+					sapend : ["meta"]
+				});
 			}
 
 			if (!this._oRecentColorItemNavigation) {
@@ -600,6 +606,12 @@ sap.ui.define([
 				this._oRecentColorItemNavigation.setCycling(false);
 				this.addDelegate(this._oRecentColorItemNavigation);
 				this._oRecentColorItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._onSwatchContainerBorderReached, this);
+				this._oRecentColorItemNavigation.setDisabledModifiers({
+					sapnext: ["alt", "meta"],
+					sapprevious: ["alt", "meta"],
+					saphome : ["alt", "meta"],
+					sapend : ["meta"]
+				});
 			}
 
 			// all currently available swatches

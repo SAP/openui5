@@ -399,8 +399,10 @@ function(
 			this._oItemNavigation.setPageSize(5);
 			//alt+right/left is used for browser navigation
 			this._oItemNavigation.setDisabledModifiers({
-				sapnext: ["alt"],
-				sapprevious: ["alt"]
+				sapnext: ["alt", "meta"],
+				sapprevious: ["alt", "meta"],
+				saphome : ["alt", "meta"],
+				sapend : ["meta"]
 			});
 
 			//Attach ItemNavigation to the control delegate queue

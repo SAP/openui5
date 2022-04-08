@@ -659,6 +659,13 @@ sap.ui.define([
 		//set the selected index
 		this.oItemNavigation.setPageSize(this._pageSize);
 
+		this.oItemNavigation.setDisabledModifiers({
+			sapnext: ["alt", "meta"],
+			sapprevious: ["alt", "meta"],
+			saphome : ["alt", "meta"],
+			sapend : ["meta"]
+		});
+
 	};
 
 	/**

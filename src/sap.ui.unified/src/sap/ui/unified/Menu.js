@@ -621,7 +621,7 @@ sap.ui.define([
 			oSubMenu = this.oHoveredItem ? this.oHoveredItem.getSubmenu() : undefined;
 
 		//right or down (RTL: left or down)
-		if (oEvent.keyCode != KeyCodes.ARROW_DOWN) {
+		if (oEvent.keyCode !== KeyCodes.ARROW_DOWN && !oEvent.metaKey && !oEvent.altKey) {
 			//Go to sub menu if available
 			if (oSubMenu && this.checkEnabled(this.oHoveredItem)) {
 				if (oSubMenu.bOpen) {
@@ -645,8 +645,10 @@ sap.ui.define([
 		this.setHoveredItem(oNextSelectableItem);
 		oNextSelectableItem && oNextSelectableItem.focus(this);
 
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
+		if (!oEvent.metaKey && !oEvent.altKey) {
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+		}
 	};
 
 	Menu.prototype.onsapnextmodifiers = Menu.prototype.onsapnext;
@@ -657,7 +659,7 @@ sap.ui.define([
 			oSubMenu = this.oHoveredItem ? this.oHoveredItem.getSubmenu() : null;
 
 		//left or up (RTL: right or up)
-		if (oEvent.keyCode != KeyCodes.ARROW_UP) {
+		if (oEvent.keyCode !== KeyCodes.ARROW_UP && !oEvent.metaKey && !oEvent.altKey) {
 			//Go to parent menu if this is a sub menu
 			if (this.isSubMenu()) {
 				this.close(true);
@@ -675,8 +677,10 @@ sap.ui.define([
 		this.setHoveredItem(oPrevSelectableItem);
 		oPrevSelectableItem && oPrevSelectableItem.focus(this);
 
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
+		if (!oEvent.metaKey && !oEvent.altKey) {
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+		}
 	};
 
 	Menu.prototype.onsappreviousmodifiers = Menu.prototype.onsapprevious;
