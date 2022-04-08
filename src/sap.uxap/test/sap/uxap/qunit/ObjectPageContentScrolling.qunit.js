@@ -77,6 +77,14 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oObjectPage.addHeaderContent(oBigHeaderContent);
 			return oObjectPage;
 		},
+		generateObjectPageWithDynamicHeaderTitle: function() {
+			var oHeaderContent = new Panel({ height: "99.3px"}),
+				oObjectPage = this.generateObjectPageWithContent(oFactory, 5);
+
+			oObjectPage.setHeaderTitle(oFactory.getDynamicPageTitle());
+			oObjectPage.addHeaderContent(oHeaderContent);
+			return oObjectPage;
+		},
 		renderObject: function (oSapUiObject) {
 			oSapUiObject.placeAt("qunit-fixture");
 			Core.applyChanges();
@@ -377,6 +385,42 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		});
 
 		helpers.renderObject(oObjectPage);
+	});
+
+	QUnit.module("Expand header");
+
+	QUnit.test("Header expand works, when scrolled header has height with fraction value", function (assert) {
+		// Arrange
+		var oObjectPage = helpers.generateObjectPageWithDynamicHeaderTitle(),
+			aSections = oObjectPage.getSections(),
+			oLastSection = aSections[aSections.length - 1],
+			oExpandButton,
+			done = assert.async();
+
+		assert.expect(2);
+
+		oObjectPage.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oObjectPage.scrollToSection(oLastSection.getId(), 0);
+
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(oObjectPage._bHeaderExpanded, false, "Header is snapped after scroll");
+
+				// Act
+				oExpandButton = oObjectPage.getHeaderTitle()._getExpandButton();
+				oExpandButton.firePress();
+
+				// Check
+				setTimeout(function () {
+					assert.strictEqual(oObjectPage._bHeaderExpanded, true, "Header is expanded after pressing expand button");
+					done();
+				}, 1000);
+			}, 500);
+
+		});
 	});
 
 	QUnit.module("ObjectPage Content scrolling", {

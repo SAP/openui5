@@ -2705,7 +2705,7 @@ sap.ui.define([
 		var bIsStickyMode = this._bStickyAnchorBar || this._bHeaderInTitleArea; // get current mode
 		var iLastSectionPositionTop = this._getSectionPositionTop(oLastVisibleSubSection, bIsStickyMode); /* we need to get the position in the current mode */
 
-		return this._$spacer.position().top - iLastSectionPositionTop;
+		return Math.ceil(this._$spacer.position().top) - iLastSectionPositionTop;
 	};
 
 	ObjectPageLayout.prototype._getStickyAreaHeight = function(bIsStickyMode) {
