@@ -752,11 +752,6 @@ sap.ui.define([
 
 			if (!oSalesOrderLineItemContext) {
 				oSalesOrderLineItemsTable.removeSelections();
-			} else if (oSalesOrderLineItemContext.isTransient()) {
-				// TODO: eliminate this workaround:
-				// to ensure that no dependent data for the newly created SO is fetched
-				// unless it is persisted in the back end (see: CPOUI5UISERVICESV3-649)
-				oSalesOrderLineItemContext = undefined;
 			}
 			this.byId("BP_2_CONTACT").setBindingContext(oSalesOrderLineItemContext);
 			this.byId("PRODUCT_2_BP").setBindingContext(oSalesOrderLineItemContext);

@@ -148,6 +148,9 @@ sap.ui.define([
 				"SalesOrderList('0500000004')/SO_2_SOITEM(SalesOrderID='0500000004',ItemPosition='0000000070')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
 					source : "SalesOrderIist('05000000004')-SO_2_SOITEM('70').json"
 				},
+				"SalesOrderList('0500000004')/SO_2_SOITEM(SalesOrderID='0500000004',ItemPosition='0000000070')?custom-option=value&$select=SOITEM_2_PRODUCT&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID);$select=ProductID)" : {
+					source : "SalesOrderIist('05000000004')-SO_2_SOITEM('70')-SOITEM_2_PRODUCT-PRODUCT_2_BP-BP_2_CONTACT.json"
+				},
 				"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber)" : {
 					source : "SalesOrderList_5.json"
 				},
@@ -269,6 +272,12 @@ sap.ui.define([
 				}, {
 					source : "POST-SalesOrderList('NEW1')-SO_2_SOITEM.json"
 				}],
+				"SalesOrderList('NEW1')/SO_2_SOITEM(SalesOrderID='NEW1',ItemPosition='10')?custom-option=value&$select=SOITEM_2_PRODUCT&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID);$select=ProductID)" : {
+					source : "SalesOrderList('NEW1')-SO_2_SOITEM('10')-SOITEM_2_PRODUCT-PRODUCT_2_BP-BP_2_CONTACT.json"
+				},
+				"SalesOrderList('NEW1')/SO_2_SOITEM(SalesOrderID='NEW1',ItemPosition='11')?custom-option=value&$select=SOITEM_2_PRODUCT&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID);$select=ProductID)" : {
+					source : "SalesOrderList('NEW1')-SO_2_SOITEM('11')-SOITEM_2_PRODUCT-PRODUCT_2_BP-BP_2_CONTACT.json"
+				},
 				"SalesOrderList('NEW2')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber)" : {
 					source : "SalesOrderList('NEW2').json"
 				},
@@ -312,6 +321,9 @@ sap.ui.define([
 				},
 				"SalesOrderList('NEW3')/SO_2_SOITEM(SalesOrderID='NEW3',ItemPosition='20')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
 					source : "SalesOrderList('NEW3')-SO_2_SOITEM('20').json"
+				},
+				"SalesOrderList('NEW3')/SO_2_SOITEM(SalesOrderID='NEW3',ItemPosition='20')?custom-option=value&$select=SOITEM_2_PRODUCT&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID);$select=ProductID)" : {
+					source : "SalesOrderList('NEW3')-SO_2_SOITEM('20')-SOITEM_2_PRODUCT-PRODUCT_2_BP-BP_2_CONTACT.json"
 				},
 				"POST SalesOrderList('NEW3')/SO_2_SOITEM?custom-option=value" : [{
 					ifMatch : /,"Note":"new 10"/,
