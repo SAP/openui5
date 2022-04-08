@@ -655,26 +655,75 @@ sap.ui.define([
 		},
 
 		metadata : {
-			publicMethods: ["boot", "isInitialized","isThemeApplied","attachInitEvent","attachInit","getRenderManager","createRenderManager",
-							 "getConfiguration", "setRoot", "createUIArea", "_createUIArea", "getUIArea", "getUIDirty", "getElementById",
-							 "getCurrentFocusedControlId", "getControl", "getComponent", "getTemplate", "lock", "unlock","isLocked",
-							 "attachEvent","detachEvent","applyChanges", "getEventBus",
-							 "applyTheme","setThemeRoot","attachThemeChanged","detachThemeChanged","getStaticAreaRef",
-							 "attachThemeScopingChanged","detachThemeScopingChanged","fireThemeScopingChanged",
-							 "notifyContentDensityChanged",
-							 "registerPlugin","unregisterPlugin","getLibraryResourceBundle", "byId",
-							 "getLoadedLibraries", "loadLibrary", "loadLibraries", "initLibrary",
-							 "includeLibraryTheme", "setModel", "getModel", "hasModel", "isMobile",
-							 "attachControlEvent", "detachControlEvent", "attachIntervalTimer", "detachIntervalTimer",
-							 "attachParseError", "detachParseError", "fireParseError",
-							 "attachValidationError", "detachValidationError", "fireValidationError",
-							 "attachFormatError", "detachFormatError", "fireFormatError",
-							 "attachValidationSuccess", "detachValidationSuccess", "fireValidationSuccess",
-							 "attachLocalizationChanged", "detachLocalizationChanged",
-							 "attachLibraryChanged", "detachLibraryChanged",
-							 "isStaticAreaRef", "createComponent", "getRootComponent", "getApplication",
-							 "setMessageManager", "getMessageManager","byFieldGroupId",
-							 "addPrerenderingTask"]
+			// while this list contains mostly public methods,
+			// a set of private API is exposed for sap.ui.core restricted usage
+			publicMethods: [
+				// @public
+				//  - Init
+				"isInitialized","attachInit",
+				"getConfiguration",
+				"lock", "unlock","isLocked",
+				//  - UIArea & Rendering
+				"createUIArea", "getUIArea", "getUIDirty", "applyChanges", "getStaticAreaRef",
+				"createRenderManager",
+				//  - Theming
+				"applyTheme","setThemeRoot","attachThemeChanged","detachThemeChanged",
+				"isThemeApplied",
+				"notifyContentDensityChanged",
+				//  - Control & App dev.
+				"getCurrentFocusedControlId",
+				"isMobile",
+				"getEventBus",
+				"byId", "byFieldGroupId",
+				//  - Libraries
+				"getLoadedLibraries", "loadLibrary", "initLibrary",
+				"getLibraryResourceBundle",
+				//  - Models & Messaging
+				"setModel", "getModel", "hasModel",
+				"getMessageManager",
+				//  - Events
+				"attachEvent","detachEvent",
+				"attachControlEvent", "detachControlEvent",
+				"attachParseError", "detachParseError",
+				"attachValidationError", "detachValidationError",
+				"attachFormatError", "detachFormatError",
+				"attachValidationSuccess", "detachValidationSuccess",
+				"attachLocalizationChanged", "detachLocalizationChanged",
+
+				// @protected
+				"isStaticAreaRef",
+				"fireFormatError", "fireValidationSuccess", "fireValidationError", "fireParseError",
+
+				// @private, @ui5-restricted sap.ui.core
+				//  - Init
+				"boot",
+				//  - UIArea & Rendering
+				"_createUIArea",
+				"addPrerenderingTask",
+				//  - Messaging
+				"setMessageManager",
+				//  - Libraries
+				"attachLibraryChanged", "detachLibraryChanged",
+				"loadLibraries",
+				//  - Theming
+				"attachThemeScopingChanged","detachThemeScopingChanged","fireThemeScopingChanged",
+				"includeLibraryTheme",
+
+				// @deprecated
+				//  - Init & Plugins
+				"attachInitEvent",
+				"registerPlugin","unregisterPlugin",
+				//  - Application/Root-Component
+				"setRoot",
+				"getRootComponent", "getApplication",
+				//  - legacy registries & factories
+				"getControl", "getComponent", "getTemplate",
+				"createComponent",
+				//  - Control dev.
+				"attachIntervalTimer", "detachIntervalTimer",
+				"getElementById",
+				//  - UIArea & Rendering
+				"getRenderManager"]
 		}
 
 	});
@@ -1307,11 +1356,19 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Creates a "rootComponent" or "sap.ui.app.Application".
+	 * Both concepts are deprecated.
+	 * Called during Core initialization.
+	 * @deprecated since 1.95
+	 * @private
+	 */
 	Core.prototype._setupRootComponent = function() {
 		var METHOD = "sap.ui.core.Core.init()",
 			oConfig = this.oConfiguration;
 
 		// load the root component
+		// @deprecated concept, superseded by "sap/ui/core/ComponentSupport"
 		var sRootComponent = oConfig.getRootComponent();
 		if (sRootComponent) {
 
@@ -1337,7 +1394,7 @@ sap.ui.define([
 
 		} else {
 
-			// DEPRECATED LEGACY CODE: load the application (TODO: remove when Application is removed!)
+			// @deprecated concept, superseded by "sap/ui/core/Component"
 			var sApplication = oConfig.getApplication();
 			if (sApplication) {
 
@@ -1397,7 +1454,7 @@ sap.ui.define([
 		}
 		this.bInitialized = true;
 		this._executeOnInit();
-		this._setupRootComponent();
+		this._setupRootComponent(); // @legacy-relevant: private API for 2 deprecated concepts "rootComponent" & "sap.ui.app.Application"
 		this._executeInitListeners();
 	};
 
