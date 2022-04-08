@@ -37018,8 +37018,12 @@ sap.ui.define([
 	//
 	// A transient item must also not be ignored by the list report (JIRA: CPOUI5ODATAV4-1409)
 	// Also check with refresh (JIRA: CPOUI5ODATAV4-1382)
+	//
+	// A refresh of the list report must not destroy inactive creation rows in the items table.
+	// JIRA: CPOUI5ODATAV4-1566
 	QUnit.test("JIRA: CPOUI5ODATAV4-1104 - do not ignore indirect kept-alive", function (assert) {
-		var oItemsTableBinding,
+		var oInactiveCreationRow,
+			oItemsTableBinding,
 			oKeptAliveItem,
 			oListReportBinding,
 			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
@@ -37090,6 +37094,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			oKeptAliveItem.setKeepAlive(false);
+
 			that.expectChange("itemPosition", ["0010"])
 				.expectCanceledError("Failed to update path /SalesOrderList('42')"
 					+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')/ItemPosition",
@@ -37101,7 +37107,7 @@ sap.ui.define([
 
 			return Promise.all([
 				checkCanceled(assert, oSetPropertyPromise),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "reset changes")
 			]);
 		}).then(function () {
 			var oTransientItem = oItemsTableBinding.create({ItemPosition : "0000"});
@@ -37115,7 +37121,60 @@ sap.ui.define([
 
 			return Promise.all([
 				oTransientItem.delete(), // cleanup
-				checkCanceled(assert, oTransientItem.created())
+				checkCanceled(assert, oTransientItem.created()),
+				that.waitForChanges(assert, "do not ignore transient")
+			]);
+		}).then(function () {
+			that.expectChange("itemPosition", ["", "0010"]);
+
+			oInactiveCreationRow = oItemsTableBinding.create({/*oInitialData*/},
+				/*bSkipRefresh*/true, /*bAtEnd*/false, /*bInactive*/true);
+
+			assert.strictEqual(oInactiveCreationRow.hasPendingChanges(), true,
+				"This includes the context itself being transient");
+			assert.strictEqual(oItemsTableBinding.hasPendingChanges(), false);
+			assert.strictEqual(oListReportBinding.hasPendingChanges(), false);
+
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+					value : [{
+						Note : "1st SalesOrder",
+						SalesOrderID : "42"
+					}]
+				})
+				.expectChange("note", ["1st SalesOrder"])
+				.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,SalesOrderID"
+					+ "&$skip=0&$top=99", {
+					value : [{
+						ItemPosition : "0011",
+						SalesOrderID : "42"
+					}]
+				})
+				.expectChange("itemPosition", [, "0011"]);
+
+			return Promise.all([
+				// code under test (JIRA: CPOUI5ODATAV4-1566)
+				oListReportBinding.requestRefresh(),
+				that.waitForChanges(assert, "JIRA: CPOUI5ODATAV4-1566")
+			]);
+		}).then(function () {
+			assert.strictEqual(oItemsTableBinding.getAllCurrentContexts()[0], oInactiveCreationRow);
+
+			that.expectChange("itemPosition", ["0111"])
+				.expectRequest({
+					method : "POST",
+					payload : {
+						ItemPosition : "0111"
+					},
+					url : "SalesOrderList('42')/SO_2_SOITEM"
+				}); // response does not matter here
+
+			// code under test
+			oInactiveCreationRow.setProperty("ItemPosition", "0111");
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oInactiveCreationRow.created(),
+				that.waitForChanges(assert, "activate")
 			]);
 		});
 	});

@@ -2156,6 +2156,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#getCurrentContexts
+	 * @see #getAllCurrentContexts
 	 * @since 1.39.0
 	 */
 	// @override sap.ui.model.ListBinding#getCurrentContexts
