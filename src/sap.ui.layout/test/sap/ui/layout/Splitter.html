@@ -1,259 +1,264 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>Splitter - sap.ui.layout</title>
-	<script src="shared-config.js"></script>
-	<script id="sap-ui-bootstrap"
-			src="../../../../resources/sap-ui-core.js" 
-			data-sap-ui-libs="sap.ui.core, sap.ui.layout, sap.m">
-	</script>
-	<style>
-		#buttons,
-		#options {
-			margin-top: 1rem;
-		}
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Splitter - sap.ui.layout</title>
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.ui.core, sap.ui.layout, sap.m"
+				data-sap-ui-theme="sap_horizon">
+		</script>
+		<style>
+			#buttons,
+			#options {
+				margin-top: 1rem;
+			}
 
-		#options {
-			margin: 1rem 2rem 1rem 2rem;
-		}
+			#options {
+				margin: 1rem 2rem 1rem 2rem;
+			}
 
-		#options .sapuiVltCell {
-			margin-top: 0.5rem;
-		}
+			#options .sapuiVltCell {
+				margin-top: 0.5rem;
+			}
 
-		#options .sapUiTv {
-			margin-right: 0.5rem;
-			margin-left: 0.5rem;
-		}
+			#options .sapUiTv {
+				margin-right: 0.5rem;
+				margin-left: 0.5rem;
+			}
 
-		.optionTitle {
-			font-weight: bold;
-			margin-right: 4rem;
-		}
-	</style>
-	<script>
-		sap.ui.getCore().attachInit(function () {
-			sap.ui.require([
-				"sap/ui/layout/Splitter",
-				"sap/ui/layout/SplitterLayoutData",
-				"sap/ui/layout/HorizontalLayout",
-				"sap/ui/layout/VerticalLayout",
-				"sap/m/App",
-				"sap/m/Page",
-				"sap/m/Button",
-				"sap/m/CheckBox",
-				"sap/m/Input",
-				"sap/m/Text",
-				"sap/m/VBox",
-				"sap/m/FlexItemData"
-			], function (Splitter, SplitterLayoutData, HorizontalLayout, VerticalLayout, App, Page, Button, CheckBox, Input, Text, VBox, FlexItemData) {
+			.optionTitle {
+				font-weight: bold;
+				margin-right: 4rem;
+			}
+		</style>
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/ui/layout/Splitter",
+					"sap/ui/layout/SplitterLayoutData",
+					"sap/ui/layout/HorizontalLayout",
+					"sap/ui/layout/VerticalLayout",
+					"sap/m/App",
+					"sap/m/Page",
+					"sap/m/Button",
+					"sap/m/CheckBox",
+					"sap/m/Input",
+					"sap/m/Text",
+					"sap/m/VBox",
+					"sap/m/FlexItemData",
+					"sap/ui/core/library"
+				], function (Splitter, SplitterLayoutData, HorizontalLayout, VerticalLayout, App, Page, Button, CheckBox, Input, Text, VBox, FlexItemData, coreLibrary) {
+					"use strict";
 
-				function createExampleContent() {
-					if (createExampleContent.called === undefined) {
-						createExampleContent.called = 0;
-					}
-					++createExampleContent.called;
+					var Orientation = coreLibrary.Orientation;
 
-					var oLd = new SplitterLayoutData({
-						resizable: true,
-						size: Math.random() > 0.5 ? "auto" : 50 + Math.floor(Math.random() * 300) + "px",
-						minSize: Math.random() > 0.5 ? 0 : Math.floor(Math.random() * 100)
-					});
+					function createExampleContent() {
+						if (createExampleContent.called === undefined) {
+							createExampleContent.called = 0;
+						}
+						++createExampleContent.called;
 
-					switch (createExampleContent.called) {
-						case 1:
-							oLd.setSize("200px");
-							break;
-						case 2:
-							oLd.setSize("auto");
-							break;
-						case 3:
-							oLd.setSize("35%");
-							break;
-					}
+						var oLd = new SplitterLayoutData({
+							resizable: true,
+							size: Math.random() > 0.5 ? "auto" : 50 + Math.floor(Math.random() * 300) + "px",
+							minSize: Math.random() > 0.5 ? 0 : Math.floor(Math.random() * 100)
+						});
 
-					return new Text({
-						text: "Content!",
-						layoutData: oLd
-					});
-				}
-
-				var oSplitter = new Splitter("mySplitter", {
-					contentAreas: [
-						new Text({
-							text: "Content! size=auto; minSize=200",
-							layoutData: new SplitterLayoutData({
-								resizable: true,
-								size: "auto",
-								minSize: 200
-							})
-						}),
-						new Text({
-							text: "Content! size=350px; minSize=50",
-							layoutData: new SplitterLayoutData({
-								resizable: true,
-								size: "350px",
-								minSize: 50
-							})
-						}),
-						new Splitter("nestedSplitter", {
-							contentAreas: [new Button(), new Button()],
-							orientation: "Vertical"
-						})
-					]
-				});
-
-				var oOptionsLayout = new VerticalLayout().addStyleClass("options");
-
-				function showLayoutOptions() {
-					// Remove all Options
-					oOptionsLayout.destroyContent();
-
-					var aContentAreas = oSplitter.getContentAreas();
-					for (var i = 0; i < aContentAreas.length; ++i) {
-						var oContentArea = aContentAreas[i];
-						var oLD = oContentArea.getLayoutData();
-						if (!oLD) {
-							oLD = new SplitterLayoutData();
-							oContentArea.setLayoutData(oLD);
+						switch (createExampleContent.called) {
+							case 1:
+								oLd.setSize("200px");
+								break;
+							case 2:
+								oLd.setSize("auto");
+								break;
+							case 3:
+								oLd.setSize("35%");
+								break;
 						}
 
-						var oOptions = new HorizontalLayout();
-						oOptions.addContent(
+						return new Text({
+							text: "Content!",
+							layoutData: oLd
+						});
+					}
+
+					var oSplitter = new Splitter("mySplitter", {
+						contentAreas: [
 							new Text({
-								text: "ContentArea #" + (i + 1)
-							}).addStyleClass("optionTitle")
-						);
-
-						oOptions.addContent(new Text({ text: "Resizable: " }));
-						oOptions.addContent(new CheckBox({
-							selected: oLD.getResizable(),
-							select: (function (oLayoutData) {
-								return function (oEvent) {
-									oLayoutData.setResizable(oEvent.getParameter("selected"));
-								}
-							})(oLD)
-						}));
-
-						oOptions.addContent(new Text({ text: "Size (CSS): " }));
-						oOptions.addContent(new Input({
-							change: (function (oLayoutData) {
-								return function (oEvent) {
-									oLayoutData.setSize(oEvent.getParameter("value"));
-								}
-							})(oLD)
-						}).setValue(oLD.getSize()));
-
-						oOptions.addContent(new Text({ text: "Min-Size: (in px)" }));
-						oOptions.addContent(new Input({
-							change: (function (oLayoutData) {
-								return function (oEvent) {
-									oLayoutData.setMinSize(parseInt(oEvent.getParameter("value"), 10));
-								}
-							})(oLD)
-						}).setValue(oLD.getMinSize()));
-
-						oOptionsLayout.addContent(oOptions);
-					}
-				}
-				showLayoutOptions();
-
-				var oButtonLayout = new HorizontalLayout().addStyleClass("buttons");
-
-				var oAddContentBtn = new Button({
-					text: "Add content area",
-					press: function () {
-						oSplitter.addContentArea(createExampleContent());
-						showLayoutOptions();
-					}
-				});
-
-				var oRemoveContentBtn = new Button({
-					text: "Remove content area",
-					press: function () {
-						var oLastContentArea = oSplitter.getContentAreas().pop();
-						oSplitter.removeContentArea(oLastContentArea);
-						oLastContentArea.destroy();
-						showLayoutOptions();
-					}
-				});
-
-				var oInvalidateBtn = new Button({
-					text: "Invalidate Splitter",
-					press: function () {
-						oSplitter.invalidate();
-					}
-				});
-
-				var oResizeBtn = new Button({
-					text: "Resize",
-					press: function () {
-						oSplitter.resetContentAreasSizes();
-					}
-				});
-
-				var oSwitchOrientationBtn = new Button({
-					text: "Change Orientation",
-					press: function () {
-						var sOr = oSplitter.getOrientation();
-						oSplitter.setOrientation(
-							sOr === sap.ui.core.Orientation.Vertical
-								? sap.ui.core.Orientation.Horizontal
-								: sap.ui.core.Orientation.Vertical
-						);
-					}
-				});
-
-				[oAddContentBtn, oRemoveContentBtn, oInvalidateBtn, oResizeBtn, oSwitchOrientationBtn].forEach(function (oBtn) { oButtonLayout.addContent(oBtn); });
-
-
-				var oEventStatus = new Text({
-					text: "Nothing happened so far."
-				});
-				var iEvents = 0;
-
-				oSplitter.attachResize(function (oEvent) {
-					oEventStatus.setText(
-						new Date().toLocaleString() + " - Resize # " + (++iEvents) + " fired by: " + oEvent.getSource().getId()
-					);
-					showLayoutOptions();
-				});
-
-				oSplitter.setLayoutData(new FlexItemData({
-					growFactor: 1
-				}));
-
-				var oApp = new App({
-					pages: [
-						new Page({
-							title: "sap.ui.layout.Splitter",
-							content: [
-								new VBox({
-									height: "100%",
-									items: [
-										oSplitter,
-										new VBox({
-											items: [
-												oButtonLayout,
-												oOptionsLayout,
-												oEventStatus
-											]
-										})
-									]
+								text: "Content! size=auto; minSize=200",
+								layoutData: new SplitterLayoutData({
+									resizable: true,
+									size: "auto",
+									minSize: 200
 								})
-							]
-						})
-					]
-				});
+							}),
+							new Text({
+								text: "Content! size=350px; minSize=50",
+								layoutData: new SplitterLayoutData({
+									resizable: true,
+									size: "350px",
+									minSize: 50
+								})
+							}),
+							new Splitter("nestedSplitter", {
+								contentAreas: [new Button(), new Button()],
+								orientation: "Vertical"
+							})
+						]
+					});
 
-				oApp.placeAt("content");
+					var oOptionsLayout = new VerticalLayout().addStyleClass("options");
+
+					function showLayoutOptions() {
+						// Remove all Options
+						oOptionsLayout.destroyContent();
+
+						var aContentAreas = oSplitter.getContentAreas();
+						for (var i = 0; i < aContentAreas.length; ++i) {
+							var oContentArea = aContentAreas[i];
+							var oLD = oContentArea.getLayoutData();
+							if (!oLD) {
+								oLD = new SplitterLayoutData();
+								oContentArea.setLayoutData(oLD);
+							}
+
+							var oOptions = new HorizontalLayout();
+							oOptions.addContent(
+								new Text({
+									text: "ContentArea #" + (i + 1)
+								}).addStyleClass("optionTitle")
+							);
+
+							oOptions.addContent(new Text({ text: "Resizable: " }));
+							oOptions.addContent(new CheckBox({
+								selected: oLD.getResizable(),
+								select: (function (oLayoutData) {
+									return function (oEvent) {
+										oLayoutData.setResizable(oEvent.getParameter("selected"));
+									}
+								})(oLD)
+							}));
+
+							oOptions.addContent(new Text({ text: "Size (CSS): " }));
+							oOptions.addContent(new Input({
+								change: (function (oLayoutData) {
+									return function (oEvent) {
+										oLayoutData.setSize(oEvent.getParameter("value"));
+									}
+								})(oLD)
+							}).setValue(oLD.getSize()));
+
+							oOptions.addContent(new Text({ text: "Min-Size: (in px)" }));
+							oOptions.addContent(new Input({
+								change: (function (oLayoutData) {
+									return function (oEvent) {
+										oLayoutData.setMinSize(parseInt(oEvent.getParameter("value")));
+									}
+								})(oLD)
+							}).setValue(oLD.getMinSize()));
+
+							oOptionsLayout.addContent(oOptions);
+						}
+					}
+					showLayoutOptions();
+
+					var oButtonLayout = new HorizontalLayout().addStyleClass("buttons");
+
+					var oAddContentBtn = new Button({
+						text: "Add content area",
+						press: function () {
+							oSplitter.addContentArea(createExampleContent());
+							showLayoutOptions();
+						}
+					});
+
+					var oRemoveContentBtn = new Button({
+						text: "Remove content area",
+						press: function () {
+							var oLastContentArea = oSplitter.getContentAreas().pop();
+							oSplitter.removeContentArea(oLastContentArea);
+							oLastContentArea.destroy();
+							showLayoutOptions();
+						}
+					});
+
+					var oInvalidateBtn = new Button({
+						text: "Invalidate Splitter",
+						press: function () {
+							oSplitter.invalidate();
+						}
+					});
+
+					var oResizeBtn = new Button({
+						text: "Resize",
+						press: function () {
+							oSplitter.resetContentAreasSizes();
+						}
+					});
+
+					var oSwitchOrientationBtn = new Button({
+						text: "Change Orientation",
+						press: function () {
+							var sOr = oSplitter.getOrientation();
+							oSplitter.setOrientation(
+								sOr === Orientation.Vertical
+									? Orientation.Horizontal
+									: Orientation.Vertical
+							);
+						}
+					});
+
+					[oAddContentBtn, oRemoveContentBtn, oInvalidateBtn, oResizeBtn, oSwitchOrientationBtn].forEach(function (oBtn) { oButtonLayout.addContent(oBtn); });
+
+
+					var oEventStatus = new Text({
+						text: "Nothing happened so far."
+					});
+					var iEvents = 0;
+
+					oSplitter.attachResize(function (oEvent) {
+						oEventStatus.setText(
+							new Date().toLocaleString() + " - Resize # " + (++iEvents) + " fired by: " + oEvent.getSource().getId()
+						);
+						showLayoutOptions();
+					});
+
+					oSplitter.setLayoutData(new FlexItemData({
+						growFactor: 1
+					}));
+
+					new App({
+						pages: [
+							new Page({
+								title: "sap.ui.layout.Splitter",
+								content: [
+									new VBox({
+										height: "100%",
+										items: [
+											oSplitter,
+											new VBox({
+												items: [
+													oButtonLayout,
+													oOptionsLayout,
+													oEventStatus
+												]
+											})
+										]
+									})
+								]
+							})
+						]
+					}).placeAt("content");
+				});
 			});
-		});
-	</script>
-</head>
-<body class="sapUiBody">
-	<div id="content"></div>
-</body>
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<div id="content"></div>
+	</body>
 </html>

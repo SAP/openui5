@@ -1,61 +1,84 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<title>HorizontalLayout - sap.ui.layout</title>
+		<meta charset="utf-8">
+		<title>HorizontalLayout - sap.ui.layout</title>
 
-	<script src="shared-config.js"></script>
-	<script id='sap-ui-bootstrap'
-		src='../../../../resources/sap-ui-core.js'
-		data-sap-ui-theme='sap_belize'
-		data-sap-ui-libs='sap.ui.layout, sap.m'></script>
+		<script src="shared-config.js"></script>
+		<script id='sap-ui-bootstrap'
+			src='../../../../resources/sap-ui-core.js'
+			data-sap-ui-async="true"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-libs="sap.ui.layout, sap.m"
+			data-sap-ui-resourceroots='{
+				"qunit.internal.acc": "../../../../../test-resources/sap/ui/core/qunit/internal/acc"
+			}'
+			data-sap-ui-theme='sap_belize'
+			></script>
+
+		<script>
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"sap/m/App",
+				"sap/m/Button",
+				"sap/m/Input",
+				"sap/m/Page",
+				"sap/m/Panel",
+				"sap/ui/core/HTML",
+				"sap/ui/layout/HorizontalLayout",
+				"sap/ui/layout/Splitter"
+			], function(App, Button, Input, Page, Panel, HTML, HorizontalLayout, Splitter) {
+				"use strict";
+
+					// create a HorizontalLayout with some initial content
+				var oDefaultLayout = new HorizontalLayout("myLayout", {content:[
+						new Button({text:"Hello World 1"}),
+						new Button({text:"Hello World 2"}),
+						new Panel({width:"200px", headerText:"A Panel", content:[
+							new Button({text:"Hello World a"}),
+							new Button({text:"Hello World b"}),
+							new HTML({content:"<div style='width:40px;'>as df rg eth et het h erj rzj rjz </div>"})
+						]})
+				]});
+
+				var btn3 = new Button({text:"Hello World 3"});
+				oDefaultLayout.addContent(btn3);
 
 
-	<script>
+				var oSplitter = new Splitter("splitter", {
+					contentAreas: new Page({
+						title: "HorizontalLayout in Splitter",
+						content: new HorizontalLayout({
+							allowWrapping: true,
+							content: [
+								new Input({ width: "12rem" }),
+								new Input({ width: "12rem" }),
+								new Input({ width: "12rem" }),
+								new Input({ width: "12rem" }),
+								new Input({ width: "12rem" }),
+								new Input({ width: "12rem" }),
+								new Input({ width: "12rem" }),
+								new Input({ width: "12rem" }),
+								new Input({ width: "12rem" })
+							]
+						})
+					})
+				});
 
-		// create a HorizontalLayout with some initial content
-	var oDefaultLayout = new sap.ui.layout.HorizontalLayout("myLayout", {content:[
-			new sap.m.Button({text:"Hello World 1"}),
-			new sap.m.Button({text:"Hello World 2"}),
-			new sap.m.Panel({width:"200px", headerText:"A Panel", content:[
-				new sap.m.Button({text:"Hello World a"}),
-				new sap.m.Button({text:"Hello World b"}),
-				new sap.ui.core.HTML({content:"<div style='width:40px;'>as df rg eth et het h erj rzj rjz </div>"})
-			]})
-	]});
-
-	var btn3 = new sap.m.Button({text:"Hello World 3"});
-	oDefaultLayout.addContent(btn3);
-
-
-	var oSplitter = new sap.ui.layout.Splitter("splitter", {
-		contentAreas: new sap.m.Page({
-			title: "HorizontalLayout in Splitter",
-			content: new sap.ui.layout.HorizontalLayout({
-				allowWrapping: true,
-				content: [
-					new sap.m.Input({ width: "12rem" }),
-					new sap.m.Input({ width: "12rem" }),
-					new sap.m.Input({ width: "12rem" }),
-					new sap.m.Input({ width: "12rem" }),
-					new sap.m.Input({ width: "12rem" }),
-					new sap.m.Input({ width: "12rem" }),
-					new sap.m.Input({ width: "12rem" }),
-					new sap.m.Input({ width: "12rem" }),
-					new sap.m.Input({ width: "12rem" })
-				]
-			})
-		})
-	});
-
-	var page1 = new sap.m.Page("area-default", {
-		title: "HorizontalLayout",
-		content: [oDefaultLayout, oSplitter]
-	});
-	var app = new sap.m.App("myApp", {initialPage:"page1"});
-	app.addPage(page1);
-	app.placeAt("content");
-
-	</script>
+				new App({
+					id: "myApp",
+					pages: [
+						new Page({
+							id: "area-default",
+							title: "HorizontalLayout",
+							content: [oDefaultLayout, oSplitter]
+						})
+					],
+					initialPage:"area-default"
+				}).placeAt("content");
+			});
+		});
+		</script>
 
 	</head>
 	<body class='sapUiBody'>

@@ -5,38 +5,49 @@
 		<title>sap.ui.layout.AlignedFlowLayout</title>
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.ui.layout, sap.m"
-				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-async="true"
 				data-sap-ui-compatVersion="edge"
-				data-sap-ui-theme="sap_belize">
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				data-sap-ui-theme="sap_horizon">
 		</script>
 		<script>
 			sap.ui.getCore().attachInit(function() {
-				oAlignedFlowLayout = new sap.ui.layout.AlignedFlowLayout({
-					content: [
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input()
-					],
-					endContent: new sap.m.Button({
-						text: "Search"
-					})
-				}).addStyleClass("sapUiContentPadding");
+				sap.ui.require([
+					"sap/m/App",
+					"sap/m/Button",
+					"sap/m/Input",
+					"sap/m/Page",
+					"sap/m/Text",
+					"sap/ui/layout/AlignedFlowLayout"
+				], function(App, Button, Input, Page, Text, AlignedFlowLayout) {
+					"use strict";
 
-				new sap.m.App({
-					pages: new sap.m.Page({
-						title: "AlignedFlowLayout Test Page",
+					var oAlignedFlowLayout = new AlignedFlowLayout({
 						content: [
-							new sap.m.Text({
-								text: "A FilterBar-like Layout"
-							}),
-							oAlignedFlowLayout
-						]
-					})
-				}).placeAt("content");
+							new Input(),
+							new Input(),
+							new Input(),
+							new Input(),
+							new Input(),
+							new Input()
+						],
+						endContent: new Button({
+							text: "Search"
+						})
+					}).addStyleClass("sapUiContentPadding");
+
+					new App({
+						pages: new Page({
+							title: "AlignedFlowLayout Test Page",
+							content: [
+								new Text({
+									text: "A FilterBar-like Layout"
+								}),
+								oAlignedFlowLayout
+							]
+						})
+					}).placeAt("content");
+				});
 			});
 		</script>
 	</head>

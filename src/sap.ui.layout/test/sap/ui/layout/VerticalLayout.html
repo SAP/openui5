@@ -8,44 +8,51 @@
 
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
-				data-sap-ui-trace="false"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.ui.layout,sap.m"
+				data-sap-ui-theme="sap_horizon"
 				src="../../../../resources/sap-ui-core.js"
 				>
 		</script>
 		<!-- relative URLs depend on testsuite frame?! -->
 		<script>
-			var oCore = sap.ui.getCore();
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"sap/m/Button",
+				"sap/m/CheckBox",
+				"sap/m/Image",
+				"sap/m/Input",
+				"sap/m/RatingIndicator",
+				"sap/m/Slider",
+				"sap/m/Text",
+				"sap/m/TextArea",
+				"sap/ui/layout/VerticalLayout"
+			], function(Button, CheckBox, Image, Input, RatingIndicator, Slider, Text, TextArea, VerticalLayout) {
+				"use strict";
 
-			oCore.attachInit(
-			  function () {
-
-				var oLayout = new sap.ui.layout.VerticalLayout("Layout1", {
+				new VerticalLayout("Layout1", {
 					content: [
-						new sap.m.Button({text:"Press me", tooltip:"Button tooltip"}),
-						new sap.m.Input({value:"Test"}),
-						new sap.m.Image({src:"http://www.sap.com/global/images/SAPLogo.gif"})
+						new Button({text:"Press me", tooltip:"Button tooltip"}),
+						new Input({value:"Test"}),
+						new Image({src:"http://www.sap.com/global/images/SAPLogo.gif"})
 					]
-				});
-				oLayout.placeAt("uiArea1");
+				}).placeAt("uiArea1");
 
-				oLayout = new sap.ui.layout.VerticalLayout("Layout2", {
+				new VerticalLayout("Layout2", {
 					width: "200px",
 					content: [
-						new sap.m.Slider({value:25, tooltip:"Slider tooltip", width: "300px"}),
-						new sap.m.TextArea({value:"This text is longer than the width of the VerticalLayout.\nSo it should be cut.\n1\n2\n3\n4\n5\n6\n7\n8\n9", width: "300px", height: "150px", wrapping: sap.ui.core.Wrapping.Off}),
-						new sap.m.RatingIndicator({value: 4}),
-						new sap.m.CheckBox({text: "Test"}),
-						new sap.m.Text({text: "This text is longer than the width of the VerticalLayout.\nSo it should be cut.", width: "300px", wrapping: false})
+						new Slider({value:25, tooltip:"Slider tooltip", width: "300px"}),
+						new TextArea({value:"This text is longer than the width of the VerticalLayout.\nSo it should be cut.\n1\n2\n3\n4\n5\n6\n7\n8\n9", width: "300px", height: "150px", wrapping: sap.ui.core.Wrapping.Off}),
+						new RatingIndicator({value: 4}),
+						new CheckBox({text: "Test"}),
+						new Text({text: "This text is longer than the width of the VerticalLayout.\nSo it should be cut.", width: "300px", wrapping: false})
 					]
-				});
-				oLayout.placeAt("uiArea2");
-
-			  }
-			);
+				}).placeAt("uiArea2");
+			});
+		});
 		</script>
-</head>
+	</head>
 	<body class="sapUiBody">
 		<h1>Testcase for sap.ui.layout.VerticalLayout</h1>
 		<br> VerticalLayout with 3 elements:

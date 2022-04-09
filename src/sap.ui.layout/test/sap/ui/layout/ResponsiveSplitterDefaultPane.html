@@ -1,20 +1,23 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-	<title>sap.ui.layout.ResponsiveSplitter</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="shared-config.js"></script>
-	<script id='sap-ui-bootstrap'
-			src='../../../../resources/sap-ui-core.js'
-			data-sap-ui-libs='sap.ui.layout, sap.m'>
-	</script>
-	<script id="myXml" type="text/xmldata">
+	<head>
+		<meta charset="utf-8">
+		<title>sap.ui.layout.ResponsiveSplitter</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="shared-config.js"></script>
+		<script id='sap-ui-bootstrap'
+				src='../../../../resources/sap-ui-core.js'
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				data-sap-ui-theme="sap_horizon">
+		</script>
+		<script id="myXml" type="text/xmldata">
 			<mvc:View xmlns:mvc="sap.ui.core.mvc"
 				displayBlock="true"
 				xmlns="sap.m"
 				xmlns:l="sap.ui.layout"
-				xmlns:core="sap.ui.core"
-				viewName="sap.ui.layout.ResponsiveSplitterDefaultPane">
+				xmlns:core="sap.ui.core">
 				<l:ResponsiveSplitter
 					id="responsiveSplitter"
 					defaultPane="default"
@@ -114,18 +117,23 @@
 					</l:PaneContainer>
 				</l:ResponsiveSplitter>
 			</mvc:View>
-	</script>
+		</script>
 
-	<script>
-		sap.ui.controller("myController", {
-			onInit: function() {
-
-			}
-		});
-		sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
-	</script>
-</head>
-<body id="body" class="sapUiBody">
-<div id="content"></div>
-</body>
+		<script>
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require([
+					"sap/ui/core/mvc/XMLView",
+				], function(XMLView) {
+					XMLView.create({
+						definition: document.getElementById("myXml").textContent,
+					}).then(function(oXMLView) {
+						oXMLView.placeAt("content");
+					});
+				})
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="content"></div>
+	</body>
 </html>

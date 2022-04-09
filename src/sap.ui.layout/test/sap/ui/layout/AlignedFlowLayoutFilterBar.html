@@ -5,71 +5,86 @@
 		<title>sap.ui.layout.AlignedFlowLayout</title>
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.ui.layout, sap.m"
-				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-async="true"
 				data-sap-ui-compatVersion="edge"
-				data-sap-ui-theme="sap_belize">
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				data-sap-ui-theme="sap_horizon">
 		</script>
 		<script>
 			sap.ui.getCore().attachInit(function() {
-				var oAlignedFlowLayout = new sap.ui.layout.AlignedFlowLayout({
-					content: [
-						new sap.ui.layout.VerticalLayout({
-							content: [
-								new sap.m.Label({text: "Delivery Date", required: true}),
-								new sap.m.DatePicker({width: "100%"})
-							]
-						}).addStyleClass("sapUiCompFilterBarItem"),
+				sap.ui.require([
+					"sap/m/App",
+					"sap/m/Button",
+					"sap/m/DatePicker",
+					"sap/m/Label",
+					"sap/m/Page",
+					"sap/m/Select",
+					"sap/m/Text",
+					"sap/m/ToggleButton",
+					"sap/ui/layout/AlignedFlowLayout",
+					"sap/ui/layout/VerticalLayout"
+				], function(App, Button, DatePicker, Label, Page, Select, Text, ToggleButton, AlignedFlowLayout, VerticalLayout) {
+					"use strict";
 
-						new sap.ui.layout.VerticalLayout({
-							content: [
-								new sap.m.Label({text: "Region", required: true}),
-								new sap.m.Select({width: "100%"})
-							]
-						}).addStyleClass("sapUiCompFilterBarItem"),
-
-						new sap.ui.layout.VerticalLayout({
-							content: [
-								new sap.m.Label({text: "Other Date"}),
-								new sap.m.DatePicker({width: "100%"})
-							]
-						}).addStyleClass("sapUiCompFilterBarItem"),
-
-						new sap.ui.layout.VerticalLayout({
-							content: [
-								new sap.m.Label({text: "Other State"}),
-								new sap.m.Select({width: "100%"})
-							]
-						}).addStyleClass("sapUiCompFilterBarItem")
-
-					],
-					endContent: [
-						new sap.m.Button({
-							text: "Adapt Filters (1)",
-							type: "Transparent"
-						}),
-						new sap.m.Button({
-							text: "Go",
-							type: "Emphasized"
-						}),
-						new sap.m.ToggleButton({
-							icon: "sap-icon://pushpin-off",
-							type: "Transparent"
-						})
-					]
-				});
-
-				new sap.m.App({
-					pages: new sap.m.Page({
-						title: "AlignedFlowLayout Test Page",
+					var oAlignedFlowLayout = new AlignedFlowLayout({
 						content: [
-							new sap.m.Text({
-								text: "A FilterBar-like Layout"
+							new VerticalLayout({
+								content: [
+									new Label({text: "Delivery Date", required: true}),
+									new DatePicker({width: "100%"})
+								]
+							}).addStyleClass("sapUiCompFilterBarItem"),
+
+							new VerticalLayout({
+								content: [
+									new Label({text: "Region", required: true}),
+									new Select({width: "100%"})
+								]
+							}).addStyleClass("sapUiCompFilterBarItem"),
+
+							new VerticalLayout({
+								content: [
+									new Label({text: "Other Date"}),
+									new DatePicker({width: "100%"})
+								]
+							}).addStyleClass("sapUiCompFilterBarItem"),
+
+							new VerticalLayout({
+								content: [
+									new Label({text: "Other State"}),
+									new Select({width: "100%"})
+								]
+							}).addStyleClass("sapUiCompFilterBarItem")
+
+						],
+						endContent: [
+							new Button({
+								text: "Adapt Filters (1)",
+								type: "Transparent"
 							}),
-							oAlignedFlowLayout
+							new Button({
+								text: "Go",
+								type: "Emphasized"
+							}),
+							new ToggleButton({
+								icon: "sap-icon://pushpin-off",
+								type: "Transparent"
+							})
 						]
-					})
-				}).placeAt("content");
+					});
+
+					new App({
+						pages: new Page({
+							title: "AlignedFlowLayout Test Page",
+							content: [
+								new Text({
+									text: "A FilterBar-like Layout"
+								}),
+								oAlignedFlowLayout
+							]
+						})
+					}).placeAt("content");
+				});
 			});
 		</script>
 		<style>

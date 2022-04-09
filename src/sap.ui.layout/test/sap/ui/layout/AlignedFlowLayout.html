@@ -5,12 +5,13 @@
 		<title>sap.ui.layout.AlignedFlowLayout</title>
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.ui.layout, sap.m"
-				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-async="true"
 				data-sap-ui-compatVersion="edge"
-				data-sap-ui-theme="sap_belize">
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				data-sap-ui-theme="sap_horizon">
 		</script>
 		<script>
+		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
 				"sap/m/App",
 				"sap/m/Page",
@@ -32,7 +33,9 @@
 				Label,
 				Slider
 			) {
-				oAlignedFlowLayout1 = new AlignedFlowLayout({
+				"use strict";
+
+				var oAlignedFlowLayout1 = new AlignedFlowLayout({
 					content: [
 						new Input(),
 						new Input(),
@@ -46,7 +49,7 @@
 					})
 				});
 
-				oAlignedFlowLayout2 = new AlignedFlowLayout({
+				var oAlignedFlowLayout2 = new AlignedFlowLayout({
 					content: [
 						new Input(),
 						new Input()
@@ -56,7 +59,7 @@
 					})
 				});
 
-				oAlignedFlowLayout3 = new AlignedFlowLayout({
+				var oAlignedFlowLayout3 = new AlignedFlowLayout({
 					content: [
 						new Input(),
 						new Input(),
@@ -71,7 +74,7 @@
 					})
 				});
 
-				oAlignedFlowLayout4 = new AlignedFlowLayout({
+				var oAlignedFlowLayout4 = new AlignedFlowLayout({
 					content: [
 						new Input(),
 						new Input(),
@@ -87,7 +90,7 @@
 					})
 				});
 
-				oAlignedFlowLayout5 = new AlignedFlowLayout({
+				var oAlignedFlowLayout5 = new AlignedFlowLayout({
 					content: [
 						new Input(),
 						new Input(),
@@ -95,7 +98,7 @@
 					]
 				});
 
-				oAlignedFlowLayout6 = new AlignedFlowLayout({
+				var oAlignedFlowLayout6 = new AlignedFlowLayout({
 					content: [
 						new Input(),
 						new Input(),
@@ -112,7 +115,7 @@
 					]
 				});
 
-				oAlignedFlowLayout7 = new AlignedFlowLayout({
+				var oAlignedFlowLayout7 = new AlignedFlowLayout({
 					content: [
 						new TextArea({
 							height: "8rem",
@@ -206,6 +209,7 @@
 					})
 				}).placeAt("content");
 			});
+		});
 		</script>
 	</head>
 	<body id="content" class="sapUiBody">

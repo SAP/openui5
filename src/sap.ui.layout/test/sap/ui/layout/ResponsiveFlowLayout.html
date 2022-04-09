@@ -1,276 +1,292 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-
-<title>ResponsiveFlowLayout - sap.ui.layout</title>
-
-<script src="shared-config.js"></script>
-<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-trace="false"
-	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-libs="sap.ui.layout,sap.ui.ux3"
-	src="../../../../resources/sap-ui-core.js">
-
-</script>
-
-<style type="text/css">
-.sampleButtonBox {
-	border: 1px solid blue;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	margin: 0 10px;
-	padding: 5px;
-}
-</style>
-<script>
-sap.ui.require([
-	"sap/m/Button",
-	"sap/m/CheckBox",
-	"sap/m/Input",
-	"sap/m/Label",
-	"sap/ui/layout/ResponsiveFlowLayout",
-	"sap/ui/layout/ResponsiveFlowLayoutData"
-], function(Button, CheckBox, Input, Label, ResponsiveFlowLayout, ResponsiveFlowLayoutData) {
-
-	var oCheck = new CheckBox({
-		text : "Use line breaks (line breaks for TextFields)",
-		checked : false,
-		change : function() {
-			var bChecked = oCheck.getChecked();
-
-			var oLDFirst = oInputFirst.getLayoutData();
-			var oLDLast = oInputLast.getLayoutData();
-
-			oLDFirst.setLinebreak(bChecked);
-			oLDLast.setLinebreak(bChecked);
+	<head>
+		<meta charset="utf-8">
+		<title>ResponsiveFlowLayout - sap.ui.layout</title>
+		<script id="sap-ui-bootstrap"
+			data-sap-ui-async = "true"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-libs="sap.ui.layout,sap.m"
+			data-sap-ui-resourceroots='{
+				"qunit.internal.acc": "../../../../../test-resources/sap/ui/core/qunit/internal/acc"
+			}'
+			data-sap-ui-theme="sap_bluecrystal"
+			src="../../../../resources/sap-ui-core.js">
+		</script>
+		<style>
+		.sampleButtonBox {
+			border: 1px solid blue;
+			-webkit-border-radius: 3px;
+			-moz-border-radius: 3px;
+			border-radius: 3px;
+			margin: 0 10px;
+			padding: 5px;
 		}
-	}).placeAt("RFLcheckBreak");
-
-	var bResponsive = true;
-	var oCheckRFL = new CheckBox({
-		text : "Set Layout to responsive",
-		checked : true,
-		change : function() {
-			bResponsive = this.getChecked();
-
-			oInnerFirst.setResponsive(bResponsive);
-			oInnerLast.setResponsive(bResponsive);
-			oAddress.setResponsive(bResponsive);
-			oRFL.setResponsive(bResponsive);
+		.sapUiRFLFullLength {
+			background-color: white;
 		}
-	}).placeAt("RFLcheckResponsive");
-	var oButtonInvalidate = new Button({
-		text : "Invalidate Layouts",
-		press : function() {
-			oInnerFirst.invalidate();
-			oInnerLast.invalidate();
-			oAddress.invalidate();
-			oRFL.invalidate();
-		}
-	}).placeAt("RFLcheckResponsive");
+		</style>
+		<script>
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"sap/m/Button",
+				"sap/m/CheckBox",
+				"sap/m/Input",
+				"sap/m/Label",
+				"sap/m/Popover",
+				"sap/ui/core/mvc/Controller",
+				"sap/ui/core/mvc/XMLView",
+				"sap/ui/layout/ResponsiveFlowLayout",
+				"sap/ui/layout/ResponsiveFlowLayoutData"
+			], function(Button, CheckBox, Input, Label, Popover, Controller, XMLView, ResponsiveFlowLayout, ResponsiveFlowLayoutData) {
+				"use strict";
 
-	/*
-	 * Inner layout for first name
-	 */
-	var oInnerFirst = new ResponsiveFlowLayout("rfl_firstname");
-	oInnerFirst.setLayoutData(new ResponsiveFlowLayoutData({
-		minWidth : 250,
-		margin : false,
-		responsive : bResponsive
-	}));
+				var bResponsive = true;
 
-	var oLblFirst = new Label({
-		text : "First name",
-		width : "100%"
-	});
+				var oInputFirst,
+					oInputLast;
 
-	var oInputFirst = new Input({
-		width : "100%"
-	}).setLayoutData(new ResponsiveFlowLayoutData({
-		weight : 1
-	}));
+				new CheckBox({
+					text : "Use line breaks (line breaks for TextFields)",
+					selected : false,
+					select : function(oEvent) {
+						var bLinebreaks = oEvent.getSource().getSelected();
 
-	oInnerFirst.addContent(oLblFirst);
-	oInnerFirst.addContent(oInputFirst);
+						var oLDFirst = oInputFirst.getLayoutData();
+						var oLDLast = oInputLast.getLayoutData();
 
-	/*
-	 * inner layout for last name name
-	 */
-	var oInnerLast = new ResponsiveFlowLayout("rfl_lastname");
-	oInnerLast.setLayoutData(new ResponsiveFlowLayoutData({
-		minWidth : 250,
-		responsive : bResponsive
-	}));
+						oLDFirst.setLinebreak(bLinebreaks);
+						oLDLast.setLinebreak(bLinebreaks);
+					}
+				}).placeAt("RFLcheckBreak");
 
-	var oLblLast = new Label({
-		text : "Last name",
-		width : "100%"
-	});
+				new CheckBox({
+					text : "Set Layout to responsive",
+					selected : true,
+					select : function(oEvent) {
+						bResponsive = oEvent.getSource().getSelected();
 
-	var oInputLast = new Input({
-		width : "100%"
-	}).setLayoutData(new ResponsiveFlowLayoutData({
-		weight : 2,
-		minWidth : 100
-	}));
-	oInnerLast.addContent(oLblLast);
-	oInnerLast.addContent(oInputLast);
+						oInnerFirst.setResponsive(bResponsive);
+						oInnerLast.setResponsive(bResponsive);
+						oAddress.setResponsive(bResponsive);
+						oRFL.setResponsive(bResponsive);
+					}
+				}).placeAt("RFLcheckResponsive");
 
-	/*
-	 * inner layout for street
-	 */
-	var oAddress = new ResponsiveFlowLayout("rfl_address");
-	oAddress.setLayoutData(new ResponsiveFlowLayoutData({
-		minWidth : 250,
-		linebreak : true,
-		responsive : bResponsive
-	}));
+				new Button({
+					text : "Invalidate Layouts",
+					press : function() {
+						oInnerFirst.invalidate();
+						oInnerLast.invalidate();
+						oAddress.invalidate();
+						oRFL.invalidate();
+					}
+				}).placeAt("RFLcheckResponsive");
 
-	var oLblStreet = new Label({
-		text : "Address",
-		width : "100%"
-	}).setLayoutData(new ResponsiveFlowLayoutData({
-		weight : 1,
-		minWidth : 80
-	}));
+				/*
+				 * Inner layout for first name
+				 */
+				var oInnerFirst = new ResponsiveFlowLayout({
+					id: "rfl_firstname",
+					responsive: bResponsive,
+					layoutData: new ResponsiveFlowLayoutData({
+						minWidth : 250,
+						margin : false
+					}),
+					content: [
+						new Label({
+							text : "First name",
+							width : "100%"
+						}),
+						oInputFirst = new Input({
+							width : "100%",
+							layoutData: new ResponsiveFlowLayoutData({
+								weight : 1
+							})
+						})
+					]
+				});
 
-	var oInputStreet = new Input({
-		width : "100%"
-	});
-	var oLD = new ResponsiveFlowLayoutData({
-		weight : 5
-	});
-	oInputStreet.setLayoutData(oLD);
+				/*
+				 * inner layout for last name name
+				 */
+				var oInnerLast = new ResponsiveFlowLayout({
+					id: "rfl_lastname",
+					responsive: bResponsive,
+					layoutData: new ResponsiveFlowLayoutData({
+						minWidth : 250
+					}),
+					content: [
+						new Label({
+							text : "Last name",
+							width : "100%"
+						}),
+						oInputLast = new Input({
+							width : "100%",
+							layoutData: new ResponsiveFlowLayoutData({
+								weight : 2,
+								minWidth : 100
+							})
+						})
+					]
+				});
 
-	var oInputStreetNo = new Input({
-		width : "100%"
-	}).setLayoutData(new ResponsiveFlowLayoutData({
-		weight : 2,
-		linebreakable : false
-	}));
-	oAddress.addContent(oLblStreet);
-	oAddress.addContent(oInputStreet);
-	oAddress.addContent(oInputStreetNo);
+				/*
+				 * inner layout for street
+				 */
+				var oAddress = new ResponsiveFlowLayout({
+					id: "rfl_address",
+					responsive: bResponsive,
+					layoutData: new ResponsiveFlowLayoutData({
+						minWidth : 250,
+						linebreak : true
+					}),
+					content: [
+						new Label({
+							text : "Address",
+							width : "100%",
+							layoutData: new ResponsiveFlowLayoutData({
+								weight : 1,
+								minWidth : 80
+							})
+						}),
+						new Input({
+							width : "100%",
+							layoutData: new ResponsiveFlowLayoutData({
+								weight : 5
+							})
+						}),
+						new Input({
+							width : "100%",
+							layoutData:  new ResponsiveFlowLayoutData({
+								weight : 2,
+								linebreakable : false
+							})
+						})
+					]
+				});
 
-	// outer layout for the form stuff
-	var oRFL = new ResponsiveFlowLayout("rfl_outer", {
-		responsive : bResponsive
-	});
-	oRFL.placeAt("RFL1");
 
-	oRFL.addContent(oInnerFirst);
-	oRFL.addContent(oInnerLast);
-	oRFL.addContent(oAddress);
+				// outer layout for the form stuff
+				var oRFL = new ResponsiveFlowLayout({
+					id: "rfl_outer",
+					responsive : bResponsive,
+					content: [
+						oInnerFirst,
+						oInnerLast,
+						oAddress
+					]
+				}).placeAt("RFL1");
 
-	/*
-	 * Next example
-	 */
-	var oRFL = new ResponsiveFlowLayout("rflLayout").placeAt("RFL2");
+				/*
+				 * Next example
+				 */
+				var oRFL = new ResponsiveFlowLayout("rflLayout").placeAt("RFL2");
 
-	var oBtn1 = new Button("button1", {
-		text : "Button1",
-		width : "100%"
-	});
-	oBtn1.setLayoutData(new ResponsiveFlowLayoutData());
+				var oBtn1 = new Button("button1", {
+					text : "Button1",
+					width : "100%"
+				});
+				oBtn1.setLayoutData(new ResponsiveFlowLayoutData());
 
-	var oBtn2 = new Button("button2", {
-		text : "Button1 (lb)",
-		width : "100%"
-	});
-	oBtn2.setLayoutData(new ResponsiveFlowLayoutData({
-		weight : 2,
-		linebreak : false
-	}));
+				var oBtn2 = new Button("button2", {
+					text : "Button1 (lb)",
+					width : "100%"
+				});
+				oBtn2.setLayoutData(new ResponsiveFlowLayoutData({
+					weight : 2,
+					linebreak : false
+				}));
 
-	// adding content
-	oRFL.addContent(oBtn1);
-	oRFL.addContent(oBtn2);
+				// adding content
+				oRFL.addContent(oBtn1);
+				oRFL.addContent(oBtn2);
 
-	/*
-	 * Example of a SimpleForm using an XML-View
-	 */
+				/*
+				 * Example of a SimpleForm using an XML-View
+				 */
 
-	var sXmlView =
-			  '<mvc:View controllerName="sampleController" xmlns="sap.m" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">'
-			+ '		<layout:ResponsiveFlowLayout>'
-			+ '			<Button text="A button" width="100%">'
-			+ '				<layoutData>'
-			+ '					<layout:ResponsiveFlowLayoutData weight="2" />'
-			+ '				</layoutData>'
-			+ '			</Button>'
-			+ '			<Button id="buttonOpener" text="Open Form" width="100%" press="openForm">'
-			+ '			</Button>'
-			+ '			<Button text="A button" width="100%">'
-			+ '			</Button>'
-			+ '		</layout:ResponsiveFlowLayout>'
-			+ '	</mvc:View>';
+				var sXmlView =
+						  '<mvc:View controllerName="sampleController"'
+						+ '    xmlns="sap.m" xmlns:layout="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc">'
+						+ '    <layout:ResponsiveFlowLayout>'
+						+ '        <Button text="A button" width="100%">'
+						+ '            <layoutData>'
+						+ '                <layout:ResponsiveFlowLayoutData weight="2" />'
+						+ '            </layoutData>'
+						+ '        </Button>'
+						+ '        <Button id="buttonOpener" text="Open Form" width="100%" press="openForm">'
+						+ '        </Button>'
+						+ '        <Button text="A button" width="100%">'
+						+ '        </Button>'
+						+ '    </layout:ResponsiveFlowLayout>'
+						+ '</mvc:View>';
 
-	var sXmlViewSimpleForm =
-			  '<mvc:View xmlns="sap.m" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">'
-			+ '		<form:SimpleForm>'
-			+ '			<Label text="First Label"></Label>'
-			+ '			<link text="Press the Phone">'
-			+ ' 			<core:Icon src="sap-icon://iphone-2" color="#666666" /> '
-			+ '			<Label text="Second Label" />'
-			+ '			<link text="Just a Link">'
-			+ '			<Label text="E-Mail" />'
-			+ '			<link text="test@sap.com">'
-			+ '		</form:SimpleForm>'
-			+ '	</mvc:View>';
+				var sXmlViewSimpleForm =
+						  '<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:mvc="sap.ui.core.mvc">'
+						+ '    <form:SimpleForm>'
+						+ '        <Label text="First Label"></Label>'
+						+ '        <Link text="Press the Phone"/>'
+						+ '        <core:Icon src="sap-icon://iphone-2" color="#666666" />'
+						+ '        <Label text="Second Label" />'
+						+ '        <Link text="Just a Link"/>'
+						+ '        <Label text="E-Mail" />'
+						+ '        <Link text="test@sap.com"/>'
+						+ '        </form:SimpleForm>'
+						+ '</mvc:View>';
 
-	var oController = sap.ui.controller("sampleController", {
-		openForm : function() {
-			if (!oTP.getOpener()) {
-				var sId = oXMLView.getId() + "--buttonOpener";
-				var oOpener = sap.ui.getCore().byId(sId);
-				oTP.setOpener(oOpener);
-			}
+				var Controller = Controller.extend("sampleController", {
+					openForm : function(oEvent) {
+						if (oTP.isOpen()) {
+							oTP.close();
+						} else {
+							oTP.openBy(oEvent.getSource(), true);
+						}
+					}
+				});
 
-			if (oTP.isOpen()) {
-				oTP.close();
-			} else {
-				oTP.open(sap.ui.core.Popup.Dock.EndTop, sap.ui.core.Popup.Dock.BeginTop);
-			}
-		}
-	});
+				var oTP = new Popover({
+					id: "formInPopup"
+				});
 
-	var oXMLView = sap.ui.xmlview({
-		viewContent : sXmlView,
-		controller : oController
-	}).placeAt("RFL3");
+				XMLView.create({
+					id: "simpleFormTP",
+					definition: sXmlViewSimpleForm
+				}).then(function(oXMLViewTP) {
+					oTP.addContent(oXMLViewTP);
+				});
 
-	var oXMLViewSimpleForm = sap.ui.xmlview("simpleFormView", {
-		viewContent : sXmlViewSimpleForm
-	}).placeAt("RFL3");
+				XMLView.create({
+					definition : sXmlView,
+					controller : new Controller()
+				}).then(function(oXMLView) {
+					oXMLView.placeAt("RFL3");
+				});
 
-	var oXMLViewTP = sap.ui.xmlview("simpleFormTP", {
-		viewContent : sXmlViewSimpleForm
-	});
+				XMLView.create({
+					id: "simpleFormView",
+					definition : sXmlViewSimpleForm
+				}).then(function(oXMLViewSimpleForm) {
+					oXMLViewSimpleForm.placeAt("RFL3");
+				});
 
-	var oTP = new sap.ui.ux3.ToolPopup("formInPopup", {
-		content : oXMLViewTP
-	});
-</script>
-<style type="text/css">
-.sapUiRFLFullLength {
-	background-color: fuchsia;
-}
-</style>
-<body class="sapUiBody">
-	<h1 id="header">
-		Test Page for
-		<code>sap.ui.layout.ResponsiveFlowLayout</code>
-	</h1>
-	<br />
-	<div id="RFLcheckBreak" style="padding-left: 10px;"></div>
-	<div id="RFLcheckResponsive" style="padding-left: 10px;"></div>
-	<br />
-	<div id="RFL1" class="sampleButtonBox" style="min-width: 250px;"></div>
-	<br />
-	<h2>Simple Example. Second button twice as big as the first one</h2>
-	<div id="RFL2" class="sampleButtonBox" style="min-width: 150px"></div>
-	<br />
-	<div id="RFL3" class="sampleButtonBox" style="min-width: 150px"></div>
-</body>
+			});
+		});
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<h1 id="header">
+			Test Page for <code>sap.ui.layout.ResponsiveFlowLayout</code>
+		</h1>
+		<br />
+		<div id="RFLcheckBreak" style="padding-left: 10px;"></div>
+		<div id="RFLcheckResponsive" style="padding-left: 10px;"></div>
+		<br />
+		<div id="RFL1" class="sampleButtonBox" style="min-width: 250px;"></div>
+		<br />
+		<h2>Simple Example. Second button twice as big as the first one</h2>
+		<div id="RFL2" class="sampleButtonBox" style="min-width: 150px"></div>
+		<br />
+		<div id="RFL3" class="sampleButtonBox" style="min-width: 150px"></div>
+	</body>
 </html>

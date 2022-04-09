@@ -1,59 +1,77 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-
+	<meta charset="utf-8">
 	<title>ResponsiveLayout ACC Test - sap.ui.layout</title>
 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.Form.gif">
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-	        data-sap-ui-libs="sap.ui.layout, sap.m"
-	        src="../../../../../resources/sap-ui-core.js">
+			data-sap-ui-async="true"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-libs="sap.ui.layout, sap.m"
+			src="../../../../../resources/sap-ui-core.js">
 	</script>
 
 	<script>
+	sap.ui.getCore().attachInit(function() {
+		sap.ui.require([
+			"sap/m/DatePicker",
+			"sap/m/Input",
+			"sap/m/Label",
+			"sap/m/RadioButton",
+			"sap/m/RadioButtonGroup",
+			"sap/m/Select",
+			"sap/m/Text",
+			"sap/ui/core/Item",
+			"sap/ui/core/Title",
+			"sap/ui/layout/form/SimpleForm"
+		], function(DatePicker, Input, Label, RadioButton, RadioButtonGroup, Select, Text, Item, Title, SimpleForm) {
+			"use strict";
 
-		var oSimpleForm = new sap.ui.layout.form.SimpleForm("SF1",{
-			minWidth : 1024,
-			maxContainerCols: 2,
-			editable: true,
-			title: new sap.ui.core.Title({text: "Customer data"}),
-			content:[
-				new sap.ui.core.Title({text: "contact data"}),
-				new sap.m.Label({text:"Name",}),
-				new sap.m.Input({value: "Mustermann"}),
-				new sap.m.Label({text:"First name"}),
-				new sap.m.Input({value: "Max"}),
-				new sap.m.Label({text:"Date of birth"}),
-				new sap.m.DatePicker(),
-				new sap.m.Label({text: "Gender"}),
-				new sap.m.RadioButtonGroup({
-					columns: 2,
-					buttons: [
-						new sap.m.RadioButton({text: "male", selected: true}),
-						new sap.m.RadioButton({text: "female", selected: false})
+			new SimpleForm({
+				id: "SF1",
+				minWidth : 1024,
+				maxContainerCols: 2,
+				editable: true,
+				title: new Title({text: "Customer data"}),
+				content:[
+					new Title({text: "contact data"}),
+					new Label({text:"Name",}),
+					new Input({value: "Mustermann"}),
+					new Label({text:"First name"}),
+					new Input({value: "Max"}),
+					new Label({text:"Date of birth"}),
+					new DatePicker(),
+					new Label({text: "Gender"}),
+					new RadioButtonGroup({
+						columns: 2,
+						buttons: [
+							new RadioButton({text: "male", selected: true}),
+							new RadioButton({text: "female", selected: false})
+							]
+						}),
+					new Label({text: "Info"}),
+					new Text({text:"additional information"}),
+					new Title({text: "Address"}),
+					new Label({text: "Street / Housenumber"}),
+					new Input({placeholder: "Street"}),
+					new Input({placeholder: "Number"}),
+					new Label({text: "City"}),
+					new Input(),
+					new Label({text: "Post code"}),
+					new Input(),
+					new Label({text:"Country"}),
+					new Select({
+						items: [
+							new Item({text: "Germany"}),
+							new Item({text: "USA"}),
+							new Item({text: "England"})
 						]
-					}),
-				new sap.m.Label({text: "Info"}),
-				new sap.m.Text({text:"additional information"}),
-				new sap.ui.core.Title({text: "Address"}),
-				new sap.m.Label({text: "Street / Housenumber"}),
-				new sap.m.Input({placeholder: "Street"}),
-				new sap.m.Input({placeholder: "Number"}),
-				new sap.m.Label({text: "City"}),
-				new sap.m.Input(),
-				new sap.m.Label({text: "Post code"}),
-				new sap.m.Input(),
-				new sap.m.Label({text:"Country"}),
-				new sap.m.Select({
-								items: [new sap.ui.core.Item({text: "Germany"}),
-								        new sap.ui.core.Item({text: "USA"}),
-								        new sap.ui.core.Item({text: "England"})]
-							})
+					})
 				]
+			}).placeAt("content");
 		});
-
-		oSimpleForm.placeAt("content");
-
+	});
 	</script>
 
 </head>

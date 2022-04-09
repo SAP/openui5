@@ -1,52 +1,70 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+	<meta charset="utf-8">
 	<title>Splitter ACC Test - sap.ui.layout</title>
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
+			data-sap-ui-async="true"
+			data-sap-ui-compatVersion="edge"
 			data-sap-ui-libs="sap.ui.layout, sap.m"
-			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-resourceroots='{
 				"qunit.internal.acc": "../../../../../test-resources/sap/ui/core/qunit/internal/acc"
-			}'>
+			}'
+			src="../../../../../resources/sap-ui-core.js"
+			>
 	</script>
 
 	<script>
-		var sLorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vitae congue diam. Donec venenatis justo sed bibendum finibus.",
-				oSplitter = new sap.ui.layout.Splitter("mySplitter", {
+	sap.ui.getCore().attachInit(function() {
+		sap.ui.require([
+			"sap/m/Button",
+			"sap/m/FlexBox",
+			"sap/m/Text",
+			"sap/ui/core/library",
+			"sap/ui/layout/Splitter"
+		], function(Button, FlexBox, Text, coreLibrary, Splitter) {
+			"use strict";
+
+			var Orientation = coreLibrary.Orientation;
+
+			var sLorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vitae congue diam. Donec venenatis justo sed bibendum finibus.",
+				oSplitter = new Splitter("mySplitter", {
 					contentAreas: [
-						new sap.m.FlexBox({
+						new FlexBox({
 							width: 'auto',
 							items: [
-								new sap.m.Text({text: sLorem}),
-								new sap.m.Button({text: "Press me"})
+								new Text({text: sLorem}),
+								new Button({text: "Press me"})
 							]
 						}),
-						new sap.m.FlexBox({
+						new FlexBox({
 							width: 'auto',
 							items: [
-								new sap.m.Text({text: sLorem}),
-								new sap.m.Button({text: "Press me 2"})
+								new Text({text: sLorem}),
+								new Button({text: "Press me 2"})
 							]
 						}),
-						new sap.m.FlexBox({
+						new FlexBox({
 							width: 'auto',
 							items: [
-								new sap.m.Text({text: sLorem}),
-								new sap.m.Button({text: "Press me 3"})
+								new Text({text: sLorem}),
+								new Button({text: "Press me 3"})
 							]
 						})
 					]
 				});
-		oSplitter.placeAt("content");
+			oSplitter.placeAt("content");
 
-		new sap.m.Button({
-			text: "Switch Orientation",
-			press: function () {
-				var sOrientation = oSplitter.getOrientation() === sap.ui.core.Orientation.Vertical ? sap.ui.core.Orientation.Horizontal : sap.ui.core.Orientation.Vertical;
-				oSplitter.setOrientation(sOrientation);
-			}
-		}).placeAt("content");
+			new Button({
+				text: "Switch Orientation",
+				press: function () {
+					var sOrientation = oSplitter.getOrientation() === Orientation.Vertical ? Orientation.Horizontal : Orientation.Vertical;
+					oSplitter.setOrientation(sOrientation);
+				}
+			}).placeAt("content");
+		});
+	});
 	</script>
 
 </head>

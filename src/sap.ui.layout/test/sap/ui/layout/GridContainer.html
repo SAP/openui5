@@ -1,441 +1,401 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
-	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
-	<title>Grid - sap.ui.layout</title>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Grid - sap.ui.layout</title>
 
-	<script src="shared-config.js"></script>
-	<script id='sap-ui-bootstrap'
-		src='../../../../resources/sap-ui-core.js'
-		data-sap-ui-theme='sap_fiori_3'
-		data-sap-ui-libs='sap.ui.layout'>
-	</script>
+		<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-libs="sap.ui.layout"
+			data-sap-ui-theme="sap_horizon"
+			>
+		</script>
 
+		<script>
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"sap/m/Label",
+				"sap/ui/core/HTML",
+				"sap/ui/layout/Grid",
+				"sap/ui/layout/GridData"
+			], function(Label, HTML, Grid, GridData) {
+				"use strict";
 
-	<script>
-	sap.ui.require([
-		"sap/m/Label",
-		"sap/ui/core/HTML",
-		"sap/ui/layout/Grid",
-		"sap/ui/layout/GridData"
-	], function(Label, HTML, Grid, GridData) {
-		var oGrid = new Grid({
-			hSpacing: 1,	// in rem; default half of the value for gutter, adds to left and right, for corrections
-			vSpacing: 1, 	// in rem; together with horizontalSpacing it generates the .gridSpacingNone, .gridSpacingHalfFull class
-			defaultSpan: "L3 M6 S12",
-			containerQuery: true,
-			content: [
-				// headings
+				var oGrid = new Grid({
+					hSpacing: 1,	// in rem; default half of the value for gutter, adds to left and right, for corrections
+					vSpacing: 1, 	// in rem; together with horizontalSpacing it generates the .gridSpacingNone, .gridSpacingHalfFull class
+					defaultSpan: "L3 M6 S12",
+					containerQuery: true,
+					content: [
+						// headings
 
-				new HTML({
-					content: '<b>Grid with 1rem horizontal and vertical spacing</b>',
-					layoutData: new GridData({
-						span: "L12 M12 S12"
-					})
-				}),
-				new Label({
-					text: 'Area spanning over the full width of the grid on all resolutions (L12 M12 S12)',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L12 M12 S12"
-					})
-				}),
+						new HTML({
+							content: '<b>Grid with 1rem horizontal and vertical spacing</b>',
+							layoutData: new GridData({
+								span: "L12 M12 S12"
+							})
+						}),
+						new Label({
+							text: 'Area spanning over the full width of the grid on all resolutions (L12 M12 S12)',
+							width: "100%",
+							layoutData: new GridData({
+								span: "L12 M12 S12"
+							})
+						}),
 
-				// small
+						// small
 
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
 
-				// medium
+						// medium
 
-				new HTML({
-					content: '<p>L4 M6 S12</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L4 M6 S12"
-					})
-				}),
-				new HTML({
-					content: '<p>L4 M6 S12</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L4 M6 S12"
-					})
-				}),
-				new HTML({
-					content: '<p>L4 M6 S12</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L4 M6 S12"
-					})
-				}),
+						new HTML({
+							content: '<p>L4 M6 S12</p>',
+							layoutData: new GridData({
+								span: "L4 M6 S12"
+							})
+						}),
+						new HTML({
+							content: '<p>L4 M6 S12</p>',
+							layoutData: new GridData({
+								span: "L4 M6 S12"
+							})
+						}),
+						new HTML({
+							content: '<p>L4 M6 S12</p>',
+							layoutData: new GridData({
+								span: "L4 M6 S12"
+							})
+						}),
 
-				new HTML({
-					content: '<p>L3 M12 S6</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L3 M12 S6"
-					})
-				}),
-				new HTML({
-					content: '<p>L3 M12 S6</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L3 M12 S6"
-					})
-				}),
-				new HTML({
-					content: '<p>L3 M12 S6</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L3 M12 S6"
-					})
-				}),
-				new HTML({
-					content: '<p>L3 M12 S6</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L3 M12 S6"
-					})
-				}),
+						new HTML({
+							content: '<p>L3 M12 S6</p>',
+							layoutData: new GridData({
+								span: "L3 M12 S6"
+							})
+						}),
+						new HTML({
+							content: '<p>L3 M12 S6</p>',
+							layoutData: new GridData({
+								span: "L3 M12 S6"
+							})
+						}),
+						new HTML({
+							content: '<p>L3 M12 S6</p>',
+							layoutData: new GridData({
+								span: "L3 M12 S6"
+							})
+						}),
+						new HTML({
+							content: '<p>L3 M12 S6</p>',
+							layoutData: new GridData({
+								span: "L3 M12 S6"
+							})
+						}),
 
-				// indents
+						// indents
 
-				new HTML({
-					content: '<p>L1 M1<br />Indent L1 M1</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1",
-						indent: "L1 M1",
-						visibleOnSmall: false
-					})
-				}),
-				new HTML({
-					content: '<p>L1 M1<br />Indent L8 M8</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1",
-						indent: "L8 M8",
-						visibleOnSmall: false
-					})
-				}),
-				new HTML({
-					content: '<p>L1 M1<br />Indent L2 M2</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1",
-						indent: "L2 M2",
-						linebreakL: true,
-						linebreakM: true,
-						visibleOnSmall: false
-					})
-				}),
-				new HTML({
-					content: '<p>L1 M1<br />Indent L6 M6</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1",
-						indent: "L6 M6",
-						visibleOnSmall: false
+						new HTML({
+							content: '<p>L1 M1<br />Indent L1 M1</p>',
+							layoutData: new GridData({
+								span: "L1 M1",
+								indent: "L1 M1",
+								visibleS: false
+							})
+						}),
+						new HTML({
+							content: '<p>L1 M1<br />Indent L8 M8</p>',
+							layoutData: new GridData({
+								span: "L1 M1",
+								indent: "L8 M8",
+								visibleS: false
+							})
+						}),
+						new HTML({
+							content: '<p>L1 M1<br />Indent L2 M2</p>',
+							layoutData: new GridData({
+								span: "L1 M1",
+								indent: "L2 M2",
+								linebreakL: true,
+								linebreakM: true,
+								visibleS: false
+							})
+						}),
+						new HTML({
+							content: '<p>L1 M1<br />Indent L6 M6</p>',
+							layoutData: new GridData({
+								span: "L1 M1",
+								indent: "L6 M6",
+								visibleS: false
 
-					})
-				}),
-				new HTML({
-					content: '<p>L1 M1<br />Indent L3 M3</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1",
-						indent: "L3 M3",
-						linebreakL: true,
-						linebreakM: true,
-						visibleOnSmall: false
-					})
-				}),
-				new HTML({
-					content: '<p>L1 M1<br />Indent L4 M4</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1",
-						indent: "L4 M4",
-						visibleOnSmall: false
-					})
-				}),
-				new HTML({
-					content: '<p>L1 M1<br />Indent L4 M4</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1",
-						indent: "L4 M4",
-						linebreakL: true,
-						linebreakM: true,
-						visibleOnSmall: false
-					})
-				}),
-				new HTML({
-					content: '<p>L1 M1<br />Indent L2 M2</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1",
-						indent: "L2 M2",
-						visibleOnSmall: false
-					})
-				}),
-				new HTML({
-					content: '<p>L2 M2<br />Indent L5 M5</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L2 M2",
-						indent: "L5 M5",
-						linebreakL: true,
-						linebreakM: true,
-						visibleOnSmall: false
-					})
-				}),
+							})
+						}),
+						new HTML({
+							content: '<p>L1 M1<br />Indent L3 M3</p>',
+							layoutData: new GridData({
+								span: "L1 M1",
+								indent: "L3 M3",
+								linebreakL: true,
+								linebreakM: true,
+								visibleS: false
+							})
+						}),
+						new HTML({
+							content: '<p>L1 M1<br />Indent L4 M4</p>',
+							layoutData: new GridData({
+								span: "L1 M1",
+								indent: "L4 M4",
+								visibleS: false
+							})
+						}),
+						new HTML({
+							content: '<p>L1 M1<br />Indent L4 M4</p>',
+							layoutData: new GridData({
+								span: "L1 M1",
+								indent: "L4 M4",
+								linebreakL: true,
+								linebreakM: true,
+								visibleS: false
+							})
+						}),
+						new HTML({
+							content: '<p>L1 M1<br />Indent L2 M2</p>',
+							layoutData: new GridData({
+								span: "L1 M1",
+								indent: "L2 M2",
+								visibleS: false
+							})
+						}),
+						new HTML({
+							content: '<p>L2 M2<br />Indent L5 M5</p>',
+							layoutData: new GridData({
+								span: "L2 M2",
+								indent: "L5 M5",
+								linebreakL: true,
+								linebreakM: true,
+								visibleS: false
+							})
+						}),
 
-				new HTML({
-					content: '<p>L6 M6 S6<br />Indent L3 M3 S3<br />linebreakL linebreakM linebreakS</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L6 M6 S6",
-						indent: "L3 M3 S3",
-						linebreakL: true,
-						linebreakM: true,
-						linebreakS: true
-					})
-				}),
+						new HTML({
+							content: '<p>L6 M6 S6<br />Indent L3 M3 S3<br />linebreakL linebreakM linebreakS</p>',
+							layoutData: new GridData({
+								span: "L6 M6 S6",
+								indent: "L3 M3 S3",
+								linebreakL: true,
+								linebreakM: true,
+								linebreakS: true
+							})
+						}),
 
-				// visisble
+						// visisble
 
-				new HTML({
-					content: '<p>L12 M12 S12<br />visibleOnLarge visibleOnMedium visibleOnSmall</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L12 M12 S12",
-						visibleOnLarge: true,
-						visibleOnMedium: true,
-						visibleOnSmall: true
-					})
-				}),
-				new HTML({
-					content: '<p>L12 M12 S12<br />visibleOnLarge</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L12 M12 S12",
-						visibleOnLarge: true,
-						visibleOnMedium: false,
-						visibleOnSmall: false
-					})
-				}),
-				new HTML({
-					content: '<p>L12 M12 S12<br />visibleOnMedium</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L12 M12 S12",
-						visibleOnLarge: false,
-						visibleOnMedium: true,
-						visibleOnSmall: false
-					})
-				}),
-				new HTML({
-					content: '<p>L12 M12 S12<br />visibleOnSmall</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L12 M12 S12",
-						visibleOnLarge: false,
-						visibleOnMedium: true,
-						visibleOnSmall: true
-					})
-				}),
+						new HTML({
+							content: '<p>L12 M12 S12<br />visibleL visibleM visibleS</p>',
+							layoutData: new GridData({
+								span: "L12 M12 S12",
+								visibleL: true,
+								visibleM: true,
+								visibleS: true
+							})
+						}),
+						new HTML({
+							content: '<p>L12 M12 S12<br />visibleL</p>',
+							layoutData: new GridData({
+								span: "L12 M12 S12",
+								visibleL: true,
+								visibleM: false,
+								visibleS: false
+							})
+						}),
+						new HTML({
+							content: '<p>L12 M12 S12<br />visibleM</p>',
+							layoutData: new GridData({
+								span: "L12 M12 S12",
+								visibleL: false,
+								visibleM: true,
+								visibleS: false
+							})
+						}),
+						new HTML({
+							content: '<p>L12 M12 S12<br />visibleS</p>',
+							layoutData: new GridData({
+								span: "L12 M12 S12",
+								visibleL: false,
+								visibleM: true,
+								visibleS: true
+							})
+						}),
 
-							// small
+									// small
 
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				}),
-				new HTML({
-					content: '<p>(L1 M1 S1)</p>',
-					width: "100%",
-					layoutData: new GridData({
-						span: "L1 M1 S1"
-					})
-				})
-			]
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						}),
+						new HTML({
+							content: '<p>(L1 M1 S1)</p>',
+							layoutData: new GridData({
+								span: "L1 M1 S1"
+							})
+						})
+					]
+				});
+
+				oGrid.placeAt('content');
+			});
 		});
+		</script>
 
-		oGrid.placeAt('content');
-	});
-	</script>
+		<style>
+		.sapUiRespGrid div {
+			background: silver;
+			color: white;
+		}
 
-	<style>
-	.sapUiRespGrid div {
-		background: silver;
-		color: white;
-	}
+		.sapUiRespGrid div p {
+			text-align: center;
+		}
+		</style>
 
-	.sapUiRespGrid div p {
-		text-align: center;
-	}
-	</style>
-
-</head>
-<body class='sapUiBody'>
-		  <div id='content'></div>
-</body>
+	</head>
+	<body class='sapUiBody'>
+		<div id='content'></div>
+	</body>
 </html>
