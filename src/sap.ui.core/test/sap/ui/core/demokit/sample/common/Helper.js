@@ -10,7 +10,6 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/TestUtils"
 ], function (Log, Opa5, EnterText, Press, Interactable, TestUtils) {
-	/*global QUnit */
 	"use strict";
 	var Helper;
 
@@ -117,9 +116,9 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The entered value of the control as a string
 		 * @param {string} [sExpectedValue=sValue]
 		 *  The expected value after entering, for example if <code>sValue</code> contains decimals
-		 *  and the control's 'displayValuePrecision' property, or the binding's data type constraint
-		 *  'scale' is 0 then the expected new value should be the largest integer less than or
-		 *  equal to <code>sValue<sValue>
+		 *  and the control's 'displayValuePrecision' property, or the binding's data type
+		 *  constraint 'scale' is 0 then the expected new value should be the largest integer less
+		 *  than or equal to <code>sValue<sValue>
 		 * @param {boolean} bSearchOpenDialogs
 		 *  If set to true, Opa5 will only search in open dialogs
 		 */

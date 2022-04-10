@@ -28,19 +28,19 @@ sap.ui.define([
 				this.byId("SalesOrderList").getBinding("items").getHeaderContext());
 		},
 
-		onCancelSalesOrderChanges : function (oEvent) {
+		onCancelSalesOrderChanges : function () {
 			this.getView().getModel().resetChanges("SalesOrderUpdateGroup");
 		},
 
-		onCancelSalesOrderListChanges : function (oEvent) {
+		onCancelSalesOrderListChanges : function () {
 			this.getView().getModel().resetChanges();
 		},
 
-		onCloseSalesOrderSchedules : function (oEvent) {
+		onCloseSalesOrderSchedules : function () {
 			this.byId("salesOrderSchedulesDialog").close();
 		},
 
-		onCloseSimulateDiscountDialog : function (oEvent) {
+		onCloseSimulateDiscountDialog : function () {
 			this.byId("SimulateDiscountDialog").close();
 		},
 
@@ -95,20 +95,22 @@ sap.ui.define([
 			this.oView.byId("onStrictMessagesDialog").close();
 		},
 
-		onCloseSalesOrderDialog : function (oEvent) {
+		onCloseSalesOrderDialog : function () {
 			this.byId("createSalesOrderDialog").close();
 			// move the focus to the row of the newly created sales order
 			this.byId("SalesOrderList").getItems()[0].focus();
 		},
 
 		onCompanyNameChanged : function (oEvent) {
-			oEvent.getSource().getBindingContext().requestSideEffects([{
-					$PropertyPath : "/com.sap.gateway.default.zui5_epm_sample.v0002.Container"
+			oEvent.getSource()
+				.getBindingContext()
+				.requestSideEffects([{$PropertyPath :
+						"/com.sap.gateway.default.zui5_epm_sample.v0002.Container"
 						+ "/SalesOrderList/SO_2_BP/CompanyName"}])
 				.catch(function () { /*may fail because of previous requests*/ });
 		},
 
-		onCreateSalesOrder : function (oEvent) {
+		onCreateSalesOrder : function () {
 			var oBPListBinding = this.byId("BuyerID::new").getBinding("suggestionItems"),
 				oContext = this.byId("SalesOrderList").getBinding("items").create({
 					BuyerID : "0100000000",
@@ -153,7 +155,7 @@ sap.ui.define([
 			});
 		},
 
-		onCreateSalesOrderLineItem : function (oEvent) {
+		onCreateSalesOrderLineItem : function () {
 			var oContext,
 				oDeliveryDate = new Date(),
 				oTable = this.byId("SO_2_SOITEM"),
@@ -331,7 +333,7 @@ sap.ui.define([
 			MessageBox.confirm(sMessage, onConfirm, "Sales Order Line Item Deletion");
 		},
 
-		onDeleteSalesOrderSchedules : function (oEvent) {
+		onDeleteSalesOrderSchedules : function () {
 			var sGroupId = this.getView().getModel().getGroupId(),
 				aPromises = [],
 				oTable = this.byId("SO_2_SCHDL"),
@@ -365,7 +367,7 @@ sap.ui.define([
 				that = this;
 
 			oView.setBusy(true);
-			this.oSimulateDiscount.execute().then(function (oResult) {
+			this.oSimulateDiscount.execute().then(function () {
 				MessageToast.show("Simulation Result: "
 					+ that.oSimulateDiscount.getBoundContext().getProperty("value"));
 			}, function (oError) {
@@ -374,7 +376,7 @@ sap.ui.define([
 			oView.setBusy(false);
 		},
 
-		onFilter : function (oEvent) {
+		onFilter : function () {
 			var oBinding = this.byId("SalesOrderList").getBinding("items"),
 				sQuery = this.getView().getModel("ui").getProperty("/filterValue");
 
@@ -389,7 +391,7 @@ sap.ui.define([
 				FilterType.Control);
 		},
 
-		onFilterItems : function (oEvent) {
+		onFilterItems : function () {
 			var oBinding = this.byId("SO_2_SOITEM").getBinding("items"),
 				aFilters = oBinding.getFilters(FilterType.Application),
 				sQuery = this.getView().getModel("ui").getProperty("/filterProductID");
@@ -441,7 +443,7 @@ sap.ui.define([
 
 		onInit : function () {
 			var oHighlightBindingInfo = {
-					formatter : function (aModelMessages, oRowData) {
+					formatter : function () {
 						var aMessages,
 							//formatter MUST be defined in a way that this is the control!
 							oRowContext = this.getBindingContext();
@@ -471,13 +473,14 @@ sap.ui.define([
 
 		onProductIDChanged : function (oEvent) {
 			var oItemContext = oEvent.getParameter("context");
+
 			if (!oItemContext.isTransient()) {
 				oItemContext.requestSideEffects([{$NavigationPropertyPath : "SOITEM_2_PRODUCT"}])
 					.catch(function () { /*may fail because of previous requests*/ });
 			}
 		},
 
-		onOpenSimulateDiscountDialog : function (oEvent) {
+		onOpenSimulateDiscountDialog : function () {
 			var oTable = this.byId("SalesOrderList"),
 				oSalesOrderContext = oTable.getSelectedItem().getBindingContext();
 
@@ -506,12 +509,12 @@ sap.ui.define([
 				[oModel.getUpdateGroupId(), "SalesOrderUpdateGroup"]);
 		},
 
-		onRefreshFavoriteProduct : function (oEvent) {
+		onRefreshFavoriteProduct : function () {
 			this.refresh(this.byId("favoriteProduct").getBinding("value"),
 				"the favorite product");
 		},
 
-		onRefreshSalesOrdersList : function (oEvent) {
+		onRefreshSalesOrdersList : function () {
 			this.refresh(this.byId("SalesOrderList").getBinding("items"),
 				"all sales orders");
 		},
@@ -527,7 +530,7 @@ sap.ui.define([
 			}
 		},
 
-		onSalesOrderSchedules : function (oEvent) {
+		onSalesOrderSchedules : function () {
 			this.byId("SO_2_SCHDL").removeSelections();
 			this.getView().getModel("ui").setProperty("/bScheduleSelected", false);
 			this.byId("salesOrderSchedulesDialog").open();
@@ -543,7 +546,7 @@ sap.ui.define([
 			);
 		},
 
-		onSalesOrderScheduleSelect : function (oEvent) {
+		onSalesOrderScheduleSelect : function () {
 			this.getView().getModel("ui").setProperty("/bScheduleSelected",
 				this.byId("SO_2_SCHDL").getSelectedContexts().length > 0);
 		},
@@ -683,6 +686,9 @@ sap.ui.define([
 		/**
 		 * Request side effects (and ETag) for the selected sales order plus the side effects
 		 * specified by the given sNavigationPropertyPath.
+		 *
+		 * @param {string} sGroupId - The group ID
+		 * @param {string} sNavigationPropertyPath - The navigation property path
 		 */
 		requestSideEffects : function (sGroupId, sNavigationPropertyPath) {
 			this.byId("objectPage").getObjectBinding().getContext().requestSideEffects([

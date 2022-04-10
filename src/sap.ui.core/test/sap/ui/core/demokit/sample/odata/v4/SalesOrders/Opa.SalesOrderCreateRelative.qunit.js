@@ -12,8 +12,6 @@ sap.ui.define([
 
 	//*****************************************************************************
 	opaTest("Create, modify and delete within relative listbinding", function (Given, When, Then) {
-
 		CreateRelativeTest.createRelative(Given, When, Then);
-
 	});
 });

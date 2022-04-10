@@ -70,13 +70,13 @@ sap.ui.define([
 								tooltip : "CompanyName reused from Sales Orders->SO_2_BP"}),
 							new Label({text : "Buyer WEB Address"}),
 							new Text({id : "WebAddress", text : "{SCHDL_2_SO/SO_2_BP/WebAddress}",
-								tooltip : "WebAddress fetched as late property within already " +
-									"expanded Sales Orders->SO_2_BP"}),
+								tooltip : "WebAddress fetched as late property within already "
+									+ "expanded Sales Orders->SO_2_BP"}),
 							new Label({text : "Buyer EMail Address"}),
 							new Text({id : "EmailAddress",
 								text : "{SCHDL_2_SO/SO_2_BP/EmailAddress}",
-								tooltip : "EmailAddress fetched as late property within already " +
-									"expanded Sales Orders->SO_2_BP"}),
+								tooltip : "EmailAddress fetched as late property within already "
+									+ "expanded Sales Orders->SO_2_BP"}),
 							new Title({text : "Schedule"}),
 							new Label({text : "Schedule Key"}),
 							new Text({id : "ScheduleKey", text : "{ScheduleKey}",

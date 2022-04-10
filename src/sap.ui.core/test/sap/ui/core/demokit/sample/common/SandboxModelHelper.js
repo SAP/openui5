@@ -35,7 +35,7 @@ sap.ui.define([
 				});
 			},
 			/**
-			 * Adapts the given OData V4 Model parameters {@see #adaptModelParameter}, - creates
+			 * Adapts the given OData V4 Model parameters {@see #adaptModelParameters}, - creates
 			 * {@see #createModel} and returns the created OData V4 Model.
 			 *
 			 * @param {object} mModelParameters
@@ -51,8 +51,8 @@ sap.ui.define([
 			},
 			/**
 			 * Creates the OData V4 Model. For the "non-realOData" case, a mock server for the
-			 * back-end requests is set up. Takes care about restoring the mock server once the model
-			 * is destroyed.
+			 * back-end requests is set up. Takes care about restoring the mock server once the
+			 * model is destroyed.
 			 *
 			 * @param {object} mModelParameters
 			 *   The (already adapted) OData V4 model parameters {@see #adaptModelParameters}

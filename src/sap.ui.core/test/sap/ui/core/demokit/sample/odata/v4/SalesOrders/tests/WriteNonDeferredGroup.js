@@ -3,9 +3,8 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils"
-], function (Log, Opa5, TestUtils) {
+], function (Log, TestUtils) {
 	"use strict";
 	var sRaiseErrorMessage = "Property `Note` value `RAISE_ERROR` not allowed!";
 
@@ -20,7 +19,6 @@ sap.ui.define([
 					component : "sap.ui.model.odata.v4.Context",
 					level : Log.Level.ERROR,
 					message : "Failed to update path /SalesOrderList"
-//					details : "Error occurred while processing the request"
 				};
 
 			Given.iStartMyUIComponent({

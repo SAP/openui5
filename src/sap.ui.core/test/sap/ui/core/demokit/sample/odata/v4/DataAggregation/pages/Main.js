@@ -2,16 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press"
-], function (Helper, Opa5, EnterText, Press) {
+], function (Opa5, EnterText, Press) {
 	"use strict";
 
 	var mIconForExpand = {
-			"true" : "sap-icon://collapse",
-			"false" : "sap-icon://expand",
+			true : "sap-icon://collapse",
+			false : "sap-icon://expand",
 			undefined : "sap-icon://e-care"
 		},
 		sViewName = "sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation";

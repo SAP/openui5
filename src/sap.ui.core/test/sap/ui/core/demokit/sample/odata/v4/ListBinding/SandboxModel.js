@@ -20,7 +20,7 @@ sap.ui.define([
 					source : "equipments2.json"
 				},
 				"GetEmployeeMaxAge()" : {
-					message : {"value" : 56}
+					message : {value : 56}
 				},
 				"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS($expand=EQUIPMENT_2_PRODUCT($expand=PRODUCT_2_CATEGORY,PRODUCT_2_SUPPLIER));$orderby=LOCATION/City/CITYNAME),TEAM_2_MANAGER&$skip=0&$top=100" : {
 					source : "TEAMS.json"
@@ -32,7 +32,7 @@ sap.ui.define([
 					source : "Team01_skip1_top1.json"
 				},
 				"TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=2&$top=1" : {
-					message : {"value" : []}
+					message : {value : []}
 				},
 				"TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=1" : {
 					source : "Team02_skip0_top1.json"
@@ -41,7 +41,7 @@ sap.ui.define([
 					source : "Team02_skip1_top1.json"
 				},
 				"TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=2&$top=1" : {
-					message : {"value" : []}
+					message : {value : []}
 				},
 				"TEAMS('TEAM_03')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=1" : {
 					source : "Team03_skip0_top1.json"
@@ -50,7 +50,7 @@ sap.ui.define([
 					source : "Team03_skip1_top1.json"
 				},
 				"TEAMS('TEAM_03')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=2&$top=1" : {
-					message : {"value" : []}
+					message : {value : []}
 				}
 			},
 			aRegExps : [{

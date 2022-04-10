@@ -3,10 +3,8 @@
  */
 sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
-	"sap/ui/test/Opa5",
-	"sap/ui/test/actions/EnterText",
-	"sap/ui/test/actions/Press"
-], function (Helper, Opa5, EnterText, Press) {
+	"sap/ui/test/Opa5"
+], function (Helper, Opa5) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.ViewTemplate.types.Types";
 
@@ -19,9 +17,10 @@ sap.ui.define([
 						id : "booleanInput",
 						success : function (oControl) {
 							var oBinding = oControl.getBinding("value");
+
 							oBinding.setValue(!oControl.getBinding("value").getValue());
-							Opa5.assert.ok(true, "Boolean value changed:" +
-								oControl.getBinding("value").getValue());
+							Opa5.assert.ok(true, "Boolean value changed:"
+								+ oControl.getBinding("value").getValue());
 						},
 						viewName : sViewName
 					});

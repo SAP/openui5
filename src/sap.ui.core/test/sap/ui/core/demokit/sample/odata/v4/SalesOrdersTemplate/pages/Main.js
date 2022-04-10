@@ -16,7 +16,7 @@ sap.ui.define([
 						actions : new Press(),
 						controlType : "sap.m.Input",
 						id : /-0-field/,
-						success : function (oValueHelp) {
+						success : function () {
 							Opa5.assert.ok(true, "ValueHelp on CurrencyCode pressed");
 							this.waitFor({
 								controlType : "sap.m.Popover",
@@ -34,7 +34,7 @@ sap.ui.define([
 						actions : new Press(),
 						controlType : "sap.m.ComboBox",
 						id : /-0-field/,
-						success : function (oValueHelp) {
+						success : function () {
 							Opa5.assert.ok(true, "ValueHelp on Role pressed");
 						},
 						viewName : sViewName

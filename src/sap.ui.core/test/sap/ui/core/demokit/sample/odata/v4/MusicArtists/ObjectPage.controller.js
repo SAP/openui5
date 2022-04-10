@@ -176,11 +176,6 @@ sap.ui.define([
 			this.byId("draftIndicator").showDraftSaving();
 		},
 
-		// TODO We can only call refresh on relative bindings, which is not supported
-		// onRefresh : function () {
-		// 	this.getView().getBindingContext().refresh();
-		// },
-
 		onSave : function () {
 			var oView = this.getView(),
 				oOldBindingContext = oView.getBindingContext(),
@@ -204,13 +199,11 @@ sap.ui.define([
 			this._navToPublication(oEvent.getSource().getBindingContext().getPath());
 		},
 
-		onValidateFieldGroup : function (oEvent) {
+		onValidateFieldGroup : function () {
 			if (this.bSideEffectFieldChanged) {
 				this.bSideEffectFieldChanged = false;
 				//TODO lock fields affected by side effects
 				this.byId("objectPageForm").getBindingContext().requestSideEffects([{
-//						$PropertyPath : "CountryOfOrigin"
-//					}, {
 						$PropertyPath : "CountryOfOrigin_Text"
 					}, {
 						$NavigationPropertyPath : "_Publication"

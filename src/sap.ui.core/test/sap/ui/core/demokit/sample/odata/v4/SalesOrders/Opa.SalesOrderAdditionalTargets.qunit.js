@@ -12,8 +12,6 @@ sap.ui.define([
 
 	//*****************************************************************************
 	opaTest("Additional targets", function (Given, When, Then) {
-
 		additionalTargets(Given, When, Then);
-
 	});
 });

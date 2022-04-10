@@ -2,12 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
-	"sap/ui/test/actions/EnterText",
-	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/Interactable"
-], function (Helper, Opa5, EnterText, Press, Interactable) {
+	"sap/ui/test/actions/Press"
+], function (Opa5, Press) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.ServerDrivenPaging.Main";
 

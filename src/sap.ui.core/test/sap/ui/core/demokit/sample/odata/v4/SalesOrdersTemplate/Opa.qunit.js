@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-/*global QUnit */
 QUnit.config.autostart = false;
 
 sap.ui.getCore().attachInit(function () {
@@ -12,7 +11,6 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/odata/v4/SalesOrdersTemplate/pages/Main",
 		"sap/ui/test/opaQunit"
 	], function (Any, Main, opaTest) {
-
 		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
 		QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersTemplate", {

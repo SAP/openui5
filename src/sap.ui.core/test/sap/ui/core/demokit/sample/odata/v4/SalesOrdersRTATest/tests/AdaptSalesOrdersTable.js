@@ -1,10 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([
-	"sap/ui/test/Opa5",
-	"sap/ui/test/TestUtils"
-], function (Opa5, TestUtils) {
+sap.ui.define([], function () {
 	"use strict";
 
 	return {
@@ -26,7 +23,6 @@ sap.ui.define([
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("Note", true);
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("LifecycleStatusDesc", true);
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("ChangedAt", true);
-
 
 			// uncheck SalesOrderID
 			When.onAdaptUIDialog.checkCheckBox("SalesOrderID");
@@ -75,7 +71,6 @@ sap.ui.define([
 
 			When.onAdaptUIDialog.applyDialog();
 			Then.onTheMainPageRTA.checkNewPropertyAppears(/RTA_BusinessPartnerRole2/);
-
 
 			// unheck BusinessPartnerRole
 			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUIBusinessPartner");

@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
-	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/Properties"
-], function (Helper, Opa5, EnterText, Press, Properties) {
+	"sap/ui/test/actions/Press"
+], function (Helper, Opa5, EnterText, Press) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.Sticky.Main";
 

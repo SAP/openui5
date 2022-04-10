@@ -16,20 +16,20 @@ sap.ui.define([
 			aggregate : {
 				AmountPerSale : {
 					grandTotal : true,
-					unit : 'Currency'
+					unit : "Currency"
 				},
 				SalesAmount : {
 					grandTotal : true,
-					unit : 'Currency'
+					unit : "Currency"
 				},
 				SalesAmountLocalCurrency : {
 					grandTotal : true,
-					unit : 'LocalCurrency'
+					unit : "LocalCurrency"
 				},
 				SalesNumberSum : {
 					grandTotal : true,
-					name : 'SalesNumber',
-					"with" : 'sum'
+					name : "SalesNumber",
+					with : "sum"
 				}
 			},
 			group : {
@@ -39,7 +39,7 @@ sap.ui.define([
 
 		_oAggregation4Responsive : {
 			aggregate : {
-				SalesAmount : {grandTotal : true, unit : 'Currency'},
+				SalesAmount : {grandTotal : true, unit : "Currency"},
 				SalesNumber : {}
 			},
 			group : {
@@ -66,17 +66,18 @@ sap.ui.define([
 			return Controller.prototype.onExit.apply(this, arguments);
 		},
 
-		onFilterGrid : function (oEvent) {
+		onFilterGrid : function () {
 			var sFilter = this.getView().getModel("ui").getProperty("/sFilterGrid"),
 				sGrandTotalAtBottomOnly
-					= UriParameters.fromQuery(location.search).get("grandTotalAtBottomOnly"),
+					= UriParameters.fromQuery(window.location.search)
+						.get("grandTotalAtBottomOnly"),
 				oTTable = this.byId("tTable"),
 				oRowsBinding = oTTable.getBinding("rows"),
 				that = this;
 
 			oRowsBinding.suspend();
 			oRowsBinding.changeParameters({
-				$filter : sFilter ? 'SalesNumberSum gt ' + sFilter : undefined
+				$filter : sFilter ? "SalesNumberSum gt " + sFilter : undefined
 			});
 			if (!this._oAggregation4Grid["grandTotal like 1.84"]) {
 				// grand total and filtering for aggregated property cannot be combined
@@ -101,14 +102,14 @@ sap.ui.define([
 			oRowsBinding.resume();
 		},
 
-		onFilterResponsive : function (oEvent) {
+		onFilterResponsive : function () {
 			var sFilter = this.getView().getModel("ui").getProperty("/sFilterResponsive"),
 				oMTable = this.byId("mTable"),
 				oItemsBinding = oMTable.getBinding("items");
 
 			oItemsBinding.suspend();
 			oItemsBinding.changeParameters({
-				$filter : sFilter ? 'SalesNumber gt ' + sFilter : undefined
+				$filter : sFilter ? "SalesNumber gt " + sFilter : undefined
 			});
 			if (!this._oAggregation4Responsive["grandTotal like 1.84"]) {
 				// grand total and filtering for aggregated property cannot be combined
@@ -129,7 +130,7 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oUriParameters = UriParameters.fromQuery(location.search),
+			var oUriParameters = UriParameters.fromQuery(window.location.search),
 				sGrandTotalAtBottomOnly = oUriParameters.get("grandTotalAtBottomOnly"),
 				bGrandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true",
 				sGrandTotalLike184 = oUriParameters.get("grandTotalLike1.84"),
@@ -157,7 +158,7 @@ sap.ui.define([
 
 			oRowsBinding.changeParameters({
 				$count : true,
-				$orderby : 'Region desc'
+				$orderby : "Region desc"
 			});
 			if (sGrandTotalAtBottomOnly) {
 				this._oAggregation4Grid.grandTotalAtBottomOnly = bGrandTotalAtBottomOnly;
@@ -175,20 +176,20 @@ sap.ui.define([
 			oTTable.setModel(oTTable.getModel(), "headerContext");
 		},
 
-		onRefreshGrid : function (oEvent) {
+		onRefreshGrid : function () {
 			this.byId("tTable").getBinding("rows").refresh();
 		},
 
-		onRefreshResponsive : function (oEvent) {
+		onRefreshResponsive : function () {
 			this.byId("mTable").getBinding("items").refresh();
 		},
 
-		onSortGrid : function (oEvent) {
-			this.byId("tTable").getBinding("rows").changeParameters({$orderby : 'Region asc'});
+		onSortGrid : function () {
+			this.byId("tTable").getBinding("rows").changeParameters({$orderby : "Region asc"});
 		},
 
-		onSortResponsive : function (oEvent) {
-			this.byId("mTable").getBinding("items").changeParameters({$orderby : 'Region asc'});
+		onSortResponsive : function () {
+			this.byId("mTable").getBinding("items").changeParameters({$orderby : "Region asc"});
 		}
 	});
 });

@@ -2,18 +2,17 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/f/library",
 	"sap/m/MessageBox",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/sample/common/Controller"
-], function (library, MessageBox, UIComponent, Controller) {
+], function (MessageBox, UIComponent, Controller) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Draft.ObjectPage", {
 		getKeyPredicate : function (oContext) {
 			var sPath = oContext.getPath();
 
-			return sPath.slice(sPath.indexOf('(', sPath.lastIndexOf('/')));
+			return sPath.slice(sPath.indexOf("(", sPath.lastIndexOf("/")));
 		},
 
 		hasPendingChanges : function (vBindingOrContext, sVerb, bIgnoreKeptAlive) {

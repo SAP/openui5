@@ -11,25 +11,16 @@ sap.ui.define([
 ], function (Log, MessageBox, Controller, Sorter, JSONModel, TestUtils) {
 	"use strict";
 
-//	function onRejected(oError) {
-//		MessageBox.alert(oError.message, {
-//			icon : MessageBox.Icon.ERROR,
-//			title : oError.isConcurrentModification
-//				? "Concurrent Modification"
-//				: "Unknown Error"
-//		});
-//	}
-
-	var MainController = Controller.extend("sap.ui.core.sample.odata.v4.ListBinding.Main", {
-		cancelChangeTeamBudget : function (oEvent) {
+	return Controller.extend("sap.ui.core.sample.odata.v4.ListBinding.Main", {
+		cancelChangeTeamBudget : function () {
 			this.byId("ChangeTeamBudgetDialog").close();
 		},
 
-		cancelChangeManagerOfTeam : function (oEvent) {
+		cancelChangeManagerOfTeam : function () {
 			this.byId("ChangeManagerOfTeamDialog").close();
 		},
 
-		changeTeamBudget : function (oEvent) {
+		changeTeamBudget : function () {
 			var oView = this.getView(),
 				oDialog = oView.byId("ChangeTeamBudgetDialog");
 
@@ -38,14 +29,13 @@ sap.ui.define([
 
 					oBinding.setContext(null);
 					oBinding.setContext(oDialog.getBindingContext());
-					MessageBox.alert("Budget changed", {
-						icon : MessageBox.Icon.SUCCESS,
+					MessageBox.alert("Budget changed", {icon : MessageBox.Icon.SUCCESS,
 						title : "Success"});
 				});
 			oView.byId("ChangeTeamBudgetDialog").close();
 		},
 
-		changeManagerOfTeam : function (oEvent) {
+		changeManagerOfTeam : function () {
 			var oView = this.getView(),
 				that = this;
 
@@ -56,31 +46,29 @@ sap.ui.define([
 					oControl.bindProperty("text", "MANAGER_ID");
 					oControl.getBinding("text").setContext(null);
 					oControl.getBinding("text").setContext(that.oChangeManager.getBoundContext());
-					MessageBox.alert("Manager changed", {
-						icon : MessageBox.Icon.SUCCESS,
+					MessageBox.alert("Manager changed", {icon : MessageBox.Icon.SUCCESS,
 						title : "Success"});
 				});
 			oView.byId("ChangeManagerOfTeamDialog").close();
 		},
 
-		getEmployeeByID : function (oEvent) {
+		getEmployeeByID : function () {
 			var oOperation = this.byId("GetEmployeeByID").getObjectBinding();
 
 			oOperation.setParameter("EmployeeID",
 					this.getView().getModel("ui").getProperty("/EmployeeID"))
 				.execute()
 				.catch(function (oError) {
-					MessageBox.alert(oError.message, {
-						icon : MessageBox.Icon.ERROR,
+					MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
 						title : "Error"});
 				});
 		},
 
-		getEmployeeMaxAge : function (oEvent) {
+		getEmployeeMaxAge : function () {
 			this.byId("GetEmployeeMaxAge").getObjectBinding().execute();
 		},
 
-		onCancel : function (oEvent) {
+		onCancel : function () {
 			this.getView().getModel().resetChanges();
 		},
 
@@ -97,17 +85,18 @@ sap.ui.define([
 
 		onEmployeeSelect : function (oEvent) {
 			var oContext = oEvent.getParameters().listItem.getBindingContext();
+
 			this.byId("EmployeeEquipments").setBindingContext(oContext);
 		},
 
 		onEquipmentsChanged : function (oEvent) {
-			var sReason = oEvent.getParameter('reason');
+			var sReason = oEvent.getParameter("reason");
 
 			Log.info("Change event on Equipment list binding received with reason: '"
 				+ sReason + "'", "sap.ui.core.sample.odata.v4.ListBinding.Main");
 		},
 
-		onEquipmentsRefresh : function (oEvent) {
+		onEquipmentsRefresh : function () {
 			this.byId("Equipments").getBinding("items").refresh();
 		},
 
@@ -134,7 +123,7 @@ sap.ui.define([
 			};
 		},
 
-		onRefresh : function (oEvent) {
+		onRefresh : function () {
 			var oModel = this.getView().getModel();
 
 			if (oModel.hasPendingChanges()) {
@@ -147,7 +136,7 @@ sap.ui.define([
 			}
 		},
 
-		onSave : function (oEvent) {
+		onSave : function () {
 			var oModel = this.getView().getModel();
 
 			// TODO this should be the default for submitBatch
@@ -173,6 +162,7 @@ sap.ui.define([
 
 			function setEquipmentContext() {
 				var oEquipmentControl = oView.byId("EmployeeEquipments");
+
 				oEquipmentControl.setBindingContext(oEmployeesBinding.getCurrentContexts()[0]);
 				oEmployeesControl.setSelectedItem(oEmployeesControl.getItems()[0]);
 			}
@@ -182,11 +172,11 @@ sap.ui.define([
 			oView.byId("TeamDetails").setBindingContext(oTeamContext);
 		},
 
-		onTeamsRequested : function (oEvent) {
+		onTeamsRequested : function () {
 			this.getView().setBusy(true);
 		},
 
-		onTeamsReceived : function (oEvent) {
+		onTeamsReceived : function () {
 			var oView = this.getView();
 
 			oView.loaded().then(function () {
@@ -209,7 +199,7 @@ sap.ui.define([
 			});
 		},
 
-		openChangeTeamBudgetDialog : function (oEvent) {
+		openChangeTeamBudgetDialog : function () {
 			var oTeamContext = this.byId("TeamDetails").getBindingContext();
 
 			// set default values for operation parameters
@@ -220,7 +210,7 @@ sap.ui.define([
 			this.byId("ChangeTeamBudgetDialog").open();
 		},
 
-		openChangeManagerOfTeamDialog : function (oEvent) {
+		openChangeManagerOfTeamDialog : function () {
 			var oView = this.getView(),
 				oTeamContext = oView.byId("TeamDetails").getBindingContext();
 
@@ -253,7 +243,7 @@ sap.ui.define([
 				sSelectedId,
 				bSortDesc,
 				oTable,
-				oUiModel = this.getView().getModel('ui');
+				oUiModel = this.getView().getModel("ui");
 
 			oEvent.getSource().getCustomData().forEach(function (oCustomData) {
 				mCustomData[oCustomData.getKey()] = oCustomData.getValue();
@@ -295,7 +285,7 @@ sap.ui.define([
 				// same property for equipment and employee
 				sSelectedId = aSelectedContexts[0].getProperty("ID");
 			}
-			oBinding.attachEventOnce("change", function (oEvent) {
+			oBinding.attachEventOnce("change", function () {
 				oTable.removeSelections(true);
 				oBinding.getCurrentContexts().some(function (oContext, i) {
 					if (oContext.getProperty("ID") === sSelectedId) {
@@ -308,6 +298,4 @@ sap.ui.define([
 			oBinding.sort(this.mSorters[sId]);
 		}
 	});
-
-	return MainController;
 });

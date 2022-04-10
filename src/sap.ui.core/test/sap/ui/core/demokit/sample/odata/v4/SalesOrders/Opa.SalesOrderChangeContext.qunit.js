@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
 ], function (Helper, ChangeContextTest, opaTest, TestUtils) {
-	/*global QUnit */
 	"use strict";
 
 	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrders - Change Context");

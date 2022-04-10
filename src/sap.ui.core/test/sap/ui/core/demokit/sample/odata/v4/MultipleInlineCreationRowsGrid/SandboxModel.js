@@ -10,7 +10,8 @@ sap.ui.define([
 ], function (SandboxModelHelper, ODataModel, TestUtils) {
 	"use strict";
 
-	var oMockData = {
+	var bPart101Persisted,
+		oMockData = {
 			sFilterBase : "/MyProducts/",
 			mFixture : {
 				"Products?$filter=IsActiveEntity%20eq%20false%20or%20SiblingEntity/IsActiveEntity%20eq%20null&$select=HasDraftEntity,ID,IsActiveEntity,name&$skip=0&$top=20" : {
@@ -66,8 +67,7 @@ sap.ui.define([
 				}]
 			},
 			sSourceBase : "sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/data"
-		},
-		bPart101Persisted;
+		};
 
 	return ODataModel.extend(
 		"sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.SandboxModel", {

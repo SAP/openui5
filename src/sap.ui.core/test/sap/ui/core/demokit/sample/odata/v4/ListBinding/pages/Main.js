@@ -54,6 +54,7 @@ sap.ui.define([
 						success : function (oEmployeeEquipments) {
 							var oRow = oEmployeeEquipments.getItems()[iRow],
 								oImage = oRow.getCells()[1];
+
 							Opa5.assert.strictEqual(
 								oImage.getSrc(),
 								sUrl[0] === "/"

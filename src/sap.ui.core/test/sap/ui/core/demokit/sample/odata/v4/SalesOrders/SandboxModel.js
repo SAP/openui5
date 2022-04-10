@@ -31,19 +31,19 @@ sap.ui.define([
 				"ProductList('HT-1000')/Name?custom-option=value" : {
 					headers : {
 						"sap-messages" : JSON.stringify([{
-							"code" : "42",
-							"message" : "Example for an unbound message",
-							"numericSeverity" : 2,
-							"longtextUrl" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/Messages(0)"
+							code : "42",
+							message : "Example for an unbound message",
+							numericSeverity : 2,
+							longtextUrl : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/Messages(0)"
 						}])
 					},
 					message : {
-						"value" : "Notebook Basic 15"
+						value : "Notebook Basic 15"
 					}
 				},
 				"ProductList('HT-1000')/ProductID?custom-option=value" : {
 					message : {
-						"value" : "HT-1000"
+						value : "HT-1000"
 					}
 				},
 				"SalesOrderList/$count?custom-option=value" : {
@@ -99,7 +99,7 @@ sap.ui.define([
 				},
 				"SalesOrderList('0500000001')/Messages(1)" : {
 					message : 'Details for "Enter customer reference if available" (relative'
-						+ ' longtext URL).'
+						+ " longtext URL)."
 				},
 				"SalesOrderList('0500000002')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber)" : {
 					source : "SalesOrderList_2.json"
@@ -137,9 +137,9 @@ sap.ui.define([
 				"SalesOrderList('0500000004')?custom-option=value&$select=ChangedAt,Note" : {
 					message : {
 						"@odata.etag" : 'W/"20160619220000.0000000"',
-						"ChangedAt" : "2016-06-26T22:00:00.000000Z",
-						"Note" : "EPM DG: SO ID 0500000004 Deliver as fast as possible",
-						"SalesOrderID" : "0500000004"
+						ChangedAt : "2016-06-26T22:00:00.000000Z",
+						Note : "EPM DG: SO ID 0500000004 Deliver as fast as possible",
+						SalesOrderID : "0500000004"
 					}
 				},
 				"SalesOrderList('0500000004')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
@@ -169,9 +169,9 @@ sap.ui.define([
 				"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,Note" : {
 					message : {
 						"@odata.etag" : 'W/"20160619220000.0000000"',
-						"ChangedAt" : "2016-06-26T22:00:00.000000Z",
-						"Note" : "EPM DG: SO ID 0500000005 Deliver as fast as possible",
-						"SalesOrderID" : "0500000005"
+						ChangedAt : "2016-06-26T22:00:00.000000Z",
+						Note : "EPM DG: SO ID 0500000005 Deliver as fast as possible",
+						SalesOrderID : "0500000005"
 					}
 				},
 				"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
@@ -220,7 +220,7 @@ sap.ui.define([
 					source : "SalesOrderList('NEW1').json"
 				},
 				"SalesOrderList('NEW1')/SO_2_SCHDL?custom-option=value&$select=DeliveryDate,ScheduleKey&$skip=0&$top=100" : {
-					message : {"value" : []}
+					message : {value : []}
 				},
 				"SalesOrderList('NEW1')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('NEW1')_refresh.json"
@@ -231,9 +231,9 @@ sap.ui.define([
 				"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,Note" : {
 					message : {
 						"@odata.etag" : 'W/"20160619220000.0000000"',
-						"ChangedAt" : "2016-06-26T22:00:00.000000Z",
-						"Note" : "new 1",
-						"SalesOrderID" : "NEW1"
+						ChangedAt : "2016-06-26T22:00:00.000000Z",
+						Note : "new 1",
+						SalesOrderID : "NEW1"
 					}
 				},
 				"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
@@ -242,7 +242,7 @@ sap.ui.define([
 				"SalesOrderList('NEW1')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$filter=ItemPosition%20gt%20'0000000000'&$select=DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=100" : {
 					message : {
 						"@odata.count" : "6",
-						"value" : []
+						value : []
 					}
 				},
 				"SalesOrderList('NEW1')/SO_2_SOITEM(SalesOrderID='NEW1',ItemPosition='10')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
@@ -305,9 +305,9 @@ sap.ui.define([
 				"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,Note" : {
 					message : {
 						"@odata.etag" : 'W/"20160619220000.0000000"',
-						"ChangedAt" : "2016-06-26T22:00:00.000000Z",
-						"Note" : "new 3",
-						"SalesOrderID" : "NEW3"
+						ChangedAt : "2016-06-26T22:00:00.000000Z",
+						Note : "new 3",
+						SalesOrderID : "NEW3"
 					}
 				},
 				"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
@@ -392,8 +392,8 @@ sap.ui.define([
 				"SalesOrderList('0500000001')/SO_2_BP?custom-option=value&$select=BusinessPartnerID,BusinessPartnerRole" : {
 					message : {
 						"@odata.etag" : 'W/"20160613065313.0000000"',
-						"BusinessPartnerID" : "0100000005",
-						"BusinessPartnerRole" : "01"
+						BusinessPartnerID : "0100000005",
+						BusinessPartnerRole : "01"
 					}
 				},
 				"SalesOrderList('0500000001')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$filter=ItemPosition%20gt%20'0000000000'&$select=DeliveryDate,GrossAmount,ItemPosition,Note,NoteLanguage,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=100" : {
@@ -402,17 +402,17 @@ sap.ui.define([
 				"SalesOrderList('0500000002')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSimulateDiscount(Discount=75,Approver='')?custom-option=value" : {
 					code : 400,
 					message : {
-						"error" : {
-							"code" : "OO/000",
-							"message" : "User John Doe is not authorized to approve more than 50%"
+						error : {
+							code : "OO/000",
+							message : "User John Doe is not authorized to approve more than 50%"
 								+ " discount w/o approver",
-							"target" : "Discount",
+							target : "Discount",
 							"@SAP__Common.additionalTargets" : ["Approver"]
 						}
 					}
 				},
 				"SalesOrderList('0500000002')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSimulateDiscount(Discount=25,Approver='')?custom-option=value" : {
-					message : {"value" : "188.05"}
+					message : {value : "188.05"}
 				},
 				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000000'%20or%20SalesOrderID%20eq%20'0500000001'%20or%20SalesOrderID%20eq%20'0500000002'%20or%20SalesOrderID%20eq%20'0500000003'%20or%20SalesOrderID%20eq%20'0500000004'%20or%20SalesOrderID%20eq%20'0500000005'%20or%20SalesOrderID%20eq%20'0500000006'%20or%20SalesOrderID%20eq%20'0500000007'%20or%20SalesOrderID%20eq%20'0500000008'%20or%20SalesOrderID%20eq%20'0500000009'&$select=SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$top=10" : {
 					source : "SalesOrderList_CompanyName_top10_sideEffects.json"
@@ -442,42 +442,42 @@ sap.ui.define([
 				}, {
 					ifMatch : /,"Note":"new 2"/,
 					message : {
-						"BuyerID" : "0100000000",
-						"Note" : "new 2",
-						"SalesOrderID" : "NEW2"
+						BuyerID : "0100000000",
+						Note : "new 2",
+						SalesOrderID : "NEW2"
 					}
 				}, {
 					ifMatch : /,"Note":"new 3"/,
 					message : {
-						"BuyerID" : "0100000000",
-						"Note" : "new 3",
-						"SalesOrderID" : "NEW3"
+						BuyerID : "0100000000",
+						Note : "new 3",
+						SalesOrderID : "NEW3"
 					}
 				}, {
 					ifMatch : /,"Note":"new 4"/,
 					message : {
-						"BuyerID" : "0100000000",
-						"Note" : "new 4",
-						"SalesOrderID" : "NEW4"
+						BuyerID : "0100000000",
+						Note : "new 4",
+						SalesOrderID : "NEW4"
 					}
 				}, {
 					message : {
-						"BuyerID" : "0100000000",
-						"Note" : "new 1",
-						"SalesOrderID" : "NEW1"
+						BuyerID : "0100000000",
+						Note : "new 1",
+						SalesOrderID : "NEW1"
 					}
 				}],
 				"POST SalesOrderList('0500000004')/SO_2_SOITEM?custom-option=value" : [{
 					code : 400,
 					ifMatch : /,"Quantity":"0",/,
 					message : {
-						"error" : {
-							"code" : "SEPM_BO_COMMON/022",
-							"message" : "Value must be greater than 0",
+						error : {
+							code : "SEPM_BO_COMMON/022",
+							message : "Value must be greater than 0",
 							"@SAP__common.numericSeverity" : 4,
 							"@SAP__Common.longtextUrl" : "",
-							"target" : "Quantity",
-							"details" : []
+							target : "Quantity",
+							details : []
 						}
 					}
 				}, {
@@ -492,10 +492,10 @@ sap.ui.define([
 						return oRequest.requestHeaders["Prefer"] === "handling=strict";
 					},
 					message : {
-						"error" : {
-							"code" : "OO/000",
-							"message" : "n/a",
-							"details" : [{
+						error : {
+							code : "OO/000",
+							message : "n/a",
+							details : [{
 								"@SAP__common.numericSeverity" : 3,
 								code : "ZUI5_EPM_SAMPLE/000",
 								message : "Enter a note",
@@ -513,17 +513,17 @@ sap.ui.define([
 					ifMatch : /{"Note":"HEADER_MESSAGE"}/,
 					headers : {
 						"sap-messages" : JSON.stringify([{
-							"code" : "42",
-							"message" : "This is your requested bound header message",
-							"numericSeverity" : 1,
-							"target" : "Note"
+							code : "42",
+							message : "This is your requested bound header message",
+							numericSeverity : 1,
+							target : "Note"
 						}])
 					}
 				},
 				"PATCH SalesOrderList('0500000004')?custom-option=value" : [{
 					code : 400,
 					ifMatch : /{"Note":"RAISE_ERROR"}/,
-					message :	{
+					message : {
 						error : {
 							code : "OO/000",
 							message : "Property `Note` value `RAISE_ERROR` not allowed!",
@@ -543,7 +543,7 @@ sap.ui.define([
 					source : "SalesOrderList_6.json"
 				},
 				"SalesOrderList?custom-option=value&$filter=(SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'%20and%20(SO_2_BP/CompanyName%20ge%20'M'))%20and%20SalesOrderID%20eq%20'0500000006'&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
-					message : {"value" : []}
+					message : {value : []}
 				}
 			},
 			sSourceBase : "sap/ui/core/sample/odata/v4/SalesOrders/data"
@@ -552,8 +552,8 @@ sap.ui.define([
 	return ODataModel.extend("sap.ui.core.sample.odata.v4.SalesOrders.SandboxModel", {
 		constructor : function (mParameters) {
 			var mModelParameters = SandboxModelHelper.adaptModelParameters(mParameters,
-					TestUtils.retrieveData("sap.ui.core.sample.odata.v4.SalesOrders" +
-						".updateGroupId")), // updateGroupId controlled by OPA
+					TestUtils.retrieveData("sap.ui.core.sample.odata.v4.SalesOrders"
+						+ ".updateGroupId")), // updateGroupId controlled by OPA
 				sUpdateGroupId = mParameters.updateGroupId !== mModelParameters.updateGroupId
 					? mModelParameters.updateGroupId
 					: undefined;

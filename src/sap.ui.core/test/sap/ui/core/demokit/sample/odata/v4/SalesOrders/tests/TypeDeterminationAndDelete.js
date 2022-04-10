@@ -2,13 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/Log",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
-], function (Log, Opa5, TestUtils, Press, Interactable, Properties) {
+], function (Opa5, TestUtils, Press, Interactable, Properties) {
 	"use strict";
 
 	return {
@@ -22,7 +21,7 @@ sap.ui.define([
 					actions : new Press(),
 					controlType : "sap.m.Button",
 					matchers : new Properties({icon : "sap-icon://sys-cancel-2"}),
-					success : function (aControls) {
+					success : function () {
 						Opa5.assert.ok(true, "Schedules Dialog closed");
 					},
 					viewName : sViewName
@@ -99,7 +98,6 @@ sap.ui.define([
 				});
 			}
 
-
 			// click on more button within sales orders table
 			function moreSalesOrders() {
 				When.waitFor({
@@ -134,6 +132,7 @@ sap.ui.define([
 							aListItems.forEach(function (oListItem) {
 								aSchedules.forEach(function (sSchedule) {
 									var sKey = oListItem.getCells()[0].getText();
+
 									if (sKey === sSchedule) {
 										new Press().executeOn(oListItem.getMultiSelectControl());
 										Opa5.assert.ok(true, "Schedule '" + sKey + "' selected");
@@ -158,7 +157,7 @@ sap.ui.define([
 				When.waitFor({
 					searchOpenDialogs : true,
 					controlType : "sap.m.Dialog",
-					success : function (aControls) {
+					success : function () {
 						//new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
 						Opa5.assert.ok(true, "'Schedules' opened");
 					}
@@ -188,12 +187,10 @@ sap.ui.define([
 					check : function (aControls) {
 						return aControls[0].$().is(":visible") === bVisible;
 					},
-					success : function (aControls) {
+					success : function () {
 						Opa5.assert.ok(true,
 								bVisible ? "'More' Button visible" : "'More' Button invisible");
-					},
-					errorMessage : bVisible ?
-							"'More'-Button not visible" : "'More'-Button still visible"
+					}
 				});
 			}
 
@@ -204,7 +201,7 @@ sap.ui.define([
 					check : function (oSalesOrderTable) {
 						return oSalesOrderTable.getItems().length > 0;
 					},
-					success : function (oSalesOrderTable) {
+					success : function () {
 						var sTypeName,
 						oView = sap.ui.getCore().byId(sViewName);
 
@@ -223,7 +220,6 @@ sap.ui.define([
 									+ oBinding.getPath() + " has ODataType: " + sTypeName
 								);
 						});
-
 					},
 					errorMessage : "No data row found. Data from service could not be retrieved?",
 					viewName : sViewName
@@ -241,6 +237,7 @@ sap.ui.define([
 								.getItems().map(function (oItem) {
 									return oItem.getCells()[0].getText();
 							});
+
 						Opa5.assert.deepEqual(aSalesOrderIds, aExpectedSalesOrderIds, sMessage);
 					}
 				});
@@ -260,7 +257,7 @@ sap.ui.define([
 						aScheduleIds = [];
 
 						oCore.byId(sViewName).byId("SO_2_SCHDL")
-							.getItems().forEach(function (oItem, i) {
+							.getItems().forEach(function (oItem) {
 								aScheduleIds.push(oItem.getCells()[0].getText());
 							});
 						Opa5.assert.deepEqual(aScheduleIds, aExpectedScheduleIds,
@@ -276,7 +273,6 @@ sap.ui.define([
 				}
 			});
 
-
 			//*****************************************************************************
 			// Check type determination
 
@@ -285,7 +281,6 @@ sap.ui.define([
 			if (bRealOData) {
 				Opa5.assert.ok(true, "Deletion test skipped because unstable real keys");
 			} else {
-
 				//*****************************************************************************
 				// Single Deletion Journey (within Sales Orders List, refetch on delete, more
 				// button)
@@ -341,7 +336,8 @@ sap.ui.define([
 				selectSalesOrderWithId("0500000005");
 
 				openSchedules();
-				verifyVisibleSchedules(["005056A71E3D1ED68DDAAE99B0154B70",
+				verifyVisibleSchedules([
+					"005056A71E3D1ED68DDAAE99B0154B70",
 					"005056A71E3D1ED68DDAAE99B0156B70",
 					"005056A71E3D1ED68DDAAE99B0158B70",
 					"005056A71E3D1ED68DDAAE99B015AB70",
@@ -354,10 +350,13 @@ sap.ui.define([
 				]);
 
 				// mark and delete some Schedules
-				markSchedules(["005056A71E3D1ED68DDAAE99B0158B70",
-					"005056A71E3D1ED68DDAAE99B015CB70"]);
+				markSchedules([
+					"005056A71E3D1ED68DDAAE99B0158B70",
+					"005056A71E3D1ED68DDAAE99B015CB70"
+				]);
 				deleteSchedules();
-				verifyVisibleSchedules(["005056A71E3D1ED68DDAAE99B0154B70",
+				verifyVisibleSchedules([
+					"005056A71E3D1ED68DDAAE99B0154B70",
 					"005056A71E3D1ED68DDAAE99B0156B70",
 					"005056A71E3D1ED68DDAAE99B015AB70",
 					"005056A71E3D1ED68DDAAE99B015EB70",
@@ -377,7 +376,6 @@ sap.ui.define([
 				//*****************************************************************************
 				// Delete BusinessPartner via Context Binding
 				deleteBusinessPartner();
-
 			}
 			Then.onAnyPage.checkLog();
 

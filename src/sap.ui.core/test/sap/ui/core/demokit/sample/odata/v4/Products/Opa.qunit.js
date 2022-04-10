@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-/*global QUnit */
 QUnit.config.autostart = false;
 
 sap.ui.getCore().attachInit(function () {
@@ -11,10 +10,9 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/Products/pages/Main",
 		"sap/base/Log",
-		"sap/ui/test/Opa5",
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/TestUtils"
-	], function (Any, Main, Log, Opa5, opaTest, TestUtils) {
+	], function (Any, Main, Log, opaTest, TestUtils) {
 		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
 		QUnit.module("sap.ui.core.sample.odata.v4.Products", {

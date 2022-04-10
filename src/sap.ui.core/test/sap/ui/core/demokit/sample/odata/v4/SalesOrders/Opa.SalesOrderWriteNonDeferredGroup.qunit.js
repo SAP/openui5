@@ -7,11 +7,10 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
 ], function (Helper, WriteNonDeferredGroupTest, opaTest, TestUtils) {
-	/*global QUnit */
 	"use strict";
 
-	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrders - " +
-		"Write via application groups with SubmitMode.Auto/.Direct");
+	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrders - "
+		+ "Write via application groups with SubmitMode.Auto/.Direct");
 
 	if (!TestUtils.isRealOData()) {
 		QUnit.skip("Test runs only with realOData=true");

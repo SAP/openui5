@@ -67,7 +67,6 @@ sap.ui.define([
 					}],
 					oLastModified = oModel.getMetaModel().getLastModified();
 
-
 				Log.debug("Last-Modified: " + oLastModified,
 					oLastModified && oLastModified.toISOString(),
 					"sap.ui.core.sample.odata.v4.SalesOrders.Component");
@@ -75,8 +74,7 @@ sap.ui.define([
 				this.runAsOwner(function () {
 					View.create({
 						id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
-						models : {
-							undefined : oModel,
+						models : {undefined : oModel,
 							ui : new JSONModel({
 								bCreateItemPending : false,
 								filterProductID : "",

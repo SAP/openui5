@@ -8,14 +8,12 @@ sap.ui.define([
 ], function (Helper, AdaptSalesOrdersTable, opaTest) {
 	"use strict";
 
-	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrdersRTATest " +
-		"- Adapt UI SalesOrdersTable");
+	Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrdersRTATest "
+		+ "- Adapt UI SalesOrdersTable");
 
 	//*****************************************************************************
 	opaTest("Adapt UI SalesOrdersTable", function (Given, When, Then) {
-
 		AdaptSalesOrdersTable.adaptSalesOrdersTable(Given, When, Then,
 			"sap.ui.core.sample.odata.v4.SalesOrdersRTATest");
-
 	});
 });

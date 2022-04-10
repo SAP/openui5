@@ -12,8 +12,6 @@ sap.ui.define([
 
 	//*****************************************************************************
 	opaTest("Create, modify and delete", function (Given, When, Then) {
-
 		CreateTest.create(Given, When, Then, "sap.ui.core.sample.odata.v4.SalesOrdersRTATest");
-
 	});
 });
