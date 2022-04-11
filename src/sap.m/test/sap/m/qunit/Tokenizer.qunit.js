@@ -226,6 +226,62 @@ sap.ui.define([
 		assert.equal(oToken3.$().hasClass("sapMTokenReadOnly"), false, "token3 is editable");
 	});
 
+	QUnit.test("checks if onsapmodifiers prevents broser navigation", function(assert) {
+		this.stub(Device, "os").value({
+			windows: true,
+			macintosh: false
+		});
+
+		var oTokenizer = new Tokenizer();
+		var oSpy = this.spy(oTokenizer, "onsapprevious");
+		var oNextSpy = this.spy(oTokenizer, "onsapnext");
+		var oFakeEvent = {
+			metaKey: false,
+			altKey: true
+		};
+
+		oTokenizer.onsappreviousmodifiers(oFakeEvent);
+		Core.applyChanges();
+
+		assert.notOk(oSpy.called, "onsappreviousmodifiers should not call onsapprevious on arrow left + alt");
+
+		oTokenizer.onsapnextmodifiers(oFakeEvent);
+		Core.applyChanges();
+
+		assert.notOk(oNextSpy.called, "onsapnextmodifiers should not call onsapnext on arrow right + alt");
+
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("checks if onsappreviousmodifiers prevents broser navigation", function(assert) {
+		this.stub(Device, "os").value({
+			windows: false,
+			macintosh: true
+		});
+
+		var oTokenizer = new Tokenizer();
+		var oSpy = this.spy(oTokenizer, "onsapprevious");
+		var oNextSpy = this.spy(oTokenizer, "onsapnext");
+		var oFakeEvent = {
+			metaKey: true,
+			altKey: false
+		};
+
+		oTokenizer.onsappreviousmodifiers(oFakeEvent);
+		Core.applyChanges();
+
+		assert.notOk(oSpy.called, "onsappreviousmodifiers should not call onsapprevious on arrow left + cmnd");
+
+		oTokenizer.onsapnextmodifiers(oFakeEvent);
+		Core.applyChanges();
+
+		assert.notOk(oNextSpy.called, "onsapnextmodifiers should not call onsapnext on arrow right + alt");
+
+		oTokenizer.destroy();
+
+		oTokenizer.destroy();
+	});
+
 	QUnit.test("selected token is visible after select with left arrow", function(assert) {
 		var oSpecialToken = new Token({text: "Token 5", key: "0005"}),
 			oMultiInput = new MultiInput({
@@ -940,17 +996,12 @@ sap.ui.define([
 		assert.ok(oSpySelection.calledWith(true), "Range selection should select all tokens until the end");
 	});
 
-	QUnit.test("ARROW_LEFT + CTR", function(assert) {
-		var oSpyPrevious = this.spy(this.tokenizer, "onsapprevious");
-
-		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.ARROW_LEFT, false, false, true);
-
-		// assert
-		assert.ok(oSpyPrevious.called, "Backward navigation is triggered");
-	});
-
 	QUnit.test("ARROW_RIGHT + CTR", function(assert) {
+		this.stub(Device, "os").value({
+			windows: true,
+			macintosh: false
+		});
+
 		var oSpyNext = this.spy(this.tokenizer, "onsapnext");
 
 		// act
