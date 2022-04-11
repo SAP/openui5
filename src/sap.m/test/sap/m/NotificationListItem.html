@@ -45,14 +45,12 @@
 				buttons: [
 					new sap.m.Button({
 						text: 'Accept',
-						type: sap.m.ButtonType.Accept,
 						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
 					}),
 					new sap.m.Button({
 						text: 'Cancel',
-						type: sap.m.ButtonType.Reject,
 						press: function () {
 							listItem2.close();
 						}
@@ -72,7 +70,6 @@
 					new sap.m.Button('notificationAcceptButton', {
 						id: 'button1',
 						text: 'Accept',
-						type: sap.m.ButtonType.Accept,
 						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
@@ -94,7 +91,6 @@
 					new sap.m.Button({
 						id: 'button356',
 						text: 'OK',
-						type: sap.m.ButtonType.Accept,
 						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
@@ -135,7 +131,6 @@
 					new sap.m.Button({
 						id: 'button5',
 						text: 'Accept',
-						type: sap.m.ButtonType.Accept,
 						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
@@ -143,7 +138,6 @@
 					new sap.m.Button({
 						id: 'button6',
 						text: 'Cancel',
-						type: sap.m.ButtonType.Reject,
 						press: function () {
 							listItem2.close();
 						}
@@ -155,20 +149,16 @@
 				showClose : true,
 				buttons : [
 					{
-						buttonText : "Action1",
-						buttonType : sap.m.ButtonType.Accept
+						buttonText : "Action1"
 					},
 					{
-						buttonText : "Action2",
-						buttonType : sap.m.ButtonType.Default
+						buttonText : "Action2"
 					},
 					{
-						buttonText : "Action3",
-						buttonType : sap.m.ButtonType.Reject
+						buttonText : "Action3"
 					},
 					{
-						buttonText : "Action4",
-						buttonType : sap.m.ButtonType.Reject
+						buttonText : "Action4"
 					}
 				]
 			};
@@ -298,7 +288,6 @@
 					new sap.m.Button({
 						id: 'button51',
 						text: 'Accept',
-						type: sap.m.ButtonType.Accept,
 						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
@@ -306,7 +295,6 @@
 					new sap.m.Button({
 						id: 'button61',
 						text: 'Cancel',
-						type: sap.m.ButtonType.Reject,
 						press: function () {
 							listItem8.close();
 						}
@@ -323,7 +311,7 @@
 				unread : true,
 				priority : sap.ui.core.Priority.High,
 				authorName : 'John Smith',
-				authorPicture : 'images/headerImg2.jpg',
+				authorPicture : 'images/headerImg2.jpg'
 			});
 
 			var list = new sap.m.NotificationList("listId", {

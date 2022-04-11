@@ -40,6 +40,9 @@ sap.ui.define([
 		// shortcut for sap.m.ButtonType
 		var ButtonType = library.ButtonType;
 
+		// shortcut for sap.m.ToolbarStyle
+		var ToolbarStyle = library.ToolbarStyle;
+
 		// shortcut for sap.m.OverflowToolbarPriority
 		var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
@@ -287,7 +290,9 @@ sap.ui.define([
 			var overflowToolbar = this.getAggregation('_overflowToolbar');
 
 			if (!overflowToolbar) {
-				overflowToolbar = new OverflowToolbar(this.getId() + '-overflowToolbar', {});
+				overflowToolbar = new OverflowToolbar(this.getId() + '-overflowToolbar', {
+					style: ToolbarStyle.Clear
+				});
 				this.setAggregation("_overflowToolbar", overflowToolbar, true);
 			}
 
