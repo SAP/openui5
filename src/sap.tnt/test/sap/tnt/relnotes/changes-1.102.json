@@ -1,0 +1,12 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "0b3497f2729acfe317fb1b92e4e15748c78bb778",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Removed \"Z\" characters from illustration"
+      }
+    ]
+  }
+}

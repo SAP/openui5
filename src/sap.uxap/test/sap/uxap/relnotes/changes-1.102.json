@@ -1,0 +1,56 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "dc61b2fb8b4a9a2acbde2333cbbc47c5126d91a1",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent auto collapsing header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280068998"
+          }
+        ]
+      },
+      {
+        "id": "bf5e3bbae65e985f20d908984bdf613ee3d44024",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Correct rounding issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270033630"
+          }
+        ]
+      },
+      {
+        "id": "43e86cda17fe103008963e8c30b8705741fe598b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected qunit"
+      },
+      {
+        "id": "625452aad37498f2717c6b6d2d00e221aad39cf6",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed inconsistent rename information",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280080989"
+          }
+        ]
+      },
+      {
+        "id": "f76d4ff0c49b9b6cdd9f4b6b15c819bcb0dfbc17",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected qunit on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015865"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "3da8a97e18216461e8af64405917a66f12d23104",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Mesage states header border colors fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270044729"
+          }
+        ]
+      },
+      {
+        "id": "5e48ad3c39ec4124563afa36fae4649f2ca9aada",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus on the navigation buttons in Fiori 3 themes is white and black dots",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270035507"
+          }
+        ]
+      },
+      {
+        "id": "e5913b4a6fed968db1f30b512937deb820050839",
+        "type": "FEATURE",
+        "text": " DragAndDrop: The mobile support is now enabled"
+      }
+    ]
+  }
+}

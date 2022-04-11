@@ -1,0 +1,495 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "377c7e5f300460b558e9424b4a906bd15d204d8d",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Labels are now redirected to the inner input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270023177"
+          }
+        ]
+      },
+      {
+        "id": "1a63acd2ed4855a132a697b50d449ce8fe49a909",
+        "type": "FIX",
+        "text": " Alt/Meta key + right/left key work natively for Balkan controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042470"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042468"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042461"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042447"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042442"
+          }
+        ]
+      },
+      {
+        "id": "3da8a97e18216461e8af64405917a66f12d23104",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Mesage states header border colors fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270044729"
+          }
+        ]
+      },
+      {
+        "id": "8a0055836cfdb4a6c22cefc88203fcd736325256",
+        "type": "FIX",
+        "text": " sap.m.Popover: Adjust arrow's offset for Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270050908"
+          }
+        ]
+      },
+      {
+        "id": "5e48ad3c39ec4124563afa36fae4649f2ca9aada",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus on the navigation buttons in Fiori 3 themes is white and black dots",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270035507"
+          }
+        ]
+      },
+      {
+        "id": "fcaa90a48e752f378b63d362d5c9e6b2263eb3cc",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Aligned dash in  emptyInicatorMode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270003320"
+          }
+        ]
+      },
+      {
+        "id": "5863a455fe0b869199d1031ba86207f0b70efe7a",
+        "type": "FIX",
+        "text": " sap.m.Page: Render div when landmark role is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270049714"
+          }
+        ]
+      },
+      {
+        "id": "e23ee2a4dad8fd3139ea52bd86f73f973c1e0004",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Prevent firing Change after setValue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270049989"
+          }
+        ]
+      },
+      {
+        "id": "a0b7b10274a32bf7dcac75d8431b666d39af7cf4",
+        "type": "FIX",
+        "text": " sap.m.Bar: Bar used as Page header respects responsive paddings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270053533"
+          }
+        ]
+      },
+      {
+        "id": "4a91759bf1865d93dd28c4af832f2a6d42439c73",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Invalidate List when new items are received and picker is open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270024984"
+          }
+        ]
+      },
+      {
+        "id": "7649b46c58ade1f2895139c9557f51cde9971bc6",
+        "type": "FEATURE",
+        "text": " sap.m.Link: Horizon themes implemented"
+      },
+      {
+        "id": "c52be440b6e3efb7cfd95e51bd222d6a2c7d6e1b",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: icon-only markers announcement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280079826"
+          }
+        ]
+      },
+      {
+        "id": "3a3c7ff07e16900a82a6e26bc1780b13ce157fb9",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Initial focus is on selected radio button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280077967"
+          }
+        ]
+      },
+      {
+        "id": "9c1aecffc63747fa96d9c306527d6996e7a0e69c",
+        "type": "FEATURE",
+        "text": " Grouping and sorting support in Uploadset is now available"
+      },
+      {
+        "id": "d5004c6ad1d8047f0377d7c78cbab61f19a31c92",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: adjust sort, filter and group lists labes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001976842022"
+          }
+        ]
+      },
+      {
+        "id": "eef780ffb4e6a2123736f06842887c060e1c0fdf",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Timezone popup is always updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042565"
+          }
+        ]
+      },
+      {
+        "id": "999cf88de3d9180f5adecae7d314dbd22d283e07",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Fixed browser navigation with alt/cmd + arrow keys",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042448"
+          }
+        ]
+      },
+      {
+        "id": "42ae4a7d0c8e7f3a09a15b3b24f60aff25fefe43",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Fixed browser navigation with alt/cmd + arrow keys",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042443"
+          }
+        ]
+      },
+      {
+        "id": "a68b18ff81551e0d338de5a1ae1e2bd64bd2bb0d",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Prevent tooltip reposition attemps if Slider is not rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270029757"
+          }
+        ]
+      },
+      {
+        "id": "218e131d1eea875586d3476483545ad60c7d9360",
+        "type": "FIX",
+        "text": " sap.m.StepInput: adjust input role",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015355"
+          }
+        ]
+      },
+      {
+        "id": "abfd4f563569dcf7d00c979ddff918ffd1871190",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Picker time is correct when the app timezone is different",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040747"
+          }
+        ]
+      },
+      {
+        "id": "d3da86e6cdb1276c772df14ceae20a1b530afcee",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Time is not truncated with different app timezone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040792"
+          }
+        ]
+      },
+      {
+        "id": "10221263268c555fa6885681ff434023e4c6c156",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adjust appointments selected state announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015360"
+          }
+        ]
+      },
+      {
+        "id": "d09957cc3e5de0ebecc4cef8db489eb3a53ef0ae",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: refactor focus handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270014669"
+          }
+        ]
+      },
+      {
+        "id": "f8079c1f7775360bc5223cfc1fced6b23aac5c1c",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: setValue() error fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270029757"
+          }
+        ]
+      },
+      {
+        "id": "b79fbaecfb647627ea717e7fbec1bfc1a44c26fa",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Removed \"Z\" characters from illustration"
+      },
+      {
+        "id": "bbb2326a4454ab08ac01a510a37d7e82cc471bb0",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Hidden tokens count on empty Tokenizer fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280081171"
+          }
+        ]
+      },
+      {
+        "id": "ad38b21e3fc441db6c81af9ab7b4099de83c37c3",
+        "type": "FEATURE",
+        "text": " sap.m.Wizard: Additional API for Page Mode"
+      },
+      {
+        "id": "7ed5aaadedcf18b4b3b33a09bbba3491a9ff6ca8",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Removed \"Z\" characters from illustration"
+      },
+      {
+        "id": "409f203c1cf42bd1cc5b115b97eb6347103e9892",
+        "type": "FIX",
+        "text": " sap.m.StepInput: accepts 0 as minimum or maximum binding constraint",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280080915"
+          }
+        ]
+      },
+      {
+        "id": "5152a8f79906a07a380d7fec190ff37af4472477",
+        "type": "FIX",
+        "text": " sap.m.Label: Asterisk is displayed properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270016372"
+          }
+        ]
+      },
+      {
+        "id": "f267cef0601220b28797659720b192699aab7755",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar:  Drag and drop actions with scale factor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280056370"
+          }
+        ]
+      },
+      {
+        "id": "2a69d0829bcd0825f050d0cf8a937da7fd97553f",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Tooltips state and visualization are now adjusted correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280076351"
+          }
+        ]
+      },
+      {
+        "id": "cc1aa0ef03b450fc79678cf7c2319214ea1cd417",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Fixed alignment on zoom out in Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270003188"
+          }
+        ]
+      },
+      {
+        "id": "b9fe66ea6bcfd46832f4329d7842b018936d8562",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: No error after rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270024795"
+          }
+        ]
+      },
+      {
+        "id": "4e4477bb6e13d311b00454b321ff4ee518ccbf13",
+        "type": "FIX",
+        "text": " sap.m.Bar: Bar used as Page header respects responsive paddings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280069199"
+          }
+        ]
+      },
+      {
+        "id": "f50ae2b488f18cd2d7823f36043dcf1402eae846",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: selected date is a constant",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001858302022"
+          }
+        ]
+      },
+      {
+        "id": "e20f61a0b820dcd59c3c59408d7072d0e5add149",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: fixed focus when placed in ObjectHeader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015351"
+          }
+        ]
+      },
+      {
+        "id": "67c064697d63f47d2c7acb56fdc7a74f89d1a6e5",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: fixed ACC sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270013288"
+          }
+        ]
+      },
+      {
+        "id": "da5387627fab462ff2ae3fe8f9df2cd744fe994e",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Aria-selected is now set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270006679"
+          }
+        ]
+      },
+      {
+        "id": "977c8044fadddc6ed8d268a080837c988575d920",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: fixed ACC sample and added documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015334"
+          }
+        ]
+      },
+      {
+        "id": "9998573d967c85582ea50a67201ebede534a5037",
+        "type": "FEATURE",
+        "text": " noData aggregation for custom noData visualization added"
+      },
+      {
+        "id": "69cfbdc9fa79dd3478cdac12933e960bb0aef157",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: remove aria-expanded attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270013284"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270013285"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270004311"
+          }
+        ]
+      },
+      {
+        "id": "8ea6ff45abfc522cb5a585a6e2caff82ea4b4a0e",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: fixed titles in sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015336"
+          }
+        ]
+      },
+      {
+        "id": "e5913b4a6fed968db1f30b512937deb820050839",
+        "type": "FEATURE",
+        "text": " DragAndDrop: The mobile support is now enabled"
+      },
+      {
+        "id": "ca103b357853231feb99819bd294de8ec9bb16cb",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: fixed ACC sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015333"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "7ef9eabf4a33adf69480a9fc65a6d68fb8fe60dc",
+        "type": "FIX",
+        "text": " Demo Kit: Query parameters are now passed to iframe"
+      },
+      {
+        "id": "2b5810a4febdae00a19f84d77ad410ce1f88d091",
+        "type": "FIX",
+        "text": " Demo kit: Doubling of version string in path is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "934b4eede09c1428bd816e06032354d4fe5d1215",
+        "type": "FIX",
+        "text": " Demo Kit: Feature files load correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040298"
+          }
+        ]
+      },
+      {
+        "id": "19a78b2da94ae65306cba264677b473cd233c4e6",
+        "type": "FIX",
+        "text": " Demo Kit: Internal samples loading fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "68494d7d6722c4d2cc2d35e883961112ec897124",
+        "type": "FIX",
+        "text": " Demo Kit: Internal samples loading fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "16bbce73588086405fb12f58f8eec8a6c5d97104",
+        "type": "FIX",
+        "text": " Demo kit: Wrong manifest loading fixed"
+      },
+      {
+        "id": "9c3f2687a6820ee29cfcdce3c8f0b21fd6400b5a",
+        "type": "FIX",
+        "text": " Demo kit: Samples theme param fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "1b7d11e349747e3c5e5d7f180768a53592d18511",
+        "type": "FIX",
+        "text": " Demo Kit: Error in samples fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
+  }
+}

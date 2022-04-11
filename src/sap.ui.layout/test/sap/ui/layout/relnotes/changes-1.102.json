@@ -1,0 +1,18 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "e2c7e4d071a89ce49b87e01536b53808f3e5ff60",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: resize handler is registered corectly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270060788"
+          }
+        ]
+      }
+    ]
+  }
+}

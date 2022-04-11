@@ -1,0 +1,18 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "d09957cc3e5de0ebecc4cef8db489eb3a53ef0ae",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: refactor focus handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270014669"
+          }
+        ]
+      }
+    ]
+  }
+}
