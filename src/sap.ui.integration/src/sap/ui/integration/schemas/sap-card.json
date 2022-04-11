@@ -33,7 +33,9 @@
         "1.21.0",
         "1.22.0",
         "1.23.0",
-        "1.24.0"
+        "1.24.0",
+        "1.25.0",
+        "1.26.0"
       ]
     },
     "designtime": {
@@ -393,9 +395,33 @@
           "description": "Represents a title of the header; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
           "type": "string"
         },
+        "titleMaxLines": {
+          "description": "[Experimental] Limit the number of lines for the title.",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ],
+          "default": 3
+        },
         "subTitle": {
           "description": "Represents a subtitle to the title; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
           "type": "string"
+        },
+        "subTitleMaxLines": {
+          "description": "[Experimental] Limit the number of lines for the sub title.",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ],
+          "default": 2
         },
         "actions": {
           "description": "Represents a description of the actions that can be applied on a part of a card",
@@ -436,9 +462,33 @@
           "description": "Represents a title of the header; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
           "type": "string"
         },
+        "titleMaxLines": {
+          "description": "[Experimental] Limit the number of lines for the title.",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ],
+          "default": 3
+        },
         "subTitle": {
           "description": "Represents a subtitle to the title; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
           "type": "string"
+        },
+        "subTitleMaxLines": {
+          "description": "[Experimental] Limit the number of lines for the sub title.",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ],
+          "default": 2
         },
         "actions": {
           "description": "Represents a description of the actions that can be applied on a part of a card",
@@ -476,6 +526,18 @@
         "details": {
           "description": "Represents additional information about the numeric header",
           "type": "string"
+        },
+        "detailsMaxLines": {
+          "description": "[Experimental] Limit the number of lines for the details text.",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ],
+          "default": 1
         },
         "sideIndicators": {
           "description": "Multiple side indicators that relate to the main numeric indicator",
@@ -1384,6 +1446,10 @@
         "text": {
           "type": "string",
           "description": "Represents text that will be displayed in the icon"
+        },
+        "alt": {
+          "type": "string",
+          "description": "Represents text that will be displayed as a tooltip"
         }
       }
     },
@@ -2275,7 +2341,9 @@
               "enum": [
                 "Custom",
                 "Navigation",
-                "Submit"
+                "Submit",
+                "ShowCard",
+                "HideCard"
               ]
             },
             {
@@ -2935,7 +3003,8 @@
             {
               "enum": [
                 "Button",
-                "ToolbarSpacer"
+                "ToolbarSpacer",
+                "Link"
               ],
               "default": "Button"
             },
