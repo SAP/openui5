@@ -11,7 +11,7 @@
 .sapMSelectListItemBase.sapMSelectListItemBaseSelected {
 	background: @sapUiListSelectionBackgroundColor;
 	color: @sapUiListTextColor;
-	border-color: @sapUiListSelectionBorderColor;
+	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
 
 	&:hover {
 		background: @sapUiListHoverSelectionBackground;
@@ -46,7 +46,8 @@ html.sap-desktop .sapMSelectListItemBase:focus::after,
 .sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected::after {
 	pointer-events: none;
 	content: "";
-	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -66,16 +67,4 @@ html.sap-desktop .sapMSelectListItemBase:focus {
 	position: relative;
 	font-size: @sapFontSize;
 	color: @sapUiListTextColor;
-
-	&:last-child:not(:only-child)::after {
-		border-bottom-left-radius: 0.75rem;
-		border-bottom-right-radius: 0.75rem;
-	}
-}
-
-.sapMSltPicker-CTX:not(.sapMSltPickerWithSubHeader) .sapMSelectListItemBase {
-	&:first-child::after {
-		border-top-left-radius: 0.75rem;
-		border-top-right-radius: 0.75rem;
-	}
 }
