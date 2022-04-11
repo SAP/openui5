@@ -1085,7 +1085,7 @@ sap.ui.define([
 			if (oToPage === oOptionDetailsPage) {
 				this.aInputControls.forEach(function(oControl) {
 					if (oControl.$().firstFocusableDomRef()) {
-						oControl.addAriaLabelledBy && oControl.addAriaLabelledBy(oToPage.getAggregation("_internalHeader"));
+						oControl.addAriaLabelledBy && oControl.addAriaLabelledBy(oToPage.getId() + "-title");
 
 						if (!this._isCalendarBasedControl(oControl) && oControl.addAriaDescribedBy) {
 							oControl.addAriaDescribedBy(oToPage.getFooter().getContent()[0]);

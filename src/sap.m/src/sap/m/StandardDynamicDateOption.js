@@ -367,7 +367,8 @@ sap.ui.define([
 			var oOptions = oControl._getOptions(),
 				oValue = oControl.getValue(),
 				aParams = this.getValueHelpUITypes(oControl),
-				aControls = [];
+				aControls = [],
+				oCurrentLabel;
 
 			if (!oControl.aControlsByParameters) {
 				oControl.aControlsByParameters = {};
@@ -386,15 +387,15 @@ sap.ui.define([
 			}
 
 			for (var iIndex = 0; iIndex < aParams.length; iIndex++) {
+				oCurrentLabel = null;
 				if (aParams[iIndex].getOptions() && aParams[iIndex].getOptions().length <= 1) {
 					break;
-				} else if (aParams[iIndex].getText()) {
-					aControls.push(
-						new Label({
-							text: aParams[iIndex].getText(),
-							width: "100%"
-						})
-					);
+				} else if (aParams[ iIndex ].getText()) {
+					oCurrentLabel = new Label({
+						text: aParams[ iIndex ].getText(),
+						width: "100%"
+					});
+					aControls.push(oCurrentLabel);
 				}
 
 				var oInputControl;
@@ -436,6 +437,7 @@ sap.ui.define([
 				}
 
 				aControls.push(oInputControl);
+				oCurrentLabel && oCurrentLabel.setLabelFor(oInputControl);
 
 				if (aParams[iIndex].getAdditionalText()) {
 					aControls.push(
