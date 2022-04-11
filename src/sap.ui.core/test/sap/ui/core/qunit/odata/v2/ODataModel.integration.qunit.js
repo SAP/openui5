@@ -15240,4 +15240,155 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A list binding in "Client" mode has an inactive, a transient and a created
+	// persisted item. After switching the list binding's parent context and then switching it back
+	// to the initial context, the inactive and transient items are restored and the created
+	// persisted item is handled as a normal persisted item outside the creation area. This behaves
+	// the same as in "Server" mode.
+	// JIRA: CPOUI5MODELS-780
+	QUnit.test("#create with OperationMode.Client: switch context", function (assert) {
+		var oBinding, oContext,
+			oModel = createSalesOrdersModel({defaultOperationMode : "Client"}),
+			sView = '\
+<FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<Table id="table" items="{ToSalesOrders}">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet('42')", {
+				__metadata : {uri : "BusinessPartnerSet('42')"},
+				BusinessPartnerID : "42"
+			})
+			.expectRequest("BusinessPartnerSet('42')/ToSalesOrders", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					Note : "Note 1"
+				}, {
+					__metadata : {uri : "SalesOrderSet('2')"},
+					SalesOrderID : "2",
+					Note : "Note 2"
+				}]
+			})
+			.expectValue("businessPartnerID", "42")
+			.expectValue("salesOrderID", ["1", "2"])
+			.expectValue("note", ["Note 1", "Note 2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectValue("salesOrderID", ["", "1", "2"])
+				.expectValue("note", ["inactive", "Note 1", "Note 2"]);
+
+			oBinding.create({Note : "inactive"}, false, {inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("salesOrderID", ["", "1", "2"], 1)
+				.expectValue("note", ["transient", "Note 1", "Note 2"], 1);
+
+			oContext = oBinding.create({Note : "transient"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "transient"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('3')"},
+						SalesOrderID : "3",
+						Note : "persisted"
+					},
+					statusCode : 201
+				})
+				.expectValue("salesOrderID", "3", 1)
+				.expectValue("note", "persisted", 1);
+
+			oModel.submitChanges();
+
+			return Promise.all([
+				oContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("salesOrderID", ["", "1", "2"], 2)
+				.expectValue("note", ["transient", "Note 1", "Note 2"], 2);
+
+			oBinding.create({Note : "transient"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerSet('99')", {
+					__metadata : {uri : "BusinessPartnerSet('99')"},
+					BusinessPartnerID : "99"
+				})
+				.expectRequest("BusinessPartnerSet('99')/ToSalesOrders", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('11')"},
+						SalesOrderID : "11",
+						Note : "Note 11"
+					}, {
+						__metadata : {uri : "SalesOrderSet('12')"},
+						SalesOrderID : "12",
+						Note : "Note 12"
+					}]
+				})
+				.expectValue("businessPartnerID", "99")
+				// TODO: While context change, can we prevent the separate change event for removing
+				// first the transient and afterwards the persisted items and do one combined change
+				// event instead?
+				.expectValue("salesOrderID", ["1", "2"], 2)
+				.expectValue("note", ["Note 1", "Note 2"], 2)
+				.expectValue("salesOrderID", "2", 2)
+				.expectValue("note", "Note 2", 2)
+				.expectValue("salesOrderID", ["11", "12"])
+				.expectValue("note", ["Note 11", "Note 12"]);
+
+			that.oView.byId("objectPage").bindElement("/BusinessPartnerSet('99')");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerSet('42')", {
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42"
+				})
+				.expectRequest("BusinessPartnerSet('42')/ToSalesOrders", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('1')"},
+						SalesOrderID : "1",
+						Note : "Note 1"
+					}, {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						SalesOrderID : "2",
+						Note : "Note 2"
+					}, {
+						__metadata : {uri : "SalesOrderSet('3')"},
+						SalesOrderID : "3",
+						Note : "persisted"
+					}]
+				})
+				.expectValue("businessPartnerID", "42")
+				.expectValue("salesOrderID", ["", "", "1", "2", "3"])
+				.expectValue("note", ["inactive", "transient", "Note 1", "Note 2", "persisted"]);
+
+			// code under test
+			that.oView.byId("objectPage").bindElement("/BusinessPartnerSet('42')");
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
