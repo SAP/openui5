@@ -276,7 +276,7 @@ sap.ui.define([
 							break;
 					}
 
-					if (!oVal) {
+					if (!oVal && oVal !== 0) {
 						aResult = null;
 						break;
 					}
