@@ -2,28 +2,24 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Component",
-	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/util/LibraryInfo",
-	"sap/ui/model/odata/ODataModel",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/URI",
+	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Core",
+	"sap/ui/core/util/LibraryInfo",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
 ], function(
 	Log,
-	Component,
-	ComponentContainer,
-	LibraryInfo,
-	ODataModel,
 	App,
 	Page,
-	jQuery,
-	URI,
-	oCore
+	Component,
+	ComponentContainer,
+	oCore,
+	LibraryInfo,
+	jQuery
 ) {
 
 	"use strict";
@@ -61,6 +57,12 @@ sap.ui.define([
 		return /_[a-zA-Z]{2}(?:_[^/]+)?\.properties$/.test(sResource);
 	}
 
+	function toAbsoluteURL(sRelativeURL) {
+		var oURL = new URL(sRelativeURL, document.baseURI);
+		oURL.search = oURL.hash = "";
+		return oURL.href;
+	}
+
 	function RequestCollector(sandbox, baseUrl) {
 		var oRequireLoadSpy = sandbox.spy(sap.ui.require, "load");
 		var oAsyncRequestSpy = sandbox.spy(jQuery, "ajax");
@@ -77,7 +79,7 @@ sap.ui.define([
 
 			var aSampleRequests = [];
 			aResources.forEach(function(sResourceUrl) {
-				sResourceUrl = new URI(sResourceUrl, document.baseURI).search("").hash("").toString();
+				sResourceUrl = toAbsoluteURL(sResourceUrl);
 				// only add requests from within the sample and no duplicates
 				if ( sResourceUrl.startsWith(baseUrl) ) {
 					sResourceUrl = sResourceUrl.slice(baseUrl.length);
@@ -145,8 +147,11 @@ sap.ui.define([
 
 		QUnit.module(this._sLibraryName, {
 			beforeEach: function() {
-				// clear metadata cache
-				ODataModel.mServiceData = {};
+				// clear metadata cache, if ODataModel is used
+				var ODataModel = sap.ui.require("sap/ui/model/odata/ODataModel");
+				if ( ODataModel ) {
+					ODataModel.mServiceData = {};
+				}
 			},
 			afterEach : function(assert) {
 				// empty the page after each test, even in case of failures
@@ -166,7 +171,7 @@ sap.ui.define([
 				// display the sample name
 				oPage.setTitle(sampleConfig.name);
 
-				var sComponentBaseUrl = new URI(sap.ui.require.toUrl(toResourceName(sampleConfig.id)) + "/", document.baseURI).toString();
+				var sComponentBaseUrl = toAbsoluteURL(sap.ui.require.toUrl(toResourceName(sampleConfig.id)) + "/");
 				var oCollector = new RequestCollector(this, sComponentBaseUrl);
 				var done = assert.async();
 
