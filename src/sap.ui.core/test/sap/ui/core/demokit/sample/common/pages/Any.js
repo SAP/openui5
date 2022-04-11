@@ -3,7 +3,6 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/qunit/QUnitUtils",
@@ -13,8 +12,8 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
-], function (Log, CacheManager, Helper, _Requestor, QUnitUtils, RuleAnalyzer, Press, Opa, Opa5,
-		TestUtils, Properties) {
+], function (Log, Helper, _Requestor, QUnitUtils, RuleAnalyzer, Press, Opa, Opa5, TestUtils,
+		Properties) {
 	"use strict";
 
 	/*
@@ -152,14 +151,6 @@ sap.ui.define([
 								sap.ui.getCore().getConfiguration()
 									.setSecurityTokenHandlers([function () {
 										oOpaContext.iExpectedSpies = 0;
-										oOpaContext.cacheKey
-											= "sap.ui.model.odata.v4.optimisticBatch:"
-											+ window.location.href;
-										// During runtime of a OPA test the window.location.href
-										// changes, so we use the securityTokenHandler as a
-										// "close in time" hook just before the ODataModel is
-										// created in order to match the right CacheManager key
-										CacheManager.del(oOpaContext.cacheKey);
 										createSpies();
 										sap.ui.getCore().getConfiguration()
 											.setSecurityTokenHandlers([createSpies]);
@@ -252,7 +243,6 @@ sap.ui.define([
 							oOpaContext.fnProcessSecurityTokenHandlersSpy.restore();
 							if (bCleanUp) {
 								sap.ui.getCore().getConfiguration().setSecurityTokenHandlers([]);
-								CacheManager.del(oOpaContext.cacheKey);
 							}
 						}
 					});

@@ -11,12 +11,14 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/cache/CacheManager",
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/LateProperties/pages/Main",
+		"sap/ui/model/odata/v4/ODataModel",
 		"sap/ui/test/opaQunit"
-	], function (Log, CacheManager, Any, Main, opaTest) {
+	], function (Log, CacheManager, Any, Main, ODataModel, opaTest) {
 		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-			sKey = "sap.ui.model.odata.v4.optimisticBatch:smokeTest",
 			oSkipPromise = new Promise(function (fnResolve) {
-				// detect whether CachManager is supported in this enviroment
+				var sKey = "sap.ui.model.odata.v4.optimisticBatch:smokeTest";
+
+				// detect whether CacheManager is supported in this enviroment
 				CacheManager.set(sKey, {foo : "bar"}).then(function () {
 					return CacheManager.has(sKey).then(function (bExists) {
 						return fnResolve(!bExists);
@@ -27,10 +29,11 @@ sap.ui.getCore().attachInit(function () {
 		QUnit.module("sap.ui.core.sample.odata.v4.LateProperties.optimisticBatch", {
 			before : function () {
 				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+				ODataModel.cleanUpOptimisticBatch();
 			},
 			after : function () {
 				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-				CacheManager.del(sKey);
+				ODataModel.cleanUpOptimisticBatch();
 			}
 		});
 
