@@ -67,6 +67,11 @@ sap.ui.define([],
 				"id": "flexibleProgrammingModelExplorer",
 				"text": "Flexible Programming Model Explorer",
 				"href": "https://sapui5.hana.ondemand.com/test-resources/sap/fe/core/fpmExplorer/index.html#/overview/introduction"
+			},
+			{
+				"id": "accessibilityGuide",
+				"text": "Accessibility Guide",
+				"href": "test-resources/sap/m/demokit/accessibilityGuide/webapp/index.html"
 			}
 		];
 

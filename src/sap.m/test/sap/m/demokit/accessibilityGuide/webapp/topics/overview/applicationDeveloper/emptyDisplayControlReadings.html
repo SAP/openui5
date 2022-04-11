@@ -9,9 +9,22 @@
 <body class="sapUiBody topicBody">
 	<div class="topic">
 		<div class="content">
-			<h1 id="overview">Empty display control readings</h1>
+			<h1 id="overview">Improve screen reader announcements</h1>
+			<h2>sap.m.Text empty indicator</h3>
+				<p>
+					sap.m.Text allows developers to show to users when text is empty with a “–” character.
+					Depending on the language the symbol (“–”) may change.
+				</p>
+			</h2>
 
-			<h2>Improve screen reader announcements for controls with empty display in sap.m.Table cell as a result of an empty string property</h3>
+<pre class="lang-js">
+new sap.m.Text({
+	text: "",
+	emptyIndicatorMode: sap.m.EmptyIndicatorMode.On
+})
+</pre>
+
+			<h2>sap.m.Table cell with empty indicator display</h3>
 				<p>
 					You have to set <code>visible</code> property to <code>false</code> for all <code>sap.m.Link</code> and <code>sap.m.Text</code> control’s instances
 					that are used inside a <code>sap.m.Table</code> cell and have empty <code>text</code> property.

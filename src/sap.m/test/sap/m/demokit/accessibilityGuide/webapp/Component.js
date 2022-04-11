@@ -1,11 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/IconPool"
 ], function (
 	UIComponent,
 	Device,
-	oCore
+	oCore,
+	IconPool
 ) {
 	"use strict";
 
@@ -28,6 +30,12 @@ sap.ui.define([
 
 			// specify the only supported language
 			oCore.getConfiguration().setLanguage("en");
+
+			// register TNT icon font
+			IconPool.registerFont({
+				fontFamily: "SAP-icons-TNT",
+				fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/")
+			});
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();

@@ -427,6 +427,25 @@
 					</VBox>
 				</f:content>
 			</f:Card>
+			<!-- Accessibility Guide -->
+			<f:Card class="threeColumnLayoutCard" visible="{=! (${device>/system/phone} || ${device>/browser/msie}) }">
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="{/accessibilityGuide/text}"
+										href="{/accessibilityGuide/href}"
+										target="_blank"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_15_TEXT}" />
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/AccessibilityGuide.png" class="toolsPageImage" alt="{i18n>TOOLS_CARD_15_IMG_ALT}"/>
+					</VBox>
+				</f:content>
+			</f:Card>
 		</l:Grid>
 		<l:BlockLayout>
 			<l:BlockLayoutRow>
