@@ -457,16 +457,30 @@ sap.ui.define([
 	};
 
 	ElementUtil._evaluateBinding = function(oElement, aStack) {
-		// var oElement = oElementOverlay.getElement();
 		var sAggregationName;
 		var iIndex;
-		var oParent = oElement.getParent();
+		var oParent;
+		var bBindingFound;
 
-		if (oParent) {
-			sAggregationName = oElement.sParentAggregationName;
-			iIndex = ElementUtil.getAggregation(oParent, sAggregationName).indexOf(oElement);
-		} else {
-			iIndex = -1;
+		// If the binding is found on an API parent (with a forwarded aggregation),
+		// the templateId is directly retrieved from it (the stack only has the element itself)
+		var aAPIParentInfos = oElement.aAPIParentInfos;
+		if (aAPIParentInfos && aAPIParentInfos.length > 0) {
+			bBindingFound = aAPIParentInfos.some(function(mParentInfo) {
+				oParent = mParentInfo.parent;
+				sAggregationName = mParentInfo.aggregationName;
+				iIndex = ElementUtil.getAggregation(oParent, sAggregationName).indexOf(oElement);
+				return oParent.getBinding(sAggregationName);
+			});
+		}
+		if (!bBindingFound) {
+			oParent = oElement.getParent();
+			if (oParent) {
+				sAggregationName = oElement.sParentAggregationName;
+				iIndex = ElementUtil.getAggregation(oParent, sAggregationName).indexOf(oElement);
+			} else {
+				iIndex = -1;
+			}
 		}
 
 		aStack.push({

@@ -532,6 +532,9 @@
 						<Column>
 							<Text text="Category" />
 						</Column>
+						<Column>
+							<Text text="Activation" />
+						</Column>
 					</columns>
 					<items>
 						<ColumnListItem id="TableItem">
@@ -551,6 +554,11 @@
 											text="{ProductCollection>Status}" />
 									</sap.ui.layout:VerticalLayout>
 								</sap.ui.layout:VerticalLayout>
+								<Select
+									id="TableSelect"
+									items= "{ path: 'ProductCollection>Active', templateShareable: false}" >
+									<core:Item key="{ProductCollection>key}" text="{ProductCollection>text}" />
+								</Select>
 							</cells>
 						</ColumnListItem>
 					</items>
