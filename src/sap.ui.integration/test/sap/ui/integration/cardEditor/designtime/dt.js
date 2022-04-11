@@ -1802,7 +1802,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"defaultValue": "text",
 								"column": {
 									"hAlign": "Center",
-									"width": "6rem"
+									"width": "6rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"
 								}
 							},
 							"url": {
@@ -1811,11 +1813,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"column": {
 									"hAlign": "Center",
 									"width": "10rem",
-									"label": "URL Link"
+									"label": "URL Link",
+									"filterProperty": "url",
+									"defaultFilterOperator": "StartsWith"
 								},
 								"cell": {
 									"type": "Link",
-									"href": "{url}aa"
+									"href": "{url}"
 								}
 							},
 							"editable": {
@@ -1843,7 +1847,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"column": {
 									"hAlign": "Center",
 									"width": "5rem",
-									"label": "Integer"
+									"label": "Integer",
+									"filterProperty": "int",
+									"defaultFilterOperator": "EQ",
+									"filterType": "sap.ui.model.type.Integer"
 								}
 							},
 							"number": {

@@ -4,20 +4,18 @@
 
 sap.ui.define([
 	"sap/ui/integration/editor/fields/ObjectField",
-	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Table",
+	"sap/m/CheckBox",
 	"sap/base/util/deepEqual",
-	"sap/base/util/deepClone",
-	"sap/base/util/includes"
+	"sap/base/util/deepClone"
 ], function (
 	ObjectField,
-	Core,
 	JSONModel,
 	Table,
+	CheckBox,
 	deepEqual,
-	deepClone,
-	includes
+	deepClone
 ) {
 	"use strict";
 
@@ -41,8 +39,11 @@ sap.ui.define([
 
 	ObjectListField.prototype.initVisualization = function (oConfig) {
 		var that = this;
-		that._newObjectTemplate = {};
-		that._bIsEnableSelectAllInTable = true;
+		that._newObjectTemplate = {
+			dt: {
+				_selected: true
+			}
+		};
 		var oVisualization = oConfig.visualization;
 		if (!oVisualization) {
 			if (oConfig.value && !oConfig.properties && (!oConfig.values || (oConfig.values && !oConfig.values.metadata))) {
@@ -68,10 +69,17 @@ sap.ui.define([
 			var oConfig = that.getConfiguration();
 			if (!oConfig.values){
 				var oValue = deepClone(oConfig.value, 500) || [];
-				oControl.setModel(new JSONModel({
-					value: oValue
+				oValue.forEach(function (oItem) {
+					oItem.dt = oItem.dt || {};
+					oItem.dt._selected = true;
+				});
+				that.setModel(new JSONModel({
+					value: oValue,
+					_allSelected: true
 				}));
-				oControl.selectAll();
+				that.bindObject({
+					path: "/value"
+				});
 			}
 		}
 	};
@@ -97,34 +105,115 @@ sap.ui.define([
 		}
 	};
 
+	ObjectListField.prototype.buildSelectionColumnLables = function() {
+		var that = this;
+		var oConfig = that.getConfiguration();
+		var oResourceBundle = that.getResourceBundle();
+		return new CheckBox({
+			selected: "{/_allSelected}",
+			visible: typeof oConfig.values !== "undefined",
+			tooltip: {
+				path: '/_allSelected',
+				formatter: function(bAllSelected) {
+					if (!bAllSelected) {
+						return oResourceBundle.getText("EDITOR_FIELD_OBJECT_LIST_TABLE_COLUMN_SELECTION_TOOLTIP_ADDALL");
+					} else {
+						return oResourceBundle.getText("EDITOR_FIELD_OBJECT_LIST_TABLE_COLUMN_SELECTION_TOOLTIP_REMOVEALL");
+					}
+				}
+			},
+			select: that.onSelectionColumnClick.bind(that)
+		});
+	};
+
+	ObjectListField.prototype.onSelectionColumnClick = function(oEvent) {
+		var that = this;
+		var bIsSelected = oEvent.getParameter("selected");
+		var oTable = that.getAggregation("_field");
+		var oRowContexts = oTable.getBinding("rows").getContexts();
+		oRowContexts.forEach(function (oRowContext) {
+			var oItem = oRowContext.getObject();
+			oItem.dt = oItem.dt || {};
+			oItem.dt._selected = bIsSelected;
+		});
+
+		var oModel = oTable.getModel();
+		var sPath = oTable.getBinding("rows").getPath();
+		var oData = oModel.getProperty(sPath);
+		var aValues;
+		oData.forEach(function (oObject) {
+			if (oObject.dt && oObject.dt._selected) {
+				var oClonedObject = deepClone(oObject, 500);
+				aValues = aValues || [];
+				aValues.push(oClonedObject);
+			}
+		});
+		oModel.checkUpdate(true);
+		that.setValue(aValues);
+	};
+
+	ObjectListField.prototype.updateSelectionColumn = function() {
+		var that = this;
+		var oTable = that.getAggregation("_field");
+		var oRowContexts = oTable.getBinding("rows").getContexts();
+		var bAllSelected = true;
+		if (oRowContexts.length === 0) {
+			bAllSelected = false;
+		} else {
+			for (var i = 0; i < oRowContexts.length; i++) {
+				var oObject = oRowContexts[i].getObject();
+				if (!oObject.dt || oObject.dt._selected !== true) {
+					bAllSelected = false;
+					break;
+				}
+			}
+		}
+		oTable.getModel().setProperty("/_allSelected", bAllSelected);
+	};
+
+	ObjectListField.prototype.onAdd = function(oEvent) {
+		var that = this;
+		var oControl = that.getAggregation("_field");
+		var oNewObject = that._oObjectDetailsPopover.getModel().getProperty("/value");
+		var sPath = oControl.getBinding("rows").getPath();
+		var oModel = oControl.getModel();
+		var oData = oModel.getProperty(sPath);
+		oData.push(oNewObject);
+		oModel.setProperty("/_hasTableAllSelected", false);
+		oModel.setProperty("/_hasTableSelected", false);
+		oModel.checkUpdate();
+		that.refreshValue();
+		that._oObjectDetailsPopover.close();
+	};
+
+	ObjectListField.prototype.refreshValue = function () {
+		var that = this;
+		var oTable = that.getAggregation("_field");
+		var oModel = oTable.getModel();
+		var sPath = oTable.getBinding("rows").getPath();
+		var oData = oModel.getProperty(sPath);
+		var vValue = [];
+		oData.forEach(function (oItem) {
+			if (oItem.dt._selected) {
+				var oClonedObject = deepClone(oItem);
+				vValue.push(oClonedObject);
+			}
+		});
+		that.setValue(vValue);
+	};
+
 	ObjectListField.prototype.onSelectionChange = function (oEvent) {
 		var that = this;
-		var oControl = oEvent.getSource();
-		var bUserInteraction = oEvent.getParameter("userInteraction") || false;
-		// only update data models if is user interaction
-		if (bUserInteraction) {
-			var aSelectedIndices = oControl.getSelectedIndices();
-
-			var oRowContexts = oControl.getBinding("rows").getContexts();
-			var oValue;
-			if (aSelectedIndices.length > 0) {
-				oValue = [];
-				aSelectedIndices.forEach(function(iSelectedIndice) {
-					var oObject = oRowContexts[iSelectedIndice].getObject();
-					oValue.push(deepClone(oObject, 500));
-				});
-			}
-
-			// merge the selections with the ones which not been seen since filtering
-			if (oControl._aPathsOfFilteredOut && oControl._aPathsOfFilteredOut.length > 0) {
-				oValue = oValue || [];
-				var oModel = oControl.getModel();
-				oControl._aPathsOfFilteredOut.forEach(function(sPathOfFilteredOut) {
-					var oObject = oModel.getProperty(sPathOfFilteredOut);
-					oValue.push(deepClone(oObject, 500));
-				});
-			}
-			that._setCurrentProperty("value", oValue);
+		var bSelected = oEvent.getParameter("selected");
+		var vValue = this._getCurrentProperty("value");
+		var oTable = that.getAggregation("_field");
+		var oModel = oTable.getModel();
+		if (bSelected || vValue.length > 1) {
+			that.refreshValue();
+			that.updateSelectionColumn();
+		} else {
+			oModel.setProperty("/_allSelected", false);
+			that.setValue(undefined);
 		}
 	};
 
@@ -132,17 +221,21 @@ sap.ui.define([
 		var that = this;
 		var oConfig = that.getConfiguration();
 		var oTable = that.getAggregation("_field");
+		var oModel = oTable.getModel();
 		if (oConfig.value && Array.isArray(oConfig.value) && oConfig.value.length > 0) {
-			var oValue,
-				oModel = oTable.getModel(),
+			var aValues = deepClone(oConfig.value, 500),
 				sPath = oTable.getBinding("rows").getPath();
+			aValues.forEach(function (oItem) {
+				oItem.dt = oItem.dt || {};
+				oItem.dt._selected = true;
+			});
 			if (Array.isArray(tResult) && tResult.length > 0) {
 				var aNotSelectedObjects = [];
 				for (var i = 0; i < tResult.length; i++) {
 					var oRequestObject = tResult[i];
 					var bIsSelected = false;
 					for (var j = 0; j < oConfig.value.length; j++) {
-						if (deepEqual(oConfig.value[j], oRequestObject)) {
+						if (deepEqual(oRequestObject, oConfig.value[j])) {
 							bIsSelected = true;
 							break;
 						}
@@ -151,17 +244,20 @@ sap.ui.define([
 						aNotSelectedObjects.push(oRequestObject);
 					}
 				}
-				tResult = deepClone(oConfig.value.concat(aNotSelectedObjects), 500);
-				oModel.setProperty(sPath, tResult);
-				oTable.addSelectionInterval(0, oConfig.value.length - 1);
+				if (aNotSelectedObjects.length > 0) {
+					oModel.setProperty("/_allSelected", false);
+					aValues = aValues.concat(aNotSelectedObjects);
+				} else {
+					oModel.setProperty("/_allSelected", true);
+				}
 			} else {
-				oValue = deepClone(oConfig.value, 500);
-				tResult = oValue;
-				oModel.setProperty(sPath, tResult);
-				oTable.selectAll();
+				oModel.setProperty("/_allSelected", true);
 			}
+			oModel.setProperty(sPath, aValues);
+		} else {
+			oModel.setProperty("/_allSelected", false);
 		}
-		return tResult;
+		oModel.checkUpdate();
 	};
 
 	ObjectListField.prototype.onChangeOfTextArea = function (oEvent) {
@@ -191,7 +287,7 @@ sap.ui.define([
 		var that = this;
 		var oValueModel;
 		if (!bIsInDetailsPopover) {
-			that._setCurrentProperty("value", oValue);
+			that.setValue(oValue);
 		} else {
 			oValueModel = oTextArea.getModel();
 			oValueModel.setProperty("/value", oValue);
@@ -200,157 +296,16 @@ sap.ui.define([
 		oTextArea.setValueStateText("");
 	};
 
-	ObjectListField.prototype.checkHasValue = function() {
-		var that = this;
-		var oValue = that._getCurrentProperty("value");
-		if (Array.isArray(oValue) && oValue.length > 0) {
-			return true;
-		}
-		return false;
-	};
-
-	// restore the selections since the selections are lost, BCP: 2280048930, JIRA: CPOUIFTEAMB-252
-	ObjectListField.prototype.applyBeforeValueAndSelections = function(sMode, oParameter) {
-		var that = this;
-		var oControl = that.getAggregation("_field");
-		var aSelectedIndices = oParameter.selectedIndices;
-		var iRowNumber = oParameter.rowNumber;
-		var sBasePath = oControl.getBinding("rows").getPath();
-		var aRowContexts = oControl.getBinding("rows").getContexts();
-		var iNewRowNumber = aRowContexts.length;
-		var iRowIndex = oParameter.rowIndex;
-		var oModel = oControl.getModel();
-		var oNewValue = [];
-		var aSelectedIndicesCloned;
-		switch (sMode) {
-			case "add":
-				// update the selections
-				aSelectedIndices.forEach(function(iSelectedIndex) {
-					oControl.addSelectionInterval(iSelectedIndex, iSelectedIndex);
-				});
-				break;
-			case "update":
-				// update the selections when row number changed which means the update may cause it filter out
-				var bIsUpdateSelectedRow = false;
-				if (iRowNumber !== iNewRowNumber) {
-					aSelectedIndicesCloned = deepClone(aSelectedIndices);
-					aSelectedIndices = [];
-					aSelectedIndicesCloned.forEach(function(iSelectedIndex) {
-						if (iSelectedIndex < iRowIndex) {
-							aSelectedIndices.push(iSelectedIndex);
-						} else if (iSelectedIndex > iRowIndex) {
-							aSelectedIndices.push(iSelectedIndex - 1);
-						} else if (iSelectedIndex === iRowIndex) {
-							bIsUpdateSelectedRow = true;
-							oControl._aPathsOfFilteredOut.push(oParameter.path);
-						}
-					});
-
-				} else if (includes(aSelectedIndices, iRowIndex)) {
-					bIsUpdateSelectedRow = true;
+	ObjectListField.prototype.cleanDT = function(oValue) {
+		if (oValue) {
+			oValue.forEach(function(oItem) {
+				if (oItem && oItem.dt && oItem.dt._selected) {
+					delete oItem.dt._selected;
 				}
-				if (bIsUpdateSelectedRow) {
-					//update objects in field value if it is selected
-					aSelectedIndices.forEach(function(iIndex) {
-						var sSelectedIndicePath = aRowContexts[iIndex].getPath();
-						var oObject = oModel.getProperty(sSelectedIndicePath);
-						oNewValue.push(deepClone(oObject, 500));
-					});
-					if (oControl._aPathsOfFilteredOut && oControl._aPathsOfFilteredOut.length > 0) {
-						oControl._aPathsOfFilteredOut.forEach(function(sPathOfFilteredOut) {
-							var oObject = oModel.getProperty(sPathOfFilteredOut);
-							oNewValue.push(deepClone(oObject, 500));
-						});
-					}
-					that._setCurrentProperty("value", oNewValue);
+				if (oItem && oItem.dt && deepEqual(oItem.dt, {})) {
+					delete oItem.dt;
 				}
-				// reselect the selections
-				aSelectedIndices.forEach(function(iSelectedIndex) {
-					oControl.addSelectionInterval(iSelectedIndex, iSelectedIndex);
-				});
-				break;
-			case "delete":
-				var bIsDeleteSelectedRow = false;
-				if (includes(aSelectedIndices, iRowIndex)) {
-					bIsDeleteSelectedRow = true;
-				}
-				aSelectedIndicesCloned = deepClone(aSelectedIndices);
-				aSelectedIndices = [];
-				aSelectedIndicesCloned.forEach(function(iSelectedIndex) {
-					if (iSelectedIndex < iRowIndex) {
-						aSelectedIndices.push(iSelectedIndex);
-					} else if (iSelectedIndex > iRowIndex) {
-						aSelectedIndices.push(iSelectedIndex - 1);
-					}
-				});
-				aSelectedIndices.forEach(function(iSelectedIndex) {
-					oControl.addSelectionInterval(iSelectedIndex, iSelectedIndex);
-				});
-				// update the Paths in oTable._aPathsOfFilteredOut
-				if (oControl._aPathsOfFilteredOut && oControl._aPathsOfFilteredOut.length > 0) {
-					oControl._aPathsOfFilteredOut = oControl._aPathsOfFilteredOut.map(function (sPathOfFilteredOut) {
-						var iRealIndexOfFilteredOut = sPathOfFilteredOut.substring(sPathOfFilteredOut.lastIndexOf("/") + 1);
-						if (iRealIndexOfFilteredOut > oParameter.realIndex) {
-							iRealIndexOfFilteredOut--;
-							return sBasePath + "/" + iRealIndexOfFilteredOut;
-						} else {
-							return sPathOfFilteredOut;
-						}
-					});
-				}
-
-				if (bIsDeleteSelectedRow) {
-					aSelectedIndices.forEach(function(iIndex) {
-						var sSelectedIndicePath = aRowContexts[iIndex].getPath();
-						var oObject = oModel.getProperty(sSelectedIndicePath);
-						oNewValue.push(deepClone(oObject, 500));
-					});
-					if (oControl._aPathsOfFilteredOut && oControl._aPathsOfFilteredOut.length > 0) {
-						oControl._aPathsOfFilteredOut.forEach(function(sPathOfFilteredOut) {
-							var oObject = oModel.getProperty(sPathOfFilteredOut);
-							oNewValue.push(deepClone(oObject, 500));
-						});
-					}
-					if (oNewValue.length === 0) {
-						oNewValue = undefined;
-					}
-					that._setCurrentProperty("value", oNewValue);
-				}
-				break;
-			case "filter":
-				var oColumn = oParameter.column;
-				var aPathsOfSelectedObjects = oControl._aPathsOfFilteredOut || [];
-				if (aSelectedIndices.length > 0) {
-					aSelectedIndices.forEach(function(iSelectedIndice) {
-						var sPath = aRowContexts[iSelectedIndice].getPath();
-						aPathsOfSelectedObjects.push(sPath);
-					});
-					oControl._aPathsOfFilteredOut = aPathsOfSelectedObjects;
-				}
-				if (oColumn._applySelection !== false && oControl._aPathsOfFilteredOut && oControl._aPathsOfFilteredOut.length > 0) {
-					oControl.attachEventOnce("rowsUpdated", function() {
-						if (oControl._aPathsOfFilteredOut && oControl._aPathsOfFilteredOut.length > 0) {
-							// select the exist selected rows
-							var aFilteredRowContexts = oControl.getBinding("rows").getContexts() || [];
-							for (var i = 0; i < aFilteredRowContexts.length; i++) {
-								if (oControl._aPathsOfFilteredOut.length === 0) {
-									break;
-								}
-								var sPath = aFilteredRowContexts[i].getPath();
-								for (var j = 0; j < oControl._aPathsOfFilteredOut.length; j++) {
-									if (oControl._aPathsOfFilteredOut[j] === sPath) {
-										oControl.addSelectionInterval(i, i);
-										oControl._aPathsOfFilteredOut.splice(j, 1);
-										break;
-									}
-								}
-							}
-						}
-					});
-				}
-				delete oColumn._applySelection;
-				break;
-			default:
+			});
 		}
 	};
 

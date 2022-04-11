@@ -1992,7 +1992,7 @@ sap.ui.define([
 		}
 		oField._oDataProviderFactory = this._oDataProviderFactory;
 		oField.setAssociation("_messageStrip", MessageStripId);
-		oField._previewPostion = this.getPreviewPosition();
+		oField._previewPosition = this.getPreviewPosition();
 		return oField;
 	};
 
@@ -2070,7 +2070,9 @@ sap.ui.define([
 			}
 			if (oConfig.type === "object" || oConfig.type === "object[]") {
 				tResult.forEach(function (oResult) {
-					oResult._editable = false;
+					oResult.dt = {
+						_editable: false
+					};
 				});
 			}
 			if (this.getMode() === "content" && oConfig.pageAdminValues && oConfig.pageAdminValues.length > 0) {
@@ -2368,16 +2370,6 @@ sap.ui.define([
 				oRequestDefaultParameters.serviceUrl = oData.url;
 				var oMetaDataModel = new ODataModel(oRequestDefaultParameters);
 				oMetaDataModel.oMetaModel.fetchData().then(function(oMetaData) {
-					if (oConfig.type === "object" || oConfig.type === "object[]") {
-						var sPath = oConfig.values.metadata.namespace + "." + oConfig.values.metadata.entityTypeName;
-						oMetaData[sPath] = Object.assign(oMetaData[sPath], {
-							_Actions: {
-								$kind: 'Property',
-								$Type: 'Actions',
-								$MaxLength: 15
-							}
-						});
-					}
 					oField.setModel(new JSONModel(oMetaData), "meta");
 				});
 			});
@@ -3101,6 +3093,24 @@ sap.ui.define([
 						if (oValueTokens) {
 							oItem.valueTokens = oValueTokens;
 						}
+					} else if (typeof oItem.value === "object" && oItem.type === "object") {
+						// backward compatibility for pre saved value
+						if (typeof oItem.value._editable === "boolean") {
+							oItem.value.dt = {
+								"_editable" : oItem.value._editable
+							};
+							delete oItem.value._editable;
+						}
+					} else if (Array.isArray(oItem.value) && oItem.value.length > 0 && oItem.type === "object[]") {
+						// backward compatibility for pre saved value
+						oItem.value.forEach(function (oObject) {
+							if (typeof oObject._editable === "boolean") {
+								oObject.dt = {
+									"_editable" : oObject._editable
+								};
+								delete oObject._editable;
+							}
+						});
 					}
 
 					//translate label if it is {{KEY}}

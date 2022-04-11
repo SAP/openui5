@@ -251,6 +251,11 @@
     padding-top: 0.2rem !important;
 }
 
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldTable .sapUiTableDataCell > .sapUiTableCellInner,
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectListFieldTable .sapUiTableDataCell > .sapUiTableCellInner{
+	text-overflow: unset;
+}
+
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldTable .sapMTBStandard,
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectListFieldTable .sapMTBStandard {
     border-bottom: 0px !important;
@@ -258,7 +263,7 @@
 	padding-left: 0.25rem !important;
 }
 
-.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldTable .sapMTB, 
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldTable .sapMTB,
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectListFieldTable .sapMTB{
 	height: 2rem !important;
 	border: solid 0.0625rem #d9d9d9;
