@@ -1004,6 +1004,10 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The event.
 	 */
 	GridContainer.prototype._moveItem = function (oEvent) {
+		if (!oEvent.ctrlKey) {
+			return;
+		}
+
 		if (!this._isItemWrapper(oEvent.target)) {
 			return;
 		}
@@ -1058,14 +1062,14 @@ sap.ui.define([
 
 	/**
 	 * Moves item for drag-and-drop keyboard handling
-	 * Modifier + Right Arrow || Modifier + Arrow Up
+	 * Ctrl + Right Arrow || Modifier + Arrow Up
 	 * @param {jQuery.Event} oEvent
 	 */
 	GridContainer.prototype.onsapincreasemodifiers = GridContainer.prototype._moveItem;
 
 	/**
 	 * Moves item for drag-and-drop keyboard handling
-	 * Modifier + Left Arrow || Modifier + Arrow Down
+	 * Ctrl + Left Arrow || Modifier + Arrow Down
 	 * @param {jQuery.Event} oEvent
 	 */
 	GridContainer.prototype.onsapdecreasemodifiers = GridContainer.prototype._moveItem;
