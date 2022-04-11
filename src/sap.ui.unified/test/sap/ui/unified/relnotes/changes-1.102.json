@@ -1,0 +1,78 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "1a63acd2ed4855a132a697b50d449ce8fe49a909",
+        "type": "FIX",
+        "text": " Alt/Meta key + right/left key work natively for Balkan controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042470"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042468"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042461"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042447"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042442"
+          }
+        ]
+      },
+      {
+        "id": "fbe7ef882396c0edb920985b2c4e97eb72e677e1",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: recache elements on setter usage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280039646"
+          }
+        ]
+      },
+      {
+        "id": "10221263268c555fa6885681ff434023e4c6c156",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adjust appointments selected state announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015360"
+          }
+        ]
+      },
+      {
+        "id": "d09957cc3e5de0ebecc4cef8db489eb3a53ef0ae",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: refactor focus handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270014669"
+          }
+        ]
+      },
+      {
+        "id": "1abad82cadcb4068b19562b96ef872e6073fbc4f",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: fixed role/alt of appointment icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015358"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "355502d6150e63da784665c01c4ad999d54ff4b9",
+        "type": "FIX",
+        "text": " sap.ui.webc: Remove trailing whitespace"
+      }
+    ]
+  }
+}

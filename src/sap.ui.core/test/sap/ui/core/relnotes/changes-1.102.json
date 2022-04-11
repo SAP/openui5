@@ -1,0 +1,54 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "abfd4f563569dcf7d00c979ddff918ffd1871190",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Picker time is correct when the app timezone is different",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040747"
+          }
+        ]
+      },
+      {
+        "id": "d7fee916b74393b2319ab7ab1c390a9ac4505ac3",
+        "type": "FEATURE",
+        "text": " Prevent overwrite SAP themes from OS high contrast settings"
+      },
+      {
+        "id": "f20db76e5f0ebec69137c3c9c7c86cdf1228798f",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat.DateTimeWithTimezone: Format Date only and Time only"
+      },
+      {
+        "id": "a1cf9f4f69f59df95dd4601f07eb95413b0147f6",
+        "type": "FIX",
+        "text": " routing.qunit.History: wait for History state API throttling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "2361eb5dbdb2923a81c550b7547858c135ffecb1",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.Context#delete: API to delete a context"
+      },
+      {
+        "id": "e5913b4a6fed968db1f30b512937deb820050839",
+        "type": "FEATURE",
+        "text": " DragAndDrop: The mobile support is now enabled"
+      },
+      {
+        "id": "7b24f779299c6475b3ad34d34beeca787477b3f3",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: Enable ExtensionPoint rendering on top-level"
+      }
+    ]
+  }
+}

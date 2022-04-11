@@ -1,0 +1,67 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "3da8a97e18216461e8af64405917a66f12d23104",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Mesage states header border colors fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270044729"
+          }
+        ]
+      },
+      {
+        "id": "8a0055836cfdb4a6c22cefc88203fcd736325256",
+        "type": "FIX",
+        "text": " sap.m.Popover: Adjust arrow's offset for Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270050908"
+          }
+        ]
+      },
+      {
+        "id": "5e48ad3c39ec4124563afa36fae4649f2ca9aada",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus on the navigation buttons in Fiori 3 themes is white and black dots",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270035507"
+          }
+        ]
+      },
+      {
+        "id": "09c1081accc756542ff18d1f2b9c4ecf33c47e7f",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: has correct height in Compact in all themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270026737"
+          }
+        ]
+      },
+      {
+        "id": "e5913b4a6fed968db1f30b512937deb820050839",
+        "type": "FEATURE",
+        "text": " DragAndDrop: The mobile support is now enabled"
+      },
+      {
+        "id": "afafa91034297560411c3f5b2f6f98e905b3fe7d",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Double borders are fixed in themes sap_fiori_3_hcb, sap_fiori_3_hcw",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270006716"
+          }
+        ]
+      }
+    ]
+  }
+}
