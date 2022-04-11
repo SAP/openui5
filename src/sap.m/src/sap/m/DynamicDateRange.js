@@ -1123,7 +1123,7 @@ sap.ui.define([
 				return;
 			}
 
-			this._oPopup._getPopup().setAutoCloseAreas([this._oInput.getDomRef()]);
+			this._oPopup._getPopup().setExtraContent([this._oInput.getDomRef()]);
 			this._oPopup.openBy(this._oInput);
 		};
 

@@ -890,7 +890,7 @@ sap.ui.define([
 		this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 
 		var oPopover = this._oPopup.getAggregation("_popup");
-		oPopover.oPopup.setAutoCloseAreas([oDomRef]);
+		oPopover.oPopup.setExtraContent([oDomRef]);
 
 		this._oPopup.openBy(oDomRef || this);
 	};

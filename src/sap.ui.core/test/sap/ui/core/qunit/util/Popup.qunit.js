@@ -2286,7 +2286,7 @@ sap.ui.define([
 		oSpyShieldBorrowObject.restore();
 	});
 
-	QUnit.module("Autoclose Area", {
+	QUnit.module("Extra Popup Content API", {
 		//Define a simple control with just a plain HTML input
 		beforeEach: function() {
 			this.CustomInput = Control.extend("CustomInput", {
@@ -2321,11 +2321,13 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oPopup.destroy();
-			this.oInput.destroy();
+			if ( this.oInput ) {
+				this.oInput.destroy();
+			}
 		}
 	});
 
-	QUnit.test("The DOM element of Autoclose area should be updated when it's rerendered", function(assert) {
+	QUnit.test("The DOM element of extra content should be updated when it's rerendered", function(assert) {
 		assert.expect(4);
 
 		var that = this, done = assert.async();
@@ -2361,7 +2363,7 @@ sap.ui.define([
 		}.bind(this);
 
 		this.oPopup.attachOpened(fnOpened);
-		this.oPopup.setAutoCloseAreas([this.oInput]);
+		this.oPopup.setExtraContent([this.oInput]);
 
 		this.oInput.focus();
 		assert.ok(containsOrEquals(this.oInput.getDomRef(), document.activeElement), "focus is inside input");
@@ -2413,7 +2415,7 @@ sap.ui.define([
 		assert.ok(this.oPopup.isOpen(), "Popup should be opened");
 	});
 
-	QUnit.test("autoclose area delegate should be removed when popup is destroyed", function(assert) {
+	QUnit.test("Extra content delegate should be removed when popup is destroyed", function(assert) {
 		this.oInput = new this.CustomInput({
 			change: function () {
 				this.oPopup.open();
@@ -2424,14 +2426,14 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		this.oPopup.setAutoCloseAreas([this.oInput]);
+		this.oPopup.setExtraContent([this.oInput]);
 
 		this.oPopup.destroy();
 
 		assert.equal(this.oRemoveDelegateSpy.callCount, 1, "Delegate is removed after destroy popup");
 	});
 
-	QUnit.test("autoclose area delegate should be added once even when the same control is added again", function(assert) {
+	QUnit.test("Extra content delegate should be added once even when the same control is added again", function(assert) {
 		this.oInput = new this.CustomInput({
 			change: function () {
 				this.oPopup.open();
@@ -2440,12 +2442,20 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		this.oPopup.setAutoCloseAreas([this.oInput]);
+		this.oPopup.setExtraContent([this.oInput]);
 		// call the function again because popup control calls the function before each open action
-		this.oPopup.setAutoCloseAreas([this.oInput]);
+		this.oPopup.setExtraContent([this.oInput]);
 
 		assert.equal(this.oInput.aDelegates.length, 1, "there's only 1 delegate added");
-		assert.equal(this.oPopup._aExtraContent.length, 1, "the same control is only added once as autoclose area");
+		assert.equal(this.oPopup._aExtraContent.length, 1, "the same control is only added once as extra content");
+	});
+
+	/**
+	 * @deprecated Since 1.75
+	 */
+	QUnit.test("Legacy API setAutoCloseArea", function(assert) {
+		// just check that the old legacy method is an alias for setExtraContent
+		assert.strictEqual(this.oPopup.setAutoCloseAreas, this.oPopup.setExtraContent);
 	});
 
 	QUnit.module("Extra Popup Content Seletor", {
