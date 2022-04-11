@@ -272,10 +272,6 @@ html.sap-desktop {
 	.sapMSinglePCBlockers,
 	.sapMSinglePCAppointments {
 		.sapUiCalendarApp {
-			&.sapUiCalendarAppSel:hover::after {
-				background-color: darken(@sapUiSelected, 10);
-			}
-
 			&:hover::after {
 				background-color: @sapUiListHoverBackground;
 			}
@@ -594,33 +590,11 @@ html.sap-desktop {
 	}
 	.sapMSinglePCBlockers, .sapMSinglePCAppointments {
 
+		&.sapUiCalendarRowVisFilled > .@{class}.sapUiCalendarRowApps:hover > .sapUiCalendarApp:not(.sapUiCalendarAppSel) > .sapUiCalendarAppCont{
+			background-color: @sapUiListHoverBackground;
+		}
 		&.sapUiCalendarRowVisFilled > .@{class}.sapUiCalendarRowApps > .sapUiCalendarApp:not(.sapUiCalendarAppSel) > .sapUiCalendarAppCont{
 			background-color: fade(@bcolor, 90%);
-		}
-	}
-	//Special Dates
-	.sapMSinglePCGrid .@{iitemtypeclass} {
-		&.sapUiCalItem:hover {
-			border-radius: 0.25rem;
-		}
-		//week views
-		&.sapUiCalItem.sapUiCalItemSel .sapUiCalItemText,
-		&.sapUiCalItem .sapUiCalItemText {
-			box-shadow: none;
-		}
-		&.sapUiCalItem:not(.sapUiCalItemSel) {
-			box-shadow: inset 0 -0.25rem 0 @color;
-		}
-		//week views selected
-		&.sapUiCalItem.sapUiCalItemSel {
-			box-shadow: inset 0 -0.25rem 0 @color, inset 0 -0.25rem white;
-			.sapUiCalItemText {
-				box-shadow: none;
-			}
-		}
-		//day view
-		.sapMSinglePCBlockersColumn {
-			box-shadow: inset 0 0.25rem 0 @color;
 		}
 	}
 }

@@ -137,6 +137,7 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active {
 	color: @sapUiBaseText;
 	background-color: @sapUiListBackground;
 	border-color: @sapUiListBorderColor;
+	border-radius: 0.5rem;
 }
 
 .sapUiCalItemNow {
@@ -152,14 +153,6 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active {
 
 html.sap-desktop .sapUiCalItem:not(.sapUiCalItemSel):not(.sapUiCalItemWeekEnd):focus {
 	background-color: @sapUiLegendWorkingBackground;
-}
-
-/* hover and focus makes only sense on desktops. On mobile devices it's not needed */
-html.sap-desktop .sapUiCalDatesRow .sapUiCalItem:not(.sapUiCalItemSel):hover,
-html.sap-desktop .sapUiCalMonthPicker .sapUiCalItem:not(.sapUiCalItemSel):not(.sapUiCalItemSelBetween):hover,
-html.sap-desktop .sapUiCalYearPicker .sapUiCalItem:not(.sapUiCalItemSel):not(.sapUiCalItemSelBetween):hover,
-html.sap-desktop .sapUiCal:not(.sapUiCalDateInt) .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
-	background-color: @sapUiListHoverBackground;
 }
 
 html.sap-desktop .sapUiCalItem.sapUiCalItemNow:not(.sapUiCalItemSelBetween):not(.sapUiCalItemSelStart):not(.sapUiCalItemSelEnd):focus > .sapUiCalItemText{
@@ -233,6 +226,8 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 html.sap-desktop .sapUiCalItemWeekEnd:not(.sapUiCalItemSel):focus {
 	background-color: @sapUiLegendNonWorkingBackground;
 }
+
+.sapUiCalItem:hover,
 .sapUiCalItemWeekEnd:hover {
 	background-color: @sapUiListHoverBackground;
 }
@@ -539,6 +534,27 @@ html.sap-desktop .sapUiCalItemSelBetween:focus:not(:hover){
 
 .sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemSecText {
 	color: @sapUiContentSelectedTextColor;
+}
+
+/* Day names inside day */
+.sapUiCalNoNameLine.sapUiCalMonthView,
+.sapUiCalNoNameLine.sapUiCalDatesRow {
+	.sapUiCalItem {
+		height: 2.75rem;
+	}
+}
+
+.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalItemText {
+	padding-top: 0.75rem;
+}
+
+.sapUiSizeCompact {
+	.sapUiCalNoNameLine.sapUiCalMonthView,
+	.sapUiCalNoNameLine.sapUiCalDatesRow {
+		.sapUiCalItem {
+			height: 2rem;
+		}
+	}
 }
 
 /*** compact mode (desktop size) ***/

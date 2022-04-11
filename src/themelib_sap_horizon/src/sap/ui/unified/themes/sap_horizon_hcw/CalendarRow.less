@@ -21,7 +21,7 @@
 
 /* Appointments */
 /* as outlines can't have different offsets on one side (no left border) and don't work in IE just use a inner border */
-html.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont:after{
+html.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont:after {
 	position: absolute;
 	top: 1px;
 	left: 1px;
@@ -30,6 +30,25 @@ html.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont:after{
 	content: "";
 	border: 0.125rem dotted @sapUiContentFocusColor;
 	pointer-events: none;
+}
+
+.sapUiCalendarApp,
+.sapUiCalendarAppCont {
+	border-radius: 0.25rem;
+}
+
+.sapUiCalendarAppCont {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+html.sap-desktop .sapUiCalendarApp:focus:not(:active) > .sapUiCalendarAppCont {
+	background-color: @sapUiListBackground;
+}
+
+html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:hover:not(:active) > .sapUiCalendarAppCont,
+html.sap-desktop .sapUiCalendarApp:hover:not(:active) > .sapUiCalendarAppCont {
+	background-color: @sapUiListHoverBackground;
 }
 
 .sapMListTblRow.sapMLIBFocusable:focus {
@@ -92,7 +111,6 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active){
 .sapUiCalendarApp:active > .sapUiCalendarAppCont,
 .sapUiCalendarApp.sapUiCalendarAppSel:active > .sapUiCalendarAppCont{
 	border-color: @sapUiListSelectionBorderColor;
-	border-left: 0.0625rem solid @sapUiListBackground;
 }
 
 
@@ -117,6 +135,7 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active)  > .sa
 
 .sapUiCalendarAppTitle{
 	font-size: @sapMFontMediumSize;
+	color: @sapUiBaseText;
 }
 
 .sapUiCalendarAppText{
