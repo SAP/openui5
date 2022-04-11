@@ -168,10 +168,11 @@ sap.ui.define([
 		 * Formats a list according to the given format options.
 		 *
 		 * @param {object} oObj The value to format
+		 * @param {boolean} bSkipCustomFormatting If set to <code>true</code> the formatter does not format to the equivalent user-friendly string. Instead, the formatter uses the specified option key and parameters.
 		 * @return {string} The formatted output value.
 		 * @public
 		 */
-		DynamicDateFormat.prototype.format = function(oObj) {
+		DynamicDateFormat.prototype.format = function(oObj, bSkipCustomFormatting) {
 			var sKey = oObj.operator;
 			var aParams = oObj.values.slice(0);
 
@@ -187,10 +188,10 @@ sap.ui.define([
 
 				aParams[0] = this._monthFormatter.format(oDate);
 				aParams[1] = this._yearFormatter.format(oDate);
-			} else if (sKey === "LASTDAYS" && aParams[0] === 1) {
+			} else if (sKey === "LASTDAYS" && aParams[0] === 1 && !bSkipCustomFormatting) {
 				sKey = "YESTERDAY";
 				aParams = [];
-			} else if (sKey === "NEXTDAYS" && aParams[0] === 1) {
+			} else if (sKey === "NEXTDAYS" && aParams[0] === 1 && !bSkipCustomFormatting) {
 				sKey = "TOMORROW";
 				aParams = [];
 			} else if ((sKey === "LASTDAYS" || sKey === "NEXTDAYS") && aParams[0] === 0) {

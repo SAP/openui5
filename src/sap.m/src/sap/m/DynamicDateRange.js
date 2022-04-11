@@ -379,6 +379,8 @@ sap.ui.define([
 			this._oInput.setPlaceholder(this.getPlaceholder());
 			this._oInput.setValueState(this.getValueState());
 			this._oInput.setValueStateText(this.getValueStateText());
+
+			this.setValue(this._reverseSubstitudeValue(this.getValue()));
 		};
 
 		DynamicDateRange.prototype.setValue = function(oValue) {
@@ -1188,6 +1190,7 @@ sap.ui.define([
 		/**
 		 * Some of the values are semantically equivalent to others.
 		 * So we substitute them everywhere, if needed. Example: Last 1 days === Yesterday
+		 * This substitution is performed only with options that are present in the options property.
 		 *
 		 * @param {object} oValue A valid control value
 		 * @private
@@ -1203,12 +1206,12 @@ sap.ui.define([
 			sKey = oValue.operator;
 			aParams = oValue.values;
 
-			if (sKey === "LASTDAYS" && aParams[0] === 1) {
+			if (sKey === "LASTDAYS" && aParams[0] === 1 && this.getOptions().includes("YESTERDAY")) {
 				oNewValue = {
 					operator: "YESTERDAY",
 					values: []
 				};
-			} else if (sKey === "NEXTDAYS" && aParams[0] === 1) {
+			} else if (sKey === "NEXTDAYS" && aParams[0] === 1  && this.getOptions().includes("TOMORROW")) {
 				oNewValue = {
 					operator: "TOMORROW",
 					values: []
@@ -1234,6 +1237,34 @@ sap.ui.define([
 		DynamicDateRange.prototype.getIdForLabel = function () {
 			// The DynamicDateRangeInput inherits from the Input
 			return this.getAggregation("_input").getIdForLabel();
+		};
+
+		/**
+		 * Some of the values are semantically equivalent to others.
+		 * So we substitute them everywhere, if needed. Example: Last 1 days === Yesterday
+		 * In some cases the replacement should be reversed as some values need to be included as options to be replaced.
+		 * So we reverse the substitution of the values if the options are missing.
+		 *
+		 * @param {object} oValue A valid control value
+		 * @private
+		 * @returns {object} A substituted value if needed, or the same value if not
+		 */
+		DynamicDateRange.prototype._reverseSubstitudeValue = function(oValue) {
+			var oNewValue = oValue;
+
+			if (oValue  && oValue.operator === "YESTERDAY" && !this.getOptions().includes("YESTERDAY") && this.getOptions().includes("LASTDAYS")) {
+				oNewValue = {
+					operator: "LASTDAYS",
+					values: [1]
+				};
+			} else if (oValue && oValue.operator === "TOMORROW"  && !this.getOptions().includes("TOMORROW") && this.getOptions().includes("NEXTDAYS")) {
+				oNewValue = {
+					operator: "NEXTDAYS",
+					values: [1]
+				};
+			}
+
+			return oNewValue;
 		};
 
 		var DynamicDateRangeInputRenderer = Renderer.extend(InputRenderer);
