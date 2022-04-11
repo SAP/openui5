@@ -17,6 +17,8 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/odata/type/String",
+	"sap/ui/model/odata/type/DateTimeWithTimezone",
+	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/base/strings/whitespaceReplacer"
 ], function (
 		ConditionType,
@@ -34,8 +36,10 @@ sap.ui.define([
 		FormatException,
 		ParseException,
 		StringType,
+		DateTimeWithTimezoneType,
+		DateTimeOffsetType,
 		whitespaceReplacer
-		) {
+	) {
 	"use strict";
 
 	var oConditionType;
@@ -467,6 +471,111 @@ sap.ui.define([
 		assert.equal(oException && oException.message, "Enter a date after 01.01.2000", "Pattern of original date used in message");
 		assert.ok(oValueType.validateValue.calledWith(new Date(1900, 0, 1)), "validateValue of ValueType called with currentValue");
 		assert.ok(oOriginalType.validateValue.calledWith(new Date(1900, 0, 1)), "validateValue of originalDateType called with currentValue");
+
+	});
+
+	var oDateTimeOffsetType;
+	var oStringType;
+	var oValueType2;
+	var oConditionType2;
+	QUnit.module("DateTimeWithTimezone type", {
+		beforeEach: function() {
+			oValueType = new DateTimeWithTimezoneType({pattern: "yyyy-MM-dd'T'HH:mm:ss", showTimezone: false});
+			oOriginalType = new DateTimeWithTimezoneType({showTimezone: true});
+			oDateTimeOffsetType = new DateTimeOffsetType({}, {V4: true});
+			oStringType = new StringType();
+			oConditionType = new ConditionType({
+				valueType: oValueType,
+				originalDateType: oOriginalType,
+				compositeTypes: [oDateTimeOffsetType, oStringType],
+				operators: ["EQ"],
+				hideOperator: true,
+				delegate: FieldBaseDelegate
+			});
+
+			oValueType2 = new DateTimeWithTimezoneType({showTimezone: true, showDate: false, showTime: false});
+			oConditionType2 = new ConditionType({
+				valueType: oValueType2,
+				originalDateType: oOriginalType,
+				compositeTypes: [oDateTimeOffsetType, oStringType],
+				operators: ["EQ"],
+				hideOperator: true,
+				delegate: FieldBaseDelegate
+			});
+		},
+		afterEach: function() {
+			oConditionType.destroy();
+			oConditionType = undefined;
+			oValueType.destroy();
+			oValueType = undefined;
+			oConditionType2.destroy();
+			oConditionType2 = undefined;
+			oValueType2.destroy();
+			oValueType2 = undefined;
+			oOriginalType.destroy();
+			oOriginalType = undefined;
+			oDateTimeOffsetType.destroy();
+			oDateTimeOffsetType = undefined;
+			oStringType.destroy();
+			oStringType = undefined;
+		}
+	});
+
+	QUnit.test("Formatting: EQ", function(assert) {
+
+		var oCondition = Condition.createCondition("EQ", [["2022-02-25T07:06:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated);
+		var sResult = oConditionType.formatValue(oCondition);
+		assert.equal(sResult, "2022-02-25T07:06:30", "Result of formatting for DateTime part");
+
+		sResult = oConditionType2.formatValue(oCondition);
+		assert.equal(sResult, "Europe/Berlin", "Result of formatting for Timezone part");
+
+	});
+
+	QUnit.test("Parsing: EQ", function(assert) {
+
+		oValueType._aCurrentValue = ["2022-02-25T07:06:30+01:00", "Europe/Berlin"]; // fake formatting before (to have at least timezone)
+		oValueType2._aCurrentValue = ["2022-02-25T07:06:30+01:00", "Europe/Berlin"]; // fake formatting before (to have at least timezone)
+		oOriginalType._aCurrentValue = ["2022-02-25T07:06:30+01:00", "Europe/Berlin"]; // fake formatting before (to have at least timezone)
+		var oCondition = oConditionType.parseValue("2022-02-25T07:32:30");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.deepEqual(oCondition.values[0], ["2022-02-25T07:32:30+01:00", "Europe/Berlin"], "Values entry");
+
+		// changing of TimeZone not a use case right now
+		oCondition = oConditionType2.parseValue("America/New_York");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.deepEqual(oCondition.values[0], ["2022-02-25T07:06:30+01:00", "America/New_York"], "Values entry");
+
+	});
+
+	QUnit.test("Validating: valid value", function(assert) {
+
+		var oCondition = Condition.createCondition("EQ", [["2022-02-25T07:06:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated);
+		var oException;
+		sinon.spy(oValueType, "validateValue");
+		sinon.spy(oOriginalType, "validateValue");
+		sinon.spy(oDateTimeOffsetType, "validateValue");
+		sinon.spy(oStringType, "validateValue");
+
+		try {
+			oConditionType.validateValue(oCondition);
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.notOk(oException, "no exception fired");
+		assert.ok(oValueType.validateValue.calledWith([new Date(2022, 1, 25, 7, 6, 30), "Europe/Berlin"]), "validateValue of ValueType called with currentValue");
+		assert.ok(oDateTimeOffsetType.validateValue.calledWith("2022-02-25T07:06:30+01:00"), "validateValue of DateTimeOffsetType called with current Date");
+		assert.ok(oStringType.validateValue.calledWith("Europe/Berlin"), "validateValue of StringType called with current timezone");
+		assert.notOk(oOriginalType.validateValue.called, "validateValue of originalDateType not called");
 
 	});
 

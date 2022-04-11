@@ -29,7 +29,8 @@ sap.ui.define([
 
 			var oViewModel = new JSONModel({
 				editMode: false,
-				addMode: false
+				addMode: false,
+				timezone: "Europe/Berlin"
 			});
 
 			this.getView().setModel(oViewModel, "view");

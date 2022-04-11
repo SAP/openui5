@@ -3,8 +3,11 @@
  */
 sap.ui.define([
 	"sap/ui/mdc/field/content/DefaultContent",
-	"sap/ui/mdc/field/content/DateContent"
-], function(DefaultContent, DateContent) {
+	"sap/ui/mdc/field/content/DateContent",
+	"sap/ui/mdc/util/DateUtil",
+	"sap/base/util/merge",
+	"sap/base/util/ObjectPath"
+], function(DefaultContent, DateContent, DateUtil, merge, ObjectPath) {
 	"use strict";
 
 	/**
@@ -27,6 +30,44 @@ sap.ui.define([
 		},
 		createEditMultiLine: function() {
 			throw new Error("sap.ui.mdc.field.content.DateTimeContent - createEditMultiLine not defined!");
+		},
+		_createDatePickerControl: function(oContentFactory, aControlClasses, sId) {
+			var aControls = DateContent._createDatePickerControl.apply(this, arguments);
+			var oType = oContentFactory.getDateOriginalType() || oContentFactory.getDataType(); // if no clone-type created use original type
+
+			if (DateUtil.showTimezone(oType)) {
+				// bind timezone to timezone part; handle as "unit"
+				var oUnitConditionsType = oContentFactory.getUnitConditionsType();
+				aControls[0].bindProperty("timezone", { path: "$field>/conditions", type: oUnitConditionsType });
+				aControls[0].setShowTimezone(true);
+			}
+
+			return aControls;
+		},
+		_adjustDataTypeForDate: function(oContentFactory) {
+			var oType = oContentFactory.retrieveDataType();
+			var oFormatOptions = oType.getFormatOptions();
+
+			if (DateUtil.showTimezone(oType)) {
+				// create internal type without showing timezone
+				this._getDatePattern(oContentFactory, oFormatOptions); // to determine pattern
+				oContentFactory.setDateOriginalType(oContentFactory.getDataType());
+				oContentFactory.setDataType(DateUtil.createInternalType(oType, oContentFactory.getValueFormat()));
+				oContentFactory.updateConditionType();
+
+				// handle timezone as "unit"; create internal type to show only timezone
+				oFormatOptions = merge({}, oFormatOptions); // do not manipulate original object
+				delete oFormatOptions.pattern; // remove pattern, if set at it might prevent showing the timezone but show the DateTime
+				oFormatOptions.showDate = false;
+				oFormatOptions.showTime = false;
+				oFormatOptions.showTimezone = true;
+				var oConstraints = oType.getConstraints();
+				var sName = oType.getMetadata().getName();
+				var TypeClass = ObjectPath.get(sName);
+				oContentFactory.setUnitType(new TypeClass(oFormatOptions, oConstraints));
+			} else {
+				DateContent._adjustDataTypeForDate.apply(this, arguments);
+			}
 		}
 
 	});

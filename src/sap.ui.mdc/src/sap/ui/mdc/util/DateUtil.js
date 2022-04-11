@@ -4,14 +4,14 @@
 sap.ui.define([
 		'sap/ui/core/library',
 		'sap/ui/core/date/UniversalDate',
-		'sap/base/util/merge',
-		'sap/ui/mdc/enum/BaseType'
+		'sap/ui/mdc/enum/BaseType',
+		'sap/base/util/merge'
 	],
 	function(
 			coreLibrary,
 			UniversalDate,
-			merge,
-			BaseType
+			BaseType,
+			merge
 	) {
 		"use strict";
 
@@ -101,7 +101,7 @@ sap.ui.define([
 				 *
 				 * @param {sap.ui.model.SimpleType} oType Data type
 				 * @param {string} sPattern Pattern based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
-				 * @return {sap.ui.model.SimpleType} nes data type
+				 * @return {sap.ui.model.SimpleType} new data type
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
 				 * @since 1.74.0
@@ -118,7 +118,32 @@ sap.ui.define([
 					oFormatOptions.pattern = sPattern;
 					oFormatOptions.calendarType = CalendarType.Gregorian;
 
+					if (this.showTimezone(oType)) {
+						// for Date/Time part of binding hide timezone, a new binding with only TimeZone is added to TimeZone property of DateTimePicker
+						oFormatOptions.showTimezone = false;
+					}
+
 					return new Type(oFormatOptions, oConstraints);
+
+				},
+
+				/**
+				 * Checks if a DateTimeWithTimezone is used and the Timezone should be shown beside Date an time
+				 *
+				 * @param {sap.ui.model.SimpleType} oType Data type
+				 * @return {boolean} if set, timezine needs to be shown
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
+				 * @since 1.101.0
+				 */
+				showTimezone: function(oType) {
+
+					var oFormatOptions = oType.getFormatOptions();
+					var fnCheckProperty = function(oFormatOptions, sProperty) {
+						return !oFormatOptions.hasOwnProperty(sProperty) || oFormatOptions[sProperty]; // if not set, showTimezone=true, showDate=true or showTime=true is default
+					};
+
+					return oType.isA("sap.ui.model.odata.type.DateTimeWithTimezone") && fnCheckProperty(oFormatOptions, "showTimezone") && (fnCheckProperty(oFormatOptions, "showDate") || fnCheckProperty(oFormatOptions, "showTime"));
 
 				},
 

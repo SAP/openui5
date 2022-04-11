@@ -97,6 +97,12 @@
 				<m:Label text="type dateTime in display mode"></m:Label>
 				<mdc:Field id="F13" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions="{style: 'short'}" editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
 
+				<m:Label text="dateTime with timezone"/>
+				<mdc:Field id="F25" value="{parts: [{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}, {path: 'TimeZone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true, style: 'short'}}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+
+				<m:Label text="dateTime with timezone in display mode"/>
+				<mdc:Field id="F26" value="{parts: [{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}, {path: 'TimeZone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true, style: 'medium'}}" editMode="Display" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+
 				<m:Label text="type Time"></m:Label>
 				<mdc:Field id="F14" value="{path:'Time', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}, targetType: 'string'}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate'}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
 
