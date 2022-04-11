@@ -105,7 +105,7 @@ sap.ui.define([
 				this.MySearchTemplate1Filterbar = new FilterBar(
 				{
 					liveMode: false,
-					delegate: {name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}},
+					delegate: {name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}},
 					basicSearchField: new FilterField({
 						delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
 						dataType: "Edm.String",
