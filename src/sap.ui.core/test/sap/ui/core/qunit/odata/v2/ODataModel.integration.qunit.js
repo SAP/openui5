@@ -15104,19 +15104,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// the creation area. When these entries become created persisted, they are removed from the
 	// creation area and are handled as normal persisted entries.
 	// JIRA: CPOUI5MODELS-780
-[{
-	action : "refresh",
-	expectedNoteValuesAfterInteraction : []
-}, {
-	action : "filter",
-	expectedNoteValuesAfterInteraction : ["Note 2"]
-}, {
-	action : "sort",
-	expectedNoteValuesAfterInteraction : ["Note 2", "Note 1"]
-}].forEach(function (oFixture) {
-	var fnQUnit = QUnit[oFixture.action === "refresh" ? "test" : "skip"];
-
-	fnQUnit("#create with OperationMode.Client: " + oFixture.action, function (assert) {
+["refresh", "filter", "sort"].forEach(function (sAction) {
+	QUnit.test("#create with OperationMode.Client: " + sAction, function (assert) {
 		var oBinding, oContext,
 			oModel = createSalesOrdersModel({defaultOperationMode : "Client"}),
 			sView = '\
@@ -15154,9 +15143,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectValue("note", oFixture.expectedNoteValuesAfterInteraction, 2);
-
-			if (oFixture.action === "refresh") {
+			if (sAction === "refresh") {
 				that.expectRequest("SalesOrderSet", {
 						results : [{
 							__metadata : {uri : "SalesOrderSet('1')"},
@@ -15171,10 +15158,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 				// code under test
 				oBinding.refresh();
-			} else if (oFixture.action === "filter") {
+			} else if (sAction === "filter") {
+				that.expectValue("note", ["Note 2"], 2);
+
 				// code under test
 				oBinding.filter(new Filter("SalesOrderID", FilterOperator.EQ, "2"));
-			} else if (oFixture.action === "sort") {
+			} else if (sAction === "sort") {
+				that.expectValue("note", ["Note 2", "Note 1"], 2);
+
 				// code under test
 				oBinding.sort(new Sorter("SalesOrderID", /*bDescending*/true));
 			}
@@ -15207,9 +15198,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectValue("note", ["inactive", "Note 1", "Note 2", "persisted"]);
-
-			if (oFixture.action === "refresh") {
+			if (sAction === "refresh") {
 				that.expectRequest("SalesOrderSet", {
 						results : [{
 							__metadata : {uri : "SalesOrderSet('1')"},
@@ -15224,14 +15213,23 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 							SalesOrderID : "3",
 							Note : "persisted"
 						}]
-					});
+					})
+					.expectValue("note", ["inactive", "Note 1", "Note 2", "persisted"]);
 
 				// code under test
 				oBinding.refresh();
-			} else if (oFixture.action === "filter") {
+			} else if (sAction === "filter") {
+				that.expectValue("note", ["inactive", "Note 1"])
+					// "Note 2" in row 3 is unchanged
+					.expectValue("note", "persisted", 3);
+
 				// code under test
 				oBinding.filter();
-			} else if (oFixture.action === "sort") {
+			} else if (sAction === "sort") {
+				that.expectValue("note", ["inactive", "Note 1"])
+					// "Note 2" in row 3 is unchanged
+					.expectValue("note", "persisted", 3);
+
 				// code under test
 				oBinding.sort();
 			}
