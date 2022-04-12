@@ -1182,7 +1182,7 @@ sap.ui.define([
 		if (!oDomRef) {
 			oDomRef = this.getDomRef();
 		}
-		this._oPopup._getPopup().setAutoCloseAreas([oDomRef]);
+		this._oPopup._getPopup().setExtraContent([oDomRef]);
 		this._oPopup.openBy(oDomRef || this);
 	};
 

@@ -1462,7 +1462,7 @@ function(
 				oPopover.setShowArrow(false);
 			}
 
-			oPopover.oPopup.setAutoCloseAreas([oIcon]);
+			oPopover.oPopup.setExtraContent([oIcon]);
 
 			if (Device.system.phone) {
 				sArialabelledby = this.$("inner").attr("aria-labelledby");

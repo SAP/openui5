@@ -884,7 +884,7 @@ sap.ui.define([
 				// Set the oControl as autoclosearea regardless what the
 				// oParentDomRef is because clicking on the openBy control again
 				// should keep the popover open.
-				oPopup.setAutoCloseAreas([oControl]);
+				oPopup.setExtraContent([oControl]);
 
 				oPopup.setContent(this);
 

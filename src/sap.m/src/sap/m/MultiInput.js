@@ -279,7 +279,7 @@ function(
 			.attachAfterClose(this._onAfterCloseTokensPicker.bind(this))
 
 			/* Prevent closing of n more popover when input is clicked */
-			._getPopup().setAutoCloseAreas([oTokenizer, this]);
+			._getPopup().setExtraContent([oTokenizer, this]);
 
 		this.setAggregation("tokenizer", oTokenizer);
 
