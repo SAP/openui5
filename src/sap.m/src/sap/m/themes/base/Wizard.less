@@ -30,10 +30,6 @@
 		display: block;
 	}
 
-	.sapMWizardLastActivatedStep {
-		min-height: 100%;
-	}
-
 	&.sapMWizardModeScroll .sapMWizardStepTitle::before {
 		counter-increment: steps-counter;
 		content: counter(steps-counter) ". ";
@@ -46,6 +42,7 @@
 	}
 
 	.sapMWizardNextButtonVisible {
+		margin-top: 0.5rem;
 		bottom: 0rem;
 		opacity: 1;
 		animation-name: showWizardButton
@@ -71,6 +68,10 @@
 	&.sapMWizardBgList .sapMWizardStepContainer {
 		background-color: @sapUiGroupContentBackground;
 	}
+}
+
+.sapMWizard:not(.sapMWizardModePage) .sapMWizardLastActivatedStep {
+	min-height: 100%;
 }
 
 html[data-sap-ui-animation='on'] .sapMWizardNextButtonVisible,

@@ -12,16 +12,21 @@
 		background-color: @sapUiShellBackground;
 	}
 }
-.sapMWizard .sapMWizardProgressNav {
-	box-shadow: @sapUiShadowHeader;
-}
 
 .sapMWizard {
 	overflow: hidden;
 }
 
+.sapMWizard .sapMWizardStep {
+	padding-bottom: 1rem;
+}
+
+.sapMWizard:not(.sapMWizardModePage) .sapMWizardLastActivatedStep {
+	min-height: calc(100% - 3rem);
+}
+
 html.sap-phone .sapMWizard .sapMWizardNextButtonVisible {
-	left: 1rem;
+	left: 2rem;
 	bottom: 3.5rem;
 	-webkit-transform: none;
 	transform: none;

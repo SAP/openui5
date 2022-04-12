@@ -9,6 +9,7 @@
 .sapMWizardProgressNav {
 	position: absolute;
 	z-index: 1;
+	box-shadow: @sapUiContentHeaderShadow;
 }
 
 .sapMWizardProgressNavStep:hover .sapMWizardProgressNavStepCircle {
@@ -21,9 +22,12 @@
 	color: @sapUiContentContrastIconColor;
 }
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"]:hover .sapMWizardProgressNavStepTitle,
 .sapMWizardProgressNavStep:hover .sapMWizardProgressNavStepTitle {
 	color: @sapTextColor;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavStepTitle {
+	color: @sapUiContentSelectedForegroundColor;
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavStepCircle::after {
@@ -41,6 +45,7 @@
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] .sapMWizardProgressNavStepContainer::after {
 	height: 0;
 }
+
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
 	& .sapMWizardProgressNavStepCircle {
 		background: @sapUiSelected;
@@ -50,13 +55,13 @@
 
 .sapMWizardProgressNavStepCircle {
 	background: @sapUiObjectHeaderBackground;
-	border-color:  @sapUiSelected;
+	border-color: @sapUiSelected;
 	color: @sapUiSelected;
 }
 
 .sapMWizardProgressNavStepTitle {
 	color: @sapTextColor;
-	font-weight: bold;
+	font-family: @sapUiFontBoldFamily;
 }
 
 .sapMWizardProgressNavStepTitle:hover {
@@ -64,16 +69,19 @@
 }
 
 .sapMWizardProgressNavStep::after {
-	border-bottom-color: @sapUiSelected;
+	border-bottom-color: @sapUiContentSelectedForegroundColor;
 }
 
 .sapMWizard .sapMWizardStepContainer {
   background: @sapUiGroupContentBackground;
 }
 
-.sapMWizardProgressNavStepTitleOptional,
-.sapMWizardProgressNavStepLabelOptional {
+.sapMWizardProgressNavStepTitleOptional {
 	color: @sapTextColor;
+}
+
+.sapMWizardProgressNavStepLabelOptional {
+	margin-top: 0.125rem;
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
@@ -81,6 +89,10 @@
 	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavStepCircle {
 		border-color: @sapUiListBorderColor;
 		background: @sapUiObjectHeaderBackground;
+		color: @sapUiContentLabelColor;
+	}
+
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavStepTitle {
 		color: @sapUiContentLabelColor;
 	}
 
