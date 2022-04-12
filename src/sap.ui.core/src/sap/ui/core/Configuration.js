@@ -106,7 +106,7 @@ sap.ui.define([
 					"calendarType"          : { type : "string",   defaultValue : null },
 					"trailingCurrencyCode"  : { type : "boolean",  defaultValue : true },
 					"accessibility"         : { type : "boolean",  defaultValue : true },
-					"autoAriaBodyRole"      : { type : "boolean",  defaultValue : false,      noUrl:true }, //whether the framework automatically adds the ARIA role 'application' to the html body
+					"autoAriaBodyRole"      : { type : "boolean",  defaultValue : false,     noUrl:true }, //whether the framework automatically adds the ARIA role 'application' to the html body
 					"animation"             : { type : "boolean",  defaultValue : true }, // deprecated, please use animationMode
 					"animationMode"         : { type : Configuration.AnimationMode, defaultValue : undefined }, // If no value is provided, animationMode will be set on instantiation depending on the animation setting.
 					"rtl"                   : { type : "boolean",  defaultValue : null },
@@ -131,14 +131,15 @@ sap.ui.define([
 					"versionedLibCss"       : { type : "boolean",  defaultValue : false },
 					"manifestFirst"         : { type : "boolean",  defaultValue : false },
 					"flexibilityServices"   : { type : "string",   defaultValue : "/sap/bc/lrep"},
-					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // deprecated, use allowlistService instead
-					"allowlistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
-					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
+					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl:true }, // deprecated, use allowlistService instead
+					"allowlistService"      : { type : "string",   defaultValue : null,      noUrl:true }, // url/to/service
+					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl:true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
 					"support"               : { type : "string[]", defaultValue : null },
 					"testRecorder"          : { type : "string[]", defaultValue : null },
-					"activeTerminologies"   : { type : "string[]", defaultValue: undefined},
-					"securityTokenHandlers"	: { type : "function[]", defaultValue: [],  noUrl: true },
+					"activeTerminologies"   : { type : "string[]", defaultValue : undefined},
+					"fileShareSupport"      : { type : "string",   defaultValue : undefined, noUrl:true }, // Module name (AMD syntax)
+					"securityTokenHandlers"	: { type : "function[]", defaultValue: [],       noUrl:true },
 					"xx-placeholder"		: { type : "boolean",  defaultValue : true },
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
@@ -1474,6 +1475,21 @@ sap.ui.define([
 		 */
 		getAllowlistService : function() {
 			return this.allowlistService;
+		},
+
+		/**
+		 * Name (ID) of a UI5 module that implements file share support.
+		 *
+		 * If no implementation is known, <code>undefined</code> is returned.
+		 *
+		 * The contract of the module is not defined by the configuration API.
+		 *
+		 * @returns {string|undefined} Module name (ID) of a file share support module
+		 * @public
+		 * @since 1.102
+		 */
+		getFileShareSupport : function() {
+			return this.fileShareSupport || undefined;
 		},
 
 		/**
