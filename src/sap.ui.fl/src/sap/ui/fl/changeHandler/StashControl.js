@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/LayerUtils"
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/changeHandler/JsControlTreeModifier"
 ], function(
-	LayerUtils
+	LayerUtils,
+	JsControlTreeModifier
 ) {
 	"use strict";
 
@@ -124,6 +126,15 @@ sap.ui.define([
 			affectedControl: oChange.getSelector(),
 			classification: sap.ui.fl.condenser.Classification.Reverse,
 			uniqueKey: "stashed"
+		};
+	};
+
+	StashControl.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+		var oSelector = oChange.getSelector();
+		var oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+		return {
+			affectedControls: [oSelector],
+			displayControls: [oElement.getParent().getId()]
 		};
 	};
 
