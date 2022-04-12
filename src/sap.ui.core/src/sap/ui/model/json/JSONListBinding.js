@@ -42,14 +42,23 @@ sap.ui.define([
 	 * @param {int} [iStartIndex=0] the startIndex where to start the retrieval of contexts
 	 * @param {int} [iLength=length of the list] determines how many contexts to retrieve beginning from the start index.
 	 * Default is the whole list length.
+	 * @param {int} [iMaximumPrefetchSize]
+	 *   Not used
+	 * @param {boolean} [bKeepCurrent]
+	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.102.0.
+	 * @return {sap.ui.model.Context[]}
+	 *   The array of contexts for each row of the bound list
+	 * @throws {Error}
+	 *   If extended change detection is enabled and <code>bKeepCurrent</code> is set, or if
+	 *   <code>iMaximumPrefetchSize</code> and <code>bKeepCurrent</code> are set
 	 *
-	 * @return {Array} the contexts array
 	 * @protected
 	 */
-	JSONListBinding.prototype.getContexts = function(iStartIndex, iLength) {
-		this.iLastStartIndex = iStartIndex;
-		this.iLastLength = iLength;
+	JSONListBinding.prototype.getContexts = function (iStartIndex, iLength, iMaximumPrefetchSize,
+			bKeepCurrent) {
+		var aContextData, aContexts;
 
+		this._updateLastStartAndLength(iStartIndex, iLength, iMaximumPrefetchSize, bKeepCurrent);
 		if (!iStartIndex) {
 			iStartIndex = 0;
 		}
@@ -57,10 +66,10 @@ sap.ui.define([
 			iLength = Math.min(this.iLength, this.oModel.iSizeLimit);
 		}
 
-		var aContexts = this._getContexts(iStartIndex, iLength),
-			aContextData = [];
+		aContexts = this._getContexts(iStartIndex, iLength);
 
 		if (this.bUseExtendedChangeDetection) {
+			aContextData = [];
 			// Use try/catch to detect issues with cyclic references in JS objects,
 			// in this case diff will be disabled.
 			try {
