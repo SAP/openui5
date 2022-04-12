@@ -319,6 +319,7 @@ sap.ui.define([
 	 */
 	function isTranslatable(vValue) {
 		return (typeof vValue === "string")
+			&& vValue.match(REGEXP_TRANSLATABLE)
 			&& vValue.indexOf("{{") === 0
 			&& vValue.indexOf("}}") === vValue.length - 2;
 	}

@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/integration/Host",
 	"sap/ui/integration/util/DataProviderFactory",
-	"sap/ui/integration/util/CsrfTokenHandler"
+	"sap/ui/integration/util/CsrfTokenHandler",
+	"sap/ui/integration/widgets/Card"
 ], function (
 	Host,
 	DataProviderFactory,
-	CsrfTokenHandler
+	CsrfTokenHandler,
+	Card
 ) {
 	"use strict";
 
@@ -142,6 +144,50 @@ sap.ui.define([
 					"title": "{Name}"
 				},
 				"maxItems": 5
+			}
+		}
+	};
+
+	var oManifest_CsrfTokenAndTranslations = {
+		"sap.app": {
+			"id": "test.card.csrf.card3",
+			"i18n": "i18n/i18n.properties"
+		},
+		"sap.card": {
+			"type": "List",
+			"configuration": {
+				"csrfTokens": {
+					"token1": {
+						"name": "Token1",
+						"data": {
+							"request": {
+								"url": "/fakeService/getToken",
+								"method": "HEAD",
+								"headers": {
+									"X-CSRF-Token": "Fetch"
+								}
+							}
+						}
+					}
+				}
+			},
+			"data": {
+				"request": {
+					"url": "/fakeService/Products",
+					"method": "GET",
+					"headers": {
+						"X-CSRF-Token": "{{csrfTokens.token1}}"
+					}
+				},
+				"path": "/results"
+			},
+			"header": {
+				"title": "{{appTitle}}"
+			},
+			"content": {
+				"item": {
+					"title": "{Name}"
+				}
 			}
 		}
 	};
@@ -397,4 +443,32 @@ sap.ui.define([
 		oDataProvider.triggerDataUpdate();
 	});
 
+	QUnit.test("CSRF Token works in card with translations", function (assert) {
+		var done = assert.async(),
+			oHostResolveToken = new Host(),
+			oCard = new Card({
+				host: oHostResolveToken,
+				manifest: oManifest_CsrfTokenAndTranslations,
+				baseUrl: "test-resources/sap/ui/integration/qunit/cardbundle/bundle/"
+			});
+
+		assert.expect(1);
+
+		oHostResolveToken.getCsrfToken = function (sName) {
+			return Promise.resolve("HostTokenValue");
+		};
+
+		// respond to the actual data request
+		this.oServer.respondWith("/fakeService/Products", function (oXhr) {
+			assert.strictEqual(oXhr.requestHeaders["X-CSRF-Token"], "HostTokenValue", "The data request headers contain the provided token");
+
+			oXhr.respond(200, {
+				"Content-Type": "application/json"
+			}, JSON.stringify({"results": []}));
+
+			done();
+		});
+
+		oCard.startManifestProcessing();
+	});
 });
