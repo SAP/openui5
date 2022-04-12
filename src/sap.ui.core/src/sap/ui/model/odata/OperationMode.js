@@ -73,6 +73,12 @@ sap.ui.define(function() {
 		 * <li>Count mode <code>None</code> is not supported together with operation mode <code>Auto</code></li>
 		 * </ol>
 		 *
+		 * @deprecated As of 1.102.0, because filtering and sorting may lead to different results
+		 *   when executed on the client and on the server, and thus to inconsistent behavior. If it
+		 *   is certain that the collection is completely loaded on the client, use
+		 *   {@link sap.ui.model.odata.OperationMode.Client}; otherwise, use
+		 *   {@link sap.ui.model.odata.OperationMode.Default} or
+		 *   {@link sap.ui.model.odata.OperationMode.Server}.
 		 * @public
 		 */
 		Auto: "Auto"

@@ -2013,9 +2013,10 @@ sap.ui.define([
 	 *           if not specified, the default operation mode of this model is used
 	 * @param {boolean} [mParameters.faultTolerant] Turns on the fault tolerance mode, data is not reset if a backend request returns an error
 	 * @param {string} [mParameters.batchGroupId] Sets the batch group ID to be used for requests originating from this binding
-	 * @param {int} [mParameters.threshold] Threshold that defines how many entries should be fetched at least
-	 *                                      by the binding if <code>operationMode</code> is set to <code>Auto</code>
-	 *                                      (See documentation for {@link sap.ui.model.odata.OperationMode.Auto})
+	 * @param {int} [mParameters.threshold]
+	 *   Deprecated since 1.102.0, as {@link sap.ui.model.odata.OperationMode.Auto} is deprecated;
+	 *   the threshold that defines how many entries should be fetched at least by the binding if
+	 *   <code>operationMode</code> is set to <code>Auto</code>
 	 * @returns {sap.ui.model.ListBinding} The new list binding
 	 * @see sap.ui.model.Model.prototype.bindList
 	 * @public
@@ -2067,6 +2068,7 @@ sap.ui.define([
 	 * <code>hierarchy-node-descendant-count-for</code> annotation. Services with hierarchy
 	 * annotations including the <code>hierarchy-node-descendant-count-for</code> annotation, do
 	 * <b>not</b> support the operation modes <code>Client</code> and <code>Auto</code>.
+	 * <b>Note:</b> {@link sap.ui.model.odata.OperationMode.Auto} is deprecated since 1.102.0.
 	 *
 	 * @param {string} sPath
 	 *   The binding path, either absolute or relative to a given <code>oContext</code>
@@ -2107,12 +2109,14 @@ sap.ui.define([
 	 *   specified. {@link sap.ui.model.odata.OperationMode.Auto OperationMode.Auto} is only
 	 *   supported for services which expose the hierarchy annotations, yet do <b>NOT</b> expose the
 	 *   <code>hierarchy-node-descendant-count-for</code> annotation.
+	 *   <b>Note:</b> {@link sap.ui.model.odata.OperationMode.Auto} is deprecated since 1.102.0.
 	 * @param {number} [mParameters.threshold]
-	 *   The threshold used if the operation mode is set to
-	 *   {@link sap.ui.model.odata.OperationMode.Auto OperationMode.Auto}. The binding tries to
-	 *   fetch (at least) as many entries as specified by the threshold value.
+	 *   Deprecated since 1.102.0, as {@link sap.ui.model.odata.OperationMode.Auto} is deprecated;
+	 *   the threshold that defines how many entries should be fetched at least by the binding if
+	 *   <code>operationMode</code> is set to <code>Auto</code>
 	 * @param {boolean} [mParameters.useServersideApplicationFilters]
-	 *   Whether <code>$filter</code> statements should be used for the <code>$count</code> /
+	 *   Deprecated since 1.102.0, as {@link sap.ui.model.odata.OperationMode.Auto} is deprecated;
+	 *   whether <code>$filter</code> statements should be used for the <code>$count</code> /
 	 *   <code>$inlinecount</code> requests and for the data request if the operation mode is
 	 *   {@link sap.ui.model.odata.OperationMode.Auto OperationMode.Auto}. Use this feature only
 	 *   if your back end supports pre-filtering the tree and is capable of responding with

@@ -63,10 +63,12 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
 	 *   The operation mode for this binding
 	 * @param {number} [mParameters.threshold]
-	 *   The threshold used if the operation mode is set to
-	 *   {@link sap.ui.model.odata.OperationMode.Auto OperationMode.Auto}
+	 *   Deprecated since 1.102.0, as {@link sap.ui.model.odata.OperationMode.Auto} is deprecated;
+	 *   the threshold that defines how many entries should be fetched at least by the binding if
+	 *   <code>operationMode</code> is set to <code>Auto</code>
 	 * @param {boolean} [mParameters.useServersideApplicationFilters]
-	 *   Whether <code>$filter</code> statements should be used for the <code>$count</code> /
+	 *   Deprecated since 1.102.0, as {@link sap.ui.model.odata.OperationMode.Auto} is deprecated;
+	 *   whether <code>$filter</code> statements should be used for the <code>$count</code> /
 	 *   <code>$inlinecount</code> requests and for the data request if the operation mode is
 	 *   {@link sap.ui.model.odata.OperationMode.Auto OperationMode.Auto}
 	 * @param {any} [mParameters.treeState]
@@ -1556,6 +1558,7 @@ sap.ui.define([
 	 * instance. If it is set, the filters of type <code>Application</code> will always be applied
 	 * on the back end and trigger an OData request.
 	 * For more information, see {@link sap.ui.model.odata.v2.ODataModel#bindTree}.
+	 * <b>Note:</b> {@link sap.ui.model.odata.OperationMode.Auto} is deprecated since 1.102.0.
 	 *
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} aFilters
 	 *   Filter or array of filters to apply
@@ -1722,6 +1725,7 @@ sap.ui.define([
 	 * Sorts the Tree according to the given Sorter(s). In <code>OperationMode.Client</code> or
 	 * <code>OperationMode.Auto</code> (if the given threshold is satisfied), the sorters are
 	 * applied locally on the client.
+	 * <b>Note:</b> {@link sap.ui.model.odata.OperationMode.Auto} is deprecated since 1.102.0.
 	 *
 	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} aSorters
 	 *   The Sorter or an Array of sap.ui.model.Sorter instances
