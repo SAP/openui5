@@ -102,17 +102,31 @@ sap.ui.define([
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField._getOperators = fnGetOperators; // fake Field
+			oBaseField = oView.byId("FB1-vh");
+			oBaseField._fireChange = fnFireChange;
+			oBaseField.attachEvent("change", this.handleChange, this);
+			oBaseField._getOperators = fnGetOperators; // fake Field
 			oBaseField = oView.byId("FB2");
+			oBaseField._fireChange = fnFireChange;
+			oBaseField.attachEvent("change", this.handleChange, this);
+			oBaseField._getOperators = fnGetOperators; // fake Field
+			oBaseField = oView.byId("FB2-vh");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField._getOperators = fnGetOperators; // fake Field
 			oBaseField = oView.byId("FB3");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
+			oBaseField = oView.byId("FB3-vh");
+			oBaseField._fireChange = fnFireChange;
+			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB4");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB5");
+			oBaseField._fireChange = fnFireChange;
+			oBaseField.attachEvent("change", this.handleChange, this);
+			oBaseField = oView.byId("FB5-vh");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB6");
@@ -147,13 +161,22 @@ sap.ui.define([
 			oBaseField = oView.byId("FB11");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
+			oBaseField = oView.byId("FB11-vh");
+			oBaseField._fireChange = fnFireChange;
+			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB12");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB13");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
+			oBaseField = oView.byId("FB13-vh");
+			oBaseField._fireChange = fnFireChange;
+			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB14");
+			oBaseField._fireChange = fnFireChange;
+			oBaseField.attachEvent("change", this.handleChange, this);
+			oBaseField = oView.byId("FB14-vh");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB15");
@@ -172,6 +195,10 @@ sap.ui.define([
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField._getOperators = fnGetOperators; // fake Field
+			oBaseField = oView.byId("FB18-vh");
+			oBaseField._fireChange = fnFireChange;
+			oBaseField.attachEvent("change", this.handleChange, this);
+			oBaseField._getOperators = fnGetOperators; // fake Field
 			oBaseField = oView.byId("FB19");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
@@ -182,6 +209,9 @@ sap.ui.define([
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB-Country");
+			oBaseField._fireChange = fnFireChange;
+			oBaseField.attachEvent("change", this.handleChange, this);
+			oBaseField = oView.byId("FB-Country-vh");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 
@@ -226,6 +256,10 @@ sap.ui.define([
 			FilterOperatorUtil.addOperator(oMyOperator);
 
 			oBaseField = oView.byId("FB-MatrId");
+			oBaseField._fireChange = fnFireChange;
+			oBaseField.attachEvent("change", this.handleChange, this);
+			oBaseField._getOperators = function() {return ["GT", "LT", "myEQ", "myNE"];};
+			oBaseField = oView.byId("FB-MatrId-vh");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField._getOperators = function() {return ["GT", "LT", "myEQ", "myNE"];};
@@ -404,11 +438,15 @@ sap.ui.define([
 			var oView = this.getView();
 			var oFH = oView.byId("FH-Country");
 			var oFB = oView.byId("FH-FB-Country");
+			var oVHTable = oView.byId("VH-Country-Dialog-MTable");
+			var oVHFB = oView.byId("VH-FB-Country");
 
 			if (bActive) {
 				oFH.setFilterBar(oFB);
+				oVHTable.setFilterBar(oVHFB);
 			} else {
 				oFH.setFilterBar();
+				oVHTable.setFilterBar();
 			}
 		},
 
@@ -416,11 +454,14 @@ sap.ui.define([
 			var bActive = oEvent.getParameter("selected");
 			var oView = this.getView();
 			var oFH = oView.byId("FH-Country");
+			var oVHTable = oView.byId("VH-Country-Dialog-MTable");
 
 			if (bActive) {
 				oFH.setFilterFields("*countryId,text*");
+				oVHTable.setFilterFields("*countryId,text*");
 			} else {
 				oFH.setFilterFields("");
+				oVHTable.setFilterFields("");
 			}
 		},
 
@@ -437,6 +478,23 @@ sap.ui.define([
 				oField.setFieldHelp(oView.byId("LFH-MatrId"));
 			} else {
 				oField.setFieldHelp(oView.byId("FVH-MatrId"));
+				oField.setMaxConditions(-1);
+			}
+		},
+
+		toggleVH: function(oEvent) {
+			var oView = this.getView();
+			var oField = oView.byId("FB-MatrId-vh");
+			var bPressed = oEvent.getParameter("pressed");
+			if (bPressed) {
+				var aConditions = oField.getConditions();
+				if (aConditions.length > 1) {
+					oField.setConditions([aConditions[0]]); // clear conditions as FixedList only allows one
+				}
+				oField.setMaxConditions(1);
+				oField.setFieldHelp(oView.byId("LFH-MatrId"));
+			} else {
+				oField.setFieldHelp(oView.byId("VH-MatrId-FL"));
 				oField.setMaxConditions(-1);
 			}
 		}
