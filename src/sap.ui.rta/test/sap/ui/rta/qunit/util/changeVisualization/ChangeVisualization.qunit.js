@@ -304,6 +304,30 @@ sap.ui.define([
 					checkBinding(assert, aVizModel[2], aMenuItems[2]);
 				}.bind(this));
 		});
+		QUnit.test("With changes (Not all supported) - Check if Menu is bound correctly to the model", function(assert) {
+			this.aMockChanges.push(createMockChange("testAddColumn", "addColumn", "Comp1---idMain1--lb1"));
+			prepareChanges(this.aMockChanges);
+			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [3]);
+			this.oCheckModelAll.count = 3;
+			this.oCheckModelAll.tooltip = oRtaResourceBundle.getText("TOOLTIP_CHANGEVISUALIZATION_OVERVIEW_ADDITIONAL_CHANGES");
+			this.oRta.setMode("visualization");
+			return waitForMethodCall(this.oRta.getToolbar(), "setModel")
+				.then(function() {
+					oCore.applyChanges();
+					var oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+					return oOpenPopoverPromise;
+				}.bind(this))
+				.then(function() {
+					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories;
+					assert.ok(this.oChangeVisualization.getAggregation("popover").getContent()[0].getVisible(), "Hidden Info Message is visible");
+					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[1].getItems();
+					checkModel(assert, aVizModel[0], this.oCheckModelAll);
+					checkModel(assert, aVizModel[2], this.oCheckModelMove);
+					checkBinding(assert, aVizModel[0], aMenuItems[0]);
+					checkBinding(assert, aVizModel[2], aMenuItems[2]);
+				}.bind(this));
+		});
 		QUnit.test("With changes (Change gets invisible) - Check if Menu is bound correctly to the model", function(assert) {
 			prepareChanges(this.aMockChanges);
 			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [3]);
