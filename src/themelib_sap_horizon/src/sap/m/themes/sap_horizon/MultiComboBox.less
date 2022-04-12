@@ -9,31 +9,9 @@
 .sapMMultiComboBoxPicker .sapMMultiComboBoxSelectAll.sapMTB.sapMIBar.sapMMultiComboBoxSelectAllFocused,
 .sapMMultiComboBoxPicker .sapMValueStateHeaderRoot.sapMFocusable:focus {
 	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	outline-offset: -0.25rem;
 }
 
-.sapMMultiComboBoxPicker.sapMSuggestionsPopoverNoneState .sapMList {
-	&:not(.sapMSticky) li[data-sap-ui-first-suggestion-item]:focus,
-	&.sapMSticky .sapMMultiComboBoxSelectAllFocused {
-		border-top-left-radius:  @sapUiElementBorderCornerRadius;
-		border-top-right-radius:  @sapUiElementBorderCornerRadius;
-	}
-}
-
-.sapMMultiComboBoxPicker .sapMValueStateHeaderRoot:focus {
-	border-top-left-radius: @sapUiElementBorderCornerRadius;
-	border-top-right-radius: @sapUiElementBorderCornerRadius;
-}
-
-.sapMMultiComboBoxPicker li[data-sap-ui-last-suggestion-item]:focus {
-	border-bottom-left-radius: @sapUiElementBorderCornerRadius;
-	border-bottom-right-radius: @sapUiElementBorderCornerRadius;
-}
-
-.sapMMultiComboBoxSelectAll.sapMTB.sapMIBar {
-	& .sapMBarChild.sapMCb.sapMCbHasLabel:focus:after {
-		border: none;
-	}
-}
 .sapMMultiComboBox .sapMTokenizer {
 	padding-top: 1px;
 }
