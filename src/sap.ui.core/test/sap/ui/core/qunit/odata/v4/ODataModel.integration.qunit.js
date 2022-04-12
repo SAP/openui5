@@ -36897,6 +36897,19 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.hasPendingChanges(), bWithPendingChanges);
 			assert.notOk(oListBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
 
+			if (!bWithPendingChanges) {
+				sNewNote = "Note 2.4";
+				that.expectRequest("SalesOrderList?$select=GrossAmount,Note,NoteLanguage"
+						+ ",SalesOrderID&$filter=SalesOrderID eq '2'", {
+						value : [{
+							GrossAmount : "2.40",
+							Note : sNewNote, // not shown on "keptAlivePage"
+							NoteLanguage : "EN", // not shown on "keptAlivePage"
+							SalesOrderID : "2"
+						}]
+					})
+					.expectChange("grossAmount", "2.40");
+			}
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
 					value : [{
 						Note : "Note 1.4",
@@ -36926,7 +36939,6 @@ sap.ui.define([
 
 			if (!bWithPendingChanges) {
 				sNewNote = "Note 2.5";
-				//TODO why is this request missing above in (4)?! --> CPOUI5ODATAV4-1180
 				that.expectRequest("SalesOrderList?$select=GrossAmount,Note,NoteLanguage"
 						+ ",SalesOrderID&$filter=SalesOrderID eq '2'", {
 						value : [{

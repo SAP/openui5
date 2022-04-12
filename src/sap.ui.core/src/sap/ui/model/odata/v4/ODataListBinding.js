@@ -141,6 +141,7 @@ sap.ui.define([
 		// A kept-alive context may be parked here for a longer time, with undefined index.
 		this.mPreviousContextsByPath = {};
 		this.aPreviousData = [];
+		this.bRefreshKeptElements = false; // refresh kept elements when resuming?
 		this.bSharedRequest = mParameters.$$sharedRequest || oModel.bSharedRequests;
 		this.aSorters = _Helper.toArray(vSorters);
 		this.sUpdateGroupId = mParameters.$$updateGroupId;
@@ -2692,7 +2693,9 @@ sap.ui.define([
 		}
 
 		if (this.isRootBindingSuspended()) {
+			// Note: side-effects (incl. refresh) are forbidden while suspended
 			this.refreshSuspended(sGroupId);
+			this.bRefreshKeptElements = true;
 			return SyncPromise.all(refreshAll(that.getDependentBindings()));
 		}
 
@@ -2709,21 +2712,7 @@ sap.ui.define([
 				that.removeCachesAndMessages(sResourcePathPrefix);
 				that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true,
 					bKeepCacheOnError ? sGroupId : undefined);
-				oKeptElementsPromise = that.oCachePromise.then(function (oNewCache) {
-					return oNewCache.refreshKeptElements(that.lockGroup(sGroupId),
-						function onRemove(sPredicate, iIndex) {
-							if (iIndex === undefined) {
-								that.mPreviousContextsByPath[that.getResolvedPath() + sPredicate]
-									.resetKeepAlive();
-							} else { // Note: implies oContext.created()
-								that.destroyCreated(that.aContexts[iIndex]);
-							}
-						});
-				}).catch(function (oError) {
-					that.oModel.reportError("Failed to refresh kept-alive elements", sClassName,
-						oError);
-					throw oError;
-				});
+				oKeptElementsPromise = that.refreshKeptElements(sGroupId);
 				if (that.iCurrentEnd > 0) {
 					oPromise = that.createRefreshPromise().catch(function (oError) {
 						if (!bKeepCacheOnError || oError.canceled) {
@@ -2769,6 +2758,37 @@ sap.ui.define([
 				// Avoid update in case bKeepCacheOnError needs to roll back.
 				return that.oHeaderContext.checkUpdateInternal(); // this is NOT done by refreshAll!
 			});
+		});
+	};
+
+	/**
+	 * Refreshes the kept-alive elements. This needs to be called before the cache has filled the
+	 * collection.
+	 *
+	 * @param {string} sGroupId
+	 *   The effective group ID
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result, or rejecting with an error if the refresh
+	 *   fails.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.refreshKeptElements = function (sGroupId) {
+		var that = this;
+
+		return this.oCachePromise.then(function (oCache) {
+			return oCache.refreshKeptElements(that.lockGroup(sGroupId),
+				function onRemove(sPredicate, iIndex) {
+					if (iIndex === undefined) {
+						that.mPreviousContextsByPath[that.getResolvedPath() + sPredicate]
+							.resetKeepAlive();
+					} else { // Note: implies oContext.created()
+						that.destroyCreated(that.aContexts[iIndex]);
+					}
+				});
+		}).catch(function (oError) {
+			that.oModel.reportError("Failed to refresh kept-alive elements", sClassName, oError);
+			throw oError;
 		});
 	};
 
@@ -3271,7 +3291,8 @@ sap.ui.define([
 	ODataListBinding.prototype.resumeInternal = function (_bCheckUpdate, bParentHasChanges) {
 		var aBindings = this.getDependentBindings(),
 			sResumeChangeReason = this.sResumeChangeReason,
-			bRefresh = bParentHasChanges || sResumeChangeReason;
+			bRefresh = bParentHasChanges || sResumeChangeReason,
+			that = this;
 
 		this.sResumeChangeReason = undefined;
 
@@ -3281,6 +3302,11 @@ sap.ui.define([
 			// if the parent binding resumes but there are no changes in the parent binding
 			// ignore the parent cache and create an own cache
 			this.fetchCache(this.oContext, !bParentHasChanges);
+
+			if (this.bRefreshKeptElements) {
+				this.bRefreshKeptElements = false;
+				that.refreshKeptElements(that.getGroupId());
+			}
 		}
 		aBindings.forEach(function (oDependentBinding) {
 			// do not call checkUpdate in dependent property bindings if the cache of this
