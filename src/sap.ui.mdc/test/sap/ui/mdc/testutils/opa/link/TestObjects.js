@@ -5,14 +5,14 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"./Actions",
 	"./Assertions",
-	"../p13n/Actions",
-    "./waitForLink"
+    "./waitForLink",
+	"../p13n/Actions"
 ], function(
 	Opa5,
 	linkActions,
 	linkAssertions,
-	p13nActions,
-    waitForLink
+    waitForLink,
+	p13nActions
 ) {
 	"use strict";
 
@@ -37,7 +37,7 @@ sap.ui.define([
                 iPersonalizeTheLinks: function(oLinkIdentifier, aLinks) {
                     return waitForLink.call(this, oLinkIdentifier, {
                         success: function(oLink) {
-                            p13nActions.iPersonalizeLink.call(this, oLink, aLinks);
+                            p13nActions.iPersonalizeLink.call(this, oLink, aLinks, linkActions.iOpenThePersonalizationDialog);
                         }
                     });
                 },
@@ -53,7 +53,7 @@ sap.ui.define([
                 iResetThePersonalization: function(oLinkIdentifier) {
                     return waitForLink.call(this, oLinkIdentifier, {
                         success: function(oLink) {
-                            p13nActions.iResetThePersonalization.call(this, oLink);
+                            p13nActions.iResetThePersonalization.call(this, oLink, linkActions.iOpenThePersonalizationDialog);
                         }
                     });
                 },

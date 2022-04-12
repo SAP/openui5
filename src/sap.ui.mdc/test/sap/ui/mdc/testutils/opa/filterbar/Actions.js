@@ -13,7 +13,10 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"./Util",
 	"../p13n/Actions",
-	"../p13n/Util"
+	"../p13n/Util",
+	"../p13n/waitForP13nButtonWithMatchers",
+	"../p13n/waitForP13nDialog",
+	"sap/ui/core/Core"
 ], function(
 	Opa5,
 	Matcher,
@@ -25,9 +28,14 @@ sap.ui.define([
 	EnterText,
 	FilterBarUtil,
 	p13nActions,
-	p13nUtil
+	p13nUtil,
+	waitForP13nButtonWithMatchers,
+	waitForP13nDialog,
+	oCore
 ) {
 	"use strict";
+
+	var oMDCBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var iEnterFilterValue = function(oGroupViewItem, mSettings) {
 		// Get sap.m.Panel of GroupViewItem
@@ -126,7 +134,48 @@ sap.ui.define([
 		});
 	};
 
-    return {
+    var oActions = {
+		iOpenThePersonalizationDialog: function(oControl, oSettings) {
+			var sControlId = typeof oControl === "string" ? oControl : oControl.getId();
+			var aDialogMatchers = [];
+			var aButtonMatchers = [];
+			return this.waitFor({
+				id: sControlId,
+				success: function(oControlInstance) {
+					Opa5.assert.ok(oControlInstance);
+
+					aButtonMatchers.push(new Ancestor(oControlInstance));
+					aDialogMatchers.push(new Ancestor(oControlInstance, false));
+
+					// Add matcher for p13n button text
+					var oMatcher = new Matcher();
+					oMatcher.isMatching = function(oButton) {
+						return oButton.getText().includes(oMDCBundle.getText("filterbar.ADAPT"));
+					};
+					aButtonMatchers.push(oMatcher);
+					aDialogMatchers.push(new Properties({
+						title: oMDCBundle.getText("filterbar.ADAPT_TITLE")
+					}));
+
+					waitForP13nButtonWithMatchers.call(this, {
+						actions: new Press(),
+						matchers: aButtonMatchers,
+						success: function() {
+							waitForP13nDialog.call(this, {
+								matchers: aDialogMatchers,
+								success:  function(oP13nDialog) {
+									if (oSettings && typeof oSettings.success === "function") {
+										oSettings.success.call(this, oP13nDialog);
+									}
+								}
+							});
+						},
+						errorMessage: "Control '" + sControlId + "' has no P13n button"
+					});
+				},
+				errorMessage: "Control '" + sControlId + "' not found."
+			});
+		},
 		iExpectSearch: function(oFilterBar) {
 			var sFilterBarId = typeof oFilterBar === "string" ? oFilterBar : oFilterBar.getId();
 			var sText = FilterBarUtil.texts.go;
@@ -153,7 +202,7 @@ sap.ui.define([
 		},
 		iEnterFilterValue: function(oFilterBar, mSettings) {
 			var sIcon = p13nUtil.icons.group;
-			return p13nActions.iOpenThePersonalizationDialog.call(this, oFilterBar, {
+			return oActions.iOpenThePersonalizationDialog.call(this, oFilterBar, {
 				success: function(oP13nDialog) {
 					this.waitFor({
 						controlType: "sap.m.Button",
@@ -246,5 +295,7 @@ sap.ui.define([
 			});
 		}
     };
+
+	return oActions;
 
 });
