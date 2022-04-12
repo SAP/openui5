@@ -1155,7 +1155,7 @@ sap.ui.define([
                 this._setState(oMDCChart, oState);
                 var oBindingInfo = this._getBindingInfo(oMDCChart);
                 this.updateBindingInfo(oMDCChart, oBindingInfo); //Applies filters
-                this.rebind(oMDCChart, oBindingInfo);
+                this._performInitialBind(oMDCChart, oBindingInfo);
 
                 resolve();
             }.bind(this));
@@ -1163,6 +1163,17 @@ sap.ui.define([
 
         }.bind(this));
 
+    };
+
+    ChartDelegate._performInitialBind = function(oMDCChart, oBindingInfo) {
+        if (oMDCChart && oBindingInfo && this._getChart(oMDCChart)) {
+            this._addBindingListener(oBindingInfo, "dataReceived", this._getState(oMDCChart).dataLoadedCallback.bind(oMDCChart));
+
+            this._getChart(oMDCChart).bindData(oBindingInfo);
+            this._setBindingInfoForState(oMDCChart, oBindingInfo);
+            var oState = this._getState(oMDCChart);
+            oState.innerChartBound = true;
+        }
     };
 
     ChartDelegate._calculateInnerChartHeight = function(oMDCChart) {
