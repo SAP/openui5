@@ -380,7 +380,7 @@ sap.ui.define([
 			this._oInput.setValueState(this.getValueState());
 			this._oInput.setValueStateText(this.getValueStateText());
 
-			this.setValue(this._reverseSubstitudeValue(this.getValue()));
+			this.setValue(this._substitudeMissingValue(this.getValue()));
 		};
 
 		DynamicDateRange.prototype.setValue = function(oValue) {
@@ -1241,15 +1241,14 @@ sap.ui.define([
 
 		/**
 		 * Some of the values are semantically equivalent to others.
-		 * So we substitute them everywhere, if needed. Example: Last 1 days === Yesterday
-		 * In some cases the replacement should be reversed as some values need to be included as options to be replaced.
-		 * So we reverse the substitution of the values if the options are missing.
+		 * Example: Last 1 days === Yesterday
+		 * When we receive value that is not present in the options property, we try to replace it with another existing equivalent option.
 		 *
 		 * @param {object} oValue A valid control value
 		 * @private
 		 * @returns {object} A substituted value if needed, or the same value if not
 		 */
-		DynamicDateRange.prototype._reverseSubstitudeValue = function(oValue) {
+		DynamicDateRange.prototype._substitudeMissingValue = function(oValue) {
 			var oNewValue = oValue;
 
 			if (oValue  && oValue.operator === "YESTERDAY" && !this.getOptions().includes("YESTERDAY") && this.getOptions().includes("LASTDAYS")) {
