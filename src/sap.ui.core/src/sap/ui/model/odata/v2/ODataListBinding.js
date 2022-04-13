@@ -577,7 +577,6 @@ sap.ui.define([
 				if (this.aExpandRefs.sideEffects && !bOldUseExpandedList) {
 					// don't switch expanded list mode if data is read via a side effect
 					this.aExpandRefs = undefined;
-					this.aAllKeys = null;
 					this.bUseExpandedList = false;
 
 					return this.bUseExpandedList;

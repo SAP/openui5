@@ -13641,6 +13641,65 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: The side-effects response contains the complete data for the binding in "Client"
+	// mode, no additional GET request is needed.
+	// JIRA: CPOUI5MODELS-780
+	QUnit.test("Request side effects: no second request in 'Client' mode", function (assert) {
+		var oModel = createSalesOrdersModel({defaultOperationMode : "Client"}),
+			sView = '\
+<FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="2">\
+		<Input id="note" value="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet('42')", {
+				__metadata : {uri : "BusinessPartnerSet('42')"},
+				BusinessPartnerID : "42"
+			})
+			.expectRequest("BusinessPartnerSet('42')/ToSalesOrders", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					Note : "Sales Order 1"
+				}, {
+					__metadata : {uri : "SalesOrderSet('2')"},
+					SalesOrderID : "2",
+					Note : "Sales Order 2"
+				}]
+			})
+			.expectValue("note", ["Sales Order 1", "Sales Order 2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("BusinessPartnerSet('42')?$expand=ToSalesOrders", {
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					ToSalesOrders : {
+						results : [{
+							__metadata : {uri : "SalesOrderSet('1')"},
+							SalesOrderID : "1",
+							Note : "Sales Order 1 - SideEffect"
+						}, {
+							__metadata : {uri : "SalesOrderSet('2')"},
+							SalesOrderID : "2",
+							Note : "Sales Order 2 - SideEffect"
+						}]
+					}
+				})
+				.expectValue("note", ["Sales Order 1 - SideEffect", "Sales Order 2 - SideEffect"]);
+
+			// code under test
+			oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
+				urlParameters : {$expand : "ToSalesOrders"}
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Messages that are no longer valid after a side-effects request are removed
 	// JIRA: CPOUI5MODELS-656
 	QUnit.test("Request side effects: correct message handling", function (assert) {
