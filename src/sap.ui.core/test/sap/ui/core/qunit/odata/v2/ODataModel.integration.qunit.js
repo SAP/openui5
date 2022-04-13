@@ -15391,4 +15391,112 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: deleting an inactive, a transient and a created persisted item from a list binding
+	// in "Client" mode. The binding behaves the same as in "Server" mode.
+	// JIRA: CPOUI5MODELS-780
+	QUnit.test("#create with OperationMode.Client: delete", function (assert) {
+		var oBinding, oContextInactive, oContextPersisted, oContextTransient,
+			oModel = createSalesOrdersModel({defaultOperationMode : "Client"}),
+			sView = '\
+<Table id="table" items="{/SalesOrderSet}">\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					Note : "from server",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectValue("note", ["from server"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectValue("note", ["inactive", "from server"]);
+
+			oContextInactive = oBinding.create({Note : "inactive"}, /*bAtEnd*/false,
+				{inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", ["persisted", "from server"], 1);
+
+			oContextPersisted = oBinding.create({Note : "persisted"}, /*bAtEnd*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "persisted"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						Note : "persisted",
+						SalesOrderID : "2"
+					},
+					statusCode : 201
+				});
+
+			// code under test
+			oModel.submitChanges();
+
+			return Promise.all([
+				oContextPersisted.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("note", ["transient", "from server"], 2);
+
+			oContextTransient = oBinding.create({Note : "transient"}, /*bAtEnd*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					requestUri : "SalesOrderSet('2')"
+				}, {})
+				.expectRequest("SalesOrderSet?"
+					+ "$filter=not(SalesOrderID eq '2')", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('1')"},
+						Note : "from server",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectValue("note", ["transient", "from server"], 1);
+
+			return Promise.all([
+				// code under test
+				oContextPersisted.delete(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("note", ["from server"], 1);
+
+			return Promise.all([
+				// code under test
+				oContextTransient.delete(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("note", ["from server"]);
+
+			return Promise.all([
+				// code under test
+				oContextInactive.delete(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });
