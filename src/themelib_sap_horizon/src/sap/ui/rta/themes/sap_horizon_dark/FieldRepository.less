@@ -1,38 +1,31 @@
-/* =========================================== */
-/* CSS for control sap.ui.rta/FieldRepository  */
-/* Evening Horizon theme                       */
-/* =========================================== */
-
-@sap_ui_rta_FieldRepository_ListSelect: @sapUiListHoverSelectionBackground;
-@sap_ui_rta_FieldRepository_ButtonActiveColor: @sapUiButtonActiveBorderColor;
+/******************************************************************
+	Style of the RTA Add Fields Dialog  - Horizon Dark Theme
+*******************************************************************/
+@_sap_ui_rta_FieldRepository_ListSelect: @sapUiListHoverSelectionBackground;
+@_sap_ui_rta_FieldRepository_BtnHoverOutline: @sapUiButtonActiveBorderColor;
+@_sap_ui_rta_FieldRepository_ListItmBorderRadius: @sapUiButtonBorderCornerRadius; //0.5rem
 
 .sapUiRtaMode {
 
 	.sapUIRtaFieldRepositoryDialog {
 
-		.sapMBtn {
-			&:hover:not(focus) {
-				.sapMBtnHoverable {
-					outline: none;
-				}
+		.sapMLIBHoverable {
+			&.sapMLIBSelected:hover {
+				background: @_sap_ui_rta_FieldRepository_ListSelect;
 			}
 
-			> .sapMBtnInner:not(.sapMBtnEmphasized) {
-				background: transparent;
-			}
-
-			&:focus {
-				&:hover > .sapMFocusable {
-					outline: 0.125rem solid @sap_ui_rta_FieldRepository_ButtonActiveColor;
-					outline-offset: -0.125rem;
-				}
+			&.sapMLIB.sapMLIBSelected {
+				border-bottom: 0.0625rem solid transparent;
 			}
 		}
 
-		.sapMLIBHoverable {
-			&.sapMLIBSelected:hover {
-				background: @sap_ui_rta_FieldRepository_ListSelect;
-			}
+		.sapUIRtaListItem {
+			border-radius: @_sap_ui_rta_FieldRepository_ListItmBorderRadius;
+		}
+
+		// Search field
+		.sapMSF.sapMFocus:hover .sapMSFF {
+			outline: 0.0625rem solid @_sap_ui_rta_FieldRepository_BtnHoverOutline; //1px
 		}
 	}
 }

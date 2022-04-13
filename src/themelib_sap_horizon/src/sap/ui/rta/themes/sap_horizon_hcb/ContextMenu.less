@@ -1,18 +1,18 @@
-/* ======================================= */
-/* CSS for control sap.ui.rta/ContextMenu  */
-/* Horizon High Contrast Black theme       */
-/* ======================================= */
-
-@_sap_ui_rta_ContextMenu_Border_LightColor: @sapUiWhite; //#ffffff
-@_sap_ui_rta_ContextMenu_Border_DarkColor: @sapUiBlackBG; //#000000
-@_sap_ui_rta_ContextMenu_BoxShadowColor: fade(@sapUiWhite, 60%); //rgba(255, 255, 255, 0.6)
+/**********************************************************************
+	Style of the RTA Contextmenu - Horizon High Contrast Black theme
+***********************************************************************/
+@_sap_ui_rta_ContextMenu_Border_LightColor: @sapUiNeutralBorder; //#ffffff
+@_sap_ui_rta_ContextMenu_Border_DarkColor: @sapUiNeutralBG; //#000000
+@_sap_ui_rta_ContextMenu_Border_Radius: @sapUiButtonBorderCornerRadius; // 0.375rem
+@_sap_ui_rta_ContextMenu_BoxShadow_DarkColor: fade(@sapUiContentShadowColor, 60%); //rgba(255, 255, 255, 0.6)
+@_sap_ui_rta_ContextMenu_BoxShadow_LightColor: @sapUiNeutralBorder; //#ffffff
 
 .sapUiRtaMode {
 	.sapUiDtContextMenu {
 		&.sapMMenu {
-			border: 0.125rem solid @_sap_ui_rta_ContextMenu_Border_LightColor; //2px
-			border-image: repeating-linear-gradient(-45deg, @_sap_ui_rta_ContextMenu_Border_DarkColor, @_sap_ui_rta_ContextMenu_Border_DarkColor 4px, @_sap_ui_rta_ContextMenu_Border_LightColor 4px, @_sap_ui_rta_ContextMenu_Border_LightColor 6px) 4;
-			box-shadow: 0 0.625rem 2rem 0 @_sap_ui_rta_ContextMenu_BoxShadowColor, 0 0 0.625rem -0.125rem @_sap_ui_rta_ContextMenu_Border_LightColor; //10px 32px 10px 2px
+			border: 0.188rem dashed @_sap_ui_rta_ContextMenu_Border_LightColor; //2px
+			border-image: none;
+			border-radius: @_sap_ui_rta_ContextMenu_Border_Radius;
 		}
 	}
 }

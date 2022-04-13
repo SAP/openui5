@@ -1,11 +1,13 @@
 /******************************************************************
 	Style of the DT Overlays - base Theme
 *******************************************************************/
-@_sap_ui_dt_Overlay_FocusColor : @sapUiContentFocusColor; //#000
-@_sap_ui_dt_Overlay_TargetZoneColor : @sapUiSelected; //#2e9cea
-@_sap_ui_dt_Overlay_SelectionColor : lighten(@sapUiBlue,10); //#3333ff
-@_sap_ui_dt_Overlay_CuttedColor : @sapUiWhite; //#fff
-@_sap_ui_dt_Overlay_HighlightColor : @sapUiOrange; //#f27020
+@_sap_ui_dt_Overlay_FocusColor: @sapUiContentFocusColor; //#000
+@_sap_ui_dt_Overlay_TargetZoneColor: @sapUiSelected; //#8fb5ff
+@_sap_ui_dt_Overlay_SelectionColor: lighten(@sapUiChart1, 20); //#6fa0e2
+@_sap_ui_dt_Overlay_CuttedColor: @sapUiNeutralBG; // #fff
+@_sap_ui_dt_Overlay_CuttedBorder: @sapUiSelected; //#8fb5ff
+@_sap_ui_dt_Overlay_HighlightColor: @sapUiShellActiveBackground; //#ec8b46
+@_sap_ui_dt_Overlay_ActiveBG: fade(@sapUiSelected, 10%); //rgba(143, 181, 255, 0.1);
 
 #overlay-container {
 	position: absolute;
@@ -54,6 +56,16 @@
 
 .sapUiDtOverlayDropZone {
 	z-index: 9999999 !important;
+
+	> .sapUiDtOverlayChildren {
+		> .sapUiDtOverlayMovable {
+			background: @_sap_ui_dt_Overlay_ActiveBG;
+			// no "border"
+			&:after {
+				content: none;
+			}
+		}
+	}
 }
 
 .sapUiDtOverlayTargetZone {
@@ -67,19 +79,42 @@
 .sapUiDtOverlaySelected {
 	&:after {
 		content: " ";
-		outline: 0.125rem dashed @_sap_ui_dt_Overlay_SelectionColor; //2px
+		outline: 0.125rem solid @_sap_ui_dt_Overlay_SelectionColor; //2px
 		outline-offset: -0.125rem; //2px
+		border: none;
+	}
+
+	&.sapUiDtOverlayWithScrollBar:after {
+		bottom: 0;
+		right: 0;
+		top: 0;
+		left: 0;
+		width: initial;
+		height: initial;
+	}
+
+	&.sapUiDtOverlayFocusable {
+		&:focus {
+			&:before {
+				top: 0.125rem; //2px
+				left: 0.125rem; //2px
+				bottom: 0.125rem; //2px
+				right: 0.125rem; //2px
+				width: auto;
+				height: auto;
+			}
+		}
 	}
 }
 
 .sapUiDtOverlayHighlighted:not(.sapUiDtOverlaySelected) {
 	&:after {
-	   content: " ";
-	   outline: 0.0625rem solid @_sap_ui_dt_Overlay_HighlightColor; //1px
-	   outline-offset: -0.0625rem; //1px
-	   box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.3);
+		content: " ";
+		outline: 0.0625rem solid @_sap_ui_dt_Overlay_HighlightColor; //1px
+		outline-offset: -0.0625rem; //1px
+		box-shadow: 0 0.1875rem 0.375rem 0 rgba(0, 0, 0, 0.3);
 	}
- }
+}
 
 .sapUiDtOverlayMovable {
 	cursor: move;
@@ -88,6 +123,12 @@
 .sapUiDtOverlayCutted {
 	background-color: @_sap_ui_dt_Overlay_CuttedColor !important;
 	opacity: 0.5;
+
+	&:after {
+		content: " ";
+		outline: 0.063rem solid @_sap_ui_dt_Overlay_CuttedBorder; //1px
+		outline-offset: -0.125rem; //2px
+	}
 }
 
 .sapUiDtDragGhostWrapper {
@@ -103,13 +144,15 @@
 
 /* fix for chrome */
 .sap-desktop[data-sap-ui-browser^="cr"] {
-
 	.sapUiDtDragGhostWrapper {
-		padding-left : -500px;
+		padding-left: -500px;
 		padding-bottom: 500px;
 		bottom: -1000px;
 	}
+}
 
+.sapUiDtDragGhost {
+	background: @_sap_ui_dt_Overlay_ActiveBG;
 }
 
 .sapUiDtClonedDom {

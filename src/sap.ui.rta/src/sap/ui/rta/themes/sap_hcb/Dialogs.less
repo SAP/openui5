@@ -1,0 +1,28 @@
+/******************************************************************
+	Style of Dialogs shown in RTA - HCB theme
+*******************************************************************/
+@_sap_ui_rta_Dialogs_BorderLightColor: @sapUiNeutralElement; //#ffffff
+@_sap_ui_rta_Dialogs_BorderDarkColor: @sapUiNeutralBG; //#000000
+
+.sapUiRtaPopover {
+	&.sapMPopoverArr, .sapMPopoverArr {
+		border-style: none;
+
+		&:after {
+			left: 0;
+			bottom: 1.5rem;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapUiRtaPopover {
+	&.sapMPopoverArr, .sapMPopoverArr {
+		bottom: -2rem;
+
+		&:after {
+			left: 0;
+			bottom: 1.5rem;
+			border-width: 0.125rem;
+		}
+	}
+}

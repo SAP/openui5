@@ -1,14 +1,43 @@
-/* ============================================== */
-/* CSS for control sap.ui.rta/Toolbar.adaptation  */
-/* Horizon High Contrast Black theme              */
-/* ============================================== */
-
-@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapUiBlackBG; //#000000
-@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiWhite; //#ffffff
-@_sap_ui_rta_Toolbar_Adaptation_BoxShadowColor: fade(@sapUiWhite, 80%); //rgba(255, 255, 255, 0.8)
+/***********************************************************************
+	Style of the RTA Toolbar (type: adaptation) - Horizon High Contrast Black theme
+************************************************************************/
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapUiNeutralBG; //#000000
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiNeutralElement; //#ffffff
+@_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder: @sapUiNeutralElement; //#ffffff
+@_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol: @sapUiNeutralBorder; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_SegBBtnSelBG: @sapUiSelected;
 
 .sapUiRtaMode {
 	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
-		box-shadow: 0 0.625rem 2rem 0 @_sap_ui_rta_Toolbar_Adaptation_BoxShadowColor, 0 0 0.625rem -0.125rem @_sap_ui_rta_Toolbar_Adaptation_TextColor; //10px 32px 10px 2px
+		.sapMBtn {
+			&:focus .sapMFocusable {
+				outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol;
+				outline-offset: -0.125rem; //2px
+				border-color: transparent;
+			}
+		}
+
+		.sapMSegB {
+			.sapMSegBBtn {
+				&.sapMSegBBtnFocusable {
+					&:focus .sapMSegBBtnInner {
+						outline-width: 0.125rem; //2px
+						outline-offset: -0.125rem; //2px
+					}
+				}
+
+				&.sapMSegBBtnSel .sapMSegBBtnInner {
+					background: @_sap_ui_rta_Toolbar_Adaptation_SegBBtnSelBG;
+
+					&:after {
+						content: none !important;
+					}
+				}
+
+				.sapMSegBBtnInner {
+					border: solid thin;
+				}
+			}
+		}
 	}
 }

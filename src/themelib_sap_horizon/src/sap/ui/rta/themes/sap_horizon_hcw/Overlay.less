@@ -1,18 +1,23 @@
-/* =================================== */
-/* CSS for control sap.ui.rta/Overlay  */
-/* Horizon High Contrast White theme   */
-/* =================================== */
-
-@_sap_ui_rta_Overlay_BorderColor: @sapUiAccent6; //#004ccb
-@_sap_ui_rta_Overlay_BoxShadowColor: @sapUiWhite; //#ffffff
-@_sap_ui_rta_Overlay_BGColor: @sapUiWhite; //#ffffff
-@_sap_ui_rta_Overlay_HoverBorder: @sapUiBlackBG; //#000000
+/******************************************************************
+	Style of the RTA Overlays - Horizon High Contrast White theme
+*******************************************************************/
+@_sap_ui_rta_Overlay_BorderColor: @sapUiIndication5; //#004ccb
+@_sap_ui_rta_Overlay_BoxShadowColor: @sapUiNeutralBG; //#fff
+@_sap_ui_rta_Overlay_ShellBG: @sapUiNeutralBG; //#fff
+@_sap_ui_rta_Overlay_FocusBorder: @sapUiNeutralElement; //#000
+@_sap_ui_rta_Overlay_TargetZoneBG: fade(@sapUiSelected, 15%);
+@_sap_ui_rta_Overlay_PlaceholderBG: @sapUiNeutralBG; //#fff
+@_sap_ui_rta_Overlay_BorderRadius: @sapUiButtonBorderCornerRadius; //0.375rem
 
 .sapUiRta {
 	.sapUiDtOverlayTargetZone {
 		&:after {
-			transition: none;
 			box-shadow: none;
+			border-radius: @_sap_ui_rta_Overlay_BorderRadius;
+		}
+
+		&.sapUiDtOverlayDropZone > .sapUiDtOverlayChildren > .sapUiDtOverlayMovable {
+			background: @_sap_ui_rta_Overlay_TargetZoneBG;
 		}
 	}
 }
@@ -26,7 +31,7 @@
 
 			&:before {
 				border: none;
-				outline: 0.125rem dotted @_sap_ui_rta_Overlay_HoverBorder; //2px
+				outline: 0.125rem dotted @_sap_ui_rta_Overlay_FocusBorder; //2px
 				outline-offset: -0.25rem; //4px
 			}
 		}
@@ -35,14 +40,14 @@
 	.sapUiRtaOverlayHover {
 		&:after {
 			border: none;
-			transition: none;
 			box-shadow: none;
 			outline: 0.125rem dotted @_sap_ui_rta_Overlay_BorderColor; //2px
 			outline-offset: -0.125rem; //2px
+			border-radius: @_sap_ui_rta_Overlay_BorderRadius;
 		}
 	}
+
 	.sapUiDtOverlaySelected {
-		transition: none;
 		box-shadow: none;
 
 		&:after {
@@ -59,23 +64,11 @@
 
 		&.sapUiRtaOverlayHover {
 			&:after {
-				border: 0.125rem solid @_sap_ui_rta_Overlay_BorderColor!important; //2px
-				outline: 0.125rem dotted @_sap_ui_rta_Overlay_BorderColor!important; //2px
+				border: 0.125rem solid @_sap_ui_rta_Overlay_BorderColor !important; //2px
+				outline: 0.125rem dotted @_sap_ui_rta_Overlay_BorderColor !important; //2px
 				outline-offset: -0.25rem; //4px
-				transition: none;
 				box-shadow: none;
 			}
 		}
 	}
-}
-
-.sapUiRtaMode .sapUiShellBackgroundImage.sapUiGlobalBackgroundImageForce.sapUshellShellBG {
-	background-color: @_sap_ui_rta_Overlay_BGColor;
-	background-image:  none;
-}
-
-.sapUiRtaMode .sapUshellViewPortCenter,
-.sapUiRtaMode .sapMShellBG,
-.sapUiRtaMode .sapUiRtaToolbar {
-	background-color: @_sap_ui_rta_Overlay_BGColor;
 }

@@ -1,17 +1,7 @@
 /******************************************************************
 	Style of the RTA Contextmenu - sap_fiori_3_hcw Theme
 *******************************************************************/
-@_sap_ui_dt_ContextMenu_BorderColor: @sapUiBlackBG; //#000000
-@_sap_ui_rta_ContextMenu_Border_LightColor: @sapUiWhite; //#ffffff
-@_sap_ui_rta_ContextMenu_Border_DarkColor: @sapUiBlackBG; //#000000
-
-
-.sapUiRtaMode {
-	.sapUiDtContextMenu {
-		&.sapMMenu {
-			border: 0.125rem solid @_sap_ui_rta_ContextMenu_Border_LightColor; //2px
-			border-image: repeating-linear-gradient( -45deg, @_sap_ui_rta_ContextMenu_Border_DarkColor, @_sap_ui_rta_ContextMenu_Border_DarkColor 4px, @_sap_ui_rta_ContextMenu_Border_LightColor 4px, @_sap_ui_rta_ContextMenu_Border_LightColor 6px) 4;
-			box-shadow: 0 0.625rem 2rem 0 rgba(0, 0, 0, 0.5), 0 0 0.625rem -0.125rem @_sap_ui_rta_ContextMenu_Border_DarkColor; //10px 32px 10px 2px
-		}
-	}
-}
+@_sap_ui_rta_ContextMenu_Border_LightColor: @sapUiNeutralBorder; //#000
+@_sap_ui_rta_ContextMenu_Border_DarkColor: @sapUiNeutralBG; //#fff
+@_sap_ui_rta_ContextMenu_BoxShadow_DarkColor: fade(@sapUiContentShadowColor, 60%); //rgba(0, 0, 0, 0.6)
+@_sap_ui_rta_ContextMenu_BoxShadow_LightColor: @sapUiNeutralBorder; //#000
