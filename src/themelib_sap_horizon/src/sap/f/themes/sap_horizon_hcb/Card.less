@@ -7,6 +7,7 @@
 @_sap_f_Card_HeaderFocusBorderBottomOffset: 2px;
 @_sap_f_Card_Badge_Background: @sapHighlightColor;
 @_sap_f_Card_Badge_Border: 0.0625rem solid @sapContent_ForegroundBorderColor;
+@_sap_f_Card_Badge_Background: @sapHighlightColor;
 
 .sapFCard .sapFCardHeader.sapFCardClickable {
 	&:hover {
@@ -32,6 +33,14 @@
 	}
 }
 
-.sapFCard .sapFCardHeader {
-	border-bottom: none;
+.sapFCard {
+
+	.sapFCardHeader {
+		border-bottom: none;
+		padding-bottom: 0.75rem;
+	}
+
+	.sapFCardFooter {
+		padding-top: 0.75rem;
+	}
 }
