@@ -264,7 +264,6 @@ sap.ui.define([
 		});
 
 		this.oColumnResizer.startResizing(oColumnDomRef);
-		this.clock.tick(1);
 		assert.strictEqual(this.oColumnResizer._oHandle.childElementCount, 1, "Resize handle circle child element is visible since its a tablet/phone device");
 		assert.ok(this.oColumnResizer._oHandle.firstChild.classList.contains("sapMPluginsColumnResizerHandleCircle"), "Correct style class added to the resize handle circle");
 
@@ -345,7 +344,6 @@ sap.ui.define([
 		assert.ok(iDummyColumnWidth > 0, "Dummy column is visible");
 
 		var iClientX = oCurrentColumnDom.getBoundingClientRect()[this.sEndDirection];
-		this.clock.tick(1);
 		QUtils.triggerEvent("mousemove", oCurrentColumnDom, {
 			clientX: iClientX
 		});
@@ -370,7 +368,6 @@ sap.ui.define([
 
 	QUnit.test("Resize session should not start if valid resizable DOM is not found", function(assert) {
 		var oColumnDom = this.oTable.getColumns()[1].getDomRef();
-		this.clock.tick(1);
 		var oTouchStart = createTouchEvent("touchstart", oColumnDom, 0, this.oColumnResizer);
 		var fnStartResizeSession = sinon.spy(this.oColumnResizer, "_startResizeSession");
 		this.oColumnResizer.ontouchstart(oTouchStart);
@@ -392,7 +389,6 @@ sap.ui.define([
 			oCurrentColumnDom = oCurrentColumn.getDomRef(),
 			fnFireColumnResie = sinon.spy(this.oColumnResizer, "_fireColumnResize");
 
-		this.clock.tick(1);
 		this.oColumnResizer.attachColumnResize(function(oEvent) {
 			oEvent.preventDefault();
 		});
@@ -421,7 +417,6 @@ sap.ui.define([
 
 		oColumn.setWidth("100px");
 		Core.applyChanges();
-		this.clock.tick(1);
 
 		assert.strictEqual(oColumn.getWidth(), "100px", "Column width is set to 100px initially");
 		var iClientX = oColumnDomRef.getBoundingClientRect()[this.sEndDirection],
@@ -444,7 +439,7 @@ sap.ui.define([
 
 		oColumn.setWidth("300px");
 		Core.applyChanges();
-		this.clock.tick(1);
+
 		var oColumnDomRef = oColumn.getDomRef();
 		assert.strictEqual(oColumn.getWidth(), "300px", "Column width is set to 100px initially (bigger than necessary");
 
