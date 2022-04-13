@@ -3942,6 +3942,30 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("createContexts: reuse a created context if kept alive", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -1,
+				SyncPromise.resolve());
+
+		oCreatedContext.setKeepAlive(true);
+		oBinding.mPreviousContextsByPath = {
+			"/EMPLOYEES('1')" : oCreatedContext
+		};
+		this.mock(Context).expects("create").never();
+		this.mock(this.oModel).expects("addPrerenderingTask").never();
+		this.mock(oCreatedContext).expects("destroy").never();
+		this.mock(oCreatedContext).expects("checkUpdate").withExactArgs();
+
+		// code under test
+		oBinding.createContexts(0, [{
+			"@$ui5._" : {predicate : "('1')"}
+		}]);
+
+		assert.strictEqual(oBinding.aContexts[0], oCreatedContext);
+		assert.strictEqual(oCreatedContext.getModelIndex(), 0);
+	});
+
+	//*********************************************************************************************
 	[{
 		keyPredicates : false
 	}, {

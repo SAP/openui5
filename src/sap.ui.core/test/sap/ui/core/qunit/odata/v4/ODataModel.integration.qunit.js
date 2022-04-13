@@ -21653,9 +21653,9 @@ sap.ui.define([
 				.expectChange("artistName", null);
 
 			return Promise.all([
-				oCreationRowContext.delete(),
 				// handle cancellation caused by .delete()
 				checkCanceled(assert, oCreationRowContext.created()),
+				oCreationRowContext.delete(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -29750,11 +29750,11 @@ sap.ui.define([
 			}
 
 			return Promise.all([
+				checkCanceled(assert, oCreationRowContext.created()),
 				// cleanup: delete creation row to avoid error on view destruction
 				oCreationRowContext.delete(),
-				checkCanceled(assert, oCreationRowContext.created()),
-				bSuccess || oNewContext.delete(),
 				bSuccess || checkCanceled(assert, oNewContext.created()),
+				bSuccess || oNewContext.delete(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -29886,9 +29886,9 @@ sap.ui.define([
 			that.expectChange("creationRow::note", null);
 
 			return Promise.all([
+				checkCanceled(assert, oCreationRowContext.created()),
 				// cleanup: delete creation row to avoid error on view destruction
 				oCreationRowContext.delete(),
-				checkCanceled(assert, oCreationRowContext.created()),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -37000,9 +37000,10 @@ sap.ui.define([
 				oCreationRowContext.setProperty("Note", "alive & kicking");
 				assert.strictEqual(oCreationRowContext.getProperty("Note"), "alive & kicking");
 
-				oCreationRowContext.delete(); // clean up
-
-				return checkCanceled(assert, oCreationRowContext.created());
+				return Promise.all([
+					checkCanceled(assert, oCreationRowContext.created()),
+					oCreationRowContext.delete() // clean up
+				]);
 			}
 		}).then(function () {
 			assert.notOk(oModel.hasPendingChanges("never"));
@@ -38198,12 +38199,14 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1409
 	//
 	// Add refresh (JIRA: CPOUI5ODATAV4-1382) and side-effects refresh (JIRA: CPOUI5ODATAV4-1384)
+	//
+	// Show that a created persisted can stay kept-alive during refresh (JIRA: CPOUI5ODATAV4-1386)
 [
 	"changeParameters", "filter", "refresh", "resume", "sideEffectsRefresh", "sort"
 ].forEach(function (sMethod) {
 	[false, true].forEach(function (bRelative) {
-	var sTitle = "CPOUI5ODATAV4-1362: created persisted, " + sMethod
-			+ ", $$ownRequest = " + bRelative;
+		var sTitle = "CPOUI5ODATAV4-1362: created persisted, " + sMethod
+				+ ", $$ownRequest = " + bRelative;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding,
@@ -38285,13 +38288,21 @@ sap.ui.define([
 						Name : "Team #2",
 						Team_Id : "TEAM_02"
 					}, {
-						Name : "Team #1",
-						Team_Id : "TEAM_01"
+						Name : "updateNonExisting ignores changes here!",
+						Team_Id : "TEAM_A"
+					}]
+				},
+				oResultA = {
+					value : [{
+						Name : "'A' Team",
+						Team_Id : "TEAM_A"
 					}]
 				};
 
 			assert.strictEqual(oBinding.hasPendingChanges(), true);
 			assert.strictEqual(oBinding.hasPendingChanges(true), false);
+
+			oContextA.setKeepAlive(true); // JIRA: CPOUI5ODATAV4-1386
 
 			switch (sMethod) {
 				case "changeParameters":
@@ -38319,7 +38330,11 @@ sap.ui.define([
 					}
 
 					// Note: expect no request for "objectPage" as there's no ODPrB there!
-					that.expectRequest(sTeams + "?$select=Name,Team_Id&$skip=0&$top=2", oResult);
+					that.expectRequest(sTeams + "?$select=Name,Team_Id&$filter=Team_Id eq 'TEAM_A'",
+							oResultA)
+						// Note: GET not yet processed, binding still "empty"
+						.expectChange("name", [, "'A' Team"])
+						.expectRequest(sTeams + "?$select=Name,Team_Id&$skip=0&$top=2", oResult);
 
 					// code under test
 					oPromise = (bRelative
@@ -38342,7 +38357,11 @@ sap.ui.define([
 					break;
 
 				case "sideEffectsRefresh":
-					that.expectRequest(sTeams + "?$select=Name,Team_Id&$skip=0&$top=2", oResult);
+					that.expectRequest(sTeams + "?$select=Name,Team_Id&$filter=Team_Id eq 'TEAM_A'",
+							oResultA)
+						// Note: GET not yet processed, binding still "empty"
+						.expectChange("name", [, "'A' Team"])
+						.expectRequest(sTeams + "?$select=Name,Team_Id&$skip=0&$top=2", oResult);
 
 					// code under test (JIRA: CPOUI5ODATAV4-1384)
 					oPromise = oBinding.getHeaderContext().requestSideEffects([""], "$auto");
@@ -38359,8 +38378,8 @@ sap.ui.define([
 				// no default
 			}
 
-			that.expectChange("id", [,, "TEAM_02", "TEAM_01"])
-				.expectChange("name", [,, "Team #2", "Team #1"]);
+			that.expectChange("id", [,, "TEAM_02"])
+				.expectChange("name", [,, "Team #2"]);
 
 			return Promise.all([
 				oPromise,
@@ -38391,6 +38410,19 @@ sap.ui.define([
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert, "submit")
 			]);
+		}).then(function () {
+			var aAllCurrentContexts = oBinding.getAllCurrentContexts();
+
+			assert.deepEqual(aAllCurrentContexts.map(getPath), [
+				"/" + sTeams + "('TEAM_D')",
+				"/" + sTeams + "('TEAM_C')",
+				"/" + sTeams + "('TEAM_02')",
+				"/" + sTeams + "('TEAM_A')"
+			]);
+			assert.strictEqual(aAllCurrentContexts[0], oContextD, "D");
+			assert.strictEqual(aAllCurrentContexts[1], oContextC, "C");
+			assert.strictEqual(oContextB.getBinding(), undefined, "B already destroyed");
+			assert.strictEqual(aAllCurrentContexts[3], oContextA, "A");
 		});
 	});
 	});
@@ -38503,7 +38535,20 @@ sap.ui.define([
 				})
 				.expectChange("id", ["TEAM_B", "TEAM_A", "TEAM_01", "TEAM_02", "TEAM_C"])
 				.expectChange("name",
-					["New 'B' Team", "New 'A' Team", "'#1' Team", "'#2' Team", "New 'C' Team"]);
+					["New 'B' Team", "New 'A' Team", "'#1' Team", "'#2' Team", "New 'C' Team"])
+				.expectRequest({ //TODO how to avoid this artefact?
+					// _CollectionCache#read computes iCreatedPersisted = 2 because oBackup has not
+					// yet been deleted (because oRefreshPromise not yet resolved); this extends
+					// the prefetch unnecessarily here :-(
+					batchNo : 3,
+					url : "TEAMS?$select=Name,Team_Id"
+						+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=3&$top=2"
+				}, {
+					value : [
+						{Name : "'#3' Team", Team_Id : "TEAM_03"},
+						{Name : "'#4' Team", Team_Id : "TEAM_04"}
+					]
+				});
 
 			return Promise.all([
 				// code under test
@@ -38523,7 +38568,9 @@ sap.ui.define([
 				"/TEAMS('TEAM_A')",
 				"/TEAMS('TEAM_01')",
 				"/TEAMS('TEAM_02')",
-				"/TEAMS('TEAM_C')"
+				"/TEAMS('TEAM_C')",
+				"/TEAMS('TEAM_03')",
+				"/TEAMS('TEAM_04')"
 			]);
 
 			that.expectRequest("TEAMS?$select=Name,Team_Id"

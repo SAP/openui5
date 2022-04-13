@@ -2450,7 +2450,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles a GET response by updating the cache data; filters out newly created elements.
+	 * Handles a GET response by updating the cache data; filters out newly created elements and
+	 * overwrites the corresponding <code>SyncPromise</code> with <code>undefined</code>.
 	 *
 	 * @param {object} oResult - The result of the GET request
 	 * @param {number} iStart - The start index of the GET's range in this.aElements
@@ -2463,6 +2464,8 @@ sap.ui.define([
 	 */
 	_CollectionCache.prototype.handleResponse = function (oResult, iStart, mTypeForMetaPath) {
 		var oElement,
+			aElements = this.aElements,
+			iCreated = aElements.$created,
 			oKeptElement,
 			iOffset = 0,
 			sPredicate,
@@ -2475,14 +2478,15 @@ sap.ui.define([
 			oElement = oResult.value[i];
 			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 			if (sPredicate) {
-				oKeptElement = this.aElements.$byPredicate[sPredicate];
+				oKeptElement = aElements.$byPredicate[sPredicate];
 				if (oKeptElement) {
 					// we expect the server to always or never send an ETag for this entity
 					if (!oKeptElement["@odata.etag"]
 							|| oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
-						if (_Helper.hasPrivateAnnotation(oKeptElement, "transientPredicate")) {
+						if (iCreated && aElements.lastIndexOf(oKeptElement, iCreated - 1) >= 0) {
 							// client-side filter for newly created persisted
 							iOffset += 1;
+							aElements[iStart + iResultLength - iOffset] = undefined;
 							continue;
 						}
 						_Helper.updateNonExisting(oKeptElement, oElement);
@@ -2492,9 +2496,9 @@ sap.ui.define([
 							+ this.sResourcePath + sPredicate);
 					} // else: if POST and GET are in the same $batch, ETag cannot differ!
 				}
-				this.aElements.$byPredicate[sPredicate] = oElement;
+				aElements.$byPredicate[sPredicate] = oElement;
 			}
-			this.aElements[iStart + i - iOffset] = oElement;
+			aElements[iStart + i - iOffset] = oElement;
 		}
 
 		return iOffset;
