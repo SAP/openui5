@@ -73,11 +73,10 @@ html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled) .sapMBtn
 	border: none;
 }
 
-.sapMActionSelectPicker ul:not(:only-child) .sapMSelectListItemBaseSelected:last-child:after {
-	border-radius:0;
-}
-
-.sapMActionSelectPicker .sapMBtn:last-child:focus .sapMFocusable {
-	border-bottom-left-radius: @sapUiElementBorderCornerRadius;
-	border-bottom-right-radius: @sapUiElementBorderCornerRadius;
+html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled):focus > .sapMBtnInner:before {
+	border-radius: 0;
+	left: 0.125rem;
+	top: 0.125rem;
+	right: 0.125rem;
+	bottom: 0.125rem;
 }
