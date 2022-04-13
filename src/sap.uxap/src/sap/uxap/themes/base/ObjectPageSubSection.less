@@ -4,7 +4,7 @@
 /* ============================================== */
 
 .sapUxAPObjectPageSubSection {
-	padding-bottom: 0;
+	padding-top: 1rem;
 	box-sizing: border-box;
 }
 
@@ -16,7 +16,7 @@
 	height: auto;
 	overflow: auto;
 	word-wrap: break-word;
-	padding: 1rem 2.25rem 0 3rem
+	padding: 0 2.25rem 0 3rem
 }
 
 .sapUxAPObjectPageSubSectionHeaderTitle {
@@ -50,7 +50,7 @@
 /* phone display */
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSectionHeader,
 html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeader {
-	padding: 1rem;
+	padding: 0 1rem;
 }
 
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSectionHeaderTitle,
@@ -67,7 +67,7 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeaderTitle {
 
 .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSubSectionHeader,
 html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
-	padding: 1rem 1.25rem 0 2rem;
+	padding: 0 1.25rem 0 2rem;
 }
 
 /* Those styles apply Desktop and Desktop-XL.
@@ -101,7 +101,6 @@ Doing so will result in less generated CSS, as well as less future maintanance i
 		white-space: normal;
 		word-wrap: break-word;
 		line-height: normal;
-		padding-top: 1rem;
 	}
 
 	.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions {
@@ -141,10 +140,10 @@ Doing so will result in less generated CSS, as well as less future maintanance i
 }
 
 .sapUxAPBlockContainer {
-	padding: 1rem 2rem 3rem 2rem;
+	padding: 0 2rem;
 }
 .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer {
-	padding: 1rem 1rem 3rem 1rem;
+	padding: 0 1rem;
 }
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer {
 	padding: 0 1rem;
@@ -154,20 +153,6 @@ Doing so will result in less generated CSS, as well as less future maintanance i
 	}
 }
 
-.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSubSectionWithSeeMore {
-	.sapUxAPBlockContainer {
-		padding-bottom: 0;
-	}
-
-	.sapUxAPSubSectionSeeMoreContainer {
-		padding-bottom: 2rem;
-	}
-}
-
-
-.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSectionPromoted .sapUxAPBlockContainer {
-	padding-top: 1rem;
-}
 
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSection {
 	.sapUiRespGrid.sapUiRespGridHSpace1 {
@@ -200,34 +185,14 @@ Doing so will result in less generated CSS, as well as less future maintanance i
 	}
 }
 
-.sapUxAPObjectPageSection .sapUxAPObjectPageSectionContainer .sapUxAPObjectPageSubSection .sapUxAPBlockContainer {
-    padding-bottom: 0;
-}
 /* compact size */
 .sapUiSizeCompact {
 	.sapUxAPObjectPageSubSectionHeaderTitle {
 		height: 2rem;
 		line-height: 2rem;
 	}
-	.sapUxAPBlockContainer {
-		padding: 1rem 2rem 2rem 2rem;
-	}
-	.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
-	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer {
-		padding: 1rem 1rem 2rem 1rem;
-	}
 	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer .sapUiFormResGrid > div{
 		padding: 1rem 0;
-	}
-
-	.sapUxAPObjectPageSubSectionWithSeeMore {
-		.sapUxAPBlockContainer {
-			padding-bottom: 0;
-		}
-
-		.sapUxAPSubSectionSeeMoreContainer {
-			padding-bottom: 2rem;
-		}
 	}
 }
 

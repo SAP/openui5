@@ -1376,7 +1376,7 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = oSubSection.$().position().top,
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
-				iSubSectionHeight = Math.round(oSubSection.$().height());
+				iSubSectionHeight = Math.round(oSubSection.$().outerHeight());
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
 			done();
 		}, this);
@@ -1403,7 +1403,7 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = oSubSection.$().position().top,
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
-				iSubSectionHeight = Math.round(oSubSection.$().height());
+				iSubSectionHeight = Math.round(oSubSection.$().outerHeight());
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
 			done();
 		}, this);
@@ -1434,7 +1434,7 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
 				iOffsetTop = oSubSection.$().position().top,
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
-				iSubSectionHeight = Math.round(oSubSection.$().height());
+				iSubSectionHeight = Math.round(oSubSection.$().outerHeight());
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
 			done();
 		}, this);
