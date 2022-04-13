@@ -1352,6 +1352,8 @@ sap.ui.define([
 		});
 
 		oMTable.setFilterBar(oFilterBar);
+		assert.ok(oFilterBar.getBasicSearchField(), "SearchField added to FilterBar");
+
 		oFilterBar.fireSearch();
 
 		// compare arguments of filter as Filter object is changed during filtering
@@ -1372,6 +1374,8 @@ sap.ui.define([
 		oFilterBar.setInternalConditions({
 			additionalText: [Condition.createCondition("Contains", "3")]
 		});
+		assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
+
 		oFilterBar.fireSearch();
 		assert.notOk(oListBinding.filter.called, "No filtering called");
 		oFilterBar.destroy();
@@ -1407,6 +1411,8 @@ sap.ui.define([
 
 		oMTable.setFilterFields("$search");
 		oMTable.setFilterBar(oFilterBar);
+		assert.ok(oFilterBar.getBasicSearchField(), "SearchField added to FilterBar");
+
 		oFilterBar.fireSearch();
 
 		assert.ok(ValueHelpDelegateV4.isSearchSupported.called, "ValueHelpDelegateV4.isSearchSupported called");
@@ -1424,6 +1430,9 @@ sap.ui.define([
 		assert.equal(oListBinding.filter.args[0][0][0].sOperator, FilterOperator.Contains, "ListBinding filter operator");
 		assert.equal(oListBinding.filter.args[0][0][0].oValue1, "2", "ListBinding filter value1");
 		assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
+
+		oMTable.setFilterFields("");
+		assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
 
 		oContainer.getValueHelpDelegate.restore();
 		ValueHelpDelegateV4.isSearchSupported.restore();
