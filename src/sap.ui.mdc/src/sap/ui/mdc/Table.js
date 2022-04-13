@@ -904,11 +904,8 @@ sap.ui.define([
 	};
 
 	Table.prototype.focus = function(oFocusInfo) {
-		//see Element.prototype.focus, MDCTable does not have any own focusable DOM, therefor forward to inner control
-		var oDomRef = this.getDomRef();
-
-		if (this._oTable && oDomRef && !containsOrEquals(oDomRef, document.activeElement)) {
-			this._oTable.focus();
+		if (this._oTable) {
+			this._oTable.focus(oFocusInfo);
 		}
 	};
 
