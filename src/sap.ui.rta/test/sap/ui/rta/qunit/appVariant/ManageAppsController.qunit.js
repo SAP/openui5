@@ -180,46 +180,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when saveAsAppVariant is called", function(assert) {
-			var oManageAppsController = new ManageAppsController();
-
-			var modelPropertySpy = sandbox.stub(oManageAppsController, "getModelProperty");
-
-			modelPropertySpy.onFirstCall().returns("descriptorUrl");
-
-			var oButton = {
-				getBindingContext: function() {
-					return {
-						sPath: "/appVariants/0"
-					};
-				}
-			};
-
-			var oEmptyEvent = new Event("emptyEventId", oButton, {
-				button: oButton
-			});
-
-			var oResult = {
-				response: {
-					"sap.app": {
-						id: "testId"
-					},
-					"sap.ui5": {
-						componentName: "id1"
-					}
-				}
-			};
-
-			var getDescriptorSpy = sandbox.stub(AppVariantOverviewUtils, "getDescriptor").resolves(oResult);
-
-			var onSaveAsSpy = sandbox.stub(RtaAppVariantFeature, "onSaveAs").resolves();
-
-			return oManageAppsController.saveAsAppVariant(oEmptyEvent).then(function() {
-				assert.ok(getDescriptorSpy.calledOnce, "the getDescriptor is called once");
-				assert.ok(onSaveAsSpy.calledOnce, "the onSaveAs method is called once");
-			});
-		});
-
 		QUnit.test("when copyId is called", function(assert) {
 			var oManageAppsController = new ManageAppsController();
 			oManageAppsController._createResourceBundle();
@@ -288,19 +248,6 @@ sap.ui.define([
 
 			oManageAppsController.onMenuAction(oEmptyEvent);
 			assert.ok(fnCopyID.calledOnce, "then copyId is called once");
-		});
-
-		QUnit.test("when onMenuAction is called and saveAsAppVariant is pressed", function(assert) {
-			var oManageAppsController = new ManageAppsController();
-
-			var oEmptyEvent = new Event("emptyEventId", new sap.m.Menu(), {
-				item: new sap.m.MenuItem({text: "Save As"})
-			});
-
-			var fnSaveAsAppVariant = sandbox.stub(oManageAppsController, "saveAsAppVariant");
-
-			oManageAppsController.onMenuAction(oEmptyEvent);
-			assert.ok(fnSaveAsAppVariant.calledOnce, "then saveAsAppVariant is called once");
 		});
 
 		QUnit.test("when onMenuAction is called and handleUiAdaptation is pressed", function(assert) {
