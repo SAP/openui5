@@ -289,6 +289,11 @@ sap.ui.define([
 		this._sBorrowedTitleDomId = sId;
 	};
 
+	ObjectPageSubSection.prototype._toggleMultiLineSectionContent = function (bMultiLine) {
+		this.toggleStyleClass("sapUxAPObjectPageSectionMultilineContent", bMultiLine);
+		this._bMultiLine = bMultiLine;
+	};
+
 	ObjectPageSubSection.prototype._expandSection = function () {
 		ObjectPageSectionBase.prototype._expandSection.call(this);
 		var oParent = this.getParent();

@@ -1695,6 +1695,12 @@ sap.ui.define([
 
 			}, this);
 
+			if (iVisibleSubSections > 1) {
+				aSubSections.forEach(function(oSubSection) {
+					oSubSection._setBorrowedTitleDomId("");
+				});
+			}
+
 			//rule noVisibleSubSection: If a section has no content (or only empty subsections) the section will be hidden.
 			if (iVisibleSubSections == 0) {
 				oSection._setInternalVisible(false, bInvalidate);
@@ -2482,8 +2488,9 @@ sap.ui.define([
 		this._aSectionBases.forEach(function (oSectionBase) {
 			var oInfo = this._oSectionInfo[oSectionBase.getId()],
 				$this = oSectionBase.$(),
+				bPromoted = false,
 				oSection,
-				bPromoted = false;
+				iSectionsTopMargin;
 
 			if (!oInfo /* sectionBase is visible */ || !$this.length) {
 				return;
@@ -2497,7 +2504,7 @@ sap.ui.define([
 
 			//calculate the scrollTop value to get the section title at the bottom of the header
 			//performance improvements possible here as .position() is costly
-			var realTop = $this.position().top; //first get the dom position = scrollTop to get the section at the window top
+			var realTop = library.Utilities.getChildPosition($this, this._$contentContainer).top;
 
 			//the amount of scrolling required is the distance between their position().top and the bottom of the anchorBar
 			oInfo.positionTop = Math.ceil(realTop);
@@ -2560,8 +2567,9 @@ sap.ui.define([
 				bParentIsFirstVisibleSection = bUseIconTabBar /* there is only single section per tab */ || (oSectionBase.getParent() === this._oFirstVisibleSection);
 				bIsFirstVisibleSubSection = bParentIsFirstVisibleSection && (iSubSectionIndex === 0); /* index of *visible* subSections is first */
 				bIsFullscreenSection = oSectionBase.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
+				iSectionsTopMargin = oSection && oSection.$().length ? parseInt(oSection.$().css("marginTop")) : 0;
 
-				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection, Math.ceil(realTop), iSectionsContainerOffsetTop));
+				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection, Math.ceil(realTop), iSectionsContainerOffsetTop, iSectionsTopMargin));
 			}
 
 		}, this);
@@ -2626,7 +2634,8 @@ sap.ui.define([
 		return true; // return success flag
 	};
 
-	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection, iSubSectionOffsetTop, iSectionsContainerOffsetTop) {
+	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection,
+		iSubSectionOffsetTop, iSectionsContainerOffsetTop, iSectionsTopMargin) {
 
 		var iSectionsContainerHeight,
 			iRemainingSectionContentHeight;
@@ -2651,8 +2660,8 @@ sap.ui.define([
 
 		if (this._bAllContentFitsContainer) {
 			// if we have a single fullscreen subsection [that takes the entire available height within the sections container]
-			// => subtract the heights above and bellow the subSection to *avoid having a scrollbar*
-			iRemainingSectionContentHeight = (iSubSectionOffsetTop - iSectionsContainerOffsetTop) + this.iFooterHeight;
+			// => subtract the heights above and bellow the subSection to *avoid having a scrollbar*, having in mind the top margin of the Section
+			iRemainingSectionContentHeight = (iSubSectionOffsetTop - iSectionsContainerOffsetTop) + iSectionsTopMargin + this.iFooterHeight;
 			iSectionsContainerHeight -= iRemainingSectionContentHeight;
 		}
 

@@ -819,7 +819,8 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oObjectPage._onScroll({ target: { scrollTop: oObjectPage._$opWrapper.scrollTop()}});
 
 			// Check
-			assert.ok($Section2TTitle.get(0).offsetTop >= oObjectPage._$opWrapper.scrollTop(), "element is visible");
+			assert.ok(oSection2.getDomRef().offsetTop + $Section2TTitle.get(0).offsetTop >= oObjectPage._$opWrapper.scrollTop(),
+				"element is visible");
 			done();
 		});
 

@@ -727,4 +727,174 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 		assert.equal(oInvalidateSpy.callCount, 0, "section is not invalidated");
 	});
 
+	QUnit.module("SubSection promoted");
+
+	QUnit.test("Showing SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class", function(assert) {
+		// Arrange
+		var oObjectPageSubSection1 = new ObjectPageSubSection({
+				title: "SubSection1",
+				blocks: new Text({ text: "SubSection1" }),
+				visible: false
+			}),
+			oObjectPageSubSection2 = new ObjectPageSubSection({
+				title: "SubSection2",
+				blocks: new Text({ text: "SubSection2" })
+			}),
+			oObjectPageSection = new ObjectPageSection({
+				title: "Section",
+				subSections: [oObjectPageSubSection1, oObjectPageSubSection2]
+			}),
+			oObjectPageLayout = new ObjectPageLayout({
+				sections: [ oObjectPageSection ]
+			}),
+			done = assert.async();
+
+		assert.expect(2);
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Assert
+			assert.ok(oObjectPageSubSection2.$().hasClass("sapUxAPObjectPageSubSectionPromoted"),
+				"SubSection has promoted CSS class");
+
+			// Act
+			oObjectPageSubSection1.setVisible(true);
+
+			setTimeout(function () {
+				// Assert
+				assert.ok(!oObjectPageSubSection2.$().hasClass("sapUxAPObjectPageSubSectionPromoted"),
+					"SubSection does not have promoted CSS class");
+
+				// Clean-up
+				oObjectPageLayout.destroy();
+				done();
+			}, 400);
+		});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+	});
+
+	QUnit.test("Adding SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class", function(assert) {
+		// Arrange
+		var oObjectPageSubSection1 = new ObjectPageSubSection({
+				title: "SubSection1",
+				blocks: new Text({ text: "SubSection1" })
+			}),
+			oObjectPageSubSection2 = new ObjectPageSubSection({
+				title: "SubSection2",
+				blocks: new Text({ text: "SubSection2" })
+			}),
+			oObjectPageSection = new ObjectPageSection({
+				title: "Section",
+				subSections: [oObjectPageSubSection1]
+			}),
+			oObjectPageLayout = new ObjectPageLayout({
+				sections: [ oObjectPageSection ]
+			}),
+			done = assert.async();
+
+		assert.expect(2);
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Assert
+			assert.ok(oObjectPageSubSection1.$().hasClass("sapUxAPObjectPageSubSectionPromoted"),
+				"SubSection has promoted CSS class");
+
+			// Act
+			oObjectPageSection.addSubSection(oObjectPageSubSection2);
+
+			setTimeout(function () {
+				// Assert
+				assert.ok(!oObjectPageSubSection2.$().hasClass("sapUxAPObjectPageSubSectionPromoted"),
+					"SubSection does not have promoted CSS class");
+
+				// Clean-up
+				oObjectPageLayout.destroy();
+				done();
+			}, 400);
+		});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+	});
+
+	QUnit.test("SubSection with long title has 'sapUxAPObjectPageSectionMultilineContent' class", function(assert) {
+		// Arrange
+		var oObjectPageSubSection = new ObjectPageSubSection({
+				title: "Loooooooooooooooooooooooooooooong loooooooooooooooooooooooooooooooong looooooooooooooooooong tiiiiiiiiiiiiiiiiiiiiiitle",
+				blocks: new Text({ text: "SubSection1" }),
+				actions: [new sap.m.Button({ text: "Buton with looooooooooooooooooooooooong text "})]
+			}),
+			oObjectPageSection = new ObjectPageSection({
+				title: "SubSection",
+				subSections: [oObjectPageSubSection]
+			}),
+			oObjectPageLayout = new ObjectPageLayout({
+				sections: [ oObjectPageSection ]
+			}),
+			done = assert.async();
+
+		assert.expect(1);
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Assert
+			assert.ok(oObjectPageSubSection.$().hasClass("sapUxAPObjectPageSectionMultilineContent"),
+				"SubSection has multine content CSS class");
+
+			// Clean up
+			oObjectPageLayout.destroy();
+			done();
+		});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+	});
+
+	QUnit.test("Resizing OPL adds 'sapUxAPObjectPageSectionMultilineContent' class to promoted SubSection", function(assert) {
+		// Arrange
+		var oObjectPageSubSection = new ObjectPageSubSection({
+				title: "Not too long title",
+				blocks: new Text({ text: "SubSection1" }),
+				actions: [new sap.m.Button({ text: "Buton with looooooooooooooooooooooooong text "})]
+			}),
+			oObjectPageSection = new ObjectPageSection({
+				title: "SubSection",
+				subSections: [oObjectPageSubSection]
+			}),
+			oObjectPageLayout = new ObjectPageLayout({
+				sections: [ oObjectPageSection ]
+			}),
+			$qunitDOMLocation = jQuery("#qunit-fixture"),
+			iInitialWidth = $qunitDOMLocation.width(),
+			done = assert.async();
+
+		assert.expect(2);
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Assert
+			assert.ok(!oObjectPageSubSection.$().hasClass("sapUxAPObjectPageSectionMultilineContent"),
+				"SubSection does not have multine content CSS class when width is enough");
+
+			// Act
+			$qunitDOMLocation.width(200);
+			oObjectPageLayout._onUpdateContentSize({ size: {
+				width: "200",
+				height: "900"
+			}});
+			oObjectPageSection._onResize();
+
+			// Assert
+			assert.ok(oObjectPageSubSection.$().hasClass("sapUxAPObjectPageSectionMultilineContent"),
+				"SubSection has multine content CSS class when width is not enough");
+
+			// Clean up
+			oObjectPageLayout.destroy();
+			$qunitDOMLocation.width(iInitialWidth);
+			done();
+		});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+	});
+
 });

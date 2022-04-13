@@ -37,6 +37,10 @@ sap.ui.define(function () {
 			oRm.class("sapUxAPObjectPageSubSectionWithSeeMore");
 		}
 
+		if (oControl._bMultiLine) {
+			oRm.class("sapUxAPObjectPageSectionMultilineContent");
+		}
+
 		oRm.class("sapUxAPObjectPageSubSection")
 			.class("ui-helper-clearfix");
 
