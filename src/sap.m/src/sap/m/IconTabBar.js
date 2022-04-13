@@ -359,7 +359,7 @@ sap.ui.define([
 
 		// toggle animation if control is already rendered
 		if (this.$().length) {
-			this._toggleExpandCollapse(bExpanded);
+			this._toggleExpandCollapse(this.getProperty("expanded"));
 		}
 		return this;
 	};
