@@ -408,6 +408,26 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("GetDirty - Given flex objects and dirty changes are present in the ChangePersistence", function(assert) {
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+
+			addChangesToChangePersistence(oChangePersistence);
+
+			return oChangePersistence.getChangesForComponent()
+				.then(oChangePersistence.saveDirtyChanges.bind(oChangePersistence, oComponent, false))
+				.then(function() {
+					addDirtyChanges(oChangePersistence);
+				})
+				.then(FlexObjectState.getDirtyFlexObjects.bind(undefined, {
+					selector: this.appComponent
+				}))
+				.then(function(aFlexObjects) {
+					assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
+					assert.equal(aFlexObjects[0].getChangeType(), "dirtyRenameField", "the first change from the persistence is present");
+					assert.equal(aFlexObjects[1].getChangeType(), "dirtyAddGroup", "the second change from the persistence is present");
+				});
+		});
+
 		QUnit.test("Save", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			sandbox.stub(Utils, "getAppIdFromManifest").returns("id");

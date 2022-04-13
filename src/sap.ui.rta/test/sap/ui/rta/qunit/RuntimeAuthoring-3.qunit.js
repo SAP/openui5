@@ -1120,7 +1120,7 @@ sap.ui.define([
 			propertyName: "status"
 		}].forEach(function(oErrorResponse) {
 			QUnit.test("When transport function is called and transportChanges returns Promise.reject() with error in the property: " + oErrorResponse.propertyName, function(assert) {
-				var sErrorBoxText = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
+				var sErrorBoxText = oTextResources.getText("MSG_TECHNICAL_ERROR") + "\n"
 					+ oTextResources.getText("MSG_ERROR_REASON", oErrorResponse.errorText);
 				sandbox.stub(PersistenceWriteAPI, "publish").rejects(oErrorResponse.error);
 				var oAppVariantRunningStub = sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(false);

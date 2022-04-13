@@ -87,19 +87,27 @@
 		<OverflowToolbar id="sapUiRta_actionsToolbar">
 			<content>
 				<ToolbarSpacer />
-				<toolbar:OverflowToolbarButton
-						id="sapUiRta_translate"
+				<MenuButton
+						id="sapUiRta_translateMenu"
 						icon="sap-icon://translate"
-						press=".showTranslationPopover"
-						visible="{controls>/translationVisible}"
+						visible="{= ${controls>/modeSwitcher} === 'adaptation' &amp;&amp; ${controls>/translationVisible}}"
 						enabled="{controls>/translationEnabled}"
 						type="Transparent"
-						text="{i18n>BTN_TRANSLATE}"
 						tooltip="{i18n>BTN_TRANSLATE}">
-					<toolbar:layoutData>
-						<OverflowToolbarLayoutData priority="Low" />
-					</toolbar:layoutData>
-				</toolbar:OverflowToolbarButton>
+					<Menu
+							id="sapUiRta_translate"
+							class="sapUiRtaToolbarVisualizationSelection">
+						<MenuItem
+								text="{i18n>BTN_OPEN_DOWNLOAD_TRANSLATION}"
+								press=".openDownloadTranslationDialog"
+								icon="sap-icon://download"/>
+						<MenuItem
+								text="{i18n>BTN_OPEN_UPLOAD_TRANSLATION}"
+								press=".openUploadTranslationDialog"
+								enabled="{= ${translation>/sourceLanguages}.length > 0}"
+								icon="sap-icon://upload"/>
+					</Menu>
+				</MenuButton>
 				<Button
 						id="sapUiRta_toggleChangeVisualizationMenuButton"
 						visible="{= ${controls>/modeSwitcher} === 'visualization'}"
@@ -108,8 +116,7 @@
 						icon="sap-icon://slim-arrow-down"
 						iconFirst="false"
 						press=".openChangeCategorySelectionPopover"
-						tooltip="{i18n>BUT_CHANGEVISUALIZATION_SELECTCHANGES}">
-				</Button>
+						tooltip="{i18n>BUT_CHANGEVISUALIZATION_SELECTCHANGES}"/>
 				<Button
 						id="sapUiRta_undo"
 						icon="sap-icon://undo"

@@ -15,15 +15,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function getReference(oAppComponent) {
-		var sReference;
-		if (oAppComponent) {
-			var oManifest = oAppComponent.getManifest();
-			sReference = ManifestUtils.getFlexReference({
-				manifest: oManifest,
-				componentData: oAppComponent.getComponentData()
-			});
-		}
+	function getFlexReferenceForControl(control) {
+		var sReference = ManifestUtils.getFlexReferenceForControl(control);
 
 		if (!sReference) {
 			throw Error("The application ID could not be determined");
@@ -33,16 +26,18 @@ sap.ui.define([
 	}
 
 	function getVersionsModel(mPropertyBag) {
-		if (!mPropertyBag.selector) {
-			throw Error("No selector was provided");
+		if (!mPropertyBag.control) {
+			throw Error("No control was provided");
 		}
 		if (!mPropertyBag.layer) {
 			throw Error("No layer was provided");
 		}
 
-		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+		var sReference = getFlexReferenceForControl(mPropertyBag.control);
+
 		return Versions.getVersionsModel({
-			reference: Utils.normalizeReference(getReference(oAppComponent)),
+			nonNormalizedReference: sReference,
+			reference: Utils.normalizeReference(sReference),
 			layer: mPropertyBag.layer
 		});
 	}
@@ -59,27 +54,27 @@ sap.ui.define([
 	var VersionsAPI = /** @lends sap.ui.fl.write.api.VersionsAPI */ {};
 
 	/**
-	 * Initializes the versions for a given selector and layer.
+	 * Initializes the versions for a given control and layer.
 	 *
 	 * @param {object} mPropertyBag - Property bag
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 *
 	 * @returns {Promise<sap.ui.model.json.JSONModel>} Model with list of versions if available and further version properties;
 	 * Rejects if not all parameters were passed or the application could not be determined
 	 */
 	VersionsAPI.initialize = function (mPropertyBag) {
-		if (!mPropertyBag.selector) {
-			return Promise.reject("No selector was provided");
+		if (!mPropertyBag.control) {
+			return Promise.reject("No control was provided");
 		}
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
 
-		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 
 		return Versions.initialize({
-			reference: Utils.normalizeReference(getReference(oAppComponent)),
+			reference: Utils.normalizeReference(getFlexReferenceForControl(oAppComponent)),
 			layer: mPropertyBag.layer
 		});
 	};
@@ -88,7 +83,7 @@ sap.ui.define([
 	 * Returns a flag if a draft exists for the current application and layer.
 	 *
 	 * @param {object} mPropertyBag - Property bag
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 *
 	 * @return {boolean} Flag if a draft is available;
@@ -109,7 +104,7 @@ sap.ui.define([
 	 * Returns a flag if the displayed version is not the active version for the current application and layer.
 	 *
 	 * @param {object} mPropertyBag - Property bag
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 *
 	 * @return {boolean} Flag if the displayed version is not the active version
@@ -129,7 +124,7 @@ sap.ui.define([
 	 * an actual reload of the application has to be triggered by the caller.
 	 *
 	 * @param {object} mPropertyBag - Property bag
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 *
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
@@ -144,7 +139,7 @@ sap.ui.define([
 	 * an actual reload of the application has to be triggered by the caller.
 	 *
 	 * @param {object} mPropertyBag - Property bag
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} [mPropertyBag.version] - Version to be loaded
 	 * @param {boolean} [mPropertyBag.allContexts] - Includes also restricted contexts
@@ -152,8 +147,8 @@ sap.ui.define([
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
 	 */
 	VersionsAPI.loadVersionForApplication = function (mPropertyBag) {
-		if (!mPropertyBag.selector) {
-			return Promise.reject("No selector was provided");
+		if (!mPropertyBag.control) {
+			return Promise.reject("No control was provided");
 		}
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
@@ -165,16 +160,13 @@ sap.ui.define([
 			}
 		}
 
-		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		return Promise.resolve()
-		.then(getReference.bind(undefined, oAppComponent))
-		.then(function (sReference) {
-			return FlexState.clearAndInitialize({
-				componentId: oAppComponent.getId(),
-				reference: sReference,
-				version: mPropertyBag.version,
-				allContexts: mPropertyBag.allContexts
-			});
+		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
+		var sReference = getFlexReferenceForControl(oAppComponent);
+		return FlexState.clearAndInitialize({
+			componentId: oAppComponent.getId(),
+			reference: sReference,
+			version: mPropertyBag.version,
+			allContexts: mPropertyBag.allContexts
 		});
 	};
 
@@ -182,7 +174,7 @@ sap.ui.define([
 	 * (Re-)activates a version.
 	 *
 	 * @param {object} mPropertyBag - Property bag
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} mPropertyBag.title - Title of the to be activated version
 	 *
@@ -194,8 +186,8 @@ sap.ui.define([
 	 * when the displayed version is already active
 	 */
 	VersionsAPI.activate = function (mPropertyBag) {
-		if (!mPropertyBag.selector) {
-			return Promise.reject("No selector was provided");
+		if (!mPropertyBag.control) {
+			return Promise.reject("No control was provided");
 		}
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
@@ -204,18 +196,14 @@ sap.ui.define([
 			return Promise.reject("No version title was provided");
 		}
 
-		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+		var sReference = getFlexReferenceForControl(mPropertyBag.control);
 
-		return Promise.resolve()
-		.then(getReference.bind(undefined, oAppComponent))
-		.then(function (sReference) {
-			return Versions.activate({
-				nonNormalizedReference: sReference,
-				reference: Utils.normalizeReference(sReference),
-				layer: mPropertyBag.layer,
-				title: mPropertyBag.title,
-				appComponent: oAppComponent
-			});
+		return Versions.activate({
+			nonNormalizedReference: sReference,
+			reference: Utils.normalizeReference(sReference),
+			layer: mPropertyBag.layer,
+			title: mPropertyBag.title,
+			appComponent: Utils.getAppComponentForControl(mPropertyBag.control)
 		});
 	};
 
@@ -225,38 +213,35 @@ sap.ui.define([
 	 * and the consumer must take care of making a reload of the application itself.
 	 *
 	 * @param {object} mPropertyBag - Property bag
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	VersionsAPI.discardDraft = function (mPropertyBag) {
-		if (!mPropertyBag.selector) {
-			return Promise.reject("No selector was provided");
+		if (!mPropertyBag.control) {
+			return Promise.reject("No control was provided");
 		}
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
 
-		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
+		var sReference = getFlexReferenceForControl(oAppComponent);
 
-		return Promise.resolve()
-		.then(getReference.bind(undefined, oAppComponent))
-		.then(function (sReference) {
-			return Versions.discardDraft({
-				nonNormalizedReference: sReference,
-				reference: Utils.normalizeReference(sReference),
-				layer: mPropertyBag.layer
-			}).then(function(oDiscardInfo) {
-				if (oDiscardInfo.backendChangesDiscarded) {
-					//invalidate flexState to trigger getFlexData for the current active version after discard
-					FlexState.clearAndInitialize({
-						componentId: oAppComponent.getId(),
-						reference: sReference
-					});
-				}
-				return oDiscardInfo;
-			});
+		return Versions.discardDraft({
+			nonNormalizedReference: sReference,
+			reference: Utils.normalizeReference(sReference),
+			layer: mPropertyBag.layer
+		}).then(function(oDiscardInfo) {
+			if (oDiscardInfo.backendChangesDiscarded) {
+				//invalidate flexState to trigger getFlexData for the current active version after discard
+				FlexState.clearAndInitialize({
+					componentId: oAppComponent.getId(),
+					reference: sReference
+				});
+			}
+			return oDiscardInfo;
 		});
 	};
 

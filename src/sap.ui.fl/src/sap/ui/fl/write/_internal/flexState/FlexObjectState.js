@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
@@ -17,6 +18,7 @@ sap.ui.define([
 	_omit,
 	FlexState,
 	ManifestUtils,
+	States,
 	ChangesController,
 	CompVariantState,
 	CompVariantMerger,
@@ -87,7 +89,6 @@ sap.ui.define([
 		var oChangePersistence = getChangePersistence(mPropertyBag);
 
 		return oChangePersistence.getChangesForComponent(_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache)
-
 		.then(function(aPersistedChanges) {
 			var aDirtyChanges = [];
 			if (mPropertyBag.includeDirtyChanges) {
@@ -119,7 +120,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Collects changes from the different states within the <code>sap.ui.fl</code>-library.
+	 * Collects changes from the different states within the <code>sap.ui.fl</code> library.
 	 * This includes the flexState entities as well as the <code>sap.ui.fl.ChangePersistence</code>.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
@@ -132,10 +133,30 @@ sap.ui.define([
 	FlexObjectState.getFlexObjects = function (mPropertyBag) {
 		return initFlexStateAndSetReference(mPropertyBag)
 			.then(function () {
-				return getChangePersistenceEntities(mPropertyBag).then(function (aChangePersistenceEntities) {
-					return getCompVariantEntities(mPropertyBag).concat(aChangePersistenceEntities);
-				});
+				return getChangePersistenceEntities(mPropertyBag);
+			}).then(function (aChangePersistenceEntities) {
+				return getCompVariantEntities(mPropertyBag).concat(aChangePersistenceEntities);
 			});
+	};
+
+	/**
+	 * Collects modified changes from the different states within the <code>sap.ui.fl</code> library.
+	 * This includes the flexState entities as well as the <code>sap.ui.fl.ChangePersistence</code>.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
+	 * @param {boolean} mPropertyBag.invalidateCache - Flag if the cache should be invalidated
+	 * @param {boolean} mPropertyBag.includeCtrlVariants - Flag if control variant changes should be included
+	 * @returns {sap.ui.fl.Change[]} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
+	 */
+	FlexObjectState.getDirtyFlexObjects = function (mPropertyBag) {
+		mPropertyBag.includeDirtyChanges = true;
+		var oChangePersistence = getChangePersistence(mPropertyBag);
+		var aChangePersistenceEntities = oChangePersistence.getDirtyChanges();
+		var aCompVariantEntities = getCompVariantEntities(mPropertyBag);
+		return aChangePersistenceEntities.concat(aCompVariantEntities).filter(function(oFlexObject) {
+			return oFlexObject.getState() !== States.PERSISTED;
+		});
 	};
 
 	/**

@@ -253,11 +253,6 @@ function(
 		});
 	};
 
-	Adaptation.prototype.showTranslationPopover = function (oEvent) {
-		var oTranslation = this.addExtension("translation", Translation);
-		return oTranslation.showTranslationPopover(oEvent, this);
-	};
-
 	Adaptation.prototype.showRestore = function (bVersioningEnabled) {
 		return !bVersioningEnabled;
 	};
@@ -331,7 +326,8 @@ function(
 				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
 				formatDiscardDraftVisible: this.formatDiscardDraftVisible.bind(this),
 				modeChange: this.eventHandler.bind(this, "ModeChange"),
-				showTranslationPopover: this.showTranslationPopover.bind(this),
+				openDownloadTranslationDialog: onOpenDownloadTranslationDialog.bind(this),
+				openUploadTranslationDialog: onOpenUploadTranslationDialog.bind(this),
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
 				openChangeCategorySelectionPopover: this.eventHandler.bind(this, "OpenChangeCategorySelectionPopover"),
@@ -347,6 +343,18 @@ function(
 			}
 		});
 	};
+
+	function onOpenDownloadTranslationDialog() {
+		var mPropertyBag = {
+			layer: this.getRtaInformation().flexSettings.layer,
+			selector: this.getRtaInformation().rootControl
+		};
+		this.addExtension("translation", Translation).openDownloadTranslationDialog(mPropertyBag);
+	}
+
+	function onOpenUploadTranslationDialog() {
+		this.addExtension("translation", Translation).openUploadTranslationDialog();
+	}
 
 	function onSaveAsPressed() {
 		AppVariantFeature.onSaveAs(true, true, this.getRtaInformation().flexSettings.layer, null);

@@ -146,7 +146,7 @@ sap.ui.define([
 			var mParameters = {};
 			var sTranslationUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.TRANSLATION.GET_SOURCELANGUAGE, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sTranslationUrl, "GET", mPropertyBag).then(function(oResult) {
-				return oResult.response;
+				return oResult && oResult.response && oResult.response.sourceLanguages ? oResult.response.sourceLanguages : [];
 			});
 		},
 

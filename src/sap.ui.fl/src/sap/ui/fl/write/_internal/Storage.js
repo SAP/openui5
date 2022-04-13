@@ -423,6 +423,7 @@ sap.ui.define([
 		 * rejects if an error occurs
 		 */
 		getSourceLanguages: function (mPropertyBag) {
+			// TODO: cache the request & invalidate it in case of a writing operation
 			return _getWriteConnectors()
 				.then(_executeActionByName.bind(undefined, "translation.getSourceLanguages", mPropertyBag));
 		},

@@ -349,7 +349,7 @@ sap.ui.define([
 				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
 				assert.equal(oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
 				var oLoadVersionArguments = oLoadVersionStub.getCall(0).args[0];
-				assert.equal(oLoadVersionArguments.selector, oComp, "with the selector");
+				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
 				assert.equal(oLoadVersionArguments.version, "1", ", the version number");
 				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
 				assert.equal(oCrossAppNavigationStub.callCount, 1, "a cross app navigation was triggered");
@@ -379,7 +379,7 @@ sap.ui.define([
 				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
 				assert.equal(oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
 				var oLoadVersionArguments = oLoadVersionStub.getCall(0).args[0];
-				assert.equal(oLoadVersionArguments.selector, oComp, "with the selector");
+				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
 				assert.equal(oLoadVersionArguments.version, sap.ui.fl.Versions.Original, ", the version number");
 				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
 				assert.equal(this.oRestartFlpStub.callCount, 1, "a app restart was triggered");
@@ -506,7 +506,7 @@ sap.ui.define([
 				.then(function() {
 					assert.equal(oActivateStub.callCount, 1, "then the activate() method is called once");
 					var oActivationCallPropertyBag = oActivateStub.getCall(0).args[0];
-					assert.equal(oActivationCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
+					assert.equal(oActivationCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
 					assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
 					assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
 					assert.equal(this.oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
@@ -549,7 +549,7 @@ sap.ui.define([
 					assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown and click on OK");
 					assert.equal(oActivateStub.callCount, 1, "activate() method is called once");
 					var oActivationCallPropertyBag = oActivateStub.getCall(0).args[0];
-					assert.equal(oActivationCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
+					assert.equal(oActivationCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
 					assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
 					assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
 					assert.equal(this.oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
@@ -612,7 +612,7 @@ sap.ui.define([
 					assert.equal(oRemoveVersionParameterStub.callCount, 1, "then _removeVersionParameterForFLP was called");
 					assert.equal(oRemoveVersionParameterStub.getCall(0).args[1], mParsedHash, "then _removeVersionParameterForFLP was called with the correct parameters");
 					var oDiscardCallPropertyBag = oDiscardDraftStub.getCall(0).args[0];
-					assert.equal(oDiscardCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
+					assert.equal(oDiscardCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
 					assert.equal(oDiscardCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
 					assert.equal(oStopStub.callCount, 1, "then stop was called");
 					assert.equal(oCrossAppNavigationStub.callCount, 1, "a restart was triggered");

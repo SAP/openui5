@@ -5,17 +5,21 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Control"
 ], function(
 	sinon,
 	Layer,
 	TranslationAPI,
 	InitialConnector,
+	FlexState,
 	ManifestUtils,
 	FlUtils,
-	oCore
+	Core,
+	Control
 ) {
 	"use strict";
 
@@ -23,10 +27,7 @@ sap.ui.define([
 
 	QUnit.module("TranslationAPI rejects", {
 		before: function() {
-			this.vSelector = {
-				elementId: "selector",
-				elementType: "sap.ui.core.Control"
-			};
+			this.oControl = new Control();
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -35,7 +36,7 @@ sap.ui.define([
 		QUnit.test("When getTexts is triggered, with missing source language", function (assert) {
 			var mPropertyBag = {
 				targetLanguage: "de-DE",
-				selector: this.vSelector,
+				selector: this.oControl,
 				appComponent: "reference",
 				layer: Layer.CUSTOMER
 			};
@@ -47,7 +48,7 @@ sap.ui.define([
 		QUnit.test("When getTexts is triggered, with missing target language", function (assert) {
 			var mPropertyBag = {
 				sourceLanguage: "en-US",
-				selector: this.vSelector,
+				selector: this.oControl,
 				appComponent: "reference",
 				layer: Layer.CUSTOMER
 			};
@@ -59,7 +60,7 @@ sap.ui.define([
 		QUnit.test("When getTexts is triggered, with missing layer", function (assert) {
 			var mPropertyBag = {
 				sourceLanguage: "en-US",
-				selector: this.vSelector,
+				selector: this.oControl,
 				appComponent: "reference"
 			};
 			return TranslationAPI.getSourceLanguages(mPropertyBag).catch(function (sRejectionMessage) {
@@ -80,27 +81,27 @@ sap.ui.define([
 		QUnit.test("When getSourceLanguages is triggered, with missing layer", function (assert) {
 			var mPropertyBag = {
 				reference: "reference",
-				selector: this.vSelector
+				selector: this.oControl
 			};
 			return TranslationAPI.getSourceLanguages(mPropertyBag).catch(function (sRejectionMessage) {
 				assert.equal(sRejectionMessage, "No layer was provided", "then the rejection message is passed");
 			});
 		});
 
-		QUnit.test("When postTranslationTexts is triggered, with missing layer", function (assert) {
+		QUnit.test("When uploadTranslationTexts is triggered, with missing layer", function (assert) {
 			var mPropertyBag = {
 				payload: {}
 			};
-			return TranslationAPI.postTranslationTexts(mPropertyBag).catch(function (sRejectionMessage) {
+			return TranslationAPI.uploadTranslationTexts(mPropertyBag).catch(function (sRejectionMessage) {
 				assert.equal(sRejectionMessage, "No layer was provided", "then the rejection message is passed");
 			});
 		});
 
-		QUnit.test("When postTranslationTexts is triggered, with missing layer", function (assert) {
+		QUnit.test("When uploadTranslationTexts is triggered, with missing layer", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER
 			};
-			return TranslationAPI.postTranslationTexts(mPropertyBag).catch(function (sRejectionMessage) {
+			return TranslationAPI.uploadTranslationTexts(mPropertyBag).catch(function (sRejectionMessage) {
 				assert.equal(sRejectionMessage, "No payload was provided", "then the rejection message is passed");
 			});
 		});
@@ -119,10 +120,7 @@ sap.ui.define([
 					return {};
 				}
 			};
-			this.vSelector = {
-				elementId: "selector",
-				elementType: "sap.ui.core.Control"
-			};
+			this.oControl = new Control();
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -130,15 +128,19 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("given a mock server, when getSourceLanguage is triggered", function (assert) {
 			var mPropertyBag = {
-				selector: this.vSelector,
+				selector: this.oControl,
 				layer: Layer.CUSTOMER
 			};
 
-			var aReturnedLanguages = [
-				"en-US",
-				"de-DE"
-			];
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexState, "getCompVariantsMap").returns({});
+
+			var aReturnedLanguages = {
+				sourceLanguages: [
+					"en-US",
+					"de-DE"
+				]
+			};
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -162,10 +164,10 @@ sap.ui.define([
 			var mPropertyBag = {
 				sourceLanguage: "en-US",
 				targetLanguage: "de-DE",
-				selector: this.vSelector,
+				selector: this.oControl,
 				layer: Layer.CUSTOMER
 			};
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -179,18 +181,18 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when postTranslationTexts is triggered", function (assert) {
+		QUnit.test("given a mock server, when uploadTranslationTexts is triggered", function (assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				payload: {}
 			};
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
 			var sUrl = "/flexKeyUser/flex/keyuser/v1/translation/texts";
 			var oStubSendRequest = sandbox.stub(InitialConnector, "sendRequest").resolves({response: {}});
-			return TranslationAPI.postTranslationTexts(mPropertyBag).then(function () {
+			return TranslationAPI.uploadTranslationTexts(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.getCall(0).args[0], sUrl, "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mPropertyBag, "the propertyBag is passed correct");

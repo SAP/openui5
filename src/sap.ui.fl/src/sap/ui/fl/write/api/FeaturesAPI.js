@@ -51,7 +51,7 @@ sap.ui.define([
 		 * @description App variant functionality is only supported in S/4HANA Cloud Platform & S/4HANA on Premise.
 		 * App variant functionality should be available if the following conditions are met:
 		 * When the current layer is 'CUSTOMER'.
-		 * When it is not a standalone app runing on Neo Cloud.
+		 * When it is not a standalone app running on Neo Cloud.
 		 * When the backend supports this feature.
 		 * @private
 	 	 * @ui5-restricted
@@ -103,7 +103,7 @@ sap.ui.define([
 		 * Checks if key user has also the admin role to enable the translation button
 		 *
 		 * @param {sap.ui.fl.Layer} sLayer - Current layer
-		 * @returns {Promise<boolean>} Resolves to a boolean indicating if they keyuser is also admin
+		 * @returns {Promise<boolean>} Resolves to a boolean indicating if the key user is also an admin
 		 * @public
 		 */
 		isKeyUserTranslationEnabled: function (sLayer) {
