@@ -5,8 +5,10 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/date/UniversalDateUtils',
-	'sap/ui/model/FilterOperator'
-], function (FilterOperatorUtil, Operator, RangeOperator, Filter, UniversalDate, UniversalDateUtils, ModelOperator) {
+	'sap/ui/model/FilterOperator',
+	'sap/m/DatePicker',
+	'sap/m/Slider'
+], function (FilterOperatorUtil, Operator, RangeOperator, Filter, UniversalDate, UniversalDateUtils, ModelOperator, DatePicker, Slider) {
 	"use strict";
 
 
@@ -142,8 +144,94 @@ sap.ui.define([
 		}
 	});
 
+	var oMyDateOperator = new Operator({
+		name: "MYDATE",
+		alias: {Date: "DATE", DateTime: "DATE"},
+		filterOperator: ModelOperator.EQ,
+		longText: "Date", // only needed for MultiValue
+		tokenText: "Date", // only needed for MultiValue
+		tokenParse: "^=([^=].*)$", // only needed for MultiValue
+		tokenFormat: "{0}", // only needed for MultiValue
+		valueTypes: [Operator.ValueType.Self],
+		createControl: function(oType, sPath, iIndex, sId)  { // only needed for MultiValue
+			var oDatePicker = new DatePicker(sId, { // render always a DatePicker, also for DateTime
+				value: {path: sPath, type: oType, mode: 'TwoWay'},
+				width: "100%"
+			});
 
-	[oRenaissanceOperator, oMediEvalOperator, oModernOperator, oCustomRangeOperator, oNotInRangeOperator, oLastYearOperator, oEuropeOperator].forEach(function (oOperator) {
+			return oDatePicker;
+		},
+		getModelFilter: function (oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+			if (oType.isA("sap.ui.model.odata.type.DateTimeOffset")) {
+				var sFrom = oCondition.values[0];
+				var oModelFormat = oType.getModelFormat(); // use ModelFormat to convert in JS-Date and add 23:59:59
+				var oDate = oModelFormat.parse(sFrom);
+				oDate.setHours(23);
+				oDate.setMinutes(59);
+				oDate.setSeconds(59);
+				oDate.setMilliseconds(999);
+				var sTo = oModelFormat.format(oDate);
+				return new Filter({path: sFieldPath, operator: ModelOperator.BT, value1: sFrom, value2: sTo});
+			} else {
+				return new Filter({path: sFieldPath, operator: this.filterOperator, value1: oCondition.values[0]});
+			}
+		}
+	});
+
+	var oMyDateRangeOperator = new Operator({
+		name: "MYDATERANGE",
+		alias: {Date: "DATERANGE", DateTime: "DATERANGE"},
+		filterOperator: ModelOperator.BT,
+		longText: "Date Range", // only needed for MultiValue
+		tokenText: "Date Range", // only needed for MultiValue
+		tokenParse: "^([^!].*)\\.\\.\\.(.+)$", // only needed for MultiValue
+		tokenFormat: "{0}...{1}", // only needed for MultiValue
+		valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
+		createControl: function(oType, sPath, iIndex, sId)  { // only needed for MultiValue
+			var oDatePicker = new DatePicker(sId, { // render always a DatePicker, also for DateTime
+				value: {path: sPath, type: oType, mode: 'TwoWay'},
+				width: "100%"
+			});
+
+			return oDatePicker;
+		},
+		getModelFilter: function (oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+			if (oType.isA("sap.ui.model.odata.type.DateTimeOffset")) {
+				var sFrom = oCondition.values[0];
+				var oModelFormat = oType.getModelFormat(); // use ModelFormat to convert in JS-Date and add 23:59:59
+				var oDate = oModelFormat.parse(oCondition.values[1]);
+				oDate.setHours(23);
+				oDate.setMinutes(59);
+				oDate.setSeconds(59);
+				oDate.setMilliseconds(999);
+				var sTo = oModelFormat.format(oDate);
+				return new Filter({path: sFieldPath, operator: ModelOperator.BT, value1: sFrom, value2: sTo});
+			} else {
+				return new Filter({path: sFieldPath, operator: this.filterOperator, value1: oCondition.values[0], value2: oCondition.values[1]});
+			}
+		}
+	});
+	var oMyNextDays = new RangeOperator({
+		name: "MYNEXTDAYS",
+		valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
+		paramTypes: ["(\\d+)"],
+		additionalInfo: "",
+		longText: "Next X days",
+		tokenText: "Next {0} days",
+		createControl: function(oType, sPath, iIndex, sId)  { // only needed for MultiValue
+			var oSlider = new Slider(sId, { // render always a DatePicker, also for DateTime
+				value: {path: sPath, type: oType, mode: 'TwoWay'},
+				width: "100%"
+			});
+
+			return oSlider;
+		},
+		calcRange: function(iDuration) {
+			return UniversalDateUtils.ranges.nextDays(iDuration);
+		}
+	});
+
+	[oRenaissanceOperator, oMediEvalOperator, oModernOperator, oCustomRangeOperator, oNotInRangeOperator, oLastYearOperator, oEuropeOperator, oMyDateOperator, oMyDateRangeOperator, oMyNextDays].forEach(function (oOperator) {
 		FilterOperatorUtil.addOperator(oOperator);
 	});
 

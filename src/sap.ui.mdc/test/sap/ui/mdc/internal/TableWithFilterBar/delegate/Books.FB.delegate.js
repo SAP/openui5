@@ -79,6 +79,7 @@ sap.ui.define([
 					oPropertyInfo.filterOperators = ["EQ"]; // for currency only fixed values make sense
 				} else if (oPropertyInfo.name === "createdAt") {
 					oPropertyInfo.maxConditions = 1; // to use DynamicDateRange
+					oPropertyInfo.filterOperators = ["MYDATE", "MYDATERANGE", "EQ", "GE", "LE", "BT", "TODAY", "YESTERDAY", "TOMORROW", "LASTDAYS", "MYNEXTDAYS", "THISWEEK", "THISMONTH", "THISQUARTER", "THISYEAR"];
 				}
 
 			});
