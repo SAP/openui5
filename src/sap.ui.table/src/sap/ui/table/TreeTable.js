@@ -456,7 +456,7 @@ sap.ui.define([
 	/**
 	 * Expands all nodes starting from the root level to the given level 'iLevel'.
 	 *
-	 * Only supported with ODataModel v2, when running in OperationMode.Client or OperationMode.Auto.
+	 * Only supported with ODataModel v2, when running in OperationMode.Client.
 	 * Fully supported for <code>sap.ui.model.ClientTreeBinding</code>, e.g. if you are using a <code>sap.ui.model.json.JSONModel</code>.
 	 *
 	 * Please also see <code>sap.ui.model.odata.OperationMode</code>.
