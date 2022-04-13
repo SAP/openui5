@@ -7,6 +7,7 @@
 // Variables overriding
 // ==========================================================================
 
+@_sap_m_Carousel_BackgroundColor: @sapBackgroundColor;
 @_sap_m_Carousel_MinWidth: 15.5rem;
 @_sap_m_Carousel_ControlsNoArrowsHeight: 2.75rem;
 @_sap_m_Carousel_NumericIndicatorTextColor: @sapUiPageFooterTextColor;
@@ -24,45 +25,3 @@
 @_sap_m_Carousel_BulletInactiveMargin: 0 0.25rem;
 @_sap_m_Carousel_FocusBorderOffsetArrow: -0.3125rem;
 @_sap_m_Carousel_ContrastFocusBorder: @sapUiContentFocusWidth solid @sapUiBaseBG;
-
-.sapMCrsl {
-	background-color: @sapUiBaseBG;
-	border: 0.125rem solid transparent;
-}
-
-/* Carousel controls: HUD */
-.sapMCrslHud a {
-	opacity: 0.5;
-	box-shadow: @sapUiShadowLevel1;
-}
-.sapMCrsl:focus {
-    outline: none;
-}
-
-.sapMCrsl .sapMCrslHud,
-.sapMCrsl .sapMCrslHud {
-	border: 3px solid @sapUiButtonBorderColor;
-}
-
-.sapMCrsl .sapMCrslHud a:hover,
-.sapMCrsl .sapMCrslHud a:focus {
-	box-shadow: @sapUiShadowLevel1;
-	border: 1px solid @sapUiButtonBorderColor;
-	background: @sapUiButtonHoverBackground;
-	background-color: @sapUiButtonActiveBackground;
-}
-
-/* HCB Additional Styles */
-.sapMCrslHud .sapMCrslPrev,
-.sapMCrslHud .sapMCrslNext {
-	border: 2px solid @sapUiButtonBorderColor;
-}
-
-.sapMCrslControls .sapMCrslPrev,
-.sapMCrslControls .sapMCrslNext {
-	border: 2px solid @sapUiButtonBorderColor;
-}
-.sapMCrsl .sapMCrslHud a:active {
-	box-shadow: @sapUiShadowLevel1;
-	background-color: @sapUiButtonActiveBackground;
-}

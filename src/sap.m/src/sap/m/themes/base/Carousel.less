@@ -3,6 +3,7 @@
 /* Base theme                      */
 /* =============================== */
 
+@_sap_m_Carousel_BackgroundColor: @sapGroup_ContentBackground;
 @_sap_m_Carousel_MinWidth: 20rem;
 @_sap_m_Carousel_ControlsNoArrowsHeight: 2rem;
 @_sap_m_Carousel_NumericIndicatorTextColor: @sapUiContentLabelColor;
@@ -14,44 +15,46 @@
 @_sap_m_Carousel_PageIndicatorWidthSizeM: 16rem;
 @_sap_m_Carousel_PageIndicatorWidthSizeL: 20rem;
 @_sap_m_Carousel_PageIndicatorWidthSizeXL: 24rem;
-
+@_sap_m_Carousel_ContentArrowBoxShadow: @sapUiShadowLevel1;
 @_sap_m_Carousel_BulletInactiveBackground: @sapUiContentNonInteractiveIconColor;
 @_sap_m_Carousel_BulletInactiveBorderColor: @sapUiContentNonInteractiveIconColor;
-
 @_sap_m_Carousel_BulletActiveBackground: @sapUiSelected;
 @_sap_m_Carousel_BulletActiveBorder: @_sap_m_Carousel_BulletActiveBackground;
-
 @_sap_m_Carousel_BulletInactiveWidth: 0.25rem;
 @_sap_m_Carousel_BulletInactiveMargin: 0 0.375rem;
-@_sap_m_Carousel_FocusBorderOffset: 0;
 @_sap_m_Carousel_FocusBorderOffsetArrow: -0.125rem;
 @_sap_m_Carousel_ContrastFocusBorder: @sapUiContentFocusWidth solid @sapUiContentContrastFocusColor;
 @_sap_m_Carousel_FocusBorder: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 
 .sapMCrsl {
+	background-color: @_sap_m_Carousel_BackgroundColor;
 	position: relative;
 	overflow: hidden;
 	box-sizing: border-box;
-	border: 1px solid transparent;
 	min-width: @_sap_m_Carousel_MinWidth;
 }
 
 .sapMCrsl:focus {
 	outline: none;
-}
 
-.sapMCrsl:focus {
-  &:before {
-    border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-    position: absolute;
-    content: " ";
-    top: @_sap_m_Carousel_FocusBorderOffset;
-    right: @_sap_m_Carousel_FocusBorderOffset;
-    bottom: @_sap_m_Carousel_FocusBorderOffset;
-    left: @_sap_m_Carousel_FocusBorderOffset;
-    z-index: 2;
-    pointer-events: none;
-  }
+	&:before,
+	&:after {
+		position: absolute;
+		content: " ";
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	&::before {
+		border: @_sap_m_Carousel_ContrastFocusBorder;
+	}
+	&::after {
+		border: @_sap_m_Carousel_FocusBorder;
+	}
 }
 
 //show the left and right arrows when the carousel is focused
@@ -193,9 +196,20 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 	opacity: 0;
 	display: none;
 	position: absolute;
+	margin: -1.5625px 0 0 0;
+	box-shadow: @_sap_m_Carousel_ContentArrowBoxShadow;
+
+	&:hover,
+	&:focus {
+		opacity: 1;
+		display: block;
+	}
+}
+
+.sapMCrslPrev,
+.sapMCrslNext {
 	width: @_sap_m_Carousel_PrevAndNextSize;
 	height: @_sap_m_Carousel_PrevAndNextSize;
-	margin: -1.5625px 0 0 0;
 	padding: 0;
 	text-decoration: none;
 	border-radius: 50%;
@@ -203,7 +217,28 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 	transition: opacity 0.1s ease-in;
 	box-sizing: border-box;
 	background-color: @sapUiButtonBackground;
+	border: 1px solid @sapUiButtonBorderColor;
 	color: @sapUiButtonIconColor;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+	user-select: none;
+	-webkit-user-drag: none;
+	-moz-user-drag: -moz-none;
+	user-drag: none;
+
+	&:hover {
+		background: @sapUiButtonHoverBackground;
+		border-color: @sapUiButtonHoverBorderColor;
+		color: @sapUiButtonHoverTextColor;
+		box-shadow: @sapContent_Interaction_Shadow;
+	}
+
+	&:active {
+		background-color: @sapUiButtonActiveBackground;
+		border-color: @sapUiButtonActiveBorderColor;
+		color: @sapUiButtonActiveTextColor;
+	}
 }
 
 .sapMCrslHudMiddle a {
@@ -216,18 +251,6 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 
 .sapMCrslHudBottom a {
 	top: calc(~"50% - 2rem");
-}
-
-.sapMCrslControls a,
-.sapMCrslHud a {
-	padding: 0;
-	-webkit-user-select: none;
-	-moz-user-select: -moz-none;
-	user-select: none;
-	-webkit-user-drag: none;
-	-moz-user-drag: -moz-none;
-	user-drag: none;
-	box-sizing: border-box;
 }
 
 .sapMCrslBulleted > span {
@@ -318,34 +341,14 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 	align-self: center;
 }
 
-.sapMCrslPrev,
-.sapMCrslNext {
-	cursor: pointer;
-}
-
 .sapMCrslControls .sapMCrslPrev,
 .sapMCrslControls .sapMCrslNext {
-	width: @_sap_m_Carousel_PrevAndNextSize;
-	height: @_sap_m_Carousel_PrevAndNextSize;
 	display: inline-block;
-	padding: 0;
 	text-decoration: none;
 	text-align: center;
-	border-radius: 50%;
 	outline: none;
 	position: relative;
 	top: 4px;
-	box-sizing: border-box;
-	background: @sapUiButtonBackground;
-	border: 1px solid @sapUiButtonBorderColor;
-}
-
-.sapMCrslHud .sapMCrslPrev,
-.sapMCrslHud .sapMCrslNext {
-	position: absolute;
-	background-color: @sapUiButtonBackground;
-	border: 1px solid @sapUiButtonBorderColor;
-	border-radius: 50%;
 }
 
 .sapMCrslArrowInner {
@@ -483,24 +486,6 @@ html[data-sap-ui-animation='off'] {
 	background: @sapUiBaseBG;
 }
 
-.sapMCrsl .sapMCrslHud a:hover,
-.sapMCrsl .sapMCrslHud a:focus {
-	background: @sapUiButtonBackground;
-	opacity: 1;
-	display: block;
-}
-
-.sapMCrsl .sapMCrslHud a:active {
-	background-color: @sapUiButtonActiveBackground;
-	border-color: @sapUiButtonActiveBorderColor;
-	color: @sapUiButtonActiveTextColor;
-}
-
-.sapMCrsl .sapMCrslControls a:active {
-	background: @sapUiButtonActiveBackground;
-	color: @sapUiButtonActiveTextColor;
-}
-
 .sapMCrsl .sapMCrslHud.sapMCrslLeftmost a.sapMCrslPrev,
 .sapMCrsl .sapMCrslHud.sapMCrslRightmost a.sapMCrslNext {
 	opacity: 0;
@@ -537,11 +522,6 @@ html[data-sap-ui-animation='off'] {
 	border-top: 1px solid @sapUiPageFooterBorderColor;
 }
 
-.sapMCrslControls a:hover,
-.sapMCrslPrev:hover, .sapMCrslNext:hover {
-	background: @sapUiButtonHoverBackground;
-}
-
 /* Default Themes/Sytles for Slider */
 .sapMCrslFluid .sapMCrslItem {
 	margin-right: 1.25rem;
@@ -550,24 +530,13 @@ html[data-sap-ui-animation='off'] {
 	overflow: hidden;
 }
 
-.sapMCrslControls,
-.sapMCrslHud {
-	.sapMCrslPrev,
-	.sapMCrslNext {
-		background: @sapUiButtonBackground;
-		border: 1px solid @sapUiButtonBorderColor;
-		color: @sapUiButtonIconColor;
-	}
-}
-
 .sapMCrsl:hover .sapMCrslHud a {
 	opacity: 1;
 	display: block;
 }
 
 html.sap-desktop {
-	.sapMCrslHud,
-	.sapMCrslControls {
+	.sapMCrslHud {
 		.sapMCrslPrev:focus,
 		.sapMCrslNext:focus {
 			&::before,
