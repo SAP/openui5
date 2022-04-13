@@ -1451,6 +1451,17 @@ function (
 		assert.strictEqual(this.oGrid.getItems()[3].getId(), oItem.getId(), "Item hasn't moved");
 	});
 
+	QUnit.test("Keyboard Drag&Drop: Alt + Arrow Right", function (assert) {
+		// Arrange
+		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement;
+
+		// Act
+		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_RIGHT, false, /**alt */true,  false );
+
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDraggedControl), -1, "Dragging should be disabled for alt + arrow keys");
+		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), -1, "Dragging should be disabled for alt + arrow keys");
+	});
+
 	QUnit.test("Keyboard Drag&Drop: Check that GridDragOver is not used", function (assert) {
 		// Arrange
 		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement,
