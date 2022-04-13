@@ -61,7 +61,7 @@ sap.ui.define(['./library'],
 
             if (oToolbar) {
                 oRm.openStart("div");
-                //oRm.class("sapUiFixFlexFixed");
+                oRm.class("sapUiFixFlexFixed");
                 oRm.openEnd();
                 oRm.renderControl(oToolbar);
                 oRm.close("div");

@@ -462,4 +462,19 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.test("MDC Chart setHeight calls delegate height adjustment", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+
+			var adjustSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "adjustChartHeight");
+
+			assert.ok(this.oMDCChart.setHeight("100px"));
+
+			assert.ok(adjustSpy.calledOnce, "Height adjustment call made to delegate");
+
+			done();
+		}.bind(this));
+	});
+
 });
