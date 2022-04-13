@@ -1672,11 +1672,17 @@ html[data-sap-ui-browser*='ff'] {
 		text-align: left !important;
 	}
 }
-.sapMGTIconMode .sapMGTSubHdrTxt{
-	line-height: 1rem;
-	.sapMText{
-		font-size: 0.875rem;
-		color: @sapUiContentLabelColor;
+.sapMGTIconMode{
+	.sapMGTHdrTxt > .sapMText{
+		font-weight: bold;
+		font-size: @sapFontHeader6Size;
+	}
+	.sapMGTSubHdrTxt{
+		line-height: 1rem;
+		.sapMText{
+			font-size: 0.875rem;
+			color: @sapUiContentLabelColor;
+		}
 	}
 }
 
