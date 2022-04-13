@@ -18,7 +18,8 @@
 				oPath = {},
 				sOriginEncoded,
 				oBaseTag,
-				oScriptTag;
+				oScriptTag,
+				sPresetDensity = getUrlParam('sap-ui-density');
 
 		if (sOrigin === "" || sOrigin === ".") {
 			var sHref = document.location.href;
@@ -51,6 +52,17 @@
 </head>
 <body class="sapUiBody sapUiSizeCompact" id="content">
 <script>
+	var setDensityClass = function(sDensityClass) {
+		var sBodyDensityClass = Array.prototype.find.call(document.body.classList, function(el){
+			return el.includes("sapUiSize");
+		});
+		sBodyDensityClass ? document.body.classList.replace(sBodyDensityClass, sDensityClass) :
+		document.body.classList.add(sDensityClass);
+	}
+
+	if (sPresetDensity) {
+		setDensityClass(sPresetDensity);
+	}
 	sap.ui.getCore().attachInit(function () {
 		sap.ui.require([
 			"sap/ui/core/ComponentContainer",
@@ -166,6 +178,7 @@
 					var oContainer = new ComponentContainer({component : oComponent, height: "100%"})
 							.placeAt("content");
 					var oMessage = {};
+					var objRta = null;
 					oMessage.type = "INIT";
 					oMessage.data = {
 						"msg": "fired after component container is placed in DOM"
@@ -189,11 +202,7 @@
 								}
 							}, getUrlParam('sap-ui-xx-dk-origin'));
 							} else if (eMessage.data.reason === "set") {
-								var sBodyDensityClass = Array.prototype.find.call(document.body.classList, function(el){
-									return el.includes("sapUiSize");
-								});
-								sBodyDensityClass ? document.body.classList.replace(sBodyDensityClass, eMessage.data.data.density) :
-								document.body.classList.add(eMessage.data.data.density);
+								setDensityClass(eMessage.data.data.density);
 								sap.ui.getCore().getConfiguration().setRTL(eMessage.data.data.RTL);
 								sap.ui.getCore().applyTheme(eMessage.data.data.theme);
 							}
@@ -201,6 +210,11 @@
 					});
 
 					function enableRta() {
+						if (objRta) {
+							objRta.stop();
+							objRta = null;
+							return;
+						}
 						sap.ui.require([
 							"sap/ui/rta/api/startKeyUserAdaptation"
 						], function (
@@ -209,6 +223,8 @@
 							startKeyUserAdaptation({
 								rootControl: oContainer.getComponentInstance()
 							}).then(function (oRta) {
+
+								objRta = oRta;
 								oContainer.$().css({
 									"padding-top": "2.5rem",
 									"box-sizing": "border-box"

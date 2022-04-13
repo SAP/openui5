@@ -221,14 +221,29 @@ sap.ui.define([
 					// oView.addDependent(this._oSettingsDialog);
 				}
 
-				this.loadSampleSettings().then(function() {
+				this.loadSampleSettings(this.applySampleSettings).then(function() {
 					this._oSettingsDialog.open();
 				}.bind(this)).catch(function(err) {
 					Log.error(err);
 				});
 			},
 
-			loadSampleSettings: function() {
+			applySampleSettings: function(eMessage) {
+				if (eMessage.data.type === "SETTINGS") {
+					var oThemeSelect = sap.ui.getCore().byId("sample--ThemeSelect");
+
+				// Theme select
+				oThemeSelect.setSelectedKey(eMessage.data.data.theme);
+
+				// RTL
+				sap.ui.getCore().byId("sample--RTLSwitch").setState(eMessage.data.data.RTL);
+
+				// Density mode select
+				sap.ui.getCore().byId("sample--DensityModeSwitch").setSelectedKey(eMessage.data.data.density.slice(9).toLowerCase());
+				}
+			},
+
+			loadSampleSettings: function(fnCallback) {
 				return new Promise(function (resolve, reject) {
 					var oIframe = this._oHtmlControl.getDomRef();
 					oIframe.contentWindow.postMessage({
@@ -239,21 +254,9 @@ sap.ui.define([
 					window.addEventListener("message", loadSettings);
 
 					function loadSettings(eMessage) {
-						if (eMessage.data.type === "SETTINGS") {
-							var oThemeSelect = sap.ui.getCore().byId("sample--ThemeSelect");
-
-						// Theme select
-						oThemeSelect.setSelectedKey(eMessage.data.data.theme);
-
-						// RTL
-						sap.ui.getCore().byId("sample--RTLSwitch").setState(eMessage.data.data.RTL);
-
-						// Density mode select
-						sap.ui.getCore().byId("sample--DensityModeSwitch").setSelectedKey(eMessage.data.data.density.slice(9).toLowerCase());
-
+						fnCallback(eMessage);
 						window.removeEventListener("message", loadSettings);
 						resolve();
-						}
 					}
 					setTimeout(function() {
 						reject("The sample iframe is not loading settings");
@@ -338,8 +341,14 @@ sap.ui.define([
 			},
 
 			onNewTab : function () {
-				this._applySearchParamValueToIframeURL('sap-ui-theme', this._sDefaultSampleTheme);
-				URLHelper.redirect(this.sIFrameUrl, true);
+				// this._applySearchParamValueToIframeURL('sap-ui-theme', this._sDefaultSampleTheme);
+				this.loadSampleSettings(function(eMessage){
+					this._applySearchParamValueToIframeURL('sap-ui-theme', eMessage.data.data.theme);
+					this._applySearchParamValueToIframeURL('sap-ui-rtl', eMessage.data.data.RTL);
+					this._applySearchParamValueToIframeURL('sap-ui-density', eMessage.data.data.density);
+				}.bind(this)).then(function(){
+					URLHelper.redirect(this.sIFrameUrl, true);
+				}.bind(this));
 			},
 
 			onPreviousSample: function (oEvent) {
