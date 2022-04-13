@@ -9,6 +9,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/date/UniversalDate',
 	'./DateRangeSelectionRenderer',
 	"sap/ui/unified/calendar/CustomMonthPicker",
@@ -24,6 +25,7 @@ sap.ui.define([
 		library,
 		LocaleData,
 		DateFormat,
+		TimezoneUtil,
 		UniversalDate,
 		DateRangeSelectionRenderer,
 		CustomMonthPicker,
@@ -198,6 +200,7 @@ sap.ui.define([
 			oCalendar._getYearPicker().setIntervalSelection(true);
 		}
 
+		this._getCalendar().detachWeekNumberSelect(this._handleWeekSelect, this);
 		this._getCalendar().attachWeekNumberSelect(this._handleWeekSelect, this);
 		this._getCalendar().getSelectedDates()[0].setStartDate(this._oDateRange.getStartDate());
 		this._getCalendar().getSelectedDates()[0].setEndDate(this._oDateRange.getEndDate());
@@ -805,11 +808,18 @@ sap.ui.define([
 		DatePicker.prototype._fillDateRange.apply(this, arguments);
 
 		var oEndDate = this.getSecondDateValue();
+		var sFormattedEndDate;
 
 		if (oEndDate &&
 			oEndDate.getTime() >= this._oMinDate.getTime() &&
 			oEndDate.getTime() <= this._oMaxDate.getTime()) {
 			if (!this._oDateRange.getEndDate() || this._oDateRange.getEndDate().getTime() !== oEndDate.getTime()) {
+				sFormattedEndDate = this._getPickerParser().format(
+					oEndDate,
+					sap.ui.getCore().getConfiguration().getTimezone()
+				);
+				oEndDate = this._getPickerParser().parse(sFormattedEndDate, TimezoneUtil.getLocalTimezone())[0];
+
 				this._oDateRange.setEndDate(new Date(oEndDate.getTime()));
 			}
 		} else {
@@ -822,6 +832,8 @@ sap.ui.define([
 
 	DateRangeSelection.prototype._selectDate = function () {
 		var aSelectedDates = this._getCalendar().getSelectedDates();
+		var sFormattedDate, oParts;
+		var sTimezone = sap.ui.getCore().getConfiguration().getTimezone();
 
 		if (aSelectedDates.length > 0) {
 			var oDate1 = aSelectedDates[0].getStartDate();
@@ -833,6 +845,17 @@ sap.ui.define([
 
 				// the selected range includes all of the hours from the second date
 				oDate2.setHours(23, 59, 59, 999);
+
+				sFormattedDate = this._getPickerParser().format(oDate1, TimezoneUtil.getLocalTimezone());
+				oParts = this._getPickerParser().parse(sFormattedDate, sTimezone);
+				oDate1 = oParts && oParts[0];
+
+				sFormattedDate = this._getPickerParser().format(oDate2, TimezoneUtil.getLocalTimezone());
+				oParts = this._getPickerParser().parse(sFormattedDate, sTimezone);
+				oDate2 = oParts && oParts[0];
+
+				//the parser does not include milliseconds, so restore them
+				oDate2.setMilliseconds(999);
 
 				var sValue;
 				if (!deepEqual(oDate1, oDate1Old) || !deepEqual(oDate2, oDate2Old)) {
@@ -886,8 +909,15 @@ sap.ui.define([
 
 	DateRangeSelection.prototype._handleWeekSelect = function(oEvent){
 		var oSelectedDates = oEvent.getParameter("weekDays"),
-			oSelectedStartDate = oSelectedDates.getStartDate(),
-			oSelectedEndDate = oSelectedDates.getEndDate();
+			oSelectedStartDate,
+			oSelectedEndDate;
+
+		if (!oSelectedDates) {
+			return;
+		}
+
+		oSelectedStartDate = oSelectedDates.getStartDate();
+		oSelectedEndDate = oSelectedDates.getEndDate();
 
 		if (this.getShowFooter()) {
 			this._oPopup.getBeginButton().setEnabled(!!(oSelectedStartDate && oSelectedEndDate));
@@ -1054,6 +1084,14 @@ sap.ui.define([
 				this.fireChangeEvent(this.getValue(), {valid: this._bValid});
 			}
 		}
+	};
+
+	DateRangeSelection.prototype._getPickerParser = function() {
+		if (!this._calendarParser) {
+			this._calendarParser = DateFormat.getDateTimeWithTimezoneInstance({ showTimezone: false });
+		}
+
+		return this._calendarParser;
 	};
 
 	function _getIncrementedDate(oOldDate, iNumber, sUnit) {

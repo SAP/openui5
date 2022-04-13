@@ -143,7 +143,20 @@
 				new sap.m.Text({width: "100%"}),new sap.m.Text({width: "100%"}), // 2 empty lines
 
 				new sap.m.Label({text: "DRS6 - Warning DateRangeSelection:", labelFor: "DRS6"}),
-				new sap.m.DateRangeSelection("DRS6", { displayFormat: "dd.MM.yyyy",  valueState: "Warning"})
+				new sap.m.DateRangeSelection("DRS6", { displayFormat: "dd.MM.yyyy",  valueState: "Warning"}),
+				new sap.m.DateRangeSelection("DRS12"),
+				new sap.m.Button("btnEtcGMT-12", {
+					text: "Etc/GMT-12",
+					press: handleTimezoneButtonPress
+				}),
+				new sap.m.Button("btnUTC", {
+					text: "UTC",
+					press: handleTimezoneButtonPress
+				}),
+				new sap.m.Button("btnEtcGMT12", {
+					text: "Etc/GMT+12",
+					press: handleTimezoneButtonPress
+				})
 			],
 			footer: createFooter()
 		});
@@ -151,6 +164,11 @@
 		var app = new sap.m.App("myApp");
 		app.addPage(page1);
 		app.placeAt("body");
+
+		function handleTimezoneButtonPress(e) {
+			sap.ui.getCore().getConfiguration().setTimezone(e.getSource().getText());
+			sap.ui.getCore().byId("DRS12").setValue("");
+		}
 	</script>
 
 	<style>
