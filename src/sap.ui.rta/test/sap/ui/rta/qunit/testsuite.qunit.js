@@ -123,6 +123,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/command/appDescriptor/AddLibrary"]
 				}
 			},
+			"command/compVariant/CompVariantContent": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/compVariant/CompVariantContent"]
+				}
+			},
 			"command/compVariant/CompVariantSaveAs": {
 				group: "Command",
 				coverage: {

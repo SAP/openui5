@@ -382,6 +382,9 @@ sap.ui.define([
 			clazz: "sap/ui/rta/command/AddIFrame",
 			configure: configureAddIFrame
 		},
+		compVariantContent: {
+			clazz: "sap/ui/rta/command/compVariant/CompVariantContent"
+		},
 		compVariantSaveAs: {
 			clazz: "sap/ui/rta/command/compVariant/CompVariantSaveAs"
 		},
