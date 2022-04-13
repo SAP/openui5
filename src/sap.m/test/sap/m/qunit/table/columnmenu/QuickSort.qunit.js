@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickSort",
 	"sap/m/table/columnmenu/QuickSortItem",
-	"sap/m/Button"
-], function (QUnitUtils, Menu, QuickSort, QuickSortItem, Button) {
+	"sap/m/Button",
+	"sap/ui/core/Core"
+], function (QUnitUtils, Menu, QuickSort, QuickSortItem, Button, Core) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -31,7 +32,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Label", function(assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT");
 		var aItems = this.oQuickSort.getItems();
 		assert.equal(aItems[0]._getLabel(aItems.length), sLabel, "QuickSort label is correct.");
@@ -50,7 +51,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Content", function(assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		var aContent = this.oQuickSort.getEffectiveQuickActions()[0].getContent();
 		assert.ok(aContent, "The quick sort has content");
 
@@ -105,7 +106,7 @@ sap.ui.define([
 				})]
 			});
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -115,32 +116,23 @@ sap.ui.define([
 
 	QUnit.test("Change", function(assert) {
 		var done = assert.async();
-		this.oColumnMenu.openBy(this.oButton);
-		sap.ui.getCore().applyChanges();
+		var oMenu = this.oColumnMenu;
+		oMenu.openBy(this.oButton);
 
-		var oQuickSort = this.oColumnMenu.getAggregation("quickActions")[0];
-		var aButtons = document.getElementsByTagName("button");
-
-		function isButtonPressed(button) {
-			return button.firstChild.classList.contains("sapMToggleBtnPressed");
-		}
+		var oQuickSort = oMenu.getAggregation("quickActions")[0];
 
 		oQuickSort.attachChange(function(oEvent) {
 			assert.ok(true, "Sort event has been fired");
 			var oItem = oEvent.getParameter("item");
 			assert.equal(oItem.getKey(), "propertyA", "The item is passed as event parameter");
 			assert.equal(oItem.getSortOrder(), "Descending", "The sortOrder property of the item is correct");
-			assert.ok(!isButtonPressed(aButtons[0]), "After pressing the descending button, the state of the ascending button has changed.");
-			assert.ok(isButtonPressed(aButtons[1]), "The descending button is pressed");
 
-			oItem.setSortOrder("None");
-			assert.ok(!isButtonPressed(aButtons[0]), "Calling setSortOrder updates the pressed state of the buttons.");
-			assert.ok(!isButtonPressed(aButtons[1]), "Calling setSortOrder updates the pressed state of the buttons.");
-			done();
+			setTimeout(function() {
+				assert.ok(!oMenu._oPopover.isOpen(), "The popover closes");
+				done();
+			}, 1000);
 		});
 
-		assert.ok(isButtonPressed(aButtons[0]), "The ascending button is initially pressed");
-		assert.ok(!isButtonPressed(aButtons[1]), "The descending button is initially not pressed");
 		this.triggerClickEvent(document.getElementsByTagName("button")[1].id);
 	});
 

@@ -125,19 +125,10 @@ sap.ui.define([
 		}
 	};
 
-	QuickGroup.prototype._onItemChange = function(oQuickGroupItem, bGrouped) {
-		var sLabel = oQuickGroupItem.getLabel();
-
-		var oButton = this.getContent().find(function(oBtn) {
-			return oBtn.getText() === sLabel;
-		});
-
-		oButton.setPressed(bGrouped);
-	};
-
 	QuickGroup.prototype.onChange = function(oEvent, oItem) {
 		oItem.setProperty("grouped", oEvent.getParameters().pressed, true);
 		this.fireChange({item: oItem});
+		this.getMenu().close();
 	};
 
 	return QuickGroup;

@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickTotal",
 	"sap/m/table/columnmenu/QuickTotalItem",
-	"sap/m/Button"
-], function (QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button) {
+	"sap/m/Button",
+	"sap/ui/core/Core"
+], function (QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button, Core) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -36,7 +37,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Label", function(assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_TOTAL");
 		assert.equal(this.oQuickTotal.getLabel(), sLabel, "QuickTotal label is correct.");
 	});
@@ -81,7 +82,7 @@ sap.ui.define([
 				})]
 			});
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -91,10 +92,10 @@ sap.ui.define([
 
 	QUnit.test("Change", function(assert) {
 		var done = assert.async();
-		this.oColumnMenu.openBy(this.oButton);
-		sap.ui.getCore().applyChanges();
+		var oMenu = this.oColumnMenu;
+		oMenu.openBy(this.oButton);
 
-		var oQuickTotal = this.oColumnMenu.getAggregation("quickActions")[0];
+		var oQuickTotal = oMenu.getAggregation("quickActions")[0];
 		var aItems = oQuickTotal.getContent();
 
 		oQuickTotal.attachChange(function(oEvent) {
@@ -102,16 +103,13 @@ sap.ui.define([
 			var oItem = oEvent.getParameter("item");
 			assert.equal(oItem.getKey(), "PropertyA", "The item is passed as event parameter");
 			assert.ok(oItem.getTotaled(), "The totaled property of the item is correct");
-			assert.ok(aItems[0].getPressed(), "The first button is pressed");
-			assert.ok(!aItems[1].getPressed(), "After pressing the first button, the state of the second button has changed.");
 
-			oItem.setTotaled(false);
-			assert.ok(!aItems[0].getPressed(), "Calling setTotaled updates the pressed state of the button.");
-			done();
+			setTimeout(function() {
+				assert.ok(!oMenu._oPopover.isOpen(), "The popover closes");
+				done();
+			}, 1000);
 		});
 
-		assert.ok(!aItems[0].getPressed(), "The first button is initially not pressed");
-		assert.ok(aItems[1].getPressed(), "The second button is initially pressed");
 		this.triggerClickEvent(aItems[0].getId());
 	});
 
