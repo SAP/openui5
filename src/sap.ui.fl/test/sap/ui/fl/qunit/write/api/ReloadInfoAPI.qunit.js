@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Version,
 	ReloadInfoAPI,
 	VersionsAPI,
 	FeaturesAPI,
@@ -42,7 +44,7 @@ sap.ui.define([
 
 			var oExpectedHash = {
 				params: {
-					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft],
+					"sap-ui-fl-version": [Version.Number.Draft],
 					"sap-ui-fl-parameter": ["test"]
 				}
 			};
@@ -204,10 +206,10 @@ sap.ui.define([
 			};
 
 			var mParsedHash = {
-				params: sap.ui.fl.Versions.UrlParameter
+				params: Version.UrlParameter
 			};
 
-			var oUriWithVersionUrlParameter = UriParameters.fromQuery("?" + sap.ui.fl.Versions.UrlParameter + "=" + sap.ui.fl.Versions.Draft);
+			var oUriWithVersionUrlParameter = UriParameters.fromQuery("?" + Version.UrlParameter + "=" + Version.Number.Draft);
 			sandbox.stub(UriParameters, "fromQuery").returns(oUriWithVersionUrlParameter);
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
@@ -611,7 +613,7 @@ sap.ui.define([
 				parseShellHash: function () {
 					return {
 						params: {
-							"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]
+							"sap-ui-fl-version": [Version.Number.Draft]
 						}
 					};
 				}
@@ -622,7 +624,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with value '0'", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()}, this.oURLParsingService);
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: Version.Number.Draft}, this.oURLParsingService);
 			assert.deepEqual(bHasVersionParameter, true, "hasVersionParameterWithValue returns true");
 		});
 
@@ -675,7 +677,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with value '0'", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft}, this.oURLParsingService);
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: Version.Number.Draft}, this.oURLParsingService);
 			assert.deepEqual(bHasVersionParameter, false, "hasVersionParameterWithValue returns undefined");
 		});
 
@@ -695,7 +697,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("and the version parameter is in the URL with value '0'", function(assert) {
-			var sParams = "?" + sap.ui.fl.Versions.UrlParameter + "=" + sap.ui.fl.Versions.Draft;
+			var sParams = "?" + Version.UrlParameter + "=" + Version.Number.Draft;
 			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(true);
 
 			var oReloadInfo = {
@@ -713,7 +715,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("and the version parameter is in the URL with value '-1'", function(assert) {
-			var sParams = "?" + sap.ui.fl.Versions.UrlParameter + "=" + sap.ui.fl.Versions.Original;
+			var sParams = "?" + Version.UrlParameter + "=" + Version.Number.Original;
 			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(true);
 
 			var oReloadInfo = {
@@ -731,7 +733,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("and the version parameter is in the URL with value '123'", function(assert) {
-			var sParams = "?" + sap.ui.fl.Versions.UrlParameter + "=123";
+			var sParams = "?" + Version.UrlParameter + "=123";
 			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(true);
 
 			var oReloadInfo = {
@@ -777,7 +779,7 @@ sap.ui.define([
 				parameters: sParams
 			};
 
-			var sExpectedParams = "?" + sap.ui.fl.Versions.UrlParameter + "=" + sap.ui.fl.Versions.Draft;
+			var sExpectedParams = "?" + Version.UrlParameter + "=" + Version.Number.Draft;
 			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
 			assert.equal(this.oHandleUrlParameterSpy.calledOnce, true, "handleUrlParameter was called");
 			assert.equal(oHasParameterAndValueStub.calledOnce, true, "handleUrlParameter was called");
@@ -831,7 +833,7 @@ sap.ui.define([
 				hasHigherLayerChanges: true,
 				parameters: sParams
 			};
-			var sExpectedParams = "?" + LayerUtils.FL_MAX_LAYER_PARAM + "=" + Layer.CUSTOMER + "&" + sap.ui.fl.Versions.UrlParameter + "=" + sap.ui.fl.Versions.Draft;
+			var sExpectedParams = "?" + LayerUtils.FL_MAX_LAYER_PARAM + "=" + Layer.CUSTOMER + "&" + Version.UrlParameter + "=" + Version.Number.Draft;
 			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
 			assert.equal(this.oHandleUrlParameterSpy.calledTwice, true, "handleUrlParameter was called twice");
 			assert.equal(oHasParameterAndValueStub.calledTwice, true, "handleUrlParameter was called twice");

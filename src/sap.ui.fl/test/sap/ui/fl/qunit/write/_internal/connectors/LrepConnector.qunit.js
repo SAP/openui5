@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
+	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
 	"sap/m/MessageBox",
@@ -17,6 +19,8 @@ sap.ui.define([
 	WriteLrepConnector,
 	WriteUtils,
 	TransportSelection,
+	Version,
+	Settings,
 	Layer,
 	Change,
 	MessageBox,
@@ -373,7 +377,7 @@ sap.ui.define([
 					{fileName: "2"}
 				]
 			};
-			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
 			sandbox.spy(BusyIndicator, "hide");
 			sandbox.spy(BusyIndicator, "show");
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
@@ -449,7 +453,7 @@ sap.ui.define([
 				isProductiveSystem: function() {return false;},
 				isAtoEnabled: function() {return false;}
 			};
-			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&changelist=transportId&selector=abc123&changeType=labelChange";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
@@ -537,7 +541,7 @@ sap.ui.define([
 				isProductiveSystem: function() {return false;},
 				isAtoEnabled: function() {return true;}
 			};
-			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves(oMockTransportInfo);
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&changelist=ATO_NOTIFICATION&generator=Change.createInitialFileContent";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
@@ -567,7 +571,7 @@ sap.ui.define([
 				isProductiveSystem: function() {return false;},
 				isAtoEnabled: function() {return true;}
 			};
-			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&selector=view--control1,feview--control2";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 
@@ -600,7 +604,7 @@ sap.ui.define([
 				isProductiveSystem: function() {return false;},
 				isAtoEnabled: function() {return true;}
 			};
-			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=USER&generator=Change.createInitialFileContent&selector=view--control1,feview--control2";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 			var aControlIds = [
@@ -1314,14 +1318,14 @@ sap.ui.define([
 				tokenUrl: "/actions/getcsrftoken/"
 			};
 			var aReturnedVersions = {versions: [{
-				versionId: sap.ui.fl.Versions.Draft
+				versionId: Version.Number.Draft
 			}, {
 				versionId: "versionGUID"
 			}]};
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: aReturnedVersions});
 			return WriteLrepConnector.versions.load(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, [{
-					version: sap.ui.fl.Versions.Draft
+					version: Version.Number.Draft
 				}, {
 					version: "versionGUID"
 				}], "the versions list is returned correctly");
@@ -1362,7 +1366,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("activate draft", function (assert) {
-			var sActivateVersion = sap.ui.fl.Versions.Draft;
+			var sActivateVersion = Version.Number.Draft;
 			var mPropertyBag = {
 				url: "/sap/bc/lrep",
 				reference: "com.sap.test.app",
@@ -1426,7 +1430,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("reactivate original app", function (assert) {
-			var sActivateVersion = sap.ui.fl.Versions.Original;
+			var sActivateVersion = Version.Number.Original;
 			var mPropertyBag = {
 				url: "/sap/bc/lrep",
 				reference: "com.sap.test.app",

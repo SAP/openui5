@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/changeHandler/UnhideControl",
 	"sap/ui/fl/changeHandler/PropertyChange",
+	"sap/ui/fl/library",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
@@ -51,6 +52,7 @@ sap.ui.define([
 	HideControl,
 	UnhideControl,
 	PropertyChange,
+	flLibrary,
 	ChangesWriteAPI,
 	Change,
 	Layer,
@@ -125,7 +127,7 @@ sap.ui.define([
 			var oFlexSettings = {
 				layer: Layer.VENDOR,
 				developerMode: true,
-				scenario: sap.ui.fl.Scenario.AppVariant,
+				scenario: flLibrary.Scenario.AppVariant,
 				projectId: "projectId",
 				baseId: "baseId"
 			};

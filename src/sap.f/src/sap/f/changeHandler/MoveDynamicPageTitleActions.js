@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/ui/fl/changeHandler/condenser/Classification"
+	], function(
+		Condenser
+	) {
 	"use strict";
 
 		/**
@@ -131,7 +135,7 @@ sap.ui.define([], function() {
 			var oRevertData = oChange.getRevertData();
 			return {
 				affectedControl: oChangeContent.movedElements[0].selector,
-				classification: sap.ui.fl.condenser.Classification.Move,
+				classification: Condenser.Move,
 				sourceContainer: oRevertData.sourceParent,
 				targetContainer: oChangeContent.targetContainer,
 				sourceIndex: oRevertData.index,

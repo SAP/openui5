@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
-	"sap/ui/fl/library",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/appVariant/Feature",
@@ -17,7 +17,7 @@ function(
 	DateFormat,
 	Fragment,
 	coreLibrary,
-	flexLibrary,
+	Version,
 	Utils,
 	Translation,
 	AppVariantFeature,
@@ -27,7 +27,6 @@ function(
 	"use strict";
 
 	var MessageType = coreLibrary.MessageType;
-	var Versions = flexLibrary.Versions;
 
 	/**
 	 * Constructor for a new sap.ui.rta.toolbar.Adaptation control
@@ -113,7 +112,7 @@ function(
 	}
 
 	Adaptation.prototype.formatDiscardDraftVisible = function (sDisplayedVersion, bVersioningEnabled) {
-		return sDisplayedVersion === Versions.Draft && bVersioningEnabled;
+		return sDisplayedVersion === Version.Number.Draft && bVersioningEnabled;
 	};
 
 	Adaptation.prototype.formatVersionButtonText = function (aVersions, sDisplayedVersion) {
@@ -122,7 +121,7 @@ function(
 		var sType = "Active";
 		aVersions = aVersions || [];
 
-		if (sDisplayedVersion === undefined || sDisplayedVersion === Versions.Original) {
+		if (sDisplayedVersion === undefined || sDisplayedVersion === Version.Number.Original) {
 			sText = oTextResources.getText("TIT_ORIGINAL_APP");
 			sType = "inactive";
 			if (aVersions.length === 0 || (aVersions.length === 1 && aVersions[0].type === "draft")) {
@@ -134,7 +133,7 @@ function(
 			});
 			if (oDisplayedVersion) {
 				sType = oDisplayedVersion.type;
-				if (sDisplayedVersion === Versions.Draft) {
+				if (sDisplayedVersion === Version.Number.Draft) {
 					sText = oTextResources.getText("TIT_DRAFT");
 				} else {
 					sText = oDisplayedVersion.title || oTextResources.getText("TIT_VERSION_1");
@@ -211,7 +210,7 @@ function(
 
 	Adaptation.prototype.versionSelected = function (oEvent) {
 		var oVersionsBindingContext = oEvent.getSource().getBindingContext("versions");
-		var sVersion = Versions.Original;
+		var sVersion = Version.Number.Original;
 
 		if (oVersionsBindingContext) {
 			// the original Version does not have a version binding Context
@@ -417,7 +416,7 @@ function(
 		return oDialogPromise.then(function () {
 			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var sTitle = oTextResources.getText("TIT_VERSION_TITLE_DIALOG");
-			if (sDisplayedVersion !== Versions.Draft) {
+			if (sDisplayedVersion !== Version.Number.Draft) {
 				sTitle = oTextResources.getText("TIT_REACTIVATE_VERSION_TITLE_DIALOG");
 			}
 			this._oDialog.setTitle(sTitle);

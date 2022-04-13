@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/changeHandler/condenser/Classification"
 ], function(
-	Log
+	Log,
+	CondenserClassification
 ) {
 	"use strict";
 
@@ -114,7 +116,7 @@ sap.ui.define([
 	PropertyBindingChange.getCondenserInfo = function(oChange) {
 		return {
 			affectedControl: oChange.getSelector(),
-			classification: sap.ui.fl.condenser.Classification.LastOneWins,
+			classification: CondenserClassification.LastOneWins,
 			uniqueKey: oChange.getContent().property
 		};
 	};

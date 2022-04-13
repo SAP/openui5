@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/util/each",
+	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/write/_internal/condenser/classifications/Create",
 	"sap/ui/fl/write/_internal/condenser/classifications/Destroy",
 	"sap/ui/fl/write/_internal/condenser/classifications/Move",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function(
 	_isEqual,
 	each,
+	CondenserClassification,
 	Create,
 	Destroy,
 	Move,
@@ -93,7 +95,7 @@ sap.ui.define([
 	 */
 	function containsOnlyCreateChanges(aCondenserInfos) {
 		return !aCondenserInfos.some(function(vElement) {
-			return vElement.classification !== sap.ui.fl.condenser.Classification.Create;
+			return vElement.classification !== CondenserClassification.Create;
 		});
 	}
 
@@ -215,7 +217,7 @@ sap.ui.define([
 					var mTypes = mReducedChanges[sTargetElementId];
 					var mSubtypes = mTypes[Utils.INDEX_RELEVANT];
 					each(mSubtypes, function(sSubtypeKey, aCondenserChanges) {
-						if (sSubtypeKey !== sap.ui.fl.condenser.Classification.Destroy) {
+						if (sSubtypeKey !== CondenserClassification.Destroy) {
 							aCondenserChanges.forEach(function(oCondenserChange) {
 								oCondenserChange.setTargetIndex(oCondenserChange.change, iIndex);
 								oCondenserChange.change.condenserState = "select";

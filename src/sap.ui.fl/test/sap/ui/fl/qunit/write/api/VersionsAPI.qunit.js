@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/Storage",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Version,
 	VersionsAPI,
 	Versions,
 	Storage,
@@ -150,7 +152,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
-				{version: sap.ui.fl.Versions.Draft},
+				{version: Version.Number.Draft},
 				{version: "2"},
 				{version: "1"}
 			];
@@ -257,7 +259,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
-				{version: sap.ui.fl.Versions.Draft},
+				{version: Version.Number.Draft},
 				{version: "2"},
 				{version: "1"}
 			];
@@ -358,7 +360,7 @@ sap.ui.define([
 				var oParameters = oLoadVersionForApplicationStub.getCall(0).args[0];
 				assert.equal(oParameters.layer, Layer.CUSTOMER, "and the layer was passed");
 				assert.equal(oParameters.control, oControl, "as well as the control was passed");
-				assert.equal(oParameters.version, sap.ui.fl.Versions.Draft, "and the version number of the draft was passed");
+				assert.equal(oParameters.version, Version.Number.Draft, "and the version number of the draft was passed");
 			});
 		});
 	});
@@ -418,7 +420,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				control: new Control(),
-				version: sap.ui.fl.Versions.Original
+				version: Version.Number.Original
 			};
 
 			assert.throws(
@@ -465,7 +467,7 @@ sap.ui.define([
 				control: new Control(),
 				componentData: {},
 				manifest: {},
-				version: sap.ui.fl.Versions.Draft
+				version: Version.Number.Draft
 			};
 
 			var sReference = "com.sap.app";
@@ -480,7 +482,7 @@ sap.ui.define([
 					var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
 					assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
 					assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
-					assert.equal(oInitializePropertyBag.version, sap.ui.fl.Versions.Draft, "and passing the version number accordingly");
+					assert.equal(oInitializePropertyBag.version, Version.Number.Draft, "and passing the version number accordingly");
 				});
 		});
 

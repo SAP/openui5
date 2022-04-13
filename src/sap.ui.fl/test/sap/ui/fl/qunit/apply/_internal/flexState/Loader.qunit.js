@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Manifest,
@@ -15,6 +16,7 @@ sap.ui.define([
 	JsObjectConnector,
 	ApplyStorage,
 	Utils,
+	Version,
 	sinon
 ) {
 	"use strict";
@@ -97,7 +99,7 @@ sap.ui.define([
 				otherValue: "a",
 				reference: "reference",
 				componentData: {},
-				version: sap.ui.fl.Versions.Draft,
+				version: Version.Number.Draft,
 				allContexts: true
 			};
 
@@ -108,7 +110,7 @@ sap.ui.define([
 				siteId: "siteId",
 				preview: undefined,
 				appDescriptor: this.oRawManifest,
-				version: sap.ui.fl.Versions.Draft,
+				version: Version.Number.Draft,
 				allContexts: true
 			};
 

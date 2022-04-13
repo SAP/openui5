@@ -1,13 +1,15 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
-	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector"
+	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	sinon,
+	Version,
 	Utils,
-	KeyUserConnector
+	KeyUserConnector,
+	sinon
 ) {
 	"use strict";
 
@@ -25,13 +27,13 @@ sap.ui.define([
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "reference",
-				version: sap.ui.fl.Versions.Draft
+				version: Version.Number.Draft
 			};
 			var mParameter = {
-				version: sap.ui.fl.Versions.Draft,
+				version: Version.Number.Draft,
 				"sap-language": "en"
 			};
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?version=" + sap.ui.fl.Versions.Draft;
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?version=" + Version.Number.Draft;
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
 				response: {
@@ -68,10 +70,10 @@ sap.ui.define([
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "reference",
-				version: sap.ui.fl.Versions.Original
+				version: Version.Number.Original
 			};
 
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?version=" + sap.ui.fl.Versions.Original;
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?version=" + Version.Number.Original;
 			sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
 				response: {

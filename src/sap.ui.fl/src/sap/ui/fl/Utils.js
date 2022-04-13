@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/util/reflection/BaseTreeModifier",
 	"sap/ui/core/Component",
+	"sap/ui/fl/Scenario",
 	"sap/ui/thirdparty/hasher",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -24,6 +25,7 @@ sap.ui.define([
 	ManagedObject,
 	BaseTreeModifier,
 	Component,
+	Scenario,
 	hasher,
 	jQuery
 ) {
@@ -582,29 +584,29 @@ sap.ui.define([
 			}
 
 			switch (sScenario) {
-				case sap.ui.fl.Scenario.VersionedAppVariant:
+				case Scenario.VersionedAppVariant:
 					if (!sProjectId) {
 						oError.message += "in a versioned app variant scenario you additionally need a project ID";
 						throw oError;
 					}
 					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
 					break;
-				case sap.ui.fl.Scenario.AppVariant:
+				case Scenario.AppVariant:
 					if (!sProjectId) {
 						oError.message += "in an app variant scenario you additionally need a project ID";
 						throw oError;
 					}
 					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
 					break;
-				case sap.ui.fl.Scenario.AdaptationProject:
+				case Scenario.AdaptationProject:
 					if (!sProjectId) {
 						oError.message += "in a adaptation project scenario you additionally need a project ID";
 						throw oError;
 					}
 					sRootNamespace += sBaseId + "/adapt/" + sProjectId + "/";
 					break;
-				case sap.ui.fl.Scenario.FioriElementsFromScratch:
-				case sap.ui.fl.Scenario.UiAdaptation:
+				case Scenario.FioriElementsFromScratch:
+				case Scenario.UiAdaptation:
 				default:
 					sRootNamespace += sBaseId + "/";
 			}

@@ -4,9 +4,11 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/fl/changeHandler/condenser/Classification",
 	'sap/ui/fl/changeHandler/JsControlTreeModifier'
 ], function(
 	Log,
+	CondenserClassification,
 	JsControlTreeModifier
 ) {
 	"use strict";
@@ -89,7 +91,7 @@ sap.ui.define([
 	HideControl.getCondenserInfo = function(oChange) {
 		return {
 			affectedControl: oChange.getSelector(),
-			classification: sap.ui.fl.condenser.Classification.Reverse,
+			classification: CondenserClassification.Reverse,
 			uniqueKey: PROPERTY_NAME
 		};
 	};

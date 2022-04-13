@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Adaptation",
@@ -17,6 +18,7 @@ sap.ui.define([
 	Fragment,
 	coreLibrary,
 	Layer,
+	Version,
 	JSONModel,
 	AppVariantFeature,
 	Adaptation,
@@ -248,7 +250,7 @@ sap.ui.define([
 				versioningEnabled: true,
 				versions: [],
 				draftAvailable: false,
-				displayedVersion: sap.ui.fl.Versions.Draft
+				displayedVersion: Version.Number.Draft
 			});
 			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
@@ -272,10 +274,10 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Given only a draft is present in the back end", function (assert) {
 			var aVersions = [{
-				version: sap.ui.fl.Versions.Draft,
+				version: Version.Number.Draft,
 				type: "draft"
 			}];
-			var sText = this.oToolbar.formatVersionButtonText(aVersions, sap.ui.fl.Versions.Draft);
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, Version.Number.Draft);
 			var sExpectedText = this.oTextResources.getText("TIT_DRAFT");
 			assert.ok(this.oDiscardDraftButton.getVisible(), "the discard button is visible");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Draft'");
@@ -285,14 +287,14 @@ sap.ui.define([
 
 		QUnit.test("Given a draft version is the draft version in the list", function(assert) {
 			var aVersions = [{
-				version: sap.ui.fl.Versions.Draft,
+				version: Version.Number.Draft,
 				type: "draft"
 			}, {
 				version: "1",
 				title: "Version Title",
 				type: "active"
 			}];
-			var sText = this.oToolbar.formatVersionButtonText(aVersions, sap.ui.fl.Versions.Draft);
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, Version.Number.Draft);
 
 			var sExpectedText = this.oTextResources.getText("TIT_DRAFT");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Draft'");
@@ -308,7 +310,7 @@ sap.ui.define([
 				versioningEnabled: true,
 				versions: [],
 				draftAvailable: false,
-				displayedVersion: sap.ui.fl.Versions.Original
+				displayedVersion: Version.Number.Original
 			});
 			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
@@ -359,14 +361,14 @@ sap.ui.define([
 
 		QUnit.test("Given a draft version is the draft version in the list", function(assert) {
 			var aVersions = [{
-				version: sap.ui.fl.Versions.Draft,
+				version: Version.Number.Draft,
 				type: "draft"
 			}, {
 				version: "1",
 				title: "Version Title",
 				type: "active"
 			}];
-			var sText = this.oToolbar.formatVersionButtonText(aVersions, sap.ui.fl.Versions.Draft);
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, Version.Number.Draft);
 
 			var sExpectedText = this.oTextResources.getText("TIT_DRAFT");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Draft'");
@@ -377,10 +379,10 @@ sap.ui.define([
 
 		QUnit.test("Given a draft in the list", function(assert) {
 			var aVersions = [{
-				version: sap.ui.fl.Versions.Draft,
+				version: Version.Number.Draft,
 				type: "draft"
 			}];
-			var sText = this.oToolbar.formatVersionButtonText(aVersions, sap.ui.fl.Versions.Draft);
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, Version.Number.Draft);
 
 			var sExpectedText = this.oTextResources.getText("TIT_DRAFT");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Draft'");
@@ -391,7 +393,7 @@ sap.ui.define([
 		QUnit.test("Given two versions and a draft and the displayed version is the second one", function(assert) {
 			var sVersionTitle2 = "Version Title 2";
 			var aVersions = [{
-				version: sap.ui.fl.Versions.Draft,
+				version: Version.Number.Draft,
 				type: "draft"
 			}, {
 				version: "2",
@@ -413,7 +415,7 @@ sap.ui.define([
 		QUnit.test("Given two versions and a draft and the displayed version is the first one", function(assert) {
 			var sVersionTitle1 = "Version Title 1";
 			var aVersions = [{
-				version: sap.ui.fl.Versions.Draft,
+				version: Version.Number.Draft,
 				type: "draft"
 			}, {
 				version: "2",
@@ -433,7 +435,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given no version is present", function(assert) {
-			var sText = this.oToolbar.formatVersionButtonText([], sap.ui.fl.Versions.Original);
+			var sText = this.oToolbar.formatVersionButtonText([], Version.Number.Original);
 			this.oVersionsModel.updateBindings();
 			var sExpectedText = this.oTextResources.getText("TIT_ORIGINAL_APP");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Original App'");
@@ -463,7 +465,7 @@ sap.ui.define([
 			var oSetInputSpy;
 			var oConfirmButtonEnabledSpy;
 			var sExpectedTitle = this.oToolbar.getTextResources().getText("TIT_VERSION_TITLE_DIALOG");
-			return this.oToolbar._openVersionTitleDialog(sap.ui.fl.Versions.Draft)
+			return this.oToolbar._openVersionTitleDialog(Version.Number.Draft)
 				.then(function () {
 					assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
 					// checking for the dialog instance wrapped into a promise
@@ -491,7 +493,7 @@ sap.ui.define([
 
 		QUnit.test("Given display version is original, when the activate version button is pressed", function(assert) {
 			var sExpectedTitle = this.oToolbar.getTextResources().getText("TIT_REACTIVATE_VERSION_TITLE_DIALOG");
-			return this.oToolbar._openVersionTitleDialog(sap.ui.fl.Versions.Original)
+			return this.oToolbar._openVersionTitleDialog(Version.Number.Original)
 				.then(function () {
 					assert.equal(this.oToolbar._oDialog.getTitle(), sExpectedTitle, "the title is 'Reactivate Version'");
 				}.bind(this));
@@ -556,7 +558,7 @@ sap.ui.define([
 			if (sVersion !== undefined) {
 				assert.equal(oEvent.getParameter("version"), sVersion, "the event was fired with the bound version number");
 			} else {
-				assert.equal(oEvent.getParameter("version"), sap.ui.fl.Versions.Original, "the event was fired with the original app number");
+				assert.equal(oEvent.getParameter("version"), Version.Number.Original, "the event was fired with the original app number");
 			}
 			done();
 		});
@@ -601,7 +603,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given a version entry of the draft was selected", function(assert) {
-			createControlWithStubbedBindingContextFireSwitchAndAssert(assert, this.oToolbar, sap.ui.fl.Versions.Draft);
+			createControlWithStubbedBindingContextFireSwitchAndAssert(assert, this.oToolbar, Version.Number.Draft);
 		});
 
 		QUnit.test("Given a version entry of an created version was selected", function(assert) {
@@ -851,7 +853,7 @@ sap.ui.define([
 			});
 			this.oVersionsModel = new JSONModel({
 				versioningEnabled: true,
-				displayedVersion: sap.ui.fl.Versions.Draft
+				displayedVersion: Version.Number.Draft
 			});
 			this.oControlsModel = new JSONModel({
 				publishVisible: true,

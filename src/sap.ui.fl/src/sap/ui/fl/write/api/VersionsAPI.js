@@ -6,11 +6,13 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
 ], function(
 	FlexState,
 	Versions,
 	Utils,
+	Version,
 	ManifestUtils
 ) {
 	"use strict";
@@ -94,7 +96,7 @@ sap.ui.define([
 
 		var aVersions = oModel.getProperty("/versions");
 		var oDraft = aVersions.find(function (oVersion) {
-			return oVersion.version === sap.ui.fl.Versions.Draft;
+			return oVersion.version === Version.Number.Draft;
 		});
 
 		return !!oDraft;
@@ -116,7 +118,7 @@ sap.ui.define([
 		var displayedVersion = oModel.getProperty("/displayedVersion");
 		var activeVersion = oModel.getProperty("/activeVersion");
 
-		return displayedVersion !== sap.ui.fl.Versions.Draft && displayedVersion !== activeVersion;
+		return displayedVersion !== Version.Number.Draft && displayedVersion !== activeVersion;
 	};
 
 	/**
@@ -130,7 +132,7 @@ sap.ui.define([
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
 	 */
 	VersionsAPI.loadDraftForApplication = function (mPropertyBag) {
-		mPropertyBag.version = sap.ui.fl.Versions.Draft;
+		mPropertyBag.version = Version.Number.Draft;
 		return VersionsAPI.loadVersionForApplication(mPropertyBag);
 	};
 

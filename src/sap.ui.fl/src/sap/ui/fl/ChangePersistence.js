@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/LayerUtils",
@@ -44,6 +45,7 @@ sap.ui.define([
 	Settings,
 	Condenser,
 	Storage,
+	Version,
 	Cache,
 	Change,
 	LayerUtils,
@@ -712,7 +714,7 @@ sap.ui.define([
 		switch (oDirtyChange.getState()) {
 			case Change.states.NEW:
 				if (sParentVersion !== undefined) {
-					sParentVersion = oDirtyChange === oFirstChange ? sParentVersion : sap.ui.fl.Versions.Draft;
+					sParentVersion = oDirtyChange === oFirstChange ? sParentVersion : Version.Number.Draft;
 				}
 				return Storage.write({
 					layer: oDirtyChange.getLayer(),

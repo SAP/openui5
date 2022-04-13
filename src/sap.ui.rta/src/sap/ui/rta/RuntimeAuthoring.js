@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
@@ -29,7 +30,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/library",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
@@ -66,6 +66,7 @@ sap.ui.define([
 	OverlayRegistry,
 	DtUtil,
 	KeyCodes,
+	Version,
 	FlexRuntimeInfoAPI,
 	SmartVariantManagementApplyAPI,
 	ControlPersonalizationWriteAPI,
@@ -76,7 +77,6 @@ sap.ui.define([
 	TranslationAPI,
 	Layer,
 	LayerUtils,
-	flexLibrary,
 	Settings,
 	FlexUtils,
 	JSONModel,
@@ -682,7 +682,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype._onStackModified = function() {
 		var bBackEndDraftExists = this._oVersionsModel.getProperty("/backendDraft");
-		var bDraftDisplayed = this._oVersionsModel.getProperty("/displayedVersion") === sap.ui.fl.Versions.Draft;
+		var bDraftDisplayed = this._oVersionsModel.getProperty("/displayedVersion") === Version.Number.Draft;
 		var oCommandStack = this.getCommandStack();
 		var bCanUndo = oCommandStack.canUndo();
 
@@ -1034,7 +1034,7 @@ sap.ui.define([
 			layer: this.getLayer(),
 			version: sVersion
 		});
-		var aVersionsParameter = mParsedHash.params[sap.ui.fl.Versions.UrlParameter];
+		var aVersionsParameter = mParsedHash.params[Version.UrlParameter];
 		if (
 			aVersionsParameter &&
 			aVersionsParameter[0] === sVersion &&
@@ -1043,7 +1043,7 @@ sap.ui.define([
 			// RTA was started with a version parameter, the displayed version has changed and the key user switches back
 			this._getUShellService("AppLifeCycle").reloadCurrentApp();
 		} else {
-			mParsedHash.params[sap.ui.fl.Versions.UrlParameter] = sVersion;
+			mParsedHash.params[Version.UrlParameter] = sVersion;
 			this._triggerCrossAppNavigation(mParsedHash);
 		}
 		return undefined;
@@ -1532,9 +1532,9 @@ sap.ui.define([
 			return mParsedHash;
 		}
 
-		var sVersionParameter = FlexUtils.getParameter(flexLibrary.Versions.UrlParameter, this._getUShellService("URLParsing"));
+		var sVersionParameter = FlexUtils.getParameter(Version.UrlParameter, this._getUShellService("URLParsing"));
 		if (sVersionParameter) {
-			delete mParsedHash.params[flexLibrary.Versions.UrlParameter];
+			delete mParsedHash.params[Version.UrlParameter];
 		} else if (
 			(this._isDraftAvailable() || bTriggerReload /* for discarding of dirty changes */) &&
 			!oReloadInfo.hasHigherLayerChanges &&

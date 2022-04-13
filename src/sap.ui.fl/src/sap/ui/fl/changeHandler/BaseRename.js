@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/changeHandler/condenser/Classification"
 ], function(
 	Base,
-	Log
+	Log,
+	CondenserClassification
 ) {
 	"use strict";
 
@@ -129,7 +131,7 @@ sap.ui.define([
 				getCondenserInfo: function(oChange) {
 					return {
 						affectedControl: oChange.getSelector(),
-						classification: sap.ui.fl.condenser.Classification.LastOneWins,
+						classification: CondenserClassification.LastOneWins,
 						uniqueKey: mRenameSettings.propertyName || mRenameSettings.changePropertyName
 					};
 				},

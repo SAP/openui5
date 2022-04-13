@@ -4,6 +4,7 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/m/MessageBox",
 	"sap/ui/base/Event",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Utils",
@@ -14,6 +15,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	MessageBox,
 	Event,
+	Version,
 	ReloadInfoAPI,
 	VersionsAPI,
 	FlexUtils,
@@ -252,7 +254,7 @@ sap.ui.define([
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			var mInitialParsedHash = {
 				params: {
-					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft]
+					"sap-ui-fl-version": [Version.Number.Draft]
 				}
 			};
 			var oReloadCurrentAppStub = sandbox.stub(this.oRta._getUShellService("AppLifeCycle"), "reloadCurrentApp").returns(true);
@@ -363,15 +365,15 @@ sap.ui.define([
 			"the 'Original App' version, create a draft and switch to 'Original Version' again)", function(assert) {
 			var fnDone = assert.async();
 			var oEvent = new Event("someEventId", undefined, {
-				version: sap.ui.fl.Versions.Original
+				version: Version.Number.Original
 			});
 
 			var oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
 			var mParsedUrlHash = {
 				params: {}
 			};
-			this.oRta._oVersionsModel.setProperty("/displayedVersion", sap.ui.fl.Versions.Draft);
-			mParsedUrlHash.params[sap.ui.fl.Versions.UrlParameter] = [sap.ui.fl.Versions.Original.toString()];
+			this.oRta._oVersionsModel.setProperty("/displayedVersion", Version.Number.Draft);
+			mParsedUrlHash.params["sap-ui-fl-version"] = [Version.Number.Original.toString()];
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedUrlHash);
 
 			this.oSwitchVersionStub.callsFake(function() {
@@ -380,7 +382,7 @@ sap.ui.define([
 				assert.equal(oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
 				var oLoadVersionArguments = oLoadVersionStub.getCall(0).args[0];
 				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
-				assert.equal(oLoadVersionArguments.version, sap.ui.fl.Versions.Original, ", the version number");
+				assert.equal(oLoadVersionArguments.version, Version.Number.Original, ", the version number");
 				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
 				assert.equal(this.oRestartFlpStub.callCount, 1, "a app restart was triggered");
 				fnDone();
@@ -470,7 +472,7 @@ sap.ui.define([
 
 			sandbox.stub(this.oRta, "_setVersionsModel").callsFake(function(oModel) {
 				oModel.setProperty("/versions", [{
-					version: sap.ui.fl.Versions.Draft,
+					version: Version.Number.Draft,
 					type: "draft"
 				}]);
 				oModel.setProperty("/backendDraft", true);
@@ -586,7 +588,7 @@ sap.ui.define([
 			var oCrossAppNavigationStub = sandbox.stub(this.oRta, "_triggerCrossAppNavigation").resolves();
 			var mParsedHash = {
 				params: {
-					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft]
+					"sap-ui-fl-version": [Version.Number.Draft]
 				}
 			};
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
@@ -699,7 +701,7 @@ sap.ui.define([
 		[{
 			testName: "when the stack was modified and a new draft is created, an old draft exists and the user has not yet confirmed the discarding of the old draft",
 			input: {
-				versionDisplayed: sap.ui.fl.Versions.Original,
+				versionDisplayed: Version.Number.Original,
 				backendDraft: true,
 				canUndo: true,
 				userConfirmedDiscard: false
@@ -710,7 +712,7 @@ sap.ui.define([
 		}, {
 			testName: "when the stack was modified and a new draft is created, an old draft exists and the user has already confirmed the discarding of the old draft",
 			input: {
-				versionDisplayed: sap.ui.fl.Versions.Original,
+				versionDisplayed: Version.Number.Original,
 				backendDraft: true,
 				canUndo: true,
 				userConfirmedDiscard: true
@@ -721,7 +723,7 @@ sap.ui.define([
 		}, {
 			testName: "when the stack was modified in the current draft",
 			input: {
-				versionDisplayed: sap.ui.fl.Versions.Draft,
+				versionDisplayed: Version.Number.Draft,
 				backendDraft: true,
 				canUndo: true,
 				userConfirmedDiscard: false
@@ -732,7 +734,7 @@ sap.ui.define([
 		}, {
 			testName: "when the stack was modified but nothing can be undone",
 			input: {
-				versionDisplayed: sap.ui.fl.Versions.Original,
+				versionDisplayed: Version.Number.Original,
 				backendDraft: true,
 				canUndo: false,
 				userConfirmedDiscard: false
@@ -743,7 +745,7 @@ sap.ui.define([
 		}, {
 			testName: "when the stack was modified and a new draft is created, an old draft does not exist",
 			input: {
-				versionDisplayed: sap.ui.fl.Versions.Original,
+				versionDisplayed: Version.Number.Original,
 				backendDraft: false,
 				canUndo: true,
 				userConfirmedDiscard: false
@@ -782,7 +784,7 @@ sap.ui.define([
 			return this.oRta.start()
 				.then(function() {
 					this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
-					this.oRta._oVersionsModel.setProperty("/displayedVersion", sap.ui.fl.Versions.Original);
+					this.oRta._oVersionsModel.setProperty("/displayedVersion", Version.Number.Original);
 					this.oRta._oVersionsModel.setProperty("/backendDraft", true);
 					sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(true);
 				}.bind(this));

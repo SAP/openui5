@@ -4,9 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier"
 ], function(
 	LayerUtils,
+	CondenserClassification,
 	JsControlTreeModifier
 ) {
 	"use strict";
@@ -124,7 +126,7 @@ sap.ui.define([
 	StashControl.getCondenserInfo = function(oChange) {
 		return {
 			affectedControl: oChange.getSelector(),
-			classification: sap.ui.fl.condenser.Classification.Reverse,
+			classification: CondenserClassification.Reverse,
 			uniqueKey: "stashed"
 		};
 	};

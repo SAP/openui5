@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
@@ -37,11 +38,12 @@ sap.ui.define([
 	MessageToast,
 	Page,
 	ComponentContainer,
-	oCore,
+	Core,
 	TabHandling,
 	ZIndexManager,
 	DesignTime,
 	FlexRuntimeInfoAPI,
+	Version,
 	Settings,
 	Versions,
 	ControlPersonalizationWriteAPI,
@@ -64,7 +66,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 	var oComp = RtaQunitUtils.createAndStubAppComponent(sinon, "someId", {
 		"sap.app": {
 			id: "someId"
@@ -192,7 +194,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.fnFLPToExternalStub = sandbox.spy();
 			this.fnTriggerRealoadStub = sandbox.stub();
-			givenAnFLP(this.fnFLPToExternalStub, this.fnTriggerRealoadStub, {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]});
+			givenAnFLP(this.fnFLPToExternalStub, this.fnTriggerRealoadStub, {"sap-ui-fl-version": [Version.Number.Draft]});
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp,
@@ -1349,7 +1351,7 @@ sap.ui.define([
 			this.oHandleParametersForStandalone.returns(document.location.search);
 			return this.oRta._determineReload().then(function() {
 				assert.equal(oHasMaxLayerParameterSpy.callCount, 1, "hasMaxLayerParameterWithValue is called");
-				assert.ok(oHasVersionParameterSpy.calledWith(sap.ui.fl.Versions.UrlParameter), "the version parameter was checked");
+				assert.ok(oHasVersionParameterSpy.calledWith("sap-ui-fl-version"), "the version parameter was checked");
 				assert.equal(this.oTriggerHardReloadStub.callCount, 1, "_triggerHardReload is called");
 			}.bind(this));
 		});
@@ -1358,7 +1360,7 @@ sap.ui.define([
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
-			sandbox.stub(FlexUtils, "getParameter").returns(sap.ui.fl.Versions.Draft.toString());
+			sandbox.stub(FlexUtils, "getParameter").returns(Version.Number.Draft);
 			var fnGetReloadMessageOnStartSpy = sandbox.spy(this.oRta, "_getReloadMessageOnStart");
 
 			this.oHandleParametersForStandalone.returns(document.location.search);

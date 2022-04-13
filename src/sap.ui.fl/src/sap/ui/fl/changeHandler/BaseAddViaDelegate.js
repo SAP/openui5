@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath"
 ], function(
+	CondenserClassification,
 	Base,
 	DelegateMediatorAPI,
 	merge,
@@ -370,7 +372,7 @@ sap.ui.define([
 
 							return {
 								affectedControl: oChange.getContent().newFieldSelector,
-								classification: sap.ui.fl.condenser.Classification.Create,
+								classification: CondenserClassification.Create,
 								targetContainer: oChange.getContent().parentId,
 								targetAggregation: mAddViaDelegateSettings.aggregationName,
 								setTargetIndex: function (oChange, iNewTargetIndex) {
