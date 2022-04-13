@@ -1040,7 +1040,16 @@
 									break;
 							}
 						}
-					})
+					}),
+					new sap.m.Input("additional-text-sugg", {
+						placeholder: "Input Search With Suggestions with additional text, type 'nothing'",
+						showSuggestion: true,
+						suggestionItems: [
+							new sap.ui.core.ListItem({text: "So close", additionalText: "...no matter how far"}),
+							new sap.ui.core.ListItem({text: "couldn't be much more", additionalText: "from the heart"}),
+							new sap.ui.core.ListItem({text: "forever thrusting who we are", additionalText: "...and nothing else matters"}),
+						],
+					}),
 			],
 			footer: createFooter()
 		});

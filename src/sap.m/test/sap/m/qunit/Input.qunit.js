@@ -1494,6 +1494,33 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Filter Two Value Suggestion with ListItems by the additional text", function(assert){
+		var oInput = new Input({
+			showSuggestion: true
+		});
+		var aItems;
+		var sText = "The truth";
+		var sAdditionalText = "Ayin è alleb";
+		var oPopup;
+
+		oInput.addSuggestionItem(new ListItem({text: sText, additionalText: sAdditionalText}));
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput._$input.trigger("focus").val("Ayin").trigger("input");
+
+		this.clock.tick(300);
+		oPopup = oInput._oSuggPopover._oPopover;
+		aItems = oPopup.getContent()[0].getItems();
+
+		assert.ok(oPopup.isOpen(), "Two Value Suggestion Popup is open now");
+		assert.equal(aItems.length, 1, "Suggestions are inserted");
+		assert.ok(aItems[0].getTitle(), sText, "Suggestion item has a title set equal to the ListItem's text");
+		assert.ok(aItems[0].getInfo(), sAdditionalText, "Suggestion item has an info set equal to the ListItem's additionalText");
+
+		oInput.destroy();
+	});
+
 	// this test ensured downward compatibility: ColumnListItem has default type "Inactive" but still does need to be selected
 	QUnit.test("Tabular Suggestions with type=\"Inactive\"", function(assert){
 		var oInput = new Input({

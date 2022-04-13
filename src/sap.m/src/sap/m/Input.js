@@ -1622,10 +1622,12 @@ function(
 				aGroups = [],
 				aHitItems = [],
 				bFilter = this.getFilterSuggests(),
-				bIsAnySuggestionAlreadySelected = false;
+				bIsAnySuggestionAlreadySelected = false,
+				bFilterAdditionalText;
 
 			for (i = 0; i < aItems.length; i++) {
 				oItem = aItems[i];
+				bFilterAdditionalText = oItem.getAdditionalText && oItem.getAdditionalText();
 
 				if (aItems[i].isA("sap.ui.core.SeparatorItem")) {
 					oListItem = new GroupHeaderListItem({
@@ -1642,7 +1644,7 @@ function(
 
 					this._configureListItem(oItem, oListItem);
 					aHitItems.push(oListItem);
-				} else if (!bFilter || this._fnFilter(sTypedChars, oItem)) {
+				} else if (!bFilter || this._fnFilter(sTypedChars, oItem, bFilterAdditionalText)) {
 					oListItem = new StandardListItem({
 						title: ManagedObject.escapeSettingsValue(oItem.getText()),
 						info: ManagedObject.escapeSettingsValue(oItem.getAdditionalText && oItem.getAdditionalText())
