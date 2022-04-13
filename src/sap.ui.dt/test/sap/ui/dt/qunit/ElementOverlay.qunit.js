@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/TextArea",
 	"sap/m/VBox",
+	"sap/m/Title",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Popup",
 	"sap/ui/dt/DesignTime",
@@ -23,6 +24,9 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
+	"sap/f/DynamicPage",
+	"sap/f/DynamicPageTitle",
+	"sap/f/DynamicPageHeader",
 	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
@@ -35,6 +39,7 @@ sap.ui.define([
 	Panel,
 	TextArea,
 	VBox,
+	Title,
 	ManagedObject,
 	Popup,
 	DesignTime,
@@ -50,6 +55,9 @@ sap.ui.define([
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
+	DynamicPage,
+	DynamicPageTitle,
+	DynamicPageHeader,
 	TestUtil,
 	jQuery,
 	sinon,
@@ -1773,6 +1781,59 @@ sap.ui.define([
 			});
 		});
 	});
+
+	QUnit.module("Given a DynamicPage with scrolling", {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+
+			function getDynamicPageTitle() {
+				return new DynamicPageTitle({
+					heading: new Title({
+						text: "Dynamic Page Title"
+					})
+				});
+			}
+
+			function getDynamicPageHeader() {
+				return new DynamicPageHeader({
+					pinnable: true,
+					content: [new Button("PageHeaderButton")]
+				});
+			}
+
+			this.oDynamicPage = new DynamicPage("DynamicPage", {
+				showFooter: true,
+				title: getDynamicPageTitle(),
+				header: getDynamicPageHeader(),
+				content: [new VerticalLayout("PageContentLayout", { height: "500px" })]
+			});
+
+			this.oDynamicPage.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oDynamicPage]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oDynamicPageOverlay = OverlayRegistry.getOverlay(this.oDynamicPage);
+				fnDone();
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oDynamicPage.destroy();
+		}
+	}, function() {
+		QUnit.test("check that the scrollcontainer overlay has the correct clip-path", function(assert) {
+			assert.strictEqual(
+				this.oDynamicPage.$wrapper.css("clip-path"),
+				this.oDynamicPageOverlay.getScrollContainerById(0).css("clip-path"),
+				"then the scroll container gets the clip-path property from the DynamicPage contentWrapper"
+			);
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
