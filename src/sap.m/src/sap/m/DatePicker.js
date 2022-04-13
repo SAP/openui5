@@ -7,6 +7,8 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/Device',
 	"sap/ui/core/Element",
+	"sap/ui/core/format/TimezoneUtil",
+	"sap/ui/core/format/DateFormat",
 	'./InputBase',
 	'./DateTimeField',
 	'./Button',
@@ -36,6 +38,8 @@ sap.ui.define([
 		jQuery,
 		Device,
 		Element,
+		TimezoneUtil,
+		DateFormat,
 		InputBase,
 		DateTimeField,
 		Button,
@@ -1317,12 +1321,18 @@ sap.ui.define([
 	};
 
 	DatePicker.prototype._fillDateRange = function(){
-
+		var sFormattedDate;
 		var oDate = this.getDateValue();
 
 		if (oDate &&
 			oDate.getTime() >= this._oMinDate.getTime() &&
 			oDate.getTime() <= this._oMaxDate.getTime()) {
+
+			sFormattedDate = this._getPickerParser().format(
+				oDate,
+				sap.ui.getCore().getConfiguration().getTimezone()
+			);
+			oDate = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[0];
 
 			this._getCalendar().focusDate(new Date(oDate.getTime()));
 			if (!this._oDateRange.getStartDate() || this._oDateRange.getStartDate().getTime() != oDate.getTime()) {
@@ -1331,6 +1341,12 @@ sap.ui.define([
 		} else {
 			var oInitialFocusedDateValue = this.getInitialFocusedDateValue();
 			var oFocusDate = oInitialFocusedDateValue ? oInitialFocusedDateValue : new Date();
+
+			sFormattedDate = this._getPickerParser().format(
+				oFocusDate,
+				sap.ui.getCore().getConfiguration().getTimezone()
+			);
+			oFocusDate = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[0];
 
 			if (oFocusDate.getTime() < this._oMinDate.getTime()) {
 				oFocusDate = this._oMinDate;
@@ -1370,6 +1386,13 @@ sap.ui.define([
 		var oDateOld = this.getDateValue(),
 			oDate = this._getSelectedDate(),
 			sValue = "";
+
+		var sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
+		var oParts = this._getPickerParser().parse(
+			sFormattedDate,
+			sap.ui.getCore().getConfiguration().getTimezone()
+		);
+		oDate = oParts && oParts[0];
 
 		// do not use this.onChange() because output pattern will change date (e.g. only last 2 number of year -> 1966 -> 2066 )
 		if (!deepEqual(oDate, oDateOld)) {
@@ -1618,6 +1641,14 @@ sap.ui.define([
 		}
 
 	}
+
+	DatePicker.prototype._getPickerParser = function() {
+		if (!this._calendarParser) {
+			this._calendarParser = DateFormat.getDateTimeWithTimezoneInstance({ showTimezone: false });
+		}
+
+		return this._calendarParser;
+	};
 
 	/**
 	 * Fired when the input operation has finished and the value has changed.

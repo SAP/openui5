@@ -8,7 +8,8 @@
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-language="en-US">
 		</script>
 
 		<script>
@@ -225,6 +226,19 @@
 				new sap.m.DatePicker("DP15", {
 					dateValue: new Date("9999", "02", "26"),
 					change: handleChange
+				}),
+				new sap.m.DatePicker("DP16"),
+				new sap.m.Button("btnEtcGMT-12", {
+					text: "Etc/GMT-12",
+					press: handleTimezoneButtonPress
+				}),
+				new sap.m.Button("btnUTC", {
+					text: "UTC",
+					press: handleTimezoneButtonPress
+				}),
+				new sap.m.Button("btnEtcGMT12", {
+					text: "Etc/GMT+12",
+					press: handleTimezoneButtonPress
 				})
 			],
 			footer: createFooter()
@@ -233,6 +247,11 @@
 		app.addPage(page1);
 
 		app.placeAt("body");
+
+		function handleTimezoneButtonPress(e) {
+			sap.ui.getCore().getConfiguration().setTimezone(e.getSource().getText());
+			sap.ui.getCore().byId("DP16").setValue("");
+		}
 
 	</script>
 	<style>

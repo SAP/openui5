@@ -54,4 +54,41 @@ describe("sap.m.DatePicker", function() {
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 		expect(takeScreenshot(oPickerInput)).toLookAs("select_date_with_space_for_second_time");
 	});
+
+	it("calendar selection in GMT+12 timezone", testDP16WithTimezoneBtn.bind(null, "btnEtcGMT-12", "GMT+12"));
+	it("calendar selection in GMT-12 timezone", testDP16WithTimezoneBtn.bind(null, "btnEtcGMT12", "GMT-12"));
+	it("calendar selection in UTC timezone", testDP16WithTimezoneBtn.bind(null, "btnUTC", "UTC"));
+
+	it("January week numbers in UTC timezone", function() {
+		var oCalendar;
+
+		element(by.id("btnUTC")).click(); //change the timezone to UTC
+		element(by.id("DP2-icon")).click(); //open the picker
+		element(by.id("DP2-cal--Head-prev")).click().click(); //navigate to Jan 2014
+
+		oCalendar = element(by.css("#DP2-RP-popover"));
+		expect(takeScreenshot(oCalendar)).toLookAs("calendar_Jan_2014_UTC");
+	});
+
+	function testDP16WithTimezoneBtn(sBtnId, sTimezone) {
+		var oInput = element(by.css("#DP16")),
+			oValueHelpIcon = element(by.id("DP16-icon")),
+			oCalendar;
+
+		element(by.id(sBtnId)).click(); //change the timezone
+
+		oInput.click();
+		browser.actions().sendKeys("Mar 2, 2022").perform(); //type Mar 2, 2022
+
+		oValueHelpIcon.click(); //open the picker
+
+		oCalendar = element(by.css("#DP16-RP-popover"));
+		expect(takeScreenshot(oCalendar)).toLookAs("calendar_Mar_2_2022_" + sTimezone);
+
+		element(by.id("DP16-cal--Month0-20220309")).click(); //select Mar 9, 2022
+		expect(takeScreenshot(oInput)).toLookAs("input_Mar_9_2022_" + sTimezone);
+
+		oValueHelpIcon.click(); //open the picker
+		expect(takeScreenshot(oCalendar)).toLookAs("select_Mar_9_2022_" + sTimezone);
+	}
 });

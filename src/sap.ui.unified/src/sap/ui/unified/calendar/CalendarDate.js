@@ -313,6 +313,16 @@ sap.ui.define([
 			return new CalendarDate(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(), sCalendarType);
 		};
 
+		/* The UTC components of a JavaScript date are used to create a CalendarDate */
+		CalendarDate.fromUTCDate = function (oJSDate, sCalendarType) {
+			// Cross frame check for a date should be performed here otherwise setDateValue would fail in OPA tests
+			// because Date object in the test is different than the Date object in the application (due to the iframe).
+			if (!oJSDate || Object.prototype.toString.call(oJSDate) !== "[object Date]" || isNaN(oJSDate)) {
+				throw new Error("Date parameter must be a JavaScript Date object: [" + oJSDate + "].");
+			}
+			return new CalendarDate(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate(), sCalendarType);
+		};
+
 		/**
 		 * Creates an UniversalDate corresponding to the given date and calendar type.
 		 * @param {Date} oDate JavaScript date object to create the UniversalDate from. Local date information is used.
