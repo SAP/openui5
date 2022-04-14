@@ -685,6 +685,52 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 	});
 
+	QUnit.test("Should keep the AnchorBar scrolled to the selected Section when title is snapped", function (assert) {
+		// Arrange
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oObjectPageSection = new ObjectPageSection({
+				subSections: [
+				new ObjectPageSubSection({
+					blocks: [new GenericDiv({height: "1500px"})]
+				}),
+				new ObjectPageSubSection({
+					blocks: [new GenericDiv({height: "200px"})]
+				})
+			]
+			}),
+			sSectionId = oObjectPageSection.getId(),
+			oAnchorBar = oObjectPage._oABHelper._getAnchorBar(),
+			oSpy = this.spy(oAnchorBar, "scrollToSection"),
+			done = assert.async();
+
+		assert.expect(2);
+
+		oObjectPage.setUseIconTabBar(true);
+		oObjectPage.addSection(oObjectPageSection);
+		Core.applyChanges();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+			//Act
+			oObjectPage.setSelectedSection(sSectionId);
+
+			setTimeout(function() {
+				oSpy.reset();
+
+				//Act
+				oObjectPage._scrollTo(oObjectPage._getSnapPosition() + 100);
+
+				setTimeout(function() {
+					// Assert
+					assert.ok(isObjectPageHeaderStickied(oObjectPage), "ObjectHeader is in stickied mode");
+					assert.strictEqual(oSpy.callCount, 1, "scrollToSection is called");
+					done();
+				}, 1000); //scroll delay
+
+			}, 1000); //scroll delay
+
+		});
+	});
+
 	QUnit.test("_isClosestScrolledSection should return the first section if all sections are hidden", function (assert) {
 		var clock = sinon.useFakeTimers(),
 			oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),

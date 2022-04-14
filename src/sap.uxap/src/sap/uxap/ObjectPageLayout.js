@@ -1581,7 +1581,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._toggleHeaderTitle = function (bExpand, bUserInteraction) {
-		var oHeaderTitle = this.getHeaderTitle();
+		var oHeaderTitle = this.getHeaderTitle(),
+			oAnchorBar = this._oABHelper._getAnchorBar();
 
 		// note that <code>this._$titleArea</code> is the placeholder [of the sticky area] where both the header title and header content are placed
 		if (this._$titleArea.length) {
@@ -1595,6 +1596,8 @@ sap.ui.define([
 		} else {
 			oHeaderTitle && oHeaderTitle.snap(bUserInteraction);
 		}
+
+		oAnchorBar.scrollToCurrentlySelectedSection();
 	};
 
 	/**

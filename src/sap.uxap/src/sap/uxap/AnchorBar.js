@@ -638,6 +638,22 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Scrolls to the currently selected Section tab, when the header titles is snapped/unsnapped
+	 *
+	 * @public
+	 */
+	AnchorBar.prototype.scrollToCurrentlySelectedSection = function () {
+		var sSelectedButton = this.getSelectedButton(),
+			oSelectedButton = sap.ui.getCore().byId(sSelectedButton),
+			sSelectedSectionId;
+
+		if (oSelectedButton) {
+			sSelectedSectionId = oSelectedButton.data("sectionId");
+			this.scrollToSection(sSelectedSectionId, 0);
+		}
+	};
+
 	// use type 'object' because Metamodel doesn't know ScrollEnablement
 	/**
 	 * Returns an sap.ui.core.delegate.ScrollEnablement object used to handle scrolling.
