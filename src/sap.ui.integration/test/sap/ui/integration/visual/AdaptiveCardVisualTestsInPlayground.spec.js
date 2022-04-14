@@ -3,7 +3,7 @@
 
 var utils = require("./cardVisualTestUtils");
 
-describe("sap.ui.integration.AdaptiveCardVisualTests", function () {
+describe("sap.ui.integration.AdaptiveCardVisualTestsInPlayground", function () {
 	"use strict";
 	browser.testrunner.currentSuite.meta.controlName = "sap.ui.integration.widgets.Card";
 

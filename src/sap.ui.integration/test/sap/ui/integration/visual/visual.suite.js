@@ -1,7 +1,7 @@
 /*global module*/
 
 module.exports = [
-	"AdaptiveCardVisualTests.spec.js",
+	"AdaptiveCardVisualTestsInPlayground.spec.js",
 	"AnalyticalCardVisualTests.spec.js",
 	"AnalyticsCloudCardVisualTests.spec.js",
 	"CalendarCardVisualTests.spec.js",
