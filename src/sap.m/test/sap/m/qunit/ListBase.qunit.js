@@ -1942,14 +1942,22 @@ sap.ui.define([
 			assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Focus is moved to the Input again");
 
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
-			assert.strictEqual(document.activeElement, oInput2.getFocusDomRef(), "Focus is moved to the second input");
+			assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Focus is not moved from first input");
 
+			oInput2.focus();
 			qutils.triggerKeydown(document.activeElement, "ARROW_UP");
-			assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Focus is moved to the first input");
+			assert.strictEqual(document.activeElement, oInput2.getFocusDomRef(), "Focus is not moved from second input");
+
+			oInput1.focus();
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", false, false, true);
+			assert.strictEqual(document.activeElement, oInput2.getFocusDomRef(), "Focus is moved to the second input with CTRL held");
+
+			qutils.triggerKeydown(document.activeElement, "ARROW_UP", false, false, true);
+			assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Focus is moved to the first input with CTRL held");
 
 			oInput2.setEnabled(false);
 			Core.applyChanges();
-			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", false, false, true);
 			assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is moved to the item since second input is disabled");
 
 			qutils.triggerKeydown(document.activeElement, "TAB", true, false, false);
