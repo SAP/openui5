@@ -23,7 +23,7 @@ html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
 		top: 0.125rem;
 		right: 0.125rem;
 		bottom: 0.125rem;
-		border: 0.0625rem solid @sapUiButtonLiteBackground;
+		border: 0.125rem solid @sapUiButtonLiteBackground;
 		pointer-events: none;
 	}
 	&:hover {
@@ -40,12 +40,13 @@ html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
 		top: 0.125rem;
 		right: 0.125rem;
 		bottom: 0.125rem;
-		border: 0.0625rem dotted @sapUiContentContrastFocusColor;
+		border: 0.125rem dotted @sapUiContentContrastFocusColor;
 		pointer-events: none;
 	}
 }
 .sap-desktop .sapMColorPalette .sapMBtn:focus {
 	&:after {
+		border-width: 0.125rem;
 		border-color: @sapUiContentFocusColor;
 	}
 }
