@@ -223,12 +223,13 @@ sap.ui.define([
 			this.iDirectionFactor = bRTL ? -1 : 1;
 		},
 		afterEach: function() {
-			this.clock.restore();
 			this.oTable.destroy();
 			this.oColumnResizer.destroy();
 			this.sBeginDirection = null;
 			this.sEndDirection = null;
 			this.iDirectionFactor = null;
+			this.clock.tick(1);
+			this.clock.restore();
 		}
 	});
 
@@ -472,12 +473,13 @@ sap.ui.define([
 			this.iDirectionFactor = bRTL ? -1 : 1;
 		},
 		afterEach: function() {
-			this.clock.restore();
 			this.oTable.destroy();
 			this.oColumnResizer.destroy();
 			this.sBeginDirection = null;
 			this.sEndDirection = null;
 			this.iDirectionFactor = null;
+			this.clock.tick(1);
+			this.clock.restore();
 		}
 	});
 
