@@ -585,7 +585,7 @@ function(
 
 		bAsync = bAsync && !!oView._sProcessingMode;
 		Log.debug("XML processing mode is " + (oView._sProcessingMode || "default") + ".", "", "XMLTemplateProcessor");
-		Log.debug("XML will be processed " + bAsync ? "asynchronously" : "synchronously" + ".", "", "XMLTemplateProcessor");
+		Log.debug("XML will be processed " + (bAsync ? "asynchronously" : "synchronously") + ".", "", "XMLTemplateProcessor");
 
 		var bDesignMode = sap.ui.getCore().getConfiguration().getDesignMode();
 		if (bDesignMode) {
