@@ -181,7 +181,7 @@ sap.ui.define([
 			iHour = parseInt(aParts[0]);
 			iMinute = parseInt(aParts[1]);
 			iSecond = parseInt(aParts[2]);
-			iMillisecond = parseInt(aParts[3]);
+			// iMillisecond = parseInt(aParts[3]);
 		}
 
 		aParts = sDate.split("-");
@@ -208,7 +208,7 @@ sap.ui.define([
 			var iHour = oDate.getHours();
 			var iMinute = oDate.getMinutes();
 			var iSecond = oDate.getSeconds();
-			var iMillisecond = oDate.getMilliseconds();
+			var iMillisecond = 0/*oDate.getMilliseconds()*/;
 			sDate = sDate + "T" + ((iHour < 10) ? "0" : "") + iHour.toString() + ":" + ((iMinute < 10) ? "0" : "") + iMinute.toString() + ":" + ((iSecond < 10) ? "0" : "") + iSecond.toString() + ":" + ((iMillisecond < 100) ? "0" : "") + ((iMillisecond < 10) ? "0" : "") + iMillisecond.toString();
 		}
 		var vDate = oType.parseValue(sDate, "string");
