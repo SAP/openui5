@@ -3143,17 +3143,19 @@ sap.ui.define([
 		return this.oTable.initialized().then(function() {
 			Core.applyChanges();
 
-			assert.ok(this.oTable._oTable.getDomRef());
-			assert.ok(!containsOrEquals(this.oTable.getDomRef(), document.activeElement));
-
-			this.oTable.focus();
-			assert.ok(containsOrEquals(this.oTable._oTable.getDomRef(), document.activeElement));
-
 			oButton.focus();
 			assert.ok(oButton.getFocusDomRef() === document.activeElement);
 
 			this.oTable.focus();
-			assert.ok(oButton.getFocusDomRef() === document.activeElement);
+			assert.ok(this.oTable._oTable.getFocusDomRef() === document.activeElement);
+
+			this.oTable.focus({
+				targetInfo: new Message({
+					message: "Error thrown",
+					type: "Error"
+				})
+			});
+			assert.ok(this.oTable._oTable.getFocusDomRef() === document.activeElement);
 		}.bind(this));
 	});
 
