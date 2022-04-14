@@ -607,6 +607,7 @@
 @sapButton_Information_Hover_TextColor: contrast(@sapButton_Information_Hover_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapButton_Information_Active_Background: darken(@sapButton_Information_Background, 10);
 @sapButton_Information_Active_BorderColor: @sapButton_Information_Active_Background;
+@sapButton_Information_Active_TextColor: contrast(@sapButton_Information_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapButton_Neutral_Background: @sapNeutralElementColor;
 @sapButton_Neutral_BorderColor: @sapButton_Neutral_Background;
 @sapButton_Neutral_TextColor: contrast(@sapButton_Neutral_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
@@ -707,9 +708,13 @@
 
 // [Tags "!Protected"]
 @sapField_ReadOnly_Background: fade(darken(@sapField_Background, 5), 50);
+@sapField_ReadOnly_BackgroundStyle: none;
 
 // [Tags "!Protected"]
 @sapField_ReadOnly_BorderColor: lighten(@sapField_BorderColor, 5);
+
+// [Tags "!Protected"]
+@sapField_ReadOnly_BorderStyle: @sapField_BorderStyle;
 
 // [Tags "!Protected"]
 @sapField_ReadOnly_HelpBackground: @sapField_ReadOnly_Background;
