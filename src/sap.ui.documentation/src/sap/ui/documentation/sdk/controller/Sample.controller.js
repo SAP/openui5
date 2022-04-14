@@ -45,6 +45,11 @@ sap.ui.define([
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper;
 
+		var ALLOWLIST_SAMPLES_SEARCH_PARAMS = [
+			"sap-ui-rtl",
+			"sap-ui-language"
+		];
+
 		return SampleBaseController.extend("sap.ui.documentation.sdk.controller.Sample", {
 			/* =========================================================== */
 			/* lifecycle methods										   */
@@ -406,14 +411,22 @@ sap.ui.define([
 					this.fResolve = resolve;
 					this.fReject = reject;
 					var sSampleOrigin = (window['sap-ui-documentation-config'] && window['sap-ui-documentation-config'].demoKitResourceOrigin) || "",
-						sSampleVersion = ResourcesUtil.getResourcesVersion();
+						sSampleVersion = ResourcesUtil.getResourcesVersion(),
+						sSampleSearchParams = "";
 
-					this.sIFrameUrl = ResourcesUtil.getResourceOrigin() +
-						"/resources/sap/ui/documentation/sdk/index.html" +
-						(new URL(document.location.href).search ? new URL(document.location.href).search + "&" : "?") +
-						"sap-ui-xx-sample-id=" + sSampleId
-						+ "&sap-ui-xx-sample-origin=" + sSampleOrigin + sSampleVersion
-						+ "&sap-ui-xx-dk-origin=" + window.location.origin;
+					// Assigning allowed query parameters from Demo Kit URL
+					ALLOWLIST_SAMPLES_SEARCH_PARAMS.forEach(function(oParam, index){
+						if (new URL(document.location.href).searchParams.get(oParam)){
+							sSampleSearchParams += (sSampleSearchParams === "" ? "?" : "&") + oParam + "=" + new URL(document.location.href).searchParams.get(oParam);
+						}
+					});
+
+					sSampleSearchParams = (sSampleSearchParams === "" ? "?" : sSampleSearchParams + "&") +
+					"sap-ui-xx-sample-id=" + sSampleId
+					+ "&sap-ui-xx-sample-origin=" + sSampleOrigin + sSampleVersion
+					+ "&sap-ui-xx-dk-origin=" + window.location.origin;
+
+					this.sIFrameUrl = ResourcesUtil.getResourceOrigin() + "/resources/sap/ui/documentation/sdk/index.html" + sSampleSearchParams;
 
 					if (this._oHtmlControl) {
 						this._oHtmlControl.destroy();
