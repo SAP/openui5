@@ -9,11 +9,13 @@ sap.ui.define([
 	'sap/ui/core/util/File',
 	'sap/ui/thirdparty/jszip',
 	'sap/ui/base/DataType',
+	'sap/ui/core/Component',
 	'sap/ui/core/Element',
 	'sap/ui/core/ElementMetadata',
 	'sap/ui/core/UIArea',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/XMLView',
+	'sap/ui/core/tmpl/Template',
 	'sap/ui/model/Binding',
 	'sap/ui/model/CompositeBinding',
 	'sap/base/util/each',
@@ -28,11 +30,13 @@ sap.ui.define([
 	File,
 	JSZip,
 	DataType,
+	Component,
 	Element,
 	ElementMetadata,
 	UIArea,
 	View,
 	XMLView,
+	Template,
 	Binding,
 	CompositeBinding,
 	each,
@@ -1419,10 +1423,10 @@ sap.ui.define([
 							oObj = oCore.byId(mAssoc.id);
 							break;
 						case "component":
-							oObj = oCore.getComponent(mAssoc.id);
+							oObj = Component.get(mAssoc.id);
 							break;
 						case "template":
-							oObj = oCore.getTemplate(mAssoc.id);
+							oObj = Template.byId(mAssoc.id);
 							break;
 						default:
 							break;
