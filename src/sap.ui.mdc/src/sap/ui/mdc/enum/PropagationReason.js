@@ -4,7 +4,7 @@
 sap.ui.define(function () {
     "use strict";
     /**
-     * Enumeration of the propagation reason in the condition propagation callback of the mdc.ValueHelp
+     * Enumeration of the propagation reason in the condition propagation callback of the {@link sap.ui.mdc.ValueHelp ValueHelp}
      *
      * @enum {string}
      * @private
@@ -29,7 +29,7 @@ sap.ui.define(function () {
          */
          Select: "Select",
         /**
-         * Triggered by valuehelp itself on getItemForValue
+         * Triggered by valuehelp itself on <code>getItemForValue</code>
          *
          * @private
          * @ui5-restricted sap.fe

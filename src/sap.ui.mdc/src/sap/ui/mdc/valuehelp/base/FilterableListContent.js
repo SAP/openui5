@@ -84,7 +84,7 @@ sap.ui.define([
 				/**
 				 * Items used for collective search. If none assigned, no collective search is available.
 				 */
-				collectiveSearchItems: {
+				collectiveSearchItems: { // TODO: remove!
 					type: "sap.ui.core.Item",
 					multiple: true,
 					singularName : "collectiveSearchItem"

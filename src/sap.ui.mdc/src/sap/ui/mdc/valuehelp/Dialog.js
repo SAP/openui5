@@ -35,7 +35,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Container for the <code>sap.ui.mdc.ValueHelp</code> element showing a dialog.
+	 * @class Container for the {@link sap.ui.mdc.ValueHelp ValueHelp} element showing a dialog.
 	 * @extends sap.ui.mdc.valuehelp.base.Container
 	 * @version ${version}
 	 * @constructor
@@ -69,6 +69,9 @@ sap.ui.define([
 					visibility: "hidden",
 					defaultValue: []
 				},
+				/**
+				 * Configuration for groups (collective search).
+				 */
 				groupConfig: {
 					type: "object",
 					defaultValue: {}

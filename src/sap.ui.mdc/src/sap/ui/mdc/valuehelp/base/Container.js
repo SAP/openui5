@@ -128,7 +128,7 @@ sap.ui.define([
 						/**
 						 * True if the focus should be set back to the field.
 						 */
-						bLeaveFocus: { type: "boolean" },
+						leaveFocus: { type: "boolean" },
 						/**
 						 * Navigated condition.
 						 *
@@ -358,10 +358,14 @@ sap.ui.define([
 	 * @param {object} oConfig Configuration
 	 * @param {any} oConfig.value Value as entered by user
 	 * @param {any} [oConfig.parsedValue] Value parsed by type to fit the data type of the key
+	 * @param {object} [oConfig.context] Contextual information provided by condition payload or inParameters/outParameters. This is only filled if the description needs to be determined for an existing condition.
+	 * @param {object} [oConfig.context.inParameter] inParameters of the current condition
+	 * @param {object} [oConfig.context.ouParameter] outParameters of the current condition
+	 * @param {object} [oConfig.context.payload] payload of the current condition
 	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
-	 * @param {boolean} [oConfig.checkKeyFirst] If set, the container checks first if the value fits a key // TODO: not longer needed?
-	 * @param {boolean} oConfig.checkKey If set, the container checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
-	 * @param {boolean} oConfig.checkDescription If set, the container checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
+	 * @param {boolean} [oConfig.checkKeyFirst] If set, the value help checks first if the value fits a key // TODO: not longer needed?
+	 * @param {boolean} oConfig.checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
+	 * @param {boolean} oConfig.checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConfig.conditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {string} [oConfig.conditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {boolean} [oConfig.caseSensitive] If set, the check is done case sensitive
