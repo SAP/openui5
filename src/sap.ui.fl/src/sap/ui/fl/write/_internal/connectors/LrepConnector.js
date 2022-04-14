@@ -618,7 +618,7 @@ sap.ui.define([
 			load: function (mPropertyBag) {
 				var oRequestOption = WriteUtils.getRequestOptions(
 					InitialConnector,
-					ROUTES.TOKEN
+					InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag)
 				);
 				var mParameters = {};
 				InitialUtils.addLanguageInfo(mParameters);
@@ -633,7 +633,7 @@ sap.ui.define([
 			activate: function (mPropertyBag) {
 				var oRequestOption = WriteUtils.getRequestOptions(
 					InitialConnector,
-					ROUTES.TOKEN,
+					InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag),
 					{title: mPropertyBag.title},
 					"application/json; charset=utf-8",
 					"json"
@@ -649,7 +649,7 @@ sap.ui.define([
 			discardDraft: function (mPropertyBag) {
 				var oRequestOption = WriteUtils.getRequestOptions(
 					InitialConnector,
-					ROUTES.TOKEN
+					InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag)
 				);
 				var sVersionsUrl = InitialUtils.getUrl(ROUTES.VERSIONS.DISCARD, mPropertyBag);
 				return WriteUtils.sendRequest(sVersionsUrl, "DELETE", oRequestOption);

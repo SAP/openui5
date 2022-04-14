@@ -1315,7 +1315,7 @@ sap.ui.define([
 			var mExpectedPropertyBag = {
 				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
-				tokenUrl: "/actions/getcsrftoken/"
+				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app"
 			};
 			var aReturnedVersions = {versions: [{
 				versionId: Version.Number.Draft
@@ -1349,7 +1349,7 @@ sap.ui.define([
 			var mExpectedPropertyBag = {
 				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
-				tokenUrl: "/actions/getcsrftoken/"
+				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app"
 			};
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return WriteLrepConnector.versions.discardDraft(mPropertyBag).then(function () {
@@ -1378,7 +1378,7 @@ sap.ui.define([
 			var mExpectedPropertyBag = {
 				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
-				tokenUrl: "/actions/getcsrftoken/",
+				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
 				payload: "{\"title\":\"new Title\"}"
@@ -1410,7 +1410,7 @@ sap.ui.define([
 			var mExpectedPropertyBag = {
 				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
-				tokenUrl: "/actions/getcsrftoken/",
+				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
 				payload: "{\"title\":\"new reactivate Title\"}"
@@ -1442,7 +1442,7 @@ sap.ui.define([
 			var mExpectedPropertyBag = {
 				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
-				tokenUrl: "/actions/getcsrftoken/",
+				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
 				payload: "{\"title\":\"new Title\"}"

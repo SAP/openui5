@@ -161,7 +161,8 @@ sap.ui.define([
 		QUnit.test("when saveAll is called for a draft without filenames", function(assert) {
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
 				persistedVersion: Version.Number.Draft,
-				versions: [{version: Version.Number.Draft, filenames: []}]
+				versions: [{version: Version.Number.Draft, filenames: []}],
+				draftFilenames: []
 			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, undefined, true)
@@ -187,7 +188,8 @@ sap.ui.define([
 			];
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
 				persistedVersion: Version.Number.Draft,
-				versions: aVersions
+				versions: aVersions,
+				draftFilenames: aFilenames
 			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, undefined, true)

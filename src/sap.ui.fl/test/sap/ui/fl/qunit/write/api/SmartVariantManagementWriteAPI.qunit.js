@@ -459,6 +459,11 @@ sap.ui.define([
 						defaultVariants: []
 					}
 				});
+				sandbox.stub(Settings, "getInstanceOrUndef").returns({
+					isVersioningEnabled: function() {
+						return false;
+					}
+				});
 
 				return FlexState.clearAndInitialize({
 					reference: sReference,

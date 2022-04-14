@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/_internal/Storage"
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/_internal/Versions"
 ], function(
 	_omit,
 	_pick,
@@ -33,20 +34,36 @@ sap.ui.define([
 	FlexState,
 	CompVariantMerger,
 	Settings,
-	Storage
+	Storage,
+	Versions
 ) {
 	"use strict";
 
-	function isChangeUpdatable(oChange, sLayer) {
+	function isFilenameInDraftVersion(oChange, mPropertyBag) {
+		var aDraftFilenames = getPropertyFromVersionsModel("/draftFilenames", mPropertyBag);
+		if (aDraftFilenames) {
+			return oChange.getState() === Change.states.NEW || aDraftFilenames.includes(oChange.getFileName());
+		}
+		return true;
+	}
+
+	function getPropertyFromVersionsModel(sPropertyName, mPropertyBag) {
+		var bIsVersionEnabled = Settings.getInstanceOrUndef().isVersioningEnabled(mPropertyBag.layer);
+		return bIsVersionEnabled && mPropertyBag.layer === Layer.CUSTOMER ? Versions.getVersionsModel({
+			reference: Utils.normalizeReference(mPropertyBag.reference),
+			layer: mPropertyBag.layer
+		}).getProperty(sPropertyName) : undefined;
+	}
+
+	function isChangeUpdatable(oChange, mPropertyBag) {
 		if (!["defaultVariant", "updateVariant"].includes(oChange.getChangeType())) {
 			return false;
 		}
-
-		var bSameLayer = oChange.getLayer() === sLayer;
+		var bSameLayer = oChange.getLayer() === mPropertyBag.layer;
 		var sPackageName = oChange.getDefinition().packageName;
 		var bNotTransported = !sPackageName || sPackageName === "$TMP";
 
-		return bSameLayer && bNotTransported;
+		return bSameLayer && bNotTransported && isFilenameInDraftVersion(oChange, mPropertyBag);
 	}
 
 	function getSubSection(mMap, oFlexObject) {
@@ -74,18 +91,25 @@ sap.ui.define([
 	}
 
 	function updateObjectAndStorage(oFlexObject, oStoredResponse) {
+		var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {layer: oFlexObject.getLayer(), reference: oFlexObject.getDefinition().reference});
 		return Storage.update({
 			flexObject: oFlexObject.getDefinition(),
 			layer: oFlexObject.getLayer(),
-			transport: oFlexObject.getRequest()
+			transport: oFlexObject.getRequest(),
+			parentVersion: sParentVersion
 		}).then(function (result) {
-			// update FlexObject
+			// update FlexObject and versionModel
 			if (result && result.response) {
 				oFlexObject.setResponse(result.response);
+				if (sParentVersion) {
+					Versions.onAllChangesSaved({
+						reference: result.response.reference,
+						layer: result.response.layer
+					});
+				}
 			} else {
 				oFlexObject.setState(States.PERSISTED);
 			}
-
 			return oStoredResponse;
 		}).then(function (oStoredResponse) {
 			// update StorageResponse
@@ -96,6 +120,7 @@ sap.ui.define([
 	}
 
 	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse) {
+		//TODO: update version model
 		function removeFromArrayByName(aObjectArray, oFlexObject) {
 			for (var i = aObjectArray.length - 1; i >= 0; i--) {
 				//aObjectArray can come from either back end response or flex state
@@ -248,7 +273,7 @@ sap.ui.define([
 		var aDefaultVariantChanges = mCompVariantsMap.defaultVariants;
 		var oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
 
-		if (!oChange || !isChangeUpdatable(oChange, mPropertyBag.layer)) {
+		if (!oChange || !isChangeUpdatable(oChange, mPropertyBag)) {
 			var oChangeParameter = {
 				fileName: Utils.createDefaultFileName(sChangeType),
 				fileType: "change",
@@ -402,13 +427,12 @@ sap.ui.define([
 			var bIsChangedOnLayer = oVariant.getChanges().some(function (oChange) {
 				return oChange.getLayer() === sLayer;
 			});
-
-			return oVariant.getPersisted() && bSameLayer && bNotTransported && !bIsChangedOnLayer;
+			return oVariant.getPersisted() && bSameLayer && bNotTransported && !bIsChangedOnLayer && isFilenameInDraftVersion(oVariant, mPropertyBag);
 		}
 
 		function getLatestUpdatableChange(oVariant) {
 			return oVariant.getChanges().reverse().find(function (oChange) {
-				return oChange.getChangeType() === "updateVariant" && isChangeUpdatable(oChange, sLayer);
+				return oChange.getChangeType() === "updateVariant" && isChangeUpdatable(oChange, mPropertyBag);
 			});
 		}
 
@@ -718,20 +742,27 @@ sap.ui.define([
 	 */
 	CompVariantState.persist = function(mPropertyBag) {
 		function writeObjectAndAddToState(oFlexObject, oStoredResponse) {
+			var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {layer: oFlexObject.getLayer(), reference: oFlexObject.getDefinition().reference});
 			// TODO: remove this line as soon as layering and a condensing is in place
 			return Storage.write({
 				flexObjects: [oFlexObject.getDefinition()],
 				layer: oFlexObject.getLayer(),
 				transport: oFlexObject.getRequest(),
-				isLegacyVariant: oFlexObject.isVariant()
+				isLegacyVariant: oFlexObject.isVariant(),
+				parentVersion: sParentVersion
 			}).then(function (result) {
-				// updateFlexObject
+				// updateFlexObject and versionModel
 				if (result && result.response && result.response[0]) {
 					oFlexObject.setResponse(result.response[0]);
+					if (sParentVersion) {
+						Versions.onAllChangesSaved({
+							reference: result.response[0].reference,
+							layer: result.response[0].layer
+						});
+					}
 				} else {
 					oFlexObject.setState(States.PERSISTED);
 				}
-
 				return oStoredResponse;
 			}).then(function (oStoredResponse) {
 				// update StorageResponse
