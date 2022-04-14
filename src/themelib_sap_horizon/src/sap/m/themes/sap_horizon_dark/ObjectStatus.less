@@ -3,10 +3,18 @@
 /* Evening Horizon theme               */
 /* =================================== */
 
-.sapMObjStatusInverted .sapMObjStatusText,
-.sapMObjStatusInverted .sapMObjStatusIcon {
-	min-height: 1rem;
-	text-shadow: @sapUiContentContrastTextShadow;
+.sapMObjStatus .sapMObjStatusLink {
+	padding: 0 0.0625rem;
+	display: inline-block;
+}
+
+.sapMObjStatusInverted:not(.sapMObjectStatusLarge) {
+	.sapMObjStatusText,
+	.sapMObjStatusIcon {
+		min-height: 1rem;
+		text-shadow: @sapUiContentContrastTextShadow;
+		height: 100%;
+	}
 }
 
 .sapMObjectStatusLarge {
@@ -56,35 +64,93 @@
 	color: @sapUiContentContrastTextColor;
 }
 
-html.sap-desktop .sapMObjStatusActive:focus {
-	.sapMObjStatusLink::after {
-		outline: none;
-		border-radius: 0.25rem;
-		content: "";
-		position: absolute;
-		box-sizing: border-box;
-		left: -0.0625rem;
-		top: -0.0625rem;
-		right: -0.0625rem;
-		bottom: -0.0625rem;
-		pointer-events: none;
-		border: 0.125rem solid @sapUiContentFocusColor;
+.sapMObjStatusInverted .sapMObjStatusText,
+.sapMObjStatusInverted .sapMObjStatusIcon.sapMObjStatusIconOnly {
+	padding: 0.0625rem 0.25rem;
+}
+
+.sapMObjStatusInverted .sapMObjStatusIcon {
+	padding: 0.0625rem 0 0.0625rem 0.25rem;
+	vertical-align: middle;
+}
+
+html.sap-desktop .sapMObjStatusActive:not(.sapMObjStatusInverted) {
+	.sapMObjStatusText {
+		text-decoration: underline;
+		text-shadow: @sapUiContentTextShadow;
 	}
-	&.sapMObjectStatusLarge {
-		&.sapMObjStatusInverted .sapMObjStatusLink::after {
+	&:focus {
+		.sapMObjStatusLink::after {
 			outline: none;
-			border-radius: 0.25rem;
+			border-radius: 0.125rem;
 			content: "";
 			position: absolute;
 			box-sizing: border-box;
-			left: -0.0625rem;
+			left: 0;
 			top: -0.0625rem;
-			height: auto;
-			right: -0.0625rem;
+			right: 0;
 			bottom: -0.0625rem;
 			pointer-events: none;
 			border: 0.125rem solid @sapUiContentFocusColor;
+			z-index: -1;
 		}
+		.sapMObjStatusLink {
+			background: @sapUiContentFocusColor;
+			border-radius: 0.125rem;
+			.sapMObjStatusIcon > .sapUiIcon,
+			.sapMObjStatusText {
+				color: @sapUiContentContrastTextColor;
+				text-shadow: @sapUiContentContrastTextShadow;
+			}
+			.sapMObjStatusText {
+				text-decoration: underline;
+			}
+			.sapMObjStatusIcon > .sapUiIcon {
+				text-decoration: none;
+			}
+		}
+	}
+	&:hover,
+	&:active,
+	&:focus:hover,
+	&:focus:active {
+		.sapMObjStatusIcon > .sapUiIcon,
+		.sapMObjStatusText {
+			text-decoration: none;
+		}
+	}
+	&.sapMObjectStatusLarge:focus {
+		.sapMObjStatusLink::after {
+			top: 0;
+			bottom: 0;
+		}
+	}
+}
+
+html.sap-desktop .sapMObjStatusActive.sapMObjStatusInverted {
+	.sapMObjStatusLink {
+		height: auto;
+	}
+	&:focus,
+	&.sapMObjectStatusLarge:focus {
+		.sapMObjStatusLink::after {
+			outline: none;
+			content: "";
+			position: absolute;
+			box-sizing: border-box;
+			left: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			pointer-events: none;
+			z-index: 1;
+			box-shadow: inset 0 0 0 0.125em @sapUiContentFocusColor, inset 0 0 0 0.1875em @sapUiContentContrastFocusColor;
+			border-radius: 0.25rem;
+			height: 100%;
+		}
+	}
+	&.sapMObjectStatusLarge:focus {
+		min-height: 2rem;
 	}
 }
 
