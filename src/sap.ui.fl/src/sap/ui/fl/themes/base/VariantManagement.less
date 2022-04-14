@@ -9,28 +9,35 @@
 }
 
 .sapUiFlVarMngmt .sapUiHLayout.sapUiFlVarMngmtLayout .sapUiHLayoutChildWrapper:first-child {
-   vertical-align: middle;
+   vertical-align: middle;  
+}
+.sapUiFlVarMngmt .sapUiHLayout.sapUiFlVarMngmtLayout .sapUiHLayoutChildWrapper:first-child>div {
+   vertical-align: middle;  
 }
 
 .sapUiFlVarMngmt .sapUiHLayout.sapUiFlVarMngmtLayout .sapUiHLayoutChildWrapper:nth-child(2) {
-   vertical-align: top;
+   vertical-align: top;  
+}
+.sapUiFlVarMngmt .sapUiHLayout.sapUiFlVarMngmtLayout .sapUiHLayoutChildWrapper:nth-child(2)>span {
+   vertical-align: top;  
 }
 
 .sapUiFlVarMngmt .sapUiHLayout.sapUiFlVarMngmtLayout .sapUiHLayoutChildWrapper:last-child {
    vertical-align: middle;
 }
-
-.sapUiFlVarMngmtModified {
-	color: @sapUiGroupTitleTextColor;
-	font-weight: bold;
-	padding-left: 0.125rem;
-	padding-right: 0.125rem;
+.sapUiFlVarMngmt .sapUiHLayout.sapUiFlVarMngmtLayout .sapUiHLayoutChildWrapper:last-child>button {
+   vertical-align: middle;
 }
 
-.sapUiFlVarMngmtTriggerBtnHover>span {
-	background-image: none;
-	border-color: @sapUiButtonLiteHoverBorderColor;
-	background-color: @sapUiButtonLiteHoverBackground;
+.sapUiFlVarMngmt .sapMTitle.sapUiFlVarMngmtTitle  {
+    color: @sapUiLink;	
+}
+
+.sapUiFlVarMngmtModified {
+	color: @sapUiLink;
+	font-weight: bold;
+	padding-left: 0.125rem;
+	padding-right: 0.125rem;	
 }
 
 .sapUiFlVarMngmtErrorPopover>div {
@@ -50,14 +57,14 @@
 	max-width: 25rem;
 }
 
-.sapUiFlVarMngmt .sapUiFlVarMngmtClickable {
-	cursor: pointer;
-	color: @sapUiButtonTextColor;
-	text-shadow: @sapUiShadowText;
+.sapUiFlVarMngmt .sapUiFlVarMngmtClickable:hover {
+	color: @sapUiLinkHoverColor;
+	cursor: default;	
 }
 
-.sapUiFlVarMngmt .sapUiFlVarMngmtClickable:hover {
-	color: @sapUiHighlight;
+.sapUiFlVarMngmt .sapUiFlVarMngmtClickable:active {
+	color: @sapUiLinkActiveColor;
+	cursor: pointer;	
 }
 
 .sapUiFlVarMngmt .sapUiFlVarMngmtDisabled {
@@ -74,10 +81,6 @@
 
 .sapUiFlVarMngmtFavNonInteractiveColor {
 	color: @sapUiContentNonInteractiveIconColor;
-}
-
-.sapUiFlVarMngmtFavNonInteractiveColor:hover {
-	cursor: default;
 }
 
 .sapUiFlVarMngmtSaveDialog  .sapUiRespGrid.sapUiRespGridVSpace1 > div {
