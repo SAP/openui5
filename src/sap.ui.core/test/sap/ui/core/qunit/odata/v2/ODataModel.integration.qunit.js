@@ -12927,10 +12927,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oTable = that.oView.byId("table");
 			oTableBinding = oTable.getBinding("rows");
 
-			that.expectValue("note", ["SO active/transient", "SO inactive/transient", "SO1"]);
+			that.expectValue("note", ["SO inactive/transient", "SO1"]);
 
 			oTableBinding.create({Note : "SO inactive/transient"}, /*bAtEnd*/false,
 				{inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", ["SO active/transient", "SO inactive/transient", "SO1"]);
+
 			oTableBinding.create({Note : "SO active/transient"}, /*bAtEnd*/false);
 
 			return that.waitForChanges(assert);
