@@ -1349,6 +1349,33 @@ sap.ui.define([
 	};
 
 	/**
+	 * Appends the keys of a list binding's created persisted contexts to its <code>aAllKeys</code>.
+	 * Afterwards, the created persisted contexts are removed from the creation rows area.
+	 *
+	 * Note that this must only be used in <code>OperationMode.Client</code> as this mode expects
+	 * that <code>aAllKeys</code> knows the complete collection from server.
+	 *
+	 * @returns {boolean} Whether created persisted entries have been processed
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._moveCreatedPersistedToAllKeys = function () {
+		var that = this,
+			aCreatedPersistedKeys = this._getCreatedPersistedContexts().map(function (oContext) {
+				return that.oModel.getKey(oContext);
+			});
+
+		if (aCreatedPersistedKeys.length) {
+			this.aAllKeys = this.aAllKeys.concat(aCreatedPersistedKeys);
+			this._removePersistedCreatedContexts();
+
+			return true;
+		}
+
+		return false;
+	};
+
+	/**
 	 * Sorts the list.
 	 *
 	 * Entities that have been created via {@link #create} and saved in the back end are removed
@@ -1388,12 +1415,10 @@ sap.ui.define([
 			if (this.useClientMode()) {
 				// apply clientside sorters only if data is available
 				if (this.aAllKeys) {
-					// If no sorters are defined, restore initial sort order by calling applyFilter
-					if (aSorters.length == 0) {
+					if (this._moveCreatedPersistedToAllKeys() || !aSorters.length) {
 						this.applyFilter();
-					} else {
-						this.applySort();
 					}
+					this.applySort();
 					this._fireChange({reason: ChangeReason.Sort});
 				} else {
 					this.sChangeReason = ChangeReason.Sort;
@@ -1616,6 +1641,7 @@ sap.ui.define([
 			if (this.useClientMode()) {
 				// apply clientside filters/sorters only if data is available
 				if (this.aAllKeys) {
+					this._moveCreatedPersistedToAllKeys();
 					this.applyFilter();
 					this.applySort();
 					this._fireChange({reason: ChangeReason.Filter});

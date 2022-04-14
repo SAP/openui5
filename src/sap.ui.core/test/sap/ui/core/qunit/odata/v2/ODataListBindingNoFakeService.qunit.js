@@ -2417,6 +2417,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[
+	{createdPersistedProcessed : false, sorters : ["~sorter"], filterCalls : 0},
+	{createdPersistedProcessed : true, sorters : ["~sorter"], filterCalls : 1},
+	{createdPersistedProcessed : false, sorters : [], filterCalls : 1}
+].forEach(function (oFixture, i) {
+	QUnit.test("sort: handle created persisted in Client mode #" + i, function (assert) {
+		var oBinding = {
+				aAllKeys : "~aAllKeys",
+				bInitial : false,
+				_moveCreatedPersistedToAllKeys : function () {},
+				_fireChange : function () {},
+				_fireSort : function () {},
+				addComparators : function () {},
+				applyFilter : function () {},
+				applySort : function () {},
+				useClientMode : function () {}
+			};
+
+		this.mock(oBinding).expects("useClientMode").withExactArgs().twice().returns(true);
+		this.mock(oBinding).expects("addComparators")
+			.withExactArgs(sinon.match.same(oFixture.sorters), true);
+		this.mock(oBinding).expects("_moveCreatedPersistedToAllKeys")
+			.withExactArgs()
+			.returns(oFixture.createdPersistedProcessed);
+		this.mock(oBinding).expects("applyFilter").withExactArgs().exactly(oFixture.filterCalls);
+		this.mock(oBinding).expects("applySort").withExactArgs();
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Sort});
+		this.mock(oBinding).expects("_fireSort")
+			.withExactArgs({sorter : sinon.match.same(oFixture.sorters)});
+
+		// code under test
+		assert.strictEqual(
+			ODataListBinding.prototype.sort.call(oBinding, oFixture.sorters),
+			oBinding);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("filter: removes persisted created entries", function (assert) {
 		var oRemoveExpectation, oResetDataExpectation,
 			aApplicationFilters = [],
@@ -2460,6 +2498,39 @@ sap.ui.define([
 		assert.strictEqual(oBinding.aFilters, aFilters);
 		assert.strictEqual(oBinding.oCombinedFilter, "~oCombinedFilter");
 		assert.ok(oResetDataExpectation.calledImmediatelyAfter(oRemoveExpectation));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter: handle created persisted in Client mode", function (assert) {
+		var oBinding = {
+				aAllKeys : [],
+				bInitial : false,
+				oModel : {checkFilterOperation : function () {}},
+				_moveCreatedPersistedToAllKeys : function () {},
+				_fireChange : function () {},
+				_fireFilter : function () {},
+				addComparators : function () {},
+				applyFilter : function () {},
+				applySort : function () {},
+				convertFilters : function () {},
+				useClientMode : function () {}
+			};
+
+		this.mock(oBinding.oModel).expects("checkFilterOperation").withExactArgs([]);
+		this.mock(oBinding).expects("convertFilters").withExactArgs();
+		this.mock(FilterProcessor).expects("combineFilters")
+			.withExactArgs([], [])
+			.returns("~oCombinedFilter");
+		this.mock(oBinding).expects("useClientMode").withExactArgs().twice().returns(true);
+		this.mock(oBinding).expects("addComparators").withExactArgs([]).twice();
+		this.mock(oBinding).expects("_moveCreatedPersistedToAllKeys").withExactArgs().returns(true);
+		this.mock(oBinding).expects("applyFilter").withExactArgs();
+		this.mock(oBinding).expects("applySort").withExactArgs();
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Filter});
+		this.mock(oBinding).expects("_fireFilter").withExactArgs({filters : []});
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.filter.call(oBinding), oBinding);
 	});
 
 	//*********************************************************************************************
@@ -3026,4 +3097,48 @@ sap.ui.define([
 			false);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_moveCreatedPersistedToAllKeys: no created persisted items", function (assert) {
+		var oBinding = {
+				aAllKeys : ["~key0"],
+				_getCreatedPersistedContexts : function () {},
+				_removePersistedCreatedContexts : function () {}
+			};
+
+		this.mock(oBinding).expects("_getCreatedPersistedContexts").withExactArgs().returns([]);
+		this.mock(oBinding).expects("_removePersistedCreatedContexts").never();
+
+		// code under test
+		assert.strictEqual(
+			ODataListBinding.prototype._moveCreatedPersistedToAllKeys.call(oBinding),
+			false);
+
+		assert.deepEqual(oBinding.aAllKeys, ["~key0"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_moveCreatedPersistedToAllKeys: has created persisted items", function (assert) {
+		var oBinding = {
+				aAllKeys : ["~key0"],
+				oModel : {getKey : function () {}},
+				_getCreatedPersistedContexts : function () {},
+				_removePersistedCreatedContexts : function () {}
+			},
+			oModelMock = this.mock(oBinding.oModel);
+
+		this.mock(oBinding).expects("_getCreatedPersistedContexts")
+			.withExactArgs()
+			.returns(["~context0", "~context1"]);
+		oModelMock.expects("getKey").withExactArgs("~context0").returns("~key1");
+		oModelMock.expects("getKey").withExactArgs("~context1").returns("~key2");
+		this.mock(oBinding).expects("_removePersistedCreatedContexts").withExactArgs();
+
+		// code under test
+		assert.strictEqual(
+			ODataListBinding.prototype._moveCreatedPersistedToAllKeys.call(oBinding),
+			true);
+
+		assert.deepEqual(oBinding.aAllKeys, ["~key0", "~key1", "~key2"]);
+	});
 });
