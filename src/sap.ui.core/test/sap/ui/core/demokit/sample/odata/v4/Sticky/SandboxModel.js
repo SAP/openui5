@@ -11,10 +11,8 @@ sap.ui.define([
 	"use strict";
 
 	var oMockData = {
+			sFilterBase : "/sap/opu/odata4/sap/zrc_rap_sticky/srvd/sap/zrc_rap_sticky/0001/",
 			mFixture : {
-				"$metadata?sap-language=EN" : {
-					source : "metadata.xml"
-				},
 				"GET Sticky?$count=true&$select=Content,Id&$skip=0&$top=5" : {
 					message : {
 						"@odata.count" : "1",
@@ -52,7 +50,6 @@ sap.ui.define([
 					}
 				}
 			},
-			sFilterBase : "/sap/opu/odata4/sap/zrc_rap_sticky/srvd/sap/zrc_rap_sticky/0001/",
 			sSourceBase : "sap/ui/core/sample/odata/v4/Sticky/data"
 		};
 

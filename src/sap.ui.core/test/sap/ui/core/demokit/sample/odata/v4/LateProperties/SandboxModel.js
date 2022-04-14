@@ -11,10 +11,8 @@ sap.ui.define([
 	"use strict";
 
 	var oMockData = {
+			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 			mFixture : {
-				"$metadata?custom-option=value&sap-language=EN" : {
-					source : "metadata.xml"
-				},
 				"SalesOrderList?custom-option=value&$select=BuyerID,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {
 					source : "SalesOrderList_skip0_top5.json"
 				},
@@ -84,7 +82,6 @@ sap.ui.define([
 					}
 				}
 			},
-			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 			sSourceBase : "sap/ui/core/sample/odata/v4/LateProperties/data"
 		};
 

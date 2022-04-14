@@ -13,8 +13,8 @@ sap.ui.define([
 	"use strict";
 
 	var oMockData = {
+			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 			mFixture : {
-				"$metadata?custom-option=value&sap-language=EN" : {source : "metadata.xml"},
 				"BusinessPartnerList?custom-option=value&$orderby=CompanyName&$filter=BusinessPartnerRole%20eq%20'01'&$select=BusinessPartnerID,CompanyName&$skip=0&$top=100" : {
 					source : "BusinessPartnerList.json"
 				},
@@ -546,7 +546,6 @@ sap.ui.define([
 					message : {"value" : []}
 				}
 			},
-			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 			sSourceBase : "sap/ui/core/sample/odata/v4/SalesOrders/data"
 		};
 

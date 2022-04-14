@@ -11,10 +11,8 @@ sap.ui.define([
 	"use strict";
 
 	var oMockData = {
+			sFilterBase : "/MyProducts/",
 			mFixture : {
-				"$metadata?sap-language=EN" : {
-					source : "metadata.xml"
-				},
 				"Products?$filter=IsActiveEntity%20eq%20false%20or%20SiblingEntity/IsActiveEntity%20eq%20null&$select=HasDraftEntity,ID,IsActiveEntity,name&$skip=0&$top=20" : {
 					ifMatch : function () {
 						bPart101Persisted = false;
@@ -67,7 +65,6 @@ sap.ui.define([
 					}
 				}]
 			},
-			sFilterBase : "/MyProducts/",
 			sSourceBase : "sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/data"
 		},
 		bPart101Persisted;
@@ -79,7 +76,7 @@ sap.ui.define([
 				TestUtils.retrieveData("sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid"
 					+ ".updateGroupId")); // updateGroupId controlled by OPA
 
-			return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, oMockData);
+			return SandboxModelHelper.createModel(mParameters, oMockData);
 		}
 	});
 });
