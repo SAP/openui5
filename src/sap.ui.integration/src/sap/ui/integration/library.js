@@ -61,19 +61,19 @@ sap.ui.define([
 	 */
 	thisLib.CardActionType = {
 		/**
-		 * Used for navigation actions
+		 * Used for navigation actions.
 		 * @public
 		 */
 		Navigation: "Navigation",
 
 		/**
-		 * Used for submit actions
+		 * Used for submit actions.
 		 * @public
 		 */
 		Submit: "Submit",
 
 		/**
-		 * Used for custom actions
+		 * Used for custom actions.
 		 * @public
 		 * @experimental Since 1.76
 		 */

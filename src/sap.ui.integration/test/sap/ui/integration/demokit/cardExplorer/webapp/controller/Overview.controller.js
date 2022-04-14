@@ -49,16 +49,24 @@ sap.ui.define([
 				sTopic = "introduction";
 			}
 
+			var sNavigationItemKey = sTopic;
+
 			// Check for deep link (id of element inside the page)
 			// Note: id of element shouldn't equal any subTopic, else it won't work.
 			if (sSubTopic) {
 				if (this.isSubTopic(sSubTopic)) {
+					sNavigationItemKey = sSubTopic;
 					sSubTopic = "/" + sSubTopic;
 				} else {
 					sElementId = sSubTopic;
 					sSubTopic = "";
 				}
 			}
+
+			this.getOwnerComponent().getEventBus().publish("navEntryChanged", {
+				navigationItemKey: sNavigationItemKey,
+				routeName: "overview"
+			});
 
 			var oNavEntry = this.findNavEntry(sTopic),
 				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/overview/" + sTopic + sSubTopic + '.html');

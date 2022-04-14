@@ -167,11 +167,6 @@ sap.ui.define([
 				key: 'features',
 				items: [
 					{
-						title: 'Actions',
-						target: 'learnDetail',
-						key: 'cardActions'
-					},
-					{
 						title: 'Data',
 						target: 'learnDetail',
 						key: 'data'
@@ -219,6 +214,30 @@ sap.ui.define([
 						title: 'Translation',
 						target: 'learnDetail',
 						key: 'translation'
+					}
+				]
+			},
+			{
+				title: 'Card Actions',
+				icon: 'action',
+				target: 'learnDetail',
+				key: 'actions',
+				items: [
+					{
+						title: 'Navigation',
+						target: 'learnDetail',
+						key: 'navigation'
+					},
+					{
+						title: 'Submit',
+						target: 'learnDetail',
+						key: 'submit'
+					},
+					{
+						title: 'Custom',
+						target: 'learnDetail',
+						key: 'custom',
+						experimental: true
 					}
 				]
 			},

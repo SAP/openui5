@@ -39,6 +39,24 @@ sap.ui.define([
 						errorMessage: "Could not expand side navigation"
 					});
 				}
+			},
+
+			assertions: {
+				iShouldSeeSelectedEntry: function (sKey) {
+					return this.waitFor({
+						controlType: "sap.tnt.NavigationListItem",
+						viewName: sViewName,
+						matchers: {
+							properties: {
+								key: sKey
+							}
+						},
+						success: function () {
+							Opa5.assert.ok(true, "Selected entry in the navigation list is correct");
+						},
+						errorMessage: "Item with key " + sKey + " is not selected in the navigation list"
+					});
+				}
 			}
 		}
 	});

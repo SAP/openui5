@@ -46,6 +46,11 @@ sap.ui.define([
 				}
 			});
 
+			this.getOwnerComponent().getEventBus().publish("navEntryChanged", {
+				navigationItemKey: sTopic,
+				routeName: "explore"
+			});
+
 			var jsonObj = {
 				pageTitle: sTitle,
 				topicURL: topicURL,

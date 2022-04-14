@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Card Actions</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1>Card Actions</h1>
+			<h2 id="overview">Overview</h2>
+			Actions provide mechanism to make card elements (header, content, list item, etc.) interactive.
+			Card actions can be built-in or attached by the card developer to the desired element.
+			Upon user interaction a corresponding event is dispatched for handling in specific order.
+			If there is a predefined behavior for the action (like navigation) and it is not prevented, it will be executed.
+
+			<h2 id="properties">Action Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td><a data-demokit-href="#/api/sap.ui.integration.CardActionType" target="_parent">CardActionType</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>
+							The type of the action. It determines the purpose, parameters and default behavior.
+							Possible values are:
+							<ul>
+								<li><a href="../../index.html#/learn/actions/navigation" target="_parent">Navigation</a></li>
+								<li><a href="../../index.html#/learn/actions/submit" target="_parent">Submit</a></li>
+								<li><a href="../../index.html#/learn/actions/custom" target="_parent">Custom</a></li>
+							</ul>
+						</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+
+					</tr>
+					<tr>
+						<td>enabled</td>
+						<td>boolean</td>
+						<td>true</td>
+						<td>No</td>
+						<td>If the action is enabled.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+
+					</tr>
+					<tr>
+						<td>parameters</td>
+						<td>Object</td>
+						<td></td>
+						<td>No</td>
+						<td>
+							The parameters of the action. Based on the type different parameters are available.
+							For details see the documentation page for the chosen action type.
+						</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="orderOfDispatching">Order of Dispatching</h2>
+			<p>
+				Whether an action is defined by the card developer, or built-in, it is dispatched for handling in the following order:
+			</p>
+			<ol>
+				<li>Card</li>
+				<li>Host</li>
+				<li>Extension</li>
+			</ol>
+			<p>
+				If any of the listed handles the action, it can prevent the dispatching to the next handlers and prevent default behavior by calling <code>preventDefault()</code> on the event object.
+			</p>
+
+			<h2 id="componentCard">
+				In Component Card or Extension
+			</h2>
+			<p>
+				You can use the <code>oCard.triggerAction()</code> method to programmatically trigger an action when
+				inside a Component card or from an extension.
+				For more info see the <a
+					data-demokit-href="#/api/sap.ui.integration.widgets.Card%23methods/triggerAction" target="_blank">API
+					documentation</a>
+				and the <a href="../../index.html#/explore/component/triggerAction" target="_parent">sample</a>.
+			</p>
+
+			<h2 id="examples">Examples</h2>
+			<p>Header level navigation action with static URL:</p>
+			<pre class="lang-json">{
+	"sap.card": {
+		"header": {
+			"title": "Some title",
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "/some/url"
+					}
+				}
+			]
+		},
+		...
+	}
+}</pre>
+			<a class="try-button" href="../../index.html#/explore/cardActions" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#properties">Properties</a></div>
+			<div><a href="#orderOfDispatching">Order of Dispatching</a></div>
+			<div><a href="#componentCard">In Component Card</a></div>
+			<div><a href="#examples">Examples</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

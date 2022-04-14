@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Card Actions</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1>Navigation</h1>
+			<h2 id="overview">Overview</h2>
+			<p>
+				Navigation action type allows to open URL or performs intent-based navigation supported by the host environment.
+				Parameters determine whether it is intent-based, or opens a URL.
+			</p>
+
+			<h2 id="usingUrl">Navigation Using a URL</h2>
+			<p>
+				This is the generic type navigation with provided URL. The optional target parameter defines if the given URL should be opened in a new or in the same window.
+			</p>
+			<p>Default behavior: opens the given <code>URL</code> in the specified <code>target</code>.</p>
+
+			<h3>Parameters</h3>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>url</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The URL to navigate to.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>target</td>
+						<td>string</td>
+						<td>"_blank"</td>
+						<td>No</td>
+						<td>If the given <code>url</code> should be opened in a new or the same window. Possible values are "_blank" and "_self".</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+				</table>
+			</div>
+			<p>
+				See <a href="../../../index.html#/explore/cardActions/navigation" target="_parent">navigation example</a>.
+			</p>
+
+			<h2 id="intentBased">Intent-Based Navigation</h2>
+			<p>
+				The intent-based navigation mechanism allows to launch applications or perform actions over semantic objects by using abstract intents.
+				In order for this mechanism to work, it is essential that the host environment supports it and the card developer knows exactly what parameters
+				the host environment expects. It is supported by environments like SAP Fiori Launchpad and SAP Work Zone.
+			</p>
+			<b>Note:</b> This navigation is experimental and may change!
+			<br>
+			<b>Note:</b> This navigation strongly depends on the host environment.
+			<h3>Parameters</h3>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>ibnTarget</td>
+						<td><a href="#ibnTargetParams">IBNTarget</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>
+							Target for intent-based navigation.
+							<br>
+							<b>Note:</b> This property is experimental.
+						</td>
+						<td>1.41.0</td>
+						<td>1.102</td>
+					</tr>
+					<tr>
+						<td>ibnParams</td>
+						<td>Object&lt;string,string&gt; or Object&lt;string,[string]&gt;</td>
+						<td></td>
+						<td>No</td>
+						<td>
+							Map of parameters for intent-based navigation that define an instance of the semantic object. The parameter value can be a string or an array of strings.
+							<br>
+							For example <code>{ "employeeID": 4 }</code>
+							<br>
+							<b>Note:</b> This property is experimental.
+						</td>
+						<td>1.41.0</td>
+						<td>1.102</td>
+					</tr>
+				</table>
+			</div>
+			<h4 id="ibnTargetParams">Properties for IBNTarget</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>semanticObject</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>Defines the business entity, which will be the target of the action. For example "Employee".</td>
+						<td>1.41.0</td>
+						<td>1.102</td>
+					</tr>
+					<tr>
+						<td>action</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Defines what operation to be performed on the semantic object. For example "display".</td>
+						<td>1.41.0</td>
+						<td>1.102</td>
+					</tr>
+				</table>
+			</div>
+			<p>
+				See <a href="../../../index.html#/explore/cardActions/ibn" target="_parent">intent-based navigation example</a>.
+			</p>
+			<h3>Related information</h3>
+			<ul>
+				<li>If you develop host environment, see how navigation can be handled <a target="_parent" href="../../../index.html#/integrate/handleActions/handleNavigationAction">here</a></li>
+				<li><a target="_blank" href="https://help.sap.com/docs/SAP_HANA_PLATFORM/52715f71adba4aaeb480d946c742d1f6/5ff538515a2a455696f9c203939d9360.html?version=2.0.01">Intent-Based Navigation on SAP Hana Platform</a></li>
+				<li><a target="_blank" data-demokit-href="#/api/sap.ushell.services.CrossApplicationNavigation">sap.ushell.services.CrossApplicationNavigation API</a></li>
+			</ul>
+
+			<h2 id="examples">Examples</h2>
+
+			<p>Header level navigation action with static URL:</p>
+			<pre class="lang-json">
+{
+	"sap.card": {
+		"header": {
+			"title": "Some title",
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "/some/url",
+						"target": "_self"
+					}
+				}
+			]
+		},
+		...
+	}
+}</pre>
+			<p>Intent-based navigation:</p>
+			<pre class="lang-json">
+{
+	"sap.card": {
+		"type": "List",
+		"content": {
+			...
+			"item": {
+				"title": "{Name}",
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"ibnTarget": {
+								"semanticObject": "Application",
+								"action": "display"
+							},
+							"ibnParams": {
+								"applicationName": "{Name}"
+							}
+						}
+					}
+				]
+			}
+		}
+	}
+}</pre>
+			<a class="try-button" href="../../../index.html#/explore/cardActions" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#usingUrl">Navigation Using a URL</a></div>
+			<div><a href="#intentBased">Intent-Based Navigation</a></div>
+			<div><a href="#examples">Examples</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -19,10 +19,16 @@ sap.ui.define([
 				key: 'usage'
 			},
 			{
-				title: 'API',
+				title: 'Card API',
 				icon: 'sap-icon://header',
 				target: 'integrate',
 				key: 'api'
+			},
+			{
+				title: 'Handle Actions',
+				icon: 'sap-icon://SAP-icons-TNT/aggregator',
+				target: 'integrate',
+				key: 'handleActions'
 			},
 			{
 				title: 'Layouts',

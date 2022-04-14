@@ -470,6 +470,10 @@ sap.ui.define([
 
 			exploreSettingsModel.setProperty("/isApplication", !!oSubSampleOrSample.isApplication);
 			this.byId("splitView").setBusy(true);
+			this.getOwnerComponent().getEventBus().publish("navEntryChanged", {
+				navigationItemKey: oSample.key,
+				routeName: "explore"
+			});
 			this._showSample(oSample, oSubSample);
 		},
 
