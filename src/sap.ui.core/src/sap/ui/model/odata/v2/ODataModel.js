@@ -34,6 +34,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/message/MessageParser",
+	"sap/ui/model/_Helper",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/FilterProcessor",
@@ -53,9 +54,9 @@ sap.ui.define([
 ], function(_CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding,
 		ODataTreeBinding, assert, Log, encodeURL, deepEqual, deepExtend, each, extend,
 		isEmptyObject, isPlainObject, merge, uid, UriParameters, SyncPromise, coreLibrary, Message,
-		MessageParser, BindingMode, BaseContext, FilterProcessor, Model, CountMode, MessageScope,
-		ODataMetadata, ODataMetaModel, ODataMessageParser, ODataPropertyBinding, ODataUtils,
-		OperationMode, UpdateMethod, OData, URI, isCrossOriginURL
+		MessageParser, _Helper, BindingMode, BaseContext, FilterProcessor, Model, CountMode,
+		MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser, ODataPropertyBinding,
+		ODataUtils, OperationMode, UpdateMethod, OData, URI, isCrossOriginURL
 ) {
 
 	"use strict";
@@ -354,9 +355,8 @@ sap.ui.define([
 			this.oMessageParser = oMessageParser;
 
 			//collect internal changes in a deferred group as default
-			this.sDefaultChangeGroup = "changes";
-			this.setDeferredGroups([this.sDefaultChangeGroup]);
-			this.setChangeGroups({"*":{groupId: this.sDefaultChangeGroup}});
+			this.setDeferredGroups(["changes"]);
+			this.setChangeGroups({"*":{groupId: "changes"}});
 
 			this.oData = {};
 			this.oMetadata = null;
@@ -4313,10 +4313,10 @@ sap.ui.define([
 				if (oEntityType) {
 					mEntityTypes[oEntityType.entityType] = true;
 				}
-				if (oRequest.key) { // e.g. /myEntity
+				if (oRequest.key) {
 					// for createEntry entities change context path to new one
 					if (oRequest.created) {
-						var sKey = this._getKey(oResultData); // e.g. /myEntity-4711
+						var sKey = this._getKey(oResultData);
 						// rewrite context for new path
 						var oContext = this.getContext("/" + oRequest.key);
 						sDeepPath = oRequest.deepPath;
@@ -4334,6 +4334,8 @@ sap.ui.define([
 						oEntity = this._getEntity(sKey);
 						if (oEntity) {
 							delete oEntity.__metadata.created;
+							// before deleting the old entity copy and update the changes
+							this._keepChangesAfterCreate(oRequest, oEntity, sKey);
 						}
 						this._removeEntity(oRequest.key);
 					} else {
@@ -4368,6 +4370,43 @@ sap.ui.define([
 		}
 
 		return true;
+	};
+
+	/**
+	 * Creates a new <code>mChangedEntities</code> entry for the <code>sKey</code> for the just
+	 * created entity and takes all changes which have been made after this create has been
+	 * submitted.
+	 *
+	 * @param {object} oRequest
+	 *   The request object for a created entity
+	 * @param {object} oEntity
+	 *   The persisted and retrieved entity object
+	 * @param {string} sKey
+	 *   The key of the created entity
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._keepChangesAfterCreate = function (oRequest, oEntity, sKey) {
+		var oKey2Entity, sProperty,
+			oChangedEntity = this.mChangedEntities[oRequest.key];
+
+		if (oChangedEntity) {
+			oChangedEntity = _Helper.merge({}, oChangedEntity);
+			oChangedEntity.__metadata = _Helper.merge({}, oEntity.__metadata);
+			oChangedEntity.__metadata.deepPath = oRequest.deepPath;
+			for (sProperty in oRequest.data) {
+				if (oRequest.data[sProperty] === oChangedEntity[sProperty]) {
+					delete oChangedEntity[sProperty];
+				}
+			}
+			this.mChangedEntities[sKey] = oChangedEntity;
+			oKey2Entity = {};
+			oKey2Entity[sKey] = oEntity;
+			this._updateChangedEntities(oKey2Entity);
+			// cleanup also further POST request for the just created entity
+			this.abortInternalRequest(this._resolveGroup(oRequest.key).groupId,
+				{requestKey: oRequest.key});
+		}
 	};
 
 	/**
@@ -6849,12 +6888,7 @@ sap.ui.define([
 			throw new Error("The 'expand' parameter is only supported if batch mode is used");
 		}
 		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
-
 		mHeaders = mHeaders || {};
-
-		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
-
-		sGroupId = sGroupId ? sGroupId : this.sDefaultChangeGroup;
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
 		var oRequestHandle = {
@@ -6877,10 +6911,17 @@ sap.ui.define([
 
 		function create() {
 			var oCreateData, oCreatedContext, oCreateResponse, oEntitySetMetadata, oExpandRequest,
-				sUID,
+				oGroupInfo, sUID,
 				bCreateFailed = false,
 				fnErrorFromParameters = fnError,
 				fnSuccessFromParameters = fnSuccess;
+
+			// fallback to groups as defined in mChangeGroups; using path is OK as we don't have an
+			// entity yet and the entity type can be derived from the path to determine the group ID
+			oGroupInfo = that._resolveGroup(sNormalizedPath);
+			sGroupId = sGroupId || oGroupInfo.groupId;
+			sChangeSetId = sChangeSetId || oGroupInfo.changeSetId;
+			bRefreshAfterChange = that._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
 			var oEntityMetadata = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
 			if (!oEntityMetadata) {

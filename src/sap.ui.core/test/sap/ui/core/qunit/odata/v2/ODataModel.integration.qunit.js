@@ -10459,6 +10459,233 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: Create a new entity and modify data before response is processed. Another call of
+	// ODataModel#submitChanges must not create a second POST request but has to create a MERGE
+	// request with the etag received from the POST request.
+	// BCP: 2270069046
+[false, true].forEach(function (bCustomChangeGroup) {
+	var sTitle = "ODataListBinding#create: create, modify before create is done"
+			+ (bCustomChangeGroup ? "; with custom change group" : "");
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding, oCreatedContext, fnResolve, oTable,
+			oModel = createSalesOrdersModel({
+				defaultBindingMode : BindingMode.TwoWay,
+				refreshAfterChange : false
+			}),
+			sView = '\
+<Table growing="true" growingThreshold="2" id="table" items="{/SalesOrderSet}">\
+	<Input id="note" value="{Note}" />\
+	<Input id="customerID" value="{CustomerID}" />\
+</Table>',
+			that = this;
+
+		function fnSubmitChanges() {
+			var mParams = {groupId : bCustomChangeGroup ? "~groupId" : undefined};
+
+			oModel.submitChanges(mParams);
+		}
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=2", {
+				results : []
+			});
+
+		if (bCustomChangeGroup) {
+			oModel.setDeferredGroups(["~groupId"]);
+			oModel.setChangeGroups({"*":{groupId: "~groupId"}});
+		}
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectValue("customerID", [""])
+				.expectValue("note", ["foo"]);
+
+			// code under test
+			oCreatedContext = oBinding.create({Note : "foo"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						Note : "foo"
+					},
+					deepPath : "/SalesOrderSet('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, new Promise(function (resolve) { fnResolve = resolve; }));
+
+			fnSubmitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("customerID", ["13"]);
+
+			oTable.getItems()[0].getCells()[1].setValue("13");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", ["bar"]);
+
+			fnResolve({
+				data : {
+					__metadata : {
+						etag : "W/\"2022-04-14T08:08:58.312Z\"",
+						uri : "SalesOrderSet('42')"
+					},
+					CustomerID : "0",
+					Note : "bar",
+					SalesOrderID : "42"
+				},
+				statusCode : 201
+			});
+
+			return Promise.all([
+				// code under test
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					data : {
+						__metadata : {
+							etag : "W/\"2022-04-14T08:08:58.312Z\"",
+							uri : "SalesOrderSet('42')"
+						},
+						CustomerID : "13"
+					},
+					deepPath : "/SalesOrderSet('42')",
+					headers : {
+						"If-Match" : "W/\"2022-04-14T08:08:58.312Z\""
+					},
+					key : "SalesOrderSet('42')",
+					method : "MERGE",
+					requestUri : "SalesOrderSet('42')"
+				}, {
+					data : NO_CONTENT,
+					headers : {etag : "W/\"2020-05-19T08:10:00.146Z\""},
+					statusCode : 204
+				});
+
+			// code under test
+			fnSubmitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity and modify data before response is processed. After the
+	// response has failed, another call of ODataModel#submitChanges leads to a second POST request
+	// with combined data of the failed request and the modification.
+	// BCP: 2270069046
+	QUnit.test("ODataListBinding#create: create, modify before create is done; first #submitChanges"
+			+ " failed", function (assert) {
+		var oBinding, oCreatedContext, fnResolve, oTable,
+			oModel = createSalesOrdersModel({
+				defaultBindingMode : BindingMode.TwoWay,
+				refreshAfterChange : false
+			}),
+			sView = '\
+<Table growing="true" growingThreshold="2" id="table" items="{/SalesOrderSet}">\
+	<Input id="note" value="{Note}" />\
+	<Input id="customerID" value="{CustomerID}" />\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=2", {
+				results : []
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectValue("customerID", [""])
+				.expectValue("note", ["foo"]);
+
+			// code under test
+			oCreatedContext = oBinding.create({Note : "foo"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						Note : "foo"
+					},
+					deepPath : "/SalesOrderSet('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, new Promise(function (resolve) { fnResolve = resolve; }));
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("customerID", ["13"]);
+
+			oTable.getItems()[0].getCells()[1].setValue("13");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.oLogMock.expects("error")
+				.withExactArgs("Request failed with status code 400: POST SalesOrderSet",
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+			fnResolve({
+				response : createErrorResponse({message : "POST failed", statusCode : 400})
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						CustomerID : "13",
+						Note : "foo"
+					},
+					deepPath : "/SalesOrderSet('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('42')"},
+						CustomerID : "15",
+						Note : "bar",
+						SalesOrderID : "42"
+					},
+					statusCode : 201
+				})
+				.expectValue("customerID", ["15"])
+				.expectValue("note", ["bar"]);
+
+			// code under test
+			oModel.submitChanges();
+
+			return Promise.all([
+				// code under test
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: All pairs test for multi create (1)
 	// Number of transient: 2
 	// Delete: ODataModel.resetChanges
