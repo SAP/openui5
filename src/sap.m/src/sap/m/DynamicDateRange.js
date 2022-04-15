@@ -17,6 +17,7 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	"sap/ui/core/LabelEnablement",
 	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/Device',
 	'./Label',
@@ -50,6 +51,7 @@ sap.ui.define([
 		Icon,
 		LabelEnablement,
 		DateFormat,
+		TimezoneUtil,
 		ManagedObjectObserver,
 		Device,
 		Label,
@@ -627,7 +629,9 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicDateRange.prototype._addSuggestionItem = function(oSuggestValue) {
-			var aResultingDates = DynamicDateUtil.toDates(oSuggestValue);
+			var aResultingDates = DynamicDateUtil.toDates(oSuggestValue).map(function(oDate) {
+				return this._convertDate(oDate);
+			}, this);
 
 			var oItem = new ListItem({
 				text: DynamicDateUtil.getOption(oSuggestValue.operator).format(oSuggestValue, this._getFormatter()),
@@ -696,7 +700,44 @@ sap.ui.define([
 		};
 
 		DynamicDateRange.prototype._toDatesString = function(oValue) {
-			return this._getDatesLabelFormatter().format(DynamicDateUtil.toDates(oValue));
+			var aDates = DynamicDateUtil.toDates(oValue).map(function(oDate) {
+				return this._convertDate(oDate);
+			}, this);
+
+			return this._getDatesLabelFormatter().format(aDates);
+		};
+
+		DynamicDateRange.prototype._convertDate = function(oDate) {
+			var sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
+			var oParts = this._getPickerParser().parse(
+				sFormattedDate,
+				sap.ui.getCore().getConfiguration().getTimezone()
+			);
+			var oNewDate = oParts ? new Date(oParts[0].getTime()) : oParts;
+
+			return oNewDate;
+		};
+
+		DynamicDateRange.prototype._reverseConvertDate = function(oDate) {
+			var sFormattedDate = this._getPickerParser().format(
+				oDate,
+				sap.ui.getCore().getConfiguration().getTimezone()
+			);
+			var oParts = this._getPickerParser().parse(
+				sFormattedDate,
+				TimezoneUtil.getLocalTimezone()
+			);
+			var oNewDate = oParts ? new Date(oParts[0].getTime()) : oParts;
+
+			return oNewDate;
+		};
+
+		DynamicDateRange.prototype._getPickerParser = function() {
+			if (!this._calendarParser) {
+				this._calendarParser = DateFormat.getDateTimeWithTimezoneInstance({ showTimezone: false });
+			}
+
+			return this._calendarParser;
 		};
 
 		DynamicDateRange.prototype._createPopup = function() {
@@ -918,7 +959,10 @@ sap.ui.define([
 				return;
 			}
 
-			aResultDates = DynamicDateUtil.toDates(oOutputValue);
+			aResultDates = DynamicDateUtil.toDates(oOutputValue).map(function(oDate) {
+				return this._convertDate(oDate);
+			}, this);
+
 			if (aResultDates) {
 				if (this._oSelectedOption.getKey() === "FROMDATETIME" || this._oSelectedOption.getKey() === "TODATETIME"
 					|| this._oSelectedOption.getKey() === "FROM" || this._oSelectedOption.getKey() === "TO") {
@@ -1131,6 +1175,14 @@ sap.ui.define([
 
 		DynamicDateRange.prototype._applyValue = function() {
 			this._oOutput = this._oSelectedOption.getValueHelpOutput(this);
+
+			this._oOutput.values = this._oOutput.values.map(function(val) {
+				if (val instanceof Date) {
+					return this._convertDate(val);
+				}
+
+				return val;
+			}, this);
 
 			var prevValue = this.getValue();
 			this.setValue(this._oOutput);
