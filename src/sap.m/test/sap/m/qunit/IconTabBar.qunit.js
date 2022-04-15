@@ -402,6 +402,32 @@ sap.ui.define([
 		oIconTabBar.destroy();
 	});
 
+	QUnit.test("setExpanded() with parameter 'undefined' should reset the value of the property", function(assert) {
+
+		// Arrange
+		var oIconTabBar = new IconTabBar({
+			expanded: false,
+			items: new IconTabFilter({key: "key1", content: new Text({ text: "test" })})
+		});
+
+		oIconTabBar.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oIconTabBar.getDomRef("content").children.length, 0, "content is not initially rendered");
+
+		// Act
+		oIconTabBar.setExpanded(undefined);
+		Core.applyChanges();
+		this.clock.tick(1000);
+
+		// Assert
+		assert.strictEqual(oIconTabBar.getDomRef("content").children.length, 1, "content is rendered due to expanded prop being reset");
+
+		// Clean up
+		oIconTabBar.destroy();
+	});
+
 	QUnit.test("setSelectedItem()", function(assert) {
 
 		// Arrange
@@ -1042,7 +1068,6 @@ sap.ui.define([
 			assert.strictEqual(oTab.getEnabled(), false, "tab is disabled");
 			assert.strictEqual($Tab.hasClass("sapMITBFilter" + sIconColor), false, "iconColor class is not set on the tab");
 			assert.strictEqual($Tab.find(".sapMITBFilter" + sIconColor).length, 0, "iconColor class is not set on any element in the tab");
-			// debugger
 			assert.strictEqual($Tab.text().includes(sIconColorLabel), false, "iconColor text is not conveyed");
 		});
 
@@ -1181,6 +1206,7 @@ sap.ui.define([
 
 		// Clean up
 		oIconTabBar.destroy();
+		Core.applyChanges();
 	});
 
 	QUnit.module("public methods");
