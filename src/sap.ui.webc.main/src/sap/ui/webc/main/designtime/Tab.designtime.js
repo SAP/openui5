@@ -2,22 +2,37 @@
  * ${copyright}
  */
 
-// Provides the design-time metadata for the sap.ui.webc.main.TabContainer control
+// Provides the design-time metadata for the sap.ui.webc.main.Tab control
 sap.ui.define([],
 	function () {
 		"use strict";
 
 		return {
 			name: {
-				singular: "TABCONTAINER_NAME",
-				plural: "TABCONTAINER_NAME_PLURAL"
+				singular: "TAB_NAME",
+				plural: "TAB_NAME_PLURAL"
+			},
+			domRef: function (oControl) {
+				return oControl.getParent().getItems().find(function (item) {
+					return item.sId === oControl.sId;
+				}).getDomRef()._getRealDomRef();
 			},
 			actions: {
-				remove: {
-					changeType: "hideControl"
-				},
-				reveal: {
-					changeType: "unhideControl"
+				rename: {
+					changeType: "rename",
+					domRef: function (oControl) {
+						return oControl.getDomRef()._getRealDomRef().querySelector(".ui5-tab-strip-itemText");
+					},
+					getTextMutators: function (oControl) {
+						return {
+							getText: function () {
+								return oControl.getText();
+							},
+							setText: function (sNewText) {
+								oControl.setText(sNewText);
+							}
+						};
+					}
 				}
 			}
 		};

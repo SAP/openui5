@@ -8,9 +8,11 @@ sap.ui.define([
 	"use strict";
 
 	return {
+		"hideControl": "default",
 		"rename": BaseRename.createRenameChangeHandler({
 			propertyName: "text",
 			translationTextType: "XBUT"
-		})
+		}),
+		"unhideControl": "default"
 	};
 });

@@ -214,10 +214,7 @@ sap.ui.define([
 						"unhideControl": "default"
 					},
 					"sap.ui.webc.main.Tab": "sap/ui/webc/main/flexibility/Tab",
-					"sap.ui.webc.main.TabContainer": {
-						"hideControl": "default",
-						"unhideControl": "default"
-					},
+					"sap.ui.webc.main.TabContainer": "sap/ui/webc/main/flexibility/TabContainer",
 					"sap.ui.webc.main.Table": {
 						"hideControl": "default",
 						"unhideControl": "default"
