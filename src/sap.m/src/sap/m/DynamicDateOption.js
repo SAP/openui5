@@ -98,7 +98,7 @@ sap.ui.define([
 		 * @public
 		 */
 		DynamicDateOption.prototype.createValueHelpUI = function(oControl, fnControlsUpdated) {
-			var oValue = oControl.getValue(),
+			var oValue = oControl.getValue() && Object.assign({}, oControl.getValue()),
 				aParams = this.getValueHelpUITypes(oControl),
 				valueHelpUiTypesCount = aParams.length,
 				aControls = [],
@@ -108,6 +108,16 @@ sap.ui.define([
 				oControl.aControlsByParameters = {};
 			}
 			oControl.aControlsByParameters[this.getKey()] = [];
+
+			if (oValue && oValue.values) {
+				oValue.values = oValue.values.map(function(val) {
+					if (val instanceof Date) {
+						return oControl._reverseConvertDate(val);
+					}
+
+					return val;
+				});
+			}
 
 			for (var i = 0; i < aParams.length; i++) {
 				if (aParams[i].getText()) {

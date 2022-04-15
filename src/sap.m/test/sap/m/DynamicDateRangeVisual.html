@@ -12,6 +12,7 @@
                 data-sap-ui-language="en_US"
 				data-sap-ui-trace="false"
 				data-sap-ui-async="true"
+				data-sap-ui-theme="sap_fiori_3"
 				src="../../../resources/sap-ui-core.js">
 		</script>
 
@@ -23,14 +24,16 @@
 				"sap/m/VBox",
 				"sap/m/Label",
 				"sap/m/DynamicDateRange",
-				"sap/m/DynamicDateUtil"
+				"sap/m/DynamicDateUtil",
+				"sap/m/Button"
 			], function(
 				App,
 				Page,
 				VBox,
 				Label,
 				DynamicDateRange,
-				DynamicDateUtil
+				DynamicDateUtil,
+				Button
 			) {
 				"use strict";
 
@@ -96,6 +99,27 @@
 										"FROMDATETIME",
 										"TODATETIME"
 									],
+								}),
+								new Label("DDR5-label", {text: "Special selection for visual tests", labelFor: "DDR5"}),
+								new DynamicDateRange("DDR5", {
+									enableGroupHeaders: false,
+									width: '300px',
+									options: [
+										"DATETIME",
+										"TODAY"
+									]
+								}),
+								new Button("btnEtcGMT-12", {
+									text: "Etc/GMT-12",
+									press: handleTimezoneButtonPress
+								}),
+								new Button("btnUTC", {
+									text: "UTC",
+									press: handleTimezoneButtonPress
+								}),
+								new Button("btnEtcGMT12", {
+									text: "Etc/GMT+12",
+									press: handleTimezoneButtonPress
 								})
 							]
 						})
@@ -104,6 +128,11 @@
 			});
 
 		});
+
+		function handleTimezoneButtonPress(e) {
+			sap.ui.getCore().getConfiguration().setTimezone(e.getSource().getText());
+			sap.ui.getCore().byId("DDR5").setValue(null);
+		}
 
 		</script>
 	</head>
