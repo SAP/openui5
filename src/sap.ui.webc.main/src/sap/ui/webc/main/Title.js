@@ -78,7 +78,8 @@ sap.ui.define([
 					type: "sap.ui.webc.main.WrappingType",
 					defaultValue: WrappingType.None
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/Title.designtime"
 		}
 	});
 

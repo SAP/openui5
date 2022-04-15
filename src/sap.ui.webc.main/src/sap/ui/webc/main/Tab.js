@@ -134,7 +134,8 @@ sap.ui.define([
 					slot: "subTabs"
 				}
 			},
-			methods: ["getTabInStripDomRef"]
+			methods: ["getTabInStripDomRef"],
+			designtime: "sap/ui/webc/main/designtime/Tab.designtime"
 		}
 	});
 

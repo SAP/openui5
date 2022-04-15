@@ -197,7 +197,8 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/TabContainer.designtime"
 		}
 	});
 

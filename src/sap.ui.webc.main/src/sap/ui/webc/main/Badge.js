@@ -75,7 +75,8 @@ sap.ui.define([
 					multiple: false,
 					slot: "icon"
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/Badge.designtime"
 		}
 	});
 
