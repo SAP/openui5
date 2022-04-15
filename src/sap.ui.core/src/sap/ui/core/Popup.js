@@ -22,7 +22,6 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/extend",
 	"sap/base/util/deepExtend",
-	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/events/isMouseEventDelayed",
@@ -47,7 +46,6 @@ sap.ui.define([
 	uid,
 	extend,
 	deepExtend,
-	containsOrEquals,
 	jQuery,
 	F6Navigation,
 	isMouseEventDelayed,
@@ -1124,7 +1122,7 @@ sap.ui.define([
 			return false;
 		}
 
-		var bContains = containsOrEquals(oPopupDomRef, oDomRef);
+		var bContains = oPopupDomRef.contains(oDomRef);
 
 		var aChildPopups;
 
@@ -1136,7 +1134,7 @@ sap.ui.define([
 				// therefore we need to try with document.getElementById to check the DOM id case first
 				// only when it doesn't contain the given DOM, we publish an event to the event bus
 				var oContainDomRef = (sChildID ? window.document.getElementById(sChildID) : null);
-				var bContains = containsOrEquals(oContainDomRef, oDomRef);
+				var bContains = oContainDomRef && oContainDomRef.contains(oDomRef);
 				if (!bContains) {
 					var sEventId = "sap.ui.core.Popup.contains-" + sChildID;
 					var oData = {
@@ -2819,7 +2817,7 @@ sap.ui.define([
 	Popup.prototype._isFocusInsidePopup = function () {
 		var oDomRef = this._$(false).get(0);
 
-		if (oDomRef && containsOrEquals(oDomRef, document.activeElement)) {
+		if (oDomRef && oDomRef.contains(document.activeElement)) {
 			return true;
 		}
 
@@ -2837,7 +2835,7 @@ sap.ui.define([
 				oCurrentOfRect;
 
 			if (oCurrentOfRef) {
-				if ((oCurrentOfRef === window) || (oCurrentOfRef === window.document) || containsOrEquals(document.documentElement, oCurrentOfRef)) {
+				if ((oCurrentOfRef === window) || (oCurrentOfRef === window.document) || document.documentElement.contains(oCurrentOfRef)) {
 					// When the current Of reference is window or window.document or it's contained in the DOM tree,
 					// The client bounding rect can be calculated
 					oCurrentOfRect = jQuery(oCurrentOfRef).rect();

@@ -8,7 +8,6 @@ sap.ui.define([
 	'./Element',
 	'./RenderManager',
 	'sap/ui/performance/trace/Interaction',
-	"sap/ui/dom/containsOrEquals",
 	"sap/ui/util/ActivityDetection",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
@@ -25,7 +24,6 @@ sap.ui.define([
 		Element,
 		RenderManager,
 		Interaction,
-		containsOrEquals,
 		ActivityDetection,
 		KeyCodes,
 		Log,
@@ -933,7 +931,7 @@ sap.ui.define([
 			// event is dispatched to the element only when the element's root DOM contains or equals the scope check
 			// DOM, so that the simulated 'touchmove' and 'touchend' event is only dispatched to the element when the
 			// 'touchstart' also occurred on the same element
-			if (!oScopeCheckDOM || containsOrEquals(oDomRef, oScopeCheckDOM)) {
+			if (!oScopeCheckDOM || (oDomRef && oDomRef.contains(oScopeCheckDOM))) {
 				// for each event type call the callback method
 				// if the execution should be stopped immediately
 				// then no further callback method will be executed
@@ -976,7 +974,7 @@ sap.ui.define([
 
 			// Only process the touchend event which is emulated from mouseout event when the current domRef
 			// doesn't equal or contain the relatedTarget
-			if (oEvent.isMarked("fromMouseout") && containsOrEquals(oDomRef, oEvent.relatedTarget)) {
+			if (oEvent.isMarked("fromMouseout") && (oDomRef && oDomRef.contains(oEvent.relatedTarget))) {
 				break;
 			}
 

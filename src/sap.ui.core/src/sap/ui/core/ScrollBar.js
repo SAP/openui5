@@ -10,7 +10,6 @@ sap.ui.define([
 	"./ScrollBarRenderer",
 	"sap/ui/performance/trace/Interaction",
 	"sap/base/Log",
-	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/jquery/EventSimulation",
 	"sap/ui/thirdparty/jquery"
 ],
@@ -21,7 +20,6 @@ sap.ui.define([
 		ScrollBarRenderer,
 		Interaction,
 		Log,
-		containsOrEquals,
 		EventSimulation,
 		jQuery
 	) {
@@ -313,7 +311,7 @@ sap.ui.define([
 			// find out if the user is scrolling up= back or down= forward.
 			var bForward = wheelData > 0 ? true : false;
 
-			if (containsOrEquals(this._$ScrollDomRef[0], oEvent.target)) {
+			if (this._$ScrollDomRef[0] && this._$ScrollDomRef[0].contains(oEvent.target)) {
 				this._doScroll(ScrollBarAction.MouseWheel, bForward);
 			} else {
 
