@@ -281,7 +281,19 @@ sap.ui.define([
 					afterPopupOpened : {type : "boolean"}
 
 				}
-			}
+			},
+
+			/**
+			 * Fired when <code>value help</code> dialog opens.
+			 * @since 1.102.0
+			 */
+			afterValueHelpOpen : {},
+
+			/**
+			 * Fired when <code>value help</code> dialog closes.
+			 * @since 1.102.0
+			 */
+			afterValueHelpClose : {}
 		},
 		designtime: "sap/m/designtime/DatePicker.designtime",
 		dnd: { draggable: false, droppable: true }
@@ -1572,6 +1584,7 @@ sap.ui.define([
 		InstanceManager.addPopoverInstance(this._oPopup);
 
 		this._oCalendar.focus();
+		this.fireAfterValueHelpOpen();
 	}
 
 	function _handleClose() {
@@ -1583,6 +1596,7 @@ sap.ui.define([
 		this._getCalendar()._closePickers();
 
 		InstanceManager.removePopoverInstance(this._oPopup);
+		this.fireAfterValueHelpClose();
 	}
 
 	function _resizeCalendar(oEvent){
