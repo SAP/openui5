@@ -1,25 +1,20 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/webc/main/Toast"
-], function(Controller, JSONModel, Toast) {
+	"sap/ui/core/mvc/Controller"
+], function(Controller) {
 	"use strict";
 
 	return Controller.extend("sap.ui.webc.fiori.sample.BarcodeScannerDialog.C", {
 
-		onInit: function() {
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
-			this.getView().setModel(oModel);
+		openBarcodeScannerDialog: function(oEvent) {
+			this.byId("bsd").show();
 		},
 		handleScanError: function(oEvent) {
-			var demoToast = this.getView().byId("demoToast");
-			demoToast.setText("Event scanError fired.");
-			demoToast.show();
+			this.byId("scanResultLabel").setText("Error result: " + oEvent.getParameter("message"));
+			this.byId("bsd").close();
 		},
 		handleScanSuccess: function(oEvent) {
-			var demoToast = this.getView().byId("demoToast");
-			demoToast.setText("Event scanSuccess fired.");
-			demoToast.show();
+			this.byId("scanResultLabel").setText("Success result: " + oEvent.getParameter("text"));
+			this.byId("bsd").close();
 		}
 
 	});

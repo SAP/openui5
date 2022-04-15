@@ -12,6 +12,36 @@
 	  ],
 	  "entities": [
 		{
+			"id": "sap.ui.webc.fiori.BarcodeScannerDialog",
+			"name": "Barcode Scanner Dialog",
+			"category": "Web Components",
+			"since": "1.101.0",
+			"samples": ["sap.ui.webc.fiori.sample.BarcodeScannerDialog"]
+		},
+		{
+			"id": "sap.ui.webc.fiori.FlexibleColumnLayout",
+			"name": "Flexible Column Layout",
+			"category": "Web Components",
+			"since": "1.101.0",
+			"samples": ["sap.ui.webc.fiori.sample.FlexibleColumnLayout"]
+		},
+		{
+			"id": "sap.ui.webc.fiori.IllustratedMessage",
+			"name": "Illustrated Message",
+			"category": "Web Components",
+			"since": "1.101.0",
+			"samples": ["sap.ui.webc.fiori.sample.IllustratedMessage"]
+		},
+		{
+			"id": "sap.ui.webc.fiori.MediaGallery",
+			"name": "Media Gallery",
+			"category": "Web Components",
+			"since": "1.101.0",
+			"samples": [
+				"sap.ui.webc.fiori.sample.MediaGallery"
+			]
+		},
+		{
 			"id": "sap.ui.webc.fiori.NotificationListItem",
 			"name": "Notification List Item",
 			"category": "Web Components",
@@ -26,6 +56,20 @@
 		  "category": "Web Components",
 		  "since": "1.100.0",
 		  "samples": ["sap.ui.webc.fiori.sample.Page"]
+		},
+		{
+			"id": "sap.ui.webc.fiori.ProductSwitch",
+			"name": "Product Switch",
+			"category": "Web Components",
+			"since": "1.101.0",
+			"samples": ["sap.ui.webc.fiori.sample.ProductSwitch"]
+		},
+		{
+			"id": "sap.ui.webc.fiori.ShellBar",
+			"name": "Shell Bar",
+			"category": "Web Components",
+			"since": "1.101.0",
+			"samples": ["sap.ui.webc.fiori.sample.ShellBar"]
 		},
 		{
 			"id": "sap.ui.webc.fiori.SideNavigation",
@@ -55,6 +99,16 @@
 	  ],
 	  "samples": [
 		{
+			"id": "sap.ui.webc.fiori.sample.BarcodeScannerDialog",
+			"name": "Barcode Scanner Dialog Freestyle Example",
+			"description": "Demonstrates the basic usage of BarcodeScannerDialog"
+		},
+		{
+			"id": "sap.ui.webc.fiori.sample.MediaGallery",
+			"name": "Media Gallery",
+			"description": "Demonstrates the basic usage of MediaGallery"
+		},
+		{
 			"id": "sap.ui.webc.fiori.sample.NotificationListItem",
 			"name": "Notification List Item",
 			"description": "Demonstrates the basic usage of NotificationListItem"
@@ -75,9 +129,24 @@
 		  "description": "Demonstrates the basic usage of UploadCollection"
 		},
 		{
-		  "id": "sap.ui.webc.fiori.sample.Wizard",
-		  "name": "Wizard",
-		  "description": "Demonstrates the basic usage of Wizard"
+			"id": "sap.ui.webc.fiori.sample.FlexibleColumnLayout",
+			"name": "Flexible Column Layout Freestyle Example",
+			"description": "Demonstrates the basic usage of FlexibleColumnLayout"
+		},
+		{
+			"id": "sap.ui.webc.fiori.sample.IllustratedMessage",
+			"name": "Illustrated Message Freestyle Example",
+			"description": "Demonstrates the basic usage of IllustratedMessage"
+		},
+		{
+			"id": "sap.ui.webc.fiori.sample.ProductSwitch",
+			"name": "Product Switch Freestyle Example",
+			"description": "Demonstrates the basic usage of ProductSwitch"
+		},
+		{
+			"id": "sap.ui.webc.fiori.sample.ShellBar",
+			"name": "Shell Bar Freestyle Example",
+			"description": "Demonstrates the basic usage of ShellBar"
 		}
 	  ]
 	}

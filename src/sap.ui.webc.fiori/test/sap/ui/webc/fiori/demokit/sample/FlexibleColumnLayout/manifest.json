@@ -15,15 +15,21 @@
 			"libs": {
 				"sap.ui.core": {},
 				"sap.ui.webc.fiori": {},
-				"sap.ui.webc.main": {}
+				"sap.ui.webc.main": {},
+				"sap.m": {},
+				"sap.f": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
+					"fragments/StartColumn.fragment.xml",
+					"fragments/MidColumn.fragment.xml",
+					"fragments/EndColumn.fragment.xml",
 					"V.view.xml",
 					"C.controller.js",
+					"Component.js",
 					"manifest.json"
 				]
 			}

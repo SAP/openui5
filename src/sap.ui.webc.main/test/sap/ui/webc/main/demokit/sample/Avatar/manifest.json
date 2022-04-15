@@ -11,10 +11,15 @@
 			"type": "XML",
 			"async": true
 		},
+		"resourceRoots": {
+			"sap/ui/webc/main/images": "../../../images"
+		},
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {},
-				"sap.ui.webc.main": {}
+				"sap.ui.webc.main": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
@@ -23,7 +28,13 @@
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"manifest.json"
+					"Component.js",
+					"manifest.json",
+					"../../../images/Speakers_avatar_01.jpg",
+					"../../../images/Woman_avatar_01.png",
+					"../../../images/Woman_avatar_02.png",
+					"../../../images/Screw_avatar_01.jpg",
+					"../../../images/Lamp_avatar_01.jpg"
 				]
 			}
 		}
