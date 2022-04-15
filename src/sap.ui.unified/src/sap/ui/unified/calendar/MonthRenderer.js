@@ -325,7 +325,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 				iWeekendEnd: oLocaleData.getWeekendEnd(),
 				aNonWorkingDays: oMonth._getNonWorkingDays(),
 				sToday: oLocaleData.getRelativeDay(0),
-				oToday: CalendarDate.fromLocalJSDate(new Date(), oMonth.getPrimaryCalendarType()),
+				oToday: CalendarDate.fromLocalJSDate(CalendarUtils._convertToTimezone(new Date(), sap.ui.getCore().getConfiguration().getTimezone()), oMonth.getPrimaryCalendarType()),
 				sId: oMonth.getId(),
 				oFormatLong: oMonth._getFormatLong(),
 				sPrimaryCalendarType: oMonth.getPrimaryCalendarType(),
