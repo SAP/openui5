@@ -126,7 +126,7 @@ sap.ui.define(["sap/ui/core/library"],
 		oRm.class("sapMObjectAttributeText");
 		if (oAttrAggregation && oAttrAggregation.isA("sap.m.Link")) {
 			oAttrAggregation.setAriaHasPopup(oOA.getAriaHasPopup());
-		} else {
+		} else if (oOA.getText() && oOA.getActive()) {
 			oRm.attr("tabindex", "0");
 			oRm.attr("role", "link");
 			if (sAriaHasPopup) {
