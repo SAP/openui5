@@ -5,11 +5,12 @@
 
 @_sap_m_Token_TokenPadding: 0.5rem;
 @_sap_m_Token_TokenCompactPadding: 0.25rem;
-@_sap_m_Token_LeftPadding: 0.25rem;
+@_sap_m_Token_LeftPadding: 0.3125rem;
 @_sap_m_Token_TokenSize: @sapMFontSmallSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
 @_sap_m_Token_TokenCompactSize: @sapMFontSmallSize + @_sap_m_Token_TokenCompactPadding;
 
 .sapMToken {
+	overflow: visible;
 	padding-left: @_sap_m_Token_LeftPadding;
 }
 
@@ -20,20 +21,20 @@
 	border-radius: @sapUiButtonBorderCornerRadius;
 }
 
-html.sap-desktop .sapMToken:not(.sapMTokenSelected):not(:focus):hover {
+html.sap-desktop .sapMToken:not(.sapMTokenSelected):not(.sapMTokenReadOnly):not(:focus):hover {
 	background: @sapUiButtonTokenBackground;
 	border: 1px solid @sapUiButtonTokenBorderColor;
 	border-radius: @sapUiButtonBorderCornerRadius;
 	box-shadow: @sapUiContentInteractionShadow;
 }
 
-html.sap-desktop .sapMToken.sapMTokenSelected:hover {
+html.sap-desktop .sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly):hover {
 	background: @sapUiButtonSelectedBackground;
 	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedBorderColor;
 	border-radius: @sapUiButtonBorderCornerRadius;
 }
 
-html.sap-desktop .sapMToken.sapMTokenSelected:not(:focus):hover {
+html.sap-desktop .sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly):not(:focus):hover {
 	box-shadow: @sapUiContentInteractionShadow;
 }
 
@@ -43,18 +44,32 @@ html.sap-desktop .sapMToken.sapMTokenSelected:not(:focus):hover {
 }
 
 html.sap-desktop .sapMToken:focus {
-	outline: 2px solid @sapUiButtonSelectedBorderColor;
-	outline-offset: 0.0625rem;
-	border-radius: @sapUiButtonBorderCornerRadius;
+	outline: none;
 }
 
-html.sap-desktop .sapMToken:not(.sapMTokenSelected):focus:hover {
+html.sap-desktop .sapMToken:focus::after {
+	content: '';
+	position: absolute;
+	pointer-events: none;
+	z-index: 2;
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiFieldActiveBorderColor;
+	border-radius: 0.625rem;
+	top: -0.25rem;
+	bottom: -0.25rem;
+	left: -0.25rem;
+	right: -0.25rem;
+}
+
+html.sap-desktop .sapMToken:not(.sapMTokenSelected):not(.sapMTokenReadOnly):focus:hover {
 	border: @sapUiButtonBorderWidth solid @sapUiButtonTokenBorderColor;
 }
 
-html.sap-desktop .sapUiSizeCompact .sapMToken:focus,
-html.sap-desktop .sapUiSizeCondensed .sapMToken:focus {
-	outline-offset: 0;
+html.sap-desktop .sapUiSizeCompact .sapMToken:focus::after,
+html.sap-desktop .sapUiSizeCondensed .sapMToken:focus::after {
+	top: -0.125rem;
+	bottom: -0.125rem;
+	left: -0.125rem;
+	right: -0.125rem;
 }
 
 html.sap-desktop .sapMToken.sapMTokenSelected:focus {

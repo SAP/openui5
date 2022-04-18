@@ -17,7 +17,8 @@
 .sapMTokenizer .sapMToken {
 	margin-right: 0.3125rem;
 	max-width: calc(~"100% - 0.3125rem");
-	margin-top: 0.25rem;
+	margin-top: 0.1875rem;
+	margin-bottom: 0.1875rem;
 }
 
 html.sap-desktop .sapMTokenizer:focus {
@@ -38,6 +39,14 @@ html.sap-desktop .sapMTokenizer.sapMTokenizerReadonly {
 .sapUiSizeCompact {
 	.sapMTokenizer {
 		padding-left: 0.25rem;
+		.sapMToken {
+			margin-right: 0.25rem;
+			margin-top: 0.0625rem;
+			margin-bottom: 0.0625rem;
+		}
+		.sapMTokenizerIndicator {
+			line-height: 1.375rem;
+		}
 	}
 }
 
@@ -50,6 +59,7 @@ html.sap-desktop .sapMTokenizer.sapMTokenizerReadonly {
 
 	&.sapMToken:hover,
 	&.sapMToken:focus,
+	&.sapMToken.sapMTokenSelected:hover,
 	&.sapMTokenSelected {
 		background: @sapUiButtonBackground;
 		cursor: default;

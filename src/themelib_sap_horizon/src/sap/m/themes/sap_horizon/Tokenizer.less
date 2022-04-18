@@ -49,8 +49,8 @@ html.sap-desktop .sapMTokenizer:focus {
 	&:focus,
 	&.sapMTokenSelected,
 	&.sapMTokenSelected:focus,
-	&.sapMTokenSelected:hover,
-	&:not(.sapMTokenSelected):not(:focus):hover {
+	&.sapMToken.sapMTokenSelected:hover,
+	&.sapMToken:not(.sapMTokenSelected):not(:focus):hover {
 		background: @sapButton_TokenBackground;
 		cursor: default;
 		color: @sapUiBaseText;
@@ -58,6 +58,10 @@ html.sap-desktop .sapMTokenizer:focus {
 		border: 1px solid @sapButton_TokenBorderColor;
 		border-radius: @sapButton_BorderCornerRadius;
 		box-shadow: none;
+	}
+
+	&:focus:after {
+		content: none;
 	}
 
 	.sapMTokenText,

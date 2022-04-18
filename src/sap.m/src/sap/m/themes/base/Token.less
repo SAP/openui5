@@ -11,6 +11,7 @@
 
 .sapMToken {
 	display: inline-block;
+	position: relative;
 	overflow: hidden;
 	box-sizing: border-box;
 	font-size: @sapMFontMediumSize;
@@ -31,7 +32,7 @@
 	color: @sapUiContentForegroundTextColor;
 }
 
-html.sap-desktop .sapMToken:hover {
+html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
 	background: @sapUiButtonHoverBackground;
 	border: @sapUiButtonBorderWidth solid @sapUiButtonHoverBorderColor;
 }
@@ -99,7 +100,7 @@ html.sap-desktop .sapMToken:hover {
 	line-height: 1.1875rem;
 }
 
-html.sap-desktop .sapMToken.sapMTokenSelected:hover {
+html.sap-desktop .sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly):hover {
 	background: @sapUiToggleButtonPressedHoverBackground;
 	border: 1px solid @sapUiToggleButtonPressedHoverBorderColor;
 }
