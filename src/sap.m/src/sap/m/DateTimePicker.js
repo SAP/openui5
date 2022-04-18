@@ -973,11 +973,13 @@ sap.ui.define([
 	};
 
 	DateTimePicker.prototype._getSelectedDate = function(){
-
 		var oDate = DatePicker.prototype._getSelectedDate.apply(this, arguments),
 			sFormattedDate;
 
 		if (oDate) {
+			sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
+			oDate = this._getPickerParser().parse(sFormattedDate, this._getTimezone(true))[0];
+
 			var oDateTime = this._oClocks.getTimeValues();
 			var sPattern = this._oClocks._getDisplayFormatPattern();
 			if (sPattern.search("h") >= 0 || sPattern.search("H") >= 0) {
@@ -996,9 +998,6 @@ sap.ui.define([
 				oDate = new Date(this._oMaxDate.getTime());
 			}
 		}
-
-		sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
-		oDate = this._getPickerParser().parse(sFormattedDate, this._getTimezone(true))[0];
 
 		return oDate;
 	};
