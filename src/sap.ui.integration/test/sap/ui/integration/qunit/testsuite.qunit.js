@@ -780,16 +780,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/ObjectListFieldWithTypeDefinedOnly": {
-				group: "Runtime Editor",
-				coverage: {
-					only: [
-						"sap/ui/integration/editor"
-					]
-				},
-				sinon: false
-			},
-			"editor/ObjectListFieldWithPropertiesDefinedOnly": {
+			"editor/ObjectListField": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [

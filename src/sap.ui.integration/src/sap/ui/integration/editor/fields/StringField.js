@@ -474,7 +474,7 @@ sap.ui.define([
 					groupHeaderFactory: that.getGroupHeader
 				}
 			});
-			var sPlacement = oField._previewPostion === "right" ? "Right" : "Left";
+			var sPlacement = oField._previewPosition === "right" ? "Right" : "Left";
 			that._oTranslationPopover = new Popover({
 				placement: sPlacement,
 				contentWidth: "300px",
