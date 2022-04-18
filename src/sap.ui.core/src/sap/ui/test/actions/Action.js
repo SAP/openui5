@@ -62,7 +62,7 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 		 * A control may have many elements in its DOM representation. The most suitable one is chosen by priority:
 		 * <ol>
 		 *     <li>If the user provided an idSuffix, return the element that matches it, or null</li>
-		 *     <li>If there is a control adapter for the action - return the element that matches it. See {@link sap.ui.test.Press.controlAdapters} for an example</li>
+		 *     <li>If there is a control adapter for the action - return the element that matches it. See <code>controlAdapters</code> at {@link sap.ui.test.Press} for an example</li>
 		 *     <li>If there is no control adapter, or it matches no elements, return the focusDomRef of the control. Note that some controls may not have a focusDomRef.</li>
 		 * </ol>
 		 * @param {object} oControl the control to execute an action on
