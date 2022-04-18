@@ -3,6 +3,11 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "0df85379fee13c67d3c7ffa759c592cd3f0323b9",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.OperationMode.Auto: deprecation"
+      },
+      {
         "id": "abfd4f563569dcf7d00c979ddff918ffd1871190",
         "type": "FIX",
         "text": " sap.m.DateTimePicker: Picker time is correct when the app timezone is different",

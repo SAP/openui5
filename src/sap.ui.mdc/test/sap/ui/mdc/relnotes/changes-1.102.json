@@ -1,0 +1,12 @@
+{
+  "1.102.0": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "b5c941decfc4803c66a3bb5a274e989eb37c7499",
+        "type": "FEATURE",
+        "text": " Field: support Timezone for DateTime"
+      }
+    ]
+  }
+}

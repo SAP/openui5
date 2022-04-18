@@ -3,6 +3,17 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "3e6cf22cadd29a8839ad67058ffa0db55748c860",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Drag and drop is disabled for alt + arrow key",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070274504"
+          }
+        ]
+      },
+      {
         "id": "26df4157b171ed602159f28d17c481970a65cb5b",
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: Stabilized qunit",

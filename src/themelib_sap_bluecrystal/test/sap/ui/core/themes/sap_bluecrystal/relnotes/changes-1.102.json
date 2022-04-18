@@ -3,6 +3,11 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "84cb94393eaab1847ef1389618b4e7089a8ab79a",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.CalendarLegend: Horizon themes applied"
+      },
+      {
         "id": "e5913b4a6fed968db1f30b512937deb820050839",
         "type": "FEATURE",
         "text": " DragAndDrop: The mobile support is now enabled"

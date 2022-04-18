@@ -3,6 +3,22 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "383994b537840c75c496afa60c5f2b87ee248379",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Selection works without offsetting the date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270067271"
+          }
+        ]
+      },
+      {
+        "id": "84cb94393eaab1847ef1389618b4e7089a8ab79a",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.CalendarLegend: Horizon themes applied"
+      },
+      {
         "id": "1a63acd2ed4855a132a697b50d449ce8fe49a909",
         "type": "FIX",
         "text": " Alt/Meta key + right/left key work natively for Balkan controls",

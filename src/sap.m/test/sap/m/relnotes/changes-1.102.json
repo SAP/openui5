@@ -3,6 +3,109 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "383994b537840c75c496afa60c5f2b87ee248379",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Selection works without offsetting the date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270067271"
+          }
+        ]
+      },
+      {
+        "id": "320e557c9e793a0701fa6636c42349f8432c9e08",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: afterValueHelpOpen and afterValueHelpClose events added"
+      },
+      {
+        "id": "a5877e46a7f0c7de8cd266a328fa6740a0d3ceef",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker, sap.m.DateTimePicker: afterValueHelpOpen and afterValueHelpClose events added"
+      },
+      {
+        "id": "a5c204ff02e97e2e3ef27981fead4be207af2a57",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: property setter for 'expanded' now handles undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270061822"
+          }
+        ]
+      },
+      {
+        "id": "e2c6ceb15024e7973a110fa9352856e09784ff62",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Remove all should remove all conditions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280065689"
+          }
+        ]
+      },
+      {
+        "id": "d99f2539085d12bd096c82986da7935d3dc9cd53",
+        "type": "FEATURE",
+        "text": " sap.m.ListBase: Vertical Navigation with Keyboard Ctrl+Up/Down added"
+      },
+      {
+        "id": "5a99d81879e7979974c739b060eb744b8ef94248",
+        "type": "FIX",
+        "text": " m.Table: visual specification alignment for the padding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270025928"
+          }
+        ]
+      },
+      {
+        "id": "e743ad011d6564134879a81663238285a0fc5dc8",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Next/Last X days are no longer dependend on static options",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280024045"
+          }
+        ]
+      },
+      {
+        "id": "9b2bb2433dfab06c24253671e844ca5b9a6a15e3",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed visual displacement of closing droppdown menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001188692022"
+          }
+        ]
+      },
+      {
+        "id": "8594c6e6122e2f5f84f206f7b2494fdd521ae789",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Label for is added for value help controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015331"
+          }
+        ]
+      },
+      {
+        "id": "8489bf72efee28cfcff37c7857f6806e416a90fa",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: The formatter now can parse 0",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270063535"
+          }
+        ]
+      },
+      {
         "id": "377c7e5f300460b558e9424b4a906bd15d204d8d",
         "type": "FIX",
         "text": " sap.m.DynamicDateRange: Labels are now redirected to the inner input",
@@ -39,6 +142,22 @@
             "reference": "2270042442"
           }
         ]
+      },
+      {
+        "id": "8535d6df3cfe54b2fb40c38fda0cc49018bedab6",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Remove onsappreviousmodifiers implementation due to browser shortcut",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042491"
+          }
+        ]
+      },
+      {
+        "id": "2b6485b755c0e2d3e2db4d60dd982ebc8584e293",
+        "type": "FEATURE",
+        "text": " sap.m.Wizard: SAP Horizon theme implemented"
       },
       {
         "id": "3da8a97e18216461e8af64405917a66f12d23104",

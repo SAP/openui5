@@ -3,6 +3,17 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "5a99d81879e7979974c739b060eb744b8ef94248",
+        "type": "FIX",
+        "text": " m.Table: visual specification alignment for the padding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270025928"
+          }
+        ]
+      },
+      {
         "id": "3da8a97e18216461e8af64405917a66f12d23104",
         "type": "FIX",
         "text": " sap.m.Dialog: Mesage states header border colors fixed",
