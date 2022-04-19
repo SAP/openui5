@@ -110,7 +110,8 @@ sap.ui.define([
 			chart: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "chart.PERSONALIZATION_DIALOG_TITLE"),
 			filter: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filter.PERSONALIZATION_DIALOG_TITLE"),
 			adaptFilter: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"),
-			settings: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.VIEW_SETTINGS")
+			settings: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.VIEW_SETTINGS"),
+			group: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "group.PERSONALIZATION_DIALOG_TITLE")
 		}
 	};
 
