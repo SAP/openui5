@@ -27,20 +27,6 @@ sap.ui.define([
 				Plugin.apply(this, [ "sapUiSupportViewInfo", "XML View and Templating Support Tools", oSupportStub]);
 
 				this._oStub = oSupportStub;
-
-				if (!this.runsAsToolPlugin()) {
-					// register as core plugin
-					var that = this;
-
-					sap.ui.getCore().registerPlugin({
-						startPlugin: function(oCore) {
-							that.oCore = oCore;
-						},
-						stopPlugin: function() {
-							that.oCore = undefined;
-						}
-					});
-				}
 			}
 		});
 
