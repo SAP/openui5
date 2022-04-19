@@ -391,30 +391,6 @@ sap.ui.define([
 				}
 			},
 
-			// DesignTime Tool
-			"dttool/controls/ListItem": {
-				group: "DtTool",
-				coverage: {
-					only: ["sap/ui/rta/internal/dttool/controls/DTToolListItem"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap.ui.rta.internal.dttool": "test-resources/sap/ui/rta/internal/dttool/"
-					}
-				}
-			},
-			"dttool/controls/OutlineTree": {
-				group: "DtTool",
-				coverage: {
-					only: ["sap/ui/rta/internal/dttool/controls/OutlineTree"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap.ui.rta.internal.dttool": "test-resources/sap/ui/rta/internal/dttool/"
-					}
-				}
-			},
-
 			// Element Action Test
 			"enablement/elementActionTest": {
 				coverage: {
