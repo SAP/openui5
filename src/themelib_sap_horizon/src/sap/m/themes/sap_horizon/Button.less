@@ -172,7 +172,7 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator):before
 	border-radius: 0.375rem;
 }
 
-html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable:not(.sapMBadgeIndicator):before,
+html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBadgeIndicator):before,
 html.sap-desktop .sapMBtn:focus > .sapMBtnCritical.sapMFocusable:not(.sapMBadgeIndicator):before,
 html.sap-desktop .sapMBtn:focus > .sapMBtnNegative.sapMFocusable:not(.sapMBadgeIndicator):before,
 html.sap-desktop .sapMBtn:focus > .sapMBtnSuccess.sapMFocusable:not(.sapMBadgeIndicator):before,
@@ -180,7 +180,7 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnNeutral.sapMFocusable:not(.sapMBadgeIn
 	border: 0.125rem solid @sapUiContentContrastFocusColor;
 }
 
-.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnAttention):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost) {
+.sapMIBar .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnAttention):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost) {
 	border-color: @sapUiButtonLiteBorderColor;
 }
 
@@ -196,6 +196,26 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnNeutral.sapMFocusable:not(.sapMBadgeIn
 /* Buttons in a Bar                                 */
 /* (add separators, remove top/bottom border)       */
 /* ------------------------------------------------ */
+
+.sapMIBar .sapMBtn .sapMBtnInner.sapMBtnDefault,
+.sapMIBar .sapMBtn .sapMBtnInner.sapMBtnDefault .sapUiIcon {
+	color: @sapUiButtonLiteTextColor;
+	background-color: @sapUiButtonLiteBackground;
+}
+
+.sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent) {
+	&.sapMBtnDefault {
+		color: @sapUiButtonLiteTextColor;
+		.sapUiIcon {
+			color: @sapUiButtonLiteTextColor;
+		}
+	}
+}
+
+.sapMIBar .sapMBtnDefault.sapMBtnActive:not(.sapMBtnDisabled):not(.sapMToggleBtnPressed),
+.sapMIBar .sapMBtnTransparent.sapMBtnActive:not(.sapMBtnDisabled):not(.sapMToggleBtnPressed) {
+	border-color: @sapUiButtonLiteBorderColor;
+}
 
 .sapUiSizeCompact .sapMBar-CTX .sapMBtnInner.sapMBtnGhost:not(.sapMBtnDisabled) {
 	background: @sapUiButtonLiteBackground;
