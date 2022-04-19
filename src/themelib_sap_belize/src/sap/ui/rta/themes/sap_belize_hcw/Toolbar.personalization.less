@@ -3,11 +3,8 @@
 *****************************************************************************/
 @_sap_ui_rta_Toolbar_Personalization_BaseColor: @sapUiNeutralBG; //#ffffff
 @_sap_ui_rta_Toolbar_Personalization_TextColor: @sapUiShellBorderColor; //#000
+@_sap_ui_rta_Toolbar_Personalization_BorderColor: @sapUiShellBorderColor; // #000
 
 .sapUiRtaToolbar.type_personalization {
-	border-top: @_sap_ui_rta_Toolbar_Personalization_TextColor 0.0625rem solid; //1px
-	.sapMBtn .sapMBtnTransparent.sapMBtnInner .sapMBtnContent {
-		font-weight: bold;
-		text-shadow: none;
-	}
+	border-top: @_sap_ui_rta_Toolbar_Personalization_BorderColor 0.125rem solid;
 }
