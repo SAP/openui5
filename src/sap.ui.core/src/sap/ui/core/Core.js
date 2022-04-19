@@ -656,7 +656,7 @@ sap.ui.define([
 
 		metadata : {
 			publicMethods: ["boot", "isInitialized","isThemeApplied","attachInitEvent","attachInit","getRenderManager","createRenderManager",
-							 "getConfiguration", "setRoot", "createUIArea", "getUIArea", "getUIDirty", "getElementById",
+							 "getConfiguration", "setRoot", "createUIArea", "_createUIArea", "getUIArea", "getUIDirty", "getElementById",
 							 "getCurrentFocusedControlId", "getControl", "getComponent", "getTemplate", "lock", "unlock","isLocked",
 							 "attachEvent","detachEvent","applyChanges", "getEventBus",
 							 "applyTheme","setThemeRoot","attachThemeChanged","detachThemeChanged","getStaticAreaRef",
@@ -1264,11 +1264,9 @@ sap.ui.define([
 		var oConfig = this.oConfiguration;
 
 		// create any pre-configured UIAreas
-		//	if ( oConfig.areas && oConfig.areas.length > 0 ) {
 		if ( oConfig.areas ) {
-			// Log.warning("deprecated config option '(data-sap-ui-)areas' used.");
 			for (var i = 0, l = oConfig.areas.length; i < l; i++) {
-				this.createUIArea(oConfig.areas[i]);
+				this._createUIArea(oConfig.areas[i]);
 			}
 			oConfig.areas = undefined;
 		}
@@ -2742,6 +2740,19 @@ sap.ui.define([
 	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt Control#placeAt} instead!
 	 */
 	Core.prototype.createUIArea = function(oDomRef) {
+		return this._createUIArea(oDomRef);
+	};
+
+	/**
+	 * Creates a new {@link sap.ui.core.UIArea UIArea}.
+	 * Must only be used by sap.ui.core functionality.
+	 *
+	 * @param {Element|string} oDomRef a DOM Element or ID string of the UIArea
+	 * @return {sap.ui.core.UIArea} a new UIArea
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	Core.prototype._createUIArea = function(oDomRef) {
 		var that = this;
 		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
 
@@ -3445,7 +3456,7 @@ sap.ui.define([
 
 			document.body.insertBefore(oStaticArea, document.body.firstChild);
 
-			this.createUIArea(oStaticArea).bInitial = false;
+			this._createUIArea(oStaticArea).bInitial = false;
 		}
 		return oStaticArea;
 
