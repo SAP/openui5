@@ -3,6 +3,17 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "81e2fa6d02f0b194c7b2ef5326931e3881649f27",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Selection works without offsetting the date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270067271"
+          }
+        ]
+      },
+      {
         "id": "fbe7ef882396c0edb920985b2c4e97eb72e677e1",
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: recache elements on setter usage",

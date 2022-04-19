@@ -3,6 +3,28 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "824500955644cab5b442a4f6ecf5cd6720a9b36e",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Date selection works without offsetting the date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270068040"
+          }
+        ]
+      },
+      {
+        "id": "81e2fa6d02f0b194c7b2ef5326931e3881649f27",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Selection works without offsetting the date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270067271"
+          }
+        ]
+      },
+      {
         "id": "4a91759bf1865d93dd28c4af832f2a6d42439c73",
         "type": "FIX",
         "text": " sap.m.MultiComboBox: Invalidate List when new items are received and picker is open",
