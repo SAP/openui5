@@ -578,6 +578,34 @@ sap.ui.define([
 		oFireUploadStartSpy.restore();
 	});
 
+	QUnit.test("'fireBeforeOpen', 'fileAfterClose' are properly called", function (assert) {
+		// arrange
+		var oFileUploader = new FileUploader().placeAt("content"),
+			oFireBeforeDialogOpenSpy = this.spy(oFileUploader, "fireBeforeDialogOpen"),
+			oFireAfterDialogCloseSpy = this.spy(oFileUploader, "fireAfterDialogClose"),
+			oInputElement = document.createElement("input"),
+			oFakeEvent = {};
+
+		oCore.applyChanges();
+		oInputElement.setAttribute("type", "file");
+		oFakeEvent.target = oInputElement;
+
+		// act
+		oFileUploader.onclick(oFakeEvent);
+
+		// assert
+		assert.ok(oFireBeforeDialogOpenSpy.calledOnce, "'fireBeforeDialogOpen' event called once");
+
+		// act
+		document.body.onfocus();
+
+		// assert
+		assert.ok(oFireAfterDialogCloseSpy.calledOnce, "'fireAfterDialogClose' event called once");
+
+		// cleanup
+		oFileUploader.destroy();
+	});
+
 	QUnit.module("File validation");
 	QUnit.test("Test file type validation - handlechange()", function (assert){
 		//setup
@@ -1379,12 +1407,15 @@ sap.ui.define([
 		//Arrange
 		this.stub(Device, "browser").value({"safari": true});
 		var oFileUploader = new FileUploader("fu"),
-			oSpy = this.spy(oFileUploader.oBrowse, "focus");
+			oSpy = this.spy(oFileUploader.oBrowse, "focus"),
+			oFakeEvent = {};
 
 		oFileUploader.placeAt("qunit-fixture");
 		oCore.applyChanges();
+		oFakeEvent.target = oFileUploader.getDomRef();
+
 		//Act
-		oFileUploader.onclick();
+		oFileUploader.onclick(oFakeEvent);
 
 		//Assert
 		assert.strictEqual(oSpy.callCount, 1, "Clicking on browse button should focus the button in safari");
