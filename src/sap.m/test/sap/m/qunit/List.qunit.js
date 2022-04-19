@@ -1865,14 +1865,14 @@ sap.ui.define([
 
 		// safari browser returns the inner text without spaces, hence trim()
 		assert.equal($titleThreeDots.innerText.trim(), "...", "three dots are rendered");
-		assert.equal($titleButton.innerText, oRb.getText("TEXT_SHOW_MORE"), "button rendered with the correct text");
+		assert.equal($titleButton.innerText, oRb.getText("EXPANDABLE_TEXT_SHOW_MORE"), "button rendered with the correct text");
 
 		// desciption text test
 		assert.ok($descText.innerText.length < oStdLI.getTitle().length, "Collapsed text is rendered which has less characters than the provided description text");
 		assert.equal($descText.innerText.length, 300, "Desktop limit for collapsed text in wrapping behavior is set correctly to 300 characters");
 		// safari browser returns the inner text without spaces, hence trim()
 		assert.equal($descThreeDots.innerText.trim(), "...", "three dots are rendered");
-		assert.equal($descButton.innerText, oRb.getText("TEXT_SHOW_MORE"), "button rendered with the correct text");
+		assert.equal($descButton.innerText, oRb.getText("EXPANDABLE_TEXT_SHOW_MORE"), "button rendered with the correct text");
 
 		// info text test
 		assert.strictEqual($infoText.innerText.length, oStdLI.getInfo().length, "The entire infoText is rendered by wrapping");
@@ -1886,7 +1886,7 @@ sap.ui.define([
 		$titleButton = oStdLI.getDomRef("titleButton");
 		assert.equal($titleText.innerText.length, oStdLI.getTitle().length, "Full title text visible");
 		assert.equal($titleThreeDots.innerText, " ", "space rendered");
-		assert.equal($titleButton.innerText, oRb.getText("TEXT_SHOW_LESS"), "button rendered with the correct text");
+		assert.equal($titleButton.innerText, oRb.getText("EXPANDABLE_TEXT_SHOW_LESS"), "button rendered with the correct text");
 
 		//trigger onsapspace on description text
 		$descButton.focus();
@@ -1900,7 +1900,7 @@ sap.ui.define([
 		$descButton = oStdLI.getDomRef("descriptionButton");
 		assert.equal($descText.innerText.length, oStdLI.getDescription().length, "Full desciption text visible");
 		assert.equal($descThreeDots.innerText, " ", "space rendered");
-		assert.equal($descButton.innerText, oRb.getText("TEXT_SHOW_LESS"), "button rendered with the correct text");
+		assert.equal($descButton.innerText, oRb.getText("EXPANDABLE_TEXT_SHOW_LESS"), "button rendered with the correct text");
 
 		oList.destroy();
 	});

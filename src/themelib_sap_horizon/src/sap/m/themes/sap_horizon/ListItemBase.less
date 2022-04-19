@@ -17,12 +17,13 @@
 	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
 }
 
-.sapMLIBActive.sapMLIBFocusable:focus {
-	outline-color: @sapUiContentContrastFocusColor;
-}
-
 /* Fix for IE/Edge visual appearance of buttons */
 .sapMLIB .sapMBtn:hover .sapMBtnHoverable.sapMBtnTransparent {
 	background-clip: border-box;
 	border-color: transparent;
+}
+
+.sapMListFtr {
+	border-bottom-left-radius: 0.75rem;
+	border-bottom-right-radius: 0.75rem;
 }

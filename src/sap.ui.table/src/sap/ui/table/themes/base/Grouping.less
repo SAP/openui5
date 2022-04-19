@@ -204,6 +204,16 @@ html[dir=rtl] {
 	outline: 0;
 }
 
+.sapUiTableGroupHeaderRow > .sapUiTableContentCell {
+	box-sizing: border-box;
+	border-top: 1px solid @sapList_TableGroupHeaderBorderColor;
+	border-bottom: 1px solid @sapList_TableGroupHeaderBorderColor;
+}
+
+.sapUiTableGroupHeaderRow:first-child > .sapUiTableContentCell {
+	border-top: 0;
+}
+
 .sapUiTableGroupMode .sapUiTableTr.sapUiTableGroupHeaderRow > .sapUiTableCellDummy {
 	background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
 }

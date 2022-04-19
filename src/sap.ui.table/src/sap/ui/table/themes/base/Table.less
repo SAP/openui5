@@ -10,7 +10,6 @@
 @_sap_ui_table_Table_FooterPaddingLeft: 1rem;
 @_sap_ui_table_Table_FooterPaddingRight: 1rem;
 @_sap_ui_table_Table_TableHeaderBorderWidth: @_sap_ui_table_BaseBorderWidth;
-@_sap_ui_table_Table_TableHeaderBorderColor: @sapUiListVerticalBorderColor;
 
 // Can be used in other themes to add styles for which there are no style definitions in the base theme and therefore no theme parameters.
 ._sap_ui_table_Table_TitleContainer() {}
@@ -251,7 +250,7 @@
 	overflow: hidden;
 	white-space: nowrap;
 	min-height: @_sap_ui_table_ColumnHeaderHeight;
-	border-bottom: @_sap_ui_table_Table_TableHeaderBorderWidth solid @_sap_ui_table_Table_TableHeaderBorderColor;
+	border-bottom: @_sap_ui_table_Table_TableHeaderBorderWidth solid @sapList_HeaderBorderColor;
 	color: @sapUiListTextColor;
 }
 
