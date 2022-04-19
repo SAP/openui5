@@ -705,6 +705,29 @@ sap.ui.define([
 		oAttr2.destroy();
 	});
 
+	QUnit.test("Inactive ObjectHeader's text span has proper attributes", function(assert) {
+		// prepare
+		var oObjectAttribute = new ObjectAttribute({
+				text: "inactive"
+			}),
+			oObjectHeader = new ObjectHeader({
+				attributes: [oObjectAttribute]
+			}),
+			oObjectAttributeTextDomRef;
+
+		oObjectHeader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oObjectAttributeTextDomRef = oObjectAttribute.getDomRef().querySelector(".sapMObjectAttributeText");
+
+		// assert
+		assert.notOk(oObjectAttributeTextDomRef.getAttribute("role"), "The text span doesn't have a link role.");
+		assert.notOk(oObjectAttributeTextDomRef.getAttribute("tabindex"), "The text span isn't focusable.");
+
+		// clean
+		oObjectHeader.destroy();
+	});
+
 
 	QUnit.module("Other");
 	QUnit.test("Empty ObjectAttribute will render a parent div", function (assert) {
