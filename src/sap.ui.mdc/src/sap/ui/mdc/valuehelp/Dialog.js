@@ -252,10 +252,13 @@ sap.ui.define([
 					oVBox.addStyleClass("sapMdcValueHelpPanel");
 					oDialog.addContent(oVBox);
 
-					var oIconTabBar = this._getIconTabBar(oDialog);
-					var oTokenizer = this._getTokenizerPanel();
+					var aPromises = [];
+					aPromises.push(this._getIconTabBar(oDialog));
 
-					return Promise.all([oIconTabBar, oTokenizer]).then(function (aControls) {
+					if (_isTokenizerRequired(this.getMaxConditions(), this.getContent())) {
+						aPromises.push(this._getTokenizerPanel());
+					}
+					return Promise.all(aPromises).then(function (aControls) {
 						aControls.forEach(function (oControl) {
 							oVBox.addItem(oControl);
 						});
@@ -280,7 +283,7 @@ sap.ui.define([
 		if (oChanges.name === "content") {
 			var aContent = this.getContent();
 			this.setProperty("_quickSelectEnabled", aContent && aContent.every(function (oContent) {
-				return oContent.isQuickSelectSupported && oContent.isQuickSelectSupported();
+				return oContent.isQuickSelectSupported();
 			}));
 
 			this._updateInitialContentKey();
@@ -290,7 +293,20 @@ sap.ui.define([
 			}
 
 			this.setProperty("_selectableContents", this._getSelectableContents());
+
+			if (_isTokenizerRequired(this.getMaxConditions(), this.getContent())) {
+				// check if Tokenizer needs to be created lately
+				var oDialog = this.getAggregation("_container");
+				if (oDialog && oDialog.getContent()[0].getItems().length === 1) { // container already created but no tokenizer
+					Promise.all([this._getTokenizerPanel()]).then(function (aControls) {
+						aControls.forEach(function (oControl) {
+							oDialog.getContent()[0].addItem(oControl);
+						});
+					});
+				}
+			}
 		}
+
 		Container.prototype._observeChanges.apply(this, arguments);
 	};
 
@@ -475,6 +491,7 @@ sap.ui.define([
 	};
 
 	Dialog.prototype._getTokenizerPanel = function (oDialog) {
+
 		if (!this.oTokenizerPanel) {
 			return loadModules([
 				'sap/m/Panel',
@@ -499,19 +516,7 @@ sap.ui.define([
 				this.oTokenizerPanel = new Panel(this.getId() + "-TokenPanel", {
 					backgroundDesign: BackgroundDesign.Transparent,
 					expanded: true,
-					visible: { parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter:
-					function(iMaxConditions, aContent) {
-						var bVisible = false;
-
-						if (aContent && aContent.some(function(oContent) {
-							// make the tokenizer visible when at least one content request the tokenizer
-							return oContent.getRequiresTokenizer();
-						})) {
-							bVisible = true;
-						}
-
-						return bVisible && iMaxConditions === -1;
-					}},
+					visible: {parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter: _isTokenizerRequired},
 					headerText: {parts: ['$i18n>valuehelp.TOKENIZERTITLE', '$valueHelp>/conditions'], formatter:
 						function(sText, aConditions) {
 							var iCount = 0;
@@ -592,12 +597,37 @@ sap.ui.define([
 		return this.oTokenizerPanel;
 	};
 
-	Dialog.prototype._open = function (oContainer) {
-		if (oContainer) {
+	function _isTokenizerRequired(iMaxConditions, aContent) {
+		var bVisible = iMaxConditions !== 1;
+
+		if (bVisible && aContent && aContent.every(function(oContent) {
+			// make the tokenizer visible when at least one content request the tokenizer
+			return !oContent.getRequiresTokenizer();
+		})) {
+			bVisible = false;
+		}
+
+		return bVisible;
+	}
+
+	Dialog.prototype._open = function (oDialog) {
+		if (oDialog) {
 			this._updateInitialContentKey(); // Update initial key as visibilities might change during content retrieval
-			this._renderSelectedContent(this._sInitialContentKey, function () {
-				oContainer.open();
-			});
+			if (_isTokenizerRequired(this.getMaxConditions(), this.getContent()) && oDialog.getContent()[0].getItems().length === 1) {
+				// Tokenizer needed but already no tokenizer
+				Promise.all([this._getTokenizerPanel()]).then(function (aControls) {
+					aControls.forEach(function (oControl) {
+						oDialog.getContent()[0].addItem(oControl);
+					});
+					this._renderSelectedContent(this._sInitialContentKey, function () {
+						oDialog.open();
+					});
+				});
+			} else {
+				this._renderSelectedContent(this._sInitialContentKey, function () {
+					oDialog.open();
+				});
+			}
 		}
 	};
 

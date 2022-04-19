@@ -599,6 +599,18 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Determines if quick selection is supported.
+	 *
+	 * @returns {boolean} if true, quick-selection is supported.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	Content.prototype.isQuickSelectSupported = function() {
+		return false;
+	};
 
 	/**
 	 * Determines if value help dialog should show the tokenizer for the content.
