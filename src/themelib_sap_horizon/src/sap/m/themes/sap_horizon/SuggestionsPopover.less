@@ -1,19 +1,5 @@
 .sapMSuggestionsPopover .sapMList .sapMLIB.sapMLIBFocusable.sapMLIBFocused,
 .sapMSuggestionsPopover .sapMValueStateHeaderRoot.sapMPseudoFocus {
 	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
-}
-
-.sapMSuggestionsPopoverNoneState .sapMList:not(.sapMListTblCnt) .sapMLIBFocused[data-sap-ui-first-suggestion-item] {
-	border-top-left-radius:  @sapUiElementBorderCornerRadius;
-	border-top-right-radius:  @sapUiElementBorderCornerRadius;
-}
-
-.sapMSuggestionsPopover .sapMValueStateHeaderRoot.sapMPseudoFocus {
-	border-top-left-radius: @sapUiElementBorderCornerRadius;
-	border-top-right-radius: @sapUiElementBorderCornerRadius;
-}
-
-.sapMSuggestionsPopover .sapMLIBFocused[data-sap-ui-last-suggestion-item] {
-	border-bottom-left-radius: @sapUiElementBorderCornerRadius;
-	border-bottom-right-radius: @sapUiElementBorderCornerRadius;
+	outline-offset: -0.25rem;
 }
