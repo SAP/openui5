@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element"
+	"sap/m/table/columnmenu/Entry"
 ], function (
-	Element
+	Entry
 ) {
 	"use strict";
 
@@ -19,7 +19,7 @@ sap.ui.define([
 	 * This element serves as a quick action item.
 	 * It can be used to specify control- and application specific quick action items.
 	 *
-	 * @extends sap.ui.core.Element
+	 * @extends sap.m.table.columnmenu.Entry
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -29,7 +29,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.m.table.columnmenu.QuickActionItem
 	 */
-	var QuickActionItem = Element.extend("sap.m.table.columnmenu.QuickActionItem", {
+	var QuickActionItem = Entry.extend("sap.m.table.columnmenu.QuickActionItem", {
 		metadata: {
 			library: "sap.m",
 			properties: {

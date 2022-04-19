@@ -18,6 +18,7 @@ sap.ui.define([], function () {
 	};
 
 	MenuRenderer.renderQuickActions = function (oRm, oMenu) {
+		// If no active QuickActions are found, do not render the quick action container.
 		if (oMenu._getAllEffectiveQuickActions().length === 0) {
 			return;
 		}
