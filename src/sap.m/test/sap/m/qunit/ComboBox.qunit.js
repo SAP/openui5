@@ -13684,4 +13684,41 @@ sap.ui.define([
 		// Clean
 		oComboBox.destroy();
 	});
+
+	QUnit.module("List item styles");
+
+	QUnit.test(".sapMLIBFocused should not be applied on second typein", function (assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			items: [
+				new SeparatorItem({text: "Group1"}),
+				new Item({text: "item11", key: "key11"}),
+				new Item({text: "item12", key: "key12"}),
+				new SeparatorItem({text: "Group2"}),
+				new Item({text: "item21", key: "key21"}),
+				new Item({text: "item22", key: "key22"})
+			]
+		});
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+
+		var oFirstMatchingItem;
+
+		// Act - first typein
+		oComboBox._$input.trigger("focus").val("i").trigger("input");
+		this.clock.tick();
+
+		// Assert
+		assert.ok(oComboBox.isOpen(), "ComboBox is open");
+		oFirstMatchingItem = oComboBox._getList().getItems()[1];
+		assert.notOk(oFirstMatchingItem.hasStyleClass("sapMLIBFocused"), "First matching item should not include .sapMLIBFocused");
+
+		// Act - second typein
+		oComboBox._$input.val("it").trigger("input");
+		this.clock.tick(1000);
+
+		// Assert
+		oFirstMatchingItem = oComboBox._getList().getItems()[1];
+		assert.notOk(oFirstMatchingItem.hasStyleClass("sapMLIBFocused"), "First matching item should not include .sapMLIBFocused on second typein");
+	});
 });
