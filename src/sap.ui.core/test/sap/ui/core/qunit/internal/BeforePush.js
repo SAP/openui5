@@ -56,15 +56,6 @@
 		aTests = Object.keys(mTests).filter(function (sUrl) {
 			return mTests[sUrl] !== sUnwanted;
 		});
-		if (bIntegration) {
-			// ensure that each URL has the query property "coverage"
-			aTests = aTests.map(function (sUrl) {
-				if (sUrl.indexOf("coverage") < 0) {
-					sUrl = sUrl + (sUrl.indexOf("?") < 0 ? "?" : "&") + "coverage";
-				}
-				return sUrl;
-			});
-		}
 		if (bRealOData === false) {
 			// remove the query property "realOData" at each URL; remove duplicates
 			aTests.forEach(function (sUrl) {
@@ -80,6 +71,15 @@
 		} else if (bRealOData === true) {
 			aTests = aTests.filter(function (sTest) {
 				return /realOData=true/.test(sTest);
+			});
+		}
+		if (bIntegration) {
+			// ensure that each URL has the query property "coverage"
+			aTests = aTests.map(function (sUrl) {
+				if (!sUrl.includes("coverage")) {
+					sUrl = sUrl + (sUrl.includes("?") ? "&" : "?") + "coverage";
+				}
+				return sUrl;
 			});
 		}
 		return aTests;
@@ -113,6 +113,12 @@
 		return mParameters;
 	}
 
+	// whether the query parameter integrationTestsOnly is given
+	function isIntegrationOnly() {
+		return "integrationTestsOnly" in mParameters
+			&& mParameters.integrationTestsOnly !== "false";
+	}
+
 	/**
 	 * Runs the tests.
 	 *
@@ -128,7 +134,7 @@
 			iRunningTests = 0,
 			oSelectedTest,
 			iStart = Date.now(),
-			aTests = filterTests(mTests, mParameters.integrationTestsOnly !== "false", bRealOData),
+			aTests = filterTests(mTests, isIntegrationOnly(), bRealOData),
 			iTop = 10000,
 			oTotal,
 			bVisible;
