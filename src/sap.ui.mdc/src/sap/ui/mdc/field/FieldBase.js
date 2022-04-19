@@ -2816,11 +2816,23 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 		if (oFieldHelp && !this._bConnected) {
 			var oConditionModelInfo = _getConditionModelInfo.call(this);
+			var oType;
+			var bIsMeasure = this._oContentFactory.isMeasure();
+
+			if (bIsMeasure) {
+				// for value help, use the basic type of the unit part, not the unit type. (As ony this part is tranfered, not the composite-array.)
+				var aCompositeTypes = this._oContentFactory.getCompositeTypes();
+				if (aCompositeTypes && aCompositeTypes.length > 1) { // if no type is defined the default (String) will be used
+					oType = aCompositeTypes[1];
+				}
+			} else {
+				oType = this._oContentFactory.getDataType(); // use data type of Field
+			}
 			var oConfig = { // TODO: only what is needed (also for DefineConditions and Tokenizer)
 					maxConditions: this.getMaxConditions(), // TODO: in unit case only 1?
-					dataType: this._oContentFactory.getDataType(),
+					dataType: oType,
 					operators: this._getOperators(),
-					display: this._oContentFactory.isMeasure() ? FieldDisplay.Value : this.getDisplay(),
+					display: bIsMeasure ? FieldDisplay.Value : this.getDisplay(),
 					delegate: this.getControlDelegate(),
 					delegateName: this.getDelegate() && this.getDelegate().name,
 					payload: this.getPayload(),

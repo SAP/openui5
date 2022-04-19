@@ -597,7 +597,7 @@
 				<m:Label text="single odata-unit field (VHD)"></m:Label>
 				<mdc:Field
 					id="F2-10_4"
-					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString: '' }}"
+					value="{parts: [{path: 'WeightMeasure', type: 'sap.ui.model.odata.type.Double'}, {path: 'WeightODataUnit', type: 'sap.ui.model.odata.type.String'}, {path: 'view>/ODataUnitCodeList'}], type: 'sap.ui.model.odata.type.Unit', formatOptions: {emptyString: '', parseAsString: false}}"
 					delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate'}"
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
