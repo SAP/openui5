@@ -123,6 +123,7 @@ sap.ui.define([
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 		this._oObserver.observe(this, {
+			properties: ["filterFields"],
 			aggregations: ["_defaultFilterBar", "filterBar"]
 		});
 	};
@@ -266,7 +267,11 @@ sap.ui.define([
 			}
 			oFilterBar.setBasicSearchField(this._oSearchField);
 		} else if (oExistingBasicSearchField) {
-			oExistingBasicSearchField.setConditions([]);
+			if (sFilterFields) {
+				oExistingBasicSearchField.setConditions([]); // initialize search field
+			} else if (oExistingBasicSearchField._bCreatedByValueHelp) {
+				oFilterBar.setBasicSearchField(); // remove to reuse on other FilterBar
+			}
 		}
 	}
 
@@ -303,8 +308,10 @@ sap.ui.define([
 				this._assignCollectiveSearch(true);
 			} */
 
+			var oFilterBar;
+
 			if (["_defaultFilterBar", "filterBar"].indexOf(oChanges.name) !== -1) {
-				var oFilterBar = oChanges.child;
+				oFilterBar = oChanges.child;
 				var oDefaultFilterBar;
 				if (oChanges.mutation === "insert") {
 					_setBasicSearch.call(this, oFilterBar);
@@ -335,6 +342,12 @@ sap.ui.define([
 							this._createDefaultFilterBar();
 						}
 					}
+				}
+			} else if (oChanges.name === "filterFields") {
+				// check if search fields needs to be removed or added
+				oFilterBar = this._getPriorityFilterBar();
+				if (oFilterBar) {
+					_setBasicSearch.call(this, oFilterBar);
 				}
 			}
 		}
