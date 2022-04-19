@@ -167,6 +167,10 @@ sap.ui.define([
 			elements: [],
 			extensions: {
 				flChangeHandlers: {
+					"sap.ui.webc.main.Avatar": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
 					"sap.ui.webc.main.Badge": "sap/ui/webc/main/flexibility/Badge",
 					"sap.ui.webc.main.BusyIndicator": {
 						"hideControl": "default",
