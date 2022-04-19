@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Core",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/dt/DesignTime",
@@ -39,6 +40,7 @@ sap.ui.define([
 	Page,
 	ComponentContainer,
 	Core,
+	JSONModel,
 	TabHandling,
 	ZIndexManager,
 	DesignTime,
@@ -389,6 +391,8 @@ sap.ui.define([
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
 			this.fnTriggerCrossAppNavigationSpy = sandbox.stub(this.oRta, "_triggerCrossAppNavigation");
 			sandbox.spy(this.oRta, "_handleUrlParameterOnExit");
+
+			this.oRta._oToolbarControlsModel = new JSONModel({});
 
 			return this.oRta._initVersioning();
 		},
@@ -1214,6 +1218,24 @@ sap.ui.define([
 				assert.ok(this.oRta._bReloadNeeded, "the flag was set");
 				assert.strictEqual(oSerializeStub.callCount, 1, "the serialize function was called once");
 				assert.strictEqual(oCallbackStub.callCount, 1, "the callback function was called once");
+			}.bind(this));
+		});
+
+		QUnit.test("when save is triggered via the toolbar with an translatable change", function(assert) {
+			return new Promise(function (resolve) {
+				this.oRta.start().then(function () {
+					assert.equal(this.oRta.bPersistedDataTranslatable, false, "no translation is present");
+
+					// simulate a translatable change was done
+					this.oRta._oToolbarControlsModel.setProperty("/translationEnabled", true);
+
+					this.oRta.getToolbar().fireSave({
+						callback: resolve
+					});
+				}.bind(this));
+			}.bind(this)).then(function () {
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translationEnabled"), true, "the translation button is still enabled");
+				assert.strictEqual(this.oRta.bPersistedDataTranslatable, true, "the serialize function was called once");
 			}.bind(this));
 		});
 	});

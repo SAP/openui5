@@ -730,7 +730,7 @@ sap.ui.define([
 			this._oToolbarControlsModel.setProperty("/redoEnabled", bCanRedo);
 			this._oToolbarControlsModel.setProperty("/publishEnabled", this.bInitialPublishEnabled || bCanUndo);
 			this._oToolbarControlsModel.setProperty("/restoreEnabled", this.bInitialResetEnabled || bCanUndo);
-			this._oToolbarControlsModel.setProperty("/translationEnabled", this.bInitialTranslationEnabled || bTranslationRelevantDirtyChange);
+			this._oToolbarControlsModel.setProperty("/translationEnabled", this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange);
 		}
 		this.fireUndoRedoStackModified();
 		return Promise.resolve();
@@ -889,6 +889,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._serializeAndSave = function() {
+		this.bPersistedDataTranslatable = this._oToolbarControlsModel.getProperty("/translationEnabled");
 		// Save changes on the current layer and discard dirty changes on other layers
 		return this._oSerializer.saveCommands(this._oVersionsModel.getProperty("/versioningEnabled"), this.getLayer(), true);
 	};
@@ -1102,13 +1103,13 @@ sap.ui.define([
 					// the "Visualization" tab should not be visible if the "fiori-tools-rta-mode" URL-parameter is set to any value but "false"
 					var bVisualizationButtonVisible;
 					bVisualizationButtonVisible = !oUriParameters.has("fiori-tools-rta-mode") || oUriParameters.get("fiori-tools-rta-mode") === "false";
-					this.bInitialTranslationEnabled = false;
+					this.bPersistedDataTranslatable = false;
 
 					this._oToolbarControlsModel = new JSONModel({
 						undoEnabled: false,
 						redoEnabled: false,
 						translationVisible: bTranslationAvailable,
-						translationEnabled: this.bInitialTranslationEnabled,
+						translationEnabled: this.bPersistedDataTranslatable,
 						publishVisible: aButtonsVisibility.publishAvailable,
 						publishEnabled: this.bInitialPublishEnabled,
 						restoreEnabled: this.bInitialResetEnabled,
@@ -1130,8 +1131,8 @@ sap.ui.define([
 
 						TranslationAPI.getSourceLanguages({selector: this.getRootControlInstance(), layer: this.getLayer()})
 							.then(function (aSourceLanguages) {
-								this.bInitialTranslationEnabled = aSourceLanguages.length > 0;
-								this._oToolbarControlsModel.setProperty("/translationEnabled", this.bInitialTranslationEnabled);
+								this.bPersistedDataTranslatable = aSourceLanguages.length > 0;
+								this._oToolbarControlsModel.setProperty("/translationEnabled", this.bPersistedDataTranslatable);
 							}.bind(this)).finally(resolve);
 					}.bind(this));
 
