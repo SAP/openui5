@@ -13,6 +13,12 @@ sap.ui.define([],
 				plural: "DIALOG_NAME_PLURAL"
 			},
 			actions: {
+				remove: {
+					changeType: "hideControl"
+				},
+				reveal: {
+					changeType: "unhideControl"
+				},
 				rename: {
 					changeType: "rename",
 					domRef: function (oControl) {

@@ -3,25 +3,34 @@ sap.ui.define([
 ], function (elementActionTest) {
 	'use strict';
 
-	// Remove and reveal actions
-	var fnConfirmTabIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
-		assert.strictEqual(oViewAfterAction.byId("tab").getVisible(), false, "then the tab element is invisible");
-	};
+		var fnConfirmTabIsRenamedWithNewValue = function (oTab, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("tab").getText(),
+				"New Tab",
+				"then the control has been renamed to the new value (New Tab)");
+		};
 
-	var fnConfirmTabIsVisible = function (oUiComponent, oViewAfterAction, assert) {
-		assert.strictEqual(oViewAfterAction.byId("tab").getVisible(), true, "then the tab element is visible");
-	};
+		var fnConfirmTabIsRenamedWithOldValue = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("tab").getText(),
+				"Tab",
+				"then the control has been renamed to the old value (Tab)");
+		};
 
-	elementActionTest("Checking the remove action for Tab", {
-		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:wc="sap.ui.webc.main">"' +
-			'<wc:Tab id="tab" />' +
-			'</mvc:View>',
-		action: {
-			name: "remove",
-			controlId: "tab"
-		},
-		afterAction: fnConfirmTabIsInvisible,
-		afterUndo: fnConfirmTabIsVisible,
-		afterRedo: fnConfirmTabIsInvisible
-	});
+		elementActionTest("Checking the rename action for a Tab", {
+			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:wc="sap.ui.webc.main">"' +
+				'<wc:Tab text="Tab" id="tab" />' +
+				'</mvc:View>',
+			action: {
+				name: "rename",
+				controlId: "tab",
+				parameter: function (oView) {
+					return {
+						newValue: 'New Tab',
+						renamedElement: oView.byId("tab")
+					};
+				}
+			},
+			afterAction: fnConfirmTabIsRenamedWithNewValue,
+			afterUndo: fnConfirmTabIsRenamedWithOldValue,
+			afterRedo: fnConfirmTabIsRenamedWithNewValue
+		});
 });
