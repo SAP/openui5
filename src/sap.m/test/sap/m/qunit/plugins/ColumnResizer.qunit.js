@@ -104,7 +104,7 @@ sap.ui.define([
 			this.iDirectionFactor = bRTL ? -1 : 1;
 		},
 		afterEach: function() {
-			this.oTable.destroy();
+			this.oTable.destroy(true);
 			this.sBeginDirection = null;
 			this.sEndDirection = null;
 			this.iDirectionFactor = null;
@@ -215,21 +215,19 @@ sap.ui.define([
 			this.oColumnResizer = new ColumnResizer();
 			this.oTable.addDependent(this.oColumnResizer);
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
-			this.clock.tick(1);
+			this.clock.tick(20);
 			var bRTL = Core.getConfiguration().getRTL();
 			this.sBeginDirection = bRTL ? "right" : "left";
 			this.sEndDirection = bRTL ? "left" : "right";
 			this.iDirectionFactor = bRTL ? -1 : 1;
 		},
 		afterEach: function() {
-			this.oTable.destroy();
-			this.oColumnResizer.destroy();
+			this.clock.restore();
+			this.oTable.destroy(true);
+			this.oColumnResizer.destroy(true);
 			this.sBeginDirection = null;
 			this.sEndDirection = null;
 			this.iDirectionFactor = null;
-			this.clock.tick(1);
-			this.clock.restore();
 		}
 	});
 
@@ -466,20 +464,19 @@ sap.ui.define([
 			this.oColumnResizer = new ColumnResizer();
 			this.oTable.addDependent(this.oColumnResizer);
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			this.clock.tick(20);
 			var bRTL = Core.getConfiguration().getRTL();
 			this.sBeginDirection = bRTL ? "right" : "left";
 			this.sEndDirection = bRTL ? "left" : "right";
 			this.iDirectionFactor = bRTL ? -1 : 1;
 		},
 		afterEach: function() {
-			this.oTable.destroy();
-			this.oColumnResizer.destroy();
+			this.clock.restore();
+			this.oTable.destroy(true);
+			this.oColumnResizer.destroy(true);
 			this.sBeginDirection = null;
 			this.sEndDirection = null;
 			this.iDirectionFactor = null;
-			this.clock.tick(1);
-			this.clock.restore();
 		}
 	});
 
@@ -584,8 +581,7 @@ sap.ui.define([
 			this.oColumnResizer = new ColumnResizer();
 			this.oTable.addDependent(this.oColumnResizer);
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
-			this.clock.tick(1);
+			this.clock.tick(20);
 			var bRTL = Core.getConfiguration().getRTL();
 			this.sBeginDirection = bRTL ? "right" : "left";
 			this.sEndDirection = bRTL ? "left" : "right";
@@ -593,8 +589,8 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.clock.restore();
-			this.oTable.destroy();
-			this.oColumnResizer.destroy();
+			this.oTable.destroy(true);
+			this.oColumnResizer.destroy(true);
 			this.sBeginDirection = null;
 			this.sEndDirection = null;
 			this.iDirectionFactor = null;
