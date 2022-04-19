@@ -157,16 +157,16 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 	 * @param {sap.ui.core.Control} oControl An object representation of the slider that should be rendered.
 	 */
 	RangeSliderRenderer.renderLabels = function (oRM, oControl) {
-		oRM.write("<div");
-		oRM.addClass();
-		oRM.addClass(SliderRenderer.CSS_CLASS + "Labels");
-		oRM.writeClasses();
-		oRM.write(">");
+		if (!oControl.getEnableTickmarks()) {
+			oRM.openStart("div")
+				.class(SliderRenderer.CSS_CLASS + "Labels")
+				.openEnd();
 
-		this.renderStartLabel(oRM, oControl);
-		this.renderEndLabel(oRM, oControl);
+			this.renderStartLabel(oRM, oControl);
+			this.renderEndLabel(oRM, oControl);
 
-		oRM.write("</div>");
+			oRM.close("div");
+		}
 	};
 
 	RangeSliderRenderer.renderProgressIndicator = function(oRm, oSlider, sForwardedLabels) {
