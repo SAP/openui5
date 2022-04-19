@@ -164,7 +164,8 @@ sap.ui.define([
 			var aVMControlIds = [
 				"testComponent2---mockview--VariantManagement1",
 				"testComponent2---mockview--VariantManagement2",
-				"testComponent2---mockview--VariantManagement3"
+				"testComponent2---mockview--VariantManagement3",
+				"testComponent2---mockview--VariantManagementNotAvailable"
 			];
 			assertVMControlFound("ObjectPageSubSection1", "VariantManagement1", aVMControlIds, assert);
 			assertVMControlFound("ObjectPageSection3", "VariantManagement1", aVMControlIds, assert);

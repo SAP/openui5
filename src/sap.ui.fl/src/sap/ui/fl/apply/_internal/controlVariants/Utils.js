@@ -113,11 +113,15 @@ sap.ui.define([
 			}
 			var aAssociatedControlIds = aVMControlIds.reduce(function(aCurrentControlIds, sVMControlId) {
 				var oVMControl = Core.byId(sVMControlId);
-				var aForControls = oVMControl.getFor();
-				aForControls.forEach(function(sControlId) {
-					oAssociatedControls[sControlId] = sVMControlId;
-				});
-				return aCurrentControlIds.concat(aForControls);
+				// there could be additional VMControl Ids that are not yet available
+				if (oVMControl) {
+					var aForControls = oVMControl.getFor();
+					aForControls.forEach(function(sControlId) {
+						oAssociatedControls[sControlId] = sVMControlId;
+					});
+					aCurrentControlIds = aCurrentControlIds.concat(aForControls);
+				}
+				return aCurrentControlIds;
 			}, []);
 
 			var sAssociatedVMControlId = getAssociatedControlId(aAssociatedControlIds, oControl);
