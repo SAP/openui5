@@ -1021,7 +1021,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.bUseExpandedList, bUseExpandedList);
 		assert.strictEqual(oBinding.aExpandRefs, bUseExpandedList ? aList : undefined);
-		assert.deepEqual(oBinding.aAllKeys, bUseExpandedList ? ["path2"] : null);
+		assert.deepEqual(oBinding.aAllKeys, ["path2"]);
 		assert.deepEqual(aList, ["path0", "path1", "path2"]); // original value not modified
 		assert.strictEqual(oBinding.iLength, 1);
 		assert.strictEqual(oBinding.bLengthFinal, true);
@@ -1067,7 +1067,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.bUseExpandedList, bUseExpandedList);
 		assert.strictEqual(oBinding.aExpandRefs, bUseExpandedList ? aList : undefined);
-		assert.strictEqual(oBinding.aAllKeys, bUseExpandedList ? aList : null);
+		assert.strictEqual(oBinding.aAllKeys, aList);
 		assert.strictEqual(oBinding.iLength, 3);
 		assert.strictEqual(oBinding.bLengthFinal, true);
 		assert.strictEqual(oBinding.bDataAvailable, true);
