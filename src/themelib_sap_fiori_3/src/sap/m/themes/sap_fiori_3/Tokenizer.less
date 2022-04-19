@@ -49,7 +49,8 @@ html.sap-desktop .sapMTokenizer:focus {
 .sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
   &.sapMToken:hover,
   &.sapMToken:focus,
-  &.sapMTokenSelected {
+  &.sapMTokenSelected,
+  &.sapMToken.sapMTokenSelected:hover {
     background: darken(@sapUiButtonBackground, 2);
     cursor: default;
     color: @sapUiBaseText;

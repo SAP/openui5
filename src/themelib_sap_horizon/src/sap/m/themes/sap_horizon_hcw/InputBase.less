@@ -15,15 +15,6 @@
 @_sap_m_InputBase_IconWidth: 2.25rem;
 @_sap_m_InputBase_IconMinWidth: 2.25rem;
 
-.sapMInputBaseContentWrapper {
-
-	&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
-		.sapMTokenizer .sapMToken {
-			margin-top: 0.1875rem;
-		}
-	}
-}
-
 .sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperError):not(.sapMInputBaseContentWrapperWarning):not(.sapMInputBaseContentWrapperInformation):not(.sapMInputBaseDisabledWrapper) {
 	border: @sapUiContentFocusWidth @sapUiFieldBorderStyle @sapUiFieldBorderColor;
 }
@@ -115,4 +106,8 @@
 
 .sapMLIBActive .sapMInputBaseInner::-webkit-input-placeholder {
 	color: @sapUiListActiveTextColor;
+}
+
+.sapUiSizeCondensed .sapUiTableDataCell .sapMInputBase .sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperState) {
+	border: none;
 }
