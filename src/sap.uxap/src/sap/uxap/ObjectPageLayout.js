@@ -1462,12 +1462,17 @@ sap.ui.define([
 	 *
 	 * The section can either be given by itself or by its id.
 	 *
-	 * Note that an argument of <code>null</code> will cause the first visible section be set as <code>selectedSection</code>.
-	 * This is because the <code>sap.uxap.ObjectPageLayout</code> should always have one of its sections selected (unless it has 0 visible sections).
+	 * If left unspecified, then the page automatically sets
+	 * the value to the first visible section before rendering.
+	 * The value never remains empty because <code>sap.uxap.ObjectPageLayout</code> should
+	 * always have one of its sections selected (unless it has 0 visible sections).
+	 *
+	 * <b>Note:</b> Updating the <code>selectedSection</code> with a value of <code>null</code>
+	 * resets the <code>selectedSection</code> to the first visible section and scrolls the page to the top.
 	 *
 	 * @param {string | sap.uxap.ObjectPageSection} sId
 	 *            The ID or the section instance that should be selected
-	 *            Note that <code>null</code> or <code>undefined</code> are not valid arguments
+	 *            Note that <code>undefined</code> is not a valid argument
 	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
