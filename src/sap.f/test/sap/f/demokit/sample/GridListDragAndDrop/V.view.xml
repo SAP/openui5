@@ -6,7 +6,7 @@
 	xmlns:dnd="sap.ui.core.dnd"
 	xmlns:dnd-grid="sap.f.dnd"
 	controllerName="sap.f.sample.GridListDragAndDrop.C">
-	<Panel id="panelForGridList">
+	<Panel id="panelForGridList" backgroundDesign="Transparent">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text="Grid List with Drag and Drop"/>

@@ -10,7 +10,7 @@
 		press="onRevealGrid"
 		class="sapUiSmallMargin" />
 	<Slider value="100" liveChange="onSliderMoved" />
-	<Panel id="panelForGridList">
+	<Panel id="panelForGridList" backgroundDesign="Transparent">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text="GridList with ResponsiveColumnLayout" />

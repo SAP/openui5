@@ -11,7 +11,7 @@
 		text="Reveal Grid"
 		press="onRevealGrid"
 		class="sapUiSmallMargin" />
-	<Panel width="100%">
+	<Panel width="100%" backgroundDesign="Transparent">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text="Recommended designs for content, used in the GridList" />

@@ -5,7 +5,7 @@
 	xmlns:grid="sap.ui.layout.cssgrid"
 	xmlns:f="sap.f">
 	<Slider value="100" liveChange="onSliderMoved" />
-	<Panel id="panelForGridList">
+	<Panel id="panelForGridList" backgroundDesign="Transparent">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text="GridList with default grid layout" />
