@@ -6,12 +6,18 @@ sap.ui.define([
 ], function (Control, PersistenceMode, DefaultProviderRegistry) {
 	"use strict";
 
+	var oEngineStub = {
+		isRegisteredForModification: function () {
+			return false;
+		}
+	};
+
 	QUnit.module("Init");
 
 	QUnit.test("Use DefaultProviderRegistry as Singleton", function(assert){
 
-		var oFirstDefaultProviderRegistry = DefaultProviderRegistry.getInstance();
-		var oSecondDefaultProviderRegistry = DefaultProviderRegistry.getInstance();
+		var oFirstDefaultProviderRegistry = DefaultProviderRegistry.getInstance(oEngineStub);
+		var oSecondDefaultProviderRegistry = DefaultProviderRegistry.getInstance(oEngineStub);
 		assert.ok(oFirstDefaultProviderRegistry.isA("sap.ui.mdc.p13n.modules.DefaultProviderRegistry"), "getInstance() returns an instance of DefaultProviderRegistry");
 		assert.deepEqual(oFirstDefaultProviderRegistry, oSecondDefaultProviderRegistry, "There is only one 'DefaultProviderRegistry' instance per session");
 
@@ -34,7 +40,8 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oFirstControl = new Control("myControl1");
 			this.oSecondControl = new Control("myControl2");
-			this.defaultProviderRegistry = DefaultProviderRegistry.getInstance();
+
+			this.defaultProviderRegistry = DefaultProviderRegistry.getInstance(oEngineStub);
 		},
 		afterEach: function() {
 			this.oFirstControl.destroy();
@@ -49,7 +56,7 @@ sap.ui.define([
 
 		assert.equal(Object.keys(this.defaultProviderRegistry._mDefaultProviders).length, 0, "No persistence provider exists yet.");
 
-		var oEngineStub = sinon.stub(this.oFirstControl.getEngine(), "isRegisteredForModification").returns(true);
+		var oModifiedEngineStub = sinon.stub(this.defaultProviderRegistry._oEngine, "isRegisteredForModification").returns(true);
 
 		assert.throws(
 			function() {
@@ -58,13 +65,13 @@ sap.ui.define([
 			function(oError) {
 				return (
 					oError instanceof Error &&
-					oError.message === "DefaultProviderRegistry: You must not change the modificationSettings for an already registered control"
+					oError.message === "DefaultProviderRegistry: You must not change the modificationSettings for an already registered element"
 				);
 			},
 			"Attaching a control having already determined modification settings is prevented."
 		);
 
-		oEngineStub.restore();
+		oModifiedEngineStub.restore();
 
 		var oPersistenceProvider = this.defaultProviderRegistry.attach(this.oFirstControl, PersistenceMode.Transient);
 

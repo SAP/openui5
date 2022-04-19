@@ -18,7 +18,6 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual',
-	'sap/ui/mdc/enum/PersistenceMode',
 	'sap/ui/mdc/enum/PropagationReason'
 ], function(
 	Element,
@@ -36,7 +35,6 @@ sap.ui.define([
 	ManagedObjectObserver,
 	merge,
 	deepEqual,
-	PersistenceMode,
 	PropagationReason
 ) {
 	"use strict";
@@ -256,7 +254,6 @@ sap.ui.define([
 	ValueHelp.prototype.init = function() {
 
 		Element.prototype.init.apply(this, arguments);
-		this.getEngine().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
 
 		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
 
@@ -273,7 +270,6 @@ sap.ui.define([
 
 	ValueHelp.prototype.exit = function() {
 
-		this.getEngine().defaultProviderRegistry.detach(this);
 
 		if (this._oManagedObjectModel) {
 			this._oManagedObjectModel.destroy();

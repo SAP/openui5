@@ -7,13 +7,18 @@ sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/ListContent',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/ui/mdc/util/Common'
+	'sap/ui/mdc/util/Common',
+	'sap/ui/mdc/enum/PersistenceMode',
+	'sap/ui/mdc/p13n/Engine'
+
 ], function(
 	loadModules,
 	ListContent,
 	Condition,
 	ConditionValidated,
-	Common
+	Common,
+	PersistenceMode,
+	Engine
 ) {
 	"use strict";
 
@@ -126,6 +131,8 @@ sap.ui.define([
 			properties: ["filterFields"],
 			aggregations: ["_defaultFilterBar", "filterBar"]
 		});
+
+		Engine.getInstance().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
 	};
 
 	FilterableListContent.prototype._handleFilterValueUpdate = function (oChanges) {
@@ -450,6 +457,8 @@ sap.ui.define([
 
 	FilterableListContent.prototype.exit = function () {
 
+		Engine.getInstance().defaultProviderRegistry.detach(this);
+
 		Common.cleanup(this, [
 			"_oCollectiveSearchSelect", "_oInitialFilterConditions"
 		]);
@@ -458,6 +467,7 @@ sap.ui.define([
 			this._oSearchField.destroy();
 			delete this._oSearchField;
 		}
+
 
 		ListContent.prototype.exit.apply(this, arguments);
 	};

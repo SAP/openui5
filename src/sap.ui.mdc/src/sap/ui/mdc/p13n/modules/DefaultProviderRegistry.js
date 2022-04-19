@@ -32,7 +32,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.p13n.modules.DefaultProviderRegistry
 	 */
 	var DefaultProviderRegistry = BaseObject.extend("sap.ui.mdc.p13n.modules.DefaultProviderRegistry", {
-		constructor: function() {
+		constructor: function(oEngine) {
 
 			if (oDefaultProviderRegistry) {
 				throw Error(ERROR_INSTANCING);
@@ -40,6 +40,7 @@ sap.ui.define([
 
 			BaseObject.call(this);
 			this._mDefaultProviders = {};
+			this._oEngine = oEngine;
 		}
 	});
 
@@ -52,27 +53,29 @@ sap.ui.define([
 			this._mDefaultProviders[sProviderName].destroy();
 			delete this._mDefaultProviders[sProviderName];
 		}.bind(this));
+		this._oEngine = null;
 		BaseObject.prototype.destroy.apply(this, arguments);
+		oDefaultProviderRegistry = null;
 	};
 
 	/**
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 *
-	 * Attaches a control to a default persistence provider held inside the DefaultProviderRegistry for the given <code>PersistenceMode</code>
+	 * Attaches an element to a default persistence provider held inside the DefaultProviderRegistry for the given <code>PersistenceMode</code>
 	 *
-	 * @param {sap.ui.mdc.Control|string} vControl The control instance or a control id.
+	 * @param {sap.ui.core.Element|string} vElement The control instance or an element id.
 	 * @param {sap.ui.mdc.enum.PersistenceMode} sPersistenceMode Desired persistence mode for the retrieved persistence provider
 	 * @returns {sap.ui.mdc.p13n.PersistenceProvider} Returns a persistence provider instance, if possible
 	 */
-	DefaultProviderRegistry.prototype.attach = function (vControl, sPersistenceMode) {
-		if (vControl.getEngine().isRegisteredForModification(vControl)) { // Modification settings for a registered control are only determined once in the Engine
-			throw new Error("DefaultProviderRegistry: You must not change the modificationSettings for an already registered control");
+	DefaultProviderRegistry.prototype.attach = function (vElement, sPersistenceMode) {
+		if (this._oEngine.isRegisteredForModification(vElement)) { // Modification settings for a registered element are only determined once in the Engine
+			throw new Error("DefaultProviderRegistry: You must not change the modificationSettings for an already registered element");
 		}
 		var oDefaultProvider = this._retrieveDefaultProvider(sPersistenceMode);
-		var sControlId = typeof vControl === "string" ? vControl : vControl.getId();
+		var sControlId = typeof vElement === "string" ? vElement : vElement.getId();
 		if (oDefaultProvider.getFor().indexOf(sControlId) === -1) {
-			oDefaultProvider.addFor(vControl);
+			oDefaultProvider.addFor(vElement);
 		}
 
 		return oDefaultProvider;
@@ -113,9 +116,9 @@ sap.ui.define([
 	 *
 	 * This method is the central point of access to the DefaultProviderRegistry Singleton.
 	 */
-	 DefaultProviderRegistry.getInstance = function() {
+	 DefaultProviderRegistry.getInstance = function(oEngine) {
 		if (!oDefaultProviderRegistry) {
-			oDefaultProviderRegistry = new DefaultProviderRegistry();
+			oDefaultProviderRegistry = new DefaultProviderRegistry(oEngine);
 		}
 		return oDefaultProviderRegistry;
 	};

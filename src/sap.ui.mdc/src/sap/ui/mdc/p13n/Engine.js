@@ -59,7 +59,7 @@ sap.ui.define([
 			this._aStateHandlers = [];
 
 			//Default Provider Registry to be used for internal PersistenceProvider functionality access
-			this.defaultProviderRegistry = DefaultProviderRegistry.getInstance();
+			this.defaultProviderRegistry = DefaultProviderRegistry.getInstance(this);
 
 			//UIManager to be used for p13n UI creation
 			this.uimanager = UIManager.getInstance(this);
