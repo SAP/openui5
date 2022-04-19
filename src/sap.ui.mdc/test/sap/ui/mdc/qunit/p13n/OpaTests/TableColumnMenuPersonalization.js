@@ -48,14 +48,20 @@ sap.ui.define([
 	opaTest("Sort with column menu quick action", function(Given, When, Then) {
 		When.iUseColumnMenuQuickSort({key: "name", sortOrder: coreLibrary.SortOrder.Ascending});
 		Then.iShouldSeeColumnSorted("Name", true, false);
+		Then.iShouldNotSeeTheColumnMenu();
 	});
 
 	opaTest("Group with column menu quick action", function(Given, When, Then) {
+		When.iClickOnColumn("Name");
+		Then.iShouldSeeOneColumnMenu();
 		When.iUseColumnMenuQuickGroup({key: "name", grouped: true});
 		Then.iShouldSeeGroupConditions({groupLevels: [{name: "name"}]});
+		Then.iShouldNotSeeTheColumnMenu();
 	});
 
 	opaTest("Sort with column menu item", function(Given, When, Then) {
+		When.iClickOnColumn("Name");
+		Then.iShouldSeeOneColumnMenu();
 		When.iPressOnColumnMenuItem(Arrangement.P13nDialog.Titles.sort);
 		Then.iShouldSeeColumnMenuItemContent(Arrangement.P13nDialog.Titles.sort);
 		Then.iShouldSeeP13nSortItems([
