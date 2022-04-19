@@ -4,18 +4,22 @@
 /* ========================== */
 
 .sapMBar {
-	background-color: transparent;
 	text-shadow: none;
 }
 
-.sapMBarRight,
-.sapMBarPH {
-	padding-right: 0.5rem;
+.sapMBarLeft{
+	padding-left: 1rem;
+	padding-right: 0.25rem;
 }
 
-.sapMBarLeft,
+.sapMBarRight {
+	padding-left: 0.25rem;
+	padding-right: 1rem;
+}
+
 .sapMBarPH {
-	padding-left: 0.5rem;
+	padding-right: 0.25rem;
+	padding-left: 0.25rem;
 }
 
 .sapMBar .sapMBarRight.sapMBarContainer > *:first-child,
@@ -33,7 +37,7 @@
 .sapMBar .sapMBarRight.sapMBarContainer > *:not(:first-child):not(:last-child),
 .sapMBar .sapMBarLeft.sapMBarContainer > *:not(:first-child):not(:last-child),
 .sapMBar .sapMBarMiddle .sapMBarContainer > *:not(:first-child):not(:last-child){
-	margin: 0 0.25rem;
+	margin: 0 0.5rem;
 }
 
 .sapMBar .sapMBarRight.sapMBarContainer > *:first-child:last-child,
@@ -59,10 +63,7 @@
 }
 
 /* in Master page the bar should have a different color shadow only if we don't have subHeader (e.g. another bar) */
-.sapMSplitContainerMaster .sapMIBar .sapMHeader-CTX:only-of-type {
-	box-shadow: inset 0 -0.0625rem @sapUiGroupContentBorderColor;
-}
-
+.sapMSplitContainerMaster .sapMIBar .sapMHeader-CTX:only-of-type,
 /* in Master page the bar should have a different color shadow */
 .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX {
 	box-shadow: inset 0 -0.0625rem @sapUiGroupContentBorderColor;
@@ -75,4 +76,8 @@
 
 html[data-sap-ui-browser^="ff"].sap-desktop .sapMBarTitleAlignAuto .sapMBarPH {
 	justify-content: start;
+}
+
+.sapMIBar-CTX.sapMFooter-CTX {
+	border-top: 0.0625rem solid @sapUiPageFooterBorderColor;
 }
