@@ -1,17 +1,13 @@
 /******************************************************************
 	Style of the DT Contextmenu - sap_belize_hcb Theme
 *******************************************************************/
-@_sap_ui_dt_ContextMenu_BoxShadowColor: @sapUiNeutralElement; //#ffffff
 
 .sapUiDtContextMenu {
-
-	&.sapMPopoverArr, .sapMPopoverArr {
-		&:after {
-			box-shadow: 0 0 0 1px @_sap_ui_dt_ContextMenu_BoxShadowColor;
-			border: none;
+	.sapUiMnuLst {
+		.sapUiMnuItm {
+			&.sapUiMnuItmDsbl {
+				opacity: 1;
+			}
 		}
-	}
-	.sapMBtn.sapMBtnDisabled {
-		opacity: 1.0;
 	}
 }
