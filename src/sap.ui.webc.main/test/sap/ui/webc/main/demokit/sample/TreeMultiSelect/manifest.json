@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.ui.webc.main.sample.TreeMultiselect",
+		"id": "sap.ui.webc.main.sample.TreeMultiSelect",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.ui.webc.main.sample.TreeMultiselect.V",
+			"viewName": "sap.ui.webc.main.sample.TreeMultiSelect.V",
 			"type": "XML",
 			"async": true
 		},

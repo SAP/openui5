@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.webc.main.sample.TreeMultiselect.Component", {
+	return UIComponent.extend("sap.ui.webc.main.sample.TreeMultiSelect.Component", {
 
 		metadata: {
 			manifest: "json"
