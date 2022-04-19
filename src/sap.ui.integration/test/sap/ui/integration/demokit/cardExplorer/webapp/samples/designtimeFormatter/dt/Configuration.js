@@ -9,12 +9,24 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"date": {
 						"manifestpath": "/sap.card/configuration/parameters/date/value",
 						"type": "date",
-						"formatter": { "format": "yMMMd" }
+						"formatter": { "format": "yMMMd" },
+						"description": "All date format options in the sap.ui.core.format.DateFormat are supported."
+					},
+					"dateWithPattern": {
+						"manifestpath": "/sap.card/configuration/parameters/dateWithPattern/value",
+						"type": "date",
+						"formatter": { "pattern": "yyyy-MM-dd" }
 					},
 					"datetime": {
 						"manifestpath": "/sap.card/configuration/parameters/datetime/value",
 						"type": "datetime",
 						"formatter": { "style": "long" }
+					},
+					"calendarType": {
+						"manifestpath": "/sap.card/configuration/parameters/calendarType/value",
+						"type": "datetime",
+						"formatter": { "calendarType": "Buddhist" },
+						"description": "All types of Calendar in the sap.ui.core.CalendarType are supported."
 					},
 					"float": {
 						"manifestpath": "/sap.card/configuration/parameters/float/value",

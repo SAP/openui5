@@ -24,7 +24,13 @@
 				"date": {
 					"value": "2021/03/05"
 				},
+				"dateWithPattern": {
+					"value": "2021/03/05"
+				},
 				"datetime": {
+					"value": "2021/03/05 13:50:06"
+				},
+				"calendarType": {
 					"value": "2021/03/05 13:50:06"
 				},
 				"float": {
