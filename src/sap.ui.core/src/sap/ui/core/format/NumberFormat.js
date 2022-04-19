@@ -315,8 +315,8 @@ sap.ui.define([
 	 * oFormat.format(1234.56); // "1.234,56"
 	 * </pre>
 	 *
-	 * @param {object} [oFormatOptions] The option object which support the following parameters.
-	 *   If no options is given, default values according to the type and locale settings are used.
+#	 * @param {object} [oFormatOptions] The option object, which supports the following parameters.
+	 *   If no options are given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -329,7 +329,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
 	 *   it is different from the grouping size (e.g. Indian grouping)
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
-	 *   (show the grouping separators)
+	 *   (grouping separators are shown)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
@@ -353,7 +353,7 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
-	 *   specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 *   specifies the rounding behavior for discarding the digits after the maximum fraction digits
 	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
 	 *   This can be assigned
 	 *   <ul>
@@ -367,7 +367,7 @@ sap.ui.define([
 	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
-	 *   'short, 'long' or 'standard' (based on CLDR decimalFormat). When set to 'short' or 'long',
+	 *   'short, 'long' or 'standard' (based on the CLDR decimalFormat). When set to 'short' or 'long',
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
 	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
 	 *   decimals, shortDecimals, or the 'precision' option itself.
@@ -407,8 +407,8 @@ sap.ui.define([
 	 * oFormat.format(1234); // "1.234"
 	 * </pre>
 	 *
-	 * @param {object} [oFormatOptions] The option object which support the following parameters.
-	 *   If no options is given, default values according to the type and locale settings are used.
+	 * @param {object} [oFormatOptions] The option object, which supports the following parameters.
+	 *   If no options are given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -421,7 +421,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
 	 *   it is different from the grouping size (e.g. Indian grouping)
 	 * @param {boolean} [oFormatOptions.groupingEnabled=false] defines whether grouping is enabled
-	 *   (show the grouping separators)
+	 *   (grouping separators are shown)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
@@ -445,7 +445,7 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=TOWARDS_ZERO]
-	 *   specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 *   specifies the rounding behavior for discarding the digits after the maximum fraction digits
 	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
 	 *   This can be assigned
 	 *   <ul>
@@ -459,7 +459,7 @@ sap.ui.define([
 	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
-	 *   'short, 'long' or 'standard' (based on CLDR decimalFormat). When set to 'short' or 'long',
+	 *   'short, 'long' or 'standard' (based on the CLDR decimalFormat). When set to 'short' or 'long',
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
 	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
 	 *   decimals, shortDecimals, or the 'precision' option itself.
@@ -531,8 +531,8 @@ sap.ui.define([
 	 * oFormat.format(777.888, "Bitcoin"); // "Bitcoin 777.89"
 	 * </pre>
 	 *
-	 * @param {object} [oFormatOptions] The option object which support the following parameters.
-	 *   If no options is given, default values according to the type and locale settings are used.
+	 * @param {object} [oFormatOptions] The option object, which supports the following parameters.
+	 *   If no options are given, default values according to the type and locale settings are used.
 	 * @param {boolean} [oFormatOptions.currencyCode=true] defines whether the currency is shown as
 	 *   a code in currency format. The currency symbol is displayed when this option is set to
 	 *   <code>false</code> and a symbol has been defined for the given currency code.
@@ -556,7 +556,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
 	 *   it is different from the grouping size (e.g. Indian grouping)
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
-	 *   (show the grouping separators)
+	 *   (grouping separators are shown)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
@@ -578,7 +578,7 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
-	 *   specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 *   specifies the rounding behavior for discarding the digits after the maximum fraction digits
 	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
 	 *   This can be assigned
 	 *   <ul>
@@ -601,7 +601,7 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number.
 	 *   This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
-	 *   'short, 'long' or 'standard' (based on CLDR decimalFormat). When set to 'short' or 'long',
+	 *   'short, 'long' or 'standard' (based on the CLDR decimalFormat). When set to 'short' or 'long',
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
 	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
 	 *   decimals, shortDecimals, or the 'precision' option itself.
@@ -659,8 +659,8 @@ sap.ui.define([
 	 * default value.
 	 * </p>
 	 *
-	 * @param {object} [oFormatOptions] The option object which support the following parameters.
-	 *   If no options is given, default values according to the type and locale settings are used.
+	 * @param {object} [oFormatOptions] The option object, which supports the following parameters.
+	 *   If no options are given, default values according to the type and locale settings are used.
 	 * @param {array} [oFormatOptions.allowedUnits] defines the allowed units for formatting and parsing, e.g. ["size-meter", "volume-liter", ...]
 	 * @param {Object<string,object>} [oFormatOptions.customUnits] defines a set of custom units, e.g.
 	 *   {"electric-inductance": {
@@ -683,7 +683,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
 	 *   it is different from the grouping size (e.g. Indian grouping)
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
-	 *   (show the grouping separators)
+	 *   (grouping separators are shown)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
@@ -707,7 +707,7 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
-	 *   specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 *   specifies the rounding behavior for discarding the digits after the maximum fraction digits
 	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
 	 *   This can be assigned
 	 *   <ul>
@@ -716,12 +716,12 @@ sap.ui.define([
 	 *   </ul>
 	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimals in the shortened
 	 *   format string. If this option isn't specified, the 'decimals' option is used instead.
-	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
+	 * @param {int} [oFormatOptions.shortLimit] defines a limit above which only short number formatting is used
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the
 	 *   scale factor for the 'short' or 'long' style format is generated. The generated scale
 	 *   factor is used for all numbers which are formatted with this format instance. This option
-	 *   has effect only when the option 'style' is set to 'short' or 'long'. This option is by
-	 *   default set with <code>undefined</code> which means the scale factor is selected
+	 *   only takes effect when the 'style' option is set to 'short' or 'long'. This option is
+	 *   set to <code>undefined</code> by default, which means that the scale factor is selected
 	 *   automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the unit of measure is shown in the formatted string,
 	 *  e.g. for input 1 and "duration-day" true: "1 day", false: "1".
@@ -736,7 +736,7 @@ sap.ui.define([
 	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
-	 *   'short, 'long' or 'standard' (based on CLDR decimalFormat). When set to 'short' or 'long',
+	 *   'short, 'long' or 'standard' (based on the CLDR decimalFormat). When set to 'short' or 'long',
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
 	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
 	 *   decimals, shortDecimals, or the 'precision' option itself.
@@ -765,8 +765,8 @@ sap.ui.define([
 	 * default value.
 	 * </p>
 	 *
-	 * @param {object} [oFormatOptions] The option object which support the following parameters.
-	 *   If no options is given, default values according to the type and locale settings are used.
+	 * @param {object} [oFormatOptions] The option object, which supports the following parameters.
+	 *   If no options are given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -779,7 +779,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
 	 *   it is different from the grouping size (e.g. Indian grouping)
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
-	 *   (show the grouping separators)
+	 *   (grouping separators are shown)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
@@ -804,7 +804,7 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
-	 *   specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 *   specifies the rounding behavior for discarding the digits after the maximum fraction digits
 	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
 	 *   This can be assigned
 	 *   <ul>
@@ -818,7 +818,7 @@ sap.ui.define([
 	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
-	 *   'short, 'long' or 'standard' (based on CLDR decimalFormat). When set to 'short' or 'long',
+	 *   'short, 'long' or 'standard' (based on the CLDR decimalFormat). When set to 'short' or 'long',
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
 	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
 	 *   decimals, shortDecimals, or the 'precision' option itself.
