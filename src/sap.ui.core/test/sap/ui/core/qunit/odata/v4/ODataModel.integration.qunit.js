@@ -39074,4 +39074,196 @@ sap.ui.define([
 
 		return this.createView(assert, sView, createSalesOrdersModel({autoExpandSelect : true}));
 	});
+
+	//*********************************************************************************************
+	// Scenario: A message target contains a not normalized message target (the sort order of the
+	// key predicate differs and the target has different percent encoding, for example with respect
+	// to upper versus lower case). The UI5 message has to contain the normalized target and should
+	// influence the value state of the corresponding control.
+	//
+	// JIRA: CPOUI5ODATAV4-1431
+	// BCP: 2180384047
+	QUnit.test("CPOUI5ODATAV4-1431: Normalize the message target", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{path : \'/SalesOrderList(\\\'42\\\')\', \
+		parameters : {$select : \'Messages\'}}">\
+	<Table id="productTable" items="{path : \'SO_2_BP/BP_2_PRODUCT\'}">\
+		<Input id="height" value="{Height}"/>\
+		<Input id="width" value="{Width}"/>\
+	</Table>\
+	<Table id="itemsTable" items="{path : \'SO_2_SOITEM\'}">\
+		<Input id="note" value="{Note}"/>\
+		<Input id="quantity" value="{Quantity}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Messages,SalesOrderID&$expand="
+			+ "SO_2_BP($select=BusinessPartnerID;"
+				+ "$expand=BP_2_PRODUCT($select=Height,ProductID,Width)),"
+			+ "SO_2_SOITEM($select=ItemPosition,Note,Quantity,SalesOrderID)", {
+				Messages : [{
+					// sort order of key properties
+					code : "code 1",
+					message : "Enter a minimum quantity of 2",
+					numericSeverity : 3,
+					target : "SO_2_SOITEM(ItemPosition='0010',SalesOrderID='42')/Quantity",
+					additionalTargets : [
+						"SO_2_SOITEM(ItemPosition='0010',SalesOrderID='42')/Note"
+					]
+				}, {
+					// percent encoding (e.g. normalize upper- and lower-case)
+					code : "code 2",
+					message : "Some additional message",
+					numericSeverity : 3,
+					target : "SO_2_SOITEM(ItemPosition='0010',SalesOrderID='42%2f')/Quantity",
+					additionalTargets : [
+						"SO_2_SOITEM(ItemPosition='0010',SalesOrderID='42%2f')/Note"
+					]
+				}, { // only one key property (changing BO is intended, due insufficient meta data)
+					code : "code 3",
+					message : "Not more than twice as high as wide",
+					numericSeverity : 3,
+					target : "SO_2_BP/BP_2_PRODUCT(ProductID='HT-1024')/Height",
+					additionalTargets : [
+						"SO_2_BP/BP_2_PRODUCT('HT-1024')/Width"
+					]
+				}, { // percent encoding (with navigation property)
+					code : "code 4",
+					message : "some message",
+					numericSeverity : 3,
+					target : "SO_2_SOITEM(ItemPosition='0010',SalesOrderID='42%2f')"
+						+ "/SOITEM_2_PRODUCT(ProductID='HT-1024')/Height",
+					additionalTargets : [
+						"SO_2_SOITEM(ItemPosition='0010',SalesOrderID='42%2f')"
+							+ "/SOITEM_2_PRODUCT(ProductID='HT-1024')"
+							+ "/PRODUCT_2_BP/BP_2_SO(SalesOrderID='42%2f')"
+							+ "/SO_2_SOITEM(ItemPosition='0010',SalesOrderID='42%2f')"
+					]
+				}],
+				SalesOrderID : "42",
+				SO_2_BP : {
+					BusinessPartnerID : "23",
+					BP_2_PRODUCT : [{
+						Height : "5",
+						ProductID : "HT-1024",
+						Width : "2"
+					}]
+				},
+				SO_2_SOITEM : [{
+					ItemPosition : "0010",
+					Note : "some note",
+					Quantity : "1",
+					SalesOrderID : "42"
+				}]
+			})
+			.expectChange("height", ["5.000"])
+			.expectChange("width", ["2.000"])
+			.expectChange("note", ["some note"])
+			.expectChange("quantity", ["1.000"])
+			.expectMessages([{
+				code : "code 1",
+				message : "Enter a minimum quantity of 2",
+				targets : [
+					"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')"
+						+ "/Quantity",
+					"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')"
+						+ "/Note"
+				],
+				type : "Warning"
+			}, {
+				code : "code 2",
+				message : "Some additional message",
+				targets : [
+					"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42%2F',ItemPosition='0010')"
+						+ "/Quantity",
+					"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42%2F',ItemPosition='0010')"
+						+ "/Note"
+				],
+				type : "Warning"
+			}, {
+				code : "code 3",
+				message : "Not more than twice as high as wide",
+				targets : [
+					"/SalesOrderList('42')/SO_2_BP/BP_2_PRODUCT('HT-1024')/Height",
+					"/SalesOrderList('42')/SO_2_BP/BP_2_PRODUCT('HT-1024')/Width"
+				],
+				type : "Warning"
+			}, {
+				code : "code 4",
+				message : "some message",
+				targets : [
+					"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42%2F',ItemPosition='0010')"
+						+ "/SOITEM_2_PRODUCT('HT-1024')/Height",
+					"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42%2F',ItemPosition='0010')"
+						+ "/SOITEM_2_PRODUCT('HT-1024')/PRODUCT_2_BP/BP_2_SO('42%2F')"
+						+ "/SO_2_SOITEM(SalesOrderID='42%2F',ItemPosition='0010')"
+				],
+				type : "Warning"
+			}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oProductTable = that.oView.byId("productTable"),
+				oInputHeight = oProductTable.getItems()[0].getCells()[0],
+				oInputWidth = oProductTable.getItems()[0].getCells()[1],
+				oItemsTable = that.oView.byId("itemsTable"),
+				oInputNote = oItemsTable.getItems()[0].getCells()[0],
+				oInputQuantity = oItemsTable.getItems()[0].getCells()[1];
+
+			return Promise.all([
+				that.checkValueState(assert, oInputHeight, "Warning",
+					"Not more than twice as high as wide"),
+				that.checkValueState(assert, oInputWidth, "Warning",
+					"Not more than twice as high as wide"),
+				that.checkValueState(assert, oInputNote, "Warning",
+					"Enter a minimum quantity of 2"),
+				that.checkValueState(assert, oInputQuantity, "Warning",
+					"Enter a minimum quantity of 2")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A header message target contains a not normalized message target (the sort order of
+	// the key predicate differs). The UI5 message has to contain the normalized target.
+	//
+	// JIRA: CPOUI5ODATAV4-1431
+	// BCP: 2180384047
+	QUnit.test("CPOUI5ODATAV4-1431: Header messages normalize targets", function (assert) {
+		var aMessages = [{
+				code : "foo-42",
+				message : "text",
+				numericSeverity : 1,
+				target : "TEAM_2_EMPLOYEES(ID='1')"
+					+ "/EMPLOYEE_2_EQUIPMENTS(ID='33',Category='Electronics')/Name"
+			}],
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/TEAMS(\'42\')}">\
+<Text id="id" text="{Team_Id}"/>\
+</FlexBox>';
+
+		function withTransition(oObject) {
+			return Object.assign({}, {transition : true}, oObject);
+		}
+
+		this.expectRequest("TEAMS('42')?$select=Team_Id", {Team_Id : "23"}, {
+				"sap-messages" : JSON.stringify(aMessages)
+			})
+			.expectMessages([{
+				code : "foo-42",
+				message : "text",
+				persistent : true,
+				target : "/TEAMS('42')/TEAM_2_EMPLOYEES('1')"
+					+ "/EMPLOYEE_2_EQUIPMENTS(Category='Electronics',ID='33')/Name",
+				technicalDetails : {
+					originalMessage : withTransition(aMessages[0])
+				},
+				type : "Success"
+			}])
+			.expectChange("id", "23");
+
+		return this.createView(assert, sView, oModel);
+	});
 });

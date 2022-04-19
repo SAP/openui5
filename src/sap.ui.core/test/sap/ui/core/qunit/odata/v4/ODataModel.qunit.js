@@ -2340,20 +2340,28 @@ sap.ui.define([
 	//*********************************************************************************************
 [undefined, "target"].forEach(function (sTarget) {
 	QUnit.test("createUI5Message: longtextUrl, target: " + sTarget, function (assert) {
-		var oRawMessage = {
+		var oModel = this.createModel(),
+			oRawMessage = {
 				longtextUrl : "longtextUrl",
 				target : sTarget
-			};
+			},
+			oUI5Message;
 
+		this.mock(oModel).expects("normalizeMessageTarget").exactly(sTarget ? 1 : 0)
+			.withExactArgs("/~path~/" + oRawMessage.target)
+			.returns("/~path~/~normalizedTarget~");
 		this.mock(_Helper).expects("createTechnicalDetails"); // ignore details
 		this.mock(_Helper).expects("makeAbsolute")
 			.withExactArgs("longtextUrl", sServiceUrl + "~path~")
 			.returns("~absoluteLongtextUrl~");
 
-		assert.strictEqual(
-			// code under test
-			this.createModel().createUI5Message(oRawMessage, "~path~").getDescriptionUrl(),
-			"~absoluteLongtextUrl~");
+		// code under test
+		oUI5Message = oModel.createUI5Message(oRawMessage, "~path~");
+
+		assert.strictEqual(oUI5Message.getDescriptionUrl(), "~absoluteLongtextUrl~");
+		assert.strictEqual(oUI5Message.getTarget(), oRawMessage.target
+			? "/~path~/~normalizedTarget~"
+			: "");
 	});
 });
 
@@ -2400,6 +2408,7 @@ sap.ui.define([
 	QUnit.test("createUI5Message: bound: " + i, function (assert) {
 		var oHelperMock = this.mock(_Helper),
 			oModel = this.createModel(),
+			oModelMock = this.mock(oModel),
 			oRawMessage = {
 				target : oFixture.target,
 				additionalTargets : oFixture.additionalTargets,
@@ -2414,7 +2423,15 @@ sap.ui.define([
 				oHelperMock.expects("buildPath")
 					.withExactArgs("/" + "~resourcePath~", "~cachePath~", sTarget)
 					.returns("/res/cache/" + sTarget);
+				oModelMock.expects("normalizeMessageTarget")
+					.withExactArgs("/res/cache/" + sTarget)
+					.returns("/res/cache/" + sTarget);
+
+				return;
 			}
+			oModelMock.expects("normalizeMessageTarget")
+				.withExactArgs(sTarget)
+				.returns(sTarget);
 		});
 
 		// code under test
@@ -2434,33 +2451,46 @@ sap.ui.define([
 			},
 			oUI5Message;
 
+		this.mock(oModel).expects("normalizeMessageTarget")
+			.withExactArgs(oRawMessage.target)
+			.returns("/~normalizedTarget~");
 		oHelperMock.expects("createTechnicalDetails"); // ignore details
 
 		// code under test
 		oUI5Message = oModel.createUI5Message(oRawMessage);
 
-		assert.deepEqual(oUI5Message.getTargets(), ["/foo"]);
+		assert.deepEqual(oUI5Message.getTargets(), ["/~normalizedTarget~"]);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("createUI5Message: resource path w/ query string", function (assert) {
 		var oHelperMock = this.mock(_Helper),
 			oModel = this.createModel(),
+			oModelMock = this.mock(oModel),
 			oRawMessage = {
 				target : "foo",
 				additionalTargets : ["bar", "baz"]
 			},
 			oUI5Message;
 
+		oModelMock.expects("normalizeMessageTarget")
+			.withExactArgs("/~resourcePath~/~cachePath~/" + oRawMessage.target)
+			.returns("/~normalizedFoo~");
+		oModelMock.expects("normalizeMessageTarget")
+			.withExactArgs("/~resourcePath~/~cachePath~/" + oRawMessage.additionalTargets[0])
+			.returns("/~normalizedBar~");
+		oModelMock.expects("normalizeMessageTarget")
+			.withExactArgs("/~resourcePath~/~cachePath~/" + oRawMessage.additionalTargets[1])
+			.returns("/~normalizedBaz~");
 		oHelperMock.expects("createTechnicalDetails"); // ignore details
 
 		// code under test
 		oUI5Message = oModel.createUI5Message(oRawMessage, "~resourcePath~?foo=bar", "~cachePath~");
 
 		assert.deepEqual(oUI5Message.getTargets(), [
-			"/~resourcePath~/~cachePath~/foo",
-			"/~resourcePath~/~cachePath~/bar",
-			"/~resourcePath~/~cachePath~/baz"
+			"/~normalizedFoo~",
+			"/~normalizedBar~",
+			"/~normalizedBaz~"
 		]);
 	});
 
@@ -2731,6 +2761,234 @@ sap.ui.define([
 			// code under test - to late
 			oModel.setOptimisticBatchEnabler("n/a");
 		}, new Error("The setter is called after a non-optimistic batch is sent"));
+	});
+
+	//*********************************************************************************************
+[{
+	sTarget : "foo(propertyA='1')",
+	sResult : "foo('1')",
+	parseKeyPredicate : [{
+		sPredicate : "(propertyA='1')",
+		oResult : {propertyA : "'1'"}
+	}],
+	fetchType : [{
+		sMetaPath : "foo",
+		oResult : {$Key : ["propertyA"]}
+	}],
+	buildPath : [{
+		sMetaPath : "",
+		sCollection : "foo",
+		sResult : "foo"
+	}]
+}, {
+	sTarget : "foo('1')",
+	sResult : "foo('1')",
+	parseKeyPredicate : [{
+		sPredicate : "('1')",
+		oResult : {"" : "'1'"}
+	}],
+	fetchType : [],
+	buildPath : [{
+		sMetaPath : "",
+		sCollection : "foo",
+		sResult : "foo"
+	}]
+}, {
+	sTarget : "bar(propertyB='2',propertyA='1')",
+	sResult : "bar(propertyA='1',propertyB='2')",
+	parseKeyPredicate : [{
+		sPredicate : "(propertyB='2',propertyA='1')",
+		oResult : {propertyB : "'2'", propertyA : "'1'"}
+	}],
+	fetchType : [{
+		sMetaPath : "bar",
+		oResult : {$Key : ["propertyA", "propertyB"]}
+	}],
+	buildPath : [{
+		sMetaPath : "",
+		sCollection : "bar",
+		sResult : "bar"
+	}]
+}, {
+	sTarget : "foo(propertyA='1')/bar(propertyB='2',propertyA='1')",
+	sResult : "foo('1')/bar(propertyA='1',propertyB='2')",
+	parseKeyPredicate : [{
+		sPredicate : "(propertyA='1')",
+		oResult : {propertyA : "'1'"}
+	}, {
+		sPredicate : "(propertyB='2',propertyA='1')",
+		oResult : {propertyB : "'2'", propertyA : "'1'"}
+	}],
+	fetchType : [{
+		sMetaPath : "foo",
+		oResult : {$Key : ["propertyA"]}
+	}, {
+		sMetaPath : "foo/bar",
+		oResult : {$Key : ["propertyA", "propertyB"]}
+	}],
+	buildPath : [{
+		sMetaPath : "",
+		sCollection : "foo",
+		sResult : "foo"
+	}, {
+		sMetaPath : "foo",
+		sCollection : "bar",
+		sResult : "foo/bar"
+	}]
+}, {
+	sTarget : "foo(propertyA='1')/baz/bar(propertyB='2',propertyA='1')",
+	sResult : "foo('1')/baz/bar(propertyA='1',propertyB='2')",
+	parseKeyPredicate : [{
+		sPredicate : "(propertyA='1')",
+		oResult : {propertyA : "'1'"}
+	}, {
+		sPredicate : "(propertyB='2',propertyA='1')",
+		oResult : {propertyB : "'2'", propertyA : "'1'"}
+	}],
+	fetchType : [{
+		sMetaPath : "foo",
+		oResult : {$Key : ["propertyA"]}
+	}, {
+		sMetaPath : "foo/baz/bar",
+		oResult : {$Key : ["propertyA", "propertyB"]}
+	}],
+	buildPath : [{
+		sMetaPath : "",
+		sCollection : "foo",
+		sResult : "foo"
+	}, {
+		sMetaPath : "foo",
+		sCollection : "baz",
+		sResult : "foo/baz"
+	}, {
+		sMetaPath : "foo/baz",
+		sCollection : "bar",
+		sResult : "foo/baz/bar"
+	}]
+}].forEach(function (oFixture) {
+	QUnit.test("normalizeMessageTarget: '" + oFixture.sTarget + "'", function (assert) {
+		var oModel = this.createModel(""),
+			oHelperMock = this.mock(_Helper),
+			oParserMock = this.mock(_Parser),
+			oRequestorMock = this.mock(oModel.oRequestor);
+
+		oFixture.parseKeyPredicate.forEach(function (oParameters) {
+			oParserMock.expects("parseKeyPredicate").withExactArgs(oParameters.sPredicate)
+				.returns(oParameters.oResult);
+		});
+
+		oFixture.fetchType.forEach(function (oParameters) {
+			oRequestorMock.expects("fetchTypeForPath")
+				.withExactArgs("/" + oParameters.sMetaPath)
+				.returns(SyncPromise.resolve(oParameters.oResult));
+		});
+
+		oFixture.buildPath.forEach(function (oParameters) {
+			oHelperMock.expects("buildPath")
+				.withExactArgs(oParameters.sMetaPath, oParameters.sCollection)
+				.returns(oParameters.sResult);
+		});
+
+		// code under test
+		assert.strictEqual(oModel.normalizeMessageTarget(oFixture.sTarget), oFixture.sResult);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("normalizeMessageTarget: no type found", function (assert) {
+		var oModel = this.createModel();
+
+		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("(propertyA='1')")
+			.returns({propertyA : "'1'"});
+		this.mock(oModel.oRequestor).expects("fetchTypeForPath").withExactArgs("/baz")
+			.returns(SyncPromise.resolve(undefined));
+
+		assert.strictEqual(
+			// code under test
+			oModel.normalizeMessageTarget("baz(propertyA='1')"),
+			"baz(propertyA='1')"
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("normalizeMessageTarget: type does not contain keys", function (assert) {
+		var oModel = this.createModel(),
+			oRequestorMock = this.mock(oModel.oRequestor),
+			oParserMock = this.mock(_Parser),
+			oTypeFoo = {$Key : ["propertyA", "propertyB"]},
+			oTypeBar = {};
+
+		oParserMock.expects("parseKeyPredicate").withExactArgs("(propertyA='1')")
+			.returns({propertyA : "'1'"});
+		oParserMock.expects("parseKeyPredicate").withExactArgs("(propertyB='2',propertyA='1')")
+			.returns({propertyA : "'1'", propertyB : "'2'"});
+		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/foo")
+			.returns(SyncPromise.resolve(oTypeFoo));
+		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/foo/bar")
+			.returns(SyncPromise.resolve(oTypeBar));
+
+		assert.strictEqual(
+			// code under test
+			oModel.normalizeMessageTarget("foo(propertyB='2',propertyA='1')/bar(propertyA='1')"),
+			"foo(propertyB='2',propertyA='1')/bar(propertyA='1')"
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("normalizeMessageTarget: %encoding upper vs lower cases", function (assert) {
+		var oModel = this.createModel(),
+			sResourcePath = "~resourcePath~";
+
+		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("('foo%2fbar')")
+			.returns({"" : "'foo%2fbar'"});
+
+		assert.strictEqual(
+			// code under test
+			oModel.normalizeMessageTarget("foo('foo%2fbar')", sResourcePath),
+			"foo('foo%2Fbar')"
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("normalizeMessageTarget: not matching key predicates", function (assert) {
+		var oModel = this.createModel(),
+			oParserMock = this.mock(_Parser),
+			oRequestorMock = this.mock(oModel.oRequestor),
+			oTypeFoo = {$Key : ["propertyA", "propertyB"]},
+			oTypeBar = {$Key : ["propertyC"]};
+
+		oParserMock.expects("parseKeyPredicate")
+			.withExactArgs("(prop%65rtyB='100%3f',propertyA='200%3f')")
+			.returns({"prop%65rtyB" : "'100%3f'", propertyA : "'200%3f'"});
+		oParserMock.expects("parseKeyPredicate")
+			.withExactArgs("(prop%65rtyC='300')")
+			.returns({"prop%65rtyC" : "'300'"});
+		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/foo")
+			.returns(SyncPromise.resolve(oTypeFoo));
+		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/foo/bar")
+			.returns(SyncPromise.resolve(oTypeBar));
+
+		assert.strictEqual(
+			// code under test
+			oModel.normalizeMessageTarget(
+				"foo(prop%65rtyB='100%3f',propertyA='200%3f')/bar(prop%65rtyC='300')"),
+			"foo(prop%65rtyB='100%3f',propertyA='200%3f')/bar(prop%65rtyC='300')"
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("normalizeMessageTarget: containing '$uid=...' stays untouched", function (assert) {
+		var oModel = this.createModel(),
+			sResourcePath = "~resourcePath~";
+
+		this.mock(_Parser).expects("parseKeyPredicate").never();
+		this.mock(oModel.oRequestor).expects("fetchTypeForPath").never();
+
+		assert.strictEqual(
+			// code under test
+			oModel.normalizeMessageTarget("foo($uid=...)/bar(propertyA='200')", sResourcePath),
+			"foo($uid=...)/bar(propertyA='200')"
+		);
 	});
 });
 //TODO constructor: test that the service root URL is absolute?

@@ -1214,12 +1214,13 @@ sap.ui.define([
 	ODataModel.prototype.createUI5Message = function (oRawMessage, sResourcePath, sCachePath) {
 		var bIsBound = typeof oRawMessage.target === "string",
 			sMessageLongtextUrl = oRawMessage.longtextUrl,
-			aTargets;
+			aTargets,
+			that = this;
 
 		function resolveTarget(sTarget) {
-			return sTarget[0] === "/"
+			return that.normalizeMessageTarget(sTarget[0] === "/"
 				? sTarget
-				: _Helper.buildPath("/" + sResourcePath, sCachePath, sTarget);
+				: _Helper.buildPath("/" + sResourcePath, sCachePath, sTarget));
 		}
 
 		if (bIsBound) {
@@ -1969,6 +1970,84 @@ sap.ui.define([
 				})
 			});
 		}
+	};
+
+	/**
+	 * Normalizes the key predicates of a message's target using the sort order from the metadata,
+	 * including proper URI encoding, e.g. "(Sector='A%2FB%26C',ID='42')" or "('42')".
+	 *
+	 * @param {string} sTarget
+	 *   The message target
+	 * @returns {string}
+	 *   The normalized message target
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.normalizeMessageTarget = function (sTarget) {
+		var sCandidate,
+			bFailed,
+			sMetaPath = "",
+			that = this;
+
+		if (sTarget.includes("$uid=")) {
+			// target containing a transient path is ignored
+			return sTarget;
+		}
+		sCandidate = sTarget.split("/").map(function (sSegment) {
+			var sCollectionName,
+				iBracketIndex = sSegment.indexOf("("),
+				aParts,
+				mProperties,
+				oType;
+
+			/*
+			 * Normalizes the value for the given alias.
+			 * @param {string} sAlias
+			 *   The property name/alias
+			 * @returns {string|undefined}
+			 *   The normalized value
+			 */
+			function getNormalizedValue(sAlias) {
+				if (sAlias in mProperties) {
+					return encodeURIComponent(decodeURIComponent(mProperties[sAlias]));
+				}
+				bFailed = true;
+			}
+
+			if (iBracketIndex < 0) {
+				sMetaPath = _Helper.buildPath(sMetaPath, sSegment);
+				return sSegment;
+			}
+
+			sCollectionName = sSegment.slice(0, iBracketIndex);
+			sMetaPath = _Helper.buildPath(sMetaPath, sCollectionName);
+			mProperties = _Parser.parseKeyPredicate(sSegment.slice(iBracketIndex));
+
+			if ("" in mProperties) {
+				return sCollectionName + "(" + getNormalizedValue("") + ")";
+			}
+
+			// could be async, but normally in this state we should already have
+			// loaded the needed metadata
+			oType = that.oRequestor.fetchTypeForPath("/" + sMetaPath).getResult();
+
+			if (!(oType && oType.$Key)) {
+				bFailed = true;
+				return sSegment;
+			}
+
+			aParts = oType.$Key.map(function (sAlias) {
+				var sValue = getNormalizedValue(sAlias);
+
+				return oType.$Key.length > 1
+					? sAlias + "=" + sValue
+					: sValue;
+			});
+
+			return sCollectionName + "(" + aParts.join(",") + ")";
+		}).join("/");
+
+		return bFailed ? sTarget : sCandidate;
 	};
 
 	/**
