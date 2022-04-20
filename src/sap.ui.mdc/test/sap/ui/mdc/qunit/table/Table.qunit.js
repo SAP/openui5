@@ -4306,8 +4306,7 @@ sap.ui.define([
 		this.assertColumnDnD(assert);
 	});
 
-	// TODO: Either delete or update
-	/* QUnit.test("Avoid unnecessary update", function(assert) {
+	QUnit.test("Avoid unnecessary update", function(assert) {
 		var oTableInvalidationSpy = sinon.spy(this.oTable, "invalidate");
 		var oInnerTableInvalidationSpy = sinon.spy(this.oTable._oTable, "invalidate");
 
@@ -4333,7 +4332,7 @@ sap.ui.define([
 		assert.ok(aP13nButtons.every(function(oButton) {
 			return oToolbar.indexOfEnd(oButton) > -1;
 		}), "The p13n buttons are still in the toolbar");
-	}); */
+	});
 
 	QUnit.test("Current state", function(assert) {
 		var aSortConditions = [{
