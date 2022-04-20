@@ -4,13 +4,16 @@
 /* =================================== */
 
 @_sap_tnt_ToolHeader_Height: 2.75rem;
-@_sap_tnt_ToolHeader_Icon_Height: 0.75rem;
+@_sap_tnt_ToolHeader_IconHeight: 0.75rem;
 @_sap_tnt_ToolHeader_DisabledOpacity: @sapUiContentDisabledOpacity;
+@_sap_tnt_ToolHeader_ArrowHeight: 0.125rem;
+@_sap_tnt_ToolHeader_ArrowMargin: 0 -0.25rem;
+@_sap_tnt_ToolHeader_Padding: 0 0.75rem;
+@_sap_tnt_ToolHeader_ArrowMarginBottom: 0.25rem;
 
 .sapTntToolHeader {
 	&.sapMTB {
 		background-color: @sapUiShellColor;
-		box-shadow: inset 0 -0.0625rem 0 0 @sapUiShellBorderColor;
 	}
 
 	&.sapMTBStandard {
@@ -484,6 +487,7 @@ html.sap-desktop .sapTntToolHeader .sapMFocus > .sapMSFF::before {
 
 	.sapMITBHead .sapMITBFilter .sapMITBText + .sapMITBContentArrow {
 		height: 0.875rem;
+		margin: 0 -0.1875rem;
 	}
 }
 
@@ -600,7 +604,7 @@ html.sap-desktop .sapTntToolHeader {
 
 	.sapMObjStatus.sapMObjStatusInverted {
 		.sapMObjStatusIcon .sapUiIcon {
-			height: @_sap_tnt_ToolHeader_Icon_Height;
+			height: @_sap_tnt_ToolHeader_IconHeight;
 			vertical-align: text-top;
 		}
 		.sapMObjStatusText,
