@@ -3,6 +3,10 @@
 /* Base theme                              */
 /* ======================================= */
 
+@_sap_tnt_NavigationList_CollapsedWidth: 3rem;
+@_sap_tnt_NavigationList_IconColor: @sapUiContentIconColor;
+@_sap_tnt_NavigationList_IconFontSize: 1rem;
+@_sap_tnt_NavigationList_ExpandIconColor: @sapUiContentIconColor;
 @_sap_tnt_NavigationList_ItemHeight: 3rem;
 @_sap_tnt_NavigationList_NoIconsGroupPadding: 1rem;
 @_sap_tnt_NavigationList_NoIconsNestedItemPadding: 1rem;
@@ -49,8 +53,13 @@
 		color: @sapUiListTextColor;
 	}
 
-	.sapUiIcon {
-		color: @sapUiContentIconColor;
+	.sapTntNavLIGroupIcon {
+		color: @_sap_tnt_NavigationList_IconColor;
+		font-size: @_sap_tnt_NavigationList_IconFontSize;
+	}
+
+	.sapTntNavLIExpandIcon {
+		color: @_sap_tnt_NavigationList_ExpandIconColor;
 	}
 
 	a {
@@ -58,20 +67,15 @@
 		height: 100%;
 		text-decoration: none;
 		outline: none;
-
-		display: -webkit-box;
-		display: -webkit-flex;
 		display: flex;
-
-		-webkit-box-align: center;
-		-webkit-align-items: center;
 		align-items: center;
+		justify-content: center;
 	}
 }
 
 .sapTntNavLIText {
-	width: 100%;
-	display: block;
+	flex: 1;
+	min-width: 0;
 }
 
 .sapTntNavLIPopup .sapTntNavLIGroupItem .sapMText {
@@ -130,7 +134,7 @@
 }
 
 .sapTntNavLICollapsed {
-	width: 3rem;
+	width: @_sap_tnt_NavigationList_CollapsedWidth;
 }
 
 .sapTntNavLI li,
@@ -221,12 +225,11 @@
 .sapTntNavLI:not(.sapTntNavLINoIcons) {
 
 	span.sapTntNavLIGroupIcon {
-		min-width: 2.75rem;
-		padding: 0.6875rem 0;
+		width: @_sap_tnt_NavigationList_CollapsedWidth;
 	}
 
 	.sapTntNavLIGroupItem .sapMText {
-		padding-left: 2.75rem;
+		padding-left: @_sap_tnt_NavigationList_CollapsedWidth;
 	}
 }
 
@@ -275,8 +278,7 @@
 	.sapTntNavLI:not(.sapTntNavLINoIcons) {
 
 		span.sapTntNavLIGroupIcon {
-			min-width: 2.75rem;
-			padding: 0.5rem 0;
+			width: @_sap_tnt_NavigationList_CollapsedWidth;
 		}
 	}
 }

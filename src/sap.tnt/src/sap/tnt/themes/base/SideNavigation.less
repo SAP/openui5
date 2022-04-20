@@ -3,19 +3,15 @@
 /* Base theme                              */
 /* ======================================= */
 
+@_sap_tnt_SideNavigation_Width: 15rem;
+@_sap_tnt_SideNavigation_CollapsedWidth: 3rem;
 @_sap_tnt_SideNavigation_NavigationSeparatorBackgroundColor: @sapUiGroupContentBorderColor;
 @_sap_tnt_SideNavigation_NavigationSeparatorHeight: 1px;
+@_sap_tnt_SideNavigation_TriangleColor: @sapUiContentIconColor;
 
 .sapTntSideNavigation {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-direction: normal;
-  -webkit-box-orient: vertical;
-  -webkit-flex-direction: column;
   flex-direction: column;
-  -webkit-box-flex: 1;
-  -webkit-flex-grow: 1;
   flex-grow: 1;
   box-sizing: border-box;
   overflow: hidden;
@@ -24,11 +20,11 @@
 }
 
 .sapTntSideNavigation {
-  width: 15rem;
+  width: @_sap_tnt_SideNavigation_Width;
 }
 
 .sapTntSideNavigation.sapTntSideNavigationNotExpandedWidth {
-  width: 3rem;
+  width: @_sap_tnt_SideNavigation_CollapsedWidth;
 }
 
 .sapTntSideNavigationNotExpanded {
@@ -41,7 +37,7 @@
 	}
 
 	.sapTntSideNavigationFlexible {
-		padding-right: 3rem;
+		padding-right: @_sap_tnt_SideNavigation_CollapsedWidth;
 		width: 6rem;
 	}
 
@@ -50,7 +46,7 @@
 		width: 0;
 		height: 0;
 		border-left: 0.375rem solid transparent;
-		border-bottom: 0.375rem solid @sapUiContentIconColor;
+		border-bottom: 0.375rem solid @_sap_tnt_SideNavigation_TriangleColor;
 		position:absolute;
 		right: 0.1875rem;
 		bottom:0.125rem;
