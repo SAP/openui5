@@ -183,6 +183,8 @@ sap.ui.define([
 				"-webkit-user-modify": "read-write",
 				"-ms-user-modify": "read-write",
 				"user-modify": "read-write",
+				"user-select": "text",
+				"-webkit-user-select": "text",
 				"text-overflow": "clip",
 				"white-space": "nowrap"
 			});
