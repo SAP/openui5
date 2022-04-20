@@ -109,9 +109,8 @@ sap.ui.define([
 			name: sCompName
 		});
 
-		var oMetadata = this.oUiComponent.getMetadata();
-		var oConfig = (oMetadata) ? oMetadata.getConfig() : null;
-		var aFiles = oConfig && oConfig.sample && oConfig.sample.files;
+		var oConfig = this.oUiComponent.getManifestEntry("/sap.ui5/config") || {};
+		var aFiles = oConfig.sample && oConfig.sample.files;
 
 		oPostMessageBus.publish({
 			target: window.parent,

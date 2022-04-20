@@ -71,7 +71,7 @@ sap.ui.define([
 
 		var oTree = this.byId("tree");
 		oTree.destroyNodes();
-		createChildren(oTree, this.getMetadata().getConfig());
+		createChildren(oTree, this.getManifestEntry("/sap.ui5/config") || {});
 
 	};
 
