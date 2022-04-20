@@ -75,7 +75,7 @@
 					</tr>
 					<tr>
 						<td>measures</td>
-						<td><a href="#measureAndDimensionProperties">Measure[]</a></td>
+						<td><a href="#measureProperties">Measure[]</a></td>
 						<td></td>
 						<td>Yes</td>
 						<td>Definitions of all measures in the dataset.</td>
@@ -84,7 +84,7 @@
 					</tr>
 					<tr>
 						<td>dimensions</td>
-						<td><a href="#measureAndDimensionProperties">Dimension[]</a></td>
+						<td><a href="#dimensionProperties">Dimension[]</a></td>
 						<td></td>
 						<td>Yes</td>
 						<td>Definitions of all dimensions in the dataset.</td>
@@ -232,7 +232,7 @@
 				</table>
 			</div>
 
-			<h4 id="measureAndDimensionProperties">Measure and Dimension Properties</h4>
+			<h4 id="dimensionProperties">Dimension Properties</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -252,10 +252,18 @@
 						<td>1.62</td>
 					</tr>
 					<tr>
+						<td>displayValue</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Display value for the dimension. It doesn't work with 'waterfallType'</td>
+						<td>1.43.0</td>
+						<td>1.102</td>
+					</tr>
+					<tr>
 						<td>name</td>
 						<td>string</td>
 						<td>Yes</td>
-						<td>A name of the measure/dimension. It should be referenced later in the <code>feeds</code>.</td>
+						<td>A name of the dimension. It should be referenced later in the <code>feeds</code>.</td>
 						<td>1.36.0</td>
 						<td>1.95</td>
 					</tr>
@@ -278,7 +286,62 @@
 						<td>
 							This property is deprecated. Use <code>name</code> instead.
 							<br>
-							Name of the measure/dimension. This value will be used as label for the corresponding axis.
+							Name of the dimension. This value will be used as label for the corresponding axis.
+						</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+				</table>
+			</div>
+
+
+			<h4 id="measureProperties">Measure Properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>Value of the field.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>A name of the measure. It should be referenced later in the <code>feeds</code>.</td>
+						<td>1.36.0</td>
+						<td>1.95</td>
+					</tr>
+				</table>
+
+				<p>Deprecated properties</p>
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>
+							This property is deprecated. Use <code>name</code> instead.
+							<br>
+							Name of the measure. This value will be used as label for the corresponding axis.
 						</td>
 						<td>1.14.0</td>
 						<td>1.62</td>

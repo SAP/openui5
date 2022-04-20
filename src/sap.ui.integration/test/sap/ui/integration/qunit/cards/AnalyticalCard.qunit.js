@@ -70,6 +70,7 @@ sap.ui.define([
 						"legendVisible": true,
 						"list": [{
 								"Week": "CW14",
+								"WeekDisplay": "Week 14",
 								"Revenue": 431000.22,
 								"Cost": 230000.00,
 								"Cost1": 24800.63,
@@ -80,6 +81,7 @@ sap.ui.define([
 							},
 							{
 								"Week": "CW15",
+								"WeekDisplay": "Week 15",
 								"Revenue": 494000.30,
 								"Cost": 238000.00,
 								"Cost1": 99200.39,
@@ -90,6 +92,7 @@ sap.ui.define([
 							},
 							{
 								"Week": "CW16",
+								"WeekDisplay": "Week 16",
 								"Revenue": 491000.17,
 								"Cost": 221000.00,
 								"Cost1": 70200.54,
@@ -100,6 +103,7 @@ sap.ui.define([
 							},
 							{
 								"Week": "CW17",
+								"WeekDisplay": "Week 17",
 								"Revenue": 536000.34,
 								"Cost": 280000.00,
 								"Cost1": 158800.73,
@@ -110,6 +114,7 @@ sap.ui.define([
 							},
 							{
 								"Week": "CW18",
+								"WeekDisplay": "Week 18",
 								"Revenue": 675000.00,
 								"Cost": 230000.00,
 								"Cost1": 140000.91,
@@ -120,6 +125,7 @@ sap.ui.define([
 							},
 							{
 								"Week": "CW19",
+								"WeekDisplay": "Week 19",
 								"Revenue": 680000.00,
 								"Cost": 250000.00,
 								"Cost1": 172800.15,
@@ -130,6 +136,7 @@ sap.ui.define([
 							},
 							{
 								"Week": "CW20",
+								"WeekDisplay": "Week 20",
 								"Revenue": 659000.14,
 								"Cost": 325000.00,
 								"Cost1": 237200.74,
@@ -143,7 +150,8 @@ sap.ui.define([
 				},
 				"dimensions": [{
 					"label": "Weeks",
-					"value": "{Week}"
+					"value": "{Week}",
+					"displayValue": "{WeekDisplay}"
 				}],
 				"measures": [{
 						"label": "{measures/revenueLabel}",
@@ -173,6 +181,7 @@ sap.ui.define([
 					"legendVisible": true,
 					"list": [{
 							"Week": "CW14",
+							"WeekDisplay": "Week 14",
 							"Revenue": 431000.22,
 							"Cost": 230000.00,
 							"Cost1": 24800.63,
@@ -183,6 +192,7 @@ sap.ui.define([
 						},
 						{
 							"Week": "CW15",
+							"WeekDisplay": "Week 15",
 							"Revenue": 494000.30,
 							"Cost": 238000.00,
 							"Cost1": 99200.39,
@@ -193,6 +203,7 @@ sap.ui.define([
 						},
 						{
 							"Week": "CW16",
+							"WeekDisplay": "Week 16",
 							"Revenue": 491000.17,
 							"Cost": 221000.00,
 							"Cost1": 70200.54,
@@ -203,6 +214,7 @@ sap.ui.define([
 						},
 						{
 							"Week": "CW17",
+							"WeekDisplay": "Week 17",
 							"Revenue": 536000.34,
 							"Cost": 280000.00,
 							"Cost1": 158800.73,
@@ -213,6 +225,7 @@ sap.ui.define([
 						},
 						{
 							"Week": "CW18",
+							"WeekDisplay": "Week 18",
 							"Revenue": 675000.00,
 							"Cost": 230000.00,
 							"Cost1": 140000.91,
@@ -223,6 +236,7 @@ sap.ui.define([
 						},
 						{
 							"Week": "CW19",
+							"WeekDisplay": "Week 19",
 							"Revenue": 680000.00,
 							"Cost": 250000.00,
 							"Cost1": 172800.15,
@@ -233,6 +247,7 @@ sap.ui.define([
 						},
 						{
 							"Week": "CW20",
+							"WeekDisplay": "Week 20",
 							"Revenue": 659000.14,
 							"Cost": 325000.00,
 							"Cost1": 237200.74,
@@ -283,7 +298,8 @@ sap.ui.define([
 				"dimensionAxis": "categoryAxis",
 				"dimensions": [{
 					"label": "Weeks",
-					"value": "{Week}"
+					"value": "{Week}",
+					"displayValue": "{WeekDisplay}"
 				}],
 				"measures": [{
 						"label": "{measures/revenueLabel}",
@@ -777,8 +793,9 @@ sap.ui.define([
 
 		oCard.attachEvent("_ready", function () {
 			var oContent = oCard.getAggregation("_content"),
-				oChart = oContent.getAggregation("_content");
-			var oVizProperites = oChart.getVizProperties();
+				oChart = oContent.getAggregation("_content"),
+				oVizProperites = oChart.getVizProperties(),
+				oDataset = oChart.getDataset();
 			Core.applyChanges();
 
 			assert.ok(oContent, "Analytical Card content form manifest should be set");
@@ -803,6 +820,11 @@ sap.ui.define([
 			assert.deepEqual(oChart.getFeeds()[0].getProperty("values"), ["Revenue", "Costs"], "Measures values should be set using binding");
 			assert.deepEqual(oChart.getFeeds()[1].getProperty("values"), ["Weeks"], "Dimensions values should be set using binding");
 			assert.ok(oChart.getFeeds()[0].getProperty("values").indexOf("Costs") > 0, "Chart should have a feed item with value Costs of it seeds labels");
+
+			// test dataset
+			assert.strictEqual(oDataset.getDimensions()[0].getBindingInfo("value").binding.getPath(), "Week", "Dimension has expected value.");
+			assert.strictEqual(oDataset.getDimensions()[0].getBindingInfo("displayValue").binding.getPath(), "WeekDisplay", "Dimension has expected displayValue.");
+
 			done();
 		});
 
