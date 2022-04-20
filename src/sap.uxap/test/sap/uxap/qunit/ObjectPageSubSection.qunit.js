@@ -12,12 +12,13 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/BlockBase",
 	"sap/uxap/ObjectPageLayout",
+	"sap/uxap/library",
 	"sap/m/App",
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/Panel",
 	"sap/m/Text"],
-function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, App, Button, Label, Panel, Text) {
+function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -1374,9 +1375,9 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
-				iOffsetTop = oSubSection.$().position().top,
+				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
-				iSubSectionHeight = Math.round(oSubSection.$().outerHeight());
+				iSubSectionHeight = Math.round(oSubSection.$().outerHeight() + parseInt(oSection.$().css("marginTop")));
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
 			done();
 		}, this);
@@ -1401,9 +1402,9 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
-				iOffsetTop = oSubSection.$().position().top,
+				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
-				iSubSectionHeight = Math.round(oSubSection.$().outerHeight());
+				iSubSectionHeight = Math.round(oSubSection.$().outerHeight() + parseInt(oSection.$().css("marginTop")));
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
 			done();
 		}, this);
@@ -1432,9 +1433,9 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
-				iOffsetTop = oSubSection.$().position().top,
+				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop),
-				iSubSectionHeight = Math.round(oSubSection.$().outerHeight());
+				iSubSectionHeight = Math.round(oSubSection.$().outerHeight() + parseInt(oSection.$().css("marginTop")));
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
 			done();
 		}, this);
@@ -1454,13 +1455,13 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			//check
 			var iViewportHeight = oPage._getScrollableViewportHeight(false),
-				iOffsetTop = oSubSection.$().position().top,
+				iOffsetTop = library.Utilities.getChildPosition(oSubSection.$(), oPage._$contentContainer).top,
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop);
 
 			oSubSection.getDomRef().style.paddingTop = "20px";
 			oPage._requestAdjustLayout(true);
 			// check height
-			assert.strictEqual(oSubSection.getDomRef().offsetHeight, iExpectedSubSectionHeight, "correct height");
+			assert.strictEqual(oSubSection.getDomRef().offsetHeight + parseInt(oSection.$().css("marginTop")), iExpectedSubSectionHeight, "correct height");
 			done();
 
 		}, this);

@@ -7,6 +7,7 @@ sap.ui.define([
     "./ObjectPageSectionBase",
     "sap/ui/Device",
     "sap/m/Button",
+	"sap/ui/core/ResizeHandler",
     "sap/ui/core/StashedControlSupport",
     "./ObjectPageSubSection",
     "./library",
@@ -16,6 +17,7 @@ sap.ui.define([
 	ObjectPageSectionBase,
 	Device,
 	Button,
+	ResizeHandler,
 	StashedControlSupport,
 	ObjectPageSubSection,
 	library,
@@ -128,10 +130,20 @@ sap.ui.define([
 	ObjectPageSection.prototype.init = function () {
 		ObjectPageSectionBase.prototype.init.call(this);
 		this._sContainerSelector = ".sapUxAPObjectPageSectionContainer";
+		this._onResizeRef = this._onResize.bind(this);
 	};
 
 	ObjectPageSection.prototype.exit = function () {
 		this._detachMediaContainerWidthChange(this._updateImportance, this);
+
+		if (this._iResizeHandlerId) {
+			ResizeHandler.deregister(this._iResizeHandlerId);
+			this._iResizeHandlerId = null;
+		}
+	};
+
+	ObjectPageSection.prototype._onResize = function () {
+		this._updateMultilineContent();
 	};
 
 	ObjectPageSection.prototype._getImportanceLevelToHide = function (oCurrentMedia) {
@@ -159,6 +171,37 @@ sap.ui.define([
 
 		if (oObjectPage && this.getDomRef()) {
 			oObjectPage._requestAdjustLayout();
+		}
+	};
+
+	ObjectPageSection.prototype._updateMultilineContent = function () {
+		var aSubSections = this.getSubSections(),
+			oFirstSubSection = aSubSections.find(function(oSubSection) {
+				return oSubSection.getVisible();
+			});
+
+		if (oFirstSubSection && oFirstSubSection.getDomRef()) {
+			var sTitleDomId = oFirstSubSection._getTitleDomId(),
+				iTitleWidth,
+				iActionsWidth,
+				iHeaderWidth,
+				bMultiLine,
+				oFirstSubSectionTitle;
+
+				// When there are more than one SubSections with no title, sTitleDomId=false.
+				// However, we are not interested in this case anyway, as there is no promoted SubSection
+				if (!sTitleDomId) {
+					return;
+				}
+
+				oFirstSubSectionTitle = document.getElementById(oFirstSubSection._getTitleDomId());
+				// Title is hidden for the first SubSection of the first Section
+				iTitleWidth = oFirstSubSectionTitle ? oFirstSubSectionTitle.offsetWidth : 0;
+				iActionsWidth = this.$().find(".sapUxAPObjectPageSubSectionHeaderActions").width();
+				iHeaderWidth = this.$("header").width();
+				bMultiLine = (iTitleWidth + iActionsWidth) > iHeaderWidth;
+
+			oFirstSubSection._toggleMultiLineSectionContent(bMultiLine);
 		}
 	};
 
@@ -194,7 +237,9 @@ sap.ui.define([
 	};
 
 	ObjectPageSection.prototype.onAfterRendering = function () {
+		this._updateMultilineContent();
 		this._attachMediaContainerWidthChange(this._updateImportance, this);
+		this._iResizeHandlerId = ResizeHandler.register(this, this._onResizeRef);
 	};
 
 	/**
