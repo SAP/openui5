@@ -188,7 +188,8 @@ sap.ui.define([
 				close: {
 					parameters: {}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/fiori/designtime/NotificationListItem.designtime"
 		}
 	});
 

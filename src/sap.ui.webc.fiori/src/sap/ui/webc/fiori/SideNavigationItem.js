@@ -98,7 +98,8 @@ sap.ui.define([
 					type: "sap.ui.webc.fiori.ISideNavigationSubItem",
 					multiple: true
 				}
-			}
+			},
+			designtime: "sap/ui/webc/fiori/designtime/SideNavigationItem.designtime"
 		}
 	});
 

@@ -109,7 +109,8 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/fiori/designtime/SideNavigation.designtime"
 		}
 	});
 
