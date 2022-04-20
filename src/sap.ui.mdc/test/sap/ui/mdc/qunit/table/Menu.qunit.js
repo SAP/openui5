@@ -5,14 +5,17 @@ sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/Column",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/m/plugins/ColumnResizer"
 ], function(
 	MDCQUnitUtils,
 	Core,
 	Table,
 	GridTableType,
 	Column,
-	Text) {
+	Text,
+	ColumnResizer
+) {
 	"use strict";
 
 	var sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
@@ -186,14 +189,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Responsive table - Resize on touch devices", function(assert) {
-		var oTable = this.oTable,
-			oInnerColumn, oMatchMediaStub;
+		var oTable = this.oTable;
+		var oInnerColumn;
 
 		return oTable._fullyInitialized().then(function () {
-			oMatchMediaStub = sinon.stub(window, "matchMedia");
-			oMatchMediaStub.withArgs("(hover:none)").returns({
-				matches: true
-			});
+			sinon.stub(ColumnResizer, "_isInTouchMode").returns(true);
 			oInnerColumn = oTable._oTable.getColumns()[0];
 			oTable._oTable.fireEvent("columnPress", {
 				column: oInnerColumn
@@ -209,7 +209,7 @@ sap.ui.define([
 			oQuickAction.getContent()[0].firePress();
 			assert.ok(fnResizeSpy.calledOnce, "Resizing started");
 
-			oMatchMediaStub.restore();
+			ColumnResizer._isInTouchMode.restore();
 		});
 	});
 

@@ -34,6 +34,7 @@ sap.ui.define([
 	"../util/createAppEnvironment",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/m/plugins/DataStateIndicator",
+	"sap/m/plugins/ColumnResizer",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/theming/Parameters",
@@ -72,6 +73,7 @@ sap.ui.define([
 	createAppEnvironment,
 	ControlPersonalizationWriteAPI,
 	DataStateIndicator,
+	ColumnResizer,
 	Message,
 	ODataModel,
 	ThemeParameters,
@@ -4730,8 +4732,7 @@ sap.ui.define([
 	QUnit.test("Enable/Disable column resize with ResponsiveTable", function(assert) {
 		var oTable = this.oTable;
 
-		sinon.stub(window, "matchMedia");
-		window.matchMedia.withArgs("(hover:none)").returns({matches: true});
+		sinon.stub(ColumnResizer, "_isInTouchMode").returns(true);
 		oTable.setType("ResponsiveTable");
 		Core.applyChanges();
 
@@ -4758,7 +4759,7 @@ sap.ui.define([
 			});
 			assert.ok(oColumnResizerButton, "Column resize button found in column menu");
 		}).finally(function() {
-			window.matchMedia.restore();
+			ColumnResizer._isInTouchMode.restore();
 		});
 	});
 
