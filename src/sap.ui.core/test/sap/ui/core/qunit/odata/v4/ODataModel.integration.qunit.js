@@ -39266,4 +39266,80 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel);
 	});
+
+	//*********************************************************************************************
+	// Scenario: Main & dependent detail table. Create inactive rows for the detail table.
+	// Deleting the parent contexts works although there are inactive rows in dependent binding.
+	// JIRA: CPOUI5ODATAV4-1468
+	QUnit.test("delete parent context, inactive rows are in dependent binding", function (assert) {
+		var oContext,
+			oDetailTable,
+			oDetailBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="mainTable" items="{/SalesOrderList}">\
+	<Text id="salesOrderId" text="{SalesOrderID}"/>\
+</Table>\
+<Table id="detailTable" items="{path: \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+	<Text id="itemPosition" text="{ItemPosition}"/>\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+			value : [{
+				SalesOrderID : "42"
+			}]
+		})
+			.expectChange("salesOrderId", ["42"])
+			.expectChange("itemPosition", [])
+			.expectChange("note", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oContext = that.oView.byId("mainTable").getItems()[0].getBindingContext();
+			oDetailTable = that.oView.byId("detailTable");
+
+			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM?"
+					+ "$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					SalesOrderID : "42",
+					ItemPosition : "1",
+					Note : "Foohoo"
+				}]
+			})
+				.expectChange("itemPosition", ["1"])
+				.expectChange("note", ["Foohoo"]);
+
+			oDetailTable.setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oDetailBinding = oDetailTable.getBinding("items");
+
+			that.expectChange("itemPosition", [, "", ""])
+				.expectChange("note", [, "First", "Second"]);
+
+			oDetailBinding.create({Note : "First"}, true, true, true);
+			oDetailBinding.create({Note : "Second"}, true, true, true);
+
+			assert.deepEqual(oDetailBinding.getCurrentContexts().length, 3);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('42')"
+				})
+				.expectChange("salesOrderId", []);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("mainTable").getBinding("items").getCurrentContexts()[0].delete(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oContext.oBinding, undefined);
+			assert.deepEqual(oDetailBinding.getCurrentContexts(), []);
+		});
+	});
 });
