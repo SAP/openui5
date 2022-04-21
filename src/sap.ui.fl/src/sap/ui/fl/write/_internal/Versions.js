@@ -46,7 +46,7 @@ sap.ui.define([
 		return Utils.getUShellService("URLParsing")
 			.then(function (oURLParsingService) {
 				var sPersistedBasisForDisplayedVersion = Utils.getParameter(
-					Version.Number.UrlParameter,
+					Version.UrlParameter,
 					oURLParsingService
 				);
 				if (!sPersistedBasisForDisplayedVersion) {
