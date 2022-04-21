@@ -40,7 +40,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', "sap/base/util/UriParame
 			this._sType = sType;
 			this._sLocalOrigin = window.location.protocol + "//" + window.location.host;
 
-			var fHandler = jQuery.proxy(this._receiveEvent, this);
+			var fHandler = this._receiveEvent.bind(this);
 			if (window.addEventListener) {
 				window.addEventListener("message", fHandler, false);
 			} else {

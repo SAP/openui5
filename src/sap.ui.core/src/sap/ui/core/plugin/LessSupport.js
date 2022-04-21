@@ -100,8 +100,8 @@
 				this.bActive = true;
 
 				// overwrite the includeLibraryTheme/applyTheme function to inject LESS
-				this.oCore.includeLibraryTheme = jQuery.proxy(this.includeLibraryTheme, this);
-				this.oCore.applyTheme = jQuery.proxy(this.applyTheme, this);
+				this.oCore.includeLibraryTheme = this.includeLibraryTheme.bind(this);
+				this.oCore.applyTheme = this.applyTheme.bind(this);
 
 				// update the themes (only when LESS files are newer than the CSS files)
 				var that = this, bUseLess = false;

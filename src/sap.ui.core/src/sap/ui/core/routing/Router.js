@@ -293,7 +293,7 @@ sap.ui.define([
 					that.addRoute(oRouteConfig);
 				});
 
-				this._oRouter.bypassed.add(jQuery.proxy(this._onBypassed, this));
+				this._oRouter.bypassed.add(this._onBypassed.bind(this));
 
 				if (!oRouterHashChanger) {
 					oRouterHashChanger = HashChanger.getInstance().createRouterHashChanger();
