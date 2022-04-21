@@ -191,6 +191,12 @@ sap.ui.define([
 	/**
 	 * Provides an initial condition configuration everytime a value help content is shown.
 	 *
+	 * <b>Note:</b> Make sure to provide the type information to the corresponding properties of
+	 * the {@link sap.ui.mdc.filterbar.vh.FilterBar FilterBar}.
+	 *
+	 * <b>Note:</b> Be aware that setting the condition for the search field or type-ahead could
+	 * lead to unwanted side effects.
+	 *
 	 * @param {object} oPayload Payload for delegate
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent ValueHelp content requesting conditions configuration
 	 * @param {sap.ui.core.Control} oControl Instance of the calling control

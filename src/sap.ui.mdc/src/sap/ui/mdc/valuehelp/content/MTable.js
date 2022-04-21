@@ -150,7 +150,7 @@ sap.ui.define([
 
 		var sFilterFields = this.getFilterFields();
 		var oFilterBar = this._getPriorityFilterBar();
-		var oConditions = oFilterBar ? oFilterBar.getInternalConditions() : this._oInitialFilterConditions;
+		var oConditions = oFilterBar ? oFilterBar.getInternalConditions() : this._oInitialFilterConditions || {};
 
 		if (!oFilterBar && sFieldSearch && sFilterFields && sFilterFields !== "$search") {
 			// add condition for Search value
