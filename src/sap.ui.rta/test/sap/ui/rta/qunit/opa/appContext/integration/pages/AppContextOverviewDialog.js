@@ -82,7 +82,7 @@ sap.ui.define([
 						},
 						success: function (aAncestors) {
 							var oAncestor = aAncestors[0];
-							this.waitFor({
+							return this.waitFor({
 								controlType: "sap.m.MenuButton",
 								matchers: new sap.ui.test.matchers.Ancestor(oAncestor),
 								success: function () {
