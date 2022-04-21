@@ -3,25 +3,46 @@ sap.ui.define([
 ], function (elementActionTest) {
 	'use strict';
 
-	// Remove and reveal actions
-	var fnConfirmUCIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
-		assert.strictEqual(oViewAfterAction.byId("uc").getVisible(), false, "then the Upload Collection element is invisible");
+	var fnConfirmUCIPositionIs = function (iIndex) {
+		return function (oUiComponent, oViewAfterAction, assert) {
+			var oItem = oViewAfterAction.byId("uci1");
+			assert.strictEqual(oViewAfterAction.byId("uc").indexOfItem(oItem), iIndex, "The item is moved to the correct position");
+		};
 	};
 
-	var fnConfirmUCIsVisible = function (oUiComponent, oViewAfterAction, assert) {
-		assert.strictEqual(oViewAfterAction.byId("uc").getVisible(), true, "then the Upload Collection Item element is visible");
-	};
-
-	elementActionTest("Checking the remove action for Upload Collection", {
+	elementActionTest("Checking the move action for Upload Collection items", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:wc="sap.ui.webc.fiori">"' +
-			'<wc:UploadCollection id="uc" />' +
+			'<wc:UploadCollection id="uc">' +
+			' <wc:items>' +
+			'	<wc:UploadCollectionItem id="uci1" />' +
+			'	<wc:UploadCollectionItem id="uci2" />' +
+			' </wc:items>' +
+			'</wc:UploadCollection>' +
 			'</mvc:View>',
 		action: {
-			name: "remove",
-			controlId: "uc"
+			name: "move",
+			controlId: "uc",
+			parameter: function (oView) {
+				return {
+					movedElements: [{
+						element: oView.byId("uci1"),
+						sourceIndex: 0,
+						targetIndex: 1
+					}],
+					source: {
+						aggregation: "items",
+						parent: oView.byId("uc")
+					},
+					target: {
+						aggregation: "items",
+						parent: oView.byId("uc")
+					}
+				};
+			}
 		},
-		afterAction: fnConfirmUCIsInvisible,
-		afterUndo: fnConfirmUCIsVisible,
-		afterRedo: fnConfirmUCIsInvisible
+		afterAction: fnConfirmUCIPositionIs(1),
+		afterUndo: fnConfirmUCIPositionIs(0),
+		afterRedo: fnConfirmUCIPositionIs(1)
 	});
+
 });

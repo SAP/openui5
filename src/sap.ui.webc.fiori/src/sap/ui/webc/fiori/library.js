@@ -112,8 +112,10 @@ sap.ui.define([
 					"sap.ui.webc.fiori.SideNavigationSubItem": "sap/ui/webc/fiori/flexibility/SideNavigationSubItem",
 					"sap.ui.webc.fiori.UploadCollection": {
 						"hideControl": "default",
-						"unhideControl": "default"
-					}
+						"unhideControl": "default",
+						"moveControls": "default"
+					},
+					"sap.ui.webc.fiori.UploadCollectionItem": "sap/ui/webc/fiori/flexibility/UploadCollectionItem"
 				}
 			}
 		});
