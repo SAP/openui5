@@ -106,6 +106,12 @@ sap.ui.define([
 		return this;
 	};
 
+	FieldValueHelpMdcTableWrapper.prototype.fieldHelpClose = function() {
+		this._bSearchTriggered = false;
+		FieldValueHelpTableWrapperBase.prototype.fieldHelpClose.apply(this, arguments);
+		return this;
+	};
+
 
 	/*
 	* Provides a table wrapper class for dealing with specifics of mdc.tables inner table whenever the wrappers table aggregation or a given mdc.tables _content aggregation receive a new table.
