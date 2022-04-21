@@ -794,16 +794,14 @@ function(
 		QUnit.test("when it is called without fragment", function (assert) {
 			return JsControlTreeModifier.instantiateFragment(undefined, this.sNamespace, this.oXmlView)
 				.catch(function (vError) {
-					assert.ok(vError.message.indexOf("Document is empty") > -1,
-						"then an exception is thrown");
+					assert.ok(!!vError.message, "then an exception is thrown");
 				});
 		});
 		QUnit.test("when it is called without view", function (assert) {
 			var sFragment = "<core:FragmentDefinition xmlns:core='sap.ui.core' xmlns='sap.m'></core:FragmentDefinition>";
 			return JsControlTreeModifier.instantiateFragment(sFragment, this.sNamespace, undefined)
 				.catch(function (vError) {
-					assert.ok(vError.message.indexOf("Cannot read properties of undefined") > -1,
-						"then an exception is thrown");
+					assert.ok(!!vError.message, "then an exception is thrown");
 				});
 		});
 	});
