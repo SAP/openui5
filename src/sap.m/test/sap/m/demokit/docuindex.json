@@ -1229,6 +1229,15 @@
 			]
 		},
 		{
+		"id": "sap.m.p13n.Engine",
+			"name": "p13n Engine",
+			"category": "Popup",
+			"since": "1.104",
+			"samples": [
+				"sap.m.sample.p13n.Engine"
+			]
+		},
+		{
 		  "id": "sap.m.P13nDialog",
 		  "name": "Personalization Dialog",
 		  "category": "Popup",
@@ -2551,6 +2560,11 @@
 			"id": "sap.m.sample.p13n.Popup",
 			"name": "p13n.Popup usage",
 			"description": "Dialog with sap.m.p13n/* Panels"
+		},
+		{
+			"id": "sap.m.sample.p13n.Engine",
+			"name": "p13n.Engine usage",
+			"description": "Personalization Engine usage with a responsive Table"
 		},
 		{
 		  "id": "sap.m.sample.P13nDialog",
