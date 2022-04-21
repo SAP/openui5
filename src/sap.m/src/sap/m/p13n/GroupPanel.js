@@ -133,12 +133,23 @@ sap.ui.define([
 		});
 	};
 
-	GroupPanel.prototype._selectKey = function(oEvt) {
+	GroupPanel.prototype._getPlaceholderText = function () {
+		return this._getResourceText("p13n.GROUP_PLACEHOLDER");
+	};
+
+	GroupPanel.prototype._getRemoveButtonTooltipText = function () {
+		return this._getResourceText("p13n.GROUP_REMOVEICONTOOLTIP");
+	};
+
+	GroupPanel.prototype._selectKey = function(oComboBox) {
 		QueryPanel.prototype._selectKey.apply(this, arguments);
+
 		//Enable CheckBox
-		var oListItem = oEvt.getSource().getParent().getParent();
-		var sNewKey = oEvt.getParameter("selectedItem").getKey();
-		oListItem.getContent()[0].getContent()[1].getItems()[0].setEnabled(sNewKey !== this.NONE_KEY);
+		var oListItem = oComboBox.getParent().getParent();
+		var sNewKey = oComboBox.getSelectedKey();
+		var aContent = oListItem.getContent()[0].getContent();
+
+		aContent[1].getItems()[0].setEnabled(!!sNewKey);
 	};
 
 	return GroupPanel;

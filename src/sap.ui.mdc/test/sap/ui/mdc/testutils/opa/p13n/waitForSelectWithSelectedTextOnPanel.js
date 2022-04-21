@@ -12,15 +12,18 @@ sap.ui.define([
 
         oSettings = oSettings || {};
 
-        oSettings.errorMessage = oSettings.errorMessage || "No sap.m.Select with selected text '" + sSelectedItemText + "' found";
+        oSettings.errorMessage = oSettings.errorMessage || "No sap.m.ComboBox with selected text '" + sSelectedItemText + "' found";
 
         var oMatcher = new Matcher();
         oMatcher.isMatching = function(oControl) {
+            if (!oControl.getSelectedItem()) {
+                return sSelectedItemText === "";
+            }
             return oControl.getSelectedItem().getText() === sSelectedItemText;
         };
 
         return this.waitFor({
-            controlType: "sap.m.Select",
+            controlType: "sap.m.ComboBox",
             matchers: [
                 oMatcher,
                 new Ancestor(oPanel, false)

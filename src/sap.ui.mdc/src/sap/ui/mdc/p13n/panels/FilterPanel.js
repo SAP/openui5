@@ -3,10 +3,12 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    "sap/m/p13n/QueryPanel", "sap/m/VBox", "sap/m/Text", "sap/ui/layout/Grid", "sap/ui/layout/GridData", "sap/m/Button", "sap/m/ComboBox", 'sap/base/util/merge'
+    "sap/m/p13n/QueryPanel", "sap/m/VBox", "sap/m/Text", "sap/ui/layout/Grid", "sap/ui/layout/GridData", "sap/m/Button", "sap/m/ComboBox", "sap/ui/core/library"
 
-], function (QueryPanel, VBox, Text, Grid, GridData, Button, ComboBox, merge) {
+], function (QueryPanel, VBox, Text, Grid, GridData, Button, ComboBox, coreLibrary) {
     "use strict";
+
+    var ValueState = coreLibrary.ValueState;
 
     var FilterPanel = QueryPanel.extend("sap.ui.mdc.p13n.panels.FilterPanel", {
         metadata: {
@@ -52,17 +54,38 @@ sap.ui.define([
         }).addStyleClass("sapUiTinyMargin");
     };
 
+    FilterPanel.prototype._getPlaceholderText = function () {
+        return this._getResourceText("p13n.FILTER_PLACEHOLDER");
+	};
+
+	FilterPanel.prototype._getRemoveButtonTooltipText = function () {
+		return this._getResourceText("p13n.FILTER_REMOVEICONTOOLTIP");
+	};
+
 	FilterPanel.prototype._createKeySelect = function (sKey) {
 
-        var oKeySelect = new ComboBox({
+        var oComboBox = new ComboBox({
 			width: "100%",
 			items: this._getAvailableItems(),
-			placeholder: "Select Filter",
-			selectionChange: this._selectKey.bind(this)
+			placeholder: this._getPlaceholderText(),
+			selectionChange: function(oEvt) {
+                var oComboBox = oEvt.getSource();
+                this._selectKey(oComboBox);
+            }.bind(this),
+            change: function(oEvt) {
+				var oComboBox = oEvt.getSource();
+				var newValue = oEvt.getParameter("newValue");
+                oComboBox.setValueState( newValue && !oComboBox.getSelectedItem() ? ValueState.Error : ValueState.None);
+			}
 		});
 
-        return oKeySelect;
+        oComboBox.onsapenter = function(oEvt) {
+            this._selectKey();
+        }.bind(this);
+
+        return oComboBox;
 	};
+
 
 	FilterPanel.prototype._getAvailableItems = function (sKey) {
         var aItems = QueryPanel.prototype._getAvailableItems.apply(this, arguments);
@@ -82,22 +105,23 @@ sap.ui.define([
         this._selectKey();
     };
 
-    FilterPanel.prototype._selectKey = function(oEvt) {
+    FilterPanel.prototype._selectKey = function(oComboBox) {
         var oQueryRowGrid, sKey;
-        if (oEvt) {
-            this._oEvt = merge({}, oEvt);
-            oQueryRowGrid = oEvt.oSource.getParent();
-            sKey = oEvt.oSource.getSelectedKey();
+        if (oComboBox) {
+            this._oComboBox = oComboBox;
+            oQueryRowGrid = oComboBox.getParent();
+            sKey = oComboBox.getSelectedKey();
+
             oQueryRowGrid.getContent()[1].setEnabled(!!sKey);
-        } else if (this._oEvt) {
-            oEvt = this._oEvt;
-            oQueryRowGrid = oEvt.oSource.getParent();
-            sKey = oEvt.oSource.getSelectedKey();
+        } else if (this._oComboBox) {
+            oComboBox = this._oComboBox;
+            oQueryRowGrid = oComboBox.getParent();
+            sKey = oComboBox.getSelectedKey();
 
             if (sKey) {
-                QueryPanel.prototype._selectKey.call(this, oEvt);
+                QueryPanel.prototype._selectKey.call(this, oComboBox);
 
-                var sText = sKey ? oEvt.getParameter("selectedItem").getText() : "";
+                var sText = sKey ? oComboBox.getSelectedItem().getText() : "";
 
                 var oSelect = oQueryRowGrid.getContent()[0];
                 oQueryRowGrid.removeContent(oSelect);
@@ -118,7 +142,7 @@ sap.ui.define([
                 var oFilterField = this._createFactoryControl({name: sKey});
                 oQueryRowGrid.insertContent(oFilterField, 1);
             }
-            delete this._oEvt;
+            delete this._oComboBox;
         }
     };
 

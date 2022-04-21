@@ -258,7 +258,7 @@ sap.ui.define([
 		When.iSwitchToP13nTab("Sort");
 
 		//open select (empty) select control in sort panel and select 'Country'
-		When.iClickOnP13nSelect("$_none");
+		When.iClickOnP13nSelect("");
 		When.iSelectP13nMenuItem("Price (average)");
 
 		When.iPressDialogOk();

@@ -49,7 +49,7 @@ sap.ui.define([
 		assert.equal(this.oGroupPanel._oListControl.getItems().length, 3, "two initial rows + 1 empty row created");
 		assert.equal(this.oGroupPanel._oListControl.getItems()[0].getContent()[0].getContent()[0].getSelectedKey(), "key1", "correct key set");
 		assert.equal(this.oGroupPanel._oListControl.getItems()[1].getContent()[0].getContent()[0].getSelectedKey(), "key2", "correct key set");
-		assert.equal(this.oGroupPanel._oListControl.getItems()[2].getContent()[0].getContent()[0].getSelectedKey(), "$_none", "correct key set");
+		assert.equal(this.oGroupPanel._oListControl.getItems()[2].getContent()[0].getContent()[0].getSelectedKey(), "", "correct key set");
 	});
 
 	QUnit.test("Check 'showIfGrouped' toggle'", function(assert){

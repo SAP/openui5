@@ -258,13 +258,13 @@ sap.ui.define([
 			vItems.forEach(function (oItem) {
 				this.waitFor({
 					searchOpenDialogs: true,
-					controlType: "sap.ui.core.Item",
+					controlType: "sap.m.StandardListItem",
 					matchers: {
 						ancestor: {
-							controlType: "sap.m.Select"
+							controlType: "sap.m.ComboBox"
 						},
 						properties: {
-							text: oItem.p13nItem
+							title: oItem.p13nItem
 						}
 					},
 					success: function (aItems) {
@@ -278,7 +278,7 @@ sap.ui.define([
 			vItems.forEach(function (oItem, iIndex) {
 				this.waitFor({
 					searchOpenDialogs: true,
-					controlType: "sap.m.Select",
+					controlType: "sap.m.ComboBox",
 					matchers: {
 						ancestor: {
 							controlType: "sap.m.CustomListItem"

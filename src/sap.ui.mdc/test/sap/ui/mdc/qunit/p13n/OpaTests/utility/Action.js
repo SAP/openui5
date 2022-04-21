@@ -308,7 +308,7 @@ sap.ui.define([
 		},
 		iClickOnP13nSelect: function (sName) {
 			return this.waitFor({
-				controlType: "sap.m.Select",
+				controlType: "sap.m.ComboBox",
 				searchOpenDialogs: true,
 				matchers: {
 					properties: {
@@ -316,7 +316,7 @@ sap.ui.define([
 					}
 				},
 				success: function(aSelect) {
-					Opa5.assert.equal(aSelect.length, 1, "Found one Select control for key " + sName);
+					Opa5.assert.equal(aSelect.length, 1, "Found one ComboBox control for key " + sName);
 				},
 				actions: new Press()
 			});
@@ -324,10 +324,10 @@ sap.ui.define([
 		iSelectP13nMenuItem: function (sName) {
 			return this.waitFor({
 				searchOpenDialogs: true,
-				controlType: "sap.ui.core.Item",
+				controlType: "sap.m.StandardListItem",
 				matchers: {
 					properties: {
-						text: sName
+						title: sName
 					}
 				},
 				actions: new Press()

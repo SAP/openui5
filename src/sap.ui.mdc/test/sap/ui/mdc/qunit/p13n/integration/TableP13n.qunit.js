@@ -242,8 +242,7 @@ sap.ui.define([
 				assert.ok(oInnerTable, "Inner Table has been created");
 				var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 
-				//we have to remove one from '_getAvailableItems' as it also contains the empty selector ($none)
-				assert.equal(oP13nControl.getContent()[0]._getAvailableItems().length - 1, oPropertyHelper.getProperties().length, "correct amount of items has been set");
+				assert.equal(oP13nControl.getContent()[0]._getAvailableItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
 				done();
 			}.bind(this));
 		}.bind(this));
