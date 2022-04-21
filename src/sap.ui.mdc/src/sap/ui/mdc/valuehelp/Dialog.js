@@ -390,6 +390,7 @@ sap.ui.define([
 						);
 						this._oGroupSelect = new CollectiveSearchSelect(this.getId() + "--Select",
 							{
+								title:"{$i18n>COL_SEARCH_SEL_TITLE}",
 								items: {
 									path: "$select>/entries",
 									template: oItemTemplate
