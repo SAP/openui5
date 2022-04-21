@@ -15,7 +15,9 @@ sap.ui.define([
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/mdc/Field',
-	'sap/ui/mdc/field/ListFieldHelp',
+	'sap/ui/mdc/ValueHelp',
+	'sap/ui/mdc/valuehelp/Popover',
+	'sap/ui/mdc/valuehelp/content/FixedList',
 	'sap/ui/mdc/field/ListFieldHelpItem',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/model/json/JSONModel',
@@ -23,7 +25,6 @@ sap.ui.define([
 	'sap/ui/model/type/String',
 	'sap/ui/core/library',
 	'sap/ui/core/InvisibleText',
-	'sap/ui/core/ListItem',
 	'sap/ui/layout/Grid',
 	'sap/ui/layout/GridData',
 	'sap/m/library',
@@ -46,7 +47,9 @@ sap.ui.define([
 		BaseType,
 		ConditionValidated,
 		Field,
-		ListFieldHelp,
+		ValueHelp,
+		Popover,
+		FixedList,
 		ListFieldHelpItem,
 		ManagedObjectModel,
 		JSONModel,
@@ -54,7 +57,6 @@ sap.ui.define([
 		StringType,
 		coreLibrary,
 		InvisibleText,
-		ListItem,
 		Grid,
 		GridData,
 		mLibrary,
@@ -369,90 +371,95 @@ sap.ui.define([
 
 		onSelectChange: function(oEvent) {
 			var oField = oEvent.getSource();
-			var oCondition = oField.getBindingContext("$this").getObject();
-			var aConditions = this.getConditions();
-			var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
-			if (iIndex >= 0) {
-				oCondition = aConditions[iIndex]; // to get right instance
-			}
+			var oPromise = oEvent.getParameter("promise"); // as with FixedList direct user input is parsed async wait for the promise
 
-			if (!oEvent.getParameter("valid")) { // if Operator in error state -> don't update values
+			oPromise.then(function (sKey) {
+				var sOldKey = oField._sOldKey;
+				var oOperator = FilterOperatorUtil.getOperator(sKey); // operator must exist as List is created from valid operators
+				var oOperatorOld = sOldKey && FilterOperatorUtil.getOperator(sOldKey);
+				var oCondition = oField.getBindingContext("$this").getObject();
+				var aConditions = this.getConditions();
+				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
+				if (iIndex >= 0) {
+					oCondition = aConditions[iIndex]; // to get right instance
+				}
+
+				if (oOperator && oOperatorOld) {
+					var bUpdate = false;
+
+					if (!deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== Operator.ValueType.Static ) {
+						// type changed -> remove entered value (only if changed by user in Select)
+						// As Static text updated on condition change, don't delete it here.
+						if (iIndex >= 0) {
+							oCondition.values.forEach(function(value, index) {
+								if (value !== null) {
+									if ((oOperator.valueTypes[index] === Operator.ValueType.Self && oOperatorOld.valueTypes[index] === Operator.ValueType.SelfNoParse) ||
+											(oOperator.valueTypes[index] === Operator.ValueType.SelfNoParse && oOperatorOld.valueTypes[index] === Operator.ValueType.Self)) {
+										// as for Decimal values the type might change we need to format and parse again
+										var oType = _getFieldType.call(this, oOperator.name, index);
+										var oTypeOld = _getFieldType.call(this, oOperatorOld.name, index);
+										var sValue = oTypeOld.formatValue(oCondition.values[index], "string");
+										var vValue = oType.parseValue(sValue, "string");
+										if (vValue !== oCondition.values[index]) {
+											oCondition.values[index] = oType.parseValue(sValue, "string");
+											bUpdate = true;
+										}
+									} else {
+										oCondition.values[index] = null;
+										bUpdate = true;
+									}
+								}
+							}.bind(this));
+						}
+					}
+
+					if (iIndex >= 0 && oOperator.valueDefaults) {
+						// sets the default values for the operator back to default, if the condition is inital or the value is null
+						oCondition.values.forEach(function(value, index) {
+							if ((oCondition.isInitial && value !== oOperator.valueDefaults[index]) ||  (value === null)) {
+								// set the default value and mark the condition as initial
+								oCondition.values[index] = oOperator.valueDefaults[index];
+								oCondition.isInitial = true;
+								bUpdate = true;
+							}
+						});
+					}
+
+					if (!oOperator.valueTypes[1] && oOperatorOld.valueTypes[1]) {
+						// switch from BT to EQ -> remove second value even if filled
+						if (iIndex >= 0) {
+							if (oCondition.values.length > 1 && oCondition.values[1]) {
+								oCondition.values = oCondition.values.slice(0, 1);
+								bUpdate = true;
+							}
+						}
+					}
+
+					if (oCondition.invalid) {
+						delete oCondition.invalid;
+						bUpdate = true;
+					}
+					if (bUpdate) {
+						FilterOperatorUtil.checkConditionsEmpty(oCondition, _getOperators.call(this));
+						this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+						_checkInvalidInput.call(this, false); // set imediately, not only if row left
+					}
+				}
+
+				delete oField._sOldKey;
+			}.bind(this)).catch(function (oException) { // if Operator in error state -> don't update values
+				var oCondition = oField.getBindingContext("$this").getObject();
+				var aConditions = this.getConditions();
+				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
+				if (iIndex >= 0) {
+					oCondition = aConditions[iIndex]; // to get right instance
+				}
 				oCondition.invalid = true;
 				this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
 				oField._sOldKey = oField.getValue();
 				_checkInvalidInput.call(this, true); // set imediately, not only if row left
-				return;
-			}
+			}.bind(this));
 
-			var sKey = oField.getValue();
-			var sOldKey = oField._sOldKey;
-			var oOperator = FilterOperatorUtil.getOperator(sKey); // operator must exist as List is created from valid operators
-			var oOperatorOld = sOldKey && FilterOperatorUtil.getOperator(sOldKey);
-
-			if (oOperator && oOperatorOld) {
-				var bUpdate = false;
-
-				if (!deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== Operator.ValueType.Static ) {
-					// type changed -> remove entered value (only if changed by user in Select)
-					// As Static text updated on condition change, don't delete it here.
-					if (iIndex >= 0) {
-						oCondition.values.forEach(function(value, index) {
-							if (value !== null) {
-								if ((oOperator.valueTypes[index] === Operator.ValueType.Self && oOperatorOld.valueTypes[index] === Operator.ValueType.SelfNoParse) ||
-										(oOperator.valueTypes[index] === Operator.ValueType.SelfNoParse && oOperatorOld.valueTypes[index] === Operator.ValueType.Self)) {
-									// as for Decimal values the type might change we need to format and parse again
-									var oType = _getFieldType.call(this, oOperator.name, index);
-									var oTypeOld = _getFieldType.call(this, oOperatorOld.name, index);
-									var sValue = oTypeOld.formatValue(oCondition.values[index], "string");
-									var vValue = oType.parseValue(sValue, "string");
-									if (vValue !== oCondition.values[index]) {
-										oCondition.values[index] = oType.parseValue(sValue, "string");
-										bUpdate = true;
-									}
-								} else {
-									oCondition.values[index] = null;
-									bUpdate = true;
-								}
-							}
-						}.bind(this));
-					}
-				}
-
-				if (iIndex >= 0 && oOperator.valueDefaults) {
-					// sets the default values for the operator back to default, if the condition is inital or the value is null
-					oCondition.values.forEach(function(value, index) {
-						if ((oCondition.isInitial && value !== oOperator.valueDefaults[index]) ||  (value === null)) {
-							// set the default value and mark the condition as initial
-							oCondition.values[index] = oOperator.valueDefaults[index];
-							oCondition.isInitial = true;
-							bUpdate = true;
-						}
-					});
-				}
-
-
-				if (!oOperator.valueTypes[1] && oOperatorOld.valueTypes[1]) {
-					// switch from BT to EQ -> remove second value even if filled
-					if (iIndex >= 0) {
-						if (oCondition.values.length > 1 && oCondition.values[1]) {
-							oCondition.values = oCondition.values.slice(0, 1);
-							bUpdate = true;
-						}
-					}
-				}
-
-				if (oCondition.invalid) {
-					delete oCondition.invalid;
-					bUpdate = true;
-				}
-				if (bUpdate) {
-					FilterOperatorUtil.checkConditionsEmpty(oCondition, _getOperators.call(this));
-					this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
-					_checkInvalidInput.call(this, false); // set imediately, not only if row left
-				}
-			}
-
-			delete oField._sOldKey;
 		},
 
 		onPaste: function(oEvent) {
@@ -878,16 +885,17 @@ sap.ui.define([
 
 		var bHasMultipleGroups = _hasMultipleOperatorGroups.call(this);
 
-		var sFieldHelpId = this.getId() + "--rowSelect-help";
-		var oListFieldHelp = sap.ui.getCore().byId(sFieldHelpId);
+		var sFixedListId = this.getId() + "--rowSelect-help-pop-fl";
+		var oFixedList = sap.ui.getCore().byId(sFixedListId);
 
 		var oTemplate;
 		if (bHasMultipleGroups) {
 			oTemplate = new ListFieldHelpItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}", groupKey: "{om>groupId}", groupText: "{om>groupText}"});
 		} else {
-			oTemplate = new ListItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}"});
+			oTemplate = new ListFieldHelpItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}"});
 		}
-		oListFieldHelp.bindAggregation("items", { path: 'om>/', templateShareable: false, template: oTemplate});
+		oFixedList.bindAggregation("items", { path: 'om>/', templateShareable: false, template: oTemplate});
+		oFixedList.setGroupable(bHasMultipleGroups);
 
 		for (var i = 0; i < aOperators.length; i++) {
 			var sOperator = aOperators[i];
@@ -1014,9 +1022,13 @@ sap.ui.define([
 		).addStyleClass("sapMdcDefineconditionPanel");
 
 		oPanel.addDependent(
-			new ListFieldHelp(this.getId() + "--rowSelect-help", {
-				filterList: false,
-				useFirstMatch: true
+			new ValueHelp(this.getId() + "--rowSelect-help", {
+				typeahead: new Popover(this.getId() + "--rowSelect-help-pop", {
+									content: [new FixedList(this.getId() + "--rowSelect-help-pop-fl", {
+													filterList: false,
+													useFirstMatch: true
+												})]
+								})
 			})
 		);
 
