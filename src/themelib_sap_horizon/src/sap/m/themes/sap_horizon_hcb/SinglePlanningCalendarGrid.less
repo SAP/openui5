@@ -17,7 +17,6 @@
 
 .sapMSinglePC .sapUiCalendarAppCont{
 	border-left: 0.0625rem solid darken(@sapUiListBorderColor, 15);
-	border-radius: 0 0.125rem 0.125rem 0.125rem;
 }
 
 html.sap-desktop {
@@ -37,8 +36,7 @@ html.sap-desktop {
 	}
 
 	.sapMSinglePCColumnHeader .sapUiCalItem.sapUiCalItemNow {
-		border-color: @sapUiLegendCurrentDateTime;
-		border-radius: 0.25rem;
+		border: none;
 	}
 
 	.sapMSinglePCNowMarker {
@@ -59,6 +57,9 @@ html.sap-desktop {
 	.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
 		.sapUiCalendarAppSel{
 			border: 0.0625rem solid @sapUiListSelectionBorderColor;
+			.sapUiCalendarAppCont {
+				border: none;
+			}
 		}
 		&:focus {
 			.sapUiCalendarAppCont:after {
@@ -76,10 +77,6 @@ html.sap-desktop {
 
 	.sapMSinglePCColumnHeader {
 		.sapUiCalItem.sapUiCalItemNow {
-			.sapUiCalItemText {
-				border: 0.0625rem solid black;
-			}
-
 			.sapUiCalSpecialDate {
 				position: absolute;
 				left: 0;
@@ -91,9 +88,12 @@ html.sap-desktop {
 		.sapUiCalItem .sapUiCalSpecialDate {
 			height: 0.25rem;
 		}
+	}
 
-		.sapUiCalItem.sapUiCalItemNow.sapUiCalItemSel .sapUiCalItemText {
-			border: 0.0625rem solid white;
+	.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
+		.sapUiCalendarApp {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
 		}
 	}
 }
@@ -111,9 +111,7 @@ html.sap-desktop {
 			outline: 0.0625rem solid black;
 			box-shadow: inset black;
 			&.sapUiCalItemSel {
-				background-color: @sapUiContentSelectedBackground;
 				outline: 0.0625rem solid white;
-				border: 0.125rem solid @sapUiLegendCurrentDateTime;
 			}
 			&.sapUiCalItemSel:hover {
 				background-color: @sapUiActive;
@@ -158,4 +156,9 @@ html.sap-desktop {
 			}
 		}
 	}
+}
+
+.sapMSinglePCBlockers > .sapUiCalendarRowApps > .sapUiCalendarApp > .sapUiCalendarAppCont,
+.sapMSinglePCAppointments > .sapUiCalendarRowApps > .sapUiCalendarApp > .sapUiCalendarAppCont {
+	background-color: @sapUiListHoverBackground;
 }
