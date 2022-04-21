@@ -60,8 +60,7 @@ sap.ui.define([
 	 */
 	function applySettings (oModifier, oIFrame, mSettings) {
 		var mFullSettings = extend({ _settings: mSettings }, mSettings);
-		return Promise.resolve()
-			.then(oModifier.applySettings.bind(oModifier, oIFrame, mFullSettings));
+		return oModifier.applySettings(oIFrame, mFullSettings);
 	}
 
 	/**
@@ -90,6 +89,10 @@ sap.ui.define([
 					originalSettings: oOriginalSettings
 				});
 				return applySettings(oModifier, oControl, oChangeDefinition.settings);
+			})
+			.then(function() {
+				// the URL needs to be set after the IFrame is inserted to prevent the automatic resolving of potential binding in the URL
+				oModifier.setProperty(oControl, "url", oChangeDefinition.settings.url);
 			});
 	};
 

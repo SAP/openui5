@@ -4,23 +4,22 @@
 
 // Provides control sap.ui.fl.util.IFrame
 sap.ui.define([
-	"../library",
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"./getContainerUserInfo",
 	"sap/base/util/extend",
 	"sap/base/security/URLListValidator",
 	"sap/base/Log",
-	"sap/ui/core/library",
-	"./IFrameRenderer"
+	"sap/ui/fl/util/resolveBinding",
+	"./IFrameRenderer" // implicitly used by the control => added here to avoid a synchronous request
 ], function(
-	library,
 	Control,
 	JSONModel,
 	getContainerUserInfo,
 	extend,
 	URLListValidator,
-	Log
+	Log,
+	resolveBinding
 ) {
 	"use strict";
 
@@ -109,12 +108,17 @@ sap.ui.define([
 		setUrl: function(sUrl) {
 			// Could contain special characters from bindings that need to be encoded
 			// Make sure that it was not encoded before
-			var sEncodedUrl = decodeURI(sUrl) === sUrl ? encodeURI(sUrl) : sUrl;
-
-			if (IFrame.isValidUrl(sEncodedUrl)) {
+			var bDecodingFailed;
+			sUrl = this.unEscapeBrackets(sUrl);
+			try {
+				var sEncodedUrl = this.encodeUrl(sUrl, this).encodedUrl;
+			} catch (oError) {
+				bDecodingFailed = true;
+			}
+			if (!bDecodingFailed && IFrame.isValidUrl(sEncodedUrl)) {
 				this.setProperty("url", sEncodedUrl);
 			} else {
-				Log.error("Provided URL is not valid as an IFrame src");
+				Log.error("Provided URL is not valid as an IFrame source");
 			}
 			return this;
 		},
@@ -143,9 +147,147 @@ sap.ui.define([
 				this._oUserModel.destroy();
 				delete this._oUserModel;
 			}
+		},
+
+		unEscapeBrackets: function(sUrl) {
+			sUrl = sUrl.replace(/\\{/g, "{");
+			sUrl = sUrl.replace(/\\}/g, "}");
+			return sUrl;
+		},
+
+		encodeUrl: function(sUrl, oBindingReferenceElement) {
+			var nStatusCode = IFrame.statusCodes.NONE;
+
+			// Bindings are the content from the outer brackets
+			// e.g. https://example.com/{Potato{Test}}/{Foo} => ["{Potato{Test}}", "{Foo}"]
+			function checkAndGetBindingsFromUrl(sUrl) {
+				var aExtractedBindings = [];
+				var nNestingLevel = 0;
+				var sParameterStart = 0;
+				for (var i = 0; i < sUrl.length; i++) {
+					var sChar = sUrl.charAt(i);
+					if (sChar === "{") {
+						if (nNestingLevel === 0) {
+							sParameterStart = i;
+						}
+						nNestingLevel++;
+					}
+					if (sChar === "}") {
+						nNestingLevel--;
+						if (nNestingLevel === 0) {
+							aExtractedBindings.push(sUrl.substring(sParameterStart, i + 1));
+						}
+					}
+				}
+
+				if (nNestingLevel !== 0) {
+					nStatusCode = IFrame.statusCodes.UNEVEN_BRACKETS;
+				}
+				return aExtractedBindings;
+			}
+
+			/**
+			 * checks if the url has encoded characters and encodes the url without the bindings
+			 * https://example.com?%{binding} [something] => https://example.com?%25{binding}%20%5Bsomething%5D
+			 * https://example.com?{binding}%20%5Dsometing] => https://example.com?{binding}%20%5Bsomething%5D
+			 * https://example.com?%{binding}%20[someting] => shows Error message
+			 * the url is partially encoded and can't be decoded because of the single % sign
+			*/
+			function encodeUrlWithoutBindings(sRawUrl, aBindings) {
+				var sDecodedUrl;
+				try {
+					sDecodedUrl = decodeURI(sRawUrl);
+				} catch (oError) {
+					sDecodedUrl = sRawUrl;
+					var aUndecodableCharacters = sRawUrl.match(/\%.{2}/g);
+					if (aUndecodableCharacters) {
+						var bHasEncodedCharacters = aUndecodableCharacters.some(function(char) {
+							try {
+								decodeURIComponent(char);
+								return true;
+							} catch (error) {
+								return false;
+							}
+						});
+
+						if (bHasEncodedCharacters) {
+							nStatusCode = IFrame.statusCodes.DECODING_ERROR;
+							return undefined;
+						}
+					}
+				}
+
+				aBindings.forEach(function(sBinding, nIndex) {
+					sDecodedUrl = sDecodedUrl.replace(sBinding, "_PLACEHOLDER_" + String(nIndex) + "_PLACEHOLDER_");
+				});
+
+				var sEncodedUrl = encodeURI(sDecodedUrl);
+
+				aBindings.forEach(function(sBinding, nIndex) {
+					sEncodedUrl = sEncodedUrl.replace("_PLACEHOLDER_" + String(nIndex) + "_PLACEHOLDER_", aBindings[nIndex]);
+				});
+
+				return sEncodedUrl;
+			}
+
+			// encodes the binding parts in the given url if they can be resolved by the binding parser
+			// e.g https://example.com/{=${Bar}}/{Foo}/{{{Unresolvable}}} => https://example.com/ResolvedBar/ResolvedFoo/{{{Unresolvable}}}
+			function resolveAndEncodeUrlParameters(sUrl, aParameters) {
+				var sEncodedUrl = sUrl;
+				aParameters.forEach(function(sParameter) {
+					var sResolvedBinding;
+					try {
+						sResolvedBinding = resolveBinding(sParameter, oBindingReferenceElement);
+					} catch (oError) {
+						sResolvedBinding = sParameter;
+						nStatusCode = IFrame.statusCodes.UNRESOLVED_JSON;
+					}
+					if (sResolvedBinding === undefined) {
+						nStatusCode = IFrame.statusCodes.UNRESOLVED_JSON;
+					}
+					sEncodedUrl = sEncodedUrl.replace(
+						sParameter,
+						sParameter === sResolvedBinding
+							? sParameter
+							: encodeURIComponent(sResolvedBinding)
+					);
+				});
+
+				return sEncodedUrl;
+			}
+
+			if (sUrl.trim() === "") {
+				return { encodedUrl: sUrl, statusCode: IFrame.statusCodes.INVALID };
+			}
+
+			var aBindings = checkAndGetBindingsFromUrl.call(this, sUrl);
+			if (nStatusCode > 0) {
+				return { encodedUrl: sUrl, statusCode: nStatusCode };
+			}
+
+			var sEncodedUrl = encodeUrlWithoutBindings.call(this, sUrl, aBindings);
+			if (nStatusCode > 0) {
+				return { encodedUrl: sUrl, statusCode: nStatusCode };
+			}
+
+			sEncodedUrl = resolveAndEncodeUrlParameters.call(this, sEncodedUrl, aBindings);
+
+			if (!IFrame.isValidUrl(encodeURI(sEncodedUrl))) {
+				return { encodedUrl: sUrl, statusCode: IFrame.statusCodes.INVALID };
+			}
+
+			return { encodedUrl: sEncodedUrl, statusCode: nStatusCode };
 		}
 
 	});
+
+	IFrame.statusCodes = {
+		NONE: 0,
+		UNRESOLVED_JSON: 1,
+		DECODING_ERROR: 2,
+		UNEVEN_BRACKETS: 3,
+		INVALID: 4
+	};
 
 	IFrame.isValidUrl = function(sUrl) {
 		// Make sure that pseudo protocols are not allowed as IFrame src

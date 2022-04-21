@@ -32,6 +32,10 @@ sap.ui.define([
 			mIFrameSettings._settings[sIFrameProperty] = vValue;
 		});
 
+		// we want to resolve the bindings in the url manually for that we have to
+		// delete the URL before the control is created and set it on the control afterwards
+		delete mIFrameSettings["url"];
+
 		return Promise.resolve()
 			.then(function() {
 				return oModifier.createControl("sap.ui.fl.util.IFrame", oComponent, oView, oSelector, mIFrameSettings, false);

@@ -109,9 +109,6 @@ sap.ui.define([
 
 			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
 				.then(function() {
-					var oBindingInfo = this.oIFrame.getBindingInfo("url");
-					assert.equal(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path has changed as expected");
-					assert.equal(oBindingInfo.parts[0].model, "model", "and the property value binding model has changed as expected");
 					assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is correct");
 				}.bind(this));
 		});
@@ -132,10 +129,6 @@ sap.ui.define([
 			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
 				.then(UpdateIFrame.revertChange.bind(UpdateIFrame, this.oChange, this.oIFrame, mPropertyBag))
 				.then(function() {
-					var oBindingInfo = this.oIFrame.getBindingInfo("url");
-					assert.equal(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path does not change");
-					assert.equal(oBindingInfo.parts[0].model, "model", "and the property value binding model does not change");
-
 					assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is still correct");
 				}.bind(this));
 		});

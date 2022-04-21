@@ -2,20 +2,22 @@
 
 sap.ui.define([
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
-	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/library",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/Button"
 ], function (
 	AddIFrameDialog,
-	Log,
 	isEmptyObject,
 	coreLibrary,
 	AddIFrameDialogController,
 	QUnitUtils,
-	oCore
+	oCore,
+	JSONModel,
+	Button
 ) {
 	"use strict";
 
@@ -32,37 +34,26 @@ sap.ui.define([
 	}, {
 		name: "rem"
 	}];
+
+	var oJsonModel = new JSONModel();
+	oJsonModel.setData({
+		Guid: "guidIOI",
+		Region: "Germany",
+		Year: "2020",
+		Month: "July",
+		Product_Category: "Ice Cream",
+		Campaign_Name: "Langnese Brand",
+		Brand_Name: "Langnese",
+		Options: "yes/no",
+		Product: "AC/DC Rocky Ice"
+	});
+
+	var oDummyReferenceControl = new Button();
+	oDummyReferenceControl.setModel(oJsonModel);
+	oDummyReferenceControl.setBindingContext(oJsonModel.getContext("/"));
+
 	var mParameters = {
-		frameUrl: "http://blabla.company.com",
-		parameters: [{
-			label: "Guid",
-			key: "{Guid}",
-			value: "guid13423412342314"
-		}, {
-			label: "Region",
-			key: "{Region}",
-			value: "Germany"
-		}, {
-			label: "Year",
-			key: "{Year}",
-			value: "2020"
-		}, {
-			label: "Month",
-			key: "{Month}",
-			value: "July"
-		}, {
-			label: "Product Category",
-			key: "{Product_Category}",
-			value: "Ice Cream"
-		}, {
-			label: "Campaign Name",
-			key: "{Campaign_Name}",
-			value: "Langnese Brand"
-		}, {
-			label: "Brand Name",
-			key: "{Brand_Name}",
-			value: "Langnese"
-		}]
+		frameUrl: "http://blabla.company.com?"
 	};
 
 	var aImportTestData = [{
@@ -94,45 +85,16 @@ sap.ui.define([
 			frameHeightUnit: "%"
 		}
 	}];
-	var mTestURLBuilderData = {
+	var mTestUrlBuilderData = {
 		asNewSection: true,
 		frameWidth: "16px",
 		frameHeight: "9rem",
 		frameUrl: "https_url",
-		unitsOfMeasure: aUnitsOfMeasure,
-		urlBuilderParameters: [{
-			label: "Guid",
-			key: "{Guid}",
-			value: "guid13423412342314"
-		}, {
-			label: "Region",
-			key: "{Region}",
-			value: "Germany"
-		}, {
-			label: "Year",
-			key: "{Year}",
-			value: "2020"
-		}, {
-			label: "Month",
-			key: "{Month}",
-			value: "July"
-		}, {
-			label: "Product_Category",
-			key: "{Product_Category}",
-			value: "Ice Cream" // Make sure this includes a whitespace to test encoding
-		}, {
-			label: "Campaign_Name",
-			key: "{Campaign_Name}",
-			value: "Langnese Brand"
-		}, {
-			label: "Brand_Name",
-			key: "{Brand_Name}",
-			value: "Langnese"
-		}]
+		unitsOfMeasure: aUnitsOfMeasure
 	};
 
-	function createJSONModel() {
-		return new sap.ui.model.json.JSONModel({
+	function createJsonModel() {
+		return new JSONModel({
 			sectionName: {
 				value: "",
 				valueState: ValueState.None
@@ -153,8 +115,8 @@ sap.ui.define([
 	}
 
 	function clickOnButton(sId) {
-		var oButton = oCore.byId(sId);
-		QUnitUtils.triggerEvent("tap", oButton.getDomRef());
+		var oDummyReferenceControl = oCore.byId(sId);
+		QUnitUtils.triggerEvent("tap", oDummyReferenceControl.getDomRef());
 	}
 
 	function clickOnCancel() {
@@ -170,6 +132,13 @@ sap.ui.define([
 		oCore.applyChanges();
 	}
 
+	function inputUrl(sUrl) {
+		var oEditUrlTextArea = oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").$("inner");
+		oEditUrlTextArea.focus();
+		oEditUrlTextArea.val(sUrl);
+		QUnitUtils.triggerEvent("input", oEditUrlTextArea);
+	}
+
 	QUnit.module("Given that a AddIFrameDialog is available...", {
 		beforeEach: function () {
 			this.oAddIFrameDialog = new AddIFrameDialog();
@@ -182,7 +151,7 @@ sap.ui.define([
 				assert.strictEqual(this.oAddIFrameDialog._oDialog.getButtons().length, 2, "then 2 buttons are added");
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
 		});
 
 		QUnit.test("When AddIFrameDialog gets initialized and open is called in Update Mode,", function (assert) {
@@ -191,138 +160,357 @@ sap.ui.define([
 				assert.strictEqual(this.oAddIFrameDialog._oDialog.getTitle(), oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_UPDATE_TITLE"), "then the correct title is set");
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open({updateMode: true});
+			return this.oAddIFrameDialog.open(oDummyReferenceControl, { updateMode: true });
 		});
 
 		QUnit.test("When AddIFrameDialog is opened then there should be no error value state", function (assert) {
 			this.oAddIFrameDialog.attachOpened(function () {
-				this.oController = new AddIFrameDialogController(this.oAddIFrameDialog._oJSONModel);
-				assert.strictEqual(this.oController._areAllValueStateNones(), true, "Value states are correct");
+				this.oController = new AddIFrameDialogController(this.oAddIFrameDialog._oJsonModel);
+				assert.strictEqual(this.oController._areAllValueStatesNotErrors(), true, "Value states are correct");
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
-		});
-
-		QUnit.test("When the dialog is opened then hash map is built correctly", function (assert) {
-			this.oAddIFrameDialog.attachOpened(function () {
-				var mHashmap = AddIFrameDialogController.prototype._buildParameterHashMap(mParameters);
-				mParameters.parameters.forEach(function (oParam) {
-					assert.strictEqual(oParam.value, mHashmap[oParam.key], "Found " + oParam.key);
-				});
-				clickOnCancel();
-			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
 		});
 
 		QUnit.test("When there is an error value state in AddIFrameDialog then it can be detected", function (assert) {
 			this.oAddIFrameDialog.attachOpened(function () {
 				aTextInputFields.concat(aNumericInputFields).forEach(function (sFieldName) {
-					this.oAddIFrameDialog._oJSONModel = createJSONModel();
-					this.oController = new AddIFrameDialogController(this.oAddIFrameDialog._oJSONModel);
-					this.oAddIFrameDialog._oJSONModel.getData()[sFieldName]["valueState"] = ValueState.Error;
-					assert.strictEqual(this.oController._areAllValueStateNones(), false, "Detected " + sFieldName + " field's error value state");
+					this.oAddIFrameDialog._oJsonModel = createJsonModel();
+					this.oController = new AddIFrameDialogController(this.oAddIFrameDialog._oJsonModel);
+					this.oAddIFrameDialog._oJsonModel.getData()[sFieldName]["valueState"] = ValueState.Error;
+					assert.strictEqual(this.oController._areAllValueStatesNotErrors(), false, "Detected " + sFieldName + " field's error value state");
 				}, this);
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
 		});
 
-		QUnit.test("When AddIFrameDialog is opened then text input fields should be empty", function (assert) {
-			this.oAddIFrameDialog.attachOpened(function () {
-				this.oController = new AddIFrameDialogController(this.oAddIFrameDialog._oJSONModel);
-				assert.strictEqual(this.oController._areAllTextFieldsValid(), false, "Text input fields are empty");
+		QUnit.test("When AddIFrameDialog is opened then the text input field should be empty", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				this.oController = new AddIFrameDialogController(this.oAddIFrameDialog._oJsonModel);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"",
+					"then the text input field is empty"
+				);
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
 		});
 
 		QUnit.test("When there is no empty text input field then it can be detected", function (assert) {
 			var aTextInputFieldsCopy = aTextInputFields.slice();
 			var sLastTextInputField = aTextInputFieldsCopy.pop();
 			this.oAddIFrameDialog.attachOpened(function () {
-				this.oController = new AddIFrameDialogController(this.oAddIFrameDialog._oJSONModel);
+				this.oController = new AddIFrameDialogController(this.oAddIFrameDialog._oJsonModel);
 				aTextInputFieldsCopy.forEach(function (sFieldName) {
-					this.oAddIFrameDialog._oJSONModel.getData()[sFieldName]["value"] = "Text entered";
+					this.oAddIFrameDialog._oJsonModel.getData()[sFieldName]["value"] = "Text entered";
 					assert.strictEqual(this.oController._areAllTextFieldsValid(), false, "Some text input fields are still empty");
 				}, this);
-				this.oAddIFrameDialog._oJSONModel.getData()[sLastTextInputField]["value"] = "Text entered";
+				this.oAddIFrameDialog._oJsonModel.getData()[sLastTextInputField]["value"] = "Text entered";
 				assert.strictEqual(this.oController._areAllTextFieldsValid(), true, "No more empty text input field");
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
 		});
 
 		QUnit.test("When parameters are passed to the dialog then they should be imported correctly", function (assert) {
 			this.oAddIFrameDialog.attachOpened(function () {
-				var oData = this.oAddIFrameDialog._oJSONModel.getData();
+				var oData = this.oAddIFrameDialog._oJsonModel.getData();
 				Object.keys(mParameters).forEach(function (sFieldName) {
 					assert.strictEqual(oData[sFieldName].value, mParameters[sFieldName], sFieldName + " is imported correctly");
 				});
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open(mParameters);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl, mParameters);
 		});
 
-		QUnit.test("When URL parameters are added then the frame URL is built correctly", function (assert) {
-			this.oAddIFrameDialog.attachOpened(function () {
-				var sUrl = this.oAddIFrameDialog._oController._addURLParameter("firstParameter");
-				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
+		QUnit.test("When URL parameters are added then the frame URL is built correctly", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var sUrl = this.oAddIFrameDialog._oController._addUrlParameter("firstParameter");
+				inputUrl(sUrl);
 				assert.strictEqual(sUrl.endsWith("firstParameter"), true, "Found firstParameter");
 
-				sUrl = this.oAddIFrameDialog._oController._addURLParameter("secondParameter");
-				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
+				sUrl = this.oAddIFrameDialog._oController._addUrlParameter("secondParameter");
+				inputUrl(sUrl);
 				assert.strictEqual(sUrl.endsWith("secondParameter"), true, "Found secondParameter");
 
-				sUrl = this.oAddIFrameDialog._oController._addURLParameter("secondParameter");
-				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
+				sUrl = this.oAddIFrameDialog._oController._addUrlParameter("secondParameter");
+				inputUrl(sUrl);
 				assert.strictEqual(sUrl.endsWith("secondParametersecondParameter"), true, "Found duplicate parameters");
 
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open(mParameters);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
 		});
 
-		QUnit.test("When URL parameter values contain characters that need to be encoded", function (assert) {
-			this.oAddIFrameDialog.attachOpened(function () {
-				var sUrl = "https://example.com/{Product_Category}";
-				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
+		QUnit.test("When URL contains parameters resolving to values containing special characters", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var sUrl = "https://example.com?{Options}/campaign={Campaign_Name}";
+				inputUrl(sUrl);
 				this.oAddIFrameDialog._oController.onShowPreview();
 				assert.strictEqual(
-					oCore.byId("sapUiRtaAddIFrameDialog_PreviewFrame").getUrl(),
-					"https://example.com/Ice%20Cream",
-					"then the preview url is encoded properly"
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"https://example.com?yes%2Fno/campaign=Langnese%20Brand",
+					"then the bindings in the url were resolved properly"
+				);
+
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
+		});
+
+		QUnit.test("When URL contains only empty spaces", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var sUrl = "       ";
+				inputUrl(sUrl);
+				assert.notOk(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), "then the save button is disabled");
+				assert.notOk(oCore.byId("sapUiRtaAddIFrameDialog_PreviewButton").getEnabled(), "then the preview button is disabled");
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"",
+					"then the url is not set"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueState(),
+					"Error",
+					"then the error state is set"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueStateText(),
+					oCore.getLibraryResourceBundle("sap.ui.rta").getText("IFRAME_ADDIFRAME_DIALOG_URL_ERROR_TEXT_INVALID"),
+					"then the error message text is set correctly"
 				);
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open(mParameters);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
 		});
 
-		QUnit.test("When Show Preview is clicked then preview URL is built correctly", function (assert) {
-			var sUrl;
-			this.oAddIFrameDialog.attachOpened(function () {
-				mParameters.parameters.forEach(function (oParam) {
-					sUrl = this.oAddIFrameDialog._oController._addURLParameter(oParam.key);
-					this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
-				}, this);
-				sUrl = this.oAddIFrameDialog._oController._buildPreviewURL(this.oAddIFrameDialog._oJSONModel.getProperty("/frameUrl/value"));
-				assert.strictEqual(sUrl, "http://blabla.company.comguid13423412342314Germany2020JulyIce CreamLangnese BrandLangnese", "Preview URL is correct");
-				clickOnCancel();
+		QUnit.test("When URL contains parameters inside JSON structures", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var sUrl = "https://example.com?{Options}/campaign={Campaign_Name}&bctx={'Product':'{Product}'}";
+				inputUrl(sUrl);
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"https://example.com?yes%2Fno/campaign=Langnese%20Brand&bctx={'Product':'{Product}'}",
+					"then the bindings in the url were resolved properly"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueState(),
+					"Warning",
+					"then the warning state is set"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueStateText(),
+					oCore.getLibraryResourceBundle("sap.ui.rta").getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT_JSON_ENCODING"),
+					"then the warning message text is set correctly"
+				);
+				clickOnSave();
 			}, this);
-			return this.oAddIFrameDialog.open(mParameters);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl)
+				.then(function(mSettings) {
+					assert.strictEqual(isEmptyObject(mSettings), false, "then the Dialog is closed and the settings are returned");
+				});
 		});
 
-		QUnit.test("When Cancel button is clicked then the promise should return no setting", function (assert) {
-			this.oAddIFrameDialog.attachOpened(function () {
+		QUnit.test("When URL contains an uneven amount of curly brackets", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var sUrl = "https://example.com?%/{{Test}Test}}}/{Hi}";
+				inputUrl(sUrl);
+				assert.notOk(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), "then the save button is disabled");
+				assert.notOk(oCore.byId("sapUiRtaAddIFrameDialog_PreviewButton").getEnabled(), "then the preview button is disabled");
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"",
+					"then the preview url is not set"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueState(),
+					"Error",
+					"then the error state is set"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueStateText(),
+					oCore.getLibraryResourceBundle("sap.ui.rta").getText("IFRAME_ADDIFRAME_DIALOG_URL_ERROR_TEXT_UNEVEN_BRACKETS"),
+					"then the error message text is set correctly"
+				);
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open().then(function (mSettings) {
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
+		});
+
+		QUnit.test("When the URL can't be encoded because of partial and wrong encoding", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				// the not encoded percent sign leads to the error
+				var sUrl = "https://example.com?%/{Test}/%20Test";
+				inputUrl(sUrl);
+				assert.notOk(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), "then the save button is disabled");
+				assert.notOk(oCore.byId("sapUiRtaAddIFrameDialog_PreviewButton").getEnabled(), "then the preview button is disabled");
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"",
+					"then the preview url is not set"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueState(),
+					"Error",
+					"then the error state is set"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueStateText(),
+					oCore.getLibraryResourceBundle("sap.ui.rta").getText("IFRAME_ADDIFRAME_DIALOG_URL_ERROR_TEXT_INVALID_ENCODING"),
+					"then the error message text is set correctly"
+				);
+				clickOnSave();
+				assert.ok(this.oAddIFrameDialog._oDialog, "then the dialog can't be saved");
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
+		});
+
+		QUnit.test("When URL parameter values contain characters that need to be encoded", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var sUrl = "https://example.com/{Product_Category}";
+				inputUrl(sUrl);
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"https://example.com/Ice%20Cream",
+					"then the binding in the url is resolved properly"
+				);
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
+		});
+
+		QUnit.test("When URL contains valid parameters inside an expression binding", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var sUrl = "https://example.com/campaign={=${Region}==='Germany'?'DE':'GL'}";
+				inputUrl(sUrl);
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"https://example.com/campaign=DE",
+					"then the expression binding in the url is resolved properly"
+				);
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
+		});
+
+		QUnit.test("When URL contains invalid parameters (which can't be resolved)", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var sUrl = "https://example.com?{Potato}";
+				inputUrl(sUrl);
+				assert.ok(oCore.byId("sapUiRtaAddIFrameDialog_PreviewButton").getEnabled(), "then the preview button not is disabled");
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.notOk(oCore.byId("sapUiRtaAddIFrameDialog_PreviewButton").getEnabled(), "then the preview button is disabled");
+				assert.ok(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), "then the save button is not disabled");
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"https://example.com?undefined",
+					"then the binding could not be resolved"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueState(),
+					"Warning",
+					"then the warning state is set"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueStateText(),
+					oCore.getLibraryResourceBundle("sap.ui.rta").getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT_JSON_ENCODING"),
+					"then the warning message text is set correctly"
+				);
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
+		});
+
+		QUnit.test("When URL contains valid parameters inside properly encoded JSON structures", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				// {Options} resolves to "yes/no" and {Product} resolves to "AC/DC Rocky Ice"
+				var sUrl = "https://example.com?{Options}/campaign={Campaign_Name}&params=%7B'Product':'{Product}'%7D";
+				inputUrl(sUrl);
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"https://example.com?yes%2Fno/campaign=Langnese%20Brand&params=%7B'Product':'AC%2FDC%20Rocky%20Ice'%7D",
+					"then the bindings in the url were resolved properly"
+				);
+
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
+		});
+
+		QUnit.test("When URL contains JSON structures without parameters", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var sUrl = "https://example.com?{Potato:'hello'}";
+				inputUrl(sUrl);
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"https://example.com?{Potato:'hello'}",
+					"then the JSON object could not be resolved"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueState(),
+					"Warning",
+					"then the warning state is set"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueStateText(),
+					oCore.getLibraryResourceBundle("sap.ui.rta").getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT_JSON_ENCODING"),
+					"then the warning message text is set correctly"
+				);
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
+		});
+
+		QUnit.test("When URL contains JSON structures that is encoded correctly", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var sUrl = "https://example.com?%7BPotato:'hello'%7D";
+				inputUrl(sUrl);
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"https://example.com?%7BPotato:'hello'%7D",
+					"then the preview url is generated properly"
+				);
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
+		});
+
+		QUnit.test("When URL is partially encoded", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var sUrl = "https://example.com?params=%7B'Product':'{Product}'%7D&💩";
+				inputUrl(sUrl);
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewLink").getText(),
+					"https://example.com?params=%7B'Product':'AC%2FDC%20Rocky%20Ice'%7D&%F0%9F%92%A9",
+					"then the special characters and bindings are encoded properly"
+				);
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
+		});
+
+		QUnit.test("When Cancel button is clicked", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(oDummyReferenceControl).then(function(mSettings) {
 				assert.strictEqual(mSettings, undefined, "The promise returns no setting");
 			});
 		});
 
 		QUnit.test("The Save-Button is only enabled when URL is entered", function (assert) {
 			this.oAddIFrameDialog.attachOpened(function () {
-				var oData = this.oAddIFrameDialog._oJSONModel.getData();
+				var oData = this.oAddIFrameDialog._oJsonModel.getData();
 				var bEnabled = !!oData.frameUrl.value;
 				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), false, "Initial state is disabled");
 				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), bEnabled, "Initial state of URL-Textarea is empty");
@@ -332,7 +520,7 @@ sap.ui.define([
 				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), bEnabled, "Button is enabled wheen URL-Textarea is not empty");
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(oDummyReferenceControl);
 		});
 
 		QUnit.test("when a forbidden url is entered", function(assert) {
@@ -344,46 +532,44 @@ sap.ui.define([
 				oCore.applyChanges();
 
 				assert.strictEqual(oUrlTextArea.getValueState(), "Error", "then an error is displayed");
-				this.oAddIFrameDialog._oController.onShowPreview();
-				assert.strictEqual(this.oAddIFrameDialog._oJSONModel.getProperty("/previewUrl/value"), "", "then the preview is not updated");
+				assert.notOk(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), "then the save button is disabled");
+				assert.notOk(oCore.byId("sapUiRtaAddIFrameDialog_PreviewButton").getEnabled(), "then the preview button is disabled");
 				clickOnSave();
-				assert.strictEqual(this.oAddIFrameDialog._oController.getSettings(), undefined, "then saving is not possible");
+				assert.strictEqual(this.oAddIFrameDialog._oController.getSettings().frameUrl, "https_url", "then saving is not possible");
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueState(),
+					"Error",
+					"then the error state is set"
+				);
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA").getValueStateText(),
+					oCore.getLibraryResourceBundle("sap.ui.rta").getText("IFRAME_ADDIFRAME_DIALOG_URL_ERROR_TEXT_INVALID"),
+					"then the error message text is set correctly"
+				);
 				clickOnCancel();
 			}.bind(this));
-			return this.oAddIFrameDialog.open(mTestURLBuilderData)
+			return this.oAddIFrameDialog.open(oDummyReferenceControl, mTestUrlBuilderData)
 				.then(function(oResponse) {
 					assert.strictEqual(oResponse, undefined, "then the dialog can only be closed via cancel");
 				});
 		});
 
-		QUnit.test("when a url with bindings is entered", function(assert) {
-			this.oAddIFrameDialog.attachOpened(function() {
-				var oUrlTextArea = oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA");
-				oUrlTextArea.setValue("https://example.com/{productCategory}");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				oCore.applyChanges();
-
-				assert.strictEqual(oUrlTextArea.getValueState(), "None", "then it is not showing an error");
-				clickOnCancel();
-			});
-			return this.oAddIFrameDialog.open(mTestURLBuilderData);
-		});
-
-		QUnit.test("When OK button is clicked then the promise should return settings", function (assert) {
+		QUnit.test("When the Save button is clicked then the promise should return settings", function (assert) {
 			this.oAddIFrameDialog.attachOpened(function () {
+				inputUrl(mTestUrlBuilderData.frameUrl);
 				aTextInputFields.forEach(function (sFieldName) {
-					this.oAddIFrameDialog._oJSONModel.getData()[sFieldName]["value"] = "Text entered";
+					this.oAddIFrameDialog._oJsonModel.getData()[sFieldName]["value"] = "Text entered";
 				}, this);
 				clickOnSave();
 			}, this);
-			return this.oAddIFrameDialog.open(mTestURLBuilderData).then(function (mSettings) {
+			return this.oAddIFrameDialog.open(oDummyReferenceControl, mTestUrlBuilderData).then(function(mSettings) {
 				assert.strictEqual(isEmptyObject(mSettings), false, "Non empty settings returned");
 			});
 		});
 
-		QUnit.test("When OK button is clicked then the returned settings should be correct", function (assert) {
-			this.oAddIFrameDialog.attachOpened(function () {
-				var oData = this.oAddIFrameDialog._oJSONModel.getData();
+		QUnit.test("When OK button is clicked then the returned settings should be correct", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				var oData = this.oAddIFrameDialog._oJsonModel.getData();
 				oData.frameUrl.value = "https://www.sap.com/\tindex.html\r\n";
 				aNumericInputFields.forEach(function (sFieldName) {
 					oData[sFieldName].value = 100;
@@ -394,7 +580,7 @@ sap.ui.define([
 				updateSaveButtonEnablement(!!oData.frameUrl.value);
 				clickOnSave();
 			}, this);
-			return this.oAddIFrameDialog.open().then(function (mSettings) {
+			return this.oAddIFrameDialog.open(oDummyReferenceControl).then(function (mSettings) {
 				assert.strictEqual(mSettings.frameUrl, "https://www.sap.com/index.html", "Setting for frameUrl is correct");
 				aNumericInputFields.forEach(function (sFieldName) {
 					assert.strictEqual(mSettings[sFieldName], 100, "Setting for " + sFieldName + " is correct");
@@ -408,13 +594,13 @@ sap.ui.define([
 		aImportTestData.forEach(function (mData, iIndex) {
 			QUnit.test("When existing settings are passed to the dialog then they should be imported correctly, part " + (iIndex + 1), function (assert) {
 				this.oAddIFrameDialog.attachOpened(function () {
-					var oData = this.oAddIFrameDialog._oJSONModel.getData();
+					var oData = this.oAddIFrameDialog._oJsonModel.getData();
 					Object.keys(mData.expectedResults).forEach(function (sFieldName) {
 						assert.strictEqual(oData[sFieldName].value, mData.expectedResults[sFieldName], sFieldName + " is imported correctly");
 					});
 					clickOnCancel();
 				}, this);
-				return this.oAddIFrameDialog.open(mData.input);
+				return this.oAddIFrameDialog.open(oDummyReferenceControl, mData.input);
 			}, this);
 		});
 	});
