@@ -4,7 +4,6 @@
 
 // Provides base class sap.ui.core.Control for all controls
 sap.ui.define([
-	'sap/ui/core/Core',
 	'./CustomStyleClassSupport',
 	'./Element',
 	'./UIArea',
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
-		Core,
 		CustomStyleClassSupport,
 		Element,
 		UIArea,
@@ -620,18 +618,19 @@ sap.ui.define([
 	 * @public
 	 */
 	Control.prototype.placeAt = function(oRef, vPosition) {
-		if (Core.isInitialized()) {
+		var oCore = sap.ui.getCore();
+		if (oCore.isInitialized()) {
 			// core already initialized, do it now
 
 			// 1st try to resolve the oRef as a Container control
 			var oContainer = oRef;
 			if (typeof oContainer === "string") {
-				oContainer = Core.byId(oRef);
+				oContainer = oCore.byId(oRef);
 			}
 			// if no container control is found use the corresponding UIArea
 			var bIsUIArea = false;
 			if (!(oContainer instanceof Element)) {
-				oContainer = Core._createUIArea(oRef);
+				oContainer = oCore._createUIArea(oRef);
 				bIsUIArea = true;
 			}
 
@@ -683,7 +682,7 @@ sap.ui.define([
 		} else {
 			// core not yet initialized, defer execution
 			var that = this;
-			Core.attachInit(function () {
+			oCore.attachInit(function () {
 				that.placeAt(oRef, vPosition);
 			});
 		}
