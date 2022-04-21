@@ -47,7 +47,7 @@ sap.ui.define([
 		assert.equal(this.oSortPanel._oListControl.getItems().length, 3, "two initial rows + 1 empty row created");
 		assert.equal(this.oSortPanel._oListControl.getItems()[0].getContent()[0].getContent()[0].getSelectedKey(), "key1", "correct key set");
 		assert.equal(this.oSortPanel._oListControl.getItems()[1].getContent()[0].getContent()[0].getSelectedKey(), "key2", "correct key set");
-		assert.equal(this.oSortPanel._oListControl.getItems()[2].getContent()[0].getContent()[0].getSelectedKey(), "$_none", "correct key set");
+		assert.equal(this.oSortPanel._oListControl.getItems()[2].getContent()[0].getContent()[0].getSelectedKey(), "", "correct key set");
 	});
 
 
@@ -97,10 +97,16 @@ sap.ui.define([
 		});
 		oSegmentedButton.setSelectedKey("desc");
 
+		oKeySelected.setSelection(oKeySelected.getItems()[2]);
+
 		// 2) Change the key of the same row (but the SegmentedButton is still 'descending')
-		oKeySelected.fireChange({
-			selectedItem: oKeySelected.getItems()[3] //key1 --> key3
+		oKeySelected.fireSelectionChange({
+			selectedItem: oKeySelected.getItems()[2] //key1 --> key3
 		});
+		oKeySelected.fireChange({
+			newValue: oKeySelected.getItems()[2].getKey() //key1 --> key3
+		});
+
 
 		var aNewSortState = [
 			{name: "key3", sorted: true, descending: true},// --> descending has been kept (!)

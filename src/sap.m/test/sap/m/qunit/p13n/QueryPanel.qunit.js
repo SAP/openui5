@@ -43,7 +43,7 @@ sap.ui.define([
 		assert.equal(this.oQueryPanel._oListControl.getItems().length, 3, "two initial rows + 1 empty row created");
 		assert.equal(this.oQueryPanel._oListControl.getItems()[0].getContent()[0].getContent()[0].getSelectedKey(), "key1", "correct key set");
 		assert.equal(this.oQueryPanel._oListControl.getItems()[1].getContent()[0].getContent()[0].getSelectedKey(), "key2", "correct key set");
-		assert.equal(this.oQueryPanel._oListControl.getItems()[2].getContent()[0].getContent()[0].getSelectedKey(), "$_none", "correct key set");
+		assert.equal(this.oQueryPanel._oListControl.getItems()[2].getContent()[0].getContent()[0].getSelectedKey(), "", "correct key set");
 	});
 
 	QUnit.test("Check '_addQueryRow'", function(assert){
@@ -55,7 +55,7 @@ sap.ui.define([
 	QUnit.test("Check 'getP13nData'", function(assert){
 		var aP13nState = this.oQueryPanel.getP13nData(true);
 
-		assert.equal(aP13nState.length, 2, "$_none is not part of the p13n state object (3-1 = 2)");
+		assert.equal(aP13nState.length, 2, "empty selectedKey is not part of the p13n state object (3-1 = 2)");
 		assert.equal(aP13nState[0].name, "key1", "correct key in correct position provided");
 		assert.equal(aP13nState[1].name, "key2", "correct key in correct position provided");
 	});
@@ -67,7 +67,7 @@ sap.ui.define([
 
 		var aP13nState = this.oQueryPanel.getP13nData(true);
 
-		assert.equal(aP13nState.length, 2, "$_none is not part of the p13n state object (3-1 = 2)");
+		assert.equal(aP13nState.length, 2, "empty selectedKey is not part of the p13n state object (3-1 = 2)");
 
 		//the order in the retrieved state should change accordingly
 		assert.equal(aP13nState[0].name, "key2", "correct key in correct position provided");
@@ -129,11 +129,16 @@ sap.ui.define([
 	QUnit.test("Check 'change' event from '_createKeySelect'", function(assert){
 
 		var oFirstItem = this.oQueryPanel._oListControl.getItems()[0];
-		var oSelectFromFirstItem = oFirstItem.getContent()[0].getContent()[0];
+		var oKeySelected = oFirstItem.getContent()[0].getContent()[0];
 
-		oSelectFromFirstItem.fireChange({
-			selectedItem: oSelectFromFirstItem.getItems()[3] //Select 'key3' instead of 'key1'
+		oKeySelected.setSelection(oKeySelected.getItems()[2]);
+		oKeySelected.fireSelectionChange({
+			selectedItem: oKeySelected.getItems()[2] //key1 --> key3
 		});
+		oKeySelected.fireChange({
+			newValue: oKeySelected.getItems()[2].getKey() //key1 --> key3
+		});
+
 
 		var aNewState = [
 			{name: "key3", visible: true},
@@ -147,11 +152,16 @@ sap.ui.define([
 	QUnit.test("Check that new row gets added if last item us updated", function(assert){
 
 		var oNoneItem = this.oQueryPanel._oListControl.getItems()[2];
-		var oSelectFromFirstItem = oNoneItem.getContent()[0].getContent()[0];
+		var oKeySelected = oNoneItem.getContent()[0].getContent()[0];
 
-		oSelectFromFirstItem.fireChange({
-			selectedItem: oSelectFromFirstItem.getItems()[4] //Select 'key4' instead of '(none)'
+		oKeySelected.setSelection(oKeySelected.getItems()[3]);
+		oKeySelected.fireSelectionChange({
+			selectedItem: oKeySelected.getItems()[3] //key1 --> key4
 		});
+		oKeySelected.fireChange({
+			newValue: oKeySelected.getItems()[3].getKey() //key1 --> key4
+		});
+
 
 		var aNewState = [
 			{name: "key1", visible: true},

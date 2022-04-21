@@ -148,7 +148,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 
 		//open the select control in the sort tab
-		When.iClickOnP13nSelect("$_none");
+		When.iClickOnP13nSelect("");
 
 		//check that the expected keys are visible in the sort dialog
 		Then.iShouldSeeP13nMenuItems(aSortItems);
@@ -181,7 +181,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 
 		//open select (empty) select control in sort panel and select 'Country'
-		When.iClickOnP13nSelect("$_none");
+		When.iClickOnP13nSelect("");
 		When.iSelectP13nMenuItem("Country");
 
 	});

@@ -310,33 +310,34 @@ sap.ui.define([
 	};
 
 	var iChangeSelectSelection = function(oSelect, sNew) {
-		new Press().executeOn(oSelect);
-		this.waitFor({
-			controlType: "sap.m.Popover",
-			matchers: new Ancestor(oSelect),
-			success: function(aPopovers) {
-				Opa5.assert.ok(aPopovers.length === 1, "Selection popover found");
-				var oPopover = aPopovers[0];
-				this.waitFor({
-					controlType: "sap.ui.core.Item",
-					matchers: [
-						new Ancestor(oPopover, false),
-						new PropertyStrictEquals({
-							name: "text",
-							value: sNew
-						})
-					],
-					actions: new Press(),
-					errorMessage: "Selection Item with text '" + sNew + "' not found"
-				});
-			}
-		});
+		// if (oSelect.isA("sap.m.Select")) {
+			new Press().executeOn(oSelect);
+			this.waitFor({
+				controlType: "sap.m.Popover",
+				matchers: new Ancestor(oSelect),
+				success: function(aPopovers) {
+					Opa5.assert.ok(aPopovers.length === 1, "Selection popover found");
+					var oPopover = aPopovers[0];
+					this.waitFor({
+						controlType: "sap.ui.core.Item",
+						matchers: [
+							new Ancestor(oPopover, false),
+							new PropertyStrictEquals({
+								name: "text",
+								value: sNew
+							})
+						],
+						actions: new Press(),
+						errorMessage: "Selection Item with text '" + sNew + "' not found"
+					});
+				}
+			});
 	};
 
-	var iChangeSelectOnPanel = function(oGroupPanel, sOld, sNew, oSettings) {
-		waitForSelectWithSelectedTextOnPanel.call(this, sOld, oGroupPanel, {
+	var iChangeSelectOnPanel = function(oGroupPanel, sNew, oSettings) {
+		waitForSelectWithSelectedTextOnPanel.call(this, "", oGroupPanel, {
 			actions: function (oSelect) {
-				iChangeSelectSelection.call(this, oSelect, sNew);
+				iChangeComboBoxSelection.call(this, oSelect, sNew);
 			}.bind(this),
 			success: function(oSelect) {
 				if (oSettings && typeof oSettings.success === "function") {
@@ -347,7 +348,7 @@ sap.ui.define([
 	};
 
 	var iAddGroupConfiguration = function(oGroupPanel, oGroupConfiguration) {
-		return iChangeSelectOnPanel.call(this, oGroupPanel, Util.texts.none, oGroupConfiguration.key, {
+		return iChangeSelectOnPanel.call(this, oGroupPanel, oGroupConfiguration.key, {
 			success: function(oSelect) {
 				if (oGroupConfiguration.showFieldAsColumn !== undefined) {
 					this.waitFor({
@@ -372,7 +373,7 @@ sap.ui.define([
 	};
 
 	var iAddSortConfiguration = function(oSortPanel, oSortConfiguration) {
-		return iChangeSelectOnPanel.call(this, oSortPanel, Util.texts.none, oSortConfiguration.key, {
+		return iChangeSelectOnPanel.call(this, oSortPanel, oSortConfiguration.key, {
 			success: function(oSelect) {
 				if (oSortConfiguration.descending !== undefined) {
 					this.waitFor({

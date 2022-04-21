@@ -52,7 +52,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 
 		//open the select control in the group tab
-		When.iClickOnP13nSelect("$_none");
+		When.iClickOnP13nSelect("");
 
 		//check that the expected keys are visible in the group dialog
 		Then.iShouldSeeP13nMenuItems(aGroupItems);
@@ -73,7 +73,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 
 		//open select (empty) select control in group panel and select 'Founding Year'
-		When.iClickOnP13nSelect("$_none");
+		When.iClickOnP13nSelect("");
 		When.iSelectP13nMenuItem("Founding Year");
 
         //close Dialog

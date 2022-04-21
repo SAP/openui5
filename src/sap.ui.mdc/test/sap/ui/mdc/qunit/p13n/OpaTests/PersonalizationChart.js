@@ -110,7 +110,7 @@ sap.ui.define([
 		When.iSwitchToP13nTab("Sort");
 
 		//open the select control in the sort tab
-		When.iClickOnP13nSelect("$_none");
+		When.iClickOnP13nSelect("");
 
 		//check that the expected keys are visible in the sort dialog
 		Then.iShouldSeeP13nMenuItems(aSortItems);
