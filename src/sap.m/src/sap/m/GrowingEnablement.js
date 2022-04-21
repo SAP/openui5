@@ -390,19 +390,8 @@ sap.ui.define([
 			this.applyPendingGroupItem();
 
 			var iLength = this._aChunk.length;
-			if (!iLength) {
+			if (!iLength || !this._oControl.shouldRenderItems()) {
 				return;
-			}
-
-			// prevent DOM updates when there are no visible columns in the table and items are being inserted (see BCP: 2080250160)
-			if (this._oControl.isA("sap.m.Table")) {
-				var bHasVisibleColumn = this._oControl.getColumns().some(function(oColumn) {
-					return oColumn.getVisible();
-				});
-
-				if (!bHasVisibleColumn) {
-					return;
-				}
 			}
 
 			if (this._oControl.getGrowingDirection() == ListGrowingDirection.Upwards) {
@@ -530,9 +519,7 @@ sap.ui.define([
 				this.rebuildListItems(aContexts, oBindingInfo);
 			} else if (!aDiff || !aItems.length && aDiff.length) {
 				// new records need to be applied from scratch
-				if (oControl.shouldRenderItems()) {
-					this.rebuildListItems(aContexts, oBindingInfo, oControl.shouldGrowingSuppressInvalidation());
-				}
+				this.rebuildListItems(aContexts, oBindingInfo, oControl.shouldGrowingSuppressInvalidation());
 			} else if (oBinding.isGrouped() || oControl.checkGrowingFromScratch()) {
 
 				if (this._sGroupingPath != this._getGroupingPath(oBinding)) {
