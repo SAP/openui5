@@ -30,7 +30,7 @@
 	}
 }
 
-.sapFCard:not(.sapFCardPreview):hover {
+.sapFCard:not(.sapFCardPreview):not(.sapFCardTransparent):hover {
 	box-shadow: @_sap_f_Card_HoverBoxShadow;
 
 	.sapFCardHeader:hover {
@@ -38,7 +38,7 @@
 	}
 }
 
-.sapFCard:not(.sapFCardPreview):active {
+.sapFCard:not(.sapFCardPreview):not(.sapFCardTransparent):active {
 	box-shadow: @_sap_f_Card_BoxShadow;
 
 	.sapFCardHeader:active {

@@ -42,6 +42,11 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	border-radius: 0%;
 	background: transparent;
 	box-shadow: unset;
+	overflow: visible;
+
+	& > .sapFCardContent {
+		overflow: visible;
+	}
 
 	& > .sapFCardHeader,
 	& > .sapFCardFilterBar,
@@ -49,6 +54,10 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 		background: transparent;
 		border: none;
 		border-radius: 0%;
+	}
+
+	& > .sapFCardFooter .sapMTB {
+		background: transparent;
 	}
 }
 
@@ -334,7 +343,7 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	}
 }
 
-.sapFCard.sapFCardNoHeader .sapFCardContent {
+.sapFCard.sapFCardNoHeader > .sapFCardContent {
 	border-radius: @_sap_f_Card_BorderRadius;
 
 	&:focus {
@@ -426,14 +435,16 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 		.sapMText {
 			cursor: pointer;
 		}
+	}
+}
 
-		&.sapFCardClickable:hover {
-			background: @sapUiTileHoverBackground;
-		}
+.sapFCard:not(.sapFCardTransparent) {
+	&.sapFCardClickable:hover {
+		background: @sapUiTileHoverBackground;
+	}
 
-		&.sapFCardClickable:active {
-			background: @sapUiTileActiveBackground;
-		}
+	&.sapFCardClickable:active {
+		background: @sapUiTileActiveBackground;
 	}
 }
 

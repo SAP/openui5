@@ -2416,7 +2416,15 @@
 						"text": "DM"
 					},
 					"title": "Donna Moore",
-					"subTitle": "Complete your time recording"
+					"subTitle": "Complete your time recording",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "#"
+							}
+						}
+					]
 				},
 				"configuration": {
 					"filters": {
@@ -2457,6 +2465,14 @@
 									"details": "Project Nanga Prabat (Ingo) 0 hours recorded. Please, record your time by the end of the month."
 								}
 							]
+						}
+					],
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "#"
+							}
 						}
 					]
 				},
