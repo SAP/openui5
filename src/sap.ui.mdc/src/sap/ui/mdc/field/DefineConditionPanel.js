@@ -724,7 +724,7 @@ sap.ui.define([
 			oControl.attachChange(this.onChange.bind(this));
 		}
 		oControl.onpaste = this.onPaste.bind(this);
-		oControl.setLayoutData(new GridData({span: {parts: [{path: "$this>/conditions"}, {path: "$this>/formatOptions"}], formatter: _getSpanForValue.bind(this)}}));
+		oControl.setLayoutData(new GridData({span: {parts: [{path: "$condition>"}, {path: "$this>/formatOptions"}], formatter: _getSpanForValue.bind(this)}}));
 		oControl.setBindingContext(oValueBindingContext, "$this");
 		oControl.setBindingContext(oBindingContext, "$condition");
 		// add fieldGroup to validate Condition only after both Fields are entered.
