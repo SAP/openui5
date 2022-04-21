@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/comp/smartvariants/SmartVariantManagement",
+	"sap/ui/core/Core",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
@@ -17,6 +18,7 @@ sap.ui.define([
 ], function(
 	Button,
 	SmartVariantManagement,
+	Core,
 	DesignTime,
 	OverlayRegistry,
 	KeyCodes,
@@ -79,11 +81,6 @@ sap.ui.define([
 				commandFactory: new CommandFactory()
 			});
 
-			this.oDesignTime = new DesignTime({
-				rootElements: [this.oVariantManagementControl],
-				plugins: [this.oPlugin]
-			});
-
 			this.oVariantId = "myFancyVariantId";
 			sandbox.stub(this.oVariantManagementControl, "getPresentVariantId").returns(this.oVariantId);
 			this.oVariant = SmartVariantManagementWriteAPI.addVariant({
@@ -98,11 +95,18 @@ sap.ui.define([
 			});
 			sandbox.stub(this.oVariantManagementControl, "getAllVariants").returns([this.oVariant]);
 
+			this.oVariantManagementControl.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oVariantManagementControl],
+				plugins: [this.oPlugin]
+			});
+
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
 				done();
 			}.bind(this));
-			this.oVariantManagementControl.placeAt("qunit-fixture");
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -357,6 +361,9 @@ sap.ui.define([
 				commandFactory: new CommandFactory()
 			});
 
+			this.oControl.placeAt("qunit-fixture");
+			Core.applyChanges();
+
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oControl],
 				plugins: [this.oPlugin]
@@ -378,7 +385,6 @@ sap.ui.define([
 				this.oPlugin.registerElementOverlay(this.oOverlay);
 				done();
 			}.bind(this));
-			this.oControl.placeAt("qunit-fixture");
 		},
 		afterEach: function() {
 			sandbox.restore();
