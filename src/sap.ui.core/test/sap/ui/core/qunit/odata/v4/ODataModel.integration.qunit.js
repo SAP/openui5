@@ -13058,6 +13058,7 @@ sap.ui.define([
 					Budget : "42", // update
 					"Budget@some.annotation" : "hello, world!",
 					// BudgetCurrency missing
+					"BudgetCurrency@$ui5.noData" : true,
 					"BudgetCurrency@foo.bar" : "love & peace!",
 					MEMBER_COUNT : 0, // MUST be ignored
 					"MEMBER_COUNT@n.a" : "n/a",
@@ -13077,6 +13078,7 @@ sap.ui.define([
 							"@a.b" : "A & B",
 							"@x.y.z" : "X, Y, Z",
 							// BudgetCurrency still missing
+							"BudgetCurrency@$ui5.noData" : true,
 							"BudgetCurrency@a.b" : "A/B",
 							"BudgetCurrency@foo.bar" : "peace on earth"
 						});
@@ -13096,6 +13098,8 @@ sap.ui.define([
 					"@x.y.z" : "X, Y, Z",
 					Budget : "42",
 					"Budget@some.annotation" : "hello, world!",
+					// BudgetCurrency still missing
+					"BudgetCurrency@$ui5.noData" : true,
 					"BudgetCurrency@foo.bar" : "love & peace!",
 					Name : "New Team",
 					"Name@my.comment" : "Please choose a new name",
@@ -13118,6 +13122,8 @@ sap.ui.define([
 					"@x.y.z" : "X, Y, Z",
 					Budget : "42",
 					"Budget@some.annotation" : "hello, world!",
+					// BudgetCurrency still missing
+					"BudgetCurrency@$ui5.noData" : true,
 					"BudgetCurrency@a.b" : "A/B",
 					"BudgetCurrency@foo.bar" : "peace on earth",
 					Name : "New Team",
@@ -40056,4 +40062,134 @@ sap.ui.define([
 			assert.deepEqual(oDetailBinding.getCurrentContexts(), []);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario:
+	// (1) Binding for a part of a structural instance annotation works without binding the
+	//     property itself
+	// (2) Late request for another annotation of the same property does not trigger a GET request
+	// (3) Late request for an instance annotation which was not requested before
+	// (4), (5) Edm.Stream simulation: initial response is empty, no further requests
+	// (6) Request side effects for property of (4), empty response
+	// (7) Again late request property (4), no further requests
+	// (8) Late request a structural instance annotation
+	//
+	// JIRA: CPOUI5ODATAV4-1290
+	QUnit.test("CPOUI5ODATAV4-1290: Bind & late request an instance annotation", function (assert) {
+		var oContext,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/BusinessPartnerList(\'1\')}">\
+	<Text id="name" text="{CompanyName}"/>\
+	<Text id="annotation1" text="{= %{WebAddress@some.Annotation/foo} }"/>\
+	<Text id="annotation2" text="{= %{WebAddress@some.Annotation/bar} }"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('1')"
+				+ "?$select=BusinessPartnerID,CompanyName,WebAddress", {
+				BusinessPartnerID : "1",
+				CompanyName : "BOPF",
+				WebAddress : "example.com",
+				"WebAddress@some.Annotation" : {foo : "string"}
+			})
+			.expectChange("name", "BOPF")
+			.expectChange("annotation1", "string");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oContext = that.oView.byId("form").getBindingContext();
+
+			return Promise.all([
+				oContext.requestProperty("WebAddress@missing.Annotation"),
+				that.waitForChanges(assert, "(2)")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], undefined);
+
+			that.expectRequest("BusinessPartnerList('1')?$select=EmailAddress", {
+					EmailAddress : "foo@bar",
+					"EmailAddress@some.other.Annotation" : "smtp"
+			});
+
+			return Promise.all([
+				oContext.requestProperty("EmailAddress@some.other.Annotation"),
+				that.waitForChanges(assert, "(3)")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], "smtp");
+
+			that.expectRequest("BusinessPartnerList('1')?$select=FaxNumber", {});
+
+			return Promise.all([
+				oContext.requestProperty("FaxNumber@some.missing.Annotation"),
+				that.waitForChanges(assert, "(4)")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], undefined);
+
+			return Promise.all([
+				oContext.requestProperty("FaxNumber@some.missing.Annotation"),
+				that.waitForChanges(assert, "(5)")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], undefined);
+
+			that.expectRequest("BusinessPartnerList('1')?$select=FaxNumber", {});
+
+			return Promise.all([
+				oContext.requestSideEffects(["FaxNumber"]),
+				that.waitForChanges(assert, "(6)")
+			]);
+		}).then(function () {
+			return Promise.all([
+				oContext.requestProperty("FaxNumber@some.missing.Annotation"),
+				that.waitForChanges(assert, "(7)")
+			]);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerList('1')?$select=PhoneNumber", {
+				"PhoneNumber@some.Annotation" : {foo : {bar : "baz"}}
+			});
+
+			return Promise.all([
+				oContext.requestProperty("PhoneNumber@some.Annotation/foo/bar"),
+				that.waitForChanges(assert, "(8)")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], "baz");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario:
+	// - Edm.Stream property is read from a complex type and is missing from the response
+	// - Accessing a missing annotation does not cause a GET request
+	//
+	// JIRA: CPOUI5ODATAV4-1290
+	QUnit.test("CPOUI5ODATAV4-1290: complex type, Edm.Stream", function (assert) {
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/Equipments(\'1\')/EQUIPMENT_2_PRODUCT}">\
+	<Text id="url" text="{ProductPicture/Picture}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Equipments('1')/EQUIPMENT_2_PRODUCT"
+				+ "?$select=ID,ProductPicture/Picture", {
+				ID : "42",
+				ProductPicture : {}
+			})
+			.expectChange("url", "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"
+				+ "Equipments('1')/EQUIPMENT_2_PRODUCT/ProductPicture/Picture");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			return Promise.all([
+				that.oView.byId("form").getBindingContext()
+					.requestProperty("ProductPicture/Picture@some.missing.annotation"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], undefined);
+		});
+	});
 });
+

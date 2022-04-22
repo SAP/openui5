@@ -1161,10 +1161,6 @@ sap.ui.define([
 			oCache.drillDown({/*no annotation found*/}, "@$ui5.context.isTransient").getResult(),
 			undefined, "no error if annotation is not found");
 
-		assert.strictEqual(
-			oCache.drillDown({/*no annotation found*/}, "property@foo.bar").getResult(),
-			undefined, "no error if annotation is not found");
-
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into 0/foo/list/bar, invalid segment: bar",
 			oCache.toString(), sClassName);
@@ -1667,6 +1663,74 @@ sap.ui.define([
 			assert.strictEqual(sValue, undefined);
 		}).then(function () {
 			assert.deepEqual(oData[0], {"@$ui5.context.isTransient" : true}, "cache unchanged");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#drillDown: missing property instance annotation", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products"),
+			oData = {
+				WebAddress : "foo.bar",
+				"WebAddress@some.Annotation" : {foo : {bar : "string"}},
+				"EmailAddress@$ui5.noData" : true
+			},
+			oTransientData = {
+				"@$ui5.context.isTransient" : true
+			},
+			that = this;
+
+		oCache.mQueryOptions = {$select : ["PostAddress"]};
+
+		this.oLogMock.expects("info")
+			.withExactArgs("Failed to drill-down into WebAddress@some.Annotation/foo/missing, "
+				+ "invalid segment: missing", "/~/Products",
+				"sap.ui.model.odata.v4.lib._Cache");
+		this.oLogMock.expects("info")
+			.withExactArgs("Failed to drill-down into ProductID@missing.Annotation, "
+				+ "invalid segment: ProductID@missing.Annotation", "/~/Products",
+				"sap.ui.model.odata.v4.lib._Cache");
+		this.oLogMock.expects("info")
+			.withExactArgs("Failed to drill-down into WebAddress@missing.Annotation, "
+				+ "invalid segment: WebAddress@missing.Annotation", "/~/Products",
+				"sap.ui.model.odata.v4.lib._Cache");
+		this.oLogMock.expects("info")
+			.withExactArgs("Failed to drill-down into EmailAddress@missing.Annotation, "
+				+ "invalid segment: EmailAddress@missing.Annotation", "/~/Products",
+				"sap.ui.model.odata.v4.lib._Cache");
+		this.oLogMock.expects("info")
+			.withExactArgs("Failed to drill-down into PostAddress@missing.Annotation, "
+				+ "invalid segment: PostAddress@missing.Annotation", "/~/Products",
+				"sap.ui.model.odata.v4.lib._Cache");
+
+		// code under test
+		return Promise.all([
+			// do not report error within annotation
+			oCache.drillDown(oData, "WebAddress@some.Annotation/foo/missing"),
+			// do not request the property if - transient
+			oCache.drillDown(oTransientData, "ProductID@missing.Annotation"),
+			// - property is already in the data
+			oCache.drillDown(oData, "WebAddress@missing.Annotation"),
+			// - annotation "Property@$ui5.noData" = true is in data
+			oCache.drillDown(oData, "EmailAddress@missing.Annotation"),
+			// - property is selected
+			oCache.drillDown(oData, "PostAddress@missing.Annotation")
+		]).then(function (aResults) {
+			assert.deepEqual(aResults, [undefined, undefined, undefined, undefined, undefined]);
+
+			oCache.mQueryOptions = undefined;
+
+			that.oModelInterfaceMock.expects("fetchMetadata")
+				.withExactArgs("/Products/PostAddress")
+				.returns(SyncPromise.resolve({}));
+			that.mock(oCache).expects("fetchLateProperty")
+				.withExactArgs("~oGroupLock~", sinon.match.same(oData), "",
+					"PostAddress", "PostAddress@some.Annotation"
+				).returns("annotationValue");
+
+			// code under test
+			return oCache.drillDown(oData, "PostAddress@some.Annotation", "~oGroupLock~");
+		}).then(function (sValue) {
+			assert.strictEqual(sValue, "annotationValue");
 		});
 	});
 
@@ -7117,7 +7181,7 @@ sap.ui.define([
 					sPathInCache
 						+ (bKeepTransientPath === false ? sPredicate : sTransientPredicate),
 					sinon.match.same(oEntityDataCleaned), sinon.match.same(oPostResult),
-					["ID", "Name", "@odata.etag"])
+					["ID", "Name"])
 				.callsFake(function () {
 					if (bKeepTransientPath === false) {
 						oEntityDataCleaned["@$ui5._"].predicate = sPredicate;
