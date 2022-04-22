@@ -919,12 +919,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when Mode is changed from adaptation to navigation and back to adaptation", function(assert) {
-			var oTabhandlingPlugin = this.oRta.getPlugins()["tabHandling"];
-			var oTabHandlingRemoveSpy = sandbox.spy(oTabhandlingPlugin, "removeTabIndex");
-			var oTabHandlingRestoreSpy = sandbox.spy(oTabhandlingPlugin, "restoreTabIndex");
-			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabhandlingPlugin, "removeOverlayTabIndex");
-			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabhandlingPlugin, "restoreOverlayTabIndex");
+			var oTabHandlingPlugin = this.oRta.getPlugins()["tabHandling"];
+			var oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
+			var oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
+			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
+			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
 			var oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
+			var oStopCutPasteStub = sandbox.stub(this.oRta.getPluginManager(), "handleStopCutPaste");
 
 			this.oRta.setMode("navigation");
 			assert.notOk(this.oRta._oDesignTime.getEnabled(), " in navigation mode the designTime property enabled is false");
@@ -932,6 +933,7 @@ sap.ui.define([
 			assert.equal(oTabHandlingRemoveOverlaySpy.callCount, 1, "removeOverlayTabIndex was called");
 			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "navigation"}, "the argument of the event is correct");
+			assert.strictEqual(oStopCutPasteStub.callCount, 1, "the cut paste was stopped");
 
 			// simulate mode change from toolbar
 			this.oRta.getToolbar().fireModeChange({item: { getKey: function() {return "adaptation";}}});
@@ -940,16 +942,18 @@ sap.ui.define([
 			assert.equal(oTabHandlingRestoreOverlaySpy.callCount, 1, "restoreOverlayTabIndex was called");
 			assert.equal(oFireModeChangedSpy.callCount, 2, "the event ModeChanged was fired again");
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "adaptation"}, "the argument of the event is correct");
+			assert.strictEqual(oStopCutPasteStub.callCount, 1, "the cut paste was not stopped again");
 		});
 
 		QUnit.test("when Mode is changed from adaptation to visualization and back to adaptation", function(assert) {
 			oComp.getRootControl().addStyleClass("sapUiDtOverlayMovable");
-			var oTabhandlingPlugin = this.oRta.getPlugins()["tabHandling"];
-			var oTabHandlingRemoveSpy = sandbox.spy(oTabhandlingPlugin, "removeTabIndex");
-			var oTabHandlingRestoreSpy = sandbox.spy(oTabhandlingPlugin, "restoreTabIndex");
-			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabhandlingPlugin, "removeOverlayTabIndex");
-			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabhandlingPlugin, "restoreOverlayTabIndex");
+			var oTabHandlingPlugin = this.oRta.getPlugins()["tabHandling"];
+			var oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
+			var oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
+			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
+			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
 			var oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
+			var oStopCutPasteStub = sandbox.stub(this.oRta.getPluginManager(), "handleStopCutPaste");
 
 			this.oRta.setMode("visualization");
 			assert.ok(this.oRta._oDesignTime.getEnabled(), "in visualization mode the designTime property enabled is true");
@@ -958,6 +962,7 @@ sap.ui.define([
 			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "visualization"}, "the argument of the event is correct");
 			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "default", "the movable overlays switched to the default cursor");
+			assert.strictEqual(oStopCutPasteStub.callCount, 1, "the cut paste was stopped");
 
 			// simulate mode change from toolbar
 			this.oRta.getToolbar().fireModeChange({item: { getKey: function() {return "adaptation";}}});
@@ -968,16 +973,17 @@ sap.ui.define([
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "adaptation"}, "the argument of the event is correct");
 			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "move", "the movable overlays switched back to the move cursor");
 			oComp.getRootControl().removeStyleClass("sapUiDtOverlayMovable");
+			assert.strictEqual(oStopCutPasteStub.callCount, 1, "the cut paste was not stopped again");
 		});
 
-		QUnit.test("when Mode is changed from visualizaton to navigation and back to visualization", function(assert) {
+		QUnit.test("when Mode is changed from visualization to navigation and back to visualization", function(assert) {
 			oComp.getRootControl().addStyleClass("sapUiDtOverlayMovable");
 			this.oRta.setMode("visualization");
-			var oTabhandlingPlugin = this.oRta.getPlugins()["tabHandling"];
-			var oTabHandlingRemoveSpy = sandbox.spy(oTabhandlingPlugin, "removeTabIndex");
-			var oTabHandlingRestoreSpy = sandbox.spy(oTabhandlingPlugin, "restoreTabIndex");
-			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabhandlingPlugin, "removeOverlayTabIndex");
-			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabhandlingPlugin, "restoreOverlayTabIndex");
+			var oTabHandlingPlugin = this.oRta.getPlugins()["tabHandling"];
+			var oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
+			var oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
+			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
+			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
 			var oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
 			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "default", "the movable overlays switched to the default cursor");
 

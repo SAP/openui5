@@ -1832,6 +1832,10 @@ sap.ui.define([
 				oTabHandlingPlugin[(sNewMode === "navigation") ? "restoreTabIndex" : "removeTabIndex"]();
 			}
 
+			if (sCurrentMode === "adaptation") {
+				this.getPluginManager().handleStopCutPaste();
+			}
+
 			oTabHandlingPlugin[(sNewMode === "adaptation") ? "restoreOverlayTabIndex" : "removeOverlayTabIndex"]();
 			oSelectionPlugin.setIsActive(!(sNewMode === "visualization"));
 
