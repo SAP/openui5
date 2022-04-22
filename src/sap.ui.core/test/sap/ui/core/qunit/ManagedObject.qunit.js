@@ -2276,6 +2276,36 @@ sap.ui.define([
 		assert.equal(oClone.isBound("subObjects"), false, "isBound must return false for bound aggregations");
 	});
 
+	QUnit.test("Clone Object: Nested ObjectBindings: cloneBinding:true/false", function(assert) {
+		assert.expect(5);
+		var oModel = new JSONModel();
+		oModel.setData({
+			testroot: [{
+				testpath: [{
+					test: "test1"
+				}]
+			}]
+		});
+		var oRootObject = new TestManagedObject();
+		oRootObject.bindObject("/testroot/0");
+		oRootObject.setModel(oModel);
+		var oChildObject = new TestManagedObject();
+		oChildObject.bindObject("testpath/0");
+		oChildObject.bindProperty("value", {path:"test"});
+		oRootObject.addAggregation("subObjects", oChildObject);
+		assert.equal(oChildObject.getProperty("value"), "test1", "value of child object evaluated correctly");
+		// clone object and add to the same aggregation so parent context stays stable
+		var oClone = oChildObject.clone(null, null, {cloneBindings:true});
+		oRootObject.addAggregation("subObjects", oClone);
+		assert.equal(oClone.getProperty("value"), "test1", "value of child object evaluated correctly");
+		assert.notStrictEqual(oChildObject.getObjectBinding(), oClone.getObjectBinding(),
+			"Object binding of child object and clone should not share binding instance");
+		oClone = oChildObject.clone(null, null, {cloneBindings:false});
+		oRootObject.addAggregation("subObjects", oClone);
+		assert.equal(oClone.isBound("value"), false, "value should not be bound");
+		assert.equal(oClone.getObjectBinding(), undefined, "object should not be bound");
+	});
+
 	QUnit.test("Clone Object: events", function(assert) {
 		var oSpy = this.spy();
 		this.obj.attachEvent("press", oSpy, this.obj);

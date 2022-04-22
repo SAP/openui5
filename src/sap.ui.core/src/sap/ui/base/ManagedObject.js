@@ -5117,15 +5117,15 @@ sap.ui.define([
 		 * Clones the BindingInfo for the aggregation/property with the given name of this ManagedObject and binds
 		 * the aggregation/property with the given target name on the given clone using the same BindingInfo.
 		 *
-		 * @param {sap.ui.base.ManagedObject} oSource Source of the clone operation
-		 * @param {string} sName the name of the binding to clone
+		 * @param {sap.ui.base.ManagedObject.ObjectBindingInfo|sap.ui.base.ManagedObject.AggregationBindingInfo|sap.ui.base.ManagedObject.PropertyBindingInfo} oBindingInfo the original binding info
 		 * @param {sap.ui.base.ManagedObject} oClone the object on which to establish the cloned binding
-		 * @param {string} sTargetName the name of the clone's aggregation to bind
+		 * @param {string} [sTargetName] the name of the clone's aggregation/property to bind, omitted for object bindings
+		 * @param {sap.ui.base.ManagedObject} [oSource] Source of the clone operation
+		 * @param {string} [sName] the name of the aggregation/property
 		 * @private
 		 */
-		function cloneBinding(oSource, sName, oClone, sTargetName) {
-			var oBindingInfo = oSource.mBindingInfos[sName];
-			oBindingInfo = oBindingInfo || oSource.getBindingInfo(sName); // fallback for forwarded bindings
+		function cloneBinding(oBindingInfo, oClone, sTargetName, oSource, sName) {
+			var bIsObjectBinding = !sTargetName;
 			var oCloneBindingInfo = Object.assign({}, oBindingInfo);
 
 			// clone the template if it is not sharable
@@ -5148,19 +5148,13 @@ sap.ui.define([
 			delete oCloneBindingInfo.dataStateChangeHandler;
 			delete oCloneBindingInfo.modelRefreshHandler;
 
-			if (oBindingInfo.factory || oBindingInfo.template) {
+			if (bIsObjectBinding) {
+				oClone.bindObject(oCloneBindingInfo);
+			} else if (oBindingInfo.factory) {
 				oClone.bindAggregation(sTargetName, oCloneBindingInfo);
 			} else {
 				oClone.bindProperty(sTargetName, oCloneBindingInfo);
 			}
-		}
-
-		/* Clone element bindings: Clone the objects not the parameters
-		 * Context will only be updated when adding the control to the control tree;
-		 * Maybe we have to call updateBindingContext() here?
-		 */
-		for (sName in this.mObjectBindingInfos) {
-			oClone.mObjectBindingInfos[sName] = Object.assign({}, this.mObjectBindingInfos[sName]);
 		}
 
 		// Clone events
@@ -5170,8 +5164,12 @@ sap.ui.define([
 
 		// Clone bindings
 		if (bCloneBindings) {
+			for (sName in this.mObjectBindingInfos) {
+				cloneBinding(this.mObjectBindingInfos[sName], oClone);
+			}
+
 			for (sName in this.mBindingInfos) {
-				cloneBinding(this, sName, oClone, sName);
+				cloneBinding(this.mBindingInfos[sName], oClone, sName, this, sName);
 			}
 		}
 
@@ -5191,7 +5189,7 @@ sap.ui.define([
 				if (oForwarder) {
 					oTarget = oForwarder.getTarget(oClone, true);
 					if (oForwarder.forwardBinding && this.isBound(sName)) { // forwarded bindings have not been cloned yet
-						cloneBinding(this, sName, oTarget, oForwarder.targetAggregationName);
+						cloneBinding(this.getBindingInfo(sName), oTarget, oForwarder.targetAggregationName, this, sName);
 					}
 				}
 			}
