@@ -220,9 +220,9 @@ sap.ui.define([
 						contentWidth: _getContentWidth(),
 						horizontalScrolling: false,
 						verticalScrolling: false,
-						title: {parts: ['$help>/title', '$help>/content'], formatter:
+						title: {parts: ['$help>/title', '$help>/_selectableContents'], formatter:
 							function(sTitle, aContent) {
-								if (aContent.length == 1) {
+								if (aContent && aContent.length == 1) {
 									var oContent = aContent[0];
 									var sDlgTitle = oContent.getFormattedShortTitle() ? oContent.getFormattedShortTitle() : oContent.getTitle();
 									if (sDlgTitle) {
