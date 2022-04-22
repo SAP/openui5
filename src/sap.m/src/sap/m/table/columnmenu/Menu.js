@@ -151,6 +151,7 @@ sap.ui.define([
 			this._initItemsContainer();
 		}
 		this._oPopover.openBy(oAnchor);
+		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
 	};
 
 	/**
@@ -174,6 +175,7 @@ sap.ui.define([
 		if (this._oPopover) {
 			this._oPopover.close();
 		}
+		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 	};
 
 	Menu.prototype.exit = function () {
@@ -248,10 +250,9 @@ sap.ui.define([
 				return;
 			}
 
-			if (!isInMenuHierarchy) {
-				if (containsOrEquals(this.getDomRef(), oEvent.target)) {
-					isInMenuHierarchy = true;
-				}
+			if (containsOrEquals(this.getDomRef(), oEvent.target) || containsOrEquals(Core.getStaticAreaRef(), oEvent.target) ||
+				isInControlTree(this, Core.byId(oEvent.target.id))) {
+				isInMenuHierarchy = true;
 			}
 		} else if (oEvent.type == "sapfocusleave") {
 			if (touchEnabled) {
@@ -259,11 +260,9 @@ sap.ui.define([
 			}
 
 			if (oEvent.relatedControlId) {
-				if (!isInMenuHierarchy) {
-					if (containsOrEquals(this.getDomRef(), jQuery(document.getElementById(oEvent.relatedControlId)).get(0)) ||
-						isInControlTree(this, Core.byId(oEvent.relatedControlId))) {
-						isInMenuHierarchy = true;
-					}
+				if (containsOrEquals(this.getDomRef(), jQuery(document.getElementById(oEvent.relatedControlId)).get(0)) ||
+					isInControlTree(this, Core.byId(oEvent.relatedControlId))) {
+					isInMenuHierarchy = true;
 				}
 			}
 		}
