@@ -51,7 +51,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 	 */
 	// Following we attach all additional module API functions to the original sap.ui.extensionpoint factory.
 	// For compatibility we cannot change the actual return value of this module.
-	var ExtensionPoint = sap.ui.extensionpoint;
+	var ExtensionPoint = sap.ui.extensionpoint || {};
 
 	/**
 	 * API documentation see ExtensionPoint.load() and sap.ui.extensionpoint().
