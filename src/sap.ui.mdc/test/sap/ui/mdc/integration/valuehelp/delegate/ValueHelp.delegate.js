@@ -262,7 +262,10 @@ sap.ui.define([
 			return oFilterItem.getBinding("conditions").sPath.indexOf("salesOrganization") >= 0;
 		});
 
-		if (bIsTypeahead || bFilterBarHasCountryFilter) {
+		var aSupportedConditionPaths = bIsTypeahead && oContent.getTable().getColumns().map(function (oColumn) { return oColumn.mAggregations.header.mProperties.text; });
+		var bTypaheadSupportsSalesOrganizationConditions = aSupportedConditionPaths && aSupportedConditionPaths.indexOf("salesOrganization") >= 0;
+
+		if (bTypaheadSupportsSalesOrganizationConditions || bFilterBarHasCountryFilter) {
 
 			var oCountry = Core.byId("FB0-SO");
 			var aCountryConditions = oCountry && oCountry.getConditions();
@@ -271,15 +274,6 @@ sap.ui.define([
 				return oConditions;
 			}
 		}
-
-		// TODO: Remove TestCode for async initial conditions
-		/* if (oContent.getId() === "__mdctable1") {
-			return new Promise(function (resolve) {
-				setTimeout(function () {
-					resolve(oConditions);
-				}, 1500);
-			});
-		} */
 
 		return oConditions;
 	};
