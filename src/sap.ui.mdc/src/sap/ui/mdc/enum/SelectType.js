@@ -18,18 +18,21 @@ sap.ui.define(function() {
 	 */
 	var SelectType = {
 		/**
+		 * The given condition are just set and replacing the existing ones.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		Set: "Set",
 
 		/**
+		 * the given conditions are just added to the existing ones, if not already existing.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		Add: "Add",
 
 		/**
+		 * The given conditions are removed.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */

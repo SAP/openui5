@@ -156,7 +156,7 @@ sap.ui.define([
 	/**
 	 * Checks if the <code>ListBinding</code> is waiting for an update.
 	 * As long as the context has not been set for <code>ListBinding</code>,
-	 * <code>FieldValueHelp</code> needs to wait.
+	 * <code>ValueHelp</code> needs to wait.
 	 *
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.model.ListBinding} oListBinding <code>ListBinding</code> to check
@@ -172,7 +172,7 @@ sap.ui.define([
 	//  InOut =====
 
 	/**
-	 * Callback invoked everytime a {@link sap.ui.mdc.ValueHelp ValueHelp} fires a select event or the vlaue of the corresponding field changes
+	 * Callback invoked everytime a {@link sap.ui.mdc.ValueHelp ValueHelp} fires a select event or the value of the corresponding field changes
 	 * This callback may be used to update external fields.
 	 *
 	 * @param {object} oPayload Payload for delegate
@@ -192,7 +192,7 @@ sap.ui.define([
 	 * Provides an initial condition configuration everytime a value help content is shown.
 	 *
 	 * @param {object} oPayload Payload for delegate
- 	 * @param {sap.ui.mdc.ValueHelp} oContent ValueHelp content requesting conditions configuration
+ 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent ValueHelp content requesting conditions configuration
 	 * @param {sap.ui.core.Control} oControl Instance of the calling control
 	 * @returns {Promise<object>|object} Returns a map of conditions suitable for a sap.ui.mdc.FilterBar control
 	 * @private

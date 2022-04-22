@@ -113,6 +113,13 @@ sap.ui.define([
 					byValue: true
 				},
 
+				/**
+				 * Path to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
+				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
+				 * Do not bind or modify the module. This property can only be configured during control initialization.
+				 *
+				 * @experimental
+				 */
 				delegate: {
 					type: "object",
 					group: "Data",
@@ -135,8 +142,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * If this property is set, the user input is validated against the value help.
-				 * If no entry is found for the user input, an error occurs.
+				 * If this property is set, the user input of the corresponding field is validated against the value help.
+				 * If no entry is found for the user input, an error is shown on the field.
 				 *
 				 * If this property is not set, the user input is still checked against the value help.
 				 * But if no entry is found, the user input is set to the field if the used data type allows this.
@@ -182,7 +189,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * This event is fired when a value is selected in the field help.
+				 * This event is fired when a value is selected in the value help.
 				 *
 				 * <b>Note:</b> This event must only be handled by the control the <code>ValueHelp</code> element
 				 * belongs to, not by the application.
@@ -224,14 +231,14 @@ sap.ui.define([
 				closed: {},
 
 				/**
-				 * This event is fired after the user navigated in the value help.
+				 * This event is fired after the user navigated, using the arrow keys, in the value help.
 				 */
 				navigated: {
 					parameters: {
 						/**
 						 * True if the focus should be set back to the field.
 						 */
-						bLeaveFocus: { type: "boolean" },
+						leaveFocus: { type: "boolean" },
 						/**
 						 * Navigated condition.
 						 *
@@ -559,14 +566,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calls initialization of the ValueHelp before the ValueHelp is really opened.
-	 * This is called in Typeahead on first letter before the ValueHelp is opened with a delay. So the
+	 * Calls initialization of the <code>ValueHelp</code> element before the value help is really opened.
+	 * This is called in Typeahead on first letter before the value help is opened with a delay. So the
 	 * content can be determined in the delegate coding early.
 	 *
 	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
 	 * belongs to, not by the application.
 	 *
-	 * @param {boolean} bTypeahead Flag that determines whether value help is opened for suggestion or for complex help
+	 * @param {boolean} bTypeahead Flag that determines whether value help is opened for type-ahead or for complex help
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
@@ -723,7 +730,10 @@ sap.ui.define([
 	 * @param {object} oConfig Configuration
 	 * @param {any} oConfig.value Value as entered by user
 	 * @param {any} [oConfig.parsedValue] Value parsed by type to fit the data type of the key
-	 * @param {any} [oConfig.context] Contextual information provided by condition payload or inParameters/outParameters
+	 * @param {object} [oConfig.context] Contextual information provided by condition payload or inParameters/outParameters. This is only filled if the description needs to be determined for an existing condition.
+	 * @param {object} [oConfig.context.inParameter] inParameters of the current condition
+	 * @param {object} [oConfig.context.ouParameter] outParameters of the current condition
+	 * @param {object} [oConfig.context.payload] payload of the current condition
 	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
 	 * @param {boolean} [oConfig.checkKeyFirst] If set, the value help checks first if the value fits a key // TODO: not longer needed?
 	 * @param {boolean} oConfig.checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.

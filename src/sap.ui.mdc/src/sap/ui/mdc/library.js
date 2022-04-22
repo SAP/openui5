@@ -261,7 +261,7 @@
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-	 * @param {boolean} oControlEvent.getParameters.bLeaveFocus Indicates that the source control should be focused again
+	 * @param {boolean} oControlEvent.getParameters.leaveFocus Indicates that the source control should be focused again
 	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
 	 * @param {string} oControlEvent.getParameters.value When no condition is given this can be used to create a default condition
 	 * @param {string} oControlEvent.getParameters.key When no condition is given this can be used to create a default condition

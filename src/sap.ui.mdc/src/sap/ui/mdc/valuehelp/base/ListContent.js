@@ -70,7 +70,7 @@ sap.ui.define([
 				 *
 				 * If set, the field help reads the data of these entities in the model and uses it to filter in the value help.
 				 */
-				inParameters: {
+				inParameters: { // TODO: remove!
 					type: "sap.ui.mdc.field.InParameter",
 					group: "Data",
 					multiple: true
@@ -81,7 +81,7 @@ sap.ui.define([
 				 *
 				 * If set, the fields sets the data of these entities in the model based to the selected values.
 				 */
-				outParameters: {
+				outParameters: { // TODO: remove!
 					type: "sap.ui.mdc.field.OutParameter",
 					group: "Data",
 					multiple: true
