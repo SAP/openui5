@@ -356,4 +356,11 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isQuickSelectSupported", function(assert) {
+
+		var bSupported = oContent.isQuickSelectSupported();
+		assert.notOk(bSupported, "not supported as default");
+
+	});
+
 });
