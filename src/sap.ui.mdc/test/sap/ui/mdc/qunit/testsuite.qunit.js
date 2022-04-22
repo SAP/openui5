@@ -103,7 +103,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/Table.qunit"
+				module: "./table/Table.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 			"ResponsiveTableType": {
 				group: "Table",
@@ -112,15 +115,24 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/ResponsiveTableType.qunit"
+				module: "./table/ResponsiveTableType.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 			"TableDelegate": {
 				group: "Table",
-				module: "./table/TableDelegate.qunit"
+				module: "./table/TableDelegate.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 			"odata.v4.TableDelegate": {
 				group: "Delegates",
-				module: "./odata/v4/TableDelegate.qunit"
+				module: "./odata/v4/TableDelegate.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 			"Column": {
 				group: "Table",
@@ -129,7 +141,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/Column.qunit"
+				module: "./table/Column.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 			"CreationRow": {
 				group: "Table",
@@ -138,7 +153,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/CreationRow.qunit"
+				module: "./table/CreationRow.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 			"Menu": {
 				group: "Table",
@@ -147,7 +165,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/Menu.qunit"
+				module: "./table/Menu.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 			"TableFlex": {
 				group: "Table",
@@ -156,7 +177,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/TableFlex.qunit"
+				module: "./table/TableFlex.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 			"TableSettings": {
 				group: "Table",
@@ -165,7 +189,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/TableSettings.qunit"
+				module: "./table/TableSettings.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 			"TablePropertyHelper": {
 				group: "Table",
@@ -174,7 +201,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/PropertyHelper.qunit"
+				module: "./table/PropertyHelper.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 			"TablePropertyHelper - V4Analytics": {
 				group: "Table",
@@ -183,7 +213,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/V4AnalyticsPropertyHelper.qunit"
+				module: "./table/V4AnalyticsPropertyHelper.qunit",
+				qunit: {
+					reorder: false
+				}
 			},
 
 			"FilterBar": {

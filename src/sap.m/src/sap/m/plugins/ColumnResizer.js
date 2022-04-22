@@ -221,7 +221,7 @@ sap.ui.define([
 	 */
 	ColumnResizer.prototype._getHoveredColumnIndex = function(iClientX) {
 		return this._aPositions.findIndex(function(fPosition) {
-			return Math.abs(fPosition - iClientX) <= (this._oAlternateHandle || window.matchMedia("(hover:none)").matches ? 20 : 3);
+			return Math.abs(fPosition - iClientX) <= (this._oAlternateHandle || ColumnResizer._isInTouchMode() ? 20 : 3);
 		}, this);
 	};
 
@@ -269,7 +269,7 @@ sap.ui.define([
 			this._oHandle = document.createElement("div");
 			this._oHandle.className = CSS_CLASS + "Handle";
 
-			if (bMobileHandle || window.matchMedia("(hover:none)").matches) {
+			if (bMobileHandle || ColumnResizer._isInTouchMode()) {
 				var oCircle = document.createElement("div");
 				oCircle.className = CSS_CLASS + "HandleCircle";
 				oCircle.style.top = this._aResizables[iColumnIndex].offsetHeight - 8 + "px";
@@ -497,7 +497,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnResizer.prototype.getColumnResizeQuickAction = function(oColumn, oColumnMenu) {
-		if (!oColumn || !window.matchMedia("(hover:none)").matches) {
+		if (!oColumn || !ColumnResizer._isInTouchMode()) {
 			return;
 		}
 
@@ -521,7 +521,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnResizer.prototype.getColumnResizeButton = function(oColumn) {
-		if (!oColumn || !window.matchMedia("(hover:none)").matches) {
+		if (!oColumn || !ColumnResizer._isInTouchMode()) {
 			return;
 		}
 
@@ -530,6 +530,10 @@ sap.ui.define([
 			icon: "sap-icon://resize-horizontal",
 			press: this.startResizing.bind(this, oColumn.getDomRef())
 		});
+	};
+
+	ColumnResizer._isInTouchMode = function() {
+		return window.matchMedia("(hover:none)").matches;
 	};
 
 	/**
@@ -547,7 +551,7 @@ sap.ui.define([
 
 				if (!oTable.bActiveHeaders) {
 					oTable.bFocusableHeaders = true;
-					this.allowTouchResizing = window.matchMedia("(hover:none)").matches;
+					this.allowTouchResizing = ColumnResizer._isInTouchMode();
 				}
 
 				oTable.setFixedLayout("Strict");

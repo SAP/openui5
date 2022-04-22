@@ -125,11 +125,11 @@ sap.ui.define([
 			}
 		}
 
-		var bResizeButton = window.matchMedia("(hover:none)").matches && oTable._bMobileTable && oTable.getEnableColumnResize();
-		if (bResizeButton) {
+		if (oTable._bMobileTable && oTable.getEnableColumnResize()) {
 			var oColumnResize = ResponsiveTableType.startColumnResize(oTable._oTable, oTable._oTable.getColumns()[oTable.indexOfColumn(oColumn)], this.getMenu());
 			this.addQuickAction(oColumnResize);
 		}
+
 		return pCreateContent;
 	};
 
