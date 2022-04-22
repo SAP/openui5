@@ -367,6 +367,12 @@ sap.ui.define([
 		if (!oConfig.checkKey && oConfig.parsedValue && !oConfig.checkDescription) {
 			return null;
 		}
+		if (oConfig.checkKey && !this.getKeyPath()) {
+			throw new Error("MTable: KeyPath missing! " + this.getId());
+		}
+		if (oConfig.checkDescription && !this.getDescriptionPath()) {
+			throw new Error("MTable: DescriptionPath missing! " + this.getId());
+		}
 
 		/* load data from model if nothing is found in the current items / contexts
 		/  steps:
