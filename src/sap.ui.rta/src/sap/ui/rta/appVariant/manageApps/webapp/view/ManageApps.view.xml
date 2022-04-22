@@ -75,7 +75,6 @@
 										visible="{delAppVarButtonVisibility}"
 										tooltip="{parts: [{path: 'delAppVarButtonEnabled'}, {path: 'isS4HanaCloud'}], formatter:'.formatDelButtonTooltip'}"
 										icon="sap-icon://delete" />
-									<MenuItem text="{i18n>MAA_DIALOG_SAVE_AS_APP}" enabled="{saveAsButtonEnabled}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_SAVE_AS_APP}" icon="sap-icon://save" visible="{isKeyUser}" />
 								</items>
 							</Menu>
 						</menu>

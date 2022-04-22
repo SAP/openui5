@@ -227,8 +227,6 @@ sap.ui.define([
 				return this.copyId(oEvent);
 			} else if (sItemPath === oI18n.getText("MAA_DIALOG_DELETE_APPVAR")) {
 				return this.deleteAppVariant(oEvent);
-			} else if (sItemPath === oI18n.getText("MAA_DIALOG_SAVE_AS_APP")) {
-				return this.saveAsAppVariant(oEvent);
 			}
 
 			return undefined;
@@ -261,21 +259,6 @@ sap.ui.define([
 			}
 
 			return false;
-		},
-
-		saveAsAppVariant: function(oEvent) {
-			AppVariantUtils.closeOverviewDialog();
-
-			var sDescriptorUrl = this.getModelProperty("descriptorUrl", oEvent.getSource().getBindingContext());
-
-			BusyIndicator.show();
-			return AppVariantOverviewUtils.getDescriptor({
-				appVarUrl: sDescriptorUrl,
-				layer: _sLayer
-			}).then(function(oAppVariantDescriptor) {
-				BusyIndicator.hide();
-				return RtaAppVariantFeature.onSaveAs(false, false, _sLayer, oAppVariantDescriptor);
-			});
 		},
 
 		copyId: function(oEvent) {
