@@ -13,7 +13,8 @@ sap.ui.define([
 
 	var mTests = {
 			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true' : 'full',
-			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&module=sap.ui.model.odata.v4.ODataModel.integration' : 'integration',
+			// realOData=true is appended so that the module is run in variant "POC verification'
+			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&module=sap.ui.model.odata.v4.ODataModel.integration&realOData=true' : 'integration',
 			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&module=sap.ui.model.odata.v4.ODataModel.realOData&realOData=true' : 'integration'
 		};
 
