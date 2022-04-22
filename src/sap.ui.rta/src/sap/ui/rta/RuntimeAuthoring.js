@@ -255,6 +255,7 @@ sap.ui.define([
 			if (window.parent !== window) {
 				this.startService("receiver");
 			}
+			this.startService("supportTools");
 
 			this._loadUShellServicesPromise = FlexUtils.getUShellServices(["URLParsing", "AppLifeCycle", "CrossApplicationNavigation"])
 				.then(function (mUShellServices) {
