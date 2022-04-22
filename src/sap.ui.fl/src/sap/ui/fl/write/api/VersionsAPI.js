@@ -184,7 +184,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the updated list of versions for the application
 	 * when the version was activated;
-	 * rejects if an error occurs, the layer does not support draft handling, there is no draft to activate or
+	 * rejects if an error occurs, the layer does not support draft handling, there is unsaved content, there is no draft to activate or
 	 * when the displayed version is already active
 	 */
 	VersionsAPI.activate = function (mPropertyBag) {

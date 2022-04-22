@@ -87,8 +87,9 @@ sap.ui.define([
 					var bDraftAvailable = bVersioningEnabled && (bDirtyChanges || bBackendDraft);
 					oModel.setProperty("/draftAvailable", bDraftAvailable);
 
-					var sDisplayedVersion = bDirtyChanges ? Version.Number.Draft : oModel.getProperty("/persistedVersion");
-					oModel.setProperty("/displayedVersion", sDisplayedVersion);
+					if (bDirtyChanges) {
+						oModel.setProperty("/displayedVersion", Version.Number.Draft);
+					}
 
 					// add draft
 					if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
@@ -248,7 +249,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.appComponent - Application Component
 	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the updated list of versions for the application
 	 * when the version was activated;
-	 * rejects if an error occurs, the layer does not support draft handling, there is no draft to activate or
+	 * rejects if an error occurs, the layer does not support draft handling, there is unsaved content, there is no draft to activate or
 	 * when the displayed version is already active
 	 */
 	Versions.activate = function(mPropertyBag) {
@@ -257,23 +258,22 @@ sap.ui.define([
 		var bDraftExists = _doesDraftExistInVersions(aVersions);
 		var sDisplayedVersion = oModel.getProperty("/displayedVersion");
 		var sActiveVersion = oModel.getProperty("/activeVersion");
-		var sParentVersion = oModel.getProperty("/persistedVersion");
 		if (sDisplayedVersion === sActiveVersion) {
 			return Promise.reject("Version is already active");
 		}
 		mPropertyBag.version = sDisplayedVersion;
 
-		var aSaveDirtyChangesPromise = [];
-		if (oModel.getProperty("/dirtyChanges")) {
-			// TODO: the handling should move to the FlexState as soon as it is ready
-			var oDirtyChangeInfo = _getDirtyChangesInfo(mPropertyBag);
-			var aChangePersistences = oDirtyChangeInfo.changePersistences;
-			aSaveDirtyChangesPromise = aChangePersistences.map(function (oChangePersistence) {
-				return oChangePersistence.saveDirtyChanges(mPropertyBag.appComponent, false, undefined, sParentVersion);
-			});
+		var oDirtyChangeInfo = _getDirtyChangesInfo(mPropertyBag);
+		var aChangePersistences = oDirtyChangeInfo.changePersistences;
+		var bDirtyChangesExists = aChangePersistences.some(function (oChangePersistence) {
+			return oChangePersistence.getDirtyChanges().length > 0;
+		});
+
+		if (bDirtyChangesExists) {
+			return Promise.reject("unsaved changes exists");
 		}
-		return Promise.all(aSaveDirtyChangesPromise)
-		.then(Storage.versions.activate.bind(undefined, mPropertyBag))
+
+		return Storage.versions.activate(mPropertyBag)
 		.then(function (oVersion) {
 			aVersions.forEach(function (oVersionEntry) {
 				oVersionEntry.type = "inactive";

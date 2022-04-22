@@ -924,7 +924,7 @@ sap.ui.define([
 			})
 			.then(function(sAction) {
 				if (sAction === MessageBox.Action.OK) {
-					this._activate(sVersionTitle);
+					return this._activate(sVersionTitle);
 				}
 			}.bind(this));
 		}
@@ -934,10 +934,13 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._activate = function(sVersionTitle) {
 		var sLayer = this.getLayer();
 		var oSelector = this.getRootControlInstance();
-		return VersionsAPI.activate({
-			layer: sLayer,
-			control: oSelector,
-			title: sVersionTitle
+		return this._serializeAndSave()
+		.then(function () {
+			return VersionsAPI.activate({
+				layer: sLayer,
+				control: oSelector,
+				title: sVersionTitle
+			});
 		}).then(function () {
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
 			this.bInitialResetEnabled = true;
