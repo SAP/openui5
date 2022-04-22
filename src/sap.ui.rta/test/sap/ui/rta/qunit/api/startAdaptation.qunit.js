@@ -3,110 +3,101 @@
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/api/startAdaptation",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/base/Log",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	RuntimeAuthoring,
 	startAdaptation,
-	Settings,
 	FeaturesAPI,
-	Log,
+	PersistenceWriteAPI,
+	Layer,
 	sinon,
 	RtaQunitUtils
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
-
-	function setIsKeyUser(bIsKeyUser) {
-		sandbox.stub(FeaturesAPI, "isKeyUser").resolves(bIsKeyUser);
-	}
+	var oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given startAdaptation()", {
 		beforeEach: function () {
-			sandbox.spy(Log, "error");
-			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
-			this.fnRtaStartStub = sandbox.stub(RuntimeAuthoring.prototype, "start").resolves();
+			sandbox.stub(RuntimeAuthoring.prototype, "start");
+			sandbox.stub(PersistenceWriteAPI, "getChangesWarning").resolves({});
 		},
 		afterEach: function () {
-			Settings._instance = undefined;
-			this.oMockedAppComponent.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when called with valid parameters", function(assert) {
-			setIsKeyUser(true);
 			var oLoadPluginsStub = sandbox.stub().resolves();
-			var oOnLoadStub = sandbox.stub();
+			var oOnStartStub = sandbox.stub();
 			var oOnFailedStub = sandbox.stub();
 			var oOnStopStub = sandbox.stub();
 
 			return startAdaptation(
 				{
-					rootControl: this.oMockedAppComponent,
+					rootControl: oAppComponent,
 					flexSettings: {
-						layer: "CUSTOMER",
-						developerMode: true
+						layer: Layer.USER,
+						developerMode: false
 					}
 				},
 				oLoadPluginsStub,
-				oOnLoadStub,
+				oOnStartStub,
 				oOnFailedStub,
 				oOnStopStub
 			).then(function(oRta) {
 				assert.ok(oLoadPluginsStub.calledOnce, "then the passed plugin modifier function is called");
-				assert.strictEqual(oRta.mEventRegistry.start.pop().fFunction, oOnLoadStub, "then the passed on load handler is registered on eventhandler");
-				assert.strictEqual(oRta.mEventRegistry.failed.pop().fFunction, oOnFailedStub, "then the passed on failed handler is registered on eventhandler");
-				assert.strictEqual(oRta.mEventRegistry.stop.pop().fFunction, oOnStopStub, "then the passed on stop handler is registered on eventhandler");
-				assert.strictEqual(oRta.getRootControl(), this.oMockedAppComponent.getId(), "then correct root control was set");
-			}.bind(this));
+				assert.deepEqual(oRta.getFlexSettings(), {layer: Layer.USER, developerMode: false}, "the flexSettings are correct");
+				assert.strictEqual(oRta.mEventRegistry.start.pop().fFunction, oOnStartStub, "then the passed on start handler is registered as event handler");
+				assert.strictEqual(oRta.mEventRegistry.failed.pop().fFunction, oOnFailedStub, "then the passed on failed handler is registered as event handler");
+				assert.strictEqual(oRta.mEventRegistry.stop.pop().fFunction, oOnStopStub, "then the passed on stop handler is registered as event handler");
+				assert.strictEqual(oRta.getRootControl(), oAppComponent.getId(), "then correct root control was set");
+			});
+		});
+
+		QUnit.test("when called without flexSettings", function(assert) {
+			var oLoadPluginsStub = sandbox.stub().resolves();
+			var oOnStartStub = sandbox.stub();
+			var oOnFailedStub = sandbox.stub();
+			var oOnStopStub = sandbox.stub();
+			sandbox.stub(FeaturesAPI, "isKeyUser").resolves(true);
+
+			return startAdaptation(
+				{
+					rootControl: oAppComponent
+				},
+				oLoadPluginsStub,
+				oOnStartStub,
+				oOnFailedStub,
+				oOnStopStub
+			).then(function(oRta) {
+				assert.ok(oLoadPluginsStub.calledOnce, "then the passed plugin modifier function is called");
+				assert.deepEqual(oRta.getFlexSettings(), {layer: Layer.CUSTOMER, developerMode: false}, "the default flexSettings are passed");
+				assert.strictEqual(oRta.mEventRegistry.start.pop().fFunction, oOnStartStub, "then the passed on start handler is registered as event handler");
+				assert.strictEqual(oRta.mEventRegistry.failed.pop().fFunction, oOnFailedStub, "then the passed on failed handler is registered as event handler");
+				assert.strictEqual(oRta.mEventRegistry.stop.pop().fFunction, oOnStopStub, "then the passed on stop handler is registered as event handler");
+				assert.strictEqual(oRta.getRootControl(), oAppComponent.getId(), "then correct root control was set");
+			});
 		});
 
 		QUnit.test("when called with an invalid layer setting", function(assert) {
-			setIsKeyUser(true);
-			var sTestLayer = "TESTLAYER";
 			return startAdaptation({
-				rootControl: this.oMockedAppComponent,
+				rootControl: oAppComponent,
 				flexSettings: {
-					layer: sTestLayer,
-					developerMode: true
+					layer: "testLayer"
 				}
 			}).catch(function(oError) {
-				assert.ok(this.fnRtaStartStub.notCalled, "then RuntimeAuthoring.start() was not called");
 				assert.ok(oError instanceof Error, "then promise was rejected with an error");
 				assert.strictEqual(oError.message, "An invalid layer is passed", "then the correct message is returned");
-			}.bind(this));
-		});
-
-		QUnit.test("when called with an invalid root control", function(assert) {
-			setIsKeyUser(true);
-			return startAdaptation({rootControl: {}})
-				.catch(function(oError) {
-					assert.ok(this.fnRtaStartStub.notCalled, "then RuntimeAuthoring.start() was not called");
-					assert.ok(oError instanceof Error, "then promise was rejected with an error");
-					assert.strictEqual(oError.message, "An invalid root control was passed", "then the correct message is returned");
-				}.bind(this));
-		});
-
-		QUnit.test("when called with 'user' layer and the user is not a key user", function(assert) {
-			setIsKeyUser(false);
-			var sTestLayer = "USER";
-			return startAdaptation({
-				rootControl: this.oMockedAppComponent,
-				flexSettings: {
-					layer: sTestLayer,
-					developerMode: true
-				}
-			}).then(function() {
-				assert.ok(this.fnRtaStartStub.calledOnce, "then RuntimeAuthoring.start() is called");
-				assert.ok(Log.error.notCalled, "then no error was logged");
-			}.bind(this));
+			});
 		});
 	});
 
 	QUnit.done(function() {
+		oAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });
