@@ -97,6 +97,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		}
 		if (oControl._isIconMode()) {
 			oRm.class("sapMGTIconMode");
+			if (this._isThemeHighContrast()) {
+				oRm.class("HighContrastTile");
+			}
 		}
 		if (!bIsArticleMode && !bIsActionMode && frameType !== frameTypes.OneByHalf && (oControl.getSystemInfo() || oControl.getAppShortcut())) {
 			oRm.class("tileWithAppInfo");
@@ -105,8 +108,13 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		if (oControl._isIconMode()) {
 			if (frameType === frameTypes.TwoByHalf) {
 				oRm.class("sapMGTTwoByHalf");
-			} else {
-				oRm.style("background-color", oControl.getBackgroundColor());
+			} else if (frameType === frameTypes.OneByOne) {
+				if (!this._isThemeHighContrast()) {
+					oRm.style("background-color", oControl.getBackgroundColor());
+				} else {
+					oRm.style("border-color", oControl.getBackgroundColor());
+					oRm.style("box-shadow", "0 0 0 1px" + oControl.getBackgroundColor());
+				}
 			}
 		}
 
@@ -229,7 +237,13 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 					oRm.class("sapMGTOneByOneIcon");
 				} else {
 					oRm.class("sapMGTTwoByHalfIcon");
-					oRm.style("background-color", oControl.getBackgroundColor());
+					if (!this._isThemeHighContrast()) {
+						oRm.style("background-color", oControl.getBackgroundColor());
+					} else {
+						oRm.class("HighContrastTile");
+						oRm.style("border-color", oControl.getBackgroundColor());
+						oRm.style("box-shadow", "0 0 0 1px" + oControl.getBackgroundColor());
+					}
 				}
 				oRm.openEnd();
 				if (oControl.getTileIcon()) {
@@ -404,13 +418,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 	GenericTileRenderer._renderFocusDiv = function(oRm, oControl) {
 		oRm.openStart("div", oControl.getId() + "-focus");
 		oRm.class("sapMGTFocusDiv");
-		if (oControl._isIconMode()) { //Set respective BorderRadius for IconMode
-			if (oControl.getFrameType() === frameTypes.OneByOne) {
-				oRm.style("border-radius", "1rem");
-			} else {
-				oRm.style("border-radius", "0.75rem");
-			}
-		}
 		oRm.openEnd();
 		oRm.close("div");
 	};
@@ -522,6 +529,15 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			return true;
 		}
 		return false;
+	};
+
+	/**
+	 * Checks whether the current theme is a high contrast theme like sap_belize_hcb or sap_belize_hcw.
+	 * @returns {boolean} True if the theme name contains hcb or hcw, false otherwise
+	 * @private
+	 */
+	GenericTileRenderer._isThemeHighContrast = function() {
+		return /(hcw|hcb)/g.test(sap.ui.getCore().getConfiguration().getTheme());
 	};
 
 	return GenericTileRenderer;
