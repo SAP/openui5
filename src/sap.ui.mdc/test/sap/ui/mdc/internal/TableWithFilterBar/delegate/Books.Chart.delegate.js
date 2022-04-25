@@ -6,9 +6,11 @@ sap.ui.define([
     "sap/ui/mdc/odata/v4/ODataMetaModelUtil",
     "sap/ui/mdc/library",
     "./Books.FB.delegate",
+	"./GridTable.delegate",
     "sap/ui/mdc/enum/FieldDisplay",
-    "sap/base/Log"
-], function(ChartDelegate, ODataMetaModelUtil, MDCLib, BooksFBDelegate, FieldDisplay, Log) {
+    "sap/base/Log",
+	"sap/ui/core/Core"
+], function(ChartDelegate, ODataMetaModelUtil, MDCLib, BooksFBDelegate, GridTableDelegate, FieldDisplay, Log, Core) {
     "use strict";
 
     var SampleChartDelegate = Object.assign({}, ChartDelegate);
@@ -274,6 +276,21 @@ sap.ui.define([
 				return BooksFBDelegate.removeCondition(sPropertyName, oChart, mPropertyBag);
 			}
 		};
+	};
+
+	SampleChartDelegate.updateBindingInfo = function(oChart, oBindingInfo) {
+		ChartDelegate.updateBindingInfo.apply(this, arguments);
+
+		var oFilterBar = Core.byId(oChart.getFilter());
+
+		if (oFilterBar) {
+			GridTableDelegate._updateSearch(oBindingInfo, oFilterBar);
+
+			if (oBindingInfo.filters) { // adjust already created filters as it may come from FilterBar or from Table-Filtering
+				GridTableDelegate._updateDateTimeFilter(oBindingInfo, oFilterBar.getPropertyHelper().getProperties());
+			}
+		}
+
 	};
 
     return SampleChartDelegate;
