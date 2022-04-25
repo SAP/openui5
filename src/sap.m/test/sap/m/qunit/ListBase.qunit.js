@@ -3434,6 +3434,19 @@ sap.ui.define([
 			var sLabelledBy = $noData.attr("aria-labelledby");
 			assert.equal(Core.byId(sLabelledBy).getText(), "Illustrated Message Custom Title. This is a custom description.", "Accessbility text is set correctly");
 
+			oList.setEnableBusyIndicator(true);
+			oList._showBusyIndicator();
+			this.clock.tick(1000);
+
+			assert.ok(oList.getBusy(), "List is set to busy");
+			assert.strictEqual($noDataText.children().get(0), Core.byId("nodataIllustratedMessage").getDomRef(), "Busy indicator does not clear illustrated message");
+
+			oList._hideBusyIndicator();
+			Core.applyChanges();
+
+			assert.notOk(oList.getBusy(), "List is not set to busy");
+			assert.strictEqual($noDataText.children().get(0), Core.byId("nodataIllustratedMessage").getDomRef(), "List contains figure's DOM element after busy indicator hidden");
+
 			oList.setNoDataText("Test");
 			assert.strictEqual($noDataText.children().get(0), Core.byId("nodataIllustratedMessage").getDomRef(), "List contains figure's DOM element");
 
