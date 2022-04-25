@@ -211,12 +211,12 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	};
 
 	PropertyHelperMixin._getPropertyByNameAsync = function(sName) {
-		var oProperty = this._oPropertyHelper && this._oPropertyHelper.getProperty(sName);
+		var oProperty = this._getPropertyByName(sName);
 
 		if (!oProperty) {
 			return this.finalizePropertyHelper().then(function (oPropertyHelper) {
-				return oPropertyHelper.getProperty(sName);
-			});
+				return this._getPropertyByName(sName);
+			}.bind(this));
 		}
 		return Promise.resolve(oProperty);
 	};

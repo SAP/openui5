@@ -63,6 +63,26 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	// FIXME: currently the FilterBar key handling is tightly coupled to the path
+	// as the FilterFields themselves are referenced through the path in the conditions binding path
+	// of the according FilterField. In use cases as for the AdaptationFilterBar, the Table's propertyinfo
+	// is being propagated to the FilterBar, where the name does not neessarily need to reflect the technical
+	// path in the model. Once the key reference between FilterFields, Columns and property info object has been aligned,
+	// the below fallback logic will become obsolete.
+	AdaptationFilterBar.prototype._getPropertyByName = function(sName) {
+		var oPropertyHelper = this.getPropertyHelper();
+		if (oPropertyHelper) {
+			var oProperty = oPropertyHelper.getProperties().find(function(oProp){
+				return oProp.path === sName;
+			});
+
+			if (!oProperty) {
+				oProperty = oPropertyHelper.getPropertyMap()[sName] || null;
+			}
+			return oProperty;
+		}
+	};
+
 	AdaptationFilterBar.prototype._waitForAdaptControlAndPropertyHelper = function(){
 		return this._oAdaptationControlPromise.then(function() {
 			return this._getAdaptationControlInstance().awaitPropertyHelper().then(function(oPropertyHelper) {
