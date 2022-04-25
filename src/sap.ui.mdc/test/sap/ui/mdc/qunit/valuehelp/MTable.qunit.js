@@ -895,6 +895,42 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getItemForValue: check missing paths", function(assert) {
+
+		oMTable.setKeyPath();
+		oMTable.setDescriptionPath();
+
+		var oConfig = {
+			parsedValue: "I3",
+			value: "I3",
+			bindingContext: undefined,
+			conditionModel: undefined,
+			conditionModelName: undefined,
+			checkKey: true,
+			checkDescription: true,
+			caseSensitive: true,
+			exception: ParseException,
+			control: "MyControl"
+		};
+
+		try {
+			oMTable.getItemForValue(oConfig);
+			assert.ok(false, "Exception missing");
+		} catch (oException) {
+			assert.equal(oException.message, "MTable: KeyPath missing! " + oMTable.getId(), "Exception fired");
+		}
+
+		oConfig.checkKey = false;
+
+		try {
+			oMTable.getItemForValue(oConfig);
+			assert.ok(false, "Exception missing");
+		} catch (oException) {
+			assert.equal(oException.message, "MTable: DescriptionPath missing! " + oMTable.getId(), "Exception fired");
+		}
+
+	});
+
 	QUnit.test("isValidationSupported", function(assert) {
 
 		assert.ok(oMTable.isValidationSupported(), "validation is supported");
