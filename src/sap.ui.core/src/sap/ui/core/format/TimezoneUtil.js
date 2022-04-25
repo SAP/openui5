@@ -6,7 +6,7 @@ sap.ui.define([], function() {
 	"use strict";
 
 	/**
-	 * Static collection of utility functions to handle timezone related conversions
+	 * Static collection of utility functions to handle time zone related conversions
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -17,7 +17,19 @@ sap.ui.define([], function() {
 	 */
 	var TimezoneUtil = {};
 
+	/**
+	 * Cache for the (browser's) local IANA timezone ID
+	 *
+	 * @type {string}
+	 */
 	var sLocalTimezone = "";
+
+	/**
+	 * Cache for valid time zones provided by <code>Intl.supportedValuesOf("timeZone")</code>
+	 *
+	 * @type {Array}
+	 */
+	var aSupportedTimezoneIDs;
 
 	/**
 	 * Cache for Intl.DateTimeFormat instances
@@ -66,17 +78,36 @@ sap.ui.define([], function() {
 	};
 
 	/**
-	 * Uses the <code>Intl.DateTimeFormat</code> API to check if it can handle the given
-	 * IANA timezone ID.
+	 * Uses the <code>Intl.supportedValuesOf('timeZone')</code> and <code>Intl.DateTimeFormat</code>
+	 * API to check if the browser can handle the given IANA timezone ID.
+	 * <code>Intl.supportedValuesOf('timeZone')</code> offers direct access to the list of supported
+	 * time zones. It is not yet supported by all browsers but if it is supported and the given time
+	 * zone is in the list it is faster than probing.
+	 *
+	 * <code>Intl.supportedValuesOf('timeZone')</code> does not return all IANA timezone IDs which
+	 * the <code>Intl.DateTimeFormat</code> can handle, e.g. "Japan", "Etc/UTC".
 	 *
 	 * @param {string} sTimezone The IANA timezone ID which is checked, e.g <code>"Europe/Berlin"</code>
-	 * @returns {boolean} Whether the timezone is a valid IANA timezone ID
+	 * @returns {boolean} Whether the time zone is a valid IANA timezone ID
 	 * @private
 	 * @ui5-restricted sap.ui.core.Configuration, sap.ui.core.format.DateFormat
 	 */
 	TimezoneUtil.isValidTimezone = function(sTimezone) {
 		if (!sTimezone) {
 			return false;
+		}
+
+		if (Intl.supportedValuesOf) {
+			try {
+				aSupportedTimezoneIDs = aSupportedTimezoneIDs || Intl.supportedValuesOf('timeZone');
+				if (aSupportedTimezoneIDs.includes(sTimezone)) {
+					return true;
+				}
+				// although not contained in the supportedValues it still can be valid, therefore continue
+			} catch (oError) {
+				// ignore error
+				aSupportedTimezoneIDs = [];
+			}
 		}
 
 		try {
@@ -88,19 +119,19 @@ sap.ui.define([], function() {
 	};
 
 	/**
-	 * Converts a date to a specific timezone.
-	 * The resulting date reflects the given timezone such that the "UTC" Date methods
-	 * can be used, e.g. Date#getUTCHours() to display the hours in the given timezone.
+	 * Converts a date to a specific time zone.
+	 * The resulting date reflects the given time zone such that the "UTC" Date methods
+	 * can be used, e.g. Date#getUTCHours() to display the hours in the given time zone.
 	 *
 	 * @example
 	 * var oDate = new Date("2021-10-13T15:22:33Z"); // UTC
-	 * // Timezone difference UTC-4 (DST)
+	 * // time zone difference UTC-4 (DST)
 	 * TimezoneUtil.convertToTimezone(oDate, "America/New_York");
 	 * // 2021-10-13 11:22:33 in America/New_York
 	 *
 	 * @param {Date} oDate The date which should be converted.
 	 * @param {string} sTargetTimezone The target IANA timezone ID, e.g <code>"Europe/Berlin"</code>
-	 * @returns {Date} The new date in the target timezone.
+	 * @returns {Date} The new date in the target time zone.
 	 * @private
 	 * @ui5-restricted sap.ui.core.format.DateFormat, sap.ui.unified, sap.m
 	 */
@@ -110,7 +141,7 @@ sap.ui.define([], function() {
 	};
 
 	/**
-	 * Uses the <code>Intl.DateTimeFormat</code> API to convert a date to a specific timezone.
+	 * Uses the <code>Intl.DateTimeFormat</code> API to convert a date to a specific time zone.
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/formatToParts
 	 * @param {Date} oDate The date which should be converted.
@@ -125,7 +156,7 @@ sap.ui.define([], function() {
 	 *     era: string,
 	 *     fractionalSecond: string,
 	 *     timeZoneName: string
-	 * }} An object containing the date and time fields considering the target timezone.
+	 * }} An object containing the date and time fields considering the target time zone.
 	 * @private
 	 */
 	TimezoneUtil._getParts = function(oDate, sTargetTimezone) {
@@ -184,7 +215,7 @@ sap.ui.define([], function() {
 	};
 
 	/**
-	 * Gets the offset to UTC in seconds for a given date in the timezone specified.
+	 * Gets the offset to UTC in seconds for a given date in the time zone specified.
 	 *
 	 * For non-unique points in time, the daylight saving time takes precedence over the standard
 	 * time shortly after the switch back (e.g. clock gets set back 1 hour, duplicate hour).
@@ -198,7 +229,7 @@ sap.ui.define([], function() {
 	 * // => -7200 seconds (-2 * 60 * 60 seconds)
 	 *
 	 * // daylight saving time (2018 Sun, 25 Mar, 02:00	CET → CEST	+1 hour (DST start)	UTC+2h)
-	 * // the given date is taken as it is in the timezone
+	 * // the given date is taken as it is in the time zone
 	 * TimezoneUtil.calculateOffset(new Date("2018-03-25T00:00:00Z"), "Europe/Berlin");
 	 * // => -3600 seconds (-1 * 60 * 60 seconds), interpreted as: 2018-03-25 00:00:00 (CET)
 	 *
@@ -209,9 +240,9 @@ sap.ui.define([], function() {
 	 * TimezoneUtil.calculateOffset(oHistoricalDate, "Europe/Berlin");
 	 * // => -3208 seconds (-3208 seconds)
 	 *
-	 * @param {Date} oDate The date in the timezone used to calculate the offset to UTC.
+	 * @param {Date} oDate The date in the time zone used to calculate the offset to UTC.
 	 * @param {string} sTimezoneSource The source IANA timezone ID, e.g <code>"Europe/Berlin"</code>
-	 * @returns {number} The difference to UTC between the date in the timezone.
+	 * @returns {number} The difference to UTC between the date in the time zone.
 	 * @private
 	 * @ui5-restricted sap.ui.core.format.DateFormat
 	 */
@@ -241,6 +272,7 @@ sap.ui.define([], function() {
 		sLocalTimezone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
 		return sLocalTimezone;
 	};
+
 
 	return TimezoneUtil;
 });

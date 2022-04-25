@@ -122,7 +122,7 @@ sap.ui.getCore().attachInit(function () {
 			When.onTheMainPage.enterInputValue("Identification::TimezoneID", "Europe/Berlin",
 				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
 			Then.onTheMainPage.checkInputValue("Identification::DateTimeOffset",
-				"Apr 19, 2029, 8:25:21 AM Europe/Berlin",
+				"Apr 19, 2029, 8:25:21 AM Europe, Berlin",
 				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
 
 			Then.onAnyPage.checkLog([{component : "sap.ui.model.odata.v4.ODataMetaModel",

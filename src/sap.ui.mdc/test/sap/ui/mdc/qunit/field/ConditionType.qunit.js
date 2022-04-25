@@ -528,7 +528,7 @@ sap.ui.define([
 		assert.equal(sResult, "2022-02-25T07:06:30", "Result of formatting for DateTime part");
 
 		sResult = oConditionType2.formatValue(oCondition);
-		assert.equal(sResult, "Europe/Berlin", "Result of formatting for Timezone part");
+		assert.equal(sResult, "Europe, Berlin", "Result of formatting for Timezone part");
 
 	});
 

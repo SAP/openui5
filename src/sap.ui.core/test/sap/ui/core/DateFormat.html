@@ -34,7 +34,7 @@
 
 	var aSamples = [
 			{key: "custom", text: "Custom", type: "Date", sample: {} },
-			{key: "timezone", text: "Timezone", type: "DateTimeWithTimezone", sample: {showTimezone: "Show"} },
+			{key: "timezone", text: "Timezone", type: "DateTimeWithTimezone", sample: {} },
 			{key: "shortdate", text: "Short date", type: "Date", sample: {style: "short"} },
 			{key: "longdate", text: "Long date", type: "Date", sample: {style: "long"} },
 			{key: "shorttime", text: "Short time", type: "Time", sample: {style: "short"} },
@@ -115,12 +115,22 @@
 			}
 		};
 
+	var oCurrentLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+	var sLocale = oCurrentLocale.getLanguage();
+	if (oCurrentLocale.getRegion()) {
+		sLocale += "_" + oCurrentLocale.getRegion();
+	}
+
 	var oModel = new sap.ui.model.json.JSONModel({
 		date: new Date(),
 		todate: new Date(),
 		formatOptions: {},
 		type: "Date",
 		locales: aLocales,
+		localesSuggestions: aLocales.map(function(sLocale) {
+			return {name: sLocale};
+		}),
+		locale: sLocale,
 		samples: aSamples,
 		sample: "custom",
 		timezone: "Europe/Berlin",
@@ -182,10 +192,11 @@
 											}),
 											new sap.m.Input({
 												value: {
-													parts: ["/date", "/todate", "/type", "/formatOptions", "/timezone"],
-													formatter: function(oDate, oToDate, sType, oFormatOptions, sTimezone) {
+													parts: ["/date", "/todate", "/type", "/formatOptions", "/locale", "/timezone"],
+													formatter: function(oDate, oToDate, sType, oFormatOptions, sLocale, sTimezone) {
+														var oLocale = new sap.ui.core.Locale(sLocale);
 														var sFunctionName = "get" + sType + "Instance",
-																oDateFormat = sap.ui.core.format.DateFormat[sFunctionName](oFormatOptions);
+																oDateFormat = sap.ui.core.format.DateFormat[sFunctionName](oFormatOptions, oLocale);
 														if (sType !== "DateTimeWithTimezone") {
 															sTimezone = undefined;
 														}
@@ -201,9 +212,11 @@
 													var oFormatOptions = oModel.getProperty("/formatOptions");
 													var sType = oModel.getProperty("/type");
 													var sTimezone = oModel.getProperty("/timezone");
+													var sLocale = oModel.getProperty("/locale");
 													var sFunctionName = "get" + sType + "Instance";
 													var oOptions = jQuery.extend({}, oFormatOptions);
-													var oDateFormat = sap.ui.core.format.DateFormat[sFunctionName](oOptions);
+													var oLocale = new sap.ui.core.Locale(sLocale);
+													var oDateFormat = sap.ui.core.format.DateFormat[sFunctionName](oOptions, oLocale);
 													if (sType !== "DateTimeWithTimezone") {
 														sTimezone = undefined;
 													}
@@ -347,6 +360,17 @@
 													formatter: function(oFormatOptions) {
 														return oFormatOptions.interval === true
 													}
+												}
+											}).addStyleClass("large largeinput"),
+											new sap.m.Label({
+												text: "Locale"
+											}),
+											new sap.m.Input({
+												showSuggestion: true,
+												suggestionItems: {path: "/localesSuggestions", factory: function(){ return new sap.m.SuggestionItem({"icon":"{path:'name', formatter: 'iconFormatter'}", "text":"{name}"});}},
+												value: "{/locale}",
+												change: function() {
+													oModel.setProperty("/sample", "custom");
 												}
 											}).addStyleClass("large largeinput")
 										]

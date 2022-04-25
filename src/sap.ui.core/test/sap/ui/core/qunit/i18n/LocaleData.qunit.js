@@ -1,10 +1,12 @@
-/*global QUnit */
+/*global QUnit*/
 sap.ui.define([
+	"./helper/_timezones",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
+	"sap/ui/core/format/TimezoneUtil",
 	"sap/base/util/LoaderExtensions"
-], function(CalendarType, Locale, LocaleData, LoaderExtensions) {
+], function(timezones, CalendarType, Locale, LocaleData, TimezoneUtil, LoaderExtensions) {
 	"use strict";
 
 	QUnit.module("Locale Data Loading", {
@@ -18,6 +20,7 @@ sap.ui.define([
 
 	QUnit.test("LocaleData caching of data", function(assert) {
 		LocaleData.getInstance(new Locale("en_US"));
+		// Get Instance again to test cache
 		LocaleData.getInstance(new Locale("en_US"));
 		assert.equal(this.loadResourceSpy.callCount, 1, "called only once for same locale");
 	});
@@ -67,14 +70,8 @@ sap.ui.define([
 		assert.equal(oLocaleData.sCLDRLocaleId, "en");
 	});
 
-
-	// added "sh"
-	var aLanguages = ["ar", "ar_EG", "ar_SA", "bg", "ca", "cy", "cs", "da", "de", "de_AT", "de_CH", "el", "el_CY",
-		"en", "en_AU", "en_GB", "en_HK", "en_IE", "en_IN", "en_NZ", "en_PG", "en_SG", "en_ZA", "es",
-		"es_AR", "es_BO", "es_CL", "es_CO", "es_MX", "es_PE", "es_UY", "es_VE", "et", "fa", "fi", "fr",
-		"fr_BE", "fr_CA", "fr_CH", "fr_LU", "he", "hi", "hr", "hu", "id", "it", "it_CH", "ja", "kk", "ko", "lt",
-		"lv", "ms", "nb", "nl", "nl_BE", "pl", "pt", "pt_PT", "ro", "ru", "ru_UA", "sk", "sl", "sr", "sr_Latn", "sh", "sv",
-		"th", "tr", "uk", "vi", "zh_CN", "zh_HK", "zh_SG", "zh_TW"];
+	var aLanguages = Locale._cldrLocales.slice();
+	aLanguages.push("sh");
 
 	aLanguages.forEach(function(sLanguage) {
 		QUnit.test("getCurrentLanguageName '" + sLanguage + "'", function(assert) {
@@ -499,6 +496,150 @@ sap.ui.define([
 		var oCurrencySymbols = oLocaleData.getCurrencySymbols();
 
 		assert.strictEqual(oCurrencySymbols["BTC"], "Ƀ", "Custom currency symbol map contains the Bitcoin icon");
+	});
+
+	QUnit.module("Timezone Translation");
+
+	var aABAPUnsupportedIDs = [
+		"Etc/GMT",
+		"Etc/Greenwich",
+		"Etc/Zulu",
+		"Pacific/Kanton"
+	];
+
+	QUnit.test("getTimezoneTranslations ensure bijective mapping / consistency", function(assert) {
+		aLanguages.forEach(function (sLocale) {
+			var oLocaleData = new LocaleData(new Locale(sLocale));
+			var mTimezoneTranslations = oLocaleData.getTimezoneTranslations();
+
+			assert.equal(Object.values(mTimezoneTranslations).length, new Set(Object.values(mTimezoneTranslations)).size, sLocale + ": values must be unique");
+			assert.equal(Object.keys(mTimezoneTranslations).length, new Set(Object.keys(mTimezoneTranslations)).size, sLocale + ": keys must be unique");
+		});
+	});
+
+	aLanguages.forEach(function (sLocale) {
+		QUnit.test("getTimezoneTranslations for " + sLocale, function(assert) {
+			var oLocaleData = new LocaleData(new Locale(sLocale));
+			var mTimezoneTranslations = oLocaleData.getTimezoneTranslations();
+
+			timezones.aABAPTimezoneIDs.forEach(function (sTimezoneId) {
+				var sTranslationCldr = mTimezoneTranslations[sTimezoneId];
+				if (aABAPUnsupportedIDs.includes(sTimezoneId)) {
+					assert.notOk(sTranslationCldr, sLocale + ": no translation expected for " + sTimezoneId);
+				} else {
+					assert.ok(sTranslationCldr, sLocale + ": translation expected for " + sTimezoneId);
+				}
+			});
+		});
+	});
+
+	QUnit.test("getTimezoneTranslations generic structure test", function(assert) {
+		var oLocaleData = new LocaleData(new Locale("de"));
+		delete oLocaleData.mTimezoneNames;
+		var oStubIsValidTimezone = this.stub(TimezoneUtil, 'isValidTimezone').returns(true);
+		var oStubGet = this.stub(oLocaleData, '_get');
+		oStubGet.withArgs("timezoneNamesFormats").returns({
+			"gmtFormat": "XYZ{0}"
+		});
+		oStubGet.withArgs("timezoneNames").returns({
+			a: {
+				_parent: "AParent",
+				a1: "A1",
+				a2: "A2",
+				a3: {
+					a31: "A31",
+					a32: "A32",
+					a33: {
+						a331: "A331",
+						a332: "A332"
+					},
+					_parent: "A3Parent",
+					a34: "A34"
+				},
+				a4: "A4",
+				a5: {
+					a51: "A51",
+					a52: "A52",
+					a53: {
+						a531: "A531",
+						a532: {
+							a5321: "A5321",
+							a5322: "A5322",
+							_parent: "A532Parent"
+						},
+						a533: "A533",
+						_parent: "A53Parent"
+					},
+					a54: "A54"
+				}
+			},
+			b: {
+				_parent: "BParent",
+				b1: "B1",
+				b2: {
+					b21: {
+						b211: "B211"
+					},
+					b22: "B22",
+					_parent: "B2Parent"
+				},
+				b3: "B3"
+			}
+		});
+		var mTimezoneNames = oLocaleData.getTimezoneTranslations();
+		assert.deepEqual({
+			"a/a1": "AParent, A1",
+			"a/a2": "AParent, A2",
+			"a/a3/a31": "AParent, A3Parent, A31",
+			"a/a3/a32": "AParent, A3Parent, A32",
+			"a/a3/a33/a331": "AParent, A3Parent, A331",
+			"a/a3/a33/a332": "AParent, A3Parent, A332",
+			"a/a3/a34": "AParent, A3Parent, A34",
+			"a/a4": "AParent, A4",
+			"a/a5/a51": "AParent, A51",
+			"a/a5/a52": "AParent, A52",
+			"a/a5/a53/a531": "AParent, A53Parent, A531",
+			"a/a5/a53/a532/a5321": "AParent, A53Parent, A532Parent, A5321",
+			"a/a5/a53/a532/a5322": "AParent, A53Parent, A532Parent, A5322",
+			"a/a5/a53/a533": "AParent, A53Parent, A533",
+			"a/a5/a54": "AParent, A54",
+			"b/b1": "BParent, B1",
+			"b/b2/b21/b211": "BParent, B2Parent, B211",
+			"b/b2/b22": "BParent, B2Parent, B22",
+			"b/b3": "BParent, B3",
+			"Etc/GMT-0": "XYZ-0",
+			"Etc/GMT-1": "XYZ-1",
+			"Etc/GMT-2": "XYZ-2",
+			"Etc/GMT-3": "XYZ-3",
+			"Etc/GMT-4": "XYZ-4",
+			"Etc/GMT-5": "XYZ-5",
+			"Etc/GMT-6": "XYZ-6",
+			"Etc/GMT-7": "XYZ-7",
+			"Etc/GMT-8": "XYZ-8",
+			"Etc/GMT-9": "XYZ-9",
+			"Etc/GMT-10": "XYZ-10",
+			"Etc/GMT-11": "XYZ-11",
+			"Etc/GMT-12": "XYZ-12",
+			"Etc/GMT-13": "XYZ-13",
+			"Etc/GMT-14": "XYZ-14",
+			"Etc/GMT0": "XYZ0",
+			"Etc/GMT+0": "XYZ+0",
+			"Etc/GMT+1": "XYZ+1",
+			"Etc/GMT+2": "XYZ+2",
+			"Etc/GMT+3": "XYZ+3",
+			"Etc/GMT+4": "XYZ+4",
+			"Etc/GMT+5": "XYZ+5",
+			"Etc/GMT+6": "XYZ+6",
+			"Etc/GMT+7": "XYZ+7",
+			"Etc/GMT+8": "XYZ+8",
+			"Etc/GMT+9": "XYZ+9",
+			"Etc/GMT+10": "XYZ+10",
+			"Etc/GMT+11": "XYZ+11",
+			"Etc/GMT+12": "XYZ+12"
+		}, mTimezoneNames);
+
+		oStubGet.restore();
+		oStubIsValidTimezone.restore();
 	});
 
 	QUnit.module("Special Cases");
