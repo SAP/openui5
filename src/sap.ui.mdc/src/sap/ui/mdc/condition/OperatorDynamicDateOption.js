@@ -106,8 +106,10 @@ sap.ui.define([
 			// TODO: request in DateContent to be sure that loaded? But needed only on opening, so async loading on initialization should be ok
 			var aModules = [];
 			var sBaseType = this.getBaseType();
-			if (sBaseType === BaseType.DateTime && !DateTimePicker) {
-				aModules.push("sap/m/DateTimePicker");
+			if (sBaseType === BaseType.DateTime) {
+				if (!DateTimePicker) {
+					aModules.push("sap/m/DateTimePicker");
+				}
 			} else if (!DatePicker) {
 				aModules.push("sap/m/DatePicker");
 			}
