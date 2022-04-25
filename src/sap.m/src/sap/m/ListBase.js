@@ -1372,12 +1372,6 @@ function(
 			// set the busy state
 			this._bBusy = true;
 
-			// TODO: would be great to have an event when busy indicator visually seen
-			this._sBusyTimer = setTimeout(function() {
-				// clean no data text
-				this.$("nodata-text").text("");
-			}.bind(this), this.getBusyIndicatorDelay());
-
 			// set busy property
 			this.setBusy(true, "listUl");
 		}
@@ -1388,12 +1382,6 @@ function(
 			// revert busy state
 			this._bBusy = false;
 			this.setBusy(false, "listUl");
-			clearTimeout(this._sBusyTimer);
-
-			// revert no data texts when necessary
-			if (!this.getItems(true).length) {
-				this.$("nodata-text").text(this.getNoDataText());
-			}
 		}
 	};
 
