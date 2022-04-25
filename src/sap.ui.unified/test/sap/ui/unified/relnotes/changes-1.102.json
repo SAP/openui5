@@ -3,6 +3,11 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "b27dc8bf9178f32c0b4abca6006ee62873a36fa6",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.FileUploader: new events are now added"
+      },
+      {
         "id": "383994b537840c75c496afa60c5f2b87ee248379",
         "type": "FIX",
         "text": " sap.m.DatePicker: Selection works without offsetting the date",
