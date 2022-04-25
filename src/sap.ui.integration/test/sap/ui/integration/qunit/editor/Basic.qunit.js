@@ -5675,7 +5675,7 @@ sap.ui.define([
 						var oField1 = oSubPanel.getContent()[1].getAggregation("_field");
 						var oField2 = oSubPanel.getContent()[3].getAggregation("_field");
 						oPanel.setExpanded(false);
-						wait(500).then(function () {
+						wait().then(function () {
 							assert.ok(oMessageStripOfPanel.getVisible(), "Message strip of group is visible since group is collapsed and has error");
 							assert.ok(oMessageStripOfPanel.getText() === oDefaultBundle.getText("EDITOR_GROUP_ERRORS"), "Message strip error text correct");
 							oPanel.setExpanded(true);
@@ -5685,7 +5685,7 @@ sap.ui.define([
 								oField2.setValue("aa");
 								wait(500).then(function () {
 									oPanel.setExpanded(false);
-									wait(500).then(function () {
+									wait().then(function () {
 										assert.ok(oMessageStripOfPanel.getVisible(), "Message strip of group is visible since has warning");
 										assert.ok(oMessageStripOfPanel.getText() === oDefaultBundle.getText("EDITOR_GROUP_WARNINGS"), "Message strip warning text correct");
 										oPanel.setExpanded(true);
