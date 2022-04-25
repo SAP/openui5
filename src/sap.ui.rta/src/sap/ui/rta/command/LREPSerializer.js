@@ -158,7 +158,8 @@ sap.ui.define([
 	 * @public
 	 */
 	LREPSerializer.prototype.saveCommands = function(bSaveAsDraft, sLayer, bRemoveOtherLayerChanges) {
-		this._lastPromise = this._lastPromise.catch(function() {
+		this._lastPromise = this._lastPromise.catch(function(oError) {
+			Log.error(oError);
 			// _lastPromise chain must not be interrupted
 		}).then(function() {
 			var oRootControl = getRootControlInstance(this.getRootControl());
@@ -173,7 +174,6 @@ sap.ui.define([
 				removeOtherLayerChanges: !!bRemoveOtherLayerChanges
 			});
 		}.bind(this))
-
 		.then(function() {
 			Log.info("UI adaptation successfully transfered changes to layered repository");
 			this.getCommandStack().removeAllCommands();

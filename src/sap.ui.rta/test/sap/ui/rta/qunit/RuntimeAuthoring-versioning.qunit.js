@@ -4,8 +4,9 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/m/MessageBox",
 	"sap/ui/base/Event",
-	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -15,8 +16,9 @@ sap.ui.define([
 	RtaQunitUtils,
 	MessageBox,
 	Event,
-	Version,
+	PersistenceWriteAPI,
 	ReloadInfoAPI,
+	Version,
 	VersionsAPI,
 	FlexUtils,
 	RuntimeAuthoring,
@@ -518,8 +520,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _onActivate is called on an older version with backend draft", function(assert) {
-			var oActivateStub;
-			var oShowMessageToastStub;
 			var sVersionTitle = "aVersionTitle";
 			var oEvent = {
 				getParameter: function() {
@@ -529,18 +529,21 @@ sap.ui.define([
 
 			sandbox.stub(this.oRta, "_isOldVersionDisplayed").returns(true);
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
-			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves("MessageBox.Action.CANCEL");
+			sandbox.stub(PersistenceWriteAPI, "save").resolves();
+			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
+			var oSerializeAndSaveSpy = sandbox.spy(this.oRta, "_serializeAndSave");
+			var oActivateStub = sandbox.stub(VersionsAPI, "activate").resolves(true);
+			var oShowMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 
 			return this.oRta
 				.start()
 				.then(function() {
-					oActivateStub = sandbox.stub(VersionsAPI, "activate").resolves(true);
-					oShowMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 					return this.oRta._onActivate(oEvent);
 				}.bind(this))
 				.then(function() {
 					assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown and click on CANCEL");
 					assert.equal(oShowMessageBoxStub.lastCall.args[1], "MSG_DRAFT_DISCARD_ON_REACTIVATE_DIALOG", "the message text is correct");
+					assert.equal(oSerializeAndSaveSpy.callCount, 0, "serializeAndSave was not called");
 					assert.equal(oActivateStub.callCount, 0, "activate() method was not called");
 
 					oShowMessageBoxStub.reset();
@@ -549,7 +552,9 @@ sap.ui.define([
 				}.bind(this))
 				.then(function() {
 					assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown and click on OK");
+					assert.equal(oSerializeAndSaveSpy.callCount, 1, "serializeAndSave is called once");
 					assert.equal(oActivateStub.callCount, 1, "activate() method is called once");
+					assert.equal(oSerializeAndSaveSpy.calledBefore(oActivateStub), true, "serialize was called before activating the verison");
 					var oActivationCallPropertyBag = oActivateStub.getCall(0).args[0];
 					assert.equal(oActivationCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
 					assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");

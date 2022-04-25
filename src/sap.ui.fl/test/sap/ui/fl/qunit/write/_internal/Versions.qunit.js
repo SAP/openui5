@@ -521,7 +521,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("and a connector is configured which returns a list of versions while a backend-draft does NOT exists but dirty changes do", function (assert) {
+		QUnit.test("and a connector is configured which returns a list of versions while dirty changes exists", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
@@ -545,7 +545,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = _prepareResponsesAndStubMethod(mPropertyBag.reference, aReturnedVersions, "saveDirtyChanges", [{}]);
+			_prepareResponsesAndStubMethod(mPropertyBag.reference, aReturnedVersions, "saveDirtyChanges", [{}]);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -571,96 +571,9 @@ sap.ui.define([
 					assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
 					assert.equal(oData.displayedVersion, Version.Number.Draft, "as well as the displayedVersion is set to 'Draft'");
 				})
-				.then(Versions.activate.bind(undefined, mPropertyBag))
 				.then(function () {
-					assert.equal(oSaveStub.callCount, 1, "the changes were saved");
-					var aSaveCallArgs = oSaveStub.getCall(0).args;
-					assert.deepEqual(aSaveCallArgs[0], this.oAppComponent, "the app component was passed");
-					assert.equal(aSaveCallArgs[1], false, "the caching update should not be skipped");
-					assert.equal(aSaveCallArgs[2], undefined, "no list of changes is passed");
-					assert.equal(aSaveCallArgs[3], 1, "the version number is set");
-					var oData = Versions.getVersionsModel(mPropertyBag).getData();
-					var aVersions = oData.versions;
-					assert.equal(Array.isArray(aVersions), true, "the versions list in the model is updated");
-					assert.equal(aVersions.length, 2, "still containing two versions");
-					assert.equal(aVersions[0], oActivatedVersion, "with the previous draft updated");
-					assert.equal(aVersions[1], oFirstVersion, "and the older version is the second");
-					assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
-					assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
-					assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
-					assert.equal(oData.activateEnabled, false, "as well as activateEnabled false");
-				}.bind(this));
-		});
-
-		QUnit.test("and a connector is configured which returns a list of versions while a backend-draft does exists and also dirty changes do", function (assert) {
-			var sReference = "com.sap.app";
-			var mPropertyBag = {
-				layer: Layer.CUSTOMER,
-				reference: sReference,
-				appComponent: this.oAppComponent
-			};
-
-			var oFirstVersion = {
-				activatedBy: "qunit",
-				activatedAt: "a while ago",
-				version: "1"
-			};
-
-			var oDraft = {
-				version: Version.Number.Draft,
-				type: "draft"
-			};
-
-			var aReturnedVersions = [
-				oDraft,
-				oFirstVersion
-			];
-
-			var oSaveStub = _prepareResponsesAndStubMethod(mPropertyBag.reference, aReturnedVersions, "saveDirtyChanges", [{}]);
-
-			var oActivatedVersion = {
-				activatedBy: "qunit",
-				activatedAt: "just now",
-				version: "2"
-			};
-			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
-
-			return Versions.initialize(mPropertyBag)
-				.then(function (oVersionsModel) {
-					oVersionsModel.setDirtyChanges(true);
-				})
-				.then(function () {
-					var oData = Versions.getVersionsModel(mPropertyBag).getData();
-					var aVersions = oData.versions;
-					assert.equal(Array.isArray(aVersions), true, "then the draft is added");
-					assert.equal(aVersions.length, 2, "summing up to two versions");
-					assert.deepEqual(aVersions[0], oDraft, "and first is the draft");
-					assert.equal(aVersions[1], oFirstVersion, "where the older version is the second");
-					assert.equal(oData.backendDraft, true, "the backendDraft flag is true");
-					assert.equal(oData.dirtyChanges, true, "the dirtyChanges flag is set to true");
-					assert.equal(oData.draftAvailable, true, "as well as draftAvailable true");
-					assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
-					assert.equal(oData.displayedVersion, Version.Number.Draft, "as well as the displayedVersion is set to 'Draft'");
-				})
-				.then(Versions.activate.bind(undefined, mPropertyBag))
-				.then(function () {
-					assert.equal(oSaveStub.callCount, 1, "the changes were saved");
-					var aSaveCallArgs = oSaveStub.getCall(0).args;
-					assert.deepEqual(aSaveCallArgs[0], this.oAppComponent, "the app component was passed");
-					assert.equal(aSaveCallArgs[1], false, "the caching update should not be skipped");
-					assert.equal(aSaveCallArgs[2], undefined, "no list of changes is passed");
-					assert.equal(aSaveCallArgs[3], Version.Number.Draft, "the draft version number is set");
-					var oData = Versions.getVersionsModel(mPropertyBag).getData();
-					var aVersions = oData.versions;
-					assert.equal(Array.isArray(aVersions), true, "the versions list in the model is updated");
-					assert.equal(aVersions.length, 2, "still containing two versions");
-					assert.equal(aVersions[0], oActivatedVersion, "with the previous draft updated");
-					assert.equal(aVersions[1], oFirstVersion, "and the older version is the second");
-					assert.equal(oData.backendDraft, false, "the backendDraft flag is still false");
-					assert.equal(oData.dirtyChanges, false, "the dirtyChanges flag is set to false");
-					assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
-					assert.equal(oData.activateEnabled, false, "as well as activateEnabled false");
-				}.bind(this));
+					return assert.throws(Versions.activate(mPropertyBag), "the save is rejected");
+				});
 		});
 	});
 
