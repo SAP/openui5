@@ -54,7 +54,7 @@ sap.ui.define([
 			oCM.addCondition("Name", Condition.createCondition("StartsWith", ["Web"]));
 			oCM.addCondition("Quantity", Condition.createCondition("EQ", [22]));
 			oCM.addCondition("CountryId", Condition.createCondition("EQ", ["USA"], undefined, undefined, ConditionValidated.Validated));
-			oCM.addCondition("RegionId", Condition.createCondition("EQ", ["01"], {"conditions/CountryId":"USA"}, undefined, ConditionValidated.Validated));
+			oCM.addCondition("RegionId", Condition.createCondition("EQ", ["02"], {"conditions/CountryId":"USA"}, undefined, ConditionValidated.Validated));
 			oCM.addCondition("CityId", Condition.createCondition("EQ", ["02"], /*{"conditions/CountryId":"USA", "conditions/RegionId":"01"}*/undefined, undefined, ConditionValidated.Validated));
 
 			//set the model on Form just to have it somehow local

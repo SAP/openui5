@@ -3,6 +3,8 @@
 	xmlns:m="sap.m"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcField="sap.ui.mdc.field"
+	xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+	xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
 	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 	xmlns:l="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
@@ -42,10 +44,10 @@
 											<mdcField:FieldValueHelpMTableWrapper id="FVH1-W">
 												<m:Table items="{path: '/ProductCollection'}" width="26rem">
 													<m:columns>
-														<m:Column>
+														<m:Column width="10rem">
 															<m:Label text="{/#Product/ProductId/@sap:label}"></m:Label>
 														</m:Column>
-														<m:Column width="10rem">
+														<m:Column>
 															<m:Label text="{/#Product/Name/@sap:label}"></m:Label>
 														</m:Column>
 														<m:Column width="2rem">
@@ -81,6 +83,98 @@
 									</mdcField:FieldValueHelp>
 								</mdcField:dependents>
 							</mdcField:FieldBase>
+							<mdcField:FieldBase id="FB1-vh"
+								conditions="{cm>/conditions/ProductId}"
+								display="Description"
+								maxConditions="1"
+								placeholder="{/#Product/ProductId/@sap:label}"
+								tooltip="{/#Product/ProductId/@sap:label}"
+								liveChange="handleLiveChange"
+								submit="handleSubmit"
+								fieldHelp="VH1">
+								<mdcField:dependents>
+									<mdc:ValueHelp id="VH1">
+										<mdc:typeahead>
+											<mdcValueHelp:Popover id="VH1-Pop">
+												<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
+													filterFields="*ProductId,Name*"
+													keyPath="ProductId"
+													descriptionPath="Name"
+													caseSensitive="true"
+													useAsValueHelp="false">
+													<m:Table id="VH1-Pop-Table" items="{path: '/ProductCollection'}" width="26rem">
+														<m:columns>
+															<m:Column width="10rem">
+																<m:Label text="{/#Product/ProductId/@sap:label}"/>
+															</m:Column>
+															<m:Column>
+																<m:Label text="{/#Product/Name/@sap:label}"/>
+															</m:Column>
+															<m:Column width="2rem">
+																<m:Label text="Icon"/>
+															</m:Column>
+														</m:columns>
+														<m:items>
+															<m:ColumnListItem type="Active">
+																<m:Text text="{ProductId}"/>
+																<m:Text text="{Name}"/>
+																<m:Image src="{= '../../../../../../' + ${ProductPicUrl}}" height="1rem"/>
+															</m:ColumnListItem>
+														</m:items>
+													</m:Table>
+												</mdcValueHelpContent:MTable>
+											</mdcValueHelp:Popover>
+										</mdc:typeahead>
+										<mdc:dialog>
+											<mdcValueHelp:Dialog id="VH1-Dialog" title="Product">
+												<mdcValueHelpContent:MTable id="VH1-Dialog-MTable"
+													filterFields="*ProductId,Name*"
+													keyPath="ProductId"
+													descriptionPath="Name"
+													caseSensitive="true"
+													useAsValueHelp="false">
+													<m:Table id="VH1-Dialog-Table" items="{path: '/ProductCollection'}">
+														<m:columns>
+															<m:Column width="10rem">
+																<m:Label text="{/#Product/ProductId/@sap:label}"/>
+															</m:Column>
+															<m:Column>
+																<m:Label text="{/#Product/Name/@sap:label}"/>
+															</m:Column>
+															<m:Column width="2rem">
+																<m:Label text="Icon"/>
+															</m:Column>
+														</m:columns>
+														<m:items>
+															<m:ColumnListItem type="Active">
+																<m:Text text="{ProductId}"/>
+																<m:Text text="{Name}"/>
+																<m:Image src="{= '../../../../../../' + ${ProductPicUrl}}" height="1rem"/>
+															</m:ColumnListItem>
+														</m:items>
+													</m:Table>
+													<mdcValueHelpContent:filterBar>
+														<vhfb:FilterBar id="VH1-FilterBar" liveMode= "false">
+															<mdc:FilterField id="VH1-FilterBar-F1"
+																label="{/#Product/ProductId/@sap:label}"
+																conditions="{$filters>/conditions/ProductId}"
+																maxConditions="5"
+																placeholder="{/#Product/ProductId/@sap:label}">
+															</mdc:FilterField>
+															<mdc:FilterField id="VH1-FilterBar-F2"
+																label="{/#Product/Name/@sap:label}"
+																conditions="{$filters>/conditions/Name}"
+																maxConditions="5"
+																placeholder="{/#Product/Name/@sap:label}">
+															</mdc:FilterField>
+														</vhfb:FilterBar>
+													</mdcValueHelpContent:filterBar>
+												</mdcValueHelpContent:MTable>
+											</mdcValueHelp:Dialog>
+										</mdc:dialog>
+									</mdc:ValueHelp>
+								</mdcField:dependents>
+							</mdcField:FieldBase>
 						</form:FormElement>
 
 						<form:FormElement label="A simple Field in display mode">
@@ -95,6 +189,17 @@
 								liveChange="handleLiveChange"
 								submit="handleSubmit">
 							</mdcField:FieldBase>
+							<mdcField:FieldBase
+								id="FB2-vh"
+								conditions="{cm>/conditions/ProductId}"
+								maxConditions="1"
+								editMode="Display"
+								display="ValueDescription"
+								placeholder="Placeholder"
+								fieldHelp="VH1"
+								liveChange="handleLiveChange"
+								submit="handleSubmit">
+							</mdcField:FieldBase>
 						</form:FormElement>
 
 						<form:FormElement label="A single value Field with conditions">
@@ -105,6 +210,14 @@
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
 								fieldHelp="CFH1">
+							</mdcField:FieldBase>
+							<mdcField:FieldBase id="FB3-vh"
+								conditions="{cm>/conditions/Description}"
+								maxConditions="1"
+								placeholder="{/#Product/Description/@sap:label}"
+								liveChange="handleLiveChange"
+								submit="handleSubmit"
+								fieldHelp="VH-Conditions">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -137,10 +250,10 @@
 											<mdcField:FieldValueHelpMTableWrapper id="FVH2-W">
 												<m:Table items="{path: '/ProductCollection'}" width="26rem">
 													<m:columns>
-														<m:Column>
+														<m:Column width="10rem">
 															<m:Label text="{/#Product/ProductId/@sap:label}"></m:Label>
 														</m:Column>
-														<m:Column width="10rem">
+														<m:Column>
 															<m:Label text="{/#Product/Name/@sap:label}"></m:Label>
 														</m:Column>
 														<m:Column width="2rem">
@@ -174,6 +287,97 @@
 											</mdc:FilterBar>
 										</mdcField:filterBar>
 									</mdcField:FieldValueHelp>
+								</mdcField:dependents>
+							</mdcField:FieldBase>
+							<mdcField:FieldBase id="FB5-vh"
+								conditions="{cm>/conditions/Name}"
+								maxConditions="5"
+								placeholder="{/#Product/Name/@sap:label}"
+								liveChange="handleLiveChange"
+								submit="handleSubmit"
+								fieldHelp="VH2">
+								<mdcField:dependents>
+									<mdc:ValueHelp id="VH2">
+										<mdc:typeahead>
+											<mdcValueHelp:Popover id="VH2-Pop">
+												<mdcValueHelpContent:MTable id="VH2-Pop-MTable"
+													filterFields="*ProductId,Name*"
+													keyPath="ProductId"
+													descriptionPath="Name"
+													caseSensitive="true"
+													useAsValueHelp="false">
+													<m:Table id="VH2-Pop-Table" items="{path: '/ProductCollection'}" width="26rem">
+														<m:columns>
+															<m:Column width="10rem">
+																<m:Label text="{/#Product/ProductId/@sap:label}"/>
+															</m:Column>
+															<m:Column>
+																<m:Label text="{/#Product/Name/@sap:label}"/>
+															</m:Column>
+															<m:Column width="2rem">
+																<m:Label text="Icon"/>
+															</m:Column>
+														</m:columns>
+														<m:items>
+															<m:ColumnListItem type="Active">
+																<m:Text text="{ProductId}"/>
+																<m:Text text="{Name}"/>
+																<m:Image src="{= '../../../../../../' + ${ProductPicUrl}}" height="1rem"/>
+															</m:ColumnListItem>
+														</m:items>
+													</m:Table>
+												</mdcValueHelpContent:MTable>
+											</mdcValueHelp:Popover>
+										</mdc:typeahead>
+										<mdc:dialog>
+											<mdcValueHelp:Dialog id="VH2-Dialog" title="Product">
+												<mdcValueHelpContent:MTable id="VH2-Dialog-MTable"
+													filterFields="*ProductId,Name*"
+													keyPath="ProductId"
+													descriptionPath="Name"
+													caseSensitive="true"
+													useAsValueHelp="false">
+													<m:Table id="VH2-Dialog-Table" items="{path: '/ProductCollection'}">
+														<m:columns>
+															<m:Column width="10rem">
+																<m:Label text="{/#Product/ProductId/@sap:label}"/>
+															</m:Column>
+															<m:Column>
+																<m:Label text="{/#Product/Name/@sap:label}"/>
+															</m:Column>
+															<m:Column width="2rem">
+																<m:Label text="Icon"/>
+															</m:Column>
+														</m:columns>
+														<m:items>
+															<m:ColumnListItem type="Active">
+																<m:Text text="{ProductId}"/>
+																<m:Text text="{Name}"/>
+																<m:Image src="{= '../../../../../../' + ${ProductPicUrl}}" height="1rem"/>
+															</m:ColumnListItem>
+														</m:items>
+													</m:Table>
+													<mdcValueHelpContent:filterBar>
+														<vhfb:FilterBar id="VH2-FilterBar" liveMode= "false">
+															<mdc:FilterField id="VH2-FilterBar-F1"
+																label="{/#Product/ProductId/@sap:label}"
+																conditions="{$filters>/conditions/ProductId}"
+																maxConditions="5"
+																placeholder="{/#Product/ProductId/@sap:label}">
+															</mdc:FilterField>
+															<mdc:FilterField id="VH2-FilterBar-F2"
+																label="{/#Product/Name/@sap:label}"
+																conditions="{$filters>/conditions/Name}"
+																maxConditions="5"
+																placeholder="{/#Product/Name/@sap:label}">
+															</mdc:FilterField>
+														</vhfb:FilterBar>
+													</mdcValueHelpContent:filterBar>
+												</mdcValueHelpContent:MTable>
+												<mdcValueHelpContent:Conditions id="VH2-Dialog-Conditions"/>
+											</mdcValueHelp:Dialog>
+										</mdc:dialog>
+									</mdc:ValueHelp>
 								</mdcField:dependents>
 							</mdcField:FieldBase>
 						</form:FormElement>
@@ -336,6 +540,24 @@
 									</mdcField:FieldValueHelp>
 								</mdcField:dependents>
 							</mdcField:FieldBase>
+							<mdcField:FieldBase id="FB11-vh"
+								conditions="{cm>/conditions/Quantity}"
+								dataType="Edm.Decimal"
+								maxConditions="-1"
+								placeholder="{/#Product/Quantity/@sap:label}"
+								liveChange="handleLiveChange"
+								submit="handleSubmit"
+								fieldHelp="VH3">
+								<mdcField:dependents>
+									<mdc:ValueHelp id="VH3" validateInput="false">
+										<mdc:dialog>
+											<mdcValueHelp:Dialog id="VH3-Dialog">
+												<mdcValueHelpContent:Conditions id="VH3-Pop-Conditions" label="{/#Product/Quantity/@sap:label}" shortTitle="{/#Product/Quantity/@sap:label}"/>
+											</mdcValueHelp:Dialog>
+										</mdc:dialog>
+									</mdc:ValueHelp>
+								</mdcField:dependents>
+							</mdcField:FieldBase>
 						</form:FormElement>
 
 						<form:FormElement label="A multi Field with conditions help in display mode">
@@ -372,6 +594,31 @@
 									</mdcField:FieldValueHelp>
 								</mdcField:dependents>
 							</mdcField:FieldBase>
+							<mdcField:FieldBase id="FB13-vh"
+								conditions="{cm>/conditions/Status}"
+								maxConditions="3"
+								display="DescriptionValue"
+								placeholder="{/#Product/Status/@sap:label}"
+								liveChange="handleLiveChange"
+								fieldHelp="VH-Status"
+								submit="handleSubmit">
+								<mdcField:dependents>
+									<mdc:ValueHelp id="VH-Status"
+										delegate="{name: 'sap/ui/mdc/sample/field/fieldBase/ValueHelp-Status.delegate', payload: {}}">
+										<mdc:typeahead>
+											<mdcValueHelp:Popover id="VH-Status-Pop">
+												<mdcValueHelpContent:MTable id="VH-Status-Pop-MTable"/>
+											</mdcValueHelp:Popover>
+										</mdc:typeahead>
+										<mdc:dialog>
+											<mdcValueHelp:Dialog id="VH-Status-Dialog" title="{/#Product/Status/@sap:label}">
+												<mdcValueHelpContent:MTable id="VH-Status-Dialog-MTable"/>
+												<mdcValueHelpContent:Conditions id="VH-Status-Dialog-Conditions"/>
+											</mdcValueHelp:Dialog>
+										</mdc:dialog>
+									</mdc:ValueHelp>
+								</mdcField:dependents>
+							</mdcField:FieldBase>
 						</form:FormElement>
 
 						<form:FormElement label="A multi Field with table provided on open display mode">
@@ -384,6 +631,16 @@
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
 								fieldHelp="FVH-Status">
+							</mdcField:FieldBase>
+							<mdcField:FieldBase id="FB14-vh"
+								conditions="{cm>/conditions/Status}"
+								maxConditions="3"
+								editMode="Display"
+								display="DescriptionValue"
+								placeholder="Placeholder"
+								liveChange="handleLiveChange"
+								submit="handleSubmit"
+								fieldHelp="VH-Status">
 							</mdcField:FieldBase>
 						</form:FormElement>
 
@@ -451,6 +708,29 @@
 											items="{view>/weightUnits}" >
 										<c:ListItem key="{view>id}" text="{view>unit}" additionalText="{view>text}"/>
 									</mdcField:ListFieldHelp>
+								</mdcField:dependents>
+							</mdcField:FieldBase>
+							<mdcField:FieldBase id="FB18-vh"
+								conditions="{cm>/conditions/WeightMeasure,WeightUnit}"
+								dataType="sap.ui.model.type.Unit"
+								dataTypeConstraints="{minimum: 0}"
+								maxConditions="1"
+								display="Description"
+								editMode="Editable"
+								placeholder="{/#Product/WeightMeasure/@sap:label}"
+								liveChange="handleLiveChange"
+								submit="handleSubmit"
+								fieldHelp="VH-WeightUnit">
+								<mdcField:dependents>
+									<mdc:ValueHelp id="VH-WeightUnit">
+										<mdc:typeahead>
+											<mdcValueHelp:Popover id="VH-WeightUnit-Pop">
+												<mdcValueHelpContent:FixedList id="VH-WeightUnit-FL" useFirstMatch="false" items="{view>/weightUnits}">
+													<mdcField:ListFieldHelpItem key="{view>id}" text="{view>unit}" additionalText="{view>text}"/>
+												</mdcValueHelpContent:FixedList>
+											</mdcValueHelp:Popover>
+										</mdc:typeahead>
+									</mdc:ValueHelp>
 								</mdcField:dependents>
 							</mdcField:FieldBase>
 						</form:FormElement>
@@ -545,6 +825,63 @@
 									<form:ColumnElementData cellsLarge="12" />
 								</mdcField:layoutData>
 							</mdcField:FieldBase>
+							<mdcField:FieldBase
+								id="FB-Country-vh"
+								conditions="{cm>/conditions/CountryId}"
+								dataType="sap.ui.model.type.String"
+								dataTypeConstraints="{maxLength: 3}"
+								display="ValueDescription"
+								placeholder="{/#Product/CountryId/@sap:label}"
+								liveChange="handleLiveChange"
+								submit="handleSubmit"
+								fieldHelp="VH-Country">
+								<mdcField:dependents>
+									<mdc:ValueHelp id="VH-Country">
+										<mdc:dialog>
+											<mdcValueHelp:Dialog id="VH-Country-Dialog" title="Countries">
+												<mdcValueHelpContent:MTable id="VH-Country-Dialog-MTable"
+													filterFields=""
+													keyPath="countryId"
+													descriptionPath="text"
+													caseSensitive="true">
+													<m:Table id="VH-Country-Dialog-Table" items="{path: '/CountryCollection', suspended: true}">
+														<m:columns>
+															<m:Column>
+																<m:Label text="{/#Country/countryId/@sap:label}"/>
+															</m:Column>
+															<m:Column>
+																<m:Label text="{/#Country/text/@sap:label}"/>
+															</m:Column>
+														</m:columns>
+														<m:items>
+															<m:ColumnListItem type="Active">
+																<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+																<m:Text text="{text}"/>
+															</m:ColumnListItem>
+														</m:items>
+													</m:Table>
+													<mdcValueHelpContent:filterBar>
+														<vhfb:FilterBar id="VH-FB-Country" liveMode= "true">
+															<mdc:FilterField
+																id="VH-FB-Country-CountryText"
+																label= "{/#Country/text/@sap:label}"
+																editMode= "Editable"
+																display= "Value"
+																dataType="sap.ui.model.type.String"
+																width="100%"
+																conditions="{$filters>/conditions/text}"/>
+														</vhfb:FilterBar>
+													</mdcValueHelpContent:filterBar>
+												</mdcValueHelpContent:MTable>
+												<mdcValueHelpContent:Conditions id="VH-Country-Dialog-Conditions"/>
+											</mdcValueHelp:Dialog>
+										</mdc:dialog>
+									</mdc:ValueHelp>
+								</mdcField:dependents>
+								<mdcField:layoutData>
+									<form:ColumnElementData cellsLarge="12" />
+								</mdcField:layoutData>
+							</mdcField:FieldBase>
 							<m:CheckBox id="CB-Filterbar"
 								selected="true"
 								text="FilterBar"
@@ -613,6 +950,94 @@
 								</m:layoutData>
 							</m:ToggleButton>
 						</form:FormElement>
+						<form:FormElement label="custom operators">
+							<mdcField:FieldBase id="FB-MatrId-vh"
+								conditions="{cm>/conditions/MatrId}"
+								dataType="sap.ui.model.type.String"
+								dataTypeConstraints="{maxLength: 5, search: '^(|[0-9])+$'}"
+								maxConditions="-1"
+								editMode="Editable"
+								display="ValueDescription"
+								placeholder="{/#Product/MatrId/@sap:label}"
+								liveChange="handleLiveChange"
+								submit="handleSubmit"
+								fieldHelp="VH-MatrId">
+								<mdcField:dependents>
+									<mdc:ValueHelp id="VH-MatrId">
+										<mdc:typeahead>
+											<mdcValueHelp:Popover id="VH-MatrId-Pop">
+												<mdcValueHelpContent:MTable id="VH-MatrId-Pop-MTable"
+													title="Material"
+													filterFields="*MatrId,Text*"
+													keyPath="MatrId"
+													descriptionPath="Text"
+													caseSensitive="true"
+													useAsValueHelp="false">
+													<m:Table id="VH-MatrId-Pop-Table" items="{path: '/MaterialCollection'}" width="26rem">
+														<m:columns>
+															<m:Column>
+																<m:Label text="{/#Material/MatrId/@sap:label}"/>
+															</m:Column>
+															<m:Column>
+																<m:Label text="{/#Material/Text/@sap:label}"/>
+															</m:Column>
+														</m:columns>
+														<m:items>
+															<m:ColumnListItem type="Active">
+																<m:Text text="{MatrId}"/>
+																<m:Text text="{Text}"/>
+															</m:ColumnListItem>
+														</m:items>
+													</m:Table>
+												</mdcValueHelpContent:MTable>
+											</mdcValueHelp:Popover>
+										</mdc:typeahead>
+										<mdc:dialog>
+											<mdcValueHelp:Dialog id="VH-MatrId-Dialog" title="Material">
+												<mdcValueHelpContent:MTable id="VH-MatrId-Dialog-MTable"
+													title="Material"
+													filterFields="*MatrId,Text*"
+													keyPath="MatrId"
+													descriptionPath="Text"
+													caseSensitive="true"
+													useAsValueHelp="false">
+													<m:Table id="VH-MatrId-Dialog-Table" items="{path: '/MaterialCollection'}">
+														<m:columns>
+															<m:Column>
+																<m:Label text="{/#Material/MatrId/@sap:label}"/>
+															</m:Column>
+															<m:Column>
+																<m:Label text="{/#Material/Text/@sap:label}"/>
+															</m:Column>
+														</m:columns>
+														<m:items>
+															<m:ColumnListItem type="Active">
+																<m:Text text="{MatrId}"/>
+																<m:Text text="{Text}"/>
+															</m:ColumnListItem>
+														</m:items>
+													</m:Table>
+												</mdcValueHelpContent:MTable>
+											</mdcValueHelp:Dialog>
+										</mdc:dialog>
+									</mdc:ValueHelp>
+									<mdc:ValueHelp id="VH-MatrId-FL">
+										<mdc:typeahead>
+											<mdcValueHelp:Popover id="VH-MatrId-FL-Pop">
+												<mdcValueHelpContent:FixedList id="VH-MatrId-FL-Pop-FL" useFirstMatch="false" items="{path: '/MaterialCollection'}" >
+													<mdcField:ListFieldHelpItem key="{MatrId}" text="{Text}" additionalText="{MatrId}"/>
+												</mdcValueHelpContent:FixedList>
+											</mdcValueHelp:Popover>
+										</mdc:typeahead>
+									</mdc:ValueHelp>
+								</mdcField:dependents>
+							</mdcField:FieldBase>
+							<m:ToggleButton id="B-MatrId-vh" text="FixedList" pressed="false" press="toggleVH">
+								<m:layoutData>
+									<form:ColumnElementData cellsLarge="3" cellsSmall="3"/>
+								</m:layoutData>
+							</m:ToggleButton>
+						</form:FormElement>
 
 					</form:FormContainer>
 
@@ -628,6 +1053,13 @@
 					</form:FormContainer>
 					<form:dependents>
 						<mdcField:ConditionFieldHelp id="CFH1" />
+						<mdc:ValueHelp id="VH-Conditions" validateInput="false">
+							<mdc:dialog>
+								<mdcValueHelp:Popover id="VH-Conditions-Pop" title="Conditions">
+									<mdcValueHelpContent:Conditions id="VH-Conditions-Pop-Conditions"/>
+								</mdcValueHelp:Popover>
+							</mdc:dialog>
+						</mdc:ValueHelp>
 					</form:dependents>
 				</form:Form>
 			</m:ScrollContainer>
