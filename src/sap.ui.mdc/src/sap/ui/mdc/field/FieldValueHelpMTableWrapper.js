@@ -291,6 +291,8 @@ sap.ui.define([
 		if (oTable) {
 			return bSelectedOnly ? oTable.getSelectedItems() : oTable.getItems();
 		}
+
+		return [];
 	};
 
 	FieldValueHelpMTableWrapper.prototype._modifyTableSelection = function (aItems, oItem, bSelected, iItemIndex) {

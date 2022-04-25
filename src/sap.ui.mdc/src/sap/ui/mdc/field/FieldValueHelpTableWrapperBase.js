@@ -710,8 +710,8 @@ sap.ui.define([
 			// remove all items originating from the table
 			if (aSelectedItems.length > 0) {
 				var aTableItems = this._getTableItems();
-				for (var k in aTableItems) {
-					oTableItem = aTableItems[k];
+				for (var n = 0; n < aTableItems.length; n++) {
+					oTableItem = aTableItems[n];
 					oValue = this._getDataFromItem(oTableItem);
 
 					if (!oValue) {
