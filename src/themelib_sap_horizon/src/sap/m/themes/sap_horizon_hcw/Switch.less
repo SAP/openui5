@@ -65,53 +65,8 @@ html.sap-desktop {
 
 /* disabled */
 
-.sapMSwtDisabled.sapMSwt {
-	&.sapMSwtOn:not(.sapMSwtAcceptReject) {
-		background: @sapUiHcReducedBackground;
-		border-color: @sapUiHcReducedForeground;
-		.sapMSwtText.sapMSwtText .sapMSwtLabel,
-		.sapMSwtText.sapMSwtText .sapMSwtLabel:before {
-			color: @sapUiHcReducedForeground;
-		}
-		.sapMSwtHandle {
-			background: @sapUiHcReducedBackground;
-			border-color: @sapUiHcReducedForeground;
-		}
-	}
-	&.sapMSwtOff:not(.sapMSwtAcceptReject) {
-		border-color: @sapUiHcReducedForeground;
-		.sapMSwtText.sapMSwtText .sapMSwtLabel,
-		.sapMSwtText.sapMSwtText .sapMSwtLabel:before {
-			color: @sapUiHcReducedForeground;
-		}
-		.sapMSwtHandle {
-			border-color: @sapUiHcReducedBackground;
-		}
-	}
-	&.sapMSwtAcceptReject {
-		&.sapMSwtOn {
-			background: @sapUiHcReducedBackground;
-			border-color: @sapUiHcReducedForeground;
-			.sapMSwtText.sapMSwtText .sapMSwtLabel,
-			.sapMSwtText.sapMSwtText .sapMSwtLabel:before {
-				color: @sapUiHcReducedForeground;
-			}
-			.sapMSwtHandle {
-				background: @sapUiHcReducedBackground;
-				border-color: @sapUiHcReducedForeground;
-			}
-		}
-		&.sapMSwtOff {
-			border-color: @sapUiHcReducedForeground;
-			.sapMSwtText.sapMSwtText .sapMSwtLabel,
-			.sapMSwtText.sapMSwtText .sapMSwtLabel:before {
-				color: @sapUiHcReducedForeground;
-			}
-			.sapMSwtHandle {
-				border-color: @sapUiHcReducedBackground;
-			}
-		}
-	}
+.sapMSwtDisabled {
+	opacity: @sapUiContentDisabledOpacity;
 }
 
 /* ------------------------------ */
