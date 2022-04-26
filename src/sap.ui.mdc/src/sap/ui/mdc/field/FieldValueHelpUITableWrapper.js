@@ -206,37 +206,36 @@ sap.ui.define([
 		}
 	};
 
+	function _getSelectedContexts (oTable) {
+		var oSelectionHandler = _getSelectionHandler.call(this, oTable);
+		var aSelectedIndices = oSelectionHandler.getSelectedIndices();
+		return aSelectedIndices.reduce(function(aPrevious, iCurrent) {
+			var oContext = oTable.getContextByIndex(iCurrent);
+			return oContext ? aPrevious.concat(oContext) : aPrevious;
+		}, []);
+	}
+
 	FieldValueHelpUITableWrapper.prototype._getTableItems = function (bSelectedOnly, bNoVirtual) {
+		var aResult = [];
 		var oTable = this._getWrappedTable();
-
-		if (!oTable) {
-			return [];
-		}
-
-		var aResult;
-		var oSelectionHandler,aSelectedIndices,aSelectedContexts;
-
-		if (bSelectedOnly) {
-			oSelectionHandler = _getSelectionHandler.call(this, oTable);
-			aSelectedIndices = oSelectionHandler.getSelectedIndices();
-			aSelectedContexts = aSelectedIndices.reduce(function(aResult, iCurrent) {
-				var oContext = oTable.getContextByIndex(iCurrent);
-				return oContext ? aResult.concat(oContext) : aResult;
-			}, []);
-		}
-
-		if (!bNoVirtual) {
-			var oBinding = oTable.getBinding();
-			aResult = bSelectedOnly ? aSelectedContexts : oBinding && oBinding.getAllCurrentContexts();
-		} else {
-			aResult = oTable.getRows().filter(function (oRow) {
-				var oRowBindingContext = oRow.getBindingContext();
-				return oRowBindingContext && oRowBindingContext.getObject();	// don't return empty rows
-			});
-			if (bSelectedOnly) {
-				aResult = aResult.filter(function (oRow) {
-					return aSelectedContexts.indexOf(oRow.getBindingContext()) >= 0;
+		if (oTable) {
+			if (!bNoVirtual) {
+				if (bSelectedOnly) {
+					aResult = _getSelectedContexts.call(this, oTable);
+				} else {
+					var oBinding = oTable.getBinding();
+					aResult = oBinding && oBinding.getAllCurrentContexts() || [];
+				}
+			} else {
+				aResult = oTable.getRows().filter(function (oRow) {
+					var oRowBindingContext = oRow.getBindingContext();
+					return oRowBindingContext && oRowBindingContext.getObject();	// don't return empty rows
 				});
+				if (bSelectedOnly) {
+					aResult = aResult.filter(function (oRow) {
+						return _getSelectedContexts.call(this, oTable).indexOf(oRow.getBindingContext()) >= 0;
+					});
+				}
 			}
 		}
 		return aResult;
