@@ -237,7 +237,10 @@ sap.ui.define([
 			// open value state message popup when focus is in the input
 			this.openValueStateMessage();
 		} else if (this._oValueStateHeader) {
-			this._oValueStateHeader.setVisible(this.getValueState() !== ValueState.None);
+			this._oValueStateHeader
+				.setValueState(this.getValueState())
+				.setText(this._getTextForPickerValueStateContent())
+				.setVisible(this.getValueState() !== ValueState.None);
 		}
 
 	};

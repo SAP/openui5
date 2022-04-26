@@ -519,6 +519,7 @@ function(
 				bOpen = oNumericPicker && oNumericPicker.isOpen();
 
 			if (!this._isMobileDevice()) {
+				DateTimeField.prototype.onfocusin.apply(this, arguments);
 				MaskEnabler.onfocusin.apply(this, arguments);
 			}
 			if (oPicker && oPicker.isOpen() && !bIconClicked) {
