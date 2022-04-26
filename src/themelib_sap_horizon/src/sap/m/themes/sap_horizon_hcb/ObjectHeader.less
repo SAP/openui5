@@ -13,7 +13,7 @@
 
 .sapMOHC.sapMOHBgTranslucent,
 .sapMOHC.sapMOHBgSolid {
-	border: none;
+	border-bottom: 0.125rem solid @sapUiObjectHeaderBorderColor;
 	box-shadow: none;
 }
 
@@ -79,4 +79,30 @@ a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 
 .sapMOHAttrRow .sapMObjStatus {
 	margin: 4px 1px;
+}
+
+.sapMOHTitle h6 .sapMText,
+.sapMOHTitle h5 .sapMText,
+.sapMOHTitle h4 .sapMText,
+.sapMOHTitle h3 .sapMText,
+.sapMOHTitle h2 .sapMText,
+.sapMOHTitle h1 .sapMText {
+	font-family: @sapUiObjectHeaderTitleFontFamily;
+	font-size: @sapUiObjectHeaderTitleFontSize;
+	color: @sapUiObjectHeaderTitleTextColor;
+}
+
+html.sap-phone {
+	.sapMOHTitle h6 .sapMText,
+	.sapMOHTitle h5 .sapMText,
+	.sapMOHTitle h4 .sapMText,
+	.sapMOHTitle h3 .sapMText,
+	.sapMOHTitle h2 .sapMText,
+	.sapMOHTitle h1 .sapMText {
+		font-size: @sapUiObjectHeaderTitleSnappedFontSize;
+	}
+}
+
+.sapMOHIntro .sapMText {
+	color: @sapUiObjectHeaderSubtitleTextColor;
 }
