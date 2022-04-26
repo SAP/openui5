@@ -229,6 +229,14 @@ sap.ui.define([
 						 */
 						def: {
 							type: "boolean"
+						},
+
+						/**
+						 * Indicates the check box state for 'Create Tile'.
+						 * <br>Note:</br>This event parameter is used only internally.
+						 */
+						tile: {
+							type: "boolean"
 						}
 					}
 				},
@@ -1274,7 +1282,7 @@ sap.ui.define([
 			}
 
 			if (this._getShowCreateTile()) {
-				this.oSaveDialogOptionsGrid.addContent(this.oCreateTile);
+				oSaveAsDialogOptionsGrid.addContent(this.oCreateTile);
 			}
 
 			this.oSaveAsDialog = new Dialog(this.getId() + "-savedialog", {
@@ -1554,15 +1562,21 @@ sap.ui.define([
 			return true;
 		}
 
-		this.fireSave({
-			key: sKey,
-			name: sName,
-			overwrite: false,
-			def: this.oDefault.getSelected(),
-			execute: this.oExecuteOnSelect.getSelected(),
-			"public": this._sStyleClass ? undefined : this.oPublic.getSelected(),
-			contexts: this._sStyleClass ? this._getContextInfoChanges() : undefined
-		});
+		var oObj = {
+				key: sKey,
+				name: sName,
+				overwrite: false,
+				def: this.oDefault.getSelected(),
+				execute: this.oExecuteOnSelect.getSelected(),
+				"public": this._sStyleClass ? undefined : this.oPublic.getSelected(),
+				contexts: this._sStyleClass ? this._getContextInfoChanges() : undefined
+		};
+
+		if (!this._sStyleClass && this._getShowCreateTile() && this.oCreateTile) {
+			oObj.tile = this.oCreateTile.getSelected();
+		}
+
+		this.fireSave(oObj);
 
 		return true;
 	};
