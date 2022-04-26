@@ -106,7 +106,6 @@ sap.ui.define([
 
 	SortPanel.prototype._createSortOrderText = function (sKey, bDesc) {
 		return new Text({
-			enabled: sKey ? true : false,
 			layoutData: new GridData({
 				span: "XL3 L3 M3 S3",
 				visibleS: false
