@@ -655,6 +655,7 @@ sap.ui.define([
 
 			this.setProperty("_selectedContentKey", sNextContentId);
 			this.setProperty("_selectableContents", this._getSelectableContents());
+			this._oManagedObjectModel.checkUpdate(true, true); // force Update as bindings to $help>displayContent are not updated automatically in some cases
 
 			if (oGroupSelectPromise) {
 				this._updateGroupSelectModel();
