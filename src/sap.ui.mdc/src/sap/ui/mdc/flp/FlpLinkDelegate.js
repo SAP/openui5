@@ -302,7 +302,8 @@ sap.ui.define([
 									// multiple contexts (~XXXX in hash) they will all be skipped
 									oNavigationTargets.ownNavigation = new LinkItem({
 										href: sHref,
-										text: oLink.text
+										text: oLink.text,
+										internalHref: oLink.intent
 									});
 									return;
 								}
@@ -312,6 +313,7 @@ sap.ui.define([
 									text: oLink.text,
 									description: undefined,
 									href: sHref,
+									internalHref: oLink.intent,
 									// target: not supported yet
 									icon: undefined, //oLink.icon,
 									initiallyVisible: (oLink.tags && oLink.tags.indexOf("superiorAction") > -1)

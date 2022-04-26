@@ -1,8 +1,8 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/layout/library", "sap/ui/mdc/link/Panel", "sap/ui/mdc/link/PanelItem", "sap/ui/layout/form/SimpleForm", "sap/ui/core/Icon", "sap/ui/mdc/p13n/Engine", "sap/ui/core/Core", "sap/m/Text"
-], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, Engine, oCore, Text) {
+	"sap/ui/layout/library", "sap/ui/mdc/link/Panel", "sap/ui/mdc/link/PanelItem", "sap/ui/layout/form/SimpleForm", "sap/ui/core/Icon", "sap/ui/mdc/p13n/Engine", "sap/ui/core/Core", "sap/m/Text", "sap/ui/mdc/Link", "sap/ui/mdc/link/LinkItem"
+], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, Engine, oCore, Text, Link, LinkItem) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
@@ -311,13 +311,16 @@ sap.ui.define([
 			items: [
 				new PanelItem({
 					text: "A",
-					href: "#A"
+					href: "#A",
+					internalHref: "#AInternal"
 				}), new PanelItem({
 					text: "B",
-					href: "#B"
+					href: "#B",
+					internalHref: "#BInternal"
 				}), new PanelItem({
 					text: "C",
-					href: "#C"
+					href: "#C",
+					internalHref: "#CInternal"
 				})
 			]
 		});
@@ -350,6 +353,49 @@ sap.ui.define([
 					done();
 				}.bind(this), 500);
 			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("check internalHref", function(assert) {
+		var done = assert.async();
+		var oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					items: [
+						new LinkItem({
+							text: "A",
+							href: "#A",
+							internalHref: "#AInternal"
+						}),
+						new LinkItem({
+							text: "B",
+							href: "#B",
+							internalHref: "#BInternal"
+						}),
+						new LinkItem({
+							text: "C",
+							href: "#C",
+							internalHref: "#CInternal"
+						})
+					]
+				}
+			}
+		});
+
+		oLink.createPopover().then(function(oPopover) {
+			this.oPanel = oPopover.getContent()[0];
+			this.oPanel.onPressLinkPersonalization();
+
+			setTimeout(function() {
+				assert.equal(this.oPanel.getDependents().length, 1, "Dialog opened");
+				assert.ok(this.oPanel.getDependents()[0].isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
+				assert.ok(this.oPanel.getDependents()[0].getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
+				assert.equal(this.oPanel.getDependents()[0].getContent()[0].getAggregation("_content").getItems()[0].getItems()[0].getCells()[0].getItems()[0].getItems()[0].getCustomData()[0].getValue(), "#AInternal", "Correct internal href");
+				assert.equal(this.oPanel.getDependents()[0].getContent()[0].getAggregation("_content").getItems()[0].getItems()[1].getCells()[0].getItems()[0].getItems()[0].getCustomData()[0].getValue(), "#BInternal", "Correct internal href");
+				assert.equal(this.oPanel.getDependents()[0].getContent()[0].getAggregation("_content").getItems()[0].getItems()[2].getCells()[0].getItems()[0].getItems()[0].getCustomData()[0].getValue(), "#CInternal", "Correct internal href");
+				done();
+			}.bind(this), 500);
 		}.bind(this));
 	});
 

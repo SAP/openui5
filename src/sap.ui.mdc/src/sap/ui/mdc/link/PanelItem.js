@@ -46,6 +46,14 @@ sap.ui.define([
 					type: "string"
 				},
 				/**
+				 * Destination link for a navigation operation in internal format provided by FLP.
+				 * @protected
+				 */
+				 internalHref: {
+					type: "string",
+					defaultValue: null
+				},
+				/**
 				 * Defines target of the item.
 				 */
 				target: {
@@ -105,6 +113,7 @@ sap.ui.define([
 			text: this.getText(),
 			description: this.getDescription(),
 			href: this.getHref(),
+			internalHref: this.getInternalHref(),
 			icon: this.getIcon(),
 			target: this.getTarget(),
 			visible: this.getVisible(),

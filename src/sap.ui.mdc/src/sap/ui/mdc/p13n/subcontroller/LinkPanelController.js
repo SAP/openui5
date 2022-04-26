@@ -53,35 +53,29 @@ sap.ui.define([
 
     LinkPanelController.prototype._onLinkPressed = function(oEvent) {
         var oSource = oEvent.getParameter("oSource");
-        var sTarget = oSource.getTarget();
+        var oPanel = this.getAdaptationControl();
+        var sHref = oSource && oSource.getCustomData() ? oSource.getCustomData()[0].getValue() : oSource.getHref();
 
-        if (sTarget !== "_blank") {
-            oEvent.preventDefault();
-
-            var oPanel = this.getAdaptationControl();
-            var sHref = oSource.getHref();
-
-            if (oPanel.getBeforeNavigationCallback) {
-                oPanel.getBeforeNavigationCallback()(oEvent).then(function (bNavigate) {
-                    if (bNavigate) {
-                        oPanel.navigate(sHref);
+        if (oPanel.getBeforeNavigationCallback) {
+            oPanel.getBeforeNavigationCallback()(oEvent).then(function (bNavigate) {
+                if (bNavigate) {
+                    oPanel.getMetadata()._oClass.navigate(sHref);
+                }
+            });
+        } else {
+            MessageBox.show(sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_QUESTION"), {
+                icon: MessageBox.Icon.WARNING,
+                title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_TITLE"),
+                actions: [
+                    MessageBox.Action.YES, MessageBox.Action.NO
+                ],
+                onClose: function (oAction) {
+                    if (oAction === MessageBox.Action.YES) {
+                        oPanel.getMetadata()._oClass.navigate(sHref);
                     }
-                });
-            } else {
-                MessageBox.show(sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_QUESTION"), {
-                    icon: MessageBox.Icon.WARNING,
-                    title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_TITLE"),
-                    actions: [
-                        MessageBox.Action.YES, MessageBox.Action.NO
-                    ],
-                    onClose: function (oAction) {
-                        if (oAction === MessageBox.Action.YES) {
-                            oPanel.navigate(sHref);
-                        }
-                    },
-                    styleClass: this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
-                });
-            }
+                },
+                styleClass: this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+            });
         }
     };
 
@@ -126,6 +120,7 @@ sap.ui.define([
             mItem.visible = oExistingLinkItem ? true : false;
             mItem.position = oExistingLinkItem ? oExistingLinkItem.position : -1;
             mItem.href = oProperty.href;
+            mItem.internalHref = oProperty.internalHref;
             mItem.description = oProperty.description;
             mItem.target = oProperty.target;
             mItem.text = oProperty.text;

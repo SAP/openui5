@@ -12,8 +12,9 @@ sap.ui.define([
     "sap/ui/core/Icon",
     "sap/m/library",
     "sap/m/OverflowToolbar",
-    "sap/ui/model/Filter"
-], function (SelectionPanel, ColumnListItem, HBox, VBox, Link, Text, Icon, mLibrary, OverflowToolbar, Filter) {
+    "sap/ui/model/Filter",
+    "sap/ui/core/CustomData"
+], function (SelectionPanel, ColumnListItem, HBox, VBox, Link, Text, Icon, mLibrary, OverflowToolbar, Filter, CustomData) {
     "use strict";
 
     // shortcut for sap.m.ListType
@@ -48,7 +49,11 @@ sap.ui.define([
                                     text: "{" + this.P13N_MODEL + ">text}",
                                     href: "{" + this.P13N_MODEL + ">href}",
                                     target: "{" + this.P13N_MODEL + ">target}",
-                                    press: this._onLinkPressed.bind(this)
+                                    press: this._onLinkPressed.bind(this),
+                                    customData: new CustomData({
+                                        key: "internalHref",
+                                        value: "{" + this.P13N_MODEL + ">internalHref}"
+                                    })
                                 }),
                                 new Text({
                                     text: "{" + this.P13N_MODEL + ">description}",
@@ -83,7 +88,10 @@ sap.ui.define([
 	};
 
     LinkSelectionPanel.prototype._onLinkPressed = function(oEvent) {
-        this.fireLinkPressed(oEvent);
+        if (oEvent.getSource().getTarget() !== "_blank") {
+            oEvent.preventDefault();
+            this.fireLinkPressed(oEvent);
+        }
     };
 
     LinkSelectionPanel.prototype.setMultiSelectMode = function(sMultiSelectMode) {

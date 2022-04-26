@@ -22,8 +22,9 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/LinkPanelController",
 	"sap/ui/mdc/p13n/Engine",
 	"sap/ui/mdc/mixin/AdaptationMixin",
-	"sap/ui/mdc/link/PanelItem"
-], function(Control, PanelRenderer, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem) {
+	"sap/ui/mdc/link/PanelItem",
+	"sap/ui/core/CustomData"
+], function(Control, PanelRenderer, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem, CustomData) {
 	"use strict";
 
 	/**
@@ -255,7 +256,11 @@ sap.ui.define([
 				}
 			},
 			press: this.onPressLink.bind(this),
-			wrapping: true
+			wrapping: true,
+			customData: new CustomData({
+				key: "internalHref",
+				value: "{$sapuimdclinkPanel>internalHref}"
+			})
 		});
 		var oLabel = new Label({
 			text: "{$sapuimdclinkPanel>text}",
@@ -317,8 +322,11 @@ sap.ui.define([
 	};
 
 	Panel.prototype.onPressLink = function(oEvent) {
-		if (this.getBeforeNavigationCallback() && oEvent.getSource() && oEvent.getSource().getTarget() !== "_blank") {
-			var sHref = oEvent.getSource().getHref();
+		var oLink = oEvent.getSource();
+		if (this.getBeforeNavigationCallback() && oLink && oLink.getTarget() !== "_blank") {
+			// Fall back to using href property when there is no internalHref
+			var bUseInternalHref = oLink && oLink.getCustomData() && oLink.getCustomData()[0].getValue();
+			var sHref = bUseInternalHref ? oLink.getCustomData()[0].getValue() : oLink.getHref();
 			oEvent.preventDefault();
 			this.getBeforeNavigationCallback()(oEvent).then(function(bNavigate) {
 				if (bNavigate) {
@@ -365,6 +373,7 @@ sap.ui.define([
 						id: oItem.name,
 						description: oItem.description,
 						href: oItem.href,
+						internalHref: oItem.internalHref,
 						target: oItem.target,
 						text: oItem.text,
 						visible: oItem.visible
@@ -592,6 +601,7 @@ sap.ui.define([
 							},
 							text: oItem.text,
 							href: oItem.href,
+							internalHref: oItem.internalHref,
 							description: oItem.description,
 							target: oItem.target,
 							visible: oItem.visible

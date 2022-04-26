@@ -38,6 +38,14 @@ sap.ui.define([
 				href: {
 					type: "string"
 				},
+				/**
+				 * Destination link for a navigation operation in internal format provided by FLP.
+				 * @protected
+				 */
+				internalHref: {
+					type: "string",
+					defaultValue: null
+				},
 				target: {
 					type: "string",
 					defaultValue: "_self"
