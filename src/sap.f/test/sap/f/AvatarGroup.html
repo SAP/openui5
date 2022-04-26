@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>sap.f.AvatarGroup test page</title>
+	<script type="text/javascript" src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.f" data-sap-ui-theme="sap_fiori_3" data-sap-ui-resourceroots='{
+				"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
+			}'>
+			</script>
+	<script>
+		new sap.m.App({
+			pages: new sap.m.Page({
+				title: "sap.f.AvatarGroup",
+				titleLevel: "H1",
+				content: [
+					new sap.m.VBox({
+						items: [
+							new sap.f.AvatarGroup({
+								items: [
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+								]
+							}),
+							new sap.f.AvatarGroup({
+								groupType: sap.f.AvatarGroupType.Individual,
+								items: [
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+								]
+							})
+						]
+					}).addStyleClass("sapUiLargeMargin"),
+					new sap.m.VBox({
+						width: "200px",
+						items: [
+							new sap.f.AvatarGroup({
+								items: [
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+								]
+							}),
+							new sap.f.AvatarGroup({
+								groupType: sap.f.AvatarGroupType.Individual,
+								items: [
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+									new sap.f.AvatarGroupItem({ initials: "AG" }),
+								]
+							})
+						]
+					}).addStyleClass("sapUiLargeMargin")
+				]
+			})
+		}).placeAt("body");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+</body>
+
+</html>

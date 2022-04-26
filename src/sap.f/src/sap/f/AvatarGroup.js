@@ -157,8 +157,9 @@ sap.ui.define([
 	});
 
 	AvatarGroup.prototype.init = function () {
-		this._oShowMoreButton = new Button({});
+		this._oShowMoreButton = new Button();
 		this._oShowMoreButton.addStyleClass("sapFAvatarGroupMoreButton");
+		this._oShowMoreButton.addStyleClass("sapFAvatarGroupMoreButton" + this.getAvatarDisplaySize());
 		this._bFirstRendering = true;
 		this._onResizeRef = this._onResize.bind(this);
 		this._iCurrentAvatarColorNumber = 1;
