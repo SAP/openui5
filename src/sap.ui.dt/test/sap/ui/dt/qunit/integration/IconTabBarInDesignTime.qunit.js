@@ -102,15 +102,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the filter is switched...", function(assert) {
+			var fnDone = assert.async();
 			var oListOverlay = OverlayRegistry.getOverlay(this.oList);
 			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 
 			this.oIconTabBar.setSelectedKey("Open");
 			oCore.applyChanges();
-			OverlayRegistry.getOverlay(this.oIconTabBar).applyStyles();
+			var oIconTabBarOverlay = OverlayRegistry.getOverlay(this.oIconTabBar);
 
-			assert.strictEqual(oListOverlay.isVisible(), false, "List overlay is not visible");
-			assert.strictEqual(oButtonOverlay.isVisible(), true, "Button overlay is visible");
+			oIconTabBarOverlay.attachEventOnce("geometryChanged", function() {
+				assert.strictEqual(oListOverlay.isVisible(), false, "List overlay is not visible");
+				assert.strictEqual(oButtonOverlay.isVisible(), true, "Button overlay is visible");
+				fnDone();
+			});
+
+			oIconTabBarOverlay.applyStyles();
 		});
 	});
 

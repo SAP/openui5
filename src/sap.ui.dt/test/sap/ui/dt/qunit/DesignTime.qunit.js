@@ -126,13 +126,7 @@ sap.ui.define([
 			this.oDesignTime.addRootElement(oOuterLayout);
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				oInnerLayout = new VerticalLayout("inner-layout");
-				oButton = new Button("button1");
-				oInnerLayout.addContent(oButton);
-
 				this.oDesignTime.attachEventOnce("synced", function() {
-					OverlayRegistry.getOverlay(oOuterLayout).applyStyles();
-
 					var oButtonOverlay = OverlayRegistry.getOverlay(oButton);
 					var oInnerOverlay = oButtonOverlay.getParentElementOverlay();
 					assert.equal(oInnerOverlay.getElement().getId(), "inner-layout", "then the button overlay is inside in inner-layout overlay");
@@ -146,6 +140,9 @@ sap.ui.define([
 					fnDone();
 				});
 
+				oInnerLayout = new VerticalLayout("inner-layout");
+				oButton = new Button("button1");
+				oInnerLayout.addContent(oButton);
 				oOuterLayout.addContent(oInnerLayout);
 				oCore.applyChanges();
 			}.bind(this));
