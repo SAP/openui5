@@ -156,6 +156,14 @@ sap.ui.define(function() {
 				sinon: false,
 				group: "Designtime"
 			},
+			"designtime/UploadCollectionItem": {
+				title: "QUnit Page for sap.ui.webc.fiori.UploadCollectionItem design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.fiori", "sap.ui.rta"]
+				},
+				sinon: false,
+				group: "Designtime"
+			},
 			"Generic Testsuite": {
 				page: "test-resources/sap/ui/webc/fiori/qunit/testsuite.generic.qunit.html"
 			}

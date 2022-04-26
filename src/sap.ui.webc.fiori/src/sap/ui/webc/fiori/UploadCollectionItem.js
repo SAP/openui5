@@ -168,7 +168,8 @@ sap.ui.define([
 				terminate: {
 					parameters: {}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/fiori/designtime/UploadCollectionItem.designtime"
 		}
 	});
 

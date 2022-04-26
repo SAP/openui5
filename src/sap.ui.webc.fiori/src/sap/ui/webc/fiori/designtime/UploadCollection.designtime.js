@@ -12,12 +12,16 @@ sap.ui.define([],
 				singular: "UPLOAD_COLLECTION_NAME",
 				plural: "UPLOAD_COLLECTION_PLURAL"
 			},
-			actions: {
-				remove: {
-					changeType: "hideControl"
-				},
-				reveal: {
-					changeType: "unhideControl"
+			aggregations: {
+				items: {
+					domRef: function (oControl) {
+						return oControl.getDomRef().shadowRoot.querySelector(".ui5-uc-content");
+					},
+					actions: {
+						move: {
+							changeType: "moveControls"
+						}
+					}
 				}
 			}
 		};
