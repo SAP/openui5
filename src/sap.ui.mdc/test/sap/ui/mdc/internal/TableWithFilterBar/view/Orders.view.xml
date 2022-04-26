@@ -191,8 +191,14 @@
 						rowPress="onRowPress"
 						threshold="50"
 						width="100%"
-						rowAction="Navigation"
 					>
+					<mdc:rowSettings>
+						<mdc:table.RowSettings >
+							<mdc:rowActions >
+								<mdc:table.RowActionItem type="Navigation"/>
+							</mdc:rowActions >
+						</mdc:table.RowSettings>
+					</mdc:rowSettings>
                     <mdc:actions>
 						<mdcat:ActionToolbarAction>
                         	<Button type="Emphasized" text="Add Order" press="onAddButtonPress"/>

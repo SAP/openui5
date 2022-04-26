@@ -768,7 +768,7 @@
 						</mdc:items>
 					</mdc:Chart>
 
-					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/v4demo/delegate/Books.Table.delegate', payload: {collectionName: 'Books'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
+					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/v4demo/delegate/Books.Table.delegate', payload: {collectionName: 'Books'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%">
 						<mdc:actions>
 							<mdcat:ActionToolbarAction id="tableAction1">
 								<Button type="Emphasized" text="Dummy Action" />
@@ -811,6 +811,13 @@
 								<mdc:Field id="F_subgenre_code" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'subgenre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" fieldHelp="FHSubGenreSingle" display="Description" multipleLines="false"/>
 							</mdc:table.Column>
 						</mdc:columns>
+						<mdc:rowSettings>
+							<mdc:table.RowSettings >
+								<mdc:rowActions >
+									<mdc:table.RowActionItem type="Navigation"/>
+								</mdc:rowActions >
+							</mdc:table.RowSettings>
+						</mdc:rowSettings>
 						<mdc:type>
 							<mdc:table.ResponsiveTableType growingMode="Scroll" />
 						</mdc:type>
