@@ -3,6 +3,38 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "66a925e7896da0c68928b5515b0b12eed9b028f6",
+        "type": "FEATURE",
+        "text": " sap.m.Button: has correct text-shadow when in MessagePepover"
+      },
+      {
+        "id": "dc981e6e285ba557c40a6d83fb07d19032c86e2a",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Horizon themes implemented"
+      },
+      {
+        "id": "15f0c1dffa6e18648ae85dce5f813f00b466ab1f",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: inactive control is properly rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270029183"
+          }
+        ]
+      },
+      {
+        "id": "0ef2a54973a8ceb6ba58e253bb3272e55187c12f",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Date selection works without offsetting the date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270068040"
+          }
+        ]
+      },
+      {
         "id": "383994b537840c75c496afa60c5f2b87ee248379",
         "type": "FIX",
         "text": " sap.m.DatePicker: Selection works without offsetting the date",

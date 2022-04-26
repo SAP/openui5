@@ -3,6 +3,21 @@
     "date": "April 2022",
     "notes": [
       {
+        "id": "dc981e6e285ba557c40a6d83fb07d19032c86e2a",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Horizon themes implemented"
+      },
+      {
+        "id": "855815ee8105258a6ae88def1c4bd689362e0d57",
+        "type": "FEATURE",
+        "text": " sap.m.Bar: Horizon themes implemented"
+      },
+      {
+        "id": "8ead23cd4eabb760873a98ed870c5450e3d92d08",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Implementation of Horizon themes"
+      },
+      {
         "id": "5a99d81879e7979974c739b060eb744b8ef94248",
         "type": "FIX",
         "text": " m.Table: visual specification alignment for the padding",
