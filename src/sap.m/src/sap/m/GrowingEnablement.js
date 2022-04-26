@@ -63,7 +63,6 @@ sap.ui.define([
 			this._sGroupingPath = "";
 			this._bDataRequested = false;
 			this._bSkippedItemsUpdateUntilDataReceived = false;
-			this._oContainerDomRef = null;
 			this._iLastItemsCount = 0;
 			this._iTriggerTimer = 0;
 			this._aChunk = [];
@@ -98,7 +97,6 @@ sap.ui.define([
 			this._oControl.$("triggerList").remove();
 			this._oControl.bUseExtendedChangeDetection = false;
 			this._oControl.removeDelegate(this);
-			this._oContainerDomRef = null;
 			this._oControl = null;
 		},
 
@@ -208,6 +206,10 @@ sap.ui.define([
 
 		// called after new page loaded
 		_onAfterPageLoaded : function(sChangeReason) {
+			if (!this._oControl) {
+				return;
+			}
+
 			this._bLoading = false;
 			this._updateTriggerDelayed(false);
 			this._oControl.onAfterPageLoaded(this.getInfo(), sChangeReason);
@@ -415,11 +417,16 @@ sap.ui.define([
 
 		// render all the collected items in the chunk and flush them into the DOM
 		// vInsert whether to append (true) or replace (falsy) or to insert at a certain position (int)
-		applyChunk : function(vInsert, oDomRef) {
+		applyChunk : function(vInsert) {
+			if (!this._oControl) {
+				return;
+			}
+
 			this.applyPendingGroupItem();
 
 			var iLength = this._aChunk.length;
-			if (!iLength || !this._oControl.shouldRenderItems()) {
+			var oDomRef = this._oControl.getItemsContainerDomRef();
+			if (!iLength || !oDomRef || !this._oControl.shouldRenderItems()) {
 				return;
 			}
 
@@ -432,15 +439,24 @@ sap.ui.define([
 				}
 			}
 
-			oDomRef = oDomRef || this._oContainerDomRef;
 			this._oRM = this._oRM || sap.ui.getCore().createRenderManager();
-
 			for (var i = 0; i < iLength; i++) {
 				this._oRM.renderControl(this._aChunk[i]);
 			}
 
+			var bHasFocus = (vInsert == false) && oDomRef.contains(document.activeElement);
 			this._oRM.flush(oDomRef, false, this._getDomIndex(vInsert));
+			bHasFocus && this._oControl.focus();
 			this._aChunk = [];
+		},
+
+		// async version of applyChunk
+		applyChunkAsync : function(vInsert) {
+			if (this._bNonClientModel) {
+				setTimeout(this.applyChunk.bind(this, vInsert));
+			} else {
+				this.applyChunk(vInsert);
+			}
 		},
 
 		// add multiple items to the list via BindingContext
@@ -455,9 +471,7 @@ sap.ui.define([
 			this.destroyListItems(bSuppressInvalidate);
 			this.addListItems(aContexts, oBindingInfo, bSuppressInvalidate);
 			if (bSuppressInvalidate) {
-				var bHasFocus = this._oContainerDomRef.contains(document.activeElement);
-				this.applyChunk(false);
-				bHasFocus && this._oControl.focus();
+				this.applyChunkAsync(false);
 			} else {
 				this.applyPendingGroupItem();
 			}
@@ -480,6 +494,7 @@ sap.ui.define([
 		 * refresh items only for OData model.
 		 */
 		refreshItems : function(sChangeReason) {
+			this._bNonClientModel = true;
 			if (!this._bDataRequested) {
 				this._bDataRequested = true;
 				this._onBeforePageLoaded(sChangeReason);
@@ -495,9 +510,13 @@ sap.ui.define([
 			var oBinding = this._oControl.getBinding("items");
 
 			if (this._aItemsPool) {
-				oBinding.attachEventOnce("dataRequested", function() {
+				if (this._oControl._bBusy) {
 					setTimeout(this.fillItemsPool.bind(this));
-				}, this);
+				} else {
+					oBinding.attachEventOnce("dataRequested", function() {
+						setTimeout(this.fillItemsPool.bind(this));
+					}, this);
+				}
 			}
 
 			oBinding.getContexts(0, this._iLimit);
@@ -511,7 +530,8 @@ sap.ui.define([
 			var oControl = this._oControl,
 				oBinding = oControl.getBinding("items"),
 				oBindingInfo = oControl.getBindingInfo("items"),
-				aItems = oControl.getItems(true);
+				aItems = oControl.getItems(true),
+				sGroupingPath = this._sGroupingPath;
 
 			// set limit to initial value if not set yet or no items at the control yet
 			if (!this._iLimit || this.shouldReset(sChangeReason) || !aItems.length) {
@@ -543,101 +563,100 @@ sap.ui.define([
 				}
 			}
 
-			// cache dom ref for internal functions not to lookup again and again
-			this._oContainerDomRef = oControl.getItemsContainerDomRef();
+			// let the grouping path to be stored
+			this._sGroupingPath = this._getGroupingPath(oBinding);
 
 			// aContexts.diff ==> undefined : New data we should build from scratch
 			// aContexts.diff ==> [] : There is no diff, means data did not changed at all
 			// aContexts.diff ==> [{index: 0, type: "delete"}, {index: 1, type: "insert"},...] : Run the diff logic
-			var aDiff = aContexts.diff,
-				bFromScratch = false,
-				vInsertIndex;
+			var aDiff = aContexts.diff;
 
 			// process the diff
 			if (!aContexts.length) {
 				// no context, destroy list items
 				this.destroyListItems();
-			} else if (!this._oContainerDomRef) {
+			} else if (!oControl.getItemsContainerDomRef()) {
 				// no dom ref for compatibility reason start from scratch
 				this.rebuildListItems(aContexts, oBindingInfo);
 			} else if (!aDiff || !aItems.length && aDiff.length) {
 				// new records need to be applied from scratch
 				this.rebuildListItems(aContexts, oBindingInfo, oControl.shouldGrowingSuppressInvalidation());
-			} else if (oBinding.isGrouped() || oControl.checkGrowingFromScratch()) {
+			} else {
+				// diff handling case for grouping and merging
+				var bFromScratch = false, vInsertIndex = true;
+				if (oBinding.isGrouped() || oControl.checkGrowingFromScratch()) {
 
-				if (this._sGroupingPath != this._getGroupingPath(oBinding)) {
-					// grouping is changed so we need to rebuild the list for the group headers
-					bFromScratch = true;
+					if (sGroupingPath != this._sGroupingPath) {
+						// grouping is changed so we need to rebuild the list for the group headers
+						bFromScratch = true;
+					} else {
+						// append items if possible
+						for (var i = 0; i < aDiff.length; i++) {
+							var oDiff = aDiff[i],
+								oContext = aContexts[oDiff.index];
+
+							if (oDiff.type == "delete" || oDiff.type == "replace") {
+								// group header may need to be deleted as well
+								bFromScratch = true;
+								break;
+							} else if (oDiff.index != this._iRenderedDataItems) {
+								// this item is not appended
+								bFromScratch = true;
+								break;
+							} else {
+								// the item is appended
+								this.addListItem(oContext, oBindingInfo, true);
+							}
+						}
+					}
+
 				} else {
-					// append items if possible
+
+					if (sGroupingPath && !this._sGroupingPath) {
+						// if it was already grouped then we need to remove group headers first
+						oControl.removeGroupHeaders(true);
+					}
+
+					vInsertIndex = -1;
+					var iLastInsertIndex = -1;
 					for (var i = 0; i < aDiff.length; i++) {
 						var oDiff = aDiff[i],
-							oContext = aContexts[oDiff.index];
+							iDiffIndex = oDiff.index,
+							oContext = aContexts[iDiffIndex];
 
-						if (oDiff.type == "delete" || oDiff.type == "replace") {
-							// group header may need to be deleted as well
-							bFromScratch = true;
-							break;
-						} else if (oDiff.index != this._iRenderedDataItems) {
-							// this item is not appended
-							bFromScratch = true;
-							break;
-						} else {
-							this.addListItem(oContext, oBindingInfo, true);
-							vInsertIndex = true;
+						if (oDiff.type == "delete") {
+							if (vInsertIndex != -1) {
+								// this record is deleted while the chunk is getting build
+								this.applyChunk(vInsertIndex);
+								iLastInsertIndex = -1;
+								vInsertIndex = -1;
+							}
+
+							this.deleteListItem(iDiffIndex);
+						} else if (oDiff.type == "insert") {
+							if (vInsertIndex == -1) {
+								// the subsequent of items needs to be inserted at this position
+								vInsertIndex = iDiffIndex;
+							} else if (iLastInsertIndex > -1 && iDiffIndex != iLastInsertIndex + 1) {
+								// this item is not simply appended to the last one but has been inserted
+								this.applyChunk(vInsertIndex);
+								vInsertIndex = iDiffIndex;
+							}
+
+							this.insertListItem(oContext, oBindingInfo, iDiffIndex);
+							iLastInsertIndex = iDiffIndex;
 						}
 					}
 				}
 
-			} else {
-
-				if (this._sGroupingPath) {
-					// if it was already grouped then we need to remove group headers first
-					oControl.removeGroupHeaders(true);
-				}
-
-				vInsertIndex = -1;
-				var iLastInsertIndex = -1;
-				for (var i = 0; i < aDiff.length; i++) {
-					var oDiff = aDiff[i],
-						iDiffIndex = oDiff.index,
-						oContext = aContexts[iDiffIndex];
-
-					if (oDiff.type == "delete") {
-						if (vInsertIndex != -1) {
-							// this record is deleted while the chunk is getting build
-							this.applyChunk(vInsertIndex);
-							iLastInsertIndex = -1;
-							vInsertIndex = -1;
-						}
-
-						this.deleteListItem(iDiffIndex);
-					} else if (oDiff.type == "insert") {
-						if (vInsertIndex == -1) {
-							// the subsequent of items needs to be inserted at this position
-							vInsertIndex = iDiffIndex;
-						} else if (iLastInsertIndex > -1 && iDiffIndex != iLastInsertIndex + 1) {
-							// this item is not simply appended to the last one but has been inserted
-							this.applyChunk(vInsertIndex);
-							vInsertIndex = iDiffIndex;
-						}
-
-						this.insertListItem(oContext, oBindingInfo, iDiffIndex);
-						iLastInsertIndex = iDiffIndex;
-					}
+				if (bFromScratch) {
+					this.rebuildListItems(aContexts, oBindingInfo, true);
+				} else {
+					// set the binding context of items inserting/deleting entries shifts the index of all following items
+					this.updateItemsBindingContext(aContexts, oBindingInfo.model);
+					this.applyChunkAsync(vInsertIndex);
 				}
 			}
-
-			if (bFromScratch) {
-				this.rebuildListItems(aContexts, oBindingInfo, true);
-			} else if (this._oContainerDomRef && aDiff) {
-				// set the binding context of items inserting/deleting entries shifts the index of all following items
-				this.updateItemsBindingContext(aContexts, oBindingInfo.model);
-				this.applyChunk(vInsertIndex);
-			}
-
-			this._oContainerDomRef = null;
-			this._sGroupingPath = this._getGroupingPath(oBinding);
 
 			if (!this._bDataRequested) {
 				this._onAfterPageLoaded(sChangeReason);
