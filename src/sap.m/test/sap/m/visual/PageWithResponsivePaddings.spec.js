@@ -2,6 +2,8 @@
 describe("sap.m.PageWithResponsivePaddings", function () {
 	"use strict";
 
+	browser.testrunner.currentSuite.meta.controlName = "sap.m.Page";
+
 	it("Should load test page", function () {
 		expect(takeScreenshot()).toLookAs("initial");
 	});
