@@ -3083,5 +3083,58 @@
         ]
       }
     ]
+  },
+  "1.71.45": {
+    "date": "April 2022",
+    "notes": [
+      {
+        "id": "c19a75ee36104fbe68f1c6d39fde59a15dec1c67",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Set aria-labelledby and labels correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270029035"
+          }
+        ]
+      },
+      {
+        "id": "b98deb15c2c51b07aa79b2ec49911ee6d9edb653",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed visual displacement of closing droppdown menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001188692022"
+          }
+        ]
+      },
+      {
+        "id": "8c8db38f0a5629459ce46354177728e37259be2b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Month view now starts with the first day of the month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080324231"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500002653212022"
+          }
+        ]
+      },
+      {
+        "id": "ea681caa58a7247f0dc31b0b5b7e852d9f17e1e5",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: initial icon alt property could be overridden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008606402021"
+          }
+        ]
+      }
+    ]
   }
 }
