@@ -1826,7 +1826,7 @@ sap.ui.define([
 					if (!oEntity) {
 						error("No instance to calculate key predicate at " + vSegment.path);
 					}
-					if (_Helper.hasPrivateAnnotation(oEntity, "transient")) {
+					if (oEntity["@$ui5.context.isTransient"]) {
 						bNoEditUrl = true;
 						return undefined;
 					}

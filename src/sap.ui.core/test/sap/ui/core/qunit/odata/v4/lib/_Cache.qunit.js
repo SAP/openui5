@@ -7022,6 +7022,7 @@ sap.ui.define([
 				aSelectForPath = ["ID", "Name"],
 				sPredicate = "('7')",
 				sTransientPredicate = "($uid=id-1-23)",
+				oTransientPromiseWrapper,
 				mTypeForMetaPath = {};
 
 			oCache.fetchValue = function () {};
@@ -7046,7 +7047,8 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oEntityDataCleaned), "transient", "updateGroup")
 				.callThrough();
 			oHelperMock.expects("setPrivateAnnotation")
-				.withExactArgs(sinon.match.same(oEntityDataCleaned), "transient", true)
+				.withExactArgs(sinon.match.same(oEntityDataCleaned), "transient",
+					sinon.match.instanceOf(Promise))
 				.callThrough();
 			this.spy(_Helper, "addByPath");
 			this.oRequestorMock.expects("request")
@@ -7106,6 +7108,9 @@ sap.ui.define([
 			assert.strictEqual(aCollection.$count, 1);
 			assert.strictEqual(aCollection.$created, 1);
 
+			oTransientPromiseWrapper = SyncPromise.resolve(oEntityDataCleaned["@$ui5._"].transient);
+			assert.ok(oTransientPromiseWrapper.isPending()); // of course...
+
 			// request is added to mPostRequests
 			sinon.assert.calledWithExactly(_Helper.addByPath,
 				sinon.match.same(oCache.mPostRequests), sPathInCache,
@@ -7125,6 +7130,7 @@ sap.ui.define([
 			return oCreatePromise.then(function (oEntityData) {
 				var oExpectedPrivateAnnotation = {};
 
+				assert.strictEqual(oTransientPromiseWrapper.getResult(), true);
 				if (bKeepTransientPath === false) {
 					oExpectedPrivateAnnotation.predicate = sPredicate;
 				}
@@ -7263,7 +7269,8 @@ sap.ui.define([
 				null, /*oPayload*/sinon.match.object, /*fnSubmit*/sinon.match.func,
 				/*fnCancel*/sinon.match.func, undefined,
 				"TEAMS('0')/TEAM_2_EMPLOYEES($uid=id-1-23)");
-		this.mock(oCache).expects("removePendingRequest").withExactArgs();
+		this.mock(oCache).expects("addPendingRequest").never();
+		this.mock(oCache).expects("removePendingRequest").never();
 
 		// code under test
 		oCreatePromise = oCache.create(oGroupLock, oPostPathPromise, "('0')/TEAM_2_EMPLOYEES",
@@ -7945,6 +7952,7 @@ sap.ui.define([
 			oPostError = new Error(),
 			oRetryGroupLock = {getGroupId : function () {}},
 			sTransientPredicate = "($uid=id-1-23)",
+			oTransientPromiseWrapper,
 			that = this;
 
 		function entityDataCleaned(oParam) {
@@ -7997,7 +8005,8 @@ sap.ui.define([
 								= oCallbacksMock.expects("submitCallback").withExactArgs();
 
 						oHelperMock.expects("setPrivateAnnotation")
-							.withExactArgs(sinon.match.same(oEntityDataCleaned), "transient", true)
+							.withExactArgs(sinon.match.same(oEntityDataCleaned), "transient",
+								sinon.match.instanceOf(Promise))
 							.callThrough();
 
 						// code under test
@@ -8005,6 +8014,9 @@ sap.ui.define([
 
 						assert.ok(oAddPendingRequestSpy.called);
 						assert.ok(oSubmitCallbackSpy.called);
+						oTransientPromiseWrapper = SyncPromise.resolve(
+							oEntityDataCleaned["@$ui5._"].transient);
+						assert.ok(oTransientPromiseWrapper.isPending()); // of course...
 					}).then(function () {
 						var oRemovePendingRequestExpectation
 							= that.mock(oCache).expects("removePendingRequest").withExactArgs();
@@ -8038,6 +8050,7 @@ sap.ui.define([
 				assert.ok(false, "Unexpected success");
 			}, function (oError) {
 				assert.strictEqual(oError, oCanceledError);
+				assert.strictEqual(oTransientPromiseWrapper.getResult(), undefined);
 			});
 	});
 });
@@ -8428,7 +8441,7 @@ sap.ui.define([
 						bSingle = iLength === undefined,
 						oTransient = {
 							"@$ui5._" : {
-								transient : true,
+								transient : "group",
 								transientPredicate : sTransientPredicate
 							},
 							key : "@"
