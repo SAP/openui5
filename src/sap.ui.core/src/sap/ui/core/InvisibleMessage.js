@@ -104,6 +104,14 @@ function (coreLibrary, ManagedObject, Log) {
 				'You have entered an invalid mode. Valid values are: ' + '"Polite" ' + 'and "Assertive".'
 				+ ' The framework will automatically set the mode to "Polite".');
 		}
+
+		// clear the span in order to avoid reading it out while in JAWS reading node
+		setTimeout(function () {
+			// ensure that we clear the text node only if no announce is made in the meantime
+			if (oNode.textContent === sText) {
+				oNode.textContent = "";
+			}
+		}, 3000);
 	};
 
 	/**

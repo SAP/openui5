@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
 
-], function (Core, coreLibrary, InvisibleMessage, Log) {
+], function (Core, coreLibrary, InvisibleMessage, Log, sinon) {
 	"use strict";
 
 	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
@@ -25,20 +25,45 @@ sap.ui.define([
 
 	QUnit.test("Element announcing", function(assert) {
 		// Arrange
-		var oStatic = Core.getStaticAreaRef(),
-			oPoliteMarkup = oStatic.querySelector(".sapUiInvisibleMessagePolite"),
-			oAssertiveMarkup = oStatic.querySelector(".sapUiInvisibleMessageAssertive"),
+		var oInvisibleMessage = InvisibleMessage.getInstance(),
+			oStatic = Core.getStaticAreaRef(),
 			fnInfoSpy = this.spy(Log, "info"),
-			oInvisibleMessage = InvisibleMessage.getInstance();
+			oPoliteMarkup, oAssertiveMarkup;
 
 		// Act
 		oInvisibleMessage.announce("Announcement", "invalidMode");
 		oInvisibleMessage.announce("Announcement", InvisibleMessageMode.Assertive);
 		oInvisibleMessage.announce("<script>alert('xss')</script>", InvisibleMessageMode.Polite);
 
+		oPoliteMarkup = oStatic.querySelector(".sapUiInvisibleMessagePolite");
+		oAssertiveMarkup = oStatic.querySelector(".sapUiInvisibleMessageAssertive");
+
 		// Assert
 		assert.strictEqual(oPoliteMarkup.innerHTML, "&lt;script&gt;alert('xss')&lt;/script&gt;", "HTML tags are escaped");
 		assert.strictEqual(oAssertiveMarkup.textContent, "Announcement",  "The text of the assertive span should have been changed.");
 		assert.ok(fnInfoSpy.called, "An info message should be displayed when calling the method with invalid mode.");
+	});
+
+	QUnit.test("Clearing of element content", function(assert) {
+		// Arrange
+		var oInvisibleMessage = InvisibleMessage.getInstance(),
+			oStatic = Core.getStaticAreaRef(),
+			oAssertiveMarkup;
+
+		this.clock = sinon.useFakeTimers();
+
+		// Act
+		oInvisibleMessage.announce("Announcement", InvisibleMessageMode.Assertive);
+
+		oAssertiveMarkup = oStatic.querySelector(".sapUiInvisibleMessageAssertive");
+
+		// Assert
+		assert.strictEqual(oAssertiveMarkup.textContent, "Announcement",  "The text of the assertive span should have been changed.");
+
+		this.clock.tick(4000);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oAssertiveMarkup.textContent, "",  "The text of the assertive span should be cleared out.");
 	});
 });
