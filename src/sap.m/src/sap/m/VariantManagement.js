@@ -497,6 +497,7 @@ sap.ui.define([
 			showContexts: false,
 			editable: true,
 			showManualVariantKey: false,
+			showCreateTile: false,
 			popoverTitle: this._oRb.getText("VARIANT_MANAGEMENT_VARIANTS")
 		});
 		this.setModel(oModel, VariantManagement.INNER_MODEL_NAME);
@@ -549,6 +550,13 @@ sap.ui.define([
 	};
 	VariantManagement.prototype._setShowExecuteOnSelection = function(bValue) {
 		this._setInnerModelProperty("/showExecuteOnSelection", bValue);
+	};
+
+	VariantManagement.prototype._getShowCreateTile = function() {
+		return this._getInnerModelProperty("/showCreateTile");
+	};
+	VariantManagement.prototype._setShowCreateTile = function(bValue) {
+		this._setInnerModelProperty("/showCreateTile", bValue);
 	};
 
 	VariantManagement.prototype._getShowManualVariantKey = function() {
@@ -1198,6 +1206,16 @@ sap.ui.define([
 				width: "100%"
 			});
 
+			this.oCreateTile = new CheckBox(this.getId() + "-tile", {
+				text: this.oResourceBundle.getText("VARIANT_MANAGEMENT_CREATETILE"),
+				enabled: true,
+				visible: {
+					path: "/showCreateTile",
+					model: VariantManagement.INNER_MODEL_NAME
+				},
+				width: "100%"
+			});
+
 			this.oInputManualKey = new Input(this.getId() + "-key", {
 				visible: {
 					path: "/showManualVariantKey",
@@ -1253,6 +1271,10 @@ sap.ui.define([
 
 			if (this._getShowExecuteOnSelection()) {
 				oSaveAsDialogOptionsGrid.addContent(this.oExecuteOnSelect);
+			}
+
+			if (this._getShowCreateTile()) {
+				this.oSaveDialogOptionsGrid.addContent(this.oCreateTile);
 			}
 
 			this.oSaveAsDialog = new Dialog(this.getId() + "-savedialog", {
@@ -1476,6 +1498,7 @@ sap.ui.define([
 		this.oDefault.setSelected(false);
 		this.oPublic.setSelected(false);
 		this.oExecuteOnSelect.setSelected(false);
+		this.oCreateTile.setSelected(false);
 
 		if (this.oVariantPopOver) {
 			this.oVariantPopOver.close();
@@ -2421,6 +2444,11 @@ sap.ui.define([
 			this.oExecuteOnSelect.destroy();
 		}
 		this.oExecuteOnSelect = undefined;
+
+		if (this.oCreateTile && !this.oCreateTile._bIsBeingDestroyed) {
+			this.oCreateTile.destroy();
+		}
+		this.oCreateTile = undefined;
 		this._oRb = undefined;
 
 		this._oVariantList = undefined;
