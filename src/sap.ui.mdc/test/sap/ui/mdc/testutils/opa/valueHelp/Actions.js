@@ -26,9 +26,9 @@ sap.ui.define([
         },
         iCloseTheValueHelpDialog: function(bCancel) {
             return this.waitFor({
-                controlType: "sap.ui.mdc.field.FieldValueHelp",
+                controlType: "sap.ui.mdc.ValueHelp",
                 success: function(aFieldValueHelps) {
-                    Opa5.assert.equal(aFieldValueHelps.length, 1, "sap.ui.mdc.field.FieldValueHelp found.");
+                    Opa5.assert.equal(aFieldValueHelps.length, 1, "sap.ui.mdc.ValueHelp found.");
                     this.waitFor({
                         controlType: "sap.m.Dialog",
                         matchers: new Ancestor(aFieldValueHelps[0]),
