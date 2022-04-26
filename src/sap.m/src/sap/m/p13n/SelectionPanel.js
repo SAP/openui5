@@ -278,6 +278,12 @@ sap.ui.define([
 		}
 		BasePanel.prototype.setP13nData.call(this, aP13nData);
 		this._updateCount();
+
+		//After explicitly updating the data (e.g. outer influences by the p13n.Popup such as reset, open & update)
+		//Ensure that the remove buttons and currently selected item will be reset, as it's not clear anymore
+		//remove the reorder buttons from their current location and hence reset the hover logic
+		this._removeMoveButtons();
+		this._oSelectedItem = null;
 	};
 
 	SelectionPanel.prototype._updateCount = function() {
