@@ -12,12 +12,13 @@
 
 .sapMOHC.sapMOHBgTranslucent,
 .sapMOHC.sapMOHBgSolid {
-	border: none;
+	border-bottom: 0.0625rem solid @sapUiObjectHeaderBorderColor;
 	box-shadow: none;
 }
 .sapMOH.sapMOHBgTransparent,
 .sapMOHC.sapMOHBgTransparent {
 	background: transparent;
+	border-bottom: 0.0625rem solid transparent;
 }
 
 a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
@@ -76,4 +77,30 @@ a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 .sapMOHRTitleActive .sapMOHRTitleText:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
+}
+
+.sapMOHTitle h6 .sapMText,
+.sapMOHTitle h5 .sapMText,
+.sapMOHTitle h4 .sapMText,
+.sapMOHTitle h3 .sapMText,
+.sapMOHTitle h2 .sapMText,
+.sapMOHTitle h1 .sapMText {
+	font-family: @sapUiObjectHeaderTitleFontFamily;
+	font-size: @sapUiObjectHeaderTitleFontSize;
+	color: @sapUiObjectHeaderTitleTextColor;
+}
+
+html.sap-phone {
+	.sapMOHTitle h6 .sapMText,
+	.sapMOHTitle h5 .sapMText,
+	.sapMOHTitle h4 .sapMText,
+	.sapMOHTitle h3 .sapMText,
+	.sapMOHTitle h2 .sapMText,
+	.sapMOHTitle h1 .sapMText {
+		font-size: @sapUiObjectHeaderTitleSnappedFontSize;
+	}
+}
+
+.sapMOHIntro .sapMText {
+	color: @sapUiObjectHeaderSubtitleTextColor;
 }
