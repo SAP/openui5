@@ -74,7 +74,28 @@ sap.ui.define([
                      *
                      * If the value is lower/higher than the allowed minimum/maximum, a warning message will be output to the console.
                      */
-                    range: {type: "float[]", group: "Data", defaultValue: [0,100]}
+                    range: {type: "float[]", group: "Data", defaultValue: [0,100]},
+
+                    /**
+                     * Stores positioning info regarding progress element DOM
+                     *
+                     * @private
+                     */
+                    progressBarSize: { type: "object", visibility: "hidden" },
+
+                    /**
+                     * Identifies if start handle is pressed
+                     *
+                     * @private
+                     */
+                    startHandlePressed: { type: "boolean", visibility: "hidden" },
+
+                    /**
+                     * Identifies if end handle is pressed
+                     *
+                     * @private
+                     */
+                    endHandlePressed: { type: "boolean", visibility: "hidden" }
                 },
                 designtime: "sap/m/designtime/RangeSlider.designtime"
             }
@@ -153,6 +174,8 @@ sap.ui.define([
                 this._storeTooltipsMetadata();
             }
 
+            this._recalculateRange();
+
             // At this point it's certain that all setters are executed and values of
             // min, max, value, value2 and range are set properly and are not using the Default values.
             // It's important however to keep the slider values within the boundaries defined by min and max.
@@ -205,8 +228,6 @@ sap.ui.define([
             if (!this._mHandleTooltip.end.tooltip) {
                 this._mHandleTooltip.end.tooltip = aTooltips[1];
             }
-
-            this._mHandleTooltip.bTooltipsSwapped = false; // Reset tooltips swapping
         };
 
         /**
@@ -214,26 +235,23 @@ sap.ui.define([
          * @private
          */
         RangeSlider.prototype._recalculateRange = function () {
-            var aHandlesLeftOffset, sStart, sEnd, oProgressIndicator,
-                sSide = this._bRTL ? "right" : "left";
+            var aHandlesLeftOffset,
+                fValue = this.getValue(),
+                fValue2 = this.getValue2(),
+                sStart, sEnd;
 
             aHandlesLeftOffset = [
-                parseFloat(this._mHandleTooltip.start.handle.style[sSide]),
-                parseFloat(this._mHandleTooltip.end.handle.style[sSide])
+                this._getPercentOfValue(this._bRTL ? fValue2 : fValue),
+                this._getPercentOfValue(this._bRTL ? fValue : fValue2)
             ];
 
             sStart = Math.min.apply(Math, aHandlesLeftOffset) + "%";
             sEnd = (100 - Math.max.apply(Math, aHandlesLeftOffset)) + "%";
 
-            oProgressIndicator = this.getDomRef("progress");
-
-            if (this._bRTL) {
-                oProgressIndicator.style.left = sEnd;
-                oProgressIndicator.style.right = sStart;
-            } else {
-                oProgressIndicator.style.left = sStart;
-                oProgressIndicator.style.right = sEnd;
-            }
+            this.setProperty("progressBarSize", {
+                left: this._bRTL ? sEnd : sStart,
+                right: this._bRTL ? sStart : sEnd
+            });
         };
 
         /**
@@ -298,8 +316,6 @@ sap.ui.define([
                 this._updateTooltipContent(oTooltip, fValue);
                 this._adjustTooltipsContainer();
             }
-
-            this._recalculateRange();
         };
 
         RangeSlider.prototype._updateHandleDom = function (oHandle, aRange, iIndex, sValue, fPercentVal) {
@@ -417,9 +433,10 @@ sap.ui.define([
 
         RangeSlider.prototype._swapTooltips = function (aRange) {
             var oTempTooltip = this._mHandleTooltip.start.tooltip;
+            var bShouldSwapTooltipsToTheRight = aRange[0] >= aRange[1] && !this._mHandleTooltip.bTooltipsSwapped;
+            var bShouldRevertTooltipsSwapping = (aRange[0] < aRange[1]) && this._mHandleTooltip.bTooltipsSwapped;
 
-            if ((aRange[0] >= aRange[1] && !this._mHandleTooltip.bTooltipsSwapped) ||
-                (aRange[0] <= aRange[1] && this._mHandleTooltip.bTooltipsSwapped)) {
+            if (bShouldSwapTooltipsToTheRight || bShouldRevertTooltipsSwapping) {
                 this._mHandleTooltip.start.tooltip = this._mHandleTooltip.end.tooltip;
                 this._mHandleTooltip.end.tooltip = oTempTooltip;
 
@@ -432,7 +449,14 @@ sap.ui.define([
                     this._mHandleTooltip.end.handle.setAttribute("aria-controls", this._mHandleTooltip.end.tooltip.getId());
                 }
 
-                this._mHandleTooltip.bTooltipsSwapped = !this._mHandleTooltip.bTooltipsSwapped;
+                if (bShouldRevertTooltipsSwapping) {
+                    this._mHandleTooltip.bTooltipsSwapped = false;
+                }
+
+                if (bShouldSwapTooltipsToTheRight) {
+                    this._mHandleTooltip.bTooltipsSwapped = true;
+                }
+
             }
         };
 
@@ -530,10 +554,6 @@ sap.ui.define([
 
             this._updateRangePropertyDependencies(aRange);
 
-            if (this._updateDOMAfterSetters(aRange[0], aRange, 0) && this._updateDOMAfterSetters(aRange[1], aRange, 1)) {
-                this._recalculateRange();
-            }
-
             return this;
         };
 
@@ -560,12 +580,8 @@ sap.ui.define([
             aRange[0] = fValue;
 
             this._updateRangePropertyDependencies(aRange);
-            if (this._updateDOMAfterSetters(aRange[0], aRange, 0)) {
-                this._recalculateRange();
-            }
 
             if (this.getShowAdvancedTooltip() && this._mHandleTooltip.start.tooltip) {
-                this._updateTooltipContent(this._mHandleTooltip.start.tooltip, fValue);
                 this.updateTooltipsPositionAndState(this._mHandleTooltip.start.tooltip, fValue, true);
             }
 
@@ -579,12 +595,8 @@ sap.ui.define([
             aRange[1] = fValue;
 
             this._updateRangePropertyDependencies(aRange);
-            if (this._updateDOMAfterSetters(aRange[1], aRange, 1)) {
-                this._recalculateRange();
-            }
 
             if (this.getShowAdvancedTooltip() && this._mHandleTooltip.end.tooltip) {
-                this._updateTooltipContent(this._mHandleTooltip.end.tooltip, fValue);
                 this.updateTooltipsPositionAndState(this._mHandleTooltip.end.tooltip, fValue, true);
             }
 
@@ -598,16 +610,16 @@ sap.ui.define([
                 fNewValue2 = Number(aRangeCopy[1].toFixed(iDecimal));
 
             if (this.getProperty("value") !== fNewValue) {
-                this.setProperty("value", fNewValue, true);
+                this.setProperty("value", fNewValue);
                 aRangeCopy[0] = fNewValue;
             }
 
             if (this.getProperty("value2") !== fNewValue2) {
-                this.setProperty("value2", fNewValue2, true);
+                this.setProperty("value2", fNewValue2);
                 aRangeCopy[1] = fNewValue2;
             }
 
-            this.setProperty("range", aRangeCopy, true);
+            this.setProperty("range", aRangeCopy);
         };
 
         /**
@@ -666,6 +678,10 @@ sap.ui.define([
                 fValue = fMax;
             }
 
+            if (!Number.isInteger(fStep)) {
+                fValue = parseFloat(fValue.toFixed(this._iDecimalPrecision));
+            }
+
             return fValue;
         };
 
@@ -679,7 +695,7 @@ sap.ui.define([
             var oTouch = oEvent.targetTouches[0],
                 CSS_CLASS = this.getRenderer().CSS_CLASS,
                 sEventNamespace = "." + CSS_CLASS, fMinValue, fMaxValue,
-                fValue, aHandles, aRange, iHandleIndex, fHandlesDistance, oFocusItem,
+                fValue, aHandles, aRange, iHandleIndex, fHandlesDistance,
                 fTotalNumberOfValues, fPercentOfHandle, fHandleValue, fHandleHalfWidth;
 
             if (!this.getEnabled()) {
@@ -688,12 +704,6 @@ sap.ui.define([
 
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
-
-            // Should be prevent as in Safari while dragging the handle everything else gets selection.
-            // As part of the RangeSlider, Inputs in the tooltips should be excluded
-            if (oEvent.target.className.indexOf("sapMInput") === -1) {
-                oEvent.preventDefault();
-            }
 
             // we need to recalculate the styles since something may have changed
             // the screen size between touches.
@@ -745,14 +755,19 @@ sap.ui.define([
                     this._ontouchmove.bind(this, fValue, this.getRange(), aHandles));
 
             // adds pressed state
-            aHandles.map(function (oHandle) {
-                if (oHandle.className.indexOf(CSS_CLASS + "HandlePressed") === -1) {
-                    oHandle.className += " " + CSS_CLASS + "HandlePressed";
-                }
-            });
+            aHandles.forEach(function (oHandle) {
+                var sProperty = oHandle.getAttribute("data-ui5-handle-position") + "HandlePressed";
 
-            oFocusItem = aHandles.length === 1 ? aHandles[0] : this.getDomRef("progress");
-            setTimeout(oFocusItem["focus"].bind(oFocusItem), 0);
+                if (!this.getProperty(sProperty)) {
+                    this.setProperty(sProperty, true);
+                }
+            }, this);
+
+            if (aHandles.length === 2) {
+                setTimeout(function () {
+                    this.getDomRef("progress").focus();
+                }.bind(this), 0);
+            }
         };
 
         /**
@@ -892,12 +907,10 @@ sap.ui.define([
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
 
-            aHandle && aHandle.map(function (oHandle) {
-                oHandle.className = oHandle.className.replace(new RegExp(" ?" + sCSSClass + "HandlePressed", "gi"), "");
-            });
-            jQuery(document).off("." + sCSSClass);
+            this.setProperty("startHandlePressed", false);
+            this.setProperty("endHandlePressed", false);
 
-            this._recalculateRange();
+            jQuery(document).off("." + sCSSClass);
 
             if (this._aInitialFocusRange[0] !== aNewRange[0] || this._aInitialFocusRange[1] !== aNewRange[1]) {
                 this._aInitialFocusRange = Array.prototype.slice.call(aNewRange);
@@ -930,6 +943,13 @@ sap.ui.define([
         };
 
         RangeSlider.prototype.getFocusDomRef = function() {
+            /* when invalidation is done and focus is in the slider
+            the render manager tries to return the focus to the focusDomRef
+            in this case we want it to be the currently focused element */
+            if (this.getDomRef().contains(document.activeElement)) {
+                return document.activeElement;
+            }
+
             return this.getDomRef("progress");
         };
 

@@ -16,12 +16,14 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 		this.renderHandle(oRM, oControl, {
 			id: oControl.getId() + "-handle1",
 			position: "start",
-			forwardedLabels: sRangeSliderLabels
+			forwardedLabels: sRangeSliderLabels,
+			pressed: oControl.getProperty("startHandlePressed")
 		});
 		this.renderHandle(oRM, oControl, {
 			id: oControl.getId() + "-handle2",
 			position: "end",
-			forwardedLabels: sRangeSliderLabels
+			forwardedLabels: sRangeSliderLabels,
+			pressed: oControl.getProperty("endHandlePressed")
 		});
 
 		// Render ARIA labels
@@ -60,6 +62,11 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 		}
 
 		oRM.class(SliderRenderer.CSS_CLASS + "Handle");
+		oRM.attr("data-ui5-handle-position", mOptions.position);
+
+		if (mOptions.pressed) {
+			oRM.class(SliderRenderer.CSS_CLASS + "HandlePressed");
+		}
 
 		if (mOptions && (mOptions.id !== undefined) && mOptions.id === (oControl.getId() + "-handle1")) {
 			oRM.style(bRTL ? "right" : "left", aRange[0]);
@@ -160,6 +167,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 
 	RangeSliderRenderer.renderProgressIndicator = function(oRm, oSlider, sForwardedLabels) {
 		var aRange = oSlider.getRange();
+		var oProggressBarSize = oSlider.getProperty("progressBarSize");
 
 		aRange[0] = oSlider.toFixed(aRange[0], oSlider._iDecimalPrecision);
 		aRange[1] = oSlider.toFixed(aRange[1], oSlider._iDecimalPrecision);
@@ -172,6 +180,11 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 		}
 		this.addProgressIndicatorClass(oRm, oSlider);
 		oRm.style("width", oSlider._sProgressValue);
+
+		if (oProggressBarSize) {
+			oRm.style("left", oProggressBarSize.left);
+			oRm.style("right", oProggressBarSize.right);
+		}
 
 		oRm.accessibilityState(oSlider, {
 			role: "slider",
@@ -187,6 +200,25 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 	RangeSliderRenderer.addClass = function(oRm, oSlider) {
 		SliderRenderer.addClass(oRm, oSlider);
 		oRm.class("sapMRangeSlider");
+	};
+
+	RangeSliderRenderer.applyTickmarkStyles = function(oRM, oSlider, iTickmarkIndex, iTickmarksToRender) {
+		var aRange = oSlider.getRange();
+
+		aRange[0] = parseInt(oSlider.toFixed(aRange[0], oSlider._iDecimalPrecision));
+		aRange[1] = parseInt(oSlider.toFixed(aRange[1], oSlider._iDecimalPrecision));
+
+		var bRender = (iTickmarkIndex >= aRange[0] && iTickmarkIndex <= aRange[1]) || (iTickmarkIndex <= aRange[0] && iTickmarkIndex >= aRange[1]);
+
+		oRM.attr("data-ui5-active-tickmark", bRender);
+	};
+
+	RangeSliderRenderer.shouldRenderFirstActiveTickmark = function (oSlider) {
+		return oSlider.getValue() === oSlider.getMin();
+	};
+
+	RangeSliderRenderer.shouldRenderLastActiveTickmark = function (oSlider) {
+		return oSlider.getValue2() === oSlider.getMax();
 	};
 
 	return RangeSliderRenderer;

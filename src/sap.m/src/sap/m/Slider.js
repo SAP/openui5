@@ -181,7 +181,14 @@ function(
 				 *
 				 * @since 1.44
 				 */
-				enableTickmarks: {type: "boolean", group: "Appearance", defaultValue: false}
+				enableTickmarks: {type: "boolean", group: "Appearance", defaultValue: false},
+
+				/**
+				 * Indicates whether a handle is pressed
+				 *
+				 * @private
+				 */
+				handlePressed: {type: "boolean", defaultValue: false, group: "Appearance", visibility: "hidden" }
 			},
 			defaultAggregation: "scale",
 			aggregations: {
@@ -1051,6 +1058,8 @@ function(
 			// add active state
 			this.$("inner").addClass(CSS_CLASS + "Pressed");
 
+			this.setProperty("handlePressed", true);
+
 			if (oTouch.target === this.getDomRef("handle")) {
 
 				this._fDiffX = (oTouch.pageX - jQuery(oNearestHandleDomRef).offset().left) + this._fSliderPaddingLeft - (this._fHandleWidth / 2);
@@ -1152,7 +1161,7 @@ function(
 			var fValue = this.getValue();
 
 			// remove the active state
-			this.$("inner").removeClass(CSS_CLASS + "Pressed");
+			this.setProperty("handlePressed", false);
 
 			if (this._fInitialValue !== fValue) {
 				this.fireChange({ value: fValue });
@@ -1588,8 +1597,8 @@ function(
 			sNewValueFixedPoint = this.toFixed(fNewValue, this.getDecimalPrecisionOfNumber(fStep));
 			fNewValue = Number(sNewValueFixedPoint);
 
-			// update the value and suppress re-rendering
-			this.setProperty("value", fNewValue, true);
+			// update the value
+			this.setProperty("value", fNewValue);
 
 			// update the value in DOM only when it has changed
 			if (fValue !== this.getValue()) {
