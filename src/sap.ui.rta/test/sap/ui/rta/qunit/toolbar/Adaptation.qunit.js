@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
-	"sap/ui/fl/Layer",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Adaptation",
@@ -17,8 +18,9 @@ sap.ui.define([
 	Core,
 	Fragment,
 	coreLibrary,
-	Layer,
+	FeaturesAPI,
 	Version,
+	Layer,
 	JSONModel,
 	AppVariantFeature,
 	Adaptation,
@@ -500,8 +502,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Versions Button", {
-		before: function () {
+	QUnit.module("Versions History", {
+		beforeEach: function () {
 			this.oToolbar = new Adaptation({
 				textResources: Core.getLibraryResourceBundle("sap.ui.rta")
 			});
@@ -509,12 +511,12 @@ sap.ui.define([
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			return this.oToolbar._pFragmentLoaded;
 		},
-		after: function() {
+		afterEach: function() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given no dialog is created, when the version button is pressed and afterwards pressed a second time", function(assert) {
+		QUnit.test("when the version button is pressed twice", function(assert) {
 			var done = assert.async();
 			var oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 			var oVersionButton = this.oToolbar.getControl("versionButton");
@@ -546,6 +548,55 @@ sap.ui.define([
 						assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment is not loaded again");
 						done();
 					});
+				})
+				.then(this.oToolbar.showVersionHistory.bind(this.oToolbar, oEvent));
+		});
+
+		QUnit.test("when the version history is opened with publish enabled", function(assert) {
+			var oVersionButton = this.oToolbar.getControl("versionButton");
+			oVersionButton.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			var oVersionsModel = new JSONModel({
+				versioningEnabled: true,
+				versions: [{
+					version: Version.Number.Draft,
+					type: "draft",
+					isPublished: false
+				}, {
+					version: "1",
+					title: "Version Title",
+					type: "active",
+					isPublished: true
+				}, {
+					version: "2",
+					title: "Version Title",
+					type: "active",
+					isPublished: false
+				}],
+				draftAvailable: true
+			});
+			// the models have to be set on both the button and the toolbar for this test,
+			// because the toolbar is not actually rendered and the version button propagates the models to the version history
+			oVersionButton.setModel(oVersionsModel, "versions");
+			this.oToolbar.setModel(oVersionsModel, "versions");
+			var oControlsModel = new JSONModel({
+				publishVisible: true
+			});
+			this.oToolbar.setModel(oControlsModel, "controls");
+			oVersionButton.setModel(oControlsModel, "controls");
+			var oEvent = {
+				getSource: function () {
+					return oVersionButton;
+				}
+			};
+			return this.oToolbar.showVersionHistory(oEvent)
+				.then(this.oToolbar.oVersionDialogPromise)
+				.then(function (oDialog) {
+					var oList = oDialog.getContent()[0];
+					assert.ok(oList.getBindingInfo("items").groupHeaderFactory, "a grouping is in place");
+					assert.strictEqual(oList.getBinding("items").aSorters.length, 1, "a sorter is in place");
+					assert.strictEqual(oList.getItems().length, 5, "there are 5 entries (two group titles, 3 versions)");
 				})
 				.then(this.oToolbar.showVersionHistory.bind(this.oToolbar, oEvent));
 		});

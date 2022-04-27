@@ -8,7 +8,7 @@
         <List
                 class="sapUiRtaVersionsList"
                 visible="{path: 'versions>/versions/length', formatter: '.formatVersionTableVisibility'}"
-                items="{versions>/versions}" >
+                items="{path: 'versions>/versions', groupHeaderFactory: '.getGroupHeaderFactory'}" >
             <FeedListItem
                 text="{parts: [{path: 'versions>title'}, {path: 'versions>type'}], formatter: '.formatVersionTitle'}"
                 info="{versions>activatedBy}"

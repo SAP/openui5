@@ -3,25 +3,30 @@
  */
 
 sap.ui.define([
+	"sap/m/GroupHeaderListItem",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/toolbar/translation/Translation",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
+	"sap/ui/model/Sorter",
 	"sap/ui/Device"
-],
-function(
+], function(
+	GroupHeaderListItem,
 	DateFormat,
 	Fragment,
 	coreLibrary,
 	Version,
 	Utils,
 	Translation,
+	FeaturesAPI,
 	AppVariantFeature,
 	Base,
+	Sorter,
 	Device
 ) {
 	"use strict";
@@ -222,7 +227,6 @@ function(
 
 	Adaptation.prototype.showVersionHistory = function (oEvent) {
 		var oVersionButton = oEvent.getSource();
-
 		if (!this.oVersionDialogPromise) {
 			this.oVersionDialogPromise = Fragment.load({
 				name: "sap.ui.rta.toolbar.VersionHistory",
@@ -235,12 +239,22 @@ function(
 					formatHighlightText: this.formatHighlightText.bind(this),
 					formatOriginalAppHighlight: this.formatOriginalAppHighlight.bind(this),
 					formatOriginalAppHighlightText: this.formatOriginalAppHighlightText.bind(this),
-					versionSelected: this.versionSelected.bind(this)
+					versionSelected: this.versionSelected.bind(this),
+					getGroupHeaderFactory: this.getGroupHeaderFactory.bind(this)
 				}
-			}).then(function (oVersionsDialog) {
-				oVersionButton.addDependent(oVersionsDialog);
-				return oVersionsDialog;
-			});
+			}).then(function(oDialog) {
+				oVersionButton.addDependent(oDialog);
+				if (this.getModel("controls").getProperty("/publishVisible")) {
+					var oSorter = new Sorter({
+						path: "isPublished",
+						group: true
+					});
+
+					var oList = oDialog.getContent()[0];
+					oList.getBinding("items").sort(oSorter);
+				}
+				return oDialog;
+			}.bind(this));
 		}
 
 		return this.oVersionDialogPromise.then(function (oVersionsDialog) {
@@ -249,7 +263,17 @@ function(
 			} else {
 				oVersionsDialog.close();
 			}
+			return oVersionsDialog;
 		});
+	};
+
+	Adaptation.prototype.getGroupHeaderFactory = function (oGroup) {
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		return new GroupHeaderListItem({
+			title: oGroup.key ? oTextResources.getText("TIT_VERSION_HISTORY_PUBLISHED") : oTextResources.getText("TIT_VERSION_HISTORY_UNPUBLISHED"),
+			upperCase: false,
+			visible: this.getModel("controls").getProperty("/publishVisible")
+		}).addStyleClass("sapUiRtaVersionHistoryGrouping").addStyleClass("sapUiRtaVersionHistory");
 	};
 
 	Adaptation.prototype.showRestore = function (bVersioningEnabled) {

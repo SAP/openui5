@@ -32,6 +32,17 @@ sap.ui.define([
 	jQuery("#qunit-fixture").hide();
 	var sandbox = sinon.createSandbox();
 
+	function stubSettings(sandbox) {
+		sandbox.stub(Settings, "getInstance").resolves({
+			isVersioningEnabled: function () {
+				return true;
+			},
+			isSystemWithTransports: function() {
+				return false;
+			}
+		});
+	}
+
 	QUnit.module("getVersionsModel", {
 		before: function() {
 			this.oAppComponent = {
@@ -75,7 +86,6 @@ sap.ui.define([
 		});
 	});
 
-
 	QUnit.module("Given VersionsAPI.isDraftAvailable is called", {
 		before: function() {
 			this.oAppComponent = {
@@ -96,11 +106,7 @@ sap.ui.define([
 			};
 		},
 		beforeEach: function () {
-			sandbox.stub(Settings, "getInstance").resolves({
-				isVersioningEnabled: function () {
-					return true;
-				}
-			});
+			stubSettings(sandbox);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -203,11 +209,7 @@ sap.ui.define([
 			};
 		},
 		beforeEach: function () {
-			sandbox.stub(Settings, "getInstance").resolves({
-				isVersioningEnabled: function () {
-					return true;
-				}
-			});
+			stubSettings(sandbox);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -334,11 +336,7 @@ sap.ui.define([
 			};
 		},
 		beforeEach: function () {
-			sandbox.stub(Settings, "getInstance").resolves({
-				isVersioningEnabled: function () {
-					return true;
-				}
-			});
+			stubSettings(sandbox);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -385,11 +383,7 @@ sap.ui.define([
 			};
 		},
 		beforeEach: function () {
-			sandbox.stub(Settings, "getInstance").resolves({
-				isVersioningEnabled: function () {
-					return true;
-				}
-			});
+			stubSettings(sandbox);
 		},
 		afterEach: function() {
 			sandbox.restore();

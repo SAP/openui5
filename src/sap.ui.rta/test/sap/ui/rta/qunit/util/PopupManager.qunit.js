@@ -121,7 +121,10 @@ sap.ui.define([
 				isVariantAdaptationEnabled: function() {
 					return false;
 				},
-				isKeyUserTranslationEnabled: function () {
+				isKeyUserTranslationEnabled: function() {
+					return false;
+				},
+				isSystemWithTransports: function() {
 					return false;
 				}
 			};
