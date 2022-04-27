@@ -15563,6 +15563,51 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: Calling ODataListBinding#getContexts with bKeepCurrent=true does not have an
+	// influence on ODataListBinding#getCurrentContexts.
+	// JIRA: CPOUI5MODELS-802
+	QUnit.test("ODataListBinding#getContexts: bKeepCurrent=true", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet}" threshold="0" visibleRowCount="2">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=2", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1"
+				}, {
+					__metadata : {uri : "SalesOrderSet('2')"},
+					SalesOrderID : "2"
+				}]
+			})
+			.expectValue("id", ["1", "2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table"),
+				oBinding = oTable.getBinding("rows"),
+				aContexts = oBinding.getCurrentContexts();
+
+			// code under test - getContextByIndex is calling getContexts with bKeepCurrent=true
+			assert.strictEqual(oTable.getContextByIndex(0), aContexts[0]);
+
+			// code under test
+			assert.deepEqual(oBinding.getCurrentContexts(), aContexts);
+
+			assert.throws(function () {
+				oBinding.getContexts(/*iStartIndex*/0, /*iLength*/1, /*iMaximumPrefetchSize*/1,
+					/*bKeepCurrent*/true);
+			}, Error("Unsupported operation: sap.ui.model.odata.v2.ODataListBinding#getContexts,"
+				+ " must not use both iMaximumPrefetchSize and bKeepCurrent"));
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Calling JSONListBinding#getContexts with bKeepCurrent=true does not have an
 	// influence on JSONListBinding#getCurrentContexts.
 	// JIRA: CPOUI5MODELS-802
