@@ -779,6 +779,15 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 			outline: none;
 		}
 	}
+	.sapMGTMoreIcon{
+		background-color: transparent;
+		border: 0;
+		.sapMBtnIcon{
+			bottom: 1rem;
+			left: 0.4rem;
+			border: 0;
+		}
+	}
 
 	.sapMGTRemoveButton {
 		width: 1.375rem;
@@ -838,6 +847,77 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 		}
 	}
 }
+
+.sapMGT.sapMGTScopeActions.sapMGTIconMode{
+	.sapMBtn.sapMGTMoreIcon{
+		&:before{
+			content: "";
+			position: absolute;
+			top: -0.25rem;
+			bottom: -2.5rem;
+			left: -0.0125rem;
+			right: -0.0125rem;
+		}
+		padding: 0;
+		height: 0;
+		bottom: auto;
+		right: 0.5rem;
+		.sapMBtnIcon{
+			bottom: 0;
+			left: 0;
+			padding-left: 0.625rem;
+			padding-right: 0.625rem;
+			width: 1rem;
+		}
+	}
+}
+
+.sapUiSizeCompact{
+	.sapMGT.sapMGTScopeActions.sapMGTIconMode.TwoByHalf.sapMTileSmallPhone{
+		.sapMBtn.sapMGTMoreIcon{
+			&:before{
+				content: "";
+				position: absolute;
+				top: -0.1975rem;
+				bottom: -1.8875rem;
+				left: -0.0125rem;
+				right: -0.0125rem
+			}
+			top: 1.4rem;
+			.sapMBtnInner{
+				padding: 0;
+				min-width: 0
+			}
+		}
+	}
+}
+
+.sapUiSizeCompact{
+	.sapMGT.sapMGTScopeActions.sapMGTIconMode.TwoByHalf{
+		.sapMBtn.sapMGTMoreIcon{
+			top: 0.9rem;
+		}
+	}
+}
+
+.sapMGT.sapMGTScopeActions.sapMGTIconMode.TwoByHalf {
+	.sapMBtn.sapMGTMoreIcon{
+		top: 0.6rem;
+		.sapMBtnInner{
+			left: 0.2rem;
+		}
+	}
+}
+
+.sapMGT.sapMGTScopeActions.sapMGTIconMode.TwoByHalf.sapMTileSmallPhone {
+	.sapMBtn.sapMGTMoreIcon{
+		top: 1.1rem;
+		.sapMBtnInner{
+			left: 0rem;
+		}
+	}
+}
+
 
 .sapMGT.sapMGTScopeActions.sapMGTBackgroundImage, .sapMGT.sapMGTScopeSingleActions.sapMGTBackgroundImage {
 
@@ -994,6 +1074,13 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 		right: -1.5rem;
 		bottom: 0.25rem;
 		width: 2rem;
+	}
+
+	.sapMGTMoreIcon.sapMBtnBase{
+		.sapMBtnIcon{
+			bottom: 0.6rem;
+			left: 0;
+		}
 	}
 
 	.sapMGTRemoveButton {
@@ -1510,37 +1597,19 @@ html[data-sap-ui-browser*='ff'] {
 		.sapMTileCnt {
 			height: 6.5rem;
 			.sapMTileContainer {
-				height: 3rem;
-				margin-bottom: 0.625rem;
-				overflow: hidden;
-				display: flex;
 				.sapMTilePriority {
 					margin: 0 0.5rem 0 1rem;
 					.sapMTilePriorityCnt {
-						display: flex;
-						align-items: center;
-						height: 1.5rem;
-						width: fit-content;
-						border-radius: 0.25rem;
 						overflow: hidden;
-						.sapMTilePriorityBorder {
-							width: 0.125rem;
-							height: inherit;
-						}
 						.sapMTilePriorityValue {
-							font-size: 0.75rem;
+							font-size: 1rem;
 							font-weight: bold;
 							line-height: 1rem;
-							padding: 0.25rem 0.5rem 0.25rem 0.625rem;
 						}
 					}
 				}
 				.High {
 					.sapMTilePriorityCnt {
-						background-color: @sapErrorBackground;
-						.sapMTilePriorityBorder {
-							background-color: @sapErrorBorderColor;
-						}
 						.sapMTilePriorityValue {
 							color: @sapNegativeTextColor;
 						}
@@ -1548,10 +1617,6 @@ html[data-sap-ui-browser*='ff'] {
 				}
 				.Medium {
 					.sapMTilePriorityCnt {
-						background-color: @sapWarningBackground;
-						.sapMTilePriorityBorder {
-							background-color: @sapWarningBorderColor;
-						}
 						.sapMTilePriorityValue {
 							color: @sapCriticalTextColor;
 						}
@@ -1559,10 +1624,6 @@ html[data-sap-ui-browser*='ff'] {
 				}
 				.Low {
 					.sapMTilePriorityCnt {
-						background-color: @sapSuccessBackground;
-						.sapMTilePriorityBorder {
-							background-color: @sapSuccessBorderColor;
-						}
 						.sapMTilePriorityValue {
 							color: @sapPositiveTextColor;
 						}
@@ -1586,6 +1647,11 @@ html[data-sap-ui-browser*='ff'] {
 				overflow: hidden;
 				padding: 0 1rem;
 				margin: 0 0 0.625rem 0;
+				p{
+					margin: 0;
+					margin-top: 0.1rem;
+					line-height: 1.7;
+				}
 				.sapMText {
 					line-height: 1.5rem;
 				}
@@ -1611,6 +1677,7 @@ html[data-sap-ui-browser*='ff'] {
 					margin-right: 0;
 					margin-left: 1rem;
 					font-size: 0.75rem;
+					margin-top: 1rem;
 				}
 				.sapMGTActionModeContainer {
 					margin: 0 1rem 0 0.5rem;

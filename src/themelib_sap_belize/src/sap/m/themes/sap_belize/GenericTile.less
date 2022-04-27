@@ -13,11 +13,47 @@
 	color: @sapUiContentContrastTextColor;
 }
 
+.sapMGT.sapMGTScopeActions{
+	.sapMBtnBase.sapMGTMoreIcon{
+		.sapMBtnIcon{
+			font-size: 1rem;
+			bottom: 0.7rem;
+			left: 0.5rem
+		}
+	}
+}
+
+html.sap-desktop .sapMGTActionButtonPress.sapMGT:focus
+{
+		.sapMGTFocusDiv{
+			border: none;
+		}
+}
+
+html.sap-desktop .sapMGTActionButtonPress.sapMGT:active
+{
+	.sapMGTFocusDiv{
+		border: none;
+	}
+}
+
+html.sap-desktop .sapMGTActionButtonPress.sapMGT:focus-visible
+{
+	.sapMGTFocusDiv{
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	}
+}
+
 /************************ LINE MODE LIST VIEW ********************/
 
 .sapMGT.sapMGTLineMode {
 	transition: background 0.2s;
 	background: transparent;
+	.sapMBtnBase.sapMGTMoreIcon{
+		.sapMBtnIcon{
+			bottom: 0.7rem;
+		}
+	}
 }
 
 .sap-desktop .sapMGT.sapMGTLineMode:not(.sapMGTDisabled) {
