@@ -4,23 +4,29 @@
 
 /*global QUnit */
 /*eslint no-warning-comments: 0 */
+/*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
 		"sap/ui/mdc/condition/ConditionModel",
 		"sap/ui/mdc/condition/Condition",
 		"sap/ui/model/json/JSONModel",
+		"sap/ui/model/ChangeReason",
 		"sap/ui/mdc/enum/ConditionValidated"
-		], function(ConditionModel, Condition, JSONModel, ConditionValidated) {
+		], function(ConditionModel, Condition, JSONModel, ChangeReason, ConditionValidated) {
 	"use strict";
 
 	var oConditionModel;
-	var sPath;
-	var sReason;
 	var iCount = 0;
+	var oPropertyChange = {};
 	function handlePropertyChange(oEvent) {
-		sPath = oEvent.getParameter("path");
-		sReason = oEvent.getParameter("reason");
+		var sPath = oEvent.getParameter("path");
 		iCount++;
+		if (!oPropertyChange[sPath]) {
+			oPropertyChange[sPath] = {reason: "", count: 0, value: undefined};
+		}
+		oPropertyChange[sPath].reason = oEvent.getParameter("reason");
+		oPropertyChange[sPath].count++;
+		oPropertyChange[sPath].value = oEvent.getParameter("value");
 	}
 
 	//*********************************************************************************************
@@ -30,9 +36,8 @@ sap.ui.define([
 		},
 
 		afterEach: function() {
-			sPath = undefined;
-			sReason = undefined;
 			iCount = 0;
+			oPropertyChange = {};
 			if (oConditionModel) {
 				oConditionModel.destroy();
 				oConditionModel = undefined;
@@ -79,20 +84,23 @@ sap.ui.define([
 		oConditionModel.attachPropertyChange(handlePropertyChange);
 
 		oConditionModel.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
-		assert.equal(sPath, "/conditions/fieldPath1", "PropertyChange event fired");
-		assert.equal(sReason, "add", "PropertyChange event reason");
 		assert.equal(iCount, 1, "PropertyChange event fired once");
-		sPath = undefined; sReason = undefined; iCount = 0;
+		assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+		assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+		assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+		iCount = 0; oPropertyChange = {};
 		oConditionModel.addCondition("field/Path2", Condition.createCondition("BT", [1, 100]));
-		assert.equal(sPath, "/conditions/field/Path2", "PropertyChange event fired");
-		assert.equal(sReason, "add", "PropertyChange event reason");
 		assert.equal(iCount, 1, "PropertyChange event fired once");
-		sPath = undefined; sReason = undefined; iCount = 0;
+		assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, 1, "PropertyChange event for field/Path2 fired once");
+		assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
+		assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for field/Path2 value");
+		iCount = 0; oPropertyChange = {};
 		oConditionModel.addCondition("fieldPath3", Condition.createCondition("GT", [new Date()]));
-		assert.equal(sPath, "/conditions/fieldPath3", "PropertyChange event fired");
-		assert.equal(sReason, "add", "PropertyChange event reason");
 		assert.equal(iCount, 1, "PropertyChange event fired once");
-		sPath = undefined; sReason = undefined; iCount = 0;
+		assert.equal(oPropertyChange["/conditions/fieldPath3"] && oPropertyChange["/conditions/fieldPath3"].count, 1, "PropertyChange event for fieldPath3 fired once");
+		assert.equal(oPropertyChange["/conditions/fieldPath3"] && oPropertyChange["/conditions/fieldPath3"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath3 reason");
+		assert.deepEqual(oPropertyChange["/conditions/fieldPath3"] && oPropertyChange["/conditions/fieldPath3"].value, oConditionModel.getConditions("fieldPath3"), "PropertyChange event for fieldPath3 value");
+		iCount = 0; oPropertyChange = {};
 
 		assert.equal(oConditionModel.getConditions("fieldPath1").length, 1, "one condition expected");
 		assert.equal(oConditionModel.getConditions("field/Path2").length, 1, "one condition expected");
@@ -107,20 +115,22 @@ sap.ui.define([
 		oConditionModel.addCondition("fieldPath3", Condition.createCondition("LT", ["xxx"]), true);
 		assert.equal(oConditionModel.getConditions("fieldPath3").length, 3, "now 3 conditions expected");
 
-		sPath = undefined; sReason = undefined; iCount = 0;
+		iCount = 0;	oPropertyChange = {};
 		oConditionModel.removeCondition("fieldPath1", 0);
 		assert.equal(oConditionModel.getConditions("fieldPath1").length, 0, "no conditions expected");
-		assert.equal(sPath, "/conditions/fieldPath1", "PropertyChange event fired");
-		assert.equal(sReason, "remove", "PropertyChange event reason");
 		assert.equal(iCount, 1, "PropertyChange event fired once");
-		sPath = undefined; sReason = undefined; iCount = 0;
+		assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+		assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+		assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+		iCount = 0;	oPropertyChange = {};
 
 		oConditionModel.removeCondition("field/Path2", 0);
 		assert.equal(oConditionModel.getConditions("field/Path2").length, 0, "no conditions expected");
-		assert.equal(sPath, "/conditions/field/Path2", "PropertyChange event fired");
-		assert.equal(sReason, "remove", "PropertyChange event reason");
 		assert.equal(iCount, 1, "PropertyChange event fired once");
-		sPath = undefined; sReason = undefined; iCount = 0;
+		assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, 1, "PropertyChange event for field/Path2 fired once");
+		assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
+		assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for field/Path2 value");
+		iCount = 0;	oPropertyChange = {};
 
 		oConditionModel.removeCondition("fieldPath3", 0);
 		assert.equal(oConditionModel.getConditions("fieldPath3").length, 2, "two condition expected");
@@ -138,20 +148,23 @@ sap.ui.define([
 		oConditionModel.attachPropertyChange(handlePropertyChange);
 
 		oConditionModel.insertCondition("fieldPath1", 0, Condition.createCondition("EQ", [1]));
-		assert.equal(sPath, "/conditions/fieldPath1", "PropertyChange event fired");
-		assert.equal(sReason, "add", "PropertyChange event reason");
 		assert.equal(iCount, 1, "PropertyChange event fired once");
-		sPath = undefined; sReason = undefined; iCount = 0;
-		oConditionModel.insertCondition("fieldPath1", 0, Condition.createCondition("EQ", [2, "text"]));
-		assert.equal(sPath, "/conditions/fieldPath1", "PropertyChange event fired");
-		assert.equal(sReason, "add", "PropertyChange event reason");
+		assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+		assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+		assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+		iCount = 0;	oPropertyChange = {};
+		oConditionModel.insertCondition("fieldPath1", 0, Condition.createItemCondition(2, "text"));
 		assert.equal(iCount, 1, "PropertyChange event fired once");
-		sPath = undefined; sReason = undefined; iCount = 0;
+		assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+		assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+		assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+		iCount = 0;	oPropertyChange = {};
 		oConditionModel.insertCondition("fieldPath1", 0, Condition.createCondition("EQ", []));
-		assert.equal(sPath, "/conditions/fieldPath1", "PropertyChange event fired");
-		assert.equal(sReason, "add", "PropertyChange event reason");
 		assert.equal(iCount, 1, "PropertyChange event fired once");
-		sPath = undefined; sReason = undefined; iCount = 0;
+		assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+		assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+		assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+		iCount = 0;	oPropertyChange = {};
 
 		var aConditions = oConditionModel.getConditions("fieldPath1");
 		assert.equal(aConditions.length, 3, "number of conditions");
@@ -377,9 +390,8 @@ sap.ui.define([
 		},
 
 		afterEach: function() {
-			sPath = undefined;
-			sReason = undefined;
 			iCount = 0;
+			oPropertyChange = {};
 			oConditionChange = {};
 			if (oConditionModel) {
 				oConditionModel.destroy();
@@ -397,29 +409,31 @@ sap.ui.define([
 			oConditionChangeBinding1.setExternalValue(aConditions);
 			setTimeout(function () {
 				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
-				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, "change", "Change event for all conditions reason");
+				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, ChangeReason.Change, "Change event for all conditions reason");
 				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, 1, "Change event for fieldPath1 fired once");
-				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, "change", "Change event for fieldPath1 reason");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, ChangeReason.Change, "Change event for fieldPath1 reason");
 				assert.notOk(oConditionChange["/conditions/field_Path2"], "Change event for fieldPath2 not fired");
 				assert.equal(iCount, 1, "PropertyChange event fired once");
-				assert.equal(sPath, "/conditions/fieldPath1", "PropertyChange event path");
-				assert.equal(sReason, "binding", "PropertyChange event reason");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
 
-				sPath = undefined; sReason = undefined; iCount = 0;
+				iCount = 0;	oPropertyChange = {};
 				oConditionChange = {};
 				aConditions = oConditionChangeBinding3.getExternalValue();
 				aConditions.push(Condition.createItemCondition("X", "Y"));
 				oConditionChangeBinding3.setExternalValue(aConditions);
 				setTimeout(function () {
 					assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
-					assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, "change", "Change event for all conditions reason");
+					assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, ChangeReason.Change, "Change event for all conditions reason");
 					assert.notOk(oConditionChange["/conditions/fieldPath1"], "Change event for fieldPath1 not fired");
 					assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, 1, "Change event for fieldPath2 fired once");
-					assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, "change", "Change event for field/Path2 reason");
+					assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, ChangeReason.Change, "Change event for field/Path2 reason");
 					assert.equal(iCount, 1, "PropertyChange event fired once");
-					assert.equal(sPath, "/conditions/field/Path2", "PropertyChange event path");
-					assert.equal(sReason, "binding", "PropertyChange event reason");
-					fnDone();
+					assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, 1, "PropertyChange event for field/Path2 fired once");
+					assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
+					assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
+						fnDone();
 				}, 0);
 			}, 0);
 		}, 0);
@@ -435,15 +449,16 @@ sap.ui.define([
 
 			setTimeout(function () {
 				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
-				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, "change", "Change event for all conditions reason");
+				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, ChangeReason.Change, "Change event for all conditions reason");
 				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, 1, "Change event for fieldPath1 fired once");
-				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, "change", "Change event for fieldPath1 reason");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, ChangeReason.Change, "Change event for fieldPath1 reason");
 				assert.notOk(oConditionChange["/conditions/field/Path2"], "Change event for field/Path2 not fired");
 				assert.equal(iCount, 1, "PropertyChange event fired once");
-				assert.equal(sPath, "/conditions/fieldPath1", "PropertyChange event path");
-				assert.equal(sReason, "binding", "PropertyChange event reason");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
 
-				sPath = undefined; sReason = undefined; iCount = 0;
+				iCount = 0;	oPropertyChange = {};
 				oConditionChange = {};
 				aConditions = oConditionChangeBinding3.getExternalValue();
 				aConditions[0].values[0] = "B";
@@ -451,13 +466,14 @@ sap.ui.define([
 
 				setTimeout(function () {
 					assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
-					assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, "change", "Change event for all conditions reason");
+					assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, ChangeReason.Change, "Change event for all conditions reason");
 					assert.notOk(oConditionChange["/conditions/fieldPath1"], "Change event for fieldPath1 not fired");
 					assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, 1, "Change event for field/Path2 fired once");
-					assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, "change", "Change event for field/Path2 reason");
+					assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, ChangeReason.Change, "Change event for field/Path2 reason");
 					assert.equal(iCount, 1, "PropertyChange event fired once");
-					assert.equal(sPath, "/conditions/field/Path2", "PropertyChange event path");
-					assert.equal(sReason, "binding", "PropertyChange event reason");
+					assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, 1, "PropertyChange event for field/Path2 fired once");
+					assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
+					assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
 
 					fnDone();
 				}, 0);
@@ -465,7 +481,47 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("ConditionModel Change event Condition.setConditions", function(assert) {
+	QUnit.test("ConditionModel Change event ConditionModel.setConditions (add conditions)", function(assert) {
+		var fnDone = assert.async();
+		setTimeout(function () {
+			oConditionChange = {};
+			oConditionModel.oData.conditions = {}; // just initialize
+
+			oConditionModel.setConditions({
+				"fieldPath1": [Condition.createCondition("BT", ["A", "C"])],
+				"field/Path2": [Condition.createCondition("GT", ["X"])]
+			});
+			setTimeout(function () {
+				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
+				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, ChangeReason.Change, "Change event for all conditions reason");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, 2, "Change event for fieldPath1 fired twice");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, ChangeReason.Change, "Change event for fieldPath1 reason");
+				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, 2, "Change event for field/Path2 fired twice");
+				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, ChangeReason.Change, "Change event for field/Path2 reason");
+				assert.equal(iCount, 2, "PropertyChange event fired twice");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, 1, "PropertyChange event for field/Path2 fired once");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
+				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
+
+				var aConditions = oConditionChangeBinding1.getExternalValue();
+				assert.equal(aConditions.length, 1, "Condititions length for fieldPath1");
+				assert.equal(aConditions[0].operator, "BT", "Conditition operator fieldPath1");
+				assert.deepEqual(aConditions[0].values, ["A", "C"], "Conditition values fieldPath1");
+
+				aConditions = oConditionChangeBinding3.getExternalValue();
+				assert.equal(aConditions.length, 1, "Condititions length for field/Path2");
+				assert.equal(aConditions[0].operator, "GT", "Conditition operator field/Path2");
+				assert.deepEqual(aConditions[0].values, ["X"], "Conditition values field/Path2");
+
+				fnDone();
+			}, 0);
+		}, 0);
+	});
+
+	QUnit.test("ConditionModel Change event ConditionModel.setConditions (change conditions)", function(assert) {
 		var fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
@@ -476,27 +532,135 @@ sap.ui.define([
 			});
 			setTimeout(function () {
 				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
-				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, "change", "Change event for all conditions reason");
+				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, ChangeReason.Change, "Change event for all conditions reason");
 				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, 2, "Change event for fieldPath1 fired twice");
-				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, "change", "Change event for fieldPath1 reason");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, ChangeReason.Change, "Change event for fieldPath1 reason");
 				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, 2, "Change event for field/Path2 fired twice");
-				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, "change", "Change event for field/Path2 reason");
+				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, ChangeReason.Change, "Change event for field/Path2 reason");
 				assert.equal(iCount, 2, "PropertyChange event fired twice");
-				assert.equal(sReason, "add", "PropertyChange event reason");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, 1, "PropertyChange event for field/Path2 fired once");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
+				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
 
 				var aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 1, "Condititions length for fieldPath1");
 				assert.equal(aConditions[0].operator, "BT", "Conditition operator fieldPath1");
+				assert.deepEqual(aConditions[0].values, ["A", "C"], "Conditition values fieldPath1");
 
 				aConditions = oConditionChangeBinding3.getExternalValue();
 				assert.equal(aConditions.length, 1, "Condititions length for field/Path2");
 				assert.equal(aConditions[0].operator, "GT", "Conditition operator field/Path2");
+				assert.deepEqual(aConditions[0].values, ["X"], "Conditition values field/Path2");
+
 				fnDone();
 			}, 0);
 		}, 0);
 	});
 
-	QUnit.test("ConditionModel Change event Condition.insertCondition", function(assert) {
+	QUnit.test("ConditionModel Change event ConditionModel.setConditions (set same conditions)", function(assert) {
+		var fnDone = assert.async();
+		setTimeout(function () {
+			oConditionChange = {};
+
+			oConditionModel.setConditions({
+				"fieldPath1": [Condition.createItemCondition("key", "description")],
+				"field/Path2": [Condition.createItemCondition("key1", "description1")]
+			});
+			setTimeout(function () {
+				assert.notOk(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, "Change event for all conditions not fired");
+				assert.notOk(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, "Change event for fieldPath1 not fired");
+				assert.notOk(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, "Change event for field/Path2 not fired");
+				assert.equal(iCount, 0, "PropertyChange event not fired");
+
+				var aConditions = oConditionChangeBinding1.getExternalValue();
+				assert.equal(aConditions.length, 1, "Condititions length for fieldPath1");
+				assert.equal(aConditions[0].operator, "EQ", "Conditition operator fieldPath1");
+				assert.deepEqual(aConditions[0].values, ["key", "description"], "Conditition values fieldPath1");
+
+				aConditions = oConditionChangeBinding3.getExternalValue();
+				assert.equal(aConditions.length, 1, "Condititions length for field/Path2");
+				assert.equal(aConditions[0].operator, "EQ", "Conditition operator field/Path2");
+				assert.deepEqual(aConditions[0].values, ["key1", "description1"], "Conditition values field/Path2");
+
+				fnDone();
+			}, 0);
+		}, 0);
+	});
+
+	QUnit.test("ConditionModel Change event ConditionModel.setConditions (change one condition, set same on other path)", function(assert) {
+		var fnDone = assert.async();
+		setTimeout(function () {
+			oConditionChange = {};
+
+			oConditionModel.setConditions({
+				"fieldPath1": [Condition.createCondition("BT", ["A", "C"])],
+				"field/Path2": [Condition.createItemCondition("key1", "description1")]
+			});
+			setTimeout(function () {
+				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
+				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, ChangeReason.Change, "Change event for all conditions reason");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, 2, "Change event for fieldPath1 fired twice");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, ChangeReason.Change, "Change event for fieldPath1 reason");
+				assert.notOk(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, "Change event for field/Path2 not fired");
+				assert.equal(iCount, 1, "PropertyChange event fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+				assert.notOk(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, "PropertyChange event for field/Path2 not fired");
+
+				var aConditions = oConditionChangeBinding1.getExternalValue();
+				assert.equal(aConditions.length, 1, "Condititions length for fieldPath1");
+				assert.equal(aConditions[0].operator, "BT", "Conditition operator fieldPath1");
+				assert.deepEqual(aConditions[0].values, ["A", "C"], "Conditition values fieldPath1");
+
+				aConditions = oConditionChangeBinding3.getExternalValue();
+				assert.equal(aConditions.length, 1, "Condititions length for field/Path2");
+				assert.equal(aConditions[0].operator, "EQ", "Conditition operator field/Path2");
+				assert.deepEqual(aConditions[0].values, ["key1", "description1"], "Conditition values field/Path2");
+
+				fnDone();
+			}, 0);
+		}, 0);
+	});
+
+	QUnit.test("ConditionModel Change event ConditionModel.setConditions (remove conditions)", function(assert) {
+		var fnDone = assert.async();
+		setTimeout(function () {
+			oConditionChange = {};
+
+			oConditionModel.setConditions({
+				"fieldPath1": []
+			});
+			setTimeout(function () {
+				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
+				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].reason, ChangeReason.Change, "Change event for all conditions reason");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, 2, "Change event for fieldPath1 fired twice");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, ChangeReason.Change, "Change event for fieldPath1 reason");
+				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, 2, "Change event for field/Path2 fired twice");
+				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, ChangeReason.Change, "Change event for field/Path2 reason");
+				assert.equal(iCount, 2, "PropertyChange event fired twice");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, 1, "PropertyChange event for field/Path2 fired once");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
+				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
+
+				var aConditions = oConditionChangeBinding1.getExternalValue();
+				assert.equal(aConditions.length, 0, "Condititions length for fieldPath1");
+
+				aConditions = oConditionChangeBinding3.getExternalValue();
+				assert.equal(aConditions.length, 0, "Condititions length for field/Path2");
+
+				fnDone();
+			}, 0);
+		}, 0);
+	});
+
+	QUnit.test("ConditionModel Change event ConditionModel.insertCondition (2 paths)", function(assert) {
 		var fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
@@ -507,25 +671,62 @@ sap.ui.define([
 			setTimeout(function () {
 				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
 				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, 2, "Change event for fieldPath1 fired twice");
-				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, "change", "Change event for fieldPath1 reason");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, ChangeReason.Change, "Change event for fieldPath1 reason");
 				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, 2, "Change event for field/Path2 fired twice");
-				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, "change", "Change event for field/Path2 reason");
+				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, ChangeReason.Change, "Change event for field/Path2 reason");
 				assert.equal(iCount, 2, "PropertyChange event fired twice");
-				assert.equal(sReason, "add", "PropertyChange event reason");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, 1, "PropertyChange event for field/Path2 fired once");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
+				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
 
 				var aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 2, "Condititions length for fieldPath1");
-				assert.equal(aConditions[0].operator, "BT", "Conditition operator fieldPath1");
+				assert.deepEqual(aConditions[0].values, ["A", "C"], "Conditition values fieldPath1");
 
 				aConditions = oConditionChangeBinding3.getExternalValue();
 				assert.equal(aConditions.length, 2, "Condititions length for field/Path2");
 				assert.equal(aConditions[0].operator, "GT", "Conditition operator field/Path2");
+				assert.deepEqual(aConditions[0].values, ["X"], "Conditition values field/Path2");
 				fnDone();
 			}, 0);
 		}, 0);
 	});
 
-	QUnit.test("ConditionModel Change event Condition.removeCondition", function(assert) {
+	QUnit.test("ConditionModel Change event ConditionModel.insertCondition (only 1 path)", function(assert) {
+		var fnDone = assert.async();
+		setTimeout(function () {
+			oConditionChange = {};
+
+			oConditionModel.insertCondition("fieldPath1", 0, Condition.createCondition("BT", ["A", "C"]));
+
+			setTimeout(function () {
+				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, 2, "Change event for fieldPath1 fired twice");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, ChangeReason.Change, "Change event for fieldPath1 reason");
+				assert.notOk(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, "Change event for field/Path2 not fired");
+				assert.equal(iCount, 1, "PropertyChange event fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+				assert.notOk(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, "PropertyChange event for field/Path2 not fired");
+
+				var aConditions = oConditionChangeBinding1.getExternalValue();
+				assert.equal(aConditions.length, 2, "Condititions length for fieldPath1");
+				assert.deepEqual(aConditions[0].values, ["A", "C"], "Conditition values fieldPath1");
+
+				aConditions = oConditionChangeBinding3.getExternalValue();
+				assert.equal(aConditions.length, 1, "Condititions length for field/Path2");
+				assert.equal(aConditions[0].operator, "EQ", "Conditition operator field/Path2");
+				assert.deepEqual(aConditions[0].values, ["key1", "description1"], "Conditition values field/Path2");
+				fnDone();
+			}, 0);
+		}, 0);
+	});
+
+	QUnit.test("ConditionModel Change event ConditionModel.removeCondition (2 paths)", function(assert) {
 		var fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
@@ -536,11 +737,16 @@ sap.ui.define([
 			setTimeout(function () {
 				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
 				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, 2, "Change event for fieldPath1 fired twice");
-				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, "change", "Change event for fieldPath1 reason");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, ChangeReason.Change, "Change event for fieldPath1 reason");
 				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, 2, "Change event for field/Path2 fired twice");
-				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, "change", "Change event for field/Path2 reason");
+				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, ChangeReason.Change, "Change event for field/Path2 reason");
 				assert.equal(iCount, 2, "PropertyChange event fired twice");
-				assert.equal(sReason, "remove", "PropertyChange event reason");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, 1, "PropertyChange event for field/Path2 fired once");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
+				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
 
 				var aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 0, "Condititions length for fieldPath1");
@@ -552,7 +758,37 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("ConditionModel Change event Condition.removeAllConditions", function(assert) {
+	QUnit.test("ConditionModel Change event ConditionModel.removeCondition (only 1 path)", function(assert) {
+		var fnDone = assert.async();
+		setTimeout(function () {
+			oConditionChange = {};
+
+			oConditionModel.removeCondition("fieldPath1", Condition.createItemCondition("key", "description"));
+
+			setTimeout(function () {
+				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, 2, "Change event for fieldPath1 fired twice");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, ChangeReason.Change, "Change event for fieldPath1 reason");
+				assert.notOk(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, "Change event for field/Path2 not fired");
+				assert.equal(iCount, 1, "PropertyChange event fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+				assert.notOk(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, "PropertyChange event for field/Path2 not fired");
+
+				var aConditions = oConditionChangeBinding1.getExternalValue();
+				assert.equal(aConditions.length, 0, "Condititions length for fieldPath1");
+
+				aConditions = oConditionChangeBinding3.getExternalValue();
+				assert.equal(aConditions.length, 1, "Condititions length for field/Path2");
+				assert.equal(aConditions[0].operator, "EQ", "Conditition operator field/Path2");
+				assert.deepEqual(aConditions[0].values, ["key1", "description1"], "Conditition values field/Path2");
+				fnDone();
+			}, 0);
+		}, 0);
+	});
+
+	QUnit.test("ConditionModel Change event ConditionModel.removeAllConditions", function(assert) {
 		var fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
@@ -563,11 +799,16 @@ sap.ui.define([
 			setTimeout(function () {
 				assert.equal(oConditionChange["/conditions"] && oConditionChange["/conditions"].count, 1, "Change event for all conditions fired");
 				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].count, 2, "Change event for fieldPath1 fired twice");
-				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, "change", "Change event for fieldPath1 reason");
+				assert.equal(oConditionChange["/conditions/fieldPath1"] && oConditionChange["/conditions/fieldPath1"].reason, ChangeReason.Change, "Change event for fieldPath1 reason");
 				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, 2, "Change event for field/Path2 fired twice");
-				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, "change", "Change event for field/Path2 reason");
+				assert.equal(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].reason, ChangeReason.Change, "Change event for field/Path2 reason");
 				assert.equal(iCount, 2, "PropertyChange event fired twice");
-				assert.equal(sReason, "remove", "PropertyChange event reason");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].count, 1, "PropertyChange event for fieldPath1 fired once");
+				assert.equal(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].reason, ChangeReason.Binding, "PropertyChange event for fieldPath1 reason");
+				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, 1, "PropertyChange event for field/Path2 fired once");
+				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
+				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
 
 				var aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 0, "Condititions length for fieldPath1");
