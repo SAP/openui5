@@ -2604,28 +2604,9 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("test Export as...", function(assert) {
-		var done = assert.async();
-
-		this.oTable.initialized().then(function() {
-			sinon.stub(this.oTable, "_onExportAs");
-			this.oTable.setEnableExport(true);
-			Core.applyChanges();
-			assert.ok(this.oTable.getEnableExport(), "enableExport=true");
-			Core.loadLibrary("sap.ui.unified", {async: true}).then(function() { // do the same async steps as the Table to load unified lib and Menu, so the Menu is available in the next checks
-				sap.ui.require(["sap/m/Menu", "sap/m/MenuItem"], function(/* Menu, MenuItem */) {
-					this.oTable._oExportButton.getMenu().getItems()[1].firePress();
-					assert.ok(this.oTable._onExportAs.calledOnce, "_onExportAs called");
-					this.oTable._onExportAs.restore();
-					done();
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
-	});
-
 	QUnit.test("test Export as... via keyboard shortcut", function(assert) {
 		return this.oTable.initialized().then(function() {
-			sinon.stub(this.oTable, "_onExportAs");
+			sinon.stub(this.oTable, "_onExport");
 
 			this.oTable.setEnableExport(true);
 			Core.applyChanges();
@@ -2635,14 +2616,14 @@ sap.ui.define([
 
 			// trigger CTRL + SHIFT + E keyboard shortcut
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
-			assert.ok(this.oTable._onExportAs.notCalled, "Export button is disabled");
+			assert.ok(this.oTable._onExport.notCalled, "Export button is disabled");
 
 			this.oTable._oExportButton.setEnabled(true);
 			Core.applyChanges();
 
 			// trigger CTRL + SHIFT + E keyboard shortcut
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
-			assert.ok(this.oTable._onExportAs.called, "Export settings dialog opened");
+			assert.ok(this.oTable._onExport.calledWith(true), "Export settings dialog opened");
 		}.bind(this));
 	});
 
@@ -2938,191 +2919,7 @@ sap.ui.define([
 
 		this.oTable.initialized().then(function() {
 			this.oTable._createExportColumnConfiguration({fileName: 'Table header'}).then(function(aActualOutput) {
-				assert.deepEqual(aActualOutput[0], aExpectedOutput, "The export configuration was created as expected");
-				done();
-			});
-		}.bind(this));
-	});
-
-	QUnit.test("test _createExportColumnConfiguration with split cells", function(assert) {
-		var done = assert.async();
-
-		var sCollectionPath = "/foo";
-		this.oTable.destroy();
-		this.oTable = new Table({
-			delegate: {
-				name: sDelegatePath,
-				payload: {
-					collectionPath: sCollectionPath
-				}
-			}
-		});
-
-		this.oTable.setEnableExport(true);
-		Core.applyChanges();
-		assert.ok(this.oTable.getEnableExport(), "enableExport=true");
-
-		this.oTable.addColumn(new Column({
-			id: "product",
-			header: "Product",
-			width: "10rem",
-			dataProperty: "product",
-			template: new Text({
-				text: "{products}"
-			})
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "price",
-			header: "Price",
-			width: "8rem",
-			hAlign: "Right",
-			dataProperty: "price",
-			template: new Text({
-				text: "{price} {currencyCode}"
-			})
-		}));
-
-		// column with complex propertyInfo
-		this.oTable.addColumn(new Column({
-			id: "company",
-			header: "Company",
-			width: "10rem",
-			dataProperty: "company",
-			template: new Text({
-				text: "{companyName} ({companyCode})"
-			})
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "companyExportSettings",
-			header: "Company",
-			width: "10rem",
-			dataProperty: "companySplit",
-			template: new Text({
-				text: "{companyName} ({companyCode})"
-			})
-		}));
-
-		var aExpectedOutput = [
-			{
-				columnId: "product",
-				property: "product",
-				type: "String",
-				label: "Product",
-				width: 10,
-				textAlign: "Begin",
-				displayUnit: false
-			},
-			{
-				columnId: "price",
-				property: "price",
-				displayUnit: false,
-				type: "Currency",
-				label: "Price",
-				width: 8,
-				textAlign: "Right",
-				unitProperty: "currencyCode"
-			},
-			{
-				columnId: "price-additionalProperty",
-				displayUnit: false,
-				label: "Currency Code",
-				property: "currencyCode",
-				type: "String",
-				width: 4,
-				textAlign: "Left"
-			},
-			{
-				columnId: "company",
-				displayUnit: false,
-				label: "Company Name",
-				property: "companyName",
-				textAlign: "Begin",
-				type: "String",
-				width: 15
-			},
-			{
-				columnId: "company-additionalProperty1",
-				displayUnit: false,
-				label: "Company Code",
-				property: "companyCode",
-				textAlign: "Begin",
-				type: "String",
-				width: 10
-			},
-			{
-				columnId: "companyExportSettings",
-				displayUnit: false,
-				label: "Company Name",
-				property: "companyName",
-				textAlign: "Begin",
-				type: "String",
-				width: 15
-			},
-			{
-				columnId: "companyExportSettings-additionalProperty1",
-				displayUnit: false,
-				label: "Company Code",
-				property: "companyCode",
-				textAlign: "Begin",
-				type: "String",
-				width: 10
-			}
-		];
-
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
-			{
-				name: "product",
-				path: "product",
-				label: "Product"
-			}, {
-				name: "price",
-				path: "price",
-				label: "Price",
-				exportSettings: {
-					label: "Price",
-					displayUnit: true,
-					unitProperty: "currencyCode",
-					type: "Currency"
-				}
-			}, {
-				name: "currencyCode",
-				path: "currencyCode",
-				label: "Currency Code",
-				exportSettings: {
-					width: 4,
-					textAlign: "Left"
-				}
-			}, {
-				name: "company",
-				path: "company",
-				label: "Company Name",
-				propertyInfos: ["companyName", "companyCode"]
-			}, {
-				name: "companyName",
-				path: "companyName",
-				label: "Company Name",
-				exportSettings: {
-					width: 15
-				}
-			}, {
-				name: "companyCode",
-				path: "companyCode",
-				label: "Company Code"
-			}, {
-				name: "companySplit",
-				label: "Name",
-				propertyInfos: ["companyName", "companyCode"],
-				exportSettings: {
-					template: "{0}, {1}"
-				}
-			}
-		]);
-
-		this.oTable.initialized().then(function() {
-			this.oTable._createExportColumnConfiguration({fileName: 'Table header', splitCells: true}).then(function(aActualOutput) {
-				assert.deepEqual(aActualOutput[0], aExpectedOutput, "The export configuration was created as expected");
+				assert.deepEqual(aActualOutput[0], aExpectedOutput[0], "The export configuration was created as expected");
 				done();
 			});
 		}.bind(this));
