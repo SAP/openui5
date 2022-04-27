@@ -39,10 +39,18 @@
 						id="sapUiRta_discardDraft"
 						icon="sap-icon://delete"
 						press=".discardDraft"
-						visible="{= ((${parts: ['versions>/displayedVersion', 'versions>/versioningEnabled' ], formatter: '.formatDiscardDraftVisible'})  &amp;&amp; (${controls>/modeSwitcher} === 'adaptation'))}"
+						visible="{parts: ['versions>/displayedVersion', 'versions>/versioningEnabled', 'controls>/modeSwitcher' ], formatter: '.formatDiscardDraftVisible'}"
 						type="Transparent"
 						text="{i18n>TOL_DISCARD_DRAFT}"
 						tooltip="{i18n>TOL_DISCARD_DRAFT}" />
+				<toolbar:OverflowToolbarButton
+						id="sapUiRta_publishVersion"
+						enabled="{versions>/publishVersionEnabled}"
+						visible="{parts: ['controls>/publishVisible', 'versions>/versioningEnabled', 'versions>/displayedVersion', 'controls>/modeSwitcher'], formatter: '.formatPublishVersionVisibility'}"
+						press=".publishVersion"
+						type="Transparent"
+						icon="sap-icon://shipping-status"
+						tooltip="{i18n>TOL_PUBLISH_VERSION}" />
 			</content>
 		</OverflowToolbar>
 	</HBox>
@@ -144,7 +152,7 @@
 				<toolbar:OverflowToolbarButton
 						id="sapUiRta_publish"
 						enabled="{controls>/publishEnabled}"
-						visible="{= (${controls>/publishVisible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
+						visible="{= (${controls>/publishVisible} &amp;&amp; !${versions>/versioningEnabled} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
 						press=".publish"
 						type="Transparent"
 						text="{i18n>BTN_PUBLISH}" >

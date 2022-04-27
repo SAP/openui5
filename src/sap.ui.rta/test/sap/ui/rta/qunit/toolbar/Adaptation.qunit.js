@@ -191,6 +191,87 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Publish Version button", {
+		beforeEach: function () {
+			this.setUpToolbar = function (assert, oToolbar, mProperties) {
+				var oVersionsModel = new JSONModel({
+					versioningEnabled: mProperties.versioningEnabled,
+					displayedVersion: mProperties.displayedVersion
+				});
+				var oToolbarControlsModel = createToolbarControlsModel();
+				oToolbarControlsModel.setProperty("/publishVisible", mProperties.publishVisible);
+
+				oToolbar.setModel(oVersionsModel, "versions");
+				oToolbar.setModel(oToolbarControlsModel, "controls");
+
+				oToolbar.animation = false;
+				return oToolbar.show().then(function () {
+					assert.equal(oToolbar.getControl("publishVersion").getVisible(), mProperties.expectedPublishVersionVisible, "the publish version visibility is set correct");
+					assert.equal(oToolbar.getControl("publish").getVisible(), mProperties.expectedPublishVisible, "the publish visibility is set correct");
+				});
+			};
+
+			this.oToolbar = new Adaptation({
+				textResources: Core.getLibraryResourceBundle("sap.ui.rta")
+			});
+
+			return this.oToolbar._pFragmentLoaded;
+		},
+		afterEach: function () {
+			this.oToolbar.destroy();
+		}
+	}, function () {
+		QUnit.test("When versioning and publishing in unavailable", function (assert) {
+			return this.setUpToolbar(assert, this.oToolbar, {
+				versioningEnabled: false,
+				publishVisible: false,
+				displayedVersion: Version.Number.Original,
+				expectedPublishVersionVisible: false,
+				expectedPublishVisible: false
+			});
+		});
+
+		QUnit.test("When versioning is available, but is publishing not", function (assert) {
+			return this.setUpToolbar(assert, this.oToolbar, {
+				versioningEnabled: true,
+				publishVisible: false,
+				displayedVersion: Version.Number.Original,
+				expectedPublishVersionVisible: false,
+				expectedPublishVisible: false
+			});
+		});
+
+		QUnit.test("When publishing is available, but versioning not", function (assert) {
+			return this.setUpToolbar(assert, this.oToolbar, {
+				versioningEnabled: false,
+				publishVisible: true,
+				displayedVersion: Version.Number.Original,
+				expectedPublishVersionVisible: false,
+				expectedPublishVisible: true
+			});
+		});
+
+		QUnit.test("When publishing and versioning is available and a non-draft version is displayed", function (assert) {
+			return this.setUpToolbar(assert, this.oToolbar, {
+				versioningEnabled: true,
+				publishVisible: true,
+				displayedVersion: Version.Number.Original,
+				expectedPublishVersionVisible: true,
+				expectedPublishVisible: false
+			});
+		});
+
+		QUnit.test("When publishing and versioning is available and the Draft version is displayed", function (assert) {
+			return this.setUpToolbar(assert, this.oToolbar, {
+				versioningEnabled: true,
+				publishVisible: true,
+				displayedVersion: Version.Number.Draft,
+				expectedPublishVersionVisible: false,
+				expectedPublishVisible: false
+			});
+		});
+	});
+
 	QUnit.module("Versions Model binding & formatter for the restore button", {
 		before: function () {
 			this.oToolbarControlsModel = createToolbarControlsModel();
@@ -267,6 +348,7 @@ sap.ui.define([
 				this.sActiveVersionAccent = "sapUiRtaActiveVersionAccent";
 				this.oVersionButton = this.oToolbar.getControl("versionButton");
 				this.oDiscardDraftButton = this.oToolbar.getControl("discardDraft");
+				this.oPublishVersionButton = this.oToolbar.getControl("publishVersion");
 			}.bind(this));
 		},
 		after: function() {
@@ -281,7 +363,8 @@ sap.ui.define([
 			}];
 			var sText = this.oToolbar.formatVersionButtonText(aVersions, Version.Number.Draft);
 			var sExpectedText = this.oTextResources.getText("TIT_DRAFT");
-			assert.ok(this.oDiscardDraftButton.getVisible(), "the discard button is visible");
+			assert.equal(this.oDiscardDraftButton.getVisible(), true, "the discard button is visible");
+			assert.equal(this.oPublishVersionButton.getVisible(), false, "the publish version button is hidden");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Draft'");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), true, "and the button color is not a draft accent");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is an active version accent");
@@ -408,7 +491,7 @@ sap.ui.define([
 			}];
 			var sText = this.oToolbar.formatVersionButtonText(aVersions, "2");
 
-			assert.equal(sText, sVersionTitle2, "then the button text matches 'Draft'");
+			assert.equal(sText, sVersionTitle2, "then the button text matches 'Version Title 2'");
 			assert.notOk(this.oDiscardDraftButton.getVisible(), "the discard button is hidden");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), true, "and the button color an active version accent");
@@ -430,7 +513,7 @@ sap.ui.define([
 			}];
 			var sText = this.oToolbar.formatVersionButtonText(aVersions, "1");
 
-			assert.equal(sText, sVersionTitle1, "then the button text matches 'Draft'");
+			assert.equal(sText, sVersionTitle1, "then the button text matches 'Version Title 1'");
 			assert.notOk(this.oDiscardDraftButton.getVisible(), "the discard button is hidden");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sActiveVersionAccent), false, "and the button color is not an active version accent");
@@ -929,10 +1012,11 @@ sap.ui.define([
 					assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is visible");
 					assert.ok(this.oToolbar.getControl("activate").getVisible(), "activate is visible");
 					assert.ok(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is visible");
+					assert.notOk(this.oToolbar.getControl("publishVersion").getVisible(), "publishVersion is visible");
 					assert.ok(this.oToolbar.getControl("undo").getVisible(), "undo is visible");
 					assert.ok(this.oToolbar.getControl("redo").getVisible(), "redo is visible");
 					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is not visible");
-					assert.ok(this.oToolbar.getControl("publish").getVisible(), "publish is visible");
+					assert.notOk(this.oToolbar.getControl("publish").getVisible(), "publish is hidden");
 					assert.notOk(this.oToolbar.getControl("restore").getVisible(), "restore is not visible");
 					assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
 					assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is visible");
@@ -948,6 +1032,7 @@ sap.ui.define([
 					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is not visible");
 					assert.notOk(this.oToolbar.getControl("activate").getVisible(), "activate is not visible");
 					assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
+					assert.notOk(this.oToolbar.getControl("publishVersion").getVisible(), "publishVersion is visible");
 					assert.notOk(this.oToolbar.getControl("undo").getVisible(), "undo is not visible");
 					assert.notOk(this.oToolbar.getControl("redo").getVisible(), "redo is not visible");
 					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is not visible");
@@ -968,6 +1053,7 @@ sap.ui.define([
 					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is not visible");
 					assert.notOk(this.oToolbar.getControl("activate").getVisible(), "activate is not visible");
 					assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
+					assert.notOk(this.oToolbar.getControl("publishVersion").getVisible(), "publishVersion is visible");
 					assert.notOk(this.oToolbar.getControl("undo").getVisible(), "undo is not visible");
 					assert.notOk(this.oToolbar.getControl("redo").getVisible(), "redo is not visible");
 					assert.ok(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is visible");

@@ -465,7 +465,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given that RuntimeAuthoring is started", {
+	QUnit.module("Given that RuntimeAuthoring is started with a draft", {
 		beforeEach: function() {
 			givenAnFLP();
 			this.oRta = new RuntimeAuthoring({
