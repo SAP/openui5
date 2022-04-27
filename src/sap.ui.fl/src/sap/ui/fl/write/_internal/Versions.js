@@ -57,8 +57,17 @@ sap.ui.define([
 						sPersistedBasisForDisplayedVersion = Version.Number.Original;
 					}
 				}
-
+				var bPublishVersionEnabled = false;
+				if (sPersistedBasisForDisplayedVersion !== Version.Number.Original) {
+					for (var i = 0; i < aVersions.length; i++) {
+						if ((aVersions[i].version === sPersistedBasisForDisplayedVersion) && (aVersions[i].isPublished === false)) {
+							bPublishVersionEnabled = true;
+							break;
+						}
+					}
+				}
 				var oModel = new JSONModel({
+					publishVersionEnabled: bPublishVersionEnabled,
 					versioningEnabled: bVersioningEnabled,
 					versions: aVersions,
 					activeVersion: sActiveVersion,
@@ -329,6 +338,41 @@ sap.ui.define([
 				dirtyChangesDiscarded: bDirtyChangesRemoved
 			};
 		});
+	};
+
+	/**
+	 * Publishes a version.
+	 *
+	 * @param {object} mPropertyBag - Property Bag
+	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
+	 * @param {string} mPropertyBag.nonNormalizedReference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 * @param {string} mPropertyBag.version - The number of the version to be published
+	 * @param {string} mPropertyBag.appComponent - Application Component
+	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving when the version was published;
+	 * rejects if an error occurs, the layer does not support draft handling, there is no version to publish or
+	 * when the displayed version is already published
+	 */
+	Versions.publish = function(mPropertyBag) {
+		var oModel = Versions.getVersionsModel({
+			reference: Utils.normalizeReference(mPropertyBag.reference),
+			layer: mPropertyBag.layer
+		});
+		return Storage.versions.publish(mPropertyBag)
+			.then(function (sMessage) {
+				//If transport version success, disable publish version button
+				if (sMessage !== "Error" && sMessage !== "Cancel") {
+					oModel.setProperty("/publishVersionEnabled", false);
+					var aVersions = oModel.getProperty("/versions");
+					for (var i = 0; i < aVersions.length; i++) {
+						if (aVersions[i].version === mPropertyBag.version) {
+							aVersions[i].isPublished = true;
+							break;
+						}
+					}
+				}
+				return sMessage;
+			});
 	};
 
 	return Versions;
