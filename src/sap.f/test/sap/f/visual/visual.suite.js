@@ -2,6 +2,7 @@
 
 module.exports = [
 	"AdaptiveCardVisualTests.spec.js",
+	"AvatarGroup.spec.js",
 	"DynamicPage.spec.js",
 	"GridContainer.spec.js",
 	"GridListItem.spec.js",
