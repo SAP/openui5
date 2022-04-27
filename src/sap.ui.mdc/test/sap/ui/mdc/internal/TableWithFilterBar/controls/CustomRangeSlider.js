@@ -87,8 +87,11 @@ sap.ui.define([
 			this._oContent = undefined;
 		}
 
-		this._oManagedObjectModel.destroy();
-		this._oManagedObjectModel = undefined;
+		if (this._oManagedObjectModel) {
+			this._oManagedObjectModel.destroy();
+			this._oManagedObjectModel = undefined;
+		}
+
 	};
 
 	CustomRangeSlider.prototype.getIdForLabel = function() {
