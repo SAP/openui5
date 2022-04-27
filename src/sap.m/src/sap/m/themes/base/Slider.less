@@ -22,6 +22,7 @@
 	position: relative;
 	background-repeat: no-repeat;
 	z-index: 1;
+	min-width: 4rem;
 }
 
 .sapUiLocalBusy .sapMSliderInner {
@@ -30,7 +31,8 @@
 
 .sapMSliderInner,
 .sapMSliderProgress {
-	height: 0.188rem;
+	height: 0.25rem;
+	border-radius: 0.25rem;
 }
 
 .sapMSliderProgress,
@@ -39,6 +41,7 @@
 }
 
 .sapMSliderHandle {
+	box-sizing: border-box;
 	display: block;
 	outline: none;
 }
@@ -113,10 +116,11 @@
 /* slider handle */
 .sapMSliderHandle {
 	margin-left: -1rem;
-	top: -0.91rem;
-	height: 1.75rem;
-	width: 1.75rem;
+	top: -0.875rem;
+	height: 2rem;
+	width: 2rem;
 	direction: ltr;
+	cursor: pointer;
 
 	/* some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
 	but does support the long-hand properties for each corner like "border-top-left-radius" */
@@ -125,21 +129,17 @@
 	border-bottom-right-radius: 1rem;
 	border-bottom-left-radius: 1rem;
 
-	&:before{
+	&:focus:before {
 		content: '';
 		position: absolute;
-		width: 100%;
-		left: 50%;
-		top: 40%;
-		transform: translate(-50%, -50%);
-		cursor: pointer;
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		border-radius: 50%;
+		pointer-events: none;
+		top: -4px;
+		bottom: -4px;
+		left: -4px;
+		right: -4px;
 	}
-}
-
-/* focus */
-html.sap-desktop .sapMSliderHandle:focus {
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-	outline-offset: 0.0625rem;
 }
 
 /* ============ */
@@ -156,8 +156,8 @@ html.sap-desktop .sapMSliderHandle:focus {
 
 	/* slider handle */
 	.sapMSliderHandle {
-		height: 1.375rem;
-		width: 1.375rem;
+		height: 1.625rem;
+		width: 1.625rem;
 		margin-left: -0.8125rem;
 		top: -0.75rem;
 	}

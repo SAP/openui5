@@ -3,74 +3,106 @@
 /* Evening Horizon theme              */
 /* ================================== */
 
-.sapMRangeSlider.sapMSliderInner .sapMSliderHandle {
-	top: -0.75rem;
-}
+@_sap_m_RangeSlider_Handle_Height: 1.5rem;
+@_sap_m_RangeSlider_Handle_Width: 2rem;
+@_sap_m_RangeSlider_Handle_Height_Compact: 1.25rem;
+@_sap_m_RangeSlider_Handle_Width_Compact: 1.5rem;
 
-.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover>.sapMSliderHandle {
-		border: 1px @sapContent_FocusStyle @sapContent_Selected_ForegroundColor;
-		background: transparent;
-		box-shadow: @sapContent_Selected_Shadow;
-}
+.sapMRangeSlider.sapMSlider .sapMSliderInner {
+	&:not(.sapMSliderInnerDisabled):hover>.sapMSliderHandle {
+		border: 1px @sapContent_FocusStyle @sapUiSliderHoverHandleBorderColor;
+		background: @sapUiSliderRangeHandleBackground;
+		box-shadow: @sapUiContentSelectedShadow;
+	}
 
-.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover .sapMSliderProgress:focus ~ .sapMSliderHandle,
-.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle.sapMSliderHandlePressed {
-	&:not(:focus) {
-		background: transparent;
-		border: none;
+	&:not(.sapMSliderInnerDisabled) .sapMSliderHandle:hover {
+		background-color: @sapUiSliderRangeHandleBackground;
+		border-color: @sapUiSliderHoverHandleBorderColor;
+		box-shadow: @sapUiContentSelectedShadow;
+	}
+
+	&:not(.sapMSliderInnerDisabled) .sapMSliderHandle.sapMSliderHandlePressed {
+		&:not(:focus) {
+			background: transparent;
+			border: 0.125rem solid #4DB1FF;
+			outline: none;
+			box-shadow: none;
+			top: -0.625rem;
+		}
+	}
+
+	&:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
+		background: @sapUiSliderActiveRangeHandleBackground;
+		border: 0.125rem solid #4DB1FF;
 		outline: none;
-		box-shadow: 0px 0px 0px 2px @sapContent_FocusColor;
-		top: -0.75rem;
+		box-shadow: none;
+		top: -0.625rem;
+	}
+
+	.sapMSliderHandle {
+		background: @sapUiSliderRangeHandleBackground;
+		box-shadow: @sapUiContentSelectedShadow;
+		top: -0.625rem;
+	}
+
+	.sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
+		top: 4px;
 	}
 }
 
+.sapMRangeSlider .sapMSliderInner::before {
+	border: 0.0625rem solid @sapUiContentMeasureIndicatorColor;
+	background-color: @sapUiContentMeasureIndicatorColor;
+}
+
 .sapUiSizeCompact {
-	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover .sapMSliderProgress:focus ~ .sapMSliderHandle,
 	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle.sapMSliderHandlePressed {
 		&:not(:focus) {
 			background: transparent;
-			border: none;
+			border: 0.125rem solid #4DB1FF;
 			outline: none;
-			box-shadow: 0px 0px 0px 2px @sapContent_FocusColor;
-			top: -0.5625rem;
+			box-shadow: none;
+			top: -0.5rem;
 		}
 	}
 
 	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
-		background: transparent;
+		background: @sapUiSliderActiveRangeHandleBackground;
+		border: 0.125rem solid #4DB1FF;
 		outline: none;
-		box-shadow: 0px 0px 0px 2px @sapContent_FocusColor;
-		top: -0.5625rem;
+		box-shadow: none;
+		top: -0.5rem;
+	}
+
+	.sapMRangeSlider.sapMSlider .sapMSliderInner .sapMSliderHandle {
+		top: -0.5rem;
+	}
+
+	.sapMRangeSlider.sapMSlider .sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
+		top: 2px;
+		right: 0.25rem;
+	}
+
+	.sapMSliderLabels {
+		margin: 0.625rem -0.875rem 0 -0.875rem;
 	}
 }
 
-.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
-	background: transparent;
-	border: none;
-	outline: none;
-	box-shadow: 0px 0px 0px 2px @sapContent_FocusColor;
-	top: -0.75rem;
+html.sap-desktop .sapMSliderProgress:focus:before {
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	border-radius: 0.5rem;
+	content: "";
+	display: block;
+	position: absolute;
+	height: ~"calc(@{_sap_m_RangeSlider_Handle_Height} + 0.375rem)";
+	width: ~"calc(100% + ((@{_sap_m_RangeSlider_Handle_Width}) + 0.375rem))";
+	top: ~"calc(-1 * ((@{_sap_m_RangeSlider_Handle_Height} / 2) + 0.1875rem))";
+	left: ~"calc(-1 * ((@{_sap_m_RangeSlider_Handle_Width} / 2) + 0.3125rem))";
 }
-
-.sapMRangeSlider .sapMSliderInner::before {
-	background-color: @sapField_BorderColor;
-}
-
 
 html.sap-desktop .sapUiSizeCompact .sapMSliderProgress:focus:before {
-	padding-left: 2rem;
-	padding-top: 0.125rem;
-	padding-bottom: 0.25rem;
-	padding-right: 0.25rem;
-	top: 1px;
-}
-
-html.sap-desktop .sapMSliderProgress:focus:before {
-	border: 0.125rem solid #0070f2;
-	border-radius: 0.5rem;
-	padding-left: 2.375rem;
-	padding-top: 0.375rem;
-	padding-right: 0.25rem;
-	padding-bottom: 0.375rem;
-	top: 1px;
+	height: ~"calc(@{_sap_m_RangeSlider_Handle_Height_Compact} + 0.375rem)";
+	width: ~"calc(100% + ((@{_sap_m_RangeSlider_Handle_Width_Compact}) + 0.375rem))";
+	top: ~"calc(-1 * ((@{_sap_m_RangeSlider_Handle_Height_Compact} / 2) + 0.1875rem))";
+	left: ~"calc(-1 * ((@{_sap_m_RangeSlider_Handle_Width_Compact} / 2) + 0.3125rem))";
 }
