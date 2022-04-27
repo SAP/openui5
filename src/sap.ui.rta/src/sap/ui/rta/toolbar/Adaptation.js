@@ -116,8 +116,13 @@ sap.ui.define([
 		oButton.setIcon(sIcon || "");
 	}
 
-	Adaptation.prototype.formatDiscardDraftVisible = function (sDisplayedVersion, bVersioningEnabled) {
-		return sDisplayedVersion === Version.Number.Draft && bVersioningEnabled;
+	Adaptation.prototype.formatPublishVersionVisibility = function (bPublishVisible, bVersioningEnabled, sDisplayedVersion, sModeSwitcher) {
+		return bPublishVisible && bVersioningEnabled && sDisplayedVersion !== Version.Number.Draft && sModeSwitcher === "adaptation";
+	};
+
+
+	Adaptation.prototype.formatDiscardDraftVisible = function (sDisplayedVersion, bVersioningEnabled, sModeSwitcher) {
+		return sDisplayedVersion === Version.Number.Draft && bVersioningEnabled && sModeSwitcher === "adaptation";
 	};
 
 	Adaptation.prototype.formatVersionButtonText = function (aVersions, sDisplayedVersion) {
@@ -348,6 +353,7 @@ sap.ui.define([
 				activate: this._openVersionTitleDialog.bind(this),
 				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
 				formatDiscardDraftVisible: this.formatDiscardDraftVisible.bind(this),
+				formatPublishVersionVisibility: this.formatPublishVersionVisibility.bind(this),
 				modeChange: this.eventHandler.bind(this, "ModeChange"),
 				openDownloadTranslationDialog: onOpenDownloadTranslationDialog.bind(this),
 				openUploadTranslationDialog: onOpenUploadTranslationDialog.bind(this),
