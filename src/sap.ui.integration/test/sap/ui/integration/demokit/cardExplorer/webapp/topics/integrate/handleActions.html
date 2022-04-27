@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1>Handle Actions</h1>
+			<p>
+				Host environment can listen for actions dispatched by the cards and handle them.
+				Some actions like the "Navigation" should be handled entirely by the host environment.
+				Each hosted card instance can dispatch <code>action</code> events of different types. The type determines the purpose of the action.
+				For more information about what action types to expect from cards, as well as their parameters, see
+				<a target="_top" href="../../index.html#/learn/actions">actions in Learn section</a>.
+			</p>
+
+			<h2 id="listenForActionEvent">Listen for the Action Event</h2>
+			<p>The actions of all cards associated with a given host are dispatched to the <code>sap.ui.integration.Host</code> instance,
+				so attaching a single event listener to it is enough.
+			</p>
+			<p>The example below shows how to listen for the action event.</p>
+			<p>1. Create the cards</p>
+			<pre class="lang-xml">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets" controllerName="hostController"&gt;
+	&lt;w:Card id="card1" manifest="./manifest1.json" /&gt;
+	&lt;w:Card id="card2" manifest="./manifest2.json" /&gt;
+&lt;/mvc:View&gt;
+</pre>
+			<p>2. Create the host, set the <code>host</code> association of the cards and implement <action>action</action> event handler</p>
+			<pre class="lang-js">
+sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/integration/library",
+	"sap/ui/integration/Host"
+], function (Controller, integrationLibrary, Host) {
+	"use strict";
+
+	return Controller.extend("hostController", {
+		onInit: function () {
+			var oHost = new Host({
+				action: this.onAction.bind(this)
+			});
+			this.byId("card1").setHost(oHost);
+			this.byId("card2").setHost(oHost);
+		},
+		onAction: function (oEvent) {
+			var sType = oEvent.getParameter("type"); // The type of the action. One of "Navigation", "Submit", "Custom", etc.
+			var oParameters = oEvent.getParameter("parameters"); // The action parameters. The different actions types have different parameters
+			var bHandled = false; // Flag indicating if the action is handled
+
+			if (sType === integrationLibrary.CardActionType.Navigation) {
+				// handle Navigation action
+				...
+				bHandled = true;
+			} else if (sType === integrationLibrary.CardActionType.Submit) {
+				// handle Submit action if needed
+				...
+				bHandled = true;
+			} else if (...) {
+				...
+			}
+
+			// Prevent the default behavior of the handled actions
+			if (bHandled) {
+				oEvent.preventDefault();
+			}
+		}
+	});
+});
+</pre>
+			<p>
+				For all available event parameters, see <a data-demokit-href="#/api/sap.ui.integration.Host/events/action" target="_blank">Host action event</a>.
+			</p>
+
+			<h2 id="handleNavigationAction">Handle Navigation Action</h2>
+			<p>
+				Navigation action can be to open a URL or intent-based. This can be determined by the event parameters -
+				when there is <code>ibnTarget</code> provided, then the card requires an intent-based navigation, otherwise it requires navigation to a URL.
+			</p>
+			<p>
+				The intent-based navigation does not have a default implementation, so it has to be handled by the host.
+			</p>
+			<p>
+				This example shows how intent-based navigation can be handled in the context of SAP Fiori Launchpad,
+				with the help of <a data-demokit-href="#/api/sap.ushell.services.CrossApplicationNavigation" target="_blank">sap.ushell.services.CrossApplicationNavigation</a>.
+			</p>
+			<pre class="lang-js">
+...
+onAction: function (oEvent) {
+	var sType = oEvent.getParameter("type");
+
+	// handle Navigation action
+	if (sType !== integrationLibrary.CardActionType.Navigation) {
+		return;
+	}
+
+	var oParameters = oEvent.getParameter("parameters");
+
+	if (oParameters.ibnTarget) {
+		oEvent.preventDefault(); // as the action will be handled by the host, prevent its default behavior
+
+		// possible variant how to perform intent-based navigation
+		sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then(function (CrossApplicationNavigationService) {
+			CrossApplicationNavigationService.toExternal({
+				target: oParameters.ibnTarget,
+				params: oParameters.ibnParams
+			});
+		});
+	}
+}
+</pre>
+
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="../../index.html#/integrate/handleActions" target="_parent">Handle Card Actions</a></div>
+			<div><a href="../../index.html#/integrate/handleActions/listenForActionEvent" target="_parent">Listen for the Action Event</a></div>
+			<div><a href="../../index.html#/integrate/handleActions/handleNavigationAction" target="_parent">Handle Navigation Action</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

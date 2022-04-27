@@ -20,62 +20,61 @@
 				<li>Set manifest URL or manifest object and base URL to create the card</li>
 				<li>Provide handlers for different user interaction events</li>
 				<li>Pass parameters needed by the card</li>
-				<li>Set width and height which would work for the layout used in the host environment</li>
 				<li>Manage card state</li>
+				<li>Set width and height which would work for the layout used in the host environment</li>
 			</ul>
+			<p>
+				The Card API should not be confused with the Host API.
+				The Card API is always used on specific card instance, while the Host controls many cards at once and its API affects all those cards.
+				Both APIs also differ by the purpose they serve.
+			</p>
 
-			<h1 id="handlingActions">Handling "action" Event</h1>
-				<p>
-					A card instance can trigger <code>action</code> event. This event should be handled by the host
-					environment to make the card interactions fully functional.
-					The type of <code>action</code> event, determines the purpose of the action.
-					Actions are defined inside the card manifest. For more information, see <a target="_top"
-						href="../../index.html#/learn/features/cardActions">actions in Learn section</a>
-				</p>
-				<p>
-					For all supported parameters, see <a
-						data-demokit-href="#/api/sap.ui.integration.widgets.Card/events/action" target="_blank">action
-						event API</a>.
-				</p>
+			<h2 id="handlingEvents">Handling Events</h2>
 
-				<h2>When using UI5</h2>
-				<p>
-					Adding handler for <code>action</code> event in the XML View
-				</p>
-				<pre class="lang-xml">
+			<h3 id="handlingActions">"action" Event</h3>
+			<p>
+				Each card can trigger <code>action</code> event. This event should be handled by the host
+				environment to make the card interactions fully functional.
+				The type of <code>action</code> event, determines the purpose of the action.
+				The actions of each card are defined in its manifest. For more information, see <a target="_top"
+					href="../../index.html#/learn/actions">actions in Learn section</a>
+			</p>
+			<p>
+				For all available event parameters, see
+				<a data-demokit-href="#/api/sap.ui.integration.widgets.Card/events/action" target="_blank">Card action event</a>.
+			</p>
+
+			<h4>When using UI5</h4>
+			<p>
+				Adding handler for <code>action</code> event in the XML View
+			</p>
+			<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
-	&lt;w:Card manifest="./manifest.json" action=".onActionLog" /&gt;
+	&lt;w:Card manifest="./manifest.json" action=".onCardAction" /&gt;
 &lt;/mvc:View&gt;
 </pre>
-				<p>
-					<code>action</code> handler code in the controller.
-				</p>
-				<pre class="lang-js">
-...
-onActionLog: function (oEvent) {
-	console.log(oEvent.getParameter("type")); // The type of the action
-	console.log(JSON.stringify(oEvent.getParameter("parameters"), null, 2)); // The action parameters passed from the card to the host environment
-	console.log(oEvent.getParameter("actionSource")); // The source of the action
+			<p>
+				<code>action</code> handler code in the controller.
+			</p>
+			<pre class="lang-js">
+onCardAction: function (oEvent) {
+	console.log(oEvent.getParameter("type")  + " action triggered for card with ID 'cardWithActions'");
 }
-...
 </pre>
 
-				<h2>When using &lt;ui-integration-card&gt; custom HTML element</h2>
-				<pre class="language-html">
+			<h4>When using &lt;ui-integration-card&gt; custom HTML element</h4>
+			<pre class="language-html">
 &lt;body&gt;
-	&lt;ui-integration-card id="cardWithActions"
-		manifest="./some/location/my/card/manifest.json"&gt;
-	&lt;/ui-integration-card&gt;
-
+	&lt;ui-integration-card id="cardWithActions" manifest="./some/location/my/card/manifest.json"&gt;&lt;/ui-integration-card&gt;
 	&lt;script&gt;
 		document.getElementById("cardWithActions").addEventListener("action", function (event) {
-			console.log(event.detail.getParameter("type") + " Action triggered! for card with ID cardWithActions");
+			console.log(event.detail.getParameter("type") + " action triggered for card with ID 'cardWithActions'");
 		});
 	&lt;/script&gt;
 &lt;/body&gt;
 </pre>
 
-			<h1 id="handlingConfigurationChange">Handling "configurationChange" Event</h1>
+			<h3 id="handlingConfigurationChange">"configurationChange" Event</h3>
 			<p>
 				When some configuration settings are changed as a result of user interaction
 				(for example - filter value is changed) the card instance
@@ -87,7 +86,7 @@ onActionLog: function (oEvent) {
 					configurationChange event API</a>.
 			</p>
 
-			<h2>When using UI5</h2>
+			<h4>When using UI5</h4>
 			<p>
 				Adding handler for <code>configurationChange</code> event in the XML View
 			</p>
@@ -107,13 +106,10 @@ onConfigurationChangeLog: function (oEvent) {
 ...
 </pre>
 
-			<h2>When using &lt;ui-integration-card&gt; custom HTML element</h2>
+			<h4>When using &lt;ui-integration-card&gt; custom HTML element</h4>
 			<pre class="language-html">
 &lt;body&gt;
-	&lt;ui-integration-card id="card"
-		manifest="./some/location/my/card/manifest.json"&gt;
-	&lt;/ui-integration-card&gt;
-
+	&lt;ui-integration-card id="card" manifest="./some/location/my/card/manifest.json"&gt;&lt;/ui-integration-card&gt;
 	&lt;script&gt;
 		document.getElementById("card").addEventListener("configurationChange", function (event) {
 			console.log(event.detail.getParameter("changes"));
@@ -122,18 +118,17 @@ onConfigurationChangeLog: function (oEvent) {
 &lt;/body&gt;
 </pre>
 
-			<h1 id="passingParameters">Passing Parameters</h1>
+			<h2 id="passingParameters">Passing Parameters</h2>
 					<p>
-						A card developer can add parameters to the cards manifest. Such parameters are often optional
-						and allow to influence the cards content. Some parameters are mandatory, because the card relies
-						on this information to work properly. If a card needs to load data, one parameter might be the
-						url that should be used to trigger a data request. Parameters are card specific and are declared
-						in the corresponding cards manifest.
+						The card developer can add parameters to the cards manifest. Such parameters are often optional and they influence the cards content.
+						Some parameters are mandatory, because the card relies on this information to work properly.
+						If a card needs to load data, one parameter might be the URL that should be used to trigger a data request.
+						Parameters are card specific and are declared in the corresponding cards manifest.
 						For an example with parameters usage in a manifest, see <a target="_top"
 							href="../../index.html#/explore/parameters">parameters in Explore section</a>.
 					</p>
 
-					<h2>When using UI5</h2>
+					<h3>When using UI5</h3>
 					<pre class="lang-js">
 var oCard = new Card();
 // This manifest expects a city parameter to render a card with information for that city.
@@ -144,7 +139,7 @@ var oParameters = {
 oCard.setParameters(oParameters);
 </pre>
 
-					<h2>When using &lt;ui-integration-card&gt; custom element</h2>
+					<h3>When using &lt;ui-integration-card&gt; custom element</h3>
 					<pre class="lang-js">
 var parameters = {
 	"city": "Walldorf, DE"
@@ -156,9 +151,9 @@ card.setAttribute("parameters", JSON.stringify(parameters));
 document.body.appendChild(card);
 </pre>
 
-					<h1 id="managingState">Managing Card State</h1>
+					<h2 id="managingState">Managing Card State</h2>
 
-					<h2 id="dataMode">Card Data Mode</h2>
+					<h3 id="dataMode">Card Data Mode</h3>
 					<p>
 						To control if the card should make requests or not the developer can set the
 						<code>dataMode</code> property of the card.
@@ -249,7 +244,7 @@ customElements.whenDefined("ui-integration-card").then(function () {
 });
 </pre>
 
-					<h1 id="configuringDimensions">Configuring Card Dimensions</h1>
+					<h2 id="configuringDimensions">Configuring Card Dimensions</h2>
 					<p>
 						To configure the height and width of the card, you can set any value that the CSS properties
 						<code>height</code> and <code>width</code> would accept.
@@ -280,17 +275,19 @@ customElements.whenDefined("ui-integration-card").then(function () {
 	height: 16rem;
 }
 ...
-&lt;ui-integration-card class="myCard" manifest="./manifest.json"&gt;
-&lt;/ui-integration-card&gt;
+&lt;ui-integration-card class="myCard" manifest="./manifest.json"&gt;&lt;/ui-integration-card&gt;
 </pre>
 		</div>
 		<div class="navigation">
 			<h4>Table of Contents</h4>
 			<div><a href="../../index.html#/integrate/api/cardApi" target="_parent">Card API</a></div>
-			<div><a href="../../index.html#/integrate/api/handlingActions" target="_parent">Handling "action" Event</a></div>
-			<div><a href="../../index.html#/integrate/api/handlingConfigurationChange" target="_parent">Handling "configurationChange" Event</a></div>
+			<div><a href="../../index.html#/integrate/api/handlingEvents" target="_parent">Handling Events</a></div>
+			<div><a href="../../index.html#/integrate/api/handlingActions" target="_parent">"action"</a></div>
+			<div><a href="../../index.html#/integrate/api/handlingConfigurationChange" target="_parent">"configurationChange" Event</a></div>
 			<div><a href="../../index.html#/integrate/api/passingParameters" target="_parent">Passing Parameters</a></div>
 			<div><a href="../../index.html#/integrate/api/managingState" target="_parent">Managing Card State</a></div>
+			<div><a href="../../index.html#/integrate/api/refreshingCards" target="_parent">Refreshing Cards</a></div>
+			<div><a href="../../index.html#/integrate/api/refreshData" target="_parent">Refreshing Data</a></div>
 			<div><a href="../../index.html#/integrate/api/configuringDimensions" target="_parent">Configuring Card Dimensions</a></div>
 		</div>
 	</div>

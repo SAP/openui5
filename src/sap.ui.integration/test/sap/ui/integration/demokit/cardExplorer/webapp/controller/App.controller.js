@@ -38,10 +38,9 @@ sap.ui.define([
 		 */
 		onInit: function () {
 			var oComponent = this.getOwnerComponent();
-
+			oComponent.getEventBus().subscribe("navEntryChanged", this.onNavEntryRouteChange, this);
 			this._setToggleButtonTooltip(!Device.system.desktop);
 
-			this.getRouter().attachRouteMatched(this.onRouteChange.bind(this));
 			this.getRouter().attachBypassed(function () {
 				this.navToRoute("overview/introduction");
 			}, this);
@@ -211,24 +210,9 @@ sap.ui.define([
 			toolPage.setSideExpanded(!toolPage.getSideExpanded());
 		},
 
-		onRouteChange: function (oEvent) {
-			var oConfig = oEvent.getParameter("config"),
-				oArgs = oEvent.getParameter("arguments"),
-				sRouteName = oConfig.name,
-				oSideNavigation = this.getView().byId("sideNavigation"),
-				sKey = "overview";
-
-			this.switchCurrentModelAndTab(sRouteName);
-
-			if (oArgs.sample) {
-				sKey = oArgs.sample;
-			} else if (oArgs.topic) {
-				sKey = oArgs.subTopic || oArgs.topic;
-			} else if (sRouteName === "default") {
-				sKey = "introduction";
-			}
-
-			oSideNavigation.setSelectedKey(sKey);
+		onNavEntryRouteChange: function (sChanelId, sEventId, oPayload) {
+			this.switchCurrentModelAndTab(oPayload.routeName);
+			this.getView().byId("sideNavigation").setSelectedKey(oPayload.navigationItemKey);
 		},
 
 		onDeviceSizeChange: function () {

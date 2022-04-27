@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Card Actions</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1>Custom</h1>
+			<h2 id="overview">Overview</h2>
+			Custom action type can be used when none of the other actions fit the specific use case. It can have any parameters and should be handled by the card extension.
+			<p>Default behavior: none.</p>
+
+			<div class="messageStripWarning">
+				Experimental feature since version 1.76. The API may change.
+			</div>
+			<h2 id="examples">Examples</h2>
+			<p>Custom action handled by extension:</p>
+			<pre class="lang-json">
+{
+	"sap.card": {
+		"extension": "./ShowMessageExtension",
+		"header": {
+			...
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "/products"
+				}
+			},
+			"item": {
+				"title": "{Name}",
+				"actionsStrip": [
+					{
+						"text": "Add to Favorites",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"method": "addToFavorites",
+									"name": "{Name}",
+									"id": "{Id}"
+								}
+							}
+						]
+					},
+					{
+						"buttonType": "Transparent",
+						"text": "Remove",
+						"actions": [
+							{
+								"type": "Custom",
+								"parameters": {
+									"method": "remove",
+									"name": "{Name}",
+									"id": "{Id}"
+								}
+							}
+						]
+					}
+				]
+			}
+		}
+	}
+}</pre>
+
+<p>Extension code:</p>
+			<pre class="lang-js">
+ShowMessageExtension.prototype.init = function () {
+	Extension.prototype.init.apply(this, arguments);
+	this.attachAction(this._handleAction.bind(this));
+};
+
+ShowMessageExtension.prototype._handleAction = function (oEvent) {
+	if (oEvent.getParameter("type") !== CardActionType.Custom) {
+		return;
+	}
+
+	var oActionParams = oEvent.getParameter("parameters");
+	var pExecuteAction;
+
+	if (oActionParams.method === "addToFavorites") {
+		this._addItemToFavorites(oActionParams.id);
+	} else if (oActionParams.method === "remove") {
+		this._removeItem(oActionParams.id);
+	}
+	...
+};
+</pre>
+
+			<a class="try-button" href="../../../index.html#/explore/extension/showMessage" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#examples">Examples</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

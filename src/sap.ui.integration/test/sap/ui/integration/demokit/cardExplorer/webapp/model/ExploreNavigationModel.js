@@ -1120,14 +1120,37 @@ sap.ui.define([
 						key: 'cardActions',
 						target: 'exploreSamples',
 						title: 'Card Actions',
-						settings: {
-							columns: 3
-						},
-						files: [
+						subSamples: [
 							{
-								url: '/samples/actions/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
+								title: 'Navigation',
+								key: "navigation",
+								target: 'exploreSamples',
+								settings: {
+									columns: 3
+								},
+								files: [
+									{
+										url: '/samples/actions/navigation/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Intent-Based Navigation',
+								key: "ibn",
+								target: 'exploreSamples',
+								experimental: true,
+								settings: {
+									columns: 3
+								},
+								files: [
+									{
+										url: '/samples/actions/ibn/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},

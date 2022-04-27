@@ -1,0 +1,101 @@
+{
+	"sap.app": {
+		"id": "card.explorer.actions.ibn",
+		"type": "card",
+		"title": "Sample of Intent-Based Navigation in Cards",
+		"subTitle": "Sample of Intent-Based Navigation in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Action",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Products",
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"ibnTarget": {
+							"semanticObject": "Employee/Product",
+							"action": "list"
+						}
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"json": [{
+						"Name": "Comfort Easy",
+						"Description": "32 GB Digital Assistant with high-resolution color screen",
+						"Highlight": "Error",
+						"ProductID": "HT-1222"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+						"Highlight": "Warning",
+						"ProductID": "HT-1223"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+						"Highlight": "Success",
+						"ProductID": "HT-1224"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+						"Highlight": "Information",
+						"ProductID": "HT-1225"
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+						"Highlight": "None",
+						"ProductID": "HT-1226"
+					}
+				]
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"highlight": "{Highlight}",
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"ibnTarget": {
+								"semanticObject": "Product",
+								"action": "display"
+							},
+							"ibnParams": {
+								"productId": "{ProductID}"
+							}
+						}
+					}
+				]
+			}
+		}
+	}
+}

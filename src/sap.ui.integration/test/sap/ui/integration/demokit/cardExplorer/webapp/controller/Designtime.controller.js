@@ -42,18 +42,25 @@ sap.ui.define([
 			var oArgs = event.getParameter("arguments"),
 				sTopic = oArgs.topic,
 				sSubTopic = oArgs.subTopic || "",
-				sElementId = oArgs.id;
+				sElementId = oArgs.id,
+				sNavigationItemKey = sTopic;
 
 			// Check for deep link (id of element inside the page)
 			// Note: id of element shouldn't equal any subTopic, else it won't work.
 			if (sSubTopic) {
 				if (this.isSubTopic(sSubTopic)) {
+					sNavigationItemKey = sSubTopic;
 					sSubTopic = "/" + sSubTopic;
 				} else {
 					sElementId = sSubTopic;
 					sSubTopic = "";
 				}
 			}
+
+			this.getOwnerComponent().getEventBus().publish("navEntryChanged", {
+				navigationItemKey: sNavigationItemKey,
+				routeName: "designtime"
+			});
 
 			var oNavEntry = this.findNavEntry(sTopic),
 				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/designtime/" + sTopic + sSubTopic + '.html');

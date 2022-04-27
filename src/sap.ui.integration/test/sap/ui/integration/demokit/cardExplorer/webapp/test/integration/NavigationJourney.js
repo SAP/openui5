@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
+	"./pages/Browser",
 	"./pages/NavigationList",
 	"./pages/Learn",
 	"./pages/ExploreSamples",
@@ -25,7 +26,7 @@ sap.ui.define([
 		Then.onTheIntegratePage.iShouldSeeSampleTitle("Use Cards in Apps");
 
 		When.onTheNavigationList.iSwitchToSample("api");
-		Then.onTheIntegratePage.iShouldSeeSampleTitle("API");
+		Then.onTheIntegratePage.iShouldSeeSampleTitle("Card API");
 
 		When.onTheNavigationList.iSwitchToSample("overview");
 		Then.onTheIntegratePage.iShouldSeeSampleTitle("Overview");
@@ -63,11 +64,18 @@ sap.ui.define([
 		When.onTheNavigationList.iSwitchToSample("headers");
 		Then.onTheLearnPage.iShouldSeeSampleTitle("Card Headers");
 
-		When.onTheNavigationList.iSwitchToSample("cardActions");
-		Then.onTheLearnPage.iShouldSeeSampleTitle("Card Features");
+		When.onTheNavigationList.iSwitchToSample("actions");
+		Then.onTheLearnPage.iShouldSeeSampleTitle("Card Actions");
 
 		When.onTheNavigationList.iSwitchToSample("gettingStarted");
 		Then.onTheLearnPage.iShouldSeeSampleTitle("Getting Started");
+	});
+
+	opaTest("Navigation to subtopic with the same name as topic", function (Given, When, Then) {
+		When.onTheBrowserPage.iChangeTheHashTo("/integrate/api/handleActions");
+
+		Then.onTheIntegratePage.iShouldSeeSampleTitle("Card API");
+		Then.onTheNavigationList.iShouldSeeSelectedEntry("api");
 
 		Then.iTeardownMyApp();
 	});
