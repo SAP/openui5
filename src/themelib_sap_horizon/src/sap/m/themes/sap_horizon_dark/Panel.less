@@ -19,9 +19,7 @@
 }
 
 .sapMPanelBGTranslucent {
-	/* In order to avoid over-styling, we need to change the default behavior to transparent for belize.
-	We cannot change it via the design property, because this change will be backward incompatible.*/
-	background-color: transparent;
+	background-color: @sapUiGroupContentBackground;
 }
 
 .sapMPanelBGTransparent {
@@ -58,10 +56,6 @@
 
 .sapMPanelWrappingDivTb .sapMTB.sapMTBStandard {
 	border: none;
-}
-
-.sapMPanelContent {
-	background: @sapGroup_ContentBackground;
 }
 
 .sapMPanelContent:not(.sapMPanelBGTransparent) {
