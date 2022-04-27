@@ -315,6 +315,8 @@ sap.ui.define([
 			sEditorTheme = "crimson_editor";
 		} else if (sUiTheme === "sap_fiori_3_dark") {
 			sEditorTheme = "clouds_midnight";
+		} else if (sUiTheme === "sap_horizon_dark") {
+			sEditorTheme = "nord_dark";
 		}
 		this.setColorTheme(sEditorTheme);
 	};

@@ -11,6 +11,13 @@
 				data-sap-ui-libs="sap.m">
 
 		</script>
+
+		<style>
+			.pageWithPadding section {
+				padding: 1rem;
+			}
+		</style>
+
 		<script>
 			function generateDetailPage2Content() {
 				var aContent = [];
@@ -109,7 +116,7 @@
 						})
 					]
 				})
-			});
+			}).addStyleClass("pageWithPadding");
 
 			var oDetailDetailPage = new sap.m.Page("detailDetail", {
 				title: "Detail Detail",
@@ -149,7 +156,7 @@
 						})
 					]
 				})
-			});
+			}).addStyleClass("pageWithPadding");
 
 			var oScrollToElementInput = new sap.m.Input("oScrollToElementInput");
 			var oScrollToElementInput2 = new sap.m.Input("oScrollToElementInput2");
@@ -175,7 +182,7 @@
 						createIconCompetitorsButtons()
 					]
 				})
-			});
+			}).addStyleClass("pageWithPadding");
 
 			//create first master page
 
