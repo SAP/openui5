@@ -24,11 +24,34 @@ sap.ui.define([
 	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/base/util/deepClone",
 	"sap/ui/model/Sorter",
-	"sap/ui/core/SeparatorItem",
+	'sap/m/GroupHeaderListItem',
 	"sap/base/util/includes",
 	"sap/ui/core/CustomData"
 ], function (
-	BaseField, Input, Text, Title, Select, ComboBox, Popover, Button, OverflowToolbar, ToolbarSpacer, ListItem, List, CustomListItem, VBox, each, _debounce, Core, JSONModel, EditorResourceBundles, deepClone, Sorter, SeparatorItem, includes, CustomData
+	BaseField,
+	Input,
+	Text,
+	Title,
+	Select,
+	ComboBox,
+	Popover,
+	Button,
+	OverflowToolbar,
+	ToolbarSpacer,
+	ListItem,
+	List,
+	CustomListItem,
+	VBox,
+	each,
+	_debounce,
+	Core,
+	JSONModel,
+	EditorResourceBundles,
+	deepClone,
+	Sorter,
+	GroupHeaderListItem,
+	includes,
+	CustomData
 ) {
 	"use strict";
 	var REGEXP_PARAMETERS = /parameters\.([^\}\}]+)/g;
@@ -471,7 +494,7 @@ sap.ui.define([
 						descending: true,
 						group: true
 					})],
-					groupHeaderFactory: that.getGroupHeader
+					groupHeaderFactory: oField.getGroupHeader
 				}
 			});
 			var sPlacement = oField._previewPosition === "right" ? "Right" : "Left";
@@ -570,8 +593,9 @@ sap.ui.define([
 	};
 
 	StringField.prototype.getGroupHeader = function(oGroup) {
-		return new SeparatorItem( {
-			text: oGroup.key
+		return new GroupHeaderListItem({
+			title: oGroup.key,
+			upperCase: false
 		});
 	};
 
