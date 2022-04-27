@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Utils",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -21,6 +22,7 @@ sap.ui.define([
 	Version,
 	VersionsAPI,
 	FlexUtils,
+	JSONModel,
 	RuntimeAuthoring,
 	Utils,
 	sinon
@@ -624,6 +626,25 @@ sap.ui.define([
 					assert.equal(oStopStub.callCount, 1, "then stop was called");
 					assert.equal(oCrossAppNavigationStub.callCount, 1, "a restart was triggered");
 				}.bind(this));
+		});
+
+		QUnit.test("when save is called and layer is not customer", function(assert) {
+			var oSaveStub = sandbox.stub().resolves();
+			this.oRta._oSerializer = {
+				saveCommands: oSaveStub
+			};
+			this.oRta.setFlexSettings({layer: "OTHER_LAYER"});
+			this.oRta._oToolbarControlsModel = new JSONModel({
+				translationEnabled: false
+			});
+			this.oRta._oVersionsModel = new JSONModel({
+				versioningEnabled: true
+			});
+
+			return this.oRta._serializeAndSave().then(function() {
+				assert.strictEqual(oSaveStub.callCount, 1, "save was triggered");
+				assert.strictEqual(oSaveStub.lastCall.args[0], false, "the draft flag is set to false");
+			});
 		});
 	});
 

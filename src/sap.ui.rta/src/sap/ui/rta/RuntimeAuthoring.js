@@ -891,7 +891,8 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._serializeAndSave = function() {
 		this.bPersistedDataTranslatable = this._oToolbarControlsModel.getProperty("/translationEnabled");
 		// Save changes on the current layer and discard dirty changes on other layers
-		return this._oSerializer.saveCommands(this._oVersionsModel.getProperty("/versioningEnabled"), this.getLayer(), true);
+		var bSaveAsDraft = this._oVersionsModel.getProperty("/versioningEnabled") && this.getLayer() === Layer.CUSTOMER;
+		return this._oSerializer.saveCommands(bSaveAsDraft, this.getLayer(), true);
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
