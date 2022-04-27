@@ -9,8 +9,8 @@ sap.ui.define([
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/mdc/util/Common',
 	'sap/ui/mdc/enum/PersistenceMode',
-	'sap/ui/mdc/p13n/Engine'
-
+	'sap/ui/mdc/p13n/Engine',
+	'sap/base/util/merge'
 ], function(
 	loadModules,
 	ListContent,
@@ -18,7 +18,8 @@ sap.ui.define([
 	ConditionValidated,
 	Common,
 	PersistenceMode,
-	Engine
+	Engine,
+	merge
 ) {
 	"use strict";
 
@@ -350,6 +351,7 @@ sap.ui.define([
 						}
 					}
 				}
+				_addFilterValueToFilterBar.call(this, this._getPriorityFilterBar(), this.getFilterValue()); // as might set before a FilterBar exist
 			} else if (oChanges.name === "filterFields") {
 				// check if search fields needs to be removed or added
 				oFilterBar = this._getPriorityFilterBar();
@@ -443,7 +445,18 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype._applyInitialConditions = function (oFilterBar) {
-		return oFilterBar && oFilterBar.setInternalConditions(this._oInitialFilterConditions);
+		if (oFilterBar) {
+			var sFilterFields =  this.getFilterFields();
+			var oNewConditions = merge({}, this._oInitialFilterConditions);
+			if (!oNewConditions[sFilterFields]) { // not set from Delegate
+				// use existing search
+				var oConditions = oFilterBar.getInternalConditions();
+				if (oConditions[sFilterFields]) {
+					oNewConditions[sFilterFields] = oConditions[sFilterFields];
+				}
+			}
+			oFilterBar.setInternalConditions(oNewConditions);
+		}
 	};
 
 	FilterableListContent.prototype._fireSelect = function (oChange) {

@@ -317,6 +317,7 @@ sap.ui.define([
 			assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].sPath, "additionalText", "ListBinding 2. filter path");
 			assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].sOperator, FilterOperator.Contains, "ListBinding 2. filter operator");
 			assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].oValue1, "3", "ListBinding 2. filter value1");
+			assert.notOk(oListBinding.filter.args[0][0][0].bAnd, "ListBinding filters are OR combined");
 			assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
 			var aItems = oTable.getItems();
 			assert.equal(aItems.length, 1, "number of items");
@@ -1291,6 +1292,7 @@ sap.ui.define([
 			iConfirm++;
 		});
 
+		oMTable.setFilterValue("X");
 		var oContent = oMTable.getContent();
 
 		if (oContent) {
@@ -1306,6 +1308,8 @@ sap.ui.define([
 				assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
 				var oFilterBar = oFixContent.getItems()[0];
 				assert.ok(oFilterBar.isA("sap.ui.mdc.filterbar.vh.FilterBar"), "VBox item is FilterBar");
+				var oConditions = oFilterBar.getInternalConditions();
+				assert.equal(oConditions["*text,additionalText*"][0].values[0], "X", "Search condition in FilterBar");
 				var oFlexContent = oContent.getFlexContent();
 				assert.ok(oFlexContent.isA("sap.m.Panel"), "FlexContent is sap.m.Panel");
 				assert.ok(oFlexContent.getExpanded(), "Panel is expanded");
@@ -1396,9 +1400,12 @@ sap.ui.define([
 		assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
 		assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
 		assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
-		assert.equal(oListBinding.filter.args[0][0][0].sPath, "additionalText", "ListBinding filter path");
-		assert.equal(oListBinding.filter.args[0][0][0].sOperator, FilterOperator.Contains, "ListBinding filter operator");
-		assert.equal(oListBinding.filter.args[0][0][0].oValue1, "2", "ListBinding filter value1");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters.length, 2, "ListBinding filter contains 2 filters");
+		assert.ok(oListBinding.filter.args[0][0][0].bAnd, "ListBinding filters are AND combined");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].sPath, "additionalText", "ListBinding filter1 path");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].sOperator, FilterOperator.Contains, "ListBinding filter1 operator");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].oValue1, "2", "ListBinding filter1 value1");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].aFilters.length, 2, "ListBinding filter2 contains 2 filters (search)"); // details tested above
 		assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
 		var aItems = oTable.getItems();
 		assert.equal(aItems.length, 1, "number of items");
@@ -1434,10 +1441,7 @@ sap.ui.define([
 		ValueHelpDelegateV4.adjustSearch.callThrough();
 
 		var oListBinding = oTable.getBinding("items");
-		sinon.spy(oListBinding, "filter");
 		oListBinding.changeParameters = function(oParameters) {}; // just fake V4 logic
-		sinon.spy(oListBinding, "changeParameters");
-		sinon.spy(oListBinding, "suspend");
 
 		var oFilterBar = new FilterBar("FB1");
 		oFilterBar.setInternalConditions({
@@ -1445,9 +1449,14 @@ sap.ui.define([
 			$search: [Condition.createCondition("StartsWith", "i")]
 		});
 
+		oMTable.setFilterValue("i");
 		oMTable.setFilterFields("$search");
 		oMTable.setFilterBar(oFilterBar);
 		assert.ok(oFilterBar.getBasicSearchField(), "SearchField added to FilterBar");
+
+		sinon.spy(oListBinding, "filter");
+		sinon.spy(oListBinding, "changeParameters");
+		sinon.spy(oListBinding, "suspend");
 
 		oFilterBar.fireSearch();
 
