@@ -70,6 +70,27 @@ sap.ui.define([
 			}
 		});
 
+		When.waitFor({
+			controlType: "sap.uxap.ObjectPageLayout",
+			actions: new Scroll()
+		});
+
+		Then.waitFor({
+			controlType: "sap.uxap.ObjectPageSubSection",
+			properties: {
+				title: "Section 1"
+			},
+			matchers: function(oControl) {
+				return isInViewport(oControl.getDomRef());
+			},
+			success: function  () {
+				Opa5.assert.ok(true, "The page is in initial state - Section 1 is visible");
+			},
+			error: function  () {
+				Opa5.assert.ok(false, "The page is not in initial state - Section 1 is not visible" );
+			}
+		});
+
 		Then.iTeardownMyApp();
 	});
 
