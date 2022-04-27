@@ -1850,6 +1850,8 @@ html[data-sap-ui-browser*='ff'] {
 }
 
 .sapMGTOneByOne.sapMGTIconMode {
+	min-width: 7rem;
+	max-width: 15rem;
 	.sapMGTHdrContent {
 		padding: 0 0.5rem;
 	}
@@ -1935,6 +1937,7 @@ html[data-sap-ui-browser*='ff'] {
 
 .sapMGTOneByOne.sapMGTIconMode.sapMTileSmallPhone {
 	height: 4rem;
+	max-width: none;
 	.sapMGTHdrContent {
 		height:auto;
 		overflow: auto;
@@ -1976,5 +1979,5 @@ html[data-sap-ui-browser*='ff'] {
 }
 
 html.sap-desktop .sapMGT.sapMGTTwoByHalf.sapMGTIconMode.HighContrastTile:not(.sapMGTStateDisabled):hover {
-	box-shadow: 0 0 0 0.188rem @sapUiContentShadowColor;
+	box-shadow: 0 0 0 0.188rem @sapUiContentShadowColor inset;
 }
