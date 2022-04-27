@@ -1270,20 +1270,10 @@ sap.ui.define([
 				defaultSpan: "L12 M12 S12"
 			});
 
-			if (this.getShowSetAsDefault()) {
-				oSaveAsDialogOptionsGrid.addContent(this.oDefault);
-			}
-
-
+			oSaveAsDialogOptionsGrid.addContent(this.oDefault);
 			oSaveAsDialogOptionsGrid.addContent(this.oPublic);
-
-			if (this._getShowExecuteOnSelection()) {
-				oSaveAsDialogOptionsGrid.addContent(this.oExecuteOnSelect);
-			}
-
-			if (this._getShowCreateTile()) {
-				oSaveAsDialogOptionsGrid.addContent(this.oCreateTile);
-			}
+			oSaveAsDialogOptionsGrid.addContent(this.oExecuteOnSelect);
+			oSaveAsDialogOptionsGrid.addContent(this.oCreateTile);
 
 			this.oSaveAsDialog = new Dialog(this.getId() + "-savedialog", {
 				title: this._oRb.getText("VARIANT_MANAGEMENT_SAVEDIALOG"),
