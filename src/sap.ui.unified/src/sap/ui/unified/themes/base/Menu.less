@@ -14,7 +14,7 @@
 	top: -10000px;
 	display: block;
 	min-width: 80px;
-	background-color: @sapUiListBackground;
+	background-color: @sapUiGroupContentBackground;
 	cursor: default;
 	outline: none;
 	overflow: hidden;
@@ -24,8 +24,8 @@
 	padding: 0px;
 	min-width: 5rem;
 	color: @sapUiListTextColor;
-	box-shadow: @sapUiShadowLevel1;
-	border-radius: 0.25rem;
+	box-shadow: @sapUiContentShadow1;
+	border-radius: @sapUiElementBorderCornerRadius;
 }
 
 .sapUiMnu:focus {
@@ -245,6 +245,7 @@ html[data-sap-ui-browser*='ie'] {
 
 .sapUiMnuItmSbMnu > div:after {
 	content: "\e066";
+	color: @sapUiContentNonInteractiveIconColor;
 	font-family: 'SAP-icons';
 	outline: none;
 }
@@ -273,7 +274,7 @@ html[data-sap-ui-browser*='ie'] {
 	margin-top: 1px;
 	margin-bottom: 1px;
 	border-width: 0;
-	border-top: 1px solid @sapUiContentForegroundBorderColor;
+	border-top: 0.625rem solid @sapUiGroupContentBorderColor;
 	height: 1px;
 	color: @sapUiToolbarSeparatorColor;
 }
@@ -378,11 +379,6 @@ html[data-sap-ui-browser*='ie'] {
 	font-size: @sapMFontMediumSize;
 	color: @sapUiListTextColor;
 	margin-right: @_sap_ui_unified_Menu_ItmPadding;
-}
-
-.sapUiMnuItmSbMnu > div:after {
-	content: "\e1ed";
-	color: @sapUiContentNonInteractiveIconColor;
 }
 
 .sapUiMnuItm.sapUiMnuItmHov .sapUiMnuItmSbMnu > div:after {
