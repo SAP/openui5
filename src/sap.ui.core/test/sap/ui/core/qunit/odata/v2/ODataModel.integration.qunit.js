@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/v2/Context",
 	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/xml/XMLModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/datajs",
 	"sap/ui/util/XMLHelper"
@@ -28,7 +29,7 @@ sap.ui.define([
 	// "sap/ui/table/Table"
 ], function (Log, uid, Input, Device, ManagedObjectObserver, SyncPromise, coreLibrary, Message,
 		Controller, View, BindingMode, Filter, FilterOperator, Sorter, JSONModel, CountMode,
-		MessageScope, Context, ODataModel, TestUtils, datajs, XMLHelper) {
+		MessageScope, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -15594,6 +15595,43 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					/*bKeepCurrent*/true);
 			}, Error("Unsupported operation: sap.ui.model.json.JSONListBinding#getContexts, must"
 				+ " not use both iMaximumPrefetchSize and bKeepCurrent"));
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Calling XMLListBinding#getContexts with bKeepCurrent=true does not have an
+	// influence on XMLListBinding#getCurrentContexts.
+	// JIRA: CPOUI5MODELS-802
+	QUnit.test("XMLListBinding#getContexts: bKeepCurrent=true", function (assert) {
+		var oModel = new XMLModel(),
+			sView = '\
+<t:Table id="table" rows="{/data}" visibleRowCount="2">\
+	<Text id="id" text="{@ID}"/>\
+</t:Table>',
+			that = this;
+
+		oModel.setXML('<?xml version="1.0"?><root><data ID="1" /><data ID="2" /><data ID="3" />'
+			+ '</root>');
+		this.expectValue("id", ["1", "2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table"),
+				oBinding = oTable.getBinding("rows"),
+				aContexts = oBinding.getCurrentContexts();
+
+			// code under test - getContextByIndex is calling getContexts with bKeepCurrent=true
+			assert.strictEqual(oTable.getContextByIndex(0), aContexts[0]);
+
+			// code under test
+			assert.deepEqual(oBinding.getCurrentContexts(), aContexts);
+
+			assert.throws(function () {
+				oBinding.getContexts(/*iStartIndex*/0, /*iLength*/1, /*iMaximumPrefetchSize*/1,
+					/*bKeepCurrent*/true);
+			}, Error("Unsupported operation: sap.ui.model.xml.XMLListBinding#getContexts, must not"
+				+ " use both iMaximumPrefetchSize and bKeepCurrent"));
 
 			return that.waitForChanges(assert);
 		});
