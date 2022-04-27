@@ -1,21 +1,19 @@
-/*global QUnit */
+/*!
+ * ${copyright}
+ */
 sap.ui.define([
-	"sap/ui/model/json/JSONListBinding",
-	"sap/ui/model/json/JSONModel",
+	"sap/base/Log",
+	"sap/base/util/deepEqual",
+	"sap/ui/Device",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
-	"sap/ui/Device",
-	"sap/base/util/deepEqual"
-], function(
-	JSONListBinding,
-	JSONModel,
-	Filter,
-	FilterOperator,
-	Sorter,
-	Device,
-	deepEqual
-) {
+	"sap/ui/model/json/JSONListBinding",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/test/TestUtils"
+], function(Log, deepEqual, Device, Filter, FilterOperator, Sorter, JSONListBinding, JSONModel,
+		TestUtils) {
+	/*global QUnit */
 	"use strict";
 
 	var oModel;
@@ -597,19 +595,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("flat arrays", function(assert) {
+		var listBinding, sorted;
 
 		createListBinding("/flatNumbers");
-		var listBinding = bindings[0];
+		listBinding = bindings[0];
 		listBinding.sort(new Sorter(""));
-		var sorted = listBinding.getContexts().map(function(oContext, i) {
+		sorted = listBinding.getContexts().map(function(oContext, i) {
 			return oContext.getProperty("");
 		});
 		assert.deepEqual(sorted, [0,1,2,3,4,5,6], "sorted array of numbers");
 
 		createListBinding("/flatStrings");
-		var listBinding = bindings[0];
+		listBinding = bindings[0];
 		listBinding.sort(new Sorter(""));
-		var sorted = listBinding.getContexts().map(function(oContext, i) {
+		sorted = listBinding.getContexts().map(function(oContext, i) {
 			return oContext.getProperty("");
 		});
 		assert.deepEqual(sorted, ["", "Andreas", "Marc", "Peter"], "sorted array of strings");
@@ -1519,6 +1518,19 @@ sap.ui.define([
 		assert.deepEqual(oBinding._getContexts(1, 1), ["~context"]);
 	});
 
+	//*********************************************************************************************
+	QUnit.module("sap.ui.model.json.JSONListBinding", {
+		beforeEach : function () {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
+		},
+
+		afterEach : function (assert) {
+			return TestUtils.awaitRendering();
+		}
+	});
+
 	//**********************************************************************************************
 	QUnit.test("getAllCurrentContexts: Returns contexts", function (assert) {
 		var oBinding = {
@@ -1531,5 +1543,49 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(JSONListBinding.prototype.getAllCurrentContexts.call(oBinding),
 			"~aContexts");
+	});
+
+	//**********************************************************************************************
+	QUnit.test("getContexts: throws error of _updateLastStartAndLength", function (assert) {
+		var oBinding = {
+				_updateLastStartAndLength : function () {}
+			},
+			oError = new Error("foo");
+
+		this.mock(oBinding).expects("_updateLastStartAndLength")
+			.withExactArgs("~iStartIndex", "~iLength", "~iMaximumPrefetchSize", "~bKeepCurrent")
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			JSONListBinding.prototype.getContexts.call(oBinding, "~iStartIndex", "~iLength",
+				"~iMaximumPrefetchSize", "~bKeepCurrent");
+		}, oError);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("getContexts: bKeepCurrent=true, no extended change detection", function (assert) {
+		var oBinding = {
+				iLastLength : "~iLastLength",
+				iLastStartIndex : "~iLastStartIndex",
+				_updateLastStartAndLength : function () {},
+				_getContexts : function () {}
+			};
+
+		this.mock(oBinding).expects("_updateLastStartAndLength")
+			.withExactArgs(7, 5, "~iMaximumPrefetchSize", true);
+		this.mock(oBinding).expects("_getContexts").withExactArgs(7, 5).returns("~aContexts");
+
+		// code under test
+		assert.strictEqual(
+			JSONListBinding.prototype.getContexts.call(oBinding, 7, 5, "~iMaximumPrefetchSize",
+				true),
+			"~aContexts");
+
+		assert.strictEqual(oBinding.iLastLength, "~iLastLength");
+		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndex");
+		assert.strictEqual(oBinding.iLastEndIndex, undefined);
+		assert.strictEqual(oBinding.aLastContexts, undefined);
+		assert.strictEqual(oBinding.aLastContextData, undefined);
 	});
 });

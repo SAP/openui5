@@ -268,6 +268,9 @@ sap.ui.define(function() {
 			"model/ContextBinding": {
 				title: "sap.ui.model.ContextBinding"
 			},
+			"model/ListBinding": {
+				title: "sap.ui.model.ListBinding"
+			},
 			"model/Model": {
 				title: "sap.ui.model.Model"
 			},

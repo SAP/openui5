@@ -52,6 +52,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/model/CompositeDataState.qunit",
 		"sap/ui/core/qunit/model/Context.qunit",
 		"sap/ui/core/qunit/model/ContextBinding.qunit",
+		"sap/ui/core/qunit/model/ListBinding.qunit",
 		"sap/ui/core/qunit/model/Model.qunit",
 		"sap/ui/core/qunit/model/TreeBindingAdapter.qunit",
 

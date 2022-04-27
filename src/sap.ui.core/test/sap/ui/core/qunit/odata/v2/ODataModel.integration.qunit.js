@@ -15561,4 +15561,41 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Calling JSONListBinding#getContexts with bKeepCurrent=true does not have an
+	// influence on JSONListBinding#getCurrentContexts.
+	// JIRA: CPOUI5MODELS-802
+	QUnit.test("JSONListBinding#getContexts: bKeepCurrent=true", function (assert) {
+		var oModel = new JSONModel({
+				data : [{ID : "1"}, {ID : "2"}, {ID : "3"}]
+			}),
+			sView = '\
+<t:Table id="table" rows="{/data}" visibleRowCount="2">\
+	<Text id="id" text="{ID}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectValue("id", ["1", "2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table"),
+				oBinding = oTable.getBinding("rows"),
+				aContexts = oBinding.getCurrentContexts();
+
+			// code under test - getContextByIndex is calling getContexts with bKeepCurrent=true
+			assert.strictEqual(oTable.getContextByIndex(0), aContexts[0]);
+
+			// code under test
+			assert.deepEqual(oBinding.getCurrentContexts(), aContexts);
+
+			assert.throws(function () {
+				oBinding.getContexts(/*iStartIndex*/0, /*iLength*/1, /*iMaximumPrefetchSize*/1,
+					/*bKeepCurrent*/true);
+			}, Error("Unsupported operation: sap.ui.model.json.JSONListBinding#getContexts, must"
+				+ " not use both iMaximumPrefetchSize and bKeepCurrent"));
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
