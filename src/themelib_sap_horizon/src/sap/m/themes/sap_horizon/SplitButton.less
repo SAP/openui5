@@ -26,14 +26,6 @@
 	}
 }
 
-.sapMSB .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
-	border-left-color: @sapUiButtonBackground;
-}
-
-.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnEmphasized {
-	border-left-color: @sapUiButtonBackground;
-}
-
 //ie
 .sapMSBTextIE.sapMSBText {
 	padding-right: 2.25rem;
@@ -214,4 +206,11 @@ html.sap-desktop .sapMSB .sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator
 	width: auto;
 	height: auto;
 	background-color: transparent;
+}
+
+.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner {
+	border: 0.0625rem solid @sapUiButtonActiveBorderColor;
+	.sapUiIcon {
+		line-height: 2.125rem;
+	}
 }

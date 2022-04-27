@@ -194,10 +194,6 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMBtnEmphasized.sapMFocusable
 /* (add separators, remove top/bottom border)       */
 /* ------------------------------------------------ */
 
-.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
-	border-color:     transparent;
-}
-
 .sapUiSizeCompact .sapMBar-CTX .sapMBtnInner.sapMBtnGhost:not(.sapMBtnDisabled) {
 	background: @sapUiButtonLiteBackground;
 	border: 0.0625rem solid @sapUiButtonBorderColor;
@@ -256,4 +252,8 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 	color: @sapContent_BadgeTextColor;
 	font-size: @sapFontSmallSize;
 	text-align: center;
+}
+
+.sapUiSizeCompact .sapMBar-CTX .sapMBtnDefault.sapMBtnInner:not(.sapMBtnDisabled) {
+	border-color: @sapUiButtonSelectedBorderColor;
 }
