@@ -469,9 +469,14 @@ sap.ui.define([
             //this._getChart(oMDCChart).removeDimension(this._getChart(oMDCChart).getDimensionByName(oMDCChartItem.getName()));
 
         } else if (oMDCChartItem.getType() === "aggregatable" && this._getChart(oMDCChart).getVisibleMeasures().includes(this._getAggregatedMeasureNameForMDCItem(oMDCChartItem))) {
-            var aNewVisibleMeasures = this._getChart(oMDCChart).getVisibleMeasures().filter(function (e) {
-                return e !== this._getAggregatedMeasureNameForMDCItem(oMDCChartItem);
+            var aNewVisibleMeasures = [];
+
+            oMDCChart.getItems().filter(function(oItem) {return oItem.getType() === "aggregatable";})
+            .filter(function(oItem){ return oItem !== oMDCChartItem;})
+            .forEach(function(oItem){
+                aNewVisibleMeasures.push(this._getAggregatedMeasureNameForMDCItem(oItem));
             }.bind(this));
+
             this._getChart(oMDCChart).setVisibleMeasures(aNewVisibleMeasures);
 
             this._getChart(oMDCChart).removeMeasure(this._getChart(oMDCChart).getMeasureByName(this._getAggregatedMeasureNameForMDCItem(oMDCChartItem)));
