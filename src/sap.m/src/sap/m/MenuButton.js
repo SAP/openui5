@@ -383,6 +383,7 @@ sap.ui.define([
 		/**
 		 * Gets the button part of a <code>MenuButton</code>.
 		 * @private
+		 * @returns {sap.m.Button | sap.m.SplitButton}
 		 */
 		MenuButton.prototype._getButtonControl = function() {
 			return this.getAggregation("_button");

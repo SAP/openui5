@@ -121,6 +121,7 @@ sap.ui.define([
 	 * Returns a control that is associated with the label of the group element.
 	 * @param {string} sQuickViewPageId The page to which the element navigates when clicked.
 	 * @private
+	 * @returns {sap.m.Link|sap.m.Text|null}
 	 */
 	GroupElement.prototype._getGroupElementValue = function (sQuickViewPageId) {
 		if (!this.getValue()) {

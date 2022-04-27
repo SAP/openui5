@@ -367,6 +367,7 @@ sap.ui.define([
 
 	/**
 	 * toggles the current mode from "Abstract" to "Live" and vice versa
+	 * @returns {sap.m.ToggleButton}
 	 */
 	CardPreview.prototype._getModeToggleButton = function () {
 		var oBundle = Core.getLibraryResourceBundle("sap.ui.integration");

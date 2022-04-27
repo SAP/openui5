@@ -606,7 +606,7 @@ sap.ui.define([
 	 * Triggers the mode switch (on/off).
 	 *
 	 * @param {sap.ui.base.ManagedObject} oRootControl - Root control of the overlays
-	 * @param {sap.ui.triggerModeChange.Toolbar} oToolbar - Toolbar of RTA
+	 * @param {sap.ui.rta.toolbar.Adaptation} oToolbar - Toolbar of RTA
 	 */
 	ChangeVisualization.prototype.triggerModeChange = function(oRootControl, oToolbar) {
 		this.oMenuButton = oToolbar.getControl("toggleChangeVisualizationMenuButton");

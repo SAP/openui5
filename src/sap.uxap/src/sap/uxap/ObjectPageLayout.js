@@ -1010,7 +1010,7 @@ sap.ui.define([
 	/**
 	 * Retrieves the list of sections to render initially
 	 * (the list includes the sections to be loaded lazily, as these are empty in the beginning, only their skeleton will be rendered)
-	 * @returns the sections list
+	 * @returns {sap.uxap.ObjectPageSection[]} the sections list
 	 */
 	ObjectPageLayout.prototype._getSectionsToRender = function () {
 		this._adjustSelectedSectionByUXRules();
@@ -1055,7 +1055,7 @@ sap.ui.define([
 	 * (1) the currently <code>selectedSection</code>
 	 * (2) the static configuration for the count of items to preload in <code>sap.uxap._helpers.LazyLoading</code>
 	 *
-	 * @returns the subSections list
+	 * @returns {sap.uxap.ObjectPageSubSection[]} the subSections list
 	 */
 	ObjectPageLayout.prototype._getSectionsToPreloadOnBeforeFirstRendering = function () {
 		var aSectionBases,
@@ -3890,6 +3890,7 @@ sap.ui.define([
 	 * Retrieve the current header design that was defined in the headerTitle if available
 	 *
 	 * @private
+	 * @returns {sap.uxap.ObjectPageHeaderDesign}
 	 */
 	ObjectPageLayout.prototype._getHeaderDesign = function () {
 		var oHeader = this.getHeaderTitle(),
@@ -3905,6 +3906,7 @@ sap.ui.define([
 	 * Gets only the visible sections
 	 *
 	 * @private
+	 * @returns {sap.uxap.ObjectPageSection[]}
 	 */
 
 	ObjectPageLayout.prototype._getVisibleSections = function () {
@@ -4064,6 +4066,7 @@ sap.ui.define([
 	 * Lazy loading of the _headerContent aggregation
 	 *
 	 * @private
+	 * @returns {sap.uxap.IHeaderContent}
 	 */
 	ObjectPageLayout.prototype._getHeaderContent = function () {
 		return this.getAggregation("_headerContent");

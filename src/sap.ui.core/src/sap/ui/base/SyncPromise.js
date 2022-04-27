@@ -86,6 +86,7 @@ sap.ui.define([], function () {
 	 * @param {function} fnExecutor
 	 *   A function that is passed with the arguments resolve and reject...
 	 *
+	 * @alias sap.ui.base.SyncPromise
 	 * @private
 	 * @ui5-restricted sap.ui.core,sap.ui.dt,sap.ui.model
 	 */

@@ -51,7 +51,7 @@ sap.ui.define([
 				}
 			});
 
-			this._oViewWhileCeateContent = this.getRootControl();
+			this._oViewWhileCreateContent = this.getRootControl();
 			this.oView = sap.ui.jsview("samples.components.routing.TestView");
 			return this.oView;
 		}

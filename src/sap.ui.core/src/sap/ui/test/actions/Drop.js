@@ -31,11 +31,11 @@ sap.ui.define([
 	 *            [mSettings] Optional object with initial settings for the new instance
 	 * @extends sap.ui.test.actions.Action
 	 * @public
-	 * @name sap.ui.test.actions.Drop
+	 * @alias sap.ui.test.actions.Drop
 	 * @author SAP SE
 	 * @since 1.76
 	 */
-	var Drop = Action.extend("sap.ui.test.actions.Drop", {
+	var Drop = Action.extend("sap.ui.test.actions.Drop", /** @lends sap.ui.test.actions.Drop.prototype */ {
 
 		metadata : {
 			properties: {

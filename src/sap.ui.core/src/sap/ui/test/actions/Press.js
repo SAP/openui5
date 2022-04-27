@@ -33,7 +33,7 @@ sap.ui.define([
 	 *            [mSettings] Optional object with initial settings for the new instance
 	 * @extends sap.ui.test.actions.Action
 	 * @public
-	 * @name sap.ui.test.actions.Press
+	 * @alias sap.ui.test.actions.Press
 	 * @author SAP SE
 	 * @since 1.34
 	 */
@@ -157,6 +157,9 @@ sap.ui.define([
 	 * A map of ID suffixes for controls that require a special DOM reference for
 	 * <code>Press</code> interaction.
 	 *
+	 * You can specify an ID suffix for specific controls in this map.
+	 * The press action will be triggered on the DOM element with the specified suffix.
+	 *
 	 * Here is a sublist of supported controls and their <code>Press</code> control adapter:
 	 * <ul>
 	 *  <li>sap.m.ComboBox - Arrow button</li>
@@ -213,10 +216,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @static
-	 * @name sap.ui.test.actions.Press.controlAdapters
-	 * You can specify an Id suffix for specific controls in this map.
-	 * The press action will be triggered on the DOM element with the specified suffix
-	 * @type map
+	 * @type Object<string,(string|function(sap.ui.core.Control):string)>
 	 */
 	Press.controlAdapters = {};
 	Press.controlAdapters["sap.m.Input"] = "vhi"; // focusDomRef: <input>

@@ -21,7 +21,7 @@ sap.ui.define([
 	 *            [mSettings] Optional object with initial settings for the new instance
 	 * @extends sap.ui.test.actions.Action
 	 * @public
-	 * @name sap.ui.test.actions.Scroll
+	 * @alias sap.ui.test.actions.Scroll
 	 * @author SAP SE
 	 * @since 1.90
 	 */

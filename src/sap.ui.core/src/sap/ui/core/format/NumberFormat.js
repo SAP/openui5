@@ -315,7 +315,7 @@ sap.ui.define([
 	 * oFormat.format(1234.56); // "1.234,56"
 	 * </pre>
 	 *
-#	 * @param {object} [oFormatOptions] The option object, which supports the following parameters.
+	 * @param {object} [oFormatOptions] The option object, which supports the following parameters.
 	 *   If no options are given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.

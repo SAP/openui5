@@ -22,7 +22,7 @@ sap.ui.define([
 
 	/**
 	 * Getter for the inner layout item.
-	 * @returns {Control} Control instance of the inner layout item.
+	 * @returns {sap.ui.core.Control} Control instance of the inner layout item.
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 */
