@@ -8491,14 +8491,21 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bFireChange) {
 	QUnit.test("getAllCurrentContexts: bFireChange = " + bFireChange, function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
+		var aAllCurrentContexts,
+			oBinding = this.bindList("/EMPLOYEES"),
 			oCache = {
 				getAllElements : function () {}
-			};
+			},
+			oKeptContext0 = {isKeepAlive : function () {}},
+			oKeptContext1 = {isKeepAlive : function () {}},
+			oNotKeptContext = {isKeepAlive : function () {}}; // BCP 2270081950:
+			// there is a point in time when contexts with keepAlive=false are present in
+			// mPreviousContextsByPath which need be filtered out.
 
 		oBinding.mPreviousContextsByPath = {
-		"~sPath1~" : "~oKeptContext1~",
-		"~sPath2~" : "~oKeptContext2~"
+			"~sPath1~" : oKeptContext0,
+			"~sPath2~" : oKeptContext1,
+			"~sPath3~" : oNotKeptContext
 		};
 
 		this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func, "", true)
@@ -8513,9 +8520,17 @@ sap.ui.define([
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
 			.exactly(bFireChange ? 1 : 0);
 
+		this.mock(oKeptContext0).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oKeptContext1).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oNotKeptContext).expects("isKeepAlive").withExactArgs().returns(false);
+
 		// code under test
-		assert.deepEqual(oBinding.getAllCurrentContexts(),
-			["~oContext0~", "~oContext2~", "~oKeptContext1~", "~oKeptContext2~"]);
+		aAllCurrentContexts = oBinding.getAllCurrentContexts();
+
+		assert.deepEqual(aAllCurrentContexts,
+			["~oContext0~", "~oContext2~", oKeptContext0, oKeptContext1]);
+		assert.strictEqual(aAllCurrentContexts[2], oKeptContext0);
+		assert.strictEqual(aAllCurrentContexts[3], oKeptContext1);
 	});
 });
 

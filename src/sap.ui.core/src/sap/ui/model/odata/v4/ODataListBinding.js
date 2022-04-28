@@ -1829,7 +1829,9 @@ sap.ui.define([
 
 		return this.aContexts.filter(function (oContext) {
 			return oContext;
-		}).concat(Object.values(this.mPreviousContextsByPath));
+		}).concat(Object.values(this.mPreviousContextsByPath).filter(function (oContext) {
+			return oContext.isKeepAlive();
+		}));
 	};
 
 	/**
