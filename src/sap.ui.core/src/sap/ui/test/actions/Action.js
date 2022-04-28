@@ -285,10 +285,10 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 		},
 
 		_createAndDispatchScrollEvent: function (oDomRef, oOptions) {
-			if (oOptions.x) {
+			if (oOptions.x != null) {
 				oDomRef.scrollLeft = oOptions.x;
 			}
-			if (oOptions.y) {
+			if (oOptions.y != null) {
 				oDomRef.scrollTop = oOptions.y;
 			}
 			var oScrollEvent = new Event("scroll", {
