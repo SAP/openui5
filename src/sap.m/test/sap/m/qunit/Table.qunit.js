@@ -809,6 +809,13 @@ sap.ui.define([
 
 	QUnit.test("Test focus event", function(assert) {
 		var sut = createSUT("idTableFocusEvent", true, true);
+		var fnFocusSpy = sinon.spy(sut, "focus");
+		var oFocusInfo = {
+			targetInfo: new Message({
+				message: "Error thrown",
+				type: "Error"
+			})
+		};
 
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -816,26 +823,19 @@ sap.ui.define([
 		var $tblHeader = sut.$("tblHeader");
 
 		sut.focus();
-		assert.ok(document.activeElement !== $tblHeader[0], "Focus event called without any parameter. Table header is not focused");
+		assert.ok(fnFocusSpy.calledWith(), "Focus event called without any parameter");
+		assert.ok(document.activeElement !== $tblHeader[0], "Table header is not focused");
 
-		sut.focus({
-			targetInfo: new Message({
-				message: "Error thrown",
-				type: "Error"
-			})
-		});
-		assert.ok(document.activeElement === $tblHeader[0], "Focus event called with core:Message. Table header is focused");
+		sut.focus(oFocusInfo);
+		assert.ok(fnFocusSpy.calledWith(oFocusInfo), "Focus event called with core:Message parameter");
+		assert.ok(document.activeElement === $tblHeader[0], "Table header is focused");
 
 		sut.removeAllColumns();
 		Core.applyChanges();
-		sut.focus({
-			targetInfo: new Message({
-				message: "Error thrown",
-				type: "Error"
-			})
-		});
+		sut.focus(oFocusInfo);
 		assert.notOk(sut.getColumns().length, "Columns removed from table");
-		assert.ok(document.activeElement === sut.$("nodata")[0], "Focus event called with core:Message. Table nodata element is focused");
+		assert.ok(fnFocusSpy.calledWith(oFocusInfo), "Focus event called with core:Message parameter");
+		assert.ok(document.activeElement === sut.$("nodata")[0], "Table nodata element is focused");
 
 		//clean up
 		sut.destroy();

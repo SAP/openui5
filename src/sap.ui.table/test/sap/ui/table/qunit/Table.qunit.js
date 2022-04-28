@@ -1419,55 +1419,50 @@ sap.ui.define([
 	});
 
 	QUnit.test("#focus", function(assert) {
-		oTable.focus();
-		checkFocus(getColumnHeader(0, null, null, oTable), assert);
-
-		oTable.focus({
+		var fnFocusSpy = sinon.spy(oTable, "focus");
+		var oFocusInfo = {
 			targetInfo: new Message({
 				message: "Error thrown",
 				type: "Error"
 			})
-		});
+		};
+		oTable.focus();
+		assert.ok(fnFocusSpy.calledWith(), "Focus event called without any parameter");
+		checkFocus(getColumnHeader(0, null, null, oTable), assert);
+
+		oTable.focus(oFocusInfo);
+		assert.ok(fnFocusSpy.calledWith(oFocusInfo), "Focus event called with core:Message parameter");
 		checkFocus(getColumnHeader(0, null, null, oTable), assert);
 
 		oTable.setColumnHeaderVisible(false);
 		oCore.applyChanges();
 		oTable.focus();
+		assert.ok(fnFocusSpy.calledWith(), "Focus event called without any parameter");
 		checkFocus(getCell(0, 0, null, null, oTable), assert);
 
-		oTable.focus({
-			targetInfo: new Message({
-				message: "Error thrown",
-				type: "Error"
-			})
-		});
+		oTable.focus(oFocusInfo);
+		assert.ok(fnFocusSpy.calledWith(oFocusInfo), "Focus event called with core:Message parameter");
 		checkFocus(getCell(0, 0, null, null, oTable), assert);
 
 		oTable.unbindRows();
 		oTable.focus();
+		assert.ok(fnFocusSpy.calledWith(), "Focus event called without any parameter");
 		checkFocus(oTable.getDomRef("noDataCnt"), assert);
 
 		oTable.setShowOverlay(true);
 		oTable.focus();
+		assert.ok(fnFocusSpy.calledWith(), "Focus event called without any parameter");
 		checkFocus(oTable.getDomRef("overlay"), assert);
 
-		oTable.focus({
-			targetInfo: new Message({
-				message: "Error thrown",
-				type: "Error"
-			})
-		});
+		oTable.focus(oFocusInfo);
+		assert.ok(fnFocusSpy.calledWith(oFocusInfo), "Focus event called with core:Message parameter");
 		checkFocus(oTable.getDomRef("overlay"), assert);
 
 		oTable.setShowOverlay(false);
 		oTable.removeAllColumns();
 		oCore.applyChanges();
-		oTable.focus({
-			targetInfo: new Message({
-				message: "Error thrown",
-				type: "Error"
-			})
-		});
+		oTable.focus(oFocusInfo);
+		assert.ok(fnFocusSpy.calledWith(oFocusInfo), "Focus event called with core:Message parameter");
 		checkFocus(oTable.getDomRef("noDataCnt"), assert);
 	});
 
