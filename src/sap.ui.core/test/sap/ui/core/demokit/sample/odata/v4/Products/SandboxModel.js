@@ -32,13 +32,13 @@ sap.ui.define([
 					code : 400,
 					ifMatch : /,"ProductID":"H-100",/g,
 					message : {
-						"error" : {
-							"code" : "/IWBEP/CM_V4_GWS/005",
-							"message" : "Error occurred while processing the request",
-							"details" : [{
-								"code" : "SEPM_BO_COMMON/032",
-								"message" : "Value 'H-100' is not unique",
-								"target" : "ProductID",
+						error : {
+							code : "/IWBEP/CM_V4_GWS/005",
+							message : "Error occurred while processing the request",
+							details : [{
+								code : "SEPM_BO_COMMON/032",
+								message : "Value 'H-100' is not unique",
+								target : "ProductID",
 								"@Common.numericSeverity" : 4
 							}]
 						}

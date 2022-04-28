@@ -26,7 +26,7 @@ sap.ui.define([
 				"Products?$filter=(IsActiveEntity%20eq%20false%20or%20SiblingEntity/IsActiveEntity%20eq%20null)%20and%20ID%20eq%2010%20and%20IsActiveEntity%20eq%20true&$count=true&$top=0" : {
 					message : {
 						"@odata.count" : "1",
-						"value" : []
+						value : []
 					}
 				},
 				"Products(ID=10,IsActiveEntity=true)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,_Category,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
@@ -58,7 +58,7 @@ sap.ui.define([
 				"Products(ID=30,IsActiveEntity=true)/_Parts?$count=true&$orderby=ID&$select=ID,description,quantity&$skip=0&$top=5" : {
 					message : {
 						"@odata.count" : "0",
-						"value" : []
+						value : []
 					}
 				},
 				"Products(ID=20,IsActiveEntity=false)/_Parts?$count=true&$orderby=ID&$select=ID,description,quantity&$skip=0&$top=5" : {

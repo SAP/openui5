@@ -15,10 +15,10 @@ sap.ui.define([
 			mFixture : {
 				"ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)?$select=ContactGUID,EmailAddress,FirstName,LastName" : {
 					message : {
-						"ContactGUID" : "42010aef-0de5-1eea-af8f-5bce865f0879",
-						"FirstName" : "Karl",
-						"LastName" : "Müller",
-						"EmailAddress" : "customer-do.not.reply@sap.com"
+						ContactGUID : "42010aef-0de5-1eea-af8f-5bce865f0879",
+						FirstName : "Karl",
+						LastName : "Müller",
+						EmailAddress : "customer-do.not.reply@sap.com"
 					}
 				},
 				"PATCH ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)" : {
@@ -26,8 +26,8 @@ sap.ui.define([
 				},
 				"ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)?$select=FirstName,LastName" : {
 					message : {
-						"FirstName" : "Karl*",
-						"LastName" : "Müller*"
+						FirstName : "Karl*",
+						LastName : "Müller*"
 					}
 				}
 			},

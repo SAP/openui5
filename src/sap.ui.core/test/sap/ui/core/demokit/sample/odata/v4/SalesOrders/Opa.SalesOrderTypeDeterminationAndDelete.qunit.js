@@ -12,8 +12,6 @@ sap.ui.define([
 
 	//*****************************************************************************
 	opaTest("Type Determination, Delete Sales Orders", function (Given, When, Then) {
-
 		TypeDeterminationAndDeleteTest.typeDeterminationAndDelete(Given, When, Then);
-
 	});
 });

@@ -16,7 +16,7 @@ sap.ui.define([
 			delete this.selectedContext;
 		},
 
-		onDiscard : function (oEvent) {
+		onDiscard : function () {
 			var oOperation = this.getView().getModel().bindContext("/DiscardChanges(...)"),
 				that = this;
 
@@ -32,14 +32,14 @@ sap.ui.define([
 			var that = this;
 
 			this.initMessagePopover("messagesButton");
-			this.getView().getModel().attachEvent("sessionTimeout", function (oEvent) {
+			this.getView().getModel().attachEvent("sessionTimeout", function () {
 				// The changes on the server are lost. Discard and allow for a new session.
 				that.discard();
 				MessageBox.error("Session timeout");
 			});
 		},
 
-		onPrepare : function (oEvent) {
+		onPrepare : function () {
 			var oItem = this.byId("Sticky").getSelectedItem(),
 				oOperation,
 				that = this;
@@ -62,7 +62,7 @@ sap.ui.define([
 			});
 		},
 
-		onSave : function (oEvent) {
+		onSave : function () {
 			var oOperation,
 				that = this;
 

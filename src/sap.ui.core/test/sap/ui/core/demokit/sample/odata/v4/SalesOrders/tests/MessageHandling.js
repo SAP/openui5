@@ -12,7 +12,6 @@ sap.ui.define([
 	var MessageType = library.MessageType, // shortcut for sap.ui.core.MessageType
 		ValueState = library.ValueState; // shortcut for sap.ui.core.ValueState
 
-
 	return {
 		checkMessages : function (Given, When, Then, sUIComponent) {
 			var sDiscountFailure = "User John Doe is not authorized to approve more than 50%"

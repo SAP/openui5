@@ -211,7 +211,6 @@ sap.ui.define([
 				// reset filter again (Note: resets also filter ItemPosition gt '0000000000')
 				When.onTheMainPage.filterSOItemsByProductIdWithChangeParameters(undefined);
 
-
 				// Sort
 				When.onTheMainPage.sortBySalesOrderIDviaController(); // sort by sales order ID asc.
 				// stores sales order ID in Opa context

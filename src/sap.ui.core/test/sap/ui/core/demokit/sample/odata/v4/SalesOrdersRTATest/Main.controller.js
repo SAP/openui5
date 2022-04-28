@@ -46,7 +46,6 @@ sap.ui.define([
 			}));
 		},
 
-
 		/**
 		 * Adapt the given container control like table or form
 		 *

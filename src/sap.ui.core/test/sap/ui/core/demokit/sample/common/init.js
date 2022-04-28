@@ -1,9 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/*global URLSearchParams*/
-
 sap.ui.getCore().attachInit(function () {
 	"use strict";
 
@@ -27,7 +24,7 @@ sap.ui.getCore().attachInit(function () {
 			name : "sap.ui.core.sample." + sComponent,
 			settings : {id : sComponent}
 		}).then(function (oComponent) {
-			new ComponentContainer({component : oComponent}).placeAt('content');
+			new ComponentContainer({component : oComponent}).placeAt("content");
 		}, function (e) {
 			alert("Error while instantiating sap.ui.core.sample." + sComponent + ":" + e);
 		});

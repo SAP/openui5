@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-/*global QUnit */
 QUnit.config.autostart = false;
 
 sap.ui.getCore().attachInit(function () {
@@ -30,7 +29,6 @@ sap.ui.getCore().attachInit(function () {
 
 		//*****************************************************************************
 		opaTest("OData Types", function (Given, When, Then) {
-
 			When.onAnyPage.applySupportAssistant();
 
 			Given.iStartMyUIComponent({

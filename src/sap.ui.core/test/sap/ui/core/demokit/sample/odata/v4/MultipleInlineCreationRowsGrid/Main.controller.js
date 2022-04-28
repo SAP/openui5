@@ -2,17 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/Log",
 	"sap/base/util/UriParameters",
 	"sap/f/library",
 	"sap/m/MessageBox",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/v4/ODataUtils",
 	"sap/ui/model/odata/v4/SubmitMode"
-], function (Log, UriParameters, library, MessageBox, Controller, Sorter, JSONModel, ODataUtils,
-		SubmitMode) {
+], function (UriParameters, library, MessageBox, Controller, Sorter, JSONModel, SubmitMode) {
 	"use strict";
 
 	var sEmptyRowCount = UriParameters.fromQuery(window.location.search).get("emptyRows"),

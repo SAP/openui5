@@ -28,8 +28,8 @@ sap.ui.define([
 			properties : {
 				enabled : {type : "boolean", defaultValue : true, bindable : "bindable"},
 				qualifier : {type : "string", defaultValue : "", bindable : "bindable"},
-				value : {type : "string", group : "Data", defaultValue : null, bindable : "bindable"
-				}
+				value : {type : "string", group : "Data", defaultValue : null,
+					bindable : "bindable"}
 			},
 			aggregations : {
 				field : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
@@ -103,7 +103,7 @@ sap.ui.define([
 			return this;
 		},
 
-		onModelContextChange : function (oEvent) {
+		onModelContextChange : function () {
 			var oBinding = this.getBinding("value"),
 				that = this;
 
@@ -148,7 +148,7 @@ sap.ui.define([
 			}
 		},
 
-		onLoadItems : function (oEvent) {
+		onLoadItems : function () {
 			var oBinding = this.getBinding("value"),
 				oComboBox = this.getAggregation("field"),
 				that = this;
@@ -197,7 +197,7 @@ sap.ui.define([
 			this.setValue(oEvent.getParameter("newValue"), oEvent.getSource().getBindingContext());
 		},
 
-		onValueHelp : function (oEvent) {
+		onValueHelp : function () {
 			var oBinding = this.getBinding("value"),
 				oInput = this.getAggregation("field"),
 				that = this;

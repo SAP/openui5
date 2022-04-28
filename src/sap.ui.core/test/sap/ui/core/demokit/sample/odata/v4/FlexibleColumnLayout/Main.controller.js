@@ -3,19 +3,17 @@
  */
 sap.ui.define([
 	"./Formatter", // make it available to the view
-	"sap/base/Log",
 	"sap/f/library",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/FilterType",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/TestUtils"
-], function (_Formatter, Log, library, MessageBox, MessageToast, Controller, Filter, FilterOperator,
-		FilterType, Sorter, JSONModel, TestUtils) {
+], function (_Formatter, library, MessageBox, MessageToast, Controller, Filter, FilterOperator,
+		Sorter, JSONModel, TestUtils) {
 	"use strict";
 
 	var LayoutType = library.LayoutType;
@@ -248,7 +246,8 @@ sap.ui.define([
 
 		rememberChangedSalesOrderContext : function () {
 			var oContext = this.byId("objectPage").getBindingContext();
-				this.mChangedSalesOrders[oContext.getPath()] = oContext;
+
+			this.mChangedSalesOrders[oContext.getPath()] = oContext;
 		},
 
 		setSalesOrderLineItemBindingContext : function (oContext) {

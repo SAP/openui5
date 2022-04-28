@@ -12,8 +12,6 @@ sap.ui.define([
 
 	//*****************************************************************************
 	opaTest("Message Handling", function (Given, When, Then) {
-
 		MessageHandling.checkMessages(Given, When, Then);
-
 	});
 });

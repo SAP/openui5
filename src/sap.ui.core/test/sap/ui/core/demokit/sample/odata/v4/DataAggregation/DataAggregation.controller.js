@@ -23,7 +23,7 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oUriParameters = UriParameters.fromQuery(location.search),
+			var oUriParameters = UriParameters.fromQuery(window.location.search),
 				sFilter = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.DataAggregation.filter")
 					|| oUriParameters.get("filter"),
@@ -55,15 +55,15 @@ sap.ui.define([
 					SalesAmountLocalCurrency : {
 						grandTotal : true,
 						subtotals : true,
-						unit : 'LocalCurrency'
+						unit : "LocalCurrency"
 					},
 					SalesNumber : {}
 				},
 				group : {
 					AccountResponsible : {},
-					Country_Code : {additionally : ['Country']}
+					Country_Code : {additionally : ["Country"]}
 				},
-				groupLevels : ['Country_Code', 'Region', 'Segment']
+				groupLevels : ["Country_Code", "Region", "Segment"]
 			};
 			if (sGrandTotalAtBottomOnly) {
 				if (sGrandTotalAtBottomOnly === "true") {
@@ -98,7 +98,7 @@ sap.ui.define([
 			oRowsBinding.resume(); // now that "ui" model is available...
 		},
 
-		onSearch : function (oEvent) {
+		onSearch : function () {
 			this._oAggregation.search
 				= this.getView().getModel("ui").getProperty("/sSearch");
 			this.byId("table").getBinding("rows").setAggregation(this._oAggregation);

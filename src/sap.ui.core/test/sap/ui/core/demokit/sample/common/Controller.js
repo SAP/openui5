@@ -77,7 +77,7 @@ sap.ui.define([
 				items : {
 					path : "messages>/",
 					template : new MessageItem({
-						activeTitle : oPage ? true : false, // onMessageSelected needs a page
+						activeTitle : !!oPage, // onMessageSelected needs a page
 						// Note: We need the details page in order to show a technical details link.
 						// The message popover only shows the details page if at least description
 						// or longtextUrl exists. Hence we here set description to ' '.
@@ -157,7 +157,7 @@ sap.ui.define([
 			this.messagePopover.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
 				"messages");
 			this.messagePopover.getBinding("items").attachChange(handleMessagesChange, this);
-			this.messagePopover.attachAfterClose(function (oEvent) {
+			this.messagePopover.attachAfterClose(function () {
 				var oMessageManager = sap.ui.getCore().getMessageManager(),
 					aMessages;
 
@@ -220,5 +220,4 @@ sap.ui.define([
 			this.messagePopover.toggle(this.byId(this.messagePopoverButtonId));
 		}
 	});
-
 });

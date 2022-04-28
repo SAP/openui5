@@ -3,10 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/m/MessageBox",
 	"sap/ui/core/library",
 	"sap/ui/core/sample/common/Controller"
-], function (MessageBox, coreLibrary, Controller) {
+], function (coreLibrary, Controller) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -90,7 +89,7 @@ sap.ui.define([
 		 *     <li> {boolean} success
 		 *   </ul>
 		 */
-		onCreateCompleted : function (oEvent) {
+		onCreateCompleted : function () {
 			this.iCreates -= 1;
 			if (this.iCreates === 0) {
 				this.byId("ProductList").setBusy(false);
@@ -137,14 +136,14 @@ sap.ui.define([
 		setNewEntryContext : function () {
 			var oContext = this.oListBinding.create({
 					// mandatory properties for new entity which are not available on UI
-					"Category" : "Notebooks",
-					"MeasureUnit" : "EA", // wrong service expectation
-					"SupplierID" : "0100000046",
-					"TaxTarifCode" : 1,
-					"TypeCode" : "PR",
+					Category : "Notebooks",
+					MeasureUnit : "EA", // wrong service expectation
+					SupplierID : "0100000046",
+					TaxTarifCode : 1,
+					TypeCode : "PR",
 					// some useful defaults
-					"CurrencyCode" : "EUR",
-					"WeightUnit" : "KG"
+					CurrencyCode : "EUR",
+					WeightUnit : "KG"
 				});
 
 			oContext.created().catch(function (oError) {

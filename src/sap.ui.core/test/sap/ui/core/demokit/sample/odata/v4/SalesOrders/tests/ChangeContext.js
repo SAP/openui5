@@ -1,15 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([
-	"sap/ui/test/Opa5",
-	"sap/ui/test/TestUtils"
-], function (Opa5, TestUtils) {
+sap.ui.define([], function () {
 	"use strict";
 
 	return {
 		changeContext : function (Given, When, Then, sUIComponent) {
-
 			Given.iStartMyUIComponent({
 				autoWait : true,
 				componentConfig : {

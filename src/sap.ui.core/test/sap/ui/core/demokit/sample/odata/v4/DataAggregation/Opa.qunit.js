@@ -1,11 +1,9 @@
 /*!
  * ${copyright}
  */
-/*global QUnit */
 QUnit.config.autostart = false;
 
 sap.ui.getCore().attachInit(function () {
-	/*eslint max-nested-callbacks: 0 */
 	"use strict";
 
 	sap.ui.require([

@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-/*global QUnit */
 QUnit.config.autostart = false;
 
 sap.ui.getCore().attachInit(function () {
@@ -11,11 +10,9 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/common/Helper",
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/FieldGroups/pages/Main",
-		"sap/ui/test/Opa5",
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/TestUtils"
-	], function (Helper, Any, Main, Opa5, opaTest, TestUtils) {
-
+	], function (Helper, Any, Main, opaTest, TestUtils) {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.FieldGroups");
 
 		if (TestUtils.isRealOData()) {

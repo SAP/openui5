@@ -15,7 +15,10 @@
 		{
 			"files": [
 				"src/sap/ui/model/odata/v4/**/*.js",
-				"test/sap/ui/core/qunit/odata/v4/**/*.js"
+				"test/sap/ui/core/qunit/odata/v4/**/*.js",
+				"test/sap/ui/core/demokit/sample/common/**/*.js",
+				"test/sap/ui/core/demokit/sample/odata/v4/**/*.js",
+				"test/sap/ui/core/demokit/sample/ViewTemplate/types/**/*.js"
 			],
 			"rules": {
 				"consistent-return": "off", // override "warn"
@@ -90,7 +93,10 @@
 		},
 		{
 			"files": [
-				"test/sap/ui/core/qunit/odata/v4/**/*.js"
+				"test/sap/ui/core/qunit/odata/v4/**/*.js",
+				"test/sap/ui/core/demokit/sample/common/**/*.js",
+				"test/sap/ui/core/demokit/sample/odata/v4/**/*.js",
+				"test/sap/ui/core/demokit/sample/ViewTemplate/types/**/*.js"
 			],
 			"globals": {
 				"QUnit": "readonly",
@@ -105,9 +111,6 @@
 		},
 		{
 			"files": [
-				"test/sap/ui/core/demokit/sample/common/**/*.js",
-				"test/sap/ui/core/demokit/sample/odata/v4/**/*.js",
-				"test/sap/ui/core/demokit/sample/ViewTemplate/types/**/*.js",
 				"test/sap/ui/core/demokit/tutorial/odatav4/**/*.js"
 			],
 			"rules": {
@@ -125,6 +128,24 @@
 				"space-before-function-paren": ["error", {"named": "never"}],
 				"space-in-parens": "error",
 				"switch-colon-spacing": "error"
+			}
+		},
+		{
+			"files": [
+				"test/sap/ui/core/demokit/sample/odata/v4/**/Opa*.qunit.js",
+				"test/sap/ui/core/demokit/sample/ViewTemplate/types/Opa.qunit.js"
+			],
+			"rules": {
+				// Opa does not work without these imports
+				"no-unused-vars": ["error", {"argsIgnorePattern": "Any|Main", "args": "all"}]
+			}
+		},
+		{
+			"files": [
+				"test/sap/ui/core/demokit/sample/odata/v4/**/SandboxModel.js"
+			],
+			"rules": {
+				"max-len": "off"
 			}
 		},
 		{

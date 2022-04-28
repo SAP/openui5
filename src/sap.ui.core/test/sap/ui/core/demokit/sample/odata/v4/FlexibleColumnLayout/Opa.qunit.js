@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-/*global QUnit */
 QUnit.config.autostart = false;
 
 /*
@@ -18,11 +17,9 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/sample/common/Helper",
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/FlexibleColumnLayout/pages/Main",
-		"sap/ui/test/Opa5",
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/TestUtils"
-	], function (Helper, Any, Main, Opa5, opaTest, TestUtils) {
-
+	], function (Helper, Any, Main, opaTest, TestUtils) {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.FlexibleColumnLayout");
 
 		if (TestUtils.isRealOData()) {
@@ -79,13 +76,13 @@ sap.ui.getCore().attachInit(function () {
 				When.onTheListReport.selectSalesOrder(0);
 				Then.onTheObjectPage.checkSalesOrderID("0500000000");
 				When.onTheObjectPage.selectSalesOrderItem(0);
-				Then.onTheSubObjectPage.checkItemPosition('0000000010');
+				Then.onTheSubObjectPage.checkItemPosition("0000000010");
 
 				When.onTheSubObjectPage.changeQuantity("2");
 
 				When.onTheObjectPage.sortByGrossAmount();
-				Then.onTheObjectPage.checkSalesOrderItemNotInTheList('0000000010');
-				Then.onTheSubObjectPage.checkItemPosition('0000000010');
+				Then.onTheObjectPage.checkSalesOrderItemNotInTheList("0000000010");
+				Then.onTheSubObjectPage.checkItemPosition("0000000010");
 
 				Then.onTheSubObjectPage.checkQuantity("2.000");
 				When.onTheObjectPage.pressMore();
@@ -116,7 +113,7 @@ sap.ui.getCore().attachInit(function () {
 
 				When.onTheObjectPage.changeNote("Test");
 
-				When.onTheListReport.filterByGrossAmount('1000');
+				When.onTheListReport.filterByGrossAmount("1000");
 				Then.onTheListReport.checkSalesOrderNotInTheList("0500000004");
 				Then.onTheListReport.checkSalesOrdersCount(7);
 				Then.onTheObjectPage.checkSalesOrderID("0500000004");
@@ -148,11 +145,11 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkSalesOrderItemsCount(27);
 
 				When.onTheObjectPage.selectSalesOrderItem(0);
-				Then.onTheSubObjectPage.checkItemPosition('0000000010');
+				Then.onTheSubObjectPage.checkItemPosition("0000000010");
 
 				When.onTheObjectPage.sortByGrossAmount();
-				Then.onTheObjectPage.checkSalesOrderItemNotInTheList('0000000010');
-				Then.onTheSubObjectPage.checkItemPosition('0000000010');
+				Then.onTheObjectPage.checkSalesOrderItemNotInTheList("0000000010");
+				Then.onTheSubObjectPage.checkItemPosition("0000000010");
 
 				When.onTheObjectPage.createSalesOrderItem();
 				Then.onTheObjectPage.checkSalesOrderItemsCount(28);
@@ -209,7 +206,7 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkSalesOrderID("0500000000");
 
 				// apply filter and check context still in collection (pre-condition of refresh)
-				When.onTheListReport.filterByGrossAmount('1000');
+				When.onTheListReport.filterByGrossAmount("1000");
 				Then.onTheObjectPage.checkSalesOrderID("0500000000");
 				Then.onTheListReport.checkSalesOrder(0, "0500000000", "Test (original)");
 
@@ -239,7 +236,7 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkSalesOrderID("0500000004");
 
 				// apply filter and check context is not in collection anymore
-				When.onTheListReport.filterByGrossAmount('1000');
+				When.onTheListReport.filterByGrossAmount("1000");
 				Then.onTheObjectPage.checkSalesOrderID("0500000004");
 				Then.onTheListReport.checkSalesOrderNotInTheList("0500000004");
 
@@ -272,7 +269,7 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheSubObjectPage.checkItemPosition("0000000010");
 
 				When.onTheObjectPage.sortByGrossAmount();
-				Then.onTheObjectPage.checkSalesOrderItemNotInTheList('0000000010');
+				Then.onTheObjectPage.checkSalesOrderItemNotInTheList("0000000010");
 				Then.onTheSubObjectPage.checkQuantity("4.000");
 				Then.onTheObjectPage.checkGrossAmount("29,558.41");
 				Then.onTheObjectPage.checkNote("Test (original)");

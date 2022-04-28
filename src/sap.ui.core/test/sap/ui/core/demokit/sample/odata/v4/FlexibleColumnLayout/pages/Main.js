@@ -77,7 +77,7 @@ sap.ui.define([
 						actions : new EnterText({clearTextFirst : true, text : sGrossAmount}),
 						controlType : "sap.m.SearchField",
 						id : "filterGrossAmount",
-						success : function (oSearchField) {
+						success : function () {
 							Opa5.assert.ok(true, "Filter by GrossAmount gt :" + sGrossAmount);
 						},
 						viewName : sViewName

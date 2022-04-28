@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-/*global QUnit */
 QUnit.config.autostart = false;
 
 sap.ui.getCore().attachInit(function () {
@@ -13,7 +12,6 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/TestUtils"
 	], function (Any, Main, opaTest, TestUtils) {
-
 		QUnit.module("sap.ui.core.sample.odata.v4.ServerDrivenPaging", {
 			before : function () {
 				this.sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();

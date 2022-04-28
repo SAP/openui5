@@ -57,7 +57,7 @@ sap.ui.define([
 				}
 				oModel.resetChanges();
 				oModel.callFunction("/ResetEdmTypes", {
-					urlParameters : {ID : '1'},
+					urlParameters : {ID : "1"},
 					method : "POST",
 					success : function () {
 						showSuccessMessage("reset");
@@ -73,12 +73,12 @@ sap.ui.define([
 			}
 		},
 
-		onResetContextBinding : function (oEvent) {
+		onResetContextBinding : function () {
 			this.getView().getElementBinding().resetChanges();
 			this.getView().getElementBinding("v4").resetChanges();
 		},
 
-		onResetModel : function (oEvent) {
+		onResetModel : function () {
 			this.getView().getModel().resetChanges();
 		},
 
@@ -99,7 +99,7 @@ sap.ui.define([
 			}
 		},
 
-		onV4 : function (oEvent) {
+		onV4 : function () {
 			var oView = this.getView(),
 				oIdentificationBox = this.byId("identificationBox"),
 				bV4 = oView.getModel("ui").getProperty("/v4");

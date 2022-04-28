@@ -5,7 +5,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.MusicArtists.MasterList", {
-		onCreate : function (oEvent) {
+		onCreate : function () {
 			var oEntityContext = this.getView().byId("Artists").getBinding("items")
 					.create(undefined, true),
 				that = this;
