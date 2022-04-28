@@ -168,9 +168,7 @@ sap.ui.define([
 
 	ChangeVisualization.prototype.exit = function() {
 		this._oChangeIndicatorRegistry.destroy();
-		if (this.oRootOverlay) {
-			this.oRootOverlay.getDomRef().removeEventListener("click", this._fnOnClickHandler, { capture: true });
-		}
+		this._toggleRootOverlayClickHandler(false);
 	};
 
 	ChangeVisualization.prototype._reset = function() {
@@ -585,6 +583,25 @@ sap.ui.define([
 		aVisibleIndicators[0].focus();
 	};
 
+	ChangeVisualization.prototype._toggleRootOverlayClickHandler = function (bEnable) {
+		var oRootOverlayDomRef = this.oRootOverlay && this.oRootOverlay.getDomRef();
+		if (oRootOverlayDomRef) {
+			if (bEnable) {
+				oRootOverlayDomRef.addEventListener(
+					"click",
+					this._fnOnClickHandler,
+					{ capture: true }
+				);
+			} else {
+				oRootOverlayDomRef.removeEventListener(
+					"click",
+					this._fnOnClickHandler,
+					{ capture: true }
+				);
+			}
+		}
+	};
+
 	/**
 	 * Triggers the mode switch (on/off).
 	 *
@@ -597,14 +614,10 @@ sap.ui.define([
 
 		if (this.getIsActive()) {
 			this.setIsActive(false);
-			if (this.oRootOverlay) {
-				this.oRootOverlay.getDomRef().removeEventListener("click", this._fnOnClickHandler, { capture: true });
-			}
+			this._toggleRootOverlayClickHandler(false);
 			return;
 		}
-		if (this.oRootOverlay) {
-			this.oRootOverlay.getDomRef().addEventListener("click", this._fnOnClickHandler, { capture: true });
-		}
+		this._toggleRootOverlayClickHandler(true);
 		if (!this.getRootControlId()) {
 			this.setRootControlId(oRootControl);
 		}
