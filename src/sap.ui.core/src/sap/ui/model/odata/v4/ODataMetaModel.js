@@ -1403,10 +1403,17 @@ sap.ui.define([
 								sTarget = sName = sSchemaChildName
 									= sSchemaChildName || mScope.$EntityContainer;
 								vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
-								if (Array.isArray(vResult) && isParameter(sSegment, vResult[0])) {
-									// path evaluation relative to an operation overload
-									// @see [OData-CSDL-JSON-v4.01] "14.4.1.2 Path Evaluation"
-									return true;
+								if (Array.isArray(vResult)) {
+									if (vBindingParameterType) {
+										vResult = vResult.filter(isRightOverload);
+									}
+									if (isParameter(sSegment, vResult[0])) {
+										// path evaluation relative to an operation overload
+										// @see [OData-CSDL-JSON-v4.01] "14.4.1.2 Path Evaluation"
+										// or ".../@$ui5.overload/0/$Parameter/<i>/$Name/$" to refer
+										// back to (overloaded) operation's parameter
+										return true;
+									}
 								}
 								if (sSegment && sSegment[0] !== "@"
 									&& !(sSegment in oSchemaChild)) {

@@ -1647,6 +1647,12 @@ sap.ui.define([
 		"/T€AMS/name.space.OverloadedAction/parameter2" : aOverloadedAction[1].$Parameter[2],
 		"/T€AMS/name.space.OverloadedAction/$Parameter/parameter2"
 			: aOverloadedAction[1].$Parameter[2],
+		// @see _AnnotationHelperExpression.path - - - - - - - - - - - - - - - - - - - - - - - - - -
+		"/T€AMS/name.space.OverloadedAction/@$ui5.overload/0/$Parameter/1/$Name/$"
+			: aOverloadedAction[1].$Parameter[1],
+		"/OverloadedAction/parameter0" : aOverloadedAction[2].$Parameter[0],
+		"/OverloadedAction/@$ui5.overload/0/$Parameter/0/$Name/$"
+			: aOverloadedAction[2].$Parameter[0],
 		// parameters take precedence, empty segment disambiguates - - - - - - - - - - - - - - - - -
 		"/T€AMS/tea_busi.NewAction/Name" : oTeamData.Name, // "Name" is not a parameter
 		"/T€AMS/tea_busi.NewAction/_it" : mScope["tea_busi.NewAction"][1].$Parameter[0],
@@ -1674,6 +1680,12 @@ sap.ui.define([
 		"/T€AMS/name.space.OverloadedBoundFunction/B" : aOverloadedBoundFunction[1].$Parameter[1],
 		"/T€AMS/name.space.OverloadedBoundFunction/$Parameter/B"
 			: aOverloadedBoundFunction[1].$Parameter[1],
+		// @see _AnnotationHelperExpression.path - - - - - - - - - - - - - - - - - - - - - - - - - -
+		"/T€AMS/name.space.OverloadedBoundFunction/@$ui5.overload/0/$Parameter/1/$Name/$"
+			: aOverloadedBoundFunction[1].$Parameter[1],
+		"/OverloadedFunctionImport/C" : aOverloadedBoundFunction[2].$Parameter[0],
+		"/OverloadedFunctionImport/@$ui5.overload/0/$Parameter/0/$Name/$"
+			: aOverloadedBoundFunction[2].$Parameter[0],
 		// annotations ----------------------------------------------------------------------------
 		"/@DefaultContainer"
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
@@ -2378,6 +2390,35 @@ sap.ui.define([
 			+ ",formatOptions:{'parseKeepsEmptyString':true}}");
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("AnnotationHelper.format and parameters of operation overloads", function (assert) {
+		var sPath = "/T€AMS/name.space.OverloadedAction/@$ui5.overload/0/$Parameter/1",
+			oSyncPromise;
+
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(SyncPromise.resolve(mScope));
+		this.mock(AnnotationHelper).expects("format")
+			.withExactArgs({$Name : "parameter1", $Type : "Edm.String"}, sinon.match({
+				$$valueAsPromise : undefined,
+				context : sinon.match({
+					oModel : this.oMetaModel,
+					sPath : sPath
+				}),
+				// Note: overload is currently not needed in case path contains $Parameter
+				//overload : sinon.match.same(aOverloadedAction[1]),
+				schemaChildName : "name.space.OverloadedAction"
+			})).callThrough(); // this is an integrative test
+
+		// code under test
+		oSyncPromise = this.oMetaModel.fetchObject(sPath
+			+ "@@sap.ui.model.odata.v4.AnnotationHelper.format");
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.strictEqual(oSyncPromise.getResult(), "{path:'parameter1'"
+			+ ",type:'sap.ui.model.odata.type.String'"
+			+ ",formatOptions:{'parseKeepsEmptyString':true}}");
+	});
 
 	//*********************************************************************************************
 	QUnit.test("@@computedAnnotation with arguments", function (assert) {
