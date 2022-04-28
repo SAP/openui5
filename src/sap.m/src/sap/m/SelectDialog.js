@@ -10,8 +10,10 @@ sap.ui.define([
 	'./List',
 	'./SearchField',
 	'./library',
+	"sap/ui/core/library",
 	'./SelectDialogBase',
 	'sap/ui/core/InvisibleText',
+	"sap/ui/core/InvisibleMessage",
 	'sap/ui/Device',
 	'sap/m/Toolbar',
 	'sap/m/Text',
@@ -27,8 +29,10 @@ function(
 	List,
 	SearchField,
 	library,
+	CoreLibrary,
 	SelectDialogBase,
 	InvisibleText,
+	InvisibleMessage,
 	Device,
 	Toolbar,
 	Text,
@@ -47,6 +51,9 @@ function(
 
 	// shortcut for sap.m.TitleAlignment
 	var TitleAlignment = library.TitleAlignment;
+
+	// shortcut for sap.ui.core.InvisibleMessageMode
+	var InvisibleMessageMode = CoreLibrary.InvisibleMessageMode;
 
 	/**
 	 * Constructor for a new SelectDialog.
@@ -343,12 +350,6 @@ function(
 			selectionChange: this._selectionChange.bind(this),
 			updateStarted: this._updateStarted.bind(this),
 			updateFinished: this._updateFinished.bind(this)
-		});
-
-		this._oList.getInfoToolbar().addEventDelegate({
-			onAfterRendering: function () {
-				that._oList.getInfoToolbar().$().attr('aria-live', 'polite');
-			}
 		});
 
 		this._list = this._oList; // for downward compatibility
@@ -1162,22 +1163,17 @@ function(
 		if (this.getShowClearButton() && this._oClearButton) {
 			this._oClearButton.setEnabled(iSelectedContexts > 0);
 		}
+
 		// update the selection label
 		if (oInfoBar.getVisible() !== bVisible) {
 			oInfoBar.setVisible(bVisible);
-
-			if (bVisible) {
-				this._oDialog.addAriaLabelledBy(oInfoBar);
-
-				// force immediate rerendering, so JAWS can read the text inside,
-				// when it become visible
-				oInfoBar.rerender();
-			} else {
-				this._oDialog.removeAriaLabelledBy(oInfoBar);
-			}
 		}
 
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
+
+		if (this._oDialog.isOpen()) {
+			InvisibleMessage.getInstance().announce(iSelectedContexts > 0 ? this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS_SR", [iSelectedContexts]) : "", InvisibleMessageMode.Polite);
+		}
 	};
 
 	/**

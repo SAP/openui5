@@ -436,9 +436,9 @@ function(
 			this._oValueStateMessage.destroy();
 		}
 
-		if (this.oInvisibleMessage) {
-			this.oInvisibleMessage.destroy();
-			this.oInvisibleMessage = null;
+		if (this._oInvisibleMessage) {
+			this._oInvisibleMessage.destroy();
+			this._oInvisibleMessage = null;
 		}
 
 		this._oValueStateMessage = null;

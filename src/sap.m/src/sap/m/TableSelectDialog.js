@@ -9,8 +9,10 @@ sap.ui.define([
 	'./SearchField',
 	'./Table',
 	'./library',
+	"sap/ui/core/library",
 	'./SelectDialogBase',
 	'sap/ui/core/InvisibleText',
+	"sap/ui/core/InvisibleMessage",
 	'sap/ui/Device',
 	'sap/m/Toolbar',
 	'sap/m/Text',
@@ -24,8 +26,10 @@ sap.ui.define([
 	SearchField,
 	Table,
 	library,
+	CoreLibrary,
 	SelectDialogBase,
 	InvisibleText,
+	InvisibleMessage,
 	Device,
 	Toolbar,
 	Text,
@@ -44,6 +48,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.TitleAlignment
 	var TitleAlignment = library.TitleAlignment;
+
+	// shortcut for sap.ui.core.InvisibleMessageMode
+	var InvisibleMessageMode = CoreLibrary.InvisibleMessageMode;
 
 	/**
 	 * Constructor for a new TableSelectDialog.
@@ -366,13 +373,6 @@ sap.ui.define([
 			},
 			updateStarted: this._updateStarted.bind(this),
 			updateFinished: this._updateFinished.bind(this)
-		});
-
-
-		this._oTable.getInfoToolbar().addEventDelegate({
-			onAfterRendering: function () {
-				that._oTable.getInfoToolbar().$().attr('aria-live', 'polite');
-			}
 		});
 
 		this._table = this._oTable; // for downward compatibility
@@ -1181,6 +1181,10 @@ sap.ui.define([
 		// update the selection label
 		oInfoBar.setVisible(!!iSelectedContexts);
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
+
+		if (this._oDialog.isOpen()) {
+			InvisibleMessage.getInstance().announce(iSelectedContexts > 0 ? this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS_SR", [iSelectedContexts]) : "", InvisibleMessageMode.Polite);
+		}
 	};
 
 	/**
