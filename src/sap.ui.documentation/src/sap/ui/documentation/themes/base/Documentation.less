@@ -602,6 +602,7 @@ html.sap-tablet:not(.sap-desktop) {
             font-weight: bold;
             border-collapse: collapse;
             padding: 0.6em;
+            border: .02em solid @sapUiDemoKitTableThBorder;
         }
 
         td {
@@ -610,6 +611,7 @@ html.sap-tablet:not(.sap-desktop) {
             vertical-align: top;
             text-align: left;
             line-height: 1.75rem;
+            border: .02em solid @sapUiDemoKitTableTdBorder;
 
             p:first-child {
               margin-top: 0;
@@ -625,6 +627,20 @@ html.sap-tablet:not(.sap-desktop) {
 
             .p {
               font-size: .8125rem;
+            }
+        }
+        th,td {
+            &.background_blue {
+                border-color: @sapUiDemoKitBorderBlue;
+                background-color: @sapUiDemoKitBgrBlue;
+            }
+            &.background_green {
+                border-color: @sapUiDemoKitBorderGreen;
+                background-color: @sapUiDemoKitBgrGreen;
+            }
+            &.background_yellow {
+                border-color: @sapUiDemoKitBorderYellow;
+                background-color: @sapUiDemoKitBgrYellow;
             }
         }
     }
