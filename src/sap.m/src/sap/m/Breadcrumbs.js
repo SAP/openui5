@@ -678,8 +678,8 @@ sap.ui.define([
 
 		this.addDelegate(oItemNavigation);
 		oItemNavigation.setDisabledModifiers({
-			sapnext : ["alt"],
-			sapprevious : ["alt"],
+			sapnext: ["alt", "meta"],
+			sapprevious: ["alt", "meta"],
 			saphome : ["alt"],
 			sapend : ["alt"]
 		});

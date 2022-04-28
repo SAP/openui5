@@ -690,4 +690,27 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 		oBreadcrumbsControl.destroy();
 	});
 
+	QUnit.module("Internal ItemNavigation");
+
+	QUnit.test("alt/meta key + right/left or + home/end is not handled", function (assert) {
+		// Prepare
+		var oBreadcrumbs = new Breadcrumbs(),
+		oModifiers;
+
+		// Act
+		oBreadcrumbs._configureKeyboardHandling();
+
+		// Assert
+		var oModifiers = oBreadcrumbs._getItemNavigation().getDisabledModifiers();
+		assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
+		assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
+		assert.ok(oModifiers["sapnext"].indexOf("alt") !== -1, "right is not handled when alt is pressed");
+		assert.ok(oModifiers["sapnext"].indexOf("meta") !== -1, "right is not handled when meta key is pressed");
+		assert.ok(oModifiers["sapprevious"].indexOf("alt") !== -1, "left is not handled when alt is pressed");
+		assert.ok(oModifiers["sapprevious"].indexOf("meta") !== -1, "left is not handled when meta key is pressed");
+
+		// Cleanup
+		oBreadcrumbs.destroy();
+	});
+
 });
