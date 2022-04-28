@@ -129,6 +129,39 @@ html.sap-desktop .sapMGT:active .sapMGTFocusDiv {
 	border: 0.125rem dotted @sapUiContentFocusColor;
 }
 
+html.sap-desktop .sapMGTActionButtonPress.sapMGT:focus
+{
+		.sapMGTFocusDiv{
+			border: none;
+		}
+}
+
+html.sap-desktop .sapMGTActionButtonPress.sapMGT:active
+{
+	.sapMGTFocusDiv{
+		border: none;
+	}
+}
+
+html.sap-desktop .sapMGTActionButtonPress.sapMGT:focus-visible
+{
+	.sapMGTFocusDiv{
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	}
+}
+
+.sapMGT.sapMGTStateLoaded.sapMGTScopeActions.sapMGTIconMode{
+	.sapMBtnBase.sapMBtn.sapMGTMoreIcon{
+		.sapMBtnInner{
+			background-color: transparent;
+			border: 0;
+		}
+	}
+	.sapMBtn:hover:not(.sapMBtnDisabled) > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized) {
+		background-color: @sapUiButtonLiteHoverBackground !important;
+	}
+}
+
 .sapMGTOverlay {
 	opacity: 1;
 }

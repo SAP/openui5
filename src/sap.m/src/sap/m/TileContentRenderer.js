@@ -100,7 +100,8 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", 
 			oPriority = oControl.getPriority(),
 			oTile = oControl.getParent(),
 			bIsActionMode = oTile instanceof GenericTile && oTile.getMode() === GenericTileMode.ActionMode && oTile.getFrameType() === FrameType.TwoByOne,
-			bRenderPriority = bIsActionMode && oPriority && oPriority !== Priority.None;
+			bRenderPriority = bIsActionMode && oPriority && oPriority !== Priority.None,
+			sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
 
 		if (oContent) {
 			if (bRenderPriority) {
@@ -125,8 +126,9 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", 
 				oRm.openStart("span", oControl.getId() + "-priority-value");
 				oRm.class("sapMTilePriorityValue");
 				oRm.openEnd();
-				oRm.text(oControl._getPriorityText(oPriority));
+				oRm.text(sPriority + ":" + " " + oControl._getPriorityText(oPriority));
 				oRm.close("span");
+				oRm.close("div");
 				oRm.close("div");
 				oRm.close("div");
 			}
@@ -140,9 +142,6 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", 
 			oRm.renderControl(oContent);
 			oRm.close("div");
 
-			if (bRenderPriority) {
-				oRm.close("div");
-			}
 		}
 	};
 

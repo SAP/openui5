@@ -226,6 +226,29 @@ html.sap-desktop .sapMGTLineModePress .sapMGTFocusDiv {
 	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 }
 
+html.sap-desktop .sapMGTActionButtonPress.sapMGT:focus
+{
+		.sapMGTFocusDiv{
+			border: none;
+			box-shadow: none;
+		}
+}
+
+html.sap-desktop .sapMGTActionButtonPress.sapMGT:active
+{
+	.sapMGTFocusDiv{
+		border: none;
+		box-shadow: none;
+	}
+}
+
+html.sap-desktop .sapMGTActionButtonPress.sapMGT:focus-visible
+{
+	.sapMGTFocusDiv{
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	}
+}
+
 html.sap-desktop .sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv,
 html.sap-desktop .sapMGT.sapMGTBackgroundImage:active .sapMGTFocusDiv {
 	&:after {
@@ -365,5 +388,13 @@ html.sap-desktop .sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv:after, html
 	border-radius: 1rem;
 	.sapMGTFocusDiv {
 		border-radius: 1rem !important;
+	}
+}
+
+.sapMGT.sapMGTScopeActions.sapMGTIconMode.TwoByHalf {
+	.sapMBtn.sapMGTMoreIcon{
+		.sapMBtnInner{
+			left: 0rem;
+		}
 	}
 }

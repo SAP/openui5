@@ -422,13 +422,24 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._initScopeContent = function (sTileClass) {
 		if (!this.getState || this.getState() !== LoadState.Disabled) {
-			this._oMoreIcon = this._oMoreIcon || IconPool.createControlByURI({
-				id: this.getId() + "-action-more",
-				size: "1rem",
-				useIconTooltip: false,
-				src: "sap-icon://overflow"
-			}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
-
+			if (!this.isA("sap.m.GenericTile") || (!this._isIconMode())){
+				this._oMoreIcon = this._oMoreIcon || new Button({
+					id: this.getId() + "-action-more",
+					icon: "sap-icon://overflow",
+					type: "Unstyled"
+				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
+				this._oMoreIcon._bExcludeFromTabChain = true;
+			} else {
+				// Acts Like an actual Button in Icon mode
+				this._oMoreIcon = this._oMoreIcon || new Button({
+					id: this.getId() + "-action-more",
+					icon: "sap-icon://overflow",
+					type: "Transparent"
+				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
+				this._oMoreIcon.ontouchstart = function() {
+					this.removeFocus();
+				}.bind(this);
+			}
 			this._oRemoveButton = this._oRemoveButton || new Button({
 				id: this.getId() + "-action-remove",
 				icon: "sap-icon://decline",
@@ -454,6 +465,14 @@ sap.ui.define([
 				// do nothing
 			}
 		}
+	};
+
+	/**
+	Focus would not be visible while clicking on the tile
+	@private
+	*/
+	GenericTile.prototype.removeFocus = function() {
+		this.getDomRef().classList.add("sapMGTActionButtonPress");
 	};
 
 	GenericTile.prototype._isSmall = function() {
@@ -580,6 +599,12 @@ sap.ui.define([
 		//Attach press event handler to Navigate Action Button
 		if (this._isNavigateActionEnabled()) {
 			this._oNavigateAction.attachPress(this._navigateEventHandler, this);
+		}
+
+		//Removes hovering and focusable properties from the action more button in non icon mode tiles
+		if (this._oMoreIcon && this._oMoreIcon.getDomRef() && !this._isIconMode()){
+			this._oMoreIcon.getDomRef().firstChild.classList.remove("sapMBtnHoverable");
+			this._oMoreIcon.getDomRef().firstChild.classList.remove("sapMFocusable");
 		}
 
 		this.onDragComplete();
@@ -933,7 +958,10 @@ sap.ui.define([
 	};
 
 	/* --- Event Handling --- */
-	GenericTile.prototype.ontouchstart = function () {
+	GenericTile.prototype.ontouchstart = function (event) {
+		if (event && event.target.id.indexOf("-action-more") === -1 && this.getDomRef()) {
+			this.getDomRef().classList.remove("sapMGTActionButtonPress"); // Sets focus on the tile when clicked other than the action-More Button in Icon mode
+		}
 		this.addStyleClass("sapMGTPressActive");
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").addClass("sapMGTPressActive");
