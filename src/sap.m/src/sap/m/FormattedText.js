@@ -324,11 +324,11 @@ function(
 		}
 
 		FormattedText.prototype.onAfterRendering = function () {
-			this.$().find('a[target="_blank"]').on("click", openExternalLink);
+			this.$().find('a:not([target="_self"]):not([target="_parent"]):not([target="_top"])').on("click", openExternalLink);
 		};
 
 		FormattedText.prototype.onBeforeRendering = function () {
-			this.$().find('a[target="_blank"]').off("click", openExternalLink);
+			this.$().find('a:not([target="_self"]):not([target="_parent"]):not([target="_top"])').off("click", openExternalLink);
 		};
 
 		FormattedText.prototype._getDisplayHtml = function (){
