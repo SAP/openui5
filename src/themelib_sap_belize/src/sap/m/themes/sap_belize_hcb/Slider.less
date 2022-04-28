@@ -7,6 +7,11 @@
 .sapMSliderInner {
 	border: 1px solid @sapUiFieldBorderColor;
 	background: @sapUiFieldBackground;
+}
+
+.sapMSliderInner,
+.sapMSliderProgress {
+	height: 0.1875rem;
 	border-radius: 0.125rem;
 }
 
@@ -14,6 +19,12 @@
 .sapMSliderHandle {
 	background: transparent;
 	border: 0.125rem solid @sapUiFieldBorderColor;
+	&:focus:before {
+		top: -5px;
+		bottom: -5px;
+		left: -5px;
+		right: -5px;
+	}
 }
 
 /* hover */

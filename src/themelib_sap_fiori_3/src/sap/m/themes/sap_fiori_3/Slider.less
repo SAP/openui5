@@ -6,15 +6,10 @@
 /* slider */
 .sapMSliderInner {
 	background: @sapUiFieldBorderColor;
-	height: 0.25rem;
-	min-width: 4rem;
-	border-radius: 0.25rem;
 }
 
 .sapMSliderProgress {
 	background: @sapUiActive;
-	height: 0.25rem;
-	border-radius: 0.25rem;
 }
 
 .sapMSliderInner:not(.sapMSliderInnerDisabled):hover > .sapMSliderHandle {
@@ -26,9 +21,10 @@
 .sapMSliderInner .sapMSliderHandle {
 	background: @sapUiButtonBackground;
 	border: solid 0.125rem @sapUiFieldBorderColor;
-	width: 1.625rem;
-	height: 1.625rem;
-	top: -0.825rem;
+	width: 1.875rem;
+	height: 1.875rem;
+	margin-left: -0.9375rem;
+	top: -0.8125rem;
 }
 
 .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
@@ -84,8 +80,9 @@
 
 .sapUiSizeCompact {
 	.sapMSliderHandle {
-		width: 1.25rem;
-		height: 1.25rem;
+		width: 1.5rem;
+		height: 1.5rem;
+		margin-left: -0.75rem;
 		top: -0.625rem;
 	}
 
