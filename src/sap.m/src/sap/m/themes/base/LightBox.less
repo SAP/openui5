@@ -15,6 +15,8 @@
 @_sap_m_LightBox_OverlayBackground: @sapUiBlockLayerBackground;
 @_sap_m_LightBox_ContainerBackground: @sapUiGlobalBackgroundColor;
 @_sap_m_LightBox_ErrorIconColor: @sapUiContentNonInteractiveIconColor;
+@_sap_m_LightBox_OverlayOpacity: 0.9;
+@_sap_m_LightBox_FontFamily: @sapUiFontFamily;
 
 /* ==========================================================================
    Container
@@ -60,7 +62,7 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
   ========================================================================== */
 .sapMLightBox + .sapUiBLy {
 	background: @_sap_m_LightBox_OverlayBackground;
-	opacity: 0.9;
+	opacity: @_sap_m_LightBox_OverlayOpacity;
 }
 
 /* ==========================================================================
@@ -103,7 +105,7 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 	}
 }
 
-.sapMLightBoxSubtitle {
+.sapMLabel.sapMLightBoxSubtitle  {
 	margin-top: @_sap_m_LightBox_SubtitleMarginTop;
 }
 
@@ -124,20 +126,20 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 	padding-right: 0.25rem;
 }
 
-.sapMText.sapMLightBoxTitle {
+.sapMTitle.sapMLightBoxTitle {
   color: @sapUiBaseText;
-  font-family: @sapUiFontFamily;
+  font-family: @_sap_m_LightBox_FontFamily;
   font-size: @sapMFontMediumSize;
 }
 
-.sapMText.sapMLightBoxSubtitle {
+.sapMLabel.sapMLightBoxSubtitle  {
   color: @sapUiContentLabelColor;
   font-family: @sapUiFontFamily;
   font-size: @sapMFontMediumSize;
 }
 
-.sapMText.sapMLightBoxTitle,
-.sapMText.sapMLightBoxSubtitle {
+.sapMTitle.sapMLightBoxTitle,
+.sapMLabel.sapMLightBoxSubtitle {
 	white-space: nowrap;
 	overflow: hidden;
 	text-align: left;
