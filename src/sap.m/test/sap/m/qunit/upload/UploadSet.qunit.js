@@ -587,6 +587,22 @@ sap.ui.define([
 		assert.equal(this.oUploadSet.getItems().length, 0, "item is successfully removed using index");
 	});
 
+	QUnit.test("Remove Aggregation destroys supplied control object", function (assert) {
+		//Arrange
+		var uploadSetItem = new UploadSetItem();
+		this.spy(uploadSetItem, "destroy");
+		this.spy(uploadSetItem, "_getListItem");
+
+		//Act
+		this.oUploadSet.removeAllAggregation("items");
+		this.oUploadSet.removeAggregation("items", uploadSetItem);
+		oCore.applyChanges();
+
+		//Assert
+		assert.equal(uploadSetItem._getListItem.callCount, 0, "List Item not created for empty list");
+		assert.equal(uploadSetItem.destroy.callCount, 1, "Item control object destroyed successfully");
+	});
+
 	QUnit.module("Drag and drop", {
 		beforeEach: function () {
 			this.$RootNode = jQuery(document.body);

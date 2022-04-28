@@ -618,13 +618,17 @@ sap.ui.define([
 				oItems = this.getItems();
 				oListItem = oItems[oObject];
 			} else if (typeof oObject === 'object') { // the object itself is given or has just been retrieved
-				oListItem = oObject._getListItem();
+				if (this.getList() && this.getList().getItems().length) {
+					oListItem = oObject._getListItem();
+				}
 			}
             var oItem = this.getList().removeAggregation("items", oListItem, bSuppressInvalidate);
-            if (oItem && oObject) {
-                oObject.destroy();
+            if (oItem) {
                 oItem.destroy();
             }
+			if (oObject) {
+				oObject.destroy();
+			}
             this._refreshInnerListStyle();
         }
     };
