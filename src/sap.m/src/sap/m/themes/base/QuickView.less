@@ -10,6 +10,10 @@
 
 @_sap_m_QuickViewCard_PagePadding: 0;
 
+@_sap_m_QuickView_TitleMarginBottom: 0.5rem;
+@_sap_m_QuickView_TitleFontSize: @sapMFontHeader5Size;
+@_sap_m_QuickView_FormTitleFontSize: @sapMFontHeader5Size;
+
 .sapMQuickView .sapMNav,
 .sapMQuickViewCard .sapMNav {
 	white-space: nowrap;
@@ -104,6 +108,10 @@ html.sap-tablet .sapMQuickViewPage > section {
 .sapMQuickViewCard .sapMQuickViewPage {
 	padding: @_sap_m_QuickViewCard_PagePadding;
 	box-sizing: border-box;
+
+	.sapMTitle {
+		font-size: @_sap_m_QuickView_TitleFontSize;
+	}
 }
 
 .sapMQuickViewPage .sapUiFormResGridCont > div {
@@ -169,7 +177,7 @@ html.sap-phone .sapMQuickViewPage .sapUiHLayout {
 
 .sapMQuickViewPage .sapUiVltCell:first-child {
 	max-height: @_sap_m_QuickView_TitleMaxHeight;
-	margin-bottom: 0.5rem;
+	margin-bottom: @_sap_m_QuickView_TitleMarginBottom;
 	overflow: hidden;
 }
 
@@ -210,7 +218,7 @@ html.sap-tablet .sapMQuickViewHeader {
 .sapMQuickViewPage h3,
 .sapMQuickViewPage .sapUiForm .sapUiFormTitle {
 	font-family: @sapUiFontHeaderFamily;
-	font-size: @sapMFontHeader5Size;
+	font-size: @_sap_m_QuickView_FormTitleFontSize;
 	font-weight: @sapUiFontHeaderWeight;
 	line-height: normal;
 	color: @sapUiGroupTitleTextColor;
@@ -267,6 +275,10 @@ html.sap-tablet.sap-ios .sapMPanel .sapMQuickViewCard {
 
 .sapMQuickViewPage .sapMPageEnableScrolling {
 	outline: none;
+}
+
+.sapMQuickView .sapMBar {
+	padding-left: 0.75rem;
 }
 
 /* Compact size */
