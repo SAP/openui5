@@ -129,6 +129,7 @@
 				"samples" : [
 					"sap.ui.layout.sample.BlockLayoutDefault",
 					"sap.ui.layout.sample.BlockLayoutCustomBackground",
+					"sap.ui.layout.sample.BlockLayoutCustomBackgroundPerCell",
 					"sap.ui.layout.sample.BlockLayoutLinkTitle"
 				]
 			},
@@ -394,8 +395,13 @@
 			},
 			{
 				"id": "sap.ui.layout.sample.BlockLayoutCustomBackground",
-				"name": "Block Layout with custom background for the cells",
-				"description": "The BlockLayout could be used with different backgrounds for its cells."
+				"name": "Block Layout with custom background color set for the cells",
+				"description": "Block Layout in which all cells use the same background color set and different color shade."
+			},
+			{
+				"id": "sap.ui.layout.sample.BlockLayoutCustomBackgroundPerCell",
+				"name": "Block Layout with custom background color set per cell",
+				"description": "Block Layout in which all cells use different background color set and different shade."
 			},
 			{
 				"id": "sap.ui.layout.sample.BlockLayoutLinkTitle",

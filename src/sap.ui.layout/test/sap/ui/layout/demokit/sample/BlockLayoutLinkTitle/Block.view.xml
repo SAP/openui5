@@ -5,7 +5,9 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns:form="sap.ui.layout.form">
-	<form:SimpleForm editable="true">
+	<form:SimpleForm
+		editable="true"
+		backgroundDesign="Transparent">
 		<Label text="Parent width" />
 		<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
 		<Label id="backgroundLabel" text="Background" />

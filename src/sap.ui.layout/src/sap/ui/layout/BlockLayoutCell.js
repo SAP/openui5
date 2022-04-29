@@ -72,14 +72,12 @@ sap.ui.define([
 					width: {type: "int", group: "Appearance", defaultValue: 0},
 					/**
 					 * The Background color set from which the background color will be selected.
-					 * By using background colors from the predefined sets your colors could later be customized from the Theme Designer.
 					 * <b>Note:</b> backgroundColorSet should be used only in combination with backgroundColorShade.
 					 * @since 1.48
 					 */
 					backgroundColorSet: {type: "sap.ui.layout.BlockLayoutCellColorSet", group: "Appearance"},
 					/**
 					 * The index of the background color in the color set from which the color will be selected.
-					 * By using background colors from the predefined sets your colors could later be customized from the Theme Designer.
 					 * <b>Note:</b> backgroundColorShade should be used only in combination with backgroundColorSet.
 					 * @since 1.48
 					 */

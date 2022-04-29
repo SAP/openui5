@@ -1,0 +1,95 @@
+<mvc:View
+	controllerName="sap.ui.layout.sample.BlockLayoutCustomBackgroundPerCell.Block"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns="sap.m">
+	<l:BlockLayout id="blockLayout">
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell
+				id="cell-1"
+				binding="{/cell1}"
+				title="Select Cells' Custom Color"
+				backgroundColorSet="{colorSet}"
+				backgroundColorShade="{colorShade}">
+				<core:Fragment fragmentName="sap.ui.layout.sample.BlockLayoutCustomBackgroundPerCell.ColorSelect" type="XML"/>
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow >
+			<l:BlockLayoutCell
+				title="The Title"
+				titleAlignment="Center"
+				class="customCellImageBackground">
+				<Text text="Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin." />
+			</l:BlockLayoutCell>
+			<l:BlockLayoutCell
+				id="cell-2"
+				binding="{/cell2}"
+				title="An Icon"
+				backgroundColorSet="{colorSet}"
+				backgroundColorShade="{colorShade}">
+				<core:Fragment fragmentName="sap.ui.layout.sample.BlockLayoutCustomBackgroundPerCell.ColorSelect" type="XML" />
+				<core:Icon src="sap-icon://add-activity" />
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell
+				id="cell-3"
+				binding="{/cell3}"
+				title="Simple Form"
+				backgroundColorSet="{colorSet}"
+				backgroundColorShade="{colorShade}">
+				<VBox>
+					<core:Fragment fragmentName="sap.ui.layout.sample.BlockLayoutCustomBackgroundPerCell.ColorSelect" type="XML"/>
+					<f:SimpleForm
+						editable="true"
+						backgroundDesign="Transparent"
+						layout="GridLayout">
+						<Label text="sap.m.Input" />
+						<Input type="Text" placeholder="Enter Name ..." />
+						<Label text="sap.m.TextArea" />
+						<TextArea placeholder="Please add your comment..." rows="6" maxLength="255" width="100%" />
+						<Label text="sap.m.Text" />
+						<Text text="Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin, in gravida lectus aliquam. Vivamus tortor lorem, semper et diam ac, faucibus suscipit metus. Curabitur eget aliquet purus, id vestibulum sapien. Cras vitae imperdiet felis. Fusce placerat velit orci, at tempor nisl aliquam laoreet. Aliquam in sapien sit amet tortor laoreet feugiat id in ligula." />
+					</f:SimpleForm>
+				</VBox>
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell
+				id="cell-4"
+				binding="{/cell4}"
+				title="Right Aligned Title"
+				titleAlignment="Right"
+				backgroundColorSet="{colorSet}"
+				backgroundColorShade="{colorShade}">
+				<core:Fragment fragmentName="sap.ui.layout.sample.BlockLayoutCustomBackgroundPerCell.ColorSelect" type="XML"/>
+				<Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui." />
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell
+				id="cell-5"
+				binding="{/cell5}"
+				title="Left Aligned Title"
+				titleAlignment="Left"
+				backgroundColorSet="{colorSet}"
+				backgroundColorShade="{colorShade}">
+				<core:Fragment fragmentName="sap.ui.layout.sample.BlockLayoutCustomBackgroundPerCell.ColorSelect" type="XML"/>
+				<Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui." />
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell
+				id="cell-6"
+				binding="{/cell6}"
+				title="Default Aligned Title"
+				backgroundColorSet="{colorSet}"
+				backgroundColorShade="{colorShade}">
+				<core:Fragment fragmentName="sap.ui.layout.sample.BlockLayoutCustomBackgroundPerCell.ColorSelect" type="XML"/>
+				<Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui." />
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+	</l:BlockLayout>
+</mvc:View>
