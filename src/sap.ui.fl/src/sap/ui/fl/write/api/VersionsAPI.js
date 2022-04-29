@@ -264,9 +264,14 @@ sap.ui.define([
 		if (!mPropertyBag.selector) {
 			return Promise.reject("No selector was provided");
 		}
+		if (!mPropertyBag.layer) {
+			return Promise.reject("No layer was provided");
+		}
+		if (!mPropertyBag.version) {
+			return Promise.reject("No version was provided");
+		}
 		mPropertyBag.styleClass = mPropertyBag.styleClass || "";
 		mPropertyBag.reference = getFlexReferenceForControl(mPropertyBag.selector);
-		mPropertyBag.appComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
 
 		return Versions.publish(mPropertyBag);
 	};

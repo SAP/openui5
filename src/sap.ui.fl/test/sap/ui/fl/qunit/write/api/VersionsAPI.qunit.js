@@ -697,4 +697,75 @@ sap.ui.define([
 				});
 		});
 	});
+
+	QUnit.module("Given VersionsAPI.publish is called", {
+		beforeEach: function() {
+			this.oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getManifestObject: function () {
+					return {};
+				},
+				getId: function () {
+					return "sComponentId";
+				},
+				getComponentData: function () {
+					return {
+						startupParameters: ["sap-app-id"]
+					};
+				}
+			};
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when no selector is provided", function (assert) {
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER
+			};
+
+			return VersionsAPI.publish(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "No selector was provided", "then an Error is thrown");
+			});
+		});
+		QUnit.test("when no layer is provided", function (assert) {
+			var mPropertyBag = {
+				selector: new Control()
+			};
+
+			return VersionsAPI.publish(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
+			});
+		});
+		QUnit.test("when no version is provided", function (assert) {
+			var mPropertyBag = {
+				selector: new Control(),
+				layer: "CUSTOMER"
+			};
+
+			return VersionsAPI.publish(mPropertyBag).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "No version was provided", "then an Error is thrown");
+			});
+		});
+		QUnit.test("when a selector, a layer amd a version were provided and the reference can be determined", function(assert) {
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				selector: new Control(),
+				version: "abc"
+			};
+
+			var sReference = "com.sap.app";
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+			var oPublishStub = sandbox.stub(Versions, "publish").resolves("Success");
+			return VersionsAPI.publish(mPropertyBag)
+				.then(function(sMessage) {
+					assert.equal(sMessage, "Success", "a message was returned");
+					assert.deepEqual(oPublishStub.getCall(0).args[0].reference, sReference, "the reference was passed");
+					assert.deepEqual(oPublishStub.getCall(0).args[0].version, "abc", "the version was passed");
+				});
+		});
+	});
 });

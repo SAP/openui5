@@ -1092,6 +1092,45 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given Storage when versions.publish is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and publish takes place", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LrepConnector", layers: ['ALL'], url: "/sap/bc/lrep"}
+			]);
+
+			var oPublishStub = sandbox.stub(WriteLrepConnector.versions, "publish").resolves();
+
+			return Storage.versions.publish(mPropertyBag).then(function () {
+				assert.equal(oPublishStub.callCount, 1, "the publish of the connector was called");
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector", function (assert) {
+			assert.expect(1);
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector"}
+			]);
+
+			return Storage.versions.publish(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.ok(sRejectionMessage, "then rejection message is passed");
+			});
+		});
+	});
+
 	QUnit.module("Given Storage when reset is called", {
 		beforeEach: function () {
 			InitialLrepConnector.xsrfToken = "123";
