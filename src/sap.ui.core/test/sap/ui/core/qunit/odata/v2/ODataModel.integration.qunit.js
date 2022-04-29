@@ -10687,6 +10687,78 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: Create a new entity with complex type. The response contains an updated property
+	// within this complex type. Therefore the changed entity handling works correct and a second
+	// ODataModel#submitChanges triggers no MERGE request.
+	// BCP: 2270069046
+	// BCP: 2270084110
+	QUnit.test("ODataListBinding#create: create with complex type results in no pending changes",
+			function (assert) {
+		var oBinding, oCreatedContext,
+			oModel = createSalesOrdersModel({refreshAfterChange : false}),
+			sView = '\
+<Table growing="true" growingThreshold="2" id="table" items="{/BusinessPartnerSet}">\
+	<Input id="country" value="{Address/Country}" />\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet?$skip=0&$top=2", {
+				results : []
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectValue("country", ["de"]);
+
+			// code under test
+			oCreatedContext = oBinding.create({Address : {Country : "de"}});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.BusinessPartner"
+						},
+						Address : {Country : "de"}
+					},
+					deepPath : "/BusinessPartnerSet('~key~')",
+					method : "POST",
+					requestUri : "BusinessPartnerSet"
+				}, {
+					data : {
+						__metadata : {
+							etag : "W/\"2022-04-14T08:08:58.312Z\"",
+							uri : "BusinessPartnerSet('42')"
+						},
+						BusinessPartnerID : "42",
+						Address : {Country : "DE"}
+					},
+					statusCode : 201
+				})
+				.expectValue("country", ["DE"]);
+
+			oModel.submitChanges();
+
+			return Promise.all([
+				// code under test
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+
+			// code under test
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: All pairs test for multi create (1)
 	// Number of transient: 2
 	// Delete: ODataModel.resetChanges

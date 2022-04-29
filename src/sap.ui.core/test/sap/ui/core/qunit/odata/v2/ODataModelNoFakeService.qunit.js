@@ -6274,24 +6274,38 @@ sap.ui.define([
 			oModel = {
 				mChangedEntities : {
 					key0 : {prop0 : "A", prop1 : "B"},
-					key1 : {prop0 : "A", prop1 : "B"}
+					key1 : {prop0 : "A", prop1 : "B", prop2 : {k0 : "p0"}, toNav : "nav"}
+				},
+				oMetadata : {
+					_getEntityTypeByPath : function () {},
+					_getNavigationPropertyNames : function () {}
 				},
 				_resolveGroup : function () {},
 				_updateChangedEntities : function () {},
 				abortInternalRequest : function () {}
 			},
 			oRequest = {
-				data : {prop0 : "A", prop1 : "_B"},
+				data : {prop0 : "A", prop1 : "_B", prop2 : {k0 : "p0"}, toNav : "_nav"},
 				deepPath : "~newDeepPath",
 				key : "key1"
 			};
 
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("newKey")
+			.returns("~entityType");
+		this.mock(oModel.oMetadata).expects("_getNavigationPropertyNames")
+			.withExactArgs("~entityType")
+			.returns(["toNav"]);
 		oHelperMock.expects("merge")
 			.withExactArgs({}, sinon.match.same(oModel.mChangedEntities.key1))
-			.returns({prop0 : "A", prop1 : "B"});
+			.returns({prop0 : "A", prop1 : "B", prop2 : {k0 : "p0"}, toNav : "nav"});
 		oHelperMock.expects("merge")
 			.withExactArgs({}, sinon.match.same(oEntity.__metadata))
 			.returns({deepPath : "~deepPath"});
+		oHelperMock.expects("deepEqual").withExactArgs("A", "A").returns(true);
+		oHelperMock.expects("deepEqual").withExactArgs("_B", "B").returns(false);
+		oHelperMock.expects("deepEqual").withExactArgs({k0 : "p0"}, {k0 : "p0"}).returns(true);
+		oHelperMock.expects("deepEqual").withExactArgs("_nav", "nav").returns(false);
 		this.mock(oModel).expects("_updateChangedEntities")
 			.withExactArgs({newKey : sinon.match.same(oEntity)});
 		this.mock(oModel).expects("_resolveGroup")
@@ -6306,7 +6320,7 @@ sap.ui.define([
 
 		assert.deepEqual(oModel.mChangedEntities, {
 			key0 : {prop0 : "A", prop1 : "B"},
-			key1 : {prop0 : "A", prop1 : "B"},
+			key1 : {prop0 : "A", prop1 : "B", prop2 : {k0 : "p0"}, toNav : "nav"},
 			newKey : {__metadata : {deepPath : "~newDeepPath"}, prop1 : "B"}
 		});
 		assert.notStrictEqual(oModel.mChangedEntities.newKey.__metadata, oEntity.__metadata);

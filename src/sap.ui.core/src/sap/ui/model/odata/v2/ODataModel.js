@@ -4387,15 +4387,18 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._keepChangesAfterCreate = function (oRequest, oEntity, sKey) {
-		var oKey2Entity, sProperty,
+		var oKey2Entity, aNavProps, sProperty,
 			oChangedEntity = this.mChangedEntities[oRequest.key];
 
 		if (oChangedEntity) {
+			aNavProps = this.oMetadata._getNavigationPropertyNames(
+				this.oMetadata._getEntityTypeByPath(sKey));
 			oChangedEntity = _Helper.merge({}, oChangedEntity);
 			oChangedEntity.__metadata = _Helper.merge({}, oEntity.__metadata);
 			oChangedEntity.__metadata.deepPath = oRequest.deepPath;
 			for (sProperty in oRequest.data) {
-				if (oRequest.data[sProperty] === oChangedEntity[sProperty]) {
+				if (_Helper.deepEqual(oRequest.data[sProperty], oChangedEntity[sProperty])
+						|| aNavProps.includes(sProperty)) {
 					delete oChangedEntity[sProperty];
 				}
 			}
