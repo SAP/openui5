@@ -24,11 +24,15 @@ html.sap-desktop .sapMBtnDisabled .sapMTB-Transparent-CTX .sapMBtnInner.sapMTogg
 .sapMTB-Transparent-CTX span.sapMBtnInner.sapMToggleBtnPressed .sapMBtnIcon,
 .sapMTB-Transparent-CTX span.sapMBtnInner.sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon,
 html.sap-desktop .sapMTB-Transparent-CTX .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon {
-  color: @sapUiHcStandardForeground;
+	color: @sapUiHcStandardForeground;
 }
 
 .sapMBtnDisabled .sapMToggleBtnPressed.sapMBtnInner .sapMBtnIcon,
 .sapMBtnDisabled .sapMToggleBtnPressed.sapMBtnInner.sapMBtnTransparent .sapMBtnIcon,
 html.sap-desktop.sapMToggleBtnPressed.sapMBtnTransparent.sapMBtnDisabled > .sapMBtnIcon{
-  color: @sapUiHcReducedAltForeground;
+	color: @sapUiHcReducedAltForeground;
+}
+
+.sapUiSizeCompact .sapMBar-CTX .sapMBtnDefault.sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
+	border-color: @sapUiButtonSelectedBorderColor;
 }
