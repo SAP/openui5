@@ -23,7 +23,7 @@ sap.ui.define([
 	 * or by defining a control adapter.
 	 *
 	 * There are some basic controls for which OPA5 has defined <code>Press</code> control
-	 * adapters. For more information, see {@link sap.ui.test.actions.Press.controlAdapters}.
+	 * adapters. For more information, see <code>controlAdapters</code> at {@link sap.ui.test.actions.Press}.
 	 *
 	 * @param {string}
 	 *            [sId] Optional ID for the new instance; generated automatically if
