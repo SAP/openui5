@@ -1630,5 +1630,29 @@ sap.ui.define([
 		}, 0);
 	});
 
+	QUnit.test("_getTableItems always returns array", function (assert) {
+		sinon.spy(oWrapper, "_getTableItems");
 
+		oWrapper._getTableItems();
+		assert.equal(oWrapper._getTableItems.lastCall.returnValue.length, 3, "_getTableItems returns array");
+
+		oWrapper._getTableItems(true);
+		assert.equal(oWrapper._getTableItems.lastCall.returnValue.length, 0, "_getTableItems returns array");
+
+		// no binding
+		var oTable = oWrapper._getWrappedTable();
+		sinon.stub(oTable,"getBinding").returns(undefined);
+		oWrapper._getTableItems();
+		assert.ok(oTable.getBinding.called, "Table.getBinding was called");
+		assert.ok(Array.isArray(oWrapper._getTableItems.lastCall.returnValue), "_getTableItems returns array without available binding");
+		oTable.getBinding.restore();
+
+		// no table
+		sinon.stub(oWrapper,"_getWrappedTable").returns(undefined);
+		oWrapper._getTableItems();
+		assert.ok(oWrapper._getWrappedTable.called, "_getWrappedTable was called");
+		assert.ok(Array.isArray(oWrapper._getTableItems.lastCall.returnValue), "_getTableItems returns array without available table");
+		oWrapper._getWrappedTable.restore();
+		oWrapper._getTableItems.restore();
+	});
 });
