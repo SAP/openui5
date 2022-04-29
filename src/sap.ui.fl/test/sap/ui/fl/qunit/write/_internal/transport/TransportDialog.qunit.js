@@ -78,6 +78,14 @@ sap.ui.define([
 			assert.equal(this.oDialog._oTransport.getEnabled(), true);
 		});
 
+		QUnit.test("setLocalObjectVisible", function (assert) {
+			assert.equal(this.oDialog._oLocalObjectButton.getVisible(), true, "by default the localObject button is visible");
+			this.oDialog.setLocalObjectVisible(false);
+			assert.equal(this.oDialog._oLocalObjectButton.getVisible(), false, "the button is hidden");
+			this.oDialog.setLocalObjectVisible(true);
+			assert.equal(this.oDialog._oLocalObjectButton.getVisible(), true, "the button is visible");
+		});
+
 		QUnit.test("_onPackageChangeError", function (assert) {
 			this.oDialog._onPackageChangeError({});
 			assert.equal(this.oDialog.getProperty("transports").length, 0);

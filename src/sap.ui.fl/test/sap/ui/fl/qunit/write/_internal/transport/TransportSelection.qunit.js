@@ -1,6 +1,8 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/_internal/transport/TransportDialog",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/write/_internal/transport/Transports",
 	"sap/ui/fl/write/_internal/connectors/Utils",
@@ -12,6 +14,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Storage,
+	TransportDialog,
 	TransportSelection,
 	Transports,
 	WriteUtils,
@@ -91,6 +95,37 @@ sap.ui.define([
 
 			this.oTransportSelection.selectTransport(oObject, fOkay, fError);
 		});
+
+		QUnit.module("localObjectVisible", {}, function () {
+			function setupAndTest(sTestName, bLocalObjectVisible) {
+				QUnit.test(sTestName, function (assert) {
+					var done = assert.async();
+					this.oServer.respondWith([
+						200,
+						{
+							"Content-Type": "application/json",
+							"Content-Length": 13,
+							"X-CSRF-Token": "0987654321"
+						},
+						"{ \"localonly\":false, \"transports\":[{\"transportId\":\"4711\",\"owner\":\"TESTUSER\",\"description\":\"test transport1\",\"locked\" : false}] }"
+					]);
+					this.oServer.autoRespond = true;
+					var oSetLocalObjectVisibleSpy = sinon.stub(this.oTransportSelection, "_openDialog").callsFake(function () {
+						assert.equal(oSetLocalObjectVisibleSpy.callCount, 1);
+						assert.equal(oSetLocalObjectVisibleSpy.getCall(0).args[0].localObjectVisible, bLocalObjectVisible);
+						done();
+					});
+					this.oTransportSelection.selectTransport({}, undefined, undefined, undefined, undefined, undefined, bLocalObjectVisible);
+				});
+			}
+
+			setupAndTest("when localObjectVisible is not set");
+
+			setupAndTest("when localObjectVisible is set to true", true);
+
+			setupAndTest("when localObjectVisible is set to false", false);
+		});
+
 
 		QUnit.test("sap.ui.fl.write._internal.transport.TransportSelection.selectTransport when LrepConnector is not available", function (assert) {
 			var done = assert.async();

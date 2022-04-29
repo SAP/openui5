@@ -671,7 +671,7 @@ sap.ui.define([
 				};
 
 				var oTransportSelection = new TransportSelection();
-				return oTransportSelection.openTransportSelection(null, mPropertyBag.rootControl, mPropertyBag.styleClass)
+				return oTransportSelection.openTransportSelection(null, mPropertyBag.rootControl, mPropertyBag.styleClass, false)
 				.then(function (oTransportInfo) {
 					if (oTransportSelection.checkTransportInfo(oTransportInfo)) {
 						BusyIndicator.show(0);
