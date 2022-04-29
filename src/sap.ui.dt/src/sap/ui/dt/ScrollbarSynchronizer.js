@@ -140,6 +140,11 @@ function(
 		this.sync(oEvent.target);
 	};
 
+	/**
+	 * Triggers the synchronization between two scroll target elements.
+	 * @param {Element} oSourceDomNode Element that needs to be synchronized with its pair.
+	 * @param {boolean} bForce Executes the synchronization even if the scroll values in both elements are the same.
+	 */
 	ScrollbarSynchronizer.prototype.sync = function (oSourceDomNode, bForce) {
 		if (
 			bForce

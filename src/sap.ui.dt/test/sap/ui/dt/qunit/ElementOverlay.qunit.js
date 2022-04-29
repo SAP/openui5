@@ -1407,15 +1407,18 @@ sap.ui.define([
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				// setTimeout is needed, because synced event doesn"t wait until all async processes are done
-				setTimeout(function() {
-					this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
-					this.oTextAreaOverlay = OverlayRegistry.getOverlay(this.oTextArea);
-					assert.ok(
-						this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
-						&& this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")
-					);
-					this.oTextAreaOverlay.attachEventOnce("geometryChanged", function() {
+				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
+				var mScrollSynchronizersMap = this.oScrollControlOverlay._oScrollbarSynchronizers;
+				var oScrollbarSynchronizer = mScrollSynchronizersMap.get(Array.from(mScrollSynchronizersMap.keys())[0]);
+				this.oTextAreaOverlay = OverlayRegistry.getOverlay(this.oTextArea);
+				assert.ok(
+					this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
+					&& this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")
+				);
+				oScrollbarSynchronizer.attachEventOnce("synced", function() {
+					assert.ok(true, "then the scrollbar container content is synchronized before it is removed");
+					// setTimeout is needed, because synced event doesn"t wait until all async processes are done
+					setTimeout(function() {
 						assert.ok(
 							!this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
 							&& !this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")
@@ -1423,10 +1426,10 @@ sap.ui.define([
 						this.oDesignTime.destroy();
 						oVerticalLayout.destroy();
 						fnDone();
-					}, this);
-					this.oTextArea.setHeight("50px");
-					oCore.applyChanges();
+					}.bind(this));
 				}.bind(this));
+				this.oTextArea.setHeight("50px");
+				oCore.applyChanges();
 			}.bind(this));
 		});
 

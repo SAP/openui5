@@ -786,28 +786,33 @@ sap.ui.define([
 	};
 
 	/**
-	 * Cleans up when scrolling is no longer needed in the overlay
-	 * @param {jQuery} $TargetDomRef - DOM reference to the element where dummy container is located
+	 * Cleans up when scrolling is no longer needed in the overlay.
+	 * @param {jQuery} $TargetDomRef - DOM reference to the element where dummy container is located.
 	 * @param {sap.ui.dt.ElementOverlay} [oTargetOverlay] - Overlay which holds scrollbar padding via CSS classes. In case of root overlay, the target is undefined.
-	 *
+	 * @param {Element} oOriginalDomRef - DomRef for the original element.
 	 * @private
 	 */
-	Overlay.prototype._deleteDummyContainer = function($TargetDomRef, oTargetOverlay) {
+	Overlay.prototype._deleteDummyContainer = function($TargetDomRef, oTargetOverlay, oOriginalDomRef) {
 		var $DummyScrollContainer = $TargetDomRef.find(">.sapUiDtDummyScrollContainer");
 		if ($DummyScrollContainer.length) {
+			var oScrollbarSynchronizer = this._oScrollbarSynchronizers.get($TargetDomRef.get(0));
 			$DummyScrollContainer.remove();
-			this._oScrollbarSynchronizers.get($TargetDomRef.get(0)).destroy();
-			this._oScrollbarSynchronizers.delete($TargetDomRef.get(0));
-			if (
-				oTargetOverlay._oScrollbarSynchronizers.size === 0
-				&& !oTargetOverlay.getChildren().some(function(oAggregationOverlay) {
-					return oAggregationOverlay._oScrollbarSynchronizers.size > 0;
-				})
-			) {
-				oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBar");
-				oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBarVertical");
-				oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
-			}
+			// Ensure that the element positions are synced before destroying
+			oScrollbarSynchronizer.attachEventOnce("synced", function() {
+				oScrollbarSynchronizer.destroy();
+				this._oScrollbarSynchronizers.delete($TargetDomRef.get(0));
+				if (
+					oTargetOverlay._oScrollbarSynchronizers.size === 0
+					&& !oTargetOverlay.getChildren().some(function(oAggregationOverlay) {
+						return oAggregationOverlay._oScrollbarSynchronizers.size > 0;
+					})
+				) {
+					oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBar");
+					oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBarVertical");
+					oTargetOverlay.removeStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
+				}
+			}.bind(this));
+			oScrollbarSynchronizer.sync(oOriginalDomRef, true);
 		}
 	};
 
@@ -877,7 +882,7 @@ sap.ui.define([
 				oScrollbarSynchronizer.sync(oOriginalDomRef, true);
 			}
 		} else {
-			this._deleteDummyContainer($TargetDomRef, oTargetOverlay);
+			this._deleteDummyContainer($TargetDomRef, oTargetOverlay, oOriginalDomRef);
 		}
 	};
 
