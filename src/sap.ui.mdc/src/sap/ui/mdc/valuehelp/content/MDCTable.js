@@ -222,8 +222,7 @@ sap.ui.define([
 						oRowMode.setMinRowCount(3);
 					}
 					var sSelectionMode = this._isSingleSelect() ? UITableSelectionMode.Single : UITableSelectionMode.MultiToggle;
-					var sSelectionBehavior = this._isSingleSelect() ? UITableSelectionBehavior.RowOnly : UITableSelectionBehavior.Row;
-					oInnerTable.setSelectionBehavior(sSelectionBehavior);
+					oInnerTable.setSelectionBehavior(UITableSelectionBehavior.Row);
 					_getUITableSelectionHandler().setSelectionMode(sSelectionMode);
 				},
 				handleScrolling: function (iIndex) {
