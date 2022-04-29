@@ -3134,4 +3134,40 @@ sap.ui.define([
 		//Assert
 		assert.equal(this.oUploadCollection._triggerLink.callCount, 1, "Download Success");
 	});
+
+	QUnit.module("UploadCollection MultiSelectMode", {
+		beforeEach: function() {
+			this.oUploadCollection = new UploadCollection("uploadCollection", {
+				mode: ListMode.MultiSelect,
+				items: {
+					path: "/items",
+					template: createItemTemplate(),
+					templateShareable: false
+				}
+			}).setModel(new JSONModel(oData));
+			this.oUploadCollection.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+
+	QUnit.test("Check Placement of UploadCollectionItem", function(assert) {
+		//Arrange
+		this.oUploadCollection.setMode(ListMode.MultiSelect);
+		document.getElementsByTagName("html")[0].classList.add("sapUiSizeCozy");
+
+		var aUploadCollectionItemsDomRef = sap.ui.getCore().byId("uploadCollection").getDomRef().querySelectorAll(".sapMLIB");
+		//Act
+		for (var i = 0 ; i < aUploadCollectionItemsDomRef.length; i++) {
+			var oCheckBoxDomRef = aUploadCollectionItemsDomRef[i].querySelector(".sapMCbBg").getBoundingClientRect();
+			var oListItemDomRef = aUploadCollectionItemsDomRef[i].querySelector(".sapMLIBContent").getBoundingClientRect();
+			//Assert
+			assert.ok(oListItemDomRef.x >= oCheckBoxDomRef.width + oCheckBoxDomRef.x, "Elements are placed correctly.");
+		}
+		//Reset
+		document.getElementsByTagName("html")[0].classList.remove("sapUiSizeCozy");
+	});
 });
