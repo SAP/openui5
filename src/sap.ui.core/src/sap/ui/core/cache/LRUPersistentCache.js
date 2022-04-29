@@ -243,6 +243,9 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 									transaction.abort();
 								});
 							} else {
+								if (!self._metadata.timestamps) {
+									self._metadata.timestamps = {};
+								}
 								resolve();
 							}
 						};
@@ -271,6 +274,61 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 					return Promise.resolve();
 				}
 				return del(this, key);
+			},
+
+			delWithFilters: function(filters) {
+				var self = this,
+					oFilters = filters || {};
+
+				return new Promise(function (resolve, reject) {
+					var oMetadataBackup = cloneMetadata(self._metadata),
+						oTransaction = self._db.transaction([ self.defaultOptions._contentStoreName, self.defaultOptions._metadataStoreName ], "readwrite"),
+						oContentStore = oTransaction.objectStore(self.defaultOptions._contentStoreName),
+						oMetadataStore = oTransaction.objectStore(self.defaultOptions._metadataStoreName),
+						oContentCursor = oContentStore.openCursor(),
+						sPrefix = oFilters.prefix || "";
+
+					function restoreMetadata() {
+						self._metadata = oMetadataBackup;
+						assignRUCounters(self);
+					}
+
+					function onTransactionFail(event) {
+						restoreMetadata();
+						reject(collectErrorData(event));
+					}
+
+					oTransaction.onerror = onTransactionFail;
+					oTransaction.onabort = onTransactionFail;
+
+					oTransaction.oncomplete = function(event) {
+						resolve();
+					};
+
+					oContentCursor.onsuccess = function(event) {
+						var oCursor = event.target.result,
+							sKey,
+							oRequest;
+
+						if (!oCursor) {
+							oMetadataStore.put(self._metadata, self.defaultOptions._metadataKey);
+							return;
+						}
+
+						sKey = oCursor.value.key;
+
+						if (sKey.indexOf(sPrefix) === 0
+							&& (!oFilters.olderThan || self._metadata.timestamps[sKey] <= oFilters.olderThan)) {
+							oRequest = oCursor.delete();
+							oRequest.onsuccess = function() {
+								Log.debug('Deleted ' + sKey + '!');
+								deleteMetadataForEntry(self, sKey);
+							};
+						}
+
+						oCursor.continue();
+					};
+				});
 			},
 
 			reset: function () {
@@ -320,9 +378,13 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 			sMsrCatSet = "LRUPersistentCache,set",
 			iMsrCounter = 0;
 
-		function scheduleMetadataSave(self) {//an async store of the metadata , the caller should not be interested in the result, since no reporting status back is supported
+		function scheduleMetadataSave(self, oItem) {//an async store of the metadata , the caller should not be interested in the result, since no reporting status back is supported
+			var transaction;
+
+			self._metadata.timestamps[oItem.oData.key] = Date.now();
+
 			//locking both stores as no further modification is required. This will block any further metadata update and sets, but this is the way to keep the metadata consistent
-			var transaction = self._db.transaction([self.defaultOptions._contentStoreName, self.defaultOptions._metadataStoreName], "readwrite");
+			transaction = self._db.transaction([self.defaultOptions._contentStoreName, self.defaultOptions._metadataStoreName], "readwrite");
 
 			transaction.onerror = transaction.onabort = function (event) {
 				Log.warning("Cache Manager cannot persist the information about usage of an entry. This may lead to earlier removal of the entry if browser storage space is over. Details: " + transaction.error);
@@ -432,8 +494,10 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 							if (oItem.oData.lu !== self._mru) { // Update the usage data only if the item is not already the most used one
 								oItem.oData.lu = ++self._mru;
 								updateItemUsage(self, oItem);
-								scheduleMetadataSave(self); //postponed as update of the metadata is not crucial here
 							}
+
+							//postponed as update of the metadata is not crucial here
+							scheduleMetadataSave(self, oItem);
 
 							Measurement.end(sMsrPutMetadata);
 							result = oItem.deserialize().oData.value;
@@ -703,6 +767,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 
 		function initMetadata(ui5version) {
 			return {
+				timestamps: {},
 				__byKey__: {},
 				__byIndex__: {},
 				__ui5version: ui5version
@@ -721,6 +786,9 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 			}
 			for (var key in source.__byKey__) {
 				backupMetadata.__byKey__[key] = source.__byKey__[key];
+			}
+			for (var key in source.timestamps) {
+				backupMetadata.timestamps[key] = source.timestamps[key];
 			}
 			return backupMetadata;
 		}
@@ -817,6 +885,9 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 			var iIndex = self._metadata.__byKey__[key];
 			delete self._metadata.__byKey__[key];
 			delete self._metadata.__byIndex__[iIndex];
+			if (self._metadata.timestamps[key]) {
+				delete self._metadata.timestamps[key];
+			}
 			seekMetadataLRU(self);
 		}
 

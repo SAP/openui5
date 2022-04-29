@@ -30,6 +30,9 @@ sap.ui.define([],
 			del: function () {
 				return Promise.resolve();
 			},
+			delWithFilters: function() {
+				return Promise.resolve();
+			},
 			reset: function () {
 				return Promise.resolve();
 			},
