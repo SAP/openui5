@@ -13,8 +13,6 @@ sap.ui.define([
 	function(ChangeReason, ClientListBinding, XMLHelper, deepEqual, each) {
 	"use strict";
 
-
-
 	/**
 	 *
 	 * @class
@@ -30,59 +28,6 @@ sap.ui.define([
 	 * @extends sap.ui.model.ClientListBinding
 	 */
 	var XMLListBinding = ClientListBinding.extend("sap.ui.model.xml.XMLListBinding");
-
-	/**
-	 * Return contexts for the list or a specified subset of contexts
-	 * @param {int} [iStartIndex=0] the startIndex where to start the retrieval of contexts
-	 * @param {int} [iLength=length of the list] determines how many contexts to retrieve beginning from the start index.
-	 * Default is the whole list length.
-	 * @param {int} [iMaximumPrefetchSize]
-	 *   Not used
-	 * @param {boolean} [bKeepCurrent]
-	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.102.0.
-	 * @return {sap.ui.model.Context[]} the contexts array
-	 * @throws {Error}
-	 *   If extended change detection is enabled and <code>bKeepCurrent</code> is set, or if
-	 *   <code>iMaximumPrefetchSize</code> and <code>bKeepCurrent</code> are set
-	 *
-	 * @protected
-	 */
-	XMLListBinding.prototype.getContexts = function(iStartIndex, iLength, iMaximumPrefetchSize,
-			bKeepCurrent) {
-		var aContextData, aContexts, i;
-
-		this._updateLastStartAndLength(iStartIndex, iLength, iMaximumPrefetchSize, bKeepCurrent);
-		if (!iStartIndex) {
-			iStartIndex = 0;
-		}
-		if (!iLength) {
-			iLength = Math.min(this.iLength, this.oModel.iSizeLimit);
-		}
-		aContexts = this._getContexts(iStartIndex, iLength);
-		if (this.bUseExtendedChangeDetection) {
-			aContextData = [];
-			for (i = 0; i < aContexts.length; i++) {
-				aContextData.push(this.getContextData(aContexts[i]));
-			}
-			//Check diff
-			if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
-				aContexts.diff = this.diffData(this.aLastContextData, aContextData);
-			}
-			this.iLastEndIndex = iStartIndex + iLength;
-			this.aLastContexts = aContexts.slice(0);
-			this.aLastContextData = aContextData.slice(0);
-		}
-
-		return aContexts;
-	};
-
-	XMLListBinding.prototype.getCurrentContexts = function() {
-		if (this.bUseExtendedChangeDetection) {
-			return this.aLastContexts || [];
-		} else {
-			return this.getContexts(this.iLastStartIndex, this.iLastLength);
-		}
-	};
 
 	/**
 	 * Returns the entry data as required for change detection/diff. For the XMLModel this is the
@@ -184,7 +129,5 @@ sap.ui.define([
 		}
 	};
 
-
 	return XMLListBinding;
-
 });

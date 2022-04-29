@@ -1,13 +1,24 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/message/Message"], function(JSONModel, Message) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/message/Message",
+	"sap/ui/model/ClientListBinding",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/message/MessageListBinding",
+	"sap/ui/test/TestUtils"
+], function(Log, Message, ClientListBinding, JSONModel, MessageListBinding, TestUtils) {
 	"use strict";
 
-	QUnit.module("sap/ui/model/message/MessageListBinding", {
+	QUnit.module("sap.ui.model.message.MessageListBinding", {
 		afterEach: function() {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
 			sap.ui.getCore().getMessageManager().removeAllMessages();
 		},
 		beforeEach: function() {
 			sap.ui.getCore().getMessageManager().removeAllMessages();
+			return TestUtils.awaitRendering();
 		}
 	});
 
@@ -60,10 +71,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/message/Message"], fu
 		var currentContexts = listBinding.getCurrentContexts();
 
 		assert.equal(contexts.length, 5, "contexts should contain 5 items");
-		assert.equal(currentContexts.length, 8, "Current contexts should contain 8 items");
-		currentContexts.forEach(function(context, i) {
-			assert.equal(context.getPath(), "/" + i, "ListBinding context");
-		});
+		assert.deepEqual(currentContexts, contexts);
 
 		oModel.getData()[3].setMessage("message12");
 		oModel.getData()[5].setMessage("messa121");
@@ -73,12 +81,11 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/message/Message"], fu
 		var fnContextLengthChangedHandler = function(){
 			listBinding.detachChange(fnContextLengthChangedHandler);
 			currentContexts = listBinding.getCurrentContexts();
-			assert.equal(currentContexts.length, 9, "Current contexts should contain 9 items.");
-			currentContexts.forEach(function(context, i) {
-				assert.equal(context.getPath(), "/" + i, "ListBinding context");
-			});
+			assert.deepEqual(currentContexts, contexts, "current contexts not changed");
+
 			contexts = listBinding.getContexts(0, 5);
-			assert.equal(contexts.diff.length, 14, "Delta information is available");
+			assert.equal(contexts.diff.length, 4,
+				"Delta information is available, 2x delete and 2x insert");
 
 			oModel.getData()[3].setMessage("newContent");
 			var fnMessageDataChangedHandler = function(){
@@ -101,7 +108,17 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/message/Message"], fu
 
 		listBinding.attachChange(fnContextLengthChangedHandler);
 		listBinding.checkUpdate();
+	});
 
+	//**********************************************************************************************
+	QUnit.test("getContexts: implemented in ClientListBinding", function (assert) {
+		assert.strictEqual(MessageListBinding.prototype.getContexts,
+			ClientListBinding.prototype.getContexts);
+	});
 
+	//**********************************************************************************************
+	QUnit.test("getCurrentContexts: implemented in ClientListBinding", function (assert) {
+		assert.strictEqual(MessageListBinding.prototype.getCurrentContexts,
+			ClientListBinding.prototype.getCurrentContexts);
 	});
 });
