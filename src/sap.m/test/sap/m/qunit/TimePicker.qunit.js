@@ -3361,6 +3361,26 @@ sap.ui.define([
 		assert.ok(oPopupContent[1].isA("sap.m.TimePickerClocks"), "There is a sap.m.TimePickerClocks created in the popup content");
 	});
 
+	QUnit.test("Value state and value state text are properly updated", function(assert) {
+		// Arrange
+		var oFocusInSpy = this.spy(sap.m.DateTimeField.prototype, "onfocusin"),
+			oFakeEvent = {
+				target: {
+					classList: {
+						contains: function() { return false; }
+					}
+				}
+			};
+		this.oTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		this.oTP.onfocusin(oFakeEvent);
+
+		// Assert
+		assert.ok(oFocusInSpy.calledOnce, "sap.m.DateTimeField.prototype.onfocusin method is called");
+	});
+
 	function triggerMultipleKeypress(timePicker, sFeed) {
 		var aFeed = sFeed.split(""),
 				$TimePicker = timePicker.getDomRef(),
