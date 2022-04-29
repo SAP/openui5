@@ -6,8 +6,8 @@
 
 var aLocales = [
 	"ar_SA",
-	"de_DE",
 	"da_DK",
+	"de_DE",
 	"en_GB",
 	"en_US",
 	"es_MX",
@@ -17,17 +17,17 @@ var aLocales = [
 	"ja_JP",
 	"id_ID",
 	"it_IT",
-	"ro_RO",
-	"ru_RU",
-	"pt_BR",
-	"hi_IN",
 	"he_IL",
-	"tr_TR",
-	"th_TH",
+	"hi_IN",
+	"ko_KR",
+	"ms_SG",
 	"nl_NL",
 	"pl_PL",
-	"ko_KR",
-	"zh_TW",
+	"pt_BR",
+	"ro_RO",
+	"ru_RU",
+	"th_TH",
+	"tr_TR",
 	"zh_CN"
 ];
 
