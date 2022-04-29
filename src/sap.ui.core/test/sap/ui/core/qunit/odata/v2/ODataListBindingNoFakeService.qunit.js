@@ -311,7 +311,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.sGroupId, undefined);
 		assert.strictEqual(oBinding.sRefreshGroupId, undefined);
 		assert.strictEqual(oBinding.bLengthRequested, false);
-		assert.strictEqual(oBinding.bUseExtendedChangeDetection, true);
+		assert.strictEqual(oBinding.bUseExtendedChangeDetection, false);
 		assert.strictEqual(oBinding.bFaultTolerant, undefined);
 		assert.strictEqual(oBinding.bLengthFinal, false);
 		assert.strictEqual(oBinding.iLastEndIndex, 0);
@@ -1466,6 +1466,7 @@ sap.ui.define([
 				_fireChange : function () {},
 				_getContexts : function () {},
 				_hasTransientParentContext : function () {},
+				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {},
 				useClientMode : function () {}
 			},
@@ -1476,6 +1477,8 @@ sap.ui.define([
 			aContexts.dataRequested = true;
 		}
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_updateLastStartAndLength")
+			.withExactArgs(0, 2, undefined, undefined);
 		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns(aContexts);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
@@ -1487,9 +1490,7 @@ sap.ui.define([
 		aResultContexts = ODataListBinding.prototype.getContexts.call(oBinding, 0, 2);
 
 		assert.strictEqual(aResultContexts, aContexts);
-		assert.strictEqual(oBinding.iLastLength, 2);
-		assert.strictEqual(oBinding.iLastStartIndex, 0);
-		assert.strictEqual(oBinding.iLastThreshold, undefined);
+		assert.strictEqual(oBinding.iLastMaximumPrefetchSize, undefined);
 	});
 });
 
@@ -1503,11 +1504,14 @@ sap.ui.define([
 				_fireChange : function () {},
 				_getContexts : function () {},
 				_hasTransientParentContext : function () {},
+				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {},
 				useClientMode : function () {}
 			};
 
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_updateLastStartAndLength")
+			.withExactArgs(0, 2, undefined, undefined);
 		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns([]);
 		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
@@ -1529,6 +1533,7 @@ sap.ui.define([
 				_getLength : function () {},
 				_getSkipAndTop : function () {},
 				_hasTransientParentContext : function () {},
+				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {},
 				loadData : function () {},
 				useClientMode : function () {}
@@ -1537,6 +1542,8 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getLength").withExactArgs().exactly(bLengthFinal ? 0 : 1);
+		this.mock(oBinding).expects("_updateLastStartAndLength")
+			.withExactArgs(0, 10, 100, undefined);
 		this.mock(oBinding).expects("_getContexts")
 			.withExactArgs(0, 10)
 			.returns(aContexts);
@@ -1552,6 +1559,8 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0, 10, 100),
 			aContexts);
+
+		assert.strictEqual(oBinding.iLastMaximumPrefetchSize, 100);
 	});
 });
 
@@ -1565,11 +1574,14 @@ sap.ui.define([
 				_getContexts : function () {},
 				_getMaximumLength : function () {},
 				_hasTransientParentContext : function () {},
+				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {},
 				useClientMode : function () {}
 			};
 
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_updateLastStartAndLength")
+			.withExactArgs(0, undefined, 100, undefined);
 		this.mock(oBinding).expects("_getMaximumLength").withExactArgs().returns("~iLength");
 		this.mock(oBinding).expects("_getContexts")
 			.withExactArgs(0, "~iLength")
@@ -1601,6 +1613,7 @@ sap.ui.define([
 				_getContexts : function () {},
 				_getSkipAndTop : function () {},
 				_hasTransientParentContext : function () {},
+				_updateLastStartAndLength : function () {},
 				isFirstCreateAtEnd : function () {},
 				loadData : function () {},
 				useClientMode : function () {}
@@ -1608,6 +1621,8 @@ sap.ui.define([
 			aContexts = [];
 
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_updateLastStartAndLength")
+			.withExactArgs(0, 10, 100, undefined);
 		this.mock(oBinding).expects("_getContexts")
 			.withExactArgs(0, 10)
 			.returns(aContexts);
@@ -1679,6 +1694,7 @@ sap.ui.define([
 				_getContexts : function () {},
 				_getSkipAndTop : function () {},
 				_hasTransientParentContext : function () {},
+				_updateLastStartAndLength : function () {},
 				getContextData : function () {},
 				isFirstCreateAtEnd : function () {},
 				loadData : function () {},
@@ -1690,6 +1706,13 @@ sap.ui.define([
 			aContexts = oFixture.sAvailableContexts === "none" ? [] : [oContext];
 
 		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_updateLastStartAndLength")
+			.withExactArgs(0, 10, 100, undefined)
+			.callsFake(function () {
+				// set last length and start to see that values are not changed anywhere else
+				this.iLastLength = "~iLastLengthUpdated";
+				this.iLastStartIndex = "~iLastStartIndexUpdated";
+			});
 		this.mock(oBinding).expects("_getContexts")
 			.withExactArgs(0, 10)
 			.returns(aContexts);
@@ -1712,7 +1735,8 @@ sap.ui.define([
 			.returns(oFixture.sAvailableContexts === "created" ? false : undefined);
 		this.mock(oBinding).expects("getContextData")
 			.withExactArgs(sinon.match.same(oContext))
-			.exactly(oFixture.iExpectedLength);
+			.exactly(oFixture.iExpectedLength)
+			.returns("~data0");
 
 		// code under test
 		aResult = ODataListBinding.prototype.getContexts.call(oBinding, 0, 10, 100);
@@ -1720,24 +1744,99 @@ sap.ui.define([
 		assert.strictEqual(aResult, aContexts);
 		assert.strictEqual(aResult.dataRequested, true);
 		assert.strictEqual(aResult.length, oFixture.iExpectedLength);
+
+		assert.deepEqual(oBinding.aLastContextData, oFixture.iExpectedLength ? ["~data0"] : []);
+		assert.deepEqual(oBinding.aLastContexts, aContexts);
+		assert.notStrictEqual(oBinding.aLastContexts, aContexts);
+		assert.strictEqual(oBinding.iLastEndIndex, 10);
+		assert.strictEqual(oBinding.iLastLength, "~iLastLengthUpdated");
+		assert.strictEqual(oBinding.iLastMaximumPrefetchSize, 100);
+		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndexUpdated");
+
 	});
 });
+
+	//**********************************************************************************************
+	QUnit.test("getContexts: throws error of _updateLastStartAndLength", function (assert) {
+		var oBinding = {
+				bLengthFinal : true,
+				_hasTransientParentContext : function () {},
+				_updateLastStartAndLength : function () {}
+			},
+			oError = new Error("foo");
+
+		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_updateLastStartAndLength")
+			.withExactArgs("~iStartIndex", "~iLength", "~iMaximumPrefetchSize", "~bKeepCurrent")
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			ODataListBinding.prototype.getContexts.call(oBinding, "~iStartIndex", "~iLength",
+				"~iMaximumPrefetchSize", "~bKeepCurrent");
+		}, oError);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("getContexts: bKeepCurrent=true, no extended change detection", function (assert) {
+		var oBinding = {
+				aAllKeys : [/* content nor relevant for this test */],
+				aLastContextData : "~aLastContextData",
+				aLastContexts : "~aLastContexts",
+				iLastEndIndex : "~iLastEndIndex",
+				iLastLength : "~iLastLength",
+				iLastMaximumPrefetchSize : "~iLastMaximumPrefetchSize",
+				iLastStartIndex : "~iLastStartIndex",
+				bLengthFinal : true,
+				_getContexts : function () {},
+				_hasTransientParentContext : function () {},
+				_updateLastStartAndLength : function () {},
+				isFirstCreateAtEnd : function () {},
+				useClientMode : function () {}
+			},
+			aContexts = ["~context0", "~context1"];
+
+		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_updateLastStartAndLength")
+			.withExactArgs(7, 2, undefined, true);
+		this.mock(oBinding).expects("_getContexts").withExactArgs(7, 2).returns(aContexts);
+		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
+
+		// code under test
+		assert.strictEqual(
+			ODataListBinding.prototype.getContexts.call(oBinding, 7, 2, undefined, true),
+			aContexts);
+
+		assert.strictEqual(oBinding.aLastContextData, "~aLastContextData");
+		assert.strictEqual(oBinding.aLastContexts, "~aLastContexts");
+		assert.strictEqual(oBinding.iLastEndIndex, "~iLastEndIndex");
+		assert.strictEqual(oBinding.iLastLength, "~iLastLength");
+		assert.strictEqual(oBinding.iLastMaximumPrefetchSize, "~iLastMaximumPrefetchSize");
+		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndex");
+	});
 
 	//*********************************************************************************************
 [
 	{aCreatedContexts : [], iLength : 0, iExpected : 0},
 	{aCreatedContexts : [{}, {}, {}], iLength : 0, iExpected : 3},
 	{aCreatedContexts : [], iLength : 42, iExpected : 52},
-	{aCreatedContexts : [], iLastLength : 17, iLastThreshold : 13, iLength : 42, iExpected : 55},
+	{
+		aCreatedContexts : [],
+		iLastLength : 17,
+		iLastMaximumPrefetchSize : 13,
+		iLength : 42,
+		iExpected : 55
+	},
 	{aCreatedContexts : [], iLastLength : 17, iLength : 42, iExpected : 59},
 	{aCreatedContexts : [{}], iLength : 42, iExpected : 53},
-	{aCreatedContexts : [{}], iLastThreshold : 13, iLength : 42, iExpected : 56},
+	{aCreatedContexts : [{}], iLastMaximumPrefetchSize : 13, iLength : 42, iExpected : 56},
 	{aCreatedContexts : [{}, {}], iLastLength : 17, iLength : 42, iExpected : 61}
 ].forEach(function (oFixture, i) {
 	QUnit.test("getLength: bLengthFinal=false; #" + i, function (assert) {
 		var oBinding = {
 				iLastLength : oFixture.iLastLength,
-				iLastThreshold : oFixture.iLastThreshold,
+				iLastMaximumPrefetchSize : oFixture.iLastMaximumPrefetchSize,
 				iLength : oFixture.iLength,
 				bLengthFinal : false,
 				_getCreatedContexts : function () {}
@@ -2030,8 +2129,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("_getCreatedContexts").withExactArgs(); // return value unused
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(sinon.match.same(oBinding.aKeys), "~startIndex", "~length", "~threshold",
-				 "~length")
+			.withExactArgs(sinon.match.same(oBinding.aKeys), "~startIndex", "~length",
+				"~maximumPrefetchSize", "~length")
 			.returns("~aIntervals");
 		this.mock(ODataUtils).expects("_mergeIntervals")
 			.withExactArgs("~aIntervals")
@@ -2039,8 +2138,8 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(
-			ODataListBinding.prototype._getSkipAndTop.call(oBinding, "~startIndex","~length",
-				"~threshold"),
+			ODataListBinding.prototype._getSkipAndTop.call(oBinding, "~startIndex", "~length",
+				"~maximumPrefetchSize"),
 			{skip : 222, top : 111});
 	});
 
@@ -2065,8 +2164,8 @@ sap.ui.define([
 			.withExactArgs()
 			.returns(false);
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(["created0", "key0", "key1"], "~startIndex", "~length", "~threshold",
-				"~length")
+			.withExactArgs(["created0", "key0", "key1"], "~startIndex", "~length",
+				"~maximumPrefetchSize", "~length")
 			.returns("~aIntervals");
 		this.mock(ODataUtils).expects("_mergeIntervals")
 			.withExactArgs("~aIntervals")
@@ -2074,8 +2173,8 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(
-			ODataListBinding.prototype._getSkipAndTop.call(oBinding, "~startIndex",
-				"~length", "~threshold"),
+			ODataListBinding.prototype._getSkipAndTop.call(oBinding, "~startIndex", "~length",
+				"~maximumPrefetchSize"),
 			oFixture.result);
 	});
 });
@@ -2097,7 +2196,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("_getCreatedContexts").withExactArgs().returns([]);
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(undefined);
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(sinon.match.same(oBinding.aKeys) , 0, 10, "~threshold", oFixture.iLimit)
+			.withExactArgs(sinon.match.same(oBinding.aKeys) , 0, 10, "~maximumPrefetchSize",
+				oFixture.iLimit)
 			.returns("~aIntervals");
 		this.mock(ODataUtils).expects("_mergeIntervals")
 			.withExactArgs("~aIntervals")
@@ -2105,7 +2205,7 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(
-			ODataListBinding.prototype._getSkipAndTop.call(oBinding, 0, 10, "~threshold"),
+			ODataListBinding.prototype._getSkipAndTop.call(oBinding, 0, 10, "~maximumPrefetchSize"),
 			{skip : 222, top : 111});
 	});
 });
@@ -2123,7 +2223,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("_getCreatedContexts").withExactArgs().returns([]);
 		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(sinon.match.same(oBinding.aKeys) , 0, 10, "~threshold", "~length")
+			.withExactArgs(sinon.match.same(oBinding.aKeys) , 0, 10, "~maximumPrefetchSize",
+				"~length")
 			.returns("~aIntervals");
 		this.mock(ODataUtils).expects("_mergeIntervals")
 			.withExactArgs("~aIntervals")
@@ -2131,7 +2232,7 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(
-			ODataListBinding.prototype._getSkipAndTop.call(oBinding, 0, 10, "~threshold"),
+			ODataListBinding.prototype._getSkipAndTop.call(oBinding, 0, 10, "~maximumPrefetchSize"),
 			undefined);
 	});
 
@@ -2152,7 +2253,8 @@ sap.ui.define([
 			.withExactArgs()
 			.returns(true);
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs("~keys" , "~startIndex", "~length", "~threshold", "~bindingLength")
+			.withExactArgs("~keys" , "~startIndex", "~length", "~maximumPrefetchSize",
+				"~bindingLength")
 			.returns("~aIntervals");
 		this.mock(ODataUtils).expects("_mergeIntervals")
 			.withExactArgs("~aIntervals")
@@ -2161,7 +2263,7 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(
 			ODataListBinding.prototype._getSkipAndTop.call(oBinding, "~startIndex",
-				"~length", "~threshold"),
+				"~length", "~maximumPrefetchSize"),
 			{skip : 222, top : 111});
 	});
 

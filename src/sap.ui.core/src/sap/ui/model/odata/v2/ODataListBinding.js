@@ -101,7 +101,7 @@ sap.ui.define([
 			this.sGroupId = undefined;
 			this.sRefreshGroupId = undefined;
 			this.bLengthRequested = false;
-			this.bUseExtendedChangeDetection = true;
+			this.bUseExtendedChangeDetection = false;
 			this.bFaultTolerant = mParameters && mParameters.faultTolerant;
 			this.bLengthFinal = false;
 			this.iLastEndIndex = 0;
@@ -214,16 +214,29 @@ sap.ui.define([
 	/**
 	 * Return contexts for the list.
 	 *
-	 * @param {int} [iStartIndex] The start index of the requested contexts
-	 * @param {int} [iLength] The requested amount of contexts
-	 * @param {int} [iThreshold] The threshold value
+	 * @param {int} [iStartIndex=0]
+	 *   The index where to start the retrieval of contexts
+	 * @param {int} [iLength]
+	 *   The number of contexts to retrieve beginning from the start index; defaults to the model's
+	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}, or to the binding's final length
+	 * @param {int} [iMaximumPrefetchSize=0]
+	 *   The maximum number of contexts to read before and after the given range; with this,
+	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
+	 *   table
+	 * @param {boolean} [bKeepCurrent]
+	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.102.0.
 	 * @return {sap.ui.model.odata.v2.Context[]}
-	 *   The array of contexts for each row of the bound list
+	 *   The array of already available contexts with the first entry containing the context for
+	 *   <code>iStartIndex</code>
+	 * @throws {Error}
+	 *   If extended change detection is enabled and <code>bKeepCurrent</code> is set, or if
+	 *   <code>iMaximumPrefetchSize</code> and <code>bKeepCurrent</code> are set
+	 *
 	 * @protected
 	 */
-	ODataListBinding.prototype.getContexts = function(iStartIndex, iLength, iThreshold) {
-		var aContexts, oSkipAndTop,
-			aContextData = [];
+	ODataListBinding.prototype.getContexts = function(iStartIndex, iLength, iMaximumPrefetchSize,
+			bKeepCurrent) {
+		var aContexts, aContextData, oSkipAndTop;
 
 		if (this.bInitial || this._hasTransientParentContext()) {
 			return [];
@@ -246,25 +259,24 @@ sap.ui.define([
 		}
 
 		//this.bInitialized = true;
-		this.iLastLength = iLength;
-		this.iLastStartIndex = iStartIndex;
-		this.iLastThreshold = iThreshold;
-
-		//	Set default values if startindex, threshold or length are not defined
+		this._updateLastStartAndLength(iStartIndex, iLength, iMaximumPrefetchSize, bKeepCurrent);
+		if (!bKeepCurrent) {
+			this.iLastMaximumPrefetchSize = iMaximumPrefetchSize;
+		}
 		if (!iStartIndex) {
 			iStartIndex = 0;
 		}
 		if (!iLength) {
 			iLength = this._getMaximumLength();
 		}
-		if (!iThreshold) {
-			iThreshold = 0;
+		if (!iMaximumPrefetchSize) {
+			iMaximumPrefetchSize = 0;
 		}
 
 		// re-set the threshold in OperationMode.Auto
 		if (this.sOperationMode == OperationMode.Auto) {
 			if (this.iThreshold >= 0) {
-				iThreshold = Math.max(this.iThreshold, iThreshold);
+				iMaximumPrefetchSize = Math.max(this.iThreshold, iMaximumPrefetchSize);
 			}
 		}
 		aContexts = this._getContexts(iStartIndex, iLength);
@@ -274,7 +286,7 @@ sap.ui.define([
 				aContexts.dataRequested = true;
 			}
 		} else {
-			oSkipAndTop = this._getSkipAndTop(iStartIndex, iLength, iThreshold);
+			oSkipAndTop = this._getSkipAndTop(iStartIndex, iLength, iMaximumPrefetchSize);
 			// check if metadata are already available
 			if (this.oModel.getServiceMetadata()) {
 				// If rows are missing send a request
@@ -298,9 +310,10 @@ sap.ui.define([
 			if (!aContexts.dataRequested && aContexts.length > 0) {
 				this._fireChange({reason : ChangeReason.Change});
 			}
-		} else {
+		} else if (!bKeepCurrent) {
 			// Do not create context data and diff in case of refresh, only if real data has been received
 			// The current behaviour is wrong and makes diff detection useless for OData in case of refresh
+			aContextData = [];
 			for (var i = 0; i < aContexts.length; i++) {
 				aContextData.push(this.getContextData(aContexts[i]));
 			}
@@ -310,9 +323,10 @@ sap.ui.define([
 					aContexts.diff = this.diffData(this.aLastContextData, aContextData);
 				}
 			}
+
 			this.iLastEndIndex = iStartIndex + iLength;
 			this.aLastContexts = aContexts.slice(0);
-			this.aLastContextData = aContextData.slice(0);
+			this.aLastContextData = aContextData;
 		}
 
 		return aContexts;
@@ -911,7 +925,7 @@ sap.ui.define([
 
 		// If length is not final and larger than zero, add some additional length to enable
 		// scrolling/paging for controls that only do this if more items are available
-		return iResult + (this.iLastThreshold || this.iLastLength || 10);
+		return iResult + (this.iLastMaximumPrefetchSize || this.iLastLength || 10);
 	};
 
 	/**
@@ -1998,13 +2012,14 @@ sap.ui.define([
 
 	/**
 	 * Gets an object with the values for system query options $skip and $top based on the given
-	 * start index (from control point of view), length and threshold. The number of entities
-	 * created via {@link #create} is considered for the <code>$skip</code> value if created at the
-	 * beginning, but it is not considered for the <code>$top</code> value.
+	 * start index (from control point of view), length and maximum prefetch size. The number of
+	 * entities created via {@link #create} is considered for the <code>$skip</code> value if
+	 * created at the beginning, but it is not considered for the <code>$top</code> value.
 	 *
 	 * @param {number} iStartIndex The start index from control point of view
 	 * @param {number} iLength The length
-	 * @param {number} iThreshold The threshold
+	 * @param {number} iMaximumPrefetchSize
+	 *   The maximum number of contexts to read before and after the given range
 	 * @returns {object}
 	 *   An object containing the properties <code>skip</code> and <code>top</code>; the values
 	 *   correspond to the system query options <code>$skip</code> and <code>$top</code>.
@@ -2012,7 +2027,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype._getSkipAndTop = function (iStartIndex, iLength, iThreshold) {
+	ODataListBinding.prototype._getSkipAndTop = function (iStartIndex, iLength,
+			iMaximumPrefetchSize) {
 		var oInterval, aIntervals,
 			aCreatedContexts = this._getCreatedContexts(),
 			bFirstCreateAtStart = this.isFirstCreateAtEnd() === false,
@@ -2020,7 +2036,7 @@ sap.ui.define([
 				? aCreatedContexts.concat(this.aKeys)
 				: this.aKeys;
 
-		aIntervals = ODataUtils._getReadIntervals(aKeys, iStartIndex, iLength, iThreshold,
+		aIntervals = ODataUtils._getReadIntervals(aKeys, iStartIndex, iLength, iMaximumPrefetchSize,
 			/*iLimit*/this.bLengthFinal ? this.iLength : undefined);
 		oInterval = ODataUtils._mergeIntervals(aIntervals);
 
