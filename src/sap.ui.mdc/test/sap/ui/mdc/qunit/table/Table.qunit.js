@@ -3143,21 +3143,25 @@ sap.ui.define([
 		this.oTable.addAction(oAction);
 
 		return this.oTable.initialized().then(function() {
-			Core.applyChanges();
-
-			oButton.focus();
-			assert.ok(oButton.getFocusDomRef() === document.activeElement);
-
-			this.oTable.focus();
-			assert.ok(this.oTable._oTable.getFocusDomRef() === document.activeElement);
-
-			this.oTable.focus({
+			var fnFocusSpy = sinon.spy(this.oTable._oTable, "focus");
+			var oFocusInfo = {
 				targetInfo: new Message({
 					message: "Error thrown",
 					type: "Error"
 				})
-			});
-			assert.ok(this.oTable._oTable.getFocusDomRef() === document.activeElement);
+			};
+			Core.applyChanges();
+
+			oButton.focus();
+			assert.ok(oButton.getFocusDomRef() === document.activeElement, "Correct DOM element focused");
+
+			this.oTable.focus();
+			assert.ok(fnFocusSpy.calledWith(), "Focus event called without any parameter");
+			assert.ok(this.oTable._oTable.getFocusDomRef() === document.activeElement, "Correct DOM element focused");
+
+			this.oTable.focus(oFocusInfo);
+			assert.ok(fnFocusSpy.calledWith(oFocusInfo), "Focus event called with core:Message parameter");
+			assert.ok(this.oTable._oTable.getFocusDomRef() === document.activeElement, "Correct DOM element focused");
 		}.bind(this));
 	});
 
