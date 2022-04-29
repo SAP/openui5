@@ -575,6 +575,11 @@ sap.ui.define([
 		FilterableListContent.prototype.onShow.apply(this, arguments);
 	};
 
+	MDCTable.prototype.onHide = function () {
+		this._bSearchTriggered = false;
+		FilterableListContent.prototype.onHide.apply(this, arguments);
+	};
+
 	MDCTable.prototype._createFiltersFromBarConditions = function (oConditions) {
 		var oConditionTypes = this._getTypesForConditions(oConditions);
 		var oCreatedFBFilters = oConditions && oConditionTypes && FilterConverter.createFilters(oConditions, oConditionTypes, undefined, this.getCaseSensitive());
