@@ -473,11 +473,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER // only the customer layer has draft active
 			});
 			sParentVersion = oVersionModel.getProperty("/persistedVersion");
-			var aVersions = oVersionModel.getProperty("/versions");
-			if (aVersions && aVersions.length > 0) {
-				var oLatestVersion = aVersions[0];
-				aDraftFilenames = oLatestVersion.version === Version.Number.Draft ? oLatestVersion.filenames : undefined;
-			}
+			aDraftFilenames = oVersionModel.getProperty("/draftFilenames");
 		}
 		return this._removeOtherLayerChanges(oAppComponent, sLayer, bRemoveOtherLayerChanges)
 			.then(this._oChangePersistence.saveDirtyChanges.bind(this._oChangePersistence, oAppComponent, bSkipUpdateCache, undefined, sParentVersion, aDraftFilenames))

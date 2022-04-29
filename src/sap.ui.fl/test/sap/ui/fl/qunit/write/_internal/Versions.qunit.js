@@ -85,6 +85,7 @@ sap.ui.define([
 				assert.equal(oData.activateEnabled, false, ", a activateEnabled flag set to false");
 				assert.equal(oData.activeVersion, Version.Number.Original, ", a activeVersion property set to the original version");
 				assert.equal(oData.displayedVersion, Version.Number.Original, ", a version property set to the original version");
+				assert.equal(oData.draftFilenames.length, 0, "empty draft filesnames");
 			}.bind(this));
 		});
 
@@ -317,6 +318,11 @@ sap.ui.define([
 				reference: "com.sap.app"
 			};
 
+			var oDraftVersion = {
+				version: Version.Number.Draft,
+				filenames: ["filename1", "filename2"]
+			};
+
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a long while ago",
@@ -330,7 +336,7 @@ sap.ui.define([
 			};
 
 			var aReturnedVersions = [
-				{version: Version.Number.Draft},
+				oDraftVersion,
 				oSecondVersion,
 				oFirstVersion
 			];
@@ -345,6 +351,10 @@ sap.ui.define([
 				assert.deepEqual(aVersions[2].type, "inactive", "the third version is the 'inactive' one");
 				assert.equal(oResponse.getProperty("/displayedVersion"), Version.Number.Draft, ", a displayedVersion property set to the draft version");
 				assert.equal(oResponse.getProperty("/activeVersion"), sActiveVersion, "and the active version was determined correct");
+				var aDraftFilenames = oResponse.getProperty("/draftFilenames");
+				assert.equal(aDraftFilenames.length, 2, "draft filenames containt 2 entries");
+				assert.equal(aDraftFilenames[0], "filename1", "first draft filename with 'filename1'");
+				assert.equal(aDraftFilenames[1], "filename2", "sec draft filename with 'filename2'");
 			});
 		});
 	});

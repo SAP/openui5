@@ -12,9 +12,11 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	UIComponent,
@@ -28,9 +30,11 @@ sap.ui.define([
 	Settings,
 	CompVariantState,
 	Storage,
+	Versions,
 	Change,
 	Utils,
 	Layer,
+	JSONModel,
 	sinon
 ) {
 	"use strict";
@@ -1229,6 +1233,154 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Versioning is enabled", {
+		beforeEach: function() {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isVersioningEnabled: function() {
+					return true;
+				}
+			});
+			this.sPersistencyKey = "persistency.key";
+			var oVariantData = {
+				changeSpecificData: {
+					type: "pageVariant",
+					layer: Layer.CUSTOMER,
+					texts: {
+						variantName: "initialName"
+					},
+					content: {},
+					favorte: false
+				},
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			};
+
+			FlexState.clearState(sComponentId);
+
+			return FlexState.initialize({
+				componentId: sComponentId,
+				reference: sComponentId
+			}).then(function () {
+				this.oVariant = CompVariantState.addVariant(oVariantData);
+			}.bind(this));
+		},
+		afterEach: function() {
+			FlexState.clearState(sComponentId);
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given updateVariant is called will created new change because it is not in a draft version", function(assert) {
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				draftFilenames: []
+			}));
+			sandbox.stub(this.oVariant, "getState").returns(Change.states.DIRTY);
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getId(),
+				favorite: true,
+				layer: Layer.CUSTOMER
+			});
+			assert.equal(this.oVariant.getDefinition().favorite, undefined, "the favorite was NOT set within the variant");
+			assert.equal(this.oVariant.getChanges().length, 1, "one change was written");
+			assert.equal(this.oVariant.getChanges()[0].getContent().favorite, true, "the change favorite is set correct");
+		});
+
+		QUnit.test("Given updateVariant is called will update variant", function(assert) {
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				draftFilenames: [this.oVariant.getFileName()]
+			}));
+
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getId(),
+				favorite: true,
+				layer: Layer.CUSTOMER
+			});
+
+			assert.equal(this.oVariant.getDefinition().favorite, true, "the favorite was set within the variant");
+		});
+
+		QUnit.test("Given updateVariant is called will update change", function(assert) {
+			var oUpdatedContent = {};
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				draftFilenames: []
+			}));
+			sandbox.stub(this.oVariant, "getState").returns(Change.states.DIRTY);
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getId(),
+				favorite: true,
+				layer: Layer.CUSTOMER
+			});
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getId(),
+				favorite: true,
+				content: oUpdatedContent,
+				layer: Layer.CUSTOMER
+			});
+			assert.equal(this.oVariant.getDefinition().favorite, undefined, "the favorite was NOT set within the variant");
+			assert.equal(this.oVariant.getChanges().length, 1, "one change was written");
+			assert.equal(this.oVariant.getChanges()[0].getContent().variantContent, oUpdatedContent, "the variant content is set correct");
+		});
+
+		QUnit.test("Given persist is called with parentVersion", function(assert) {
+			var sParentVersion = "GUIDParentVersion";
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				persistedVersion: sParentVersion,
+				draftFilenames: [this.oVariant.getFileName()]
+			}));
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getId(),
+				favorite: true,
+				layer: Layer.CUSTOMER
+			});
+			var oResponse = {
+				response: [{
+					reference: sComponentId,
+					layer: Layer.CUSTOMER
+				}]
+			};
+			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
+
+			var oWriteStub = sandbox.stub(Storage, "write").resolves(oResponse);
+			var oUpdateStub = sandbox.stub(Storage, "update").resolves(oResponse);
+			var oRemoveStub = sandbox.stub(Storage, "remove").resolves();
+			var oVersionsOnAllChangesSaved = sandbox.stub(Versions, "onAllChangesSaved");
+
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			})
+			.then(function () {
+				assert.equal(oWriteStub.callCount, 1, "then the write method was called one times,");
+				assert.equal(oUpdateStub.callCount, 0, "no update was called");
+				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
+				assert.equal(oWriteStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct");
+				assert.equal(oVersionsOnAllChangesSaved.callCount, 1, "and versions.onAllChangesSaved is called one time");
+			})
+			.then(function () {
+				oCompVariantStateMapForPersistencyKey.variants[0].setState(Change.states.DIRTY);
+			})
+			.then(CompVariantState.persist.bind(undefined, {
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			}))
+			.then(function () {
+				assert.equal(oWriteStub.callCount, 1, "AFTER SOME CHANGES; still the write method was called one times,");
+				assert.equal(oUpdateStub.callCount, 1, "one update was called");
+				assert.equal(oRemoveStub.callCount, 0, "and no deletes were called");
+				assert.equal(oUpdateStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct");
+				assert.equal(oVersionsOnAllChangesSaved.callCount, 2, "and versions.onAllChangesSaved is called second time");
+			});
+		});
+	});
 
 	QUnit.done(function() {
 		oComponent.destroy();

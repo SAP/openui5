@@ -29,12 +29,14 @@ sap.ui.define([
 
 	function createModel(bVersioningEnabled, aVersions) {
 		var bBackendDraft = _doesDraftExistInVersions(aVersions);
+		var aDraftFilenames = [];
 
 		var sActiveVersion = Version.Number.Original;
 		aVersions.forEach(function (oVersion) {
 			if (oVersion.version === Version.Number.Draft) {
 				oVersion.type = "draft";
 				oVersion.isPublished = false;
+				aDraftFilenames = oVersion.filenames;
 			} else if (sActiveVersion === Version.Number.Original) {
 				// no active version found yet; the first non-draft version is always the active version
 				oVersion.type = "active";
@@ -76,7 +78,8 @@ sap.ui.define([
 					draftAvailable: bBackendDraft,
 					activateEnabled: bBackendDraft,
 					persistedVersion: sPersistedBasisForDisplayedVersion,
-					displayedVersion: sPersistedBasisForDisplayedVersion
+					displayedVersion: sPersistedBasisForDisplayedVersion,
+					draftFilenames: aDraftFilenames
 				});
 
 				oModel.setDefaultBindingMode(BindingMode.OneWay);
