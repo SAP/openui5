@@ -20,6 +20,7 @@
 @_sap_ui_layout_Splitter_BarBorder: none;
 @_sap_ui_layout_Splitter_BarHoverIconBorderColor: @sapUiButtonLiteBorderColor;
 @_sap_ui_layout_Splitter_BarHoverIconBackground: @sapUiButtonLiteBackground;
+@_sap_ui_layout_Splitter_GripButtonColor: @sapUiContentIconColor;
 
 /********************************************* General ********************************************/
 
@@ -38,7 +39,7 @@
 
 .sapUiLoSplitter > .sapUiLoSplitterBar,
 .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	color: @sapUiContentIconColor;
+	color: @_sap_ui_layout_Splitter_GripButtonColor;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -110,7 +111,7 @@
 		background-position: center;
 	}
 
-	.sapUiLoSplitterBarDecorationAfter{
+	.sapUiLoSplitterBarDecorationAfter {
 		width: 1rem;
 		height: 4rem;
 		height: 4rem;
