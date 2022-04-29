@@ -7,6 +7,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/ResizeHandler',
+	"sap/ui/core/theming/Parameters",
 	'sap/ui/core/Icon',
 	'sap/ui/core/delegate/ScrollEnablement',
 	"./SideNavigationRenderer"
@@ -15,6 +16,7 @@ sap.ui.define([
 		library,
 		Control,
 		ResizeHandler,
+		Parameters,
 		Icon,
 		ScrollEnablement,
 		SideNavigationRenderer
@@ -115,7 +117,6 @@ sap.ui.define([
 		});
 
 		SideNavigation.prototype.init = function () {
-
 			this._scroller = new ScrollEnablement(this, this.getId() + "-Flexible-Content", {
 				horizontal: false,
 				vertical: true
@@ -123,6 +124,12 @@ sap.ui.define([
 
 			// Define group for F6 handling
 			this.data('sap-ui-fastnavgroup', 'true', true);
+		};
+
+		// event listener for theme changed
+		SideNavigation.prototype.onThemeChanged = function() {
+			this._mThemeParams = null;
+			this._initThemeParams();
 		};
 
 		SideNavigation.prototype.setAggregation = function (aggregationName, object) {
@@ -150,6 +157,9 @@ sap.ui.define([
 				$this = this.$(),
 				itemAggregation = that.getAggregation('item'),
 				fixedItemAggregation = that.getAggregation('fixedItem'),
+				themeParams,
+				expandedWidth,
+				collapsedWidth,
 				width;
 
 			if (!this.getDomRef()) {
@@ -189,7 +199,11 @@ sap.ui.define([
 			}
 
 			that._hasActiveAnimation = true;
-			width = isExpanded ? '15rem' : '3rem';
+
+			themeParams = this._mThemeParams || {};
+			expandedWidth = themeParams['_sap_tnt_SideNavigation_Width'] || "15rem";
+			collapsedWidth = themeParams['_sap_tnt_SideNavigation_CollapsedWidth'] || "3rem";
+			width = isExpanded ? expandedWidth : collapsedWidth;
 
 			$this.animate({
 					width: width
@@ -237,6 +251,15 @@ sap.ui.define([
 			setTimeout(this._toggleArrows.bind(this), 0);
 		};
 
+		SideNavigation.prototype._initThemeParams = function() {
+			this._mThemeParams = Parameters.get({
+				name: ["_sap_tnt_SideNavigation_Width", "_sap_tnt_SideNavigation_CollapsedWidth"],
+				callback: function (mParams) {
+					this._mThemeParams = mParams;
+				}.bind(this)
+			});
+		};
+
 		/**
 		 * @private
 		 */
@@ -251,6 +274,10 @@ sap.ui.define([
 			}
 
 			this._deregisterControl();
+
+			if (!this._mThemeParams) {
+				this._initThemeParams();
+			}
 		};
 
 		/**
@@ -344,12 +371,12 @@ sap.ui.define([
 		 * @private
 		 */
 		SideNavigation.prototype.exit = function () {
-
 			if (this._scroller) {
 				this._scroller.destroy();
 				this._scroller = null;
 			}
 
+			this._mThemeParams = null;
 			this._deregisterControl();
 		};
 
