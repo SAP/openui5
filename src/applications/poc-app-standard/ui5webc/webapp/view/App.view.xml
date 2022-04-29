@@ -1,0 +1,44 @@
+<mvc:View
+    controllerName="sap.ui.demo.todo.controller.App"
+    displayBlock="true"
+    xmlns="sap.ui.webc.main"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+    <html:div class="messages">
+        <MessageStrip id="errorMessage" visible="false" design="Negative" text="${i18n>todo_message_error}" close="closeError">
+            <icon>
+                <Icon name="error"/>
+            </icon>
+        </MessageStrip>
+    </html:div>
+
+    <Title class="title" text="{i18n>app_title}"/>
+
+    <html:div class="searchbar">
+        <Input id="newTodo" value="{/newTodo}" placeholder="{i18n>todo_input_placeholder}"/>
+        <Button text="{i18n>todo_button_add}" design="Emphasized" click=".addTodo" icon="add"/>
+    </html:div>
+
+    <html:div class="content">
+        <List items="{/todos}">
+            <CustomListItem class="todoItems">
+                <CheckBox checked="{completed}" change=".completeTodo"/>
+                <Label text="{title}"/>
+                <Button icon="edit" click=".editTodo"/>
+                <Button icon="delete" design="Negative" click=".deleteTodo"/>
+            </CustomListItem>
+        </List>
+    </html:div>
+
+    <Dialog id="editDialog" headerText="{i18n>todo_dialog_edit_header}">
+        <content>
+            <Input value="{title}" id="editTodo" class="dialogTodoInput" change=".closeEdit"/>
+        </content>
+        <footer>
+            <Button class="dialogCloseButton" design="Emphasized" text="{i18n>todo_dialog_close_button}" click=".closeEdit"/>
+        </footer>
+    </Dialog>
+
+</mvc:View>

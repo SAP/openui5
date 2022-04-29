@@ -1,0 +1,14 @@
+{
+	"newTodo": "",
+	"todos": [{
+			"title": "Start this app",
+			"completed": true
+		},
+		{
+			"title": "Learn OpenUI5",
+			"completed": false
+		}
+	],
+	"itemsRemovable": true,
+	"completedCount": 1
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Basic UI5</title>
+
+	<script src="resources/sap-ui-custom.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-theme="sap_fiori_3"
+		data-sap-ui-preloadLibCss = "!sap.ui.core"
+		data-sap-ui-compatversion="edge"
+		data-sap-ui-async="true"
+		data-sap-ui-language="en">
+	</script>
+	<script>
+		sap.ui.loader.config({
+			paths: {"poc": "./"}
+		});
+		sap.ui.require(["poc/App"], function() {
+
+		});
+	</script>
+</head>
+<body class="sapUiBody">
+
+</body></html>
