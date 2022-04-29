@@ -853,7 +853,12 @@ function(
 		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
 		sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
 
-		aSeparatedText = sOriginalText.split(/\r\n|\r|\n/g);
+		// Pasting from Excel on Windows always adds "\r\n" at the end, even if a single cell is selected
+		if (sOriginalText.length && sOriginalText.endsWith("\r\n")) {
+			sOriginalText = sOriginalText.substring(0, sOriginalText.lastIndexOf("\r\n"));
+		}
+
+		aSeparatedText = sOriginalText.split(/\r\n|\r|\n|\t/g);
 
 		// if only one piece of text was pasted, we can assume that the user wants to alter it before it is converted into a token
 		// in this case we leave it as plain text input
