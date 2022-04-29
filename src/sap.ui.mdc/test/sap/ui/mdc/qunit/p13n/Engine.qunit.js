@@ -722,7 +722,10 @@ sap.ui.define([
 		var oP13nUI = new BasePanel({
 			id: "someTestPanel"
 		});
-		Engine.getInstance().validateP13n(this.oControl, "Test2", oP13nUI);
+		var mValidation = Engine.getInstance().validateP13n(this.oControl, "Test2", oP13nUI);
+
+		assert.equal(mValidation.validation, coreLibrary.MessageType.Warning, "The correct validation state provided");
+		assert.equal(mValidation.message, "Test", "The correct validation messsage provided");
 
 		//Check if the strip has been placed in the BasePanel content area
 		var oMessageStrip = oP13nUI._oMessageStrip;
@@ -730,6 +733,15 @@ sap.ui.define([
 		oP13nUI.destroy();
 		AggregationBaseDelegate.validateState.restore();
 
+	});
+
+	QUnit.test("Check 'validateP13n' will gracefully skip in case no corresponding controller is registered and return undefined", function(assert){
+
+		//Create a mock UI (usually done via runtime in personalization)
+		var oP13nUI = new BasePanel();
+
+		var mValidation = Engine.getInstance().validateP13n(this.oControl, "SomeUnregisteredKey", oP13nUI);
+		assert.notOk(mValidation, "No validation triggered as the provided key is unregistered");
 	});
 
 	QUnit.test("Check 'validateP13n' message handling (valid validation should NOT display a message strip)", function(assert){

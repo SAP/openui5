@@ -987,6 +987,8 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
 	 * @param {string} sKey The registerd key to get the corresponding Controller.
 	 * @param {sap.ui.core.Control} oP13nUI The adaptation UI displayed in the container (e.g. BasePanel derivation).
+	 *
+	 * @returns {object} Object defining the state validation result
 	 */
 	Engine.prototype.validateP13n = function(vControl, sKey, oP13nUI) {
 		var oController = this.getController(vControl, sKey);
@@ -1001,7 +1003,7 @@ sap.ui.define([
 		});
 
 		//Only execeute validation for controllers that support 'model2State'
-		if (oController.model2State instanceof Function) {
+		if (oController && oController.model2State instanceof Function) {
 			oTheoreticalState[sKey] = oController.model2State();
 
 			var mInfoState = oControl.validateState(this.externalizeKeys(oControl, oTheoreticalState), sKey);
@@ -1020,7 +1022,9 @@ sap.ui.define([
 			} else {
 				Log.warning("message strip could not be provided - the adaptation UI needs to implement 'setMessageStrip'");
 			}
-
+			return mInfoState;
+		} else {
+			return undefined;
 		}
 
 	};
