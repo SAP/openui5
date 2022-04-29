@@ -29,16 +29,19 @@
 				padding: 0 0 0 0.5rem;
 				border-bottom: 0;
 				margin-right: 0.5rem;
+				.sapMTabStripItemLabel {
+					font-family: @sapFontBoldFamily;
+				}
 				&:last-child {
 					margin-right: 0;
 				}
 				&:hover {
-					color: @_sap_m_TabStrip_ItemHoverTextColor;
-					background-color: @sapUiListHoverBackground;
+					color: @sapTextColor;
+					background-color: @sapList_Hover_Background;
 				}
 				&.sapMTabStripItemSelected {
-					color: @sapUiSelected;
-					background: @sapUiListBackground;
+					color: @sapContent_Selected_ForegroundColor;
+					background: @sapList_Background;
 				}
 				.sapMTSItemCloseBtnCnt {
 					width: 2rem;
@@ -77,6 +80,9 @@
 
 .sapMTabStrip .sapMTSTabsContainer .sapMTSTabs .sapMTabStripItem:focus::before {
 	top: 0.25rem;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	border-radius: 0.25rem;
 	border: 0.125rem solid @sapUiContentFocusColor;
 }
@@ -96,8 +102,8 @@
 					padding: 0 2rem 0 0.5rem;
 				}
 				&.sapMTabStripItemSelected {
-					color: @sapUiSelected;
-					background: @sapUiListBackground;
+					color: @sapContent_Selected_ForegroundColor;
+					background: @sapList_Background;
 					padding: 0 2rem 0 0.5rem;
 				}
 				.sapMTSItemCloseBtnCnt {

@@ -29,17 +29,20 @@
 			.sapMTabStripItem {
 				height: 2.625rem;
 				padding: 0 0 0 0.5rem;
-				border: solid 0.0625rem @sapUiObjectHeaderBorderColor;
+				border: solid 0.0625rem @sapList_BorderColor;
 				border-radius: 0.125rem 0.125rem 0 0;
 				border-bottom: 0;
 				margin-right: 0.5rem;
 				margin-top: 0.125rem;
+				.sapMTabStripItemLabel {
+					font-family: @sapFontFamily;
+				}
 				&:last-child {
 					margin-right: 0;
 				}
 				&:hover {
-					color: @_sap_m_TabStrip_ItemHoverTextColor;
-					background-color: @sapUiListHoverBackground;
+					color: @sapTextColor;
+					background-color: @sapList_Hover_Background;
 				}
 				&.sapMTabStripItemSelected {
 					height: 2.75rem;
