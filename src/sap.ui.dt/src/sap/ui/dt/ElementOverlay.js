@@ -821,6 +821,9 @@ sap.ui.define([
 				window.cancelAnimationFrame(this._iApplyStylesRequest);
 			}
 			this._iApplyStylesRequest = window.requestAnimationFrame(function () {
+				//Cache the geometry values
+				this.getGeometry(true);
+				mParameters.bSkipForceCalculation = true;
 				this.fireApplyStylesRequired(mParameters);
 				delete this._iApplyStylesRequest;
 			}.bind(this));
@@ -966,7 +969,7 @@ sap.ui.define([
 		} else if (typeof oDTData.isVisible === "function") {
 			bVisible = oDTData.isVisible(oElement);
 		} else {
-			var oGeometry = this.getGeometry(true);
+			var oGeometry = this.getGeometry();
 			if (oGeometry) {
 				bVisible = oGeometry.visible;
 			} else if (oElement instanceof Control) {

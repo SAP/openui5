@@ -353,7 +353,7 @@ function (
 		var oElementOverlay = oEvent.getSource();
 		this._oTaskManager.add({
 			type: "applyStyles",
-			callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay, mParameters.bForceScrollbarSync),
+			callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay, mParameters.bForceScrollbarSync, mParameters.bSkipForceCalculation),
 			overlayId: oElementOverlay.getId()
 		}, "overlayId");
 	};
