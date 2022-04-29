@@ -6,6 +6,10 @@
 @_sap_tnt_ToolHeader_AvatarBackground: lighten(saturate(spin(@sapUiAccent6, 348), 36), 28);
 @_sap_tnt_ToolHeader_AvatarColor: @sapUiBaseText;
 @_sap_tnt_ToolHeader_BorderColor: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
+@_sap_tnt_ToolHeader_ArrowHeight: 0.1875rem;
+@_sap_tnt_ToolHeader_ArrowMargin: 0;
+@_sap_tnt_ToolHeader_Padding: 0 0.5rem;
+@_sap_tnt_ToolHeader_ArrowMarginBottom: 0.188rem;
 
 .sapTntToolHeaderPopover.sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll,
 .sapTntToolHeaderPopover.sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll .sapMBtn {
@@ -23,7 +27,7 @@
 .sapMIBar.sapTntToolHeader .sapMBarChild.sapMITH {
 	height: @_sap_tnt_ToolHeader_Height;
 	box-shadow: none;
-	padding: 0 0.5rem;
+	padding: @_sap_tnt_ToolHeader_Padding;
 	flex: 1;
 	min-width: 0; // fixes Chrome flex issue
 
@@ -35,7 +39,8 @@
 			&:after {
 				border-radius: 0.125rem;
 				box-shadow: none;
-				margin-bottom: 0.188rem;
+				margin-bottom: @_sap_tnt_ToolHeader_ArrowMarginBottom;
+				height: @_sap_tnt_ToolHeader_ArrowHeight;
 			}
 		}
 	}
@@ -48,7 +53,7 @@
 }
 
 .sapTntToolHeader .sapMITH .sapMITBContentArrow {
-	margin: 0;
+	margin: @_sap_tnt_ToolHeader_ArrowMargin;
 }
 
 // ==========================================================================
