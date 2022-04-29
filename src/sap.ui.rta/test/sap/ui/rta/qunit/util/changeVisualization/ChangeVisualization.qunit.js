@@ -818,6 +818,15 @@ sap.ui.define([
 			oRootOverlay.getDomRef().dispatchEvent(oMouseEvent);
 			assert.notOk(fnClickSpy.called, "then the click event handler was removed from the Root Overlay DomRef");
 		});
+
+		QUnit.test("when exiting after overlays were destroyed", function (assert) {
+			// Overlay might be already destroyed, e.g. during version switch
+			this.oRta.setMode("visualization");
+			var oRootOverlay = OverlayRegistry.getOverlay("Comp1");
+			oRootOverlay.destroy();
+			this.oChangeVisualization.exit();
+			assert.ok(true, "then no error is thrown");
+		});
 	});
 
 	function getIndicatorForElement(aIndicators, sId) {
