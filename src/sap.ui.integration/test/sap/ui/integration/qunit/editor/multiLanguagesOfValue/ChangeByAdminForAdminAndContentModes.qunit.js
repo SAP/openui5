@@ -196,7 +196,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === _oExpectedValues["string4"]["en"], "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -226,7 +226,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -249,7 +249,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -320,7 +320,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === _oExpectedValues["string4"]["en-GB"], "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -350,7 +350,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -373,7 +373,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -444,7 +444,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === _oExpectedValues["string4"]["fr"], "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -474,7 +474,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -497,7 +497,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -568,7 +568,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === "String 4 English", "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -598,7 +598,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -621,7 +621,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -692,7 +692,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === _oExpectedValues["string4"]["zh-CN"], "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -722,7 +722,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -745,7 +745,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -816,7 +816,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === "String 4 English", "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -846,7 +846,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -869,7 +869,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -940,7 +940,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === "String 4 English", "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -970,7 +970,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -993,7 +993,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -1075,7 +1075,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === _oExpectedValues["string4"]["en"], "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -1105,7 +1105,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -1128,7 +1128,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -1199,7 +1199,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === _oExpectedValues["string4"]["en-GB"], "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -1229,7 +1229,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -1252,7 +1252,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -1323,7 +1323,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === _oExpectedValues["string4"]["fr"], "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -1353,7 +1353,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -1376,7 +1376,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -1447,7 +1447,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === "String 4 English", "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -1477,7 +1477,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -1500,7 +1500,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -1571,7 +1571,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === _oExpectedValues["string4"]["zh-CN"], "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -1601,7 +1601,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -1624,7 +1624,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -1695,7 +1695,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === "String 4 English", "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -1725,7 +1725,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -1748,7 +1748,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
@@ -1819,7 +1819,7 @@ sap.ui.define([
 						assert.ok(oField4.getAggregation("_field").getValue() === "String 4 English", "oField4: String4 Value");
 						assert.ok(oField4.getAggregation("_field").isA("sap.m.Input"), "oField4: Input control");
 
-						var oValueHelpIcon1 = oField1.getAggregation("_field").getAggregation("_endIcon")[0];
+						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
@@ -1849,7 +1849,7 @@ sap.ui.define([
 							var oValueHelpIcon2 = oField2.getAggregation("_field").getAggregation("_endIcon");
 							assert.ok(oValueHelpIcon2 === null, "oField2: No Input value help icon");
 
-							var oValueHelpIcon3 = oField3.getAggregation("_field").getAggregation("_endIcon")[0];
+							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
@@ -1872,7 +1872,7 @@ sap.ui.define([
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
 
-								var oValueHelpIcon4 = oField4.getAggregation("_field").getAggregation("_endIcon")[0];
+								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.ok(oValueHelpIcon4.getSrc() === "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
