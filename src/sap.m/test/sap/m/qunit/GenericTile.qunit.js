@@ -3605,6 +3605,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOneIcon").length, 1, "Icon Container Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOne").length, 1, "Text Container Created.");
+				assert.ok(this.oGenericTile._oMoreIcon.isA("sap.m.Button"), "Button is created in place of action more icon");
 				assert.ok(this.oGenericTile.getAggregation("_tileIcon"), "Icon Aggregation has a valid value");
 				this.oGenericTile.setTileIcon(IMAGE_PATH + "female_BaySu.jpg");
 				oCore.applyChanges();
@@ -3672,6 +3673,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No Footer Text Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 1, "Icon Container Created.");
+				assert.ok(this.oGenericTile._oMoreIcon.isA("sap.m.Button"), "Button is created in place of action more icon");
 				this.oGenericTile.setTileIcon(IMAGE_PATH + "female_BaySu.jpg");
 				oCore.applyChanges();
 				setTimeout(function(){
@@ -4269,5 +4271,72 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.notOk(aItems[0].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for small TwoByOne tile");
 		assert.notOk(aItems[1].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for small TwoByHalf tile");
 		assert.notOk(aItems[2].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for small OneByOne tile");
+	});
+
+	QUnit.module("Button created in Place of action more icon", {
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		},
+		fnCreateGenericTile: function(sFrameType,sMode){
+			this.oGenericTile = new GenericTile("generic-tile", {
+				subheader: "GenericTile SubHeader",
+				frameType: sFrameType,
+				mode: sMode,
+				header: "GenericTile Header",
+				headerImage: IMAGE_PATH + "female_BaySu.jpg",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "TileContent Footer",
+					content: new NumericContent("numeric-cnt", {
+						state: LoadState.Loaded,
+						scale: "M",
+						indicator: DeviationIndicator.Up,
+						truncateValueTo: 4,
+						value: 20,
+						nullifyValue: true,
+						formatterValue: false,
+						valueColor: ValueColor.Good,
+						icon: "sap-icon://customer-financial-fact-sheet"
+					})
+				})
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		}
+	});
+
+	QUnit.test("Checking if the Button created for OneByOne tile", function (assert) {
+		// Arrange
+		this.fnCreateGenericTile(FrameType.OneByOne,GenericTileMode.ContentMode);
+		// Assert
+		assert.ok(this.oGenericTile._oMoreIcon.isA("sap.m.Button"), "Button is created in place of action more icon");
+	});
+
+	QUnit.test("Checking if the Button created for TwoByOne tile", function (assert) {
+		// Arrange
+		this.fnCreateGenericTile(FrameType.TwoByOne,GenericTileMode.ContentMode);
+		// Assert
+		assert.ok(this.oGenericTile._oMoreIcon.isA("sap.m.Button"), "Button is created in place of action more icon");
+	});
+
+	QUnit.test("Checking if the Button created for TwoByHalf tile", function (assert) {
+		// Arrange
+		this.fnCreateGenericTile(FrameType.TwoByHalf,GenericTileMode.ContentMode);
+
+		// Assert
+		assert.ok(this.oGenericTile._oMoreIcon.isA("sap.m.Button"), "Button is created in place of action more icon");
+	});
+
+	QUnit.test("Checking if the Button created for OneByHalf tile", function (assert) {
+		// Arrange
+		this.fnCreateGenericTile(FrameType.OneByHalf,GenericTileMode.ContentMode);
+		// Assert
+		assert.ok(this.oGenericTile._oMoreIcon.isA("sap.m.Button"), "Button is created in place of action more icon");
+	});
+	QUnit.test("Checking if the Button created for linemode tile", function (assert) {
+		// Arrange
+		this.fnCreateGenericTile(FrameType.Auto,GenericTileMode.LineMode);
+		// Assert
+		assert.ok(this.oGenericTile._oMoreIcon.isA("sap.m.Button"), "Button is created in place of action more icon");
 	});
 });

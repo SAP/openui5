@@ -304,6 +304,13 @@ sap.ui.define([
 		assert.equal(this.oSlideTile.getTiles()[0].getDomRef().offsetWidth, 360, "Generic Tile inside Slide tile has the default width");
 	});
 
+	QUnit.test("Button created in Place of action more icon", function(assert) {
+		//Arrange
+		this.oSlideTile.setScope("Actions");
+		oCore.applyChanges();
+		//Assert
+		assert.ok(this.oSlideTile._oMoreIcon.isA("sap.m.Button"),"Button has been rendered");
+	});
 	QUnit.module("Events - sap.m.SlideTile", {
 		beforeEach : function() {
 			this.fnPressHandler = function() {

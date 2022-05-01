@@ -88,6 +88,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		if (sScope ===  GenericTileScope.ActionMore) {
 				oRm.style("padding-right", "2.25rem");
 		}
+		if (sState !== LoadState.Disabled && sScope === GenericTileScope.ActionRemove) {
+			oRm.class("sapMGTAcionRemove");
+		}
 		oRm.class("sapMGTLineMode");
 		if (oControl.getSystemInfo() || oControl.getAppShortcut()) {
 			oRm.class("sapMGTInfoRendered");
