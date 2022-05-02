@@ -1,7 +1,12 @@
 {
   "1.102.0": {
-    "date": "April 2022",
+    "date": "May 2022",
     "notes": [
+      {
+        "id": "88684a893fd004f11a11a434d1dd4c031fb4d0a0",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Horizon themes implementated"
+      },
       {
         "id": "b27dc8bf9178f32c0b4abca6006ee62873a36fa6",
         "type": "FEATURE",

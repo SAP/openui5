@@ -1,7 +1,12 @@
 {
   "1.102.0": {
-    "date": "April 2022",
+    "date": "May 2022",
     "notes": [
+      {
+        "id": "e5093387c73229cc279e325ce95b610b4c4d5f7e",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Support intent-based navigation"
+      },
       {
         "id": "1f31a000e877a83e09aba354f521e7f42d7d2d54",
         "type": "FIX",

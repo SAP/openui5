@@ -1,7 +1,18 @@
 {
   "1.102.0": {
-    "date": "April 2022",
+    "date": "May 2022",
     "notes": [
+      {
+        "id": "f08811d8c6efabf84d8c3314555d0fe4ba6285de",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: has corect alignment of icon in Belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270081354"
+          }
+        ]
+      },
       {
         "id": "5a99d81879e7979974c739b060eb744b8ef94248",
         "type": "FIX",

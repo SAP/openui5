@@ -1,7 +1,18 @@
 {
   "1.102.0": {
-    "date": "April 2022",
+    "date": "May 2022",
     "notes": [
+      {
+        "id": "7e2c5f9495af17593c050c576b2941d85c240221",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: AnchorBar position is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040798"
+          }
+        ]
+      },
       {
         "id": "dc61b2fb8b4a9a2acbde2333cbbc47c5126d91a1",
         "type": "FIX",

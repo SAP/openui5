@@ -1,7 +1,78 @@
 {
   "1.102.0": {
-    "date": "April 2022",
+    "date": "May 2022",
     "notes": [
+      {
+        "id": "d91f3ced7b3fc15247d2f9e22ac44b36b057a798",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270079850"
+          }
+        ]
+      },
+      {
+        "id": "1c13a4943c02cf025bf273ccce8f31beb61c047d",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Correct visualization in DynamicPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270079633"
+          }
+        ]
+      },
+      {
+        "id": "551d1e0a859569695618affc63e8310a618e8d8d",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: When selecting the first item the Info toolbar content is read out by the Screen reader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040641"
+          }
+        ]
+      },
+      {
+        "id": "970a920186a95b7ee1f0d82c93435d9b2d434d0f",
+        "type": "FIX",
+        "text": " sap.m.Bar: fixed middle content width and position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270068259"
+          }
+        ]
+      },
+      {
+        "id": "4c26a77c437e18e80166e2bd484359dd4a5335e5",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: value state is properly applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270075766"
+          }
+        ]
+      },
+      {
+        "id": "ea60ac72bec2aed1b150ee5d911afad5935827f1",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectListItem: Horizon themes implemented"
+      },
+      {
+        "id": "c7ec80f3d11dd37b6720104524fad335f161e43d",
+        "type": "FIX",
+        "text": " ListBase: NoData aggregation not shown after busy indicator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270077108"
+          }
+        ]
+      },
       {
         "id": "66a925e7896da0c68928b5515b0b12eed9b028f6",
         "type": "FEATURE",

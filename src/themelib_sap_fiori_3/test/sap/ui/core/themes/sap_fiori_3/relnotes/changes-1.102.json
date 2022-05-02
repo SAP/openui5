@@ -1,7 +1,29 @@
 {
   "1.102.0": {
-    "date": "April 2022",
+    "date": "May 2022",
     "notes": [
+      {
+        "id": "b42cc3af54a06eeecbcac3966867dcb2ff0ed941",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: pressed and hovered Ghost button has correct background",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270060534"
+          }
+        ]
+      },
+      {
+        "id": "2d0cf43d585c038ac88041db2dcff55c8d349053",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Correct spacing for single item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270065006"
+          }
+        ]
+      },
       {
         "id": "5a99d81879e7979974c739b060eb744b8ef94248",
         "type": "FIX",

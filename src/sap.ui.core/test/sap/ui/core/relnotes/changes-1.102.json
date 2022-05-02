@@ -1,7 +1,39 @@
 {
   "1.102.0": {
-    "date": "April 2022",
+    "date": "May 2022",
     "notes": [
+      {
+        "id": "7f91501309efc848858c0611599b6b59747ddeb1",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Helper.updateSelected: handle instance annotations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270023075"
+          }
+        ]
+      },
+      {
+        "id": "ba8d0d0aaf9074d31ce2bcc4d8a788c715f7fbf0",
+        "type": "FEATURE",
+        "text": " sap.ui.core.CacheManager: Support last usage time per key"
+      },
+      {
+        "id": "f002cc56adadc25b135773ad0a32a4489f131577",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#createEntry: proper handling of property changes while POST is running",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270069046"
+          }
+        ]
+      },
+      {
+        "id": "6f5698834bd151f45554547ad66ca8399d3e438f",
+        "type": "FIX",
+        "text": " sap.ui.test.actions.Action: Allow scroll to top"
+      },
       {
         "id": "0df85379fee13c67d3c7ffa759c592cd3f0323b9",
         "type": "FIX",
