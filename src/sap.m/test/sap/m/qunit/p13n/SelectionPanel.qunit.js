@@ -5,15 +5,12 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/core/Core",
 	"sap/base/util/merge"
-], function(ListView, VBox, sinon, oCore, merge) {
+], function(SelectionPanel, VBox, sinon, oCore, merge) {
 	"use strict";
 
 	QUnit.module("API Tests", {
-		beforeEach: function(){
-
-			this.aVisible = ["key1", "key2", "key3"];
-
-			this.aInfoData = [
+		getTestData: function() {
+			return [
 				{
 					visible: true,
 					name: "key1",
@@ -53,9 +50,12 @@ sap.ui.define([
 					tooltip: "Some Tooltip"
 				}
 			];
+		},
+		beforeEach: function(){
 
-			this.aMockInfo = this.aInfoData;
-			this.oSelectionPanel = new ListView();
+			this.aVisible = ["key1", "key2", "key3"];
+
+			this.oSelectionPanel = new SelectionPanel();
 			this.oSelectionPanel.setItemFactory(function(){
 				return new VBox();
 			});
@@ -65,19 +65,18 @@ sap.ui.define([
 		afterEach: function(){
 			this.sDefaultGroup = null;
 			this.oP13nData = null;
-			this.aMockInfo = null;
 			this.oSelectionPanel.destroy();
 		}
 	});
 
 	QUnit.test("check instantiation", function(assert){
 		assert.ok(this.oSelectionPanel, "Panel created");
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 		assert.ok(this.oSelectionPanel.getModel(this.oSelectionPanel.P13N_MODEL).isA("sap.ui.model.json.JSONModel"), "Model has been set");
 	});
 
 	QUnit.test("Check column toggle", function(assert){
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 
 		var oList = this.oSelectionPanel._oListControl;
 
@@ -91,47 +90,66 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'active' icon'", function(assert){
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 
-		assert.ok(this.oSelectionPanel._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is filtered (active)");
+		assert.ok(this.oSelectionPanel._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is active");
 
 		//Mock what happens during runtime if a filter is made inactive
-		this.aInfoData[1].active = false;
-		this.oSelectionPanel.setP13nData(this.aInfoData);
-		assert.ok(!this.oSelectionPanel._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is NOT filtered (active)");
+		var aAllInactive = this.getTestData();
+		aAllInactive[1].active = false;
+		this.oSelectionPanel.setP13nData(aAllInactive);
+		assert.ok(!this.oSelectionPanel._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is NOT active");
 
 		//Mock what happens during runtime if a filter is made active
-		this.aInfoData[1].active = true;
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.getTestData()[1].active = true;
+		this.oSelectionPanel.setP13nData(this.getTestData());
 		assert.ok(this.oSelectionPanel._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is filtered (active)");
 	});
 
+	QUnit.test("Check acc information on 'active' state", function(assert){
+
+		this.oSelectionPanel.setP13nData(this.getTestData());
+
+		this.oSelectionPanel._oListControl.getItems().forEach(function(oItem, iIndex){
+
+			var oInvisibleText = oItem.getCells()[1].getItems()[1];
+
+			//The second item has been set to active in the test data --> screen reader should announce this information
+			if (iIndex === 1) {
+				assert.equal(oInvisibleText.getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.ACTIVESTATE_ACTIVE"), "No field is active, all items shall be announced as ACTIVE");
+			} else {
+				assert.equal(oInvisibleText.getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.ACTIVESTATE_INACTIVE"), "No field is active, all items shall be announced as INACTIVE");
+			}
+		});
+
+	});
+
 	QUnit.test("Check 'getSelectedFields' ", function(assert){
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 		assert.equal(this.oSelectionPanel.getSelectedFields().length, this.aVisible.length, "Amount of selected fields is equal to initially visible fields");
 	});
 
 	QUnit.test("Check '_addMoveButtons' ", function(assert){
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 
 		this.oSelectionPanel._oSelectedItem = this.oSelectionPanel._oListControl.getItems()[0];
 
 		this.oSelectionPanel._addMoveButtons(this.oSelectionPanel._oSelectedItem);
-		assert.equal(this.oSelectionPanel._oSelectedItem.getCells()[1].getItems().length, 5, "Item does contain move buttons after being selected");
+		assert.equal(this.oSelectionPanel._oSelectedItem.getCells()[1].getItems().length, 6, "Item does contain move buttons after being selected");
 	});
 
 	QUnit.test("Check 'removeButtons' ", function(assert){
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 
 		this.oSelectionPanel._oSelectedItem = this.oSelectionPanel._oListControl.getItems()[0];
 
 		this.oSelectionPanel._addMoveButtons(this.oSelectionPanel._oSelectedItem);
 		this.oSelectionPanel._removeMoveButtons();
-		assert.equal(this.oSelectionPanel._oSelectedItem.getCells()[1].getItems().length, 1, "Item does not contain move buttons");
+		assert.equal(this.oSelectionPanel._oSelectedItem.getCells()[1].getItems().length, 2, "Item does not contain move buttons");
 	});
 
 	QUnit.test("Check hover event handling", function(assert){
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 
 		var nFirstHovered = this.oSelectionPanel._oListControl.getItems()[1].getDomRef();
 		this.oSelectionPanel._hoverHandler({
@@ -156,7 +174,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check focus event handling", function(assert){
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 
 		var nFirstHovered = this.oSelectionPanel._oListControl.getItems()[1].getDomRef();
 		this.oSelectionPanel._focusHandler({
@@ -182,7 +200,7 @@ sap.ui.define([
 
 	QUnit.test("Check deselectAll focus handling", function(assert){
 		//Arrange
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 		var oUpdateEnableOfMoveButtonsSpy = sinon.spy(this.oSelectionPanel, "_updateEnableOfMoveButtons");
 
 		var oClearAllButton = this.oSelectionPanel.getAggregation("_content").getItems()[0]._clearAllButton;
@@ -202,7 +220,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check '_handleActivated'", function(assert){
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 
 		var oHoveredItem = this.oSelectionPanel._oListControl.getItems()[1];
 
@@ -253,7 +271,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'enableCount' property", function(assert){
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 
 		var aColumns = [
 			"Fields",
@@ -277,7 +295,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check selection count after filtering the table control", function(assert) {
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 		var aColumns = [
 			"Fields",
 			"Test"
@@ -305,7 +323,7 @@ sap.ui.define([
 		// Prepare the panel --> 3 items selected
 		this.oSelectionPanel.setEnableCount(true);
 
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 		var aColumns = [
 			"Fields",
 			"Test"
@@ -314,7 +332,7 @@ sap.ui.define([
 		this.oSelectionPanel._setPanelColumns(aColumns);//update the columns
 
 		// Select an additonal item --> 4 items selected
-		var aNew = merge([], this.aInfoData);
+		var aNew = merge([], this.getTestData());
 		aNew[3].visible = true;
 		this.oSelectionPanel.setP13nData(aNew);
 
@@ -322,7 +340,7 @@ sap.ui.define([
 		this.oSelectionPanel._filterList(true);
 
 		//Reset the p13n data
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 
 		var oRB = oCore.getLibraryResourceBundle("sap.m");
 		var sTextFirstColumn = this.oSelectionPanel._oListControl.getColumns()[0].getHeader().getText();
@@ -332,7 +350,7 @@ sap.ui.define([
 
 	QUnit.test("Check reset of hover logic on data update", function(assert){
 
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 
 		//not yet any item selected
 		assert.notOk(this.oSelectionPanel._oSelectedItem, "Item is not selected");
@@ -348,7 +366,7 @@ sap.ui.define([
 		assert.ok(this.oSelectionPanel._oSelectedItem, "Item is selected");
 
 		//trigger update the personalization data (mock updates such as 'Reset')
-		this.oSelectionPanel.setP13nData(this.aInfoData);
+		this.oSelectionPanel.setP13nData(this.getTestData());
 		assert.notOk(this.oSelectionPanel._oSelectedItem, "Item is not selected");
 
 	});

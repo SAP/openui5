@@ -17,8 +17,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/OverflowToolbar",
 	"sap/ui/model/Filter",
-	"sap/base/util/merge"
-], function(BasePanel, Label, ColumnListItem, HBox, VBox, coreLibrary, Icon, Text, Column, Table, mLibrary, ToolbarSpacer, Button, OverflowToolbar, Filter, merge) {
+	"sap/base/util/merge",
+	"sap/ui/core/InvisibleText"
+], function(BasePanel, Label, ColumnListItem, HBox, VBox, coreLibrary, Icon, Text, Column, Table, mLibrary, ToolbarSpacer, Button, OverflowToolbar, Filter, merge, InvisibleText) {
 	"use strict";
 
 	// shortcut for sap.ui.core.IconColor
@@ -148,6 +149,17 @@ sap.ui.define([
 										return false;
 									}
 								}
+							}
+						}),
+						// The active status is visiually represented as dot icon in the tabular view, for the screen reader it needs to be ensured
+						// that a similar information is available without the UI. This InvisibleText will provide a text in the screen reader as:
+						// "Active Field is active" & "Active Field is inactive"
+						new InvisibleText({
+							text: {
+								path: this.P13N_MODEL + ">active",
+								formatter: function(bactive) {
+									return bactive ? this._getResourceText("p13n.ACTIVESTATE_ACTIVE") : this._getResourceText("p13n.ACTIVESTATE_INACTIVE");
+								}.bind(this)
 							}
 						})
 					]
