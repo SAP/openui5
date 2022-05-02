@@ -318,8 +318,6 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 * @since 1.99
-	 * @experimental As of 1.99.0 certain aspects of this API are not settled yet, i.e. the defaulting for the timezone parameter might change.
-	 *   To be on the safe side, always call with a valid timezone.
 	 */
 
 	/**
@@ -373,8 +371,6 @@ sap.ui.define([
 	 * @name sap.ui.core.format.DateFormat.DateTimeWithTimezone.parse
 	 * @function
 	 * @since 1.99
-	 * @experimental As of 1.99.0 certain aspects of this API are not settled yet, i.e. the defaulting for the timezone parameter might change.
-	 *   To be on the safe side, always call with a valid timezone.
 	 */
 
 	/**
@@ -406,7 +402,6 @@ sap.ui.define([
 	 * @static
 	 * @public
 	 * @since 1.99.0
-	 * @experimental As of 1.99.0 certain aspects of this API are not settled yet, i.e. the defaulting for the timezone parameter might change.
 	 */
 	DateFormat.getDateTimeWithTimezoneInstance = function(oFormatOptions, oLocale) {
 		// do not modify the input format options
