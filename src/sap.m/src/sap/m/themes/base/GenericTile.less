@@ -825,8 +825,8 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 
 			&:before {
 				position: relative;
-				top: -0.125rem;
-				left: -0.0625rem;
+				top: -0.15rem;
+				left: 0;
 			}
 		}
 
@@ -848,6 +848,16 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	}
 }
 
+.sapUiSizeCompact{
+	.sapMGT.sapMGTScopeActions, .sapMGT.sapMGTScopeSingleAction {
+		.sapMGTMoreIcon{
+			.sapMBtnIcon{
+				left: -0.3rem;
+				bottom: 0.5rem
+			}
+		}
+	}
+}
 .sapMGT.sapMGTScopeActions.sapMGTIconMode{
 	.sapMBtn.sapMGTMoreIcon{
 		&:before{
@@ -886,7 +896,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 			top: 1.4rem;
 			.sapMBtnInner{
 				padding: 0;
-				min-width: 0
+				min-width: 0;
 			}
 		}
 	}
@@ -896,6 +906,10 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	.sapMGT.sapMGTScopeActions.sapMGTIconMode.TwoByHalf{
 		.sapMBtn.sapMGTMoreIcon{
 			top: 0.9rem;
+			.sapMBtnIcon{
+				padding-left: 0.5rem;
+				padding-right: 0.5rem;
+			}
 		}
 	}
 }
@@ -905,6 +919,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 		top: 0.6rem;
 		.sapMBtnInner{
 			left: 0.2rem;
+			padding: 0;
 		}
 	}
 }
@@ -1076,13 +1091,6 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 		width: 2rem;
 	}
 
-	.sapMGTMoreIcon.sapMBtnBase{
-		.sapMBtnIcon{
-			bottom: 0.6rem;
-			left: 0;
-		}
-	}
-
 	.sapMGTRemoveButton {
 		display: block;
 		margin: 0 0.3125rem;
@@ -1099,9 +1107,47 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 			height: 1.5rem;
 			padding: 0.75rem 0.3125rem;
 			margin-top: -0.75rem;
-			margin-left: -0.75rem;
-			left: 0;
+			left: -0.3rem;
 			display: inline-block;
+		}
+	}
+}
+
+.sapMGTLineMode.sapMGTScopeSingleAction {
+	.sapMGTMoreIcon.sapMBtnBase{
+		.sapMBtnIcon{
+			left: 0rem;
+			bottom: 0.6rem;
+		}
+	}
+}
+.sapUiSizeCompact {
+	.sapMGTLineMode.sapMGTScopeSingleAction {
+		.sapMGTMoreIcon.sapMBtnBase{
+			.sapMBtnIcon{
+				left: 0.5rem;
+				bottom: 0.3rem;
+			}
+		}
+	}
+}
+
+.sapMGTLineMode.sapMGTScopeActions {
+	.sapMGTMoreIcon.sapMBtnBase{
+		.sapMBtnIcon{
+			bottom: 0.6rem;
+			left: -1rem;
+		}
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMGTLineMode.sapMGTScopeActions {
+		.sapMGTMoreIcon.sapMBtnBase{
+			.sapMBtnIcon{
+				bottom: 0.3rem;
+				left: -0.5rem;
+			}
 		}
 	}
 }
@@ -1227,7 +1273,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 
 	.sapMGTLineMode.sapMGTScopeActions {
 		.sapMGTHdrTxt:last-of-type, .sapMGTSubHdrTxt {
-			padding-right: 3rem;
+			padding-right: 3.5rem;
 		}
 	}
 
@@ -1284,7 +1330,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 			@padding-top: 0.125rem;
 			@padding-bottom: 0.125rem;
 			min-height: 2rem;
-			padding: 0.5rem 0;
+			padding: 0.5rem 0.5rem 0.5rem 0;
 		}
 		.sapMGTLineMode .sapMGTLineModeFailedIcon {
 			display: inline-block;
@@ -1704,17 +1750,34 @@ html[data-sap-ui-browser*='ff'] {
 		cursor: auto;
 	}
 }
+.sapMGT.sapMGTOneByOne,.sapMGT.sapMGTOneByOne.sapMTileSmallPhone{
+	.sapMBtnBase.sapMGTMoreIcon{
+		.sapMBtnIcon{
+			bottom: 0.3rem;
+		}
+	}
+}
 
 @media (min-width:320px) and (max-width:599px){
     .sapMGT.sapMGTOneByOne {
         width: 9rem;
         height: 9rem;
+		.sapMBtnBase.sapMGTMoreIcon{
+			.sapMBtnIcon{
+				bottom: 0.7rem;
+			}
+		}
     }
 }
 @media (min-width:600px) {
     .sapMGT.sapMGTOneByOne {
         width: 7rem;
         height: 7rem;
+		.sapMBtnBase.sapMGTMoreIcon{
+			.sapMBtnIcon{
+				bottom: 0.3rem;
+			}
+		}
     }
 }
 .sapMGT.sapMGTOneByOne {

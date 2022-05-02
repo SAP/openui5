@@ -422,15 +422,8 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._initScopeContent = function (sTileClass) {
 		if (!this.getState || this.getState() !== LoadState.Disabled) {
-			if (!this.isA("sap.m.GenericTile") || (!this._isIconMode())){
-				this._oMoreIcon = this._oMoreIcon || new Button({
-					id: this.getId() + "-action-more",
-					icon: "sap-icon://overflow",
-					type: "Unstyled"
-				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
-				this._oMoreIcon._bExcludeFromTabChain = true;
-			} else {
-				// Acts Like an actual Button in Icon mode
+			if (this.isA("sap.m.GenericTile") && this._isIconMode() && this.getFrameType() === FrameType.TwoByHalf){
+				// Acts Like an actual Button in Icon mode for TwoByHalf Tile
 				this._oMoreIcon = this._oMoreIcon || new Button({
 					id: this.getId() + "-action-more",
 					icon: "sap-icon://overflow",
@@ -439,6 +432,13 @@ sap.ui.define([
 				this._oMoreIcon.ontouchstart = function() {
 					this.removeFocus();
 				}.bind(this);
+			} else {
+				this._oMoreIcon = this._oMoreIcon || new Button({
+					id: this.getId() + "-action-more",
+					icon: "sap-icon://overflow",
+					type: "Unstyled"
+				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
+				this._oMoreIcon._bExcludeFromTabChain = true;
 			}
 			this._oRemoveButton = this._oRemoveButton || new Button({
 				id: this.getId() + "-action-remove",
@@ -468,11 +468,22 @@ sap.ui.define([
 	};
 
 	/**
+	Adding the  Classes for Action More Button in IconMode
+	@private
+	*/
+	GenericTile.prototype._addClassesForButton = function() {
+		this._oMoreIcon.getDomRef().classList.add("sapMBtn");
+		this._oMoreIcon.getDomRef("inner").classList.add("sapMBtnInner");
+		this._oMoreIcon.getDomRef("inner").classList.add("sapMBtnTransparent");
+	};
+
+	/**
 	Focus would not be visible while clicking on the tile
 	@private
 	*/
 	GenericTile.prototype.removeFocus = function() {
 		this.getDomRef().classList.add("sapMGTActionButtonPress");
+		this._oMoreIcon._activeButton();
 	};
 
 	GenericTile.prototype._isSmall = function() {
@@ -605,6 +616,11 @@ sap.ui.define([
 		if (this._oMoreIcon && this._oMoreIcon.getDomRef() && !this._isIconMode()){
 			this._oMoreIcon.getDomRef().firstChild.classList.remove("sapMBtnHoverable");
 			this._oMoreIcon.getDomRef().firstChild.classList.remove("sapMFocusable");
+		}
+
+		//Adds the classes for the action-more buton in IconMode for TwoByHalf Tile
+		if (this._isIconMode() && this.getFrameType() === FrameType.TwoByHalf && this._oMoreIcon.getDomRef()){
+			this._addClassesForButton();
 		}
 
 		this.onDragComplete();
