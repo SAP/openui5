@@ -32,6 +32,9 @@ function(
 						return true;
 					}
 					return false;
+				},
+				isPublicLayerAvailable: function() {
+					return true;
 				}
 			});
 		},
@@ -144,16 +147,6 @@ function(
 				oFakeCommandStack.id, "then command stack is provided to the settings plugin");
 		});
 
-		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with enabled versioning", function(assert) {
-			var oDefaultLocalResetPlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.USER})["localReset"];
-			assert.notOk(oDefaultLocalResetPlugin, "then the localReset plugin is not available");
-		});
-
-		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but on developer layer", function(assert) {
-			var oDefaultLocalResetPlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER_BASE})["localReset"];
-			assert.notOk(oDefaultLocalResetPlugin, "then the localReset plugin is not available");
-		});
-
 		QUnit.test("when 'getPluginList' function is called", function(assert) {
 			assert.strictEqual(this.oPluginManager.getPluginList().length, 0,
 				"then before set plugins the returned value is an empty array");
@@ -168,6 +161,42 @@ function(
 				"then after set plugins the first value is a create container plugin");
 			assert.ok(aPlugins[1] instanceof SettingsPlugin,
 				"then after set plugins the first value is a settings plugin");
+		});
+	});
+
+	QUnit.module("Given PluginManager exists", {
+		beforeEach: function() {
+			this.oPluginManager = new PluginManager();
+		},
+		afterEach: function() {
+			this.oPluginManager.destroy();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with public layer unavailable", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isVariantAdaptationEnabled: function() {
+					return true;
+				},
+				isPublicLayerAvailable: function() {
+					return false;
+				}
+			});
+			var oDefaultLocalResetPlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER})["localReset"];
+			assert.equal(oDefaultLocalResetPlugin, undefined, "then the localReset plugin is not available");
+		});
+
+		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but public layer available", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isVariantAdaptationEnabled: function() {
+					return true;
+				},
+				isPublicLayerAvailable: function() {
+					return true;
+				}
+			});
+			var oDefaultLocalResetPlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER});
+			assert.notEqual(oDefaultLocalResetPlugin, undefined, "then the localReset plugin is available");
 		});
 	});
 

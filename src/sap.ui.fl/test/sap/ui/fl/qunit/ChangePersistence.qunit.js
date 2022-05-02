@@ -2651,8 +2651,9 @@ sap.ui.define([
 			this.oChangePersistence.deleteChange(oChangeToBeSaved);
 
 			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exists initially");
-			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, [oChangeToBeSaved]).then(function() {
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, [oChangeToBeSaved], Version.Number.Original).then(function() {
 				assert.equal(this.oRemoveStub.callCount, 1);
+				assert.equal(this.oRemoveStub.getCall(0).args[0].parentVersion, Version.Number.Original, "the (original) version parameter was passed");
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "then one dirty change still exists");
 				assert.deepEqual(this.oChangePersistence.getDirtyChanges()[0], oChangeNotToBeSaved, "the the correct dirty change was not saved");

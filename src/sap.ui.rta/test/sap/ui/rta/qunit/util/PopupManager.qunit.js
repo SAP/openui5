@@ -126,6 +126,9 @@ sap.ui.define([
 				},
 				isSystemWithTransports: function() {
 					return false;
+				},
+				isPublicLayerAvailable: function() {
+					return false;
 				}
 			};
 			sandbox.stub(FlSettings, "getInstance").resolves(oSettings);
