@@ -448,6 +448,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag Property bag
 		 * @param {object} mPropertyBag.flexObject Flex Object to be deleted
 		 * @param {string} [mPropertyBag.transport] The transport ID
+		 * @param {string} [mPropertyBag.parentVersion]  Indicates if changes should be written as a draft and on which version the changes should be based on
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise} Resolves as soon as the deletion is completed without data
 		 */
@@ -458,6 +459,9 @@ sap.ui.define([
 			};
 			if (mPropertyBag.transport) {
 				mParameters.changelist = mPropertyBag.transport;
+			}
+			if (mPropertyBag.parentVersion) {
+				mParameters.parentVersion = mPropertyBag.parentVersion;
 			}
 			InitialConnector._addClientInfo(mParameters);
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
