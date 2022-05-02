@@ -136,9 +136,11 @@
 												height="100%"
 												selectionMode="Multi"
 												p13nMode="Column,Sort"
-												delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
+												delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}"
+												threshold="50"
+												enableAutoColumnWidth="true">
 												<mdc:columns>
-													<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" dataProperty="ID" width="5rem">
+													<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" dataProperty="ID">
 														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="Display" width="100%" multipleLines="false"/>
 													</mdc:table.Column>
 													<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" dataProperty="title">
@@ -147,7 +149,7 @@
 													<mdc:table.Column id="FH4--mdc--gridtable--descr" header="Description" dataProperty="descr">
 														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'descr', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4--mdc--gridtable--pub" header="Published" dataProperty="published" width="10rem">
+													<mdc:table.Column id="FH4--mdc--gridtable--pub" header="Published" dataProperty="published">
 														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'published', type: 'sap.ui.model.odata.type.Date'}" editMode="Display" width="100%" multipleLines="false"/>
 													</mdc:table.Column>
 													<mdc:table.Column id="FH4--mdc--gridtable--genre" header="Genre" dataProperty="genre_code">
@@ -768,7 +770,7 @@
 						</mdc:items>
 					</mdc:Chart>
 
-					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/v4demo/delegate/Books.Table.delegate', payload: {collectionName: 'Books'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%">
+					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/v4demo/delegate/Books.Table.delegate', payload: {collectionName: 'Books'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" enableAutoColumnWidth="true">
 						<mdc:actions>
 							<mdcat:ActionToolbarAction id="tableAction1">
 								<Button type="Emphasized" text="Dummy Action" />
@@ -778,7 +780,7 @@
 							</mdcat:ActionToolbarAction>
 						</mdc:actions>
 						<mdc:columns>
-							<mdc:table.Column id="id2" header="Title" dataProperty="title" width="15rem">
+							<mdc:table.Column id="id2" header="Title" dataProperty="title">
 								<mdc:Field id="F_title" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" multipleLines="true" width="100%">
 									<mdc:fieldInfo>
 										<mdc:Link sourceControl="fTitle" delegate='{ name: "sap/ui/mdc/flp/FlpLinkDelegate", payload: {
@@ -791,23 +793,23 @@
 							<mdc:table.Column id="id3" header="Description" dataProperty="descr">
 								<mdc:Field id="F_descr" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'descr', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" multipleLines="true" editMode="Display" width="100%"/>
 							</mdc:table.Column>
-							<mdc:table.Column id="id1" header="Author ID" dataProperty="author_ID" width="10rem">
+							<mdc:table.Column id="id1" header="Author ID" dataProperty="author_ID">
 								<mdc:Field id="F_author_ID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'author_ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" display="DescriptionValue" additionalValue="{author/name}"  editMode="Display" multipleLines="true" width="100%">
 									<mdc:fieldInfo>
 										<mdc:Link delegate="{name: 'sap/ui/v4demo/delegate/Books.Link.delegate'}"></mdc:Link>
 									</mdc:fieldInfo>
 								</mdc:Field>
 							</mdc:table.Column>
-							<mdc:table.Column id="id4" header="Price" dataProperty="price" width="6rem">
+							<mdc:table.Column id="id4" header="Price" dataProperty="price">
 								<mdc:Field id="F_price" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" width="100%" multipleLines="false"/>
 							</mdc:table.Column>
-							<mdc:table.Column id="id5" header="Stock" dataProperty="stock" width="4rem" importance="High">
+							<mdc:table.Column id="id5" header="Stock" dataProperty="stock" importance="High">
 								<mdc:Field id="F_stock" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'stock', type:'sap.ui.model.odata.type.Int32'}" editMode="Display" width="100%" multipleLines="false"/>
 							</mdc:table.Column>
-							<mdc:table.Column id="id6" header="Genre" dataProperty="genre_code" width="6rem" importance="High">
+							<mdc:table.Column id="id6" header="Genre" dataProperty="genre_code" importance="High">
 								<mdc:Field id="F_genre_code" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'genre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" fieldHelp="FHGenreSingle" display="Description" multipleLines="false"/>
 							</mdc:table.Column>
-							<mdc:table.Column id="id7" header="SubGenre" dataProperty="subgenre_code" width="6rem" importance="High">
+							<mdc:table.Column id="id7" header="SubGenre" dataProperty="subgenre_code" importance="High">
 								<mdc:Field id="F_subgenre_code" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'subgenre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" fieldHelp="FHSubGenreSingle" display="Description" multipleLines="false"/>
 							</mdc:table.Column>
 						</mdc:columns>
