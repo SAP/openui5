@@ -3841,8 +3841,6 @@ sap.ui.define([
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"~metaPath~", {})
 			.returns(mQueryOptions);
-		oHelperMock.expects("buildPath").withExactArgs(undefined, "@odata.etag")
-			.returns("@odata.etag");
 		oHelperMock.expects("buildPath").withExactArgs("~metaPath~", undefined).returns("~2~");
 		this.oRequestorMock.expects("fetchType").never();
 		oHelperMock.expects("buildPath")
@@ -3868,8 +3866,7 @@ sap.ui.define([
 				"~metaPath~", "");
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
-				sinon.match.same(oEntity), sinon.match.same(oData),
-				[sRequestedPropertyPath, "@odata.etag"]);
+				sinon.match.same(oEntity), sinon.match.same(oData), [sRequestedPropertyPath]);
 		oHelperMock.expects("drillDown")
 			.withExactArgs(sinon.match.same(oEntity), ["foo", "bar"])
 			.returns("baz");
@@ -3922,8 +3919,6 @@ sap.ui.define([
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"/Employees/entity/path", {})
 			.returns(mQueryOptions);
-		oHelperMock.expects("buildPath").withExactArgs(undefined, "@odata.etag")
-			.returns("@odata.etag");
 		oHelperMock.expects("buildPath").withExactArgs("/Employees", "entity/path")
 			.returns("/Employees/entity/path");
 		oHelperMock.expects("buildPath").withExactArgs("/Employees/entity/path", undefined)
@@ -3950,8 +3945,7 @@ sap.ui.define([
 				oCache.sMetaPath + "/entity/path", "('31')/entity/path");
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('31')/entity/path",
-				sinon.match.same(oEntity), sinon.match.same(oData),
-				[sRequestedPropertyPath, "@odata.etag"]);
+				sinon.match.same(oEntity), sinon.match.same(oData), [sRequestedPropertyPath]);
 		oHelperMock.expects("drillDown")
 			.withExactArgs(sinon.match.same(oEntity), ["foo", "bar"])
 			.returns("baz");
@@ -4043,14 +4037,6 @@ sap.ui.define([
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath + "/entity/path", {})
 			.returns(mQueryOptions);
-		oHelperMock.expects("buildPath").withExactArgs(undefined, "@odata.etag")
-			.returns("@odata.etag");
-		oHelperMock.expects("buildPath").withExactArgs("foo", "@odata.etag")
-			.returns("foo/@odata.etag");
-		oHelperMock.expects("buildPath").withExactArgs("foo/bar", "@odata.etag")
-			.returns("foo/bar/@odata.etag");
-		oHelperMock.expects("buildPath").withExactArgs("foo/bar/baz", "@odata.etag")
-			.returns("foo/bar/baz/@odata.etag");
 		this.oRequestorMock.expects("fetchType").never();
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath + "/entity/path", undefined)
 			.returns("~");
@@ -4102,10 +4088,7 @@ sap.ui.define([
 		oUpdateSelectedCall = oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('1')/entity/path",
 				sinon.match.same(oEntity), sinon.match.same(oData), [
-					"foo/bar/baz/qux", "@odata.etag", "foo/foo1", "foo/t/foo2",
-					"foo/@$ui5._/predicate", "foo/@odata.etag", "foo/bar/@$ui5._/predicate",
-					"foo/bar/@odata.etag", "foo/bar/baz/baz1", "foo/bar/baz/@$ui5._/predicate",
-					"foo/bar/baz/@odata.etag"
+					"foo/bar/baz/qux", "foo/foo1", "foo/t/foo2", "foo/bar/baz/baz1"
 				]);
 		oHelperMock.expects("drillDown")
 			.withExactArgs(sinon.match.same(oEntity), ["foo"])
@@ -4179,14 +4162,14 @@ sap.ui.define([
 				oCache.sMetaPath, "");
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
-				sinon.match.same(oEntity), sinon.match.same(oData), ["property/foo", "@odata.etag"])
+				sinon.match.same(oEntity), sinon.match.same(oData), ["property/foo"])
 			.callsFake(function () {
 				assert.ok("Employees('31')?$select=property" in oCache.mPropertyRequestByPath,
 					"still cached");
 			});
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
-				sinon.match.same(oEntity), sinon.match.same(oData), ["property/bar", "@odata.etag"])
+				sinon.match.same(oEntity), sinon.match.same(oData), ["property/bar"])
 			.callsFake(function () {
 				oEntity["@odata.etag"] = "etag";
 			});

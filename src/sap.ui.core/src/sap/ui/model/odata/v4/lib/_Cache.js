@@ -701,10 +701,7 @@ sap.ui.define([
 					}
 					aUpdateProperties.push(_Helper.buildPath(sBasePath, vKey));
 				});
-				aUpdateProperties.push(sBasePath + "/@$ui5._/predicate");
 			}
-			// Always copy the ETag for the case that the cached entity is still initial
-			aUpdateProperties.push(_Helper.buildPath(sBasePath, "@odata.etag"));
 			if (mQueryOptions0.$expand) {
 				// intersecting the query options with sRequestedPropertyPath delivers exactly one
 				// entry in $expand at each level (one for each navigation property binding)
