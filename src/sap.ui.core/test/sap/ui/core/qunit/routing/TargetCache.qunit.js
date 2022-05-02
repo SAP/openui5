@@ -279,17 +279,31 @@ sap.ui.define([
 
 	QUnit.module("destroy", {
 		beforeEach: function () {
-			var that = this,
-				oDestroySpy = sinon.spy();
+			var that = this;
+
+			this.oRegisterForDestroySpy = sinon.spy();
+			this.oDestroySpy = sinon.spy();
+
+			this.oOwnerComponent = {
+				runAsOwner: function(fnCreate) {
+					return fnCreate();
+				},
+				registerForDestroy: this.oRegisterForDestroySpy,
+				isA: function() {
+					return true;
+				},
+				getRouter: function() {
+				}
+			};
 
 			this.oCache = new TargetCache({
-				async: true
+				async: true,
+				component: this.oOwnerComponent
 			});
 
-			this.oDestroySpy = oDestroySpy;
 
 			this.oComponent = {
-				destroy: oDestroySpy,
+				destroy: this.oDestroySpy,
 				isA: function(sClass) {
 					return sClass === "sap.ui.core.UIComponent";
 				},
@@ -314,6 +328,7 @@ sap.ui.define([
 		this.oCache.destroy();
 
 		assert.equal(this.oDestroySpy.callCount, 1, "The managed component is also destroyed");
+		assert.ok(this.oRegisterForDestroySpy.notCalled, "The creation of the component isn't registered at the owner component side because it's created immediately");
 	});
 
 	QUnit.test("Destroy TargetCache should wait for the loading promise to resolve before destroys the managed object", function (assert) {
@@ -324,6 +339,7 @@ sap.ui.define([
 		this.oCache.destroy();
 
 		assert.equal(this.oDestroySpy.callCount, 0, "The destroy method of the component isn't called yet");
+		assert.equal(this.oRegisterForDestroySpy.callCount, 1, "The async creation of the component is registered at the owner component");
 
 		return oPromise.then(function () {
 			assert.equal(this.oDestroySpy.callCount, 1, "The destroy method of the component is called");

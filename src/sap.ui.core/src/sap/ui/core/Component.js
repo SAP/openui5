@@ -388,14 +388,29 @@ sap.ui.define([
 	// apply the registry plugin
 	ManagedObjectRegistry.apply(Component, {
 		onDeregister: function(sComponentId) {
-			Element.registry.forEach(function(oElement) {
-				if ( oElement._sapui_candidateForDestroy && oElement._sOwnerId === sComponentId && !oElement.getParent() ) {
+			forEachChildElement(function(oElement) {
+				if ( oElement._sapui_candidateForDestroy) {
 					Log.debug("destroying dangling template " + oElement + " when destroying the owner component");
 					oElement.destroy();
 				}
-			});
+			}, sComponentId);
 		}
 	});
+
+	/**
+	 * Executes the given callback function for each sap.ui.core.Element whose owner-component
+	 * has the given ID and which has no parent.
+	 * @param {function(sap.ui.core.Element, sap.ui.core.ID)} fn callback function
+	 * @param {sap.ui.core.ID} sComponentId the component ID used for the owner check
+	 */
+	function forEachChildElement(fn, sComponentId) {
+		Element.registry.forEach(function(oElement, sId) {
+			var sElementOwnerId = Component.getOwnerIdFor(oElement);
+			if (sElementOwnerId === sComponentId && !oElement.getParent()) {
+				fn(oElement, sId);
+			}
+		});
+	}
 
 	/**
 	 * Helper function to retrieve owner (extension) component holding the customizing configuration.
@@ -794,7 +809,7 @@ sap.ui.define([
 	 * clean up the component and its dependent entities like models or event handlers
 	 */
 	Component.prototype.destroy = function() {
-
+		var pAsyncDestroy, bSomeRejected = false;
 		// destroy all services
 		for (var sLocalServiceAlias in this._mServices) {
 			if (this._mServices[sLocalServiceAlias].instance) {
@@ -834,11 +849,29 @@ sap.ui.define([
 				oInstance.destroy();
 			}
 		}
+		function fnError(oError) {
+			// We ignore errors if we are in destroy phase and try to cleanup dangling objects
+			// via the Element registry and the owner Component
+			// remember rejections so we can do a defensive destruction of dangling controls in this case
+			bSomeRejected = true;
+		}
 
 		// trigger an async destroy for all registered commponent promises
 		var aDestroyables = this._getDestroyables();
 		for (var i = 0; i < aDestroyables.length; i++ ) {
-			aDestroyables[i] = aDestroyables[i].then(fnDestroy);
+			aDestroyables[i] = aDestroyables[i].then(fnDestroy, fnError);
+		}
+		if (aDestroyables.length > 0) {
+			pAsyncDestroy = Promise.all(aDestroyables).then(function() {
+				// defensive destroy: Do it only if some collected Promises rejected
+				if (bSomeRejected) {
+					// destroy dangling Controls
+					forEachChildElement(function(oElement) {
+						// we assume that we can safely destroy a control that has no parent
+						oElement.destroy();
+					}, this.getId());
+				}
+			}.bind(this));
 		}
 
 		// destroy the object
@@ -855,7 +888,7 @@ sap.ui.define([
 		} else {
 			this.getMetadata().exit();
 		}
-		return Promise.all(aDestroyables);
+		return pAsyncDestroy;
 	};
 
 
@@ -3744,13 +3777,10 @@ sap.ui.define([
 		this._bIsActive = false;
 
 		// deactivate all child elements
-		Element.registry.filter(function(oElement) {
-			var sOwnerId = Component.getOwnerIdFor(oElement);
-			if (sOwnerId === this.getId()) {
-				ResizeHandler.suspend(oElement.getDomRef());
-				return oElement.onOwnerDeactivation();
-			}
-		}, this);
+		forEachChildElement(function(oElement) {
+			ResizeHandler.suspend(oElement.getDomRef());
+			oElement.onOwnerDeactivation();
+		}, this.getId());
 
 		// deactivate all child components
 		Component.registry.filter(function(oComponent) {
@@ -3810,13 +3840,10 @@ sap.ui.define([
 		this._bIsActive = true;
 
 		// resume all child elements
-		Element.registry.forEach(function(oElement) {
-			var sCompId = Component.getOwnerIdFor(oElement);
-			if (sCompId === this.getId()) {
-				ResizeHandler.resume(oElement.getDomRef());
-				return oElement.onOwnerActivation();
-			}
-		}, this);
+		forEachChildElement(function(oElement) {
+			ResizeHandler.resume(oElement.getDomRef());
+			oElement.onOwnerActivation();
+		}, this.getId());
 
 		// activate all child components
 		Component.registry.forEach(function(oComponent) {
