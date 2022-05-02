@@ -559,18 +559,23 @@ function (
 	 * The calculation is based on original associated DOM state and parent overlays
 	 * This method also calls "applyStyles" method for every child Overlay of this Overlay (cascade)
 	 * @param {boolean} bForceScrollbarSync - `true` to force a scrollbars synchronisation if there are any
+	 * @param {boolean} bSkipForceCalculation - `true` to skip the geometry calculation (geometry was already cached)
 	 * @public
 	 */
-	Overlay.prototype.applyStyles = function (bForceScrollbarSync) {
+	Overlay.prototype.applyStyles = function (bForceScrollbarSync, bSkipForceCalculation) {
 		this.fireBeforeGeometryChanged();
+		var oGeometry;
 
 		if (!this.isRendered() || this._bIsBeingDestroyed || this.getShouldBeDestroyed()) {
 			return;
 		}
 
-		if (this.isVisible()) {
-			var oGeometry = this.getGeometry(true);
+		// If not done before, re-calculate the Geometry to cache the values for the isVisible() check
+		if (this.getVisible()) {
+			oGeometry = this.getGeometry(!bSkipForceCalculation);
+		}
 
+		if (this.isVisible()) {
 			if (oGeometry && oGeometry.visible) {
 				this._setSize(this.$(), oGeometry);
 				var $RenderingParent = this._getRenderingParent();

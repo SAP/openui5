@@ -752,7 +752,9 @@ function (
 				window.cancelAnimationFrame(this._iApplyStylesRequest);
 			}
 			this._iApplyStylesRequest = window.requestAnimationFrame(function () {
-				this.applyStyles();
+				//Cache the geometry values
+				this.getGeometry(true);
+				this.applyStyles(false, true);
 				delete this._iApplyStylesRequest;
 			}.bind(this));
 		}
@@ -895,7 +897,7 @@ function (
 		} else if (typeof oDTData.isVisible === "function") {
 			bVisible = oDTData.isVisible(oElement);
 		} else {
-			var oGeometry = this.getGeometry(true);
+			var oGeometry = this.getGeometry();
 			if (oGeometry) {
 				bVisible = oGeometry.visible;
 			} else if (oElement instanceof Control) {
