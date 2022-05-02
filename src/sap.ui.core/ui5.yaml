@@ -13,6 +13,63 @@ resources:
 builder:
   bundles:
     - bundleDefinition:
+        name: sap/ui/core/library-preload.js
+        sections:
+          - mode: provided
+            filters:
+              # bundle sap-ui-core.js
+              - ui5loader-autoconfig.js
+              - sap/ui/core/Core.js
+              # end bundle sap-ui-core.js
+            resolve: true
+          - mode: preload
+            name: sap/ui/core/library-preload
+            filters:
+              - "**/*.js"
+              - "sap/ui/core/manifest.json"
+
+              # include only thirdparty that is very likely to be used
+              - "!sap/ui/thirdparty/"
+              - "sap/ui/thirdparty/crossroads.js"
+              - "sap/ui/thirdparty/caja-html-sanitizer.js"
+              - "sap/ui/thirdparty/hasher.js"
+              - "sap/ui/thirdparty/signals.js"
+              - "sap/ui/thirdparty/jquery-mobile-custom.js"
+              - "sap/ui/thirdparty/jqueryui/jquery-ui-core.js"
+              - "sap/ui/thirdparty/jqueryui/jquery-ui-datepicker.js"
+              - "sap/ui/thirdparty/jqueryui/jquery-ui-position.js"
+
+              # exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5)
+              - "!sap-*.js"
+              - "!jquery-*.js"
+              - "!sap/ui/core/*-preload.js"
+
+              # ignore substitutes for moved third party libs
+              - "!sap/ui/model/odata/datajs.js"
+
+              # exclude legacy app namespace (not visible in OpenUI5)
+              - "!sap/ui/app/"
+
+              # exclude non-productive code
+              - "!sap/ui/core/support/"
+              - "!sap/ui/core/designtime/"
+              - "!sap/ui/core/**/*.designtime.js"
+              - "!sap/ui/core/**/*.support.js"
+              - "!sap/ui/debug/"
+              - "!sap/ui/qunit/"
+              - "!sap/ui/test/"
+
+              # core plugins, shouldn't be packaged by default
+              - "!sap/ui/core/plugin/DeclarativeSupport.js"
+              - "!sap/ui/core/plugin/LessSupport.js"
+
+            resolve: false
+            resolveConditional: false
+            renderer: true
+      bundleOptions:
+        optimize: true
+        usePredefineCalls: true
+    - bundleDefinition:
         name: jquery-sap.js
         sections:
           - mode: provided

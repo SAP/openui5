@@ -16,7 +16,6 @@
       <module-syntax>ui5</module-syntax>
     </generation>
     <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.core" />
-    <!-- excludes for the all-in-one file -->
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
         <raw-module name="sap/ui/core/support/trace/EppLib.js" />
@@ -106,93 +105,6 @@
         <raw-module name="sap/ui/test/starter/_configureLoader.js" depends="ui5loader.js" />
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Component.js" />
       </module-infos>
-      <all-in-one>
-        <!-- exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5) -->
-        <exclude name="jquery-*.js" />
-        <exclude name="sap-*" />
-        <!-- CorePlugin, shouldn't be installed by default -->
-        <exclude name="sap/ui/core/plugin/DeclarativeSupport.js" />
-        <exclude name="sap/ui/core/plugin/LessSupport.js" />
-        <!-- exclude non-productive code -->
-        <exclude name="sap/ui/debug/**" />
-        <exclude name="sap/ui/core/support/" />
-        <exclude name="sap/ui/qunit/**" />
-        <exclude name="sap/ui/test/**" />
-        <exclude name="testsuite/**" />
-        <!-- Ignore substitutes for moved third party libs -->
-        <exclude name="jquery-ui-core.js" />
-        <exclude name="jquery-ui-datepicker.js" />
-        <exclude name="jquery-ui-position.js" />
-        <exclude name="sap/ui/model/odata/datajs.js" />
-        <!-- Third party libs which should NOT be part of the all-in-one file -->
-        <exclude name="sap/ui/thirdparty/bignumber.js" />
-        <exclude name="sap/ui/thirdparty/blanket.js" />
-        <!-- <exclude name="sap/ui/thirdparty/crossroads.js" /> -->
-        <!-- <exclude name="sap/ui/thirdparty/caja-html-sanitizer.js" /> -->
-        <exclude name="sap/ui/thirdparty/d3.js" />
-        <exclude name="sap/ui/thirdparty/datajs.js" />
-        <exclude name="sap/ui/thirdparty/handlebars.js" />
-        <!-- <exclude name="sap/ui/thirdparty/hasher.js" /> -->
-        <exclude name="sap/ui/thirdparty/IPv6.js" />
-        <exclude name="sap/ui/thirdparty/iscroll.js" />
-        <exclude name="sap/ui/thirdparty/iscroll-lite.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-widget.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-effect*.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-blind.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-bounce.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-clip.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-drop.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-explode.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-fade.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-fold.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-highlight.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-pulsate.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-scale.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-shake.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-slide.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-transfer.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-mouse.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-draggable.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-resizable.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-selectable.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-sortable.js" />
-        <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-droppable.js" />
-        <exclude name="sap/ui/thirdparty/jszip.js" />
-        <exclude name="sap/ui/thirdparty/klay.js" />
-        <exclude name="sap/ui/thirdparty/less.js" />
-        <exclude name="sap/ui/thirdparty/mobify-carousel.js" />
-        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
-        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
-        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" />
-        <exclude name="sap/ui/thirdparty/punycode.js" />
-        <exclude name="sap/ui/thirdparty/qunit-2.js" />
-        <exclude name="sap/ui/thirdparty/qunit-composite.js" />
-        <exclude name="sap/ui/thirdparty/qunit-reporter-junit.js" />
-        <exclude name="sap/ui/thirdparty/qunit.js" />
-        <exclude name="sap/ui/thirdparty/RequestRecorder.js"/>
-        <exclude name="sap/ui/thirdparty/require.js" />
-        <exclude name="sap/ui/thirdparty/SecondLevelDomains.js" />
-        <!-- <exclude name="sap/ui/thirdparty/signals.js" /> -->
-        <exclude name="sap/ui/thirdparty/sinon-4.js" />
-        <exclude name="sap/ui/thirdparty/sinon-ie.js" />
-        <exclude name="sap/ui/thirdparty/sinon-qunit.js" />
-        <exclude name="sap/ui/thirdparty/sinon-server.js" />
-        <exclude name="sap/ui/thirdparty/sinon.js" />
-        <exclude name="sap/ui/thirdparty/swipe-view.js" />
-        <!-- URI is no longer excluded because it's needed in jquery.sap.global and others -->
-        <!-- <exclude name="sap/ui/thirdparty/URI.js" /> -->
-        <exclude name="sap/ui/thirdparty/URITemplate.js" />
-        <exclude name="sap/ui/thirdparty/vkbeautify.js" />
-        <exclude name="sap/ui/thirdparty/zyngascroll.js" />
-        <exclude name="sap/ui/thirdparty/hyphenopoly/**" />
-        <!-- INCLUDED (because not mentioned in the list above) are the following libs: -->
-        <!-- jquery.sap.global.js -->
-        <!-- sap/ui/thirdparty/jquery-mobile-custom.js -->
-        <!-- sap/ui/thirdparty/jqueryui/jquery-ui-core.js -->
-        <!-- sap/ui/thirdparty/jqueryui/jquery-ui-position.js -->
-        <!-- sap/ui/thirdparty/jqueryui/jquery-ui-datepicker.js -->
-      </all-in-one>
     </packaging>
     <!-- excludes for the JSDoc -->
     <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
