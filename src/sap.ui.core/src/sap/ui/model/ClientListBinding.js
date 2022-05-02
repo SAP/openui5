@@ -104,6 +104,37 @@ sap.ui.define([
 	};
 
 	/**
+	 * This helper function must be called only by {@link #getContexts}. It updates
+	 * <code>iLastStartIndex</code> and <code>iLastLength</code> of the current instance with the
+	 * given start index and length. If <code>bKeepCurrent</code> is set, throw an error if keeping
+	 * current contexts untouched is not supported, otherwise don't update
+	 * <code>iLastStartIndex</code> and <code>iLastLength</code>.
+	 *
+	 * @param {int} [iStartIndex]
+	 *   The start index
+	 * @param {int} [iLength]
+	 *   The length
+	 * @param {int} [iMaximumPrefetchSize]
+	 *   Must not be used
+	 * @param {boolean} [bKeepCurrent]
+	 *   Whether the result of {@link #getCurrentContexts} keeps untouched
+	 * @throws {Error}
+	 *   If extended change detection is enabled and <code>bKeepCurrent</code> is set, or if
+	 *   <code>iMaximumPrefetchSize</code> and <code>bKeepCurrent</code> are set
+	 *
+	 * @private
+	 */
+	 ClientListBinding.prototype._updateLastStartAndLength = function (iStartIndex, iLength,
+			iMaximumPrefetchSize, bKeepCurrent) {
+		if (bKeepCurrent) {
+			this._checkKeepCurrentSupported(iMaximumPrefetchSize);
+		} else {
+			this.iLastStartIndex = iStartIndex;
+			this.iLastLength = iLength;
+		}
+	};
+
+	/**
 	 * Returns an array of binding contexts for the bound target list.
 	 *
 	 * In case of extended change detection, the context array may have an additional
@@ -121,7 +152,7 @@ sap.ui.define([
 	 *   Determines how many contexts to retrieve beginning from the start index; default is the
 	 *   whole list length up to the model's size limit; see {@link sap.ui.model.Model#setSizeLimit}
 	 * @param {int} [iMaximumPrefetchSize]
-	 *   Not used
+	 *   Must not be used
 	 * @param {boolean} [bKeepCurrent]
 	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.102.0.
 	 * @return {sap.ui.model.Context[]}
