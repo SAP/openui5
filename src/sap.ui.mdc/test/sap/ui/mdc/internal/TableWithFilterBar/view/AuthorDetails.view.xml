@@ -324,7 +324,7 @@
 												<mdc:dialog>
 													<mdcv:Dialog title="Genre">
 														<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-															<Table id="mTable2_genre" items='{path : "/Genres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
+															<Table id="mTable2_genre" items='{path : "/Genres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
 																<columns>
 																	<Column width="10rem">
 																		<header>
