@@ -93,17 +93,16 @@ sap.ui.define([
 	 * destroy</code> method. All functions can be called but may not work properly or lead to unexpected side effects.
 	 *
 	 * <strong>Note:</strong><br>
-	 * On root level, you can only define content for the default aggregation, e.g. without adding the <code>&lt;content&gt;</code> tag. If
-	 * you want to specify content for another aggregation of a view like <code>dependents</code>, place it in a child
-	 * control's dependents aggregation or add it by using {@link sap.ui.core.mvc.XMLView#addDependent}.
-	 *
-	 * <strong>Note:</strong><br>
 	 * The XML view offers special handling for context binding and style classes.
 	 * You can specify them via the <code>binding</code> and <code>class</code> attributes on a control's XML node.
 	 * Please be aware that these attributes are not properties of the respective controls and thus
 	 * are not supported by a control's constructor.
 	 * For more information, see {@link topic:91f05e8b6f4d1014b6dd926db0e91070 Context Binding (Element Binding)}
 	 * and {@link topic:b564935324f449209354c7e2f9903f22 Using CSS Style Sheets in XML Views}.
+	 *
+	 * <strong>Note:</strong><br>
+	 * When the content aggregation of this control is bound, no HTML markup is allowed in the binding template of the
+	 * bound content aggregation. An error will be thrown when the above combination is detected.
 	 *
 	 * @extends sap.ui.core.mvc.View
 	 * @version ${version}
@@ -525,18 +524,11 @@ sap.ui.define([
 			}
 
 			// extract the properties of the view from the XML element
-			if ( !that.isSubView() ) {
-				// for a real XMLView, we need to parse the attributes of the root node
-				var mSettingsFromXML = {};
-				// enrich mSettingsFromXML
-				XMLTemplateProcessor.parseViewAttributes(xContent, that, mSettingsFromXML);
-				if (!mSettings.async) {
-					// extend mSettings which get applied implicitly during view constructor
-					Object.assign(mSettings, mSettingsFromXML);
-				} else {
-					// apply the settings from the loaded view source via an explicit call
-					that.applySettings(mSettingsFromXML);
-				}
+			if (!that.isSubView()) {
+				// extract the internal settings from the XML and set on the view. The standard properties, event
+				// handler, aggregation and association will be extracted during parsing the content and applied to the
+				// view instance by calling "applySettings"
+				XMLTemplateProcessor.parseViewAttributes(xContent, that);
 			} else {
 				// when used as fragment: prevent connection to controller, only top level XMLView must connect
 				delete mSettings.controller;
@@ -677,7 +669,7 @@ sap.ui.define([
 		View.prototype.exit.apply(this, arguments);
 	};
 
-	XMLView.prototype.onControllerConnected = function(oController) {
+	XMLView.prototype.onControllerConnected = function(oController, mSettings) {
 		var that = this;
 		// unset any preprocessors (e.g. from an enclosing JSON view)
 
@@ -692,7 +684,7 @@ sap.ui.define([
 
 		// parse the XML tree
 		if (!this.oAsyncState) {
-			this._aParsedContent = fnRunWithPreprocessor(XMLTemplateProcessor.parseTemplate.bind(null, this._xContent, this));
+			this._aParsedContent = fnRunWithPreprocessor(XMLTemplateProcessor.parseTemplate.bind(null, this._xContent, this, mSettings));
 		} else {
 			var fnDone = Interaction.notifyAsyncStep("VIEW PROCESSING");
 			return XMLTemplateProcessor.parseTemplatePromise(this._xContent, this, true, {

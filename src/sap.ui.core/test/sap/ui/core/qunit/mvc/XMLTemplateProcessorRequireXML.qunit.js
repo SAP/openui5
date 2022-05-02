@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/XMLView"
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/routing/HashChanger"
 ], function(Component, UIComponent, XMLTemplateProcessor, View,
-	InstanceManager, Log, merge, JSONModel, XMLView) {
+	InstanceManager, Log, merge, JSONModel, XMLView, HashChanger) {
 	"use strict";
 
 	var TESTDATA_PREFIX = "testdata.xml-require";
@@ -25,7 +26,9 @@ sap.ui.define([
 			merge(oSettings, additionalViewSettings);
 		}
 
-		return bAsync ? View.create(oSettings) : sap.ui.xmlview(oSettings).loaded();
+		return bAsync ? View.create(oSettings) : Promise.resolve().then(function() {
+			return sap.ui.xmlview(oSettings).loaded();
+		});
 	};
 
 	var createAsyncView = function (sViewName, additionalViewSettings) {
@@ -96,7 +99,7 @@ sap.ui.define([
 		return XMLView.create({
 			definition: sView
 		}).catch(function(oError) {
-			assert.equal(oError.message, "core:require in XMLView contains invalide value '[object Object]'under key 'module' on Node: Panel");
+			assert.equal(oError.message, "core:require in XMLView contains invalid value '[object Object]'under key 'module' on Node: Panel");
 		});
 	});
 
@@ -107,10 +110,16 @@ sap.ui.define([
 		viewName: ".view.XMLTemplateProcessorAsync_require",
 		settings: {
 			async: {
-				create: createAsyncView
+				create: createAsyncView,
+				spies: {
+					getInstance: [HashChanger, "getInstance"]
+				}
 			},
 			sync: {
-				create: createSyncView
+				create: createSyncView,
+				spies: {
+					getInstance: [HashChanger, "getInstance"]
+				}
 			}
 		},
 		runAssertions: function (oView, mSpies, assert, bAsync) {
@@ -125,6 +134,8 @@ sap.ui.define([
 			assert.ok(MessageBox, "Class is loaded");
 			assert.ok(BusyIndicator, "Class is loaded");
 			assert.ok(Helper, "Class is loaded");
+
+			assert.equal(mSpies.getInstance.callCount, 1, "event handler on view instance is called");
 
 			var oPage = oView.byId("page");
 			var oBoxButton = oView.byId("boxButton");
@@ -179,6 +190,101 @@ sap.ui.define([
 					resolve();
 				});
 			});
+		}
+	}, {
+		testDescription: "Parsing core:require in XMLView where required module is used in the bound 'content' aggregation",
+		viewName: ".view.XMLTemplateProcessorAsync_require_bind_content",
+		settings: {
+			async: {
+				create: createAsyncView
+			},
+			sync: {
+				create: createSyncView
+			}
+		},
+		runAssertions: function (oView, mSpies, assert, bAsync) {
+			oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var aContent = oView.getContent();
+			var aDependents = oView.getDependents();
+			var oBindingTemplate = oView.byId("template");
+
+			assert.equal(aContent.length, 0, "No content exists before model is available");
+			assert.equal(aDependents.length, 1, "The dependent control is created");
+			assert.ok(oBindingTemplate, "Binding template instance is created");
+			assert.notOk(oBindingTemplate.getDomRef(), "Binding template isn't rendered");
+
+			var oModel = new JSONModel({
+				names: [{
+					name: "name1"
+				}, {
+					name: "name2"
+				}]
+			});
+
+			oView.setModel(oModel);
+			sap.ui.getCore().applyChanges();
+
+			aContent = oView.getContent();
+			assert.equal(aContent.length, 2, "content under binding is created");
+			assert.equal(aContent[0].getText(), "NAME1", "The bound value is formatted by the given formatter");
+			assert.ok(aContent[0].hasListeners("press"), "The 'press' event handler is resolved correctly");
+
+			assert.ok(aContent[0].getDomRef(), "The control created from binding template should be rendered");
+			assert.ok(aContent[1].getDomRef(), "The control created from binding template should be rendered");
+
+			assert.notOk(oView.getDomRef().hasAttribute("data-sap-ui-preserve"),
+				"The rendering is done by using 'renderControl' with the content aggregation, " +
+				"the view itself shouldn't have the preserve attribute set.");
+
+			oModel.setData({
+				names: [{
+					name: "name1"
+				}, {
+					name: "name2"
+				}, {
+					name: "name3"
+				}]
+			});
+
+			aContent = oView.getContent();
+			assert.equal(aContent.length, 3, "content under binding is created");
+			assert.equal(aContent[2].getText(), "NAME3", "The bound value is formatted by the given formatter");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(aContent[0].getDomRef(), "The control created from binding template should be rendered");
+			assert.ok(aContent[1].getDomRef(), "The control created from binding template should be rendered");
+			assert.ok(aContent[2].getDomRef(), "The control created from binding template should be rendered");
+
+			assert.notOk(oView.getDomRef().hasAttribute("data-sap-ui-preserve"),
+				"The rendering is done by using 'renderControl' with the content aggregation, " +
+				"the view itself shouldn't have the preserve attribute set.");
+		}
+	}, {
+		testDescription: "Error should be thrown when HTML nodes exist in the binding template of the bound 'content' aggregation",
+		viewName: ".view.XMLTemplateProcessorAsync_require_bind_content_html",
+		settings: {
+			async: {
+				create: createAsyncView,
+				additionalViewSettings: {
+					id: "viewWithBoundContentHTML"
+				}
+			},
+			sync: {
+				create: createSyncView,
+				additionalViewSettings: {
+					id: "viewWithBoundContentHTML"
+				}
+			}
+		},
+		runAssertions: function (oView, mSpies, assert, bAsync) {
+			assert.notOk(true, "The promise should NOT resolve");
+		},
+		onRejection: function(assert, oError) {
+			assert.equal(oError.message,
+				"Error found in View (id: 'viewWithBoundContentHTML').\nXML node: '<html:div xmlns:html=\"http://www.w3.org/1999/xhtml\"></html:div>':\nNo XHTML or SVG node is allowed because the 'content' aggregation is bound.",
+				"Error message is correct");
 		}
 	}, {
 		testDescription: "Parsing core:require in fragment",
@@ -527,6 +633,10 @@ sap.ui.define([
 			return oConfig.settings.async.create(oConfig.viewName, oConfig.settings.async.additionalViewSettings)
 				.then(function (oView) {
 					return oConfig.runAssertions.call(that, oView, mSpies, assert, bAsync);
+				}, function(oError) {
+					if (oConfig.onRejection) {
+						oConfig.onRejection(assert, oError);
+					}
 				});
 		});
 
@@ -543,6 +653,10 @@ sap.ui.define([
 			return oConfig.settings.sync.create(oConfig.viewName, oConfig.settings.sync.additionalViewSettings)
 				.then(function (oView) {
 					return oConfig.runAssertions.call(that, oView, mSpies, assert, bAsync);
+				}, function(oError) {
+					if (oConfig.onRejection) {
+						oConfig.onRejection(assert, oError);
+					}
 				});
 		});
 	});
