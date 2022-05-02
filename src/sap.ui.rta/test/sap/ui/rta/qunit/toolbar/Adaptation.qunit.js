@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
-	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
@@ -18,7 +17,6 @@ sap.ui.define([
 	Core,
 	Fragment,
 	coreLibrary,
-	FeaturesAPI,
 	Version,
 	Layer,
 	JSONModel,
@@ -51,6 +49,23 @@ sap.ui.define([
 		});
 	}
 
+	function createAndWaitForToolbar() {
+		this.oToolbar = new Adaptation({
+			textResources: Core.getLibraryResourceBundle("sap.ui.rta")
+		});
+		document.getElementById("qunit-fixture").style.width = "1600px";
+		this.oToolbar.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		this.oToolbar.setModel(this.oVersionsModel, "versions");
+		this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+		this.oToolbar.animation = false;
+
+		return this.oToolbar._pFragmentLoaded.then(function() {
+			return this.oToolbar.show();
+		}.bind(this));
+	}
+
 	QUnit.module("Different Screen Sizes", {
 		beforeEach: function() {
 			this.oVersionsModel = new JSONModel({
@@ -60,16 +75,6 @@ sap.ui.define([
 			});
 			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oGetCurrentRangeStub = sandbox.stub(Device.media, "getCurrentRange");
-
-			this.oToolbar = new Adaptation({
-				textResources: Core.getLibraryResourceBundle("sap.ui.rta")
-			});
-
-			document.getElementById("qunit-fixture").style.width = "1600px";
-			this.oToolbar.placeAt("qunit-fixture");
-			Core.applyChanges();
-
-			return this.oToolbar._pFragmentLoaded;
 		},
 		afterEach: function() {
 			this.oToolbar.destroy();
@@ -77,117 +82,106 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the toolbar gets initially shown in desktop mode (>= 900px) and then rerendered in the other 2 modes", function(assert) {
-			this.oToolbar.setModel(this.oVersionsModel, "versions");
-			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+			var oInitRangeSetStub = sandbox.stub(Device.media, "initRangeSet");
+			// the 'calledOnceWithMatch' function is not yet available in the current sinon versions
+			// and the toolbar does not exist in time to only stub the call from the toolbar
+			var nCallCount = 0;
+			sandbox.stub(Device.media, "attachHandler").callsFake(function(fnHandler, oContext, sName) {
+				if (sName === "sapUiRtaToolbar") {
+					nCallCount++;
+				}
+			});
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.DESKTOP});
-			this.oToolbar.animation = false;
-			return this.oToolbar.show().then(function() {
+
+			return createAndWaitForToolbar.call(this).then(function() {
+				assert.equal(oInitRangeSetStub.callCount, 1, "our range set was initialized");
+				assert.equal(oInitRangeSetStub.lastCall.args[0], "sapUiRtaToolbar", "the first parameter is correct");
+				assert.deepEqual(oInitRangeSetStub.lastCall.args[1], [900, 1200], "the second parameter is correct");
+				assert.equal(oInitRangeSetStub.lastCall.args[2], "px", "the third parameter is correct");
+				assert.deepEqual(oInitRangeSetStub.lastCall.args[3], [Adaptation.modes.MOBILE, Adaptation.modes.TABLET, Adaptation.modes.DESKTOP], "the fourth parameter is correct");
+				assert.equal(nCallCount, 1, "the handler was attached once");
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.DESKTOP, "the mode was correctly set");
 				assert.notOk(this.oToolbar.getControl("exit").getIcon(), "the exit button has no icon");
 				assert.ok(this.oToolbar.getControl("exit").getText(), "the exit button has text");
 				assert.equal(this.oToolbar.getControl("restore").getLayoutData().getPriority(), "High", "the layout data priority is correct");
 				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 
-				return this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
-			}.bind(this))
-			.then(function() {
+				this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
 				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 
-				return this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
-			}.bind(this))
-			.then(function() {
+				this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
 				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 
-				return this.oToolbar._onSizeChanged({name: Adaptation.modes.DESKTOP});
-			}.bind(this))
-			.then(function() {
+				this.oToolbar._onSizeChanged({name: Adaptation.modes.DESKTOP});
 				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 			}.bind(this));
 		});
 
 		QUnit.test("when a draft is visible and the toolbar gets initially shown in desktop mode (>= 1200px) and then rerendered in the other 2 modes and back", function(assert) {
-			this.oToolbar.setModel(this.oVersionsModel, "versions");
-			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+			var oInitRangeSetStub = sandbox.stub(Device.media, "initRangeSet");
+			sandbox.stub(Device.media, "hasRangeSet").withArgs("sapUiRtaToolbar").returns(true);
+
 			this.oVersionsModel.setProperty("/versioningEnabled", true);
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.DESKTOP});
-			this.oToolbar.animation = false;
 
-			return this.oToolbar.show().then(function() {
+			return createAndWaitForToolbar.call(this).then(function() {
+				assert.equal(oInitRangeSetStub.callCount, 0, "our range set was not initialized");
 				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
-				return this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
-			}.bind(this))
-			.then(function() {
+				this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
 				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
-				return this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
-			}.bind(this))
-			.then(function() {
+				this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
 				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
-				return this.oToolbar._onSizeChanged({name: Adaptation.modes.DESKTOP});
-			}.bind(this))
-			.then(function() {
+				this.oToolbar._onSizeChanged({name: Adaptation.modes.DESKTOP});
 				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
 			}.bind(this));
 		});
 
 		QUnit.test("when the toolbar gets initially shown in tablet mode (between 900px and 1200px)", function(assert) {
-			this.oToolbar.setModel(this.oVersionsModel, "versions");
-			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.TABLET});
-			this.oToolbar.animation = false;
-			return this.oToolbar.show()
-				.then(function() {
-					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
-					assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
-					assert.notOk(this.oToolbar.getControl("exit").getIcon(), "the exit button has no icon");
-					assert.ok(this.oToolbar.getControl("exit").getText(), "the exit button has text");
-				}.bind(this));
+
+			return createAndWaitForToolbar.call(this).then(function() {
+				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
+				assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
+				assert.notOk(this.oToolbar.getControl("exit").getIcon(), "the exit button has no icon");
+				assert.ok(this.oToolbar.getControl("exit").getText(), "the exit button has text");
+			}.bind(this));
 		});
 
 		QUnit.test("when the draft is set to visible and toolbar gets initially shown in tablet mode (between 900px and 1200px)", function(assert) {
-			this.oToolbar.setModel(this.oVersionsModel, "versions");
-			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oVersionsModel.setProperty("/versioningEnabled", true);
 			this.oVersionsModel.setProperty("/draftAvailable", true);
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.TABLET});
 
-			this.oToolbar.animation = false;
-			return this.oToolbar.show()
-				.then(function() {
-					assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is shown");
-					assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
-				}.bind(this));
+			return createAndWaitForToolbar.call(this).then(function() {
+				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is shown");
+				assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
+			}.bind(this));
 		});
 
 		QUnit.test("when the toolbar gets initially shown in mobile mode (< 900px)", function(assert) {
-			this.oToolbar.setModel(this.oVersionsModel, "versions");
-			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.MOBILE});
-			this.oToolbar.animation = false;
-			return this.oToolbar.show()
-				.then(function() {
-					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
-					assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
-					assert.ok(this.oToolbar.getControl("exit").getIcon(), "the exit button has an icon");
-					assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
-				}.bind(this));
+
+			return createAndWaitForToolbar.call(this).then(function() {
+				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
+				assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
+				assert.ok(this.oToolbar.getControl("exit").getIcon(), "the exit button has an icon");
+				assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
+			}.bind(this));
 		});
 
 		QUnit.test("when the draft is set to visible and the toolbar gets initially shown in mobile mode (< 900px)", function(assert) {
-			this.oToolbar.setModel(this.oVersionsModel, "versions");
-			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			this.oVersionsModel.setProperty("/versioningEnabled", true);
 			this.oVersionsModel.setProperty("/draftAvailable", true);
 			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.MOBILE});
-			this.oToolbar.animation = false;
-			return this.oToolbar.show()
-				.then(function() {
-					assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
-					assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
-					assert.ok(this.oToolbar.getControl("exit").getIcon(), "the exit button has an icon");
-					assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
-				}.bind(this));
+
+			return createAndWaitForToolbar.call(this).then(function() {
+				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
+				assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
+				assert.ok(this.oToolbar.getControl("exit").getIcon(), "the exit button has an icon");
+				assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
+			}.bind(this));
 		});
 	});
 
