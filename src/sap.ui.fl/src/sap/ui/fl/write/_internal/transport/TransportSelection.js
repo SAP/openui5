@@ -48,9 +48,10 @@ sap.ui.define([
 	 * @param {boolean} bCompactMode - Flag indicating whether the transport dialog should be opened in compact mode
 	 * @param {object} oControl - Control instance
 	 * @param {string} sStyleClass - CSS style class that should be added to any dialogs
+	 * @param {boolean} bLocalObjectVisible - Flag if the "Local Object" button should be visible in the transport dialog
 	 * @public
 	 */
-	TransportSelection.prototype.selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, oControl, sStyleClass) {
+	TransportSelection.prototype.selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, oControl, sStyleClass, bLocalObjectVisible) {
 		//No transport selection unless Lrep connector is available
 		if (!FlUtils.getLrepUrl()) {
 			fOkay(this._createEventObject(oObjectInfo, {transportId: ""}));
@@ -63,6 +64,7 @@ sap.ui.define([
 						hidePackage: !LayerUtils.doesCurrentLayerRequirePackage(),
 						pkg: oObjectInfo.package,
 						transports: oGetTransportsResult.transports,
+						localObjectVisible: bLocalObjectVisible,
 						lrepObject: this._toLREPObject(oObjectInfo)
 					}, fOkay, fError, bCompactMode, sStyleClass);
 				} else {
@@ -303,10 +305,11 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change} [oChange] - Change for which the transport information should be retrieved
 	 * @param {object} oControl - Object of the root control for the transport dialog
 	 * @param {string} sStyleClass - CSS style class that should be added to any dialogs
+	 * @param {boolean} bLocalObjectVisible - Flag if the "Local Object" button should be visible in the transport dialog
 	 * @returns {Promise} Promise that resolves
 	 * @public
 	 */
-	TransportSelection.prototype.openTransportSelection = function(oChange, oControl, sStyleClass) {
+	TransportSelection.prototype.openTransportSelection = function(oChange, oControl, sStyleClass, bLocalObjectVisible) {
 		var that = this;
 
 		return new Promise(function(resolve, reject) {
@@ -340,7 +343,7 @@ sap.ui.define([
 				oObject.type = oChange.getDefinition().fileType;
 			}
 
-			that.selectTransport(oObject, fnOkay, fnError, false, oControl, sStyleClass);
+			that.selectTransport(oObject, fnOkay, fnError, false, oControl, sStyleClass, bLocalObjectVisible);
 		});
 	};
 

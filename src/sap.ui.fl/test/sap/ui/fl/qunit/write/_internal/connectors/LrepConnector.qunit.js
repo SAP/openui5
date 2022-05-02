@@ -211,6 +211,7 @@ sap.ui.define([
 			}).then(function(sMessage) {
 				assert.equal(sMessage, oResourceBundle.getText("MSG_TRANSPORT_SUCCESS"), "the correct message was returned");
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
+				assert.equal(fnOpenTransportSelectionStub.getCall(0).args.localObjectVisible, undefined, "the local object option is not changed");
 				assert.ok(fnCheckTransportInfoStub.calledOnce, "then checkTransportInfo called once");
 				assert.ok(fnPrepareChangesForTransportStub.calledOnce, "then _prepareChangesForTransport called once");
 				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, this.aMockLocalChanges, this.aAppVariantDescriptors, {

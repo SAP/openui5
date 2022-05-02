@@ -61,6 +61,11 @@ sap.ui.define([
 				lrepObject: {type: "any", group: "Misc", defaultValue: null},
 
 				/**
+				 * Flag if the "Local Object" button should be visible.
+				 */
+				localObjectVisible: {type: "boolean", group: "Misc", defaultValue: true},
+
+				/**
 				 * Flag indicating whether the selection of an ABAP package is to be hidden or not.
 				 */
 				hidePackage: {type: "boolean", group: "Misc", defaultValue: null}
@@ -141,13 +146,14 @@ sap.ui.define([
 	TransportDialog.prototype._createButtons = function() {
 		var that = this;
 
-		this.addButton(new Button({
+		this._oLocalObjectButton = new Button({
 			text: this._oResources.getText("TRANSPORT_DIALOG_LOCAL_OBJECT"),
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_LOCAL_OBJECT"),
 			press: function() {
 				that._onLocal();
 			}
-		}));
+		});
+		this.addButton(this._oLocalObjectButton);
 		this.addButton(new Button({
 			text: this._oResources.getText("TRANSPORT_DIALOG_OK"),
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_OK"),
@@ -419,6 +425,11 @@ sap.ui.define([
 		}
 
 		return null;
+	};
+
+	TransportDialog.prototype.setLocalObjectVisible = function (bLocalObjectVisible) {
+		this._oLocalObjectButton.setVisible(bLocalObjectVisible);
+		this.setProperty("localObjectVisible", bLocalObjectVisible);
 	};
 
 	/**
