@@ -4118,7 +4118,7 @@ sap.ui.define([
 			afterEach: function() {
 				this.oTable.destroy();
 			},
-			assertInnerTableAction: function(assert, oMDCTable) {
+			assertInnerTableAction: function(assert, oMDCTable, bIsBound) {
 				var oTable = oMDCTable || this.oTable;
 
 				switch (sTableType) {
@@ -4127,9 +4127,16 @@ sap.ui.define([
 						break;
 					default:
 						assert.ok(oTable._oTable.getRowActionTemplate(), "Row action template exists");
-						assert.equal(oTable._oTable.getRowActionTemplate().getItems().length, 1, "With one item");
-						assert.equal(oTable._oTable.getRowActionTemplate().getItems()[0].getType(), "Navigation", "Of type 'Navigation'");
-						assert.equal(oTable._oTable.getRowActionCount(), 1, "Row action count");
+						if (bIsBound) {
+							var oBindingInfo = oTable._oTable.getRowActionTemplate().getBindingInfo("items");
+							assert.ok(oBindingInfo, "BindingInfo for items exist");
+							assert.ok(oBindingInfo.template.getVisible(), "RowAction is visible");
+							assert.ok(oBindingInfo.template.isBound("type"), "Type property is bound");
+						} else {
+							assert.equal(oTable._oTable.getRowActionTemplate().getItems().length, 1, "With one item");
+							assert.equal(oTable._oTable.getRowActionTemplate().getItems()[0].getType(), "Navigation", "Of type 'Navigation'");
+							assert.equal(oTable._oTable.getRowActionCount(), 1, "Row action count");
+						}
 				}
 			},
 			assertNoInnerTableAction: function(assert, oMDCTable) {
@@ -4142,6 +4149,32 @@ sap.ui.define([
 					default:
 						assert.notOk(oTable._oTable.getRowActionTemplate(), "Row action template does not exist");
 						assert.equal(oTable._oTable.getRowActionCount(), 0, "Row action count");
+				}
+			},
+			assertInnerTableActionFormatted: function(assert, oMDCTable, bIsBound) {
+				var oTable = oMDCTable || this.oTable;
+
+				switch (sTableType) {
+					case "ResponsiveTable":
+						assert.equal(oTable._oTemplate.getType(), "Navigation", "Type of the list item template");
+						assert.ok(oTable._oTemplate.getBindingInfo("type").formatter, "Type has formatter");
+						var sType = oTable._oTemplate.getBindingInfo("type").formatter("Test");
+						assert.equal(sType, "Navigation", "Type is Navigation when boolean is true");
+						sType = oTable._oTemplate.getBindingInfo("type").formatter("False");
+						assert.equal(sType, "Inactive", "Type is Navigation when boolean is false");
+						break;
+					default:
+						assert.ok(oTable._oTable.getRowActionTemplate(), "Row action template exists");
+						if (bIsBound) {
+							var oBindingInfo = oTable._oTable.getRowActionTemplate().getBindingInfo("items");
+							assert.ok(oBindingInfo, "BindingInfo for items exist");
+							assert.ok(oBindingInfo.template.getVisible(), "RowAction is visible");
+							assert.ok(oBindingInfo.template.isBound("type"), "Type property is bound");
+						} else {
+							assert.equal(oTable._oTable.getRowActionTemplate().getItems().length, 1, "With one item");
+							assert.equal(oTable._oTable.getRowActionTemplate().getItems()[0].getType(), "Navigation", "Of type 'Navigation'");
+							assert.equal(oTable._oTable.getRowActionCount(), 1, "Row action count");
+						}
 				}
 			}
 		});
@@ -4165,6 +4198,77 @@ sap.ui.define([
 			return oTable.initialized().then(function() {
 				this.assertInnerTableAction(assert, oTable);
 			}.bind(this));
+		});
+
+		QUnit.test("Row Actions initialization different scenarios", function(assert) {
+			// Scenario 1: Static RowAction + Static Visibility. Expected: All Rows have navigation.
+			var oRowSettings = new RowSettings({
+				rowActions: [
+					new RowActionItem({type: "Navigation"})
+				]
+			});
+			this.oTable.setRowSettings(oRowSettings);
+			this.assertInnerTableAction(assert);
+			oRowSettings.removeAllRowActions();
+
+			// Scenario 2: Static RowAction + Bound Visibility. Expected: Only rows with stock String "Test" should have Navigation.
+			oRowSettings = new RowSettings({
+				rowActions: [
+					new RowActionItem({
+						type: "Navigation",
+						visible: {
+							path: 'stock',
+							type: 'sap.ui.model.type.Boolean',
+							formatter: function (sString) {
+								return sString === "Test";
+							}
+						}
+					})
+				]
+			});
+			this.oTable.setRowSettings(oRowSettings);
+			this.assertInnerTableActionFormatted(assert);
+			oRowSettings.removeAllRowActions();
+
+			this.oTable.setModel(new JSONModel({
+				data: [{
+					type: "Navigation"
+				}]
+			}));
+
+			// Scenario 3: Bound RowAction + Static Visibility. Expected: All rows have navigation.
+			oRowSettings = new RowSettings({
+				rowActions: {
+					path: "/data",
+					template: new RowActionItem({
+						type: "{type}",
+						visible: true
+					})
+				}
+			});
+			this.oTable.setRowSettings(oRowSettings);
+			this.assertInnerTableAction(assert, null, true);
+			oRowSettings.removeAllRowActions();
+
+			// Scenario 4: Bound RowAction Type + Bound Visibility. Expected: Only rows with stock String "Test" have Navigation.
+			oRowSettings = new RowSettings({
+				rowActions: {
+					path: "/data",
+					template: new RowActionItem({
+						type: "{type}",
+						visible: {
+							path: 'stock',
+							type: 'sap.ui.model.type.Boolean',
+							formatter: function (sString) {
+								return sString === "Test";
+							}
+						}
+					})
+				}
+			});
+			this.oTable.setRowSettings(oRowSettings);
+			this.assertInnerTableActionFormatted(assert, null, true);
+			oRowSettings.removeAllRowActions();
 		});
 
 		QUnit.test("Add and remove actions", function(assert) {

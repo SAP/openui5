@@ -186,23 +186,15 @@ sap.ui.define([
 			return;
 		}
 
-		var oRowActionsInfo = oRowSettings.getAllActions();
+		var vRowType, bVisibleBound, fnVisibleFormatter, oRowActionsInfo = oRowSettings.getAllActions();
+		// If templateInfo is given, the rowActions are bound
 		if ("templateInfo" in oRowActionsInfo) {
 			var oTemplateInfo = oRowActionsInfo.templateInfo;
 
-			if (oTemplateInfo.visible.formatter) {
-				// Wrap the formatter (which should return a boolean) value and determine the type based on the formatted value.
-				var fnFormatter = oTemplateInfo.visible.formatter;
-				oTemplateInfo.visible.formatter = function (sValue) {
-					var bVisible = fnFormatter(sValue);
-					return bVisible ? RowAction.Navigation : sType;
-				};
-			}
-			if (typeof oTemplateInfo.visible === "object") {
-				oTable._oTemplate.bindProperty("type", oTemplateInfo.visible);
-			} else {
-				oTable._oTemplate.setProperty("type", oTemplateInfo.visible);
-			}
+			fnVisibleFormatter = oTemplateInfo.visible.formatter;
+			// If visible property is of type object, we know for certain the property is bound (see RowSettings.getAllActions)
+			bVisibleBound = typeof oTemplateInfo.visible == "object";
+			vRowType = oTemplateInfo.visible;
 		} else if (oRowActionsInfo && oRowActionsInfo.items){
 			var _oRowActionItem;
 			if (oRowActionsInfo.items.length == 0) {
@@ -210,20 +202,40 @@ sap.ui.define([
 				return;
 			}
 
+			// Check if rowActions are of type Navigation. ResponsiveTable currently only supports RowActionItem<Navigation>
 			_oRowActionItem = oRowActionsInfo.items.find(function (oRowAction) {
 				return oRowAction.getType() == "Navigation";
 			});
-
-			// ResponsiveTable currently only supports RowActionItem<Navigation>
 			if (!_oRowActionItem && oRowActionsInfo.items.length > 0) {
 				throw new Error("No RowAction of type 'Navigation' found. sap.m.Table only accepts RowAction of type 'Navigation'.");
 			}
 
 			// Associate RowActionItem<Navigation> to template for reference
 			oTable._oTemplate.data("rowAction", _oRowActionItem);
+
+			// Check if visible property is bound
+			bVisibleBound = _oRowActionItem.isBound("visible");
+			// Based on whether visible property is bound, either get binding info or the actual property
+			vRowType = bVisibleBound ? _oRowActionItem.getBindingInfo("visible") : _oRowActionItem.getVisible();
+			fnVisibleFormatter = vRowType.formatter;
 		}
 
-		oTable._oTemplate.setType(RowAction.Navigation);
+		// If a custom formatter exists, apply it before converting it to row type, otherwise just convert
+		if (fnVisibleFormatter) {
+			vRowType.formatter = function (sValue) {
+				var bVisible = fnVisibleFormatter(sValue);
+				return bVisible ? RowAction.Navigation : sType;
+			};
+		} else {
+			vRowType = vRowType ? RowAction.Navigation : sType;
+		}
+
+		// Depending on whether the property is bound, either bind or set
+		if (bVisibleBound) {
+			oTable._oTemplate.bindProperty("type", vRowType);
+		} else {
+			oTable._oTemplate.setProperty("type", vRowType);
+		}
 	};
 
 	ResponsiveTableType.disableColumnResizer = function(oTable, oInnerTable) {
