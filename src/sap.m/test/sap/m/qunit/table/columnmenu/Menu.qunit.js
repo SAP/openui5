@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Button",
 	"sap/ui/core/Core",
-	"sap/ui/layout/GridData"
-], function (QUnitUtils, Menu, QuickAction, Item, Button, oCore, GridData) {
+	"sap/ui/layout/GridData",
+	"sap/ui/Device"
+], function (QUnitUtils, Menu, QuickAction, Item, Button, oCore, GridData, Device) {
 	"use strict";
 	// Test setup
 
@@ -154,12 +155,23 @@ sap.ui.define([
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
 		assert.ok(this.oColumnMenu._oPopover.isOpen());
+		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
 	});
 
 	QUnit.test("Open popover by an HTMLElement", function (assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton.getDomRef());
 		assert.ok(this.oColumnMenu._oPopover.isOpen());
+		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
+	});
+
+	QUnit.test("Open popup on mobile", function (assert) {
+		this.stub(Device.system, "phone").value(true);
+		this.createMenu(true, true, true, true);
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu._oPopover.isOpen(), "Popover was opened");
+		assert.ok(this.oColumnMenu._oPopover.getShowHeader(), "Header is shown on mobile");
 	});
 
 	QUnit.test("Check hidden header and footer in default view", function (assert) {
