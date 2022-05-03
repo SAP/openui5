@@ -1490,7 +1490,6 @@ sap.ui.define([
 		aResultContexts = ODataListBinding.prototype.getContexts.call(oBinding, 0, 2);
 
 		assert.strictEqual(aResultContexts, aContexts);
-		assert.strictEqual(oBinding.iLastMaximumPrefetchSize, undefined);
 	});
 });
 
@@ -1559,8 +1558,6 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0, 10, 100),
 			aContexts);
-
-		assert.strictEqual(oBinding.iLastMaximumPrefetchSize, 100);
 	});
 });
 
@@ -1750,9 +1747,7 @@ sap.ui.define([
 		assert.notStrictEqual(oBinding.aLastContexts, aContexts);
 		assert.strictEqual(oBinding.iLastEndIndex, 10);
 		assert.strictEqual(oBinding.iLastLength, "~iLastLengthUpdated");
-		assert.strictEqual(oBinding.iLastMaximumPrefetchSize, 100);
 		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndexUpdated");
-
 	});
 });
 
@@ -1811,6 +1806,71 @@ sap.ui.define([
 		assert.strictEqual(oBinding.aLastContextData, "~aLastContextData");
 		assert.strictEqual(oBinding.aLastContexts, "~aLastContexts");
 		assert.strictEqual(oBinding.iLastEndIndex, "~iLastEndIndex");
+		assert.strictEqual(oBinding.iLastLength, "~iLastLength");
+		assert.strictEqual(oBinding.iLastMaximumPrefetchSize, "~iLastMaximumPrefetchSize");
+		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndex");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_updateLastStartAndLength: bKeepCurrent = false", function (assert) {
+		var oBinding = {
+				iLastLength : "~iLastLength",
+				iLastMaximumPrefetchSize : "~iLastMaximumPrefetchSize",
+				iLastStartIndex : "~iLastStartIndex",
+				bUseExtendedChangeDetection : true
+			};
+
+		// code under test
+		ODataListBinding.prototype._updateLastStartAndLength.call(oBinding, "~start", "~length",
+			"~maximumPrefetchSize", /*bKeepCurrent*/false);
+
+		assert.strictEqual(oBinding.iLastLength, "~length");
+		assert.strictEqual(oBinding.iLastMaximumPrefetchSize, "~maximumPrefetchSize");
+		assert.strictEqual(oBinding.iLastStartIndex, "~start");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_updateLastStartAndLength: keep last start and last length", function (assert) {
+		var oBinding = {
+				iLastLength : "~iLastLength",
+				iLastMaximumPrefetchSize : "~iLastMaximumPrefetchSize",
+				iLastStartIndex : "~iLastStartIndex",
+				_checkKeepCurrentSupported : function () {}
+			};
+
+		this.mock(oBinding).expects("_checkKeepCurrentSupported")
+			.withExactArgs("~iMaximumPrefetchSize");
+
+		// code under test
+		ODataListBinding.prototype._updateLastStartAndLength.call(oBinding, "~start", "~length",
+			"~iMaximumPrefetchSize", /*bKeepCurrent*/true);
+
+		assert.strictEqual(oBinding.iLastLength, "~iLastLength");
+		assert.strictEqual(oBinding.iLastMaximumPrefetchSize, "~iLastMaximumPrefetchSize");
+		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndex");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_updateLastStartAndLength: throws error of _checkKeepCurrentSupported",
+			function (assert) {
+		var oBinding = {
+				iLastLength : "~iLastLength",
+				iLastMaximumPrefetchSize : "~iLastMaximumPrefetchSize",
+				iLastStartIndex : "~iLastStartIndex",
+				_checkKeepCurrentSupported : function () {}
+			},
+			oError = new Error("Foo");
+
+		this.mock(oBinding).expects("_checkKeepCurrentSupported")
+			.withExactArgs("~iMaximumPrefetchSize")
+			.throws(oError);
+
+		// code under test
+		assert.throws(function () {
+			ODataListBinding.prototype._updateLastStartAndLength.call(oBinding, "~start", "~length",
+				"~iMaximumPrefetchSize", /*bKeepCurrent*/true);
+		}, oError);
+
 		assert.strictEqual(oBinding.iLastLength, "~iLastLength");
 		assert.strictEqual(oBinding.iLastMaximumPrefetchSize, "~iLastMaximumPrefetchSize");
 		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndex");

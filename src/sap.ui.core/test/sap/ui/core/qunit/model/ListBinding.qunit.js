@@ -34,60 +34,21 @@ sap.ui.define([
 	sExpectedError : "Unsupported operation: ~foo#getContexts, must not use bKeepCurrent if"
 		+ " extended change detection is enabled"
 }].forEach(function (oFixture, i) {
-	QUnit.test("_updateLastStartAndLength: error cases, #" + i, function (assert) {
+	QUnit.test("_checkKeepCurrentSupported: error cases, #" + i, function (assert) {
 		var oBinding = {
-				iLastLength : "~iLastLength",
-				iLastStartIndex : "~iLastStartIndex",
 				bUseExtendedChangeDetection : oFixture.bUseExtendedChangeDetection,
 				getMetadata : function () {}
 			},
-			oBindingMock = this.mock(oBinding),
-			oMetadata = {getName : function () {}},
-			oMetadataMock = this.mock(oMetadata);
+			oMetadata = {getName : function () {}};
 
-		oBindingMock.expects("getMetadata").withExactArgs().returns(oMetadata);
-		oMetadataMock.expects("getName").withExactArgs().returns("~foo");
+		this.mock(oBinding).expects("getMetadata").withExactArgs().returns(oMetadata);
+		this.mock(oMetadata).expects("getName").withExactArgs().returns("~foo");
 
 		// code under test
 		assert.throws(function () {
-			ListBinding.prototype._updateLastStartAndLength.call(oBinding, /*iStartIndex*/0,
-				/*iLength*/3, oFixture.iMaximumPrefetchSize, /*bKeepCurrent*/true);
+			ListBinding.prototype._checkKeepCurrentSupported.call(oBinding,
+				oFixture.iMaximumPrefetchSize);
 		}, new Error(oFixture.sExpectedError));
-
-		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndex");
-		assert.strictEqual(oBinding.iLastLength, "~iLastLength");
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("_updateLastStartAndLength: bKeepCurrent = false", function (assert) {
-		var oBinding = {
-				iLastLength : "~iLastLength",
-				iLastStartIndex : "~iLastStartIndex",
-				bUseExtendedChangeDetection : true
-			};
-
-		// code under test
-		ListBinding.prototype._updateLastStartAndLength.call(oBinding, "~start", "~length",
-			"~iMaximumPrefetchSize", /*bKeepCurrent*/false);
-
-		assert.strictEqual(oBinding.iLastStartIndex, "~start");
-		assert.strictEqual(oBinding.iLastLength, "~length");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_updateLastStartAndLength: keep last start and last length", function (assert) {
-		var oBinding = {
-				iLastLength : "~iLastLength",
-				iLastStartIndex : "~iLastStartIndex",
-				bUseExtendedChangeDetection : false
-			};
-
-		// code under test
-		ListBinding.prototype._updateLastStartAndLength.call(oBinding, "~start", "~length",
-			/*iMaximumPrefetchSize*/undefined, /*bKeepCurrent*/true);
-
-		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndex");
-		assert.strictEqual(oBinding.iLastLength, "~iLastLength");
-	});
 });

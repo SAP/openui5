@@ -270,4 +270,63 @@ sap.ui.define([
 		assert.deepEqual(oBinding.aLastContexts, undefined);
 		assert.strictEqual(oBinding.bUseExtendedChangeDetection, false);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_updateLastStartAndLength: bKeepCurrent = false", function (assert) {
+		var oBinding = {
+				iLastLength : "~iLastLength",
+				iLastStartIndex : "~iLastStartIndex",
+				bUseExtendedChangeDetection : true
+			};
+
+		// code under test
+		ClientListBinding.prototype._updateLastStartAndLength.call(oBinding, "~start", "~length",
+			"~iMaximumPrefetchSize", /*bKeepCurrent*/false);
+
+		assert.strictEqual(oBinding.iLastLength, "~length");
+		assert.strictEqual(oBinding.iLastStartIndex, "~start");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_updateLastStartAndLength: keep last start and last length", function (assert) {
+		var oBinding = {
+				iLastLength : "~iLastLength",
+				iLastStartIndex : "~iLastStartIndex",
+				_checkKeepCurrentSupported : function () {}
+			};
+
+		this.mock(oBinding).expects("_checkKeepCurrentSupported")
+			.withExactArgs("~iMaximumPrefetchSize");
+
+		// code under test
+		ClientListBinding.prototype._updateLastStartAndLength.call(oBinding, "~start", "~length",
+			"~iMaximumPrefetchSize", /*bKeepCurrent*/true);
+
+		assert.strictEqual(oBinding.iLastLength, "~iLastLength");
+		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndex");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_updateLastStartAndLength: throws error of _checkKeepCurrentSupported",
+			function (assert) {
+		var oBinding = {
+				iLastLength : "~iLastLength",
+				iLastStartIndex : "~iLastStartIndex",
+				_checkKeepCurrentSupported : function () {}
+			},
+			oError = new Error("Foo");
+
+		this.mock(oBinding).expects("_checkKeepCurrentSupported")
+			.withExactArgs("~iMaximumPrefetchSize")
+			.throws(oError);
+
+		// code under test
+		assert.throws(function () {
+			ClientListBinding.prototype._updateLastStartAndLength.call(oBinding, "~start",
+				"~length", "~iMaximumPrefetchSize", /*bKeepCurrent*/true);
+		}, oError);
+
+		assert.strictEqual(oBinding.iLastLength, "~iLastLength");
+		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndex");
+	});
 });

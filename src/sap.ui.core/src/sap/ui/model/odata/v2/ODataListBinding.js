@@ -188,6 +188,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * This helper function must be called only by {@link #getContexts}. It updates
+	 * <code>iLastStartIndex</code>, <code>iLastLength</code> and
+	 * <code>iLastMaximumPrefetchSize</code> with the given start index, length and maximum prefetch
+	 * size. If <code>bKeepCurrent</code> is set, throw an error if keeping
+	 * current contexts untouched is not supported, otherwise don't update
+	 * <code>iLastStartIndex</code>, <code>iLastLength</code> and
+	 * <code>iLastMaximumPrefetchSize</code>.
+	 *
+	 * @param {int} [iStartIndex]
+	 *   The start index
+	 * @param {int} [iLength]
+	 *   The length
+	 * @param {int} [iMaximumPrefetchSize]
+	 *   The maximum number of contexts to read before and after the given range
+	 * @param {boolean} [bKeepCurrent]
+	 *   Whether the result of {@link #getCurrentContexts} keeps untouched
+	 * @throws {Error}
+	 *   If extended change detection is enabled and <code>bKeepCurrent</code> is set, or if
+	 *   <code>iMaximumPrefetchSize</code> and <code>bKeepCurrent</code> are set
+	 *
+	 * @private
+	 */
+	 ODataListBinding.prototype._updateLastStartAndLength = function (iStartIndex, iLength,
+			iMaximumPrefetchSize, bKeepCurrent) {
+		if (bKeepCurrent) {
+			this._checkKeepCurrentSupported(iMaximumPrefetchSize);
+		} else {
+			this.iLastStartIndex = iStartIndex;
+			this.iLastLength = iLength;
+			this.iLastMaximumPrefetchSize = iMaximumPrefetchSize;
+		}
+	};
+
+	/**
 	 * Returns all current contexts of this list binding in no special order. Just like
 	 * {@link #getCurrentContexts}, this method does not request any data from a back end and does
 	 * not change the binding's state. In contrast to {@link #getCurrentContexts}, it does not only
@@ -260,9 +294,6 @@ sap.ui.define([
 
 		//this.bInitialized = true;
 		this._updateLastStartAndLength(iStartIndex, iLength, iMaximumPrefetchSize, bKeepCurrent);
-		if (!bKeepCurrent) {
-			this.iLastMaximumPrefetchSize = iMaximumPrefetchSize;
-		}
 		if (!iStartIndex) {
 			iStartIndex = 0;
 		}

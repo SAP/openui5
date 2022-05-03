@@ -179,41 +179,24 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 	 */
 
 	/**
-	 * This helper function must be called only by {@link #getContexts}. It updates
-	 * <code>iLastStartIndex</code> and <code>iLastLength</code> of the current instance with the
-	 * given start index and length. If <code>bKeepCurrent</code> is set, throw an error if keeping
-	 * current contexts untouched is not supported, otherwise don't update
-	 * <code>iLastStartIndex</code> and <code>iLastLength</code>.
+	 * Checks whether keeping current contexts untouched is supported.
 	 *
-	 * @param {int} [iStartIndex]
-	 *   The start index
-	 * @param {int} [iLength]
-	 *   The length
 	 * @param {int} [iMaximumPrefetchSize]
 	 *   The maximum number of contexts to read before and after the given range
-	 * @param {boolean} [bKeepCurrent]
-	 *   Whether the result of {@link #getCurrentContexts} keeps untouched
 	 * @throws {Error}
-	 *   If extended change detection is enabled and <code>bKeepCurrent</code> is set, or if
-	 *   <code>iMaximumPrefetchSize</code> and <code>bKeepCurrent</code> are set
+	 *   If extended change detection is enabled, or if <code>iMaximumPrefetchSize</code> is set
 	 *
 	 * @private
 	 */
-	ListBinding.prototype._updateLastStartAndLength = function (iStartIndex, iLength,
-			iMaximumPrefetchSize, bKeepCurrent) {
-		if (bKeepCurrent) {
-			if (this.bUseExtendedChangeDetection) {
-				throw new Error("Unsupported operation: " + this.getMetadata().getName()
-					+ "#getContexts, must not use bKeepCurrent if extended change detection is"
-					+ " enabled");
-			}
-			if (iMaximumPrefetchSize) {
-				throw new Error("Unsupported operation: " + this.getMetadata().getName()
-					+ "#getContexts, must not use both iMaximumPrefetchSize and bKeepCurrent");
-			}
-		} else {
-			this.iLastStartIndex = iStartIndex;
-			this.iLastLength = iLength;
+	ListBinding.prototype._checkKeepCurrentSupported = function (iMaximumPrefetchSize) {
+		if (this.bUseExtendedChangeDetection) {
+			throw new Error("Unsupported operation: " + this.getMetadata().getName()
+				+ "#getContexts, must not use bKeepCurrent if extended change detection is"
+				+ " enabled");
+		}
+		if (iMaximumPrefetchSize) {
+			throw new Error("Unsupported operation: " + this.getMetadata().getName()
+				+ "#getContexts, must not use both iMaximumPrefetchSize and bKeepCurrent");
 		}
 	};
 
