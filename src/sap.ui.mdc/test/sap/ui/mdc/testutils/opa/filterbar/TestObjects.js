@@ -38,7 +38,7 @@ sap.ui.define([
 				 * @returns
 				 */
 				iPersonalizeFilter: function(oFilterBar, oSettings) {
-					return p13nActions.iPersonalizeFilterBar.call(this, oFilterBar, oSettings);
+					return p13nActions.iPersonalizeFilterBar.call(this, oFilterBar, oSettings, filterBarActions.iOpenThePersonalizationDialog);
 				},
 				/**
 				 * OPA5 test action
@@ -60,7 +60,7 @@ sap.ui.define([
 				 * @returns
 				 */
 				iResetThePersonalization: function(oFilterBar) {
-					return p13nActions.iResetThePersonalization.call(this, oFilterBar);
+					return p13nActions.iResetThePersonalization.call(this, oFilterBar, filterBarActions.iOpenThePersonalizationDialog);
 				},
 				/**
 				 * OPA5 test action

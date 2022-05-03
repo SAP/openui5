@@ -34,7 +34,7 @@ sap.ui.define([
                  * 4. Closes the personalization dialog.
                  */
                 iPersonalizeChart: function(oChart, aConfigurations){
-                    return p13nActions.iPersonalizeChart.call(this, oChart, null, aConfigurations, true);
+                    return p13nActions.iPersonalizeChart.call(this, oChart, null, aConfigurations, true, chartActions.iOpenThePersonalizationDialog);
                 },
                 /**
                  * @typedef {object} SortPersonalizationConfiguration
@@ -51,7 +51,7 @@ sap.ui.define([
                  * 3. Closes the personalization dialog.
                  */
                 iPersonalizeSort: function(oChart, aConfigurations) {
-                    return p13nActions.iPersonalizeSort.call(this, oChart, aConfigurations);
+                    return p13nActions.iPersonalizeSort.call(this, oChart, aConfigurations, chartActions.iOpenThePersonalizationDialog);
                 },
                 /**
                  * Opa5 test action
@@ -63,7 +63,7 @@ sap.ui.define([
                  * 4. Closes the personalization dialog.
                  */
                 iResetThePersonalization: function(oChart) {
-                    return p13nActions.iResetThePersonalization.call(this, oChart);
+                    return p13nActions.iResetThePersonalization.call(this, oChart, chartActions.iOpenThePersonalizationDialog);
                 },
 
                 /**
