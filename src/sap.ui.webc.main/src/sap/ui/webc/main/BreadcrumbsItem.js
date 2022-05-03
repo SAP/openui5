@@ -88,7 +88,8 @@ sap.ui.define([
 					defaultValue: "",
 					mapping: "textContent"
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/BreadcrumbsItem.designtime"
 		}
 	});
 
