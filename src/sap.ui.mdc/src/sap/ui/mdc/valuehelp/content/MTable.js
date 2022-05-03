@@ -119,7 +119,7 @@ sap.ui.define([
 		if (this._oTable) {
 			var aItems = this._oTable.getItems();
 			var aConditions = this.getConditions();
-			var bHideSelection = this._isSingleSelect() && !FilterableListContent.prototype._isSingleSelect.apply(this); // if table is in single selection but Fild allows multiple values, don'tr select items
+			var bHideSelection = this._isSingleSelect() && !FilterableListContent.prototype._isSingleSelect.apply(this); // if table is in single selection but Fild allows multiple values, don't select items
 
 			for (var iId in aItems) {
 				var oItem = aItems[iId];

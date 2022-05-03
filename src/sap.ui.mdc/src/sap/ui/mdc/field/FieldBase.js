@@ -2572,12 +2572,12 @@ sap.ui.define([
 				}
 
 				// take what ever comes from field help as valid - even if it is an empty key
-				var iIndex = bAdd ? -1 : FilterOperatorUtil.indexOfCondition(oCondition, aConditions);	// Why?
-				if (iIndex === -1) { // check if already exist
+				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions); // check if already exist
+				if (iIndex === -1) { // new -> add
 					aConditions.push(oCondition);
-				} else if (oCondition.values[1] !== aConditions[iIndex].values[1] && aConditions[iIndex].values[1]) {
+				} else if (oCondition.validated === ConditionValidated.Validated && oCondition.values.length > 1 && (aConditions[iIndex].values.length === 1 || oCondition.values[1] !== aConditions[iIndex].values[1])) {
 					// description changed -> use the current description
-					aConditions[iIndex].values[1] = oCondition.values[1];
+					aConditions[iIndex].values = oCondition.values;
 				}
 			}
 		}
