@@ -2,27 +2,18 @@
  * ${copyright}
  */
 /*eslint-disable max-len */
-// Provides the JSON model implementation of a list binding
 sap.ui.define([
-	'./ChangeReason',
-	'./Filter',
-	'./FilterType',
-	'./ListBinding',
-	'./FilterProcessor',
-	'./Sorter',
-	'./SorterProcessor',
-	"sap/base/util/each"
-],
-	function(
-		ChangeReason,
-		Filter,
-		FilterType,
-		ListBinding,
-		FilterProcessor,
-		Sorter,
-		SorterProcessor,
-		each
-	) {
+	"sap/base/Log",
+	"sap/base/util/each",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterType",
+	"sap/ui/model/ListBinding",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/SorterProcessor"
+], function (Log, each, ChangeReason, Filter, FilterType, ListBinding, FilterProcessor, Sorter,
+		SorterProcessor) {
 	"use strict";
 
 	/**
@@ -54,8 +45,19 @@ sap.ui.define([
 			this.mNormalizeCache = {};
 			this.oModel.checkFilterOperation(this.aApplicationFilters);
 			this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
-
 			this.bIgnoreSuspend = false;
+			// the serialized context data for the contexts returned by the last call of getContexts
+			// if extended change detection is enabled
+			this.aLastContextData = undefined;
+			// the contexts returned by the last call of getContexts if extended change detection is
+			// enabled
+			this.aLastContexts = undefined;
+			// the defaulted value of the given iLength from the last call of getContexts with
+			// bKeepCurrent !== true
+			this.iLastLength = undefined;
+			// the defaulted value of the given iStartIndex from the last call of getContexts with
+			// bKeepCurrent !== true
+			this.iLastStartIndex = undefined;
 			this.update();
 		},
 
@@ -99,6 +101,79 @@ sap.ui.define([
 		}
 
 		return aContexts;
+	};
+
+	/**
+	 * Returns an array of binding contexts for the bound target list.
+	 *
+	 * In case of extended change detection, the context array may have an additional
+	 * <code>diff</code> property, see
+	 * {@link topic:7cdff73f308b4b10bdf7d83b7aba72e7 documentation on extended change detection} for
+	 * details.
+	 *
+	 * <strong>Note:</strong>The public usage of this method is deprecated, as calls from outside of
+	 * controls will lead to unexpected side effects. To avoid this, use
+	 * {@link sap.ui.model.ListBinding.prototype.getCurrentContexts} instead.
+	 *
+	 * @param {int} [iStartIndex=0]
+	 *   The start index where to start the retrieval of contexts
+	 * @param {int} [iLength=length of the list]
+	 *   Determines how many contexts to retrieve beginning from the start index; default is the
+	 *   whole list length up to the model's size limit; see {@link sap.ui.model.Model#setSizeLimit}
+	 * @param {int} [iMaximumPrefetchSize]
+	 *   Not used
+	 * @param {boolean} [bKeepCurrent]
+	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.102.0.
+	 * @return {sap.ui.model.Context[]}
+	 *   The array of contexts for each row of the bound list
+	 * @throws {Error}
+	 *   If <code>bKeepCurrent</code> is set and extended change detection is enabled or
+	 *   <code>iMaximumPrefetchSize</code> is set
+	 *
+	 * @protected
+	 */
+	 ClientListBinding.prototype.getContexts = function (iStartIndex, iLength, iMaximumPrefetchSize,
+			bKeepCurrent) {
+		var aContextData, aContexts,
+			iLastEnd = this.iLastStartIndex + this.iLastLength;
+
+		iStartIndex = iStartIndex || 0;
+		iLength = iLength || Math.min(this.iLength, this.oModel.iSizeLimit);
+		this._updateLastStartAndLength(iStartIndex, iLength, iMaximumPrefetchSize, bKeepCurrent);
+		aContexts = this._getContexts(iStartIndex, iLength);
+		if (this.bUseExtendedChangeDetection) {
+			aContextData = [];
+			// Use try/catch to detect issues with getting context data
+			try {
+				for (var i = 0; i < aContexts.length; i++) {
+					aContextData.push(this.getContextData(aContexts[i]));
+				}
+				if (this.aLastContextData && iStartIndex < iLastEnd) {
+					aContexts.diff = this.diffData(this.aLastContextData, aContextData);
+				}
+				this.aLastContextData = aContextData;
+				this.aLastContexts = aContexts.slice(0);
+			} catch (oError) {
+				this.aLastContextData = undefined;
+				this.aLastContexts = undefined;
+				this.bUseExtendedChangeDetection = false;
+				Log.warning(
+					"Disabled extended change detection for binding path '" + this.getResolvedPath()
+						+ "'; context data could not be serialized",
+					oError, this.getMetadata().getName());
+			}
+		}
+
+		return aContexts;
+	};
+
+	// documented in sap.ui.model.ListBinding#getCurrentContexts
+	ClientListBinding.prototype.getCurrentContexts = function() {
+		if (this.bUseExtendedChangeDetection) {
+			return this.aLastContexts || [];
+		} else {
+			return this.getContexts(this.iLastStartIndex, this.iLastLength);
+		}
 	};
 
 	/*

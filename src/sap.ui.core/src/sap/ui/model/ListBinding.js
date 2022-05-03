@@ -87,20 +87,13 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 	/**
 	 * Returns an array of binding contexts for the bound target list.
 	 *
-	 * <h4>Extended Change Detection</h4>
-	 * If extended change detection is enabled using
-	 * {@link sap.ui.model.ListBinding.prototype.enableExtendedChangeDetection}, the context array
-	 * may carry an additional property named <code>diff</code>, which contains an array of actual
-	 * changes on the context array compared to the last call of <code>getContexts()</code>. In case
-	 * no <code>diff</code> property is available on the context array, the list is completely
-	 * different and needs to be recreated. In case the <code>diff</code> property contains an empty
-	 * array, there have been no changes on the list.
-	 *
-	 * Sample diff array:
-	 * <code>[{index: 1, type: "delete"}, {index: 4, type: "insert}]</code>
+	 * In case of extended change detection, the context array may have an additional
+	 * <code>diff</code> property, see
+	 * {@link topic:7cdff73f308b4b10bdf7d83b7aba72e7 documentation on extended change detection} for
+	 * details.
 	 *
 	 * <strong>Note:</strong>The public usage of this method is deprecated, as calls from outside of
-	 * controls will lead to unexpected side effects. To avoid these side effect, use
+	 * controls will lead to unexpected side effects. To avoid this, use
 	 * {@link sap.ui.model.ListBinding.prototype.getCurrentContexts} instead.
 	 *
 	 * @function
@@ -108,7 +101,8 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 	 * @param {int} [iStartIndex=0]
 	 *   The startIndex where to start the retrieval of contexts
 	 * @param {int} [iLength=length of the list]
-	 *   Determines how many contexts to retrieve beginning from the start index.
+	 *   Determines how many contexts to retrieve beginning from the start index; default is the
+	 *   whole list length up to the model's size limit; see {@link sap.ui.model.Model#setSizeLimit}
 	 * @param {int} [iMaximumPrefetchSize]
 	 *   The maximum number of contexts to read before and after the given range; with this,
 	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
@@ -118,6 +112,9 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 	 *   This parameter is model-specific and not implemented by all models
 	 * @return {sap.ui.model.Context[]}
 	 *   The array of contexts for each row of the bound list
+	 * @throws {Error}
+	 *   If <code>bKeepCurrent</code> is set and extended change detection is enabled or
+	 *   <code>iMaximumPrefetchSize</code> is set
 	 *
 	 * @protected
 	 */

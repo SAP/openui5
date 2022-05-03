@@ -45,46 +45,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Return contexts for the list or a specified subset of contexts.
-	 * @param {int} [iStartIndex=0] the startIndex where to start the retrieval of contexts.
-	 * @param {int} [iLength=length of the list] determines how many contexts to retrieve beginning from the start index.
-	 * Default is the whole list length.
-	 *
-	 * @return {Array} the contexts array
-	 * @protected
-	 */
-	MessageListBinding.prototype.getContexts = function(iStartIndex, iLength) {
-		this.iLastStartIndex = iStartIndex;
-		this.iLastLength = iLength;
-
-		if (!iStartIndex) {
-			iStartIndex = 0;
-		}
-		if (!iLength) {
-			iLength = Math.min(this.iLength, this.oModel.iSizeLimit);
-		}
-
-		var aContexts = this._getContexts(iStartIndex, iLength), aContextData = [];
-
-		if (this.bUseExtendedChangeDetection) {
-
-			for (var i = 0; i < aContexts.length; i++) {
-				aContextData.push(this.getContextData(aContexts[i]));
-			}
-
-			//Check diff
-			if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
-				aContexts.diff = this.diffData(this.aLastContextData, aContexts);
-			}
-			this.iLastEndIndex = iStartIndex + iLength;
-			this.aLastContexts = aContexts.slice(0);
-			this.aLastContextData = aContextData.slice(0);
-		}
-
-		return aContexts;
-	};
-
-	/**
 	 * Treats the context's object as sap/ui/core/message/Message.
 	 * Its processor is removed, it is serialized and then the processor is re-added.
 	 * This is required to avoid circular references when using <code>JSON.stringify</code>
@@ -182,7 +142,5 @@ sap.ui.define([
 		}
 	};
 
-
 	return MessageListBinding;
-
 });

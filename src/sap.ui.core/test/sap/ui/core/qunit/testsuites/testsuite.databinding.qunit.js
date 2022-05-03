@@ -39,6 +39,12 @@ sap.ui.define(function() {
 					language: "en-US"
 				}
 			},
+			ClientListBinding : {
+				title: "sap.ui.model.ClientListBinding - QUnit Tests",
+				module: [
+					"test-resources/sap/ui/core/qunit/model/ClientListBinding.qunit"
+				]
+			},
 			ClientModel: {
 				title: "sap.ui.model.ClientModel - QUnit Tests",
 				ui5: {

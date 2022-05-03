@@ -38,71 +38,6 @@ sap.ui.define([
 	var JSONListBinding = ClientListBinding.extend("sap.ui.model.json.JSONListBinding");
 
 	/**
-	 * Return contexts for the list or a specified subset of contexts
-	 * @param {int} [iStartIndex=0] the startIndex where to start the retrieval of contexts
-	 * @param {int} [iLength=length of the list] determines how many contexts to retrieve beginning from the start index.
-	 * Default is the whole list length.
-	 * @param {int} [iMaximumPrefetchSize]
-	 *   Not used
-	 * @param {boolean} [bKeepCurrent]
-	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.102.0.
-	 * @return {sap.ui.model.Context[]}
-	 *   The array of contexts for each row of the bound list
-	 * @throws {Error}
-	 *   If extended change detection is enabled and <code>bKeepCurrent</code> is set, or if
-	 *   <code>iMaximumPrefetchSize</code> and <code>bKeepCurrent</code> are set
-	 *
-	 * @protected
-	 */
-	JSONListBinding.prototype.getContexts = function (iStartIndex, iLength, iMaximumPrefetchSize,
-			bKeepCurrent) {
-		var aContextData, aContexts;
-
-		this._updateLastStartAndLength(iStartIndex, iLength, iMaximumPrefetchSize, bKeepCurrent);
-		if (!iStartIndex) {
-			iStartIndex = 0;
-		}
-		if (!iLength) {
-			iLength = Math.min(this.iLength, this.oModel.iSizeLimit);
-		}
-
-		aContexts = this._getContexts(iStartIndex, iLength);
-
-		if (this.bUseExtendedChangeDetection) {
-			aContextData = [];
-			// Use try/catch to detect issues with cyclic references in JS objects,
-			// in this case diff will be disabled.
-			try {
-				for (var i = 0; i < aContexts.length; i++) {
-					aContextData.push(this.getContextData(aContexts[i]));
-				}
-
-				//Check diff
-				if (this.aLastContextData && iStartIndex < this.iLastEndIndex) {
-					aContexts.diff = this.diffData(this.aLastContextData, aContextData);
-				}
-
-				this.iLastEndIndex = iStartIndex + iLength;
-				this.aLastContexts = aContexts.slice(0);
-				this.aLastContextData = aContextData.slice(0);
-			} catch (oError) {
-				this.bUseExtendedChangeDetection = false;
-				Log.warning("JSONListBinding: Extended change detection has been disabled as JSON data could not be serialized.");
-			}
-		}
-
-		return aContexts;
-	};
-
-	JSONListBinding.prototype.getCurrentContexts = function() {
-		if (this.bUseExtendedChangeDetection) {
-			return this.aLastContexts || [];
-		} else {
-			return this.getContexts(this.iLastStartIndex, this.iLastLength);
-		}
-	};
-
-	/**
 	 * Get indices of the list
 	 */
 	JSONListBinding.prototype.updateIndices = function() {
@@ -206,7 +141,5 @@ sap.ui.define([
 		}
 	};
 
-
 	return JSONListBinding;
-
 });

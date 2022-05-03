@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ClientListBinding",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
@@ -12,8 +13,8 @@ sap.ui.define([
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/jquery"
-], function(Log, Device, ChangeReason, Filter, FilterOperator, Sorter, XMLListBinding, XMLModel,
-		TestUtils, jQuery) {
+], function(Log, Device, ChangeReason, ClientListBinding, Filter, FilterOperator, Sorter,
+		XMLListBinding, XMLModel, TestUtils, jQuery) {
 	/*global QUnit */
 	"use strict";
 
@@ -890,46 +891,14 @@ sap.ui.define([
 	});
 
 	//**********************************************************************************************
-	QUnit.test("getContexts: throws error of _updateLastStartAndLength", function (assert) {
-		var oBinding = {
-				_updateLastStartAndLength : function () {}
-			},
-			oError = new Error("foo");
-
-		this.mock(oBinding).expects("_updateLastStartAndLength")
-			.withExactArgs("~iStartIndex", "~iLength", "~iMaximumPrefetchSize", "~bKeepCurrent")
-			.throws(oError);
-
-		assert.throws(function () {
-			// code under test
-			XMLListBinding.prototype.getContexts.call(oBinding, "~iStartIndex", "~iLength",
-				"~iMaximumPrefetchSize", "~bKeepCurrent");
-		}, oError);
+	QUnit.test("getContexts: implemented in ClientListBinding", function (assert) {
+		assert.strictEqual(XMLListBinding.prototype.getContexts,
+			ClientListBinding.prototype.getContexts);
 	});
 
 	//**********************************************************************************************
-	QUnit.test("getContexts: bKeepCurrent=true, no extended change detection", function (assert) {
-		var oBinding = {
-				iLastLength : "~iLastLength",
-				iLastStartIndex : "~iLastStartIndex",
-				_updateLastStartAndLength : function () {},
-				_getContexts : function () {}
-			};
-
-		this.mock(oBinding).expects("_updateLastStartAndLength")
-			.withExactArgs(7, 5, "~iMaximumPrefetchSize", true);
-		this.mock(oBinding).expects("_getContexts").withExactArgs(7, 5).returns("~aContexts");
-
-		// code under test
-		assert.strictEqual(
-			XMLListBinding.prototype.getContexts.call(oBinding, 7, 5, "~iMaximumPrefetchSize",
-				true),
-			"~aContexts");
-
-		assert.strictEqual(oBinding.iLastLength, "~iLastLength");
-		assert.strictEqual(oBinding.iLastStartIndex, "~iLastStartIndex");
-		assert.strictEqual(oBinding.iLastEndIndex, undefined);
-		assert.strictEqual(oBinding.aLastContexts, undefined);
-		assert.strictEqual(oBinding.aLastContextData, undefined);
+	QUnit.test("getCurrentContexts: implemented in ClientListBinding", function (assert) {
+		assert.strictEqual(XMLListBinding.prototype.getCurrentContexts,
+			ClientListBinding.prototype.getCurrentContexts);
 	});
 });
