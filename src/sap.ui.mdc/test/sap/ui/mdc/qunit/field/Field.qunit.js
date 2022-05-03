@@ -1538,7 +1538,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent instanceof DateTimePicker, "DateTimePicker used");
 		assert.equal(oContent.getValue(), "2022-02-25T07:06:30", "Value set on DateTimePicker control");
-		assert.equal(oContent.getTimezone(), "Europe/Berlin", "Timezone set on DateTimePicker control");
+		assert.equal(oContent.getTimezone(), "Europe, Berlin", "Timezone set on DateTimePicker control");
 		var oBindingInfo = oContent.getBindingInfo("value");
 		var oConditionsType = oBindingInfo.type;
 		var oMyType = oConditionsType.getFormatOptions().valueType;

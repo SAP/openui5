@@ -293,10 +293,10 @@ sap.ui.define([
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
 	 *
 	 * DateFormat.getDateTimeWithTimezoneInstance().format(oDate, "Europe/Berlin");
-	 * // output: "Dec 24, 2021, 2:37:00 PM Europe/Berlin"
+	 * // output: "Dec 24, 2021, 2:37:00 PM Europe, Berlin"
 	 *
 	 * DateFormat.getDateTimeWithTimezoneInstance().format(oDate, "America/New_York");
-	 * // output: "Dec 24, 2021, 8:37:00 AM America/New_York"
+	 * // output: "Dec 24, 2021, 8:37:00 AM Americas, New York"
 	 *
 	 * @example <caption>Format option showTimezone: false</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
@@ -306,7 +306,7 @@ sap.ui.define([
 	 * @example <caption>Format option showDate: false and showTime:false</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
 	 * DateFormat.getDateTimeWithTimezoneInstance({showDate: false, showTime: false}).format(oDate, "America/New_York");
-	 * // output: "America/New_York"
+	 * // output: "Americas, New York"
 	 *
 	 * @param {Date} oJSDate The date to format
 	 * @param {string} [sTimezone] The IANA timezone ID in which the date will be calculated and
@@ -329,10 +329,10 @@ sap.ui.define([
 	 * @example <caption>Format option showTimezone: true (default)</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
 	 *
-	 * DateFormat.getDateTimeWithTimezoneInstance().parse("Dec 24, 2021, 2:37:00 PM Europe/Berlin", "Europe/Berlin");
+	 * DateFormat.getDateTimeWithTimezoneInstance().parse("Dec 24, 2021, 2:37:00 PM Europe, Berlin", "Europe/Berlin");
 	 * // output: [oDate, "Europe/Berlin"]
 	 *
-	 * DateFormat.getDateTimeWithTimezoneInstance().parse("Dec 24, 2021, 8:37:00 AM America/New_York", "America/New_York");
+	 * DateFormat.getDateTimeWithTimezoneInstance().parse("Dec 24, 2021, 8:37:00 AM Americas, New York", "America/New_York");
 	 * // output: [oDate, "America/New_York"]
 	 *
 	 * @example <caption>Format option showTimezone: false</caption>
@@ -341,7 +341,7 @@ sap.ui.define([
 	 * // output: [oDate, undefined]
 	 *
 	 * @example <caption>Format option showDate: false and showTime: false</caption>
-	 * DateFormat.getDateTimeWithTimezoneInstance({showDate: false, showTime: false}).parse("America/New_York", "America/New_York");
+	 * DateFormat.getDateTimeWithTimezoneInstance({showDate: false, showTime: false}).parse("Americas, New York", "America/New_York");
 	 * // output: [undefined, "America/New_York"]
 	 *
 	 * @param {string} sValue the string containing a formatted date/time value
@@ -1832,7 +1832,9 @@ sap.ui.define([
 				// e.g. America/New_York
 				// @see http://www.unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns
 				if (!bUTC && oField.digits === 2) {
-					return sTimezone;
+					// fallback for unknown but valid IANA timezone IDs (IANA is a living standard and the browser might support more, while the CLDR data is fixed)
+					// such that the user can see, that there is no translation
+					return oFormat.oLocaleData.getTimezoneTranslations()[sTimezone] || sTimezone;
 				}
 				return "";
 			},
@@ -1844,20 +1846,35 @@ sap.ui.define([
 
 				// VV - The long IANA timezone ID
 				if (oPart.digits === 2) {
-					if (sValue === sTimezone) {
-						oTimezoneParsed.timezone = sTimezone;
-						oTimezoneParsed.length = sTimezone.length;
-						return oTimezoneParsed;
+					var mTimezoneTranslations = oFormat.oLocaleData.getTimezoneTranslations();
+
+					// shortcut, first try the timezone parameter
+					if (sValue === mTimezoneTranslations[sTimezone]) {
+						return {
+							timezone: sTimezone,
+							length: sValue.length
+						};
 					}
 
-					// TODO: Support more pattern in regex like UTC or without the country part, checking for valid timezone
-					if (sValue) {
-						var rIanaTimezone = new RegExp("([A-Za-z_])+([\/][A-Za-z_]+)+");
-						var aResult = rIanaTimezone.exec(sValue);
-						if (aResult && aResult[0] && TimezoneUtil.isValidTimezone(aResult[0])) {
-							oTimezoneParsed.timezone = aResult[0];
-							oTimezoneParsed.length = aResult[0].length;
-							return oTimezoneParsed;
+					var aTimezoneTranslations = Object.values(mTimezoneTranslations);
+					var oTimezoneResult = oParseHelper.findEntry(sValue, aTimezoneTranslations, oFormat.oLocaleData.sCLDRLocaleId);
+					if (oTimezoneResult.index !== -1) {
+						return {
+							timezone: Object.keys(mTimezoneTranslations)[oTimezoneResult.index],
+							length: oTimezoneResult.length
+						};
+					}
+
+					// fallback for unknown but valid IANA timezone IDs (IANA is a living
+					// standard and the browser might support more, while the CLDR data is fixed)
+					// such that the user can see, that there is no translation
+					var sCurrentValue = "";
+					for (var i = 0; i < sValue.length; i++) {
+						sCurrentValue += sValue[i];
+
+						if (TimezoneUtil.isValidTimezone(sCurrentValue)) {
+							oTimezoneParsed.timezone = sCurrentValue;
+							oTimezoneParsed.length = sCurrentValue.length;
 						}
 					}
 				}
@@ -1985,7 +2002,7 @@ sap.ui.define([
 				// Although an invalid date was given, the DATETIME_WITH_TIMEZONE instance might
 				// have a pattern with the timezone (VV) inside then the IANA timezone ID is returned
 				if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE && this.oFormatOptions.pattern.includes("VV")) {
-					return sTimezone;
+					return this.oLocaleData.getTimezoneTranslations()[sTimezone] || sTimezone;
 				}
 				Log.error("The given date instance isn't valid.");
 				return "";

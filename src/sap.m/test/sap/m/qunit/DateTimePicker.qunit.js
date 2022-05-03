@@ -970,7 +970,7 @@ sap.ui.define([
 
 		// assert
 		assert.equal(oDTP.getDateValue().getTime(), 1643777700000, "dateValue contains the correct date and time");
-		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM Asia/Kabul", "the time part of the value stays the same");
+		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM Asia, Kabul", "the time part of the value stays the same");
 
 		// clean
 		oDTP.destroy();
@@ -984,20 +984,20 @@ sap.ui.define([
 		});
 
 		// assert
-		assert.equal(oDTP.getValue(), "Feb 2, 2022, 8:25:00 AM America/New_York", "the value is correct");
+		assert.equal(oDTP.getValue(), "Feb 2, 2022, 8:25:00 AM Americas, New York", "the value is correct");
 
 		// act
 		oDTP.setDateValue(new Date(Date.UTC(2022, 1, 2, 14, 25, 0)));
 
 		// assert
-		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM America/New_York", "the value is correct");
+		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM Americas, New York", "the value is correct");
 
 		// act
 		oDTP.setTimezone("Asia/Kabul");
 
 		// assert
 		assert.equal(oDTP.getDateValue().getTime(), 1643777700000, "dateValue contains the correct date and time");
-		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM Asia/Kabul", "the time part of the value stays the same");
+		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM Asia, Kabul", "the time part of the value stays the same");
 
 		// clean
 		oDTP.destroy();
@@ -1066,7 +1066,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// assert
-		assert.equal(oDTP.getValue(), "Feb 18, 2016, 10:00:00 AM America/New_York", "value is correct");
+		assert.equal(oDTP.getValue(), "Feb 18, 2016, 10:00:00 AM Americas, New York", "value is correct");
 		assert.equal(oDTP.$("inner").val(), "Jum. I 9, 1437 AH, 10:00:00 AM", "correct displayed value");
 		assert.equal(oDTP.getDateValue().getTime(), 1455807600000, "correct dateValue");
 

@@ -3217,10 +3217,10 @@ sap.ui.define([
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "VV"
 				}).format(oDateTime, true), "",
-				"No timezone is formatted for utc");
+				"No timezone is formatted for UTC");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "VV"
-				}).format(oDateTime), "Europe/Berlin",
+				}).format(oDateTime), "Europe, Berlin",
 				"Only local timezone is formatted");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "z"
@@ -3228,15 +3228,15 @@ sap.ui.define([
 				"Only local offset is formatted");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss VV z"
-				}).format(oDateTime).toString(), "2000-09-23T08:46:13 Europe/Berlin GMT+02:00",
+				}).format(oDateTime).toString(), "2000-09-23T08:46:13 Europe, Berlin GMT+02:00",
 				"Local timezone and offset is formatted");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss z VV"
-				}).format(oDateTime).toString(), "2000-09-23T08:46:13 GMT+02:00 Europe/Berlin",
+				}).format(oDateTime).toString(), "2000-09-23T08:46:13 GMT+02:00 Europe, Berlin",
 				"Local offset and timezone is formatted");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss VV"
-				}).format(oDateTime).toString(), "2000-09-23T08:46:13 Europe/Berlin",
+				}).format(oDateTime).toString(), "2000-09-23T08:46:13 Europe, Berlin",
 				"Local timezone is formatted");
 		});
 
@@ -3245,7 +3245,7 @@ sap.ui.define([
 			oDate.setUTCHours(oDate.getUTCHours() - 1); // GMT+1 (Europe/Berlin)
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "VV"
-				}).parse("Europe/Berlin", false, true).getTime(), oDate.getTime(),
+				}).parse("Europe, Berlin", false, true).getTime(), oDate.getTime(),
 				"Parsed the initial unix epoch date with pattern symbol VV.");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "z"
@@ -3253,15 +3253,15 @@ sap.ui.define([
 				"Parsed the initial unix epoch date with pattern symbol z.");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss VV z"
-				}).parse("2000-09-23T08:46:13 Europe/Berlin GMT+02:00").getTime(), oDateTime.getTime(),
+				}).parse("2000-09-23T08:46:13 Europe, Berlin GMT+02:00").getTime(), oDateTime.getTime(),
 				"Parsed with pattern symbols VV and z.");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss z VV"
-				}).parse("2000-09-23T08:46:13 GMT+02:00 Europe/Berlin").getTime(), oDateTime.getTime(),
+				}).parse("2000-09-23T08:46:13 GMT+02:00 Europe, Berlin").getTime(), oDateTime.getTime(),
 				"Parsed with pattern symbols z and VV.");
 			assert.equal(DateFormat.getDateTimeInstance({
 					pattern: "yyyy-MM-dd'T'HH:mm:ss VV"
-				}).parse("2000-09-23T08:46:13 Europe/Berlin").getTime(), oDateTime.getTime(),
+				}).parse("2000-09-23T08:46:13 Europe, Berlin").getTime(), oDateTime.getTime(),
 				"Parsed with pattern symbol VV.");
 		});
 
@@ -3566,7 +3566,7 @@ sap.ui.define([
 			var oDate = new Date("2021-10-09T02:37:00Z");
 
 			var sFormatted = oDateFormat.format(oDate);
-			assert.equal(sFormatted, "2021-10-08T22:37:00.000-04:00-America/New_York");
+			assert.equal(sFormatted, "2021-10-08T22:37:00.000-04:00-Amerika, New York");
 
 			var oParsedDate = oDateFormat.parse(sFormatted);
 			assert.equal(oParsedDate.getTime(), oDate.getTime());

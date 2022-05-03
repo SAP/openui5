@@ -7658,8 +7658,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectValue("dateAndTime", "Jan 17, 2022, 4:54:48 AM")
 			.expectValue("date", "Jan 17, 2022")
 			.expectValue("time", "4:54:48 AM")
-			.expectValue("timezone", "America/New_York")
-			.expectValue("default", "Jan 17, 2022, 4:54:48 AM America/New_York")
+			.expectValue("timezone", "Americas, New York")
+			.expectValue("default", "Jan 17, 2022, 4:54:48 AM Americas, New York")
 			.expectMessage(oDateWarning, "/DateTimeWithTimezoneSet('1')/")
 			.expectValueState("dateAndTime", "Warning", "Foo")
 			.expectValueState("date", "Warning", "Foo")
@@ -7722,22 +7722,22 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				ID : "1",
 				TimezoneID : ""
 			})
-			.expectValue("timezone", "Europe/London");
+			.expectValue("timezone", "Europe, London");
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectValue("timezone", "America/New_York");
+			that.expectValue("timezone", "Americas, New York");
 
 			// code under test
-			that.oView.byId("timezone").setValue("America/New_York");
+			that.oView.byId("timezone").setValue("Americas, New York");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(oModel.getProperty("/DateTimeWithTimezoneSet('1')/TimezoneID"),
 				"America/New_York");
 
-			that.expectValue("timezone", "Europe/London")
-				.expectValue("timezone", "Europe/London")
+			that.expectValue("timezone", "Europe, London")
+				.expectValue("timezone", "Europe, London")
 				.expectValueState("timezone", "None", "");
 
 			// code under test

@@ -486,7 +486,7 @@ sap.ui.define([
 					},
 					{
 						formatArgs: [Condition.createCondition("EQ", [["2022-02-24T12:15:30Z", "Europe/Berlin"]]), oDateTimeWithTimezoneType2, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
-						formatValue: "Europe/Berlin",
+						formatValue: "Europe, Berlin",
 						parseArgs: ["America/New_York", oDateTimeWithTimezoneType2, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
 						parsedValue: "2022-02-24T12:15:30Z,America/New_York",
 						condition: Condition.createCondition("EQ", [["2022-02-24T12:15:30Z", "America/New_York"]], undefined, undefined, ConditionValidated.NotValidated),
