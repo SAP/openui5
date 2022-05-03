@@ -1644,23 +1644,17 @@ sap.ui.define([
 			return null;
 		}
 
-		var mDefaultExportSettings = {
-			fileName: this.getHeader()
-		};
-
-		if (!this._cachedExportSettings) {
-			this._cachedExportSettings = mDefaultExportSettings;
-		}
-
 		if (!this._oExportButton) {
 			this._oExportButton = TableSettings.createExportButton(this.getId(), {
 				"default": [
 					function() {
-						this._onExport(mDefaultExportSettings);
+						this._onExport();
 					}, this
 				],
 				"exportAs": [
-					this._onExportAs, this
+					function() {
+						this._onExport(true);
+					}, this
 				]
 			});
 		}
@@ -1693,8 +1687,7 @@ sap.ui.define([
 	 * @returns {Promise} Column configuration to be exported
 	 * @private
 	 */
-	Table.prototype._createExportColumnConfiguration = function(mCustomConfig) {
-		var bSplitCells = mCustomConfig && mCustomConfig.splitCells;
+	Table.prototype._createExportColumnConfiguration = function() {
 		var aColumns = this.getColumns();
 
 		return this._fullyInitialized().then(function() {
@@ -1702,26 +1695,35 @@ sap.ui.define([
 			var aSheetColumns = [];
 
 			aColumns.forEach(function(oColumn) {
-				var aColumnExportSettings = oPropertyHelper.getColumnExportSettings(oColumn, bSplitCells);
+				var aColumnExportSettings = oPropertyHelper.getColumnExportSettings(oColumn);
 				aSheetColumns = aSheetColumns.concat(aColumnExportSettings);
 			}, this);
-			return [aSheetColumns, oPropertyHelper];
+			return aSheetColumns;
 		}.bind(this));
+	};
+
+	/**
+	 * Returns the label/header text of the column
+	 * @param {string} sPath column key
+	 * @returns {string|null} column label/header text. Returns null if no column or header/label text is available.
+	 * @private
+	 */
+	Table.prototype._getColumnLabel = function(sPath) {
+		var oPropertyHelper = this.getPropertyHelper();
+		var mPropertyInfo = oPropertyHelper.getProperty(sPath);
+		return mPropertyInfo && mPropertyInfo.label;
 	};
 
 	/**
 	 * Triggers export via "sap.ui.export"/"Document Export Services" export functionality
 	 *
-	 * @param {Object} mCustomConfig Custom config for the spreadsheet export
+	 * @param {boolean} bExportAs controls whether the regular export or the Export As dialog should be called
 	 * @returns {Promise} export build process promise
 	 * @private
 	 */
-	Table.prototype._onExport = function(mCustomConfig) {
+	Table.prototype._onExport = function(bExportAs) {
 		var that = this;
-		return this._createExportColumnConfiguration(mCustomConfig).then(function(aResult) {
-			var aSheetColumns = aResult[0];
-			var oPropertyHelper = aResult[1];
-
+		return this._createExportColumnConfiguration().then(function(aSheetColumns) {
 			// If no columns exist, show message and return without exporting
 			if (!aSheetColumns || !aSheetColumns.length) {
 				sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
@@ -1733,96 +1735,40 @@ sap.ui.define([
 			}
 
 			var oRowBinding = that._getRowBinding();
+			var fnGetColumnLabel = that._getColumnLabel.bind(that);
 			var mExportSettings = {
 				workbook: {
 					columns: aSheetColumns,
 					context: {
-						title: that.getHeader() || mCustomConfig.fileName
+						title: that.getHeader()
 					}
 				},
 				dataSource: oRowBinding,
-				fileType: mCustomConfig.selectedFileType,
-				fileName: mCustomConfig ? mCustomConfig.fileName : this.getHeader()
+				fileName: that.getHeader()
 			};
-
-			var mPDFUserSettings = {
-				border: mCustomConfig.border,
-				fontSize: mCustomConfig.fontSize,
-				paperSize: mCustomConfig.selectedPaperSize,
-				doEnableAccessibility: mCustomConfig.doEnableAccessibility,
-				signature: mCustomConfig.signature,
-				signatureReason: mCustomConfig.signatureReason,
-				orientation: mCustomConfig.selectedOrientation,
-				fitToPage: mCustomConfig.fitToPage,
-				pdfArchive: mCustomConfig.pdfArchive
-			};
-
-			if (mExportSettings.fileType === "PDF") {
-				Object.assign(mExportSettings, mPDFUserSettings);
-			}
 
 			that._loadExportLibrary().then(function() {
-				sap.ui.require(["sap/ui/export/ExportUtils"], function(ExportUtils) {
-					var oProcessor = Promise.resolve();
+				sap.ui.require(["sap/ui/export/ExportHandler"], function(ExportHandler) {
+					var oHandler;
 
-					if (mCustomConfig.includeFilterSettings) {
-						oProcessor = ExportUtils.parseFilterConfiguration(oRowBinding, function(sPropertyName) {
-							return oPropertyHelper.hasProperty(sPropertyName) ? oPropertyHelper.getProperty(sPropertyName).label : null;
-						}).then(function(oFilterConfig) {
-							if (oFilterConfig) {
-								var oContext = mExportSettings.workbook.context;
+					that.getControlDelegate().fetchExportCapabilities(that).then(function(oExportCapabilities) {
+						if (!that._oExportHandler) {
+							oHandler = new ExportHandler(oExportCapabilities);
 
-								oContext.metaSheetName =  oFilterConfig.name;
-								oContext.metainfo = [oFilterConfig];
-							}
-						});
-					}
-
-					oProcessor.then(function() {
-						var mUserSettings = {
-							splitCells: false,
-							includeFilterSettings: false
-						};
-
-						if (mCustomConfig) {
-							mUserSettings.splitCells = mCustomConfig.splitCells;
-							mUserSettings.includeFilterSettings = mCustomConfig.includeFilterSettings;
-						}
-
-						ExportUtils.getExportInstance(mExportSettings).then(function(oSheet){
-							oSheet.attachBeforeExport(function(oEvent) {
-							var oExportSettings = oEvent.getParameter("exportSettings");
-
-							that.fireBeforeExport({
-								exportSettings: oExportSettings,
-								userExportSettings: mUserSettings
-							  });
-						    }, that);
-							oSheet.build().finally(function() {
-								oSheet.destroy();
+							oHandler.attachBeforeExport(function(oEvent) {
+								that.fireBeforeExport({
+									exportSettings: oEvent.getParameter('exportSettings'),
+									userExportSettings: oEvent.getParameter('userExportSettings')
+								});
 							});
-						});
+							that._oExportHandler = oHandler;
+						}
+						if (bExportAs) {
+							that._oExportHandler.exportAs(mExportSettings, fnGetColumnLabel);
+						} else {
+							that._oExportHandler.export(mExportSettings, fnGetColumnLabel);
+						}
 					});
-				});
-			});
-		});
-	};
-
-	/**
-	 * Opens the export settings dialog for providing user specific export settings.
-	 *
-	 * @private
-	 */
-	Table.prototype._onExportAs = function() {
-		var that = this;
-
-		this._loadExportLibrary().then(function() {
-			sap.ui.require(['sap/ui/export/ExportUtils'], function(ExportUtils) {
-				that.getControlDelegate().fetchExportCapabilities(that).then(function(oExportCapabilities) {
-					return ExportUtils.getExportSettingsViaDialog(that._cachedExportSettings, oExportCapabilities, that);
-				}).then(function(oUserInput) {
-					that._cachedExportSettings = oUserInput;
-					that._onExport(oUserInput);
 				});
 			});
 		});
@@ -1854,7 +1800,7 @@ sap.ui.define([
 
 		if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.shiftKey && oEvent.which === KeyCodes.E) {
 			if (this.getEnableExport() && this._oExportButton && this._oExportButton.getEnabled()) {
-				this._onExportAs();
+				this._onExport(true);
 				oEvent.setMarked();
 				oEvent.preventDefault();
 			}
