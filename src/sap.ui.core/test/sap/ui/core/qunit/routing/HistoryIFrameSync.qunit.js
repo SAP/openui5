@@ -7,7 +7,15 @@ sap.ui.define([
 ], function(oApp, Device, HistoryUtils, HashChanger) {
 	"use strict";
 
-	var bWithinFrame = window.self !== window.top;
+	/*
+	 * Some browsers or browsers in specific mode (like Firefox and browser controlled by web driver) can't handle the
+	 * back navigation correctly when this test runs in a testsuite. In a testsuite, each test is executed with an
+	 * iframe. Because this test creates another embedded iframe, we have a situation that an iframe is embedded within
+	 * another iframe. Every time when the hash is changed in the deeper nested iframe, calling window.history.back()
+	 * will reload the whole test page instead of having a back navigation in the deeper nested iframe. Therefore the
+	 * tests that navigate back after a hash change in the deeper nested iframe have to be excluded in Firefox.
+	 */
+	var bBackNavigationIFrame = !((Device.browser.firefox || window.navigator.webdriver) && window.self !== window.top);
 
 	// Initialize the HistoryUtils
 	QUnit.begin(HistoryUtils.init);
@@ -26,16 +34,7 @@ sap.ui.define([
 		}
 	});
 
-	/*
-	 * Firefox can't handle the back navigaiton correctly when this test runs in a testsuite. In a testsuite, each
-	 * test is executed with an iframe. Because this test creates another embeded iframe, we have a situation that
-	 * an iframe is embeded within another iframe. Everytime when the hash is changed in the deeper nested iframe,
-	 * calling window.history.back() will reload the whole test page instead of having a back navigation in the
-	 * deeper nested iframe. Therefore the tests that navigate back after a hash change in the deeper nested iframe
-	 * have to be excluded in Firefox.
-	 */
-
-	if (!(Device.browser.firefox && bWithinFrame)) {
+	if (bBackNavigationIFrame) {
 		QUnit.test("Outer(Set)->Inner(Set)->Back->Outer(Set)->Back->Forward", function(assert) {
 			var iframe = document.getElementById("iframe1");
 			return oApp.setHash("outerHash1")
@@ -122,7 +121,7 @@ sap.ui.define([
 			});
 	});
 
-	if (!(Device.browser.firefox && bWithinFrame)) {
+	if (bBackNavigationIFrame) {
 		QUnit.test("Outer(Set)->Inner(Set)->Back->Inner(Set)->Back->Forward", function(assert) {
 			var iframe = document.getElementById("iframe1");
 			return oApp.setHash("outerHash1")
@@ -166,7 +165,7 @@ sap.ui.define([
 		});
 	}
 
-	if (!(Device.browser.firefox && bWithinFrame)) {
+	if (bBackNavigationIFrame) {
 		QUnit.test("Outer(Set)->Inner(Set)->Inner(Replace)->Back->Outer(Set)", function(assert) {
 			var iframe = document.getElementById("iframe1");
 			return oApp.setHash("outerHash1")
@@ -199,7 +198,7 @@ sap.ui.define([
 		});
 	}
 
-	if (!(Device.browser.firefox && bWithinFrame)) {
+	if (bBackNavigationIFrame) {
 		QUnit.test("Outer(Set)->Inner(Set)->Outer(Replace)->Back->Outer(Set)", function(assert) {
 			var iframe = document.getElementById("iframe1");
 			return oApp.setHash("outerHash1")
@@ -232,7 +231,7 @@ sap.ui.define([
 		});
 	}
 
-	if (!(Device.browser.firefox && bWithinFrame)) {
+	if (bBackNavigationIFrame) {
 		QUnit.test("Outer(Set)->Inner(Set)->Outer(Replace)->Back->Forward", function(assert) {
 			var iframe = document.getElementById("iframe1");
 			return oApp.setHash("outerHash1")
