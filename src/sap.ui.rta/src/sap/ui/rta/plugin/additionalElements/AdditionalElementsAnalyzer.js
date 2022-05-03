@@ -226,16 +226,26 @@ sap.ui.define([
 	 * @private
 	 */
 	function _findModelProperty(aControlsBindingPaths, aProperties) {
-		return aProperties.filter(function (oModelProperty) {
-			return aControlsBindingPaths.some(function(sBindingPath) {
-				//there might be some deeper binding paths available on controls,
-				//than returned by the model evaluation (e.g. navigation property paths)
-				//in this case we only check if the navigation path is valid
-				//unsupported: check existence of the property also in the navigation target
-				return sBindingPath === oModelProperty.bindingPath ||
-					sBindingPath.startsWith(oModelProperty.bindingPath + '/');
-			});
-		}).pop();
+		return aProperties
+			.sort(function (oProperty1, oProperty2) {
+				// Temporary fix to avoid evaluating technical properties like RAP feature
+				// control flags, might lead to problems if multiple value bindings exist
+				// on a hidden control
+				return !!oProperty2.hideFromReveal - !!oProperty1.hideFromReveal;
+			})
+			.filter(function (oModelProperty) {
+				return aControlsBindingPaths.some(function(sBindingPath) {
+					//there might be some deeper binding paths available on controls,
+					//than returned by the model evaluation (e.g. navigation property paths)
+					//in this case we only check if the navigation path is valid
+					//unsupported: check existence of the property also in the navigation target
+					return (
+						sBindingPath === oModelProperty.bindingPath
+						|| sBindingPath.startsWith(oModelProperty.bindingPath + '/')
+					);
+				});
+			})
+			.pop();
 	}
 
 	function _vBindingToPath(vBinding) {

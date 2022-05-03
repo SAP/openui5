@@ -3,17 +3,15 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/util/BindingsExtractor",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/DesignTime",
-	"sap/base/Log",
+	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"./TestUtils",
 	"sap/ui/core/Core"
 ], function(
 	AdditionalElementsAnalyzer,
 	BindingsExtractor,
-	ElementUtil,
 	DesignTime,
-	Log,
+	DelegateMediatorAPI,
 	TestUtils,
 	oCore
 ) {
@@ -440,6 +438,53 @@ sap.ui.define([
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
 				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+			});
+		});
+
+		QUnit.test("when an invisible element has a feature control binding", function(assert) {
+			var oGroup = this.oView.byId("GroupEntityType01");
+			var oGroupElement = this.oView.byId("EntityType01.Prop11");
+
+			// Simulate that the field control property is returned after the regular value property
+			var oDelegateMediatorStub = this.sandbox.stub(DelegateMediatorAPI, "getDelegateForControl");
+			function getDelegateForControl() {
+				return oDelegateMediatorStub.wrappedMethod.apply(this, arguments)
+				.then(function (oDelegateInfo) {
+					var fnGetPropertyInfo = oDelegateInfo.instance.getPropertyInfo;
+					oDelegateInfo.instance.getPropertyInfo = function () {
+						return fnGetPropertyInfo.apply(this, arguments)
+							.then(function (aProperties) {
+								return aProperties.concat({
+									name: "UxFcThatMakeFieldVisible",
+									bindingPath: "UxFcThatMakeFieldVisible",
+									entityType: "EntityType01",
+									label: "UI Field Control",
+									tooltip: "UI Field Control Byte (Should be defined centrally)",
+									hideFromReveal: true,
+									unsupported: true
+								});
+							});
+					};
+					return oDelegateInfo;
+				});
+			}
+			oDelegateMediatorStub.callsFake(getDelegateForControl);
+
+			oGroupElement.setVisible(false);
+			oCore.applyChanges();
+
+			var oActionsObject = {
+				aggregation: "formElements",
+				reveal: {
+					elements: [{
+						element: oGroupElement,
+						action: {} //not relevant for test
+					}]
+				}
+			};
+
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement)), "then the field is available on the dialog");
 			});
 		});
 
