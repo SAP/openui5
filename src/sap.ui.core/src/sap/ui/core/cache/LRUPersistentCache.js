@@ -318,7 +318,8 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 						sKey = oCursor.value.key;
 
 						if (sKey.indexOf(sPrefix) === 0
-							&& (!oFilters.olderThan || self._metadata.timestamps[sKey] <= oFilters.olderThan)) {
+							&& (!oFilters.olderThan || !(sKey in self._metadata.timestamps)
+								|| self._metadata.timestamps[sKey] <= oFilters.olderThan)) {
 							oRequest = oCursor.delete();
 							oRequest.onsuccess = function() {
 								Log.debug('Deleted ' + sKey + '!');
