@@ -113,8 +113,7 @@ sap.ui.define([
 			} else {
 				oFlexObject.setState(States.PERSISTED);
 			}
-			return oStoredResponse;
-		}).then(function (oStoredResponse) {
+		}).then(function () {
 			// update StorageResponse
 			var aObjectArray = getSubSection(oStoredResponse.changes.comp, oFlexObject);
 			updateArrayByName(aObjectArray, oFlexObject.getDefinition());
@@ -122,18 +121,28 @@ sap.ui.define([
 		});
 	}
 
-	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse) {
-		function removeFromArrayByName(aObjectArray, oFlexObject) {
-			for (var i = aObjectArray.length - 1; i >= 0; i--) {
-				//aObjectArray can come from either back end response or flex state
-				//In the first case, the fileName is a direct property of object
-				//In the second case, it can be obtained from getFileName() function
-				if ((aObjectArray[i].fileName || aObjectArray[i].getFileName()) === oFlexObject.fileName) {
-					aObjectArray.splice(i, 1);
-					break;
-				}
+	function removeFromArrayByName(aObjectArray, oFlexObject) {
+		for (var i = aObjectArray.length - 1; i >= 0; i--) {
+			//aObjectArray can come from either back end response or flex state
+			//In the first case, the fileName is a direct property of object
+			//In the second case, it can be obtained from getFileName() function
+			if ((aObjectArray[i].fileName || aObjectArray[i].getFileName()) === oFlexObject.fileName) {
+				aObjectArray.splice(i, 1);
+				break;
 			}
 		}
+	}
+
+	function removeFromCompVariantsMap(oFlexObject, mCompVariantsMapByPersistencyKey) {
+		delete mCompVariantsMapByPersistencyKey.byId[oFlexObject.getId()];
+		if (oFlexObject.getChangeType() === "standardVariant") {
+			mCompVariantsMapByPersistencyKey.standardVariantChange = undefined;
+		} else {
+			removeFromArrayByName(getSubSection(mCompVariantsMapByPersistencyKey, oFlexObject), oFlexObject.getDefinition());
+		}
+	}
+
+	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse) {
 		var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {layer: oFlexObject.getLayer(), reference: oFlexObject.getDefinition().reference});
 
 		return Storage.remove({
@@ -142,15 +151,9 @@ sap.ui.define([
 			transport: oFlexObject.getRequest(),
 			parentVersion: sParentVersion
 		}).then(function () {
-			// update compVariantsMap
-			delete mCompVariantsMapByPersistencyKey.byId[oFlexObject.getId()];
-			if (oFlexObject.getChangeType() === "standardVariant") {
-				mCompVariantsMapByPersistencyKey.standardVariantChange = undefined;
-			} else {
-				removeFromArrayByName(getSubSection(mCompVariantsMapByPersistencyKey, oFlexObject), oFlexObject.getDefinition());
-			}
-			return oStoredResponse;
-		}).then(function (oStoredResponse) {
+			// update CompVariantsMap
+			removeFromCompVariantsMap(oFlexObject, mCompVariantsMapByPersistencyKey);
+		}).then(function () {
 			// update StorageResponse
 			removeFromArrayByName(getSubSection(oStoredResponse.changes.comp, oFlexObject), oFlexObject.getDefinition());
 			return oFlexObject.getDefinition();
@@ -614,18 +617,25 @@ sap.ui.define([
 	 */
 	CompVariantState.removeVariant = function (mPropertyBag) {
 		var oVariant = getVariantById(mPropertyBag);
+		var sCurrentState = oVariant.getState();
 
 		if (!mPropertyBag.revert) {
 			var oRevertData = new CompVariantRevertData({
 				type: CompVariantState.operationType.StateUpdate,
 				content: {
-					previousState: oVariant.getState()
+					previousState: sCurrentState
 				}
 			});
 			oVariant.addRevertInfo(oRevertData);
 		}
 
-		// TODO: check if it is an deletion or create corresponding changes
+		if (sCurrentState === States.NEW) {
+			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
+			var mCompVariantsMapByPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);
+			removeFromCompVariantsMap(oVariant, mCompVariantsMapByPersistencyKey);
+			return oVariant;
+		}
+
 		oVariant.markForDeletion();
 		return oVariant;
 	};
@@ -767,8 +777,7 @@ sap.ui.define([
 				} else {
 					oFlexObject.setState(States.PERSISTED);
 				}
-				return oStoredResponse;
-			}).then(function (oStoredResponse) {
+			}).then(function () {
 				// update StorageResponse
 				getSubSection(oStoredResponse.changes.comp, oFlexObject).push(oFlexObject.getDefinition());
 				return oFlexObject.getDefinition();
@@ -779,28 +788,29 @@ sap.ui.define([
 		var sPersistencyKey = mPropertyBag.persistencyKey;
 		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
 		var mCompVariantsMapByPersistencyKey = mCompVariantsMap._getOrCreate(sPersistencyKey);
-		var oStoredResponse = FlexState.getStorageResponse(sReference);
 
-		var aPromises = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey)
-			.filter(needsPersistencyCall)
-			.map(function (oFlexObject) {
-				switch (oFlexObject.getState()) {
-					case States.NEW:
-						ifVariantClearRevertData(oFlexObject);
-						return writeObjectAndAddToState(oFlexObject, oStoredResponse);
-					case States.DIRTY:
-						ifVariantClearRevertData(oFlexObject);
-						return updateObjectAndStorage(oFlexObject, oStoredResponse);
-					case States.DELETED:
-						ifVariantClearRevertData(oFlexObject);
-						return deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse);
-					default:
-						break;
-				}
+		return FlexState.getStorageResponse(sReference)
+			.then(function(oStoredResponse) {
+				var aPromises = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey)
+				.filter(needsPersistencyCall)
+				.map(function (oFlexObject) {
+					switch (oFlexObject.getState()) {
+						case States.NEW:
+							ifVariantClearRevertData(oFlexObject);
+							return writeObjectAndAddToState(oFlexObject, oStoredResponse);
+						case States.DIRTY:
+							ifVariantClearRevertData(oFlexObject);
+							return updateObjectAndStorage(oFlexObject, oStoredResponse);
+						case States.DELETED:
+							ifVariantClearRevertData(oFlexObject);
+							return deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse);
+						default:
+							break;
+					}
+				});
+				// TODO Consider not rejecting with first error, but wait for all promises and collect the results
+				return Promise.all(aPromises);
 			});
-
-		// TODO Consider not rejecting with first error, but wait for all promises and collect the results
-		return Promise.all(aPromises);
 	};
 
 	/**
