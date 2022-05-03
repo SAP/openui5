@@ -2037,10 +2037,6 @@ sap.ui.define([
 					this._oItemContainer.initializeItems()
 				]).then(function() {
 					if (this._oQuickActionContainer.hasQuickActions() || this._oItemContainer.hasItems()) {
-						if (this._oColumnHeaderMenu._oItemsContainer) {
-							this._oColumnHeaderMenu._oItemsContainer.destroy();
-							this._oColumnHeaderMenu._oItemsContainer = null;
-						}
 						this._oColumnHeaderMenu.openBy(oColumn);
 					}
 				}.bind(this));

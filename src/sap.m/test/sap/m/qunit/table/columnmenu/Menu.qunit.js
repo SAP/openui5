@@ -263,6 +263,90 @@ sap.ui.define([
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[2].getId());
 	});
 
+	QUnit.test("Check visibility", function (assert) {
+		function getActiveItems(oColumnMenu) {
+			return oColumnMenu._oItemsContainer._getNavigationList().getItems().filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		}
+		// Menu has 2 Quick Actions (1 Private, 1 Public), 2 Items (both Public)
+		this.createMenu(true, true, true, false);
+
+		// Initial State
+		this.oColumnMenu.openBy(this.oButton);
+
+		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 2, "All quick actions are visible");
+		assert.equal(getActiveItems(this.oColumnMenu).length, 2, "All items are visible");
+
+		this.oColumnMenu.close();
+
+		// Public Quick Action hidden
+		this.oColumnMenu.getQuickActions()[0].setVisible(false);
+		this.oColumnMenu.openBy(this.oButton);
+		oCore.applyChanges();
+
+		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 1, "Only one quick action visible");
+
+		this.oColumnMenu.close();
+
+		// One item hidden
+		this.oColumnMenu.getItems()[0].setVisible(false);
+		this.oColumnMenu.openBy(this.oButton);
+		oCore.applyChanges();
+
+		assert.equal(getActiveItems(this.oColumnMenu).length, 1, "Only one item visible");
+
+		this.oColumnMenu.close();
+
+		// All items hidden
+		this.oColumnMenu.getItems()[1].setVisible(false);
+		this.oColumnMenu.openBy(this.oButton);
+		oCore.applyChanges();
+
+		assert.equal(getActiveItems(this.oColumnMenu).length, 0, "No items are visible");
+
+		this.oColumnMenu.close();
+
+		// All Quick Actions hidden
+		this.oColumnMenu.getAggregation("_quickActions")[0].setVisible(false);
+		this.oColumnMenu.openBy(this.oButton);
+		oCore.applyChanges();
+
+		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 0, "No quick actions are in the form");
+		assert.notOk(document.getElementById(this.oColumnMenu.getId() + "-quickActions"), "Quick Actions Container is not rendered");
+
+		this.oColumnMenu.close();
+
+		// Make 1 QuickAction and 1 item visible
+		this.oColumnMenu.getItems()[0].setVisible(true);
+		this.oColumnMenu.getAggregation("_quickActions")[0].setVisible(true);
+		this.oColumnMenu.openBy(this.oButton);
+		oCore.applyChanges();
+
+		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 1, "One quick action is visible");
+		assert.equal(getActiveItems(this.oColumnMenu).length, 1, "One item is visible");
+	});
+
+	QUnit.test("Add menu item", function (assert) {
+		this.createMenu(true, true, true, true);
+		this.oColumnMenu.openBy(this.oButton);
+		oCore.applyChanges();
+
+		var aItems = this.oColumnMenu._oItemsContainer._getNavigationList().getItems();
+		assert.equal(aItems.length, 3, "Menu has exactly 3 items");
+
+		this.oColumnMenu.close();
+
+		var oItem = new Item({label: "Added Item", content: new Button({text: "Added Button"})});
+		this.oColumnMenu.addItem(oItem);
+		oCore.applyChanges();
+		this.oColumnMenu.openBy(this.oButton);
+
+		aItems = this.oColumnMenu._oItemsContainer._getNavigationList().getItems();
+		assert.equal(aItems.length, 4, "Menu has exactly 4 items");
+		assert.equal(aItems[3].getTitle(), "Added Item");
+	});
+
 	QUnit.module("Button states", {
 		beforeEach: function () {
 			this.oItem = new Item({label: sText, content: new Button({text: sText})});
@@ -412,6 +496,11 @@ sap.ui.define([
 					new QuickAction({
 						label: sText,
 						content: new Button({text: sText})
+					}),
+					new QuickAction({
+						label: sText,
+						content: new Button({text: sText}),
+						visible: false
 					})
 				],
 				items: [new Item({label: sText, content: new Button({text: sText})})],
@@ -441,6 +530,8 @@ sap.ui.define([
 
 		var oContainer = this.oColumnMenu._oForm.getFormContainers()[0];
 		var aFormElements = oContainer.getFormElements();
+
+		assert.equal(aFormElements.length, 4, "Form has only four Quick Action elements, as the last one is not visible");
 
 		// First Quick Action, expected S(6), M(4)
 		assert.equal(aFormElements[0].getLabel().getText(), sText, "First Quick Action has correct label");
@@ -488,5 +579,22 @@ sap.ui.define([
 		assert.equal(aFormElements[3].getFields()[0].getLayoutData().getSpanM(), 8, "Span M is set correctly to 8");
 		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
 		assert.equal(oControl.getText(), sText, "Correct button with correct button text");
+
+		this.oColumnMenu.close();
+		this.oColumnMenu.addQuickAction(new QuickAction({label: "Added Action", content: [new Button({text: "Button Added"})]}));
+		oCore.applyChanges();
+
+		this.oColumnMenu.openBy(this.oButton);
+
+		oContainer = this.oColumnMenu._oForm.getFormContainers()[0];
+		aFormElements = oContainer.getFormElements();
+
+		// Check if added quick action is rendered
+		assert.equal(aFormElements[4].getLabel().getText(), "Added Action", "Added Quick Action has correct label");
+		oControl = sap.ui.getCore().byId(aFormElements[4].getFields()[0].getControl());
+		assert.equal(aFormElements[4].getFields()[0].getLayoutData().getSpanS(), 12, "Span S is set correctly to 12");
+		assert.equal(aFormElements[4].getFields()[0].getLayoutData().getSpanM(), 8, "Span M is set correctly to 8");
+		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
+		assert.equal(oControl.getText(), "Button Added", "Correct button with correct button text");
 	});
 });

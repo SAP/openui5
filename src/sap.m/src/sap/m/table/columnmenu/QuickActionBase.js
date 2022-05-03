@@ -48,5 +48,15 @@ sap.ui.define([
 		return [this];
 	};
 
+	QuickActionBase.prototype.setVisible = function (bVisible) {
+		if (this.getVisible() == bVisible) {
+			return this;
+		}
+
+		this.setProperty("visible", bVisible);
+		this.getMenu() && this.getMenu()._createQuickActionGrids();
+		return this;
+	};
+
 	return QuickActionBase;
 });

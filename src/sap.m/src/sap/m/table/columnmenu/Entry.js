@@ -85,15 +85,5 @@ sap.ui.define([
 		throw new Error(this + " does not implement #getContent");
 	};
 
-	Entry.prototype.setVisible = function (bVisible) {
-		if (this.getVisible() == bVisible) {
-			return this;
-		}
-
-		this.setProperty("visible", bVisible);
-		this.getMenu() && this.getMenu()._setItemVisibility(this, bVisible);
-		return this;
-	};
-
 	return Entry;
 });

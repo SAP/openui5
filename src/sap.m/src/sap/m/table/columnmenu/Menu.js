@@ -147,9 +147,12 @@ sap.ui.define([
 		this._initPopover();
 		this._createQuickActionGrids();
 
-		if (!this._oItemsContainer) {
-			this._initItemsContainer();
+		if (this._oItemsContainer) {
+			this._oItemsContainer.destroy();
+			this._oItemsContainer = null;
 		}
+		this._initItemsContainer();
+
 		this._oPopover.openBy(oAnchor);
 		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
 	};
@@ -430,7 +433,9 @@ sap.ui.define([
 		var aQuickActions = (this.getAggregation("_quickActions") || []).concat(this.getQuickActions());
 		return aQuickActions.reduce(function (a, oQuickAction) {
 			return a.concat(oQuickAction.getEffectiveQuickActions());
-		}, []);
+		}, []).filter(function (oQuickAction) {
+			return oQuickAction.getVisible();
+		});
 	};
 
 	Menu.prototype._hasQuickActions = function() {
@@ -441,7 +446,9 @@ sap.ui.define([
 		var aItems = (this.getAggregation("_items") || []).concat(this.getItems());
 		return aItems.reduce(function(a, oItem) {
 			return a.concat(oItem.getEffectiveItems());
-		}, []);
+		}, []).filter(function (oItem) {
+			return oItem.getVisible();
+		});
 	};
 
 	Menu.prototype._hasItems = function() {
@@ -522,6 +529,9 @@ sap.ui.define([
 
 		var aEffectiveQuickActions = this._getAllEffectiveQuickActions();
 		aEffectiveQuickActions.forEach(function (oEffectiveQuickAction) {
+			if (!oEffectiveQuickAction.getVisible()) {
+				return;
+			}
 			// Create label
 			var oGridData = new GridData({span: "XL4 L4 M4 S12"});
 			var oLabel = new Label({
