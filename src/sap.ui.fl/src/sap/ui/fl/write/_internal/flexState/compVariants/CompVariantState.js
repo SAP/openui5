@@ -49,10 +49,13 @@ sap.ui.define([
 
 	function getPropertyFromVersionsModel(sPropertyName, mPropertyBag) {
 		var bIsVersionEnabled = Settings.getInstanceOrUndef().isVersioningEnabled(mPropertyBag.layer);
-		return bIsVersionEnabled && mPropertyBag.layer === Layer.CUSTOMER ? Versions.getVersionsModel({
-			reference: Utils.normalizeReference(mPropertyBag.reference),
-			layer: mPropertyBag.layer
-		}).getProperty(sPropertyName) : undefined;
+		if (bIsVersionEnabled && mPropertyBag.layer === Layer.CUSTOMER) {
+			return Versions.getVersionsModel({
+				reference: Utils.normalizeReference(mPropertyBag.reference),
+				layer: mPropertyBag.layer
+			}).getProperty(sPropertyName);
+		}
+		return undefined;
 	}
 
 	function isChangeUpdatable(oChange, mPropertyBag) {
@@ -120,7 +123,6 @@ sap.ui.define([
 	}
 
 	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse) {
-		//TODO: update version model
 		function removeFromArrayByName(aObjectArray, oFlexObject) {
 			for (var i = aObjectArray.length - 1; i >= 0; i--) {
 				//aObjectArray can come from either back end response or flex state
@@ -132,11 +134,13 @@ sap.ui.define([
 				}
 			}
 		}
+		var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {layer: oFlexObject.getLayer(), reference: oFlexObject.getDefinition().reference});
 
 		return Storage.remove({
 			flexObject: oFlexObject.getDefinition(),
 			layer: oFlexObject.getLayer(),
-			transport: oFlexObject.getRequest()
+			transport: oFlexObject.getRequest(),
+			parentVersion: sParentVersion
 		}).then(function () {
 			// update compVariantsMap
 			delete mCompVariantsMapByPersistencyKey.byId[oFlexObject.getId()];
