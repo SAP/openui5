@@ -63,7 +63,7 @@ sap.ui.define([
 	 * @class
 	 * Icon uses embedded font instead of pixel image. Comparing to image, Icon is easily scalable, color can be altered live and various effects can be added using css.
 	 *
-	 * A set of built in Icons is available in the <a href="test-resources/sap/m/demokit/iconExplorer/webapp/index.html">Icon Explorer</a>.
+	 * A set of built in Icons is available in the {@link demo:sap/m/demokit/iconExplorer/webapp/index.html Icon Explorer}.
 	 *
 	 * For further information, see {@link topic:21ea0ea94614480d9a910b2e93431291 Icon and Icon Pool}.
 	 *

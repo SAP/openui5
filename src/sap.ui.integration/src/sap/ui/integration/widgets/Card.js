@@ -156,7 +156,7 @@ sap.ui.define([
 	 * <li>The behavior for the actions described in the manifest.json file, using the action event</li>
 	 * </ul>
 	 *
-	* <strong>You can learn more about integration cards in the <a href="test-resources/sap/ui/integration/demokit/cardExplorer/index.html">Card Explorer</a></strong>
+	* <strong>You can learn more about integration cards in the {@link demo:sap/ui/integration/demokit/cardExplorer/index.html Card Explorer}</strong>
 	 *
 	 * <i>When to use</i>
 	 * <ul>
