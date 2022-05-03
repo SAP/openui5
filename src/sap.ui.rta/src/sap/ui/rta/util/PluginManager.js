@@ -211,7 +211,7 @@ sap.ui.define([
 			if (
 				oFlexSettings.layer === Layer.CUSTOMER
 				&& oSettings
-				&& !oSettings.isVersioningEnabled(oFlexSettings.layer)
+				&& oSettings.isPublicLayerAvailable()
 			) {
 				this._mDefaultPlugins["localReset"] = new LocalResetPlugin({
 					commandFactory: this._oCommandFactory

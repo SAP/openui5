@@ -726,7 +726,8 @@ sap.ui.define([
 				return Storage.remove({
 					flexObject: oDirtyChange.getDefinition(),
 					layer: oDirtyChange.getLayer(),
-					transport: oDirtyChange.getRequest()
+					transport: oDirtyChange.getRequest(),
+					parentVersion: sParentVersion
 				});
 			default:
 		}
