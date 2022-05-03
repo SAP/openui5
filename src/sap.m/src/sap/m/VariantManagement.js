@@ -988,7 +988,7 @@ sap.ui.define([
 			}
 		});
 
-		this._oVariantList = new SelectList(this.getId() + "-list", {
+		this.oVariantList = new SelectList(this.getId() + "-list", {
 			selectedKey: {
 				path: this._checkForFinalBindingPath("currentVariant"),
 				model: this._sModelName
@@ -1012,14 +1012,14 @@ sap.ui.define([
 				}
 			}.bind(this)
 		});
-		this._oVariantList.setNoDataText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA"));
+		this.oVariantList.setNoDataText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA"));
 
 		var oItemTemplate = new sap.ui.core.Item({
 			key: '{' + this._sModelName + ">key}",
 			text: '{' + this._sModelName + ">title}"
 		});
 
-		this._oVariantList.bindAggregation("items", {
+		this.oVariantList.bindAggregation("items", {
 			path: this._checkForFinalBindingPath("variants"),
 			model: this._sModelName,
 			template: oItemTemplate
@@ -1027,7 +1027,7 @@ sap.ui.define([
 
 		this._oSearchField = new SearchField(this.getId() + "-search");
 		this._oSearchField.attachLiveChange(function(oEvent) {
-			this._triggerSearch(oEvent, this._oVariantList);
+			this._triggerSearch(oEvent, this.oVariantList);
 		}.bind(this));
 
 		this.oVariantSelectionPage = new Page(this.getId() + "-selpage", {
@@ -1037,7 +1037,7 @@ sap.ui.define([
 				]
 			}),
 			content: [
-				this._oVariantList
+				this.oVariantList
 			],
 			footer: new OverflowToolbar({
 				content: [
@@ -1089,7 +1089,7 @@ sap.ui.define([
 		}
 		this.addDependent(this.oVariantPopOver);
 
-		// this._oVariantList.getBinding("items").filter(this._getFilters());
+		// this.oVariantList.getBinding("items").filter(this._getFilters());
 	};
 
 	/**
@@ -1132,9 +1132,9 @@ sap.ui.define([
 		this._createVariantList();
 		this._oSearchField.setValue("");
 
-		this._oVariantList.getBinding("items").filter(this._getFilters());
+		this.oVariantList.getBinding("items").filter(this._getFilters());
 
-		this.oVariantSelectionPage.setShowSubHeader(this._oVariantList.getItems().length > 9);
+		this.oVariantSelectionPage.setShowSubHeader(this.oVariantList.getItems().length > 9);
 
 		this.showSaveButton(false);
 
@@ -1215,7 +1215,7 @@ sap.ui.define([
 			});
 
 			this.oCreateTile = new CheckBox(this.getId() + "-tile", {
-				text: this.oResourceBundle.getText("VARIANT_MANAGEMENT_CREATETILE"),
+				text: this._oRb.getText("VARIANT_MANAGEMENT_CREATETILE"),
 				enabled: true,
 				visible: {
 					path: "/showCreateTile",
@@ -2461,7 +2461,7 @@ sap.ui.define([
 		this.oCreateTile = undefined;
 		this._oRb = undefined;
 
-		this._oVariantList = undefined;
+		this.oVariantList = undefined;
 		this.oVariantSelectionPage = undefined;
 		this.oVariantLayout = undefined;
 		this.oVariantText = undefined;
