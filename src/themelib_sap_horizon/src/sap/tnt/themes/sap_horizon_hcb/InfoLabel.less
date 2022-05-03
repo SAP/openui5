@@ -4,30 +4,46 @@
 /* ================================== */
 
 // ==========================================================================
-// Variables overriding
+// Variables and mixins
 // ==========================================================================
 
 @_sap_tnt_InfoLabel_LineHeightDisplayOnly: 0.875rem;
+@_sap_tnt_InfoLabel_DisplayModeBorder: 0.0625rem solid #A9BACB;
+@_sap_tnt_InfoLabel_DisplayModeBackground: #1C2834;
+@_sap_tnt_InfoLabel_DisplayModeColor: #A9BACB;
 
-.sapTntInfoLabel {
-	background: @sapUiGroupContentBackground;
-	border: solid 0.0625rem @sapUiGroupContentBorderColor;
+@_sap_tnt_InfoLabel_ColorsArray:
+#362401 #FDA503,
+#550404 #FC9F9F,
+#520230 #F79DCA,
+#480057 #F794FF,
+#240381 #BDADFF,
+#002559 #83BCFF,
+#012D28 #06CFAF,
+#0F2D17 #26D526,
+#032B37 #1BC8F2,
+#1C2834 #A9BACB;
 
-	.sapTntInfoLabelInner {
-		color: @sapUiBaseText;
-	}
+.create-classes-for-background-and-border-colors(backgroundColor, @_sap_tnt_InfoLabel_ColorsArray);
 
-	&.sapTntInfoLabelDisplayOnly {
-		background: @sapUiGroupContentBackground;
-		border: solid 1px @sapUiGroupContentBorderColor;
+// Iterate over the InfoLabel ColorsArray and create separate class for each
+// color named with the passed prefix and the number of the color
+.create-classes-for-background-and-border-colors(@prefix, @list) {
+	.iter(length(@list));
+	.iter(@i) when (@i > 0) {
+		.iter(@i - 1);
 
-		.sapTntInfoLabelInner {
-			color: @sapUiBaseText;
-			line-height: 0.875rem;
-		}
+		@pair: extract(@list, @i);
+		@backgroundColor: extract(@pair, 1);
+		@borderColor: extract(@pair, 2);
 
-		&.sapTntInfoLabelWithIcon .sapUiIcon {
-			line-height: 0.875rem;
+		.@{prefix}@{i} {
+			border: 0.0625rem solid @borderColor;
+			background-color: @backgroundColor;
+
+			.sapTntInfoLabelInner {
+				color: @borderColor;
+			}
 		}
 	}
 }

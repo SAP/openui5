@@ -7,17 +7,22 @@
 // Variables and mixins
 // ==========================================================================
 
+@_sap_tnt_InfoLabel_LineHeightDisplayOnly: 0.875rem;
+@_sap_tnt_InfoLabel_DisplayModeBorder: 0.0625rem solid #B3BDC6;
+@_sap_tnt_InfoLabel_DisplayModeBackground: #29394B;
+@_sap_tnt_InfoLabel_DisplayModeColor: #B3BDC6;
+
 @_sap_tnt_InfoLabel_ColorsArray:
-	@sapUiLegendBackgroundColor1 @sapUiAccent1,
-	@sapUiLegendBackgroundColor2 @sapUiAccent2,
-	@sapUiLegendBackgroundColor3 @sapUiAccent3,
-	@sapUiLegendBackgroundColor5 @sapUiAccent4,
-	@sapUiLegendBackgroundColor20 @sapUiAccent5,
-	@sapUiLegendBackgroundColor6 @sapUiAccent6,
-	@sapUiLegendBackgroundColor7 @sapUiAccent7,
-	@sapUiLegendBackgroundColor18 @sapUiLegend18,
-	@sapUiLegendBackgroundColor10 @sapUiAccent10,
-	@sapUiLegendBackgroundColor9 @sapUiAccent9;
+#4A3502 #EFAB01,
+#770606 #FFA0BF,
+#6E064B #FF98B6,
+#580787 #FF8FF1,
+#331C9F #C6A8FF,
+#0E3382 #5CC0FF,
+#054039 #1ECDAF,
+#164120 #81CB24,
+#063D5B #08C8E4,
+#29394B #B3BDC6;
 
 .create-classes-for-background-and-border-colors(backgroundColor, @_sap_tnt_InfoLabel_ColorsArray);
 
@@ -31,13 +36,14 @@
 		@pair: extract(@list, @i);
 		@backgroundColor: extract(@pair, 1);
 		@borderColor: extract(@pair, 2);
+		@textColor: extract(@pair, 2);
 
 		.@{prefix}@{i} {
 			border: 0.0625rem solid @borderColor;
 			background-color: @backgroundColor;
 
 			.sapTntInfoLabelInner {
-				color: @sapUiBaseText;
+				color: @textColor;
 			}
 		}
 	}

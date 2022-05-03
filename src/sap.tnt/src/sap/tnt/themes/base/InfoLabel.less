@@ -8,6 +8,9 @@
 @_sap_tnt_InfoLabel_LineHeightDisplayOnly: 1rem;
 @_sap_tnt_InfoLabel_HeightWithoutBorders: 0.875rem;
 @_sap_tnt_InfoLabel_PaddingWhenEmpty: 0 @_sap_tnt_InfoLabel_HeightWithoutBorders/2;
+@_sap_tnt_InfoLabel_DisplayModeBorder: none;
+@_sap_tnt_InfoLabel_DisplayModeBackground: @sapTextColor;
+@_sap_tnt_InfoLabel_DisplayModeColor: @sapContent_ContrastTextColor;
 
 /* ==========================================================================
    Root element
@@ -44,11 +47,11 @@
    InfoLabel Display Only
    ========================================================================== */
 .sapTntInfoLabel.sapTntInfoLabelDisplayOnly {
-	border: none;
-	background: @sapTextColor;
+	border: @_sap_tnt_InfoLabel_DisplayModeBorder;
+	background: @_sap_tnt_InfoLabel_DisplayModeBackground;
 
 	.sapTntInfoLabelInner {
-		color: @sapContent_ContrastTextColor;
+		color: @_sap_tnt_InfoLabel_DisplayModeColor;
 		line-height: @_sap_tnt_InfoLabel_LineHeightDisplayOnly;
 	}
 }
