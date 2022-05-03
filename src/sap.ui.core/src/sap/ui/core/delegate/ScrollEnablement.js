@@ -209,8 +209,12 @@ sap.ui.define([
 			 */
 			setIconTabBar : function(oIconTabBar, fnScrollEndCallback, fnScrollStartCallback) {
 				this._oIconTabBar = oIconTabBar;
-				this._fnScrollEndCallback = jQuery.proxy(fnScrollEndCallback, oIconTabBar);
-				this._fnScrollStartCallback = jQuery.proxy(fnScrollStartCallback, oIconTabBar);
+				if (fnScrollEndCallback) {
+					this._fnScrollEndCallback = fnScrollEndCallback.bind(oIconTabBar);
+				}
+				if (fnScrollStartCallback) {
+					this._fnScrollStartCallback = fnScrollStartCallback.bind(oIconTabBar);
+				}
 				return this;
 			},
 			/**
@@ -692,7 +696,7 @@ sap.ui.define([
 
 			onAfterRendering: function() {
 				var $Container = this._$Container = this._sContainerId ? jQuery(document.getElementById(this._sContainerId)) : jQuery(document.getElementById(this._sContentId)).parent();
-				var _fnRefresh = jQuery.proxy(this._refresh, this);
+				var _fnRefresh = this._refresh.bind(this);
 				var bElementVisible = $Container.is(":visible");
 				$Container.addClass("sapUiScrollDelegate");
 
@@ -779,10 +783,10 @@ sap.ui.define([
 			_scrollTo: function(x, y, time, fnScrollEndCallback) {
 				if (this._$Container.length > 0) {
 					if (time > 0) {
-						this._$Container.finish().animate({ scrollTop: y, scrollLeft: x }, time, jQuery.proxy(function() {
+						this._$Container.finish().animate({ scrollTop: y, scrollLeft: x }, time, function() {
 							this._readActualScrollPosition();
 							fnScrollEndCallback && fnScrollEndCallback();
-						}, this));
+						}.bind(this));
 					} else {
 						this._$Container.scrollTop(y);
 						this._$Container.scrollLeft(x);

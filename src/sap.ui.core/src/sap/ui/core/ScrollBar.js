@@ -156,7 +156,7 @@ sap.ui.define([
 			// number of unneeded rendering is reduced.
 			this._bSkipTouchHandling = false;
 
-			this._oTouchScroller = new window.Scroller(jQuery.proxy(this._handleTouchScroll,this), {
+			this._oTouchScroller = new window.Scroller(this._handleTouchScroll.bind(this), {
 				bouncing:false
 			});
 		}
@@ -267,7 +267,7 @@ sap.ui.define([
 
 		this.setCheckedScrollPosition(this.getScrollPosition() ? this.getScrollPosition() : 0, true);
 
-		this._$ScrollDomRef.on("scroll", jQuery.proxy(this.onscroll, this));
+		this._$ScrollDomRef.on("scroll", this.onscroll.bind(this));
 
 		if (EventSimulation.touchEventMode === "ON") {
 			this._bSkipTouchHandling = true;
@@ -523,10 +523,10 @@ sap.ui.define([
 			}
 
 			if (EventSimulation.touchEventMode === "ON") {
-				this._$OwnerDomRef.off(this._getTouchEventType("touchstart"), jQuery.proxy(this.ontouchstart, this));
-				this._$OwnerDomRef.off(this._getTouchEventType("touchmove"), jQuery.proxy(this.ontouchmove, this));
-				this._$OwnerDomRef.off(this._getTouchEventType("touchend"), jQuery.proxy(this.ontouchend, this));
-				this._$OwnerDomRef.off(this._getTouchEventType("touchcancel"), jQuery.proxy(this.ontouchcancel, this));
+				this._$OwnerDomRef.off(this._getTouchEventType("touchstart"), this.ontouchstart.bind(this));
+				this._$OwnerDomRef.off(this._getTouchEventType("touchmove"), this.ontouchmove.bind(this));
+				this._$OwnerDomRef.off(this._getTouchEventType("touchend"), this.ontouchend.bind(this));
+				this._$OwnerDomRef.off(this._getTouchEventType("touchcancel"), this.ontouchcancel.bind(this));
 			}
 		}
 	};
@@ -543,14 +543,14 @@ sap.ui.define([
 		if (oOwnerDomRef) {
 			this._$OwnerDomRef = jQuery(oOwnerDomRef);
 			if (this.getVertical()) {
-				this._$OwnerDomRef.on(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this.onmousewheel, this));
+				this._$OwnerDomRef.on(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this.onmousewheel.bind(this));
 			}
 
 			if (EventSimulation.touchEventMode === "ON") {
-				this._$OwnerDomRef.on(this._getTouchEventType("touchstart"), jQuery.proxy(this.ontouchstart, this));
-				this._$OwnerDomRef.on(this._getTouchEventType("touchmove"), jQuery.proxy(this.ontouchmove, this));
-				this._$OwnerDomRef.on(this._getTouchEventType("touchend"), jQuery.proxy(this.ontouchend, this));
-				this._$OwnerDomRef.on(this._getTouchEventType("touchcancel"), jQuery.proxy(this.ontouchcancel, this));
+				this._$OwnerDomRef.on(this._getTouchEventType("touchstart"), this.ontouchstart.bind(this));
+				this._$OwnerDomRef.on(this._getTouchEventType("touchmove"), this.ontouchmove.bind(this));
+				this._$OwnerDomRef.on(this._getTouchEventType("touchend"), this.ontouchend.bind(this));
+				this._$OwnerDomRef.on(this._getTouchEventType("touchcancel"), this.ontouchcancel.bind(this));
 			}
 		}
 	};

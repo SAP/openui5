@@ -8,10 +8,9 @@ sap.ui.define([
 	'sap/ui/base/EventProvider',
 	'./ReadyState',
 	'sap/ui/thirdparty/URI',
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/Log"
 ],
-	function(Device, EventProvider, ReadyState, URI, Log, jQuery) {
+	function(Device, EventProvider, ReadyState, URI, Log) {
 	"use strict";
 
 	/**
@@ -406,10 +405,10 @@ sap.ui.define([
 		this._oWs = (typeof (aProtocols) === 'undefined')
 			? new window.WebSocket(sUrl)
 			: new window.WebSocket(sUrl, aProtocols);
-		this._oWs.onopen = jQuery.proxy(this._onopen, this);
-		this._oWs.onclose = jQuery.proxy(this._onclose, this);
-		this._oWs.onmessage = jQuery.proxy(this._onmessage, this);
-		this._oWs.onerror = jQuery.proxy(this._onerror, this);
+		this._oWs.onopen = this._onopen.bind(this);
+		this._oWs.onclose = this._onclose.bind(this);
+		this._oWs.onmessage = this._onmessage.bind(this);
+		this._oWs.onerror = this._onerror.bind(this);
 	};
 
 	// Event-Handlers

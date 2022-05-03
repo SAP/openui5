@@ -2395,12 +2395,14 @@ sap.ui.define([
 
 	QUnit.test("Do not fire close events when already closed.", function (assert) {
 		// Setup
+		var bTouchEnabled = Popup.prototype.touchEnabled;
+		Popup.prototype.touchEnabled = true;
+
 		var oPopover = new Popover(),
 			oButton = new Button(),
 			beforeCloseSpy = this.spy(),
 			afterCloseSpy = this.spy();
 
-		oPopover.oPopup.touchEnabled = true;
 		oButton.addDependent(oPopover);
 		oButton.placeAt("content");
 		oCore.applyChanges();
@@ -2425,6 +2427,7 @@ sap.ui.define([
 		oButton.destroy();
 		oButton = null;
 		oPopover = null;
+		Popup.prototype.touchEnabled = bTouchEnabled;
 	});
 
 	QUnit.test("Do not attach orientationChange handler on destroyed popover", function (assert){

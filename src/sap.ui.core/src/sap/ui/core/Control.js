@@ -522,7 +522,6 @@ sap.ui.define([
 				}
 				oListener = oListener || this;
 
-				// FWE jQuery.proxy can't be used as it breaks our contract when used with same function but different listeners
 				var fnProxy = fnHandler.bind(oListener);
 
 				this.aBindParameters.push({
