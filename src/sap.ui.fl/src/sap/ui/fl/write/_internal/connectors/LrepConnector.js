@@ -704,7 +704,7 @@ sap.ui.define([
 						var oRequestOption = WriteUtils.getRequestOptions(
 							InitialConnector,
 							sTokenUrl,
-							mParameters,
+							undefined,
 							"application/json; charset=utf-8", "json"
 						);
 						return WriteUtils.sendRequest(sUrl, "POST", oRequestOption)

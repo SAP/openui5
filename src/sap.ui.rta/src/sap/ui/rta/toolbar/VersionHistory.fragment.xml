@@ -6,6 +6,7 @@
             showHeader="false"
             placement="Bottom" >
         <List
+                id="versionList"
                 class="sapUiRtaVersionsList"
                 visible="{path: 'versions>/versions/length', formatter: '.formatVersionTableVisibility'}"
                 items="{path: 'versions>/versions', groupHeaderFactory: '.getGroupHeaderFactory'}" >

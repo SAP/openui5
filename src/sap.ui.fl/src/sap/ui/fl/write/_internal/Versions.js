@@ -32,19 +32,7 @@ sap.ui.define([
 		var aDraftFilenames = [];
 
 		var sActiveVersion = Version.Number.Original;
-		aVersions.forEach(function (oVersion) {
-			if (oVersion.version === Version.Number.Draft) {
-				oVersion.type = "draft";
-				oVersion.isPublished = false;
-				aDraftFilenames = oVersion.filenames;
-			} else if (sActiveVersion === Version.Number.Original) {
-				// no active version found yet; the first non-draft version is always the active version
-				oVersion.type = "active";
-				sActiveVersion = oVersion.version;
-			} else {
-				oVersion.type = "inactive";
-			}
-		});
+		var bPublishVersionEnabled = false;
 
 		return Utils.getUShellService("URLParsing")
 			.then(function (oURLParsingService) {
@@ -59,15 +47,28 @@ sap.ui.define([
 						sPersistedBasisForDisplayedVersion = Version.Number.Original;
 					}
 				}
-				var bPublishVersionEnabled = false;
-				if (sPersistedBasisForDisplayedVersion !== Version.Number.Original) {
-					for (var i = 0; i < aVersions.length; i++) {
-						if ((aVersions[i].version === sPersistedBasisForDisplayedVersion) && (aVersions[i].isPublished === false)) {
+
+				aVersions.forEach(function (oVersion) {
+					if (oVersion.version === Version.Number.Draft) {
+						oVersion.type = "draft";
+						oVersion.isPublished = false;
+						aDraftFilenames = oVersion.filenames;
+					} else {
+						if (sActiveVersion === Version.Number.Original) {
+							// no active version found yet; the first non-draft version is always the active version
+							oVersion.type = "active";
+							sActiveVersion = oVersion.version;
+						} else {
+							oVersion.type = "inactive";
+						}
+						//If the current selected version is not yet published, enable the publish button
+						//Original versions are not part of back end response, so publish button is not enabled by default value
+						if ((oVersion.version === sPersistedBasisForDisplayedVersion) && (oVersion.isPublished === false)) {
 							bPublishVersionEnabled = true;
-							break;
 						}
 					}
-				}
+				});
+
 				var oModel = new JSONModel({
 					publishVersionEnabled: bPublishVersionEnabled,
 					versioningEnabled: bVersioningEnabled,
@@ -297,6 +298,7 @@ sap.ui.define([
 				aVersions.shift();
 			}
 			aVersions.splice(0, 0, oVersion);
+			oModel.setProperty("/publishVersionEnabled", true);
 			oModel.setProperty("/backendDraft", false);
 			oModel.setProperty("/dirtyChanges", false);
 			oModel.setProperty("/draftAvailable", false);
@@ -349,10 +351,8 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
-	 * @param {string} mPropertyBag.nonNormalizedReference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} mPropertyBag.version - The number of the version to be published
-	 * @param {string} mPropertyBag.appComponent - Application Component
 	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving when the version was published;
 	 * rejects if an error occurs, the layer does not support draft handling, there is no version to publish or
 	 * when the displayed version is already published
@@ -368,12 +368,9 @@ sap.ui.define([
 				if (sMessage !== "Error" && sMessage !== "Cancel") {
 					oModel.setProperty("/publishVersionEnabled", false);
 					var aVersions = oModel.getProperty("/versions");
-					for (var i = 0; i < aVersions.length; i++) {
-						if (aVersions[i].version === mPropertyBag.version) {
-							aVersions[i].isPublished = true;
-							break;
-						}
-					}
+					aVersions.find(function (oVersion) {
+						return oVersion.version === mPropertyBag.version;
+					}).isPublished = true;
 				}
 				return sMessage;
 			});

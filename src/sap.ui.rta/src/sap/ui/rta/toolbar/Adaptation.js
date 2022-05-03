@@ -64,7 +64,7 @@ sap.ui.define([
 				save: {},
 				restore: {},
 				transport: {},
-				transportVersion: {},
+				publishVersion: {},
 				modeChange: {},
 				activate: {},
 				discardDraft: {},
@@ -233,10 +233,11 @@ sap.ui.define([
 
 	Adaptation.prototype.showVersionHistory = function (oEvent) {
 		var oVersionButton = oEvent.getSource();
+
 		if (!this.oVersionDialogPromise) {
 			this.oVersionDialogPromise = Fragment.load({
 				name: "sap.ui.rta.toolbar.VersionHistory",
-				id: this.getId() + "_versionHistoryDialog",
+				id: this.getId() + "_fragment--sapUiRta_versionHistoryDialog",
 				controller: {
 					formatVersionTitle: this.formatVersionTitle.bind(this),
 					formatVersionTimeStamp: this.formatVersionTimeStamp.bind(this),
@@ -250,27 +251,25 @@ sap.ui.define([
 				}
 			}).then(function(oDialog) {
 				oVersionButton.addDependent(oDialog);
-				if (this.getModel("controls").getProperty("/publishVisible")) {
-					var oSorter = new Sorter({
-						path: "isPublished",
-						group: true
-					});
-
-					var oList = oDialog.getContent()[0];
-					oList.getBinding("items").sort(oSorter);
-				}
 				return oDialog;
-			}.bind(this));
+			});
 		}
 
 		return this.oVersionDialogPromise.then(function (oVersionsDialog) {
 			if (!oVersionsDialog.isOpen()) {
 				oVersionsDialog.openBy(oVersionButton);
+				if (this.getModel("controls").getProperty("/publishVisible")) {
+					var oList = this.getControl("versionHistoryDialog--versionList");
+					var oSorter = new Sorter({
+						path: "isPublished",
+						group: true
+					});
+					oList.getBinding("items").sort(oSorter);
+				}
 			} else {
 				oVersionsDialog.close();
 			}
-			return oVersionsDialog;
-		});
+		}.bind(this));
 	};
 
 	Adaptation.prototype.getGroupHeaderFactory = function (oGroup) {
@@ -366,7 +365,7 @@ sap.ui.define([
 				saveAs: onSaveAsPressed.bind(this),
 				restore: this.eventHandler.bind(this, "Restore"),
 				publish: this.eventHandler.bind(this, "Transport"),
-				publishVersion: this.eventHandler.bind(this, "TransportVersion"),
+				publishVersion: this.eventHandler.bind(this, "PublishVersion"),
 				exit: this.eventHandler.bind(this, "Exit"),
 				formatVersionButtonText: this.formatVersionButtonText.bind(this),
 				showVersionHistory: this.showVersionHistory.bind(this),

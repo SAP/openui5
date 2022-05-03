@@ -1491,6 +1491,111 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("LrepConnector.versions.publish", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when calling publish successfully", function(assert) {
+			var oMockTransportInfo = {
+				transport: "transportId"
+			};
+
+			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
+			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
+			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
+
+			var sExpectedUrl = "/sap/bc/lrep/flex/versions/publish/sampleComponent?transport=transportId&version=versionToPublish";
+			var mExpectedPropertyBag = {
+				xsrfToken: undefined,
+				initialConnector: InitialLrepConnector,
+				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+				contentType: "application/json; charset=utf-8",
+				dataType: "json"
+			};
+
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
+			return WriteLrepConnector.versions.publish({
+				transportDialogSettings: {
+					rootControl: null,
+					styleClass: null
+				},
+				layer: "CUSTOMER",
+				reference: "sampleComponent",
+				version: "versionToPublish"
+			}).then(function(sMessage) {
+				assert.equal(sMessage, oResourceBundle.getText("MSG_TRANSPORT_SUCCESS"), "the correct message was returned");
+				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
+				assert.ok(fnCheckTransportInfoStub.calledOnce, "then checkTransportInfo called once");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+
+		QUnit.test("when calling publish successfully in S/4 Hana Cloud", function(assert) {
+			var oMockTransportInfo = {
+				transport: "ATO_NOTIFICATION"
+			};
+
+			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
+			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
+			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
+
+			var sExpectedUrl = "/sap/bc/lrep/flex/versions/publish/sampleComponent?transport=ATO_NOTIFICATION&version=versionToPublish";
+			var mExpectedPropertyBag = {
+				xsrfToken: undefined,
+				initialConnector: InitialLrepConnector,
+				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+				contentType: "application/json; charset=utf-8",
+				dataType: "json"
+			};
+
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
+			return WriteLrepConnector.versions.publish({
+				transportDialogSettings: {
+					rootControl: null,
+					styleClass: null
+				},
+				layer: "CUSTOMER",
+				reference: "sampleComponent",
+				version: "versionToPublish"
+			}).then(function(sMessage) {
+				assert.equal(sMessage, oResourceBundle.getText("MSG_ATO_NOTIFICATION"), "the correct message was returned");
+				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
+				assert.ok(fnCheckTransportInfoStub.calledOnce, "then checkTransportInfo called once");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+
+		QUnit.test("when calling publish unsuccessfully", function(assert) {
+			sandbox.stub(TransportSelection.prototype, "openTransportSelection").rejects();
+			sandbox.stub(MessageBox, "show");
+			return WriteLrepConnector.versions.publish({
+				transportDialogSettings: {
+					rootControl: null,
+					styleClass: null
+				}
+			}).then(function(sResponse) {
+				assert.equal(sResponse, "Error", "then Promise.resolve() with error message is returned");
+			});
+		});
+
+		QUnit.test("when calling publish successfully, but with cancelled transport selection", function(assert) {
+			sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves();
+			return WriteLrepConnector.versions.publish({
+				transportDialogSettings: {
+					rootControl: null,
+					styleClass: null
+				}
+			}).then(function(sResponse) {
+				assert.equal(sResponse, "Cancel", "then Promise.resolve() with cancel message is returned");
+			});
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

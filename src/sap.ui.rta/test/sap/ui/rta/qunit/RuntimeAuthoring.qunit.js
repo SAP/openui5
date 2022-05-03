@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/command/BaseCommand",
@@ -34,6 +35,7 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	Change,
 	PersistenceWriteAPI,
+	VersionsAPI,
 	ChangesWriteAPI,
 	QUnitUtils,
 	RTABaseCommand,
@@ -383,6 +385,22 @@ sap.ui.define([
 				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
 				assert.equal(oAppVariantRunningStub.callCount, 1, "then isApplicationVariant() got called");
 				assert.equal(fnGetResetAndPublishInfoStub.callCount, 1, "then the status of publish and reset button is evaluated");
+			});
+		});
+
+		QUnit.test("When publishVersion function is called and publicVersion returns Promise.resolve() ", function(assert) {
+			sandbox.stub(VersionsAPI, "publish").resolves();
+			var oMessageToastStub = sandbox.stub(MessageToast, "show");
+			return this.oRta._onPublishVersion().then(function() {
+				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
+			});
+		});
+
+		QUnit.test("When publishVersion function is called and publicVersion returns Cancel or Error", function(assert) {
+			sandbox.stub(VersionsAPI, "publish").resolves("Cancel");
+			var oMessageToastStub = sandbox.stub(MessageToast, "show");
+			return this.oRta._onPublishVersion().then(function() {
+				assert.equal(oMessageToastStub.callCount, 0, "then no messageToast was shown");
 			});
 		});
 	});

@@ -675,12 +675,12 @@ sap.ui.define([
 			};
 			return this.oToolbar.showVersionHistory(oEvent)
 				.then(this.oToolbar.oVersionDialogPromise)
-				.then(function (oDialog) {
-					var oList = oDialog.getContent()[0];
+				.then(function () {
+					var oList = this.oToolbar.getControl("versionHistoryDialog--versionList");
 					assert.ok(oList.getBindingInfo("items").groupHeaderFactory, "a grouping is in place");
 					assert.strictEqual(oList.getBinding("items").aSorters.length, 1, "a sorter is in place");
 					assert.strictEqual(oList.getItems().length, 5, "there are 5 entries (two group titles, 3 versions)");
-				})
+				}.bind(this))
 				.then(this.oToolbar.showVersionHistory.bind(this.oToolbar, oEvent));
 		});
 	});
