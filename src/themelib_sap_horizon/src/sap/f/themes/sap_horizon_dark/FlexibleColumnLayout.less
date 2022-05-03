@@ -16,4 +16,12 @@
 	.sapMBtnInner {
 		height: 1.625rem;
 	}
+
+	&:before {
+        background-image: linear-gradient(to top, @sapUiGroupContentBorderColor, transparent);
+    }
+
+    &:after {
+        background-image: linear-gradient(to bottom, @sapUiGroupContentBorderColor, transparent);
+    }
 }
