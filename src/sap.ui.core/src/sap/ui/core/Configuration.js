@@ -613,6 +613,16 @@ sap.ui.define([
 			return this.theme;
 		},
 
+		/**
+		 * Returns the configured binding syntax.
+		 * @private
+		 * @ui5-restricted sap.ui.base, sap.ui.core
+		 * @returns {string} the configured binding syntax, either "complex" or "simple".
+		 */
+		getBindingSyntax: function() {
+			return this["bindingSyntax"];
+		},
+
 		getPlaceholder : function() {
 			return this["xx-placeholder"];
 		},
@@ -1235,7 +1245,7 @@ sap.ui.define([
 		 * @returns {boolean} whether the design mode is active or not.
 		 * @since 1.13.2
 		 * @private
-		 * @ui5-restricted sap.watt, com.sap.webide, sap.ui.fl, sap.ui.rta, sap.ui.comp, SAP Business Application Studio
+		 * @ui5-restricted sap.ui.core, sap.watt, com.sap.webide, sap.ui.fl, sap.ui.rta, sap.ui.comp, SAP Business Application Studio
 		 */
 		getDesignMode : function() {
 			return this["xx-designMode"];
