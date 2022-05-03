@@ -185,6 +185,7 @@ sap.ui.define([
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
+					"sap.ui.webc.main.CheckBox": "sap/ui/webc/main/flexibility/CheckBox",
 					"sap.ui.webc.main.DatePicker": {
 						"hideControl": "default",
 						"unhideControl": "default"
