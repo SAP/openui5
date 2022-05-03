@@ -31,21 +31,21 @@
 		.sapMBtnInner {
 			border: 1px solid @sapUiButtonBorderColor;
 
-			&:before,
-			&:after {
-				background-size: 0.125rem 100%;
-				background-position-x: calc(50% - 0.0625rem);
-			}
-			&:before {
-				background-image: linear-gradient(to top, @sapUiGroupContentBorderColor, @sapUiGroupContentBorderColor);
-			}
-
-			&:after {
-				background-image: linear-gradient(to bottom, @sapUiGroupContentBorderColor, @sapUiGroupContentBorderColor);
-			}
 			.sapMBtnIcon {
 				width: auto;
 			}
+		}
+		&:before,
+		&:after {
+			background-size: 0.125rem 100%;
+			background-position-x: calc(50% - 0.0625rem);
+		}
+		&:before {
+			background-image: linear-gradient(to top, @sapUiGroupContentBorderColor, @sapUiGroupContentBorderColor);
+		}
+
+		&:after {
+			background-image: linear-gradient(to bottom, @sapUiGroupContentBorderColor, @sapUiGroupContentBorderColor);
 		}
 	}
 }
