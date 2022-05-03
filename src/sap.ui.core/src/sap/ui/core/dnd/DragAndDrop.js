@@ -545,9 +545,9 @@ function(lib, Device, UIArea, jQuery) {
 			return;
 		}
 
-		// mobile devices needs text data set on the dataTransfer object to allow dragging
+		// mobile devices needs text data with a value set on the dataTransfer object to allow dragging
 		if (!Device.system.desktop && !oEvent.originalEvent.dataTransfer.getData("text")) {
-			oEvent.originalEvent.dataTransfer.setData("text", "");
+			oEvent.originalEvent.dataTransfer.setData("text", " ");
 		}
 
 		// create the drag session object and attach to the event

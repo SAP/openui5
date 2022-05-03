@@ -135,25 +135,13 @@ sap.ui.define([
 	}
 
 	function createNativeDragEventDummy(sEventType) {
-		var oEvent;
 
-		if (typeof Event === "function") {
-			oEvent = new Event(sEventType, {
-				bubbles: true,
-				cancelable: true
-			});
-		} else { // IE
-			oEvent = document.createEvent("Event");
-			oEvent.initEvent(sEventType, true, true);
-		}
+		var oEvent = new Event(sEventType, {
+			bubbles: true,
+			cancelable: true
+		});
 
-		oEvent.dataTransfer = {
-			types: [],
-				dropEffect: "",
-				setDragImage: function() {},
-			setData: function() {}
-		};
-
+		oEvent.dataTransfer = new window.DataTransfer();
 		return oEvent;
 	}
 
@@ -696,13 +684,17 @@ sap.ui.define([
 			complexData: ["complexData"]
 		};
 
-		this.oSourceDomRef.focus();
+		var oSystemStub = sinon.stub(Device, "system");
+		oSystemStub.value({desktop: false});
+
 		this.oDragInfo.attachDragStart(function(oEvent) {
 			var oSession = oEvent.getParameter("dragSession");
+			assert.strictEqual(oEvent.getParameter("browserEvent").dataTransfer.getData("text"), " ", "empty text data set for mobile devices");
 			oSession.setData("data", oDataTransfer.data);
 			oSession.setTextData(oDataTransfer.textData);
 			oSession.setComplexData("complexData", oDataTransfer.complexData);
 		});
+		this.oSourceDomRef.focus();
 		this.oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
 
 		function sessionTest(oEvent) {
@@ -723,6 +715,7 @@ sap.ui.define([
 		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragover"));
 		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
 		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragend"));
+		oSystemStub.restore();
 	});
 
 	QUnit.test("dragged from outside the browser", function(assert) {
