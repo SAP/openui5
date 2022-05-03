@@ -136,7 +136,7 @@ sap.ui.define([
 		this.oTable.addDependent(oColumnResizer);
 		Core.applyChanges();
 		assert.ok(oTableDomRef.classList.contains("sapMPluginsColumnResizerContainer"), "ColumnResizer container style class added");
-		assert.notOk(oTableDomRef.children[oTableDomRef.children.length - 1].classList.contains("sapMPluginsColumnResizerHandle"), "ColumnResizer handle created");
+		assert.notOk(oTableDomRef.children[oTableDomRef.children.length - 1].classList.contains("sapMPluginsColumnResizerHandle"), "ColumnResizer handle not yet created");
 
 		// get resizable <th> elements
 		var aResizableColumns = jQuery(oColumnResizer.getConfig("resizable")).get();
@@ -248,10 +248,15 @@ sap.ui.define([
 		assert.ok(fnDisplayHandle.calledWith(0), "_displayHandle called for column index 0");
 		assert.ok(this.oColumnResizer._oHandle.classList.contains("sapMPluginsColumnResizerHandle"), "Column resizing handle created");
 		assert.ok(this.oColumnResizer._oHandle.style[this.sBeginDirection], "left position applied, resizer handle is visible");
+		assert.ok(this.oColumnResizer._oHandle.onmouseleave, "onmouseleave event is registered for the handle");
 
 		QUtils.triggerEvent("mouseleave", oTableDomRef);
 		this.clock.tick(1);
 		assert.ok(this.oColumnResizer._bPositionsInvalid, "Handle positions are invalidated");
+		assert.ok(this.oColumnResizer._oHandle.style[this.sBeginDirection], "Handle positions are not changed after leaving the table");
+
+		QUtils.triggerEvent("mouseleave", this.oColumnResizer._oHandle);
+		assert.notOk(this.oColumnResizer._oHandle.style[this.sBeginDirection], "Handle is not visible after mouse leave");
 	});
 
 	QUnit.test("Resize handle should have a circle in mobile device", function(assert) {

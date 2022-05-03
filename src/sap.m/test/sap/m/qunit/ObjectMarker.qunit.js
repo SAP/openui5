@@ -836,28 +836,16 @@ sap.ui.define([
 
 	QUnit.test("aria-label of the active icon - IconAndText", function (assert) {
 		// Arrange
-		var oMarker = new ObjectMarker("OM", {
+		var oLabel = new Label("labelInTable", {
+				text : "Object Marker (active)"
+			}),
+			oMarker = new ObjectMarker("OM", {
 				visibility: ObjectMarkerVisibility.IconAndText,
 				press: function () {}
-			}),
-			oTable = new Table({
-				columns : [
-					new Column({
-						header : new Label("labelInTable", {
-							text : "Object Marker (active)"
-						})
-					})
-				],
-				items: [
-					new ColumnListItem({
-						cells: [
-							oMarker
-						]
-					})
-				]
-			}).placeAt("qunit-fixture"),
+			}).addAriaLabelledBy(oLabel),
 			sType;
 
+		oMarker.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		for (sType in ObjectMarkerType) {
@@ -870,7 +858,8 @@ sap.ui.define([
 		}
 
 		// Cleanup
-		oTable.destroy();
+		oMarker.destroy();
+		oLabel.destroy();
 	});
 
 	QUnit.test("Tooltips", function (assert) {
