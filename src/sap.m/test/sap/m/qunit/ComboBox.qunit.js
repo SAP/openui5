@@ -13544,6 +13544,61 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("'handleClearIconPress' should fire selectionChange and change event when changing the selected item", function(assert) {
+
+		// Arrange
+		var oItem1 = new Item({
+			text: "Lorem ipsum dolor sit amet, duo ut soleat insolens, commodo vidisse intellegam ne usu"
+		}), oItem2 = new Item({
+			text: "Lorem ipsum dolor sit amet, duo ut soleat insolens, commodo vidisse intellegam ne usu"
+		}),
+		oComboBox = new ComboBox({
+			showClearIcon: true,
+			items: [
+				oItem1,
+				oItem2
+			]
+		}),
+		oSelectionChangeEventSpy, oChangeEventSpy;
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+
+		// Act
+		oComboBox.setSelectedItem(oItem1);
+		oCore.applyChanges();
+
+		oSelectionChangeEventSpy = this.spy(oComboBox, "fireSelectionChange");
+		oChangeEventSpy = this.spy(oComboBox, "fireChange");
+
+		oComboBox.handleClearIconPress();
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(oSelectionChangeEventSpy.callCount, 1, "selectionChange event is triggered");
+		assert.strictEqual(oChangeEventSpy.callCount, 1, "change event is triggered");
+
+		// Act
+		oComboBox.getFocusDomRef().blur();
+		this.clock.tick(0);
+
+		oComboBox.setValue("test");
+		oComboBox.focus();
+		oCore.applyChanges();
+
+		oComboBox.handleClearIconPress();
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(oSelectionChangeEventSpy.callCount, 1, "selectionChange event is not triggered when there is no selected item");
+		assert.strictEqual(oChangeEventSpy.callCount, 1, "change event is not triggered when there is no selected item");
+
+		// Clean
+		oSelectionChangeEventSpy.restore();
+		oSelectionChangeEventSpy.restore();
+		oComboBox.destroy();
+	});
+
 	QUnit.test("'handleClearIconPress' should not do anything when control is disabled", function(assert) {
 		// Arrange
 		var oComboBox = new ComboBox({

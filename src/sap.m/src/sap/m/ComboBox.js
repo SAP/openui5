@@ -1891,6 +1891,9 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype.handleClearIconPress = function (oEvent) {
+			var oPreviouslySelectedItem = this.getSelectedItem(),
+				mParam = this.getChangeEventParams();
+
 			if (!(this.getEnabled() && this.getEditable())) {
 				return;
 			}
@@ -1899,6 +1902,14 @@ sap.ui.define([
 				this.clearSelection();
 				this.bOpenedByKeyboardOrButton ? this.clearFilter() : this.close();
 				this.setProperty("effectiveShowClearIcon", false);
+			}
+
+			if (oPreviouslySelectedItem) {
+				this.fireSelectionChange({
+					selectedItem: null
+				});
+
+				this.fireChangeEvent(null, mParam);
 			}
 		};
 
