@@ -300,6 +300,7 @@ sap.ui.define([
 			oModel.setProperty("/backendDraft", false);
 			oModel.setProperty("/dirtyChanges", false);
 			oModel.setProperty("/draftAvailable", false);
+			oModel.setProperty("/publishVersionEnabled", true);
 			oModel.setProperty("/activateEnabled", false);
 			oModel.setProperty("/activeVersion", oVersion.version);
 			oModel.setProperty("/displayedVersion", oVersion.version);

@@ -498,6 +498,7 @@ sap.ui.define([
 					assert.equal(aVersions[1], oSecondVersion, "where the old version is the second");
 					assert.equal(aVersions[2], oFirstVersion, "where the older version is the third");
 					assert.equal(oResponse.getProperty("/backendDraft"), false, "backendDraft property was set to false");
+					assert.equal(oResponse.getProperty("/publishVersionEnabled"), true, "publishVersionEnabled property was set to true");
 					assert.equal(oResponse.getProperty("/displayedVersion"), sActiveVersion, ", a displayedVersion property set to the active version");
 					assert.equal(oResponse.getProperty("/activeVersion"), sActiveVersion, "and the active version was determined correct");
 				});
