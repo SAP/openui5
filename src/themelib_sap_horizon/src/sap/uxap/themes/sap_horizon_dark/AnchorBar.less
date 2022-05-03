@@ -12,7 +12,7 @@ Common compact/cozy
 @sapUiFiori3ABUnderlineTopRadius: 0.125rem;
 
 .sapUxAPAnchorBarFiori3Height {
-	height: @sapElement_LineHeight;
+	height: @sapUiElementLineHeight;
 }
 
 .sapUiSizeCompact .sapUxAPAnchorBar,
@@ -54,7 +54,7 @@ Common compact/cozy
 				font-family: @sapUiFontFamily;
 				font-size: @sapMFontMediumSize;
 				height: 2.5rem;
-				line-height: @sapElement_LineHeight;
+				line-height: @sapUiElementLineHeight;
 			}
 		}
 	}
@@ -106,7 +106,7 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 	&.sapMMenuBtn .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnIcon,
 	&.sapMMenuBtn .sapMSBArrow:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnIcon,
 	&.sapMMenuBtn.sapMMenuBtnSplit .sapMSBText:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnContent {
-		color: @sapContent_Selected_TextColor;
+		color: @sapUiContentSelectedTextColor;
 	}
 
 	&.sapMMenuBtn .sapMSBArrow:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive {
@@ -131,7 +131,7 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 
 		.sapMBtnContent,
 		.sapUiIcon {
-			color: @sapContent_Selected_TextColor;
+			color: @sapUiContentSelectedTextColor;
 		}
 
 		&::after {
@@ -149,13 +149,13 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 			padding: (@sapUiFiori3ABUnderlineOffsetAndHeight / 2) @sapUiFiori3ABUnderlineOffsetAndHeight;
 			border-top-left-radius: @sapUiFiori3ABUnderlineTopRadius;
 			border-top-right-radius: @sapUiFiori3ABUnderlineTopRadius;
-			background-color: @sapContent_Selected_ForegroundColor;
+			background-color: @sapUiContentSelectedForegroundColor;
 		}
 	}
 
 	.sapMBtnDefault .sapMBtnContent {
 		overflow: visible;
-		color: @sapContent_Selected_TextColor;
+		color: @sapUiContentSelectedTextColor;
 
 		&::after {
 			content: "";
@@ -166,7 +166,7 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 			padding: (@sapUiFiori3ABUnderlineOffsetAndHeight / 2) @sapUiFiori3ABUnderlineOffsetAndHeight;
 			border-top-left-radius: @sapUiFiori3ABUnderlineTopRadius;
 			border-top-right-radius: @sapUiFiori3ABUnderlineTopRadius;
-			background-color: @sapContent_Selected_ForegroundColor;
+			background-color: @sapUiContentSelectedForegroundColor;
 		}
 	}
 }
@@ -303,7 +303,7 @@ html.sap-desktop .sapMBtnBase.sapMBtn.sapUxAPAnchorBarButton:focus::after {
 	right: 0;
 	bottom: 0.25rem;
 	left: 0;
-	border: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	border-radius: 0.5rem;
 }
 
@@ -320,5 +320,5 @@ html.sap-desktop .sapUxAPAnchorBarButton .sapMBtn:focus .sapMBtnInner::before {
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMBtn > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) bdi,
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMBtn + .sapMBtn .sapMBtnInner *,
 .sapUxAPAnchorBar .sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnDefault .sapMBtnContent{
-	color: @sapContent_Selected_TextColor;
+	color: @sapUiContentSelectedTextColor;
 }
