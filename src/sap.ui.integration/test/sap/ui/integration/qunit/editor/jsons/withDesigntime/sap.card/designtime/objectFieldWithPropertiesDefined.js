@@ -5,11 +5,6 @@ sap.ui.define(["sap/ui/integration/Designtime"
 		return new Designtime({
 			"form": {
 				"items": {
-					"object": {
-						"manifestpath": "/sap.card/configuration/parameters/object/value",
-						"type": "object",
-						"label": "Object Field"
-					},
 					"objectWithPropertiesDefined": {
 						"manifestpath": "/sap.card/configuration/parameters/objectWithPropertiesDefined/value",
 						"type": "object",
@@ -22,7 +17,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								"label": "Icon"
 							},
 							"text": {
-								"label": "Text"
+								"label": "Text",
+								"translatable": true
 							},
 							"url": {
 								"label": "URL"

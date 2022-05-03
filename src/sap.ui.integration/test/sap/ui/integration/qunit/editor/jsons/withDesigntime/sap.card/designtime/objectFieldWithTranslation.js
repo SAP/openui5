@@ -49,6 +49,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 							"text": {
 								"label": "Text",
 								"defaultValue": "text",
+								"translatable": true,
 								"column": {
 									"hAlign": "Center",
 									"width": "10rem",

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
-	"./ContextHost",
+	"./../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/base/util/deepClone",
 	"sap/ui/core/util/MockServer",
@@ -26,7 +26,7 @@ sap.ui.define([
 	QUnit.config.reorder = false;
 
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/";
-	var oValue1Ori = {"text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 , "editable": true, "number": 3.55};
+	var oValue1Ori = {"text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#E69A17", "int": 1 , "editable": true, "number": 3.55};
 	var oValue2Ori = {"text": "text02", "key": "key02", "url": "http://sapui5.hana.ondemand.com/05", "icon": "sap-icon://cart", "iconcolor": "#64E4CE", "int": 2, "number": 3.55};
 	var oValue3Ori = {"text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "editable": true};
 	var oValue4Ori = {"text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "number": 3.55};
@@ -34,21 +34,23 @@ sap.ui.define([
 	var oValue6Ori = {"text": "text06", "key": "key06", "url": "https://sapui5.hana.ondemand.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 6, "number": 3.55};
 	var oValue7Ori = {"text": "text07", "key": "key07", "url": "http://sapui5.hana.ondemand.com/02", "icon": "sap-icon://cart", "iconcolor": "#1C4C98", "int": 7, "editable": true};
 	var oValue8Ori = {"text": "text08", "key": "key08", "url": "https://sapui5.hana.ondemand.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#8875E7", "int": 8, "number": 3.55};
-
 	var oValue1 = Object.assign(deepClone(oValue1Ori), {"_editable": false});
-	var oValue2 = Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}});
-	var oValue3 = Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}});
+	var oValue2 = Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}});
+	var oValue3 = Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}});
 	var oValue5 = Object.assign(deepClone(oValue5Ori), {"_editable": false});
-	var oValue7 = Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}});
+	var oValue7 = Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}});
 	var oValue8 = Object.assign(deepClone(oValue8Ori), {"_editable": false});
+
+	var oDefalutNewObjectSelected = {"_dt": {"_selected": true},"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5};
+	var oEditObject = {"text": "textnew","key": "keynew","url": "https://sapui5.hana.ondemand.com/04","icon": "sap-icon://zoom-in","iconcolor": "#E69A17","int": 3,"_dt": {"_selected": true}};
 
 	var oValueNew = {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
 	var aObjectsParameterValue = [
-		Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-		Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-		Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-		Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-		Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+		Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+		Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+		Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+		Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+		Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 		oValueNew
 	];
 	var oManifestForObjectListFields = {
@@ -90,6 +92,31 @@ sap.ui.define([
 				resolve();
 			}, ms || 1000);
 		});
+	}
+
+	function cleanUUID(oValue) {
+		var oClonedValue = deepClone(oValue, 500);
+		if (typeof oClonedValue === "string") {
+			oClonedValue = JSON.parse(oClonedValue);
+		}
+		if (Array.isArray(oClonedValue)) {
+			oClonedValue.forEach(function(oResult) {
+				if (oResult._dt) {
+					delete oResult._dt._uuid;
+				}
+				if (deepEqual(oResult._dt, {})) {
+					delete oResult._dt;
+				}
+			});
+		} else if (typeof oClonedValue === "object") {
+			if (oClonedValue._dt) {
+				delete oClonedValue._dt._uuid;
+			}
+			if (deepEqual(oClonedValue._dt, {})) {
+				delete oClonedValue._dt;
+			}
+		}
+		return oClonedValue;
 	}
 
 	QUnit.module("basic", {
@@ -199,35 +226,35 @@ sap.ui.define([
 						assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 						var oRow1 = oTable.getRows()[0];
-						assert.ok(deepEqual(oRow1.getBindingContext().getObject(), Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}})), "Row 1: value");
+						assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}})), "Row 1: value");
 						var oSelectionCell1 = oRow1.getCells()[0];
 						assert.ok(oSelectionCell1.getVisible(), "Row 1: cell1 selection checkbox Visible");
 						assert.ok(oSelectionCell1.getEnabled(), "Row 1: cell1 selection checkbox Enabled");
 						assert.ok(!oSelectionCell1.getSelected(), "Row 1: cell1 selection checkbox not selected");
 
 						var oRow2 = oTable.getRows()[1];
-						assert.ok(deepEqual(oRow2.getBindingContext().getObject(), Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}})), "Row 2: value");
+						assert.ok(deepEqual(cleanUUID(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}})), "Row 2: value");
 						var oSelectionCell2 = oRow2.getCells()[0];
 						assert.ok(oSelectionCell2.getVisible(), "Row 2: cell1 selection checkbox Visible");
 						assert.ok(oSelectionCell2.getEnabled(), "Row 2: cell1 selection checkbox Enabled");
 						assert.ok(!oSelectionCell2.getSelected(), "Row 2: cell1 selection checkbox not selected");
 
 						var oRow3 = oTable.getRows()[2];
-						assert.ok(deepEqual(oRow3.getBindingContext().getObject(), Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}})), "Row 3: value");
+						assert.ok(deepEqual(cleanUUID(oRow3.getBindingContext().getObject()), Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}})), "Row 3: value");
 						var oSelectionCell3 = oRow3.getCells()[0];
 						assert.ok(oSelectionCell3.getVisible(), "Row 3: cell1 selection checkbox Visible");
 						assert.ok(oSelectionCell3.getEnabled(), "Row 3: cell1 selection checkbox Enabled");
 						assert.ok(!oSelectionCell3.getSelected(), "Row 3: cell1 selection checkbox not selected");
 
 						var oRow4 = oTable.getRows()[3];
-						assert.ok(deepEqual(oRow4.getBindingContext().getObject(), Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}})), "Row 4: value");
+						assert.ok(deepEqual(cleanUUID(oRow4.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})), "Row 4: value");
 						var oSelectionCell4 = oRow4.getCells()[0];
 						assert.ok(oSelectionCell4.getVisible(), "Row 4: cell1 selection checkbox Visible");
 						assert.ok(oSelectionCell4.getEnabled(), "Row 4: cell1 selection checkbox Enabled");
 						assert.ok(!oSelectionCell4.getSelected(), "Row 4: cell1 selection checkbox not selected");
 
 						var oRow5 = oTable.getRows()[4];
-						assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}})), "Row 5: value");
+						assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}})), "Row 5: value");
 						var oSelectionCell5 = oRow5.getCells()[0];
 						assert.ok(oSelectionCell5.getVisible(), "Row 5: cell1 selection checkbox Visible");
 						assert.ok(oSelectionCell5.getEnabled(), "Row 5: cell1 selection checkbox Enabled");
@@ -235,13 +262,13 @@ sap.ui.define([
 
 						oAddButton.firePress();
 						wait().then(function () {
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
@@ -249,21 +276,21 @@ sap.ui.define([
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 400;
 								wait().then(function () {
 									var oRow6 = oTable.getRows()[2];
-									assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}})), "Row 6: value");
+									assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})), "Row 6: value");
 									var oSelectionCell6 = oRow6.getCells()[0];
 									assert.ok(oSelectionCell6.getVisible(), "Row 6: cell1 selection checkbox Visible");
 									assert.ok(oSelectionCell6.getEnabled(), "Row 6: cell1 selection checkbox Enabled");
 									assert.ok(!oSelectionCell6.getSelected(), "Row 6: cell1 selection checkbox not selected");
 
 									var oRow7 = oTable.getRows()[3];
-									assert.ok(deepEqual(oRow7.getBindingContext().getObject(), Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}})), "Row 7: value");
+									assert.ok(deepEqual(cleanUUID(oRow7.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}})), "Row 7: value");
 									var oSelectionCell7 = oRow7.getCells()[0];
 									assert.ok(oSelectionCell7.getVisible(), "Row 7: cell1 selection checkbox Visible");
 									assert.ok(oSelectionCell7.getEnabled(), "Row 7: cell1 selection checkbox Enabled");
 									assert.ok(!oSelectionCell7.getSelected(), "Row 7: cell1 selection checkbox not selected");
 
 									var oRow8 = oTable.getRows()[4];
-									assert.ok(deepEqual(oRow8.getBindingContext().getObject(), Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})), "Row 8: value");
+									assert.ok(deepEqual(cleanUUID(oRow8.getBindingContext().getObject()), Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})), "Row 8: value");
 									var oSelectionCell8 = oRow8.getCells()[0];
 									assert.ok(oSelectionCell8.getVisible(), "Row 8: cell1 selection checkbox Visible");
 									assert.ok(oSelectionCell8.getEnabled(), "Row 8: cell1 selection checkbox Enabled");
@@ -295,13 +322,13 @@ sap.ui.define([
 								"objectListWithRequestValues": {
 									"value": [
 										Object.assign(deepClone(oValue1Ori), {"_editable": false}),
-										Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
 										Object.assign(deepClone(oValue4Ori), {"_editable": false}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
 										Object.assign(deepClone(oValue6Ori), {"_editable": false}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 									]
 								}
 							},
@@ -326,15 +353,15 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-						Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+						Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 					]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
@@ -359,35 +386,35 @@ sap.ui.define([
 						assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
 
 						var oRow1 = oTable.getRows()[0];
-						assert.ok(deepEqual(oRow1.getBindingContext().getObject(), Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false, "_selected": true}})), "Row 1: value");
+						assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false, "_selected": true}})), "Row 1: value");
 						var oSelectionCell1 = oRow1.getCells()[0];
 						assert.ok(oSelectionCell1.getVisible(), "Row 1: cell1 selection checkbox Visible");
 						assert.ok(oSelectionCell1.getEnabled(), "Row 1: cell1 selection checkbox Enabled");
 						assert.ok(oSelectionCell1.getSelected(), "Row 1: cell1 selection checkbox selected");
 
 						var oRow2 = oTable.getRows()[1];
-						assert.ok(deepEqual(oRow2.getBindingContext().getObject(), Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false, "_selected": true}})), "Row 2: value");
+						assert.ok(deepEqual(cleanUUID(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false, "_selected": true}})), "Row 2: value");
 						var oSelectionCell2 = oRow2.getCells()[0];
 						assert.ok(oSelectionCell2.getVisible(), "Row 2: cell1 selection checkbox Visible");
 						assert.ok(oSelectionCell2.getEnabled(), "Row 2: cell1 selection checkbox Enabled");
 						assert.ok(oSelectionCell2.getSelected(), "Row 2: cell1 selection checkbox selected");
 
 						var oRow3 = oTable.getRows()[2];
-						assert.ok(deepEqual(oRow3.getBindingContext().getObject(), Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false, "_selected": true}})), "Row 3: value");
+						assert.ok(deepEqual(cleanUUID(oRow3.getBindingContext().getObject()), Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false, "_selected": true}})), "Row 3: value");
 						var oSelectionCell3 = oRow3.getCells()[0];
 						assert.ok(oSelectionCell3.getVisible(), "Row 3: cell1 selection checkbox Visible");
 						assert.ok(oSelectionCell3.getEnabled(), "Row 3: cell1 selection checkbox Enabled");
 						assert.ok(oSelectionCell3.getSelected(), "Row 3: cell1 selection checkbox selected");
 
 						var oRow4 = oTable.getRows()[3];
-						assert.ok(deepEqual(oRow4.getBindingContext().getObject(), Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false, "_selected": true}})), "Row 4: value");
+						assert.ok(deepEqual(cleanUUID(oRow4.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false, "_selected": true}})), "Row 4: value");
 						var oSelectionCell4 = oRow4.getCells()[0];
 						assert.ok(oSelectionCell4.getVisible(), "Row 4: cell1 selection checkbox Visible");
 						assert.ok(oSelectionCell4.getEnabled(), "Row 4: cell1 selection checkbox Enabled");
 						assert.ok(oSelectionCell4.getSelected(), "Row 4: cell1 selection checkbox selected");
 
 						var oRow5 = oTable.getRows()[4];
-						assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false, "_selected": true}})), "Row 5: value");
+						assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false, "_selected": true}})), "Row 5: value");
 						var oSelectionCell5 = oRow5.getCells()[0];
 						assert.ok(oSelectionCell5.getVisible(), "Row 5: cell1 selection checkbox Visible");
 						assert.ok(oSelectionCell5.getEnabled(), "Row 5: cell1 selection checkbox Enabled");
@@ -395,13 +422,13 @@ sap.ui.define([
 
 						oAddButton.firePress();
 						wait().then(function () {
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
@@ -409,21 +436,21 @@ sap.ui.define([
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 400;
 								wait().then(function () {
 									var oRow6 = oTable.getRows()[2];
-									assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false, "_selected": true}})), "Row 6: value");
+									assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false, "_selected": true}})), "Row 6: value");
 									var oSelectionCell6 = oRow6.getCells()[0];
 									assert.ok(oSelectionCell6.getVisible(), "Row 6: cell1 selection checkbox Visible");
 									assert.ok(oSelectionCell6.getEnabled(), "Row 6: cell1 selection checkbox Enabled");
 									assert.ok(oSelectionCell6.getSelected(), "Row 6: cell1 selection checkbox selected");
 
 									var oRow7 = oTable.getRows()[3];
-									assert.ok(deepEqual(oRow7.getBindingContext().getObject(), Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false, "_selected": true}})), "Row 7: value");
+									assert.ok(deepEqual(cleanUUID(oRow7.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false, "_selected": true}})), "Row 7: value");
 									var oSelectionCell7 = oRow7.getCells()[0];
 									assert.ok(oSelectionCell7.getVisible(), "Row 7: cell1 selection checkbox Visible");
 									assert.ok(oSelectionCell7.getEnabled(), "Row 7: cell1 selection checkbox Enabled");
 									assert.ok(oSelectionCell7.getSelected(), "Row 7: cell1 selection checkbox selected");
 
 									var oRow8 = oTable.getRows()[4];
-									assert.ok(deepEqual(oRow8.getBindingContext().getObject(), Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false, "_selected": true}})), "Row 8: value");
+									assert.ok(deepEqual(cleanUUID(oRow8.getBindingContext().getObject()), Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false, "_selected": true}})), "Row 8: value");
 									var oSelectionCell8 = oRow8.getCells()[0];
 									assert.ok(oSelectionCell8.getVisible(), "Row 8: cell1 selection checkbox Visible");
 									assert.ok(oSelectionCell8.getEnabled(), "Row 8: cell1 selection checkbox Enabled");
@@ -501,58 +528,58 @@ sap.ui.define([
 						var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
 						oSelectionCell1.setSelected(true);
 						oSelectionCell1.fireSelect({ selected: true });
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-							Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}})
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+							Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}})
 						]), "Field 1: Value after selecting row1");
 
 						var oSelectionCell2 = oTable.getRows()[1].getCells()[0];
 						oSelectionCell2.setSelected(true);
 						oSelectionCell2.fireSelect({ selected: true });
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-							Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}})
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+							Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}})
 						]), "Field 1: Value after selecting row2");
 
 						var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
 						oSelectionCell3.setSelected(true);
 						oSelectionCell3.fireSelect({ selected: true });
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-							Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}})
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+							Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}})
 						]), "Field 1: Value after selecting row3");
 
 						var oSelectionCell4 = oTable.getRows()[3].getCells()[0];
 						oSelectionCell4.setSelected(true);
 						oSelectionCell4.fireSelect({ selected: true });
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-							Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}})
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+							Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})
 						]), "Field 1: Value after selecting row4");
 
 						var oSelectionCell5 = oTable.getRows()[4].getCells()[0];
 						oSelectionCell5.setSelected(true);
 						oSelectionCell5.fireSelect({ selected: true });
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-							Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}})
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+							Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}})
 						]), "Field 1: Value after selecting row5");
 						assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 						oAddButton.firePress();
 						wait().then(function () {
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
@@ -562,41 +589,41 @@ sap.ui.define([
 									var oSelectionCell6 = oTable.getRows()[2].getCells()[0];
 									oSelectionCell6.setSelected(true);
 									oSelectionCell6.fireSelect({ selected: true });
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}})
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value after selecting row6");
 
 									var oSelectionCell7 = oTable.getRows()[3].getCells()[0];
 									oSelectionCell7.setSelected(true);
 									oSelectionCell7.fireSelect({ selected: true });
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}})
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value after selecting row7");
 									assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 									var oSelectionCell8 = oTable.getRows()[4].getCells()[0];
 									oSelectionCell8.setSelected(true);
 									oSelectionCell8.fireSelect({ selected: true });
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value after selecting row8");
 									assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
 
@@ -629,13 +656,13 @@ sap.ui.define([
 								"objectListWithRequestValues": {
 									"value": [
 										Object.assign(deepClone(oValue1Ori), {"_editable": false}),
-										Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
 										Object.assign(deepClone(oValue4Ori), {"_editable": false}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
 										Object.assign(deepClone(oValue6Ori), {"_editable": false}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 									]
 								}
 							},
@@ -660,15 +687,15 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-						Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-						Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+						Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+						Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 					]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
@@ -695,69 +722,69 @@ sap.ui.define([
 						var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
 						oSelectionCell1.setSelected(false);
 						oSelectionCell1.fireSelect({ selected: false });
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-							Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+							Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 						]), "Field 1: Value after deselecting row1");
 						assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column unselected");
 
 						var oSelectionCell2 = oTable.getRows()[1].getCells()[0];
 						oSelectionCell2.setSelected(false);
 						oSelectionCell2.fireSelect({ selected: false });
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-							Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+							Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 						]), "Field 1: Value after deselecting row2");
 						assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column unselected");
 
 						var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
 						oSelectionCell3.setSelected(false);
 						oSelectionCell3.fireSelect({ selected: false });
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-							Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+							Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 						]), "Field 1: Value after deselecting row3");
 
 						var oSelectionCell4 = oTable.getRows()[3].getCells()[0];
 						oSelectionCell4.setSelected(false);
 						oSelectionCell4.fireSelect({ selected: false });
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-							Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+							Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 						]), "Field 1: Value after deselecting row4");
 
 						var oSelectionCell5 = oTable.getRows()[4].getCells()[0];
 						oSelectionCell5.setSelected(false);
 						oSelectionCell5.fireSelect({ selected: false });
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-							Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-							Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+							Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+							Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 						]), "Field 1: Value after deselecting row5");
 
 						oAddButton.firePress();
 						wait().then(function () {
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
@@ -767,16 +794,16 @@ sap.ui.define([
 									var oSelectionCell6 = oTable.getRows()[2].getCells()[0];
 									oSelectionCell6.setSelected(false);
 									oSelectionCell6.fireSelect({ selected: false });
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value after deselecting row6");
 
 									var oSelectionCell7 = oTable.getRows()[3].getCells()[0];
 									oSelectionCell7.setSelected(false);
 									oSelectionCell7.fireSelect({ selected: false });
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value after deselecting row7");
 
 									var oSelectionCell8 = oTable.getRows()[4].getCells()[0];
@@ -787,15 +814,15 @@ sap.ui.define([
 
 									oSelectOrUnSelectAllButton.setSelected(true);
 									oSelectOrUnSelectAllButton.fireSelect({ selected: true });
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value after selectAll");
 									resolve();
 								});
@@ -918,7 +945,7 @@ sap.ui.define([
 						assert.ok(oColumns[7].getLabel().getText() === "Number", "Table: column 'Number'");
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
@@ -985,26 +1012,26 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
 								var oNewObject = {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5};
-								assert.ok(deepEqual(oTable.getBinding().getContexts()[8].getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row data");
-								assert.ok(deepEqual(oField._getCurrentProperty("value"), [oNewObject]), "Field 1: value");
+								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row data");
+								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [oNewObject]), "Field 1: value");
 								// scroll to bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 								wait().then(function () {
 									var oRow5 = oTable.getRows()[4];
-									assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row");
+									assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row");
 									var oSelectionCell5 = oRow5.getCells()[0];
 									assert.ok(oSelectionCell5.getVisible(), "Row: selection checkbox visible");
 									assert.ok(oSelectionCell5.getEnabled(), "Row: selection checkbox enabled");
@@ -1084,11 +1111,11 @@ sap.ui.define([
 						assert.ok(oColumns[7].getLabel().getText() === "Number", "Table: column 'Number'");
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
-							assert.ok(oContents[15].getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
+							assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
 							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -1166,7 +1193,7 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							var oSwitchModeButton = oField._oObjectDetailsPopover.getCustomHeader().getContent()[2];
+							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
 							wait().then(function () {
 								oContents = oSimpleForm.getContent();
@@ -1202,26 +1229,26 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
 									var oNewObject = {"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1};
-									assert.ok(deepEqual(oTable.getBinding().getContexts()[8].getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row data");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [oNewObject]), "Field 1: value");
+									assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row data");
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [oNewObject]), "Field 1: value");
 									// scroll to bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 									wait().then(function () {
 										var oRow5 = oTable.getRows()[4];
-										assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row");
+										assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row");
 										var oSelectionCell5 = oRow5.getCells()[0];
 										assert.ok(oSelectionCell5.getVisible(), "Row: selection checkbox visible");
 										assert.ok(oSelectionCell5.getEnabled(), "Row: selection checkbox enabled");
@@ -1302,11 +1329,11 @@ sap.ui.define([
 						assert.ok(oColumns[7].getLabel().getText() === "Number", "Table: column 'Number'");
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
-							assert.ok(oContents[15].getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
+							assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
 							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -1384,7 +1411,7 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							var oSwitchModeButton = oField._oObjectDetailsPopover.getCustomHeader().getContent()[2];
+							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
 							wait().then(function () {
 								oContents = oSimpleForm.getContent();
@@ -1420,29 +1447,29 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var sNewValue = '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								var sNewValue = '{\n\t"_dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
 								oFormField.setValue(sNewValue);
 								oFormField.fireChange({ value: sNewValue});
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
 									var oNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sapui5.hana.ondemand.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55};
-									assert.ok(deepEqual(oTable.getBinding().getContexts()[8].getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row data");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [oNewObject]), "Field 1: value");
+									assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row data");
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [oNewObject]), "Field 1: value");
 									// scroll to bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 									wait().then(function () {
 										var oRow5 = oTable.getRows()[4];
-										assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row");
+										assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row");
 										var oSelectionCell5 = oRow5.getCells()[0];
 										assert.ok(oSelectionCell5.getVisible(), "Row: selection checkbox visible");
 										assert.ok(oSelectionCell5.getEnabled(), "Row: selection checkbox enabled");
@@ -1496,7 +1523,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), []), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), []), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -1525,7 +1552,7 @@ sap.ui.define([
 						assert.ok(oColumns[7].getLabel().getText() === "Number", "Table: column 'Number'");
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
@@ -1592,26 +1619,26 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
 								var oNewObject = {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5};
-								assert.ok(deepEqual(oTable.getBinding().getContexts()[8].getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row data");
-								assert.ok(deepEqual(oField._getCurrentProperty("value"), [oNewObject]), "Field 1: value");
+								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row data");
+								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [oNewObject]), "Field 1: value");
 								// scroll to bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 								wait().then(function () {
 									var oRow5 = oTable.getRows()[4];
-									assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row");
+									assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row");
 									var oSelectionCell5 = oRow5.getCells()[0];
 									assert.ok(oSelectionCell5.getVisible(), "Row: selection checkbox visible");
 									assert.ok(oSelectionCell5.getEnabled(), "Row: selection checkbox enabled");
@@ -1664,7 +1691,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), []), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), []), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -1693,11 +1720,11 @@ sap.ui.define([
 						assert.ok(oColumns[7].getLabel().getText() === "Number", "Table: column 'Number'");
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
-							assert.ok(oContents[15].getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
+							assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
 							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -1775,7 +1802,7 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							var oSwitchModeButton = oField._oObjectDetailsPopover.getCustomHeader().getContent()[2];
+							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
 							wait().then(function () {
 								oContents = oSimpleForm.getContent();
@@ -1811,26 +1838,26 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
 									var oNewObject = {"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1};
-									assert.ok(deepEqual(oTable.getBinding().getContexts()[8].getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row data");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [oNewObject]), "Field 1: value");
+									assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row data");
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [oNewObject]), "Field 1: value");
 									// scroll to bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 									wait().then(function () {
 										var oRow5 = oTable.getRows()[4];
-										assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row");
+										assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row");
 										var oSelectionCell5 = oRow5.getCells()[0];
 										assert.ok(oSelectionCell5.getVisible(), "Row: selection checkbox visible");
 										assert.ok(oSelectionCell5.getEnabled(), "Row: selection checkbox enabled");
@@ -1884,7 +1911,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), []), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), []), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -1913,11 +1940,11 @@ sap.ui.define([
 						assert.ok(oColumns[7].getLabel().getText() === "Number", "Table: column 'Number'");
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
-							assert.ok(oContents[15].getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
+							assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
 							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -1995,7 +2022,7 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							var oSwitchModeButton = oField._oObjectDetailsPopover.getCustomHeader().getContent()[2];
+							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
 							wait().then(function () {
 								oContents = oSimpleForm.getContent();
@@ -2031,29 +2058,29 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var sNewValue = '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								var sNewValue = '{\n\t"_dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
 								oFormField.setValue(sNewValue);
 								oFormField.fireChange({ value: sNewValue});
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
 									var oNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sapui5.hana.ondemand.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55};
-									assert.ok(deepEqual(oTable.getBinding().getContexts()[8].getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row data");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [oNewObject]), "Field 1: value");
+									assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row data");
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [oNewObject]), "Field 1: value");
 									// scroll to bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 									wait().then(function () {
 										var oRow5 = oTable.getRows()[4];
-										assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row");
+										assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row");
 										var oSelectionCell5 = oRow5.getCells()[0];
 										assert.ok(oSelectionCell5.getVisible(), "Row: selection checkbox visible");
 										assert.ok(oSelectionCell5.getEnabled(), "Row: selection checkbox enabled");
@@ -2082,7 +2109,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -2107,7 +2134,7 @@ sap.ui.define([
 
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
@@ -2174,26 +2201,26 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oAddButtonInPopover.firePress();
 							wait().then(function () {
 								var oNewObject = {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5};
 								assert.ok(oTable.getBinding().getCount() === 10, "Table: value length is 10");
-								assert.ok(deepEqual(oTable.getBinding().getContexts()[9].getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row data");
+								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[9].getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row data");
 								// scroll to the bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 								wait().then(function () {
 									var oNewRow = oTable.getRows()[4];
-									assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row in the bottom");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
+									assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row in the bottom");
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
 									resolve();
 								});
 							});
@@ -2217,7 +2244,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -2242,7 +2269,7 @@ sap.ui.define([
 
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
@@ -2309,19 +2336,19 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 10");
-								assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 								resolve();
 							});
 						});
@@ -2344,7 +2371,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -2369,11 +2396,11 @@ sap.ui.define([
 
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
-							assert.ok(oContents[15].getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
+							assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
 							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -2451,7 +2478,7 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							var oSwitchModeButton = oField._oObjectDetailsPopover.getCustomHeader().getContent()[2];
+							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
 							wait().then(function () {
 								oContents = oSimpleForm.getContent();
@@ -2487,26 +2514,26 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									var oNewObject = {"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1};
 									assert.ok(oTable.getBinding().getCount() === 10, "Table: value length is 10");
-									assert.ok(deepEqual(oTable.getBinding().getContexts()[9].getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row data");
+									assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[9].getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row data");
 									// scroll to the bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 									wait().then(function () {
 										var oNewRow = oTable.getRows()[4];
-										assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row in the bottom");
-										assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
+										assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row in the bottom");
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
 										resolve();
 									});
 								});
@@ -2531,7 +2558,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -2556,11 +2583,11 @@ sap.ui.define([
 
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
-							assert.ok(oContents[15].getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
+							assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
 							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -2638,7 +2665,7 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							var oSwitchModeButton = oField._oObjectDetailsPopover.getCustomHeader().getContent()[2];
+							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
 							wait().then(function () {
 								oContents = oSimpleForm.getContent();
@@ -2674,19 +2701,19 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oCancelButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 10");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 									resolve();
 								});
 							});
@@ -2710,7 +2737,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -2735,11 +2762,11 @@ sap.ui.define([
 
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
-							assert.ok(oContents[15].getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
+							assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
 							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -2817,7 +2844,7 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							var oSwitchModeButton = oField._oObjectDetailsPopover.getCustomHeader().getContent()[2];
+							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
 							wait().then(function () {
 								oContents = oSimpleForm.getContent();
@@ -2853,29 +2880,29 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var sNewValue = '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								var sNewValue = '{\n\t"_dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
 								oFormField.setValue(sNewValue);
 								oFormField.fireChange({ value: sNewValue});
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									var oNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sapui5.hana.ondemand.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55};
 									assert.ok(oTable.getBinding().getCount() === 10, "Table: value length is 10");
-									assert.ok(deepEqual(oTable.getBinding().getContexts()[9].getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row data");
+									assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[9].getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row data");
 									// scroll to the bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 									wait().then(function () {
 										var oNewRow = oTable.getRows()[4];
-										assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row in the bottom");
-										assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
+										assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row in the bottom");
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
 										resolve();
 									});
 								});
@@ -2900,7 +2927,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -2925,11 +2952,11 @@ sap.ui.define([
 
 						oAddButton.firePress();
 						wait().then(function () {
-							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
-							assert.ok(oContents[15].getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
+							assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
 							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -3007,7 +3034,7 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-							var oSwitchModeButton = oField._oObjectDetailsPopover.getCustomHeader().getContent()[2];
+							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
 							wait().then(function () {
 								oContents = oSimpleForm.getContent();
@@ -3043,22 +3070,22 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://accept",\n\t"text": "text01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"number": 0.55,\n\t"key": "key01",\n\t"editable": true,\n\t"int": 1\n}', "SimpleForm field8: Has value");
-								var sNewValue = '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								var sNewValue = '{\n\t"_dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
 								oFormField.setValue(sNewValue);
 								oFormField.fireChange({ value: sNewValue});
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oCancelButtonInPopover.firePress();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 10");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 									resolve();
 								});
 							});
@@ -3129,7 +3156,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -3146,13 +3173,13 @@ sap.ui.define([
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
 						wait().then(function () {
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
@@ -3161,7 +3188,7 @@ sap.ui.define([
 								wait().then(function () {
 									assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 									var oRow6 = oTable.getRows()[1];
-									assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": true}}))), "Row 6: value");
+									assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 6: value");
 									oTable.setSelectedIndex(5);
 									oTable.fireRowSelectionChange({
 										rowIndex: 5,
@@ -3170,19 +3197,19 @@ sap.ui.define([
 									assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 									oEditButton.firePress();
 									wait().then(function () {
-										var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+										var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 										assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
-										var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+										var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 										assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
-										var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+										var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 										assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-										var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+										var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 										assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
-										var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+										var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 										assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 										var oContents = oSimpleForm.getContent();
 										assert.ok(oContents.length === 16, "SimpleForm: length");
-										assert.ok(oContents[15].getValue() === '{\n\t"text": "textnew",\n\t"key": "keynew",\n\t"url": "https://sapui5.hana.ondemand.com/04",\n\t"icon": "sap-icon://zoom-in",\n\t"iconcolor": "#E69A17",\n\t"int": 3,\n\t"dt": {\n\t\t"_selected": true\n\t}\n}', "SimpleForm field textArea: Has the value");
+										assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oEditObject), "SimpleForm field textArea: Has the value");
 										var oFormLabel = oContents[0];
 										var oFormField = oContents[1];
 										assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -3260,20 +3287,20 @@ sap.ui.define([
 										assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 										assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 										assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-										assert.ok(oFormField.getValue() === '{\n\t"text": "text01",\n\t"key": "key01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"icon": "sap-icon://accept",\n\t"iconcolor": "#E69A17",\n\t"int": 1,\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"editable": true,\n\t"number": 0.55\n}', "SimpleForm field textArea: Has changed value");
+										assert.ok(deepEqual(cleanUUID(oFormField.getValue()), Object.assign(deepClone(oValue1Ori, 500), {"_dt": {"_selected": true}, "number": 0.55})), "SimpleForm field textArea: Has changed value");
 										oUpdateButtonInPopover.firePress();
 										wait().then(function () {
 											var oNewValue = {"text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#E69A17", "int": 1, "editable": true, "number": 0.55};
-											assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-												Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+											assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+												Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 												oNewValue
 											]), "Field 1: Value updated");
 											assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-											assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oNewValue), ({"dt": {"_selected": true}}))), "Row 6: new value");
+											assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oNewValue), ({"_dt": {"_selected": true}}))), "Row 6: new value");
 											resolve();
 										});
 									});
@@ -3299,7 +3326,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -3316,13 +3343,13 @@ sap.ui.define([
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
 						wait().then(function () {
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
@@ -3331,7 +3358,7 @@ sap.ui.define([
 								wait().then(function () {
 									assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 									var oRow6 = oTable.getRows()[1];
-									assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": true}}))), "Row 6: value");
+									assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 6: value");
 									oTable.setSelectedIndex(5);
 									oTable.fireRowSelectionChange({
 										rowIndex: 5,
@@ -3340,19 +3367,19 @@ sap.ui.define([
 									assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 									oEditButton.firePress();
 									wait().then(function () {
-										var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+										var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 										assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
-										var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+										var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 										assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
-										var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+										var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 										assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-										var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+										var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 										assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
-										var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+										var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 										assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 										var oContents = oSimpleForm.getContent();
 										assert.ok(oContents.length === 16, "SimpleForm: length");
-										assert.ok(oContents[15].getValue() === '{\n\t"text": "textnew",\n\t"key": "keynew",\n\t"url": "https://sapui5.hana.ondemand.com/04",\n\t"icon": "sap-icon://zoom-in",\n\t"iconcolor": "#E69A17",\n\t"int": 3,\n\t"dt": {\n\t\t"_selected": true\n\t}\n}', "SimpleForm field textArea: Has the value");
+										assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oEditObject), "SimpleForm field textArea: Has the value");
 										var oFormLabel = oContents[0];
 										var oFormField = oContents[1];
 										assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -3430,11 +3457,11 @@ sap.ui.define([
 										assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 										assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 										assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-										assert.ok(oFormField.getValue() === '{\n\t"text": "text01",\n\t"key": "key01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"icon": "sap-icon://accept",\n\t"iconcolor": "#E69A17",\n\t"int": 1,\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"editable": true,\n\t"number": 0.55\n}', "SimpleForm field textArea: Has changed value");
+										assert.ok(deepEqual(cleanUUID(oFormField.getValue()), Object.assign(deepClone(oValue1Ori, 500), {"_dt": {"_selected": true}, "number": 0.55})), "SimpleForm field textArea: Has changed value");
 										oCancelButtonInPopover.firePress();
 										wait().then(function () {
 											assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 10");
-											assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+											assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 											resolve();
 										});
 									});
@@ -3460,7 +3487,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -3477,13 +3504,13 @@ sap.ui.define([
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
 						wait().then(function () {
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
@@ -3492,7 +3519,7 @@ sap.ui.define([
 								wait().then(function () {
 									assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 									var oRow6 = oTable.getRows()[1];
-									assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": true}}))), "Row 6: value");
+									assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 6: value");
 									oTable.setSelectedIndex(5);
 									oTable.fireRowSelectionChange({
 										rowIndex: 5,
@@ -3501,19 +3528,19 @@ sap.ui.define([
 									assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 									oEditButton.firePress();
 									wait().then(function () {
-										var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+										var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 										assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
-										var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+										var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 										assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
-										var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+										var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 										assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-										var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+										var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 										assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
-										var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+										var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 										assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 										var oContents = oSimpleForm.getContent();
 										assert.ok(oContents.length === 16, "SimpleForm: length");
-										assert.ok(oContents[15].getValue() === '{\n\t"text": "textnew",\n\t"key": "keynew",\n\t"url": "https://sapui5.hana.ondemand.com/04",\n\t"icon": "sap-icon://zoom-in",\n\t"iconcolor": "#E69A17",\n\t"int": 3,\n\t"dt": {\n\t\t"_selected": true\n\t}\n}', "SimpleForm field textArea: Has the value");
+										assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oEditObject), "SimpleForm field textArea: Has the value");
 										var oFormLabel = oContents[0];
 										var oFormField = oContents[1];
 										assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -3591,26 +3618,26 @@ sap.ui.define([
 										assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 										assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 										assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-										assert.ok(oFormField.getValue() === '{\n\t"text": "text01",\n\t"key": "key01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"icon": "sap-icon://accept",\n\t"iconcolor": "#E69A17",\n\t"int": 1,\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"editable": true,\n\t"number": 0.55\n}', "SimpleForm field textArea: Has changed value");
-										var oSwitchModeButton = oField._oObjectDetailsPopover.getCustomHeader().getContent()[2];
+										assert.ok(deepEqual(cleanUUID(oFormField.getValue()), Object.assign(deepClone(oValue1Ori, 500), {"_dt": {"_selected": true}, "number": 0.55})), "SimpleForm field textArea: Has changed value");
+										var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 										oSwitchModeButton.firePress();
 										wait().then(function () {
-											var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"editable": false,\n\t"number": 5.55\n}';
+											var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"_dt": {\n\t\t"_selected": true\n\t},\n\t"editable": false,\n\t"number": 5.55\n}';
 											oFormField.setValue(sNewValue);
 											oFormField.fireChange({ value: sNewValue});
 											oUpdateButtonInPopover.firePress();
 											wait().then(function () {
 												var oNewValue = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sapui5.hana.ondemand.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55};
-												assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-													Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-													Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-													Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-													Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-													Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+												assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+													Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+													Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+													Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+													Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+													Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 													oNewValue
 												]), "Field 1: Value updated");
 												assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-												assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oNewValue), ({"dt": {"_selected": true}}))), "Row 6: new value");
+												assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oNewValue), ({"_dt": {"_selected": true}}))), "Row 6: new value");
 												resolve();
 											});
 										});
@@ -3637,7 +3664,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -3654,13 +3681,13 @@ sap.ui.define([
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
 						wait().then(function () {
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
@@ -3669,7 +3696,7 @@ sap.ui.define([
 								wait().then(function () {
 									assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 									var oRow6 = oTable.getRows()[1];
-									assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": true}}))), "Row 6: value");
+									assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 6: value");
 									oTable.setSelectedIndex(5);
 									oTable.fireRowSelectionChange({
 										rowIndex: 5,
@@ -3678,19 +3705,19 @@ sap.ui.define([
 									assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 									oEditButton.firePress();
 									wait().then(function () {
-										var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+										var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 										assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
-										var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+										var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 										assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
-										var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+										var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 										assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-										var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+										var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 										assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
-										var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+										var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 										assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 										var oContents = oSimpleForm.getContent();
 										assert.ok(oContents.length === 16, "SimpleForm: length");
-										assert.ok(oContents[15].getValue() === '{\n\t"text": "textnew",\n\t"key": "keynew",\n\t"url": "https://sapui5.hana.ondemand.com/04",\n\t"icon": "sap-icon://zoom-in",\n\t"iconcolor": "#E69A17",\n\t"int": 3,\n\t"dt": {\n\t\t"_selected": true\n\t}\n}', "SimpleForm field textArea: Has the value");
+										assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oEditObject), "SimpleForm field textArea: Has the value");
 										var oFormLabel = oContents[0];
 										var oFormField = oContents[1];
 										assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -3768,17 +3795,17 @@ sap.ui.define([
 										assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 										assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 										assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-										assert.ok(oFormField.getValue() === '{\n\t"text": "text01",\n\t"key": "key01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"icon": "sap-icon://accept",\n\t"iconcolor": "#E69A17",\n\t"int": 1,\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"editable": true,\n\t"number": 0.55\n}', "SimpleForm field textArea: Has changed value");
-										var oSwitchModeButton = oField._oObjectDetailsPopover.getCustomHeader().getContent()[2];
+										assert.ok(deepEqual(cleanUUID(oFormField.getValue()), Object.assign(deepClone(oValue1Ori, 500), {"_dt": {"_selected": true}, "number": 0.55})), "SimpleForm field textArea: Has changed value");
+										var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 										oSwitchModeButton.firePress();
 										wait().then(function () {
-											var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"editable": false,\n\t"number": 5.55\n}';
+											var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"_dt": {\n\t\t"_selected": true\n\t},\n\t"editable": false,\n\t"number": 5.55\n}';
 											oFormField.setValue(sNewValue);
 											oFormField.fireChange({ value: sNewValue});
 											oCancelButtonInPopover.firePress();
 											wait().then(function () {
 												assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 10");
-												assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+												assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 												resolve();
 											});
 										});
@@ -3852,7 +3879,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -3869,13 +3896,13 @@ sap.ui.define([
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
 						wait().then(function () {
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
@@ -3884,7 +3911,7 @@ sap.ui.define([
 								wait().then(function () {
 									assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 									var oRow6 = oTable.getRows()[1];
-									assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": true}}))), "Row 6: value");
+									assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 6: value");
 									oTable.setSelectedIndex(5);
 									oTable.fireRowSelectionChange({
 										rowIndex: 5,
@@ -3898,12 +3925,12 @@ sap.ui.define([
 										var oOKButton = oMessageBox._getToolbar().getContent()[1];
 										oOKButton.firePress();
 										wait().then(function () {
-											assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-												Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+											assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+												Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 											]), "Field 1: Value updated");
 											assert.ok(oTable.getBinding().getCount() === oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
 											resolve();
@@ -3931,7 +3958,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -3948,13 +3975,13 @@ sap.ui.define([
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
 						wait().then(function () {
-							var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-							var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 							assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-							var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+							var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 							assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-							var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
@@ -3970,15 +3997,15 @@ sap.ui.define([
 									oSelectionCell6.fireSelect({
 										selected: false
 									});
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value updated");
 									assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-									assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": false}}))), "Row 6: value");
+									assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": false}}))), "Row 6: value");
 									oTable.setSelectedIndex(5);
 									oTable.fireRowSelectionChange({
 										rowIndex: 5,
@@ -3992,12 +4019,12 @@ sap.ui.define([
 										var oOKButton = oMessageBox._getToolbar().getContent()[1];
 										oOKButton.firePress();
 										wait().then(function () {
-											assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-												Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+											assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+												Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 											]), "Field 1: Value not change after deleting");
 											assert.ok(oTable.getBinding().getCount() === oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
 											resolve();
@@ -4071,7 +4098,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -4084,7 +4111,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oURLColumn = oTable.getColumns()[4];
 						var oIntColumn = oTable.getColumns()[6];
 						var oMenu = oURLColumn.getMenu();
@@ -4095,7 +4122,7 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							oMenu = oIntColumn.getMenu();
 							// open the column filter menu, input filter value, close the menu.
 							oMenu.open();
@@ -4104,7 +4131,7 @@ sap.ui.define([
 							oMenu.close();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 1, "Table: RowCount after filtering column Integer with '4'");
-								assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 								// open the column filter menu, input filter value, close the menu.
 								oMenu.open();
 								oMenu.getItems()[0].setValue(">4");
@@ -4112,13 +4139,13 @@ sap.ui.define([
 								oMenu.close();
 								wait().then(function () {
 									assert.ok(oTable.getBinding().getCount() === 2, "Table: RowCount after filtering column Integer with '>4'");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 
 									// clear all the filters
 									oClearFilterButton.firePress();
 									wait().then(function () {
 										assert.ok(oTable.getBinding().getCount() === 9, "Table: RowCount after removing all the filters");
-										assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 										resolve();
 									});
 								});
@@ -4142,7 +4169,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -4155,7 +4182,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -4172,50 +4199,50 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 							// scroll to the bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 							wait().then(function () {
 								var oRow5 = oTable.getRows()[3];
-								assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}})), "Table: row 5 value");
+								assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})), "Table: row 5 value");
 								var oSelectionCell5 = oRow5.getCells()[0];
 								assert.ok(!oSelectionCell5.getSelected(), "Row 5: not selected");
 								oSelectionCell5.setSelected(true);
 								oSelectionCell5.fireSelect({ selected: true });
 								wait().then(function () {
-									assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false, "_selected": true}})), "Table: row 5 value");
+									assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 5 value");
 									assert.ok(oSelectionCell5.getSelected(), "Row 5: selected");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 										oValueNew,
-										Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}})
+										Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value after selecting row5");
 									assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 									var oRow6 = oTable.getRows()[4];
-									assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}})), "Table: row 6 value");
+									assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})), "Table: row 6 value");
 									var oSelectionCell6 = oRow6.getCells()[0];
 									assert.ok(!oSelectionCell6.getSelected(), "Row 6: not selected");
 									oSelectionCell6.setSelected(true);
 									oSelectionCell6.fireSelect({ selected: true });
 									wait().then(function () {
-										assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false, "_selected": true}})), "Table: row 6 value");
+										assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 6 value");
 										assert.ok(oSelectionCell6.getSelected(), "Row 6: selected");
-										assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-											Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+											Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 											oValueNew,
-											Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}})
+											Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
 										]), "Field 1: Value after selecting row6");
 										assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
 
@@ -4224,9 +4251,9 @@ sap.ui.define([
 										wait().then(function () {
 											assert.ok(oTable.getBinding().getCount() === 9, "Table: RowCount after removing all the filters");
 											assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-											assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue.concat([
-												Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-												Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}})
+											assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([
+												Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+												Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
 											])), "Field 1: Value after selecting row6");
 											resolve();
 										});
@@ -4252,7 +4279,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -4265,7 +4292,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -4282,18 +4309,18 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 							// scroll to the bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 							wait().then(function () {
 								var oRow5 = oTable.getRows()[3];
-								assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}})), "Table: row 5 value");
+								assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})), "Table: row 5 value");
 								var oSelectionCell5 = oRow5.getCells()[0];
 								assert.ok(!oSelectionCell5.getSelected(), "Row 5: not selected");
 								var oRow6 = oTable.getRows()[4];
-								assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}})), "Table: row 6 value");
+								assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})), "Table: row 6 value");
 								var oSelectionCell6 = oRow6.getCells()[0];
 								assert.ok(!oSelectionCell6.getSelected(), "Row 6: not selected");
 								// select all
@@ -4301,19 +4328,19 @@ sap.ui.define([
 								oSelectOrUnSelectAllButton.fireSelect({ selected: true });
 								wait().then(function () {
 									assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
-									assert.ok(deepEqual(oRow5.getBindingContext().getObject(), Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false, "_selected": true}})), "Table: row 5 value");
+									assert.ok(deepEqual(cleanUUID(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 5 value");
 									assert.ok(oSelectionCell5.getSelected(), "Row 5: selected");
-									assert.ok(deepEqual(oRow6.getBindingContext().getObject(), Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false, "_selected": true}})), "Table: row 6 value");
+									assert.ok(deepEqual(cleanUUID(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 6 value");
 									assert.ok(oSelectionCell6.getSelected(), "Row 6: selected");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 										oValueNew,
-										Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}})
+										Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value after selecting all");
 
 									// clear all the filters
@@ -4321,9 +4348,9 @@ sap.ui.define([
 									wait().then(function () {
 										assert.ok(oTable.getBinding().getCount() === 9, "Table: RowCount after removing all the filters");
 										assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-										assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue.concat([
-											Object.assign(deepClone(oValue4Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue6Ori), {"dt": {"_editable": false}})
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([
+											Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})
 										])), "Field 1: Value after selecting row6");
 										resolve();
 									});
@@ -4348,7 +4375,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -4361,7 +4388,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -4378,31 +4405,31 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 3, "Table: RowCount after filtering column URL with 'http://'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 							var oRow1 = oTable.getRows()[0];
-							assert.ok(deepEqual(oRow1.getBindingContext().getObject(), Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false, "_selected": true}})), "Table: row 1 value");
+							assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 1 value");
 							var oSelectionCell1 = oRow1.getCells()[0];
 							assert.ok(oSelectionCell1.getSelected(), "Row1: selected");
 							var oRow2 = oTable.getRows()[1];
-							assert.ok(deepEqual(oRow2.getBindingContext().getObject(), Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false, "_selected": true}})), "Table: row 2 value");
+							assert.ok(deepEqual(cleanUUID(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 2 value");
 							var oSelectionCell2 = oRow2.getCells()[0];
 							assert.ok(oSelectionCell2.getSelected(), "Row2: selected");
 							var oRow3 = oTable.getRows()[2];
-							assert.ok(deepEqual(oRow3.getBindingContext().getObject(), oValue2), "Table: row 2 value");
+							assert.ok(deepEqual(cleanUUID(oRow3.getBindingContext().getObject()), oValue2), "Table: row 2 value");
 							var oSelectionCell3 = oRow3.getCells()[0];
 							assert.ok(!oSelectionCell3.getSelected(), "Row3: not selected");
 							oSelectionCell1.setSelected(false);
 							oSelectionCell1.fireSelect({ selected: false });
 							wait().then(function () {
-								assert.ok(deepEqual(oRow1.getBindingContext().getObject(), Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false, "_selected": false}})), "Table: row 1 value after deselecting");
+								assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false, "_selected": false}})), "Table: row 1 value after deselecting");
 								assert.ok(!oSelectionCell1.getSelected(), "Row1: not selected");
-								assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-									Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-									Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-									Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-									Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+									Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+									Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+									Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+									Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 									oValueNew
 								]), "Field 1: Value after deselecting row1");
 								assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
@@ -4410,12 +4437,12 @@ sap.ui.define([
 								oSelectionCell2.setSelected(false);
 								oSelectionCell2.fireSelect({ selected: false });
 								wait().then(function () {
-									assert.ok(deepEqual(oRow2.getBindingContext().getObject(), Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false, "_selected": false}})), "Table: row 2 value after deselecting");
+									assert.ok(deepEqual(cleanUUID(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false, "_selected": false}})), "Table: row 2 value after deselecting");
 									assert.ok(!oSelectionCell2.getSelected(), "Row2: not selected");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 										oValueNew
 									]), "Field 1: Value after deselecting row2");
 									assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
@@ -4425,10 +4452,10 @@ sap.ui.define([
 									wait().then(function () {
 										assert.ok(oTable.getBinding().getCount() === 9, "Table: RowCount after removing all the filters");
 										assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-										assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-											Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+											Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 											oValueNew
 										]), "Field 1: Value");
 										resolve();
@@ -4454,7 +4481,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -4467,7 +4494,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -4484,28 +4511,28 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 3, "Table: RowCount after filtering column URL with 'http://'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 							var oRow1 = oTable.getRows()[0];
-							assert.ok(deepEqual(oRow1.getBindingContext().getObject(), Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false, "_selected": true}})), "Table: row 1 value");
+							assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 1 value");
 							var oSelectionCell1 = oRow1.getCells()[0];
 							assert.ok(oSelectionCell1.getSelected(), "Row1: selected");
 							var oRow2 = oTable.getRows()[1];
-							assert.ok(deepEqual(oRow2.getBindingContext().getObject(), Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false, "_selected": true}})), "Table: row 2 value");
+							assert.ok(deepEqual(cleanUUID(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 2 value");
 							var oSelectionCell2 = oRow2.getCells()[0];
 							assert.ok(oSelectionCell2.getSelected(), "Row2: selected");
 							var oRow3 = oTable.getRows()[2];
-							assert.ok(deepEqual(oRow3.getBindingContext().getObject(), oValue2), "Table: row 2 value");
+							assert.ok(deepEqual(cleanUUID(oRow3.getBindingContext().getObject()), oValue2), "Table: row 2 value");
 							var oSelectionCell3 = oRow3.getCells()[0];
 							assert.ok(!oSelectionCell3.getSelected(), "Row3: not selected");
 							oSelectionCell3.setSelected(true);
 							oSelectionCell3.fireSelect({ selected: true });
 							wait().then(function () {
-								assert.ok(deepEqual(oRow3.getBindingContext().getObject(), Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false, "_selected": true}})), "Table: row 3 value after selecting");
+								assert.ok(deepEqual(cleanUUID(oRow3.getBindingContext().getObject()), Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false, "_selected": true}})), "Table: row 3 value after selecting");
 								assert.ok(oSelectionCell3.getSelected(), "Row1: not selected");
 								assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
-								assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue.concat([
+								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([
 									oValue2
 								])), "Field 1: Value after selectingAll");
 								assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
@@ -4513,16 +4540,16 @@ sap.ui.define([
 								oSelectOrUnSelectAllButton.setSelected(false);
 								oSelectOrUnSelectAllButton.fireSelect({ selected: false });
 								wait().then(function () {
-									assert.ok(deepEqual(oRow1.getBindingContext().getObject(), Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false, "_selected": false}})), "Table: row 1 value after deselectAll");
+									assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false, "_selected": false}})), "Table: row 1 value after deselectAll");
 									assert.ok(!oSelectionCell1.getSelected(), "Row1: not selected");
-									assert.ok(deepEqual(oRow2.getBindingContext().getObject(), Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false, "_selected": false}})), "Table: row 2 value after deselectAll");
+									assert.ok(deepEqual(cleanUUID(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false, "_selected": false}})), "Table: row 2 value after deselectAll");
 									assert.ok(!oSelectionCell2.getSelected(), "Row2: not selected");
-									assert.ok(deepEqual(oRow3.getBindingContext().getObject(), Object.assign(deepClone(oValue2Ori), {"dt": {"_editable": false, "_selected": false}})), "Table: row 3 value after deselectAll");
+									assert.ok(deepEqual(cleanUUID(oRow3.getBindingContext().getObject()), Object.assign(deepClone(oValue2Ori), {"_dt": {"_editable": false, "_selected": false}})), "Table: row 3 value after deselectAll");
 									assert.ok(!oSelectionCell3.getSelected(), "Row3: not selected");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 										oValueNew
 									]), "Field 1: Value after deselectAll");
 									assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
@@ -4532,10 +4559,10 @@ sap.ui.define([
 									wait().then(function () {
 										assert.ok(oTable.getBinding().getCount() === 9, "Table: RowCount after removing all the filters");
 										assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
-										assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-											Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+											Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 											oValueNew
 										]), "Field 1: Value");
 										resolve();
@@ -4561,7 +4588,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -4574,7 +4601,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -4591,7 +4618,7 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 3, "Table: RowCount after filtering column URL with 'http://'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 							var oToolbar = oTable.getToolbar();
 							assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
@@ -4599,7 +4626,7 @@ sap.ui.define([
 							assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 							oAddButton.firePress();
 							wait().then(function () {
-								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 								assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 								var oContents = oSimpleForm.getContent();
 								assert.ok(oContents.length === 16, "SimpleForm: length");
@@ -4666,23 +4693,23 @@ sap.ui.define([
 								assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 								assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-								assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "http://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oDefalutNewObjectSelected), "SimpleForm field textArea: Has Default value");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									var oNewObject = {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5};
 									assert.ok(oTable.getBinding().getCount() === 4, "Table: value length is 4");
-									assert.ok(deepEqual(oTable.getBinding().getContexts()[3].getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row data");
+									assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[3].getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row data");
 									var oNewRow = oTable.getRows()[3];
-									assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row in the bottom");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
+									assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row in the bottom");
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
 									resolve();
 								});
 							});
@@ -4705,7 +4732,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -4718,7 +4745,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -4735,7 +4762,7 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 3, "Table: RowCount after filtering column URL with 'http://'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 							var oToolbar = oTable.getToolbar();
 							assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
@@ -4743,7 +4770,7 @@ sap.ui.define([
 							assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 							oAddButton.firePress();
 							wait().then(function () {
-								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 								assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 								var oContents = oSimpleForm.getContent();
 								assert.ok(oContents.length === 16, "SimpleForm: length");
@@ -4812,34 +4839,34 @@ sap.ui.define([
 								assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 								assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-								assert.ok(oFormField.getValue() === '{\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"icon": "sap-icon://add",\n\t"text": "text",\n\t"url": "https://",\n\t"number": 0.5\n}', "SimpleForm field textArea: Has Default value");
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), Object.assign(oDefalutNewObjectSelected, {"url": "https://"})), "SimpleForm field textArea: Has changed value");
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(!oUpdateButtonInPopover.getVisible(), "Popover: update button not visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									var oNewObject = {"icon": "sap-icon://add","text": "text","url": "https://","number": 0.5};
 									assert.ok(oTable.getBinding().getCount() === 3, "Table: value length is still 3");
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
 
 									// clear all the filters
 									oClearFilterButton.firePress();
 									wait().then(function () {
 										assert.ok(oTable.getBinding().getCount() === 10, "Table: RowCount after removing all the filters");
-										assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue.concat(oNewObject)), "Field 1: Value");
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat(oNewObject)), "Field 1: Value");
 										// scroll to the bottom
 										oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 										wait().then(function () {
 											var oNewRow = oTable.getRows()[4];
-											assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oNewObject), {"dt": {"_selected": true}})), "Table: new row in the bottom");
+											assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oNewObject), {"_dt": {"_selected": true}})), "Table: new row in the bottom");
 											var oSelectionCell10 = oNewRow.getCells()[0];
 											assert.ok(oSelectionCell10.getSelected(), "Row 10: selected");
-											assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
+											assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat(oNewObject)), "Field 1: DT Value");
 											resolve();
 										});
 									});
@@ -4864,7 +4891,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -4877,7 +4904,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -4894,12 +4921,12 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 							assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 							var oNewRow = oTable.getRows()[3];
-							assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": true}}))), "Row 4: value");
+							assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 							var oSelectionCell4 = oNewRow.getCells()[0];
 							assert.ok(oSelectionCell4.getSelected(), "Row 4: selected");
 							oTable.setSelectedIndex(3);
@@ -4910,19 +4937,19 @@ sap.ui.define([
 							assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 							oEditButton.firePress();
 							wait().then(function () {
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
-								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 								assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 								var oContents = oSimpleForm.getContent();
 								assert.ok(oContents.length === 16, "SimpleForm: length");
-								assert.ok(oContents[15].getValue() === '{\n\t"text": "textnew",\n\t"key": "keynew",\n\t"url": "https://sapui5.hana.ondemand.com/04",\n\t"icon": "sap-icon://zoom-in",\n\t"iconcolor": "#E69A17",\n\t"int": 3,\n\t"dt": {\n\t\t"_selected": true\n\t}\n}', "SimpleForm field textArea: Has the value");
+								assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oEditObject), "SimpleForm field textArea: Has the value");
 								var oFormLabel = oContents[0];
 								var oFormField = oContents[1];
 								assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -5000,20 +5027,20 @@ sap.ui.define([
 								assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 								assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-								assert.ok(oFormField.getValue() === '{\n\t"text": "text01",\n\t"key": "key01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"icon": "sap-icon://accept",\n\t"iconcolor": "#E69A17",\n\t"int": 1,\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"editable": true,\n\t"number": 0.55\n}', "SimpleForm field textArea: Has changed value");
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), Object.assign(deepClone(oValue1Ori, 500), {"_dt": {"_selected": true}, "number": 0.55})), "SimpleForm field textArea: Has changed value");
 								oUpdateButtonInPopover.firePress();
 								wait().then(function () {
 									var oNewValue = {"text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#E69A17", "int": 1, "editable": true, "number": 0.55};
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 										oNewValue
 									]), "Field 1: Value updated");
 									assert.ok(oTable.getBinding().getCount() === 6, "Table: value length is still 6 after updating");
-									assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oNewValue), ({"dt": {"_selected": true}}))), "Row 4: new value");
+									assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oNewValue), ({"_dt": {"_selected": true}}))), "Row 4: new value");
 									assert.ok(oSelectionCell4.getSelected(), "Row 4: still selected");
 									resolve();
 								});
@@ -5037,7 +5064,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -5050,7 +5077,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -5067,12 +5094,12 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 							assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 							var oNewRow = oTable.getRows()[3];
-							assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": true}}))), "Row 4: value");
+							assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 							var oSelectionCell4 = oNewRow.getCells()[0];
 							assert.ok(oSelectionCell4.getSelected(), "Row 4: selected");
 							oTable.setSelectedIndex(3);
@@ -5083,19 +5110,19 @@ sap.ui.define([
 							assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 							oEditButton.firePress();
 							wait().then(function () {
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
-								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 								assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 								var oContents = oSimpleForm.getContent();
 								assert.ok(oContents.length === 16, "SimpleForm: length");
-								assert.ok(oContents[15].getValue() === '{\n\t"text": "textnew",\n\t"key": "keynew",\n\t"url": "https://sapui5.hana.ondemand.com/04",\n\t"icon": "sap-icon://zoom-in",\n\t"iconcolor": "#E69A17",\n\t"int": 3,\n\t"dt": {\n\t\t"_selected": true\n\t}\n}', "SimpleForm field textArea: Has the value");
+								assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oEditObject), "SimpleForm field textArea: Has the value");
 								var oFormLabel = oContents[0];
 								var oFormField = oContents[1];
 								assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -5173,16 +5200,16 @@ sap.ui.define([
 								assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 								assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-								assert.ok(oFormField.getValue() === '{\n\t"text": "text01",\n\t"key": "key01",\n\t"url": "http://sapui5.hana.ondemand.com/06",\n\t"icon": "sap-icon://accept",\n\t"iconcolor": "#E69A17",\n\t"int": 1,\n\t"dt": {\n\t\t"_selected": true\n\t},\n\t"editable": true,\n\t"number": 0.55\n}', "SimpleForm field textArea: Has changed value");
+								var oNewValue = {"text": "text01", "key": "key01", "url": "http://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#E69A17", "int": 1, "editable": true, "number": 0.55};
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), Object.assign(deepClone(oNewValue, 500), {"_dt": {"_selected": true}})), "SimpleForm field textArea: Has changed value");
 								oUpdateButtonInPopover.firePress();
 								wait().then(function () {
-									var oNewValue = {"text": "text01", "key": "key01", "url": "http://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#E69A17", "int": 1, "editable": true, "number": 0.55};
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 										oNewValue
 									]), "Field 1: Value updated");
 									assert.ok(oTable.getBinding().getCount() === 5, "Table: value length is 5 after updating");
@@ -5190,19 +5217,19 @@ sap.ui.define([
 									oClearFilterButton.firePress();
 									wait().then(function () {
 										assert.ok(oTable.getBinding().getCount() === 9, "Table: RowCount after removing all the filters");
-										assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-											Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}}),
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+											Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}}),
 											oNewValue
 										]), "Field 1: Value");
 										// scroll to the bottom
 										oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 										wait().then(function () {
 											var oNewRow = oTable.getRows()[1];
-											assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oNewValue), ({"dt": {"_selected": true}}))), "Row 4: new value");
+											assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oNewValue), ({"_dt": {"_selected": true}}))), "Row 4: new value");
 											var oSelectionCell6 = oNewRow.getCells()[0];
 											assert.ok(oSelectionCell6.getSelected(), "Row 6: selected");
 											resolve();
@@ -5229,7 +5256,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -5242,7 +5269,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -5259,24 +5286,24 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 							assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 							var oNewRow = oTable.getRows()[3];
-							assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": true}}))), "Row 4: value");
+							assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 							var oSelectionCell4 = oNewRow.getCells()[0];
 							assert.ok(oSelectionCell4.getSelected(), "Row 4: selected");
 							oSelectionCell4.setSelected(false);
 							oSelectionCell4.fireSelect({ selected: false });
 							assert.ok(!oSelectionCell4.getSelected(), "Row 4: not selected");
-							assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": false}}))), "Row 4: value after deselecting");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-								Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+							assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": false}}))), "Row 4: value after deselecting");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+								Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 							]), "Field 1: Value after deselecting row4");
 							oTable.setSelectedIndex(3);
 							oTable.fireRowSelectionChange({
@@ -5286,19 +5313,19 @@ sap.ui.define([
 							assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 							oEditButton.firePress();
 							wait().then(function () {
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
-								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 								assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 								var oContents = oSimpleForm.getContent();
 								assert.ok(oContents.length === 16, "SimpleForm: length");
-								assert.ok(oContents[15].getValue() === '{\n\t"text": "textnew",\n\t"key": "keynew",\n\t"url": "https://sapui5.hana.ondemand.com/04",\n\t"icon": "sap-icon://zoom-in",\n\t"iconcolor": "#E69A17",\n\t"int": 3,\n\t"dt": {\n\t\t"_selected": false\n\t}\n}', "SimpleForm field textArea: Has the value");
+								assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), Object.assign(oEditObject, {"_dt":{"_selected":false}})), "SimpleForm field textArea: Has the value");
 								var oFormLabel = oContents[0];
 								var oFormField = oContents[1];
 								assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -5376,19 +5403,19 @@ sap.ui.define([
 								assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 								assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-								assert.ok(oFormField.getValue() === '{\n\t"text": "text01",\n\t"key": "key01",\n\t"url": "https://sapui5.hana.ondemand.com/06",\n\t"icon": "sap-icon://accept",\n\t"iconcolor": "#E69A17",\n\t"int": 1,\n\t"dt": {\n\t\t"_selected": false\n\t},\n\t"editable": true,\n\t"number": 0.55\n}', "SimpleForm field textArea: Has changed value");
+								var oNewValue = {"text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#E69A17", "int": 1, "editable": true, "number": 0.55};
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), Object.assign(deepClone(oNewValue, 500), {"_dt": {"_selected": false}})), "SimpleForm field textArea: Has changed value");
 								oUpdateButtonInPopover.firePress();
 								wait().then(function () {
-									var oNewValue = {"text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#E69A17", "int": 1, "editable": true, "number": 0.55};
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value not changed");
 									assert.ok(oTable.getBinding().getCount() === 6, "Table: value length is still 6 after updating");
-									assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oNewValue), ({"dt": {"_selected": false}}))), "Row 6: new value");
+									assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oNewValue), ({"_dt": {"_selected": false}}))), "Row 6: new value");
 									assert.ok(!oSelectionCell4.getSelected(), "Row 4: still not selected");
 									resolve();
 								});
@@ -5412,7 +5439,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -5425,7 +5452,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -5442,24 +5469,24 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 							assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 							var oNewRow = oTable.getRows()[3];
-							assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": true}}))), "Row 4: value");
+							assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 							var oSelectionCell4 = oNewRow.getCells()[0];
 							assert.ok(oSelectionCell4.getSelected(), "Row 4: selected");
 							oSelectionCell4.setSelected(false);
 							oSelectionCell4.fireSelect({ selected: false });
 							assert.ok(!oSelectionCell4.getSelected(), "Row 4: not selected");
-							assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": false}}))), "Row 4: value after deselecting");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-								Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+							assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": false}}))), "Row 4: value after deselecting");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+								Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 							]), "Field 1: Value after deselecting row4");
 							oTable.setSelectedIndex(3);
 							oTable.fireRowSelectionChange({
@@ -5469,19 +5496,19 @@ sap.ui.define([
 							assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 							oEditButton.firePress();
 							wait().then(function () {
-								var oAddButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[1];
+								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
-								var oUpdateButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[2];
+								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
 								assert.ok(oUpdateButtonInPopover.getVisible(), "Popover: update button visible");
-								var oCancelButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[3];
+								var oCancelButtonInPopover = oField._oObjectDetailsPopover._oCancelButton;
 								assert.ok(oCancelButtonInPopover.getVisible(), "Popover: cancel button visible");
-								var oCloseButtonInPopover = oField._oObjectDetailsPopover.getFooter().getContent()[4];
+								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
-								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0];
+								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 								assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 								var oContents = oSimpleForm.getContent();
 								assert.ok(oContents.length === 16, "SimpleForm: length");
-								assert.ok(oContents[15].getValue() === '{\n\t"text": "textnew",\n\t"key": "keynew",\n\t"url": "https://sapui5.hana.ondemand.com/04",\n\t"icon": "sap-icon://zoom-in",\n\t"iconcolor": "#E69A17",\n\t"int": 3,\n\t"dt": {\n\t\t"_selected": false\n\t}\n}', "SimpleForm field textArea: Has the value");
+								assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), Object.assign(oEditObject, {"_dt":{"_selected":false}})), "SimpleForm field textArea: Has the value");
 								var oFormLabel = oContents[0];
 								var oFormField = oContents[1];
 								assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
@@ -5559,34 +5586,34 @@ sap.ui.define([
 								assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 								assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
-								assert.ok(oFormField.getValue() === '{\n\t"text": "text01",\n\t"key": "key01",\n\t"url": "http://sapui5.hana.ondemand.com/06",\n\t"icon": "sap-icon://accept",\n\t"iconcolor": "#E69A17",\n\t"int": 1,\n\t"dt": {\n\t\t"_selected": false\n\t},\n\t"editable": true,\n\t"number": 0.55\n}', "SimpleForm field textArea: Has changed value");
+								var oNewValue = {"text": "text01", "key": "key01", "url": "http://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#E69A17", "int": 1, "editable": true, "number": 0.55};
+								assert.ok(deepEqual(cleanUUID(oFormField.getValue()),  Object.assign(deepClone(oNewValue, 500), {"_dt": {"_selected": false}})), "SimpleForm field textArea: Has changed value");
 								oUpdateButtonInPopover.firePress();
 								wait().then(function () {
-									var oNewValue = {"text": "text01", "key": "key01", "url": "http://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#E69A17", "int": 1, "editable": true, "number": 0.55};
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value not changed");
 									assert.ok(oTable.getBinding().getCount() === 5, "Table: value length is 5 after updating");
 									// clear all the filters
 									oClearFilterButton.firePress();
 									wait().then(function () {
 										assert.ok(oTable.getBinding().getCount() === 9, "Table: RowCount after removing all the filters");
-										assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-											Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-											Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+											Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+											Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 										]), "Field 1: Value");
 										// scroll to the bottom
 										oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 										wait().then(function () {
 											var oNewRow = oTable.getRows()[1];
-											assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oNewValue), ({"dt": {"_selected": false}}))), "Row 6: new value");
+											assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oNewValue), ({"_dt": {"_selected": false}}))), "Row 6: new value");
 											var oSelectionCell6 = oNewRow.getCells()[0];
 											assert.ok(!oSelectionCell6.getSelected(), "Row 6: not selected");
 											resolve();
@@ -5613,7 +5640,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -5628,7 +5655,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -5645,12 +5672,12 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 							assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 							var oNewRow = oTable.getRows()[3];
-							assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": true}}))), "Row 4: value");
+							assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 							var oSelectionCell4 = oNewRow.getCells()[0];
 							assert.ok(oSelectionCell4.getSelected(), "Row 4: selected");
 							oTable.setSelectedIndex(3);
@@ -5666,12 +5693,12 @@ sap.ui.define([
 								var oOKButton = oMessageBox._getToolbar().getContent()[1];
 								oOKButton.firePress();
 								wait().then(function () {
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value updated");
 									assert.ok(oTable.getBinding().getCount() === 5, "Table: value length is still 5 after deleting");
 									resolve();
@@ -5696,7 +5723,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: DT Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
@@ -5711,7 +5738,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 						assert.ok(oTable.getBinding().getCount() === (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
-						assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
 						var oColumns = oTable.getColumns();
 						assert.ok(oColumns.length === 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -5728,23 +5755,23 @@ sap.ui.define([
 						oMenu.close();
 						wait().then(function () {
 							assert.ok(oTable.getBinding().getCount() === 6, "Table: RowCount after filtering column URL with 'https'");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), aObjectsParameterValue), "Field 1: Value not changed after filtering");
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 							assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 							var oNewRow = oTable.getRows()[3];
-							assert.ok(deepEqual(oNewRow.getBindingContext().getObject(), Object.assign(deepClone(oValueNew), ({"dt": {"_selected": true}}))), "Row 4: value");
+							assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), Object.assign(deepClone(oValueNew), ({"_dt": {"_selected": true}}))), "Row 4: value");
 							var oSelectionCell4 = oNewRow.getCells()[0];
 							assert.ok(oSelectionCell4.getSelected(), "Row 4: selected");
 							oSelectionCell4.setSelected(false);
 							oSelectionCell4.fireSelect({ selected: false});
 							assert.ok(!oSelectionCell4.getSelected(), "Row 4: not selected");
-							assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-								Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-								Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+								Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+								Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 							]), "Field 1: Value updated after deselecting");
 							oTable.setSelectedIndex(3);
 							oTable.fireRowSelectionChange({
@@ -5759,12 +5786,12 @@ sap.ui.define([
 								var oOKButton = oMessageBox._getToolbar().getContent()[1];
 								oOKButton.firePress();
 								wait().then(function () {
-									assert.ok(deepEqual(oField._getCurrentProperty("value"), [
-										Object.assign(deepClone(oValue1Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue3Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue5Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue7Ori), {"dt": {"_editable": false}}),
-										Object.assign(deepClone(oValue8Ori), {"dt": {"_editable": false}})
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
+										Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue3Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue5Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue7Ori), {"_dt": {"_editable": false}}),
+										Object.assign(deepClone(oValue8Ori), {"_dt": {"_editable": false}})
 									]), "Field 1: Value not change after deleting");
 									assert.ok(oTable.getBinding().getCount() === 5, "Table: value length is still 5 after deleting");
 									resolve();

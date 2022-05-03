@@ -3,30 +3,22 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/m/Button",
-	"sap/m/FormattedText",
 	"sap/m/MultiInput",
 	"sap/m/Token",
 	"sap/ui/core/Core",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/core/ListItem",
 	"sap/base/util/ObjectPath",
-	"sap/ui/integration/util/Utils",
-	"sap/base/util/deepEqual",
-	"sap/m/MessageToast"
+	"sap/base/util/deepEqual"
 ], function (
 	Control,
-	Button,
-	FormattedText,
 	MultiInput,
 	Token,
 	Core,
 	BindingHelper,
 	ListItem,
 	ObjectPath,
-	Utils,
-	deepEqual,
-	MessageToast
+	deepEqual
 ) {
 	"use strict";
 
@@ -615,6 +607,7 @@ sap.ui.define([
 
 	BaseField.prototype.initEditor = function (oConfig) {
 		var oControl;
+		this._settingsModel = this.getModel("currentSettings");
 		this.initVisualization && this.initVisualization(oConfig);
 		if (this._visualization.editor) {
 			oControl = this._visualization.editor;

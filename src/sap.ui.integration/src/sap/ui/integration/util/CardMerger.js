@@ -26,8 +26,14 @@ sap.ui.define([
 			});
 			if (oChange.hasOwnProperty("texts") && oChange.texts.hasOwnProperty(sLanguage)) {
 				var oTranslation = oChange.texts[sLanguage];
-				for (var key in oTranslation) {
-					oModel.setProperty(key, oTranslation[key]);
+				for (var sManifestPath in oTranslation) {
+					var oTranslations = oTranslation[sManifestPath];
+					// if the translation value type is object, translate it
+					if (typeof oTranslations === "object") {
+						CardMerger.translateObject(oModel, sManifestPath, oTranslations);
+					} else {
+						oModel.setProperty(sManifestPath, oTranslations);
+					}
 				}
 			}
 		},
@@ -52,7 +58,6 @@ sap.ui.define([
 			}
 			return oInitialManifest;
 		},
-
 		mergeCardDesigntimeMetadata: function (oDesigntimeMetadata, aChanges) {
 			var oInitialDTMedatada = merge({}, oDesigntimeMetadata);
 
@@ -82,6 +87,29 @@ sap.ui.define([
 			});
 
 			return oInitialDTMedatada;
+		},
+		translateObject: function (oModel, sManifestPath, oTranslations) {
+			var oValue = oModel.getProperty(sManifestPath);
+			if (!oValue || typeof oValue !== "object") {
+				return;
+			}
+			oValue = deepClone(oValue, 500);
+			if (!Array.isArray(oValue)) {
+				var sUUID = (oValue._dt || {})._uuid;
+				if (sUUID && oTranslations[sUUID]) {
+					Object.assign(oValue, oTranslations[sUUID]);
+					oModel.setProperty(sManifestPath, oValue);
+				}
+			} else {
+				oValue.forEach(function (oOriginValue) {
+					var sUUID = (oOriginValue._dt || {})._uuid;
+					if (sUUID && oTranslations[sUUID]) {
+						Object.assign(oOriginValue, oTranslations[sUUID]);
+					}
+				});
+				oModel.setProperty(sManifestPath, oValue);
+				return;
+			}
 		}
 	};
 

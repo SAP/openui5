@@ -274,8 +274,7 @@
 	font-size: 0.8rem;
 }
 
-.sapUiIntegrationFieldTranslation .sapMPopoverTitle,
-.sapUiIntegrationFieldObjectListPopup .sapMPopoverTitle {
+.sapUiIntegrationFieldTranslation .sapMPopoverTitle{
 	max-width: 300px !important;
 	font-size: 1.125rem;
 	text-align: center;
@@ -283,14 +282,16 @@
 	padding: 0.5rem 0 0 0;
 }
 
-.sapUiIntegrationFieldTranslation .sapMLIB.sapMGHLI {
+.sapUiIntegrationFieldTranslation .sapMLIB.sapMGHLI,
+.sapUiIntegrationEditorItemObjectFieldDetailsPopover .sapMLIB.sapMGHLI {
     font-weight: bold;
 	border-bottom: 0;
 	height: 2.25rem;
     padding-top: 0.5rem;
 }
 
-.sapUiIntegrationFieldTranslation .sapMCLI {
+.sapUiIntegrationFieldTranslation .sapMCLI,
+.sapUiIntegrationEditorItemObjectFieldDetailsPopover .sapMCLI {
     padding: 0 1rem 0 1rem;
 	border-bottom: 0;
 }

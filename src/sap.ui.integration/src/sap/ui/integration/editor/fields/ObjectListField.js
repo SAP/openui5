@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/m/CheckBox",
 	"sap/base/util/deepEqual",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"sap/ui/integration/util/Utils"
 ], function (
 	ObjectField,
 	JSONModel,
 	Table,
 	CheckBox,
 	deepEqual,
-	deepClone
+	deepClone,
+	Utils
 ) {
 	"use strict";
 
@@ -40,8 +42,9 @@ sap.ui.define([
 	ObjectListField.prototype.initVisualization = function (oConfig) {
 		var that = this;
 		that._newObjectTemplate = {
-			dt: {
-				_selected: true
+			"_dt": {
+				"_selected": true,
+				"_uuid": ""
 			}
 		};
 		var oVisualization = oConfig.visualization;
@@ -65,13 +68,14 @@ sap.ui.define([
 		var oControl = that.getAggregation("_field");
 		if (oControl instanceof Table) {
 			oControl.addStyleClass("sapUiIntegrationEditorItemObjectListFieldTable");
-			// select all the rows if values from config.value
 			var oConfig = that.getConfiguration();
+			// select all the results come from config.value
 			if (!oConfig.values){
 				var oValue = deepClone(oConfig.value, 500) || [];
 				oValue.forEach(function (oItem) {
-					oItem.dt = oItem.dt || {};
-					oItem.dt._selected = true;
+					oItem._dt = oItem._dt || {};
+					oItem._dt._selected = true;
+					oItem._dt._uuid = oItem._dt._uuid || Utils.generateUuidV4();
 				});
 				that.setModel(new JSONModel({
 					value: oValue,
@@ -91,7 +95,8 @@ sap.ui.define([
 			var oProperties = {};
 			oConfig.value.forEach(function(oObject) {
 				for (var n in oObject) {
-					if (!oProperties[n]) {
+					// not show _dt property which generated and used by editor
+					if (!oProperties[n] && n !== "_dt") {
 						var sType = typeof oObject[n];
 						var oProperty = sType === "string" ? {} : {"type": sType};
 						oProperties[n] = oProperty;
@@ -133,8 +138,8 @@ sap.ui.define([
 		var oRowContexts = oTable.getBinding("rows").getContexts();
 		oRowContexts.forEach(function (oRowContext) {
 			var oItem = oRowContext.getObject();
-			oItem.dt = oItem.dt || {};
-			oItem.dt._selected = bIsSelected;
+			oItem._dt = oItem._dt || {};
+			oItem._dt._selected = bIsSelected;
 		});
 
 		var oModel = oTable.getModel();
@@ -142,7 +147,7 @@ sap.ui.define([
 		var oData = oModel.getProperty(sPath);
 		var aValues;
 		oData.forEach(function (oObject) {
-			if (oObject.dt && oObject.dt._selected) {
+			if (oObject._dt && oObject._dt._selected) {
 				var oClonedObject = deepClone(oObject, 500);
 				aValues = aValues || [];
 				aValues.push(oClonedObject);
@@ -162,7 +167,7 @@ sap.ui.define([
 		} else {
 			for (var i = 0; i < oRowContexts.length; i++) {
 				var oObject = oRowContexts[i].getObject();
-				if (!oObject.dt || oObject.dt._selected !== true) {
+				if (!oObject._dt || oObject._dt._selected !== true) {
 					bAllSelected = false;
 					break;
 				}
@@ -194,7 +199,7 @@ sap.ui.define([
 		var oData = oModel.getProperty(sPath);
 		var vValue = [];
 		oData.forEach(function (oItem) {
-			if (oItem.dt._selected) {
+			if (oItem._dt._selected) {
 				var oClonedObject = deepClone(oItem);
 				vValue.push(oClonedObject);
 			}
@@ -225,24 +230,41 @@ sap.ui.define([
 		if (oConfig.value && Array.isArray(oConfig.value) && oConfig.value.length > 0) {
 			var aValues = deepClone(oConfig.value, 500),
 				sPath = oTable.getBinding("rows").getPath();
-			aValues.forEach(function (oItem) {
-				oItem.dt = oItem.dt || {};
-				oItem.dt._selected = true;
-			});
 			if (Array.isArray(tResult) && tResult.length > 0) {
+				var aUUIDs = [];
+				// move the uuids into backup array
+				aValues.forEach(function (oItem) {
+					var sUuid;
+					if (!oItem._dt) {
+						sUuid = Utils.generateUuidV4();
+					} else {
+						sUuid = oItem._dt._uuid || Utils.generateUuidV4();
+						delete oItem._dt._uuid;
+					}
+					aUUIDs.push(sUuid);
+				});
 				var aNotSelectedObjects = [];
+				// filter out the unselected request results, and add uuid for them
 				for (var i = 0; i < tResult.length; i++) {
 					var oRequestObject = tResult[i];
 					var bIsSelected = false;
-					for (var j = 0; j < oConfig.value.length; j++) {
-						if (deepEqual(oRequestObject, oConfig.value[j])) {
+					for (var j = 0; j < aValues.length; j++) {
+						if (deepEqual(oRequestObject, aValues[j])) {
 							bIsSelected = true;
 							break;
 						}
 					}
 					if (!bIsSelected) {
+						oRequestObject._dt._uuid = Utils.generateUuidV4();
 						aNotSelectedObjects.push(oRequestObject);
 					}
+				}
+				// add uuid for each result in value, and mark them as selected
+				for (var k = 0; k < aValues.length; k++) {
+					var oValueItem = aValues[k];
+					oValueItem._dt = oValueItem._dt || {};
+					oValueItem._dt._selected = true;
+					oValueItem._dt._uuid = aUUIDs[k];
 				}
 				if (aNotSelectedObjects.length > 0) {
 					oModel.setProperty("/_allSelected", false);
@@ -251,10 +273,22 @@ sap.ui.define([
 					oModel.setProperty("/_allSelected", true);
 				}
 			} else {
+				// add uuid for each result in value, and mark them as selected
+				aValues.forEach(function (oItem) {
+					oItem._dt = oItem._dt || {};
+					oItem._dt._selected = true;
+					oItem._dt._uuid = oItem._dt._uuid || Utils.generateUuidV4();
+				});
 				oModel.setProperty("/_allSelected", true);
 			}
 			oModel.setProperty(sPath, aValues);
 		} else {
+			// add uuid for each request result
+			if (Array.isArray(tResult) && tResult.length > 0) {
+				tResult.forEach(function(oResult) {
+					oResult._dt._uuid = Utils.generateUuidV4();
+				});
+			}
 			oModel.setProperty("/_allSelected", false);
 		}
 		oModel.checkUpdate();
@@ -299,11 +333,11 @@ sap.ui.define([
 	ObjectListField.prototype.cleanDT = function(oValue) {
 		if (oValue) {
 			oValue.forEach(function(oItem) {
-				if (oItem && oItem.dt && oItem.dt._selected) {
-					delete oItem.dt._selected;
+				if (oItem && oItem._dt && oItem._dt._selected) {
+					delete oItem._dt._selected;
 				}
-				if (oItem && oItem.dt && deepEqual(oItem.dt, {})) {
-					delete oItem.dt;
+				if (oItem && oItem._dt && deepEqual(oItem._dt, {})) {
+					delete oItem._dt;
 				}
 			});
 		}

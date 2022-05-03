@@ -299,7 +299,6 @@ sap.ui.define([
 				oControl.attachSelectionChange(this.onSelectionChange.bind(this));
 			}
 		}
-		this._settingsModel = this.getModel("currentSettings");
 	};
 
 	StringField.prototype.onSelectionChange = function(oEvent) {
@@ -379,13 +378,13 @@ sap.ui.define([
 		return aOriginTranslatedValues;
 	};
 
-	StringField.prototype.getTranslationValueInTexts = function (sLanguage, sKey) {
+	StringField.prototype.getTranslationValueInTexts = function (sLanguage, sManifestPath) {
 		var sTranslationPath = "/texts/" + sLanguage;
 		var oProperty = this._settingsModel.getProperty(sTranslationPath) || {};
-		return oProperty[sKey];
+		return oProperty[sManifestPath];
 	};
 
-	StringField.prototype.setTranslationValueInTexts = function (sLanguage, sKey, sValue) {
+	StringField.prototype.setTranslationValueInTexts = function (sLanguage, sManifestPath, sValue) {
 		var sTranslationPath = "/texts";
 		var oData = this._settingsModel.getData();
 		if (!oData) {
@@ -394,7 +393,7 @@ sap.ui.define([
 		if (!oData.hasOwnProperty("texts")) {
 			var oTexts = {};
 			oTexts[sLanguage] = {};
-			oTexts[sLanguage][sKey] = sValue;
+			oTexts[sLanguage][sManifestPath] = sValue;
 			this._settingsModel.setProperty(sTranslationPath, oTexts);
 		} else {
 			sTranslationPath = "/texts/" + sLanguage;
@@ -404,7 +403,7 @@ sap.ui.define([
 			} else {
 				oLanguage = oData.texts[sLanguage];
 			}
-			oLanguage[sKey] = sValue;
+			oLanguage[sManifestPath] = sValue;
 			this._settingsModel.setProperty(sTranslationPath, oLanguage);
 		}
 	};

@@ -748,7 +748,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("In zh-CN (繁體中文)", function (assert) {
+		QUnit.test("In zh-CN (简体中文)", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
 				that.oEditor = createEditor("zh-CN");
