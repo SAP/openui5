@@ -1956,9 +1956,15 @@ sap.ui.define([
 		}
 
 		if (this.getDisplayTextForExecuteOnSelectionForStandardVariant() && (this.getStandardVariantKey() === oItem.key)) {
-			oExecuteOnSelectCtrl = new CheckBox({
+			oExecuteOnSelectCtrl = new CheckBox(this.getId() + "-manage-exe-0",{
 				wrapping: true,
 				text: this.getDisplayTextForExecuteOnSelectionForStandardVariant(),
+				select: fSelectCB,
+				selected: '{' + this._sModelName + ">executeOnSelect}"
+			});
+		} else if (this.getStandardVariantKey() === oItem.key) {
+			oExecuteOnSelectCtrl = new CheckBox(this.getId() + "-manage-exe-0",{
+				text: "",
 				select: fSelectCB,
 				selected: '{' + this._sModelName + ">executeOnSelect}"
 			});
