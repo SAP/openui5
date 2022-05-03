@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit,sinon */
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Icon",
@@ -9,8 +9,10 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/ui/core/Core",
 	"sap/base/util/extend",
-	"sap/ui/thirdparty/jquery"
-], function(JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore, extend, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/test/TestUtils"
+], function(JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore, extend, jQuery, ODataV4Model, TestUtils) {
 	"use strict";
 
 
@@ -256,5 +258,76 @@ sap.ui.define([
 
 		//clean up
 		sut.destroy();
+	});
+
+	QUnit.module("OData V4", {
+		before: function() {
+			// The TestUtils FakeServer Cannot be used together with the sap.ui.core.util.MockServer!
+			this.oFakeServer = TestUtils.useFakeServer(sinon.sandbox.create(), "sap/ui/core/demokit/sample/odata/v4/Products/data", {
+				"/MyService/$metadata": {
+					source: "metadata.xml"
+				},
+				"/MyService/ProductList(ProductID='DD402')/PRODUCT_2_BP?$skip=0&$top=2": {
+					message: {value: [{CompanyName: "SAP"}, {CompanyName: "SAP"}]}
+				},
+				"/MyService/ProductList(ProductID='DD402')/PRODUCT_2_BP?$skip=2&$top=2": {
+					message: {value: [{CompanyName: "SAP"}, {CompanyName: "SAP"}]}
+				}
+			});
+		},
+		beforeEach: function() {
+			this.oModel = new ODataV4Model({
+				serviceUrl: "/MyService/",
+				synchronizationMode: "None",
+				operationMode: "Server"
+			});
+
+			this.oTable = new Table({
+				growing: true,
+				growingThreshold: 2,
+				columns : new Column({
+					header : new Label({
+						text : "CompanyName"
+					}),
+					mergeDuplicates : true
+				}),
+				items: {
+					path: "",
+					template: new ColumnListItem({
+						cells: new Label({ text: "{CompanyName}" })
+					})
+				},
+				models: this.oModel,
+				bindingContexts: this.oModel.createBindingContext("/ProductList(ProductID='DD402')/PRODUCT_2_BP")
+			});
+
+			this.oTable.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			this.oTable.destroy();
+		},
+		after: function() {
+			this.oFakeServer.restore();
+		}
+	});
+
+	QUnit.test("Merge cells", function(assert) {
+		var that = this;
+
+		return new Promise(function(resolve) {
+			that.oTable.attachEventOnce("updateFinished", resolve);
+		}).then(function() {
+			assert.notOk(that.oTable.getItems()[0].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
+			assert.ok(that.oTable.getItems()[1].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
+			return new Promise(function(resolve) {
+				that.oTable.$("trigger").trigger("tap");
+				that.oTable.attachEventOnce("updateFinished", resolve);
+			});
+		}).then(function() {
+			assert.ok(that.oTable.getItems()[2].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
+			assert.ok(that.oTable.getItems()[3].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
+		});
 	});
 });
