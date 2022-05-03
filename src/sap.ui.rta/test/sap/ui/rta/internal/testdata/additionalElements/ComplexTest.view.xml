@@ -107,6 +107,9 @@
 									<smartForm:GroupElement id="EntityType01.Property10b" visible="false" label="Property10 - Property10b is technically invisible but this is not">
 										<TextArea value="{Property10b}"/>
 									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType01.Prop11" >
+										<smartField:SmartField editable="true" contextEditable="true" value="{Property11-visible-via-Field-Control}"/>
+									</smartForm:GroupElement>
 								</smartForm:Group>
 								<!--This Group is bound to EntityType02 because the form is bound to EntityType02 -->
 								<smartForm:Group id="GroupEntityType02" label="Group2 bound to EntityType02" >
