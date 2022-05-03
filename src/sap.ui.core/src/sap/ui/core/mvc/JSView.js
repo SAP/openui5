@@ -204,7 +204,7 @@ sap.ui.define([
 		Log.warning(
 			"Do not use deprecated sap.ui.core.mvc.JSView: (View: " + (mSettings.id || mSettings.viewName) + "). " +
 			"Use typed views defined by 'sap.ui.core.mvc.View.extend()' and created by 'sap.ui.core.mvc.View.create()'. " +
-			"For further information, have a look at https://sapui5.hana.ondemand.com/#/topic/e6bb33d076dc4f23be50c082c271b9f0.",
+			"For further information, have a look at https://openui5.hana.ondemand.com/topic/e6bb33d076dc4f23be50c082c271b9f0.",
 			"sap.ui.core.mvc.JSView",
 			null,
 			function () {

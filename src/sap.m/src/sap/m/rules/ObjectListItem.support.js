@@ -31,7 +31,7 @@ sap.ui.define(["sap/ui/support/library"],
 			resolution: "Use markers aggregation",
 			resolutionurls: [{
 				text: "API Reference: sap.m.ObjectListItem",
-				href: "https://sapui5.hana.ondemand.com/#/api/sap.m.ObjectListItem"
+				href: "https://openui5.hana.ondemand.com/api/sap.m.ObjectListItem"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.ObjectListItem")

@@ -232,7 +232,7 @@
 						<Link
 							text="{i18n>developmentDocumentation}"
 							target="_blank"
-							href="https://openui5.hana.ondemand.com/#/topic/21ea0ea94614480d9a910b2e93431291"
+							href="https://openui5.hana.ondemand.com/topic/21ea0ea94614480d9a910b2e93431291"
 							class="sapUiSmallMarginTop IconDescriptionLink"/>
 						<Link
 							text="{i18n>SAPFioriDesignGuidelines}"

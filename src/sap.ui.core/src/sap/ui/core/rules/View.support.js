@@ -39,7 +39,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/library", "sap/ui/core/Element", 
 		resolution: "Define the XML view as '<mvc:View ...>' and configure the XML namepspace as 'xmlns:mvc=\"sap.ui.core.mvc\"'",
 		resolutionurls: [{
 			text: "Documentation: Namespaces in XML Views",
-			href: "https://sapui5.hana.ondemand.com/#/topic/2421a2c9fa574b2e937461b5313671f0"
+			href: "https://openui5.hana.ondemand.com/topic/2421a2c9fa574b2e937461b5313671f0"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var aXMLViews = oScope.getElements().filter(function (oControl) { return oControl.getMetadata().getName() === "sap.ui.core.mvc.XMLView"; });
@@ -72,7 +72,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/library", "sap/ui/core/Element", 
 		resolution: "Set the namespace of the control library that holds most of the controls you use as default namespace (e.g. xmlns=\"sap.m\")",
 		resolutionurls: [{
 			text: "Documentation: Namespaces in XML Views",
-			href: "https://sapui5.hana.ondemand.com/#/topic/2421a2c9fa574b2e937461b5313671f0"
+			href: "https://openui5.hana.ondemand.com/topic/2421a2c9fa574b2e937461b5313671f0"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var aXMLViews = oScope.getElements().filter(function (oControl) { return oControl.getMetadata().getName() === "sap.ui.core.mvc.XMLView"; });
@@ -103,7 +103,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/library", "sap/ui/core/Element", 
 		resolution: "Start the Control tag with upper case",
 		resolutionurls: [{
 			text: "Documentation: SAPUI5 Control Development Guidelines",
-			href: "https://sapui5.hana.ondemand.com/#/topic/4549da61e2d949d6a3d20ad8a9d17a6f"
+			href: "https://openui5.hana.ondemand.com/topic/4549da61e2d949d6a3d20ad8a9d17a6f"
 		}],
 		check: function (oIssueManager, oCoreFacade, oScope) {
 			var aRelevantLogMessages = Log.getLogEntries().filter(function(oEntry) {
@@ -135,7 +135,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/library", "sap/ui/core/Element", 
 		resolution: "Remove the unused namespaces from the view definition",
 		resolutionurls: [{
 			text: "Documentation: Namespaces in XML Views",
-			href: "https://sapui5.hana.ondemand.com/#/topic/2421a2c9fa574b2e937461b5313671f0"
+			href: "https://openui5.hana.ondemand.com/topic/2421a2c9fa574b2e937461b5313671f0"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var aXMLViews = oScope.getElements().filter(function (oControl) { return oControl.getMetadata().getName() === "sap.ui.core.mvc.XMLView"; });
@@ -186,7 +186,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/library", "sap/ui/core/Element", 
 		resolution: "Refer to the API of the element which property should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
+			href: "https://openui5.hana.ondemand.com/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName(Element).forEach(function(oElement) {
@@ -229,7 +229,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/library", "sap/ui/core/Element", 
 		resolution: "Refer to the API of the element which element should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
+			href: "https://openui5.hana.ondemand.com/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName(Element).forEach(function(oElement) {
@@ -263,7 +263,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/library", "sap/ui/core/Element", 
 		resolution: "Refer to the API of the element which aggregation should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
+			href: "https://openui5.hana.ondemand.com/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName(Element).forEach(function(oElement) {
@@ -303,7 +303,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/library", "sap/ui/core/Element", 
 		resolution: "Refer to the API of the element which association should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
+			href: "https://openui5.hana.ondemand.com/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName(Element).forEach(function(oElement) {
@@ -343,7 +343,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/library", "sap/ui/core/Element", 
 		resolution: "Refer to the API of the element which event should be used instead.",
 		resolutionurls: [{
 			text: "API Reference",
-			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
+			href: "https://openui5.hana.ondemand.com/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName(Element).forEach(function(oElement) {

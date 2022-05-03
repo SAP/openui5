@@ -34,7 +34,7 @@ sap.ui.define([
 		resolution: "Control and renderer must be migrated to modern rendering syntax. For more information consult with documentation.",
 		resolutionurls: [{
 			text: "Documentation: RenderManager syntax",
-			href: "https://sapui5.hana.ondemand.com/#/api/sap.ui.core.RenderManager"
+			href: "https://openui5.hana.ondemand.com/api/sap.ui.core.RenderManager"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var aControls = oScope.getElements().filter(function (oElement) { return oElement.isA("sap.ui.core.Control"); });

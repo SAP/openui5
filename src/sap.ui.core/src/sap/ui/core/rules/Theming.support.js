@@ -38,10 +38,10 @@ sap.ui.define(["sap/ui/support/library", "./CoreHelper.support", "sap/ui/thirdpa
 		resolution: "Avoid CSS manipulations with custom CSS values as this could lead to rendering issues ",
 		resolutionurls: [{
 			text: 'CSS Styling Issues',
-			href: 'https://openui5.hana.ondemand.com/#/topic/9d87f925dfbb4e99b9e2963693aa00ef'
+			href: 'https://openui5.hana.ondemand.com/topic/9d87f925dfbb4e99b9e2963693aa00ef'
 		}, {
 			text: 'General Guidelines',
-			href: 'https://openui5.hana.ondemand.com/#/topic/5e08ff90b7434990bcb459513d8c52c4'
+			href: 'https://openui5.hana.ondemand.com/topic/5e08ff90b7434990bcb459513d8c52c4'
 		}],
 		check: function (issueManager, oCoreFacade, oScope) {
 			var cssFilesMessage = "Following stylesheet file(s) contain 'custom' CSS that could affects (overwrites) UI5 controls' own styles: \n",
@@ -95,10 +95,10 @@ sap.ui.define(["sap/ui/support/library", "./CoreHelper.support", "sap/ui/thirdpa
 		resolution: "Avoid CSS manipulations with custom CSS values as this could lead to rendering issues ",
 		resolutionurls: [{
 			text: 'CSS Styling Issues',
-			href: 'https://openui5.hana.ondemand.com/#/topic/9d87f925dfbb4e99b9e2963693aa00ef'
+			href: 'https://openui5.hana.ondemand.com/topic/9d87f925dfbb4e99b9e2963693aa00ef'
 		}, {
 			text: 'General Guidelines',
-			href: 'https://openui5.hana.ondemand.com/#/topic/5e08ff90b7434990bcb459513d8c52c4'
+			href: 'https://openui5.hana.ondemand.com/topic/5e08ff90b7434990bcb459513d8c52c4'
 		}],
 		check: function (issueManager, oCoreFacade, oScope) {
 			var controlCustomCssHashMap = {},

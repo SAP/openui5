@@ -89,7 +89,7 @@ sap.ui.define(["sap/ui/support/library"],
 		resolution: "Enable the \"densityAware\" property of this image control",
 		resolutionurls: [{
 			text: "API Refrence for sap.m.Image",
-			href: "https://sapui5.hana.ondemand.com/#/api/sap.m.Image"
+			href: "https://openui5.hana.ondemand.com/api/sap.m.Image"
 		}],
 		check: function (oIssueManager, oCoreFacade, oScope, fnResolve) {
 

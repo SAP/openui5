@@ -47,7 +47,7 @@ sap.ui.define([
 		resolution: "Use asynchronous XHR calls instead",
 		resolutionurls: [{
 			text: 'Documentation: Loading a Module',
-			href: 'https://sapui5.hana.ondemand.com/#/topic/d12024e38385472a89c1ad204e1edb48'
+			href: 'https://openui5.hana.ondemand.com/topic/d12024e38385472a89c1ad204e1edb48'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			// get the controllers and the associated viewId
@@ -149,7 +149,7 @@ sap.ui.define([
 		resolutionurls: [{
 			text: 'Documentation: Modularization',
 			// TODO: link to the modularization dev guide
-			href: 'https://openui5.hana.ondemand.com/#/api'
+			href: 'https://openui5.hana.ondemand.com/api'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var oLoggedObjects = oScope.getLoggedObjects("jquery.sap.stubs");
@@ -182,7 +182,7 @@ sap.ui.define([
 		resolutionurls: [{
 			text: 'Documentation: Modularization',
 			// TODO: link to the modularization dev guide
-			href: 'https://openui5.hana.ondemand.com/#/topic/a075ed88ef324261bca41813a6ac4a1c'
+			href: 'https://openui5.hana.ondemand.com/topic/a075ed88ef324261bca41813a6ac4a1c'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope, fnResolve) {
 			if (oScope.getType() === "global") {
@@ -222,7 +222,7 @@ sap.ui.define([
 		resolution: "Avoid using synchronous factory functions. Use the create() and/or load() functions of the respective modules instead. For example: View.create(...) or Component.load(). Migrate to the modern module API as documented.",
 		resolutionurls: [{
 			text: 'Documentation: Legacy Factories Replacement',
-			href: 'https://openui5.hana.ondemand.com/#/topic/491bd9c70b9f4c4d913c8c7b4a970833'
+			href: 'https://openui5.hana.ondemand.com/topic/491bd9c70b9f4c4d913c8c7b4a970833'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var aFactoryTypes = [
@@ -266,7 +266,7 @@ sap.ui.define([
 		resolution: "Avoid using sap.ui.core.mvc.JSView. Instead use Typed Views by defining the view class with 'sap.ui.core.mvc.View.extend' and creating the view instances with 'sap.ui.core.mvc.View.create'.",
 		resolutionurls: [{
 			text: 'Documentation: Typed Views',
-			href: 'https://openui5.hana.ondemand.com/#/topic/e6bb33d076dc4f23be50c082c271b9f0'
+			href: 'https://openui5.hana.ondemand.com/topic/e6bb33d076dc4f23be50c082c271b9f0'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var oLoggedObjects = oScope.getLoggedObjects("sap.ui.core.mvc.JSView");
@@ -296,11 +296,11 @@ sap.ui.define([
 		resolution: "Check the details of the findings for tips to fix the issue.",
 		resolutionurls: [{
 			text: "Performance: Speed Up Your App",
-			href: "https://sapui5.hana.ondemand.com/#/topic/408b40efed3c416681e1bd8cdd8910d4"
+			href: "https://openui5.hana.ondemand.com/topic/408b40efed3c416681e1bd8cdd8910d4"
 		},
 		{
 			text: "Configuration of 'sap.ui.loader'",
-			href: "https://sapui5.hana.ondemand.com/#/api/sap.ui.loader"
+			href: "https://openui5.hana.ondemand.com/api/sap.ui.loader"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var oLoggedObjects = oScope.getLoggedObjects("SyncXHR");
@@ -331,7 +331,7 @@ sap.ui.define([
 		resolution: "Check the details of the findings for tips to fix the issue.",
 		resolutionurls: [{
 			text: 'Documentation: Adapting to the Modularization of the Core',
-			href: 'https://openui5.hana.ondemand.com/#/topic/b8fdf0c903424c9191f142842323ae22'
+			href: 'https://openui5.hana.ondemand.com/topic/b8fdf0c903424c9191f142842323ae22'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var oLoggedObjects = oScope.getLoggedObjects("Deprecation");
