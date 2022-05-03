@@ -4,6 +4,10 @@
 /* ====================================== */
 
 .sapMRI {
+	&:not(.sapMRIDisabled):not(.sapMRIDisplayOnly):not(.sapMRIReadOnly):hover {
+		opacity: 0.9;
+	}
+
 	.sapMRIUnsel {
 		color: @sapContent_UnratedColor;
 	}
@@ -46,4 +50,8 @@ html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 .sapMRI .sapUiIcon,
 .sapMRI .sapMImg {
 	top: -1px;
+}
+
+.sapMRIIconSel, .sapMRIIconUnsel {
+	text-shadow: @sapContent_TextShadow;
 }

@@ -4,6 +4,10 @@
 /* ====================================== */
 
 .sapMRI {
+	&:not(.sapMRIDisabled):not(.sapMRIDisplayOnly):not(.sapMRIReadOnly):hover {
+		opacity: 0.9;
+	}
+
 	.sapMRIUnsel {
 		color: @sapContent_UnratedColor;
 	}
@@ -40,6 +44,9 @@ html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 
 .sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov, .sapMRIIconReadOnly {
 	font-size: 1.5rem;
+}
+.sapMRIIconSel, .sapMRIIconUnsel {
+	text-shadow: @sapContent_TextShadow;
 }
 
 /* temporary workaround of an issue in the icon font */
