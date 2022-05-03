@@ -127,19 +127,20 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oDesignTime.attachEventOnce("synced", function() {
-					var oButtonOverlay = OverlayRegistry.getOverlay(oButton);
-					var oInnerOverlay = oButtonOverlay.getParentElementOverlay();
-					assert.equal(oInnerOverlay.getElement().getId(), "inner-layout", "then the button overlay is inside in inner-layout overlay");
-					var oOuterOverlay = oInnerOverlay.getParentElementOverlay();
-					assert.equal(oOuterOverlay.getElement().getId(), "outer-layout", "then the inner-layout overlay is chained at outer-layout overlay");
-					assert.ok(DOMUtil.isVisible(oOuterOverlay.getDomRef()), "then the outer-layout overlay is visible");
-					assert.ok(DOMUtil.isVisible(oInnerOverlay.getDomRef()), "then the inner-layout overlay is visible");
-					assert.ok(DOMUtil.isVisible(oButtonOverlay.getDomRef()), "then the button-layout overlay is visible");
-
-					oOuterLayout.destroy();
-					fnDone();
+					// TODO: Remove when it is no longer allowed that DT "synced" event is called before all applyStyles calls are finalized
+					window.requestAnimationFrame(function() {
+						var oButtonOverlay = OverlayRegistry.getOverlay(oButton);
+						var oInnerOverlay = oButtonOverlay.getParentElementOverlay();
+						assert.equal(oInnerOverlay.getElement().getId(), "inner-layout", "then the button overlay is inside in inner-layout overlay");
+						var oOuterOverlay = oInnerOverlay.getParentElementOverlay();
+						assert.equal(oOuterOverlay.getElement().getId(), "outer-layout", "then the inner-layout overlay is chained at outer-layout overlay");
+						assert.ok(DOMUtil.isVisible(oOuterOverlay.getDomRef()), "then the outer-layout overlay is visible");
+						assert.ok(DOMUtil.isVisible(oInnerOverlay.getDomRef()), "then the inner-layout overlay is visible");
+						assert.ok(DOMUtil.isVisible(oButtonOverlay.getDomRef()), "then the button-layout overlay is visible");
+						oOuterLayout.destroy();
+						fnDone();
+					});
 				});
-
 				oInnerLayout = new VerticalLayout("inner-layout");
 				oButton = new Button("button1");
 				oInnerLayout.addContent(oButton);
