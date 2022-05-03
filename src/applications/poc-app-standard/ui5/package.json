@@ -1,0 +1,37 @@
+{
+	"name": "openui5-sample-app",
+	"version": "0.2.0",
+	"description": "Sample of an OpenUI5 app",
+	"private": true,
+	"scripts": {
+		"start": "ui5 serve",
+		"lint": "eslint webapp",
+		"karma": "karma start",
+		"karma-ci": "rimraf coverage && karma start karma-ci.conf.js",
+		"watch": "npm run karma",
+		"test": "npm run lint && npm run karma-ci",
+		"build": "ui5 build -a --clean-dest",
+		"build-app": "ui5 build",
+		"build-themes": "ui5 build -a '--exclude-task=*' --include-task=buildThemes --clean-dest",
+		"build-self-contained": "ui5 build self-contained -a --clean-dest",
+		"serve-dist": "ws --compress --http2 -d dist"
+	},
+	"dependencies": {
+		"@openui5/sap.ui.core": "^1.102.0-SNAPSHOT",
+		"@openui5/sap.m": "^1.102.0-SNAPSHOT",
+		"@openui5/themelib_sap_fiori_3": "^1.102.0-SNAPSHOT"
+	},
+	"devDependencies": {
+		"@ui5/cli": "^2.14.4",
+		"eslint": "^7.32.0",
+		"karma": "^6.3.12",
+		"karma-chrome-launcher": "^3.1.0",
+		"karma-coverage": "^2.1.0",
+		"karma-ui5": "^2.4.0",
+		"local-web-server": "^4.2.1",
+		"rimraf": "^3.0.2"
+	},
+	"workspaces": [
+		"../../../*"
+	]
+}

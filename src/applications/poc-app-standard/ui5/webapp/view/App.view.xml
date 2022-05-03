@@ -1,0 +1,73 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:f="sap.f" controllerName="sap.ui.demo.todo.controller.App" displayBlock="true">
+		<App>
+			<Page>
+				<headerContent>
+					<Toolbar>
+						<Image core:require="{ Helper: 'sap/ui/demo/todo/util/Helper' }" src="{:= Helper.resolvePath('./img/logo_ui5.png') }"/>
+						<ToolbarSpacer/>
+						<Title text="{i18n>TITLE}" level="H3"/>
+						<ToolbarSpacer/>
+					</Toolbar>
+				</headerContent>
+
+				<content>
+                <Input class="todoInput" id="addTodoItemInput" value="{/newTodo}" placeholder="{i18n>INPUT_PLACEHOLDER}" change=".addTodo" />
+                    <List id="todoList"
+                        items="{ path: '/todos', events: { change: '.updateItemsLeftCount' } }"
+                        mode="None"
+                        growing="true"
+                        growingScrollToLoad="true"
+                        showNoData="false"
+                        showSeparators="None">
+                        <headerToolbar>
+                            <OverflowToolbar class="sapUiSizeCompact" visible="{= !${view>/isMobile} }">
+                                <ToolbarSpacer />
+                                <SearchField id="searchTodoItemsInput" liveChange=".onSearch" width="20rem"/>
+                                <SegmentedButton selectedKey="all" selectionChange=".onFilter" class="sapMSegmentedButtonNoAutoWidth">
+                                    <items>
+                                        <SegmentedButtonItem text="{i18n>LABEL_ALL}" key="all"/>
+                                        <SegmentedButtonItem text="{i18n>LABEL_ACTIVE}" key="active"/>
+                                        <SegmentedButtonItem text="{i18n>LABEL_COMPLETED}" key="completed"/>
+                                    </items>
+                                </SegmentedButton>
+                                <Button id="clearCompleted" enabled="{/itemsRemovable}" icon="sap-icon://delete" text="{i18n>CLEAR_COMPLETED}" press=".clearCompleted"/>
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <infoToolbar>
+                            <OverflowToolbar
+                                visible="{= !!${view>/filterText} }"
+                                active="false">
+                                <Label text="{view>/filterText}" />
+                            </OverflowToolbar>
+                        </infoToolbar>
+                        <CustomListItem>
+                            <HBox>
+                                <CheckBox selected="{completed}"  />
+                                <VBox justifyContent="Center">
+                                    <Text text="{title}"/>
+                                </VBox>
+                            </HBox>
+                            <customData>
+                                <core:CustomData key="todo-item-completed" value="{= String(${completed})}" writeToDom="true" />
+                            </customData>
+                        </CustomListItem>
+                    </List>
+				</content>
+
+				<footer>
+					<OverflowToolbar visible="{= !!${view>/isMobile} }">
+						<SegmentedButton selectedKey="all" selectionChange=".onFilter" class="sapMSegmentedButtonNoAutoWidth">
+							<items>
+								<SegmentedButtonItem text="All" key="all"/>
+								<SegmentedButtonItem text="Active" key="active"/>
+								<SegmentedButtonItem text="Completed" key="completed"/>
+							</items>
+						</SegmentedButton>
+						<ToolbarSpacer />
+						<Button id="clearCompleted-footer" enabled="{/itemsRemovable}" icon="sap-icon://delete" text="{i18n>CLEAR_COMPLETED}" press=".clearCompleted"/>
+					</OverflowToolbar>
+				</footer>
+
+			</Page>
+		</App>
+</mvc:View>
