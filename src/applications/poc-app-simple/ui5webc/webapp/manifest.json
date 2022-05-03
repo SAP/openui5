@@ -1,9 +1,0 @@
-{
-    "sap.app": {
-        "id": "poc",
-        "type": "application",
-        "applicationVersion": {
-            "version": "1.0.0"
-        }
-    }
-}
