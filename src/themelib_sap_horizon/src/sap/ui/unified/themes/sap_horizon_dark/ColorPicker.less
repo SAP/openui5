@@ -122,7 +122,13 @@
 }
 
 .sapUnifiedColorPicker .sapMSliderInner .sapMSliderHandle:focus {
-	outline: 0.125rem solid @sapUiContentFocusColor;
+	outline: 0.1875rem solid @sapUiContentFocusColor;
+}
+
+.sapUnifiedColorPicker .sapMSliderInner .sapMSliderHandle:focus::before {
+	content: "";
+	outline: 0.0625rem solid @sapContent_ContrastFocusColor;
+	outline-offset: -0.125rem;
 }
 
 .sapUnifiedColorPicker .sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover > .sapMSliderHandle):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
@@ -133,4 +139,5 @@
 .sapUnifiedColorPicker .sapMSliderInner:not(.sapMSliderInnerDisabled).sapMSliderPressed .sapMSliderHandle,
 .sapUnifiedColorPicker .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
 	border: 0.125rem solid darken(@sapUiFieldBorderColor, 15);
+	background-color: transparent;
 }

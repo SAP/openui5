@@ -1,7 +1,7 @@
-/* =========================================== */
-/* CSS for control sap.ui.unified.ColorPicker  */
-/* Horizon High Contrast White theme           */
-/* =========================================== */
+/* ========================================== */
+/* CSS for control sap.ui.unified.ColorPicker */
+/* Horizon High Contrast Black theme          */
+/* ========================================== */
 
 .sapUiColorPicker-ColorPickerSlider.sapUiSliHori .sapUiSliBar,
 .sapUiColorPicker-ColorPickerSlider.sapUiSliHori .sapUiSliBar .sapUiSliHiLi {
@@ -19,10 +19,10 @@
 	.sapUiColorPicker-ColorPickerAlphaSlider,
 	.sapUiColorPicker-ColorPickerSlider {
 		.sapMSliderHandle {
+			width: 1.0625rem;
 			top: -0.50rem;
 			border: 0.125rem solid @sapUiContentContrastShadowColor;
 			background-color: transparent;
-			height: 1.625rem;
 			box-shadow: inset 0 0 0 0.125rem @sapUiContentForegroundColor;
 		}
 		.sapMSliderProgress {
@@ -34,6 +34,12 @@
 			&.sapMSliderPressed:not(.sapMSliderInnerDisabled ) > .sapMSliderHandle {
 				//override the blue border color when the handle is pressed
 				border-color: @sapUiContentContrastShadowColor;
+			}
+			.sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
+				content: none;
+			}
+			&::before {
+				content: none
 			}
 		}
 	}

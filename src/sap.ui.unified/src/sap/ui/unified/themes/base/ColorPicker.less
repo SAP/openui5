@@ -378,7 +378,8 @@ html[data-sap-ui-browser^="ie"] .sapMPopover .sapUiColorPicker-ColorPickerMatrix
 		}
 		//slider handle
 		.sapMSliderHandle {
-			width: 0.6875rem;
+			width: 0.9375rem;
+			height: 1.875rem;
 			box-shadow: inset 0 0 0 0.125rem @sapUiContentContrastShadowColor;
 			top: -0.45rem;
 			//to center the handle at the both ends
@@ -386,6 +387,9 @@ html[data-sap-ui-browser^="ie"] .sapMPopover .sapUiColorPicker-ColorPickerMatrix
 			//remove the hover of the slider handle
 			&:hover {
 				background-color: transparent;
+			}
+			&:focus:before {
+				border-radius: 0.5625rem;
 			}
 		}
 	}
