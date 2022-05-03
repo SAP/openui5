@@ -14,15 +14,26 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/Sorter",
+	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
 ], function (Button, mobileLibrary, Dialog, Input, Label, MessageToast, Text, Controller, Title,
-		SimpleForm, Sorter, TestUtils) {
+		 SimpleForm, Sorter, ODataModel, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.LateProperties.Main", {
+		onCleanUpOptimisticBatchCache : function (oEvent) {
+			var oTimeStamp = new Date(Date.now()
+				- parseInt(oEvent.getParameter("id").split("days")[1]) * 864000);
+
+			ODataModel.cleanUpOptimisticBatch(oTimeStamp).then(function () {
+				MessageToast.show("Optimistic batch cache entries deleted");
+			}, function (oError) {
+				MessageToast.show("Cache cleanup failed: " + oError);
+			}).catch();
+		},
 		onInit : function () {
 			var bOptimisticBatch = TestUtils.isOptimisticBatch(),
 				that = this;
@@ -49,7 +60,6 @@ sap.ui.define([
 				that.oView.byId("SalesOrderList").getBinding("items").resume();
 			}, 20);
 		},
-
 		onOpenEditDeliveryDate : function (oEvent) {
 			var oDialog = new Dialog({
 					title : "Edit Delivery Date",

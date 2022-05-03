@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/BindingMode",
@@ -42,7 +43,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
 		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		SyncPromise, coreLibrary, Message, BindingMode, BaseContext, Model, OperationMode, URI) {
+		SyncPromise, CacheManager, coreLibrary, Message, BindingMode, BaseContext, Model,
+		OperationMode, URI) {
 	"use strict";
 
 	var rApplicationGroupID = /^\w+$/,
@@ -2251,6 +2253,7 @@ sap.ui.define([
 	 *
 	 * @experimental As of version 1.100.0
 	 * @private
+	 * @see cleanUpOptimisticBatch
 	 * @ui5-restricted sap.fe
 	 */
 	ODataModel.prototype.setOptimisticBatchEnabler = function (fnOptimisticBatchEnabler) {
@@ -2339,6 +2342,30 @@ sap.ui.define([
 			return !oBinding.isResolved();
 		}).some(function (oBinding) {
 			return oBinding[sCallbackName](vParameter);
+		});
+	};
+
+	//*********************************************************************************************
+	// "static" functions
+	//*********************************************************************************************
+
+	/**
+	 * Cleans up the optimistic batch cache to a given point in time.
+	 *
+	 * @param {Date} [dOlderThan] The point in time from which on older cache entries are deleted.
+	 *   If not supplied, all optimistic batch entries are deleted.
+	 * @returns {Promise} A promise resolving without a defined result, or rejecting with an error
+	 *   if deletion fails.
+	 *
+	 * @experimental As of version 1.102.0
+	 * @private
+	 * @see #setOptimisticBatchEnabler
+	 * @ui5-restricted sap.fe
+	 */
+	ODataModel.cleanUpOptimisticBatch = function (dOlderThan) {
+		return CacheManager.delWithFilters({
+			olderThan : dOlderThan,
+			prefix : "sap.ui.model.odata.v4.optimisticBatch:"
 		});
 	};
 

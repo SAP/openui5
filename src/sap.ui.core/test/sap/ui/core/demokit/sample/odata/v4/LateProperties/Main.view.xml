@@ -2,7 +2,6 @@
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.LateProperties.Main"
 	xmlns="sap.m"
-	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
 		<Table id="SalesOrderList" growing="true" growingThreshold="5"
@@ -11,6 +10,19 @@
 			<headerToolbar>
 				<Toolbar>
 					<Title text="Sales Order" level="H1"/>
+					<ToolbarSpacer/>
+					<MenuButton icon="sap-icon://reset" tooltip="Cleanup Optimistic Batch Cache">
+						<Menu>
+							<MenuItem id="days0" text="All" press=".onCleanUpOptimisticBatchCache"
+								tooltip="All Optimistic Batch Cache Entries"/>
+							<MenuItem id="days30" text="One Month Ago"
+								press=".onCleanUpOptimisticBatchCache"
+								tooltip="Optimistic Batch Cache Entries One Month Ago"/>
+							<MenuItem id="days360" text="One Year Ago"
+								press=".onCleanUpOptimisticBatchCache"
+								tooltip="Optimistic Batch Cache Entries One Year Ago"/>
+						</Menu>
+					</MenuButton>
 				</Toolbar>
 			</headerToolbar>
 			<columns>

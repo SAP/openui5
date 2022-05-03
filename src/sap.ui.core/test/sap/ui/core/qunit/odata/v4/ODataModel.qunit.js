@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
@@ -19,9 +20,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/core/library"
-], function (Log, SyncPromise, Message, Binding, BindingMode, BaseContext, Model, OperationMode,
-		Context, ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor, _Parser,
-		_Requestor, library) {
+], function (Log, SyncPromise, CacheManager, Message, Binding, BindingMode, BaseContext, Model,
+		OperationMode, Context, ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor,
+		_Parser, _Requestor, library) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -2761,6 +2762,35 @@ sap.ui.define([
 			// code under test - to late
 			oModel.setOptimisticBatchEnabler("n/a");
 		}, new Error("The setter is called after a non-optimistic batch is sent"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("cleanUpOptimisticBatch: default", function (assert) {
+		this.mock(CacheManager).expects("delWithFilters")
+			.withExactArgs({
+				olderThan : undefined,
+				prefix : "sap.ui.model.odata.v4.optimisticBatch:"
+			})
+			.resolves("~nothing~");
+
+		// code under test
+		return ODataModel.cleanUpOptimisticBatch().then(function (oResult) {
+			assert.strictEqual(oResult, "~nothing~");
+		});
+	});
+
+	QUnit.test("cleanUpOptimisticBatch: with olderThan", function (assert) {
+		this.mock(CacheManager).expects("delWithFilters")
+			.withExactArgs({
+				olderThan : "~anyDate~",
+				prefix : "sap.ui.model.odata.v4.optimisticBatch:"
+			})
+			.resolves("~nothing~");
+
+		// code under test
+		return ODataModel.cleanUpOptimisticBatch("~anyDate~").then(function (oResult) {
+			assert.strictEqual(oResult, "~nothing~");
+		});
 	});
 
 	//*********************************************************************************************
