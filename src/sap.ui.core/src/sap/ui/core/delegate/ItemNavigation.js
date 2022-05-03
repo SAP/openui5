@@ -13,13 +13,12 @@ sap.ui.define([
 	'sap/ui/base/EventProvider',
 	"sap/base/assert",
 	"sap/base/Log",
-	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	// jQuery custom selectors ":sapFocusable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(EventProvider, assert, Log, containsOrEquals, KeyCodes, jQuery) {
+	function(EventProvider, assert, Log, KeyCodes, jQuery) {
 	"use strict";
 	/* eslint-disable no-lonely-if */
 
@@ -786,7 +785,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ItemNavigation.prototype.onsapfocusleave = function(oEvent) {
-		if (!oEvent.relatedControlId || !containsOrEquals(this.oDomRef, sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !this.oDomRef || !this.oDomRef.contains(sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 
 			// entirely leaving the control handled by this ItemNavigation instance
 			var iIndex;
@@ -814,7 +813,7 @@ sap.ui.define([
 					}
 				}
 
-				if (!oEvent.relatedControlId || containsOrEquals(oParentDomRef, sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+				if (!oEvent.relatedControlId || oParentDomRef.contains(sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 					jQuery(this.aItemDomRefs[this.iFocusedIndex]).attr("tabindex", -1);
 				}
 			}
@@ -864,12 +863,12 @@ sap.ui.define([
 
 		};
 
-		if (containsOrEquals(this.oDomRef, oSource)) {
+		if (this.oDomRef && this.oDomRef.contains(oSource)) {
 
 			// the mouse down occured inside the main dom ref
-			for (var i = 0; i < this.aItemDomRefs.length;i++) {
+			for (var i = 0; i < this.aItemDomRefs.length; i++) {
 				var oItem = this.aItemDomRefs[i];
-				if (containsOrEquals(oItem,oSource)) {
+				if (oItem && oItem.contains(oSource)) {
 					if (!this.bTableMode) {
 
 						// the mousedown occured inside of an item
@@ -920,7 +919,7 @@ sap.ui.define([
 	 */
 	ItemNavigation.prototype.onsapnext = function(oEvent) {
 
-		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!this.oDomRef || !this.oDomRef.contains(oEvent.target)) {
 
 			// current element is not part of the navigation content
 			return;
@@ -1053,7 +1052,7 @@ sap.ui.define([
 	 */
 	ItemNavigation.prototype.onsapprevious = function(oEvent) {
 
-		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!this.oDomRef || !this.oDomRef.contains(oEvent.target)) {
 
 			// current element is not part of the navigation content
 			return;
@@ -1195,7 +1194,7 @@ sap.ui.define([
 	 */
 	ItemNavigation.prototype.onsappageup = function(oEvent) {
 
-		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!this.oDomRef || !this.oDomRef.contains(oEvent.target)) {
 
 			// current element is not part of the navigation content
 			return;
@@ -1258,7 +1257,7 @@ sap.ui.define([
 	 */
 	ItemNavigation.prototype.onsappagedown = function(oEvent) {
 
-		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!this.oDomRef || !this.oDomRef.contains(oEvent.target)) {
 
 			// current element is not part of the navigation content
 			return;
@@ -1322,7 +1321,7 @@ sap.ui.define([
 	 */
 	ItemNavigation.prototype.onsaphome = function(oEvent) {
 
-		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!this.oDomRef || !this.oDomRef.contains(oEvent.target)) {
 
 			// current element is not part of the navigation content
 			// or shift or alt key is pressed
@@ -1396,7 +1395,7 @@ sap.ui.define([
 	 */
 	ItemNavigation.prototype.onsapend = function(oEvent) {
 
-		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!this.oDomRef || !this.oDomRef.contains(oEvent.target)) {
 
 			// current element is not part of the navigation content
 			// or shift or alt key is pressed

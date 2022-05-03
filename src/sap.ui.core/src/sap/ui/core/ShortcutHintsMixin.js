@@ -8,7 +8,6 @@ sap.ui.define([
 	"./ShortcutHint",
 	"./Popup",
 	"./InvisibleText",
-	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/checkMouseEnterOrLeave",
 	"sap/ui/Device"
 ],
@@ -18,7 +17,6 @@ sap.ui.define([
 		ShortcutHint,
 		Popup,
 		InvisibleText,
-		containsOrEquals,
 		checkMouseEnterOrLeave,
 		Device
 	) {
@@ -336,7 +334,7 @@ sap.ui.define([
 			oHintInfo = aInfos[i];
 			oHintInfo.ref = document.getElementById(oHintInfo.id);
 
-			if (containsOrEquals(oHintInfo.ref, domEventTarget)) {
+			if (oHintInfo.ref && oHintInfo.ref.contains(domEventTarget)) {
 				aResultInfos.push(oHintInfo);
 			}
 		}
@@ -462,7 +460,7 @@ sap.ui.define([
 
 			if (checkMouseEnterOrLeave(oEvent, oShortcutHintRefs[0].ref)) {
 				// do not hide if the element is focused
-				if (containsOrEquals(oShortcutHintRefs[0].ref, document.activeElement)) {
+				if (oShortcutHintRefs[0].ref.contains(document.activeElement)) {
 					return;
 				}
 

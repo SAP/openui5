@@ -5,13 +5,12 @@
 // Provides class sap.ui.core.FocusHandler
 sap.ui.define([
 	'../base/Object',
-	"sap/ui/dom/containsOrEquals",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control"
 ],
-	function(BaseObject, containsOrEquals, Log, jQuery) {
+	function(BaseObject, Log, jQuery) {
 	"use strict";
 
 
@@ -340,7 +339,7 @@ sap.ui.define([
 					oUiArea = oCore.getUIArea(oControlUIArea.getId());
 				} else {
 					var oPopupUIAreaDomRef = oCore.getStaticAreaRef();
-					if (containsOrEquals(oPopupUIAreaDomRef, oEvent.target)) {
+					if (oPopupUIAreaDomRef.contains(oEvent.target)) {
 						oUiArea = oCore.getUIArea(oPopupUIAreaDomRef.id);
 					}
 				}
