@@ -880,13 +880,13 @@
         "dimensions": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ContentType.Analytical.MeasureAndDimension"
+            "$ref": "#/definitions/ContentType.Analytical.Dimension"
           }
         },
         "measures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ContentType.Analytical.MeasureAndDimension"
+            "$ref": "#/definitions/ContentType.Analytical.Measure"
           }
         },
         "feeds": {
@@ -1040,22 +1040,45 @@
         }
       }
     },
-    "ContentType.Analytical.MeasureAndDimension": {
-      "description": "Measure/dimension for the dataset",
+    "ContentType.Analytical.Measure": {
+      "description": "Measure for the dataset",
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "name": {
-          "description": "The name of the measure/dimension",
+          "description": "The name of the measure",
           "type": "string"
         },
         "label": {
-          "description": "[Deprecated] Label for the measure/dimension",
+          "description": "[Deprecated] Label for the measure",
           "type": "string"
         },
         "value": {
           "type": "string",
           "description": "Binding path to the data"
+        }
+      }
+    },
+    "ContentType.Analytical.Dimension": {
+      "description": "Dimension for the dataset",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "The name of the dimension",
+          "type": "string"
+        },
+        "label": {
+          "description": "[Deprecated] Label for the dimension",
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "description": "Binding path to the data"
+        },
+        "displayValue": {
+          "type": "string",
+          "description": "Display value for the dimension. It doesn't work with 'waterfallType'"
         }
       }
     },
