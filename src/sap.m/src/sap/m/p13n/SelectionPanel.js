@@ -282,6 +282,7 @@ sap.ui.define([
 	 * Sets the personalization state of the panel instance.
 	 * @public
 	 * @param {sap.m.p13n.Item[]} aP13nData An array containing the personalization state that is represented by the <code>SelectionPanel</code>.
+	 * @returns {this} The <code>SelectionPanel</code> instance
 	 */
 	SelectionPanel.prototype.setP13nData = function(aP13nData) {
 		if (this.getEnableCount()) {
@@ -296,6 +297,8 @@ sap.ui.define([
 		//remove the reorder buttons from their current location and hence reset the hover logic
 		this._removeMoveButtons();
 		this._oSelectedItem = null;
+
+		return this;
 	};
 
 	SelectionPanel.prototype._updateCount = function() {
