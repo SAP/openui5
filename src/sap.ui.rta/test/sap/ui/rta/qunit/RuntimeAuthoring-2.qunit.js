@@ -263,7 +263,8 @@ sap.ui.define([
 
 		QUnit.test("when draft changes already existed when entering and user exits RTA...", function(assert) {
 			var oReloadInfo = {
-				reloadMethod: this.oRta._RELOAD.VIA_HASH
+				reloadMethod: this.oRta._RELOAD.VIA_HASH,
+				hasVersionUrlParameter: true
 			};
 			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(oReloadInfo);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
@@ -341,7 +342,8 @@ sap.ui.define([
 
 			return this.oRta.stop().then(function() {
 				assert.equal(this.fnHandleParametersOnExitStub.callCount, 1, "then handleParametersOnExit was called");
-				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount, 1, "then crossAppNavigation was triggered");
+				assert.equal(this.fnTriggerRealoadStub.callCount, 1, "then reloadCurrentApp was triggered");
+				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount, 0, "then crossAppNavigation was not triggered");
 			}.bind(this));
 		});
 
@@ -357,11 +359,11 @@ sap.ui.define([
 			return this.oRta.stop().then(function() {
 				assert.equal(this.fnHandleParametersOnExitStub.callCount, 1, "then handleParametersOnExit was called");
 				assert.equal(this.fnTriggerRealoadStub.callCount, 1, "then reloadCurrentApp was trigger");
-				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount, 1, "then crossAppNavigation was triggered");
+				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount, 0, "then crossAppNavigation was not triggered");
 			}.bind(this));
 		});
 
-		QUnit.test("when all context is loaded without higher layer changes after entering RTA and user exits RTA...", function(assert) {
+		QUnit.test("when all context is loaded with higher layer changes after entering RTA and user exits RTA...", function(assert) {
 			var oReloadInfo = {
 				reloadMethod: this.oRta._RELOAD.VIA_HASH,
 				hasHigherLayerChanges: true,
