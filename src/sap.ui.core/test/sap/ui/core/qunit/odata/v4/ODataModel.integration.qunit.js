@@ -35,8 +35,7 @@ sap.ui.define([
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
-		rCountTrue = /[?&]\$count=true/, // $count=true, but not inside $expand
+	var rCountTrue = /[?&]\$count=true/, // $count=true, but not inside $expand
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		fnFireEvent = EventProvider.prototype.fireEvent,
 		sInvalidModel = "/invalid/model/",
@@ -1087,7 +1086,7 @@ sap.ui.define([
 			].forEach(function (sAnnotation) {
 				oLogMock.expects("warning")
 					.withExactArgs("Unsupported annotation 'sap:" + sAnnotation + "'",
-						sinon.match.string, sClassName);
+						sinon.match.string, "sap.ui.model.odata.v4.lib._V2MetadataConverter");
 			});
 
 			mModelParameters = Object.assign({}, {odataVersion : "2.0"}, mModelParameters);
@@ -1112,7 +1111,7 @@ sap.ui.define([
 					.withExactArgs("Unsupported SAP annotation at a complex type in"
 						+ " '/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata'",
 						"sap:" + sAnnotation + " at property 'GWSAMPLE_BASIC.CT_String/String'",
-						sClassName);
+						"sap.ui.model.odata.v4.lib._V2MetadataConverter");
 			});
 
 			mModelParameters = Object.assign({}, {odataVersion : "2.0"}, mModelParameters);
@@ -3990,10 +3989,10 @@ sap.ui.define([
 
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read path /EMPLOYEES('42')", sinon.match(oError.message),
-				"sap.ui.model.odata.v4.ODataContextBinding");
+				sODCB);
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read path /EMPLOYEES('42')/Name", sinon.match(oError.message),
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
+				sODPrB);
 		this.expectRequest("EMPLOYEES('42')", oError)
 			.expectMessages([{
 				code : "CODE",
@@ -4040,7 +4039,7 @@ sap.ui.define([
 
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read path /EMPLOYEES('42')/Name", sinon.match(oError.message),
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
+				sODPrB);
 		this.expectRequest("EMPLOYEES('42')/Name", oError)
 			.expectMessages([{
 				code : "CODE",
@@ -4332,7 +4331,7 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to refresh entity: /EMPLOYEES('0')[0]",
-					sinon.match(oError.message), "sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match(oError.message), sODLB);
 			that.expectRequest("EMPLOYEES('0')?$select=ID", oError)
 				.expectMessages([{
 					code : "CODE",
@@ -4852,9 +4851,9 @@ sap.ui.define([
 			var oError = createError({message : "Employee does not exist"});
 
 			that.oLogMock.expects("error").withExactArgs("Failed to read path /EMPLOYEES('2')",
-				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
+				sinon.match(oError.message), sODCB);
 			that.oLogMock.expects("error").withExactArgs("Failed to read path /EMPLOYEES('2')/Name",
-				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataPropertyBinding");
+				sinon.match(oError.message), sODPrB);
 			that.expectRequest(
 					"EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", oError)
 				.expectChange("text", null)
@@ -5294,7 +5293,7 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
-				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
+				sinon.match(oError.message), sODCB);
 			that.expectRequest({
 					method : "POST",
 					url : "ChangeTeamBudgetByID",
@@ -6670,8 +6669,7 @@ sap.ui.define([
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'EntitiesWithComplexKey' failed; "
 					+ "will be repeated automatically",
-					sinon.match("Request intentionally failed"),
-					"sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match("Request intentionally failed"), sODLB);
 			that.expectChange("item", ["", "Baz", "Foo", "Bar"])
 				.expectRequest({
 					method : "POST",
@@ -7021,7 +7019,7 @@ sap.ui.define([
 				}]);
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
-					sinon.match(oError.message), "sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match(oError.message), sODLB);
 
 			fnRejectPost(oError);
 
@@ -7166,12 +7164,11 @@ sap.ui.define([
 				}]);
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
-					sinon.match(oError.error.message), "sap.ui.model.odata.v4.ODataListBinding")
+					sinon.match(oError.error.message), sODLB)
 				.exactly(2);
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to get contexts for " + sSalesOrderService + "SalesOrderList"
-					+ " with start index 0 and length 100", sinon.match(sPreviousFailed),
-					"sap.ui.model.odata.v4.ODataListBinding");
+					+ " with start index 0 and length 100", sinon.match(sPreviousFailed), sODLB);
 
 			aCreatedContexts.push(oBinding.create({Note : "new3"}, /*bSkipRefresh*/true));
 			aCreatedContexts.push(oBinding.create({Note : "new4"}, /*bSkipRefresh*/true));
@@ -9955,8 +9952,7 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList('42')/SO_2_SOITEM' failed; "
-					+ "will be repeated automatically", sinon.match(oError.message),
-					"sap.ui.model.odata.v4.ODataListBinding");
+					+ "will be repeated automatically", sinon.match(oError.message), sODLB);
 			that.expectRequest({
 					method : "POST",
 					url : "SalesOrderList('42')/SO_2_SOITEM",
@@ -11521,10 +11517,10 @@ sap.ui.define([
 				});
 
 			that.oLogMock.expects("error").withExactArgs("Failed to execute /" + sUrl + "(...)",
-				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
+				sinon.match(oError.message), sODCB);
 			that.oLogMock.expects("error").withExactArgs(//TODO: prevent log -> CPOUI5ODATAV4-127
 				"Failed to read path /" + sUrl + "(...)/TEAM_ID", sinon.match(oError.message),
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
+				sODPrB);
 			that.expectRequest({
 					method : "POST",
 					headers : {"If-Match" : "ETag"},
@@ -12285,14 +12281,14 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("TEAMS?$select=BudgetCurrency,Team_Id&$skip=0&$top=100", {
 					value : [
-						{BudgetCurrency : "RBL", Team_Id : "TEAM_01"},
-						{BudgetCurrency : "RBL", Team_Id : "TEAM_02"}
+						{BudgetCurrency : "UAH", Team_Id : "TEAM_01"},
+						{BudgetCurrency : "UAH", Team_Id : "TEAM_02"}
 					]
 				})
-				.expectChange("currency", ["RBL", "RBL"])
+				.expectChange("currency", ["UAH", "UAH"])
 				.expectRequest("TEAMS('TEAM_02')?$select=Budget,Name",
-					{Budget : "123", Name : "Gzprm"})
-				.expectChange("name", "Gzprm")
+					{Budget : "123", Name : "Nftgz"})
+				.expectChange("name", "Nftgz")
 				.expectChange("budget", "123");
 
 			return Promise.all([
@@ -20518,8 +20514,7 @@ sap.ui.define([
 				.withExactArgs("Read-only path must not be updated", oMatcher,
 					"sap.ui.model.odata.v4.ODataMetaModel");
 			that.oLogMock.expects("error")
-				.withExactArgs("Failed to update path /MANAGERS('1')/@$ui5.foo", oMatcher,
-					"sap.ui.model.odata.v4.ODataPropertyBinding");
+				.withExactArgs("Failed to update path /MANAGERS('1')/@$ui5.foo", oMatcher, sODPrB);
 
 			that.expectMessages([{
 					message : "/MANAGERS('1')/@$ui5.foo: Read-only path must not be updated",
@@ -24446,14 +24441,13 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to read path /TEAMS('TEAM_01')/Team_Id",
-					sinon.match.string, "sap.ui.model.odata.v4.ODataPropertyBinding");
+					sinon.match.string, sODPrB);
 			that.oLogMock.expects("error")
-				.withExactArgs("Failed to read path /TEAMS('TEAM_01')",
-					sinon.match.string, "sap.ui.model.odata.v4.ODataContextBinding");
+				.withExactArgs("Failed to read path /TEAMS('TEAM_01')", sinon.match.string, sODCB);
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to get contexts for " + sTeaBusi
 						+ "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES with start index 0 and length 100",
-					sinon.match.string, "sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match.string, sODLB);
 			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id", oError1)
 				.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
 					+ "&$skip=0&$top=100", oError2)
@@ -30328,8 +30322,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
-					sinon.match("Request intentionally failed"),
-					"sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match("Request intentionally failed"), sODLB);
 
 			that.expectRequest({
 					method : "POST",
@@ -30367,12 +30360,12 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
-					sinon.match(oError.error.message), "sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match(oError.error.message), sODLB);
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to get contexts for " + sSalesOrderService + "SalesOrderList"
 					+ " with start index 1 and length 2",
 					sinon.match("request was not processed because the previous request failed"),
-					"sap.ui.model.odata.v4.ODataListBinding");
+					sODLB);
 
 			that.expectRequest({
 					batchNo : 3,
@@ -30447,13 +30440,10 @@ sap.ui.define([
 			.expectChange("note", ["Test"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error").withArgs("$batch failed");
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO' failed; "
-					+ "will be repeated automatically", sinon.match.string,
-					"sap.ui.model.odata.v4.ODataListBinding");
-			that.oLogMock.expects("error")
-				.withExactArgs("$batch failed", sinon.match.string,
-					"sap.ui.model.odata.v4.ODataModel");
+					+ "will be repeated automatically", sinon.match.string, sODLB);
 
 			that.expectRequest({
 					method : "POST",
@@ -32091,7 +32081,7 @@ sap.ui.define([
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to get contexts for " + sTeaBusi
 						+ "TEAMS with start index 0 and length 100",
-					sinon.match.string, "sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match.string, sODLB);
 
 			oSideEffectsPromise = oListBinding.getHeaderContext()
 				.requestSideEffects([{$NavigationPropertyPath : ""}], "$direct");
@@ -32592,8 +32582,7 @@ sap.ui.define([
 			// Note: this error message is a bit misleading ;-)
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'People' failed; will be repeated automatically",
-					sinon.match("Could not load metadata: 500 Internal Server Error"),
-					"sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match("Could not load metadata: 500 Internal Server Error"), sODLB);
 			that.expectRequest({
 					method : "POST",
 					url : "People",
@@ -32802,11 +32791,10 @@ sap.ui.define([
 					+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm(...)",
 					sinon.match(
 						"All requests with strict handling must belong to the same change set"),
-					"sap.ui.model.odata.v4.ODataContextBinding");
+					sODCB);
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to execute /GetProductStock(...)",
-					sinon.match("Not an action: /GetProductStock(...)"),
-					"sap.ui.model.odata.v4.ODataContextBinding");
+					sinon.match("Not an action: /GetProductStock(...)"), sODCB);
 			that.expectRequest({
 					headers : {
 						Prefer : "handling=strict"
@@ -33778,7 +33766,7 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
-					sinon.match(sMessage), "sap.ui.model.odata.v4.ODataContextBinding");
+					sinon.match(sMessage), sODCB);
 
 			oAction.execute().then(mustFail(assert), function (oError) {
 				assert.strictEqual(oError.message, sMessage);
@@ -33992,8 +33980,7 @@ sap.ui.define([
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList('42')/SO_2_SOITEM' failed; "
 					+ "will be repeated automatically",
-					sinon.match("Request intentionally failed"),
-					"sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match("Request intentionally failed"), sODLB);
 			that.expectChange("count", "2")
 				.expectChange("note", [, "Note 1"])
 				.expectChange("inactive", [, false])
@@ -36096,7 +36083,7 @@ sap.ui.define([
 					.withExactArgs("Failed to get contexts for "
 						+ sSalesOrderService + "SalesOrderList('1')/SO_2_SOITEM"
 						+ " with start index 0 and length 100",
-						sinon.match("Not found"), "sap.ui.model.odata.v4.ODataListBinding");
+						sinon.match("Not found"), sODLB);
 
 				that.expectRequest({
 						batchNo : 3,
@@ -39393,6 +39380,145 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel);
 	});
+
+	//*********************************************************************************************
+	// Scenario: While a POST request is in flight, a property is updated. For an inline creation
+	// row, data is entered in one field, sending the POST, and then in another before that POST has
+	// returned. No error must happen and user input must win over server's default value. This
+	// must also work if the 1st POST fails (PATCH is then still merged).
+	// JIRA: CPOUI5ODATAV4-1583
+[false, true].forEach(function (bSkipRefresh) {
+	QUnit.test("JIRA: CPOUI5ODATAV4-1583, bSkipRefresh=" + bSkipRefresh, function (assert) {
+		var oBinding,
+			oContext,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			fnRespond0,
+			fnRespond1,
+			sView = '\
+<t:Table id="table" rows="{/TEAMS}">\
+	<Text id="id" text="{Team_Id}"/>\
+	<Text id="name" text="{Name}"/>\
+	<Text id="budget" text="{Budget}"/>\
+	<Text id="budgetCurency" text="{BudgetCurrency}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Budget,BudgetCurrency,Name,Team_Id&$skip=0&$top=110",
+				{value : []})
+			.expectChange("id", [])
+			.expectChange("name", [])
+			.expectChange("budget", [])
+			.expectChange("budgetCurency", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("rows");
+			oContext = oBinding.create({}, bSkipRefresh, /*bAtEnd*/false, /*bInactive*/true);
+
+			that.expectChange("id", [""])
+				.expectChange("name", ["New A"])
+				.expectChange("budget", [null])
+				.expectChange("budgetCurency", [""])
+				.expectRequest({
+					method : "POST",
+					payload : {Name : "New A"},
+					url : "TEAMS"
+				}, new Promise(function (_resolve, reject) {
+					fnRespond0 = reject.bind(null, createError()); // take care of timing
+				}));
+
+			oContext.setProperty("Name", "New A"); // activate
+
+			return that.waitForChanges(assert, "activate");
+		}).then(function () {
+			that.expectChange("budgetCurency", ["GBP"]);
+
+			// code under test
+			oContext.setProperty("BudgetCurrency", "GBP");
+
+			return that.waitForChanges(assert, "1st update");
+		}).then(function () {
+			that.oLogMock.expects("error").withArgs("$batch failed");
+			that.oLogMock.expects("error")
+				.withArgs("POST on 'TEAMS' failed; will be repeated automatically");
+			that.expectMessages([{
+					message : "Communication error: 500 ",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}, {
+					message : "HTTP request was not processed because $batch failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}])
+				.expectRequest({
+					method : "POST",
+					// Note: PATCH is merged into POST
+					payload : {BudgetCurrency : "GBP", Name : "New A"},
+					url : "TEAMS"
+				}, new Promise(function (resolve) {
+					fnRespond1 = resolve.bind(null, {
+						"@odata.etag" : "etag0",
+						Budget : "0",
+						BudgetCurrency : "EUR",
+						Name : "New A Team",
+						Team_Id : "TEAM_A"
+					});
+				}));
+
+			fnRespond0();
+
+			return that.waitForChanges(assert, "1st response");
+		}).then(function () {
+			that.expectChange("budget", ["1,234"]);
+
+			// code under test
+			oContext.setProperty("Budget", "1234");
+
+			return that.waitForChanges(assert, "2nd update");
+		}).then(function () {
+			that.expectChange("id", ["TEAM_A"])
+				.expectChange("name", ["New A Team"])
+				.expectChange("budget", ["0"]) //TODO
+				.expectChange("budgetCurency", ["EUR"]);
+			if (!bSkipRefresh) {
+				that.expectRequest("TEAMS('TEAM_A')?$select=Budget,BudgetCurrency,Name,Team_Id", {
+						"@odata.etag" : "etag1",
+						Budget : "1",
+						BudgetCurrency : "DEM",
+						Name : "New 'A' Team",
+						Team_Id : "TEAM_A"
+					})
+					.expectChange("name", ["New 'A' Team"])
+					.expectChange("budget", ["1"])
+					.expectChange("budgetCurency", ["DEM"]);
+			}
+			that.expectChange("budget", ["1,234"]) //TODO much too late, there's a GET in between!
+				.expectRequest({
+					headers : {"If-Match" : bSkipRefresh ? "etag0" : "etag1"},
+					method : "PATCH",
+					// Note: up-to-date currency value is used!
+					payload : {Budget : "1234", BudgetCurrency : bSkipRefresh ? "EUR" : "DEM"},
+					url : "TEAMS('TEAM_A')"
+				}, {
+					"@odata.etag" : "etag2",
+					Budget : "4321",
+					BudgetCurrency : "USD",
+					Name : "'A' Team",
+					Team_Id : "TEAM_A"
+				})
+				.expectChange("name", ["'A' Team"])
+				.expectChange("budget", ["4,321"])
+				.expectChange("budgetCurency", ["USD"]);
+
+			fnRespond1();
+
+			return that.waitForChanges(assert, "2nd response");
+		}).then(function () {
+			assert.strictEqual(oContext.getProperty("@odata.etag"), "etag2");
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Main & dependent detail table. Create inactive rows for the detail table.

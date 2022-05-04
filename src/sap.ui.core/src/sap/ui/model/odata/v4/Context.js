@@ -408,8 +408,26 @@ sap.ui.define([
 	 */
 	Context.prototype.doSetProperty = function (sPath, vValue, oGroupLock, bSkipRetry) {
 		var oMetaModel = this.oModel.getMetaModel(),
+			oPromise,
 			that = this;
 
+		if (oGroupLock && this.isTransient() && !this.isInactive()) {
+			oPromise = _Helper.getPrivateAnnotation(this.getValue(), "transient");
+			if (oPromise instanceof Promise) {
+				oGroupLock.unlock();
+				oGroupLock = oGroupLock.getUnlockedCopy();
+				this.doSetProperty(sPath, vValue, null, true) // early UI update
+					.catch(this.oModel.getReporter());
+
+				return oPromise.then(function (bSuccess) {
+					// in case of success, wait until creation is completed because context path's
+					// key predicate is adjusted
+					return bSuccess && that.created();
+				}).then(function () {
+					return that.doSetProperty(sPath, vValue, oGroupLock, bSkipRetry);
+				});
+			}
+		}
 		if (this.oModel.bAutoExpandSelect) {
 			sPath = oMetaModel.getReducedPath(
 				this.oModel.resolve(sPath, this),

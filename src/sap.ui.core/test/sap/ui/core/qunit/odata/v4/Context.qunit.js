@@ -2588,6 +2588,7 @@ sap.ui.define([
 				fetchUpdateData : function () {}
 			},
 			oModel = {
+				bAutoExpandSelect : false,
 				getMetaModel : function () {
 					return oMetaModel;
 				}
@@ -2596,20 +2597,23 @@ sap.ui.define([
 			oError = new Error("This call intentionally failed"),
 		that = this;
 
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext).expects("isInactive").withExactArgs().returns(true);
+		this.mock(oContext).expects("getValue").never();
 		this.mock(oContext).expects("withCache")
-			.withExactArgs(sinon.match.func, "some/relative/path", false, true)
+			.withExactArgs(sinon.match.func, "~sPath~", false, true)
 			.callsFake(function (fnProcessor) {
 				that.mock(oBinding).expects("doSetProperty")
-					.withExactArgs("some/relative/path", undefined, undefined);
+					.withExactArgs("~sPath~", "~vValue~", "~oGroupLock~");
 				that.mock(oMetaModel).expects("fetchUpdateData")
-					.withExactArgs("some/relative/path", sinon.match.same(oContext), true)
+					.withExactArgs("~sPath~", sinon.match.same(oContext), false)
 					.returns(SyncPromise.resolve(Promise.reject(oError)));
 
-				return fnProcessor({/*oCache*/}, "some/relative/path", oBinding);
+				return fnProcessor({/*oCache*/}, "~sPath~", oBinding);
 			});
 
 		// code under test
-		return oContext.doSetProperty("some/relative/path").then(function () {
+		return oContext.doSetProperty("~sPath~", "~vValue~", "~oGroupLock~").then(function () {
 			assert.ok(false, "Unexpected success");
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
@@ -2619,21 +2623,26 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("doSetProperty: withCache fails", function (assert) {
 		var oBinding = {},
-			oMetaModel = {},
 			oModel = {
+				bAutoExpandSelect : false,
 				getMetaModel : function () {
-					return oMetaModel;
+					return {}; // do not use
 				}
 			},
 			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
 			oError = new Error("This call intentionally failed");
 
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext).expects("isInactive").withExactArgs().returns(false);
+		this.mock(oContext).expects("getValue").withExactArgs().returns("~getValue~");
+		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~getValue~", "transient")
+			.returns("group"); // POST is not in flight
 		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func,
-			"some/relative/path", /*bSync*/false, /*bWithOrWithoutCache*/true)
+				"~sPath~", /*bSync*/false, /*bWithOrWithoutCache*/true)
 			.returns(SyncPromise.reject(oError));
 
 		// code under test
-		return oContext.doSetProperty("some/relative/path").then(function () {
+		return oContext.doSetProperty("~sPath~", "~vValue~", "~oGroupLock~").then(function () {
 			assert.ok(false, "Unexpected success");
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
@@ -2722,6 +2731,7 @@ sap.ui.define([
 			vWithCacheResult = {},
 			that = this;
 
+		this.mock(oContext).expects("getValue").never();
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().on(oContext)
 			.exactly(i === 1 ? 1 : 0).returns("~bKeepAlive~");
 		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func,
@@ -2919,6 +2929,7 @@ sap.ui.define([
 			},
 			that = this;
 
+		this.mock(oContext).expects("getValue").never();
 		oModelMock.expects("resolve")
 			.withExactArgs("some/relative/path", sinon.match.same(oContext))
 			.returns("/~");
@@ -2997,6 +3008,7 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
 			that = this;
 
+		this.mock(oContext).expects("isTransient").never();
 		this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.func, "/some/absolute/path", /*bSync*/false,
 				/*bWithOrWithoutCache*/true)
@@ -3025,7 +3037,7 @@ sap.ui.define([
 				return fnProcessor(oCache, "/cache/path", oBinding);
 			});
 
-		// code under test
+		// code under test (no group lock!)
 		return oContext.doSetProperty("/some/absolute/path", "new value");
 	});
 
@@ -3107,6 +3119,68 @@ sap.ui.define([
 
 		// code under test
 		return oContext.doSetProperty("/some/absolute/path", "new value", oGroupLock, bSkipRetry);
+	});
+});
+
+	//*********************************************************************************************
+[undefined, true].forEach(function (bSuccess) {
+	var sTitle = "doSetProperty: repeat while POST is in flight; bSuccess=" + bSuccess;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = {
+				bAutoExpandSelect : true,
+				getMetaModel : function () {
+					return {}; // do not use
+				},
+				getReporter : function () {}
+			},
+			oPostPromise = Promise.resolve(bSuccess),
+			oContext = Context.create(oModel, /*oBinding*/null, "/ProductList($uid=123)", 0,
+				SyncPromise.resolve(oPostPromise)), // transient while POST is in flight
+			oContextMock = this.mock(oContext),
+			oError = new Error("catch me if you can"),
+			oExpectation,
+			oGroupLock = {
+				getUnlockedCopy : function () {},
+				unlock : function () {}
+			},
+			fnReporter = sinon.spy();
+
+		oContextMock.expects("isTransient").withExactArgs().returns(true);
+		oContextMock.expects("doSetProperty")
+			.withExactArgs("~sPath~", "~vValue~", sinon.match.same(oGroupLock), "~bSkipRetry~")
+			.callThrough(); // start the recursion
+		oContextMock.expects("getValue").withExactArgs().returns("~getValue~");
+		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~getValue~", "transient")
+			.returns(oPostPromise);
+		this.mock(oGroupLock).expects("unlock").withExactArgs();
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~unlockedCopy~");
+		oContextMock.expects("doSetProperty").withExactArgs("~sPath~", "~vValue~", null, true)
+			.rejects(oError); // to prove error handling
+		this.mock(oModel).expects("getReporter").withExactArgs().returns(fnReporter);
+		oExpectation = oContextMock.expects("doSetProperty")
+			.withExactArgs("~sPath~", "~vValue~", "~unlockedCopy~", "~bSkipRetry~")
+			.returns("~result~"); // to prove timing and error handling
+		oPostPromise.then(function () {
+			var oCreatedPromise = new Promise(function (resolve) {
+					setTimeout(resolve, 0); // to prove timing
+				});
+
+			assert.notOk(oExpectation.called);
+			oContextMock.expects("created").exactly(bSuccess ? 1 : 0).withExactArgs()
+				.returns(oCreatedPromise);
+			oCreatedPromise.then(function () {
+				assert.strictEqual(oExpectation.called, !bSuccess);
+			});
+		});
+
+		// code under test
+		return oContext.doSetProperty("~sPath~", "~vValue~", oGroupLock, "~bSkipRetry~")
+			.then(function (vResult) {
+				assert.strictEqual(vResult, "~result~");
+				sinon.assert.calledOnce(fnReporter);
+				sinon.assert.calledWithExactly(fnReporter, oError);
+			});
 	});
 });
 

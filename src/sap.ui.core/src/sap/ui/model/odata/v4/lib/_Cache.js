@@ -178,10 +178,10 @@ sap.ui.define([
 					Array.isArray(vCacheData) ? sKeyPredicate : vDeleteProperty),
 				sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
 
-			if (sTransientGroup === true) {
-				throw new Error("No 'delete' allowed while waiting for server response");
-			}
 			if (sTransientGroup) {
+				if (typeof sTransientGroup !== "string") {
+					throw new Error("No 'delete' allowed while waiting for server response");
+				}
 				that.oRequestor.removePost(sTransientGroup, oEntity);
 				return undefined;
 			}
@@ -327,6 +327,7 @@ sap.ui.define([
 			sGroupId = oGroupLock.getGroupId(),
 			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
 			oPostBody,
+			fnResolve,
 			that = this;
 
 		// Clean-up when the create has been canceled.
@@ -350,7 +351,9 @@ sap.ui.define([
 		// Sets a marker that the create request is pending, so that update and delete fail.
 		function setCreatePending() {
 			that.addPendingRequest();
-			_Helper.setPrivateAnnotation(oEntityData, "transient", true);
+			_Helper.setPrivateAnnotation(oEntityData, "transient", new Promise(function (resolve) {
+				fnResolve = resolve;
+			}));
 			fnSubmitCallback();
 		}
 
@@ -397,13 +400,17 @@ sap.ui.define([
 					aSelect && aSelect.concat("@odata.etag")); // do not change $select
 
 				that.removePendingRequest();
+				fnResolve(true);
 				return oEntityData;
 			}, function (oError) {
 				if (oError.canceled) {
 					// for cancellation no error is reported via fnErrorCallback
 					throw oError;
 				}
-				that.removePendingRequest();
+				if (fnResolve) {
+					that.removePendingRequest();
+					fnResolve();
+				}
 				fnErrorCallback(oError);
 				if (that.fetchTypes().isRejected()) {
 					throw oError;
@@ -1809,7 +1816,7 @@ sap.ui.define([
 			}
 			sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
 			if (sTransientGroup) {
-				if (sTransientGroup === true) {
+				if (typeof sTransientGroup !== "string") {
 					throw new Error("No 'update' allowed while waiting for server response");
 				}
 				if (sTransientGroup.startsWith("$parked.")
