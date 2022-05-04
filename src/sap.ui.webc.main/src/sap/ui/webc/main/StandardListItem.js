@@ -152,7 +152,8 @@ sap.ui.define([
 				detailClick: {
 					parameters: {}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/StandardListItem.designtime"
 		}
 	});
 
