@@ -3154,7 +3154,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Check Placement of UploadCollectionItem", function(assert) {
+	QUnit.test("Check Placement of CheckBox in UploadCollectionItem ContentDensity: sapUiSizeCozy", function(assert) {
 		//Arrange
 		this.oUploadCollection.setMode(ListMode.MultiSelect);
 		document.getElementsByTagName("html")[0].classList.add("sapUiSizeCozy");
@@ -3169,5 +3169,39 @@ sap.ui.define([
 		}
 		//Reset
 		document.getElementsByTagName("html")[0].classList.remove("sapUiSizeCozy");
+	});
+
+	QUnit.test("Check Placement of CheckBox in UploadCollectionItem ContentDensity: sapUiSizeCompact", function(assert) {
+		//Arrange
+		this.oUploadCollection.setMode(ListMode.MultiSelect);
+		document.getElementsByTagName("html")[0].classList.add("sapUiSizeCompact");
+
+		var aUploadCollectionItemsDomRef = sap.ui.getCore().byId("uploadCollection").getDomRef().querySelectorAll(".sapMLIB");
+		//Act
+		for (var i = 0 ; i < aUploadCollectionItemsDomRef.length; i++) {
+			var oCheckBoxDomRef = aUploadCollectionItemsDomRef[i].querySelector(".sapMCbBg").getBoundingClientRect();
+			var oListItemDomRef = aUploadCollectionItemsDomRef[i].querySelector(".sapMLIBContent").getBoundingClientRect();
+			//Assert
+			assert.ok(oListItemDomRef.x >= oCheckBoxDomRef.width + oCheckBoxDomRef.x, "Elements are placed correctly.");
+		}
+		//Reset
+		document.getElementsByTagName("html")[0].classList.remove("sapUiSizeCompact");
+	});
+
+	QUnit.test("Check Placement of CheckBox in UploadCollectionItem ContentDensity: sapUiSizeCondensed", function(assert) {
+		//Arrange
+		this.oUploadCollection.setMode(ListMode.MultiSelect);
+		document.getElementsByTagName("html")[0].classList.add("sapUiSizeCondensed");
+
+		var aUploadCollectionItemsDomRef = sap.ui.getCore().byId("uploadCollection").getDomRef().querySelectorAll(".sapMLIB");
+		//Act
+		for (var i = 0 ; i < aUploadCollectionItemsDomRef.length; i++) {
+			var oCheckBoxDomRef = aUploadCollectionItemsDomRef[i].querySelector(".sapMCbBg").getBoundingClientRect();
+			var oListItemDomRef = aUploadCollectionItemsDomRef[i].querySelector(".sapMLIBContent").getBoundingClientRect();
+			//Assert
+			assert.ok(oListItemDomRef.x >= oCheckBoxDomRef.width + oCheckBoxDomRef.x, "Elements are placed correctly.");
+		}
+		//Reset
+		document.getElementsByTagName("html")[0].classList.remove("sapUiSizeCondensed");
 	});
 });
