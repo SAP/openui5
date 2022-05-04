@@ -3,6 +3,11 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "96bd15d49ed178f0f02a487ff7740791263ab97c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: ObjectPage visual tests updated"
+      },
+      {
         "id": "7e2c5f9495af17593c050c576b2941d85c240221",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: AnchorBar position is fixed",

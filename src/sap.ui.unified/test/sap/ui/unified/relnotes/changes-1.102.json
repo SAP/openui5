@@ -3,6 +3,11 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "b33bd06d6dc3476a83eee93af05ffbba38b1157d",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPicker: Horizon themes implemented"
+      },
+      {
         "id": "88684a893fd004f11a11a434d1dd4c031fb4d0a0",
         "type": "FEATURE",
         "text": " sap.m.Menu: Horizon themes implementated"
