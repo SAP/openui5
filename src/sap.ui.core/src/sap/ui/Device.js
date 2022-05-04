@@ -437,6 +437,9 @@ if (typeof window.sap.ui !== "object") {
 	 * a tablet or phone device is detected.
 	 *
 	 * <b>Note:</b> This information might not be available for all browsers.
+	 * <b>Note:</b> The flag is also set to <code>true</code> for any touch device,
+	 * including laptops with touchscreen monitor.
+	 * For more information, see the documentation for {@link sap.ui.Device.system.combi} devices.
 	 *
 	 * @name sap.ui.Device.browser.mobile
 	 * @type boolean
@@ -742,6 +745,9 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * <b>Note:</b> This flag indicates whether the used browser supports touch events or not.
 	 * This does not necessarily mean that the used device has a touchable screen.
+	 * <b>Note:</b> This flag also affects other {@link sap.ui.Device} properties.
+	 * For more information, see the documentation for {@link sap.ui.Device.browser.mobile} and
+	 * {@link sap.ui.Device.system.combi} devices.
 	 *
 	 * @name sap.ui.Device.support.touch
 	 * @type boolean
