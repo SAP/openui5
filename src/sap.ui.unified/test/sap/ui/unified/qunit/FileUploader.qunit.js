@@ -1032,6 +1032,16 @@ sap.ui.define([
 		);
 	});
 
+	QUnit.test("getFocusDomRef returns the proper element", function(assert) {
+
+		// assert
+		assert.strictEqual(
+			this.oFileUploader.getFocusDomRef().id,
+			this.oFileUploader.oBrowse.getId(),
+			"Browse button returned"
+		);
+	});
+
 	QUnit.module("Keyboard handling");
 
 	QUnit.test("ESCAPE key propagation", function (assert) {

@@ -976,7 +976,7 @@ sap.ui.define([
 	 * @returns {Element} The DOM element that should be focused
 	 */
 	FileUploader.prototype.getFocusDomRef = function() {
-		return this.$("fu").get(0);
+		return this.oBrowse.getDomRef();
 	};
 
 	FileUploader.prototype._resizeDomElements = function() {
