@@ -159,12 +159,17 @@ sap.ui.define([
 	 *
 	 * @param {object} [mParameters]
 	 *   For a persistent context, a map of parameters as specified for
-	 *   {@link sap.ui.model.odata.v2.ODataModel#remove}
+	 *   {@link sap.ui.model.odata.v2.ODataModel#remove}, except that the <code>groupId</code> and
+	 *   <code>changeSetId</code> parameters default to the values set via
+	 *   {@link sap.ui.model.odata.v2.ODataModel#setChangeGroups} for the type of the entity to be
+	 *   deleted.
 	 * @param {string} [mParameters.groupId]
 	 *   ID of a request group; requests belonging to the same group will be bundled in one batch
-	 *   request
+	 *   request. If not provided, the <code>groupId</code> defined for the type of the entity to be
+	 *   deleted is used.
 	 * @param {string} [mParameters.changeSetId]
-	 *   ID of the <code>ChangeSet</code> that this request should belong to
+	 *   ID of the <code>ChangeSet</code> that this request should belong to. If not provided, the
+	 *   <code>changeSetId</code> defined for the type of the entity to be deleted is used.
 	 * @param {boolean} [mParameters.refreshAfterChange]
 	 *   Defines whether to update all bindings after submitting this change operation,
 	 *   see {@link #setRefreshAfterChange}. If given, this overrules the model-wide
@@ -201,10 +206,14 @@ sap.ui.define([
 		}
 
 		return new Promise(function (resolve, reject) {
+			var oGroupInfo = oModel._resolveGroup(that.getPath());
+
 			oModel.remove("",
 				_Helper.merge({
+					changeSetId : oGroupInfo.changeSetId,
 					context : that,
 					error : reject,
+					groupId : oGroupInfo.groupId,
 					success : function () {resolve();}
 				}, mParameters));
 		});
