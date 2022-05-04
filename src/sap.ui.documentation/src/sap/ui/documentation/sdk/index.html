@@ -11,15 +11,6 @@
 			return new window.URLSearchParams(window.location.search).get(sParamName);
 		};
 
-		var encodeOrigin = function (sResourceOrigin) {
-			return sResourceOrigin
-					.replaceAll("&", "&amp;")
-					.replaceAll("<", "&lt;")
-					.replaceAll(">", "&gt;")
-					.replaceAll("\"", "&quot;")
-					.replaceAll("’", "&#x27;");
-		};
-
 		var sSampleId = getUrlParam('sap-ui-xx-sample-id'),
 				sOrigin = getUrlParam('sap-ui-xx-sample-origin'),
 				sPresetTheme = getUrlParam('sap-ui-theme') || 'sap_fiori_3',
@@ -33,12 +24,12 @@
 			sOrigin = new URL(sOrigin, document.baseURI).pathname;
 		}
 
-		oPath["sap/ui/demo/mock"] = sOrigin + "/test-resources/sap/ui/documentation/sdk";
+		oPath["sap/ui/demo/mock"] = encodeURI(sOrigin) + "/test-resources/sap/ui/documentation/sdk";
 		oPath["test-resources/sap/ui/documentation/sdk"] = ".";
 
-		document.write("<script src=" + encodeOrigin(sOrigin)  + '/resources/sap-ui-core.js' + " id='sap-ui-bootstrap' " +
-				"data-sap-ui-libs='sap.m' data-sap-ui-bindingSyntax='complex' data-sap-ui-rtl=" + sPresetRTL + " data-sap-ui-theme=" + sPresetTheme + " data-sap-ui-compatVersion='edge' data-sap-ui-resourceroots=" + JSON.stringify(oPath) + "></scr" + "ipt>");
-		document.write("<base href=" + encodeOrigin(sOrigin) + "/>");
+		document.write("<script src=" + encodeURI(sOrigin)  + '/resources/sap-ui-core.js' + " id='sap-ui-bootstrap' " +
+				"data-sap-ui-libs='sap.m' data-sap-ui-bindingSyntax='complex' data-sap-ui-rtl=" + encodeURI(sPresetRTL) + " data-sap-ui-theme=" + encodeURI(sPresetTheme) + " data-sap-ui-compatVersion='edge' data-sap-ui-resourceroots=" + JSON.stringify(oPath) + "></scr" + "ipt>");
+		document.write("<base href=" + encodeURI(sOrigin) + "/>");
 	</script>
 </head>
 <body class="sapUiBody sapUiSizeCompact" id="content">
