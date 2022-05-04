@@ -879,6 +879,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"editor/objectListField/PropertyTranslationWithChanges4": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
 			"editor/RequestValues": {
 				group: "Runtime Editor",
 				coverage: {
