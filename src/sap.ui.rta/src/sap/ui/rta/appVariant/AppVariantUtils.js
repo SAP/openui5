@@ -568,10 +568,10 @@ function(
 		var oUshellContainer = FlexUtils.getUshellContainer();
 		var oComponentInstance;
 		if (oUshellContainer) {
-			return oUshellContainer.getServiceAsync("AppConfiguration")
+			return oUshellContainer.getServiceAsync("AppLifeCycle")
 				.then(function(oAppConfiguration) {
 					var oApplication = oAppConfiguration.getCurrentApplication();
-					oComponentInstance = oApplication.componentHandle.getInstance();
+					oComponentInstance = oApplication.componentInstance;
 					if (oComponentInstance) {
 						return oUshellContainer.getServiceAsync("CrossApplicationNavigation");
 					}
