@@ -480,6 +480,10 @@ sap.ui.define([
 	 * @return {this} this pointer for chaining
 	 */
 	IconTabHeader.prototype.setSelectedKey = function (sKey) {
+		if (sKey === this.getSelectedKey()) {
+			return this;
+		}
+
 		var aItems = this.getTabFilters(),
 			bIsParentIconTabBar = this._isInsideIconTabBar(),
 			bApiChange = true,
