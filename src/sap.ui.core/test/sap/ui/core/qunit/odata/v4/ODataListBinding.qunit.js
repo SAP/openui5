@@ -1479,7 +1479,6 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(Promise.reject(oError)));
 		this.mock(oBinding).expects("_fireChange").never();
 		this.mock(oBinding).expects("getContextsInViewOrder").never();
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to get contexts for /service/EMPLOYEES with start index 1 and length 2",
 			sClassName, sinon.match.same(oError));
@@ -4023,7 +4022,6 @@ sap.ui.define([
 					"~bDoNotRequestCount~", sinon.match.func)
 				.callsArgWith(5, 2, aData)
 				.resolves();
-			this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 			oBinding.aContexts.forEach(function (oContext) {
 				// #destroy would only be called for created context
 				that.mock(oContext).expects("destroy").never();
@@ -4204,7 +4202,6 @@ sap.ui.define([
 			.withExactArgs("~update~", true, true, sinon.match.func)
 			.returns(oGroupLock0);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
-		oBindingMock.expects("getResolvedPath").thrice().withExactArgs().callThrough();
 		oCreateInCacheExpectation = oBindingMock.expects("createInCache")
 			.withExactArgs(sinon.match.same(oGroupLock0), sinon.match.same(oCreatePathPromise),
 				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData0),
@@ -4232,7 +4229,6 @@ sap.ui.define([
 			.withExactArgs("~update~", true, true, sinon.match.func)
 			.returns(oGroupLock1);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
-		oBindingMock.expects("getResolvedPath").withExactArgs().callThrough();
 		oBindingMock.expects("createInCache")
 			.withExactArgs(sinon.match.same(oGroupLock1), sinon.match.same(oCreatePathPromise),
 				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData1),
