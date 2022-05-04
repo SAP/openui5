@@ -4,7 +4,7 @@
 /* ========================== */
 
 @_sap_ui_table_Cell_FocusOutlineOffset: -@sapUiContentFocusWidth;
-@_sap_ui_table_Cell_FocusOutlineOffsetInZoomedChrome: calc(-@sapUiContentFocusWidth ~"- 0.0625rem");
+@_sap_ui_table_Cell_FocusOutlineOffsetInZoomedChrome: -@sapUiContentFocusWidth - 1px;
 @_sap_ui_table_Cell_Padding: 0 0.5rem;
 @_sap_ui_table_Cell_TouchMenuIconSize: 1.375rem;
 @_sap_ui_table_Cell_ColumnIconSize: 0.75rem;
@@ -12,6 +12,7 @@
 @_sap_ui_table_Cell_BorderColorFixedSelected: @sapUiListTableFixedBorder;
 @_sap_ui_table_Cell_ShadowColorFixed: transparent;
 @_sap_ui_table_Cell_BorderBottomFocus: @sapUiListTableFixedBorder;
+@_sap_ui_table_Cell_DummyBorderColor: @sapUiListVerticalBorderColor;
 
 /*
  * Focus outline
@@ -379,7 +380,7 @@
 }
 
 .sapUiTableCellDummy {
-	border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
+	border-left: @_sap_ui_table_BaseBorderWidth solid @_sap_ui_table_Cell_DummyBorderColor;
 	pointer-events: none;
 	.sapUiTableContentRow & {
 		background-color: @sapBackgroundColor !important;
