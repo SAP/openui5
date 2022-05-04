@@ -2621,7 +2621,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doSetProperty: withCache fails", function (assert) {
+[false, true].forEach(function (bHasValue) {
+	QUnit.test("doSetProperty: withCache fails, bHasValue=" + bHasValue, function (assert) {
 		var oBinding = {},
 			oModel = {
 				bAutoExpandSelect : false,
@@ -2634,8 +2635,11 @@ sap.ui.define([
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
 		this.mock(oContext).expects("isInactive").withExactArgs().returns(false);
-		this.mock(oContext).expects("getValue").withExactArgs().returns("~getValue~");
-		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~getValue~", "transient")
+		this.mock(oContext).expects("getValue").withExactArgs()
+			// BCP: 2270087626, oCachePromise might still be pending
+			.returns(bHasValue ? "~getValue~" : undefined);
+		this.mock(_Helper).expects("getPrivateAnnotation").exactly(bHasValue ? 1 : 0)
+			.withExactArgs("~getValue~", "transient")
 			.returns("group"); // POST is not in flight
 		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func,
 				"~sPath~", /*bSync*/false, /*bWithOrWithoutCache*/true)
@@ -2648,6 +2652,7 @@ sap.ui.define([
 			assert.strictEqual(oError0, oError);
 		});
 	});
+});
 
 	//*********************************************************************************************
 [function (_assert, _oModelMock, _oBinding, _oBindingMock, _fnErrorCallback, _fnPatchSent,
