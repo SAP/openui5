@@ -299,7 +299,7 @@ sap.ui.define([
 					if (!this._contains(oEvent.target)) {
 						this.close();
 					}
-				};
+				}.bind(this);
 			}
 
 			this._F6NavigationHandler = function(oEvent) {
@@ -335,7 +335,7 @@ sap.ui.define([
 				}
 
 				F6Navigation.handleF6GroupNavigation(oEvent, oSettings);
-			};
+			}.bind(this);
 		},
 
 		metadata : {
@@ -1102,7 +1102,7 @@ sap.ui.define([
 
 		this._activateFocusHandle();
 
-		this._$(false, true).on("keydown", this._F6NavigationHandler.bind(this));
+		this._$(false, true).on("keydown", this._F6NavigationHandler);
 	};
 
 	Popup.prototype._shouldGetFocusAfterOpen = function() {
@@ -2025,7 +2025,7 @@ sap.ui.define([
 				if (this.touchEnabled && this._bAutoClose) {
 					if (!bModal) {
 						// register the autoclose handler when modal is set to false
-						jQuery(document).on("touchstart mousedown", this._fAutoCloseHandler.bind(this));
+						jQuery(document).on("touchstart mousedown", this._fAutoCloseHandler);
 					} else {
 						// deregister the autoclose handler when modal is set to true
 						jQuery(document).off("touchstart mousedown", this._fAutoCloseHandler);
@@ -2081,7 +2081,7 @@ sap.ui.define([
 			if (!this._bModal) {
 				if (bAutoClose) {
 					//register the autoclose hanlder when autoclose is set to true
-					jQuery(document).on("touchstart mousedown", this._fAutoCloseHandler.bind(this));
+					jQuery(document).on("touchstart mousedown", this._fAutoCloseHandler);
 				} else {
 					//deregister the autoclose handler when autoclose is set to false
 					jQuery(document).off("touchstart mousedown", this._fAutoCloseHandler);
@@ -2471,7 +2471,7 @@ sap.ui.define([
 
 		//autoclose implementation for mobile or desktop browser in touch mode
 		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
-			jQuery(document).on("touchstart mousedown", this._fAutoCloseHandler.bind(this));
+			jQuery(document).on("touchstart mousedown", this._fAutoCloseHandler);
 		}
 	};
 
@@ -3026,7 +3026,7 @@ sap.ui.define([
 			this._addFocusEventListeners();
 		}
 
-		this._$(false, true).on("keydown", this._F6NavigationHandler.bind(this));
+		this._$(false, true).on("keydown", this._F6NavigationHandler);
 	};
 
 	/**
