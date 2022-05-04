@@ -5,9 +5,9 @@
   Test page that runs all QUnit and OPA tests of a team within a hidden inline frame (well, not
   actually hidden, but out of sight).
 
-  The configuration must be given using the query option "team" which is expanded to a module name
-  "BeforePush.<team>" in the same folder as this script. This module is expected to return a map of
-  test files to 'full', 'integration' or 'both'.
+  The configuration must be given using the query option "team" which is expanded to a UI5 module
+  named "BeforePush.<team>" in the same folder as this script. This module is expected to return a
+  map of test files to 'full', 'integration' or 'both'.
 
   The page has two modes. As a default ("full mode") all tests are run except those with
   'integration'.
@@ -18,10 +18,10 @@
   combination with realOData=true to overcome "No Mockdata found" errors)
 
   Many of our tests can (and will) be run with "realOData=true" and perform tests against a back-end
-  server using the SimpleProxy servlet. If BeforePush is called w/o realOData URL parameter, this
-  page checks that this server can be accessed and asks for basic authentication, so that the tests
-  themselves later run through without login popups. If this fails, the tests with "realOData=true"
-  can be skipped.
+  server using a reverse proxy. If BeforePush is called w/o realOData URL parameter, this page
+  checks that this server can be accessed and asks for basic authentication, so that the tests
+  themselves later run through without login popups. If this fails, a list of common variants is
+  shown. Use the query option "variants" to see this list immediately.
 
   With "realOData=true" only tests having "realOData=true" in the URL are run.
   With "realOData=false" all tests are run with "realOData=true" stripped off.
@@ -29,7 +29,9 @@
   With "frames=n" you can run several tests in parallel to speed it up. When running only the
   verification, "frames=4" seems a valid option in Chrome, Edge, and Firefox. When testing with
   multiple browsers at once, it is better to run only one frame in each browser. When "frames=n" is
-  given, all tests are run invisible.
+  given, all tests are run invisible. BeforePush remembers the run times of the tests in the local
+  storage. In subsequent runs the longest-running tests are started first to ensure an optimal
+  utilization of the n frames.
 
   With "keepResults" the results for successful QUnit tests are NOT destroyed.
 
@@ -38,6 +40,7 @@
 (function () {
 	"use strict";
 	var mParameters = getQueryParameters(),
+		sLastKey = "BeforePush." + mParameters.team + ".last",
 		sServiceDocument = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		mVariants = {
 			"All tests" : {},
@@ -119,6 +122,11 @@
 			&& mParameters.integrationTestsOnly !== "false";
 	}
 
+	// loads the run times of the last run
+	function loadLastRun() {
+		return JSON.parse(localStorage.getItem(sLastKey) || "{}");
+	}
+
 	/**
 	 * Runs the tests.
 	 *
@@ -131,6 +139,7 @@
 	function runTests(mTests, bRealOData) {
 		var oFirstFailedTest,
 			iFrames,
+			mLastRun = loadLastRun(),
 			iRunningTests = 0,
 			oSelectedTest,
 			iStart = Date.now(),
@@ -142,17 +151,22 @@
 		function createTest(sText, sUrl) {
 			var oTest = {
 					element : document.createElement("li"),
+					text : sText,
 					url : sUrl
 				},
 				oDiv = document.createElement("div"),
 				oText = document.createTextNode(sText);
 
 			oTest.element.appendChild(oDiv);
+			oTest.icon = document.createElement("div");
+			oTest.icon.classList.add("status");
+			oDiv.appendChild(oTest.icon);
 			oDiv.addEventListener("click", select.bind(null, oTest));
 			oDiv.appendChild(oText);
 			oTest.infoNode = document.createTextNode("");
 			oTest.element.appendChild(oTest.infoNode);
 			document.getElementById("results").appendChild(oTest.element);
+			oTest.last = mLastRun[oTest.text] || 0;
 			return oTest;
 		}
 
@@ -164,6 +178,7 @@
 				oTotal.element.classList.remove("hidden");
 				oTotal.element.firstChild.classList.add("running");
 				summary(Date.now() - iStart);
+				saveLastRun(mLastRun);
 				if (oFirstFailedTest) {
 					select(oFirstFailedTest);
 				}
@@ -178,6 +193,17 @@
 				var oQUnit = oTest.frame.contentWindow.QUnit;
 
 				oTest.frame.removeEventListener("load", onLoad);
+				if (!(oQUnit && oQUnit.on)) {
+					// oTest.element.firstChild.classList.remove("running");
+					// oTest.element.firstChild.classList.add("failed");
+					oTest.infoNode.data = oQUnit ? ": no QUnit V2 found" : ": no QUnit found";
+					// if (bVisible && oTest === oSelectedTest) {
+					// 	select(oTest); // unselect the test to make it invisible
+					// }
+					// iRunningTests -= 1;
+					// next();
+					return;
+				}
 				// see https://github.com/js-reporters/js-reporters (@since QUnit 2)
 				oQUnit.on("runStart", function (oDetails) {
 					oTest.testCounts = oDetails.testCounts;
@@ -278,11 +304,16 @@
 			oTest.infoNode.data = sText;
 
 			if (oTest.url) {
+				oTest.icon.appendChild(
+					document.createTextNode(oTest.testCounts.failed ? "\u2716" : "\u2714"));
 				oElement = document.createElement("a");
 				oElement.setAttribute("href", oTest.url);
 				oElement.setAttribute("target", "_blank");
 				oElement.appendChild(document.createTextNode("Rerun"));
 				oTest.element.appendChild(oElement);
+				if (!oTest.testCounts.failed || !mLastRun[oTest.text]) {
+					mLastRun[oTest.text] = iRuntime;
+				}
 			}
 		}
 
@@ -293,6 +324,7 @@
 		aTests = aTests.map(function (sUrl) {
 			return createTest(sUrl, "test-resources/sap/ui/core/" + sUrl);
 		});
+		aTests.sort(function (oTest1, oTest2) { return oTest2.last - oTest1.last; });
 		oTotal = createTest("Finished");
 		oTotal.testCounts = {
 			failed : 0,
@@ -309,6 +341,11 @@
 				iFrames -= 1;
 			}
 		}
+	}
+
+	// saves the run times of the current run
+	function saveLastRun(mLastRun) {
+		localStorage.setItem(sLastKey, JSON.stringify(mLastRun));
 	}
 
 	function setStatus(sText) {
