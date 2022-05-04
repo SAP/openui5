@@ -493,6 +493,7 @@ sap.ui.define([
 			ComboBoxBase.prototype.exit.apply(this, arguments);
 
 			this._oSelectedItemBeforeOpen = null;
+			this._bInputFired = null;
 			this.setLastFocusedListItem(null);
 
 		};
@@ -645,6 +646,8 @@ sap.ui.define([
 			if (oEvent.isMarked("invalid")) {
 				return;
 			}
+
+			this._bInputFired = true;
 
 			this.loadItems(function() {
 				this.handleInputValidation(oEvent);
@@ -1547,7 +1550,13 @@ sap.ui.define([
 			this.syncPickerContent();
 			ComboBoxBase.prototype.open.call(this);
 
-			this._getSuggestionsPopover() && this._getSuggestionsPopover().updateFocus(this, ListHelpers.getListItem(this.getSelectedItem()));
+			var oSelectedItem = ListHelpers.getListItem(this.getSelectedItem());
+
+			if (!this._bInputFired) {
+				this._getSuggestionsPopover() && this._getSuggestionsPopover().updateFocus(this, oSelectedItem);
+			}
+
+			this._bInputFired = false;
 
 			return this;
 		};
