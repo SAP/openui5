@@ -5,9 +5,14 @@
 sap.ui.define([
 		'sap/ui/mdc/enum/BaseType',
 		'sap/base/util/ObjectPath',
-		'sap/ui/model/SimpleType'
-	], function(BaseType, ObjectPath, SimpleType) {
+		'sap/ui/model/SimpleType',
+		'sap/ui/mdc/util/DateUtil'
+], function(BaseType, ObjectPath, SimpleType, DateUtil) {
 	"use strict";
+
+	var sDateTimePattern = "yyyy-MM-ddTHH:mm:ssZ"; // milliseconds missing
+	var sDatePattern = "yyyy-MM-dd";
+	var sTimePattern = "HH:mm:ss";
 
 	/**
 	 * Provides mapping functionality for model dependent data types to base types. Extend this object in your project to customize behaviour depending on model usage.
@@ -130,42 +135,125 @@ sap.ui.define([
 		 * Returns a dataType instance based on given object path, formatoptions and constraints
 		 *
 		 * @param {string} sDataType Class path as string where each name is separated by '.'
-  		 * @param {object} formatOptions formatOptions for the dataType
- 		 * @param {object} constraints constraints for the dataType
+  		 * @param {object} [oFormatOptions] formatoptions for the dataType
+ 		 * @param {object} [oConstraints] constraints for the dataType
 		 * @returns {sap.ui.model.SimpleType} creates returns an instance of the resolved dataType
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		getDataTypeInstance: function(sDataType, formatOptions, constraints) {
+		getDataTypeInstance: function(sDataType, oFormatOptions, oConstraints) {
 			var TypeClass = this.getDataTypeClass(sDataType);
-			return new TypeClass(formatOptions, constraints);
+			return new TypeClass(oFormatOptions, oConstraints);
 		},
 
 		/**
 		 * returns a type mapping configuration object for a given type string or simpleType
 		 *
 		 * @param {string|sap.ui.model.SimpleType} vType Given dataType as string or type
+		 * @param {object} [oFormatOptions] formatoptions for the given dataType
+ 		 * @param {object} [oConstraints] constraints for the given dataType
 		 * @returns {sap.ui.mdc.TypeConfig} output returns typeConfig object
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		getTypeConfig: function (vType, formatOptions, constraints) {
+		getTypeConfig: function (vType, oFormatOptions, oConstraints) {
 
-			var oType, sDataType;
-
-			if (vType instanceof SimpleType) {
-				oType = vType;
-			} else {
-				var sDataTypeClass = this.getDataTypeClassName(vType);
-				sDataType = sDataTypeClass ? vType : undefined;
-				oType = this.getDataTypeInstance(sDataTypeClass || vType, formatOptions, constraints);
-			}
+			var oType = this._normalizeType(vType, oFormatOptions, oConstraints);
 
 			return {
-				className: sDataType,
+				className: oType.getMetadata().getName(),
 				typeInstance: oType,
 				baseType: this.getBaseTypeForType(oType)
 			};
+		},
+
+		/**
+		 * converts a string into a type-based value
+		 *
+		 * The value is not checked for validity. The used values must fit to the used basic type.
+		 *
+		 * <b>Note:</b> Number types are not converted, the number conversion is done by the Flex handling.
+		 *
+		 * @param {string} sValue stringified value
+		 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
+		 * @param {object} [oFormatOptions] formatoptions for the dataType
+ 		 * @param {object} [oConstraints] constraints for the dataType
+		 * @returns {object} converted value
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 * @since 1.103.0
+		 */
+		internalizeValue: function (sValue, vType, oFormatOptions, oConstraints) {
+			var oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
+			var sBaseType = this.getBaseTypeForType(oTypeInstance);
+			switch (sBaseType) {
+				case BaseType.DateTime:
+					return DateUtil.stringToType(sValue, oTypeInstance, sDateTimePattern);
+
+				case BaseType.Date:
+					return DateUtil.stringToType(sValue, oTypeInstance, sDatePattern);
+
+				case BaseType.Time:
+					return DateUtil.stringToType(sValue, oTypeInstance, sTimePattern);
+
+				case BaseType.Boolean:
+					return sValue;
+
+				case BaseType.Numeric:
+					return sValue;
+
+				default:
+					// just use type to convert
+					return oTypeInstance.parseValue(sValue, "string");
+			}
+		},
+
+		/**
+		 * converts a value into a string using a designated type
+		 *
+		 * The value is not checked for validity. The used values must fit to the used basic type.
+		 *
+		 * <b>Note:</b> Number types are not converted, the number conversion is done by the Flex handling.
+		 *
+		 * @param {object} vValue typed value
+		 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
+		 * @param {object} [oFormatOptions] formatoptions for the dataType
+ 		 * @param {object} [oConstraints] constraints for the dataType
+		 * @returns {string} converted value
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 * @since 1.103.0
+		 */
+		externalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
+			var oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
+			var sBaseType = this.getBaseTypeForType(oTypeInstance);
+			switch (sBaseType) {
+				case BaseType.DateTime:
+					return DateUtil.typeToString(vValue, oTypeInstance, sDateTimePattern);
+
+				case BaseType.Date:
+					return DateUtil.typeToString(vValue, oTypeInstance, sDatePattern);
+
+				case BaseType.Time:
+					return DateUtil.typeToString(vValue, oTypeInstance, sTimePattern);
+
+				case BaseType.Boolean:
+					return vValue;
+
+				case BaseType.Numeric:
+					return vValue;
+
+				default:
+					// just use type to convert
+					return oTypeInstance.formatValue(vValue, "string");
+			}
+		},
+
+		_normalizeType: function (vType, oFormatOptions, oConstraints) {
+			if (vType instanceof SimpleType) { // simpletype
+				return vType;
+			}
+			return this.getDataTypeInstance(vType, oFormatOptions, oConstraints); // string
 		}
 	};
 

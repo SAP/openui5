@@ -78,7 +78,7 @@ sap.ui.define([
 				// unknown Edm type -> throw error to not continue with strange data
 				throw new Error("Invalid data type " + sType);
 			} else {
-				sType = BaseTypeUtil.getDataTypeClassName(sType);
+				sType = BaseTypeUtil.getDataTypeClassName.call(this, sType);
 			}
 
 			return sType;
@@ -116,8 +116,30 @@ sap.ui.define([
 					return BaseType.Numeric;
 
 				default:
-					return BaseTypeUtil.getBaseType(sType, oFormatOptions, oConstraints);
+					return BaseTypeUtil.getBaseType.call(this, sType, oFormatOptions, oConstraints);
 			}
+		},
+
+		internalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
+			var oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
+			if (this.getBaseType(oTypeInstance) === BaseType.Numeric) {
+				if (typeof sValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
+					// INT64 and Decimal using string as internal value -> if for some reason a number comes in convert it to string
+					return vValue.toString(); // don't use type as this could have locale dependent parsing
+				}
+			}
+			return BaseTypeUtil.internalizeValue.call(this, vValue, vType, oFormatOptions, oConstraints);
+		},
+
+		externalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
+			var oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
+			if (this.getBaseType(oTypeInstance) === BaseType.Numeric) {
+				if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
+					// INT64 and Decimal parsed always to string, if for some reason a number comes in -> convert to string, but don't use type at this might have locale dependent formatting
+					return vValue.toString();
+				}
+			}
+			return BaseTypeUtil.externalizeValue.call(this, vValue, vType, oFormatOptions, oConstraints);
 		}
 	});
 
