@@ -224,6 +224,15 @@ sap.ui.define([
 		this._clearMedia();
 	};
 
+	Column.prototype.setParent = function(oParent) {
+		Element.prototype.setParent.apply(this, arguments);
+		if (!oParent) {
+			delete this._initialOrder;
+		}
+
+		return this;
+	};
+
 	Column.prototype.getTable = function() {
 		var oParent = this.getParent();
 		if (oParent && oParent.isA("sap.m.Table")) {

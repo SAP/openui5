@@ -318,6 +318,10 @@ sap.ui.define([
 
 		assert.ok(mediaAttachSpy.called, "Media handler called immediately");
 
+		assert.equal(sut.getInitialOrder(), 0, "initial order is correct after rendering");
+		parent.removeColumn(sut);
+		assert.equal(sut.getInitialOrder(), -1, "initial order is not cashed and correct after removal");
+
 		parent.destroy();
 	});
 

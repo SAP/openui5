@@ -1026,6 +1026,9 @@ sap.ui.define([
 		Core.applyChanges();
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
+		// headers association is set on the td elements
+		assert.equal(Core.byId(sut.$().find("td.sapMListTblCell").attr("headers")), sut.getColumns()[0], "Headers attribute is set on the first cell");
+
 		// accessibility role
 		assert.equal(sut.getAccessibilityType(), oResourceBundle.getText("ACC_CTR_TYPE_TABLE"), "Accessilitiy role correctly set");
 

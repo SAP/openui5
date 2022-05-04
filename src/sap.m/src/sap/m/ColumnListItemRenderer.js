@@ -216,7 +216,6 @@ sap.ui.define([
 			rm.openEnd();
 
 			if (bRenderCell) {
-				this.applyAriaLabelledBy(oHeader, oCell);
 				rm.renderControl(oCell);
 			}
 

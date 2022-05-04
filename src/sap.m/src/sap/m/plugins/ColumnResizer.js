@@ -178,6 +178,7 @@ sap.ui.define([
 
 	ColumnResizer.prototype._onmouseleave = function() {
 		this._invalidatePositions();
+		this.onsapescape();
 	};
 
 	ColumnResizer.prototype._ontouchend = function() {
@@ -268,6 +269,7 @@ sap.ui.define([
 		if (!this._oHandle) {
 			this._oHandle = document.createElement("div");
 			this._oHandle.className = CSS_CLASS + "Handle";
+			this._oHandle.onmouseleave = function() { this.style[sBeginDirection] = ""; };
 
 			if (bMobileHandle || ColumnResizer._isInTouchMode()) {
 				var oCircle = document.createElement("div");
