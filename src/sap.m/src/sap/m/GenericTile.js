@@ -422,6 +422,11 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._initScopeContent = function (sTileClass) {
 		if (!this.getState || this.getState() !== LoadState.Disabled) {
+			if (this._oMoreIcon) {
+				//It destroys the existing button when the Tile is getting rendered more than once
+				this._oMoreIcon.destroy();
+				this._oMoreIcon = null;
+			}
 			if (this.isA("sap.m.GenericTile") && this._isIconMode() && this.getFrameType() === FrameType.TwoByHalf){
 				// Acts Like an actual Button in Icon mode for TwoByHalf Tile
 				this._oMoreIcon = this._oMoreIcon || new Button({
