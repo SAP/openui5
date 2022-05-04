@@ -682,6 +682,15 @@ sap.ui.define([
 
 	};
 
+	Content.prototype.onContainerClose = function() {
+
+	};
+
+	Content.prototype.onContainerOpen = function() {
+
+	};
+
+
 	PromiseMixin.call(Content.prototype);
 
 

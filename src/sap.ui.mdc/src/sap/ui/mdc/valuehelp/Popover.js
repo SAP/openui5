@@ -239,6 +239,7 @@ sap.ui.define([
 		var oContent = this._getContent();
 
 		if (oContent) {
+			oContent.onContainerOpen();
 			oContent.onShow();
 		}
 
@@ -254,6 +255,7 @@ sap.ui.define([
 
 		if (oContent) {
 			oContent.onHide();
+			oContent.onContainerClose();
 		}
 
 		var oPopover = this.getAggregation("_container");
