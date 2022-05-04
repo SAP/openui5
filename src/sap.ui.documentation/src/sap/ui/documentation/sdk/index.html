@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"/>
 	<title>SAPUI5 Navigation</title>
 	<script>
 
@@ -28,6 +29,8 @@
 		if (sOrigin === "" || sOrigin === ".") {
 			var sHref = document.location.href;
 			sOrigin = sHref.substring(0, sHref.lastIndexOf('resources/sap/ui/documentation/sdk/') - 1);
+		} else {
+			sOrigin = new URL(sOrigin, document.baseURI).pathname;
 		}
 
 		oPath["sap/ui/demo/mock"] = sOrigin + "/test-resources/sap/ui/documentation/sdk";
