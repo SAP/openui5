@@ -424,7 +424,7 @@ sap.ui.define([
 		for (var i = 0; i < aItems.length; i++) {
 			oItem = aItems[i];
 
-			if (oItem instanceof IconTabFilter == false) {
+			if (!oItem.isA("sap.m.IconTabFilter") || !oItem.getVisible()) {
 				continue;
 			}
 
@@ -434,6 +434,7 @@ sap.ui.define([
 				break;
 			}
 		}
+
 		this._oItemNavigation.setFocusedIndex(iIndex);
 	};
 

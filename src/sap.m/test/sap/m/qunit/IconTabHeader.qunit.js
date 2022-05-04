@@ -1163,4 +1163,49 @@ sap.ui.define([
 		assert.strictEqual(oSelectSpy.lastCall.args[0].key, "key2", "second filter key is passed as select event arg");
 		assert.strictEqual(oSelectSpy.lastCall.args[0].previousKey, "key1", "first filter key is passed as previousKey select event arg");
 	});
+
+	QUnit.module("Focusing", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader({
+				items: [
+					new IconTabFilter({
+						text: "Tab1",
+						key: "tab1"
+					}),
+					new IconTabFilter({
+						text: "Tab2",
+						key: "tab2",
+						visible: false
+					}),
+					new IconTabFilter({
+						text: "Tab3",
+						key: "tab3"
+					}),
+					new IconTabFilter({
+						text: "Tab4",
+						key: "tab4"
+					}),
+					new IconTabFilter({
+						text: "Tab5",
+						key: "tab5"
+					})
+				]
+			});
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Focused index on focus leave", function(assert) {
+		this.oITH.setSelectedKey("tab4");
+		Core.applyChanges();
+
+		this.oITH._onItemNavigationFocusLeave();
+
+		// Assert
+		assert.strictEqual(this.oITH._oItemNavigation.getFocusedIndex(), 2, "focused index is correct");
+	});
 });
