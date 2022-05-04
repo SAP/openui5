@@ -139,6 +139,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines whether the component is required.
+				 */
+				required: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
 				 * Defines the text of the component.
 				 */
 				text: {

@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Lleihau",
 		STEPINPUT_INC_ICON_TITLE: "Cynyddu",
 		SPLIT_BUTTON_DESCRIPTION: "Botwm Hollti",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Pwyswch Space neu Enter i sbarduno cam gweithredu diofyn ac Alt + Saeth i Lawr neu F4 i sbarduno gweithred saeth"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Pwyswch Space neu Enter i sbarduno cam gweithredu diofyn ac Alt + Saeth i Lawr neu F4 i sbarduno gweithred saeth",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Yn Ôl",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Gwrthod"
 	};
 
 	exports.default = messagebundle_cy;

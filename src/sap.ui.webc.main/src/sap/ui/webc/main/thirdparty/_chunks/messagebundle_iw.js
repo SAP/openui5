@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "הפחת",
 		STEPINPUT_INC_ICON_TITLE: "הגדל",
 		SPLIT_BUTTON_DESCRIPTION: "לחצן פיצול",
-		SPLIT_BUTTON_KEYBOARD_HINT: "לחץ רווח או ENTER כדי להפעיל פעולה בברירת מחדל ו- Alt + חץ למטה או F4 כדי להפעיל פעולת חץ"
+		SPLIT_BUTTON_KEYBOARD_HINT: "לחץ רווח או ENTER כדי להפעיל פעולה בברירת מחדל ו- Alt + חץ למטה או F4 כדי להפעיל פעולת חץ",
+		MENU_BACK_BUTTON_ARIA_LABEL: "חזור",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "דחה"
 	};
 
 	exports.default = messagebundle_iw;

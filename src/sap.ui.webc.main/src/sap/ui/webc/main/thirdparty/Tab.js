@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/renderer/executeTemplate', './types/SemanticColor', './TabContainer', './Icon', './CustomListItem', './generated/templates/TabTemplate.lit', './generated/templates/TabInStripTemplate.lit', './generated/templates/TabInOverflowTemplate.lit', './generated/themes/Tab.css', './generated/themes/TabInStrip.css', './generated/themes/TabInOverflow.css'], function (UI5Element, litRender, executeTemplate, SemanticColor, TabContainer, Icon, CustomListItem, TabTemplate_lit, TabInStripTemplate_lit, TabInOverflowTemplate_lit, Tab_css, TabInStrip_css, TabInOverflow_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/renderer/executeTemplate', 'sap/ui/webc/common/thirdparty/icons/error', 'sap/ui/webc/common/thirdparty/icons/alert', 'sap/ui/webc/common/thirdparty/icons/sys-enter-2', './types/SemanticColor', './types/ListItemType', './TabContainer', './Icon', './Button', './CustomListItem', './generated/templates/TabTemplate.lit', './generated/templates/TabInStripTemplate.lit', './generated/templates/TabInOverflowTemplate.lit', './generated/themes/Tab.css', './generated/themes/TabInStrip.css', './generated/themes/TabInOverflow.css'], function (UI5Element, litRender, executeTemplate, error, alert, sysEnter2, SemanticColor, ListItemType, TabContainer, Icon, Button, CustomListItem, TabTemplate_lit, TabInStripTemplate_lit, TabInOverflowTemplate_lit, Tab_css, TabInStrip_css, TabInOverflow_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -88,6 +88,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static get dependencies() {
 			return [
 				Icon,
+				Button,
 				CustomListItem,
 			];
 		}
@@ -130,7 +131,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					&& (node.nodeType !== Node.TEXT_NODE || node.nodeValue.trim().length !== 0)));
 		}
 		getTabInStripDomRef() {
-			return this._getTabInStripDomRef;
+			return this._tabInStripDomRef;
 		}
 		getFocusDomRef() {
 			let focusedDomRef = super.getFocusDomRef();
@@ -205,16 +206,28 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			return classes.join(" ");
 		}
-		get headerSemanticIconClasses() {
-			const classes = ["ui5-tab-strip-item-semanticIcon"];
-			if (this.design !== SemanticColor.Default) {
-				classes.push(`ui5-tab-strip-item-semanticIcon--${this.design.toLowerCase()}`);
+		get semanticIconName() {
+			switch (this.design) {
+			case SemanticColor.Positive:
+				return "sys-enter-2";
+			case SemanticColor.Negative:
+				return "error";
+			case SemanticColor.Critical:
+				return "alert";
+			default:
+				return null;
+			}
+		}
+		get semanticIconClasses() {
+			const classes = ["ui5-tab-semantic-icon"];
+			if (this.design !== SemanticColor.Default && this.design !== SemanticColor.Neutral) {
+				classes.push(`ui5-tab-semantic-icon--${this.design.toLowerCase()}`);
 			}
 			return classes.join(" ");
 		}
 		get overflowClasses() {
 			const classes = ["ui5-tab-overflow-item"];
-			if (this.design !== SemanticColor.Default) {
+			if (this.design !== SemanticColor.Default && this.design !== SemanticColor.Neutral) {
 				classes.push(`ui5-tab-overflow-item--${this.design.toLowerCase()}`);
 			}
 			if (this.disabled) {
@@ -226,7 +239,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return classes.join(" ");
 		}
 		get overflowState() {
-			return (this.disabled || this.isSingleClickArea) ? "Inactive" : "Active";
+			return (this.disabled || this.isSingleClickArea) ? ListItemType.Inactive : ListItemType.Active;
 		}
 	}
 	Tab.define();

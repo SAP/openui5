@@ -18,16 +18,19 @@ sap.ui.define([
 				valueStateMessage: "Value State Message",
 				options: [
 					new Option({
+						additionalText: "Some text...",
 						icon: "employee",
 						text: "Some text...",
 						value: "Control value"
 					}),
 					new Option({
+						additionalText: "Some text...",
 						icon: "employee",
 						text: "Some text...",
 						value: "Control value"
 					}),
 					new Option({
+						additionalText: "Some text...",
 						icon: "employee",
 						text: "Some text...",
 						value: "Control value"

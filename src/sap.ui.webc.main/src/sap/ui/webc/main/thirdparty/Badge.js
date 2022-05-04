@@ -19,9 +19,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			_iconOnly: {
 				type: Boolean,
 			},
-			active: {
-				type: Boolean,
-			},
 		},
 		managedSlots: true,
 		slots:  {
@@ -52,12 +49,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		onBeforeRendering() {
 			this._hasIcon = this.hasIcon;
 			this._iconOnly = this.iconOnly;
-		}
-		_onmousedown() {
-			this.active = true;
-		}
-		_onmouseup() {
-			this.active = false;
 		}
 		get hasText() {
 			return !!this.textContent.trim().length;

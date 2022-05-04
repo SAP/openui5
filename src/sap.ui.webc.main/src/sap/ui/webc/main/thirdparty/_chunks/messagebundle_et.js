@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Vähenda",
 		STEPINPUT_INC_ICON_TITLE: "Suurenda",
 		SPLIT_BUTTON_DESCRIPTION: "Tükeldatud nupp",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Vaiketoimingu käivitamiseks vajutage tühikuklahvi (Space) või sisestusklahvi (Enter) ning nooletoimingu käivitamiseks klahvikombinatsiooni Alt+allanool või klahvi F4"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Vaiketoimingu käivitamiseks vajutage tühikuklahvi (Space) või sisestusklahvi (Enter) ning nooletoimingu käivitamiseks klahvikombinatsiooni Alt+allanool või klahvi F4",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Tagasi",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Keeldu"
 	};
 
 	exports.default = messagebundle_et;

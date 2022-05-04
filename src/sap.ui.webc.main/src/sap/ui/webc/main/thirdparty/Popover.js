@@ -230,9 +230,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 				height = rect.height;
 			return { width, height };
 		}
-		get contentDOM() {
-			return this.shadowRoot.querySelector(".ui5-popup-content");
-		}
 		get arrowDOM() {
 			return this.shadowRoot.querySelector(".ui5-popover-arrow");
 		}

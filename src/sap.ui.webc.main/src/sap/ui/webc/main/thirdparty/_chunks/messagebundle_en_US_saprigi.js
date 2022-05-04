@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "⁪⁪⁪‌​​‍‍‌​‍​‍​‌​‌‍‍​​​‍‍‌‌‌‍​​​‌​‌‍‍‍‌‌‍‌‌‌⁪Decrease⁪⁪",
 		STEPINPUT_INC_ICON_TITLE: "⁪⁪⁪‌​‌‌​‍​‍​‌‍‌​​‌‍‍‌‍‌‌‍​‌‌​​‍‌​​​‌‌‌‌‌​‍‍⁪Increase⁪⁪",
 		SPLIT_BUTTON_DESCRIPTION: "⁪⁪⁪‌​‌‍​‌​‍​‍​‌‍‍​​‌‌‌‌‌‍​​‌‍​‌‍‌​‌‍‍​​‌‌​‌‌⁪Split Button⁪⁪",
-		SPLIT_BUTTON_KEYBOARD_HINT: "⁪⁪⁪‌​‍‍​​‍‍‍‌‍‌‌‌​‍‌‌‍​‌‍​​‌‍‌​‍‍​‌‌‌‍​​​‍​​⁪Press Space or Enter to trigger default action and Alt + Arrow Down or F4 to trigger arrow action⁪⁪"
+		SPLIT_BUTTON_KEYBOARD_HINT: "⁪⁪⁪‌​‍‍​​‍‍‍‌‍‌‌‌​‍‌‌‍​‌‍​​‌‍‌​‍‍​‌‌‌‍​​​‍​​⁪Press Space or Enter to trigger default action and Alt + Arrow Down or F4 to trigger arrow action⁪⁪",
+		MENU_BACK_BUTTON_ARIA_LABEL: "⁪⁪⁪‌‌‌‌‍‍‌​‍‍‍‍​‌‌​​​‌‍‌‌‍​‍‍‌‌​​‍​‌‍‍‌​​‍‍‌⁪Back⁪⁪",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "⁪⁪⁪‌‌‌​‍‌‍‌‍‌‌‌‌‍‌‍‍‍‍​‌‍​‌​‌‍​‌‌‍‌​‍​‌‍​‍‍‌⁪Decline⁪⁪"
 	};
 
 	exports.default = messagebundle_en_US_saprigi;

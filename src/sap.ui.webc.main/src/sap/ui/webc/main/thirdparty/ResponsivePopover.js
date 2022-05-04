@@ -71,6 +71,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		get _dialog() {
 			return this.shadowRoot.querySelector("[ui5-dialog]");
 		}
+		get contentDOM() {
+			return this._isPhone ? this._dialog.contentDOM : super.contentDOM;
+		}
 		get _isPhone() {
 			return Device.isPhone();
 		}

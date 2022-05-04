@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Diminuer",
 		STEPINPUT_INC_ICON_TITLE: "Augmenter",
 		SPLIT_BUTTON_DESCRIPTION: "Bouton partagé",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Appuyez sur la barre des espaces ou sur Entrée pour déclencher l'action par défaut et utilisez Alt+Flèche vers le bas ou la touche F4 pour déclencher une action de flèche."
+		SPLIT_BUTTON_KEYBOARD_HINT: "Appuyez sur la barre des espaces ou sur Entrée pour déclencher l'action par défaut et utilisez Alt+Flèche vers le bas ou la touche F4 pour déclencher une action de flèche.",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Retour",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Refuser"
 	};
 
 	exports.default = messagebundle_fr_CA;

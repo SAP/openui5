@@ -105,6 +105,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		static get staticAreaStyles() {
 			return [ResponsivePopoverCommon_css, DatePickerPopover_css];
 		}
+		constructor() {
+			super();
+			this.FormSupport = undefined;
+		}
 		onResponsivePopoverAfterClose() {
 			this._isPickerOpen = false;
 			if (Device.isPhone()) {
@@ -114,6 +118,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			}
 		}
 		onBeforeRendering() {
+			this.FormSupport = FeaturesRegistry.getFeature("FormSupport");
 			["minDate", "maxDate"].forEach(prop => {
 				if (this[prop] && !this.isValid(this[prop])) {
 					console.warn(`Invalid value for property "${prop}": ${this[prop]} is not compatible with the configured format pattern: "${this._displayFormat}"`);
@@ -158,7 +163,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			if (this.isOpen()) {
 				return;
 			}
-			if (Keys.isPageUpShiftCtrl(event)) {
+			if (Keys.isEnter(event)) {
+				if (this.FormSupport) {
+					this.FormSupport.triggerFormSubmit(this);
+				}
+			} else if (Keys.isPageUpShiftCtrl(event)) {
 				event.preventDefault();
 				this._modifyDateValue(1, "year");
 			} else if (Keys.isPageUpShift(event)) {
@@ -288,7 +297,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 				"ariaRoledescription": this.dateAriaDescription,
 				"ariaHasPopup": HasPopup.Grid,
 				"ariaAutoComplete": "none",
-				"ariaControls": `${this._id}-responsive-popover`,
 				"ariaRequired": this.required,
 				"ariaLabel": AriaLabelHelper.getEffectiveAriaLabelText(this),
 			};

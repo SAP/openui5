@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Verkleinern",
 		STEPINPUT_INC_ICON_TITLE: "Vergrößern",
 		SPLIT_BUTTON_DESCRIPTION: "Zweigeteilte Drucktaste",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Für Standardaktion Leertaste oder Eingabetaste drücken; für Pfeilaktion Alt + Pfeil nach unten oder F4 drücken"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Für Standardaktion Leertaste oder Eingabetaste drücken; für Pfeilaktion Alt + Pfeil nach unten oder F4 drücken",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Back",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Decline"
 	};
 
 	exports.default = messagebundle_de;

@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/util/Caret', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/not-editable', 'sap/ui/webc/common/thirdparty/icons/error', 'sap/ui/webc/common/thirdparty/icons/alert', 'sap/ui/webc/common/thirdparty/icons/sys-enter-2', 'sap/ui/webc/common/thirdparty/icons/information', './types/InputType', './Popover', './Icon', './generated/templates/InputTemplate.lit', './generated/templates/InputPopoverTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Input.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css'], function (UI5Element, litRender, ResizeHandler, Device, ValueState, FeaturesRegistry, Keys, Integer, i18nBundle, AriaLabelHelper, Caret, decline, notEditable, error, alert, sysEnter2, information, InputType, Popover, Icon, InputTemplate_lit, InputPopoverTemplate_lit, i18nDefaults, Input_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/util/Caret', 'sap/ui/webc/common/thirdparty/base/util/getActiveElement', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/not-editable', 'sap/ui/webc/common/thirdparty/icons/error', 'sap/ui/webc/common/thirdparty/icons/alert', 'sap/ui/webc/common/thirdparty/icons/sys-enter-2', 'sap/ui/webc/common/thirdparty/icons/information', './types/InputType', './Popover', './Icon', './generated/templates/InputTemplate.lit', './generated/templates/InputPopoverTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Input.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css'], function (UI5Element, litRender, ResizeHandler, Device, ValueState, FeaturesRegistry, Keys, Integer, i18nBundle, AriaLabelHelper, Caret, getActiveElement, decline, notEditable, error, alert, sysEnter2, information, InputType, Popover, Icon, InputTemplate_lit, InputPopoverTemplate_lit, i18nDefaults, Input_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -7,6 +7,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	var ResizeHandler__default = /*#__PURE__*/_interopDefaultLegacy(ResizeHandler);
 	var ValueState__default = /*#__PURE__*/_interopDefaultLegacy(ValueState);
 	var Integer__default = /*#__PURE__*/_interopDefaultLegacy(Integer);
+	var getActiveElement__default = /*#__PURE__*/_interopDefaultLegacy(getActiveElement);
 
 	const rgxFloat = new RegExp(/(\+|-)?\d+(\.|,)\d+/);
 	const metadata = {
@@ -190,10 +191,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.suggestionsTexts = this.Suggestions.defaultSlotProperties(this.highlightValue);
 			}
 			this.effectiveShowClearIcon = (this.showClearIcon && !!this.value && !this.readonly && !this.disabled);
-			const FormSupport = FeaturesRegistry.getFeature("FormSupport");
+			this.FormSupport = FeaturesRegistry.getFeature("FormSupport");
 			const hasItems = this.suggestionItems.length;
 			const hasValue = !!this.value;
-			const isFocused = this === document.activeElement;
+			const isFocused = this.shadowRoot.querySelector("input") === getActiveElement__default();
 			if (this._isPhone) {
 				this.open = this.openOnMobile;
 			} else if (this._forceOpen) {
@@ -201,8 +202,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			} else {
 				this.open = hasValue && hasItems && isFocused && this.isTyping;
 			}
-			if (FormSupport) {
-				FormSupport.syncNativeHiddenInput(this);
+			if (this.FormSupport) {
+				this.FormSupport.syncNativeHiddenInput(this);
 			} else if (this.name) {
 				console.warn(`In order for the "name" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`);
 			}
@@ -292,6 +293,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (!itemPressed) {
 				this.fireEventByAction(this.ACTION_ENTER);
 				this.lastConfirmedValue = this.value;
+				if (this.FormSupport) {
+					this.FormSupport.triggerFormSubmit(this);
+				}
 				return;
 			}
 			this.focused = true;

@@ -101,13 +101,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.fireEvent("click");
 		}
 		get _dir() {
-			if (!this.effectiveDir) {
-				return;
-			}
-			if (this.ltr) {
-				return "ltr";
-			}
-			return this.effectiveDir;
+			return this.ltr ? "ltr" : undefined;
 		}
 		get effectiveAriaHidden() {
 			if (this.ariaHidden === "") {

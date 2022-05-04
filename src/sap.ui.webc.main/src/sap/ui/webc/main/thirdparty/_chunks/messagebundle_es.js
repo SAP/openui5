@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Reducir",
 		STEPINPUT_INC_ICON_TITLE: "Ampliar",
 		SPLIT_BUTTON_DESCRIPTION: "Botón doble",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Pulse la barra espaciadora o intro para iniciar la acción por defecto y Alt + flecha hacia abajo o F4 para iniciar la acción de flecha"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Pulse la barra espaciadora o intro para iniciar la acción por defecto y Alt + flecha hacia abajo o F4 para iniciar la acción de flecha",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Volver",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Declinar"
 	};
 
 	exports.default = messagebundle_es;

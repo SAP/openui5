@@ -24,6 +24,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5El
 			value: {
 				type: String,
 			},
+			 additionalText: {
+				type: String,
+			},
 			_focused: {
 				type: Boolean,
 			},

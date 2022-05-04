@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Disminuir",
 		STEPINPUT_INC_ICON_TITLE: "Aumentar",
 		SPLIT_BUTTON_DESCRIPTION: "Botón de división",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Presione la barra espaciadora o intro para desencadenar la acción predeterminada y Alt + flecha hacia abajo para desencadenar la acción de flecha"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Presione la barra espaciadora o intro para desencadenar la acción predeterminada y Alt + flecha hacia abajo para desencadenar la acción de flecha",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Atrás",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Rechazar"
 	};
 
 	exports.default = messagebundle_es_MX;

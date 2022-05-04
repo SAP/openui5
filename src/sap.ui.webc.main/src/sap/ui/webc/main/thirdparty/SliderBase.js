@@ -63,6 +63,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				max: null,
 				labelInterval: null,
 			};
+			this._ontouchstart = {
+				handleEvent(event) {
+					this._onmousedown(event);
+				},
+				passive: true,
+			};
 		}
 		static get metadata() {
 			return metadata;
@@ -142,9 +148,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.notResized) {
 				this._resizeHandler();
 			}
-		}
-		_ontouchstart(event) {
-			this._onmousedown(event);
 		}
 		_onmouseover(event) {
 			if (this.showTooltip) {

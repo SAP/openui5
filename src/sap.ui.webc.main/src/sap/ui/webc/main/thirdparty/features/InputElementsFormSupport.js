@@ -48,17 +48,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry'], function 
 			}
 		}
 		static triggerFormSubmit(element) {
-			if (!element.submits) {
-				return;
-			}
 			let currentElement = element.parentElement;
 			while (currentElement && currentElement.tagName.toLowerCase() !== "form") {
 				currentElement = currentElement.parentElement;
 			}
 			if (currentElement) {
+				currentElement.dispatchEvent(new SubmitEvent("submit", {
+					bubbles: true,
+					cancelable: true,
+					submitter: element,
+				}));
 				currentElement.submit();
-			} else {
-				console.error(`${element} is not within a form. Please add it in a form.`);
 			}
 		}
 	}

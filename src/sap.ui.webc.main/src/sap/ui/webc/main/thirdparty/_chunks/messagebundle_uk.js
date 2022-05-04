@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Зменшити",
 		STEPINPUT_INC_ICON_TITLE: "Збільшити",
 		SPLIT_BUTTON_DESCRIPTION: "Кнопка розділення",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Натисніть клавішу пробілу або Enter для ініціювання усталеної операції, та Alt + стрілка вниз або F4 для ініціювання операції стрілки"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Натисніть клавішу пробілу або Enter для ініціювання усталеної операції, та Alt + стрілка вниз або F4 для ініціювання операції стрілки",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Назад",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Відхилити"
 	};
 
 	exports.default = messagebundle_uk;

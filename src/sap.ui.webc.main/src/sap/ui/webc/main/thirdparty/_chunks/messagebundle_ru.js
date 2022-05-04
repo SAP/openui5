@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Уменьшить",
 		STEPINPUT_INC_ICON_TITLE: "Увеличить",
 		SPLIT_BUTTON_DESCRIPTION: "Разделенная на две части кнопка",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Нажмите пробел или Enter, чтобы запустить операцию по умолчанию, и Alt + клавишу со стрелкой вниз или F4, чтобы запустить операцию стрелки"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Нажмите пробел или Enter, чтобы запустить операцию по умолчанию, и Alt + клавишу со стрелкой вниз или F4, чтобы запустить операцию стрелки",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Назад",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Отклонить"
 	};
 
 	exports.default = messagebundle_ru;

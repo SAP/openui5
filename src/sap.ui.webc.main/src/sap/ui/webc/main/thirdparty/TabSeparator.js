@@ -31,7 +31,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return true;
 		}
 		getTabInStripDomRef() {
-			return this._getTabInStripDomRef;
+			return this._tabInStripDomRef;
 		}
 		get stableDomRef() {
 			return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;

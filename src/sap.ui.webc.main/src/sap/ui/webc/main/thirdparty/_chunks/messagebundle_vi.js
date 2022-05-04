@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Giảm",
 		STEPINPUT_INC_ICON_TITLE: "Tăng",
 		SPLIT_BUTTON_DESCRIPTION: "Nút phân chia",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Nhấn Phím cách hoặc Enter để kích hoạt thao tác mặc định và Alt + Mũi tên xuống hoặc F4 để kích hoạt thao tác mũi tên"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Nhấn Phím cách hoặc Enter để kích hoạt thao tác mặc định và Alt + Mũi tên xuống hoặc F4 để kích hoạt thao tác mũi tên",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Quay lại",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Từ chối"
 	};
 
 	exports.default = messagebundle_vi;

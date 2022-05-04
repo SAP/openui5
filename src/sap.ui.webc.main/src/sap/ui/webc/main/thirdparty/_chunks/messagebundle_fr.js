@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Diminuer",
 		STEPINPUT_INC_ICON_TITLE: "Augmenter",
 		SPLIT_BUTTON_DESCRIPTION: "Bouton de fractionnement",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Appuyez sur la barre d'espacement ou sur la touche Entrée pour déclencher l'action par défaut, puis sur Alt + touche fléchée vers le bas ou F4 pour déclencher l'action."
+		SPLIT_BUTTON_KEYBOARD_HINT: "Appuyez sur la barre d'espacement ou sur la touche Entrée pour déclencher l'action par défaut, puis sur Alt + touche fléchée vers le bas ou F4 pour déclencher l'action.",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Retour",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Refuser"
 	};
 
 	exports.default = messagebundle_fr;

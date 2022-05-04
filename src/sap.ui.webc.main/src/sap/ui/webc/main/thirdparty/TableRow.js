@@ -71,6 +71,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static get dependencies() {
 			return [CheckBox];
 		}
+		constructor() {
+			super();
+			this._ontouchstart = {
+				handleEvent(event) {
+					this.activate();
+				},
+				passive: true,
+			};
+		}
 		_onmouseup() {
 			this.deactivate();
 		}
@@ -110,9 +119,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (Keys.isSpace(event) || Keys.isEnter(event)) {
 				this.deactivate();
 			}
-		}
-		_ontouchstart(event) {
-			this.activate();
 		}
 		_ontouchend() {
 			this.deactivate();

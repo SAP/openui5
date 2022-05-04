@@ -43,6 +43,7 @@ sap.ui.define([
 				"sap.ui.webc.main.IInput",
 				"sap.ui.webc.main.IInputSuggestionItem",
 				"sap.ui.webc.main.IListItem",
+				"sap.ui.webc.main.IMenuItem",
 				"sap.ui.webc.main.IMultiComboBoxItem",
 				"sap.ui.webc.main.ISegmentedButtonItem",
 				"sap.ui.webc.main.ISelectOption",
@@ -122,6 +123,8 @@ sap.ui.define([
 				"sap.ui.webc.main.Label",
 				"sap.ui.webc.main.Link",
 				"sap.ui.webc.main.List",
+				"sap.ui.webc.main.Menu",
+				"sap.ui.webc.main.MenuItem",
 				"sap.ui.webc.main.MessageStrip",
 				"sap.ui.webc.main.MultiComboBox",
 				"sap.ui.webc.main.MultiComboBoxItem",
@@ -170,15 +173,15 @@ sap.ui.define([
 						"unhideControl": "default"
 					},
 					"sap.ui.webc.main.Button": "sap/ui/webc/main/flexibility/Button",
-					"sap.ui.webc.main.DatePicker": {
-						"hideControl": "default",
-						"unhideControl": "default"
-					},
 					"sap.ui.webc.main.Card": {
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
 					"sap.ui.webc.main.Carousel": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
+					"sap.ui.webc.main.DatePicker": {
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
@@ -198,12 +201,12 @@ sap.ui.define([
 						"unhideControl": "default"
 					},
 					"sap.ui.webc.main.Panel": "sap/ui/webc/main/flexibility/Panel",
+					"sap.ui.webc.main.Popover": "sap/ui/webc/main/flexibility/Popover",
+					"sap.ui.webc.main.RadioButton": "sap/ui/webc/main/flexibility/RadioButton",
 					"sap.ui.webc.main.RangeSlider": {
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
-					"sap.ui.webc.main.Popover": "sap/ui/webc/main/flexibility/Popover",
-					"sap.ui.webc.main.RadioButton": "sap/ui/webc/main/flexibility/RadioButton",
 					"sap.ui.webc.main.RatingIndicator": {
 						"hideControl": "default",
 						"unhideControl": "default"
@@ -331,6 +334,17 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+
+		/**
+		 * Interface for components that may be slotted inside <code>ui5-menu</code> as items
+		 *
+		 * @name sap.ui.webc.main.IMenuItem
+		 * @interface
+		 * @public
+		 * @since 1.102.0
+		 * @experimental Since 1.102.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 

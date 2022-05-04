@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Reduzir",
 		STEPINPUT_INC_ICON_TITLE: "Ampliar",
 		SPLIT_BUTTON_DESCRIPTION: "Botão dividido em duas partes",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Pressione a barra de espaços ou Enter para acionar a ação padrão e Alt + tecla de controle do cursor para baixo ou F4 para acionar a ação da tecla de controle do cursor"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Pressione a barra de espaços ou Enter para acionar a ação padrão e Alt + tecla de controle do cursor para baixo ou F4 para acionar a ação da tecla de controle do cursor",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Voltar",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Recusar"
 	};
 
 	exports.default = messagebundle_pt;

@@ -81,7 +81,11 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 	const isIOS = () => {
 		return iOS;
 	};
+	const isAndroid = () => {
+		return android || androidPhone;
+	};
 
+	exports.isAndroid = isAndroid;
 	exports.isChrome = isChrome;
 	exports.isCombi = isCombi;
 	exports.isDesktop = isDesktop;

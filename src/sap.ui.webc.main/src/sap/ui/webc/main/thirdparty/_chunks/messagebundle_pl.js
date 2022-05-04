@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Zmniejsz",
 		STEPINPUT_INC_ICON_TITLE: "Zwiększ",
 		SPLIT_BUTTON_DESCRIPTION: "Przycisk podzielony na dwie części",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Naciśnij spację lub Enter, aby wywołać domyślną czynność, i strzałkę w dół lub F4, aby wywołać czynność strzałki"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Naciśnij spację lub Enter, aby wywołać domyślną czynność, i strzałkę w dół lub F4, aby wywołać czynność strzałki",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Wstecz",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Odrzuć"
 	};
 
 	exports.default = messagebundle_pl;

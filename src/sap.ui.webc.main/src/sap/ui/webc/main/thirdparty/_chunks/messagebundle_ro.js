@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Scădere",
 		STEPINPUT_INC_ICON_TITLE: "Creștere",
 		SPLIT_BUTTON_DESCRIPTION: "Buton de divizare",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Apăsați pe Space sau Enter pentru a declanșa acțiunea implicită și pe Alt + Săgeată în jos sau F4 pentru a declanșa acțiunea de săgeată"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Apăsați pe Space sau Enter pentru a declanșa acțiunea implicită și pe Alt + Săgeată în jos sau F4 pentru a declanșa acțiunea de săgeată",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Înapoi",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Refuzare"
 	};
 
 	exports.default = messagebundle_ro;

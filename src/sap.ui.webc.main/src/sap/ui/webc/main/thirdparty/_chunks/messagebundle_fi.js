@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Pienennä",
 		STEPINPUT_INC_ICON_TITLE: "Suurenna",
 		SPLIT_BUTTON_DESCRIPTION: "Jaa-painike",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Käynnistä oletustoiminto painamalla välilyönti- tai ENTER-näppäintä tai käynnistä nuolitoiminto painamalla Alt+alanuoli tai F4."
+		SPLIT_BUTTON_KEYBOARD_HINT: "Käynnistä oletustoiminto painamalla välilyönti- tai ENTER-näppäintä tai käynnistä nuolitoiminto painamalla Alt+alanuoli tai F4.",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Paluu",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Hylkää"
 	};
 
 	exports.default = messagebundle_fi;
