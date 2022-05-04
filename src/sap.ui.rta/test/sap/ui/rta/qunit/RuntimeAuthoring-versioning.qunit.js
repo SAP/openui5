@@ -290,6 +290,17 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("and active version is not selected", function(assert) {
+			this.oRta._oVersionsModel.setProperty("/draftAvailable", true);
+			this.oRta._oVersionsModel.setProperty("/activeVersion", "2");
+			var oShowMessageBoxStub = whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
+			return this.oRta._handleReloadOnExit()
+				.then(function(oReloadInfo) {
+					assert.equal(oShowMessageBoxStub.calledOnce, true, "A Popup was shown");
+					assert.equal(oReloadInfo.activeVersionNotSelected, true, "the active version is not selected");
+				});
+		});
+
 		QUnit.test("and changes need a reload", function(assert) {
 			this.oRta._bReloadNeeded = true;
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);

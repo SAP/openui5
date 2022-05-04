@@ -1598,8 +1598,7 @@ sap.ui.define([
 
 		// allContexts do not change the url parameter to trigger a reload
 		if (
-			oReloadInfo.allContexts &&
-			!oReloadInfo.hasHigherLayerChanges &&
+			((oReloadInfo.allContexts && !oReloadInfo.hasHigherLayerChanges) || oReloadInfo.activeVersionNotSelected) &&
 			this._getUShellService("AppLifeCycle")
 		) {
 			this._getUShellService("AppLifeCycle").reloadCurrentApp();
