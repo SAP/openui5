@@ -4,20 +4,11 @@
 
 // Provides the base class for all objects with managed properties and aggregations.
 sap.ui.define([
-	'./DataType',
-	'./EventProvider',
-	'./ManagedObjectMetadata',
-	'./Object',
-	'./BindingInfo',
-	'../model/BindingMode',
-	'../model/StaticBinding',
-	'../model/CompositeBinding',
-	'../model/Context',
-	'../model/FormatException',
-	'../model/ParseException',
-	'../model/Type',
-	'../model/ValidateException',
-	"sap/ui/base/SyncPromise",
+	"./DataType",
+	"./EventProvider",
+	"./ManagedObjectMetadata",
+	"./Object",
+	"./BindingInfo",
 	"sap/ui/util/ActivityDetection",
 	"sap/base/util/ObjectPath",
 	"sap/base/Log",
@@ -33,15 +24,6 @@ sap.ui.define([
 	ManagedObjectMetadata,
 	BaseObject,
 	BindingInfo,
-	BindingMode,
-	StaticBinding,
-	CompositeBinding,
-	Context,
-	FormatException,
-	ParseException,
-	Type,
-	ValidateException,
-	SyncPromise,
 	ActivityDetection,
 	ObjectPath,
 	Log,
@@ -568,6 +550,27 @@ sap.ui.define([
 
 	function assertModelName(sModelName) {
 		assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
+	}
+
+	// Binding support Marker
+	var _bHasBindingSupport = false;
+
+	/**
+	 * Checks if the <code>ManagedObjectBindingSupport</code> mixin is introduced
+	 * via a model instance.
+	 * If so, it is applied to the <code>ManagedObject.prototype</code> once.
+	 *
+	 * @param {Object<string, sap.ui.model.Model>} mModels a map of models, keyed by the model name.
+	 */
+	function checkForBindingSupport(mModels) {
+		if (!_bHasBindingSupport ) {
+			var oModel = Object.values(mModels)[0];
+			// In theory an application could pass an object that does not extend from sap.ui.model.Model
+			if (oModel && oModel.mixinBindingSupport) {
+				oModel.mixinBindingSupport(ManagedObject.prototype);
+				_bHasBindingSupport = true;
+			}
+		}
 	}
 
 	/**
@@ -1128,7 +1131,8 @@ sap.ui.define([
 			if ( typeof mSettings.bindingContexts !== "object" ) {
 				throw new Error("bindingContexts must be a simple object");
 			}
-			if ( mSettings.bindingContexts instanceof Context) {
+			var oBindingContexts = mSettings.bindingContexts;
+			if ( BaseObject.isA(oBindingContexts, "sap.ui.model.Context")) {
 				this.setBindingContext(mSettings.bindingContexts);
 			} else {
 				for (sKey in mSettings.bindingContexts ) {
@@ -1866,7 +1870,7 @@ sap.ui.define([
 			return oObject;
 		}
 
-		if ( oObject instanceof BaseObject && oObject.isA(oAggregation.type) ) {
+		if ( BaseObject.isA(oObject, oAggregation.type) ) {
 			return oObject;
 		}
 
@@ -2796,7 +2800,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.destroy = function(bSuppressInvalidate) {
-		var sName;
+		var sName, oBindingInfo;
 		// ignore repeated calls
 		if (this.bIsDestroyed) {
 			return;
@@ -2814,15 +2818,21 @@ sap.ui.define([
 
 		// Data Binding
 		for (sName in this.mBindingInfos) {
-			if (this.mBindingInfos[sName].factory) {
-				this._detachAggregationBindingHandlers(sName);
-			} else {
-				this._detachPropertyBindingHandlers(sName);
+			oBindingInfo = this.mBindingInfos[sName];
+			if (oBindingInfo.binding) {
+				if (oBindingInfo.factory) {
+					this._detachAggregationBindingHandlers(sName);
+				} else {
+					this._detachPropertyBindingHandlers(sName);
+				}
 			}
 		}
 
 		for (sName in this.mObjectBindingInfos) {
-			this._detachObjectBindingHandlers(sName);
+			oBindingInfo = this.mObjectBindingInfos[sName];
+			if (oBindingInfo.binding) {
+				this._detachObjectBindingHandlers(oBindingInfo);
+			}
 		}
 
 		if (this.exit) {
@@ -3074,75 +3084,25 @@ sap.ui.define([
 		return this;
 	};
 
+	function logError(sFunctionName) {
+		Log.error("Unexpected call of '" + sFunctionName + "'.");
+	}
+
 	/**
 	 * Create object binding.
 	 *
 	 * @param {sap.ui.base.ManagedObject.ObjectBindingInfo} oBindingInfo The bindingInfo object
 	 * @private
 	 */
-	ManagedObject.prototype._bindObject = function(oBindingInfo) {
-		var oBinding,
-			oContext,
-			sModelName,
-			oModel,
-			that = this;
-
-		var fnChangeHandler = function(oEvent) {
-			that.setElementBindingContext(oBinding.getBoundContext(), sModelName);
-		};
-
-		var fnDataStateChangeHandler = function(oEvent) {
-			var oDataState = oBinding.getDataState();
-			if (!oDataState) {
-				return;
-			}
-			//inform generic refreshDataState method
-			if (that.refreshDataState) {
-				that.refreshDataState('', oDataState);
-			}
-		};
-
-		sModelName = oBindingInfo.model;
-		oModel = this.getModel(sModelName);
-
-		oContext = this.getBindingContext(sModelName);
-
-		oBinding = oModel.bindContext(oBindingInfo.path, oContext, oBindingInfo.parameters);
-		if (oBindingInfo.suspended) {
-			oBinding.suspend(true);
-		}
-		oBinding.attachChange(fnChangeHandler);
-		oBindingInfo.binding = oBinding;
-		oBindingInfo.modelChangeHandler = fnChangeHandler;
-		oBindingInfo.dataStateChangeHandler = fnDataStateChangeHandler;
-
-		oBinding.attachEvents(oBindingInfo.events);
-
-		if (this.refreshDataState) {
-			oBinding.attachAggregatedDataStateChange(fnDataStateChangeHandler);
-		}
-
-		oBinding.initialize();
-	};
+	ManagedObject.prototype._bindObject = logError.bind(null, "_bindObject");
 
 	/**
 	 * Detach all object binding event handler
 	 *
-	 * @param {string} sModelName Name of the model to detach the handler for.
+	 * @param {sap.ui.base.ManagedObject.ObjectBindingInfo} oBindingInfo The BindingInfo to detach the handler for.
 	 * @private
 	 */
-	ManagedObject.prototype._detachObjectBindingHandlers = function(sModelName) {
-		var oBindingInfo = this.mObjectBindingInfos[sModelName];
-		if (oBindingInfo) {
-			if (oBindingInfo.binding) {
-				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-				oBindingInfo.binding.detachEvents(oBindingInfo.events);
-				if (this.refreshDataState) {
-					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
-				}
-			}
-		}
-	};
+	ManagedObject.prototype._detachObjectBindingHandlers = logError.bind(null, "_detachObjectBindingHandlers");
 
 	/**
 	 * Removes the defined binding context of this object, all bindings will now resolve
@@ -3155,22 +3115,15 @@ sap.ui.define([
 	ManagedObject.prototype.unbindObject = function(sModelName, /* internal use only */ _bSkipUpdateBindingContext) {
 		var oBindingInfo = this.mObjectBindingInfos[sModelName];
 		if (oBindingInfo) {
-			if (oBindingInfo.binding) {
-				if (!this._bIsBeingDestroyed) {
-					this._detachObjectBindingHandlers(sModelName);
-				}
-				oBindingInfo.binding.destroy();
-			}
 			delete this.mObjectBindingInfos[sModelName];
-			delete this.mElementBindingContexts[sModelName];
-			if ( !_bSkipUpdateBindingContext ) {
-				this.updateBindingContext(false, sModelName);
-				this.propagateProperties(sModelName);
-				this.fireModelContextChange();
+			if (oBindingInfo.binding) {
+				this._unbindObject(oBindingInfo, sModelName, /* internal use only */ _bSkipUpdateBindingContext);
 			}
 		}
 		return this;
 	};
+
+	ManagedObject.prototype._unbindObject = logError.bind(null, "_unbindObject");
 
 	/**
 	 * Bind the object to the referenced entity in the model, which is used as the binding context
@@ -3358,7 +3311,7 @@ sap.ui.define([
 			oBindingInfo = {
 				parts: [ {
 					path: oBindingInfo,
-					type: _vFormat instanceof Type ? _vFormat : undefined,
+					type: BaseObject.isA(_vFormat, "sap.ui.model.Type") ? _vFormat : undefined,
 					mode: _sMode
 				} ],
 				formatter: typeof _vFormat === 'function' ? _vFormat : undefined
@@ -3395,127 +3348,35 @@ sap.ui.define([
 	};
 
 	ManagedObject.prototype._bindProperty = function(sName, oBindingInfo) {
-		var oModel,
-			oContext,
-			oBinding,
-			sMode,
-			sCompositeMode = BindingMode.TwoWay,
-			oType,
-			clType,
-			oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName), // TODO fix handling of hidden entities?
-			sInternalType = oPropertyInfo._iKind === /* PROPERTY */ 0 ? oPropertyInfo.type : oPropertyInfo.altTypes[0],
-			that = this,
-			aBindings = [],
-			fnModelChangeHandler = function(oEvent){
-				that.updateProperty(sName);
-				//clear Messages from messageManager
-				var oDataState = oBinding.getDataState();
-				if (oDataState) {
-					var oControlMessages = oDataState.getControlMessages();
-					if (oControlMessages && oControlMessages.length > 0) {
-						var oMessageManager = sap.ui.getCore().getMessageManager();
-						oDataState.setControlMessages([]); //remove the controlMessages before informing manager to avoid 'dataStateChange' event to fire
-						if (oControlMessages) {
-							oMessageManager.removeMessages(oControlMessages);
-						}
-					}
-					oDataState.setInvalidValue(undefined); //assume that the model always sends valid data
-				}
-				if (oBinding.getBindingMode() === BindingMode.OneTime && oBinding.isResolved()) {
-					// if binding is one time but not resolved yet we don't destroy it yet.
-					oBinding.detachChange(fnModelChangeHandler);
-					if (this.refreshDataState) {
-						oBinding.detachAggregatedDataStateChange(fnDataStateChangeHandler);
-					}
-					oBinding.detachEvents(oBindingInfo.events);
-				}
-			},
-			fnDataStateChangeHandler = function(){
-				var oDataState = oBinding.getDataState();
-				if (!oDataState) {
-					return;
-				}
-				//inform generic refreshDataState method
-				if (that.refreshDataState) {
-					that.refreshDataState(sName, oDataState);
-				}
-			};
-
-		oBindingInfo.parts.forEach(function(oPart) {
-			// get context and model for this part
-			oContext = that.getBindingContext(oPart.model);
-			oModel = that.getModel(oPart.model);
-
-			// Create type instance if needed
-			oType = oPart.type;
-			if (typeof oType == "string") {
-				clType = ObjectPath.get(oType);
-				if (typeof clType !== "function") {
-					throw new Error("Cannot find type \"" + oType + "\" used in control \"" + that.getId() + "\"!");
-				}
-				oType = new clType(oPart.formatOptions, oPart.constraints);
+		/* Special case for handling StaticBindings:
+		If all parts are a StaticBinding no mixin of the binding relevant code
+		is done via a Model. In this case we need to handle these static
+		bindings manually by simulating its static behavior:
+		  - call formatter
+		  - call property mutator
+		If at least one part refers to a real Model this
+		code will be overwritten by the mixin and works as before.*/
+		var bIsStaticOnly = true;
+		for (var i = 0; i < oBindingInfo.parts.length; i++) {
+			if (oBindingInfo.parts[i].value === undefined) {
+				bIsStaticOnly = false;
+				break;
 			}
-
-			if (oPart.value !== undefined) {
-				oBinding = new StaticBinding(oPart.value);
-			} else {
-				oBinding = oModel.bindProperty(oPart.path, oContext, oPart.parameters || oBindingInfo.parameters);
-			}
-			oBinding.setType(oType, oPart.targetType || sInternalType);
-			oBinding.setFormatter(oPart.formatter);
-			if (oPart.suspended) {
-				oBinding.suspend(true);
-			}
-
-			sMode = oPart.mode || (oModel && oModel.getDefaultBindingMode()) || BindingMode.TwoWay;
-			oBinding.setBindingMode(sMode);
-
-			// Only if all parts have twoway binding enabled, the composite binding will also have twoway binding
-			if (sMode !== BindingMode.TwoWay) {
-				sCompositeMode = BindingMode.OneWay;
-			}
-
-			aBindings.push(oBinding);
-		});
-
-		// check if we have a composite binding or a formatter function created by the BindingParser which has property textFragments
-		if (aBindings.length > 1 || ( oBindingInfo.formatter && oBindingInfo.formatter.textFragments )) {
-			// Create type instance if needed
-			oType = oBindingInfo.type;
-			if (typeof oType == "string") {
-				clType = ObjectPath.get(oType);
-				oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
-			}
-			oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);
-			oBinding.setType(oType, oBindingInfo.targetType || sInternalType);
-			oBinding.setBindingMode(oBindingInfo.mode || sCompositeMode);
+		}
+		// The special treatment of early 'static-only' StaticBindings is making compromises on a couple of things:
+		//   - no async type can be supported
+		//   - no handling of parse/validate exceptions
+		//   - observers won't be called
+		if (bIsStaticOnly) {
+			var aValues = [];
+			oBindingInfo.parts.forEach(function(oPart) {
+				aValues.push(oPart.formatter ? oPart.formatter(oPart.value) : oPart.value);
+			});
+			var vValue = oBindingInfo.formatter ? oBindingInfo.formatter(aValues) : aValues.join(" ");
+			var oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName);
+			this[oPropertyInfo._sMutator](vValue);
 		} else {
-			oBinding = aBindings[0];
-		}
-
-		oBinding.attachChange(fnModelChangeHandler);
-		if (this.refreshDataState) {
-			oBinding.attachAggregatedDataStateChange(fnDataStateChangeHandler);
-		}
-
-		// set only one formatter function if any
-		// because the formatter gets the context of the element, we have to set the context via proxy to ensure compatibility
-		// for formatter function which is now called by the property binding
-		// proxy formatter here because "this" is the correct cloned object
-		if (typeof oBindingInfo.formatter === "function") {
-			oBinding.setFormatter(oBindingInfo.formatter.bind(this));
-		}
-
-		// Set additional information on the binding info
-		oBindingInfo.binding = oBinding;
-		oBindingInfo.modelChangeHandler = fnModelChangeHandler;
-		oBindingInfo.dataStateChangeHandler = fnDataStateChangeHandler;
-		oBinding.attachEvents(oBindingInfo.events);
-
-		oBinding.initialize();
-
-		if (this._observer) {
-			this._observer.bindingChange(this, sName, "ready", oBindingInfo, "property");
+			logError.call(this, "_bindProperty");
 		}
 	};
 
@@ -3529,22 +3390,7 @@ sap.ui.define([
 	 * @param {string} sName the name of the property
 	 * @private
 	 */
-	ManagedObject.prototype._detachPropertyBindingHandlers = function(sName) {
-		var oBindingInfo = this.mBindingInfos[sName],
-			oBinding;
-		if (oBindingInfo) {
-			oBinding = oBindingInfo.binding;
-			if (oBinding) {
-				oBinding.detachChange(oBindingInfo.modelChangeHandler);
-				oBinding.detachEvents(oBindingInfo.events);
-				/* to reset messages on a control we need to detach the datastate handler after destroy,
-				as binding destroy clears up validation messages */
-				if (this.refreshDataState && this._bIsBeingDestroyed) {
-					oBinding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
-				}
-			}
-		}
-	};
+	ManagedObject.prototype._detachPropertyBindingHandlers = function(sName) { };
 
 	/**
 	 * Unbind the property from the model
@@ -3554,21 +3400,11 @@ sap.ui.define([
 	 * @returns {this} reference to the instance itself
 	 * @public
 	 */
-	ManagedObject.prototype.unbindProperty = function(sName, bSuppressReset){
-		var oBindingInfo = this.mBindingInfos[sName],
-			oBinding;
+	ManagedObject.prototype.unbindProperty = function(sName, bSuppressReset) {
+		var oBindingInfo = this.mBindingInfos[sName];
 		if (oBindingInfo) {
-			oBinding = oBindingInfo.binding;
-			if (oBinding) {
-				if (!this._bIsBeingDestroyed) {
-					this._detachPropertyBindingHandlers(sName);
-				}
-				oBinding.destroy();
-				/* to reset messages on a control we need to detach the datastate handler after destroy,
-				   as binding destroy clears up validation messages */
-				if (this.refreshDataState && !this._bIsBeingDestroyed) {
-					oBinding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
-				}
+			if (oBindingInfo.binding) {
+				this._unbindProperty(oBindingInfo, sName);
 			}
 
 			if (this._observer && !this._bIsBeingDestroyed) {
@@ -3583,6 +3419,8 @@ sap.ui.define([
 		return this;
 	};
 
+	ManagedObject.prototype._unbindProperty = logError.bind(null, "_unbindProperty");
+
 	/**
 	 * Generic method which is called, whenever a property binding is changed.
 	 *
@@ -3593,50 +3431,7 @@ sap.ui.define([
 	 *   Name of the property to update
 	 * @private
 	 */
-	ManagedObject.prototype.updateProperty = function(sName) {
-		var oBindingInfo = this.mBindingInfos[sName],
-			oBinding = oBindingInfo.binding,
-			oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName),
-			that = this;
-
-		function handleException(oException) {
-			if (oException instanceof FormatException) {
-				that.fireFormatError({
-					element : that,
-					property : sName,
-					type : oBinding.getType(),
-					newValue : oBinding.getValue(),
-					oldValue : that[oPropertyInfo._sGetter](),
-					exception: oException,
-					message: oException.message
-				}, false, true); // bAllowPreventDefault, bEnableEventBubbling
-				Log.error("FormatException in property '" + sName + "' of '" + that + "': " + oException.message +
-					"\nHint: single properties referenced in composite bindings and within binding expressions are automatically converted " +
-					"into the type of the bound control property, unless a different 'targetType' is specified. targetType:'any' may avoid " +
-					"the conversion and lead to the expected behavior.");
-				oBindingInfo.skipModelUpdate++;
-				that.resetProperty(sName);
-				oBindingInfo.skipModelUpdate--;
-			} else {
-				throw oException;
-			}
-		}
-
-		// If model change was triggered by the property itself, don't call the setter again
-		if (oBindingInfo.skipPropertyUpdate) {
-			return;
-		}
-
-		SyncPromise.resolve().then(function() {
-			return oBinding.getExternalValue();
-		}).then(function(oValue) {
-			oBindingInfo.skipModelUpdate++;
-			that[oPropertyInfo._sMutator](oValue);
-			oBindingInfo.skipModelUpdate--;
-		}).catch(function(oException) {
-			handleException(oException);
-		}).unwrap();
-	};
+	ManagedObject.prototype.updateProperty = function(sName) { };
 
 	/**
 	 * Update the property in the model if two way data binding mode is enabled
@@ -3646,72 +3441,7 @@ sap.ui.define([
 	 * @param {any} oOldValue the previous value of the property
 	 * @private
 	 */
-	ManagedObject.prototype.updateModelProperty = function(sName, oValue, oOldValue){
-		var oBindingInfo, oBinding,
-			that = this;
-
-		function handleException(oException) {
-			var mErrorParameters = {
-				element: that,
-				property: sName,
-				type: oBinding.getType(),
-				newValue: oValue,
-				oldValue: oOldValue,
-				exception: oException,
-				message: oException.message
-			};
-			if (oException instanceof ParseException) {
-				that.fireParseError(mErrorParameters, false, true); // mParameters, bAllowPreventDefault, bEnableEventBubbling
-			} else if (oException instanceof ValidateException) {
-				that.fireValidationError(mErrorParameters, false, true); // mParameters, bAllowPreventDefault, bEnableEventBubbling
-			} else {
-				throw oException;
-			}
-		}
-
-		function handleSuccess() {
-			var mSuccessParameters = {
-				element: that,
-				property: sName,
-				type: oBinding.getType(),
-				newValue: oValue,
-				oldValue: oOldValue
-			};
-			// Only fire validation success, if a type is used
-			if (oBinding.hasValidation()) {
-				that.fireValidationSuccess(mSuccessParameters, false, true); // bAllowPreventDefault, bEnableEventBubbling
-			}
-		}
-
-		if (this.isBound(sName)) {
-			var oBindingInfo = this.mBindingInfos[sName],
-				oBinding = oBindingInfo.binding;
-
-			// If property change was triggered by the model, don't update the model again
-			if (oBindingInfo.skipModelUpdate || (oBinding && oBinding.isSuspended())) {
-				return;
-			}
-
-			// only two-way bindings allow model updates
-			if (oBinding && oBinding.getBindingMode() == BindingMode.TwoWay) {
-				oBindingInfo.skipPropertyUpdate++;
-				SyncPromise.resolve(oValue).then(function(oValue) {
-					return oBinding.setExternalValue(oValue);
-				}).then(function() {
-					oBindingInfo.skipPropertyUpdate--;
-					return oBinding.getExternalValue();
-				}).then(function(oExternalValue) {
-					if (oValue != oExternalValue) {
-						that.updateProperty(sName);
-					}
-					handleSuccess();
-				}).catch(function(oException) {
-					oBindingInfo.skipPropertyUpdate--;
-					handleException(oException);
-				}).unwrap();
-			}
-		}
-	};
+	ManagedObject.prototype.updateModelProperty = function(sName, oValue, oOldValue) { };
 
 	// a non-falsy value used as default for 'templateShareable'.
 	var MAYBE_SHAREABLE_OR_NOT = 1;
@@ -3887,71 +3617,7 @@ sap.ui.define([
 	 * @param {object} oBindingInfo The bindingInfo object
 	 * @private
 	 */
-	ManagedObject.prototype._bindAggregation = function(sName, oBindingInfo) {
-		var that = this,
-			oBinding,
-			oAggregationInfo = this.getMetadata().getAggregation(sName),
-			fnModelChangeHandler = function(oEvent){
-				var sOldOwnerId = ManagedObject._sOwnerId;
-				try {
-					ManagedObject._sOwnerId = that._sOwnerId;
-					oAggregationInfo.update(that, oEvent.getParameter("reason"), {
-						detailedReason: oEvent.getParameter("detailedReason")
-					});
-				} finally {
-					ManagedObject._sOwnerId = sOldOwnerId;
-				}
-			},
-			fnModelRefreshHandler = function(oEvent){
-				oAggregationInfo.refresh(that, oEvent.getParameter("reason"));
-			},
-			fnDataStateChangeHandler = function(oEvent) {
-				var oDataState = oBinding.getDataState();
-				if (!oDataState) {
-					return;
-				}
-				//inform generic refreshDataState method
-				if (that.refreshDataState) {
-					that.refreshDataState(sName, oDataState);
-				}
-			};
-
-			var oModel = this.getModel(oBindingInfo.model);
-			if (this.isTreeBinding(sName)) {
-				oBinding = oModel.bindTree(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.filters, oBindingInfo.parameters, oBindingInfo.sorter);
-			} else {
-				oBinding = oModel.bindList(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.sorter, oBindingInfo.filters, oBindingInfo.parameters);
-				if (this.bUseExtendedChangeDetection) {
-					assert(!this.oExtendedChangeDetectionConfig || !this.oExtendedChangeDetectionConfig.symbol, "symbol function must not be set by controls");
-					oBinding.enableExtendedChangeDetection(!oBindingInfo.template, oBindingInfo.key, this.oExtendedChangeDetectionConfig);
-				}
-			}
-
-		if (oBindingInfo.suspended) {
-			oBinding.suspend(true);
-		}
-
-		oBindingInfo.binding = oBinding;
-		oBindingInfo.modelChangeHandler = fnModelChangeHandler;
-		oBindingInfo.modelRefreshHandler = fnModelRefreshHandler;
-		oBindingInfo.dataStateChangeHandler = fnDataStateChangeHandler;
-
-		oBinding.attachChange(fnModelChangeHandler);
-
-		oBinding.attachRefresh(fnModelRefreshHandler);
-
-		oBinding.attachEvents(oBindingInfo.events);
-
-		if (this.refreshDataState) {
-			oBinding.attachAggregatedDataStateChange(fnDataStateChangeHandler);
-		}
-
-		oBinding.initialize();
-
-		if (this._observer) {
-			this._observer.bindingChange(this, sName, "ready", oBindingInfo, "aggregation");
-		}
-	};
+	ManagedObject.prototype._bindAggregation = logError.bind(null, "_bindAggregation");
 
 	/**
 	 * Detach all aggregation binding event handler
@@ -3959,19 +3625,7 @@ sap.ui.define([
 	 * @param {string} sName the name of the aggregation
 	 * @private
 	 */
-	ManagedObject.prototype._detachAggregationBindingHandlers = function(sName) {
-		var oBindingInfo = this.mBindingInfos[sName];
-		if (oBindingInfo) {
-			if (oBindingInfo.binding) {
-				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-				oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
-				oBindingInfo.binding.detachEvents(oBindingInfo.events);
-				if (this.refreshDataState) {
-					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
-				}
-			}
-		}
-	};
+	ManagedObject.prototype._detachAggregationBindingHandlers = logError.bind(null, "_detachAggregationBindingHandlers");
 
 	/**
 	 * Unbind the aggregation from the model.
@@ -3984,7 +3638,7 @@ sap.ui.define([
 	 * @returns {this} Reference to this instance itself
 	 * @public
 	 */
-	ManagedObject.prototype.unbindAggregation = function(sName, bSuppressReset){
+	ManagedObject.prototype.unbindAggregation = function(sName, bSuppressReset) {
 		var oForwarder = this.getMetadata().getAggregationForwarder(sName);
 		if (oForwarder && oForwarder.forwardBinding) {
 			oForwarder.getTarget(this).unbindAggregation(oForwarder.targetAggregationName, bSuppressReset);
@@ -3995,10 +3649,7 @@ sap.ui.define([
 			oAggregationInfo = this.getMetadata().getAggregation(sName);
 		if (oBindingInfo) {
 			if (oBindingInfo.binding) {
-				if (!this._bIsBeingDestroyed) {
-					this._detachAggregationBindingHandlers(sName);
-				}
-				oBindingInfo.binding.destroy();
+				this._unbindAggregation(oBindingInfo, sName);
 			}
 			// remove template if any
 			if (oBindingInfo.template ) {
@@ -4019,6 +3670,8 @@ sap.ui.define([
 		}
 		return this;
 	};
+
+	ManagedObject.prototype._unbindAggregation = logError.bind(null, "_unbindAggregation");
 
 	/**
 	 * Generic method which is called whenever an aggregation binding has changed.
@@ -4045,146 +3698,7 @@ sap.ui.define([
 	 *   reason, and describe under what circumstances each value will be used.
 	 * @protected
 	 */
-	ManagedObject.prototype.updateAggregation = function(sName, sChangeReason, oEventInfo) {
-		var oBindingInfo = this.mBindingInfos[sName],
-			oBinding = oBindingInfo.binding,
-			fnFactory = oBindingInfo.factory,
-			oAggregationInfo = this.getMetadata().getAggregation(sName),  // TODO fix handling of hidden aggregations
-			sGroup,
-			bGrouped,
-			aContexts,
-			sGroupFunction = oAggregationInfo._sMutator + "Group",
-			that = this;
-
-		function getIdSuffix(oControl, iIndex) {
-			if (that.bUseExtendedChangeDetection) {
-				return ManagedObjectMetadata.uid('clone');
-			} else {
-				return oControl.getId() + "-" + iIndex;
-			}
-		}
-
-		// Update a single aggregation with the array of contexts. Reuse existing children
-		// and just append or remove at the end, if some are missing or too many.
-		function update(oControl, aContexts, fnBefore, fnAfter) {
-			var aChildren = oControl[oAggregationInfo._sGetter]() || [],
-				oContext,
-				oClone;
-			if (aChildren.length > aContexts.length) {
-				for (var i = aContexts.length; i < aChildren.length; i++) {
-					oClone = aChildren[i];
-					oControl[oAggregationInfo._sRemoveMutator](oClone);
-					oClone.destroy("KeepDom");
-				}
-			}
-			for (var i = 0; i < aContexts.length; i++) {
-				oContext = aContexts[i];
-				oClone = aChildren[i];
-				if (fnBefore) {
-					fnBefore(oContext);
-				}
-				if (oClone) {
-					oClone.setBindingContext(oContext, oBindingInfo.model);
-				} else {
-					oClone = fnFactory(getIdSuffix(oControl, i), oContext);
-					oClone.setBindingContext(oContext, oBindingInfo.model);
-					oControl[oAggregationInfo._sMutator](oClone);
-				}
-				if (fnAfter) {
-					fnAfter(oContext, oClone);
-				}
-			}
-		}
-
-		// Update a single aggregation with the array of contexts. Use the calculated diff to
-		// only add/remove children as the data has changed to minimize control updates and rendering
-		function updateDiff(oControl, aContexts) {
-			var aDiff = aContexts.diff,
-				aChildren = oControl[oAggregationInfo._sGetter]() || [],
-				oDiff, oClone, oContext, i;
-
-			// If no diff exists or aggregation is empty, fall back to default update
-			if (!aDiff || aChildren.length === 0) {
-				update(oControl, aContexts);
-				return;
-			}
-
-			// Loop through the diff and apply it
-			for (i = 0; i < aDiff.length; i++) {
-				oDiff = aDiff[i];
-				switch (oDiff.type) {
-					case "insert":
-						oContext = aContexts[oDiff.index];
-						oClone = fnFactory(getIdSuffix(oControl, oDiff.index), oContext);
-						oClone.setBindingContext(oContext, oBindingInfo.model);
-						oControl[oAggregationInfo._sInsertMutator](oClone, oDiff.index);
-						break;
-					case "delete":
-						oClone = oControl[oAggregationInfo._sRemoveMutator](oDiff.index);
-						oClone.destroy("KeepDom");
-						break;
-					default:
-						Log.error("Unknown diff type \"" + oDiff.type + "\"");
-				}
-			}
-
-			// Loop through all children and set the binding context again. This is needed for
-			// indexed contexts, where inserting/deleting entries shifts the index of all following items
-			aChildren = oControl[oAggregationInfo._sGetter]() || [];
-			for (i = 0; i < aChildren.length; i++) {
-				aChildren[i].setBindingContext(aContexts[i], oBindingInfo.model);
-			}
-		}
-
-		// Check the current context for its group. If the group key changes, call the
-		// group function on the control.
-		function updateGroup(oContext) {
-			var oNewGroup = oBinding.getGroup(oContext);
-			if (oNewGroup.key !== sGroup) {
-				var oGroupHeader;
-				//If factory is defined use it
-				if (oBindingInfo.groupHeaderFactory) {
-					oGroupHeader = oBindingInfo.groupHeaderFactory(oNewGroup);
-				}
-				that[sGroupFunction](oNewGroup, oGroupHeader);
-				sGroup = oNewGroup.key;
-			}
-		}
-
-		// Update the tree recursively
-		function updateRecursive(oControl, oContexts) {
-			update(oControl, oContexts, null, function(oContext, oClone) {
-				updateRecursive(oClone, oBinding.getNodeContexts(oContext));
-			});
-		}
-
-		if (BaseObject.isA(oBinding, "sap.ui.model.ListBinding")) {
-			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
-			bGrouped = oBinding.isGrouped() && that[sGroupFunction];
-			if (bGrouped || oBinding.bWasGrouped) {
-				// If grouping is enabled, destroy aggregation and use updateGroup as fnBefore to create groups
-				this[oAggregationInfo._sDestructor]();
-				update(this, aContexts, bGrouped ? updateGroup : undefined);
-			} else if (this.bUseExtendedChangeDetection) {
-				// With extended change detection just update according to the diff
-				updateDiff(this, aContexts);
-			} else {
-				// If factory function is used without extended change detection, destroy aggregation
-				if (!oBindingInfo.template) {
-					this[oAggregationInfo._sDestructor]();
-				}
-				update(this, aContexts);
-			}
-			oBinding.bWasGrouped = bGrouped;
-		} else if (BaseObject.isA(oBinding, "sap.ui.model.TreeBinding")) {
-			// Destroy all children in case a factory function is used
-			if (!oBindingInfo.template) {
-				this[oAggregationInfo._sDestructor]();
-			}
-			// In fnAfter call update recursively for the child nodes of the current tree node
-			updateRecursive(this, oBinding.getRootContexts());
-		}
-	};
+	ManagedObject.prototype.updateAggregation = function(sName, sChangeReason, oEventInfo) { };
 
 	/**
 	 * Generic method which can be called, when an aggregation needs to be refreshed.
@@ -4198,11 +3712,7 @@ sap.ui.define([
 	 * @param {string} sName name of the aggregation to refresh
 	 * @protected
 	 */
-	ManagedObject.prototype.refreshAggregation = function(sName) {
-		var oBindingInfo = this.mBindingInfos[sName],
-			oBinding = oBindingInfo.binding;
-		oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
-	};
+	ManagedObject.prototype.refreshAggregation = function(sName) { };
 
 	/**
 	* Generic method which is called, whenever messages for this object exist.
@@ -4242,139 +3752,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ManagedObject.prototype.updateBindings = function(bUpdateAll, sModelName) {
-		var that = this,
-			sName,
-			bCanCreate,
-			oBindingInfo;
-
-		/*
-		 * Checks whether the binding for the given oBindingInfo became invalid because
-		 * of the current model change (as identified by bUpdateAll and sModelName).
-		 *
-		 * Precondition: oBindingInfo contains a 'binding' object
-		 *
-		 * @param {object} oBindingInfo
-		 * @returns {boolean} Whether the binding info became invalid
-		 * @private
-		 */
-		function becameInvalid(oBindingInfo) {
-			var aParts = oBindingInfo.parts,
-				i;
-
-			if (aParts) {
-				if (aParts.length == 1) {
-					// simple property binding: invalid when the model has the same name (or updateall) and when the model instance differs
-					return (bUpdateAll || aParts[0].model == sModelName) && !oBindingInfo.binding.updateRequired(that.getModel(aParts[0].model));
-				} else {
-					// simple or composite binding: invalid when for any part the model has the same name (or updateall) and when the model instance for that part differs
-					for (i = 0; i < aParts.length; i++) {
-						if ( (bUpdateAll || aParts[i].model == sModelName) && !oBindingInfo.binding.aBindings[i].updateRequired(that.getModel(aParts[i].model)) ) {
-							return true;
-						}
-					}
-				}
-			} else {
-				// list or object binding: invalid when  the model has the same name (or updateall) and when the model instance differs
-				return (bUpdateAll || oBindingInfo.model == sModelName) && !oBindingInfo.binding.updateRequired(that.getModel(oBindingInfo.model));
-			}
-		}
-
-		/*
-		 * Checks whether a binding can be created for the given oBindingInfo.
-		 *
-		 * @param {object} oBindingInfo
-		 * @returns {boolean} Whether a binding can be created
-		 * @private
-		 */
-		function canCreate(oBindingInfo) {
-			var aParts = oBindingInfo.parts,
-				i;
-
-			if (aParts) {
-				for (i = 0; i < aParts.length; i++) {
-					// check if model exists - ignore static bindings
-					if ( !that.getModel(aParts[i].model) && aParts[i].value === undefined) {
-						return false;
-					}
-				}
-				return true;
-			} else { // List or object binding
-				return !!that.getModel(oBindingInfo.model);
-			}
-		}
-
-		/*
-		 * Remove binding, detach all events and destroy binding object
-		 */
-		function removeBinding(oBindingInfo) {
-			var oBinding = oBindingInfo.binding;
-			// Also tell the Control that the messages have been removed (if any)
-			if (that.refreshDataState) {
-				that.refreshDataState(sName, oBinding.getDataState());
-			}
-
-			oBinding.detachChange(oBindingInfo.modelChangeHandler);
-			if (oBindingInfo.modelRefreshHandler) { // only list bindings currently have a refresh handler attached
-				oBinding.detachRefresh(oBindingInfo.modelRefreshHandler);
-			}
-			oBinding.detachEvents(oBindingInfo.events);
-			oBinding.destroy();
-			// remove all binding related data from the binding info
-			delete oBindingInfo.binding;
-			delete oBindingInfo.modelChangeHandler;
-			delete oBindingInfo.dataStateChangeHandler;
-			delete oBindingInfo.modelRefreshHandler;
-		}
-
-		// create object bindings if they don't exist yet
-		for ( sName in this.mObjectBindingInfos ) {
-			oBindingInfo = this.mObjectBindingInfos[sName];
-			bCanCreate = canCreate(oBindingInfo);
-			// if there is a binding and if it became invalid through the current model change, then remove it
-			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
-				removeBinding(oBindingInfo);
-				// if model does not exists anymore, also delete the BindingContext
-				if (!bCanCreate) {
-					delete this.mElementBindingContexts[sName];
-				}
-			}
-
-			// if there is no binding and if all required information is available, create a binding object
-			if ( !oBindingInfo.binding && bCanCreate ) {
-				this._bindObject(oBindingInfo);
-			}
-		}
-
-		// create property and aggregation bindings if they don't exist yet
-		for ( sName in this.mBindingInfos ) {
-
-			oBindingInfo = this.mBindingInfos[sName];
-
-			// if there is a binding and if it became invalid through the current model change, then remove it
-			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
-				if (this._observer) {
-					var sMember = oBindingInfo.factory ? "aggregation" : "property";
-					this._observer.bindingChange(this, sName, "remove", oBindingInfo, sMember);
-				}
-
-				removeBinding(oBindingInfo);
-			}
-
-			// if there is no binding and if all required information is available, create a binding object
-			if ( !oBindingInfo.binding && canCreate(oBindingInfo) ) {
-				if (oBindingInfo.factory) {
-					this._bindAggregation(sName, oBindingInfo);
-				} else {
-					this._bindProperty(sName, oBindingInfo);
-				}
-			}
-
-		}
-
-
-	};
-
+	ManagedObject.prototype.updateBindings = function(bUpdateAll, sModelName) { };
 
 	/**
 	 * Find out whether a property or aggregation is bound
@@ -4471,7 +3849,7 @@ sap.ui.define([
 	ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
 		assertModelName(sModelName);
 		var oOldContext = this.oBindingContexts[sModelName];
-		if (Context.hasChanged(oOldContext, oContext)) {
+		if (oOldContext !== oContext || oContext && oContext.hasChanged()) {
 			if (oContext === undefined) {
 				delete this.oBindingContexts[sModelName];
 			} else {
@@ -4496,106 +3874,13 @@ sap.ui.define([
 	 * @param {string} [sModelName] the name of the model to set the context for or <code>undefined</code>
 	 * @private
 	 */
-	ManagedObject.prototype.setElementBindingContext = function(oContext, sModelName){
-		assertModelName(sModelName);
-		var oOldContext = this.mElementBindingContexts[sModelName];
-
-		if (Context.hasChanged(oOldContext, oContext)) {
-			if (oContext === undefined) {
-				delete this.mElementBindingContexts[sModelName];
-			} else {
-				this.mElementBindingContexts[sModelName] = oContext;
-			}
-			this.updateBindingContext(true, sModelName);
-			this.propagateProperties(sModelName);
-			this.fireModelContextChange();
-		}
-		return this;
-	};
+	ManagedObject.prototype.setElementBindingContext = function(oContext, sModelName) { };
 
 	/**
 	 * Update the binding context in this object and all aggregated children
 	 * @private
 	 */
-	ManagedObject.prototype.updateBindingContext = function(bSkipLocal, sFixedModelName, bUpdateAll){
-
-		var oModel,
-			oModelNames = {},
-			sModelName,
-			oContext,
-			sName,
-			oBindingInfo,
-			aParts;
-
-		// Whether the binding part with the given index belongs to the current model name and is
-		// not a static binding
-		function isPartForModel(iPartIndex) {
-			return aParts[iPartIndex].model == sModelName && aParts[iPartIndex].value === undefined;
-		}
-
-		// find models that need a context update
-		if (bUpdateAll) {
-			for (sModelName in this.oModels) {
-				if ( this.oModels.hasOwnProperty(sModelName) ) {
-					oModelNames[sModelName] = sModelName;
-				}
-			}
-			for (sModelName in this.oPropagatedProperties.oModels) {
-				if ( this.oPropagatedProperties.oModels.hasOwnProperty(sModelName) ) {
-					oModelNames[sModelName] = sModelName;
-				}
-			}
-		} else {
-			oModelNames[sFixedModelName] = sFixedModelName;
-		}
-
-		for (sModelName in oModelNames ) {
-			if ( oModelNames.hasOwnProperty(sModelName) ) {
-				sModelName = sModelName === "undefined" ? undefined : sModelName;
-				oModel = this.getModel(sModelName);
-				oBindingInfo = this.mObjectBindingInfos[sModelName];
-
-				if (oModel && oBindingInfo && !bSkipLocal) {
-					if (!oBindingInfo.binding) {
-						this._bindObject(oBindingInfo);
-					} else {
-						oContext = this._getBindingContext(sModelName);
-						if (Context.hasChanged(oBindingInfo.binding.getContext(), oContext)) {
-							oBindingInfo.binding.setContext(oContext);
-						}
-					}
-					continue;
-				}
-
-				oContext = this.getBindingContext(sModelName);
-
-				// update context in existing bindings
-				for ( sName in this.mBindingInfos ){
-					var oBindingInfo = this.mBindingInfos[sName],
-						oBinding = oBindingInfo.binding;
-
-					aParts = oBindingInfo.parts;
-
-					if (!oBinding) {
-						continue;
-					}
-					if (oBinding instanceof CompositeBinding) {
-						oBinding.setContext(oContext, {fnIsBindingRelevant : isPartForModel});
-					} else if (oBindingInfo.factory) {
-						// list binding: update required when the model has the same name (or updateall)
-						if ( oBindingInfo.model == sModelName) {
-							oBinding.setContext(oContext);
-						}
-
-					} else if (isPartForModel(0)) {
-						// simple property binding: update required when the model has the same name
-						oBinding.setContext(oContext);
-					}
-				}
-			}
-		}
-
-	};
+	ManagedObject.prototype.updateBindingContext = function(bSkipLocal, sFixedModelName, bUpdateAll) { };
 
 
 	/**
@@ -4808,6 +4093,9 @@ sap.ui.define([
 			sAggregationName, oAggregation, i,
 			mAllAggregations = Object.assign({}, this.mAggregations, this.mForwardedAggregations);
 
+		// introduce data binding capabilities via mixin if available
+		checkForBindingSupport(oProperties.oModels);
+
 		for (sAggregationName in mAllAggregations) {
 			if (this.mSkipPropagation[sAggregationName]) {
 				continue;
@@ -4836,6 +4124,10 @@ sap.ui.define([
 			bUpdateListener = vName === false;
 			sName = bUpdateAll ? undefined : vName;
 		}
+
+		// introduce data binding capabilities via mixin if available
+		checkForBindingSupport(oProperties.oModels);
+
 		if (oObject.oPropagatedProperties !== oProperties) {
 			oObject.oPropagatedProperties = oProperties;
 			// if propagation triggered by adding a listener no binding updates needed

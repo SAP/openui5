@@ -5,13 +5,15 @@
 // Provides the base implementation for all model implementations
 sap.ui.define([
 	'sap/ui/core/message/MessageProcessor',
+	'./ManagedObjectBindingSupport',
 	'./BindingMode',
 	'./Context',
 	'./Filter',
 	"sap/base/util/deepEqual",
 	"sap/base/util/each"
 ],
-	function(MessageProcessor, BindingMode, Context, Filter, deepEqual, each) {
+	function(MessageProcessor, ManagedObjectBindingSupport, BindingMode, Context, Filter, deepEqual,
+		each) {
 	"use strict";
 
 
@@ -99,7 +101,6 @@ sap.ui.define([
 			]
 		}
 	});
-
 
 	/**
 	 * Map of event names, that are provided by the model.
@@ -1226,6 +1227,16 @@ sap.ui.define([
 			_traverseFilter(oFilter.aFilters, fnCheck);
 		}
 	}
+
+	/**
+	 * Introduces data binding support on the ManagedObject prototype via mixin.
+	 * Called by the ManagedObject during property propagation.
+	 * @param {sap.ui.base.ManagedObject.prototype} ManagedObject
+	 *   the sap.ui.base.ManagedObject.prototype
+	 */
+	Model.prototype.mixinBindingSupport = function(ManagedObject) {
+		Object.assign(ManagedObject, ManagedObjectBindingSupport);
+	};
 
 	return Model;
 
