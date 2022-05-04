@@ -3,6 +3,33 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "9f26d83b71f99f5d06e6fbd8df6803cc42296d1a",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Events handling enhancements on handleClearIconPress",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270084070"
+          }
+        ]
+      },
+      {
+        "id": "7967e2a59923a3a40cbd1f9b6a7572513174f817",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: IANA timezone translation"
+      },
+      {
+        "id": "389a91f27b8894738064e6d20e90a90450078ce6",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Single cell is now pasted as text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700032754172022"
+          }
+        ]
+      },
+      {
         "id": "d91f3ced7b3fc15247d2f9e22ac44b36b057a798",
         "type": "FIX",
         "text": " sap.m.FormattedText: improvement",
@@ -21,6 +48,28 @@
           {
             "type": "BCP",
             "reference": "2270079633"
+          }
+        ]
+      },
+      {
+        "id": "d0096a56c3ca1eb0e300e1a06a4289204d43813e",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Added support for browser shortcuts on macOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270066817"
+          }
+        ]
+      },
+      {
+        "id": "c126617bfefe4a25a69a7ba9c7396eecda45700f",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Step title now displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270078096"
           }
         ]
       },

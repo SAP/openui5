@@ -3,6 +3,43 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "c7244b9de84aadef10d12e21b40889dbdeede640",
+        "type": "FIX",
+        "text": " DragAndDrop: Android browser support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270084085"
+          }
+        ]
+      },
+      {
+        "id": "7967e2a59923a3a40cbd1f9b6a7572513174f817",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: IANA timezone translation"
+      },
+      {
+        "id": "2da0dcf402da031c8670148a7d8ddfdffa1044cf",
+        "type": "FEATURE",
+        "text": " mvc.XMLView: make \"content\" aggregation of XMLView bindable"
+      },
+      {
+        "id": "6a909df8efdc9eef3eec755aa415cf54e5fd5ed0",
+        "type": "FEATURE",
+        "text": " mvc.XMLView: declarative usage of aggregation, association and event handler"
+      },
+      {
+        "id": "775eaf765f9a3bdde8896c3e8152f452760b8924",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODLB#getAllCurrentContexts: mPreviousContextsByPath & kept-alive contexts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270081950"
+          }
+        ]
+      },
+      {
         "id": "7f91501309efc848858c0611599b6b59747ddeb1",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.lib._Helper.updateSelected: handle instance annotations",

@@ -3,6 +3,11 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "7967e2a59923a3a40cbd1f9b6a7572513174f817",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: IANA timezone translation"
+      },
+      {
         "id": "b5c941decfc4803c66a3bb5a274e989eb37c7499",
         "type": "FEATURE",
         "text": " Field: support Timezone for DateTime"
