@@ -959,7 +959,7 @@ sap.ui.define([
 				sapui5Version: sap.ui.version,
 				sourceChangeFileName: oPropertyBag.support && oPropertyBag.support.sourceChangeFileName || "",
 				compositeCommand: oPropertyBag.support && oPropertyBag.support.compositeCommand || "",
-				command: oPropertyBag.command || ""
+				command: oPropertyBag.command || oPropertyBag.support && oPropertyBag.support.command || ""
 			},
 			oDataInformation: oPropertyBag.oDataInformation || {},
 			dependentSelector: oPropertyBag.dependentSelector || {},

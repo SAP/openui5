@@ -463,6 +463,49 @@ sap.ui.define([
 			assert.ok(oCreatedFile.jsOnly);
 		});
 
+		QUnit.test("createInitialFileContent with support command", function(assert) {
+			var oInfo = {
+				service: "someService",
+				reference: "smartFilterBar.Component",
+				componentName: "smartFilterBar",
+				changeType: "filterVariant",
+				texts: {
+					variantName: {
+						type: "myTextType",
+						value: "myVariantName"
+					}
+				},
+				content: {something: "createNewVariant"},
+				isVariant: true,
+				packageName: "/UIF/LREP",
+				namespace: "apps/smartFilterBar/adapt/oil/changes/",
+				selector: {id: "control1"},
+				id: "0815_1",
+				dependentSelector: {
+					source: {
+						id: "controlSource1",
+						idIsLocal: true
+					},
+					target: {
+						id: "controlTarget1",
+						idIsLocal: true
+					}
+				},
+				support: {
+					command: "move"
+				},
+				oDataInformation: {
+					propertyName: "propertyName",
+					entityType: "entityType",
+					oDataServiceUri: "oDataServiceUri"
+				},
+				jsOnly: true
+			};
+
+			var oCreatedFile = Change.createInitialFileContent(oInfo);
+			assert.equal(oCreatedFile.support.command, "move", "Support command is set correctly");
+		});
+
 		QUnit.test("createInitialFileContent with descriptor change", function(assert) {
 			var oInfo = {
 				service: "someService",
