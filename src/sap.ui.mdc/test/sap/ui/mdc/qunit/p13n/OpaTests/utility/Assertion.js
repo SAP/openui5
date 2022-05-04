@@ -720,7 +720,6 @@ sap.ui.define([
 		},
 		iShouldNotSeeTheColumnMenu: function() {
 			return this.waitFor({
-				searchOpenDialogs: true,
 				success: function() {
 					// We might need to wait for the close animation of the menu to finish.
 					this.iWaitForPromise(new Promise(function(resolve) {
