@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "कमी",
 		STEPINPUT_INC_ICON_TITLE: "वृध्दि",
 		SPLIT_BUTTON_DESCRIPTION: "विभाजन बटन",
-		SPLIT_BUTTON_KEYBOARD_HINT: "डिफ़ॉल्ट क्रिया ट्रिगर करने के लिए स्पेस या दर्ज करें दबाएं और तीर क्रिया ट्रिगर करने के लिए Alt + नीचे तीर या F4 दबाएं"
+		SPLIT_BUTTON_KEYBOARD_HINT: "डिफ़ॉल्ट क्रिया ट्रिगर करने के लिए स्पेस या दर्ज करें दबाएं और तीर क्रिया ट्रिगर करने के लिए Alt + नीचे तीर या F4 दबाएं",
+		MENU_BACK_BUTTON_ARIA_LABEL: "वापस जाएं",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "अस्वीकृत करें"
 	};
 
 	exports.default = messagebundle_hi;

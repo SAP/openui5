@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Μείωση",
 		STEPINPUT_INC_ICON_TITLE: "Αύξηση",
 		SPLIT_BUTTON_DESCRIPTION: "Κουμπί Διαίρεσης",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Πατήστε το πλήκτρο Διαστήματος ή Enter για να ξεκινήσει η προεπιλεγμένη ενέργεια και Alt + Κάτω Βέλος ή F4 για να ξεκινήσει η ενέργεια βέλους"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Πατήστε το πλήκτρο Διαστήματος ή Enter για να ξεκινήσει η προεπιλεγμένη ενέργεια και Alt + Κάτω Βέλος ή F4 για να ξεκινήσει η ενέργεια βέλους",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Πίσω",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Απόρριψη"
 	};
 
 	exports.default = messagebundle_el;

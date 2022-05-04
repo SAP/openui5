@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Azalt",
 		STEPINPUT_INC_ICON_TITLE: "Artır",
 		SPLIT_BUTTON_DESCRIPTION: "İki bölümlü düğme",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Varsayılan işlemi tetiklemek için boşluk tuşuna veya ok işlemini tetiklemek için Alt + Aşağı ok ya da F4 tuşlarına basın"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Varsayılan işlemi tetiklemek için boşluk tuşuna veya ok işlemini tetiklemek için Alt + Aşağı ok ya da F4 tuşlarına basın",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Geri",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Reddet"
 	};
 
 	exports.default = messagebundle_tr;

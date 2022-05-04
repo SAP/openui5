@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Formindsk",
 		STEPINPUT_INC_ICON_TITLE: "Forstør",
 		SPLIT_BUTTON_DESCRIPTION: "Opdelt trykknap",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Tryk på mellemrumstasten eller Enter for at udløse standardaktion og Alt + pil ned eller F4 for at udløse pileaktion"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Tryk på mellemrumstasten eller Enter for at udløse standardaktion og Alt + pil ned eller F4 for at udløse pileaktion",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Tilbage",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Afvis"
 	};
 
 	exports.default = messagebundle_da;

@@ -271,6 +271,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		get _root() {
 			return this.shadowRoot.querySelector(".ui5-popup-root");
 		}
+		get contentDOM() {
+			return this.shadowRoot.querySelector(".ui5-popup-content");
+		}
 		get styles() {
 			return {
 				root: {},

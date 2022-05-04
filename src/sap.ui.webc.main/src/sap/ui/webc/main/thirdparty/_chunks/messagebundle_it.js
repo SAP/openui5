@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Riduci",
 		STEPINPUT_INC_ICON_TITLE: "Aumenta",
 		SPLIT_BUTTON_DESCRIPTION: "Pulsante di comando Suddividi",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Premere Spazio o Invio per avviare l'azione predefinita e Alt+freccia giù o F4 per avviare l'azione freccia"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Premere Spazio o Invio per avviare l'azione predefinita e Alt+freccia giù o F4 per avviare l'azione freccia",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Indietro",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Rifiuta"
 	};
 
 	exports.default = messagebundle_it;

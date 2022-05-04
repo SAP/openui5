@@ -106,6 +106,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				document.addEventListener("mouseup", this._deactivate);
 				isGlobalHandlerAttached = true;
 			}
+			this._ontouchstart = {
+				handleEvent(event) {
+					event.isMarked = "button";
+					if (this.nonInteractive) {
+						return;
+					}
+					this.active = true;
+				},
+				passive: true,
+			};
 		}
 		onEnterDOM() {
 			this._isTouch = (Device.isPhone() || Device.isTablet()) && !Device.isCombi();
@@ -124,7 +134,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			event.isMarked = "button";
 			const FormSupport = FeaturesRegistry.getFeature("FormSupport");
-			if (FormSupport) {
+			if (FormSupport && this.submits) {
 				FormSupport.triggerFormSubmit(this);
 			}
 			if (Device.isSafari()) {
@@ -138,13 +148,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			event.isMarked = "button";
 			this.active = true;
 			activeButton = this;
-		}
-		_ontouchstart(event) {
-			event.isMarked = "button";
-			if (this.nonInteractive) {
-				return;
-			}
-			this.active = true;
 		}
 		_ontouchend(event) {
 			this.active = false;

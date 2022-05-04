@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Samazināt",
 		STEPINPUT_INC_ICON_TITLE: "Palielināt",
 		SPLIT_BUTTON_DESCRIPTION: "Dalītā poga",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Nospiediet atstarpes taustiņu vai Enter, lai izraisītu noklusējuma darbību, un taustiņu kombināciju Alt + lejupvērstā bultiņa vai F4, lai izraisītu bultiņas darbību"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Nospiediet atstarpes taustiņu vai Enter, lai izraisītu noklusējuma darbību, un taustiņu kombināciju Alt + lejupvērstā bultiņa vai F4, lai izraisītu bultiņas darbību",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Atpakaļ",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Noraidīt"
 	};
 
 	exports.default = messagebundle_lv;

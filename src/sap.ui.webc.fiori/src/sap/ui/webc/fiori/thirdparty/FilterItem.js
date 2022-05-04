@@ -1,9 +1,8 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/main/thirdparty/ListItem', './generated/templates/FilterItemTemplate.lit', './generated/themes/FilterItem.css'], function (litRender, ListItem, FilterItemTemplate_lit, FilterItem_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5Element) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
-	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
-	var ListItem__default = /*#__PURE__*/_interopDefaultLegacy(ListItem);
+	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
 
 	const metadata = {
 		tag: "ui5-filter-item",
@@ -24,18 +23,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/u
 		events:  {
 		},
 	};
-	class FilterItem extends ListItem__default {
+	class FilterItem extends UI5Element__default {
 		static get metadata() {
 			return metadata;
-		}
-		static get render() {
-			return litRender__default;
-		}
-		static get styles() {
-			return [ListItem__default.styles, FilterItem_css];
-		}
-		static get template() {
-			return FilterItemTemplate_lit;
 		}
 	}
 	FilterItem.define();

@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Reduksjon",
 		STEPINPUT_INC_ICON_TITLE: "Økning",
 		SPLIT_BUTTON_DESCRIPTION: "Todelt knapp",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Trykk på mellomromstasten eller Enter for å utløse standardaktiviteten, og Alt + Pil ned eller F4 for å utløse pilaktiviteten"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Trykk på mellomromstasten eller Enter for å utløse standardaktiviteten, og Alt + Pil ned eller F4 for å utløse pilaktiviteten",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Tilbake",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Avvis"
 	};
 
 	exports.default = messagebundle_no;

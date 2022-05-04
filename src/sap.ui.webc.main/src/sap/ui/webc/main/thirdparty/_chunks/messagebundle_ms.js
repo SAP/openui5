@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Penurunan",
 		STEPINPUT_INC_ICON_TITLE: "Tingkatkan",
 		SPLIT_BUTTON_DESCRIPTION: "Butang Pisahan",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Tekan Space atau Enter untuk memicukan tindakan lalai dan Alt + Anak Panah Bawah atau F4 untuk memicukan tindakan anak panah"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Tekan Space atau Enter untuk memicukan tindakan lalai dan Alt + Anak Panah Bawah atau F4 untuk memicukan tindakan anak panah",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Kembali",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Tolak"
 	};
 
 	exports.default = messagebundle_ms;

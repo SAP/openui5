@@ -20,9 +20,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 				type: String,
 				defaultValue: "listitem",
 			},
+			accessibleRole: {
+				type: String,
+			},
 			_mode: {
 				type: ListMode,
 				defaultValue: ListMode.None,
+			},
+			_ariaHasPopup: {
+				type: String,
+				noAttribute: true,
 			},
 		},
 		events:  {
@@ -57,6 +64,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 				if (this.active) {
 					this.active = false;
 				}
+			};
+			this._ontouchstart = {
+				handleEvent(event) {
+					this._onmousedown(event);
+				},
+				passive: true,
 			};
 		}
 		onBeforeRendering(...params) {
@@ -107,9 +120,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 				return;
 			}
 			this.deactivate();
-		}
-		_ontouchstart(event) {
-			this._onmousedown(event);
 		}
 		_ontouchend(event) {
 			this._onmouseup(event);
@@ -207,12 +217,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 		}
 		get _accInfo() {
 			return {
-				role: this.role,
+				role: this.accessibleRole || this.role,
 				ariaExpanded: undefined,
 				ariaLevel: undefined,
 				ariaLabel: ListItem.i18nBundle.getText(i18nDefaults.ARIA_LABEL_LIST_ITEM_CHECKBOX),
 				ariaLabelRadioButton: ListItem.i18nBundle.getText(i18nDefaults.ARIA_LABEL_LIST_ITEM_RADIO_BUTTON),
 				ariaSelectedText: this.ariaSelectedText,
+				ariaHaspopup: this._ariaHasPopup || undefined,
 			};
 		}
 		static async onDefine() {

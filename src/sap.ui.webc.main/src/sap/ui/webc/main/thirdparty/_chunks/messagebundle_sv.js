@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Minska",
 		STEPINPUT_INC_ICON_TITLE: "Öka",
 		SPLIT_BUTTON_DESCRIPTION: "Delningsknapp",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Tryck på blanktecken eller Retur för att initiera standardåtgärd och på Alt + nedåtpil eller F4 för att initiera pilåtgärd"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Tryck på blanktecken eller Retur för att initiera standardåtgärd och på Alt + nedåtpil eller F4 för att initiera pilåtgärd",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Tillbaka",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Avvisa"
 	};
 
 	exports.default = messagebundle_sv;

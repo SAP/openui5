@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Намаляване",
 		STEPINPUT_INC_ICON_TITLE: "Увеличаване",
 		SPLIT_BUTTON_DESCRIPTION: "Бутон разделяне",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Натиснете интервал или Enter, за да инициирате действие по подразбиране и Alt + стрелка надолу или F4, за да инициирате действие на стрелка."
+		SPLIT_BUTTON_KEYBOARD_HINT: "Натиснете интервал или Enter, за да инициирате действие по подразбиране и Alt + стрелка надолу или F4, за да инициирате действие на стрелка.",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Назад",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Отхвърляне"
 	};
 
 	exports.default = messagebundle_bg;

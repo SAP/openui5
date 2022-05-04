@@ -88,6 +88,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static async onDefine() {
 			SplitButton.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
+		constructor() {
+			super();
+			this._textButtonPress = {
+				handleEvent(event) {
+					this._textButtonActive = true;
+					this.focused = false;
+					this._setTabIndexValue();
+				},
+				passive: true,
+			};
+		}
 		onBeforeRendering() {
 			this._textButtonIcon = this.textButton && this.activeIcon !== "" && (this._textButtonActive) && !this._shiftOrEscapePressed ? this.activeIcon : this.icon;
 			if (this.disabled) {
@@ -157,11 +168,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_textButtonRelease() {
 			this._textButtonActive = false;
 			this._textButtonIcon = this.textButton && this.activeIcon !== "" && (this._textButtonActive) && !this._shiftOrEscapePressed ? this.activeIcon : this.icon;
-			this._setTabIndexValue();
-		}
-		_textButtonPress() {
-			this._textButtonActive = true;
-			this.focused = false;
 			this._setTabIndexValue();
 		}
 		_setTabIndexValue() {

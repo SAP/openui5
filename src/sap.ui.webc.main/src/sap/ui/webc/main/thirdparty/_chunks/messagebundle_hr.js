@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Smanjenje",
 		STEPINPUT_INC_ICON_TITLE: "Povećanje",
 		SPLIT_BUTTON_DESCRIPTION: "Razdijeljeni gumb",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Pritisnite razmaknicu ili Enter za pokretanje preddefinirane radnje i Alt + strelicu dolje ili F4 za pokretanje radnje strelice"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Pritisnite razmaknicu ili Enter za pokretanje preddefinirane radnje i Alt + strelicu dolje ili F4 za pokretanje radnje strelice",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Natrag",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Odbij"
 	};
 
 	exports.default = messagebundle_hr;

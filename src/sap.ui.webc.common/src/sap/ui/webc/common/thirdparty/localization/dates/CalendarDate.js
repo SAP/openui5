@@ -125,7 +125,13 @@ sap.ui.define(['sap/ui/core/date/UniversalDate'], function (UniversalDate) { 'us
 		}
 		static fromTimestamp(iTimestamp, sCalendarType) {
 			const oCalDate = new CalendarDate(0, 0, 1);
-			oCalDate._oUDate = UniversalDate__default.getInstance(new Date(iTimestamp), sCalendarType);
+			let oUDate;
+			try {
+				oUDate = UniversalDate__default.getInstance(new Date(iTimestamp), sCalendarType);
+			} catch (e) {
+				oUDate = new Date(NaN);
+			}
+			oCalDate._oUDate = oUDate;
 			return oCalDate;
 		}
 	}

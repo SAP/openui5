@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Csökkentés",
 		STEPINPUT_INC_ICON_TITLE: "Növelés",
 		SPLIT_BUTTON_DESCRIPTION: "Felosztott gomb",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Az alapértelmezett művelet elindításához nyomja meg a Szóköz vagy az Enter billentyűt, illetve az Alt + Le vagy az F4 billentyűt nyílművelet elindításához"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Az alapértelmezett művelet elindításához nyomja meg a Szóköz vagy az Enter billentyűt, illetve az Alt + Le vagy az F4 billentyűt nyílművelet elindításához",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Vissza",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Elutasítás"
 	};
 
 	exports.default = messagebundle_hu;

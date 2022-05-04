@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "تخفيض",
 		STEPINPUT_INC_ICON_TITLE: "زيادة",
 		SPLIT_BUTTON_DESCRIPTION: "زر التقسيم",
-		SPLIT_BUTTON_KEYBOARD_HINT: "اضغط على Space أو Enter لبدء تشغيل الإجراء الافتراضي وAlt + Arrow Down أو F4 لبدء تشغيل إجراء السهم"
+		SPLIT_BUTTON_KEYBOARD_HINT: "اضغط على Space أو Enter لبدء تشغيل الإجراء الافتراضي وAlt + Arrow Down أو F4 لبدء تشغيل إجراء السهم",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Back",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Decline"
 	};
 
 	exports.default = messagebundle_ar;

@@ -97,9 +97,9 @@ sap.ui.define([
 			extensions: {
 				flChangeHandlers: {
 					"sap.ui.webc.fiori.NotificationListItem": {
-						"moveControls": "default",
 						"hideControl": "default",
-						"unhideControl": "default"
+						"unhideControl": "default",
+						"moveControls": "default"
 					},
 					"sap.ui.webc.fiori.Page": {
 						"moveControls": "default"

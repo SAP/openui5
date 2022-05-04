@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "gzq0VyT+wa4J3oEOwtIzjA_Decrease",
 		STEPINPUT_INC_ICON_TITLE: "EVD8WgPmWB8TGa/9oY2+WQ_Increase",
 		SPLIT_BUTTON_DESCRIPTION: "4evHovIP9/1rkDeRtyd5wQ_Split Button",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Lpz82i9+CXskdfoXFtAVIw_Press Space or Enter to trigger default action and Alt + Arrow Down or F4 to trigger arrow action"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Lpz82i9+CXskdfoXFtAVIw_Press Space or Enter to trigger default action and Alt + Arrow Down or F4 to trigger arrow action",
+		MENU_BACK_BUTTON_ARIA_LABEL: "o8Bj4Md9gKc6n3x/iX2uOA_Back",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "dQqsUhJPZiVL4KcRCKGrOQ_Decline"
 	};
 
 	exports.default = messagebundle_en_US_saptrc;

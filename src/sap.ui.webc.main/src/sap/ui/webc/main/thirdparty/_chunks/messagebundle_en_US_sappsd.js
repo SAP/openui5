@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "[[[Ďēċŗēąşē∙∙∙∙∙∙]]]",
 		STEPINPUT_INC_ICON_TITLE: "[[[Ĭŋċŗēąşē∙∙∙∙∙∙]]]",
 		SPLIT_BUTTON_DESCRIPTION: "[[[Ŝρĺįţ Ɓűţţŏŋ∙∙∙∙∙∙∙]]]",
-		SPLIT_BUTTON_KEYBOARD_HINT: "[[[Ƥŗēşş Ŝρąċē ŏŗ Ĕŋţēŗ ţŏ ţŗįğğēŗ ƌēƒąűĺţ ąċţįŏŋ ąŋƌ Āĺţ + Āŗŗŏŵ Ďŏŵŋ ŏŗ Ƒ4 ţŏ ţŗįğğēŗ ąŗŗŏŵ ąċţįŏŋ∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙]]]"
+		SPLIT_BUTTON_KEYBOARD_HINT: "[[[Ƥŗēşş Ŝρąċē ŏŗ Ĕŋţēŗ ţŏ ţŗįğğēŗ ƌēƒąűĺţ ąċţįŏŋ ąŋƌ Āĺţ + Āŗŗŏŵ Ďŏŵŋ ŏŗ Ƒ4 ţŏ ţŗįğğēŗ ąŗŗŏŵ ąċţįŏŋ∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙]]]",
+		MENU_BACK_BUTTON_ARIA_LABEL: "[[[Ɓąċķ]]]",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "[[[Ďēċĺįŋē∙∙∙∙∙∙∙]]]"
 	};
 
 	exports.default = messagebundle_en_US_sappsd;

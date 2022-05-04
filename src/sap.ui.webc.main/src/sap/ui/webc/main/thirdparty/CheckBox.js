@@ -25,6 +25,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			readonly: {
 				type: Boolean,
 			},
+			required: {
+				type: Boolean,
+			},
 			indeterminate: {
 				type: Boolean,
 			},

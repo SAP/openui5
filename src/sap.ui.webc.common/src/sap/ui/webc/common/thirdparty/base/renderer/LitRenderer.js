@@ -2,7 +2,7 @@ sap.ui.define(['exports', '../_chunks/style-map', '../FeaturesRegistry', 'sap/ui
 
 	const effectiveHtml = (...args) => {
 		const LitStatic = FeaturesRegistry.getFeature("LitStatic");
-		const fn = LitStatic ? LitStatic.html : styleMap.p;
+		const fn = LitStatic ? LitStatic.html : styleMap.$;
 		return fn(...args);
 	};
 	const effectiveSvg = (...args) => {
@@ -20,7 +20,7 @@ sap.ui.define(['exports', '../_chunks/style-map', '../FeaturesRegistry', 'sap/ui
 		} else if (Array.isArray(styleStrOrHrefsArr) && styleStrOrHrefsArr.length) {
 			templateResult = effectiveHtml`${styleStrOrHrefsArr.map(href => effectiveHtml`<link type="text/css" rel="stylesheet" href="${href}">`)}${templateResult}`;
 		}
-		styleMap.w(templateResult, domNode, { host });
+		styleMap.x(templateResult, domNode, { host });
 	};
 	const scopeTag = (tag, tags, suffix) => {
 		const LitStatic = FeaturesRegistry.getFeature("LitStatic");

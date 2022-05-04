@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "减少",
 		STEPINPUT_INC_ICON_TITLE: "增加",
 		SPLIT_BUTTON_DESCRIPTION: "拆分按钮",
-		SPLIT_BUTTON_KEYBOARD_HINT: "按空格键或 Enter 触发缺省操作，按 Alt + 向下箭头或 F4 触发箭头操作"
+		SPLIT_BUTTON_KEYBOARD_HINT: "按空格键或 Enter 触发缺省操作，按 Alt + 向下箭头或 F4 触发箭头操作",
+		MENU_BACK_BUTTON_ARIA_LABEL: "返回",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "拒绝"
 	};
 
 	exports.default = messagebundle_zh_CN;

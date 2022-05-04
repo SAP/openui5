@@ -131,9 +131,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		_onkeydown(event) {
 			if (Keys.isEnter(event)) {
+				event.preventDefault();
 				const executeEvent = this.fireEvent("click", null, true);
 				if (executeEvent) {
-					event.preventDefault();
 					this.href && window.open(this.href, this.target);
 				}
 			} else if (Keys.isSpace(event)) {

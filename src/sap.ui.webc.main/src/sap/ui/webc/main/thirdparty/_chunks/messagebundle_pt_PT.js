@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Diminuir",
 		STEPINPUT_INC_ICON_TITLE: "Aumentar",
 		SPLIT_BUTTON_DESCRIPTION: "Botão separador",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Prima Space ou Enter para despoletar a ação padrão e Alt + seta para baixo ou F4 para despoletar a ação da seta"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Prima Space ou Enter para despoletar a ação padrão e Alt + seta para baixo ou F4 para despoletar a ação da seta",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Voltar",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Recusar"
 	};
 
 	exports.default = messagebundle_pt_PT;

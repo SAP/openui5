@@ -47,6 +47,8 @@
                 "sap/ui/webc/main/CustomListItem",
                 "sap/ui/webc/main/GroupHeaderListItem",
                 "sap/ui/webc/main/StandardListItem",
+                "sap/ui/webc/main/Menu",
+                "sap/ui/webc/main/MenuItem",
                 "sap/ui/webc/main/MessageStrip",
                 "sap/ui/webc/main/MultiComboBox",
                 "sap/ui/webc/main/MultiComboBoxItem",
@@ -81,7 +83,7 @@
                 "sap/ui/webc/main/Tree",
                 "sap/ui/webc/main/TreeItem"
             ], function(
-                Avatar, Button, AvatarGroup, Badge, Icon, Breadcrumbs, BreadcrumbsItem, BusyIndicator, Calendar, CalendarDate, Card, CardHeader, Carousel, CheckBox, ColorPalette, ColorPaletteItem, ColorPalettePopover, ColorPicker, ComboBox, ComboBoxGroupItem, ComboBoxItem, DatePicker, DateRangePicker, DateTimePicker, Dialog, FileUploader, Input, SuggestionGroupItem, SuggestionItem, Label, Link, List, CustomListItem, GroupHeaderListItem, StandardListItem, MessageStrip, MultiComboBox, MultiComboBoxItem, MultiInput, Token, Panel, Popover, ProgressIndicator, RadioButton, RangeSlider, RatingIndicator, ResponsivePopover, SegmentedButton, SegmentedButtonItem, Select, Option, Slider, StepInput, Switch, TabContainer, Tab, TabSeparator, Table, TableColumn, TableGroupRow, TableRow, TableCell, TextArea, TimePicker, Title, Toast, Tree, TreeItem
+                Avatar, Button, AvatarGroup, Badge, Icon, Breadcrumbs, BreadcrumbsItem, BusyIndicator, Calendar, CalendarDate, Card, CardHeader, Carousel, CheckBox, ColorPalette, ColorPaletteItem, ColorPalettePopover, ColorPicker, ComboBox, ComboBoxGroupItem, ComboBoxItem, DatePicker, DateRangePicker, DateTimePicker, Dialog, FileUploader, Input, SuggestionGroupItem, SuggestionItem, Label, Link, List, CustomListItem, GroupHeaderListItem, StandardListItem, Menu, MenuItem, MessageStrip, MultiComboBox, MultiComboBoxItem, MultiInput, Token, Panel, Popover, ProgressIndicator, RadioButton, RangeSlider, RatingIndicator, ResponsivePopover, SegmentedButton, SegmentedButtonItem, Select, Option, Slider, StepInput, Switch, TabContainer, Tab, TabSeparator, Table, TableColumn, TableGroupRow, TableRow, TableCell, TextArea, TimePicker, Title, Toast, Tree, TreeItem
             ) {
 
                 var oAvatar = new Avatar({
@@ -1235,6 +1237,300 @@
                 oList.placeAt("testList");
 
 
+                var oMenu0Button = new Button({
+                    text: "close",
+                    click: function(oEvent) {
+                        console.log("Calling close...");
+                        var result = oMenu.close();
+                        console.log("... close returned: ", result);
+                    }
+                });
+                oMenu0Button.placeAt("methodsMenu");
+
+
+
+                var oMenu1Button = new Button({
+                    text: "showAt",
+                    click: function(oEvent) {
+                        console.log("Calling showAt...");
+                        var result = oMenu.showAt(oMenu1Button);
+                        console.log("... showAt returned: ", result);
+                    }
+                });
+                oMenu1Button.placeAt("methodsMenu");
+
+                var oMenu = new Menu({
+                    headerText: "Some text...",
+                    items: [
+                        new MenuItem({
+                            icon: "employee",
+                            text: "Some text...",
+                            items: [
+                                new MenuItem({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new MenuItem({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new MenuItem({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        }),
+                        new MenuItem({
+                            icon: "employee",
+                            text: "Some text...",
+                            items: [
+                                new MenuItem({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new MenuItem({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new MenuItem({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        }),
+                        new MenuItem({
+                            icon: "employee",
+                            text: "Some text...",
+                            items: [
+                                new MenuItem({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new MenuItem({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new MenuItem({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new MenuItem({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        })
+                    ],
+                    itemClick: function(oEvent) {
+                        console.log("Event itemClick fired for Menu with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oMenu.placeAt("testMenu");
+
+
                 var oMessageStrip = new MessageStrip({
                     text: "Some text...",
                     icon: new Icon({
@@ -1842,16 +2138,19 @@
                     valueStateMessage: "Value State Message",
                     options: [
                         new Option({
+                            additionalText: "Some text...",
                             icon: "employee",
                             text: "Some text...",
                             value: "Control value"
                         }),
                         new Option({
+                            additionalText: "Some text...",
                             icon: "employee",
                             text: "Some text...",
                             value: "Control value"
                         }),
                         new Option({
+                            additionalText: "Some text...",
                             icon: "employee",
                             text: "Some text...",
                             value: "Control value"
@@ -3034,133 +3333,139 @@
     <br><br>
 
 
-    <h1>25. MessageStrip</h1>
+    <h1>25. Menu</h1>
+    <div id="methodsMenu"></div>
+    <div id="testMenu"></div>
+    <br><br>
+
+
+    <h1>26. MessageStrip</h1>
     <div id="methodsMessageStrip"></div>
     <div id="testMessageStrip"></div>
     <br><br>
 
 
-    <h1>26. MultiComboBox</h1>
+    <h1>27. MultiComboBox</h1>
     <div id="methodsMultiComboBox"></div>
     <div id="testMultiComboBox"></div>
     <br><br>
 
 
-    <h1>27. MultiInput</h1>
+    <h1>28. MultiInput</h1>
     <div id="methodsMultiInput"></div>
     <div id="testMultiInput"></div>
     <br><br>
 
 
-    <h1>28. Panel</h1>
+    <h1>29. Panel</h1>
     <div id="methodsPanel"></div>
     <div id="testPanel"></div>
     <br><br>
 
 
-    <h1>29. Popover</h1>
+    <h1>30. Popover</h1>
     <div id="methodsPopover"></div>
     <div id="testPopover"></div>
     <br><br>
 
 
-    <h1>30. ProgressIndicator</h1>
+    <h1>31. ProgressIndicator</h1>
     <div id="methodsProgressIndicator"></div>
     <div id="testProgressIndicator"></div>
     <br><br>
 
 
-    <h1>31. RadioButton</h1>
+    <h1>32. RadioButton</h1>
     <div id="methodsRadioButton"></div>
     <div id="testRadioButton"></div>
     <br><br>
 
 
-    <h1>32. RangeSlider</h1>
+    <h1>33. RangeSlider</h1>
     <div id="methodsRangeSlider"></div>
     <div id="testRangeSlider"></div>
     <br><br>
 
 
-    <h1>33. RatingIndicator</h1>
+    <h1>34. RatingIndicator</h1>
     <div id="methodsRatingIndicator"></div>
     <div id="testRatingIndicator"></div>
     <br><br>
 
 
-    <h1>34. ResponsivePopover</h1>
+    <h1>35. ResponsivePopover</h1>
     <div id="methodsResponsivePopover"></div>
     <div id="testResponsivePopover"></div>
     <br><br>
 
 
-    <h1>35. SegmentedButton</h1>
+    <h1>36. SegmentedButton</h1>
     <div id="methodsSegmentedButton"></div>
     <div id="testSegmentedButton"></div>
     <br><br>
 
 
-    <h1>36. Select</h1>
+    <h1>37. Select</h1>
     <div id="methodsSelect"></div>
     <div id="testSelect"></div>
     <br><br>
 
 
-    <h1>37. Slider</h1>
+    <h1>38. Slider</h1>
     <div id="methodsSlider"></div>
     <div id="testSlider"></div>
     <br><br>
 
 
-    <h1>38. StepInput</h1>
+    <h1>39. StepInput</h1>
     <div id="methodsStepInput"></div>
     <div id="testStepInput"></div>
     <br><br>
 
 
-    <h1>39. Switch</h1>
+    <h1>40. Switch</h1>
     <div id="methodsSwitch"></div>
     <div id="testSwitch"></div>
     <br><br>
 
 
-    <h1>40. TabContainer</h1>
+    <h1>41. TabContainer</h1>
     <div id="methodsTabContainer"></div>
     <div id="testTabContainer"></div>
     <br><br>
 
 
-    <h1>41. Table</h1>
+    <h1>42. Table</h1>
     <div id="methodsTable"></div>
     <div id="testTable"></div>
     <br><br>
 
 
-    <h1>42. TextArea</h1>
+    <h1>43. TextArea</h1>
     <div id="methodsTextArea"></div>
     <div id="testTextArea"></div>
     <br><br>
 
 
-    <h1>43. TimePicker</h1>
+    <h1>44. TimePicker</h1>
     <div id="methodsTimePicker"></div>
     <div id="testTimePicker"></div>
     <br><br>
 
 
-    <h1>44. Title</h1>
+    <h1>45. Title</h1>
     <div id="methodsTitle"></div>
     <div id="testTitle"></div>
     <br><br>
 
 
-    <h1>45. Toast</h1>
+    <h1>46. Toast</h1>
     <div id="methodsToast"></div>
     <div id="testToast"></div>
     <br><br>
 
 
-    <h1>46. Tree</h1>
+    <h1>47. Tree</h1>
     <div id="methodsTree"></div>
     <div id="testTree"></div>
     <br><br>

@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Азайту",
 		STEPINPUT_INC_ICON_TITLE: "Арттыру",
 		SPLIT_BUTTON_DESCRIPTION: "Бөлу түймесі",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Әдепкі операцияны іске қосу үшін бос орын немесе Enter пернесін және көрсеткі операциясын іске қосу үшін Alt + төменгі көрсеткі немесе F4 пернесін басыңыз"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Әдепкі операцияны іске қосу үшін бос орын немесе Enter пернесін және көрсеткі операциясын іске қосу үшін Alt + төменгі көрсеткі немесе F4 пернесін басыңыз",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Артқа",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Бас тарту"
 	};
 
 	exports.default = messagebundle_kk;

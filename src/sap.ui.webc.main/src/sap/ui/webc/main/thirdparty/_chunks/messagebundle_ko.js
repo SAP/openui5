@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "감소",
 		STEPINPUT_INC_ICON_TITLE: "증가",
 		SPLIT_BUTTON_DESCRIPTION: "분할 버튼",
-		SPLIT_BUTTON_KEYBOARD_HINT: "스페이스바 또는 Enter를 눌러 기본 액션 및 Alt + Arrow Down 또는 F4를 트리거하거나 화살표 액션을 트리거합니다."
+		SPLIT_BUTTON_KEYBOARD_HINT: "스페이스바 또는 Enter를 눌러 기본 액션 및 Alt + Arrow Down 또는 F4를 트리거하거나 화살표 액션을 트리거합니다.",
+		MENU_BACK_BUTTON_ARIA_LABEL: "뒤로",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "거부"
 	};
 
 	exports.default = messagebundle_ko;

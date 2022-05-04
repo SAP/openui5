@@ -174,7 +174,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (Keys.isEndShift(event)) {
 				this._handleEndShift(event);
 			}
-			this._handleItemNavigation(event, this.tokens);
+			this._handleItemNavigation(event, this._tokens);
 		}
 		_handleItemNavigation(event, tokens) {
 			const isCtrl = !!(event.metaKey || event.ctrlKey);
@@ -336,6 +336,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get valueStateMessageText() {
 			return this.getSlottedNodes("valueStateMessage").map(el => el.cloneNode(true));
+		}
+		 get _valueStateMessageIcon() {
+			const iconPerValueState = {
+				Error: "error",
+				Warning: "alert",
+				Success: "sys-enter-2",
+				Information: "information",
+			};
+			return this.valueState !== ValueState__default.None ? iconPerValueState[this.valueState] : "";
 		}
 		get _isPhone() {
 			return Device.isPhone();

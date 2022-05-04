@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "ลด",
 		STEPINPUT_INC_ICON_TITLE: "เพิ่ม",
 		SPLIT_BUTTON_DESCRIPTION: "ปุ่ม 'แยก'",
-		SPLIT_BUTTON_KEYBOARD_HINT: "กด Space หรือ Enter เพื่อทริกเกอร์การดำเนินการตั้งต้นแล้วกด Alt + ลูกศรลง หรือ F4 เพื่อทริกเกอร์การดำเนินการของลูกศร"
+		SPLIT_BUTTON_KEYBOARD_HINT: "กด Space หรือ Enter เพื่อทริกเกอร์การดำเนินการตั้งต้นแล้วกด Alt + ลูกศรลง หรือ F4 เพื่อทริกเกอร์การดำเนินการของลูกศร",
+		MENU_BACK_BUTTON_ARIA_LABEL: "ย้อนกลับ",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "ปฏิเสธ"
 	};
 
 	exports.default = messagebundle_th;

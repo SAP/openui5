@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Verkleinen",
 		STEPINPUT_INC_ICON_TITLE: "Vergroten",
 		SPLIT_BUTTON_DESCRIPTION: "Splitsknop",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Druk op de spatiebalk of Enter om standaardactie te starten en op Alt + pijl-omlaag of F4 om actie met pijlen starten"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Druk op de spatiebalk of Enter om standaardactie te starten en op Alt + pijl-omlaag of F4 om actie met pijlen starten",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Terug",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Afwijzen"
 	};
 
 	exports.default = messagebundle_nl;

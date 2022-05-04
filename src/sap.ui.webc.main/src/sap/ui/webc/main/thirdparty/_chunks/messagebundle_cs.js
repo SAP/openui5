@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Zmenšení",
 		STEPINPUT_INC_ICON_TITLE: "Zvětšení",
 		SPLIT_BUTTON_DESCRIPTION: "Rozdělené tlačítko",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Stisknutím mezerníku nebo Enter spustíte standardní akci a pomocí Alt + šipky dolů nebo F4 spustíte akci šipky"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Stisknutím mezerníku nebo Enter spustíte standardní akci a pomocí Alt + šipky dolů nebo F4 spustíte akci šipky",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Zpět",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Odmítnout"
 	};
 
 	exports.default = messagebundle_cs;

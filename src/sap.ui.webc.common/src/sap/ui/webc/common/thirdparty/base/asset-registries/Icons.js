@@ -1,4 +1,4 @@
-sap.ui.define(['exports', '../getSharedResource', '../assets-meta/IconCollectionsAlias', '../config/Theme'], function (exports, getSharedResource, IconCollectionsAlias, Theme) { 'use strict';
+sap.ui.define(['exports', '../getSharedResource', '../assets-meta/IconCollectionsAlias', '../config/Icons'], function (exports, getSharedResource, IconCollectionsAlias, Icons) { 'use strict';
 
 	const loaders = new Map();
 	const registry = getSharedResource("SVGIcons.registry", new Map());
@@ -34,7 +34,7 @@ sap.ui.define(['exports', '../getSharedResource', '../assets-meta/IconCollection
 	};
 	const registerIcon = (name, { pathData, ltr, accData, collection, packageName } = {}) => {
 		if (!collection) {
-			collection = _getDefaultCollection();
+			collection = Icons.getEffectiveDefaultIconCollection();
 		}
 		const key = `${collection}/${name}`;
 		registry.set(key, {
@@ -50,7 +50,7 @@ sap.ui.define(['exports', '../getSharedResource', '../assets-meta/IconCollection
 		}
 		let collection;
 		[name, collection] = name.split("/").reverse();
-		collection = collection || _getDefaultCollection();
+		collection = collection || Icons.getEffectiveDefaultIconCollection();
 		collection = _normalizeCollection(collection);
 		name = name.replace("icon-", "");
 		const registryKey = `${collection}/${name}`;
@@ -81,9 +81,6 @@ sap.ui.define(['exports', '../getSharedResource', '../assets-meta/IconCollection
 		await getIconData("tnt/arrow");
 		await getIconData("business-suite/3d");
 		return Array.from(registry.keys());
-	};
-	const _getDefaultCollection = () => {
-		return Theme.isThemeFamily("sap_horizon") ? "SAP-icons-v5" : "SAP-icons";
 	};
 	const _normalizeCollection = collectionName => {
 		if (IconCollectionsAlias[collectionName]) {

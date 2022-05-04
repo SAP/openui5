@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Reduir",
 		STEPINPUT_INC_ICON_TITLE: "Ampliar",
 		SPLIT_BUTTON_DESCRIPTION: "Polsador dividit",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Premeu Espai o Intro per activar l'acció predeterminada i Alt + Fletxa avall o F4 per activar l'acció de fletxa"
+		SPLIT_BUTTON_KEYBOARD_HINT: "Premeu Espai o Intro per activar l'acció predeterminada i Alt + Fletxa avall o F4 per activar l'acció de fletxa",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Endarrere",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Declinar"
 	};
 
 	exports.default = messagebundle_ca;

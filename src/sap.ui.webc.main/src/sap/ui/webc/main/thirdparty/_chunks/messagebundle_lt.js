@@ -123,7 +123,9 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_DEC_ICON_TITLE: "Sumažinti",
 		STEPINPUT_INC_ICON_TITLE: "Padidinti",
 		SPLIT_BUTTON_DESCRIPTION: "Skaidymo mygtukas",
-		SPLIT_BUTTON_KEYBOARD_HINT: "Norėdami paleisti numatytąjį veiksmą paspauskite tarpo arba įvesties klavišą, norėdami paleisti rodyklės veiksmą paspauskite „Alt + Rodyklė žemyn“ arba F4."
+		SPLIT_BUTTON_KEYBOARD_HINT: "Norėdami paleisti numatytąjį veiksmą paspauskite tarpo arba įvesties klavišą, norėdami paleisti rodyklės veiksmą paspauskite „Alt + Rodyklė žemyn“ arba F4.",
+		MENU_BACK_BUTTON_ARIA_LABEL: "Atgal",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Atmesti"
 	};
 
 	exports.default = messagebundle_lt;

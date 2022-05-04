@@ -87,15 +87,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/u
 		_onkeydown(event) {
 			super._onkeydown(event);
 			const isHomeInBeginning = Keys.isHome(event) && event.target.selectionStart === 0;
-			if (Keys.isLeft(event) || isHomeInBeginning) {
+			if (isHomeInBeginning) {
+				this._skipOpenSuggestions = true;
+				return this._focusFirstToken(event);
+			}
+			if (Keys.isLeft(event) || Keys.isBackSpace(event)) {
 				this._skipOpenSuggestions = true;
 				return this._handleLeft(event);
 			}
 			this._skipOpenSuggestions = false;
-			if (Keys.isBackSpace(event) && event.target.value === "") {
-				event.preventDefault();
-				this.tokenizer._focusLastToken();
-			}
 			if (Keys.isShow(event)) {
 				this.valueHelpPress();
 			}
@@ -132,13 +132,23 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/u
 				return this.tokenizer._fillClipboard("copy", selectedTokens);
 			}
 		}
-		_handleLeft() {
+		_handleLeft(event) {
 			const cursorPosition = this.getDomRef().querySelector(`input`).selectionStart;
 			const tokens = this.tokens;
 			const lastToken = tokens.length && tokens[tokens.length - 1];
 			if (cursorPosition === 0 && lastToken) {
+				event.preventDefault();
 				lastToken.focus();
 				this.tokenizer._itemNav.setCurrentItem(lastToken);
+			}
+		}
+		_focusFirstToken(event) {
+			const tokens = this.tokens;
+			const firstToken = tokens.length && tokens[0];
+			if (firstToken) {
+				event.preventDefault();
+				firstToken.focus();
+				this.tokenizer._itemNav.setCurrentItem(firstToken);
 			}
 		}
 		_onfocusout(event) {

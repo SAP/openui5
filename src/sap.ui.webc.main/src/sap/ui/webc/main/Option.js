@@ -45,6 +45,13 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Defines the additional text displayed at the end of the option element.
+				 */
+				additionalText: {
+					type: "string"
+				},
+
+				/**
 				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
 				 */
 				enabled: {

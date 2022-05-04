@@ -1,1 +1,1 @@
-.ui5-tc__separator{min-height:.25rem;border-bottom:.0625rem solid var(--sapGroup_TitleBorderColor);margin-left:calc(var(--_ui5-indentation-level, 0)*1rem);margin-right:.5rem}[ui5-list]>.ui5-tc__separator:first-child{min-height:.5rem}
+.ui5-tc__separator{min-height:.25rem;border-bottom:.0625rem solid var(--sapGroup_TitleBorderColor);margin-inline-start:calc(var(--_ui5-tab-indentation-level)*0.5rem);margin-inline-end:.5rem}[ui5-list]>.ui5-tc__separator:first-child{min-height:.5rem}
