@@ -26,10 +26,11 @@ sap.ui.define([
 	return Controller.extend("sap.ui.core.sample.odata.v4.LateProperties.Main", {
 		onCleanUpOptimisticBatchCache : function (oEvent) {
 			var oTimeStamp = new Date(Date.now()
-				- parseInt(oEvent.getParameter("id").split("days")[1]) * 864000);
+				- parseInt(oEvent.getParameter("id").split("days")[1]) * 60 * 60 * 24 * 1000);
 
 			ODataModel.cleanUpOptimisticBatch(oTimeStamp).then(function () {
-				MessageToast.show("Optimistic batch cache entries deleted");
+				MessageToast.show("Deleted optimistic batch cache entries older than: "
+					+ oTimeStamp);
 			}, function (oError) {
 				MessageToast.show("Cache cleanup failed: " + oError);
 			}).catch();

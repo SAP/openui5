@@ -18,7 +18,7 @@
 							<MenuItem id="days30" text="One Month Ago"
 								press=".onCleanUpOptimisticBatchCache"
 								tooltip="Optimistic Batch Cache Entries One Month Ago"/>
-							<MenuItem id="days360" text="One Year Ago"
+							<MenuItem id="days365" text="One Year Ago"
 								press=".onCleanUpOptimisticBatchCache"
 								tooltip="Optimistic Batch Cache Entries One Year Ago"/>
 						</Menu>
