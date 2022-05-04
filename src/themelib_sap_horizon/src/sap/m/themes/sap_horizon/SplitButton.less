@@ -214,3 +214,12 @@ html.sap-desktop .sapMSB .sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator
 		line-height: 2.125rem;
 	}
 }
+
+.sapMSB .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnTransparent.sapMBtnIconFirst::before,
+.sapMIBar .sapMSB .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnDefault::before {
+	background-color: @sapUiButtonActiveTextColor;
+}
+
+.sapMIBar .sapMSB .sapMBtn {
+	background-color: transparent;
+}
