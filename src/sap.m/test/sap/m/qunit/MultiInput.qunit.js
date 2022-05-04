@@ -1449,6 +1449,62 @@ sap.ui.define([
 			assert.equal(this.multiInput1.getTokens().length, 0, "no token should be created");
 	});
 
+	QUnit.test("Paste clipboard data from excel from several rows and columns info multiple tokens", function(assert) {
+		var sPastedString = '1\t\t2\r\n\t\t\r\n3\t\t4\r\n',
+			counter = 0;
+
+		this.multiInput1.addValidator(function (args) {
+			return new Token({text: args.text, key: args.text});
+		});
+
+		this.multiInput1.attachTokenUpdate(function (args) {
+			counter++;
+		});
+
+		//act
+		qutils.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+			originalEvent: {
+				clipboardData: {
+					getData: function () {
+						return sPastedString;
+					}
+				}
+			}
+		});
+
+		this.clock.tick(10);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.equal(counter, 1, "tokenUpdate event should be fired once");
+		assert.equal(this.multiInput1.getTokens().length, 4, "6 tokens should be added to MultiInput");
+	});
+
+	QUnit.test("Paste single cell from excel should not create a token on Windows.", function(assert) {
+		var sPastedString = '1\r\n';
+
+		this.multiInput1.addValidator(function (args) {
+			return new Token({text: args.text, key: args.text});
+		});
+
+		//act
+		qutils.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+			originalEvent: {
+				clipboardData: {
+					getData: function () {
+						return sPastedString;
+					}
+				}
+			}
+		});
+
+		this.clock.tick(10);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.equal(this.multiInput1.getTokens().length, 0, "A token should not be created");
+	});
+
 	QUnit.test("token update event", function(assert) {
 		var iCount = 0,
 			done = assert.async(),

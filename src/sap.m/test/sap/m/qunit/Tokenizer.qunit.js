@@ -1142,7 +1142,8 @@ sap.ui.define([
 
 		assert.equal(aTextArray1[0], "1 2", "text separated");
 		assert.equal(aTextArray1[1], "2+4", "text separated");
-		assert.equal(aTextArray1[2], "3)\t(/&%$)", "text separated");
+		assert.equal(aTextArray1[2], "3)", "text separated");
+		assert.equal(aTextArray1[3], "(/&%$)", "text separated");
 	});
 
 	QUnit.test("Copy to clipboard (Non IE):", function(assert) {

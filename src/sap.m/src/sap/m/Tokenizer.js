@@ -1159,11 +1159,9 @@ sap.ui.define([
 						type : Tokenizer.TokenUpdateType.Added
 					});
 				}
-			} else {
-				if (fValidateCallback) {
+			} else if (fValidateCallback) {
 					fValidateCallback(false);
 				}
-			}
 		};
 	};
 
@@ -1254,7 +1252,7 @@ sap.ui.define([
 
 		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
 		// delimiter is line break
-		return sString.split(/\r\n|\r|\n/g);
+		return sString.split(/\r\n|\r|\n|\t/g);
 	};
 
 	/**

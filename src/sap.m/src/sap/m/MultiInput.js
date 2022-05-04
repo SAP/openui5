@@ -736,6 +736,11 @@ function(
 			sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
 		}
 
+		// Pasting from Excel on Windows always adds "\r\n" at the end, even if a single cell is selected
+		if (sOriginalText.length && sOriginalText.endsWith("\r\n")) {
+			sOriginalText = sOriginalText.substring(0, sOriginalText.lastIndexOf("\r\n"));
+		}
+
 		var aSeparatedText = this._tokenizer._parseString(sOriginalText);
 
 		// if only one piece of text was pasted, we can assume that the user wants to alter it before it is converted into a token
