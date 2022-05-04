@@ -64,7 +64,7 @@
 				}">
 			<headerToolbar>
 				<Toolbar>
-					<Title level="H2" text="Parts"/>
+					<Title level="H3" text="Parts"/>
 				</Toolbar>
 			</headerToolbar>
 			<columns>
