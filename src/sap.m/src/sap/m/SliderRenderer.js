@@ -211,6 +211,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 			this.renderTickmarksLabel(oRm, oSlider, oSlider.getMin());
 			oRm.openStart("li")
 				.class(SliderRenderer.CSS_CLASS + "Tick")
+				.attr("data-ui5-active-tickmark", this.shouldRenderFirstActiveTickmark(oSlider))
 				.style("width", fTickmarksDistance + "%")
 				.openEnd()
 				.close("li");
@@ -222,14 +223,16 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 				}
 
 				oRm.openStart("li").class(SliderRenderer.CSS_CLASS + "Tick")
-					.style("width", fTickmarksDistance + "%")
-					.openEnd()
+					.style("width", fTickmarksDistance + "%");
+				this.applyTickmarkStyles(oRm, oSlider, i, iTickmarksToRender);
+				oRm.openEnd()
 					.close("li");
 			}
 
 			this.renderTickmarksLabel(oRm, oSlider, oSlider.getMax());
 			oRm.openStart("li")
 				.class(SliderRenderer.CSS_CLASS + "Tick")
+				.attr("data-ui5-active-tickmark", this.shouldRenderLastActiveTickmark(oSlider))
 				.style("width", "0")
 				.openEnd()
 				.close("li");
@@ -301,6 +304,10 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 */
 		SliderRenderer.addInnerClass = function(oRm, oSlider) {
 			oRm.class(SliderRenderer.CSS_CLASS + "Inner");
+
+			if (oSlider.getProperty("handlePressed")) {
+				oRm.class(SliderRenderer.CSS_CLASS + "Pressed");
+			}
 		};
 
 		/**
@@ -312,6 +319,10 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 */
 		SliderRenderer.addProgressIndicatorClass = function(oRm, oSlider) {
 			oRm.class(SliderRenderer.CSS_CLASS + "Progress");
+
+			if (oSlider.getEnableTickmarks()) {
+				oRm.class(SliderRenderer.CSS_CLASS + "ProgressWithTickmarks");
+			}
 		};
 
 		/**
@@ -333,6 +344,20 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 */
 		SliderRenderer.renderLabels = function (oRm, oSlider) {
 			oSlider.getAggregation("_handlesLabels").forEach(oRm.renderControl, oRm);
+		};
+
+		SliderRenderer.applyTickmarkStyles = function(oRm, oSlider,iTickmarkIndex, iTickmarksToRender) {
+			var iProgressTickmarks = (parseInt(oSlider._sProgressValue) / 100) * iTickmarksToRender;
+			var bRender = iTickmarkIndex <= iProgressTickmarks;
+			oRm.attr("data-ui5-active-tickmark", bRender);
+		};
+
+		SliderRenderer.shouldRenderFirstActiveTickmark = function () {
+			return true;
+		};
+
+		SliderRenderer.shouldRenderLastActiveTickmark = function (oSlider) {
+			return oSlider.getValue() === oSlider.getMax();
 		};
 
 		return SliderRenderer;

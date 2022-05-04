@@ -269,12 +269,12 @@ sap.ui.define([
 
 
 	QUnit.test("set/getValue() should update advanced tooltip state and visualization", function (assert) {
+		this.rangeSlider.setShowAdvancedTooltip(true);
+		oCore.applyChanges();
+
 		var fnUpdateTooltipsPositionAndStateSpy = this.spy(this.rangeSlider, "updateTooltipsPositionAndState");
 		var fnUpdateTooltipContentSpy;
 		var fnFireChange = this.spy(this.rangeSlider, "fireChange");
-
-		this.rangeSlider.setShowAdvancedTooltip(true);
-		oCore.applyChanges();
 
 		fnUpdateTooltipContentSpy = this.spy(this.rangeSlider, "_updateTooltipContent");
 		this.rangeSlider.setValue(50);

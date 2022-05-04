@@ -1538,6 +1538,8 @@ sap.ui.define([
 				srcControl: oSlider
 			}, '_on');
 
+			Core.applyChanges();
+
 			// assert
 			assert.strictEqual(oSlider.getValue(), iPageX);
 			assert.ok(!oSlider.$("inner").hasClass(SliderRenderer.CSS_CLASS + "Pressed"), 'On touchend the slider muss not have the CSS class “' + SliderRenderer.CSS_CLASS + 'Pressed”');
