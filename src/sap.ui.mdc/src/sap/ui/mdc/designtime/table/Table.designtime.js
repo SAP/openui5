@@ -26,7 +26,7 @@ sap.ui.define([
 		aggregations: {
 			_content: {
 				propagateMetadata: function(oElement) {
-					if (oElement.isA("sap.ui.mdc.ActionToolbar")) {
+					if (oElement.isA("sap.ui.mdc.ActionToolbar") || (oElement.getParent() && oElement.getParent().isA("sap.ui.mdc.actiontoolbar.ActionToolbarAction"))) {
 						return {
 							actions: {
 								settings: {}

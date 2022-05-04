@@ -24,13 +24,13 @@
                     </mdc:end>
                     <mdc:actions>
                         <mdcat:ActionToolbarAction id="standaloneAction1">
-                            <Button text="Action 1" />
+                            <Button text="Action 1" id="standaloneButton1" />
                         </mdcat:ActionToolbarAction>
                         <mdcat:ActionToolbarAction id="standaloneAction2" layoutInformation="{
                                 aggregationName: 'end',
                                 alignment: 'End'
                             }">
-                            <Button text="Action 2" />
+                            <Button text="Action 2" id="standaloneButton2" />
                         </mdcat:ActionToolbarAction>
 
 
@@ -38,14 +38,14 @@
                             aggregationName: 'end',
                             alignment: 'End'
                         }">
-                            <Button text="Action 3" />
+                            <Button text="Action 3" id="standaloneButton3" />
                         </mdcat:ActionToolbarAction>
 
                         <mdcat:ActionToolbarAction id="standaloneAction4">
-                            <Button text="Action 4" />
+                            <Button text="Action 4" id="standaloneButton4" />
                         </mdcat:ActionToolbarAction>
                         <mdcat:ActionToolbarAction id="standaloneAction5">
-                            <Button text="Action 5" />
+                            <Button text="Action 5" id="standaloneButton5" />
                         </mdcat:ActionToolbarAction>
                     </mdc:actions>
                 </mdc:ActionToolbar>
@@ -53,13 +53,13 @@
                 <mdc:Table id="actionToolbarTable" header="Dummy Table" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'delegates/TableDelegate', payload: {collectionName: 'Books'}}" showRowCount="true" threshold="50" width="100%">
                     <mdc:actions>
                         <mdcat:ActionToolbarAction id="tableAction1">
-                            <Button text="Action 1" />
+                            <Button text="Action 1" id="tableButton1" />
                         </mdcat:ActionToolbarAction>
                         <mdcat:ActionToolbarAction id="tableAction2" layoutInformation="{
                                 aggregationName: 'end',
                                 alignment: 'End'
                             }">
-                            <Button text="Action 2" />
+                            <Button text="Action 2" id="tableButton2" />
                         </mdcat:ActionToolbarAction>
 
 
@@ -67,14 +67,14 @@
                             aggregationName: 'end',
                             alignment: 'End'
                         }">
-                            <Button text="Action 3" />
+                            <Button text="Action 3" id="tableButton3" />
                         </mdcat:ActionToolbarAction>
 
                         <mdcat:ActionToolbarAction id="tableAction4">
-                            <Button text="Action 4" />
+                            <Button text="Action 4" id="tableButton4" />
                         </mdcat:ActionToolbarAction>
                         <mdcat:ActionToolbarAction id="tableAction5">
-                            <Button text="Action 5" />
+                            <Button text="Action 5" id="tableButton5" />
                         </mdcat:ActionToolbarAction>
                     </mdc:actions>
                     <mdc:type>
@@ -103,13 +103,13 @@
                     </mdc:selectionDetailsActions>
                     <mdc:actions>
                         <mdcat:ActionToolbarAction id="chartAction1">
-                            <Button text="Action 1" />
+                            <Button text="Action 1" id="chartButton1" />
                         </mdcat:ActionToolbarAction>
                         <mdcat:ActionToolbarAction id="chartAction2" layoutInformation="{
                                 aggregationName: 'end',
                                 alignment: 'End'
                             }">
-                            <Button text="Action 2" />
+                            <Button text="Action 2" id="chartButton2" />
                         </mdcat:ActionToolbarAction>
 
 
@@ -117,14 +117,14 @@
                             aggregationName: 'end',
                             alignment: 'End'
                         }">
-                            <Button text="Action 3" />
+                            <Button text="Action 3" id="chartButton3" />
                         </mdcat:ActionToolbarAction>
 
                         <mdcat:ActionToolbarAction id="chartAction4">
-                            <Button text="Action 4" />
+                            <Button text="Action 4" id="chartButton4" />
                         </mdcat:ActionToolbarAction>
                         <mdcat:ActionToolbarAction id="chartAction5">
-                            <Button text="Action 5" />
+                            <Button text="Action 5" id="chartButton5" />
                         </mdcat:ActionToolbarAction>
                     </mdc:actions>
                     <mdc:items>

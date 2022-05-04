@@ -31,6 +31,7 @@ sap.ui.define([
     var ActionToolbarAction = Control.extend("sap.ui.mdc.actiontoolbar.ActionToolbarAction", {
         metadata: {
             library: "sap.ui.mdc",
+            designtime: "sap/ui/mdc/designtime/actiontoolbar/ActionToolbarAction.designtime",
             interfaces : [
 				"sap.m.IOverflowToolbarContent"
 			],

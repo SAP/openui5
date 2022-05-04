@@ -26,7 +26,9 @@ sap.ui.define([
                 }
             }
 	    },
-        aAllowedAggregations = [],
+        aAllowedAggregations = [
+            "actions"
+        ],
         aAllProperties = [];
 
     return Util.getDesignTime(ActionToolbar, aAllProperties, aAllowedAggregations, oDesignTime);

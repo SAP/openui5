@@ -73,15 +73,21 @@ sap.ui.define([
     var aTestSettings = [
         {
             name: "StandAlone",
-            id: "---app--actionToolbarId"
+            toolbarID: "---app--actionToolbarId",
+            contextMenuEntries: ["Cut", "Paste", "Toolbar Actions"],
+            renameActionID: "standaloneButton4"
         },
         {
             name: "Table",
-            id: "---app--actionToolbarTable-toolbar"
+            toolbarID: "---app--actionToolbarTable-toolbar",
+            contextMenuEntries: ["Toolbar Actions"],
+            renameActionID: "tableButton4"
         },
         {
             name: "Chart",
-            id: "---app--actionToolbarChart--toolbar"
+            toolbarID: "---app--actionToolbarChart--toolbar",
+            contextMenuEntries: ["Toolbar Actions"],
+            renameActionID: "chartButton4"
         }
     ];
 
@@ -97,7 +103,7 @@ sap.ui.define([
             Given.iEnableTheLocalLRep();
             Given.iClearTheLocalStorageFromRtaRestart();
 
-            Then.onTheApp.iShouldSeeActionToolbarWithActions("__component" + iComponent + oTestSetting.id, {
+            Then.onTheApp.iShouldSeeActionToolbarWithActions("__component" + iComponent + oTestSetting.toolbarID, {
                 "Action 1": {
                     alignment: ActionToolbarActionAlignment.Begin,
                     aggregationName: "end"
@@ -121,14 +127,15 @@ sap.ui.define([
             });
         });
 
-        opaTest("Hide 'Test Action 1'"/*, move 'Test Action 2' down, move 'Test Action 8' to top"*/, function(Given, When, Then) {
+        opaTest("Hide 'Action 1'", function(Given, When, Then) {
             When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("__component" + iComponent + "---app");
             Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("__component" + iComponent + "---app", undefined);
 
             // Open Context Menu of ActionToolbar
-            When.onPageWithRTA.iRightClickOnAnElementOverlay("__component" + iComponent + oTestSetting.id);
+            When.onPageWithRTA.iRightClickOnAnElementOverlay("__component" + iComponent + oTestSetting.toolbarID);
 
             Then.onPageWithRTA.iShouldSeetheContextMenu();
+            Then.onPageWithRTA.iShouldSeetheContextMenuEntries(oTestSetting.contextMenuEntries);
             When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Toolbar Actions");
 
             // Check if Dialog opened (included in personalization)
@@ -140,9 +147,6 @@ sap.ui.define([
                 "Action 3"
             ]);
 
-            //When.onTheApp.iMoveActionDown("__component" + iComponent + "---app--idAction2");
-            //When.onTheApp.iMoveActionToTop("__component" + iComponent + "---app--idAction5");
-
             // Close dialog
             When.onTheApp.iPressOkButtonOnP13nDialog();
 
@@ -150,7 +154,7 @@ sap.ui.define([
             When.onPageWithRTA.iExitRtaMode();
 
             // Check button order
-            Then.onTheApp.iShouldSeeActionToolbarWithActions("__component" + iComponent + oTestSetting.id, {
+            Then.onTheApp.iShouldSeeActionToolbarWithActions("__component" + iComponent + oTestSetting.toolbarID, {
                 "Action 4": {
                     alignment: ActionToolbarActionAlignment.Begin,
                     aggregationName: "end"
@@ -168,9 +172,86 @@ sap.ui.define([
                     aggregationName: "end"
                 }
             });
+        });
+
+        opaTest("move 'Action 2' down, move 'Action 5' to top", function(Given, When, Then) {
+            When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("__component" + iComponent + "---app");
+            Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("__component" + iComponent + "---app", undefined);
+
+            // Open Context Menu of ActionToolbar
+            When.onPageWithRTA.iRightClickOnAnElementOverlay("__component" + iComponent + oTestSetting.toolbarID);
+
+            Then.onPageWithRTA.iShouldSeetheContextMenu();
+            Then.onPageWithRTA.iShouldSeetheContextMenuEntries(oTestSetting.contextMenuEntries);
+            When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Toolbar Actions");
+
+            // Change button order
+            When.onTheApp.iMoveActionDown("Action 2");
+            When.onTheApp.iMoveActionToTop("Action 5");
+
+            // Close dialog
+            When.onTheApp.iPressOkButtonOnP13nDialog();
+
+            // Close RTA
+            When.onPageWithRTA.iExitRtaMode();
+
+            // Check button order
+            Then.onTheApp.iShouldSeeActionToolbarWithActions("__component" + iComponent + oTestSetting.toolbarID, {
+                "Action 5": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Action 4": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Action 3": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                },
+                "Action 2": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                }
+            });
+        });
+
+        opaTest("rename 'Action 4'", function(Given, When, Then) {
+            When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("__component" + iComponent + "---app");
+            Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("__component" + iComponent + "---app", undefined);
+
+            // Open Context Menu of ActionToolbarAction
+            When.onPageWithRTA.iRightClickOnAnElementOverlay("__component" + iComponent + "---app--" + oTestSetting.renameActionID);
+            Then.onPageWithRTA.iShouldSeetheContextMenu();
+            Then.onPageWithRTA.iShouldSeetheContextMenuEntries(["Rename"]);
+            When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Rename");
+
+            When.onPageWithRTA.iEnterANewName("Rename Test");
+
+            // Close RTA
+            When.onPageWithRTA.iExitRtaMode();
+
+             // Check button order
+             Then.onTheApp.iShouldSeeActionToolbarWithActions("__component" + iComponent + oTestSetting.toolbarID, {
+                "Action 5": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Rename Test": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Action 3": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                },
+                "Action 2": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                }
+            });
 
             Then.iTeardownMyUIComponent();
         });
     });
-
 });
