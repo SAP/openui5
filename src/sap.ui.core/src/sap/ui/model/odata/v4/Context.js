@@ -409,10 +409,12 @@ sap.ui.define([
 	Context.prototype.doSetProperty = function (sPath, vValue, oGroupLock, bSkipRetry) {
 		var oMetaModel = this.oModel.getMetaModel(),
 			oPromise,
+			oValue,
 			that = this;
 
 		if (oGroupLock && this.isTransient() && !this.isInactive()) {
-			oPromise = _Helper.getPrivateAnnotation(this.getValue(), "transient");
+			oValue = this.getValue();
+			oPromise = oValue && _Helper.getPrivateAnnotation(oValue, "transient");
 			if (oPromise instanceof Promise) {
 				oGroupLock.unlock();
 				oGroupLock = oGroupLock.getUnlockedCopy();

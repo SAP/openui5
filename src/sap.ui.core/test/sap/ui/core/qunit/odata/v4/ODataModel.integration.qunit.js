@@ -21733,9 +21733,11 @@ sap.ui.define([
 			// 5. Show the creation row of a creation row binding [...]
 
 			oCreationRowContext = that.oModel.bindList("_Publication", oReturnValueContext,
-				undefined, undefined, {$$updateGroupId : "doNotSubmit"}).create({Price : "47"});
+				undefined, undefined, {$$updateGroupId : "doNotSubmit"}).create();
+			oCreationRowContext.setProperty("Price", "47"); // BCP: 2270087626
 
-			that.expectChange("price", "47")
+			that.expectChange("price", null) // timing issue, #setProperty is too slow :-(
+				.expectChange("price", "47")
 				.expectChange("artistName", "The Beatles (modified)");
 
 			oCreationRow.setBindingContext(oCreationRowContext);
