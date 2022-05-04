@@ -114,6 +114,38 @@ function (
 		});
 	});
 
+	QUnit.test("AvatarGroup with avatarDisplaySize set to 'Custom'", function (assert) {
+		// Arrange
+		var $oDomRef;
+		this.oAvatarGroup.setAvatarDisplaySize("Custom");
+		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		$oDomRef = this.oAvatarGroup.$();
+		assert.ok($oDomRef.hasClass("sapFAvatarGroupCustom"), "The AvatarGroup has 'sapFAvatarGroupCustom' class");
+		assert.ok(this.oAvatarGroup.getAvatarCustomDisplaySize(), "3rem", "The AvatarGroup has 'avatarCustomDisplaySize' property with 3rem by default");
+		assert.ok(this.oAvatarGroup.getAvatarCustomFontSize(), "1.125rem", "The AvatarGroup has 'avatarCustomFontSize' property with 1.125rem by default");
+
+		this.oAvatarGroup.getItems().forEach(function (oItem) {
+			assert.ok(oItem.$().hasClass("sapFAvatarGroupItemCustom"), "The AvatarGroupItem has 'sapFAvatarGroupItemCustom' class");
+		});
+
+		// Act
+		this.oAvatarGroup.setAvatarCustomDisplaySize("4rem");
+		this.oAvatarGroup.setAvatarCustomFontSize("1.5rem");
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oAvatarGroup.getAvatarCustomDisplaySize(), "4rem", "The AvatarGroup has 'avatarCustomDisplaySize' property changed to 4rem");
+		assert.ok(this.oAvatarGroup.getAvatarCustomFontSize(), "1.5rem", "The AvatarGroup has 'avatarCustomFontSize' property changed to 1.5rem");
+
+		this.oAvatarGroup.getItems().forEach(function (oItem) {
+			assert.ok(oItem._getAvatar().getCustomDisplaySize(), "4rem", "The avatarCustomDisplaySize property propagates to Avatar");
+			assert.ok(oItem._getAvatar().getCustomFontSize(), "1.5rem", "The avatarCustomFontSize property propagates to Avatar");
+		});
+	});
+
 	QUnit.test("Avatar theme changing logic", function (assert) {
 		// Arrange
 		var oSpy = this.spy(this.oAvatarGroup, "_onResize");
@@ -269,6 +301,19 @@ function (
 			"When button has at most two digits, substract one Avatar");
 	});
 
+	QUnit.test("_getAvatarWidth", function (assert) {
+		// Assert
+		assert.strictEqual(this.oAvatarGroup._getAvatarWidth("M"), 4,
+			"Avatar width in Group mode is calculated correctly");
+
+		// Act
+		this.oAvatarGroup.setGroupType("Individual");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oAvatarGroup._getAvatarWidth("M"), 4,
+			"Avatar width in Individual mode is calculated correctly");
+	});
 
 	QUnit.test("_getAvatarNetWidth", function (assert) {
 		// Assert

@@ -7,6 +7,9 @@ sap.ui.define(["sap/f/library"],
 	function (library) {
 		"use strict";
 
+		// shortcut for sap.f.AvatarSize
+		var AvatarSize = library.AvatarSize;
+
 		/**
 		 * <code>AvatarGroup</code> renderer.
 		 * @author SAP SE
@@ -25,6 +28,9 @@ sap.ui.define(["sap/f/library"],
 		AvatarGroupRenderer.render = function (oRm, oAvatarGroup) {
 			var sAvatarGroupClass = "sapFAvatarGroup",
 				sGroupType = oAvatarGroup.getGroupType(),
+				sAvatarDisplaySize = oAvatarGroup.getAvatarDisplaySize(),
+				sAvatarCustomDisplaySize = oAvatarGroup.getAvatarCustomDisplaySize(),
+				sAvatarCustomFontSize = oAvatarGroup.getAvatarCustomFontSize(),
 				sAvatarGroupTypeClass = sAvatarGroupClass + sGroupType,
 				aItems = oAvatarGroup.getItems(),
 				bShowMoreButton = oAvatarGroup._shouldShowMoreButton(),
@@ -33,7 +39,7 @@ sap.ui.define(["sap/f/library"],
 			oRm.openStart("div", oAvatarGroup)
 				.class(sAvatarGroupClass)
 				.class(sAvatarGroupTypeClass)
-				.class(sAvatarGroupClass + oAvatarGroup.getAvatarDisplaySize());
+				.class(sAvatarGroupClass + sAvatarDisplaySize);
 
 			if (bShowMoreButton) {
 				oRm.class("sapFAvatarGroupShowMore");
@@ -49,6 +55,13 @@ sap.ui.define(["sap/f/library"],
 
 			if (sGroupType === "Group") {
 				oRm.attr("role", "button");
+			}
+
+			if (sAvatarDisplaySize === AvatarSize.Custom) {
+				oRm.style("height", sAvatarCustomDisplaySize);
+				oRm.style("min-width", sAvatarCustomDisplaySize);
+				oRm.style("font-size", sAvatarCustomFontSize);
+				oRm.style("line-height", sAvatarCustomDisplaySize);
 			}
 
 			oRm.openEnd();
