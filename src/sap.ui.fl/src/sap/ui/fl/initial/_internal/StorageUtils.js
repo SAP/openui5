@@ -70,39 +70,6 @@ sap.ui.define([
 		});
 	}
 
-	/**
-	 * Sort grouped flexibility objects by their creation timestamp.
-	 *
-	 * @param {object} [mResult] Grouped flexibility objects
-	 * @returns {object} Map of grouped flexibility objects per layer sorted by their creation timestamp
-	 */
-	function sortGroupedFlexObjects(mResult) {
-		function byCreation(oChangeA, oChangeB) {
-			return new Date(oChangeA.creation) - new Date(oChangeB.creation);
-		}
-
-		[
-			"changes",
-			"variantChanges",
-			"variants",
-			"variantDependentControlChanges",
-			"variantManagementChanges"
-		].forEach(function (sSectionName) {
-			mResult[sSectionName] = mResult[sSectionName].sort(byCreation);
-		});
-		if (mResult.comp) {
-			[
-				"changes",
-				"defaultVariants",
-				"standardVariants"
-			].forEach(function (sSectionName) {
-				mResult.comp[sSectionName] = mResult.comp[sSectionName].sort(byCreation);
-			});
-		}
-
-		return mResult;
-	}
-
 	function _getConnectorConfigurations(sNameSpace, bLoadConnectors, mConnectors) {
 		return mConnectors.map(function (mConnectorConfiguration) {
 			var sConnector = mConnectorConfiguration.connector;
@@ -233,6 +200,12 @@ sap.ui.define([
 			return aResponses;
 		},
 
+		sortFlexObjects: function(aFlexObjects) {
+			aFlexObjects.sort(function(oChangeA, oChangeB) {
+				return new Date(oChangeA.creation) - new Date(oChangeB.creation);
+			});
+		},
+
 		/**
 		 * Groups flexibility objects according to their layer and semantics.
 		 *
@@ -240,6 +213,7 @@ sap.ui.define([
 		 * @returns {object} Map of grouped flexibility objects per layer
 		 */
 		getGroupedFlexObjects: function (aFlexObjects) {
+			this.sortFlexObjects(aFlexObjects);
 			var mGroupedFlexObjects = {};
 
 			// build empty groups
@@ -281,11 +255,6 @@ sap.ui.define([
 						}
 					}
 				}
-			});
-
-			// sort groups
-			Object.keys(mGroupedFlexObjects).forEach(function (sLayer) {
-				sortGroupedFlexObjects(mGroupedFlexObjects[sLayer]);
 			});
 
 			return mGroupedFlexObjects;

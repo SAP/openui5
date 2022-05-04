@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/base/strings/hash",
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
 ], function(
+	hash,
 	merge,
 	BaseConnector,
 	StorageUtils,
@@ -54,6 +56,12 @@ sap.ui.define([
 		return oFlexObject;
 	}
 
+	function calculateCacheKey(aFlexObjects) {
+		return hash(aFlexObjects.reduce(function(sKey, oFlexObject) {
+			return sKey + new Date(oFlexObject.creation).getTime();
+		}, ""));
+	}
+
 	/**
 	 * Abstract connector class for requesting data from a storage.
 	 * The inherited objects must implement the <code>storage</code> object.
@@ -89,8 +97,13 @@ sap.ui.define([
 				storage: this.storage,
 				reference: mPropertyBag.reference
 			}).then(function (aFlexObjects) {
+				StorageUtils.sortFlexObjects(aFlexObjects);
 				var mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aFlexObjects);
-				return StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
+				var aResponses = StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
+				if (aResponses.length) {
+					aResponses[0].cacheKey = calculateCacheKey(aFlexObjects);
+				}
+				return aResponses;
 			});
 		},
 
