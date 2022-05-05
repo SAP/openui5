@@ -479,8 +479,9 @@ sap.ui.define([
 				return _mInstances[sReference].unfilteredStorageResponse;
 			});
 		}
-		return undefined;
+		return Promise.resolve();
 	};
+
 	// temporary function until the maps are ready
 	FlexState.getFlexObjectsFromStorageResponse = function(sReference) {
 		return _mInstances[sReference] && _mInstances[sReference].unfilteredStorageResponse.changes;

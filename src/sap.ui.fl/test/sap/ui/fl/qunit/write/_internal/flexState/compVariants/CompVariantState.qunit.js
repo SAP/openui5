@@ -367,6 +367,92 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Given persist is called for a variant that was created and removed before persisting", function(assert) {
+			var sPersistencyKey = "persistency.key";
+
+			var oVariant = CompVariantState.addVariant({
+				changeSpecificData: {
+					type: "pageVariant",
+					content: {}
+				},
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			});
+
+			CompVariantState.removeVariant({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				id: oVariant.getId(),
+				layer: Layer.CUSTOMER
+			});
+
+			var oWriteStub = sandbox.stub(Storage, "write").resolves();
+			var oUpdateStub = sandbox.stub(Storage, "update").resolves();
+			var oRemoveStub = sandbox.stub(Storage, "remove").resolves();
+			// Preparation ends
+
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			})
+			.then(function () {
+				assert.equal(oWriteStub.callCount, 0, "no write was called");
+				assert.equal(oUpdateStub.callCount, 0, "no update was called");
+				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
+			});
+		});
+
+		QUnit.test("Given persist is called for a variant that was created, modified and removed before persisting", function(assert) {
+			var sPersistencyKey = "persistency.key";
+
+			var oVariant = CompVariantState.addVariant({
+				changeSpecificData: {
+					type: "pageVariant",
+					content: {}
+				},
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			});
+
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				id: oVariant.getId(),
+				favorite: true,
+				layer: Layer.CUSTOMER
+			});
+
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				id: oVariant.getId(),
+				favorite: false,
+				layer: Layer.CUSTOMER
+			});
+
+			CompVariantState.removeVariant({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				id: oVariant.getId(),
+				layer: Layer.CUSTOMER
+			});
+
+			var oWriteStub = sandbox.stub(Storage, "write").resolves();
+			var oUpdateStub = sandbox.stub(Storage, "update").resolves();
+			var oRemoveStub = sandbox.stub(Storage, "remove").resolves();
+			// Preparation ends
+
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			})
+			.then(function () {
+				assert.equal(oWriteStub.callCount, 0, "no write was called");
+				assert.equal(oUpdateStub.callCount, 0, "no update was called");
+				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
+			});
+		});
+
 		QUnit.test("persistAll", function(assert) {
 			var oPersistStub = sandbox.stub(CompVariantState, "persist");
 			sandbox.stub(FlexState, "getCompVariantsMap").returns({
@@ -1017,7 +1103,7 @@ sap.ui.define([
 			assert.equal(aRevertData.length, 1, "revertData was stored");
 			var oLastRevertData = aRevertData[0];
 			assert.equal(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
-			assert.deepEqual(oLastRevertData.getContent(), {previousState: States.PERSISTED}, "... to PERSISTED");
+			assert.deepEqual(oLastRevertData.getContent(), {previousState: States.PERSISTED}, "... from PERSISTED");
 
 			CompVariantState.revert({
 				reference: sComponentId,
@@ -1028,10 +1114,9 @@ sap.ui.define([
 
 			aRevertData = oVariant.getRevertInfo();
 			assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
-			assert.equal(oVariant.getState(), States.PERSISTED, "and the change is flagged as new");
+			assert.equal(oVariant.getState(), States.PERSISTED, "and the variant is flagged as PERSISTED");
 		});
 	});
-
 
 	QUnit.module("overrideStandardVariant", {
 		before: function() {
