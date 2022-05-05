@@ -2020,8 +2020,8 @@ sap.ui.define([
 						|| sProperty.endsWith("@mediaReadLink")) {
 					oInstance[sProperty] = _Helper.makeAbsolute(vPropertyValue, sContextUrl);
 				}
-				if (sProperty.includes("@")) { // ignore other annotations
-					return;
+				if (sProperty === sMessageProperty || sProperty.includes("@")) {
+					return; // ignore message property and other annotations
 				}
 				if (Array.isArray(vPropertyValue)) {
 					vPropertyValue.$created = 0; // number of (client-side) created elements

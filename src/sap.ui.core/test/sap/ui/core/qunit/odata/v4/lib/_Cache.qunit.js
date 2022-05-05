@@ -2506,7 +2506,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: reportStateMessages; single entity", function () {
+	QUnit.test("Cache#visitResponse: reportStateMessages; single entity", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
 			aMessagesInBusinessPartner = [{/* any message object */}],
 			aMessagesSalesOrder = [{/* any message object */}],
@@ -2563,6 +2563,15 @@ sap.ui.define([
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath);
+
+		assert.notOk("$created" in aMessagesInBusinessPartner);
+		assert.notOk("$count" in aMessagesInBusinessPartner);
+		assert.notOk("$created" in aMessagesSalesOrder);
+		assert.notOk("$count" in aMessagesSalesOrder);
+		assert.notOk("$created" in aMessagesSalesOrderSchedules0);
+		assert.notOk("$count" in aMessagesSalesOrderSchedules0);
+		assert.notOk("$created" in aMessagesSalesOrderSchedules1);
+		assert.notOk("$count" in aMessagesSalesOrderSchedules1);
 	});
 
 	//*********************************************************************************************
@@ -2909,8 +2918,6 @@ sap.ui.define([
 				"/EntitySet/Navigation" : oType
 			};
 
-		mExpectedMessages[""].$count = 1;
-		mExpectedMessages[""].$created = 0;
 		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
 
@@ -2975,14 +2982,6 @@ sap.ui.define([
 				"/EntitySet/Navigation/foo/baz" : oType
 			};
 
-		mExpectedMessages[""].$count = 1;
-		mExpectedMessages[""].$created = 0;
-		mExpectedMessages["foo"].$count = 1;
-		mExpectedMessages["foo"].$created = 0;
-		mExpectedMessages["foo/bar"].$count = 1;
-		mExpectedMessages["foo/bar"].$created = 0;
-		mExpectedMessages["foo/baz"].$count = 1;
-		mExpectedMessages["foo/baz"].$created = 0;
 		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
 
@@ -3047,12 +3046,6 @@ sap.ui.define([
 				"/EntitySet/Navigation/foo/bar" : oType
 			};
 
-		mExpectedMessages["(1)"].$count = 1;
-		mExpectedMessages["(1)"].$created = 0;
-		mExpectedMessages["(1)/foo(2)"].$count = 1;
-		mExpectedMessages["(1)/foo(2)"].$created = 0;
-		mExpectedMessages["(1)/foo(2)/bar(3)"].$count = 1;
-		mExpectedMessages["(1)/foo(2)/bar(3)"].$created = 0;
 		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["(1)"]);
 
@@ -3103,8 +3096,6 @@ sap.ui.define([
 			return bReturnsOriginalResourcePath ? sOriginalResourcePath : undefined;
 		}
 
-		mExpectedMessages[""].$count = 1;
-		mExpectedMessages[""].$created = 0;
 		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(bReturnsOriginalResourcePath ? sOriginalResourcePath : sResourcePath,
 				mExpectedMessages, undefined);
