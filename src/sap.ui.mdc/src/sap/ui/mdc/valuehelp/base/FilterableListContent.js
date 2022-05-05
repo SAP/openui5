@@ -448,14 +448,11 @@ sap.ui.define([
 		if (oFilterBar) {
 			var sFilterFields =  this.getFilterFields();
 			var oNewConditions = merge({}, this._oInitialFilterConditions);
-			if (!oNewConditions[sFilterFields]) { // not set from Delegate
-				// use existing search
-				var oConditions = oFilterBar.getInternalConditions();
-				if (oConditions[sFilterFields]) {
-					oNewConditions[sFilterFields] = oConditions[sFilterFields];
-				}
-			}
 			oFilterBar.setInternalConditions(oNewConditions);
+			if (!oNewConditions[sFilterFields]) { // not set from Delegate
+				// add current FilterValue as search
+				_addFilterValueToFilterBar.call(this, oFilterBar, this.getFilterValue()); // as might set before a FilterBar exist
+			}
 		}
 	};
 
