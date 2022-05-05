@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
@@ -31,6 +32,7 @@ sap.ui.define([
 	CompVariantState,
 	Storage,
 	Versions,
+	Version,
 	Change,
 	Utils,
 	Layer,
@@ -1238,6 +1240,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isVersioningEnabled: function() {
 					return true;
+				},
+				isPublicLayerAvailable: function() {
+					return true;
 				}
 			});
 			this.sPersistencyKey = "persistency.key";
@@ -1249,6 +1254,7 @@ sap.ui.define([
 						variantName: "initialName"
 					},
 					content: {},
+					executeOnSelection: false,
 					favorte: false
 				},
 				reference: sComponentId,
@@ -1279,8 +1285,11 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				id: this.oVariant.getId(),
 				favorite: true,
+				executeOnSelection: true,
 				layer: Layer.CUSTOMER
 			});
+			assert.equal(this.oVariant.getDefinition().executeOnSelection, false, "the executeOnSelection was NOT set within the variant");
+			assert.equal(this.oVariant.getChanges()[0].getContent().executeOnSelection, true, "the change executeOnSelection is set correct");
 			assert.equal(this.oVariant.getDefinition().favorite, undefined, "the favorite was NOT set within the variant");
 			assert.equal(this.oVariant.getChanges().length, 1, "one change was written");
 			assert.equal(this.oVariant.getChanges()[0].getContent().favorite, true, "the change favorite is set correct");
@@ -1334,11 +1343,19 @@ sap.ui.define([
 				persistedVersion: sParentVersion,
 				draftFilenames: [this.oVariant.getFileName()]
 			}));
+			CompVariantState.addVariant({
+				changeSpecificData: {
+					type: "pageVariant",
+					content: {}
+				},
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			});
 			CompVariantState.updateVariant({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,
 				id: this.oVariant.getId(),
-				favorite: true,
+				executeOnSelection: true,
 				layer: Layer.CUSTOMER
 			});
 			var oResponse = {
@@ -1359,11 +1376,12 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey
 			})
 			.then(function () {
-				assert.equal(oWriteStub.callCount, 1, "then the write method was called one times,");
+				assert.equal(oWriteStub.callCount, 2, "then the write method was called two times,");
 				assert.equal(oUpdateStub.callCount, 0, "no update was called");
 				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
 				assert.equal(oWriteStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct");
-				assert.equal(oVersionsOnAllChangesSaved.callCount, 1, "and versions.onAllChangesSaved is called one time");
+				assert.equal(oWriteStub.getCalls()[1].args[0].parentVersion, Version.Number.Draft, "and the second request the parentVersion parameter is draft a version");
+				assert.equal(oVersionsOnAllChangesSaved.callCount, 2, "and versions.onAllChangesSaved is called two times");
 			})
 			.then(function () {
 				oCompVariantStateMapForPersistencyKey.variants[0].setState(Change.states.DIRTY);
@@ -1373,11 +1391,11 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey
 			}))
 			.then(function () {
-				assert.equal(oWriteStub.callCount, 1, "AFTER SOME CHANGES; still the write method was called one times,");
+				assert.equal(oWriteStub.callCount, 2, "AFTER SOME CHANGES; still the write method was called two times,");
 				assert.equal(oUpdateStub.callCount, 1, "one update was called");
 				assert.equal(oRemoveStub.callCount, 0, "and no deletes were called");
 				assert.equal(oUpdateStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct");
-				assert.equal(oVersionsOnAllChangesSaved.callCount, 2, "and versions.onAllChangesSaved is called second time");
+				assert.equal(oVersionsOnAllChangesSaved.callCount, 3, "and versions.onAllChangesSaved is called a third time");
 			});
 		});
 	});
