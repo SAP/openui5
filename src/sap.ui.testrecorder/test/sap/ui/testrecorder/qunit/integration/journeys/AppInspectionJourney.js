@@ -18,14 +18,14 @@ sap.ui.define([
 		treeText: "Button",
 		selector: {
 			controlType: "sap.m.Button",
-			properties: {text: "Button One"}
+			properties: { text: "Button One" }
 		}
 	}, {
 		// use only to change/clear highlighted control
 		text: "Clear Selection",
 		selector: {
 			controlType: "sap.m.Button",
-			properties: {text: "Clear Selection"}
+			properties: { text: "Clear Selection" }
 		}
 	}, {
 		text: "Button With ID",
@@ -106,6 +106,24 @@ sap.ui.define([
 		Then.onTheIFrameInspectPage.iShouldSeeItemOwnProperties(mItems[0].text);
 	});
 
+	opaTest("Should interact with control in app - WDI5", function (Given, When, Then) {
+		When.onTheAppPage.iActOnControl(mItems[1].selector, "Highlight"); // clear
+		When.onTheIFrameInspectPage.iSelectDialect(Dialects.WDI5);
+
+		When.onTheAppPage.iActOnControl(mItems[0].selector, "Highlight");
+		Then.onTheIFrameTreePage.iShouldSeeTheHighlightedItem(mItems[0].treeText);
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.WDI5, "Highlight");
+		Then.onTheIFrameInspectPage.iShouldSeeItemOwnProperties(mItems[0].text);
+
+		When.onTheAppPage.iActOnControl(mItems[0].selector, "Press");
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.WDI5, "Press");
+		Then.onTheIFrameInspectPage.iShouldSeeItemOwnProperties(mItems[0].text);
+
+		When.onTheAppPage.iActOnControl(mItems[0].selector, "Enter Text");
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.WDI5, "Enter Text");
+		Then.onTheIFrameInspectPage.iShouldSeeItemOwnProperties(mItems[0].text);
+	});
+
 	opaTest("Should interact with control in tree", function (Given, When, Then) {
 		When.onTheIFrameTreePage.iSelectItem(mItems[0].text);
 		Then.onTheAppPage.iShouldSeeTheSelectedControl(mItems[0].selector);
@@ -121,6 +139,9 @@ sap.ui.define([
 
 		When.onTheIFrameInspectPage.iSelectDialect(Dialects.UIVERI5);
 		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.UIVERI5);
+
+		When.onTheIFrameInspectPage.iSelectDialect(Dialects.WDI5);
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.WDI5);
 	});
 
 	opaTest("Should switch between snippet dialects - selector and action", function (Given, When, Then) {
@@ -135,6 +156,9 @@ sap.ui.define([
 		When.onTheIFrameInspectPage.iSelectDialect(Dialects.UIVERI5);
 		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.UIVERI5, "Press");
 
+		When.onTheIFrameInspectPage.iSelectDialect(Dialects.WDI5);
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.WDI5, "Press");
+
 		When.onTheIFrameTreePage.iSelectActionWithItem(mItems[0].treeText, "Enter Text");
 
 		When.onTheIFrameInspectPage.iSelectDialect(Dialects.RAW);
@@ -145,21 +169,25 @@ sap.ui.define([
 
 		When.onTheIFrameInspectPage.iSelectDialect(Dialects.UIVERI5);
 		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.UIVERI5, "Enter Text");
+
+		When.onTheIFrameInspectPage.iSelectDialect(Dialects.WDI5);
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.WDI5, "Enter Text");
 	});
 
 	opaTest("Should change preference of view ID over global ID", function (Given, When, Then) {
 		// should be disabled by default -> click once to enable
+		When.onTheIFrameInspectPage.iSelectDialect(Dialects.OPA5);
 		When.onTheIFrameInspectPage.iOpenTheSettingsDialog();
 		When.onTheIFrameInspectPage.iSelectViewIdPreference();
 
 		When.onTheAppPage.iActOnControl(mItems[2].selector.viewId, "Highlight");
-		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[2].text + " -- viewId", Dialects.UIVERI5, "Highlight");
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[2].text + " -- viewId", Dialects.OPA5, "Highlight");
 
 		// reset setting to disabled
 		When.onTheIFrameInspectPage.iOpenTheSettingsDialog();
 		When.onTheIFrameInspectPage.iSelectViewIdPreference();
 
-		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[2].text + " -- globalId", Dialects.UIVERI5, "Highlight");
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[2].text + " -- globalId", Dialects.OPA5, "Highlight");
 	});
 
 	opaTest("Should change PO method setting", function (Given, When, Then) {
@@ -168,7 +196,7 @@ sap.ui.define([
 		When.onTheIFrameInspectPage.iSelectPOMethodPreference();
 		When.onTheAppPage.iActOnControl(mItems[2].selector.viewId, "Highlight");
 
-		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[2].text + " -- noPOMethod", Dialects.UIVERI5, "Highlight");
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[2].text + " -- noPOMethod", Dialects.OPA5, "Highlight");
 
 		// reset setting to enabled
 		When.onTheIFrameInspectPage.iOpenTheSettingsDialog();
@@ -182,7 +210,7 @@ sap.ui.define([
 		When.onTheAppPage.iActOnControl(mItems[0].selector, "Highlight");
 		When.onTheAppPage.iActOnControl(mItems[2].selector.globalId, "Highlight");
 
-		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet("multi", Dialects.UIVERI5, "Highlight");
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet("multi", Dialects.OPA5, "Highlight");
 
 		When.onTheIFrameInspectPage.iSwitchMultiple();
 	});
@@ -205,10 +233,14 @@ sap.ui.define([
 	opaTest("Should assert a property", function (Given, When, Then) {
 		When.onTheAppPage.iActOnControl(mItems[0].selector, "Highlight");
 		When.onTheIFrameInspectPage.iAssertProperty(mItems[0].text);
+		// OPA5 is default dialect
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.OPA5, "Assert");
+
+		When.onTheIFrameInspectPage.iSelectDialect(Dialects.UIVERI5);
 		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.UIVERI5, "Assert");
 
-		When.onTheIFrameInspectPage.iSelectDialect(Dialects.OPA5);
-		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.OPA5, "Assert");
+		When.onTheIFrameInspectPage.iSelectDialect(Dialects.WDI5);
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.WDI5, "Assert");
 	});
 
 	opaTest("Should interact with sap.m.DatePicker", function (Given, When, Then) {

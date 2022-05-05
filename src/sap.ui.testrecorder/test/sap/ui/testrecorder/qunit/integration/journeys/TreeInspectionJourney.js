@@ -76,6 +76,15 @@ sap.ui.define([
 		Then.onTheInspectPage.iShouldSeeItemCodeSnippet(mItems[0].id, Dialects.UIVERI5, "Enter Text");
 	});
 
+	opaTest("Should include action - WDI5", function (Given, When, Then) {
+		When.onTheInspectPage.iSelectDialect(Dialects.WDI5);
+		When.onTheTreePage.iSelectActionWithItem(mItems[0].text, "Press");
+		Then.onTheInspectPage.iShouldSeeItemCodeSnippet(mItems[0].id, Dialects.WDI5, "Press");
+
+		When.onTheTreePage.iSelectActionWithItem(mItems[0].text, "Enter Text");
+		Then.onTheInspectPage.iShouldSeeItemCodeSnippet(mItems[0].id, Dialects.WDI5, "Enter Text");
+	});
+
 	opaTest("Should preserve selected snippet dialect", function (Given, When, Then) {
 		When.onTheInspectPage.iSelectDialect(Dialects.OPA5);
 

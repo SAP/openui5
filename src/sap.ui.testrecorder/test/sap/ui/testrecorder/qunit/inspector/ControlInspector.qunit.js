@@ -16,12 +16,12 @@ sap.ui.define([
 
 	QUnit.module("ControlInspector", {
 		beforeEach: function () {
-			this.sTestSnippet = "element(by.control({\n" +
-			"    id: \"container-cart---homeView--searchField\"\n" +
-			"}));";
-			this.sTestSnippetPO = "    element(by.control({\n" +
-			"        id: \"container-cart---homeView--searchField\"\n" +
-			"    }));";
+			this.sTestSnippet = "this.waitFor({\n" +
+				"    id: \"container-cart---homeView--searchField\"\n" +
+				"});";
+			this.sTestSnippetPO = "    this.waitFor({\n" +
+				"        id: \"container-cart---homeView--searchField\"\n" +
+				"    });";
 			this.fnFindSelector = sinon.stub(ControlInspectorRepo, "findSelector");
 			this.fnFindSelector.withArgs("searchField").returns({
 				id: "container-cart---homeView--searchField"
@@ -84,19 +84,19 @@ sap.ui.define([
 
 	QUnit.test("Should combine multiple snippets in a PO method", function (assert) {
 		var fnDone = assert.async();
-		var sPrevSnippet = "element(by.control({\n" +
-		"    id: \"previous-snippet\"\n" +
-		"}));";
+		var sPrevSnippet = "this.waitFor({\n" +
+			"    id: \"previous-snippet\"\n" +
+			"});";
 		this.fnGetSnippets.returns([sPrevSnippet, this.sTestSnippet]);
 
-		ControlInspector.updateSettings({multipleSnippets: true});
+		ControlInspector.updateSettings({ multipleSnippets: true });
 		ControlInspector.getCodeSnippet({
 			domElementId: "searchField"
 		}).then(function () {
 			var sResult = this.fnPublish.getCalls()[3].args[1].codeSnippet; // skip calls made by updateSettings
-			assert.equal(sResult, "iAssertTheUIState: function () {\n    element(by.control({\n" +
-			"        id: \"previous-snippet\"\n" +
-			"    }));\n\n" + this.sTestSnippetPO + "\n}");
+			assert.equal(sResult, "iAssertTheUIState: function () {\n    this.waitFor({\n" +
+				"        id: \"previous-snippet\"\n" +
+				"    });\n\n" + this.sTestSnippetPO + "\n}");
 			assert.ok(this.fnFindSelector.calledOnce, "Should use cached selector");
 			assert.ok(this.fnGenerateSelector.notCalled, "Should not generate selector");
 			assert.ok(this.fnGetSnippets.calledOnce, "Should collect previous snippets");
@@ -116,7 +116,7 @@ sap.ui.define([
 			JSON.stringify(mCurrentSnippet, undefined, 4)
 		]);
 
-		ControlInspector.updateSettings({multipleSnippets: true});
+		ControlInspector.updateSettings({ multipleSnippets: true });
 		ControlInspector.setDialect(Dialects.RAW);
 
 		ControlInspector.getCodeSnippet({
@@ -157,28 +157,28 @@ sap.ui.define([
 		var fnProvider = sinon.stub(CodeSnippetProvider, "getSnippet");
 		fnProvider.returns("test-snippet");
 
-		ControlInspector.updateSettings({preferViewId: true});
+		ControlInspector.updateSettings({ preferViewId: true });
 		assert.ok(fnSpy.calledOnce, "Should get snippets again - preferViewId - single");
 		assert.strictEqual(fnSpy.getCalls()[0].args[0].domElementId, "second");
 		fnSpy.resetHistory();
 
-		ControlInspector.updateSettings({formatAsPOMethod: false});
+		ControlInspector.updateSettings({ formatAsPOMethod: false });
 		assert.ok(fnSpy.calledOnce, "Should get snippets again - formatAsPOMethod - single");
 		assert.strictEqual(fnSpy.getCalls()[0].args[0].domElementId, "second");
 		fnSpy.resetHistory();
 
-		ControlInspector.updateSettings({multipleSnippets: true});
+		ControlInspector.updateSettings({ multipleSnippets: true });
 		assert.ok(fnSpy.calledOnce, "Should get snippets again - multipleSelectors");
 		assert.strictEqual(fnSpy.getCalls()[0].args[0].domElementId, "second");
 		fnSpy.resetHistory();
 
-		ControlInspector.updateSettings({preferViewId: true});
+		ControlInspector.updateSettings({ preferViewId: true });
 		assert.ok(fnSpy.calledTwice, "Should get snippets again - preferViewId with multi");
 		assert.strictEqual(fnSpy.getCalls()[0].args[0].domElementId, "first");
 		assert.strictEqual(fnSpy.getCalls()[1].args[0].domElementId, "second");
 		fnSpy.resetHistory();
 
-		ControlInspector.updateSettings({formatAsPOMethod: false});
+		ControlInspector.updateSettings({ formatAsPOMethod: false });
 		assert.ok(fnSpy.calledTwice, "Should get snippets again - formatAsPoMethod with multi");
 		assert.strictEqual(fnSpy.getCalls()[0].args[0].domElementId, "first");
 		assert.strictEqual(fnSpy.getCalls()[1].args[0].domElementId, "second");
