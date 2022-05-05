@@ -293,7 +293,12 @@ sap.ui.define([
 					valueType: oType,
 					operators: ["EQ", "BT"],
 					display: FieldDisplay.Description,
-					fieldHelpID: "VH"
+					fieldHelpID: "VH",
+					control: oField,
+					delegate: undefined,
+					delegateName: undefined,
+					payload: undefined,
+					convertWhitespaces: true
 				};
 				assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 				var oButton = aItems[1];
