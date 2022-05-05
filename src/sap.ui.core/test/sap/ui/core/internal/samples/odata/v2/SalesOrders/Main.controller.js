@@ -192,7 +192,7 @@ sap.ui.define([
 					return;
 				}
 
-				oItemContext.delete().then(function () {
+				oItemContext.delete({groupId : "$auto"}).then(function () {
 					if (bNonTransient) {
 						MessageToast.show("Deleted sales order item " + sSalesOrderLineItem);
 						oTable.clearSelection();
@@ -225,7 +225,7 @@ sap.ui.define([
 				}
 
 				that.getView().byId("objectPage").unbindElement();
-				oContext.delete().then(function () {
+				oContext.delete({groupId : "$auto"}).then(function () {
 					if (bNonTransient) {
 						MessageToast.show("Deleted sales order " + sSalesOrderID);
 					}
