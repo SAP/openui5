@@ -185,7 +185,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Publish Version button", {
+	QUnit.module("Publish Version and SaveAs buttons", {
 		beforeEach: function () {
 			this.setUpToolbar = function (assert, oToolbar, mProperties) {
 				var oVersionsModel = new JSONModel({
@@ -194,6 +194,7 @@ sap.ui.define([
 				});
 				var oToolbarControlsModel = createToolbarControlsModel();
 				oToolbarControlsModel.setProperty("/publishVisible", mProperties.publishVisible);
+				oToolbarControlsModel.setProperty("/saveAsEnabled", mProperties.saveAsEnabled);
 
 				oToolbar.setModel(oVersionsModel, "versions");
 				oToolbar.setModel(oToolbarControlsModel, "controls");
@@ -202,6 +203,7 @@ sap.ui.define([
 				return oToolbar.show().then(function () {
 					assert.equal(oToolbar.getControl("publishVersion").getVisible(), mProperties.expectedPublishVersionVisible, "the publish version visibility is set correct");
 					assert.equal(oToolbar.getControl("publish").getVisible(), mProperties.expectedPublishVisible, "the publish visibility is set correct");
+					assert.equal(oToolbar.getControl("saveAs").getEnabled(), mProperties.expectSaveAsEnabled, "the save as enablement is set correct");
 				});
 			};
 
@@ -215,53 +217,63 @@ sap.ui.define([
 			this.oToolbar.destroy();
 		}
 	}, function () {
-		QUnit.test("When versioning and publishing in unavailable", function (assert) {
+		QUnit.test("When saveAs is available, but versioning and publishing in unavailable", function (assert) {
 			return this.setUpToolbar(assert, this.oToolbar, {
 				versioningEnabled: false,
 				publishVisible: false,
 				displayedVersion: Version.Number.Original,
 				expectedPublishVersionVisible: false,
-				expectedPublishVisible: false
+				expectedPublishVisible: false,
+				saveAsEnabled: true,
+				expectSaveAsEnabled: true
 			});
 		});
 
-		QUnit.test("When versioning is available, but is publishing not", function (assert) {
+		QUnit.test("When saveAs and versioning is available, but is publishing not", function (assert) {
 			return this.setUpToolbar(assert, this.oToolbar, {
 				versioningEnabled: true,
 				publishVisible: false,
 				displayedVersion: Version.Number.Original,
 				expectedPublishVersionVisible: false,
-				expectedPublishVisible: false
+				expectedPublishVisible: false,
+				saveAsEnabled: true,
+				expectSaveAsEnabled: true
 			});
 		});
 
-		QUnit.test("When publishing is available, but versioning not", function (assert) {
+		QUnit.test("When saveAs and publishing is available, but versioning not", function (assert) {
 			return this.setUpToolbar(assert, this.oToolbar, {
 				versioningEnabled: false,
 				publishVisible: true,
 				displayedVersion: Version.Number.Original,
 				expectedPublishVersionVisible: false,
-				expectedPublishVisible: true
+				expectedPublishVisible: true,
+				saveAsEnabled: true,
+				expectSaveAsEnabled: true
 			});
 		});
 
-		QUnit.test("When publishing and versioning is available and a non-draft version is displayed", function (assert) {
+		QUnit.test("When saveAs, publishing and versioning is available and a non-draft version is displayed", function (assert) {
 			return this.setUpToolbar(assert, this.oToolbar, {
 				versioningEnabled: true,
 				publishVisible: true,
 				displayedVersion: Version.Number.Original,
 				expectedPublishVersionVisible: true,
-				expectedPublishVisible: false
+				expectedPublishVisible: false,
+				saveAsEnabled: true,
+				expectSaveAsEnabled: true
 			});
 		});
 
-		QUnit.test("When publishing and versioning is available and the Draft version is displayed", function (assert) {
+		QUnit.test("When saveAs, publishing and versioning is available and the Draft version is displayed", function (assert) {
 			return this.setUpToolbar(assert, this.oToolbar, {
 				versioningEnabled: true,
 				publishVisible: true,
 				displayedVersion: Version.Number.Draft,
 				expectedPublishVersionVisible: false,
-				expectedPublishVisible: false
+				expectedPublishVisible: false,
+				saveAsEnabled: true,
+				expectSaveAsEnabled: false
 			});
 		});
 	});
@@ -890,6 +902,7 @@ sap.ui.define([
 			});
 			this.oControlsModel = createToolbarControlsModel();
 			this.oToolbar.setModel(this.oControlsModel, "controls");
+			this.oToolbar.setModel(new JSONModel({}), "versions");
 			return this.oToolbar._pFragmentLoaded;
 		},
 		afterEach: function() {
