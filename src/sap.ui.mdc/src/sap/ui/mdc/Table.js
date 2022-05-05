@@ -1090,7 +1090,7 @@ sap.ui.define([
 			}
 
 			oFilterInfoBar.setVisible(false);
-			oTable._oTable.removeAriaLabelledBy(oFilterInfoBarText);
+			getFilterInfoBarInvisibleText(oTable).setText("");
 
 			return;
 		}
@@ -1106,10 +1106,10 @@ sap.ui.define([
 
 			if (!oFilterInfoBar.getVisible()) {
 				oFilterInfoBar.setVisible(true);
-				oTable._oTable.addAriaLabelledBy(oFilterInfoBarText);
 			}
 
 			oFilterInfoBarText.setText(sFilterText);
+			getFilterInfoBarInvisibleText(oTable).setText(sFilterText);
 		});
 	}
 
@@ -1132,9 +1132,19 @@ sap.ui.define([
 			oTable._oTable.insertExtension(oFilterInfoBar, 1);
 		}
 
-		if (oFilterInfoBar.getVisible()) {
-			oTable._oTable.addAriaLabelledBy(getFilterInfoBarText(oTable));
+		var oInvisibleText = getFilterInfoBarInvisibleText(oTable);
+		oTable._oTable.addAriaLabelledBy(oInvisibleText.getId());
+	}
+
+	function getFilterInfoBarInvisibleText(oTable) {
+		if (!oTable) {
+			return null;
 		}
+
+		if (!oTable._oFilterInfoBarInvisibleText) {
+			oTable._oFilterInfoBarInvisibleText = new InvisibleText().toStatic();
+		}
+		return oTable._oFilterInfoBarInvisibleText;
 	}
 
 	function createFilterInfoBar(oTable) {
@@ -2693,6 +2703,11 @@ sap.ui.define([
 		this._oTableReady = null;
 		this._oFullInitialize = null;
 		this._oPasteButton = null;
+
+		if (this._oFilterInfoBarInvisibleText) {
+			this._oFilterInfoBarInvisibleText.destroy();
+			this._oFilterInfoBarInvisibleText = null;
+		}
 
 		Control.prototype.exit.apply(this, arguments);
 	};
