@@ -249,7 +249,7 @@ sap.ui.define([
 		var bRowsAggregationChanged = this.updateTableRows();
 
 		if (oTable._bInvalid) {
-			// No need to update the DOM or fire the _rowsUpdated event if the table is about to rerender, or is currently rendering.
+			// No need to update the DOM or fire the _rowsUpdated event if the table is about to rerender.
 			return;
 		}
 
@@ -619,8 +619,8 @@ sap.ui.define([
 		}
 
 		bRowsAggregationChanged = true;
-
 		oTable._bRowAggregationInvalid = false;
+
 		return bRowsAggregationChanged;
 	};
 

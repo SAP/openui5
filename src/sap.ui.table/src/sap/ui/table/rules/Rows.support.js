@@ -138,7 +138,7 @@ sap.ui.define([
 	 * Checks the configuration of the sap.f.DynamicPage. If the DynamicPage contains a table with <code>visibleRowCountMode=Auto</code>, the
 	 * <code>fitContent</code> property of the DynamicPage should be set to true, otherwise false.
 	 */
-	var oDynamicPageConfoguration = SupportHelper.normalizeRule({
+	var oDynamicPageConfiguration = SupportHelper.normalizeRule({
 		id: "DynamicPageConfiguration",
 		minversion: "1.38",
 		categories: [Categories.Usage],
@@ -181,6 +181,6 @@ sap.ui.define([
 		}
 	});
 
-	return [oContentDensity, oRowHeights, oDynamicPageConfoguration];
+	return [oContentDensity, oRowHeights, oDynamicPageConfiguration];
 
 }, true);
