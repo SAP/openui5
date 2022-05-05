@@ -978,9 +978,10 @@ function(
 			}
 
 			$this.css(oStyles);
+			$this.css(this._calcMaxSizes());
 
 			if (!this._oManuallySetSize && !this._bDisableRepositioning) {
-				this._positionDialog();
+				$this.css(this._calcPosition());
 			}
 
 			//In Chrome when the dialog is stretched the footer is not rendered in the right position;
