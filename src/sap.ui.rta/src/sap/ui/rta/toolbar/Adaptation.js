@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/toolbar/translation/Translation",
-	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/model/Sorter",
@@ -23,7 +22,6 @@ sap.ui.define([
 	Version,
 	Utils,
 	Translation,
-	FeaturesAPI,
 	AppVariantFeature,
 	Base,
 	Sorter,
@@ -86,17 +84,12 @@ sap.ui.define([
 	var ACTIVE_ACCENT_COLOR = "sapUiRtaActiveVersionAccent";
 
 	Adaptation.prototype.init = function() {
-		Device.media.attachHandler(this._onSizeChanged, this, DEVICE_SET);
-		this._pFragmentLoaded = Base.prototype.init.apply(this, arguments);
-	};
-
-	Adaptation.prototype.onBeforeRendering = function () {
-		if (!Device.media.hasRangeSet(DEVICE_SET)) {
-			Device.media.initRangeSet(DEVICE_SET, [900, 1200], "px", [Adaptation.modes.MOBILE, Adaptation.modes.TABLET, Adaptation.modes.DESKTOP]);
-		}
-		this._onSizeChanged(Device.media.getCurrentRange(DEVICE_SET));
-
-		Base.prototype.onBeforeRendering.apply(this, arguments);
+		this._pFragmentLoaded = Base.prototype.init.apply(this, arguments).then(function() {
+			if (!Device.media.hasRangeSet(DEVICE_SET)) {
+				Device.media.initRangeSet(DEVICE_SET, [900, 1200], "px", [Adaptation.modes.MOBILE, Adaptation.modes.TABLET, Adaptation.modes.DESKTOP]);
+			}
+			Device.media.attachHandler(this._onSizeChanged, this, DEVICE_SET);
+		}.bind(this));
 	};
 
 	Adaptation.prototype.onFragmentLoaded = function() {
@@ -106,6 +99,11 @@ sap.ui.define([
 	Adaptation.prototype.exit = function() {
 		Device.media.detachHandler(this._onSizeChanged, this, DEVICE_SET);
 		Base.prototype.exit.apply(this, arguments);
+	};
+
+	Adaptation.prototype.show = function() {
+		this._onSizeChanged(Device.media.getCurrentRange(DEVICE_SET), true);
+		return Base.prototype.show.apply(this, arguments);
 	};
 
 	function setButtonProperties(sButtonName, sIcon, sTextKey, sToolTipKey) {
@@ -317,12 +315,8 @@ sap.ui.define([
 		this._showButtonText("exit", "BTN_EXIT");
 	};
 
-	Adaptation.prototype._onSizeChanged = function(mParams) {
-		if (!mParams) {
-			return Promise.resolve();
-		}
-
-		return this.onFragmentLoaded().then(function() {
+	Adaptation.prototype._onSizeChanged = function(mParams, bInitial) {
+		if (mParams) {
 			var sMode = mParams.name;
 			this.sMode = sMode;
 
@@ -332,12 +326,15 @@ sap.ui.define([
 					break;
 				case Adaptation.modes.TABLET:
 				case Adaptation.modes.DESKTOP:
-					this._switchToTexts();
+					// this is already defined in the view
+					if (!bInitial) {
+						this._switchToTexts();
+					}
 					break;
 				default:
 				// no default
 			}
-		}.bind(this));
+		}
 	};
 
 	/**
