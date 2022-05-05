@@ -2052,6 +2052,48 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Max sizes are set after dragging", function (assert) {
+		// arrange
+		var oDialog = new Dialog({
+			draggable: true,
+			title: "Some title",
+			beginButton: new Button({text: "button"}),
+			content: [
+				new Text({
+					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag"
+				})
+			]
+		});
+
+		// act
+		oDialog.open();
+
+		this.clock.tick(500);
+
+		var oMockEvent = {
+			clientX: 608,
+			clientY: 646,
+			offsetX: 177,
+			offsetY: 35,
+			preventDefault: function () {},
+			stopPropagation: function () {},
+			target: oDialog.getAggregation("_header").$().find(".sapMBarPH")[0]
+		};
+
+		oDialog.onmousedown(oMockEvent);
+
+		this.clock.tick(500);
+
+		oDialog.invalidate();
+		Core.applyChanges();
+
+		assert.ok(oDialog.getDomRef().style.maxHeight, "max height is set");
+
+		// cleanup
+		jQuery(document).off("mouseup mousemove");
+		oDialog.destroy();
+	});
+
 	QUnit.module("Drag and resize in custom Within Area", {
 		beforeEach: function () {
 			this.oDialog = new Dialog({
