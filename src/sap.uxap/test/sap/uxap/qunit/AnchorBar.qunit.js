@@ -190,7 +190,8 @@ sap.ui.define([
 
 	QUnit.test("Phone view", function (assert) {
 		//display hierarchical select
-		this.oObjectPage.getDomRef().style.width = BREAK_POINTS.Phone + "px";
+		this.oObjectPage.toggleStyleClass("sapUxAPObjectPageLayout-Std-Phone", true);
+		this.oObjectPage.invalidate();
 
 		// allow for re-render
 		this.clock.tick(iRenderingDelay);
