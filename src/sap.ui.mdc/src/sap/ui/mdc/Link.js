@@ -229,6 +229,7 @@ sap.ui.define([
 								text: oMLinkItem.text,
 								description: oMLinkItem.description,
 								href: oMLinkItem.href,
+								internalHref: oMLinkItem.internalHref,
 								target: oMLinkItem.target,
 								icon: oMLinkItem.icon,
 								visible: true
@@ -292,6 +293,7 @@ sap.ui.define([
 				text: oLinkItem.getText(),
 				description: oLinkItem.getDescription(),
 				href: oLinkItem.getHref(),
+				internalHref: oLinkItem.getInternalHref(),
 				target: oLinkItem.getTarget(),
 				icon: oLinkItem.getIcon(),
 				initiallyVisible: oLinkItem.getInitiallyVisible(),
@@ -370,6 +372,7 @@ sap.ui.define([
 				text: oMLinkItem.text,
 				description: oMLinkItem.description,
 				href: oMLinkItem.href,
+				internalHref: oMLinkItem.internalHref,
 				target: oMLinkItem.target,
 				visible: oMLinkItem.visible
 			};
