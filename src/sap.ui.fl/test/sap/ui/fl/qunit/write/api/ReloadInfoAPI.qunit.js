@@ -319,6 +319,7 @@ sap.ui.define([
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then expected reloadMethod was set");
+			assert.equal(oReloadInfo.hasVersionUrlParameter, false, "has version paramert in the url");
 		});
 
 		QUnit.test("and dirty draft changes exist", function(assert) {
@@ -402,6 +403,7 @@ sap.ui.define([
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
+			assert.equal(oReloadInfo.hasVersionUrlParameter, true, "has version paramert in the url");
 		});
 
 		QUnit.test("and sap-ui-fl-max-layer parameter exist", function(assert) {

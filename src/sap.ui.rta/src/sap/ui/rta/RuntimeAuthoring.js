@@ -1596,18 +1596,13 @@ sap.ui.define([
 			return undefined;
 		}
 
-		// allContexts do not change the url parameter to trigger a reload
-		if (
-			((oReloadInfo.allContexts && !oReloadInfo.hasHigherLayerChanges) || oReloadInfo.activeVersionNotSelected) &&
-			this._getUShellService("AppLifeCycle")
-		) {
+		if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasVersionUrlParameter) {
+			mParsedHash = this._removeMaxLayerParameterForFLP(oReloadInfo, mParsedHash);
+			mParsedHash = this._removeVersionParameterForFLP(oReloadInfo, mParsedHash, false);
+			this._triggerCrossAppNavigation(mParsedHash);
+		} else {
 			this._getUShellService("AppLifeCycle").reloadCurrentApp();
 		}
-
-		mParsedHash = this._removeMaxLayerParameterForFLP(oReloadInfo, mParsedHash);
-		mParsedHash = this._removeVersionParameterForFLP(oReloadInfo, mParsedHash, false);
-		this._triggerCrossAppNavigation(mParsedHash);
-
 		// In FLP scenario we need to remove all parameters and also trigger an hard reload on reset
 		if (oReloadInfo.triggerHardReload) {
 			this._reloadPage();
@@ -1737,6 +1732,7 @@ sap.ui.define([
 				if (
 					oReloadInfo.allContexts &&
 					!oReloadInfo.hasHigherLayerChanges &&
+					!oReloadInfo.isDraftAvailable &&
 					this._getUShellService("AppLifeCycle")
 				) {
 					this._getUShellService("AppLifeCycle").reloadCurrentApp();
