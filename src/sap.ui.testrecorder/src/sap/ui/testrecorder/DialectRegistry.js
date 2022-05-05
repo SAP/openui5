@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (BaseObject, Dialects) {
 	"use strict";
 
-	var DEFAULT_DIALECT = Dialects.UIVERI5;
+	var DEFAULT_DIALECT = Dialects.OPA5;
 
 	var oDialectRegistry = null;
 

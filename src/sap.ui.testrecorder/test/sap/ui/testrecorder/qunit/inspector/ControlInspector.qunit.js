@@ -16,12 +16,12 @@ sap.ui.define([
 
 	QUnit.module("ControlInspector", {
 		beforeEach: function () {
-			this.sTestSnippet = "element(by.control({\n" +
-			"    id: \"container-cart---homeView--searchField\"\n" +
-			"}));";
-			this.sTestSnippetPO = "    element(by.control({\n" +
-			"        id: \"container-cart---homeView--searchField\"\n" +
-			"    }));";
+			this.sTestSnippet = "this.waitFor({\n" +
+				"    id: \"container-cart---homeView--searchField\"\n" +
+				"});";
+			this.sTestSnippetPO = "    this.waitFor({\n" +
+				"        id: \"container-cart---homeView--searchField\"\n" +
+				"    });";
 			this.fnFindSelector = sinon.stub(ControlInspectorRepo, "findSelector");
 			this.fnFindSelector.withArgs("searchField").returns({
 				id: "container-cart---homeView--searchField"
@@ -84,9 +84,9 @@ sap.ui.define([
 
 	QUnit.test("Should combine multiple snippets in a PO method", function (assert) {
 		var fnDone = assert.async();
-		var sPrevSnippet = "element(by.control({\n" +
-		"    id: \"previous-snippet\"\n" +
-		"}));";
+		var sPrevSnippet = "this.waitFor({\n" +
+			"    id: \"previous-snippet\"\n" +
+			"});";
 		this.fnGetSnippets.returns([sPrevSnippet, this.sTestSnippet]);
 
 		ControlInspector.updateSettings({multipleSnippets: true});
@@ -94,9 +94,9 @@ sap.ui.define([
 			domElementId: "searchField"
 		}).then(function () {
 			var sResult = this.fnPublish.getCalls()[3].args[1].codeSnippet; // skip calls made by updateSettings
-			assert.equal(sResult, "iAssertTheUIState: function () {\n    element(by.control({\n" +
-			"        id: \"previous-snippet\"\n" +
-			"    }));\n\n" + this.sTestSnippetPO + "\n}");
+			assert.equal(sResult, "iAssertTheUIState: function () {\n    this.waitFor({\n" +
+				"        id: \"previous-snippet\"\n" +
+				"    });\n\n" + this.sTestSnippetPO + "\n}");
 			assert.ok(this.fnFindSelector.calledOnce, "Should use cached selector");
 			assert.ok(this.fnGenerateSelector.notCalled, "Should not generate selector");
 			assert.ok(this.fnGetSnippets.calledOnce, "Should collect previous snippets");

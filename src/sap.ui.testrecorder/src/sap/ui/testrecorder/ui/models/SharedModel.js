@@ -24,8 +24,11 @@ sap.ui.define([
 		}, {
 			key: Dialects.UIVERI5,
 			label: oI18nModel.getProperty("TestRecorder.Inspect.Snippet.Dialect.UIVeri5")
+		}, {
+			key: Dialects.WDI5,
+			label: oI18nModel.getProperty("TestRecorder.Inspect.Snippet.Dialect.WDI5")
 		}],
-		selectedDialect: Dialects.UIVERI5,
+		selectedDialect: Dialects.OPA5,
 		settings: {
 			preferViewId: false,
 			formatAsPOMethod: true,

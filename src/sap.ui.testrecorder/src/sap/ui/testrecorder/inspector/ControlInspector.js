@@ -127,7 +127,7 @@ sap.ui.define([
 				return POMethodUtil.getPOMethod(aSnippets, $.extend({
 					action: mData.action,
 					assertion: mData.assertion
-				}, mSelectorSettings));
+				}, mSelectorSettings), DialectRegistry.getActiveDialect() === Dialects.WDI5);
 			}
 		}).then(function (sSnippet) {
 			// here sSnippet contains the snippets for one or multiple controls

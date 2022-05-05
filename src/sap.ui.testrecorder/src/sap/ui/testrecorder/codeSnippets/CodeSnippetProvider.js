@@ -7,9 +7,10 @@ sap.ui.define([
 	"sap/ui/testrecorder/codeSnippets/OPA5ControlSnippetGenerator",
 	"sap/ui/testrecorder/codeSnippets/RawControlSnippetGenerator",
 	"sap/ui/testrecorder/codeSnippets/UIVeri5ControlSnippetGenerator",
+	"sap/ui/testrecorder/codeSnippets/WDI5ControlSnippetGenerator",
 	"sap/ui/testrecorder/DialectRegistry",
 	"sap/ui/testrecorder/Dialects"
-], function (BaseObject, OPA5ControlSnippetGenerator, RawControlSnippetGenerator, UIVeri5ControlSnippetGenerator, DialectRegistry, Dialects) {
+], function (BaseObject, OPA5ControlSnippetGenerator, RawControlSnippetGenerator, UIVeri5ControlSnippetGenerator, WDI5ControlSnippetGenerator, DialectRegistry, Dialects) {
 	"use strict";
 
 	var oControlSnippetProvider = null;
@@ -52,6 +53,7 @@ sap.ui.define([
 			case Dialects.OPA5: return OPA5ControlSnippetGenerator;
 			case Dialects.RAW: return RawControlSnippetGenerator;
 			case Dialects.UIVERI5: return UIVeri5ControlSnippetGenerator;
+			case Dialects.WDI5: return WDI5ControlSnippetGenerator;
 			default: return RawControlSnippetGenerator;
 		}
 	};
