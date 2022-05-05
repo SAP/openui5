@@ -536,11 +536,7 @@ sap.ui.define([
 						},
 						getCurrentApplication: function() {
 							return {
-								componentHandle: {
-									getInstance: function() {
-										return "testInstance";
-									}
-								}
+								componentInstance: "testInstance"
 							};
 						}
 					});
