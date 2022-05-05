@@ -813,6 +813,37 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		});
 	});
 
+	QUnit.test("Upon scrolling 'subSectionEnteredViewPortEvent' is fired after '_connectModelsForSections' is called", function (assert) {
+		// Arrange
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			done = assert.async(),
+			oStub = this.stub(oObjectPage, "_connectModelsForSections").callsFake(function () {
+				// Assert
+				assert.ok(oSpy.notCalled, "subSectionEnteredViewPortEvent is not fired before _connectModelsForSections");
+
+				oStub.restore();
+			}),
+			oSpy;
+
+		oObjectPage.setEnableLazyLoading(true);
+		Core.applyChanges();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oSpy = this.spy(oObjectPage, "_fireSubSectionEnteredViewPortEvent");
+
+			//Act
+			oObjectPage.scrollToSection("UxAP-objectPageContentScrolling--subsection3-1",0,0);
+
+			setTimeout(function() {
+				//Assert
+				assert.ok(oSpy.called, "subSectionEnteredViewPortEvent is fired after _connectModelsForSections");
+
+				// Clean up
+				done();
+			}, 1000); //scroll delay
+		}.bind(this));
+	});
+
 	QUnit.test("ScrollEnablement private API", function (assert) {
 		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout");
 

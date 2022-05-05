@@ -2287,7 +2287,7 @@ sap.ui.define([
 	 * @param {object} oTargetSection the section
 	 * @private
 	 */
-	ObjectPageLayout.prototype._preloadSectionsOnBeforeScroll = function (oTargetSection) {
+	 ObjectPageLayout.prototype._preloadSectionsOnBeforeScroll = function (oTargetSection) {
 
 		var sId = oTargetSection.getId(),
 			aToLoad;
@@ -2306,20 +2306,26 @@ sap.ui.define([
 				//on desktop we delay the call to have the preload done during the scrolling animation
 				setTimeout(function () {
 					this._connectModelsForSections(aToLoad);
+
+					this._fireSubSectionEnteredViewPortEvent(aToLoad);
 				}.bind(this), 50);
 			} else {
 				//on device, do the preload first then scroll.
 				//doing anything during the scrolling animation may
 				//trouble animation and lazy loading on slow devices.
 				this._connectModelsForSections(aToLoad);
-			}
 
-			aToLoad.forEach(function (subSection) {
-				this.fireEvent("subSectionEnteredViewPort", {
-					subSection: subSection
-				});
-			}, this);
+				this._fireSubSectionEnteredViewPortEvent(aToLoad);
+			}
 		}
+	};
+
+	ObjectPageLayout.prototype._fireSubSectionEnteredViewPortEvent = function (aToLoad) {
+		aToLoad.forEach(function (oSubSection) {
+			this.fireEvent("subSectionEnteredViewPort", {
+				subSection: oSubSection
+			});
+		}, this);
 	};
 
 	/**
