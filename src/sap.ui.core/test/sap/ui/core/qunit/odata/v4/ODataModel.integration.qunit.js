@@ -36764,7 +36764,7 @@ sap.ui.define([
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="list" items="{path : \'/Artists\', parameters : {$$getKeepAliveContext : true},\
-		suspended : \'true\'}">\
+		suspended : true}">\
 	<Text id="listName" text="{Name}"/>\
 	<Text id="defaultChannel" text="{defaultChannel}"/>\
 </Table>\
@@ -39521,6 +39521,54 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A table shows a visible area with one persisted row. Two inline creation rows are
+	// added at the end, inside the visible area, when data is received. There is an ODCB with empty
+	// path inside the row template so that oCachePromise becomes pending again. This lead to a
+	// "Failed to drill-down into ($uid=id-...), invalid segment: ($uid=id-...)" issue inside
+	// ODLB#create.
+	// BCP: 2270085667
+	QUnit.test("BCP: 2270085667", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<t:Table id="table" rows="{path : \'TEAMS\', parameters : {$$ownRequest : true}}">\
+	<Text id="id" text="{Team_Id}"/>\
+	<Text binding="{}" id="name" text="{Name}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectChange("id", [])
+			.expectChange("name", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("rows"),
+				oRootContext = that.oModel.createBindingContext("/");
+
+			function addInlineCreationRows() {
+				oBinding.create({Team_Id : "TEAM_A"}, true, true, /*bInactive*/true);
+				oBinding.create({Team_Id : "TEAM_B"}, true, true, /*bInactive*/true);
+			}
+
+			oBinding.attachDataReceived(function () {
+				// that's the way you do it ;-) (kind of, in real life)
+				Promise.resolve().then(addInlineCreationRows);
+			});
+
+			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=110", {
+					value : [
+						{Name : "Team #1", Team_Id : "TEAM_01"}
+					]
+				})
+				.expectChange("id", ["TEAM_01", "TEAM_A", "TEAM_B"])
+				.expectChange("name", ["Team #1", "", ""]);
+
+			// t:Table does not support initially suspended rows binding :-(
+			oBinding.setContext(oRootContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Main & dependent detail table. Create inactive rows for the detail table.
