@@ -15,7 +15,7 @@
 				mode="SingleSelectMaster" selectionChange="onProductSelect">
 			<headerToolbar>
 				<Toolbar id="productsToolbar">
-					<Title id="productsTitle" level="H2"
+					<Title id="productsTitle" level="H1"
 							text="{headerContext>$count} Products">
 						<layoutData>
 							<ToolbarLayoutData shrinkable="false"/>
