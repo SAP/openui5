@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/DateTypeRange",
 	"sap/m/DateRangeSelection",
+	"sap/m/InputBase",
 	"sap/m/DatePicker",
 	"sap/ui/Device",
 	"sap/ui/core/library",
@@ -30,6 +31,7 @@ sap.ui.define([
 	CalendarDate,
 	DateTypeRange,
 	DateRangeSelection,
+	InputBase,
 	DatePicker,
 	Device,
 	coreLibrary,
@@ -1481,6 +1483,43 @@ sap.ui.define([
 		//Cleanup
 		oDP1.destroy();
 		oDP2.destroy();
+	});
+
+	QUnit.test("_getInputValue", function (assert) {
+		// Prepare
+		var oDDR = new DateRangeSelection(),
+			oGetInputValueSpy = this.spy(InputBase.prototype, "_getInputValue"),
+			oGetFocusDomRefStub = this.stub(oDDR, "getFocusDomRef").callsFake(function () {
+				return { value: undefined };
+			});
+
+		// Act
+		oDDR.handleInputValueConcurrency("test");
+
+		// Assert
+		assert.ok(oGetInputValueSpy.calledOnce, "sap.m.InputBase.prototype._getInputValue called");
+
+		// Clean
+		oGetFocusDomRefStub.restore();
+	});
+
+	QUnit.test("Overwriting the user input with model updates will be prevented", function (assert) {
+		// Prepare
+		var oDDR = new DateRangeSelection(),
+			oHandleInputValueConcurrencySpy = this.spy(oDDR, "handleInputValueConcurrency");
+
+		oDDR._setPreferUserInteraction(true);
+		oDDR.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oDDR.setValue("test value");
+
+		// Assert
+		assert.ok(oHandleInputValueConcurrencySpy.calledOnce, "Model update is prevented");
+
+		// Clean
+		oDDR.destroy();
 	});
 
 	QUnit.module("Misc");

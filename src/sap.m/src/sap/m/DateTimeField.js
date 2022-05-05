@@ -121,8 +121,18 @@ sap.ui.define([
 			this.setLastValue(sValue);
 		}
 
-		// set the property in any case but check validity on output
-		this.setProperty("value", sValue);
+		// convert to date object and check validity on output
+		var oDate = this._parseAndValidateValue(sValue);
+		this.setProperty("dateValue", oDate, this._bPreferUserInteraction);
+
+		// do not call InputBase.setValue because the displayed value and the output value might have different pattern
+		this._formatValueAndUpdateOutput(oDate, sValue);
+		this.setProperty("value", sValue, this._bPreferUserInteraction);
+
+		return this;
+	};
+
+	DateTimeField.prototype._parseAndValidateValue = function(sValue) {
 		this._bValid = true;
 
 		// convert to date object
@@ -144,25 +154,26 @@ sap.ui.define([
 			}
 		}
 
-		this.setProperty("dateValue", oDate);
+		return oDate;
+	};
 
-		// do not call InputBase.setValue because the displayed value and the output value might have different pattern
-		if (this.getDomRef()) {
-			// convert to output
-			var sOutputValue;
-			if (oDate) {
-				sOutputValue = this._formatValue(oDate);
-			} else {
-				sOutputValue = sValue;
-			}
-
-			if (this._$input.val() !== sOutputValue) {
-				this._$input.val(sOutputValue);
-				this._curpos = this._$input.cursorPos();
-			}
+	DateTimeField.prototype._formatValueAndUpdateOutput = function(oDate, sValue) {
+		if (!this.getDomRef()) {
+			return;
 		}
+		// convert to output
+		var sOutputValue = oDate ? this._formatValue(oDate) : sValue;
 
-		return this;
+		if (this._bPreferUserInteraction) {
+			// Handle the value concurrency before setting the value property of the control,
+			// in order to distinguish whether the user only focused the input field or typed in it
+			this.handleInputValueConcurrency(sOutputValue);
+		} else if (this._$input.val() !== sOutputValue) {
+			// update the DOM value when necessary
+			// otherwise cursor can go to the end of text unnecessarily
+			this._$input.val(sOutputValue);
+			this._curpos = this._$input.cursorPos();
+		}
 	};
 
 	DateTimeField.prototype.setDateValue = function (oDate) {

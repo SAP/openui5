@@ -248,6 +248,25 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.test("Overwriting the user input with model updates will be prevented", function (assert) {
+		// Prepare
+		var oDTP = new DateTimePicker(),
+			oHandleInputValueConcurrencySpy = this.spy(oDTP, "handleInputValueConcurrency");
+
+		oDTP._setPreferUserInteraction(true);
+		oDTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oDTP.setValue("test value");
+
+		// Assert
+		assert.ok(oHandleInputValueConcurrencySpy.calledOnce, "Model update is prevented");
+
+		// Clean
+		oDTP.destroy();
+	});
+
 	QUnit.module("Rendering");
 
 	QUnit.test("date format", function(assert) {
