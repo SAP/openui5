@@ -3714,8 +3714,9 @@ sap.ui.define([
 				assert.ok(that.hasFilterInfoBar(), "No initial filter conditions: Filter info bar exists");
 				assert.ok(!that.getFilterInfoBar().getVisible(), "No initial filter conditions: Filter info bar is invisible");
 				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-					return sId === that.getFilterInfoText().getId();
-				}).length, 0, "When the filter info bar is invisible its text is not in the \"ariaLabelledBy\" association of the table");
+					return sId === that.oTable._oFilterInfoBarInvisibleText.getId();
+				}).length, 1, "ariaLabelledBy of the inner table contains a reference to the invisible text");
+				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "", "The associated invisible text is empty");
 			}).then(function() {
 				that.oTable.destroy();
 				that.oTable = new Table({
@@ -3754,9 +3755,7 @@ sap.ui.define([
 				assert.strictEqual(that.getFilterInfoText().getText(),
 					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel"])),
 					"Initial filter conditions: The filter info bar text is correct (1 filter)");
-				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-					return sId === that.getFilterInfoText().getId();
-				}).length, 1, "The filter info bar text is in the \"ariaLabelledBy\" association of the table");
+				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "Filtered by: NameLabel", "The associated invisible text is correct");
 
 				that.oTable.setFilterConditions({
 					name: [
@@ -3793,9 +3792,7 @@ sap.ui.define([
 				});
 				assert.ok(that.hasFilterInfoBar(), "Filter conditions removed: Filter info bar exists");
 				assert.ok(!that.getFilterInfoBar().getVisible(), "Filter conditions removed: Filter info bar is invisible");
-				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-					return sId === that.getFilterInfoText().getId();
-				}).length, 0, "When the filter info bar is invisible its text is not in the \"ariaLabelledBy\" association of the table");
+				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "", "The associated invisible text is empty");
 				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
 				that.oTable.setFilterConditions({
@@ -3831,9 +3828,8 @@ sap.ui.define([
 				assert.strictEqual(that.getFilterInfoText().getText(),
 					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabel", "GenderLabel"])),
 					"Set filter conditions: The filter info bar text is correct (3 filters)");
-				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-					return sId === that.getFilterInfoText().getId();
-				}).length, 1, "The filter info bar text is in the \"ariaLabelledBy\" association of the table");
+				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "Filtered by: NameLabel, AgeLabel, and GenderLabel",
+					"The associated invisible text is correct");
 			}).then(function() {
 				return that.waitForFilterInfoBarRendered();
 			}).then(function() {
@@ -3847,13 +3843,12 @@ sap.ui.define([
 				that.oTable.setP13nMode(["Column", "Sort"]);
 				assert.ok(that.hasFilterInfoBar(), "Filter disabled: Filter info bar exists");
 				assert.ok(!oFilterInfoBar.getVisible(), "Filter disabled: Filter info bar is invisible");
-				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-					return sId === that.getFilterInfoText().getId();
-				}).length, 0, "When the filter info bar is invisible its text is not in the \"ariaLabelledBy\" association of the table");
+				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "", "The associated invisible text is empty");
 				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
 				that.oTable.destroy();
 				assert.ok(oFilterInfoBar.bIsDestroyed, "Filter info bar is destroyed when the table is destroyed");
+				assert.equal(that.oTable._oFilterInfoBarInvisibleText, null, "The invisible text is set to null");
 				MDCQUnitUtils.restorePropertyInfos(Table.prototype);
 			});
 		});
@@ -3883,7 +3878,7 @@ sap.ui.define([
 		}).then(function() {
 			assert.ok(that.hasFilterInfoBar(), "Changed from \"Table\" to \"ResponsiveTable\": Filter info bar exists");
 			assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-				return sId === that.getFilterInfoText().getId();
+				return sId === that.oTable._oFilterInfoBarInvisibleText.getId();
 			}).length, 1, "Changed from \"Table\" to \"ResponsiveTable\": The filter info bar text is in the \"ariaLabelledBy\" association of the"
 						  + " table");
 		}).then(function() {
@@ -3892,7 +3887,7 @@ sap.ui.define([
 		}).then(function() {
 			assert.ok(that.hasFilterInfoBar(), "Changed from \"ResponsiveTable\" to \"Table\": Filter info bar exists");
 			assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-				return sId === that.getFilterInfoText().getId();
+				return sId === that.oTable._oFilterInfoBarInvisibleText.getId();
 			}).length, 1, "Changed from \"ResponsiveTable\" to \"Table\": The filter info bar text is in the \"ariaLabelledBy\" association of the"
 						  + " table");
 		});
