@@ -267,6 +267,30 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 *   as that class allows to configure an SAP Logon language.
 			 */
 			getSAPLogonLanguage : function() {
+				return this._getSAPLogonLanguage();
+			},
+			/**
+			 * Best guess to get a proper SAP Logon Language for this locale.
+			 *
+			 * Conversions taken into account:
+			 * <ul>
+			 * <li>use the language part only</li>
+			 * <li>convert old ISO639 codes to newer ones (e.g. 'iw' to 'he')</li>
+			 * <li>for Chinese, map 'Traditional Chinese' or region 'TW' to SAP proprietary code 'zf'</li>
+			 * <li>map private extensions x-saptrc, x-sappsd and saprigi to SAP pseudo languages '1Q', '2Q' and '3Q'</li>
+			 * <li>remove ext. language sub tags</li>
+			 * <li>convert to uppercase</li>
+			 * </ul>
+			 *
+			 * Note that the conversion also returns a result for languages that are not
+			 * supported by the default set of SAP languages. This method has no knowledge
+			 * about the concrete languages of any given backend system.
+			 *
+			 * @return {string} a language code that should
+			 * @private
+			 * @ui5-restricted sap.ui.core.Configuration
+			 **/
+			_getSAPLogonLanguage : function() {
 
 				var sLanguage = this.sLanguage || "";
 

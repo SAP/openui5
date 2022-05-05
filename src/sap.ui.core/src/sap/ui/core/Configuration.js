@@ -699,7 +699,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getSAPLogonLanguage : function () {
-			return (this.sapLogonLanguage && this.sapLogonLanguage.toUpperCase()) || this.language.getSAPLogonLanguage();
+			return (this.sapLogonLanguage && this.sapLogonLanguage.toUpperCase()) || this.language._getSAPLogonLanguage();
 		},
 
 		/**
