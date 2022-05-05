@@ -257,21 +257,44 @@ sap.ui.define([
 			var i = 0;
 			var oCondition;
 
-			this.setProperty("/conditions", {}, undefined, true); // async checkUpdate
-
 			if (Array.isArray(oConditions)) {
 				throw new Error("setConditions with an Array of condition is not supported! " + this);
 			} else {
-				this._bNoSingleEvent = true;
-				for (var sMyFieldPath in oConditions) {
-					this._getFieldPathProperty(sMyFieldPath); // to initialize FieldPath
-					for (i = 0; i < oConditions[sMyFieldPath].length; i++) {
-						oCondition = oConditions[sMyFieldPath][i];
-						this.insertCondition(sMyFieldPath, -1, oCondition, true);
+				this._bNoSingleEvent = true; // to fire event only once per FieldPath
+				var bUpdate = false;
+				var sExternalFieldPath; // used for FieldPath from outside
+				var sFieldPath; // used for escaped FieldPath
+				// check old conditions to fire right propertyChange events
+				var oOldConditions = merge({}, this.getProperty("/conditions")); // in oOldConditions the escaped FieldPath is used
+				for (sExternalFieldPath in oConditions) { // in oConditions the external FieldPath is used
+					this._getFieldPathProperty(sExternalFieldPath); // to initialize FieldPath
+					sFieldPath = _escapeFieldPath.call(this, sExternalFieldPath);
+					var aOldConditions = oOldConditions[sFieldPath] || [];
+					var aConditions = oConditions[sExternalFieldPath] || [];
+					if (!FilterOperatorUtil.compareConditionsArray(aOldConditions, aConditions)) {
+						bUpdate = true;
+						this.removeAllConditions(sExternalFieldPath);
+						for (i = 0; i < oConditions[sExternalFieldPath].length; i++) {
+							oCondition = oConditions[sExternalFieldPath][i];
+							this.insertCondition(sExternalFieldPath, -1, oCondition, true);
+						}
+						this.firePropertyChange({ reason: ChangeReason.Binding, path: "/conditions/" + sExternalFieldPath, context: undefined, value: oConditions[sExternalFieldPath] });
 					}
-					this.firePropertyChange({ reason: ChangeReason.Add, path: "/conditions/" + sMyFieldPath, context: undefined, value: oConditions[sMyFieldPath] });
+					delete oOldConditions[sFieldPath]; // is processed
 				}
-				this.checkUpdate(true, true);
+
+				var oFieldPath = this.getProperty("/fieldPath");
+				for (sFieldPath in oOldConditions) { // just entries without update left here
+					if (oOldConditions[sFieldPath].length > 0) { // there where conditions and no there are none -> update
+						bUpdate = true;
+						sExternalFieldPath = oFieldPath[sFieldPath].fieldPath;
+						this.removeAllConditions(sExternalFieldPath);
+						this.firePropertyChange({ reason: ChangeReason.Binding, path: "/conditions/" + sExternalFieldPath, context: undefined, value: [] });
+					}
+				}
+				if (bUpdate) {
+					this.checkUpdate(false, true); // do not force, only fire real updates. But do async as not known if any other changes via api triggered.
+				}
 				this._bNoSingleEvent = false;
 			}
 
@@ -341,8 +364,8 @@ sap.ui.define([
 			}
 
 			if (!this._bNoSingleEvent) {
-				this.checkUpdate(true, true);
-				this.firePropertyChange({ reason: ChangeReason.Add, path: "/conditions/" + sFieldPath, context: undefined, value: aConditions });
+				this.checkUpdate(false, true); // do not force, only fire real updates. But do async as not known if any other changes via api triggered.
+				this.firePropertyChange({ reason: ChangeReason.Binding, path: "/conditions/" + sFieldPath, context: undefined, value: aConditions });
 			}
 
 			return this;
@@ -384,7 +407,7 @@ sap.ui.define([
 		 * Removes a condition for a specified <code>FieldPath</code>.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
-		 * @param {int|{sap.ui.mdc.condition.ConditionObject} vCondition condition or index of the condition
+		 * @param {int|sap.ui.mdc.condition.ConditionObject} vCondition condition or index of the condition
 		 * @returns {boolean} flag if condition was removed.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
@@ -407,8 +430,8 @@ sap.ui.define([
 				var aConditions = this.getConditions(sFieldPath);
 				if (aConditions.length > iIndex) {
 					aConditions.splice(iIndex, 1);
-					this.checkUpdate(true, true);
-					this.firePropertyChange({ reason: ChangeReason.Remove, path: "/conditions/" + sFieldPath, context: undefined, value: aConditions });
+					this.checkUpdate(false, true); // do not force, only fire real updates. But do async as not known if any other changes via api triggered.
+					this.firePropertyChange({ reason: ChangeReason.Binding, path: "/conditions/" + sFieldPath, context: undefined, value: aConditions });
 					return true;
 				}
 			}
@@ -433,20 +456,26 @@ sap.ui.define([
 				var sEscapedFieldPath = _escapeFieldPath.call(this, sFieldPath);
 				if (oConditions[sEscapedFieldPath] && oConditions[sEscapedFieldPath].length > 0) {
 					oConditions[sEscapedFieldPath] = [];
-					this.firePropertyChange({ reason: ChangeReason.Remove, path: "/conditions/" + sFieldPath, context: undefined, value: oConditions[sFieldPath] });
+					if (!this._bNoSingleEvent) {
+						this.firePropertyChange({ reason: ChangeReason.Binding, path: "/conditions/" + sFieldPath, context: undefined, value: oConditions[sEscapedFieldPath] });
+					}
 				}
 			} else {
 				for (var sMyFieldPath in oConditions) {
 					if (oConditions[sMyFieldPath] && oConditions[sMyFieldPath].length > 0) {
 						oConditions[sMyFieldPath] = [];
-						var oFieldPath = this.getProperty("/fieldPath");
-						var sOriginalFieldPath = oFieldPath[sMyFieldPath].fieldPath;
-						this.firePropertyChange({ reason: ChangeReason.Remove, path: "/conditions/" + sOriginalFieldPath, context: undefined, value: oConditions[sMyFieldPath] });
+						if (!this._bNoSingleEvent) {
+							var oFieldPath = this.getProperty("/fieldPath");
+							var sOriginalFieldPath = oFieldPath[sMyFieldPath].fieldPath;
+							this.firePropertyChange({ reason: ChangeReason.Binding, path: "/conditions/" + sOriginalFieldPath, context: undefined, value: oConditions[sMyFieldPath] });
+						}
 					}
 				}
 			}
 
-			this.checkUpdate(true, true);
+			if (!this._bNoSingleEvent) {
+				this.checkUpdate(false, true); // do not force, only fire real updates. But do async as not known if any other changes via api triggered.
+			}
 
 			return this;
 
