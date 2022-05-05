@@ -676,7 +676,7 @@ sap.ui.define([
 				assert.ok(true, "Promise rejected");
 				assert.equal(oException, "XXXX", "wrongValue");
 				assert.equal(oField.getValueState(), "Error", "ValueState");
-
+				oContent.getFocusDomRef().blur();
 				// cleanup should remove valueState
 				oField.setValue();
 				setTimeout(function() { // to wait for ManagedObjectModel update

@@ -295,14 +295,26 @@ sap.ui.define([
 	 * @public
 	 */
 	DateRangeSelection.prototype.setValue = function(sValue) {
+		sValue = this.validateProperty("value", sValue);
 
 		if (sValue !== this.getValue()) {
 			this.setLastValue(sValue);
 		} else {
 			return this;
 		}
-		// Set the property in any case but check validity on output
-		this.setProperty("value", sValue);
+
+		var aDates = this._parseAndValidateValue(sValue);
+		this.setProperty("dateValue", _normalizeDateValue(aDates[0]), this._bPreferUserInteraction);
+		this.setProperty("secondDateValue", _normalizeDateValue(aDates[1]), this._bPreferUserInteraction);
+
+		this._formatValueAndUpdateOutput(aDates);
+		this.setProperty("value", sValue, this._bPreferUserInteraction);
+
+		return this;
+
+	};
+
+	DateRangeSelection.prototype._parseAndValidateValue = function(sValue) {
 		this._bValid = true;
 
 		// Convert to date object(s)
@@ -316,22 +328,27 @@ sap.ui.define([
 			}
 		}
 
-		this.setProperty("dateValue", _normalizeDateValue(aDates[0]));
-		this.setProperty("secondDateValue", _normalizeDateValue(aDates[1]));
+		return aDates;
+	};
 
-		// Do not call InputBase.setValue because the displayed value and the output value might have different pattern
-		if (this.getDomRef()) {
-			// Convert to output
-			var sOutputValue = this._formatValue(aDates[0], aDates[1]);
-
-			if (this._$input.val() !== sOutputValue) {
-				this._$input.val(sOutputValue);
-				this._curpos = this._$input.cursorPos();
-			}
+	DateRangeSelection.prototype._formatValueAndUpdateOutput = function(aDates) {
+		if (!this.getDomRef()) {
+			return;
 		}
 
-		return this;
+		// Convert to output
+		var sOutputValue = this._formatValue(aDates[0], aDates[1]);
 
+		if (this._bPreferUserInteraction) {
+			// Handle the value concurrency before setting the value property of the control,
+			// in order to distinguish whether the user only focused the input field or typed in it
+			this.handleInputValueConcurrency(sOutputValue);
+		} else if (this._$input.val() !== sOutputValue) {
+			// update the DOM value when necessary
+			// otherwise cursor can go to the end of text unnecessarily
+			this._$input.val(sOutputValue);
+			this._curpos = this._$input.cursorPos();
+		}
 	};
 
 	/**
@@ -774,7 +791,7 @@ sap.ui.define([
 		}
 
 		var aDates = this._parseValue(sValue);
-		sValue = this._formatValue( aDates[0], aDates[1]);
+		sValue = this._formatValue(aDates[0], aDates[1]);
 
 		return sValue;
 
@@ -792,11 +809,18 @@ sap.ui.define([
 		var aDates = this._parseValue(sValue);
 		sValue = this._formatValue( aDates[0], aDates[1]);
 
-		// update the DOM value when necessary
-		// otherwise cursor can goto end of text unnecessarily
-		if (this.isActive() && (this._$input.val() !== sValue)) {
-			this._$input.val(sValue);
-			this._$input.cursorPos(this._curpos);
+		// if set to true, handle the user input and data
+		// model updates concurrency in order to not overwrite
+		// values coming from the user
+		if (this._bPreferUserInteraction) {
+			this.handleInputValueConcurrency(sValue);
+		} else {
+			// update the DOM value when necessary
+			// otherwise cursor can goto end of text unnecessarily
+			if (this.isActive() && (this._$input.val() !== sValue)) {
+				this._$input.val(sValue);
+				this._$input.cursorPos(this._curpos);
+			}
 		}
 
 		return this;

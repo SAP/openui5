@@ -1483,6 +1483,43 @@ sap.ui.define([
 		oDP2.destroy();
 	});
 
+	QUnit.test("_getInputValue", function (assert) {
+		// Prepare
+		var oDDR = new DateRangeSelection(),
+			oGetInputValueSpy = this.spy(oDDR, "_getInputValue"),
+			oGetFocusDomRefStub = this.stub(oDDR, "getFocusDomRef").callsFake(function () {
+				return { value: undefined };
+			});
+
+		// Act
+		oDDR.handleInputValueConcurrency("test");
+
+		// Assert
+		assert.ok(oGetInputValueSpy.notCalled, "Method from the sap.m.InputBase properly called");
+
+		// Clean
+		oGetFocusDomRefStub.restore();
+	});
+
+	QUnit.test("Overwriting the user input with model updates will be prevented", function (assert) {
+		// Prepare
+		var oDDR = new DateRangeSelection(),
+			oHandleInputValueConcurrencySpy = this.spy(oDDR, "handleInputValueConcurrency");
+
+		oDDR._setPreferUserInteraction(true);
+		oDDR.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oDDR.setValue("test value");
+
+		// Assert
+		assert.ok(oHandleInputValueConcurrencySpy.calledOnce, "Model update is prevented");
+
+		// Clean
+		oDDR.destroy();
+	});
+
 	QUnit.module("Misc");
 
 	QUnit.test("Date with seconds set to the last second of the maxDate is displayed", function(assert) {
