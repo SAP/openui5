@@ -11,7 +11,8 @@ sap.ui.define([
 	'./FormattedTextRenderer',
 	"sap/base/Log",
 	"sap/base/security/URLListValidator",
-	"sap/base/security/sanitizeHTML"
+	"sap/base/security/sanitizeHTML",
+	"sap/ui/util/openWindow"
 ],
 function(
 	library,
@@ -21,7 +22,8 @@ function(
 	FormattedTextRenderer,
 	Log,
 	URLListValidator,
-	sanitizeHTML0
+	sanitizeHTML0,
+	openWindow
 	) {
 		"use strict";
 
@@ -317,18 +319,16 @@ function(
 
 		// prohibit a new window from accessing window.opener.location
 		function openExternalLink (oEvent) {
-			var newWindow = window.open();
-			newWindow.opener = null;
-			newWindow.location = oEvent.currentTarget.href;
 			oEvent.preventDefault();
+			openWindow(oEvent.currentTarget.href);
 		}
 
 		FormattedText.prototype.onAfterRendering = function () {
-			this.$().find('a[target="_blank"]').on("click", openExternalLink);
+			this.$().find('a:not([target="_self"]):not([target="_parent"]):not([target="_top"])').on("click", openExternalLink);
 		};
 
 		FormattedText.prototype.onBeforeRendering = function () {
-			this.$().find('a[target="_blank"]').off("click", openExternalLink);
+			this.$().find('a:not([target="_self"]):not([target="_parent"]):not([target="_top"])').off("click", openExternalLink);
 		};
 
 		FormattedText.prototype._getDisplayHtml = function (){
