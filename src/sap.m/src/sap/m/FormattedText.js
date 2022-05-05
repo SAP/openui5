@@ -3,8 +3,16 @@
  */
 
 // Provides control sap.m.FormattedText.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function (jQuery, library, Control) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'jquery.sap.global',
+	'jquery.sap.script'
+],
+function(
+	Control,
+	jQuery,
+	jQueryScript
+	) {
 		"use strict";
 
 
@@ -212,16 +220,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 
-		// prohibit a new window from accessing window.opener.location
-		function openExternalLink (oEvent) {
-			var newWindow = window.open();
-			newWindow.opener = null;
-			newWindow.location = oEvent.currentTarget.href;
+		// open links href using safe API
+		function openLink (oEvent) {
 			oEvent.preventDefault();
+			jQueryScript.sap.openWindow(oEvent.currentTarget.href, oEvent.currentTarget.target);
 		}
 
 		FormattedText.prototype.onAfterRendering = function () {
-			this.$().find('a[target="_blank"]').on("click", openExternalLink);
+			this.$().find('a').on("click", openLink);
+		};
+
+		FormattedText.prototype.onBeforeRendering = function () {
+			this.$().find('a').off("click", openLink);
 		};
 
 		/**
