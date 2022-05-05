@@ -696,7 +696,7 @@ sap.ui.define([
 
 			onAfterRendering: function() {
 				var $Container = this._$Container = this._sContainerId ? jQuery(document.getElementById(this._sContainerId)) : jQuery(document.getElementById(this._sContentId)).parent();
-				var _fnRefresh = this._refresh.bind(this);
+				var _fnRefresh = this._refresh;
 				var bElementVisible = $Container.is(":visible");
 				$Container.addClass("sapUiScrollDelegate");
 
@@ -714,7 +714,7 @@ sap.ui.define([
 					|| this._fnScrollLoadCallback) {
 
 					// element may be hidden and have height 0
-					this._sResizeListenerId = ResizeHandler.register($Container[0], _fnRefresh);
+					this._sResizeListenerId = ResizeHandler.register($Container[0], _fnRefresh.bind(this));
 				}
 
 				if (this._fnOverflowChangeCallback) {
