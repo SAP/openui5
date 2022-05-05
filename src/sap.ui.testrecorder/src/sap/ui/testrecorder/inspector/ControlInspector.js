@@ -127,7 +127,7 @@ sap.ui.define([
 				return POMethodUtil.getPOMethod(aSnippets, $.extend({
 					action: mData.action,
 					assertion: mData.assertion
-				}, mSelectorSettings));
+				}, mSelectorSettings), DialectRegistry.getActiveDialect() === Dialects.WDI5);
 			}
 		}).then(function (sSnippet) {
 			// here sSnippet contains the snippets for one or multiple controls
@@ -152,7 +152,7 @@ sap.ui.define([
 		if (mData.domElementId) {
 			oHighlighter.highlight(mData.domElementId);
 		} else if (mData.controlId) {
-			var domElement = _ControlFinder._findElements({id: mData.controlId})[0];
+			var domElement = _ControlFinder._findElements({ id: mData.controlId })[0];
 			if (domElement) {
 				oHighlighter.highlight(domElement.id);
 			}
