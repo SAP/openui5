@@ -42,18 +42,6 @@ sap.ui.define([
 		{
 			"key": "fr",
 			"description": "Français"
-		},
-		{
-			"key": "fr-CA",
-			"description": "Français (Canada)"
-		},
-		{
-			"key": "zh-CN",
-			"description": "简体中文"
-		},
-		{
-			"key": "zh-TW",
-			"description": "繁體中文"
 		}
 	];
 	var oManifestForObjectFieldsWithTranslations = {
