@@ -228,8 +228,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the transport <code>sap.ui.commons.ComboBox</code>.
-	 * @returns {sap.ui.commons.ComboBox} Transport <code>sap.ui.commons.ComboBox</code>
+	 * Creates the transport <code>sap.m.ComboBox</code>.
+	 * @returns {sap.m.ComboBox} Transport <code>sap.m.ComboBox</code>
 	 *
 	 * @private
 	 */
@@ -271,8 +271,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the package <code>sap.ui.commons.ComboBox</code>.
-	 * @returns {sap.ui.commons.ComboBox} Package <code>sap.ui.commons.ComboBox</code>
+	 * Creates an <code>sap.m.Input</code> field for the package.
+	 * @returns {sap.m.Input} Input field for the package
 	 *
 	 * @private
 	 */

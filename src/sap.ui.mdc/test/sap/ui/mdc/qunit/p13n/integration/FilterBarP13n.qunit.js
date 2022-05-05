@@ -146,7 +146,7 @@ sap.ui.define([
 			assert.ok(oList.isA("sap.m.ListBase"), "ListBase control as inner representation");
 
 			var oFirstGroup = oList.getItems()[0];
-			assert.ok(oFirstGroup.isA("sap.m.ListItemBase"), "ListItem for grup presentation");
+			assert.ok(oFirstGroup.isA("sap.m.ListItemBase"), "ListItem for group presentation");
 
 			var oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
 			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");

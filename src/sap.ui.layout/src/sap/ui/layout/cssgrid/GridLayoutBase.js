@@ -199,9 +199,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Should return sap.ui.layout.cssgrid.GridSettings - The active GridSettings
-	 * Must be implemented by child classes
+	 * Should return the active GridSettings.
+	 * Must be implemented by child classes.
 	 * @abstract
+	 * @returns {sap.ui.layout.cssgrid.GridSettings}
 	 * @public
 	 */
 	GridLayoutBase.prototype.getActiveGridSettings = function () {

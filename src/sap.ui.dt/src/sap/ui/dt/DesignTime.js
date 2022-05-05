@@ -1120,7 +1120,7 @@ function (
 
 	/**
 	 * Handler for destroy event of ElementOverlay
-	 * @param {sap.ui.baseEvent} oEvent event object
+	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
 	DesignTime.prototype._onElementOverlayDestroyed = function (oEvent) {
@@ -1167,7 +1167,7 @@ function (
 
 	/**
 	 * Handler for destroy event of AggregationOverlay
-	 * @param {sap.ui.baseEvent} oEvent event object
+	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
 	DesignTime.prototype._onAggregationOverlayDestroyed = function (oEvent) {
@@ -1183,7 +1183,7 @@ function (
 	};
 
 	/**
-	 * @param {sap.ui.baseEvent} oEvent event object
+	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
 	DesignTime.prototype._onElementOverlaySelectionChange = function(oEvent) {
@@ -1206,7 +1206,7 @@ function (
 	};
 
 	/**
-	 * @param {sap.ui.baseEvent} oEvent event object
+	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
 	DesignTime.prototype._onElementModified = function(oEvent) {
@@ -1248,7 +1248,7 @@ function (
 	};
 
 	/**
-	 * @param {sap.ui.baseEvent} oEvent event object
+	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
 	DesignTime.prototype._onEditableChanged = function(oEvent) {

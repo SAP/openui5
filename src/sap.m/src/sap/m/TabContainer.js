@@ -264,6 +264,7 @@ sap.ui.define([
 
 		/**
 		 * Gets a reference to the instance of the TabStrip aggregation.
+		 * @returns {sap.m.TabStrip}
 		 */
 		TabContainer.prototype._getTabStrip = function () {
 			return this.getAggregation("_tabStrip");

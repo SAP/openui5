@@ -159,7 +159,7 @@ sap.ui.define([
 	/**
 	 * Function provides controls which should be rendered into the Toolbar. Controls are going to be rendered
 	 * in the same order as provided in returned array.
-	 * @returns {Array.<sap.ui.core.Control>} An array of controls
+	 * @returns {Promise<sap.ui.core.Control[]>} A Promise that resolves with an array of controls
 	 * @protected
 	 */
 	Base.prototype.buildControls = function () {

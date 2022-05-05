@@ -601,7 +601,7 @@ function(
 
 	/**
 	 * Creates the picker popup.
-	 * @returns {Popup} the created popup
+	 * @returns {sap.m.Popover} the created popup
 	 * @private
 	 */
 	PlanningCalendarHeader.prototype._createPopup = function () {

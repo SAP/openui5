@@ -424,6 +424,7 @@ sap.ui.define([
 	 * Returns panel.
 	 *
 	 * @private
+	 * @returns {sap.m.P13nPanel|null}
 	 */
 	P13nDialog.prototype._getPanelByNavigationItem = function(oNavigationItem) {
 		for (var i = 0, aPanels = this.getPanels(), iPanelsLength = aPanels.length; i < iPanelsLength; i++) {
@@ -438,6 +439,7 @@ sap.ui.define([
 	 * Returns NavigationItem.
 	 *
 	 * @private
+	 * @returns {sap.m.SegmentedButtonItem | sap.m.StandardListItem | null}
 	 */
 	P13nDialog.prototype._getNavigationItemByPanel = function(oPanel) {
 		return oPanel ? oPanel.data("sapMP13nDialogNavigationItem") : null;

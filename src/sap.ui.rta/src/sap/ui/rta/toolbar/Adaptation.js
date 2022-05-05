@@ -340,7 +340,7 @@ sap.ui.define([
 	/**
 	 * Loads and creates the Fragment of the Toolbar
 	 *
-	 * @returns {sap.ui.core.Control[]} Returns the controls in a structure described above.
+	 * @returns {Promise<sap.ui.core.Control[]>} Returns the controls in a structure described above.
 	 */
 	Adaptation.prototype.buildControls = function () {
 		return Fragment.load({

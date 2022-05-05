@@ -400,6 +400,15 @@ function(
 		}
 	};
 
+	/**
+	 * Creates a new aggregation forwarder for the given aggregation.
+	 * @param {object} oAggregation Aggregation info object
+	 *
+	 * @class Class to manage the forwarding of an aggregation.
+	 * @alias sap.ui.base.ManagedObjectMetadata.AggregationForwarder
+	 * @private
+	 * @ui5-restricted sap.ui.base
+	 */
 	function AggregationForwarder(oAggregation) {
 		var oForwardTo = oAggregation.forwarding;
 		this.aggregation = oAggregation; // source aggregation info
@@ -456,6 +465,7 @@ function(
 
 	/*
 	 * Returns the forwarding target instance and ensures that this.targetAggregationInfo is available
+	 * @returns {sap.ui.core.Control}
 	 */
 	AggregationForwarder.prototype.getTarget = function(oInstance, bConnectTargetInfo) {
 		var oTarget = this._getTarget.call(oInstance);
@@ -1343,7 +1353,9 @@ function(
 
 	/**
 	 * Returns a forwarder for the given aggregation (or undefined, when there is no forwarding), considering also inherited aggregations.
+	 * @param {string} sAggregationName Name of the aggregation to get the forwarder for
 	 * @private
+	 * @returns {sap.ui.base.ManagedObjectMetadata.AggregationForwarder|undefined}
 	 */
 	ManagedObjectMetadata.prototype.getAggregationForwarder = function(sAggregationName) {
 		var oAggregation = this._mAllAggregations[sAggregationName];

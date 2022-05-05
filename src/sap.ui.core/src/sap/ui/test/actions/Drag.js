@@ -24,11 +24,11 @@ sap.ui.define([
 	 *            [mSettings] Optional object with initial settings for the new instance
 	 * @extends sap.ui.test.actions.Action
 	 * @public
-	 * @name sap.ui.test.actions.Drag
+	 * @alias sap.ui.test.actions.Drag
 	 * @author SAP SE
 	 * @since 1.76
 	 */
-	var Drag = Action.extend("sap.ui.test.actions.Drag", {
+	var Drag = Action.extend("sap.ui.test.actions.Drag", /** @lends sap.ui.test.actions.Drag.prototype */ {
 
 		metadata : {
 			publicMethods : [ "executeOn" ]

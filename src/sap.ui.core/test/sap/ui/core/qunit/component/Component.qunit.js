@@ -514,7 +514,7 @@ sap.ui.define([
 		//Assert
 		assert.strictEqual(this.oComponent._oViewWhileInit, oRootControl, "the root control is available in the init function");
 		assert.strictEqual(this.oComponent.oView, oRootControl, "the returned control is the rootView");
-		assert.strictEqual(this.oComponent._oViewWhileCeateContent, null, "in the create content the control is still null");
+		assert.strictEqual(this.oComponent._oViewWhileCreateContent, null, "in the create content the control is still null");
 
 		//Cleanup
 		this.oComponent.destroy();

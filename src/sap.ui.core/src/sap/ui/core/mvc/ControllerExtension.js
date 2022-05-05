@@ -43,7 +43,7 @@ sap.ui.define([
 			/**
 			 * Sets the controller for this extension. Accessible by the base member.
 			 *
-			 * @param {sap.ui.core.mvcController} oController The controller
+			 * @param {sap.ui.core.mvc.Controller} oController The controller
 			 * @private
 			 */
 			_setController: function(oController) {

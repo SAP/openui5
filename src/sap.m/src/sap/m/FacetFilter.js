@@ -1983,6 +1983,7 @@ sap.ui.define([
 
 
 	/**
+	 * @returns {sap.m.Toolbar}
 	 * @private
 	 */
 	FacetFilter.prototype._getSummaryBar = function() {

@@ -133,6 +133,7 @@ sap.ui.define([
 
 	/**
 	 * @private
+	 * @returns {sap.ui.core.Element}
 	 */
 	ElementEnablementTest.prototype._createElement = function() {
 		var sType = this.getType();

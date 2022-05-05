@@ -1459,7 +1459,7 @@ sap.ui.define([
 
 	/**
 	 * Getter for DatePicker's Calendar instance.
-	 * @returns {object} The _header object
+	 * @returns {sap.ui.unified.Calendar} The calendar object
 	 * @private
 	 */
 	DatePicker.prototype._getCalendar = function () {

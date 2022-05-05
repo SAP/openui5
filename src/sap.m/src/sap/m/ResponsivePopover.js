@@ -610,6 +610,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * @returns {sap.ui.core.Control}
 	 * @private
 	 */
 	ResponsivePopover.prototype._getButtonFooter = function() {

@@ -1114,9 +1114,9 @@ sap.ui.define([
 	};
 
 	/**
-	* Retrieves a <code>sap.f.SemanticTitle</code> instance.
+	* Retrieves a <code>sap.f.semantic.SemanticTitle</code> instance.
 	*
-	* @returns {sap.f.SemanticTitle}
+	* @returns {sap.f.semantic.SemanticTitle}
 	* @private
 	*/
 	SemanticPage.prototype._getSemanticTitle = function() {
@@ -1127,9 +1127,9 @@ sap.ui.define([
 	};
 
 	/**
-	* Retrieves a <code>sap.f.SemanticShareMenu</code> instance.
+	* Retrieves a <code>sap.f.semantic.SemanticShareMenu</code> instance.
 	*
-	* @returns {sap.f.SemanticShareMenu}
+	* @returns {sap.f.semantic.SemanticShareMenu}
 	* @private
 	*/
 	SemanticPage.prototype._getShareMenu = function() {
@@ -1208,9 +1208,9 @@ sap.ui.define([
 	};
 
 	/**
-	* Retrieves a <code>sap.f.SemanticFooter</code> instance.
+	* Retrieves a <code>sap.f.semantic.SemanticFooter</code> instance.
 	*
-	* @returns {sap.f.SemanticFooter}
+	* @returns {sap.f.semantic.SemanticFooter}
 	* @private
 	*/
 	SemanticPage.prototype._getSemanticFooter = function() {
