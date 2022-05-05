@@ -655,7 +655,11 @@ sap.ui.define([
 
 			this.setProperty("_selectedContentKey", sNextContentId);
 			this.setProperty("_selectableContents", this._getSelectableContents());
-			this._oManagedObjectModel.checkUpdate(true, true); // force Update as bindings to $help>displayContent are not updated automatically in some cases
+			this._oManagedObjectModel.checkUpdate(true, false, function (oBinding) { // force update as bindings to $help>displayContent are not updated automatically in some cases
+				if (oBinding.getPath() === "displayContent") { // do not update other bindings as this might lead to rerendering of IconTabBar ot other unwanted updates.
+					return true;
+				}
+			});
 
 			if (oGroupSelectPromise) {
 				this._updateGroupSelectModel();

@@ -80,14 +80,14 @@ sap.ui.define([
 		renderer: {
 			apiVersion: 2,
 			render: function(oRm, oControl) {
-				//oRm.openStart("div", oControl);
-				//oRm.openEnd();
-//				var oContent = oControl._displayContent;
+				oRm.openStart("div", oControl);
+				oRm.class("sapUiMdcDialogTab");
+				oRm.openEnd();
 				var oContent = oControl.getContent();
 				if (oContent) {
 					oRm.renderControl(oContent);
 				}
-				//oRm.close("div");
+				oRm.close("div");
 			}
 		}
 	});
