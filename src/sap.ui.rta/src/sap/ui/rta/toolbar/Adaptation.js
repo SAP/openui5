@@ -363,6 +363,7 @@ sap.ui.define([
 				manageApps: onManageAppsPressed.bind(this),
 				appVariantOverview: onOverviewPressed.bind(this),
 				saveAs: onSaveAsPressed.bind(this),
+				formatSaveAsEnabled: formatSaveAsEnabled,
 				restore: this.eventHandler.bind(this, "Restore"),
 				publish: this.eventHandler.bind(this, "Transport"),
 				publishVersion: this.eventHandler.bind(this, "PublishVersion"),
@@ -384,6 +385,10 @@ sap.ui.define([
 
 	function onOpenUploadTranslationDialog() {
 		this.addExtension("translation", Translation).openUploadTranslationDialog();
+	}
+
+	function formatSaveAsEnabled(bGeneralSaveAsEnabled, sDisplayedVersion) {
+		return bGeneralSaveAsEnabled && sDisplayedVersion !== Version.Number.Draft;
 	}
 
 	function onSaveAsPressed() {
