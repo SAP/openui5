@@ -1228,7 +1228,6 @@ sap.ui.define([
 
 		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
 		oBinding = this.bindContext(sPath);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true)
@@ -3601,7 +3600,6 @@ sap.ui.define([
 		oBinding.attachChange(fnOnRefresh);
 
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 		this.mock(oBinding).expects("getGroupId").withExactArgs().returns("$auto");
 
 		// code under test
@@ -4093,7 +4091,6 @@ sap.ui.define([
 
 			this.mock(oBinding).expects("isReturnValueLikeBindingParameter")
 				.withExactArgs(sinon.match.same(oOperationMetadata)).returns(true);
-			this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 			if (oFixture.contextMetaPath) {
 				this.mock(this.oModel.oMetaModel).expects("getObject")
 					.withExactArgs(oFixture.contextMetaPath)
