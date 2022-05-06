@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/write/_internal/Versions"
+	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/write/api/Version"
 ], function(
 	_omit,
 	_pick,
@@ -35,11 +36,12 @@ sap.ui.define([
 	CompVariantMerger,
 	Settings,
 	Storage,
-	Versions
+	Versions,
+	Version
 ) {
 	"use strict";
 
-	function isFilenameInDraftVersion(oChange, mPropertyBag) {
+	function isVersionIndependentOrInDraft(oChange, mPropertyBag) {
 		var aDraftFilenames = getPropertyFromVersionsModel("/draftFilenames", mPropertyBag);
 		if (aDraftFilenames) {
 			return oChange.getState() === Change.states.NEW || aDraftFilenames.includes(oChange.getFileName());
@@ -66,7 +68,7 @@ sap.ui.define([
 		var sPackageName = oChange.getDefinition().packageName;
 		var bNotTransported = !sPackageName || sPackageName === "$TMP";
 
-		return bSameLayer && bNotTransported && isFilenameInDraftVersion(oChange, mPropertyBag);
+		return bSameLayer && bNotTransported && isVersionIndependentOrInDraft(oChange, mPropertyBag);
 	}
 
 	function getSubSection(mMap, oFlexObject) {
@@ -93,8 +95,7 @@ sap.ui.define([
 		}
 	}
 
-	function updateObjectAndStorage(oFlexObject, oStoredResponse) {
-		var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {layer: oFlexObject.getLayer(), reference: oFlexObject.getDefinition().reference});
+	function updateObjectAndStorage(oFlexObject, oStoredResponse, sParentVersion) {
 		return Storage.update({
 			flexObject: oFlexObject.getDefinition(),
 			layer: oFlexObject.getLayer(),
@@ -142,9 +143,7 @@ sap.ui.define([
 		}
 	}
 
-	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse) {
-		var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {layer: oFlexObject.getLayer(), reference: oFlexObject.getDefinition().reference});
-
+	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion) {
 		return Storage.remove({
 			flexObject: oFlexObject.getDefinition(),
 			layer: oFlexObject.getLayer(),
@@ -434,7 +433,7 @@ sap.ui.define([
 			var bIsChangedOnLayer = oVariant.getChanges().some(function (oChange) {
 				return oChange.getLayer() === sLayer;
 			});
-			return oVariant.getPersisted() && bSameLayer && bNotTransported && !bIsChangedOnLayer && isFilenameInDraftVersion(oVariant, mPropertyBag);
+			return oVariant.getPersisted() && bSameLayer && bNotTransported && !bIsChangedOnLayer && isVersionIndependentOrInDraft(oVariant, mPropertyBag);
 		}
 
 		function getLatestUpdatableChange(oVariant) {
@@ -755,8 +754,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CompVariantState.persist = function(mPropertyBag) {
-		function writeObjectAndAddToState(oFlexObject, oStoredResponse) {
-			var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {layer: oFlexObject.getLayer(), reference: oFlexObject.getDefinition().reference});
+		function writeObjectAndAddToState(oFlexObject, oStoredResponse, sParentVersion) {
 			// TODO: remove this line as soon as layering and a condensing is in place
 			return Storage.write({
 				flexObjects: [oFlexObject.getDefinition()],
@@ -784,6 +782,22 @@ sap.ui.define([
 			});
 		}
 
+		function saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion) {
+			switch (oFlexObject.getState()) {
+				case States.NEW:
+					ifVariantClearRevertData(oFlexObject);
+					return writeObjectAndAddToState(oFlexObject, oStoredResponse, sParentVersion);
+				case States.DIRTY:
+					ifVariantClearRevertData(oFlexObject);
+					return updateObjectAndStorage(oFlexObject, oStoredResponse, sParentVersion);
+				case States.DELETED:
+					ifVariantClearRevertData(oFlexObject);
+					return deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion);
+				default:
+					break;
+			}
+		}
+
 		var sReference = mPropertyBag.reference;
 		var sPersistencyKey = mPropertyBag.persistencyKey;
 		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
@@ -791,21 +805,22 @@ sap.ui.define([
 
 		return FlexState.getStorageResponse(sReference)
 			.then(function(oStoredResponse) {
-				var aPromises = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey)
-				.filter(needsPersistencyCall)
-				.map(function (oFlexObject) {
-					switch (oFlexObject.getState()) {
-						case States.NEW:
-							ifVariantClearRevertData(oFlexObject);
-							return writeObjectAndAddToState(oFlexObject, oStoredResponse);
-						case States.DIRTY:
-							ifVariantClearRevertData(oFlexObject);
-							return updateObjectAndStorage(oFlexObject, oStoredResponse);
-						case States.DELETED:
-							ifVariantClearRevertData(oFlexObject);
-							return deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse);
-						default:
-							break;
+				var aFlexObject = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey).filter(needsPersistencyCall);
+				var aPromises = aFlexObject.map(function(oFlexObject, index) {
+					if (index === 0) {
+						var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {layer: oFlexObject.getLayer(), reference: oFlexObject.getDefinition().reference});
+						// TODO: use condensing route to reduce backend requests
+						// need to save first entry to generate draft version in backend
+						return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion)
+						.then(function() {
+							var aPromises = aFlexObject.map(function(oFlexObject, index) {
+								if (index !== 0) {
+									var sDraftVersion = sParentVersion ? Version.Number.Draft : undefined;
+									return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sDraftVersion);
+								}
+							});
+							return aPromises;
+						});
 					}
 				});
 				// TODO Consider not rejecting with first error, but wait for all promises and collect the results
