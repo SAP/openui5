@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
-	"./../ContextHost",
+	"./../../../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
@@ -67,7 +67,8 @@ sap.ui.define([
 			"configuration": {
 				"parameters": {
 					"objectWithPropertiesDefined1": {},
-					"objectWithPropertiesDefined2": {}
+					"objectWithPropertiesDefined2": {},
+					"objectWithPropertiesDefined3": {}
 				},
 				"destinations": {
 					"local": {
@@ -86,8 +87,9 @@ sap.ui.define([
 		"_dt": {
 			"_uuid": "111771a4-0d3f-4fec-af20-6f28f1b894cb"
 		},
+		"key": "{i18n>string1}",
 		"icon": "sap-icon://add",
-		"text": "{i18n>string1}",
+		"text": "text",
 		"url": "http://",
 		"number": 0.5
 	};
@@ -95,54 +97,47 @@ sap.ui.define([
 		"_dt": {
 			"_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"
 		},
+		"key": "string2",
 		"icon": "sap-icon://add",
-		"text": "string2",
+		"text": "text",
+		"url": "http://",
+		"number": 0.5
+	};
+	var oValueOfObject3InAdminChange = {
+		"_dt": {
+			"_uuid": "333771a4-0d3f-4fec-af20-6f28f1b894cb"
+		},
+		"key": "string3",
+		"icon": "sap-icon://add",
+		"text": "text",
 		"url": "http://",
 		"number": 0.5
 	};
 	var _oAdminChangesOfObjectsWithWithTranslations = {
 		"/sap.card/configuration/parameters/objectWithPropertiesDefined1/value": oValueOfObject1InAdminChange,
 		"/sap.card/configuration/parameters/objectWithPropertiesDefined2/value": oValueOfObject2InAdminChange,
+		"/sap.card/configuration/parameters/objectWithPropertiesDefined3/value": oValueOfObject3InAdminChange,
 		":layer": 0,
 		":errors": false,
 		"texts": {
 			"en": {
 				"/sap.card/configuration/parameters/objectWithPropertiesDefined1/value": {
 					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String1 EN Admin"
-					}
-				},
-				"/sap.card/configuration/parameters/objectWithPropertiesDefined2/value": {
-					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String2 EN Admin"
+						"key": "String1 EN Admin"
 					}
 				}
 			},
 			"fr": {
 				"/sap.card/configuration/parameters/objectWithPropertiesDefined1/value": {
 					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String1 FR Admin"
-					}
-				}
-			},
-			"ru": {
-				"/sap.card/configuration/parameters/objectWithPropertiesDefined2/value": {
-					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String2 RU Admin"
+						"key": "String1 FR Admin"
 					}
 				}
 			},
 			"zh-CN": {
 				"/sap.card/configuration/parameters/objectWithPropertiesDefined1/value": {
 					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String1 简体 Admin"
-					}
-				}
-			},
-			"zh-TW": {
-				"/sap.card/configuration/parameters/objectWithPropertiesDefined2/value": {
-					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String2 繁體 Admin"
+						"key": "String1 简体 Admin"
 					}
 				}
 			}
@@ -158,12 +153,6 @@ sap.ui.define([
 			"fr-FR": "String 1 French",
 			"fr-CA": "String 1 French CA",
 			"zh-CN": "String1 简体 Admin"
-		},
-		"objectWithPropertiesDefined2": {
-			"default": "string2",
-			"en": "String2 EN Admin",
-			"ru": "String2 RU Admin",
-			"zh-TW": "String2 繁體 Admin"
 		}
 	};
 
@@ -205,20 +194,21 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("translatable property", {
-		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-		},
-		afterEach: function () {
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-		}
-	}, function () {
-		_oCheckedModesOfChange.admin.forEach(function(sMode) {
+
+	_oCheckedModesOfChange.admin.forEach(function(sMode) {
+		QUnit.module(sMode + " mode", {
+			beforeEach: function () {
+				this.oHost = new Host("host");
+				this.oContextHost = new ContextHost("contexthost");
+			},
+			afterEach: function () {
+				this.oHost.destroy();
+				this.oContextHost.destroy();
+			}
+		}, function () {
 			_aCheckedLanguages.forEach(function(sLanguage) {
 				var sLanguageKey = sLanguage.key;
-				var sCaseTitle = sMode + " mode - in " + sLanguageKey + " (" + sLanguage.description + ")";
+				var sCaseTitle = "in " + sLanguageKey + " (" + sLanguage.description + ")";
 				QUnit.test(sCaseTitle, function (assert) {
 					var that = this;
 					return new Promise(function (resolve, reject) {
@@ -238,13 +228,16 @@ sap.ui.define([
 							var oField1 = that.oEditor.getAggregation("_formContent")[2];
 							var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
 							var oField2 = that.oEditor.getAggregation("_formContent")[4];
+							var oLabel3 = that.oEditor.getAggregation("_formContent")[5];
+							var oField3 = that.oEditor.getAggregation("_formContent")[6];
 							var oSelectedValueOfField1 = merge(deepClone(oValueOfObject1InAdminChange, 500), {"_dt": {"_selected": true}});
 							var oSelectedValueOfField2 = merge(deepClone(oValueOfObject2InAdminChange, 500), {"_dt": {"_selected": true}});
+							var oSelectedValueOfField3 = merge(deepClone(oValueOfObject3InAdminChange, 500), {"_dt": {"_selected": true}});
 							wait().then(function () {
 								assert.ok(oLabel1.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 								assert.ok(oLabel1.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-								assert.ok(oField1.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-								assert.ok(deepEqual(oField1._getCurrentProperty("value"), oValueOfObject1InAdminChange), "Field 1: Value");
+								assert.ok(oField1.isA("sap.ui.integration.editor.fields.ObjectField"), " field 1: Object Field");
+								assert.ok(deepEqual(oField1._getCurrentProperty("value"), oValueOfObject1InAdminChange), " field 1: Value");
 								var oTable1 = oField1.getAggregation("_field");
 								var oToolbar1 = oTable1.getToolbar();
 								assert.ok(oTable1.getBinding().getCount() === 9, "Table 1: value length is 9");
@@ -254,9 +247,9 @@ sap.ui.define([
 								assert.ok(!oEditButton1.getEnabled(), "Table toolbar 1: edit button disabled");
 								var oRow1 = oTable1.getRows()[0];
 								assert.ok(deepEqual(oRow1.getBindingContext().getObject(), oSelectedValueOfField1), "Table 1: value object is the first row");
-								var oTextCell1 = oRow1.getCells()[3];
-								var sTextPropertyValue = _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined1"][sLanguageKey] || _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined1"]["default"];
-								assert.ok(oTextCell1.getText() === sTextPropertyValue, "Row 1: text cell value");
+								var oKeyCell1 = oRow1.getCells()[1];
+								var sKeyPropertyValue = _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined1"][sLanguageKey] || _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined1"]["default"];
+								assert.ok(oKeyCell1.getText() === sKeyPropertyValue, "Row 1: key cell value");
 								oTable1.setSelectedIndex(0);
 								oTable1.fireRowSelectionChange({
 									rowIndex: 0,
@@ -280,43 +273,40 @@ sap.ui.define([
 										var oContents1 = oSimpleForm1.getContent();
 										assert.ok(oContents1.length === 16, "SimpleForm 1: length");
 										assert.ok(deepEqual(JSON.parse(oContents1[15].getValue()), oSelectedValueOfField1), "SimpleForm 1 field textArea: Has the value");
-										var oFormLabel3 = oContents1[4];
-										var oFormField3 = oContents1[5];
-										assert.ok(oFormLabel3.getText() === "Text", "SimpleForm 1 label 3: Has label text");
-										assert.ok(oFormLabel3.getVisible(), "SimpleForm 1 label 3: Visible");
-										assert.ok(oFormField3.isA("sap.m.Input"), "SimpleForm 1 Field 3: Input Field");
-										assert.ok(oFormField3.getVisible(), "SimpleForm 1 Field 3: Visible");
-										assert.ok(oFormField3.getEditable(), "SimpleForm 1 Field 3: Editable");
-										assert.ok(oFormField3.getValue() === oValueOfObject1InAdminChange.text, "SimpleForm 1 field 3: Has value");
-										assert.ok(oFormField3.getShowValueHelp(), "SimpleForm 1 field 3: ShowValueHelp true");
-										var oValueHelpIcon3 = oFormField3._oValueHelpIcon;
-										assert.ok(oValueHelpIcon3, "SimpleForm 1 field 3: Value help icon exist");
-										assert.ok(oValueHelpIcon3.getVisible(), "SimpleForm 1 field 3: Value help icon visible");
-										assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "SimpleForm 1 field 3: Input value help icon");
-										assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "SimpleForm 1 field 3: Input value help icon src");
-										oValueHelpIcon3.firePress();
+										var oFormField1 = oContents1[1];
+										assert.ok(oFormField1.isA("sap.m.Input"), "SimpleForm 1 field 1: Input Field");
+										assert.ok(oFormField1.getVisible(), "SimpleForm 1 field 1: Visible");
+										assert.ok(oFormField1.getEditable(), "SimpleForm 1 field 1: Editable");
+										assert.ok(oFormField1.getValue() === oValueOfObject1InAdminChange.key, "SimpleForm 1 field 1: Has value");
+										assert.ok(oFormField1.getShowValueHelp(), "SimpleForm 1 field 1: ShowValueHelp true");
+										var oValueHelpIcon1 = oFormField1._oValueHelpIcon;
+										assert.ok(oValueHelpIcon1, "SimpleForm 1 field 1: Value help icon exist");
+										assert.ok(oValueHelpIcon1.getVisible(), "SimpleForm 1 field 1: Value help icon visible");
+										assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "SimpleForm 1 field 1: Input value help icon");
+										assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "SimpleForm 1 field 1: Input value help icon src");
+										oValueHelpIcon1.firePress();
 										wait(1500).then(function () {
-											var oTranslationListPage3 = oField1._oTranslationListPage;
-											var oSaveButton3 = oTranslationListPage3.getFooter().getContent()[1];
-											assert.ok(oSaveButton3.getVisible(), "oTranslationListPage3 footer: save button visible");
-											assert.ok(!oSaveButton3.getEnabled(), "oTranslationListPage3 footer: save button disabled");
-											var oResetButton3 = oTranslationListPage3.getFooter().getContent()[2];
-											assert.ok(oResetButton3.getVisible(), "oTranslationListPage3 footer: reset button visible");
-											assert.ok(!oResetButton3.getEnabled(), "oTranslationListPage3 footer: reset button disabled");
-											var oCancelButton3 = oTranslationListPage3.getFooter().getContent()[3];
-											assert.ok(!oCancelButton3.getVisible(), "oTranslationListPage3 footer: cancel button not visible");
-											var oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
-											assert.ok(oLanguageItems3.length === 50, "oTranslationPopover3 Content: length");
-											for (var i = 0; i < oLanguageItems3.length; i++) {
-												var oCustomData = oLanguageItems3[i].getCustomData();
+											var oTranslationListPage1 = oField1._oTranslationListPage;
+											var oSaveButton1 = oTranslationListPage1.getFooter().getContent()[1];
+											assert.ok(oSaveButton1.getVisible(), "oTranslationListPage 1 footer: save button visible");
+											assert.ok(!oSaveButton1.getEnabled(), "oTranslationListPage 1 footer: save button disabled");
+											var oResetButton1 = oTranslationListPage1.getFooter().getContent()[2];
+											assert.ok(oResetButton1.getVisible(), "oTranslationListPage 1 footer: reset button visible");
+											assert.ok(!oResetButton1.getEnabled(), "oTranslationListPage 1 footer: reset button disabled");
+											var oCancelButton1 = oTranslationListPage1.getFooter().getContent()[3];
+											assert.ok(!oCancelButton1.getVisible(), "oTranslationListPage 1 footer: cancel button not visible");
+											var oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
+											assert.ok(oLanguageItems1.length === 50, "oTranslationPopover 1 Content: length");
+											for (var i = 0; i < oLanguageItems1.length; i++) {
+												var oCustomData = oLanguageItems1[i].getCustomData();
 												if (oCustomData && oCustomData.length > 0) {
 													var sLanguage = oCustomData[0].getKey();
 													var sExpectedValue = _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined1"][sLanguage] || _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined1"]["default"];
-													var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
-													assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+													var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
+													assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover 1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 												}
 											}
-											oTranslationListPage3._navBtn.firePress();
+											oTranslationListPage1._navBtn.firePress();
 											oCancelButtonInPopover1.firePress();
 											wait().then(function () {
 												assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
@@ -330,11 +320,10 @@ sap.ui.define([
 												var oEditButton2 = oToolbar2.getContent()[2];
 												assert.ok(oEditButton2.getVisible(), "Table toolbar 2: edit button visible");
 												assert.ok(!oEditButton2.getEnabled(), "Table toolbar 2: edit button disabled");
-												oRow1 = oTable2.getRows()[0];
+												var oRow1 = oTable2.getRows()[0];
 												assert.ok(deepEqual(oRow1.getBindingContext().getObject(), oSelectedValueOfField2), "Table 2: value object is the first row");
-												oTextCell1 = oRow1.getCells()[3];
-												sTextPropertyValue = _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined2"][sLanguageKey] || _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined2"]["default"];
-												assert.ok(oTextCell1.getText() === sTextPropertyValue, "Row 1: text cell value");
+												var oKeyCell1 = oRow1.getCells()[1];
+												assert.ok(oKeyCell1.getText() === "string2", "Row 1: key cell value");
 												oTable2.setSelectedIndex(0);
 												oTable2.fireRowSelectionChange({
 													rowIndex: 0,
@@ -354,46 +343,66 @@ sap.ui.define([
 													var oSimpleForm2 = oField2._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 													assert.ok(oSimpleForm2.isA("sap.ui.layout.form.SimpleForm"), "Popover 1: content is SimpleForm");
 													var oContents2 = oSimpleForm2.getContent();
-													assert.ok(oContents2.length === 16, "SimpleForm 1: length");
+													assert.ok(oContents2.length === 16, "SimpleForm 2: length");
 													assert.ok(deepEqual(JSON.parse(oContents2[15].getValue()), oSelectedValueOfField2), "SimpleForm 2 field textArea: Has the value");
-													oFormLabel3 = oContents2[4];
-													oFormField3 = oContents2[5];
-													assert.ok(oFormLabel3.getText() === "Text", "SimpleForm 2 label 3: Has label text");
-													assert.ok(oFormLabel3.getVisible(), "SimpleForm 2 label 3: Visible");
-													assert.ok(oFormField3.isA("sap.m.Input"), "SimpleForm 2 Field 3: Input Field");
-													assert.ok(oFormField3.getVisible(), "SimpleForm 2 Field 3: Visible");
-													assert.ok(oFormField3.getEditable(), "SimpleForm 2 Field 3: Editable");
-													assert.ok(oFormField3.getValue() === oValueOfObject2InAdminChange.text, "SimpleForm 2 field 3: Has value");
-													assert.ok(oFormField3.getShowValueHelp(), "SimpleForm 2 field 3: ShowValueHelp true");
-													oValueHelpIcon3 = oFormField3._oValueHelpIcon;
-													assert.ok(oValueHelpIcon3, "SimpleForm field 3: Value help icon exist");
-													assert.ok(oValueHelpIcon3.getVisible(), "SimpleForm 2 field 3: Value help icon visible");
-													assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "SimpleForm 2 field 3: Input value help icon");
-													assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "SimpleForm 2 field 3: Input value help icon src");
-													oValueHelpIcon3.firePress();
+													var oFormField1 = oContents2[1];
+													assert.ok(oFormField1.isA("sap.m.Input"), "SimpleForm 2 field 1: Input Field");
+													assert.ok(oFormField1.getVisible(), "SimpleForm 2 field 1: Visible");
+													assert.ok(oFormField1.getEditable(), "SimpleForm 2 field 1: Editable");
+													assert.ok(oFormField1.getValue() === oValueOfObject2InAdminChange.key, "SimpleForm 2 field 1: Has value");
+													assert.ok(!oFormField1.getShowValueHelp(), "SimpleForm 2 field 1: ShowValueHelp not true");
+													var oValueHelpIcon2 = oFormField1._oValueHelpIcon;
+													assert.ok(!oValueHelpIcon2, "SimpleForm 2 field 1: Value help icon not exist");
+													oCancelButtonInPopover2.firePress();
 													wait().then(function () {
-														oTranslationListPage3 = oField2._oTranslationListPage;
-														oSaveButton3 = oTranslationListPage3.getFooter().getContent()[1];
-														assert.ok(oSaveButton3.getVisible(), "oTranslationListPage3 footer: save button visible");
-														assert.ok(!oSaveButton3.getEnabled(), "oTranslationListPage3 footer: save button disabled");
-														oResetButton3 = oTranslationListPage3.getFooter().getContent()[2];
-														assert.ok(oResetButton3.getVisible(), "oTranslationListPage3 footer: reset button visible");
-														assert.ok(!oResetButton3.getEnabled(), "oTranslationListPage3 footer: reset button disabled");
-														oCancelButton3 = oTranslationListPage3.getFooter().getContent()[3];
-														assert.ok(!oCancelButton3.getVisible(), "oTranslationListPage3 footer: cancel button not visible");
-														oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
-														assert.ok(oLanguageItems3.length === 50, "oTranslationPopover3 Content: length");
-														for (var i = 0; i < oLanguageItems3.length; i++) {
-															var oCustomData = oLanguageItems3[i].getCustomData();
-															if (oCustomData && oCustomData.length > 0) {
-																var sLanguage = oCustomData[0].getKey();
-																var sExpectedValue = _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined2"][sLanguage] || _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined2"]["default"];
-																var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
-																assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
-															}
-														}
-														destroyEditor(that.oEditor);
-														resolve();
+														assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
+														assert.ok(oLabel3.getText() === "Object properties defined: value from Json list", "Label 3: Has label text");
+														assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
+														assert.ok(deepEqual(oField3._getCurrentProperty("value"), oValueOfObject3InAdminChange), "Field 3: Value");
+														var oTable3 = oField3.getAggregation("_field");
+														var oToolbar3 = oTable3.getToolbar();
+														assert.ok(oTable3.getBinding().getCount() === 9, "Table 3: value length is 9");
+														assert.ok(oToolbar3.getContent().length === 8, "Table toolbar 3: content length");
+														var oEditButton3 = oToolbar3.getContent()[2];
+														assert.ok(oEditButton3.getVisible(), "Table toolbar 3: edit button visible");
+														assert.ok(!oEditButton3.getEnabled(), "Table toolbar 3: edit button disabled");
+														var oRow1 = oTable3.getRows()[0];
+														assert.ok(deepEqual(oRow1.getBindingContext().getObject(), oSelectedValueOfField3), "Table 3: value object is the first row");
+														var oKeyCell1 = oRow1.getCells()[1];
+														assert.ok(oKeyCell1.getText() === "string3", "Row 1: key cell value");
+														oTable3.setSelectedIndex(0);
+														oTable3.fireRowSelectionChange({
+															rowIndex: 0,
+															userInteraction: true
+														});
+														assert.ok(oEditButton3.getEnabled(), "Table toolbar 3: edit button enabled");
+														oEditButton3.firePress();
+														wait().then(function () {
+															var oAddButtonInPopover3 = oField3._oObjectDetailsPopover._oAddButton;
+															assert.ok(!oAddButtonInPopover3.getVisible(), "Popover 3: add button not visible");
+															var oUpdateButtonInPopover3 = oField3._oObjectDetailsPopover._oUpdateButton;
+															assert.ok(oUpdateButtonInPopover3.getVisible(), "Popover 3: update button visible");
+															var oCancelButtonInPopover3 = oField3._oObjectDetailsPopover._oCancelButton;
+															assert.ok(oCancelButtonInPopover3.getVisible(), "Popover 3: cancel button visible");
+															var oCloseButtonInPopover3 = oField3._oObjectDetailsPopover._oCloseButton;
+															assert.ok(!oCloseButtonInPopover3.getVisible(), "Popover 3: close button not visible");
+															var oSimpleForm3 = oField3._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
+															assert.ok(oSimpleForm3.isA("sap.ui.layout.form.SimpleForm"), "Popover 1: content is SimpleForm");
+															var oContents3 = oSimpleForm3.getContent();
+															assert.ok(oContents3.length === 16, "SimpleForm 3: length");
+															assert.ok(deepEqual(JSON.parse(oContents3[15].getValue()), oSelectedValueOfField3), "SimpleForm 3 field textArea: Has the value");
+															var oFormField1 = oContents3[1];
+															assert.ok(oFormField1.isA("sap.m.Input"), "SimpleForm 3 field 1: Input Field");
+															assert.ok(oFormField1.getVisible(), "SimpleForm 3 field 1: Visible");
+															assert.ok(oFormField1.getEditable(), "SimpleForm 3 field 1: Editable");
+															assert.ok(oFormField1.getValue() === oValueOfObject3InAdminChange.key, "SimpleForm 3 field 1: Has value");
+															assert.ok(!oFormField1.getShowValueHelp(), "SimpleForm 3 field 1: ShowValueHelp not true");
+															var oValueHelpIcon3 = oFormField1._oValueHelpIcon;
+															assert.ok(!oValueHelpIcon3, "SimpleForm 3 field 1: Value help icon not exist");
+															oCancelButtonInPopover3.firePress();
+															destroyEditor(that.oEditor);
+															resolve();
+														});
 													});
 												});
 											});

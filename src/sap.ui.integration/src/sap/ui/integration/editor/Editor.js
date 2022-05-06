@@ -1567,6 +1567,9 @@ sap.ui.define([
 		if (mNext) {
 			mResult[":designtime"] = mNext;
 		}
+		if (oSettings[":designtime"]) {
+			mResult[":designtime"] = merge(mResult[":designtime"], oSettings[":designtime"]);
+		}
 		return mResult;
 	};
 	/**
@@ -3307,6 +3310,7 @@ sap.ui.define([
 	 */
 	Editor.prototype._applyDesigntimeLayers = function (oSettings) {
 		var oTexts = {};
+		var oDesigntime = {};
 		//pull current values
 		if (this._appliedLayerManifestChanges && Array.isArray(this._appliedLayerManifestChanges)) {
 			for (var i = 0; i < this._appliedLayerManifestChanges.length; i++) {
@@ -3314,7 +3318,14 @@ sap.ui.define([
 				if (oChanges) {
 					var aKeys = Object.keys(oChanges);
 					for (var j = 0; j < aKeys.length; j++) {
-						this._settingsModel.setProperty(aKeys[j], oChanges[aKeys[j]]);
+						var vValue = oChanges[aKeys[j]];
+						// if the value of design time is object type,it should for the object field/object list field
+						// add it into designtime of settings
+						if (typeof vValue === "object") {
+							oDesigntime[aKeys[j]] = merge(oDesigntime[aKeys[j]], vValue);
+							continue;
+						}
+						this._settingsModel.setProperty(aKeys[j], vValue);
 					}
 				}
 				var oAppliedLayerManifestChangeTexts = this._appliedLayerManifestChanges[i]["texts"];
@@ -3331,14 +3342,21 @@ sap.ui.define([
 					//apply the values to a "_next/editable", "_next/visible" entry to the settings.
 					//the current layer needs to be able to change those values
 					var sPath = aKeys[j],
+						vValue = oChanges[sPath];
 						sNext = sPath.substring(0, sPath.lastIndexOf("/") + 1) + "_next";
+					// if the value of design time is object type,it should for the object field/object list field
+					// add it into designtime of settings
+					if (typeof vValue === "object") {
+						oDesigntime[sPath] = merge(oDesigntime[sPath], vValue);
+						continue;
+					}
 					if (!this._settingsModel.getProperty(sNext)) {
 						//create a _next entry if it does not exist
 						this._settingsModel.setProperty(sNext, {});
 					}
 					var sNext = sPath.substring(0, sPath.lastIndexOf("/") + 1) + "_next",
 						sProp = sPath.substring(sPath.lastIndexOf("/") + 1);
-					this._settingsModel.setProperty(sNext + "/" + sProp, oChanges[aKeys[j]]);
+					this._settingsModel.setProperty(sNext + "/" + sProp, vValue);
 				}
 			}
 			var ocurrentLayerManifestChangeTexts = this._currentLayerManifestChanges["texts"];
@@ -3348,6 +3366,9 @@ sap.ui.define([
 		}
 		if (!deepEqual(oTexts, {})) {
 			this._settingsModel.setProperty("/texts", oTexts);
+		}
+		if (!deepEqual(oDesigntime, {})) {
+			this._settingsModel.setProperty("/:designtime", oDesigntime);
 		}
 	};
 	/**

@@ -17,20 +17,22 @@ sap.ui.define([
 	var CardMerger = {
 		layers: { "admin": 0, "content": 5, "translation": 10, "all": 20 },
 		mergeManifestPathChanges: function (oModel, oChange) {
-			var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('_', '-');
 			Object.keys(oChange).forEach(function (s) {
 				if (s.charAt(0) === "/") {
 					var value = oChange[s];
 					oModel.setProperty(s, value);
 				}
 			});
-			if (oChange.hasOwnProperty("texts") && oChange.texts.hasOwnProperty(sLanguage)) {
-				var oTranslation = oChange.texts[sLanguage];
+		},
+		mergeTextsChanges: function (oModel, oTexts, oDesigntime) {
+			var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('_', '-');
+			if (oTexts && oTexts.hasOwnProperty(sLanguage)) {
+				var oTranslation = oTexts[sLanguage];
 				for (var sManifestPath in oTranslation) {
 					var oTranslations = oTranslation[sManifestPath];
 					// if the translation value type is object, translate it
 					if (typeof oTranslations === "object") {
-						CardMerger.translateObject(oModel, sManifestPath, oTranslations);
+						CardMerger.translateObject(oModel, sManifestPath, oTranslations, oDesigntime);
 					} else {
 						oModel.setProperty(sManifestPath, oTranslations);
 					}
@@ -43,18 +45,20 @@ sap.ui.define([
 				sSection = "sap.card";
 			}
 			if (Array.isArray(aChanges) && aChanges.length > 0) {
-				var oModel;
+				var oModel, oTexts, oDesigntime;
 				aChanges.forEach(function (oChange) {
 					if (oChange.content) {
 						//merge old changes
 						merge(oInitialManifest[sSection], oChange.content);
 					} else {
+						oTexts = merge(oTexts, oChange.texts);
+						oDesigntime = merge(oDesigntime, oChange[":designtime"]);
 						//merge path based changes via model
 						oModel = oModel || new JSONModel(oInitialManifest);
 						CardMerger.mergeManifestPathChanges(oModel, oChange);
 					}
 				});
-
+				CardMerger.mergeTextsChanges(oModel, oTexts, oDesigntime);
 			}
 			return oInitialManifest;
 		},
@@ -88,7 +92,7 @@ sap.ui.define([
 
 			return oInitialDTMedatada;
 		},
-		translateObject: function (oModel, sManifestPath, oTranslations) {
+		translateObject: function (oModel, sManifestPath, oTranslations, oDesigntime) {
 			var oValue = oModel.getProperty(sManifestPath);
 			if (!oValue || typeof oValue !== "object") {
 				return;
@@ -97,14 +101,30 @@ sap.ui.define([
 			if (!Array.isArray(oValue)) {
 				var sUUID = (oValue._dt || {})._uuid;
 				if (sUUID && oTranslations[sUUID]) {
-					Object.assign(oValue, oTranslations[sUUID]);
+					// if the property is not translatable set in designtime, do not translation it by deleting the value in texts
+					if (oDesigntime && oDesigntime[sManifestPath] && oDesigntime[sManifestPath][sUUID]) {
+						for (var n in oDesigntime[sManifestPath][sUUID]) {
+							if (oDesigntime[sManifestPath][sUUID][n].translatable === false) {
+								delete oTranslations[sUUID][n];
+							}
+						}
+					}
+					merge(oValue, oTranslations[sUUID]);
 					oModel.setProperty(sManifestPath, oValue);
 				}
 			} else {
 				oValue.forEach(function (oOriginValue) {
 					var sUUID = (oOriginValue._dt || {})._uuid;
 					if (sUUID && oTranslations[sUUID]) {
-						Object.assign(oOriginValue, oTranslations[sUUID]);
+						// if the property is not translatable set in designtime, do not translation it by deleting the value in texts
+						if (oDesigntime && oDesigntime[sManifestPath] && oDesigntime[sManifestPath][sUUID]) {
+							for (var n in oDesigntime[sManifestPath][sUUID]) {
+								if (oDesigntime[sManifestPath][sUUID][n].translatable === false) {
+									delete oTranslations[sUUID][n];
+								}
+							}
+						}
+						merge(oOriginValue, oTranslations[sUUID]);
 					}
 				});
 				oModel.setProperty(sManifestPath, oValue);

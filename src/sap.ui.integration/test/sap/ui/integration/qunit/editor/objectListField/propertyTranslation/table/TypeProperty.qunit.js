@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
-	"./../ContextHost",
+	"./../../../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone"
@@ -24,18 +24,18 @@ sap.ui.define([
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/";
 
 	var oValue03 = { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_uuid": "111771a4-0d3f-4fec-af20-6f28f1b894cb"}};
-	var oManifestForObjectFieldsWithTranslation = {
+	var oManifestForObjectListFieldWithTranslation = {
 		"sap.app": {
 			"id": "test.sample",
 			"i18n": "../i18ntrans/i18n.properties"
 		},
 		"sap.card": {
-			"designtime": "designtime/objectFieldWithTranslation",
+			"designtime": "designtime/objectListFieldWithTranslation",
 			"type": "List",
 			"configuration": {
 				"parameters": {
-					"objectWithPropertiesDefinedAndValueFromJsonList": {
-						"value": oValue03
+					"objectsWithPropertiesDefinedAndValueFromJsonList": {
+						"value": [oValue03]
 					}
 				},
 				"destinations": {
@@ -150,7 +150,8 @@ sap.ui.define([
 		}
 		return oClonedValue;
 	}
-	QUnit.module("Translation type : property", {
+
+	QUnit.module("Basic", {
 		beforeEach: function () {
 			this.oHost = new Host("host");
 			this.oContextHost = new ContextHost("contexthost");
@@ -167,7 +168,7 @@ sap.ui.define([
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -175,8 +176,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -184,9 +185,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
@@ -255,7 +256,7 @@ sap.ui.define([
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -263,8 +264,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -272,9 +273,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
@@ -375,7 +376,18 @@ sap.ui.define([
 				});
 			});
 		});
+	});
 
+	QUnit.module("Update", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+		},
+		afterEach: function () {
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+		}
+	}, function () {
 		QUnit.test("update translation values and delete for normal string value", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
@@ -383,7 +395,7 @@ sap.ui.define([
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -391,8 +403,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -400,9 +412,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
@@ -505,7 +517,7 @@ sap.ui.define([
 											wait().then(function () {
 												var oNewObjectValue = deepClone(oNewObject, 500);
 												delete oNewObjectValue._dt._selected;
-												assert.ok(deepEqual(oField._getCurrentProperty("value"), oNewObjectValue), "Field 1: Value changed to new object");
+												assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03, oNewObjectValue]), "Field 1: new object added into value");
 												var oRow5 = oTable.getRows()[4];
 												assert.ok(deepEqual(oRow5.getBindingContext().getObject(), oNewObject), "Table: new object is the last row");
 												var oTextCell = oRow5.getCells()[3];
@@ -530,7 +542,7 @@ sap.ui.define([
 														assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
 														sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 														assert.ok(!sTranslationTextOfEN, "Texts: no value");
-														assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value deleted");
+														assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: added object deleted");
 														destroyEditor(that.oEditor);
 														resolve();
 													});
@@ -546,14 +558,14 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("update translation values and delete for {i18n>KEY}} format", function (assert) {
+		QUnit.test("update translation values and delete for {i18n>KEY} format", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
 				that.oEditor = createEditor("en");
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -561,8 +573,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -570,9 +582,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
@@ -696,7 +708,7 @@ sap.ui.define([
 														wait().then(function () {
 															var oNewObjectValue = Object.assign(deepClone(oNewObject, 500), {"text": "{i18n>string1}"});
 															delete oNewObjectValue._dt._selected;
-															assert.ok(deepEqual(oField._getCurrentProperty("value"), oNewObjectValue), "Field 1: Value changed to new object");
+															assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03, oNewObjectValue]), "Field 1: Field 1: new object added into value");
 															var oRow5 = oTable.getRows()[4];
 															assert.ok(deepEqual(oRow5.getBindingContext().getObject(), oNewObject), "Table: new object is the last row");
 															var oTextCell = oRow5.getCells()[3];
@@ -721,7 +733,7 @@ sap.ui.define([
 																	assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
 																	sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 																	assert.ok(!sTranslationTextOfEN, "Texts: no value");
-																	assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value deleted");
+																	assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Field 1: added object deleted");
 																	destroyEditor(that.oEditor);
 																	resolve();
 																});
@@ -747,7 +759,7 @@ sap.ui.define([
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -755,8 +767,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -764,9 +776,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
@@ -863,7 +875,7 @@ sap.ui.define([
 									wait().then(function () {
 										oCancelButtonInPopover.firePress();
 										wait().then(function () {
-											assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+											assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 											sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 											assert.ok(!sTranslationTextOfEN, "Texts: no value");
 											destroyEditor(that.oEditor);
@@ -885,7 +897,7 @@ sap.ui.define([
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -893,8 +905,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -902,9 +914,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
@@ -1022,7 +1034,7 @@ sap.ui.define([
 												wait().then(function () {
 													oCancelButtonInPopover.firePress();
 													wait().then(function () {
-														assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+														assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 														sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 														assert.ok(!sTranslationTextOfEN, "Texts: no value");
 														destroyEditor(that.oEditor);
@@ -1047,7 +1059,7 @@ sap.ui.define([
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -1055,8 +1067,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -1064,9 +1076,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
@@ -1175,7 +1187,7 @@ sap.ui.define([
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -1183,8 +1195,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -1192,9 +1204,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
@@ -1327,7 +1339,7 @@ sap.ui.define([
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -1335,8 +1347,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -1344,9 +1356,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
@@ -1489,7 +1501,7 @@ sap.ui.define([
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -1497,8 +1509,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -1506,9 +1518,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
@@ -1651,7 +1663,7 @@ sap.ui.define([
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -1659,8 +1671,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -1668,9 +1680,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
@@ -1837,7 +1849,7 @@ sap.ui.define([
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
-					manifest: oManifestForObjectFieldsWithTranslation
+					manifest: oManifestForObjectListFieldWithTranslation
 				});
 				that.oEditor.attachReady(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -1845,8 +1857,8 @@ sap.ui.define([
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -1854,9 +1866,9 @@ sap.ui.define([
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
-					var oSelectionCell3 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
+					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
 					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];

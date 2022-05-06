@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
-	"./../ContextHost",
+	"./../../../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
@@ -56,18 +56,18 @@ sap.ui.define([
 			"description": "繁體中文"
 		}
 	];
-	var oManifestForobjectFieldsWithTranslations = {
+	var oManifestForObjectListFieldsWithTranslations = {
 		"sap.app": {
 			"id": "test.sample",
 			"i18n": "../i18ntrans/i18n.properties"
 		},
 		"sap.card": {
-			"designtime": "designtime/objectFieldsWithTranslations",
+			"designtime": "designtime/objectListFieldsWithTranslations",
 			"type": "List",
 			"configuration": {
 				"parameters": {
-					"objectWithPropertiesDefined1": {},
-					"objectWithPropertiesDefined2": {}
+					"objectListWithTranslations1": {},
+					"objectListWithTranslations2": {}
 				},
 				"destinations": {
 					"local": {
@@ -76,6 +76,73 @@ sap.ui.define([
 					},
 					"mock_request": {
 						"name": "mock_request"
+					}
+				}
+			}
+		}
+	};
+
+	var oValueOfObject1InAdminChange = {
+		"_dt": {
+			"_uuid": "111771a4-0d3f-4fec-af20-6f28f1b894cb"
+		},
+		"icon": "sap-icon://add",
+		"text": "{i18n>string1}",
+		"url": "http://",
+		"number": 0.5
+	};
+	var oValueOfObject2InAdminChange = {
+		"_dt": {
+			"_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"
+		},
+		"icon": "sap-icon://add",
+		"text": "string2",
+		"url": "http://",
+		"number": 0.5
+	};
+	var _oAdminChangesOfObjectListsWithTranslations = {
+		"/sap.card/configuration/parameters/objectListWithTranslations1/value": [oValueOfObject1InAdminChange],
+		"/sap.card/configuration/parameters/objectListWithTranslations2/value": [oValueOfObject2InAdminChange],
+		":layer": 0,
+		":errors": false,
+		"texts": {
+			"en": {
+				"/sap.card/configuration/parameters/objectListWithTranslations1/value": {
+					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
+						"text": "String1 EN Admin"
+					}
+				},
+				"/sap.card/configuration/parameters/objectListWithTranslations2/value": {
+					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
+						"text": "String2 EN Admin"
+					}
+				}
+			},
+			"fr": {
+				"/sap.card/configuration/parameters/objectListWithTranslations1/value": {
+					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
+						"text": "String1 FR Admin"
+					}
+				}
+			},
+			"ru": {
+				"/sap.card/configuration/parameters/objectListWithTranslations2/value": {
+					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
+						"text": "String2 RU Admin"
+					}
+				}
+			},
+			"zh-CN": {
+				"/sap.card/configuration/parameters/objectListWithTranslations1/value": {
+					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
+						"text": "String1 简体 Admin"
+					}
+				}
+			},
+			"zh-TW": {
+				"/sap.card/configuration/parameters/objectListWithTranslations2/value": {
+					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
+						"text": "String2 繁體 Admin"
 					}
 				}
 			}
@@ -100,47 +167,47 @@ sap.ui.define([
 		"url": "http://",
 		"number": 0.5
 	};
-	var _oContentChangesOfObjectsWithWithTranslations = {
-		"/sap.card/configuration/parameters/objectWithPropertiesDefined1/value": oValueOfObject1InContentChange,
-		"/sap.card/configuration/parameters/objectWithPropertiesDefined2/value": oValueOfObject2InContentChange,
+	var _oContentChangesOfObjectListsWithTranslations = {
+		"/sap.card/configuration/parameters/objectListWithTranslations1/value": [oValueOfObject1InContentChange],
+		"/sap.card/configuration/parameters/objectListWithTranslations2/value": [oValueOfObject2InContentChange],
 		":layer": 5,
 		":errors": false,
 		"texts": {
 			"en": {
-				"/sap.card/configuration/parameters/objectWithPropertiesDefined1/value": {
+				"/sap.card/configuration/parameters/objectListWithTranslations1/value": {
 					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
 						"text": "String2 EN Content"
 					}
 				},
-				"/sap.card/configuration/parameters/objectWithPropertiesDefined2/value": {
+				"/sap.card/configuration/parameters/objectListWithTranslations2/value": {
 					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
 						"text": "String1 EN Content"
 					}
 				}
 			},
 			"fr": {
-				"/sap.card/configuration/parameters/objectWithPropertiesDefined2/value": {
+				"/sap.card/configuration/parameters/objectListWithTranslations2/value": {
 					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
 						"text": "String1 FR Content"
 					}
 				}
 			},
 			"ru": {
-				"/sap.card/configuration/parameters/objectWithPropertiesDefined1/value": {
+				"/sap.card/configuration/parameters/objectListWithTranslations1/value": {
 					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
 						"text": "String2 RU Content"
 					}
 				}
 			},
 			"zh-CN": {
-				"/sap.card/configuration/parameters/objectWithPropertiesDefined2/value": {
+				"/sap.card/configuration/parameters/objectListWithTranslations2/value": {
 					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
 						"text": "String1 简体 Content"
 					}
 				}
 			},
 			"zh-TW": {
-				"/sap.card/configuration/parameters/objectWithPropertiesDefined1/value": {
+				"/sap.card/configuration/parameters/objectListWithTranslations1/value": {
 					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
 						"text": "String2 繁體 Content"
 					}
@@ -148,11 +215,14 @@ sap.ui.define([
 			}
 		}
 	};
-	var _oExpectedValuesOfChangesFromContent = {
+
+	var _oExpectedValuesOfChangesFromAdminAndContent = {
 		"objectWithPropertiesDefined1": {
 			"default": "string2",
 			"en": "String2 EN Content",
+			"fr": "String1 FR Admin",
 			"ru": "String2 RU Content",
+			"zh-CN": "String1 简体 Admin",
 			"zh-TW": "String2 繁體 Content"
 		},
 		"objectWithPropertiesDefined2": {
@@ -163,7 +233,9 @@ sap.ui.define([
 			"fr": "String1 FR Content",
 			"fr-FR": "String 1 French",
 			"fr-CA": "String 1 French CA",
-			"zh-CN": "String1 简体 Content"
+			"ru": "String2 RU Admin",
+			"zh-CN": "String1 简体 Content",
+			"zh-TW": "String2 繁體 Admin"
 		}
 	};
 
@@ -205,20 +277,20 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("translatable property", {
-		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-		},
-		afterEach: function () {
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-		}
-	}, function () {
-		_oCheckedModesOfChange.content.forEach(function(sMode) {
+	_oCheckedModesOfChange.adminAndContent.forEach(function(sMode) {
+		QUnit.module(sMode + " mode", {
+			beforeEach: function () {
+				this.oHost = new Host("host");
+				this.oContextHost = new ContextHost("contexthost");
+			},
+			afterEach: function () {
+				this.oHost.destroy();
+				this.oContextHost.destroy();
+			}
+		}, function () {
 			_aCheckedLanguages.forEach(function(sLanguage) {
 				var sLanguageKey = sLanguage.key;
-				var sCaseTitle = sMode + " mode - in " + sLanguageKey + " (" + sLanguage.description + ")";
+				var sCaseTitle = "in " + sLanguageKey + " (" + sLanguage.description + ")";
 				QUnit.test(sCaseTitle, function (assert) {
 					var that = this;
 					return new Promise(function (resolve, reject) {
@@ -229,8 +301,8 @@ sap.ui.define([
 						that.oEditor.setJson({
 							baseUrl: sBaseUrl,
 							host: "contexthost",
-							manifest: oManifestForobjectFieldsWithTranslations,
-							manifestChanges: [_oContentChangesOfObjectsWithWithTranslations]
+							manifest: oManifestForObjectListFieldsWithTranslations,
+							manifestChanges: [_oAdminChangesOfObjectListsWithTranslations, _oContentChangesOfObjectListsWithTranslations]
 						});
 						that.oEditor.attachReady(function () {
 							assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -243,8 +315,8 @@ sap.ui.define([
 							wait().then(function () {
 								assert.ok(oLabel1.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 								assert.ok(oLabel1.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
-								assert.ok(oField1.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-								assert.ok(deepEqual(oField1._getCurrentProperty("value"), oValueOfObject1InContentChange), "Field 1: Value");
+								assert.ok(oField1.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+								assert.ok(deepEqual(oField1._getCurrentProperty("value"), [oValueOfObject1InContentChange]), "Field 1: Value");
 								var oTable1 = oField1.getAggregation("_field");
 								var oToolbar1 = oTable1.getToolbar();
 								assert.ok(oTable1.getBinding().getCount() === 9, "Table 1: value length is 9");
@@ -255,7 +327,7 @@ sap.ui.define([
 								var oRow1 = oTable1.getRows()[0];
 								assert.ok(deepEqual(oRow1.getBindingContext().getObject(), oSelectedValueOfField1), "Table 1: value object is the first row");
 								var oTextCell1 = oRow1.getCells()[3];
-								var sTextPropertyValue = _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined1"][sLanguageKey] || _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined1"]["default"];
+								var sTextPropertyValue = _oExpectedValuesOfChangesFromAdminAndContent["objectWithPropertiesDefined1"][sLanguageKey] || _oExpectedValuesOfChangesFromAdminAndContent["objectWithPropertiesDefined1"]["default"];
 								assert.ok(oTextCell1.getText() === sTextPropertyValue, "Row 1: text cell value");
 								oTable1.setSelectedIndex(0);
 								oTable1.fireRowSelectionChange({
@@ -311,7 +383,7 @@ sap.ui.define([
 												var oCustomData = oLanguageItems3[i].getCustomData();
 												if (oCustomData && oCustomData.length > 0) {
 													var sLanguage = oCustomData[0].getKey();
-													var sExpectedValue = _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined1"][sLanguage] || _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined1"]["default"];
+													var sExpectedValue = _oExpectedValuesOfChangesFromAdminAndContent["objectWithPropertiesDefined1"][sLanguage] || _oExpectedValuesOfChangesFromAdminAndContent["objectWithPropertiesDefined1"]["default"];
 													var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 													assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 												}
@@ -321,8 +393,8 @@ sap.ui.define([
 											wait().then(function () {
 												assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 												assert.ok(oLabel2.getText() === "Object properties defined: value from Json list", "Label 2: Has label text");
-												assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
-												assert.ok(deepEqual(oField2._getCurrentProperty("value"), oValueOfObject2InContentChange), "Field 2: Value");
+												assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 2: Object List Field");
+												assert.ok(deepEqual(oField2._getCurrentProperty("value"), [oValueOfObject2InContentChange]), "Field 2: Value");
 												var oTable2 = oField2.getAggregation("_field");
 												var oToolbar2 = oTable2.getToolbar();
 												assert.ok(oTable2.getBinding().getCount() === 9, "Table 2: value length is 9");
@@ -333,7 +405,7 @@ sap.ui.define([
 												oRow1 = oTable2.getRows()[0];
 												assert.ok(deepEqual(oRow1.getBindingContext().getObject(), oSelectedValueOfField2), "Table 2: value object is the first row");
 												oTextCell1 = oRow1.getCells()[3];
-												sTextPropertyValue = _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined2"][sLanguageKey] || _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined2"]["default"];
+												sTextPropertyValue = _oExpectedValuesOfChangesFromAdminAndContent["objectWithPropertiesDefined2"][sLanguageKey] || _oExpectedValuesOfChangesFromAdminAndContent["objectWithPropertiesDefined2"]["default"];
 												assert.ok(oTextCell1.getText() === sTextPropertyValue, "Row 1: text cell value");
 												oTable2.setSelectedIndex(0);
 												oTable2.fireRowSelectionChange({
@@ -387,7 +459,7 @@ sap.ui.define([
 															var oCustomData = oLanguageItems3[i].getCustomData();
 															if (oCustomData && oCustomData.length > 0) {
 																var sLanguage = oCustomData[0].getKey();
-																var sExpectedValue = _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined2"][sLanguage] || _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined2"]["default"];
+																var sExpectedValue = _oExpectedValuesOfChangesFromAdminAndContent["objectWithPropertiesDefined2"][sLanguage] || _oExpectedValuesOfChangesFromAdminAndContent["objectWithPropertiesDefined2"]["default"];
 																var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 																assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 															}

@@ -157,9 +157,17 @@ sap.ui.define([
 
 		this._oEditorManifest = this._oEditorCard._oCardManifest;
 		this._registerManifestModulePath();
-		this._oInitialManifestModel = new JSONModel(this._oEditorManifest._oInitialJson);
-		this.setProperty("json", this._oEditorManifest._oInitialJson, bSuppress);
-		var oManifestJson = this._oEditorManifest._oManifest.getRawJson();
+		// since Manifest.js will translate i18n values in the manifest.json which we don't want to,
+		// so we need to get inital manifest json, merge it with before layer changes by ourself to keep the i18n key
+		var oInitialJson = this._oEditorManifest._oInitialJson;
+		this._oInitialManifestModel = new JSONModel(oInitialJson);
+		this.setProperty("json", oInitialJson, bSuppress);
+		var oManifestJson;
+		if (this._beforeLayerManifestChanges) {
+			oManifestJson = Merger.mergeDelta(oInitialJson, [this._beforeLayerManifestChanges]);
+		} else {
+			oManifestJson = oInitialJson;
+		}
 		var _beforeCurrentLayer = merge({}, oManifestJson);
 		this._beforeManifestModel = new JSONModel(_beforeCurrentLayer);
 		if (iCurrentModeIndex < Merger.layers["translation"] && this._currentLayerManifestChanges) {

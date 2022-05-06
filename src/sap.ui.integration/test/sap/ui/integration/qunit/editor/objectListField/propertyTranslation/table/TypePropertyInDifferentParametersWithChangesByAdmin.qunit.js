@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
-	"./../ContextHost",
+	"./../../../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
@@ -82,88 +82,88 @@ sap.ui.define([
 		}
 	};
 
-	var oValueOfObject1InContentChange = {
+	var oValueOfObject1InAdminChange = {
 		"_dt": {
 			"_uuid": "111771a4-0d3f-4fec-af20-6f28f1b894cb"
-		},
-		"icon": "sap-icon://add",
-		"text": "string2",
-		"url": "http://",
-		"number": 0.5
-	};
-	var oValueOfObject2InContentChange = {
-		"_dt": {
-			"_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"
 		},
 		"icon": "sap-icon://add",
 		"text": "{i18n>string1}",
 		"url": "http://",
 		"number": 0.5
 	};
-	var _oContentChangesOfObjectListsWithTranslations = {
-		"/sap.card/configuration/parameters/objectListWithTranslations1/value": [oValueOfObject1InContentChange],
-		"/sap.card/configuration/parameters/objectListWithTranslations2/value": [oValueOfObject2InContentChange],
-		":layer": 5,
+	var oValueOfObject2InAdminChange = {
+		"_dt": {
+			"_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"
+		},
+		"icon": "sap-icon://add",
+		"text": "string2",
+		"url": "http://",
+		"number": 0.5
+	};
+	var _oAdminChangesOfObjectListsWithTranslations = {
+		"/sap.card/configuration/parameters/objectListWithTranslations1/value": [oValueOfObject1InAdminChange],
+		"/sap.card/configuration/parameters/objectListWithTranslations2/value": [oValueOfObject2InAdminChange],
+		":layer": 0,
 		":errors": false,
 		"texts": {
 			"en": {
 				"/sap.card/configuration/parameters/objectListWithTranslations1/value": {
 					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String2 EN Content"
+						"text": "String1 EN Admin"
 					}
 				},
 				"/sap.card/configuration/parameters/objectListWithTranslations2/value": {
 					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String1 EN Content"
+						"text": "String2 EN Admin"
 					}
 				}
 			},
 			"fr": {
-				"/sap.card/configuration/parameters/objectListWithTranslations2/value": {
-					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String1 FR Content"
+				"/sap.card/configuration/parameters/objectListWithTranslations1/value": {
+					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
+						"text": "String1 FR Admin"
 					}
 				}
 			},
 			"ru": {
-				"/sap.card/configuration/parameters/objectListWithTranslations1/value": {
-					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String2 RU Content"
+				"/sap.card/configuration/parameters/objectListWithTranslations2/value": {
+					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
+						"text": "String2 RU Admin"
 					}
 				}
 			},
 			"zh-CN": {
-				"/sap.card/configuration/parameters/objectListWithTranslations2/value": {
-					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String1 简体 Content"
+				"/sap.card/configuration/parameters/objectListWithTranslations1/value": {
+					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
+						"text": "String1 简体 Admin"
 					}
 				}
 			},
 			"zh-TW": {
-				"/sap.card/configuration/parameters/objectListWithTranslations1/value": {
-					"111771a4-0d3f-4fec-af20-6f28f1b894cb": {
-						"text": "String2 繁體 Content"
+				"/sap.card/configuration/parameters/objectListWithTranslations2/value": {
+					"222771a4-0d3f-4fec-af20-6f28f1b894cb": {
+						"text": "String2 繁體 Admin"
 					}
 				}
 			}
 		}
 	};
-	var _oExpectedValuesOfChangesFromContent = {
+	var _oExpectedValuesOfChangesFromAdmin = {
 		"objectWithPropertiesDefined1": {
-			"default": "string2",
-			"en": "String2 EN Content",
-			"ru": "String2 RU Content",
-			"zh-TW": "String2 繁體 Content"
-		},
-		"objectWithPropertiesDefined2": {
 			"default": "String 1 English",
-			"en": "String1 EN Content",
+			"en": "String1 EN Admin",
 			"en-US": "String 1 US English",
 			"es-MX": "String 1 Spanish MX",
-			"fr": "String1 FR Content",
+			"fr": "String1 FR Admin",
 			"fr-FR": "String 1 French",
 			"fr-CA": "String 1 French CA",
-			"zh-CN": "String1 简体 Content"
+			"zh-CN": "String1 简体 Admin"
+		},
+		"objectWithPropertiesDefined2": {
+			"default": "string2",
+			"en": "String2 EN Admin",
+			"ru": "String2 RU Admin",
+			"zh-TW": "String2 繁體 Admin"
 		}
 	};
 
@@ -205,20 +205,20 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("translatable property", {
-		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-		},
-		afterEach: function () {
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-		}
-	}, function () {
-		_oCheckedModesOfChange.content.forEach(function(sMode) {
+	_oCheckedModesOfChange.admin.forEach(function(sMode) {
+		QUnit.module(sMode + " mode", {
+			beforeEach: function () {
+				this.oHost = new Host("host");
+				this.oContextHost = new ContextHost("contexthost");
+			},
+			afterEach: function () {
+				this.oHost.destroy();
+				this.oContextHost.destroy();
+			}
+		}, function () {
 			_aCheckedLanguages.forEach(function(sLanguage) {
 				var sLanguageKey = sLanguage.key;
-				var sCaseTitle = sMode + " mode - in " + sLanguageKey + " (" + sLanguage.description + ")";
+				var sCaseTitle = "in " + sLanguageKey + " (" + sLanguage.description + ")";
 				QUnit.test(sCaseTitle, function (assert) {
 					var that = this;
 					return new Promise(function (resolve, reject) {
@@ -230,7 +230,7 @@ sap.ui.define([
 							baseUrl: sBaseUrl,
 							host: "contexthost",
 							manifest: oManifestForObjectListFieldsWithTranslations,
-							manifestChanges: [_oContentChangesOfObjectListsWithTranslations]
+							manifestChanges: [_oAdminChangesOfObjectListsWithTranslations]
 						});
 						that.oEditor.attachReady(function () {
 							assert.ok(that.oEditor.isReady(), "Editor is ready");
@@ -238,13 +238,13 @@ sap.ui.define([
 							var oField1 = that.oEditor.getAggregation("_formContent")[2];
 							var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
 							var oField2 = that.oEditor.getAggregation("_formContent")[4];
-							var oSelectedValueOfField1 = merge(deepClone(oValueOfObject1InContentChange, 500), {"_dt": {"_selected": true}});
-							var oSelectedValueOfField2 = merge(deepClone(oValueOfObject2InContentChange, 500), {"_dt": {"_selected": true}});
+							var oSelectedValueOfField1 = merge(deepClone(oValueOfObject1InAdminChange, 500), {"_dt": {"_selected": true}});
+							var oSelectedValueOfField2 = merge(deepClone(oValueOfObject2InAdminChange, 500), {"_dt": {"_selected": true}});
 							wait().then(function () {
 								assert.ok(oLabel1.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 								assert.ok(oLabel1.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
 								assert.ok(oField1.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-								assert.ok(deepEqual(oField1._getCurrentProperty("value"), [oValueOfObject1InContentChange]), "Field 1: Value");
+								assert.ok(deepEqual(oField1._getCurrentProperty("value"), [oValueOfObject1InAdminChange]), "Field 1: Value");
 								var oTable1 = oField1.getAggregation("_field");
 								var oToolbar1 = oTable1.getToolbar();
 								assert.ok(oTable1.getBinding().getCount() === 9, "Table 1: value length is 9");
@@ -255,7 +255,7 @@ sap.ui.define([
 								var oRow1 = oTable1.getRows()[0];
 								assert.ok(deepEqual(oRow1.getBindingContext().getObject(), oSelectedValueOfField1), "Table 1: value object is the first row");
 								var oTextCell1 = oRow1.getCells()[3];
-								var sTextPropertyValue = _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined1"][sLanguageKey] || _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined1"]["default"];
+								var sTextPropertyValue = _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined1"][sLanguageKey] || _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined1"]["default"];
 								assert.ok(oTextCell1.getText() === sTextPropertyValue, "Row 1: text cell value");
 								oTable1.setSelectedIndex(0);
 								oTable1.fireRowSelectionChange({
@@ -287,7 +287,7 @@ sap.ui.define([
 										assert.ok(oFormField3.isA("sap.m.Input"), "SimpleForm 1 Field 3: Input Field");
 										assert.ok(oFormField3.getVisible(), "SimpleForm 1 Field 3: Visible");
 										assert.ok(oFormField3.getEditable(), "SimpleForm 1 Field 3: Editable");
-										assert.ok(oFormField3.getValue() === oValueOfObject1InContentChange.text, "SimpleForm 1 field 3: Has value");
+										assert.ok(oFormField3.getValue() === oValueOfObject1InAdminChange.text, "SimpleForm 1 field 3: Has value");
 										assert.ok(oFormField3.getShowValueHelp(), "SimpleForm 1 field 3: ShowValueHelp true");
 										var oValueHelpIcon3 = oFormField3._oValueHelpIcon;
 										assert.ok(oValueHelpIcon3, "SimpleForm 1 field 3: Value help icon exist");
@@ -311,7 +311,7 @@ sap.ui.define([
 												var oCustomData = oLanguageItems3[i].getCustomData();
 												if (oCustomData && oCustomData.length > 0) {
 													var sLanguage = oCustomData[0].getKey();
-													var sExpectedValue = _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined1"][sLanguage] || _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined1"]["default"];
+													var sExpectedValue = _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined1"][sLanguage] || _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined1"]["default"];
 													var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 													assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 												}
@@ -322,7 +322,7 @@ sap.ui.define([
 												assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 												assert.ok(oLabel2.getText() === "Object properties defined: value from Json list", "Label 2: Has label text");
 												assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 2: Object List Field");
-												assert.ok(deepEqual(oField2._getCurrentProperty("value"), [oValueOfObject2InContentChange]), "Field 2: Value");
+												assert.ok(deepEqual(oField2._getCurrentProperty("value"), [oValueOfObject2InAdminChange]), "Field 2: Value");
 												var oTable2 = oField2.getAggregation("_field");
 												var oToolbar2 = oTable2.getToolbar();
 												assert.ok(oTable2.getBinding().getCount() === 9, "Table 2: value length is 9");
@@ -333,7 +333,7 @@ sap.ui.define([
 												oRow1 = oTable2.getRows()[0];
 												assert.ok(deepEqual(oRow1.getBindingContext().getObject(), oSelectedValueOfField2), "Table 2: value object is the first row");
 												oTextCell1 = oRow1.getCells()[3];
-												sTextPropertyValue = _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined2"][sLanguageKey] || _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined2"]["default"];
+												sTextPropertyValue = _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined2"][sLanguageKey] || _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined2"]["default"];
 												assert.ok(oTextCell1.getText() === sTextPropertyValue, "Row 1: text cell value");
 												oTable2.setSelectedIndex(0);
 												oTable2.fireRowSelectionChange({
@@ -363,7 +363,7 @@ sap.ui.define([
 													assert.ok(oFormField3.isA("sap.m.Input"), "SimpleForm 2 Field 3: Input Field");
 													assert.ok(oFormField3.getVisible(), "SimpleForm 2 Field 3: Visible");
 													assert.ok(oFormField3.getEditable(), "SimpleForm 2 Field 3: Editable");
-													assert.ok(oFormField3.getValue() === oValueOfObject2InContentChange.text, "SimpleForm 2 field 3: Has value");
+													assert.ok(oFormField3.getValue() === oValueOfObject2InAdminChange.text, "SimpleForm 2 field 3: Has value");
 													assert.ok(oFormField3.getShowValueHelp(), "SimpleForm 2 field 3: ShowValueHelp true");
 													oValueHelpIcon3 = oFormField3._oValueHelpIcon;
 													assert.ok(oValueHelpIcon3, "SimpleForm field 3: Value help icon exist");
@@ -387,7 +387,7 @@ sap.ui.define([
 															var oCustomData = oLanguageItems3[i].getCustomData();
 															if (oCustomData && oCustomData.length > 0) {
 																var sLanguage = oCustomData[0].getKey();
-																var sExpectedValue = _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined2"][sLanguage] || _oExpectedValuesOfChangesFromContent["objectWithPropertiesDefined2"]["default"];
+																var sExpectedValue = _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined2"][sLanguage] || _oExpectedValuesOfChangesFromAdmin["objectWithPropertiesDefined2"]["default"];
 																var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 																assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 															}
