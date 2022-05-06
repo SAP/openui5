@@ -408,9 +408,10 @@ sap.ui.define([
 		var bCompositeType = _isCompositeType.call(this, oType);
 
 		if (oCondition && !bIsUnit && bCompositeType) {
-			var sName = oType.getMetadata().getName();
-			var oFormatOptions = oType.getFormatOptions();
-			var oConstraints = oType.getConstraints();
+			var oOriginalType = _getOriginalType.call(this) || oType; // use original type for determination if unit as valueType might mapped different (if no original type, valueType is original)
+			var sName = oOriginalType.getMetadata().getName();
+			var oFormatOptions = oOriginalType.getFormatOptions();
+			var oConstraints = oOriginalType.getConstraints();
 			var oDelegate = this.oFormatOptions.delegate;
 			var oPayload = this.oFormatOptions.payload;
 			var sBaseType = oDelegate && oDelegate.getTypeUtil(oPayload).getBaseType(sName, oFormatOptions, oConstraints); // don't use _getBaseType to get "real" unit type
