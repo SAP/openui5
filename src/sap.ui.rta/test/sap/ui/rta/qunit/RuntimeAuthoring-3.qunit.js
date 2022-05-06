@@ -768,10 +768,15 @@ sap.ui.define([
 				showToolbars: false
 			});
 			var oDesigntimeAddRootElementSpy = sandbox.spy(DesignTime.prototype, "addRootElement");
-			return Promise.all([oRuntimeAuthoring.start(), oRuntimeAuthoring.start()])
-				.then(function() {
-					assert.strictEqual(oDesigntimeAddRootElementSpy.callCount, 1, "the the designtime is going to start once");
-				});
+			return oRuntimeAuthoring.start().then(function() {
+				assert.strictEqual(oDesigntimeAddRootElementSpy.callCount, 1, "the the designtime is going to start once");
+
+				return oRuntimeAuthoring.start();
+			})
+			.catch(function(sError) {
+				assert.strictEqual(oDesigntimeAddRootElementSpy.callCount, 1, "the the designtime is not started again");
+				assert.strictEqual(sError, "RuntimeAuthoring is already started", "the start function rejects");
+			});
 		});
 
 		QUnit.test("when the uri-parameter sap-ui-layer is set to 'VENDOR',", function(assert) {

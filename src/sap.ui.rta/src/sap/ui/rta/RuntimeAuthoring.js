@@ -201,7 +201,13 @@ sap.ui.define([
 				stop: {},
 
 				/** Fired when the runtime authoring failed to start */
-				failed: {},
+				failed: {
+					parameters: {
+						error: {
+							type: "any"
+						}
+					}
+				},
 
 				/**
 				 * Event fired when a DesignTime selection is changed
@@ -569,19 +575,17 @@ sap.ui.define([
 				});
 			}.bind(this))
 			.catch(function (vError) {
-				if (vError !== "Reload triggered") {
-					this._sStatus = FAILED;
-					this.fireFailed(vError);
-				}
-				if (vError) {
-					// destroy rta when reload is triggered
+				if (vError === "Reload triggered") {
+					// destroy rta when reload is triggered - otherwise the consumer needs to take care of this
 					this.destroy();
-					return Promise.reject(vError);
+				} else {
+					this._sStatus = FAILED;
+					this.fireFailed({error: vError});
 				}
-				return undefined;
+				return Promise.reject(vError);
 			}.bind(this));
 		}
-		return undefined;
+		return Promise.reject("RuntimeAuthoring is already started");
 	};
 
 	function _ffContextMenuHandler() {
