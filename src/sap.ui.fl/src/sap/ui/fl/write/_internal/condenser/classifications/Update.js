@@ -10,7 +10,8 @@ sap.ui.define([
 
 	return {
 		/**
-		 * Adds a LastOneWins change to the map with reduced changes if there is no change of that unique key already.
+		 * Adds a Update change to the map with reduced changes.
+		 * The last Update change always wins, so all others can be deleted.
 		 *
 		 * @param {Map} mProperties - Map with all reduced changes
 		 * @param {string} oCondenserInfo - Condenser information
@@ -18,7 +19,8 @@ sap.ui.define([
 		 */
 		addToChangesMap: function(mProperties, oCondenserInfo, oChange) {
 			if (!mProperties[oCondenserInfo.uniqueKey]) {
-				mProperties[oCondenserInfo.uniqueKey] = [oChange];
+				oCondenserInfo.change = oChange;
+				mProperties[oCondenserInfo.uniqueKey] = oCondenserInfo;
 				oChange.condenserState = "select";
 			} else {
 				oChange.condenserState = "delete";

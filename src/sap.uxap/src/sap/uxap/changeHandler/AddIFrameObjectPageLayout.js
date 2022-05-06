@@ -89,5 +89,18 @@ sap.ui.define([
 			});
 	};
 
+	AddIFrameObjectPageLayout.getCondenserInfo = function(oChange) {
+		var oCondenserInfo = Object.assign({}, BaseAddIFrame.getCondenserInfo(oChange));
+		var oChangeDefinition = oChange.getDefinition();
+		var sAggregationName = oChangeDefinition.content.targetAggregation;
+		// The update of iFrames is done on the iFrame itself - which has a different selector
+		// that needs to be passed to the condenser so it can collect all changes under the same group
+		if (sAggregationName === "sections") {
+			oCondenserInfo.updateControl = Object.assign({}, oCondenserInfo.affectedControl);
+			oCondenserInfo.updateControl.id = oCondenserInfo.affectedControl.id + '-iframe';
+		}
+		return oCondenserInfo;
+	};
+
 	return AddIFrameObjectPageLayout;
 }, /* bExport= */true);

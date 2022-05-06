@@ -3,6 +3,7 @@
 sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
 	// "sap/ui/core/ComponentContainer",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	// "sap/ui/core/UIComponent",
 	// "sap/ui/mdc/TableDelegate",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	// ComponentContainer,
+	XMLView,
 	JsControlTreeModifier,
 	// UIComponent,
 	// TableDelegate,
@@ -165,7 +167,7 @@ sap.ui.define([
 		}.bind(this));
 	}
 
-	QUnit.module("Condenser with default and smartform changes", {
+	QUnit.module("Given an app with a SmartForm", {
 		before: function() {
 			return RtaQunitUtils.renderTestAppAtAsync("qunit-fixture").then(function(oComp) {
 				oAppComponent = oComp.getComponentInstance();
@@ -665,7 +667,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Condenser with template changes", {
+	QUnit.module("Given an app with controls with templates", {
 		before: function() {
 			return RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture").then(function(oComp) {
 				oAppComponent = oComp.getComponentInstance();
@@ -692,6 +694,48 @@ sap.ui.define([
 				assert.equal(aRemainingChanges[2].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
 				assert.equal(aRemainingChanges[3].getChangeType(), sMoveChangeType, sChangeTypeMsg + sMoveChangeType);
 				assert.equal(aRemainingChanges[4].getChangeType(), sMoveChangeType, sChangeTypeMsg + sMoveChangeType);
+			});
+		});
+	});
+
+	QUnit.module("Given an ObjectPageLayout", {
+		before: function() {
+			return XMLView.create({
+				viewName: "sap.ui.fl.testResources.condenser.ObjectPageLayout",
+				id: "myView"
+			}).then(function(oView) {
+				oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "componentId", undefined, oView);
+			});
+		},
+		beforeEach: function() {
+			this.aChanges = [];
+		},
+		afterEach: function() {
+			return revertMultipleChanges(this.aChanges).then(function() {
+				sandbox.restore();
+			});
+		},
+		after: function() {
+			oAppComponent._restoreGetAppComponentStub();
+			oAppComponent.destroy();
+		}
+	}, function() {
+		[true, false].forEach(function(bPersistedChanges) {
+			var sName = "addIFrame and updateIFrame together" + (bPersistedChanges ? " with some persisted changes" : "");
+			QUnit.test(sName, function(assert) {
+				var aPersistedChanges = bPersistedChanges ? [0, 1, 2, 3] : [];
+				// eslint-disable-next-line max-nested-callbacks
+				return loadApplyCondenseChanges.call(this, "addIFrameUpdateIFrame.json", 6, 2, assert, aPersistedChanges).then(function(aRemainingChanges) {
+					assert.strictEqual(aRemainingChanges[0].condenserState, bPersistedChanges ? "update" : "select", "the condenser state is set correctly");
+					assert.strictEqual(aRemainingChanges[0].getContent().url, "https://www.example.com", "the url got updated");
+					assert.strictEqual(aRemainingChanges[0].getContent().height, "200px", "the height got updated");
+					assert.strictEqual(aRemainingChanges[0].getContent().width, "16rem", "the width got updated");
+
+					assert.strictEqual(aRemainingChanges[1].condenserState, bPersistedChanges ? "update" : "select", "the condenser state is set correctly");
+					assert.strictEqual(aRemainingChanges[1].getContent().url, "https://www.example.com", "the url got updated");
+					assert.strictEqual(aRemainingChanges[1].getContent().height, "100px", "the height got updated");
+					assert.strictEqual(aRemainingChanges[1].getContent().width, "10rem", "the width got updated");
+				});
 			});
 		});
 	});
