@@ -3396,12 +3396,12 @@ sap.ui.define([
 						// the i18n processing has already happened and we skip this part.
 
 						// Why do we set the oManifest object here?
-						// > If we have instance specific information like "activeTerminologies", the resulting
+						// > If we have instance specific information like "activeTerminologies" (non-empty array), the resulting
 						//   Manifest instance differs from the Manifest that is stored on the ComponentMetadata.
 						//   The function prepareControllerClass() then creates a ComponentMetadata Proxy,
 						//   which encapsulates this single instance specific Manifest object.
 						var pProcessI18n = Promise.resolve();
-						if (!oManifest && mOptions.activeTerminologies) {
+						if (!oManifest && Array.isArray(mOptions.activeTerminologies) && mOptions.activeTerminologies.length > 0) {
 							oManifest = new Manifest(oMetadata.getManifestObject().getRawJson(), {
 								process: false,
 								activeTerminologies: aActiveTerminologies
