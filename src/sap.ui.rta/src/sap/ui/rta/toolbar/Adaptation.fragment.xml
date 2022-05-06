@@ -207,7 +207,7 @@
 				<toolbar:OverflowToolbarButton
 						id="sapUiRta_saveAs"
 						visible="{= (${controls>/saveAsVisible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
-						enabled="{controls>/saveAsEnabled}"
+						enabled="{parts: ['controls>/saveAsEnabled', 'versions>/displayedVersion'], formatter: '.formatSaveAsEnabled'}"
 						press=".saveAs"
 						type="Transparent"
 						text="{i18n>BTN_SAVE_AS}" >
