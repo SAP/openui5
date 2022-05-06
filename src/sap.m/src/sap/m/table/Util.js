@@ -62,6 +62,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] The settings object
 	 * @param {int} [mSettings.maxWidth=19] The maximum content width of the field in rem
 	 * @param {int} [mSettings.defaultWidth=8] The default column content width when type check fails
+	 * @param {float} [mSettings.gap=0] The additional content width in rem
 	 * @returns {float} The calculated width of the ODataType converted to rem
 	 * @private
 	 */
@@ -76,6 +77,11 @@ sap.ui.define([
 		return function(oType, mSettings) {
 
 			var sType = oType.getMetadata().getName().split(".").pop();
+			var iMaxWidth = mSettings && mSettings.maxWidth || 19;
+			var iGap = mSettings && mSettings.gap || 0;
+			var applySettings = function(fCalculatedWidth) {
+				return Math.min(fCalculatedWidth + iGap, iMaxWidth);
+			};
 
 			if (sType == "Boolean") {
 				if (!fBooleanWidth) {
@@ -84,13 +90,11 @@ sap.ui.define([
 					var fNoWidth = Util.measureText(oResourceBundle.getText("NO"));
 					fBooleanWidth = Math.max(fYesWidth, fNoWidth);
 				}
-				return fBooleanWidth;
+				return applySettings(fBooleanWidth);
 			}
 
 			if (sType == "String" || oType.isA("sap.ui.model.odata.type.String")) {
-				var iMaxWidth = mSettings && mSettings.maxWidth || 19;
 				var iMaxLength = parseInt(oType.getConstraints().maxLength) || 0;
-
 				if (!iMaxLength) {
 					return Math.max(Math.min(10, iMaxWidth), iMaxWidth * 0.75);
 				}
@@ -104,7 +108,7 @@ sap.ui.define([
 				}
 
 				var fWidth = Math.log(fSampleWidth - iMaxWidth * 0.16) / Math.log(iMaxWidth / 3) * (iMaxWidth / 2) * Math.pow(iMaxWidth / 19, 1 / fSampleWidth);
-				return Math.min(fWidth, fSampleWidth, iMaxWidth);
+				return applySettings(Math.min(fWidth, fSampleWidth));
 			}
 
 			if (sType.startsWith("Date") || sType.startsWith("Time")) {
@@ -123,7 +127,7 @@ sap.ui.define([
 						sSample += (sWideFormat.length == 4 ? "---" : "-");
 					});
 				}
-				return Util.measureText(sSample);
+				return applySettings(Util.measureText(sSample));
 			}
 
 			if (mNumericLimits[sType]) {
@@ -132,7 +136,7 @@ sap.ui.define([
 				iPrecision = Math.min(iPrecision, mNumericLimits[sType]);
 				var sNumber = 2 * Math.pow(10, iPrecision - iScale - 1);
 				sNumber = oType.formatValue(sNumber, "string");
-				return Util.measureText(sNumber);
+				return applySettings(Util.measureText(sNumber));
 			}
 
 			return mSettings && mSettings.defaultWidth || 8;

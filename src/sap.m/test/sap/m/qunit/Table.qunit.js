@@ -3210,4 +3210,14 @@ sap.ui.define([
 			);
 		}, this);
 	});
+
+	QUnit.test("AriaLabelledBy", function(assert) {
+		this.vt.getColumns().forEach(function(oColumn, iColumnIndex) {
+			assert.equal(Core.byId(this.vt.getItems()[0].getCells()[iColumnIndex].getAriaLabelledBy()[0]).getParent(), oColumn);
+			assert.equal(
+				Core.byId(this.vt.getItems()[0].getCells()[iColumnIndex].getAriaLabelledBy()[0]).getParent().getId(),
+				this.vt.getItems()[0].$().find(".sapMListTblCell").eq(iColumnIndex).attr("headers")
+			);
+		}, this);
+	});
 });
