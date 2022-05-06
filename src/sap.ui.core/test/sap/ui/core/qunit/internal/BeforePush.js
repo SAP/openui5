@@ -60,20 +60,19 @@
 			return mTests[sUrl] !== sUnwanted;
 		});
 		if (bRealOData === false) {
-			// remove the query property "realOData" at each URL; remove duplicates
-			aTests.forEach(function (sUrl) {
-				var sTest = sUrl.replace(/\?.*$/, ""); // the URL w/o query parameters
+			aTests = aTests.filter(function (sUrl) {
+				var sTest = sUrl.replace(/\?.*$/, ""), // the URL w/o query parameters
+					// run the test unless it is realOData and there was already one for this URL
+					bRun = !(sUrl.includes("realOData=true") && sTest in mFilter);
 
-				if (!mFilter[sTest]) {
-					mFilter[sTest] = sUrl.replace(/realOData=true(&|$)/, "").replace(/[?&]$/, "");
-				}
-			});
-			aTests = Object.keys(mFilter).map(function (sTest) {
-				return mFilter[sTest];
+				mFilter[sTest] = true;
+				return bRun;
+			}).map(function (sUrl) {
+				return sUrl.replace(/realOData=true(&|$)/, "").replace(/[?&]$/, "");
 			});
 		} else if (bRealOData === true) {
 			aTests = aTests.filter(function (sTest) {
-				return /realOData=true/.test(sTest);
+				return sTest.includes("realOData=true");
 			});
 		}
 		if (bIntegration) {

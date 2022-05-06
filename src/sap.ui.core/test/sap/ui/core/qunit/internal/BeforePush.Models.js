@@ -7,10 +7,13 @@
  * You can find more information about how to configure the BeforePush test in the main test runner
  * file (BeforePush.js).
  */
-sap.ui.define(function () {
+sap.ui.define([
+	"sap/ui/core/qunit/internal/testsuite.models.qunit"
+ ],function (oTestSuite) {
 	"use strict";
 
-	var sPathName = window.location.pathname,
+	var sSuite = "../../../../resources/sap/ui/test/starter/Test.qunit.html"
+			+ "?testsuite=test-resources/sap/ui/core/qunit/internal/testsuite.models.qunit&test=",
 		mTests = {
 			'internal/samples/odata/twoFields/Opa.qunit.html' : 'both',
 			'internal/samples/odata/v2/SalesOrders/Opa.qunit.html' : 'both',
@@ -21,14 +24,11 @@ sap.ui.define(function () {
 			'demokit/sample/ViewTemplate/types/Opa.qunit.html?supportAssistant=true' : 'both',
 			'demokit/sample/ViewTemplate/types/Opa.qunit.html?realOData=true' : 'both',
 			'qunit/internal/AnnotationParser.qunit.html?hidepassed&coverage' : 'both'
-		},
-		sTestSuite = "../qunit/testrunner.html?testpage="
-			// enable both URLs with /testsuite/ (maven/grunt) and without (npm)
-			+ encodeURIComponent(sPathName.slice(0, sPathName.indexOf("/test-resources/"))
-				+ "/test-resources/sap/ui/core/qunit/internal/testsuite.models.qunit.html")
-			+ "&autostart=true";
+		};
 
-	mTests[sTestSuite] = "both";
+	Object.keys(oTestSuite.tests).forEach(function (sTest) {
+		mTests[sSuite + sTest] = "both";
+	});
 
 	return mTests;
 });
