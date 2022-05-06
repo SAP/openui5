@@ -81,6 +81,7 @@ sap.ui.define([
 				oVM.setModel(oModel, Utils.VARIANT_MODEL_NAME);
 			});
 			this._oWrapper = new VerticalLayout(this.getId() + "--accWrapper", {
+				visible: false,
 				content: [
 					oVM
 				]

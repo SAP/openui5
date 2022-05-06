@@ -49,7 +49,7 @@ sap.ui.define([
 		var aStaticAreaContent = oCore.getUIArea(oCore.getStaticAreaRef()).getContent();
 
 		this.oPP.onAfterRendering = function() {
-			assert.equal(aStaticAreaContent[0].getDomRef().getAttribute("aria-hidden"), "true", "accWrapper container sets aria-hidden attribute");
+			assert.notOk(aStaticAreaContent[0].getDomRef(), "accWrapper will not render in the dom");
 			done();
 		};
 
