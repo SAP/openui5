@@ -914,11 +914,11 @@ sap.ui.define([
 		this.iCreatedContexts += 1;
 		oContext = Context.create(this.oModel, this, sTransientPath, -this.iCreatedContexts,
 			oCreatePromise, bInactive);
-		oContext.fetchValue("", null, true).then(function (oElement) {
+		// to make sure that #fetchValue does not overtake #createInCache, avoid bCached flag!
+		oContext.fetchValue().then(function (oElement) {
 			if (oElement) {
 				_Helper.setPrivateAnnotation(oElement, "context", oContext);
-				_Helper.setPrivateAnnotation(oElement, "firstCreateAtEnd",
-					that.bFirstCreateAtEnd);
+				_Helper.setPrivateAnnotation(oElement, "firstCreateAtEnd", that.bFirstCreateAtEnd);
 			} // else: context already destroyed
 		});
 

@@ -4204,7 +4204,6 @@ sap.ui.define([
 			.withExactArgs("~update~", true, true, sinon.match.func)
 			.returns(oGroupLock0);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
-		oBindingMock.expects("getResolvedPath").thrice().withExactArgs().callThrough();
 		oCreateInCacheExpectation = oBindingMock.expects("createInCache")
 			.withExactArgs(sinon.match.same(oGroupLock0), sinon.match.same(oCreatePathPromise),
 				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData0),
@@ -4214,9 +4213,7 @@ sap.ui.define([
 			that.mock(oContext0).expects("refreshDependentBindings")
 				.withExactArgs(sinon.match(/EMPLOYEES\(\$uid=.+\)/), "$auto", true);
 		});
-		this.mock(oBinding.oCache).expects("fetchValue").twice()
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), sinon.match(/\(\$uid=.+\)/),
-				undefined, null).resolves({});
+		this.mock(oContextPrototype).expects("fetchValue").twice().withExactArgs().resolves({});
 
 		// code under test (create first entity, skip refresh)
 		oContext0 = oBinding.create(oInitialData0, true);
@@ -4232,7 +4229,6 @@ sap.ui.define([
 			.withExactArgs("~update~", true, true, sinon.match.func)
 			.returns(oGroupLock1);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
-		oBindingMock.expects("getResolvedPath").withExactArgs().callThrough();
 		oBindingMock.expects("createInCache")
 			.withExactArgs(sinon.match.same(oGroupLock1), sinon.match.same(oCreatePathPromise),
 				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData1),
@@ -4390,7 +4386,7 @@ sap.ui.define([
 						sinon.match(rTransientPredicate), sinon.match.same(oFixture.oInitialData),
 						false, sinon.match.func, sinon.match.func)
 					.returns(aCreatePromises[iCurrentCreateNo]);
-				oContextMock.expects("fetchValue").withExactArgs("", null, true).resolves({});
+				oContextMock.expects("fetchValue").withExactArgs().resolves({});
 
 				aCreatePromises[iCurrentCreateNo].then(function () {
 					oBindingMock.expects("lockGroup")
@@ -4483,8 +4479,7 @@ sap.ui.define([
 					"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData),
 					false, sinon.match.func, sinon.match.func)
 				.returns(oCreatePromise);
-			this.mock(oContextPrototype).expects("fetchValue").withExactArgs("", null, true)
-				.resolves({});
+			this.mock(oContextPrototype).expects("fetchValue").withExactArgs().resolves({});
 			oCreatePromise.then(function () {
 				that.mock(_Helper).expects("getPrivateAnnotation")
 					.withExactArgs(sinon.match.same(oCreatedEntity), "predicate")
@@ -4579,7 +4574,7 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oContext), sinon.match.same(oRefreshGroupLock))
 					.returns(oRefreshPromise);
 			});
-			oContextMock.expects("fetchValue").withExactArgs("", null, true).resolves({});
+			oContextMock.expects("fetchValue").withExactArgs().resolves({});
 
 			// code under test
 			oContext = oBinding.create(oFixture.oInitialData);
@@ -4679,8 +4674,7 @@ sap.ui.define([
 				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData),
 				false, sinon.match.func, sinon.match.func)
 			.returns(oCreatePromise);
-		this.mock(oContextPrototype).expects("fetchValue").withExactArgs("", null, true)
-			.resolves({});
+		this.mock(oContextPrototype).expects("fetchValue").withExactArgs().resolves({});
 
 		oBindingMock.expects("refreshSingle").never();
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
@@ -4754,8 +4748,7 @@ sap.ui.define([
 					sinon.match.same(oBinding), sinon.match.string, -oBinding.iCreatedContexts - 1,
 					Promise.resolve({}), undefined)
 				.returns(oNewContext0);
-			this.mock(oNewContext0).expects("fetchValue").withExactArgs("", null, true)
-				.resolves(oElement0);
+			this.mock(oNewContext0).expects("fetchValue").withExactArgs().resolves(oElement0);
 			oHelperMock.expects("setPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oElement0), "context",
 					sinon.match.same(oNewContext0));
@@ -4797,9 +4790,7 @@ sap.ui.define([
 						sinon.match.same(oBinding), sinon.match.string,
 						-oBinding.iCreatedContexts - 1, Promise.resolve({}), undefined)
 					.returns(oNewContext1);
-				this.mock(oNewContext1).expects("fetchValue")
-					.withExactArgs("", null, true)
-					.resolves(oElement1);
+				this.mock(oNewContext1).expects("fetchValue").withExactArgs().resolves(oElement1);
 				oHelperMock.expects("setPrivateAnnotation")
 					.withExactArgs(sinon.match.same(oElement1), "context",
 						sinon.match.same(oNewContext1));
@@ -4869,8 +4860,7 @@ sap.ui.define([
 				sinon.match.same(oBinding), sinon.match.string, -oBinding.iCreatedContexts - 1,
 				Promise.resolve({}), undefined)
 			.returns(oNewContext);
-		this.mock(oNewContext).expects("fetchValue").withExactArgs("", null, true)
-			.resolves(undefined);
+		this.mock(oNewContext).expects("fetchValue").withExactArgs().resolves(undefined);
 		this.mock(_Helper).expects("setPrivateAnnotation").never();
 
 		// code under test
@@ -4902,8 +4892,7 @@ sap.ui.define([
 		oBinding.createContexts(6, createData(1, 3, true, 1)); // simulate a short read
 		this.mock(oBinding).expects("createInCache")
 			.returns(SyncPromise.resolve(Promise.resolve({})));
-		this.mock(oContextPrototype).expects("fetchValue")
-			.withExactArgs("", null, true).resolves({});
+		this.mock(oContextPrototype).expects("fetchValue").withExactArgs().resolves({});
 
 		// code under test
 		oContext = oBinding.create(undefined, true, true);
@@ -4939,8 +4928,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").thrice().withExactArgs();
 		this.mock(oBinding).expects("createInCache").thrice()
 			.returns(SyncPromise.resolve(Promise.resolve({})));
-		this.mock(oContextPrototype).expects("fetchValue").thrice()
-			.withExactArgs("", null, true).resolves({});
+		this.mock(oContextPrototype).expects("fetchValue").thrice().withExactArgs().resolves({});
 
 		// code under test
 		oContext0 = oBinding.create(undefined, true, true);
@@ -4970,8 +4958,7 @@ sap.ui.define([
 		oBinding.iMaxLength = 0;
 		oExpectation = oBindingMock.expects("lockGroup").atLeast(1).returns({});
 		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
-		this.mock(oContextPrototype).expects("fetchValue").atLeast(1)
-			.withExactArgs("", null, true).resolves({});
+		this.mock(oContextPrototype).expects("fetchValue").atLeast(1).withExactArgs().resolves({});
 		oBindingMock.expects("refreshSingle").atLeast(1).returns(SyncPromise.resolve());
 
 		// code under test
