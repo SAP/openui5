@@ -164,6 +164,10 @@ sap.ui.define([
 			oContent.onHide();
 		}
 
+		this.getContent().forEach(function (oContent) {
+			oContent.onContainerClose();
+		});
+
 		// Reset selection to initial key for retrieveContent calls before it is opened again.
 		this.setProperty("_selectedContentKey", this._sInitialContentKey);
 
@@ -617,20 +621,26 @@ sap.ui.define([
 	Dialog.prototype._open = function (oDialog) {
 		if (oDialog) {
 			this._updateInitialContentKey(); // Update initial key as visibilities might change during content retrieval
+
+			var fnRenderContent = function () {
+				this._renderSelectedContent(this._sInitialContentKey, function () {
+					oDialog.open();
+					this.getContent().forEach(function (oContent) {
+						oContent.onContainerOpen();
+					});
+				}.bind(this));
+			}.bind(this);
+
 			if (_isTokenizerRequired(this.getMaxConditions(), this.getContent()) && oDialog.getContent()[0].getItems().length === 1) {
 				// Tokenizer needed but already no tokenizer
 				Promise.all([this._getTokenizerPanel()]).then(function (aControls) {
 					aControls.forEach(function (oControl) {
 						oDialog.getContent()[0].addItem(oControl);
 					});
-					this._renderSelectedContent(this._sInitialContentKey, function () {
-						oDialog.open();
-					});
+					fnRenderContent();
 				});
 			} else {
-				this._renderSelectedContent(this._sInitialContentKey, function () {
-					oDialog.open();
-				});
+				fnRenderContent();
 			}
 		}
 	};

@@ -283,22 +283,29 @@ sap.ui.define([
 		}
 	}
 
+	FilterableListContent.prototype.onContainerOpen = function () {
+		this._bInitialConditionsApplied = false;
+	};
+
 	FilterableListContent.prototype.onShow = function () {
 		ListContent.prototype.onShow.apply(this, arguments);
 
-		var oListBinding = this.getListBinding();
-		var oListBindingInfo = this._getListBindingInfo();
 
-		var bBindingSuspended = oListBinding && oListBinding.isSuspended();
-		var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
+		if (!this._bInitialConditionsApplied) {
+			this._applyInitialConditions(this._getPriorityFilterBar()); // to set incomming condition on FilterBar
+			this._bInitialConditionsApplied = true;
 
-		this._applyInitialConditions(this._getPriorityFilterBar()); // to set incomming condition on FilterBar
+			var oListBinding = this.getListBinding();
+			var oListBindingInfo = this._getListBindingInfo();
+			var bBindingSuspended = oListBinding && oListBinding.isSuspended();
+			var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
 
-		if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) {
-			return; // in dialog case do not resume suspended table on opening
+			if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) {
+				return; // in dialog case do not resume suspended table on opening
+			}
+
+			this.applyFilters(this.getFilterValue());
 		}
-
-		this.applyFilters(this.getFilterValue());
 	};
 
 	FilterableListContent.prototype.onHide = function () {
@@ -470,7 +477,7 @@ sap.ui.define([
 		Engine.getInstance().defaultProviderRegistry.detach(this);
 
 		Common.cleanup(this, [
-			"_oCollectiveSearchSelect", "_oInitialFilterConditions"
+			"_oCollectiveSearchSelect", "_oInitialFilterConditions", "_bInitialConditionsApplied"
 		]);
 
 		if (this._oSearchField && !this._oSearchField.getParent()) {
