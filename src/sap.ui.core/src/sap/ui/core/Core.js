@@ -38,6 +38,7 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/isEmptyObject',
 	'sap/base/util/each',
+	'sap/base/util/mixedFetch',
 	'sap/ui/VersionInfo',
 	'sap/ui/events/jquery/EventSimulation'
 ],
@@ -76,6 +77,7 @@ sap.ui.define([
 		LoaderExtensions,
 		isEmptyObject,
 		each,
+		mixedFetch,
 		VersionInfo
 		/* ,EventSimulation */
 	) {
@@ -1861,26 +1863,26 @@ sap.ui.define([
 	}
 
 	function loadJSONAsync(lib) {
-
 		var sURL = getModulePath(lib, "/library-preload.json");
-
-		return Promise.resolve(jQuery.ajax({
-			dataType : "json",
-			url : sURL
-		})).then(
-			function(data) {
-				if ( data ) {
-					registerPreloadedModules(data, sURL);
-					return preprocessDependencies(data.dependencies);
-				}
-			},
-			function(xhr, textStatus, error) {
-				Log.error("failed to load '" + sURL + "': " + (error || textStatus));
+		return mixedFetch(sURL, {
+			headers: {
+				Accept: mixedFetch.ContentTypes.JSON
 			}
-		);
-
+		}).then(function(response) {
+			if (response.ok) {
+				return response.json().then(function(data) {
+					if (data) {
+						registerPreloadedModules(data, sURL);
+						return preprocessDependencies(data.dependencies);
+					}
+				});
+			} else {
+				throw new Error(response.statusText || response.status);
+			}
+		}).catch(function(oError) {
+			Log.error("failed to load '" + sURL + "': " + oError.message);
+		});
 	}
-
 
 	/**
 	 * Preloads a library synchronously.
@@ -1980,22 +1982,25 @@ sap.ui.define([
 		var sURL = getModulePath(lib, "/library-preload.json");
 		var dependencies;
 
-		jQuery.ajax({
-			dataType : "json",
-			async: false,
-			url : sURL,
-			success: function(data) {
-				if ( data ) {
-					registerPreloadedModules(data, sURL);
-					dependencies = data.dependencies;
-				}
-			},
-			error: function(xhr, textStatus, error) {
-				Log.error("failed to load '" + sURL + "': " + (error || textStatus));
+		return mixedFetch(sURL, {
+			headers: {
+				Accept: mixedFetch.ContentTypes.JSON
 			}
-		});
-
-		return preprocessDependencies(dependencies);
+		}, true).then(function(response) {
+			if (response.ok) {
+				return response.json().then(function(data) {
+					if (data) {
+						registerPreloadedModules(data, sURL);
+						dependencies = data.dependencies;
+					}
+					return preprocessDependencies(dependencies);
+				});
+			}  else {
+				throw Error(response.statusText || response.status);
+			}
+		}).catch(function(oError) {
+			Log.error("failed to load '" + sURL + "': " + oError.message);
+		}).unwrap();
 	}
 
 	/**

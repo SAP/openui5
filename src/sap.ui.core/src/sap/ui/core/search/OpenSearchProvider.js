@@ -7,10 +7,11 @@ sap.ui.define([
 	'./SearchProvider',
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
+	"sap/base/util/fetch",
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/library' // ensure that required DataTypes are available
 ],
-	function(SearchProvider, Log, encodeURL, jQuery) {
+	function(SearchProvider, Log, encodeURL, fetch, jQuery) {
 	"use strict";
 
 
@@ -86,18 +87,30 @@ sap.ui.define([
 				fCallback(sValue, data[1]);
 			};
 		}
-
-		jQuery.ajax({
-			url: sUrl,
-			dataType: sType,
-			success: fSuccess,
-			error: function(XMLHttpRequest, textStatus, errorThrown) {
-				Log.fatal("The following problem occurred: " + textStatus, XMLHttpRequest.responseText + ","
-						+ XMLHttpRequest.status);
+		fetch(sUrl, {
+			headers: {
+				Accept: fetch.ContentTypes[sType.toUpperCase()]
 			}
+		}).then(function(response) {
+			if (response.ok) {
+				return response.text().then(function (responseText) {
+					var data;
+					if (sType === "json") {
+						data = JSON.parse(responseText);
+					} else {
+						// sType == "xml"
+						var parser = new DOMParser();
+						data = parser.parseFromString(responseText, "text/xml");
+					}
+					fSuccess(data);
+				});
+			} else {
+				throw new Error(response.statusText || response.status);
+			}
+		}).catch(function(error) {
+			Log.fatal("The following problem occurred: " + error.message);
 		});
 	};
-
 
 	return OpenSearchProvider;
 

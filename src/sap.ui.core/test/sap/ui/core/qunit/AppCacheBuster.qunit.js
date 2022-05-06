@@ -6,10 +6,10 @@ sap.ui.define([
 	'sap/ui/core/AppCacheBuster',
 	'sap/ui/core/Control',
 	'sap/ui/core/_IconRegistry',
-	'sap/base/Log',
+	'sap/base/util/fetch',
 	'sap/ui/dom/includeScript',
 	'sap/ui/dom/includeStylesheet'
-	], function(jQuery, ManagedObject, AppCacheBuster, Control, _IconRegistry, Log, includeScript, includeStylesheet) {
+	], function(jQuery, ManagedObject, AppCacheBuster, Control, _IconRegistry, fetch, includeScript, includeStylesheet) {
 		"use strict";
 
 	// create a control with an URI property to validate URI replacement
@@ -183,7 +183,7 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("jQuery.ajax to an application resource...", function(assert) {
+		QUnit.test("Request to an application resource...", function(assert) {
 			assert.expect(1);
 
 			// fake response for a cachebusted application resource
@@ -191,27 +191,26 @@ sap.ui.define([
 				xhr.respond(200, { "Content-Type": "text/javascript" }, '');
 			});
 
-			// check AJAX request for that resource
-			var done = assert.async();
-			jQuery.ajax({
-				url: "js/script.js",
-				dataType: "text",
-				success: function(data, textStatus, xhr) {
-					assert.strictEqual(xhr.status, 200,
-						"...should be cache busted");
-					done();
-				},
-				error: function(xhr) {
-					assert.strictEqual(xhr.status, 200,
-						"...failed, maybe because cache busting failed?");
-					done();
+			// check request for that resource
+			var pFetch = fetch("js/script.js", {
+				headers: {
+					Accept: fetch.ContentTypes.TEXT
+				}
+			}).then(function(response) {
+				if (response.ok) {
+					assert.strictEqual(response.status, 200,
+							"...should be cache busted");
+				} else {
+					assert.strictEqual(response.status, 200,
+							"...failed, maybe because cache busting failed?");
 				}
 			});
 
 			this.server.respond();
+			return pFetch;
 		});
 
-		QUnit.test("jQuery.ajax to a non-application resource...", function(assert) {
+		QUnit.test("Request to a non-application resource...", function(assert) {
 			assert.expect(1);
 
 			// fake response for a non-application resource (no cache buster token expected)
@@ -221,22 +220,18 @@ sap.ui.define([
 			});
 
 			// check normal URLs
-			var done = assert.async();
-			jQuery.ajax({
-				url: "js/script1.js",
-				success: function(data, textStatus, xhr) {
-					assert.strictEqual(xhr.status, 200,
-						"...should not be cache busted");
-					done();
-				},
-				error: function(xhr) {
-					assert.strictEqual(xhr.status, 200,
-						"...failed, maybe because the URL was cache busted?");
-					done();
+			var pFetch = fetch("js/script.js").then(function(response) {
+				if (response.ok) {
+					assert.strictEqual(response.status, 200,
+							"...should not be cache busted");
+				} else {
+					assert.strictEqual(response.status, 404,
+							"...failed, maybe because the URL was cache busted?");
 				}
 			});
 
 			this.server.respond();
+			return pFetch;
 		});
 
 		QUnit.test("check includeScript handling", function(assert) {

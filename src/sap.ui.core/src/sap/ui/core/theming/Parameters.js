@@ -14,11 +14,11 @@ sap.ui.define([
 	'sap/base/util/UriParameters',
 	'sap/base/Log',
 	'sap/base/util/extend',
+	'sap/base/util/syncFetch',
 	'sap/ui/core/ThemeCheck',
-	'sap/ui/thirdparty/jquery',
 	'./ThemeHelper'
 ],
-	function(URI, Element, UriParameters, Log, extend, ThemeCheck, jQuery, ThemeHelper) {
+	function(URI, Element, UriParameters, Log, extend, syncFetch, ThemeCheck, ThemeHelper) {
 	"use strict";
 
 	var oCfgData = window["sap-ui-config"] || {};
@@ -116,8 +116,8 @@ sap.ui.define([
 		}
 
 		function forEachStyleSheet(fnCallback) {
-			jQuery("link[id^=sap-ui-theme-]").each(function() {
-				fnCallback(this.getAttribute("id"));
+			document.querySelectorAll("link[id^=sap-ui-theme-]").forEach(function(linkNode) {
+				fnCallback(linkNode.getAttribute("id"));
 			});
 		}
 
@@ -133,8 +133,8 @@ sap.ui.define([
 			// In some browsers (e.g. Safari) it might happen that after switching the theme or adopting the <link>'s href,
 			// the parameters from the previous stylesheet are taken. This can be prevented by checking whether the theme is applied.
 			if (bThemeApplied && bUseInlineParameters) {
-				var $link = jQuery(document.getElementById(sId));
-				var sDataUri = $link.css("background-image");
+				var oLink = document.getElementById(sId);
+				var sDataUri = window.getComputedStyle(oLink).getPropertyValue("background-image");
 				var aParams = /\(["']?data:text\/plain;utf-8,(.*?)['"]?\)$/i.exec(sDataUri);
 				if (aParams && aParams.length >= 2) {
 					var sParams = aParams[1];
@@ -231,27 +231,46 @@ sap.ui.define([
 		 * @param {boolean[]} aWithCredentials probing values for requesting with or without credentials
 		 */
 		function loadParametersJSON(sUrl, sThemeBaseUrl, aWithCredentials) {
-			var bCurrentWithCredentials = aWithCredentials.shift();
+			var oHeaders = {
+				Accept: syncFetch.ContentTypes.JSON
+			};
 
-			var mHeaders = bCurrentWithCredentials ? {
+			var bCurrentWithCredentials = aWithCredentials.shift();
+			if (bCurrentWithCredentials) {
 				// the X-Requested-With Header is essential for the Theming-Service to determine if a GET request will be handled
 				// This forces a preflight request which should give us valid Allow headers:
 				//   Access-Control-Allow-Origin: ... fully qualified requestor origin ...
 				//   Access-Control-Allow-Credentials: true
-				"X-Requested-With": "XMLHttpRequest"
-			} : {};
+				oHeaders["X-Requested-With"] = "XMLHttpRequest";
+			}
+
+			function fnErrorCallback(error) {
+				// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file
+				Log.error("Could not load theme parameters from: " + sUrl, error); // could be an error as well, but let's avoid more CSN messages...
+
+				if (aWithCredentials.length > 0) {
+					// In a CORS scenario, IF we have sent credentials on the first try AND the request failed,
+					// we expect that a service could have answered with the following Allow header:
+					//     Access-Control-Allow-Origin: *
+					// In this case we must not send credentials, otherwise the service would have answered with:
+					//     Access-Control-Allow-Origin: https://...
+					//     Access-Control-Allow-Credentials: true
+					// Due to security constraints, the browser does not hand out any more information in a CORS scenario,
+					// so now we try again without credentials.
+					Log.warning("Initial library-parameters.json request failed ('withCredentials=" + bCurrentWithCredentials + "'; sUrl: '" + sUrl + "').\n" +
+								"Retrying with 'withCredentials=" + !bCurrentWithCredentials + "'.", "sap.ui.core.theming.Parameters");
+					loadParametersJSON(sUrl, sThemeBaseUrl, aWithCredentials);
+				}
+			}
 
 			// load and evaluate parameter file
-			jQuery.ajax({
-				url: sUrl,
-				dataType: 'json',
-				async: false,
-				xhrFields: {
-					// default is false
-					withCredentials: bCurrentWithCredentials
-				},
-				headers: mHeaders,
-				success: function(data, textStatus, xhr) {
+			try {
+				var response = syncFetch(sUrl, {
+					credentials: bCurrentWithCredentials ? "include" : "omit",
+					headers: oHeaders
+				});
+				if (response.ok) {
+					var data = response.json();
 					// Once we have a successful request we track the credentials setting for this origin
 					var sThemeOrigin = new URI(sThemeBaseUrl).origin();
 					mOriginsNeedingCredentials[sThemeOrigin] = bCurrentWithCredentials;
@@ -265,26 +284,13 @@ sap.ui.define([
 					} else {
 						mergeParameters(data, sThemeBaseUrl);
 					}
-				},
-				error: function(xhr, textStatus, error) {
-					// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file
-					Log.error("Could not load theme parameters from: " + sUrl, error); // could be an error as well, but let's avoid more CSN messages...
-
-					if (aWithCredentials.length > 0) {
-						// In a CORS scenario, IF we have sent credentials on the first try AND the request failed,
-						// we expect that a service could have answered with the following Allow header:
-						//     Access-Control-Allow-Origin: *
-						// In this case we must not send credentials, otherwise the service would have answered with:
-						//     Access-Control-Allow-Origin: https://...
-						//     Access-Control-Allow-Credentials: true
-						// Due to security constraints, the browser does not hand out any more information in a CORS scenario,
-						// so now we try again without credentials.
-						Log.warning("Initial library-parameters.json request failed ('withCredentials=" + bCurrentWithCredentials + "'; sUrl: '" + sUrl + "').\n" +
-									"Retrying with 'withCredentials=" + !bCurrentWithCredentials + "'.", "sap.ui.core.theming.Parameters");
-						loadParametersJSON(sUrl, sThemeBaseUrl, aWithCredentials);
-					}
+				} else {
+					throw new Error(response.statusText || response.status);
 				}
-			});
+
+			} catch (error) {
+				fnErrorCallback(error);
+			}
 		}
 
 		/**

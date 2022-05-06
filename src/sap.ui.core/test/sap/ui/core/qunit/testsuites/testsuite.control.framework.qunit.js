@@ -93,6 +93,11 @@ sap.ui.define(function() {
 				title: "sap.ui.core.IconPool",
 				ui5: {
 					libs: "sap.ui.core,sap.m"
+				},
+				loader: {
+					paths: {
+						"testdata/iconfonts": "test-resources/sap/ui/core/qunit/testdata"
+					}
 				}
 			},
 			"IconPool-custom-theme": {

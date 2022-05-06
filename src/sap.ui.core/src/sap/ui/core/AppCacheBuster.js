@@ -12,12 +12,12 @@ sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	'sap/base/Log',
 	'sap/base/util/extend',
+	'sap/base/util/mixedFetch',
 	'sap/base/strings/escapeRegExp',
-	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/_IconRegistry',
 	'./Core' // provides sap.ui.getCore()
 ],
-	function(ManagedObject, URI, Log, extend, escapeRegExp, jQuery, _IconRegistry/*, Core */) {
+	function(ManagedObject, URI, Log, extend, mixedFetch, escapeRegExp, _IconRegistry/*, Core */) {
 	"use strict";
 
 	/*
@@ -101,9 +101,10 @@ sap.ui.define([
 		var mIndex = oSession.index;
 
 		// the request object
-		var oRequest;
+		var oInit;
 		var sUrl;
 		var sAbsoluteBaseUrl;
+		var fnSuccessCallback, fnErrorCallback;
 
 		// in case of an incoming array we register each base url on its own
 		// except in case of the batch mode => there we pass all URLs in a POST request.
@@ -150,27 +151,28 @@ sap.ui.define([
 			if (sContent.length > 0) {
 
 				// create the URL for the index file
-				var sUrl = sAbsoluteRootUrl + "sap-ui-cachebuster-info.json?sap-ui-language=" + sLanguage;
+				sUrl = sAbsoluteRootUrl + "sap-ui-cachebuster-info.json?sap-ui-language=" + sLanguage;
 
 				// configure request; check how to execute the request (sync|async)
-				oRequest = {
-						url: sUrl,
-						type: "POST",
-						async: !bSync && !!oSyncPoint,
-						dataType: "json",
-						contentType: "text/plain",
-						data: sContent.join("\n"),
-						success: function(data) {
-							// notify that the content has been loaded
-							AppCacheBuster.onIndexLoaded(sUrl, data);
-							// add the index file to the index map
-							extend(mIndex, data);
-						},
-						error: function() {
-							Log.error("Failed to batch load AppCacheBuster index file from: \"" + sUrl + "\".");
-						}
+				oInit = {
+					body: sContent.join("\n"),
+					headers: {
+						"Accept": mixedFetch.ContentTypes.JSON,
+						"Content-Type": "text/plain"
+					},
+					mode: "POST"
 				};
 
+				fnSuccessCallback = function(data) {
+					// notify that the content has been loaded
+					AppCacheBuster.onIndexLoaded(sUrl, data);
+					// add the index file to the index map
+					extend(mIndex, data);
+				};
+
+				fnErrorCallback = function(sUrl) {
+					Log.error("Failed to batch load AppCacheBuster index file from: \"" + sUrl + "\".");
+				};
 			}
 
 		} else {
@@ -191,64 +193,76 @@ sap.ui.define([
 			if (!mIndex[sAbsoluteBaseUrl]) {
 
 				// create the URL for the index file
-				var sUrl = sAbsoluteBaseUrl + "sap-ui-cachebuster-info.json?sap-ui-language=" + sLanguage;
+				sUrl = sAbsoluteBaseUrl + "sap-ui-cachebuster-info.json?sap-ui-language=" + sLanguage;
 
 				// configure request; check how to execute the request (sync|async)
-				oRequest = {
-						url: sUrl,
-						async: !bSync && !!oSyncPoint,
-						dataType: "json",
-						success: function(data) {
-							// notify that the content has been loaded
-							AppCacheBuster.onIndexLoaded(sUrl, data);
-							// add the index file to the index map
-							mIndex[sAbsoluteBaseUrl] = data;
-						},
-						error: function() {
-							Log.error("Failed to load AppCacheBuster index file from: \"" + sUrl + "\".");
-						}
+				oInit = {
+					headers: {
+						Accept: mixedFetch.ContentTypes.JSON
+					},
+					mode: "POST"
 				};
 
+				fnSuccessCallback = function(data) {
+					// notify that the content has been loaded
+					AppCacheBuster.onIndexLoaded(sUrl, data);
+					// add the index file to the index map
+					mIndex[sAbsoluteBaseUrl] = data;
+				};
+
+				fnErrorCallback = function(sUrl) {
+					Log.error("Failed to load AppCacheBuster index file from: \"" + sUrl + "\".");
+				};
 			}
 
 		}
 
 		// only request in case of having a correct request object!
-		if (oRequest) {
+		if (oInit) {
 
 			// hook to onIndexLoad to allow to inject the index file manually
-			var mIndexInfo = AppCacheBuster.onIndexLoad(oRequest.url);
+			var mIndexInfo = AppCacheBuster.onIndexLoad(sUrl);
 			// if anything else than undefined or null is returned we will use this
 			// content as data for the cache buster index
 			if (mIndexInfo != null) {
 				Log.info("AppCacheBuster index file injected for: \"" + sUrl + "\".");
-				oRequest.success(mIndexInfo);
+				fnSuccessCallback(mIndexInfo);
 			} else {
+				var bAsync = !bSync && !!oSyncPoint;
 
 				// use the syncpoint only during boot => otherwise the syncpoint
 				// is not given because during runtime the registration needs to
 				// be done synchronously.
-				if (oRequest.async) {
+				if (bAsync) {
 					var iSyncPoint = oSyncPoint.startTask("load " + sUrl);
-					var fnSuccess = oRequest.success, fnError = oRequest.error;
-					Object.assign(oRequest, {
-						success: function(data) {
-							fnSuccess.apply(this, arguments);
-							oSyncPoint.finishTask(iSyncPoint);
-						},
-						error: function() {
-							fnError.apply(this, arguments);
-							oSyncPoint.finishTask(iSyncPoint, false);
-						}
-					});
+					var fnSuccess = fnSuccessCallback, fnError = fnErrorCallback;
+					fnSuccessCallback = function(data) {
+						fnSuccess.apply(this, arguments);
+						oSyncPoint.finishTask(iSyncPoint);
+					};
+
+					fnErrorCallback = function() {
+						fnError.apply(this, arguments);
+						oSyncPoint.finishTask(iSyncPoint, false);
+					};
 				}
 
 				// load it
 				Log.info("Loading AppCacheBuster index file from: \"" + sUrl + "\".");
-				jQuery.ajax(oRequest);
 
+				mixedFetch(sUrl, oInit, !bAsync)
+					.then(function(oResponse) {
+						if (oResponse.ok) {
+							return oResponse.json();
+						} else {
+							throw new Error("Status code: " + oResponse.status);
+						}
+					})
+					.then(fnSuccessCallback)
+					.catch(function() {
+						fnErrorCallback(sUrl);
+				});
 			}
-
 		}
 
 	};

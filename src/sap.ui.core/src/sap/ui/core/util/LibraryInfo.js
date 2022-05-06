@@ -6,10 +6,11 @@
 sap.ui.define([
 	'sap/ui/base/Object',
 	"sap/base/Log",
+	"sap/base/util/fetch",
 	"sap/base/util/Version",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(BaseObject, Log, Version, jQuery) {
+	function(BaseObject, Log, fetch, Version, jQuery) {
 	"use strict";
 
 	/**
@@ -65,19 +66,28 @@ sap.ui.define([
 
 		sRequestUrl = typeof that.getResourceUrl === "function" ? that.getResourceUrl(sUrl) : sUrl;
 
-		jQuery.ajax({
-			url : sRequestUrl + sLibraryType,
-			dataType : "xml",
-			error : function(xhr, status, e) {
-				Log.error("failed to load library details from '" + sUrl + sLibraryType + ": " + status + ", " + e);
-				that._oLibInfos[sLibraryName] = {name: sLibraryName, data: null, url: sUrl};
-				fnCallback(that._oLibInfos[sLibraryName]);
-			},
-			success : function(oData, sStatus, oXHR) {
-				that._oLibInfos[sLibraryName] = {name: sLibraryName, data: oData, url: sUrl};
-				fnCallback(that._oLibInfos[sLibraryName]);
+		function fnErrorCallback(error) {
+			Log.error("failed to load library details from '" + sUrl + sLibraryType + ": " + error.message + ", " + error);
+			that._oLibInfos[sLibraryName] = {name: sLibraryName, data: null, url: sUrl};
+			fnCallback(that._oLibInfos[sLibraryName]);
+		}
+
+		fetch(sRequestUrl + sLibraryType, {
+			headers: {
+				Accept: fetch.ContentTypes.XML
 			}
-		});
+		}).then(function(response) {
+			if (response.ok) {
+				return response.text().then(function(responseText) {
+					var parser = new DOMParser();
+					var oData = parser.parseFromString(responseText, "text/xml");
+					that._oLibInfos[sLibraryName] = {name: sLibraryName, data: oData, url: sUrl};
+					fnCallback(that._oLibInfos[sLibraryName]);
+				});
+			} else {
+				throw new Error(response.statusText || response.status);
+			}
+		}).catch(fnErrorCallback);
 	};
 
 
@@ -156,18 +166,23 @@ sap.ui.define([
 				sUrl = that.getResourceUrl(sUrl);
 			}
 
-			jQuery.ajax({
-				url : sUrl,
-				dataType : "json",
-				error : function(xhr, status, e) {
-					Log.error("failed to load library docu from '" + sUrl + "': " + status + ", " + e);
-					fnCallback(result);
-				},
-				success : function(oData, sStatus, oXHR) {
-					oData.library = lib;
-					oData.libraryUrl = libUrl;
-					fnCallback(oData);
+			fetch(sUrl, {
+				headers: {
+					Accept: fetch.ContentTypes.JSON
 				}
+			}).then(function(response) {
+				if (response.ok) {
+					response.json().then(function(oData) {
+						oData.library = lib;
+						oData.libraryUrl = libUrl;
+						fnCallback(oData);
+					});
+				} else {
+					throw new Error(response.statusText || response.status);
+				}
+			}).catch(function(error) {
+				Log.error("failed to load library docu from '" + sUrl + "': " + error.message + ", " + error);
+				fnCallback(result);
 			});
 		});
 	};
@@ -234,25 +249,29 @@ sap.ui.define([
 				sUrl = that.getResourceUrl(sUrl);
 			}
 
-			// load the changelog/releasenotes
-			jQuery.ajax({
-				url : sUrl,
-				dataType : "json",
-				error : function(xhr, status, e) {
-					if (status === "parsererror") {
-						Log.error("failed to parse release notes for library '" + sLibraryName + ", " + e);
-					} else {
-						Log.warning("failed to load release notes for library '" + sLibraryName + ", " + e);
-					}
-					fnCallback({});
-				},
-				success : function(oData, sStatus, oXHR) {
-					// in case of a version is specified we return only the content
-					// of the specific version instead of the full data of the release notes file.
-					fnCallback(oData, sVersion);
+			// load the changelog
+			fetch(sUrl, {
+				headers: {
+					Accept: fetch.ContentTypes.JSON
 				}
+			}).then(function(response) {
+				if (response.ok) {
+					return response.json().then(function(oData) {
+						// in case of a version is specified we return only the content
+						// of the specific version instead of the full data of the release notes file.
+						fnCallback(oData, sVersion);
+					});
+				} else {
+					throw new Error(response.statusText || response.status);
+				}
+			}).catch(function(error) {
+				if (error.name === "SyntaxError") {
+					Log.error("failed to parse release notes for library '" + sLibraryName + ", " + error);
+				} else {
+					Log.warning("failed to load release notes for library '" + sLibraryName + ", " + error);
+				}
+				fnCallback({});
 			});
-
 		});
 	};
 
