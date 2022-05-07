@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.field.FieldMultiInput
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var FieldMultiInput = MultiInput.extend("sap.ui.mdc.field.FieldMultiInput", /** @lends sap.ui.mdc.field.FieldMultiInput */
+	var FieldMultiInput = MultiInput.extend("sap.ui.mdc.field.FieldMultiInput", /** @lends sap.ui.mdc.field.FieldMultiInput.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

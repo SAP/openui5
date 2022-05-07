@@ -79,7 +79,7 @@ sap.ui.define([
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Control = Element.extend("sap.ui.core.Control", /** @lends sap.ui.core.Control */ {
+	var Control = Element.extend("sap.ui.core.Control", /** @lends sap.ui.core.Control.prototype */ {
 
 		metadata : {
 			stereotype : "control",

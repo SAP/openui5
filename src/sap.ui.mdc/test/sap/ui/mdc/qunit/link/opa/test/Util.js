@@ -15,7 +15,7 @@ sap.ui.define([
 ], function(BaseObject, Opa5, MLibrary) {
 	"use strict";
 
-	var Util = BaseObject.extend("sap.ui.mdc.qunit.link.opa.test.Util", /** @lends sap.ui.mdc.qunit.link.opa.test.Util */
+	var Util = BaseObject.extend("sap.ui.mdc.qunit.link.opa.test.Util", /** @lends sap.ui.mdc.qunit.link.opa.test.Util.prototype */
 	{});
 
 	Util.getTextFromResourceBundle = function(sLibraryName, sTextKey) {

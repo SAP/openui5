@@ -18,9 +18,13 @@ sap.ui.define([
      * @author SAP SE
      * @private
      * @since 1.88
-     * @alias sap.ui.mdc.odata.v4.vizChart.ChartDelegate
+     * @alias sap.ui.mdc.chart.DrillBreadcrumbs
      */
-    var DrillBreadcrumbs = Breadcrumbs.extend("sap/m/Breadcrumbs", {});
+    var DrillBreadcrumbs = Breadcrumbs.extend("sap.ui.mdc.chart.DrillBreadcrumbs", {
+        renderer: {
+            apiVersion: 2
+        }
+    });
 
     DrillBreadcrumbs.prototype.init = function(){
         Breadcrumbs.prototype.init.apply(this, arguments);

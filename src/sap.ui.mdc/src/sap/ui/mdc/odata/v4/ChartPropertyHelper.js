@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 * @since 1.83
-	 * @alias sap.ui.mdc.table.PropertyHelper
+	 * @alias sap.ui.mdc.odata.v4.ChartPropertyHelper
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
     var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.odata.v4.ChartPropertyHelper");

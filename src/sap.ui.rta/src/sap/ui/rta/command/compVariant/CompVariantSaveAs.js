@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @since 1.87
 	 * @alias sap.ui.rta.command.compVariant.CompVariantSaveAs
 	 */
-	var CompVariantSaveAs = BaseCommand.extend("sap.ui.rta.command.CompVariantSaveAs", {
+	var CompVariantSaveAs = BaseCommand.extend("sap.ui.rta.command.compVariant.CompVariantSaveAs", {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {

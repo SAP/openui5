@@ -26,7 +26,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
-	 * @alias sap.f.cards.LoadingProvider
+	 * @alias sap.ui.integration.util.LoadingProvider
 	 */
 	var LoadingProvider = Element.extend("sap.ui.integration.util.LoadingProvider", {
 		metadata: {

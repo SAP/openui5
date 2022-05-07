@@ -22,7 +22,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"],
 	 * @version ${version}
 	 * @alias sap.m.TablePersoProvider
 	 */
-	var TablePersoProvider = ManagedObject.extend("sap.m.TablePersoProvider", /** @lends sap.m.TablePersoProvider */
+	var TablePersoProvider = ManagedObject.extend("sap.m.TablePersoProvider", /** @lends sap.m.TablePersoProvider.prototype */
 
 	{
 		constructor: function(sId, mSettings) {

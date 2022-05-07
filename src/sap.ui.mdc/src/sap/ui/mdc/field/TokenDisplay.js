@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.field.TokenDisplay
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TokenDisplay = Token.extend("sap.ui.mdc.field.TokenDisplay", /** @lends sap.ui.mdc.field.TokenDisplay */
+	var TokenDisplay = Token.extend("sap.ui.mdc.field.TokenDisplay", /** @lends sap.ui.mdc.field.TokenDisplay.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

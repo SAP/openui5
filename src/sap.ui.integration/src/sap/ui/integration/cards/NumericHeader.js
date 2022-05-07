@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.77
-	 * @alias sap.ui.integration.cards.Header
+	 * @alias sap.ui.integration.cards.NumericHeader
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NumericHeader = FNumericHeader.extend("sap.ui.integration.cards.NumericHeader", {
@@ -283,8 +283,8 @@ sap.ui.define([
 
 	/**
 	 * Gets the card instance of which this element is part of.
-	 * @ui5-restricted
 	 * @private
+	 * @ui5-restricted
 	 * @returns {sap.ui.integration.widgets.Card} The card instance.
 	 */
 	NumericHeader.prototype.getCardInstance = function () {

@@ -116,7 +116,7 @@ sap.ui.define([
 			metadata : {
 				stereotype : "webcomponent",
 				"abstract" : true,
-				library : "sap.ui.core",
+				library : "sap.ui.webc.common",
 				properties: {
 					__isBusy: {
 						type: "boolean",

@@ -52,16 +52,16 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.fl.IFrame
+	 * @alias sap.ui.fl.util.IFrame
 	 */
-	var IFrame = Control.extend("sap.ui.fl.util.IFrame", /** @lends ap.ui.fl.util.IFrame.prototype */ {
+	var IFrame = Control.extend("sap.ui.fl.util.IFrame", /** @lends sap.ui.fl.util.IFrame.prototype */ {
 
 		metadata: {
 			library: "sap.ui.fl",
 
 			properties: {
 				/**
-				 * Determines the url of the content.
+				 * Determines the URL of the content.
 				 */
 				url: {type: "sap.ui.core.URI", group: "Misc", defaultValue: "" },
 

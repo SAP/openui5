@@ -37,7 +37,7 @@ function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
 	 * @alias sap.m.SimpleFixFlex
 	 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 	 */
-	var SimpleFixFlex = Control.extend("sap.m.SimpleFixFlex", /** @lends sap.m.SimpleFixFlex */ {
+	var SimpleFixFlex = Control.extend("sap.m.SimpleFixFlex", /** @lends sap.m.SimpleFixFlex.prototype */ {
 
 		metadata: {
 			library: "sap.m",

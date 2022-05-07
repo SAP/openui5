@@ -39,7 +39,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @alias sap.m.TablePersoController
 	 */
-	var TablePersoController = ManagedObject.extend("sap.m.TablePersoController", /** @lends sap.m.TablePersoController */
+	var TablePersoController = ManagedObject.extend("sap.m.TablePersoController", /** @lends sap.m.TablePersoController.prototype */
 
 	{
 		constructor: function(sId, mSettings) {

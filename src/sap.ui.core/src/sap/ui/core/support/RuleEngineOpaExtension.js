@@ -89,7 +89,7 @@ sap.ui.define([
 			 * @alias sap.ui.core.support.RuleEngineOpaAssertions
 			 * @public
 			 */
-			var oRuleEngineAssertions = /** @lends sap.ui.core.support.RuleEngineOpaAssertions */ {
+			var oRuleEngineAssertions = {
 				/**
 				 * Run the Support Assistant and analyze against a specific state of the application.
 				 * Depending on the options passed the assertion might either fail or not if any issues were found.

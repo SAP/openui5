@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @experimental Since 1.49. This class is experimental and provides only limited functionality. Also the API might be
 	 *               changed in future.
 	 */
-	var AppDescriptorCommand = BaseCommand.extend("sap.ui.rta.command.AppDescriptor", {
+	var AppDescriptorCommand = BaseCommand.extend("sap.ui.rta.command.AppDescriptorCommand", {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {

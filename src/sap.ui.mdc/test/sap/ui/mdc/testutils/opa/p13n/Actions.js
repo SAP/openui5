@@ -697,7 +697,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>SmartChart</code> that is personalized
 		 * @param {string} sChartType String containing the type of chart that is displayed
 		 * @param {ChartPersonalizationConfiguration[]} aItems Array containing the chart personalization configuration objects
-		 * @param {bool} bIsMDC indicates, that the action is called by the MDC framework instead of comp
+		 * @param {boolean} bIsMDC indicates, that the action is called by the MDC framework instead of comp
 		 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
 		 * @returns {Promise} OPA waitFor
 		 */
