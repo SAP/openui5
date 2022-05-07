@@ -1,7 +1,10 @@
 /*
  * ! ${copyright}
  */
-sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
+sap.ui.define([
+	"sap/ui/mdc/p13n/Engine",
+	"sap/ui/mdc/flexibility/Util"
+], function(Engine, Util) {
 	"use strict";
 	var fRebindControl = function(oControl) {
 		var bExecuteRebindForTable = oControl && oControl.isA && oControl.isA("sap.ui.mdc.Table") && oControl.isTableBound();
@@ -34,8 +37,9 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 		fRebindControl(oControl);
 	};
 
-	var fAddSort = function(oChange, oControl, mPropertyBag, bIsRevert) {
+	var fAddSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
 		return new Promise(function(resolve, reject) {
+			var bIsRevert = (sChangeReason === Util.REVERT);
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
@@ -64,9 +68,10 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 		});
 	};
 
-	var fRemoveSort = function(oChange, oControl, mPropertyBag, bIsRevert) {
+	var fRemoveSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
 		return new Promise(function(resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
+			var bIsRevert = (sChangeReason === Util.REVERT);
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
@@ -99,8 +104,9 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 		});
 	};
 
-	var fMoveSort = function(oChange, oControl, mPropertyBag, bIsRevert) {
+	var fMoveSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
 		return new Promise(function(resolve, reject) {
+			var bIsRevert = (sChangeReason === Util.REVERT);
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
@@ -132,55 +138,20 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 	};
 
 	var Sort = {};
-	Sort.removeSort = {
-		"changeHandler": {
-			applyChange: function(oChange, oControl, mPropertyBag) {
-				return fRemoveSort(oChange, oControl, mPropertyBag, false);
-			},
-			completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
-				// Not used, but needs to be there
-			},
-			revertChange: function(oChange, oControl, mPropertyBag) {
-				return fAddSort(oChange, oControl, mPropertyBag, true);
-			}
-		},
-		"layers": {
-			"USER": true
-		}
-	};
+	Sort.removeSort = Util.createChangeHandler({
+		apply: fRemoveSort,
+		revert: fAddSort
+	});
 
-	Sort.addSort = {
-		"changeHandler": {
-			applyChange: function(oChange, oControl, mPropertyBag) {
-				return fAddSort(oChange, oControl, mPropertyBag, false);
-			},
-			completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
-				// Not used, but needs to be there
-			},
-			revertChange: function(oChange, oControl, mPropertyBag) {
-				return fRemoveSort(oChange, oControl, mPropertyBag, true);
-			}
-		},
-		"layers": {
-			"USER": true
-		}
-	};
+	Sort.addSort = Util.createChangeHandler({
+		apply: fAddSort,
+		revert: fRemoveSort
+	});
 
-	Sort.moveSort = {
-		"changeHandler": {
-			applyChange: function(oChange, oControl, mPropertyBag) {
-				return fMoveSort(oChange, oControl, mPropertyBag);
-			},
-			completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
-				// Not used, but needs to be there
-			},
-			revertChange: function(oChange, oControl, mPropertyBag) {
-				return fMoveSort(oChange, oControl, mPropertyBag, true);
-			}
-		},
-		"layers": {
-			"USER": true
-		}
-	};
+	Sort.moveSort = Util.createChangeHandler({
+		apply: fMoveSort,
+		revert: fMoveSort
+	});
+
 	return Sort;
 });

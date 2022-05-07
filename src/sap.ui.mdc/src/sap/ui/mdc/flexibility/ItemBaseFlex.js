@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/fl/changeHandler/Base", "sap/ui/mdc/p13n/Engine", "sap/base/Log"
-], function(FLBase, Engine, Log) {
+	"sap/ui/mdc/p13n/Engine", "sap/base/Log", "sap/ui/mdc/flexibility/Util"
+], function(Engine, Log, Util) {
 	"use strict";
 
 	var ItemBaseFlex = {
@@ -153,7 +153,8 @@ sap.ui.define([
 			}
 		},
 
-		_applyAdd: function(oChange, oControl, mPropertyBag, bIsRevert) {
+		_applyAdd: function(oChange, oControl, mPropertyBag, sChangeReason) {
+			var bIsRevert = (sChangeReason === Util.REVERT);
 			this.beforeApply(oChange.getChangeType(), oControl, bIsRevert);
 			if (this._bSupressFlickering) {
 				this._delayInvalidate(oControl);
@@ -233,7 +234,8 @@ sap.ui.define([
 
 		},
 
-		_applyRemove: function(oChange, oControl, mPropertyBag, bIsRevert) {
+		_applyRemove: function(oChange, oControl, mPropertyBag, sChangeReason) {
+			var bIsRevert = (sChangeReason === Util.REVERT);
 			this.beforeApply(oChange.getChangeType(), oControl, bIsRevert);
 			if (this._bSupressFlickering) {
 				this._delayInvalidate(oControl);
@@ -309,7 +311,8 @@ sap.ui.define([
 
 		},
 
-		_applyMove: function(oChange, oControl, mPropertyBag, bIsRevert) {
+		_applyMove: function(oChange, oControl, mPropertyBag, sChangeReason) {
+			var bIsRevert = (sChangeReason === Util.REVERT);
 			this.beforeApply(oChange.getChangeType(), oControl, bIsRevert);
 			if (this._bSupressFlickering) {
 				this._delayInvalidate(oControl);
@@ -376,50 +379,26 @@ sap.ui.define([
 
 		/******************************* Public methods *************************************/
 
-		createChangeHandler: function(fApply, fComplete, fRevert) {
-			return {
-				"changeHandler": {
-					applyChange: function(oChange, oControl, mPropertyBag) {
-						return fApply(oChange, oControl, mPropertyBag);
-					},
-					completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
-						fComplete(oChange, mChangeSpecificInfo, mPropertyBag);
-					},
-					revertChange: function(oChange, oControl, mPropertyBag) {
-						return fRevert(oChange, oControl, mPropertyBag, true);
-					}
-				},
-				"layers": {
-					"USER": true
-				}
-			};
-		},
-
 		createAddChangeHandler: function() {
-
-			var fApply = this._applyAdd.bind(this);
-			var fComplete = function() { };
-			var fRevert = this._applyRemove.bind(this);
-
-			return this.createChangeHandler(fApply, fComplete, fRevert);
+			return Util.createChangeHandler({
+				apply: this._applyAdd.bind(this),
+				revert: this._applyRemove.bind(this)
+			});
 		},
 
 		createRemoveChangeHandler: function() {
-
-			var fApply = this._applyRemove.bind(this);
-			var fComplete = this._removeIndexFromChange.bind(this);
-			var fRevert = this._applyAdd.bind(this);
-
-			return this.createChangeHandler(fApply, fComplete, fRevert);
+			return Util.createChangeHandler({
+				apply: this._applyRemove.bind(this),
+				complete: this._removeIndexFromChange.bind(this),
+				revert: this._applyAdd.bind(this)
+			});
 		},
 
 		createMoveChangeHandler: function() {
-
-			var fApply = this._applyMove.bind(this);
-			var fComplete = function() { };
-			var fRevert = fApply;
-
-			return this.createChangeHandler(fApply, fComplete, fRevert);
+			return Util.createChangeHandler({
+				apply: this._applyMove.bind(this),
+				revert: this._applyMove.bind(this)
+			});
 		}
 
 	};

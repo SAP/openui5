@@ -1,36 +1,36 @@
 /* global QUnit */
 sap.ui.define([
     "sap/ui/mdc/Control",
-	"sap/ui/mdc/flexibility/AggregationConfigFlex",
+	"sap/ui/mdc/flexibility/xConfigFlex",
 	"sap/ui/core/Core",
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
-], function (MDCControl, AggregationConfigFlex, Core, createAppEnvironment, JsControlTreeModifier) {
+], function (MDCControl, xConfigFlex, Core, createAppEnvironment, JsControlTreeModifier) {
 	"use strict";
 
-	QUnit.module("AggregationConfigFlex Error handling");
+	QUnit.module("xConfigFlex Error handling");
 
-	QUnit.test("Throw Error if config is missing 'AggregationConfigFlex#createSetChangeHandler", function(assert){
+	QUnit.test("Throw Error if config is missing 'xConfigFlex#createSetChangeHandler", function(assert){
 
 		assert.throws(function() {
-			AggregationConfigFlex.createSetChangeHandler();
+			xConfigFlex.createSetChangeHandler();
 		}, "The method expects a config object to create a changehandler");
 
 	});
 
-    QUnit.test("Throw Error if property config is missing 'AggregationConfigFlex#createSetChangeHandler", function(assert){
+    QUnit.test("Throw Error if property config is missing 'xConfigFlex#createSetChangeHandler", function(assert){
 
 		assert.throws(function() {
-			AggregationConfigFlex.createSetChangeHandler({
+			xConfigFlex.createSetChangeHandler({
                 aggregation: "test"
             });
 		}, "The method expects a config object containing 'aggregations' and 'name' key to create a changehandler");
 
 	});
 
-    QUnit.test("Throw Error if property config is missing 'AggregationConfigFlex#createSetChangeHandler", function(assert){
+    QUnit.test("Throw Error if property config is missing 'xConfigFlex#createSetChangeHandler", function(assert){
 
-        var oHandler = AggregationConfigFlex.createSetChangeHandler({
+        var oHandler = xConfigFlex.createSetChangeHandler({
             aggregation: "testAggregation",
             property: "testProperty"
         });
@@ -76,7 +76,7 @@ sap.ui.define([
 
 				Core.applyChanges();
 
-				this.oHandler = AggregationConfigFlex.createSetChangeHandler({
+				this.oHandler = xConfigFlex.createSetChangeHandler({
 					aggregation: "items",
 					property: "text"
 				});

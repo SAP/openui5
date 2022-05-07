@@ -2,8 +2,11 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'sap/base/util/merge', 'sap/base/Log', 'sap/ui/mdc/condition/FilterOperatorUtil'
-], function(merge, Log, FilterOperatorUtil) {
+	'sap/base/util/merge',
+	'sap/base/Log',
+	'sap/ui/mdc/condition/FilterOperatorUtil',
+	'sap/ui/mdc/flexibility/Util'
+], function(merge, Log, FilterOperatorUtil, Util) {
 	"use strict";
 
 	/*
@@ -42,9 +45,11 @@ sap.ui.define([
 		return oController ? oController.getFilterControl() : null;
 	};
 
-	var fAddCondition = function(oChange, oChangeContent, oControl, mPropertyBag, bIsRevert) {
+	var fAddCondition = function(oChange, oControl, mPropertyBag, sChangeReason) {
 
 		var oFilterControl = fDetermineFilterControl(oControl);
+		var bIsRevert = (sChangeReason === Util.REVERT);
+		var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 
 		if (oFilterControl && oFilterControl.applyConditionsAfterChangesApplied) {
 			oFilterControl.applyConditionsAfterChangesApplied(oControl);
@@ -101,6 +106,9 @@ sap.ui.define([
 						}
 					})
 					.finally(function() {
+						if (bIsRevert) {
+							oChange.resetRevertData();
+						}
 						if (oFilterControl && oFilterControl.addCondition) {
 							return oFilterControl.addCondition(oChangeContent.name, oChangeContent.condition);
 						}
@@ -110,9 +118,11 @@ sap.ui.define([
 		});
 	};
 
-	var fRemoveCondition = function(oChange, oChangeContent, oControl, mPropertyBag, bIsRevert) {
+	var fRemoveCondition = function(oChange, oControl, mPropertyBag, sChangeReason) {
 
 		var oFilterControl = fDetermineFilterControl(oControl);
+		var bIsRevert = (sChangeReason === Util.REVERT);
+		var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 
 		if (oFilterControl && oFilterControl.applyConditionsAfterChangesApplied) {
 			oFilterControl.applyConditionsAfterChangesApplied(oControl);
@@ -168,6 +178,9 @@ sap.ui.define([
 								}
 							})
 							.finally(function() {
+								if (bIsRevert) {
+									oChange.resetRevertData();
+								}
 								if (oFilterControl && oFilterControl.removeCondition) {
 									return oFilterControl.removeCondition(oChangeContent.name, oChangeContent.condition);
 								}
@@ -178,46 +191,17 @@ sap.ui.define([
 		});
 	};
 
-	var oConditionFlex = {};
+	var ConditionFlex = {};
 
-	oConditionFlex.addCondition = {
-		"changeHandler": {
-			applyChange: function(oChange, oControl, mPropertyBag) {
-				return fAddCondition(oChange, oChange.getContent(), oControl, mPropertyBag, false);
-			},
-			completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
-				// TODO
-			},
-			revertChange: function(oChange, oControl, mPropertyBag) {
-				return fRemoveCondition(oChange, oChange.getRevertData(), oControl, mPropertyBag, true).then(function() {
-					oChange.resetRevertData();
-				});
+	ConditionFlex.addCondition = Util.createChangeHandler({
+		apply: fAddCondition,
+		revert: fRemoveCondition
+	});
 
-			}
-		},
-		"layers": {
-			"USER": true
-		}
-	};
-	oConditionFlex.removeCondition = {
-		"changeHandler": {
-			applyChange: function(oChange, oControl, mPropertyBag) {
-				return fRemoveCondition(oChange, oChange.getContent(), oControl, mPropertyBag, false);
-			},
-			completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
-				// TODO
-			},
-			revertChange: function(oChange, oControl, mPropertyBag) {
-				return fAddCondition(oChange, oChange.getRevertData(), oControl, mPropertyBag, true).then(function() {
-					oChange.resetRevertData();
-				});
+	ConditionFlex.removeCondition = Util.createChangeHandler({
+		apply: fRemoveCondition,
+		revert: fAddCondition
+	});
 
-			}
-		},
-		"layers": {
-			"USER": true
-		}
-	};
-
-	return oConditionFlex;
+	return ConditionFlex;
 });
