@@ -1562,10 +1562,6 @@ sap.ui.define([
 				delete mResult.texts;
 			}
 		}
-		//add a property ":multipleLanguage" for backward compatibility of multiple language feature
-		if (this.getMode() !== "translation") {
-			mResult[":multipleLanguage"] = true;
-		}
 		mResult[":layer"] = Merger.layers[this.getMode()];
 		mResult[":errors"] = this.checkCurrentSettings()[":errors"];
 		if (mNext) {

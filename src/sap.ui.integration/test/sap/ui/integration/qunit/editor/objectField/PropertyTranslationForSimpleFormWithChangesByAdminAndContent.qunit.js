@@ -100,7 +100,6 @@ sap.ui.define([
 		"/sap.card/configuration/parameters/objectWithPropertiesDefined1/value": oValueOfObject1InAdminChange,
 		"/sap.card/configuration/parameters/objectWithPropertiesDefined2/value": oValueOfObject2InAdminChange,
 		":layer": 0,
-		":multipleLanguage": true,
 		":errors": false,
 		"texts": {
 			"en": {
@@ -168,7 +167,6 @@ sap.ui.define([
 		"/sap.card/configuration/parameters/objectWithPropertiesDefined1/value": oValueOfObjectWithPropertiesDefined1InContentChange,
 		"/sap.card/configuration/parameters/objectWithPropertiesDefined2/value": oValueOfObjectWithPropertiesDefined2InContentChange,
 		":layer": 5,
-		":multipleLanguage": true,
 		":errors": false,
 		"texts": {
 			"en": {
