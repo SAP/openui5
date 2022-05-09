@@ -187,6 +187,8 @@ sap.ui.define([
 		assert.equal(ccw([[Str(10), {maxWidth: 3}], [Str(10), {maxWidth: 2}]]), "6.5rem", "Type related settings");
 		assert.equal(ccw([[Str(10), {maxWidth: 3}], [Str(10), {maxWidth: 2}]], "", {minWidth: 10, padding: 0}), "10rem", "Type related and column related settings");
 
+		assert.ok(parseFloat(ccw([[new Byte(), {gap: 10}]])) > 12, "Gap taken into account 10rem gap + 1rem padding + ~1rem Byte width ");
+		assert.equal(ccw([[new Byte(), {gap: 10, maxWidth: 5}]]), "6rem", "Gap and maxWidth taken into account");
 	});
 
 });
