@@ -196,6 +196,40 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Stretched dialog with inner footer max height", function (assert) {
+		var oDialog = new Dialog({
+			stretch: true,
+			content: new Page({
+				title: "Dialog Test",
+				content: new Text({text: "Content"}),
+				footer: new Bar({
+					contentRight: new Button({
+						text: "Some text"
+					})
+				})
+			})
+		});
+
+		oDialog.open();
+		this.clock.tick(100);
+
+		// Assert
+		var oDomRef = oDialog.getDomRef(),
+			iMaxHeight = parseFloat(oDomRef.style.maxHeight);
+
+		oDialog.getContent()[0].destroyFooter();
+		oDialog.setEndButton(new Button({
+			text: "Some text"
+		}));
+
+		Core.applyChanges();
+
+		assert.ok(iMaxHeight > parseFloat(oDomRef.style.maxHeight), "dialog max height is bigger when there is no dialog footer.");
+
+		// Clean up
+		oDialog.destroy();
+	});
+
 	QUnit.module("Content preservation", {
 		beforeEach: function() {
 			sinon.config.useFakeTimers = false;
