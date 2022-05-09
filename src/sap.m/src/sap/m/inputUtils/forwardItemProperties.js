@@ -34,6 +34,10 @@ sap.ui.define([
 			return;
 		}
 
+		if (oItem.isA("sap.ui.core.Item") && propName === "enabled") {
+			oItem._bSelectable = !!propValue;
+		}
+
 		if (oDirectMapping[propName]) {
 			sProperty = oDirectMapping[propName];
 			sSetter = "set" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1);

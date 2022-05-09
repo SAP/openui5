@@ -11796,6 +11796,52 @@ sap.ui.define([
 		assert.strictEqual(oListItem.getInfo(), "New additional text", "The list item info is updated.");
 	});
 
+	QUnit.test("Item should be maked as selecable after changing of enabled property", function (assert) {
+		var oItem = new Item({
+			text: "Item 2",
+			enabled: false
+		});
+
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({
+					text: "Item 1"
+				}),
+				oItem
+			]
+		});
+
+		var openComboBox = function () {
+			oComboBox.focus();
+			oComboBox.open();
+			this.clock.tick(500);
+		}.bind(this);
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+		this.clock.tick(500);
+
+		openComboBox();
+
+		var oList = oComboBox.getList();
+		var getVisibleListItems = function () {
+			return oList.getItems().filter(function (oElement) {
+				return oElement.getVisible();
+			}).length;
+		};
+
+		assert.strictEqual(getVisibleListItems(), 1, "One item should be visible");
+
+		oItem.setEnabled(true);
+		oCore.applyChanges();
+		oComboBox.close();
+
+		openComboBox();
+		assert.strictEqual(getVisibleListItems(), 2, "Two items should be visible");
+
+		oComboBox.destroy();
+	});
+
 	QUnit.module("addItemGroup", {
 		beforeEach: function () {
 			this.oComboBox = new ComboBox();
