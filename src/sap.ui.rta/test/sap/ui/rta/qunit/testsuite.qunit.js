@@ -727,6 +727,14 @@ sap.ui.define([
 					only: ["sap/ui/rta/util/showMessageBox"]
 				}
 			},
+			"util/changeVisualization/categories/CombineVisualization": {
+				group: "Change visualization",
+				coverage: {
+					only: [
+						"sap/ui/rta/util/changeVisualization/categories/CombineVisualization"
+					]
+				}
+			},
 			"util/changeVisualization/categories/MoveVisualization": {
 				group: "Change visualization",
 				coverage: {

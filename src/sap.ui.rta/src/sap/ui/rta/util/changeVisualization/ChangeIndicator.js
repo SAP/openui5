@@ -158,7 +158,7 @@ sap.ui.define([
 
 	function centerVertically(oIndicator) {
 		var oIndicatorDomRef = oIndicator.getDomRef();
-		var iOverlayHeight = document.getElementById(oIndicator.getOverlayId()).offsetHeight;
+		var iOverlayHeight = Core.byId(oIndicator.getOverlayId()).getDomRef().offsetHeight;
 		var iIndicatorHeight = oIndicatorDomRef.offsetHeight;
 		// the indicator should be centered only if the element has a small enough height to improve the design and visibility
 		if (iOverlayHeight < iIndicatorHeight * 5) {
@@ -201,11 +201,28 @@ sap.ui.define([
 		this._bScheduledForFocus = true;
 	};
 
+	ChangeIndicator.prototype.setOverlayId = function(sOverlayId) {
+		// Overlays don't have aggregations, thus the indicator dom ref must be placed as
+		// a child of the overlay dom ref manually
+		// If the overlay that the indicator should be attached to changes, it is possible that the
+		// indicator is not rendered yet or that the old overlay and thus the nested indicator were destroyed
+		// To properly render it, the indicator must temporarily be placed in the static area
+		// Once it is rendered, it can move itself to the actual overlay dom ref (see onAfterRendering)
+		var oDomRef = this.getDomRef();
+		if (oDomRef) {
+			oDomRef.parentNode.removeChild(oDomRef);
+		}
+		this.placeAt(Core.getStaticAreaRef());
+
+		this.setProperty("overlayId", sOverlayId);
+		return this;
+	};
+
 	ChangeIndicator.prototype.onAfterRendering = function() {
-		var oOverlay = document.getElementById(this.getOverlayId());
+		var oOverlay = Core.getElementById(this.getOverlayId());
 		if (oOverlay) {
 			// Attach to the overlay
-			oOverlay.appendChild(this.getDomRef());
+			oOverlay.getDomRef().appendChild(this.getDomRef());
 			centerVertically(this);
 		}
 		// Restore the Tabindex if stored before; set to 0 as default
