@@ -204,10 +204,8 @@
 												<core:Item text="with Country" key="template1"/>
 											</mdcvc:collectiveSearchItems>
 										</mdcvc:MTable> -->
-										<mdcvc:MTable id="FH1-Dialog-MTable_default" title="Default" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch">
-										</mdcvc:MTable>
-										<mdcvc:MTable id="FH1-Dialog-MTable_withCountry" title="with Country" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch">
-										</mdcvc:MTable>
+										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_default" title="Default" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch"/>
+										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_withCountry" title="with Country" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch"/>
 										<mdcvc:Conditions label="Author ID"/>
 									</mdcv:Dialog>
 								</mdc:dialog>
@@ -254,36 +252,32 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Languages">
-										<mdcvc:MTable keyPath="code" descriptionPath="name" filterFields="$search">
-											<Table id="mTable2_languages" items='{path : "/Languages"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
-												<columns>
-													<Column width="5rem">
-														<header>
-															<Text text="Code" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Name" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="navitve Name" />
-														</header>
-													</Column>
-												</columns>
-												<items>
-													<ColumnListItem type="Active">
-														<cells>
-															<Text text="{code}" />
-															<Text text="{name}" />
-															<Text text="{nativeName}" />
-														</cells>
-													</ColumnListItem>
-												</items>
-											</Table>
-										</mdcvc:MTable>
+										<mdcvc:MDCTable keyPath="code" descriptionPath="name" filterFields="$search">
+											<mdc:Table id="FHLanguage-mdcTable"
+												autoBindOnInit="true"
+												width="100%"
+												height="100%"
+												selectionMode="Multi"
+												p13nMode="Sort"
+												delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Languages'}}"
+												threshold="50"
+												enableAutoColumnWidth="true">
+												<mdc:columns>
+													<mdc:table.Column id="FHLanguage-mdcTable--code" header="Code" dataProperty="code">
+														<Text text="{code}"/>
+													</mdc:table.Column>
+													<mdc:table.Column id="FHLanguage-mdcTable--name" header="Name" dataProperty="name">
+														<Text text="{name}"/>
+													</mdc:table.Column>
+													<mdc:table.Column id="HLanguage-mdcTable--nativeName" header="navitve Name" dataProperty="nativeName">
+														<Text text="{nativeName}"/>
+													</mdc:table.Column>
+												</mdc:columns>
+												<mdc:type>
+													<mdc:table.GridTableType rowCountMode="Auto"/>
+												</mdc:type>
+											</mdc:Table>
+										</mdcvc:MDCTable>
 										<mdcvc:Conditions label="Languages"/>
 									</mdcv:Dialog>
 								</mdc:dialog>
@@ -385,7 +379,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Sub Genre">
-										<mdcvc:MTable id="subGenre" keyPath="code" descriptionPath="title" filterFields="$search">
+										<mdcvc:MDCTable id="subGenre" keyPath="code" descriptionPath="title" filterFields="$search">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar id="subgenreVHFB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 													<vhfb:basicSearchField>
@@ -405,41 +399,34 @@
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
-											<Table id="mTable2_subgenre" items='{path: "/SubGenres", parameters: {$select: ["classification_code", "genre_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
-												<columns>
-													<Column width="10rem">
-														<header>
-															<Text text="Code" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Title" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Genre" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Classification" />
-														</header>
-													</Column>
-												</columns>
-												<items>
-													<ColumnListItem type="Active">
-														<cells>
-															<Text text="{code}"/>
-															<Text text="{title}"/>
-															<Text text="{genre/title}"/>
-															<Text text="{classification/title}"/>
-														</cells>
-													</ColumnListItem>
-												</items>
-											</Table>
-										</mdcvc:MTable>
+											<mdc:Table id="FHSubGenre-MDCTable"
+												autoBindOnInit="true"
+												width="100%"
+												height="100%"
+												selectionMode="Multi"
+												p13nMode="Sort"
+												delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'SubGenres', $select: ['classification_code', 'genre_code']}}"
+												threshold="50"
+												enableAutoColumnWidth="true">
+												<mdc:columns>
+													<mdc:table.Column id="FHSubGenre-MDCTable--code" header="Code" dataProperty="code">
+														<Text text="{code}"/>
+													</mdc:table.Column>
+													<mdc:table.Column id="FHSubGenre-MDCTable--title" header="Title" dataProperty="title">
+														<Text text="{title}"/>
+													</mdc:table.Column>
+													<mdc:table.Column id="FHSubGenre-MDCTable--genre" header="Genre" dataProperty="genre/title">
+														<Text text="{genre/title}"/>
+													</mdc:table.Column>
+													<mdc:table.Column id="FHSubGenre-MDCTable--classification" header="Classification" dataProperty="classification/title">
+														<Text text="{classification/title}"/>
+													</mdc:table.Column>
+												</mdc:columns>
+												<mdc:type>
+													<mdc:table.GridTableType rowCountMode="Auto"/>
+												</mdc:type>
+											</mdc:Table>
+										</mdcvc:MDCTable>
 										<mdcvc:Conditions label="Sub Genre"/>
 									</mdcv:Dialog>
 								</mdc:dialog>
@@ -521,7 +508,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Detail Genre">
-										<mdcvc:MTable id="detailGenre" keyPath="code" descriptionPath="title" filterFields="$search">
+										<mdcvc:MDCTable id="detailGenre" keyPath="code" descriptionPath="title" filterFields="$search">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar id="detailgenreVHFB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 													<vhfb:basicSearchField>
@@ -542,47 +529,37 @@
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
-											<Table id="mTable2_detailgenre" items='{path: "/DetailGenres", parameters: {$select: ["classification_code", "genre_code", "subgenre_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
-												<columns>
-													<Column width="10rem">
-														<header>
-															<Text text="Code" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Title" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Classification" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Genre" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Sub Genre" />
-														</header>
-													</Column>
-												</columns>
-												<items>
-													<ColumnListItem type="Active">
-														<cells>
-															<Text text="{code}"/>
-															<Text text="{title}"/>
-															<Text text="{classification/title}"/>
-															<Text text="{genre/title}"/>
-															<Text text="{subgenre/title}"/>
-														</cells>
-													</ColumnListItem>
-												</items>
-											</Table>
-										</mdcvc:MTable>
+											<mdc:Table id="FHDetailGenre-MDCTable"
+												autoBindOnInit="true"
+												width="100%"
+												height="100%"
+												selectionMode="Multi"
+												p13nMode="Sort"
+												delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'DetailGenres', $select: ['classification_code', 'genre_code', 'subgenre_code']}}"
+												threshold="50"
+												enableAutoColumnWidth="true">
+												<mdc:columns>
+													<mdc:table.Column id="FHDetailGenre-MDCTable--code" header="Code" dataProperty="code">
+														<Text text="{code}"/>
+													</mdc:table.Column>
+													<mdc:table.Column id="FHDetailGenre-MDCTable--title" header="Title" dataProperty="title">
+														<Text text="{title}"/>
+													</mdc:table.Column>
+													<mdc:table.Column id="FHDetailGenre-MDCTable--classification" header="Classification" dataProperty="classification/title">
+														<Text text="{classification/title}"/>
+													</mdc:table.Column>
+													<mdc:table.Column id="FHDetailGenre-MDCTable--genre" header="Genre" dataProperty="genre/title">
+														<Text text="{genre/title}"/>
+													</mdc:table.Column>
+													<mdc:table.Column id="FHDetailGenre-MDCTable--subgenre" header="Sub Genre" dataProperty="subgenre/title">
+														<Text text="{subgenre/title}"/>
+													</mdc:table.Column>
+												</mdc:columns>
+												<mdc:type>
+													<mdc:table.GridTableType rowCountMode="Auto"/>
+												</mdc:type>
+											</mdc:Table>
+										</mdcvc:MDCTable>
 										<mdcvc:Conditions label="Detail Genre"/>
 									</mdcv:Dialog>
 								</mdc:dialog>
@@ -983,7 +960,7 @@
 					</mdc:typeahead>
 					<mdc:dialog>
 						<mdcv:Dialog title="Genre">
-							<mdcvc:MTable id="genre" keyPath="code" descriptionPath="title" filterFields="$search">
+							<mdcvc:MDCTable id="genre" keyPath="code" descriptionPath="title" filterFields="$search">
 								<mdcvc:filterBar>
 									<vhfb:FilterBar id="genreVHFB" liveMode="false" expandFilterFields="true" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:basicSearchField>
@@ -1002,35 +979,31 @@
 										</vhfb:filterItems>
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
-								<Table id="mTable2_genre" items='{path : "/Genres", parameters: {$select: "classification_code"}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
-									<columns>
-										<Column width="10rem">
-											<header>
-												<Text text="Code" />
-											</header>
-										</Column>
-										<Column>
-											<header>
-												<Text text="Title" />
-											</header>
-										</Column>
-										<Column>
-											<header>
-												<Text text="Classification" />
-											</header>
-										</Column>
-									</columns>
-									<items>
-										<ColumnListItem type="Active">
-											<cells>
-												<Text text="{code}"/>
-												<Text text="{title}"/>
-												<Text text="{classification/title}"/>
-											</cells>
-										</ColumnListItem>
-									</items>
-								</Table>
-							</mdcvc:MTable>
+								<mdc:Table id="FHGenre-MDCTable"
+									autoBindOnInit="true"
+									width="100%"
+									height="100%"
+									selectionMode="Multi"
+									p13nMode="Sort"
+									delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Genres', $select: ['classification_code']}}"
+									threshold="50"
+									enableAutoColumnWidth="true">
+									<mdc:columns>
+										<mdc:table.Column id="FHGenre-MDCTable--code" header="Code" dataProperty="code">
+											<Text text="{code}"/>
+										</mdc:table.Column>
+										<mdc:table.Column id="FHGenre-MDCTable--title" header="Title" dataProperty="title">
+											<Text text="{title}"/>
+										</mdc:table.Column>
+										<mdc:table.Column id="FHGenre-MDCTable--classification" header="Classification" dataProperty="classification/title">
+											<Text text="{classification/title}"/>
+										</mdc:table.Column>
+									</mdc:columns>
+									<mdc:type>
+										<mdc:table.GridTableType rowCountMode="Auto"/>
+									</mdc:type>
+								</mdc:Table>
+							</mdcvc:MDCTable>
 							<mdcvc:Conditions label="Genre"/>
 						</mdcv:Dialog>
 					</mdc:dialog>

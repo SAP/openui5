@@ -78,9 +78,9 @@
 												</mdc:typeahead>
 												<mdc:dialog>
 													<mdcv:Dialog id="FH1-Dialog" title="Author ID">
-														<mdcvc:MTable id="FH1-Dialog-MTable" keyPath="ID" descriptionPath="name" filterFields="$search">
+														<mdcvc:MDCTable id="FH1-Dialog-MDCTable" keyPath="ID" descriptionPath="name" filterFields="$search">
 															<mdcvc:filterBar>
-																<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+																<vhfb:FilterBar id="FH1-Dialog-MDCTable--default-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 																	<vhfb:basicSearchField>
 																		<mdc:FilterField
 																			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
@@ -108,35 +108,31 @@
 																	</vhfb:filterItems>
 																</vhfb:FilterBar>
 															</mdcvc:filterBar>
-															<Table id="mTable2" items='{path : "/Authors"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
-																<columns>
-																	<Column width="5rem">
-																		<header>
-																			<Text text="ID" />
-																		</header>
-																	</Column>
-																	<Column>
-																		<header>
-																			<Text text="Name" />
-																		</header>
-																	</Column>
-																	<Column>
-																		<header>
-																			<Text text="Date of birth" />
-																		</header>
-																	</Column>
-																</columns>
-																<items>
-																	<ColumnListItem type="Active">
-																		<cells>
-																			<Text id="mTable2-authorId" text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" />
-																			<Text text="{name}" />
-																			<Text text="{dateOfBirth}" />
-																		</cells>
-																	</ColumnListItem>
-																</items>
-															</Table>
-														</mdcvc:MTable>
+															<mdc:Table id="FH1-Dialog-MDCTable--default"
+																autoBindOnInit="true"
+																width="100%"
+																height="100%"
+																selectionMode="Single"
+																p13nMode="Sort"
+																delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}}"
+																threshold="50"
+																enableAutoColumnWidth="true">
+																<mdc:columns>
+																	<mdc:table.Column id="FH1-Dialog-MDCTable--default--id" header="ID" dataProperty="ID">
+																		<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"/>
+																	</mdc:table.Column>
+																	<mdc:table.Column id="FH1-Dialog-MDCTable--default--name" header="Name" dataProperty="name">
+																		<Text text="{name}"/>
+																	</mdc:table.Column>
+																	<mdc:table.Column id="FH1-Dialog-MDCTable--default--dateOfBirth" header="Date of birth" dataProperty="dateOfBirth">
+																		<Text text="{dateOfBirth}"/>
+																	</mdc:table.Column>
+																</mdc:columns>
+																<mdc:type>
+																	<mdc:table.GridTableType rowCountMode="Auto"/>
+																</mdc:type>
+															</mdc:Table>
+														</mdcvc:MDCTable>
 													</mdcv:Dialog>
 												</mdc:dialog>
 											</mdc:ValueHelp>
@@ -187,7 +183,16 @@
 								</f:content>
 								<f:dependents>
 									<mdc:ValueHelp id="FHGenre"
-										delegate="{name: 'sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate', payload: {}}">
+										delegate="{name: 'sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate', payload: {
+											inParameters: [ {contentId:'container-v4demo---bookdetails--genreDialog', source:'classification_code', target:'classification_code'},
+															{contentId:'container-v4demo---bookdetails--genreTypeAhead', source:'classification_code', target:'classification_code'}
+															],
+											outParameters: [{source: 'classification_code', target: 'classification_code', mode:'Always'}
+															],
+											payloadInfos: [ {contentId:'container-v4demo---bookdetails--genreDialog', path:['classification_code']},
+															{contentId:'container-v4demo---bookdetails--genreTypeAhead', path:['classification_code']}
+															]
+										}}">
 										<!-- <mdc:inParameters>
 											<mdcf:InParameter id="IOFFVHGenre-In-Class" value="{classification_code}" helpPath="classification_code" />
 										</mdc:inParameters>
@@ -196,7 +201,7 @@
 										</mdc:outParameters> -->
 										<mdc:typeahead>
 											<mdcv:Popover title="Genre">
-												<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
+												<mdcvc:MTable id="genreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search">
 													<Table id="mTable1_genre" items='{path : "/Genres", length: 10, parameters: {$select: ["classification_code"]}}' width="30rem" mode="SingleSelectMaster">
 														<columns>
 															<Column width="10rem">
@@ -230,47 +235,46 @@
 										</mdc:typeahead>
 										<mdc:dialog>
 											<mdcv:Dialog title="Genre">
-												<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-													<Table id="mTable2_genre" items='{path : "/Genres", parameters: {$select: ["classification_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
-														<columns>
-															<Column width="10rem">
-																<header>
-																	<Text text="Code" />
-																</header>
-															</Column>
-															<Column>
-																<header>
-																	<Text text="Title" />
-																</header>
-															</Column>
-															<Column>
-																<header>
-																	<Text text="Classification" />
-																</header>
-															</Column>
-														</columns>
-														<items>
-															<ColumnListItem type="Active">
-																<cells>
-																	<Text text="{code}"/>
-																	<Text text="{title}"/>
-																	<Text text="{classification/title}"/>
-																</cells>
-															</ColumnListItem>
-														</items>
-													</Table>
-												</mdcvc:MTable>
+												<mdcvc:MDCTable id="genreDialog" keyPath="code" descriptionPath="title" filterFields="$search">
+													<mdc:Table id="FHGenre-MDCTable"
+														autoBindOnInit="true"
+														width="100%"
+														height="100%"
+														selectionMode="Single"
+														p13nMode="Sort"
+														delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Genres', $select: ['classification_code']}}"
+														threshold="50"
+														enableAutoColumnWidth="true">
+														<mdc:columns>
+															<mdc:table.Column id="FHGenre-MDCTable--code" header="Code" dataProperty="code">
+																<Text text="{code}"/>
+															</mdc:table.Column>
+															<mdc:table.Column id="FHGenre-MDCTable--title" header="Title" dataProperty="title">
+																<Text text="{title}"/>
+															</mdc:table.Column>
+															<mdc:table.Column id="FHGenre-MDCTable--classification" header="Classification" dataProperty="classification/title">
+																<Text text="{classification/title}"/>
+															</mdc:table.Column>
+														</mdc:columns>
+														<mdc:type>
+															<mdc:table.GridTableType rowCountMode="Auto"/>
+														</mdc:type>
+													</mdc:Table>
+												</mdcvc:MDCTable>
 											</mdcv:Dialog>
 										</mdc:dialog>
 									</mdc:ValueHelp>
 									<mdc:ValueHelp id="FHSubGenre"
 										delegate="{name: 'sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate', payload: {
-											inParameters: [ {contentId:'container-v4demo---bookdetails--subGenre', sourceFieldId:'container-v4demo---bookdetails--fGenre', target:'genre_code'},
-															{contentId:'container-v4demo---bookdetails--subGenreTypeAhead', sourceFieldId:'container-v4demo---bookdetails--fGenre', target:'genre_code'}
+											inParameters: [ {contentId:'container-v4demo---bookdetails--subGenreDialog', sourceFieldId:'container-v4demo---bookdetails--fGenre', target:'genre_code'},
+															{contentId:'container-v4demo---bookdetails--subGenreDialog', source:'classification_code', target:'classification_code'},
+															{contentId:'container-v4demo---bookdetails--subGenreTypeAhead', sourceFieldId:'container-v4demo---bookdetails--fGenre', target:'genre_code'},
+															{contentId:'container-v4demo---bookdetails--gsubGenreTypeAhead', source:'classification_code', target:'classification_code'}
 															],
-											outParameters: [{source: 'genre_code', targetFieldId: 'container-v4demo---bookdetails--fGenre', mode:'Always'}
+											outParameters: [{source: 'genre_code', targetFieldId: 'container-v4demo---bookdetails--fGenre', mode:'Always'},
+															{source: 'classification_code', target: 'classification_code', mode:'Always'}
 															],
-											payloadInfos: [ {contentId:'container-v4demo---bookdetails--subGenre', path:['classification_code', 'genre_code']},
+											payloadInfos: [ {contentId:'container-v4demo---bookdetails--subGenreDialog', path:['classification_code', 'genre_code']},
 															{contentId:'container-v4demo---bookdetails--subGenreTypeAhead', path:['classification_code', 'genre_code']}
 															]
 										}}">
@@ -324,9 +328,9 @@
 										</mdc:typeahead>
 										<mdc:dialog>
 											<mdcv:Dialog title="Sub Genre">
-												<mdcvc:MTable id="subGenre" keyPath="code" descriptionPath="title" filterFields="$search">
+												<mdcvc:MDCTable id="subGenreDialog" keyPath="code" descriptionPath="title" filterFields="$search">
 													<mdcvc:filterBar>
-														<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
+														<vhfb:FilterBar id="subGenreDialog-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 															<vhfb:basicSearchField>
 																<mdc:FilterField
 																	delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
@@ -344,41 +348,34 @@
 															</vhfb:filterItems>
 														</vhfb:FilterBar>
 													</mdcvc:filterBar>
-													<Table id="mTable2_subgenre" items='{path : "/SubGenres", parameters: {$select: ["classification_code", "genre_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
-														<columns>
-															<Column width="10rem">
-																<header>
-																	<Text text="Code" />
-																</header>
-															</Column>
-															<Column>
-																<header>
-																	<Text text="Title" />
-																</header>
-															</Column>
-															<Column>
-																<header>
-																	<Text text="Genre" />
-																</header>
-															</Column>
-															<Column>
-																<header>
-																	<Text text="Classification" />
-																</header>
-															</Column>
-														</columns>
-														<items>
-															<ColumnListItem type="Active">
-																<cells>
-																	<Text text="{code}"/>
-																	<Text text="{title}"/>
-																	<Text text="{genre/title}"/>
-																	<Text text="{classification/title}"/>
-																</cells>
-															</ColumnListItem>
-														</items>
-													</Table>
-												</mdcvc:MTable>
+													<mdc:Table id="FHSubGenre-MDCTable"
+														autoBindOnInit="true"
+														width="100%"
+														height="100%"
+														selectionMode="Single"
+														p13nMode="Sort"
+														delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'SubGenres', $select: ['classification_code', 'genre_code']}}"
+														threshold="50"
+														enableAutoColumnWidth="true">
+														<mdc:columns>
+															<mdc:table.Column id="FHSubGenre-MDCTable--code" header="Code" dataProperty="code">
+																<Text text="{code}"/>
+															</mdc:table.Column>
+															<mdc:table.Column id="FHSubGenre-MDCTable--title" header="Title" dataProperty="title">
+																<Text text="{title}"/>
+															</mdc:table.Column>
+															<mdc:table.Column id="FHSubGenre-MDCTable--genre" header="Genre" dataProperty="genre/title">
+																<Text text="{genre/title}"/>
+															</mdc:table.Column>
+															<mdc:table.Column id="FHSubGenre-MDCTable--classification" header="Classification" dataProperty="classification/title">
+																<Text text="{classification/title}"/>
+															</mdc:table.Column>
+														</mdc:columns>
+														<mdc:type>
+															<mdc:table.GridTableType rowCountMode="Auto"/>
+														</mdc:type>
+													</mdc:Table>
+												</mdcvc:MDCTable>
 											</mdcv:Dialog>
 										</mdc:dialog>
 									</mdc:ValueHelp>

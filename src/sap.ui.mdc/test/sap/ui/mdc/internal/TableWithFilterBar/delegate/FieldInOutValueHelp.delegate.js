@@ -25,6 +25,7 @@ sap.ui.define([
 		if (oField.isA("sap.ui.mdc.Field")) {
 			var sContentId = oContent.getId();
 			var aPropertyPromises = [];
+			var aPropertyPromiseTargets = [];
 
 			aInParameters.forEach(function(oInParameter) {
 				if (sContentId === oInParameter.contentId) {
@@ -38,7 +39,8 @@ sap.ui.define([
 						}
 					} else {
 						var oContext = oField.getBindingContext();
-						aPropertyPromises.push( oContext.requestProperty(oInParameter.source));
+						aPropertyPromises.push(oContext.requestProperty(oInParameter.source));
+						aPropertyPromiseTargets.push(oInParameter.target);
 					}
 
 				}
@@ -47,7 +49,7 @@ sap.ui.define([
 			if (aPropertyPromises.length > 0) {
 				return Promise.all(aPropertyPromises).then(function(aResults) {
 					aResults.forEach(function(vResult, index){
-						oConditions[aInParameters[index].target] = Condition.createCondition("EQ", [aResults[index]], null, null, false, null);
+						oConditions[aPropertyPromiseTargets[index]] = [Condition.createCondition("EQ", [vResult], null, null, ConditionValidated.Validated, null)];
 					});
 					return oConditions;
 				});
@@ -95,16 +97,21 @@ sap.ui.define([
 
 		aOutParameters.forEach(function(oOutParameter) {
 
-			if (oOutParameter.targetFieldId) {
-				// update field by Id
-				var sTarget = oOutParameter.target || oOutParameter.targetFieldId;
-				var aAllOutValues = mAllOutValues[sTarget];
-				var sTargetFieldId = oOutParameter.targetFieldId;
-				var oTargetField = Core.byId(sTargetFieldId);
-				var bAlways = oOutParameter.mode === "Always";
-				if (!oTargetField.getValue() || bAlways) {
-					if (aAllOutValues && aAllOutValues.length) {
+			var sTarget = oOutParameter.target || oOutParameter.targetFieldId;
+			var aAllOutValues = mAllOutValues[sTarget];
+			if (aAllOutValues && aAllOutValues.length) {
+				if (oOutParameter.targetFieldId) {
+					// update field by Id
+					var sTargetFieldId = oOutParameter.targetFieldId;
+					var oTargetField = Core.byId(sTargetFieldId);
+					var bAlways = oOutParameter.mode === "Always";
+					if (!oTargetField.getValue() || bAlways) {
 						oTargetField.setValue(aAllOutValues[0]);
+					}
+				} else if (oOutParameter.target && oOutParameter.mode === "Always") {
+					var oBindingContext = oField.getBindingContext();
+					if (oBindingContext) {
+						oBindingContext.setProperty(oOutParameter.target, aAllOutValues[0]);
 					}
 				}
 			}

@@ -41,127 +41,127 @@
 				<f2:DynamicPageHeader>
 				<f2:content>
 			<mdc:FilterBar
-					id="ordersFilterBar"
-					variantBackreference="IDVariantManagementOfTable"
-					liveMode="false"
-					delegate="{name: 'sap/ui/v4demo/delegate/Orders.FB.delegate', payload: {collectionName: 'Orders'} }"
-					search="onSearch"
-					p13nMode="Item,Value"
-					filtersChanged="onFiltersChanged">
-					<mdc:dependents>
+				id="ordersFilterBar"
+				variantBackreference="IDVariantManagementOfTable"
+				liveMode="false"
+				delegate="{name: 'sap/ui/v4demo/delegate/Orders.FB.delegate', payload: {collectionName: 'Orders'} }"
+				search="onSearch"
+				p13nMode="Item,Value"
+				filtersChanged="onFiltersChanged">
+				<mdc:dependents>
 
-						<mdc:ValueHelp id="FH1"
-							delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
-							<mdc:typeahead>
-								<mdcv:Popover >
-									<mdcvc:MTable keyPath="OrderNo" filterFields="*OrderNo*">
-										<Table items='{path : "/Orders", length: 10}' width="30rem" mode="MultiSelect">
-											<columns>
-												<Column>
-													<header>
-														<Text text="Order Number" />
-													</header>
-												</Column>
-												<Column>
-													<header>
-														<Text text="Order ID" />
-													</header>
-												</Column>
-											</columns>
-											<items>
-												<ColumnListItem type="Active">
-													<cells>
-														<Text text="{OrderNo}" />
-														<Text text="{ID}" />
-													</cells>
-												</ColumnListItem>
-											</items>
-										</Table>
-									</mdcvc:MTable>
-								</mdcv:Popover>
-							</mdc:typeahead>
-							<mdc:dialog>
-								<mdcv:Dialog title="Order Number">
-									<mdcvc:MTable keyPath="OrderNo" filterFields="">
-										<mdcvc:filterBar>
-											<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
-												<vhfb:filterItems>
-													<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
-												</vhfb:filterItems>
-											</vhfb:FilterBar>
-										</mdcvc:filterBar>
-										<Table items='{path : "/Orders"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
-											<columns>
-												<Column>
-													<header>
-														<Text text="Order Number" />
-													</header>
-												</Column>
-												<Column>
-													<header>
-														<Text text="Order ID" />
-													</header>
-												</Column>
-											</columns>
-											<items>
-												<ColumnListItem type="Active">
-													<cells>
-														<Text text="{OrderNo}" />
-														<Text text="{ID}" />
-													</cells>
-												</ColumnListItem>
-											</items>
-										</Table>
-									</mdcvc:MTable>
+					<mdc:ValueHelp id="FH1"
+						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+						<mdc:typeahead>
+							<mdcv:Popover >
+								<mdcvc:MTable keyPath="OrderNo" filterFields="*OrderNo*">
+									<Table items='{path : "/Orders", length: 10}' width="30rem" mode="MultiSelect">
+										<columns>
+											<Column>
+												<header>
+													<Text text="Order Number" />
+												</header>
+											</Column>
+											<Column>
+												<header>
+													<Text text="Order ID" />
+												</header>
+											</Column>
+										</columns>
+										<items>
+											<ColumnListItem type="Active">
+												<cells>
+													<Text text="{OrderNo}" />
+													<Text text="{ID}" />
+												</cells>
+											</ColumnListItem>
+										</items>
+									</Table>
+								</mdcvc:MTable>
+							</mdcv:Popover>
+						</mdc:typeahead>
+						<mdc:dialog>
+							<mdcv:Dialog title="Order Number">
+								<mdcvc:MDCTable keyPath="OrderNo" filterFields="">
+									<mdcvc:filterBar>
+										<vhfb:FilterBar id="FH1--mdc--responsivetable-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+											<vhfb:filterItems>
+												<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
+											</vhfb:filterItems>
+										</vhfb:FilterBar>
+									</mdcvc:filterBar>
+									<mdc:Table id="FH1--mdc--responsivetable"
+										autoBindOnInit="true"
+										header="Items"
+										width="100%"
+										height="100%"
+										selectionMode="Multi"
+										p13nMode="Sort"
+										delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Orders'}}"
+										threshold="50"
+										enableAutoColumnWidth="true">
+										<mdc:columns>
+											<mdc:table.Column header="Order Number" dataProperty="OrderNo">
+												<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="Display" multipleLines="false" width="100%"/>
+											</mdc:table.Column>
+											<mdc:table.Column header="Order ID" dataProperty="ID">
+												<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="Display" multipleLines="false" width="100%"/>
+											</mdc:table.Column>
+										</mdc:columns>
+										<mdc:type>
+											<mdc:table.ResponsiveTableType growingMode="Scroll"/>
+										</mdc:type>
+									</mdc:Table>
+								</mdcvc:MDCTable>
 
-									<mdcvc:MDCTable keyPath="OrderNo" filterFields="">
-										<mdcvc:filterBar>
-											<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
-												<vhfb:filterItems>
-													<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
-												</vhfb:filterItems>
-											</vhfb:FilterBar>
-										</mdcvc:filterBar>
-										<mdc:Table id="FH1--mdc--gridtable"
-											autoBindOnInit="true"
-											header="Items"
-											width="100%"
-											height="100%"
-											selectionMode="Multi"
-											p13nMode="Column,Sort"
-											delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Orders'}}"
-											threshold="50"
-											enableAutoColumnWidth="true">
-											<mdc:columns>
-												<mdc:table.Column header="Order Number" dataProperty="OrderNo">
-													<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="Display" multipleLines="false" width="100%"/>
-												</mdc:table.Column>
-												<mdc:table.Column header="Order ID" dataProperty="ID">
-													<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="Display" multipleLines="false" width="100%"/>
-												</mdc:table.Column>
-											</mdc:columns>
-											<mdc:type>
-												<mdc:table.GridTableType rowCountMode="Auto"/>
-											</mdc:type>
-										</mdc:Table>
-									</mdcvc:MDCTable>
+								<mdcvc:MDCTable keyPath="OrderNo" filterFields="">
+									<mdcvc:filterBar>
+										<vhfb:FilterBar id="FH1--mdc--gridtable-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+											<vhfb:filterItems>
+												<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
+											</vhfb:filterItems>
+										</vhfb:FilterBar>
+									</mdcvc:filterBar>
+									<mdc:Table id="FH1--mdc--gridtable"
+										autoBindOnInit="true"
+										header="Items"
+										width="100%"
+										height="100%"
+										selectionMode="Multi"
+										p13nMode="Sort"
+										delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Orders'}}"
+										threshold="50"
+										enableAutoColumnWidth="true">
+										<mdc:columns>
+											<mdc:table.Column header="Order Number" dataProperty="OrderNo">
+												<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="Display" multipleLines="false" width="100%"/>
+											</mdc:table.Column>
+											<mdc:table.Column header="Order ID" dataProperty="ID">
+												<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="Display" multipleLines="false" width="100%"/>
+											</mdc:table.Column>
+										</mdc:columns>
+										<mdc:type>
+											<mdc:table.GridTableType rowCountMode="Auto"/>
+										</mdc:type>
+									</mdc:Table>
+								</mdcvc:MDCTable>
 
-									<mdcvc:Conditions label="Order Number"/>
-								</mdcv:Dialog>
-							</mdc:dialog>
-						</mdc:ValueHelp>
+								<mdcvc:Conditions label="Order Number"/>
+							</mdcv:Dialog>
+						</mdc:dialog>
+					</mdc:ValueHelp>
 
-						<mdc:ValueHelp id="FH-Currency"
-							delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
-							<mdc:typeahead>
-								<mdcv:Popover>
-									<mdcvc:FixedList items="{/Currencies}" useAsValueHelp="true">
-										<mdcf:ListFieldHelpItem key="{code}" text="{descr}" additionalText="{code}"/>
-									</mdcvc:FixedList>
-								</mdcv:Popover>
-							</mdc:typeahead>
-						</mdc:ValueHelp>
-					</mdc:dependents>
+					<mdc:ValueHelp id="FH-Currency"
+						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+						<mdc:typeahead>
+							<mdcv:Popover>
+								<mdcvc:FixedList items="{/Currencies}" useAsValueHelp="true">
+									<mdcf:ListFieldHelpItem key="{code}" text="{descr}" additionalText="{code}"/>
+								</mdcvc:FixedList>
+							</mdcv:Popover>
+						</mdc:typeahead>
+					</mdc:ValueHelp>
+				</mdc:dependents>
                 <mdc:basicSearchField>
                     <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
 					dataType="Edm.String"
