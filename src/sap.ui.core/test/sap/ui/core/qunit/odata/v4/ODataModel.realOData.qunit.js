@@ -1225,6 +1225,7 @@ sap.ui.define([
 			oEntity = {
 				"@odata.etag" : "*"
 			},
+			fnMergeRequests = function () {},
 			oRequestor = _Requestor.create(sSampleServiceUrl, oModelInterface);
 
 		function onError(sRequestUrl, oError) {
@@ -1239,13 +1240,15 @@ sap.ui.define([
 		// code under test
 		return Promise.all([
 			oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
-					{"If-Match" : oEntity}, {Name : "foo"})
+					{"If-Match" : oEntity}, {Name : "foo"}, undefined, undefined, undefined,
+					undefined, undefined, undefined, undefined, fnMergeRequests)
 				.then(undefined,
 					onError.bind(null, sSampleServiceUrl + "ProductList('HT-1001')")),
 			oRequestor.request("POST", "Unknown", this.createGroupLock(), undefined, {})
 				.then(undefined, onError.bind(null, sSampleServiceUrl + "Unknown")),
 			oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
-					{"If-Match" : oEntity}, {Name : "bar"})
+					{"If-Match" : oEntity}, {Name : "bar"}, undefined, undefined, undefined,
+					undefined, undefined, undefined, undefined, fnMergeRequests)
 				.then(undefined,
 					onError.bind(null, sSampleServiceUrl + "ProductList('HT-1001')")),
 			oRequestor.request("GET", "SalesOrderList?$skip=0&$top=10", this.createGroupLock())
