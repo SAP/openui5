@@ -1,0 +1,76 @@
+{
+  "1.103.0": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "23f8bcafb19bb88ec17aa7644be885895f008e3f",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: proper inner element receives focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080354200"
+          }
+        ]
+      },
+      {
+        "id": "b33bd06d6dc3476a83eee93af05ffbba38b1157d",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPicker: Horizon themes implemented"
+      },
+      {
+        "id": "88684a893fd004f11a11a434d1dd4c031fb4d0a0",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Horizon themes implementated"
+      },
+      {
+        "id": "b27dc8bf9178f32c0b4abca6006ee62873a36fa6",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.FileUploader: new events are now added"
+      },
+      {
+        "id": "383994b537840c75c496afa60c5f2b87ee248379",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Selection works without offsetting the date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270067271"
+          }
+        ]
+      },
+      {
+        "id": "84cb94393eaab1847ef1389618b4e7089a8ab79a",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.CalendarLegend: Horizon themes applied"
+      },
+      {
+        "id": "1a63acd2ed4855a132a697b50d449ce8fe49a909",
+        "type": "FIX",
+        "text": " Alt/Meta key + right/left key work natively for Balkan controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042470"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042468"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042461"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042447"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042442"
+          }
+        ]
+      }
+    ]
+  }
+}

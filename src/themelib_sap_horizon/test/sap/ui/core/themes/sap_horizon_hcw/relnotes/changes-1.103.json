@@ -1,0 +1,144 @@
+{
+  "1.103.0": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "e501c7fb094051a208698744d5404d1a6204e48f",
+        "type": "FEATURE",
+        "text": " sap.m.Slider: Paint active tickmarks"
+      },
+      {
+        "id": "54cf606465a223fd5186a5bafe1a846a96c25631",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Warning placeholder font-weight adjusted in Horizon HC themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270087564"
+          }
+        ]
+      },
+      {
+        "id": "cfe0c1538939e4146840ac7ee5e822967c828548",
+        "type": "FEATURE",
+        "text": "sap.m.RatingIndicator: Implement Horizon Theme"
+      },
+      {
+        "id": "b33bd06d6dc3476a83eee93af05ffbba38b1157d",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPicker: Horizon themes implemented"
+      },
+      {
+        "id": "1cd9ca6b4683a1886b9a231b1f0e451ea36975b5",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: icon and text are vertically aligned in Horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270081351"
+          }
+        ]
+      },
+      {
+        "id": "138af90b1ae4395e778dfceabc2629b78271b836",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Correct height in horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270066779"
+          }
+        ]
+      },
+      {
+        "id": "108356a8065914ad82c59d6ed3066f216403cf4c",
+        "type": "FEATURE",
+        "text": " sap.m.TabContainer: Horizon themes implemented"
+      },
+      {
+        "id": "88684a893fd004f11a11a434d1dd4c031fb4d0a0",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Horizon themes implementated"
+      },
+      {
+        "id": "ea60ac72bec2aed1b150ee5d911afad5935827f1",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectListItem: Horizon themes implemented"
+      },
+      {
+        "id": "cf49896ad7676f93b7e9ad02c2351d5fffdccfde",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectHeader: Horizon themes applied"
+      },
+      {
+        "id": "dc981e6e285ba557c40a6d83fb07d19032c86e2a",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Horizon themes implemented"
+      },
+      {
+        "id": "e6218b0e702711c6e24cd0d66d1c64223fb1b55f",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Horizon themes implemented"
+      },
+      {
+        "id": "2d0cf43d585c038ac88041db2dcff55c8d349053",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Correct spacing for single item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270065006"
+          }
+        ]
+      },
+      {
+        "id": "855815ee8105258a6ae88def1c4bd689362e0d57",
+        "type": "FEATURE",
+        "text": " sap.m.Bar: Horizon themes implemented"
+      },
+      {
+        "id": "8ead23cd4eabb760873a98ed870c5450e3d92d08",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Implementation of Horizon themes"
+      },
+      {
+        "id": "5a99d81879e7979974c739b060eb744b8ef94248",
+        "type": "FIX",
+        "text": " m.Table: visual specification alignment for the padding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270025928"
+          }
+        ]
+      },
+      {
+        "id": "2b6485b755c0e2d3e2db4d60dd982ebc8584e293",
+        "type": "FEATURE",
+        "text": " sap.m.Wizard: SAP Horizon theme implemented"
+      },
+      {
+        "id": "3da8a97e18216461e8af64405917a66f12d23104",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Mesage states header border colors fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270044729"
+          }
+        ]
+      },
+      {
+        "id": "5e48ad3c39ec4124563afa36fae4649f2ca9aada",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus on the navigation buttons in Fiori 3 themes is white and black dots",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270035507"
+          }
+        ]
+      }
+    ]
+  }
+}

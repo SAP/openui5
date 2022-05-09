@@ -1,0 +1,452 @@
+{
+  "1.103.0": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "5347584ccc6791c1e32ba8536b0883fec1709b3b",
+        "type": "FIX",
+        "text": "sap.m.Input: Properly update value with maxLength",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270034369"
+          }
+        ]
+      },
+      {
+        "id": "c3dcbfd39ae69d06815b3f44328f784d8b9cb0da",
+        "type": "FIX",
+        "text": " sap.ui.core: attach/detach event handler correctly"
+      },
+      {
+        "id": "e501c7fb094051a208698744d5404d1a6204e48f",
+        "type": "FEATURE",
+        "text": " sap.m.Slider: Paint active tickmarks"
+      },
+      {
+        "id": "6acdcc1404d3639a8fc90c02395ae463689f8abe",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Item navigation is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270005087"
+          }
+        ]
+      },
+      {
+        "id": "5d1adcd598ca783c54bc61707e3434d60f19fac8",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Remove specified with for grouped steps",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270077250"
+          }
+        ]
+      },
+      {
+        "id": "cfe0c1538939e4146840ac7ee5e822967c828548",
+        "type": "FEATURE",
+        "text": "sap.m.RatingIndicator: Implement Horizon Theme"
+      },
+      {
+        "id": "9f26d83b71f99f5d06e6fbd8df6803cc42296d1a",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Events handling enhancements on handleClearIconPress",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270084070"
+          }
+        ]
+      },
+      {
+        "id": "065d8ba907f17dec653680094929143051200cd8",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Focused item styles adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270044783"
+          }
+        ]
+      },
+      {
+        "id": "7967e2a59923a3a40cbd1f9b6a7572513174f817",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: IANA timezone translation"
+      },
+      {
+        "id": "389a91f27b8894738064e6d20e90a90450078ce6",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Single cell is now pasted as text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700032754172022"
+          }
+        ]
+      },
+      {
+        "id": "d91f3ced7b3fc15247d2f9e22ac44b36b057a798",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270079850"
+          }
+        ]
+      },
+      {
+        "id": "1c13a4943c02cf025bf273ccce8f31beb61c047d",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Correct visualization in DynamicPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270079633"
+          }
+        ]
+      },
+      {
+        "id": "d0096a56c3ca1eb0e300e1a06a4289204d43813e",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Added support for browser shortcuts on macOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270066817"
+          }
+        ]
+      },
+      {
+        "id": "c126617bfefe4a25a69a7ba9c7396eecda45700f",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Step title now displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270078096"
+          }
+        ]
+      },
+      {
+        "id": "551d1e0a859569695618affc63e8310a618e8d8d",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: When selecting the first item the Info toolbar content is read out by the Screen reader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270040641"
+          }
+        ]
+      },
+      {
+        "id": "970a920186a95b7ee1f0d82c93435d9b2d434d0f",
+        "type": "FIX",
+        "text": " sap.m.Bar: fixed middle content width and position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270068259"
+          }
+        ]
+      },
+      {
+        "id": "4c26a77c437e18e80166e2bd484359dd4a5335e5",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: value state is properly applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270075766"
+          }
+        ]
+      },
+      {
+        "id": "ea60ac72bec2aed1b150ee5d911afad5935827f1",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectListItem: Horizon themes implemented"
+      },
+      {
+        "id": "c7ec80f3d11dd37b6720104524fad335f161e43d",
+        "type": "FIX",
+        "text": " ListBase: NoData aggregation not shown after busy indicator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270077108"
+          }
+        ]
+      },
+      {
+        "id": "66a925e7896da0c68928b5515b0b12eed9b028f6",
+        "type": "FEATURE",
+        "text": " sap.m.Button: has correct text-shadow when in MessagePepover"
+      },
+      {
+        "id": "dc981e6e285ba557c40a6d83fb07d19032c86e2a",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Horizon themes implemented"
+      },
+      {
+        "id": "15f0c1dffa6e18648ae85dce5f813f00b466ab1f",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: inactive control is properly rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270029183"
+          }
+        ]
+      },
+      {
+        "id": "0ef2a54973a8ceb6ba58e253bb3272e55187c12f",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Date selection works without offsetting the date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270068040"
+          }
+        ]
+      },
+      {
+        "id": "383994b537840c75c496afa60c5f2b87ee248379",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Selection works without offsetting the date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270067271"
+          }
+        ]
+      },
+      {
+        "id": "320e557c9e793a0701fa6636c42349f8432c9e08",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: afterValueHelpOpen and afterValueHelpClose events added"
+      },
+      {
+        "id": "a5877e46a7f0c7de8cd266a328fa6740a0d3ceef",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker, sap.m.DateTimePicker: afterValueHelpOpen and afterValueHelpClose events added"
+      },
+      {
+        "id": "a5c204ff02e97e2e3ef27981fead4be207af2a57",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: property setter for 'expanded' now handles undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270061822"
+          }
+        ]
+      },
+      {
+        "id": "e2c6ceb15024e7973a110fa9352856e09784ff62",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Remove all should remove all conditions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280065689"
+          }
+        ]
+      },
+      {
+        "id": "d99f2539085d12bd096c82986da7935d3dc9cd53",
+        "type": "FEATURE",
+        "text": " sap.m.ListBase: Vertical Navigation with Keyboard Ctrl+Up/Down added"
+      },
+      {
+        "id": "5a99d81879e7979974c739b060eb744b8ef94248",
+        "type": "FIX",
+        "text": " m.Table: visual specification alignment for the padding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270025928"
+          }
+        ]
+      },
+      {
+        "id": "e743ad011d6564134879a81663238285a0fc5dc8",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Next/Last X days are no longer dependend on static options",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280024045"
+          }
+        ]
+      },
+      {
+        "id": "9b2bb2433dfab06c24253671e844ca5b9a6a15e3",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed visual displacement of closing droppdown menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001188692022"
+          }
+        ]
+      },
+      {
+        "id": "8594c6e6122e2f5f84f206f7b2494fdd521ae789",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Label for is added for value help controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015331"
+          }
+        ]
+      },
+      {
+        "id": "8489bf72efee28cfcff37c7857f6806e416a90fa",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: The formatter now can parse 0",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270063535"
+          }
+        ]
+      },
+      {
+        "id": "377c7e5f300460b558e9424b4a906bd15d204d8d",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Labels are now redirected to the inner input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270023177"
+          }
+        ]
+      },
+      {
+        "id": "1a63acd2ed4855a132a697b50d449ce8fe49a909",
+        "type": "FIX",
+        "text": " Alt/Meta key + right/left key work natively for Balkan controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042470"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042468"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042461"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042447"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270042442"
+          }
+        ]
+      },
+      {
+        "id": "8535d6df3cfe54b2fb40c38fda0cc49018bedab6",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Remove onsappreviousmodifiers implementation due to browser shortcut",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270042491"
+          }
+        ]
+      },
+      {
+        "id": "2b6485b755c0e2d3e2db4d60dd982ebc8584e293",
+        "type": "FEATURE",
+        "text": " sap.m.Wizard: SAP Horizon theme implemented"
+      },
+      {
+        "id": "3da8a97e18216461e8af64405917a66f12d23104",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Mesage states header border colors fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270044729"
+          }
+        ]
+      },
+      {
+        "id": "8a0055836cfdb4a6c22cefc88203fcd736325256",
+        "type": "FIX",
+        "text": " sap.m.Popover: Adjust arrow's offset for Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270050908"
+          }
+        ]
+      },
+      {
+        "id": "5e48ad3c39ec4124563afa36fae4649f2ca9aada",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus on the navigation buttons in Fiori 3 themes is white and black dots",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270035507"
+          }
+        ]
+      },
+      {
+        "id": "fcaa90a48e752f378b63d362d5c9e6b2263eb3cc",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Aligned dash in  emptyInicatorMode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270003320"
+          }
+        ]
+      },
+      {
+        "id": "5863a455fe0b869199d1031ba86207f0b70efe7a",
+        "type": "FIX",
+        "text": " sap.m.Page: Render div when landmark role is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270049714"
+          }
+        ]
+      },
+      {
+        "id": "e23ee2a4dad8fd3139ea52bd86f73f973c1e0004",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Prevent firing Change after setValue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270049989"
+          }
+        ]
+      },
+      {
+        "id": "a0b7b10274a32bf7dcac75d8431b666d39af7cf4",
+        "type": "FIX",
+        "text": " sap.m.Bar: Bar used as Page header respects responsive paddings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270053533"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "1.103.0": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "f08811d8c6efabf84d8c3314555d0fe4ba6285de",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: has corect alignment of icon in Belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270081354"
+          }
+        ]
+      },
+      {
+        "id": "5a99d81879e7979974c739b060eb744b8ef94248",
+        "type": "FIX",
+        "text": " m.Table: visual specification alignment for the padding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270025928"
+          }
+        ]
+      },
+      {
+        "id": "84cb94393eaab1847ef1389618b4e7089a8ab79a",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.CalendarLegend: Horizon themes applied"
+      },
+      {
+        "id": "3da8a97e18216461e8af64405917a66f12d23104",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Mesage states header border colors fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270044729"
+          }
+        ]
+      },
+      {
+        "id": "5e48ad3c39ec4124563afa36fae4649f2ca9aada",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus on the navigation buttons in Fiori 3 themes is white and black dots",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270035507"
+          }
+        ]
+      }
+    ]
+  }
+}

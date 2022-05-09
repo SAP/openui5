@@ -1,0 +1,29 @@
+{
+  "1.103.0": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "db90f86e1698ab427b8f2285f58f9a3d275b3912",
+        "type": "FIX",
+        "text": " Demo Kit: Loading sample from previous version fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "ceca0bf21942151579b1ba87c0b0adc7d6bad8c9",
+        "type": "FIX",
+        "text": " Demo Kit: Sample loading fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
+  }
+}
