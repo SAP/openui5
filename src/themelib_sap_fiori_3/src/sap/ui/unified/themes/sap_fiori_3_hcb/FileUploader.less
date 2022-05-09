@@ -4,33 +4,33 @@
 /* ============================================ */
 
 /* increase outline offset */
-.sapMIBar-CTX .sapUiFup:focus .sapMBtnInner.sapMFocusable {
+.sapMIBar-CTX .sapUiFup .sapMBtnInner:focus.sapMFocusable {
 	outline-offset: -.125rem;
 }
 
-.sapUiFup:focus .sapMBtn {
+.sapUiFup .sapMBtn:focus {
 	outline: none;
 }
 
-html.sap-desktop .sapUiFup:focus .sapMFocusable,
-html.sap-desktop .sapUiFup:active .sapMFocusable {
+html.sap-desktop .sapUiFup .sapMFocusable:focus,
+html.sap-desktop .sapUiFup .sapMFocusable:active {
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
 }
 
-.sapMFooter-CTX .sapUiFup:focus .sapMBtnInner.sapMFocusable,
-.sapMFooter-CTX .sapUiFup:active .sapMBtnInner.sapMFocusable,
-.sapUiFup:active .sapMBtnInner.sapMBtnAccept,
-html.sap-desktop .sapUiFup:active .sapMBtnInner.sapMBtnAccept,
-.sapUiFup:active .sapMBtnInner.sapMBtnReject,
-html.sap-desktop .sapUiFup:active .sapMBtnInner.sapMBtnReject,
-.sapUiFup:active .sapMBtnInner.sapMBtnEmphasized,
-html.sap-desktop .sapUiFup:active .sapMBtnInner.sapMBtnEmphasized {
+.sapMFooter-CTX .sapUiFup .sapMBtnInner:focus.sapMFocusable,
+.sapMFooter-CTX .sapUiFup .sapMBtnInner:active.sapMFocusable,
+.sapUiFup .sapMBtnInner:active.sapMBtnAccept,
+html.sap-desktop .sapUiFup .sapMBtnInner:active.sapMBtnAccept,
+.sapUiFup .sapMBtnInner:active.sapMBtnReject,
+html.sap-desktop .sapUiFup .sapMBtnInner:active.sapMBtnReject,
+.sapUiFup .sapMBtnInner:active.sapMBtnEmphasized,
+html.sap-desktop .sapUiFup .sapMBtnInner:active.sapMBtnEmphasized {
 	outline-color: @sapUiContentContrastFocusColor;
 	outline-offset: -.125rem;
 }
 
-.sapMFooter-CTX .sapUiFup:active .sapMBtnInner.sapMFocusable {
+.sapMFooter-CTX .sapUiFup .sapMBtnInner:active.sapMFocusable {
 	background-color: @sapUiButtonActiveBackground;
 }
 
@@ -38,12 +38,12 @@ html.sap-desktop .sapUiFup:active .sapMBtnInner.sapMBtnEmphasized {
 
 html[data-sap-ui-browser^="ie"] {
 
-	.sapUiFup:focus .sapMBtnInner.sapMFocusable {
+	.sapUiFup .sapMBtnInner:focus.sapMFocusable {
 		outline: none;
 		position: relative;
 	}
 
-	.sapUiFup:focus .sapMBtnInner.sapMFocusable:before {
+	.sapUiFup .sapMBtnInner:focus.sapMFocusable:before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;
@@ -54,7 +54,7 @@ html[data-sap-ui-browser^="ie"] {
 		border: 1px dotted @sapUiContentFocusColor;
 	}
 
-	.sapMFooter-CTX .sapUiFup:focus .sapMBtnInner.sapMFocusable:before {
+	.sapMFooter-CTX .sapUiFup .sapMBtnInner:focus.sapMFocusable:before {
 		border-color: @sapUiContentContrastFocusColor;
 	}
 
