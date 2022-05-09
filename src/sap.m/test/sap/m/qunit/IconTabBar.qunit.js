@@ -753,6 +753,7 @@ sap.ui.define([
 		assert.strictEqual(oSelectSpy.callCount, 0, "content is not rerendered");
 
 		// Clean up
+		oSelectSpy.restore();
 		oIconTabBar.destroy();
 	});
 
@@ -1907,7 +1908,6 @@ sap.ui.define([
 	QUnit.module("tab selection");
 
 	QUnit.test("API Selection", function(assert) {
-
 		// Arrange
 		var oIconTabBar = new IconTabBar({
 			expandable: true,
@@ -2004,7 +2004,7 @@ sap.ui.define([
 		var $selectedItem  = oIconTabBar.$().find('.sapMITBSelected');
 
 		// Assert
-		assert.ok($selectedItem.find('.sapMITBText').text() == 'B', "the second item is selected");
+		assert.strictEqual($selectedItem.find('.sapMITBText').text(), 'B', "the second item is selected");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -2064,7 +2064,7 @@ sap.ui.define([
 		var $selectedItem  = oIconTabBar.$().find('.sapMITBSelected');
 
 		// Assert
-		assert.ok($selectedItem.find('.sapMITBText').text() == 'Jones', "the last item is selected");
+		assert.strictEqual($selectedItem.find('.sapMITBText').text(), 'Jones', "the last item is selected");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -2338,6 +2338,47 @@ sap.ui.define([
 
 		// Clean up
 		oITH.destroy();
+	});
+
+	QUnit.test("Content is not rerendered", function(assert) {
+		// Arrange
+		var oModel = new JSONModel({
+			items: [
+				{key: "1", text: "Text 1"},
+				{key: "2", text: "Text 2"}
+			],
+			selectedKey: "1"
+		});
+
+		var oIconTabBar = new IconTabBar({
+			expandable: false,
+			selectedKey: "{/selectedKey}",
+			items: {
+				path: "/items",
+				template: new IconTabFilter({
+					key: "{key}",
+					text: "{text}",
+					content: new Text({text: "{text}"})
+				})
+			}
+		});
+
+		oIconTabBar.setModel(oModel);
+
+		// System under Test
+		oIconTabBar.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var oSpy = sinon.spy(oIconTabBar, "_rerenderContent");
+		oModel.checkUpdate(true);
+
+		Core.applyChanges();
+
+		assert.ok(oSpy.notCalled, "_rerenderContent is not called");
+
+		// Clean up
+		oSpy.restore();
+		oIconTabBar.destroy();
 	});
 
 	QUnit.module("Tabs", {
