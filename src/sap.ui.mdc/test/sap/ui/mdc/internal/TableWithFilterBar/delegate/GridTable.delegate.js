@@ -20,6 +20,20 @@ sap.ui.define([
 	 */
 	var ODataTableDelegate = Object.assign({}, TableDelegate);
 
+	ODataTableDelegate.fetchProperties = function (oTable) {
+		var oODataProps = TableDelegate.fetchProperties.apply(this, arguments);
+		return oODataProps.then(function (aProperties) {
+
+			aProperties.forEach(function(oPropertyInfo){
+				if (oPropertyInfo.typeConfig.className === "Edm.Guid") {
+					oPropertyInfo.visualSettings = {widthCalculation: {minWidth: 18}}; // auto width seems not to work for GUID
+				}
+			});
+
+			return aProperties;
+		});
+	};
+
 	/**
 	 * Updates the binding info with the relevant path and model from the metadata.
 	 *

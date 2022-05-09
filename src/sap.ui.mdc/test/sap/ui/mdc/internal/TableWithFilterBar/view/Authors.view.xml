@@ -383,6 +383,7 @@
 						rowPress="onRowPress"
 						threshold="50"
 						width="100%"
+						enableAutoColumnWidth="true"
 					>
 					<mdc:rowSettings>
 						<mdc:table.RowSettings >
@@ -397,22 +398,22 @@
 						</mdcat:ActionToolbarAction>
 					</mdc:actions>
 					<mdc:columns>
-						<mdc:table.Column id="cName" header="Name" dataProperty="name" width="15rem">
+						<mdc:table.Column id="cName" header="Name" dataProperty="name">
 							<mdc:Field id="F_name" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'name', type: 'sap.ui.model.odata.type.String', contraints: {maxLength: 111}}" editMode="Display" multipleLines="true" width="100%"/>
 						</mdc:table.Column>
-						<mdc:table.Column id="cDoB" header="Date of birth" dataProperty="dateOfBirth" width="15rem">
+						<mdc:table.Column id="cDoB" header="Date of birth" dataProperty="dateOfBirth">
 							<mdc:Field id="F_dateOfBirth" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'dateOfBirth', type: 'sap.ui.model.odata.type.Date'}" editMode="Display" multipleLines="false" width="100%"/>
 						</mdc:table.Column>
-						<mdc:table.Column id="cDoD" header="Date of death" dataProperty="dateOfDeath" width="15rem">
+						<mdc:table.Column id="cDoD" header="Date of death" dataProperty="dateOfDeath">
 							<mdc:Field id="F_dateOfDeath" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'dateOfDeath', type: 'sap.ui.model.odata.type.Date'}" editMode="Display" multipleLines="false" width="100%"/>
 						</mdc:table.Column>
-						<mdc:table.Column id="cCoO" header="Country of origin" dataProperty="countryOfOrigin_code" width="15rem">
+						<mdc:table.Column id="cCoO" header="Country of origin" dataProperty="countryOfOrigin_code">
 							<mdc:Field id="F_countryOfOrigin_code" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'countryOfOrigin_code', type: 'sap.ui.model.odata.type.String', formatOptions: {maxLength: 3}}" additionalValue="{countryOfOrigin/descr}" editMode="Display" multipleLines="false" width="100%" display="Description" />
 						</mdc:table.Column>
-						<mdc:table.Column id="cRoO" header="Region of origin" dataProperty="regionOfOrigin_code" width="15rem">
+						<mdc:table.Column id="cRoO" header="Region of origin" dataProperty="regionOfOrigin_code">
 							<mdc:Field id="F_regionOfOrigin_code" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'regionOfOrigin_code', type: 'sap.ui.model.odata.type.String', formatOptions: {maxLength: 3}}" additionalValue="{regionOfOrigin/text}" editMode="Display" multipleLines="false" width="100%" display="Description" />
 						</mdc:table.Column>
-						<mdc:table.Column id="cCioO" header="City of origin" dataProperty="cityOfOrigin_city" width="15rem">
+						<mdc:table.Column id="cCioO" header="City of origin" dataProperty="cityOfOrigin_city">
 							<mdc:Field id="F_cityOfOrigin_city" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'cityOfOrigin_city', type: 'sap.ui.model.odata.type.String', formatOptions: {maxLength: 3}}" additionalValue="{cityOfOrigin/text}" editMode="Display" multipleLines="false" width="100%" display="Description" />
 						</mdc:table.Column>
 

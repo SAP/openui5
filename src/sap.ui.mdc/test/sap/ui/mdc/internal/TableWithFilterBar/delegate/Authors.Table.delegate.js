@@ -28,6 +28,12 @@ sap.ui.define([
 			aProperties.forEach(function(oProperty){
 				if (oProperty.name === "ID") {
 					oProperty.typeConfig.typeInstance = new Int32Type({groupingEnabled: false}, {nullable: false});
+				} else if (oProperty.name === "countryOfOrigin_code") {
+					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown
+				} else if (oProperty.name === "regionOfOrigin_code") {
+					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown
+				} else if (oProperty.name === "cityOfOrigin_city") {
+					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown
 				}
 			});
 
@@ -102,12 +108,6 @@ sap.ui.define([
 	AuthorsTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
 			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
-
-			if (oProperty.name === "ID") {
-				oColumn.setWidth("5rem");
-			} else {
-				oColumn.setWidth("15rem");
-			}
 
 			// oColumn.getTemplate().destroy();
 			// if (oColumn._oTemplateClone) {

@@ -36,6 +36,7 @@ sap.ui.define([
 					oPropertyInfo.typeConfig.typeInstance = new Int32Type({groupingEnabled: false}, {nullable: false}); // needed for Field in table
 					oPropertyInfo.formatOptions = {groupingEnabled: false}; // needed for FilterField on settings-FilterBar
 					oPropertyInfo.label = "Book";
+					oPropertyInfo.visualSettings = {widthCalculation: {minWidth: 25}}; // as the title is shown
 				}
 			});
 
@@ -75,6 +76,11 @@ sap.ui.define([
 			multipleLines: false
 		};
 
+		if (oProperty.name === "book_ID") {
+			oCtrlProperties.additionalValue = "{book/title}";
+			oCtrlProperties.display = FieldDisplay.Description;
+		}
+
 		return new Field(oCtrlProperties);
 
 	};
@@ -82,14 +88,6 @@ sap.ui.define([
 	OrderItemssTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
 			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
-
-			if (oProperty.name === "ID") {
-				oColumn.setWidth("18rem");
-			} else if (oProperty.name === "amount") {
-				oColumn.setWidth("15rem");
-			} else if (oProperty.name === "netAmount") {
-				oColumn.setWidth("15rem");
-			}
 
 			var oTemplate = OrderItemssTableDelegate._createColumnTemplate(oTable, oProperty);
 			oColumn.setTemplate(oTemplate);

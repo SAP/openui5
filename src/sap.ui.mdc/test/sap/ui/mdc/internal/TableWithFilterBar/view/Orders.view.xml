@@ -129,7 +129,9 @@
 											height="100%"
 											selectionMode="Multi"
 											p13nMode="Column,Sort"
-											delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Orders'}}" threshold="50">
+											delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Orders'}}"
+											threshold="50"
+											enableAutoColumnWidth="true">
 											<mdc:columns>
 												<mdc:table.Column header="Order Number" dataProperty="OrderNo">
 													<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="Display" multipleLines="false" width="100%"/>
@@ -191,6 +193,7 @@
 						rowPress="onRowPress"
 						threshold="50"
 						width="100%"
+						enableAutoColumnWidth="true"
 					>
 					<mdc:rowSettings>
 						<mdc:table.RowSettings >
@@ -209,7 +212,6 @@
 									id="cID"
 									header="ID"
 									dataProperty="ID"
-									width="18rem"
 								>
                             <mdc:Field id="F_ID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
@@ -217,7 +219,6 @@
 									id="cOrderNo"
 									header="Order Number"
 									dataProperty="OrderNo"
-									width="5rem"
 								>
                             <mdc:Field id="F_OrderNo" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
@@ -225,7 +226,6 @@
 									id="cTime"
 									header="Order time"
 									dataProperty="orderTime"
-									width="8rem"
 								>
                             <mdc:Field id="F_orderTime" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'orderTime', type: 'sap.ui.model.odata.type.TimeOfDay'}" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
@@ -233,7 +233,6 @@
 									id="cCustomer"
 									header="Customer"
 									dataProperty="customer_ID"
-									width="auto"
 								>
                             <mdc:Field id="F_customer_ID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'customer_ID', type: 'sap.ui.model.odata.type.Int32'}" additionalValue="{customer/name}" display="Description" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
@@ -241,7 +240,6 @@
 									id="cCreatedAt"
 									header="Created On"
 									dataProperty="createdAt"
-									width="13rem"
 								>
                             <mdc:Field id="F_createdAt" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'createdAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
@@ -249,7 +247,6 @@
 									id="cModifiedAt"
 									header="Modified On"
 									dataProperty="modifiedAt"
-									width="13rem"
 								>
                             <mdc:Field id="F_modifiedAt" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'modifiedAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
@@ -257,7 +254,6 @@
 									id="cTotal"
 									header="Total"
 									dataProperty="total"
-									width="10rem"
 								>
                             <mdc:Field id="F_total" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" multipleLines="false" width="100%"/>
 						</mdc:table.Column>

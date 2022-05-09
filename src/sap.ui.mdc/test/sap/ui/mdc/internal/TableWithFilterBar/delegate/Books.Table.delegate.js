@@ -34,11 +34,18 @@ sap.ui.define([
 
 				if (oProperty.name === "subgenre_code") {
 					oProperty.label = "Sub Genre";
+					oProperty.visualSettings = {widthCalculation: {maxWidth: 10}}; // as Text is normally short
+				}
+				if (oProperty.name === "genre_code") {
+					oProperty.visualSettings = {widthCalculation: {maxWidth: 10}}; // as Text is normally short
 				}
 
 				if (oProperty.name === "ID" || oProperty.name === "author_ID") {
 					oProperty.typeConfig.typeInstance = new Int32Type({groupingEnabled: false}, {nullable: false}); // needed for Field in table
 					oProperty.formatOptions = {groupingEnabled: false}; // needed for FilterField on settings-FilterBar
+					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown too
+				} else if (oProperty.name === "descr") {
+					oProperty.visualSettings = {widthCalculation: {minWidth: 40}};
 				}
 
 			});
@@ -166,20 +173,6 @@ sap.ui.define([
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
 			if (oColumn) { // in XML templating there is no column
 				var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
-
-				if (oProperty.name === "title") {
-					oColumn.setWidth("15rem");
-				} else if (oProperty.name === "currency_code") {
-					oColumn.setWidth("5rem");
-				} else if (oProperty.name != "descr") {
-					oColumn.setWidth(["actions", "stock", "ID"].indexOf(oProperty.name) != -1 ? "6rem" : "10rem");
-				}
-
-				//oColumn.getTemplate().destroy();
-				// if (oColumn._oTemplateClone) {
-				// 	oColumn._oTemplateClone.destroy();
-				// 	delete oColumn._oTemplateClone;
-				// }
 
 				var oTemplate = BooksTableDelegate._createColumnTemplate(oTable, oProperty);
 				oColumn.setTemplate(oTemplate);

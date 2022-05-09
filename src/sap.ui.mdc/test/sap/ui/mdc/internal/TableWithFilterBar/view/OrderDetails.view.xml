@@ -101,7 +101,7 @@
 				<uxap:subSections>
 					<uxap:ObjectPageSubSection>
 						<uxap:blocks>
-							<mdc:Table id="childOrderItemsTable" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/v4demo/delegate/OrderItems.Table.delegate', payload: {collectionName: 'OrderItems', collectionPath: 'Items'}}" header="Order Items" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
+							<mdc:Table id="childOrderItemsTable" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/v4demo/delegate/OrderItems.Table.delegate', payload: {collectionName: 'OrderItems', collectionPath: 'Items'}}" header="Order Items" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}" enableAutoColumnWidth="true">
 								<mdc:variant>
 									<fl:VariantManagement id="opTableVM" for="childOrderItemsTable"/>
 								</mdc:variant>
@@ -111,16 +111,16 @@
 									</mdcat:ActionToolbarAction>
 								</mdc:actions>
 								<mdc:columns>
-									<mdc:table.Column id="cID" header="ID" dataProperty="ID" width="18rem">
+									<mdc:table.Column id="cID" header="ID" dataProperty="ID">
 										<mdc:Field id="F_ID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" width="100%" editMode="Display" multipleLines="false"/>
 									</mdc:table.Column>
-									<mdc:table.Column id="cAmount" header="amount" dataProperty="amount" width="15rem">
+									<mdc:table.Column id="cAmount" header="amount" dataProperty="amount">
 										<mdc:Field id="F_amount" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'amount', type: 'sap.ui.model.odata.type.Int32'}" editMode="Display" width="100%" multipleLines="false"/>
 									</mdc:table.Column>
-									<mdc:table.Column id="cNetAmount" header="netAmount" dataProperty="netAmount" width="15rem">
+									<mdc:table.Column id="cNetAmount" header="netAmount" dataProperty="netAmount">
 										<mdc:Field id="F_netAmount" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'netAmount', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}" editMode="Display" width="100%" multipleLines="false"/>
 									</mdc:table.Column>
-									<mdc:table.Column id="cBook" header="Book" dataProperty="book_ID" >
+									<mdc:table.Column id="cBook" header="Book" dataProperty="book_ID">
 										<mdc:Field id="F_book_ID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'book_ID', type: 'sap.ui.model.odata.type.Int32'}" additionalValue="{book/title}" display="Description" width="100%" editMode="Display" multipleLines="false"/>
 									</mdc:table.Column>
 								</mdc:columns>
@@ -170,9 +170,11 @@
 														height="100%"
 														selectionMode="Multi"
 														p13nMode="Column,Sort"
-														delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
+														delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}"
+														threshold="50"
+														enableAutoColumnWidth="true">
 														<mdc:columns>
-															<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" dataProperty="ID" width="5rem">
+															<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" dataProperty="ID">
 																<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="Display" width="100%" multipleLines="false"/>
 															</mdc:table.Column>
 															<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" dataProperty="title">

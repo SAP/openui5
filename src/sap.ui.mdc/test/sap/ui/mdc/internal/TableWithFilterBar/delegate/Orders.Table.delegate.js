@@ -24,22 +24,24 @@ sap.ui.define([
 		return oView.getId() + "--" + sVHId;
 	};
 
-	// OrdersTableDelegate.fetchProperties = function (oTable) {
-	// 	var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
-	// 	return oODataProps.then(function (aProperties) {
+	OrdersTableDelegate.fetchProperties = function (oTable) {
+		var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
+		return oODataProps.then(function (aProperties) {
 
-	// 		// Provide the label for the properties which are the same on the xml view. so that the column header and p13n dialog has the same names.
-	// 		// Provide the fieldHelp for some of the properties. Without fieldHelp the filter panel will not provide the expected VH.
-	// 		// TODO fieldHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
-	// 		aProperties.forEach(function(oPropertyInfo){
-	// 			if (oPropertyInfo.name === "OrderNo") {
-	// 				oPropertyInfo.label = "Order Number";
-	// 			}
-	// 		});
+			// Provide the label for the properties which are the same on the xml view. so that the column header and p13n dialog has the same names.
+			// Provide the fieldHelp for some of the properties. Without fieldHelp the filter panel will not provide the expected VH.
+			// TODO fieldHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
+			aProperties.forEach(function(oPropertyInfo){
+				if (oPropertyInfo.name === "customer_ID") {
+					oPropertyInfo.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown
+				} else if (oPropertyInfo.name === "total") {
+					oPropertyInfo.visualSettings = {widthCalculation: {minWidth: 8}}; // as currency is shown too
+				}
+			});
 
-	// 		return aProperties;
-	// 	});
-	// };
+			return aProperties;
+		});
+	};
 
 	OrdersTableDelegate.getFilterDelegate = function() {
 		return {
@@ -99,20 +101,6 @@ sap.ui.define([
 	OrdersTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
 			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
-
-			if (oProperty.name === "OrderNo") {
-				oColumn.setWidth("5rem");
-			} else if (oProperty.name === "ID") {
-				oColumn.setWidth("18rem");
-			} else if (oProperty.name === "orderTime") {
-				oColumn.setWidth("8rem");
-			} else if (oProperty.name === "createdAt" || oProperty.name === "modifiedAt") {
-				oColumn.setWidth("13rem");
-			} else if (oProperty.name === "total") {
-				oColumn.setWidth("10rem");
-			} else if (oProperty.name === "currency_code") {
-				oColumn.setWidth("5rem");
-			}
 
 			var oTemplate = OrdersTableDelegate._createColumnTemplate(oTable, oProperty);
 			oColumn.setTemplate(oTemplate);
