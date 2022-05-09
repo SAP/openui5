@@ -2325,5 +2325,10 @@ sap.ui.define([
 			assert.strictEqual(vValue, "42");
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("onDelete", function () {
+		this.oModel.bindProperty("/EMPLOYEES('1')/AGE").onDelete();
+	});
 });
 // TODO read in initialize and refresh? This forces checkUpdate to use getProperty.

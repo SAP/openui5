@@ -204,7 +204,7 @@ sap.ui.define([
 						}),
 				iIndex === undefined // single element or kept-alive not in list
 					&& !bDoNotRequestCount
-					&& that.requestCount(oGroupLock),
+					&& that.requestCount(oGroupLock || that.oRequestor.lockGroup("$auto", that)),
 				oGroupLock && oGroupLock.unlock() // unlock when all requests have been queued
 			]).then(function () {
 				if (Array.isArray(vCacheData)) {

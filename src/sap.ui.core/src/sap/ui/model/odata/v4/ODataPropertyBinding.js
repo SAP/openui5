@@ -502,6 +502,14 @@ sap.ui.define([
 
 	/**
 	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#onDelete
+	 */
+	ODataPropertyBinding.prototype.onDelete = function () {
+		// nothing to do
+	};
+
+	/**
+	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataPropertyBinding.prototype.refreshInternal = function (_sResourcePathPrefix, sGroupId,

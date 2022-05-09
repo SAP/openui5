@@ -988,6 +988,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Reacts on a delete of an entity via the model. If a context of this binding has the given
+	 * canonical path it is destroyed.
+	 *
+	 * @param {string} sCanonicalPath
+	 *   The canonical path of the entity (as a context path with the leading "/")
+	 *
+	 * @name sap.ui.model.odata.v4.ODataBinding#onDelete
+	 * @private
+	 */
+
+	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
 	 *
