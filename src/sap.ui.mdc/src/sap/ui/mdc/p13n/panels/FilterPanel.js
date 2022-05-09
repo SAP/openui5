@@ -31,26 +31,14 @@ sap.ui.define([
             ]
         }) : this._createKeySelect(oItem.name);
 
-
-        var oAddButton;
-        if (!oItem.name) {
-            oAddButton = new Button({
-                text: "Add",
-                press: this._addPressed.bind(this),
-                enabled: false
-            });
-            oAddButton.setLayoutData(new GridData({
-                indent: "XL7 L7 M7 S7",
-                span: "XL1 L1 M1 S1"
-            }));
+        var aContent = [oSelect];
+        if (oItem.name) {
+            aContent.push(this._createFactoryControl(oItem));
         }
-
         return new Grid({
             containerQuery: true,
             defaultSpan: "XL4 L4 M4 S4",
-            content: [
-                oSelect, oItem.name ? this._createFactoryControl(oItem) : oAddButton
-            ]
+            content: aContent
         }).addStyleClass("sapUiTinyMargin");
     };
 
@@ -75,13 +63,11 @@ sap.ui.define([
             change: function(oEvt) {
 				var oComboBox = oEvt.getSource();
 				var newValue = oEvt.getParameter("newValue");
-                oComboBox.setValueState( newValue && !oComboBox.getSelectedItem() ? ValueState.Error : ValueState.None);
-			}
+				oComboBox.setValueState( newValue && !oComboBox.getSelectedItem() ? ValueState.Error : ValueState.None);
+				this._selectKey();
+			}.bind(this)
 		});
 
-        oComboBox.onsapenter = function(oEvt) {
-            this._selectKey();
-        }.bind(this);
 
         return oComboBox;
 	};
@@ -111,8 +97,6 @@ sap.ui.define([
             this._oComboBox = oComboBox;
             oQueryRowGrid = oComboBox.getParent();
             sKey = oComboBox.getSelectedKey();
-
-            oQueryRowGrid.getContent()[1].setEnabled(!!sKey);
         } else if (this._oComboBox) {
             oComboBox = this._oComboBox;
             oQueryRowGrid = oComboBox.getParent();
@@ -125,8 +109,6 @@ sap.ui.define([
 
                 var oSelect = oQueryRowGrid.getContent()[0];
                 oQueryRowGrid.removeContent(oSelect);
-                var oAddBtn = oQueryRowGrid.getContent()[0];
-                oQueryRowGrid.removeContent(oAddBtn);
 
                 // var sKey = oSelect._key;
                 var oFieldBox = new VBox({
