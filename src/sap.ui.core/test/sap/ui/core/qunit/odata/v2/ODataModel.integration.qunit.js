@@ -13267,6 +13267,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			var oPromise;
+
 			that.expectRequest({
 					method : "DELETE",
 					requestUri : "SalesOrderSet('1')"
@@ -13275,11 +13277,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oModel.getObject(sContextPath), undefined,
 				"data of inactive/transient context removed");
 
-			return Promise.all([
-				// code under test
-				oTable.getRows()[0].getBindingContext().delete({refreshAfterChange : false}),
-				that.waitForChanges(assert)
-			]);
+			// code under test
+			oPromise = oTable.getRows()[0].getBindingContext().delete({refreshAfterChange : false});
+			oModel.submitChanges();
+
+			return Promise.all([oPromise, that.waitForChanges(assert)]);
 		});
 	});
 
@@ -15841,7 +15843,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return Promise.all([
 				// code under test
-				oContextPersisted.delete(),
+				oContextPersisted.delete({groupId : "$auto"}),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {

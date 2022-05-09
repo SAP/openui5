@@ -325,7 +325,8 @@ sap.ui.define([
 	QUnit.test("delete: persistent context, remove successful: " + bSuccess, function (assert) {
 		var fnError, fnSuccess, oPromise,
 			oModel = {
-				remove : function () {}
+				remove : function () {},
+				_resolveGroup : function () {}
 			},
 			oContext = new Context(oModel, "/~sPath"),
 			mParameters = {
@@ -337,13 +338,18 @@ sap.ui.define([
 		this.mock(oContext).expects("getModel").withExactArgs().returns(oModel);
 		this.mock(oContext).expects("isInactive").withExactArgs().returns(false);
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("~path");
+		this.mock(oModel).expects("_resolveGroup").withExactArgs("~path")
+			.returns({groupId : "~defaultGroupId", changeSetId : "~defaultChangeSetId"});
 		this.mock(_Helper).expects("merge")
 			.withExactArgs(sinon.match.object, sinon.match.same(mParameters))
 			.callsFake(function (mPresetParameters/*, mParameters*/) {
+				assert.strictEqual(mPresetParameters.changeSetId, "~defaultChangeSetId");
 				assert.strictEqual(mPresetParameters.context, oContext);
 				assert.strictEqual(typeof mPresetParameters.error, "function");
+				assert.strictEqual(mPresetParameters.groupId, "~defaultGroupId");
 				assert.strictEqual(typeof mPresetParameters.success, "function");
-				assert.strictEqual(Object.keys(mPresetParameters).length, 3);
+				assert.strictEqual(Object.keys(mPresetParameters).length, 5);
 				fnError = mPresetParameters.error;
 				fnSuccess = mPresetParameters.success;
 
