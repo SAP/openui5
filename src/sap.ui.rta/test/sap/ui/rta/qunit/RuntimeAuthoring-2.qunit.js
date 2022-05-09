@@ -394,8 +394,6 @@ sap.ui.define([
 			this.fnTriggerCrossAppNavigationSpy = sandbox.stub(this.oRta, "_triggerCrossAppNavigation");
 			sandbox.spy(this.oRta, "_handleUrlParameterOnExit");
 
-			this.oRta._oToolbarControlsModel = new JSONModel({});
-
 			return this.oRta._initVersioning();
 		},
 		afterEach: function() {
@@ -1229,7 +1227,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when save is triggered via the toolbar with an translatable change", function(assert) {
+		QUnit.test("when save is triggered via the toolbar with a translatable change", function(assert) {
 			return new Promise(function (resolve) {
 				this.oRta.start().then(function () {
 					assert.equal(this.oRta.bPersistedDataTranslatable, false, "no translation is present");
