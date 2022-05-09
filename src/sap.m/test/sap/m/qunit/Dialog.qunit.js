@@ -2784,23 +2784,6 @@ sap.ui.define([
 		assert.strictEqual($dialog.outerHeight(), $withinArea.height(), "Dialog takes full height");
 	});
 
-	QUnit.test("Custom Within Area. Dialog when there is no enough space", function (assert) {
-		// Arrange
-		var oLogSpy = this.spy(Log, "error");
-		Popup.setWithinArea(this.oWithinArea);
-		this.styleWithinArea({
-			top: "2rem",
-			left: "2rem",
-			width: "100px",
-			height: "100px"
-		});
-		this.oDialog.open();
-		this.clock.tick(500);
-
-		// Assert
-		assert.ok(oLogSpy.called, "Error is logged when Within Area is small");
-	});
-
 	QUnit.test("Custom Within Area. Borders of Within Area should be included", function (assert) {
 		// Arrange
 		this.oDialog.setStretch(true);
