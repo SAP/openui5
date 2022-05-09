@@ -8,6 +8,71 @@ sap.ui.define([
 ], function(TableQUnitUtils, Table, Filter, Core) {
 	"use strict";
 
+	QUnit.module("API", {
+		before: function() {
+			this.oMockServer = TableQUnitUtils.startMockServer();
+			this.oDataModel = TableQUnitUtils.createODataModel();
+
+			return this.oDataModel.metadataLoaded();
+		},
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rows: {path: "/Products"},
+				models: this.oDataModel
+			});
+
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		after: function() {
+			this.oMockServer.destroy();
+			this.oDataModel.destroy();
+		}
+	});
+
+	QUnit.test("#_getTotalRowCount", function(assert){
+		var oTable = this.oTable;
+
+		assert.strictEqual(oTable._getTotalRowCount(), 16, "Binding#getLength defines the total row count in the table");
+
+		oTable.bindRows({path: "/Products"});
+		assert.strictEqual(oTable._getTotalRowCount(), 16, "On rebind, the last known binding length of the previous binding is returned");
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(oTable._getTotalRowCount(), 16, "After rebind, the new binding length is returned");
+			oTable.getBinding().refresh();
+			assert.strictEqual(oTable._getTotalRowCount(), 16, "On refresh, the last known binding length is returned");
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(oTable._getTotalRowCount(), 16, "After refresh, the new binding length is returned");
+			oTable.getBinding().filter(new Filter({
+				path: "Category",
+				operator: "EQ",
+				value1: "GC"
+			}));
+			assert.strictEqual(oTable._getTotalRowCount(), 16, "On filter, the last known binding length is returned");
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(oTable._getTotalRowCount(), 3, "After filter, the new binding length is returned");
+			oTable.bindRows({path: "/Products", length: 5});
+			assert.strictEqual(oTable._getTotalRowCount(), 5, "The \"length\" parameter in the binding info overrides Binding#getLength");
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(oTable._getTotalRowCount(), 5, "After data is received, still the \"length\" parameter is returned");
+			oTable.getBinding().refresh();
+			assert.strictEqual(oTable._getTotalRowCount(), 5, "On refresh, still the \"length\" parameter is returned");
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(oTable._getTotalRowCount(), 5, "After refresh, still the \"length\" parameter is returned");
+
+			var oModel = oTable.getModel();
+			oTable.setModel(null);
+			assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding the total row count is 0, regardless of the binding info");
+
+			oTable.unbindRows();
+			oTable.setModel(oModel);
+			assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding or binding info the total row count is 0");
+		});
+	});
+
 	QUnit.module("Get contexts", {
 		before: function() {
 			this.oMockServer = TableQUnitUtils.startMockServer();

@@ -4778,7 +4778,7 @@ sap.ui.define([
 		assert.ok(!oTable._bLargeDataScrolling, "Large data scrolling disabled");
 	});
 
-	QUnit.test("_getContexts", function(assert) {
+	QUnit.test("#_getContexts", function(assert) {
 		var oGetContexts = sinon.stub(oTable.getBinding(), "getContexts");
 		var sReturnValue = "Binding#getContexts return value";
 
@@ -4828,7 +4828,7 @@ sap.ui.define([
 		assert.ok(oTable._getColumnsWidth() > 600 && oTable._getColumnsWidth() < 900, "Columns width returned");
 	});
 
-	QUnit.test("_getBaseRowHeight", function(assert) {
+	QUnit.test("#_getBaseRowHeight", function(assert) {
 		var oBody = document.body;
 
 		oTable.setRowHeight(98);
@@ -4858,7 +4858,7 @@ sap.ui.define([
 		oBody.classList.add("sapUiSizeCozy");
 	});
 
-	QUnit.test("_getTotalRowCount with client binding", function(assert){
+	QUnit.test("#_getTotalRowCount", function(assert){
 		oTable.bindRows({path: "/modelData"});
 		assert.strictEqual(oTable._getTotalRowCount(), 200, "Binding#getLength defines the total row count in the table");
 
@@ -4872,78 +4872,6 @@ sap.ui.define([
 
 		oTable.unbindRows();
 		assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding or binding info the total row count is 0");
-	});
-
-	QUnit.test("_getTotalRowCount with OData binding", function(assert){
-		var oMockServer = TableQUnitUtils.startMockServer();
-
-		oTable.setModel(TableQUnitUtils.createODataModel());
-		oTable.bindRows({path: "/Products"});
-
-		return new Promise(function(resolve) {
-			oTable.attachEventOnce("rowsUpdated", resolve);
-		}).then(function() {
-			oTable.bindRows({path: "/Products"});
-			assert.strictEqual(oTable._getTotalRowCount(), 200, "On rebind, the last known binding length of the previous binding is returned");
-
-			return new Promise(function(resolve) {
-				oTable.getBinding().attachEventOnce("change", function() {
-					assert.strictEqual(oTable._getTotalRowCount(), 16, "After rebind, the new binding length is returned");
-					resolve();
-				});
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				oTable.getBinding().refresh();
-				assert.strictEqual(oTable._getTotalRowCount(), 16, "On refresh, the last known binding length is returned");
-				oTable.getBinding().attachEventOnce("change", function() {
-					assert.strictEqual(oTable._getTotalRowCount(), 16, "After refresh, the new binding length is returned");
-					resolve();
-				});
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				oTable.getBinding().filter(new Filter({
-					path: "Category",
-					operator: "EQ",
-					value1: "GC"
-				}));
-				assert.strictEqual(oTable._getTotalRowCount(), 16, "On filter, the last known binding length is returned");
-				oTable.getBinding().attachEventOnce("change", function() {
-					assert.strictEqual(oTable._getTotalRowCount(), 3, "After filter, the new binding length is returned");
-					oTable.getBinding().refresh();
-					resolve();
-				});
-			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				oTable.bindRows({path: "/Products", length: 5});
-				assert.strictEqual(oTable._getTotalRowCount(), 5, "The \"length\" parameter in the binding info overrides Binding#getLength");
-				oTable.getBinding().attachEventOnce("change", function() {
-					assert.strictEqual(oTable._getTotalRowCount(), 5, "After data is received, still the \"length\" parameter is returned");
-					resolve();
-				});
-			});
-		}).then(function() {
-				return new Promise(function(resolve) {
-					oTable.getBinding().refresh();
-					assert.strictEqual(oTable._getTotalRowCount(), 5, "On refresh, still the \"length\" parameter is returned");
-					oTable.getBinding().attachEventOnce("change", function() {
-						assert.strictEqual(oTable._getTotalRowCount(), 5, "After refresh, still the \"length\" parameter is returned");
-						resolve();
-					});
-				});
-		}).then(function() {
-			var oModel = oTable.getModel();
-			oTable.setModel(null);
-			assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding the total row count is 0, regardless of the binding info");
-
-			oTable.unbindRows();
-			oTable.setModel(oModel);
-			assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding or binding info the total row count is 0");
-
-			oMockServer.destroy();
-		});
 	});
 
 	QUnit.module("Performance", {
