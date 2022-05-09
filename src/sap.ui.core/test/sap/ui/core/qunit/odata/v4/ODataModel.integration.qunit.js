@@ -38,7 +38,6 @@ sap.ui.define([
 	var rCountTrue = /[?&]\$count=true/, // $count=true, but not inside $expand
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		fnFireEvent = EventProvider.prototype.fireEvent,
-		sInvalidModel = "/invalid/model/",
 		sODCB = "sap.ui.model.odata.v4.ODataContextBinding",
 		sODLB = "sap.ui.model.odata.v4.ODataListBinding",
 		sODPrB = "sap.ui.model.odata.v4.ODataPropertyBinding",
@@ -78,18 +77,6 @@ sap.ui.define([
 		return oPromise.then(mustFail(assert), function (oError) {
 			assert.ok(oError instanceof Error && oError.canceled, "canceled error expected");
 		});
-	}
-
-	/**
-	 * Creates a V4 OData model for data aggregation tests.
-	 *
-	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
-	 *   potentially overwrite the parameters operationMode, serviceUrl, and synchronizationMode
-	 *   which are set by default
-	 * @returns {ODataModel} The model
-	 */
-	function createAggregationModel(mModelParameters) {
-		return createModel("/aggregation/", mModelParameters);
 	}
 
 	/**
@@ -154,107 +141,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates a V4 OData model.
-	 *
-	 * @param {string} sServiceUrl The service URL
-	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
-	 *   potentially overwrite the parameters operationMode, serviceUrl, and synchronizationMode
-	 *   which are set by default
-	 * @returns {sap.ui.model.odata.v4.ODataModel} The model
-	 */
-	function createModel(sServiceUrl, mModelParameters) {
-		var mDefaultParameters = {
-				operationMode : OperationMode.Server,
-				serviceUrl : sServiceUrl,
-				synchronizationMode : "None"
-			};
-
-		return new ODataModel(Object.assign(mDefaultParameters, mModelParameters));
-	}
-
-	/**
-	 * Creates a V4 OData model for <code>zui5_epm_sample</code>.
-	 *
-	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
-	 *   potentially overwrite the parameters operationMode, serviceUrl, and synchronizationMode
-	 *   which are set by default
-	 * @returns {ODataModel} The model
-	 */
-	function createSalesOrdersModel(mModelParameters) {
-		return createModel(sSalesOrderService, mModelParameters);
-	}
-
-	/**
-	 * Creates a V4 OData model for special cases (not backed by Gateway).
-	 *
-	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
-	 *   potentially overwrite the parameters operationMode, serviceUrl, and synchronizationMode
-	 *   which are set by default
-	 * @returns {ODataModel} The model
-	 */
-	function createSpecialCasesModel(mModelParameters) {
-		return createModel("/special/cases/", mModelParameters);
-	}
-
-	/**
-	 * Creates a V4 OData model for <code>TEA_BUSI</code>.
-	 *
-	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
-	 *   potentially overwrite the parameters operationMode, serviceUrl, and synchronizationMode
-	 *   which are set by default
-	 * @returns {sap.ui.model.odata.v4.ODataModel} The model
-	 */
-	function createTeaBusiModel(mModelParameters) {
-		return createModel(sTeaBusi, mModelParameters);
-	}
-
-	/**
-	 * Test that the template output is as expected.
-	 *
-	 * @param {object} assert The QUnit assert object
-	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
-	 *    see {@link sap.ui.core.mvc.View.create}
-	 * @param {string} sTemplate The template used to generate the expected view as XML
-	 * @param {string} sView The expected resulting view from templating
-	 * @returns {Promise} A promise that is resolved when the test is done
-	 *
-	 * @private
-	 */
-	function doTestXMLTemplating(assert, oXMLPreprocessorConfig, sTemplate, sView) {
-		var that = this;
-
-		/*
-		 * Remove all namespaces and all spaces before tag ends (..."/>) and all tabs from the
-		 * given XML string.
-		 *
-		 * @param {string} sXml
-		 *   XML string
-		 * @returns {string}
-		 *   Normalized XML string
-		 */
-		function _normalizeXml(sXml) {
-			/*jslint regexp: true*/
-			sXml = sXml
-				.replace(/ xmlns.*?=".*?"/g, "")
-				.replace(/ \/>/g, "/>")
-				// Replace all tabulators
-				.replace(/\t/g, "");
-			return sXml;
-		}
-
-		// allow indents in expectation
-		sView = sView.replace(/\t/g, "");
-
-		return this.createView(assert, sTemplate, undefined, undefined,
-			{xml : oXMLPreprocessorConfig}).then(function () {
-			assert.strictEqual(
-				_normalizeXml(XMLHelper.serialize(that.oView._xContent)),
-				_normalizeXml(XMLHelper.serialize(xml(sView)))
-			);
-		});
-	}
-
-	/**
 	 * Returns the binding context's path for a given managed object.
 	 *
 	 * @param {sap.ui.model.ManagedObject} oManagedObject - A managed object
@@ -298,36 +184,6 @@ sap.ui.define([
 	}
 
 	/**
-	 *  Create a view with a relative ODataListBinding which is ready to create a new entity.
-	 *
-	 * @param {object} oTest The QUnit test object
-	 * @param {object} assert The QUnit assert object
-	 * @returns {Promise} A promise that is resolved when the view is created and ready to create
-	 *   a relative entity
-	 */
-	function prepareTestForCreateOnRelativeBinding(oTest, assert) {
-		var oModel = createTeaBusiModel({updateGroupId : "update"}),
-			sView = '\
-<FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
-	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
-	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<Text id="id" text="{ID}"/>\
-		<Text id="text" text="{Name}"/>\
-	</Table>\
-</FlexBox>';
-
-		oTest.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
-				TEAM_2_EMPLOYEES : [
-					{ID : "2", Name : "Frederic Fall"}
-				]
-			})
-			.expectChange("id", ["2"])
-			.expectChange("text", ["Frederic Fall"]);
-
-		return oTest.createView(assert, sView, oModel);
-	}
-
-	/**
 	 * @param {any|function} [vValue]
 	 *   The value to be returned later or a callback function delivering it
 	 * @param {number} [iDelay=5]
@@ -356,9 +212,10 @@ sap.ui.define([
 	 *   and response as value
 	 * @param {object|object[]} mValueByControl A map or an array of maps containing control id as
 	 *   key and the expected control values as value
-	 * @param {string|sap.ui.model.odata.v4.ODataModel} [vModel]
-	 *   The model (or the name of a function at <code>this</code> which creates it); it is attached
-	 *   to the view and to the test instance.
+	 * @param {function|string|sap.ui.model.odata.v4.ODataModel} [vModel]
+	 *   The model (or the name of a function at <code>this</code> which creates it, of a function
+	 *   called on <code>this</code> which creates it); it is attached to the view and to the test
+	 *   instance.
 	 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
 	 * @param {function} [fnAssert]
 	 *   A function containing additional assertions such as expected log messages which is called
@@ -383,7 +240,9 @@ sap.ui.define([
 			} else {
 				expectChanges(mValueByControl);
 			}
-			if (typeof vModel === "string") {
+			if (typeof vModel === "function") {
+				vModel = vModel.apply(this);
+			} else if (typeof vModel === "string") {
 				vModel = this[vModel]();
 			}
 			if (fnAssert) {
@@ -398,16 +257,25 @@ sap.ui.define([
 	 * Creates a QUnit.test which tests that the template output is as expected.
 	 *
 	 * @param {string} sTitle The title of the test case
-	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
-	 *    see {@link sap.ui.core.mvc.View.create}
+	 * @param {object|string} vXMLPreprocessorConfig
+	 *   Holds a preprocessor configuration for type "xml", see {@link sap.ui.core.mvc.View.create},
+	 *   or the name of a function at <code>this</code> which creates the corresponding model
 	 * @param {string} sTemplate The template used to generate the expected view as XML
 	 * @param {string} sView The expected resulting view from templating
 	 *
 	 * @private
 	 */
-	function testXMLTemplating(sTitle, oXMLPreprocessorConfig, sTemplate, sView) {
+	function testXMLTemplating(sTitle, vXMLPreprocessorConfig, sTemplate, sView) {
 		QUnit.test(sTitle, function (assert) {
-			return doTestXMLTemplating.call(this, assert, oXMLPreprocessorConfig, sTemplate, sView);
+			if (typeof vXMLPreprocessorConfig === "string") {
+				vXMLPreprocessorConfig = {
+					models : {
+						meta : this[vXMLPreprocessorConfig]().getMetaModel()
+					}
+				};
+			}
+
+			return this.doTestXMLTemplating(assert, vXMLPreprocessorConfig, sTemplate, sView);
 		});
 	}
 
@@ -553,45 +421,6 @@ sap.ui.define([
 			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 
-			// These metadata files are _always_ faked, the query option "realOData" is ignored
-			this.useFakeServer({
-				"/aggregation/$metadata"
-					: {source : "odata/v4/data/metadata_aggregation.xml"},
-				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
-					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
-				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
-					: {source : "model/GWSAMPLE_BASIC.annotations.xml"},
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
-					: {source : "odata/v4/data/metadata.xml"},
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=123"
-					: {source : "odata/v4/data/metadata.xml"},
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
-					: {source : "odata/v4/data/metadata.xml"},
-				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
-					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
-				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?c1=a&c2=b"
-					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
-				"/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/$metadata"
-					: {source : "model/RMTSAMPLEFLIGHT.metadata.xml"},
-				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
-					: {source : "odata/v4/data/metadata_codelist.xml"},
-				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
-					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
-				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata?sap-client=123"
-					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
-				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata"
-					: {source : "odata/v4/data/VH_ProductTypeCode.xml"},
-				"/special/cases/$metadata"
-					: {source : "odata/v4/data/metadata_special_cases.xml"},
-				"/special/cases/$metadata?sap-client=123"
-					: {source : "odata/v4/data/metadata_special_cases.xml"},
-				"/special/countryoforigin/$metadata"
-					: {source : "odata/v4/data/metadata_countryoforigin.xml"},
-				"/special/CurrencyCode/$metadata"
-					: {source : "odata/v4/data/metadata_CurrencyCode.xml"},
-				"/special/Price/$metadata"
-					: {source : "odata/v4/data/metadata_Price.xml"}
-			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning")
 				.withExactArgs(sinon.match.string, "LegacyParametersGet", "sap.ui.support",
@@ -764,7 +593,7 @@ sap.ui.define([
 				}
 				delete this.mListChanges[sControlId];
 			}
-			if (sap.ui.getCore().getUIDirty() || this.oModel.aPrerenderingTasks
+			if (sap.ui.getCore().getUIDirty() || this.oModel && this.oModel.aPrerenderingTasks
 					|| sap.ui.getCore().getMessageManager().getMessageModel().getObject("/").length
 						< this.aMessages.length) {
 				setTimeout(this.checkFinish.bind(this, assert), 10);
@@ -846,7 +675,7 @@ sap.ui.define([
 		 * @returns {Promise} A promise that is resolved when the change event has been fired
 		 */
 		checkResetInvalidDataState : function (assert, fnGetResetable) {
-			var oModel = createTeaBusiModel({updateGroupId : "update"}),
+			var oModel = this.createTeaBusiModel({updateGroupId : "update"}),
 				sView = '\
 <FlexBox id="form" binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="age" text="{AGE}"/>\
@@ -954,6 +783,19 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a V4 OData model for data aggregation tests.
+		 *
+		 * @param {object} [mModelParameters] Map of parameters for model construction...
+		 * @returns {ODataModel} The model
+		 */
+		createAggregationModel : function (mModelParameters) {
+			return this.createModel("/aggregation/", mModelParameters, {
+				"/aggregation/$metadata"
+					: {source : "odata/v4/data/metadata_aggregation.xml"}
+			});
+		},
+
+		/**
 		 * Creates a view containing a list report and an object page. The list report contains a
 		 * list of sales orders and the object page the details of a sales order. The list report is
 		 * initially filtered to only show sales orders with a gross amount less than 150.
@@ -975,7 +817,7 @@ sap.ui.define([
 		 */
 		createKeepAliveScenario : function (assert, bDropFromCollection, fnOnBeforeDestroy) {
 			var oContext,
-				oModel = createSalesOrdersModel({autoExpandSelect : true}),
+				oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 				oTable,
 				sView = '\
 <Table id="listReport" growing="true" growingThreshold="2" items="{path : \'/SalesOrderList\',\
@@ -1067,6 +909,30 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a V4 OData model.
+		 *
+		 * @param {string} sServiceUrl The service URL
+		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance
+		 *   and potentially overwrite the parameters operationMode, serviceUrl, and
+		 *   synchronizationMode which are set by default
+		 * @param {map} mFixture
+		 *   The fixture. See {@link sap.ui.test.TestUtils.useFakeServer}
+		 * @returns {sap.ui.model.odata.v4.ODataModel} The model
+		 */
+		createModel : function (sServiceUrl, mModelParameters, mFixture) {
+			var mDefaultParameters = {
+					operationMode : OperationMode.Server,
+					serviceUrl : sServiceUrl,
+					synchronizationMode : "None"
+				};
+
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", mFixture, [/*aRegExps*/],
+				/*sServiceUrl*/undefined, /*bStrict*/true);
+
+			return new ODataModel(Object.assign(mDefaultParameters, mModelParameters));
+		},
+
+		/**
 		 * Creates a V4 OData model for V2 service <code>RMTSAMPLEFLIGHT</code>.
 		 *
 		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance
@@ -1091,7 +957,10 @@ sap.ui.define([
 
 			mModelParameters = Object.assign({}, {odataVersion : "2.0"}, mModelParameters);
 
-			return createModel("/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/", mModelParameters);
+			return this.createModel("/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/", mModelParameters, {
+					"/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/$metadata"
+						: {source : "model/RMTSAMPLEFLIGHT.metadata.xml"}
+				});
 		},
 
 		/**
@@ -1116,7 +985,56 @@ sap.ui.define([
 
 			mModelParameters = Object.assign({}, {odataVersion : "2.0"}, mModelParameters);
 
-			return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
+			return this.createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters, {
+					"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
+						: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
+					"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
+						: {source : "model/GWSAMPLE_BASIC.annotations.xml"}
+				});
+		},
+
+		/**
+		 * Creates a V4 OData model for <code>zui5_epm_sample</code>.
+		 *
+		 * @param {object} [mModelParameters] Map of parameters for model construction...
+		 * @param {map} [mAdditionalFixture]
+		 *   The additional fixture. See {@link sap.ui.test.TestUtils.useFakeServer}
+		 * @returns {ODataModel} The model
+		 */
+		createSalesOrdersModel : function (mModelParameters, mAdditionalFixture) {
+			return this.createModel(sSalesOrderService, mModelParameters,
+				Object.assign({
+					"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
+						: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"}
+				}, mAdditionalFixture));
+		},
+
+		/**
+		 * Creates a V4 OData model for <code>zui5_epm_sample</code> using client "123".
+		 *
+		 * @param {object} [mModelParameters] Map of parameters for model construction...
+		 * @returns {ODataModel} The model
+		 */
+		createSalesOrdersModel123 : function (mModelParameters) {
+			return this.createModel(sSalesOrderService + "?sap-client=123", mModelParameters, {
+					"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata?sap-client=123"
+						: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"}
+				});
+		},
+
+		/**
+		 * Creates a V4 OData model for <code>TEA_BUSI</code>.
+		 *
+		 * @param {object} [mModelParameters] Map of parameters for model construction
+		 * @returns {sap.ui.model.odata.v4.ODataModel} The model
+		 */
+		createTeaBusiModel : function (mModelParameters) {
+			return this.createModel(sTeaBusi, mModelParameters, {
+					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
+						: {source : "odata/v4/data/metadata.xml"},
+					"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
+						: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
+				});
 		},
 
 		/**
@@ -1143,7 +1061,7 @@ sap.ui.define([
 		createTwiceSaveInBetween : function (assert) {
 			var oBinding,
 				oCreatedContext,
-				oModel = createSalesOrdersModel({
+				oModel = this.createSalesOrdersModel({
 					autoExpandSelect : true,
 					updateGroupId : "update"
 				}),
@@ -1234,7 +1152,10 @@ sap.ui.define([
 		 * @returns {Promise<sap.ui.model.odata.v4.Context>} A promise on the context
 		 */
 		createSetPropertyScenario : function (assert) {
-			var oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			var oModel = this.createTeaBusiModel({
+					autoExpandSelect : true,
+					updateGroupId : "update"
+				}),
 				sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Input id="name" value="{Name}"/>\
@@ -1253,6 +1174,22 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a V4 OData model for special cases (not backed by Gateway).
+		 *
+		 * @param {object} [mModelParameters] Map of parameters for model construction...
+		 * @param {map} [mAdditionalFixture]
+		 *   The additional fixture. See {@link sap.ui.test.TestUtils.useFakeServer}
+		 * @returns {ODataModel} The model
+		 */
+		createSpecialCasesModel : function (mModelParameters, mAdditionalFixture) {
+			return this.createModel("/special/cases/", mModelParameters,
+				Object.assign({
+					"/special/cases/$metadata"
+						: {source : "odata/v4/data/metadata_special_cases.xml"}
+				}, mAdditionalFixture));
+		},
+
+		/**
 		 * Creates the view and attaches it to the model. Checks that the expected requests (see
 		 * {@link #expectRequest} are fired and the controls got the expected changes (see
 		 * {@link #expectChange}).
@@ -1267,7 +1204,8 @@ sap.ui.define([
 		 * @param {string} [sViewXML=""] The view content as XML
 		 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
 		 *   and to the test instance.
-		 *   If no model is given, <code>createTeaBusiModel</code> is used.
+		 *   If no model is given, <code>createTeaBusiModel</code> is used -  unless
+		 *   <code>null</code> is explicitly given.
 		 * @param {object} [oController]
 		 *   An object defining the methods and properties of the controller
 		 * @param {object} [mPreprocessors] A map from the specified preprocessor type (e.g. "xml")
@@ -1518,8 +1456,8 @@ sap.ui.define([
 				fnReportError.apply(this, arguments);
 			}
 
-			this.oModel = oModel || createTeaBusiModel();
-			if (this.oModel.submitBatch) {
+			this.oModel = oModel === null ? null : oModel || this.createTeaBusiModel();
+			if (this.oModel && this.oModel.submitBatch) {
 				// stub request methods for the requestor prototype to also check requests from
 				// "hidden" model instances like the code list model...
 				this.mock(Object.getPrototypeOf(this.oModel.oRequestor)).expects("sendBatch")
@@ -1566,6 +1504,52 @@ sap.ui.define([
 				that.oView = oView;
 
 				return that.waitForChanges(assert, "createView");
+			});
+		},
+
+		/**
+		 * Test that the template output is as expected.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
+		 *    see {@link sap.ui.core.mvc.View.create}
+		 * @param {string} sTemplate The template used to generate the expected view as XML
+		 * @param {string} sView The expected resulting view from templating
+		 * @returns {Promise} A promise that is resolved when the test is done
+		 *
+		 * @private
+		 */
+		doTestXMLTemplating : function (assert, oXMLPreprocessorConfig, sTemplate, sView) {
+			var that = this;
+
+			/*
+			* Remove all namespaces and all spaces before tag ends (..."/>) and all tabs from the
+			* given XML string.
+			*
+			* @param {string} sXml
+			*   XML string
+			* @returns {string}
+			*   Normalized XML string
+			*/
+			function _normalizeXml(sXml) {
+				/*jslint regexp: true*/
+				sXml = sXml
+					.replace(/ xmlns.*?=".*?"/g, "")
+					.replace(/ \/>/g, "/>")
+					// Replace all tabulators
+					.replace(/\t/g, "");
+				return sXml;
+			}
+
+			// allow indents in expectation
+			sView = sView.replace(/\t/g, "");
+
+			return this.createView(assert, sTemplate, null, undefined,
+				{xml : oXMLPreprocessorConfig}).then(function () {
+				assert.strictEqual(
+					_normalizeXml(XMLHelper.serialize(that.oView._xContent)),
+					_normalizeXml(XMLHelper.serialize(xml(sView)))
+				);
 			});
 		},
 
@@ -1860,6 +1844,35 @@ sap.ui.define([
 		},
 
 		/**
+		 *  Create a view with a relative ODataListBinding which is ready to create a new entity.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @returns {Promise} A promise that is resolved when the view is created and ready to
+		 *   create a relative entity
+		 */
+		prepareTestForCreateOnRelativeBinding : function (assert) {
+			var oModel = this.createTeaBusiModel({updateGroupId : "update"}),
+				sView = '\
+<FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
+	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<Text id="id" text="{ID}"/>\
+		<Text id="text" text="{Name}"/>\
+	</Table>\
+</FlexBox>';
+
+			this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+					TEAM_2_EMPLOYEES : [
+						{ID : "2", Name : "Frederic Fall"}
+					]
+				})
+				.expectChange("id", ["2"])
+				.expectChange("text", ["Frederic Fall"]);
+
+			return this.createView(assert, sView, oModel);
+		},
+
+		/**
 		 * Removes the control with the given ID from the given form in the view created by
 		 * {@link #createView}.
 		 *
@@ -2007,24 +2020,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Sets up a SinonJS fake server using the given fixture.
-		 *
-		 * @param {map} mFixture
-		 *   The fixture. See {@link sap.ui.test.TestUtils.useFakeServer}
-		 * @returns {object}
-		 *   The SinonJS fake server instance
-		 */
-		useFakeServer : function (mFixture) {
-			if (this.oFakeServer) {
-				this.oFakeServer.restore();
-			}
-			this.oFakeServer = TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit",
-				mFixture, [/*aRegExps*/], /*sServiceUrl*/undefined, /*bStrict*/true);
-
-			return this.oFakeServer;
-		},
-
-		/**
 		 * Waits for the expected requests and changes.
 		 *
 		 * @param {object} assert The QUnit assert object
@@ -2101,13 +2096,12 @@ sap.ui.define([
 			dRetryAfter = new Date(),
 			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}"/>';
 
-		this.useFakeServer({
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
+			.returns(true);
+		oModel = this.createModel("/sap/statistics/", {groupId : "$direct"}, {
 			"/sap/statistics/$metadata?sap-statistics=true"
 				: {source : "odata/v4/data/metadata.xml"} // same as TEA_BUSI
 		});
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
-			.returns(true);
-		oModel = createModel("/sap/statistics/", {groupId : "$direct"});
 		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
 		this.expectRequest("EMPLOYEES('1')/ID?sap-statistics=true",
 				createError({}, 503, dRetryAfter))
@@ -2165,14 +2159,13 @@ sap.ui.define([
 	QUnit.test("sap-statistics for $batch", function (assert) {
 		var oModel;
 
-		this.useFakeServer({
+		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
+			.returns(true);
+		oModel = this.createModel("/sap/statistics/", {earlyRequests : true}, {
 			"HEAD /sap/statistics/?sap-statistics=true" : {},
 			"/sap/statistics/$metadata?sap-statistics=true"
 				: {source : "odata/v4/data/metadata.xml"} // same as TEA_BUSI
 		});
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
-			.returns(true);
-		oModel = createModel("/sap/statistics/", {earlyRequests : true});
 		oModel.submitBatch = false; // @see #createView
 		this.mock(oModel.oRequestor).expects("sendRequest")
 			.withArgs("POST", "$batch?sap-statistics=true").rejects();
@@ -2196,7 +2189,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// verify that error responses are processed correctly for change sets
 	QUnit.test("error response: $batch w/ change set (framework test)", function (assert) {
-		var oModel = createSalesOrdersModel(),
+		var oModel = this.createSalesOrdersModel(),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Text id="id" text="{SalesOrderID}"/>\
@@ -2476,7 +2469,7 @@ sap.ui.define([
 	var sTitle = "OLDB#requestContexts standalone, autoExpandSelect=" + bAutoExpandSelect;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : bAutoExpandSelect}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : bAutoExpandSelect}),
 			oPromise,
 			that = this;
 
@@ -2552,7 +2545,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1396
 [false, true].forEach(function (bGrowing) {
 	QUnit.test("OLDB#requestContexts w/ sap.m.Table, growing=" + bGrowing, function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="table" growing="' + bGrowing + '" growingThreshold="3" items="{/SalesOrderList}">\
@@ -2612,7 +2605,7 @@ sap.ui.define([
 	// Scenario: Request contexts from an ODataListBinding bound to a non-growing sap.ui.table.Table
 	// JIRA: CPOUI5UISERVICESV3-1396
 	QUnit.test("OLDB#requestContexts w/ sap.ui.table.Table", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="3">\
@@ -2681,7 +2674,7 @@ sap.ui.define([
 	// auto-$expand/$select sends the right events
 	// BCP: 2080228141
 	QUnit.test("BCP: 2080228141 - autoExpandSelect & late ODLB#setContext", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{}" threshold="0" visibleRowCount="3">\
 	<Text id="note" text="{Note}"/>\
@@ -2729,7 +2722,7 @@ sap.ui.define([
 	// BCP: 2070470932: see that sap-client is handled properly
 	QUnit.test("ODCB: late property", function (assert) {
 		var oFormContext,
-			oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel123({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_BP}">\
 	<Text id="city" text="{Address/City}"/>\
@@ -2835,7 +2828,7 @@ sap.ui.define([
 	// BCP: 2080093480
 	QUnit.test("BCP: 2080093480", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Text id="id1" text="{SalesOrderID}"/>\
@@ -2941,7 +2934,7 @@ sap.ui.define([
 	// Scenario: relative ODCB without cache; late property must be added to the parent cache.
 	// BCP: 2080093480
 	QUnit.test("ODCB w/o cache: late property", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="outer" binding="{/SalesOrderList(\'1\')}">\
 	<FlexBox id="inner" binding="{SO_2_BP}">\
@@ -3013,7 +3006,7 @@ sap.ui.define([
 	// Scenario: relative ODLB without cache; late property must be added to the parent cache.
 	// BCP: 2080093480
 	QUnit.test("ODLB w/o cache: late property", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
@@ -3061,7 +3054,7 @@ sap.ui.define([
 	// BCP: 2070011343
 	QUnit.test("BCP: 2070011343", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/SalesOrderList(\\\'1\\\')\',\
 		parameters : {$select : \'Messages,SO_2_SOITEM/Messages\'}}">\
@@ -3176,7 +3169,7 @@ sap.ui.define([
 	// Test ODLB#getCount
 	// JIRA: CPOUI5ODATAV4-958
 	QUnit.test("ODLB: late property", function (assert) {
-		var oModel = createModel(sTeaBusi + "?sap-client=123", {autoExpandSelect : true}),
+		var oModel,
 			oRowContext,
 			oTable,
 			sView = '\
@@ -3193,6 +3186,11 @@ sap.ui.define([
 <Input id="team" value="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}"/>\
 <Input id="budget" value="{EMPLOYEE_2_TEAM/Budget}"/>',
 			that = this;
+
+		oModel = this.createModel(sTeaBusi + "?sap-client=123", {autoExpandSelect : true}, {
+			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=123"
+				: {source : "odata/v4/data/metadata.xml"}
+		});
 
 		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$search=foo"
 				+ "&$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
@@ -3386,7 +3384,7 @@ sap.ui.define([
 	// changed key predicate for TEAM_2_MANAGER.
 	// JIRA: CPOUI5ODATAV4-362
 	QUnit.test("ODCB: requestSideEffects for nested expand", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/EMPLOYEES(\'1\')}">\
 	<Text id="employee_id" text="{ID}"/>\
@@ -3435,7 +3433,7 @@ sap.ui.define([
 	// changed key predicate for TEAM_2_MANAGER.
 	// JIRA: CPOUI5ODATAV4-362
 	QUnit.test("ODLB: requestSideEffects for nested expand", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
 	<Text id="employee_id" text="{ID}"/>\
@@ -3501,8 +3499,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-398
 	QUnit.test("requestSideEffects: absolute paths", function (assert) {
 		var oBusinessPartnerContext,
-			oModel = createModel(sSalesOrderService + "?sap-client=123",
-				{autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel123({autoExpandSelect : true}),
 			sEntityContainer = "/com.sap.gateway.default.zui5_epm_sample.v0002.Container",
 			oItemsTable,
 			sView = '\
@@ -3721,7 +3718,7 @@ sap.ui.define([
 	// Scenario: ODLB, late property at an entity within $expand.
 	// JIRA: CPOUI5ODATAV4-23
 	QUnit.test("ODLB: late property at nested entity", function (assert) {
-		var oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel123({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList(\'1\')/SO_2_SOITEM}">\
 	<Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
@@ -3773,7 +3770,7 @@ sap.ui.define([
 	// Scenario: ODCB, late property at an entity within $expand.
 	// JIRA: CPOUI5ODATAV4-23
 	QUnit.test("ODCB: late property at nested entity", function (assert) {
-		var oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel123({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_SOITEM(\'0010\')}">\
 	<Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
@@ -3830,7 +3827,7 @@ sap.ui.define([
 	lateID : "HT-2000"
 }].forEach(function (oFixture) {
 	QUnit.test("ODCB: late property at nested entity fails: " + oFixture.error, function (assert) {
-		var oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel123({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_SOITEM(\'0010\')}">\
 	<Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
@@ -3898,7 +3895,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-36
 	QUnit.test("create an entity and immediately reset changes (no UI) V4-36", function (assert) {
 		var // use autoExpandSelect so that the cache is created asynchronously
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -3941,7 +3938,7 @@ sap.ui.define([
 	// in the cache.
 	// JIRA: CPOUI5ODATAV4-23
 	QUnit.test("ODCB: late property at complex type", function (assert) {
-		var oModel = createModel(sSalesOrderService, {autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/BusinessPartnerList(\'1\')/Address}">\
 	<Text id="city" text="{City}"/>\
@@ -3980,7 +3977,7 @@ sap.ui.define([
 				message : "Could not read",
 				target : "Name"
 			}),
-			oModel = createTeaBusiModel({groupId : "$direct"}),
+			oModel = this.createTeaBusiModel({groupId : "$direct"}),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'42\')}">\
 	<Input id="text" value="{Name}"/>\
@@ -4033,7 +4030,7 @@ sap.ui.define([
 				message : "Could not read",
 				target : ""
 			}),
-			oModel = createTeaBusiModel({groupId : "$direct"}),
+			oModel = this.createTeaBusiModel({groupId : "$direct"}),
 			sView = '<Input id="text" value="{/EMPLOYEES(\'42\')/Name}"/>',
 			that = this;
 
@@ -4070,7 +4067,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-12
 	QUnit.test("Relative ODLB inherits parent ODCB's query options on filter", function (assert) {
 		var oBinding,
-			oModel = createModel(sTeaBusi + "?c1=a&c2=b"),
+			oModel,
 			sView = '\
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'42\\\')\',\
 	parameters : {$expand : {EMPLOYEE_2_EQUIPMENTS : {$orderby : \'ID\', $select : \'Name\'}}}}">\
@@ -4079,6 +4076,13 @@ sap.ui.define([
 	</Table>\
 </FlexBox>',
 			that = this;
+
+		oModel = this.createModel(sTeaBusi + "?c1=a&c2=b", {}, {
+			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
+				: {source : "odata/v4/data/metadata.xml"},
+			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?c1=a&c2=b"
+				: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
+		});
 
 		this.expectRequest("EMPLOYEES('42')?c1=a&c2=b&$expand=EMPLOYEE_2_EQUIPMENTS($orderby=ID"
 				+ ";$select=Name)", {
@@ -4132,7 +4136,7 @@ sap.ui.define([
 	// Refresh single row after it has been updated with a value which doesn't match the table's
 	// filter anymore. In this case we expect the single row to disappear.
 	QUnit.test("Context#refresh(undefined, true)", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="table"\
@@ -4204,7 +4208,7 @@ sap.ui.define([
 	// Refresh a single row with a bound message and check that the message is not duplicated.
 	// Refreshing a single line in a collection must not remove messages for other lines.
 	QUnit.test("Context#refresh() with messages", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oMessage1 = {
 				code : "2",
 				message : "Another Text",
@@ -4314,7 +4318,7 @@ sap.ui.define([
 				message : "Not found",
 				target : "ID"
 			}, 404),
-			oModel = createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
 			oTable,
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
@@ -4358,7 +4362,7 @@ sap.ui.define([
 	//
 	// BCP: 002075129500005176612021
 	QUnit.test("Nested ODLB: contexts deleted too early", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="rootTable" items="{/SalesOrderList}">\
 	<Text text="{SalesOrderID}"/>\
@@ -4435,7 +4439,7 @@ sap.ui.define([
 			.expectChange("id", "1")
 			.expectChange("name", []);
 
-		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+		return this.createView(assert, sView, this.createSalesOrdersModel()).then(function () {
 			that.expectRequest({
 					method : "POST",
 					url : "SalesOrderList('1')/"
@@ -4530,7 +4534,7 @@ sap.ui.define([
 		oTable.getBinding("items").refresh();
 	}].forEach(function (fnRefresh, i) {
 		QUnit.test("refresh: No drill-down error for deleted data #" + i, function (assert) {
-			var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 				oTable,
 				sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', templateShareable : false}">\
@@ -4655,7 +4659,7 @@ sap.ui.define([
 	// * Click on "Refresh sales orders" button
 	// This test is a simplification of that scenario with a different service.
 	QUnit.test("Absolute ODLB refresh", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', \
@@ -4816,7 +4820,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Refresh an ODataContextBinding with a message, the entity is deleted in between
 	QUnit.test("Absolute ODCB refresh & message", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
 	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
@@ -5223,7 +5227,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-29, check message target for unbound action
 	// JIRA: CPOUI5ODATAV4-852, support multiple targets in messages
 	QUnit.test("Allow binding of operation parameters: Changing with controls", function (assert) {
-		var oModel = createTeaBusiModel({groupId : "$direct"}),
+		var oModel = this.createTeaBusiModel({groupId : "$direct"}),
 			oOperation,
 			oParameterContext,
 			sView = '\
@@ -5336,7 +5340,7 @@ sap.ui.define([
 	// Format options and binding parameters are passed to @@format and @@value.
 	// JIRA: CPOUI5ODATAV4-121
 	testXMLTemplating("Operation parameters with sap.ui.model.odata.v4.AnnotationHelper.format",
-		{models : {meta : createTeaBusiModel().getMetaModel()}},
+		"createTeaBusiModel",
 '<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
 <template:alias name="value" value="sap.ui.model.odata.v4.AnnotationHelper.value">\
 	<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
@@ -5387,7 +5391,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-132
 	testXMLTemplating(
 		"Annotations on operations and parameters sap.ui.model.odata.v4.AnnotationHelper.format",
-		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+		"createSpecialCasesModel",
 '<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
 	<FlexBox binding="{special.cases.SendAutograph(...)}"\
 		visible="{meta>/Artists/special.cases.SendAutograph\
@@ -5429,7 +5433,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-52
 	QUnit.test("Allow binding of complex operation parameters", function (assert) {
 		var oOperation,
-			oModel = createSpecialCasesModel(),
+			oModel = this.createSpecialCasesModel(),
 			sView = '\
 <FlexBox id="operation" binding="{/HirePerson(...)}">\
 	<FlexBox id="parameter" binding="{$Parameter}">\
@@ -5538,7 +5542,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("ODCB#setParameter with complex type holds the reference", function (assert) {
-		var oModel = createSpecialCasesModel(),
+		var oModel = this.createSpecialCasesModel(),
 			oOperation = oModel.bindContext("/HirePerson(...)"),
 			oPerson = {
 				Address : {
@@ -5729,7 +5733,7 @@ sap.ui.define([
 			.expectChange("count")
 			.expectChange("id", ["0500000001", "0500000002"]);
 
-		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+		return this.createView(assert, sView, this.createSalesOrdersModel()).then(function () {
 			oTable = that.oView.byId("table");
 			oTableBinding = oTable.getBinding("items");
 			oHeaderContext = oTableBinding.getHeaderContext();
@@ -5789,7 +5793,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1263
 	QUnit.test("OLDB: case insensitive filtering", function (assert) {
 		var oListBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/ProductList\'}">\
 	<Text id="name" text="{Name}"/>\
@@ -5863,7 +5867,7 @@ sap.ui.define([
 			.expectChange("count") // ensures that count is observed
 			.expectChange("id", ["0500000001", "0500000002"]);
 
-		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+		return this.createView(assert, sView, this.createSalesOrdersModel()).then(function () {
 			oTable = that.oView.byId("table");
 			oTableBinding = oTable.getBinding("items");
 
@@ -5912,7 +5916,7 @@ sap.ui.define([
 	// Also check that unchanged $expand/$select is tolerated by #changeParameters
 	// JIRA: CPOUI5ODATAV4-1098
 	QUnit.test("ODLB: $count and changeParameters()", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			oTableBinding,
 			sView = '\
@@ -5967,7 +5971,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1769
 	// BCP:  1980007571
 	QUnit.test("multiple delete: index for gap-filling read requests", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
 	<Text id="id" text="{SalesOrderID}"/>\
@@ -6014,7 +6018,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1769
 	// BCP:  1980007571
 	QUnit.test("growing while deleting: index for gap-filling read request", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
@@ -6066,7 +6070,7 @@ sap.ui.define([
 	// Scenario: Delete in a growing table and at the same time refresh a row with higher index.
 	// JIRA: CPOUI5UISERVICESV3-1829
 	QUnit.test("refreshing row while deleting", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
@@ -6115,7 +6119,7 @@ sap.ui.define([
 	// the items and the detail table the schedules (with 1:n, which we don't have here).
 	// BCP: 2080123400
 	QUnit.test("BCP: 2080123400", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="list" items="{/SalesOrderList}">\
@@ -6193,7 +6197,7 @@ sap.ui.define([
 	// time.
 	// JIRA: CPOUI5UISERVICESV3-1795
 	QUnit.test("growing while deleting: adjust the pending read request", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
@@ -6242,7 +6246,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Delete multiple entities in a table w/o own cache.
 	QUnit.test("Delete multiple entities in a table w/o own cache", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}" id="form">\
 	<Table id="table" items="{SO_2_SOITEM}">\
@@ -6314,7 +6318,7 @@ sap.ui.define([
 			.expectChange("count")
 			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
 
-		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+		return this.createView(assert, sView, this.createSalesOrdersModel()).then(function () {
 			that.expectChange("count", "3");
 
 			// code under test
@@ -6367,7 +6371,7 @@ sap.ui.define([
 			.expectChange("oldCount")
 			.expectChange("item", ["10", "20"]);
 
-		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+		return this.createView(assert, sView, this.createSalesOrdersModel()).then(function () {
 			oTable = that.oView.byId("table");
 
 			that.expectChange("count", "2")
@@ -6405,7 +6409,7 @@ sap.ui.define([
 	// are refreshed when resuming. See CPOUI5UISERVICESV3-1179
 	QUnit.test("Refresh a suspended binding hierarchy", function (assert) {
 		var oBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'0500000001\')}">\
 	<Text id="note" text="{Note}"/>\
@@ -6497,7 +6501,7 @@ sap.ui.define([
 <Table id="table" items="{/SalesOrderList}">\
 	<Input id="item" value="{SO_2_BP/CompanyName}"/>\
 </Table>',
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID"
@@ -6563,7 +6567,7 @@ sap.ui.define([
 <Table id="table" items="{/EntitiesWithComplexKey}">\
 	<Input id="item" value="{Value}"/>\
 </Table>',
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			that = this;
 
 		this.expectRequest("EntitiesWithComplexKey?$select=Key/P1,Key/P2,Value&$skip=0&$top=100", {
@@ -6608,7 +6612,7 @@ sap.ui.define([
 		parameters : {$select : \'Messages\'}}">\
 	<Input id="item" value="{Value}"/>\
 </Table>',
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			that = this;
 
 		this.expectRequest("EntitiesWithComplexKey?$select=Key/P1,Key/P2,Messages,Value"
@@ -6765,7 +6769,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-717
 	QUnit.test("requestFilterForMessages on a relative list binding", function (assert) {
 		var oBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/SalesOrderList(\\\'42\\\')\', \
 		parameters : {$select : \'Messages\'}}">\
@@ -6847,7 +6851,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-122
 	QUnit.test("Late property in entity with key aliases", function (assert) {
 		var oBinding,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/As(1)}">\
 	<Text id="avalue" text="{AValue}"/>\
@@ -6909,7 +6913,7 @@ sap.ui.define([
 	QUnit.test("createSent and createCompleted", function (assert) {
 		var oBinding,
 			oCreatedContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
 			fnRejectPost,
 			fnResolvePost,
 			fnResolveCreateCompleted,
@@ -7078,7 +7082,7 @@ sap.ui.define([
 	QUnit.test("BCP: 2070287827: restore created entities after failed refresh", function (assert) {
 		var oBinding,
 			aCreatedContexts = [],
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Text id="note" text="{Note}"/>\
@@ -7257,7 +7261,7 @@ sap.ui.define([
 	[false, true].forEach(function (bSkipRefresh) {
 		QUnit.test("Create with user input - bSkipRefresh: " + bSkipRefresh, function (assert) {
 			var oCreatedContext,
-				oModel = createSalesOrdersModel({
+				oModel = this.createSalesOrdersModel({
 					autoExpandSelect : true,
 					updateGroupId : "update"
 				}),
@@ -7355,7 +7359,7 @@ sap.ui.define([
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -7595,7 +7599,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -7719,7 +7723,7 @@ sap.ui.define([
 		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				groupId : "$direct",
 				updateGroupId : "update"
@@ -7823,7 +7827,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -7959,7 +7963,7 @@ sap.ui.define([
 		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -8099,7 +8103,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -8203,7 +8207,7 @@ sap.ui.define([
 		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				groupId : "$direct",
 				updateGroupId : "update"
@@ -8361,7 +8365,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				groupId : "$direct",
 				updateGroupId : "update"
@@ -8478,7 +8482,7 @@ sap.ui.define([
 		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -8550,7 +8554,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -8651,7 +8655,7 @@ sap.ui.define([
 		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -8722,7 +8726,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -8793,7 +8797,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -8882,7 +8886,7 @@ sap.ui.define([
 		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -8959,7 +8963,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -9049,7 +9053,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -9182,7 +9186,7 @@ sap.ui.define([
 		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				groupId : "$direct",
 				updateGroupId : "update"
@@ -9289,7 +9293,7 @@ sap.ui.define([
 		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -9358,7 +9362,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -9448,7 +9452,7 @@ sap.ui.define([
 		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				groupId : "$direct",
 				updateGroupId : "update"
@@ -9557,7 +9561,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				groupId : "$direct",
 				updateGroupId : "update"
@@ -9660,7 +9664,7 @@ sap.ui.define([
 			oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				groupId : "$direct",
 				updateGroupId : "update"
@@ -9765,7 +9769,7 @@ sap.ui.define([
 	// Scenario: Create a business partner w/o key properties, enter an address (complex property),
 	// then submit the batch
 	QUnit.test("Create with default value in a complex property", function (assert) {
-		var oModel = createSalesOrdersModel({
+		var oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -9847,7 +9851,7 @@ sap.ui.define([
 	// quantity unit to be sent, too.
 	QUnit.test("Create with default value in a currency/unit", function (assert) {
 		var oListBinding,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -9926,7 +9930,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Failure when creating a sales order line item. Observe the message.
 	QUnit.test("Create error", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
 			oTable,
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')}">\
@@ -10005,7 +10009,7 @@ sap.ui.define([
 				target : "/BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')/Quantity",
 				type : "Warning"
 			},
-			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
 			sView = '\
 <FlexBox binding="{\
 		path : \'/BusinessPartnerList(\\\'1\\\')/BP_2_SO(\\\'42\\\')/SO_2_SOITEM(\\\'0010\\\')\',\
@@ -10122,7 +10126,7 @@ sap.ui.define([
 	// Scenario: Modify two properties of a sales order, then submit the batch
 	QUnit.test("Merge PATCHes", function (assert) {
 		var sEtag = "ETag",
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -10173,7 +10177,7 @@ sap.ui.define([
 	// Scenario: Merge PATCHes for different entities even if there are other changes in between
 	// JIRA: CPOUI5UISERVICESV3-1450
 	QUnit.test("Merge PATCHes for different entities", function (assert) {
-		var oModel = createSalesOrdersModel({
+		var oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -10266,7 +10270,7 @@ sap.ui.define([
 	// the message model
 	QUnit.test("Error response for a change set w/o content-ID", function (assert) {
 		var oError = createErrorInsideBatch({message : "Value 4.22 not allowed"}),
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -10349,7 +10353,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-729
 	QUnit.test("CPOUI5ODATAV4-729: @Core.ContentId", function (assert) {
 		var aItems,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<ColumnListItem>\
@@ -10466,7 +10470,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1450
 	QUnit.test("Lazy determination of ETag while PATCH", function (assert) {
 		var oBinding,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -10540,7 +10544,7 @@ sap.ui.define([
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 			oBinding,
 			oExecutePromise,
-			oModel = createTeaBusiModel({updateGroupId : "update"}),
+			oModel = this.createTeaBusiModel({updateGroupId : "update"}),
 			fnRespond,
 			oSubmitBatchPromise,
 			sView = '\
@@ -10618,7 +10622,7 @@ sap.ui.define([
 	// has been called before it was created (CPOUI5UISERVICESV3-1531).
 	QUnit.test("PATCH entity, two subsequent PATCHes on this entity wait", function (assert) {
 		var oBinding,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				updateGroupId : "update"
 			}),
 			aPromises = [],
@@ -10727,7 +10731,7 @@ sap.ui.define([
 	QUnit.test("1=PATCH e1, 2=PATCH(e1,e2), 3=PATCH e2: request sequence 1,2,3", function (assert) {
 		var oBinding42,
 			oBinding77,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -10846,7 +10850,7 @@ sap.ui.define([
 			var fnAfterPatchCompleted,
 				oBatchPromise0,
 				oBatchPromise1,
-				oModel = createSalesOrdersModel({
+				oModel = this.createSalesOrdersModel({
 					autoExpandSelect : true,
 					updateGroupId : sUpdateGroupId
 				}),
@@ -10994,7 +10998,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-112
 	// BCP: 2080084634
 	QUnit.test("Auto-$expand/$select: Absolute ODCB with relative ODPB", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
 		parameters : {$select : \'AGE,ROOM_ID,EMPLOYEE_2_TEAM/Name\
@@ -11031,7 +11035,7 @@ sap.ui.define([
 	// converted to $expand, but this conversion is asynchronous.
 	// BCP: 2070020773
 	QUnit.test("ODCB: asynchronous $select to $expand", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'C\\\',ID=1)\',\
 		parameters : {$select : \'EQUIPMENT_2_PRODUCT/SupplierIdentifier\'}}">\
@@ -11063,7 +11067,7 @@ sap.ui.define([
 	// which must be converted to $expand. (The scenario from the incident.)
 	// BCP: 2070020773
 	QUnit.test("ODLB: dynamic filter and $select to $expand", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\',\
 		parameters : {$select : \'EMPLOYEE_2_TEAM/Name\'},\
@@ -11106,7 +11110,7 @@ sap.ui.define([
 			.expectChange("name", "Jonathan Smith");
 
 		return this.createView(
-			assert, sView, createTeaBusiModel({autoExpandSelect : true})
+			assert, sView, this.createTeaBusiModel({autoExpandSelect : true})
 		).then(function () {
 			that.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {Name : "Jonathan Schmidt"})
 				.expectChange("name", "Jonathan Schmidt");
@@ -11158,7 +11162,7 @@ sap.ui.define([
 <Table id="table" items="{/MANAGERS}">\
 	<Text id="item" text="{@sapui.name}"/>\
 </Table>',
-			oModel = createTeaBusiModel().getMetaModel();
+			oModel = this.createTeaBusiModel().getMetaModel();
 
 		this.expectChange("item", "ID", "/MANAGERS/ID")
 			.expectChange("item", "TEAM_ID", "/MANAGERS/TEAM_ID")
@@ -11173,7 +11177,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-582
 	QUnit.test("Metadata: Product name", function (assert) {
 		var sView = '<Text id="product" text="{/Equipments/EQUIPMENT_2_PRODUCT/@sapui.name}"/>',
-			oModel = createTeaBusiModel().getMetaModel();
+			oModel = this.createTeaBusiModel().getMetaModel();
 
 		this.expectChange("product",
 			"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product");
@@ -11190,7 +11194,7 @@ sap.ui.define([
 <FlexBox binding="{/Equipments/EQUIPMENT_2_PRODUCT/}">\
 	<Text id="product" text="{@sapui.name}"/>\
 </FlexBox>',
-			oModel = createTeaBusiModel().getMetaModel();
+			oModel = this.createTeaBusiModel().getMetaModel();
 
 		this.expectChange("product",
 			"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product");
@@ -11207,7 +11211,7 @@ sap.ui.define([
 <Table id="table" items="{}">\
 	<Text id="item" text="{@sapui.name}"/>\
 </Table>',
-			oModel = createTeaBusiModel().getMetaModel(),
+			oModel = this.createTeaBusiModel().getMetaModel(),
 			that = this;
 
 		this.expectChange("item", []);
@@ -11243,7 +11247,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Avoid duplicate call to computed annotation
 	QUnit.test("Avoid duplicate call to computed annotation", function (assert) {
-		var oModel = createTeaBusiModel().getMetaModel(),
+		var oModel = this.createTeaBusiModel().getMetaModel(),
 			sView = '\
 <Text id="text"\
 	text="{/MANAGERS/TEAM_ID@@sap.ui.model.odata.v4.AnnotationHelper.getValueListType}"/>';
@@ -11285,7 +11289,7 @@ sap.ui.define([
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("TEAM_ID", "TEAM_03");
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
+		return this.createView(assert, sView, this.createTeaBusiModel({autoExpandSelect : true}));
 	});
 
 	//*********************************************************************************************
@@ -11316,7 +11320,7 @@ sap.ui.define([
 			})
 			.expectChange("name", "SAP NetWeaver Gateway Content");
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
+		return this.createView(assert, sView, this.createTeaBusiModel({autoExpandSelect : true}));
 	});
 
 	//*********************************************************************************************
@@ -11328,7 +11332,7 @@ sap.ui.define([
 			oTeamBinding,
 			that = this;
 
-		return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
+		return this.prepareTestForCreateOnRelativeBinding(assert).then(function () {
 			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
 			oTeamBinding = that.oView.byId("form").getObjectBinding();
 			// insert new employee at first row
@@ -11388,7 +11392,7 @@ sap.ui.define([
 				oTeamBinding,
 				that = this;
 
-			return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
+			return this.prepareTestForCreateOnRelativeBinding(assert).then(function () {
 				oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
 				oTeamBinding = that.oView.byId("form").getObjectBinding();
 
@@ -11435,7 +11439,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-29 (bound action parameter and error with message target)
 	// JIRA: CPOUI5ODATAV4-132 (bind property of binding parameter relative to $Parameter)
 	QUnit.test("Bound action", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
 			sView = '\
 <FlexBox id="form" binding="{/EMPLOYEES(\'1\')}">\
 	<Text id="name" text="{Name}"/>\
@@ -11578,7 +11582,7 @@ sap.ui.define([
 	// Return value context can be used with v4.Context#setProperty (CPOUI5UISERVICESV3-1874).
 	QUnit.test("Bound action on collection", function (assert) {
 		var oHeaderContext,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oReturnValueContext,
 			sView = '\
 <Table id="table" items="{path : \'/Artists\', parameters : {$select : \'Messages\'}}">\
@@ -11755,7 +11759,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Call bound action on a context of a relative ListBinding
 	QUnit.test("Read entity for a relative ListBinding, call bound action", function (assert) {
-		var oModel = createTeaBusiModel(),
+		var oModel = this.createTeaBusiModel(),
 			that = this,
 			sView = '\
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
@@ -11801,7 +11805,7 @@ sap.ui.define([
 		var oAction,
 			oContext,
 			oExecutionPromise,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table"\
 		items="{\
@@ -11905,7 +11909,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect on an operation
 	QUnit.test("Auto-$expand/$select: Function import", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="function" binding="{/GetEmployeeByID(...)}">\
 	<Text id="name" text="{Name}"/>\
@@ -11932,7 +11936,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Instance annotation in child path
 	QUnit.test("Auto-$expand/$select: Instance annotation in child path", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="ETag" text="{\
@@ -12006,7 +12010,7 @@ sap.ui.define([
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("age", "32");
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
+		return this.createView(assert, sView, this.createTeaBusiModel({autoExpandSelect : true}));
 	});
 
 	//*********************************************************************************************
@@ -12017,7 +12021,7 @@ sap.ui.define([
 	// Call ODLB#filter with the same Filter as before. this should not trigger a request.
 	// CPOUI5ODATAV4-942
 	QUnit.test("Absolute ODLB with auto-$expand/$select: filter via API", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oListBinding,
 			sView = '\
 <Table id="table"\
@@ -12081,7 +12085,7 @@ sap.ui.define([
 	// P.S.: Sync data access is possible although oCachePromise becomes pending again.
 	// JIRA: CPOUI5ODATAV4-204
 	QUnit.test("ODLB with auto-$expand/$select below ODCB: filter via API", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'2\')}">\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
@@ -12141,13 +12145,15 @@ sap.ui.define([
 				{Name : "Peter Burke"}
 			]
 		}
-	}, {text : ["Frederic Fall", "Peter Burke"]}, createTeaBusiModel({autoExpandSelect : true}));
+	}, {text : ["Frederic Fall", "Peter Burke"]}, function () {
+		return this.createTeaBusiModel({autoExpandSelect : true});
+	});
 
 	//*********************************************************************************************
 	// Scenario: child binding cannot use its parent list binding's cache (for whatever reason)
 	// but must not compute the canonical path for the virtual context
 	QUnit.test("Auto-$expand/$select: no canonical path for virtual context", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table items="{/TEAMS}">\
 	<List items="{path : \'TEAM_2_EMPLOYEES\',\
@@ -12177,7 +12183,7 @@ sap.ui.define([
 	// Scenario: list/detail where the detail does not need additional $expand/$select and thus
 	// should reuse its parent's cache
 	QUnit.test("Auto-$expand/$select: simple list/detail", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="list" items="{/TEAMS}">\
 	<Text id="text0" text="{Team_Id}"/>\
@@ -12219,7 +12225,7 @@ sap.ui.define([
 	// requested for all rows.
 	// JIRA: CPOUI5ODATAV4-544
 	QUnit.test("Auto-$expand/$select: list/detail with separate requests", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="list" items="{/TEAMS}">\
@@ -12338,7 +12344,7 @@ sap.ui.define([
 			})
 			.expectChange("text", ["R2D2", "36"]);
 
-		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}),
+		return this.createView(assert, sView, this.createTeaBusiModel({autoExpandSelect : true}),
 			oController);
 	});
 
@@ -12346,7 +12352,7 @@ sap.ui.define([
 	// Scenario: Refresh a form with an invalid value
 	// JIRA: CPOUI5ODATAV4-459
 	QUnit.test("CPOUI5ODATAV4-459: Context binding with invalid value", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="budget" text="{Budget}"/>\
@@ -12384,7 +12390,7 @@ sap.ui.define([
 	// BCP: 2180177518
 	QUnit.test("BCP: 2180177518", function (assert) {
 		var oInput,
-			oModel = createTeaBusiModel({updateGroupId : "noSubmit"}),
+			oModel = this.createTeaBusiModel({updateGroupId : "noSubmit"}),
 			oTransientContext,
 			sView = '<Input id="budgetCurrency" value="{BudgetCurrency}"/>',
 			that = this;
@@ -12478,7 +12484,7 @@ sap.ui.define([
 					ID : "3",
 					Name : "Jonathan Smith"
 				},
-				oModel = createTeaBusiModel({autoExpandSelect : bAutoExpandSelect}),
+				oModel = this.createTeaBusiModel({autoExpandSelect : bAutoExpandSelect}),
 				sUrlPrefix = bAutoExpandSelect
 					? "EMPLOYEES?$select=ID,Name&"
 					: "EMPLOYEES?",
@@ -12519,7 +12525,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: call submitBatch() synchronously after resume w/ auto-$expand/$select
 	QUnit.test("submitBatch after resume w/ auto-$expand/$select", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table"\
 		items="{path : \'/EMPLOYEES\', parameters : {$$groupId : \'group\'}, suspended : true}">\
@@ -12565,7 +12571,7 @@ sap.ui.define([
 	// bindings get lost e.g. if context of a dependent binding is reset (set to null or undefined).
 	QUnit.test("Pending change in hidden cache", function (assert) {
 		var oListBinding,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="teamSet" items="{/TEAMS}">\
 	<Text id="teamId" text="{Team_Id}"/>\
@@ -12775,7 +12781,7 @@ sap.ui.define([
 				})
 				.expectChange("text", ["0", "1", "2"]);
 
-			return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			return this.createView(assert, sView, this.createSalesOrdersModel()).then(function () {
 				that.expectRequest("SalesOrderList?$filter=" + oFixture.request
 						+ "&$skip=0&$top=100", {
 						value : [
@@ -12874,7 +12880,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oContext,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oResponse = {},
 			sView = '\
 <FlexBox binding="{/Equipments(\'1\')/EQUIPMENT_2_PRODUCT}">\
@@ -12939,7 +12945,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-593
 	QUnit.test("CPOUI5ODATAV4-593: Writing instance annotations via POST/PATCH", function (assert) {
 		var oContext,
-			oModel = createModel("/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/"),
+			oModel,
 			oInitialData = {
 				"@annotation" : "baz",
 				"@annotation@annotation" : "bazbaz",
@@ -12952,6 +12958,12 @@ sap.ui.define([
 			},
 			oPayload = Object.assign({}, oInitialData, {"@complexAnnotation" : {sub : "bar*"}}),
 			that = this;
+
+		oModel = this.createModel(
+			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/", {}, {
+				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
+					: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
+			});
 
 		return this.createView(assert, "", oModel).then(function () {
 			var oListBinding = that.oModel.bindList("/Products");
@@ -13007,7 +13019,7 @@ sap.ui.define([
 	QUnit.test("BCP: 2270023075 - creation POST returns instance annotations", function (assert) {
 		var oContext,
 			oListBinding,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			fnRespond,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
@@ -13123,7 +13135,7 @@ sap.ui.define([
 	<Input id="quantity" value="{Quantity}"/>\
 	<Text id="quantityUnit" text="{QuantityUnit}"/>\
 </FlexBox>',
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
 		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM('10')"
@@ -13160,7 +13172,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: PATCH an entity which is read via navigation from a complex type
 	QUnit.test("PATCH entity below a complex type", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
 	<Table id="table" items="{LOCATION/City/EmployeesInCity}">\
@@ -13362,7 +13374,7 @@ sap.ui.define([
 			.expectChange("text2", "Jonathan Smith");
 
 		return this.createView(assert, sView,
-			createTeaBusiModel({
+			this.createTeaBusiModel({
 				groupProperties : {
 					group1 : {submit : "Direct"},
 					group2 : {submit : "Direct"}
@@ -13395,7 +13407,7 @@ sap.ui.define([
 			.expectChange("text1", "Frederic Fall")
 			.expectChange("text2", "Jonathan Smith");
 
-		return this.createView(assert, sView, createTeaBusiModel({}));
+		return this.createView(assert, sView, this.createTeaBusiModel({}));
 	});
 
 	//*********************************************************************************************
@@ -13418,7 +13430,7 @@ sap.ui.define([
 		</t:template>\
 	</t:Column>\
 </t:Table>',
-			oModel = createTeaBusiModel({autoExpandSelect : true});
+			oModel = this.createTeaBusiModel({autoExpandSelect : true});
 
 		this.expectRequest("EMPLOYEES?$filter=AGE gt 42&$select=ID,Name&$skip=0&$top=140", {
 				value : [
@@ -13436,7 +13448,7 @@ sap.ui.define([
 	// cross-service navigation) and a property binding (maybe even at the same time)
 	// Note: ID will not fail, it is also present on EQUIPMENT! SupplierIdentifier is "unique"
 	QUnit.test("Relative object binding & property binding: separate control", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oText = new Text(),
 			sView = '\
 <FlexBox binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
@@ -13463,7 +13475,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Relative object binding & property binding: same control", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oText = new Text(),
 			sView = '\
 <FlexBox binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
@@ -13491,7 +13503,7 @@ sap.ui.define([
 	// and a property binding at the same time, inside a list binding
 	// Note: ID will not fail, it is also present on EQUIPMENT! SupplierIdentifier is "unique"
 	QUnit.test("Relative object binding & property binding within a list (1)", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
@@ -13521,7 +13533,7 @@ sap.ui.define([
 	// and a property binding at the same time, inside a list binding
 	// Note: ID will not fail, it is also present on EQUIPMENT! AGE is "unique"
 	QUnit.test("Relative object binding & property binding within a list (2)", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
@@ -13754,7 +13766,7 @@ sap.ui.define([
 	// Scenario: ODataListBinding contains ODataContextBinding contains ODataPropertyBinding;
 	//   only one cache; refresh()
 	QUnit.test("refresh on dependent bindings", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sUrl = "TEAMS('42')?$select=Team_Id&$expand=TEAM_2_MANAGER($select=ID)",
 			sView = '\
 <FlexBox binding="{/TEAMS(\'42\')}">\
@@ -13999,7 +14011,7 @@ sap.ui.define([
 	// Scenario: ODataListBinding contains ODataContextBinding contains ODataPropertyBinding;
 	//   only one cache; hasPendingChanges()
 	QUnit.test("hasPendingChanges on dependent bindings", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sUrl = "SalesOrderList?$select=SalesOrderID"
 				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100",
 			sView = '\
@@ -14080,7 +14092,9 @@ sap.ui.define([
 			adAction1 : "",
 			adAction2 : "set to available",
 			name : "Frederic Fall"
-		}], createTeaBusiModel({autoExpandSelect : true})
+		}], function () {
+			return this.createTeaBusiModel({autoExpandSelect : true});
+		}
 	);
 
 	//*********************************************************************************************
@@ -14089,7 +14103,7 @@ sap.ui.define([
 	// immediately destroyed again.
 	// BCP: 2080321417
 	QUnit.test("BCP: 2080321417: Auto-$expand/$select and nested list bindings", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Text id="id" text="{SalesOrderID}"/>\
@@ -14119,7 +14133,7 @@ sap.ui.define([
 	// TODO automatic type determination cannot handle #com...AcSetIsAvailable/title
 	// TODO neither can autoExpandSelect
 	QUnit.test("Advertised actions: title updates", function (assert) {
-		var oModel = createTeaBusiModel(),
+		var oModel = this.createTeaBusiModel(),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
 	<Input id="name" value="{Name}"/>\
@@ -14206,7 +14220,7 @@ sap.ui.define([
 	// edit, bound action
 	// CPOUI5UISERVICESV3-905, CPOUI5UISERVICESV3-1714
 	QUnit.test("Advertised actions: object updates", function (assert) {
-		var oModel = createTeaBusiModel(),
+		var oModel = this.createTeaBusiModel(),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
 	<Text id="enabled"\
@@ -14286,7 +14300,7 @@ sap.ui.define([
 	QUnit.test("Advertised actions: object & title updates", function (assert) {
 		var oActionBinding,
 			sActionName = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
-			oModel = createTeaBusiModel(),
+			oModel = this.createTeaBusiModel(),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
 	<Text id="enabled"\
@@ -14844,7 +14858,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Initially suspended context binding is refreshed before resumed
 	QUnit.test("suspend/refresh/resume", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'Electronics\\\',ID=1)\', \
 		suspended : true}">\
@@ -14879,7 +14893,7 @@ sap.ui.define([
 		var sTitle = "suspend/resume: changes for suspended context binding, refresh=" + bRefresh;
 
 		QUnit.test(sTitle, function (assert) {
-			var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
 <FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'Electronics\\\',ID=1)\', \
 		suspended : true}">\
@@ -14932,7 +14946,12 @@ sap.ui.define([
 			parameters : {custom : \'foo\', c2 : \'x\'}}"/>',
 		{"TEAMS('42')/Name?c1=a&c2=x&custom=foo" : {value : "Business Suite"}},
 		{text : "Business Suite"},
-		createModel(sTeaBusi + "?c1=a&c2=b")
+		function () {
+			return this.createModel(sTeaBusi + "?c1=a&c2=b", {}, {
+					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
+						: {source : "odata/v4/data/metadata.xml"}
+				});
+		}
 	);
 
 	//*********************************************************************************************
@@ -14943,9 +14962,7 @@ sap.ui.define([
 			<Text id="text" text="{path : \'Name\',\
 				parameters : {custom : \'foo\', $$groupId : \'binding\'}}"/>\
 		</FlexBox>',
-		{"TEAMS('42')" : {Name : "Business Suite"}},
-		{text : "Business Suite"},
-		createTeaBusiModel()
+		{"TEAMS('42')" : {Name : "Business Suite"}}, {text : "Business Suite"}, "createTeaBusiModel"
 	);
 
 	//*********************************************************************************************
@@ -14955,7 +14972,7 @@ sap.ui.define([
 		var sTitle = "suspend/resume: suspended list binding, refresh=" + bRefresh;
 
 		QUnit.test(sTitle, function (assert) {
-			var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
 <Table id="table" items="{path : \'/Equipments\', suspended : true, templateShareable : false}">\
 	<Text id="idCategory" text="{Category}"/>\
@@ -15028,7 +15045,7 @@ sap.ui.define([
 		var sTitle = "suspend/resume: *not* suspended context binding, refresh=" + bRefresh;
 
 		QUnit.test(sTitle, function (assert) {
-			var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
 <FlexBox id="form" binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
 	<Text id="idCategory" text="{Category}"/>\
@@ -15081,7 +15098,7 @@ sap.ui.define([
 		var sTitle = "suspend/resume: *not* suspended list binding; refresh=" + bRefresh;
 
 		QUnit.test(sTitle, function (assert) {
-			var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
 <Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
 	<Text id="idCategory" text="{Category}"/>\
@@ -15163,7 +15180,7 @@ sap.ui.define([
 	//   After resume, a new request reflecting the changes is sent and the added fields are
 	//   updated.
 	QUnit.test("suspend/refresh/resume: dependent context bindings", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="outerForm" binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
 	<Text id="idEquipmentName" text="{Name}"/>\
@@ -15231,7 +15248,7 @@ sap.ui.define([
 	//
 	// JIRA: CPOUI5ODATAV4-227
 	QUnit.test("suspend/resume: no unneeded requests", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oOuterForm,
 			sView = '\
 <FlexBox id="outerForm" binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
@@ -15306,7 +15323,7 @@ sap.ui.define([
 			sIdTeam,
 			oInnerFormBinding,
 			oListBinding,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\', suspended : true}">\
 	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
@@ -15590,7 +15607,7 @@ sap.ui.define([
 	QUnit.test("suspend/resume (w/o autoExpandSelect) change $expand/$select on ODCB and ODLB",
 			function (assert) {
 		var oFormBinding,
-			oModel = createTeaBusiModel({}),
+			oModel = this.createTeaBusiModel({}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\', \
 		parameters : {\
@@ -15681,7 +15698,7 @@ sap.ui.define([
 	//   After resume, a new request reflecting the changes is sent and the added field/column is
 	//   updated.
 	QUnit.test("suspend/resume: context binding with dependent list binding", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
@@ -15753,7 +15770,7 @@ sap.ui.define([
 	// Scenario: Outer form with context binding is suspended after initialization; outer form
 	// contains inner table. The inner table is sorted resulting in a different order.
 	QUnit.test("suspend/resume: sort dependent list binding", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
@@ -15875,7 +15892,7 @@ sap.ui.define([
 	QUnit.test("suspend/resume: list binding with details context binding, only context"
 			+ " binding is adapted", function (assert) {
 		var oForm,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
 	<Text id="idEquipmentName" text="{Name}"/>\
@@ -15944,7 +15961,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-102: call ODLB#create on a just resumed binding
 	QUnit.test("suspend/resume: call read APIs on a suspended ODLB", function (assert) {
 		var oBinding,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "doNotSubmit"
 			}),
@@ -16001,7 +16018,7 @@ sap.ui.define([
 	// Scenario: ODM#refresh ignores suspended bindings
 	// A suspended binding should not be considered when refreshing via ODM#refresh
 	QUnit.test("ODM#refresh ignores suspended bindings", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
 	<Text id="id" text="{BusinessPartnerID}"/>\
@@ -16024,7 +16041,7 @@ sap.ui.define([
 	// Ensure that auto-$expand/$select does not add $select
 	// JIRA: CPOUI5ODATAV4-270
 	QUnit.test("suspend/resume: call setAggregation on a suspended ODLB", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
 	<Text id="role" text="{BusinessPartnerRole}"/>\
@@ -16067,7 +16084,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: call changeParameters on a suspended ODCB
 	QUnit.test("suspend/resume: call changeParameters on a suspended ODCB", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
 	<Text id="id" text="{SalesOrderID}"/>\
@@ -16117,7 +16134,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-474
 	QUnit.test("suspend/resume: suspended ODCB created by app", function (assert) {
 		var oBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form">\
 	<Text id="note" text="{Note}"/>\
@@ -16161,7 +16178,7 @@ sap.ui.define([
 
 		this.expectChange("role");
 
-		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+		return this.createView(assert, sView, this.createSalesOrdersModel()).then(function () {
 			oBinding = that.oView.byId("form").getObjectBinding();
 
 			that.expectRequest("SalesOrderList('42')/SO_2_BP", {
@@ -16190,7 +16207,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-474
 	QUnit.test("ODLB implicitly switching from unresolved to suspended", function (assert) {
 		var oBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form">\
 	<Text id="note" text="{Note}"/>\
@@ -16236,7 +16253,7 @@ sap.ui.define([
 	// Scenario: Deferred operation binding returns a collection. A dependent list binding for
 	// "value" with auto-$expand/$select displays the result.
 	QUnit.test("Deferred operation returns collection, auto-$expand/$select", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/GetSOContactList(...)}" id="function">\
 	<Table items="{value}">\
@@ -16271,7 +16288,7 @@ sap.ui.define([
 	// Scenario: List binding for non-deferred function call which returns a collection, with
 	// auto-$expand/$select.
 	QUnit.test("List: function returns collection, auto-$expand/$select", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table items="{/GetSOContactList(SalesOrderID=\'0500000001\')}">\
 	<Text id="nickname" text="{Nickname}"/>\
@@ -16295,7 +16312,7 @@ sap.ui.define([
 	// dependent list binding for "value" with auto-$expand/$select displays the result.
 	// github.com/SAP/openui5/issues/1727
 	QUnit.test("Context: function returns collection, auto-$expand/$select", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/GetSOContactList(SalesOrderID=\'0500000001\')}" id="function">\
 	<Table items="{value}">\
@@ -16325,7 +16342,7 @@ sap.ui.define([
 	QUnit.test("Rel. bound function, auto-$expand/$select (BCP 2070134549)", function (assert) {
 		var sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
 				+ ".__FAKE__FuGetEmployeesByManager",
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/MANAGERS(\'1\')}" id="manager">\
 	<Text id="TEAM_ID" text="{TEAM_ID}"/>\
@@ -16362,7 +16379,7 @@ sap.ui.define([
 	// this entity are notified even if they have a child path of the context binding without being
 	// dependent to it.
 	QUnit.test("notify non-dependent bindings after deletion", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">\
 	<FlexBox binding="{SO_2_BP}" id="businessPartner">\
@@ -16415,7 +16432,7 @@ sap.ui.define([
 [true, false].forEach(function (bParentHasData) {
 	QUnit.test("delete context of binding with empty path and $$ownRequest (" + bParentHasData
 			+ ")", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">'
 	+ (bParentHasData ? '<Text id="netAmount" text="{NetAmount}"/>' : "") + '\
@@ -16470,7 +16487,7 @@ sap.ui.define([
 	// of the context for which Context#delete is called.
 	// JIRA CPOUI5UISERVICESV3-1917
 	QUnit.test("delete context of binding with empty path, delegate to ODLB", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}">\
 	<Text id="note" text="{Note}"/>\
@@ -16542,7 +16559,7 @@ sap.ui.define([
 	// deregisterChange. This scenario only simulates the object page, the contexts from the list
 	// are hardcoded to keep the test small.
 	QUnit.test("deregisterChange", function (assert) {
-		var oModel = createSalesOrdersModel(),
+		var oModel = this.createSalesOrdersModel(),
 			sView = '\
 <FlexBox id="form">\
 	<t:Table rows="{path : \'SO_2_SOITEM\', parameters : {$$updateGroupId : \'update\'}}">\
@@ -16582,7 +16599,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("delayed create", function (assert) {
-		var oModel = createSalesOrdersModel(),
+		var oModel = this.createSalesOrdersModel(),
 			sView = '<FlexBox id="form" binding="{/SalesOrderList(\'0500000000\')}"/>',
 			that = this;
 
@@ -16618,7 +16635,7 @@ sap.ui.define([
 	QUnit.test("delayed execute", function (assert) {
 		var sAction = "SalesOrderList('0500000000')/"
 				+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Cancel",
-			oModel = createSalesOrdersModel(),
+			oModel = this.createSalesOrdersModel(),
 			sView = '<FlexBox id="form" binding="{/' + sAction + '(...)}"/>',
 			that = this;
 
@@ -16641,7 +16658,7 @@ sap.ui.define([
 	// Scenario: Refresh using a group with submit mode 'API'. The view contains one context binding
 	// without children. Hence the binding doesn't trigger a request, but its lock must be released.
 	QUnit.test("ODCB: delayed refresh", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'0100000000\')}">\
 	<Text id="company" text="{CompanyName}"/>\
@@ -16678,7 +16695,7 @@ sap.ui.define([
 	// without a control. Hence getContexts() is not called and no request is triggered. But the
 	// lock must be released.
 	QUnit.test("ODLB: delayed refresh", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Text id="note" text="{Note}"/>\
@@ -16800,7 +16817,7 @@ sap.ui.define([
 	//Table.onAfterRendering (Table.js?eval:1402)
 	QUnit.skip("ODLB: resume/refresh/filter w/ submitBatch on a t:Table", function (assert) {
 		var oListBinding,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" visibleRowCountMode="Auto"\
 		rows="{path : \'/Equipments\', parameters : {$$groupId : \'api\'}, suspended : true}">\
@@ -16871,7 +16888,7 @@ sap.ui.define([
 	//TODO support $filter : \'GrossAmount gt 0\',\
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
 		var oListBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
@@ -17015,7 +17032,7 @@ sap.ui.define([
 	// Test ODLB#getCount
 	// JIRA: CPOUI5ODATAV4-958
 	QUnit.test("Data Aggregation: $$aggregation w/ grand total w/ unit", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -17081,7 +17098,7 @@ sap.ui.define([
 	// there!
 	// JIRA: CPOUI5ODATAV4-700
 	QUnit.test("Data Aggregation: leaves' key predicates", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -17149,7 +17166,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-958
 	QUnit.test("Data Aggregation: expand, paging and collapse on sap.m.Table", function (assert) {
 		var oListBinding,
-			oModel = createAggregationModel({autoExpandSelect : true}),
+			oModel = this.createAggregationModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" growing="true" growingThreshold="3" items="{path : \'/BusinessPartners\',\
 		parameters : {\
@@ -17347,7 +17364,7 @@ sap.ui.define([
 	// Check download URL.
 	// JIRA: CPOUI5ODATAV4-609
 	QUnit.test("Data Aggregation: expand and paging on sap.ui.table.Table", function (assert) {
-		var oModel = createAggregationModel(),
+		var oModel = this.createAggregationModel(),
 			oTable,
 			sView = '\
 <t:Table id="table" threshold="0" visibleRowCount="3"\
@@ -17552,7 +17569,7 @@ sap.ui.define([
 	var sTitle = "Data Aggregation: intersecting requests, with expand = " + bWithExpand;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createAggregationModel(),
+		var oModel = this.createAggregationModel(),
 			fnRespondExpand,
 			fnRespondScroll1,
 			fnRespondScroll2,
@@ -17734,7 +17751,7 @@ sap.ui.define([
 	// Request leaf count.
 	// JIRA: CPOUI5ODATAV4-164
 	QUnit.test("Data Aggregation: expand and paging to the last loaded leaf", function (assert) {
-		var oModel = createAggregationModel(),
+		var oModel = this.createAggregationModel(),
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
@@ -17946,7 +17963,7 @@ sap.ui.define([
 	var sTitle = "Data Aggregation: grandTotalAtBottomOnly=" + bGrandTotalAtBottomOnly;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createAggregationModel(),
+		var oModel = this.createAggregationModel(),
 			sView = '\
 <t:Table fixedBottomRowCount="1" fixedRowCount="' + (bGrandTotalAtBottomOnly ? 0 : 1) + '"\
 	id="table" rows="{path : \'/BusinessPartners\', parameters : {\
@@ -18031,7 +18048,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oListBinding,
-			oModel = createAggregationModel(),
+			oModel = this.createAggregationModel(),
 			oTable,
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartners\', parameters : {\
@@ -18220,7 +18237,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oListBinding,
-			oModel = createAggregationModel(),
+			oModel = this.createAggregationModel(),
 			oTable,
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartners\', parameters : {\
@@ -18386,7 +18403,7 @@ sap.ui.define([
 	// anything!
 	// JIRA: CPOUI5ODATAV4-825
 	QUnit.test("Data Aggregation: grandTotalAtBottomOnly=true, just two rows", function (assert) {
-		var oModel = createAggregationModel(),
+		var oModel = this.createAggregationModel(),
 			sView = '\
 <t:Table fixedBottomRowCount="1" id="table" rows="{path : \'/BusinessPartners\', parameters : {\
 		$$aggregation : {\
@@ -18429,7 +18446,7 @@ sap.ui.define([
 	// Collapse with placeholders
 	// JIRA: CPOUI5ODATAV4-179
 	QUnit.test("Data Aggregation: collapse with placeholders", function (assert) {
-		var oModel = createAggregationModel(),
+		var oModel = this.createAggregationModel(),
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{path : \'/BusinessPartners\',\
@@ -18534,7 +18551,7 @@ sap.ui.define([
 	// Check download URL.
 	// JIRA: CPOUI5ODATAV4-609
 	QUnit.test("Data Aggregation: expand three levels, expand after collapse", function (assert) {
-		var oModel = createAggregationModel(),
+		var oModel = this.createAggregationModel(),
 			oRowsBinding,
 			oTable,
 			oUKContext,
@@ -18829,7 +18846,7 @@ sap.ui.define([
 			.expectChange("city", ["", ""])
 			.expectChange("sendsAutographs", [null, null]);
 
-		return this.createView(assert, sView, createSpecialCasesModel()).then(function () {
+		return this.createView(assert, sView, this.createSpecialCasesModel()).then(function () {
 			oTable = that.oView.byId("table");
 
 			that.expectRequest("Artists?$apply=filter(IsActiveEntity eq true)"
@@ -18905,7 +18922,7 @@ sap.ui.define([
 		+ bSecondScroll + ")";
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createAggregationModel(),
+		var oModel = this.createAggregationModel(),
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{path : \'/BusinessPartners\',\
@@ -19033,7 +19050,7 @@ sap.ui.define([
 	// at the root level and find the 2nd level properly expanded as well.
 	// JIRA: CPOUI5ODATAV4-378
 	QUnit.test("Data Aggregation: collapse while expanding", function (assert) {
-		var oModel = createAggregationModel(),
+		var oModel = this.createAggregationModel(),
 			oRowsBinding,
 			oTable,
 			oUKContext,
@@ -19205,7 +19222,7 @@ sap.ui.define([
 	// has finished.
 	// JIRA: CPOUI5ODATAV4-378
 	QUnit.test("Data Aggregation: collapse while paging", function (assert) {
-		var oModel = createAggregationModel(),
+		var oModel = this.createAggregationModel(),
 			oRowsBinding,
 			oTable,
 			oUSContext,
@@ -19367,7 +19384,7 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oListBinding,
-				oModel = createAggregationModel({autoExpandSelect : bAutoExpandSelect}),
+				oModel = this.createAggregationModel({autoExpandSelect : bAutoExpandSelect}),
 				aResponse = [
 					{SalesNumber : 351, "SalesNumber@odata.type" : "#Int32"},
 					{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"},
@@ -19470,7 +19487,7 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oListBinding,
-				oModel = createAggregationModel({autoExpandSelect : true}),
+				oModel = this.createAggregationModel({autoExpandSelect : true}),
 				oTable,
 				aValues = [
 					{SalesNumber : 351, "SalesNumber@odata.type" : "#Int32"},
@@ -19565,7 +19582,7 @@ sap.ui.define([
 	// Check the download URL(CPOUI5ODATAV4-609).
 	QUnit.test("Data Aggregation: $$aggregation grandTotal w/o groupLevels using with/as/unit",
 			function (assert) {
-		var oModel = createAggregationModel({autoExpandSelect : true}),
+		var oModel = this.createAggregationModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{\
 			path : \'/BusinessPartners\',\
@@ -19652,7 +19669,7 @@ sap.ui.define([
 	QUnit.test("API calls before binding is resolved", function (assert) {
 		var that = this;
 
-		return this.createView(assert, "", createAggregationModel()).then(function () {
+		return this.createView(assert, "", this.createAggregationModel()).then(function () {
 			var oListBinding = that.oModel.bindList("BusinessPartners");
 
 			// code under test
@@ -19704,7 +19721,7 @@ sap.ui.define([
 	// - those filters that must be applied after aggregating
 	// JIRA: CPOUI5ODATAV4-119
 	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _MinMaxHelper", function (assert) {
-		var oModel = createAggregationModel({autoExpandSelect : true}),
+		var oModel = this.createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -19748,7 +19765,7 @@ sap.ui.define([
 	// Add searching before aggregating and sorting.
 	// JIRA: CPOUI5ODATAV4-1030
 	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _AggregationCache", function (assert) {
-		var oModel = createAggregationModel({autoExpandSelect : true}),
+		var oModel = this.createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -19796,7 +19813,7 @@ sap.ui.define([
 	// Add $count as well as searching before and after aggregating.
 	// JIRA: CPOUI5ODATAV4-1030
 	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _Cache.CollectionCache", function (assert) {
-		var oModel = createAggregationModel({autoExpandSelect : true}),
+		var oModel = this.createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -19843,7 +19860,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1030
 	QUnit.test("BCP: 2170032897 with UI5 filters", function (assert) {
 		var oListBinding,
-			oModel = createAggregationModel({autoExpandSelect : true}),
+			oModel = this.createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -19925,7 +19942,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-119
 	QUnit.test("BCP: 2170032897 with $filter", function (assert) {
 		var oListBinding,
-			oModel = createAggregationModel({autoExpandSelect : true}),
+			oModel = this.createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -20025,7 +20042,7 @@ sap.ui.define([
 					UI5min__AGE : 42,
 					UI5max__AGE : 77
 				},
-				oModel = createSalesOrdersModel({autoExpandSelect : true}),
+				oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 				oTable,
 				sView = '\
 <Text id="count" text="{$count}"/>\
@@ -20107,7 +20124,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1030
 	QUnit.test("Data Aggregation: search before aggregation", function (assert) {
 		var oListBinding,
-			oModel = createAggregationModel(),
+			oModel = this.createAggregationModel(),
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{path : \'/BusinessPartners\',\
@@ -20224,7 +20241,7 @@ sap.ui.define([
 	// BCP: 2080047558
 	QUnit.test("BCP: 2080047558", function (assert) {
 		var oListBinding,
-			oModel = createSalesOrdersModel(),
+			oModel = this.createSalesOrdersModel(),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
@@ -20330,7 +20347,7 @@ sap.ui.define([
 	// BCP: 2070044134
 	QUnit.test("BCP: 2070044134", function (assert) {
 		var oListBinding,
-			oModel = createSalesOrdersModel(),
+			oModel = this.createSalesOrdersModel(),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
@@ -20404,7 +20421,7 @@ sap.ui.define([
 	QUnit.test("requestSideEffects and $$aggregation", function (assert) {
 		var oBinding,
 			oHeaderContext,
-			oModel = createAggregationModel(),
+			oModel = this.createAggregationModel(),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartners\',\
 		parameters : {\
@@ -20489,7 +20506,7 @@ sap.ui.define([
 	// Scenario: Application tries to overwrite client-side instance annotations.
 	// JIRA: CPOUI5UISERVICESV3-1220
 	QUnit.test("@$ui5.* is write-protected", function (assert) {
-		var oModel = createTeaBusiModel(),
+		var oModel = this.createTeaBusiModel(),
 			sView = '\
 <FlexBox binding="{/MANAGERS(\'1\')}" id="form">\
 	<Input id="foo" value="{= %{@$ui5.foo} }"/>\
@@ -20547,7 +20564,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-360
 	QUnit.test("@$ui5.* is write-protected for ODLB#create", function (assert) {
 		var oContext,
-			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
 	<Text id="name" text="{Name}"/>\
@@ -20633,7 +20650,7 @@ sap.ui.define([
 	// Note: Private annotations of navigation properties are also read protected.
 	// BCP: 2080181343
 	QUnit.test("@$ui5._ is read-protected", function (assert) {
-		var oModel = createTeaBusiModel(),
+		var oModel = this.createTeaBusiModel(),
 			sView = '\
 <FlexBox binding="{path : \'/MANAGERS(\\\'1\\\')\', \
 		parameters : {$expand : {Manager_to_Team : true}}}" id="form">\
@@ -20771,7 +20788,7 @@ sap.ui.define([
 				.expectChange("grossAmount", [, "2.00", "3.00", "4.00", "5.00"])
 				.expectChange("lifecycleStatus", [, "Y", "X", "W", "V"]);
 
-			return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			return this.createView(assert, sView, this.createSalesOrdersModel()).then(function () {
 				oTable = that.oView.byId("table");
 
 				that.expectChange("count", "26");
@@ -21000,7 +21017,7 @@ sap.ui.define([
 	// properly computed.
 	// BCP 1870081505
 	QUnit.test("bindElement called twice on table", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			// Note: table must be "growing" otherwise it does not use ECD
 			sView = '\
@@ -21059,7 +21076,7 @@ sap.ui.define([
 	// We need two text fields: The one used to observe change events cannot be used for setText
 	// because our test framework attaches a formatter.
 	QUnit.test("Update model property via control", function (assert) {
-		var oModel = createTeaBusiModel(),
+		var oModel = this.createTeaBusiModel(),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'1\')}" id="form">\
 	<Text id="Team_Id" text="{Team_Id}"/>\
@@ -21108,7 +21125,7 @@ sap.ui.define([
 		method : "GET"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("bound operation: execute resolves with V4 context, " + i, function (assert) {
-			var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 				oOperation,
 				sRequestPath = "Artists(ArtistID='42',IsActiveEntity=true)/special.cases."
 					+ oFixture.operation + (oFixture.method === "GET" ? "()" : ""),
@@ -21270,7 +21287,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oHiddenBinding, // to be kept in the controller
 			oPublications,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			mNames = {
 				"23" : "The Rolling Stones",
 				"42" : "The Beatles"
@@ -21560,7 +21577,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oCreationRow,
 			oCreationRowContext,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oObjectPage,
 			oReturnValueContext,
 			sTable = '\
@@ -21797,7 +21814,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-189
 	QUnit.test("Fiori Elements Safeguard: Test 2 (Create)", function (assert) {
 		var oCreationRowContext,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oReturnValueContext,
 			sView = '\
 <FlexBox id="objectPage">\
@@ -21991,7 +22008,7 @@ sap.ui.define([
 	// after the rebind.
 	// JIRA: CPOUI5ODATAV4-936
 	QUnit.test("BCP: 2180125559", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oObjectPage,
 			sView = '\
 <FlexBox id="objectPage">\
@@ -22108,7 +22125,7 @@ sap.ui.define([
 	QUnit.test("return value contexts: don't reuse caches if context changed", function (assert) {
 		var oActiveArtistContext,
 			oInactiveArtistContext,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -22266,7 +22283,7 @@ sap.ui.define([
 	// See CPOUI5UISERVICESV3-1686.
 	QUnit.test("Reuse caches in dependent tables w/ own request while switching list entry",
 			function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			oTableBinding,
 			sView = '\
@@ -22363,7 +22380,7 @@ sap.ui.define([
 				persistent : true,
 				type : "Success"
 			},
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -22538,7 +22555,7 @@ sap.ui.define([
 	// the result is copied back to the binding parameter.
 	// JIRA: CPOUI5UISERVICESV3-523
 	QUnit.test("bound operation: copy result into context", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')}">\
 	<Text id="id" text="{SalesOrderID}"/>\
@@ -22598,7 +22615,7 @@ sap.ui.define([
 	// Scenario: Delete return value context obtained from bound action execute.
 	// JIRA: CPOUI5UISERVICESV3-1193
 	QUnit.test("bound operation: delete return value context", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -22672,7 +22689,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Execute bound action with context for which no data has been read yet.
 	QUnit.test("bound operation: execute bound action on context w/o read", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oParentContext = oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
 				.getBoundContext(),
 			that = this;
@@ -22741,7 +22758,7 @@ sap.ui.define([
 			oListBinding,
 			sMessage1 = "It sure feels fine to see one's name in print",
 			sMessage2 = "A book's a book, though there's naught in 't",
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			fnOnBeforeDestroy = sinon.spy(),
 			oTable,
 			sView = '\
@@ -23136,7 +23153,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-189
 	QUnit.test("bound operation: $$inheritExpandSelect and parent w/o cache #1", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'Messages\'}}">\
 	<Text id="listId" text="{SalesOrderID}"/>\
@@ -23185,7 +23202,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-189
 	QUnit.test("bound operation: $$inheritExpandSelect and parent w/o cache #2", function (assert) {
 		var sAction = "special.cases.EditAction",
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/Artists\',\
 		parameters : {$select : \'BestFriend/Messages\'}}">\
@@ -23251,7 +23268,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1233
 	QUnit.test("Create absolute, save and call action", function (assert) {
 		var oCreatedContext,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			that = this,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
@@ -23306,7 +23323,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1233
 	QUnit.test("Create relative, save and call action", function (assert) {
 		var oCreatedContext,
-			oModel = createTeaBusiModel(),
+			oModel = this.createTeaBusiModel(),
 			oTeam2EmployeesBinding,
 			that = this,
 			sView = '\
@@ -23370,7 +23387,7 @@ sap.ui.define([
 		var oCreatedItemContext,
 			oCreatedSOContext,
 			oItemBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			that = this,
 			sView = '\
 <Table id="SalesOrders" items="{/SalesOrderList}">\
@@ -23499,7 +23516,7 @@ sap.ui.define([
 					numericSeverity : 1,
 					target : "Name" // JIRA: CPOUI5ODATAV4-1082
 				}],
-				oModel = createTeaBusiModel({groupId : sGroupId}),
+				oModel = this.createTeaBusiModel({groupId : sGroupId}),
 				sView = '\
 <FlexBox binding="{path : \'/TEAMS(\\\'42\\\')/TEAM_2_MANAGER\',\
 	parameters : {custom : \'foo\'}}">\
@@ -23562,7 +23579,7 @@ sap.ui.define([
 	// the message is gone.
 	// JIRA: CPOUI5UISERVICESV3-135
 	QUnit.test("List/Detail & messages", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="table" items="{path : \'/TEAMS\', templateShareable : false}">\
@@ -23685,7 +23702,7 @@ sap.ui.define([
 					+ "/SO_2_SOITEM(SalesOrderID='0500000347',ItemPosition='0')/Note",
 				type : "Warning"
 			},
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
@@ -24001,7 +24018,7 @@ sap.ui.define([
 	QUnit.test("Context: Pending change in a hidden cache", function (assert) {
 		var oContext0,
 			oContext1,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="equipments" items="{/Equipments}">\
 	<Text id="id" text="{ID}"/>\
@@ -24115,7 +24132,7 @@ sap.ui.define([
 				technical : true,
 				type : "Error"
 			},
-			oModel = createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
 			oReadMessage = {
 				code : "1",
 				message : "Text",
@@ -24211,7 +24228,7 @@ sap.ui.define([
 	// Scenario: Delete an entity with messages from an ODataContextBinding
 	// JIRA: CPOUI5UISERVICESV3-1361
 	QUnit.test("Delete an entity with messages from an ODataContextBinding", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
 	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
@@ -24264,7 +24281,7 @@ sap.ui.define([
 	// Scenario: Delete an entity with messages from an relative ODLB w/o cache
 	// JIRA: CPOUI5UISERVICESV3-1361
 	QUnit.test("Delete an entity with messages from an relative ODLB w/o cache", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <FlexBox id="detail" binding="{/TEAMS(\'TEAM_01\')}">\
@@ -24334,7 +24351,7 @@ sap.ui.define([
 	// Scenario: Delete an entity from a relative ODLB with pending changes (POST) in siblings
 	// CPOUI5UISERVICESV3-1799
 	QUnit.test("Delete entity from rel. ODLB with pending changes in siblings", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			oTable,
 			sView = '\
 <FlexBox id="detail" binding="{/TEAMS(\'TEAM_01\')}">\
@@ -24389,7 +24406,7 @@ sap.ui.define([
 	// be used and all bindings shall fail while trying to read the data.
 	// BCP: 1970282109
 	QUnit.test("Delete removes dependent caches", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
 			sView = '\
 <FlexBox id="detail" binding="">\
 	<Text id="Team_Id" text="{Team_Id}"/>\
@@ -24478,7 +24495,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Delete an entity with messages from a relative ODataContextBinding w/o cache
 	QUnit.test("Delete an entity with messages from a relative ODCB w/o cache", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Equipments(Category=\'foo\',ID=815)}">\
 	<FlexBox id="form" binding="{path : \'EQUIPMENT_2_EMPLOYEE\', \
@@ -24541,7 +24558,7 @@ sap.ui.define([
 	// Scenario: Update property within an absolute binding and get bound messages in response
 	QUnit.test("Update property (in absolute binding), getting bound messages", function (assert) {
 		var oBinding,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'1\\\')\', \
 		parameters : {\
@@ -24631,7 +24648,7 @@ sap.ui.define([
 	QUnit.test("Update property (in relative binding), getting bound messages", function (assert) {
 		var oBinding,
 			oContext,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sPathToMessages = "TEAM_2_EMPLOYEES('1')/__CT__FAKE__Message/__FAKE__Messages",
 			sView = '\
 <FlexBox binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\', \
@@ -24723,7 +24740,7 @@ sap.ui.define([
 	// Scenario: Update property within an entity in a collection and get bound messages in response
 	QUnit.test("Update property (in collection), getting bound messages", function (assert) {
 		var oBinding,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', \
 		parameters : {\
@@ -24796,7 +24813,7 @@ sap.ui.define([
 	// corresponding fields on the UI change. This must work the same way if a first PATCH/GET
 	// $batch fails.
 	QUnit.test("$$patchWithoutSideEffects, then requestSideEffects", function (assert) {
-		var oModel = createModel(sSalesOrderService + "?sap-client=123", {
+		var oModel = this.createSalesOrdersModel123({
 				autoExpandSelect : true,
 				groupId : "$direct", // GET should not count for batchNo
 				updateGroupId : "update"
@@ -24969,7 +24986,7 @@ sap.ui.define([
 	// in a context binding that inherits the parameter
 	// CPOUI5UISERVICESV3-1684
 	QUnit.test("$$patchWithoutSideEffects in list binding and inherited", function (assert) {
-		var oModel = createModel(sSalesOrderService, {autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="table" items="{path : \'/SalesOrderList\',\
@@ -25037,7 +25054,7 @@ sap.ui.define([
 	// Scenario: Read side effects which include navigation properties while there are pending
 	// changes.
 	QUnit.test("requestSideEffects with navigation properties", function (assert) {
-		var oModel = createSpecialCasesModel({
+		var oModel = this.createSpecialCasesModel({
 				autoExpandSelect : true,
 				groupId : "$direct", // GET should not count for batchNo
 				updateGroupId : "update"
@@ -25107,7 +25124,7 @@ sap.ui.define([
 	// Scenario: Read side effects via $NavigationPropertyPath. The dependent binding must be
 	// refreshed.
 	QUnit.test("requestSideEffects with $NavigationPropertyPath", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -25195,7 +25212,7 @@ sap.ui.define([
 			.expectChange("id", "1")
 			.expectChange("note", ["Note €"]);
 
-		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+		return this.createView(assert, sView, this.createSalesOrdersModel()).then(function () {
 			that.expectRequest("SalesOrderList('1')"
 					+ "?$expand=SO_2_SOITEM($filter=Note.contains('%20%E2%82%AC')"
 					+ "&$select=SO_2_SOITEM", {
@@ -25216,7 +25233,7 @@ sap.ui.define([
 	// Scenario: requestSideEffects delivers a new entity. See that it can be patched later on.
 	// JIRA: CPOUI5UISERVICESV3-1992
 	QUnit.test("requestSideEffects delivers a new entity", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}" id="form">\
 	<Input id="company" value="{SO_2_BP/CompanyName}"/>\
@@ -25278,7 +25295,7 @@ sap.ui.define([
 	// expected.
 	// JIRA: CPOUI5ODATAV4-225
 	QUnit.skip("requestSideEffects unexpectedly deletes an entity", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}" id="form">\
 	<Input id="company" value="{SO_2_BP/CompanyName}"/>\
@@ -25315,7 +25332,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: read side effects which affect dependent bindings.
 	QUnit.test("requestSideEffects: dependent bindings #1", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -25365,7 +25382,7 @@ sap.ui.define([
 	QUnit.test("requestSideEffects: dependent bindings #2", function (assert) {
 		var sDraftAdministrativeData = "Artists(ArtistID='42',IsActiveEntity=true)"
 				+ "/BestFriend/BestFriend/DraftAdministrativeData",
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -25419,7 +25436,7 @@ sap.ui.define([
 	QUnit.test("requestSideEffects: dependent bindings #3", function (assert) {
 		var sDraftAdministrativeData = "Artists(ArtistID='42',IsActiveEntity=true)"
 				+ "/BestFriend/_Friend(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData",
-			oModel = createSpecialCasesModel({autoExpandSelect : false}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : false}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -25473,7 +25490,7 @@ sap.ui.define([
 		var sTitle = "requestSideEffects with collection-valued navigation; growing = " + bGrowing;
 
 		QUnit.test(sTitle, function (assert) {
-			var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 				sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -25535,7 +25552,7 @@ sap.ui.define([
 	// by the side effect; instead of refreshing the whole collection, an efficient request is sent.
 	// JIRA: CPOUI5UISERVICESV3-1690
 	QUnit.test("requestSideEffects for a single property of a collection", function (assert) {
-		var oModel = createModel("/special/cases/?sap-client=123", {autoExpandSelect : true}),
+		var oModel,
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
@@ -25554,6 +25571,11 @@ sap.ui.define([
 	</FlexBox>\
 </FlexBox>',
 			that = this;
+
+		oModel = this.createModel("/special/cases/?sap-client=123", {autoExpandSelect : true}, {
+			"/special/cases/$metadata?sap-client=123"
+				: {source : "odata/v4/data/metadata_special_cases.xml"}
+		});
 
 		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
 				+ "?sap-client=123&$select=ArtistID,IsActiveEntity"
@@ -25744,7 +25766,7 @@ sap.ui.define([
 	// Finally, read a side effect that affects a single row, refreshing it completely.
 	// JIRA: CPOUI5UISERVICESV3-1867
 	QUnit.test("requestSideEffects: collection & list/detail", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oTable,
 			oTableBinding,
 			sView = '\
@@ -25932,7 +25954,10 @@ sap.ui.define([
 	// CPOUI5UISERVICESV3-1765
 	QUnit.test("requestSideEffects on context of a list binding", function (assert) {
 		var oCreatedContext0,
-			oModel = createSpecialCasesModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createSpecialCasesModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/Artists(\'42\')/_Publication}" threshold="0" visibleRowCount="2">\
@@ -26050,7 +26075,7 @@ sap.ui.define([
 	// context binding with a cache.
 	// CPOUI5UISERVICESV3-1707
 	QUnit.test("requestSideEffects: relative to a context binding", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
 	<FlexBox binding="{BestFriend}" id="bestFriend">\
@@ -26173,7 +26198,7 @@ sap.ui.define([
 	// BCP: 2170263464
 	QUnit.test("requestSideEffects: relative to a list binding", function (assert) {
 		var oBestFriendBox,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/Artists}">\
 	<FlexBox binding="{BestFriend}"> \
@@ -26331,7 +26356,7 @@ sap.ui.define([
 	// a context binding with a cache. Side effects are requested on the parent binding.
 	// CPOUI5UISERVICESV3-1984
 	QUnit.test("requestSideEffects: skip empty path", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true, groupId : "$direct"}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true, groupId : "$direct"}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="outer">\
 	<Text id="outerName" text="{Name}"/>\
@@ -26382,7 +26407,7 @@ sap.ui.define([
 	// Check that a kept-alive context does not interfere with this.
 	// JIRA: CPOUI5ODATAV4-1104
 	QUnit.test("ODLB: refresh within requestSideEffects fails", function (assert) {
-		var oModel = createSalesOrdersModel({
+		var oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -26440,7 +26465,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1828
 	QUnit.test("ODLB+ODCB: refresh within requestSideEffects fails", function (assert) {
 		var oContext,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -26509,7 +26534,7 @@ sap.ui.define([
 	// to a rejected promise, but no changes in data.
 	// JIRA: CPOUI5UISERVICESV3-1828
 	QUnit.test("ODCB+ODLB: refresh within requestSideEffects fails", function (assert) {
-		var oModel = createSalesOrdersModel({
+		var oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -26582,7 +26607,7 @@ sap.ui.define([
 	// to a rejected promise, but no changes in data, even in case of a return value context.
 	// BCP: 2280001179
 	QUnit.test("R.V.C.: refresh within requestSideEffects fails", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oParentContext,
 			oReturnValueContext,
 			sView = '\
@@ -26708,7 +26733,7 @@ sap.ui.define([
 	// to a rejected promise.
 	// JIRA: CPOUI5UISERVICESV3-1828
 	QUnit.test("ODCB: failed requestSideEffects & changeParameters", function (assert) {
-		var oModel = createSalesOrdersModel({
+		var oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -26754,7 +26779,7 @@ sap.ui.define([
 	// changes.
 	// JIRA: CPOUI5UISERVICESV3-1921
 	QUnit.test("Request side effects in a different batch group", function (assert) {
-		var oModel = createSalesOrdersModel({
+		var oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -26822,7 +26847,7 @@ sap.ui.define([
 	// BCP: 2080268833
 	QUnit.test("BCP: 2080268833: requestSideEffects before bound action", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Text id="note" text="{Note}"/>\
@@ -27009,7 +27034,7 @@ sap.ui.define([
 		]);
 	}].forEach(function (fnCodeUnderTest, i) {
 		QUnit.test("Later retry failed PATCHes for $auto, " + i, function (assert) {
-			var oModel = createTeaBusiModel({groupId : "$direct", updateGroupId : "$auto"}),
+			var oModel = this.createTeaBusiModel({groupId : "$direct", updateGroupId : "$auto"}),
 				sView = '\
 <FlexBox binding="{/EMPLOYEES(\'3\')}" id="form">\
 	<Input id="roomId" value="{ROOM_ID}"/>\
@@ -27063,7 +27088,7 @@ sap.ui.define([
 	["$auto", "group"].forEach(function (sUpdateGroupId) {
 		QUnit.test("Immediately retry failed PATCHes for " + sUpdateGroupId, function (assert) {
 			var oAgeBinding,
-				oModel = createTeaBusiModel({updateGroupId : sUpdateGroupId}),
+				oModel = this.createTeaBusiModel({updateGroupId : sUpdateGroupId}),
 				oPromise,
 				fnReject,
 				oRoomIdBinding,
@@ -27168,7 +27193,7 @@ sap.ui.define([
 	// Scenario: ODCB#execute waits until PATCHes are back and happens inside same $batch as retry
 	// (CPOUI5UISERVICESV3-1451)
 	QUnit.test("CPOUI5UISERVICESV3-1451: ODCB#execute after all PATCHes", function (assert) {
-		var oModel = createTeaBusiModel({groupId : "$direct", updateGroupId : "$auto"}),
+		var oModel = this.createTeaBusiModel({groupId : "$direct", updateGroupId : "$auto"}),
 			fnReject,
 			oRoomIdBinding,
 			sView = '\
@@ -27264,7 +27289,7 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oEmployeeCreatedContext,
-				oModel = createTeaBusiModel(),
+				oModel = this.createTeaBusiModel(),
 				sNestedTransientPath,
 				oTable,
 				oTeamCreatedContext,
@@ -27394,7 +27419,10 @@ sap.ui.define([
 			var sEntityPath = bUseCanonicalPath
 					? "BusinessPartnerList('23')"
 					: "SalesOrderList('0500000000')/SO_2_BP",
-				oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
+				oModel = this.createSalesOrdersModel({
+					autoExpandSelect : true,
+					groupId : "$direct"
+				}),
 				sParameters = bUseCanonicalPath
 					? "parameters : {$$canonicalPath : true}"
 					: "parameters : {$$ownRequest : true}",
@@ -27568,7 +27596,10 @@ sap.ui.define([
 		var oBusinessPartnerContext,
 			oBusinessPartnerList,
 			oForm,
-			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
 			oTable,
 			sView = '\
 <Table id="businessPartnerList" items="{/BusinessPartnerList}">\
@@ -27741,7 +27772,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: unnecessary context bindings to confuse auto-$expand/$select
 	QUnit.skip("CPOUI5UISERVICESV3-1677: Avoid unnecessary $expand", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -27767,7 +27798,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: context binding for :N navigation property using key predicate
 	QUnit.skip("CPOUI5UISERVICESV3-1679: nav.prop. using key predicate", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -27795,7 +27826,7 @@ sap.ui.define([
 	// Scenario: A grid table shows a collection which completely resides in the parent binding's
 	// cache. Auto-$expand/$select does not properly handle this case: "Price" is not selected.
 	QUnit.skip("CPOUI5UISERVICESV3-1685: autoExpandSelect with grid table", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
 	<Text id="id" text="{ArtistID}"/>\
@@ -27836,7 +27867,9 @@ sap.ui.define([
 			Name : "Foo"
 		}},
 		{label0 : "Artist Name", name : "Foo", insertable : true, label1 : "Artist"},
-		createSpecialCasesModel({autoExpandSelect : true})
+		function () {
+			return this.createSpecialCasesModel({autoExpandSelect : true});
+		}
 	);
 
 	//*********************************************************************************************
@@ -27848,7 +27881,9 @@ sap.ui.define([
 	text="{:= %{/Artists##@Org.OData.Capabilities.V1.InsertRestrictions}.Insertable }"/>',
 		/* no data request*/ undefined,
 		{insertable : true},
-		createSpecialCasesModel({autoExpandSelect : true})
+		function () {
+			return this.createSpecialCasesModel({autoExpandSelect : true});
+		}
 	);
 
 	//*********************************************************************************************
@@ -27865,7 +27900,9 @@ sap.ui.define([
 			_Publication : [{/*PublicationID : ...*/}, {}, {}]
 		}},
 		{publicationCount : 3},
-		createSpecialCasesModel({autoExpandSelect : true})
+		function () {
+			return this.createSpecialCasesModel({autoExpandSelect : true});
+		}
 	);
 
 	//*********************************************************************************************
@@ -27874,8 +27911,9 @@ sap.ui.define([
 	QUnit.test("Auto-$expand/$select with dynamic filter, but no metadata", function (assert) {
 		var oModel, sView;
 
-		this.useFakeServer({"/invalid/model/$metadata" : {code : 500}});
-		oModel = createModel(sInvalidModel, {autoExpandSelect : true});
+		oModel = this.createModel("/invalid/model/", {autoExpandSelect : true}, {
+			"/invalid/model/$metadata" : {code : 500}
+		});
 		sView = '\
 <Table items="{path : \'/Artists\', \
 		filters : {path : \'IsActiveEntity\', operator : \'EQ\', value1 : \'true\'}}">\
@@ -27914,7 +27952,10 @@ sap.ui.define([
 	// JIRA: CPOUI5MODELS-302
 	QUnit.test("OData Unit type considering unit customizing", function (assert) {
 		var oControl,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}, {
+				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
+					: {source : "odata/v4/data/metadata_codelist.xml"}
+			}),
 			sView = '\
 <FlexBox binding="{/ProductList(\'HT-1000\')}">\
 	<Input id="weight" value="{parts: [\'WeightMeasure\', \'WeightUnit\',\
@@ -28063,7 +28104,10 @@ sap.ui.define([
 	// JIRA: CPOUI5MODELS-302
 	QUnit.test("OData Currency type considering currency customizing", function (assert) {
 		var oControl,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}, {
+				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
+					: {source : "odata/v4/data/metadata_codelist.xml"}
+			}),
 			sView = '\
 <FlexBox binding="{/ProductList(\'HT-1000\')}">\
 	<Input id="price" value="{parts: [\'Price\', \'CurrencyCode\',\
@@ -28221,7 +28265,10 @@ sap.ui.define([
 	// BCP: 1970116818
 	// JIRA: CPOUI5UISERVICESV3-1744
 	QUnit.test("Value help at action parameter", function (assert) {
-		var oModel = createSpecialCasesModel(),
+		var oModel = this.createSpecialCasesModel({}, {
+				"/special/countryoforigin/$metadata"
+					: {source : "odata/v4/data/metadata_countryoforigin.xml"}
+			}),
 			sPropertyPath = "/Artists/special.cases.Create/Countryoforigin";
 
 		return oModel.getMetaModel().requestValueListType(sPropertyPath)
@@ -28255,7 +28302,10 @@ sap.ui.define([
 	// with targets in 4.01 syntax and ValueListType.Fixed.
 	// JIRA: CPOUI5ODATAV4-54
 	QUnit.test("Value help at bound action parameter, 4.01 syntax, fixed", function (assert) {
-		var oModel = createSpecialCasesModel(),
+		var oModel = this.createSpecialCasesModel({}, {
+				"/special/CurrencyCode/$metadata"
+					: {source : "odata/v4/data/metadata_CurrencyCode.xml"}
+			}),
 			oOperationBinding
 				= oModel.bindContext("/Artists('42')/_Publication/special.cases.Create(...)"),
 			oPropertyBinding
@@ -28283,7 +28333,10 @@ sap.ui.define([
 	// with targets both in 4.0 and 4.01 syntax.
 	// JIRA: CPOUI5ODATAV4-54
 	QUnit.test("Value help at bound action parameter, 4.01 syntax, standard", function (assert) {
-		var oModel = createSpecialCasesModel(),
+		var oModel = this.createSpecialCasesModel({}, {
+				"/special/Price/$metadata"
+					: {source : "odata/v4/data/metadata_Price.xml"}
+			}),
 			oOperationBinding
 				= oModel.bindContext("/Artists('42')/_Publication/special.cases.Create(...)"),
 			oPropertyBinding
@@ -28323,7 +28376,7 @@ sap.ui.define([
 	// messages.
 	// CPOUI5UISERVICESV3-1587
 	QUnit.test("bound action on navigation property updates binding parameter", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sResourcePath = "Artists(ArtistID='42',IsActiveEntity=true)/BestPublication",
 			sView = '\
 <FlexBox binding="{\
@@ -28390,7 +28443,7 @@ sap.ui.define([
 	// for missing support of $expand at action POSTs). No fix required.
 	// BCP: 1980108040
 	QUnit.test("BCP: 1980108040", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oReturnValueContext,
 			sView = '\
 <FlexBox id="objectPage" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
@@ -28518,7 +28571,7 @@ sap.ui.define([
 }].forEach(function (fnCodeUnderTest, i) {
 	QUnit.test("JIRA: CPOUI5UISERVICESV3-1845 - POST still pending, " + i, function (assert) {
 		var oContext,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -28588,7 +28641,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-958
 	QUnit.skip("JIRA: CPOUI5UISERVICESV3-1825 - GET & POST in same $batch", function (assert) {
 		var oBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <Table growing="true" growingThreshold="2" id="table"\
@@ -28657,7 +28710,7 @@ sap.ui.define([
 	// Scenario: Annotation target with parentheses to specify action overload
 	// JIRA: CPOUI5UISERVICESV3-1844
 	QUnit.test("Annotation target with parentheses to specify action overload", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true});
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 
 		return this.createView(assert, "", oModel).then(function () {
 			return oModel.getMetaModel().requestData();
@@ -28685,7 +28738,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1814
 	QUnit.test("Create on a relative binding with $expand", function (assert) {
 		var oCreatedContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			oTableBinding,
 			sView = '\
@@ -29138,7 +29191,7 @@ sap.ui.define([
 					done();
 				}
 			},
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Button id="button" press=".onPress(${path : \'NetAmount\', targetType : \'string\'})"\
@@ -29167,7 +29220,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1871
 	QUnit.test("Use list binding programmatically", function (assert) {
 		var done = assert.async(),
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
 		this.createView(assert, "", oModel).then(function () {
@@ -29204,7 +29257,7 @@ sap.ui.define([
 	// cache and written back to it.
 	// JIRA: CPOUI5UISERVICESV3-1877
 	QUnit.test("Reduce path: property in same cache", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
 	<Table id="table" items="{SO_2_SOITEM}">\
@@ -29256,7 +29309,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1942
 	QUnit.test("Reduce path: property in parent cache", function (assert) {
 		var oCreationRowContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
@@ -29344,7 +29397,7 @@ sap.ui.define([
 	// Scenario: Reduce path by removing multiple pairs of partner attributes.
 	// JIRA: CPOUI5UISERVICESV3-1877
 	QUnit.test("Reduce path by removing multiple pairs of partner attributes", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/As(1)}">\
 	<FlexBox binding="{AtoB}">\
@@ -29375,7 +29428,7 @@ sap.ui.define([
 	// taken from two caches above.
 	// JIRA: CPOUI5UISERVICESV3-1877
 	QUnit.test("Reduce path and step up multiple caches", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/As(1)}">\
 	<FlexBox binding="{path : \'AtoB\', parameters : {$$ownRequest : true}}">\
@@ -29410,7 +29463,7 @@ sap.ui.define([
 	// Scenario: Reduced path must not be shorter than root binding's path.
 	// JIRA: CPOUI5UISERVICESV3-1877
 	QUnit.test("Reduced path must not be shorter than root binding's path", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/As(1)/AtoB}">\
 	<Text id="aValue" text="{BtoA/AValue}"/>\
@@ -29442,7 +29495,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1877
 	QUnit.test("Operation on reduceable path", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
 	<Table id="table" items="{SO_2_SOITEM}">\
@@ -29499,7 +29552,7 @@ sap.ui.define([
 	// Sync data access is possible although oCachePromise becomes pending again.
 	// JIRA: CPOUI5ODATAV4-204
 	QUnit.test("Partner attributes in path to collection, CPOUI5ODATAV4-204", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Bs(1)}">\
 	<Table id="table" items="{BtoA/AtoB/BtoDs}">\
@@ -29554,7 +29607,10 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1877
 	// JIRA: CPOUI5UISERVICESV3-1944
 	QUnit.test("Partner attributes in path to collection, other updateGroupId", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true, updateGroupId : "update"}),
+		var oModel = this.createSpecialCasesModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
 			sView = '\
 <FlexBox binding="{/Bs(1)}">\
 	<Text id="bValue" text="{BValue}"/>\
@@ -29594,7 +29650,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Request data from property binding
 	QUnit.test("ODPrB access value async via API", function (assert) {
-		var oModel = createSalesOrdersModel(),
+		var oModel = this.createSalesOrdersModel(),
 			oPropertyBinding = oModel.bindProperty("/SalesOrderList('1')/NetAmount"),
 			that = this;
 
@@ -29611,7 +29667,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Request data from context binding
 	QUnit.test("ODCB access value async via API", function (assert) {
-		var oModel = createSalesOrdersModel(),
+		var oModel = this.createSalesOrdersModel(),
 			oContextBinding = oModel.bindContext("/SalesOrderList('1')"),
 			oSalesOrder = {
 				NetAmount : "42",
@@ -29661,7 +29717,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oCreationRowContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oNewContext,
 			oTableBinding,
 			// image we had a $filter : \'NoteLanguage ne null\' or similar for the table
@@ -29888,7 +29944,7 @@ sap.ui.define([
 		var oCreationRowContext,
 			oCreationRowListBinding,
 			oFormBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTableBinding,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
@@ -30022,7 +30078,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-114
 	QUnit.test("create removes a nested property", function (assert) {
 		var oCreatedContext,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
@@ -30187,7 +30243,7 @@ sap.ui.define([
 	text : "Repeated POST fails"
 }].forEach(function (oFixture) {
 	QUnit.test("requestSideEffects repeats failed POST - " + oFixture.text, function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTableBinding,
 			sView = '\
 <FlexBox id="form" binding="{/BusinessPartnerList(\'4711\')}">\
@@ -30301,7 +30357,7 @@ sap.ui.define([
 	// contexts are kept, even if not visible.
 	// JIRA: CPOUI5UISERVICESV3-1764 (now: CPOUI5ODATAV4-1361)
 	QUnit.test("requestSideEffects keeps invisible transient contexts", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oNewContext,
 			oTable,
 			oTableBinding,
@@ -30417,7 +30473,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1936
 	QUnit.test("requestSideEffects waits for pending POST", function (assert) {
 		var oCreatedRowContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oRequestSideEffectsPromise,
 			fnRespond,
 			oTableBinding,
@@ -30524,7 +30580,7 @@ sap.ui.define([
 	// requestSideEffect must wait for the PATCH.
 	// JIRA: CPOUI5UISERVICESV3-1936
 	QUnit.test("requestSideEffects waits for pending PATCH", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oName,
 			oRequestSideEffectsPromise,
 			fnRespond,
@@ -30619,7 +30675,7 @@ sap.ui.define([
 	// BCP: 2070206648
 	QUnit.test("requestSideEffects: path reduction", function (assert) {
 		var oContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{path : \'/SalesOrderList(\\\'42\\\')\', parameters : {$select : \'Messages\'}}">\
 	<FlexBox binding="{}">\
@@ -30734,7 +30790,7 @@ sap.ui.define([
 	// "/As(1)/AtoCs(2)/CtoD/DtoC/CtoA/AValue".
 	// JIRA: CPOUI5ODATAV4-221
 	QUnit.test("requestSideEffects: parent cache of a list binding", function (assert) {
-		var oModel = createSpecialCasesModel({
+		var oModel = this.createSpecialCasesModel({
 				autoExpandSelect : true,
 				updateGroupId : "update1"
 			}),
@@ -30819,7 +30875,7 @@ sap.ui.define([
 	// necessary.
 	// JIRA: CPOUI5ODATAV4-103
 	QUnit.test("requestSideEffects: path reduction and bubble up", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/As(1)}">\
 	<Text id="aValue" text="{AValue}"/>\
@@ -30866,7 +30922,7 @@ sap.ui.define([
 	// dependent bindings refresh and that the promise resolves.
 	// JIRA: CPOUI5ODATAV4-293
 	QUnit.test("ODCB: requestRefresh w/o own request", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/BusinessPartnerList(\'42\')}">\
 	<Table id="table" items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
@@ -30906,7 +30962,7 @@ sap.ui.define([
 	// to reuse the parent binding's cache.
 	// JIRA: CPOUI5UISERVICESV3-1981, CPOUI5UISERVICESV3-1994
 	QUnit.test("hasPendingChanges + resetChanges work for late child bindings", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="orders" items="{path : \'/SalesOrderList\', parameters : {\
 		$expand : {\
@@ -31011,7 +31067,8 @@ sap.ui.define([
 			.expectChange("id", ["1"])
 			.expectChange("item0Note", ["covfefe"]);
 
-		return this.createView(assert, sView, createSalesOrdersModel({autoExpandSelect : true}));
+		return this.createView(assert, sView,
+			this.createSalesOrdersModel({autoExpandSelect : true}));
 	});
 
 	//*********************************************************************************************
@@ -31072,7 +31129,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oCreatedContext,
 			oListBindingWithoutUI,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form">\
 	<Text id="note" text="{Note}"/>\
@@ -31129,7 +31186,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1994
 	QUnit.test("create an entity and immediately reset changes (no UI) V3-1994", function (assert) {
 		var // use autoExpandSelect so that the cache is created asynchronously
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -31160,7 +31217,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1994
 	QUnit.test("Create relative via controller + resetChanges on parent", function (assert) {
 		var oFormBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Table id="table" items="{SO_2_SOITEM}">\
@@ -31208,7 +31265,7 @@ sap.ui.define([
 	// processed before the GET response.
 	// JIRA: CPOUI5UISERVICESV3-1878
 	QUnit.test("unpark keeps response processing order", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'4711\')}">\
 	<Input id="note" value="{Note}"/>\
@@ -31270,7 +31327,7 @@ sap.ui.define([
 	// individual requests inside the $batch but not for the $batch itself.
 	QUnit.test("ODataModel#changeHttpHeaders", function (assert) {
 		var mHeaders = {Authorization : "Bearer xyz"},
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '<Text id="name" text="{/EMPLOYEES(0)/Name}"/>',
 			that = this;
 
@@ -31333,7 +31390,7 @@ sap.ui.define([
 			securityTokenHandler2
 		]);
 
-		oModel = createTeaBusiModel({autoExpandSelect : true, earlyRequests : bEarlyRequests});
+		oModel = this.createTeaBusiModel({autoExpandSelect : true, earlyRequests : bEarlyRequests});
 
 		this.expectRequest({
 					headers : mExpectedHeaders,
@@ -31570,7 +31627,7 @@ sap.ui.define([
 	// Scenario: A property binding with a path using a collection navigation property must not
 	// cause an invalid late property request.
 	QUnit.test("BCP: 1970517588 - invalid property path", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="teamId" text="{Team_Id}"/>\
@@ -31598,7 +31655,7 @@ sap.ui.define([
 	// Sync data access is possible although oCachePromise becomes pending again.
 	// JIRA: CPOUI5ODATAV4-204
 	QUnit.test("CPOUI5UISERVICESV3-2025, CPOUI5ODATAV4-204", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
 	<Text id="teamId" text="{Team_Id}"/>\
@@ -31647,7 +31704,7 @@ sap.ui.define([
 	// sap.ui.model.odata.v4.ODataListBinding: /|TEAMS"
 	// JIRA: CPOUI5UISERVICESV3-2033
 	QUnit.test("CPOUI5UISERVICESV3-2033", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{TEAMS}">\
 	<Text id="teamId" text="{Team_Id}"/>\
@@ -31697,7 +31754,7 @@ sap.ui.define([
 	// BCP: 2070052679 - allow to set a value for a property beneath a null :1 navigation property
 	QUnit.test("CPOUI5ODATAV4-14", function (assert) {
 		var oBinding,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'42\')}" id="form">\
 	<Input id="name" value="{Name}"/>\
@@ -31800,7 +31857,7 @@ sap.ui.define([
 	// entity known (yet).
 	// BCP: 2070199671
 	QUnit.test("BCP: 2070199671", function () {
-		var oModel = createTeaBusiModel({updateGroupId : "doNotSubmit"}),
+		var oModel = this.createTeaBusiModel({updateGroupId : "doNotSubmit"}),
 			oListBinding = oModel.bindList("/TEAMS"),
 			oTransientContext = oListBinding.create({TEAM_2_MANAGER : {}});
 
@@ -31814,7 +31871,7 @@ sap.ui.define([
 	// fails instead of changing the wrong data or so.
 	// JIRA: CPOUI5ODATAV4-14
 	QUnit.test("CPOUI5ODATAV4-108 what if context has changed in the meantime", function (assert) {
-		var oModel = createTeaBusiModel({groupId : "$direct"}),
+		var oModel = this.createTeaBusiModel({groupId : "$direct"}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -31865,7 +31922,7 @@ sap.ui.define([
 	// BCP: 1970600374
 	QUnit.test("BCP: 1970600374 (CPOUI5ODATAV4-34)", function (assert) {
 		var oInput,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}">\
 	<Input id="name" value="{Name}"/>\
@@ -31951,7 +32008,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-980
 	QUnit.test("CPOUI5ODATAV4-34: ODLB instead of ODCB", function (assert) {
 		var oContext,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
@@ -32041,7 +32098,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-34
 	QUnit.test("CPOUI5ODATAV4-34: bKeepCacheOnError & transient rows", function (assert) {
 		var oListBinding,
-			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			oNewContext,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
@@ -32122,7 +32179,7 @@ sap.ui.define([
 	// BCP: 2080439734
 	QUnit.test("BCP: 2080439734: concurrent requestSideEffects", function (assert) {
 		var oHeaderContext,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oPromise1,
 			oPromise2,
 			fnResolve,
@@ -32180,7 +32237,7 @@ sap.ui.define([
 	// with an EDM type that is not mapped to a UI5 type
 	// BCP: 2080062941
 	testXMLTemplating("BCP: 2080062941",
-		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+		"createSpecialCasesModel",
 '<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
 	<template:repeat \
 		list="{meta>/special.cases.EntityWithUnsupportedEdmTypes/@com.sap.vocabularies.UI.v1.SelectionFields}"\
@@ -32211,7 +32268,7 @@ sap.ui.define([
 	// BCP: 2180419641
 	QUnit.test("requestSideEffects: {$PropertyPath : '*'}", function (assert) {
 		var oContext,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
 	<Text id="city" text="{Address/City}"/>\
@@ -32516,7 +32573,7 @@ sap.ui.define([
 </Table>';
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : bAutoExpandSelect}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : bAutoExpandSelect}),
 			that = this;
 
 		this.expectRequest("SalesOrderList?$count=true&" + sSelect + "$skip=0&$top=1", {
@@ -32568,14 +32625,13 @@ sap.ui.define([
 	// Scenario: list binding is used to create an entity, but the metadata could not be loaded
 	// JIRA: CPOUI5ODATAV4-231
 	QUnit.test("CPOUI5ODATAV4-231: ODLB#create failed due to failed $metadata", function (assert) {
-		var that = this;
+		var oModel = this.createModel("/invalid/model/", {}, {
+				"/invalid/model/$metadata" : {code : 500}
+			}),
+			that = this;
 
-		this.useFakeServer({
-			"/invalid/model/$metadata" : {code : 500}
-		});
-
-		return this.createView(assert, "", createModel(sInvalidModel)).then(function () {
-			var oListBinding = that.oModel.bindList("/People");
+		return this.createView(assert, "", oModel).then(function () {
+			var oListBinding = oModel.bindList("/People");
 
 			that.oLogMock.expects("error")
 				.withExactArgs("GET /invalid/model/$metadata",
@@ -32620,7 +32676,7 @@ sap.ui.define([
 	// deliver the old predicate, so the binding parameter was not updated.
 	QUnit.test("BCP: 2070200175, CPOUI5ODATAV4-288: POST > GET", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Text id="status" text="{LifecycleStatus}"/>\
@@ -32680,7 +32736,7 @@ sap.ui.define([
 				}],
 				message : "Strict Handling"
 			}, 412),
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			fnResolve,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
@@ -32772,7 +32828,7 @@ sap.ui.define([
 	QUnit.test("CPOUI5ODATAV4-943: handling=strict, multiple strict executions", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
 			oContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'0\')}">\
 	<Text id="status" text="{LifecycleStatus}"/>\
@@ -32874,7 +32930,10 @@ sap.ui.define([
 		var sConfirmAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
 			sGoodsAction = "com.sap.gateway.default.zui5_epm_sample.v0002."
 				+ "SalesOrder_GoodsIssueCreated",
-			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "confirm"}),
+			oModel = this.createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "confirm"
+			}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
 	<Text id="status" text="{LifecycleStatus}"/>\
@@ -32960,7 +33019,7 @@ sap.ui.define([
 	// Scenario: A list binding with $$sharedRequest below another list binding.
 	// JIRA: CPOUI5ODATAV4-269
 	QUnit.test("CPOUI5ODATAV4-269: Nested lists and $$sharedRequest", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
 	<Text id="name" text="{Name}"/>\
@@ -32999,7 +33058,7 @@ sap.ui.define([
 	// value help requests.
 	// JIRA: CPOUI5ODATAV4-269
 	QUnit.test("CPOUI5ODATAV4-269: Avoid redundant value help requests", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
 	<Text id="name1" text="{Name}"/>\
@@ -33122,7 +33181,7 @@ sap.ui.define([
 	//  entity type reached via the binding parameter of an operation
 	// JIRA: CPOUI5ODATAV4-104
 	testXMLTemplating("AnnotationHelper#value on properties",
-		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+		"createSpecialCasesModel",
 		'<template:alias name="value" value="sap.ui.model.odata.v4.AnnotationHelper.value">\
 			<Input value="{meta>/Artists/Name@@value}"/>\
 			<Input value="{meta>/Artists/BestFriend/IsActiveEntity@@value}"/>\
@@ -33141,7 +33200,7 @@ sap.ui.define([
 	// "14.5.13 Expression edm:PropertyPath"
 	// JIRA: CPOUI5ODATAV4-104
 	testXMLTemplating("AnnotationHelper#value inside path object",
-		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+		"createSpecialCasesModel",
 		'<template:alias name="value" value="sap.ui.model.odata.v4.AnnotationHelper.value">\
 			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/0/$PropertyPath@@value}"/>\
 			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/1/$PropertyPath@@value}"/>\
@@ -33162,7 +33221,7 @@ sap.ui.define([
 	//  entity type reached via the binding parameter of an operation
 	// JIRA: CPOUI5ODATAV4-104
 	testXMLTemplating("AnnotationHelper#format on properties",
-		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+		"createSpecialCasesModel",
 		'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
 			<Input value="{meta>/Artists/Name@@format}"/>\
 			<Input value="{meta>/Artists/BestFriend/IsActiveEntity@@format}"/>\
@@ -33186,7 +33245,7 @@ sap.ui.define([
 	// "14.5.13 Expression edm:PropertyPath"
 	// JIRA: CPOUI5ODATAV4-104
 	testXMLTemplating("AnnotationHelper#format inside path object",
-		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+		"createSpecialCasesModel",
 		'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
 			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/0/$PropertyPath@@format}"/>\
 			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/1/$PropertyPath@@format}"/>\
@@ -33207,7 +33266,7 @@ sap.ui.define([
 	// Note: Equipment's ID should not matter here.
 	// BCP: 2080140429
 	QUnit.test("BCP: 2080140429", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table rows="{/EMPLOYEES}">\
 	<Text id="name" text="{Name}"/>\
@@ -33372,7 +33431,7 @@ sap.ui.define([
 	// properties of a related entity, but in fact that entity's identity changes unexpectedly.
 	// The requestSideEffects API detects this situation and throws an error.
 	QUnit.test("requestSideEffects: key predicate changed beneath ODLB", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/Artists}">\
 	<Text id="friend" text="{BestFriend/Name}"/>\
@@ -33460,7 +33519,7 @@ sap.ui.define([
 					// ]});
 				}
 			},
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table growing="true" id="table" items="{\
@@ -33605,7 +33664,7 @@ sap.ui.define([
 	// BCP: 2180095696
 [false, true].forEach(function (bAutoExpandSelect) {
 	QUnit.test("BCP: 2180095696, bAutoExpandSelect = " + bAutoExpandSelect, function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : bAutoExpandSelect}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : bAutoExpandSelect}),
 			sView = '\
 <FlexBox id="flexBox" items="{/EMPLOYEES}">\
 	<Text id="name" text="{Name}"/>\
@@ -33655,7 +33714,10 @@ sap.ui.define([
 			+ bAutoExpandSelect;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createSalesOrdersModel(),
+		var oModel = this.createSalesOrdersModel({}, {
+				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata"
+					: {source : "odata/v4/data/VH_ProductTypeCode.xml"}
+			}),
 			sView = '\
 <FlexBox binding="{/ProductList(\'1\')}">\
 	<Text id="typeCode1" text="{TypeCode}"/>\
@@ -33717,7 +33779,7 @@ sap.ui.define([
 	// Scenario: A value list model is sorted and changes are reflected on the UI.
 	// BCP: 2080320093
 	QUnit.test("BCP: 2080320093: sharedRequests and sort", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true, sharedRequests : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true, sharedRequests : true}),
 			sView = '\
 <Table id="table" growing="true" growingThreshold="2" items="{path : \'/ProductList\'}">\
 	<Text id="name" text="{Name}"/>\
@@ -33759,7 +33821,7 @@ sap.ui.define([
 	// Scenario: Executing an action is forbidden for models with shared requests.
 	// JIRA: CPOUI5ODATAV4-344
 	QUnit.test("sharedRequests forbids action execute", function (assert) {
-		var oModel = createTeaBusiModel({sharedRequests : true}),
+		var oModel = this.createTeaBusiModel({sharedRequests : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -33780,7 +33842,7 @@ sap.ui.define([
 	// Scenario: <template:repeat> over more than Model#iSizeLimit (= 100) entries.
 	// BCP: 002075129500002532232020 (253223 / 2020)
 	QUnit.test("BCP: 002075129500002532232020", function (assert) {
-		var oMetaModel = createSpecialCasesModel().getMetaModel(),
+		var oMetaModel = this.createSpecialCasesModel().getMetaModel(),
 			sTemplate = '\
 <template:repeat list="{meta>/As/$Type/$Key}">\
 	<Text text="{meta>}"/>\
@@ -33798,7 +33860,7 @@ sap.ui.define([
 				sView += '<Text text="' + i + '"/>';
 			}
 
-			return doTestXMLTemplating.call(that, assert,
+			return that.doTestXMLTemplating(assert,
 				{models : {meta : oMetaModel}}, sTemplate, sView);
 		});
 	});
@@ -33840,7 +33902,7 @@ sap.ui.define([
 	// BCP: 2070486792
 	QUnit.test("ODLB: create at end w/ $count before read", function (assert) {
 		var oBinding,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" growing="true" growingThreshold="2"\
 		items="{path : \'EMPLOYEES\', parameters : {$count : true}}">\
@@ -33915,7 +33977,7 @@ sap.ui.define([
 			oContext2,
 			oContext3,
 			iEventCount = 0,
-			oModel = createSalesOrdersModel({
+			oModel = this.createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : bAPI ? "update" : undefined
 			}),
@@ -34140,7 +34202,7 @@ sap.ui.define([
 			oContext0,
 			oContext1,
 			oContext2,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{path : \'SO_2_SOITEM\',\
 		parameters : {$$ownRequest : true}}">\
@@ -34235,7 +34297,7 @@ sap.ui.define([
 	//
 	// JIRA: CPOUI5ODATAV4-1450
 	QUnit.test("ODLB w/o own cache: setContext with transient rows", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oFirstBindingContext,
 			oListBinding,
 			sView = '\
@@ -34302,7 +34364,7 @@ sap.ui.define([
 	QUnit.test("create, delete and paging", function (assert) {
 		var oBinding,
 			oContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <Table growing="true" growingThreshold="2" id="listReport"\
@@ -34384,26 +34446,25 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create a model with metadataUrlParams. See that the main $metadata request contains
-	// sap-context-token, sap-language, and sap-client -> see this.useFakeServer() below.
+	// sap-context-token, sap-language, and sap-client -> see this.createModel() below.
 	// Further requests for $metadata references must not use sap-context-token.
 	//
 	// JIRA: CPOUI5ODATAV4-279
 	QUnit.test("CPOUI5ODATAV4-279", function (assert) {
 		var oModel;
 
-		this.useFakeServer({
-			"HEAD /sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/?sap-client=279" : {},
-			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=279&sap-context-token=20200716120000&sap-language=en"
-				: {source : "odata/v4/data/metadata.xml"},
-			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-client=279&sap-language=en"
-				: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
-		});
-		oModel = createModel(sTeaBusi + "?sap-client=279", {
+		oModel = this.createModel(sTeaBusi + "?sap-client=279", {
 			earlyRequests : true,
 			metadataUrlParams : {
 				"sap-context-token" : "20200716120000",
 				"sap-language" : "en"
 			}
+		}, {
+			"HEAD /sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/?sap-client=279" : {},
+			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=279&sap-context-token=20200716120000&sap-language=en"
+				: {source : "odata/v4/data/metadata.xml"},
+			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-client=279&sap-language=en"
+				: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
 		});
 
 		return oModel.getMetaModel()
@@ -34432,7 +34493,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-340
 	QUnit.test("CPOUI5ODATAV4-340: Context#setKeepAlive", function (assert) {
 		var oKeptContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
 			oTable,
 			oTableBinding,
 			sView = '\
@@ -34562,7 +34626,10 @@ sap.ui.define([
 	// JIRA: CPOUI5MODELS-782
 	QUnit.test("CPOUI5ODATAV4-340: Context#setKeepAlive, update conflict", function (assert) {
 		var oKeptContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
 			oTable,
 			oTableBinding,
 			sView = '\
@@ -34651,7 +34718,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-339
 	// BCP: 2080303042
 	QUnit.test("Context#requestProperty (JIRA: CPOUI5ODATAV4-339)", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oContext = oModel.bindContext("/SalesOrderList('1')").getBoundContext(),
 			that = this;
 
@@ -34711,7 +34778,7 @@ sap.ui.define([
 	// BCP: 2080293614
 ["$direct", "$auto"].forEach(function (sGroupId) {
 	QUnit.test("BCP: 2080293614, " + sGroupId, function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true, groupId : sGroupId}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true, groupId : sGroupId}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistUUID=xyz,IsActiveEntity=false)/BestPublication}">\
 	<Text id="price" text="{Price}"/>\
@@ -34757,7 +34824,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oKeptContext,
 			oListBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			fnOnBeforeDestroy = sinon.spy(),
 			oTable,
 			sView = '\
@@ -34958,7 +35025,7 @@ sap.ui.define([
 	// Scenario: An annotation with $If comparing a number is evaluated.
 	// JIRA: CPOUI5ODATAV4-408
 	QUnit.test("CPOUI5ODATAV4-408: $If comparing a number", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/As(1)}">\
 	<Text id="avalue" text="{AValue}"/>\
@@ -34997,7 +35064,7 @@ sap.ui.define([
 	var sTitle = "CPOUI5ODATAV4-408: ValueListRelevantQualifiers, value=" + iValue;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/As(1)}">\
 	<Text id="aid" text="{AID}"/>\
@@ -35032,7 +35099,7 @@ sap.ui.define([
 			+ ", value=" + iValue;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/Bs(1)}">\
 	<Text id="bid" text="{BID}"/>\
@@ -35066,7 +35133,7 @@ sap.ui.define([
 	// such bindings.
 	// JIRA: CPOUI5MODELS-290
 	QUnit.test("ODataPropertyBindings and CompositeBindings: $$ignoreMessages", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage" binding="{path : \'/EMPLOYEES(\\\'1\\\')\', \
 	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
@@ -35357,7 +35424,7 @@ sap.ui.define([
 		+ ", bKeepAlive = " + bKeepAlive;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/SalesOrderList\',\
 		filters : {path : \'GrossAmount\', operator : \'LE\', value1 : 150}}">\
@@ -35412,7 +35479,7 @@ sap.ui.define([
 	// whether or not the collection itself is empty, drill-down fails or just logs.
 	// BCP: 2070374495
 	QUnit.test("$byPredicate for empty collections", function (assert) {
-		var oModel = createSpecialCasesModel(),
+		var oModel = this.createSpecialCasesModel(),
 			sView = '\
 <FlexBox binding="{path : \'/Artists(ArtistID=\\\'ABC\\\',IsActiveEntity=false)\',\
 	parameters : {$expand : {_Friend : null, _Publication : null}}}">\
@@ -35455,7 +35522,7 @@ sap.ui.define([
 	QUnit.test("CPOUI5ODATAV4-366: kept-context in collection only one request", function (assert) {
 		var oContext,
 			oInput,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Input id="grossAmount" value="{GrossAmount}"/>\
@@ -35537,7 +35604,7 @@ sap.ui.define([
 	// BCP: 2070459149
 	QUnit.test("BCP: 2070459149: transient context + nested ODLB w/ own cache", function (assert) {
 		var oContext,
-			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'1\')}">\
 	<Table id="employees" items="{TEAM_2_EMPLOYEES}">\
@@ -35595,7 +35662,7 @@ sap.ui.define([
 	// BCP: 2070459149
 	QUnit.test("BCP: 2070459149: transient context + nested ODCB w/ own cache", function (assert) {
 		var oContext,
-			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'1\')}">\
 	<Table id="employees" items="{TEAM_2_EMPLOYEES}">\
@@ -35839,7 +35906,7 @@ sap.ui.define([
 //     return oModel.createBindingContext("/TEAMS('42')");
 }].forEach(function (fnCreateContext, i) {
 	QUnit.test("CPOUI5ODATAV4-766: re-read dependent if parent is new, #" + i, function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oObjectPage,
 			oOldRoot,
 			oSubObjectPage,
@@ -35982,7 +36049,7 @@ sap.ui.define([
 	//
 	// JIRA: CPOUI5ODATAV4-766
 	QUnit.test("CPOUI5ODATAV4-766: re-read dependent if parent list is new", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oObjectPage,
 			oOldRoot,
 			sView = '\
@@ -36181,7 +36248,7 @@ sap.ui.define([
 		var oActiveContext,
 			oDraftContext,
 			bListResolved = false,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oObjectPage,
 			sView = '\
 <Table id="listReport"\ items="{path : \'Artists\', \
@@ -36465,7 +36532,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1405
 [false, true].forEach(function (bRelative) {
 	QUnit.test("getKeepAliveContext: row context, relative=" + bRelative, function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sPath = bRelative ? "Artists" : "/Artists",
 			oTable,
 			sView = '\
@@ -36540,7 +36607,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1406
 	QUnit.test("getKeepAliveContext: create context, merge later", function (assert) {
 		var oContext,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="list" growing="true" growingThreshold="2" \
@@ -36658,7 +36725,7 @@ sap.ui.define([
 	// page are in sync.
 	// JIRA: CPOUI5ODATAV4-1407
 	QUnit.test("getKeepAliveContext: immediately release temporary binding", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="list" items="{path : \'Artists\', parameters : {$$getKeepAliveContext : true,\
@@ -36761,7 +36828,7 @@ sap.ui.define([
 	QUnit.test("getKeepAliveContext: suspended", function (assert) {
 		var oContext,
 			oListBinding,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="list" items="{path : \'/Artists\', parameters : {$$getKeepAliveContext : true},\
 		suspended : true}">\
@@ -36858,7 +36925,7 @@ sap.ui.define([
 		var aContexts,
 			oCreationRowContext,
 			oListBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sNewNote,
 			oSetPropertyPromise,
 			sView = '\
@@ -37143,7 +37210,10 @@ sap.ui.define([
 			oItemsTableBinding,
 			oKeptAliveItem,
 			oListReportBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
 			oSetPropertyPromise,
 			sView = '\
 <Table id="listReport" items="{/SalesOrderList}">\
@@ -37303,7 +37373,7 @@ sap.ui.define([
 	QUnit.test("JIRA: CPOUI5ODATAV4-1104 - kept-alive and bKeepCacheOnError", function (assert) {
 		var oBinding,
 			oKeptAliveItem,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="listReport" items="{/SalesOrderList}">\
 	<Text id="note" text="{Note}"/>\
@@ -37383,7 +37453,7 @@ sap.ui.define([
 	//
 	// JIRA: CPOUI5ODATAV4-1205
 	QUnit.test("CPOUI5ODATAV4-1205: sap.ui.model.ListBinding#getFilters", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="list" items="{path: \'/SalesOrderList\',\
 		filters : {path : \'GrossAmount\', operator : \'LE\', value1 : 125}}">\
@@ -37556,7 +37626,7 @@ sap.ui.define([
 	// Scenario: A collection-valued structural property in the initial data of a created entity.
 	// BCP: 2170084493
 	QUnit.test("BCP: 2170084493", function (assert) {
-		var oModel = createSalesOrdersModel({updateGroupId : "doNotSubmit"}),
+		var oModel = this.createSalesOrdersModel({updateGroupId : "doNotSubmit"}),
 			sView = '<Text id="code" text="{Messages/0/code}"/>',
 			that = this;
 
@@ -37698,7 +37768,7 @@ sap.ui.define([
 [false, true].forEach(function (bNull) {
 	QUnit.test("_checkDataStateMessages, bNull=" + bNull, function (assert) {
 		var oInput,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '<Input id="age" value="{AGE}"/>',
 			that = this;
 
@@ -37769,7 +37839,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var sEntityContainer = "/com.sap.gateway.default.zui5_epm_sample.v0002.Container",
 			oListBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : bAutoExpandSelect}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : bAutoExpandSelect}),
 			sView = '<Text id="count" text="{/SalesOrderList/$count}"/>',
 			that = this;
 
@@ -37872,7 +37942,7 @@ sap.ui.define([
 	//
 	// JIRA: CPOUI5ODATAV4-1098
 	QUnit.test("ODPaB#changeParameters: object values", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -37949,7 +38019,7 @@ sap.ui.define([
 	//
 	// BCP: 002075129400006474012021
 	QUnit.test("Do not refresh destroyed dependent bindings", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <IconTabBar id="employees" items="{/EMPLOYEES}">\
 	<items>\
@@ -38006,7 +38076,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1206
 	QUnit.test("CPOUI5ODATAV4-1206: $$inheritExpandSelect with $select", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Text id="salesOrderID" text="{SalesOrderID}"/>\
@@ -38094,7 +38164,7 @@ sap.ui.define([
 			oContextA,
 			oContextB,
 			oContextC,
-			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{parameters : {$count : true}, path : \'/TEAMS\'}" threshold="0"\
@@ -38330,7 +38400,7 @@ sap.ui.define([
 			oContextB,
 			oContextC,
 			oContextD,
-			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			oTable,
 			sTeams = bRelative ? "Departments(Sector='EMEA',ID='UI5')/DEPARTMENT_2_TEAMS" : "TEAMS",
 			sView = bRelative ? '\
@@ -38562,7 +38632,7 @@ sap.ui.define([
 			oContextA,
 			oContextB,
 			oContextC,
-			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			// Note: threshold is either 0 or at least visibleRowCount
 			sView = '\
 <t:Table id="table" rows="{/TEAMS}" threshold="0" visibleRowCount="5">\
@@ -38740,7 +38810,7 @@ sap.ui.define([
 			oContextA,
 			oContextB,
 			oContextC,
-			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			oTable,
 			// Note: threshold is either 0 or at least visibleRowCount
 			sView = '\
@@ -39018,7 +39088,7 @@ sap.ui.define([
 	QUnit.test("OLDB#getAllCurrentContexts", function (assert) {
 		var oBinding,
 			oInput,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" threshold="2" visibleRowCount="2">\
@@ -39136,7 +39206,8 @@ sap.ui.define([
 		this.expectRequest("SalesOrderList('1')?$select=*,SalesOrderID", {SalesOrderID : "1"})
 			.expectChange("id", "1");
 
-		return this.createView(assert, sView, createSalesOrdersModel({autoExpandSelect : true}));
+		return this.createView(assert, sView,
+			this.createSalesOrdersModel({autoExpandSelect : true}));
 	});
 	//TODO w/ the following inside the FlexBox, there is a timing issue here with destroyed ODCB
 	// (SOITEM_2_SO) trying to delegate ODPaB#fetchIfChildCanUseCache up...
@@ -39163,7 +39234,8 @@ sap.ui.define([
 			})
 			.expectChange("name", "SAP");
 
-		return this.createView(assert, sView, createSalesOrdersModel({autoExpandSelect : true}));
+		return this.createView(assert, sView,
+			this.createSalesOrdersModel({autoExpandSelect : true}));
 	});
 
 	//*********************************************************************************************
@@ -39188,7 +39260,8 @@ sap.ui.define([
 			})
 			.expectChange("on", true);
 
-		return this.createView(assert, sView, createSalesOrdersModel({autoExpandSelect : true}));
+		return this.createView(assert, sView,
+			this.createSalesOrdersModel({autoExpandSelect : true}));
 	});
 
 	//*********************************************************************************************
@@ -39200,7 +39273,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1431
 	// BCP: 2180384047
 	QUnit.test("CPOUI5ODATAV4-1431: Normalize the message target", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/SalesOrderList(\\\'42\\\')\', \
 		parameters : {$select : \'Messages\'}}">\
@@ -39354,7 +39427,7 @@ sap.ui.define([
 				target : "TEAM_2_EMPLOYEES(ID='1')"
 					+ "/EMPLOYEE_2_EQUIPMENTS(ID='33',Category='Electronics')/Name"
 			}],
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'42\')}">\
 <Text id="id" text="{Team_Id}"/>\
@@ -39393,7 +39466,7 @@ sap.ui.define([
 	QUnit.test("JIRA: CPOUI5ODATAV4-1583, bSkipRefresh=" + bSkipRefresh, function (assert) {
 		var oBinding,
 			oContext,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			fnRespond0,
 			fnRespond1,
 			sView = '\
@@ -39530,7 +39603,7 @@ sap.ui.define([
 	// ODLB#create.
 	// BCP: 2270085667
 	QUnit.test("BCP: 2270085667", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			sView = '\
 <t:Table id="table" rows="{path : \'TEAMS\', parameters : {$$ownRequest : true}}">\
 	<Text id="id" text="{Team_Id}"/>\
@@ -39578,7 +39651,7 @@ sap.ui.define([
 		var oContext,
 			oDetailTable,
 			oDetailBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="mainTable" items="{/SalesOrderList}">\
 	<Text id="salesOrderId" text="{SalesOrderID}"/>\
