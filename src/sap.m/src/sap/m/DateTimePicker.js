@@ -420,7 +420,7 @@ sap.ui.define([
 		this._oValueFormatWithTimezone = null;
 
 		if (this._oTimezonePopup) {
-			this._oTimezonePopup.setTitle(sTimezone);
+			this._oTimezonePopup.setTitle(this._getTranslatedTimezone(true));
 		}
 
 		// the dateValue should be adjusted, and the value re-formatted
@@ -556,7 +556,7 @@ sap.ui.define([
 		var oResourceBundle;
 
 		if (this._oTimezonePopup) {
-			this._oTimezonePopup.setTitle(this._getTimezone(true));
+			this._oTimezonePopup.setTitle(this._getTranslatedTimezone(true));
 			return this._oTimezonePopup;
 		}
 
@@ -706,6 +706,17 @@ sap.ui.define([
 		}
 
 		return this.getTimezone() || (bUseDefaultAsFallback && Core.getConfiguration().getTimezone());
+	};
+
+
+	/**
+	 * Gets the timezone that will be used by the control translated to the cofiguration language.
+	 * @param {boolean} bUseDefaultAsFallback Whether to use the application default as a fallback.
+	 * @returns {string} The translated timezone.
+	 * @private
+	 */
+	DateTimePicker.prototype._getTranslatedTimezone = function(bUseDefaultAsFallback) {
+		return LocaleData.getInstance(Core.getConfiguration().getFormatSettings().getFormatLocale()).getTimezoneTranslations()[this._getTimezone(bUseDefaultAsFallback)];
 	};
 
 	DateTimePicker.prototype._checkStyle = function(sPattern){
