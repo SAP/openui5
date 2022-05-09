@@ -267,6 +267,8 @@ sap.ui.define([
 			// TODO move changesNeedReload near flexState; set flag when saving change that needs a reload
 			oReloadInfo.isDraftAvailable = oReloadInfo.isDraftAvailable || ReloadInfoAPI.hasVersionParameterWithValue({value: Version.Number.Draft}, oReloadInfo.URLParsingService);
 
+			oReloadInfo.hasVersionUrlParameter = !!Utils.getParameter(Version.UrlParameter, oReloadInfo.URLParsingService);
+
 			if (oReloadInfo.activeVersion !== Version.Number.Original) {
 				oReloadInfo.activeVersionNotSelected = oReloadInfo.activeVersion && !ReloadInfoAPI.hasVersionParameterWithValue({value: oReloadInfo.activeVersion}, oReloadInfo.URLParsingService);
 			}
