@@ -795,6 +795,18 @@ sap.ui.define([
 			assert.equal(sTimeStamp, sFormattedTimeStamp, "then timestamp was formatted");
 		});
 
+		QUnit.test("Given the importedAt timestamp of a version should be formatted", function (assert) {
+			// the format function is mocked, because the formatter is dependent on the locale of the test executioner
+			var sFormattedTimeStamp = "Sep 20, 2020, 12:43 PM";
+			var sImportedAtFormattedTimeStamp = "Sep 22, 2020, 12:43 PM";
+			sandbox.stub(DateFormatter, "getInstance").returns({
+				format: sandbox.stub().returns(sFormattedTimeStamp, sImportedAtFormattedTimeStamp)
+			});
+			var sTimeStamp = this.oToolbar.formatVersionTimeStamp(new Date("2020-09-22 12:43:15.17"));
+
+			assert.equal(sTimeStamp, sFormattedTimeStamp, "then timestamp was formatted");
+		});
+
 		QUnit.test("Given no timestamp is given (i.e. 'Draft' or 'Original App'", function (assert) {
 			// the format function is mocked, because the formatter is dependent on the locale of the test executioner
 			var oFormatStub = sandbox.stub();

@@ -168,7 +168,9 @@ sap.ui.define([
 		return sTitle || oTextResources.getText("TIT_VERSION_1");
 	};
 
-	Adaptation.prototype.formatVersionTimeStamp = function (sTimeStamp) {
+	Adaptation.prototype.formatVersionTimeStamp = function (sActivatedAtTimeStamp, sImportedAtTimeStamp) {
+		var sTimeStamp = sImportedAtTimeStamp || sActivatedAtTimeStamp;
+
 		if (!sTimeStamp) {
 			// in case of "Original App" and "Draft" no timestamp is set
 			return "";
