@@ -711,16 +711,15 @@ function(
 			}
 
 			sNodeName = localName(node);
-			if (sNodeName === "View" || sNodeName === "XMLView") {
-				if (node.namespaceURI !== CORE_MVC_NAMESPACE) {
-					// it's not <core:View>, it's <mvc:View> !!!
-					Log.warning("XMLView root node must have the 'sap.ui.core.mvc' namespace, not '" + node.namespaceURI + "'" + (sCurrentName ? " (View name: " + sCurrentName + ")" : ""));
+			if (oView.isA("sap.ui.core.mvc.XMLView")) {
+				if ((sNodeName !== "View" && sNodeName !== "XMLView") || node.namespaceURI !== CORE_MVC_NAMESPACE) {
+					Log.error("XMLView's root node must be 'View' or 'XMLView' and have the namespace 'sap.ui.core.mvc'" + (sCurrentName ? " (View name: " + sCurrentName + ")" : ""));
 				}
 				// createRegularControls
 				pResultChain = pChain.then(function() {
 					return createRegularControls(node, oView.getMetadata().getClass(), pChain, null, { rootArea: true, rootNode: true });
 				});
-			} else if (sNodeName === "FragmentDefinition") {
+			} else {
 				var handleChildren = getHandleChildrenStrategy(bAsync, function(node, childNode, mOptions) {
 					if (childNode.nodeType === 1 /* Element Node*/) {
 						return createControls(childNode, mOptions.chain, null /*closest binding*/, undefined /* aggregation info*/, { rootArea: true });
@@ -733,10 +732,7 @@ function(
 					});
 				});
 
-			} else {
-				throw new Error("The node with name '" + sNodeName + "' and namespace '" + node.namespaceURI + "' can't be defined as root node of XMLView");
 			}
-
 			return bWrapped;
 		}
 
@@ -1114,10 +1110,7 @@ function(
 				// 3. Events
 				bStashedControl = node.getAttribute("stashed") === "true",
 				bRootArea = oConfig && oConfig.rootArea,
-				// the CORE_MVC_NAMESPACE can't be checked together with the node name because there are already views
-				// created with the wrong namespace used for the root node. By checking the 'bRootArea', it's guaranteed
-				// that this is the first UI5 control encountered in the XMLView which is the view itself.
-				bViewRootNode = bRootArea && (localName(node) === "View" || localName(node) === "XMLView"),
+				bViewRootNode = oConfig && oConfig.rootNode,
 				oRequireContext;
 
 			// remove stashed attribute as it is an unknown property.
