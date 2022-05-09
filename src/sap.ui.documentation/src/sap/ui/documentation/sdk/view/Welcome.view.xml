@@ -622,7 +622,7 @@
 					<l:BlockLayoutCell
 							class="sapUiBlockCenteredCell communityLinkCell"
 							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeA">
+							backgroundColorShade="ShadeD">
 						<l:HorizontalLayout>
 							<core:Icon
 									src="sap-icon://collaborate"
@@ -647,7 +647,7 @@
 					<l:BlockLayoutCell
 							class="sapUiBlockCenteredCell communityLinkCell"
 							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeB">
+							backgroundColorShade="ShadeA">
 						<l:HorizontalLayout>
 							<Image
 									src="./resources/sap/ui/documentation/sdk/images/logo_stackoverflow.png"
@@ -695,11 +695,12 @@
 								press="onDisclaimerLinkPress"/>
 						</l:HorizontalLayout>
 					</l:BlockLayoutCell>
-
+				</l:BlockLayoutRow>
+				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
-							class="sapUiBlockCenteredCell communityLinkCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeD">
+						class="sapUiBlockCenteredCell communityLinkCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
 						<l:HorizontalLayout>
 							<Image
 									src="./resources/sap/ui/documentation/sdk/images/logo_twitter.png"
@@ -721,7 +722,30 @@
 								press="onDisclaimerLinkPress"/>
 						</l:HorizontalLayout>
 					</l:BlockLayoutCell>
-
+					<l:BlockLayoutCell
+						class="sapUiBlockCenteredCell communityLinkCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
+						<l:HorizontalLayout>
+							<core:Icon
+									src="sap-icon://email"
+									size="2.5rem"
+									color="Default"/>
+							<custom:TitleLink
+									href="https://listserv.sap.com/mailman/listinfo/ui5.announce"
+									target="_blank"
+									text="{i18n>WELCOME_BLOCK_13_TITLE}"
+									titleStyle="H2"
+									wrap="false"
+									class="sapUiSmallMargin sapUiNoMarginBottom sapUiNoMarginEnd"/>
+							<Image
+								src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+								tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
+								width="1.25rem"
+								class="sapUiDisclaimerCommunityLink"
+								press="onDisclaimerLinkPress"/>
+						</l:HorizontalLayout>
+					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
 		</Panel>
