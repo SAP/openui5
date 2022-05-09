@@ -577,5 +577,44 @@
         ]
       }
     ]
+  },
+  "1.84.24": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "115e381564606be3f596d4b2f375230662573103",
+        "type": "FIX",
+        "text": " sap.ui.core.InvisibleMessage: Span content is now cleared",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180195538"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400002780742022"
+          }
+        ]
+      },
+      {
+        "id": "df9d2c38dd268cdf53eeccd3fb038c357a568fbc",
+        "type": "FIX",
+        "text": " core/m: remove restriction meta tag of disabling user scalability (except iOS)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780061368"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280037152"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270037896"
+          }
+        ]
+      }
+    ]
   }
 }

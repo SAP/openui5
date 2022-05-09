@@ -1294,5 +1294,95 @@
         ]
       }
     ]
+  },
+  "1.84.24": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "94a2eaba123f6727d481dd4cde0cc4e7c3ae459c",
+        "type": "FIX",
+        "text": " Table: binding columns before items with growing=true option",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002362692022"
+          }
+        ]
+      },
+      {
+        "id": "24f07c18e5056735a1d923493d9fac8343ecb3a0",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed visual displacement of closing droppdown menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001188692022"
+          }
+        ]
+      },
+      {
+        "id": "dc822573a7fd726d06cf71fb2c58bc3c0f55dd2c",
+        "type": "FIX",
+        "text": " sap.m Input: Filter items based on additional text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700029491892022"
+          }
+        ]
+      },
+      {
+        "id": "92db00ebd3375ec060edff9765277d8dd6c2453a",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Mesage states header border colors fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270044729"
+          }
+        ]
+      },
+      {
+        "id": "c1a2c004d6b1d825db0b9e8bd918fcf9b7d694b6",
+        "type": "FIX",
+        "text": " sap.m.FeedInput : Console errors on usage of invalid html tags",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170295055"
+          }
+        ]
+      },
+      {
+        "id": "df9d2c38dd268cdf53eeccd3fb038c357a568fbc",
+        "type": "FIX",
+        "text": " core/m: remove restriction meta tag of disabling user scalability (except iOS)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780061368"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280037152"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270037896"
+          }
+        ]
+      },
+      {
+        "id": "68b78d1fb9e1747c359e78d757171223dc7d5d8e",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Announcing of hidden button is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170287753"
+          }
+        ]
+      }
+    ]
   }
 }

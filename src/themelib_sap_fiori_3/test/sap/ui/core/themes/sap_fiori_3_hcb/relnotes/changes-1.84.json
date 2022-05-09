@@ -112,5 +112,21 @@
         ]
       }
     ]
+  },
+  "1.84.24": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "92db00ebd3375ec060edff9765277d8dd6c2453a",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Mesage states header border colors fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270044729"
+          }
+        ]
+      }
+    ]
   }
 }
