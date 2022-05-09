@@ -7438,10 +7438,10 @@ sap.ui.define([
 
 		fnSetValueTestCase1({maxLength : 0, value : "Test", output: "Test"});
 		fnSetValueTestCase1({maxLength: 5, value: "Test", output: "Test"});
-		fnSetValueTestCase1({maxLength: 2, value: "Test", output: "Te"});
+		fnSetValueTestCase1({maxLength: 2, value: "Test", output: "Test"});
 	});
 
-	QUnit.test("maxLength: setValue() after the initial rendering should respect getMaxLength", function(assert) {
+	QUnit.test("maxLength: setValue() after the initial rendering should not respect getMaxLength", function(assert) {
 		var fnSetValueTestCase2 = function(mSettings) {
 			// Arrange
 			var oInput = new Input({maxLength: mSettings.maxLength});
@@ -7467,48 +7467,7 @@ sap.ui.define([
 
 		fnSetValueTestCase2({maxLength: 0, input : "Test", output: "Test"});
 		fnSetValueTestCase2({maxLength: 5, input: "Test", output: "Test"});
-		fnSetValueTestCase2({maxLength: 2, input: "Test", output: "Te"});
-	});
-
-	QUnit.test("maxLength: setMaxLength vs setValue priorities", function (assert) {
-		// Arrange
-		var oInput = new Input({});
-
-		oInput.placeAt("content");
-		oCore.applyChanges();
-
-		// Act
-		oInput.setMaxLength(5);
-		oInput.setValue("12345678");
-		oCore.applyChanges();
-
-		// Assert
-		assert.strictEqual(oInput.getValue(), "12345", "Value should be cut to 5 sybmols");
-
-		// Act
-		oInput.setValue("12345678");
-		oInput.setMaxLength(10);
-		oCore.applyChanges();
-
-		// Assert
-		assert.strictEqual(oInput.getValue(), "12345", "Value is not updated properly, because maxLength was set after the value and it was cut with the previous maxLength value");
-
-		// Act
-		oInput.setValue("12345678");
-		oCore.applyChanges();
-
-		// Assert
-		assert.strictEqual(oInput.getValue(), "12345678", "Now value is updated properly");
-
-		// Act
-		oInput.setMaxLength(0);
-		oCore.applyChanges();
-
-		// Assert
-		assert.strictEqual(oInput.getValue(), "12345678", "maxLength is ignored when its value is 0");
-
-		// Cleanup
-		oInput.destroy();
+		fnSetValueTestCase2({maxLength: 2, input: "Test", output: "Test"});
 	});
 
 	QUnit.test("Mobile: Dialog's input should propagate the correct typed value for the valueHelpRequest event", function (assert) {
