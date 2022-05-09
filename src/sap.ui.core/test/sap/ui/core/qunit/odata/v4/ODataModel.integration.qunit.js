@@ -27133,7 +27133,7 @@ sap.ui.define([
 						technical : true,
 						type : "Error"
 					}]);
-				that.oLogMock.expects("error").twice(); // don't care about console here
+				that.oLogMock.expects("error"); // don't care about console here
 
 				oRoomIdBinding.setValue("23");
 				fnReject(oError);
@@ -27220,7 +27220,7 @@ sap.ui.define([
 						technical : true,
 						type : "Error"
 					}]);
-				that.oLogMock.expects("error").twice(); // don't care about console here
+				that.oLogMock.expects("error"); // don't care about console here
 
 				fnReject(createErrorInsideBatch());
 			}
@@ -39643,6 +39643,191 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oContext.oBinding, undefined);
 			assert.deepEqual(oDetailBinding.getCurrentContexts(), []);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Multiple properties of two entities are changed, but no PATCH is sent. After
+	// changing different properties several times, the PATCHES are sent and responded with an
+	// error. Afterwards all changes are reverted via ODM#resetChanges. The initial values of the
+	// properties are displayed.
+	// JIRA: CPOUI5ODATAV4-1603
+	// BCP: 2270079668
+	QUnit.test("BCP: 2270079668 - #resetChanges after failed PATCH", function (assert) {
+	var oBinding,
+		oContext,
+		oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		iPatchCompletedCount = 0,
+		aPatchPromises = [],
+		fnPatchSent = sinon.spy(),
+		sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Input id="grossAmount" value="{GrossAmount}"/>\
+	<Input id="note" value="{Note}"/>\
+	<Input id="city" value="{SO_2_BP/Address/City}"/>\
+	<Input id="postalCode" value="{SO_2_BP/Address/PostalCode}"/>\
+</FlexBox>',
+		that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=GrossAmount,Note,SalesOrderID"
+				+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID)", {
+				GrossAmount : "100",
+				Note : "Foo",
+				SalesOrderID : "1",
+				SO_2_BP : {
+					Address : {
+						City : "Walldorf",
+						PostalCode : "42"
+					},
+					BusinessPartnerID : "23"
+				}
+			})
+			.expectChange("grossAmount", "100.00")
+			.expectChange("note", "Foo")
+			.expectChange("city", "Walldorf")
+			.expectChange("postalCode", "42");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oContext = that.oView.byId("form").getBindingContext();
+			oBinding = oContext.getBinding();
+
+			oBinding.attachPatchSent(fnPatchSent);
+			oBinding.attachPatchCompleted(function (oEvent) {
+				// the event is modified later, so we have to check immediately
+				assert.strictEqual(oEvent.getParameter("success"), false);
+				iPatchCompletedCount += 1;
+			});
+
+			that.expectChange("grossAmount", "200.00")
+				.expectChange("note", "Bar")
+				.expectChange("city", "Qo'noS")
+				.expectChange("postalCode", "23");
+
+			aPatchPromises.push(
+				oContext.setProperty("GrossAmount", "200", "update", true));
+			aPatchPromises.push(
+				oContext.setProperty("Note", "Bar", "update", true));
+			aPatchPromises.push(
+				oContext.setProperty("SO_2_BP/Address/City", "Qo'noS", "update", true));
+			// make sure that the old data of a complex property is merged correctly
+			aPatchPromises.push(
+				oContext.setProperty("SO_2_BP/Address/PostalCode", "23", "update", true));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("grossAmount", "300.00")
+				.expectChange("note", "Baz")
+				.expectChange("city", "Tellar");
+
+			aPatchPromises.push(
+				oContext.setProperty("GrossAmount", "300", "update", true));
+			aPatchPromises.push(
+				oContext.setProperty("Note", "Baz", "update", true));
+			aPatchPromises.push(
+				oContext.setProperty("SO_2_BP/Address/City", "Tellar", "update", true));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("grossAmount", "400.00")
+				.expectChange("note", "RAISE_ERROR")
+				.expectChange("city", "Trill");
+
+			aPatchPromises.push(
+				oContext.setProperty("GrossAmount", "400", "update", true));
+			aPatchPromises.push(
+				oContext.setProperty("Note", "RAISE_ERROR", "update", true));
+			aPatchPromises.push(
+				oContext.setProperty("SO_2_BP/Address/City", "Trill", "update", true));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.oLogMock.expects("error")
+				.withArgs("Failed to update path /SalesOrderList('1')/GrossAmount");
+			that.oLogMock.expects("error")
+				.withArgs("Failed to update path /SalesOrderList('1')/SO_2_BP/Address/City");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('1')",
+					payload : {
+						GrossAmount : "400",
+						Note : "RAISE_ERROR"
+					}
+				}, createErrorInsideBatch())
+				.expectRequest({
+					method : "PATCH",
+					url : "BusinessPartnerList('23')",
+					payload : {
+						Address : {
+							City : "Trill",
+							PostalCode : "23"
+						}
+					}
+				}) // no response required since the 1st PATCH fails
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/GrossAmount",
+					"Request canceled: PATCH SalesOrderList('1'); group: update")
+				.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/Note",
+					"Request canceled: PATCH SalesOrderList('1'); group: update")
+				.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/GrossAmount",
+					"Request canceled: PATCH SalesOrderList('1'); group: update")
+				.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/Note",
+					"Request canceled: PATCH SalesOrderList('1'); group: update")
+				.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/GrossAmount",
+					"Request canceled: PATCH SalesOrderList('1'); group: update")
+				.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/Note",
+					"Request canceled: PATCH SalesOrderList('1'); group: update")
+				.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/SO_2_BP/Address/City",
+					"Request canceled: PATCH BusinessPartnerList('23'); group: update")
+				.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/SO_2_BP/Address/PostalCode",
+					"Request canceled: PATCH BusinessPartnerList('23'); group: update")
+				.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/SO_2_BP/Address/City",
+					"Request canceled: PATCH BusinessPartnerList('23'); group: update")
+				.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/SO_2_BP/Address/City",
+					"Request canceled: PATCH BusinessPartnerList('23'); group: update")
+				.expectChange("grossAmount", "100.00")
+				.expectChange("note", "Foo")
+				.expectChange("city", "Walldorf")
+				.expectChange("postalCode", "42");
+
+			// code under test
+			oModel.resetChanges("update");
+
+			return Promise.all(
+				aPatchPromises.map(checkCanceled.bind(null, assert))
+					.concat([that.waitForChanges(assert)])
+			);
+		}).then(function () {
+			assert.strictEqual(oContext.getValue("Note"), "Foo");
+			assert.strictEqual(oContext.getValue("GrossAmount"), "100");
+			assert.strictEqual(oContext.getValue("SO_2_BP/Address/City"), "Walldorf");
+			assert.strictEqual(oContext.getValue("SO_2_BP/Address/PostalCode"), "42");
+			assert.strictEqual(oContext.hasPendingChanges(), false);
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+			sinon.assert.calledOnce(fnPatchSent);
+			assert.strictEqual(iPatchCompletedCount, 1);
 		});
 	});
 });

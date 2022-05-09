@@ -111,6 +111,7 @@ sap.ui.define([
 		// they are always "newer"
 		this.iInactiveSince = Infinity;
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
+		this.mEditUrl2PatchPromise = {}; // map from edit URL to a PATCH promise for retry
 		// a promise with attached properties $count, $resolve existing while DELETEs or POSTs are
 		// being sent
 		this.oPendingRequestsPromise = null;
@@ -1708,10 +1709,11 @@ sap.ui.define([
 		return oPromise.then(function (oEntity) {
 			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
 				sGroupId = oGroupLock.getGroupId(),
-				vOldValue,
+				oOldData,
 				oPatchPromise,
 				oPostBody,
 				sParkedGroup,
+				bSkip,
 				sTransientGroup,
 				sUnitOrCurrencyValue,
 				oUpdateData = _Cache.makeUpdateData(aPropertyPath, vValue);
@@ -1723,8 +1725,29 @@ sap.ui.define([
 			function onCancel() {
 				_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				// write the previous value into the cache
-				_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity,
-					_Cache.makeUpdateData(aPropertyPath, vOldValue));
+				_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity, oOldData);
+			}
+
+			/*
+			 * Callback to merge the entity's old data into its one remaining PATCH. If
+			 * no old data from another PATCH is supplied, the PATCH is skipped and returns its
+			 * old data. Otherwise the given old data from the skipped patch is merged into the
+			 * surviving PATCH's own old data.
+			 *
+			 * @param {object} [oOtherOldData]
+	 		 *   Either another PATCH's old data which is to be merged into this one or
+			 *   <code>undefined</code> if this PATCH is the skipped one and has to return its own
+			 *   old data.
+			 * @returns {object}
+			 *   This PATCH's old data which is to be merged into another one or
+			 *   <code>undefined</code> if this is the surviving PATCH.
+			 */
+			function mergePatchRequests(oOtherOldData) {
+				if (arguments.length === 0) {
+					bSkip = true;
+					return oOldData; // my PATCH was merged
+				}
+				_Helper.updateNonExisting(oOldData, oOtherOldData);
 			}
 
 			function patch(oPatchGroupLock, bAtFront) {
@@ -1747,7 +1770,8 @@ sap.ui.define([
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
 					mHeaders, oUpdateData, onSubmit, onCancel, /*sMetaPath*/undefined,
 					_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath),
-					bAtFront);
+					bAtFront, /*mQueryOptions*/ undefined, /*vOwner*/ undefined,
+					mergePatchRequests);
 				oPatchPromise.$isKeepAlive = fnIsKeepAlive;
 				_Helper.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
@@ -1757,6 +1781,10 @@ sap.ui.define([
 					var oPatchResult = aResult[0];
 
 					_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+					if (bSkip) {
+						// if a PATCH is skipped, because it is merged into another, nothing to do!
+						return;
+					}
 					if (!bPatchWithoutSideEffects) {
 						// visit response to report the messages
 						that.visitResponse(oPatchResult, aResult[1],
@@ -1780,6 +1808,14 @@ sap.ui.define([
 					if (oError.canceled) {
 						throw oError;
 					}
+					oRequestLock.unlock();
+					oRequestLock = undefined;
+
+					if (bSkip) {
+						// Note: this PATCH is already merged into another
+						// --> return the corresponding PATCH promise
+						return that.mEditUrl2PatchPromise[sEditUrl];
+					}
 
 					// Note: We arrive here only for the PATCH which was really sent to the server.
 					// The other ones which have been merged are still pending on this one!
@@ -1799,14 +1835,16 @@ sap.ui.define([
 						default:
 							throw oError; // no retry, just give up
 					}
-					oRequestLock.unlock();
-					oRequestLock = undefined;
 
-					return patch(that.oRequestor.lockGroup(sRetryGroupId, that, true, true), true);
+					that.mEditUrl2PatchPromise[sEditUrl]
+						= patch(that.oRequestor.lockGroup(sRetryGroupId, that, true, true), true);
+
+					return that.mEditUrl2PatchPromise[sEditUrl];
 				}).finally(function () {
 					if (oRequestLock) {
 						oRequestLock.unlock();
 					}
+					delete that.mEditUrl2PatchPromise[sEditUrl];
 				});
 			}
 
@@ -1830,7 +1868,9 @@ sap.ui.define([
 				}
 			}
 			// remember the old value
-			vOldValue = _Helper.drillDown(oEntity, aPropertyPath);
+			oOldData
+				= _Cache.makeUpdateData(aPropertyPath, _Helper.drillDown(oEntity, aPropertyPath));
+
 			oPostBody = _Helper.getPrivateAnnotation(oEntity, "postBody");
 			if (oPostBody) {
 				// change listeners are informed later
