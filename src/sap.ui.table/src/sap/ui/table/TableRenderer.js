@@ -481,6 +481,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './library', "./Column", 
 			}
 		}
 
+		if (TableUtils.hasRowHeader(oTable) && oTable._getSelectionPlugin()._getSelectionMode() === library.SelectionMode.None) {
+			rm.openStart("span", oTable.getId() + "-rowselecthdr");
+			rm.class("sapUiPseudoInvisibleText");
+			rm.openEnd();
+			rm.text(TableUtils.getResourceText("TBL_ROW_SELECTION_COLUMN_LABEL"));
+			rm.close("span");
+		}
+
 		rm.close("div");
 	};
 
