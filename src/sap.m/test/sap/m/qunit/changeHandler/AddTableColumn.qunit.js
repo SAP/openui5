@@ -92,6 +92,9 @@ sap.ui.define([
 			appComponent: {
 				createId: function (sControlId) {
 					return sControlId;
+				},
+				getLocalId: function (sControlId) {
+					return sControlId;
 				}
 			},
 			view: this.oXmlView
