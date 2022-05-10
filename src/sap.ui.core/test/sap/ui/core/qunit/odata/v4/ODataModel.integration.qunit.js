@@ -29194,7 +29194,7 @@ sap.ui.define([
 	QUnit.test("CPOUI5ODATAV4-1511: ODLB, kept=" + bKeepAlive, function (assert) {
 		var oContext,
 			oListBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			fnOnDelete = sinon.spy(),
 			oTable,
 			sView = '\
@@ -29313,7 +29313,7 @@ sap.ui.define([
 	// this entity.
 	// JIRA: CPOUI5ODATAV4-1511
 	QUnit.test("CPOUI5ODATAV4-1511: ODCB, bound context", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{\
 		path : \'/Artists(ArtistID=\\\'1\\\',IsActiveEntity=true)/BestFriend\',\
@@ -29363,7 +29363,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1511
 	QUnit.test("CPOUI5ODATAV4-1511: ODCB, return value context", function (assert) {
 		var oForm,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form">\
 	<Text id="id" text="{ArtistID}"/>\
