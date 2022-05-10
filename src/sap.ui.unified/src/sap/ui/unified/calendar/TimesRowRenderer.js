@@ -149,12 +149,12 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/format/Time
 	 * @returns {Object} <code>oNewDate</code> aligned to the configured timezone.
 	 * @private
 	 */
-	TimesRowRenderer._convertToTimezone = function(оDate) {
+	TimesRowRenderer._convertToTimezone = function(oDate) {
 		var sTimezone = Core.getConfiguration().getTimezone();
-		var oNewDate = CalendarUtils._createUniversalUTCDate(оDate, undefined, true);
+		var oNewDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
 
-		oNewDate = new Date(оDate.getUTCFullYear(), оDate.getUTCMonth(), оDate.getUTCDate(), оDate.getUTCHours(), оDate.getUTCMinutes(), оDate.getUTCSeconds());
-		oNewDate.setUTCFullYear(оDate.getUTCFullYear());
+		oNewDate = new Date(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds());
+		oNewDate.setUTCFullYear(oDate.getUTCFullYear());
 		oNewDate = TimezoneUtil.convertToTimezone(oNewDate, sTimezone);
 
 		return oNewDate;
