@@ -52,6 +52,9 @@
 				sPath = "/" + sPath;
 			}
 			return sPath;
+		},
+		isInternal: function (oVersionInfo) {
+			return (/internal/i.test(oVersionInfo.name) || (self['sap-ui-documentation-config'] && self['sap-ui-documentation-config'].visibility === "internal")) || false;
 		}
 	};
 
