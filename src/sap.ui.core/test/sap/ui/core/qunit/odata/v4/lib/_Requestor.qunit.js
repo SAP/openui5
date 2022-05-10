@@ -3658,19 +3658,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchTypeForPath, bAsName=true", function (assert) {
-		var oPromise = {},
-			oRequestor = _Requestor.create("/", oModelInterface);
-
-		this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
-			.withExactArgs("/EMPLOYEES/EMPLOYEE_2_TEAM/$Type").returns(oPromise);
-
-		// code under test
-		assert.strictEqual(oRequestor.fetchTypeForPath("/EMPLOYEES/EMPLOYEE_2_TEAM", true),
-			oPromise);
-	});
-
-	//*********************************************************************************************
 	[{
 		iCallCount : 1,
 		mHeaders : {"OData-Version" : "4.0"}

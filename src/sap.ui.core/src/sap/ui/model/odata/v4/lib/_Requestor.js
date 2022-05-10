@@ -858,17 +858,13 @@ sap.ui.define([
 	 *
 	 * @param {string} sMetaPath
 	 *   The meta path, e.g. "/SalesOrderList/SO_2_BP"
-	 * @param {boolean} [bAsName]
-	 *   If <code>true</code>, the name of the type is delivered instead of the type itself. This
-	 *   must be used when asking for a property type to avoid that the function logs an error
-	 *   because there are no objects for primitive types like "Edm.Stream".
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise that is resolved with the type at the given path or its name.
+	 *   A promise that is resolved with the type at the given path.
 	 *
 	 * @private
 	 */
-	_Requestor.prototype.fetchTypeForPath = function (sMetaPath, bAsName) {
-		return this.oModelInterface.fetchMetadata(sMetaPath + (bAsName ? "/$Type" : "/"));
+	_Requestor.prototype.fetchTypeForPath = function (sMetaPath) {
+		return this.oModelInterface.fetchMetadata(sMetaPath + "/");
 	};
 
 	/**
