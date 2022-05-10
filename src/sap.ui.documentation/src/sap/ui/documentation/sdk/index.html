@@ -15,7 +15,10 @@
 				sOrigin = getUrlParam('sap-ui-xx-sample-origin'),
 				sPresetTheme = getUrlParam('sap-ui-theme') || 'sap_fiori_3',
 				sPresetRTL = getUrlParam('sap-ui-rtl') || false,
-				oPath = {};
+				oPath = {},
+				sOriginEncoded,
+				oBaseTag,
+				oScriptTag;
 
 		if (sOrigin === "" || sOrigin === ".") {
 			var sHref = document.location.href;
@@ -24,12 +27,26 @@
 			sOrigin = new URL(sOrigin, document.baseURI).pathname;
 		}
 
-		oPath["sap/ui/demo/mock"] = encodeURI(sOrigin) + "/test-resources/sap/ui/documentation/sdk";
+		sOriginEncoded = encodeURI(sOrigin);
+
+		oPath["sap/ui/demo/mock"] = sOriginEncoded + "/test-resources/sap/ui/documentation/sdk";
 		oPath["test-resources/sap/ui/documentation/sdk"] = ".";
 
-		document.write("<script src=" + encodeURI(sOrigin)  + '/resources/sap-ui-core.js' + " id='sap-ui-bootstrap' " +
-				"data-sap-ui-libs='sap.m' data-sap-ui-bindingSyntax='complex' data-sap-ui-rtl=" + encodeURI(sPresetRTL) + " data-sap-ui-theme=" + encodeURI(sPresetTheme) + " data-sap-ui-compatVersion='edge' data-sap-ui-resourceroots=" + JSON.stringify(oPath) + "></scr" + "ipt>");
-		document.write("<base href=" + encodeURI(sOrigin) + "/>");
+		oBaseTag = document.createElement("base");
+		oBaseTag.setAttribute("href", sOriginEncoded + "/");
+		document.head.appendChild(oBaseTag);
+
+		oScriptTag = document.createElement("script");
+		oScriptTag.setAttribute("src", sOriginEncoded + "/resources/sap-ui-core.js");
+		oScriptTag.setAttribute("id", "sap-ui-bootstrap");
+		oScriptTag.setAttribute("data-sap-ui-compatVersion", "edge");
+		oScriptTag.dataset.sapUiAsync = true;
+		oScriptTag.dataset.sapUiLibs = "sap.m";
+		oScriptTag.dataset.sapUiRtl = sPresetRTL;
+		oScriptTag.dataset.sapUiResourceroots = JSON.stringify(oPath);
+		oScriptTag.dataset.sapUiTheme = sPresetTheme;
+
+		document.write(oScriptTag.outerHTML);
 	</script>
 </head>
 <body class="sapUiBody sapUiSizeCompact" id="content">
