@@ -262,8 +262,8 @@ sap.ui.define([
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				var aVersions = oResponse.getProperty("/versions");
 				assert.deepEqual(aVersions, aReturnedVersions, "then the versions list is returned");
-				assert.deepEqual(aVersions[0].type, "active", "the first version on the list is the 'active' one");
-				assert.deepEqual(aVersions[1].type, "inactive", "the second version on the list  is the 'inactive' one");
+				assert.deepEqual(aVersions[0].type, Version.Type.Active, "the first version on the list is the 'active' one");
+				assert.deepEqual(aVersions[1].type, Version.Type.Inactive, "the second version on the list  is the 'inactive' one");
 				assert.equal(oResponse.getProperty("/activeVersion"), sActiveVersion, "and the active version was determined correct");
 				assert.equal(oResponse.getProperty("/publishVersionEnabled"), true, "and the publish button is enabled");
 			});
@@ -357,9 +357,9 @@ sap.ui.define([
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
 				var aVersions = oResponse.getProperty("/versions");
 				assert.deepEqual(aVersions, aReturnedVersions, "then the versions list is returned");
-				assert.deepEqual(aVersions[0].type, "draft", "the first version is the 'draft' one");
-				assert.deepEqual(aVersions[1].type, "active", "the second version is the 'active' one");
-				assert.deepEqual(aVersions[2].type, "inactive", "the third version is the 'inactive' one");
+				assert.deepEqual(aVersions[0].type, Version.Type.Draft, "the first version is the 'draft' one");
+				assert.deepEqual(aVersions[1].type, Version.Type.Active, "the second version is the 'active' one");
+				assert.deepEqual(aVersions[2].type, Version.Type.Inactive, "the third version is the 'inactive' one");
 				assert.equal(oResponse.getProperty("/displayedVersion"), Version.Number.Draft, ", a displayedVersion property set to the draft version");
 				assert.equal(oResponse.getProperty("/activeVersion"), sActiveVersion, "and the active version was determined correct");
 				assert.equal(oResponse.getProperty("/publishVersionEnabled"), false, "and the publish button is not enabled due to current display Draft");
@@ -439,7 +439,7 @@ sap.ui.define([
 				activatedAt: "just now",
 				version: sActiveVersion,
 				isPublished: false,
-				type: "active"
+				type: Version.Type.Active
 			};
 
 			return Versions.initialize(mPropertyBag)
@@ -572,7 +572,7 @@ sap.ui.define([
 
 			var oDraft = {
 				version: Version.Number.Draft,
-				type: "draft",
+				type: Version.Type.Draft,
 				filenames: [],
 				isPublished: false
 			};
@@ -654,7 +654,7 @@ sap.ui.define([
 
 			var oDraft = {
 				version: Version.Number.Draft,
-				type: "draft",
+				type: Version.Type.Draft,
 				filenames: [],
 				isPublished: false
 			};

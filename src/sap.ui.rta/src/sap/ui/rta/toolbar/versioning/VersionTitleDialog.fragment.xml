@@ -2,11 +2,12 @@
         xmlns="sap.m"
         xmlns:core="sap.ui.core" >
     <Dialog
+            id="dialog"
             title="{i18n>TIT_VERSION_TITLE_DIALOG}"
             type="Message" >
         <content>
             <Input
-                    id="sapUiRta_versionTitleInput"
+                    id="versionTitleInput"
                     type="Text"
                     maxLength="200"
                     liveChange=".onVersionTitleLiveChange"
@@ -15,7 +16,7 @@
         </content>
         <beginButton>
             <Button
-                id="sapUiRta_confirmVersionTitleButton"
+                id="confirmVersionTitleButton"
                 text="{i18n>BUT_VERSION_TITLE_DIALOG_CONFIRM}"
                 type="Emphasized"
                 enabled="false"

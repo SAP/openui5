@@ -62,7 +62,7 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				toolbar: {
-					type: "sap.ui.rta.toolbar.Base"
+					type: "any" // "sap.ui.rta.toolbar.Base"
 				}
 			}
 		},

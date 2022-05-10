@@ -109,27 +109,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds an extension to the toolbar, if it is not already registered.
+	 * Adds and returns an extension to the toolbar, if it is not already registered.
 	 * The new extension gets created with the toolbar itself as property 'toolbar'.
 	 *
 	 * @param {string} sName - Name of the extension
 	 * @param {sap.ui.base.ManagedObject} Extension - Extension Class to be instantiated
-	 * @returns {sap.ui.base.ManagedObject} Returns the newly created module.
+	 * @returns {sap.ui.base.ManagedObject|undefined} Returns the extension or undefined if it does not exist
 	 */
-	Base.prototype.addExtension = function(sName, Extension) {
+	Base.prototype.getExtension = function(sName, Extension) {
 		if (!Object.keys(this._oExtensions).includes(sName)) {
 			this._oExtensions[sName] = new Extension({toolbar: this});
 		}
-		return this._oExtensions[sName];
-	};
-
-	/**
-	 * Returns the extension with the passed name
-	 *
-	 * @param {string} sName - Name of the extension
-	 * @returns {sap.ui.base.ManagedObject|undefined} Returns the extension or undefined if it does not exist
-	 */
-	Base.prototype.getExtension = function(sName) {
 		return this._oExtensions[sName];
 	};
 

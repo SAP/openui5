@@ -488,7 +488,7 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "_setVersionsModel").callsFake(function(oModel) {
 				oModel.setProperty("/versions", [{
 					version: Version.Number.Draft,
-					type: "draft"
+					type: Version.Type.Draft
 				}]);
 				oModel.setProperty("/backendDraft", true);
 				oModel.setProperty("/versioningEnabled", true);
