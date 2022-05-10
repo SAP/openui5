@@ -172,7 +172,7 @@ function (
 		var oAvatar = this.oAvatarGroupItem._getAvatar();
 
 		// Assert
-		assert.ok(oAvatar.isA("sap.f.Avatar"), "Avatar instance is created");
+		assert.ok(oAvatar.isA("sap.m.Avatar"), "Avatar instance is created");
 		assert.strictEqual(oAvatar.getShowBorder(), true, "showBorder of Avatar is true");
 	});
 

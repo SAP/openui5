@@ -488,8 +488,8 @@ sap.ui.define([
 	/**
 	 * Returns the net width of each <code>Avatar</code>
 	 *
-	 * @param {int} iAvatarWidth - the width of the <code>sap.f.Avatar</code>
-	 * @param {int} iAvatarMargin - the margin of the <code>sap.f.Avatar</code>
+	 * @param {int} iAvatarWidth - the width of the <code>sap.m.Avatar</code>
+	 * @param {int} iAvatarMargin - the margin of the <code>sap.m.Avatar</code>
 	 * @returns {int} The net width of each <code>Avatar</code>
 	 * @private
 	 */
@@ -507,8 +507,8 @@ sap.ui.define([
 	 * Returns the number of <code>Avatars</code> to be shown
 	 *
 	 * @param {int} iWidth - the width of the <code>sap.f.AvatarGroup</code>
-	 * @param {int} iAvatarWidth - the width full of the <code>sap.f.Avatar</code>
-	 * @param {int} iAvatarNetWidth - the net width of the <code>sap.f.Avatar</code>
+	 * @param {int} iAvatarWidth - the width full of the <code>sap.m.Avatar</code>
+	 * @param {int} iAvatarNetWidth - the net width of the <code>sap.m.Avatar</code>
 	 * @returns {int} The <code>Avatars</code> to be shown
 	 * @private
 	 */

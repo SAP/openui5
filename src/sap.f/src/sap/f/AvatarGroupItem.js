@@ -7,7 +7,7 @@ sap.ui.define([
 	"./library",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Control",
-	"./Avatar",
+	"sap/m/Avatar",
 	"./AvatarGroupItemRenderer"
 ], function(library, ManagedObject, Control, Avatar, AvatarGroupItemRenderer) {
 	"use strict";
@@ -184,7 +184,7 @@ sap.ui.define([
 	/**
 	 * Returns the <code>Avatar</code>
 	 *
-	 * @returns {sap.f.Avatar} The <code>Avatar</code> instance
+	 * @returns {sap.m.Avatar} The <code>Avatar</code> instance
 	 * @private
 	 */
 	AvatarGroupItem.prototype._getAvatar = function () {
