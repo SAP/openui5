@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/strings/hash",
 	"sap/base/util/merge",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/base/util/values",
 	"sap/base/util/restricted/_uniq"
 ], function(
+	hash,
 	merge,
 	sinon,
 	ObjectStorageConnector,
@@ -27,6 +29,7 @@ sap.ui.define([
 
 	var oTestData = {
 		oChange1: {
+			creation: "2021-05-04T12:57:32.229Z",
 			fileName: "oChange1",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
@@ -37,6 +40,7 @@ sap.ui.define([
 			changeType: "type1"
 		},
 		oChange2: {
+			creation: "2021-05-06T12:57:32.229Z",
 			fileName: "oChange2",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
@@ -57,6 +61,7 @@ sap.ui.define([
 			changeType: "type1"
 		},
 		oChange4: {
+			creation: "2021-05-05T12:57:32.229Z",
 			fileName: "oChange4",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
@@ -136,10 +141,16 @@ sap.ui.define([
 		}, function() {
 			QUnit.test("when write is called with various changes", function(assert) {
 				return saveListWithConnector(oConnector, values(oTestData))
-					.then(function () {
+					.then(function() {
 						return Promise.all([assertFileWritten(assert, oConnector.storage, oTestData, " was written")]);
 					})
-					.then(function () {
+					.then(function() {
+						return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
+					})
+					.then(function(aFlexData) {
+						assert.strictEqual(aFlexData[0].changes.length, 3, "three changes are returned");
+						assert.strictEqual(aFlexData[0].cacheKey, hash("162013305222916202194522291620305852229"), "the cacheKey got calculated correctly");
+
 						// clean up
 						return removeListFromStorage(oConnector.storage, values(oTestData));
 					});
@@ -432,11 +443,10 @@ sap.ui.define([
 	});
 
 	parameterizedTest(JsObjectConnector, "JsObjectStorage");
+	// LocalStorage behaves similar to Session storage and we rely on this to not run into issues with parallel tests interfering in the LocalStorageTests
 	parameterizedTest(SessionStorageWriteConnector, "sessionStorage", true);
 	// WebIDE uses the ObjectStorageConnector with an async storage
 	parameterizedTest(oConnectorWithAsyncStorage, "asyncStorage");
-	// LocalStorage behaves similar to Session storage and we rely on this to not run into issues with parallel tests interfering in the LocalStorageTests
-	// parameterizedTest(LocalStorageWriteConnector, "localStorage");
 
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
