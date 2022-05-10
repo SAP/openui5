@@ -326,7 +326,7 @@ sap.ui.define(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
 					// act - get all 3 entries, after 50 ms get one of them, filter and delete them
 					// based on usage time, verify correct delete
 					Promise.all([ pSet1, pSet2, pSet3 ]).then(function() {
-						return Promise.all([ oCache.get("a1"), oCache.get("b3"), oCache.get("a2") ]);
+						return Promise.all([ oCache.get("b3"), oCache.get("a2") ]);
 					}).then(function() {
 						var oFilterDate = new Date();
 						setTimeout(function() {
