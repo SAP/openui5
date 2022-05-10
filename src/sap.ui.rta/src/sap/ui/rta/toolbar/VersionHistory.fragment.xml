@@ -13,7 +13,7 @@
             <FeedListItem
                 text="{parts: [{path: 'versions>title'}, {path: 'versions>type'}], formatter: '.formatVersionTitle'}"
                 info="{versions>activatedBy}"
-                timestamp="{path: 'versions>activatedAt', formatter: '.formatVersionTimeStamp'}"
+                timestamp="{parts: ['versions>activatedAt', 'versions>importedAt'], formatter: '.formatVersionTimeStamp'}"
                 type="Active"
                 press=".versionSelected"
                 highlight="{path: 'versions>type', formatter: '.formatHighlight'}"
