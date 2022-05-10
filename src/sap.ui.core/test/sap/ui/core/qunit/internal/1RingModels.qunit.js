@@ -46,6 +46,7 @@ sap.ui.require([
 		//TODO: get test running in 1RingModels.qunit; test has to be refactored
 		// "sap/ui/core/qunit/MasterDetail.qunit",
 		"sap/ui/core/qunit/StaticBinding.qunit",
+		"sap/ui/core/qunit/TreeBindingUtils.qunit",
 		"sap/ui/core/qunit/model/_Helper.qunit",
 		"sap/ui/core/qunit/model/Binding.qunit",
 		"sap/ui/core/qunit/model/ClientListBinding.qunit",
@@ -144,6 +145,8 @@ sap.ui.require([
 		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
 		// "sap/ui/core/qunit/odata/ODataSharedMetadata.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
+		// "sap/ui/core/qunit/odata/ODataTreeBinding.qunit",
+		//TODO: get test running in 1RingModels.qunit; it uses MockServer
 		// "sap/ui/core/qunit/odata/ODataTreeBindingAdapter.qunit",
 		"sap/ui/core/qunit/odata/ODataUtils.qunit",
 
@@ -174,6 +177,12 @@ sap.ui.require([
 		// "sap/ui/core/qunit/odata/v2/ODataV2ListBinding_Paging.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataModelFakeService
 		// "sap/ui/core/qunit/odata/v2/ODataV2Model.qunit",
+		//TODO: get test running in 1RingModels.qunit; it uses MockServer
+		// "sap/ui/core/qunit/odata/v2/ODataV2TreeBinding.qunit",
+		//TODO: get test running in 1RingModels.qunit; it uses MockServer
+		// "sap/ui/core/qunit/odata/v2/ODataV2TreeBindingFlat_MockSrv.qunit",
+		//TODO: get test running in 1RingModels.qunit; it uses ODataModelFakeService
+		// "sap/ui/core/qunit/odata/v2/ODataV2TreeBindingFlat_FakeSrv.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
 		// "sap/ui/core/qunit/odata/v2/PendingChanges.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
