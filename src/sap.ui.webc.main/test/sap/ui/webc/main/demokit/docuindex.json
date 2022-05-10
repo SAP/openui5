@@ -162,6 +162,7 @@
 				"samples": [
 					"sap.ui.webc.main.sample.ListBasic",
 					"sap.ui.webc.main.sample.ListBusy",
+					"sap.ui.webc.main.sample.ListCustomListItem",
 					"sap.ui.webc.main.sample.ListModes",
 					"sap.ui.webc.main.sample.ListNoDataText",
 					"sap.ui.webc.main.sample.ListSeparationTypes"
@@ -458,6 +459,11 @@
 				"id": "sap.ui.webc.main.sample.ListBusy",
 				"name": "List 'busy' Property",
 				"description": "Demonstrates the 'busy' property of List"
+			},
+			{
+				"id": "sap.ui.webc.main.sample.ListCustomListItem",
+				"name": "List with CustomListItem",
+				"description": "Demonstrates the CustomListItem as items of List"
 			},
 			{
 				"id": "sap.ui.webc.main.sample.ListModes",
