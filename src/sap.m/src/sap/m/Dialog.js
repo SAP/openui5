@@ -1255,14 +1255,6 @@ function(
 				iMaxHeight = this._percentOfSize(oAreaDimensions.height, 100 - 2 * VERTICAL_MARGIN) - iHeightAsPadding; // 94% of available height minus paddings for headers and footer
 			}
 
-			if (iMaxHeight < parseInt($this.css("min-height"))) {
-				Log.error("Height of Within Area is not enough to fit dialog");
-			}
-
-			if (iMaxWidth < parseInt($this.css("min-width"))) {
-				Log.error("Width of Within Area is not enough to fit dialog");
-			}
-
 			return {
 				maxWidth: Math.floor(iMaxWidth),
 				maxHeight: Math.floor(iMaxHeight)
