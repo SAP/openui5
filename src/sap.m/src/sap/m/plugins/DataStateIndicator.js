@@ -340,9 +340,10 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 	DataStateIndicator.prototype._applyFilter = function() {
 		var fnFilter = this.getFilter();
 		var oControl = this.getControl();
+		var oParent = this.getParent();
 		var oBinding = oControl.getBinding(this._getBindingName());
 		var fnMessageFilter = fnFilter && function(oMessage) {
-			return fnFilter(oMessage, oControl);
+			return fnFilter(oMessage, oParent);
 		};
 
 		oBinding.requestFilterForMessages(fnMessageFilter).then(function(oFilter) {
