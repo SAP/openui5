@@ -430,13 +430,9 @@ sap.ui.define([
 		CardBase.prototype.init.call(this);
 
 		this.setAggregation("_loadingProvider", new LoadingProvider());
-		this.setModel(new JSONModel()); // always create a default model to isolate the card from a propagated default model
-		this.setModel(new JSONModel(), "parameters");
-		this.setModel(new JSONModel(), "filters");
-		this.setModel(new JSONModel(), "paginator");
-		this.setModel(new JSONModel(), "form");
-		// this.setModel(new JSONModel(), "csrfTokens");
-		this.setModel(new ContextModel(), "context");
+
+		this._initModels();
+
 		this._oContentFactory = new ContentFactory(this);
 		this._oCardObserver = new CardObserver(this);
 		this._bFirstRendering = true;
@@ -508,6 +504,32 @@ sap.ui.define([
 			"hide",
 			"getOpener"
 		]);
+	};
+
+	/**
+	 * Initializes the internally used models.
+	 */
+	Card.prototype._initModels = function () {
+		this.setModel(new JSONModel());
+		this.setModel(new JSONModel(), "parameters");
+		this.setModel(new JSONModel(), "filters");
+		this.setModel(new JSONModel(), "paginator");
+		this.setModel(new JSONModel(), "form");
+		this.setModel(new ContextModel(), "context");
+	};
+
+	/**
+	 * @inheritdoc
+	 */
+	Card.prototype.clone = function () {
+		var oClone = CardBase.prototype.clone.apply(this, arguments);
+
+		// Cloning will copy the models rather then clone them.
+		// Therefore we should re-initialize them, so that the used models are not shared between
+		// several cards which are cloned from a single template.
+		oClone._initModels();
+
+		return oClone;
 	};
 
 	/**
