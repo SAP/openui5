@@ -72,13 +72,6 @@ sap.ui.define([
         return oComboBox;
 	};
 
-
-	FilterPanel.prototype._getAvailableItems = function (sKey) {
-        var aItems = QueryPanel.prototype._getAvailableItems.apply(this, arguments);
-        aItems.shift();
-        return aItems;
-	};
-
     FilterPanel.prototype._createRemoveButton = function (bVisible) {
         var oRemoveBtn = QueryPanel.prototype._createRemoveButton.apply(this, arguments);
         oRemoveBtn.setLayoutData(new GridData({
