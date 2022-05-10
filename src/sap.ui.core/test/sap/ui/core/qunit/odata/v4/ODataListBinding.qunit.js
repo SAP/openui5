@@ -8893,7 +8893,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bMatch) {
-	QUnit.test("onDelete: aContexts, match=" + bMatch, function () {
+	QUnit.test("findContextForCanonicalPath: aContexts, match=" + bMatch, function (assert) {
 		var oBinding = this.bindList("/TEAM('1')/TEAM_2_EMPLOYEES"),
 			oContext1 = {
 				fetchCanonicalPath : function () {}
@@ -8912,17 +8912,19 @@ sap.ui.define([
 			.returns(SyncPromise.resolve("/EMPLOYEES('2')"));
 		this.mock(oContext3).expects("fetchCanonicalPath").exactly(bMatch ? 0 : 1).withExactArgs()
 			.returns(SyncPromise.resolve("/EMPLOYEES('3')"));
-		this.mock(oBinding).expects("_delete").exactly(bMatch ? 1 : 0)
-			.withExactArgs(null, "EMPLOYEES('2')", sinon.match.same(oContext2));
 
-		// code under test
-		oBinding.onDelete(bMatch ? "/EMPLOYEES('2')" : "/EMPLOYEES('99')");
+		assert.strictEqual(
+			// code under test
+			oBinding.findContextForCanonicalPath(bMatch ? "/EMPLOYEES('2')" : "/EMPLOYEES('99')"),
+			bMatch ? oContext2 : undefined);
 	});
 });
 
 	//*********************************************************************************************
 [false, true].forEach(function (bMatch) {
-	QUnit.test("onDelete: mPreviousContextsByPath, match=" + bMatch, function () {
+	var sTitle = "findContextForCanonicalPath: mPreviousContextsByPath, match=" + bMatch;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/TEAM('1')/TEAM_2_EMPLOYEES"),
 			oContext1 = {
 				fetchCanonicalPath : function () {},
@@ -8955,16 +8957,16 @@ sap.ui.define([
 			.returns(SyncPromise.resolve("/EMPLOYEES('2')"));
 		this.mock(oContext3).expects("fetchCanonicalPath").exactly(bMatch ? 0 : 1).withExactArgs()
 			.returns(SyncPromise.resolve("/EMPLOYEES('3')"));
-		this.mock(oBinding).expects("_delete").exactly(bMatch ? 1 : 0)
-			.withExactArgs(null, "EMPLOYEES('2')", sinon.match.same(oContext2));
 
-		// code under test
-		oBinding.onDelete(bMatch ? "/EMPLOYEES('2')" : "/EMPLOYEES('99')");
+		assert.strictEqual(
+			// code under test
+			oBinding.findContextForCanonicalPath(bMatch ? "/EMPLOYEES('2')" : "/EMPLOYEES('99')"),
+			bMatch ? oContext2 : undefined);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("onDelete: fetchCanonicalPath fails", function () {
+	QUnit.test("findContextForCanonicalPath: fetchCanonicalPath fails", function (assert) {
 		var oBinding = this.bindList("/TEAM('1')/TEAM_2_EMPLOYEES"),
 			oContext1 = {
 				fetchCanonicalPath : function () {}
@@ -8973,10 +8975,11 @@ sap.ui.define([
 		oBinding.aContexts = [oContext1];
 		this.mock(oContext1).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.reject(new Error()));
-		this.mock(oBinding).expects("_delete").never();
 
-		// code under test
-		oBinding.onDelete("/EMPLOYEES('2')");
+		assert.strictEqual(
+			// code under test
+			oBinding.findContextForCanonicalPath("/EMPLOYEES('2')"),
+			undefined);
 	});
 });
 

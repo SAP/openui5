@@ -3305,7 +3305,10 @@ sap.ui.define([
 		this.mock(oBinding).expects("lockGroup").never();
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", "new value", null, true)
-			.returns(SyncPromise.reject(oError));
+			.callsFake(function () {
+				oContext.oModel = undefined; // must even work when the context is destroyed then
+				return SyncPromise.resolve(Promise.reject(oError));
+			});
 		this.mock(oModel).expects("resolve")
 			.withExactArgs("some/relative/path", sinon.match.same(oContext))
 			.returns("/resolved/path");

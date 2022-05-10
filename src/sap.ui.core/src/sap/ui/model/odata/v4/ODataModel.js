@@ -1254,7 +1254,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deletes the entity with the given canonical path on the server and in all bindings.
+	 * Deletes the entity with the given canonical path on the server and in all bindings. Pending
+	 * changes in contexts for this entity or in dependents thereof are canceled.
 	 *
 	 * Deleting in the bindings is only possible if the given path is a canonical path, and all
 	 * paths follow these rules in addition to the OData 4.0 specification:
@@ -1283,8 +1284,7 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> the path does not start with a '/',
 	 *     <li> the given group ID is invalid,
-	 *     <li> the resulting group ID has {@link sap.ui.model.odata.v4.SubmitMode.API},
-	 *     <li> there are pending changes.
+	 *     <li> the resulting group ID has {@link sap.ui.model.odata.v4.SubmitMode.API}.
 	 *   </ul>
 	 *
 	 * @public
@@ -1300,9 +1300,6 @@ sap.ui.define([
 		sGroupId = sGroupId || this.getUpdateGroupId();
 		if (this.isApiGroup(sGroupId)) {
 			throw new Error("Illegal update group ID: " + sGroupId);
-		}
-		if (this.hasPendingChanges()) {
-			throw new Error("Cannot delete due to pending changes");
 		}
 
 		return this.oRequestor.request("DELETE", sCanonicalPath.slice(1),

@@ -3033,7 +3033,6 @@ sap.ui.define([
 		this.mock(oModel).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
 			.withExactArgs().returns("group");
 		this.mock(oModel).expects("isApiGroup").withExactArgs("group").returns(false);
-		this.mock(oModel).expects("hasPendingChanges").withExactArgs().returns(false);
 		this.mock(oModel).expects("lockGroup")
 			.withExactArgs("group", sinon.match.same(oModel), true, true)
 			.returns("~groupLock~");
@@ -3070,7 +3069,6 @@ sap.ui.define([
 		oError.status = oFixture.iStatus;
 		oModel.aAllBindings = aAllBindings;
 		this.mock(oModel).expects("isApiGroup").withExactArgs("group").returns(false);
-		this.mock(oModel).expects("hasPendingChanges").withExactArgs().returns(false);
 		this.mock(oModel).expects("lockGroup")
 			.withExactArgs("group", sinon.match.same(oModel), true, true)
 			.returns("~groupLock~");
@@ -3107,20 +3105,6 @@ sap.ui.define([
 		}, new Error("Illegal update group ID: group"));
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("delete: pending changes", function (assert) {
-		var oModel = this.createModel();
-
-		this.mock(oModel).expects("isApiGroup").withExactArgs("group").returns(false);
-		this.mock(oModel).expects("hasPendingChanges").withExactArgs().returns(true);
-		this.mock(oModel.oRequestor).expects("request").never();
-
-		assert.throws(function () {
-			// code under test
-			oModel.delete("/Entity('key')", "group");
-		}, new Error("Cannot delete due to pending changes"));
-	});
 
 	//*********************************************************************************************
 	QUnit.test("delete: not an absolute path", function (assert) {

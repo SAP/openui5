@@ -3904,6 +3904,66 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.getGeneration(), 0);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("onDelete: context", function (assert) {
+		var oBinding = new ODataParentBinding({
+				_delete : function () {},
+				findContextForCanonicalPath : function () {},
+				oModel : {
+					getDependentBindings : function () {}
+				}
+			}),
+			oContext = {
+				getPath : function () {}
+			},
+			oDependentBinding1 = {
+				resetChanges : function () {}
+			},
+			oDependentBinding2 = {
+				resetChanges : function () {}
+			},
+			iResets = 0;
+
+		function reset() {
+			iResets += 1;
+		}
+
+		this.mock(oBinding).expects("findContextForCanonicalPath").withExactArgs("/canonical/path")
+			.returns(oContext);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/context/path");
+		this.mock(oBinding).expects("getRelativePath").withExactArgs("/context/path")
+			.returns("relative/path");
+		this.mock(oBinding).expects("resetChangesForPath").withExactArgs("relative/path", [])
+			.callsFake(reset);
+		this.mock(oBinding.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns([oDependentBinding1, oDependentBinding2]);
+		this.mock(oDependentBinding1).expects("resetChanges").withExactArgs().callsFake(reset);
+		this.mock(oDependentBinding2).expects("resetChanges").withExactArgs().callsFake(reset);
+		this.mock(oBinding).expects("_delete")
+			.withExactArgs(null, "canonical/path", sinon.match.same(oContext))
+			.callsFake(function () {
+				assert.strictEqual(iResets, 3);
+			});
+
+		// code under test
+		oBinding.onDelete("/canonical/path");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onDelete: no context", function () {
+		var oBinding = new ODataParentBinding({
+				findContextForCanonicalPath : function () {}
+			});
+
+		this.mock(oBinding).expects("findContextForCanonicalPath").withExactArgs("/canonical/path")
+			.returns(undefined);
+		this.mock(oBinding).expects("resetChangesForPath").never();
+
+		// code under test
+		oBinding.onDelete("/canonical/path");
+	});
 });
 //TODO Fix issue with ODataModel.integration.qunit
 //  "suspend/resume: list binding with nested context binding, only context binding is adapted"

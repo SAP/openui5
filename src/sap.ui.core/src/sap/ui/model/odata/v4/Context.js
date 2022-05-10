@@ -1609,8 +1609,8 @@ sap.ui.define([
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, for example if the annotation belongs to
 	 *   the read-only namespace "@$ui5.*". With <code>bRetry</code> it is only rejected with an
-	 *   <code>Error</code> instance where <code>oError.canceled === true</code> when the property
-	 *   has been reset via the methods
+	 *   <code>Error</code> instance where <code>oError.canceled === true</code> when the entity has
+	 *   been deleted while the request was pending or the property has been reset via the methods
 	 *   <ul>
 	 *     <li> {@link sap.ui.model.odata.v4.ODataModel#resetChanges}
 	 *     <li> {@link sap.ui.model.odata.v4.ODataContextBinding#resetChanges} or
@@ -1630,6 +1630,7 @@ sap.ui.define([
 	 */
 	Context.prototype.setProperty = function (sPath, vValue, sGroupId, bRetry) {
 		var oGroupLock = null,
+			oModel = this.oModel,
 			that = this;
 
 		this.oBinding.checkSuspended();
@@ -1646,7 +1647,7 @@ sap.ui.define([
 				if (oGroupLock) {
 					oGroupLock.unlock(true);
 				}
-				that.oModel.reportError("Failed to update path " + that.oModel.resolve(sPath, that),
+				oModel.reportError("Failed to update path " + oModel.resolve(sPath, that),
 					sClassName, oError);
 				throw oError;
 			});

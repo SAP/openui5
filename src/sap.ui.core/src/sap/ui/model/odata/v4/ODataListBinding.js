@@ -1688,6 +1688,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#findContextForCanonicalPath
+	 */
+	ODataListBinding.prototype.findContextForCanonicalPath = function (sCanonicalPath) {
+		var aKeptAliveContexts = Object.values(this.mPreviousContextsByPath)
+				.filter(function (oCandidate) {
+					return oCandidate.isKeepAlive();
+				});
+
+		function check(aContexts) {
+			return aContexts.find(function (oCandidate) {
+				var oPromise;
+
+				if (oCandidate) {
+					oPromise = oCandidate.fetchCanonicalPath();
+					oPromise.caught();
+					return oPromise.getResult() === sCanonicalPath;
+				}
+			});
+		}
+
+		return check(aKeptAliveContexts) || check(this.aContexts);
+	};
+
+	/**
 	 * Filters the list with the given filters. Since 1.97.0, if filters are unchanged, no request
 	 * is sent, regardless of pending changes.
 	 *
@@ -2668,35 +2693,6 @@ sap.ui.define([
 	ODataListBinding.prototype.isLengthFinal = function () {
 		// some controls use .bLengthFinal on list binding instead of calling isLengthFinal
 		return this.bLengthFinal;
-	};
-
-	/**
-	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#onDelete
-	 */
-	ODataListBinding.prototype.onDelete = function (sCanonicalPath) {
-		var oContext,
-			aKeptAliveContexts = Object.values(this.mPreviousContextsByPath)
-				.filter(function (oCandidate) {
-					return oCandidate.isKeepAlive();
-				});
-
-		function check(aContexts) {
-			return aContexts.find(function (oCandidate) {
-				var oPromise;
-
-				if (oCandidate) {
-					oPromise = oCandidate.fetchCanonicalPath();
-					oPromise.caught();
-					return oPromise.getResult() === sCanonicalPath;
-				}
-			});
-		}
-
-		oContext = check(aKeptAliveContexts) || check(this.aContexts);
-		if (oContext) {
-			this._delete(null, sCanonicalPath.slice(1), oContext);
-		}
 	};
 
 	/**

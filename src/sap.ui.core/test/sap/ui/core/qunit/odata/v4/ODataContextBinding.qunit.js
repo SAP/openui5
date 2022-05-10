@@ -4885,18 +4885,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("onDelete: unresolved", function () {
+	QUnit.test("findContextForCanonicalPath: unresolved", function (assert) {
 		var oBinding = this.bindContext("unresolved");
 
-		this.mock(oBinding).expects("_delete").never();
-
-		// code under test
-		oBinding.onDelete("/BusinessPartner('2')");
+		assert.strictEqual(
+			// code under test
+			oBinding.findContextForCanonicalPath("/BusinessPartner('2')"),
+			undefined);
 	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bMatch) {
-	QUnit.test("onDelete: match=" + bMatch, function () {
+	QUnit.test("findContextForCanonicalPath: match=" + bMatch, function (assert) {
 		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP"),
 			sCanonicalPath = bMatch ? "/BusinessPartner('2')" : "/BusinessPartner('3')";
 
@@ -4904,30 +4904,30 @@ sap.ui.define([
 			.returns({"@$ui5._" : {predicate : "1"}});
 		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.resolve(sCanonicalPath));
-		this.mock(oBinding).expects("_delete").exactly(bMatch ? 1 : 0)
-			.withExactArgs(null, "BusinessPartner('2')",
-				sinon.match.same(oBinding.oElementContext));
 
-		// code under test
-		oBinding.onDelete("/BusinessPartner('2')");
+		assert.strictEqual(
+			// code under test
+			oBinding.findContextForCanonicalPath("/BusinessPartner('2')"),
+			bMatch ? oBinding.oElementContext : undefined);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("onDelete: operation w/o RVC", function () {
+	QUnit.test("findContextForCanonicalPath: operation w/o RVC", function (assert) {
 		var oBinding = this.bindContext("/Operation(...)");
 
 		this.mock(oBinding.oElementContext).expects("getValue").never();
 		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").never();
-		this.mock(oBinding).expects("_delete").never();
 
-		// code under test
-		oBinding.onDelete("/BusinessPartner('2')");
+		assert.strictEqual(
+			// code under test
+			oBinding.findContextForCanonicalPath("/BusinessPartner('2')"),
+			undefined);
 	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bMatch) {
-	QUnit.test("onDelete: operation w/ RVC, match=" + bMatch, function () {
+	QUnit.test("findContextForCanonicalPath: operation w/ RVC, match=" + bMatch, function (assert) {
 		var oBinding = this.bindContext("/Operation(...)"),
 			sCanonicalPath = bMatch ? "/BusinessPartner('2')" : "/BusinessPartner('3')",
 			oReturnValueContext = {
@@ -4942,49 +4942,52 @@ sap.ui.define([
 			.returns({"@$ui5._" : {predicate : "1"}});
 		this.mock(oReturnValueContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.resolve(sCanonicalPath));
-		this.mock(oBinding).expects("_delete").exactly(bMatch ? 1 : 0)
-			.withExactArgs(null, "BusinessPartner('2')", sinon.match.same(oReturnValueContext));
 
-		// code under test
-		oBinding.onDelete("/BusinessPartner('2')");
+		assert.strictEqual(
+			// code under test
+			oBinding.findContextForCanonicalPath("/BusinessPartner('2')"),
+			bMatch ? oReturnValueContext : undefined);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("onDelete: fetchCanonicalPath fails", function () {
+	QUnit.test("findContextForCanonicalPath: fetchCanonicalPath fails", function (assert) {
 		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP");
 
 		this.mock(oBinding.oElementContext).expects("getValue").withExactArgs()
 			.returns({"@$ui5._" : {predicate : "1"}});
 		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.reject(new Error()));
-		this.mock(oBinding).expects("_delete").never();
 
-		// code under test
-		oBinding.onDelete("/BusinessPartner('2')");
+		assert.strictEqual(
+			// code under test
+			oBinding.findContextForCanonicalPath("/BusinessPartner('2')"),
+			undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("onDelete: no entity data in cache", function () {
+	QUnit.test("findContextForCanonicalPath: no entity data in cache", function (assert) {
 		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP");
 
 		this.mock(oBinding.oElementContext).expects("getValue").withExactArgs().returns(undefined);
 		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").never();
-		this.mock(oBinding).expects("_delete").never();
 
-		// code under test
-		oBinding.onDelete("/BusinessPartner('2')");
+		assert.strictEqual(
+			// code under test
+			oBinding.findContextForCanonicalPath("/BusinessPartner('2')"),
+			undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("onDelete: no key predicate", function () {
+	QUnit.test("findContextForCanonicalPath: no key predicate", function (assert) {
 		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP");
 
 		this.mock(oBinding.oElementContext).expects("getValue").withExactArgs().returns({});
 		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").never();
-		this.mock(oBinding).expects("_delete").never();
 
-		// code under test
-		oBinding.onDelete("/BusinessPartner('2')");
+		assert.strictEqual(
+			// code under test
+			oBinding.findContextForCanonicalPath("/BusinessPartner('2')"),
+			undefined);
 	});
 });
