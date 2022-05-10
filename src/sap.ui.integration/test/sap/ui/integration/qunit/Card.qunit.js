@@ -1090,6 +1090,44 @@ sap.ui.define([
 			oCard.startManifestProcessing();
 		});
 
+		QUnit.module("Clone");
+
+		QUnit.test("Cloned card has its own models", function (assert) {
+			var done = assert.async();
+
+			var oCard = new Card("somecard", {
+					manifest: oManifest_ListCard_NoHeader
+				}),
+				oClonedCard = oCard.clone();
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oClonedCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oClonedCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var aModels = ["parameters", "filters", "paginator", "form", "context"];
+
+				assert.ok(oCard.getModel(), "Default model exists in original card.");
+				assert.ok(oClonedCard.getModel(), "Default model exists in cloned card.");
+				assert.notStrictEqual(oCard.getModel(), oClonedCard.getModel(), "Default model is unique per card.");
+
+				aModels.forEach(function (sModelName) {
+					assert.ok(oCard.getModel(sModelName), "Model '" + sModelName + "' exists in original card.");
+					assert.ok(oClonedCard.getModel(sModelName), "Model '" + sModelName + "' exists in cloned card.");
+					assert.notStrictEqual(oCard.getModel(sModelName), oClonedCard.getModel(sModelName), "Model '" + sModelName + "' is unique per card.");
+				});
+
+				oCard.destroy();
+				oClonedCard.destroy();
+
+				done();
+			});
+		});
+
 		QUnit.module("Methods", {
 			beforeEach: function () {
 				this.oCard = new Card({
