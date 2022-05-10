@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.76
-	 * @alias sap.f.cards.loading.ListLoadingContent
+	 * @alias sap.f.cards.loading.GenericPlaceholder
 	 */
 	var GenericPlaceholder = Control.extend("sap.f.cards.loading.GenericPlaceholder", {
 		metadata: {

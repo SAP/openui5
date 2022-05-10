@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @since 1.87
 	 * @alias sap.ui.rta.command.compVariant.CompVariantUpdate
 	 */
-	var CompVariantUpdate = BaseCommand.extend("sap.ui.rta.command.CompVariantUpdate", {
+	var CompVariantUpdate = BaseCommand.extend("sap.ui.rta.command.compVariant.CompVariantUpdate", {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {

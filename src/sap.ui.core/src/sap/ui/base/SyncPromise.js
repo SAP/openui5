@@ -87,6 +87,7 @@ sap.ui.define([], function () {
 	 *   A function that is passed with the arguments resolve and reject...
 	 *
 	 * @alias sap.ui.base.SyncPromise
+	 * @class
 	 * @private
 	 * @ui5-restricted sap.ui.core,sap.ui.dt,sap.ui.model
 	 */

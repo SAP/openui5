@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.field.FieldInput
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var FieldInput = Input.extend("sap.ui.mdc.field.FieldInput", /** @lends sap.ui.mdc.field.FieldInput */
+	var FieldInput = Input.extend("sap.ui.mdc.field.FieldInput", /** @lends sap.ui.mdc.field.FieldInput.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

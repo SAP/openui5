@@ -20,7 +20,7 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 	 * @public
 	 * @alias sap.ui.base.EventProvider
 	 */
-	var EventProvider = BaseObject.extend("sap.ui.base.EventProvider", /** @lends sap.ui.base.EventProvider */ {
+	var EventProvider = BaseObject.extend("sap.ui.base.EventProvider", /** @lends sap.ui.base.EventProvider.prototype */ {
 
 		constructor : function() {
 

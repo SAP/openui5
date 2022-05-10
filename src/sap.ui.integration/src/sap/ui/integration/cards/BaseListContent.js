@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.76
-	 * @alias sap.ui.integration.cards.BaseContent
+	 * @alias sap.ui.integration.cards.BaseListContent
 	 */
 	var BaseListContent = BaseContent.extend("sap.ui.integration.cards.BaseListContent", {
 		metadata: {
@@ -182,7 +182,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Used to show the illustrated message for no data retrived from server.
+	 * Used to show the illustrated message for no data retrieved from server.
 	 *
 	 * @protected
 	 * @param {Object} mItemConfig The item template.

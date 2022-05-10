@@ -88,7 +88,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @alias sap.m.TablePersoDialog
 	 */
-	var TablePersoDialog = ManagedObject.extend("sap.m.TablePersoDialog", /** @lends sap.m.TablePersoDialog */
+	var TablePersoDialog = ManagedObject.extend("sap.m.TablePersoDialog", /** @lends sap.m.TablePersoDialog.prototype */
 
 	{
 		constructor : function(sId, mSettings) {

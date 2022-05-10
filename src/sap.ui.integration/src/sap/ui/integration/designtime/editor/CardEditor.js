@@ -48,7 +48,7 @@ sap.ui.define([
 	 * @since 1.83
 	 * @private
 	 * @experimental since 1.83.0
-	 * @alias sap.ui.integration.designtime.CardEditor
+	 * @alias sap.ui.integration.designtime.editor.CardEditor
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CardEditor = Editor.extend("sap.ui.integration.designtime.editor.CardEditor", /** @lends sap.ui.integration.designtime.editor.CardEditor.prototype */ {
@@ -57,11 +57,13 @@ sap.ui.define([
 			properties: {
 				/**
 				 * Set an id to an already existing card instance as string or provide the settings for a card as an object
+				 * <pre>
 				 * {
 				 *    manifest:        manifest for the card as a json object
 				 *    baseUrl:         base url for the card
 				 *    ...
 				 * }
+				 * </pre>
 				 * Depending on the scenario there is a card instance already available. In this case an id to this card instance
 				 * should be provided, to avoid an additional card instance creation.
 				 */
@@ -287,8 +289,8 @@ sap.ui.define([
 	//map of language strings in their actual language representation, initialized in CardEditor.init
 	CardEditor._languages = {};
 
-	//theming from parameters to css valiables if css variables are not turned on
-	//find out if css vars are turned on
+	//theming from parameters to CSS variables if CSS variables are not turned on
+	//find out if CSS vars are turned on
 	CardEditor._appendThemeVars = function () {
 		var aVars = [
 			"sapUiButtonHoverBackground",
@@ -319,7 +321,7 @@ sap.ui.define([
 	CardEditor.init = function () {
 		this.init = function () { }; //replace self
 
-		//add theming variables if css vars are not turned on
+		//add theming variables if CSS vars are not turned on
 		//if (!window.getComputedStyle(document.documentElement).getPropertyValue('--sapBackgroundColor')) {
 		CardEditor._appendThemeVars();
 		Core.attachThemeChanged(function () {

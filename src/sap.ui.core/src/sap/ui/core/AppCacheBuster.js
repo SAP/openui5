@@ -263,7 +263,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.core.AppCacheBuster
 	 */
-	var AppCacheBuster = /** @lends sap.ui.core.AppCacheBuster */ {
+	var AppCacheBuster = {
 
 			/**
 			 * Boots the AppCacheBuster by initializing and registering the
