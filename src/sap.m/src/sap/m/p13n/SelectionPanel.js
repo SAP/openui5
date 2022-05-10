@@ -222,7 +222,7 @@ sap.ui.define([
 		//remove move buttons if unselected item is hovered (not covered by updateStarted)
 		this._removeMoveButtons();
 		//Check if the prior hovered item had a visible icon and renable it if required
-		if (this._oHoveredItem && this._oHoveredItem.getBindingContextPath()){
+		if (this._oHoveredItem && !this._oHoveredItem.bIsDestroyed && this._oHoveredItem.getBindingContextPath()){
 			var bVisible = !!this._getP13nModel().getProperty(this._oHoveredItem.getBindingContextPath()).active;
 			var oOldIcon = this._oHoveredItem.getCells()[1].getItems()[0];
 			oOldIcon.setVisible(bVisible);
