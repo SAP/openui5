@@ -461,16 +461,33 @@ sap.ui.define([
 	};
 
 	MoveSimpleForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+		var oSourceParentContainer;
+		var oTargetParentContainer;
 		var oMovedElement = oChange.getContent().movedElements[0];
 		var oGroupSelector = oMovedElement.source.groupSelector;
 		var oAffectedControlSelector = JsControlTreeModifier.bySelector(oMovedElement.elementSelector, oAppComponent).getParent().getId();
+		if (oChange.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD) {
+			var mPropertyBag = {
+				modifier: JsControlTreeModifier,
+				appComponent: oAppComponent
+			};
+			oSourceParentContainer = oChange.getDependentControl("sourceParent", mPropertyBag).getParent().getId();
+			oTargetParentContainer = oChange.getDependentControl("targetParent", mPropertyBag).getParent().getId();
+			oGroupSelector = {
+				id: oSourceParentContainer
+			};
+		}
 		return {
 			affectedControls: [oAffectedControlSelector],
 			dependentControls: [
 				oGroupSelector && oGroupSelector.id
 					? oGroupSelector
 					: oChange.getContent().targetSelector
-			]
+			],
+			payload: {
+				sourceParentContainer: oSourceParentContainer,
+				targetParentContainer: oTargetParentContainer
+			}
 		};
 	};
 
