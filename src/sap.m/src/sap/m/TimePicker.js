@@ -19,6 +19,7 @@ sap.ui.define([
 	'./MaskEnabler',
 	'sap/ui/Device',
 	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Locale',
 	'sap/m/library',
 	'sap/ui/core/LocaleData',
@@ -45,6 +46,7 @@ function(
 	MaskEnabler,
 	Device,
 	DateFormat,
+	TimezoneUtil,
 	Locale,
 	library,
 	LocaleData,
@@ -583,18 +585,25 @@ function(
 			/* Set the timevalues of the picker here to prevent user from seeing it */
 			var oClocks = this._getClocks(),
 				oDateValue = this.getDateValue(),
+				iDateValueMilliseconds = oDateValue ? oDateValue.getMilliseconds() : 0,
 				sInputValue = this._$input.val(),
 				sFormat = this._getFormatter(true).oFormatOptions.pattern,
 				iIndexOfHH = sFormat.indexOf("HH"),
-				iIndexOfH = sFormat.indexOf("H");
+				iIndexOfH = sFormat.indexOf("H"),
+				sFormattedDate;
 
 			var oCurrentDateValue = this._getFormatter(true).parse(sInputValue) || oDateValue;
 			var sDisplayFormattedValue = this._getFormatter(true).format(oCurrentDateValue);
 
 			oClocks.setValue(sDisplayFormattedValue);
 
+			sFormattedDate = this._getPickerParser().format(oDateValue || new Date(),
+				sap.ui.getCore().getConfiguration().getTimezone());
+			oDateValue = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[ 0 ];
+			oDateValue.setMilliseconds(iDateValueMilliseconds);
+
 			if (this._shouldSetInitialFocusedDateValue()) {
-				oDateValue = this.getInitialFocusedDateValue();
+				oDateValue = this.getInitialFocusedDateValue() || oDateValue;
 			}
 
 			oClocks._setTimeValues(oDateValue, TimePickerInternals._isHoursValue24(sDisplayFormattedValue, iIndexOfHH, iIndexOfH));
@@ -1626,7 +1635,11 @@ function(
 		 */
 		TimePicker.prototype._handleOkPress = function(oEvent) {
 			var oDate = this._getClocks().getTimeValues(),
-				sValue;
+				sValue,
+				sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
+
+			oDate = this._getPickerParser()
+				.parse(sFormattedDate, sap.ui.getCore().getConfiguration().getTimezone())[0];
 
 			this._isClockPicker = true;
 			this._isNumericPicker = false;
@@ -1656,7 +1669,11 @@ function(
 		 */
 		 TimePicker.prototype._handleNumericOkPress = function(oEvent) {
 			var oDate = this._getInputs().getTimeValues(),
-				sValue;
+				sValue,
+				sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
+
+			oDate = this._getPickerParser()
+				.parse(sFormattedDate, sap.ui.getCore().getConfiguration().getTimezone())[0];
 
 			this._isClockPicker = false;
 			this._isNumericPicker = true;
@@ -2266,6 +2283,14 @@ function(
 			this._resetTempValue(iBegin, iEnd);
 			this.updateDomValue(this._oTempValue.toString());
 			this._setCursorPosition(Math.max(this._iUserInputStartPosition, iStart));
+		};
+
+		TimePicker.prototype._getPickerParser = function() {
+			if (!this._clocksParser) {
+				this._clocksParser = DateFormat.getDateTimeWithTimezoneInstance({ showTimezone: false });
+			}
+
+			return this._clocksParser;
 		};
 
 		/**

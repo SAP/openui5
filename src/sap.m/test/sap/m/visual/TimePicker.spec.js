@@ -161,5 +161,34 @@ describe("sap.m.TimePicker", function() {
 		// Disable mobile device simulation
 		oToggleMobileButton.click();
 	});
+
+	it("clocks selection in GMT+12 timezone", testTPTZWithTimezoneBtn.bind(null, "btnEtcGMT-12", "GMT+12"));
+	it("clocks selection in GMT-12 timezone", testTPTZWithTimezoneBtn.bind(null, "btnEtcGMT12", "GMT-12"));
+	it("clocks selection in UTC timezone", testTPTZWithTimezoneBtn.bind(null, "btnUTC", "UTC"));
+
+	function testTPTZWithTimezoneBtn(sBtnId, sTimezone) {
+		var oInput = element(by.css("#TPTZ")),
+			oValueHelpIcon = element(by.id("TPTZ-icon")),
+			oPicker,
+			oHoursCover;
+
+		element(by.id(sBtnId)).click(); //change the timezone
+
+		oInput.click();
+		browser.actions().sendKeys("5:20:12 AM").perform(); //type
+
+		oValueHelpIcon.click(); //open the picker
+
+		oPicker = element(by.css("#TPTZ-RP-popover"));
+		expect(takeScreenshot(oPicker)).toLookAs("picker_5_20_12_AM_" + sTimezone);
+
+		oHoursCover = element(by.id("TPTZ-clocks-clockH-cover"));
+		browser.actions().mouseMove(oHoursCover, {x: 67, y: 245 }).click().perform(); //select hours -> 7
+		element(by.id("TPTZ-OK")).click(); //click OK
+		expect(takeScreenshot(oInput)).toLookAs("input_7_20_12_AM_" + sTimezone);
+
+		oValueHelpIcon.click(); //open the picker
+		expect(takeScreenshot(oPicker)).toLookAs("picker_7_20_12_AM_" + sTimezone);
+	}
 });
 
