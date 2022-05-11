@@ -1494,6 +1494,33 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Compatibility");
+
+	QUnit.test("XMLView with wrong root node name should still be parsed correctly", function(assert) {
+		var oLogErrorSpy = this.spy(Log, "error");
+		var sContent = [
+			'<mvc:view xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">',
+			'  <m:Panel id="panel">',
+			'  </m:Panel>',
+			'</mvc:view>'
+		].join('');
+
+		return XMLView.create({
+			id: "wrongRootNodeName",
+			definition: sContent
+		}).then(function(oView) {
+			assert.equal(oLogErrorSpy.callCount, 1, "Error is logged");
+			assert.equal(oLogErrorSpy.getCall(0).args[0], "XMLView's root node must be 'View' or 'XMLView' and have the namespace 'sap.ui.core.mvc'", "Log message is correct");
+
+			assert.ok(oView.byId("panel"), "The panel control is created");
+			assert.equal(oView.getContent()[0], oView.byId("panel"), "The panel is added to the view's content aggregation");
+
+			oView.destroy();
+		}, function() {
+			assert.notOk(true, "The XMLView.create promise should not reject");
+		});
+	});
+
 	// let test starter wait for the XML to be loaded
 	return pViewXMLLoaded;
 });
