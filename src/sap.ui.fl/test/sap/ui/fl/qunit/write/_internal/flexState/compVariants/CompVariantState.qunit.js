@@ -1400,12 +1400,23 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		//Todo: will be anabled with a following change
-		QUnit.skip("Given updateVariant is called without being a draft version", function(assert) {
+		QUnit.test("Given updateVariant is called without being a draft version", function(assert) {
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
 				draftFilenames: []
 			}));
 			sandbox.stub(this.oVariant, "getState").returns(Change.states.DIRTY);
+			var oInitialFileContent = {
+				changeType: "updateVariant",
+				content: {},
+				id: this.oVariant.getId(),
+				executeOnSelection: true,
+				reference: sComponentId,
+				layer: Layer.CUSTOMER,
+				selector: {
+					persistencyKey: this.sPersistencyKey
+				}
+			};
+			var oChangeCreateInitialFileContent = sandbox.stub(Change, "createInitialFileContent").returns(oInitialFileContent);
 			CompVariantState.updateVariant({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,
@@ -1413,7 +1424,7 @@ sap.ui.define([
 				executeOnSelection: true,
 				layer: Layer.CUSTOMER
 			});
-			assert.equal(this.oVariant.convertToFileContent().executeOnSelection, false, "the executeOnSelection was NOT set within the variant");
+			assert.equal(oChangeCreateInitialFileContent.callCount, 1, "create one new change");
 			assert.equal(this.oVariant.getChanges().length, 1, "one change was written");
 			assert.equal(this.oVariant.getChanges()[0].getContent().executeOnSelection, true, "the change executeOnSelection is set correct");
 		});
@@ -1434,13 +1445,25 @@ sap.ui.define([
 			assert.equal(this.oVariant.convertToFileContent().executeOnSelection, true, "the executeOnSelection was set within the variant");
 		});
 
-		//Todo: will be anabled with following change
-		QUnit.skip("Given updateVariant is called without being a draft version", function(assert) {
+		QUnit.test("Given updateVariant is called twice without being a draft version", function(assert) {
 			var oUpdatedContent = {};
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
 				draftFilenames: []
 			}));
 			sandbox.stub(this.oVariant, "getState").returns(Change.states.DIRTY);
+			var oApplyChangesOnVariantSpy = sandbox.spy(CompVariantMerger, "applyChangeOnVariant");
+			var oInitialFileContent = {
+				changeType: "updateVariant",
+				content: {},
+				id: this.oVariant.getId(),
+				executeOnSelection: true,
+				reference: sComponentId,
+				layer: Layer.CUSTOMER,
+				selector: {
+					persistencyKey: this.sPersistencyKey
+				}
+			};
+			var oChangeCreateInitialFileContent = sandbox.stub(Change, "createInitialFileContent").returns(oInitialFileContent);
 			CompVariantState.updateVariant({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,
@@ -1452,13 +1475,14 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,
 				id: this.oVariant.getId(),
-				executeOnSelection: true,
 				content: oUpdatedContent,
 				layer: Layer.CUSTOMER
 			});
-			assert.equal(this.oVariant.convertToFileContent().executeOnSelection, false, "the executeOnSelection was NOT set within the variant");
-			assert.equal(this.oVariant.getChanges().length, 1, "one change was written");
-			assert.equal(this.oVariant.getChanges()[0].getContent().variantContent, oUpdatedContent, "the variant content is set correct");
+			assert.equal(oChangeCreateInitialFileContent.callCount, 1, "create one new change");
+			assert.equal(oApplyChangesOnVariantSpy.callCount, 2, "and apply two changes");
+			assert.equal(this.oVariant.getChanges().length, 1, "and one change was written");
+			assert.equal(this.oVariant.getChanges()[0].getContent().variantContent, oUpdatedContent, "and the variant content is set correct");
+			assert.equal(this.oVariant.getChanges()[0].getContent().executeOnSelection, true, "and the change executeOnSelection is set correct");
 		});
 
 		QUnit.test("Given persist is called with parentVersion", function(assert) {
@@ -1482,6 +1506,13 @@ sap.ui.define([
 				executeOnSelection: true,
 				layer: Layer.CUSTOMER
 			});
+			CompVariantState.setDefault({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				defaultVariantId: "id_123_pageVariant",
+				conntent: {},
+				layer: Layer.CUSTOMER
+			});
 			var oResponse = {
 				response: [{
 					reference: sComponentId,
@@ -1500,26 +1531,28 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey
 			})
 			.then(function () {
-				assert.equal(oWriteStub.callCount, 2, "then the write method was called one times,");
+				assert.equal(oWriteStub.callCount, 3, "then the write method was called three times,");
 				assert.equal(oUpdateStub.callCount, 0, "no update was called");
 				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
 				assert.equal(oWriteStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct");
 				assert.equal(oWriteStub.getCalls()[1].args[0].parentVersion, Version.Number.Draft, "and the second request the parentVersion parmeter is draft a version");
-				assert.equal(oVersionsOnAllChangesSaved.callCount, 2, "and versions.onAllChangesSaved is called one time");
+				assert.equal(oVersionsOnAllChangesSaved.callCount, 3, "and versions.onAllChangesSaved is called three time");
 			})
 			.then(function () {
 				oCompVariantStateMapForPersistencyKey.variants[0].setState(Change.states.DIRTY);
+				oCompVariantStateMapForPersistencyKey.defaultVariants[0].setState(Change.states.DELETED);
 			})
 			.then(CompVariantState.persist.bind(undefined, {
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
 			}))
 			.then(function () {
-				assert.equal(oWriteStub.callCount, 2, "AFTER SOME CHANGES; still the write method was called one times,");
+				assert.equal(oWriteStub.callCount, 3, "AFTER SOME CHANGES; still the write method was called three times,");
 				assert.equal(oUpdateStub.callCount, 1, "one update was called");
-				assert.equal(oRemoveStub.callCount, 0, "and no deletes were called");
-				assert.equal(oUpdateStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct");
-				assert.equal(oVersionsOnAllChangesSaved.callCount, 3, "and versions.onAllChangesSaved is called second time");
+				assert.equal(oRemoveStub.callCount, 1, "and one deletes were called");
+				assert.equal(oUpdateStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct in update");
+				assert.equal(oRemoveStub.getCalls()[0].args[0].parentVersion, Version.Number.Draft, "and parentVersion is set correct in delete");
+				assert.equal(oVersionsOnAllChangesSaved.callCount, 4, "and versions.onAllChangesSaved is called a fourth time");
 			});
 		});
 	});

@@ -804,6 +804,34 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("given a mock server, when remove change is triggered with parentVersion", function (assert) {
+			var oFlexObject = {
+				fileType: "change",
+				fileName: "myFileName",
+				namespace: "level1/level2/level3",
+				layer: Layer.VENDOR
+			};
+			var mPropertyBag = {
+				flexObject: oFlexObject,
+				url: "/sap/bc/lrep",
+				transport: "transportID",
+				parentVersion: "parentVersionGUID"
+			};
+			var sUrl = "/sap/bc/lrep/changes/myFileName?namespace=level1/level2/level3&layer=VENDOR&changelist=transportID&parentVersion=parentVersionGUID";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+
+			return WriteLrepConnector.remove(mPropertyBag).then(function () {
+				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json"
+				}), "a send request with correct parameters and options is sent");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
 		QUnit.test("given a mock server, when remove variant is triggered", function (assert) {
 			var oFlexObject = {
 				fileType: "variant",
