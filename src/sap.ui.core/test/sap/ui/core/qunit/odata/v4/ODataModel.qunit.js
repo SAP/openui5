@@ -2898,9 +2898,9 @@ sap.ui.define([
 }].forEach(function (oFixture) {
 	QUnit.test("normalizeMessageTarget: '" + oFixture.sTarget + "'", function (assert) {
 		var oModel = this.createModel(""),
+			oMetaModelMock = this.mock(oModel.getMetaModel()),
 			oHelperMock = this.mock(_Helper),
-			oParserMock = this.mock(_Parser),
-			oRequestorMock = this.mock(oModel.oRequestor);
+			oParserMock = this.mock(_Parser);
 
 		oFixture.parseKeyPredicate.forEach(function (oParameters) {
 			oParserMock.expects("parseKeyPredicate").withExactArgs(oParameters.sPredicate)
@@ -2908,9 +2908,9 @@ sap.ui.define([
 		});
 
 		oFixture.fetchType.forEach(function (oParameters) {
-			oRequestorMock.expects("fetchTypeForPath")
-				.withExactArgs("/" + oParameters.sMetaPath)
-				.returns(SyncPromise.resolve(oParameters.oResult));
+			oMetaModelMock.expects("getObject")
+				.withExactArgs("/" + oParameters.sMetaPath + "/")
+				.returns(oParameters.oResult);
 		});
 
 		oFixture.buildPath.forEach(function (oParameters) {
@@ -2930,7 +2930,7 @@ sap.ui.define([
 
 		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("(propertyA='1')")
 			.returns({propertyA : "'1'"});
-		this.mock(oModel.oRequestor).expects("fetchTypeForPath").withExactArgs("/baz")
+		this.mock(oModel.getMetaModel()).expects("fetchObject").withExactArgs("/baz/")
 			.returns(SyncPromise.resolve(undefined));
 
 		assert.strictEqual(
@@ -2943,7 +2943,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("normalizeMessageTarget: type does not contain keys", function (assert) {
 		var oModel = this.createModel(),
-			oRequestorMock = this.mock(oModel.oRequestor),
+			oMetaModelMock = this.mock(oModel.getMetaModel()),
 			oParserMock = this.mock(_Parser),
 			oTypeFoo = {$Key : ["propertyA", "propertyB"]},
 			oTypeBar = {};
@@ -2952,10 +2952,8 @@ sap.ui.define([
 			.returns({propertyA : "'1'"});
 		oParserMock.expects("parseKeyPredicate").withExactArgs("(propertyB='2',propertyA='1')")
 			.returns({propertyA : "'1'", propertyB : "'2'"});
-		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/foo")
-			.returns(SyncPromise.resolve(oTypeFoo));
-		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/foo/bar")
-			.returns(SyncPromise.resolve(oTypeBar));
+		oMetaModelMock.expects("getObject").withExactArgs("/foo/").returns(oTypeFoo);
+		oMetaModelMock.expects("getObject").withExactArgs("/foo/bar/").returns(oTypeBar);
 
 		assert.strictEqual(
 			// code under test
@@ -2982,8 +2980,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("normalizeMessageTarget: not matching key predicates", function (assert) {
 		var oModel = this.createModel(),
+			oMetaModelMock = this.mock(oModel.getMetaModel()),
 			oParserMock = this.mock(_Parser),
-			oRequestorMock = this.mock(oModel.oRequestor),
 			oTypeFoo = {$Key : ["propertyA", "propertyB"]},
 			oTypeBar = {$Key : ["propertyC"]};
 
@@ -2993,10 +2991,8 @@ sap.ui.define([
 		oParserMock.expects("parseKeyPredicate")
 			.withExactArgs("(prop%65rtyC='300')")
 			.returns({"prop%65rtyC" : "'300'"});
-		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/foo")
-			.returns(SyncPromise.resolve(oTypeFoo));
-		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/foo/bar")
-			.returns(SyncPromise.resolve(oTypeBar));
+		oMetaModelMock.expects("getObject").withExactArgs("/foo/").returns(oTypeFoo);
+		oMetaModelMock.expects("getObject").withExactArgs("/foo/bar/").returns(oTypeBar);
 
 		assert.strictEqual(
 			// code under test
@@ -3012,7 +3008,7 @@ sap.ui.define([
 			sResourcePath = "~resourcePath~";
 
 		this.mock(_Parser).expects("parseKeyPredicate").never();
-		this.mock(oModel.oRequestor).expects("fetchTypeForPath").never();
+		this.mock(oModel.getMetaModel()).expects("getObject").never();
 
 		assert.strictEqual(
 			// code under test

@@ -2097,7 +2097,7 @@ sap.ui.define([
 
 			// could be async, but normally in this state we should already have
 			// loaded the needed metadata
-			oType = that.oRequestor.fetchTypeForPath("/" + sMetaPath).getResult();
+			oType = that.oMetaModel.getObject("/" + sMetaPath + "/");
 
 			if (!(oType && oType.$Key)) {
 				bFailed = true;
