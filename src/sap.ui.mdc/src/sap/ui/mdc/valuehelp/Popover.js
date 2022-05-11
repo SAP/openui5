@@ -210,6 +210,8 @@ sap.ui.define([
 			return;
 		}
 
+		Container.prototype._open.apply(this, arguments);
+
 		var oControl = this._getControl();
 		var oTarget = oControl && oControl.getFocusElementForValueHelp ? oControl.getFocusElementForValueHelp(this.isTypeahead()) : oControl;
 
@@ -224,6 +226,7 @@ sap.ui.define([
 
 	Popover.prototype._close = function () {
 
+		Container.prototype._close.apply(this, arguments);
 		var oPopover = this.getAggregation("_container");
 		if (oPopover) {
 			oPopover.close();

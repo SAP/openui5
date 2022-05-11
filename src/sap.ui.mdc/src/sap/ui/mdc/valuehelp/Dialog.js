@@ -116,6 +116,7 @@ sap.ui.define([
 			});
 			if (oCurrentContent) {
 				oCurrentContent.onHide();
+				this._unbindContent(oCurrentContent);
 			}
 			this._renderSelectedContent(sNextId);
 		}.bind(this));
@@ -697,6 +698,7 @@ sap.ui.define([
 		}
 		return Promise.all(aNecessaryPromises).then(function (aPromiseResults) {
 
+			this._bindContent(oNextContent);
 			this.setProperty("_selectedContentKey", sNextContentId);
 			this.setProperty("_selectableContents", this._getSelectableContents());
 			this._oManagedObjectModel.checkUpdate(true, false, function (oBinding) { // force update as bindings to $help>displayContent are not updated automatically in some cases

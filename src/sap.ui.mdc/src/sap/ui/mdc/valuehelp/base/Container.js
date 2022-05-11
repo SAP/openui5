@@ -158,8 +158,8 @@ sap.ui.define([
 			if (oChanges.mutation === "remove") {
 				this._unbindContent(oContent);
 
-			} else {
-				this._bindContent(oContent);
+			// } else {
+			// 	this._bindContent(oContent);
 			}
 		}
 	};
@@ -289,9 +289,15 @@ sap.ui.define([
 
 	Container.prototype._open = function (oContainer) {
 
+		var aContent = this.getContent();
+		for (var i = 0; i < aContent.length; i++) { // for Dialog overwrite to only bind shown content
+			this._bindContent(aContent[i]);
+		}
+
 	};
 
 	Container.prototype._close = function () {
+
 	};
 
 	Container.prototype._handleOpened = function () {
@@ -301,6 +307,12 @@ sap.ui.define([
 
 	Container.prototype._handleClosed = function (oEvent) {
 		this._removePromise("open");
+
+		var aContent = this.getContent();
+		for (var i = 0; i < aContent.length; i++) {
+			this._unbindContent(aContent[i]);
+		}
+
 		this.fireClosed();
 	};
 
