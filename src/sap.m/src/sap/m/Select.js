@@ -827,8 +827,13 @@ function(
 				oSelectedKey = this.getSelectedKey(),
 				sSelectedItemText = this._getSelectedItemText();
 
+			// the hidden INPUT is only used when the select is submitted
+			// with a form so update its value in all cases
 			oInput.attr("value", oSelectedKey || "");
-			oSelect.text(sSelectedItemText);
+
+			if (!this._isIconOnly()) {
+				oSelect.text(sSelectedItemText);
+			}
 		};
 
 		Select.prototype._getValueIcon = function() {
