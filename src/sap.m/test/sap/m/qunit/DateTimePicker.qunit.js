@@ -1037,14 +1037,14 @@ sap.ui.define([
 
 		// assert
 		assert.equal(oDTP.$("timezoneLabel").length, 1, "has a timezone label");
-		assert.equal(oDTP.$("timezoneLabel").text(), "Asia/Kabul", "the label text is the default timezone");
+		assert.equal(oDTP.$("timezoneLabel").text(), "Asia, Kabul", "the label text is the default timezone");
 
 		// act
 		oDTP.setTimezone("America/New_York");
 		oCore.applyChanges();
 
 		// assert
-		assert.equal(oDTP.$("timezoneLabel").text(), "America/New_York", "the label text is the provided timezone");
+		assert.equal(oDTP.$("timezoneLabel").text(), "Americas, New York", "the label text is the provided timezone");
 
 		// clean
 		oDTP.destroy();
@@ -1222,7 +1222,7 @@ sap.ui.define([
 		oTimezonePopup = oDTP._getTimezoneNamePopup();
 
 		// assert
-		assert.equal(oTimezonePopup.getTitle(), "America/Chicago",
+		assert.equal(oTimezonePopup.getTitle(), "Americas, Chicago",
 			"the popup shows the correct timezone");
 
 		// clean
