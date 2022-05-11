@@ -503,7 +503,7 @@ sap.ui.define([
 
 	UploadSet.prototype.onBeforeRendering = function (oEvent) {
 		this._aGroupHeadersAdded = [];
-		this._clearList();
+		this._clearGroupHeaders();
 		this._fillListWithUploadSetItems(this.getItems());
 	};
 
@@ -604,10 +604,18 @@ sap.ui.define([
 
 	UploadSet.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
 		Control.prototype.addAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+		if (oObject && (sAggregationName === 'items' || sAggregationName === "incompleteItems")) {
+			this._projectToNewListItem(oObject);
+			this._refreshInnerListStyle();
+		}
 	};
 
 	UploadSet.prototype.insertAggregation = function (sAggregationName, oObject, iIndex, bSuppressInvalidate) {
 		Control.prototype.insertAggregation.call(this, sAggregationName, oObject, iIndex, bSuppressInvalidate);
+		if (oObject && (sAggregationName === 'items' || sAggregationName === 'incompleteItems')) {
+			this._projectToNewListItem(oObject, iIndex || 0);
+			this._refreshInnerListStyle();
+		}
 	};
 
 	UploadSet.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
@@ -623,12 +631,10 @@ sap.ui.define([
 				}
 			}
             var oItem = this.getList().removeAggregation("items", oListItem, bSuppressInvalidate);
-            if (oItem) {
+            if (oItem && oObject) {
                 oItem.destroy();
-            }
-			if (oObject) {
 				oObject.destroy();
-			}
+            }
             this._refreshInnerListStyle();
         }
     };
@@ -1357,7 +1363,11 @@ sap.ui.define([
 			// maps groups for each item if group configuration provided
 			this._mapGroupForItem(oItem);
 		}
-		this.getList().addAggregation("items", oListItem, true);
+		if (iIndex === 0) {
+			this.getList().insertAggregation("items", oListItem, iIndex, true);
+		} else {
+			this.getList().addAggregation("items", oListItem, true);
+		}
 		this._checkRestrictionsForItem(oItem);
 	};
 
@@ -1511,10 +1521,12 @@ sap.ui.define([
 	 * Destroy the items in the List.
 	 * @private
 	 */
-	 UploadSet.prototype._clearList = function() {
-		if (this._oList) {
-			this.getList().destroyAggregation("items", true);	// note: suppress re-rendering
-		}
+	 UploadSet.prototype._clearGroupHeaders = function() {
+		this.getList().getItems().forEach(function(oItem) {
+			if (oItem.isGroupHeader()) {
+				oItem.destroy(false);
+			}
+		});
 	};
 
 	/**
@@ -1555,7 +1567,7 @@ sap.ui.define([
 		var that = this;
 		aItems.forEach(function(item, index) {
 			item._reset();
-			that._projectToNewListItem(item, index, true);
+			that._projectToNewListItem(item, true);
 			that._refreshInnerListStyle();
 		});
 	};

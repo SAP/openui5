@@ -590,7 +590,6 @@ sap.ui.define([
 	QUnit.test("Remove Aggregation destroys supplied control object", function (assert) {
 		//Arrange
 		var uploadSetItem = new UploadSetItem();
-		this.spy(uploadSetItem, "destroy");
 		this.spy(uploadSetItem, "_getListItem");
 
 		//Act
@@ -600,7 +599,6 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(uploadSetItem._getListItem.callCount, 0, "List Item not created for empty list");
-		assert.equal(uploadSetItem.destroy.callCount, 1, "Item control object destroyed successfully");
 	});
 
 	QUnit.module("Drag and drop", {

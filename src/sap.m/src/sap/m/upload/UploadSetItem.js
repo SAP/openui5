@@ -1050,8 +1050,21 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadSetItem.prototype._reset = function() {
+		if (this._oListItem) {
+			this._oListItem.destroy();
+			this._oListItem = null;
+		}
 		this._oListItem = null;
-		this._oIcon = null;
+		if (this._oIcon) {
+			this.removeDependent(this._oIcon);
+			this._oIcon.destroy();
+			this._oIcon = null;
+		}
+		if (this._oFileNameLink) {
+			this.removeDependent(this._oFileNameLink);
+			this._oFileNameLink.destroy();
+			this._oFileNameLink = null;
+		}
 		this._oDynamicContent = null;
 	};
 
