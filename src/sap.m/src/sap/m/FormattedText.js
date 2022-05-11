@@ -317,18 +317,18 @@ function(
 			});
 		}
 
-		// prohibit a new window from accessing window.opener.location
-		function openExternalLink (oEvent) {
+		// open links href using safe API
+		function openLink (oEvent) {
 			oEvent.preventDefault();
-			openWindow(oEvent.currentTarget.href);
+			openWindow(oEvent.currentTarget.href, oEvent.currentTarget.target);
 		}
 
 		FormattedText.prototype.onAfterRendering = function () {
-			this.$().find('a:not([target="_self"]):not([target="_parent"]):not([target="_top"])').on("click", openExternalLink);
+			this.$().find('a').on("click", openLink);
 		};
 
 		FormattedText.prototype.onBeforeRendering = function () {
-			this.$().find('a:not([target="_self"]):not([target="_parent"]):not([target="_top"])').off("click", openExternalLink);
+			this.$().find('a').off("click", openLink);
 		};
 
 		FormattedText.prototype._getDisplayHtml = function (){
