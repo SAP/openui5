@@ -34,7 +34,8 @@ sap.ui.define(["sap/ui/core/library"],
 			sState = oControl.getState(),
 			sTextDirectionLowerCase = oControl.getTextDirection().toLowerCase(),
 			sControlId = oControl.getId(),
-			bEnabled = oControl.getEnabled();
+			bEnabled = oControl.getEnabled(),
+			bAnimate = sap.ui.getCore().getConfiguration().getAnimation() && oControl.getDisplayAnimation();
 
 		// PI container
 		oRm.openStart("div", oControl);
@@ -99,6 +100,11 @@ sap.ui.define(["sap/ui/core/library"],
 			oRm.class("sapMPIBarNeutral");
 		}
 
+		if (bAnimate) {
+			oRm.style("transition-property", "flex-basis");
+			oRm.style("transition-duration", (Math.abs(oControl._fPercentValueDiff) * 20) + "ms");
+			oRm.style("transition-timing-function", "linear");
+		}
 
 		oRm.style("flex-basis", fPercentValue + "%");
 		oRm.openEnd();

@@ -151,10 +151,11 @@ sap.ui.define([
 		SELF: "_sResizeHandlerId"
 	};
 
-	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation();
-
 	ProgressIndicator.prototype.init = function () {
 		this._bIEBrowser = Device.browser.internet_explorer;
+
+		// The difference between the old and new values, used to calulate the animation duration
+		this._fPercentValueDiff = 0;
 	};
 
 	ProgressIndicator.prototype.onBeforeRendering = function () {
@@ -315,10 +316,7 @@ sap.ui.define([
 
 	ProgressIndicator.prototype.setPercentValue = function(fPercentValue) {
 		var that = this,
-			$progressBar,
-			fPercentDiff,
-			$progressIndicator = this.$(),
-			fAnimationDuration,
+			oProgressIndicatorDomRef = this.getDomRef(),
 			fOriginalValue = fPercentValue;
 
 		fPercentValue = parseFloat(fPercentValue);
@@ -336,41 +334,29 @@ sap.ui.define([
 		}
 
 		if (this.getPercentValue() !== fPercentValue) {
-			fPercentDiff = this.getPercentValue() - fPercentValue;
-			this.setProperty("percentValue", fPercentValue, true);
+			this._fPercentValueDiff = this.getPercentValue() - fPercentValue;
+			this.setProperty("percentValue", fPercentValue);
 
-			if (!$progressIndicator.length) {
+			if (!oProgressIndicatorDomRef) {
 				return this;
 			}
 
 			["sapMPIValueMax", "sapMPIValueMin", "sapMPIValueNormal", "sapMPIValueGreaterHalf"].forEach(function (sClass){
-				$progressIndicator.removeClass(sClass);
+				that.removeStyleClass(sClass);
 			});
 
-			$progressIndicator.addClass(this._getCSSClassByPercentValue(fPercentValue).join(" "));
-			$progressIndicator.addClass("sapMPIAnimate")
-				.attr("aria-valuenow", fPercentValue)
-				.attr("aria-valuetext", this._getAriaValueText({fPercent: fPercentValue}));
+			this.addStyleClass(this._getCSSClassByPercentValue(fPercentValue).join(" "));
+			oProgressIndicatorDomRef.setAttribute("aria-valuenow", fPercentValue);
+			oProgressIndicatorDomRef.setAttribute("aria-valuetext", this._getAriaValueText({fPercent: fPercentValue}));
 
-			fAnimationDuration = bUseAnimations && this.getDisplayAnimation() ? Math.abs(fPercentDiff) * 20 : 0;
-			$progressBar = this.$("bar");
-			// Stop currently running animation and start new one.
-			// In case of multiple setPercentValue calls all animations will run and it will take some time until the last value is animated,
-			// which is the one, actually valuable.
-			$progressBar.stop();
-			$progressBar.animate({
-				"flex-basis" : fPercentValue + "%"
-			}, fAnimationDuration, "linear", function() {
-				that._setText.apply(that);
-				that.$().removeClass("sapMPIAnimate");
-			});
+			this._setText();
 		}
 
 		return this;
 	};
 
 	ProgressIndicator.prototype._setText = function() {
-		this.$().toggleClass("sapMPIValueGreaterHalf", this.getPercentValue() > 50);
+		this.toggleStyleClass("sapMPIValueGreaterHalf", this.getPercentValue() > 50);
 		return this;
 	};
 
