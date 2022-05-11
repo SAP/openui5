@@ -123,7 +123,7 @@
 	height: 100%;
 
 	&::before {
-		display: block;
+		display: block !important; /* otherwise will be overwritten by icon css rules in RTL */
 		position: absolute;
 		width: 100%;
 		vertical-align: baseline;
