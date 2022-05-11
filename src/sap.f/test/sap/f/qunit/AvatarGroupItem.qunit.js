@@ -175,4 +175,26 @@ function (
 		assert.ok(oAvatar.isA("sap.f.Avatar"), "Avatar instance is created");
 		assert.strictEqual(oAvatar.getShowBorder(), true, "showBorder of Avatar is true");
 	});
+
+	QUnit.test("_setCustomDisplaySize", function (assert) {
+		// Arrange
+		var oAvatar = this.oAvatarGroupItem._getAvatar();
+		this.oAvatarGroupItem._setDisplaySize("Custom");
+		this.oAvatarGroupItem._setCustomDisplaySize("3rem");
+
+		// Assert
+		assert.strictEqual(oAvatar.getDisplaySize(), "Custom", "displaySize of Avatar is set correctly");
+		assert.strictEqual(oAvatar.getCustomDisplaySize(), "3rem", "customDisplaySize of Avatar is set correctly");
+	});
+
+	QUnit.test("_setCustomFontSize", function (assert) {
+		// Arrange
+		var oAvatar = this.oAvatarGroupItem._getAvatar();
+		this.oAvatarGroupItem._setDisplaySize("Custom");
+		this.oAvatarGroupItem._setCustomFontSize("0.5rem");
+
+		// Assert
+		assert.strictEqual(oAvatar.getDisplaySize(), "Custom", "displaySize of Avatar is set correctly");
+		assert.strictEqual(oAvatar.getCustomFontSize(), "0.5rem", "customFontSize of Avatar is set correctly");
+	});
 });

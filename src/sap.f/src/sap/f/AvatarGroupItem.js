@@ -163,6 +163,24 @@ sap.ui.define([
 		return this._sAvatarDisplaySize;
 	};
 
+	AvatarGroupItem.prototype._setCustomDisplaySize = function (sValue) {
+		this._sAvatarCustomDisplaySize = sValue;
+		this._getAvatar().setCustomDisplaySize(sValue);
+	};
+
+	AvatarGroupItem.prototype._getCustomDisplaySize = function () {
+		return this._sAvatarCustomDisplaySize;
+	};
+
+	AvatarGroupItem.prototype._setCustomFontSize = function (sValue) {
+		this._sAvatarCustomFontSize = sValue;
+		this._getAvatar().setCustomFontSize(sValue);
+	};
+
+	AvatarGroupItem.prototype._getCustomFontSize = function () {
+		return this._sAvatarCustomFontSize;
+	};
+
 	/**
 	 * Returns the <code>Avatar</code>
 	 *
@@ -177,7 +195,9 @@ sap.ui.define([
 				fallbackIcon: this.getFallbackIcon(),
 				backgroundColor: this.getAvatarColor(),
 				showBorder: true,
-				displaySize: this._getDisplaySize()
+				displaySize: this._getDisplaySize(),
+				customDisplaySize: this._getCustomDisplaySize(),
+				customFontSize: this._getCustomFontSize()
 			});
 		}
 

@@ -120,6 +120,14 @@
 			margin-right: 0.25rem;;
 		}
 	}
+
+	.sapFAvatarGroupItemCustom {
+		height: inherit;
+
+		&.sapFAvatarGroupItem:not(:last-child) {
+			margin-right: 0.125rem;
+		}
+	}
 }
 
 .sapFAvatarGroupGroup:not(.sapFAvatarGroupShowMore) {
@@ -147,6 +155,10 @@
 		&.sapFAvatarGroupItemXL {
 			margin-right: -2.75rem;
 		}
+
+		&.sapFAvatarGroupItemCustom {
+			margin-right: var(--sapUiAvatarGroupCustomMarginRight);
+		}
 	}
 
 	.sapFAvatar,
@@ -172,7 +184,7 @@
 }
 
  .sapFAvatarGroupMoreButton .sapMBtnInner {
-	border-radius: 3.5rem;
+	border-radius: 50%;
  }
 
  .sapMBtn.sapFAvatarGroupMoreButton.sapFAvatarGroupMoreButtonXS {
@@ -193,6 +205,13 @@
 
 .sapMBtn.sapFAvatarGroupMoreButton.sapFAvatarGroupMoreButtonXL {
 	height: 7rem;
+}
+
+.sapMBtn.sapFAvatarGroupMoreButton.sapFAvatarGroupMoreButtonCustom {
+	height: inherit;
+	min-width: inherit;
+	font-size: inherit;
+	line-height: inherit;
 }
 
  .sapFAvatarGroupMoreButtonXS .sapMBtnInner {
@@ -244,3 +263,13 @@
 		line-height: 7rem;
 	}
  }
+
+.sapFAvatarGroupMoreButtonCustom .sapMBtnInner {
+	height: inherit;
+	min-width: inherit;
+	font-size: inherit;
+
+	.sapMBtnContent {
+		line-height: inherit;
+	}
+}
