@@ -208,7 +208,7 @@ sap.ui.define([
 
 		this._oPopover = new ResponsivePopover({
 			showArrow: false,
-			showHeader: false,
+			showHeader: Device.system.phone,
 			placement: library.PlacementType.Bottom,
 			content: new AssociativeControl({control: this, height: true}),
 			contentWidth: MENU_WIDTH,
