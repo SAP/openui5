@@ -67,11 +67,11 @@ sap.ui.define([
 
 		function checkCompat(oConf, sText, sExp1, sExp2){
 			window["sap-ui-config"] = oConf;
-			var _config = new Configuration(_core);
+			Configuration.setCore(_core);
 			var dflt = jQuery.sap.Version(sExp1).toString();
-			assert.equal(_config.getCompatibilityVersion("").toString(), dflt, sText + ": Default (feature='')");
-			assert.equal(_config.getCompatibilityVersion("xx-test2").toString(), dflt, sText + ": Default (undef. feature)");
-			assert.equal(_config.getCompatibilityVersion("xx-test").toString(), jQuery.sap.Version(sExp2).toString(), sText + ": Result (avail. feature)");
+			assert.equal(Configuration.getCompatibilityVersion("").toString(), dflt, sText + ": Default (feature='')");
+			assert.equal(Configuration.getCompatibilityVersion("xx-test2").toString(), dflt, sText + ": Default (undef. feature)");
+			assert.equal(Configuration.getCompatibilityVersion("xx-test").toString(), jQuery.sap.Version(sExp2).toString(), sText + ": Result (avail. feature)");
 		}
 
 		var currentVersion = jQuery.sap.Version(config.getVersion().getMajor(), config.getVersion().getMinor()).toString();

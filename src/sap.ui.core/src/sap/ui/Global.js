@@ -25,11 +25,12 @@
 
 sap.ui.define([
 	'sap/ui/VersionInfo',
+	'sap/ui/core/Configuration',
 	'sap/base/Log',
 	'sap/base/assert',
 	'sap/base/util/ObjectPath'
 ],
-	function(VersionInfo, Log, assert, ObjectPath) {
+	function(VersionInfo, Configuration, Log, assert, ObjectPath) {
 	"use strict";
 
 	// Register to the OpenAjax Hub if it exists
@@ -78,15 +79,7 @@ sap.ui.define([
 		buildinfo : { lastchange : "", buildtime : "${buildtime}" }
 	});
 
-	var oCfgData = window["sap-ui-config"] || {};
-
-	var syncCallBehavior = 0; // ignore
-	if ( oCfgData['xx-nosync'] === 'warn' || /(?:\?|&)sap-ui-xx-nosync=(?:warn)/.exec(window.location.search) ) {
-		syncCallBehavior = 1;
-	}
-	if ( oCfgData['xx-nosync'] === true || oCfgData['xx-nosync'] === 'true' || /(?:\?|&)sap-ui-xx-nosync=(?:x|X|true)/.exec(window.location.search) ) {
-		syncCallBehavior = 2;
-	}
+	var syncCallBehavior = Configuration.getSyncCallBehavior();
 
 	/**
 	 * Loads the version info file (resources/sap-ui-version.json) and returns

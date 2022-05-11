@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/Component",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/test/v2models/parent/CustomModel"
-], function(jQuery, ResourceBundle, UriParameters, Log, Component) {
+], function(jQuery, ResourceBundle, UriParameters, Log, Component, Configuration) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -22,14 +23,6 @@ sap.ui.define([
 	// might wrongly optimize the access (e.g. within jQuery) to override the fake server which fails those tests.
 	window.XMLHttpRequest = window["XML" + "HttpRequest"];
 
-
-	// used to get access to the non-public core parts
-	var oRealCore;
-	sap.ui.getCore().registerPlugin({
-		startPlugin: function(oCore, bOnInit) {
-			oRealCore = oCore;
-		}
-	});
 
 	var Helper = {
 		spyModels: function() {
@@ -1426,10 +1419,8 @@ sap.ui.define([
 
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
-
 			// enable async preloading
-			this.oldCfgPreload = oRealCore.oConfiguration.preload;
-			oRealCore.oConfiguration.preload = "async";
+			this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("");
 
 			// unload not existing module to prevent different logs
 			// depending on cached 404 response or not
@@ -1558,9 +1549,9 @@ sap.ui.define([
 			this.restoreModels();
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
+			this.oConfigurationGetPreloadStub.restore();
 			this.oServer.restore();
 			this.restoreGetUriParameters();
-			oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			Component._fnLoadComponentCallback = null;
 		}
 	});

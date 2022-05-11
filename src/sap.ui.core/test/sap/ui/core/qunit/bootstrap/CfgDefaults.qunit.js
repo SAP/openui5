@@ -1,12 +1,10 @@
 /*global QUnit */
-(function() {
+sap.ui.define([
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Locale",
+	"sap/ui/Device"
+], function(Configuration, Locale, Device) {
 	"use strict";
-
-	/* activate the following to check the behavior for browsers with obscure language settings
-	Object.defineProperty(navigator, "languages", {
-		value: [ 'c' ]
-	});
-	*/
 
 	/*
 	 * Note: this is basically a copy of the logic from Configuration.js.
@@ -15,7 +13,7 @@
 	 */
 	function defaultLocale() {
 		function navigatorLanguage() {
-			if ( sap.ui.Device.os.android ) {
+			if ( Device.os.android ) {
 				// on Android, navigator.language is hardcoded to 'en', so check UserAgent string instead
 				var match = navigator.userAgent.match(/\s([a-z]{2}-[a-z]{2})[;)]/i);
 				if ( match ) {
@@ -29,14 +27,14 @@
 		function convertToLocaleOrNull(sLanguage) {
 			try {
 				if ( sLanguage && typeof sLanguage === 'string' ) {
-					return new sap.ui.core.Locale( sLanguage );
+					return new Locale( sLanguage );
 				}
 			} catch (e) {
 				// ignore
 			}
 		}
 
-		return convertToLocaleOrNull( (navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage ) || new sap.ui.core.Locale("en");
+		return convertToLocaleOrNull( (navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage ) || new Locale("en");
 	}
 
 	function toLower(str) {
@@ -46,22 +44,20 @@
 	QUnit.module("Configuration Defaults");
 
 	QUnit.test("Settings", function(assert) {
-		var oCfg = new sap.ui.core.Configuration();
-
 		// compare values where possible
-		assert.equal(oCfg.theme, "base", "theme");
-		assert.equal(toLower(oCfg.language), toLower(defaultLocale()), "language");
-		assert.equal(oCfg.accessibility, true, "accessibility");
-		assert.equal(oCfg.animation, true, "animation");
-		assert.equal(oCfg.animationMode, sap.ui.core.Configuration.AnimationMode.full, "animationMode");
-		assert.equal(oCfg.getRTL(), false, "rtl");
-		assert.equal(oCfg.debug, false, "debug");
-		assert.equal(oCfg.noConflict, false, "noConflict");
-		assert.equal(oCfg.trace, false, "trace");
-		assert.deepEqual(oCfg.modules, [], "modules");
-		assert.deepEqual(oCfg.areas, null, "areas");
-		assert.equal(oCfg.onInit, undefined, "onInit");
-		assert.equal(oCfg.ignoreUrlParams, false, "ignoreUrlParams");
+		assert.equal(Configuration.getTheme(), "base", "theme");
+		assert.equal(toLower(Configuration.getLanguage()), toLower(defaultLocale()), "language");
+		assert.equal(Configuration.getAccessibility(), true, "accessibility");
+		assert.equal(Configuration.getAnimation(), true, "animation");
+		assert.equal(Configuration.getAnimationMode(), Configuration.AnimationMode.full, "animationMode");
+		assert.equal(Configuration.getRTL(), false, "rtl");
+		assert.equal(Configuration.getDebug(), false, "debug");
+		assert.equal(Configuration.getValue("noConflict"), false, "noConflict");
+		assert.equal(Configuration.getTrace(), false, "trace");
+		assert.deepEqual(Configuration.getValue("modules"), [], "modules");
+		assert.deepEqual(Configuration.getValue("areas"), null, "areas");
+		assert.equal(Configuration.getValue("onInit"), undefined, "onInit");
+		assert.equal(Configuration.getValue("ignoreUrlParams"), false, "ignoreUrlParams");
 	});
 
 	// in the default case, noConflict must not have been called -> $ is available
@@ -71,4 +67,4 @@
 		assert.equal(window.jQuery, window.$, "$ is a synonym for jQuery");
 	});
 
-}());
+});

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/Configuration",
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -15,6 +16,7 @@ function(
 	ManagedObject,
 	Element,
 	CustomData,
+	Configuration,
 	jQuery
 ) {
 	"use strict";
@@ -554,12 +556,6 @@ function(
 
 	QUnit.module("Design Time Library and Preload", {
 		beforeEach: function(assert) {
-			this.TestCorePlugin = {};
-			this.TestCorePlugin.startPlugin = function(oCore, bOnInit) {
-				this.oRealCore = oCore;
-			}.bind(this);
-			sap.ui.getCore().registerPlugin(this.TestCorePlugin);
-			this.oldCfgPreload = this.oRealCore.oConfiguration.preload;
 			this.oMetadata = CustomData.getMetadata();
 			this.vOldDesigntime = this.oMetadata._oDesignTime;
 			//create a preload
@@ -572,13 +568,12 @@ function(
 			//reset the designtime stores
 			this.oMetadata._oDesignTime = this.vOldDesigntime;
 			this.oMetadata._oDesignTimePromise = null;
-			this.oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			delete window.testlibs;
 			sap.ui.getCore().unregisterPlugin(this.TestCorePlugin);
 		}
 	}, function () {
 		QUnit.test("loadDesignTime - from core for custom data no preload", function(assert) {
-			this.oRealCore.oConfiguration.preload = "off";
+			this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("");
 			this.spy(sap.ui, 'require');
 			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 			return this.oMetadata.loadDesignTime().then(function(oDesignTime) {
@@ -588,12 +583,14 @@ function(
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/library.designtime"]), "library.designtime.js was required");
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/CustomData.designtime"]), "CustomData.designtime.js was required");
 				assert.ok(oDesignTime._oLib !== undefined, "sap/ui/core/designtime/library.designtime.js is available in designtime object");
+			}.bind(this)).finally(function () {
+				this.oConfigurationGetPreloadStub.restore();
 			}.bind(this));
 		});
 
 		QUnit.test("loadDesignTime - from core for custom data with preload async", function(assert) {
 			//async configuration simulation
-			this.oRealCore.oConfiguration.preload = "async";
+			this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("async");
 			this.spy(sap.ui, 'require');
 			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 
@@ -608,12 +605,14 @@ function(
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/library.designtime"]), "library.designtime.js was required");
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/CustomData.designtime"]), "CustomData.designtime.js was required");
 				assert.ok(oDesignTime._oLib !== undefined, "sap/ui/core/designtime/library.designtime.js loaded");
+			}.bind(this)).finally(function () {
+				this.oConfigurationGetPreloadStub.restore();
 			}.bind(this));
 		});
 
 		QUnit.test("loadDesignTime - from core for custom data with preload sync", function(assert) {
 			//sync configuration simulation
-			this.oRealCore.oConfiguration.preload = "sync";
+			this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 			this.spy(sap.ui, 'require');
 			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 
@@ -628,6 +627,8 @@ function(
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/library.designtime"]), "library.designtime.js was required");
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/CustomData.designtime"]), "CustomData.designtime.js was required");
 				assert.ok(oDesignTime._oLib !== undefined, "sap/ui/core/designtime/library.designtime.js loaded");
+			}.bind(this)).finally(function () {
+				this.oConfigurationGetPreloadStub.restore();
 			}.bind(this));
 		});
 	});

@@ -7,8 +7,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/Core',
 	'sap/ui/core/Element',
+	'sap/ui/core/Configuration',
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, oCore, Element, createAndAppendDiv) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, oCore, Element, Configuration, createAndAppendDiv) {
 	"use strict";
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
@@ -539,12 +540,11 @@ sap.ui.define([
 
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
-			assert.notOk(oCore.getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
-			this.oldCfgPreload = oRealCore.oConfiguration.preload;
-			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+			assert.notOk(Configuration.getDebug(), "debug mode must be deactivated to properly test library loading");
+			this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 		},
 		afterEach: function(assert) {
-			oRealCore.oConfiguration.preload = this.oldCfgPreload;
+			this.oConfigurationGetPreloadStub.restore();
 			delete window.testlibs;
 		}
 	});
@@ -679,8 +679,6 @@ sap.ui.define([
 			async: true
 		}).then(function(versioninfo) {
 			sap.ui.versioninfo = versioninfo;
-
-			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
 
 			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 			this.spy(sap.ui, 'require');

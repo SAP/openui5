@@ -5,22 +5,15 @@ sap.ui.require([
 	'sap/base/util/ObjectPath',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/i18n/ResourceBundle',
-	'sap/base/Log'
-], function(jQuery, ObjectPath, LoaderExtensions, ResourceBundle, Log) {
+	'sap/base/Log',
+	'sap/ui/core/Configuration'
+], function(jQuery, ObjectPath, LoaderExtensions, ResourceBundle, Log, Configuration) {
 	"use strict";
 
 	QUnit.assert.isLibLoaded = function(libName) {
 		this.ok(ObjectPath.get(libName), "namespace for " + libName + " should exist");
 		this.ok(sap.ui.getCore().getLoadedLibraries()[libName], "Core should know and list " + libName + " as 'loaded'");
 	};
-
-	// used to get access to the non-public core parts
-	var oRealCore;
-	var TestCorePlugin = function() {};
-	TestCorePlugin.prototype.startPlugin = function(oCore, bOnInit) {
-		oRealCore = oCore;
-	};
-	sap.ui.getCore().registerPlugin(new TestCorePlugin());
 
 	QUnit.module('getLibraryResourceBundle');
 
@@ -110,10 +103,8 @@ sap.ui.require([
 	QUnit.module("loadLibraries (from server)", {
 		beforeEach: function(assert) {
 			assert.notOk(sap.ui.getCore().getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
-			this.oldCfgPreload = oRealCore.oConfiguration.preload;
 		},
 		afterEach: function(assert) {
-			oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			delete window.testlibs;
 		}
 	});
@@ -134,7 +125,8 @@ sap.ui.require([
 		// is done asynchronously, based on the manifest.
 		// Currently, it is still done synchronously in initLibrary based on initLibrary data.
 
-		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+		// sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 
 		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 		this.spy(sap.ui, 'require');
@@ -191,7 +183,9 @@ sap.ui.require([
 			// TODO (sync initLibrary) sinon.assert.neverCalledWith(jQuery.sap.require, 'testlibs.scenario1.lib7.library');
 			// TODO (sync initLibrary) sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario1/lib7/library']);
 
-		});
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
+		}.bind(this));
 
 	});
 
@@ -205,7 +199,8 @@ sap.ui.require([
 	 */
 	QUnit.test("multiple libraries (sync, preloads are active)", function(assert) {
 
-		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+		// sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 
 		this.spy(sap.ui, 'requireSync');
 
@@ -244,6 +239,7 @@ sap.ui.require([
 		assert.isLibLoaded('testlibs.scenario2.lib7');
 		sinon.assert.calledWith(sap.ui.requireSync, sinon.match(/scenario2\/lib7\/library-preload$/));
 
+		this.oConfigurationGetPreloadStub.restore();
 	});
 
 	/*
@@ -251,7 +247,8 @@ sap.ui.require([
 	 */
 	QUnit.test("multiple libraries, one missing (async, preloads are active)", function(assert) {
 
-		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+		// sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 		var vResult = sap.ui.getCore().loadLibraries(['testlibs.scenario3.lib1', 'testlibs.scenario3.lib2']);
 		assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
@@ -261,7 +258,9 @@ sap.ui.require([
 			assert.ok(true, "Promise for missing library should be rejected");
 			assert.ok(typeof e === 'object' && /failed to/.test(e.message), "rejected Promise should report an error");
 			// TODO check that only lib4 failed
-		});
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
+		}.bind(this));
 	});
 
 	/*
@@ -269,7 +268,8 @@ sap.ui.require([
 	 */
 	QUnit.test("two libraries, depending on each other (lib cycle, but not module cycle, async, preloads are active)", function(assert) {
 
-		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+		// sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 		var vResult = sap.ui.getCore().loadLibraries(['testlibs.scenario4.lib1', 'testlibs.scenario4.lib2']);
 		assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
@@ -278,7 +278,9 @@ sap.ui.require([
 			assert.isLibLoaded('testlibs.scenario4.lib2');
 		}, function(e) {
 			assert.ok(false, "Promise for libs with cyclic dependency should not be rejected");
-		});
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
+		}.bind(this));
 	});
 
 	/*
@@ -308,7 +310,8 @@ sap.ui.require([
 
 		this.spy(Log, 'warning');
 
-		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+		// sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 		var vResult = sap.ui.getCore().loadLibraries(['testlibs.scenario5.lib1', 'testlibs.scenario5.lib3']);
 		assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
@@ -327,7 +330,9 @@ sap.ui.require([
 			assert.isLibLoaded('testlibs.scenario5.lib4');
 		}, function(e) {
 			assert.ok(false, "Promise for async loading should be fulfilled even when sync loading conflicts with it");
-		});
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
+		}.bind(this));
 	});
 
 	/*
@@ -340,7 +345,8 @@ sap.ui.require([
 	 */
 	QUnit.test("suppress access to js file by configuration", function(assert) {
 
-		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+		// sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 
 		// clear the version information in case it's already set
 		// because the legacy option 'json' isn't supported by fetching transitive closure
@@ -355,7 +361,9 @@ sap.ui.require([
 		return sap.ui.getCore().loadLibraries([ { name: 'testlibs.scenario6.lib2', json: true } ]).then(function() {
 			assert.isLibLoaded('testlibs.scenario6.lib2');
 			sinon.assert.notCalled(sap.ui.loader._.loadJSResourceAsync);
-		});
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
+		}.bind(this));
 
 	});
 
@@ -409,10 +417,8 @@ sap.ui.require([
 			assert.notOk(sap.ui.getCore().getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
 			this.server = sinon.fakeServer.create();
 			this.server.autoRespond = true;
-			this.oldCfgPreload = oRealCore.oConfiguration.preload;
 		},
 		afterEach: function(assert) {
-			oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			this.server.restore();
 			delete window.my;
 		}
@@ -423,21 +429,24 @@ sap.ui.require([
 		this.server.respondWith(/my\/lib3\/library\.js/, makeLib('my.lib3'));
 		this.server.respondWith(/my\/lib4\/library\.js/, makeLib('my.lib4'));
 
-		oRealCore.oConfiguration.preload = 'off';
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("off");
 		var vResult = sap.ui.getCore().loadLibraries(['my.lib3', 'my.lib4']);
 		assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
 		return vResult.then(function() {
 			assert.isLibLoaded('my.lib3');
 			assert.isLibLoaded('my.lib4');
-		});
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
+		}.bind(this));
 	});
 
 	QUnit.test("multiple libraries, one missing (async, preloads are activate)", function(assert) {
 
 		this.server.respondWith(/my\/lib5\/library-preload\.json/, makeLibPreloadJSON('my.lib5'));
 
-		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+		// sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 		var vResult = sap.ui.getCore().loadLibraries(['my.non.existing.lib', 'my.lib5']);
 		assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
@@ -446,14 +455,16 @@ sap.ui.require([
 		}, function(e) {
 			assert.ok(true, "Promise for missing library should be rejected");
 			assert.ok(typeof e === 'object' && /failed to/.test(e.message), "rejected Promise should report an error");
-		});
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
+		}.bind(this));
 	});
 
 	QUnit.test("multiple libraries, one missing (async, preloads are deactivated)", function(assert) {
 
 		this.server.respondWith(/my\/lib6\/library\.js/, makeLib('my.lib6'));
 
-		oRealCore.oConfiguration.preload = 'off';
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("off");
 		var vResult = sap.ui.getCore().loadLibraries(['my.lib6', 'my.non.existing.lib2']);
 		assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
@@ -462,7 +473,9 @@ sap.ui.require([
 		}, function(e) {
 			assert.ok(true, "Promise for missing library should be rejected");
 			assert.ok(typeof e === 'object' && /failed to/.test(e.message), "rejected Promise should report an error");
-		});
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
+		}.bind(this));
 	});
 
 	QUnit.test("multiple libraries (async, preloads are active, preloadOnly)", function(assert) {
@@ -470,7 +483,8 @@ sap.ui.require([
 		this.server.respondWith(/my\/lib12\/library-preload\.json/, makeLibPreloadJSON('my.lib12'));
 		this.server.respondWith(/my\/lib13\/library-preload\.json/, makeLibPreloadJSON('my.lib13'));
 
-		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+		// sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 		var vResult = sap.ui.getCore().loadLibraries(['my.lib12', 'my.lib13'], { preloadOnly: true });
 		assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
@@ -481,7 +495,9 @@ sap.ui.require([
 			assert.ok(!ObjectPath.get('my.lib13'), "lib13 should not have been loaded");
 			assert.ok(!sap.ui.getCore().getLoadedLibraries()['my.lib13'], "Core should not know or report lib13 as 'loaded'");
 			assert.ok(jQuery.sap.isResourceLoaded('my/lib13/library.js'), "lib13 library module should be preloaded");
-		});
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
+		}.bind(this));
 	});
 
 	QUnit.test("multiple libraries (sync, existing, preload on)", function(assert) {
@@ -489,11 +505,14 @@ sap.ui.require([
 		this.server.respondWith(/my\/lib7\/library-preload\.json/, makeLibPreloadJSON('my.lib7'));
 		this.server.respondWith(/my\/lib8\/library-preload\.json/, makeLibPreloadJSON('my.lib8'));
 
-		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+		// sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 		var vResult = sap.ui.getCore().loadLibraries(['my.lib7', 'my.lib8'], { async: false });
 		assert.ok(vResult == null, "sync call to loadLibraries must not return a value");
 		assert.isLibLoaded('my.lib7');
 		assert.isLibLoaded('my.lib8');
+
+		this.oConfigurationGetPreloadStub.restore();
 	});
 
 	QUnit.test("multiple libraries (sync, existing, preload off)", function(assert) {
@@ -501,18 +520,20 @@ sap.ui.require([
 		this.server.respondWith(/my\/lib9\/library\.js/, makeLib('my.lib9'));
 		this.server.respondWith(/my\/lib10\/library\.js/, makeLib('my.lib10'));
 
-		oRealCore.oConfiguration.preload = 'off';
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("off");
 		var vResult = sap.ui.getCore().loadLibraries(['my.lib9', 'my.lib10'], { async: false });
 		assert.ok(vResult == null, "sync call to loadLibraries must not return a value");
 		assert.isLibLoaded('my.lib9');
 		assert.isLibLoaded('my.lib10');
+
+		this.oConfigurationGetPreloadStub.restore();
 	});
 
 	QUnit.test("multiple libraries, one missing (sync, non-existing)", function(assert) {
 
 		this.server.respondWith(/my\/lib11\/library\.js/, makeLib('my.lib11'));
 
-		oRealCore.oConfiguration.preload = 'off';
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("off");
 		try {
 			sap.ui.getCore().loadLibraries(['my.non.existing.lib3', 'my.lib11'], { async: false });
 			assert.ok(false, "sync loadLibraries for missing lib must not succeed");
@@ -520,6 +541,8 @@ sap.ui.require([
 			assert.ok(true, "sync loadLibraries should throw an exception");
 			assert.ok(typeof e === 'object' && /failed to/.test(e.message), "exception should report an error");
 		}
+
+		this.oConfigurationGetPreloadStub.restore();
 	});
 
 	// ---------------------------------------------------------------------------
@@ -529,11 +552,8 @@ sap.ui.require([
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
 			assert.notOk(sap.ui.getCore().getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
-			this.oldCfgPreload = oRealCore.oConfiguration.preload;
-			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
 		},
 		afterEach: function(assert) {
-			oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			delete window.testlibs;
 		}
 	});
@@ -555,7 +575,8 @@ sap.ui.require([
 		}).then(function(versioninfo) {
 			sap.ui.versioninfo = versioninfo;
 
-			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+			// sync or async both activate the preload
+			this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 
 			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 			this.spy(sap.ui, 'require');
@@ -613,6 +634,8 @@ sap.ui.require([
 				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib7\/library-preload\.js$/));
 
 			});
+		}.bind(this)).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
 		}.bind(this));
 	});
 

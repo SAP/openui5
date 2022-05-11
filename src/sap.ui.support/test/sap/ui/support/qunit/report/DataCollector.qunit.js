@@ -117,8 +117,12 @@ sap.ui.define([
 				_getThemePath: function(){
 					return "http://www.example.com/";
 				},
-				oConfiguration: {
-					theme: "fiori_3"
+				getConfiguration: function() {
+					return {
+						getTheme: function() {
+							return "fiori_3";
+						}
+					};
 				}
 			};
 

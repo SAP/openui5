@@ -5,20 +5,13 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/UIComponentMetadata",
 	"sap/ui/core/Manifest",
+	"sap/ui/core/Configuration",
 	"sap/base/util/Deferred",
 	"sap/base/util/LoaderExtensions"
-], function(jQuery, Log, Component, UIComponent, UIComponentMetadata, Manifest, Deferred, LoaderExtensions) {
+], function(jQuery, Log, Component, UIComponent, UIComponentMetadata, Manifest, Configuration, Deferred, LoaderExtensions) {
 
 	"use strict";
 	/*global sinon, QUnit*/
-
-	// used to get access to the non-public core parts
-	var oRealCore;
-	var TestCorePlugin = function() {};
-	TestCorePlugin.prototype.startPlugin = function(oCore, bOnInit) {
-		oRealCore = oCore;
-	};
-	sap.ui.getCore().registerPlugin(new TestCorePlugin());
 
 	/**
 	 * Checks whether the given (JavaScript) resource has been loaded
@@ -365,12 +358,10 @@ sap.ui.define([
 
 	QUnit.module("Synchronization of Preloads", {
 		beforeEach: function(assert) {
-			this.oldCfgPreload = oRealCore.oConfiguration.preload;
 			this.loadScript = sinon.stub(sap.ui.loader._, "loadJSResourceAsync");
 			this.requireSpy = sinon.stub(sap.ui, "require").callsArgWith(1);
 		},
 		afterEach: function(assert) {
-			oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			this.requireSpy.restore();
 			this.loadScript.restore();
 		}
@@ -378,7 +369,7 @@ sap.ui.define([
 
 	QUnit.test("preload only", function(assert) {
 
-		oRealCore.oConfiguration.preload = 'async'; // sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("async"); // sync or async both activate the preload
 
 		function contains(dep) {
 			return sinon.match(function(value) {
@@ -416,13 +407,15 @@ sap.ui.define([
 				assert.ok( this.requireSpy.calledWith( contains('scenario1/comp/Component') ), "component has been required");
 			}.bind(this));
 
+		}.bind(this)).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
 		}.bind(this));
 
 	});
 
 	QUnit.test("preload bundles and libs", function(assert) {
 
-		oRealCore.oConfiguration.preload = 'async'; // sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("async"); // sync or async both activate the preload
 
 		function contains(dep) {
 			return sinon.match(function(value) {
@@ -475,6 +468,8 @@ sap.ui.define([
 			assert.ok( this.requireSpy.calledWith( contains('scenario2/lib1/library') ), "lib1 has been required");
 			assert.ok( this.requireSpy.calledWith( contains('scenario2/lib2/library') ), "lib2 has been required");
 			assert.ok( this.requireSpy.calledWith( contains('scenario2/comp/Component') ), "component has been required");
+		}.bind(this)).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
 		}.bind(this));
 
 	});
@@ -482,7 +477,6 @@ sap.ui.define([
 
 	QUnit.module("Async (Pre-)Loading (Manifest First)", {
 		beforeEach: function() {
-			this.oldCfgPreload = oRealCore.oConfiguration.preload;
 
 			// Register test module path
 			sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
@@ -494,7 +488,6 @@ sap.ui.define([
 			this.oManifestLoad = sinon.spy(Manifest, "load");
 		},
 		afterEach: function() {
-			oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			unloadResources();
 
 			// Restore spies
@@ -509,7 +502,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("dependencies with manifest component", function(assert) {
-		oRealCore.oConfiguration.preload = 'async'; // sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("async"); // sync or async both activate the preload
 
 		var done = assert.async();
 
@@ -547,15 +540,16 @@ sap.ui.define([
 			// No deprecation warnings should be logged
 			sinon.assert.neverCalledWithMatch(this.oLogWarningSpy, "Do not use deprecated function 'sap.ui.component.load'");
 
-			done();
 		}.bind(this), function(oError) {
 			assert.ok(false, "Promise of Component hasn't been resolved correctly.");
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
 			done();
-		});
+		}.bind(this));
 	});
 
 	QUnit.test("dependencies with component (no manifest first)", function(assert) {
-		oRealCore.oConfiguration.preload = 'async'; // sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("async"); // sync or async both activate the preload
 
 		var done = assert.async();
 
@@ -585,11 +579,12 @@ sap.ui.define([
 			// As manifest first is not used, no manifest.json should have been loaded
 			sinon.assert.notCalled(this.oManifestLoad);
 
-			done();
 		}.bind(this), function(oError) {
 			assert.ok(false, "Promise of Component hasn't been resolved correctly.");
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
 			done();
-		});
+		}.bind(this));
 	});
 
 	QUnit.test("load component callback", function(assert) {

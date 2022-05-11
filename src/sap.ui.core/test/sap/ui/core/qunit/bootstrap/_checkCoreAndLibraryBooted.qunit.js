@@ -1,4 +1,4 @@
-/*global QUnit, jQuery */
+/*global QUnit */
 (function() {
 	"use strict";
 
@@ -11,8 +11,7 @@
 		assert.ok(typeof sap.ui.getCore === "function", "sap.ui.getCore exists");
 		assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
 
-		var oCfg = new sap.ui.core.Configuration();
-		assert.deepEqual(oCfg.modules, ["sap.m.library"], "Libraries");
+		assert.deepEqual(sap.ui.core.Configuration.getValue("modules"), [ "sap.m.library" ], "Libraries");
 	});
 
 	QUnit.test("Check boot() has run", function(assert) {

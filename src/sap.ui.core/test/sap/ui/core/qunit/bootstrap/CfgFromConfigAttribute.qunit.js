@@ -1,28 +1,28 @@
 /*global QUnit */
-(function() {
+sap.ui.define([
+	"sap/ui/core/Configuration"
+], function(Configuration) {
 	"use strict";
 
 	QUnit.module("Configuration From Config Attribute");
 
 	QUnit.test("Settings", function(assert) {
-		var oCfg = new sap.ui.core.Configuration();
-
 		// compare values where possible
-		assert.equal(oCfg.theme, "fantasy", "theme");
-		assert.equal(oCfg.language, "klingon", "language");
-		assert.equal(oCfg.accessibility, true, "accessibility");
-		assert.equal(oCfg.animation, false, "animation");
-		assert.equal(oCfg.rtl, true, "rtl");
-		assert.equal(oCfg.debug, true, "debug");
-		assert.equal(oCfg.noConflict, true, "noConflict");
-		assert.equal(oCfg.trace, true, "trace");
+		assert.equal(Configuration.getTheme(), "fantasy", "theme");
+		assert.equal(Configuration.getLanguage(), "klingon", "language");
+		assert.equal(Configuration.getAccessibility(), true, "accessibility");
+		assert.equal(Configuration.getAnimation(), false, "animation");
+		assert.equal(Configuration.getRTL(), true, "rtl");
+		assert.equal(Configuration.getDebug(), true, "debug");
+		assert.equal(Configuration.getValue("noConflict"), true, "noConflict");
+		assert.equal(Configuration.getTrace(), true, "trace");
 		// Note: libs and modules cannot be checked in that simple way, see below
-		assert.deepEqual(oCfg.areas, ["area-51", "no-go"], "areas");
-		assert.equal(typeof oCfg.onInit, "string", "onInit");
-		assert.equal(oCfg.ignoreUrlParams, true, "ignoreUrlParams");
+		assert.deepEqual(Configuration.getValue("areas"), ["area-51", "no-go"], "areas");
+		assert.equal(typeof Configuration.getValue("onInit"), "string", "onInit");
+		assert.equal(Configuration.getValue("ignoreUrlParams"), true, "ignoreUrlParams");
 
 		// libs must have been converted and prepended to modules
-		assert.deepEqual(oCfg.modules, ["sap.m.library", "sap.m.Button"], "modules and libraries");
+		assert.deepEqual(Configuration.getValue("modules"), [ "sap.m.library", "sap.m.Button" ], "modules and libraries");
 
 		// init function must have been called
 		assert.strictEqual(window["I was here"], "u.g.a.d.m.k.", "onInit hook has not been called");
@@ -36,4 +36,4 @@
 		assert.ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
 	});
 
-}());
+});

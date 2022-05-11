@@ -2,8 +2,8 @@
 sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/thirdparty/jquery",
-	"jquery.sap.global" // provides jQuery.sap.require
-], function(ObjectPath, jQuery) {
+	"sap/ui/core/Configuration"
+], function(ObjectPath, jQuery, Configuration) {
 	"use strict";
 
 	// custom assertion
@@ -16,14 +16,6 @@ sap.ui.define([
 			this.ok(sap.ui.getCore().getLoadedLibraries()[libName], "Core should know and list " + libName + " as 'loaded'");
 		}
 	};
-
-	// used to get access to the non-public core parts
-	var oRealCore;
-	var TestCorePlugin = function() {};
-	TestCorePlugin.prototype.startPlugin = function(oCore, bOnInit) {
-		oRealCore = oCore;
-	};
-	sap.ui.getCore().registerPlugin(new TestCorePlugin());
 
 	/*
 	 * Scenario7/8
@@ -46,11 +38,7 @@ sap.ui.define([
 	$title.text($title.text() + cfgLibraryPreloadFiles.replace(/testlibs.scenario/g, '...'));
 
 	QUnit.module("libraryPreloadFiles=" + cfgLibraryPreloadFiles.replace(/testlibs.scenario/g, '...'), {
-		beforeEach: function(assert) {
-			this.oldCfgPreload = oRealCore.oConfiguration.preload;
-		},
 		afterEach: function(assert) {
-			oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			delete window.testlibs;
 		}
 	});
@@ -59,7 +47,8 @@ sap.ui.define([
 
 		assert.ok(EXPECTATIONS[cfgLibraryPreloadFiles], "[precondition] configured variants should be described in EXPECTATIONS");
 
-		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+		// sync or async both activate the preload
+		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 
 		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 		this.spy(jQuery, 'ajax');
@@ -117,7 +106,9 @@ sap.ui.define([
 				}
 			});
 
-		});
+		}).finally(function () {
+			this.oConfigurationGetPreloadStub.restore();
+		}.bind(this));
 
 	});
 

@@ -5,7 +5,6 @@
 	QUnit.module("Core boot Debug", {
 		before: function() {
 			this.requireSyncStub = sinon.spy(sap.ui, "requireSync");
-			window["sap-ui-config"] = {debug: true};
 			return new Promise(function(resolve) {
 				sap.ui.require(["sap/base/Log", "sap/ui/Device"], function(Log, Device) {
 					Log.logSupportInfo(true);

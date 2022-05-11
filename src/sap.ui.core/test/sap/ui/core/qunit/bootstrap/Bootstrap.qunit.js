@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define([
-
-], function() {
+	"sap/ui/core/Configuration"
+], function(Configuration) {
 
 	"use strict";
 
@@ -56,8 +56,7 @@ sap.ui.define([
 	QUnit.test("GetConfiguration", function(assert) {
 		var oCore = sap.ui.getCore();
 		assert.notStrictEqual(oCore.getConfiguration, undefined, "function getConfiguration on sap.ui.core.Core instance must be defined");
-		assert.ok(oCore.getConfiguration() instanceof sap.ui.base.Interface, "calling getConfiguration on Core instance must deliver the Configuration interface");
-		checkPublicMethods(assert, oCore.getConfiguration(), sap.ui.core.Configuration);
+		assert.ok(oCore.getConfiguration() === Configuration, "calling getConfiguration on Core instance must deliver the Configuration singleton");
 	});
 
 
