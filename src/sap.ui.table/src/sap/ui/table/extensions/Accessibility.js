@@ -666,6 +666,9 @@ sap.ui.define([
 				case AccExtension.ELEMENTTYPES.ROWHEADER:
 					mAttributes["role"] = "gridcell";
 					mAttributes["aria-colindex"] = 1;
+					if (TableUtils.hasRowHeader(oTable) && oTable._getSelectionPlugin()._getSelectionMode() === SelectionMode.None) {
+						mAttributes["aria-labelledby"] = [sTableId + "-rowselecthdr"];
+					}
 					break;
 
 				case AccExtension.ELEMENTTYPES.ROWACTION:
