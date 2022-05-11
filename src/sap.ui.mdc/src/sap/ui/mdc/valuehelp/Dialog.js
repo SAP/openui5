@@ -28,7 +28,7 @@ sap.ui.define([
 	"use strict";
 
 	var MDialog, MLibrary, Button, ManagedObjectModel, IconTabBar, IconTabFilter;
-	var Panel, HBox, Tokenizer, Token;
+	var Panel, HBox, Tokenizer, Token, Filter;
 
 	/**
 	 * Constructor for a new <code>Dialog</code> container.
@@ -516,7 +516,7 @@ sap.ui.define([
 				VBox = aModules[2];
 				Tokenizer = aModules[3];
 				Token = aModules[4];
-				var Filter = aModules[5];
+				Filter = aModules[5];
 				var ConditionType = aModules[6];
 				var BackgroundDesign = MLibrary.BackgroundDesign;
 				var ButtonType = MLibrary.ButtonType;
@@ -546,19 +546,9 @@ sap.ui.define([
 
 				var oHBox = new HBox(this.getId() + "-TokenBox", {fitContainer: true, width: "100%"});
 
-				var oFilter = new Filter({path:'isEmpty', operator:'NE', value1:true});
-
-				var oValueHelpModel = this.getModel("$valueHelp");
-				var oConfig = oValueHelpModel ? oValueHelpModel.getProperty("/_config") : {};
-				var oParent = this.getParent();
-				var oFormatOptions = { // TODO: is more needed?
-							maxConditions: -1, // as for tokens there should not be a limit on type side
-							valueType: oConfig.dataType,
-							operators: oConfig.operators,
-							display: oConfig.display,
-							fieldHelpID: oParent && oParent.getId() // needed to get description for Token (if not provided)
-						};
-				var oTokenTemplate = new Token(this.getId() + "-Token", {text: {path: '$valueHelp>', type: new ConditionType(oFormatOptions)}});
+				var oFormatOptions = _getConditionFormatOptions.call(this);
+				this._oConditionType = new ConditionType(oFormatOptions);
+				this._oConditionType._bVHTokenizer = true; // just help for debugging
 				this.oTokenizer = new Tokenizer(this.getId() + "-Tokenizer", {
 					width: "100%",
 					tokenDelete: function(oEvent) {
@@ -577,11 +567,11 @@ sap.ui.define([
 						}
 
 					}.bind(this),
-					tokens: {path: '/conditions', model: "$valueHelp", templateShareable: false, template: oTokenTemplate, filters: oFilter},
 					layoutData: new FlexItemData({growFactor: 1, maxWidth: "calc(100% - 2rem)"})
 				});
 				this.oTokenizer.addAriaDescribedBy( this.oTokenizer.getTokensInfoId());
 				this.oTokenizer.addStyleClass("sapMdcTokenizer");
+				_bindTokenizer.call(this, true);
 
 				this.oRemoveAllBtn = new Button(this.getId() + "-TokenRemoveAll", {
 					press: function(oEvent) {
@@ -601,6 +591,9 @@ sap.ui.define([
 
 				return this.oTokenizerPanel;
 			}.bind(this));
+		} else { // update ConditionType with current formatOptions
+			var oFormatOptions = _getConditionFormatOptions.call(this);
+			this._oConditionType.setFormatOptions(oFormatOptions);
 		}
 		return this.oTokenizerPanel;
 	};
@@ -616,6 +609,44 @@ sap.ui.define([
 		}
 
 		return bVisible;
+	}
+
+	function _getConditionFormatOptions() {
+
+		var oValueHelpModel = this.getModel("$valueHelp");
+		var oConfig = oValueHelpModel ? oValueHelpModel.getProperty("/_config") : {};
+		var oParent = this.getParent();
+		var oControl = this._getControl();
+		return { // TODO: is more needed?
+			maxConditions: -1, // as for tokens there should not be a limit on type side
+			valueType: oConfig.dataType,
+			operators: oConfig.operators,
+			display: oConfig.display,
+			fieldHelpID: oParent && oParent.getId(), // needed to get description for Token (if not provided)
+			control: oControl,
+			delegate: oControl && oControl.getControlDelegate && oControl.getControlDelegate(),
+			delegateName: oControl && oControl.getDelegate && oControl.getDelegate() && oControl.getDelegate().name,
+			payload: oControl && oControl.getPayload && oControl.getPayload(),
+			convertWhitespaces: true
+		};
+
+	}
+
+	function _bindTokenizer(bBind) {
+
+		if (this.oTokenizer) {
+			var oBindingInfo = this.oTokenizer.getBindingInfo("tokens");
+			if (bBind) {
+				if (!oBindingInfo) { // not bound -> create binding
+					var oFilter = new Filter({path:'isEmpty', operator:'NE', value1:true});
+					var oTokenTemplate = new Token(this.getId() + "-Token", {text: {path: '$valueHelp>', type: this._oConditionType}});
+					this.oTokenizer.bindAggregation("tokens", {path: '/conditions', model: "$valueHelp", templateShareable: false, template: oTokenTemplate, filters: oFilter});
+				}
+			} else if (oBindingInfo) { // remove binding if dialog is closed to prevent updated on tokens if conditions are updated. (Suspend would not be enough, as every single binding on token would need to be suspended too.)
+				this.oTokenizer.unbindAggregation("tokens");
+			}
+		}
+
 	}
 
 	Dialog.prototype._open = function (oDialog) {
@@ -640,6 +671,9 @@ sap.ui.define([
 					fnRenderContent();
 				});
 			} else {
+				if (this.oTokenizer) { // restore tokenizer binding to enable updates if open
+					_bindTokenizer.call(this, true);
+				}
 				fnRenderContent();
 			}
 		}
@@ -693,6 +727,10 @@ sap.ui.define([
 		var oContainer = this.getAggregation("_container");
 		if (oContainer) {
 			oContainer.close();
+
+			if (this.oTokenizer) { // remove tokenizer binding to prevent updates if closed
+				_bindTokenizer.call(this, false);
+			}
 		}
 	};
 
