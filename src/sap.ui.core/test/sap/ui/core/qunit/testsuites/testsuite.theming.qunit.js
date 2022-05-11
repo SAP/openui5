@@ -28,8 +28,8 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
-			ThemeCheck: {
-				title: "sap.ui.core.ThemeCheck",
+			ThemeManager: {
+				title: "sap.ui.core.theming.ThemeManager",
 				ui5: {
 					libs: "sap.ui.core,sap.ui.testlib",
 					themeRoots: {

@@ -22,24 +22,22 @@
 			testresults.bApplyThemeExists = typeof sap.ui.getCore().applyTheme === "function";
 			testresults.sThemeBefore = sap.ui.getCore().getConfiguration().getTheme();
 			testresults.oLinksBefore = document.querySelectorAll('head > link[id^="sap-ui-theme-"]');
-			try {
-				sap.ui.getCore().applyTheme("SapSampleTheme2");
+			var fnThemeChanged = function () {
 				testresults.oLinksAfter = document.querySelectorAll('head > link[id^="sap-ui-theme-"]');
 				testresults.sThemeAfter = sap.ui.getCore().getConfiguration().getTheme();
-				testresults.bApplyThemeFails = false;
-			} catch (e) {
-				testresults.bApplyThemeFails = true;
-			}
+				testresults.bIconPoolLoaded = !!sap.ui.require("sap/ui/core/IconPool");
+
+				sap.ui.require([
+					"sap/ui/core/IconPool"
+				], function() {
+					callback();
+				});
+
+				sap.ui.getCore().detachThemeChanged(fnThemeChanged);
+			};
+			sap.ui.getCore().attachThemeChanged(fnThemeChanged);
+			sap.ui.getCore().applyTheme("SapSampleTheme2");
 		}
-
-		testresults.bIconPoolLoaded = !!sap.ui.require("sap/ui/core/IconPool");
-
-		sap.ui.require([
-			"sap/ui/core/IconPool"
-		], function() {
-			callback();
-		});
-
 	};
 
 }());

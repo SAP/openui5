@@ -5,16 +5,14 @@
 /**
  * Provides methods for information retrieval from the core.
  */
-sap.ui.define(["sap/base/util/LoaderExtensions", 'sap/base/security/encodeXML', "sap/ui/core/Component", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI"],
-	function (LoaderExtensions, encodeXML, Component, ToolsAPI, URI) {
+sap.ui.define(["sap/ui/core/Core", "sap/base/util/LoaderExtensions", 'sap/base/security/encodeXML', "sap/ui/core/Component", "sap/ui/core/Configuration", "sap/ui/core/theming/ThemeManager", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI"],
+	function (Core, LoaderExtensions, encodeXML, Component, Configuration, ThemeManager, ToolsAPI, URI) {
 	"use strict";
 
 	/**
 	 * The DataCollector collects information.
 	 */
-	var DataCollector = function(oCore) {
-		this._oCore = oCore;
-
+	var DataCollector = function() {
 		// Set default
 		this._oSupportAssistantInfo = {
 			location: "",
@@ -124,7 +122,7 @@ sap.ui.define(["sap/base/util/LoaderExtensions", 'sap/base/security/encodeXML', 
 		oTechData.resourcePaths = aResults;
 
 		//add theme paths
-		var mLibraries = this._oCore.getLoadedLibraries();
+		var mLibraries = Core.getLoadedLibraries();
 		aResults = [];
 		for (var n in mLibraries) {
 			if (n === "") {
@@ -133,9 +131,9 @@ sap.ui.define(["sap/base/util/LoaderExtensions", 'sap/base/security/encodeXML', 
 				// (e.g. "MyControl" instead of "com.example.MyControl").
 				continue;
 			}
-			var sPath = this._oCore._getThemePath(n, this._oCore.getConfiguration().getTheme());
+			var sPath = ThemeManager._getThemePath(n, Configuration.getTheme());
 			aResults.push({
-				theme : this._oCore.getConfiguration().getTheme(),
+				theme : Configuration.getTheme(),
 				library: n,
 				relativePath: sPath,
 				absolutePath: URI(sPath).absoluteTo(document.location.origin + document.location.pathname).toString()

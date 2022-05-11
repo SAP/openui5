@@ -36,7 +36,7 @@ sap.ui.define([
 
 	QUnit.test("library.css", function(assert) {
 		var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
-		var sHref = oLink.getAttribute("href");
+		var sHref = oLink.href;
 		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
 
 		var sExpectedHref;
@@ -46,6 +46,7 @@ sap.ui.define([
 			sExpectedHref = sap.ui.require.toUrl("sap/ui/core/themes/");
 		}
 		sExpectedHref += Configuration.getTheme() + "/library.css";
+		sExpectedHref = new URL(sExpectedHref, document.baseURI);
 
 		if (mOptions.versionedLibCss) {
 			assert.equal(
@@ -70,10 +71,10 @@ sap.ui.define([
 			return;
 		}
 
-		var sHref = oLink.getAttribute("href");
+		var sHref = oLink.href;
 		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
 
-		var sExpectedHref = "test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/" + Configuration.getTheme() + "/custom.css";
+		var sExpectedHref = new URL("test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/" + Configuration.getTheme() + "/custom.css", document.baseURI);
 
 		assert.equal(
 			sHref,
@@ -131,10 +132,10 @@ sap.ui.define([
 			sap.ui.getCore().detachThemeChanged(fnThemeChanged);
 
 			var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
-			var sHref = oLink.getAttribute("href");
+			var sHref = oLink.href;
 			var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
 
-			var sExpectedHref = sap.ui.require.toUrl("sap/ui/core/themes/sap_bluecrystal/library.css");
+			var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/sap_bluecrystal/library.css"), document.baseURI);
 
 			if (mOptions.versionedLibCss) {
 				assert.equal(
@@ -157,29 +158,40 @@ sap.ui.define([
 	});
 
 	QUnit.test("RTL Change", function(assert) {
+		var done = assert.async();
+
+		var fnThemeChanged = function () {
+			var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
+			var sHref = oLink.href;
+			var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
+
+			var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/sap_bluecrystal/library-RTL.css"), document.baseURI);
+
+			if (mOptions.versionedLibCss) {
+				assert.equal(
+					sHref,
+					sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + oVersionInfo.version,
+					"'sap.ui.core' library-RTL.css URL should contain version parameters."
+				);
+			} else {
+				assert.equal(
+					sHref,
+					sExpectedHref,
+					"'sap.ui.core' library-RTL.css URL should not contain version parameters."
+				);
+			}
+
+			sap.ui.getCore().detachThemeChanged(fnThemeChanged);
+			Configuration.setRTL(false);
+
+			done();
+		};
+
+		sap.ui.getCore().attachThemeChanged(fnThemeChanged);
+		// setTheme to ensure applyTheme is really applying 'sap_bluecrystal'
+		Configuration.setTheme("sap_hcb");
+		sap.ui.getCore().applyTheme("sap_bluecrystal");
 		Configuration.setRTL(true);
-
-		var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
-		var sHref = oLink.getAttribute("href");
-		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
-
-		var sExpectedHref = sap.ui.require.toUrl("sap/ui/core/themes/sap_bluecrystal/library-RTL.css");
-
-		if (mOptions.versionedLibCss) {
-			assert.equal(
-				sHref,
-				sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + oVersionInfo.version,
-				"'sap.ui.core' library-RTL.css URL should contain version parameters."
-			);
-		} else {
-			assert.equal(
-				sHref,
-				sExpectedHref,
-				"'sap.ui.core' library-RTL.css URL should not contain version parameters."
-			);
-		}
-
-		Configuration.setRTL(false);
 	});
 
 	return waitForThemeApplied();
