@@ -18,7 +18,7 @@ sap.ui.define([
 	});
 
 	QuickActionContainer.prototype.getEffectiveQuickActions = function() {
-		return this.getQuickActions().reduce(function(aQuickActions, oQuickAction) {
+		return !this.getVisible() ? [] : this.getQuickActions().reduce(function(aQuickActions, oQuickAction) {
 			return aQuickActions.concat(oQuickAction.getEffectiveQuickActions());
 		}, []);
 	};

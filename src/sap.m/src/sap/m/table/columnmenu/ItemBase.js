@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	ItemBase.prototype.getEffectiveItems = function() {
-		return [this];
+		return this.getVisible() ? [this] : [];
 	};
 
 	/**

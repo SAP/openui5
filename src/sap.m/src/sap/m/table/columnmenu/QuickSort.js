@@ -61,9 +61,11 @@ sap.ui.define([
 		var aItems = this.getItems();
 		var aEffectiveQuickActions = [];
 
-		aItems.forEach(function(oItem) {
-			aEffectiveQuickActions.push(oItem._getAction());
-		}, this);
+		if (this.getVisible()) {
+			aItems.forEach(function(oItem) {
+				aEffectiveQuickActions.push(oItem._getAction());
+			}, this);
+		}
 
 		return aEffectiveQuickActions;
 	};

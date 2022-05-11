@@ -43,6 +43,9 @@ sap.ui.define([
 	QUnit.test("getEffectiveQuickActions", function(assert) {
 		assert.equal(this.oQuickSort.getEffectiveQuickActions().length, 1, "Returns an array that contains 1 item");
 		assert.ok(this.oQuickSort.getEffectiveQuickActions()[0].isA("sap.m.table.columnmenu.QuickAction"), "The array contains a QuickAction instance");
+
+		this.oQuickSort.setVisible(false);
+		assert.equal(this.oQuickSort.getEffectiveQuickActions().length, 0, "Returns an array that contains 0 items");
 	});
 
 	QUnit.test("Label", function(assert) {

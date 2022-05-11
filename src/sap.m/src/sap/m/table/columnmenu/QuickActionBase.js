@@ -47,7 +47,7 @@ sap.ui.define([
 	 * @public
 	 */
 	QuickActionBase.prototype.getEffectiveQuickActions = function() {
-		return [this];
+		return this.getVisible() ? [this] : [];
 	};
 
 	QuickActionBase.prototype.setVisible = function (bVisible) {
