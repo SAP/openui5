@@ -52,6 +52,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			}
 			oRm.openStart("div"); // buttons wrapper
 			oRm.class("sapMTPCButtons");
+			oRm.attr("dir", "ltr");
 			oRm.openEnd();
 
 			// render buttons
