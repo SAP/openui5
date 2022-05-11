@@ -33,6 +33,20 @@
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
         <exclude name="sap.m.js." />
     </jscoverage>
+    <!-- excludes for the library-preload.js -->
+    <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
+        <all-in-one>
+            <exclude name="sap/m/_thirdparty/purify.js" />
+        </all-in-one>
+    </packaging>
+    <!-- Thirdparty references -->
+    <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
+        <lib name="DOMPurify" displayName="purify.js" version="2.3.8" homepage="https://github.com/cure53/DOMPurify/" id="73554900106100137292">
+            <license url="https://github.com/cure53/DOMPurify/blob/main/LICENSE" type="Apache-2.0" />
+            <copyright>Mario Heiderich</copyright>
+            <pattern>sap/m/_thirdparty/purify.js</pattern>
+        </lib>
+    </thirdparty>
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
         indexUrl="../../../test-resources/sap/m/demokit/docuindex.json"
         resolve="lib" />

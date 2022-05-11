@@ -2,6 +2,7 @@
 dist
 target
 
+src/sap/m/_thirdparty
 test/sap/m/demokit/cart/webapp/Component.js
 test/sap/m/demokit/master-detail/webapp/Component.js
 test/sap/m/demokit/master-detail/webapp/controller/BaseController.js

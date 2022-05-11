@@ -182,6 +182,65 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
+	QUnit.test("Image in 'Svg' mode renders inline 'svg'", function(assert) {
+		// Arrange
+		var oImage = createImage({
+				src: ("/testsuite/test-resources/sap/m/demokit/sample/Image/images/sap-logo.svg"),
+				mode: "InlineSvg"
+			}),
+			fnDone = assert.async(),
+			oSpy = this.spy(oImage.getRenderer(), "_renderSvg");
+
+		assert.expect(1);
+
+		// System under test
+		oImage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		setTimeout(function() {
+			// Assert
+			assert.ok(oSpy.called, "Inline svg is rendered");
+
+			// Clean up
+			oImage.destroy();
+			fnDone();
+		}, 1000);
+	});
+
+	QUnit.test("Svg data is cached, so upon rerendering svg is not requested twice, but it is still rendered inline", function(assert) {
+		// Arrange
+		var oImage = createImage({
+				src: ("/testsuite/test-resources/sap/m/demokit/sample/Image/images/sap-logo.svg"),
+				mode: "InlineSvg"
+			}),
+			fnDone = assert.async(),
+			oSpy;
+
+		assert.expect(1);
+
+		// System under test
+		oImage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		setTimeout(function() {
+			// Act
+			oImage.setWidth("200px");
+			oSpy = this.spy(jQuery, "get");
+
+			oImage.addEventDelegate({
+				onAfterRendering: function () {
+
+					// Assert
+					assert.ok(oSpy.notCalled, "Same svg is not requested twice");
+
+					// Clean up
+					oImage.destroy();
+					fnDone();
+				}
+			});
+		}.bind(this), 1000);
+	});
+
 	QUnit.module("Rendering decorative image");
 
 	QUnit.test("Alt text and tooltip", function(assert) {

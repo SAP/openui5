@@ -2416,7 +2416,16 @@ sap.ui.define([
 		* The image is rendered with 'span' tag and the 'src' property is set to the 'background-image' CSS style on the output DOM element
 		* @public
 		*/
-		Background: "Background"
+		Background: "Background",
+
+		/**
+		* The image is rendered with 'div' tag, containing the inline 'svg'
+		* <b>Note:</b> Please, be aware that this feature works under the Browser's Cross-Origin Resource Sharing (CORS) policy.
+		* This means that a web application using those APIs can only request resources from the same origin the application was loaded from unless the response from other origins includes the right CORS headers.
+		* @public
+		* @experimental since 1.106
+		*/
+		InlineSvg: "InlineSvg"
 
 	};
 

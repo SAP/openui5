@@ -6,6 +6,7 @@ src/*/node_modules
 src/sap.ui.core/src/sap/ui/thirdparty
 src/sap.ui.core/src/sap/base/util/restricted/_
 src/sap.ui.core/test/sap/ui/core/qunit/thirdparty
+src/sap.m/src/sap/m/_thirdparty
 src/sap.m/test/sap/m/demokit/cart/webapp/Component.js
 src/sap.m/test/sap/m/demokit/master-detail/webapp/Component.js
 src/sap.m/test/sap/m/demokit/master-detail/webapp/controller/BaseController.js

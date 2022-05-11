@@ -19,6 +19,10 @@
 				<Text text="Image using SVG format:" class="sapUiSmallMarginBottom" />
 				<Image src="{/svgLogo}"/>
 			</VBox>
+			<VBox>
+				<Text text="Image displaying inline SVG:" class="sapUiSmallMarginBottom" />
+				<Image src="{/svgLogo}" mode="InlineSvg"/>
+			</VBox>
 		</HBox>
 	</VBox>
 </mvc:View>

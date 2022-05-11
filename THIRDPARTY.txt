@@ -4,6 +4,15 @@ each subcomponent.
 The full text of all referenced licenses is appended at the end of this file.
 
 
+Library: sap.m:
+
+Component: purify.js, version: 2.3.8
+Copyright: Mario Heiderich
+License: Apache-2.0
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+Contained in: src/sap.m/src/sap/m/_thirdparty/purify.js
+
+
 Library: sap.ui.codeeditor:
 
 Component: Ace (Ajax.org Cloud9 Editor), version: 1.4.13
