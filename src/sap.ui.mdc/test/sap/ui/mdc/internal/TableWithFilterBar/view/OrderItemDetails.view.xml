@@ -78,24 +78,26 @@
 											</mdc:typeahead>
 											<mdc:dialog>
 												<mdcv:Dialog title="Book">
-													<mdcvc:MTable keyPath="ID" descriptionPath="title" filterFields="$search">
-														<Table items='{path : "/Books"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
-															<columns>
-																<Column width="5rem">
-																	<header>
-																		<Text text="Title" />
-																	</header>
-																</Column>
-															</columns>
-															<items>
-																<ColumnListItem type="Active">
-																	<cells>
-																		<Text text="{title}" />
-																	</cells>
-																</ColumnListItem>
-															</items>
-														</Table>
-													</mdcvc:MTable>
+													<mdcvc:MDCTable keyPath="ID" descriptionPath="title" filterFields="$search">
+														<mdc:Table id="FH4--mdc--gridtable"
+															autoBindOnInit="true"
+															width="100%"
+															height="100%"
+															selectionMode="Single"
+															p13nMode="Sort"
+															delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}"
+															threshold="50"
+															enableAutoColumnWidth="true">
+															<mdc:columns>
+																<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" dataProperty="title">
+																	<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'title', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
+																</mdc:table.Column>
+															</mdc:columns>
+															<mdc:type>
+																<mdc:table.GridTableType rowCountMode="Auto"/>
+															</mdc:type>
+														</mdc:Table>
+													</mdcvc:MDCTable>
 												</mdcv:Dialog>
 											</mdc:dialog>
 										</mdc:ValueHelp>
