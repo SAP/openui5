@@ -95,10 +95,8 @@ sap.ui.define([
 							.then(oModifier.insertAggregation.bind(oModifier, oTemplate, CELLS_AGGREGATION_NAME, oSmartField, iIndex, oView))
 							.then(oModifier.updateAggregation.bind(oModifier, oTable, ITEMS_AGGREGATION_NAME)) //only needed in JS case
 							.then(function() {
-								oRevertData.newCellSelector = {
-									id: mFieldSelector.id + '--field',
-									idIsLocal: true
-								};
+								// getSelector() helps to decide whether idIsLocal is true/false
+								oRevertData.newCellSelector = oModifier.getSelector(oSmartField, oAppComponent);
 								oChange.setRevertData(oRevertData);
 							});
 					}
