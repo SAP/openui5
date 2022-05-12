@@ -137,7 +137,8 @@
 			"category": "Display",
 			"since": "1.72",
 			  "samples": [
-				  "sap.f.sample.ShellBarProductSwitch"
+				  "sap.f.sample.ShellBarProductSwitch",
+				  "sap.f.sample.ProductSwitchNavigation"
 			  ]
 		  }
 	  ],
@@ -307,6 +308,11 @@
 			"id": "sap.f.sample.GridContainersNavigation",
 			"name": "Grid Container - Keyboard navigation between multiple grids",
 			"description": "This sample demonstrates the keyboard navigation between multiple grids"
+		},
+		{
+			"id": "sap.f.sample.ProductSwitchNavigation",
+			"name": "Product Switch with Navigation",
+		  	"description": "This sample demonstrates the navigation behavior of Product Switch, configurable by the app developer."
 		}
 	  ]
 	}

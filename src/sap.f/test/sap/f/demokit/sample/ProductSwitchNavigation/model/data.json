@@ -1,0 +1,25 @@
+{
+	"items": [
+		{
+			"src": "sap-icon://sap-logo-shape",
+			"title": "SAP Homepage",
+			"subTitle": "Learn more about SAP",
+			"targetSrc": "https://www.sap.com/index.html",
+			"target": "_blank"
+		},
+		{
+			"src": "sap-icon://newspaper",
+			"title": "Newsletter",
+			"subTitle": "Subscribe to receive the latest UI5 updates",
+			"targetSrc": "https://listserv.sap.com/mailman/listinfo/ui5.announce",
+			"target": "_blank"
+		},
+		{
+			"src": "sap-icon://group",
+			"title": "Community",
+			"subTitle": "Get involved",
+			"targetSrc": "https://community.sap.com/topics/ui5",
+			"target": "_blank"
+		}
+	]
+}
