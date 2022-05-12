@@ -24,7 +24,7 @@ sap.ui.define([
         var oSelectionPanel = new ActionToolbarPanel({
             showHeader: true
         });
-        oSelectionPanel.setEnableReorder(false);
+        //oSelectionPanel.setEnableReorder(false);
         oSelectionPanel.setFieldColumn(oResourceBundle.getText("actiontoolbar.RTA_COLUMN_HEADER"));
 
         var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
