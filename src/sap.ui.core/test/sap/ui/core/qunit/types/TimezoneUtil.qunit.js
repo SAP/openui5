@@ -13,25 +13,33 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/ui/core/format/TimezoneUtil", "
 
 		QUnit.test("valid timezones (UI5 json data)", function (assert) {
 			aTimezoneIDs.forEach(function (sTimezone) {
-				assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (CLDR).");
+				if (!timezones.aUnsupportedBrowserTimezoneIDs.includes(sTimezone)) {
+					assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (UI5 json data).");
+				}
 			});
 		});
 
 		QUnit.test("valid timezones (CLDR)", function (assert) {
 			timezones.aCLDRTimezoneIDs.forEach(function (sTimezone) {
-				assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (CLDR).");
+				if (!timezones.aUnsupportedBrowserTimezoneIDs.includes(sTimezone)) {
+					assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (CLDR).");
+				}
 			});
 		});
 
 		QUnit.test("valid timezones (ABAP)", function (assert) {
 			timezones.aABAPTimezoneIDs.forEach(function (sTimezone) {
-				assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (ABAP).");
+				if (!timezones.aUnsupportedBrowserTimezoneIDs.includes(sTimezone)) {
+					assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (ABAP).");
+				}
 			});
 		});
 
 		QUnit.test("valid timezones (tz)", function (assert) {
 			timezones.aTzTimezoneIDs.forEach(function (sTimezone) {
-				assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (tz).");
+				if (!timezones.aUnsupportedBrowserTimezoneIDs.includes(sTimezone)) {
+					assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (tz).");
+				}
 			});
 		});
 
@@ -509,10 +517,12 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/ui/core/format/TimezoneUtil", "
 
 		QUnit.test("local timezone", function (assert) {
 			var sLocalTimezone = TimezoneUtil.getLocalTimezone();
-			assert.ok(aTimezoneIDs.includes(sLocalTimezone), "Local timezone should be in list: " + sLocalTimezone);
+			assert.ok(sLocalTimezone, "local timezone can be retrieved");
+			assert.ok(timezones.aTzTimezoneIDs.includes(sLocalTimezone) || aTimezoneIDs.includes(sLocalTimezone),
+				"Local timezone should be in list: " + sLocalTimezone);
 		});
 
-		QUnit.module("Fixed date with end of January such that", {
+		QUnit.module("Fixed date with end of January", {
 			beforeEach: function () {
 				this.clock = sinon.useFakeTimers(new Date("2022-01-31T15:22:33Z").getTime());
 			},
@@ -521,7 +531,7 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/ui/core/format/TimezoneUtil", "
 			}
 		});
 
-		QUnit.test("convert to from UTC to UTC", function (assert) {
+		QUnit.test("convert from UTC to UTC", function (assert) {
 			// The date creation from fields provided by the Intl.DateTimeFormat API must be in the
 			// correct order and use the UNIX epoch start date (new Date(0)).
 			// Otherwise if created from a new Date() with date January 31st when calling
