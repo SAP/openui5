@@ -1,0 +1,94 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.column.timeseries",
+		"type": "card",
+		"title": "Sample of a Column Series with Time Axis",
+		"subTitle": "Sample of a Column Series with Time Axis",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Analytical",
+				"Card",
+				"Line",
+				"Sample",
+				"Time"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://column-chart"
+		}
+	},
+	"sap.card": {
+		"type": "Analytical",
+		"header": {
+			"title": "Column Series with Time Axis"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./data.json"
+				},
+				"path": "/milk"
+			},
+			"chartType": "timeseries_column",
+			"chartProperties": {
+				"plotArea": {
+					"dataLabel": {
+						"visible": true
+					}
+				},
+				"timeAxis": {
+					"title": {
+						"visible": false
+					}
+				},
+				"valueAxis": {
+					"title": {
+						"visible": false
+					}
+				},
+				"title": {
+					"visible": false
+				}
+			},
+			"dimensions": [
+				{
+					"name": "Date",
+					"value": "{Date}",
+					"dataType":"date"
+				}
+			],
+			"measures": [
+				{
+					"name": "Cost",
+					"value": "{Cost}"
+				}
+			],
+			"feeds": [
+				{
+					"uid": "valueAxis",
+					"type": "Measure",
+					"values": [
+						"Cost"
+					]
+				},
+				{
+					"uid": "timeAxis",
+					"type": "Dimension",
+					"values": [
+						"Date"
+					]
+				}
+			]
+		}
+	}
+}

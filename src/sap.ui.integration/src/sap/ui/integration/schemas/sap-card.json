@@ -36,7 +36,8 @@
         "1.24.0",
         "1.25.0",
         "1.26.0",
-        "1.27.0"
+        "1.27.0",
+        "1.28.0"
       ]
     },
     "designtime": {
@@ -1079,6 +1080,23 @@
         "displayValue": {
           "type": "string",
           "description": "Display value for the dimension. It doesn't work with 'waterfallType'"
+        },
+        "dataType": {
+          "type": "string",
+          "description": "Data type of the dimension as displayed in the chart. Currently only in time series chart, it is required to set data type to 'date' if this column is going to feed the 'timeAxis'",
+          "oneOf": [
+             {
+               "enum": [
+                 "string",
+                 "number",
+                 "date"
+               ],
+               "default": "string"
+             },
+             {
+               "$ref": "#/definitions/simpleBinding"
+             }
+          ]
         }
       }
     },
