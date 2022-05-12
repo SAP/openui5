@@ -498,9 +498,22 @@ sap.ui.define([
 			bClose = oEvent.getParameter("close");
 		});
 
-		oContent.fireConfirm();
-		assert.equal(iConfirm, 1, "Confirm event fired");
-		assert.ok(bClose, "close parameter");
+		var oPromise = oPopover.open(Promise.resolve());
+		if (oPromise) {
+			var fnDone = assert.async();
+			oPromise.then(function() {
+				setTimeout(function() { // wait until open
+					oContent.fireConfirm();
+					assert.equal(iConfirm, 1, "Confirm event fired");
+					assert.ok(bClose, "close parameter");
+
+					fnDone();
+				}, iPopoverDuration);
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
 
 	});
 

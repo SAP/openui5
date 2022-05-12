@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/model/type/String",
 	"sap/ui/Device",
 	"sap/base/strings/formatMessage",
+	"sap/base/util/merge",
 	"sap/m/library",
 	"sap/ui/core/Core"
 ], function (
@@ -30,6 +31,7 @@ sap.ui.define([
 		StringType,
 		Device,
 		formatMessage,
+		merge,
 		mLibrary,
 		oCore
 	) {
@@ -533,25 +535,57 @@ sap.ui.define([
 			bClose = oEvent.getParameter("close");
 		});
 
-		oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: SelectType.Set});
-		assert.equal(iSelect, 1, "select event fired");
-		assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
-		assert.equal(sType, SelectType.Set, "select event type");
-		assert.equal(iConfirm, 0, "ConfirmEvent not fired");
+		var oContent2 = new Content("Content2", {title: "Content title 2", shortTitle: "ShortTitle 2"});
+		sinon.stub(oContent2, "isQuickSelectSupported").returns(true);
+		oDialog.addContent(oContent2);
 
-		oValueHelpConfig.maxConditions = 1;
-		oDialog.removeContent(oContent);
-		sinon.stub(oContent, "isQuickSelectSupported").returns(true);
+		var oPromise = oDialog.open(Promise.resolve());
+		if (oPromise) {
+			var fnDone = assert.async();
+			oPromise.then(function() {
+				setTimeout(function() { // wait until open
+					oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: SelectType.Set});
+					assert.equal(iSelect, 1, "select event fired");
+					assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
+					assert.equal(sType, SelectType.Set, "select event type");
+					assert.equal(iConfirm, 0, "ConfirmEvent not fired");
 
-		oDialog.addContent(oContent);
-		iSelect = 0;
-		iConfirm = 0;
-		oContent.fireSelect({conditions: [Condition.createItemCondition("Y", "Text")], type: SelectType.Set});
-		assert.equal(iSelect, 1, "select event fired");
-		assert.deepEqual(aConditions, [Condition.createItemCondition("Y", "Text")], "select event conditions");
-		assert.equal(sType, SelectType.Set, "select event type");
-		assert.equal(iConfirm, 1, "ConfirmEvent fired");
-		assert.ok(bClose, "Close parameter set");
+					iSelect = 0;
+					iConfirm = 0;
+					oContent2.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: SelectType.Set});
+					assert.equal(iSelect, 0, "select event not fired for hidden content");
+
+					oValueHelpConfig = merge({}, oValueHelpConfig);
+					oValueHelpConfig.maxConditions = 1;
+					oModel.setProperty("/_config", oValueHelpConfig); // update Model to use Binding updates
+					oDialog._handleContentSelectionChange("Content2"); // fake switch of content
+					oDialog.removeContent(oContent); // to enable quick select
+					oContent.destroy();
+
+					setTimeout(function() { // wait until switched and model updated
+						iSelect = 0;
+						iConfirm = 0;
+						oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: SelectType.Set});
+						assert.equal(iSelect, 0, "select event not fired for hidden content");
+
+						iSelect = 0;
+						iConfirm = 0;
+						oContent2.fireSelect({conditions: [Condition.createItemCondition("Y", "Text")], type: SelectType.Set});
+						assert.equal(iSelect, 1, "select event fired");
+						assert.deepEqual(aConditions, [Condition.createItemCondition("Y", "Text")], "select event conditions");
+						assert.equal(sType, SelectType.Set, "select event type");
+						assert.equal(iConfirm, 1, "ConfirmEvent fired");
+						assert.ok(bClose, "Close parameter set");
+
+						oContent2.destroy();
+						fnDone();
+					}, iDialogDuration);
+				}, iDialogDuration);
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
 
 	});
 

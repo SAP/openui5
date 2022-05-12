@@ -285,6 +285,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
+		oContainer._open(); // just fake opening as only bound if open
 
 		assert.equal(oContent.getFilterValue(), "X", "filterValue from ValueHelp");
 		assert.deepEqual(oContent.getConfig(), oValueHelpConfig, "_config from ValueHelp");
@@ -308,6 +309,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
+		oContainer._open(); // just fake opening as only bound if open
 		oContent.fireConfirm();
 		assert.equal(iConfirm, 1, "Confirm event fired");
 
@@ -323,6 +325,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
+		oContainer._open(); // just fake opening as only bound if open
 		oContent.fireCancel();
 		assert.equal(iCancel, 1, "Cancel event fired");
 
@@ -340,6 +343,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
+		oContainer._open(); // just fake opening as only bound if open
 		oContent.fireRequestSwitchToDialog();
 		assert.equal(iRequestSwitchToDialog, 1, "RequestSwitchToDialog event fired");
 		assert.equal(oEventContainer, oContainer, "RequestSwitchToDialog event container");
@@ -360,6 +364,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
+		oContainer._open(); // just fake opening as only bound if open
 		oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: SelectType.Set});
 		assert.equal(iSelect, 1, "select event fired");
 		assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
@@ -383,6 +388,7 @@ sap.ui.define([
 		// add
 		var oContent = new Content("Content1");
 		oContainer.addContent(oContent);
+		oContainer._open(); // just fake opening as only bound if open
 		oContent.fireNavigated({condition: Condition.createItemCondition("X", "Text"), leaveFocus: true, itemId:"X"});
 		assert.equal(iNavigated, 1, "navigated event fired");
 		assert.deepEqual(oCondition, Condition.createItemCondition("X", "Text"), "navigated event condition");
