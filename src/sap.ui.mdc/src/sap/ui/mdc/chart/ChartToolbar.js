@@ -46,7 +46,6 @@ sap.ui.define([
          * @private
          * @since 1.88
          * @alias sap.ui.mdc.chart.ChartToolbar
-         * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
          */
         var ChartToolbar = ActionToolbar.extend("sap.ui.mdc.chart.ChartToolbar", /** @lends sap.ui.mdc.chart.ChartToolbar.prototype */ {
             metadata: {
@@ -74,6 +73,14 @@ sap.ui.define([
             ActionToolbar.prototype.init.apply(this, arguments);
         };
 
+        /**
+         * Creates the inner toolbar content.
+         * @param {sap.ui.mdc.Chart} oMDCChart Reference to the parent chart
+         *
+         * @experimental
+         * @private
+         * @ui5-restricted sap.ui.mdc
+         */
         ChartToolbar.prototype.createToolbarContent = function (oMDCChart) {
             //Keep track of chart buttons to enable them later on
             this._chartInternalButtonsToEnable = [];
@@ -190,6 +197,14 @@ sap.ui.define([
 
         };
 
+        /**
+         * This adds a <code>VariantManagement</code> control at the beginning of the toolbar.
+         * @param {sap.ui.fl.variantManagement} oVariantManagement the <code>VariantManagement</code> control to add to the toolbar
+         *
+         * @experimental
+         * @private
+         * @ui5-restricted sap.ui.mdc
+         */
         ChartToolbar.prototype.addVariantManagement = function(oVariantManagement) {
 
             if (oVariantManagement){
@@ -203,6 +218,14 @@ sap.ui.define([
 
         };
 
+        /**
+         * This checks the enablement of the zoom button in the toolbar.
+         * @param {sap.ui.mdc.Chart} oMDCChart Reference to the parent chart
+         *
+         * @experimental
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.fe
+         */
         ChartToolbar.prototype.toggleZoomButtons = function (oMDCChart) {
             var oZoomInfo = this._getZoomEnablement(oMDCChart);
 
@@ -216,6 +239,15 @@ sap.ui.define([
 
         };
 
+        /**
+         * This updates the toolbar in accordance with the parent chart.
+         * Only used internally.
+         * @param {sap.ui.mdc.Chart} oMDCChart Reference to the parent chart
+         *
+         * @experimental
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.fe
+         */
         ChartToolbar.prototype.updateToolbar = function (oMDCChart) {
             this.toggleZoomButtons(oMDCChart);
 
