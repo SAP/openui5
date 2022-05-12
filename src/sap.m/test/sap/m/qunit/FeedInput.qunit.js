@@ -31,13 +31,19 @@ sap.ui.define([
 		assert.strictEqual(this.oFeedInput.getShowIcon(), true, "showIcon is 'true'");
 		assert.strictEqual(this.oFeedInput.getValue(), "", "value is ''");
 		assert.strictEqual(this.oFeedInput.getVisible(), true, "visible is 'true'");
-		assert.strictEqual(this.oFeedInput.getAriaLabelForPicture(), "", "ariaLabelForPicture is ''");
 		assert.strictEqual(this.oFeedInput.getRows(), 2, "rows is '2'");
 		assert.strictEqual(this.oFeedInput.getGrowing(), false, "growing is 'false'");
 		assert.strictEqual(this.oFeedInput.getGrowingMaxLines(), 0, "growingMaxLines is '0'");
 		assert.strictEqual(this.oFeedInput.getShowExceededText(), false, "showExceededText is 'false'");
 		assert.strictEqual(this.oFeedInput.$().attr("role"), "group", "role is 'group'");
 		assert.strictEqual(this.oFeedInput.$().attr("aria-label"), oRb.getText("FEED_INPUT_ARIA_LABEL"), "aria-label is 'Your Input'");
+	});
+
+	/**
+	 * @deprecated Since version 1.88.
+	 */
+	QUnit.test("Default value of ariaLabelForPicture property", function (assert) {
+		assert.strictEqual(this.oFeedInput.getAriaLabelForPicture(), "", "ariaLabelForPicture is ''");
 	});
 
 	QUnit.test("ButtonTooltip", function (assert) {

@@ -138,6 +138,9 @@ sap.ui.define([
 		assert.strictEqual(oSpy.callCount, 1, "setPointerOnIcon was called.");
 	});
 
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	QUnit.test("setIndicator function", function (assert) {
 		var fnAssert = function (sExpectedIcon, sExpectedIndicator) {
 			assert.strictEqual(this.oNumericContent._oIndicatorIcon.getSrc(), sExpectedIcon, "Indicator icon src should be correct.");
@@ -665,6 +668,9 @@ sap.ui.define([
 		assert.ok(document.getElementById("numeric-cnt-scale"), "Scale was rendered successfully");
 	}
 
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	function fnCreateExampleNumericContent () {
 		return new NumericContent("numeric-cnt", {
 			size: Size.L,

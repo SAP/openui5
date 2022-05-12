@@ -105,6 +105,9 @@ sap.ui.define([
 	});
 
 
+	/**
+	 * @deprecated As of version 1.50.0.
+	 */
 	QUnit.test('Header is shown when the title is filled', function (assert) {
 		assert.expect(3);
 		var done = assert.async();
@@ -151,6 +154,9 @@ sap.ui.define([
 		oPdfViewer.open();
 	});
 
+	/**
+	 * @deprecated As of version 1.50.0
+	 */
 	QUnit.test('Header is shown when the title is empty string', function (assert) {
 		assert.expect(2);
 		var done = assert.async();

@@ -169,6 +169,10 @@ sap.ui.define([
 	QUnit.test("Default value of failedText", function(assert) {
 		assert.strictEqual(this.oGenericTile.getProperty("failedText"), "");
 	});
+
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	QUnit.test("Default value of size", function(assert) {
 		assert.strictEqual(this.oGenericTile.getProperty("size"), Size.Auto);
 	});
