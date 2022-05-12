@@ -4,12 +4,13 @@
 /* ================================== */
 
 ._sap_ui_table_Scrolling_NativeScrollbarDesktop() {
-	&::-webkit-scrollbar {
-		border: none !important;
+	&::-webkit-scrollbar-thumb:vertical {
+		border-left-width: 0.25rem !important;
+		border-right-width: 0.25rem !important;
 	}
 
-	&::-webkit-scrollbar-thumb {
-		border: none !important;
-		box-shadow: none !important;
+	&::-webkit-scrollbar-thumb:horizontal {
+		border-top-width: 0.25rem !important;
+		border-bottom-width: 0.25rem !important;
 	}
 }
