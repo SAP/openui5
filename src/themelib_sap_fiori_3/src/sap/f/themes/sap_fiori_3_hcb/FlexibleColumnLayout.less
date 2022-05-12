@@ -24,7 +24,7 @@
 		border-right: none;
 		border-left: none;
 	}
-	
+
 	&.sapFFCLBackgroundDesign {
 		background: @sapUiBaseBG;
 	}
@@ -35,21 +35,21 @@
 		.sapMBtnInner {
 			border: 1px solid @sapUiButtonBorderColor;
 
-			&:before,
-			&:after {
-				background-size: 0.125rem 100%;
-				background-position-x: calc(50% - 0.0625rem);
-			}
-			&:before {
-				background-image: linear-gradient(to top, @sapUiObjectHeaderBorderColor, fade(@sapUiObjectHeaderBorderColor, 0));
-			}
-
-			&:after {
-				background-image: linear-gradient(to bottom, @sapUiObjectHeaderBorderColor, fade(@sapUiObjectHeaderBorderColor, 0));
-			}
 			.sapMBtnIcon {
 				width: auto;
 			}
+		}
+		&:before,
+		&:after {
+			background-size: 0.125rem 100%;
+			background-position-x: calc(50% - 0.0625rem);
+		}
+		&:before {
+			background-image: linear-gradient(to top, @sapUiObjectHeaderBorderColor, fade(@sapUiObjectHeaderBorderColor, 0));
+		}
+
+		&:after {
+			background-image: linear-gradient(to bottom, @sapUiObjectHeaderBorderColor, fade(@sapUiObjectHeaderBorderColor, 0));
 		}
 	}
 }
