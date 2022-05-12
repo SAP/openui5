@@ -191,6 +191,12 @@ sap.ui.define(function() {
 					useFakeTimers : true
 				}
 			},
+			ODataTreeBinding : {
+				// not in 1RingModels.qunit because of MockServer usage
+				title : "sap.ui.model.odata.ODataTreeBinding",
+				module : ["test-resources/sap/ui/core/qunit/odata/ODataTreeBinding.qunit"],
+				sinon : 1
+			},
 			ODataTreeBindingAdapter : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.ODataTreeBindingAdapter",
@@ -232,6 +238,30 @@ sap.ui.define(function() {
 				// not in 1RingModels.qunit because of ODataModelFakeService usage
 				title : "sap.ui.model.odata.v2.ODataModel (ODataV2Model)",
 				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataV2Model.qunit"]
+			},
+			ODataV2TreeBinding : {
+				// not in 1RingModels.qunit because of MockServer usage
+				title : "sap.ui.model.odata.v2.ODataTreeBinding",
+				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataV2TreeBinding.qunit"],
+				path : {
+					mockdata : "test-resources/sap/ui/core/qunit/model"
+				},
+				sinon : 1
+			},
+			ODataV2TreeBindingFlat_MockSrv : {
+				// not in 1RingModels.qunit because of MockServer usage
+				title : "sap.ui.model.odata.ODataTreeBindingFlat (MockSrv)",
+				module : [
+					"test-resources/sap/ui/core/qunit/odata/v2/ODataV2TreeBindingFlat_MockSrv.qunit"
+				],
+				sinon : 1
+			},
+			ODataV2TreeBindingFlat_FakeSrv : {
+				// not in 1RingModels.qunit because of ODataModelFakeService usage
+				title : "sap.ui.model.odata.ODataTreeBindingFlat (FakeSrv)",
+				module : [
+					"test-resources/sap/ui/core/qunit/odata/v2/ODataV2TreeBindingFlat_FakeSrv.qunit"
+				]
 			},
 			PendingChanges : {
 				// not in 1RingModels.qunit because of MockServer usage
