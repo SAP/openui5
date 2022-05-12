@@ -7,9 +7,9 @@ sap.ui.define([
 	"sap/base/Log",
 	'sap/ui/core/ResizeHandler',
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
 	"sap/ui/core/library" // ensures loading of CSS
-],
-function (
+], function (
 	Log,
 	ResizeHandler,
 	jQuery

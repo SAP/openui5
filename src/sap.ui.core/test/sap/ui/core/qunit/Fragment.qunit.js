@@ -647,6 +647,36 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("HTML Fragment as Dialog Template", function(assert) {
+		assert.expect(6);
+		var done = assert.async();
+		var oDialog = sap.ui.htmlfragment("testdata.fragments.HTMLFragmentDialogTemplate", {
+			closeDialog: function() {
+				oDialog.close();
+			}
+		});
+
+		assert.strictEqual(oDialog.getId(), "myHtmlDialog", "HTMLDialog has the correct ID");
+		assert.strictEqual(oDialog.getContent().length, 2, "HTMLDialog has two controls in content aggregation");
+		assert.notOk(oDialog.getDomRef(), "HTMLDialog has no DomRef");
+
+		oDialog.attachAfterOpen(function (oEvent) {
+			assert.deepEqual(oDialog, oEvent.getSource(), "Dialog open");
+			assert.ok(oDialog.getDomRef(), "HTMLDialog has a DomRef");
+
+			oDialog.attachAfterClose(function () {
+				assert.notOk(oDialog.getDomRef(), "HTMLDialog has no DomRef");
+
+				oDialog.destroy();
+				done();
+			});
+
+			triggerClickEvent("htmlDialogBtn"); // close it
+		});
+
+		oDialog.open();
+	});
+
 
 
 	QUnit.module("Fragments with no Controller");

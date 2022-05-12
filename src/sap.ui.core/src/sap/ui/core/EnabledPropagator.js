@@ -3,7 +3,9 @@
  */
 
 // Provides mixin sap.ui.core.EnabledPropagator
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/ui/dom/jquery/Selectors"// jQuery custom selectors ":focusable"
+], function() {
 	"use strict";
 
 	/**

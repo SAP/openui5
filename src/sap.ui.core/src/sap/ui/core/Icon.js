@@ -12,8 +12,8 @@ sap.ui.define([
 	'./library',
 	"./IconRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/each"
 ],
 	function(
 		assert,
@@ -24,8 +24,8 @@ sap.ui.define([
 		library,
 		IconRenderer,
 		KeyCodes,
-		jQuery,
-		Log
+		Log,
+		each
 	) {
 	"use strict";
 
@@ -389,7 +389,7 @@ sap.ui.define([
 			return;
 		}
 
-		jQuery.each(IconColor, function(sPropertyName, sPropertyValue) {
+		each(IconColor, function(sPropertyName, sPropertyValue) {
 			that.removeStyleClass(sCSSClassNamePrefix + sPropertyValue);
 		});
 

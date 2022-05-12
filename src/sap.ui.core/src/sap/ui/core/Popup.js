@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/base/util/Version",
 	"sap/base/util/uid",
 	"sap/base/util/extend",
+	"sap/base/util/each",
 	"sap/base/util/deepExtend",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
@@ -45,6 +46,7 @@ sap.ui.define([
 	Version,
 	uid,
 	extend,
+	each,
 	deepExtend,
 	jQuery,
 	F6Navigation,
@@ -2497,7 +2499,7 @@ sap.ui.define([
 	Popup.prototype._registerEventBusEvents = function() {
 		var that = this;
 
-		jQuery.each(that._mEvents, function(sEventId, fnListener) {
+		each(that._mEvents, function(sEventId, fnListener) {
 			sap.ui.getCore().getEventBus().subscribe("sap.ui", sEventId, fnListener, that);
 		});
 
@@ -2512,7 +2514,7 @@ sap.ui.define([
 	Popup.prototype._unregisterEventBusEvents = function() {
 		var that = this;
 
-		jQuery.each(that._mEvents, function(sEventId, fnListener) {
+		each(that._mEvents, function(sEventId, fnListener) {
 			sap.ui.getCore().getEventBus().unsubscribe("sap.ui", sEventId, fnListener, that);
 		});
 

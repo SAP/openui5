@@ -5,7 +5,6 @@
 /*global HTMLTemplateElement, Promise */
 
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/DataType',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/CustomData',
@@ -21,13 +20,12 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	'sap/base/util/values',
 	'sap/base/assert',
-	'sap/base/security/encodeXML',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/JSTokenizer',
+	'sap/base/util/each',
 	'sap/base/util/isEmptyObject'
 ],
 function(
-	jQuery,
 	DataType,
 	ManagedObject,
 	CustomData,
@@ -43,9 +41,9 @@ function(
 	ObjectPath,
 	values,
 	assert,
-	encodeXML,
 	LoaderExtensions,
 	JSTokenizer,
+	each,
 	isEmptyObject
 ) {
 	"use strict";
@@ -747,7 +745,7 @@ function(
 		function findControlClass(sNamespaceURI, sLocalName) {
 			var sClassName;
 			var mLibraries = sap.ui.getCore().getLoadedLibraries();
-			jQuery.each(mLibraries, function(sLibName, oLibrary) {
+			each(mLibraries, function(sLibName, oLibrary) {
 				if ( sNamespaceURI === oLibrary.namespace || sNamespaceURI === oLibrary.name ) {
 					sClassName = oLibrary.name + "." + ((oLibrary.tagNames && oLibrary.tagNames[sLocalName]) || sLocalName);
 				}

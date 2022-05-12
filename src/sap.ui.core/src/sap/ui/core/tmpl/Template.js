@@ -449,7 +449,7 @@ function(
 
 			// lookup all kind of DOM elements for having a type which is supported
 			var aTemplates = [];
-			jQuery.each(Template._mSupportedTypes, function(sType, sClass) {
+			jQuery.each(Template._mSupportedTypes, function(sType, sClass) { // @legacy-relevant: jQuery usage in deprecated code
 				jQuery("script[type='" + sType + "'], [data-type='" + sType + "']").each(function(iIndex, oElement) {
 					aTemplates.push(sap.ui.template({
 						id: oElement.id,
@@ -477,7 +477,7 @@ function(
 			}
 
 			// apply the default values
-			oTemplate = jQuery.extend({
+			oTemplate = jQuery.extend({ // @legacy-relevant: jQuery usage in deprecated code
 				type: Template.DEFAULT_TEMPLATE
 			}, oTemplate);
 
@@ -491,7 +491,7 @@ function(
 			if (bLoadTemplate) {
 
 				// load the template from the specified URL
-				jQuery.ajax({
+				jQuery.ajax({ // @legacy-relevant: jQuery usage in deprecated code
 					url: oTemplate.src,
 					dataType: "text",
 					async: false,

@@ -118,6 +118,7 @@ sap.ui.define([
 		var sType = $element.attr("data-sap-ui-type");
 		var aControls = [];
 		var bIsUIArea = sType === "sap.ui.core.UIArea";
+		var aAttributes = oElement.getAttributeNames();
 
 		if (bIsUIArea) {
 			// use a UIArea / better performance when rendering multiple controls
@@ -143,12 +144,12 @@ sap.ui.define([
 		// for a UIArea we remove only the data HTML attributes and keep the others
 		// also marks the control as parsed (by removing data-sap-ui-type)
 		var aAttr = [];
-		jQuery.each(oElement.attributes, function(iIndex, oAttr) {
-			var sName = oAttr.name;
+		for (var i = 0; i < aAttributes.length; i++) {
+			var sName = aAttributes[i];
 			if (!bIsUIArea || bIsUIArea && /^data-/g.test(sName.toLowerCase())) {
 				aAttr.push(sName);
 			}
-		});
+		}
 		if (aAttr.length > 0) {
 			$element.removeAttr(aAttr.join(" "));
 		}
@@ -256,10 +257,11 @@ sap.ui.define([
 		var fnBindingParser = ManagedObject.bindingParser;
 		var aCustomData = [];
 		var reCustomData = /^data-custom-data:(.+)/i;
+		var aAttributes = oElement.getAttributeNames();
 
-		jQuery.each(oElement.attributes, function(iIndex, oAttr) {
-			var sName = oAttr.name;
-			var sValue = oAttr.value;
+		for (var i = 0; i < aAttributes.length; i++) {
+			var sName = aAttributes[i];
+			var sValue = oElement.getAttribute(sName);
 
 			if (!reCustomData.test(sName)) {
 
@@ -338,8 +340,7 @@ sap.ui.define([
 				}));
 
 			}
-
-		});
+		}
 
 		if (aCustomData.length > 0) {
 			mSettings.customData = aCustomData;

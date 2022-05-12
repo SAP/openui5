@@ -82,7 +82,7 @@ sap.ui.define([
 			// handle custom attributes if not already defined in settings
 			if (!mSettings["attributes"]) {
 				var aAttributes = mSettings["attributes"] = [];
-				jQuery.each(mSettings, function(sKey, oValue) {
+				jQuery.each(mSettings, function(sKey, oValue) { // @legacy-relevant: jQuery usage in deprecated code
 					if (sKey !== "id" && !mJSONKeys[sKey] && typeof oValue === "string") {
 						// add custom settings as DOM attributes
 						aAttributes.push(new DOMAttribute({
