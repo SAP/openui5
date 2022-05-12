@@ -340,7 +340,7 @@ sap.ui.define([
 				});
 
 				if (window.hljs) {
-					document.querySelectorAll('pre').forEach(function(block) {
+					document.querySelectorAll('pre:not([class*="lines"])').forEach(function(block) {
 						window.hljs.highlightBlock(block);
 					});
 				}
