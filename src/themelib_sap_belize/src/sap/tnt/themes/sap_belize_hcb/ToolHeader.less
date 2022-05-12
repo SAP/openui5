@@ -13,3 +13,15 @@
 .sapTntToolHeader .sapMITH.sapMITBTextOnly .sapMITHEndOverflow {
 	margin-top: 0;
 }
+
+// ==========================================================================
+// sap.m.Avatar / sap.f.Avatar overriding
+// ==========================================================================
+
+.sapTntToolHeader .sapFAvatar {
+	background-color: @_sap_tnt_ToolHeader_AvatarBackground;
+	.sapFAvatarInitialsHolder,
+	.sapUiIcon.sapFAvatarTypeIcon  {
+		color: @_sap_tnt_ToolHeader_AvatarColor;
+	}
+}
