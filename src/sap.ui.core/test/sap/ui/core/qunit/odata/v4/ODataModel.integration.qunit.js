@@ -40191,5 +40191,197 @@ sap.ui.define([
 			assert.strictEqual(aResults[0], undefined);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Absolute property bindings that belong to the same singleton share requests and
+	// cache
+	// (1) consume different property bindings by UI (usually not as LATE properties) from singleton
+	//     and singleton's navigation property
+	// (2) request further late properties for singleton itself (merged), etag change is not allowed
+	//     (only from null to not null)
+	// (3) request further late properties for singleton and entity via singleton's navigation
+	//     property (not merged, because different entities)
+	// (4) create a new property binding that reuses the same singleton cache (no request)
+	// (5) create a new property binding for the same singleton property but different query option
+	//      and show that it does NOT reuse the same singleton cache (own request)
+	// (6) refresh multiple properties, properties for the same entity are merged in one request,
+	//     the entity's ETag may change
+	// (7) requestSideEffects: as absolute property bindings have no v4 Context, a dummy context is
+	//     used in order to call #requestSideEffects with the absolute singleton property paths
+	//
+	// JIRA: CPOUI5ODATAV4-1594
+	QUnit.test("CPOUI5ODATAV4-1594: absolute singleton property bindings", function (assert) {
+		var oDefaultChannel0,
+			oDefaultChannel1,
+			oDummyContext,
+			oLastUsedChannel0,
+			oLastUsedChannel1,
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			oSendsAutoGraphs,
+			sView = '\
+<FlexBox id="form">\
+	<Text id="artistID" text="{/MyFavoriteArtist/ArtistID}"/>\
+	<Text id="name" text="{/MyFavoriteArtist/Name}"/>\
+	<Text id="bestFriend" text="{/MyFavoriteArtist/BestFriend/Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("MyFavoriteArtist?$select=ArtistID,BestFriend,Name"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+				ArtistID : "42",
+				Name : "The Beatles",
+				BestFriend : {
+					"@odata.etag" : "etag43-0",
+					ArtistID : 43,
+					IsActiveEntity : true,
+					Name : "Beatles BestFriend"
+				}
+			})
+			.expectChange("artistID", "42")
+			.expectChange("name", "The Beatles")
+			.expectChange("bestFriend", "Beatles BestFriend");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oSendsAutoGraphs = oModel.bindProperty("/MyFavoriteArtist/BestFriend/sendsAutographs");
+			oLastUsedChannel0 = oModel.bindProperty("/MyFavoriteArtist/BestFriend/lastUsedChannel");
+
+			that.expectRequest("MyFavoriteArtist/BestFriend?$select=ArtistID,IsActiveEntity,"
+					+ "lastUsedChannel,sendsAutographs", {
+					"@odata.etag" : "etag43-0", // etag must not change (because fetched late)
+					ArtistID : 43,
+					IsActiveEntity : true,
+					lastUsedChannel : "mail",
+					sendsAutographs : false
+				});
+
+			return Promise.all([
+				oSendsAutoGraphs.requestValue(),
+				oLastUsedChannel0.requestValue(),
+				that.waitForChanges(assert, "(2)")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], false);
+			assert.strictEqual(oSendsAutoGraphs.getValue(), false);
+			assert.strictEqual(aResults[1], "mail");
+			assert.strictEqual(oLastUsedChannel0.getValue(), "mail");
+
+			oDefaultChannel0 = oModel.bindProperty("/MyFavoriteArtist/defaultChannel");
+			oDefaultChannel1 = oModel.bindProperty("/MyFavoriteArtist/BestFriend/defaultChannel");
+
+			that.expectRequest("MyFavoriteArtist?$select=defaultChannel", {
+					// ArtistID : 42,
+					// IsActiveEntity : true,
+					defaultChannel : "42's default channel"
+				})
+				.expectRequest("MyFavoriteArtist/BestFriend?$select=ArtistID,IsActiveEntity"
+					+ ",defaultChannel", {
+					"@odata.etag" : "etag43-0", // etag must not change because fetched as late
+					ArtistID : 43,
+					IsActiveEntity : true,
+					defaultChannel : "43's default channel"
+				});
+
+			return Promise.all([
+				oDefaultChannel0.requestValue(),
+				oDefaultChannel1.requestValue(),
+				oLastUsedChannel0.requestValue(),
+				that.waitForChanges(assert, "(3)")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], "42's default channel");
+			assert.strictEqual(oDefaultChannel0.getValue(), "42's default channel");
+			assert.strictEqual(aResults[1], "43's default channel");
+			assert.strictEqual(oDefaultChannel1.getValue(), "43's default channel");
+			assert.strictEqual(aResults[2], "mail");
+			assert.strictEqual(oLastUsedChannel0.getValue(), "mail");
+
+			oLastUsedChannel0 = oModel.bindProperty("/MyFavoriteArtist/BestFriend/lastUsedChannel");
+
+			return Promise.all([
+				oLastUsedChannel0.requestValue(),
+				that.waitForChanges(assert, "(4)")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], "mail");
+			assert.strictEqual(oLastUsedChannel0.getValue(), "mail");
+
+			that.expectRequest("MyFavoriteArtist?custom=query&$select=BestFriend"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,lastUsedChannel)", {
+					BestFriend : {
+						ArtistID : 43,
+						IsActiveEntity : true,
+						lastUsedChannel : "mail (otherQueryOptions)"
+					}
+				});
+
+			oLastUsedChannel1 = oModel.bindProperty("/MyFavoriteArtist/BestFriend/lastUsedChannel"
+				, null, {custom : "query"});
+
+			return Promise.all([
+				oLastUsedChannel1.requestValue(),
+				that.waitForChanges(assert, "(5)")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], "mail (otherQueryOptions)");
+			assert.strictEqual(oLastUsedChannel1.getValue(), "mail (otherQueryOptions)");
+
+			that.expectRequest("MyFavoriteArtist?$select=Name,defaultChannel", {
+					Name : "The Beatles (refreshed)",
+					defaultChannel : "42's default channel (refreshed)"
+				})
+				.expectRequest("MyFavoriteArtist/BestFriend?$select=ArtistID,IsActiveEntity"
+					+ ",Name,defaultChannel", {
+					"@odata.etag" : "etag43-1", // etag may change
+					ArtistID : 43,
+					IsActiveEntity : true,
+					defaultChannel : "43's default channel (refreshed)",
+					Name : "Beatles BestFriend (refreshed)"
+				})
+				.expectChange("name", "The Beatles (refreshed)")
+				.expectChange("bestFriend", "Beatles BestFriend (refreshed)");
+
+			that.oView.byId("name").getBinding("text").refresh();
+			that.oView.byId("bestFriend").getBinding("text").refresh();
+			oDefaultChannel0.refresh();
+			oDefaultChannel1.refresh();
+
+			return that.waitForChanges(assert, "(6)");
+		}).then(function () {
+			assert.strictEqual(oDefaultChannel0.getValue(), "42's default channel (refreshed)");
+			assert.strictEqual(oDefaultChannel1.getValue(), "43's default channel (refreshed)");
+			assert.strictEqual(oLastUsedChannel0.getValue(), "mail");
+			assert.strictEqual(oSendsAutoGraphs.getValue(), false);
+		}).then(function () {
+			oDummyContext = oModel.bindContext("/Artists('41')").getBoundContext();
+
+			that.expectRequest("Artists('41')", {/*response doesn't matter*/});
+
+			return Promise.all([
+				oDummyContext.requestObject(""),
+				that.waitForChanges(assert, "preparation for (7)")
+			]);
+		}).then(function () {
+			that.expectRequest("MyFavoriteArtist?$select=Name", {
+					Name : "The Beatles (via requestSideEffects)"
+				})
+				.expectRequest("MyFavoriteArtist/BestFriend?$select=ArtistID,IsActiveEntity"
+					+ ",Name", {
+					"@odata.etag" : "etag43-2", // etag may change
+					ArtistID : 43,
+					IsActiveEntity : true,
+					Name : "Beatles BestFriend (via requestSideEffects)"
+				})
+				.expectChange("name", "The Beatles (via requestSideEffects)")
+				.expectChange("bestFriend", "Beatles BestFriend (via requestSideEffects)");
+
+			return Promise.all([
+				oDummyContext.requestSideEffects([
+					"/special.cases.Container/MyFavoriteArtist/Name",
+					"/special.cases.Container/MyFavoriteArtist/BestFriend/Name"
+				]),
+				that.waitForChanges(assert, "(7)")
+			]);
+		});
+	});
 });
 

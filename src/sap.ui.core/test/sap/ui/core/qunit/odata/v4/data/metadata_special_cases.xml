@@ -175,6 +175,7 @@
 						Target="EntitiesWithComplexKey"/>
 				</EntitySet>
 				<EntitySet Name="Bs" EntityType="special.cases.B"/>
+				<Singleton Name="MyFavoriteArtist" Type="special.cases.ArtistsType"/>
 				<ActionImport Name="HirePerson" Action="special.cases.AcHirePerson"/>
 			</EntityContainer>
 			<Annotations Target="special.cases.ArtistsType/ArtistID">

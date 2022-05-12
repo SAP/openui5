@@ -786,11 +786,12 @@ sap.ui.define([
 		// even when two late properties lead to the same request, each of them must be copied to
 		// the cache.
 		return oPromise.then(function (oData) {
-			var sPredicate = _Helper.getPrivateAnnotation(oData, "predicate");
+			var sNewPredicate = _Helper.getPrivateAnnotation(oData, "predicate"),
+				sOldPredicate = _Helper.getPrivateAnnotation(oResource, "predicate");
 
-			if (sPredicate && _Helper.getPrivateAnnotation(oResource, "predicate") !== sPredicate) {
+			if (sOldPredicate && sNewPredicate && sOldPredicate !== sNewPredicate) {
 				throw new Error("GET " + sRequestPath + ": Key predicate changed from "
-					+ _Helper.getPrivateAnnotation(oResource, "predicate") + " to " + sPredicate);
+					+ sOldPredicate + " to " + sNewPredicate);
 			}
 			// we expect the server to always or never send an ETag for this entity
 			if (oResource["@odata.etag"] && oData["@odata.etag"] !== oResource["@odata.etag"]) {
@@ -3187,20 +3188,27 @@ sap.ui.define([
 	 *   requests for late properties. If <code>false<code>, {@link #post} throws an error.
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
-	 *
+	 * @param {boolean} [bEmpty]
+	 *   Whether the cache is initialized with an empty response so that all properties are fetched
+	 *   as late properties
 	 * @alias sap.ui.model.odata.v4.lib._SingleCache
 	 * @constructor
 	 * @private
 	 */
 	function _SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			bSharedRequest, fnGetOriginalResourcePath, bPost, sMetaPath) {
+			bSharedRequest, fnGetOriginalResourcePath, bPost, sMetaPath, bEmpty) {
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			fnGetOriginalResourcePath, bSharedRequest);
 
 		this.sMetaPath = sMetaPath || this.sMetaPath; // overrides Cache c'tor
 		this.bPost = bPost;
 		this.bPosting = false;
-		this.oPromise = null; // a SyncPromise for the current value
+		if (bEmpty) {
+			// simulates an empty response and ensure that all properties become late properties
+			this.oPromise = SyncPromise.resolve({});
+		} else {
+			this.oPromise = null; // a SyncPromise for the current value
+		}
 	}
 
 	// make SingleCache a Cache
@@ -3476,6 +3484,132 @@ sap.ui.define([
 		return oResult;
 	};
 
+	/**
+	 * Resets the property for the given path. This means that the next #fetchValue will request the
+	 * property again via #fetchLateProperty. Deletes also the entity's ETag within the cache in
+	 * order to allow that it may change.
+	 *
+	 * @param {string} sPath - The path to the property within the cache
+	 */
+	_SingleCache.prototype.resetProperty = function (sPath) {
+		var oData = this.oPromise.getResult();
+
+		if (oData) {
+			sPath.split("/").some(function (sProperty) {
+				// Note: all ETags that are reached by the given sPath are deleted in order to
+				// prevent that #fetchLateProperty throws "Key predicate changed from ..."
+				// Ideally only the ETag for the entity the property belongs to should be deleted.
+				// But because PATCH within SingletonPropertyCache is anyhow not supported we can
+				// delete all ETags so far
+				delete oData["@odata.etag"];
+				if (typeof oData[sProperty] === "object") {
+					oData = oData[sProperty];
+					return false;
+				}
+				delete oData[sProperty];
+				return true;
+			});
+		}
+	};
+
+	//*********************************************************************************************
+	// SingletonPropertyCache
+	//*********************************************************************************************
+	/**
+	 * Creates a cache for a property that belongs to an OData singleton by creating a _SingleCache
+	 * for the singleton and remembering the property path within that _SingleCache. All
+	 * _SingletonPropertyCaches that belong to the same singleton share the same _SingleCache if
+	 * they have the same query options.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
+	 *   The requestor
+	 * @param {string} sResourcePath
+	 *   A resource path relative to the service URL
+	 * @param {object} [mQueryOptions]
+	 *   A map of key-value pairs representing the query string
+	 * @private
+	 */
+	function _SingletonPropertyCache(oRequestor, sResourcePath, mQueryOptions) {
+		var aSegments = sResourcePath.split("/"),
+			sSingleton = aSegments[0],
+			sSingletonKey = sSingleton + JSON.stringify(mQueryOptions),
+			mSingletonCacheByPath = oRequestor.$mSingletonCacheByPath;
+
+		_PropertyCache.call(this, oRequestor, sResourcePath,
+			{/*mQueryOptions will be passed to the _SingleCache*/});
+
+		if (!mSingletonCacheByPath) {
+			mSingletonCacheByPath = oRequestor.$mSingletonCacheByPath = {};
+		}
+		this.oSingleton = mSingletonCacheByPath[sSingletonKey];
+		if (!this.oSingleton) {
+			this.oSingleton = mSingletonCacheByPath[sSingletonKey]
+				= new _SingleCache(oRequestor, sSingleton, mQueryOptions,
+					/*bSortExpandSelect*/ undefined, /*bSharedRequest*/ undefined,
+					/*fnGetOriginalResourcePath*/ undefined, /*bPost*/ undefined,
+					/*sMetaPath*/ undefined, /*bEmpty*/ true);
+		}
+		this.sRelativePath = sResourcePath.split(sSingleton + "/")[1];
+	}
+
+	// make _SingletonPropertyCache a _PropertyCache
+	_SingletonPropertyCache.prototype = Object.create(_PropertyCache.prototype);
+
+	/**
+	 * Delegates to #fetchValue of its shared OData Singleton _SingleCache. Within the 1st call its
+	 * own relative property path is added to the mLateQueryOptions of its _SingleCache.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group to associate the request with
+	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {string} [_sPath]
+	 *   ignored for property caches, should be empty
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before the back-end request is sent.
+	 * @param {object} [oListener]
+	 *   A change listener that is added for the given path. Its method <code>onChange</code> is
+	 *   called with the new value if the property at that path is modified later
+	 * @param {boolean} [bCreateOnDemand]
+	 *   Unsupported
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise to be resolved with the value. It is rejected if the request for the data failed.
+	 * @throws {Error}
+	 *   If <code>bCreateOnDemand</code> is set or if group ID is '$cached' and the value is not
+	 *   cached (the error has a property <code>$cached = true</code> then)
+	 *
+	 * @public
+	 */
+	_SingletonPropertyCache.prototype.fetchValue = function (oGroupLock, _sPath, fnDataRequested,
+			oListener, bCreateOnDemand) {
+		var sPropertyPath = this.oSingleton.sResourcePath + "/" + this.sRelativePath,
+			mLateQueryOptions,
+			oMetadataPromise = this.oMetadataPromise || this.oRequestor.getModelInterface()
+				.fetchMetadata("/" + _Helper.getMetaPath(sPropertyPath)),
+			that = this;
+
+		return oMetadataPromise.then(function () {
+			if (!that.oMetadataPromise) {
+				mLateQueryOptions = that.oSingleton.getLateQueryOptions() || {};
+				_Helper.aggregateExpandSelect(mLateQueryOptions,
+					_Helper.wrapChildQueryOptions("/" + that.oSingleton.sResourcePath,
+						that.sRelativePath, {}, that.oRequestor.getModelInterface().fetchMetadata));
+				that.oSingleton.setLateQueryOptions(mLateQueryOptions);
+			}
+			that.oMetadataPromise = oMetadataPromise;
+			return that.oSingleton.fetchValue(oGroupLock, that.sRelativePath, fnDataRequested,
+				oListener, bCreateOnDemand);
+		});
+	};
+
+	/**
+	 * Resets the property for its own relative path within the singleton's single cache. This means
+	 * that the next #fetchValue will request the property again via #fetchLateProperty. Deletes
+	 * also the entity's ETag within the cache in order to allow that it may change.
+	 */
+	_SingletonPropertyCache.prototype.reset = function () {
+		this.oSingleton.resetProperty(this.sRelativePath);
+	};
+
 	//*********************************************************************************************
 	// "static" functions
 	//*********************************************************************************************
@@ -3574,7 +3708,10 @@ sap.ui.define([
 	 * @public
 	 */
 	_Cache.createProperty = function (oRequestor, sResourcePath, mQueryOptions) {
-		return new _PropertyCache(oRequestor, sResourcePath, mQueryOptions);
+		if (sResourcePath.includes("(") || sResourcePath.endsWith("/$count")) {
+			return new _PropertyCache(oRequestor, sResourcePath, mQueryOptions);
+		}
+		return new _SingletonPropertyCache(oRequestor, sResourcePath, mQueryOptions);
 	};
 
 	/**
