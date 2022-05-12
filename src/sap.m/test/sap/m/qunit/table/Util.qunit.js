@@ -72,10 +72,8 @@ sap.ui.define([
 
 	QUnit.test("calcTypeWidth - String", function(assert) {
 
-		assert.equal(Util.calcTypeWidth(Str()), 19 * 0.75);
-		assert.equal(Util.calcTypeWidth(Str(), {maxWidth: 40}), 30);
-		assert.equal(Util.calcTypeWidth(Str(), {maxWidth: 5}), 5);
-		assert.equal(Util.calcTypeWidth(Str(), {maxWidth: 12}), 10);
+		assert.equal(Util.calcTypeWidth(Str()), 19);
+		assert.equal(Util.calcTypeWidth(Str(), {maxWidth: 40}), 40);
 
 		assert.equal(Util.calcTypeWidth(Str(25), {maxWidth: 5}), 5);
 

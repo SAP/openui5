@@ -95,10 +95,7 @@ sap.ui.define([
 
 			if (sType == "String" || oType.isA("sap.ui.model.odata.type.String")) {
 				var iMaxLength = parseInt(oType.getConstraints().maxLength) || 0;
-				if (!iMaxLength) {
-					return Math.max(Math.min(10, iMaxWidth), iMaxWidth * 0.75);
-				}
-				if (iMaxLength * 0.25 > iMaxWidth) {
+				if (!iMaxLength || iMaxLength * 0.25 > iMaxWidth) {
 					return iMaxWidth;
 				}
 
@@ -230,13 +227,16 @@ sap.ui.define([
 		var iMaxWidth = Math.max(iMinWidth, mSettings.maxWidth);
 
 		var fContentWidth = mSettings.gap + vTypes.reduce(function(fInnerWidth, vType) {
-			var oType = vType, oTypeSettings = mSettings;
+			var oType = vType, oTypeSettings = {
+				defaultWidth: mSettings.defaultWidth,
+				maxWidth: mSettings.maxWidth
+			};
 
 			if (Array.isArray(vType)) {
 				// for internal usage (mdc/Table) every field can provide own width settings
 				// in this case we get [<TypeInstance>, <TypeSettings>][] instead of <TypeInstance>[]
 				oType = vType[0];
-				oTypeSettings = vType[1] || mSettings;
+				oTypeSettings = vType[1] || oTypeSettings;
 			}
 
 			var fTypeWidth = Util.calcTypeWidth(oType, oTypeSettings);
