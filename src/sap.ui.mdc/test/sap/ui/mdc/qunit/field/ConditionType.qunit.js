@@ -1848,6 +1848,8 @@ sap.ui.define([
 			oValueType = undefined;
 			oUnitType.destroy();
 			oUnitType = undefined;
+			oOriginalType.destroy();
+			oOriginalType = undefined;
 			oUnitConditionType.destroy();
 			oUnitConditionType = undefined;
 			oOneFieldConditionType.destroy();
@@ -2010,6 +2012,58 @@ sap.ui.define([
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
 		assert.equal(oCondition.values[0][0], 1.23, "Values entry0");
 		assert.equal(oCondition.values[0][1], "USD", "Values entry1");
+		oType.destroy();
+
+	});
+
+	QUnit.test("Parsing: with unit and nullable type", function(assert) {
+
+		oValueType.destroy();
+		oUnitType.destroy();
+		oOriginalType.destroy();
+		oValueType = new CurrencyType({showMeasure: false, emptyString: 0});
+		oUnitType = new CurrencyType({showNumber: false, emptyString: 0});
+		oOriginalType = new CurrencyType({emptyString: 0});
+		oConditionType.oFormatOptions.valueType = oValueType; // fake setting directly
+		oConditionType.oFormatOptions.additionalType = oUnitType; // fake setting directly
+		oConditionType.oFormatOptions.originalDateType = oOriginalType; // fake setting directly
+		oUnitConditionType.oFormatOptions.valueType = oUnitType; // fake setting directly
+		oUnitConditionType.oFormatOptions.additionalType = oValueType; // fake setting directly
+		oUnitConditionType.oFormatOptions.originalDateType = oOriginalType; // fake setting directly
+
+		sinon.spy(oValueType, "parseValue");
+		sinon.stub(oValueType, "getParseWithValues").returns(true); // fake parseWithValue (to simulate oData type)
+
+		var oCondition = oConditionType.parseValue("1.23");
+		oCondition = oUnitConditionType.parseValue("USD");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0].length, 2, "Values0 length");
+		assert.equal(oCondition.values[0][0], 1.23, "Values entry0");
+		assert.equal(oCondition.values[0][1], "USD", "Values entry1");
+
+		oCondition = oConditionType.parseValue("");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0].length, 2, "Values0 length");
+		assert.equal(oCondition.values[0][0], 0, "Values entry0");
+		assert.equal(oCondition.values[0][1], "USD", "Values entry1");
+
+		// oCondition = oUnitConditionType.parseValue("");
+		// assert.ok(oCondition, "Result returned");
+		// assert.equal(typeof oCondition, "object", "Result is object");
+		// assert.equal(oCondition.operator, "EQ", "Operator");
+		// assert.ok(Array.isArray(oCondition.values), "values are array");
+		// assert.equal(oCondition.values.length, 1, "Values length");
+		// assert.equal(oCondition.values[0].length, 2, "Values0 length");
+		// assert.equal(oCondition.values[0][0], 0, "Values entry0");
+		// assert.equal(oCondition.values[0][1], "", "Values entry1");
 
 	});
 
