@@ -17,6 +17,19 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.ODataBinding";
 
 	/**
+	 * Returns a function which must not be called. Use as a replacment for
+	 * {@link sap.ui.model.odata.v4.ODataModel#getReporter} in cases where that reporter must not be
+	 * used.
+	 *
+	 * @returns {function} - A function which must not be called
+	 */
+	function getForbiddenReporter() {
+		return function () {
+			throw new Error("must not be called");
+		};
+	}
+
+	/**
 	 * Constructs a test object.
 	 *
 	 * @param {object} [oTemplate]
@@ -998,7 +1011,8 @@ sap.ui.define([
 				oModel : {
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
-					}
+					},
+					getReporter : getForbiddenReporter
 				},
 				sPath : "relative",
 				bRelative : true
@@ -1042,7 +1056,8 @@ sap.ui.define([
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
 					},
-					mUriParameters : {}
+					mUriParameters : {},
+					getReporter : getForbiddenReporter
 				},
 				sPath : "/absolute",
 				bRelative : false
@@ -1092,7 +1107,8 @@ sap.ui.define([
 						oRequestor : {
 							ready : function () { return SyncPromise.resolve(); }
 						},
-						mUriParameters : {}
+						mUriParameters : {},
+						getReporter : getForbiddenReporter
 					},
 					sPath : "relative",
 					bRelative : true
@@ -1155,7 +1171,8 @@ sap.ui.define([
 				doCreateCache : function () {},
 				oModel : {
 					oRequestor : oRequestor,
-					mUriParameters : {}
+					mUriParameters : {},
+					getReporter : getForbiddenReporter
 				},
 				sPath : "/absolute",
 				bRelative : false
@@ -1205,7 +1222,8 @@ sap.ui.define([
 							oRequestor : {
 								ready : function () { return SyncPromise.resolve(); }
 							},
-							mUriParameters : {}
+							mUriParameters : {},
+							getReporter : getForbiddenReporter
 						},
 						sPath : "relative",
 						aChildCanUseCachePromises : bIsParentBinding ? [] : undefined,
@@ -1274,7 +1292,8 @@ sap.ui.define([
 				oModel : {
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
-					}
+					},
+					getReporter : getForbiddenReporter
 				},
 				bRelative : true
 			}),
@@ -1306,7 +1325,8 @@ sap.ui.define([
 				oModel : {
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
-					}
+					},
+					getReporter : getForbiddenReporter
 				}
 			});
 
@@ -1327,7 +1347,7 @@ sap.ui.define([
 					oOldCache : "~n/a~"
 				},
 				oModel : {
-					reportError : function () {},
+					getReporter : function () {},
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
 					},
@@ -1339,15 +1359,17 @@ sap.ui.define([
 				toString : function () { return "MyBinding"; }
 			}),
 			oBindingMock = this.mock(oBinding),
-			oNewCache = {},
 			oContext0 = {
 				getPath : function () { return "/n/a"; }
 			},
 			oContext1 = {
 				getPath : function () { return "/deep/path"; }
 			},
+			oModelMock = this.mock(oBinding.oModel),
+			oNewCache = {},
 			mLocalQueryOptions = {},
-			oPromise;
+			oPromise,
+			fnReporter = sinon.spy();
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache")
 			.withExactArgs(sinon.match.same(oContext0), undefined)
@@ -1358,6 +1380,7 @@ sap.ui.define([
 		oBindingMock.expects("fetchResourcePath")
 			.withExactArgs(sinon.match.same(oContext0))
 			.returns(SyncPromise.resolve(Promise.resolve("resourcePath0")));
+		oModelMock.expects("getReporter").withExactArgs().returns(fnReporter);
 
 		// code under test
 		oBinding.fetchCache(oContext0);
@@ -1367,9 +1390,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 		oPromise = oBinding.oCachePromise;
 
-		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Failed to create cache for binding MyBinding", sClassName,
-				sinon.match.instanceOf(Error));
 		oBindingMock.expects("fetchQueryOptionsForOwnCache")
 			.withExactArgs(sinon.match.same(oContext1), undefined)
 			.returns(SyncPromise.resolve({
@@ -1383,6 +1403,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mLocalQueryOptions), "resourcePath1",
 				sinon.match.same(oContext1), "~sGroupId~", sinon.match.same(oOldCache))
 			.returns(oNewCache);
+		oModelMock.expects("getReporter").withExactArgs().returns(getForbiddenReporter());
 
 		// code under test - create new cache for this binding while other cache creation is pending
 		oBinding.fetchCache(oContext1, undefined, undefined, "~sGroupId~");
@@ -1400,6 +1421,8 @@ sap.ui.define([
 			})
 		]).then(function () {
 			assert.strictEqual(oBinding.sReducedPath, "/reduced/path/2");
+			sinon.assert.calledOnce(fnReporter);
+			sinon.assert.calledWithExactly(fnReporter, sinon.match.instanceOf(Error));
 		});
 	});
 
@@ -1410,7 +1433,7 @@ sap.ui.define([
 				oCachePromise : SyncPromise.resolve(null),
 				mCacheQueryOptions : {},
 				oModel : {
-					reportError : function () {},
+					getReporter : function () {},
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
 					},
@@ -1421,7 +1444,8 @@ sap.ui.define([
 			}),
 			oBindingMock = this.mock(oBinding),
 			oContext = {},
-			oError = new Error("canonical path failure");
+			oError = new Error("canonical path failure"),
+			fnReporter = sinon.spy();
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache")
 			.returns(SyncPromise.resolve({mQueryOptions : {}}));
@@ -1429,9 +1453,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext))
 			.returns(SyncPromise.reject(oError));
 		oBindingMock.expects("createAndSetCache").never();
-		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Failed to create cache for binding MyBinding", sClassName,
-				sinon.match.same(oError));
+		this.mock(oBinding.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 
 		// code under test
 		oBinding.fetchCache(oContext);
@@ -1445,6 +1467,8 @@ sap.ui.define([
 				assert.strictEqual(oBinding.mCacheQueryOptions, undefined,
 					"cache query options stored at binding are reset");
 				assert.strictEqual(oBinding.oCache, undefined);
+				sinon.assert.calledOnce(fnReporter);
+				sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
 			}
 		);
 	});
@@ -1463,7 +1487,7 @@ sap.ui.define([
 				oFetchCacheCallToken : "~n/a~",
 				mLateQueryOptions : mLateQueryOptions,
 				oModel : {
-					reportError : function () {},
+					getReporter : getForbiddenReporter,
 					oRequestor : {
 						ready : function () {}
 					}
@@ -1480,7 +1504,6 @@ sap.ui.define([
 			.returns(oNewCache);
 		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache").never();
 		this.mock(oBinding.oModel.oRequestor).expects("ready").never();
-		this.mock(oBinding.oModel).expects("reportError").never();
 		this.mock(oBinding).expects("fetchResourcePath").never();
 
 		// code under test
@@ -1511,7 +1534,7 @@ sap.ui.define([
 				mCacheQueryOptions : mCacheQueryOptions,
 				mLateQueryOptions : mLateQueryOptions,
 				oModel : {
-					reportError : function () {},
+					getReporter : getForbiddenReporter,
 					oRequestor : {
 						ready : function () {}
 					}
@@ -1521,7 +1544,6 @@ sap.ui.define([
 		this.mock(oBinding).expects("createAndSetCache").never();
 		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache").never();
 		this.mock(oBinding.oModel.oRequestor).expects("ready").never();
-		this.mock(oBinding.oModel).expects("reportError").never();
 		this.mock(oBinding).expects("fetchResourcePath").never();
 
 		// code under test
@@ -1546,7 +1568,7 @@ sap.ui.define([
 				oFetchCacheCallToken : oCallToken,
 				mLateQueryOptions : mLateQueryOptions,
 				oModel : {
-					reportError : function () {},
+					getReporter : getForbiddenReporter,
 					oRequestor : {
 						ready : function () {}
 					}
@@ -1556,7 +1578,6 @@ sap.ui.define([
 		this.mock(oBinding).expects("createAndSetCache").never();
 		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache").never();
 		this.mock(oBinding.oModel.oRequestor).expects("ready").never();
-		this.mock(oBinding.oModel).expects("reportError").never();
 		this.mock(oBinding).expects("fetchResourcePath").never();
 
 		assert.throws(function () {

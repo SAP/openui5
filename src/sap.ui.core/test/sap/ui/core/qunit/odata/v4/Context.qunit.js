@@ -3361,25 +3361,27 @@ sap.ui.define([
 				expand : function () {}
 			},
 			oModel = {
-				reportError : function () {}
+				getReporter : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/path"),
 			oError = new Error(),
-			oPromise = bSuccess ? Promise.resolve() : Promise.reject(oError);
+			oPromise = bSuccess ? Promise.resolve() : Promise.reject(oError),
+			fnReporter = sinon.spy();
 
 		this.mock(oContext).expects("isExpanded").withExactArgs().returns(false);
 		this.mock(oBinding).expects("expand").withExactArgs(sinon.match.same(oContext))
 			.returns(oPromise);
-		if (!bSuccess) {
-			this.mock(oModel).expects("reportError")
-				.withExactArgs("Failed to expand " + oContext, "sap.ui.model.odata.v4.Context",
-					sinon.match.same(oError));
-		}
+		this.mock(oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 
 		// code under test
 		oContext.expand();
 
-		return oPromise.catch(function () {});
+		return oPromise.then(function () {
+			sinon.assert.notCalled(fnReporter);
+		}, function () {
+			sinon.assert.calledOnce(fnReporter);
+			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+		});
 	});
 });
 

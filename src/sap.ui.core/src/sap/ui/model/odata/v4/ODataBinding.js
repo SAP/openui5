@@ -13,7 +13,6 @@ sap.ui.define([
 
 	var aChangeReasonPrecedence = [ChangeReason.Context, ChangeReason.Change, ChangeReason.Refresh,
 			ChangeReason.Sort, ChangeReason.Filter],
-		sClassName = "sap.ui.model.odata.v4.ODataBinding",
 		// Whether a path segment is an index or contains a transient predicate
 		rIndexOrTransientPredicate = /\/\d|\(\$uid=/;
 
@@ -478,12 +477,10 @@ sap.ui.define([
 			that.oCache = null;
 			return null;
 		});
-		this.oCachePromise.catch(function (oError) {
-			//Note: this may also happen if the promise to read data for the canonical path's
-			// key predicate is rejected with a canceled error
-			that.oModel.reportError("Failed to create cache for binding " + that, sClassName,
-				oError);
-		});
+		// Note: this happens if the promise to read data for the canonical path's
+		// key predicate is rejected with a canceled error or the cache creation failed (e.g. in
+		// case the cache has been discarded because a new cache has been created).
+		this.oCachePromise.catch(this.oModel.getReporter());
 	};
 
 	/**

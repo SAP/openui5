@@ -367,10 +367,9 @@ sap.ui.define([
 		var that = this;
 
 		this.withCache(function (_oCache, sPath, oBinding) {
-			oBinding.doDeregisterChangeListener(sPath, that);
-		}).catch(function (oError) {
-			that.oModel.reportError("Error in deregisterChange", sClassName, oError);
-		}, /*sPath*/"", /*bSync*/false, /*bWithOrWithoutCache*/true);
+				oBinding.doDeregisterChangeListener(sPath, that);
+			}, /*sPath*/"", /*bSync*/false, /*bWithOrWithoutCache*/true)
+			.catch(this.oModel.getReporter());
 	};
 
 	/**
