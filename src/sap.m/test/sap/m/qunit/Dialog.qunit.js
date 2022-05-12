@@ -177,6 +177,25 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Resize handler", function (assert) {
+		var oDialog = new Dialog({
+			resizable: true,
+			title: "Dialog Test",
+			content: new Text({text: "Content"})
+		});
+
+		oDialog.open();
+		this.clock.tick(100);
+
+		// Assert
+		var oIconDomRef = oDialog.getDomRef().querySelector(".sapMDialogResizeHandler");
+		assert.notOk(oIconDomRef.getAttribute("title"), "title attribute is not set");
+		assert.notOk(oIconDomRef.getAttribute("aria-label"), "aria-label attribute is not set");
+
+		// Clean up
+		oDialog.destroy();
+	});
+
 	QUnit.module("Content preservation", {
 		beforeEach: function() {
 			sinon.config.useFakeTimers = false;
