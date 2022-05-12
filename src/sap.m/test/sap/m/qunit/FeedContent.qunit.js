@@ -13,6 +13,9 @@ sap.ui.define([
 	// shortcut for sap.m.Size
 	var Size = library.Size;
 
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	QUnit.module("Rendering test - sap.m.FeedContent", {
 		beforeEach : function() {
 			this.oFeedContent = new FeedContent("feed-cnt", {
@@ -38,6 +41,9 @@ sap.ui.define([
 		assert.ok(document.getElementById("feed-cnt-value"),"Value was rendered successfully");
 	});
 
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	QUnit.module("Functional tests - sap.m.FeedContent", {
 		beforeEach : function() {
 			this.oFeedContent = new FeedContent({
@@ -99,6 +105,9 @@ sap.ui.define([
 		assert.deepEqual(sTooltip.getText(), "Tooltip", "Tooltip is an object with a text property containing the correct string"); //TODO
 	});
 
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	QUnit.module("Events test", {
 		beforeEach : function() {
 			this.oFeedContent = new FeedContent({

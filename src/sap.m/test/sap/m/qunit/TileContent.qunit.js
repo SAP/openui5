@@ -24,6 +24,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	QUnit.test("Property 'size'", function(assert) {
 		assert.equal(this.oTileContent.getSize(), "Auto", "Property 'size' default value is correct.");
 	});
@@ -48,6 +51,9 @@ sap.ui.define([
 		assert.equal(this.oTileContent.getFrameType(), "Auto", "Property 'frameType' default value is correct.");
 	});
 
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	QUnit.module("Rendering", {
 		beforeEach : function() {
 			this.oNewsTileContent = new TileContent("tc1", {
@@ -114,6 +120,9 @@ sap.ui.define([
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorGood"), "Correct CSS class added");
 	});
 
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	QUnit.module("Functional test", {
 		beforeEach : function() {
 			this.oFeedTileContent = new TileContent("tc2", {
@@ -251,6 +260,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	QUnit.test("when both content and tile have tooltip", function(assert) {
 		this.oTileContent =  new TileContent("tileContent", {
 			size : "Auto",
@@ -267,6 +279,9 @@ sap.ui.define([
 		assert.equal(document.getElementById("tileContent").title,tooltip);
 	});
 
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	QUnit.test("when only content has tooltip", function(assert) {
 		this.oTileContent =  new TileContent("tileContent1", {
 			size : "Auto",
@@ -281,6 +296,9 @@ sap.ui.define([
 		assert.equal(document.getElementById("tileContent1").title,"content " + "\n");
 	});
 
+	/**
+	 * @deprecated Since version 1.38.0.
+	 */
 	QUnit.test("when only tile has tooltip", function(assert) {
 		this.oTileContent =  new TileContent("tileContent2", {
 			content : new FeedContent("feed2", {
