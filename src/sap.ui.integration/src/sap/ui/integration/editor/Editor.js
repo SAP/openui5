@@ -1306,6 +1306,8 @@ sap.ui.define([
 				var oTranslationChange = {
 					"texts": {}
 				};
+				// delete the error texts property
+				delete oChange.texts;
 				oTranslationChange.texts[sLanguage] = {};
 				Object.keys(oChange).forEach(function (s) {
 					if (s.charAt(0) === "/") {
@@ -1461,8 +1463,8 @@ sap.ui.define([
 						if (oItem.translatable && !oItem._changed && oItem._translatedPlaceholder && !this._currentLayerManifestChanges[oItem.manifestpath]) {
 							//do not save a value that was not changed and comes from a translated default value
 							//mResult[oItem.manifestpath] = oItem._translatedPlaceholder;
-							//if we would save it
-							continue;
+							//but we need to save the setting changes for the next layer, so remove the continue sentence.
+							//continue;
 						} else {
 							if (oItem.valueItems) {
 								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueItems"] = oItem.valueItems;
@@ -1473,6 +1475,13 @@ sap.ui.define([
 							switch (oItem.type) {
 								case "string":
 									if (!oItem.translatable) {
+										mResult[oItem.manifestpath] = oItem.value;
+									} else if (oItem._hasDynamicValue) {
+										// if value is dynamic value of a translatable parameter, save it and delete all the current translations
+										mResult[oItem.manifestpath] = oItem.value;
+										this.deleteAllTranslationValuesInTexts(oItem.manifestpath);
+									} else if (oItem._beforeValue && (oItem._beforeValue.indexOf("{context>") === 0 || oItem._beforeValue.indexOf("{{parameters") === 0)) {
+										// if before value is dynamic value of a translatable parameter, save it
 										mResult[oItem.manifestpath] = oItem.value;
 									}
 									break;
@@ -1515,7 +1524,10 @@ sap.ui.define([
 				}
 			}
 		}
-		if (oSettings.texts) {
+		if (this.getMode() === "translation") {
+			// translation mode don't have texts property
+			delete mResult.texts;
+		} else if (oSettings.texts) {
 			mResult.texts = deepClone(oSettings.texts, 500) || {};
 			// Clean the translations of object or object list field :
 			// - remove the translations if the object is not exist in value
@@ -2464,6 +2476,22 @@ sap.ui.define([
 		return oProperty[sManifestPath];
 	};
 
+	Editor.prototype.deleteAllTranslationValuesInTexts = function (sManifestPath) {
+		var that = this;
+		var oData = that._settingsModel.getData();
+		if (!oData || !oData.texts) {
+			return;
+		}
+		var sTranslationPath = "/texts";
+		var oTexts = deepClone(oData.texts, 500);
+		for (var n in oTexts) {
+			if (oTexts[n][sManifestPath]) {
+				delete oTexts[n][sManifestPath];
+			}
+		}
+		this._settingsModel.setProperty(sTranslationPath, oTexts);
+	};
+
 	Editor.prototype._handleITBValidation = function (oEditor, sItem, sErrorType) {
 		var oResourceBundle = oEditor._oResourceBundle;
 		if (sItem.getItems().length > 0 && sItem._oExpandButton) {
@@ -3089,6 +3117,11 @@ sap.ui.define([
 							} else if (sPlaceholder.startsWith("{i18n>")) {
 								sTranslationTextKey = sPlaceholder.substring(6, sPlaceholder.length - 1);
 							}
+						}
+						// if the value is a dynamic value, do not allow to translate, and delete all the translations
+						if (oItem.value && (oItem.value.indexOf("{context>") === 0 || oItem.value.indexOf("{{parameters") === 0)) {
+							this.deleteAllTranslationValuesInTexts(oItem.manifestpath);
+							sTranslationTextKey = null;
 						}
 						var sTranslationValueinTexts = this.getTranslationValueInTexts(sLanguage, oItem.manifestpath);
 						//only if there is a translation key
