@@ -53,10 +53,10 @@ sap.ui.define([
 
 	Item.prototype.onReset = function() {
 		var oTable = this.getTable();
+		var sKey = this.getKey();
 
-		oTable.getEngine().reset(oTable, [this.getKey()]).then(function() {
-			oTable._oQuickActionContainer.initializeQuickActions();
-			oTable._oColumnHeaderMenu._oPopover.invalidate();
+		oTable.getEngine().reset(oTable, [sKey]).then(function() {
+			oTable._oQuickActionContainer.updateQuickActions([sKey]);
 		});
 	};
 

@@ -77,6 +77,17 @@ sap.ui.define([
 		Then.iShouldSeeColumnMenuQuickGroup({key: "name", label: "Name", grouped: true});
 	});
 
+	opaTest("Reset p13n changes", function(Given, When, Then) {
+		When.iUseColumnMenuQuickSort({key: "name", sortOrder: coreLibrary.SortOrder.Ascending});
+		When.iClickOnColumn("Name");
+		Then.iShouldSeeOneColumnMenu();
+		When.iPressOnColumnMenuItem(Arrangement.P13nDialog.Titles.sort);
+		When.iPressResetInColumnMenu();
+		When.iNavigateBackFromColumnMenuItemContent();
+		Then.iShouldSeeColumnMenuQuickSort({key: "name", label: "Name", sortOrder: coreLibrary.SortOrder.None});
+		Then.iShouldSeeColumnMenuQuickGroup({key: "name", label: "Name", grouped: true});
+	});
+
 	opaTest("Close column menu", function(Given, When, Then) {
 		When.iCloseTheColumnMenu();
 		Then.iShouldNotSeeTheColumnMenu();

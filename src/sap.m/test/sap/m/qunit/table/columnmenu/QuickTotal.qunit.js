@@ -55,6 +55,16 @@ sap.ui.define([
 		assert.ok(aContent[1].getPressed(), "The second button is pressed");
 	});
 
+	QUnit.test("QuickTotalItem setTotaled", function(assert) {
+		var oQuickTotalItem = this.oQuickTotal.getItems()[0];
+		var oButton = this.oQuickTotal.getContent()[0];
+
+		oQuickTotalItem.setTotaled(true);
+		assert.ok(oButton.getPressed(), "The pressed state of the button is updated");
+		oQuickTotalItem.setTotaled(false);
+		assert.ok(!oButton.getPressed(), "The pressed state of the button is updated");
+	});
+
 	QUnit.module("Events", {
 		triggerClickEvent: function(sId) {
 			QUnitUtils.triggerEvent("mousedown", sId);

@@ -144,6 +144,7 @@ sap.ui.define([
 					name: "test",
 					label: "Test",
 					path: "test",
+					sortable: true,
 					groupable: true
 				}
 			]);
@@ -250,6 +251,49 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("updateQuickActions", function(assert) {
+		var oTable = this.oTable,
+			oInnerColumn;
+
+		function testUpdateQuickActions(sSortOrder, bGrouped, bTotaled) {
+			oTable._oQuickActionContainer.updateQuickActions(["Sort", "Group"]);
+			oTable._oQuickActionContainer.getEffectiveQuickActions().forEach(function(oQuickAction) {
+				if (oQuickAction.getParent().isA("sap.m.table.columnmenu.QuickSortItem")) {
+					assert.equal(oQuickAction.getContent()[0].getPressed(), sSortOrder === "Ascending");
+					assert.equal(oQuickAction.getContent()[1].getPressed(), sSortOrder === "Descending");
+				} else if (oQuickAction.isA("sap.m.table.columnmenu.QuickGroup")) {
+					assert.ok(oQuickAction.getContent()[0].getPressed() === bGrouped);
+				} else if (oQuickAction.isA("sap.m.table.columnmenu.QuickTotal")) {
+					assert.ok(oQuickAction.getContent()[0].getPressed() === bTotaled);
+				}
+			});
+		}
+
+		return oTable._fullyInitialized().then(function () {
+			oInnerColumn = oTable._oTable.getColumns()[0];
+			oTable.setP13nMode([
+				"Sort", "Group"
+			]);
+			oTable._onColumnPress(oInnerColumn);
+		}).then(function() {
+			oTable._getSortedProperties = function() {
+				return [{ name: "test", Descending: false }];
+			};
+			oTable._getGroupedProperties = function() {
+				return [];
+			};
+			testUpdateQuickActions("Ascending", false);
+
+			oTable._getSortedProperties = function() {
+				return [];
+			};
+			oTable._getGroupedProperties = function() {
+				return [{ name: "test" }];
+			};
+			testUpdateQuickActions("None", true);
+		});
+	});
+
 	QUnit.module("ItemContainer", {
 		beforeEach: function() {
 			this.oTable = new Table({
@@ -316,7 +360,11 @@ sap.ui.define([
 
 	QUnit.test("Item", function(assert) {
 		var oTable = this.oTable,
-			oInnerColumn;
+			oInnerColumn,
+			fUpdateSpy,
+			fHandleP13nSpy,
+			fResetSpy,
+			fUpdateQuickActionsSpy;
 
 		return oTable._fullyInitialized().then(function () {
 			return wait(0);
@@ -335,11 +383,12 @@ sap.ui.define([
 			return wait(0);
 		}).then(function() {
 			var aItems = oTable._oItemContainer.getItems();
-
 			var oItem = aItems[0];
-			var fUpdateSpy = sinon.spy(oTable.getEngine().getController(oTable, oItem.getKey()), "update");
-			var fHandleP13nSpy = sinon.spy(oTable.getEngine(), "handleP13n");
-			var fResetSpy = sinon.spy(oTable.getEngine(), "reset");
+
+			fUpdateSpy = sinon.spy(oTable.getEngine().getController(oTable, oItem.getKey()), "update");
+			fHandleP13nSpy = sinon.spy(oTable.getEngine(), "handleP13n");
+			fResetSpy = sinon.stub(oTable.getEngine(), "reset").returns(Promise.resolve());
+			fUpdateQuickActionsSpy = sinon.spy(oTable._oQuickActionContainer, "updateQuickActions");
 
 			oItem.onPress();
 			assert.ok(fUpdateSpy.calledOnce, "Controller update called once");
@@ -348,8 +397,13 @@ sap.ui.define([
 			assert.ok(fHandleP13nSpy.calledOnce, "Engine handleP13n called once");
 			assert.ok(fHandleP13nSpy.calledWithExactly(oTable, [oItem.getKey()]), "handleP13n called with the correct parameters");
 			oItem.onReset();
+
+			return wait(0);
+		}).then(function() {
 			assert.ok(fResetSpy.calledOnce, "Engine reset called once");
-			assert.ok(fResetSpy.calledWithExactly(oTable, [oItem.getKey()]), "reset called with the correct parameters");
+			assert.ok(fResetSpy.calledWithExactly(oTable, ["Sort"]), "reset called with the correct parameters");
+			assert.ok(fUpdateQuickActionsSpy.calledOnce, "updateQuickActions called once");
+			assert.ok(fUpdateQuickActionsSpy.calledWithExactly(["Sort"]), "updateQuickActions called with the correct parameters");
 		});
 	});
 });

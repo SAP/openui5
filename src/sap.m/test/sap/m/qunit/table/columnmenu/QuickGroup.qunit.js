@@ -55,6 +55,16 @@ sap.ui.define([
 		assert.ok(!aContent[1].getPressed(), "The second button is not pressed");
 	});
 
+	QUnit.test("QuickGroupItem setGrouped", function(assert) {
+		var oQuickGroupItem = this.oQuickGroup.getItems()[0];
+		var oButton = this.oQuickGroup.getContent()[0];
+
+		oQuickGroupItem.setGrouped(true);
+		assert.ok(oButton.getPressed(), "The pressed state of the button is updated");
+		oQuickGroupItem.setGrouped(false);
+		assert.ok(!oButton.getPressed(), "The pressed state of the button is updated");
+	});
+
 	QUnit.module("Events", {
 		triggerClickEvent: function(sId) {
 			QUnitUtils.triggerEvent("mousedown", sId);
