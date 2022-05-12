@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	'./ItemBaseFlex'
-], function(ItemBaseFlex) {
+	"./ItemBaseFlex",
+	"./Util"
+], function(ItemBaseFlex, Util) {
 	"use strict";
 
     var oActionFlex = Object.assign({}, ItemBaseFlex);
@@ -22,7 +23,8 @@ sap.ui.define([
 		});
 	};
 
-	oActionFlex._applyMove = function(oChange, oControl, mPropertyBag, bIsRevert) {
+	oActionFlex._applyMove = function(oChange, oControl, mPropertyBag, sChangeReason) {
+		var bIsRevert = sChangeReason === Util.REVERT ? true : false;
 		if (oControl.getParent()){
 			if (oControl.getParent().isA("sap.ui.mdc.Chart")) {
 				// ActionToolbar of sap.ui.mdc.Chart
