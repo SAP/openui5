@@ -1,4 +1,4 @@
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/Device"], function(Device) {
 	"use strict";
 
 	/**
@@ -466,6 +466,19 @@ sap.ui.define([], function() {
 		"Pacific/Wallis"
 	];
 
+	/**
+	 * TimezoneIDs which are not supported by the local browser
+	 * @type {string[]}
+	 */
+	var aUnsupportedBrowserTimezoneIDs = [];
+
+	/**
+	 * Safari version < 15 does not support timezone "Pacific/Kanton"
+	 */
+	if (Device.browser.safari && Device.browser.version < 15) {
+		aUnsupportedBrowserTimezoneIDs = ["Pacific/Kanton"];
+	}
+
 
 	/**
 	 * CLDR 35.1.0
@@ -911,12 +924,14 @@ sap.ui.define([], function() {
 		"Jamaica",
 		"Japan",
 		"US/Hawaii",
+		"UTC",
 		"Zulu"
 	];
 
 	return {
 		aABAPTimezoneIDs: aABAPTimezoneIDs,
 		aCLDRTimezoneIDs: aCLDRTimezoneIDs,
-		aTzTimezoneIDs: aTzTimezoneIDs
+		aTzTimezoneIDs: aTzTimezoneIDs,
+		aUnsupportedBrowserTimezoneIDs: aUnsupportedBrowserTimezoneIDs
 	};
 });
