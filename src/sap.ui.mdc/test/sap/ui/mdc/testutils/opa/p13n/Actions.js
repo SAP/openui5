@@ -358,60 +358,33 @@ sap.ui.define([
 		});
 	};
 
-	var iAddFilterConfiguration = function(oWrappingGrid, oConfiguration, bPressAddButton) {
+	var iAddFilterConfiguration = function(oFilterPanel, iIndex, oConfiguration) {
 		this.waitFor({
-			controlType: "sap.m.Button",
-			matchers: [
-				new PropertyStrictEquals({
-					name: "text",
-					value: "Add"
-				}),
-				new Ancestor(oWrappingGrid, false)
-			],
-			success: function(aAddButtons) {
-				var oAddButton = aAddButtons[0];
+			controlType: "sap.m.CustomListItem",
+			matchers: new Ancestor(oFilterPanel, false),
+			success: function(aCustomListItems) {
+				var oLastItem = aCustomListItems[aCustomListItems.length - 1];
 				this.waitFor({
-					controlType: "sap.ui.layout.Grid",
-					matchers: [
-						new Descendant(oAddButton),
-						new Ancestor(oWrappingGrid)
-					],
-					success: function(aGrids) {
-						var oGrid = aGrids[0];
+					controlType: "sap.m.ComboBox",
+					matchers: new Ancestor(oLastItem, false),
+					actions: new EnterText({
+						text: oConfiguration.key,
+						pressEnterKey: true
+					}),
+					success: function() {
 						this.waitFor({
-							controlType: "sap.m.ComboBox",
-							matchers: new Ancestor(oGrid),
-							success: function(aComboBoxes) {
-								var oComboBoxName = aComboBoxes[0];
-								var oComboBoxCondition = aComboBoxes[1];
-								// Select name
-								iChangeComboBoxSelection.call(this, oComboBoxName, oConfiguration.key , {
-									success: function() {
-										// Select condition
-										iChangeComboBoxSelection.call(this, oComboBoxCondition, oConfiguration.operator, {
-											success: function() {
-												// Add filter value(s)
-												if (oConfiguration.values && oConfiguration.values.length) {
-													oConfiguration.values.forEach(function(sConfigurationValue) {
-														this.waitFor({
-															controlType: oConfiguration.inputControl,
-															matchers: new Ancestor(oGrid),
-															success: function(aInputs) {
-																var oInput = aInputs[oConfiguration.values.indexOf(sConfigurationValue)];
-																new EnterText({
-																	text: sConfigurationValue
-																}).executeOn(oInput);
-															}
-														});
-													}.bind(this));
-												}
-												// click add button if needed
-												if (bPressAddButton) {
-													new Press().executeOn(oAddButton);
-												}
-											}
-										});
-									}
+							controlType: "sap.m.CustomListItem",
+							matchers: new Ancestor(oFilterPanel, false),
+							success: function(aCustomListItems) {
+								Opa5.assert.ok(aCustomListItems.length > iIndex + 1, "New filter entry generated");
+
+								this.waitFor({
+									id: oConfiguration.inputControl,
+									//matchers: new Ancestor(oCreatedItem, false), Parent of FilterField is an AdapationFilterbar
+									actions: new EnterText({
+										text: oConfiguration.values[0],
+										pressEnterKey: true
+									})
 								});
 							}
 						});
@@ -1013,38 +986,17 @@ sap.ui.define([
 			return iPersonalize.call(this, oControl, Util.texts.filter, fnOpenThePersonalizationDialog, {
 				success: function(oP13nDialog) {
 					this.waitFor({
-						controlType: "sap.ui.comp.p13n.P13nFilterPanel",
+						controlType: "sap.ui.mdc.p13n.panels.FilterPanel",
 						matchers: new Ancestor(oP13nDialog, false),
 						success: function(aFilterPanels) {
 							var oFilterPanel = aFilterPanels[0];
-							this.waitFor({
-								controlType: "sap.m.Panel",
-								matchers: new Ancestor(oFilterPanel),
-								success: function(aPanels) {
-									var oPanel = aPanels[0];
-									this.waitFor({
-										controlType: "sap.ui.comp.p13n.P13nConditionPanel",
-										matchers: new Ancestor(oPanel),
-										success: function(aP13nConditionPanels) {
-											var oP13nConditionPanel = aP13nConditionPanels[0];
-											// Remove all filter entries
-											iPressAllDeclineButtonsOnPanel.call(this, oP13nConditionPanel, {
-												success: function() {
-													this.waitFor({
-														controlType: "sap.ui.layout.Grid",
-														matchers: new Ancestor(oP13nConditionPanel),
-														success: function(aGrids) {
-															var oWrappingGrid = aGrids[0];
-															aConfigurations.forEach(function(oConfiguration) {
-																var bPressAddButton = (aConfigurations.indexOf(oConfiguration) != aConfigurations.length - 1);
-																iAddFilterConfiguration.call(this, oWrappingGrid, oConfiguration, bPressAddButton);
-															}.bind(this));
-														}
-													});
-												}
-											});
-										}
-									});
+							iPressAllDeclineButtonsOnPanel.call(this, oFilterPanel, {
+								itemAmount: oFilterPanel._oListControl.getItems().length,
+								success: function() {
+									aConfigurations.forEach(function(oConfiguration, iIndex) {
+										iAddFilterConfiguration.call(this, oP13nDialog, iIndex, oConfiguration);
+									}.bind(this));
+									iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
 								}
 							});
 						}

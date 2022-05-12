@@ -17,7 +17,8 @@ sap.ui.require([
 		autoWait: true,
 		async: true,
 		appParams: {
-			"sap-ui-animation": false
+			"sap-ui-animation": false,
+			"sap-ui-xx-filterQueryPanel": true
 		},
 		testLibs: {
 			mdcTestLibrary: {

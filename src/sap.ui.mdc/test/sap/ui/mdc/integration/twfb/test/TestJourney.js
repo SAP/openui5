@@ -123,8 +123,7 @@ sap.ui.define([
 		When.onTable.iResetThePersonalization(sTableID);
 		//Then TODO no assertions available
 
-		//TODO only works with comp
-		//When.onTable.iPersonalizeFilter(sTableID, [{key : "language_code", operator: "EQ", values: ["DE"], inputControl: "__component0---books--booksTable--filter--language_code"}]);
+		When.onTable.iPersonalizeFilter(sTableID, [{key : "Language", values: ["DE"], inputControl: "__component" + iComponent + "---books--booksTable--filter--language_code"}]);
 
 		When.onTable.iPersonalizeSort(sTableID, [{key: "Price", descending: false}]); //ERROR failed because of custom stock slider (when at the end I call teardown....)
 		// When.onTable.iResetThePersonalization(sTableID);
