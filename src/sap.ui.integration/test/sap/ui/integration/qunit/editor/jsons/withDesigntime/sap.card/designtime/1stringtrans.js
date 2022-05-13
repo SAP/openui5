@@ -10,7 +10,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"type": "string",
 						"label": "{i18n>STRINGLABELTRANS}",
 						"translatable": true,
-						"description": "Description"
+						"description": "Description",
+						"allowDynamicValues": true
 					}
 				}
 			}

@@ -86,6 +86,47 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								}
 							}
 						}
+					},
+					"objectWithPropertiesDefined3": {
+						"manifestpath": "/sap.card/configuration/parameters/objectWithPropertiesDefined3/value",
+						"type": "object",
+						"label": "Object3 properties defined",
+						"properties": {
+							"key": {
+								"label": "Key"
+							},
+							"icon": {
+								"label": "Icon"
+							},
+							"text": {
+								"label": "Text",
+								"translatable": true
+							},
+							"url": {
+								"label": "URL"
+							},
+							"editable": {
+								"label": "Editable",
+								"type": "boolean"
+							},
+							"int": {
+								"label": "Integer",
+								"type": "int",
+								"formatter": {
+									"minIntegerDigits": 1,
+									"maxIntegerDigits": 6,
+									"emptyString": ""
+								}
+							},
+							"number": {
+								"label": "Number",
+								"type": "number",
+								"formatter": {
+									"decimals": 1,
+									"style":"short"
+								}
+							}
+						}
 					}
 				}
 			}
