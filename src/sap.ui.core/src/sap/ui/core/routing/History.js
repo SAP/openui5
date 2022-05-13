@@ -161,8 +161,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * gets the previous hash in the history - if the last direction was Unknown or there was no navigation yet, undefined will be returned
-	 * @returns {string} or undefined
+	 * gets the previous hash in the history - if the last direction was Unknown or there was no navigation yet, <code>undefined</code> will be returned
+	 * @returns {string|undefined}
 	 * @public
 	 */
 	History.prototype.getPreviousHash = function() {
