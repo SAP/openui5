@@ -162,6 +162,7 @@ function (
 		assert.ok(fnCreateDOMPoolSpy.calledOnce, "create DOM is called once in the _addAssetToDOMPool method");
 		assert.ok(jQuery("#" + SAP_ILLUSTRATION_POOL_ID).children("#" + sDummyParagraphID)[0],
 			"the dummy DOM node is successfully added to the Illustration Pool's DOM Ref");
+		assert.strictEqual(jQuery("#" + SAP_ILLUSTRATION_POOL_ID)[0].getAttribute("aria-hidden"), "true", "DOM pool is hidden from accessibility tree");
 	});
 
 	QUnit.module("_getDOMPool");
