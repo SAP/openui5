@@ -544,6 +544,10 @@ sap.ui.define([
 		// code under test: no decimals check for unset number values
 		oType.validateValue([undefined, "KG"]);
 
+		// code under test: ignore trailing zeroes in decimal places
+		oType.validateValue(["1.20", "G"]);
+		oType.validateValue(["1.000000000", "G"]);
+
 		oType = new UnitMixin({showNumber : false});
 		oType.formatValue(["42", "G", {"G" : {Text : "gram", UnitSpecificScale : 1}}], "string");
 
