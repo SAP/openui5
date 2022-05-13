@@ -34,7 +34,15 @@ sap.ui.define([
 					if (typeof oTranslations === "object") {
 						CardMerger.translateObject(oModel, sManifestPath, oTranslations, oDesigntime);
 					} else {
-						oModel.setProperty(sManifestPath, oTranslations);
+						var sCurrentValue = oModel.getProperty(sManifestPath);
+						// only if the current value is a dynamic value string, do not translate it
+						var bTranslate = true;
+						if (sCurrentValue && typeof sCurrentValue === "string" && (sCurrentValue.indexOf("{context>") === 0 || sCurrentValue.indexOf("{{parameters") === 0)) {
+							bTranslate = false;
+						}
+						if (bTranslate) {
+							oModel.setProperty(sManifestPath, oTranslations);
+						}
 					}
 				}
 			}
@@ -51,6 +59,24 @@ sap.ui.define([
 						//merge old changes
 						merge(oInitialManifest[sSection], oChange.content);
 					} else {
+						var iLayer = oChange.hasOwnProperty(":layer") ? oChange[":layer"] : 1000;
+						// for changes from translation layer, we use them as the translations of current languages
+						if (iLayer === CardMerger.layers["translation"]) {
+							var sLanguage = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+							var oTranslationChange = {
+								"texts": {}
+							};
+							oTranslationChange.texts[sLanguage] = {};
+							delete oChange.texts;
+							Object.keys(oChange).forEach(function (s) {
+								if (s.charAt(0) === "/") {
+									oTranslationChange.texts[sLanguage][s] = oChange[s];
+								} else {
+									oTranslationChange[s] = oChange[s];
+								}
+							});
+							oChange = oTranslationChange;
+						}
 						oTexts = merge(oTexts, oChange.texts);
 						oDesigntime = merge(oDesigntime, oChange[":designtime"]);
 						//merge path based changes via model

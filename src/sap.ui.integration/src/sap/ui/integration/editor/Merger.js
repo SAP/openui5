@@ -41,7 +41,6 @@ sap.ui.define([
 						Merger.mergeManifestPathChanges(oModel, oChange);
 					}
 				});
-
 			}
 			return oInitialManifest;
 		},

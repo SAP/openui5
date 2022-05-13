@@ -1905,7 +1905,7 @@ sap.ui.define([
 				&& oTexts[sLanguage][oConfig.manifestpath]
 				&& oTexts[sLanguage][oConfig.manifestpath][sUUID]) {
 				if (sProperty) {
-					if (oTexts[sLanguage][oConfig.manifestpath][sUUID][sProperty]) {
+					if (oTexts[sLanguage][oConfig.manifestpath][sUUID].hasOwnProperty(sProperty)) {
 						delete oTexts[sLanguage][oConfig.manifestpath][sUUID][sProperty];
 						if (deepEqual(oTexts[sLanguage][oConfig.manifestpath][sUUID], {})) {
 							delete oTexts[sLanguage][oConfig.manifestpath][sUUID];
