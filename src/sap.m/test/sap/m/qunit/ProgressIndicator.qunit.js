@@ -386,45 +386,45 @@ sap.ui.define([
 		oProgressIndicator.destroy();
 	});
 
-	QUnit.test("Animation is displayed when displayAnimation is true", function(assert) {
+	QUnit.test("CSS animation properties are applied when displayAnimation is true", function(assert) {
 		// Arrange
 		var oProgressIndicator = new ProgressIndicator(),
-			iExpectedAnimationDuration = 2000, // the default one
-			oSpy = this.spy(jQuery.fn, "animate");
+			oBarDomRef;
 
 		// Act
 		oProgressIndicator.placeAt("content");
 		Core.applyChanges();
 		oProgressIndicator.setPercentValue(100);
+		Core.applyChanges();
+		oBarDomRef = oProgressIndicator.getDomRef().querySelector(".sapMPIBar");
 
 		// Assert
-		assert.ok(oSpy.calledOnce, "jQuery's animate method is called only once");
-		assert.strictEqual(oSpy.args[0][1], iExpectedAnimationDuration,
-			"jQuery's animate method's second argument is " + iExpectedAnimationDuration +
-			" milliseconds (default animation) as expected");
+		assert.strictEqual(oBarDomRef.style.transitionProperty, "flex-basis", "The bar's transition-property is set to 'flex-basis'");
+		assert.strictEqual(oBarDomRef.style.transitionDuration, "2000ms", "The bar's transition-duration is set to '2000ms'");
+		assert.strictEqual(oBarDomRef.style.transitionTimingFunction, "linear", "The bar's transition-timing-function is set to 'linear'");
 
 		// Clean up
 		oProgressIndicator.destroy();
 	});
 
-	QUnit.test("Animation is not displayed when displayAnimation is false", function(assert) {
+	QUnit.test("CSS animation properties are not applied when displayAnimation is false", function(assert) {
 		// Arrange
 		var oProgressIndicator = new ProgressIndicator({
 				displayAnimation: false
 			}),
-			iExpectedAnimationDuration = 0,
-			oSpy = this.spy(jQuery.fn, "animate");
+			oBarDomRef;
 
 		// Act
 		oProgressIndicator.placeAt("content");
 		Core.applyChanges();
 		oProgressIndicator.setPercentValue(100);
 
+		oBarDomRef = oProgressIndicator.getDomRef().querySelector(".sapMPIBar");
+
 		// Assert
-		assert.ok(oSpy.calledOnce, "jQuery's animate method is called only once");
-		assert.strictEqual(oSpy.args[0][1], iExpectedAnimationDuration,
-			"jQuery's animate method's second argument is " + iExpectedAnimationDuration +
-			" milliseconds (no animation) as expected");
+		assert.notOk(oBarDomRef.style.transitionProperty, "The bar's transition-property is not set");
+		assert.notOk(oBarDomRef.style.transitionDuration, "The bar's transition-duration is not set");
+		assert.notOk(oBarDomRef.style.transitionTimingFunction, "The bar's transition-timing-function is not set");
 
 		// Clean up
 		oProgressIndicator.destroy();
