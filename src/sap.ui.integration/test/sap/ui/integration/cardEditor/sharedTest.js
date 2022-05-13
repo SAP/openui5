@@ -69,7 +69,10 @@ function showCurrentValues(id) {
 	alert(JSON.stringify(o, null, "\t"));
 }
 function saveCurrentValues(id) {
-	var o = document.getElementById(id).getCurrentSettings()
+	var o = document.getElementById(id).getCurrentSettings();
+	if (id === "cardEditorAdminContent") {
+		id = "cardEditorContent";
+	}
 	localStorage.setItem(localStorageKey + id, JSON.stringify(o, null, "\t"));
 	updateAllLayerCard();
 }

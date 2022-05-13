@@ -99,7 +99,6 @@ sap.ui.define([
 	var _oAdminChanges = {
 		"/sap.card/configuration/parameters/string2/value": "String2 Value Admin",
 		":layer": 0,
-		":multipleLanguage": true,
 		":errors": false,
 		"texts": {
 			"en": {

@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/core/ListItem",
 	"sap/base/util/ObjectPath",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/util/deepClone"
 ], function (
 	Control,
 	MultiInput,
@@ -18,7 +19,8 @@ sap.ui.define([
 	BindingHelper,
 	ListItem,
 	ObjectPath,
-	deepEqual
+	deepEqual,
+	deepClone
 ) {
 	"use strict";
 
@@ -197,6 +199,36 @@ sap.ui.define([
 				"required": true,
 				"type": "error"
 			});
+		}
+	};
+
+	// delete the translation text
+	BaseField.prototype.deleteTranslationValuesInTexts = function (sLanguage) {
+		var that = this;
+		var oConfig = that.getConfiguration();
+		var sTranslationPath = "/texts";
+		var oData = this._settingsModel.getData();
+		if (!oData || !oData.texts) {
+			return;
+		}
+		var oTexts = deepClone(oData.texts, 500);
+		if (sLanguage) {
+			if (oTexts[sLanguage]) {
+				delete oTexts[sLanguage][oConfig.manifestpath];
+				if (deepEqual(oTexts[sLanguage], {})) {
+					delete oTexts[sLanguage];
+				}
+				if (deepEqual(oTexts, {})) {
+					delete oData.texts;
+					this._settingsModel.setData(oData);
+				} else {
+					this._settingsModel.setProperty(sTranslationPath, oTexts);
+				}
+			}
+		} else {
+			for (var n in oTexts) {
+				that.deleteTranslationValuesInTexts(n);
+			}
 		}
 	};
 
@@ -795,6 +827,10 @@ sap.ui.define([
 				text: o.object.label,
 				"delete": function () {
 					this._setCurrentProperty("value", "");
+					// save "" value to overwrite the dynamic value
+					var oInput = this.getAggregation("_field");
+					oInput.setValue("");
+					oInput.fireChange();
 					if (!this._hasDynamicValue()) {
 						this._hideDynamicField();
 					}
@@ -805,6 +841,11 @@ sap.ui.define([
 					}.bind(this), 100);
 				}.bind(this)
 			}));
+			// delete all the transalation texts since the translatable string value now is a dynamic value
+			var oConfig = this.getConfiguration();
+			if (oConfig.type === "string" && oConfig.translatable) {
+				this.deleteTranslationValuesInTexts();
+			}
 		} else {
 			this._setCurrentProperty("value", oData.value);
 			this._setCurrentProperty("_changed", oData._changed);

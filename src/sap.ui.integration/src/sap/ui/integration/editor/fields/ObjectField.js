@@ -1053,6 +1053,7 @@ sap.ui.define([
 							var oControl = oEvent.getSource();
 							var sValue = oEvent.getParameter("value");
 							// change the translation format {{KEY}} to {i18n>KEY} since manifest will translate it, but we don't want
+							// more info in JIRA DIGITALWORKPLACE-3974
 							if (sValue && sValue.match(REGEXP_TRANSLATABLE)) {
 								var sKey = sValue.substring(2, sValue.length - 2);
 								sValue = "{i18n>" + sKey + "}";
@@ -1074,14 +1075,19 @@ sap.ui.define([
 							oSettings.showValueHelp = {
 								path: sPathPrefix + n,
 								formatter: function(oValue) {
+									var oSettings = this.getModel("settings").getData();
+									var sUUID = this.getModel().getProperty(oSettings.uuidPath);
+									var sConfigName = "translatable";
 									if (that.getTranslationKey(oValue)) {
+										if (!this.getShowValueHelp() && that.getObjectPropertyConfigValueInDesigntime(sUUID, oSettings.property, sConfigName) === false) {
+											that.setObjectPropertyConfigValueInDesigntime(sUUID, oSettings.property, sConfigName, true);
+										}
 										return true;
 									}
 									if (this.getShowValueHelp()) {
-										var oSettings = this.getModel("settings").getData();
-										var sUUID = this.getModel().getProperty(oSettings.uuidPath);
 										// clean the translation values and updated language since the translation feature is off
 										that.deleteTranslationValueInTexts(undefined, sUUID, oSettings.property);
+										that.setObjectPropertyConfigValueInDesigntime(sUUID, oSettings.property, sConfigName, false);
 										that._oUpdatedTranslations = {};
 									}
 									return false;
@@ -1192,6 +1198,7 @@ sap.ui.define([
 		var oResourceBundle = that.getResourceBundle();
 		var oItemCloned = deepClone(oItem, 500);
 		var oModel;
+		var sPlacement = sMode === "add" && that._previewPosition !== "right" ? "Left" : "Right";
 		if (!that._oObjectDetailsPopover) {
 			var oAddButton = new Button({
 				text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_ADD"),
@@ -1344,7 +1351,6 @@ sap.ui.define([
 			_oTranslationListPage.addContent();
 			*/
 			that._oNavContainer.addPage(that._oTranslationListPage);
-			var sPlacement = that._previewPosition === "right" ? "Right" : "Left";
 			that._oObjectDetailsPopover = new Popover({
 				placement: sPlacement,
 				showHeader: false,
@@ -1385,6 +1391,7 @@ sap.ui.define([
 				that._oObjectDetailsPopover._oCloseButton.setVisible(true);
 			}
 			that._oObjectDetailsPopover._openBy = oControl;
+			that._oObjectDetailsPopover.setPlacement(sPlacement);
 			// nav back to main page
 			that._oNavContainer.back();
 		}
@@ -1617,7 +1624,7 @@ sap.ui.define([
 		if (!that._oTranslationPopover) {
 			var oList = that.buildTranslationsList();
 			var oTranslationsFooter = that.buildTranslationsFooter(oList, true);
-			var sPlacement = that._previewPostion === "right" ? "Right" : "Left";
+			var sPlacement = that._previewPosition === "right" ? "Right" : "Left";
 			that._oTranslationPopover = new Popover({
 				placement: sPlacement,
 				contentWidth: "300px",
@@ -1811,6 +1818,50 @@ sap.ui.define([
 		return sValue;
 	};
 
+	// set the config value of the property in designtime
+	ObjectField.prototype.setObjectPropertyConfigValueInDesigntime = function (sUUID, sProperty, sConfigName, vConfigValue) {
+		var that = this;
+		var oConfig = that.getConfiguration();
+		var sDesigntimePath = "/:designtime";
+		var oData = this._settingsModel.getData();
+		if (!oData) {
+			return;
+		}
+		var oDesigntime;
+		if (!oData.hasOwnProperty(":designtime")) {
+			oDesigntime = {};
+		} else {
+			oDesigntime = deepClone(oData[":designtime"], 500);
+		}
+		if (!oDesigntime.hasOwnProperty(oConfig.manifestpath)) {
+			oDesigntime[oConfig.manifestpath] = {};
+		}
+		if (!oDesigntime[oConfig.manifestpath].hasOwnProperty(sUUID)) {
+			oDesigntime[oConfig.manifestpath][sUUID] = {};
+		}
+		if (!oDesigntime[oConfig.manifestpath][sUUID].hasOwnProperty(sProperty)) {
+			oDesigntime[oConfig.manifestpath][sUUID][sProperty] = {};
+		}
+		oDesigntime[oConfig.manifestpath][sUUID][sProperty][sConfigName] = vConfigValue;
+		this._settingsModel.setProperty(sDesigntimePath, oDesigntime);
+	};
+
+	// get the config value of the property in designtime
+	ObjectField.prototype.getObjectPropertyConfigValueInDesigntime = function (sUUID, sProperty, sConfigName) {
+		var that = this;
+		var vConfigValue;
+		var oConfig = that.getConfiguration();
+		var oData = this._settingsModel.getData();
+		if (oData && oData[":designtime"]
+			&& oData[":designtime"][oConfig.manifestpath]
+			&& oData[":designtime"][oConfig.manifestpath][sUUID]
+			&& oData[":designtime"][oConfig.manifestpath][sUUID][sProperty]
+			&& oData[":designtime"][oConfig.manifestpath][sUUID][sProperty].hasOwnProperty(sConfigName)) {
+			vConfigValue = oData[":designtime"][oConfig.manifestpath][sUUID][sProperty][sConfigName];
+		}
+		return vConfigValue;
+	};
+
 	// set the translation text
 	ObjectField.prototype.setTranslationValueInTexts = function (sLanguage, sUUID, sProperty, sValue) {
 		var that = this;
@@ -1854,7 +1905,7 @@ sap.ui.define([
 				&& oTexts[sLanguage][oConfig.manifestpath]
 				&& oTexts[sLanguage][oConfig.manifestpath][sUUID]) {
 				if (sProperty) {
-					if (oTexts[sLanguage][oConfig.manifestpath][sUUID][sProperty]) {
+					if (oTexts[sLanguage][oConfig.manifestpath][sUUID].hasOwnProperty(sProperty)) {
 						delete oTexts[sLanguage][oConfig.manifestpath][sUUID][sProperty];
 						if (deepEqual(oTexts[sLanguage][oConfig.manifestpath][sUUID], {})) {
 							delete oTexts[sLanguage][oConfig.manifestpath][sUUID];
