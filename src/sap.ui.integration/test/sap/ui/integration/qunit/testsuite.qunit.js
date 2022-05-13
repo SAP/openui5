@@ -887,7 +887,16 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/table/TypeKeyWithChangesByAdmin": {
+			"editor/objectField/propertyTranslation/table/TypeKeyWithChangesByAdmin01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/TypeKeyWithChangesByAdmin02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
