@@ -1,6 +1,6 @@
 /* global QUnit, sinon */
 
-/*eslint max-nested-callbacks: [2, 10]*/
+/*eslint max-nested-callbacks: [2, 20]*/
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
@@ -345,24 +345,30 @@ sap.ui.define([
 			oOperatorField.fireChange({value: "BT"}); // fake item select
 
 			setTimeout(function () { // as model update is async
-				oCore.applyChanges();
-				var aConditions = oDefineConditionPanel.getConditions();
-				assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
-				assert.deepEqual(aConditions[0].values, ["Andreas", null], "Values set on condition");
+				setTimeout(function () { // as parsing is async
+					setTimeout(function () { // as model update is async
+						setTimeout(function () { // as row update is async
+							oCore.applyChanges();
+							var aConditions = oDefineConditionPanel.getConditions();
+							assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+							assert.deepEqual(aConditions[0].values, ["Andreas", null], "Values set on condition");
 
-				var oGrid = oCore.byId("DCP1--conditions");
-				var aContent = oGrid.getContent();
-				var oField1 = aContent[2];
-				var oField2 = aContent[3];
+							var oGrid = oCore.byId("DCP1--conditions");
+							var aContent = oGrid.getContent();
+							var oField1 = aContent[2];
+							var oField2 = aContent[3];
 
-				assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
-				assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
-				assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
-				assert.equal(oField1.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_FROM"), "Placeholder of Field1");
-				assert.equal(oField2.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_TO"), "Placeholder of Field2");
-				assert.equal(oField1.getValue(), "Andreas", "Field1 value not changed");
-				assert.equal(oField2.getValue(), null, "Field2 value is empty");
-				fnDone();
+							assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
+							assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
+							assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
+							assert.equal(oField1.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_FROM"), "Placeholder of Field1");
+							assert.equal(oField2.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_TO"), "Placeholder of Field2");
+							assert.equal(oField1.getValue(), "Andreas", "Field1 value not changed");
+							assert.equal(oField2.getValue(), null, "Field2 value is empty");
+							fnDone();
+						}, 0);
+					}, 0);
+				}, 0);
 			}, 0);
 		}, 0);
 
@@ -386,21 +392,27 @@ sap.ui.define([
 			oOperatorField.fireChange({value: "EQ"}); // fake item select
 
 			setTimeout(function () { // as model update is async
-				oCore.applyChanges();
-				var aConditions = oDefineConditionPanel.getConditions();
-				assert.equal(aConditions[0].operator, "EQ", "Operator set on condition");
-				assert.deepEqual(aConditions[0].values, ["A"], "Values set on condition");
+				setTimeout(function () { // as parsing is async
+					setTimeout(function () { // as model update is async
+						setTimeout(function () { // as row update is async
+							oCore.applyChanges();
+							var aConditions = oDefineConditionPanel.getConditions();
+							assert.equal(aConditions[0].operator, "EQ", "Operator set on condition");
+							assert.deepEqual(aConditions[0].values, ["A"], "Values set on condition");
 
-				var oGrid = oCore.byId("DCP1--conditions");
-				var aContent = oGrid.getContent();
-				var oField1 = aContent[2];
+							var oGrid = oCore.byId("DCP1--conditions");
+							var aContent = oGrid.getContent();
+							var oField1 = aContent[2];
 
-				assert.equal(aContent.length, 5, "One row with one fields created - Grid contains 5 controls");
-				assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
-				assert.equal(oField1.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_VALUE"), "Placeholder of Field1");
-				assert.equal(oField1.getValue(), "A", "Field1 value not changed");
+							assert.equal(aContent.length, 5, "One row with one fields created - Grid contains 5 controls");
+							assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
+							assert.equal(oField1.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_VALUE"), "Placeholder of Field1");
+							assert.equal(oField1.getValue(), "A", "Field1 value not changed");
 
-				fnDone();
+							fnDone();
+						}, 0);
+					}, 0);
+				}, 0);
 			}, 0);
 		}, 0);
 
@@ -424,17 +436,23 @@ sap.ui.define([
 			oOperatorField.fireChange({value: "Empty"}); // fake item select
 
 			setTimeout(function () { // as model update is async
-				oCore.applyChanges();
-				var aConditions = oDefineConditionPanel.getConditions();
-				assert.equal(aConditions[0].operator, "Empty", "Operator set on condition");
-				assert.deepEqual(aConditions[0].values, [], "Values set on condition");
+				setTimeout(function () { // as parsing is async
+					setTimeout(function () { // as model update is async
+						setTimeout(function () { // as row update is async
+							oCore.applyChanges();
+							var aConditions = oDefineConditionPanel.getConditions();
+							assert.equal(aConditions[0].operator, "Empty", "Operator set on condition");
+							assert.deepEqual(aConditions[0].values, [], "Values set on condition");
 
-				var oGrid = oCore.byId("DCP1--conditions");
-				var aContent = oGrid.getContent();
+							var oGrid = oCore.byId("DCP1--conditions");
+							var aContent = oGrid.getContent();
 
-				assert.equal(aContent.length, 4, "One row with no fields created - Grid contains 4 controls");
+							assert.equal(aContent.length, 4, "One row with no fields created - Grid contains 4 controls");
 
-				fnDone();
+							fnDone();
+						}, 0);
+					}, 0);
+				}, 0);
 			}, 0);
 		}, 0);
 
@@ -459,46 +477,58 @@ sap.ui.define([
 			oOperatorField.fireChange({value: "XXX"}); // fake wrong input
 
 			setTimeout(function () { // as model update is async
-				oCore.applyChanges();
-				var aConditions = oDefineConditionPanel.getConditions();
-				assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
-				assert.deepEqual(aConditions[0].values, ["A", "Z"], "Values set on condition");
+				setTimeout(function () { // as parsing is async
+					setTimeout(function () { // as model update is async
+						setTimeout(function () { // as row update is async
+							oCore.applyChanges();
+							var aConditions = oDefineConditionPanel.getConditions();
+							assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+							assert.deepEqual(aConditions[0].values, ["A", "Z"], "Values set on condition");
 
-				var oGrid = oCore.byId("DCP1--conditions");
-				var aContent = oGrid.getContent();
-				var oField1 = aContent[2];
-				var oField2 = aContent[3];
+							var oGrid = oCore.byId("DCP1--conditions");
+							var aContent = oGrid.getContent();
+							var oField1 = aContent[2];
+							var oField2 = aContent[3];
 
-				assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
-				assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
-				assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
-				assert.equal(oField1 && oField1.getEditMode(), EditMode.ReadOnly, "Field1 is readonly");
-				assert.equal(oField2 && oField2.getEditMode(), EditMode.ReadOnly, "Field2 is readonly");
-				assert.notOk(oDefineConditionPanel.getInputOK(), "InputOK not set");
+							assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
+							assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
+							assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
+							assert.equal(oField1 && oField1.getEditMode(), EditMode.ReadOnly, "Field1 is readonly");
+							assert.equal(oField2 && oField2.getEditMode(), EditMode.ReadOnly, "Field2 is readonly");
+							assert.notOk(oDefineConditionPanel.getInputOK(), "InputOK not set");
 
-				oOperatorField.setValue("BT");
-				oOperatorField.fireChange({value: "BT"}); // fake right input
+							oOperatorField.setValue("BT");
+							oOperatorField.fireChange({value: "BT"}); // fake right input
 
-				setTimeout(function () { // as model update is async
-					oCore.applyChanges();
-					aConditions = oDefineConditionPanel.getConditions();
-					assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
-					assert.deepEqual(aConditions[0].values, ["A", "Z"], "Values set on condition");
+							setTimeout(function () { // as model update is async
+								setTimeout(function () { // as parsing is async
+									setTimeout(function () { // as model update is async
+										setTimeout(function () { // as row update is async
+											oCore.applyChanges();
+											aConditions = oDefineConditionPanel.getConditions();
+											assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+											assert.deepEqual(aConditions[0].values, ["A", "Z"], "Values set on condition");
 
-					aContent = oGrid.getContent();
-					oField1 = aContent[2];
-					oField2 = aContent[3];
+											aContent = oGrid.getContent();
+											oField1 = aContent[2];
+											oField2 = aContent[3];
 
-					assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
-					assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
-					assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
-					assert.equal(oField1 && oField1.getEditMode(), EditMode.Editable, "Field1 is editable");
-					assert.equal(oField2 && oField2.getEditMode(), EditMode.Editable, "Field2 is editable");
-					assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set");
+											assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
+											assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
+											assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
+											assert.equal(oField1 && oField1.getEditMode(), EditMode.Editable, "Field1 is editable");
+											assert.equal(oField2 && oField2.getEditMode(), EditMode.Editable, "Field2 is editable");
+											assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set");
 
-					fnDone();
+											fnDone();
+										}, 0);
+									}, 0);
+								}, 0);
+							}, 0);
+						}, 0);
+					}, 0);
 				}, 0);
-				}, 0);
+			}, 0);
 		}, 0);
 
 	});
@@ -654,8 +684,10 @@ sap.ui.define([
 			assert.equal(oField.getText(), "Test", "Value of FIeld");
 
 			var oOperatorField = aContent[0];
-			var oFH = oCore.byId(oOperatorField.getFieldHelp());
-			var aItems = oFH.getItems();
+			var oVH = oCore.byId(oOperatorField.getFieldHelp());
+			var oPopover = oVH.getTypeahead();
+			var oFL = oPopover.getContent()[0];
+			var aItems = oFL.getItems();
 
 			assert.equal(aItems.length, 1, "Only one Operator available");
 			assert.equal(aItems[0].getText(), "Longtext", "Text of operator");
@@ -681,8 +713,10 @@ sap.ui.define([
 			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oOperatorField = aContent[0]; // operator
-			var oFH = oCore.byId(oOperatorField.getFieldHelp());
-			var aItems = oFH.getItems();
+			var oVH = oCore.byId(oOperatorField.getFieldHelp());
+			var oPopover = oVH.getTypeahead();
+			var oFL = oPopover.getContent()[0];
+			var aItems = oFL.getItems();
 			var oField = aContent[2];
 			var aConditions = oDefineConditionPanel.getConditions();
 
@@ -701,7 +735,7 @@ sap.ui.define([
 
 			// switch operator
 			oOperatorField.setValue("BT");
-			oOperatorField.fireChange({value: "BT", valid: true}); // fake item select
+			oOperatorField.fireChange({value: "BT", valid: true, promise: Promise.resolve("BT")}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				oCore.applyChanges();
@@ -721,7 +755,7 @@ sap.ui.define([
 
 				// switch operator back
 				oOperatorField.setValue("MyOperator");
-				oOperatorField.fireChange({value: "MyOperator", valid: true}); // fake item select
+				oOperatorField.fireChange({value: "MyOperator", valid: true, promise: Promise.resolve("MyOperator")}); // fake item select
 
 				setTimeout(function () { // as model update is async
 					oCore.applyChanges();
@@ -865,7 +899,7 @@ sap.ui.define([
 			var aContent = oGrid.getContent();
 			var oOperatorField = aContent[0];
 			oOperatorField.setValue("TODAY");
-			oOperatorField.fireChange({value: "TODAY", valid: true}); // fake item select
+			oOperatorField.fireChange({value: "TODAY", valid: true, promise: Promise.resolve("TODAY")}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				oCore.applyChanges();
@@ -882,94 +916,102 @@ sap.ui.define([
 				assert.equal(oField.getValue(), oDateType.formatValue(new Date(), "string"), "Text");
 
 				oOperatorField.setValue("NEXTDAYS");
-				oOperatorField.fireChange({value: "NEXTDAYS", valid: true}); // fake item select
+				oOperatorField.fireChange({value: "NEXTDAYS", valid: true, promise: Promise.resolve("NEXTDAYS")}); // fake item select
 
 				setTimeout(function () { // as model update is async
-					oCore.applyChanges();
-					aContent = oGrid.getContent();
-					oField = aContent[2];
-					assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
-					aContent = oField && oField.getAggregation("_content");
-					oControl = aContent && aContent.length > 0 && aContent[0];
+					setTimeout(function () { // as change event is async
+						oCore.applyChanges();
+						aContent = oGrid.getContent();
+						oField = aContent[2];
+						assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+						aContent = oField && oField.getAggregation("_content");
+						oControl = aContent && aContent.length > 0 && aContent[0];
 
-					assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
-					oType = oField.getBindingInfo("value").type;
-					assert.ok(oType instanceof IntegerType, "Type of Field binding");
-					assert.equal(oField.getValue(), 1, "default value");
+						assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
+						oType = oField.getBindingInfo("value").type;
+						assert.ok(oType instanceof IntegerType, "Type of Field binding");
+						assert.equal(oField.getValue(), 1, "default value");
 
-					oControl.setValue("5");
-					oControl.fireChange({value: "5"}); //fake input
-					setTimeout(function () { // as model update is async
-						oOperatorField.setValue("EQ");
-						oOperatorField.fireChange({value: "EQ", valid: true}); // fake item select
-
+						oControl.setValue("5");
+						oControl.fireChange({value: "5"}); //fake input
 						setTimeout(function () { // as model update is async
-							oCore.applyChanges();
-							aContent = oGrid.getContent();
-							oField = aContent[2];
-							assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
-							aContent = oField && oField.getAggregation("_content");
-							oControl = aContent && aContent.length > 0 && aContent[0];
-
-							assert.ok(oControl.isA("sap.m.DatePicker"), "Field uses DatePicker");
-							oType = oField.getBindingInfo("value").type;
-							assert.ok(oType instanceof DateType, "Type of Field binding");
-							assert.notOk(oField.getValue(), "no Value");
-
-							oOperatorField.setValue("TODAYFROMTO");
-							oOperatorField.fireChange({value: "TODAYFROMTO", valid: true}); // fake item select
+							oOperatorField.setValue("EQ");
+							oOperatorField.fireChange({value: "EQ", valid: true, promise: Promise.resolve("EQ")}); // fake item select
 
 							setTimeout(function () { // as model update is async
-								oCore.applyChanges();
-								aContent = oGrid.getContent();
-								oField = aContent[2];
-								assert.equal(aContent.length, 6, "One row with two field created - Grid contains 6 controls");
-								aContent = oField && oField.getAggregation("_content");
-								oControl = aContent && aContent.length > 0 && aContent[0];
-								assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
-								oType = oField.getBindingInfo("value").type;
-								assert.ok(oType instanceof IntegerType, "Type of Field binding");
-								assert.equal(oField.getValue(), 1, "default Value");
-								oControl.setValue("6");
-								oControl.fireChange({value: "6"}); //fake input
+								setTimeout(function () { // as change event is async
+									oCore.applyChanges();
+									aContent = oGrid.getContent();
+									oField = aContent[2];
+									assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+									aContent = oField && oField.getAggregation("_content");
+									oControl = aContent && aContent.length > 0 && aContent[0];
 
-								aContent = oGrid.getContent();
-								oField = aContent[3];
-								aContent = oField && oField.getAggregation("_content");
-								oControl = aContent && aContent.length > 0 && aContent[0];
-								assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "second Field uses Input");
-								oType = oField.getBindingInfo("value").type;
-								assert.ok(oType instanceof IntegerType, "Type of second Field binding");
-								assert.equal(oField.getValue(), 1, "default Value");
-								oControl.setValue("6");
-								oControl.fireChange({value: "6"}); //fake input
+									assert.ok(oControl.isA("sap.m.DatePicker"), "Field uses DatePicker");
+									oType = oField.getBindingInfo("value").type;
+									assert.ok(oType instanceof DateType, "Type of Field binding");
+									assert.notOk(oField.getValue(), "no Value");
 
-								setTimeout(function () { // as model update is async
-									oOperatorField.setValue("BT");
-									oOperatorField.fireChange({value: "BT", valid: true}); // fake item select
+									oOperatorField.setValue("TODAYFROMTO");
+									oOperatorField.fireChange({value: "TODAYFROMTO", valid: true, promise: Promise.resolve("TODAYFROMTO")}); // fake item select
 
 									setTimeout(function () { // as model update is async
-										oCore.applyChanges();
-										aContent = oGrid.getContent();
-										oField = aContent[2];
-										assert.equal(aContent.length, 6, "One row with two field created - Grid contains 6 controls");
-										aContent = oField && oField.getAggregation("_content");
-										oControl = aContent && aContent.length > 0 && aContent[0];
-										assert.ok(oControl.isA("sap.m.DatePicker"), "Field uses DatePicker");
-										oType = oField.getBindingInfo("value").type;
-										assert.ok(oType instanceof DateType, "Type of Field binding");
-										assert.notOk(oField.getValue(), "no Value");
+										setTimeout(function () { // as change event is async
+											oCore.applyChanges();
+											aContent = oGrid.getContent();
+											oField = aContent[2];
+											assert.equal(aContent.length, 6, "One row with two field created - Grid contains 6 controls");
+											aContent = oField && oField.getAggregation("_content");
+											oControl = aContent && aContent.length > 0 && aContent[0];
+											assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
+											oType = oField.getBindingInfo("value").type;
+											assert.ok(oType instanceof IntegerType, "Type of Field binding");
+											assert.equal(oField.getValue(), 1, "default Value");
+											oControl.setValue("6");
+											oControl.fireChange({value: "6"}); //fake input
 
-										aContent = oGrid.getContent();
-										oField = aContent[3];
-										aContent = oField && oField.getAggregation("_content");
-										oControl = aContent && aContent.length > 0 && aContent[0];
-										assert.ok(oControl.isA("sap.m.DatePicker"), "second Field uses DatePicker");
-										oType = oField.getBindingInfo("value").type;
-										assert.ok(oType instanceof DateType, "Type of second Field binding");
-										assert.notOk(oField.getValue(), "no Value");
+											aContent = oGrid.getContent();
+											oField = aContent[3];
+											aContent = oField && oField.getAggregation("_content");
+											oControl = aContent && aContent.length > 0 && aContent[0];
+											assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "second Field uses Input");
+											oType = oField.getBindingInfo("value").type;
+											assert.ok(oType instanceof IntegerType, "Type of second Field binding");
+											assert.equal(oField.getValue(), 1, "default Value");
+											oControl.setValue("6");
+											oControl.fireChange({value: "6"}); //fake input
 
-										fnDone();
+											setTimeout(function () { // as model update is async
+												oOperatorField.setValue("BT");
+												oOperatorField.fireChange({value: "BT", valid: true, promise: Promise.resolve("BT")}); // fake item select
+
+												setTimeout(function () { // as model update is async
+													setTimeout(function () { // as change event is async
+														oCore.applyChanges();
+														aContent = oGrid.getContent();
+														oField = aContent[2];
+														assert.equal(aContent.length, 6, "One row with two field created - Grid contains 6 controls");
+														aContent = oField && oField.getAggregation("_content");
+														oControl = aContent && aContent.length > 0 && aContent[0];
+														assert.ok(oControl.isA("sap.m.DatePicker"), "Field uses DatePicker");
+														oType = oField.getBindingInfo("value").type;
+														assert.ok(oType instanceof DateType, "Type of Field binding");
+														assert.notOk(oField.getValue(), "no Value");
+
+														aContent = oGrid.getContent();
+														oField = aContent[3];
+														aContent = oField && oField.getAggregation("_content");
+														oControl = aContent && aContent.length > 0 && aContent[0];
+														assert.ok(oControl.isA("sap.m.DatePicker"), "second Field uses DatePicker");
+														oType = oField.getBindingInfo("value").type;
+														assert.ok(oType instanceof DateType, "Type of second Field binding");
+														assert.notOk(oField.getValue(), "no Value");
+
+														fnDone();
+													}, 0);
+												}, 0);
+											}, 0);
+										}, 0);
 									}, 0);
 								}, 0);
 							}, 0);
