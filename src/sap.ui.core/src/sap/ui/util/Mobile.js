@@ -163,27 +163,29 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', 'sap/base/util/extend', 'sap/ui/
 			}
 		}
 
-		if (options.homeIcon) {
-			var oIcons;
+		if (options) {
+			if (options.homeIcon) {
+				var oIcons;
 
-			if (typeof options.homeIcon === "string") {
-				oIcons = {
-					phone: options.homeIcon,
-					favicon: options.homeIcon
-				};
-			} else {
-				oIcons = Object.assign({}, options.homeIcon);
-				oIcons.phone = options.homeIcon.phone || options.homeIcon.icon || oIcons.favicon;
-				oIcons.favicon = oIcons.favicon || options.homeIcon.icon || options.homeIcon.phone;
-				oIcons.icon = undefined;
+				if (typeof options.homeIcon === "string") {
+					oIcons = {
+						phone: options.homeIcon,
+						favicon: options.homeIcon
+					};
+				} else {
+					oIcons = Object.assign({}, options.homeIcon);
+					oIcons.phone = options.homeIcon.phone || options.homeIcon.icon || oIcons.favicon;
+					oIcons.favicon = oIcons.favicon || options.homeIcon.icon || options.homeIcon.phone;
+					oIcons.icon = undefined;
+				}
+
+				oIcons.precomposed = options.homeIconPrecomposed || oIcons.precomposed;
+				Mobile.setIcons(oIcons);
 			}
 
-			oIcons.precomposed = options.homeIconPrecomposed || oIcons.precomposed;
-			Mobile.setIcons(oIcons);
-		}
-
-		if (options.hasOwnProperty("mobileWebAppCapable")) {
-			Mobile.setWebAppCapable(options.mobileWebAppCapable, options.statusBar);
+			if (options.hasOwnProperty("mobileWebAppCapable")) {
+				Mobile.setWebAppCapable(options.mobileWebAppCapable, options.statusBar);
+			}
 		}
 	};
 

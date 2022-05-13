@@ -53,6 +53,10 @@ sap.ui.define([
 		// Check whether size changes through new viewport were detected and the Device.resize values were adapted.
 		assert.equal(window.innerHeight, Device.resize.height, "Device.resize.height is set correctly.");
 		assert.equal(window.innerWidth, Device.resize.width, "Device.resize.width is set correctly.");
+
+		// Check that additional init without parameters does not crash ==> See BCP 2270099497
+		Mobile.init();
+		assert.ok(true, "Mobile.init() was re-executed without exception.");
 	});
 
 	QUnit.test("Test init with custom settings", function (assert) {
