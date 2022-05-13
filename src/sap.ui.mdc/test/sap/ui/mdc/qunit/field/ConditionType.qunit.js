@@ -326,12 +326,38 @@ sap.ui.define([
 		var sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "=2", "Result of formatting");
 
+		oCondition.validated = ConditionValidated.Validated;
+		sResult = oConditionType.formatValue(oCondition, "string");
+		assert.equal(sResult, "2", "Result of formatting");
+
+		sResult = oConditionType.formatValue(oCondition, "int");
+		assert.equal(sResult, 2, "Result of formatting");
+
+		sResult = oConditionType.formatValue(oCondition, "sap.ui.mdc.raw");
+		assert.equal(sResult, 2, "Result of formatting");
+
 	});
 
 	QUnit.test("Parsing: EQ - number", function(assert) {
 
 		oConditionType.setFormatOptions({operators: ["EQ"], fieldPath: "X"});
 		var oCondition = oConditionType.parseValue("1");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], 1, "Values entry");
+
+		oCondition = oConditionType.parseValue(1, "int");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], 1, "Values entry");
+
+		oCondition = oConditionType.parseValue(1, "sap.ui.mdc.raw");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
 		assert.equal(oCondition.operator, "EQ", "Operator");
@@ -530,6 +556,9 @@ sap.ui.define([
 		sResult = oConditionType2.formatValue(oCondition);
 		assert.equal(sResult, "Europe, Berlin", "Result of formatting for Timezone part");
 
+		sResult = oConditionType2.formatValue(oCondition, "sap.ui.mdc.raw:1"); // without type formatting
+		assert.equal(sResult, "Europe/Berlin", "Result of formatting for Timezone part");
+
 	});
 
 	QUnit.test("Parsing: EQ", function(assert) {
@@ -546,13 +575,21 @@ sap.ui.define([
 		assert.deepEqual(oCondition.values[0], ["2022-02-25T07:32:30+01:00", "Europe/Berlin"], "Values entry");
 
 		// changing of TimeZone not a use case right now
-		oCondition = oConditionType2.parseValue("America/New_York");
+		oCondition = oConditionType2.parseValue("Americas, New York");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
 		assert.equal(oCondition.operator, "EQ", "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.deepEqual(oCondition.values[0], ["2022-02-25T07:06:30+01:00", "America/New_York"], "Values entry");
+
+		oCondition = oConditionType2.parseValue("Europe/Berlin", "sap.ui.mdc.raw:1"); // without type parsing
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.deepEqual(oCondition.values[0], ["2022-02-25T07:06:30+01:00", "Europe/Berlin"], "Values entry");
 
 	});
 

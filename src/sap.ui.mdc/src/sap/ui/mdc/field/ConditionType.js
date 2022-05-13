@@ -37,6 +37,9 @@ sap.ui.define([
 	) {
 	"use strict";
 
+	var sTargetTypeRaw = "sap.ui.mdc.raw";
+	var sTargetTypeRawComposite = "sap.ui.mdc.raw:";
+
 	/**
 	 * Constructor for a Condition type.
 	 *
@@ -54,7 +57,7 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 *
 	 * @param {object} [oFormatOptions] Formatting options
-	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting and parsing)
+	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting, parsing and validating)
 	 * @param {string[]} [oFormatOptions.operators] Possible operators to be used in the condition
 	 * @param {sap.ui.mdc.enum.FieldDisplay} [oFormatOptions.display] DisplayFormat used to visualize a value
 	 * @param {string} [oFormatOptions.fieldHelpID] ID of the field help to determine the key and description // TODO: async request????
@@ -102,7 +105,28 @@ sap.ui.define([
 
 	};
 
-	ConditionType.prototype.formatValue = function(oCondition, sInternalType) {
+	/**
+	 * Formats the given condition to an output value of the given target type.
+	 * This values are formatted using the given data type. Depending of the operator
+	 * and the configuration (set in <code>FormatOptions</code>) a description will be determined via given value help or delegate.
+	 *
+	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition
+	 *	The condition to be formatted
+	 * @param {string} sTargetType
+	 *	The target type; see {@link topic:ac56d92162ed47ff858fdf1ce26c18c4 Allowed Property Types}
+	 *	In addition to the standard target types <code>sap.ui.mdc.raw</code> can be used. In this case the value is not formatted and just
+	 *	forwarded to the target. If the value is an array representing data for a <code>CompositeType</code> the index of the needed raw value can be added to the
+	 *	name (For example if a unit should be forwarded as raw value <code>sap.ui.mdc.raw:1</code> can be used).
+	 * @return {any|Promise}
+	 *	The formatted output value or a <code>Promise</code> resolving with the formatted value
+	 * @throws {sap.ui.model.FormatException}
+	 *	If formatting to the target type is not possible
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	ConditionType.prototype.formatValue = function(oCondition, sTargetType) {
 
 		if (oCondition == undefined || oCondition == null || this._bDestroyed) { // if destroyed do nothing
 			return null;
@@ -113,8 +137,8 @@ sap.ui.define([
 			throw new FormatException("No valid condition provided");
 		}
 
-		if (!sInternalType) {
-			sInternalType = "string";
+		if (!sTargetType) {
+			sTargetType = "string";
 		}
 
 		var oType = _getValueType.call(this);
@@ -123,7 +147,7 @@ sap.ui.define([
 
 		_attachCurrentValueAtType.call(this, oCondition, oType); // use original condition
 
-		switch (this.getPrimitiveType(sInternalType)) {
+		switch (this.getPrimitiveType(sTargetType)) {
 			case "string":
 			case "any":
 				var sDisplay = _getDisplay.call(this);
@@ -179,12 +203,20 @@ sap.ui.define([
 
 				return _returnResult.call(this, oCondition, undefined, iCallCount, true, oType);
 			default:
-				// operators can only be formatted to string. But other controls (like Slider) might just use the value
-				if (oType && oCondition.values.length >= 1) {
-					return oType.formatValue(oCondition.values[0], sInternalType);
+				var iIndex = _getIndexOfRawValue(sTargetType);
+				if (iIndex >= 0) {
+					if (_isCompositeType.call(this, oType)) {
+						//used for compositeTypes if just one value needs to be transfered without any formatting (e.g. for Timezone)
+						return oCondition.values.length >= 1 ? oCondition.values[0][iIndex] : null;
+					}
+				} else if (sTargetType === sTargetTypeRaw) {
+					return oCondition.values.length >= 1 ? oCondition.values[0] : null; // TODO: how to handle operators <> EQ
+				} else if (oType && oCondition.values.length >= 1) {
+					// operators can only be formatted to string. But other controls (like Slider) might just use the value
+					return oType.formatValue(oCondition.values[0], sTargetType);
 				}
 
-				throw new FormatException("Don't know how to format Condition to " + sInternalType);
+				throw new FormatException("Don't know how to format Condition to " + sTargetType);
 		}
 
 	};
@@ -254,22 +286,47 @@ sap.ui.define([
 
 	}
 
-	ConditionType.prototype.parseValue = function(vValue, sInternalType) {
+	/**
+	 * Parses an external value of the given source type to a condition that holds the value in model
+	 * representation.
+	 * These values are parsed using the given data type. Depending of the operator
+	 * and the configuration (set in <code>FormatOptions</code>) a value will be determined via given value help or delegate.
+	 *
+	 * @param {any} vValue
+	 *	The value to be parsed
+	 * @param {string} sSourceType
+	 *	The type of the given value; see
+	 *	{@link topic:ac56d92162ed47ff858fdf1ce26c18c4 Allowed Property Types}
+	 *	In addition to the standard source types <code>sap.ui.mdc.raw</code> can be used. In this case the value is not parsed and just
+	 *	used in the condition. If the value of the condition is an array representing data for a <code>CompositeType</code> the index of the needed raw value can be added to the
+	 *	name (For example if a unit should be forwarded as raw value <code>sap.ui.mdc.raw:1</code> can be used).
+	 * @return {null|sap.ui.mdc.condition.ConditionObject|Promise<null|sap.ui.mdc.condition.ConditionObject>}
+	 *	The condition or a <code>Promise</code> resolving with the condition.
+	 *  If there is no value <code>null</code> is returned.
+	 * @throws {sap.ui.model.ParseException}
+	 *	If parsing to the model type is not possible; the message of the exception is language
+	 *	dependent as it may be displayed on the UI
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	ConditionType.prototype.parseValue = function(vValue, sSourceType) {
 
 		if (this._bDestroyed) { // if destroyed do nothing
 			return null;
 		}
 
-		if (!sInternalType) {
-			sInternalType = "string";
-		} else if (sInternalType === "any" && typeof vValue === "string") {
-			sInternalType = "string";
+		if (!sSourceType) {
+			sSourceType = "string";
+		} else if (sSourceType === "any" && typeof vValue === "string") {
+			sSourceType = "string";
 		}
 
 		var oNavigateCondition = this.oFormatOptions.navigateCondition;
 		if (oNavigateCondition) {
 			// condition already known from navigation. Just check if it is really the same as the input.
-			var vOutput = this.formatValue(oNavigateCondition, sInternalType);
+			var vOutput = this.formatValue(oNavigateCondition, sSourceType);
 			if (vOutput === vValue) {
 				return merge({}, oNavigateCondition); // use copy
 			}
@@ -291,7 +348,7 @@ sap.ui.define([
 
 		_initCurrentValueAtType.call(this, oType);
 
-		switch (this.getPrimitiveType(sInternalType)) {
+		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
 				var oOperator;
 				var bCheckForDefault = false;
@@ -394,10 +451,22 @@ sap.ui.define([
 						}
 					}
 					if (sDefaultOperator) {
-						return Condition.createCondition(sDefaultOperator, [oType.parseValue(vValue, sInternalType)], undefined, undefined, ConditionValidated.NotValidated);
+						var iIndex = _getIndexOfRawValue(sSourceType);
+						if (iIndex >= 0) {
+							if (_isCompositeType.call(this, oType)) {
+								//used for compositeTypes if just one value needs to be transfered without any parsing (Timezone)
+								var aValue = merge([], oType._aCurrentValue);
+								aValue[iIndex] = vValue;
+								return Condition.createCondition(sDefaultOperator, [aValue], undefined, undefined, ConditionValidated.NotValidated);
+							}
+						} else if (sSourceType === sTargetTypeRaw) {
+							return Condition.createCondition(sDefaultOperator, [vValue], undefined, undefined, ConditionValidated.NotValidated);
+						} else {
+							return Condition.createCondition(sDefaultOperator, [oType.parseValue(vValue, sSourceType)], undefined, undefined, ConditionValidated.NotValidated);
+						}
 					}
 				}
-				throw new ParseException("Don't know how to parse Condition from " + sInternalType);
+				throw new ParseException("Don't know how to parse Condition from " + sSourceType);
 		}
 
 	};
@@ -615,6 +684,21 @@ sap.ui.define([
 
 	}
 
+	/**
+	 * Validates a given condition. The values of the condition are validated using the given data type.
+	 *
+	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition
+	 *	The condition to be validated
+	 * @returns {void|Promise}
+	 *	<code>undefined</code> or a <code>Promise</code> resolving with an undefined value
+	 * @throws {sap.ui.model.ValidateException}
+	 *	If at least one of the values of the condition is not valid for the given data type; the message of the exception is
+	 *	language dependent as it may be displayed on the UI
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
 	ConditionType.prototype.validateValue = function(oCondition) {
 
 		var oType = _getValueType.call(this);
@@ -971,6 +1055,16 @@ sap.ui.define([
 		}
 
 		return oOperator;
+
+	}
+
+	function _getIndexOfRawValue(sType) {
+
+		var iIndex = -1;
+		if (sType.startsWith(sTargetTypeRawComposite)) {
+			iIndex = parseInt(sType[sTargetTypeRawComposite.length]);
+		}
+		return iIndex;
 
 	}
 
