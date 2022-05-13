@@ -19,7 +19,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Global'],
 	 *
 	 * @param {int} [iIndex] Optional parameter to return the control instance at the given index in the array.
 	 * @param {boolean} [bIncludeRelated] Whether or not to respect the associated DOM elements to a control via <code>data-sap-ui-related</code> attribute.
-	 * @returns {sap.ui.core.Control[] | sap.ui.core.Control | null} Depending on the given context and index parameter an array of controls, an instance or null.
+	 * @returns {sap.ui.core.Control[] | sap.ui.core.Control | null} Depending on the given context and index parameter an array of controls, an instance or <code>null</code>.
 	 * @name jQuery#control
 	 * @function
 	 * @public

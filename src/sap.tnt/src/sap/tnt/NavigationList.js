@@ -268,7 +268,7 @@ sap.ui.define([
 		/**
 		 * Gets the currently selected <code>NavigationListItem</code>.
 		 * @public
-		 * @return {sap.tnt.NavigationListItem|null} The selected item or null if nothing is selected
+		 * @return {sap.tnt.NavigationListItem|null} The selected item or <code>null</code> if nothing is selected
 		 */
 		NavigationList.prototype.getSelectedItem = function () {
 			var selectedItem = this.getAssociation('selectedItem');

@@ -2035,7 +2035,7 @@ sap.ui.define([
 	 * Converts old binding configuration APIs to the new API.
 	 *
 	 * @param {...*} [args] Binding configuration arguments.
-	 * @returns {Object|null} The binding info object or null.
+	 * @returns {object|null} The binding info object or null.
 	 * @private
 	 */
 	function getSanitizedBindingInfo(args) {
@@ -3209,7 +3209,7 @@ sap.ui.define([
 	 * the currently visible scroll area.
 	 *
 	 * @param {int} iIndex Index of the row to return the context from.
-	 * @returns {sap.ui.model.Context | null} The context at this index or null
+	 * @returns {sap.ui.model.Context | null} The context at this index or <code>null</code>
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

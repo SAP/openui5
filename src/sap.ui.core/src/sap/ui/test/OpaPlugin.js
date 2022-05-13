@@ -62,8 +62,8 @@ sap.ui.define([
 			 * Returns the view with a specific name. The result should be a unique view.
 			 * If there are multiple visible views with that name, none will be returned.
 			 *
-			 * @param {string} sViewName the name of the view
-			 * @returns {sap.ui.core.mvc.View} or undefined
+			 * @param {string} sViewName Name of the view
+			 * @returns {sap.ui.core.mvc.View|undefined} Unique view or <code>undefined</code>
 			 * @public
 			 */
 			getView: function (sViewName) {
@@ -487,7 +487,7 @@ sap.ui.define([
 			 * @param {object} oOptions a map of match conditions. Must contain an id property
 			 * @param {string|string[]} [oOptions.id] required - ID to match. Can be string, regex or array
 			 * @param {string|function} [oOptions.controlType] optional - control type to match
-			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]} all matching controls
+			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|null} all matching controls
 			 * <ul>
 			 *     <li>if a oOptions.id is a string, will return the single matching control or null if no controls match</li>
 			 *     <li>otherwise, will return an array of matching controls, or an empty array, if no controls match</li>

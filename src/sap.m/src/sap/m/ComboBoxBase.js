@@ -264,8 +264,8 @@ sap.ui.define([
 		/**
 		 * Decorates the Input.
 		 *
-		 * @param {sap.m.InputBase} oInput The input which should be decorated
-		 * @returns {*} The decorated input or undefined
+		 * @param {sap.m.InputBase} [oInput] The input which should be decorated
+		 * @returns {sap.m.InputBase|undefined} The decorated input or <code>undefined</code>
 		 * @private
 		 * @ui5-restricted
 		 */
@@ -1389,7 +1389,7 @@ sap.ui.define([
 		 * Gets the item from the aggregation named <code>items</code> at the given 0-based index.
 		 *
 		 * @param {int} iIndex Index of the item to return.
-		 * @returns {sap.ui.core.Item} Item at the given index, or null if none.
+		 * @returns {sap.ui.core.Item|null} Item at the given index, or <code>null</code> if none.
 		 * @public
 		 */
 		ComboBoxBase.prototype.getItemAt = function(iIndex) {
@@ -1399,7 +1399,7 @@ sap.ui.define([
 		/**
 		 * Gets the first item from the aggregation named <code>items</code>.
 		 *
-		 * @returns {sap.ui.core.Item} The first item, or null if there are no items.
+		 * @returns {sap.ui.core.Item|null} The first item, or <code>null</code> if there are no items.
 		 * @public
 		 */
 		ComboBoxBase.prototype.getFirstItem = function() {
@@ -1409,7 +1409,7 @@ sap.ui.define([
 		/**
 		 * Gets the last item from the aggregation named <code>items</code>.
 		 *
-		 * @returns {sap.ui.core.Item} The last item, or null if there are no items.
+		 * @returns {sap.ui.core.Item|null} The last item, or <code>null</code> if there are no items.
 		 * @public
 		 */
 		ComboBoxBase.prototype.getLastItem = function() {
@@ -1499,7 +1499,7 @@ sap.ui.define([
 		 * Removes an item from the aggregation named <code>items</code>.
 		 *
 		 * @param {int | string | sap.ui.core.Item} vItem The item to remove or its index or ID.
-		 * @returns {sap.ui.core.Item} The removed item or null.
+		 * @returns {sap.ui.core.Item|null} The removed item or <code>null</code>.
 		 * @public
 		 */
 

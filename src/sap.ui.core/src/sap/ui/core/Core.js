@@ -2595,7 +2595,7 @@ sap.ui.define([
 	 * Used in Core#initLibrary and ThemeCheck#checkStyle.
 	 *
 	 * @param {object} oLibInfo Library info object (containing a "version" property)
-	 * @return {string|undefined} query parameters or undefined if "versionedLibCss" config is "false"
+	 * @returns {string|undefined} query parameters or undefined if "versionedLibCss" config is "false"
 	 * @private
 	 */
 	Core.prototype._getLibraryCssQueryParams = function(oLibInfo) {
@@ -3429,11 +3429,11 @@ sap.ui.define([
 	Core.prototype.getElementById = Element.registry.get;
 
 	/**
-	 * Returns the registered object for the given id, if any.
+	 * Returns the registered object for the given ID, if any.
 	 *
 	 * @param {string} sType Stereotype of the object to retrieve
-	 * @param {sap.ui.core.ID|null|undefined} sId Id of the object to retrieve
-	 * @returns {sap.ui.base.ManagedObject|undefined} Object of the given type and with the given id or undefined
+	 * @param {sap.ui.core.ID|null|undefined} sId ID of the object to retrieve
+	 * @returns {sap.ui.base.ManagedObject|undefined} Object of the given type and with the given ID or undefined
 	 * @private
 	 */
 	Core.prototype.getObject = function(sType, sId) {

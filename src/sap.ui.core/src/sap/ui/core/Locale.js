@@ -96,7 +96,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 * (Upper case first letter and lower case reminder enforced as
 			 * recommended by BCP47/ISO15924)
 			 *
-			 * @return {string} the script code or null
+			 * @returns {string|null} the script code or <code>null</code>
 			 * @public
 			 */
 			getScript : function() {
@@ -121,7 +121,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 *
 			 * Multiple variants are separated by a dash '-'.
 			 *
-			 * @return {string} the variant or null
+			 * @return {string|null} the variant or <code>null</code>
 			 * @public
 			 */
 			getVariant : function() {
@@ -150,7 +150,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 *
 			 * Use {@link #getExtensions} to get the individual extension tokens as an array.
 			 *
-			 * @return {string} the extension
+			 * @return {string|null} the extension or <code>null</code>
 			 * @public
 			 */
 			getExtension : function() {

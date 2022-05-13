@@ -41,9 +41,8 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 *
 	 * @param {string} sCategoryId The category's id.
 	 * @param {object} oInstance The instance that will be added to the given category.
-	 * @returns {sap.m.InstanceManager} Enable method chaining.
+	 * @returns {this} Enable method chaining.
 	 * @protected
-	 * @function
 	 */
 	InstanceManager.addInstance = function(sCategoryId, oInstance) {
 		assert(sCategoryId, "In sap.m.InstanceManager.addInstance method, the parameter sCategoryId can't be null or empty string");
@@ -65,9 +64,8 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 *
 	 * @param {string} sCategoryId The category's id.
 	 * @param {object} oInstance The instance that will be removed from the given category.
-	 * @returns {object} The removed instance or null. If the instance isn't managed, this method returns null instead of the instance object.
+	 * @returns {object|null} The removed instance or <code>null</code>. If the instance isn't managed, this method returns <code>null</code> instead of the instance object.
 	 * @protected
-	 * @function
 	 */
 	InstanceManager.removeInstance = function(sCategoryId, oInstance) {
 		var aCategory = mRegistry[sCategoryId],
@@ -89,9 +87,8 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Returns an array of managed instances in the given category.
 	 *
 	 * @param {string} sCategoryId The category's id.
-	 * @returns {object} Managed instances in the given category.
+	 * @returns {object[]} Managed instances in the given category.
 	 * @protected
-	 * @function
 	 */
 	InstanceManager.getInstancesByCategoryId = function(sCategoryId) {
 		assert(sCategoryId, "In sap.m.InstanceManager.getInstancesByCategoryId method, the parameter sCategoryId can't be null or empty string");
@@ -106,7 +103,6 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * @param {object} oInstance The instance that needs to be checked.
 	 * @returns {boolean} Whether the instance is managed in the given category.
 	 * @protected
-	 * @function
 	 */
 	InstanceManager.isInstanceManaged = function(sCategoryId, oInstance) {
 		assert(sCategoryId, "In sap.m.InstanceManager.isInstanceManaged method, the parameter sCategoryId can't be null or empty string");
@@ -140,7 +136,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Adds a control to predefined popover category in instance manager.
 	 *
 	 * @param {sap.ui.core.Control} oPopover Popover to be added to instance manager. Custom popover which doesn't inherit from sap.m.Popover can also be added as long as it has a close method.
-	 * @returns {sap.m.InstanceManager} Enable method chaining.
+	 * @returns {this} Enable method chaining.
 	 * @protected
 	 */
 	InstanceManager.addPopoverInstance = function(oPopover){
@@ -156,7 +152,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Adds a control to predefined dialog category in instance manager.
 	 *
 	 * @param {sap.ui.core.Control} oDialog Dialog to be added to instance manager. Dialog which doesn't inherit from sap.m.Dialog can also be added as long as it has a close method.
-	 * @returns {sap.m.InstanceManager} Enable method chaining.
+	 * @returns {this} Enable method chaining.
 	 * @protected
 	 */
 	InstanceManager.addDialogInstance = function(oDialog){
@@ -172,7 +168,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Adds a control to predefined lightbox category in instance manager.
 	 *
 	 * @param {sap.m.LightBox} oLightBox Dialog to be added to instance manager. Dialog which doesn't inherit from sap.m.Dialog can also be added as long as it has a close method.
-	 * @returns {sap.m.InstanceManager} Enable method chaining.
+	 * @returns {this} Enable method chaining.
 	 * @protected
 	 */
 	InstanceManager.addLightBoxInstance = function(oLightBox){
@@ -188,7 +184,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Removes control from predefined popover category in instance manager.
 	 *
 	 * @param {sap.ui.core.Control} oPopover to be removed from instance manager.
-	 * @returns {sap.ui.core.Control} The removed popover or null. If the popover isn't managed, this method returns null instead of the removed popover.
+	 * @returns {sap.ui.core.Control|null} The removed popover or <code>null</code>. If the popover isn't managed, this method returns <code>null</code> instead of the removed popover.
 	 * @protected
 	 */
 	InstanceManager.removePopoverInstance = function(oPopover){
@@ -199,9 +195,8 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Removes control from predefined dialog category in instance manager.
 	 *
 	 * @param {sap.ui.core.Control} oDialog to be removed from instance manager.
-	 * @returns {sap.ui.core.Control} The removed popover or null. If the popover isn't managed, this method returns null instead of the removed popover.
+	 * @returns {sap.ui.core.Control} The removed popover or <code>null</code>. If the popover isn't managed, this method returns <code>null</code> instead of the removed popover.
 	 * @protected
-	 * @function
 	 */
 	InstanceManager.removeDialogInstance = function(oDialog){
 		return InstanceManager.removeInstance(sDialogCategoryId, oDialog);
@@ -211,7 +206,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Removes control from predefined lightbox category in instance manager.
 	 *
 	 * @param {sap.m.LightBox} oLightBox to be removed from instance manager.
-	 * @returns {sap.m.LightBox|null} The removed popover or null. If the LightBox isn't managed, this method returns null instead of the removed LightBox.
+	 * @returns {sap.m.LightBox|null} The removed popover or <code>null</code>. If the LightBox isn't managed, this method returns <code>null</code> instead of the removed LightBox.
 	 * @protected
 	 */
 	InstanceManager.removeLightBoxInstance = function(oLightBox){
@@ -330,7 +325,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Closes all open popovers.
 	 *
 	 * @public
-	 * @returns {sap.m.InstanceManager} Enable method chaining.
+	 * @returns {this} Enable method chaining.
 	 */
 	InstanceManager.closeAllPopovers = function(){
 		var aIntances = InstanceManager.getOpenPopovers(), i;
@@ -345,7 +340,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 *
 	 * @param {function} fnCallback
 	 * @public
-	 * @returns {sap.m.InstanceManager} Enable method chaining.
+	 * @returns {this} Enable method chaining.
 	 */
 	InstanceManager.closeAllDialogs = function(fnCallback) {
 		var oDeferred,
@@ -389,12 +384,12 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Closes all open lightboxes.
 	 *
 	 * @public
-	 * @returns {sap.m.InstanceManager} Enable method chaining.
+	 * @returns {this} Enable method chaining.
 	 */
 	InstanceManager.closeAllLightBoxes = function(){
-		var aIntances = InstanceManager.getOpenLightBoxes(), iLength = aIntances.length, index;
+		var aInstances = InstanceManager.getOpenLightBoxes(), iLength = aInstances.length, index;
 		for (index = 0; index < iLength; index += 1) {
-			aIntances[index].close();
+			aInstances[index].close();
 		}
 		return this;
 	};

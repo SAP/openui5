@@ -140,7 +140,7 @@ sap.ui.define(["sap/base/assert"], function (assert) {
 		 * Retrieves data item for a specific key.
 		 *
 		 * @param {string} sKey key to retrieve
-		 * @return {object|null} keys value or null
+		 * @returns {object|null} key's value or <code>null</code>
 		 * @public
 		 * @function
 		 * @name module:sap/ui/util/Storage#get

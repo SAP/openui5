@@ -310,7 +310,7 @@ sap.ui.define([
 	 * In this case, the panel's DOM reference is returned, otherwise the DOM reference
 	 * of the <code>ResponsiveFlowLayout</code> rendering the container's content.
 	 * @param {sap.ui.layout.form.FormContainer} oContainer <code>FormContainer</code>
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	ResponsiveLayout.prototype.getContainerRenderedDomRef = function(oContainer) {
@@ -338,7 +338,7 @@ sap.ui.define([
 	 * In this Layout each <code>FormElement</code> is represented by an own ResponsiveFlowLayout.
 	 * So the DOM of this <code>ResponsiveFlowLayout</code> is returned
 	 * @param {sap.ui.layout.form.FormElement} oElement <code>FormElement</code>
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	ResponsiveLayout.prototype.getElementRenderedDomRef = function(oElement) {

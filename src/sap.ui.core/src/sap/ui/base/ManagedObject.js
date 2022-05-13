@@ -1513,8 +1513,10 @@ sap.ui.define([
 	 * activated by configuration. Even then, it might not be present for all properties
 	 * and their values depending on where the value came form.
 	 *
-	 * @param {string} sPropertyName the name of the property
-	 * @return {object} a map of properties describing the origin of this property value or null
+	 * If no origin info is available, <code>null</code> will be returned.
+	 *
+	 * @param {string} sPropertyName Name of the property
+	 * @returns {object|null} An object describing the origin of this property's value or <code>null</code>
 	 * @public
 	 */
 	ManagedObject.prototype.getOriginInfo = function(sPropertyName) {
@@ -1996,14 +1998,14 @@ sap.ui.define([
 	 *            Name of the aggregation
 	 * @param {sap.ui.base.ManagedObject | Array} [oDefaultForCreation=null]
 	 *            Object that is used in case the current aggregation is empty. If provided, it must be null for
-	 *            0..1 aggregations or an empty array for 0..n aggregations. If not provided, null is used.
+	 *            0..1 aggregations or an empty array for 0..n aggregations. If not provided, <code>null</code> is used.
 	 *
 	 *            <b>Note:</b> When an empty array is given and used because the aggregation was not set before,
 	 *            then this array will be used for the aggregation from thereon. Sharing the same empty array
 	 *            between different calls to this method therefore is not possible and will result in
 	 *            inconsistencies.
 	 * @returns {sap.ui.base.ManagedObject|sap.ui.base.ManagedObject[]|null}
-	 *            Aggregation array in case of 0..n-aggregations or the managed object or null in case of 0..1-aggregations
+	 *            Aggregation array in case of 0..n-aggregations or the managed object or <code>null</code> in case of 0..1-aggregations
 	 * @protected
 	 */
 	ManagedObject.prototype.getAggregation = function(sAggregationName, oDefaultForCreation) {
@@ -2180,7 +2182,7 @@ sap.ui.define([
 	 *
 	 * If the given object is found in the aggregation, it is removed, it's parent relationship
 	 * is unset and this ManagedObject is marked as changed. The removed object is returned as
-	 * result of this method. If the object could not be found, <code>undefined</code> is returned.
+	 * result of this method. If the object could not be found, <code>null</code> is returned.
 	 *
 	 * This method must only be called for aggregations of cardinality 0..n. The only way to remove objects
 	 * from a 0..1 aggregation is to set a <code>null</code> value for them.
@@ -2197,7 +2199,7 @@ sap.ui.define([
 	 *            of the aggregation, nothing is removed.
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
-	 * @returns {sap.ui.base.ManagedObject} the removed object or null
+	 * @returns {sap.ui.base.ManagedObject|null} the removed object or <code>null</code>
 	 * @protected
 	 */
 	ManagedObject.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
@@ -2921,7 +2923,7 @@ sap.ui.define([
 	 * @param {object} oScope
 	 * @param {boolean} bDetectValue
 	 *
-	 * @returns {object} the binding info object or an unescaped string or undefined.
+	 * @returns {object|string|undefined} the binding info object or an unescaped string or <code>undefined</code>.
 	 *     If a binding info is returned, it contains at least a path property
 	 *     or nested bindings (parts) and, depending on the binding type,
 	 *     additional properties

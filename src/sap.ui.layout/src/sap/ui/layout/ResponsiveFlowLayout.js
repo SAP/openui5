@@ -718,7 +718,7 @@ sap.ui.define([
 		 * The difference with the function rect() in sap/ui/dom/jquery/rect.js is that the height and width are cut to the
 		 * 1st digit after the decimal separator and this is consistent across all browsers.
 		 * @param {object} oElement The jQuery collection to check
-		 * @returns {object} Object with properties top, left, width and height or null if no such element
+		 * @returns {object|null} Object with properties top, left, width and height or null if no such element
 		 * @private
 		 */
 		ResponsiveFlowLayout.prototype._getElementRect = function (oElement) {

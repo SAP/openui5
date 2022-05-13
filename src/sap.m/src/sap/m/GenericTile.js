@@ -1352,7 +1352,7 @@ sap.ui.define([
 	 * If the application provides a specific tooltip, the returned string is equal to the tooltip text.
 	 * If the tooltip provided by the application is a string of only white spaces, the function returns null.
 	 *
-	 * @returns {string} Text for tooltip or null.
+	 * @returns {string|null} Text for tooltip or null.
 	 * @private
 	 */
 	GenericTile.prototype._getTooltipText = function () {

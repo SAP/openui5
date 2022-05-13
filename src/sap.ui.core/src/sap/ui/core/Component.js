@@ -130,7 +130,7 @@ sap.ui.define([
 		// only extend / clone if there is data
 		// otherwise "null" will be converted into an empty object
 		if (oParentData || oData) {
-				oData = deepExtend({}, oParentData, oData);
+			oData = deepExtend({}, oParentData, oData);
 		}
 
 		return oData;

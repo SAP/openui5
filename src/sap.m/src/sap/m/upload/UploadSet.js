@@ -943,7 +943,7 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the currently selected UploadSetItem.
-	 * @returns {sap.m.upload.UploadSetItem | null} The currently selected item or null
+	 * @returns {sap.m.upload.UploadSetItem | null} The currently selected item or <code>null</code>
 	 * @public
 	 * @since 1.100.0
 	 */

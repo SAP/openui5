@@ -2949,7 +2949,7 @@ function(
 		 * Gets the item from the aggregation named <code>items</code> at the given 0-based index.
 		 *
 		 * @param {int} iIndex Index of the item to return.
-		 * @returns {sap.ui.core.Item | null} Item at the given index, or null if none.
+		 * @returns {sap.ui.core.Item | null} Item at the given index, or <code>null</code> if none.
 		 * @public
 		 * @since 1.16
 		 */
@@ -2971,7 +2971,7 @@ function(
 		/**
 		 * Gets the first item from the aggregation named <code>items</code>.
 		 *
-		 * @returns {sap.ui.core.Item | null} The first item, or null if there are no items.
+		 * @returns {sap.ui.core.Item | null} The first item, or <code>null</code> if there are no items.
 		 * @public
 		 * @since 1.16
 		 */
@@ -2982,7 +2982,7 @@ function(
 		/**
 		 * Gets the last item from the aggregation named <code>items</code>.
 		 *
-		 * @returns {sap.ui.core.Item | null} The last item, or null if there are no items.
+		 * @returns {sap.ui.core.Item | null} The last item, or <code>null</code> if there are no items.
 		 * @public
 		 * @since 1.16
 		 */
@@ -3023,7 +3023,7 @@ function(
 		 * Removes an item from the aggregation named <code>items</code>.
 		 *
 		 * @param {int | string | sap.ui.core.Item} vItem The item to be removed or its index or ID.
-		 * @returns {sap.ui.core.Item} The removed item or null.
+		 * @returns {sap.ui.core.Item|null} The removed item or <code>null</code>.
 		 * @public
 		 */
 		Select.prototype.removeItem = function(vItem) {

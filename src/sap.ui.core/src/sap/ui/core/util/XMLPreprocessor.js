@@ -996,7 +996,7 @@ sap.ui.define([
 			 *
 			 * @param {Element} oIfElement
 			 *   the <template:if> XML DOM element
-			 * @returns {Element[]}
+			 * @returns {Element[]|null}
 			 *   the XML DOM element children (a <then>, zero or more <elseif> and possibly an
 			 *   <else>) or null if there is no <then>
 			 * @throws {Error}

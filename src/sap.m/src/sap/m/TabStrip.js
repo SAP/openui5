@@ -345,7 +345,7 @@ function(
 		/**
 		 * Finds the DOM element that should get the focus.
 		 *
-		 * @returns {null | Element} The element that have to receive the focus or null
+		 * @returns {null | Element} The element that should receive the focus or <code>null</code>
 		 * @public
 		 * @override
 		 */

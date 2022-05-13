@@ -400,12 +400,12 @@ sap.ui.define([
 
 
 	/**
-	 * Returns the control with the given ID from the "pages" aggregation (if available).
+	 * Returns the control with the given ID from the <code>pages</code> aggregation (if available).
 	 *
 	 * @param {string} pageId The ID of the aggregated control to find
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.ui.core.Control} The control with the given ID or null if it doesn`t exist
+	 * @returns {sap.ui.core.Control|null} The control with the given ID or <code>null</code> if it doesn't exist
 	 */
 	NavContainer.prototype.getPage = function (pageId) {
 		var aPages = this.getPages();
@@ -1711,7 +1711,7 @@ sap.ui.define([
 	 *            or that <code>Control</code> itself;
 	 *            if <code>vPage</code> is invalid, a negative value or a value greater or equal than the current size
 	 *            of the aggregation, nothing is removed.
-	 * @return {sap.ui.core.Control} the removed page or null
+	 * @returns {sap.ui.core.Control|null} the removed page or <code>null</code>
 	 * @protected
 	 * @override
 	 */

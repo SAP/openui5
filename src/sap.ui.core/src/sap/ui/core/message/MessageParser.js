@@ -54,7 +54,7 @@ MessageParser.prototype.setProcessor = function(oProcessor) {
 /**
  * Returns the registered processor on which the events for message handling can be fired
  *
- * @return {sap.ui.core.message.MessageProcessor} The currently set MessageProcessor or null if none is set
+ * @returns {sap.ui.core.message.MessageProcessor|null} The currently set MessageProcessor or <code>null</code> if none is set
  * @protected
  */
 MessageParser.prototype.getProcessor = function() {

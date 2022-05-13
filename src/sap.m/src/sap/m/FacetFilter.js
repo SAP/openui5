@@ -1512,7 +1512,7 @@ sap.ui.define([
 			subHeader : new Bar({
 			contentMiddle : oFacetsSearchField
 			}),
-			content : [  oFacetList ]
+			content : [ oFacetList ]
 		});
 		return oPage;
 	};
@@ -1775,7 +1775,7 @@ sap.ui.define([
 	 * by the list when selection changes.
 	 *
 	 * @param {sap.m.FacetFilterList} oList The sap.m.FacetFilterList from which the checkbox association is created
-	 * @returns {sap.m.Bar} Bar, or null if the given list is not multi-select
+	 * @returns {sap.m.Bar|null} Bar, or <code>null</code> if the given list is not multi-select
 	 * @private
 	 */
 	FacetFilter.prototype._createSelectAllCheckboxBar = function(oList) {
@@ -1847,30 +1847,30 @@ sap.ui.define([
 		var iIndex = oCustomData[0].getValue();
 		var oFacetFilterList = this.getLists()[iIndex];
 		this._listIndexAgg = this.indexOfAggregation("lists", oFacetFilterList);
-	  if (this._listIndexAgg == iIndex) {
-		var oFilterItemsPage = this._getFilterItemsPage(oNavCont);
+		if (this._listIndexAgg == iIndex) {
+			var oFilterItemsPage = this._getFilterItemsPage(oNavCont);
 
-		// This page instance is used to display content for every facet filter list, so remove any prior content, if any.
-		//oFilterItemsPage.destroyAggregation("content", true);
+			// This page instance is used to display content for every facet filter list, so remove any prior content, if any.
+			//oFilterItemsPage.destroyAggregation("content", true);
 
-		oFacetFilterList.fireListOpen({});
-		// Add the facet filter list
-		this._moveListToDisplayContainer(oFacetFilterList, oFilterItemsPage);
+			oFacetFilterList.fireListOpen({});
+			// Add the facet filter list
+			this._moveListToDisplayContainer(oFacetFilterList, oFilterItemsPage);
 
-		// Add the search field bar. The bar is destroyed from NavContainer.afterNavigate.
-		oFilterItemsPage.setSubHeader(this._createFilterItemsSearchFieldBar(oFacetFilterList));
+			// Add the search field bar. The bar is destroyed from NavContainer.afterNavigate.
+			oFilterItemsPage.setSubHeader(this._createFilterItemsSearchFieldBar(oFacetFilterList));
 
-		// Add the select all checkbox bar if the list being displayed on the filter items page
-		// is a multi select list. The bar is created only if the list is multi select.
-		// The bar is destroyed from NavContainer.afterNavigate.
-		var oCheckboxBar = this._createSelectAllCheckboxBar(oFacetFilterList);
-		if (oCheckboxBar) {
-			oFilterItemsPage.insertContent(oCheckboxBar, 0);
-		}
+			// Add the select all checkbox bar if the list being displayed on the filter items page
+			// is a multi select list. The bar is created only if the list is multi select.
+			// The bar is destroyed from NavContainer.afterNavigate.
+			var oCheckboxBar = this._createSelectAllCheckboxBar(oFacetFilterList);
+			if (oCheckboxBar) {
+				oFilterItemsPage.insertContent(oCheckboxBar, 0);
+			}
 
-		oFilterItemsPage.setTitle(oFacetFilterList.getTitle());
+			oFilterItemsPage.setTitle(oFacetFilterList.getTitle());
 
-		oNavCont.to(oFilterItemsPage);
+			oNavCont.to(oFilterItemsPage);
 		}
 	};
 
@@ -2095,14 +2095,14 @@ sap.ui.define([
 	 */
 	FacetFilter.prototype._getSummaryText = function() {
 
-	  var COMMA_AND_SPACE = ", ";
-	  var SPACE = " ";
-	  var sFinalSummaryText = "";
-	  var bFirst = true;
+		var COMMA_AND_SPACE = ", ";
+		var SPACE = " ";
+		var sFinalSummaryText = "";
+		var bFirst = true;
 
-	  var aListOfFilters = this.getLists();
+		var aListOfFilters = this.getLists();
 
-		  if (aListOfFilters.length > 0) {
+		if (aListOfFilters.length > 0) {
 
 			for (var i = 0; i < aListOfFilters.length; i++) {
 				var oFacet = aListOfFilters[i];
@@ -2144,7 +2144,7 @@ sap.ui.define([
 	 */
 	FacetFilter.prototype._getSelectedItemsText = function(oList) {
 
-	   var aTexts = oList.getSelectedItems().map(function(value) {
+		var aTexts = oList.getSelectedItems().map(function(value) {
 			return value.getText();
 		});
 

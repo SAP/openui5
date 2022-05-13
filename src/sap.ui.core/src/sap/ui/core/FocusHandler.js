@@ -300,12 +300,12 @@ sap.ui.define([
 		//***********************************************************
 
 		/**
-		 * Returns the id of the control/element to which the given DOM
+		 * Returns the ID of the control/element to which the given DOM
 		 * reference belongs to or <code>null</code> if no such
 		 * control/element exists.
 		 *
 		 * @param {Element} oDOM the DOM reference
-		 * @returns {string} Id of the control or null
+		 * @returns {string|null} ID of the control or <code>null</code>
 		 * @private
 		 */
 		var getControlIdForDOM = function(oDOM){

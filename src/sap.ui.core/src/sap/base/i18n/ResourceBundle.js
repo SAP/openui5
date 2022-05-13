@@ -83,7 +83,7 @@ sap.ui.define([
 	 * @param {string} sLocale Locale to normalize
 	 * @param {boolean} [bPreserveLanguage=false] Whether to keep the language untouched, otherwise
 	 *     the language is mapped from modern to legacy ISO639 codes, e.g. "sr" to "sh"
-	 * @returns {string} Normalized locale or undefined if the locale can't be normalized
+	 * @returns {string|undefined} Normalized locale or <code>undefined</code> if the locale can't be normalized
 	 * @private
 	 */
 	function normalize(sLocale, bPreserveLanguage) {
@@ -184,7 +184,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sLocale locale to convert
 	 * @param {boolean} bConvertToModern whether to convert to modern language
-	 * @returns {string} Normalized locale or undefined if the locale can't be normalized
+	 * @returns {string|undefined} Normalized locale or <code>undefined</code> if the locale can't be normalized
 	 */
 	function convertLocaleToBCP47(sLocale, bConvertToModern) {
 		var m;

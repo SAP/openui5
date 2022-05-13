@@ -189,7 +189,7 @@ function(lib, Device, UIArea, jQuery) {
 			 * Returns the data that has been set via <code>setComplexData</code> method.
 			 *
 			 * @param {string} sKey The key of the data
-			 * @returns {any} The previously set data or undefined
+			 * @returns {any|undefined} The previously set data or undefined
 			 * @public
 			 */
 			getComplexData: function(sKey) {

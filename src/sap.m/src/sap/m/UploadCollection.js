@@ -895,7 +895,7 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the currently selected UploadCollectionItem.
-	 * @returns {sap.m.UploadCollectionItem | null} The currently selected item or null
+	 * @returns {sap.m.UploadCollectionItem | null} The currently selected item or <code>null</code>
 	 * @since 1.34.0
 	 * @public
 	 */
@@ -3312,8 +3312,8 @@ sap.ui.define([
 
 	/**
 	 * Helper function for better Event API. This reference points to the oEvent coming from the FileUploader
-	 * @param {string} sHeaderParameterName Header parameter name (optional)
-	 * @returns {UploadCollectionParameter | UploadCollectionParameter[] | null} Header parameter or null
+	 * @param {string} [sHeaderParameterName] Header parameter name (optional)
+	 * @returns {sap.m.UploadCollectionParameter | sap.m.UploadCollectionParameter[] | null} Header parameter or null
 	 * @private
 	 */
 	UploadCollection.prototype._getHeaderParameterWithinEvent = function(sHeaderParameterName) {
@@ -3504,7 +3504,7 @@ sap.ui.define([
 	 * Retrieves the sap.m.ListItem from the internal sap.m.List based on the ID
 	 * @param {string} listItemId The item ID used for finding the UploadCollectionItem
 	 * @param {sap.m.ListItemBase[]} listItems The array of list items to search in
-	 * @returns {sap.m.UploadCollectionItem} The matching UploadCollectionItem or null if none is found
+	 * @returns {sap.m.UploadCollectionItem|null} The matching UploadCollectionItem or null if none is found
 	 * @private
 	 */
 	UploadCollection._findById = function(listItemId, listItems) {

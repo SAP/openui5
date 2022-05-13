@@ -273,7 +273,7 @@ sap.ui.define(["./FlexBoxStylingHelper", "./library", "sap/ui/core/LayoutData"],
 	 * Returns the correct FlexBox item DOM reference.
 	 *
 	 * @param {string} [sSuffix] ID suffix to get the DOMRef for
-	 * @return {Element} The Element's DOM Element sub DOM Element or null
+	 * @return {Element|null} The Element's DOM Element, sub DOM Element or <code>null</code>
 	 * @protected
 	 */
 	FlexItemData.prototype.getDomRef = function(sSuffix) {

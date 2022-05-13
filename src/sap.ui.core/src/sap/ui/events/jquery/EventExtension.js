@@ -195,7 +195,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 		 * PRIVATE EXTENSION
 		 *
 		 * @param {string} [sKey="handledByControl"]
-		 * @returns {any} the marked value or undefined
+		 * @returns {any|undefined} the marked value or undefined
 		 */
 		jQuery.Event.prototype.getMark = function(sKey) {
 			sKey = sKey || "handledByControl";

@@ -101,7 +101,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 * @virtual
-	 * @returns {sap.ui.core.Control|null} An instance of ListBase or null.
+	 * @returns {sap.ui.core.Control|null} An instance of ListBase or <code>null</code>.
 	 */
 	BaseListContent.prototype.getInnerList = function () {
 		return null;

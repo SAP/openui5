@@ -558,7 +558,7 @@
 	 *
 	 * @param {string} sURL URL to guess the resource name for
 	 * @param {boolean} [bLoadedResourcesOnly=false] Whether the guess should be limited to already loaded resources
-	 * @returns {string} Resource name or undefined if no matching name could be found
+	 * @returns {string|undefined} Resource name or <code>undefined</code> if no matching name could be found
 	 * @private
 	 */
 	function guessResourceName(sURL, bLoadedResourcesOnly) {
@@ -3064,7 +3064,7 @@
 	 *                      dependencies or executing the factory function. Note that due to browser restrictions
 	 *                      not all errors will be reported via this callback. In general, module loading is
 	 *                      designed for the non-error case. Error handling is not complete.
-	 * @returns {any|undefined} A single module export value (sync probing variant) or undefined (async loading variant)
+	 * @returns {any|undefined} A single module export value (sync probing variant) or <code>undefined</code> (async loading variant)
 	 * @public
 	 * @function
 	 * @ui5-global-only
@@ -3130,7 +3130,7 @@
 	 * a content security policies (CSP) that forbids 'eval'.
 	 *
 	 * @param {string} sModuleName Module name in requireJS syntax
-	 * @returns {any} value of the loaded module or undefined
+	 * @returns {any} Export value of the loaded module (can be <code>undefined</code>)
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 * @function

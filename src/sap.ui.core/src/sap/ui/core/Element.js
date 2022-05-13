@@ -435,7 +435,7 @@ sap.ui.define([
 	 * This matches the UI5 naming convention for named inner DOM nodes of a control.
 	 *
 	 * @param {string} [sSuffix] ID suffix to get the DOMRef for
-	 * @return {Element} The Element's DOM Element sub DOM Element or null
+	 * @returns {Element|null} The Element's DOM Element, sub DOM Element or <code>null</code>
 	 * @protected
 	 */
 	Element.prototype.getDomRef = function(sSuffix) {
@@ -534,7 +534,7 @@ sap.ui.define([
 	/**
 	 * Returns the UI area of this element, if any.
 	 *
-	 * @return {sap.ui.core.UIArea} The UI area of this element or null
+	 * @return {sap.ui.core.UIArea|null} The UI area of this element or <code>null</code>
 	 * @private
 	 */
 	Element.prototype.getUIArea = function() {
@@ -787,11 +787,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the DOM Element that should get the focus.
+	 * Returns the DOM Element that should get the focus or <code>null</code> if there's no such element currently.
 	 *
 	 * To be overwritten by the specific control method.
 	 *
-	 * @return {Element} Returns the DOM Element that should get the focus
+	 * @returns {Element|null} Returns the DOM Element that should get the focus or <code>null</code>
 	 * @protected
 	 */
 	Element.prototype.getFocusDomRef = function () {
@@ -955,9 +955,9 @@ sap.ui.define([
 
 	/**
 	 * Returns the tooltip for this element but only if it is a simple string.
-	 * Otherwise an undefined value is returned.
+	 * Otherwise, <code>undefined</code> is returned.
 	 *
-	 * @return {string} string tooltip or undefined
+	 * @returns {string|undefined} string tooltip or <code>undefined</code>
 	 * @public
 	 */
 	Element.prototype.getTooltip_AsString = function() {
@@ -969,12 +969,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the main text for the current tooltip or undefined if there is no such text.
-	 * If the tooltip is an object derived from sap.ui.core.Tooltip, then the text property
-	 * of that object is returned. Otherwise the object itself is returned (either a string
-	 * or undefined or null).
+	 * Returns the main text for the current tooltip or <code>undefined</code> if there is no such text.
 	 *
-	 * @return {string} text of the current tooltip or undefined
+	 * If the tooltip is an object derived from <code>sap.ui.core.TooltipBase</code>, then the text property
+	 * of that object is returned. Otherwise the object itself is returned (either a string
+	 * or <code>undefined</code> or <code>null</code>).
+	 *
+	 * @returns {string|undefined} Text of the current tooltip or <code>undefined</code> or <code>null</code>
 	 * @public
 	 */
 	Element.prototype.getTooltip_Text = function() {

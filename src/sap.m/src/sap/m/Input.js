@@ -1913,7 +1913,7 @@ function(
 	/**
 	 * Helper function that refreshes list all items.
 	 *
-	 * @returns {null|undefined} null or undefined
+	 * @returns {boolean|null|undefined} false, null or undefined
 	 */
 	Input.prototype._refreshListItems = function () {
 		var bShowSuggestion = this.getShowSuggestion(),

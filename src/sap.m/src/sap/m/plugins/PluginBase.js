@@ -93,7 +93,7 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 *
 	 * @param {sap.ui.core.Control} oControl The control instance to check for
 	 * @param {string|function} [vPlugin] The full name or the constructor of the plugin
-	 * @return {undefined|sap.m.plugins.PluginBase} The found plugin instance or undefined if not found
+	 * @return {undefined|sap.m.plugins.PluginBase} The found plugin instance or <code>undefined</code> if not found
 	 * @public
 	 * @static
 	 */

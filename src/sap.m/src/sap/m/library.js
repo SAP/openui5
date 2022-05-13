@@ -4862,7 +4862,7 @@ sap.ui.define([
 	 * Search given control's parents and try to find iScroll.
 	 *
 	 * @param {sap.ui.core.Control} oControl Control to start the search at
-	 * @returns {Object|undefined} iScroll reference or undefined if cannot find
+	 * @returns {Object|undefined} iScroll reference or <code>undefined</code> if cannot find
 	 * @public
 	 * @since 1.11
 	 */
@@ -4888,7 +4888,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Control} oControl Starting point for the search
 	 * @param {boolean} bGlobal Whether the search should stop on component level (<code>false</code>) or not
-	 * @returns {Object|undefined} ScrollDelegate or undefined if it cannot be found
+	 * @returns {Object|undefined} ScrollDelegate or <code>undefined</code> if it cannot be found
 	 * @public
 	 * @since 1.11
 	 */
@@ -5468,7 +5468,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sPercentage A percentage value in string format, for example "25%"
 		 * @param {float} fBaseSize A float number which the calculation is based on.
-		 * @returns {int} The calculated size string with "px" as unit or null when the format of given parameter is wrong.
+		 * @returns {string|null} The calculated size string with "px" as unit or <code>null</code> when the format of given parameter is wrong.
 		 *
 		 * @protected
 		 */

@@ -581,14 +581,14 @@ sap.ui.define([
 			/**
 			 * Hook to intercept the load of the cache buster info. Returns either the
 			 * JSON object with the cache buster info or null/undefined if the URL should
-			 * be handled.
-			 * <p>
+			 * be handled by AppCacheBuster's default implementation.
+			 *
 			 * The cache buster info object is a map which contains the relative
 			 * paths for the resources as key and a timestamp/etag as string as
 			 * value for the entry. The value is used to be added as part of the
 			 * URL to create a new URL if the resource has been changed.
 			 * @param {string} sUrl URL from where to load the cachebuster info
-			 * @return {object} cache buster info object or null/undefined
+			 * @returns {object{null|undefined} cache buster info object or null/undefined
 			 * @private
 			 */
 			onIndexLoad: function(sUrl) {

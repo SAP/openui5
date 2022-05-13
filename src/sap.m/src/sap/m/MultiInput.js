@@ -1188,12 +1188,12 @@ function(
 	 *
 	 * @private
 	 * @param {string} sText The given starting text
-	 * @param {array} aItems The item array
+	 * @param {Array<sap.ui.core.Item|sap.m.ColumnListItem>} aItems The item array
 	 * @param {boolean} bExactMatch Whether the match should be exact
-	 * @param {function} fGetText Function to extract text from a single item
-	 * @return {object} A found item or null
+	 * @param {function} fnGetText Function to extract text from a single item
+	 * @returns {sap.ui.core.Item|sap.m.ColumnListItem|undefined} A found item or undefined
 	 */
-	MultiInput.prototype._findItem = function (sText, aItems, bExactMatch, fGetText) {
+	MultiInput.prototype._findItem = function (sText, aItems, bExactMatch, fnGetText) {
 		if (!sText) {
 			return;
 		}
@@ -1207,7 +1207,7 @@ function(
 		var length = aItems.length;
 		for (var i = 0; i < length; i++) {
 			var item = aItems[i];
-			var compareText = fGetText(item);
+			var compareText = fnGetText(item);
 			if (!compareText) {
 				continue;
 			}
@@ -1229,7 +1229,7 @@ function(
 	 * @private
 	 * @param {string} sText The search text
 	 * @param {boolean} bExactMatch If true, only items will be returned which exactly matches the text
-	 * @return {sap.ui.core.Item} A found item or null
+	 * @returns {sap.ui.core.Item|undefined} A found item or undefined
 	 */
 	MultiInput.prototype._getSuggestionItem = function (sText, bExactMatch) {
 		var items = null;
@@ -1809,7 +1809,7 @@ function(
 	 * @private
 	 * @param {object} oParameters Parameter bag containing fields for text, token, suggestionObject and validation callback
 	 * @param {function[]} aValidators [optional] Array of all validators to be used
-	 * @returns {sap.m.Token} A valid token or null
+	 * @returns {sap.m.Token|null} A valid token or null
 	 */
 	MultiInput.prototype._validateToken = function(oParameters, aValidators) {
 		var oToken = oParameters.token,

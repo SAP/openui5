@@ -449,7 +449,7 @@ sap.ui.define([
 	 * For synchronous root control creation the Promise resolves immediately with the root control instance or null if none was created.
 	 *
 	 * @since 1.90.0
-	 * @return {Promise<sap.ui.core.Control|null>} resolves with the created root control or null if none was created, rejects with any thrown error
+	 * @returns {Promise<sap.ui.core.Control|null>} resolves with the created root control or null if none was created, rejects with any thrown error
 	 * @public
 	 */
 	UIComponent.prototype.rootControlLoaded = function() {
