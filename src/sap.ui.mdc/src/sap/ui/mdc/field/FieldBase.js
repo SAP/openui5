@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/field/content/ContentFactory',
 	'sap/ui/mdc/Control',
+	"sap/ui/mdc/util/loadModules",
 	'sap/ui/core/library',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/message/MessageMixin',
@@ -45,6 +46,7 @@ sap.ui.define([
 	BaseType,
 	ContentFactory,
 	Control,
+	loadModules,
 	coreLibrary,
 	LabelEnablement,
 	MessageMixin,
@@ -540,18 +542,27 @@ sap.ui.define([
 
 		mDefaultHelps = {
 			bool: {
-				name: "sap/ui/mdc/field/BoolFieldHelp",
+				modules: ["sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Popover", "sap/ui/mdc/valuehelp/content/Bool"],
 				id: "BoolDefaultHelp",
-				getDelegate: "getDefaultFieldHelpBaseDelegate",
-				properties: {},
-				control: undefined
+				getDelegate: "getDefaultValueHelpDelegate",
+				contentProperties: {},
+				dialog: false,
+				control: undefined,
+				updateTitle: function (oValueHelp, sTitle) {
+					// no title needed for boolean help (just dropdown)
+				}
 			},
 			defineConditions: {
-				name: "sap/ui/mdc/field/FieldValueHelp",
+				modules: ["sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Dialog", "sap/ui/mdc/valuehelp/content/Conditions"],
 				id: "Field-DefineConditions-Help",
-				getDelegate: "getDefaultFieldValueHelpDelegate",
-				properties: { showConditionPanel: true },
-				control: undefined
+				getDelegate: "getDefaultValueHelpDelegate",
+				contentProperties: {},
+				dialog: true,
+				control: undefined,
+				updateTitle: function (oValueHelp, sTitle) {
+					oValueHelp.getDialog().setTitle(sTitle);
+					oValueHelp.getDialog().getContent()[0].setLabel(sTitle);
+				}
 			}
 		};
 
@@ -1594,7 +1605,7 @@ sap.ui.define([
 	 */
 	FieldBase.prototype._checkCreateInternalContent = function() {
 
-		if (this.getVisible() && this._oContentFactory.getDataType()) {
+		if (!this.bIsDestroyed && this.getVisible() && this._oContentFactory.getDataType()) {
 			_createInternalContentWrapper.call(this);
 		}
 
@@ -1865,42 +1876,43 @@ sap.ui.define([
 		this.setProperty("_fieldHelpEnabled", true, true);
 		this._sDefaultFieldHelp = mDefaultHelps[sType].id;
 
-		var oFieldHelp = mDefaultHelps[sType].control;
+		var oValueHelp = mDefaultHelps[sType].control;
 
-		if (oFieldHelp && oFieldHelp.bIsDestroyed) {
+		if (oValueHelp && oValueHelp.bIsDestroyed) {
 			// someone destroyed FieldHelp -> initialize
 			mDefaultHelps[sType].control = undefined;
-			oFieldHelp = undefined;
+			oValueHelp = undefined;
 		}
 
-		if (!oFieldHelp) {
+		if (!oValueHelp) {
 			if (mDefaultHelps[sType].promise) {
 				mDefaultHelps[sType].promise.then(_defaultFieldHelpUpdate.bind(this, mDefaultHelps[sType].id));
-			}
-			var FieldHelp = sap.ui.require(mDefaultHelps[sType].name);
-			if (!FieldHelp && !mDefaultHelps[sType].promise) {
-				mDefaultHelps[sType].promise = new Promise(function(fResolve) {
-					mDefaultHelps[sType].resolve = fResolve;
-					sap.ui.require([mDefaultHelps[sType].name], function(fnControl) {
-						_createDefaultFieldHelp.call(this, sType);
-					}.bind(this));
-				}.bind(this)).then(_defaultFieldHelpUpdate.bind(this, mDefaultHelps[sType].id));
-			}
-			if (FieldHelp) {
-				var oDelegate = this.bDelegateInitialized && this.getControlDelegate()[mDefaultHelps[sType].getDelegate]();
-				var oProperties = merge({ delegate: oDelegate }, mDefaultHelps[sType].properties);
-				oFieldHelp = new FieldHelp(mDefaultHelps[sType].id, oProperties);
-				oFieldHelp._bIsDefaultHelp = true;
-				mDefaultHelps[sType].control = oFieldHelp;
-				//				this.addDependent(oFieldHelp); // TODO: where to add to control tree
-				oFieldHelp.connect(this); // to forward dataType
-				if (mDefaultHelps[sType].resolve) {
-					mDefaultHelps[sType].resolve();
-					delete mDefaultHelps[sType].resolve;
-				}
-				if (!mDefaultHelps[sType].promise) {
+			} else {
+				mDefaultHelps[sType].promise = loadModules(mDefaultHelps[sType].modules).catch(function(oError) {
+					throw new Error("loadModules promise rejected in sap.ui.mdc.field.FieldBase:_createDefaultFieldHelp function call - could not load controls " + JSON.stringify(mDefaultHelps[sType].modules));
+				}).then(function(aModules) {
+					var ValueHelp = aModules[0];
+					var Container = aModules[1];
+					var Content = aModules[2];
+					var oDelegate = this.bDelegateInitialized && this.getControlDelegate()[mDefaultHelps[sType].getDelegate]();
+					oValueHelp = new ValueHelp(mDefaultHelps[sType].id, {
+						delegate: oDelegate
+					});
+					var oContainer = new Container(mDefaultHelps[sType].id + "-container", {
+						content: [new Content(mDefaultHelps[sType].id + "-content", mDefaultHelps[sType].contentProperties)]
+					});
+					oValueHelp._bIsDefaultHelp = true;
+					oValueHelp._sDefaultHelpType = sType;
+					mDefaultHelps[sType].control = oValueHelp;
+					if (mDefaultHelps[sType].dialog) {
+						oValueHelp.setDialog(oContainer);
+					} else {
+						oValueHelp.setTypeahead(oContainer);
+					}
+					//				this.addDependent(oValueHelp); // TODO: where to add to control tree
+					oValueHelp.connect(this); // to forward dataType
 					_defaultFieldHelpUpdate.call(this, mDefaultHelps[sType].id);
-				}
+				}.bind(this)).unwrap();
 			}
 		} else {
 			_defaultFieldHelpUpdate.call(this, mDefaultHelps[sType].id);
@@ -2853,9 +2865,10 @@ sap.ui.define([
 
 			var oContent = this.getControlForSuggestion();
 			_setFocusHandlingForFieldHelp.call(this, oContent);
-			if (oFieldHelp._bIsDefaultHelp && oFieldHelp.setTitle) {
-				oFieldHelp.setTitle(this.getLabel()); // use label as default title for FilterField
-      }
+			if (oFieldHelp._bIsDefaultHelp) {
+				// use label as default title for FilterField
+				mDefaultHelps[oFieldHelp._sDefaultHelpType].updateTitle(oFieldHelp, this.getLabel());
+			}
 		}
 
 	}

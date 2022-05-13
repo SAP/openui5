@@ -225,6 +225,7 @@ sap.ui.define([
 	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, if bound to one
 	 * @param {object} oConditionPayload Additional context information for this key
 	 * @param {sap.ui.core.Control} [oControl] Instance if the calling control
+	 * @param {sap.ui.model.Type} oType Type of the value
 	 * @returns {string|object|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.FormatException} if the description cannot be determined
 	 * @since: 1.78.0
@@ -232,11 +233,12 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	FieldBaseDelegate.getDescription = function(oPayload, oFieldHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName, oConditionPayload, oControl) {
+	FieldBaseDelegate.getDescription = function(oPayload, oFieldHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName, oConditionPayload, oControl, oType) {
 		if (oFieldHelp && oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
 			var oConfig = {
 				value: vKey,
 				parsedValue: vKey,
+				dataType: oType,
 				context: {inParameters: oInParameters, outParameters: oOutParameters, payload: oConditionPayload},
 				bindingContext: oBindingContext,
 				conditionModel: oConditionModel,
@@ -284,6 +286,23 @@ sap.ui.define([
 	FieldBaseDelegate.getDefaultFieldValueHelpDelegate = function(oPayload) {
 
 		return {name: "sap/ui/mdc/field/FieldValueHelpDelegate", payload: {}};
+
+	};
+
+	/**
+	 * This function returns which <code>ValueHelpDelegate</code> is used
+	 * if a default field help (for example, for defining conditions in </code>FilterField</code>)
+	 * is created.
+	 *
+	 * @param {object} oPayload Payload for delegate
+	 * @returns {object} Delegate object with <code>name</code and <code>payload</code>
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.99.0
+	 */
+	FieldBaseDelegate.getDefaultValueHelpDelegate = function(oPayload) {
+
+		return {name: "sap/ui/mdc/ValueHelpDelegate", payload: {}};
 
 	};
 

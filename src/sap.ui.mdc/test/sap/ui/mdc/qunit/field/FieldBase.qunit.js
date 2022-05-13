@@ -7,10 +7,14 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/field/FieldBase",
 	"sap/ui/mdc/field/FieldHelpBase",
-	"sap/ui/mdc/field/FieldValueHelp",
-	"sap/ui/mdc/field/BoolFieldHelp",
+	"sap/ui/mdc/ValueHelp",
+	"sap/ui/mdc/valuehelp/Popover",
+	"sap/ui/mdc/valuehelp/Dialog",
+	"sap/ui/mdc/valuehelp/content/Bool",
+	"sap/ui/mdc/valuehelp/content/Conditions",
 	"sap/ui/mdc/field/FieldInfoBase",
 	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // to test V4 logic too
+	"sap/ui/mdc/odata/v4/ValueHelpDelegate",
 	"sap/ui/mdc/field/FieldHelpBaseDelegate",
 	"sap/ui/mdc/field/FieldValueHelpDelegate",
 	"sap/ui/mdc/field/FieldInput",
@@ -65,10 +69,14 @@ sap.ui.define([
 	qutils,
 	FieldBase,
 	FieldHelpBase,
-	FieldValueHelp,
-	BoolFieldHelp,
+	ValueHelp,
+	Popover,
+	Dialog,
+	Bool,
+	Conditions,
 	FieldInfoBase,
 	FieldBaseDelegate,
+	ValueHelpDelegate,
 	FieldHelpBaseDelegate,
 	FieldValueHelpDelegate,
 	FieldInput,
@@ -296,10 +304,13 @@ sap.ui.define([
 		assert.ok(oContent.getShowValueHelp(), "valueHelp used");
 		assert.equal(oField._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
 		var oFieldHelp = oCore.byId(oField._sDefaultFieldHelp);
-		assert.ok(oFieldHelp && oFieldHelp instanceof FieldValueHelp, "FieldValueHelp used");
-		assert.notOk(oFieldHelp.getContent(), "No Wrapper in FieldHelp");
-		assert.ok(oFieldHelp.getShowConditionPanel(), "showConditionPanel set");
-		assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/field/FieldValueHelpDelegate", payload: {}}, "base delegate used on FieldValueHelp");
+		assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
+		var oDialog = oFieldHelp && oFieldHelp.getDialog();
+		assert.ok(oDialog, "Dialog used in ValueHelp");
+		assert.ok(oDialog && oDialog instanceof Dialog, "Dialog used");
+		var aDialogContent = oDialog && oDialog.getContent()[0];
+		assert.ok(aDialogContent && aDialogContent instanceof Conditions, "ConditionPanel used");
+		assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/ValueHelpDelegate", payload: {}}, "base delegate used on FieldValueHelp");
 
 		var oSuggestControl = oField.getControlForSuggestion();
 		assert.equal(oSuggestControl, oContent, "inner control is used for suggestion");
@@ -383,8 +394,8 @@ sap.ui.define([
 
 		assert.equal(oField._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
 		var oFieldHelp = oCore.byId(oField._sDefaultFieldHelp);
-		assert.ok(oFieldHelp && oFieldHelp instanceof FieldValueHelp, "FieldValueHelp used");
-		assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/odata/v4/FieldValueHelpDelegate", payload: {}}, "V4 delegate used on FieldValueHelp");
+		assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
+		assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/odata/v4/ValueHelpDelegate", payload: {}}, "V4 delegate used on ValueHelp");
 
 	});
 
@@ -640,7 +651,8 @@ sap.ui.define([
 		var oFieldHelp = oCore.byId(oField._sDefaultFieldHelp);
 		oField.focus();
 
-		assert.equal(oFieldHelp.getTitle(), "Test", "Field help title");
+		assert.equal(oFieldHelp.getDialog().getTitle(), "Test", "Field help title");
+		assert.equal(oFieldHelp.getDialog().getContent()[0].getLabel(), "Test", "DefineConditions Label");
 
 	});
 
@@ -1373,6 +1385,7 @@ sap.ui.define([
 		oCM.addCondition("Name", oCondition);
 		oFieldEditSingle.setDisplay(FieldDisplay.Description);
 		oFieldEditSingle.setDataType("Edm.Boolean");
+		oFieldEditSingle.setLabel("Test");
 		oFieldDisplay.setMaxConditions(1);
 		oFieldDisplay.setDataType("Edm.Boolean");
 		oCore.applyChanges();
@@ -1384,9 +1397,16 @@ sap.ui.define([
 			assert.ok(oContent instanceof Input, "Input rendered");
 			assert.equal(oFieldEditSingle._sDefaultFieldHelp, "BoolDefaultHelp", "Default Field help set");
 			var oFieldHelp = oCore.byId("BoolDefaultHelp");
-			assert.ok(oFieldHelp && oFieldHelp instanceof BoolFieldHelp, "BoolFieldHelp used");
+			assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
+			var oPopover = oFieldHelp && oFieldHelp.getTypeahead();
+			assert.ok(oPopover, "Typeahead used in ValueHelp");
+			assert.ok(oPopover && oPopover instanceof Popover, "Popover used");
+			var aPopoverContent = oPopover && oPopover.getContent()[0];
+			assert.ok(aPopoverContent && aPopoverContent instanceof Bool, "Bool content used");
 			assert.equal(oContent.getValue(), "Yes", "Value set on Input control");
-			assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/field/FieldHelpBaseDelegate", payload: {}}, "base delegate used on FieldHelp");
+			assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/odata/v4/ValueHelpDelegate", payload: {}}, "base delegate used on FieldHelp");
+			oFieldEditSingle.focus();
+			assert.equal(oPopover.getTitle(), "", "no title on typeahead");
 
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1404,7 +1424,7 @@ sap.ui.define([
 	QUnit.test("dataType Boolean, load BoolFieldHelp async", function(assert) {
 
 		var oStub = sinon.stub(sap.ui, "require");
-		oStub.withArgs("sap/ui/mdc/field/BoolFieldHelp").onFirstCall().returns(undefined);
+		oStub.withArgs("sap/ui/mdc/valuehelp/content/Bool").onFirstCall().returns(undefined);
 		oStub.callThrough();
 
 		var oCondition = Condition.createCondition("EQ", [true], undefined, undefined, ConditionValidated.Validated);
@@ -1425,7 +1445,12 @@ sap.ui.define([
 			assert.ok(oContent instanceof Input, "Input rendered");
 			assert.equal(oFieldEditSingle._sDefaultFieldHelp, "BoolDefaultHelp", "Default Field help set");
 			oFieldHelp = oCore.byId("BoolDefaultHelp");
-			assert.ok(oFieldHelp && oFieldHelp instanceof BoolFieldHelp, "BoolFieldHelp used");
+			assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
+			var oPopover = oFieldHelp && oFieldHelp.getTypeahead();
+			assert.ok(oPopover, "Typeahead used in ValueHelp");
+			assert.ok(oPopover && oPopover instanceof Popover, "Popover used");
+			var aPopoverContent = oPopover && oPopover.getContent()[0];
+			assert.ok(aPopoverContent && aPopoverContent instanceof Bool, "Bool content used");
 			assert.equal(oContent.getValue(), "Yes", "Value set on Input control");
 
 			aContent = oFieldDisplay.getAggregation("_content");
