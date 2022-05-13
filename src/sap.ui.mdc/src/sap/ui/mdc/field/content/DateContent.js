@@ -270,13 +270,13 @@ sap.ui.define([
 			var oType = oContentFactory.retrieveDataType(); // TODO: do we need to create data type right now?
 			var sBaseType = oContentFactory.getField().getBaseType();
 			var oFormatOptions = oType.getFormatOptions();
-			var oUsedFormatOptions;
+			var oUsedFormatOptions = {UTC: true}; // we always work with UTC dates
 			var oDateRangeFormatOptions = {};
 
 			if (oFormatOptions.style) {
-				oUsedFormatOptions = {style: oFormatOptions.style};
+				oUsedFormatOptions.style = oFormatOptions.style;
 			} else if (oFormatOptions.pattern) {
-				oUsedFormatOptions = {pattern: oFormatOptions.pattern};
+				oUsedFormatOptions.pattern = oFormatOptions.pattern;
 			}
 
 			if (sBaseType === BaseType.DateTime) {

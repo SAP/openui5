@@ -298,7 +298,7 @@ sap.ui.define([
 		var aOperators = oData.operators;
 		var aDefaultOperators = this.oField._getOperators();
 
-		assert.deepEqual(oFormatter.oOriginalFormatOptions.date, {style: "long"}, "Formatter set on DynamicDateRange");
+		assert.deepEqual(oFormatter.oOriginalFormatOptions.date, {UTC:true, style: "long"}, "Formatter set on DynamicDateRange");
 		// check only some specific operators, nor every single one
 		assert.equal(aOptions.length, aOperators.length, "Option for each operator created on DynamicDateRange");
 
