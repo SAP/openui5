@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"/>
 	<title>SAPUI5 Navigation</title>
 	<script>
 
@@ -10,24 +11,37 @@
 			sSamplePath = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-path'),
 			sOrigin = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-origin'),
 			sVersion = new window.URLSearchParams(window.location.search).get('sap-ui-xx-sample-version'),
-
+			sOriginEncoded,
+			oBaseTag,
+			oScriptTag,
 			oPath = {};
+
 		if (!sOrigin || sOrigin == ".") {
 			sOrigin = window.location.origin + (window.location.pathname.includes("testsuite") ? "/testsuite" : "");
 		} else {
-			sOrigin = sOrigin + sVersion;
+			sOrigin = new URL(sOrigin, document.baseURI).pathname + sVersion;
 		}
 
-		oPath[sSampleId.replace(/\./g, "/")] = sSamplePath;
-		oPath["sap/ui/demo/mock"] = sOrigin + "/test-resources/sap/ui/documentation/sdk";
+		sOriginEncoded = encodeURI(sOrigin);
+
+		oPath[sSampleId.replace(/\./g, "/")] = encodeURI(sSamplePath);
+		oPath["sap/ui/demo/mock"] = sOriginEncoded + "/test-resources/sap/ui/documentation/sdk";
 		oPath["test-resources/sap/ui/documentation/sdk"] = ".";
-		oPath["sap/uxap/sample"] = sOrigin + "/test-resources/sap/uxap/demokit/sample";
+		oPath["sap/uxap/sample"] = sOriginEncoded + "/test-resources/sap/uxap/demokit/sample";
 
+		oBaseTag = document.createElement("base");
+		oBaseTag.setAttribute("href", sOriginEncoded + "/");
+		document.head.appendChild(oBaseTag);
 
+		oScriptTag = document.createElement("script");
+		oScriptTag.setAttribute("src", sOriginEncoded + "/resources/sap-ui-core.js");
+		oScriptTag.setAttribute("id", "sap-ui-bootstrap");
+		oScriptTag.setAttribute("data-sap-ui-compatVersion", "edge");
+		oScriptTag.dataset.sapUiAsync = true;
+		oScriptTag.dataset.sapUiLibs = "sap.m";
+		oScriptTag.dataset.sapUiResourceroots = JSON.stringify(oPath);
 
-		document.write("<script src=" + sOrigin  + '/resources/sap-ui-core.js' + " id='sap-ui-bootstrap' " +
-				"data-sap-ui-libs='sap.m' data-sap-ui-bindingSyntax='complex' data-sap-ui-compatVersion='edge'></scr" + "ipt>");
-		document.write("<base href=" + sOrigin + "/>");
+		document.write(oScriptTag.outerHTML);
 
 	</script>
 </head>
