@@ -1293,7 +1293,7 @@ sap.ui.define([
 			oContent = aContent && aContent.length > 0 && aContent[0];
 			var oCompareValue = {
 				"operator": "DATE",
-				values: [new Date(2018, 11, 20)]
+				values: [new Date(Date.UTC(2018, 11, 20))]
 			};
 			assert.ok(oContent instanceof DynamicDateRange, "DynamicDateRange rendered");
 			assert.deepEqual(oContent.getValue(), oCompareValue, "Value set on DynamicDateRange control");

@@ -164,75 +164,22 @@ sap.ui.define([
 
 	function _dateToTimestamp(vValue) {
 
-		var oType = _getInternalType.call(this);
-		var sBaseType = _getBaseType.call(this);
-		var sDate = oType.formatValue(vValue, "string");
-		var aParts;
-		var iHour = 0;
-		var iMinute = 0;
-		var iSecond = 0;
-		var iMillisecond = 0;
-
-		if (sBaseType === BaseType.DateTime) {
-			aParts = sDate.split("T");
-			sDate = aParts[0];
-			var sTime = aParts[1];
-			aParts = sTime.split(":");
-			iHour = parseInt(aParts[0]);
-			iMinute = parseInt(aParts[1]);
-			iSecond = parseInt(aParts[2]);
-			// iMillisecond = parseInt(aParts[3]);
-		}
-
-		aParts = sDate.split("-");
-		var iYear = parseInt(aParts[0]);
-		var iMonth = parseInt(aParts[1]) - 1;
-		var iDate = parseInt(aParts[2]);
-		var iTimeStamp = new Date(iYear, iMonth, iDate, iHour, iMinute, iSecond, iMillisecond).getTime();
-
-		return iTimeStamp;
+		var oType = _getValueType.call(this);
+		var oModelFormat = oType.getModelFormat();
+		var oDate = oModelFormat.parse(vValue); // All Date and DateTime types parse the model specific value into a JS-Date via ModelFormat. UTC is used, so the JS Date is timezone independent. For Date types UTC 00:00:00 is used.
+		return oDate.getTime();
 
 	}
 
 	function _timestampToDate(iTimeStamp) {
 
-		var oType = _getInternalType.call(this);
-		var sBaseType = _getBaseType.call(this);
+		var oType = _getValueType.call(this);
+		var oModelFormat = oType.getModelFormat();
 		var oDate = new Date(iTimeStamp);
-		var iYear = oDate.getFullYear();
-		var iMonth = oDate.getMonth() + 1;
-		var iDate = oDate.getDate();
-		var sDate = iYear.toString() + "-" + ((iMonth < 10) ? "0" : "") + iMonth.toString() + "-" + ((iDate < 10) ? "0" : "") + iDate.toString();
-
-		if (sBaseType === BaseType.DateTime) {
-			var iHour = oDate.getHours();
-			var iMinute = oDate.getMinutes();
-			var iSecond = oDate.getSeconds();
-			var iMillisecond = 0/*oDate.getMilliseconds()*/;
-			sDate = sDate + "T" + ((iHour < 10) ? "0" : "") + iHour.toString() + ":" + ((iMinute < 10) ? "0" : "") + iMinute.toString() + ":" + ((iSecond < 10) ? "0" : "") + iSecond.toString() + ":" + ((iMillisecond < 100) ? "0" : "") + ((iMillisecond < 10) ? "0" : "") + iMillisecond.toString();
-		}
-		var vDate = oType.parseValue(sDate, "string");
+		oDate.setUTCMilliseconds(0); // ignore missiseconds for the moment (As not saved in variants)
+		var vDate = oModelFormat.format(oDate); // All Date and DateTime types parse the model specific value into a JS-Date via ModelFormat. UTC is used, so the JS Date is timezone independent. For Date types UTC 00:00:00 is used.
 
 		return vDate;
-
-	}
-
-	function _getInternalType() {
-
-		if (!this._oInternalType) {
-			var oType = _getValueType.call(this);
-			var sBaseType = _getBaseType.call(this);
-			var sPattern;
-
-			if (sBaseType === BaseType.DateTime) {
-				sPattern = "yyyy-MM-dd'T'HH:mm:ss:SSS";
-			} else {
-				sPattern = "yyyy-MM-dd";
-			}
-			this._oInternalType = DateUtil.createInternalType(oType, sPattern);
-		}
-
-		return this._oInternalType;
 
 	}
 
