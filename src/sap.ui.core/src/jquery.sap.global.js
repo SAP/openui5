@@ -540,7 +540,7 @@ sap.ui.define([
 	 * (and depending on the browser, if cookies are enabled, even though cookies are not used).
 	 *
 	 * @param {string} sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
-	 * @returns {string} the current reboot URL or undefined in case of an error or when the reboot URL has been cleared
+	 * @returns {string|undefined} the current reboot URL or undefined in case of an error or when the reboot URL has been cleared
 	 *
 	 * @private
 	 * @function

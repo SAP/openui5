@@ -1206,7 +1206,7 @@ function(
 				/**
 				 * Returns the operator object for the given operator name.
 				 * @param {string} sOperator Name of the operator
-				 * @returns {sap.ui.mdc.condition.Operator} the operator object, or undefined if the operator with the requested name does not exist
+				 * @returns {sap.ui.mdc.condition.Operator|undefined} the operator object, or <code>undefined<code> if the operator with the requested name does not exist
 				 *
 				 * @private
 				 * @ui5-restricted sap.fe
@@ -1469,7 +1469,7 @@ function(
 				 * Returns the operator object for the given <code>DynamicDateOption</code> name.
 				 * @param {string} sOption Name of the operator
 				 * @param {sap.ui.mdc.enum.BaseType} [sBaseType] Basic type
-				 * @returns {sap.ui.mdc.condition.Operator} the operator object, or undefined if the operator with the requested name does not exist
+				 * @returns {sap.ui.mdc.condition.Operator|undefined} the operator object, or <code>undefined</code> if the operator with the requested name does not exist
 				 *
 				 * @protected
 				 * @since: 1.100.0

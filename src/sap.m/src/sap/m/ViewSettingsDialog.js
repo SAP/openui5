@@ -717,7 +717,7 @@ function(
 	 * Forward method to the inner dialog method: getDomRef.
 	 * @public
 	 * @override
-	 * @return {Element} The Element's DOM Element sub DOM Element or null
+	 * @return {Element|null} The Element's DOM Element, sub DOM Element or <code>null</code>
 	 */
 	ViewSettingsDialog.prototype.getDomRef = function () {
 		// this is also called on destroy to remove the DOM element, therefore we directly check the reference instead of the internal getter
@@ -2837,7 +2837,7 @@ function(
 	 * @override
 	 * @public
 	 * @param { int| sap.m.ViewSettingsFilterItem | string } vFilterItem The filter item's index, or the item itself, or its id
-	 * @returns {sap.m.ViewSettingsFilterItem|null} The removed item or null
+	 * @returns {sap.m.ViewSettingsFilterItem|null} The removed item or <code>null</code>
 	 */
 	ViewSettingsDialog.prototype.removeFilterItem = function (vFilterItem) {
 		var sFilterItemId = "";

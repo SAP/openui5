@@ -2736,7 +2736,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Parses number and currency
+	 * Parses number and currency.
 	 *
 	 * Search for the currency symbol first, looking for the longest match. In case no currency
 	 * symbol is found, search for a three letter currency code.
@@ -2751,7 +2751,7 @@ sap.ui.define([
 	 * @param {boolean} oConfig.customCurrenciesAvailable a flag to mark if custom currencies are available on the instance
 	 *
 	 * @private
-	 * @return {object} returns object containing numberValue and currencyCode or null
+	 * @returns {object|undefined} returns object containing numberValue and currencyCode or undefined
 	 */
 	function parseNumberAndCurrency(oConfig) {
 		var sValue = oConfig.value;

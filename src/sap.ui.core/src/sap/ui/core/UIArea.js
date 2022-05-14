@@ -1199,9 +1199,10 @@ sap.ui.define([
 
 	/**
 	 * Returns the current valid field group control.
+	 *
 	 * There is only one field group control for all UI areas.
 	 *
-	 * @return {sap.ui.core.Control} the current valid field group control or null.
+	 * @returns {sap.ui.core.Control|null} the current valid field group control or <code>null</code>.
 	 *
 	 * @private
 	 */

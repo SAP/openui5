@@ -200,7 +200,7 @@ sap.ui.define(['sap/ui/layout/library', './FormLayout', './GridLayoutRenderer'],
 	 * In <code>GridLayout</code> a <code>FormContainer</code> can't have a surrounding DOM element,
 	 * so it always returns null
 	 * @param {sap.ui.layout.form.FormContainer} oContainer <code>FormContainer</code>
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	GridLayout.prototype.getContainerRenderedDomRef = function(oContainer) {

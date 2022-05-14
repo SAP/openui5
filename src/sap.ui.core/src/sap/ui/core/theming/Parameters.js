@@ -366,7 +366,7 @@ sap.ui.define([
 		 * @param {boolean} mOptions.loadPendingParameters If set to "true" and no parameter value is found,
 		 *                                                 all pending parameters will be loaded (see Parameters._addLibraryTheme)
 		 * @param {boolean} mOptions.async whether the parameter value should be retrieved asynchronous
-		 * @returns {string} parameter value or undefined
+		 * @returns {string|undefined} parameter value or undefined
 		 * @private
 		 */
 		function getParam(mOptions) {

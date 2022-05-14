@@ -27,7 +27,7 @@ sap.ui.define([
 	 *
 	 * @param {Node} oContainer Node to search for a focusable descendant
 	 * @param {boolean} bForward Whether to search forward (true) or backwards (false)
-	 * @returns {Element} Element node that is focusable and visible or null
+	 * @returns {Element|null} Element node that is focusable and visible or null
 	 * @private
 	 */
 	function findFocusableDomRef(oContainer, bForward) {

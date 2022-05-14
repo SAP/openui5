@@ -244,7 +244,7 @@ sap.ui.define([
 	 * If the <code>FormContainer</code> has a DOM representation this function returns it,
 	 * independent from the ID of this DOM element
 	 * @param {sap.ui.layout.form.FormContainer} oContainer <code>FormContainer</code>
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	Form.prototype.getContainerRenderedDomRef = function(oContainer) {
@@ -263,7 +263,7 @@ sap.ui.define([
 	 * If the <code>FormElement</code> has a DOM representation this function returns it,
 	 * independent from the ID of this DOM element
 	 * @param {sap.ui.layout.form.FormElement} oElement <code>FormElement</code>
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	Form.prototype.getElementRenderedDomRef = function(oElement) {

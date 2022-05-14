@@ -783,7 +783,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sProperty An item property.
 		 * @param {string} sValue An item value that specifies the item to retrieve.
-		 * @returns {sap.ui.core.Item | null} The matched item or null.
+		 * @returns {sap.ui.core.Item | null} The matched item or <code>null</code>.
 		 * @protected
 		 */
 		SelectList.prototype.findItem = function(sProperty, sValue) {
@@ -804,7 +804,7 @@ sap.ui.define([
 		 * <code>Note: </code> If duplicate values exist, the first item matching the value is returned.
 		 *
 		 * @param {string} sText An item value that specifies the item to retrieve.
-		 * @returns {sap.ui.core.Item | null} The matched item or null.
+		 * @returns {sap.ui.core.Item | null} The matched item or <code>null</code>.
 		 * @protected
 		 */
 		SelectList.prototype.getItemByText = function(sText) {
@@ -999,7 +999,7 @@ sap.ui.define([
 		 * Gets the item from the aggregation named <code>items</code> at the given 0-based index.
 		 *
 		 * @param {int} iIndex Index of the item to return.
-		 * @returns {sap.ui.core.Item | null} Item at the given index, or null if none.
+		 * @returns {sap.ui.core.Item | null} Item at the given index, or <code>null</code> if none.
 		 * @public
 		 */
 		SelectList.prototype.getItemAt = function(iIndex) {
@@ -1009,7 +1009,7 @@ sap.ui.define([
 		/**
 		 * Gets the first item from the aggregation named <code>items</code>.
 		 *
-		 * @returns {sap.ui.core.Item | null} The first item, or null if there are no items.
+		 * @returns {sap.ui.core.Item | null} The first item, or <code>null</code> if there are no items.
 		 * @public
 		 */
 		SelectList.prototype.getFirstItem = function() {
@@ -1019,7 +1019,7 @@ sap.ui.define([
 		/**
 		 * Gets the enabled items from the aggregation named <code>items</code>.
 		 *
-		 * @returns {sap.ui.core.Item | null} The last item, or null if there are no items.
+		 * @returns {sap.ui.core.Item | null} The last item, or <code>null</code> if there are no items.
 		 * @public
 		 */
 		SelectList.prototype.getLastItem = function() {
@@ -1047,7 +1047,7 @@ sap.ui.define([
 		 * <b>Note: </b> If duplicate keys exists, the first item matching the key is returned.
 		 *
 		 * @param {string} sKey An item key that specifies the item to retrieve.
-		 * @returns {sap.ui.core.Item | null} The matched item or null
+		 * @returns {sap.ui.core.Item | null} The matched item or <code>null</code>
 		 * @public
 		 */
 		SelectList.prototype.getItemByKey = function(sKey) {
@@ -1058,7 +1058,7 @@ sap.ui.define([
 		 * Removes an item from the aggregation named <code>items</code>.
 		 *
 		 * @param {int | string | sap.ui.core.Item} vItem The item to remove or its index or id.
-		 * @returns {sap.ui.core.Item} The removed item or null.
+		 * @returns {sap.ui.core.Item|null} The removed item or <code>null</code>.
 		 * @public
 		 */
 		SelectList.prototype.removeItem = function(vItem) {

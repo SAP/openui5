@@ -846,7 +846,7 @@ function(
 	 * Forward method to the inner dialog: getDomRef
 	 * @public
 	 * @override
-	 * @return {Element} The Element's DOM Element sub DOM Element or null
+	 * @returns {Element|null} The Element's DOM Element, sub DOM Element or <code>null</code>
 	 */
 	SelectDialog.prototype.getDomRef = function () {
 		if (this._oDialog) {

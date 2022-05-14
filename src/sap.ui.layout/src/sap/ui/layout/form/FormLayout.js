@@ -893,7 +893,7 @@ sap.ui.define([
 	 * As Elements must not have a DOM reference it is not sure if one exists
 	 * In this basic <code>FormLayout</code> each <code>FormContainer</code> has its own DOM.
 	 * @param {sap.ui.layout.form.FormContainer} oContainer <code>FormContainer</code>
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	FormLayout.prototype.getContainerRenderedDomRef = function(oContainer) {

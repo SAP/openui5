@@ -367,7 +367,7 @@ sap.ui.define([
 	/**
 	 * Returns the button, which closes the QuickView.
 	 * On desktop or tablet, this method returns undefined.
-	 * @returns {sap.ui.core.Control} The close button of the QuickView on phone or undefined on desktop and tablet.
+	 * @returns {sap.ui.core.Control|undefined} The close button of the QuickView on phone or undefined on desktop and tablet.
 	 * @private
 	 */
 	QuickView.prototype.getCloseButton = function() {

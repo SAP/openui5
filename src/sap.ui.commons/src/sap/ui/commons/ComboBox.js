@@ -758,10 +758,10 @@ sap.ui.define([
 	//***********************************************************
 
 	/**
-	 * Returns the DomRef which represents the icon for value help.
-	 * Could be overwritten in child-classes
+	 * Returns the DOM element which represents the icon for value help.
+	 * Could be overwritten in child-classes.
 	 *
-	 * @return {Element} The F4-element's DOM reference or null
+	 * @returns {Element|null} The F4-element's DOM reference or <code>null</code>
 	 * @protected
 	 */
 	ComboBox.prototype.getF4ButtonDomRef = function() {

@@ -2031,7 +2031,7 @@ sap.ui.define([
 		 *
 		 * @param {object} oPosParams Parameters used from the method to calculate the right values
 		 *
-		 * @returns {string|undefined} Correct CSS class or undefined if the Arrow do not cross Header or Footer
+		 * @returns {string|undefined} Correct CSS class or <code>undefined</code> if the Arrow does not cross Header or Footer
 		 * @private
 		 */
 		Popover.prototype._getArrowStyleCssClass = function (oPosParams) {

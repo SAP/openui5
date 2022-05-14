@@ -238,8 +238,8 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> Do not change items to the <code>Bool</code> content. The items will be filled by itself
 	 *
-	 * @param {int|string|sap.ui.mdc.field.ListFieldHelpItem} vItem The item to remove or its index or id
-	 * @returns {sap.ui.mdc.field.ListFieldHelpItem} The removed item or null
+	 * @param {int|string|sap.ui.mdc.field.ListFieldHelpItem} vItem The item to remove or its index or ID
+	 * @returns {sap.ui.mdc.field.ListFieldHelpItem|null} The removed item or <code>null</code>
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE

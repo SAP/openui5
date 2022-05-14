@@ -2598,7 +2598,7 @@ sap.ui.define([
 	 * @param {string} sValue the string containing a formatted date/time value
 	 * @param {boolean} bUTC whether to use UTC, if no timezone is contained
 	 * @param {boolean} bStrict to use strict value check
-	 * @return {Date} the parsed value or null if relative parsing not possible
+	 * @returns {Date|null} the parsed value or <code>null</code> if relative parsing not possible
 	 * @private
 	 */
 	DateFormat.prototype.parseRelative = function(sValue, bUTC) {
@@ -2662,7 +2662,7 @@ sap.ui.define([
 	 * @param {boolean} bUTC whether to use UTC
 	 * @param {number[]} aRange scale ranges
 	 * @param {string} sTimezone the IANA timezone ID
-	 * @return {string} the formatted output value or null if relative formatting not possible
+	 * @returns {string|null} the formatted output value or <code>null</code> if relative formatting is not possible
 	 * @private
 	 */
 	DateFormat.prototype.formatRelative = function(oJSDate, bUTC, aRange, sTimezone) {

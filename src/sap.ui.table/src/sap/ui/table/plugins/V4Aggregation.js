@@ -238,7 +238,7 @@ sap.ui.define([
 	 * Retrieves a propertyInfo from its name.
 	 *
 	 * @param {string} sPropertyName name of the propertyInfo to be found
-	 * @returns {object} the proprty info with the corresponding name, or null
+	 * @returns {object|undefined} the property info with the corresponding name, or undefined
 	 */
 	V4Aggregation.prototype.findPropertyInfo = function(sPropertyName) {
 		return this.getPropertyInfos().find(function(oPropertyInfo) {

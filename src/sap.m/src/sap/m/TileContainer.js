@@ -2099,7 +2099,7 @@ function(
 	};
 	/**
 	 * Calculates the dimension (width and height) of a Tile.
-	 * @returns {object} Width and height of a tile or undefined if no DOM yet.
+	 * @returns {object|undefined} Width and height of a tile or <code>undefined</code> if no DOM yet.
 	 * @protected
 	 */
 	TileDimensionCalculator.prototype.calc = function(visibleTiles) {

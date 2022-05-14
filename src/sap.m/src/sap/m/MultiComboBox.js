@@ -2822,10 +2822,10 @@ function(
 	};
 
 	/**
-	 * Removes an selectedItem from the association named <code>selectedItems</code>.
+	 * Removes a selected item from the association named <code>selectedItems</code>.
 	 *
-	 * @param {sap.ui.core.Item | sap.ui.core.ID | string} oItem The item to be removed
-	 * @returns {sap.ui.core.ID | null} The removed selectedItem or null
+	 * @param {sap.ui.core.Item | sap.ui.core.ID} oItem The item to be removed or its ID
+	 * @returns {sap.ui.core.Item | null} The removed item or <code>null</code>
 	 * @public
 	 */
 	MultiComboBox.prototype.removeSelectedItem = function(oItem) {

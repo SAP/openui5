@@ -606,7 +606,7 @@ sap.ui.define([
 
 	/**
 	 * Gets the format options of the value or dateValue binding.
-	 * @returns {object} The binding format options or undefined.
+	 * @returns {object|undefined} The binding format options or undefined.
 	 * @private
 	 */
 	DateTimePicker.prototype._getBindingFormatOptions = function() {

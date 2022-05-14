@@ -55,7 +55,7 @@ sap.ui.define(['./ComponentMetadata', 'sap/ui/core/mvc/ViewType'],
 	 * the Component metadata or in the proper Component manifest.
 	 *
 	 * @param {boolean} [bDoNotMerge] Returns the local root view configuration if set to <code>true</code>.
-	 * @return {object} root view as configuration object or null ({@link sap.ui.view})
+	 * @return {object|null} root view as configuration object or null ({@link sap.ui.view})
 	 * @protected
 	 * @since 1.15.1
 	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/rootView")

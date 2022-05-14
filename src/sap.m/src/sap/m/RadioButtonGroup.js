@@ -470,7 +470,7 @@ sap.ui.define([
 			 * Removes all radio buttons.
 			 *
 			 * @public
-			 * @returns {Array} Array of removed buttons or null.
+			 * @returns {sap.m.RadioButton[]} Array of removed buttons.
 			 */
 			RadioButtonGroup.prototype.removeAllButtons = function () {
 				if (!this._bUpdateButtons) {

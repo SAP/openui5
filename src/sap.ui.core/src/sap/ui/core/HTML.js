@@ -141,7 +141,7 @@ sap.ui.define([
 
 	/**
 	 * @param {string} [sSuffix=''] Suffix of the Element to be retrieved or empty
-	 * @return {Element} The element's DOM reference or null
+	 * @returns {Element|null} The element's DOM reference or <code>null</code>
 	 * @public
 	 */
 	HTML.prototype.getDomRef = function(sSuffix) {

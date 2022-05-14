@@ -288,7 +288,7 @@ sap.ui.define([
 	 * As Elements must not have a DOM reference it is not sure if one exists
 	 * If the FormElement has a DOM representation this function returns it,
 	 * independent from the ID of this DOM element
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	FormElement.prototype.getRenderedDomRef = function(){

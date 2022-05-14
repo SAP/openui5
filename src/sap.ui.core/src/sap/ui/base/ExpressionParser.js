@@ -736,7 +736,7 @@ sap.ui.define([
 		 * Throws an error if the next token's ID is not equal to the optional
 		 * <code>sExpectedTokenId</code>.
 		 * @param {string} [sExpectedTokenId] - the expected id of the next token
-		 * @returns {object} - the next token or undefined if all tokens have been read
+		 * @returns {object|undefined} - the next token or undefined if all tokens have been read
 		 */
 		function advance(sExpectedTokenId) {
 			var oToken = aTokens[iNextToken];
@@ -758,7 +758,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the next token in the array of tokens, but does not advance the index.
-		 * @returns {object} - the next token or undefined if all tokens have been read
+		 * @returns {object|undefined} - the next token or undefined if all tokens have been read
 		 */
 		function current() {
 			return aTokens[iNextToken];

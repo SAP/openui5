@@ -1056,7 +1056,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the property to be retrieved or empty
-	 * @return {object} property info object or undefined
+	 * @returns {object|undefined} property info object or <code>undefined</code>
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getManagedProperty = function(sName) {
@@ -1197,7 +1197,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sAggregationName name of the aggregation to be retrieved or empty
-	 * @return {object} aggregation info object or undefined
+	 * @returns {object|undefined} aggregation info object or <code>undefined</code>
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getManagedAggregation = function(sAggregationName) {
@@ -1514,7 +1514,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the association to be retrieved
-	 * @return {object} association info object or undefined
+	 * @returns {object|undefined} association info object or <code>undefined</code>
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getManagedAssociation = function(sName) {
@@ -1722,16 +1722,17 @@ function(
 
 	/**
 	 * Filter out settings from the given map that are not described in the metadata.
-	 * If null or undefined is given, null or undefined is returned.
 	 *
-	 * @param {object} mSettings original filters or null
-	 * @returns {object} filtered settings or null
+	 * If <code>null</code> or <code>undefined</code> is given, <code>null</code> or <code>undefined</code> is returned.
+	 *
+	 * @param {object|null|undefined} [mSettings] original filters or <code>null</code>
+	 * @returns {object|null|undefined} new object with filtered settings or <code>null</code> or <code>undefined</code>
 	 * @private
 	 * @since 1.27.0
 	 */
 	ManagedObjectMetadata.prototype.removeUnknownSettings = function(mSettings) {
 
-		assert(mSettings == null || typeof mSettings === 'object', "mSettings must be null or an object");
+		assert(mSettings == null || typeof mSettings === 'object', "mSettings must be null or undefined or an object");
 
 		if ( mSettings == null ) {
 			return mSettings;

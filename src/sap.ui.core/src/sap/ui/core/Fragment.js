@@ -208,7 +208,7 @@ function(
 
 	/**
 	 *
-	 * @returns {sap.ui.core.mvc.Controller} the Controller connected to this Fragment, or null
+	 * @returns {sap.ui.core.mvc.Controller|null} the Controller connected to this Fragment, or <code>null</code>
 	 * @private
 	 */
 	Fragment.prototype.getController = function() { // required for the parsers to find the specified Controller methods

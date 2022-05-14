@@ -413,7 +413,7 @@ sap.ui.define([
 	 * In this case, the panel's DOM reference is returned, otherwise the DOM reference
 	 * of the <code>Grid</code> rendering the container's content.
 	 * @param {sap.ui.layout.form.FormContainer} oContainer <code>FormContainer</code>
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	ResponsiveGridLayout.prototype.getContainerRenderedDomRef = function(oContainer) {
@@ -441,7 +441,7 @@ sap.ui.define([
 	 * In this Layout a <code>FormElement</code> has no DOM representation,
 	 * so null will always be returned
 	 * @param {sap.ui.layout.form.FormElement} oElement <code>FormElement</code>
-	 * @return {Element} The Element's DOM representation or null
+	 * @return {Element|null} The Element's DOM representation or null
 	 * @private
 	 */
 	ResponsiveGridLayout.prototype.getElementRenderedDomRef = function(oElement) {

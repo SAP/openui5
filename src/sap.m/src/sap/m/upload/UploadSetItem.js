@@ -697,7 +697,7 @@ sap.ui.define([
 	 * Retrieves the sap.m.ListItem from the internal sap.m.List based on the ID
 	 * @param {string} listItemId The item ID used for finding the UploadSetItem
 	 * @param {sap.m.ListItemBase[]} listItems The array of list items to search in
-	 * @returns {sap.m.UploadSetItem} The matching UploadSetItem or null if none is found
+	 * @returns {sap.m.UploadSetItem|null} The matching UploadSetItem or null if none is found
 	 * @private
 	 */
 	UploadSetItem._findById = function(listItemId, listItems) {

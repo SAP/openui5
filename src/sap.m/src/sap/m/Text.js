@@ -410,7 +410,7 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
 	 * @param {int} [iStartPos] Start point of the ellipsis search.
 	 * @param {int} [iEndPos] End point of the ellipsis search.
-	 * @returns {int|undefined} Returns found ellipsis position or undefined.
+	 * @returns {int|undefined} Returns found ellipsis position or <code>undefined</code>.
 	 * @since 1.20
 	 */
 	Text.prototype.clampText = function (oDomRef, iStartPos, iEndPos) {
