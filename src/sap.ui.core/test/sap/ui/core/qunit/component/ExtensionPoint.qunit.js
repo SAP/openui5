@@ -222,11 +222,6 @@ sap.ui.define([
 			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[30].getId(), "ExtComponent---mainView--EPinBinding_in_nestedView", "Main.view content is in correct order"); // Main (nested view with EPs)
 
-			// Default content for EPs in nested View should be available
-			var oNestedView = aViewContent[30];
-			assert.ok(oNestedView.byId("TableRowButton") != null, "Default Content 'TableRowButton' in nested View is available");
-			assert.ok(oNestedView.byId("PanelButton") != null, "Default Content 'PanelButton' in nested View is available");
-
 			// table
 			var oTable = aViewContent[11];
 			var aTableItems = oTable.getItems();
@@ -245,6 +240,13 @@ sap.ui.define([
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
+
+			// Default content for EPs in nested View should be available
+			var oNestedView = aViewContent[30];
+			return oNestedView.loaded().then(function() {
+				assert.ok(oNestedView.byId("TableRowButton") != null, "Default Content 'TableRowButton' in nested View is available");
+				assert.ok(oNestedView.byId("PanelButton") != null, "Default Content 'PanelButton' in nested View is available");
+			});
 		});
 	});
 
@@ -291,11 +293,6 @@ sap.ui.define([
 			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[30].getId(), "ExtComponent---mainView--EPinBinding_in_nestedView", "Main.view content is in correct order"); // Main (nested view with EPs)
 
-			// Default content for EPs in nested View should be available
-			var oNestedView = aViewContent[30];
-			assert.ok(oNestedView.byId("TableRowButton") != null, "Default Content 'TableRowButton' in nested View is available");
-			assert.ok(oNestedView.byId("PanelButton") != null, "Default Content 'PanelButton' in nested View is available");
-
 			// table
 			var oTable = aViewContent[11];
 			var aTableItems = oTable.getItems();
@@ -320,6 +317,13 @@ sap.ui.define([
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
+
+			// Default content for EPs in nested View should be available
+			var oNestedView = aViewContent[30];
+			return oNestedView.loaded().then(function() {
+				assert.ok(oNestedView.byId("TableRowButton") != null, "Default Content 'TableRowButton' in nested View is available");
+				assert.ok(oNestedView.byId("PanelButton") != null, "Default Content 'PanelButton' in nested View is available");
+			});
 		});
 	});
 
