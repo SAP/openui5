@@ -49,6 +49,9 @@ sap.ui.define([
 		getTypeahead: function () {
 			return oPopover;
 		},
+		getDialog: function () {
+			return null;
+		},
 		getControlDelegate: function () {
 			return ValueHelpDelegate;
 		},
@@ -440,17 +443,23 @@ sap.ui.define([
 			ariaHasPopup: "dialog",
 			roleDescription: "X"
 		});
-		oContent.getUseAsValueHelp = function () {
-			return true;
-		};
 
 		var oCheckAttributes = {
 			contentId: "X",
 			ariaHasPopup: "dialog",
-			role: "combobox",
+			role: null,
 			roleDescription: "X"
 		};
 		var oAttributes = oPopover.getAriaAttributes();
+		assert.ok(oAttributes, "Aria attributes returned");
+		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
+
+		oContent.getUseAsValueHelp = function () {
+			return true;
+		};
+
+		oCheckAttributes.role = "combobox";
+		oAttributes = oPopover.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 

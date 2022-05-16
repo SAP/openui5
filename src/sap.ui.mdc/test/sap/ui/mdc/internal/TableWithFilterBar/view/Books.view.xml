@@ -91,7 +91,7 @@
 								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 								<mdc:typeahead>
 									<mdcv:Popover title="Title">
-										<mdcvc:MTable keyPath="title" descriptionPath="title" filterFields="$search">
+										<mdcvc:MTable keyPath="title" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
 											<Table id="mTable1_title" items='{path : "/Books", length: 10}' width="30rem" mode="MultiSelect">
 												<columns>
 													<Column>
@@ -170,7 +170,7 @@
 								delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorVH.delegate', payload: {}}">
 								<mdc:typeahead>
 									<mdcv:Popover id="FH1-Popover" title="Author ID">
-										<mdcvc:MTable id="FH1-Popover-MTable" keyPath="ID" descriptionPath="name" filterFields="$search">
+										<mdcvc:MTable id="FH1-Popover-MTable" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
 											<Table id="mTable1" items='{path : "/Authors", length: 10}' width="30rem" mode="MultiSelect">
 												<columns>
 													<Column width="5rem">
@@ -224,7 +224,7 @@
 								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 								<mdc:typeahead>
 									<mdcv:Popover title="Langugages">
-										<mdcvc:MTable keyPath="code" descriptionPath="name" filterFields="$search">
+										<mdcvc:MTable keyPath="code" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
 											<Table id="mTable1_languages" items='{path : "/Languages", length: 10}' width="30rem" mode="SingleSelectMaster">
 												<columns>
 													<Column width="5rem">
@@ -287,7 +287,7 @@
 								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 								<mdc:typeahead>
 									<mdcv:Popover title="Classification">
-										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
+										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
 											<Table id="mTable1_classification" items='{path : "/Classification"}' width="30rem" mode="SingleSelectMaster">
 												<columns>
 													<Column width="10rem">
@@ -339,7 +339,7 @@
 								</mdc:outParameters> -->
 								<mdc:typeahead>
 									<mdcv:Popover title="Sub Genre">
-										<mdcvc:MTable id="subGenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search">
+										<mdcvc:MTable id="subGenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
 											<Table id="mTable1_subgenre" items='{path: "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="30rem" mode="MultiSelect">
 												<columns>
 													<Column width="10rem">
@@ -462,7 +462,7 @@
 								</mdc:outParameters> -->
 								<mdc:typeahead>
 									<mdcv:Popover title="Detail Genre">
-										<mdcvc:MTable id="detailGenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search">
+										<mdcvc:MTable id="detailGenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
 											<Table id="mTable1_detailgenre" items='{path: "/DetailGenres", length: 10, parameters: {$select: ["classification_code", "genre_code", "subgenre_code"]}}' width="30rem" mode="MultiSelect">
 												<columns>
 													<Column width="10rem">
@@ -926,7 +926,7 @@
 					</mdc:outParameters> -->
 					<mdc:typeahead>
 						<mdcv:Popover title="Genre">
-							<mdcvc:MTable id="genreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search">
+							<mdcvc:MTable id="genreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
 								<Table id="mTable1_genre" items='{path : "/Genres", length: 10, parameters: {$select: "classification_code"}}' width="30rem" mode="MultiSelect">
 									<columns>
 										<Column width="10rem">

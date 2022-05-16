@@ -473,6 +473,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the container is used as dialog inside the value help
+	 *
+	 * The container is also used as dialog if <code>useAsValueHelp</code> is set on content and no other dialog is set.
+	 *
+	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
+	 *
+	 * @returns {boolean} True if used as dialog
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	Container.prototype.isDialog = function () {
+		var oValueHelp = this.getParent();
+		return oValueHelp && (oValueHelp.getDialog() === this || (this.isTypeahead() && !oValueHelp.getDialog() && this.getUseAsValueHelp()));
+	};
+
+	/**
 	 * Determines if the container provides a own scroll functionality.
 	 * If not, the <code>Content</code> needs to provide a scrolling solution like a {@link sap.m.ScrollContainer ScrollContainer}.
 	 *

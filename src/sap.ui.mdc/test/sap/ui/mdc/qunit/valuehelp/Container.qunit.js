@@ -42,6 +42,9 @@ sap.ui.define([
 		getTypeahead: function () {
 			return oContainer;
 		},
+		getDialog: function () {
+			return null;
+		},
 		getControlDelegate: function () {
 			return ValueHelpDelegate;
 		},
@@ -438,6 +441,23 @@ sap.ui.define([
 
 		var bSupported = oContainer.isTypeaheadSupported();
 		assert.notOk(bSupported, "not supported as default");
+
+	});
+
+	QUnit.test("isDialog", function(assert) {
+
+		var bDialog = oContainer.isDialog();
+		assert.notOk(bDialog, "Is not used as dialog");
+
+		sinon.stub(oValueHelp, "getDialog").returns(oContainer);
+		bDialog = oContainer.isDialog();
+		assert.ok(bDialog, "Is used as dialog");
+		oValueHelp.getDialog.restore();
+
+		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
+		bDialog = oContainer.isDialog();
+		assert.ok(bDialog, "Is used as dialog");
+		oContainer.getUseAsValueHelp.restore();
 
 	});
 
