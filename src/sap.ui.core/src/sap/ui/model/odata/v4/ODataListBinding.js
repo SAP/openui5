@@ -1378,6 +1378,8 @@ sap.ui.define([
 		return oPromise.then(function (oResult) {
 			var oError;
 
+			// Without the bAsync flag we would need the following test twice: once here for the
+			// createContexts and once in the caller to be safe after the additional hop
 			if (!that.aContexts) {
 				oError = new Error("Binding already destroyed");
 				oError.canceled = true;
