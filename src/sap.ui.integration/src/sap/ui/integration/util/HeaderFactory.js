@@ -109,10 +109,6 @@ sap.ui.define([
 		if (mConfiguration.status &&
 			mConfiguration.status.text &&
 			mConfiguration.status.text.format) {
-			if (mConfiguration.status.text.format.translationKey) {
-				oCard._loadDefaultTranslations();
-			}
-
 			bindStatusText(mConfiguration.status.text.format, oHeader);
 		}
 
