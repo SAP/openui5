@@ -577,6 +577,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './library', "./Column", 
 		rm.openStart("div", sHeaderId + "-inner");
 		rm.class("sapUiTableCellInner");
 
+		if (!TableUtils.hasRowHeader(oTable) && bIsFirstColumn && !TableUtils.hasRowHighlights(oTable) && !TableUtils.Grouping.isInTreeMode(oTable)) {
+			rm.class("sapUiTableFirstColumnCell");
+		}
+
 		var sHAlign = oColumn.getHAlign();
 		var sTextAlign = Renderer.getTextAlign(sHAlign);
 
@@ -1186,6 +1190,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './library', "./Column", 
 
 			rm.openStart("div");
 			rm.class("sapUiTableCellInner");
+
+			if (!TableUtils.hasRowHeader(oTable) && bIsFirstColumn && !TableUtils.hasRowHighlights(oTable) && !TableUtils.Grouping.isInTreeMode(oTable)) {
+				rm.class("sapUiTableFirstColumnCell");
+			}
 
 			oTable._getRowMode().renderCellContentStyles(rm);
 
