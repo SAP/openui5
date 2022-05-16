@@ -105,6 +105,10 @@ sap.ui.define([
 					afterClose: this._handleClosed.bind(this)
 				}).addStyleClass("sapMdcValueHelpPopover").addStyleClass("sapMComboBoxBasePicker").addStyleClass("sapMComboBoxBasePicker-CTX"); // to have a ComboBox popup
 
+				oPopover.isPopupAdaptationAllowed = function () {
+					return false;
+				};
+
 				oPopover.addStyleClass(this._isSingleSelect() ? "sapMdcValueHelpSingleSelect" : "sapMdcValueHelpMultiSelect");
 
 				oPopover.addDelegate({onsapshow: this._handleRequestSwitchToDialog.bind(this)});
