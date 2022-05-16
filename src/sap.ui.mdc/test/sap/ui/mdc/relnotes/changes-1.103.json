@@ -3,6 +3,28 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "42ca4aa9ff655ade998e732855f287fb9d1a6be9",
+        "type": "FIX",
+        "text": " Tables: Column width calculation for Edm.String adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270098060"
+          }
+        ]
+      },
+      {
+        "id": "b4ccfe3c70f2c9ec893b4e93c47bca2203a26f60",
+        "type": "FIX",
+        "text": " Field: clear currency measure brings error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270046846"
+          }
+        ]
+      },
+      {
         "id": "7967e2a59923a3a40cbd1f9b6a7572513174f817",
         "type": "FEATURE",
         "text": " sap.ui.core.format.DateFormat: IANA timezone translation"

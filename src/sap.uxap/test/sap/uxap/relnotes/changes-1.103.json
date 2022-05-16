@@ -3,6 +3,17 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "a4031360cab8c2b31d62bcebbeb41d980c68032d",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Switch to HierarchicalSelect optimized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000511102022"
+          }
+        ]
+      },
+      {
         "id": "96bd15d49ed178f0f02a487ff7740791263ab97c",
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: ObjectPage visual tests updated"

@@ -3,6 +3,127 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "42ca4aa9ff655ade998e732855f287fb9d1a6be9",
+        "type": "FIX",
+        "text": " Tables: Column width calculation for Edm.String adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270098060"
+          }
+        ]
+      },
+      {
+        "id": "49b23ee97df2bf625d2945dcae6174e5ee774242",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: 24:00:00 is correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000280062022"
+          }
+        ]
+      },
+      {
+        "id": "5f5f2859cd279d75c55d484cfb1a43b6d2132c44",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Resize handler icon no longer has aria-label attr",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270092686"
+          }
+        ]
+      },
+      {
+        "id": "5d51d94c54e41e9b7f14c2b211d68f13cd0446fb",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Title font-size is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270094521"
+          }
+        ]
+      },
+      {
+        "id": "d91d9f96ec0dc6f859ac20263cbef027287c5c9a",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: fixed Large ObjectNumber appearance in Belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270093423"
+          }
+        ]
+      },
+      {
+        "id": "febf16bdf411380a781154df4add7bb2f120a4ec",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Clock is not mirrored in rtl languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270092628"
+          }
+        ]
+      },
+      {
+        "id": "f99a686502e1ea193224b7e988de57b11efc2d91",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Works with the user timezone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270075878"
+          }
+        ]
+      },
+      {
+        "id": "48e55e60c9387b79c4c5724b46789632c899dc12",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dialog is now correctly stretched",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270089582"
+          }
+        ]
+      },
+      {
+        "id": "3b2d3dff92fd5199fcff300b945a68180af6ebf2",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Unnecessary console errors are no longer thrown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270084087"
+          }
+        ]
+      },
+      {
+        "id": "12b207ae2d46d800dcf7e6e981a15e5902d2d677",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Display Items after enabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270033805"
+          }
+        ]
+      },
+      {
+        "id": "3b4f4c253caa7c657fca3a1bda7e08d4095b11cd",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Content is not longer rerendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270086622"
+          }
+        ]
+      },
+      {
         "id": "5347584ccc6791c1e32ba8536b0883fec1709b3b",
         "type": "FIX",
         "text": "sap.m.Input: Properly update value with maxLength",

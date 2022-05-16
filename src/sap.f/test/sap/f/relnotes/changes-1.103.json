@@ -3,6 +3,39 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "cbedc26257f78ddf6ac1a675d172edb061c3f343",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Span for Status text no longer rendered in the Header when it is empty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270079590"
+          }
+        ]
+      },
+      {
+        "id": "6a4b6e42d15ae5800509c86c08d27d8c4e9cdfaf",
+        "type": "FEATURE",
+        "text": " sap.f.AvatarGroup: Custom display and font size properties introduced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270081146"
+          }
+        ]
+      },
+      {
+        "id": "71041ab0f68b7d15952b865f921eb5c0d7540f99",
+        "type": "FIX",
+        "text": " Integration cards: Browser no longer crashes on pagination",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270084328"
+          }
+        ]
+      },
+      {
         "id": "3e6cf22cadd29a8839ad67058ffa0db55748c860",
         "type": "FIX",
         "text": " sap.f.GridContainer: Drag and drop is disabled for alt + arrow key",

@@ -3,6 +3,39 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "be1907446bdc868d44188c675b04d2f70813088d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: DatesRow has correct alignment of size in horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270088152"
+          }
+        ]
+      },
+      {
+        "id": "6a4b6e42d15ae5800509c86c08d27d8c4e9cdfaf",
+        "type": "FEATURE",
+        "text": " sap.f.AvatarGroup: Custom display and font size properties introduced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270081146"
+          }
+        ]
+      },
+      {
+        "id": "d91d9f96ec0dc6f859ac20263cbef027287c5c9a",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: fixed Large ObjectNumber appearance in Belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270093423"
+          }
+        ]
+      },
+      {
         "id": "e501c7fb094051a208698744d5404d1a6204e48f",
         "type": "FEATURE",
         "text": " sap.m.Slider: Paint active tickmarks"

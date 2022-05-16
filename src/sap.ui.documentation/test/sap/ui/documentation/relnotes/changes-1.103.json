@@ -3,6 +3,28 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "4fb1736907f04efe064f273db2a5cd0701c329df",
+        "type": "FIX",
+        "text": " Demo Kit: highlighter turned off for 'lines'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270055980"
+          }
+        ]
+      },
+      {
+        "id": "0610452fb9b82684309da18f12788bd624e31e67",
+        "type": "FIX",
+        "text": " Demo Kit: Fix \"background_\" classes on table cells",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270056156"
+          }
+        ]
+      },
+      {
         "id": "db90f86e1698ab427b8f2285f58f9a3d275b3912",
         "type": "FIX",
         "text": " Demo Kit: Loading sample from previous version fixed",

@@ -3,6 +3,33 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "d321e7d025c53726a2367cf11b9f32105acb19f9",
+        "type": "FIX",
+        "text": " routing.History: clarify return type of getPreviousHash"
+      },
+      {
+        "id": "41d16da59a3ea2db619ce83e9e763f0cfc246189",
+        "type": "FIX",
+        "text": " sap/ui/util/Mobile.js: Add check for parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270099497"
+          }
+        ]
+      },
+      {
+        "id": "6a0c295e8be945605ef5cb5c86c3cb7cbe7b5332",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.UnitMixin#validateValue: Ignore trailing zeroes in decimal places",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270090634"
+          }
+        ]
+      },
+      {
         "id": "8f74c6e007c5907a0a2306216eeaef27b236ed15",
         "type": "FIX",
         "text": " core.Component: Correctly handle empty activeTerminologies array"
