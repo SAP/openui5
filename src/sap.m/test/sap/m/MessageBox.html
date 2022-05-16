@@ -204,11 +204,9 @@
 			}
 		}));
 
-
 		oVL.addContent(new sap.m.Text("text3", {
-					text: "\n Show details in MessageBox content"
-				})
-		);
+			text: "\n Show details in MessageBox content"
+		}));
 
 		oVL.addContent(new sap.m.Button("buttonDetails", {
 			text: "Show details",
@@ -232,7 +230,7 @@
 		}));
 
 		oVL.addContent(new sap.m.Button({
-			text: "Show JSON details in control",
+			text: "Show JSON details",
 			width: "270px",
 			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
@@ -249,6 +247,68 @@
 					actions: [sap.m.MessageBox.Action.OK],
 					id: "messageBoxId1",
 					details: oJSON
+				});
+			}
+		}));
+
+		oVL.addContent(new sap.m.Button({
+			text: "Show details from callback",
+			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function () {
+				var oJSON = {
+					"success": false,
+					"error": {
+						"code": 231,
+						"message": "An error occurred!"
+					}
+				}
+				sap.m.MessageBox.show("Error message", {
+					title: "Error",
+					details: function () {
+						return Promise.resolve(oJSON);
+					}
+				});
+			}
+		}));
+
+		oVL.addContent(new sap.m.Button({
+			text: "Show details from callback - error case",
+			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function () {
+				sap.m.MessageBox.show("Error message", {
+					title: "Error",
+					details: function () {
+						return new Promise(function (resolve, reject) {
+							setTimeout(reject, 1500);
+						});
+					}
+				});
+			}
+		}));
+		var iAttemptCnt = 0;
+		oVL.addContent(new sap.m.Button({
+			text: "Show details from callback - error on first attempt",
+			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function () {
+				sap.m.MessageBox.show("Error message", {
+					title: "Error",
+					details: function () {
+						if (iAttemptCnt === 0) {
+							iAttemptCnt++;
+							return new Promise(function (resolve, reject) {
+								setTimeout(reject, 1500);
+							});
+						}
+						return new Promise(function (resolve, reject) {
+							setTimeout(resolve.bind(null, "Display this data"), 1500);
+						});
+					},
+					onClose: function () {
+						iAttemptCnt = 0;
+					}
 				});
 			}
 		}));

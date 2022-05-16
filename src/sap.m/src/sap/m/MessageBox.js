@@ -9,6 +9,7 @@ sap.ui.define([
 	'./Text',
 	'./FormattedText',
 	'./Link',
+	'./MessageStrip',
 	'./VBox',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/ElementMetadata',
@@ -22,6 +23,7 @@ sap.ui.define([
 	Text,
 	FormattedText,
 	Link,
+	MessageStrip,
 	VBox,
 	IconPool,
 	ElementMetadata,
@@ -38,14 +40,23 @@ sap.ui.define([
 	// shortcut for sap.m.DialogRoleType
 	var DialogRoleType = library.DialogRoleType;
 
-	// shortcut for sap.ui.core.TextDirection
-	var TextDirection = coreLibrary.TextDirection;
-
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
 	// shortcut for sap.m.TitleAlignment
 	var TitleAlignment = library.TitleAlignment;
+
+	// shortcut for sap.m.FlexRendertype
+	var FlexRendertype = library.FlexRendertype;
+
+	// shortcut for sap.m.FlexAlignItems
+	var FlexAlignItems = library.FlexAlignItems;
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	/**
 	 * Provides easier methods to create sap.m.Dialog with type sap.m.DialogType.Message, such as standard alerts,
@@ -197,15 +208,139 @@ sap.ui.define([
 		QUESTION: "QUESTION"
 	};
 
-
 	var Action = MessageBox.Action,
-			Icon = MessageBox.Icon;
+		Icon = MessageBox.Icon;
 
-	var _verifyBundle = function () {
+	function _verifyBundle() {
 		if (MessageBox._rb !== sap.ui.getCore().getLibraryResourceBundle("sap.m")) {
 			MessageBox._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		}
-	};
+	}
+
+	function _formatDetails(vDetails) {
+		if (typeof vDetails === "object") {
+			// Using stringify() with "tab" as space argument and escaping the JSON to prevent binding
+			return "<pre>" + JSON.stringify(vDetails, null, "\t").replace(/{/gi, "&#x007B;") + "</pre>";
+		}
+
+		return vDetails;
+	}
+
+	function _getDetailsLayout(mOptions, oMessageText, oDialog, oInitialFocusFallback) {
+		var oDetails, oViewDetails, oErrorMessage, oTryAgain, bFocusTryAgain = false,
+			oVBox = new VBox({
+				renderType: FlexRendertype.Bare,
+				alignItems: FlexAlignItems.Start,
+				items: [
+					oMessageText
+				]
+			});
+
+		if (!mOptions.details) {
+			return oVBox;
+		}
+
+		function showDetails(vDetails) {
+			// html text is set by purpose with setter. If it's set in the constructor, there would be issues with binding
+			oDetails.setHtmlText(_formatDetails(vDetails));
+
+			var oInitialFocus = oDialog.getInitialFocus();
+			oDialog.addAriaLabelledBy(oDetails);
+
+			oDetails.setVisible(true);
+			oViewDetails.setVisible(false);
+
+			// focus the dialog, so the screen readers can read the details text
+			oDialog._setInitialFocus();
+
+			if (!oInitialFocus || oInitialFocus === oViewDetails.getId()) {
+				// if the initialFocus is not set or is set to the "Show details" link
+				// focus the first action button
+				oInitialFocusFallback.focus();
+			}
+		}
+
+		function showDetailsAsync() {
+			oViewDetails.setBusyIndicatorDelay(0).setBusy(true);
+			oViewDetails.getDomRef("busyIndicator").focus();
+
+			mOptions.details()
+				.then(function (sData) {
+					if (oDialog.isDestroyed()) {
+						return;
+					}
+
+					showDetails(sData);
+				})
+				.catch(function () {
+					if (oDialog.isDestroyed()) {
+						return;
+					}
+
+					if (document.activeElement === oViewDetails.getDomRef("busyIndicator")) {
+						bFocusTryAgain = true;
+					}
+					oViewDetails.setVisible(false);
+					oErrorMessage.setVisible(true);
+				});
+		}
+
+		oDetails = new FormattedText({
+			visible: false
+		});
+
+		oViewDetails = new Link({
+			text: MessageBox._rb.getText("MSGBOX_LINK_TITLE"),
+			press: function () {
+				if (typeof mOptions.details === "function") {
+					showDetailsAsync();
+				} else {
+					showDetails(mOptions.details);
+				}
+			}
+		});
+
+		oTryAgain = new Link({
+			text: MessageBox._rb.getText("MSGBOX_DETAILS_RETRY_LOADING"),
+			press: function () {
+				oViewDetails.setVisible(true);
+				oErrorMessage.setVisible(false);
+				var oDelegate = {
+					onAfterRendering: function () {
+						oViewDetails.removeEventDelegate(oDelegate);
+						showDetailsAsync();
+					}
+				};
+				oViewDetails.addEventDelegate(oDelegate);
+			}
+		});
+
+		oTryAgain.addEventDelegate({
+			onAfterRendering: function () {
+				if (bFocusTryAgain) {
+					oTryAgain.focus();
+				}
+				bFocusTryAgain = false;
+			}
+		});
+
+		oErrorMessage = new MessageStrip({
+			text: MessageBox._rb.getText("MSGBOX_DETAILS_LOAD_ERROR"),
+			type: MessageType.Error,
+			visible: false,
+			link: oTryAgain
+		});
+
+		oViewDetails.addStyleClass("sapMMessageBoxLinkText");
+		oErrorMessage.addStyleClass("sapMMessageBoxErrorText");
+		oDetails.addStyleClass("sapMMessageBoxDetails");
+
+		oVBox.addItem(oViewDetails);
+		oVBox.addItem(oErrorMessage);
+		oVBox.addItem(oDetails);
+
+		return oVBox;
+	}
 
 	/**
 	 * Creates and displays an sap.m.Dialog with type sap.m.DialogType.Message with the given text and buttons, and optionally other parts.
@@ -257,7 +392,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 	 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 	 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
-	 * @param {string} [mOptions.details] Added since version 1.28.0. If 'details' is set in the MessageBox, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed. The initial visibility is not configurable and the details are hidden by default.
+	 * @param {string|object|function():Promise<string|object>} [mOptions.details]
+	 *      Added since version 1.28.0. If 'details' is set, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed.
+	 *      The initial visibility is not configurable and the details are hidden by default.<br>
+	 *      If object is given, it will be serialized using <code>JSON.stringify</code>.<br>
+	 *      Since version 1.103, a callback function can be used. It should return a promise, that resolves with a <code>string</code> value or a JSON object, which will be stringified,
+	 *      or rejects - in this case a default error message will be displayed.
 	 * @param {sap.ui.core.CSSSize} [mOptions.contentWidth] The width of the MessageBox
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @public
@@ -362,57 +502,6 @@ sap.ui.define([
 			aButtons.push(button(mOptions.actions[i], sButtonType));
 		}
 
-		function getInformationLayout(mOptions, oMessageText) {
-			//Generate MessageBox Layout
-			var oFT, oShowLink,
-				oVBox = new VBox({
-					items: [
-						oMessageText
-					]
-				});
-
-			if (!mOptions.details) {
-				return oVBox;
-			}
-
-			if (typeof mOptions.details == 'object') {
-				//covers JSON case
-				//Using stringify() with "tab" as space argument and escaping the JSON to prevent binding
-				mOptions.details = "<pre>" + JSON.stringify(mOptions.details, null, '\t')
-				.replace(/{/gi, "&#x007B;") + "</pre>";
-			}
-			// html text is set by purpose with setter. If is set in the constructor there are issues with binding
-			oFT = new FormattedText().setVisible(false).setHtmlText(mOptions.details);
-
-			oShowLink = new Link({
-				text: MessageBox._rb.getText("MSGBOX_LINK_TITLE"),
-				press: function () {
-					var oInitialFocus = oDialog.getInitialFocus();
-					oDialog.addAriaLabelledBy(oFT);
-
-					oFT.setVisible(true);
-					oShowLink.setVisible(false);
-
-					// focus the dialog, so the screen readers can read the details text
-					oDialog._setInitialFocus();
-
-					if (!oInitialFocus || oInitialFocus === oShowLink.getId()) {
-						// if the initialFocus is not set or is set to the "Show details" link
-						// focus the first action button
-						aButtons[0].focus();
-					}
-				}
-			});
-
-			oShowLink.addStyleClass("sapMMessageBoxLinkText");
-			oFT.addStyleClass("sapMMessageBoxDetails");
-
-			oVBox.addItem(oShowLink);
-			oVBox.addItem(oFT);
-
-			return oVBox;
-		}
-
 		function onclose() {
 			if (typeof mOptions.onClose === "function") {
 				mOptions.onClose(oResult);
@@ -460,17 +549,11 @@ sap.ui.define([
 			vMessageContent = vMessage.addStyleClass("sapMMsgBoxText");
 		}
 
-		// If we have additional details, we should wrap the content in a details layout.
-		if (mOptions && mOptions.hasOwnProperty("details") && mOptions.details !== "") {
-			vMessageContent = getInformationLayout(mOptions, vMessageContent);
-		}
-
 		oDialog = new Dialog({
 			id: mOptions.id,
 			type: DialogType.Message,
 			title: mOptions.title,
 			titleAlignment: TitleAlignment.Auto,
-			content: vMessageContent,
 			icon: mIcons[mOptions.icon],
 			initialFocus: getInitialFocusControl(),
 			verticalScrolling: mOptions.verticalScrolling,
@@ -482,6 +565,12 @@ sap.ui.define([
 			closeOnNavigation: mOptions.closeOnNavigation
 		}).addStyleClass("sapMMessageBox");
 
+		// If we have additional details, we should wrap the content in a details layout.
+		if (mOptions.hasOwnProperty("details") && mOptions.details !== "") {
+			vMessageContent = _getDetailsLayout(mOptions, vMessageContent, oDialog, aButtons[0]);
+		}
+
+		oDialog.addContent(vMessageContent);
 		oDialog.setProperty("role",  DialogRoleType.AlertDialog);
 
 		if (mClasses[mOptions.icon]) {
@@ -542,7 +631,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 	 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 	 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
-	 * @param {string} [mOptions.details] Added since version 1.28.0. If 'details' is set in the MessageBox, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed. The initial visibility is not configurable and the details are hidden by default.
+	 * @param {string|object|function():Promise<string|object>} [mOptions.details]
+	 *      Added since version 1.28.0. If 'details' is set, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed.
+	 *      The initial visibility is not configurable and the details are hidden by default.<br>
+	 *      If object is given, it will be serialized using <code>JSON.stringify</code>.<br>
+	 *      Since version 1.103, a callback function can be used. It should return a promise, that resolves with a <code>string</code> value or a JSON object, which will be stringified,
+	 *      or rejects - in this case a default error message will be displayed.
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @public
 	 * @static
@@ -576,7 +670,7 @@ sap.ui.define([
 
 		mOptions = jQuery.extend({}, mDefaults, mOptions);
 
-		return MessageBox.show(vMessage, mOptions);
+		MessageBox.show(vMessage, mOptions);
 	};
 
 	/**
@@ -628,7 +722,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 	 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 	 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
-	 * @param {string} [mOptions.details] Added since version 1.28.0. If 'details' is set in the MessageBox, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed. The initial visibility is not configurable and the details are hidden by default.
+	 * @param {string|object|function():Promise<string|object>} [mOptions.details]
+	 *      Added since version 1.28.0. If 'details' is set, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed.
+	 *      The initial visibility is not configurable and the details are hidden by default.<br>
+	 *      If object is given, it will be serialized using <code>JSON.stringify</code>.<br>
+	 *      Since version 1.103, a callback function can be used. It should return a promise, that resolves with a <code>string</code> value or a JSON object, which will be stringified,
+	 *      or rejects - in this case a default error message will be displayed.
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @public
 	 * @static
@@ -662,7 +761,7 @@ sap.ui.define([
 
 		mOptions = jQuery.extend({}, mDefaults, mOptions);
 
-		return MessageBox.show(vMessage, mOptions);
+		MessageBox.show(vMessage, mOptions);
 	};
 
 	/**
@@ -708,7 +807,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 	 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 	 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
-	 * @param {string} [mOptions.details] Added since version 1.28.0. If 'details' is set in the MessageBox, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed. The initial visibility is not configurable and the details are hidden by default.
+	 * @param {string|object|function():Promise<string|object>} [mOptions.details]
+	 *      Added since version 1.28.0. If 'details' is set, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed.
+	 *      The initial visibility is not configurable and the details are hidden by default.<br>
+	 *      If object is given, it will be serialized using <code>JSON.stringify</code>.<br>
+	 *      Since version 1.103, a callback function can be used. It should return a promise, that resolves with a <code>string</code> value or a JSON object, which will be stringified,
+	 *      or rejects - in this case a default error message will be displayed.
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @public
 	 * @since 1.30
@@ -728,7 +832,7 @@ sap.ui.define([
 
 		mOptions = jQuery.extend({}, mDefaults, mOptions);
 
-		return MessageBox.show(vMessage, mOptions);
+		MessageBox.show(vMessage, mOptions);
 	};
 
 	/**
@@ -773,7 +877,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 	 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 	 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
-	 * @param {string} [mOptions.details] Added since version 1.28.0. If 'details' is set in the MessageBox, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed. The initial visibility is not configurable and the details are hidden by default.
+	 * @param {string|object|function():Promise<string|object>} [mOptions.details]
+	 *      Added since version 1.28.0. If 'details' is set, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed.
+	 *      The initial visibility is not configurable and the details are hidden by default.<br>
+	 *      If object is given, it will be serialized using <code>JSON.stringify</code>.<br>
+	 *      Since version 1.103, a callback function can be used. It should return a promise, that resolves with a <code>string</code> value or a JSON object, which will be stringified,
+	 *      or rejects - in this case a default error message will be displayed.
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @public
 	 * @since 1.30
@@ -793,7 +902,7 @@ sap.ui.define([
 
 		mOptions = jQuery.extend({}, mDefaults, mOptions);
 
-		return MessageBox.show(vMessage, mOptions);
+		MessageBox.show(vMessage, mOptions);
 	};
 
 	/**
@@ -838,7 +947,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 	 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 	 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
-	 * @param {string} [mOptions.details] Added since version 1.28.0. If 'details' is set in the MessageBox, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed. The initial visibility is not configurable and the details are hidden by default.
+	 * @param {string|object|function():Promise<string|object>} [mOptions.details]
+	 *      Added since version 1.28.0. If 'details' is set, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed.
+	 *      The initial visibility is not configurable and the details are hidden by default.<br>
+	 *      If object is given, it will be serialized using <code>JSON.stringify</code>.<br>
+	 *      Since version 1.103, a callback function can be used. It should return a promise, that resolves with a <code>string</code> value or a JSON object, which will be stringified,
+	 *      or rejects - in this case a default error message will be displayed.
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @public
 	 * @since 1.30
@@ -858,7 +972,7 @@ sap.ui.define([
 
 		mOptions = jQuery.extend({}, mDefaults, mOptions);
 
-		return MessageBox.show(vMessage, mOptions);
+		MessageBox.show(vMessage, mOptions);
 	};
 
 	/**
@@ -903,7 +1017,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 	 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 	 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
-	 * @param {string} [mOptions.details] Added since version 1.28.0. If 'details' is set in the MessageBox, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed. The initial visibility is not configurable and the details are hidden by default.
+	 * @param {string|object|function():Promise<string|object>} [mOptions.details]
+	 *      Added since version 1.28.0. If 'details' is set, a link to view details is added. When the user clicks the link, the text area containing 'details' information is displayed.
+	 *      The initial visibility is not configurable and the details are hidden by default.<br>
+	 *      If object is given, it will be serialized using <code>JSON.stringify</code>.<br>
+	 *      Since version 1.103, a callback function can be used. It should return a promise, that resolves with a <code>string</code> value or a JSON object, which will be stringified,
+	 *      or rejects - in this case a default error message will be displayed.
 	 * @param {boolean} [mOptions.closeOnNavigation=true] Added since version 1.72.0. Whether the MessageBox will be closed automatically when a routing navigation occurs.
 	 * @public
 	 * @since 1.30
@@ -923,7 +1042,7 @@ sap.ui.define([
 
 		mOptions = jQuery.extend({}, mDefaults, mOptions);
 
-		return MessageBox.show(vMessage, mOptions);
+		MessageBox.show(vMessage, mOptions);
 	};
 
 	return MessageBox;
