@@ -3298,6 +3298,18 @@ sap.ui.define([
 			dataProperty: "complexNoWidthCalculation"
 		}));
 
+		this.oTable.addColumn(new Column({
+			id: "stringValue_nomaxlength",
+			header: "stringValue_nomaxlength",
+			dataProperty: "stringValue_nomaxlength"
+		}));
+
+		this.oTable.addColumn(new Column({
+			id: "stringValue_bigmaxlength",
+			header: "stringValue_bigmaxlength",
+			dataProperty: "stringValue_bigmaxlength"
+		}));
+
 		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "firstName",
@@ -3357,7 +3369,9 @@ sap.ui.define([
 			}, {
 				name: "columnGap1",
 				label: "Test gap",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String"),
+				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+					maxLength: 32
+				}),
 				visualSettings: {
 					widthCalculation: {
 						gap: 2
@@ -3366,7 +3380,9 @@ sap.ui.define([
 			}, {
 				name: "columnGap2",
 				label: "Test gap",
-				typeConfig: TypeUtil.getTypeConfig("Edm.String")
+				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+					maxLength: 32
+				})
 			}, {
 				name: "noWidthCalculation",
 				label: "No Width Calculation",
@@ -3384,6 +3400,16 @@ sap.ui.define([
 						includeLabel: false
 					}
 				}
+			}, {
+				name: "stringValue_nomaxlength",
+				label: "String",
+				typeConfig: TypeUtil.getTypeConfig("Edm.String")
+			}, {
+				name: "stringValue_bigmaxlength",
+				label: "String",
+				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+					maxLength: 255
+				})
 			}
 		]);
 
@@ -3430,6 +3456,9 @@ sap.ui.define([
 
 			// complex property with visualSettings.widthCalculation=null
 			assert.equal(getInnerColumnWidth(aColumns[8]), getInnerColumnWidth(aColumns[1]), "Width calculation in complex property with visualSettings.widthCalculation=null is ignored");
+
+			assert.equal(getInnerColumnWidth(aColumns[9]), "20rem", "String type without maxLength gets maxWidth");
+			assert.equal(getInnerColumnWidth(aColumns[10]), "20rem", "String type with big maxLength gets maxWidth");
 		}.bind(this));
 	});
 
