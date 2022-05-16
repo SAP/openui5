@@ -1264,20 +1264,21 @@ sap.ui.define([
 		assert.strictEqual(_Helper.namespace("zui5_epm_sample.v1.Products/Category/type.cast"),
 			"zui5_epm_sample.v1");
 		assert.strictEqual(
-			_Helper.namespace("zui5_epm_sample.v1.Action(ui5_epm_sample.v1.EnityType)/"),
+			_Helper.namespace("zui5_epm_sample.v1.Action(ui5_epm_sample.v1.EntityType)/"),
 			"zui5_epm_sample.v1");
 		assert.strictEqual(
-			_Helper.namespace("zui5_epm_sample.v1.Action(ui5_epm_sample.v1.EnityType)/Country"),
+			_Helper.namespace("zui5_epm_sample.v1.Action(ui5_epm_sample.v1.EntityType)/Country"),
 			"zui5_epm_sample.v1");
 		assert.strictEqual(
-			_Helper.namespace("zui5_epm_sample.v1.Action(Collection(ui5_epm_sample.v1.EnityType))"),
+			_Helper.namespace("zui5_epm_sample.v1.Action(Collection"
+				+ "(ui5_epm_sample.v1.EntityType))"),
 			"zui5_epm_sample.v1");
 		assert.strictEqual(
-			_Helper.namespace("zui5_epm_sample.v1.Action(Collection(ui5_epm_sample.v1.EnityType))"
+			_Helper.namespace("zui5_epm_sample.v1.Action(Collection(ui5_epm_sample.v1.EntityType))"
 				+ "/Country"),
 			"zui5_epm_sample.v1");
 		assert.strictEqual(
-			_Helper.namespace("zui5_epm_sample.v1.Action(Collection(ui5_epm_sample.v1.EnityType))"
+			_Helper.namespace("zui5_epm_sample.v1.Action(Collection(ui5_epm_sample.v1.EntityType))"
 				+ "/Address/Country"),
 			"zui5_epm_sample.v1");
 	});

@@ -670,11 +670,11 @@ sap.ui.define([
 		 * change event.
 		 *
 		 * @param {object} assert The QUnit assert object
-		 * @param {function} fnGetResetable The function to determine the object to call
+		 * @param {function} fnGetResettable The function to determine the object to call
 		 *   resetChanges at. The function gets the view as parameter.
 		 * @returns {Promise} A promise that is resolved when the change event has been fired
 		 */
-		checkResetInvalidDataState : function (assert, fnGetResetable) {
+		checkResetInvalidDataState : function (assert, fnGetResettable) {
 			var oModel = this.createTeaBusiModel({updateGroupId : "update"}),
 				sView = '\
 <FlexBox id="form" binding="{/EMPLOYEES(\'2\')}">\
@@ -701,7 +701,7 @@ sap.ui.define([
 
 				// code under test
 				// Note: $direct would be an "Invalid group ID" here
-				fnGetResetable(that.oView).resetChanges();
+				fnGetResettable(that.oView).resetChanges();
 
 				return that.waitForChanges(assert);
 			});

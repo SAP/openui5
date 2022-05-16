@@ -713,7 +713,7 @@ sap.ui.define([
 
 		this.associations[sName] = this.association = {
 			referentialConstraint : null,
-			roles : {} // maps role name -> AssocationEnd
+			roles : {} // maps role name -> AssociationEnd
 		};
 	};
 

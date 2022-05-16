@@ -2580,7 +2580,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doSetProperty: fetchUpdataData fails", function (assert) {
+	QUnit.test("doSetProperty: fetchUpdateData fails", function (assert) {
 		var oBinding = {
 				doSetProperty : function () {}
 			},

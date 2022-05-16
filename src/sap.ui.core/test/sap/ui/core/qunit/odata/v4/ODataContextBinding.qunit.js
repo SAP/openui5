@@ -4151,7 +4151,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.getParameterContext(), oBinding.oParameterContext);
 		assert.strictEqual(oBinding.oParameterContext.getPath(), "/Operation(...)/$Parameter");
 
-		// preparation - seting parameter
+		// preparation - setting parameter
 		oBinding.oCachePromise = SyncPromise.resolve({/* cache must be ignored! */});
 		this.mock(oBinding).expects("getRelativePath")
 			.withExactArgs("/Operation(...)/$Parameter/name")

@@ -1597,7 +1597,7 @@ sap.ui.define([
 	QUnit.test("processBatch(...): success", function (assert) {
 		var oBatchRequestSentExpectation,
 			oBatchResponseReceivedExpectation,
-			oCleanUpChangeSetsExpection,
+			oCleanUpChangeSetsExpectation,
 			fnSubmit = function () {},
 			aExpectedRequests = [[{
 				method : "POST",
@@ -1741,7 +1741,7 @@ sap.ui.define([
 		aExpectedRequests.iChangeSet = 0;
 		aExpectedRequests[0].iSerialNumber = 0; // Note: #cleanUpChangeSets would remove this
 
-		oCleanUpChangeSetsExpection = oRequestorMock.expects("cleanUpChangeSets")
+		oCleanUpChangeSetsExpectation = oRequestorMock.expects("cleanUpChangeSets")
 			.withExactArgs(aExpectedRequests).returns("~bHasChanges~");
 		oRequestorMock.expects("mergeGetRequests").withExactArgs(aExpectedRequests)
 			.callsFake(function (aRequests) {
@@ -1773,7 +1773,7 @@ sap.ui.define([
 
 		assert.ok(oBatchRequestSentExpectation.calledImmediatelyBefore(oSendBatchExpectation));
 		assert.ok(oBatchResponseReceivedExpectation.notCalled);
-		oCleanUpChangeSetsExpection.verify();
+		oCleanUpChangeSetsExpectation.verify();
 		oRequestorMock.expects("cleanUpChangeSets").withExactArgs([]).returns(false);
 
 		// code under test
@@ -2617,7 +2617,7 @@ sap.ui.define([
 		// relevant and that the group ID is only checked if it has been passed to
 		// hasPendingChanges, and that isModifying is checked before isLocked.
 		// @param {boolean} bIsModifying - Whether the group lock is modifying
-		function addDummyGoupLock(bIsModifying) {
+		function addDummyGroupLock(bIsModifying) {
 			var oGroupLock = {
 					getGroupId : function () {},
 					isLocked : function () {},
@@ -2638,7 +2638,7 @@ sap.ui.define([
 
 		oRequestor.aLockedGroupLocks = [];
 		for (j = 0; j < i + 2; j += 1) {
-			addDummyGoupLock(j % 2 === 0); // some are modifying but all are unlocked
+			addDummyGroupLock(j % 2 === 0); // some are modifying but all are unlocked
 		}
 		this.mock(oGroupLockForFixture).expects("getGroupId").withExactArgs()
 			.thrice() // once for oFixture.sGroupId and once for "otherGroup"
@@ -3820,7 +3820,7 @@ sap.ui.define([
 		var aMessages = [{code : "42", message : "Test"}, {code : "43", type : "Warning"}],
 			sMessages = JSON.stringify(aMessages),
 			oRequestor = _Requestor.create("/", oModelInterface),
-			sResourcePath = "Procduct(42)/to_bar";
+			sResourcePath = "Product(42)/to_bar";
 
 		this.mock(oModelInterface).expects("reportTransitionMessages")
 			.withExactArgs([{
@@ -4129,7 +4129,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("setSessionContext: succesful ping", function (assert) {
+	QUnit.test("setSessionContext: successful ping", function (assert) {
 		var oExpectation,
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface, {}, {
 				"sap-client" : "120"

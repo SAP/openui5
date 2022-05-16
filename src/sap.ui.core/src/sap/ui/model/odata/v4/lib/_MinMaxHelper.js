@@ -11,7 +11,7 @@ sap.ui.define([
 
 	return {
 		/**
-		 * Creates a cache that requests the mininum and maximum values together with the first
+		 * Creates a cache that requests the minimum and maximum values together with the first
 		 * request. Subsequent requests remain unchanged.
 		 *
 		 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor

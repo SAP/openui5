@@ -1840,7 +1840,7 @@ sap.ui.define([
 	 * binding, its contexts are moved here, it is destroyed and its cache is returned.
 	 *
 	 * @param {string} sResourcePath
-	 *   The resoure path for the cache
+	 *   The resource path for the cache
 	 * @param {object} mQueryOptions
 	 *   The query options for the cache
 	 * @returns {sap.ui.model.odata.v4.lib._CollectionCache|undefined}

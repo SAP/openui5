@@ -773,7 +773,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#registerChange: $$sharedRequst", function () {
+	QUnit.test("_Cache#registerChange: $$sharedRequest", function () {
 		var oCache = new _Cache(this.oRequestor, "TEAMS", undefined, false, undefined, true);
 
 		this.mock(_Helper).expects("addByPath").never();
@@ -792,7 +792,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#deregisterChange: $$sharedRequst", function () {
+	QUnit.test("_Cache#deregisterChange: $$sharedRequest", function () {
 		var oCache = new _Cache(this.oRequestor, "TEAMS", undefined, false, undefined, true);
 
 		this.mock(_Helper).expects("removeByPath").never();

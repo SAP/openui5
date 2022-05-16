@@ -214,7 +214,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oXml0), sAnnotationUrl)
 			.returns({});
 
-		// code under test (read annotations before 1st $metdata request)
+		// code under test (read annotations before 1st $metadata request)
 		oPromise0 = oMetadataRequestor.read(sAnnotationUrl, /*bAnnotations*/true);
 
 		oJQueryMock.expects("ajax")
