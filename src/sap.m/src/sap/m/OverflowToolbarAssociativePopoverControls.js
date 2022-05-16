@@ -169,6 +169,11 @@ sap.ui.define(['sap/ui/base/Object', './OverflowToolbarButton', './OverflowToolb
 				listenForEvents: ["change"],
 				noInvalidationProps: ["enabled", "value", "dateValue", "displayFormat", "valueFormat", "displayFormatType", "secondaryCalendarType", "minDate", "maxDate"]
 			},
+			"sap.m.DateRangeSelection": {
+				canOverflow: true,
+				listenForEvents: ["change"],
+				noInvalidationProps: ["enabled", "value", "dateValue", "secondDateValue", "displayFormat", "valueFormat", "displayFormatType", "secondaryCalendarType", "minDate", "maxDate", "delimiter"]
+			},
 			"sap.m.DateTimePicker": {
 				canOverflow: true,
 				listenForEvents: ["change"],
