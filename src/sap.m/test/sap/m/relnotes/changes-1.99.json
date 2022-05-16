@@ -785,5 +785,32 @@
         "text": " sap.m.DynamicDateRange: Adds new standard options"
       }
     ]
+  },
+  "1.99.1": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "3c698852782502e6744d0d52e4733ac348d445c2",
+        "type": "FIX",
+        "text": " core/m: fix viewport meta for iOS platform",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280037152"
+          }
+        ]
+      },
+      {
+        "id": "28a77eeb06f214b652cdba28b2209a90030f2a71",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: No error after rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270024795"
+          }
+        ]
+      }
+    ]
   }
 }

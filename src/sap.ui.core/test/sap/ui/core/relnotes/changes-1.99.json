@@ -250,5 +250,32 @@
         "text": " sap.m.DynamicDateRange: Adds new standard options"
       }
     ]
+  },
+  "1.99.1": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "3c698852782502e6744d0d52e4733ac348d445c2",
+        "type": "FIX",
+        "text": " core/m: fix viewport meta for iOS platform",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280037152"
+          }
+        ]
+      },
+      {
+        "id": "00836ec18a49916857b9786e24e6107cc5e11aae",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#refresh: must not reset pending refresh flag as long as binding is suspended",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280074593"
+          }
+        ]
+      }
+    ]
   }
 }
