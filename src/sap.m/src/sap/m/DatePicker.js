@@ -1342,7 +1342,7 @@ sap.ui.define([
 
 			sFormattedDate = this._getPickerParser().format(
 				oDate,
-				sap.ui.getCore().getConfiguration().getTimezone()
+				this._getTimezone(true)
 			);
 			oDate = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[0];
 
@@ -1356,7 +1356,7 @@ sap.ui.define([
 
 			sFormattedDate = this._getPickerParser().format(
 				oFocusDate,
-				sap.ui.getCore().getConfiguration().getTimezone()
+				this._getTimezone(true)
 			);
 			oFocusDate = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[0];
 
@@ -1402,7 +1402,7 @@ sap.ui.define([
 		var sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
 		var oParts = this._getPickerParser().parse(
 			sFormattedDate,
-			sap.ui.getCore().getConfiguration().getTimezone()
+			this._getTimezone(true)
 		);
 		oDate = oParts && oParts[0];
 
@@ -1444,6 +1444,10 @@ sap.ui.define([
 		}
 
 		this._selectDate();
+	};
+
+	DatePicker.prototype._getTimezone = function(bUseDefaultAsFallback) {
+		return sap.ui.getCore().getConfiguration().getTimezone();
 	};
 
 	/* sets cursor inside the input in order to focus it */
