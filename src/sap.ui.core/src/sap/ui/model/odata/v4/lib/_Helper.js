@@ -46,7 +46,7 @@ sap.ui.define([
 			if (oItem) {
 				if (!mMap[sPath]) {
 					mMap[sPath] = [oItem];
-				} else if (mMap[sPath].indexOf(oItem) < 0) {
+				} else if (!mMap[sPath].includes(oItem)) {
 					mMap[sPath].push(oItem);
 				}
 			}
@@ -68,7 +68,7 @@ sap.ui.define([
 				aChildren.forEach(function (sPath) {
 					var aSegments;
 
-					if (aAncestors.indexOf(sPath) >= 0) {
+					if (aAncestors.includes(sPath)) {
 						mChildren[sPath] = true;
 						return;
 					}
@@ -95,7 +95,7 @@ sap.ui.define([
 		addToSelect : function (mQueryOptions, aSelectPaths) {
 			mQueryOptions.$select = mQueryOptions.$select || [];
 			aSelectPaths.forEach(function (sPath) {
-				if (mQueryOptions.$select.indexOf(sPath) < 0) {
+				if (!mQueryOptions.$select.includes(sPath)) {
 					mQueryOptions.$select.push(sPath);
 				}
 			});

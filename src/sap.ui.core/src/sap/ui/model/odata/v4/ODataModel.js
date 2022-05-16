@@ -886,7 +886,7 @@ sap.ui.define([
 				sExpandPath,
 				vValue = mOptions[sOptionName];
 
-			if (!bSystemQueryOptionsAllowed || aAllowed.indexOf(sOptionName) < 0) {
+			if (!bSystemQueryOptionsAllowed || !aAllowed.includes(sOptionName)) {
 					throw new Error("System query option " + sOptionName + " is not supported");
 			}
 			if ((sOptionName === "$expand" || sOptionName === "$select")
