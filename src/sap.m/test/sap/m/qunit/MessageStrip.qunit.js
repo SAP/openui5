@@ -406,18 +406,12 @@ sap.ui.define([
 			"only one element with class .sapUiPseudoInvisibleText should be present");
 	});
 
-	QUnit.test("When link is set it should have aria-labelledby attribute", function (assert) {
+	QUnit.test("When link is set it should have aria-describedby attribute", function (assert) {
 		var link = this.oMessageStrip.getLink(),
 			linkDom = link.getDomRef(),
-			labelledBy = linkDom.getAttribute("aria-labelledby");
+			describedBy = linkDom.getAttribute("aria-describedby");
 
-			if (Device.browser.msie) {
-				assert.strictEqual(labelledBy, this.oMessageStrip.getId(),
-					"link aria-labelledby should point to the MessageStrip id");
-			} else {
-				assert.strictEqual(labelledBy, this.oMessageStrip.getId() + " " + link.getId(),
-					"link aria-labelledby should point to the MessageStrip and Link id");
-			}
+			assert.strictEqual(describedBy, this.oMessageStrip.getId(), "link aria-labelledby should point to the MessageStrip and Link id");
 	});
 
 	QUnit.test("When we have a close button it should indicate that it closes a message strip", function (assert) {
