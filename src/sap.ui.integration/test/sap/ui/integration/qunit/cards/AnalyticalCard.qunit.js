@@ -783,6 +783,111 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_Analytical_TimeAxis = {
+		"sap.app": {"id": "sap.fe", "type": "card"},
+		"sap.ui": {"technology": "UI5"},
+		"sap.card": {
+			"type": "Analytical",
+			"header": {
+				"title": "Column Series with Time Axis"
+			},
+			"content": {
+				"data": {
+					"json": {
+						"milk": [
+							{
+								"Date": "12/9/2012",
+								"Revenue": 1884613.732,
+								"Cost": 318748.33
+							},
+							{
+								"Date": "12/10/2012",
+								"Revenue": 4682139.01563249,
+								"Cost": 724396.2295
+							},
+							{
+								"Date": "12/11/2012",
+								"Revenue": 3487569.9375,
+								"Cost": 172863.976
+							},
+							{
+								"Date": "12/12/2012",
+								"Revenue": 1046946.00408699,
+								"Cost": 544135.4995
+							},
+							{
+								"Date": "12/13/2012",
+								"Revenue": 1230392.932,
+								"Cost": 467009.594
+							},
+							{
+								"Date": "12/14/2012",
+								"Revenue": 1633524.08,
+								"Cost": 214320.01
+							},
+							{
+								"Date": "12/15/2012",
+								"Revenue": 1235093.22603004,
+								"Cost": 345418.05
+							}
+						]
+					},
+					"path": "/milk"
+				},
+				"chartType": "timeseries_column",
+				"chartProperties": {
+					"plotArea": {
+						"dataLabel": {
+							"visible": true
+						}
+					},
+					"timeAxis": {
+						"title": {
+							"visible": false
+						}
+					},
+					"valueAxis": {
+						"title": {
+							"visible": false
+						}
+					},
+					"title": {
+						"visible": false
+					}
+				},
+				"dimensions": [
+					{
+						"name": "Date",
+						"value": "{Date}",
+						"dataType":"date"
+					}
+				],
+				"measures": [
+					{
+						"name": "Cost",
+						"value": "{Cost}"
+					}
+				],
+				"feeds": [
+					{
+						"uid": "valueAxis",
+						"type": "Measure",
+						"values": [
+							"Cost"
+						]
+					},
+					{
+						"uid": "timeAxis",
+						"type": "Dimension",
+						"values": [
+							"Date"
+						]
+					}
+				]
+			}
+		}
+	};
+
 	function testStackedBarChartCreation(oCard, oManifest, assert) {
 		// Arrange
 		var done = assert.async(),
@@ -935,6 +1040,22 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_Analytical_WithFeeds);
+		});
+
+		QUnit.test("Creating chart with time axis", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				var oContent = this.oCard.getCardContent(),
+					oChart = oContent.getAggregation("_content");
+				Core.applyChanges();
+
+				assert.strictEqual(oChart.getDataset().getDimensions()[0].getDataType(), "date", "dataType is correctly set");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_Analytical_TimeAxis);
 		});
 
 		QUnit.module("Init");

@@ -454,6 +454,26 @@ sap.ui.define([
 										key: 'data.json'
 									}
 								]
+							},
+							{
+								title: 'Column with Time Axis',
+								key: 'timeAxis',
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/analytical/timeAxis/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/analytical/timeAxis/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
 							}
 						]
 					},

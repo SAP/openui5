@@ -1064,7 +1064,7 @@
 							"visible": true
 						}
 					},
-					"categoryAxis": {
+					"timeAxis": {
 						"title": {
 							"visible": false
 						}
