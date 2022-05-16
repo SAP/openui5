@@ -66,6 +66,9 @@ sap.ui.define([
 					subTitle: { type: "string", defaultValue: null },
 					 /**
 					 * Defines the <code>ProductSwitchItem</code> target URI. Supports standard hyperlink behavior.
+					 *
+					 * <b>Note:</b> Redirection is handled via application logic, by subscribing to the
+					 * {@link sap.f.ProductSwitch#event:change change} event of <code>sap.f.ProductSwitch</code>.
 					 */
 					targetSrc: { type: "sap.ui.core.URI", group: "Data", defaultValue: null },
 					 /**
