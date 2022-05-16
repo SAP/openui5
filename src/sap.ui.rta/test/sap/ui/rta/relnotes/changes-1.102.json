@@ -1,0 +1,18 @@
+{
+  "1.102.0": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "07c8f529c72649807fe0459a4a6d3f8b634d1744",
+        "type": "FIX",
+        "text": " sap.ui.rta - fix missing AppConfiguration service",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270081519"
+          }
+        ]
+      }
+    ]
+  }
+}

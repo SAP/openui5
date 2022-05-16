@@ -3,6 +3,17 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "5096546aa4c52f3d95a012e009fb5b0ae6774203",
+        "type": "FIX",
+        "text": " sap.ui.unified.TimesRow: Invalid symbol replaced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270094593"
+          }
+        ]
+      },
+      {
         "id": "b33bd06d6dc3476a83eee93af05ffbba38b1157d",
         "type": "FEATURE",
         "text": " sap.m.ColorPicker: Horizon themes implemented"

@@ -3,6 +3,61 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "3823468a6a83a32f1b86b86f82bfc39aba6d0064",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.UnitMixin#validateValue: Ignore trailing zeroes in decimal places",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270090634"
+          }
+        ]
+      },
+      {
+        "id": "9d60d98d0b0a23c913926704a56ed6234f7f8d56",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.Context#delete: Use default change group and change set id for entity type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270088174"
+          }
+        ]
+      },
+      {
+        "id": "84e271cd9f7a7b17a5e5ae82c02a1b6666209979",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context#doSetProperty: avoid TypeError...",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270087626"
+          }
+        ]
+      },
+      {
+        "id": "99083a3f4bd568a02693970afea8d18ce32748ae",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#create: avoid \"Failed to drill-down into ($uid=id-...)\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270085667"
+          }
+        ]
+      },
+      {
+        "id": "c86d82ef56933a666d9c03696bf4a68b465bbe08",
+        "type": "FIX",
+        "text": " sap.ui.core: attach/detach event handler correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "c7244b9de84aadef10d12e21b40889dbdeede640",
         "type": "FIX",
         "text": " DragAndDrop: Android browser support",

@@ -3,6 +3,17 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "6369d02a385d55a99e0f1815653becc93c074caa",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Warning placeholder font-weight adjusted in Horizon HC themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270087564"
+          }
+        ]
+      },
+      {
         "id": "b33bd06d6dc3476a83eee93af05ffbba38b1157d",
         "type": "FEATURE",
         "text": " sap.m.ColorPicker: Horizon themes implemented"

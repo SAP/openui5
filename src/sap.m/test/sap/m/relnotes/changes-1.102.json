@@ -3,6 +3,39 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "75819e1725b159ff661e22941c27304287843293",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Resize handler icon no longer has aria-label attr",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270092686"
+          }
+        ]
+      },
+      {
+        "id": "4a2ce37b56f7d9cfe1b079f74b42550ac4d91ab6",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Works with the user timezone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270075878"
+          }
+        ]
+      },
+      {
+        "id": "c86d82ef56933a666d9c03696bf4a68b465bbe08",
+        "type": "FIX",
+        "text": " sap.ui.core: attach/detach event handler correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "9f26d83b71f99f5d06e6fbd8df6803cc42296d1a",
         "type": "FIX",
         "text": " sap.m.ComboBox: Events handling enhancements on handleClearIconPress",
