@@ -6,7 +6,7 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	function(library, Core, Control, TileContentRenderer) {
 	"use strict";
 
-	var Priority = Core.Priority;
+	var Priority = library.Priority;
 
 	var LoadState = library.LoadState;
 
@@ -61,7 +61,12 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 				 * Adds a priority badge before the content. Works only in Generic Tile ActionMode.
 				 * @experimental Since 1.96
 				 */
-				"priority" : {type: "sap.ui.core.Priority", group: "Misc", defaultValue: Priority.None},
+				"priority" : {type: "sap.m.Priority", group: "Misc", defaultValue: Priority.None},
+				/**
+				 * Sets the Text inside the Priority badge in Generic Tile ActionMode.
+				 * @experimental Since 1.103
+				 */
+				 "priorityText" : {type: "string", group: "Misc", defaultValue: null},
 				/**
 				 * The load status.
 				 * @since 1.100.0
@@ -264,17 +269,6 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	TileContent.prototype.setRenderContent = function(value) {
 		this._bRenderContent = value;
 		return this;
-	};
-
-	/**
-	 * Returns priority text from resource bundle
-	 * @param {string} sPriority The priority value
-	 * @returns {string} The priority text
-	 * @private
-	 */
-	TileContent.prototype._getPriorityText = function(sPriority) {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
-		return oResourceBundle.getText('ACTION_PRIORITY_' + sPriority.toUpperCase());
 	};
 
 	return TileContent;
