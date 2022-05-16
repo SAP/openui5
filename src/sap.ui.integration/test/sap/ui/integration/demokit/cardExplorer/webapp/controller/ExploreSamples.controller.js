@@ -75,6 +75,12 @@ sap.ui.define([
 		 * Called when the controller is instantiated.
 		 */
 		onInit: function () {
+			// Simulate library location for the shared extension
+			sap.ui.loader.config({
+				paths: {
+					"sap/ui/demo/cardExplorer/testLib": sap.ui.require.toUrl("sap/ui/demo/cardExplorer/testLib")
+				}
+			});
 			var oRouter = this.getRouter();
 			oRouter.getRoute("exploreSamples").attachMatched(this._onRouteMatched, this);
 

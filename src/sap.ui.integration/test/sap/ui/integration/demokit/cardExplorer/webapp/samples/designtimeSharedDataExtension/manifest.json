@@ -1,0 +1,66 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.extension.getData"
+	},
+	"sap.ui5": {
+		"dependencies": {
+		  "libs": {
+			"sap/ui/demo/cardExplorer/testLib": {}
+		  }
+		}
+	},
+	"sap.card": {
+		"extension": "module:sap/ui/demo/cardExplorer/testLib/SharedDataExtension",
+		"configuration": {
+			"editor": "dt/Configuration",
+			"destinations": {
+				"local": {
+					"name": "local",
+					"defaultUrl": "./"
+				},
+				"Northwind_V3": {
+					"name": "Northwind_V3",
+					"label": "Northwind V3 Service URL",
+					"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+				}
+			},
+			"parameters": {
+				"maxItems": {
+					"value": 4
+				},
+				"stringWithRequestExtensionList": {
+					"value": "Quality Management"
+				},
+				"stringWithDataFromExtensionList": {
+					"value": "Quality Management"
+				},
+				"stringWithRequestDestinationList": {
+					"value": ""
+				}
+			}
+		},
+		"data": {
+			"extension": {
+				"method": "getData"
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Available Trainings",
+			"icon": {
+				"src": "sap-icon://activities"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{title}",
+				"description": "Trainer: {trainer}",
+				"info": {
+					"value": "Location: {location}"
+				}
+			},
+			"maxItems": "{{parameters.maxItems}}"
+		}
+	}
+}

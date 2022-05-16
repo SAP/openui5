@@ -57,6 +57,13 @@ function init() {
 		//load common implementation for host testing
 		sap.ui.require(["testjs/HostImpl"]);
 	});
+
+	// Simulate library location for the shared extension
+	sap.ui.loader.config({
+		paths: {
+			"sap/ui/integration/cardEditor/test/testLib": sap.ui.require.toUrl("sap/ui/integration/cardEditor/test/testLib")
+		}
+	});
 }
 
 function getItem(id) {

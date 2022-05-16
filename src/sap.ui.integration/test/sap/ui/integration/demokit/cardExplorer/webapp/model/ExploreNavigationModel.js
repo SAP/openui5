@@ -2534,6 +2534,32 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Shared Data Extension',
+								key: 'designtimeSharedDataExtension',
+								files: [
+									{
+										url: '/samples/designtimeSharedDataExtension/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeSharedDataExtension/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeSharedDataExtension/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									},
+									{
+										url: '/testLib/SharedDataExtension.js',
+										name: 'testLib/SharedDataExtension.js',
+										key: 'dataExtension.js'
+									}
+								]
+							},
+							{
 								title: 'Filter',
 								key: 'designtimeFilter',
 								files: [

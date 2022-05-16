@@ -6,8 +6,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
 	"sap/ui/core/Core",
-	"sap/ui/core/util/MockServer",
-	"./jsons/withDesigntime/sap.card/DataExtensionImpl"
+	"sap/ui/core/util/MockServer"
 ], function (
 	Editor,
 	Designtime,
@@ -15,8 +14,7 @@ sap.ui.define([
 	sinon,
 	ContextHost,
 	Core,
-	MockServer,
-	DataExtensionImpl
+	MockServer
 ) {
 	"use strict";
 
@@ -128,6 +126,59 @@ sap.ui.define([
 		},
 		"sap.card": {
 			"extension": "DataExtensionImpl",
+			"designtime": "designtime/extension",
+			"type": "List",
+			"header": {},
+			"data": {
+				"extension": {
+					"method": "getData"
+				},
+				"path": "/values"
+			},
+			"configuration": {
+				"parameters": {
+					"DataGotFromExtensionRequest": {
+						"value": ""
+					},
+					"DataGotFromEditorExtension": {
+						"value": ""
+					}
+				},
+				"destinations": {
+					"northwind": {
+						"name": "Northwind"
+					},
+					"mock_request": {
+						"name": "mock_request"
+					}
+				}
+			},
+			"content": {
+				"item": {
+					"title": "{title}",
+					"description": "Trainer: {trainer}",
+					"info": {
+						"value": "Location: {location}"
+					}
+				},
+				"maxItems": 4
+			}
+		}
+	};
+	var oManifestForSharedExtension = {
+		"sap.app": {
+			"id": "test.sample",
+			"i18n": "../i18n/i18n.properties"
+		},
+		"sap.ui5": {
+			"dependencies": {
+			  "libs": {
+				"sap/ui/integration/editor/test/testLib": {}
+			  }
+			}
+		},
+		"sap.card": {
+			"extension": "module:sap/ui/integration/editor/test/testLib/SharedExtensionForEditor",
 			"designtime": "designtime/extension",
 			"type": "List",
 			"header": {},
@@ -827,6 +878,86 @@ sap.ui.define([
 				baseUrl: sBaseUrl,
 				host: "contexthost",
 				manifest: oManifestForExtension
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomerLabel.getText() === "DataGotFromExtensionRequest", "Label: Has static label text");
+					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromExtensionRequest is ComboBox");
+
+					var oEmployeeLabel = this.oEditor.getAggregation("_formContent")[3];
+					var oEmployeeField = this.oEditor.getAggregation("_formContent")[4];
+					assert.ok(oEmployeeLabel.getText() === "DataGotFromEditorExtension", "Label: Has static label text");
+					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromEditorExtension is ComboBox");
+
+					setTimeout(function () {
+						assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromExtensionRequest lenght is OK");
+						assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromEditorExtension lenght is OK");
+						resolve();
+					}, 2 * iWaitTimeout);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Get data from shared extension", {
+		beforeEach: function () {
+			// Simulate library location for the shared extension
+			sap.ui.loader.config({
+				paths: {
+					"sap/ui/integration/editor/test/testLib": "../test-resources/sap/ui/integration/qunit/editor/testLib"
+				}
+			});
+			this.oMockServer = new MockServer();
+			this.oMockServer.setRequests([
+				{
+					method: "GET",
+					path: RegExp("/mock_request/Employees.*"),
+					response: function (xhr) {
+						xhr.respondJSON(200, null, {"value": oResponseData["Employees"]});
+					}
+				}
+			]);
+			this.oMockServer.start();
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oEditor = new Editor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oEditor.destroy();
+			this.oMockServer.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Check value items from shared extension", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: oManifestForSharedExtension
 			});
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {

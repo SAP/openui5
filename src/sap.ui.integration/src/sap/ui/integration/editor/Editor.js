@@ -128,7 +128,8 @@ sap.ui.define([
 		REGEXP_PARAMETERS = /\{\{parameters\.([^\}\}]+)/g,
 		CONTEXT_TIMEOUT = 5000,
 		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
-		MessageStripId = "__strip0";
+		MessageStripId = "__strip0",
+		MODULE_PREFIX = "module:";
 
 	/**
 	 * Constructor for a new <code>Editor</code>.
@@ -1099,7 +1100,8 @@ sap.ui.define([
 	};
 
 	Editor.prototype._loadExtension = function () {
-		var sExtensionPath = this._oEditorManifest.get(this.getConfigurationPath() + "/extension") || this._oEditorManifest.get("/" + this.getSection() + "/extension");
+		var sExtensionPath = this._oEditorManifest.get(this.getConfigurationPath() + "/extension") || this._oEditorManifest.get("/" + this.getSection() + "/extension"),
+			sFullExtensionPath;
 		if (!sExtensionPath) {
 			Log.info("Extension is not defined in manifest, do not load it.");
 			return new Promise(function (resolve, reject) {
@@ -1107,7 +1109,11 @@ sap.ui.define([
 			});
 		}
 
-		var sFullExtensionPath = this._sAppId.replace(/\./g, "/") + "/" + sExtensionPath;
+		if (sExtensionPath.startsWith(MODULE_PREFIX)) {
+			sFullExtensionPath = sExtensionPath.replace(MODULE_PREFIX, "");
+		} else {
+			sFullExtensionPath = this._sAppId.replace(/\./g, "/") + "/" + sExtensionPath;
+		}
 
 		return new Promise(function (resolve, reject) {
 			sap.ui.require([sFullExtensionPath], function (ExtensionSubclass) {

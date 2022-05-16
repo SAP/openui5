@@ -16,8 +16,16 @@
 			"icon": "sap-icon://accept"
 		}
 	},
+	"sap.ui5": {
+		"dependencies": {
+		  "libs": {
+			"sap/ui/integration/editor/test/testLib": {}
+		  }
+		}
+	},
 	"sap.card": {
-		"extension": "DataExtensionImpl",
+		"extension1": "DataExtensionImpl",
+		"extension": "module:sap/ui/integration/editor/test/testLib/SharedExtension",
 		"type": "List",
 		"configuration": {
 			"editor": "dt",

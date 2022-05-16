@@ -72,7 +72,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the card.
+	 * Sets the editor.
 	 *
 	 * @param {object} oEditor The editor.
 	 * @param {object} oEditorInterface A limited interface to the editor.

@@ -1,10 +1,13 @@
-sap.ui.define(["sap/ui/integration/editor/Extension"], function (Extension) {
+sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	"use strict";
 
-	var DataExtension = Extension.extend("integration.test.editor.extension.getData.DataExtension");
+	var SharedExtension = Extension.extend("sap.ui.integration.cardEditor.test.testLib.SharedExtension");
+
+	SharedExtension.prototype.init = function () {
+	};
 
 	// should return a promise
-	DataExtension.prototype.getData = function () {
+	SharedExtension.prototype.getData = function () {
 		// Get information about trainings, trainers, and locations, then combine them in a way that it suitable for the card.
 		return Promise.all([
 			this.getAvailableTrainings(),
@@ -31,7 +34,7 @@ sap.ui.define(["sap/ui/integration/editor/Extension"], function (Extension) {
 	};
 
 	// Returns static info for trainings. In real scenario this would be a request to a backend service.
-	DataExtension.prototype.getAvailableTrainings = function () {
+	SharedExtension.prototype.getAvailableTrainings = function () {
 		return new Promise(function (resolve, reject) {
 			setTimeout(function () {
 				resolve([
@@ -45,11 +48,11 @@ sap.ui.define(["sap/ui/integration/editor/Extension"], function (Extension) {
 	};
 
 	// Gets the trainers names.
-	DataExtension.prototype.getTrainers = function () {
-		var oEditor = this.getEditor(),
-			oParameters = oEditor.getParameters();
+	SharedExtension.prototype.getTrainers = function () {
+		var oCard = this.getCard(),
+			oParameters = oCard.getCombinedParameters();
 
-		return oEditor.request({
+		return oCard.request({
 			"url": "{{destinations.northwind}}/Employees",
 			"parameters": {
 				"$format": "json",
@@ -65,8 +68,8 @@ sap.ui.define(["sap/ui/integration/editor/Extension"], function (Extension) {
 	};
 
 	// Requests XML data, then serializes it to an Object
-	DataExtension.prototype.getTrainingLocations = function () {
-		return this.getEditor().request({
+	SharedExtension.prototype.getTrainingLocations = function () {
+		return this.getCard().request({
 			"url": "../locations.xml",
 			"dataType": "xml"
 		}).then(function (oXMLDocument) {
@@ -79,7 +82,7 @@ sap.ui.define(["sap/ui/integration/editor/Extension"], function (Extension) {
 	};
 
 	// should return a promise
-    DataExtension.prototype.getMinLength = function () {
+    SharedExtension.prototype.getMinLength = function () {
         // Get information about trainings, trainers, and locations, then combine them in a way that it suitable for the card.
         return Promise.all([
             this.getAvailableTrainings(),
@@ -102,7 +105,7 @@ sap.ui.define(["sap/ui/integration/editor/Extension"], function (Extension) {
     };
 
 	// should return a promise
-    DataExtension.prototype.checkCanSeeCourses = function () {
+    SharedExtension.prototype.checkCanSeeCourses = function () {
         // Get information about trainings, trainers, and locations, then combine them in a way that it suitable for the card.
         return Promise.all([
             this.getAvailableTrainings(),
@@ -124,5 +127,5 @@ sap.ui.define(["sap/ui/integration/editor/Extension"], function (Extension) {
         });
     };
 
-	return DataExtension;
+	return SharedExtension;
 });
