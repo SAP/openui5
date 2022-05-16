@@ -516,13 +516,9 @@ sap.ui.define([
 	 * @since 1.77.0
 	 */
 	Context.prototype.expand = function () {
-		var that = this;
-
 		switch (this.isExpanded()) {
 			case false:
-				this.oBinding.expand(this).catch(function (oError) {
-					that.oModel.reportError("Failed to expand " + that, sClassName, oError);
-				});
+				this.oBinding.expand(this).catch(this.oModel.getReporter());
 				break;
 			case true:
 				throw new Error("Already expanded: " + this);

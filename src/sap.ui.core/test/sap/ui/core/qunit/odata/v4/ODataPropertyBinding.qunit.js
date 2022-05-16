@@ -2183,7 +2183,8 @@ sap.ui.define([
 			},
 			sPath = "foo";
 
-		oMock = this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func)
+		oMock = this.mock(oBinding).expects("withCache")
+			.withExactArgs(sinon.match.func, "", false, /*bWithOrWithoutCache*/true)
 			.returns(SyncPromise.resolve());
 
 		// code under test
@@ -2199,14 +2200,17 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("deregisterChange: withCache rejects sync", function () {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
-			oError = new Error("fail intentionally");
+			oError = new Error("fail intentionally"),
+			fnReporter = sinon.spy();
 
 		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
-		this.mock(this.oModel).expects("reportError")
-			.withExactArgs("Error in deregisterChange", sClassName, sinon.match.same(oError));
+		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 
 		// code under test
 		oBinding.deregisterChange();
+
+		sinon.assert.calledOnce(fnReporter);
+		sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
 	});
 
 	//*********************************************************************************************

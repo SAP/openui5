@@ -14990,12 +14990,9 @@ sap.ui.define([
 					oTableBinding;
 
 				// 3 suspended ODLBs are destroyed before resume, so to say
-				that.expectCanceledError("Failed to create cache for binding " + sODLB
-						+ ": /Equipments", "Cache discarded as a new cache has been created")
-					.expectCanceledError("Failed to create cache for binding " + sODLB
-						+ ": /Equipments", "Cache discarded as a new cache has been created")
-					.expectCanceledError("Failed to create cache for binding " + sODLB
-						+ ": /Equipments", "Cache discarded as a new cache has been created");
+				that.expectCanceledError("Cache discarded as a new cache has been created")
+					.expectCanceledError("Cache discarded as a new cache has been created")
+					.expectCanceledError("Cache discarded as a new cache has been created");
 
 				// Note: each of these is causing a "rebind"
 				sId0 = that.addToTable(oTable, "Name", assert);
@@ -15127,12 +15124,9 @@ sap.ui.define([
 					oTableBinding;
 
 				// 3 suspended ODLBs are destroyed before resume, so to say
-				that.expectCanceledError("Failed to create cache for binding " + sODLB
-						+ ": /Equipments", "Cache discarded as a new cache has been created")
-					.expectCanceledError("Failed to create cache for binding " + sODLB
-						+ ": /Equipments", "Cache discarded as a new cache has been created")
-					.expectCanceledError("Failed to create cache for binding " + sODLB
-						+ ": /Equipments", "Cache discarded as a new cache has been created");
+				that.expectCanceledError("Cache discarded as a new cache has been created")
+					.expectCanceledError("Cache discarded as a new cache has been created")
+					.expectCanceledError("Cache discarded as a new cache has been created");
 
 				// Note: each of these is causing a "rebind"
 				sId0 = that.addToTable(oTable, "Name", assert);
@@ -20862,8 +20856,7 @@ sap.ui.define([
 			.expects("getContexts")
 			.withExactArgs(1, 3, 0, undefined)
 			.callsFake(function () {
-				that.expectCanceledError("Failed to create cache for binding " + sODLB
-						+ ": /EMPLOYEES", "Cache discarded as a new cache has been created");
+				that.expectCanceledError("Cache discarded as a new cache has been created");
 				oMeasureRangePromise = this.updateAnalyticalInfo(aAggregation)
 					.measureRangePromise.then(function (mMeasureRange) {
 						assert.deepEqual(mMeasureRange, {
@@ -26753,8 +26746,7 @@ sap.ui.define([
 			var oBinding = that.oView.byId("form").getElementBinding(),
 				oPromise;
 
-			that.expectCanceledError("Failed to create cache for binding " + sODCB
-					+ ": /SalesOrderList('42')", "Cache discarded as a new cache has been created")
+			that.expectCanceledError("Cache discarded as a new cache has been created")
 				.expectCanceledError("Failed to read path /SalesOrderList('42')/Note",
 					"Cache discarded as a new cache has been created")
 				.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID&foo=bar", {
@@ -31982,8 +31974,7 @@ sap.ui.define([
 				oTable = that.oView.byId("table"),
 				oListBinding = oTable.getBinding("items");
 
-			that.expectCanceledError("Failed to create cache for binding " + sODLB + ": /|TEAMS",
-					"Cache discarded as a new cache has been created")
+			that.expectCanceledError("Cache discarded as a new cache has been created")
 				.expectCanceledError("Cache discarded as a new cache has been created")
 				.expectCanceledError(sODLB + ": /|TEAMS: Failed to enhance query options for"
 						+ " auto-$expand/$select for child Team_Id",
@@ -33298,8 +33289,7 @@ sap.ui.define([
 
 		this.rIgnoredCanceledErrors = /^Cache discarded as a new cache has been created$/;
 		// Timing: whether the inner list binding for the virtual context is destroyed early...
-		// this.expectCanceledError("Failed to create cache for binding " + sODLB + ": /MANAGERS",
-		//         "Cache discarded as a new cache has been created")
+		// this.expectCanceledError("Cache discarded as a new cache has been created")
 		//     .expectCanceledError(sODLB + ": /MANAGERS: Failed to enhance query options for"
 		//         + " auto-$expand/$select for child ID",
 		//         "Cache discarded as a new cache has been created");
