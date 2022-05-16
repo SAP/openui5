@@ -397,13 +397,13 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		oRm.class("sapMGTTInfo");
 		oRm.openEnd();
 		if (oControl.getAppShortcut()) {
-			oRm.openStart("div", oControl.getId() + "-appShortcut");
+			oRm.openStart("div", oControl.getId() + "-appShortcutWrapper");
 			oRm.class("sapMGTAppShortcutText").openEnd();
 			oRm.renderControl(oControl._oAppShortcut);
 			oRm.close("div");
 		}
 		if (oControl.getSystemInfo()) {
-			oRm.openStart("div", oControl.getId() + "-sytemInfo");
+			oRm.openStart("div", oControl.getId() + "-sytemInfoWrapper");
 			if (oControl.getAppShortcut() && oControl.getSystemInfo()){
 				oRm.class("sapMGTMarginTop4px");
 			}
