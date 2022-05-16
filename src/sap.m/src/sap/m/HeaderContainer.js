@@ -348,59 +348,63 @@ sap.ui.define([
 						this._handleMobileScrolling();
 					}
 					if (this._isMobileView()) {
-						var aItems = this._filterVisibleItems();
-						this.aItemSize = [];
-						this.aItemScrollValue = [0];
-						var fnGetItemSize = function (oItem) {
-							return oItem.getDomRef().parentElement.offsetWidth
-									+ parseFloat(getComputedStyle(oItem.getDomRef().parentElement).marginLeft)
-									+ parseFloat(getComputedStyle(oItem.getDomRef().parentElement).marginRight);
-						};
-						for (var i = 0; i < aItems.length; i++) {
-							this.aItemSize.push(fnGetItemSize(aItems[i]));
-							this.aItemScrollValue.push(this.aItemScrollValue[i] ? this.aItemScrollValue[i] + this.aItemSize[i] : this.aItemSize[i]);
-						}
+						this._oScrollCntr.attachBrowserEvent("scrollstart", function(oEvent){
+							var aItems = this._filterVisibleItems();
+							this.aItemSize = [];
+								this.aItemScrollValue = [0];
+								var fnGetItemSize = function (oItem) {
+									 if (oItem.getDomRef() && oItem.getDomRef().parentElement) {
+										return oItem.getDomRef().parentElement.offsetWidth
+										+ parseFloat(getComputedStyle(oItem.getDomRef().parentElement).marginLeft)
+										+ parseFloat(getComputedStyle(oItem.getDomRef().parentElement).marginRight);
+									 }
+								};
+								for (var i = 0; i < aItems.length; i++) {
+									this.aItemSize.push(fnGetItemSize(aItems[i]));
+									this.aItemScrollValue.push(this.aItemScrollValue[i] ? this.aItemScrollValue[i] + this.aItemSize[i] : this.aItemSize[i]);
+								}
+							this.triggerScrollStop = false;
+						}.bind(this));
 						this._oScrollCntr.attachBrowserEvent("scrollstop", function(oEvent){
-								if (!this.triggerScrollStop) {
-									this.triggerScrollStop = true;
-									var iScrollValue = 0, iScrollOffset = 15;
+							if (!this.triggerScrollStop) {
+								var aItems = this._filterVisibleItems();
+								this.triggerScrollStop = true;
+								var iScrollValue = 0, iScrollOffset = 15;
 
-									var iScrollContainerScrollLeft = this._oScrollCntr.getDomRef().scrollLeft;
-									var iScrollContainerWidth = iScrollContainerScrollLeft + this._oScrollCntr.getDomRef().clientWidth;
+								var iScrollContainerScrollLeft = this._oScrollCntr.getDomRef().scrollLeft;
+								var iScrollContainerWidth = iScrollContainerScrollLeft + this._oScrollCntr.getDomRef().clientWidth;
 
-									var oFinalItem = aItems[aItems.length - 1];
+								var oFinalItem = aItems[aItems.length - 1];
 
-									var iFinalElementScrollLeft = oFinalItem.getParent().getDomRef().offsetLeft;
-									var iFinalElementContainerWidth = iFinalElementScrollLeft + oFinalItem.getDomRef().clientWidth;
+								var iFinalElementScrollLeft = oFinalItem.getParent().getDomRef().offsetLeft;
+								var iFinalElementContainerWidth = iFinalElementScrollLeft + oFinalItem.getDomRef().clientWidth;
 
-									var bIsFinalItemVisible = ((iFinalElementContainerWidth <= iScrollContainerWidth) && (iFinalElementScrollLeft >= iScrollContainerScrollLeft));
-									var iCurrectScrollValue = this._bRtl ? Math.abs(oEvent.currentTarget.scrollLeft) : oEvent.currentTarget.scrollLeft;
+								var bIsFinalItemVisible = ((iFinalElementContainerWidth <= iScrollContainerWidth) && (iFinalElementScrollLeft >= iScrollContainerScrollLeft));
+								var iCurrectScrollValue = this._bRtl ? Math.abs(oEvent.currentTarget.scrollLeft) : oEvent.currentTarget.scrollLeft;
 
-									if (bIsFinalItemVisible) {
-										iScrollValue = this.aItemScrollValue[aItems.length - 1] - iScrollOffset - iCurrectScrollValue;
+								if (bIsFinalItemVisible) {
+									iScrollValue = this.aItemScrollValue[aItems.length - 1] - iScrollOffset - iCurrectScrollValue;
+									this.triggerScrollStop = false;
+								} else {
+									var value = this.aItemScrollValue.reduce(function(a, b) {
+										var aDiff = Math.abs(a - iCurrectScrollValue);
+										var bDiff = Math.abs(b - iCurrectScrollValue);
+										if (aDiff == bDiff) {
+											return a > b ? a : b;
+										} else {
+											return bDiff < aDiff ? b : a;
+										}
+									});
+									if (iCurrectScrollValue == 0) {
+										iScrollValue = 0;
 										this.triggerScrollStop = false;
 									} else {
-										var value = this.aItemScrollValue.reduce(function(a, b) {
-											var aDiff = Math.abs(a - iCurrectScrollValue);
-											var bDiff = Math.abs(b - iCurrectScrollValue);
-											if (aDiff == bDiff) {
-												return a > b ? a : b;
-											} else {
-												return bDiff < aDiff ? b : a;
-											}
-										});
-										if (iCurrectScrollValue == 0) {
-											iScrollValue = 0;
-											this.triggerScrollStop = false;
-										} else {
-											iScrollValue = value - iScrollOffset - iCurrectScrollValue;
-										}
+										iScrollValue = value - iScrollOffset - iCurrectScrollValue;
 									}
-									this._scroll(iScrollValue, this.getScrollTime());
-								} else {
-									this.triggerScrollStop = false;
 								}
-							}.bind(this));
+								this._scroll(iScrollValue, this.getScrollTime());
+							}
+						}.bind(this));
 					}
 				}.bind(this)
 			});
