@@ -29182,40 +29182,52 @@ sap.ui.define([
 	// predicate from the cache data which is already gone. Ensure that this problem does not end up
 	// in the message manager.
 	// JIRA: CPOUI5ODATAV4-1511
+	// JIRA: CPOUI5ODATAV4-1593: The list has pending changes in the deleted and in another context
 [false, true].forEach(function (bKeepAlive) {
 	QUnit.test("CPOUI5ODATAV4-1511: ODLB, kept=" + bKeepAlive, function (assert) {
 		var oContext,
 			oListBinding,
-			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			oNote1Promise,
+			oNote3Promise,
 			fnOnDelete = sinon.spy(),
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
-<Table growing="true" growingThreshold="2" id="table" items="{path : \'/SalesOrderList\', \
+<Table growing="true" growingThreshold="3" id="table" items="{path : \'/SalesOrderList\', \
 		parameters : {$count : true, $select : \'Messages\'}}">\
 	<Text id="listId" text="{SalesOrderID}"/>\
+	<Input id="note" value="{Note}"/>\
 </Table>\
 <FlexBox id="objectPage" binding="{SO_2_BP}">\
 	<Text id="id" text="{BusinessPartnerID}"/>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$count=true&$select=Messages,SalesOrderID"
-				+ "&$skip=0&$top=2", {
-				"@odata.count" : "4",
+		this.expectRequest("SalesOrderList?$count=true&$select=Messages,Note,SalesOrderID"
+				+ "&$skip=0&$top=3", {
+				"@odata.count" : "5",
 				value : [{
 					Messages : [{
 						message : "To be deleted",
 						numericSeverity : 2,
 						target : ""
 					}],
+					Note : "Note 1",
 					SalesOrderID : "1"
 				}, {
 					Messages : [],
+					Note : "Note 2",
 					SalesOrderID : "2"
+				}, {
+					Messages : [],
+					Note : "Note 3",
+					SalesOrderID : "3"
 				}]
 			})
-			.expectChange("listId", ["1", "2"])
+			.expectChange("listId", ["1", "2", "3"])
+			.expectChange("note", ["Note 1", "Note 2", "Note 3"])
 			.expectChange("count")
 			.expectChange("id")
 			.expectMessages([{
@@ -29226,7 +29238,7 @@ sap.ui.define([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectChange("count", "4")
+			that.expectChange("count", "5")
 				.expectRequest("SalesOrderList('1')?$select=SO_2_BP"
 					+ "&$expand=SO_2_BP($select=BusinessPartnerID)",
 					{SO_2_BP : {BusinessPartnerID : "B1"}}
@@ -29241,16 +29253,24 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectChange("note", ["Note 1 (changed)"]);
+
+			oNote1Promise = oContext.setProperty("Note", "Note 1 (changed)");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			if (bKeepAlive) {
-				that.expectRequest("SalesOrderList?$count=true&$select=Messages,SalesOrderID"
-						+ "&$orderby=SalesOrderID desc&$skip=0&$top=2", {
-						"@odata.count" : "4",
+				that.expectRequest("SalesOrderList?$count=true&$select=Messages,Note,SalesOrderID"
+						+ "&$orderby=SalesOrderID desc&$skip=0&$top=3", {
+						"@odata.count" : "5",
 						value : [
-							{Messages : [], SalesOrderID : "4"},
-							{Messages : [], SalesOrderID : "3"}
+							{Messages : [], Note : "Note 5", SalesOrderID : "5"},
+							{Messages : [], Note : "Note 4", SalesOrderID : "4"},
+							{Messages : [], Note : "Note 3", SalesOrderID : "3"}
 						]
 					})
-					.expectChange("listId", ["4", "3"])
+					.expectChange("listId", ["5", "4"])
+					.expectChange("note", ["Note 5", "Note 4"])
 					.expectMessages([]);
 
 				oContext.setKeepAlive(true, fnOnDelete);
@@ -29259,6 +29279,13 @@ sap.ui.define([
 				return that.waitForChanges(assert);
 			}
 		}).then(function () {
+			that.expectChange("note", [,, "Note 3 (changed)"]);
+
+			oNote3Promise = oTable.getItems()[2].getBindingContext()
+				.setProperty("Note", "Note 3 (changed)");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			that.expectRequest({
 					method : "DELETE",
 					headers : {"If-Match" : "*"},
@@ -29266,32 +29293,45 @@ sap.ui.define([
 				});
 			if (bKeepAlive) {
 				that.expectRequest("SalesOrderList?$count=true&$top=0", {
-					"@odata.count" : "3",
+					"@odata.count" : "4",
 					value : []
 				});
 			} else {
-				that.expectRequest("SalesOrderList?$count=true&$select=Messages,SalesOrderID"
-						+ "&$skip=1&$top=1", {
-						"@odata.count" : "3",
-						value : [{Messages : [], SalesOrderID : "3"}]
+				that.expectRequest("SalesOrderList?$count=true&$select=Messages,Note,SalesOrderID"
+						+ "&$skip=2&$top=1", {
+						"@odata.count" : "4",
+						value : [{Messages : [], Note : "Note 4", SalesOrderID : "4"}]
 					})
-					.expectChange("listId", [, "3"]);
+					.expectChange("listId", [,, "4"])
+					.expectChange("note", ["Note 1"]) // -> resetChanges before the list update
+					.expectChange("note", [,, "Note 4"]);
 				that.oLogMock.expects("error")
 					.withArgs("Failed to drill-down into ('1')/SO_2_BP, invalid segment: ('1')");
 			}
-			that.expectChange("count", "3")
+			that.expectChange("count", "4")
 				.expectChange("id", null)
+				.expectCanceledError("Failed to update path /SalesOrderList('1')/Note",
+					"Request canceled: PATCH SalesOrderList('1'); group: update")
 				.expectMessages([]);
 
 			return Promise.all([
 				// code under test
-				oModel.delete("/SalesOrderList('1')"),
+				oModel.delete("/SalesOrderList('1')", "$auto"),
+				checkCanceled(assert, oNote1Promise),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			// wait for the prerendering task which was triggered by delete after all expectations
-			// were fulfilled
-			return that.waitForChanges(assert);
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('3')",
+					payload : {Note : "Note 3 (changed)"}
+				});
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oNote3Promise,
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			if (bKeepAlive) {
 				sinon.assert.called(fnOnDelete);
@@ -29304,27 +29344,42 @@ sap.ui.define([
 	// Scenario: Delete an entity via the model. The bound context of a context binding points to
 	// this entity.
 	// JIRA: CPOUI5ODATAV4-1511
+	// JIRA: CPOUI5ODATAV4-1593: There are pending changes in the context and in a dependent list
 	QUnit.test("CPOUI5ODATAV4-1511: ODCB, bound context", function (assert) {
-		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = this.createSpecialCasesModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			oNamePromise,
+			oPricePromise,
 			sView = '\
 <FlexBox id="form" binding="{\
 		path : \'/Artists(ArtistID=\\\'1\\\',IsActiveEntity=true)/BestFriend\',\
 		parameters : {$select : \'Messages\'}}">\
 	<Text id="id" text="{ArtistID}"/>\
+	<Input id="name" value="{Name}"/>\
+	<Table id="publications" \
+			items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
+		<Input id="price" value="{Price}"/>\
+	</Table>\
 </FlexBox>',
 			that = this;
 
 		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=true)/BestFriend"
-				+ "?$select=ArtistID,IsActiveEntity,Messages", {
+				+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
 				ArtistID : "2",
 				IsActiveEntity : true,
 				Messages : [{
 					message : "To be deleted",
 					numericSeverity : 2,
 					target : ""
-				}]
+				}],
+				Name : "The Beatles"
 			})
+			.expectRequest("Artists(ArtistID='1',IsActiveEntity=true)/BestFriend/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=100",
+					{value : [{Price : "19.99", PublicationID : "P1"}]})
 			.expectChange("id", "2")
+			.expectChange("name", "The Beatles")
+			.expectChange("price", ["19.99"])
 			.expectMessages([{
 				code : undefined,
 				message : "To be deleted",
@@ -29333,17 +29388,39 @@ sap.ui.define([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("name", "The Beatles (changed)")
+				.expectChange("price", ["12.99"]);
+
+			oNamePromise = that.oView.byId("form").getBindingContext()
+				.setProperty("Name", "The Beatles (changed)");
+			oPricePromise = that.oView.byId("publications").getItems()[0].getBindingContext()
+				.setProperty("Price", "12.99");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectCanceledError(
+				"Failed to update path /Artists(ArtistID='1',IsActiveEntity=true)/BestFriend/Name",
+				"Request canceled: PATCH Artists(ArtistID='2',IsActiveEntity=true); group: update");
+			that.expectCanceledError("Failed to update path"
+				+ " /Artists(ArtistID='1',IsActiveEntity=true)/BestFriend/_Publication('P1')/Price",
+				"Request canceled: PATCH Artists(ArtistID='2',IsActiveEntity=true)"
+				+ "/_Publication('P1'); group: update");
 			that.expectRequest({
-				method : "DELETE",
-				headers : {"If-Match" : "*"},
-				url : "Artists(ArtistID='2',IsActiveEntity=true)"
-			})
-			.expectChange("id", null)
-			.expectMessages([]);
+					method : "DELETE",
+					headers : {"If-Match" : "*"},
+					url : "Artists(ArtistID='2',IsActiveEntity=true)"
+				})
+				.expectChange("id", null)
+				.expectChange("name", "The Beatles")
+				.expectChange("name", null)
+				.expectChange("price", ["19.99"])
+				.expectMessages([]);
 
 			return Promise.all([
 				// code under test
-				oModel.delete("/Artists(ArtistID='2',IsActiveEntity=true)"),
+				oModel.delete("/Artists(ArtistID='2',IsActiveEntity=true)", "$auto"),
+				checkCanceled(assert, oNamePromise),
+				checkCanceled(assert, oPricePromise),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -32148,7 +32225,14 @@ sap.ui.define([
 							}
 						});
 					})
-				);
+				)
+				.expectMessages([{
+					message : sinon.match.string, // browser-specific TypeError, see below
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}], true);
+			that.oLogMock.expects("error"); // details do not interest, see below
 
 			return Promise.all([
 				oContextBinding.getBoundContext().setProperty("Name", "Darth Vader")

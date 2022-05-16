@@ -101,6 +101,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Finds the context that matches the given canonical path.
+	 *
+	 * @param {string} sCanonicalPath
+	 *   The canonical path of an entity (as a context path with the leading "/")
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   A matching context or <code>undefined</code> if there is none
+	 *
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataParentBinding#findContextForCanonicalPath
+	 * @private
+	 */
+
+	/**
 	 * Fire event 'patchCompleted' to attached listeners, if the last PATCH request is completed.
 	 *
 	 * @param {boolean} bSuccess Whether the current PATCH request has been processed successfully
@@ -1063,6 +1076,22 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.isMeta = function () {
 		return false;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#onDelete
+	 */
+	ODataParentBinding.prototype.onDelete = function (sCanonicalPath) {
+		var oContext = this.findContextForCanonicalPath(sCanonicalPath);
+
+		if (oContext) {
+			this.resetChangesForPath(this.getRelativePath(oContext.getPath()), []);
+			this.oModel.getDependentBindings(oContext).forEach(function (oBinding) {
+				oBinding.resetChanges();
+			});
+			this._delete(null, sCanonicalPath.slice(1), oContext);
+		}
 	};
 
 	/**
