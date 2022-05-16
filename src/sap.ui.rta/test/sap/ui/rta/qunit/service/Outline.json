@@ -129,6 +129,12 @@
 																						]
 																					}
 																				]
+																			},
+																			{
+																				"id": "objSection",
+																				"technicalName": "heading",
+																				"editable": false,
+																				"type": "aggregation"
 																			}
 																		]
 																	}

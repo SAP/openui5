@@ -90,6 +90,9 @@
 
 		<sections>
 			<ObjectPageSection titleUppercase="false" id="goalsSection" title="2014 Goals Plan">
+				<heading>
+					<m:MessageStrip text="Lorem Ipsum is simply dummy text of the printing and typesetting industry." type="Error" />
+				</heading>
 				<subSections>
 					<ObjectPageSubSection id="goalsSectionSS1">
 						<blocks>
@@ -100,7 +103,10 @@
 			</ObjectPageSection>
 
 			<ObjectPageSection titleUppercase="false" id="personalSection" title="Personal" importance="Medium">
-				<subSections>
+					<heading>
+						<m:MessageStrip text="Lorem Ipsum is simply dummy text of the printing and typesetting industry." type="Error" />
+					</heading>
+					<subSections>
 					<ObjectPageSubSection id="personalSectionSS1" title="Connect" titleUppercase="false">
 						<blocks>
 							<personal:BlockPhoneNumber id="phone"/>

@@ -74,6 +74,14 @@ sap.ui.define([
 				 */
 				subSections: {type: "sap.uxap.ObjectPageSubSection", multiple: true, singularName: "subSection"},
 
+				/**
+				 * Section heading content.
+				 *
+				 * Note: For some accessibility concerns we encourage you to use non-focusable elements.
+				 * @since 1.106
+				 */
+				heading: {type: "sap.ui.core.Control", multiple: false},
+
 				_showHideAllButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
 				_showHideButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
 			},

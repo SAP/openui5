@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSectionBase",
 	"sap/m/Text",
+	"sap/m/MessageStrip",
 	"sap/m/Button"],
-function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, Button) {
+function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, MessageStrip, Button) {
 	"use strict";
 	var Importance = library.Importance;
 
@@ -895,6 +896,46 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 
 		oObjectPageLayout.placeAt('qunit-fixture');
 		Core.applyChanges();
+	});
+
+	QUnit.module("Heading aggregation");
+
+	QUnit.test("Heading is displayed correctly", function (assert) {
+		// Arrange
+		var oMessageStrip = new MessageStrip({ text: "Simple message strip" }),
+			oObjectPageLayout = new ObjectPageLayout({
+				sections: new ObjectPageSection({
+					title: "Section",
+					heading: oMessageStrip,
+					subSections: [
+						new ObjectPageSubSection({
+							title: "SubSection1",
+							blocks: new Text({ text: "SubSection1" }),
+							visible: false
+						}),
+						new ObjectPageSubSection({
+							title: "SubSection2",
+							blocks: new Text({ text: "SubSection2" })
+						})
+					]
+				})
+			}),
+			oSection = oObjectPageLayout.getSections()[0],
+			$section,
+			$strip;
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		$section = oSection.getDomRef();
+		$strip = oMessageStrip.getDomRef();
+
+		assert.ok($section.contains($strip), "Message strip is displayed correctly");
+
+		oSection.destroyHeading();
+		Core.applyChanges();
+
+		assert.notOk($section.contains($strip), "Message strip is displayed correctly");
 	});
 
 });
