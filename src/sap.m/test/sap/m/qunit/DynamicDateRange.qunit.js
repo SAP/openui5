@@ -544,6 +544,96 @@ sap.ui.define([
 		assert.ok(oValidateValueHelpUISpy.returned(true), "validation succeeded");
 	});
 
+	QUnit.test("today -x/+y maintaining negative and zero values in the step inputs", function(assert) {
+		var oDDR = new DynamicDateRange(),
+			oValue = {
+				operator: "TODAYFROMTO",
+				values: []
+			};
+
+		oDDR.placeAt("qunit-fixture");
+
+		// act
+		oValue.values = [2, 3];
+		oDDR._updateInputValue(oValue);
+		// assert
+		assert.strictEqual(oDDR._oInput.getValue(), "Today -2 / +3 Days", "Input value is correct (default scenario)");
+
+		// act
+		oValue.values = [-2, 3];
+		oDDR._updateInputValue(oValue);
+		// assert
+		assert.strictEqual(oDDR._oInput.getValue(), "Today +2 / +3 Days", "Input Value is correct (negative before date)");
+
+		// act
+		oValue.values = [2, -3];
+		oDDR._updateInputValue(oValue);
+		// assert
+		assert.strictEqual(oDDR._oInput.getValue(), "Today -3 / -2 Days", "Input Value is correct (negative after date)");
+
+		// act
+		oValue.values = [-2, -3];
+		oDDR._updateInputValue(oValue);
+		// assert
+		assert.strictEqual(oDDR._oInput.getValue(), "Today -3 / +2 Days", "Input Value is correct (negative before and after dates)");
+
+		// act
+		oValue.values = [0, 3];
+		oDDR._updateInputValue(oValue);
+		// assert
+		assert.strictEqual(oDDR._oInput.getValue(), "Today -0 / +3 Days", "Input Value is correct (zero before date)");
+
+		// act
+		oValue.values = [0, -3];
+		oDDR._updateInputValue(oValue);
+		// assert
+		assert.strictEqual(oDDR._oInput.getValue(), "Today -3 / +0 Days", "Input Value is correct (zero before date, negative after date)");
+
+		// act
+		oValue.values = [2, 0];
+		oDDR._updateInputValue(oValue);
+		// assert
+		assert.strictEqual(oDDR._oInput.getValue(), "Today -2 / +0 Days", "Input Value is correct (zero after date)");
+
+		// act
+		oValue.values = [-2, 0];
+		oDDR._updateInputValue(oValue);
+		// assert
+		assert.strictEqual(oDDR._oInput.getValue(), "Today -0 / +2 Days", "Input Value is correct (negative before date, zero after date)");
+
+		// act
+		oValue.values = [0, 0];
+		oDDR._updateInputValue(oValue);
+		// assert
+		assert.strictEqual(oDDR._oInput.getValue(), "Today -0 / +0 Days", "Input Value is correct (zero before and after dates)");
+
+		// cleanup
+		oDDR.destroy();
+		oValue = null;
+	});
+
+	QUnit.test("today -x/+y parsing manually entered values", function(assert) {
+		var oDDR = new DynamicDateRange();
+
+		oDDR.placeAt("qunit-fixture");
+
+		// act/assert
+		assert.strictEqual(oDDR._parseValue("Today -5 / +10 Days").values.join("/"), "5/10", "Parsed values are correct (default scenario - X is negative, Y is positive)");
+		assert.strictEqual(oDDR._parseValue("Today +10 / -5 Days").values.join("/"), "5/10", "Parsed values are correct (default scenario, but X and Y are swapped)");
+		assert.strictEqual(oDDR._parseValue("Today -5 / -10 Days").values.join("/"), "10/-5", "Parsed values are correct (X and Y are negative)");
+		assert.strictEqual(oDDR._parseValue("Today -10 / -5 Days").values.join("/"), "10/-5", "Parsed values are correct (X and Y are negative)");
+		assert.strictEqual(oDDR._parseValue("Today +5 / +10 Days").values.join("/"), "-5/10", "Parsed values are correct (X and Y are positive)");
+		assert.strictEqual(oDDR._parseValue("Today +10 / +5 Days").values.join("/"), "-5/10", "Parsed values are correct (X and Y are positive)");
+		assert.strictEqual(oDDR._parseValue("Today -5 / 0 Days").values.join("/"), "5/0", "Parsed values are correct (X is negative, Y is 0)");
+		assert.strictEqual(oDDR._parseValue("Today +5 / 0 Days").values.join("/"), "0/5", "Parsed values are correct (X is positive, Y is 0)");
+		assert.strictEqual(oDDR._parseValue("Today 0 / 0 Days").values.join("/"), "0/0", "Parsed values are correct (X and Y are 0)");
+		assert.strictEqual(oDDR._parseValue("Today 0 / -5 Days").values.join("/"), "5/0", "Parsed values are correct (X is 0, Y is negative)");
+		assert.strictEqual(oDDR._parseValue("Today 0 / +5 Days").values.join("/"), "0/5", "Parsed values are correct (X is 0, Y is positive)");
+
+		// cleanup
+		oDDR.destroy();
+	});
+
 	QUnit.test("getGroup and getGroupHeader - several options", function(assert) {
 		var oOption = new StandardDynamicDateOption({ key: "LASTDAYS" });
 
