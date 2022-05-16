@@ -268,7 +268,9 @@
 													parts: ["/locale"],
 													formatter: function(sLocale) {
 														if(sLocale && sLocale.length > 3) {
-															return "flags/" + sLocale.substr(3) + ".png";
+															if (aTerritories.includes(sLocale.substr(3))) {
+																return "flags/" + sLocale.substr(3) + ".png";
+															}
 														}
 													}
 												},
@@ -387,12 +389,24 @@
 											}),
 
 											new sap.m.Label({
-												text: "Value"
+												text: "Number"
 											}),
 											new sap.m.Input({
 												value: {
 													path: "/number",
-													type: new sap.ui.model.type.Float()
+													// use number formatting like in JavaScript
+													type: new sap.ui.model.type.Float({
+														groupingEnabled: false,
+														groupingSeparator: ",",
+														decimalSeparator: ".",
+														parseAsString: true
+													})
+												},
+												liveChange: function(oEvent) {
+													// a number ending with "." is not valid
+													if (!this.getValue().endsWith(".")) {
+														this.onChange(oEvent);
+													}
 												}
 											}).addStyleClass("large largeinput"),
 											new sap.m.Label({
@@ -411,6 +425,12 @@
 													formatter: function(sType) {
 														return sType == "Currency"
 													}
+												},
+												change: function() {
+													oModel.setProperty("/sample", "custom");
+												},
+												liveChange: function(oEvent) {
+													this.onChange(oEvent);
 												}
 											}).addStyleClass("large largeinput"),
 											new sap.m.Label({
@@ -434,6 +454,9 @@
 												},
 												change: function() {
 													oModel.setProperty("/sample", "custom");
+												},
+												liveChange: function(oEvent) {
+													this.onChange(oEvent);
 												}
 											}).addStyleClass("large largeinput"),
 											new sap.m.Label({
