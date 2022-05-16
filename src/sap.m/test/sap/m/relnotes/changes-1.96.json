@@ -968,5 +968,54 @@
         ]
       }
     ]
+  },
+  "1.96.8": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "3e8a478c2720706d8e126ea6477b884f9ef893f1",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: 24:00:00 is correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000280062022"
+          }
+        ]
+      },
+      {
+        "id": "2c82c86e70cc10588d905bdd1100bf0d73e82b46",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed visual displacement of closing droppdown menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001188692022"
+          }
+        ]
+      },
+      {
+        "id": "079da87cc4c213820187b15e06bc1327ff0708f2",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Mesage states header border colors fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270044729"
+          }
+        ]
+      },
+      {
+        "id": "6f4a1c552de13a4ea10a474cbc8d5d335d967299",
+        "type": "FIX",
+        "text": " sap.m.FeedInput : Console errors on usage of invalid html tags",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170295055"
+          }
+        ]
+      }
+    ]
   }
 }

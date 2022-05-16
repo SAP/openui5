@@ -74,5 +74,21 @@
         ]
       }
     ]
+  },
+  "1.96.8": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "807fe6bd6291411da9c0a5fe9c94a8e6f71b5b01",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: now doesn't throw error when selecting and year after year range selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280047448"
+          }
+        ]
+      }
+    ]
   }
 }
