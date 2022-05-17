@@ -209,7 +209,12 @@ sap.ui.define([
 				 * @experimental
 				 * @since 1.95
 				 */
-				valueColor: {type: "sap.m.ValueColor", group: "Appearance", defaultValue: "None"}
+				valueColor: {type: "sap.m.ValueColor", group: "Appearance", defaultValue: "None"},
+				/**
+				 * The load state of the tileIcon.
+				 * @experimental
+				 */
+				iconLoaded: {type: "boolean", group: "Misc", defaultValue: true}
 			},
 			defaultAggregation: "tileContent",
 			aggregations: {
@@ -1670,9 +1675,16 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._isIconMode = function () {
 		if (this.getMode() === GenericTileMode.IconMode
-			&& (this.getFrameType() === FrameType.OneByOne || this.getFrameType() === FrameType.TwoByHalf)
-			&& this.getBackgroundColor() && this.getTileIcon()){
-			return true;
+			&& (this.getFrameType() === FrameType.OneByOne || this.getFrameType() === FrameType.TwoByHalf)){
+				if (this.getTileIcon() && this.getBackgroundColor()) {
+					return true;
+				} else {
+					if (!this.getIconLoaded()) {
+						return true;
+					} else {
+						return false;
+					}
+				}
 		} else {
 			return false;
 		}
