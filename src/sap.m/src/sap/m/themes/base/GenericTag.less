@@ -3,6 +3,8 @@
 @sapMGenericTagStatusIconWidth: 1rem;
 @sapMGenericTagIconPaddingRight: 0.5rem;
 @sapMGenericTagTextMinWidth: 1.5625rem;
+@sapMGenericTagHeightCompact: 1.625rem;
+@sapMGenericTagHeightCozy: 2.5rem;
 
 .sapMGenericTag {
 	margin-top: 0.1875rem;
@@ -72,7 +74,7 @@ html.sap-desktop .sapMGenericTag:focus {
 	flex-flow: row nowrap;
 	align-items: center;
 	page-break-after: auto;
-	height: 1.625rem;
+	height: @sapMGenericTagHeightCompact;
 	min-width: @sapMGenericTagBorderWidth + @sapMGenericTagPaddingLeft + @sapMGenericTagStatusIconWidth + @sapMGenericTagIconPaddingRight+ @sapMGenericTagTextMinWidth;
 
 	.sapMGenericTagIcon {
@@ -126,7 +128,7 @@ html.sap-desktop .sapMGenericTag:focus {
 	}
 
 	.sapMGenericTagActive &  {
-		background: @sapUiListActiveBackground;
+		background-color: @sapUiListActiveBackground;
 
 		.sapMGenericTagIcon,
 		.sapMGenericTagText,
@@ -189,7 +191,7 @@ html.sap-desktop .sapMGenericTag:focus {
 		margin: 0.25rem 0;
 
 		.sapMGenericTagWrap {
-			height:  2.5rem;
+			height:  @sapMGenericTagHeightCozy;
 		}
 	}
 }

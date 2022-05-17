@@ -24,10 +24,10 @@ sap.ui.define([
 
 		// map of the icon types, relative to the status message
 		Icons = {
-			Error: "sap-icon://message-error",
-			Warning: "sap-icon://message-warning",
-			Success: "sap-icon://message-success",
-			Information: "sap-icon://hint"
+			Error: "sap-icon://error",
+			Warning: "sap-icon://alert",
+			Success: "sap-icon://sys-enter-2",
+			Information: "sap-icon://information"
 		};
 
 	/**
