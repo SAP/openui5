@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/base/util/UriParameters",
-	"sap/ui/core/Item"
+	"sap/base/util/UriParameters"
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
@@ -26,8 +25,7 @@ sap.ui.define([
 	Column,
 	ColumnListItem,
 	Text,
-	UriParameters,
-	Item
+	UriParameters
 ) {
 	"use strict";
 
@@ -82,10 +80,10 @@ sap.ui.define([
 
 			if (!oCurrentContent) {
 
-				oCurrentContent = new MTable({title: "Select from List", keyPath: "ID", descriptionPath: "name", filterFields: "$search", collectiveSearchItems: [
-					new Item({text: "Default Search Template", key: "default"}),
-					new Item({text: "Search Template 1", key: "template1"})
-				]});
+				oCurrentContent = new MTable({keyPath: "ID", descriptionPath: "name", filterFields: "$search", group:"group1", title: "Default Search Template"});
+				oContainer.addContent(oCurrentContent);
+				oCurrentContent = new MTable({keyPath: "ID", descriptionPath: "name", filterFields: "$search", group:"group1", title: "Search Template 1"});
+				oContainer.addContent(oCurrentContent);
 
 				oContainer.addContent(oCurrentContent);
 
@@ -106,13 +104,20 @@ sap.ui.define([
 				oCurrentTable.destroy();
 			}
 
+			var oCurrentFB = oCurrentContent.getFilterBar();
+
+			if (oCurrentFB) {
+				oCurrentContent.setFilterBar();
+				oCurrentFB.destroy();
+			}
+
 			var oCollectiveSearchContent;
 
 			switch (sCollectiveSearchKey) {
 				case "template1":
 
 					oCurrentContent.setFilterBar(
-						new FilterBar({
+						new FilterBar("FB0-FH1-Dialog-FB2", {
 							liveMode: false,
 							delegate: {
 								name: "delegates/GenericVhFilterBarDelegate",
@@ -171,7 +176,7 @@ sap.ui.define([
 				default:
 
 					oCurrentContent.setFilterBar(
-						new FilterBar({
+						new FilterBar("FB0-FH1-Dialog-FB1", {
 							liveMode: false,
 							delegate: {
 								name: "delegates/GenericVhFilterBarDelegate",

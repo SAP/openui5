@@ -32,8 +32,7 @@ sap.ui.define([
 		{path: "sap.ui.v4demo.view.SalesOrganization", text: "SalesOrganization Example", maxConditions: -1, maxConditionsToggleEnabled: true},
 		{path: "sap.ui.v4demo.view.ModelInOut", text: "Model In-/Out", maxConditions: 1, maxConditionsToggleEnabled: true},
 		{path: "sap.ui.v4demo.view.SingleSelect", text: "SingleSelect Examples", maxConditions: 1, maxConditionsToggleEnabled: false},
-		{path: "sap.ui.v4demo.view.MultiSelect", text: "MultiSelect Examples", maxConditions: -1, maxConditionsToggleEnabled: false},
-		{path: "sap.ui.v4demo.view.MultiCollectiveSearch", text: "Multiple Collective Searches", maxConditionsToggleEnabled: true}
+		{path: "sap.ui.v4demo.view.MultiSelect", text: "MultiSelect Examples", maxConditions: -1, maxConditionsToggleEnabled: false}
 	];
 
 	return Controller.extend("sap.ui.v4demo.controller.App", {

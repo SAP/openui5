@@ -198,12 +198,6 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog id="FH1-Dialog" title="Author ID">
-										<!-- <mdcvc:MTable id="FH1-Dialog-MTable" keyPath="ID" descriptionPath="name" filterFields="$search">
-											<mdcvc:collectiveSearchItems>
-												<core:Item text="Default" key="default"/>
-												<core:Item text="with Country" key="template1"/>
-											</mdcvc:collectiveSearchItems>
-										</mdcvc:MTable> -->
 										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_default" title="Default" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch"/>
 										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_withCountry" title="with Country" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch"/>
 										<mdcvc:Conditions label="Author ID"/>

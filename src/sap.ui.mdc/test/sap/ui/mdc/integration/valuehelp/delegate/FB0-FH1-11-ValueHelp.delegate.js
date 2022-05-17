@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/base/util/UriParameters",
-	"sap/ui/core/Item",
 	"sap/ui/core/Core",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enum/ConditionValidated',
@@ -42,7 +41,6 @@ sap.ui.define([
 	ColumnListItem,
 	Text,
 	UriParameters,
-	Item,
 	Core,
 	Condition,
 	ConditionValidated,
@@ -101,13 +99,10 @@ sap.ui.define([
 
 			if (!oCurrentContent) {
 
-				oCurrentContent = new MDCTable({title: "Select from List", keyPath: "ID", descriptionPath: "name", filterFields: "$search", collectiveSearchItems: [
-					new Item({text: "Default Search Template", key: "default"}),
-					new Item({text: "Search Template 1", key: "template1"})
-				]});
+				oCurrentContent = new MDCTable({keyPath: "ID", descriptionPath: "name", filterFields: "$search", group:"group1", title: "Default Search Template"});
 
 				oCurrentContent.setFilterBar(
-					new FilterBar({
+					new FilterBar("mdcFilterbar-listcollection-1", {
 						liveMode: false,
 						delegate: {
 							name: "delegates/GenericVhFilterBarDelegate",
@@ -137,6 +132,39 @@ sap.ui.define([
 					})
 				);
 
+				oContainer.addContent(oCurrentContent);
+
+				oCurrentContent = new MDCTable({keyPath: "ID", descriptionPath: "name", filterFields: "$search", group:"group1", title: "Search Template 1"});
+				oCurrentContent.setFilterBar(
+					new FilterBar("mdcFilterbar-listcollection-2", {
+						liveMode: false,
+						delegate: {
+							name: "delegates/GenericVhFilterBarDelegate",
+							payload: {}
+						},
+						basicSearchField: new FilterField({
+							delegate: {
+								name: "sap/ui/mdc/odata/v4/FieldBaseDelegate",
+								payload: {}
+							},
+							dataType: "Edm.String",
+							conditions: "{$filters>/conditions/$search}",
+							width: "50%",
+							maxConditions: 1,
+							placeholder: "Search"
+						}),
+						filterItems: [
+							new FilterField({
+								delegate: {
+									name: "sap/ui/mdc/odata/v4/FieldBaseDelegate",
+									payload: {}
+								},
+								label: "Country",
+								conditions: "{$filters>/conditions/countryOfOrigin_code}"
+							})
+						]
+					})
+				);
 				oContainer.addContent(oCurrentContent);
 
 				if (bMultiSelect) {
