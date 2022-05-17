@@ -337,7 +337,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	 Container.prototype.isOpen = function () {
 		var oPromise = this._retrievePromise("open");
@@ -353,7 +352,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	 Container.prototype.isOpening = function () {
 		var oPromise = this._retrievePromise("open");
@@ -387,7 +385,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.getItemForValue = function(oConfig) { // TODO only for TypeAhead container
 	};
@@ -399,9 +396,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	 Container.prototype.isValidationSupported = function() { // TODO only for TypeAhead container
+	Container.prototype.isValidationSupported = function() { // TODO only for TypeAhead container
 		return false;
 	};
 
@@ -418,7 +414,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.navigate = function(iStep) { // pass through to content
 		return Promise.all([this._getContainer()]).then(function (aResults) {
@@ -436,7 +431,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.removeFocus = function() {
 	};
@@ -450,7 +444,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.isTypeahead = function () {
 		var oValueHelp = this.getParent();
@@ -466,7 +459,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp, sap.ui.mdc.valueHelp.base.Content
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.isTypeaheadSupported = function () {
 		return false;
@@ -483,7 +475,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.isDialog = function () {
 		var oValueHelp = this.getParent();
@@ -500,7 +491,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.providesScrolling = function () {
 		return false;
@@ -516,7 +506,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.getValueHelpDelegate = function () {
 		var oValueHelp = this.getParent();
@@ -532,9 +521,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	 Container.prototype.getValueHelpDelegatePayload = function () {
+	Container.prototype.getValueHelpDelegatePayload = function () {
 		var oValueHelp = this.getParent();
 		return oValueHelp && oValueHelp.getPayload();
 	};
@@ -549,9 +537,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	 Container.prototype.awaitValueHelpDelegate = function () {
+	Container.prototype.awaitValueHelpDelegate = function () {
 		var oValueHelp = this.getParent();
 		return oValueHelp && oValueHelp.awaitControlDelegate();
 	};
@@ -565,9 +552,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	 Container.prototype.isValueHelpDelegateInitialized = function () {
+	Container.prototype.isValueHelpDelegateInitialized = function () {
 		var oValueHelp = this.getParent();
 		return oValueHelp && oValueHelp.bDelegateInitialized;
 	};
@@ -582,7 +568,6 @@ sap.ui.define([
 	 * @returns {boolean} True if value help shall open as valuehelp
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.getUseAsValueHelp = function() {
 		return false;
@@ -594,7 +579,6 @@ sap.ui.define([
 	 * @returns {string} Name of the icon
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.getValueHelpIcon = function() {
 		// not define icon property on Container as it might be dependent Popover/Dialog or used content
@@ -608,7 +592,6 @@ sap.ui.define([
 	 * @returns {object} object with the aria-attibutes
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.getAriaAttributes = function(iMaxConditions) {
 
@@ -632,7 +615,6 @@ sap.ui.define([
 	 * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.shouldOpenOnClick = function() {
 		return false;
@@ -644,9 +626,8 @@ sap.ui.define([
 	 * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	 Container.prototype.shouldOpenOnNavigate = function() {
+	Container.prototype.shouldOpenOnNavigate = function() {
 		return false;
 	};
 
@@ -658,7 +639,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.isFocusInHelp = function() {
 
@@ -673,7 +653,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Container.prototype.isMultiSelect = function() {
 
