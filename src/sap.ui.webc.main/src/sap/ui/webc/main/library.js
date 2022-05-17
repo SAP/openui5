@@ -220,6 +220,7 @@ sap.ui.define([
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
+					"sap.ui.webc.main.StandardListItem": "sap/ui/webc/main/flexibility/StandardListItem",
 					"sap.ui.webc.main.Tab": "sap/ui/webc/main/flexibility/Tab",
 					"sap.ui.webc.main.TabContainer": "sap/ui/webc/main/flexibility/TabContainer",
 					"sap.ui.webc.main.Table": {
