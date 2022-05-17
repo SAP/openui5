@@ -126,7 +126,7 @@ sap.ui.define([
 			for (sPropertyName in oEntityType) {
 				if (oEntityType[sPropertyName].$kind === "Property"
 						&& oEntityType[sPropertyName].$Type.startsWith("Edm.")) {
-					if (this.aDisplayedProperties.indexOf(sPropertyName) < 0) {
+					if (!this.aDisplayedProperties.includes(sPropertyName)) {
 						aProperties.push({
 							name : sPropertyName,
 							displayed : false,

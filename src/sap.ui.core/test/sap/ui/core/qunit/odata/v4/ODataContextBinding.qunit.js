@@ -395,7 +395,7 @@ sap.ui.define([
 			assert.notStrictEqual(oBinding[sFunction], oMixin[sFunction], "overwrite " + sFunction);
 		});
 		Object.keys(oMixin).forEach(function (sKey) {
-			if (aOverriddenFunctions.indexOf(sKey) < 0) {
+			if (!aOverriddenFunctions.includes(sKey)) {
 				assert.strictEqual(oBinding[sKey], oMixin[sKey], sKey);
 			}
 		});

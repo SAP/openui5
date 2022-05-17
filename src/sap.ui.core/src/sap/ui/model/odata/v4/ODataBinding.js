@@ -124,7 +124,7 @@ sap.ui.define([
 			if (!sKey.startsWith("$$")) {
 				return;
 			}
-			if (aAllowed.indexOf(sKey) < 0) {
+			if (!aAllowed.includes(sKey)) {
 				throw new Error("Unsupported binding parameter: " + sKey);
 			}
 

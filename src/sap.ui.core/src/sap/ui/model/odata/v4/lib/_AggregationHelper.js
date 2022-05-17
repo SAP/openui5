@@ -81,8 +81,8 @@ sap.ui.define([
 		}
 		aAggregate.push(sAggregate);
 
-		if (sUnit && aAggregate.indexOf(sUnit) < 0 && aAliases.indexOf(sUnit, i + 1) < 0
-				&& aGroupBy.indexOf(sUnit) < 0) {
+		if (sUnit && !aAggregate.includes(sUnit) && !aAliases.includes(sUnit, i + 1)
+				&& !aGroupBy.includes(sUnit)) {
 			aAggregate.push(sUnit);
 		}
 	}
@@ -231,7 +231,7 @@ sap.ui.define([
 			});
 			aGroupBy = bIsLeafLevel
 				? Object.keys(oAggregation.group).sort().filter(function (sGroup) {
-					return oAggregation.groupLevels.indexOf(sGroup) < 0;
+					return !oAggregation.groupLevels.includes(sGroup);
 				})
 				: [oAggregation.groupLevels[iLevel - 1]];
 			if (!iLevel) {
@@ -557,14 +557,14 @@ sap.ui.define([
 			 */
 			function isUsedAtLeaf(sName) {
 				if (sName in oAggregation.group
-						&& (!iLevel || oAggregation.groupLevels.indexOf(sName) < 0)) {
+						&& (!iLevel || !oAggregation.groupLevels.includes(sName))) {
 					return true; // "quick path"
 				}
 
 				return Object.keys(oAggregation.aggregate).some(function (sAlias) {
 					return sName === oAggregation.aggregate[sAlias].unit;
 				}) || Object.keys(oAggregation.group).some(function (sGroup) {
-					return (!iLevel || oAggregation.groupLevels.indexOf(sGroup) < 0)
+					return (!iLevel || !oAggregation.groupLevels.includes(sGroup))
 						&& isUsedFor(sName, sGroup);
 				});
 			}
@@ -579,7 +579,7 @@ sap.ui.define([
 			function isUsedFor(sName, sGroup) {
 				return sName === sGroup
 					|| oAggregation.group[sGroup].additionally
-					&& oAggregation.group[sGroup].additionally.indexOf(sName) >= 0;
+					&& oAggregation.group[sGroup].additionally.includes(sName);
 			}
 
 			if (sOrderby) {

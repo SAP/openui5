@@ -257,7 +257,7 @@ sap.ui.define([
 			 * @returns {boolean} Whether the query options can be fulfilled by this binding
 			 */
 			function mergeSelectPath(sSelectPath) {
-				if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
+				if (!mAggregatedQueryOptions.$select.includes(sSelectPath)) {
 					mAggregatedQueryOptions.$select.push(sSelectPath);
 				}
 				return true;
