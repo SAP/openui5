@@ -948,9 +948,13 @@ sap.ui.define([
 			// popup
 			&& this._getDomRefToFocus() !== document.activeElement) {
 
-			// actively move the focus to the static UI area to blur the previous focused element after popup is open.
-			// The focus will be moved into the popup once the popup opening animation is finished
-			oFirstFocusableInStaticArea.focus();
+			/* actively move the focus to the static UI area to blur the previous focused element after popup is open.
+			 The focus will be moved into the popup once the popup opening animation is finished
+			 */
+			/* In safari, internet explorer and edge no scrolling happens when focus() is called on DOM elements with height: 0px.
+			 In firefox and chrome no scrolling has to be forced with preventScroll: true in this scenario.
+			*/
+			oFirstFocusableInStaticArea.focus({preventScroll: true});
 		}
 
 		// add Delegate to hosted content for handling of events (e.g. onfocusin)

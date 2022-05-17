@@ -17,23 +17,25 @@
 	<link href="static/popup.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<button id="focusableElement">Focusable Button</button>
-	<input id="focusableElement2">
+	<div id="testContent">
+		<button id="focusableElement">Focusable Button</button>
+		<input id="focusableElement2">
 
-	<div id="popup" tabindex="0">
-		This is a plain-HTML popup with two focusable child elements
-		<div id="popupcontent" tabindex="0">Child 1</div>
-		<div id="secondpopupcontent" tabindex="0">Child 2</div>
+		<div id="popup" tabindex="0">
+			This is a plain-HTML popup with two focusable child elements
+			<div id="popupcontent" tabindex="0">Child 1</div>
+			<div id="secondpopupcontent" tabindex="0">Child 2</div>
+		</div>
+
+		<div id="popup1" tabindex="0">
+			<button id="popup1-btn">Open Popup</button>
+		</div>
+
+		<div id="popup2" tabindex="0">
+			<button id="popup2-btn">Button</button>
+		</div>
+
+		<div id="uiarea" />
 	</div>
-
-	<div id="popup1" tabindex="0">
-		<button id="popup1-btn">Open Popup</button>
-	</div>
-
-	<div id="popup2" tabindex="0">
-		<button id="popup2-btn">Button</button>
-	</div>
-
-	<div id="uiarea" />
 </body>
 </html>

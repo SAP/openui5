@@ -571,6 +571,89 @@ sap.ui.define([
 		oSecondPopup.open(0);
 	});
 
+	QUnit.test("Check if no scrolling happens when a popup is opened and closed", function(assert){
+		var done = assert.async();
+
+		var oExpectedScrollPosition;
+
+		/**
+		 * Determines the current scroll position
+		 *
+		 * @returns {object} The scroll position
+		 */
+		var fnGetCurrentScrollPosition = function(){
+			return {
+				x: Math.round(window.pageXOffset),
+				y: Math.round(window.pageYOffset)
+			};
+		};
+
+		var oTestContent = document.getElementById("testContent");
+
+		var oAppDom = document.createElement("div");
+		oAppDom.style.height = "1000px";
+		oAppDom.style.width = "100px";
+		oAppDom.style.backgroundColor = "red";
+
+		var oButton = document.createElement("button");
+		oButton.innerText = "My Button";
+
+		var oPopupDom = document.createElement("div");
+		oPopupDom.innerText = "My Popup Content";
+
+		oTestContent.appendChild(oButton);
+		oTestContent.appendChild(oAppDom);
+
+		var oPopup = new Popup(oPopupDom, false, true, true);
+		var fnOpened = function (){
+			var oCurrentScrollPosition = fnGetCurrentScrollPosition();
+
+			if (Device.browser.msie) {
+				// depending on the screen height IE11 provides no accurate scroll position, so +-1px is still ok
+				assert.ok(Math.abs(oCurrentScrollPosition.y - oExpectedScrollPosition.y) <= 1, "The Y-dimension of the visible screen area was not changed by the focus change");
+			} else {
+				assert.equal(oCurrentScrollPosition.y, oExpectedScrollPosition.y, "The Y-dimension of the visible screen area was not changed by the focus change");
+			}
+
+			assert.equal(oCurrentScrollPosition.x, oExpectedScrollPosition.x, "The X-dimension of the visible screen area was not changed by the focus change");
+			oExpectedScrollPosition = fnGetCurrentScrollPosition();
+			oPopup.close();
+		};
+
+		var fnClosed = function (){
+			var oCurrentScrollPosition = fnGetCurrentScrollPosition();
+
+			if (Device.browser.msie) {
+				// depending on the screen height IE11 provides no accurate scroll position, so +-1px is still ok
+				assert.ok(Math.abs(oCurrentScrollPosition.y - oExpectedScrollPosition.y) <= 1, "The Y-dimension of the visible screen area was not changed by the focus change");
+			} else {
+				assert.equal(oCurrentScrollPosition.y, oExpectedScrollPosition.y, "The Y-dimension of the visible screen area was not changed by the focus change");
+			}
+			assert.equal(oCurrentScrollPosition.x, oExpectedScrollPosition.x, "The X-dimension of the visible screen area was not changed by the focus change");
+
+			// Clean Up
+			oTestContent.removeChild(oButton);
+			oTestContent.removeChild(oAppDom);
+			oPopup.destroy();
+
+			// Finish
+			done();
+		};
+
+		oPopup.attachOpened(fnOpened);
+		oPopup.attachClosed(fnClosed);
+
+		// focus the button
+		oButton.focus();
+
+		// scroll in the window to the available screen height
+		window.scrollTo(0, window.screen.availHeight);
+
+		oExpectedScrollPosition = fnGetCurrentScrollPosition();
+
+		oPopup.open();
+	});
+
 	QUnit.module("Animation", {
 		beforeEach : function() {
 			this.oDomRef = jQuery.sap.domById("popup");
