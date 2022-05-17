@@ -88,14 +88,6 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * Items used for collective search. If none assigned, no collective search is available.
-				 */
-				collectiveSearchItems: { // TODO: remove!
-					type: "sap.ui.core.Item",
-					multiple: true,
-					singularName : "collectiveSearchItem"
-				},
-				/**
 				 * FilterBar
 				 */
 				filterBar: {
@@ -318,11 +310,6 @@ sap.ui.define([
 
 	FilterableListContent.prototype._observeChanges = function (oChanges) {
 		if (oChanges.object == this) {
-
-			/* if (oChanges.name === "collectiveSearchItems") {
-				this._assignCollectiveSearch(true);
-			} */
-
 			var oFilterBar;
 
 			if (["_defaultFilterBar", "filterBar"].indexOf(oChanges.name) !== -1) {
@@ -432,15 +419,24 @@ sap.ui.define([
 		return bSearchSupported;
 	};
 
-	FilterableListContent.prototype.setCollectiveSearchSelect = function (oDropdown) {
-		this._oCollectiveSearchSelect = oDropdown;
+	/**
+	 * Sets the collective Search to the <code>FilterBar</code>
+	 *
+	 * @param {sap.ui.mdc.filterbar.vh.CollectiveSearchSelect} oCollectiveSearchSelect Collective search control
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.Dialog
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FilterableListContent.prototype.setCollectiveSearchSelect = function (oCollectiveSearchSelect) {
+		this._oCollectiveSearchSelect = oCollectiveSearchSelect;
 		this._assignCollectiveSearchSelect();
 	};
 
 	FilterableListContent.prototype._assignCollectiveSearchSelect = function () {
 		var oFilterBar = this._getPriorityFilterBar();
-		if (oFilterBar.setCollectiveSearch && this._oCollectiveSearchSelect) {
-			oFilterBar.setCollectiveSearch(this._oCollectiveSearchSelect);
+		if (oFilterBar.setCollectiveSearch) {
+			oFilterBar.setCollectiveSearch(this._oCollectiveSearchSelect); // remove it if empty
 		}
 	};
 

@@ -115,6 +115,9 @@ sap.ui.define([
 				return oContent.getId() === sCurrentContentKey;
 			});
 			if (oCurrentContent) {
+				if (oCurrentContent.setCollectiveSearchSelect) {
+					oCurrentContent.setCollectiveSearchSelect(undefined); // remove collective search from Filterbar
+				}
 				oCurrentContent.onHide();
 				this._unbindContent(oCurrentContent);
 			}

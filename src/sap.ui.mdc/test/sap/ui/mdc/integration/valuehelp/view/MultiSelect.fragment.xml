@@ -54,15 +54,10 @@
 					</mdcv:Popover>
 				</mdc:typeahead>
 				<mdc:dialog>
-					<mdcv:Dialog title="Label of Field">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search">
-							<mdcvc:collectiveSearchItems>
-								<core:Item text="Default Search Template" key="default"/>
-								<core:Item text="Search Template 1" key="template1"/>
-							</mdcvc:collectiveSearchItems>
-
+					<mdcv:Dialog id="FB0-FH1-Dialog" title="Label of Field">
+						<mdcvc:MTable id="FB0-FH1-Dialog-MTable1" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Default Search Template">
 							<mdcvc:filterBar>
-								<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+								<vhfb:FilterBar id="FB0-FH1-Dialog-FB1" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 									<vhfb:basicSearchField>
 										<mdc:FilterField
 											delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
@@ -106,7 +101,52 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
-						<mdcvc:Conditions label="Label of Field"></mdcvc:Conditions>
+						<mdcvc:MTable id="FB0-FH1-Dialog-MTable2" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Search Template 1">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="FB0-FH1-Dialog-FB2" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+									<vhfb:basicSearchField>
+										<mdc:FilterField
+											delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+											dataType= "Edm.String"
+											conditions= "{$filters>/conditions/$search}"
+											width="50%"
+											maxConditions="1"
+											placeholder="Search" />
+									</vhfb:basicSearchField>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Country of Origin" conditions="{$filters>/conditions/countryOfOrigin_code}" />
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+							<Table id="mTable3" items='{path : "/Authors"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Name" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Country of Origin" />
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{ID}" />
+											<Text text="{name}" />
+											<Text text="{countryOfOrigin_code}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
@@ -187,12 +227,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog title="MDC Table with ui.Table">
-						<mdcvc:MDCTable keyPath="ID" descriptionPath="name" filterFields="$search">
-							<mdcvc:collectiveSearchItems>
-								<core:Item text="Default Search Template" key="default"/>
-								<core:Item text="Search Template 1" key="template1"/>
-							</mdcvc:collectiveSearchItems>
-
+						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Default Search Template">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="mdcFilterbar1" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 									<vhfb:basicSearchField>
@@ -236,7 +271,56 @@
 								</mdc:columns>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-						<mdcvc:Conditions label="Label of Field"></mdcvc:Conditions>
+						<mdcvc:MDCTable id="mdcTableContent2" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Search Template 1">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="mdcFilterbar2" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+									<vhfb:basicSearchField>
+										<mdc:FilterField
+											delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+											dataType= "Edm.String"
+											conditions= "{$filters>/conditions/$search}"
+											width="50%"
+											maxConditions="1"
+											placeholder="Search" />
+									</vhfb:basicSearchField>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Country of Origin" conditions="{$filters>/conditions/countryOfOrigin_code}" />
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+
+								<!-- type="ResponsiveTable" -->
+							<mdc:Table autoBindOnInit="true"
+								id="mdcTable2"
+								width="100%"
+								height="100%"
+								headerVisible="true"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								p13nMode="Column,Sort"
+								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}}"
+								threshold="50">
+								<mdc:type>
+									<mdc:table.GridTableType rowCountMode="Auto"/>
+								</mdc:type>
+								<mdc:columns>
+									<mdc:table.Column id="mdcTable2_col_ID" header="ID" dataProperty="ID">
+										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable2_col_name" header="Name" dataProperty="name">
+										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable2_col_country" header="Country" dataProperty="countryOfOrigin_code">
+										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin_code}" additionalValue="{countryOfOrigin/descr}" display="Description" editMode="Display"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable2_col_region" header="Region" dataProperty="regionOfOrigin_code">
+										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{regionOfOrigin_code}" additionalValue="{regionOfOrigin/text}" display="Description" editMode="Display"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable2_col_city" header="City" dataProperty="cityOfOrigin_city">
+										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{cityOfOrigin_city}" additionalValue="{cityOfOrigin/text}" display="Description" editMode="Display"/>
+									</mdc:table.Column>
+								</mdc:columns>
+							</mdc:Table>
+						</mdcvc:MDCTable>
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
@@ -274,55 +358,137 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog title="MDC Table with m.Table">
-						<mdcvc:MDCTable keyPath="ID" descriptionPath="name" filterFields="$search">
-							<mdcvc:collectiveSearchItems>
-								<core:Item text="Default Search Template" key="default"/>
-								<core:Item text="Search Template 1" key="template1"/>
-							</mdcvc:collectiveSearchItems>
-							<mdcvc:filterBar>
-								<vhfb:FilterBar id="mdcFilterbar2" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
-									<vhfb:basicSearchField>
-										<mdc:FilterField
-											delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
-											dataType= "Edm.String"
-											conditions= "{$filters>/conditions/$search}"
-											width="50%"
-											maxConditions="1"
-											placeholder="Search" />
-									</vhfb:basicSearchField>
-									<vhfb:filterItems>
-										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
-									</vhfb:filterItems>
-								</vhfb:FilterBar>
-							</mdcvc:filterBar>
+							<mdcvc:MDCTable title="Authors" keyPath="ID" descriptionPath="name" filterFields="$search" group="tables">
+								<mdcvc:filterBar>
+									<vhfb:FilterBar id="mdcFilterbar-listcollection-1" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+										<vhfb:basicSearchField>
+											<mdc:FilterField
+												delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+												dataType= "Edm.String"
+												conditions= "{$filters>/conditions/$search}"
+												width="50%"
+												maxConditions="1"
+												placeholder="Search" />
+										</vhfb:basicSearchField>
+										<vhfb:filterItems>
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
+										</vhfb:filterItems>
+									</vhfb:FilterBar>
+								</mdcvc:filterBar>
 
-							<mdc:Table autoBindOnInit="true"
-								id="mdcTable2"
-								type="ResponsiveTable"
-								width="100%"
-								height="100%"
-								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
-								p13nMode="Column,Sort"
-								delegate="{name: 'sap/ui/v4demo/delegate/ResponsiveTable.delegate', payload: {collectionName: 'Authors'}}"
-								threshold="50">
-								<mdc:type>
-									<mdc:table.ResponsiveTableType growingMode="Scroll" />
-								</mdc:type>
-								<mdc:columns>
-									<mdc:table.Column id="mdcTable2_col_ID" header="ID" dataProperty="ID">
-										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
-									</mdc:table.Column>
-									<mdc:table.Column id="mdcTable2_col_name" header="Name" dataProperty="name">
-										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display"/>
-									</mdc:table.Column>
-									<mdc:table.Column id="mdcTable2_col_dateOfBirth" header="Date of birth" dataProperty="dateOfBirth">
-										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{dateOfBirth}" editMode="Display"/>
-									</mdc:table.Column>
-								</mdc:columns>
-							</mdc:Table>
-						</mdcvc:MDCTable>
-						<mdcvc:Conditions label="Label of Field"></mdcvc:Conditions>
+								<mdc:Table autoBindOnInit="true"
+									id="mdcTable-listcollection-1"
+									width="100%"
+									height="100%"
+									headerVisible="true"
+									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+									p13nMode="Column,Sort"
+									delegate="{name: 'sap/ui/v4demo/delegate/ResponsiveTable.delegate', payload: {collectionName: 'Authors'}}"
+									threshold="50">
+									<mdc:type>
+										<mdc:table.ResponsiveTableType growingMode="Scroll" />
+									</mdc:type>
+									<mdc:columns>
+										<mdc:table.Column id="mdcTable-listcollection-1_col_ID" header="ID" dataProperty="ID">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+										</mdc:table.Column>
+										<mdc:table.Column id="mdcTable-listcollection-1_col_name" header="Name" dataProperty="name">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display"/>
+										</mdc:table.Column>
+									</mdc:columns>
+								</mdc:Table>
+							</mdcvc:MDCTable>
+
+							<mdcvc:MDCTable title="Authors by Country" keyPath="ID" descriptionPath="name" filterFields="$search"  group="tables">
+								<mdcvc:filterBar>
+									<vhfb:FilterBar id="mdcFilterbar-listcollection-2" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+										<vhfb:basicSearchField>
+											<mdc:FilterField
+												delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+												dataType= "Edm.String"
+												conditions= "{$filters>/conditions/$search}"
+												width="50%"
+												maxConditions="1"
+												placeholder="Search" />
+										</vhfb:basicSearchField>
+										<vhfb:filterItems>
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Country of origin" conditions="{$filters>/conditions/countryOfOrigin_code}" />
+										</vhfb:filterItems>
+									</vhfb:FilterBar>
+								</mdcvc:filterBar>
+
+								<mdc:Table autoBindOnInit="true"
+									id="mdcTable-listcollection-2"
+									width="100%"
+									height="100%"
+									headerVisible="true"
+									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+									p13nMode="Column,Sort"
+									delegate="{name: 'sap/ui/v4demo/delegate/ResponsiveTable.delegate', payload: {collectionName: 'Authors'}}"
+									threshold="50">
+									<mdc:type>
+										<mdc:table.ResponsiveTableType growingMode="Scroll" />
+									</mdc:type>
+									<mdc:columns>
+										<mdc:table.Column id="mdcTable-listcollection-2_col_ID" header="ID" dataProperty="ID">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+										</mdc:table.Column>
+										<mdc:table.Column id="mdcTable-listcollection-2_col_name" header="Name" dataProperty="name">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" additionalValue="{countryOfOrigin_code}" display="ValueDescription" value="{name}" editMode="Display"/>
+										</mdc:table.Column>
+                                        <mdc:table.Column id="mdcTable-listcollection-2_col_countryOfOrigin" header="Country of origin" dataProperty="countryOfOrigin_code">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin_code}" editMode="Display"/>
+										</mdc:table.Column>
+									</mdc:columns>
+								</mdc:Table>
+							</mdcvc:MDCTable>
+
+							<mdcvc:MDCTable title="Authors by Date of Birth" keyPath="ID" descriptionPath="name" filterFields="$search" group="tables">
+								<mdcvc:filterBar>
+									<vhfb:FilterBar id="mdcFilterbar-listcollection-3" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+										<vhfb:basicSearchField>
+											<mdc:FilterField
+												delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+												dataType= "Edm.String"
+												conditions= "{$filters>/conditions/$search}"
+												width="50%"
+												maxConditions="1"
+												placeholder="Search" />
+										</vhfb:basicSearchField>
+										<vhfb:filterItems>
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Date of Birth" conditions="{$filters>/conditions/dateOfBirth}" />
+										</vhfb:filterItems>
+									</vhfb:FilterBar>
+								</mdcvc:filterBar>
+
+								<mdc:Table autoBindOnInit="true"
+									id="mdcTable-listcollection-3"
+									width="100%"
+									height="100%"
+									headerVisible="true"
+									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+									p13nMode="Column,Sort"
+									delegate="{name: 'sap/ui/v4demo/delegate/ResponsiveTable.delegate', payload: {collectionName: 'Authors'}}"
+									threshold="50">
+									<mdc:type>
+										<mdc:table.ResponsiveTableType growingMode="Scroll" />
+									</mdc:type>
+									<mdc:columns>
+										<mdc:table.Column id="mdcTable-listcollection-3_col_ID" header="ID" dataProperty="ID">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+										</mdc:table.Column>
+										<mdc:table.Column id="mdcTable-listcollection-3_col_name" header="Name" dataProperty="name">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" additionalValue="{dateOfBirth}" display="ValueDescription" value="{name}" editMode="Display"/>
+										</mdc:table.Column>
+                                        <mdc:table.Column id="mdcTable-listcollection-3_col_dateOfBirth" header="Date of Birth" dataProperty="dateOfBirth">
+											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{dateOfBirth}" editMode="Display"/>
+										</mdc:table.Column>
+									</mdc:columns>
+								</mdc:Table>
+							</mdcvc:MDCTable>
+
+
+							<mdcvc:Conditions label="Conditions"></mdcvc:Conditions>
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
@@ -469,7 +635,7 @@
 					<mdcv:Dialog id="FB0-FH-Region-Dialog" title="Region">
 						<mdcvc:MTable id="FB0-FH-Region-Dialog-MTable" keyPath="code" descriptionPath="text" filterFields="$search" title="Region">
 							<mdcvc:filterBar>
-								<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+								<vhfb:FilterBar id="FB0-FH-Region-Dialog-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 									<vhfb:basicSearchField>
 										<mdc:FilterField
 											delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
@@ -547,7 +713,7 @@
 					<mdcv:Dialog id="FB0-FH-City-Dialog" title="Region">
 						<mdcvc:MDCTable id="FB0-FH-City-Dialog-MDCTable" keyPath="city" descriptionPath="text" filterFields="$search" >
 							<mdcvc:filterBar>
-								<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+								<vhfb:FilterBar id="FB0-FH-City-Dialog-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 									<vhfb:basicSearchField>
 										<mdc:FilterField
 											delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
@@ -671,8 +837,8 @@
 							</mdc:Table>
 						</mdcvc:MDCTable>
 						<mdcvc:MTable id="FH_Books1-MTable" keyPath="ID" descriptionPath="title" filterFields="$search" title="mTable">
-							<mdcvc:filterBar id="FH_Books1-MTable-FB">
-								<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="FH_Books1-MTable-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 									<vhfb:filterItems>
 										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" conditions="{$filters>/conditions/ID}" dataType="Edm.Int32" dataTypeFormatOptions="{groupingEnabled: false}"/>
 									</vhfb:filterItems>
@@ -790,8 +956,8 @@
 							</mdc:Table>
 						</mdcvc:MDCTable>
 						<mdcvc:MTable id="FH_Books2-MTable" keyPath="ID" descriptionPath="title" filterFields="*title,descr*" title="mTable">
-							<mdcvc:filterBar id="FH_Books2-MTable-FB">
-								<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="FH_Books2-MTable-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 									<vhfb:filterItems>
 										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" conditions="{$filters>/conditions/ID}" dataType="Edm.Int32" dataTypeFormatOptions="{groupingEnabled: false}"/>
 									</vhfb:filterItems>
@@ -909,8 +1075,8 @@
 							</mdc:Table>
 						</mdcvc:MDCTable>
 						<mdcvc:MTable id="FH_Books3-MTable" keyPath="ID" descriptionPath="title" title="mTable">
-							<mdcvc:filterBar id="FH_Books3-MTable-FB">
-								<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="FH_Books3-MTable-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 									<vhfb:filterItems>
 										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" conditions="{$filters>/conditions/ID}" dataType="Edm.Int32" dataTypeFormatOptions="{groupingEnabled: false}"/>
 									</vhfb:filterItems>

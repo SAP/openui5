@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/base/util/UriParameters",
-	"sap/ui/core/Item",
 	'sap/m/library',
 	"sap/ui/core/Core",
 	'sap/ui/mdc/condition/Condition'
@@ -41,7 +40,6 @@ sap.ui.define([
 	ColumnListItem,
 	Text,
 	UriParameters,
-	Item,
 	Core,
 	Condition
 ) {
@@ -100,11 +98,9 @@ sap.ui.define([
 
 			if (!oCurrentContent) {
 
-				oCurrentContent = new MDCTable({title: "Select from List", keyPath: "ID", descriptionPath: "name", filterFields: "$search", collectiveSearchItems: [
-					new Item({text: "Default Search Template", key: "default"}),
-					new Item({text: "Search Template 1", key: "template1"})
-				]});
-
+				oCurrentContent = new MDCTable({keyPath: "ID", descriptionPath: "name", filterFields: "$search", group:"group1", title: "Default Search Template"});
+				oContainer.addContent(oCurrentContent);
+				oCurrentContent = new MDCTable({keyPath: "ID", descriptionPath: "name", filterFields: "$search", group:"group1", title: "Search Template 1"});
 				oContainer.addContent(oCurrentContent);
 
 				if (bMultiSelect) {
@@ -126,6 +122,12 @@ sap.ui.define([
 				oCurrentTable.destroy();
 			}
 
+			var oCurrentFB = oCurrentContent.getFilterBar();
+
+			if (oCurrentFB) {
+				oCurrentContent.setFilterBar();
+				oCurrentFB.destroy();
+			}
 
 			var oCollectiveSearchContent;
 
@@ -133,7 +135,7 @@ sap.ui.define([
 				case "template1":
 
 					oCurrentContent.setFilterBar(
-						new FilterBar({
+						new FilterBar("mdcFilterbar2", {
 							liveMode: false,
 							delegate: {
 								name: "delegates/GenericVhFilterBarDelegate",
@@ -190,7 +192,7 @@ sap.ui.define([
 				default:
 
 					oCurrentContent.setFilterBar(
-						new FilterBar({
+						new FilterBar("mdcFilterbar1", {
 							liveMode: false,
 							delegate: {
 								name: "delegates/GenericVhFilterBarDelegate",
