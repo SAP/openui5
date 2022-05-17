@@ -181,7 +181,7 @@ sap.ui.define([
 			control: this,
 			actionControl: this._oItemTemplate,
 			enabledPropertyName: "type",
-			enabledPropertyValue: ListType.Navigation,
+			enabledPropertyValue: ListType.Active,
 			disabledPropertyValue: ListType.Inactive
 		});
 
@@ -227,7 +227,7 @@ sap.ui.define([
 					control: this,
 					actionControl: oItem,
 					enabledPropertyName: "type",
-					enabledPropertyValue: ListType.Navigation,
+					enabledPropertyValue: ListType.Active,
 					disabledPropertyValue: ListType.Inactive
 				});
 			}

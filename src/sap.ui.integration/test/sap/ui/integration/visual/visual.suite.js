@@ -5,6 +5,7 @@ module.exports = [
 	"AnalyticalCardVisualTests.spec.js",
 	"AnalyticsCloudCardVisualTests.spec.js",
 	"CalendarCardVisualTests.spec.js",
+	"CardActionsVisualTests.spec.js",
 	"CardHeadersVisualTests.spec.js",
 	"CardLayoutsVisualTests.spec.js",
 	"CardOthersVisualTests.spec.js",

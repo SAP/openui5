@@ -2,6 +2,7 @@
 /* global element, by, browser, expect, takeScreenshot */
 
 module.exports = {
+
 	navigateTo: function (sTitle) {
 		"use strict";
 		element(by.control({
@@ -12,10 +13,12 @@ module.exports = {
 			}
 		})).click();
 	},
+
 	navigateBack: function () {
 		"use strict";
 		browser.executeScript("window.history.back()");
 	},
+
 	getElement: function (oConfig) {
 		"use strict";
 		var oElement;
@@ -34,6 +37,7 @@ module.exports = {
 
 		return oElement;
 	},
+
 	takePictureOfElement: function (oConfig, sPictureId) {
 		"use strict";
 		var oElement = this.getElement(oConfig);
@@ -42,7 +46,8 @@ module.exports = {
 
 		expect(takeScreenshot(oElement)).toLookAs(sPictureId);
 	},
-	switchToCompactDensity: function  () {
+
+	switchToCompactDensity: function () {
 		"use strict";
 		var oCompactBtn = element(by.control({
 			controlType: "sap.m.SegmentedButton",
@@ -55,5 +60,10 @@ module.exports = {
 		browser.executeScript("arguments[0].scrollIntoView()", oCompactBtn.getWebElement());
 
 		oCompactBtn.click();
+	},
+
+	hoverOn: function (oElement) {
+		"use strict";
+		browser.actions().mouseMove(oElement).perform();
 	}
 };
