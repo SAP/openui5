@@ -306,6 +306,14 @@ sap.ui.define(function() {
 					only: ["sap/ui/webc/main/Tree"]
 				}
 			},
+			"designtime/Avatar": {
+				title: "QUnit Page for sap.ui.webc.main.Avatar design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.main","sap.ui.rta"]
+				},
+				sinon: false,
+				group: "Designtime"
+			},
 			"designtime/Badge": {
 				title: "QUnit Page for sap.ui.webc.main.Badge design time and rta enabling",
 				ui5: {
