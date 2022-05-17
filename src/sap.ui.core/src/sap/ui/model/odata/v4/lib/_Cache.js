@@ -1338,7 +1338,7 @@ sap.ui.define([
 			delete aElements.$byPredicate[sTransientPredicate];
 		}
 		if (!sPath && iIndex !== undefined) {
-			// Note: sPath is empty only in a CollectionCache, so we may use iLmit and
+			// Note: sPath is empty only in a CollectionCache, so we may use iLimit and
 			// adjustReadRequests
 			if (!sTransientPredicate) {
 				this.iLimit -= 1; // this doesn't change Infinity

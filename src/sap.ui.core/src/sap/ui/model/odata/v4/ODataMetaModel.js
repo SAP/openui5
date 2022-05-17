@@ -2176,7 +2176,7 @@ sap.ui.define([
 		 * or a constraint if not needed.
 		 *
 		 * @param {string} sKey The constraint's name
-		 * @param {any} vValue The contraint's value
+		 * @param {any} vValue The constraint's value
 		 */
 		function setConstraint(sKey, vValue) {
 			if (vValue !== undefined) {
@@ -3243,10 +3243,10 @@ sap.ui.define([
 				})).then(function (aResults) {
 					// insert the returned mappings into oValueListInfo in the order of aMappingUrls
 					aMappingUrls.forEach(function (sMappingUrl, i) {
-						var mvalueListMappingByQualifier = aResults[i].valueListMappingByQualifier;
+						var mValueListMappingByQualifier = aResults[i].valueListMappingByQualifier;
 
-						Object.keys(mvalueListMappingByQualifier).forEach(function (sQualifier) {
-							addMapping(mvalueListMappingByQualifier[sQualifier], sQualifier,
+						Object.keys(mValueListMappingByQualifier).forEach(function (sQualifier) {
+							addMapping(mValueListMappingByQualifier[sQualifier], sQualifier,
 								sMappingUrl, aResults[i].$model);
 						});
 					});
