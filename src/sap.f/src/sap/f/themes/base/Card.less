@@ -425,6 +425,16 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 		}
 	}
 
+	&:not(.sapFCardTransparent) {
+		.sapFCardClickable:hover {
+			background: @sapUiTileHoverBackground;
+		}
+
+		.sapFCardClickable:active {
+			background: @sapUiTileActiveBackground;
+		}
+	}
+
 	.sapFCardClickable,
 	.sapFCardClickable svg {
 		cursor: pointer !important;
@@ -434,17 +444,6 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 		}
 	}
 }
-
-.sapFCard:not(.sapFCardTransparent) {
-	&.sapFCardClickable:hover {
-		background: @sapUiTileHoverBackground;
-	}
-
-	&.sapFCardClickable:active {
-		background: @sapUiTileActiveBackground;
-	}
-}
-
 
 .sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before,
 .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCardHeader:not(.sapFCardHeaderToolbarFocused)::before, // focus inside Grid Container
