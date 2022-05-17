@@ -147,7 +147,6 @@ sap.ui.define([
 	 * @returns {this|Promise} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.initialize = function(bSuggestion) {
 		return this;
@@ -159,7 +158,6 @@ sap.ui.define([
 	 * @param {boolean} bSuggestion Flag if field help is opened as suggestion or dialog
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.dispose = function(bSuggestion) {
 	};
@@ -180,7 +178,6 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} Content to be shown in the value help
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getDialogContent = function() {
 
@@ -194,7 +191,6 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} Content to be shown in the value help
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getSuggestionContent = function() {
 
@@ -210,7 +206,6 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.field.FieldValueHelpContentWrapperBase} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.fieldHelpOpen = function(bSuggestion) {
 
@@ -225,7 +220,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.fieldHelpClose = function() {
 
@@ -242,7 +236,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.removeFocus = function() {
 
@@ -256,7 +249,6 @@ sap.ui.define([
 	 * @returns {boolean} true if filtering on the content is supported
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getFilterEnabled = function() {
 
@@ -270,7 +262,6 @@ sap.ui.define([
 	 * @param {int} iStep Number of steps for navigation (for example, 1 means next item, -1 means previous item)
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.navigate = function(iStep) {
 
@@ -291,7 +282,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, bNoRequest, bCaseSensitive) {
 
@@ -313,7 +303,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getKeyForText = function(sText, oInParameters, bNoRequest, bCaseSensitive) {
 
@@ -335,7 +324,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.88.0
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getKeyAndText = function(vKey, sText, oInParameters, oOutParameters, bCaseSensitive) {
@@ -350,7 +338,6 @@ sap.ui.define([
 	 * @returns {sap.ui.model.ListBinding} ListBinding
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getListBinding = function() {
 
@@ -369,7 +356,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @since 1.67.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getAsyncKeyText = function() {
 
@@ -391,7 +377,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @since 1.73.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.applyFilters = function(aFilters, sSearch) {
 
@@ -404,7 +389,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @since 1.73.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.isSuspended = function() {
 
@@ -419,7 +403,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @since 1.92.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	 FieldValueHelpContentWrapperBase.prototype.enableShowAllItems = function() {
 
@@ -434,7 +417,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
  	 * @since 1.92.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.getAllItemsShown = function() {
 

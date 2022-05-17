@@ -302,7 +302,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.connect = function(oField) {
 
@@ -333,7 +332,6 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} Control to which the <code>FieldHelp</code> element is connected
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getField = function() {
 
@@ -351,7 +349,6 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.condition.Operator} Operator used
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getOperator = function() {
 
@@ -374,7 +371,6 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the maintained operator along with <code>sKey</code> and <code>sDescription</code> as <code>aValues</code>
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._createCondition = function(sKey, sDescription, oInParameters, oOutParameters) {
 
@@ -396,7 +392,6 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} Control to which the <code>FieldHelp</code> element is connected
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getControlForSuggestion = function() {
 
@@ -418,7 +413,6 @@ sap.ui.define([
 	 * @returns {string} FieldPath
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getFieldPath = function() {
 
@@ -453,7 +447,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.81.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getContentId = function() {
 
@@ -477,7 +470,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.92.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getAriaHasPopup = function() {
 
@@ -497,7 +489,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.81.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getRoleDescription = function(iMaxConditions) {
 
@@ -515,7 +506,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.86.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getValueHelpEnabled = function() {
 
@@ -534,7 +524,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.open = function(bSuggestion) {
 
@@ -590,7 +579,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.close = function() {
 
@@ -623,7 +611,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.toggleOpen = function(bSuggestion) {
 
@@ -665,7 +652,6 @@ sap.ui.define([
 	 * @since 1.66.0
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.isOpen = function(bCheckClosing) {
 
@@ -693,7 +679,6 @@ sap.ui.define([
 	 * @since 1.73.0
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.skipOpening = function() {
 
@@ -721,7 +706,6 @@ sap.ui.define([
 	 * @since 1.84.0
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.initBeforeOpen = function(bSuggestion) {
 
@@ -753,7 +737,6 @@ sap.ui.define([
 	 * @returns {sap.m.Popover} Popover
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._createPopover = function() {
 
@@ -816,7 +799,6 @@ sap.ui.define([
 	 * @returns {sap.m.Popover} Popover
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getPopover = function() {
 
@@ -838,7 +820,6 @@ sap.ui.define([
 	 * @param {object} oEvent Event object
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._handleAfterOpen = function(oEvent) {
 	};
@@ -851,7 +832,6 @@ sap.ui.define([
 	 * @param {object} oEvent Event object
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._handleAfterClose = function(oEvent) {
 
@@ -878,7 +858,6 @@ sap.ui.define([
 	 * @returns {boolean|Promise} if <code>true</code>, the field help should open by typing. If determined asynchronously, a <code>Promise</code> is returned
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.openByTyping = function() {
 
@@ -899,7 +878,6 @@ sap.ui.define([
 	 * @since 1.81.0
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.openByClick = function() {
 
@@ -915,7 +893,6 @@ sap.ui.define([
 	 * @since 1.75.0
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.isFocusInHelp = function() {
 
@@ -929,7 +906,6 @@ sap.ui.define([
 	 * @since 1.92.0
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.removeFocus = function() {
 
@@ -945,7 +921,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.navigate = function(iStep) {
 		// to be implements by the concrete FieldHelp
@@ -988,7 +963,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName) {
 		return _getTextForKey.call(this, vKey, oBindingContext, oInParameters, oOutParameters, false, oConditionModel, sConditionModelName, true); // case sensitive as used to get description for known key
@@ -1017,7 +991,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getKeyForText = function(sText, oBindingContext, oConditionModel, sConditionModelName) {
 		return _getKeyForText.call(this, sText, oBindingContext, false, oConditionModel, sConditionModelName, true); // case sensitive as used to get key for known description
@@ -1051,7 +1024,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
 	 * @since 1.77.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName, vParsedValue, bKeyAndDescription, bCaseSensitive) {
 		// to be implements by the concrete FieldHelp
@@ -1070,7 +1042,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
 	 * @since 1.81.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._isTextOrKeyRequestSupported = function() {
 		// to be implemented by the concrete FieldHelp
@@ -1085,7 +1056,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
 	 * @since 1.82.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.isValidationSupported = function() {
 		// to be implemented by the concrete FieldHelp
@@ -1116,7 +1086,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
 	 * @since 1.77.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getItemForValue = function(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
 
@@ -1184,7 +1153,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.75.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.isUsableForValidation = function() {
 		// to be implements by the concrete FieldHelp
@@ -1203,7 +1171,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.66.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.onFieldChange = function() {
 
@@ -1218,7 +1185,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._setContent = function(oContent) {
 
@@ -1250,7 +1216,6 @@ sap.ui.define([
 	 * @since 1.60.0
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getIcon = function() {
 		return "sap-icon://slim-arrow-down";
@@ -1297,7 +1262,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
 	 * @since 1.77.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._fireOpen = function(bSuggestion, fnCallback) {
 
@@ -1325,7 +1289,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
 	 * @since 1.77.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._callContentRequest = function(bSuggestion, fnCallback) {
 
@@ -1382,7 +1345,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
 	 * @since 1.87.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getContenRequestProperties = function(bSuggestion) {
 		return null;
