@@ -529,8 +529,8 @@ sap.ui.define([
 					backgroundDesign: BackgroundDesign.Transparent,
 					expanded: true,
 					visible: {parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter: _isTokenizerRequired},
-					headerText: {parts: ['$i18n>valuehelp.TOKENIZERTITLE', '$valueHelp>/conditions'], formatter:
-						function(sText, aConditions) {
+					headerText: {parts: ['$valueHelp>/conditions', '$help>/_selectableContents'], formatter:
+						function(aConditions, aContent) {
 							var iCount = 0;
 							for (var i = 0; i < aConditions.length; i++) {
 								var oCondition = aConditions[i];
@@ -538,11 +538,19 @@ sap.ui.define([
 									iCount++;
 								}
 							}
-							if (iCount === 0) {
-								// in case of no items do not show a number
-								sText = this._oResourceBundle.getText("valuehelp.TOKENIZERTITLENONUMBER");
+							var sTitle;
+							if (aContent && aContent.length == 1) { // in case of single content the title will be provided by the content
+								sTitle = aContent[0].getFormattedTokenizerTitle(iCount);
+								return sTitle;
+							} else {
+								// default title
+								sTitle = this._oResourceBundle.getText("valuehelp.TOKENIZERTITLE");
+								if (iCount === 0) {
+									// in case of no items do not show a number
+									sTitle = this._oResourceBundle.getText("valuehelp.TOKENIZERTITLENONUMBER");
+								}
+								return formatMessage(sTitle, iCount);
 							}
-							return formatMessage(sText, iCount);
 						}.bind(this)
 					}
 				});

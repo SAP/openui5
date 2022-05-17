@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library",
-	"sap/m/Popover"
+	"sap/m/Popover",
+	"sap/ui/core/Core"
 ], function (
 		ValueHelpDelegate,
 		FilterableListContent,
@@ -29,11 +30,13 @@ sap.ui.define([
 		Icon,
 		JSONModel,
 		mLibrary,
-		Popover
+		Popover,
+		oCore
 	) {
 	"use strict";
 
 	var oContent;
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var _teardown = function() {
 		oContent.destroy();
@@ -67,6 +70,17 @@ sap.ui.define([
 			assert.equal(oFilterBar, oMyFilterBar, "returns dedicated filterbar, if available");
 			fnDone();
 		});
+	});
+
+	QUnit.test("getFormattedTokenizerTitle", function(assert) {
+
+		assert.equal(oContent.getFormattedTokenizerTitle(0), oResourceBundle.getText("valuehelp.SELECTFROMLIST.TokenizerTitleNoCount"), "formatted TokenizerTitle");
+		assert.equal(oContent.getFormattedTokenizerTitle(1), oResourceBundle.getText("valuehelp.SELECTFROMLIST.TokenizerTitle", 1), "formatted TokenizerTitle");
+
+		oContent.setTokenizerTitle("myTitleText");
+		assert.equal(oContent.getFormattedTokenizerTitle(0), "myTitleText", "formatted TokenizerTitle");
+		assert.equal(oContent.getFormattedTokenizerTitle(1), "myTitleText", "formatted TokenizerTitle");
+
 	});
 
 });

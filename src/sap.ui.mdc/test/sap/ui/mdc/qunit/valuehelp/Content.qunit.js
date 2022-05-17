@@ -349,6 +349,17 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getFormattedTokenizerTitle", function(assert) {
+
+		assert.equal(oContent.getFormattedTokenizerTitle(), "", "formatted TokenizerTitle is empty");
+
+		oContent.setTokenizerTitle("TokenizerTitle {0}");
+		assert.equal(oContent.getFormattedTokenizerTitle(), "TokenizerTitle ", "formatted TokenizerTitle");
+		assert.equal(oContent.getFormattedTokenizerTitle(1), "TokenizerTitle 1", "formatted TokenizerTitle");
+		assert.equal(oContent.getFormattedTokenizerTitle(0), "TokenizerTitle ", "formatted TokenizerTitle");
+
+	});
+
 	QUnit.test("_getControl", function(assert) {
 
 		var oControl = oContent._getControl();

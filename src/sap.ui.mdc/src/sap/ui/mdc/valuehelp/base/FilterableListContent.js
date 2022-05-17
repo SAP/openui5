@@ -405,6 +405,14 @@ sap.ui.define([
 		return sShortTitle;
 	};
 
+	FilterableListContent.prototype.getFormattedTokenizerTitle = function(iCount) {
+		var sTokenizerTitle = this.getTokenizerTitle();
+		if (!sTokenizerTitle) {
+			sTokenizerTitle = this._oResourceBundle.getText("valuehelp.SELECTFROMLIST.TokenizerTitle" + (iCount === 0 ? "NoCount" : ""), iCount);
+		}
+		return sTokenizerTitle;
+	};
+
 	FilterableListContent.prototype.isSearchSupported = function () {
 
 		var sFilterFields = this.getFilterFields();
