@@ -1593,7 +1593,7 @@ sap.ui.define([
 
 		if (this._oCreateContentPromise) {
 			this._oCreateContentPromise.then(function() {
-				fnCreateInternalContent.call(this);
+				_createInternalContentWrapper.call(this); // as already a Promise might be pending
 			}.bind(this));
 		} else {
 			fnCreateInternalContent.call(this);
