@@ -305,6 +305,14 @@
 					]
 				},
 				{
+					"pattern": "static/BPSupport",
+					"name": "BPSupport",
+					"target": [
+						"BPSupport"
+					]
+				},
+
+				{
 					"pattern": "search/{searchParam}:?options:",
 					"name": "search",
 					"target": [
@@ -433,6 +441,11 @@
 					"viewName": "News",
 					"viewLevel": 2,
 					"viewId": "news"
+				},
+				"BPSupport": {
+					"viewName": "BPSupport",
+					"viewLevel": 2,
+					"viewId": "BPSupport"
 				},
 				"apiDetailInitial": {
 					"viewName": "ApiDetailInitial",
