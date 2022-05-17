@@ -1436,7 +1436,27 @@ sap.ui.define([
 			{"@$ui5._" : {predicate : "(1)"}},
 			["foo"]); // "foo" is just selected so that we do not jump to updateAll
 
-		assert.deepEqual(oOldValue, {"@$ui5._" : {context : oContext, predicate : "(1)"}});
+		assert.deepEqual(oOldValue,
+			{"@$ui5._" : {context : oContext, predicate : "(1)"}, "foo@$ui5.noData" : true});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateSelected: create annotation", function (assert) {
+		var oBinding = {},
+			oOldValue = {};
+
+		oBinding.oContext = {oBinding : oBinding};
+		this.mock(_Helper).expects("fireChange").never();
+
+		// code under test
+		_Helper.updateSelected("~mChangeListener~", "", oOldValue,
+			{baz : {}}, ["foo", "bar", "baz"]);
+
+		assert.deepEqual(oOldValue, {
+			"foo@$ui5.noData" : true,
+			"bar@$ui5.noData" : true,
+			baz : {}
+		});
 	});
 
 	//*********************************************************************************************

@@ -396,8 +396,7 @@ sap.ui.define([
 				aSelect = _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath).$select;
 				_Helper.updateSelected(that.mChangeListeners,
 					_Helper.buildPath(sPath, sPredicate || sTransientPredicate), oEntityData,
-					oCreatedEntity,
-					aSelect && aSelect.concat("@odata.etag")); // do not change $select
+					oCreatedEntity, aSelect);
 
 				that.removePendingRequest();
 				fnResolve(true);
@@ -506,6 +505,7 @@ sap.ui.define([
 		var oDataPromise = SyncPromise.resolve(oData),
 			oEntity,
 			iEntityPathLength,
+			bInAnnotation = false,
 			aSegments,
 			bTransient = false,
 			that = this;
@@ -520,21 +520,42 @@ sap.ui.define([
 		 * Determines the implicit value if the value is missing in the cache. Reports an invalid
 		 * segment if there is no @Core.Permissions: 'None' annotation and no implicit value.
 		 *
-		 * @param {object} oValue The object that is expected to have the value
-		 * @param {string} sSegment The path segment that is missing
-		 * @param {number} iPathLength The length of the path of the missing value
-		 * @returns {any} The value if it could be determined or undefined otherwise
+		 * @param {object} oValue - The object that is expected to have the value
+		 * @param {string} sSegment - The path segment that is missing
+		 * @param {number} iPathLength - The length of the path of the missing value
+		 * @returns {sap.ui.base.SyncPromise|undefined}
+		 *   Returns a SyncPromise which resolves with the value or returns undefined in some
+		 *   special cases.
 		 */
 		function missingValue(oValue, sSegment, iPathLength) {
 			var sPropertyPath = aSegments.slice(0, iPathLength).join("/"),
+				sPropertyName,
 				sReadLink,
 				sServiceUrl;
 
 			if (Array.isArray(oValue)) {
 				return invalidSegment(sSegment, sSegment === "0"); // missing key predicate or index
 			}
+
+			if (bInAnnotation) {
+				return invalidSegment(sSegment, true);
+			}
+
+			if (sSegment.includes("@")) { // missing property annotation
+				sPropertyName = sSegment.split("@")[0];
+				if (bTransient
+						|| sPropertyName in oValue
+						|| oValue[sPropertyName + "@$ui5.noData"]
+						|| (that.mQueryOptions
+							&& that.mQueryOptions.$select.includes(sPropertyPath.split("@")[0]))) {
+					// no use to send late request
+					return invalidSegment(sSegment, true);
+				}
+			}
+
 			return that.oRequestor.getModelInterface()
-				.fetchMetadata(that.sMetaPath + "/" + _Helper.getMetaPath(sPropertyPath))
+				.fetchMetadata(that.sMetaPath + "/"
+					+ _Helper.getMetaPath(sPropertyPath.split("@")[0]))
 				.then(function (oProperty) {
 					var vPermissions;
 
@@ -564,7 +585,7 @@ sap.ui.define([
 						return oEntity
 							&& that.fetchLateProperty(oGroupLock, oEntity,
 								aSegments.slice(0, iEntityPathLength).join("/"),
-								aSegments.slice(iEntityPathLength).join("/"),
+								aSegments.slice(iEntityPathLength).join("/").split("@")[0],
 								aSegments.slice(iEntityPathLength, iPathLength).join("/"))
 							|| invalidSegment(sSegment);
 					}
@@ -632,9 +653,14 @@ sap.ui.define([
 					vValue = vValue[vIndex];
 				}
 				// missing advertisement or annotation is not an error
-				return vValue === undefined && sSegment[0] !== "#" && !sSegment.includes("@")
+				vValue = vValue === undefined && sSegment[0] !== "#" && sSegment[0] !== "@"
 					? missingValue(oParentValue, sSegment, i + 1)
 					: vValue;
+				if (sSegment.includes("@")) {
+					bInAnnotation = true;
+				}
+
+				return vValue;
 			});
 		}, oDataPromise);
 	};
