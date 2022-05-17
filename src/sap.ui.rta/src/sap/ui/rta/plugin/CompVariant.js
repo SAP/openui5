@@ -197,7 +197,7 @@ sap.ui.define([
 				var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 				var aVariants = getAllVariants(oElementOverlay);
 				var oCurrentVariant = aVariants.find(function(oVariant) {
-					return oVariant.getId() === oVariantManagementControl.getPresentVariantId();
+					return oVariant.getVariantId() === oVariantManagementControl.getPresentVariantId();
 				});
 
 				if (oCurrentVariant.isRenameEnabled(sLayer)) {
@@ -241,9 +241,9 @@ sap.ui.define([
 				});
 
 				var aSubmenuItems = aVariants.map(function(oVariant) {
-					var bCurrentItem = oVariantManagementControl.getPresentVariantId() === oVariant.getId();
+					var bCurrentItem = oVariantManagementControl.getPresentVariantId() === oVariant.getVariantId();
 					var oItem = {
-						id: oVariant.getId(),
+						id: oVariant.getVariantId(),
 						text: oVariant.getText("variantName"),
 						icon: bCurrentItem ? "sap-icon://accept" : "blank",
 						enabled: !bCurrentItem
