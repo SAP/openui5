@@ -47,8 +47,8 @@ sap.ui.define([
 	// shortcut for sap.m.GenericTileMode
 	var GenericTileMode = library.GenericTileMode;
 
-	//shortcut for sap.ui.core.Priority
-	var Priority = coreLibrary.Priority;
+	//shortcut for sap.m.Priority
+	var Priority = library.Priority;
 
 	// shortcut for sap.m.GenericTileScope
 	var GenericTileScope = library.GenericTileScope;
@@ -3328,6 +3328,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 				tileContent: new TileContent("tile-cont", {
 					unit: "EUR",
 					priority: Priority.High,
+					priorityText: "High",
 					footer: "Current Quarter",
 					content: new NumericContent("numeric-cnt", {
 						state: LoadState.Loaded,
@@ -3458,31 +3459,48 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.notOk(document.getElementById("tile-cont-priority-border"), Priority.None + ": Priority border is not rendered");
 		assert.notOk(document.getElementById("tile-cont-priority-value"), Priority.None + ": Priority value is not rendered");
 
+		//Switch to VeryHigh Priority
+		oTileContent.setPriority(Priority.VeryHigh);
+		oTileContent.setPriorityText("Very High");
+
+		oCore.applyChanges();
+		assert.ok(document.getElementById("tile-cont-priority"), Priority.VeryHigh + ": Priority container is rendered");
+		assert.ok(document.getElementById("tile-cont-priority").classList.contains(Priority.VeryHigh), Priority.VeryHigh + ": VeryHigh StyleClass is applied");
+		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.VeryHigh + ":Priority content is rendered");
+		assert.equal(document.getElementById("tile-cont-priority-value").innerText, this.oGenericTile.getTileContent()[0].getPriorityText() + " " + sPriority,Priority.VeryHigh + ":Priority value is rendered");
+		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.VeryHigh + ":Priority border is rendered");
+
 		//Switch to High Priority
 		oTileContent.setPriority(Priority.High);
+		oTileContent.setPriorityText("High");
+
 		oCore.applyChanges();
 		assert.ok(document.getElementById("tile-cont-priority"), Priority.High + ": Priority container is rendered");
 		assert.ok(document.getElementById("tile-cont-priority").classList.contains(Priority.High), Priority.High + ": High StyleClass is applied");
 		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.High + ":Priority content is rendered");
-		assert.equal(document.getElementById("tile-cont-priority-value").innerText, sPriority + ":" + " " + Priority.High, Priority.High + ":Priority value is rendered");
+		assert.equal(document.getElementById("tile-cont-priority-value").innerText, this.oGenericTile.getTileContent()[0].getPriorityText() + " " + sPriority, Priority.High + ":Priority value is rendered");
 		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.High + ":Priority border is rendered");
 
 		//Switch to Medium Priority
 		oTileContent.setPriority(Priority.Medium);
+		oTileContent.setPriorityText("Medium");
+
 		oCore.applyChanges();
 		assert.ok(document.getElementById("tile-cont-priority"), Priority.Medium + ": Priority container is rendered");
 		assert.ok(document.getElementById("tile-cont-priority").classList.contains(Priority.Medium), Priority.Medium + ": Medium StyleClass is applied");
 		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.Medium + ":Priority content is rendered");
-		assert.equal(document.getElementById("tile-cont-priority-value").innerText, sPriority + ":" + " " + Priority.Medium, Priority.Medium + ":Priority value is rendered");
+		assert.equal(document.getElementById("tile-cont-priority-value").innerText, this.oGenericTile.getTileContent()[0].getPriorityText() + " " + sPriority, Priority.Medium + ":Priority value is rendered");
 		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.Medium + ":Priority border is rendered");
 
 		//Switch to Low Priority
 		oTileContent.setPriority(Priority.Low);
+		oTileContent.setPriorityText("Low");
+
 		oCore.applyChanges();
 		assert.ok(document.getElementById("tile-cont-priority"), Priority.Low + ": Priority container is rendered");
 		assert.ok(document.getElementById("tile-cont-priority").classList.contains(Priority.Low), Priority.Low + ": Low StyleClass is applied");
 		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.Low + ":Priority content is rendered");
-		assert.equal(document.getElementById("tile-cont-priority-value").innerText, sPriority + ":" + " " + Priority.Low, Priority.Low + ":Priority value is rendered");
+		assert.equal(document.getElementById("tile-cont-priority-value").innerText, this.oGenericTile.getTileContent()[0].getPriorityText() + " " + sPriority, Priority.Low + ":Priority value is rendered");
 		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.Low + ":Priority border is rendered");
 	});
 

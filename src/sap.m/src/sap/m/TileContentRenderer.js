@@ -8,7 +8,7 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", 
 
 	var GenericTileMode = library.GenericTileMode,
 		FrameType = library.FrameType,
-		Priority = Core.Priority;
+		Priority = library.Priority;
 
 	/**
 	 * TileContent renderer.
@@ -28,6 +28,7 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", 
 
 		var sTooltip = oControl.getTooltip_AsString();
 		var sContentTypeClass = oControl._getContentType();
+		var sPriority = oControl.getPriority();
 		if (sContentTypeClass) {
 			sContentTypeClass = encodeCSS(sContentTypeClass);
 		}
@@ -37,6 +38,11 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", 
 		oRm.class(oControl.getState() == "Disabled" ? "sapMTileCnt sapMTileCntDisabled" : "sapMTileCnt");
 		oRm.class(sContentTypeClass);
 		oRm.class(sFrameTypeClass);
+		if (sPriority === Priority.None){
+			oRm.class("sapMGTNoPriority");
+		} else {
+			oRm.class("sapMGTPriority");
+		}
 		if (sTooltip.trim()) { // trim check needed since IE11 renders white spaces
 			oRm.attr("title", sTooltip);
 		}
@@ -100,8 +106,10 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", 
 			oPriority = oControl.getPriority(),
 			oTile = oControl.getParent(),
 			bIsActionMode = oTile instanceof GenericTile && oTile.getMode() === GenericTileMode.ActionMode && oTile.getFrameType() === FrameType.TwoByOne,
-			bRenderPriority = bIsActionMode && oPriority && oPriority !== Priority.None,
-			sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
+			sPriorityText = oControl.getPriorityText(),
+			bRenderPriority = bIsActionMode && oPriority && oPriority !== Priority.None && sPriorityText,
+			sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY"),
+			iMaxLines = (oPriority && sPriorityText) ? 1 : 3; //if the Priority is present then the text should have 1 line else 3 lines in ActionMode
 
 		if (oContent) {
 			if (bRenderPriority) {
@@ -126,13 +134,15 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", 
 				oRm.openStart("span", oControl.getId() + "-priority-value");
 				oRm.class("sapMTilePriorityValue");
 				oRm.openEnd();
-				oRm.text(sPriority + ":" + " " + oControl._getPriorityText(oPriority));
+				oRm.text(sPriorityText + " " + sPriority);
 				oRm.close("span");
 				oRm.close("div");
 				oRm.close("div");
 				oRm.close("div");
 			}
-
+			if (oContent.isA("sap.m.Text") && bIsActionMode && (oControl.getFrameType() === FrameType.TwoByOne || oControl.getFrameType() === FrameType.Auto)) {
+				oContent.setProperty("maxLines", iMaxLines,true);
+			}
 			oRm.openStart("div", oControl.getId() + "-content");
 			oRm.class("sapMTileCntContent");
 			oRm.openEnd();
