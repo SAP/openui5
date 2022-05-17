@@ -194,6 +194,9 @@ sap.ui.define([
 	QUnit.test("Default value of scope", function(assert) {
 		assert.strictEqual(this.oGenericTile.getProperty("scope"), GenericTileScope.Display);
 	});
+	QUnit.test("Default value of iconLoaded", function(assert) {
+		assert.strictEqual(this.oGenericTile.getProperty("iconLoaded"), true);
+	});
 
 	QUnit.module("Rendering tests", {
 		beforeEach: function() {
@@ -4362,5 +4365,260 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		this.fnCreateGenericTile(FrameType.Auto,GenericTileMode.LineMode);
 		// Assert
 		assert.ok(this.oGenericTile._oMoreIcon.isA("sap.m.Button"), "Button is created in place of action more icon");
+	});
+
+	QUnit.module("GenericTile in IconMode to validate iconLoaded Property", {
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		},
+		createTile: function(sFrameType, sSizeBehavior, sSize) {
+			this.oGenericTile = new GenericTile("generic-tile", {
+				header: "GenericTile Header",
+				frameType: sFrameType,
+				size: sSize,
+				mode: GenericTileMode.IconMode,
+				sizeBehavior: sSizeBehavior,
+				backgroundColor:"red",
+				tileIcon: "sap-icon://home-share"
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		}
+	});
+
+	QUnit.test("For FrameType = OneByOne and State = Loading", function (assert) {
+		// Arrange
+		this.createTile(FrameType.OneByOne, "Responsive", Size.Auto);
+		// Assert
+		assert.equal(this.oGenericTile.getIconLoaded(), true, "IconLoaded property = true");
+		this.oGenericTile.setState(LoadState.Loading);
+		oCore.applyChanges();
+		//Act
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		//Assert
+		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsOneByOne"), "Row Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[0].classList.contains("sapMGTContentShimmerPlaceholderIconOneByOne"), "Icon Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[1].classList.contains("sapMGTContentShimmerPlaceholderItemTextOneByOne"), "Text Placeholder div is present when state is loading");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = OneByOne, State = Loading and TileIcon = ''", function (assert) {
+		//Arrange
+		this.createTile(FrameType.OneByOne, "Responsive", Size.Auto);
+		this.oGenericTile.setState(LoadState.Loading);
+		this.oGenericTile.setProperty("tileIcon", "", true);
+		this.oGenericTile.setIconLoaded(false);
+		oCore.applyChanges();
+		//Act
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		//Assert
+		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
+		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsOneByOne"), "Row Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[0].classList.contains("sapMGTContentShimmerPlaceholderIconOneByOne"), "Icon Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[1].classList.contains("sapMGTContentShimmerPlaceholderItemTextOneByOne"), "Text Placeholder div is not present when state is loading");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = OneByOne, State = Loaded and tileIcon = ''", function (assert) {
+		//Arrange
+		this.createTile(FrameType.OneByOne, "Responsive", Size.Auto);
+		this.oGenericTile.setProperty("tileIcon", "", true);
+		this.oGenericTile.setProperty("iconLoaded", false, false);
+		this.oGenericTile.setState(LoadState.Loaded);
+		oCore.applyChanges();
+		//Act
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		//Assert
+		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loaded");
+		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsOneByOne"), "Row Placeholder div is present when state is loading");
+		assert.ok(oPlaceHolderDomRef.children[0].children[0].classList.contains("sapMGTContentShimmerPlaceholderIconOneByOne"), "Icon Placeholder div is present when state is loading");
+		assert.notOk(oPlaceHolderDomRef.children[0].children[1], "Text Placeholder div is not present when state is loading");
+		assert.ok(oContentDomRef.children[0].classList.contains("sapMGTHdrTxt"), "Text div is present when state is loading");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = OneByOne and State = Loaded", function (assert) {
+		//Arrange
+		this.createTile(FrameType.OneByOne, "Responsive", Size.Auto);
+		this.oGenericTile.setProperty("tileIcon", "sap-icon://home-share", true);
+		this.oGenericTile.setState(LoadState.Loaded);
+		this.oGenericTile.setIconLoaded(true);
+		oCore.applyChanges();
+		//Act
+		var oIconDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		//Assert
+		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is not present when state is loaded");
+		assert.ok(oIconDomRef.classList.contains("sapMGTOneByOneIcon"), "Icon div is present when state is loaded");
+		assert.ok(oContentDomRef.children[0].classList.contains("sapMGTHdrTxt"), "Text div is present when state is loaded");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = OneByOne, State = Loading and backgroundColor = ''", function (assert) {
+		//Arrange
+		this.createTile(FrameType.OneByOne, "Responsive", Size.Auto);
+		this.oGenericTile.setProperty("backgroundColor", "", true);
+		this.oGenericTile.setProperty("state", LoadState.Loading, true);
+		this.oGenericTile.setIconLoaded(false);
+		oCore.applyChanges();
+		//Act
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		//Assert
+		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
+		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsOneByOne"), "Row Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[0].classList.contains("sapMGTContentShimmerPlaceholderIconOneByOne"), "Icon Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[1].classList.contains("sapMGTContentShimmerPlaceholderItemTextOneByOne"), "Text Placeholder div is present when state is loading");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = OneByOne, State = Loaded and backgroundColor = ''", function (assert) {
+		//Arrange
+		this.createTile(FrameType.OneByOne, "Responsive", Size.Auto);
+		this.oGenericTile.setProperty("backgroundColor", "", true);
+		this.oGenericTile.setState(LoadState.Loaded);
+		this.oGenericTile.setIconLoaded(false);
+		oCore.applyChanges();
+		//Act
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		//Assert
+		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is not present when state is loaded");
+		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsOneByOne"), "Row Placeholder div is present when state is loaded");
+		assert.ok(oPlaceHolderDomRef.children[0].children[0].classList.contains("sapMGTContentShimmerPlaceholderIconOneByOne"), "Icon Placeholder div is present when state is loaded");
+		assert.notOk(oContentDomRef.children[0].children[1], "Text Placeholder div is not present when state is loaded");
+		assert.ok(oContentDomRef.children[0].classList.contains("sapMGTHdrTxt"), "Text div is present when state is loaded");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = OneByOne, State = Loaded and backgroundColor = ''", function (assert) {
+		//Arrange
+		this.createTile(FrameType.OneByOne, "Responsive", Size.Auto);
+		this.oGenericTile.setProperty("backgroundColor", "red", true);
+		this.oGenericTile.setState(LoadState.Loaded);
+		this.oGenericTile.setIconLoaded(true);
+		oCore.applyChanges();
+		//Act
+		var oIconDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		//Assert
+		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is not present when state is loaded");
+		assert.ok(oIconDomRef.classList.contains("sapMGTOneByOneIcon"), "Icon div is present when state is loaded");
+		assert.ok(oContentDomRef.children[0].classList.contains("sapMGTHdrTxt"), "Text div is present when state is loaded");
+	});
+
+	QUnit.test("For FrameType = TwoByHalf and State = Loading", function (assert) {
+		// Arrange
+		this.createTile(FrameType.TwoByHalf, "Small");
+		// Assert
+		assert.equal(this.oGenericTile.getIconLoaded(), true, "IconLoaded property = true");
+		this.oGenericTile.setState(LoadState.Loading);
+		oCore.applyChanges();
+		//Act
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		//Assert
+		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsTwoByHalf"), "Row Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[0].classList.contains("sapMGTContentShimmerPlaceholderIconTwoByHalf"), "Icon Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[1].classList.contains("sapMGTContentShimmerPlaceholderItemTextTwoByHalf"), "Text Placeholder div is present when state is loading");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = TwoByHalf, State = Loading and TileIcon = ''", function (assert) {
+		//Arrange
+		this.createTile(FrameType.TwoByHalf, "Small");
+		this.oGenericTile.setState(LoadState.Loading);
+		this.oGenericTile.setProperty("tileIcon", "", true);
+		this.oGenericTile.setIconLoaded(false);
+		oCore.applyChanges();
+		//Act
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		//Assert
+		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
+		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsTwoByHalf"), "Row Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[0].classList.contains("sapMGTContentShimmerPlaceholderIconTwoByHalf"), "Icon Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[1].classList.contains("sapMGTContentShimmerPlaceholderItemTextTwoByHalf"), "Text Placeholder div is not present when state is loading");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = TwoByHalf, State = Loaded and tileIcon = ''", function (assert) {
+		//Arrange
+		this.createTile(FrameType.TwoByHalf, "Small");
+		this.oGenericTile.setProperty("tileIcon", "", true);
+		this.oGenericTile.setProperty("iconLoaded", false, false);
+		this.oGenericTile.setState(LoadState.Loaded);
+		oCore.applyChanges();
+		//Act
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		//Assert
+		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loaded");
+		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsTwoByHalf"), "Row Placeholder div is present when state is loading");
+		assert.ok(oPlaceHolderDomRef.children[0].children[0].classList.contains("sapMGTContentShimmerPlaceholderIconTwoByHalf"), "Icon Placeholder div is present when state is loading");
+		assert.notOk(oPlaceHolderDomRef.children[0].children[1], "Text Placeholder div is not present when state is loading");
+		assert.ok(oContentDomRef.children[0].classList.contains("sapMGTHdrTxt"), "Text div is present when state is loading");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = TwoByHalf and State = Loaded", function (assert) {
+		//Arrange
+		this.createTile(FrameType.TwoByHalf, "Small");
+		this.oGenericTile.setProperty("tileIcon", "sap-icon://home-share", true);
+		this.oGenericTile.setState(LoadState.Loaded);
+		this.oGenericTile.setIconLoaded(true);
+		oCore.applyChanges();
+		//Act
+		var oIconDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		//Assert
+		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is not present when state is loaded");
+		assert.ok(oIconDomRef.classList.contains("sapMGTTwoByHalfIcon"), "Icon div is present when state is loaded");
+		assert.ok(oContentDomRef.children[0].classList.contains("sapMGTHdrTxt"), "Text div is present when state is loaded");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = TwoByHalf, State = Loading and backgroundColor = ''", function (assert) {
+		//Arrange
+		this.createTile(FrameType.TwoByHalf, "Small");
+		this.oGenericTile.setProperty("backgroundColor", "", true);
+		this.oGenericTile.setProperty("state", LoadState.Loading, true);
+		this.oGenericTile.setIconLoaded(false);
+		oCore.applyChanges();
+		//Act
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		//Assert
+		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
+		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsTwoByHalf"), "Row Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[0].classList.contains("sapMGTContentShimmerPlaceholderIconTwoByHalf"), "Icon Placeholder div is present when state is loading");
+		assert.ok(oDomRef.children[0].children[1].classList.contains("sapMGTContentShimmerPlaceholderItemTextTwoByHalf"), "Text Placeholder div is present when state is loading");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = TwoByHalf, State = Loaded and backgroundColor = ''", function (assert) {
+		//Arrange
+		this.createTile(FrameType.TwoByHalf, "Small");
+		this.oGenericTile.setProperty("backgroundColor", "", true);
+		this.oGenericTile.setState(LoadState.Loaded);
+		this.oGenericTile.setIconLoaded(false);
+		oCore.applyChanges();
+		//Act
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		//Assert
+		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is not present when state is loaded");
+		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsTwoByHalf"), "Row Placeholder div is present when state is loaded");
+		assert.ok(oPlaceHolderDomRef.children[0].children[0].classList.contains("sapMGTContentShimmerPlaceholderIconTwoByHalf"), "Icon Placeholder div is present when state is loaded");
+		assert.notOk(oContentDomRef.children[0].children[1], "Text Placeholder div is not present when state is loaded");
+		assert.ok(oContentDomRef.children[0].classList.contains("sapMGTHdrTxt"), "Text div is present when state is loaded");
+	});
+
+	QUnit.test("For IconLoaded = false, FrameType = TwoByHalf, State = Loaded and backgroundColor = ''", function (assert) {
+		//Arrange
+		this.createTile(FrameType.TwoByHalf, "Small");
+		this.oGenericTile.setProperty("backgroundColor", "red", true);
+		this.oGenericTile.setState(LoadState.Loaded);
+		this.oGenericTile.setIconLoaded(true);
+		oCore.applyChanges();
+		//Act
+		var oIconDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		//Assert
+		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is not present when state is loaded");
+		assert.ok(oIconDomRef.classList.contains("sapMGTTwoByHalfIcon"), "Icon div is present when state is loaded");
+		assert.ok(oContentDomRef.children[0].classList.contains("sapMGTHdrTxt"), "Text div is present when state is loaded");
 	});
 });

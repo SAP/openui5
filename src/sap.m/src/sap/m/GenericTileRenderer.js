@@ -157,46 +157,56 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		var iLength = aTileContent.length;
 		var isFooterPresent = false;
 		var isContentPresent = false;
+		function renderLoadingShimmerIconMode(oRm, bIsLoading) {
+			if (frameType === frameTypes.OneByOne) {
+				oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItemOneByOne");
+				oRm.class("sapMGTContentShimmerPlaceholderWithDescriptionOneByOne");
+				oRm.openEnd();
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderRowsOneByOne")
+					.openEnd();
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderIconOneByOne")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+				if (bIsLoading){
+					oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderItemTextOneByOne")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+				}
+			} else {
+				oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItemTwoByHalf");
+				oRm.class("sapMGTContentShimmerPlaceholderWithDescriptionTwoByHalf");
+				if (!oControl.getIconLoaded() && !bIsLoading) {
+					oRm.class("sapMGTContentShimmerPlaceholderWithDescriptionTwoByHalfIconLoaded");
+				}
+				oRm.openEnd();
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderRowsTwoByHalf")
+					.openEnd();
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderIconTwoByHalf")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+				if (bIsLoading){
+					oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderItemTextTwoByHalf")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+				}
+			}
+			oRm.close("div");
+			oRm.close("div");
+		}
 		if (sState === LoadState.Loading) {
 			//Setplaceholders for IconMode.
-			if ( oControl._isIconMode() ) {
-				if (frameType === frameTypes.OneByOne) {
-					oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItemOneByOne");
-					oRm.class("sapMGTContentShimmerPlaceholderWithDescriptionOneByOne");
-					oRm.openEnd();
-					oRm.openStart("div")
-						.class("sapMGTContentShimmerPlaceholderRowsOneByOne")
-						.openEnd();
-					oRm.openStart("div")
-						.class("sapMGTContentShimmerPlaceholderIconOneByOne")
-						.class("sapMGTLoadingShimmer")
-						.openEnd()
-						.close("div");
-					oRm.openStart("div")
-						.class("sapMGTContentShimmerPlaceholderItemTextOneByOne")
-						.class("sapMGTLoadingShimmer")
-						.openEnd()
-						.close("div");
-				} else {
-					oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItemTwoByHalf");
-					oRm.class("sapMGTContentShimmerPlaceholderWithDescriptionTwoByHalf");
-					oRm.openEnd();
-					oRm.openStart("div")
-						.class("sapMGTContentShimmerPlaceholderRowsTwoByHalf")
-						.openEnd();
-					oRm.openStart("div")
-						.class("sapMGTContentShimmerPlaceholderIconTwoByHalf")
-						.class("sapMGTLoadingShimmer")
-						.openEnd()
-						.close("div");
-					oRm.openStart("div")
-						.class("sapMGTContentShimmerPlaceholderItemTextTwoByHalf")
-						.class("sapMGTLoadingShimmer")
-						.openEnd()
-						.close("div");
-				}
-				oRm.close("div");
-				oRm.close("div");
+			if (oControl._isIconMode()) {
+				renderLoadingShimmerIconMode(oRm, true);
 			} else {
 				oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItem");
 				oRm.class("sapMGTContentShimmerPlaceholderWithDescription");
@@ -232,27 +242,31 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			}
 			//Set respective Class/ BackgroundColor for IconMode
 			if (oControl._isIconMode()) {
-				oRm.openStart("div");
-				if (frameType === frameTypes.OneByOne) {
-					oRm.class("sapMGTOneByOneIcon");
+				if (!oControl.getIconLoaded()) {
+					renderLoadingShimmerIconMode(oRm, false);
 				} else {
-					oRm.class("sapMGTTwoByHalfIcon");
-					if (!this._isThemeHighContrast()) {
-						oRm.style("background-color", oControl.getBackgroundColor());
+					oRm.openStart("div");
+					if (frameType === frameTypes.OneByOne) {
+						oRm.class("sapMGTOneByOneIcon");
 					} else {
-						oRm.class("HighContrastTile");
-						oRm.style("border-color", oControl.getBackgroundColor());
-						oRm.style("box-shadow", "0 0 0 1px" + oControl.getBackgroundColor());
+						oRm.class("sapMGTTwoByHalfIcon");
+						if (!this._isThemeHighContrast()) {
+							oRm.style("background-color", oControl.getBackgroundColor());
+						} else {
+							oRm.class("HighContrastTile");
+							oRm.style("border-color", oControl.getBackgroundColor());
+							oRm.style("box-shadow", "0 0 0 1px" + oControl.getBackgroundColor());
+						}
 					}
-				}
-				oRm.openEnd();
-				if (oControl.getTileIcon()) {
-					var sAggregation = oControl._generateIconAggregation(oControl.getTileIcon());
-					if (sAggregation) {
-						oRm.renderControl(oControl.getAggregation(sAggregation));
+					oRm.openEnd();
+					if (oControl.getTileIcon()) {
+						var sAggregation = oControl._generateIconAggregation(oControl.getTileIcon());
+						if (sAggregation) {
+							oRm.renderControl(oControl.getAggregation(sAggregation));
+						}
 					}
+					oRm.close("div");
 				}
-				oRm.close("div");
 			}
 
 			//Wrapper div for adjusting to Info Container
@@ -266,6 +280,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			if (oControl._isIconMode() ){
 				if (frameType === frameTypes.OneByOne) {
 					var sClass = "sapMGTOneByOne";
+					if (!oControl.getIconLoaded()) {
+						sClass = sClass.concat(" sapMGTOneByOneIconLoaded");
+					}
 				} else if (frameType === frameTypes.TwoByHalf) {
 					var sClass = "TwoByHalf";
 				}
