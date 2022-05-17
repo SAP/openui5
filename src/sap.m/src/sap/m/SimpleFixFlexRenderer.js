@@ -27,6 +27,7 @@ sap.ui.define([],
 			oRm.openEnd();
 
 			if (oFixContent) {
+				oFixContent.toggleStyleClass("sapUiSimpleFixFlexFixedWrap", oControl.getFitParent());
 				oRm.renderControl(oFixContent.addStyleClass('sapUiSimpleFixFlexFixed'));
 			}
 

@@ -118,10 +118,9 @@ function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
 			return null;
 		}
 
-			//using clientHeight as jQuery's innerHeight() method returns the height
-			//even if the fix content has style of "display: none;"
-			$simpleFixFlex.css("padding-top", oFixedDom.clientHeight);
-			$fixContent.addClass("sapUiSimpleFixFlexFixedWrap");
+		//using clientHeight as jQuery's innerHeight() method returns the height
+		//even if the fix content has style of "display: none;"
+		$simpleFixFlex.css("padding-top", oFixedDom.clientHeight);
 	};
 
 	SimpleFixFlex.prototype.exit = function() {
