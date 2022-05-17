@@ -88,7 +88,8 @@ sap.ui.define([
 	 * <h3>Overflow Behavior</h3>
 	 * By default, only the following controls can move to the overflow area:
 	 *
-	 * <ul><li>{@link sap.m.Button}</li>
+	 * <ul><li>{@link sap.m.Breadcrumbs}</li>
+	 * <li>{@link sap.m.Button}</li>
 	 * <li>{@link sap.m.CheckBox}</li>
 	 * <li>{@link sap.m.ComboBox}</li>
 	 * <li>{@link sap.m.DatePicker}</li>
@@ -115,7 +116,7 @@ sap.ui.define([
 	 * <b>Note:</b> The <code>OverflowToolbar</code> is an adaptive container that checks the available
 	 * width and hides the part of its content that doesn't fit. It is intended that simple controls,
 	 * such as {@link sap.m.Button} and {@link sap.m.Label} are used as content. Embedding other
-	 * adaptive container controls, such as {@link sap.m.Breadcrumbs}, results in competition for the available
+	 * adaptive container controls (with the exception of {@link sap.m.Breadcrumbs}), results in competition for the available
 	 * space - both controls calculate the available space based on the other one's size and both change their
 	 * width at the same time, leading to incorrectly distributed space.
 	 *
@@ -828,7 +829,9 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._markControlWithShrinkableLayoutData = function(oControl) {
 		var sWidth,
-			oLayout;
+			oLayout,
+			bShrinkable,
+			bBreadcrumbs;
 
 		// remove old class
 		oControl.removeStyleClass(Toolbar.shrinkClass);
@@ -841,7 +844,14 @@ sap.ui.define([
 
 		// check shrinkable via layout data
 		oLayout = oControl.getLayoutData();
-		if (oLayout && oLayout.isA("sap.m.ToolbarLayoutData") && oLayout.getShrinkable()) {
+		bShrinkable = oLayout && oLayout.isA("sap.m.ToolbarLayoutData") && oLayout.getShrinkable();
+
+		// check explicitly for sap.m.Breadcrumbs, as text
+		// controls implement sap.ui.core.IShrinkable too,
+		// and they are not meant to be included
+		bBreadcrumbs = oControl.isA("sap.m.Breadcrumbs");
+
+		if (bShrinkable || bBreadcrumbs) {
 			oControl.addStyleClass(Toolbar.shrinkClass);
 		}
 	};
@@ -1447,10 +1457,21 @@ sap.ui.define([
 	OverflowToolbar.prototype._getOptimalControlWidth = function (oControl, iOldSize) {
 		var iOptimalWidth,
 			oLayoutData = oControl.getLayoutData(),
-			bShrinkable = oLayoutData && oLayoutData.isA("sap.m.ToolbarLayoutData") ? oLayoutData.getShrinkable() : false,
-			iMinWidth = bShrinkable ? this._getMinWidthOfShrinkableControl(oControl) : 0,
+			bLayoutData = oLayoutData && oLayoutData.isA("sap.m.ToolbarLayoutData"),
 			bVisible = oControl.getVisible(),
+			bBreadcrumbs = oControl.isA("sap.m.Breadcrumbs"),
+			bShrinkable = false,
+			iMinWidth,
 			iSpacerWidth;
+
+		// sap.m.Breadcrumbs is always shrinkable, regardless of sap.m.ToolbarLayoutData.shrinkable
+		if (bBreadcrumbs) {
+			bShrinkable = true;
+		} else if (bLayoutData) {
+			bShrinkable = oLayoutData.getShrinkable();
+		}
+
+		iMinWidth = bShrinkable ? this._getMinWidthOfShrinkableControl(oControl) : 0;
 
 		// For spacers, get the width (if specified) + margins
 		if (oControl.isA("sap.m.ToolbarSpacer")) {
