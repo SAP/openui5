@@ -19,6 +19,7 @@ sap.ui.define([
 			oUploadSet.getDefaultFileUploader().setTooltip("");
 			oUploadSet.getDefaultFileUploader().setIconOnly(true);
 			oUploadSet.getDefaultFileUploader().setIcon("sap-icon://attachment");
+			oUploadSet.attachUploadCompleted(this.onUploadCompleted.bind(this));
 		},
 		onUploadSelectedButton: function () {
 			var oUploadSet = this.byId("UploadSet");
@@ -37,6 +38,28 @@ sap.ui.define([
 					oItem.download(true);
 				}
 			});
+		},
+		onSelectionChange: function() {
+			var oUploadSet = this.byId("UploadSet");
+			// If there's any item selected, sets version button enabled
+			if (oUploadSet.getSelectedItems().length > 0) {
+				if (oUploadSet.getSelectedItems().length === 1) {
+					this.byId("versionButton").setEnabled(true);
+				} else {
+					this.byId("versionButton").setEnabled(false);
+				}
+			} else {
+				this.byId("versionButton").setEnabled(false);
+			}
+		},
+		onVersionUpload: function(oEvent) {
+			var oUploadSet = this.byId("UploadSet");
+			this.oItemToUpdate = oUploadSet.getSelectedItem()[0];
+			oUploadSet.openFileDialog(this.oItemToUpdate);
+		},
+		onUploadCompleted: function(oEvent) {
+			this.oItemToUpdate = null;
+			this.byId("versionButton").setEnabled(false);
 		}
 	});
 });

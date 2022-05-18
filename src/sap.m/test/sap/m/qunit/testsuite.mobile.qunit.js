@@ -1567,7 +1567,9 @@ sap.ui.define([
 				module: [
 					"./upload/UploadSet.qunit",
 					"./upload/UploadSetItem.qunit",
-					"./upload/UploadSetRestrictions.qunit"
+					"./upload/UploadSetRestrictions.qunit",
+					"./upload/UploadSetToolbar.qunit",
+					"./upload/UploadSetOpenFileDialog.qunit"
 				]
 			},
 			VBox: {
