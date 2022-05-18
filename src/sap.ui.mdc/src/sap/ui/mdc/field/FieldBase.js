@@ -1872,7 +1872,6 @@ sap.ui.define([
 
 	function _createDefaultFieldHelp(sType) {
 
-		this.setProperty("_fieldHelpEnabled", true, true);
 		this._sDefaultFieldHelp = mDefaultHelps[sType].id;
 
 		var oValueHelp = mDefaultHelps[sType].control;
@@ -2419,8 +2418,10 @@ sap.ui.define([
 
 	function _fieldHelpChanged(sId, sMutation) {
 
+		var oFieldHelp;
+
 		if (sMutation === "remove") {
-			var oFieldHelp = sap.ui.getCore().byId(sId);
+			oFieldHelp = sap.ui.getCore().byId(sId);
 			if (oFieldHelp) {
 				oFieldHelp.detachEvent("select", _handleFieldHelpSelect, this);
 				oFieldHelp.detachEvent("navigated", _handleFieldHelpNavigated, this);
@@ -2429,24 +2430,29 @@ sap.ui.define([
 				oFieldHelp.detachEvent("afterClose", _handleFieldHelpAfterClose, this);
 				oFieldHelp.detachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
 			}
-			this.setProperty("_fieldHelpEnabled", false, true);
+			this.resetProperty("_fieldHelpEnabled");
 			this._bConnected = false;
 		} else if (sMutation === "insert") {
+			if (this._sDefaultFieldHelp && sId !== this._sDefaultFieldHelp) { // remove default help
+				_fieldHelpChanged.call(this, this._sDefaultFieldHelp, "remove");
+				delete this._sDefaultFieldHelp; // do not destroy as might used on other Fields too
+			}
 			_checkFieldHelpExist.call(this, sId);
+
+			// update icon (on remove not necessary as hidden)
+			var oControl = this._getContent()[0];
+			if (oControl && oControl.setValueHelpIconSrc) {
+				oControl.setValueHelpIconSrc(this._getFieldHelpIcon());
+			}
 		}
 
-		// update icon
-		var oControl = this._getContent()[0];
-		if (oControl && oControl.setValueHelpIconSrc) {
-			oControl.setValueHelpIconSrc(this._getFieldHelpIcon());
-		}
 		_handleConditionsChange.call(this, this.getConditions()); // to update descriptions
 
 	}
 
 	function _checkFieldHelpExist(sId) {
 
-		if (sId && !this.getProperty("_fieldHelpEnabled")) {
+		if (sId && this.isPropertyInitial("_fieldHelpEnabled")) {
 			var oFieldHelp = sap.ui.getCore().byId(sId);
 			if (oFieldHelp) {
 				oFieldHelp.attachEvent("dataUpdate", _handleHelpDataUpdate, this);
