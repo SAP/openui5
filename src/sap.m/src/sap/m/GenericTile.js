@@ -623,8 +623,28 @@ sap.ui.define([
 			this._addClassesForButton();
 		}
 
+		//Adds Extra height to the TileContent when GenericTile is in ActionMode
+		if (this.getFrameType()  === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode) {
+			this._applyExtraHeight();
+		}
+
 		this.onDragComplete();
 	};
+	/**
+	 * Increases the height of the TileContent when the header-text has one line
+	 * @private
+	 */
+	GenericTile.prototype._applyExtraHeight = function(){
+		var iHeight = this.getDomRef("hdr-text").offsetHeight,
+			iLineHeight = parseInt(getComputedStyle(this.getDomRef("title")).lineHeight.slice(0,2)),
+			iHeaderLines = Math.ceil(iHeight / iLineHeight);
+		if (iHeaderLines === 1 && !this.getHeaderImage()) {
+			this.getDomRef("content").classList.add("sapMGTFtrMarginTop");
+		} else {
+			this.getDomRef("content").classList.remove("sapMGTFtrMarginTop");
+		}
+	};
+
 	GenericTile.prototype._setMaxLines = function() {
 		var sFrameType = this.getFrameType(),
 			iLines = sFrameType === FrameType.OneByOne || sFrameType === FrameType.TwoByHalf ? 1 : 2;

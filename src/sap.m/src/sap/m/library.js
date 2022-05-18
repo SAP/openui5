@@ -107,6 +107,7 @@ sap.ui.define([
 			"sap.m.GenericTagDesign",
 			"sap.m.GenericTagValueState",
 			"sap.m.GenericTileMode",
+			"sap.m.Priority",
 			"sap.m.GenericTileScope",
 			"sap.m.HeaderLevel",
 			"sap.m.IBarHTMLTag",
@@ -1825,6 +1826,46 @@ sap.ui.define([
 		 * @experimental Since 1.96
 		 */
 		IconMode : "IconMode"
+	};
+
+	/**
+	 * Defines the priority for the TileContent in ActionMode
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.Priority = {
+
+		/**
+		 * It displays very high priority color for the GenericTag
+		 * @public
+		 */
+		VeryHigh : "VeryHigh",
+
+		/**
+		 * It displays high priority color for the GenericTag
+		 * @public
+		 */
+		High : "High",
+
+		/**
+		 * It displays medium priority color for the GenericTag
+		 * @public
+		 */
+		Medium: "Medium",
+
+		/**
+		 * It displays low priority color for the GenericTag
+		 * @public
+		 */
+		Low: "Low",
+
+		/**
+		 *The priority is not set
+		 * @public
+		 */
+		None : "None"
 	};
 
 	/**

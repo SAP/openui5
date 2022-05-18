@@ -223,7 +223,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				oRm.close("div");
 			}
 		} else {
-			if (this._isValueColorValid(oControl.getValueColor())) {
+			if (!bIsActionMode && this._isValueColorValid(oControl.getValueColor())) {
 				oRm.openStart("div");
 				oRm.class("sapMGTCriticalBorder");
 				oRm.class(oControl.getValueColor());
@@ -273,6 +273,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.class(oControl._isIconMode()	? sClass : frameType);
 			if (sTooltipText) {
 				oRm.attr("title", sTooltipText);
+			}
+			if (bIsActionMode && oControl.getFrameType() === frameTypes.TwoByOne && sHeaderImage) {
+				oRm.class("sapMGTHdrImage");
 			}
 			oRm.openEnd();
 
