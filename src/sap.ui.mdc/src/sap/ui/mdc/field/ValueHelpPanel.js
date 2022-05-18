@@ -196,7 +196,6 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		setFilterbar: function(oFilterbar) {
 
@@ -241,7 +240,6 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		setTable: function(oTable) {
 			if (this._oTable) {
@@ -276,7 +274,6 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		getTable: function() {
 			if (this._oTable) {
@@ -293,7 +290,6 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		setDefineConditions: function(oDefineConditionPanel) {
 			var oITBar = this.byId("iconTabBar");

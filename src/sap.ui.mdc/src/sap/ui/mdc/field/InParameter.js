@@ -107,7 +107,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	InParameter.prototype.getFieldPath = function() {
 
@@ -165,7 +164,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	InParameter.prototype.getUseConditions = function() {
 
@@ -206,7 +204,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.86.0
 	 */
 	InParameter.prototype.getDataType = function() {

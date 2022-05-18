@@ -79,7 +79,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	CustomFieldHelp.prototype.fireSelectEvent = function(aConditions) {
 
