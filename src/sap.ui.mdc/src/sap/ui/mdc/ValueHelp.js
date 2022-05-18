@@ -317,7 +317,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.connect = function(oControl, oConfig) {
 		if (this._oControl && this._oControl !== oControl) {
@@ -361,7 +360,6 @@ sap.ui.define([
 	 * @returns {object} object with the aria-attibutes
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.getAriaAttributes = function(iMaxConditions) {
 
@@ -443,7 +441,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.open = function(bTypeahead) {
 		var oContainer = bTypeahead ? this.getTypeahead() : _getValueHelpContainer.call(this);
@@ -475,7 +472,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.close = function() {
 		var oTypeahead = this.getTypeahead();
@@ -500,7 +496,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.toggleOpen = function(bTypeahead) {
 		var oTypeahead = this.getTypeahead();
@@ -530,7 +525,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.isOpen = function() {
 		var oTypeahead = this.getTypeahead();
@@ -546,7 +540,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.skipOpening = function() { // ? Use close based logic instead?
 		var oTypeahead = this.getTypeahead();
@@ -573,7 +566,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.initBeforeOpen = function(bTypeahead) { // ? naming, include as config in open?
 
@@ -591,7 +583,6 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} if <code>true</code>, the field help should open by typing. The result might be returned asynchronously, so a Promise is used.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.isTypeaheadSupported = function() { // always return promise ?
 
@@ -618,7 +609,6 @@ sap.ui.define([
 	 * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.shouldOpenOnClick = function () { // was openByClick before, better naming?
 
@@ -638,7 +628,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.isFocusInHelp = function() { // find more elegant way?
 
@@ -652,7 +641,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.removeFocus = function() {
 		var oTypeahead = this.getTypeahead();
@@ -672,7 +660,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.navigate = function(iStep) { // pass through to container
 		var oTypeahead = this.getTypeahead();
@@ -743,7 +730,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.getItemForValue = function(oConfig) {
 		// TODO: Discuss how we handle binding / typeahead changes ??
@@ -775,7 +761,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.isValidationSupported = function() { // isUsableForValidation also necessary?
 
@@ -796,7 +781,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.onControlChange = function() {
 
@@ -816,7 +800,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.getIcon = function() {
 
@@ -854,7 +837,6 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if value help is enabled, <code>false</code> if only typeahead is enabled
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.valueHelpEnabled = function() {
 

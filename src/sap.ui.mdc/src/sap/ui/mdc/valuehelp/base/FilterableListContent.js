@@ -434,7 +434,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.Dialog
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FilterableListContent.prototype.setCollectiveSearchSelect = function (oCollectiveSearchSelect) {
 		this._oCollectiveSearchSelect = oCollectiveSearchSelect;

@@ -249,7 +249,6 @@
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 
@@ -282,7 +281,6 @@
 	 * @method
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	*/
 
 	/**
@@ -294,7 +292,6 @@
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -305,7 +302,6 @@
 	 * @returns {boolean} True if value help shall open as valuehelp
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -314,11 +310,10 @@
 	 * @method
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 
-		/**
+	/**
 	 *
 	 * Interface for valuehelp containers
 	 *
@@ -440,7 +435,6 @@
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 
@@ -473,8 +467,7 @@
 	 * @method
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	*/
+	 */
 
 	/**
 	 * Defines if the typeahead can be used for input validation.
@@ -485,7 +478,6 @@
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -496,7 +488,6 @@
 	 * @returns {boolean} True if value help shall open as valuehelp
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -505,7 +496,6 @@
 	 * @method
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 
@@ -718,7 +708,6 @@
 	 * @since 1.80
 	 * @public
 	 * @function
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
