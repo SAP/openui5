@@ -56,6 +56,7 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
+				var oConfiguration = sap.ui.getCore().getConfiguration();
 				SampleBaseController.prototype.onInit.call(this);
 
 				this.getRouter().getRoute("sample").attachPatternMatched(this._onSampleMatched, this);
@@ -63,7 +64,10 @@ sap.ui.define([
 				this.oModel = new JSONModel({
 					showNavButton : true,
 					showNewTab: false,
-					rtaLoaded: false
+					rtaLoaded: false,
+					density: this.getOwnerComponent().getContentDensityClass(),
+					rtl: oConfiguration.getRTL(),
+					theme: oConfiguration.getTheme()
 				});
 
 				this._sId = null; // Used to hold sample ID
@@ -216,12 +220,10 @@ sap.ui.define([
 				if (!this._oSettingsDialog) {
 					this._oSettingsDialog = sap.ui.xmlfragment("sample", "sap.ui.documentation.sdk.view.appSettingsDialog", this);
 
-					// oView = sap.ui.getCore().byId("__xmlview0") || sap.ui.getCore().byId("__container0");
 					this._oSettingsDialog.setModel(this._oMessageBundle, "i18n");
-					// oView.addDependent(this._oSettingsDialog);
 				}
 
-				this.loadSampleSettings(this.applySampleSettings).then(function() {
+				this.loadSampleSettings(this.applySampleSettings.bind(this)).then(function() {
 					this._oSettingsDialog.open();
 				}.bind(this)).catch(function(err) {
 					Log.error(err);
@@ -232,14 +234,15 @@ sap.ui.define([
 				if (eMessage.data.type === "SETTINGS") {
 					var oThemeSelect = sap.ui.getCore().byId("sample--ThemeSelect");
 
-				// Theme select
-				oThemeSelect.setSelectedKey(eMessage.data.data.theme);
+					// Theme select
+					oThemeSelect.setSelectedKey(eMessage.data.data.theme);
 
-				// RTL
-				sap.ui.getCore().byId("sample--RTLSwitch").setState(eMessage.data.data.RTL);
+					// RTL
+					sap.ui.getCore().byId("sample--RTLSwitch").setState(eMessage.data.data.RTL);
 
-				// Density mode select
-				sap.ui.getCore().byId("sample--DensityModeSwitch").setSelectedKey(eMessage.data.data.density.slice(9).toLowerCase());
+					// Density mode select
+					sap.ui.getCore().byId("sample--DensityModeSwitch").setSelectedKey(this._presetDensity(eMessage.data.data.density, true));
+
 				}
 			},
 
@@ -290,6 +293,21 @@ sap.ui.define([
 
 				// handle settings change
 				this._applyAppConfiguration(sTheme, sDensityMode, bRTL);
+				this._saveLocalSettings(sTheme, sDensityMode, bRTL);
+			},
+
+			_saveLocalSettings: function(sTheme, sDensityMode, bRTL) {
+				var sDensityMode = this._presetDensity(sDensityMode);
+				this.getView().getModel().setData({
+					theme: sTheme,
+					rtl: bRTL,
+					density: sDensityMode
+				}, true);
+
+			},
+
+			_presetDensity: function(sDensity, bToValue) {
+				return bToValue ? sDensity.slice(9).toLowerCase() : "sapUiSize" + capitalize(sDensity);
 			},
 
 			/**
@@ -300,12 +318,13 @@ sap.ui.define([
 			 * @private
 			 */
 			_applyAppConfiguration: function(sThemeActive, sDensityMode, bRTL){
-				var oIframe = this._oHtmlControl.getDomRef();
+				var oIframe = this._oHtmlControl.getDomRef(),
+					sDensityMode = this._presetDensity(sDensityMode);
 				oIframe.contentWindow.postMessage({
 					type: "SETTINGS",
 					reason: "set",
 					data: {
-						"density": "sapUiSize" + capitalize(sDensityMode),
+						"density": sDensityMode,
 						"RTL": bRTL,
 						"theme": sThemeActive
 					}
@@ -442,8 +461,8 @@ sap.ui.define([
 					}
 
 					var fnMessage =  function (eMessage) {
+						var oSettingsData = this.getView().getModel().getData();
 						if (eMessage.data.type === "INIT") {
-							var oConfiguration = sap.ui.getCore().getConfiguration();
 							if (eMessage.data.config && eMessage.data.config.sample && eMessage.data.config.sample.iframe) {
 								sSampleId = this._sId;
 								vIframe = eMessage.data.config.sample.iframe;
@@ -465,9 +484,9 @@ sap.ui.define([
 								type: "SETTINGS",
 								reason: "set",
 								data: {
-									"density": this.getOwnerComponent().getContentDensityClass(),
-									"RTL": oConfiguration.getRTL(),
-									"theme": oConfiguration.getTheme()
+									"density": oSettingsData.density,
+									"RTL": oSettingsData.rtl,
+									"theme": oSettingsData.theme
 								}
 							}, this.getOwnerComponent()._sSampleIframeOrigin);
 							this.fResolve(eMessage.data.config.sample);
