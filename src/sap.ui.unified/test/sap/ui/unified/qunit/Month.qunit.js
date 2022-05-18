@@ -757,6 +757,47 @@ sap.ui.define([
 			oMonth.destroy();
 		});
 
+		QUnit.test("_markDatesBetweenStartAndHoveredDate", function (assert) {
+			// Prepare
+			var aItemsMarkedAsBetween,
+				oMonth = new Month({
+					intervalSelection: true,
+					date: new Date(2018, 8, 1)
+				});
+
+			oMonth.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
+			oMonth._oMinDate = CalendarDate.fromLocalJSDate(new Date(2018, 8, 10));
+			oMonth._oMaxDate = CalendarDate.fromLocalJSDate(new Date(2018, 8, 20));
+
+			// Act
+			oMonth._markDatesBetweenStartAndHoveredDate(20180810, 20220820);
+
+			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
+
+			// Assert
+			assert.strictEqual(aItemsMarkedAsBetween.length, 9, "9 days inside the interval");
+
+			// Act
+			oMonth._markDatesBetweenStartAndHoveredDate(20180801, 20220820);
+
+			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
+
+			// Assert
+			assert.strictEqual(aItemsMarkedAsBetween.length, 9, "9 days inside the interval");
+
+			// Act
+			oMonth._markDatesBetweenStartAndHoveredDate(20180810, 20220830);
+
+			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
+
+			// Assert
+			assert.strictEqual(aItemsMarkedAsBetween.length, 9, "9 days inside the interval");
+
+			oMonth.destroy();
+		});
+
 		QUnit.module("_isIntervalSelected function", {
 			beforeEach: function () {
 				this.oM = new Month();

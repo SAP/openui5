@@ -433,14 +433,14 @@ sap.ui.define([
 			oFocusedDate = CalendarDate.fromUTCDate(this._oFormatYyyymmdd.parse(sYyyymmdd, true), this.getPrimaryCalendarType());
 
 			if (this._bMousedownChange) {
-				if (oFocusedDate.isSame(oStartDate) || oFocusedDate.isSame(oEndDate)) {
+				if ((oFocusedDate.isSame(oStartDate) || oFocusedDate.isSame(oEndDate)) && !CalendarUtils._isOutside(oFocusedDate, this._oMinDate, this._oMaxDate)) {
 					jQuery(aDomRefs[i]).addClass("sapUiCalItemSel");
 				} else {
 					jQuery(aDomRefs[i]).removeClass("sapUiCalItemSel");
 				}
 			}
 
-			if (CalendarUtils._isBetween(oFocusedDate, oStartDate, oEndDate)) {
+			if (CalendarUtils._isBetween(oFocusedDate, oStartDate, oEndDate) && CalendarUtils._isBetween(oFocusedDate, this._oMinDate, this._oMaxDate)) {
 				jQuery(aDomRefs[i]).addClass("sapUiCalItemSelBetween");
 			} else {
 				jQuery(aDomRefs[i]).removeClass("sapUiCalItemSelBetween");

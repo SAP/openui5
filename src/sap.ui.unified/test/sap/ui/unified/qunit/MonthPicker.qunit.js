@@ -476,6 +476,45 @@ sap.ui.define([
 			assert.ok(aRefs.eq(10).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
 		});
 
+		QUnit.test("_markInterval", function (assert) {
+			// Prepare
+			var aItemsMarkedAsBetween,
+				oBeforeStartDate = CalendarDate.fromLocalJSDate(new Date(2022, 1, 1)),
+				oIntervalStartDate = CalendarDate.fromLocalJSDate(new Date(2022, 3, 1)),
+				oIntervalEndDate = CalendarDate.fromLocalJSDate(new Date(2022, 8, 1)),
+				oAfterEndDate = CalendarDate.fromLocalJSDate(new Date(2022, 10, 1));
+
+			this.MP._iMinMonth = 3;
+			this.MP._iMaxMonth = 8;
+
+			this.MP.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
+			// Act
+			this.MP._markInterval(oIntervalStartDate, oIntervalEndDate);
+
+			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
+
+			// Assert
+			assert.strictEqual(aItemsMarkedAsBetween.length, 4, "4 months inside the interval");
+
+			// Act
+			this.MP._markInterval(oBeforeStartDate, oIntervalEndDate);
+
+			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
+
+			// Assert
+			assert.strictEqual(aItemsMarkedAsBetween.length, 4, "4 months inside the interval");
+
+			// Act
+			this.MP._markInterval(oIntervalStartDate, oAfterEndDate);
+
+			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
+
+			// Assert
+			assert.strictEqual(aItemsMarkedAsBetween.length, 4, "4 months inside the interval");
+		});
+
 		QUnit.module("Accessibility", {
 			beforeEach: function () {
 				this.oMP = new MonthPicker();

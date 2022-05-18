@@ -260,6 +260,9 @@ sap.ui.define([
 
 		this._iColumns = 7;
 
+		this._oMinDate = CalendarUtils._minDate(this.getPrimaryCalendarType());
+		this._oMaxDate = CalendarUtils._maxDate(this.getPrimaryCalendarType());
+
 		// Currently visible days
 		this._aVisibleDays = [];
 
@@ -348,7 +351,7 @@ sap.ui.define([
 			$CheckRef = jQuery(aDomRefs[i]);
 			iCheckDate = $CheckRef.data('sapDay');
 
-			if (iCheckDate > iDate1 && iCheckDate < iDate2) {
+			if (iCheckDate > iDate1 && iCheckDate < iDate2 && this._isInAllowedRange(iCheckDate)) {
 				$CheckRef.addClass('sapUiCalItemSelBetween');
 			} else {
 				$CheckRef.removeClass('sapUiCalItemSelBetween');
@@ -357,6 +360,11 @@ sap.ui.define([
 				}
 			}
 		}
+	};
+
+	Month.prototype._isInAllowedRange = function(iCheckDate) {
+		return this._oFormatYyyymmdd.parse(iCheckDate).getTime() > this._oMinDate.toLocalJSDate().getTime()
+			&& this._oFormatYyyymmdd.parse(iCheckDate).getTime() < this._oMaxDate.toLocalJSDate().getTime();
 	};
 
 	Month.prototype.onsapfocusleave = function(oEvent){
@@ -986,18 +994,13 @@ sap.ui.define([
 				var oFocusedDate = CalendarDate.fromUTCDate(this._oFormatYyyymmdd.parse($Target.attr("data-sap-day"), true), this.getPrimaryCalendarType());
 
 				if (!oFocusedDate.isSame(oOldFocusedDate)) {
-					if ($Target.hasClass("sapUiCalItemOtherMonth")) {
-						// in other month -> change month
-						this.fireFocus({date: oFocusedDate.toLocalJSDate(), otherMonth: true});
-					} else {
-						this._oDate = oFocusedDate;
-						var bSelected = this._selectDay(oFocusedDate, true);
-						if (bSelected) {
-							// remember last selected enabled date
-							this._oMoveSelectedDate = new CalendarDate(oFocusedDate, this.getPrimaryCalendarType());
-						}
-						this._bMoveChange = true;
+					this._oDate = oFocusedDate;
+					var bSelected = this._selectDay(oFocusedDate, true);
+					if (bSelected) {
+						// remember last selected enabled date
+						this._oMoveSelectedDate = new CalendarDate(oFocusedDate, this.getPrimaryCalendarType());
 					}
+					this._bMoveChange = true;
 				}
 			}
 		}

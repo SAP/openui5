@@ -354,7 +354,7 @@ sap.ui.define([
 				oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this.getPrimaryCalendarType());
 				oEndDate = oSelectedDates.getEndDate();
 				iMonth = this._extractMonth(oTarget);
-				if (iMonth !== oStartDate.getMonth() && !oEndDate) {
+				if (iMonth !== oStartDate.getMonth() && !oEndDate && iMonth >= this._iMinMonth && iMonth <= this._iMaxMonth) {
 					this._selectMonth(iMonth);
 					this._oItemNavigation.focusItem(iMonth);
 				}
@@ -657,15 +657,19 @@ sap.ui.define([
 		}
 
 		if (this._bMousedownChange) {
-			jQuery(aDomRefs[oEndDate.getMonth()]).addClass("sapUiCalItemSel");
-			jQuery(aDomRefs[oStartDate.getMonth()]).addClass("sapUiCalItemSel");
+			if (oEndDate.getMonth() > this._iMinMonth && oEndDate.getMonth() < this._iMaxMonth) {
+				jQuery(aDomRefs[oEndDate.getMonth()]).addClass("sapUiCalItemSel");
+			}
+			if (oStartDate.getMonth() > this._iMinMonth && oStartDate.getMonth() < this._iMaxMonth) {
+				jQuery(aDomRefs[oStartDate.getMonth()]).addClass("sapUiCalItemSel");
+			}
 		}
 
 		for (i = 0; i < aDomRefs.length; ++i) {
 			oCurrentDate.setMonth(this._extractMonth(aDomRefs[i]), 1);
 			this._iYear && oCurrentDate.setYear(this._iYear);
 
-			if (CalendarUtils._isBetween(oCurrentDate, oStartDate, oEndDate)) {
+			if (CalendarUtils._isBetween(oCurrentDate, oStartDate, oEndDate) && oCurrentDate.getMonth() > this._iMinMonth && oCurrentDate.getMonth() < this._iMaxMonth) {
 				jQuery(aDomRefs[i]).addClass("sapUiCalItemSelBetween");
 			} else {
 				jQuery(aDomRefs[i]).removeClass("sapUiCalItemSelBetween");

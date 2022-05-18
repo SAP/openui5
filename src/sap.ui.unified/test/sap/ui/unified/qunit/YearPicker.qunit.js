@@ -282,6 +282,46 @@ sap.ui.define([
 			assert.ok(aRefs.eq(12).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
 		});
 
+		QUnit.test("_markInterval", function (assert) {
+			// Prepare
+			var aItemsMarkedAsBetween,
+				oBeforeStartDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 1)),
+				oIntervalStartDate = CalendarDate.fromLocalJSDate(new Date(2018, 0, 1)),
+				oIntervalEndDate = CalendarDate.fromLocalJSDate(new Date(2022, 11, 31)),
+				oAfterEndDate = CalendarDate.fromLocalJSDate(new Date(2024, 11, 31));
+
+			this.YP.setYear(2018);
+			this.YP._oMinDate = CalendarDate.fromLocalJSDate(new Date(2018, 0, 1));
+			this.YP._oMaxDate = CalendarDate.fromLocalJSDate(new Date(2022, 11, 31));
+
+			this.YP.placeAt("content");
+			oCore.applyChanges();
+
+			// Act
+			this.YP._markInterval(oIntervalStartDate, oIntervalEndDate);
+
+			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
+
+			// Assert
+			assert.strictEqual(aItemsMarkedAsBetween.length, 4, "4 years inside the interval");
+
+			// Act
+			this.YP._markInterval(oBeforeStartDate, oIntervalEndDate);
+
+			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
+
+			// Assert
+			assert.strictEqual(aItemsMarkedAsBetween.length, 4, "4 years inside the interval");
+
+			// Act
+			this.YP._markInterval(oIntervalStartDate, oAfterEndDate);
+
+			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
+
+			// Assert
+			assert.strictEqual(aItemsMarkedAsBetween.length, 4, "4 years inside the interval");
+		});
+
 		QUnit.module("Accessibility", {
 			beforeEach: function () {
 				this.oYP = new YearPicker();
