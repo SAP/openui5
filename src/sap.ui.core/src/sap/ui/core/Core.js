@@ -890,13 +890,13 @@ sap.ui.define([
 		// During this first call, the configuration object is not yet set on the Core instance.
 		if (this.oConfiguration) {
 			var html = document.documentElement;
-			var bAnimation = this.oConfiguration.getAnimation();
+			var sAnimationMode = this.oConfiguration.getAnimationMode();
+			html.dataset.sapUiAnimationMode = sAnimationMode;
+			var bAnimation = (sAnimationMode !== Configuration.AnimationMode.minimal && sAnimationMode !== Configuration.AnimationMode.none);
 			html.dataset.sapUiAnimation = bAnimation ? "on" : "off";
 			if (typeof jQuery !== "undefined") {
 				jQuery.fx.off = !bAnimation;
 			}
-			var sAnimationMode = this.oConfiguration.getAnimationMode();
-			html.dataset.sapUiAnimationMode = sAnimationMode;
 		}
 	};
 
