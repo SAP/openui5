@@ -513,14 +513,14 @@ sap.ui.define([
 			}, {
 				versionNumber: 1
 			}];
-			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: aReturnedVersions});
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: {versions: aReturnedVersions}});
 			return KeyUserConnector.versions.load(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, [{
 					version: Version.Number.Draft
 				}, {
 					version: "1"
 				}], "the versions list is returned correctly");
-				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/com.sap.test.app?sap-language=en&limit=10", "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v2/versions/com.sap.test.app?sap-language=en&limit=10", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
 			});

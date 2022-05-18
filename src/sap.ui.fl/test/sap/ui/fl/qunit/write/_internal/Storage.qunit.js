@@ -991,7 +991,7 @@ sap.ui.define([
 			]);
 
 			var aReturnedVersions = [];
-			sandbox.stub(InitialUtils, "sendRequest").resolves({response: aReturnedVersions});
+			sandbox.stub(InitialUtils, "sendRequest").resolves({response: {versions: aReturnedVersions}});
 
 			return Storage.versions.load(mPropertyBag).then(function (aVersions) {
 				assert.deepEqual(aVersions, aReturnedVersions);

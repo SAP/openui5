@@ -22,7 +22,10 @@ sap.ui.define([
 	"use strict";
 
 	var PREFIX = "/flex/keyuser";
-	var API_VERSION = "/v1";
+	var API_VERSION = {
+		V1: "/v1",
+		V2: "/v2"
+	};
 
 	/**
 	 * Connector for saving and deleting data from SAPUI5 Flexibility KeyUser service.
@@ -37,20 +40,20 @@ sap.ui.define([
 		layers: InitialConnector.layers,
 
 		ROUTES: {
-			CHANGES: PREFIX + API_VERSION + "/changes/",
-			SETTINGS: PREFIX + API_VERSION + "/settings",
-			TOKEN: PREFIX + API_VERSION + "/settings",
+			CHANGES: PREFIX + API_VERSION.V1 + "/changes/",
+			SETTINGS: PREFIX + API_VERSION.V1 + "/settings",
+			TOKEN: PREFIX + API_VERSION.V1 + "/settings",
 			VERSIONS: {
-				GET: PREFIX + API_VERSION + "/versions/",
-				ACTIVATE: PREFIX + API_VERSION + "/versions/activate/",
-				DISCARD: PREFIX + API_VERSION + "/versions/draft/"
+				GET: PREFIX + API_VERSION.V2 + "/versions/",
+				ACTIVATE: PREFIX + API_VERSION.V1 + "/versions/activate/",
+				DISCARD: PREFIX + API_VERSION.V1 + "/versions/draft/"
 			},
 			TRANSLATION: {
-				UPLOAD: PREFIX + API_VERSION + "/translation/texts",
-				DOWNLOAD: PREFIX + API_VERSION + "/translation/texts/",
-				GET_SOURCELANGUAGE: PREFIX + API_VERSION + "/translation/sourcelanguages/"
+				UPLOAD: PREFIX + API_VERSION.V1 + "/translation/texts",
+				DOWNLOAD: PREFIX + API_VERSION.V1 + "/translation/texts/",
+				GET_SOURCELANGUAGE: PREFIX + API_VERSION.V1 + "/translation/sourcelanguages/"
 			},
-			CONTEXTS: PREFIX + API_VERSION + "/contexts/"
+			CONTEXTS: PREFIX + API_VERSION.V1 + "/contexts/"
 		},
 		isLanguageInfoRequired: true,
 		loadFeatures: function (mPropertyBag) {
@@ -118,7 +121,7 @@ sap.ui.define([
 			mParameters.limit = mPropertyBag.limit;
 			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.GET, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sVersionsUrl, "GET", mPropertyBag).then(function (oResult) {
-				return oResult.response.map(function (oVersion) {
+				return oResult.response.versions.map(function (oVersion) {
 					return renameVersionNumberProperty(oVersion);
 				});
 			});
