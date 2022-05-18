@@ -217,7 +217,7 @@ sap.ui.define([
 			});
 
 			oContentField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
-			oContent = new Content("Content1", {title: "Content title", shortTitle: "ShortTitle"});
+			oContent = new Content("Content1", {title: "Content title", shortTitle: "ShortTitle", tokenizerTitle: "TokenizerTitle"});
 			sinon.stub(oContent, "getContent").returns(oContentField);
 			oContent.setAggregation("displayContent", oContentField);
 			sinon.stub(oContent, "getCount").callsFake(function (aConditions) { return aConditions.length;});
@@ -274,7 +274,7 @@ sap.ui.define([
 
 				assert.ok(oPanel.isA("sap.m.Panel"), "Panel is second VBox item");
 				assert.ok(oPanel.getVisible, "Panel is visible");
-				assert.equal(oPanel.getHeaderText(), formatMessage(oResourceBundle.getText("valuehelp.TOKENIZERTITLE"), 1), "Panel headerText");
+				assert.equal(oPanel.getHeaderText(), "TokenizerTitle", "Panel headerText");
 				assert.equal(oPanel.getBackgroundDesign(), mLibrary.BackgroundDesign.Transparent, "Panel backgroundDesign");
 				assert.ok(oPanel.getExpanded(), "Panel expanded");
 				assert.notOk(oPanel.getExpandable(), "Panel expandable");
@@ -624,7 +624,7 @@ sap.ui.define([
 					filterValue: "X",
 					conditions: []
 				}); // simulate data update
-				assert.equal(oPanel.getHeaderText(), oResourceBundle.getText("valuehelp.TOKENIZERTITLENONUMBER"), "Panel headerText");
+				assert.equal(oPanel.getHeaderText(), "TokenizerTitle", "Panel headerText");
 
 				fnDone();
 			}).catch(function(oError) {

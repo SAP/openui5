@@ -45,7 +45,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
-                /**
+				/**
 				 * Title text that appears tab header.
 				 */
 				title: {
@@ -53,10 +53,18 @@ sap.ui.define([
 					group: "Appearance",
 					defaultValue: ""
 				},
-                /**
+				/**
 				 * Title text that appears in the dialog header.
 				 */
 				shortTitle: {
+					type: "string",
+					group: "Appearance",
+					defaultValue: ""
+				},
+				/**
+				 * Title text that appears in the dialog tokenizer panel, when ony one content exist.
+				 */
+				tokenizerTitle: {
 					type: "string",
 					group: "Appearance",
 					defaultValue: ""
@@ -673,6 +681,25 @@ sap.ui.define([
 	 */
 	Content.prototype.getFormattedShortTitle = function() {
 		return this.getShortTitle();
+	};
+
+	/**
+	 * Determines the title used in the header of the dialog for the bottom tokenizer.
+	 *
+	 * <b>Note:</b> This function is used by the container and must not be used from outside
+	 *
+	 * @param {int} iCount Number of selected items or conditions
+	 * @returns {string} title
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 */
+	Content.prototype.getFormattedTokenizerTitle = function(iCount) {
+		var sTitle = this.getTokenizerTitle();
+		if (sTitle) {
+			sTitle = formatMessage(sTitle, iCount ? iCount : "");
+		}
+		return sTitle;
 	};
 
 	Content.prototype._getMaxConditions = function() {

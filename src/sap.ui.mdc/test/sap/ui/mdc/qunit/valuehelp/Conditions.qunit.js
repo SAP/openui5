@@ -333,7 +333,7 @@ sap.ui.define([
 
 	QUnit.test("getRequiresTokenizer", function(assert) {
 
-		assert.notOk(oConditions.getRequiresTokenizer(), "getRequiresTokenizer");
+		assert.ok(oConditions.getRequiresTokenizer(), "getRequiresTokenizer");
 
 	});
 
@@ -350,7 +350,18 @@ sap.ui.define([
 
 		assert.equal(oConditions.getFormattedShortTitle(), oResourceBundle.getText("valuehelp.DEFINECONDITIONS.Shorttitle"), "formatted shortTitle");
 		oConditions.setShortTitle("Text");
-		assert.equal(oConditions.getFormattedShortTitle(0), "Text", "formatted shortTitle");
+		assert.equal(oConditions.getFormattedShortTitle(), "Text", "formatted shortTitle");
+
+	});
+
+	QUnit.test("getFormattedTokenizerTitle", function(assert) {
+
+		assert.equal(oConditions.getFormattedTokenizerTitle(0), oResourceBundle.getText("valuehelp.DEFINECONDITIONS.TokenizerTitleNoCount"), "formatted TokenizerTitle");
+		assert.equal(oConditions.getFormattedTokenizerTitle(1), oResourceBundle.getText("valuehelp.DEFINECONDITIONS.TokenizerTitle", 1), "formatted TokenizerTitle");
+
+		oConditions.setTokenizerTitle("myTitleText");
+		assert.equal(oConditions.getFormattedTokenizerTitle(0), "myTitleText", "formatted TokenizerTitle");
+		assert.equal(oConditions.getFormattedTokenizerTitle(1), "myTitleText", "formatted TokenizerTitle");
 
 	});
 

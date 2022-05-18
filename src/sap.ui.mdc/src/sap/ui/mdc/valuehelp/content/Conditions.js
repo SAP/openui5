@@ -157,8 +157,8 @@ sap.ui.define([
 	};
 
 	Conditions.prototype.getRequiresTokenizer = function() {
-		// when only the conditions content is on the dialog the tokenizer should be hidden.
-		return false;
+		// when only the conditions content is on the dialog the tokenizer should be shown.
+		return true;
 	};
 
 	Conditions.prototype.getFormattedTitle = function(iCount) {
@@ -175,6 +175,14 @@ sap.ui.define([
 			sShortTitle = this._oResourceBundle.getText("valuehelp.DEFINECONDITIONS.Shorttitle");
 		}
 		return sShortTitle;
+	};
+
+	Conditions.prototype.getFormattedTokenizerTitle = function(iCount) {
+		var sTokenizerTitle = this.getTokenizerTitle();
+		if (!sTokenizerTitle) {
+			sTokenizerTitle = this._oResourceBundle.getText("valuehelp.DEFINECONDITIONS.TokenizerTitle" + (iCount === 0 ? "NoCount" : ""), iCount);
+		}
+		return sTokenizerTitle;
 	};
 
 	Conditions.prototype.getAriaAttributes = function(iMaxConditions) {
