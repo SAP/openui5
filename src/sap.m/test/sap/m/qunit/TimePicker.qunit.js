@@ -2068,6 +2068,62 @@ sap.ui.define([
 		oTP.destroy();
 	});
 
+	QUnit.test("support2400 - 24:00:00 value works correctly in all scenarios", function(assert) {
+		//prepare
+		//this test checks the scenario when the default date pattern has HH for hours. this happens when "de-DE" is set for language.
+		var oCore = sap.ui.getCore();
+		oCore.getConfiguration().setLanguage("de-DE");
+		oCore.applyChanges();
+
+		var tpId = "timepicker",
+			oSlidersSpy = this.spy(TimePickerSliders.prototype, "_setTimeValues"),
+			oTimePickerSliders = new TimePickerSliders(tpId + "-sliders").placeAt("qunit-fixture"),
+			oTP = new TimePicker(tpId, {
+				support2400: true
+			}).placeAt("qunit-fixture"),
+			oGetSlidersStub = this.stub(oTP, "_getSliders").callsFake(function () { return oTimePickerSliders; });
+
+		oCore.applyChanges();
+
+		//act
+		oTP.setValue('24:00:00');
+		oCore.applyChanges();
+
+		//assert
+		assert.ok(oTP._bValid, "value is valid");
+		assert.equal(jQuery("#" + tpId + "-inner").val(), '24:00:00', "input value is correct");
+
+		//act
+		oTP._handleInputChange("23:00:00");
+		oTP._handleInputChange("24:00:00");
+
+		//assert
+		assert.equal(oTP.getValue(), "24:00:00", "Value is set to 24:00:00");
+		assert.ok(oTP._bValid, "value is valid");
+		assert.equal(jQuery("#" + tpId + "-inner").val(), '24:00:00', "input value is correct");
+
+		//act
+		oTP._formatValue(new Date(2022, 4, 1));
+
+		//assert
+		assert.equal(oTP.getValue(), "24:00:00", "Value is set to 24:00:00");
+		assert.ok(oTP._bValid, "value is valid");
+		assert.equal(jQuery("#" + tpId + "-inner").val(), '24:00:00', "input value is correct");
+
+		//act
+		oTP.onBeforeOpen();
+
+		//assert
+		assert.ok(oSlidersSpy.calledWithExactly(new Date(1970, 0, 1), true), "The set value is passed to the sliders");
+
+		//cleanup
+		oSlidersSpy.restore();
+		oGetSlidersStub.restore();
+		oTimePickerSliders.destroy();
+		oTP.destroy();
+		oCore.getConfiguration().setLanguage("en-US");
+	});
+
 	QUnit.module("properties in constructor options", {
 		beforeEach: function() {
 			this._defaultFormatter = DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
