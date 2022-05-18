@@ -383,8 +383,11 @@ sap.ui.define([
 				this._getInternalModel().setProperty("/showResetEnabled", bShowResetEnabled);
 			};
 
-			var oPopover = this.getParent();
-			oPopover.setModal(true);
+			var oParent = this.getParent();
+			// In case of mobile oParent isA sap.m.Dialog
+			if (oParent.isA("sap.m.Popover")) {
+				oParent.setModal(true);
+			}
 			Engine.getInstance().uimanager.show(this, "LinkItems").then(function(oDialog) {
 				var oResetButton = oDialog.getCustomHeader().getContentRight()[0];
 				var oSelectionPanel = oDialog.getContent()[0];
@@ -396,8 +399,10 @@ sap.ui.define([
 				oSelectionPanel.attachChange(function(oEvent) {
 					fnUpdateResetButton.call(this, oSelectionPanel);
 				}.bind(this));
-				oDialog.attachAfterClose(function(){
-					oPopover.setModal(false);
+				oDialog.attachAfterClose(function() {
+					if (oParent.isA("sap.m.Popover")) {
+						oParent.setModal(false);
+					}
 				});
 			}.bind(this));
 		}.bind(this));
