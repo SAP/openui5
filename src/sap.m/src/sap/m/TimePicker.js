@@ -414,18 +414,22 @@ function(
 			/* Set the timevalues of the picker here to prevent user from seeing it */
 			var oSliders = this._getSliders(),
 				oDateValue = this.getDateValue(),
-				sInputValue = this._$input.val(),
-				sFormat = this.getValueFormat(),
-				iIndexOfHH = sFormat.indexOf("HH"),
-				iIndexOfH = sFormat.indexOf("H");
+				sFormat = this.getValueFormat() || (this._sValueFormat && this._sValueFormat.oFormatOptions.pattern),
+				iIndexOfHH,
+				iIndexOfH,
+				sInputValue = TimePickerSliders._isHoursValue24(this._$input.val(), iIndexOfHH, iIndexOfH) ?
+					TimePickerSliders._replace24HoursWithZero(this._$input.val(), iIndexOfHH, iIndexOfH) : this._$input.val();
 
+			sFormat = sFormat ? sFormat : "";
+			iIndexOfHH = sFormat.indexOf("HH");
+			iIndexOfH = sFormat.indexOf("H");
 			oSliders.setValue(sInputValue);
 
 			if (this._shouldSetInitialFocusedDateValue()) {
 				oDateValue = this.getInitialFocusedDateValue();
 			}
 
-			oSliders._setTimeValues(oDateValue, TimePickerSliders._isHoursValue24(sInputValue, iIndexOfHH, iIndexOfH));
+			oSliders._setTimeValues(oDateValue, TimePickerSliders._isHoursValue24(this._$input.val(), iIndexOfHH, iIndexOfH));
 			oSliders.collapseAll();
 
 			/* Mark input as active */
@@ -481,9 +485,13 @@ function(
 				sThatValue,
 				bThatValue2400,
 				bEnabled2400,
-				sFormat = this.getValueFormat(),
-				iIndexOfHH = sFormat.indexOf("HH"),
-				iIndexOfH = sFormat.indexOf("H");
+				sFormat = this.getValueFormat() || (this._sValueFormat && this._sValueFormat.oFormatOptions.pattern),
+				iIndexOfHH,
+				iIndexOfH;
+
+			sFormat = sFormat ? sFormat : "";
+			iIndexOfHH = sFormat.indexOf("HH");
+			iIndexOfH = sFormat.indexOf("H");
 
 			sValue = sValue || this._$input.val();
 			sThatValue = sValue;
@@ -685,12 +693,20 @@ function(
 		 * @public
 		 */
 		TimePicker.prototype.setValue = function(sValue) {
+			if (sValue) {
+				this._getFormatter(); // initialise DateFormatter
+			}
+
 			var oDate,
 				sOutputValue,
-				sFormat = this.getValueFormat(),
-				iIndexOfHH = sFormat.indexOf("HH"),
-				iIndexOfH = sFormat.indexOf("H"),
-				oSliders = this._getSliders();
+				sFormat = this.getValueFormat() || (this._sValueFormat && this._sValueFormat.oFormatOptions.pattern),
+				oSliders = this._getSliders(),
+				iIndexOfHH,
+				iIndexOfH;
+
+			sFormat = sFormat ? sFormat : "";
+			iIndexOfHH = sFormat.indexOf("HH");
+			iIndexOfH = sFormat.indexOf("H");
 
 			sValue = this.validateProperty("value", sValue);
 
@@ -1208,9 +1224,14 @@ function(
 		 */
 		TimePicker.prototype._formatValue = function(oDate, bValueFormat) {
 			var sValue = DateTimeField.prototype._formatValue.apply(this, arguments),
-				sFormat = this.getValueFormat(),
-				iIndexOfHH = sFormat.indexOf("HH"),
-				iIndexOfH = sFormat.indexOf("H");
+				sFormat = this.getValueFormat() || (this._sValueFormat && this._sValueFormat.oFormatOptions.pattern),
+				iIndexOfHH,
+				iIndexOfH,
+				bFieldValueIs24;
+
+			sFormat = sFormat ? sFormat : "";
+			iIndexOfHH = sFormat.indexOf("HH");
+			iIndexOfH = sFormat.indexOf("H");
 
 			if (oDate) {
 				// in display format the formatter returns strings without the leading space
@@ -1224,9 +1245,14 @@ function(
 				}
 			}
 
+			if ((this._getPicker() && this._getPicker().isOpen() && this._getSliders() && this._getSliders()._getHoursSlider().getSelectedValue() === "24") ||
+				(this._sLastChangeValue && this._sLastChangeValue.indexOf("24") > -1)) {
+				bFieldValueIs24 = true;
+			}
+
 			//2400 scenario - be sure that the correct value will be set in all cases - when binding,
 			//setting the value by sliders or only via setValue
-			if (oDate && oDate.getHours() === 0 && this.getSupport2400() && this._getSliders() && this._getSliders()._getHoursSlider().getSelectedValue() === "24") {
+			if (oDate && oDate.getHours() === 0 && this.getSupport2400() && bFieldValueIs24) {
 				sValue = TimePickerSliders._replaceZeroHoursWith24(sValue, iIndexOfHH, iIndexOfH);
 			}
 
