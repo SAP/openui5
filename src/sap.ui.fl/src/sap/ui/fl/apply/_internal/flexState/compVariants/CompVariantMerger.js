@@ -4,11 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/base/Log"
 ], function(
 	CompVariant,
-	FlexObjectFactory,
 	Log
 ) {
 	"use strict";
@@ -31,17 +29,17 @@ sap.ui.define([
 			if (oChangeContent.contexts) {
 				oVariant.setContexts(oChangeContent.contexts);
 			}
-
 			if (oChangeContent.variantContent) {
-				oVariant.setContent(oChangeContent.variantContent, /* bSkipStateChange = */ true);
+				oVariant.setContent(oChangeContent.variantContent);
 			}
+
 			var sVariantName = oChange.getText("variantName");
 			if (sVariantName) {
-				oVariant.setName(sVariantName, /* bSkipStateChange = */ true);
+				oVariant.setName(sVariantName);
 			}
 		},
 		standardVariant: function (oVariant, oChange) {
-			// legacy change on standard variants
+			// legacy change on stanard variants
 			oVariant.setExecuteOnSelection(oChange.getContent().executeOnSelect);
 		}
 	};
@@ -69,8 +67,7 @@ sap.ui.define([
 
 	function createVariant(sPersistencyKey, oVariantInput) {
 		var oVariantData = {
-			fileName: oVariantInput.fileName,
-			variantId: oVariantInput.id || CompVariant.STANDARD_VARIANT_ID,
+			fileName: oVariantInput.id || CompVariant.STANDARD_VARIANT_ID,
 			persisted: oVariantInput.persisted,
 			content: oVariantInput.content || {},
 			texts: {
@@ -91,7 +88,7 @@ sap.ui.define([
 			oVariantData.executeOnSelection = oVariantInput.executeOnSelection;
 		}
 
-		return FlexObjectFactory.createCompVariant(oVariantData);
+		return new CompVariant(oVariantData);
 	}
 
 	function applyChangeOnVariant(oVariant, oChange) {
@@ -101,7 +98,7 @@ sap.ui.define([
 	}
 
 	function applyChangesOnVariant(mChanges, oVariant) {
-		var sVariantId = oVariant.getVariantId();
+		var sVariantId = oVariant.getId();
 		if (mChanges[sVariantId]) {
 			mChanges[sVariantId].forEach(function (oChange) {
 				applyChangeOnVariant(oVariant, oChange);
@@ -147,13 +144,13 @@ sap.ui.define([
 			// the standard must always be visible
 			oStandardVariant.setFavorite(true);
 			oStandardVariant.setStandardVariant(true);
-			mCompData.byId[oStandardVariant.getVariantId()] = oStandardVariant;
+			mCompData.byId[oStandardVariant.getId()] = oStandardVariant;
 
 			var oStandardVariantChange = mCompData.standardVariantChange;
 			if (oStandardVariantChange) {
-				mChanges[oStandardVariant.getVariantId()] = mChanges[oStandardVariant.getVariantId()] || [];
-				mChanges[oStandardVariant.getVariantId()].push(oStandardVariantChange);
-				mChanges[oStandardVariant.getVariantId()].sort(function (a, b) {
+				mChanges[oStandardVariant.getId()] = mChanges[oStandardVariant.getId()] || [];
+				mChanges[oStandardVariant.getId()].push(oStandardVariantChange);
+				mChanges[oStandardVariant.getId()].sort(function (a, b) {
 					if (a.getDefinition().creation < b.getDefinition().creation) {
 						return -1;
 					}

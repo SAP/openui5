@@ -68,7 +68,7 @@ sap.ui.define([
 		var mPropertyBag = {
 			changeSpecificData: {
 				// in case of redo the variant is still saved and the ID should be reused
-				id: this._oVariant ? this._oVariant.getVariantId() : undefined,
+				id: this._oVariant ? this._oVariant.getId() : undefined,
 				type: oNewVariantProperties.type,
 				texts: {
 					variantName: oNewVariantProperties.text
@@ -88,12 +88,12 @@ sap.ui.define([
 		if (oNewVariantProperties.default) {
 			SmartVariantManagementWriteAPI.setDefaultVariantId(Object.assign({}, this.mInformation, {
 				control: this.getElement(),
-				defaultVariantId: this._oVariant.getVariantId()
+				defaultVariantId: this._oVariant.getId()
 			}));
 		}
 
 		this.getElement().addVariant(this._oVariant, oNewVariantProperties.default);
-		this.getElement().activateVariant(this._oVariant.getVariantId());
+		this.getElement().activateVariant(this._oVariant.getId());
 		return Promise.resolve();
 	};
 
@@ -104,7 +104,7 @@ sap.ui.define([
 	 */
 	CompVariantSaveAs.prototype.undo = function() {
 		SmartVariantManagementWriteAPI.removeVariant({
-			id: this._oVariant.getVariantId(),
+			id: this._oVariant.getId(),
 			control: this.getElement(),
 			revert: true
 		});
@@ -120,7 +120,7 @@ sap.ui.define([
 			previousDirtyFlag: this.getPreviousDirtyFlag(),
 			previousVariantId: this.getPreviousVariantId(),
 			previousDefault: this.getPreviousDefault(),
-			variantId: this._oVariant.getVariantId()
+			variantId: this._oVariant.getId()
 		});
 
 		return Promise.resolve();

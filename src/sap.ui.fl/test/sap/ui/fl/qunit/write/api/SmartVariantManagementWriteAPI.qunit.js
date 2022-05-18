@@ -394,14 +394,19 @@ sap.ui.define([
 					assert.equal(oChange.getLayer(), testData.expected.layer, "the layer is set correct");
 					assert.equal(oChange.getDefinition().changeType, "updateVariant", "changeType ist updateVariant");
 					assert.deepEqual(oChange.getDefinition().content, testData.expected.changeContent, "change content ist updateVariant");
+					var oVariantDefinition = oVariant.getDefinition();
 					assert.equal(oVariant.getFavorite(), testData.expected.favorite, "the favorite flag flag is set correct");
+					assert.equal(oVariantDefinition.favorite, testData.expected.definition.favorite, "and the definition.favorite flag is correct");
 					assert.equal(oVariant.getExecuteOnSelection(), testData.expected.executeOnSelection, "the executeOnSelection flag is set correct");
+					assert.equal(oVariantDefinition.executeOnSelection, testData.expected.definition.executeOnSelection, "and the definition.executeOnSelection flag is correct");
 					assert.deepEqual(oVariant.getContexts(), testData.expected.contexts, "the contexts section is set correct");
+					assert.deepEqual(oVariantDefinition.contexts, testData.expected.definition.contexts, "the definition.contexts section is correct");
 					// also test the name in case it is part of the update
 					if (testData.updateVariantPropertyBag.name) {
 						assert.equal(oVariant.getName(), testData.expected.name, "the name is set correct");
 						assert.deepEqual(oChange.getText("variantName"), testData.expected.changeTextsVariantName, "the change has the name set correct in the texts section");
 					}
+					assert.equal(oVariantDefinition.texts.variantName.value, "A variant", "the name in the definition is unchanged");
 				});
 			});
 		});
@@ -620,7 +625,8 @@ sap.ui.define([
 					persistencyKey: sPersistencyKey
 				},
 				content: {
-					someOld: "content"
+					someOld: "content",
+					executeOnSelection: false
 				},
 				texts: {
 					variantName: {
@@ -891,7 +897,7 @@ sap.ui.define([
 				});
 			}).then(function (oRemovedVariant) {
 				assert.equal(oRemovedVariant.getState(), States.DELETED, "the variant is flagged for deletion");
-				var aRevertData = oRemovedVariant.getRevertData();
+				var aRevertData = oRemovedVariant.getRevertInfo();
 				assert.equal(aRevertData.length, 1, "revertData was stored");
 				var oLastRevertData = aRevertData[0];
 				assert.equal(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
@@ -904,7 +910,7 @@ sap.ui.define([
 					control: oControl
 				});
 
-				aRevertData = oRemovedVariant.getRevertData();
+				aRevertData = oRemovedVariant.getRevertInfo();
 				assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
 				assert.equal(oRemovedVariant.getState(), States.PERSISTED, "and the change is flagged as new");
 			});
