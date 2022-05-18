@@ -114,6 +114,14 @@ sap.ui.define([
 				enableFormattedText: { type: "boolean", group: "Appearance", defaultValue: false },
 
 				/**
+				 * Defines whether the <code>IllustratedMessage</code> would resize itself according to it's height
+				 * if <code>illustrationSize</code> property is set to <code>IllustratedMessageSize.Auto</code>.
+				 *
+				 * @since 1.104
+				 */
+				enableVerticalResponsiveness: { type: "boolean", group: "Appearance", defaultValue: false },
+
+				/**
 				 * Determines which illustration breakpoint variant is used.
 				 *
 				 * As <code>IllustratedMessage</code> adapts itself around the <code>Illustration</code>, the other
@@ -256,6 +264,12 @@ sap.ui.define([
 		BASE: 259
 	};
 
+	IllustratedMessage.BREAK_POINTS_HEIGHT = {
+		DIALOG: 451,
+		SPOT: 296,
+		BASE: 154
+	};
+
 	IllustratedMessage.MEDIA = {
 		BASE: "sapMIllustratedMessage-Base",
 		SPOT: "sapMIllustratedMessage-Spot",
@@ -272,6 +286,7 @@ sap.ui.define([
 	 */
 
 	IllustratedMessage.prototype.init = function () {
+		this._sLastKnownMedia = null;
 		this._updateInternalIllustrationSetAndType(this.getIllustrationType());
 	};
 
@@ -480,7 +495,7 @@ sap.ui.define([
 		if (oDomRef) {
 			sSize = this.getIllustrationSize();
 			if (sSize === IllustratedMessageSize.Auto) {
-				this._updateMedia(oDomRef.getBoundingClientRect().width);
+				this._updateMedia(oDomRef.getBoundingClientRect().width, oDomRef.getBoundingClientRect().height);
 			} else {
 				this._updateMediaStyle(IllustratedMessage.MEDIA[sSize.toUpperCase()]);
 			}
@@ -505,29 +520,39 @@ sap.ui.define([
 	 * @private
 	 */
 	IllustratedMessage.prototype._onResize = function (oEvent) {
-		var iCurrentWidth = oEvent.size.width;
+		var iCurrentWidth = oEvent.size.width,
+			iCurrentHeight = oEvent.size.height;
 
-		this._updateMedia(iCurrentWidth);
+		this._updateMedia(iCurrentWidth, iCurrentHeight);
 	};
 
 	/**
-	 * Updates the media size of the control based on its own width, not on the entire screen size (which media query does).
+	 * Updates the media size of the control based on its own width and height, not on the entire screen size (which media query does).
 	 * @param {number} iWidth - the actual width of the control
+	 * @param {number} iHeight - the actual height of the control
 	 * @private
 	 */
-	IllustratedMessage.prototype._updateMedia = function (iWidth) {
-		if (!iWidth) {
+	IllustratedMessage.prototype._updateMedia = function (iWidth, iHeight) {
+		var bVertical = this.getEnableVerticalResponsiveness(),
+			sNewMedia;
+
+		if (!iWidth && !iHeight) {
 			return;
 		}
 
-		if (iWidth <= IllustratedMessage.BREAK_POINTS.BASE) {
-			this._updateMediaStyle(IllustratedMessage.MEDIA.BASE);
-		} else if (iWidth <= IllustratedMessage.BREAK_POINTS.SPOT) {
-			this._updateMediaStyle(IllustratedMessage.MEDIA.SPOT);
-		} else if (iWidth <= IllustratedMessage.BREAK_POINTS.DIALOG) {
-			this._updateMediaStyle(IllustratedMessage.MEDIA.DIALOG);
+		if (iWidth <= IllustratedMessage.BREAK_POINTS.BASE || (iHeight <= IllustratedMessage.BREAK_POINTS_HEIGHT.BASE && bVertical)) {
+			sNewMedia = IllustratedMessage.MEDIA.BASE;
+		} else if (iWidth <= IllustratedMessage.BREAK_POINTS.SPOT || (iHeight <= IllustratedMessage.BREAK_POINTS_HEIGHT.SPOT && bVertical)) {
+			sNewMedia = IllustratedMessage.MEDIA.SPOT;
+		} else if (iWidth <= IllustratedMessage.BREAK_POINTS.DIALOG || (iHeight <= IllustratedMessage.BREAK_POINTS_HEIGHT.DIALOG && bVertical)) {
+			sNewMedia = IllustratedMessage.MEDIA.DIALOG;
 		} else {
-			this._updateMediaStyle(IllustratedMessage.MEDIA.SCENE);
+			sNewMedia = IllustratedMessage.MEDIA.SCENE;
+		}
+
+		if (this._sLastKnownMedia !== sNewMedia) {
+			this._updateMediaStyle(sNewMedia);
+			this._sLastKnownMedia = sNewMedia;
 		}
 	};
 

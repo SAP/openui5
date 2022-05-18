@@ -55,6 +55,8 @@ function (
 		assert.strictEqual(aPublicProperties["description"].type, "string", "The type of the description property is string");
 		assert.notOk(this.oIllustratedMessage.getEnableFormattedText(), "The IllustratedMessage enableFormattedText is false by default");
 		assert.strictEqual(aPublicProperties["enableFormattedText"].type, "boolean", "The type of the enableFormattedText property is boolean");
+		assert.notOk(this.oIllustratedMessage.getEnableVerticalResponsiveness(), "The IllustratedMessage enableVerticalResponsiveness is false by default");
+		assert.strictEqual(aPublicProperties["enableVerticalResponsiveness"].type, "boolean", "The type of the enableVerticalResponsiveness property is boolean");
 		assert.strictEqual(aPublicProperties["illustrationSize"].type, "sap.m.IllustratedMessageSize", "The type of the illustrationSize property is sap.m.IllustratedMessageSize");
 		assert.strictEqual(aPublicProperties["illustrationType"].type, "string", "The type of the illustrationType property is string");
 		assert.ok(this.oIllustratedMessage.getAdditionalContent(), "The IllustratedMessage additional content has instantiated successfully");
@@ -309,11 +311,12 @@ function (
 		this.oIllustratedMessage._updateDomSize();
 
 		// Assert
-		assert.ok(fnUpdateMediaStyleSpy.calledOnce,
-			"_updateMediaStyle is called once inside the _updateMedia call when illustrationSize is IllustratedMessageSize.Auto");
+		assert.strictEqual(fnUpdateMediaStyleSpy.callCount, 0,
+			"_updateMediaStyle is not called inside the _updateMedia because the media has been already calculated to 'Scene' on initialization");
 		assert.ok(fnUpdateMediaSpy.calledOnce, "_updateMedia is called once when illustrationSize is IllustratedMessageSize.Auto");
-		assert.ok(fnUpdateMediaSpy.calledWithExactly(this.oIllustratedMessage.getDomRef().getBoundingClientRect().width),
-			"_updateMedia called width the IllustratedMessage's Dom Reference width");
+		assert.ok(fnUpdateMediaSpy.calledWithExactly(this.oIllustratedMessage.getDomRef().getBoundingClientRect().width,
+			this.oIllustratedMessage.getDomRef().getBoundingClientRect().height),
+			"_updateMedia called width the IllustratedMessage's Dom Reference width and height");
 
 		// Act
 		fnUpdateMediaSpy.resetHistory();
@@ -403,7 +406,7 @@ function (
 
 	QUnit.test("_onResize", function (assert) {
 		// Arrange
-		var oMockEvent = {size: {width: 666}},
+		var oMockEvent = {size: {width: 666, height: 666}},
 			fnUpdateMediaSpy = this.spy(this.oIllustratedMessage, "_updateMedia");
 
 		// Act
@@ -412,11 +415,11 @@ function (
 		// Assert
 		assert.ok(fnUpdateMediaSpy.calledOnce,
 			"_updateMedia is called once inside the _onResize call");
-		assert.ok(fnUpdateMediaSpy.calledWithExactly(oMockEvent.size.width),
+		assert.ok(fnUpdateMediaSpy.calledWithExactly(oMockEvent.size.width, oMockEvent.size.height),
 			"_updateMedia is called with the oMockEvent's new width size");
 	});
 
-	QUnit.test("_updateMedia", function (assert) {
+	QUnit.test("_updateMedia (horizontal)", function (assert) {
 		// Assert
 		assert.expect(9);
 
@@ -437,6 +440,46 @@ function (
 			// Assert
 			assert.ok(fnUpdateMediaStyleSpy.calledOnce,
 				"_updateMediaStyle is called once inside the _updateMedia call when a valid argument/width is passed");
+			assert.ok(fnUpdateMediaStyleSpy.calledWithExactly(IllustratedMessage.MEDIA[sBreakPoint]),
+				"_updateMediaStyle called with the correct class ( " + IllustratedMessage.MEDIA[sBreakPoint] + " ) for breakpoint: " + sBreakPoint);
+
+			// Clear
+			fnUpdateMediaStyleSpy.resetHistory();
+		}, this);
+	});
+
+	QUnit.test("_updateMedia (vertical) with enableVerticalResponsiveness property", function (assert) {
+		// Assert
+		assert.expect(11);
+
+		// Arrange
+		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
+		var sScalableClass = 'sapMIllustratedMessageScalable';
+
+		// Act
+		this.oIllustratedMessage._updateMedia(9999, IllustratedMessage.BREAK_POINTS_HEIGHT[IllustratedMessage.BREAK_POINTS_HEIGHT.Dialog]);
+
+		// Assert
+		assert.strictEqual(fnUpdateMediaStyleSpy.callCount, 0,
+			"_updateMediaStyle is not called inside the _updateMedia call when a valid arguments width and height are passed, but enableVerticalResponsiveness is 'false'");
+		assert.notOk(this.oIllustratedMessage.$().hasClass(sScalableClass),
+			"IllustratedMessage doesn't have the scalable class which allows scalable SVG when EVS property is false");
+
+		// Act Enable vertical responsiveness in order to test the height breakpoints
+		this.oIllustratedMessage.setEnableVerticalResponsiveness(true);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oIllustratedMessage.$().hasClass(sScalableClass),
+			"IllustratedMessage has the scalable class which allows scalable SVG when EVS property is true");
+
+		Object.keys(jQuery.extend(IllustratedMessage.BREAK_POINTS_HEIGHT, {SCENE: 999})).forEach(function (sBreakPoint) {
+			// Act
+			this.oIllustratedMessage._updateMedia(9999, IllustratedMessage.BREAK_POINTS_HEIGHT[sBreakPoint]);
+
+			// Assert
+			assert.ok(fnUpdateMediaStyleSpy.calledOnce,
+				"_updateMediaStyle is called once inside the _updateMedia call when a valid arguments width and height are passed");
 			assert.ok(fnUpdateMediaStyleSpy.calledWithExactly(IllustratedMessage.MEDIA[sBreakPoint]),
 				"_updateMediaStyle called with the correct class ( " + IllustratedMessage.MEDIA[sBreakPoint] + " ) for breakpoint: " + sBreakPoint);
 

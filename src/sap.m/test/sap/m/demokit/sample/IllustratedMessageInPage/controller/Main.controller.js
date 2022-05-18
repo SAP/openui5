@@ -25,6 +25,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 				});
 
 				this.oModel.setProperty("/sSelectedSize", aIMISizeData[0].key);
+				this.oModel.setProperty("/sSelectedEVS", this.getView().byId("im").getEnableVerticalResponsiveness());
 				this.oModel.setProperty("/sSelectedType", aIMITypeData[0].key);
 
 				this.getView().setModel(this.oModel);
@@ -34,6 +35,9 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 			},
 			onSelectType: function (oEvent) {
 				this.oModel.setProperty("/sSelectedType", oEvent.getParameter("selectedItem").getKey());
+			},
+			onSwitchEVS: function (oEvent) {
+				this.oModel.setProperty("/sSelectedEVS", oEvent.getParameter("state"));
 			}
 		});
 
