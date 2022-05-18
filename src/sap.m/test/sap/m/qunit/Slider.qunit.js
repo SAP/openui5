@@ -1492,69 +1492,63 @@ sap.ui.define([
 	/* tap                                 */
 	/* ----------------------------------- */
 
-	function fnTapTestCase(iPageX) {
-		QUnit.test("Firing events: tap", function(assert) {
+	QUnit.test("Firing events: tap", function(assert) {
 
-			// system under test
-			var oSlider = new Slider({
-				value: 0,
-				width: "100px",
-				min: 0,
-				max: 100
-			}).addStyleClass("sapMSliderWithoutPadding");
+		// system under test
+		var oSlider = new Slider({
+			value: 0,
+			width: "100px",
+			min: 0,
+			max: 100
+		}).addStyleClass("sapMSliderWithoutPadding");
 
-			// arrange
-			oPage.addContent(oSlider);
-			Core.applyChanges();
+		// arrange
+		oPage.addContent(oSlider);
+		Core.applyChanges();
 
-			var oTouches = {
-				0: {
-					pageX: iPageX
-				},
+		var oTouches = {
+			0: {
+				pageX: 50
+			},
 
-				length: 1
-			};
+			length: 1
+		};
 
-			var fnHasEventListeners = function(oDomRef, sEventType) {
-				var aEventListeners = jQuery._data(oDomRef, "events")[sEventType] || [];
+		var fnHasEventListeners = function(oDomRef, sEventType) {
+			var aEventListeners = jQuery._data(oDomRef, "events")[sEventType] || [];
 
-				if (!aEventListeners.length) {
-					return false;
-				}
+			if (!aEventListeners.length) {
+				return false;
+			}
 
-				return aEventListeners.some(function(oEventListener) {
-					return oEventListener.namespace === SliderRenderer.CSS_CLASS;
-				});
-			};
-
-			// act
-			qutils.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
-				targetTouches: oTouches,
-				srcControl: oSlider
+			return aEventListeners.some(function(oEventListener) {
+				return oEventListener.namespace === SliderRenderer.CSS_CLASS;
 			});
+		};
 
-			qutils.triggerTouchEvent("touchend", oSlider.getDomRef(), {
-				targetTouches: oTouches,
-				srcControl: oSlider
-			}, '_on');
-
-			Core.applyChanges();
-
-			// assert
-			assert.strictEqual(oSlider.getValue(), iPageX);
-			assert.ok(!oSlider.$("inner").hasClass(SliderRenderer.CSS_CLASS + "Pressed"), 'On touchend the slider muss not have the CSS class “' + SliderRenderer.CSS_CLASS + 'Pressed”');
-			assert.strictEqual(fnHasEventListeners(document, "touchend"), false);
-			assert.strictEqual(fnHasEventListeners(document, "touchcancel"), false);
-			assert.strictEqual(fnHasEventListeners(document, "mouseup"), false);
-
-			// cleanup
-			oSlider.destroy();
+		// act
+		qutils.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
+			targetTouches: oTouches,
+			srcControl: oSlider
 		});
-	}
 
-	for (var iPageX = 0; iPageX < 100; iPageX++) {
-		fnTapTestCase(iPageX);
-	}
+		qutils.triggerTouchEvent("touchend", oSlider.getDomRef(), {
+			targetTouches: oTouches,
+			srcControl: oSlider
+		}, '_on');
+
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oSlider.getValue(), 50);
+		assert.ok(!oSlider.$("inner").hasClass(SliderRenderer.CSS_CLASS + "Pressed"), 'On touchend the slider muss not have the CSS class “' + SliderRenderer.CSS_CLASS + 'Pressed”');
+		assert.strictEqual(fnHasEventListeners(document, "touchend"), false);
+		assert.strictEqual(fnHasEventListeners(document, "touchcancel"), false);
+		assert.strictEqual(fnHasEventListeners(document, "mouseup"), false);
+
+		// cleanup
+		oSlider.destroy();
+	});
 
 	/* ------------------------------ */
 	/* change and liveChange          */
