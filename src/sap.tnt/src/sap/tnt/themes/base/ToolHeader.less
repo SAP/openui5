@@ -10,6 +10,7 @@
 @_sap_tnt_ToolHeader_ArrowMargin: 0;
 @_sap_tnt_ToolHeader_Padding: 0 0.5rem;
 @_sap_tnt_ToolHeader_ArrowMarginBottom: 0.188rem;
+@_sap_tnt_ToolHeader_IconTabHeader_Height: @_sap_tnt_ToolHeader_Height;
 
 .sapTntToolHeaderPopover.sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll,
 .sapTntToolHeaderPopover.sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll .sapMBtn {
@@ -25,7 +26,7 @@
 // ==========================================================================
 
 .sapMIBar.sapTntToolHeader .sapMBarChild.sapMITH {
-	height: @_sap_tnt_ToolHeader_Height;
+	height: @_sap_tnt_ToolHeader_IconTabHeader_Height;
 	box-shadow: none;
 	padding: @_sap_tnt_ToolHeader_Padding;
 	flex: 1;
@@ -54,18 +55,6 @@
 
 .sapTntToolHeader .sapMITH .sapMITBContentArrow {
 	margin: @_sap_tnt_ToolHeader_ArrowMargin;
-}
-
-// ==========================================================================
-// sap.m.Avatar / sap.f.Avatar overriding
-// ==========================================================================
-
-.sapTntToolHeader .sapFAvatar {
-	background-color: @_sap_tnt_ToolHeader_AvatarBackground;
-	.sapFAvatarInitialsHolder,
-	.sapUiIcon.sapFAvatarTypeIcon  {
-		color: @_sap_tnt_ToolHeader_AvatarColor;
-	}
 }
 
 // ==========================================================================

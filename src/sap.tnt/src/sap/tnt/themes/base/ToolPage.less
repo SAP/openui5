@@ -11,6 +11,7 @@
 @_sap_tnt_ToolPage_AsideWidthOnTablet : 3rem;
 @_sap_tnt_ToolPage_HeaderHeight : 3rem;
 @_sap_tnt_ToolPage_AnimationDuration : 0.3s;
+@_sap_tnt_ToolPage_HeaderShadow: none;
 
 /* ==========================================================================
    Root element
@@ -34,6 +35,22 @@
    ========================================================================== */
 .sapTntToolPageHeader {
   height: @_sap_tnt_ToolPage_HeaderHeight;
+}
+
+.sapTntToolPageHeaderWrapper {
+  box-shadow: @_sap_tnt_ToolPage_HeaderShadow;
+  z-index: 2; // bring header above content wrapper to draw drop shadow over the content
+}
+
+/* ==========================================================================
+   Subheader
+   ========================================================================== */
+.sapTntToolPage header + header .sapTntToolPageHeader {
+  height: auto;
+
+  .sapTntToolHeader {
+    height: auto;
+  }
 }
 
 /* ==========================================================================

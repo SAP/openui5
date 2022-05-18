@@ -194,6 +194,10 @@ html.sap-desktop .sapTntToolHeader .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusD
 		color: @sapUiShellInteractiveTextColor;
 	}
 
+	.sapMSB:focus .sapMSBInner::after {
+		border-color: @_sap_tnt_ToolHeader_BorderColor;
+	}
+
 	.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled)  .sapMBtnInner.sapMBtnActive {
 		background: @sapUiShellActiveBackground;
 	}
@@ -201,10 +205,6 @@ html.sap-desktop .sapTntToolHeader .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusD
 	.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnActive::after {
 		color: @sapUiShellInteractiveTextColor;
 		background-color: transparent;
-	}
-
-	.sapMSB:focus .sapMSBInner::after {
-		border-color: @_sap_tnt_ToolHeader_BorderColor;
 	}
 
 	.sapMMenuBtn .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized, .sapMMenuBtn span.sapMBtnInner.sapMBtnEmphasized {
@@ -644,5 +644,17 @@ html.sap-desktop .sapTntToolHeader .sapMObjStatusActive:focus .sapMObjStatusLink
 
 	.sapMBreadcrumbsSeparator {
 		color: @sapUiShellTextColor;
+	}
+}
+
+// ==========================================================================
+// sap.m.Avatar / sap.f.Avatar overriding
+// ==========================================================================
+
+.sapTntToolHeader .sapFAvatar {
+	background-color: @_sap_tnt_ToolHeader_AvatarBackground;
+	.sapFAvatarInitialsHolder,
+	.sapUiIcon.sapFAvatarTypeIcon  {
+		color: @_sap_tnt_ToolHeader_AvatarColor;
 	}
 }

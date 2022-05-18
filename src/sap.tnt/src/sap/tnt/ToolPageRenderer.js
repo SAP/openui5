@@ -22,12 +22,26 @@ sap.ui.define([
 	 * @param {sap.tnt.ToolPage} oControl an object representation of the control that should be rendered
 	 */
 	ToolPageRenderer.render = function (oRM, oControl) {
-		var oHeader = oControl.getHeader(),
-			oSubHeader = oControl.getSubHeader();
-
 		oRM.openStart("div", oControl)
 			.class("sapTntToolPage")
 			.openEnd();
+
+		this.renderHeaderWrapper(oRM, oControl);
+
+		this.renderContentWrapper(oRM, oControl);
+
+		oRM.close("div");
+	};
+
+	ToolPageRenderer.renderHeaderWrapper = function (oRM, oControl) {
+		var oHeader = oControl.getHeader(),
+			oSubHeader = oControl.getSubHeader();
+
+		if (oHeader || oSubHeader) {
+			oRM.openStart("div")
+				.class("sapTntToolPageHeaderWrapper")
+				.openEnd();
+		}
 
 		if (oHeader) {
 			oRM.openStart("header").openEnd();
@@ -57,10 +71,10 @@ sap.ui.define([
 			oRM.close("header");
 		}
 
+		if (oHeader || oSubHeader) {
+			oRM.close("div");
+		}
 
-		this.renderContentWrapper(oRM, oControl);
-
-		oRM.close("div");
 	};
 
 	ToolPageRenderer.renderContentWrapper = function (oRM, oControl) {
