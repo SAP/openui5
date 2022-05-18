@@ -165,7 +165,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	CardBase.prototype.getFocusDomRef = function () {
-		return this.getCardHeader() ? this.getCardHeader().getDomRef() : this.getDomRef();
+		return this.getCardHeader() ? this.getCardHeader().getFocusDomRef() : this.getDomRef();
 	};
 
 	CardBase.prototype.onmousedown = function () {
@@ -205,7 +205,7 @@ sap.ui.define([
 			sAriaLabelledBy;
 
 		if (oHeader) {
-			oDomRef = oHeader.getDomRef();
+			oDomRef = oHeader.getFocusDomRef();
 		} else {
 			oDomRef = this.getDomRef("contentSection");
 		}

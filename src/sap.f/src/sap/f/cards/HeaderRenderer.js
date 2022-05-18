@@ -16,7 +16,8 @@ sap.ui.define([], function () {
 	 * @param {sap.f.cards.Header} oHeader An object representation of the control that should be rendered
 	 */
 	HeaderRenderer.render = function (oRm, oHeader) {
-		var oBindingInfos = oHeader.mBindingInfos,
+		var sId = oHeader.getId(),
+			oBindingInfos = oHeader.mBindingInfos,
 			sStatus = oHeader.getStatusText(),
 			oTitle = oHeader.getAggregation("_title"),
 			oSubtitle = oHeader.getAggregation("_subtitle"),
@@ -31,11 +32,6 @@ sap.ui.define([], function () {
 
 		oRm.openStart("div", oHeader)
 			.class("sapFCardHeader");
-
-		if (oHeader.getProperty("focusable")) {
-			sTabIndex = oHeader._isInsideGridContainer() ? "-1" : "0";
-			oRm.attr("tabindex", sTabIndex);
-		}
 
 		if (bLoading) {
 			oRm.class("sapFCardHeaderLoading");
@@ -52,15 +48,25 @@ sap.ui.define([], function () {
 		//Accessibility state
 		oRm.accessibilityState(oHeader, {
 			role: oHeader.getAriaRole(),
-			labelledby: { value: oHeader._getAriaLabelledBy(), append: true },
-			roledescription: { value: oHeader.getAriaRoleDescription(), append: true },
-			level: { value: oHeader.getAriaHeadingLevel() }
+			roledescription: { value: oHeader.getAriaRoleDescription(), append: true }
 		});
 		oRm.openEnd();
 
 		oRm.openStart("div")
-			.class("sapFCardHeaderWrapper")
-			.openEnd();
+			.attr("id", sId + "-focusable")
+			.class("sapFCardHeaderWrapper");
+
+		if (oHeader.getProperty("focusable")) {
+			sTabIndex = oHeader._isInsideGridContainer() ? "-1" : "0";
+			oRm.attr("tabindex", sTabIndex);
+		}
+
+		oRm.accessibilityState({
+			labelledby: { value: oHeader._getAriaLabelledBy(), append: true },
+			role: oHeader.getFocusableElementAriaRole()
+		});
+
+		oRm.openEnd();
 
 		if (oError) {
 			oRm.renderControl(oError);
@@ -99,7 +105,7 @@ sap.ui.define([], function () {
 			oRm.renderControl(oTitle);
 
 			if (sStatus) {
-				oRm.openStart("span", oHeader.getId() + "-status")
+				oRm.openStart("span", sId + "-status")
 					.class("sapFCardStatus");
 
 				if (oBindingInfos.statusText) {
@@ -148,7 +154,6 @@ sap.ui.define([], function () {
 			oRm.openStart("div")
 				.class("sapFCardHeaderToolbarCont")
 				.openEnd();
-
 			oRm.renderControl(oToolbar);
 
 			oRm.close("div");

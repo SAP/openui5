@@ -2184,8 +2184,8 @@ sap.ui.define([
 	Card.prototype.getFocusDomRef = function () {
 		var oHeader = this.getCardHeader();
 
-		if (oHeader && oHeader.getDomRef()) {
-			return oHeader.getDomRef();
+		if (oHeader && oHeader.getFocusDomRef()) {
+			return oHeader.getFocusDomRef();
 		}
 
 		return this.getDomRef();

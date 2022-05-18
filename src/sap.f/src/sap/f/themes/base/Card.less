@@ -100,9 +100,9 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	border-radius: @_sap_f_Card_BorderRadius @_sap_f_Card_BorderRadius 0 0;
 	padding: @_sap_f_Card_ContentPadding;
 	display: flex;
-	outline: none;
 
 	.sapFCardHeaderWrapper {
+		outline: none;
 		display: flex;
 		min-width: 0;
 		flex: 1;
@@ -137,10 +137,6 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 		min-width: 0;
 		width: 100%;
 
-		.sapFCardHeaderTitle {
-			min-width: 0;
-		}
-
 		.sapFCardTitle {
 			min-width: 0;
 			display: block;
@@ -172,7 +168,6 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 		line-height: normal;
 		margin-left: 1rem;
 		margin-top: 0.188rem;
-		text-wrap: avoid;
 		display: inline-block;
 		white-space: nowrap;
 	}
@@ -234,6 +229,7 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 
 	.sapFCardHeaderContent {
 		overflow: hidden;
+		outline: none;
 		min-width: 0; // fixes Chrome issue
 		flex: 1;
 	}
@@ -449,9 +445,10 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	}
 }
 
-.sapFCardHeader:focus::before,
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCardHeader::before, // focus inside Grid Container
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before { // ... on a card without header
+
+.sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before,
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCardHeader:not(.sapFCardHeaderToolbarFocused)::before, // focus inside Grid Container
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard.sapFCardNoHeader::before { // ... focus on a card without header
 	content: '';
 	display: block;
 	position: absolute;
