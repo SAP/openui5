@@ -1395,7 +1395,8 @@ sap.ui.define([
 				assert.equal(this.oHeaderContainer.getOrientation(), Orientation.Horizontal,  "Orientation is Hotizontal.");
 				assert.equal(Device.resize.width >= ScreenSizes.xsmall && Device.resize.width < ScreenSizes.tablet, true,  "Screen size is Mobilee.");
 				assert.equal(this.oHeaderContainer._isMobileView(), true,  "Method returns true.");
-				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[0].sEventType, "scrollstop", "scrollstop Event is bound.");
+				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[0].sEventType, "scrollstart", "scrollstart Event is bound.");
+				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[1].sEventType, "scrollstop", "scrollstop Event is bound.");
 				this.oHeaderContainer.removeEventDelegate(afterRenderDelegate);
 				fnDone();
 			}.bind(this)
@@ -1454,7 +1455,8 @@ sap.ui.define([
 				assert.equal(this.oHeaderContainer.getOrientation(), Orientation.Horizontal,  "Orientation is Hotizontal.");
 				assert.equal(Device.resize.width >= ScreenSizes.xsmall && Device.resize.width < ScreenSizes.tablet, true,  "Screen size is Mobilee.");
 				assert.equal(this.oHeaderContainer._isMobileView(), true,  "Method returns true.");
-				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[0].sEventType, "scrollstop", "scrollstop Event is bound.");
+				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[0].sEventType, "scrollstart", "scrollstart Event is bound.");
+				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[1].sEventType, "scrollstop", "scrollstop Event is bound.");
 				this.oHeaderContainer.removeEventDelegate(afterRenderDelegate);
 				sap.ui.getCore().getConfiguration().setRTL(false);
 				fnDone();
@@ -1513,7 +1515,8 @@ sap.ui.define([
 				assert.equal(this.oHeaderContainer.getOrientation(), Orientation.Horizontal,  "Orientation is Hotizontal.");
 				assert.equal(Device.resize.width >= ScreenSizes.xsmall && Device.resize.width < ScreenSizes.tablet, true,  "Screen size is Mobilee.");
 				assert.equal(this.oHeaderContainer._isMobileView(), true,  "Method returns true.");
-				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[0].sEventType, "scrollstop", "scrollstop Event is bound.");
+				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[0].sEventType, "scrollstart", "scrollstart Event is bound.");
+				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[1].sEventType, "scrollstop", "scrollstop Event is bound.");
 				assert.notOk(bIsFinalItemVisible , "Final item is not visible.");
 
 				this.oHeaderContainer._oScrollCntr.scrollTo(1100);
