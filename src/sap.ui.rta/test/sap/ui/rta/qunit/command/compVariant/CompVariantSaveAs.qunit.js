@@ -32,7 +32,7 @@ sap.ui.define([
 				var oSaveAsCommand;
 				var sVariantId = "variant";
 				var oVariant = {
-					getVariantId: function() {
+					getId: function() {
 						return sVariantId;
 					}
 				};

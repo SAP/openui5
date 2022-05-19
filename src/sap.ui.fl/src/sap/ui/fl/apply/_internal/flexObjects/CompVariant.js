@@ -5,100 +5,21 @@
 sap.ui.define([
 	"sap/base/util/restricted/_pick",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexObjects/Variant",
-	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
 ], function (
 	_pick,
 	States,
-	Variant,
-	LayerUtils,
+	Change,
 	Layer,
 	Settings,
+	LayerUtils,
 	Utils
 ) {
 	"use strict";
-
-	/**
-	 * Flexibility CompVariant class. Stores variant content and related information.
-	 *
-	 * @param {object} mPropertyBag - Initial object properties
-	 *
-	 * @class CompVariant instance
-	 * @extends sap.ui.fl.apply._internal.flexObjects.Variant
-	 * @alias sap.ui.fl.apply._internal.flexObjects.CompVariant
-	 * @since 1.103
-	 * @version ${version}
-	 * @private
-	 * @ui5-restricted sap.ui.fl sap.ui.comp
-	 */
-	var CompVariant = Variant.extend("sap.ui.fl.apply._internal.flexObjects.CompVariant", /** @lends sap.ui.fl.apply._internal.flexObjects.CompVariant.prototype */ {
-		metadata: {
-			properties: {
-				/**
-				 * Indicates whether the variant is persisted
-				 */
-				persisted: {
-					type: "boolean",
-					defaultValue: true
-				},
-				/**
-				 * Key used by SmartVariantManagement to access personalization data
-				 */
-				persistencyKey: {
-					type: "string"
-				}
-			},
-			aggregations: {
-				/**
-				 * Stores required data to revert variant updates.
-				 * TODO: When the FL Variant is also a FlexObject, try to consolidate RevertData from both
-				 */
-				revertData: {
-					type: "sap.ui.fl.apply._internal.flexObjects.CompVariantRevertData",
-					multiple: true,
-					singularName: "revertData",
-					defaultValue: []
-				}
-			}
-		},
-		constructor: function(mPropertyBag) {
-			Variant.apply(this, arguments);
-
-			// fileType "variant" is only for compVariant
-			this.setFileType("variant");
-
-			if (mPropertyBag.favorite !== undefined) {
-				this.setFavorite(!!mPropertyBag.favorite);
-			} else if (mPropertyBag.layer === Layer.VENDOR || mPropertyBag.layer === Layer.CUSTOMER_BASE) {
-				this.setFavorite(true);
-			}
-		}
-	});
-
-	CompVariant.STANDARD_VARIANT_ID = "*standard*";
-
-	/**
-	 * Returns the mapping between flex object properties and file content properties in the back-end response.
-	 * @returns {object} Mapping information
-	 * @static
-	 */
-	 CompVariant.getMappingInfo = function () {
-		return Object.assign(Variant.getMappingInfo(), {
-			persistencyKey: "persistencyKey"
-		});
-	};
-
-	/**
-	 * Returns the mapping between flex object properties and file content properties in the back-end response.
-	 * Can be overridden to avoid access of static mapping within base methods.
-	 * @returns {object} Mapping information
-	 */
-	CompVariant.prototype.getMappingInfo = function () {
-		return CompVariant.getMappingInfo();
-	};
 
 	function isUserAuthor(oAuthor) {
 		var oSettings = Settings.getInstanceOrUndef();
@@ -112,6 +33,8 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Layer} [sActiveLayer] - Layer in which the operation may take place
 	 * @param {string} sUserId - ID of the variants creator
 	 * @returns {boolean} <code>true</code> if the variant is read only
+	 *
+	 * @private
 	 */
 	 function checkLayerAndUserAuthorization(sLayer, sActiveLayer, sUserId) {
 		if (sActiveLayer) {
@@ -136,8 +59,12 @@ sap.ui.define([
 	 * A variant can only be modified if the current language equals the original language.
 	 * Returns <code>false</code> if the current language does not equal the original language of the variant file.
 	 * Returns <code>false</code> if the original language is initial.
+	 *
 	 * @param {string} sOriginalLanguage - Language code of the language used on the variant creation
+	 *
 	 * @returns {boolean} <code>true</code> if the current logon language equals the original language of the variant file
+	 *
+	 * @private
 	 */
 	function isRenameEnableDueToOriginalLanguage(sOriginalLanguage) {
 		return !sOriginalLanguage || Utils.getCurrentLanguage() === sOriginalLanguage;
@@ -158,78 +85,144 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns the package name of the variant.
-	 * Used by the SmartVariantManagement control.
-	 * @returns {string} Package name
+	 * Flexibility CompVariant class. Stores variant content and related information.
+	 *
+	 * @param {object} oFile - File content and admin data
+	 *
+	 * @class sap.ui.fl.apply._internal.flexObjects.CompVariant
+	 * @extends sap.ui.fl.Change
+	 * @private
+	 * @ui5-restricted
+	 * @since 1.86.0
 	 */
-	CompVariant.prototype.getPackage = function() {
-		return this.getFlexObjectMetadata().packageName;
-	};
+	var CompVariant = Change.extend("sap.ui.fl.apply._internal.flexObjects.Variant", /** @lends sap.ui.fl.apply._internal.flexObjects.CompVariant.prototype */ {
+		metadata: {
+			properties: {
+				favorite: {
+					type: "boolean",
+					defaultValue: false
+				},
+				executeOnSelection: {
+					type: "boolean",
+					defaultValue: false
+				},
+				standardVariant: {
+					type: "boolean",
+					defaultValue: false
+				},
+				contexts: {
+					type: "object",
+					defaultValue: {}
+				},
+				persisted: {
+					type: "boolean",
+					defaultValue: true
+				},
+				name: {
+					type: "string",
+					defaultValue: ""
+				},
+				content: {
+					type: "object",
+					defaultValue: {}
+				}
+			},
+			aggregations: {
+				// TODO: change to revertData for alignment, but this will conflict with the derived Change.getRevertData as of today
+				revertInfo: {
+					type: "sap.ui.fl.apply._internal.flexObjects.CompVariantRevertData",
+					multiple: true,
+					singularName: "revertInfo",
+					defaultValue: []
+				},
+				changes: {
+					type: "sap.ui.fl.Change",
+					multiple: true,
+					defaultValue: []
+				}
+			}
+		},
+
+		constructor: function(oFile) {
+			Change.apply(this, arguments);
+
+			var bExecuteOnSelect = oFile.content && (oFile.content.executeOnSelect || oFile.content.executeOnSelection);
+
+			// new property always overrules older content
+			if (oFile.executeOnSelection !== undefined) {
+				bExecuteOnSelect = oFile.executeOnSelection;
+			}
+			this.setExecuteOnSelection(bExecuteOnSelect);
+
+			this.setContexts(oFile.contexts || {});
+			this.setContent(oFile.content || {});
+
+			this.setName(this.getText("variantName"));
+
+			if (oFile.layer === Layer.VENDOR || oFile.layer === Layer.CUSTOMER_BASE) {
+				this.setFavorite(true);
+			}
+
+			if (oFile.favorite !== undefined) {
+				this.setFavorite(!!oFile.favorite);
+			}
+
+			if (oFile.persisted !== undefined) {
+				this.setPersisted(!!oFile.persisted);
+			}
+		}
+	});
+
+	CompVariant.STANDARD_VARIANT_ID = "*standard*";
 
 	/**
-	 * Sets the transport request.
-	 * Used by the SmartVariantManagement control.
-	 * @param {string} sRequest Transport request
+	 * Returns the id of the variant object
+	 * @returns {string} the id of the variant object.
 	 */
-	CompVariant.prototype.setRequest = function (sRequest) {
-		this._sRequest = sRequest;
-	};
-
-	/**
-	 * Gets the transport request.
-	 * Used by the SmartVariantManagement control.
-	 * @returns {string} Transport request
-	 */
-	CompVariant.prototype.getRequest = function () {
-		return this._sRequest;
-	};
-
-	/**
-	 * Checks if the object is a variant from smart variant management.
-	 * Used by the SmartVariantManagement control.
-	 * @returns {boolean} <code>true</code> if object is a variant
-	 */
-	CompVariant.prototype.isVariant = function () {
-		return true;
+	CompVariant.prototype.getVariantId = function () {
+		return this.getId();
 	};
 
 	/**
 	 * Checks whenever the variant can be renamed updating the entity or crating an <code>updateChange</code>.
+	 *
 	 * @param {sap.ui.fl.Layer} [sLayer] - Layer in which the edition may take place
+	 *
 	 * @returns {boolean} <code>true</code> if the variant can be updated
+	 *
+	 * @public
 	 */
 	CompVariant.prototype.isRenameEnabled = function (sLayer) {
-		return !this.getStandardVariant()
-			&& this.isEditEnabled(sLayer)
-			&& isRenameEnableDueToOriginalLanguage(this.getSupportInformation().originalLanguage);
+		return !this.getStandardVariant() && this.isEditEnabled(sLayer) && isRenameEnableDueToOriginalLanguage(this._oDefinition.content.originalLanguage);
 	};
 
 	/**
 	 * Checks whenever the variant can be edited (a save operation) updating the entity or crating an <code>updateChange</code>.
+	 *
 	 * @param {sap.ui.fl.Layer} [sActiveLayer] - Layer in which the edition may take place
+	 *
 	 * @returns {boolean} <code>true</code> if the variant can be updated
+	 *
+	 * @public
 	 */
 	CompVariant.prototype.isEditEnabled = function (sActiveLayer) {
 		var bDeveloperLayer = sActiveLayer && LayerUtils.isDeveloperLayer(sActiveLayer);
-		var bOriginSystem = isOriginSystem(
-			this.getSupportInformation().sourceSystem,
-			this.getSupportInformation().sourceClient
-		);
+		var bOriginSystem = isOriginSystem(this._oDefinition.sourceSystem, this._oDefinition.sourceClient);
 		var bUserAuthorized = checkLayerAndUserAuthorization(this.getLayer(), sActiveLayer, this.getOwnerId());
 		return bDeveloperLayer || bOriginSystem && bUserAuthorized;
 	};
 
 	/**
 	 * Checks whenever the variant can be deleted.
+	 *
 	 * @param {sap.ui.fl.Layer} [sLayer] - Layer in which the deletion may take place
+	 *
 	 * @returns {boolean} <code>true</code> if the variant file can be deleted
+	 *
+	 * @public
 	 */
 	CompVariant.prototype.isDeleteEnabled = function (sLayer) {
-		var bOriginSystem = isOriginSystem(
-			this.getSupportInformation().sourceSystem,
-			this.getSupportInformation().sourceClient
-		);
-		return bOriginSystem
+		return isOriginSystem(this._oDefinition.sourceSystem, this._oDefinition.sourceClient)
 			&& checkLayerAndUserAuthorization(this.getLayer(), sLayer, this.getOwnerId())
 			&& !this.getStandardVariant();
 	};
@@ -237,72 +230,152 @@ sap.ui.define([
 	/**
 	 * Sets the favorite flag of the runtime instance as well as the persistent representation.
 	 * This results in setting the definition as well as flagging the entity as 'dirty'.
+	 *
 	 * @param {boolean} bFavorite - Boolean to which the favorite flag should be set
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
 	CompVariant.prototype.storeFavorite = function (bFavorite) {
-		if (bFavorite !== this.getFavorite()) {
-			this.setState(States.DIRTY);
-			this.setFavorite(bFavorite);
+		if (bFavorite !== undefined) {
+			this._oDefinition.favorite = bFavorite;
+		} else {
+			delete this._oDefinition.favorite;
 		}
+		this.setState(States.DIRTY);
+		this.setFavorite(bFavorite);
 	};
 
 	/**
-	 * Retrieves the owner ID (user)
-	 * @returns {string} User ID
+	 * Sets the content of the runtime instance.
+	 *
+	 * @param {object} [oContent={}] - Content object to be set
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
+	CompVariant.prototype.setContent = function (oContent) {
+		// TODO: remove after the extended Change.js does not overwrite the default setContent
+		this.setProperty("content", oContent || {});
+	};
+
+	/**
+	 * Sets the content of the runtime instance.
+	 *
+	 * @returns {object} Content object of the variant
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+	CompVariant.prototype.getContent = function () {
+		// TODO: remove after the extended Change.js does not overwrite the default getContent
+		return this.getProperty("content");
+	};
+
+
 	CompVariant.prototype.getOwnerId = function() {
-		return this.getSupportInformation().user || "";
+		return this._oDefinition.support ? this._oDefinition.support.user : "";
 	};
 
 	/**
 	 * Sets the content of the runtime instance as well as the persistent representation.
 	 * This results in setting the definition as well as flagging the entity as 'dirty'.
+	 *
 	 * @param {object} [oContent={}] - Content object to be stored
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
 	CompVariant.prototype.storeContent = function (oContent) {
-		// setContent() already sets the dirty state by default
+		this._oDefinition.content = oContent || {};
+		this.setState(States.DIRTY);
 		this.setContent(oContent);
 	};
 
 	/**
 	 * Sets the e'Apply Automatically' flag of the runtime instance as well as the persistent representation.
 	 * This results in setting the definition as well as flagging the entity as 'dirty'.
+	 *
 	 * @param {boolean} bExecuteOnSelection - Boolean to which the 'Apply Automatically' flag should be set
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
 	CompVariant.prototype.storeExecuteOnSelection = function (bExecuteOnSelection) {
-		if (bExecuteOnSelection !== this.getExecuteOnSelection()) {
-			this.setState(States.DIRTY);
-			this.setExecuteOnSelection(bExecuteOnSelection);
+		if (bExecuteOnSelection !== undefined) {
+			this._oDefinition.executeOnSelection = bExecuteOnSelection;
+		} else {
+			delete this._oDefinition.executeOnSelection;
 		}
+		delete this._oDefinition.content.executeOnSelection;
+		this.setState(States.DIRTY);
+		this.setExecuteOnSelection(bExecuteOnSelection);
 	};
 
 	/**
 	 * Sets the name of the runtime instance as well as the persistent representation.
 	 * This results in a entity within the texts section flagged as a field for translation.
+	 *
 	 * @param {string} sName - Name to be set
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
 	CompVariant.prototype.storeName = function (sName) {
-		// setName() already sets the dirty state by default
+		this._oDefinition.texts.variantName.value = sName;
+
+		this.setState(States.DIRTY);
 		this.setName(sName);
 	};
 
 	/**
 	 * Sets the object of the contexts attribute.
+	 *
 	 * @param {object} mContexts - Contexts of the variant file
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
 	CompVariant.prototype.storeContexts = function (mContexts) {
+		if (mContexts !== undefined) {
+			this._oDefinition.contexts = mContexts;
+		} else {
+			delete this._oDefinition.contexts;
+		}
 		this.setContexts(mContexts);
 		this.setState(States.DIRTY);
+	};
+
+	CompVariant.createInitialFileContent = function (oPropertyBag) {
+		var oNewFile = Change.createInitialFileContent(oPropertyBag);
+		if (oPropertyBag.contexts) {
+			oNewFile.contexts = oPropertyBag.contexts;
+		}
+		if (oPropertyBag.favorite !== undefined) {
+			oNewFile.favorite = oPropertyBag.favorite;
+		}
+		if (oPropertyBag.executeOnSelection !== undefined) {
+			oNewFile.executeOnSelection = oPropertyBag.executeOnSelection;
+		}
+
+		// TODO: clean up the createInitialFileContent within the Change class plus create a base class FlexObject
+		return _pick(oNewFile, [
+			"changeType",
+			"namespace",
+			"service",
+			"content",
+			"reference",
+			"fileName",
+			"fileType",
+			"packageName",
+			"layer",
+			"favorite",
+			"executeOnSelection",
+			"selector",
+			"texts",
+			"support",
+			"contexts"
+		]);
 	};
 
 	return CompVariant;

@@ -43,7 +43,7 @@ sap.ui.define([
 			assert.equal(typeof mCompVariants._initialize, "function", "and the other entry is the helper function '_initialize'");
 		});
 
-		QUnit.test("given a response with favorite changes", function(assert) {
+		QUnit.test("given an response with favorite changes", function(assert) {
 			var sPersistencyKey1 = "persistencyKey1";
 			var sId1 = "addFavorite1";
 			var oAddFavoriteChange1 = fakeFlexObject(sId1, sPersistencyKey1);
@@ -83,7 +83,7 @@ sap.ui.define([
 			assert.deepEqual(Object.keys(mCompVariants[sPersistencyKey2].byId).length, 1, "the second persistency key map contains one item");
 		});
 
-		QUnit.test("given a response with a defaultVariant change", function(assert) {
+		QUnit.test("given an response with a defaultVariant change", function(assert) {
 			var sPersistencyKey = "persistencyKey1";
 			var sId1 = "defaultVariant1";
 			var oDefaultVariantChange1 = fakeFlexObject(sId1, sPersistencyKey);
@@ -113,7 +113,7 @@ sap.ui.define([
 			assert.equal(mCompVariants[sPersistencyKey].defaultVariants[1].getId(), sId2, "and with the latest provided defaultVariant change");
 		});
 
-		QUnit.test("given a response with a standardVariant change", function(assert) {
+		QUnit.test("given an response with a standardVariant change", function(assert) {
 			var sPersistencyKey = "persistencyKey1";
 			var sId1 = "standardVariant1";
 			var oStandardVariantChange1 = fakeFlexObject(sId1, sPersistencyKey);
@@ -143,7 +143,7 @@ sap.ui.define([
 			assert.equal(mCompVariants[sPersistencyKey].standardVariantChange.getId(), sId2, "and with the latest provided standardVariant change");
 		});
 
-		QUnit.test("given a response with a variant", function(assert) {
+		QUnit.test("given an response with a variant", function(assert) {
 			var sPersistencyKey = "persistencyKey1";
 			var sId1 = "variant1";
 			var oVariant1 = fakeFlexObject(sId1, sPersistencyKey);
@@ -167,15 +167,15 @@ sap.ui.define([
 			assert.equal(typeof mCompVariants._getOrCreate, "function", "and one entry is the helper function '_getOrCreate'");
 			assert.equal(typeof mCompVariants._initialize, "function", "and the other entry is the helper function '_initialize'");
 			assert.equal(typeof mCompVariants[sPersistencyKey], "object", "another is the persistency key");
-			assert.equal(mCompVariants[sPersistencyKey].variants.length, 2, "with two variants");
-			assert.equal(mCompVariants[sPersistencyKey].variants[0].getVariantId(), sId1, "which is the provided variant1");
-			assert.equal(mCompVariants[sPersistencyKey].variants[1].getVariantId(), sId2, "which is the provided variant2");
+			assert.equal(mCompVariants[sPersistencyKey].variants.length, 2, "with two variant");
+			assert.equal(mCompVariants[sPersistencyKey].variants[0].getId(), sId1, "which is the provided variant1");
+			assert.equal(mCompVariants[sPersistencyKey].variants[1].getId(), sId2, "which is the provided variant2");
 			assert.deepEqual(Object.keys(mCompVariants[sPersistencyKey].byId).length, 2, "the specific persistency key map contains two items");
-			assert.deepEqual(mCompVariants[sPersistencyKey].byId[sId1].getVariantId(), sId1, "which is the provided defaultVariant1 under its ID");
-			assert.deepEqual(mCompVariants[sPersistencyKey].byId[sId2].getVariantId(), sId2, "which is the provided defaultVariant2 under its ID");
+			assert.deepEqual(mCompVariants[sPersistencyKey].byId[sId1].getId(), sId1, "which is the provided defaultVariant1 under its ID");
+			assert.deepEqual(mCompVariants[sPersistencyKey].byId[sId2].getId(), sId2, "which is the provided defaultVariant2 under its ID");
 		});
 
-		QUnit.test("given a response with an overwritten standard variant", function(assert) {
+		QUnit.test("given an response with a overwritten standard variant", function(assert) {
 			var sPersistencyKey = "persistencyKey1";
 			var sId1 = "variant1";
 			var oVariant1 = fakeFlexObject(sId1, sPersistencyKey);
@@ -204,13 +204,13 @@ sap.ui.define([
 			assert.equal(typeof mCompVariants._getOrCreate, "function", "and one entry is the helper function '_getOrCreate'");
 			assert.equal(typeof mCompVariants._initialize, "function", "and the other entry is the helper function '_initialize'");
 			assert.equal(typeof mCompVariants[sPersistencyKey], "object", "another is the persistency key");
-			assert.equal(mCompVariants[sPersistencyKey].variants.length, 3, "with three variants");
-			assert.equal(mCompVariants[sPersistencyKey].variants[0].getVariantId(), sId1, "which is the provided variant1");
-			assert.equal(mCompVariants[sPersistencyKey].variants[1].getVariantId(), sStandardVariantId, "which is the provided standardVariant");
-			assert.equal(mCompVariants[sPersistencyKey].variants[2].getVariantId(), sId2, "which is the provided variant2");
+			assert.equal(mCompVariants[sPersistencyKey].variants.length, 3, "with three variant");
+			assert.equal(mCompVariants[sPersistencyKey].variants[0].getId(), sId1, "which is the provided variant1");
+			assert.equal(mCompVariants[sPersistencyKey].variants[1].getId(), sStandardVariantId, "which is the provided standardVariant");
+			assert.equal(mCompVariants[sPersistencyKey].variants[2].getId(), sId2, "which is the provided variant2");
 			assert.deepEqual(Object.keys(mCompVariants[sPersistencyKey].byId).length, 3, "the specific persistency key map contains three items");
-			assert.deepEqual(mCompVariants[sPersistencyKey].byId[sId1].getVariantId(), sId1, "which is the provided defaultVariant1 under its ID");
-			assert.deepEqual(mCompVariants[sPersistencyKey].byId[sId2].getVariantId(), sId2, "which is the provided defaultVariant2 under its ID");
+			assert.deepEqual(mCompVariants[sPersistencyKey].byId[sId1].getId(), sId1, "which is the provided defaultVariant1 under its ID");
+			assert.deepEqual(mCompVariants[sPersistencyKey].byId[sId2].getId(), sId2, "which is the provided defaultVariant2 under its ID");
 		});
 	});
 
