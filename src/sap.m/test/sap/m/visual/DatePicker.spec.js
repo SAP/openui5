@@ -55,7 +55,7 @@ describe("sap.m.DatePicker", function() {
 		expect(takeScreenshot(oPickerInput)).toLookAs("select_date_with_space_for_second_time");
 	});
 
-	it("calendar selection in GMT+12 timezone", testDP16WithTimezoneBtn.bind(null, "btnEtcGMT12", "GMT+12"));
+	it("calendar selection in GMT+12 timezone", testDP16WithTimezoneBtn.bind(null, "btnEtcGMT12", "GMT12"));
 	it("calendar selection in GMT-12 timezone", testDP16WithTimezoneBtn.bind(null, "btnEtcGMT-12", "GMT-12"));
 	it("calendar selection in UTC timezone", testDP16WithTimezoneBtn.bind(null, "btnUTC", "UTC"));
 

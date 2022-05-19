@@ -162,7 +162,7 @@ describe("sap.m.TimePicker", function() {
 		oToggleMobileButton.click();
 	});
 
-	it("clocks selection in GMT+12 timezone", testTPTZWithTimezoneBtn.bind(null, "btnEtcGMT-12", "GMT+12"));
+	it("clocks selection in GMT+12 timezone", testTPTZWithTimezoneBtn.bind(null, "btnEtcGMT-12", "GMT12"));
 	it("clocks selection in GMT-12 timezone", testTPTZWithTimezoneBtn.bind(null, "btnEtcGMT12", "GMT-12"));
 	it("clocks selection in UTC timezone", testTPTZWithTimezoneBtn.bind(null, "btnUTC", "UTC"));
 

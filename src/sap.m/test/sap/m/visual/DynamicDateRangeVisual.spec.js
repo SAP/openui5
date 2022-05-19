@@ -219,7 +219,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 	}, iDefaultTimeout);
 
 	it("pick today in GMT-12 timezone", testDateTimeWithTimezoneBtn.bind(null, "btnEtcGMT-12", "GMT-12"), iDefaultTimeout);
-	it("pick today in GMT+12 timezone", testDateTimeWithTimezoneBtn.bind(null, "btnEtcGMT12", "GMT+12"), iDefaultTimeout);
+	it("pick today in GMT+12 timezone", testDateTimeWithTimezoneBtn.bind(null, "btnEtcGMT12", "GMT12"), iDefaultTimeout);
 	it("pick today in UTC timezone", testDateTimeWithTimezoneBtn.bind(null, "btnUTC", "UTC"), iDefaultTimeout);
 
 	function testDateTimeWithTimezoneBtn(sBtnId, sTimezone) {
