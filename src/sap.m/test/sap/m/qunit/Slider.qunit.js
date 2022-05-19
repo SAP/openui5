@@ -1631,64 +1631,35 @@ sap.ui.define([
 	/* onsapincreasemodifiers         */
 	/* ------------------------------ */
 
-	function fnOnIncreaseModifiersTestCase(mOptions) {
-		QUnit.test("Firing events: onsapincreasemodifiers", function(assert) {
-
-			// system under test
-			var oSlider = mOptions.control;
-
-			// arrange
-			var fnFireChangeSpy = this.spy(oSlider, "fireChange");
-			var fnFireLiveChangeSpy = this.spy(oSlider, "fireLiveChange");
-			this.spy(oSlider, "onsapincreasemodifiers");
-
-			oPage.addContent(oSlider);
-			Core.applyChanges();
-
-			// act
-			qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_RIGHT, false, false, /* Ctrl key */ true);
-
-			// assert
-			assert.strictEqual(oSlider.getValue(), mOptions.expectedValue, "The slider value must be increased to " + mOptions.expectedValue);
-			assert.strictEqual(fnFireChangeSpy.callCount, 1);
-			assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
-
-			// cleanup
-			oSlider.destroy();
-		});
-	}
-
-	fnOnIncreaseModifiersTestCase({
-		control: new Slider({
+	QUnit.test("Firing events: onsapincreasemodifiers", function(assert) {
+		// system under test
+		var oSlider = new Slider({
 			min: 0,
 			max: 100,
 			step: 1,
 			value: 0
-		}),
+		});
 
-		expectedValue: 10
-	});
+		// arrange
+		var expectedValue = 10;
 
-	fnOnIncreaseModifiersTestCase({
-		control: new Slider({
-			min: 5,
-			max: 10,
-			step: 1,
-			value: 0
-		}),
+		var fnFireChangeSpy = this.spy(oSlider, "fireChange");
+		var fnFireLiveChangeSpy = this.spy(oSlider, "fireLiveChange");
+		this.spy(oSlider, "onsapincreasemodifiers");
 
-		expectedValue: 6
-	});
+		oPage.addContent(oSlider);
+		Core.applyChanges();
 
-	fnOnIncreaseModifiersTestCase({
-		control: new Slider({
-			min: -100,
-			max: 0,
-			step: 2,
-			value: -100
-		}),
+		// act
+		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_RIGHT, false, false, /* Ctrl key */ true);
 
-		expectedValue: -90
+		// assert
+		assert.strictEqual(oSlider.getValue(), expectedValue, "The slider value must be increased to " + expectedValue);
+		assert.strictEqual(fnFireChangeSpy.callCount, 1);
+		assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
+
+		// cleanup
+		oSlider.destroy();
 	});
 
 	/* ------------------------------ */
@@ -1728,65 +1699,58 @@ sap.ui.define([
 	/* onsapdecreasemodifiers         */
 	/* ------------------------------ */
 
-	function fnOnDecreaseModifiersTestCase(mOptions) {
-		QUnit.test("Firing events: onsapdecreasemodifiers", function(assert) {
+	QUnit.test("Firing events: onsapdecreasemodifiers", function(assert) {
 
-			// system under test
-			var oSlider = mOptions.control;
-
-			// arrange
-			var fnFireChangeSpy = this.spy(oSlider, "fireChange");
-			var fnFireLiveChangeSpy = this.spy(oSlider, "fireLiveChange");
-			var fnDecreaseModifiersSpy = this.spy(oSlider, "onsapdecreasemodifiers");
-
-			oPage.addContent(oSlider);
-			Core.applyChanges();
-
-			// act
-			qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_LEFT, false, false, /* Ctrl key */ true);
-
-			// assert
-			assert.strictEqual(oSlider.getValue(), mOptions.expectedValue, "The slider value must be decreased to " + mOptions.expectedValue);
-			assert.strictEqual(fnDecreaseModifiersSpy.callCount, 1);
-			assert.strictEqual(fnFireChangeSpy.callCount, 1);
-			assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
-
-			// cleanup
-			oSlider.destroy();
-		});
-	}
-
-	fnOnDecreaseModifiersTestCase({
-		control: new Slider({
+		// system under test
+		var oSlider = new Slider({
 			min: 0,
 			max: 100,
 			step: 1,
 			value: 100
-		}),
+		});
 
-		expectedValue: 90
-	});
-
-	fnOnDecreaseModifiersTestCase({
-		control: new Slider({
+		var oAnotherSlider = new Slider({
 			min: 5,
 			max: 10,
 			step: 1,
 			value: 10
-		}),
+		});
 
-		expectedValue: 9
-	});
+		// arrange
+		var expectedValue = 90;
+		var fnFireChangeSpy = this.spy(oSlider, "fireChange");
+		var fnFireLiveChangeSpy = this.spy(oSlider, "fireLiveChange");
+		var fnDecreaseModifiersSpy = this.spy(oSlider, "onsapdecreasemodifiers");
 
-	fnOnDecreaseModifiersTestCase({
-		control: new Slider({
-			min: -100,
-			max: 0,
-			step: 2,
-			value: 0
-		}),
+		oPage.addContent(oSlider);
+		oPage.addContent(oAnotherSlider);
 
-		expectedValue: -10
+		Core.applyChanges();
+
+		// act
+		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_LEFT, false, false, /* Ctrl key */ true);
+
+		// assert
+		assert.strictEqual(oSlider.getValue(), expectedValue, "The slider value must be decreased to " + expectedValue);
+		assert.strictEqual(fnDecreaseModifiersSpy.callCount, 1);
+		assert.strictEqual(fnFireChangeSpy.callCount, 1);
+		assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
+
+		// cleanup
+		oSlider.destroy();
+
+		expectedValue = 9;
+		fnFireChangeSpy = this.spy(oAnotherSlider, "fireChange");
+		fnFireLiveChangeSpy = this.spy(oAnotherSlider, "fireLiveChange");
+		fnDecreaseModifiersSpy = this.spy(oAnotherSlider, "onsapdecreasemodifiers");
+
+		// act
+		qutils.triggerKeydown(oAnotherSlider.getDomRef(), KeyCodes.ARROW_LEFT, false, false, /* Ctrl key */ true);
+
+		assert.strictEqual(oAnotherSlider.getValue(), expectedValue, "The slider value must be decreased to " + expectedValue);
+		assert.strictEqual(fnDecreaseModifiersSpy.callCount, 1);
+		assert.strictEqual(fnFireChangeSpy.callCount, 1);
+		assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
 	});
 
 	/* ------------------------------ */
