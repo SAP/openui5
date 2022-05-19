@@ -109,6 +109,16 @@ sap.ui.define([
 		"				}" +
 		"			}\"" +
 		"		/>" +
+		"		<DatePicker id=\"picker5\"" +
+		"			showFooter='true'" +
+		"			value=\"{" +
+		"				path: 'DateTime'," +
+		"				type: 'sap.ui.model.odata.type.DateTime'," +
+		"				constraints: {" +
+		"					displayFormat: 'Date'" +
+		"				}" +
+		"			}\"" +
+		"		/>" +
 		"	</VBox>" +
 		"</mvc:View>";
 
@@ -2941,5 +2951,69 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
+	QUnit.module("Different application timezone", {
+		//test with Etc/GMT-12 -> +12, except when it is the local timezone
+		before: function() {
+			var sTZ1 = "Europe/Sofia";
+			var sTZ2 = "Etc/GMT-12";
 
+			this.localTimezone = oCore.getConfiguration().getTimezone();
+			oCore.getConfiguration().setTimezone(this.localTimezone !== sTZ2 ? sTZ2 : sTZ1);
+			oCore.applyChanges();
+		},
+		after: function() {
+			oCore.getConfiguration().setTimezone(this.localTimezone);
+			oCore.applyChanges();
+		}
+	});
+
+	QUnit.test("sap.ui.model.odata.type.DateTime with displayFormat:'Date' constraint", function(assert) {
+		var done = assert.async();
+
+		TestUtils.useFakeServer(sinon.sandbox.create(),
+			"sap/ui/core/demokit/sample/ViewTemplate/types/data", {
+				"/sap/opu/odata/sap/ZUI5_EDM_TYPES/$metadata" : {
+					source : "metadataV2.xml"
+				},
+				"/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection(ID='1')" : {
+					source : "EdmTypesV2.json"
+				}
+			});
+
+		var oModelV2 = new ODataModel({
+			serviceUrl : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
+			useBatch : false
+		});
+
+		XMLView.create({
+			definition: sMyxml
+		}).then(function(view) {
+
+			view.setModel(oModelV2)
+				.placeAt("qunit-fixture");
+
+			oModelV2.attachRequestCompleted(function() {
+				var oDP = view.byId("picker5");
+
+				// act - open the popup
+				oDP.toggleOpen();
+				oCore.applyChanges();
+
+				// act - select a date in the calendar and press ok
+				oDP._getCalendar().removeAllSelectedDates();
+				oDP._getCalendar().addSelectedDate(
+					new DateRange({
+						startDate: new Date(2014, 2, 24)
+					})
+				);
+				oDP._oPopup.getBeginButton().firePress();
+				oCore.applyChanges();
+
+				// assert
+				assert.equal(oDP._$input.val(), "Mar 24, 2014", "picker5 has a correct value!");
+
+				done();
+			});
+		});
+	});
 });
