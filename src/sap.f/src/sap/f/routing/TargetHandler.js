@@ -88,7 +88,7 @@ sap.ui.define(['sap/m/InstanceManager', 'sap/f/FlexibleColumnLayout', 'sap/ui/ba
 				bCloseDialogs = bCloseDialogs || bNavigationOccurred;
 			}
 
-			if (bCloseDialogs) {
+			if (bCloseDialogs || bBack) {
 				this._closeDialogs();
 			}
 		};

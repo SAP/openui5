@@ -219,6 +219,11 @@ sap.ui.define(function () {
 					language: "en"
 				}
 			},
+			"TargetHandler": {
+				coverage: {
+					only: ["sap/f/routing/TargetHanlder"]
+				}
+			},
 
 			// -------------------------------------------------------------------------------
 			// Designtime tests:
