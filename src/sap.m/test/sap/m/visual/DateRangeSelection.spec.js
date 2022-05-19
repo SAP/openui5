@@ -37,8 +37,8 @@ describe("sap.m.DateRangeSelection", function() {
 		expect(takeScreenshot(oCalendar)).toLookAs("year_range_selected");
 	});
 
-	it("calendar selection in GMT+12 timezone", testDRS12WithTimezoneBtn.bind(null, "btnEtcGMT-12", "GMT+12"));
-	it("calendar selection in GMT-12 timezone", testDRS12WithTimezoneBtn.bind(null, "btnEtcGMT12", "GMT-12"));
+	it("calendar selection in GMT+12 timezone", testDRS12WithTimezoneBtn.bind(null, "btnEtcGMT12", "GMT+12"));
+	it("calendar selection in GMT-12 timezone", testDRS12WithTimezoneBtn.bind(null, "btnEtcGMT-12", "GMT-12"));
 	it("calendar selection in UTC timezone", testDRS12WithTimezoneBtn.bind(null, "btnUTC", "UTC"));
 
 	function testDRS12WithTimezoneBtn(sBtnId, sTimezone) {
