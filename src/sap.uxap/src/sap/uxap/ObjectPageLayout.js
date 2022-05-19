@@ -19,7 +19,6 @@ sap.ui.define([
 	"./LazyLoading",
 	"./ObjectPageLayoutABHelper",
 	"./ThrottledTaskHelper",
-	"sap/m/ScrollBar",
 	"sap/ui/core/library",
 	"./library",
 	"./ObjectPageLayoutRenderer",
@@ -49,7 +48,6 @@ sap.ui.define([
 	LazyLoading,
 	ABHelper,
 	ThrottledTask,
-	ScrollBar,
 	coreLibrary,
 	library,
 	ObjectPageLayoutRenderer,
@@ -409,9 +407,7 @@ sap.ui.define([
 				/**
 				 * Internal aggregation to hold the reference to the IHeaderContent implementation.
 				 */
-				_headerContent: {type: "sap.uxap.IHeaderContent", multiple: false, visibility: "hidden"},
-
-				_customScrollBar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
+				_headerContent: {type: "sap.uxap.IHeaderContent", multiple: false, visibility: "hidden"}
 			},
 			events: {
 
@@ -680,6 +676,7 @@ sap.ui.define([
 			bPinnable;
 
 		this._deregisterScreenSizeListener();
+		this._deregisterTitleSizeListener();
 
 		if (this._oLazyLoading) {
 			this._oLazyLoading.destroy();
@@ -905,6 +902,7 @@ sap.ui.define([
 		this._moveHeaderToContentArea();
 		this._scrollTo(0, 0, 0);
 		this._bHeaderExpanded = true;
+		this._adjustHeaderHeights(); // call synchonously (before resize notification) to avoid visual flickering
 		this._updateToggleHeaderVisualIndicators();
 
 		if (this._isHeaderPinnable()) {
@@ -1129,11 +1127,12 @@ sap.ui.define([
 
 		this._bInvalidatedAndNotRerendered = false;
 
-		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
-
 		this._ensureCorrectParentHeight();
 
 		this._cacheDomElements();
+
+		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
+		this._iTitleResizeId = ResizeHandler.register(this._$titleArea.get(0), this._adjustTitlePositioning.bind(this));
 
 		if (this._hasDynamicTitle()) {
 			this.addStyleClass("sapUxAPObjectPageHasDynamicTitle");
@@ -1204,10 +1203,6 @@ sap.ui.define([
 		// enable scrolling in non-fullscreen-mode only
 		// (to avoid any scrollbar appearing even for an instance while we snap/unsnap header)
 		this._toggleScrolling(!this._bAllContentFitsContainer);
-
-		if (Device.system.desktop) {
-			this._$opWrapper.on("scroll.OPL", this.onWrapperScroll.bind(this));
-		}
 
 		this._registerOnContentResize();
 
@@ -1331,46 +1326,6 @@ sap.ui.define([
 		this._oFirstVisibleSubSection = null;
 	};
 
-	ObjectPageLayout.prototype._getCustomScrollBar = function () {
-
-		if (!this.getAggregation("_customScrollBar")) {
-			var oVSB = new ScrollBar(this.getId() + "-vertSB", {
-				scrollPosition: 0,
-				scroll: this.onCustomScrollerScroll.bind(this),
-				visible: false
-			});
-			this.setAggregation("_customScrollBar", oVSB, true);
-		}
-
-		return this.getAggregation("_customScrollBar");
-	};
-
-	ObjectPageLayout.prototype.onWrapperScroll = function (oEvent) {
-		var iScrollTop = Math.max(oEvent.target.scrollTop, 0);
-
-		if (this._getCustomScrollBar()) {
-			if (this.allowCustomScroll === true) {
-				this.allowCustomScroll = false;
-				return;
-			}
-			this.allowInnerDiv = true;
-
-			this._getCustomScrollBar().setScrollPosition(iScrollTop);
-		}
-	};
-
-	ObjectPageLayout.prototype.onCustomScrollerScroll = function (oEvent) {
-		var iScrollTop = Math.max(this._getCustomScrollBar().getScrollPosition(), 0); // top of the visible page
-
-		if (this.allowInnerDiv === true) {
-			this.allowInnerDiv = false;
-			return;
-		}
-		this.allowCustomScroll = true;
-
-		jQuery(this._$opWrapper).scrollTop(iScrollTop);
-	};
-
 	ObjectPageLayout.prototype.setShowOnlyHighImportance = function (bValue) {
 		var bOldValue = this.getShowOnlyHighImportance();
 
@@ -1418,43 +1373,33 @@ sap.ui.define([
 	};
 
 	/**
-	 * Callback for the end of the scroll triggered from <code>scrollToElement</code>
-	 * of <code>sap.ui.core.delegate.ScrollEnablement</code>.
+	 * Offsets to the required scroll position.
+	 * The offset is the offset of the scroll container from the top of the content container.
 	 *
-	 * Required for Safari and IE11 (where there is no browser automatic scroll adjustment,
-	 * see <code>overflow-anchor</code> CSS property).
-	 *
-	 * The execution of <code>scrollToElement</code> changes the current scroll position,
-	 * so we check if the new scroll position entails subsequent change of the scroll
-	 * container of our page(namely: snapping of the header, which involves removal
-	 * of the anchorBar from the top of the scroll container and placing it
-	 * in the title area above the scroll container instead).
-	 *
-	 * If such a change (namely, removal of the anchorBar from the top of the scroll container)
-	 * should occur, then the content bellow the removed anchorBar will became offset with X pixels,
-	 * where X is the anchorBar height => the element [provided to <code>scrollToElement </code>]
-	 * will be misplaced as a result.
-	 *
-	 * Therefore here we synchronously call the listener to the "scroll" event to check if
-	 * it entails the above snapping and subsequent misplacement => if it entails it,
-	 * then we adjust back the scroll position to correct the misplacement of the scrolled element.
+	 * This is required because <code>sap.ui.code>ScrollEnablement.prototype.scrollToElement</code>
+	 * scrolls the element to the very top of the scroll container, regardless of the scroll container top-padding.
 	 *
 	 * @private
 	 */
 	ObjectPageLayout.prototype._onAfterScrollToElement = function () {
 		var iScrollTop = this._$opWrapper.scrollTop(),
-			bStickyAnchorBarBefore = this._bStickyAnchorBar;
+			bStickyAnchorBarBefore = this._bStickyAnchorBar,
+			iOffset;
 
 		// synchronously call the listener for the "scroll" event, to trigger any pending toggling of the header
 		this._onScroll({ target: { scrollTop: iScrollTop}});
 
-		// if the anchorBar was sticked (removed from the topmost part of the scrollable area) =>
-		// all elements bellow it became offset with X pixels, where X is the anchorBar height =>
-		// the element (target of <code>scrollToElement</code>) was offset respectively =>
-		// adjust the scroll position to ensure the element is back visible (outside scroll overflow)
+		// the <code>this._$contentContainer</code> is offset from the top of the scroll container
+		// with padding, in order to make space for the elements in the title area
+		iOffset = this._$contentContainer.get(0).offsetTop;
+
 		if (this._bStickyAnchorBar && !bStickyAnchorBarBefore && this._$opWrapper.scrollTop() === iScrollTop) {
-			this._$opWrapper.scrollTop(iScrollTop - this.iAnchorBarHeight);
+			// the offset in sticky mode is different from the offset in expanded mode
+			// where the difference is obtained from <code>this._getTitleHeightDelta()</code>
+			iOffset -= this._getTitleHeightDelta();
 		}
+
+		this._$opWrapper.scrollTop(iScrollTop - iOffset);
 	};
 
 	/**
@@ -2199,8 +2144,6 @@ sap.ui.define([
 
 			this._preloadSectionsOnBeforeScroll(oSection);
 
-			this.getHeaderTitle() && this._shiftHeaderTitle();
-
 			iScrollTo += iOffset;
 
 			if (!this._bStickyAnchorBar && this._shouldSnapHeaderOnScroll(iScrollTo)) {
@@ -2636,7 +2579,7 @@ sap.ui.define([
 			});
 		}
 
-		this._updateCustomScrollerHeight(bStickyTitleMode);
+		this._adjustTitlePositioning();
 
 		this._setSectionInfoIsDirty(false);
 
@@ -2680,27 +2623,6 @@ sap.ui.define([
 		}
 
 		return iSectionsContainerHeight + "px";
-	};
-
-	ObjectPageLayout.prototype._updateCustomScrollerHeight = function(bRequiresSnap) {
-
-		if (Device.system.desktop && this.getAggregation("_customScrollBar")) {
-
-			// update content size
-			var iScrollableContentSize = this._computeScrollableContentSize(bRequiresSnap);
-			iScrollableContentSize += this._getStickyAreaHeight(bRequiresSnap);
-			this._getCustomScrollBar().setContentSize(iScrollableContentSize + "px");
-
-
-			// update visibility
-			var bShouldBeVisible = (iScrollableContentSize > Math.ceil(this.iScreenHeight)),
-				bVisibilityChange = (bShouldBeVisible !== this._getCustomScrollBar().getVisible());
-
-			if (bVisibilityChange) {
-				this._getCustomScrollBar().setVisible(bShouldBeVisible);
-				this.getHeaderTitle() && this._shiftHeaderTitle();
-			}
-		}
 	};
 
 	ObjectPageLayout.prototype._computeScrollableContentSize = function(bShouldStick) {
@@ -3008,6 +2930,34 @@ sap.ui.define([
 		|| (this._$contentContainer.length && this._$contentContainer.get(0).offsetHeight !== this.iContentHeight);
 	};
 
+	ObjectPageLayout.prototype._adjustTitlePositioning = function (oEvent) {
+		if (!this._$titleArea.length || !this._$opWrapper.length) {
+			return;
+		}
+
+		var oWrapperElement = this._$opWrapper.get(0),
+			oTitleElement = this._$titleArea.get(0),
+			iTitleHeight = oTitleElement.getBoundingClientRect().height,
+			iTitleWidth = oTitleElement.getBoundingClientRect().width;
+
+		// the top area of the scroll container is reserved for showing the title element,
+		// (where the title element is positioned absolutely on top of the scroll container),
+		// therefore
+
+		// (1) add top padding for the area underneath the title element
+		// so that the title does not overlap the content of the scroll container
+		oWrapperElement.style.paddingTop = iTitleHeight + "px";
+
+		// (2) also make the area underneath the title invisible (using clip-path)
+		// to allow usage of *transparent background* of the title element
+		// (otherwise content from the scroll *overflow* will show underneath the transparent title element)
+		oWrapperElement.style.clipPath = 'polygon(0px ' + iTitleHeight + 'px, '
+			+ Math.floor(iTitleWidth) + 'px ' 	+ iTitleHeight + 'px, '
+			+ Math.floor(iTitleWidth) + 'px 0, 100% 0, 100% 100%, 0 100%)';
+
+		this.getHeaderTitle() && this._shiftHeaderTitle();
+	};
+
 	/**
 	 * called when the screen is resize by users. Updates the screen height
 	 * @param oEvent
@@ -3150,7 +3100,7 @@ sap.ui.define([
 		var iReachableScrollTop;
 		iExtraSpaceLength = iExtraSpaceLength || 0;
 
-		iReachableScrollTop = this._oScrollContainerLastState.iScrollableContentLength + iExtraSpaceLength - this._oScrollContainerLastState.iScrollableViewportHeight;
+		iReachableScrollTop = this._oScrollContainerLastState.iScrollableContentLength + iExtraSpaceLength + this._$contentContainer.get(0).offsetTop - this._oScrollContainerLastState.iScrollableViewportHeight;
 		return iReachableScrollTop >= oRequiredScrollTop;
 	};
 
@@ -3173,6 +3123,17 @@ sap.ui.define([
 		if (this._iResizeId) {
 			ResizeHandler.deregister(this._iResizeId);
 			this._iResizeId = null;
+		}
+	};
+
+	/**
+	 * removes listener for title-area resize
+	 * @private
+	 */
+	 ObjectPageLayout.prototype._deregisterTitleSizeListener = function () {
+		if (this._iTitleResizeId) {
+			ResizeHandler.deregister(this._iTitleResizeId);
+			this._iTitleResizeId = null;
 		}
 	};
 
@@ -3789,6 +3750,7 @@ sap.ui.define([
 			}
 
 			this._adjustHeaderBackgroundSize();
+			this._adjustTitlePositioning();
 
 			Log.info("ObjectPageLayout :: adjustHeaderHeight", "headerTitleHeight: " + this.iHeaderTitleHeight + " - headerTitleStickiedHeight: " + this.iHeaderTitleHeightStickied + " - headerContentHeight: " + this.iHeaderContentHeight);
 		} else {
@@ -4123,7 +4085,8 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._hasVerticalScrollBar = function () {
-		return (this._getCustomScrollBar().getVisible() === true);
+		var oWrapperElement = this._$opWrapper.length && this._$opWrapper.get(0);
+		return oWrapperElement && (oWrapperElement.scrollHeight > oWrapperElement.offsetHeight);
 	};
 
 	ObjectPageLayout.prototype._shiftHeaderTitle = function () {
@@ -4131,7 +4094,7 @@ sap.ui.define([
 		var oShiftOffsetParams = this._calculateShiftOffset(),
 			sDirection = oShiftOffsetParams.sStyleAttribute,
 			sPixels = oShiftOffsetParams.iMarginalsOffset;
-		this.$().find(".sapUxAPObjectPageHeaderTitle").css("padding-" + sDirection, sPixels + "px");
+		this.$().find(".sapUxAPObjectPageHeaderTitle").css(sDirection, sPixels + "px");
 	};
 
 	/**

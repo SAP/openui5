@@ -1639,72 +1639,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given an object page with scrolling", {
-		beforeEach: function(assert) {
-			var fnDone = assert.async();
-			var fnDone2 = assert.async();
-
-			var oSubSection = new ObjectPageSubSection("subsection", {
-				blocks: [new Button({ text: "abc" }), new Button({ text: "def" }), new Button({ text: "ghi" })]
-			});
-			var oSubSection2 = new ObjectPageSubSection("subsection2", {
-				blocks: [new Button({ text: "foo" }), new Button({ text: "bar" }), new Button({ text: "foobar" })]
-			});
-			var oSection = new ObjectPageSection("section", {
-				subSections: [oSubSection]
-			});
-			var oSection2 = new ObjectPageSection("section2", {
-				subSections: [oSubSection2]
-			});
-			this.oLayout = new ObjectPageLayout("layout", {
-				height: "300px",
-				sections: [oSection, oSection2],
-				headerTitle: new ObjectPageHeader({
-					objectTitle: "Title"
-				}),
-				headerContent: new Button({
-					text: "headerContent"
-				})
-			}).attachEventOnce("onAfterRenderingDOMReady", fnDone2);
-			this.oVBox = new VBox({
-				items: [this.oLayout]
-			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
-
-			this.oDesignTime = new DesignTime({
-				rootElements: [this.oVBox]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
-				fnDone();
-			}.bind(this));
-		},
-		afterEach: function() {
-			this.oDesignTime.destroy();
-			this.oVBox.destroy();
-		}
-	}, function() {
-		QUnit.test("check that the scrollcontainer overlay has the correct z-index", function(assert) {
-			var fnDone = assert.async();
-
-			var $ScrollContainerOverlayDomRef = this.oLayoutOverlay.getScrollContainerById(1);
-			var $ScrollContainerDomRef = this.oLayoutOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oLayout, this.oLayoutOverlay.getScrollContainers()[1].domRef);
-
-			// FIXME: remove timeout when #1870203056 is implemented
-			setTimeout(function() {
-				assert.equal(
-					DOMUtil.getZIndex($ScrollContainerOverlayDomRef),
-					DOMUtil.getZIndex($ScrollContainerDomRef),
-					"the z-index of the scrollcontainer overlay is " + DOMUtil.getZIndex($ScrollContainerDomRef) + " and correct"
-				);
-				fnDone();
-			}, 200);
-		});
-	});
-
-	QUnit.module("Error handling", function() {
-		QUnit.test("when creating an ElementOverlay with incorrect elemement object", function(assert) {
+	QUnit.module("Error handling", function () {
+		QUnit.test("when creating an ElementOverlay with incorrect elemement object", function (assert) {
 			var oManagedObject = new ManagedObject();
 
 			assert.throws(

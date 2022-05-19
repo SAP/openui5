@@ -71,11 +71,6 @@ sap.ui.define(["sap/ui/Device"],
 			oRm.accessibilityState(oControl, oControl._formatLandmarkInfo(oLandmarkInfo, "Root"));
 			oRm.openEnd();
 
-			// custom scrollbar
-			if (Device.system.desktop) {
-				oRm.renderControl(oControl._getCustomScrollBar());
-			}
-
 			// Header
 			oRm.openStart(sHeaderTag, oControl.getId() + "-headerTitle");
 			if (!bHeaderRoleSet) {
