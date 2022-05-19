@@ -84,7 +84,14 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			 */
 			clearFilter: {
 				allowPreventDefault: true
-			}
+			},
+
+			/**
+			 * This event is fired when the user presses the <code>Close</code> button of the <code>MessageStrip</code> control which is managed by this plugin.
+			 *
+			 * @since 1.103
+			 */
+			close: {}
 		}
 	}});
 
@@ -179,7 +186,8 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 					showIcon: true,
 					close: function() {
 						oControl.focus();
-					}
+						this.fireClose();
+					}.bind(this)
 				}).addStyleClass("sapUiTinyMargin");
 
 				oControl.setAggregation("_messageStrip", this._oMessageStrip);
