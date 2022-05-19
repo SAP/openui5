@@ -299,6 +299,14 @@ sap.ui.define([
 		).getDatePattern(sPlaceholder);
 	};
 
+	DateTimeField.prototype._getTimezoneFormatter = function() {
+		if (!this._timezoneFormatter) {
+			this._timezoneFormatter = DateFormat.getDateTimeWithTimezoneInstance({ showTimezone: false });
+		}
+
+		return this._timezoneFormatter;
+	};
+
 	DateTimeField.prototype._parseValue = function (sValue, bDisplayFormat) {
 		var oBinding = this.getBinding("value"),
 			oBindingType = oBinding && oBinding.getType && oBinding.getType(),
@@ -307,7 +315,8 @@ sap.ui.define([
 			oFormatter = this._getFormatter(bDisplayFormat),
 			oFormatOptions,
 			oDateLocal,
-			oDate;
+			oDate,
+			sFormatted;
 
 		if (this._isSupportedBindingType(oBindingType)) {
 			try {
@@ -330,10 +339,10 @@ sap.ui.define([
 
 			if (oDate && ((oBindingType.oFormatOptions && this._isFormatOptionsUTC(oBindingType.oFormatOptions)) || (oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly))) {
 				// convert to local date because it was parsed as UTC date
-				oDateLocal = new Date(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(),
-					oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds(), oDate.getUTCMilliseconds());
+				sFormatted = this._getTimezoneFormatter().format(oDate, "UTC");
+				oDateLocal = this._getTimezoneFormatter().parse(sFormatted,
+					sap.ui.getCore().getConfiguration().getTimezone())[0];
 
-				oDateLocal.setFullYear(oDate.getUTCFullYear());
 				oDate = oDateLocal;
 			}
 			return oDate;
@@ -351,15 +360,15 @@ sap.ui.define([
 		var oBinding = this.getBinding("value"),
 			oBindingType = oBinding && oBinding.getType && oBinding.getType(),
 			oFormatOptions,
-			oDateUTC;
+			oDateUTC,
+			sFormatted;
 
 		if (this._isSupportedBindingType(oBindingType)) {
 			if ((oBindingType.oFormatOptions && oBindingType.oFormatOptions.UTC) || (oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly)) {
 				// convert to UTC date because it will be formatted as UTC date
-				oDateUTC = new Date(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(),
-					oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
+				sFormatted = this._getTimezoneFormatter().format(oDate, sap.ui.getCore().getConfiguration().getTimezone());
+				oDateUTC = this._getTimezoneFormatter().parse(sFormatted, "UTC")[ 0 ];
 
-				oDateUTC.setUTCFullYear(oDate.getFullYear());
 				oDate = oDateUTC;
 			}
 
