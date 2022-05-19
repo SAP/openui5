@@ -280,7 +280,7 @@ function(
 					//Add a custom hidden role "ObjectIdentifier" with hidden text
 					ariaLabelledBy: InvisibleText.getStaticId("sap.m", "OI_ARIA_ROLE")
 				});
-				oTitleControl.addAssociation("ariaLabelledBy", sId + "-text", true);
+				oTitleControl.addAriaLabelledBy(sId + "-text");
 			} else {
 				oTitleControl = new Text({
 					id : sId + "-txt",
@@ -421,7 +421,7 @@ function(
 
 		if (sAssociationName === "ariaLabelledBy") {
 			if (this.getTitleActive() && oTitle instanceof Link) {
-				oTitle.addAssociation("ariaLabelledBy", sId, true);
+				oTitle.addAriaLabelledBy(sId);
 			}
 		}
 
