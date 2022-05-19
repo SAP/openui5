@@ -1229,6 +1229,26 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.test("picker selection in a different timezone", function(assert) {
+		// arrange
+		var oDTP = new DateTimePicker("dtp", {
+			value: "2022-05-16T01:16:33",
+			valueFormat: "yyyy-MM-ddTHH:mm:ss",
+			timezone: "UTC"
+		}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+		oDTP.toggleOpen();
+		oDTP._selectDate(); //simulate date and time selection via picker
+
+		// assert
+		assert.equal(oDTP.getDateValue().getUTCDate(), 16, "the selected date is as expected");
+		assert.equal(oDTP.getDateValue().getUTCHours(), 1, "the selected hours is as expected");
+
+		// clean
+		oDTP.destroy();
+	});
+
 	QUnit.module("Different application timezone", {
 		before: function() {
 			var sTZ1 = "Europe/Sofia";

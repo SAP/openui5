@@ -974,14 +974,13 @@ sap.ui.define([
 
 	DateTimePicker.prototype._getSelectedDate = function(){
 		var oDate = DatePicker.prototype._getSelectedDate.apply(this, arguments),
-			sFormattedDate;
+			oDateTime,
+			sPattern;
 
 		if (oDate) {
-			sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
-			oDate = this._getPickerParser().parse(sFormattedDate, this._getTimezone(true))[0];
+			oDateTime = this._oClocks.getTimeValues();
+			sPattern = this._oClocks._getDisplayFormatPattern();
 
-			var oDateTime = this._oClocks.getTimeValues();
-			var sPattern = this._oClocks._getDisplayFormatPattern();
 			if (sPattern.search("h") >= 0 || sPattern.search("H") >= 0) {
 				oDate.setHours(oDateTime.getHours());
 			}
