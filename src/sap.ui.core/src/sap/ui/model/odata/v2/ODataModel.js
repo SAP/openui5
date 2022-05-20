@@ -1583,6 +1583,9 @@ sap.ui.define([
 			if (this.hasContext("/" + sKey) && this.getContext("/" + sKey).isPreliminary()) {
 				var oExistingContext = this.getContext("/" + sKey);
 				oExistingContext.setUpdated(true);
+				this.callAfterUpdate(function() {
+					oExistingContext.setUpdated(false);
+				});
 				oExistingContext.setPreliminary(false);
 			}
 
