@@ -779,7 +779,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/Basic": {
+			"editor/objectField/propertyTranslation/simpleForm/typeKey/Basic": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -788,7 +788,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/FilterInTable": {
+			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByAdminForAdminMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -797,7 +797,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/simpleForm/Basic": {
+			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByAdminForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -806,7 +806,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/simpleForm/TypeKeyWithChangesByAdmin": {
+			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByAdminForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -815,7 +815,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/simpleForm/TypeKeyWithChangesByContent": {
+			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByContentForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -824,7 +824,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/simpleForm/TypeKeyWithChangesByAdminAndContent": {
+			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByContentForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -833,7 +833,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/simpleForm/TypePropertyWithChangesByAdmin01": {
+			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByAdminAndContentForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -842,7 +842,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/simpleForm/TypePropertyWithChangesByAdmin02": {
+			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByAdminAndContentForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -851,7 +851,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/simpleForm/TypePropertyWithChangesByContent": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/Basic": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -860,7 +860,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/simpleForm/TypePropertyWithChangesByAdminAndContent": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/I18nFormatAsValue": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -869,7 +869,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/table/BasicOfTypeKey": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/NormalStringAsValue": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -878,7 +878,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/table/BasicOfTypeProperty": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForAdminMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -887,7 +887,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/table/TypeKeyWithChangesByAdmin01": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForAdminMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -896,7 +896,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/table/TypeKeyWithChangesByAdmin02": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -905,7 +905,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/table/TypeKeyWithChangesByContent": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -914,7 +914,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/table/TypeKeyWithChangesByAdminAndContent": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -923,7 +923,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/table/TypePropertyWithChangesByAdmin01": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -932,7 +932,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/table/TypePropertyWithChangesByAdmin02": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -941,7 +941,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/table/TypePropertyWithChangesByContent": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -950,7 +950,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectField/propertyTranslation/table/TypePropertyWithChangesByAdminAndContent": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -959,7 +959,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/Basic": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -968,7 +968,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/FilterInTable": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminAndContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -977,7 +977,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/RequestValues": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminAndContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -986,7 +986,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/RequestValuesWiithFilter": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminAndContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -995,7 +995,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypeKey": {
+			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminAndContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1004,7 +1004,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypeKeyWithChangesByAdmin01": {
+			"editor/objectField/propertyTranslation/table/typeKey/Basic": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1013,7 +1013,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypeKeyWithChangesByAdmin02": {
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForAdminMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1022,7 +1022,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypeKeyWithChangesByContent": {
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForAdminMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1031,7 +1031,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypeKeyWithChangesByAdminAndContent": {
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1040,7 +1040,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypeProperty": {
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1049,7 +1049,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypePropertyWithChangesByAdmin01": {
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1058,7 +1058,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypePropertyWithChangesByAdmin02": {
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1067,7 +1067,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypePropertyWithChangesByAdminAndContent": {
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1076,7 +1076,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypePropertyWithChangesByContent": {
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1085,7 +1085,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypePropertyInDifferentParametersWithChangesByAdmin": {
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1094,7 +1094,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypePropertyInDifferentParametersWithChangesByContent": {
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1103,7 +1103,700 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/propertyTranslation/table/TypePropertyInDifferentParametersWithChangesByAdminAndContent": {
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/Basic": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/I18nFormatAsValue": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/NormalStringAsValue": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForAdminMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForAdminMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByContentForContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByContentForContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByContentForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByContentForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/table/Basic": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/table/Add": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/table/UpdateAndDelete": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/table/Filter": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/table/FilterAndCUD": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/table/PropertyTranslation": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectField/TextAreaAndSimpleForm": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/TextArea": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/table/Basic": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/table/CUD": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/table/Filter": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/table/FilterAndCUD": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/requestValues/Basic": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/requestValues/Add": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/requestValues/UpdateAndDelete": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/requestValues/Filter": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/requestValues/FilterAndCUD": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/Basic": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/Update": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForAdminMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForAdminMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByContentForContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByContentForContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByContentForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByContentForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/Basic": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/NormalStringAsValue": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/I18nFormatAsValue": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForAdminMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForAdminMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByContentForContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByContentForContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByContentForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByContentForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByAdminForAdminMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByAdminForContentMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByAdminForAllMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByContentForContentMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByContentForAllMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByAdminAndContentForContentMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByAdminAndContentForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
