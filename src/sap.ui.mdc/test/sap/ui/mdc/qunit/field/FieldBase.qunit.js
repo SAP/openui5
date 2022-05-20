@@ -1413,6 +1413,10 @@ sap.ui.define([
 			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
 			assert.equal(oContent.getText(), "Yes", "Text set on Text control");
 
+			// setting FieldHelp needs to remove default help
+			oFieldEditSingle.setFieldHelp("X");
+			assert.notOk(oFieldEditSingle._sDefaultFieldHelp, "No Default Field help set");
+
 			if (oFieldHelp) {
 				oFieldHelp.destroy(); // to initialze for next test
 			}
