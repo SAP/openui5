@@ -25,11 +25,22 @@ builder:
           - mode: preload
             name: sap/ui/core/library-preload
             filters:
-              - "**/*.js"
-              - "sap/ui/core/manifest.json"
+              # NOTE: In some scenarios, more files are available during bundling, so only specific includes must be used
+              - sap/ui/core/
+              - sap/ui/core/**/manifest.json
+              - sap/base/
+              - sap/ui/base/
+              - sap/ui/dom/
+              - sap/ui/events/
+              - sap/ui/model/
+              - sap/ui/security/
+              - sap/ui/util/
+              - sap/ui/Device.js
+              - sap/ui/Global.js
+              - sap/ui/VersionInfo.js
+              - "jquery.sap.*.js"
 
               # include only thirdparty that is very likely to be used
-              - "!sap/ui/thirdparty/"
               - "sap/ui/thirdparty/crossroads.js"
               - "sap/ui/thirdparty/caja-html-sanitizer.js"
               - "sap/ui/thirdparty/hasher.js"
@@ -48,20 +59,23 @@ builder:
               - "!sap/ui/model/odata/datajs.js"
 
               # exclude legacy app namespace (not visible in OpenUI5)
-              - "!sap/ui/app/"
+              # - "!sap/ui/app/" # Not included, so exclude is not required
 
               # exclude non-productive code
               - "!sap/ui/core/support/"
               - "!sap/ui/core/designtime/"
               - "!sap/ui/core/**/*.designtime.js"
               - "!sap/ui/core/**/*.support.js"
-              - "!sap/ui/debug/"
-              - "!sap/ui/qunit/"
-              - "!sap/ui/test/"
+              # - "!sap/ui/debug/" # Not included, so exclude is not required
+              # - "!sap/ui/qunit/" # Not included, so exclude is not required
+              # - "!sap/ui/test/" # Not included, so exclude is not required
 
               # core plugins, shouldn't be packaged by default
               - "!sap/ui/core/plugin/DeclarativeSupport.js"
               - "!sap/ui/core/plugin/LessSupport.js"
+
+              # CLDR files must not be packaged
+              - "!sap/ui/core/cldr/"
 
             resolve: false
             resolveConditional: false
