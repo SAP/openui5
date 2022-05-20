@@ -1260,7 +1260,8 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oMaskInput = new MaskInput({
 				mask: "993-99-999",
-				placeholderSymbol: "_"
+				placeholderSymbol: "_",
+				placeholder: "Enter Text"
 			});
 			this.oRenderer = this.oMaskInput.getRenderer();
 			this.oMaskInput.placeAt("content");
@@ -1271,6 +1272,13 @@ sap.ui.define([
 				this.oMaskInput.destroy();
 			}
 		}
+	});
+
+	QUnit.test("Testing aria label", function (assert){
+		var $AriaLabel = this.oMaskInput.$().find("#" + this.oMaskInput.getId() + "-labelledby");
+		//assert
+		assert.ok($AriaLabel.length > 0, "The hidden aria description is present in the DOM");
+		assert.strictEqual(this.oRenderer.getLabelledByAnnouncement(this.oMaskInput), $AriaLabel.text(), "The message is rendered correctly");
 	});
 
 	QUnit.test("Testing aria roledescription", function (assert){
