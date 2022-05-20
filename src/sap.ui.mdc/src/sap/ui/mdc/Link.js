@@ -104,11 +104,23 @@ sap.ui.define([
 		oModel.setSizeLimit(1000);
 		this.setModel(oModel, "$sapuimdcLink");
 		this.attachEvent("modelContextChange", this.fireDataUpdate, this);
+		this._oLinkType = null;
 		this._bLinkItemsFetched = false;
 		this._aLinkItems = [];
-		this._oLinkType = null;
 
 		FieldInfoBase.prototype.init.apply(this, arguments);
+	};
+
+	Link.prototype.exit = function() {
+		this._aLinkItems = undefined;
+		this._bLinkItemsFetched = undefined;
+		this._oLinkType = undefined;
+		this._oUseDelegateItemsPromise = undefined;
+
+		this._aAdditionalContent = undefined;
+		this._oUseDelegateAdditionalContentPromise = undefined;
+
+		FieldInfoBase.prototype.exit.apply(this, arguments);
 	};
 
 	// ----------------------- Implementation of 'FieldInfoBase' interface --------------------------------------------
@@ -254,6 +266,9 @@ sap.ui.define([
 						metadata: jQuery.extend(true, [], this._getInternalModel().getProperty("/linkItems")),
 						baseline: jQuery.extend(true, [], this._getInternalModel().getProperty("/baselineLinkItems"))
 					}), "$sapuimdcLink");
+					// reset _aAdditionalContent as the additionalContent gets forwarded to the Panel and will be destroyed when the Popover is closed
+					this._setAdditionalContent(undefined);
+
 					return resolve(oPanel);
 				}.bind(this));
 			}.bind(this));
@@ -440,16 +455,43 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Link.prototype.retrieveAdditionalContent = function() {
+		if (this._aAdditionalContent) {
+			return Promise.resolve(this._aAdditionalContent);
+		} else {
+			this._oUseDelegateAdditionalContentPromise = this._useDelegateAdditionalContent();
+			return this._oUseDelegateAdditionalContentPromise.then(function() {
+				return Promise.resolve(this._aAdditionalContent);
+			}.bind(this));
+		}
+	};
+
+	/**
+	 * Determines the <code>AdditionalContent</code> objects depending on the given <code>LinkDelegate</code>.
+	 * @private
+	 * @returns {Promise} Resolves once the <code>AdditionalContent</code> objects have been retrieved by the delegate. This also sets this._aAdditionalContent.
+	 */
+	Link.prototype._useDelegateAdditionalContent = function() {
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {
 				var oPayload = Object.assign({}, this.getPayload());
-				return this.getControlDelegate().fetchAdditionalContent(oPayload, this).then(function(aAdditionalContent) {
-					return aAdditionalContent;
-				});
+				return new Promise(function(resolve) {
+					this.getControlDelegate().fetchAdditionalContent(oPayload, this).then(function(aAdditionalContent) {
+						this._setAdditionalContent(aAdditionalContent === null ? [] : aAdditionalContent);
+						resolve();
+					}.bind(this));
+				}.bind(this));
 			}.bind(this));
 		}
 		SapBaseLog.error("mdc.Link retrieveAdditionalContent: control delegate is not set - could not load AdditionalContent from delegate.");
 		return Promise.resolve([]);
+	};
+
+	/**
+	 * @private
+	 * @param {sap.ui.core.Control[]} aAdditionalContent The given <code>AdditionalContent</code> objects
+	 */
+	 Link.prototype._setAdditionalContent = function(aAdditionalContent) {
+		this._aAdditionalContent = aAdditionalContent;
 	};
 
 	/**
@@ -494,8 +536,8 @@ sap.ui.define([
 		if (this._bLinkItemsFetched) {
 			return Promise.resolve(this._aLinkItems);
 		} else {
-			this.oUseDelegateItemsPromise = this._useDelegateItems();
-			return this.oUseDelegateItemsPromise.then(function() {
+			this._oUseDelegateItemsPromise = this._useDelegateItems();
+			return this._oUseDelegateItemsPromise.then(function() {
 				return Promise.resolve(this._aLinkItems);
 			}.bind(this));
 		}
@@ -537,6 +579,7 @@ sap.ui.define([
 		aLinkItemsMissingParent.forEach(function(oLinkItem) {
 			this.addDependent(oLinkItem);
 		}.bind(this));
+
 		this._aLinkItems = aLinkItems;
 	};
 

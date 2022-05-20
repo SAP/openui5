@@ -89,8 +89,8 @@ sap.ui.define([
 	 * @protected
 	 */
 	FieldInfoBase.prototype.open = function(oControl) {
-		var oParent = this.getParent();
-		if (!oParent) {
+		oControl = oControl ? oControl : this.getParent();
+		if (!oControl) {
 			throw new Error("sap.ui.mdc.field.FieldInfoBase: popover can not be open because the control is undefined");
 		}
 		// Avoid creation of a new popover instance if the same triggerable control is triggered again.
@@ -106,7 +106,7 @@ sap.ui.define([
 
 					this.addDependent(this._oPopover);
 
-					this._oPopover.openBy(oControl || oParent);
+					this._oPopover.openBy(oControl);
 
 					this._oPopover.attachAfterOpen(function() {
 						this.firePopoverAfterOpen();
