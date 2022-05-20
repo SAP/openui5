@@ -192,7 +192,7 @@ sap.ui.define([
 				});
 
 				// We show restricted members for internal versions
-				if (ResourcesUtil.isInternal(oVersionInfo.name)) {
+				if (ResourcesUtil.isInternal(oVersionInfo)) {
 					bIsInternal = true;
 					this.aAllowedMembers.push("restricted");
 				}
