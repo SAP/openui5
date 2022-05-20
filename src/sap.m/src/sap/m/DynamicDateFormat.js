@@ -173,8 +173,8 @@ sap.ui.define([
 		 * @public
 		 */
 		DynamicDateFormat.prototype.format = function(oObj, bSkipCustomFormatting) {
-			var sKey = oObj.operator;
-			var aParams = oObj.values.slice(0);
+			var sKey = oObj.operator,
+				aParams = oObj.values.slice(0);
 
 			if (sKey === "SPECIFICMONTH") {
 				var oDate = new Date();
@@ -199,6 +199,12 @@ sap.ui.define([
 				aParams = [];
 			} else if (sKey === "DATETIME") {
 				aParams[0] = this._dateTimeFormatter.format(oObj.values[0]);
+			} else if (sKey === "TODAYFROMTO") {
+				aParams[0] = -aParams[0];
+				if (aParams[0] > aParams[1]) {
+					// swap two values because first one is bigger than second one
+					aParams = [aParams[1], aParams[0]];
+				}
 			}
 
 			var aFormattedParams = aParams.map(function(param) {
@@ -216,6 +222,16 @@ sap.ui.define([
 				}
 			}, this);
 
+			if (sKey === 'TODAYFROMTO') {
+				aFormattedParams.forEach(function(item, index, arr) {
+					if (item === "0") {
+						arr[index] = (index === 0 ? this.oLocaleData.getNumberSymbol("minusSign") : this.oLocaleData.getNumberSymbol("plusSign")) + item;
+					} else {
+						arr[index] = aParams[index] < 0 ? item.toString() : this.oLocaleData.getNumberSymbol("plusSign") + item;
+					}
+				}, this);
+			}
+
 			return this._resourceBundle.getText("DYNAMIC_DATE_" + sKey.toUpperCase() + "_FORMAT", aFormattedParams);
 		};
 
@@ -228,17 +244,11 @@ sap.ui.define([
 		 * @public
 		 */
 		DynamicDateFormat.prototype.parse = function(sValue, sKey) {
-			var aResult;
-			var aStaticParts = _staticParts[sKey];
-
-			var sRegexPattern = "^" + aStaticParts.join("(.*)") + "$";
-
-			if (sKey === "TODAYFROMTO") {
-				sRegexPattern = sRegexPattern.replace("+", "\\+");
-			}
-
-			var rRegex = new RegExp(sRegexPattern, "i");
-			var match = sValue.match(rRegex);
+			var aResult,
+				aStaticParts = _staticParts[sKey],
+				sRegexPattern = "^" + aStaticParts.join("(.*)") + "$",
+				rRegex = new RegExp(sRegexPattern, "i"),
+				match = sValue.match(rRegex);
 
 			if (match) {
 				aResult = {};
@@ -283,6 +293,14 @@ sap.ui.define([
 					}
 
 					aResult.values[iIndex] = oVal;
+				}
+
+				if (sKey === "TODAYFROMTO" && aResult) {
+					if (aResult.values[0] > aResult.values[1]) {
+						// swap two values because first one is bigger than second one
+						aResult.values = [aResult.values[1], aResult.values[0]];
+					}
+					aResult.values[0] = -aResult.values[0];
 				}
 
 				if (aResult) {
