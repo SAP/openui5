@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/Device",
     "sap/ui/events/KeyCodes",
-	"sap/ui/core/InvisibleMessage"
+	"sap/ui/core/InvisibleMessage",
+	"sap/ui/core/Core"
 ], function(
 	library,
 	CoreLibrary,
@@ -38,7 +39,8 @@ sap.ui.define([
 	Icon,
 	Device,
 	KeyCodes,
-	InvisibleMessage
+	InvisibleMessage,
+	oCore
 ) {
 	"use strict";
 
@@ -46,7 +48,6 @@ sap.ui.define([
 	var DynamicPageTitleArea = library.DynamicPageTitleArea,
 		ToolbarStyle = mobileLibrary.ToolbarStyle,
 		InvisibleMessageMode = CoreLibrary.InvisibleMessageMode;
-	var oCore = sap.ui.getCore();
 
 	/**
 	 * Constructor for a new <code>DynamicPageTitle</code>.

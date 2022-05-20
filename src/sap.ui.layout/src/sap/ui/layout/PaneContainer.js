@@ -101,7 +101,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 
 	PaneContainer.prototype._getPanesInInterval = function (iFrom) {
 		return this.getPanes().filter(function(oPane) {
-			return oPane instanceof sap.ui.layout.SplitPane && oPane._isInInterval(iFrom);
+			return oPane && oPane.isA("sap.ui.layout.SplitPane") && oPane._isInInterval(iFrom);
 		});
 	};
 

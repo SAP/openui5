@@ -349,14 +349,14 @@ sap.ui.define([
 
 			if (!oLayoutData) {
 				return undefined;
-			} else if (oLayoutData instanceof sap.ui.layout.GridData) {
+			} else if (oLayoutData.isA("sap.ui.layout.GridData")) {
 				return oLayoutData;
 			} else if (oLayoutData.isA("sap.ui.core.VariantLayoutData")) {
 				// multiple LayoutData available - search here
 				var aLayoutData = oLayoutData.getMultipleLayoutData();
 				for ( var i = 0; i < aLayoutData.length; i++) {
 					var oLayoutData2 = aLayoutData[i];
-					if (oLayoutData2 instanceof sap.ui.layout.GridData) {
+					if (oLayoutData2 && oLayoutData2.isA("sap.ui.layout.GridData")) {
 						return oLayoutData2;
 					}
 				}

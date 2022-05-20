@@ -5,6 +5,7 @@
 // Provides control sap.m.OverflowToolbar.
 sap.ui.define([
 	"sap/ui/core/library",
+	"sap/ui/core/Core",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/m/ToggleButton",
@@ -25,6 +26,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "lastFocusableDomRef"
 ], function(
 	coreLibrary,
+	oCore,
 	library,
 	Control,
 	ToggleButton,
@@ -227,7 +229,7 @@ sap.ui.define([
 
 		this.addStyleClass("sapMOTB");
 
-		this._sAriaRoleDescription = sap.ui.getCore()
+		this._sAriaRoleDescription = oCore
 			.getLibraryResourceBundle("sap.m")
 			.getText(OverflowToolbar.ARIA_ROLE_DESCRIPTION);
 
@@ -309,8 +311,7 @@ sap.ui.define([
 	 * @private
 	 */
 	OverflowToolbar.prototype._doLayout = function () {
-		var oCore = sap.ui.getCore(),
-			iWidth;
+		var iWidth;
 
 		// If the theme is not applied, control widths should not be measured and cached
 		if (!oCore.isThemeApplied()) {
@@ -377,7 +378,7 @@ sap.ui.define([
 			$LastFocusableChildControl = this.$().lastFocusableDomRef();
 
 		if (this.sFocusedChildControlId) {
-			oFocusedChildControl = sap.ui.getCore().byId(this.sFocusedChildControlId);
+			oFocusedChildControl = oCore.byId(this.sFocusedChildControlId);
 		}
 
 		if (oFocusedChildControl && oFocusedChildControl.getDomRef()){
@@ -402,7 +403,7 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._preserveChildControlFocusInfo = function () {
 		// Preserve focus info
-		var sActiveElementId = sap.ui.getCore().getCurrentFocusedControlId();
+		var sActiveElementId = oCore.getCurrentFocusedControlId();
 
 		if (this._getControlsIds().indexOf(sActiveElementId) !== -1) {
 			this._bControlWasFocused = true;

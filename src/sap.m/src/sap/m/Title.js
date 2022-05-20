@@ -199,7 +199,7 @@ sap.ui.define([
 
 		if (sTitle) {
 			var oTitle = sap.ui.getCore().byId(sTitle);
-			if (oTitle && oTitle instanceof sap.ui.core.Title) {
+			if (oTitle && oTitle.isA("sap.ui.core.Title")) {
 				return oTitle;
 			}
 		}

@@ -72,7 +72,8 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 			oScope.getElementsByClassName("sap.m.DatePicker")
 				.forEach(function(oElement) {
 					var oValueBinding = oElement.getBinding("value");
-					if (oValueBinding && oValueBinding.getType() instanceof sap.ui.model.odata.type.DateTime
+					if (oValueBinding && oValueBinding.getType()
+						&& oValueBinding.getType().isA("sap.ui.model.odata.type.DateTime")
 						&& (!oValueBinding.getType().oConstraints || !oValueBinding.getType().oConstraints.isDateOnly)) {
 						var sElementId = oElement.getId(),
 							sElementName = oElement.getMetadata().getElementName();
@@ -112,8 +113,8 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 				.forEach(function(oElement) {
 					var oValueBinding = oElement.getBinding("value");
 					if (oValueBinding
-						&& oElement.getModel() instanceof sap.ui.model.json.JSONModel
-						&& oValueBinding.getType() instanceof sap.ui.model.odata.type.Date) {
+						&& oElement.getModel() && oElement.getModel().isA("sap.ui.model.json.JSONModel")
+						&& oValueBinding.getType() && oValueBinding.getType().isA("sap.ui.model.odata.type.Date")) {
 						var sElementId = oElement.getId(),
 							sElementName = oElement.getMetadata().getElementName();
 

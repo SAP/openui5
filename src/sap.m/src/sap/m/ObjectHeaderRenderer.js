@@ -246,7 +246,7 @@ sap.ui.define([
 			var aStatuses = oOH.getStatuses();
 			for (var i = 0; i < aStatuses.length; i++) {
 				if (!aStatuses[i].getVisible || aStatuses[i].getVisible()) {
-					if ((aStatuses[i] instanceof sap.m.ObjectStatus && !aStatuses[i]._isEmpty()) || aStatuses[i] instanceof sap.m.ProgressIndicator) {
+					if ((aStatuses[i].isA("sap.m.ObjectStatus") && !aStatuses[i]._isEmpty()) || aStatuses[i].isA("sap.m.ProgressIndicator")) {
 						aVisibleStatuses.push([aStatuses[i]]);
 					} else {
 						Log.warning("Only sap.m.ObjectStatus or sap.m.ProgressIndicator are allowed in \"sap.m.ObjectHeader.statuses\" aggregation." + " Current object is "
@@ -312,7 +312,7 @@ sap.ui.define([
 			this._renderAttribute(oRM, oOH, oLeft, ObjectHeaderRenderer._isEmptyArray(aRight));
 		} else if (ObjectHeaderRenderer._isEmptyObject(oLeft) && !ObjectHeaderRenderer._isEmptyArray(aRight)) {
 			// if there are no attributes at all and the array containing statuses and progress indicators isn't empty
-			if (aRight[0] instanceof sap.m.ProgressIndicator) { // check if the first element in the array is progress indicator, and if it's so then place an empty "attribute" div before the progress indicator
+			if (aRight[0] && aRight[0].isA("sap.m.ProgressIndicator")) { // check if the first element in the array is progress indicator, and if it's so then place an empty "attribute" div before the progress indicator
 				oRM.openStart("div");
 				oRM.class("sapMOHAttr");
 				oRM.openEnd();
@@ -322,9 +322,9 @@ sap.ui.define([
 
 		if (!ObjectHeaderRenderer._isEmptyArray(aRight)) { // check do we have statuses, icons or progress indicators and render them accordingly
 			oRM.openStart("div");
-			if (aRight[0] instanceof sap.m.ProgressIndicator) {
+			if (aRight[0] && aRight[0].isA("sap.m.ProgressIndicator")) {
 				oRM.class("sapMOHStatusFixedWidth");
-			} else if (aRight[0] instanceof sap.m.ObjectMarker) {
+			} else if (aRight[0] && aRight[0].isA("sap.m.ObjectMarker")) {
 				oRM.class("sapMOHStatusFixedWidth");
 				oRM.class("sapMObjStatusMarker");
 			} else {
@@ -812,7 +812,7 @@ sap.ui.define([
 
 		oRM.close("div");
 
-		if (oHeaderContainer && oHeaderContainer instanceof sap.m.IconTabBar) {
+		if (oHeaderContainer && oHeaderContainer.isA("sap.m.IconTabBar")) {
 			this._renderChildControl(oRM, oOH, oHeaderContainer);
 		}
 
@@ -1139,15 +1139,15 @@ sap.ui.define([
 			oIconTabHeader;
 
 		if (oHeaderContainer) {
-			if (oHeaderContainer instanceof sap.m.IconTabBar) {
+			if (oHeaderContainer.isA("sap.m.IconTabBar")) {
 				oIconTabHeader = oHeaderContainer._getIconTabHeader();
 				if (oIconTabHeader.getVisible()) {
 					oControl._iCountVisTabs = oIconTabHeader.getItems().length;
 					return !!oIconTabHeader.getItems().length;
 				}
-			} else if (oHeaderContainer.getMetadata().getName() === "sap.m.HeaderContainer") {
+			} else if (oHeaderContainer.isA("sap.m.HeaderContainer")) {
 				return !!oHeaderContainer.getContent().length;
-			} else if (oHeaderContainer.getMetadata().getName() === "sap.suite.ui.commons.HeaderContainer") {
+			} else if (oHeaderContainer.isA("sap.suite.ui.commons.HeaderContainer")) {
 				return !!oHeaderContainer.getItems().length;
 			}
 		}
@@ -1170,17 +1170,17 @@ sap.ui.define([
 
 		oRM.openStart("div");
 		oRM.class("sapMOHRTabs");
-		if (oHeaderContainer instanceof sap.m.IconTabBar) {
+		if (oHeaderContainer && oHeaderContainer.isA("sap.m.IconTabBar")) {
 			oRM.class("sapMOHRTabsITB");
 		}
 		oRM.openEnd();
 		if (oHeaderContainer) {
-			if (oHeaderContainer instanceof sap.m.IconTabBar) {
+			if (oHeaderContainer.isA("sap.m.IconTabBar")) {
 				oIconTabHeader = oHeaderContainer._getIconTabHeader();
 				this._renderChildControl(oRM, oControl, oIconTabHeader);
 				// tell iconTabBar to not render the header
 				oHeaderContainer._bHideHeader = true;
-			} else if (oHeaderContainer.getMetadata().getName() === "sap.m.HeaderContainer" || oHeaderContainer.getMetadata().getName() === "sap.suite.ui.commons.HeaderContainer") {
+			} else if (oHeaderContainer.isA(["sap.m.HeaderContainer", "sap.suite.ui.commons.HeaderContainer"])) {
 				// render the header container
 				this._renderChildControl(oRM, oControl, oHeaderContainer);
 			} else {

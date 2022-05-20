@@ -130,7 +130,7 @@ function(
 
 	IconPool.insertFontFaceStyle();
 
-	TileContainer.prototype._bRtl  = sap.ui.getCore().getConfiguration().getRTL();
+	TileContainer.prototype._bRtl = oCore.getConfiguration().getRTL();
 
 	/**
 	 * Initializes the control.
@@ -613,7 +613,7 @@ function(
 		for (var i = 0;i < aTiles.length; i++) {
 			var oTile = aTiles[i];
 
-			if (oTile instanceof sap.m.Tile) {
+			if (oTile.isA("sap.m.Tile")) {
 				oTile.isEditable(bEditable);
 			}
 		}
@@ -1607,7 +1607,7 @@ function(
 			 oEvent.srcControl =  oEvent.srcControl.getParent();
 		}
 
-		if (oEvent.srcControl instanceof sap.m.Tile && this.getEditable()) {
+		if (oEvent.srcControl && oEvent.srcControl.isA("sap.m.Tile") && this.getEditable()) {
 
 			if (oEvent.target.className != "sapMTCRemove") {
 				this._initDragSession(oEvent);
@@ -1976,7 +1976,7 @@ function(
 	 */
 	TileContainer.prototype._handleAriaActiveDescendant = function () {
 		var oActiveElement = jQuery(document.activeElement).control(0);
-		if (oActiveElement instanceof sap.m.Tile && oActiveElement.getParent() === this) {
+		if (oActiveElement && oActiveElement.isA("sap.m.Tile") && oActiveElement.getParent() === this) {
 			this.getDomRef().setAttribute("aria-activedescendant", oActiveElement.getId());
 		}
 	};

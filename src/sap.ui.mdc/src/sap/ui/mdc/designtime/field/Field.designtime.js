@@ -2,10 +2,15 @@
  * ! ${copyright}
  */
 
-sap.ui.define(['sap/ui/fl/Utils', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'], function(Utils, FlexRuntimeInfoAPI) {
+sap.ui.define([
+	'sap/ui/fl/Utils',
+	'sap/ui/fl/apply/api/FlexRuntimeInfoAPI',
+	'sap/ui/mdc/p13n/Engine',
+	'sap/ui/core/Core'
+], function(Utils, FlexRuntimeInfoAPI, Engine, oCore) {
 	"use strict";
 
-    var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+    var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	return {
         properties: {
@@ -22,7 +27,7 @@ sap.ui.define(['sap/ui/fl/Utils', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'], fun
                 return [];
             }
             var oFieldInfo = oField.getFieldInfo();
-            var oControl = typeof oFieldInfo.getSourceControl() === "string" ? sap.ui.getCore().byId(oFieldInfo.getSourceControl()) : oFieldInfo.getSourceControl();
+            var oControl = typeof oFieldInfo.getSourceControl() === "string" ? oCore.byId(oFieldInfo.getSourceControl()) : oFieldInfo.getSourceControl();
             if (!oControl) {
                 oControl = oField;
             }
@@ -52,7 +57,7 @@ sap.ui.define(['sap/ui/fl/Utils', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'], fun
                             return FlexRuntimeInfoAPI.waitForChanges({
                                 element: oPanel
                             }).then(function() {
-                                var oEngine = sap.ui.mdc.p13n.Engine.getInstance();
+                                var oEngine = Engine.getInstance();
                                 mPropertyBag.fnAfterClose = function() {
                                     oPanel.destroy();
                                 };

@@ -736,8 +736,8 @@ sap.ui.define([
 			bIconFirst;
 
 		// check if image control type and src match - destroy it, if they don't
-		if (this._image instanceof sap.m.Image && bIsIconURI ||
-			this._image instanceof sap.ui.core.Icon && !bIsIconURI) {
+		if (this._image && this._image.isA("sap.m.Image") && bIsIconURI ||
+			this._image && this._image.isA("sap.ui.core.Icon") && !bIsIconURI) {
 			this._image.destroy();
 			this._image = undefined;
 		}
@@ -747,7 +747,7 @@ sap.ui.define([
 
 		if (this._image) {
 			this._image.setSrc(sSrc);
-			if (this._image instanceof sap.m.Image) {
+			if (this._image.isA("sap.m.Image")) {
 				this._image.setActiveSrc(sActiveSrc);
 				this._image.setDensityAware(bIconDensityAware);
 			}

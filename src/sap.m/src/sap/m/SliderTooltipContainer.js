@@ -81,7 +81,7 @@ function(
 		};
 
 		SliderTooltipContainer.prototype._handleTabNavigation = function (oEvent) {
-			var bParentRangeSlider = this._oParentSlider instanceof sap.m.RangeSlider;
+			var bParentRangeSlider = this._oParentSlider && this._oParentSlider.isA("sap.m.RangeSlider");
 
 			oEvent.preventDefault();
 			this[bParentRangeSlider ? "_handleRangeSliderF2" : "_handleSliderF2"].apply(this, arguments);
@@ -151,7 +151,7 @@ function(
 				return;
 			}
 
-			var bParentRangeSlider = this._oParentSlider instanceof sap.m.RangeSlider,
+			var bParentRangeSlider = this._oParentSlider.isA("sap.m.RangeSlider"),
 				aTooltips = this._oParentSlider.getUsedTooltips(),
 				// we are considering that both tooltips have the same rendering
 				fTooltipHeight = this.getAssociatedTooltipsAsControls()[0].$().outerHeight(true);

@@ -2160,7 +2160,7 @@ function(
 			for (var i = 0, oItem; i < aItems.length; i++) {
 				oItem = aItems[i];
 				var bTextIsRelevantString = typeof sText === "string" && sText !== "";
-				if (oItem.getEnabled() && !(oItem instanceof sap.ui.core.SeparatorItem) && oItem.getText().toLowerCase().startsWith(sText.toLowerCase()) && bTextIsRelevantString) {
+				if (oItem.getEnabled() && !(oItem.isA("sap.ui.core.SeparatorItem")) && oItem.getText().toLowerCase().startsWith(sText.toLowerCase()) && bTextIsRelevantString) {
 					return oItem;
 				}
 			}

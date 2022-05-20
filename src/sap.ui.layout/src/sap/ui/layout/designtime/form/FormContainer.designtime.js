@@ -31,7 +31,7 @@ sap.ui.define([
 		var oForm = fnFindForm(oFormContainer);
 		if (oForm &&
 			oForm.getLayout() &&
-			oForm.getLayout().getMetadata().getName() === "sap.ui.layout.form.GridLayout") {
+			oForm.getLayout().isA("sap.ui.layout.form.GridLayout")) {
 			return false;
 		}
 		return true;

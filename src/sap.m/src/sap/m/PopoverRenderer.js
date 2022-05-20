@@ -60,7 +60,7 @@ sap.ui.define([
 		};
 
 		PopoverRenderer.isButtonFooter = function(footer) {
-			if (footer instanceof sap.m.Bar) {
+			if (footer && footer.isA("sap.m.Bar")) {
 				var aContentLeft = footer.getContentLeft(),
 					aContentRight = footer.getContentRight(),
 					aContentMiddle = footer.getContentMiddle(),
@@ -69,7 +69,7 @@ sap.ui.define([
 					bMiddleTwoButtons = false;
 
 				if (aContentMiddle && aContentMiddle.length === 2) {
-					if ((aContentMiddle[0] instanceof sap.m.Button) && (aContentMiddle[1] instanceof sap.m.Button)) {
+					if ((aContentMiddle[0] && aContentMiddle[0].isA("sap.m.Button")) && (aContentMiddle[1] && aContentMiddle[1].isA("sap.m.Button"))) {
 						bMiddleTwoButtons = true;
 					}
 				}

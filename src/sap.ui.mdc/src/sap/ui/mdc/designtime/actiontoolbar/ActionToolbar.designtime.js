@@ -3,8 +3,9 @@
  */
 sap.ui.define([
     "sap/ui/mdc/ActionToolbar",
+    "sap/ui/mdc/p13n/Engine",
     "../Util"
-], function (ActionToolbar, Util) {
+], function (ActionToolbar, Engine, Util) {
 	"use strict";
 
     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -18,7 +19,7 @@ sap.ui.define([
                 settings: {
                     name: oResourceBundle.getText("actiontoolbar.RTA_SETTINGS_NAME"),
                     handler: function (oControl, mPropertyBag) {
-                        return sap.ui.mdc.p13n.Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "actionsKey").then(function(aChanges){
+                        return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "actionsKey").then(function(aChanges){
                             return aChanges;
                         });
                     },
