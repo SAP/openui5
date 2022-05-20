@@ -1413,7 +1413,7 @@ sap.ui.define([
 
 		DynamicDateRangeInput.prototype.onfocusin = function (oEvent) {
 			Input.prototype.onfocusin.apply(this, arguments);
-			if (this._getControlOrigin()._oPopup && this._getControlOrigin()._oPopup.isOpen()) {
+			if (this._getControlOrigin()._oPopup && this._getControlOrigin()._oPopup.isOpen() && !this.isMobileDevice()) {
 				this._getControlOrigin()._closePopup();
 			}
 		};
