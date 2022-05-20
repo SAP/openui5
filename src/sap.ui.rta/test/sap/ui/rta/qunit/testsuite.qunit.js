@@ -638,10 +638,16 @@ sap.ui.define([
 			},
 
 			// Toolbar
-			"toolbar/Base": {
+			"toolbar/translation/Translation": {
 				group: "Toolbar",
 				coverage: {
-					only: ["sap/ui/rta/toolbar/Base"]
+					only: ["sap/ui/rta/toolbar/translation/Translation", "sap/ui/rta/toolbar/Adaptation"]
+				}
+			},
+			"toolbar/versioning/Versioning": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/versioning/Versioning", "sap/ui/rta/toolbar/Adaptation"]
 				}
 			},
 			"toolbar/Adaptation": {
@@ -650,16 +656,10 @@ sap.ui.define([
 					only: ["sap/ui/rta/toolbar/Adaptation"]
 				}
 			},
-			"toolbar/OverflowToolbarButton": {
+			"toolbar/Base": {
 				group: "Toolbar",
 				coverage: {
-					only: ["sap/ui/rta/toolbar/OverflowToolbarButton"]
-				}
-			},
-			"toolbar/translation/Translation": {
-				group: "Toolbar",
-				coverage: {
-					only: ["sap/ui/rta/toolbar/translation/Translation"]
+					only: ["sap/ui/rta/toolbar/Base"]
 				}
 			},
 			"toolbar/Fiori": {
@@ -672,6 +672,12 @@ sap.ui.define([
 				group: "Toolbar",
 				coverage: {
 					only: ["sap/ui/rta/toolbar/FioriLike"]
+				}
+			},
+			"toolbar/OverflowToolbarButton": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/OverflowToolbarButton"]
 				}
 			},
 

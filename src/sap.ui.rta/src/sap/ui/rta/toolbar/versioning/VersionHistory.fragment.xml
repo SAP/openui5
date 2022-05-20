@@ -2,13 +2,14 @@
         xmlns="sap.m"
         xmlns:core="sap.ui.core" >
     <Popover
+            id="popover"
             class="sapUiRtaVersionHistory"
             showHeader="false"
             placement="Bottom" >
         <List
                 id="versionList"
                 class="sapUiRtaVersionsList"
-                visible="{path: 'versions>/versions/length', formatter: '.formatVersionTableVisibility'}"
+                visible="{= ${versions>/versions/length} > 0}"
                 items="{path: 'versions>/versions', groupHeaderFactory: '.getGroupHeaderFactory'}" >
             <FeedListItem
                 text="{parts: [{path: 'versions>title'}, {path: 'versions>type'}], formatter: '.formatVersionTitle'}"
@@ -20,7 +21,7 @@
                 highlightText="{path: 'versions>type', formatter: '.formatHighlightText'}"
                 showIcon="false" />
         </List>
-        <List>
+        <List id="originalVersionList">
             <FeedListItem
                 text="{i18n>TIT_ORIGINAL_APP}"
                 type="Active"

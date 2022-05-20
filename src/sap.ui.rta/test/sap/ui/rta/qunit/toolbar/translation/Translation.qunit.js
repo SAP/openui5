@@ -37,7 +37,7 @@ sap.ui.define([
 		return sap.ui.getCore().byId(oToolbar.getId() + "_upload_translation_fragment--" + sId);
 	}
 
-	QUnit.module("Given within the Translation", {
+	QUnit.module("Given a Toolbar with a translation extension", {
 		beforeEach: function () {
 			this.oToolbar = new Adaptation({
 				textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
@@ -78,289 +78,287 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.module("a download dialog", {}, function () {
-			QUnit.module("is created", {
-				beforeEach: function () {
-					sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(false);
-					this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
-					return this.oToolbar._pFragmentLoaded;
-				},
-				afterEach: function () {
-					this.oToolbar.destroy();
-					sandbox.restore();
-				}
-			}, function () {
-				QUnit.test("and no dirty changes exist then the dialog is created and opened", function (assert) {
-					return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
-						assert.equal(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
-						assert.equal(oDialog.isOpen(), true, "the dialog is opened");
-					}.bind(this));
-				});
-
-				QUnit.test("and opened a second time", function (assert) {
-					return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
-						// simulate user selection
-						oDialog.getModel("translation").setProperty("/targetLanguage", "de");
-						oDialog.close();
-					}).then(this.oTranslation.openDownloadTranslationDialog.bind(this.oTranslation))
-						.then(function (oDialog) {
-							assert.equal(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded not again");
-							assert.equal(oDialog.isOpen(), true, "the dialog is opened");
-							assert.deepEqual(oDialog.getModel("translation").getProperty("/targetLanguage"), "", "the data was reset");
-						}.bind(this));
-				});
+		QUnit.module("a download dialog is created", {
+			beforeEach: function () {
+				sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(false);
+				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
+				return this.oToolbar._pFragmentLoaded;
+			},
+			afterEach: function () {
+				this.oToolbar.destroy();
+				sandbox.restore();
+			}
+		}, function () {
+			QUnit.test("and no dirty changes exist then the dialog is created and opened", function (assert) {
+				return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
+					assert.equal(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
+					assert.equal(oDialog.isOpen(), true, "the dialog is opened");
+				}.bind(this));
 			});
 
-			QUnit.module("is opened", {}, function () {
-				QUnit.test("when a target language is selected and download pressed", function (assert) {
-					// finish after the press event handling
-					var done = assert.async();
-					sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(false);
-
-					return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
-						var oStubbedXml = "<xml></xml>";
-
-						var oSaveChangesStub = sandbox.stub(this.oToolbar, "fireSave");
-						var oGetTextsStub = sandbox.stub(TranslationAPI, "getTexts").resolves(oStubbedXml);
-						var oSaveFileStub = sandbox.stub(FileUtil, "save");
-
-						sandbox.stub(oDialog, "close").callsFake(function () {
-							assert.equal(oSaveChangesStub.callCount, 0, "no changes were saved");
-							assert.equal(oGetTextsStub.callCount, 1, "the texts were collected");
-							var oGetTextsArgs = oGetTextsStub.getCall(0).args[0];
-							assert.equal(oGetTextsArgs.layer, Layer.CUSTOMER, "the layer is set correct");
-							assert.equal(oGetTextsArgs.sourceLanguage, "en-EN", "the source language is set correct");
-							assert.equal(oGetTextsArgs.targetLanguage, "de-DE", "the target language is set correct");
-							assert.equal(oSaveFileStub.callCount, 1, "a file was saved");
-							var aSaveFileArgs = oSaveFileStub.getCall(0).args;
-							assert.equal(aSaveFileArgs[0], oStubbedXml, "the file is passed correct");
-							assert.equal(aSaveFileArgs[1], "en-EN_de-DE_TranslationXLIFF", "the file name is set correct");
-							assert.equal(aSaveFileArgs[2], "xml", "the file type is set correct");
-							assert.equal(aSaveFileArgs[3], "application/xml", "a content type is set correct");
-							done();
-						});
-						// simulate user input
-						oDialog.getModel("translation").setProperty("/targetLanguage", "de-DE");
-						var oDownloadButton = getDownloadDialogControl(this.oToolbar, "downloadTranslation");
-						oDownloadButton.firePress();
+			QUnit.test("and opened a second time", function (assert) {
+				return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
+					// simulate user selection
+					oDialog.getModel("translation").setProperty("/targetLanguage", "de");
+					oDialog.close();
+				}).then(this.oTranslation.openDownloadTranslationDialog.bind(this.oTranslation))
+					.then(function (oDialog) {
+						assert.equal(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded not again");
+						assert.equal(oDialog.isOpen(), true, "the dialog is opened");
+						assert.deepEqual(oDialog.getModel("translation").getProperty("/targetLanguage"), "", "the data was reset");
 					}.bind(this));
-				});
-				QUnit.test("when a target language is not selected and download pressed", function (assert) {
-					// finish after the error message
-					var done = assert.async();
-					sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(false);
-					assert.expect(0);
-					return this.oTranslation.openDownloadTranslationDialog().then(function () {
-						sandbox.stub(MessageBox, "error").callsFake(done);
-						var oDownloadButton = getDownloadDialogControl(this.oToolbar, "downloadTranslation");
-						oDownloadButton.firePress();
-					}.bind(this));
-				});
-				QUnit.test("and a translatable dirty change is present", function (assert) {
-					// finish after the press event handling
-					var done = assert.async();
-					sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(true);// finish after the error message
-
-					return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
-						var oMessageStrip = getDownloadDialogControl(this.oToolbar, "dirtyChangesExistsMessage");
-						assert.equal(oMessageStrip.getVisible(), true, "then a message is shown");
-
-						var oStubbedXml = "<xml></xml>";
-						var oGetTextsStub = sandbox.stub(TranslationAPI, "getTexts").resolves(oStubbedXml);
-						var oSaveChangesStub = sandbox.stub(this.oToolbar, "fireSave").callsFake(function (mParameters) {
-							mParameters.callback();
-						});
-						var oSaveFileStub = sandbox.stub(FileUtil, "save");
-
-						sandbox.stub(oDialog, "close").callsFake(function () {
-							assert.equal(oSaveChangesStub.callCount, 1, "the changes were saved");
-							assert.ok(oSaveChangesStub.calledBefore(oSaveFileStub), "the files were saved before the texts were requested");
-							assert.equal(oGetTextsStub.callCount, 1, "the texts were collected");
-							var oGetTextsArgs = oGetTextsStub.getCall(0).args[0];
-							assert.equal(oGetTextsArgs.layer, Layer.CUSTOMER, "the layer is set correct");
-							assert.equal(oGetTextsArgs.sourceLanguage, "en-EN", "the source language is set correct");
-							assert.equal(oGetTextsArgs.targetLanguage, "de-DE", "the target language is set correct");
-							assert.equal(oSaveFileStub.callCount, 1, "a file was saved");
-							var aSaveFileArgs = oSaveFileStub.getCall(0).args;
-							assert.equal(aSaveFileArgs[0], oStubbedXml, "the file is passed correct");
-							assert.equal(aSaveFileArgs[1], "en-EN_de-DE_TranslationXLIFF", "the file name is set correct");
-							assert.equal(aSaveFileArgs[2], "xml", "the file type is set correct");
-							assert.equal(aSaveFileArgs[3], "application/xml", "a content type is set correct");
-							done();
-						});
-
-						// simulate user input
-						oDialog.getModel("translation").setProperty("/targetLanguage", "de-DE");
-						var oDownloadButton = getDownloadDialogControl(this.oToolbar, "downloadTranslation");
-						oDownloadButton.firePress();
-					}.bind(this));
-				});
-
-				QUnit.test("and a translatable dirty change is present when the cancel button is pressed", function (assert) {
-					// finish after the press event handling
-					var done = assert.async();
-					sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(true);// finish after the error message
-
-					return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
-						var oMessageStrip = getDownloadDialogControl(this.oToolbar, "dirtyChangesExistsMessage");
-						assert.equal(oMessageStrip.getVisible(), true, "then a message is shown");
-
-						var oGetTextsStub = sandbox.stub(TranslationAPI, "getTexts");
-						var oSaveChangesStub = sandbox.stub(this.oToolbar, "fireSave");
-						var oSaveFileStub = sandbox.stub(FileUtil, "save");
-
-						sandbox.stub(oDialog, "close").callsFake(function () {
-							assert.equal(oSaveChangesStub.callCount, 0, "no changes were saved");
-							assert.equal(oGetTextsStub.callCount, 0, "no texts were collected");
-							assert.equal(oSaveFileStub.callCount, 0, "no file was saved");
-							done();
-						});
-
-						// simulate user input
-						oDialog.getModel("translation").setProperty("/targetLanguage", "de-DE");
-						var oCancelDownloadButton = getDownloadDialogControl(this.oToolbar, "cancelDownloadTranslation");
-						oCancelDownloadButton.firePress();
-					}.bind(this));
-				});
-
-				QUnit.test("Given a dialog is open when a file is selected, download is pressed and an error occurs", function (assert) {
-					// finish after the press event handling
-					var done = assert.async();
-					assert.expect(0);
-					sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(false);
-
-					return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
-						var oStubbedXml = "<xml></xml>";
-
-						sandbox.stub(this.oToolbar, "fireSave");
-						sandbox.stub(TranslationAPI, "getTexts").resolves(oStubbedXml);
-						sandbox.stub(FileUtil, "save").throws(new Error("all broken"));
-
-						sandbox.stub(MessageBox, "error").callsFake(done);
-
-						// simulate user input
-						oDialog.getModel("translation").setProperty("/targetLanguage", "de-DE");
-						var oDownloadButton = getDownloadDialogControl(this.oToolbar, "downloadTranslation");
-						oDownloadButton.firePress();
-					}.bind(this));
-				});
 			});
 		});
 
-		QUnit.module("a upload dialog", {}, function () {
-			QUnit.module("is created", {
-				beforeEach: function () {
-					this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
-				}
-			}, function () {
-				QUnit.test("for the first time", function (assert) {
-					return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
-						assert.equal(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
-						assert.equal(oDialog.isOpen(), true, "the dialog is opened");
-						assert.equal(getUploadDialogControl(this.oToolbar, "uploadTranslation").getEnabled(), false, "the upload button is disabled");
-					}.bind(this));
-				});
+		QUnit.module("a download dialog is opened", {}, function () {
+			QUnit.test("when a target language is selected and download pressed", function (assert) {
+				// finish after the press event handling
+				var done = assert.async();
+				sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(false);
 
-				QUnit.test("and opened a second time", function (assert) {
-					return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
-						return oDialog.close();
-					}).then(this.oTranslation.openUploadTranslationDialog.bind(this.oTranslation))
-						.then(function (oDialog) {
-							assert.equal(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded only once");
-							assert.equal(oDialog.isOpen(), true, "the dialog is opened");
-						}.bind(this));
-				});
+				return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
+					var oStubbedXml = "<xml></xml>";
+
+					var oSaveChangesStub = sandbox.stub(this.oToolbar, "fireSave");
+					var oGetTextsStub = sandbox.stub(TranslationAPI, "getTexts").resolves(oStubbedXml);
+					var oSaveFileStub = sandbox.stub(FileUtil, "save");
+
+					sandbox.stub(oDialog, "close").callsFake(function () {
+						assert.equal(oSaveChangesStub.callCount, 0, "no changes were saved");
+						assert.equal(oGetTextsStub.callCount, 1, "the texts were collected");
+						var oGetTextsArgs = oGetTextsStub.getCall(0).args[0];
+						assert.equal(oGetTextsArgs.layer, Layer.CUSTOMER, "the layer is set correct");
+						assert.equal(oGetTextsArgs.sourceLanguage, "en-EN", "the source language is set correct");
+						assert.equal(oGetTextsArgs.targetLanguage, "de-DE", "the target language is set correct");
+						assert.equal(oSaveFileStub.callCount, 1, "a file was saved");
+						var aSaveFileArgs = oSaveFileStub.getCall(0).args;
+						assert.equal(aSaveFileArgs[0], oStubbedXml, "the file is passed correct");
+						assert.equal(aSaveFileArgs[1], "en-EN_de-DE_TranslationXLIFF", "the file name is set correct");
+						assert.equal(aSaveFileArgs[2], "xml", "the file type is set correct");
+						assert.equal(aSaveFileArgs[3], "application/xml", "a content type is set correct");
+						done();
+					});
+					// simulate user input
+					oDialog.getModel("translation").setProperty("/targetLanguage", "de-DE");
+					var oDownloadButton = getDownloadDialogControl(this.oToolbar, "downloadTranslation");
+					oDownloadButton.firePress();
+				}.bind(this));
 			});
 
-			QUnit.module("is opened", {}, function () {
-				QUnit.test("when a file is selected and upload is pressed", function (assert) {
-					// finish after the press event handling
-					var done = assert.async();
+			QUnit.test("when a target language is not selected and download pressed", function (assert) {
+				// finish after the error message
+				var done = assert.async();
+				sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(false);
+				assert.expect(0);
+				return this.oTranslation.openDownloadTranslationDialog().then(function () {
+					sandbox.stub(MessageBox, "error").callsFake(done);
+					var oDownloadButton = getDownloadDialogControl(this.oToolbar, "downloadTranslation");
+					oDownloadButton.firePress();
+				}.bind(this));
+			});
 
-					return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
-						var oModel = oDialog.getModel("translation");
+			QUnit.test("and a translatable dirty change is present", function (assert) {
+				// finish after the press event handling
+				var done = assert.async();
+				sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(true);// finish after the error message
 
-						// simulate user file selection
-						var oFileBlob = new Blob([JSON.stringify('<xml />', null, 2)], {type: 'application/xml'});
-						oModel.setProperty("/filePath", "C:\\myFolder\\en-EN_de-DE_TranslationXLIFF.xml");
-						oModel.setProperty("/file", oFileBlob);
-						var oUploadButton = getUploadDialogControl(this.oToolbar, "uploadTranslation");
-						assert.equal(oUploadButton.getEnabled(), true, "the upload button is enabled");
+				return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
+					var oMessageStrip = getDownloadDialogControl(this.oToolbar, "dirtyChangesExistsMessage");
+					assert.equal(oMessageStrip.getVisible(), true, "then a message is shown");
 
-						var oPostTranslationTextsStub = sandbox.stub(TranslationAPI, "uploadTranslationTexts").resolves();
-						sandbox.stub(oDialog, "close").callsFake(function () {
-							assert.equal(oPostTranslationTextsStub.callCount, 1, "the file was uploaded");
-							done();
-						});
+					var oStubbedXml = "<xml></xml>";
+					var oGetTextsStub = sandbox.stub(TranslationAPI, "getTexts").resolves(oStubbedXml);
+					var oSaveChangesStub = sandbox.stub(this.oToolbar, "fireSave").callsFake(function (mParameters) {
+						mParameters.callback();
+					});
+					var oSaveFileStub = sandbox.stub(FileUtil, "save");
 
-						oUploadButton.firePress();
+					sandbox.stub(oDialog, "close").callsFake(function () {
+						assert.equal(oSaveChangesStub.callCount, 1, "the changes were saved");
+						assert.ok(oSaveChangesStub.calledBefore(oSaveFileStub), "the files were saved before the texts were requested");
+						assert.equal(oGetTextsStub.callCount, 1, "the texts were collected");
+						var oGetTextsArgs = oGetTextsStub.getCall(0).args[0];
+						assert.equal(oGetTextsArgs.layer, Layer.CUSTOMER, "the layer is set correct");
+						assert.equal(oGetTextsArgs.sourceLanguage, "en-EN", "the source language is set correct");
+						assert.equal(oGetTextsArgs.targetLanguage, "de-DE", "the target language is set correct");
+						assert.equal(oSaveFileStub.callCount, 1, "a file was saved");
+						var aSaveFileArgs = oSaveFileStub.getCall(0).args;
+						assert.equal(aSaveFileArgs[0], oStubbedXml, "the file is passed correct");
+						assert.equal(aSaveFileArgs[1], "en-EN_de-DE_TranslationXLIFF", "the file name is set correct");
+						assert.equal(aSaveFileArgs[2], "xml", "the file type is set correct");
+						assert.equal(aSaveFileArgs[3], "application/xml", "a content type is set correct");
+						done();
+					});
+
+					// simulate user input
+					oDialog.getModel("translation").setProperty("/targetLanguage", "de-DE");
+					var oDownloadButton = getDownloadDialogControl(this.oToolbar, "downloadTranslation");
+					oDownloadButton.firePress();
+				}.bind(this));
+			});
+
+			QUnit.test("and a translatable dirty change is present when the cancel button is pressed", function (assert) {
+				// finish after the press event handling
+				var done = assert.async();
+				sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(true);// finish after the error message
+
+				return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
+					var oMessageStrip = getDownloadDialogControl(this.oToolbar, "dirtyChangesExistsMessage");
+					assert.equal(oMessageStrip.getVisible(), true, "then a message is shown");
+
+					var oGetTextsStub = sandbox.stub(TranslationAPI, "getTexts");
+					var oSaveChangesStub = sandbox.stub(this.oToolbar, "fireSave");
+					var oSaveFileStub = sandbox.stub(FileUtil, "save");
+
+					sandbox.stub(oDialog, "close").callsFake(function () {
+						assert.equal(oSaveChangesStub.callCount, 0, "no changes were saved");
+						assert.equal(oGetTextsStub.callCount, 0, "no texts were collected");
+						assert.equal(oSaveFileStub.callCount, 0, "no file was saved");
+						done();
+					});
+
+					// simulate user input
+					oDialog.getModel("translation").setProperty("/targetLanguage", "de-DE");
+					var oCancelDownloadButton = getDownloadDialogControl(this.oToolbar, "cancelDownloadTranslation");
+					oCancelDownloadButton.firePress();
+				}.bind(this));
+			});
+
+			QUnit.test("Given a dialog is open when a file is selected, download is pressed and an error occurs", function (assert) {
+				// finish after the press event handling
+				var done = assert.async();
+				assert.expect(0);
+				sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(false);
+
+				return this.oTranslation.openDownloadTranslationDialog().then(function (oDialog) {
+					var oStubbedXml = "<xml></xml>";
+
+					sandbox.stub(this.oToolbar, "fireSave");
+					sandbox.stub(TranslationAPI, "getTexts").resolves(oStubbedXml);
+					sandbox.stub(FileUtil, "save").throws(new Error("all broken"));
+
+					sandbox.stub(MessageBox, "error").callsFake(done);
+
+					// simulate user input
+					oDialog.getModel("translation").setProperty("/targetLanguage", "de-DE");
+					var oDownloadButton = getDownloadDialogControl(this.oToolbar, "downloadTranslation");
+					oDownloadButton.firePress();
+				}.bind(this));
+			});
+		});
+
+		QUnit.module("a upload dialog is created", {
+			beforeEach: function () {
+				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
+			}
+		}, function () {
+			QUnit.test("for the first time", function (assert) {
+				return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
+					assert.equal(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
+					assert.equal(oDialog.isOpen(), true, "the dialog is opened");
+					assert.equal(getUploadDialogControl(this.oToolbar, "uploadTranslation").getEnabled(), false, "the upload button is disabled");
+				}.bind(this));
+			});
+
+			QUnit.test("and opened a second time", function (assert) {
+				return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
+					return oDialog.close();
+				}).then(this.oTranslation.openUploadTranslationDialog.bind(this.oTranslation))
+					.then(function (oDialog) {
+						assert.equal(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded only once");
+						assert.equal(oDialog.isOpen(), true, "the dialog is opened");
 					}.bind(this));
-				});
+			});
+		});
 
-				QUnit.test("when the cancel button is pressed", function (assert) {
-					// finish after the press event handling
-					var done = assert.async();
+		QUnit.module("a upload dialog is opened", {}, function () {
+			QUnit.test("when a file is selected and upload is pressed", function (assert) {
+				// finish after the press event handling
+				var done = assert.async();
 
-					return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
-						var oModel = oDialog.getModel("translation");
+				return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
+					var oModel = oDialog.getModel("translation");
 
-						// simulate user file selection
-						var oFileBlob = new Blob([JSON.stringify('<xml />', null, 2)], {type: 'application/xml'});
-						oModel.setProperty("/filePath", "C:\\myFolder\\en-EN_de-DE_TranslationXLIFF.xml");
-						oModel.setProperty("/file", oFileBlob);
+					// simulate user file selection
+					var oFileBlob = new Blob([JSON.stringify('<xml />', null, 2)], {type: 'application/xml'});
+					oModel.setProperty("/filePath", "C:\\myFolder\\en-EN_de-DE_TranslationXLIFF.xml");
+					oModel.setProperty("/file", oFileBlob);
+					var oUploadButton = getUploadDialogControl(this.oToolbar, "uploadTranslation");
+					assert.equal(oUploadButton.getEnabled(), true, "the upload button is enabled");
 
-						var oPostTranslationTextsStub = sandbox.stub(TranslationAPI, "uploadTranslationTexts").resolves();
-						sandbox.stub(oDialog, "close").callsFake(function () {
-							assert.equal(oPostTranslationTextsStub.callCount, 0, "no file was uploaded");
-							done();
-						});
+					var oPostTranslationTextsStub = sandbox.stub(TranslationAPI, "uploadTranslationTexts").resolves();
+					sandbox.stub(oDialog, "close").callsFake(function () {
+						assert.equal(oPostTranslationTextsStub.callCount, 1, "the file was uploaded");
+						done();
+					});
 
-						var oCancelUploadButton = getUploadDialogControl(this.oToolbar, "cancelTranslationUpload");
-						oCancelUploadButton.firePress();
-					}.bind(this));
-				});
+					oUploadButton.firePress();
+				}.bind(this));
+			});
 
-				QUnit.test("with a selected file when the file entry is removed", function (assert) {
-					return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
-						var oModel = oDialog.getModel("translation");
+			QUnit.test("when the cancel button is pressed", function (assert) {
+				// finish after the press event handling
+				var done = assert.async();
 
-						// simulate user file selection
-						var oFileBlob = new Blob([JSON.stringify('<xml />', null, 2)], {type: 'application/xml'});
-						oModel.setProperty("/filePath", "C:\\myFolder\\en-EN_de-DE_TranslationXLIFF.xml");
-						oModel.setProperty("/file", oFileBlob);
+				return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
+					var oModel = oDialog.getModel("translation");
 
-						var oUploadButton = getUploadDialogControl(this.oToolbar, "uploadTranslation");
-						assert.equal(oUploadButton.getEnabled(), true, "the upload button is enabled");
+					// simulate user file selection
+					var oFileBlob = new Blob([JSON.stringify('<xml />', null, 2)], {type: 'application/xml'});
+					oModel.setProperty("/filePath", "C:\\myFolder\\en-EN_de-DE_TranslationXLIFF.xml");
+					oModel.setProperty("/file", oFileBlob);
 
-						oModel.setProperty("/filePath", "");
-						oModel.setProperty("/file", undefined);
+					var oPostTranslationTextsStub = sandbox.stub(TranslationAPI, "uploadTranslationTexts").resolves();
+					sandbox.stub(oDialog, "close").callsFake(function () {
+						assert.equal(oPostTranslationTextsStub.callCount, 0, "no file was uploaded");
+						done();
+					});
 
-						assert.equal(oUploadButton.getEnabled(), false, "the upload button is disabled");
-					}.bind(this));
-				});
+					var oCancelUploadButton = getUploadDialogControl(this.oToolbar, "cancelTranslationUpload");
+					oCancelUploadButton.firePress();
+				}.bind(this));
+			});
 
-				QUnit.test("when a file is selected, upload pressed and an error occurs", function (assert) {
-					// finish after the press event handling
-					var done = assert.async();
-					assert.expect(0);
+			QUnit.test("with a selected file when the file entry is removed", function (assert) {
+				return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
+					var oModel = oDialog.getModel("translation");
 
-					return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
-						var oModel = oDialog.getModel("translation");
+					// simulate user file selection
+					var oFileBlob = new Blob([JSON.stringify('<xml />', null, 2)], {type: 'application/xml'});
+					oModel.setProperty("/filePath", "C:\\myFolder\\en-EN_de-DE_TranslationXLIFF.xml");
+					oModel.setProperty("/file", oFileBlob);
 
-						// simulate user file selection
-						var oFileBlob = new Blob([JSON.stringify('<xml />', null, 2)], {type: 'application/xml'});
-						oModel.setProperty("/filePath", "C:\\myFolder\\en-EN_de-DE_TranslationXLIFF.xml");
-						oModel.setProperty("/file", oFileBlob);
+					var oUploadButton = getUploadDialogControl(this.oToolbar, "uploadTranslation");
+					assert.equal(oUploadButton.getEnabled(), true, "the upload button is enabled");
 
-						sandbox.stub(MessageBox, "error").callsFake(done);
-						sandbox.stub(TranslationAPI, "uploadTranslationTexts").callsFake(function () {
-							return Promise.reject("all broken");
-						});
+					oModel.setProperty("/filePath", "");
+					oModel.setProperty("/file", undefined);
 
-						var oUploadButton = getUploadDialogControl(this.oToolbar, "uploadTranslation");
-						oUploadButton.firePress();
-					}.bind(this));
-				});
+					assert.equal(oUploadButton.getEnabled(), false, "the upload button is disabled");
+				}.bind(this));
+			});
+
+			QUnit.test("when a file is selected, upload pressed and an error occurs", function (assert) {
+				// finish after the press event handling
+				var done = assert.async();
+				assert.expect(0);
+
+				return this.oTranslation.openUploadTranslationDialog().then(function (oDialog) {
+					var oModel = oDialog.getModel("translation");
+
+					// simulate user file selection
+					var oFileBlob = new Blob([JSON.stringify('<xml />', null, 2)], {type: 'application/xml'});
+					oModel.setProperty("/filePath", "C:\\myFolder\\en-EN_de-DE_TranslationXLIFF.xml");
+					oModel.setProperty("/file", oFileBlob);
+
+					sandbox.stub(MessageBox, "error").callsFake(done);
+					sandbox.stub(TranslationAPI, "uploadTranslationTexts").callsFake(function () {
+						return Promise.reject("all broken");
+					});
+
+					var oUploadButton = getUploadDialogControl(this.oToolbar, "uploadTranslation");
+					oUploadButton.firePress();
+				}.bind(this));
 			});
 		});
 	});

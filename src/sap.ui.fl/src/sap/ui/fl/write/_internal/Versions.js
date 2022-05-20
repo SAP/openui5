@@ -50,16 +50,16 @@ sap.ui.define([
 
 				aVersions.forEach(function (oVersion) {
 					if (oVersion.version === Version.Number.Draft) {
-						oVersion.type = "draft";
+						oVersion.type = Version.Type.Draft;
 						oVersion.isPublished = false;
 						aDraftFilenames = oVersion.filenames;
 					} else {
 						if (sActiveVersion === Version.Number.Original) {
 							// no active version found yet; the first non-draft version is always the active version
-							oVersion.type = "active";
+							oVersion.type = Version.Type.Active;
 							sActiveVersion = oVersion.version;
 						} else {
-							oVersion.type = "inactive";
+							oVersion.type = Version.Type.Inactive;
 						}
 						//If the current selected version is not yet published, enable the publish button
 						//Original versions are not part of back end response, so publish button is not enabled by default value
@@ -107,7 +107,7 @@ sap.ui.define([
 
 					// add draft
 					if (!_doesDraftExistInVersions(aVersions) && bDraftAvailable) {
-						aVersions.splice(0, 0, {version: Version.Number.Draft, type: "draft", filenames: [], isPublished: false});
+						aVersions.splice(0, 0, {version: Version.Number.Draft, type: Version.Type.Draft, filenames: [], isPublished: false});
 					}
 
 					// remove draft
@@ -290,9 +290,9 @@ sap.ui.define([
 		return Storage.versions.activate(mPropertyBag)
 		.then(function (oVersion) {
 			aVersions.forEach(function (oVersionEntry) {
-				oVersionEntry.type = "inactive";
+				oVersionEntry.type = Version.Type.Inactive;
 			});
-			oVersion.type = "active";
+			oVersion.type = Version.Type.Active;
 			oVersion.isPublished = false;
 			if (bDraftExists) {
 				aVersions.shift();

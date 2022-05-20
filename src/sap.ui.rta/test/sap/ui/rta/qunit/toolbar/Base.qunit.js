@@ -150,7 +150,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("add / get Extension", function(assert) {
+		QUnit.test("get Extension", function(assert) {
 			var Extension1 = ManagedObject.extend("foo.bar", {
 				metadata: {
 					properties: {
@@ -170,17 +170,14 @@ sap.ui.define([
 				}
 			});
 
-			var oExtension1 = this.oToolbar.addExtension("foo.bar", Extension1);
+			var oExtension1 = this.oToolbar.getExtension("foo.bar", Extension1);
 			assert.strictEqual(oExtension1.getMetadata().getName(), "foo.bar", "the correct extension was added");
-			assert.deepEqual(oExtension1, this.oToolbar.getExtension("foo.bar"), "the add and get function return the same value");
 
-			var oNewExtension = this.oToolbar.addExtension("foo.bar", Extension2);
+			var oNewExtension = this.oToolbar.getExtension("foo.bar", Extension2);
 			assert.strictEqual(oNewExtension.getMetadata().getName(), "foo.bar", "still the same extension");
-			assert.deepEqual(oExtension1, this.oToolbar.getExtension("foo.bar"), "the toolbar was not replaced as the same name was used");
 
-			var oExtension2 = this.oToolbar.addExtension("foo.bar.foobar", Extension2);
+			var oExtension2 = this.oToolbar.getExtension("foo.bar.foobar", Extension2);
 			assert.strictEqual(oExtension2.getMetadata().getName(), "foo.bar.foobar", "the second extension was added");
-			assert.deepEqual(oExtension2, this.oToolbar.getExtension("foo.bar.foobar"), "the toolbar was not replaced as the same name was used");
 
 			this.oToolbar.destroy();
 			assert.ok(oExtension1.isDestroyed(), true);

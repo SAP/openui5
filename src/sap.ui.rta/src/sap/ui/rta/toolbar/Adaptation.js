@@ -3,33 +3,23 @@
  */
 
 sap.ui.define([
-	"sap/m/GroupHeaderListItem",
-	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/library",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/rta/Utils",
 	"sap/ui/rta/toolbar/translation/Translation",
+	"sap/ui/rta/toolbar/versioning/Versioning",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
-	"sap/ui/model/Sorter",
 	"sap/ui/Device"
 ], function(
-	GroupHeaderListItem,
-	DateFormat,
 	Fragment,
-	coreLibrary,
 	Version,
-	Utils,
 	Translation,
+	Versioning,
 	AppVariantFeature,
 	Base,
-	Sorter,
 	Device
 ) {
 	"use strict";
-
-	var MessageType = coreLibrary.MessageType;
 
 	/**
 	 * Constructor for a new sap.ui.rta.toolbar.Adaptation control
@@ -80,9 +70,6 @@ sap.ui.define([
 
 	var DEVICE_SET = "sapUiRtaToolbar";
 
-	var DRAFT_ACCENT_COLOR = "sapUiRtaDraftVersionAccent";
-	var ACTIVE_ACCENT_COLOR = "sapUiRtaActiveVersionAccent";
-
 	Adaptation.prototype.init = function() {
 		this._pFragmentLoaded = Base.prototype.init.apply(this, arguments).then(function() {
 			if (!Device.media.hasRangeSet(DEVICE_SET)) {
@@ -116,169 +103,23 @@ sap.ui.define([
 	}
 
 	Adaptation.prototype.formatPublishVersionVisibility = function (bPublishVisible, bVersioningEnabled, sDisplayedVersion, sModeSwitcher) {
-		return bPublishVisible && bVersioningEnabled && sDisplayedVersion !== Version.Number.Draft && sModeSwitcher === "adaptation";
+		return this.getExtension("versioning", Versioning).formatPublishVersionVisibility(bPublishVisible, bVersioningEnabled, sDisplayedVersion, sModeSwitcher);
 	};
 
-
 	Adaptation.prototype.formatDiscardDraftVisible = function (sDisplayedVersion, bVersioningEnabled, sModeSwitcher) {
-		return sDisplayedVersion === Version.Number.Draft && bVersioningEnabled && sModeSwitcher === "adaptation";
+		return this.getExtension("versioning", Versioning).formatDiscardDraftVisible(sDisplayedVersion, bVersioningEnabled, sModeSwitcher);
 	};
 
 	Adaptation.prototype.formatVersionButtonText = function (aVersions, sDisplayedVersion) {
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		var sText = "";
-		var sType = "Active";
-		aVersions = aVersions || [];
-
-		if (sDisplayedVersion === undefined || sDisplayedVersion === Version.Number.Original) {
-			sText = oTextResources.getText("TIT_ORIGINAL_APP");
-			sType = "inactive";
-			if (aVersions.length === 0 || (aVersions.length === 1 && aVersions[0].type === "draft")) {
-				sType = "active";
-			}
-		} else {
-			var oDisplayedVersion = aVersions.find(function (oVersion) {
-				return oVersion.version === sDisplayedVersion;
-			});
-			if (oDisplayedVersion) {
-				sType = oDisplayedVersion.type;
-				if (sDisplayedVersion === Version.Number.Draft) {
-					sText = oTextResources.getText("TIT_DRAFT");
-				} else {
-					sText = oDisplayedVersion.title || oTextResources.getText("TIT_VERSION_1");
-				}
-			}
-		}
-
-		this.setVersionButtonAccentColor(sType);
-		return sText;
+		return this.getExtension("versioning", Versioning).formatVersionButtonText(aVersions, sDisplayedVersion);
 	};
 
-	Adaptation.prototype.formatVersionTableVisibility = function (nVersionsLength) {
-		return nVersionsLength > 0;
+	Adaptation.prototype.showVersionHistory = function(oEvent) {
+		return this.getExtension("versioning", Versioning).showVersionHistory(oEvent);
 	};
 
-	Adaptation.prototype.formatVersionTitle = function (sTitle, sType) {
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-
-		if (sType === "draft") {
-			return oTextResources.getText("TIT_DRAFT");
-		}
-
-		return sTitle || oTextResources.getText("TIT_VERSION_1");
-	};
-
-	Adaptation.prototype.formatVersionTimeStamp = function (sActivatedAtTimeStamp, sImportedAtTimeStamp) {
-		var sTimeStamp = sImportedAtTimeStamp || sActivatedAtTimeStamp;
-
-		if (!sTimeStamp) {
-			// in case of "Original App" and "Draft" no timestamp is set
-			return "";
-		}
-
-		return DateFormat.getInstance({
-			format: "yMMMdjm"
-		}).format(new Date(sTimeStamp));
-	};
-
-	Adaptation.prototype.formatHighlight = function (sType) {
-		switch (sType) {
-			case "draft":
-				return MessageType.Warning;
-			case "active":
-				return MessageType.Success;
-			default:
-				return MessageType.None;
-		}
-	};
-
-	Adaptation.prototype.formatHighlightText = function (sType) {
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		switch (sType) {
-			case "draft":
-				return oTextResources.getText("TIT_DRAFT");
-			case "active":
-				return oTextResources.getText("LBL_ACTIVE");
-			default:
-				return oTextResources.getText("LBL_INACTIVE");
-		}
-	};
-
-	function doesActiveVersionExists (aVersions) {
-		return aVersions.some(function (oVersion) {
-			return oVersion.type === "active";
-		});
-	}
-
-	Adaptation.prototype.formatOriginalAppHighlight = function (aVersions) {
-		return doesActiveVersionExists(aVersions) ? MessageType.None : MessageType.Success;
-	};
-
-	Adaptation.prototype.formatOriginalAppHighlightText = function (aVersions) {
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		return doesActiveVersionExists(aVersions) ? oTextResources.getText("LBL_INACTIVE") : oTextResources.getText("LBL_ACTIVE");
-	};
-
-	Adaptation.prototype.versionSelected = function (oEvent) {
-		var oVersionsBindingContext = oEvent.getSource().getBindingContext("versions");
-		var sVersion = Version.Number.Original;
-
-		if (oVersionsBindingContext) {
-			// the original Version does not have a version binding Context
-			sVersion = oVersionsBindingContext.getProperty("version");
-		}
-
-		this.fireEvent("switchVersion", {version: sVersion});
-	};
-
-	Adaptation.prototype.showVersionHistory = function (oEvent) {
-		var oVersionButton = oEvent.getSource();
-
-		if (!this.oVersionDialogPromise) {
-			this.oVersionDialogPromise = Fragment.load({
-				name: "sap.ui.rta.toolbar.VersionHistory",
-				id: this.getId() + "_fragment--sapUiRta_versionHistoryDialog",
-				controller: {
-					formatVersionTitle: this.formatVersionTitle.bind(this),
-					formatVersionTimeStamp: this.formatVersionTimeStamp.bind(this),
-					formatVersionTableVisibility: this.formatVersionTableVisibility.bind(this),
-					formatHighlight: this.formatHighlight.bind(this),
-					formatHighlightText: this.formatHighlightText.bind(this),
-					formatOriginalAppHighlight: this.formatOriginalAppHighlight.bind(this),
-					formatOriginalAppHighlightText: this.formatOriginalAppHighlightText.bind(this),
-					versionSelected: this.versionSelected.bind(this),
-					getGroupHeaderFactory: this.getGroupHeaderFactory.bind(this)
-				}
-			}).then(function(oDialog) {
-				oVersionButton.addDependent(oDialog);
-				return oDialog;
-			});
-		}
-
-		return this.oVersionDialogPromise.then(function (oVersionsDialog) {
-			if (!oVersionsDialog.isOpen()) {
-				oVersionsDialog.openBy(oVersionButton);
-				if (this.getModel("controls").getProperty("/publishVisible")) {
-					var oList = this.getControl("versionHistoryDialog--versionList");
-					var oSorter = new Sorter({
-						path: "isPublished",
-						group: true
-					});
-					oList.getBinding("items").sort(oSorter);
-				}
-			} else {
-				oVersionsDialog.close();
-			}
-		}.bind(this));
-	};
-
-	Adaptation.prototype.getGroupHeaderFactory = function (oGroup) {
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		return new GroupHeaderListItem({
-			title: oGroup.key ? oTextResources.getText("TIT_VERSION_HISTORY_PUBLISHED") : oTextResources.getText("TIT_VERSION_HISTORY_UNPUBLISHED"),
-			upperCase: false,
-			visible: this.getModel("controls").getProperty("/publishVisible")
-		}).addStyleClass("sapUiRtaVersionHistoryGrouping").addStyleClass("sapUiRtaVersionHistory");
+	Adaptation.prototype._openVersionTitleDialog = function (sDisplayedVersion) {
+		return this.getExtension("versioning", Versioning).openActivateVersionDialog(sDisplayedVersion);
 	};
 
 	Adaptation.prototype.showRestore = function (bVersioningEnabled) {
@@ -379,11 +220,11 @@ sap.ui.define([
 			layer: this.getRtaInformation().flexSettings.layer,
 			selector: this.getRtaInformation().rootControl
 		};
-		this.addExtension("translation", Translation).openDownloadTranslationDialog(mPropertyBag);
+		this.getExtension("translation", Translation).openDownloadTranslationDialog(mPropertyBag);
 	}
 
 	function onOpenUploadTranslationDialog() {
-		this.addExtension("translation", Translation).openUploadTranslationDialog();
+		this.getExtension("translation", Translation).openUploadTranslationDialog();
 	}
 
 	function formatSaveAsEnabled(bGeneralSaveAsEnabled, sDisplayedVersion) {
@@ -404,76 +245,8 @@ sap.ui.define([
 		AppVariantFeature.onGetOverview(true, this.getRtaInformation().flexSettings.layer);
 	}
 
-	function resetDialog() {
-		this.getControl("versionTitleInput").setValue("");
-		this.getControl("confirmVersionTitleButton").setEnabled(false);
-		return Promise.resolve(this._oDialog);
-	}
-
-	function createDialog() {
-		return Fragment.load({
-			name: "sap.ui.rta.toolbar.VersionTitleDialog",
-			id: this.getId() + "_fragment",
-			controller: {
-				onConfirmVersioningDialog: function () {
-					var sVersionTitle = this.getControl("versionTitleInput").getValue();
-					this.fireEvent("activate", {versionTitle: sVersionTitle});
-					this._oDialog.close();
-				}.bind(this),
-				onCancelVersioningDialog: function () {
-					this._oDialog.close();
-				}.bind(this),
-				onVersionTitleLiveChange: function (oEvent) {
-					var sValue = oEvent.getParameter("value");
-					this.getControl("confirmVersionTitleButton").setEnabled(!!sValue);
-				}.bind(this)
-			}
-		}).then(function (oDialog) {
-			this._oDialog = oDialog;
-			oDialog.addStyleClass(Utils.getRtaStyleClassName());
-			this.addDependent(this._oDialog);
-		}.bind(this));
-	}
-
 	Adaptation.prototype.getControl = function(sName) {
 		return sap.ui.getCore().byId(this.getId() + "_fragment--sapUiRta_" + sName);
-	};
-
-	Adaptation.prototype._openVersionTitleDialog = function (sDisplayedVersion) {
-		var oDialogPromise;
-
-		if (this._oDialog) {
-			oDialogPromise = resetDialog.call(this);
-		} else {
-			oDialogPromise = createDialog.call(this);
-		}
-
-		return oDialogPromise.then(function () {
-			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-			var sTitle = oTextResources.getText("TIT_VERSION_TITLE_DIALOG");
-			if (sDisplayedVersion !== Version.Number.Draft) {
-				sTitle = oTextResources.getText("TIT_REACTIVATE_VERSION_TITLE_DIALOG");
-			}
-			this._oDialog.setTitle(sTitle);
-			return this._oDialog.open();
-		}.bind(this));
-	};
-
-	Adaptation.prototype.setVersionButtonAccentColor = function (sType) {
-		var oVersionButton = this.getControl("versionButton");
-		switch (sType) {
-			case "draft":
-				oVersionButton.addStyleClass(DRAFT_ACCENT_COLOR);
-				oVersionButton.removeStyleClass(ACTIVE_ACCENT_COLOR);
-				break;
-			case "active":
-				oVersionButton.addStyleClass(ACTIVE_ACCENT_COLOR);
-				oVersionButton.removeStyleClass(DRAFT_ACCENT_COLOR);
-				break;
-			default:
-				oVersionButton.removeStyleClass(ACTIVE_ACCENT_COLOR);
-				oVersionButton.removeStyleClass(DRAFT_ACCENT_COLOR);
-		}
 	};
 
 	return Adaptation;
