@@ -17,6 +17,22 @@
 		</script>
 
 		<script>
+
+        // We have to mock the current date in order to have stable visual tests as the dates used in the
+        // DynamicDateRange control are relative to the current date. The case where there are no arguments passed to
+        // the Date object returns a solid date in the past.
+
+        var oMockedDate = new Date(2015,0,1,6);
+        Date = class extends Date{
+            constructor(options) {
+                if (options) {
+                    super(options);
+                } else {
+                    super(oMockedDate);
+                }
+            }
+        };
+
 		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
 				"sap/m/App",

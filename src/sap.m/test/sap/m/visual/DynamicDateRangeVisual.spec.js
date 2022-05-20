@@ -6,28 +6,6 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.DynamicDateRange';
 	var iDefaultTimeout = 35000; // timeout for test execution in milliseconds
 
-	it("Mock now Date", function() {
-		var el = element(by.tagName('body'));
-
-		// We have to mock the current date in order to have stable tests as the dates used in the DynamicDateRange
-		// control are relative to the current date. This is done by executing a script on body level in the HTML page -
-		// the case where there are no arguments passed to the Date object returns a solid date in the past. The magic
-		// string passed to the executeScript function is the same as the lines below but without the spaces:
-
-		// var a = new Date(2015,0,1);
-		// Date = class extends Date{
-		// 	constructor(options) {
-		// 		if (options) {
-		// 			super(options);
-		// 		} else {
-		// 			super(a);
-		// 		}
-		// 	}
-		// };
-
-		browser.executeScript('var a = new Date(2015,1,1);Date = class extends Date{constructor(options) {if (options) {super(options);} else {super(a);}}};', el);
-	}, iDefaultTimeout);
-
 	it("Suggestion popover gets opened", function() {
 		var oInput = element(by.id("DDR1-input-inner")),
 			oVBox = element(by.id("Page1"));
@@ -97,14 +75,14 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select end date
 		expect(takeScreenshot(oPopover)).toLookAs("date_range_end_date_preview");
 
-		element(by.css("#DDR2-RP-popover .sapMBtnBack")).click(); // get back to suggestions popover
+		element(by.css("#DDR2-RP-popover .sapMBtnBack .sapMBtnInner")).click(); // get back to suggestions popover
 		aListItems.get(2).click(); // select "from" date option
 		expect(takeScreenshot(oPopover)).toLookAs("from_date_ui");
 
 		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select date
 		expect(takeScreenshot(oPopover)).toLookAs("from_date_ui_selected");
 
-		element(by.css("#DDR2-RP-popover .sapMBtnBack")).click(); // get back to suggestions popover
+		element(by.css("#DDR2-RP-popover .sapMBtnBack .sapMBtnInner")).click(); // get back to suggestions popover
 		aListItems.get(5).click(); // select "month" option
 		expect(takeScreenshot(oPopover)).toLookAs("month_ui");
 
@@ -112,7 +90,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 		expect(takeScreenshot(oPopover)).toLookAs("month_ui_selected");
 
-		element(by.css("#DDR2-RP-popover .sapMBtnBack")).click(); // get back to suggestions popover
+		element(by.css("#DDR2-RP-popover .sapMBtnBack .sapMBtnInner")).click(); // get back to suggestions popover
 		aListItems.get(4).click(); // select "month in year" option
 		expect(takeScreenshot(oPopover)).toLookAs("monthinyear_ui");
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
@@ -152,7 +130,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 		expect(takeScreenshot(oPopover)).toLookAs("last_x_years");
 
-		element(by.css("#DDR3-RP-popover .sapMBtnBack")).click();
+		element(by.css("#DDR3-RP-popover .sapMBtnBack .sapMBtnInner")).click();
 		aListItems.get(1).click(); // select Next X days
 		expect(takeScreenshot(oPopover)).toLookAs("next_x_days");
 
@@ -160,7 +138,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 		expect(takeScreenshot(oPopover)).toLookAs("next_x_days_max_value_exceeded");
 
-		element(by.css("#DDR3-RP-popover .sapMBtnBack")).click();
+		element(by.css("#DDR3-RP-popover .sapMBtnBack .sapMBtnInner")).click();
 		aListItems.get(2).click(); // select Today -X/+Y
 		expect(takeScreenshot(oPopover)).toLookAs("today_x_y");
 
@@ -193,30 +171,35 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 		expect(takeScreenshot(oPopover)).toLookAs("datetime_options_timepicker");
 
-		element(by.css("#DDR4-RP-popover .sapMBtnBack")).click();
+		element(by.css("#DDR4-RP-popover .sapMBtnBack .sapMBtnInner")).click();
 		aListItems.get(1).click(); // select From Date and Time
+		expect(takeScreenshot(oPopover)).toLookAs("fromdatetime_option_datepicker");
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select date and move to time part
+		expect(takeScreenshot(oPopover)).toLookAs("fromdatetime_option_timepicker");
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();// select time and close popover
-		expect(takeScreenshot(oPage)).toLookAs("fromdatetime_option_datepicker");
+		expect(takeScreenshot(oPage)).toLookAs("fromdatetime_option_selected");
 
 		oValueHelp.click();
-		aListItems.get(1).click(); // select To Date and Time
+		aListItems.get(2).click(); // select To Date and Time
+		expect(takeScreenshot(oPopover)).toLookAs("todatetime_option_datepicker");
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select date and move to time part
+		expect(takeScreenshot(oPopover)).toLookAs("todatetime_option_timepicker");
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();// select time and close popover
-		expect(takeScreenshot(oPage)).toLookAs("todatetime_option_datepicker");
+		expect(takeScreenshot(oPage)).toLookAs("todatetime_option_selected");
 
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	}, iDefaultTimeout);
+
 
 	it("pick today in GMT-12 timezone", testDateTimeWithTimezoneBtn.bind(null, "btnEtcGMT-12", "GMT-12"), iDefaultTimeout);
 	it("pick today in GMT+12 timezone", testDateTimeWithTimezoneBtn.bind(null, "btnEtcGMT12", "GMT12"), iDefaultTimeout);
