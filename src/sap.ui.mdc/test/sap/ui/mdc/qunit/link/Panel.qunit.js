@@ -1,8 +1,19 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/layout/library", "sap/ui/mdc/link/Panel", "sap/ui/mdc/link/PanelItem", "sap/ui/layout/form/SimpleForm", "sap/ui/core/Icon", "sap/ui/mdc/p13n/Engine", "sap/ui/core/Core", "sap/m/Text"
-], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, Engine, oCore, Text) {
+	"sap/ui/layout/library",
+	"sap/ui/mdc/link/Panel",
+	"sap/ui/mdc/link/PanelItem",
+	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/core/Icon",
+	"sap/ui/mdc/p13n/Engine",
+	"sap/ui/core/Core",
+	"sap/m/Text",
+	"sap/ui/mdc/Link",
+	"sap/ui/mdc/link/LinkItem",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/jquery"
+], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, Engine, oCore, Text, Link, LinkItem, JSONModel, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
@@ -382,6 +393,28 @@ sap.ui.define([
 		});
 
 		assert.equal(oPanel.getAggregation("_content").getContent()[3].getItems()[0].getVisible(), false, "personalization buttons visibility set to false");
+	});
+
+	QUnit.test("check if seperator is visible", function (assert) {
+		var oPanelItem = new PanelItem({
+			text: "PanelItem",
+			href: "#PanelItem"
+		});
+		var oText = new Text({ text: "AdditionalContentText" });
+		var oPanel = new Panel({
+			items: [ oPanelItem ],
+			additionalContent: [ oText ]
+		});
+
+		oPanel.setModel(new JSONModel({
+			metadata: jQuery.extend(true, [], [ oPanelItem ])
+		}), "$sapuimdcLink");
+
+		oPanel.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Check if seperator is visible
+		assert.ok(oPanel.getAggregation("_content").getContent()[1].getVisible(), "seperator is visible");
 	});
 
 });
