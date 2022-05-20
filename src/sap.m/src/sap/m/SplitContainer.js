@@ -8,7 +8,6 @@ sap.ui.define([
 	'sap/ui/base/DataType',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
-	'sap/m/semantic/SemanticPage',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
@@ -25,7 +24,6 @@ function(
 	DataType,
 	Control,
 	IconPool,
-	SemanticPage,
 	InvisibleText,
 	Device,
 	ManagedObject,
@@ -1802,16 +1800,10 @@ function(
 		var oReturn = oPage, aContent;
 
 		while (oReturn) {
-			if (oReturn instanceof sap.m.Page) {
+			if (oReturn.isA(["sap.m.Page", "sap.m.MessagePage", "sap.m.semantic.SemanticPage"])) {
 				return oReturn;
 			}
-			if (oReturn instanceof sap.m.MessagePage) {
-				return oReturn;
-			}
-			if (oReturn instanceof SemanticPage) {
-				return oReturn;
-			}
-			if (oReturn instanceof sap.ui.core.mvc.View) {
+			if (oReturn.isA("sap.ui.core.mvc.View")) {
 				aContent = oReturn.getContent();
 				if (aContent.length === 1) {
 					oReturn = aContent[0];

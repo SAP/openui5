@@ -137,7 +137,7 @@ sap.ui.define([
 		oSettings = oSettings || {};
 
 		//Mobile
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			return this.waitFor({
 				controlType: "sap.m.List",
 				success: function(aLists) {

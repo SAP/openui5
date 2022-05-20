@@ -236,7 +236,7 @@ sap.ui.define([
 			oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
 			oLocaleData = LocaleData.getInstance(oLocale);
 
-			if (oBinding && oBinding.getType() instanceof sap.ui.model.type.DateInterval) {
+			if (oBinding && oBinding.getType() && oBinding.getType().isA("sap.ui.model.type.DateInterval")) {
 				oBindingType = oBinding.getType();
 
 				if (oBindingType.oFormatOptions && oBindingType.oFormatOptions.format) {
@@ -545,7 +545,7 @@ sap.ui.define([
 		var oDate1, oDate2;
 		var oBinding = this.getBinding("value");
 
-		if (oBinding && oBinding.getType() instanceof sap.ui.model.type.DateInterval) {
+		if (oBinding && oBinding.getType() && oBinding.getType().isA("sap.ui.model.type.DateInterval")) {
 			//The InputBase has it's own mechanism for handling parser exception that
 			//uses sap.ui.core.message.MessageMixin and MessageManager. This mechanism
 			//is triggered once the invalid value is set to the Input. In our case this
@@ -660,7 +660,7 @@ sap.ui.define([
 		if (oDate1) {
 			oBinding = this.getBinding("value");
 
-			if (oBinding && oBinding.getType() instanceof sap.ui.model.type.DateInterval) {
+			if (oBinding && oBinding.getType() && oBinding.getType().isA("sap.ui.model.type.DateInterval")) {
 				if (oBinding.getType().oFormatOptions && oBinding.getType().oFormatOptions.source && oBinding.getType().oFormatOptions.source.pattern === "timestamp") {
 					sValue = oBinding.getType().formatValue([_denormalizeDateValue(oDateValue), _denormalizeDateValue(oSecondDateValue)], "string");
 				} else {

@@ -303,14 +303,14 @@ sap.ui.define([
 
 		oIconTabBar = oIconTabHeader.getParent();
 
-		if (!(oIconTabBar instanceof sap.m.IconTabBar)) {
+		if (!(oIconTabBar && oIconTabBar.isA("sap.m.IconTabBar"))) {
 			oIconTabHeader.invalidate();
 			return;
 		}
 
 		oObjectHeader = oIconTabBar.getParent();
 
-		if (oObjectHeader instanceof sap.m.ObjectHeader) {
+		if (oObjectHeader && oObjectHeader.isA("sap.m.ObjectHeader")) {
 			// invalidate the object header to re-render IconTabBar content and header
 			oObjectHeader.invalidate();
 		} else {
@@ -336,7 +336,7 @@ sap.ui.define([
 				Item.prototype.setProperty.call(this, sPropertyName, oValue, true);
 				if (!bSuppressInvalidate) {
 					var oIconTabHeader = this.getParent();
-					if (oIconTabHeader instanceof sap.m.IconTabHeader) {
+					if (oIconTabHeader && oIconTabHeader.isA("sap.m.IconTabHeader")) {
 						oIconTabHeader.invalidate();
 					}
 				}

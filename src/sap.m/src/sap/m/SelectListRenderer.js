@@ -95,7 +95,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 					elementData: true
 				};
 
-				if (!(aItems[i] instanceof sap.ui.core.SeparatorItem) && aItems[i].getEnabled()) {
+				if (!(aItems[i] && aItems[i].isA("sap.ui.core.SeparatorItem")) && aItems[i].getEnabled()) {
 					oItemStates.posinset = iCurrentPosInSet++;
 				}
 
@@ -143,7 +143,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 				oRm.class("sapMSelectListItemWithIcon");
 			}
 
-			if (oItem instanceof sap.ui.core.SeparatorItem) {
+			if (oItem.isA("sap.ui.core.SeparatorItem")) {
 				oRm.class(CSS_CLASS + "SeparatorItem");
 
 				if (bShowSecondaryValues) {

@@ -110,7 +110,7 @@ sap.ui.define([
 
 			if (oImage) {
 				oImage.setSrc(sSrc);
-				if (oImage instanceof sap.m.Image) {
+				if (oImage.isA("sap.m.Image")) {
 					oImage.setDensityAware(bIconDensityAware);
 				}
 			} else {
@@ -122,7 +122,7 @@ sap.ui.define([
 				}, sap.m.Image).setParent(this, null, true);
 			}
 
-			if (oImage instanceof sap.m.Image) {
+			if (oImage.isA("sap.m.Image")) {
 				oImage.addStyleClass(sImgStyle, true);
 			} else {
 				oImage.addStyleClass(sImgStyle + "Icon", true);

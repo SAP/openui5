@@ -765,7 +765,7 @@ sap.ui.define([
 
 	/**
 	 * @private
-	 * @returns {Array} The visible markers
+	 * @returns {sap.m.ObjectMarker[]} The visible markers
 	 */
 	ObjectHeader.prototype._getVisibleMarkers = function() {
 
@@ -1247,10 +1247,10 @@ sap.ui.define([
 		if (!bHasStatus && this.getStatuses() && this.getStatuses().length > 0) {
 			var statuses = this.getStatuses();
 			for ( var i = 0; i < statuses.length; i++) {
-				if (statuses[i] instanceof sap.m.ObjectStatus && !statuses[i]._isEmpty()) {
+				if (statuses[i] && statuses[i].isA("sap.m.ObjectStatus") && !statuses[i]._isEmpty()) {
 					bHasStatus = true;
 					break;
-				} else if (statuses[i] instanceof sap.m.ProgressIndicator) {
+				} else if (statuses[i] && statuses[i].isA("sap.m.ProgressIndicator")) {
 					bHasStatus = true;
 					break;
 				}

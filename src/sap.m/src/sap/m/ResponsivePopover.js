@@ -401,7 +401,7 @@ sap.ui.define([
 		//overwrite the _removeChild to detach event listener and remove delegate when the navcontainer is removed from this responsive popover
 		this._oControl._removeChild = function(oChild, sAggregationName, bSuppressInvalidate){
 			var aPages, i;
-			if ((sAggregationName === "content") && (oChild instanceof sap.m.NavContainer)) {
+			if ((sAggregationName === "content") && (oChild && oChild.isA("sap.m.NavContainer"))) {
 				aPages = oChild.getPages();
 				for (i = 0 ; i < aPages.length ; i++) {
 					aPages[i].removeEventDelegate(that._oPageDelegate);
@@ -493,11 +493,11 @@ sap.ui.define([
 	ResponsivePopover.prototype._getSingleNavContent = function(){
 		var aContent = this.getContent();
 
-		while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
+		while (aContent.length === 1 && aContent[0] && aContent[0].isA("sap.ui.core.mvc.View")) {
 			aContent = aContent[0].getContent();
 		}
 
-		if (aContent.length === 1 && aContent[0] instanceof sap.m.NavContainer) {
+		if (aContent.length === 1 && aContent[0] && aContent[0].isA("sap.m.NavContainer")) {
 			return aContent[0];
 		} else {
 			return null;
@@ -508,10 +508,10 @@ sap.ui.define([
 		var oReturn = oPage, aContent;
 
 		while (oReturn) {
-			if (oReturn instanceof sap.m.Page) {
+			if (oReturn.isA("sap.m.Page")) {
 				return oReturn;
 			}
-			if (oReturn instanceof sap.ui.core.mvc.View) {
+			if (oReturn.isA("sap.ui.core.mvc.View")) {
 				aContent = oReturn.getContent();
 				if (aContent.length === 1) {
 					oReturn = aContent[0];

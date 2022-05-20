@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'./library',
 	'sap/ui/core/library',
+	'sap/ui/core/Core',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/Device',
 	"sap/base/security/encodeXML",
@@ -21,6 +22,7 @@ function(
 	ResizeHandler,
 	library,
 	coreLibrary,
+	oCore,
 	KeyCodes,
 	Device,
 	encodeXML,
@@ -300,7 +302,6 @@ function(
 	 */
 	TextArea.prototype._setGrowingMaxHeight = function () {
 		var oHiddenDiv = this.getDomRef('hidden'),
-			oCore = sap.ui.getCore(),
 			oLoadedLibraries = oCore.getLoadedLibraries(),
 			fLineHeight,
 			fMaxHeight,
@@ -593,7 +594,7 @@ function(
 	};
 
 	TextArea.prototype._getCounterValue = function () {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oBundle = oCore.getLibraryResourceBundle("sap.m"),
 				iCharactersExceeded = this.getMaxLength() - this.getValue().length,
 				bExceeded = (iCharactersExceeded < 0 ? true : false),
 				sMessageBundleKey = "TEXTAREA_CHARACTER" + ( Math.abs(iCharactersExceeded) === 1 ? "" : "S") + "_" + (bExceeded ? "EXCEEDED" : "LEFT");
