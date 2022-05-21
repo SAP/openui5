@@ -424,9 +424,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		}
 		if (oControl.getSystemInfo()) {
 			oRm.openStart("div", oControl.getId() + "-sytemInfoWrapper");
-			if (oControl.getAppShortcut() && oControl.getSystemInfo()){
-				oRm.class("sapMGTMarginTop4px");
-			}
 			oRm.class("sapMGTSystemInfoText").openEnd();
 			oRm.renderControl(oControl._oSystemInfo);
 			oRm.close("div");
