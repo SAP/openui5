@@ -183,6 +183,20 @@
 	}
 }
 
+/* ------------------------------------------------ */
+/* Shell overrides                        */
+/* ------------------------------------------------ */
+
+.sapUshellShellTabBar .sapMITH,
+.sapUshellShellTabBar.sapMITH {
+	.sapMBtn:hover:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnHoverable.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
+		opacity: 0.6;
+
+	}
+	.sapMBtn:hover:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed) > .sapMBtnIcon {
+		color: @sapUiShellNavigationActiveTextColor;
+	}
+}
 
 /* Custom focus outline */
 html.sap-desktop {
