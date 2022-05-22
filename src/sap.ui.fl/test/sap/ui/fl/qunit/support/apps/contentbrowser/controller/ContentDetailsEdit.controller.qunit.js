@@ -37,7 +37,10 @@ sap.ui.define([
 			var sNamespace = "hi/there/";
 			var sFileName = "helloWorld";
 			var sFileType = "json";
-			var oData = {};
+			var oData = [{
+				name: "layer",
+				value: "CUSTOMER"
+			}];
 			var oRouteParameters = {
 				getParameter: function () {
 					return {
@@ -57,6 +60,11 @@ sap.ui.define([
 						setBusy: function () {
 						}
 					}];
+				},
+				byId: function() {
+					return {
+						setVisible: function() {}
+					};
 				}
 			});
 
@@ -76,16 +84,26 @@ sap.ui.define([
 		});
 
 		QUnit.test("on LRep content received", function(assert) {
+			sandbox.stub(oController, "getView").returns({
+				byId: function() {
+					return {
+						setVisible: function() {}
+					};
+				}
+			});
 			var oModelData = {
 				fileType: "json"
 			};
-			var oData = {};
+			var oData = [{
+				name: "layer",
+				value: "CUSTOMER"
+			}];
 			var oPage = {
 				setBusy: function () {}
 			};
 			var sContentSuffix = "pathtothefile";
 			var oStubbedFormatData = sandbox.stub(DataUtils, "formatData");
-			var oStubbedGetContent = sandbox.stub(LRepConnector, "getContent").returns(Promise.resolve());
+			var oStubbedGetContent = sandbox.stub(LRepConnector, "getContent").resolves(oData);
 			var oStubbedSetBusy = sandbox.stub(oPage, "setBusy");
 			oController.oSelectedContentModel = {
 				setData: function() {}
@@ -128,6 +146,13 @@ sap.ui.define([
 							};
 						}
 					};
+				},
+				byId: function() {
+					return {
+						getSelected: function() {
+							return false;
+						}
+					};
 				}
 			});
 
@@ -159,6 +184,13 @@ sap.ui.define([
 									value: "LOAD"
 								}]
 							};
+						}
+					};
+				},
+				byId: function() {
+					return {
+						getSelected: function() {
+							return false;
 						}
 					};
 				}
@@ -198,6 +230,13 @@ sap.ui.define([
 							};
 						}
 					};
+				},
+				byId: function() {
+					return {
+						getSelected: function() {
+							return false;
+						}
+					};
 				}
 			});
 
@@ -230,6 +269,13 @@ sap.ui.define([
 									value: Layer.VENDOR
 								}]
 							};
+						}
+					};
+				},
+				byId: function() {
+					return {
+						getSelected: function() {
+							return false;
 						}
 					};
 				}
@@ -270,13 +316,20 @@ sap.ui.define([
 						}
 					};
 				},
-				addDependent: function() {}
+				addDependent: function() {},
+				byId: function() {
+					return {
+						getSelected: function() {
+							return false;
+						}
+					};
+				}
 			});
 			var oStubbedOpenDialog = sandbox.stub(Dialog.prototype, 'open').returns("dummy");
 
 			oController.onSave();
 
-			assert.equal(oStubbedGetView.callCount, 2, "then getView is called twice, first to get selected data, second to attach transport dialog");
+			assert.equal(oStubbedGetView.callCount, 3, "then getView is called twice, first to get selected data, second to attach transport dialog");
 			assert.ok(oStubbedOpenDialog.calledOnce, "The transport Dialog is opened");
 		});
 
@@ -300,6 +353,13 @@ sap.ui.define([
 								fileType: "fileType",
 								namespace: "namespace"
 							};
+						}
+					};
+				},
+				byId: function() {
+					return {
+						getSelected: function() {
+							return false;
 						}
 					};
 				}

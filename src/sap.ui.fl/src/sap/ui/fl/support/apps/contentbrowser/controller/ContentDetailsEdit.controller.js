@@ -107,14 +107,23 @@ sap.ui.define([
 		 * @private
 		 */
 		_onContentReceived: function (oModelData, oPage, sContentSuffix, oData) {
-			var that = this;
 			return LRepConnector.getContent(oModelData.layer, sContentSuffix, true).then(
 				function (oMetadata) {
 					oModelData.data = DataUtils.formatData(oData, oModelData.fileType);
 					oModelData.metadata = oMetadata;
-					that.oSelectedContentModel.setData(oModelData);
+					this.oSelectedContentModel.setData(oModelData);
+					oModelData.metadata.some(function (oMetadata) {
+						if (oMetadata.name === "layer") {
+							if (oMetadata.value === "CUSTOMER") {
+								this.getView().byId("activeVersionCheckBox").setVisible(true);
+							} else {
+								this.getView().byId("activeVersionCheckBox").setVisible(true);
+							}
+							return true;
+						}
+					}.bind(this));
 					oPage.setBusy(false);
-				}, function () {
+				}.bind(this), function () {
 					oPage.setBusy(false);
 				}
 			);
@@ -128,6 +137,7 @@ sap.ui.define([
 		onSave: function () {
 			var that = this;
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
+			var bOnActivatedVersion = this.getView().byId("activeVersionCheckBox").getSelected();
 			var oContentData = oSelectedContentModel.getData();
 			var sLayer;
 			var sTransportIdFromContent;
@@ -157,10 +167,10 @@ sap.ui.define([
 				(sLayer === "VENDOR_LOAD") ||
 				(!sTransportIdFromContent && (!sPackageFromContent || sPackageFromContent === "$TMP"))) {
 				sTransportId = undefined;
-				this._saveFile(sLayer, oContentData.namespace, oContentData.fileName, oContentData.fileType, oContentData.data, sTransportId, sPackageName);
+				this._saveFile(sLayer, oContentData.namespace, oContentData.fileName, oContentData.fileType, oContentData.data, sTransportId, sPackageName, bOnActivatedVersion);
 			} else if (sTransportIdFromContent === "ATO_NOTIFICATION") {
 				sTransportId = sTransportIdFromContent;
-				this._saveFile(sLayer, oContentData.namespace, oContentData.fileName, oContentData.fileType, oContentData.data, sTransportId, sPackageName);
+				this._saveFile(sLayer, oContentData.namespace, oContentData.fileName, oContentData.fileType, oContentData.data, sTransportId, sPackageName, bOnActivatedVersion);
 			} else {
 				var isPackageVisible = !!(sLayer === Layer.VENDOR || sLayer === Layer.CUSTOMER_BASE);
 				var oPackageInput = new Input({visible: isPackageVisible, placeholder: "Package name (Only necessary for cross client content)" });
@@ -203,8 +213,8 @@ sap.ui.define([
 		 * @returns {Promise} <code>LRepConnector</code> "saveFiles" promise
 		 * @private
 		 */
-		_saveFile: function (sLayer, sNameSpace, sFileName, sFileType, sData, sTransportId, sPackageName) {
-			return LRepConnector.saveFile(sLayer, sNameSpace, sFileName, sFileType, sData, sTransportId, sPackageName).then(this._navToDisplayMode.bind(this));
+		_saveFile: function (sLayer, sNameSpace, sFileName, sFileType, sData, sTransportId, sPackageName, bSupport) {
+			return LRepConnector.saveFile(sLayer, sNameSpace, sFileName, sFileType, sData, sTransportId, sPackageName, bSupport).then(this._navToDisplayMode.bind(this));
 		},
 
 		/**

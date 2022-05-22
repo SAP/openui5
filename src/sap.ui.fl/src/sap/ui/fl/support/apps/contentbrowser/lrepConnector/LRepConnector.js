@@ -56,10 +56,11 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @param {string} sContent - Content of the file saved to the layered repository
 	 * @param {string} sTransportId - ID of an ABAP transport or ATO_NOTIFICATION
 	 * @param {string} sPackageName - Name of an ABAP package
+	 * @param [boolean] bSupport - Save file with support mode for activated version
 	 * @returns {Promise} Promise of the SAVE content request to the back end
 	 * @public
 	 */
-	LrepConnector.saveFile = function (sLayer, sNamespace, sFilename, sFileType, sContent, sTransportId, sPackageName) {
+	LrepConnector.saveFile = function (sLayer, sNamespace, sFilename, sFileType, sContent, sTransportId, sPackageName, bSupport) {
 		return new Promise(function (fnResolve, fnReject) {
 			if (!sLayer || sNamespace === undefined || !sFilename || !sFileType) {
 				fnReject();
@@ -71,6 +72,9 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 			var sChangeListSuffix = this._getChangeListSuffix(sTransportId);
 			var sPackageSuffix = this._getPackageSuffix(sPackageName);
 			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix + sChangeListSuffix + sPackageSuffix;
+			if (bSupport) {
+				sUrl = sUrl + "&support=true";
+			}
 			this._getTokenAndSendPutRequest(sUrl, sContent, fnResolve, fnReject);
 		}.bind(this));
 	};
@@ -83,10 +87,11 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @param {string} sFileName - Name of the file
 	 * @param {string} sFileType - Type of the file
 	 * @param {string} sTransportId - ID of the ABAP transport or ATO_NOTIFICATION
+	 * @param [boolean] bSupport - Delete file with support mode for activated version
 	 * @returns {Promise} Promise of DELETE content request to the back end
 	 * @public
 	 */
-	LrepConnector.deleteFile = function (sLayer, sNamespace, sFileName, sFileType, sTransportId) {
+	LrepConnector.deleteFile = function (sLayer, sNamespace, sFileName, sFileType, sTransportId, bSupport) {
 		return new Promise(function (fnResolve, fnReject) {
 			if (!sLayer || sNamespace === undefined || !sFileName || !sFileType) {
 				fnReject();
@@ -97,6 +102,9 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 			var sLayerSuffix = this._getLayerSuffix(sLayer);
 			var sChangeListSuffix = this._getChangeListSuffix(sTransportId);
 			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix + sChangeListSuffix;
+			if (bSupport) {
+				sUrl = sUrl + "&support=true";
+			}
 			this._getTokenAndSendDeletionRequest(sUrl, fnResolve, fnReject);
 		}.bind(this));
 	};

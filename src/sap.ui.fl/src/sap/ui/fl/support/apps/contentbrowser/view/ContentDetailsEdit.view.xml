@@ -18,6 +18,7 @@
 				<ToolbarSpacer />
 				<Button text="{i18n>save}" press=".onSave" />
 				<Button text="{i18n>cancel}" press=".onCancel" />
+				<CheckBox id="activeVersionCheckBox" text="{i18n>onActiveVersion}" valueState="Warning" visible="false"/>
 			</Toolbar>
 		</footer>
 	</Page>
