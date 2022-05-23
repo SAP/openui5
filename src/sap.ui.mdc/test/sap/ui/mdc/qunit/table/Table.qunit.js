@@ -88,6 +88,24 @@ sap.ui.define([
 	var P13nMode = MdcLibrary.TableP13nMode;
 	var aTestedTypes = ["Table", "ResponsiveTable"];
 	var sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
+
+	var CustomFilterControl = Control.extend("sap.ui.mdc.table.qunit.CustomFilterControl", {
+		metadata: {
+			interfaces: ["sap.ui.mdc.IFilter"],
+			properties: {
+				customConditions: {type: "object"},
+				customSearch: {type: "string", defaultValue: ""}
+			},
+			events: {
+				search: {},
+				filtersChanged: {}
+			}
+		},
+		getConditions: function() {return this.getCustomConditions();},
+		validate: function () {return Promise.resolve();},
+		getSearch: function() {return this.getCustomSearch();}
+	});
+
 	function wait(iMilliseconds) {
 		return new Promise(function(resolve) {
 			setTimeout(resolve, iMilliseconds);
@@ -2255,7 +2273,6 @@ sap.ui.define([
 
 	QUnit.test("Table with FilterBar", function(assert) {
 		var oTable = this.oTable;
-		var fGetConditionsSpy;
 		var fBindRowsStub;
 
 		this.oTable.setAutoBindOnInit(false);
@@ -2265,42 +2282,35 @@ sap.ui.define([
 			var fStub = sinon.stub(oTable._oTable, "isBound");
 			var oFilter = new FilterBar();
 
-			fGetConditionsSpy = sinon.spy(oFilter, "getConditions");
 			fBindRowsStub = sinon.stub(oTable._oTable, "bindRows");
 			fStub.withArgs("rows").returns(true);
 			oTable.setFilter(oFilter);
 
-			assert.strictEqual(oTable.getFilter(), oFilter.getId());
 			assert.strictEqual(oTable._oTable.getShowOverlay(), false);
-			assert.ok(fGetConditionsSpy.notCalled);
 			assert.ok(fBindRowsStub.notCalled);
 
 			// simulate filtersChanged event
 			oFilter.fireFiltersChanged();
 
 			assert.strictEqual(oTable._oTable.getShowOverlay(), false);
-			assert.ok(fGetConditionsSpy.notCalled);
 			assert.ok(fBindRowsStub.notCalled);
 
 			// simulate filtersChanged event
 			oFilter.fireFiltersChanged({conditionsBased: false});
 
 			assert.strictEqual(oTable._oTable.getShowOverlay(), false);
-			assert.ok(fGetConditionsSpy.notCalled);
 			assert.ok(fBindRowsStub.notCalled);
 
 			// simulate filtersChanged event
 			oFilter.fireFiltersChanged({conditionsBased: true});
 
 			assert.strictEqual(oTable._oTable.getShowOverlay(), true);
-			assert.ok(fGetConditionsSpy.notCalled);
 			assert.ok(fBindRowsStub.notCalled);
 
 			// simulate search event
 			oFilter.fireSearch();
 		}).then(function() {
 			assert.strictEqual(oTable._oTable.getShowOverlay(), false);
-			assert.ok(fGetConditionsSpy.calledOnce);
 			assert.ok(fBindRowsStub.calledOnce);
 
 			// Test with empty
@@ -2352,8 +2362,8 @@ sap.ui.define([
 
 	QUnit.test("noDataText - Table with FilterBar with filters and the table is bound", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
-		var oFilterBar = new FilterBar("FB1");
-		oFilterBar.setFilterConditions({ key: [{ operator: "EQ", values: ["Pr"] }] });
+			var oFilterBar = new FilterBar("FB1");
+			sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: "EQ", values: ["Pr"]}]});
 			this.oTable.setFilter(oFilterBar);
 			return waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
@@ -2379,6 +2389,30 @@ sap.ui.define([
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
+		}.bind(this));
+	});
+
+	QUnit.test("noDataText - Table with custom external filter control without filters, and the table is bound", function(assert) {
+		return this.oTable._fullyInitialized().then(function() {
+			var oFilterControl = new CustomFilterControl();
+			this.oTable.setFilter(oFilterControl);
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"),
+				"'No data available' is displayed");
+		}.bind(this));
+	});
+
+	QUnit.test("noDataText - Table with custom external filter control with search string, and the table is bound", function(assert) {
+		return this.oTable._fullyInitialized().then(function() {
+			var oFilterControl = new CustomFilterControl({customSearch: "found something?"});
+			this.oTable.setFilter(oFilterControl);
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"),
+				"'No data available. Try adjusting the filter settings.' is displayed");
 		}.bind(this));
 	});
 
