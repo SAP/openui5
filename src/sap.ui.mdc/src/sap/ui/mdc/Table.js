@@ -1076,13 +1076,13 @@ sap.ui.define([
 	function updateFilterInfoBar(oTable) {
 		var oFilterInfoBar = getFilterInfoBar(oTable);
 		var oFilterInfoBarText = getFilterInfoBarText(oTable);
-		var aFilteredProperties = getFilteredProperties(oTable);
+		var aFilteredProperties = getInternallyFilteredProperties(oTable);
 
 		if (!oFilterInfoBar) {
 			return;
 		}
 
-		if (aFilteredProperties.length === 0 || !oTable.isFilteringEnabled()) {
+		if (aFilteredProperties.length === 0) {
 			var oFilterInfoBarDomRef = oFilterInfoBar.getDomRef();
 
 			if (oFilterInfoBarDomRef && oFilterInfoBarDomRef.contains(document.activeElement)) {
@@ -1269,13 +1269,13 @@ sap.ui.define([
 			return oRb.getText("table.NO_DATA");
 		}
 
-	// Table is bound, but does not show any data
-	// If table-internal or external (for example FilterBar) filters are set, then show the message that the data not found and also ask to adjust the filters.
-		var oExternalFilter = Core.byId(this.getFilter());
-		if ((this.isFilteringEnabled() && getFilteredProperties(this).length > 0) ||  //internal filters check
-			(oExternalFilter && getFilteredProperties(oExternalFilter).length > 0)) { //external filters check
+		// Table is bound, but does not show any data.
+		// If the table is filtered internally or externally, e.g. FilterBar, then show the message that no data was found and that filters can be
+		// adjusted.
+		if (isFiltered(this)) {
 			return oRb.getText("table.NO_RESULTS");
 		}
+
 		// If no filters set, show only message that the data are not found, and nothing about the filters.
 		return oRb.getText("table.NO_DATA");
 	};
@@ -1519,12 +1519,44 @@ sap.ui.define([
 		return this.getEngine().readXConfig(this);
 	};
 
-	// oControl can be a Table or FilterBar - any Control that is able to have Filter
-	function getFilteredProperties(oControl) {
-		var mFilterConditions = oControl.getFilterConditions();
+	/**
+	 * Gets the keys of properties that are filtered internally via the inbuilt filtering ({@link sap.ui.mdc.filterbar.p13n.AdaptationFilterBar}).
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table.
+	 * @returns {string[]} The keys of the filtered properties.
+	 */
+	function getInternallyFilteredProperties(oTable) {
+		return oTable.isFilteringEnabled() ? getFilteredProperties(oTable.getFilterConditions()) : [];
+	}
 
-		return Object.keys(mFilterConditions).filter(function(sProperty) {
-			return mFilterConditions[sProperty].length > 0;
+	/**
+	 * Gets the keys of properties that are filtered externally via the associated filter ({@link sap.ui.mdc.IFilter}).
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table.
+	 * @returns {string[]} The keys of the filtered properties.
+	 */
+	function getExternallyFilteredProperties(oTable) {
+		var oFilter = Core.byId(oTable.getFilter());
+		return oFilter ? getFilteredProperties(oFilter.getConditions()) : [];
+	}
+
+	/**
+	 * Whether the table is filtered internally via the inbuilt filtering ({@link sap.ui.mdc.filterbar.p13n.AdaptationFilterBar}), or externally via
+	 * the associated filter ({@link sap.ui.mdc.IFilter}).
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table.
+	 * @return {boolean} Whether the table is filtered (internally or externally).
+	 */
+	function isFiltered(oTable) {
+		var oFilter = Core.byId(oTable.getFilter());
+		return getInternallyFilteredProperties(oTable).length > 0
+			   || getExternallyFilteredProperties(oTable).length > 0
+			   || oFilter && oFilter.getSearch() !== "";
+	}
+
+	function getFilteredProperties(mConditions) {
+		return Object.keys(mConditions || {}).filter(function(sProperty) {
+			return mConditions[sProperty].length > 0;
 		});
 	}
 
