@@ -120,15 +120,16 @@ sap.ui.define(["sap/ui/core/library"],
 	ObjectAttributeRenderer.renderActiveText = function (oRm, oOA, oParent) {
 		var oAttrAggregation = oOA.getAggregation("customContent"),
 			bRenderBDI = oOA.getTextDirection() === TextDirection.Inherit,
-			sAriaHasPopup = (oOA.getAriaHasPopup() === AriaHasPopup.None) ? "" : oOA.getAriaHasPopup().toLowerCase();
+			sAriaHasPopup = (oOA.getAriaHasPopup() === AriaHasPopup.None) ? "" : oOA.getAriaHasPopup().toLowerCase(),
+			sAriaLabel = [oOA.getTitle(), oOA.getText()].join(" ").trim();
 
 		oRm.openStart("span", oOA.getId() + "-text");
 		oRm.class("sapMObjectAttributeText");
-		if (oAttrAggregation && oAttrAggregation.isA("sap.m.Link")) {
-			oAttrAggregation.setAriaHasPopup(oOA.getAriaHasPopup());
-		} else if (oOA.getText() && oOA.getActive()) {
+
+		if (oOA._isSimulatedLink()) {
 			oRm.attr("tabindex", "0");
 			oRm.attr("role", "link");
+			oRm.attr("aria-label", sAriaLabel);
 			if (sAriaHasPopup) {
 				oRm.attr("aria-haspopup", sAriaHasPopup);
 			}
