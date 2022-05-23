@@ -140,7 +140,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 									}
 
 								} else {
-									Log.error("no such property: " + sFieldPath);
+									Log.error("sap.ui.mdc.util.FilterUitl.js :", "could not find propertyMetadata of : " + sFieldPath);
 								}
 							}
 						}
