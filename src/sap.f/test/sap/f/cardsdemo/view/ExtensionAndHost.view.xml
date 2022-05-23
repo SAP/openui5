@@ -32,6 +32,11 @@
 						<f:GridContainerItemLayoutData columns="4"/>
 					</w:layoutData>
 				</w:Card>
+				<w:Card id="card21" manifest="{cardsPlayground>/playgroundBaseUrl}/cardWithDestinations/manifest.json" action="onCardAction">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4"/>
+					</w:layoutData>
+				</w:Card>
 			</f:GridContainer>
 
 			<Title text="Shared Extension" class="sapUiSmallMargin"/>

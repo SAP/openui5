@@ -27,14 +27,22 @@ sap.ui.define([
 				action: function (oEvent) {
 					Log.error("Action handled in the Host:" + JSON.stringify(oEvent.getParameters().parameters));
 				},
-				resolveDestination: function (sDestinationName) {
-					if (sDestinationName === "Northwind") {
-						return "https://services.odata.org/V3/Northwind/Northwind.svc";
+				resolveDestination: function (sDestinationName, oCard) {
+					switch (sDestinationName) {
+						case "Northwind":
+							return "https://services.odata.org/V3/Northwind/Northwind.svc";
+						case "Navigation":
+							return new Promise(function (resolve) {
+								setTimeout(function () {
+									resolve("https://some.domain.com");
+								}, 10);
+							});
 					}
 				}
 			});
 
 			this.byId("card1").setHost(oHost);
+			this.byId("card21").setHost(oHost);
 			this.byId("card3").setHost(oHost);
 			this.byId("card4").setHost(oHost);
 

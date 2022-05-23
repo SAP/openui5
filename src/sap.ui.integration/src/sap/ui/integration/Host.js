@@ -62,7 +62,12 @@ sap.ui.define([
 							/**
 							 * The name of the destination to resolve.
 							 */
-							destinationName: { type: "string" }
+							destinationName: {type: "string"},
+
+							/**
+							 * The card that resolves the destination.
+							 */
+							card: {type: "sap.ui.integration.widgets.Card"}
 						}
 					}
 				},
@@ -160,12 +165,13 @@ sap.ui.define([
 		 * Resolves the destination and returns its URL.
 		 *
 		 * @param {string} sDestinationName The name of the destination.
+		 * @param {sap.ui.integration.widgets.Card} oCard The card that depends on the destination.
 		 * Most often the name which is used in the SAP Cloud Platform.
 		 * @returns {Promise} A promise which resolves with the URL of the destination.
 		 *
 		 * @public
 		 */
-		Host.prototype.getDestination = function (sDestinationName) {
+		Host.prototype.getDestination = function (sDestinationName, oCard) {
 			var fnResolveDestination = this.getResolveDestination(),
 				vReturn;
 
@@ -173,9 +179,9 @@ sap.ui.define([
 				return Promise.reject("Could not resolve destination '" + sDestinationName + "'. There is no 'resolveDestination' callback function configured in the host.");
 			}
 
-			vReturn = fnResolveDestination(sDestinationName);
+			vReturn = fnResolveDestination(sDestinationName, oCard);
 
-			if (!vReturn) {
+			if (vReturn === null || vReturn === undefined) {
 				return Promise.reject("Destination '" + sDestinationName + "' could not be resolved by the host.");
 			}
 

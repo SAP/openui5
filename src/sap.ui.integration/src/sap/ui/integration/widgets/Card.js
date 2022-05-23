@@ -1258,6 +1258,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resolves the destinations and returns a Promise with the resolved configuration.
+	 * @private
+	 * @ui5-restricted
+	 * @param {object} oConfig The configuration.
+	 * @returns {Promise} A promise which resolves with the resolved configuration.
+	 */
+	Card.prototype.processDestinations = function (oConfig) {
+		return this._oDestinations.process(oConfig);
+	};
+
+	/**
 	 * Displays a message strip above the content with the given text.
 	 * There can be only 1 message displayed. If there is a previous message, it is removed.
 	 * Can be used only after the <code>manifestApplied</code> event is fired.
@@ -1374,7 +1385,11 @@ sap.ui.define([
 			this._oDataProviderFactory.destroy();
 		}
 
-		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS));
+		this._oDestinations = new Destinations({
+			host: this.getHostInstance(),
+			card: this,
+			manifestConfig: this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS)
+		});
 		this._oIconFormatter = new IconFormatter({
 			destinations: this._oDestinations,
 			card: this
