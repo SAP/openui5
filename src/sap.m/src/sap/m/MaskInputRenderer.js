@@ -30,6 +30,16 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 		return mAccessibilityState;
 	};
 
+	MaskInputRenderer.getLabelledByAnnouncement = function(oControl) {
+		var sMask = oControl.getMask();
+
+		if (sMask && sMask.length) {
+			return oControl.getPlaceholder() || "";
+		}
+
+		return InputBaseRenderer.getLabelledByAnnouncement.apply(this, arguments);
+	};
+
 	return MaskInputRenderer;
 
 }, /* bExport= */ true);
