@@ -81,6 +81,7 @@
                 <module>sap/m/upload/Uploader</module>
                 <module>sap/m/upload/UploadSet</module>
                 <module>sap/m/upload/UploadSetItem</module>
+                <module>sap/m/upload/UploadSetToolbarPlaceholder</module>
             </modules>
         </component>
         <component>
