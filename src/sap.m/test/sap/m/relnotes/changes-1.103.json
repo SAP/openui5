@@ -3,6 +3,60 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "20a8ae8518c0a55ecd45a24ed168a208237cab1f",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: fixed \"Today -X/+Y Days\" input/output",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280024042"
+          }
+        ]
+      },
+      {
+        "id": "ab37beaaf765f783b1750d888b5eb936128a331b",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Date is correct with DateTime data binding and different application timezone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270101337"
+          }
+        ]
+      },
+      {
+        "id": "14515d147c825b51682a67aee5a66a9dda592202",
+        "type": "FEATURE",
+        "text": " DataStateIndicator: Close Event"
+      },
+      {
+        "id": "ad6a07f13301374d49746787ba1174494854e6e5",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Popup now opens on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270095767"
+          }
+        ]
+      },
+      {
+        "id": "2b19065f8181a3a42b5c8bbdf2691e416bf1882f",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection: gets supported within sap.m.OverflowToolbar"
+      },
+      {
+        "id": "90d93e79bd5f5f1b22bc7d81e3c04b1c2b0409d8",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Selection is OK when value is bound with timezone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270101399"
+          }
+        ]
+      },
+      {
         "id": "42ca4aa9ff655ade998e732855f287fb9d1a6be9",
         "type": "FIX",
         "text": " Tables: Column width calculation for Edm.String adjusted",
@@ -109,6 +163,17 @@
           {
             "type": "BCP",
             "reference": "2270033805"
+          }
+        ]
+      },
+      {
+        "id": "19f0cd212663e3972fa93f58a4c8416f5a530e7b",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Max sizes are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270068256"
           }
         ]
       },

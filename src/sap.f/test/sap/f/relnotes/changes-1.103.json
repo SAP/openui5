@@ -3,6 +3,28 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "5cda6a8a6c7bf3b82090127d121f5206e349b057",
+        "type": "FIX",
+        "text": " sap.f.TargetHandler: Close all Dialogs when navigating back",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280065097"
+          }
+        ]
+      },
+      {
+        "id": "0638c62c786bd53fb406a5ab4f374bb3faa72514",
+        "type": "FIX",
+        "text": " Integration cards: Interactive header now changes background when hovered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270103332"
+          }
+        ]
+      },
+      {
         "id": "cbedc26257f78ddf6ac1a675d172edb061c3f343",
         "type": "FIX",
         "text": " sap.ui.integration.widgets.Card: Span for Status text no longer rendered in the Header when it is empty",
