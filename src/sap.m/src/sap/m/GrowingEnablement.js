@@ -11,7 +11,9 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/core/HTML',
 	'sap/m/CustomListItem',
-	'sap/base/security/encodeXML'
+	'sap/base/security/encodeXML',
+	'sap/ui/core/Core',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		BaseObject,
@@ -21,7 +23,9 @@ sap.ui.define([
 		ManagedObjectMetadata,
 		HTML,
 		CustomListItem,
-		encodeXML
+		encodeXML,
+		Core,
+		jQuery
 	) {
 	"use strict";
 
@@ -126,6 +130,31 @@ sap.ui.define([
 			}
 		},
 
+		onsapdown: function(oEvent) {
+			// Navigate from last item to growing trigger and vice versa via arrow keys
+			var oControl = this._oControl;
+			if (oControl._oItemNavigation && !oEvent.isMarked()) {
+				var aItemDomRefs = oControl._oItemNavigation.getItemDomRefs();
+				var sDir = oControl.getGrowingDirection();
+				if ((sDir != ListGrowingDirection.Upwards && oEvent.type == "sapdown" && oEvent.target === aItemDomRefs[aItemDomRefs.length - 1])
+						|| (sDir == ListGrowingDirection.Upwards && oEvent.type == "sapup" && oEvent.target === aItemDomRefs[0])) {
+					var $Trigger = oControl.$("trigger");
+					$Trigger.trigger("focus");
+					oEvent.setMarked();
+					oEvent.stopImmediatePropagation(); // to prevent ItemNavigation
+				} else if ((sDir == ListGrowingDirection.Upwards && oEvent.type == "sapdown")
+						|| (sDir != ListGrowingDirection.Upwards && oEvent.type == "sapup")
+						&& oEvent.target === oControl.getDomRef("trigger")) {
+					jQuery(aItemDomRefs[oEvent.type == "sapdown" ? 0 : aItemDomRefs.length - 1]).trigger("focus");
+					oEvent.setMarked();
+				}
+			}
+		},
+
+		onsapup: function(oEvent) {
+			return this.onsapdown(oEvent);
+		},
+
 		setTriggerText : function(sText) {
 			this._oControl.$("triggerText").text(sText);
 		},
@@ -223,7 +252,7 @@ sap.ui.define([
 			var sTriggerID = this._oControl.getId() + "-trigger",
 				sTriggerText = this._oControl.getGrowingTriggerText();
 
-			sTriggerText = sTriggerText || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA");
+			sTriggerText = sTriggerText || Core.getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA");
 			this._oControl.addNavSection(sTriggerID);
 
 			if (this._oTrigger) {
@@ -242,6 +271,7 @@ sap.ui.define([
 										'<span class="sapMSLITitle" id="' + sTriggerID + 'Text">' + encodeXML(sTriggerText) + '</span>' +
 									'</div>' +
 									'<div class="sapMGrowingListDescription sapMSLIDescription" id="' + sTriggerID + 'Info"></div>' +
+									'<div class="sapUiInvisibleText" id="' + sTriggerID + 'Message"></div>' +
 								'</div>'
 				})
 			}).setParent(this._oControl, null, true).attachPress(this.requestNewPage, this).addDelegate({
@@ -261,7 +291,8 @@ sap.ui.define([
 					$oTrigger.attr({
 						"tabindex": 0,
 						"role": "button",
-						"aria-labelledby": sTriggerID + "Text" + " " + sTriggerID + "Info"
+						"aria-labelledby": sTriggerID + "Text",
+						"aria-describedby": sTriggerID + "Message"
 					});
 				}
 			}, this);
@@ -276,7 +307,14 @@ sap.ui.define([
 
 		// returns the growing information to be shown at the growing button
 		_getListItemInfo : function() {
-			return ("[ " + this._iRenderedDataItems + " / " + NumberFormat.getFloatInstance().format(this._oControl.getMaxItemsCount()) + " ]");
+			var aCounts = this._getItemCounts();
+			var oFormat = NumberFormat.getFloatInstance();
+			return "[ " + oFormat.format(aCounts[0]) + " / " + oFormat.format(aCounts[1]) + " ]";
+		},
+
+		// returns the item counts for the growing information (current vs. total)
+		_getItemCounts : function() {
+			return [this._iRenderedDataItems, this._oControl.getMaxItemsCount()];
 		},
 
 		// returns the first sorters grouping path when available
@@ -450,7 +488,7 @@ sap.ui.define([
 				}
 			}
 
-			this._oRM = this._oRM || sap.ui.getCore().createRenderManager();
+			this._oRM = this._oRM || Core.createRenderManager();
 			for (var i = 0; i < iLength; i++) {
 				this._oRM.renderControl(this._aChunk[i]);
 			}
@@ -740,6 +778,10 @@ sap.ui.define([
 				} else {
 					if (bLengthFinal) {
 						oControl.$("triggerInfo").css("display", "block").text(this._getListItemInfo());
+						var aCounts = this._getItemCounts();
+						oControl.$("triggerMessage").text(Core.getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA_ACC_WITH_COUNT", aCounts));
+					} else {
+						oControl.$("triggerMessage").text(Core.getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA_ACC"));
 					}
 
 					oControl.$("triggerList").css("display", "");

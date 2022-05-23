@@ -16,8 +16,10 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/ui/core/HTML",
 	"sap/m/Page",
-	"sap/ui/thirdparty/jquery"
-], function(Core, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes"
+], function(Core, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, jQuery, qutils, KeyCodes) {
 	"use strict";
 	createAndAppendDiv("growing1");
 	createAndAppendDiv("growing2");
@@ -126,6 +128,53 @@ sap.ui.define([
 			}, 0);
 
 		}, 0);
+	});
+
+	QUnit.test("Growing Trigger - ACC and Keyboard", function(assert) {
+		var done = assert.async();
+
+		var oModel = new JSONModel();
+		oModel.setData({items: [{},{}]});
+
+		var oList = new List({
+			growing : true,
+			growingThreshold: 1,
+			items : {
+				path : "/items",
+				template : new StandardListItem()
+			}
+		}).setModel(oModel);
+
+		new Page({
+			content: oList
+		}).placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// sytem under test
+		//var oGrowingDelegate = oList._oGrowingDelegate;
+		//var oTrigger = oGrowingDelegate._oTrigger;
+
+		setTimeout(function() {
+			assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+
+			//Check ACC
+			assert.equal(oList.$("trigger").attr("aria-labelledby"), oList.$("triggerText").attr("id"), "aria-labelledby contains reference to the trigger text");
+			assert.equal(oList.$("trigger").attr("aria-describedby"), oList.$("triggerMessage").attr("id"), "aria-describedby contains reference to status info");
+			assert.ok(oList.$("triggerText").text(), "Status info is available");
+			var aCountInfo = oList._oGrowingDelegate._getItemCounts();
+			assert.equal(aCountInfo[0], 1, "Current loaded items count known");
+			assert.equal(aCountInfo[1], 2, "Overall count known");
+
+			// Test Navigation via Arrow Keys from / to Trigger
+			oList.getItems()[0].focus();
+			qutils.triggerKeyboardEvent(oList.getItems()[0].getDomRef(), KeyCodes.ARROW_DOWN);
+			assert.ok(oList.getDomRef("trigger") === document.activeElement, "Trigger has focus after navigation from last item via arrow key");
+			qutils.triggerKeyboardEvent(oList.getDomRef("trigger"), KeyCodes.ARROW_UP);
+			assert.ok(oList.getItems()[0].getDomRef() === document.activeElement, "Item has focus after navigation from trigger via arrow key");
+
+			done();
+		}, 0);
+
 	});
 
 	QUnit.test("Show noDataText and hide 'Load more' trigger when no item is visible", function(assert) {
