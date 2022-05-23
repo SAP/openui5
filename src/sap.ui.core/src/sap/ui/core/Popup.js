@@ -58,7 +58,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
 	// shortcut for sap.ui.core.CSSSize
 	var CSSSize = library.CSSSize;
 
@@ -66,6 +65,36 @@ sap.ui.define([
 	var OpenState = library.OpenState;
 
 	var oStaticUIArea;
+
+	var vGlobalWithinArea;
+
+	var oResizeObserver;
+	var sResizeHandlerIdAttribute = "sapUiPopupResize";
+
+	if (window.ResizeObserver) {
+		oResizeObserver = new window.ResizeObserver(function(aEntries){
+			adaptSizeAndPosition(jQuery("#sap-ui-blocklayer-popup"), aEntries[0].target);
+		});
+	} else {
+		oResizeObserver = {
+			observe: function(oElement) {
+				var sHandlerId = oElement.dataset[sResizeHandlerIdAttribute];
+				if (!sHandlerId) {
+					sHandlerId = ResizeHandler.register(oElement, function(oEvent) {
+						adaptSizeAndPosition(jQuery("#sap-ui-blocklayer-popup"), oEvent.target);
+					});
+					oElement.dataset[sResizeHandlerIdAttribute] = sHandlerId;
+				}
+			},
+			unobserve: function(oElement) {
+				var sHandlerId = oElement.dataset[sResizeHandlerIdAttribute];
+				if (sHandlerId) {
+					ResizeHandler.deregister(sHandlerId);
+					delete oElement.dataset[sResizeHandlerIdAttribute];
+				}
+			}
+		};
+	}
 
 	function getStaticUIArea() {
 		if (oStaticUIArea) {
@@ -90,6 +119,65 @@ sap.ui.define([
 		oControl.destroy();
 
 		return oStaticUIArea;
+	}
+
+	/**
+	 * Convert the different types of 'within' values to a DOM element or the window object.
+	 *
+	 * @param {string | sap.ui.core.Element | Element | Window} [vWithin] the given within
+	 * @returns {Element | Window} the DOM element or Window object that represents the given within
+	 * @private
+	 */
+	function convertWithin(vWithin) {
+		var oWithin;
+
+		if (typeof vWithin === "string") {
+			oWithin = document.querySelector(vWithin);
+		} else if (vWithin instanceof Element) {
+			oWithin = vWithin.getDomRef();
+		} else  {
+			oWithin = vWithin;
+		}
+
+		return oWithin || window;
+	}
+
+	/**
+	 * Remove the size and position CSS properties from the blocklayer DOM element
+	 *
+	 * @param {jQuery} $BlockRef the block layer jQuery object
+	 * @private
+	 */
+	function clearSizeAndPosition($BlockRef) {
+		var aProperties = ["left", "top", "width", "height", "position"];
+
+		if ($BlockRef[0]) {
+			aProperties.forEach(function(sProperty) {
+				$BlockRef[0].style.removeProperty(sProperty);
+			});
+		}
+	}
+
+	/**
+	 * Change the size and position of the blocklayer to the same values as for the given 'within'.
+	 *
+	 * @param {jQuery} $BlockRef the jQuery object that contains the blocklayer DOM element
+	 * @param {Element} oWithin the DOM element of the given within
+	 * @private
+	 */
+	function adaptSizeAndPosition($BlockRef, oWithin) {
+		var oClientRect = oWithin.getBoundingClientRect();
+
+		$BlockRef.css({
+			width: oClientRect.width,
+			height: oClientRect.height,
+			display: "block",
+			position: "absolute"
+		}).position({
+			my: "left top",
+			at: "left top",
+			of: oWithin
+		});
 	}
 
 	/**
@@ -695,8 +783,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.Popup.Dock} [at=sap.ui.core.Popup.Dock.CenterCenter] the "of" element's reference point for docking to
 	 * @param {string | sap.ui.core.Element | Element | jQuery | jQuery.Event} [of=document] specifies the reference element to which the given content should dock to
 	 * @param {string} [offset='0 0'] the offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "10 0" to move the popup 10 pixels to the right). If the docking of both "my" and "at" are both RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
-	 * @param {string} [collision='flip'] defines how the position of an element should be adjusted in case it overflows the window in some direction.
-	 * @param {boolean} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
+	 * @param {string} [collision='flip'] defines how the position of an element should be adjusted in case it overflows the window or the within area that is set via {@link sap.ui.core.Popup.setWithinArea} in some direction.
+	 * @param {boolean | function} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
 	 * @public
 	 */
 	Popup.prototype.open = function(iDuration, my, at, of, offset, collision, followOf) {
@@ -706,6 +794,33 @@ sap.ui.define([
 		if (this.eOpenState != OpenState.CLOSED) {
 			return;
 		}
+
+		// iDuration is optional... if not given:
+		if (typeof (iDuration) == "string") {
+			followOf = collision;
+			collision = offset;
+			offset = of;
+			of = at;
+			at = my;
+			my = iDuration;
+			iDuration = -1;
+		}
+
+		// if no arguments are passed iDuration has to be set to -1
+		if (iDuration === undefined) {
+			iDuration = -1;
+		}
+
+		// all other parameters must be given if any subsequent parameter is given, hence no more shifting
+		// now every parameter should be in the right variable
+
+		assert(iDuration === -1 || (typeof iDuration === "number" && iDuration % 1 == 0), "iDuration must be an integer (or omitted)"); // omitted results in -1
+		assert(my === undefined || typeof my === "string", "my must be a string or empty");
+		assert(at === undefined || typeof at === "string", "at must be a string or empty");
+		assert(!of || typeof of === "object" || typeof of === "function", "of must be empty or an object");
+		assert(!offset || typeof offset === "string", "offset must be empty or a string");
+		assert(!collision || typeof collision === "string", "collision must be empty or a string");
+		assert(!followOf || typeof followOf === "boolean" || typeof followOf === "function", "followOf must be either empty, or a boolean, or a function");
 
 		this.eOpenState = OpenState.OPENING;
 
@@ -738,33 +853,6 @@ sap.ui.define([
 				Log.warning("The Popup content is NOT connected with the static-UIArea and may not work properly!");
 			}
 		}
-
-
-		// iDuration is optional... if not given:
-		if (typeof (iDuration) == "string") {
-			followOf = collision;
-			collision = offset;
-			offset = of;
-			of = at;
-			at = my;
-			my = iDuration;
-			iDuration = -1;
-		}
-
-		// if no arguments are passed iDuration has to be set to -1
-		if (iDuration === undefined) {
-			iDuration = -1;
-		}
-
-		// all other parameters must be given if any subsequent parameter is given, hence no more shifting
-		// now every parameter should be in the right variable
-
-		assert(iDuration === -1 || (typeof iDuration === "number" && iDuration % 1 == 0), "iDuration must be an integer (or omitted)"); // omitted results in -1
-		assert(my === undefined || typeof my === "string", "my must be a string or empty");
-		assert(at === undefined || typeof at === "string", "at must be a string or empty");
-		assert(!of || typeof of === "object" || typeof of === "function", "of must be empty or an object");
-		assert(!offset || typeof offset === "string", "offset must be empty or a string");
-		assert(!collision || typeof collision === "string", "collision must be empty or a string");
 
 		// save current focused element to restore the focus after closing
 		this._oPreviousFocus = Popup.getCurrentFocusInfo();
@@ -809,6 +897,9 @@ sap.ui.define([
 			this._oPosition = _oPosition;
 		} else {
 			_oPosition = this._oPosition;
+			if (vGlobalWithinArea) {
+				this._oPosition.within = vGlobalWithinArea;
+			}
 		}
 		if (!_oPosition.of) {
 			_oPosition.of = this._oPosition.of || document;
@@ -1562,7 +1653,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Popup.Dock | {left: sap.ui.core.CSSSize, top: sap.ui.core.CSSSize}} at specifies the point of the reference element to which the given Content should be aligned
 	 * @param {string | sap.ui.core.Element | Element | jQuery | jQuery.Event} [of=document] specifies the reference element to which the given content should be aligned as specified in the other parameters
 	 * @param {string} [offset='0 0'] the offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right). If the docking of both "my" and "at" are both RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
-	 * @param {string} [collision] defines how the position of an element should be adjusted in case it overflows the window in some direction. The valid values that refer to jQuery-UI's position parameters are "flip", "fit" and "none".
+	 * @param {string} [collision] defines how the position of an element should be adjusted in case it overflows the window or the within area that is set via {@link sap.ui.core.Popup.setWithinArea} in some direction. The valid values that refer to jQuery-UI's position parameters are "flip", "fit" and "none".
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -1583,8 +1674,8 @@ sap.ui.define([
 		return this;
 	};
 
-	Popup.prototype._createPosition = function(my, at, of, offset, collision) {
 
+	Popup.prototype._createPosition = function(my, at, of, offset, collision) {
 		// check if new jQuery-UI (>1.9) offset is used
 		var bNewOffset = false;
 		if (my && (my.indexOf("+") >= 0 || my.indexOf("-") >= 0)) {
@@ -1595,13 +1686,17 @@ sap.ui.define([
 			offset = null;
 		}
 
-		var oPosition = extend({},this._oDefaultPosition, {
-			"my": my || this._oDefaultPosition.my, // to use default my if empty string
-			"at": at || this._oDefaultPosition.at, // to use default at if empty string
-			"of": of,
-			"offset": offset,
-			"collision": collision
+		var oPosition = extend({}, this._oDefaultPosition, {
+			my: my || this._oDefaultPosition.my, // to use default my if empty string
+			at: at || this._oDefaultPosition.at, // to use default at if empty string
+			of: of,
+			offset: offset,
+			collision: collision
 		});
+
+		if (vGlobalWithinArea) {
+			oPosition.within = vGlobalWithinArea;
+		}
 
 		if ( !jQuery.ui.version) {
 			// only jquery-ui-position.js loaded, not jquery-ui-core.js, so no version info available
@@ -1910,12 +2005,18 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._resolveReference = function(oPosition) {
-		var oResult = oPosition;
-		if ( oPosition.of instanceof Element ) {
-			oResult = Object.assign({}, oPosition, { of : oPosition.of.getDomRef()});
-		}
 
-		return oResult;
+		var oExtension,
+			aProperties = ["of", "within"];
+
+		aProperties.forEach(function(sProperty) {
+			if ( oPosition[sProperty] instanceof Element ) {
+				oExtension = oExtension || {};
+				oExtension[sProperty] = oPosition[sProperty].getDomRef();
+			}
+		});
+
+		return oExtension ? Object.assign({}, oPosition, oExtension) : oPosition;
 	};
 
 	/**
@@ -2664,12 +2765,34 @@ sap.ui.define([
 		}
 	};
 
+
+	function connectBlockLayerAndWithin($BlockRef, oWithinDOMRef) {
+		if (oWithinDOMRef === window) {
+			clearSizeAndPosition($BlockRef);
+			document.documentElement.classList.add("sapUiBLyBack");
+		} else {
+			adaptSizeAndPosition($BlockRef, oWithinDOMRef);
+			oWithinDOMRef.classList.add("sapUiBLyBack");
+			oResizeObserver.observe(oWithinDOMRef);
+		}
+	}
+
+	function disconnectBlockLayerAndWithin(oWithinDOMRef) {
+		if (oWithinDOMRef === window) {
+			document.documentElement.classList.remove("sapUiBLyBack");
+		} else {
+			oWithinDOMRef.classList.remove("sapUiBLyBack");
+			oResizeObserver.unobserve(oWithinDOMRef);
+		}
+	}
+
 	/**
 	 * @private
 	 */
 	Popup.prototype._showBlockLayer = function() {
 		var $BlockRef = jQuery("#sap-ui-blocklayer-popup"),
-			sClassName = "sapUiBLy" + (this._sModalCSSClass ? " " + this._sModalCSSClass : "");
+			sClassName = "sapUiBLy" + (this._sModalCSSClass ? " " + this._sModalCSSClass : ""),
+			oWithinDOMRef;
 
 		if ($BlockRef.length === 0) {
 			$BlockRef = jQuery('<div id="sap-ui-blocklayer-popup" tabindex="0" class="' + sClassName + '"></div>');
@@ -2678,6 +2801,16 @@ sap.ui.define([
 			$BlockRef.removeClass().addClass(sClassName);
 		}
 
+		// unregister the resize handler for the within area of the currently top most popup
+		var oLastPopupInfo = Popup.blStack[Popup.blStack.length - 1];
+		if (oLastPopupInfo) {
+			oWithinDOMRef = convertWithin(oLastPopupInfo.popup._oLastPosition.within);
+			disconnectBlockLayerAndWithin(oWithinDOMRef);
+		}
+
+		oWithinDOMRef = convertWithin(this._oLastPosition.within);
+		connectBlockLayerAndWithin($BlockRef, oWithinDOMRef);
+
 		// push current z-index to stack
 		Popup.blStack.push({
 			zIndex: this._iZIndex - 2,
@@ -2685,12 +2818,9 @@ sap.ui.define([
 		});
 
 		$BlockRef.css({
-			"z-index" : this._iZIndex - 2,
-			"visibility" : "visible"
+			"z-index": this._iZIndex - 2,
+			"visibility": "visible"
 		}).show();
-
-		// prevent HTML page from scrolling
-		jQuery("html").addClass("sapUiBLyBack");
 
 		if (Popup.blStack.length === 1) {
 			_fireBlockLayerStateChange({
@@ -2702,34 +2832,37 @@ sap.ui.define([
 
 	Popup.prototype._hideBlockLayer = function() {
 		// a dialog was closed so pop his z-index from the stack
-		var $oBlockLayer = jQuery("#sap-ui-blocklayer-popup"),
+		var $BlockRef = jQuery("#sap-ui-blocklayer-popup"),
+			oBlockLayerDomRef = $BlockRef[0],
 			that = this,
-			oLastPopupInfo;
+			oLastPopupInfo, oWithinDOMRef;
 
-		if ($oBlockLayer.length) {
+		oWithinDOMRef = convertWithin(this._oLastPosition.within);
+		disconnectBlockLayerAndWithin(oWithinDOMRef);
+
+		if ($BlockRef.length) {
 			// if there are more z-indices this means there are more dialogs stacked
 			// up. So redisplay the block layer (with new z-index) under the new
 			// current dialog which should be displayed.
-			var oBlockLayerDomRef = $oBlockLayer.get(0);
 
 			if (Popup.blStack.length > 1) {
 				Popup.blStack = Popup.blStack.filter(function(oPopupInfo) {
 					return oPopupInfo.popup !== that;
 				});
+				oLastPopupInfo = Popup.blStack[Popup.blStack.length - 1];
 				// set the block layer z-index to the last z-index in the stack and show it
-				oBlockLayerDomRef.style.zIndex = Popup.blStack[Popup.blStack.length - 1].zIndex;
+				oBlockLayerDomRef.style.zIndex = oLastPopupInfo.zIndex;
+
 				oBlockLayerDomRef.style.visibility = "visible";
 				oBlockLayerDomRef.style.display = "block";
+
+				oWithinDOMRef = convertWithin(oLastPopupInfo.popup._oLastPosition.within);
+				connectBlockLayerAndWithin($BlockRef, oWithinDOMRef);
 			} else {
 				oLastPopupInfo = Popup.blStack.pop();
 				// the last dialog was closed so we can hide the block layer now
 				oBlockLayerDomRef.style.visibility = "hidden";
 				oBlockLayerDomRef.style.display = "none";
-
-				window.setTimeout(function() {
-					// Allow scrolling again in HTML page only if there is no BlockLayer left
-					jQuery("html").removeClass("sapUiBLyBack");
-				}, 0);
 
 				_fireBlockLayerStateChange({
 					visible: false,
@@ -3447,6 +3580,54 @@ sap.ui.define([
 		aExternalContent.forEach(function($IntegratedPopupContent){
 			Popup._markAsNotUserSelectable($IntegratedPopupContent, bForce);
 		});
+	};
+
+	/**
+	 * Sets a within area that is used as the area available for positioning the popup. It mainly affects the collision
+	 * detection. The position of the popup can then be further adapted depending on the "collision" parameter that is
+	 * set with {@link sap.ui.core.Popup#open} or {@link sap.ui.core.Popup#setPosition} when the popup overflows the
+	 * within area.
+	 *
+	 * If no within area is specified, all popups use the <code>window</code> as within area.
+	 *
+	 * When an {@link sap.ui.core.Element} is set as the within area, make sure that the control is rendered when the popup
+	 * opens, otherwise the <code>window</code> is used as the within area.
+	 *
+	 * @param {string|Element|sap.ui.core.Element|Window} vValue The within area
+	 * @public
+	 * @since 1.84.26
+	 */
+	Popup.setWithinArea = function (vValue) {
+		vGlobalWithinArea = vValue;
+	};
+
+	/**
+	 * Returns the value that has been set by {@link sap.ui.core.Popup.setWithinArea}. When a DOM element that represents the
+	 * within area is needed, use {@link sap.ui.core.Popup.getWithinAreaDomRef} instead.
+	 *
+	 * If no within area is specified, <code>undefined</code> is returned.
+	 *
+	 * @returns {string|Element|sap.ui.core.Element|Window} The specified within area
+	 * @public
+	 * @since 1.84.26
+	 */
+	Popup.getWithinArea = function () {
+		return vGlobalWithinArea;
+	};
+
+	/**
+	 * Returns the actual DOM element of the value that has been set by {@link sap.ui.core.Popup.setWithinArea}. It
+	 * returns <code>window</code> by default when no within area has been set using {@link sap.ui.core.Popup.setWithinArea}.
+	 *
+	 * When an {@link sap.ui.core.Element} is set as a within area, <code>document.documentElement</code> is returned before element is
+	 * rendered.
+	 *
+	 * @returns {Element | Window} The DOM Element or the window object
+	 * @public
+	 * @since 1.84.26
+	 */
+	Popup.getWithinAreaDomRef = function () {
+		return convertWithin(vGlobalWithinArea);
 	};
 
 	return Popup;

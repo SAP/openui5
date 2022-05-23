@@ -129,7 +129,10 @@ sap.ui.define(function() {
 			},
 			"util/Popup": {
 				title: "sap.ui.core.Popup",
-				page: "test-resources/sap/ui/core/qunit/util/Popup.qunit.html"
+				page: "test-resources/sap/ui/core/qunit/util/Popup.qunit.html",
+				qunit: {
+					reorder: false
+				}
 			},
 			RenderManager: {
 				title: "sap.ui.core.RenderManager"
