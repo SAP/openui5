@@ -2,167 +2,96 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <title>ResponsivePopover - sap.ui.webc.main</title>
-    <script src="shared-config.js"></script>
-    <script src="../../../../../resources/sap-ui-core.js"
-        id="sap-ui-bootstrap"
-        data-sap-ui-libs="sap.ui.webc.main"
-        data-sap-ui-resourceroots='{
+	<meta charset="utf-8">
+	<title>ResponsivePopover - sap.ui.webc.main</title>
+	<script src="shared-config.js"></script>
+	<script src="../../../../../resources/sap-ui-core.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.ui.webc.main"
+		data-sap-ui-resourceroots='{
 					"qunit.internal.acc": "../../../../../test-resources/sap/ui/core/qunit/internal/acc"
 				}'>
-    </script>
+	</script>
 
-    <script>
-        sap.ui.getCore().attachInit(function() {
-            sap.ui.require([
-                "sap/ui/webc/main/ResponsivePopover",
-                "sap/ui/webc/main/Button"
-            ], function(
-                ResponsivePopover, Button
-            ) {
+	<script>
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"sap/ui/webc/main/ResponsivePopover",
+				"sap/ui/webc/main/Button",
+				"sap/m/Text",
+				"sap/m/FlexBox"
+			], function(
+				ResponsivePopover, Button, Text, FlexBox
+			) {
+				var oPopover0Button = new Button({
+					text: "Show Popover",
+					click: function(oEvent) {
+						oPopover.showAt(oPopover0Button);
+					}
+				});
+				oPopover0Button.placeAt("methodButtons");
 
-                var oResponsivePopover0Button = new Button({
-                    text: "applyFocus",
-                    click: function(oEvent) {
-                        console.log("Calling applyFocus...");
-                        var result = oResponsivePopover.applyFocus();
-                        console.log("... applyFocus returned: ", result);
-                    }
-                });
-                oResponsivePopover0Button.placeAt("methodButtons");
+				var oPopover = new ResponsivePopover({
+					headerText: "ResponsivePopover Title",
+					content: [
+						new Text({
+							text: "Content"
+						})
+					],
+					footer: [
+						new FlexBox({
+							width: "100%",
+							justifyContent: sap.m.FlexJustifyContent.End,
+							items: new Button({
+								text: "Close",
+								click: function (oEvent) {
+									oPopover.close();
+								}
+							})
+						})
+					]
+				});
+				oPopover.placeAt("testControl");
 
+				var oPopover1Button = new Button({
+					text: "Open via Property",
+					click: function(oEvent) {
+						oPopover1.setOpener(oPopover1Button);
+						oPopover1.setOpen(true);
+					}
+				});
+				oPopover1Button.placeAt("methodButtons");
 
-
-                var oResponsivePopover1Button = new Button({
-                    text: "close",
-                    click: function(oEvent) {
-                        console.log("Calling close...");
-                        var result = oResponsivePopover.close();
-                        console.log("... close returned: ", result);
-                    }
-                });
-                oResponsivePopover1Button.placeAt("methodButtons");
-
-
-
-                var oResponsivePopover2Button = new Button({
-                    text: "isOpen",
-                    click: function(oEvent) {
-                        console.log("Calling isOpen...");
-                        var result = oResponsivePopover.isOpen();
-                        console.log("... isOpen returned: ", result);
-                    }
-                });
-                oResponsivePopover2Button.placeAt("methodButtons");
-
-
-
-                var oResponsivePopover3Button = new Button({
-                    text: "showAt",
-                    click: function(oEvent) {
-                        console.log("Calling showAt...");
-                        var result = oResponsivePopover.showAt(oResponsivePopover3Button);
-                        console.log("... showAt returned: ", result);
-                    }
-                });
-                oResponsivePopover3Button.placeAt("methodButtons");
-
-
-                var oResponsivePopover = new ResponsivePopover({
-                    headerText: "Some text...",
-                    content: [
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        })
-                    ],
-                    footer: [
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        })
-                    ],
-                    header: [
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        })
-                    ],
-                    afterClose: function(oEvent) {
-                        console.log("Event afterClose fired for ResponsivePopover with parameters: ", oEvent.getParameters());
-                    },
-                    afterOpen: function(oEvent) {
-                        console.log("Event afterOpen fired for ResponsivePopover with parameters: ", oEvent.getParameters());
-                    },
-                    beforeClose: function(oEvent) {
-                        console.log("Event beforeClose fired for ResponsivePopover with parameters: ", oEvent.getParameters());
-                    },
-                    beforeOpen: function(oEvent) {
-                        console.log("Event beforeOpen fired for ResponsivePopover with parameters: ", oEvent.getParameters());
-                    }
-                });
-                oResponsivePopover.placeAt("testControl");
-            });
-        });
-    </script>
+				var oPopover1 = new ResponsivePopover({
+					headerText: "Popover Title",
+					content: [
+						new Text({
+							text: "Content"
+						})
+					],
+					footer: [
+						new FlexBox({
+							width: "100%",
+							justifyContent: sap.m.FlexJustifyContent.End,
+							items: new Button({
+								text: "Close",
+								click: function (oEvent) {
+									oPopover1.setOpen(false);
+								}
+							})
+						})
+					]
+				});
+				oPopover1.placeAt("testControl");
+			});
+		});
+	</script>
 </head>
 
 <body id="body" class="sapUiBody">
-    <div id="methodButtons"></div>
-    <br><br>
-    <div id="testControl"></div>
+	<div id="methodButtons"></div>
+	<br><br>
+	<div id="testControl"></div>
 </body>
 
 </html>
