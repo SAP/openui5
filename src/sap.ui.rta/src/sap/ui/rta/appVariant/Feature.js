@@ -108,7 +108,7 @@ sap.ui.define([
 				};
 
 				var oUriParameters = new UriParameters(window.location.href);
-				var sAppContextsEnabled = oUriParameters.get("sap-ui-rta-appContexts");
+				var sAppContextsEnabled = oUriParameters.get("sap-ui-xx-rta-adaptations");
 
 				var sOverviewPath = "sap/ui/rta/appVariant/AppVariantOverviewDialog";
 				var oProperties = {
