@@ -35,7 +35,7 @@ sap.ui.define([
 				"Products(ID=20,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$orderby=quantity&$skip=0&$top=120" : {
 					source : "Product_20_Parts_sorted.json"
 				},
-				"POST /MyProducts/Products(ID=10,IsActiveEntity=false)/_Parts" : [{
+				"POST Products(ID=10,IsActiveEntity=false)/_Parts" : [{
 					ifMatch : /"ID":99/,
 					message : {
 						ID : 99,
