@@ -1046,7 +1046,7 @@ sap.ui.define([
 			if (!this._oOptionsList) {
 				this._oOptionsList = new List({
 					showSeparators: ListSeparators.None,
-					mode: ListMode.None
+					mode: ListMode.SingleSelectMaster
 				});
 			}
 
@@ -1091,6 +1091,7 @@ sap.ui.define([
 			}
 
 			oElementToFocus.focus();
+			oElementToFocus && oElementToFocus.setSelected && oElementToFocus.setSelected(true);
 
 			this._reApplyFocusToElement(oToPage, oValue);
 		};
@@ -1427,6 +1428,21 @@ sap.ui.define([
 			},
 			renderer: StandardListItemRenderer
 		});
+
+		/* Override which enables DynamicDateRangeListItem selection */
+		DynamicDateRangeListItem.prototype.hasActiveType = function() {
+			return true;
+		};
+
+		/* Override which enables DynamicDateRangeListItem selection */
+		DynamicDateRangeListItem.prototype.isIncludedIntoSelection = function() {
+			return false;
+		};
+
+		/* Override which prevents DynamicDateRangeListItem selection by pressing SPACE */
+		DynamicDateRangeListItem.prototype.onsapspace = function(oEvent) {
+			oEvent.preventDefault();
+		};
 
 		// Overwrite the sap.m.StandardListItem.getNavigationControl method, in order to change the navigation icon URI
 		DynamicDateRangeListItem.prototype.getNavigationControl = function() {
