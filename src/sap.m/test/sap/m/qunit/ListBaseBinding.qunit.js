@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/base/strings/capitalize",
 	"sap/ui/core/Core",
-	"sap/base/util/UriParameters"
+	"sap/m/GrowingEnablement"
 ], function(
 	MockServer,
 	ODataModel,
@@ -36,7 +36,7 @@ sap.ui.define([
 	Input,
 	capitalize,
 	oCore,
-	UriParameters
+	GrowingEnablement
 ) {
 	"use strict";
 
@@ -957,15 +957,10 @@ sap.ui.define([
 
 	QUnit.module("enableItemsPool", {
 		beforeEach: function() {
-			var oGetParameterStub = sinon.stub();
-			oGetParameterStub.withArgs("sap-ui-xx-enableItemsPool").returns("true");
-
-			this.oGetUriParametersStub = sinon.stub(UriParameters, "fromQuery").returns({
-				get: oGetParameterStub
-			});
+			GrowingEnablement.prototype._aItemsPool = [];
 		},
 		afterEach: function() {
-			this.oGetUriParametersStub.restore();
+			delete GrowingEnablement.prototype._aItemsPool;
 		}
 	});
 
