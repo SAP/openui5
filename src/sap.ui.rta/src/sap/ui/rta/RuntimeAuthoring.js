@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -29,7 +28,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
@@ -46,6 +44,7 @@ sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
 	"sap/ui/rta/util/PluginManager",
 	"sap/ui/rta/util/PopupManager",
+	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/util/ServiceEventBus",
 	"sap/ui/rta/util/validateFlexEnabled",
 	"sap/ui/rta/Utils",
@@ -67,7 +66,6 @@ sap.ui.define([
 	DtUtil,
 	KeyCodes,
 	Version,
-	FlexRuntimeInfoAPI,
 	SmartVariantManagementApplyAPI,
 	ControlPersonalizationWriteAPI,
 	FeaturesAPI,
@@ -76,7 +74,6 @@ sap.ui.define([
 	VersionsAPI,
 	TranslationAPI,
 	Layer,
-	LayerUtils,
 	Settings,
 	FlexUtils,
 	JSONModel,
@@ -93,6 +90,7 @@ sap.ui.define([
 	ChangeVisualization,
 	PluginManager,
 	PopupManager,
+	ReloadManager,
 	ServiceEventBus,
 	validateFlexEnabled,
 	Utils,
@@ -238,7 +236,6 @@ sap.ui.define([
 
 			this._dependents = {};
 			this._mServices = {};
-			this._mCustomServicesDictinary = {};
 			this._mUShellServices = {};
 			this._pElementModified = Promise.resolve();
 
@@ -260,12 +257,8 @@ sap.ui.define([
 			this._loadUShellServicesPromise = FlexUtils.getUShellServices(["URLParsing", "AppLifeCycle", "CrossApplicationNavigation"])
 				.then(function (mUShellServices) {
 					this._mUShellServices = mUShellServices;
+					ReloadManager.setUShellServices(mUShellServices);
 				}.bind(this));
-		},
-		_RELOAD: {
-			NOT_NEEDED: "NO_RELOAD",
-			VIA_HASH: "CROSS_APP_NAVIGATION",
-			RELOAD_PAGE: "HARD_RELOAD"
 		}
 	});
 
@@ -463,15 +456,25 @@ sap.ui.define([
 			return this._loadUShellServicesPromise
 			.then(this._initVersioning.bind(this))
 			/*
-			Check if the application has personalized changes and reload without them;
-			Also Check if the application has an available draft and if yes, reload with those changes.
+			 Check if the application has personalized changes and reload without them;
+			 Also Check if the application has an available draft and if yes, reload with those changes.
 			 */
-			.then(this._determineReload.bind(this))
+			.then(function() {
+				return ReloadManager.handleReloadOnStart({
+					layer: this.getLayer(),
+					selector: this.getRootControlInstance(),
+					versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
+					developerMode: this.getFlexSettings().developerMode
+				});
+			}.bind(this))
 			.then(function(bReloadTriggered) {
 				if (bReloadTriggered) {
 					// FLP Plugin reacts on this error string and doesn't pass the error on the UI
 					return Promise.reject("Reload triggered");
 				}
+				var oFlexInfoSession = PersistenceWriteAPI.getResetAndPublishInfoFromSession(this.getRootControlInstance());
+				this.bInitialResetEnabled = !!oFlexInfoSession.isResetEnabled;
+				this.bInitialPublishEnabled = !!oFlexInfoSession.isPublishEnabled;
 
 				this._oSerializer = new LREPSerializer({commandStack: this.getCommandStack(), rootControl: this.getRootControl()});
 
@@ -776,21 +779,31 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.stop = function(bDontSaveChanges, bSkipRestart) {
 		this._checkToolbarAndExecuteFunction("setBusy", true);
+		var oReloadInfo;
 		return waitForPendingActions.call(this)
-			.then(this._handleReloadOnExit.bind(this, bSkipRestart))
-			.then(function(oReloadInfo) {
-				return ((bDontSaveChanges) ? Promise.resolve() : this._serializeToLrep(this))
-				.then(this._checkToolbarAndExecuteFunction.bind(this, "hide", bDontSaveChanges))
-				.then(function() {
-					this.fireStop();
-					if (oReloadInfo.reloadMethod && (oReloadInfo.reloadMethod !== this._RELOAD.NOT_NEEDED)) {
-						oReloadInfo.deleteMaxLayer = true; // true for normal exit, false for reset
-						oReloadInfo.onExit = true;
-						oReloadInfo.triggerHardReload = (oReloadInfo.reloadMethod === this._RELOAD.RELOAD_PAGE); // StandAlone or AppDescriptorChanges case
-						return this._handleUrlParameterOnExit(oReloadInfo);
-					}
-					return undefined;
-				}.bind(this));
+			.then(function() {
+				if (bSkipRestart) {
+					return {};
+				}
+				return ReloadManager.checkReloadOnExit({
+					layer: this.getLayer(),
+					selector: this.getRootControlInstance(),
+					isDraftAvailable: this._oVersionsModel.getProperty("/draftAvailable"),
+					versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
+					activeVersion: this._oVersionsModel.getProperty("/activeVersion"),
+					changesNeedReloadPromise: this._bSavedChangesNeedReload ? Promise.resolve(true) : this._oSerializer.needsReload()
+				});
+			}.bind(this))
+			.then(function(oReturn) {
+				oReloadInfo = oReturn;
+				return bDontSaveChanges ? Promise.resolve() : this._serializeToLrep(this);
+			}.bind(this))
+			.then(this._checkToolbarAndExecuteFunction.bind(this, "hide", bDontSaveChanges))
+			.then(function() {
+				this.fireStop();
+				if (!bSkipRestart) {
+					ReloadManager.handleUrlParametersOnExit(oReloadInfo);
+				}
 			}.bind(this))
 			.catch(showTechnicalError)
 			.then(function () {
@@ -902,9 +915,11 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
-		if (!this._bReloadNeeded) {
+		// when saving a change that requires a reload, the information has to be cached
+		// to do the reload when exiting UI Adaptation as then the change will not be available anymore
+		if (!this._bSavedChangesNeedReload) {
 			return this._oSerializer.needsReload().then(function(bReloadNeeded) {
-				this._bReloadNeeded = bReloadNeeded;
+				this._bSavedChangesNeedReload = bReloadNeeded;
 				return this._serializeAndSave();
 			}.bind(this));
 		}
@@ -962,18 +977,12 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._handleDiscard = function() {
 		var sLayer = this.getLayer();
 		var oReloadInfo = {
-			isDraftAvailable: false, // draft was just discarded
-			layer: sLayer
+			layer: sLayer,
+			removeDraft: true
 		};
 		RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
-		if (!FlexUtils.getUshellContainer()) {
-			this.getCommandStack().removeAllCommands();
-			return this._triggerHardReload(oReloadInfo);
-		}
-		var bTriggerReload = true;
 		this.getCommandStack().removeAllCommands();
-		var mParsedHash = this._removeVersionParameterForFLP(oReloadInfo, FlexUtils.getParsedURLHash(this._getUShellService("URLParsing")), bTriggerReload);
-		this._triggerCrossAppNavigation(mParsedHash);
+		ReloadManager.triggerReload(oReloadInfo);
 		return this.stop(true, true);
 	};
 
@@ -1029,39 +1038,16 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._switchVersion = function (sVersion) {
 		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 
-		if (!FlexUtils.getUshellContainer()) {
-			if (!ReloadInfoAPI.hasVersionParameterWithValue({value: sVersion}, this._getUShellService("URLParsing"))) {
-				var oReloadInfo = {
-					versionSwitch: true,
-					version: sVersion
-				};
-				return this._triggerHardReload(oReloadInfo);
-			}
-			return this._reloadPage();
-		}
-		var mParsedHash = FlexUtils.getParsedURLHash(this._getUShellService("URLParsing"));
 		VersionsAPI.loadVersionForApplication({
 			control: this.getRootControlInstance(),
 			layer: this.getLayer(),
 			version: sVersion
 		});
-		var aVersionsParameter = mParsedHash.params[Version.UrlParameter];
-		if (
-			aVersionsParameter &&
-			aVersionsParameter[0] === sVersion &&
-			this._getUShellService("AppLifeCycle")
-		) {
-			// RTA was started with a version parameter, the displayed version has changed and the key user switches back
-			this._getUShellService("AppLifeCycle").reloadCurrentApp();
-		} else {
-			mParsedHash.params[Version.UrlParameter] = sVersion;
-			this._triggerCrossAppNavigation(mParsedHash);
-		}
-		return undefined;
-	};
-
-	RuntimeAuthoring.prototype._setUriParameter = function (sParameters) {
-		document.location.search = sParameters;
+		var oReloadInfo = {
+			versionSwitch: true,
+			version: sVersion
+		};
+		ReloadManager.triggerReload(oReloadInfo);
 	};
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {
@@ -1286,7 +1272,7 @@ sap.ui.define([
 	 * the changes for both places will be deleted. For App Variants all the changes are saved in one place.
 	 *
 	 * @private
-	 * @returns {Promise} Resolves when change persistence is resetted
+	 * @returns {Promise} Resolves when change persistence is reset
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
 		var sLayer = this.getLayer();
@@ -1299,26 +1285,17 @@ sap.ui.define([
 			this.getCommandStack().removeAllCommands(true);
 			ReloadInfoAPI.removeInfoSessionStorage(oSelector);
 			var oReloadInfo = {
-				isDraftAvailable: ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer}, this._getUShellService("URLParsing")),
 				layer: sLayer,
-				deleteMaxLayer: false,
+				ignoreMaxLayerParameter: true,
 				triggerHardReload: true
 			};
-			return this._handleUrlParameterOnExit(oReloadInfo);
+			return ReloadManager.triggerReload(oReloadInfo);
 		}.bind(this))
 		.catch(function (oError) {
 			if (oError !== "cancel") {
 				Utils.showMessageBox("error", "MSG_RESTORE_FAILED", {error: oError});
 			}
 		});
-	};
-
-	/**
-	 * Reloads the page.
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._reloadPage = function() {
-		window.location.reload();
 	};
 
 	/**
@@ -1342,7 +1319,7 @@ sap.ui.define([
 	 * @returns {boolean} Returns true if restart is needed
 	 */
 	RuntimeAuthoring.needsRestart = function(sLayer) {
-		return !!window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
+		return ReloadManager.needsAutomaticStart(sLayer);
 	};
 
 	/**
@@ -1355,9 +1332,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oRootControl - Root control for which RTA was started
 	 */
 	RuntimeAuthoring.enableRestart = function(sLayer, oRootControl) {
-		var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oRootControl});
-		var vParameter = sFlexReference || true;
-		window.sessionStorage.setItem("sap.ui.rta.restart." + sLayer, vParameter);
+		ReloadManager.enableAutomaticStart(sLayer, oRootControl);
 	};
 
 	/**
@@ -1368,7 +1343,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Layer} sLayer - Active layer
 	 */
 	RuntimeAuthoring.disableRestart = function(sLayer) {
-		window.sessionStorage.removeItem("sap.ui.rta.restart." + sLayer);
+		ReloadManager.disableAutomaticStart(sLayer);
 	};
 
 	/**
@@ -1484,7 +1459,7 @@ sap.ui.define([
 	 * Function to handle modification of an element
 	 *
 	 * @param {sap.ui.base.Event} oEvent Event object
-	 * @returns {Promise} Returns promise that resolves after command was executed sucessfully
+	 * @returns {Promise} Returns promise that resolves after command was executed successfully
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleElementModified = function(oEvent) {
@@ -1522,314 +1497,6 @@ sap.ui.define([
 		return this._pElementModified;
 	};
 
-	/**
-	 * Build the navigation arguments object required to trigger the navigation
-	 * using the CrossApplicationNavigation ushell service.
-	 *
-	 * @param  {Object} mParsedHash Parsed URL hash
-	 * @return {Object} Returns argument map ("oArg" parameter of the "toExternal" function)
-	 */
-	RuntimeAuthoring.prototype._buildNavigationArguments = function(mParsedHash) {
-		return {
-			target: {
-				semanticObject: mParsedHash.semanticObject,
-				action: mParsedHash.action,
-				context: mParsedHash.contextRaw
-			},
-			params: mParsedHash.params,
-			appSpecificRoute: mParsedHash.appSpecificRoute,
-			writeHistory: false
-		};
-	};
-
-	RuntimeAuthoring.prototype._triggerCrossAppNavigation = function(mParsedHash) {
-		if (
-			(this.getLayer() !== Layer.USER) &&
-			this._getUShellService("CrossApplicationNavigation")
-		) {
-			this._getUShellService("CrossApplicationNavigation")
-				.toExternal(this._buildNavigationArguments(mParsedHash));
-			return true;
-		}
-		return false;
-	};
-
-	RuntimeAuthoring.prototype._removeVersionParameterForFLP = function(oReloadInfo, mParsedHash, bTriggerReload) {
-		var sLayer = this.getLayer();
-		if (sLayer === Layer.USER) {
-			return mParsedHash;
-		}
-
-		var sVersionParameter = FlexUtils.getParameter(Version.UrlParameter, this._getUShellService("URLParsing"));
-		if (sVersionParameter) {
-			delete mParsedHash.params[Version.UrlParameter];
-		} else if (
-			(this._isDraftAvailable() || bTriggerReload /* for discarding of dirty changes */) &&
-			!oReloadInfo.hasHigherLayerChanges &&
-			this._getUShellService("AppLifeCycle")
-		) {
-			// reloading this way only works when we dont have to remove max-layer parameter, see _removeMaxLayerParameterForFLP
-			this._getUShellService("AppLifeCycle").reloadCurrentApp();
-		}
-		return mParsedHash;
-	};
-
-	RuntimeAuthoring.prototype._removeMaxLayerParameterForFLP = function(oReloadInfo, mParsedHash) {
-		// keep max layer parameter when reset was called, remove it on save & exit
-		if (oReloadInfo.deleteMaxLayer && oReloadInfo.hasHigherLayerChanges) {
-			delete mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM];
-		}
-		return mParsedHash;
-	};
-
-	/**
-	 * Reload the app inside FLP or Standalone by removing max layer / draft parameter;
-	 *
-	 * @param {boolean} oReloadInfo - Information needed to
-	 * @param {boolean} oReloadInfo.deleteMaxLayer - Indicates if the <code>sap-ui-fl-max-layer</code> parameter should be removed or not (reset / exit)
-	 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
-	 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
-	 *
-	 * @return {map} parsedHash
-	 */
-	RuntimeAuthoring.prototype._handleUrlParameterOnExit = function(oReloadInfo) {
-		if (!FlexUtils.getUshellContainer()) {
-			return this._triggerHardReload(oReloadInfo);
-		}
-
-		var mParsedHash = FlexUtils.getParsedURLHash(this._getUShellService("URLParsing"));
-		if (!mParsedHash) {
-			return undefined;
-		}
-
-		if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasVersionUrlParameter) {
-			mParsedHash = this._removeMaxLayerParameterForFLP(oReloadInfo, mParsedHash);
-			mParsedHash = this._removeVersionParameterForFLP(oReloadInfo, mParsedHash, false);
-			this._triggerCrossAppNavigation(mParsedHash);
-		} else {
-			this._getUShellService("AppLifeCycle").reloadCurrentApp();
-		}
-		// In FLP scenario we need to remove all parameters and also trigger an hard reload on reset
-		if (oReloadInfo.triggerHardReload) {
-			this._reloadPage();
-		}
-		return undefined;
-	};
-
-	/**
-	 * Returns the correct message - why a reload is needed.
-	 *
-	 * @param  {object}  oReloadInfo - Contains the information needed to return the correct reload message
-	 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
-	 * @param  {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
-	 * @param  {boolean} oReloadInfo.allContexts - Indicates if a all contexts is visible
-	 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
-	 *
-	 * @return {string} sReason Reload message
-	 */
-	RuntimeAuthoring.prototype._getReloadMessageOnStart = function(oReloadInfo) {
-		var sReason;
-		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
-
-		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.isDraftAvailable) {
-			sReason = bIsCustomerLayer ? "MSG_VIEWS_OR_PERSONALIZATION_AND_DRAFT_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_AND_DRAFT_EXISTS";
-		} else if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.allContexts) {
-			sReason = "MSG_RESTRICTED_CONTEXT_EXIST_AND_PERSONALIZATION";
-		} else if (oReloadInfo.hasHigherLayerChanges) {
-			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_OR_PUBLIC_VIEWS_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_EXIST";
-		} else if (oReloadInfo.isDraftAvailable) {
-			sReason = "MSG_DRAFT_EXISTS";
-		} else if (oReloadInfo.allContexts) {
-			sReason = "MSG_RESTRICTED_CONTEXT_EXIST";
-		} // TODO add app descr changes case for start?
-		return sReason;
-	};
-
-	/**
-	 * Returns the correct message - why a reload is needed.
-	 *
-	 * @param  {object}  oReloadInfo - Contains the information needed to return the correct reload message
-	 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if sap-ui-fl-max-layer parameter is present in the url
-	 * @param  {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
-	 * @param  {boolean} oReloadInfo.changesNeedReload - Indicates if app descriptor changes need hard reload
-	 * @param  {boolean} oReloadInfo.initialDraftGotActivated - Indicates if a draft got activated and had a draft initially when entering UI adaptation
-	 * @param  {boolean} oReloadInfo.allContexts - Indicates if restricted contexts is visible
-	 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
-	 *
-	 * @returns {string} sReason Reload message
-	 */
-	RuntimeAuthoring.prototype._getReloadMessageOnExit = function(oReloadInfo) {
-		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
-
-		if (oReloadInfo.hasHigherLayerChanges) {
-			if (!bIsCustomerLayer) {
-				return "MSG_RELOAD_WITH_ALL_CHANGES";
-			}
-			if (oReloadInfo.isDraftAvailable) {
-				return "MSG_RELOAD_WITH_VIEWS_PERSONALIZATION_AND_WITHOUT_DRAFT";
-			}
-			if (oReloadInfo.allContexts) {
-				return "MSG_RELOAD_WITH_PERSONALIZATION_AND_RESTRICTED_CONTEXT";
-			}
-			return "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS";
-		}
-
-		if (oReloadInfo.initialDraftGotActivated) {
-			return "MSG_RELOAD_ACTIVATED_DRAFT";
-		}
-
-		if (oReloadInfo.isDraftAvailable) {
-			return "MSG_RELOAD_WITHOUT_DRAFT";
-		}
-
-		if (oReloadInfo.changesNeedReload) {
-			return "MSG_RELOAD_NEEDED";
-		}
-
-		if (oReloadInfo.allContexts) {
-			return "MSG_RELOAD_WITHOUT_ALL_CONTEXT";
-		}
-		return undefined;
-	};
-
-	/**
-	 * Handler for the message box warning the user that personalization changes exist
-	 * and the app will be reloaded
-	 *
-	 * @param  {Object} oReloadReasons Information to determine which message to show
-	 * @returns {Promise} Resolving when the user clicks on OK
-	 */
-	RuntimeAuthoring.prototype._handleReloadMessageBoxOnExit = function(oReloadReasons) {
-		var sReason = this._getReloadMessageOnExit(oReloadReasons);
-
-		if (sReason) {
-			return Utils.showMessageBox("information", sReason, {
-				titleKey: "HEADER_RELOAD_NEEDED"
-			});
-		}
-		return Promise.resolve();
-	};
-
-	RuntimeAuthoring.prototype._triggerReloadOnStart = function(oReloadInfo) {
-		if (this._getUShellService("CrossApplicationNavigation") && this._oVersionsModel.getProperty("/versioningEnabled")) {
-			if (oReloadInfo.isDraftAvailable) {
-				// clears FlexState and triggers reloading of the flex data without blocking
-				VersionsAPI.loadDraftForApplication({
-					control: oReloadInfo.selector,
-					layer: oReloadInfo.layer
-				});
-			} else {
-				VersionsAPI.loadVersionForApplication({
-					control: oReloadInfo.selector,
-					layer: oReloadInfo.layer,
-					allContexts: oReloadInfo.allContexts
-				});
-			}
-		}
-		var sReason = this._getReloadMessageOnStart(oReloadInfo);
-		if (!sReason) {
-			return Promise.resolve();
-		}
-		// showing messages in visual editor is leading to blocked screen. In this case we should reload without message
-		return (this.getFlexSettings().developerMode ? Promise.resolve() : Utils.showMessageBox("information", sReason))
-			.then(function() {
-				RuntimeAuthoring.enableRestart(oReloadInfo.layer, this.getRootControlInstance());
-				// allContexts do not change the url parameter to trigger a reload
-				if (
-					oReloadInfo.allContexts &&
-					!oReloadInfo.hasHigherLayerChanges &&
-					!oReloadInfo.isDraftAvailable &&
-					this._getUShellService("AppLifeCycle")
-				) {
-					this._getUShellService("AppLifeCycle").reloadCurrentApp();
-				}
-				if (FlexUtils.getUshellContainer()) {
-					// clears FlexState and triggers reloading of the flex data without blocking
-					var oParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
-					return this._triggerCrossAppNavigation(oParsedHash);
-				}
-				return this._triggerHardReload(oReloadInfo);
-			}.bind(this));
-	};
-
-	/**
-	 * Check if there are personalization changes/draft changes and restart the application without/with them;
-	 * Warn the user that the application will be restarted without personalization / with draft changes;
-	 * Check if it is neccessary to load all contexts
-	 * This is only valid when a UShell is present;
-	 *
-	 * @return {Promise<boolean>} Resolving to false means that reload is not necessary
-	 */
-	RuntimeAuthoring.prototype._determineReload = function() {
-		var oReloadInfo = {
-			hasHigherLayerChanges: false,
-			isDraftAvailable: false,
-			layer: this.getLayer(),
-			selector: this.getRootControlInstance(),
-			ignoreMaxLayerParameter: false,
-			includeCtrlVariants: true,
-			URLParsingService: this._getUShellService("URLParsing")
-		};
-		return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo)
-		.then(function (oReloadInfo) {
-			var oFlexInfoSession = PersistenceWriteAPI.getResetAndPublishInfoFromSession(oReloadInfo.selector);
-			this.bInitialResetEnabled = !!oFlexInfoSession.isResetEnabled;
-			this.bInitialPublishEnabled = !!oFlexInfoSession.isPublishEnabled;
-			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.isDraftAvailable || oReloadInfo.allContexts) {
-				return this._triggerReloadOnStart(oReloadInfo);
-			}
-			return undefined;
-		}.bind(this));
-	};
-
-	/**
-	 * Change URL parameters if necessary, which will trigger an reload;
-	 * This function must only be called outside of the ushell.
-	 *
-	 * @param {Object} oReloadInfo - Information to determine reload is needed
-	 * @returns {Promise} Resolves when page reload is triggered
-	 */
-	RuntimeAuthoring.prototype._triggerHardReload = function(oReloadInfo) {
-		oReloadInfo.parameters = document.location.search;
-		oReloadInfo.URLParsingService = this._getUShellService("URLParsing");
-		var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
-		if (document.location.search !== sParameters) {
-			this._setUriParameter(sParameters);
-			return Promise.resolve();
-		}
-		return this._reloadPage();
-	};
-
-	/**
-	 * When exiting RTA and personalization changes exist, the user can choose to
-	 * reload the app with personalization or stay in the app without the personalization
-	 * @param {boolean} bSkipRestart - Stop RTA without reloading the app in any way
-	 *
-	 * @return {Promise<object>} Resolving to an object containing information about if an reload is needed and how to handle it
-	 */
-	RuntimeAuthoring.prototype._handleReloadOnExit = function(bSkipRestart) {
-		if (bSkipRestart) {
-			return Promise.resolve({reloadMethod: this._RELOAD.NOT_NEEDED});
-		}
-
-		var oReloadPromise = this._bReloadNeeded ? Promise.resolve(this._bReloadNeeded) : this._oSerializer.needsReload();
-		return oReloadPromise.then(function (bChangesNeedReload) {
-			var oReloadInfo = {
-				layer: this.getLayer(),
-				selector: this.getRootControlInstance(),
-				changesNeedReload: bChangesNeedReload,
-				isDraftAvailable: this._oVersionsModel.getProperty("/draftAvailable"),
-				versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
-				activeVersion: this._oVersionsModel.getProperty("/activeVersion"),
-				URLParsingService: this._getUShellService("URLParsing")
-			};
-			oReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			return this._handleReloadMessageBoxOnExit(oReloadInfo).then(function () {
-				return oReloadInfo;
-			});
-		}.bind(this));
-	};
-
 	RuntimeAuthoring.prototype._onModeChange = function(oEvent) {
 		this.setMode(oEvent.getParameter("item").getKey());
 	};
@@ -1848,7 +1515,7 @@ sap.ui.define([
 			var oTabHandlingPlugin = this.getPluginManager().getPlugin("tabHandling");
 			var oSelectionPlugin = this.getPluginManager().getPlugin("selection");
 
-			// Switch between another mode and navigation -> toggle overlay & App-Tabindex enablement
+			// Switch between another mode and navigation -> toggle overlay & App-TabIndex enablement
 			if (sCurrentMode === "navigation" || sNewMode === "navigation") {
 				this._oDesignTime.setEnabled(sNewMode !== "navigation");
 				oTabHandlingPlugin[(sNewMode === "navigation") ? "restoreTabIndex" : "removeTabIndex"]();
@@ -1880,7 +1547,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.setMetadataScope = function (sScope) {
 		// We do not support scope change after creation of DesignTime instance
-		// as this requires reinitialization of all overlays
+		// as this requires re-initialization of all overlays
 		if (this._sStatus !== STOPPED) {
 			Log.error("sap.ui.rta: Failed to set metadata scope on RTA instance after RTA is started");
 			return;
@@ -1980,14 +1647,14 @@ sap.ui.define([
 									if (this.bIsDestroyed) {
 										throw DtUtil.createError(
 											"RuntimeAuthoring#startService",
-											DtUtil.printf("RuntimeAuthoring instance is destroyed while initialising the service '{0}'", sName),
+											DtUtil.printf("RuntimeAuthoring instance is destroyed while initializing the service '{0}'", sName),
 											"sap.ui.rta"
 										);
 									}
 									if (!jQuery.isPlainObject(oService)) {
 										throw DtUtil.createError(
 											"RuntimeAuthoring#startService",
-											DtUtil.printf("Invalid service format. Service should return simple javascript object after initialisation. Service name = '{0}'", sName),
+											DtUtil.printf("Invalid service format. Service should return simple javascript object after initialization. Service name = '{0}'", sName),
 											"sap.ui.rta"
 										);
 									}
@@ -2041,7 +1708,7 @@ sap.ui.define([
 							DtUtil.propagateError(
 								vError,
 								"RuntimeAuthoring#startService",
-								DtUtil.printf("Error during service '{0}' initialisation.", sName),
+								DtUtil.printf("Error during service '{0}' initialization.", sName),
 								"sap.ui.rta"
 							)
 						);

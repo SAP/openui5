@@ -951,11 +951,7 @@ sap.ui.define([
 					mParsedHash.params[sParameterName] &&
 					mParsedHash.params[sParameterName][0];
 			}
-			var oUriParams = UriParameters.fromQuery(document.location.search);
-			if (!oUriParams) {
-				return false;
-			}
-			return oUriParams.get(sParameterName);
+			return Utils.getUrlParameter(sParameterName);
 		},
 
 		/**

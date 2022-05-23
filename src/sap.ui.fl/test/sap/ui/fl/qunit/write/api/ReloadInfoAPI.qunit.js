@@ -29,102 +29,6 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("Given that a CrossAppNavigation is needed because of a draft, handleParametersOnStart is called,", {
-		afterEach: function() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("while a draft is available and the url parameter for draft is not present in the parsed hash", function(assert) {
-			var oReloadInfo = {
-				hasHigherLayerChanges: false,
-				isDraftAvailable: true,
-				layer: Layer.CUSTOMER,
-				selector: {}
-			};
-
-			var oExpectedHash = {
-				params: {
-					"sap-ui-fl-version": [Version.Number.Draft],
-					"sap-ui-fl-parameter": ["test"]
-				}
-			};
-			var mParsedHash = {
-				params: {
-					"sap-ui-fl-parameter": ["test"]
-				}
-			};
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-			var oNewParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
-			assert.deepEqual(oNewParsedHash.params, oExpectedHash.params, "Parameters are as expected");
-		});
-
-		QUnit.test("while no draft is available and the url parameter for draft is not present in the parsed hash", function(assert) {
-			var oReloadInfo = {
-				hasHigherLayerChanges: false,
-				isDraftAvailable: false,
-				layer: Layer.CUSTOMER,
-				selector: {}
-			};
-
-			var mParsedHash = {
-				params: {
-					"sap-ui-fl-parameter": ["test"]
-				}
-			};
-
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-
-			var oLoadForApplicationStub = sandbox.stub(VersionsAPI, "loadDraftForApplication");
-			var oNewParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
-
-			assert.equal(oNewParsedHash.params, mParsedHash.params, "The parsed hash did not change");
-			assert.equal(oLoadForApplicationStub.callCount, 0, "then loadDraftForApplication is not called");
-		});
-
-		QUnit.test("while higher layer changes are available and the url parameter for max-layer is not present in the parsed hash", function(assert) {
-			var oReloadInfo = {
-				hasHigherLayerChanges: true,
-				isDraftAvailable: false,
-				layer: Layer.CUSTOMER,
-				selector: {}
-			};
-
-			var oExpectedParams = {
-				params: {
-					"sap-ui-fl-max-layer": [Layer.CUSTOMER]
-				}
-			};
-
-			var mParsedHash = {
-				params: {}
-			};
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-			var oNewParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
-
-			assert.deepEqual(oNewParsedHash.params, oExpectedParams.params, "Parameters are as expected");
-		});
-
-		QUnit.test("while no higher layer changes are available and the url parameter for max-layer is not present in the parsed hash", function(assert) {
-			var oReloadInfo = {
-				hasHigherLayerChanges: false,
-				isDraftAvailable: false,
-				layer: Layer.CUSTOMER,
-				selector: {}
-			};
-
-			var oExpectedParams = {
-				params: {}
-			};
-
-			var mParsedHash = {
-				params: {}
-			};
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-			var oNewParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
-			assert.deepEqual(oNewParsedHash.params, oExpectedParams.params, "Parameters are as expected");
-		});
-	});
-
 	QUnit.module("Given that a getReloadReasonsForStart is called on RTA start,", {
 		beforeEach: function() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
@@ -361,7 +265,8 @@ sap.ui.define([
 				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true,
-				activeVersion: "2"
+				activeVersion: "2",
+				URLParsingService: true //the functionality is stubbed, but is needs to exist
 			};
 
 			var mParsedHash = {
@@ -377,6 +282,30 @@ sap.ui.define([
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+		});
+
+		QUnit.test("active version is not original", function(assert) {
+			var oReloadInfo = {
+				layer: Layer.CUSTOMER,
+				selector: {},
+				changesNeedReload: false,
+				isDraftAvailable: false,
+				versioningEnabled: true,
+				activeVersion: "2",
+				URLParsingService: true //the functionality is stubbed, but is needs to exist
+			};
+
+			var mParsedHash = {
+				params: {}
+			};
+
+			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
+
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
+
+			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
+			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
 		});
 
 		QUnit.test("current active version is selected/previewed", function(assert) {
@@ -689,160 +618,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given that a handleParametersForStandalone is called", {
-		beforeEach: function() {
-			sandbox.stub(FlexUtils, "getUshellContainer").returns(undefined);
-			this.oHandleUrlParameterSpy = sandbox.spy(FlexUtils, "handleUrlParameters");
-		},
-		afterEach: function() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("and the version parameter is in the URL with value '0'", function(assert) {
-			var sParams = "?" + Version.UrlParameter + "=" + Version.Number.Draft;
-			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(true);
-
-			var oReloadInfo = {
-				layer: Layer.CUSTOMER,
-				isDraftAvailable: true,
-				hasHigherLayerChanges: false,
-				parameters: sParams
-			};
-
-			var sExpectedParams = "";
-			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
-			assert.equal(this.oHandleUrlParameterSpy.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(oHasParameterAndValueStub.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(sParameters, sExpectedParams, "then the parameter was removed");
-		});
-
-		QUnit.test("and the version parameter is in the URL with value '-1'", function(assert) {
-			var sParams = "?" + Version.UrlParameter + "=" + Version.Number.Original;
-			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(true);
-
-			var oReloadInfo = {
-				layer: Layer.CUSTOMER,
-				isDraftAvailable: true,
-				hasHigherLayerChanges: false,
-				parameters: sParams
-			};
-
-			var sExpectedParams = "";
-			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
-			assert.equal(this.oHandleUrlParameterSpy.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(oHasParameterAndValueStub.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(sParameters, sExpectedParams, "then the parameter was removed");
-		});
-
-		QUnit.test("and the version parameter is in the URL with value '123'", function(assert) {
-			var sParams = "?" + Version.UrlParameter + "=123";
-			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(true);
-
-			var oReloadInfo = {
-				layer: Layer.CUSTOMER,
-				isDraftAvailable: true,
-				hasHigherLayerChanges: false,
-				parameters: sParams
-			};
-
-			var sExpectedParams = "";
-			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
-			assert.equal(this.oHandleUrlParameterSpy.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(oHasParameterAndValueStub.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(sParameters, sExpectedParams, "then the parameter was removed");
-		});
-
-		QUnit.test("and the max-layer parameter is in the url", function(assert) {
-			var sParams = "?" + LayerUtils.FL_MAX_LAYER_PARAM + "=" + Layer.CUSTOMER;
-			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(true);
-
-			var oReloadInfo = {
-				layer: Layer.CUSTOMER,
-				isDraftAvailable: false,
-				hasHigherLayerChanges: true,
-				parameters: sParams
-			};
-
-			var sExpectedParams = "";
-			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
-			assert.equal(this.oHandleUrlParameterSpy.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(oHasParameterAndValueStub.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(sParameters, sExpectedParams, "then the parameter was removed");
-		});
-
-		QUnit.test("and the version parameter is not in the url and draft changes exist on startup", function(assert) {
-			var sParams = "";
-			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(false);
-
-			var oReloadInfo = {
-				layer: Layer.CUSTOMER,
-				isDraftAvailable: true,
-				hasHigherLayerChanges: false,
-				parameters: sParams
-			};
-
-			var sExpectedParams = "?" + Version.UrlParameter + "=" + Version.Number.Draft;
-			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
-			assert.equal(this.oHandleUrlParameterSpy.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(oHasParameterAndValueStub.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(sParameters, sExpectedParams, "then the parameter was added");
-		});
-
-		QUnit.test("and the version parameter is not in the url and draft changes exist on exit", function(assert) {
-			var sParams = "";
-			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(false);
-
-			var oReloadInfo = {
-				layer: Layer.CUSTOMER,
-				isDraftAvailable: true,
-				hasHigherLayerChanges: false,
-				parameters: sParams,
-				onExit: true
-			};
-
-			var sExpectedParams = "";
-			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
-			assert.equal(this.oHandleUrlParameterSpy.calledOnce, false, "handleUrlParameter was NOT called");
-			assert.equal(oHasParameterAndValueStub.calledOnce, false, "handleUrlParameter was NOT called");
-			assert.equal(sParameters, sExpectedParams, "then the parameter was NOT added");
-		});
-
-		QUnit.test("and the max-layer parameter is not in the url and higherLayer changes exist", function(assert) {
-			var sParams = "";
-			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(false);
-
-			var oReloadInfo = {
-				layer: Layer.CUSTOMER,
-				isDraftAvailable: false,
-				hasHigherLayerChanges: true,
-				parameters: sParams
-			};
-
-			var sExpectedParams = "?" + LayerUtils.FL_MAX_LAYER_PARAM + "=" + Layer.CUSTOMER;
-			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
-			assert.equal(this.oHandleUrlParameterSpy.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(oHasParameterAndValueStub.calledOnce, true, "handleUrlParameter was called");
-			assert.equal(sParameters, sExpectedParams, "then the parameter was added");
-		});
-
-		QUnit.test("and the max-layer & version parameter is not in the url and higherLayer & draft changes exist", function(assert) {
-			var sParams = "";
-			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(false);
-
-			var oReloadInfo = {
-				layer: Layer.CUSTOMER,
-				isDraftAvailable: true,
-				hasHigherLayerChanges: true,
-				parameters: sParams
-			};
-			var sExpectedParams = "?" + LayerUtils.FL_MAX_LAYER_PARAM + "=" + Layer.CUSTOMER + "&" + Version.UrlParameter + "=" + Version.Number.Draft;
-			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
-			assert.equal(this.oHandleUrlParameterSpy.calledTwice, true, "handleUrlParameter was called twice");
-			assert.equal(oHasParameterAndValueStub.calledTwice, true, "handleUrlParameter was called twice");
-			assert.equal(sParameters, sExpectedParams, "then the parameter was added");
-		});
-	});
-
 	QUnit.module("Given that removeInfoSessionStorage is called", {
 		afterEach: function() {
 			sandbox.restore();
@@ -863,5 +638,173 @@ sap.ui.define([
 			// clean up session storage
 			window.sessionStorage.removeItem("sap.ui.fl.info.bar");
 		});
+	});
+
+	function checkParameters(oExpectedParameters, oActualParameters, sScenario, assert) {
+		var vParameters = oExpectedParameters;
+		if (sScenario === "standalone") {
+			var oUriParameters = UriParameters.fromQuery(oActualParameters);
+			Object.entries(oExpectedParameters).forEach(function(aKeyValue) {
+				assert.strictEqual(oUriParameters.get(aKeyValue[0]), aKeyValue[1][0], "the parameters are correct");
+			});
+			assert.strictEqual(Object.keys(oExpectedParameters).length, Object.keys(oUriParameters.mParams).length, "the number of params is correct");
+		} else {
+			assert.deepEqual(oActualParameters, vParameters, "the parameters are correct");
+		}
+	}
+
+	function initialParameter(sKey, sValue, sScenario) {
+		var oReturn;
+		if (sScenario === "flp") {
+			oReturn = {};
+			oReturn[sKey] = [sValue];
+		} else {
+			oReturn = "?" + sKey + "=" + sValue;
+		}
+		return oReturn;
+	}
+
+	["flp", "standalone"].forEach(function(sScenario) {
+		var sName = sScenario + ": handleParametersOnStart - ";
+		QUnit.module(sName, {
+			beforeEach: function() {
+				this.oReloadInfo = {
+					parameters: sScenario === "flp" ? {} : "",
+					layer: Layer.CUSTOMER
+				};
+			},
+			afterEach: function() {
+				sandbox.restore();
+			}
+		}, function() {
+			QUnit.test("with no draft / higher layer Changes", function(assert) {
+				var bResult = ReloadInfoAPI.handleParametersOnStart(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, false, "no parameter was changed");
+				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("with a draft / no higher layer Changes", function(assert) {
+				this.oReloadInfo.isDraftAvailable = true;
+				var bResult = ReloadInfoAPI.handleParametersOnStart(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, true, "parameters were changed");
+				checkParameters({"sap-ui-fl-version": [Version.Number.Draft]}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("with no draft / higher layer Changes", function(assert) {
+				this.oReloadInfo.hasHigherLayerChanges = true;
+				var bResult = ReloadInfoAPI.handleParametersOnStart(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, true, "parameters were changed");
+				checkParameters({"sap-ui-fl-max-layer": [Layer.CUSTOMER]}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("with a draft / higher layer Changes", function(assert) {
+				this.oReloadInfo.isDraftAvailable = true;
+				this.oReloadInfo.hasHigherLayerChanges = true;
+				var bResult = ReloadInfoAPI.handleParametersOnStart(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, true, "parameters were changed");
+				checkParameters({"sap-ui-fl-max-layer": [Layer.CUSTOMER], "sap-ui-fl-version": [Version.Number.Draft]}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+		});
+
+		var sName2 = sScenario + ": handleUrlParameters - ";
+		QUnit.module(sName2, {
+			beforeEach: function() {
+				this.oReloadInfo = {
+					parameters: sScenario === "flp" ? {} : "",
+					layer: Layer.CUSTOMER
+				};
+				sandbox.stub(UriParameters, "fromQuery").callsFake(function() {
+					return UriParameters.fromQuery.wrappedMethod(this.oReloadInfo.parameters);
+				}.bind(this));
+			},
+			afterEach: function() {
+				sandbox.restore();
+			}
+		}, function() {
+			QUnit.test("with max layer param in the url and hasHigherLayerChanges", function(assert) {
+				this.oReloadInfo.hasHigherLayerChanges = true;
+				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-max-layer", Layer.CUSTOMER, sScenario);
+				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, true, "parameters were changed");
+				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("with max layer param in the url and hasHigherLayerChanges / ignoreMaxLayerParameter", function(assert) {
+				this.oReloadInfo.hasHigherLayerChanges = true;
+				this.oReloadInfo.ignoreMaxLayerParameter = true;
+				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-max-layer", Layer.CUSTOMER, sScenario);
+				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, false, "no parameters were changed");
+				checkParameters({"sap-ui-fl-max-layer": [Layer.CUSTOMER]}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("without version in url and versionSwitch / version set", function(assert) {
+				this.oReloadInfo.versionSwitch = true;
+				this.oReloadInfo.version = "1";
+				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, true, "parameters were changed");
+				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("with version in url and versionSwitch / version set", function(assert) {
+				this.oReloadInfo.versionSwitch = true;
+				this.oReloadInfo.version = "1";
+				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "1", sScenario);
+				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, false, "no parameters were changed");
+				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("with different version in url and versionSwitch / version set", function(assert) {
+				this.oReloadInfo.versionSwitch = true;
+				this.oReloadInfo.version = "1";
+				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "2", sScenario);
+				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, true, "parameters were changed");
+				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("with version in url and removeVersionParameter", function(assert) {
+				this.oReloadInfo.removeVersionParameter = true;
+				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "2", sScenario);
+				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, true, "parameters were changed");
+				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("with draft version in url and removeVersionParameter", function(assert) {
+				this.oReloadInfo.removeVersionParameter = true;
+				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", Version.Number.Draft, sScenario);
+				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, true, "parameters were changed");
+				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("without version in url and removeVersionParameter", function(assert) {
+				this.oReloadInfo.removeVersionParameter = true;
+				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, false, "no parameters were changed");
+				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("without version in url and removeDraft", function(assert) {
+				this.oReloadInfo.removeVersionParameter = true;
+				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, false, "no parameters were changed");
+				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+
+			QUnit.test("with draft version in url and removeDraft", function(assert) {
+				this.oReloadInfo.removeVersionParameter = true;
+				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", Version.Number.Draft, sScenario);
+				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.strictEqual(bResult, true, "parameters were changed");
+				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+			});
+		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

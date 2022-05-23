@@ -700,6 +700,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/util/PopupManager"]
 				}
 			},
+			"util/ReloadManager": {
+				group: "util",
+				coverage: {
+					only: ["sap/ui/rta/util/ReloadManager"]
+				}
+			},
 			"util/hasStableId": {
 				group: "util",
 				coverage: {

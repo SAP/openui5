@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/service/index",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
@@ -48,6 +49,7 @@ sap.ui.define([
 	Layer,
 	FlUtils,
 	AppVariantFeature,
+	ReloadManager,
 	mServicesDictionary,
 	RuntimeAuthoring,
 	Utils,
@@ -78,7 +80,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("service initialisation must always wait until RTA is started", function(assert) {
+		QUnit.test("service initialization must always wait until RTA is started", function(assert) {
 			var bRtaIsStarted = false;
 			var sServiceName = Object.keys(mServicesDictionary).shift();
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
@@ -145,7 +147,7 @@ sap.ui.define([
 			return Promise.all([oServiceLoader1, oServiceLoader2, oServiceLoader3]);
 		});
 
-		QUnit.test("starting a service after successful initialisation", function(assert) {
+		QUnit.test("starting a service after successful initialization", function(assert) {
 			var sServiceName = Object.keys(mServicesDictionary).shift();
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			var oServiceSpy = sandbox.spy(function() {
@@ -168,7 +170,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("starting a service after failed initialisation", function(assert) {
+		QUnit.test("starting a service after failed initialization", function(assert) {
 			var sServiceName = Object.keys(mServicesDictionary).shift();
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			var oServiceStub = sandbox.stub(sap.ui, "require")
@@ -381,7 +383,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("service fails with any error during initialisation", function(assert) {
+		QUnit.test("service fails with any error during initialization", function(assert) {
 			var sServiceName = Object.keys(mServicesDictionary).shift();
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			var oServiceError = new Error("Error in the service");
@@ -438,7 +440,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("RTA instance is destroyed during initialisation", function(assert) {
+		QUnit.test("RTA instance is destroyed during initialization", function(assert) {
 			var sServiceName = Object.keys(mServicesDictionary).shift();
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			var fnMockService = function() {
@@ -467,7 +469,7 @@ sap.ui.define([
 			return oServicePromise;
 		});
 
-		QUnit.test("RTA instance is destroyed during async initialisation", function(assert) {
+		QUnit.test("RTA instance is destroyed during async initialization", function(assert) {
 			var sServiceName = Object.keys(mServicesDictionary).shift();
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			var fnMockService = function() {
@@ -876,8 +878,7 @@ sap.ui.define([
 			});
 			this.oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
-			this.oHandleParametersOnExitSpy = sandbox.spy(this.oRta, "_handleUrlParameterOnExit");
-			this.oReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
+			this.oReloadPageStub = sandbox.stub(ReloadManager, "triggerReload");
 			return this.oRta._initVersioning();
 		},
 		afterEach: function() {
@@ -941,7 +942,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling restore successfully", function(assert) {
-			assert.expect(6);
+			assert.expect(4);
 			var oRemoveStub = sandbox.spy(this.oRta.getCommandStack(), "removeAllCommands");
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
@@ -956,8 +957,6 @@ sap.ui.define([
 
 			return this.oRta.restore().then(function() {
 				assert.strictEqual(oRemoveStub.callCount, 1, "the command stack was cleared");
-				assert.ok(oRemoveStub.calledBefore(this.oHandleParametersOnExitSpy), "the command stack was cleared before the navigation is triggered");
-				assert.equal(this.oHandleParametersOnExitSpy.callCount, 1, "then delete draft url parameter");
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
 				var sFlexInfoFromSession = window.sessionStorage.getItem("sap.ui.fl.info." + sFlexReference);
 				assert.equal(sFlexInfoFromSession, null, "then flex info from session storage is null");
@@ -965,7 +964,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling restore successfully in AppVariant", function(assert) {
-			assert.expect(3);
+			assert.expect(2);
 			sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(true);
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
@@ -976,7 +975,6 @@ sap.ui.define([
 			});
 
 			return this.oRta.restore().then(function() {
-				assert.equal(this.oHandleParametersOnExitSpy.callCount, 1, "then delete draft url parameter");
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
 			}.bind(this));
 		});
