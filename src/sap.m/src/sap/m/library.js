@@ -440,6 +440,7 @@ sap.ui.define([
 			"sap.m.ViewSettingsCustomTab",
 			"sap.m.ViewSettingsFilterItem",
 			"sap.m.ViewSettingsItem",
+			"sap.m.plugins.CellSelector",
 			"sap.m.plugins.ColumnResizer",
 			"sap.m.plugins.DataStateIndicator",
 			"sap.m.plugins.PasteProvider",
