@@ -40568,4 +40568,61 @@ sap.ui.define([
 			assert.strictEqual(iPatchCompletedCount, 1);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: ODLB#getAllCurrentContexts must not fire unnecessary change events and must not
+	// modify internal states of the binding. Calling ODLB#getLength afterwards works as expected.
+	//
+	// Simulate a possible infinite loop here.
+	// If a t:Table (with MDCTable wrapper) uses VisibleRowCountMode=Auto, then there is a "change"
+	// listener in RowMode#updateTable. It calls ODLB#getContexts (which calls fetchContexts ->
+	// createContexts -> modifies bLengthFinal) and fires a "rowsUpdated" event, where another
+	// listener in MDCTable#_handleUpdateFinished reacts on. That listener calls
+	// ODLB#getAllCurrentContexts, which would again fire a change event, creating an infinite loop.
+	//
+	// BCP: 2270093727
+	QUnit.test("BCP: 2270093727", function (assert) {
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table id="table" rows="{path: \'/SalesOrderList\', parameters: {$count : true}}"\
+		threshold="0" visibleRowCount="4">\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
+	<Input id="grossAmount" value="{GrossAmount}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList"
+				+ "?$count=true&$select=GrossAmount,SalesOrderID&$skip=0&$top=4", {
+				"@odata.count" : "20",
+				value : [
+					{SalesOrderID : "01", GrossAmount : "23"},
+					{SalesOrderID : "02", GrossAmount : "23"},
+					{SalesOrderID : "03", GrossAmount : "23"},
+					{SalesOrderID : "04", GrossAmount : "23"}
+				]
+			})
+			.expectChange("salesOrderID", ["01", "02", "03", "04"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("rows");
+
+			oBinding.attachChange(function () {
+				assert.ok(false);
+				oBinding.getContexts(0, 4);
+				oBinding.getAllCurrentContexts();
+			});
+
+			assert.strictEqual(oBinding.getLength(), 20, "before");
+
+			// code under test
+			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
+				"/SalesOrderList('01')",
+				"/SalesOrderList('02')",
+				"/SalesOrderList('03')",
+				"/SalesOrderList('04')"
+			]);
+
+			assert.strictEqual(oBinding.getLength(), 20, "after");
+		});
+	});
 });

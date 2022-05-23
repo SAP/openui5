@@ -4622,13 +4622,18 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("#getAllElements without path", function (assert) {
-		var oCache = this.createCache("Employees"),
+		var aAllElements,
+			oCache = this.createCache("Employees"),
 			oPromise = new SyncPromise(function () {});
 
 		oCache.aElements = ["~oElement0~", oPromise, "~oElement2~"];
+		oCache.aElements.$count = 3;
 
 		// code under test
-		assert.deepEqual(oCache.getAllElements(), ["~oElement0~", undefined, "~oElement2~"]);
+		aAllElements = oCache.getAllElements();
+		assert.deepEqual(aAllElements, ["~oElement0~", undefined, "~oElement2~"]);
+
+		assert.strictEqual(aAllElements.$count, 3);
 	});
 
 	//*********************************************************************************************
