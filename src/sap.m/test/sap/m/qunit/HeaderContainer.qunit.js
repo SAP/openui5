@@ -522,46 +522,6 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("FocusAgain Event of ItemNavigation on IE", function (assert) {
-			//Arrange
-			Device.browser.msie = true;
-			this.oHeaderContainer = new HeaderContainer("headerContainer", {
-				content: [
-					new VerticalLayout(),
-					new VerticalLayout(),
-					new VerticalLayout()
-				]
-			});
-			this.oHeaderContainer.placeAt("qunit-fixture");
-			sinon.stub(this.oHeaderContainer, "_handleFocusAgain");
-			oCore.applyChanges();
-			//Act
-			this.oHeaderContainer._oItemNavigation.fireEvent("FocusAgain");
-			//Assert
-			assert.ok(this.oHeaderContainer._oItemNavigation.hasListeners("FocusAgain"), "Event handler for Event FocusAgain has been attached on Msie.");
-			assert.equal(this.oHeaderContainer._handleFocusAgain.called, true, "FocusAgain Event of ItemNavigation is run on Msie.");
-		});
-
-		QUnit.test("FocusAgain Event of ItemNavigation on Edge", function (assert) {
-			//Arrange
-			Device.browser.edge = true;
-			this.oHeaderContainer = new HeaderContainer("headerContainer", {
-				content: [
-					new VerticalLayout(),
-					new VerticalLayout(),
-					new VerticalLayout()
-				]
-			});
-			this.oHeaderContainer.placeAt("qunit-fixture");
-			sinon.stub(this.oHeaderContainer, "_handleFocusAgain");
-			oCore.applyChanges();
-			//Act
-			this.oHeaderContainer._oItemNavigation.fireEvent("FocusAgain");
-			//Assert
-			assert.ok(this.oHeaderContainer._oItemNavigation.hasListeners("FocusAgain"), "Event handler for Event FocusAgain has been attached on Edge.");
-			assert.equal(this.oHeaderContainer._handleFocusAgain.called, true, "FocusAgain Event of ItemNavigation is run on Edge.");
-		});
-
 		QUnit.module("General focus issues", {
 			beforeEach: function () {
 				this.oHeaderContainer = new HeaderContainer("headerContainer", {
