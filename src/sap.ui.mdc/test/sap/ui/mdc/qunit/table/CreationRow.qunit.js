@@ -183,6 +183,26 @@ sap.ui.define([
 		});
 	});
 
+	// BCP: 2280082502
+	QUnit.test("Enable 'hideEmptyRows' if CreationRow is made visible before initialization of inner CreationRow", function(assert) {
+		var that = this;
+		var pSequence;
+
+		sinon.stub(this.oCreationRow, "_getTable").returns(this.oMDCGridTable);
+
+		this.oCreationRow.setVisible(false);
+		pSequence = this.oCreationRow.update();
+		this.oCreationRow.setVisible(true);
+		pSequence = pSequence.then(function() {
+			var oInnerTableRowMode = that.oMDCGridTable._oTable.getRowMode();
+			assert.strictEqual(oInnerTableRowMode.getHideEmptyRows(), true, "The inner table's 'hideEmptyRow' feature is enabled");
+		}).then(function() {
+			that.oCreationRow._getTable.restore();
+		});
+
+		return pSequence;
+	});
+
 	QUnit.test("Binding contexts", function(assert) {
 		var oModel = new JSONModel();
 		var done = assert.async();
