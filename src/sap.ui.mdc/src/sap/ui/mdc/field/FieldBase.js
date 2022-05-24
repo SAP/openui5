@@ -641,7 +641,7 @@ sap.ui.define([
 		if (oFieldHelp) {
 			oFieldHelp.detachEvent("dataUpdate", _handleHelpDataUpdate, this);
 			if (this._bConnected) {
-				_handleDisconnect.call(this); // remove event listeners
+				_disconnectFieldhelp.call(this, oFieldHelp); // remove event listeners
 				oFieldHelp.connect(); // disconnect FieldHelp to remove callbacks
 			}
 		}
@@ -2423,15 +2423,10 @@ sap.ui.define([
 		if (sMutation === "remove") {
 			oFieldHelp = sap.ui.getCore().byId(sId);
 			if (oFieldHelp) {
-				oFieldHelp.detachEvent("select", _handleFieldHelpSelect, this);
-				oFieldHelp.detachEvent("navigated", _handleFieldHelpNavigated, this);
+				_disconnectFieldhelp.call(this, oFieldHelp);
 				oFieldHelp.detachEvent("dataUpdate", _handleHelpDataUpdate, this);
-				oFieldHelp.detachEvent("disconnect", _handleDisconnect, this);
-				oFieldHelp.detachEvent("afterClose", _handleFieldHelpAfterClose, this);
-				oFieldHelp.detachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
 			}
 			this.resetProperty("_fieldHelpEnabled");
-			this._bConnected = false;
 		} else if (sMutation === "insert") {
 			if (this._sDefaultFieldHelp && sId !== this._sDefaultFieldHelp) { // remove default help
 				_fieldHelpChanged.call(this, this._sDefaultFieldHelp, "remove");
@@ -2818,13 +2813,21 @@ sap.ui.define([
 	function _handleDisconnect(oEvent) {
 
 		var oFieldHelp = _getFieldHelp.call(this);
-		oFieldHelp.detachEvent("select", _handleFieldHelpSelect, this);
-		oFieldHelp.detachEvent("navigated", _handleFieldHelpNavigated, this);
-		oFieldHelp.detachEvent("disconnect", _handleDisconnect, this);
-		oFieldHelp.detachEvent("afterClose", _handleFieldHelpAfterClose, this); // TODO: remove
-		oFieldHelp.detachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
-		oFieldHelp.detachEvent("closed", _handleFieldHelpAfterClose, this);
-		this._bConnected = false;
+		_disconnectFieldhelp.call(this, oFieldHelp);
+
+	}
+
+	function _disconnectFieldhelp(oFieldHelp) {
+
+		if (this._bConnected) {
+			oFieldHelp.detachEvent("select", _handleFieldHelpSelect, this);
+			oFieldHelp.detachEvent("navigated", _handleFieldHelpNavigated, this);
+			oFieldHelp.detachEvent("disconnect", _handleDisconnect, this);
+			oFieldHelp.detachEvent("afterClose", _handleFieldHelpAfterClose, this); // TODO: remove
+			oFieldHelp.detachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
+			oFieldHelp.detachEvent("closed", _handleFieldHelpAfterClose, this);
+			this._bConnected = false;
+		}
 
 	}
 
