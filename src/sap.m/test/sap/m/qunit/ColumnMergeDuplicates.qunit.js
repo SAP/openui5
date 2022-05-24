@@ -272,6 +272,9 @@ sap.ui.define([
 				},
 				"/MyService/ProductList(ProductID='DD402')/PRODUCT_2_BP?$skip=2&$top=2": {
 					message: {value: [{CompanyName: "SAP"}, {CompanyName: "SAP"}]}
+				},
+				"/MyService/ProductList(ProductID='DD402')/PRODUCT_2_BP?$skip=4&$top=2": {
+					message: {value: [{CompanyName: "ABC"}, {CompanyName: "CBA"}]}
 				}
 			});
 		},
@@ -321,6 +324,7 @@ sap.ui.define([
 		}).then(function() {
 			assert.notOk(that.oTable.getItems()[0].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
 			assert.ok(that.oTable.getItems()[1].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
+			assert.ok(that.oTable._oGrowingDelegate._bApplyChunkAsync);
 			return new Promise(function(resolve) {
 				that.oTable.$("trigger").trigger("tap");
 				that.oTable.attachEventOnce("updateFinished", resolve);
@@ -328,6 +332,20 @@ sap.ui.define([
 		}).then(function() {
 			assert.ok(that.oTable.getItems()[2].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
 			assert.ok(that.oTable.getItems()[3].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
+			return new Promise(function(resolve) {
+				that.oTable.$("trigger").trigger("tap");
+				that.oTable.attachEventOnce("updateStarted", function() {
+					that.oTable._oGrowingDelegate._aChunk = [new ColumnListItem({
+						cells: new Label({ text: "My Company" })
+					})];
+					that.oTable._oGrowingDelegate.applyChunkAsync(0);
+				});
+				that.oTable.attachEventOnce("updateFinished", resolve);
+			});
+		}).then(function() {
+			assert.equal(that.oTable.getItems().length, 6);
+			assert.equal(that.oTable.getItemsContainerDomRef().childElementCount, 6);
+			assert.equal(that.oTable.getItems()[0].getCells()[0].getText(), "SAP");
 		});
 	});
 });
