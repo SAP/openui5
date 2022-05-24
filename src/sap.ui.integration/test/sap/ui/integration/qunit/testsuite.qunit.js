@@ -770,7 +770,25 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"editor/Enhancement": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
 			"editor/Layout": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/Settings": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1814,6 +1832,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"editor/RequestValuesEnhancement": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
 			"editor/Translation": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1841,7 +1868,25 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"editor/SectionSapCard1Enhancement": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
 			"editor/SectionTemp": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/SectionTempEnhancement": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1859,7 +1904,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/InitialWithNoChange": {
+			"editor/multiLanguagesOfValue/InitialWithNoChange01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1869,7 +1914,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/InitialWithErrorCondition": {
+			"editor/multiLanguagesOfValue/InitialWithNoChange02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1879,7 +1924,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/ChangeByAdminForAdminAndContentModes": {
+			"editor/multiLanguagesOfValue/InitialWithErrorCondition01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1889,7 +1934,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/ChangeByAdminForTranslationAndAllModes": {
+			"editor/multiLanguagesOfValue/InitialWithErrorCondition02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1899,7 +1944,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/ChangeByContent": {
+			"editor/multiLanguagesOfValue/ChangeByAdminForAdminMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1909,7 +1954,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/ChangeByTranslation": {
+			"editor/multiLanguagesOfValue/ChangeByAdminForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1919,7 +1964,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/ChangeByAdminAndContent": {
+			"editor/multiLanguagesOfValue/ChangeByAdminForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1929,7 +1974,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/ChangeByAdminAndTranslation": {
+			"editor/multiLanguagesOfValue/ChangeByAdminForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1939,7 +1984,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslation": {
+			"editor/multiLanguagesOfValue/ChangeByAdminForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1949,7 +1994,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/ChangeByContentAndTranslation": {
+			"editor/multiLanguagesOfValue/ChangeByContentForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1959,7 +2004,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/BCChangeByAdminForAdminAndContentModes": {
+			"editor/multiLanguagesOfValue/ChangeByContentForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1969,7 +2014,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/BCChangeByAdminForTranslationAndAllModes": {
+			"editor/multiLanguagesOfValue/ChangeByContentForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1979,7 +2024,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/BCChangeByContent": {
+			"editor/multiLanguagesOfValue/ChangeByContentForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1989,7 +2034,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/BCChangeByAdminAndContent": {
+			"editor/multiLanguagesOfValue/ChangeByTranslationForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1999,7 +2044,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentAndTranslation": {
+			"editor/multiLanguagesOfValue/ChangeByTranslationForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -2009,7 +2054,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/BCChangeByAdminAndTranslation": {
+			"editor/multiLanguagesOfValue/ChangeByTranslationForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -2019,7 +2064,327 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/multiLanguagesOfValue/BCChangeByContentAndTranslation": {
+			"editor/multiLanguagesOfValue/ChangeByAdminAndContentForContentMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByAdminAndContentForTranslationMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByAdminAndContentForTranslationMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByAdminAndContentForAllMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByAdminAndTranslationForTranslationMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByAdminAndTranslationForTranslationMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByAdminAndTranslationForAllMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslationForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslationForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslationForTranslationMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslationForTranslationMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByContentAndTranslationForTranslationMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByContentAndTranslationForTranslationMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeByContentAndTranslationForAllMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminForAdminMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminForContentMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminForAllMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminForTranslationMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminForTranslationMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByContentForContentAndAllModes": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByContentForTranslationMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentForContentAndAllMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentForTranslationMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentForTranslationMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentAndTranslationForTranslationMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentAndTranslationForTranslationMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentAndTranslationForAllMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndTranslationForTranslationMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndTranslationForTranslationMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndTranslationForAllMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByContentAndTranslationForTranslationMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByContentAndTranslationForTranslationMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/BCChangeByContentAndTranslationForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
