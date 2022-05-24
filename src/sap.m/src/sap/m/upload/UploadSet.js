@@ -24,9 +24,10 @@ sap.ui.define([
 	"sap/m/upload/UploaderHttpRequestMethod",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/dnd/DropInfo",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/m/upload/UploadSetToolbarPlaceholder"
 ], function (Control, Icon, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
-			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod, DragDropInfo, DropInfo, Library) {
+			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod, DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder) {
 	"use strict";
 
 	/**
@@ -474,6 +475,8 @@ sap.ui.define([
 		this._oLastEnteredTarget = null;
 
 		this._aGroupHeadersAdded = [];
+		this._iFileUploaderPH = null;
+		this._oItemToUpdate = null;
 	};
 
 	UploadSet.prototype.exit = function () {
@@ -574,9 +577,15 @@ sap.ui.define([
 				this._oToolbar = new OverflowToolbar(this.getId() + "-toolbar", {
 					content: [this._oNumberOfAttachmentsTitle, new ToolbarSpacer(), this.getDefaultFileUploader()]
 				});
+				this._iFileUploaderPH = 2;
 				this.addDependent(this._oToolbar);
 			} else {
-				this._oToolbar.addContent(this.getDefaultFileUploader());
+				this._iFileUploaderPH = this._getFileUploaderPlaceHolderPosition(this._oToolbar);
+				if (this._oToolbar && this._iFileUploaderPH > -1) {
+					this._setFileUploaderInToolbar(this.getDefaultFileUploader());
+				} else if (this._oToolbar) {
+					this._oToolbar.insertContent(this.getDefaultFileUploader());
+				}
 			}
 		}
 
@@ -996,6 +1005,28 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Opens the FileUploader dialog. When an UploadSetItem is provided, this method can be used to update a file with a new version.
+	 * @param {sap.m.UploadSetItem} item The UploadSetItem to update with a new version. This parameter is mandatory.
+	 * @returns {this} this to allow method chaining
+	 * @public
+	 */
+	 UploadSet.prototype.openFileDialog = function(item) {
+		if (this._oFileUploader) {
+			if (item) {
+				if (!this._oFileUploader.getMultiple()) {
+					this._oItemToUpdate = item;
+					this._oFileUploader.$().find("input[type=file]").trigger("click");
+				} else {
+					Log.warning("Version Upload cannot be used in multiple upload mode");
+				}
+			} else {
+				this._oFileUploader.$().find("input[type=file]").trigger("click");
+			}
+		}
+		return this;
+	};
+
 	/* ============== */
 	/* Event handlers */
 	/* ============== */
@@ -1033,8 +1064,12 @@ sap.ui.define([
 			"headers": oResponseXHRParams.headers
 		};
 		oItem.setProgress(100);
+		if (this._oItemToUpdate && this.getInstantUpload()) {
+			this.removeAggregation('items', this._oItemToUpdate, false);
+		}
 		this.insertItem(oItem, 0);
 		oItem.setUploadState(UploadState.Complete);
+		this._oItemToUpdate = null;
 		this.fireUploadCompleted(oXhrParams);
 	};
 
@@ -1572,5 +1607,29 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Provides the position of the placeholder for the FileUploader, that every toolbar must have if it is provided by the application.
+	 * @param {sap.m.OverflowToolbar} toolbar Toolbar where the placeholder can be found.
+	 * @return {int} The position of the placeholder or -1 if there's no placeholder.
+	 * @private
+	 */
+	 UploadSet.prototype._getFileUploaderPlaceHolderPosition = function(toolbar) {
+		for (var i = 0; i < toolbar.getContent().length; i++) {
+			if (toolbar.getContent()[i] instanceof UploadSetToolbarPlaceholder) {
+				return i;
+			}
+		}
+		return -1;
+	};
+
+	/**
+	 * Inserts the given FileUploader object into the current Toolbar at the position of the placeholder.
+	 * @param {sap.ui.unified.FileUploader} fileUploader The FileUploader object to insert into the Toolbar
+	 * @private
+	 */
+	 UploadSet.prototype._setFileUploaderInToolbar = function(fileUploader) {
+		this._oToolbar.getContent()[this._iFileUploaderPH].setVisible(false);
+		this._oToolbar.insertContent(fileUploader, this._iFileUploaderPH);
+	};
 	return UploadSet;
 });

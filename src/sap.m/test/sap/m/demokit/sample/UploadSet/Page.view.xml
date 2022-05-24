@@ -17,7 +17,8 @@
 				mediaTypes="text/plain,application/msword,image/jpeg"
 				uploadUrl="../../../../upload"
 				items="{path: '/items', templateShareable: false}"
-				mode="MultiSelect">
+				mode="MultiSelect"
+				selectionChanged="onSelectionChange">
 			<upload:toolbar>
 				<OverflowToolbar>
 					<Button
@@ -28,6 +29,12 @@
 							id="downloadSelectedButton"
 							text="Download selected"
 							press="onDownloadSelectedButton"/>
+					<Button
+							id="versionButton"
+							enabled="false"
+							text="Upload a new version"
+							press="onVersionUpload"/>
+					<upload:UploadSetToolbarPlaceholder />
 				</OverflowToolbar>
 			</upload:toolbar>
 			<upload:items>
