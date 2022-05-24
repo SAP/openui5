@@ -6,14 +6,15 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_pick",
 	"sap/base/util/UriParameters",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
-	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
-	"sap/ui/fl/apply/_internal/flexObjects/RevertData",
-	"sap/ui/fl/apply/_internal/flexObjects/CompVariantRevertData",
-	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariantRevertData",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/RevertData",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/registry/Settings",
@@ -24,14 +25,15 @@ sap.ui.define([
 	_omit,
 	_pick,
 	UriParameters,
-	Layer,
 	Change,
-	UpdatableChange,
-	CompVariant,
-	RevertData,
-	CompVariantRevertData,
-	States,
+	Layer,
 	Utils,
+	CompVariant,
+	CompVariantRevertData,
+	FlexObjectFactory,
+	RevertData,
+	States,
+	UpdatableChange,
 	FlexState,
 	CompVariantMerger,
 	Settings,
@@ -44,7 +46,8 @@ sap.ui.define([
 	function isVersionIndependentOrInDraft(oChange, mPropertyBag) {
 		var aDraftFilenames = getPropertyFromVersionsModel("/draftFilenames", mPropertyBag);
 		if (aDraftFilenames) {
-			return oChange.getState() === Change.states.NEW || aDraftFilenames.includes(oChange.getFileName());
+			return oChange.getState() === Change.states.NEW
+			|| aDraftFilenames.includes(oChange.getFileName ? oChange.getFileName() : oChange.getId());
 		}
 		return true;
 	}
@@ -60,15 +63,17 @@ sap.ui.define([
 		return undefined;
 	}
 
-	function isChangeUpdatable(oChange, mPropertyBag) {
-		if (!["defaultVariant", "updateVariant"].includes(oChange.getChangeType())) {
+	function isChangeUpdatable(oFlexObject, mPropertyBag) {
+		var oChangeType = oFlexObject.getFlexObjectMetadata ? oFlexObject.getFlexObjectMetadata().changeType : oFlexObject.getChangeType();
+		if (!["defaultVariant", "updateVariant"].includes(oChangeType)) {
 			return false;
 		}
-		var bSameLayer = oChange.getLayer() === mPropertyBag.layer;
-		var sPackageName = oChange.getDefinition().packageName;
+
+		var bSameLayer = oFlexObject.getLayer() === mPropertyBag.layer;
+		var sPackageName = oFlexObject.getPackage();
 		var bNotTransported = !sPackageName || sPackageName === "$TMP";
 
-		return bSameLayer && bNotTransported && isVersionIndependentOrInDraft(oChange, mPropertyBag);
+		return bSameLayer && bNotTransported && isVersionIndependentOrInDraft(oFlexObject, mPropertyBag);
 	}
 
 	function getSubSection(mMap, oFlexObject) {
@@ -76,7 +81,8 @@ sap.ui.define([
 			return mMap.variants;
 		}
 
-		switch (oFlexObject.getChangeType()) {
+		var oChangeType = oFlexObject.getChangeType();
+		switch (oChangeType) {
 			case "defaultVariant":
 				return mMap.defaultVariants;
 			case "standardVariant":
@@ -97,7 +103,7 @@ sap.ui.define([
 
 	function updateObjectAndStorage(oFlexObject, oStoredResponse, sParentVersion) {
 		return Storage.update({
-			flexObject: oFlexObject.getDefinition(),
+			flexObject: oFlexObject.convertToFileContent ? oFlexObject.convertToFileContent() : oFlexObject.getDefinition(),
 			layer: oFlexObject.getLayer(),
 			transport: oFlexObject.getRequest(),
 			parentVersion: sParentVersion
@@ -117,17 +123,19 @@ sap.ui.define([
 		}).then(function () {
 			// update StorageResponse
 			var aObjectArray = getSubSection(oStoredResponse.changes.comp, oFlexObject);
-			updateArrayByName(aObjectArray, oFlexObject.getDefinition());
-			return oFlexObject.getDefinition();
+			var oFileContent = oFlexObject.convertToFileContent ? oFlexObject.convertToFileContent() : oFlexObject.getDefinition();
+			updateArrayByName(aObjectArray, oFileContent);
+			return oFileContent;
 		});
 	}
 
-	function removeFromArrayByName(aObjectArray, oFlexObject) {
+	function removeFromArrayById(aObjectArray, sObjectId) {
 		for (var i = aObjectArray.length - 1; i >= 0; i--) {
 			//aObjectArray can come from either back end response or flex state
 			//In the first case, the fileName is a direct property of object
-			//In the second case, it can be obtained from getFileName() function
-			if ((aObjectArray[i].fileName || aObjectArray[i].getFileName()) === oFlexObject.fileName) {
+			//In the second case, it can be obtained from getId() function
+			var sFileName = aObjectArray[i].fileName || (aObjectArray[i].getFileName && aObjectArray[i].getFileName());
+			if ((sFileName || aObjectArray[i].getId()) === sObjectId) {
 				aObjectArray.splice(i, 1);
 				break;
 			}
@@ -139,13 +147,14 @@ sap.ui.define([
 		if (oFlexObject.getChangeType() === "standardVariant") {
 			mCompVariantsMapByPersistencyKey.standardVariantChange = undefined;
 		} else {
-			removeFromArrayByName(getSubSection(mCompVariantsMapByPersistencyKey, oFlexObject), oFlexObject.getDefinition());
+			removeFromArrayById(getSubSection(mCompVariantsMapByPersistencyKey, oFlexObject), oFlexObject.getId());
 		}
 	}
 
 	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion) {
+		var oFileContent = oFlexObject.convertToFileContent ? oFlexObject.convertToFileContent() : oFlexObject.getDefinition();
 		return Storage.remove({
-			flexObject: oFlexObject.getDefinition(),
+			flexObject: oFileContent,
 			layer: oFlexObject.getLayer(),
 			transport: oFlexObject.getRequest(),
 			parentVersion: sParentVersion
@@ -154,21 +163,12 @@ sap.ui.define([
 			removeFromCompVariantsMap(oFlexObject, mCompVariantsMapByPersistencyKey);
 		}).then(function () {
 			// update StorageResponse
-			removeFromArrayByName(getSubSection(oStoredResponse.changes.comp, oFlexObject), oFlexObject.getDefinition());
-			return oFlexObject.getDefinition();
+			removeFromArrayById(
+				getSubSection(oStoredResponse.changes.comp, oFlexObject),
+				oFileContent.fileName
+			);
+			return oFileContent;
 		});
-	}
-
-	function needsPersistencyCall(oFlexObject) {
-		return oFlexObject &&
-			[States.NEW, States.DIRTY, States.DELETED].includes(oFlexObject.getState());
-	}
-
-	function getAllCompVariantObjects(mCompVariantsMapByPersistencyKey) {
-		return mCompVariantsMapByPersistencyKey.variants
-			.concat(mCompVariantsMapByPersistencyKey.changes)
-			.concat(mCompVariantsMapByPersistencyKey.defaultVariants)
-			.concat(mCompVariantsMapByPersistencyKey.standardVariantChange);
 	}
 
 	function getTexts(mPropertyBag) {
@@ -182,6 +182,18 @@ sap.ui.define([
 			});
 		}
 		return mInternalTexts;
+	}
+
+	function needsPersistencyCall(oFlexObject) {
+		return oFlexObject &&
+			[States.NEW, States.DIRTY, States.DELETED].includes(oFlexObject.getState());
+	}
+
+	function getAllCompVariantObjects(mCompVariantsMapByPersistencyKey) {
+		return mCompVariantsMapByPersistencyKey.variants
+			.concat(mCompVariantsMapByPersistencyKey.changes)
+			.concat(mCompVariantsMapByPersistencyKey.defaultVariants)
+			.concat(mCompVariantsMapByPersistencyKey.standardVariantChange);
 	}
 
 	function determineLayer(mPropertyBag) {
@@ -217,7 +229,7 @@ sap.ui.define([
 
 	function ifVariantClearRevertData(oFlexObject) {
 		if (oFlexObject instanceof CompVariant) {
-			oFlexObject.removeAllRevertInfo();
+			oFlexObject.removeAllRevertData();
 		}
 	}
 
@@ -225,9 +237,7 @@ sap.ui.define([
 		oVariant.storeExecuteOnSelection(mPropertyBag.executeOnSelection);
 		oVariant.storeFavorite(mPropertyBag.favorite);
 		oVariant.storeContexts(mPropertyBag.contexts);
-		if (mPropertyBag.name) {
-			oVariant.setText("variantName", mPropertyBag.name);
-		}
+		oVariant.storeName(mPropertyBag.name);
 		oVariant.storeContent(mPropertyBag.content || oVariant.getContent());
 		return oVariant;
 	}
@@ -236,9 +246,7 @@ sap.ui.define([
 		oVariant.setExecuteOnSelection(mPropertyBag.executeOnSelection);
 		oVariant.setFavorite(mPropertyBag.favorite);
 		oVariant.setContexts(mPropertyBag.contexts);
-		if (mPropertyBag.name) {
-			oVariant.setName(mPropertyBag.name);
-		}
+		oVariant.setName(mPropertyBag.name);
 		oVariant.setContent(mPropertyBag.content || oVariant.getContent());
 		return oVariant;
 	}
@@ -367,35 +375,11 @@ sap.ui.define([
 
 		var oChangeSpecificData = mPropertyBag.changeSpecificData;
 
-		var oInfo = {
-			id: oChangeSpecificData.id,
-			changeType: oChangeSpecificData.type,
-			service: oChangeSpecificData.ODataService,
-			content: oChangeSpecificData.content || {},
-			reference: mPropertyBag.reference,
-			fileType: "variant",
-			packageName: oChangeSpecificData.packageName,
-			layer: determineLayer(oChangeSpecificData),
-			selector: {
-				persistencyKey: mPropertyBag.persistencyKey
-			},
-			texts: getTexts(oChangeSpecificData),
-			command: mPropertyBag.command,
-			generator: mPropertyBag.generator
-		};
-
-		if (oChangeSpecificData.favorite !== undefined) {
-			oInfo.favorite = oChangeSpecificData.favorite;
-		}
-		if (oChangeSpecificData.executeOnSelection !== undefined) {
-			oInfo.executeOnSelection = oChangeSpecificData.executeOnSelection;
-		}
-		if (oChangeSpecificData.contexts !== undefined) {
-			oInfo.contexts = oChangeSpecificData.contexts;
-		}
-
-		var oFile = CompVariant.createInitialFileContent(oInfo);
-		var oFlexObject = new CompVariant(oFile);
+		oChangeSpecificData.layer = determineLayer(oChangeSpecificData);
+		oChangeSpecificData.changeType = oChangeSpecificData.type;
+		oChangeSpecificData.texts = getTexts(oChangeSpecificData);
+		var oFileContent = Object.assign({}, oChangeSpecificData, _omit(mPropertyBag, "changeSpecificData"));
+		var oFlexObject = FlexObjectFactory.createCompVariant(oFileContent);
 
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 		var oMapOfPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);
@@ -451,13 +435,11 @@ sap.ui.define([
 					previousContent: oVariant.getContent(),
 					previousFavorite: oVariant.getFavorite(),
 					previousExecuteOnSelection: oVariant.getExecuteOnSelection(),
-					previousContexts: oVariant.getContexts()
+					previousContexts: oVariant.getContexts(),
+					previousName: oVariant.getName()
 				}
 			};
-			if (mPropertyBag.name) {
-				oRevertData.content.previousName = oVariant.getText("variantName");
-			}
-			oVariant.addRevertInfo(new CompVariantRevertData(oRevertData));
+			oVariant.addRevertData(new CompVariantRevertData(oRevertData));
 		}
 
 		function updateVariant(mPropertyBag, oVariant) {
@@ -492,23 +474,18 @@ sap.ui.define([
 			aRevertData.push(oRevertData);
 			oChange.setRevertData(aRevertData);
 			if (mPropertyBag.executeOnSelection !== undefined) {
-				oVariant.setExecuteOnSelection(mPropertyBag.executeOnSelection);
 				oChangeContent.executeOnSelection = mPropertyBag.executeOnSelection;
 			}
 			if (mPropertyBag.favorite !== undefined) {
-				oVariant.setFavorite(mPropertyBag.favorite);
 				oChangeContent.favorite = mPropertyBag.favorite;
 			}
 			if (mPropertyBag.contexts) {
-				oVariant.setContexts(mPropertyBag.contexts);
 				oChangeContent.contexts = mPropertyBag.contexts;
 			}
 			if (mPropertyBag.content) {
-				oVariant.setContent(mPropertyBag.content);
 				oChangeContent.variantContent = mPropertyBag.content;
 			}
 			if (mPropertyBag.name) {
-				oVariant.setName(mPropertyBag.name);
 				oChangeContent.texts = {
 					variantName: {
 						value: mPropertyBag.name,
@@ -520,8 +497,8 @@ sap.ui.define([
 			if (mPropertyBag.transportId) {
 				oChange.setRequest(mPropertyBag.transportId);
 			}
-			CompVariantMerger.applyChangeOnVariant(oVariant, oChange);
 			storeRevertDataInVariant(mPropertyBag, oVariant, CompVariantState.operationType.UpdateVariantViaChangeUpdate, oChange);
+			CompVariantMerger.applyChangeOnVariant(oVariant, oChange);
 		}
 
 		function createChange(mPropertyBag, oVariant) {
@@ -543,7 +520,7 @@ sap.ui.define([
 				content: {},
 				selector: {
 					persistencyKey: mPropertyBag.persistencyKey,
-					variantId: oVariant.getId()
+					variantId: oVariant.getVariantId()
 				}
 			});
 
@@ -625,7 +602,7 @@ sap.ui.define([
 					previousState: sCurrentState
 				}
 			});
-			oVariant.addRevertInfo(oRevertData);
+			oVariant.addRevertData(oRevertData);
 		}
 
 		if (sCurrentState === States.NEW) {
@@ -660,8 +637,8 @@ sap.ui.define([
 
 		var oVariant = getVariantById(mPropertyBag);
 
-		var oVariantRevertData = oVariant.getRevertInfo().pop();
-		oVariant.removeRevertInfo(oVariantRevertData);
+		var oVariantRevertData = oVariant.getRevertData().pop();
+		oVariant.removeRevertData(oVariantRevertData);
 		var oRevertDataContent = oVariantRevertData.getContent();
 		var oChange;
 
@@ -733,7 +710,7 @@ sap.ui.define([
 	 */
 	CompVariantState.overrideStandardVariant = function(mPropertyBag) {
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)[mPropertyBag.persistencyKey];
-		var oStandardVariant = mCompVariantsMap.byId[mCompVariantsMap.standardVariant.getId()];
+		var oStandardVariant = mCompVariantsMap.byId[mCompVariantsMap.standardVariant.getVariantId()];
 
 		oStandardVariant.setExecuteOnSelection(!!mPropertyBag.executeOnSelection);
 		var aChanges = oStandardVariant.getChanges();
@@ -757,7 +734,7 @@ sap.ui.define([
 		function writeObjectAndAddToState(oFlexObject, oStoredResponse, sParentVersion) {
 			// TODO: remove this line as soon as layering and a condensing is in place
 			return Storage.write({
-				flexObjects: [oFlexObject.getDefinition()],
+				flexObjects: [oFlexObject.convertToFileContent ? oFlexObject.convertToFileContent() : oFlexObject.getDefinition()],
 				layer: oFlexObject.getLayer(),
 				transport: oFlexObject.getRequest(),
 				isLegacyVariant: oFlexObject.isVariant(),
@@ -777,8 +754,9 @@ sap.ui.define([
 				}
 			}).then(function () {
 				// update StorageResponse
-				getSubSection(oStoredResponse.changes.comp, oFlexObject).push(oFlexObject.getDefinition());
-				return oFlexObject.getDefinition();
+				var oFileContent = oFlexObject.convertToFileContent ? oFlexObject.convertToFileContent() : oFlexObject.getDefinition();
+				getSubSection(oStoredResponse.changes.comp, oFlexObject).push(oFileContent);
+				return oFileContent;
 			});
 		}
 
@@ -808,7 +786,12 @@ sap.ui.define([
 				var aFlexObject = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey).filter(needsPersistencyCall);
 				var aPromises = aFlexObject.map(function(oFlexObject, index) {
 					if (index === 0) {
-						var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {layer: oFlexObject.getLayer(), reference: oFlexObject.getDefinition().reference});
+						var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {
+							layer: oFlexObject.getLayer(),
+							reference: oFlexObject.getFlexObjectMetadata ?
+								oFlexObject.getFlexObjectMetadata().reference :
+								oFlexObject.getDefinition().reference
+						});
 						// TODO: use condensing route to reduce backend requests
 						// need to save first entry to generate draft version in backend
 						return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion)

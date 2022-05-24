@@ -120,14 +120,14 @@ sap.ui.define([
 					type: "pageVariant",
 					isVariant: true,
 					content: {},
-					id: "1"
+					id: "myId"
 				},
 				reference: sReference,
 				persistencyKey: sPersistencyKey
 			});
 			CompVariantState.updateVariant({
 				favorite: true,
-				id: "1",
+				id: "myId",
 				layer: Layer.USER,
 				control: oControl,
 				reference: sReference,
@@ -164,7 +164,7 @@ sap.ui.define([
 			})
 				.then(function (aFlexObjects) {
 					assert.equal(aFlexObjects.length, 1, "an array with 1 entries is returned");
-					assert.equal(aFlexObjects[0].getFileName(), "*standard*", "the standard variant is present");
+					assert.equal(aFlexObjects[0].getVariantId(), "*standard*", "the standard variant is present");
 				});
 		});
 
@@ -179,14 +179,14 @@ sap.ui.define([
 					type: "pageVariant",
 					isVariant: true,
 					content: {},
-					id: "1"
+					id: "myId"
 				},
 				reference: sReference,
 				persistencyKey: sPersistencyKey
 			});
 			CompVariantState.updateVariant({
 				favorite: true,
-				id: "1",
+				id: "myId",
 				layer: Layer.USER,
 				control: oControl,
 				reference: sReference,
@@ -213,8 +213,8 @@ sap.ui.define([
 					assert.equal(aFlexObjects.length, 6, "an array with 6 entries is returned");
 					assert.equal(aFlexObjects[0].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
 					assert.equal(aFlexObjects[1].getChangeType(), "updateVariant", "the change from the compVariantState is present");
-					assert.equal(aFlexObjects[2].getFileName(), "#PS1", "the oData variant is present");
-					assert.equal(aFlexObjects[3].getFileName(), "*standard*", "the standard variant is present");
+					assert.equal(aFlexObjects[2].getVariantId(), "#PS1", "the oData variant is present");
+					assert.equal(aFlexObjects[3].getVariantId(), "*standard*", "the standard variant is present");
 					assert.equal(aFlexObjects[4].getChangeType(), "renameField", "the 1st change in changePersistence is present");
 					assert.equal(aFlexObjects[5].getChangeType(), "addGroup", "the 2nd change in changePersistence is present");
 				});

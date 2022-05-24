@@ -319,10 +319,26 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory"]
 				}
 			},
+			"apply/_internal/flexObjects/Variant": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexObjects/Variant"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/qunit": "test-resources/sap/ui/fl/qunit/"
+					}
+				}
+			},
 			"apply/_internal/flexObjects/CompVariant": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexObjects/CompVariant"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/qunit": "test-resources/sap/ui/fl/qunit/"
+					}
 				}
 			},
 			"apply/_internal/flexState/changes/DependencyHandler": {
