@@ -199,6 +199,8 @@ sap.ui.define([
 				]
 			});
 
+			this._getTable()._oTable.getRowMode().setHideEmptyRows(this.getVisible());
+
 			for (var sModelName in this._mBindingContexts) {
 				var mBindingContext = this._mBindingContexts[sModelName];
 				this._oInnerCreationRow.setBindingContext(mBindingContext.context, mBindingContext.modelName);
