@@ -3266,7 +3266,7 @@ sap.ui.define([
 			ThemeParameters.get({ name: "sapUiFontFamily" }) || "Arial"
 		].join(" ");
 
-		var fPadding = 1;
+		var fPadding = 1.1875;
 		this.oTable.setEnableAutoColumnWidth(true);
 		Core.applyChanges();
 
@@ -3470,7 +3470,7 @@ sap.ui.define([
 			var sPropertyName = aColumns[3].getDataProperty();
 			var oProperty = oPropertyHelper.getProperty(sPropertyName);
 
-			var sWidth = oPropertyHelper._calcColumnWidth(oProperty);
+			var sWidth = oPropertyHelper._calcColumnWidth(oProperty, fPadding);
 			assert.equal(sWidth, aColumns[3]._oSettingsModel.getProperty("/calculatedWidth"), "calculatedWidth for numberValue width is " + sWidth);
 			assert.equal(sWidth, getInnerColumnWidth(aColumns[3]), "Column numberValue width is " + sWidth);
 
@@ -3491,8 +3491,8 @@ sap.ui.define([
 			// complex property with visualSettings.widthCalculation=null
 			assert.equal(getInnerColumnWidth(aColumns[8]), getInnerColumnWidth(aColumns[1]), "Width calculation in complex property with visualSettings.widthCalculation=null is ignored");
 
-			assert.equal(getInnerColumnWidth(aColumns[9]), "20rem", "String type without maxLength gets maxWidth");
-			assert.equal(getInnerColumnWidth(aColumns[10]), "20rem", "String type with big maxLength gets maxWidth");
+			assert.equal(getInnerColumnWidth(aColumns[9]), 19 + fPadding + "rem", "String type without maxLength gets maxWidth");
+			assert.equal(getInnerColumnWidth(aColumns[10]), 19 + fPadding + "rem", "String type with big maxLength gets maxWidth");
 		}.bind(this));
 	});
 

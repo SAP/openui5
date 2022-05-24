@@ -231,21 +231,24 @@ sap.ui.define([
 			return null;
 		}
 
-		return this._calcColumnWidth(oProperty);
+		var fPadding = oMDCColumn.getTable()._bMobileTable ? 1 : 1.1875; // TODO: get from theme parameters
+		return this._calcColumnWidth(oProperty, fPadding);
 	};
 
 	/**
 	 * Calculates the column width based on the provided <code>PropertyInfo</code>.
 	 *
 	 * @param {Object} oProperty The properties of <code>PropertyInfo</code> of <code>Column</code> instance for which to set the width
+	 * @param {float} [fPadding=1] The additional horizontal border and padding added to the content width calculation of the column
 	 * @return {string} The calculated column width
 	 * @since 1.95
 	 * @private
 	 */
-	 PropertyHelper.prototype._calcColumnWidth = function (oProperty) {
+	 PropertyHelper.prototype._calcColumnWidth = function (oProperty, fPadding) {
 		var mWidthCalculation = Object.assign({
 			gap: 0,
 			includeLabel: true,
+			padding: fPadding || 1,
 			excludeProperties: []
 		}, oProperty.visualSettings && oProperty.visualSettings.widthCalculation);
 
