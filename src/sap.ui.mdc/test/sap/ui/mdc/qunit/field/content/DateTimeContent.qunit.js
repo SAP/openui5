@@ -261,6 +261,7 @@ sap.ui.define([
 			var oBindingInfo = aControls[0].getBindingInfo("timezone");
 			assert.ok(oBindingInfo, "Timezone bound");
 			assert.equal(oBindingInfo && oBindingInfo.type, oType, "Timezone bound using own ConditionsType");
+			assert.equal(oBindingInfo && oBindingInfo.parts[0].targetType, "sap.ui.mdc.raw:1", "Timezone bound using own TargetType");
 
 			for (var i = 0; i < aControls.length; i++) {
 				aControls[i].destroy();

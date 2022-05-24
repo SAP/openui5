@@ -38,7 +38,7 @@ sap.ui.define([
 			if (DateUtil.showTimezone(oType)) {
 				// bind timezone to timezone part; handle as "unit"
 				var oUnitConditionsType = oContentFactory.getUnitConditionsType();
-				aControls[0].bindProperty("timezone", { path: "$field>/conditions", type: oUnitConditionsType });
+				aControls[0].bindProperty("timezone", { path: "$field>/conditions", type: oUnitConditionsType, targetType: "sap.ui.mdc.raw:1" }); // use own target type to allow special handling in ConditionType (DateTimePicker needs the raw value of the timezone, not translated)
 				aControls[0].setShowTimezone(true);
 			}
 
