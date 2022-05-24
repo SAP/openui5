@@ -79,6 +79,14 @@ sap.ui.define([
 						type: "boolean",
 						help: "Show Timezone part"
 					},
+					firstDayOfWeek: {
+						type: "int",
+						help: "first day of week, 0=Sunday"
+					},
+					minimalDaysInFirstWeek: {
+						type: "int",
+						help: "Minimal days of first week"
+					},
 					interval: {
 						type: "boolean",
 						help: "To enable interval formatting set to \"true\""
