@@ -56,12 +56,10 @@ sap.ui.define([
 			oCondition = Condition.createCondition(sOperator, aValuesIn);
 		}
 
-		var oTypeConfig = TypeUtil.getTypeConfig(oType);
-
 		if (bToString) {
-			oResult = ConditionConverter.toString(oCondition, oTypeConfig, TypeUtil);
+			oResult = ConditionConverter.toString(oCondition, oType, TypeUtil);
 		} else {
-			oResult = ConditionConverter.toType(oCondition, oTypeConfig, TypeUtil);
+			oResult = ConditionConverter.toType(oCondition, oType, TypeUtil);
 		}
 
 		assert.equal(typeof oResult, "object", "Object returned");

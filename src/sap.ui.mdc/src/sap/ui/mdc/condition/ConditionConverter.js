@@ -3,27 +3,19 @@
  */
 sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
-	'sap/ui/mdc/util/DateUtil',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Operator',
 	'sap/base/util/merge'
 ],
 	function(
 		Condition,
-		BaseType,
 		ConditionValidated,
-		DateUtil,
 		FilterOperatorUtil,
 		Operator,
 		merge
 	) {
 		"use strict";
-
-		var sDateTimePattern = "yyyy-MM-ddTHH:mm:ssZ"; // milliseconds missing
-		var sDatePattern = "yyyy-MM-dd";
-		var sTimePattern = "HH:mm:ss";
 
 		/**
 		 * Utilities for condition conversion
@@ -47,18 +39,19 @@ sap.ui.define([
 			 * <b>Note:</b> Number types are not converted, the number conversion is done by the Flex handling.
 			 *
 			 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
-			 * @param {sap.ui.mdc.TypeConfig} oTypeConfig given dataType mapping configuration
+			 * @param {sap.ui.model.SimpleType|sap.ui.mdc.TypeConfig} vType given dataType mapping configuration
 			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent <code>TypeUtil</code> implementation
 			 * @returns {sap.ui.mdc.condition.ConditionObject} stringified condition
 			 * @private
 			 * @ui5-restricted sap.ui.mdc
 			 * @since 1.74.0
 			 */
-			toString: function(oCondition, oTypeConfig, oTypeUtil) {
+			toString: function(oCondition, vType, oTypeUtil) {
 
 				// convert using "normalized" data type
 				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-				var aValues = _valuesToString(oCondition.values, _getLocalTypeConfig(oTypeUtil, oTypeConfig, oOperator) || oTypeConfig, oOperator);
+				var oTypeInstance = vType.typeInstance ? vType.typeInstance : vType;
+				var aValues = _externalizeValues(oCondition.values, _getLocalType(oTypeInstance, oOperator), oOperator, oTypeUtil);
 
 				// inParameter, OutParameter
 				// TODO: we need the types of the in/out parameter
@@ -90,17 +83,18 @@ sap.ui.define([
 			 * <b>Note:</b> Number types are not converted, the number conversion is done by the Flex handling.
 			 *
 			 * @param {sap.ui.mdc.condition.ConditionObject} oCondition stringified condition
-			 * @param {sap.ui.mdc.TypeConfig} oTypeConfig Data type of the condition
+			 * @param {sap.ui.model.SimpleType|sap.ui.mdc.TypeConfig} vType given dataType mapping configuration
 			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent <code>TypeUtil</code> implementation
 			 * @returns {sap.ui.mdc.condition.ConditionObject} condition
 			 * @private
 			 * @ui5-restricted sap.ui.mdc
 			 * @since 1.74.0
 			 */
-			toType: function(oCondition, oTypeConfig, oTypeUtil) {
+			toType: function(oCondition, vType, oTypeUtil) {
 				// convert using "normalized" data type
 				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-				var aValues = _stringToValues(oCondition.values, _getLocalTypeConfig(oTypeUtil, oTypeConfig, oOperator) || oTypeConfig);
+				var oTypeInstance = vType.typeInstance ? vType.typeInstance : vType;
+				var aValues = _internalizeValues(oCondition.values, _getLocalType(oTypeInstance, oOperator), oTypeUtil);
 
 				// inParameter, OutParameter
 				// TODO: we need the types of the in/out parameter
@@ -127,60 +121,18 @@ sap.ui.define([
 				}
 
 				return oResult;
-
-			},
-			/**
-			 * creates a Condition from internal values
-			 *
-			 * @param {string} sOperator Name of operator
-			 * @param {any[]} aValues values
-			 * @param {sap.ui.mdc.enum.ConditionValidated} sValidated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the <code>DefineConditionPanel</code> control
-			 * @param {object} [oPayload] payload of condition
-			 * @param {sap.ui.model.Type} oType Data type of the values
-			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent <code>TypeUtil</code> implementation
-			 * @returns {sap.ui.mdc.condition.ConditionObject} stringified condition
-			 * @private
-			 * @ui5-restricted sap.ui.mdc
-			 * @MDC_PUBLIC_CANDIDATE
-			 * @since 1.100.0
-			 */
-			 createExternalCondition: function(sOperator, aValues, sValidated, oPayload, oType, oTypeUtil) {
-				// convert using "normalized" data type
-				var oOperator = FilterOperatorUtil.getOperator(sOperator);
-				var oTypeConfig = oTypeUtil.getTypeConfig(oType);
-				aValues = _valuesToString(aValues, _getLocalTypeConfig(oTypeUtil, oTypeConfig, oOperator) || oTypeConfig, oOperator);
-				var oCondition = Condition.createCondition(sOperator, aValues, undefined, undefined, sValidated); // TODO_ add payload
-				return oCondition;
-			},
-			/**
-			 * gets internal values from stringified condition
-			 *
-			 * @param {sap.ui.mdc.condition.ConditionObject} oCondition stringified condition
-			 * @param {sap.ui.model.Type} oType Data type of the values
-			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent <code>TypeUtil</code> implementation
-			 * @returns {any[]} internal values
-			 * @private
-			 * @ui5-restricted sap.ui.mdc
-			 * @MDC_PUBLIC_CANDIDATE
-			 * @since 1.100.0
-			 */
-			 getInternalValues: function(oCondition, oType, oTypeUtil) {
-				// convert using "normalized" data type
-				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-				var oTypeConfig = oTypeUtil.getTypeConfig(oType);
-				var aValues = _stringToValues(oCondition.values, _getLocalTypeConfig(oTypeUtil, oTypeConfig, oOperator) || oTypeConfig);
-				return aValues;
 			}
 		};
 
-		function _getLocalTypeConfig (oTypeUtil, oTypeConfig, oOperator) {
+		function _getLocalType (oTypeInstance, oOperator) {
 			if (oOperator && oOperator.valueTypes[0] && (oOperator.valueTypes[0] !== Operator.ValueType.Self && oOperator.valueTypes[0] !== Operator.ValueType.Static)) {
 				// we have to create the type instance for the values
-				return oTypeUtil.getTypeConfig(oOperator._createLocalType(oOperator.valueTypes[0], oTypeConfig && oTypeConfig.typeInstance)); // TODO type for all values must be the same})
+				return oOperator._createLocalType(oOperator.valueTypes[0], oTypeInstance); //TODO: type for all values must be the same
 			}
+			return oTypeInstance;
 		}
 
-		function _valuesToString (aValues, oTypeConfig, oOperator) {
+		function _externalizeValues (aValues, oTypeInstance, oOperator, oTypeUtil) {
 
 			var aResult = [];
 
@@ -188,7 +140,7 @@ sap.ui.define([
 				if (!oOperator || (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== Operator.ValueType.Static)) {
 					// only add real values (no description in EQ case or static texts) (for unknown operators just copy to be compatible)
 					var vValue = aValues[i];
-					aResult.push(_valueToString(vValue, oTypeConfig));
+					aResult.push(oTypeUtil.externalizeValue(vValue, oTypeInstance));
 				}
 			}
 
@@ -196,83 +148,16 @@ sap.ui.define([
 
 		}
 
-		function _valueToString (vValue, oTypeConfig) {
-
-			// read base type
-			var sBaseType = oTypeConfig.baseType;
-			var oTypeInstance = oTypeConfig.typeInstance;
-
-			switch (sBaseType) {
-				case BaseType.DateTime:
-					return DateUtil.typeToString(vValue, oTypeInstance, sDateTimePattern);
-
-				case BaseType.Date:
-					return DateUtil.typeToString(vValue, oTypeInstance, sDatePattern);
-
-				case BaseType.Time:
-					return DateUtil.typeToString(vValue, oTypeInstance, sTimePattern);
-
-				case BaseType.Boolean:
-					return vValue;
-
-				case BaseType.Numeric:
-					if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
-						// INT64 and Decimal parsed always to string, if for some reason a number comes in -> convert to string, but don't use type at this might have locale dependent formatting
-						return vValue.toString();
-					}
-					return vValue; // use as it is and let Flex handle it
-
-				default:
-					// just use type to convert
-					return oTypeInstance.formatValue(vValue, "string");
-			}
-
-		}
-
-		function _stringToValues (aValues, oTypeConfig) {
+		function _internalizeValues (aValues, oTypeInstance, oTypeUtil) {
 
 			var aResult = [];
 
 			for (var i = 0; i < aValues.length; i++) {
 				var sValue = aValues[i];
-				aResult.push(_stringToValue(sValue, oTypeConfig));
+				aResult.push(oTypeUtil.internalizeValue(sValue, oTypeInstance));
 			}
 
 			return aResult;
-
-		}
-
-		function _stringToValue (sValue, oTypeConfig) {
-
-			// read base type
-			var sBaseType = oTypeConfig.baseType;
-			var oTypeInstance = oTypeConfig.typeInstance;
-
-
-			switch (sBaseType) {
-				case BaseType.DateTime:
-					return DateUtil.stringToType(sValue, oTypeInstance, sDateTimePattern);
-
-				case BaseType.Date:
-					return DateUtil.stringToType(sValue, oTypeInstance, sDatePattern);
-
-				case BaseType.Time:
-					return DateUtil.stringToType(sValue, oTypeInstance, sTimePattern);
-
-				case BaseType.Boolean:
-					return sValue;
-
-				case BaseType.Numeric:
-					if (typeof sValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
-						// INT64 and Decimal using string as internal value -> if for some reason a number comes in convert it to string
-						return sValue.toString(); // don't use type as this could have locale dependent parsing
-					}
-					return sValue; // use as it is
-
-				default:
-					// just use type to convert
-					return oTypeInstance.parseValue(sValue, "string");
-			}
 
 		}
 

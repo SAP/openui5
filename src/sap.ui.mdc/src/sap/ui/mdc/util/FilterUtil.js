@@ -136,7 +136,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 									//convert from externalized to model-specific value representation
 									for (i = 0; i < mConditions[sFieldPath].length; i++) {
 										oConditionInternal = merge({}, mConditions[sFieldPath][i]);
-										mInternalFilterConditions[sFieldPath].push(ConditionConverter.toType(oConditionInternal, oProperty.typeConfig, vTypeProvider.getTypeUtil ? vTypeProvider.getTypeUtil() : vTypeProvider));
+										mInternalFilterConditions[sFieldPath].push(ConditionConverter.toType(oConditionInternal, oProperty.typeConfig.typeInstance, vTypeProvider.getTypeUtil ? vTypeProvider.getTypeUtil() : vTypeProvider));
 									}
 
 								} else {

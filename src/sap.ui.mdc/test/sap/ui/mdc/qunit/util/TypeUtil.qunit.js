@@ -17,12 +17,11 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Float"
 
-
 ], function(
 	TypeUtil,
 	SimpleType,
 	BaseType,
-	Date,
+	DateType,
 	DateTime,
 	Time,
 	BooleanType,
@@ -60,7 +59,7 @@ sap.ui.define([
 	QUnit.test("getBaseTypeForType", function(assert) {
 
 		var aTypeList = [
-			[new Date({style: "long"}, {displayFormat: "Date"}), BaseType.Date],
+			[new DateType({style: "long"}, {displayFormat: "Date"}), BaseType.Date],
 			[new DateTime(), BaseType.DateTime],
 			[new Time(), BaseType.Time],
 			[new BooleanType(), BaseType.Boolean],
@@ -99,5 +98,27 @@ sap.ui.define([
 
 		oTypeConfig = TypeUtil.getTypeConfig("sap.ui.model.type.Currency", {showMeasure: true});
 		assert.equal(oTypeConfig.baseType, BaseType.Unit , "expected basetype returned");
+	});
+
+	QUnit.test("_normalizeType", function (assert) {
+
+		var oTypeInstance = TypeUtil._normalizeType("sap.ui.model.type.Currency", {showMeasure: false}, {maximum: 999});
+		assert.ok(oTypeInstance instanceof SimpleType, "type instance returned");
+		assert.equal(oTypeInstance.getFormatOptions().showMeasure, false, "formatoptions are considered");
+		assert.equal(oTypeInstance.getConstraints().maximum, 999, "constraints are considered");
+
+		oTypeInstance = TypeUtil._normalizeType(new Currency());
+		assert.ok(oTypeInstance instanceof SimpleType, "type instance returned");
+	});
+
+	QUnit.test("internalizeValue", function (assert) {
+		var oTypedValue = TypeUtil.internalizeValue("2000-01-01", new DateType());
+		assert.equal(oTypedValue.toDateString(), 'Sat Jan 01 2000', "expected value returned");
+	});
+
+	QUnit.test("externalizeValue", function (assert) {
+		var oDate = new Date("2000-01-01 UTC");
+		var oStringifiedValue = TypeUtil.externalizeValue(oDate, new DateType());
+		assert.equal(oStringifiedValue, "2000-01-01", "stringified value returned");
 	});
 });

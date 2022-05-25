@@ -37,7 +37,7 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enum/BaseType',	'sap/bas
 					return BaseType.String; // only unit to show
 				}
 			default:
-				return ODataTypeUtil.getBaseType(sType, oFormatOptions, oConstraints);
+				return ODataTypeUtil.getBaseType.call(this, sType, oFormatOptions, oConstraints);
 		}
 	};
 
@@ -51,24 +51,24 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enum/BaseType',	'sap/bas
 		if (mEdmTypes[sType]) {
 			sType = mEdmTypes[sType];
 		} else {
-			sType = ODataTypeUtil.getDataTypeClassName(sType);
+			sType = ODataTypeUtil.getDataTypeClassName.call(this, sType);
 		}
 		return sType;
 	};
 
-	ODataV4TypeUtil.getDataTypeInstance = function(sDataType, formatOptions, constraints) {
+	ODataV4TypeUtil.getDataTypeInstance = function(sDataType, oFormatOptions, oConstraints) {
 		switch (sDataType) {
 			case "sap.ui.model.odata.type.DateTimeOffset":
 			case "Edm.DateTimeOffset":
-				constraints = merge({}, constraints);
-				constraints.V4 = true;
+				oConstraints = merge({}, oConstraints);
+				oConstraints.V4 = true;
 				break;
 
 			default:
 		}
 
 		var TypeClass = this.getDataTypeClass(sDataType);
-		return new TypeClass(formatOptions, constraints);
+		return new TypeClass(oFormatOptions, oConstraints);
 	};
 
 	return ODataV4TypeUtil;

@@ -115,38 +115,5 @@ sap.ui.define([
 		return TypeUtil;
 	};
 
-	function _convertCondition(oOptions, bExternalize) {
-		var oTypeUtil = ODataV4ValueHelpDelegate.getTypeUtil();
-		var oTypeConfig = oTypeUtil.getTypeConfig(oOptions.type, oOptions.formatOptions, oOptions.constraints);
-		var fnConvert = bExternalize ? ConditionConverter.toString : ConditionConverter.toType;
-		return fnConvert(oOptions.condition, oTypeConfig, ODataV4ValueHelpDelegate.getTypeUtil());
-	}
-
-	/**
-	 * @param  {object} oPayload Delegate payload
- 	 * @param  {object} oOptions Options for conversion
-	 * @param  {object} oOptions.condition Condition to be converted
-	 * @param  {object} oOptions.type Data type for this condition
-	 * @param  {object} oOptions.formatOptions formatOptions for given type
-  	 * @param  {object} oOptions.constraints constraints for given type
-	 * @returns {object<sap.ui.mdc.condition.ConditionObject>} returns a stringified condition object
-	 */
-	ODataV4ValueHelpDelegate.externalizeCondition = function (oPayload, oOptions) {
-		return _convertCondition(oOptions, true);
-	};
-
-	/**
-	 * @param  {object} oPayload Delegate payload
- 	 * @param  {object} oOptions Options for conversion
-	 * @param  {object} oOptions.condition Condition to be converted
-	 * @param  {object} oOptions.type Data type for this condition
-	 * @param  {object} oOptions.formatOptions formatOptions for given type
-  	 * @param  {object} oOptions.constraints constraints for given type
-	 * @returns {object<sap.ui.mdc.condition.ConditionObject>} returns a type based condition object
-	 */
-	ODataV4ValueHelpDelegate.internalizeCondition = function (oPayload, oOptions) {
-		return _convertCondition(oOptions, false);
-	};
-
 	return ODataV4ValueHelpDelegate;
 });
