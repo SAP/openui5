@@ -1072,4 +1072,51 @@ sap.ui.define([
 		oDynamicDateRange.destroy();
 	});
 
+	QUnit.module("Misc", {
+		beforeEach: function() {
+			this.ddr = new DynamicDateRange();
+			this.ddr.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.ddr.destroy();
+		}
+	});
+
+	QUnit.test("DynamicDateFormat doesn't allow year outside of the range [1-9999]", function (assert) {
+		var oResult;
+
+		// act
+		oResult = this.ddr._parseValue("Jul 1, 2019");
+		// assert
+		assert.notEqual(oResult, null, "(date) When year is within the allowed range, value is parsed properly");
+		assert.strictEqual(oResult.values[0].getFullYear(), 2019, "The year is correct");
+
+		// act
+		oResult = this.ddr._parseValue("Jul 1, 0000");
+		// assert
+		assert.strictEqual(oResult, null, "(date) When year is < 1, parsing returns null (value is not parsed)");
+
+		// act
+		oResult = this.ddr._parseValue("Jul 1, 10000");
+		// assert
+		assert.strictEqual(oResult, null, "(date) When year is > 9999, parsing returns null (value is not parsed)");
+
+		// act
+		oResult = this.ddr._parseValue("Jul 1, 2019, 11:33:00 AM");
+		// assert
+		assert.notEqual(oResult, null, "(datetime) When year is within the allowed range, value is parsed properly");
+		assert.strictEqual(oResult.values[0].getFullYear(), 2019, "The year is correct");
+
+		// act
+		oResult = this.ddr._parseValue("Jul 1, 0000, 11:33:00 AM");
+		// assert
+		assert.strictEqual(oResult, null, "(datetime) When year is < 1, parsing returns null (value is not parsed)");
+
+		// act
+		oResult = this.ddr._parseValue("Jul 1, 10000, 11:33:00 AM");
+		// assert
+		assert.strictEqual(oResult, null, "(datetime) When year is > 9999, parsing returns null (value is not parsed)");
+	});
+
 });
