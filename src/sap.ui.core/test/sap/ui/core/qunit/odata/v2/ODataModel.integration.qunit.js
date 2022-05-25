@@ -888,6 +888,14 @@ sap.ui.define([
 					if ("batchNo" in oExpectedRequest) {
 						oActualRequest.batchNo = iBatchNo;
 					}
+					if ("skipDeepPathCheck" in oExpectedRequest) {
+						// in 1.84 the deepPath of created contexts is not yet updated and updating
+						// it is functionally not needed either, see changes:
+						// Ic65027b7c2a143c680b844f463d83e193794860b
+						// I8152043b7b80cb5f13bbb497db8b24203741335e
+						delete oExpectedRequest.skipDeepPathCheck;
+						delete oActualRequest.deepPath;
+					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 					oResponse.headers = mResponseHeaders || {};
 					if (oExpectedRequest.headers["Content-ID"]) {
@@ -6998,6 +7006,93 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				assert.ok(!sKey.includes("?"),
 					"canonical path cache key has no URL parameters, " + sKey);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A not yet initialized ODataListBinding (with transient context) is getting
+	// initialized after the entity of its parent ODataContextBinding which has the empty binding
+	// path and thus the transient context as element context got persisted.
+	// BCP: 002075129400002462642022
+	QUnit.test("ODataListBinding with created parent context initializes", function (assert) {
+		var oContext,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="objectPage">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<Text id="companyName" text="{CompanyName}"/>\
+	<t:Table id="table" visibleRowCount="2">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("businessPartnerID", null)
+			.expectChange("companyName", null)
+			.expectChange("salesOrderID", [])
+			.expectChange("note", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oObjectPage = that.oView.byId("objectPage"),
+				oTable = that.oView.byId("table");
+
+			that.expectChange("businessPartnerID", undefined)
+				.expectChange("companyName", "SAP");
+
+			// ODataContextBinding must be created first!
+			oObjectPage.bindObject("", {select : "BusinessPartnerID,CompanyName"});
+			oContext = oModel.createEntry("/BusinessPartnerSet", {
+				properties : {CompanyName : "SAP"}
+			});
+			oObjectPage.setBindingContext(oContext);
+			// in the ticket scenario a failed $batch caused a #checkUpdate on the bindings; for
+			// simplicity a #updateBindings leads to the same binding behavior
+			oModel.updateBindings();
+			oTable.bindRows("ToSalesOrders");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.BusinessPartner"},
+						CompanyName : "SAP"
+					},
+					deepPath : "/BusinessPartnerSet('~key~')",
+					method : "POST",
+					requestUri : "BusinessPartnerSet"
+				}, {
+					data : {
+						__metadata : {uri : "BusinessPartnerSet('42')"},
+						BusinessPartnerID : "42",
+						CompanyName : "SAP"
+					},
+					statusCode : 201
+				})
+				.expectChange("businessPartnerID", "42")
+				.expectRequest({
+					method : "GET",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=102",
+					skipDeepPathCheck : true
+				}, {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('1~0~')"},
+						SalesOrderID : "1~0~",
+						Note : "Note 1"
+					}, {
+						__metadata : {uri : "SalesOrderSet('2~1~')"},
+						SalesOrderID : "2~1~",
+						Note : "Note 2"
+					}]
+				})
+				.expectChange("salesOrderID", ["1~0~", "2~1~"])
+				.expectChange("note", ["Note 1", "Note 2"]);
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
 		});
 	});
 });
