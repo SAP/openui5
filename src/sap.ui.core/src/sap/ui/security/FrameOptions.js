@@ -74,6 +74,8 @@ sap.ui.define(['sap/base/Log'], function(Log) {
 					var bOk = false;
 					var bTrue = true;
 					do {
+						// Accessing a property on the window to check whether we are within the same origin.
+						// In cross origin scenarios this will cause an exception which will be handled below.
 						var test = oParentWindow.document.domain;
 						if (oParentWindow == FrameOptions.__top) {
 							if (test != undefined) {
@@ -83,12 +85,12 @@ sap.ui.define(['sap/base/Log'], function(Log) {
 						}
 						oParentWindow = oParentWindow.parent;
 					// eslint-disable-next-line no-unmodified-loop-condition
-					} while (bTrue); // TODO: refactor loop condition bTrue
+					} while (bTrue);
 					if (bOk) {
 						this._applyState(true, true);
 					}
 				} catch (e) {
-					// access to the top window is not possible
+					// access to the top window (oParentWindow.document.domain) is not possible
 					this._sendRequireMessage();
 				}
 
