@@ -41,11 +41,12 @@ sap.ui.define([
 
 			xhr.onload = function() {
 				if (xhr.status >= 200 && xhr.status < 400) {
-					resolve(xhr.response);
+					resolve(xhr.response === "true");
 				} else {
 					var oError = new Error(xhr.statusText);
 					oError.status = xhr.status;
-					reject(oError);
+					Log.error("Response status code is: " + oError.status, "Stacktrace: " + oError.stack);
+					reject(false);
 				}
 			};
 		});
@@ -591,9 +592,7 @@ sap.ui.define([
 	};
 
 	AppVariantUtils.handleBeforeUnloadEvent = function () {
-		// oEvent.preventDefault();
-		var sMessage = AppVariantUtils.getText("MSG_DO_NOT_CLOSE_BROWSER");
-		return sMessage;
+		return AppVariantUtils.getText("MSG_DO_NOT_CLOSE_BROWSER");
 	};
 
 	AppVariantUtils.showMessage = function(sMessageKey) {

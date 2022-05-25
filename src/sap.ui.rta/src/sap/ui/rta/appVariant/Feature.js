@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/base/util/merge",
-	"sap/base/Log"
+	"sap/base/util/merge"
 ], function(
 	FlexUtils,
 	AppVariantUtils,
@@ -20,8 +19,7 @@ sap.ui.define([
 	Settings,
 	AppVariantFactory,
 	FeaturesAPI,
-	merge,
-	Log
+	merge
 ) {
 	"use strict";
 
@@ -154,13 +152,7 @@ sap.ui.define([
 		},
 		isManifestSupported: function() {
 			var oDescriptor = fnGetDescriptor();
-
-			return AppVariantUtils.getManifirstSupport(oDescriptor["sap.app"].id).then(function(oResult) {
-				return oResult.response;
-			}).catch(function(oError) {
-				Log.error("Response status code is: " + oError.status, "Stacktrace: " + oError.stack);
-				return false;
-			});
+			return AppVariantUtils.getManifirstSupport(oDescriptor["sap.app"].id);
 		},
 		/**
 		 * @param {object} oRootControl - Root control of an app (variant)
