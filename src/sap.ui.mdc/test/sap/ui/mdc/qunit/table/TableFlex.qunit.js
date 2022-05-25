@@ -1,7 +1,35 @@
-/* global QUnit */
+/* global QUnit, sinon */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/util/TypeUtil", "sap/ui/mdc/FilterField", "sap/ui/mdc/p13n/FlexUtil", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/flexibility/Table.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/core/Core"
-], function(createAppEnvironment, TypeUtil, FilterField, FlexUtil, TableSettings, TableFlexHandler, ChangesWriteAPI, JsControlTreeModifier, UIComponent, ComponentContainer, TableDelegate, Column, oCore) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
+	"sap/ui/mdc/util/TypeUtil",
+	"sap/ui/mdc/FilterField",
+	"sap/ui/mdc/p13n/FlexUtil",
+	"sap/ui/mdc/p13n/StateUtil",
+	"sap/ui/mdc/table/TableSettings",
+	"sap/ui/mdc/flexibility/Table.flexibility",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/mdc/TableDelegate",
+	"sap/ui/mdc/table/Column",
+	"sap/ui/core/Core"
+], function(
+	createAppEnvironment,
+	TypeUtil,
+	FilterField,
+	FlexUtil,
+	StateUtil,
+	TableSettings,
+	TableFlexHandler,
+	ChangesWriteAPI,
+	JsControlTreeModifier,
+	UIComponent,
+	ComponentContainer,
+	TableDelegate,
+	Column,
+	oCore
+) {
 	'use strict';
 
 	oCore.loadLibrary("sap.ui.fl");
@@ -216,4 +244,22 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Remove columns", function(assert) {
+		var oTableInvalidate = sinon.spy(this.oTable, "invalidate");
+		var oInnerTableInvalidate = sinon.spy(this.oTable._oTable, "invalidate");
+		var aRemovedInnerColumns = [this.oTable._oTable.getColumns()[1], this.oTable._oTable.getColumns()[2]];
+
+		return StateUtil.applyExternalState(this.oTable, {
+			items: [
+				{name: "column1", visible: false},
+				{name: "column2", visible: false}
+			]
+		}).then(function(aChanges){
+			assert.equal(oTableInvalidate.callCount, 1, "Table was invalidated once");
+			assert.ok(oInnerTableInvalidate.notCalled, "Inner table is not invalidated");
+			assert.ok(aRemovedInnerColumns.every(function(oInnerColumn) {
+				return oInnerColumn.isDestroyed();
+			}), "Inner columns are destroyed");
+		});
+	});
 });
