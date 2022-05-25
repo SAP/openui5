@@ -84,9 +84,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				},
 				autostart: false // starts itself after async loading of HistoryQUnit.js
 			},
-			/*HistoryIFrameSync: {
+			HistoryIFrameSync: {
 				title: "QUnit Page for sap.ui.core.routing.History with hash synchronization between frames"
-			},*/
+			},
 			TargetCache: {
 				title: "QUnit Page for sap.ui.core.routing.TargetCache"
 			},
