@@ -39,7 +39,6 @@ sap.ui.define([
          * @MDC_PUBLIC_CANDIDATE
          * @since 1.88
          * @alias sap.ui.mdc.chart.ChartSelectionDetails
-         * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
          */
         var ChartSelectionDetails = SelectionDetails.extend("sap.ui.mdc.chart.ChartSelectionDetails", /** @lends sap.ui.mdc.chart.ChartSelectionDetails.prototype */ {
             metadata: {
