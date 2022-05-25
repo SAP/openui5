@@ -3716,6 +3716,14 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No SubHeader Text Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 1, "Icon Container Created.");
+					var sLink = "https://www.google.com/";
+					this.oGenericTile.setUrl(sLink);
+					this.oGenericTile.setScope(GenericTileScope.Actions);
+					oCore.applyChanges();
+					setTimeout(function(){
+						assert.equal(this.oGenericTile.getDomRef().tagName, "A", "The GenericTile is rendered in anchor tag");
+					}.bind(this),100);
+					this.oGenericTile.setScope(GenericTileScope.Display);
 					this.oGenericTile.setState("Loading");
 					oCore.applyChanges();
 					setTimeout(function(){
