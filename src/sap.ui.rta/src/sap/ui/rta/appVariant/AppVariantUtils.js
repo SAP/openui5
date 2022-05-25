@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
-	"sap/ui/fl/write/api/ChangesWriteAPI"
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/_internal/connectors/LrepConnector"
 ], function(
 	FlexUtils,
 	MessageBox,
@@ -21,7 +22,8 @@ sap.ui.define([
 	Log,
 	PersistenceWriteAPI,
 	AppVariantWriteAPI,
-	ChangesWriteAPI
+	ChangesWriteAPI,
+	LrepConnector
 ) {
 	"use strict";
 	var AppVariantUtils = {};
@@ -32,23 +34,7 @@ sap.ui.define([
 	AppVariantUtils._newAppVariantId = null;
 
 	AppVariantUtils.getManifirstSupport = function(sRunningAppId) {
-		var sManifirstUrl = '/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=' + sRunningAppId;
-
-		return new Promise(function (resolve, reject) {
-			var xhr = new XMLHttpRequest();
-			xhr.open("GET", sManifirstUrl);
-			xhr.send();
-
-			xhr.onload = function() {
-				if (xhr.status >= 200 && xhr.status < 400) {
-					resolve(xhr.response);
-				} else {
-					var oError = new Error(xhr.statusText);
-					oError.status = xhr.status;
-					reject(oError);
-				}
-			};
-		});
+		return LrepConnector.appVariant.getManifirstSupport({appId: sRunningAppId});
 	};
 
 	AppVariantUtils.getNewAppVariantId = function() {
@@ -591,9 +577,7 @@ sap.ui.define([
 	};
 
 	AppVariantUtils.handleBeforeUnloadEvent = function () {
-		// oEvent.preventDefault();
-		var sMessage = AppVariantUtils.getText("MSG_DO_NOT_CLOSE_BROWSER");
-		return sMessage;
+		return AppVariantUtils.getText("MSG_DO_NOT_CLOSE_BROWSER");
 	};
 
 	AppVariantUtils.showMessage = function(sMessageKey) {
