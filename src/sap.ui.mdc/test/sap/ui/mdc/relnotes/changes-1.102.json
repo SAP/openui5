@@ -13,5 +13,32 @@
         "text": " Field: support Timezone for DateTime"
       }
     ]
+  },
+  "1.102.1": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "c96ca3caa7b5f135ffdd943ee60e448777e7d5f1",
+        "type": "FIX",
+        "text": " Tables: Column width calculation for Edm.String adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270098060"
+          }
+        ]
+      },
+      {
+        "id": "1c8f6234124e74a1b76d27536ab868be5475d0c4",
+        "type": "FIX",
+        "text": " Field: clear currency measure brings error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270046846"
+          }
+        ]
+      }
+    ]
   }
 }

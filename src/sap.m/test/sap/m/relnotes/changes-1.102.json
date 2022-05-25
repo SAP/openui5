@@ -795,5 +795,62 @@
         ]
       }
     ]
+  },
+  "1.102.1": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "a5670c2ecd845d08c08372417441b6e4650e1a2b",
+        "type": "FIX",
+        "text": " GrowingEnablement: asynchronous items rendering issue is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280083462"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270108409"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003845712022"
+          }
+        ]
+      },
+      {
+        "id": "c96ca3caa7b5f135ffdd943ee60e448777e7d5f1",
+        "type": "FIX",
+        "text": " Tables: Column width calculation for Edm.String adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270098060"
+          }
+        ]
+      },
+      {
+        "id": "5650b68636d95dece36bca1b589857a1e0b132c8",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dialog is now correctly stretched",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270089582"
+          }
+        ]
+      },
+      {
+        "id": "76b1f822c38e18052f481f46a3bdce3b3954f0e4",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Selection is OK when value is bound with timezone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270101399"
+          }
+        ]
+      }
+    ]
   }
 }

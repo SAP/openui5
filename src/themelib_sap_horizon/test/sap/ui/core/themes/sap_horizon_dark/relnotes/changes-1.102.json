@@ -182,5 +182,21 @@
         ]
       }
     ]
+  },
+  "1.102.1": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "a14a8db6e29e5e1c25d196a53769cc5ddb769062",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: DatesRow has correct alignment of size in horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270088152"
+          }
+        ]
+      }
+    ]
   }
 }
