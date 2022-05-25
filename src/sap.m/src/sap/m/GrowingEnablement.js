@@ -590,8 +590,8 @@ sap.ui.define([
 			if (!aContexts.length) {
 				// no context, destroy list items
 				this.destroyListItems();
-			} else if (!aItems.length && !oControl.getItemsContainerDomRef()) {
-				// there are no items and dom ref we can start from scratch
+			} else if (!oControl.getItemsContainerDomRef()) {
+				// no dom ref for compatibility reason start from scratch
 				this.rebuildListItems(aContexts, oBindingInfo);
 			} else if (!aDiff || !aItems.length && aDiff.length) {
 				// new records need to be applied from scratch
