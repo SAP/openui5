@@ -344,7 +344,6 @@ function(
 					 *
 					 * <b>Note:</b> This property takes effect only when the <code>showSecondaryValues</code> property is set to <code>true</code>.
 					 * @since 1.86
-					 * @experimental As of version 1.86
 					 */
 					columnRatio: {
 						type: "sap.m.SelectColumnRatio",
