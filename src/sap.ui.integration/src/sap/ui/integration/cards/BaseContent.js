@@ -79,6 +79,15 @@ sap.ui.define([
 					visibility: "hidden"
 				},
 
+				/**
+				 * Defines the internally used LoadingProvider.
+				 */
+				_loadingPlaceholder: {
+					type: "sap.ui.core.Element",
+					multiple: false,
+					visibility: "hidden"
+				},
+
 				_messageContainer: {
 					type: "sap.m.VBox",
 					multiple: false,
@@ -159,11 +168,6 @@ sap.ui.define([
 			this._oActions = null;
 		}
 
-		if (this._oLoadingPlaceholder) {
-			this._oLoadingPlaceholder.destroy();
-			this._oLoadingPlaceholder = null;
-		}
-
 		this._sContentBindingPath = null;
 	};
 
@@ -226,7 +230,8 @@ sap.ui.define([
 			return this;
 		}
 
-		this._oLoadingPlaceholder = this.getAggregation("_loadingProvider").createContentPlaceholder(oConfiguration, sType, this.getCardInstance());
+		var oLoadingPlaceholder = this.getAggregation("_loadingProvider").createContentPlaceholder(oConfiguration, sType, this.getCardInstance());
+		this.setAggregation("_loadingPlaceholder", oLoadingPlaceholder);
 		this._setDataConfiguration(oConfiguration.data);
 
 		return this;

@@ -22,7 +22,7 @@
 				<SegmentedButtonItem text="Compact" key="compact" />
 			</items>
 		</SegmentedButton>
-
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
 		<Panel>
 			<w:Card
 				id="card1"
@@ -49,6 +49,14 @@
 				class="sapUiTinyMargin" />
 			<w:Card
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/object_snack.manifest.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/object_bite.manifest.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/withExtension/manifest.json"
 				width="auto"
 				class="sapUiTinyMargin" />
 		</Panel>

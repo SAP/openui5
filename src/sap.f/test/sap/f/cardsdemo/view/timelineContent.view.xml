@@ -16,6 +16,7 @@
 		</subHeader>
 
 		<content>
+			<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
 			<Panel>
 				<VBox>
 					<HBox>

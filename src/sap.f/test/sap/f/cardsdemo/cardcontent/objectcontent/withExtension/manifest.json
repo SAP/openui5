@@ -1,0 +1,183 @@
+
+{
+	"sap.app": {
+		"id": "card.explorer.object.card",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"extension": "./CustomActionsExtension",
+		"data": {
+			"extension": {
+				"method": "getData"
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "sap-icon://building",
+				"shape": "Square"
+			},
+			"title": "ACME Consulting",
+			"subTitle": "{/header/subHeader}"
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"value": "Overdue by 20 days",
+							"type": "Status",
+							"state": "Error"
+						},
+						{
+							"value": "USD 10,000.00 was to be billed on 23rd August, 2021."
+						}
+					]
+				},
+				{
+					"items": [
+						{
+							"label": "Billing Element",
+							"value": "RN47565.0.1"
+						},
+						{
+							"label": "Customer",
+							"value": "Domestic US Customer 1"
+						}
+					]
+				},
+				{
+					"items": [
+						{
+							"label": "Project",
+							"value": "RN4765"
+						},
+						{
+							"label": "Contacts",
+							"type": "IconGroup",
+							"path": "contacts",
+							"template": {
+								"icon": {
+									"src": "{photo}",
+									"text": "{= format.initials(${name})}"
+								},
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "/contacts-service?name={= encodeURIComponent(${name}) }"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Approve",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "approve"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Reject",
+					"text": "Reject",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "reject"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"text": "Details",
+					"ariaHasPopup": "Dialog",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "openSnack"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"icon": "sap-icon://email",
+					"text": "Contact",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "mailto:{email}"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"text": "Book a Meeting",
+					"overflowPriority": "AlwaysOverflow",
+					"actions": [
+						{
+							"type": "Navigation",
+							"enabled": false,
+							"parameters": {
+								"url": "{agendaUrl}"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"text": "Contact Company",
+					"overflowPriority": "AlwaysOverflow",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "mailto:{company/email}?subject={company/emailSubject}"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

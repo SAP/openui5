@@ -12,6 +12,7 @@
 			</Toolbar>
 		</subHeader>
 
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
 		<Panel>
 			<w:Card
 				id="adaptivecard1"

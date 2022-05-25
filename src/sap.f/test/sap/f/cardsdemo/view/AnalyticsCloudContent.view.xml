@@ -12,6 +12,7 @@
 				<ToolbarSpacer/>
 			</Toolbar>
 		</subHeader>
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
 
 		<f:GridContainer class="sapUiSmallMargin">
 			<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/manifestLine1.json">
