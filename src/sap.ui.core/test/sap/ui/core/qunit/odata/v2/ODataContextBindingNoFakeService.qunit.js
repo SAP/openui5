@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/base/Log",
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Context',
+	"sap/ui/model/ContextBinding",
 	"sap/ui/model/odata/v2/ODataContextBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, ChangeReason, BaseContext, ODataContextBinding, TestUtils) {
+], function (Log, ChangeReason, BaseContext, ContextBinding, ODataContextBinding, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -708,4 +709,39 @@ sap.ui.define([
 			"~oV2Context");
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_fireChange: no oElementContext", function (assert) {
+		var oBinding = {};
+
+		this.mock(ContextBinding.prototype).expects("_fireChange").on(oBinding)
+			.withExactArgs("~mParameters");
+
+		// code under test
+		ODataContextBinding.prototype._fireChange.call(oBinding, "~mParameters");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_fireChange: with oElementContext", function (assert) {
+		var oBinding = {
+				oElementContext : {
+					isUpdated : function () {},
+					setForceRefresh : function () {},
+					setUpdated : function () {}
+				}
+			},
+			oContextMock = this.mock(oBinding.oElementContext);
+
+		oContextMock.expects("isUpdated").withExactArgs().returns("~bOldUpdated");
+		oContextMock.expects("setForceRefresh").withExactArgs("~bForceUpdate");
+		oContextMock.expects("setUpdated").withExactArgs("~bUpdated");
+		this.mock(ContextBinding.prototype).expects("_fireChange").on(oBinding)
+			.withExactArgs("~mParameters");
+		oContextMock.expects("setForceRefresh").withExactArgs(false);
+		oContextMock.expects("setUpdated").withExactArgs("~bOldUpdated");
+
+		// code under test
+		ODataContextBinding.prototype._fireChange.call(oBinding, "~mParameters", "~bForceUpdate",
+			"~bUpdated");
+	});
 });
