@@ -3373,6 +3373,19 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		}
 	});
 
+	QUnit.test("_applyExtraHeight property should not be called when the tile is in loading state", function(assert) {
+		this.fnWithRenderAsserts(assert);
+
+		var openSpy = sinon.spy(GenericTile.prototype, "_applyExtraHeight");
+		this.oGenericTile.setState(LoadState.Loaded);
+		this.oGenericTile.rerender();
+		assert.equal(openSpy.callCount, 1, "The _applyExtraHeight function is called when the state is in loaded");
+		openSpy.reset();
+		this.oGenericTile.setState(LoadState.Loading);
+		this.oGenericTile.rerender();
+		assert.equal(openSpy.callCount, 0, "The _applyExtraHeight function is not called when the state is in loading");
+	});
+
 	QUnit.test("GenericTile rendered with Action Buttons", function(assert) {
 		this.fnWithRenderAsserts(assert);
 
