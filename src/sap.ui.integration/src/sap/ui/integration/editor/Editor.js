@@ -2901,6 +2901,14 @@ sap.ui.define([
 			oConfig.label = oConfig._translatedLabel || "";
 			oConfig.required = false; //translation is never required
 			var oTranslateLanguageField = this._createField(oConfig);
+			//accessibility set aria-label
+			var tfDelegate = {
+				onAfterRendering: function(oEvent) {
+					var tfField = document.getElementById(oTranslateLanguageField.getId());
+					tfField.setAttribute("aria-label", oLabel);
+				}
+			};
+			oTranslateLanguageField.addEventDelegate(tfDelegate);
 			this.addAggregation("_formContent",
 				oTranslateLanguageField
 			);
@@ -2928,6 +2936,14 @@ sap.ui.define([
 				}
 			}
 			var oField = this._createField(oConfig);
+			//accessibility set aria-label
+			var fDelegate = {
+				onAfterRendering: function(oEvent) {
+					var eField = document.getElementById(oField.getId());
+					eField.setAttribute("aria-label", oNewLabel);
+				}
+			};
+			oField.addEventDelegate(fDelegate);
 			this.addAggregation("_formContent",
 				oField
 			);

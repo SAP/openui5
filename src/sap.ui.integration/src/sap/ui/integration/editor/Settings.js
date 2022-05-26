@@ -301,6 +301,7 @@ sap.ui.define([
 		oSegmentedButton = createSegmentedButton();
 		var oDynamicValueText = new Text({
 			text: oResourceBundle.getText("EDITOR_MORE_DYNAMICVALUES"),
+			tooltip: oResourceBundle.getText("EDITOR_MORE_DYNAMICVALUES"),
 			visible: "{= ${currentSettings>allowDynamicValues} && !${currentSettings>allowSettings}}"
 		}).addStyleClass("sapUiTinyMagin");
 		var oSettingsText = new Text({
@@ -494,10 +495,13 @@ sap.ui.define([
 
 		oDynamicValueField.addStyleClass("selectvariable");
 
-
+		var selectDynamicValueLabel = new Label({
+			text: "Select a dynamic value"
+		});
+		oDynamicValueField.addAriaLabelledBy(selectDynamicValueLabel);
 		var oVBox = new VBox({
 			items: [
-				new Label({ text: "Select a dynamic value" }),
+				selectDynamicValueLabel,
 				oDynamicValueField
 			]
 		});
@@ -546,18 +550,21 @@ sap.ui.define([
 	}
 
 	function createCurrentValuesBox() {
+		var settingsActualValueTxt = new Text({
+			text: oResourceBundle.getText("EDITOR_ACTUAL_VALUE")
+		});
+		var settingsActualValueInput = new Input({
+			value: {
+				path: "currentSettings>_currentContextValue"
+			},
+			editable: false
+		});
+		settingsActualValueInput.addAriaLabelledBy(settingsActualValueTxt);
 		var oCurrentValue = new VBox("settings_current_value", {
 			width: "100%",
 			items: [
-				new Text({
-					text: oResourceBundle.getText("EDITOR_ACTUAL_VALUE")
-				}),
-				new Input({
-					value: {
-						path: "currentSettings>_currentContextValue"
-					},
-					editable: false
-				})]
+				settingsActualValueTxt,
+				settingsActualValueInput]
 		});
 		oCurrentValue.addStyleClass("currentval");
 
@@ -572,49 +579,58 @@ sap.ui.define([
 			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN"),
 			wrapping: true
 		}).addStyleClass("stitle"));
+		var settingsAdminVisibleLabel = new Label({
+			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_VISIBLE"),
+			wrapping: true
+		});
+		var settingsAdminVisibleCKB = new CheckBox({
+			selected: "{= ${currentSettings>_next/visible} !== false}",
+			select: function (oEvent) {
+				setNextSetting("visible", oEvent.getParameter("selected"));
+			}
+		});
+		settingsAdminVisibleCKB.addAriaLabelledBy(settingsAdminVisibleLabel);
 		oBox.addItem(new HBox({
 			items: [
-				new Label({
-					text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_VISIBLE"),
-					wrapping: true
-				}),
-				new CheckBox({
-					selected: "{= ${currentSettings>_next/visible} !== false}",
-					select: function (oEvent) {
-						setNextSetting("visible", oEvent.getParameter("selected"));
-					}
-				})
+				settingsAdminVisibleLabel,
+				settingsAdminVisibleCKB
 			]
 		}).addStyleClass("cbrow"));
+		var settingsAdminEditLabel = new Label({
+			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_EDIT"),
+			wrapping: true
+		});
+		var settingsAdminEditCKB = new CheckBox({
+			selected: "{= ${currentSettings>_next/editable} !== false}",
+			enabled: "{= ${currentSettings>_next/visible} !== false}",
+			select: function (oEvent) {
+				setNextSetting("editable", oEvent.getParameter("selected"));
+			}
+		});
+		settingsAdminEditCKB.addAriaLabelledBy(settingsAdminEditLabel);
 		oBox.addItem(new HBox({
 			items: [
-				new Label({
-					text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_EDIT"),
-					wrapping: true
-				}),
-				new CheckBox({
-					selected: "{= ${currentSettings>_next/editable} !== false}",
-					enabled: "{= ${currentSettings>_next/visible} !== false}",
-					select: function (oEvent) {
-						setNextSetting("editable", oEvent.getParameter("selected"));
-					}
-				})
+				settingsAdminEditLabel,
+				settingsAdminEditCKB
 			]
 		}).addStyleClass("cbrow"));
+		var settingsAdminDYNLabel = new Label({
+			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_DYN"),
+			wrapping: true
+		});
+		var settingsAdminDYNCKB = new CheckBox({
+			selected: "{= ${currentSettings>_next/allowDynamicValues} !== false}",
+			enabled: "{= ${currentSettings>_next/visible} !== false && ${currentSettings>_next/editable} !== false}",
+			select: function (oEvent) {
+				setNextSetting("allowDynamicValues", oEvent.getParameter("selected"));
+			}
+		});
+		settingsAdminDYNCKB.addAriaLabelledBy(settingsAdminDYNLabel);
 		oBox.addItem(new HBox({
 			visible: "{= ${currentSettings>allowDynamicValues}!== false}",
 			items: [
-				new Label({
-					text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_DYN"),
-					wrapping: true
-				}),
-				new CheckBox({
-					selected: "{= ${currentSettings>_next/allowDynamicValues} !== false}",
-					enabled: "{= ${currentSettings>_next/visible} !== false && ${currentSettings>_next/editable} !== false}",
-					select: function (oEvent) {
-						setNextSetting("allowDynamicValues", oEvent.getParameter("selected"));
-					}
-				})
+				settingsAdminDYNLabel,
+				settingsAdminDYNCKB
 			]
 		}).addStyleClass("cbrow"));
 
