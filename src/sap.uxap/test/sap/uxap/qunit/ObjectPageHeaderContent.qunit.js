@@ -81,31 +81,45 @@ function (jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLay
 	});
 
 	QUnit.test("indexOfHeaderContent", function (assert) {
-		assert.equal(this.contentView.byId("ObjectPageLayout").indexOfHeaderContent(Core.byId("UxAP-ObjectPageHeaderContent--testLink")), 0, "the Link inside the ContentHeader aggregation is on 0 position");
+		var oPage = this.contentView.byId("ObjectPageLayout"),
+			oNestedControl = Core.byId("UxAP-ObjectPageHeaderContent--testLink");
+		assert.equal(oPage.indexOfHeaderContent(oNestedControl), 0, "the Link inside the ContentHeader aggregation is on 0 position");
+		assert.strictEqual(oNestedControl.getParent().getId(), oPage.getId(), "control parent is correct");
 	});
 
 	QUnit.test("insertHeaderContent", function (assert) {
-		this.contentView.byId("ObjectPageLayout").insertHeaderContent(new Label({id: "label1", text: "label1"}), 1);
+		var oPage = this.contentView.byId("ObjectPageLayout"),
+			oControl = new Label({id: "label1", text: "label1"});
+
+		oPage.insertHeaderContent(oControl, 1);
 		Core.applyChanges();
 
-		assert.equal(this.contentView.byId("ObjectPageLayout").getHeaderContent().length, 5, "contents length is 5 after inserting element in the HeaderContent aggregation");
-		assert.equal(this.contentView.byId("ObjectPageLayout").indexOfHeaderContent(Core.byId("label1")), 1, "the label1 inside the ContentHeader aggregation is insert on 1 position");
+		assert.equal(oPage.getHeaderContent().length, 5, "contents length is 5 after inserting element in the HeaderContent aggregation");
+		assert.equal(oPage.indexOfHeaderContent(Core.byId("label1")), 1, "the label1 inside the ContentHeader aggregation is insert on 1 position");
+		assert.strictEqual(oControl.getParent().getId(), oPage.getId(), "control parent is correct");
 	});
 
 	QUnit.test("addHeaderContent", function (assert) {
-		this.contentView.byId("ObjectPageLayout").addHeaderContent(new Label({id: "label2", text: "label2"}));
+		var oPage = this.contentView.byId("ObjectPageLayout"),
+			oControl = new Label({id: "label2", text: "label2"});
+
+		oPage.addHeaderContent(oControl);
 		Core.applyChanges();
 
 		assert.equal(this.contentView.byId("ObjectPageLayout").getHeaderContent().length, 5, "contents length is 5 after inserting element in the HeaderContent aggregation");
 		assert.equal(this.contentView.byId("ObjectPageLayout").indexOfHeaderContent(Core.byId("label2")), 4, "the label2 inside the ContentHeader aggregation is added on the last position");
+		assert.strictEqual(oControl.getParent().getId(), oPage.getId(), "control parent is correct");
 	});
 
 	QUnit.test("removeHeaderContent", function (assert) {
-		var oToRemove = this.contentView.byId("testLink");
-		this.contentView.byId("ObjectPageLayout").removeHeaderContent(oToRemove);
+		var oPage = this.contentView.byId("ObjectPageLayout"),
+			oToRemove = this.contentView.byId("testLink");
+
+		oPage.removeHeaderContent(oToRemove);
 		Core.applyChanges();
 
-		assert.equal(this.contentView.byId("ObjectPageLayout").getHeaderContent().length, 3, "contents length is 5 after removing one item");
+		assert.equal(oPage.getHeaderContent().length, 3, "contents length is 5 after removing one item");
+		assert.strictEqual(oToRemove.getParent(), null, "control parent is correct");
 
 		//cleanup needed since we removed that item from its parent aggregation
 		oToRemove.destroy();
@@ -117,6 +131,9 @@ function (jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLay
 
 		assert.equal(this.contentView.byId("ObjectPageLayout").getHeaderContent().length, 0, "contents length is 0 after removing it all");
 
+		oRemovedContent.forEach(function(oItem) {
+			assert.strictEqual(oItem.getParent(), null, "control parent is correct");
+		});
 		//cleanup needed since we removed those items from their parent aggregation
 		oRemovedContent.forEach(function(oItem) {oItem.destroy();});
 	});
