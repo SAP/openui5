@@ -172,6 +172,7 @@ sap.ui.define([
 						"unhideControl": "default"
 					},
 					"sap.ui.webc.main.Badge": "sap/ui/webc/main/flexibility/Badge",
+					"sap.ui.webc.main.BreadcrumbsItem": "sap/ui/webc/main/flexibility/BreadcrumbsItem",
 					"sap.ui.webc.main.BusyIndicator": {
 						"hideControl": "default",
 						"unhideControl": "default"
