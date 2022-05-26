@@ -624,6 +624,31 @@ function (
 		oDynamicPage.destroy();
 	});
 
+	QUnit.test("buttons work when Header is destroyed and new one is set", function (assert) {
+		// Arrange
+		var oNewHeader = oFactory.getDynamicPageHeader(),
+			oSpy = this.spy(oNewHeader, "attachEvent"),
+			fnDone = assert.async();
+
+		assert.expect(1);
+
+		// Act
+		this.oDynamicPage.destroyHeader();
+		this.oDynamicPage.setHeader(oNewHeader);
+		this.oDynamicPage.addEventDelegate({
+			onAfterRendering: function () {
+				// Assert
+				assert.ok(oSpy.calledWith(DynamicPage.EVENTS.HEADER_VISUAL_INDICATOR_PRESS),
+					"Press handler of expand/collapse buttons is set to the new Header");
+
+				//Clean-up
+				this.oDynamicPage.destroy();
+				oSpy.reset();
+				fnDone();
+			}.bind(this)
+		});
+	});
+
 	QUnit.module("DynamicPage - Rendering - Header State Preserved On Scroll", {
 		beforeEach: function () {
 			this.oDynamicPageWithPreserveHeaderStateOnScroll = oFactory.getDynamicPageWithPreserveHeaderOnScroll();
