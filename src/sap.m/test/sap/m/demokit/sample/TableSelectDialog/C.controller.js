@@ -124,21 +124,16 @@ sap.ui.define([
 			oModel.setProperty("/ProductCollection", aProducts);
 		},
 
-		handleValueHelpClose: function () {
-			var oModel = this.getView().getModel(),
-				aProducts = oModel.getProperty("/ProductCollection"),
-				oInput = this.byId("productInput");
+		handleValueHelpClose: function (oEvent) {
+			var oSelectedItem = oEvent.getParameter("selectedItem"),
+			oInput = this.byId("productInput");
 
-			var bHasSelected = aProducts.some(function (oProduct) {
-				if (oProduct.selected) {
-					oInput.setValue(oProduct.Name);
-					return true;
-				}
-			});
-
-			if (!bHasSelected) {
-				oInput.setValue(null);
+			if (!oSelectedItem) {
+				oInput.resetProperty("value");
+				return;
 			}
+
+			oInput.setValue(oSelectedItem.getCells()[0].getTitle());
 		}
 
 	});
