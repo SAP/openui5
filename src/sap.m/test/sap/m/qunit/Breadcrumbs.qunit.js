@@ -713,4 +713,14 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 		oBreadcrumbs.destroy();
 	});
 
+	QUnit.module("OverflowToolbar configuration");
+
+	QUnit.test("OverflowToolbar configuration is set correctly", function (assert) {
+		var oBreadcrumbs = new Breadcrumbs(),
+			oConfig = oBreadcrumbs.getOverflowToolbarConfig();
+
+		assert.ok(oConfig.canOverflow, "canOverflow is set to true");
+		assert.equal(typeof oConfig.getCustomImportance, "function", "getCustomImportance function is set");
+		assert.equal(oConfig.getCustomImportance(), "High", "customImportance is set to 'High'");
+	});
 });

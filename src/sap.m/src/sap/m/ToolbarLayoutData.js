@@ -39,7 +39,11 @@ sap.ui.define(['./library', 'sap/ui/core/LayoutData'],
 			/**
 			 * Determines whether the control, when in a toolbar, is shrinkable or not. For controls with fixed width (100px, 5rem, etc...) this property is ignored.
 			 *
-			 * Note: Nested layout controls should not be shrinkable.
+			 * <b>Notes:</b>
+			 * <ul>
+			 * <li>Nested layout controls should not be shrinkable.</li>
+			 * <li>This property has no effect on <code>sap.m.Breadcrumbs</code> as it is shrinkable by default.</li>
+			 * </ul>
 			 */
 			shrinkable : {type : "boolean", group : "Behavior", defaultValue : false},
 

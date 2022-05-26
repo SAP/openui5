@@ -844,6 +844,34 @@
 		new sap.m.ToolbarSpacer()
 	];
 
+	var toolbarContent12 = [
+		new sap.m.Label({
+			text : "Breadcrumbs Toolbar"
+		}),
+		new sap.m.Breadcrumbs({
+			currentLocationText: "Sed laudantium, totam rem aperiam, eaque ipsa quae. "
+				+ "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit. "
+				+ "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis.",
+			links: [
+				new sap.m.Link({text: "Link 1"}),
+				new sap.m.Link({text: "Link 2"}),
+				new sap.m.Link({text: "Link 3"})
+			]
+		}),
+		new sap.m.Button({
+			icon: "sap-icon://filter"
+		}),
+		new sap.m.Button({
+			icon: "sap-icon://add"
+		}),
+		new sap.m.Button({
+			icon: "sap-icon://delete"
+		}),
+		new sap.m.Button({
+			icon: "sap-icon://share"
+		})
+	];
+
 	var toolbarContentFooter = [
 		new sap.m.Label({
 			text : "When the toolbar is in the footer, the action sheet opens above it."
@@ -945,6 +973,12 @@
 			width: 'auto',
 			content: toolbarContent11
 		}),
+
+		new sap.m.OverflowToolbar("otb12", {
+			width: 'auto',
+			content: toolbarContent12
+		}),
+
 		new sap.m.OverflowToolbar("otbFooter", {
 			width: 'auto',
 			style: 'Clear',

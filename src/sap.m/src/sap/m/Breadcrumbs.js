@@ -59,6 +59,7 @@ sap.ui.define([
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/breadcrumb/ Breadcrumbs}
 	 *
 	 * @extends sap.ui.core.Control
+	 * @implements sap.m.IBreadcrumbs, sap.m.IOverflowToolbarContent, sap.ui.core.IShrinkable
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -73,7 +74,11 @@ sap.ui.define([
 	var Breadcrumbs = Control.extend("sap.m.Breadcrumbs", {
 		metadata: {
 			library: "sap.m",
-			interfaces: ["sap.m.IBreadcrumbs"],
+			interfaces: [
+				"sap.m.IBreadcrumbs",
+				"sap.m.IOverflowToolbarContent",
+				"sap.ui.core.IShrinkable"
+			],
 			designtime: "sap/m/designtime/Breadcrumbs.designtime",
 			properties: {
 
@@ -763,6 +768,26 @@ sap.ui.define([
 		this.removeDelegate(this._getItemNavigation());
 		this.invalidate(this);
 		return this;
+	};
+
+	/**
+	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+	 * Registers invalidation event which is fired when width of the control is changed.
+	 *
+	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar
+	 */
+	Breadcrumbs.prototype.getOverflowToolbarConfig = function() {
+		var oConfig = {
+			canOverflow: true,
+			getCustomImportance: function () {
+				return "High";
+			}
+		};
+
+		return oConfig;
 	};
 
 	// helper functions
