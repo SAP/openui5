@@ -1130,6 +1130,14 @@ sap.ui.define([
 		assert.equal();
 	});
 
+	QUnit.test("Border-Radius for the GenericTile wrapper", function(assert){
+		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
+		oCore.applyChanges();
+		assert.ok(getComputedStyle(document.querySelector(".sapMSTOverflowHidden")).borderRadius,"3.68px 3.68px 4px 4px", "Border-Radius property set correctly");
+		this.oSlideTile.destroy();
+		this.oSlideTile = null;
+	});
+
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {
