@@ -315,7 +315,8 @@ sap.ui.define([
 			}
 
 			var aStyleClass = oColumn.getStyleClass().split(" "),
-				sPopinDisplay = oColumn.getPopinDisplay();
+				sPopinDisplay = oColumn.getPopinDisplay(),
+				oOriginalHeader = oHeader;
 
 			/* row start */
 			rm.openStart("div");
@@ -329,6 +330,9 @@ sap.ui.define([
 			/* header cell */
 			if (oHeader && sPopinDisplay != PopinDisplay.WithoutHeader) {
 				rm.openStart("div").class("sapMListTblSubCntHdr").openEnd();
+				if (oTable._aPopinHeaders.indexOf(oHeader) === -1) {
+					oTable._aPopinHeaders.push(oOriginalHeader);
+				}
 				oHeader = oHeader.clone();
 				oColumn.addDependent(oHeader);
 				oLI._addClonedHeader(oHeader);
@@ -346,7 +350,7 @@ sap.ui.define([
 				rm.class("sapMListTblSubCntVal");
 				rm.class("sapMListTblSubCntVal" + sPopinDisplay);
 				rm.openEnd();
-				this.applyAriaLabelledBy(oHeader, oCell);
+				this.applyAriaLabelledBy(oOriginalHeader, oCell);
 				rm.renderControl(oCell);
 				rm.close("div");
 			}

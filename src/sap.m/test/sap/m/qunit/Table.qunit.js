@@ -393,6 +393,23 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("Popin column header must be rendered in a hidden DIV element", function(assert) {
+		var sut = createSUT("popinHoverTest", true, false, "SingleSelectMaster");
+		var oColumn = sut.getColumns()[1];
+		oColumn.setDemandPopin(true);
+		oColumn.setMinScreenWidth("48000px");
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.ok(sut.getDomRef("popin-headers"), "DOM element found");
+		oColumn.setDemandPopin(false);
+		Core.applyChanges();
+
+		assert.notOk(sut.getDomRef("popin-headers"), "DOM element does not exist since there are no popins");
+
+		sut.destroy();
+	});
+
 	QUnit.module("Modes");
 
 	QUnit.test("MultiSelect", function(assert) {

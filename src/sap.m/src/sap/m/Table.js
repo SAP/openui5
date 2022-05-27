@@ -431,6 +431,12 @@ sap.ui.define([
 			this._selectAllCheckBox.destroy();
 			this._selectAllCheckBox = null;
 		}
+		if (this._aPopinHeaders) {
+			this._aPopinHeaders.forEach(function(oPopinHeader) {
+				oPopinHeader.destroy();
+			});
+			this._aPopinHeaders = null;
+		}
 	};
 
 	Table.prototype.destroyItems = function() {

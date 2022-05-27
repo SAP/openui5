@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/m/Text",
 	"sap/m/Label",
-	"sap/m/MessageToast"
-], function(Mobile, Device, Core, ColumnListItem, Column, Table, Text, Label, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/m/Input"
+], function(Mobile, Device, Core, ColumnListItem, Column, Table, Text, Label, MessageToast, Input) {
 	"use strict";
 
 
@@ -227,6 +228,101 @@ sap.ui.define([
 
 		// clean up
 		oTable.destroy();
+	});
+
+	QUnit.test("Cloned header should be added as dependent to the column", function(assert) {
+		// SUT
+		var sut = new ColumnListItem({
+			cells : [new Text({
+				text: "Cell1"
+			}), new Text({
+				text: "Cell2"
+			})]
+		}),
+		column1 = new Column({
+			header : new Text({
+				text : "Header1"
+			}),
+
+			// make the size bigger than the screen to force to go to popin
+			minScreenWidth : "48000px",
+			demandPopin : true
+		}),
+		column2 = new Column({
+			header : new Text({
+				text : "Header2"
+			})
+		}),
+		sut2 = new ColumnListItem({
+			cells : [new Text({
+				text: "Cell1"
+			}), new Text({
+				text: "Cell2"
+			})]
+		}),
+		table = new Table({
+			columns : [column1, column2],
+			items : [sut, sut2]
+		});
+
+		table.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(column1.getDependents()[0], sut._aClonedHeaders[0], "cloned popin header is added as a dependent");
+		assert.strictEqual(column1.getDependents()[1], sut2._aClonedHeaders[0], "cloned popin header is added as a dependent");
+
+		//Cleanup
+		table.destroy();
+	});
+
+	QUnit.test("Popin column headers are added to oTable._aPopinHeaders which is used later for accessibility", function(assert) {
+		// SUT
+		var sut = new ColumnListItem({
+			cells : [
+				new Input(),
+				new Text({
+					text: "Cell2"
+				})
+			]
+		}),
+		column1Header = new Text({
+			text : "Header1"
+		}),
+		column1 = new Column({
+			header : column1Header,
+			// make the size bigger than the screen to force to go to popin
+			minScreenWidth : "48000px",
+			demandPopin : true
+		}),
+		column2 = new Column({
+			header : new Text({
+				text : "Header2"
+			})
+		}),
+		sut2 = new ColumnListItem({
+			cells : [
+				new Input(),
+				new Text({
+					text: "Cell2"
+				})
+			]
+		}),
+		table = new Table({
+			columns : [column1, column2],
+			items : [sut, sut2]
+		});
+
+		table.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(table._aPopinHeaders.length, 1, "1 column header control is added to the array");
+		assert.strictEqual(table._aPopinHeaders[0], column1Header, "expected column header control is added to the array");
+
+		assert.ok(sut.getCells()[0].getAriaLabelledBy().indexOf(column1Header.getId()) > -1, "expected ariaLabelledBy association found");
+		assert.ok(sut2.getCells()[0].getAriaLabelledBy().indexOf(column1Header.getId()) > -1, "expected ariaLabelledBy association found");
+
+		//Cleanup
+		table.destroy();
 	});
 
 	QUnit.module("Dummy Column", {
