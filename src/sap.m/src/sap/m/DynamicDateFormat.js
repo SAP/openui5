@@ -320,5 +320,30 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Checks if a UTC flag is set to a specific formatter.
+		 *
+		 * @param {string} sOption The key of specific option
+		 * @return {boolean} If the format for this option has UTC flag set to true
+		 * @private
+		 */
+		DynamicDateFormat.prototype._checkFormatterUTCTimezone = function(sOption) {
+			var sType = "";
+			if (aParameterTypesByStandardOptionKey[sOption]) {
+				sType = aParameterTypesByStandardOptionKey[sOption];
+			}
+
+			// ensure that in options like last/next days or +/- days we still use correct timezone when formatting the dates.
+			if (sType === "" || sType[0] === "int") {
+				sType = "date";
+			}
+
+			if (this.oOriginalFormatOptions[sType]) {
+				return this.oOriginalFormatOptions[sType].UTC;
+			}
+
+			return false;
+		};
+
 		return DynamicDateFormat;
 	});

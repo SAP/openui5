@@ -629,9 +629,12 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicDateRange.prototype._addSuggestionItem = function(oSuggestValue) {
-			var aResultingDates = DynamicDateUtil.toDates(oSuggestValue).map(function(oDate) {
-				return this._convertDate(oDate);
-			}, this);
+			var bTimezone = this._checkFormatterUTCTimezone(oSuggestValue);
+			var aValueDates = DynamicDateUtil.toDates(oSuggestValue);
+			var aResultingDates = [];
+			for (var i = 0; i < aValueDates.length; i++) {
+				aResultingDates[i] = this._convertDate(aValueDates[i], bTimezone);
+			}
 
 			var oItem = new ListItem({
 				text: DynamicDateUtil.getOption(oSuggestValue.operator).format(oSuggestValue, this._getFormatter()),
@@ -700,18 +703,22 @@ sap.ui.define([
 		};
 
 		DynamicDateRange.prototype._toDatesString = function(oValue) {
-			var aDates = DynamicDateUtil.toDates(oValue).map(function(oDate) {
-				return this._convertDate(oDate);
-			}, this);
+			var bTimezone = this._checkFormatterUTCTimezone(oValue);
+			var aValueDates = DynamicDateUtil.toDates(oValue);
+			var aDates = [];
+			for (var i = 0; i < aValueDates.length; i++) {
+				aDates[i] = this._convertDate(aValueDates[i], bTimezone);
+			}
 
 			return this._getDatesLabelFormatter().format(aDates);
 		};
 
-		DynamicDateRange.prototype._convertDate = function(oDate) {
+		DynamicDateRange.prototype._convertDate = function(oDate, bUTCTimezone) {
 			var sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
+			var sFormatTimezone = bUTCTimezone ? "UTC" : sap.ui.getCore().getConfiguration().getTimezone();
 			var oParts = this._getPickerParser().parse(
 				sFormattedDate,
-				sap.ui.getCore().getConfiguration().getTimezone()
+				sFormatTimezone
 			);
 			var oNewDate = oParts ? new Date(oParts[0].getTime()) : oParts;
 
@@ -952,16 +959,19 @@ sap.ui.define([
 
 		DynamicDateRange.prototype._updateDatesLabel = function() {
 			var oOutputValue = this._oSelectedOption.getValueHelpOutput(this),
-				aResultDates,
+				bTimezone = this._checkFormatterUTCTimezone(oOutputValue),
+				aResultDates = [],
 				sFormattedDates;
+
+			var aValueDates = DynamicDateUtil.toDates(oOutputValue);
 
 			if (!oOutputValue || !oOutputValue.operator || !DynamicDateUtil.getOption(oOutputValue.operator)) {
 				return;
 			}
 
-			aResultDates = DynamicDateUtil.toDates(oOutputValue).map(function(oDate) {
-				return this._convertDate(oDate);
-			}, this);
+			for (var i = 0; i < aValueDates.length; i++) {
+				aResultDates[i] = this._convertDate(aValueDates[i], bTimezone);
+			}
 
 			if (aResultDates) {
 				if (this._oSelectedOption.getKey() === "FROMDATETIME" || this._oSelectedOption.getKey() === "TODATETIME"
@@ -1175,14 +1185,13 @@ sap.ui.define([
 
 		DynamicDateRange.prototype._applyValue = function() {
 			this._oOutput = this._oSelectedOption.getValueHelpOutput(this);
-
-			this._oOutput.values = this._oOutput.values.map(function(val) {
-				if (val instanceof Date) {
-					return this._convertDate(val);
+			var sTimezone = this._checkFormatterUTCTimezone(this._oOutput);
+			var aValueDates = DynamicDateUtil.toDates(this._oOutput);
+			for (var i = 0; i < aValueDates.length; i++) {
+				if (this._oOutput.values[i] instanceof Date) {
+					this._oOutput.values[i] = this._convertDate(aValueDates[i], sTimezone);
 				}
-
-				return val;
-			}, this);
+			}
 
 			var prevValue = this.getValue();
 			this.setValue(this._oOutput);
@@ -1316,6 +1325,10 @@ sap.ui.define([
 			}
 
 			return oNewValue;
+		};
+
+		DynamicDateRange.prototype._checkFormatterUTCTimezone = function(oValue) {
+			return this._getFormatter()._checkFormatterUTCTimezone(oValue.operator);
 		};
 
 		var DynamicDateRangeInputRenderer = Renderer.extend(InputRenderer);
