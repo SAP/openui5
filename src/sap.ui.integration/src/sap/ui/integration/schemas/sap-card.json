@@ -2975,7 +2975,7 @@
               "$ref": "#/definitions/Enums.ValueColor"
             },
             {
-              "type": "string"
+              "$ref": "#/definitions/simpleBinding"
             }
           ]
         }
