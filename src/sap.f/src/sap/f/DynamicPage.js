@@ -502,7 +502,21 @@ sap.ui.define([
 			return this;
 		}
 
-		if (oOldHeader) {
+		this._detachHeaderEventListeners();
+
+		return this.setAggregation("header", oHeader);
+	};
+
+	DynamicPage.prototype.destroyHeader = function () {
+		this._detachHeaderEventListeners();
+
+		return this.destroyAggregation("header");
+	};
+
+	DynamicPage.prototype._detachHeaderEventListeners = function () {
+		var oHeader = this.getHeader();
+
+		if (oHeader) {
 			if (this._oStickyHeaderObserver) {
 				this._oStickyHeaderObserver.disconnect();
 			}
@@ -512,20 +526,16 @@ sap.ui.define([
 			}
 
 			this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.HEADER);
-			oOldHeader.detachEvent(DynamicPage.EVENTS.PIN_UNPIN_PRESS, this._onPinUnpinButtonPress);
+			oHeader.detachEvent(DynamicPage.EVENTS.PIN_UNPIN_PRESS, this._onPinUnpinButtonPress);
 			this._bAlreadyAttachedPinPressHandler = false;
-			oOldHeader.detachEvent(DynamicPage.EVENTS.HEADER_VISUAL_INDICATOR_PRESS, this._onCollapseHeaderVisualIndicatorPress);
+			oHeader.detachEvent(DynamicPage.EVENTS.HEADER_VISUAL_INDICATOR_PRESS, this._onCollapseHeaderVisualIndicatorPress);
 			this._bAlreadyAttachedHeaderIndicatorPressHandler = false;
-			oOldHeader.detachEvent(DynamicPage.EVENTS.VISUAL_INDICATOR_MOUSE_OVER, this._onVisualIndicatorMouseOver);
-			oOldHeader.detachEvent(DynamicPage.EVENTS.VISUAL_INDICATOR_MOUSE_OUT, this._onVisualIndicatorMouseOut);
+			oHeader.detachEvent(DynamicPage.EVENTS.VISUAL_INDICATOR_MOUSE_OVER, this._onVisualIndicatorMouseOver);
+			oHeader.detachEvent(DynamicPage.EVENTS.VISUAL_INDICATOR_MOUSE_OUT, this._onVisualIndicatorMouseOut);
 			this._bAlreadyAttachedVisualIndicatorMouseOverOutHandler = false;
 			this._bAlreadyAttachedStickyHeaderObserver = false;
 			this._bAlreadyAttachedHeaderObserver = false;
 		}
-
-		this.setAggregation("header", oHeader);
-
-		return this;
 	};
 
 	DynamicPage.prototype.setStickySubheaderProvider = function (sStickySubheaderProviderId) {
