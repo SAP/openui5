@@ -55,6 +55,21 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	}, iDefaultTimeout);
 
+	it("Currently selected option is marked as selected", function() {
+		var oInput = element(by.id("DDR2-input-inner")),
+			oValueHelp = element(by.id("DDR2-input-vhi")),
+			oPopover;
+
+		oInput.click();
+		browser.actions().sendKeys("May 23, 2022").perform();
+		oValueHelp.click();
+		oPopover = element(by.id("DDR2-RP-popover"));
+		expect(takeScreenshot(oPopover)).toLookAs("current_option_selected");
+
+		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+		oInput.click();
+	}, iDefaultTimeout);
+
 	it("Fixed date and date range with 'Calendar' based UI", function() {
 		var oValueHelp = element(by.id("DDR2-input-vhi")),
 			aListItems, oPopover;
@@ -245,4 +260,5 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 
 		expect(takeScreenshot(oInput)).toLookAs("input_Dec_1_2000_" + sTimezone);
 	}
+
 });
