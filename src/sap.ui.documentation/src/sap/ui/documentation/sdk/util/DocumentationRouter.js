@@ -8,8 +8,9 @@ sap.ui.define([
 	'sap/ui/core/routing/History',
 	'sap/ui/thirdparty/hasher',
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-	"sap/ui/thirdparty/URI"
-], function(Router, History, Hasher, ControlsInfo, URI) {
+	"sap/ui/thirdparty/URI",
+	"./ParamUtils"
+], function(Router, History, Hasher, ControlsInfo, URI, ParamUtils) {
 	"use strict";
 
 	// We need to set the global hasher instance to not encode URL's. This is specific for the SDK
@@ -592,6 +593,13 @@ sap.ui.define([
 		 * @override
 		 */
 		DocumentationRouter.prototype.initialize = function () {
+			// hide DemoKit if sample should open standalone
+			this.getRoute("sample").attachPatternMatched(function () {
+				if (ParamUtils.containsKey("dk-sample-standalone")) {
+					document.body.style.visibility = "hidden";
+				}
+			});
+
 			Router.prototype.initialize.apply(this, arguments);
 
 			// attach listener for route changes via the browser back/forward buttons

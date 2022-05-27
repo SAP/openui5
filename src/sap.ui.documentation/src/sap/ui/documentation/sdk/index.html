@@ -177,13 +177,34 @@
 
 					var oContainer = new ComponentContainer({component : oComponent, height: "100%"})
 							.placeAt("content");
+					var oConfig = oComponent.getMetadata().getConfig();
+
+					// if dk-sample-standalone is used,
+					// display message for samples with own index.html
+					if (oConfig.sample && oConfig.sample.iframe) {
+						sap.ui.require([
+							"sap/m/IllustratedMessage",
+							"sap/m/IllustratedMessageType",
+							"sap/ui/documentation/sdk/util/ParamUtils"
+						], function (IllustratedMessage, IllustratedMessageType, ParamUtils) {
+							if (ParamUtils.containsKey("dk-sample-standalone")) {
+								oContainer.destroy();
+								new IllustratedMessage({
+									title: "Sample unsupported",
+									description: "Samples with own index.html are currently unsupported by dk-sample-standalone.",
+									illustrationType: IllustratedMessageType.PageNotFound
+								}).placeAt("content");
+							}
+						});
+					}
+
 					var oMessage = {};
 					var objRta = null;
 					oMessage.type = "INIT";
 					oMessage.data = {
 						"msg": "fired after component container is placed in DOM"
 					};
-					oMessage.config = oComponent.getMetadata().getConfig();
+					oMessage.config = oConfig;
 					window.parent.postMessage(oMessage, getUrlParam('sap-ui-xx-dk-origin'));
 
 					window.addEventListener("message", function(eMessage){
