@@ -7,22 +7,35 @@
 /* button                        */
 /* ----------------------------- */
 
-.sapMActionSelectPicker .sapMBtn {
-	 .sapMBtnInner {
+html.sap-desktop .sapMActionSelectPicker .sapMBtn {
+	.sapMBtnInner {
 		border-top: 1px solid @sapUiListBorderColor;
 		border-bottom: 0;
 		border-left: 0;
 		border-right: 0;
 		height: 2.5rem;
-	 }
+	}
 
-	 .sapMBtnContent {
+	.sapMBtnContent {
 		line-height: 2.4375rem;
-	 }
+	}
 }
 
-.sapMActionSelectPicker .sapMBtn .sapMBtnInner {
+html.sap-desktop .sapMActionSelectPicker .sapUiSimpleFixFlexFlexContent .sapMBtn .sapMBtnInner {
 	border-radius: 0;
+}
+
+html.sap-phone .sapMActionSelectPicker .sapMBtn .sapMBtnInner {
+	border: none;
+}
+
+html.sap-phone .sapMActionSelectPicker .sapUiSimpleFixFlexFlexContent > .sapMBtn {
+	border: 1px solid @sapUiListBorderColor;
+	border-bottom: none;
+}
+
+html.sap-phone .sapMActionSelectPicker .sapUiSimpleFixFlexFlexContent > .sapMBtn ~ .sapMBtn {
+	border: 1px solid @sapUiListBorderColor;
 }
 
 /* override standard buttons inside the action select */
@@ -44,9 +57,9 @@ html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled) .sapMBtn
 	background: @sapUiListHoverBackground;
 }
 
-/* ======================================================================== */
-/* CSS for control sap.m/ActionSelect Fiori 3 theme compact/condensed sizes */
-/* ======================================================================== */
+/* ================================================================================ */
+/* CSS for control sap.m/ActionSelect Evening Horizon theme compact/condensed sizes */
+/* ================================================================================ */
 
 /* ----------------------------- */
 /* button                        */
@@ -58,7 +71,7 @@ html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled) .sapMBtn
 	padding: 0;
 }
 
-.sapUiSizeCompact.sapMActionSelectPicker .sapMBtnInner {
+html.sap-desktop .sapUiSizeCompact.sapMActionSelectPicker .sapMBtnInner {
 	height: 2rem;
 	border-radius: 0;
 	border: 0;
