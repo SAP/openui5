@@ -310,6 +310,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 	 * generate table columns
 	 */
 	TableRenderer.renderListHeadAttributes = function(rm, oControl) {
+		oControl._aPopinHeaders = [];
 		this.renderColumns(rm, oControl, "Head");
 		rm.openStart("tbody", oControl.addNavSection(oControl.getId("tblBody")));
 		rm.class("sapMListItems");
@@ -330,6 +331,32 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 		rm.close("tbody"); // items should be rendered before foot
 		oControl._hasFooter && this.renderColumns(rm, oControl, "Foot");
 		rm.close("table");
+
+		// render popin headers in a separate div element for ACC
+		this.renderPopinColumnHeaders(rm, oControl);
+	};
+
+	/**
+	 * Renders the actual column header control that is moved to the pop-in area.
+	 * This ensure correct accessibility mappings to focusable content in the pop-in area.
+	 * @param {sap.ui.core.RenderManager} rm RenderManager instance
+	 * @param {sap.m.Table} oControl the table instance
+	 */
+	TableRenderer.renderPopinColumnHeaders = function(rm, oControl) {
+		if (!oControl._aPopinHeaders || !oControl._aPopinHeaders.length) {
+			return;
+		}
+
+		rm.openStart("div", oControl.getId("popin-headers"));
+		rm.class("sapMTablePopinHeaders");
+		rm.attr("aria-hidden", "true");
+		rm.openEnd();
+
+		oControl._aPopinHeaders.forEach(function(oHeader) {
+			rm.renderControl(oHeader);
+		});
+
+		rm.close("div");
 	};
 
 	/**
