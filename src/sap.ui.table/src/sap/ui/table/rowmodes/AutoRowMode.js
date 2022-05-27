@@ -230,7 +230,7 @@ sap.ui.define([
 			var iConfiguredRowCount = this.getConfiguredRowCount();
 
 			if (iConfiguredRowCount > 0) {
-				return this.getRowContexts(iConfiguredRowCount, true).length > 0;
+				return this.getRowContexts(iConfiguredRowCount).length > 0;
 			}
 		} else {
 			return RowMode.prototype.updateTableRows.call(this);
@@ -573,7 +573,6 @@ sap.ui.define([
 
 		if (!bRenderedRows) {
 			this.stopAutoRowMode();
-			this.updateTable(TableUtils.RowsUpdateReason.Render);
 		}
 	};
 

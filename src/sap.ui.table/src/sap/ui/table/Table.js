@@ -1422,7 +1422,6 @@ sap.ui.define([
 		}
 
 		this._updateTableSizes(TableUtils.RowsUpdateReason.Render, true);
-		this._adjustFirstVisibleRowToTotalRowCount(); // The number of rendered rows might have changed.
 		TableUtils.registerResizeHandler(this, "Table", this._onTableResize.bind(this));
 
 		this._bFirstRendering = false;
@@ -2471,7 +2470,7 @@ sap.ui.define([
 	};
 
 	function createVirtualRow(oTable) {
-		var oVirtualContext = oTable._getRowContexts(null, true)[0];
+		var oVirtualContext = oTable._getRowContexts()[0];
 
 		destroyVirtualRow(oTable);
 		oTable._oVirtualRow = oTable._getRowClone("virtual");

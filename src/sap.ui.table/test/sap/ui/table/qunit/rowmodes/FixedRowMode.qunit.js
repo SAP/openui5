@@ -371,16 +371,58 @@ sap.ui.define([
 
 	QUnit.test("Initialization", function(assert) {
 		return this.createTable().qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Method to get contexts called once"); // render
-			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls consider the row count");
+			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Method to get contexts called once");
+			assert.ok(this.oGetContextsSpy.calledWithExactly(0, 10, 100), "The call considers the row count");
 		}.bind(this));
 	});
 
 	QUnit.test("Initialization; Variable row heights", function(assert) {
 		return this.createTable(true).qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Method to get contexts called once"); // render
-			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100), "All calls consider the row count");
+			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Method to get contexts called once");
+			assert.ok(this.oGetContextsSpy.calledWithExactly(0, 11, 100), "The call considers the row count");
 		}.bind(this));
+	});
+
+	QUnit.test("Change row count", function(assert) {
+		var oTable = this.createTable();
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		oTable.setFirstVisibleRow(10);
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.resetHistory();
+
+			oTable.getRowMode().setRowCount(8);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Decreased row count: Method to get contexts called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(10, 8, 100), "Decreased row count: The call considers the row count");
+
+			oGetContextsSpy.resetHistory();
+			oTable.getRowMode().setRowCount(10);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Increased row count: Method to get contexts called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(10, 10, 100), "Decreased row count: The call considers the row count");
+
+			oTable.setFirstVisibleRow(100);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			oGetContextsSpy.resetHistory();
+			oTable.getRowMode().setRowCount(8);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(oGetContextsSpy.callCount, 1,
+				"Decreased row count when scrolled to bottom: Method to get contexts called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(90, 8, 100),
+				"Decreased row count when scrolled to bottom: The call considers the row count");
+
+			oTable.setFirstVisibleRow(100);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			oGetContextsSpy.resetHistory();
+			oTable.getRowMode().setRowCount(10);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.strictEqual(oGetContextsSpy.callCount, 1,
+				"Increased row count when scrolled to bottom: Method to get contexts called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(90, 10, 100),
+				"Increased row count when scrolled to bottom: The call considers the row count");
+		});
 	});
 
 	QUnit.module("Row count constraints", {
