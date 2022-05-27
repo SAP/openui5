@@ -4842,6 +4842,35 @@ sap.ui.define([
 		return pTestSequence;
 	});
 
+	QUnit.only("Restore scroll position after changing the row count on resize; Small data; Fixed row heights", function(assert) {
+		var that = this;
+		var oTable = this.createTable({
+			rowMode: this.mTestedRowModes.AutoRowMode.setMinRowCount(8)
+		});
+		var iFirstVisibleRow;
+		var iScrollPosition;
+
+		return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(200)).then(function() {
+			iFirstVisibleRow = oTable.getFirstVisibleRow();
+			iScrollPosition = oTable._getScrollExtension().getVerticalScrollbar().scrollTop;
+		}).then(oTable.qunit.$resize({height: "400px"})).then(function() {
+			that.assertPosition(assert, iFirstVisibleRow, iScrollPosition, 0, "ScrollTop = 200; After height decreased");
+		}).then(oTable.qunit.resetSize).then(function() {
+			that.assertPosition(assert, iFirstVisibleRow, iScrollPosition, 0, "ScrollTop = 200; After height increased");
+		}).then(oTable.qunit.$scrollVSbTo(9999999)).then(function() {
+			iFirstVisibleRow = oTable.getFirstVisibleRow();
+			iScrollPosition = oTable._getScrollExtension().getVerticalScrollbar().scrollTop;
+		}).then(oTable.qunit.$resize({height: "400px"})).then(function() {
+			that.assertPosition(assert, iFirstVisibleRow, iScrollPosition, 0, "ScrollTop = MAX; After height decreased");
+		}).then(oTable.qunit.$scrollVSbTo(9999999)).then(function() {
+			iFirstVisibleRow = oTable.getFirstVisibleRow();
+			iScrollPosition = oTable._getScrollExtension().getVerticalScrollbar().scrollTop;
+		}).then(oTable.qunit.resetSize).then(function() {
+			that.assertPosition(assert, iFirstVisibleRow - 2, iScrollPosition - that.iBaseRowHeight * 2, 0,
+				"ScrollTop = MAX; After height increased");
+		});
+	});
+
 	QUnit.test("Restore scroll position after binding length change; Tiny data; Variable row heights", function(assert) {
 		var that = this;
 		var pTestSequence = Promise.resolve();

@@ -2110,10 +2110,9 @@ sap.ui.define([
 			if (bRenderedRows) {
 				oScrollExtension.updateVerticalScrollbarHeight();
 				oScrollExtension.updateVerticalScrollHeight();
-			} else {
-				VerticalScrollingHelper.restoreScrollPosition(this, this.getBinding() != null);
 			}
 
+			VerticalScrollingHelper.restoreScrollPosition(this, this.getBinding() != null);
 			HorizontalScrollingHelper.restoreScrollPosition(this);
 		},
 

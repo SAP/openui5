@@ -267,14 +267,8 @@ sap.ui.define([
 	 * @this sap.ui.table.rowmodes.InteractiveRowMode
 	 */
 	TableDelegate.onBeforeRendering = function(oEvent) {
-		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
-
 		if (this.bLegacy) {
 			this.getTable().setVisibleRowCount(this.getComputedRowCounts().count);
-		}
-
-		if (!bRenderedRows) {
-			this.updateTable(TableUtils.RowsUpdateReason.Render);
 		}
 	};
 

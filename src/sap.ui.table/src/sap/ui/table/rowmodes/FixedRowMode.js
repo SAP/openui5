@@ -130,7 +130,7 @@ sap.ui.define([
 			var iRowCount = this.getRowCount();
 
 			if (iRowCount > 0) {
-				return this.getRowContexts(iRowCount, true).length > 0;
+				return this.getRowContexts(iRowCount).length > 0;
 			}
 		} else {
 			return RowMode.prototype.updateTableRows.call(this);
@@ -221,17 +221,6 @@ sap.ui.define([
 
 			this.initTableRowsAfterDataRequested(iRowCount);
 			this.getRowContexts(iRowCount); // Trigger data request.
-		}
-	};
-
-	/**
-	 * @this sap.ui.table.rowmodes.FixedRowMode
-	 */
-	TableDelegate.onBeforeRendering = function(oEvent) {
-		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
-
-		if (!bRenderedRows) {
-			this.updateTable(TableUtils.RowsUpdateReason.Render);
 		}
 	};
 

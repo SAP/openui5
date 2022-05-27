@@ -246,6 +246,7 @@ sap.ui.define([
 		_private(this).updateTableAsync.cancel(); // Update will be performed right now.
 
 		// Update the rows aggregation and the row's binding contexts.
+		oTable._adjustFirstVisibleRowToTotalRowCount(); // TODO: Move this to Table#onBeforeRendering as soon as #renderTableRows is removed
 		var bRowsAggregationChanged = this.updateTableRows();
 
 		if (oTable._bInvalid) {
@@ -799,6 +800,7 @@ sap.ui.define([
 
 		if (!bRenderedRows) {
 			this._bFiredRowsUpdatedAfterRendering = false;
+			this.updateTable(TableUtils.RowsUpdateReason.Render);
 		}
 	};
 
