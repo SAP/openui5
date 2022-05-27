@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/date/UniversalDateUtils",
+	"sap/ui/unified/calendar/CalendarUtils",
 	"./library"
 ],
-	function(DateFormat, NumberFormat, Locale, LocaleData, Log, deepExtend, isEmptyObject, UniversalDateUtils, library) {
+	function(DateFormat, NumberFormat, Locale, LocaleData, Log, deepExtend, isEmptyObject, UniversalDateUtils, CalendarUtils, library) {
 		"use strict";
 
 		/**
@@ -285,6 +286,15 @@ sap.ui.define([
 							break;
 						default:
 							break;
+					}
+
+					if (oVal && (sType === "date" || sType === "datetime")) {
+						// for date/datetime types, if year is outside the allowed range [1-9999], return null as invalid result
+						try {
+							CalendarUtils._checkYearInValidRange(oVal.getFullYear());
+						} catch (e) {
+							oVal = null;
+						}
 					}
 
 					if (!oVal && oVal !== 0) {
