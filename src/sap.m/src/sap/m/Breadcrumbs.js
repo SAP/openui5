@@ -783,7 +783,7 @@ sap.ui.define([
 		var oConfig = {
 			canOverflow: true,
 			getCustomImportance: function () {
-				return "High";
+				return "Medium";
 			}
 		};
 
