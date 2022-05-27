@@ -264,9 +264,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Bar.prototype._updatePosition = function(bContentLeft, bContentMiddle, bContentRight) {
-		if (!bContentLeft && !bContentRight && bContentMiddle) {
-			return;
-		}
 		if (bContentLeft && !bContentMiddle && !bContentRight) {
 			return;
 		}
