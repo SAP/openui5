@@ -2368,6 +2368,22 @@ function (
 		assert.equal(oDynamicPage._getScrollPosition(), iExpectedScrollPosition, "Scroll position is correctly offset");
 	});
 
+	QUnit.test("Title position is updated after unpin", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oSpy = this.spy(oDynamicPage, "_updateTitlePositioning");
+
+		//setup
+		oDynamicPage._pin();
+		oDynamicPage._unPin();
+		oSpy.resetHistory();
+
+		//act
+		oDynamicPage._toggleHeaderOnScroll();
+
+		//check
+		assert.equal(oSpy.callCount, 1, "update is triggered");
+	});
+
 	QUnit.module("DynamicPage - Header initially collapsed", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPage();
