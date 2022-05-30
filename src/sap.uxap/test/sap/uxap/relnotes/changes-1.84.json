@@ -175,5 +175,21 @@
         ]
       }
     ]
+  },
+  "1.84.25": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "9721713137aff52db83d43903da3c6cc4eaa3200",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Switch to HierarchicalSelect optimized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000511102022"
+          }
+        ]
+      }
+    ]
   }
 }

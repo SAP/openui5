@@ -14,5 +14,29 @@
         ]
       }
     ]
+  },
+  "1.84.25": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "e88bd5fc53879b95078f5781bd798506554e49cc",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: busy state and hover interaction properly applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170304073"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180210567"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075125800002681512022"
+          }
+        ]
+      }
+    ]
   }
 }

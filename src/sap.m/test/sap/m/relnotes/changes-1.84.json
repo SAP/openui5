@@ -1384,5 +1384,32 @@
         ]
       }
     ]
+  },
+  "1.84.25": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "5dab8f41a1e4786529f204073467fb283a7600bd",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: 24:00:00 is correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000280062022"
+          }
+        ]
+      },
+      {
+        "id": "c15499236b1a2be91a1112d0b1546aa8f46b3e28",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: now returns empty description when no text, title, tooltip and state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170040097"
+          }
+        ]
+      }
+    ]
   }
 }
