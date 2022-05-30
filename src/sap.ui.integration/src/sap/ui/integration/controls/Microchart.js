@@ -5,11 +5,15 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/base/DataType",
+	"sap/base/Log"
 ], function (
 	mLibrary,
 	Control,
-	Core
+	Core,
+	DataType,
+	Log
 ) {
 	"use strict";
 
@@ -17,6 +21,28 @@ sap.ui.define([
 	var BulletMicroChart, BulletMicroChartData, StackedBarMicroChart, StackedBarMicroChartBar;
 
 	var ValueColor = mLibrary.ValueColor;
+
+	/**
+	 * Validates the given bar valueColor against the sap.m.ValueColor type.
+	 * Normally sap.suite.ui.microchart.StackedBarMicroChartBar allows css colors, but for cards we limit this to sap.m.ValueColor.
+	 * That ensures that theming and the mobile rendering can work.
+	 * @param {string} sColor The color to validate.
+	 * @returns {string} The validated color.
+	 */
+	function validateBarValueColor(sColor) {
+		if (!sColor || typeof sColor !== "string") {
+			return sColor;
+		}
+
+		var bIsValid = DataType.getType("sap.m.ValueColor").isValid(sColor);
+
+		if (!bIsValid) {
+			Log.error("The value for stacked bar color must be a valid 'sap.m.ValueColor'. Given '" + sColor + "'.", "sap.ui.integration.controls.Microchart");
+			return null;
+		}
+
+		return sColor;
+	}
 
 	/**
 	 * Constructor for a new Microchart.
@@ -155,10 +181,11 @@ sap.ui.define([
 
 		if (oChartSettings.type === "StackedBar") {
 			var aBars = oChartSettings.bars.map(function (oBar) {
+				var vColor = validateBarValueColor(oBar.color);
 				return new StackedBarMicroChartBar({
 					value: oBar.value,
 					displayValue: oBar.displayValue,
-					valueColor: oBar.color
+					valueColor: vColor
 				});
 			});
 
