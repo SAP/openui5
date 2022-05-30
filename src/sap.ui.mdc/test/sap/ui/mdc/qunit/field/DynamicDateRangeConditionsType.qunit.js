@@ -146,19 +146,19 @@ sap.ui.define([
 
 		var oCondition = _createCondition("EQ", [new Date(Date.UTC(2021, 9, 4))]);
 		var oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
-		assert.deepEqual(oResult, {operator: "DATE", values: [new Date(2021, 9, 4)]}, "Result of formatting: " + oCondition.operator);
+		assert.deepEqual(oResult, {operator: "DATE", values: [new Date(Date.UTC(2021, 9, 4))]}, "Result of formatting: " + oCondition.operator);
 
 		oCondition = _createCondition("BT", [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
-		assert.deepEqual(oResult, {operator: "DATERANGE", values: [new Date(2021, 9, 4), new Date(2021, 9, 5)]}, "Result of formatting: " + oCondition.operator);
+		assert.deepEqual(oResult, {operator: "DATERANGE", values: [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]}, "Result of formatting: " + oCondition.operator);
 
 		oCondition = _createCondition("GE", [new Date(Date.UTC(2021, 9, 4))]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
-		assert.deepEqual(oResult, {operator: "FROM", values: [new Date(2021, 9, 4)]}, "Result of formatting: " + oCondition.operator);
+		assert.deepEqual(oResult, {operator: "FROM", values: [new Date(Date.UTC(2021, 9, 4))]}, "Result of formatting: " + oCondition.operator);
 
 		oCondition = _createCondition("LE", [new Date(Date.UTC(2021, 9, 4))]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
-		assert.deepEqual(oResult, {operator: "TO", values: [new Date(2021, 9, 4)]}, "Result of formatting: " + oCondition.operator);
+		assert.deepEqual(oResult, {operator: "TO", values: [new Date(Date.UTC(2021, 9, 4))]}, "Result of formatting: " + oCondition.operator);
 
 	});
 
@@ -234,19 +234,19 @@ sap.ui.define([
 
 		var oCondition = _createCondition("EQ", [new Date(Date.UTC(2022, 1, 1, 9, 8, 30, 0))]);
 		var oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
-		assert.deepEqual(oResult, {operator: "DATETIME", values: [new Date(2022, 1, 1, 9, 8, 30, 0)]}, "Result of formatting: " + oCondition.operator);
+		assert.deepEqual(oResult, {operator: "DATETIME", values: [new Date(Date.UTC(2022, 1, 1, 9, 8, 30, 0))]}, "Result of formatting: " + oCondition.operator);
 
 		oCondition = _createCondition("BT", [new Date(Date.UTC(2022, 1, 1, 9, 8, 30, 0)), new Date(Date.UTC(2022, 1, 2, 9, 8, 30, 999))]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
-		assert.deepEqual(oResult, {operator: "DATETIMERANGE", values: [new Date(2022, 1, 1, 9, 8, 30, 0), new Date(2022, 1, 2, 9, 8, 30/*, 999*/)]}, "Result of formatting: " + oCondition.operator);
+		assert.deepEqual(oResult, {operator: "DATETIMERANGE", values: [new Date(Date.UTC(2022, 1, 1, 9, 8, 30, 0)), new Date(Date.UTC(2022, 1, 2, 9, 8, 30, 999))]}, "Result of formatting: " + oCondition.operator);
 
 		oCondition = _createCondition("GE", [new Date(Date.UTC(2022, 1, 8, 12, 22, 30, 0))]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
-		assert.deepEqual(oResult, {operator: "FROMDATETIME", values: [new Date(2022, 1, 8, 12, 22, 30, 0)]}, "Result of formatting: " + oCondition.operator);
+		assert.deepEqual(oResult, {operator: "FROMDATETIME", values: [new Date(Date.UTC(2022, 1, 8, 12, 22, 30, 0))]}, "Result of formatting: " + oCondition.operator);
 
 		oCondition = _createCondition("LE", [new Date(Date.UTC(2022, 1, 8, 12, 22, 30, 999))]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
-		assert.deepEqual(oResult, {operator: "TODATETIME", values: [new Date(2022, 1, 8, 12, 22, 30/*, 999*/)]}, "Result of formatting: " + oCondition.operator);
+		assert.deepEqual(oResult, {operator: "TODATETIME", values: [new Date(Date.UTC(2022, 1, 8, 12, 22, 30, 999))]}, "Result of formatting: " + oCondition.operator);
 
 	});
 
@@ -299,19 +299,19 @@ sap.ui.define([
 	QUnit.test("normal operators", function(assert) {
 
 		var oCondition = _createCondition("EQ", [new Date(Date.UTC(2021, 9, 4))]);
-		var aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATE", values: [new Date(2021, 9, 4)]});
+		var aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATE", values: [new Date(Date.UTC(2021, 9, 4))]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
 		oCondition = _createCondition("BT", [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]);
-		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATERANGE", values: [new Date(2021, 9, 4), new Date(2021, 9, 5)]});
+		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATERANGE", values: [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
 		oCondition = _createCondition("GE", [new Date(Date.UTC(2021, 9, 4))]);
-		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "FROM", values: [new Date(2021, 9, 4)]});
+		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "FROM", values: [new Date(Date.UTC(2021, 9, 4))]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
 		oCondition = _createCondition("LE", [new Date(Date.UTC(2021, 9, 4))]);
-		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "TO", values: [new Date(2021, 9, 4)]});
+		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "TO", values: [new Date(Date.UTC(2021, 9, 4))]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
 	});
@@ -372,19 +372,19 @@ sap.ui.define([
 	QUnit.test("normal operators", function(assert) {
 
 		var oCondition = _createCondition("EQ", [new Date(Date.UTC(2022, 1, 1, 9, 21, 30, 0))]);
-		var aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATETIME", values: [new Date(2022, 1, 1, 9, 21, 30, 0)]});
+		var aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATETIME", values: [new Date(Date.UTC(2022, 1, 1, 9, 21, 30, 0))]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
 		oCondition = _createCondition("BT", [new Date(Date.UTC(2022, 1, 1, 9, 21, 30, 0)), new Date(Date.UTC(2022, 1, 1, 10, 21, 30/*, 999*/))]);
-		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATETIMERANGE", values: [new Date(2022, 1, 1, 9, 21, 30, 0), new Date(2022, 1, 1, 10, 21, 30, 999)]});
+		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATETIMERANGE", values: [new Date(Date.UTC(2022, 1, 1, 9, 21, 30, 0)), new Date(Date.UTC(2022, 1, 1, 10, 21, 30, 999))]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
 		oCondition = _createCondition("GE", [new Date(Date.UTC(2022, 1, 8, 12, 22, 30, 0))]);
-		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "FROMDATETIME", values: [new Date(2022, 1, 8, 12, 22, 30, 0)]});
+		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "FROMDATETIME", values: [new Date(Date.UTC(2022, 1, 8, 12, 22, 30, 0))]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
 		oCondition = _createCondition("LE", [new Date(Date.UTC(2022, 1, 8, 12, 22, 30/*, 999*/))]);
-		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "TODATETIME", values: [new Date(2022, 1, 8, 12, 22, 30, 999)]});
+		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "TODATETIME", values: [new Date(Date.UTC(2022, 1, 8, 12, 22, 30, 999))]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
 	});
