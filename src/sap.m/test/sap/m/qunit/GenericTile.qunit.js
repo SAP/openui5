@@ -22,11 +22,12 @@ sap.ui.define([
 	"sap/f/GridContainerItemLayoutData",
 	"sap/f/GridContainerSettings",
 	"sap/f/GridContainer",
+	"sap/m/FormattedText",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
 			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, coreLibrary, isEmptyObject, KeyCodes, oCore,GridContainerItemLayoutData,
-			GridContainerSettings,GridContainer) {
+			GridContainerSettings,GridContainer,FormattedText) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -3578,6 +3579,74 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 
 		assert.ok(document.getElementById("tile-cont-priority"), "Priority container is rendered");
 		assert.ok(document.getElementById("generic-tile-actionButtons"), "Action Buttons Container is rendered in Action Mode");
+	});
+
+
+	QUnit.module("Generic Tile in s4 Homes Tests", {
+		beforeEach: function() {
+			this.oTask = new GenericTile("genericTile", {
+				mode: GenericTileMode.ActionMode,
+				subheader: "Expenses By Region",
+				frameType: FrameType.TwoByOne,
+				header: "Comparative Annual Totals",
+				tileContent: new TileContent("tileCont", {
+					unit: "EUR",
+					priority: Priority.High,
+					priorityText: "High",
+					footer: "Current Quarter",
+					content: new FormattedText("frmt-txt", {
+						htmlText : "<p>Due Date: Apr 12, 2022 10:00:00 AM <br> Created By: Example Purchaser</p>"
+					})
+				})
+			}).placeAt("qunit-fixture");
+			this.oSituation = new GenericTile("generic-tile", {
+				mode: GenericTileMode.ActionMode,
+				subheader: "Expenses By Region",
+				frameType: FrameType.TwoByOne,
+				header: "Comparative Annual Totals",
+				headerImage: "sap-icon://alert",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter",
+					content: new Text("txt", {
+						text : "This would be a situation long text description. it would have 3 lines of space,as a maximum."
+					})
+				})
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oTask.destroy();
+			this.oTask = null;
+			this.oSituation.destroy();
+			this.oSituation = null;
+		}
+	});
+	QUnit.test("Aria-Label Properties for Tiles", function(assert) {
+		/**
+		 * Arrange
+		 * Getting focus on the Task Tile
+		 */
+		var tabDown = jQuery.Event("keydown");
+		tabDown.keyCode = KeyCodes.TAB;
+		this.oTask.$().trigger(tabDown);
+		var tabUp = jQuery.Event("keyup");
+		tabUp.keyCode = KeyCodes.TAB;
+		this.oTask.$().trigger(tabUp);
+		//Act
+		assert.equal(this.oTask.getDomRef().getAttribute("aria-label"),"Comparative Annual Totals\nExpenses By Region\nHigh Priority\nDue Date: Apr 12, 2022 10:00:00 AM\nCreated By: Example Purchaser\nEUR\nCurrent Quarter","Aria-Label has been rendered Successfully");
+		/**
+		 * Arrange
+		 * Getting focus on the Situation Tile
+		 */
+		var tabDown = jQuery.Event("keydown");
+		tabDown.keyCode = KeyCodes.TAB;
+		this.oSituation.$().trigger(tabDown);
+		var tabUp = jQuery.Event("keyup");
+		tabUp.keyCode = KeyCodes.TAB;
+		this.oSituation.$().trigger(tabUp);
+		//Act
+		assert.equal(this.oSituation.getDomRef().getAttribute("aria-label"),"Comparative Annual Totals\nExpenses By Region\nThis would be a situation long text description. it would have 3 lines of space,as a maximum.\nEUR\nCurrent Quarter","Aria-Label has been rendered Successfully");
 	});
 
 	QUnit.module("GenericTile IconMode", {

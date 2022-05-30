@@ -206,13 +206,12 @@ sap.ui.define([
 				backgroundColor: {type: "sap.ui.core.CSSColor", group: "Appearance"},
 				/**
 				 * The semantic color of the value.
-				 * @experimental
+				 * @experimental Since 1.95
 				 * @since 1.95
 				 */
 				valueColor: {type: "sap.m.ValueColor", group: "Appearance", defaultValue: "None"},
 				/**
 				 * The load state of the tileIcon.
-				 * @experimental
 				 */
 				iconLoaded: {type: "boolean", group: "Misc", defaultValue: true}
 			},
@@ -1299,7 +1298,7 @@ sap.ui.define([
 		var aContent = this.getTileContent();
 		var sAdditionalTooltip = this.getAdditionalTooltip();
 
-		if (!this._isInActionScope() && (this.getMode() === GenericTileMode.ContentMode || this.getMode() === GenericTileMode.ArticleMode)) {
+		if (!this._isInActionScope() && (this.getMode() === GenericTileMode.ContentMode || this.getMode() === GenericTileMode.ArticleMode || this.getMode() === GenericTileMode.ActionMode)) {
 			for (var i = 0; i < aContent.length; i++) {
 				if (typeof aContent[i]._getAriaAndTooltipText === "function") {
 					sText += (bIsFirst ? "" : "\n") + aContent[i]._getAriaAndTooltipText();

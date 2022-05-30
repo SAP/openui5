@@ -10,6 +10,8 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 
 	var LoadState = library.LoadState;
 
+	var GenericTileMode = library.GenericTileMode;
+
 	/**
 	 * Constructor for a new sap.m.TileContent control.
 	 *
@@ -64,7 +66,6 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 				"priority" : {type: "sap.m.Priority", group: "Misc", defaultValue: Priority.None},
 				/**
 				 * Sets the Text inside the Priority badge in Generic Tile ActionMode.
-				 * @experimental Since 1.103
 				 */
 				 "priorityText" : {type: "string", group: "Misc", defaultValue: null},
 				/**
@@ -218,14 +219,30 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 		var sAltText = "";
 		var bIsFirst = true;
 		var oContent = this.getContent();
+		var oParent = this.getParent();
 
 		if (oContent) {
+			var oContentDom = oContent.getDomRef();
 			if (oContent.getAltText) {
 				sAltText += oContent.getAltText();
 				bIsFirst = false;
 			} else if (oContent.getTooltip_AsString()) {
 				sAltText += oContent.getTooltip_AsString();
 				bIsFirst = false;
+			} else if (oParent && oParent.isA("sap.m.GenericTile") && oParent.getMode() === GenericTileMode.ActionMode) {
+				var sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY"),
+					sPriorityText = this.getPriorityText();
+				if (sPriorityText && this.getPriority()){
+					sAltText += sPriorityText + " " + sPriority;
+					bIsFirst = false;
+				}
+				if (oContent.isA("sap.m.Text")){
+					sAltText += (bIsFirst ? "" : "\n") + oContent.getText();
+					bIsFirst = false;
+				} else if (oContentDom && oContent.isA("sap.m.FormattedText")) {
+					sAltText += (bIsFirst ? "" : "\n") + oContentDom.innerText;
+					bIsFirst = false;
+				}
 			}
 		}
 		if (this.getUnit()) {
