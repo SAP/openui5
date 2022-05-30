@@ -203,13 +203,11 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnNeutral.sapMFocusable:not(.sapMBadgeIn
 	background-color: @sapUiButtonLiteBackground;
 }
 
-.sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent) {
-	&.sapMBtnDefault,
-	&.sapMBtnBack {
+.sapMIBar .sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnDefault,
+.sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnBack {
+	color: @sapUiButtonLiteTextColor;
+	.sapUiIcon {
 		color: @sapUiButtonLiteTextColor;
-		.sapUiIcon {
-			color: @sapUiButtonLiteTextColor;
-		}
 	}
 }
 
