@@ -3136,5 +3136,73 @@
         ]
       }
     ]
+  },
+  "1.71.46": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "8054f86f445a570b44539b14228812b6770db580",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Buttons are now not included in announce",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180165971"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270058028"
+          }
+        ]
+      },
+      {
+        "id": "d42376aa6e3591844f1718c000a50cef14d831fa",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: 24:00:00 is correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000280062022"
+          }
+        ]
+      },
+      {
+        "id": "d5398ddf094343bbae8b52f699c07d27b6afc3c5",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Text is no longer read twice in virtual mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180090829"
+          }
+        ]
+      },
+      {
+        "id": "d12b5bdabebe4f1ea1432496fd2eacf9335953b1",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Empty Popover is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070107682"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270083289"
+          }
+        ]
+      },
+      {
+        "id": "110842cb6f81d0d1491b16131667c16ae182777d",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Single cell is now pasted as text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700032754172022"
+          }
+        ]
+      }
+    ]
   }
 }

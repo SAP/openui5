@@ -57,5 +57,21 @@
         ]
       }
     ]
+  },
+  "1.71.46": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "1003297764514c6e3023b0d76f6197f3652d34a2",
+        "type": "FIX",
+        "text": " ObjectHeader: Align focus state by VD specification in belize, fiori 3 and fiori 3 HCB/HCW",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180090867"
+          }
+        ]
+      }
+    ]
   }
 }

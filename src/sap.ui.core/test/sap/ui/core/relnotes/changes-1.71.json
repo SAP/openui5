@@ -1319,5 +1319,40 @@
         ]
       }
     ]
+  },
+  "1.71.46": {
+    "date": "May 2022",
+    "notes": [
+      {
+        "id": "dc609238dddda22968238bec9831de300fbaf7c4",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: Fixed scrolling behavior while popup opening",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070120788"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003075662022"
+          }
+        ]
+      },
+      {
+        "id": "c2d7011342c111c73465e4189c7b5dee99e25a3b",
+        "type": "FIX",
+        "text": " core.Popup: avoid setting focus to static UIArea when runs on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000087592021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003075662022"
+          }
+        ]
+      }
+    ]
   }
 }
