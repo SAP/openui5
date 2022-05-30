@@ -16,155 +16,78 @@
     <script>
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
+				"sap/ui/core/Core",
                 "sap/ui/webc/fiori/SideNavigation",
                 "sap/ui/webc/fiori/SideNavigationItem",
                 "sap/ui/webc/fiori/SideNavigationSubItem",
                 "sap/ui/webc/main/Button"
             ], function(
-                SideNavigation, SideNavigationItem, SideNavigationSubItem, Button
+					Core, SideNavigation, SideNavigationItem, SideNavigationSubItem, Button
             ) {
 
 
-                var oSideNavigation = new SideNavigation({
-                    fixedItems: [
-                        new SideNavigationItem({
-                            icon: "employee",
-                            text: "Some text...",
-                            items: [
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                }),
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                }),
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                })
-                            ]
-                        }),
-                        new SideNavigationItem({
-                            icon: "employee",
-                            text: "Some text...",
-                            items: [
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                }),
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                }),
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                })
-                            ]
-                        }),
-                        new SideNavigationItem({
-                            icon: "employee",
-                            text: "Some text...",
-                            items: [
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                }),
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                }),
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                })
-                            ]
-                        })
-                    ],
-                    header: [
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        })
-                    ],
+                var oSideNavigation = new SideNavigation("sideNavigation", {
                     items: [
                         new SideNavigationItem({
-                            icon: "employee",
-                            text: "Some text...",
-                            items: [
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                }),
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                }),
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                })
-                            ]
+                            icon: "home",
+                            text: "Home"
                         }),
                         new SideNavigationItem({
-                            icon: "employee",
-                            text: "Some text...",
+                            icon: "group",
+                            text: "People",
+							expanded: true,
                             items: [
                                 new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
+                                    text: "From My Team"
                                 }),
                                 new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
+                                    text: "From Other Teams"
                                 }),
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                })
                             ]
                         }),
-                        new SideNavigationItem({
-                            icon: "employee",
-                            text: "Some text...",
-                            items: [
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                }),
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                }),
-                                new SideNavigationSubItem({
-                                    icon: "employee",
-                                    text: "Some text..."
-                                })
-                            ]
-                        })
+						new SideNavigationItem({
+							icon: "locate-me",
+							text: "Locations",
+							selected: true
+						}),
+						new SideNavigationItem({
+							icon: "calendar",
+							text: "Events",
+							items: [
+								new SideNavigationSubItem({
+									text: "Local"
+								}),
+								new SideNavigationSubItem({
+									text: "Others"
+								}),
+							]
+						})
                     ],
+					fixedItems: [
+						new SideNavigationItem({
+							icon: "chain-link",
+							text: "Useful Links"
+						}),
+						new SideNavigationItem({
+							icon: "history",
+							text: "History"
+						})
+					],
                     selectionChange: function(oEvent) {
                         console.log("Event selectionChange fired for SideNavigation with parameters: ", oEvent.getParameters());
                     }
                 });
+				var oButton = new Button({
+					text: "Expand/Collapse SideNavigation",
+					click: function () {
+						var oSideNavigation = Core.byId("sideNavigation");
+						var bExpanded = oSideNavigation.getCollapsed();
+
+						oSideNavigation.setCollapsed(!bExpanded);
+					}
+				});
+
+				oButton.placeAt("testControl");
                 oSideNavigation.placeAt("testControl");
             });
         });
