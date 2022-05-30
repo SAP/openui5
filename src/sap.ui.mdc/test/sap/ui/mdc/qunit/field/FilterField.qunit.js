@@ -352,4 +352,38 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("value updates in searchfield scenario", function(assert) { // BCP: 2280085536
+		oFilterField.destroy();
+		oFilterField = new FilterField("FF1", {
+			conditions: "{$filters>/conditions/$search}",
+			maxConditions: 1,
+			delegate: '{name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}}'
+		});
+
+		sinon.spy(oFilterField, "fireChange");
+
+		oFilterField.placeAt("content");
+		oCore.applyChanges();
+
+
+		var aContent = oFilterField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+
+		oContent.fireChange({
+			id: 'F1-inner-inner',
+			value: '123'
+		});
+
+		assert.equal(oFilterField.fireChange.lastCall.args[0].value, '123', "Contains expected value");
+
+		oContent.fireChange({
+			id: 'F1-inner-inner',
+			value: ''
+		});
+
+		assert.equal(oFilterField.fireChange.lastCall.args[0].value, undefined, "Contains expected value");
+
+		oFilterField.fireChange.restore();
+	});
+
 });

@@ -2177,6 +2177,7 @@ sap.ui.define([
 
 	}
 
+	// Please note: This method may update aConditions!
 	function _updateConditionsFromChange(oCondition, aConditions, oConditionType, bValid, vValue, oSource, oChange) {
 
 		var iMaxConditions = this.getMaxConditions();
@@ -2197,7 +2198,7 @@ sap.ui.define([
 			if (oCondition) {
 				if (this._oContentFactory.isMeasure() && aConditions.length === 1 && aConditions[0].values[0][0] === undefined) {
 					// remove empty condition
-					aConditions = [];
+					aConditions.length = 0;
 				}
 				if (iMaxConditions !== 1 && FilterOperatorUtil.indexOfCondition(oCondition, aConditions) >= 0) {
 					// condition already exist (only error if tokens, in SearchField it is OK)
@@ -2210,7 +2211,7 @@ sap.ui.define([
 					aConditions.push(oCondition);
 				}
 			} else if (iMaxConditions === 1) {
-				aConditions = [];
+				aConditions.length = 0;
 			}
 
 			if (!deepEqual(aConditions, this.getConditions())) {
