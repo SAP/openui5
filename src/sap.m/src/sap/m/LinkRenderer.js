@@ -44,15 +44,19 @@
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
 			bShouldHaveOwnLabelledBy = oControl._determineSelfReferencePresence(),
 			sHasPopupType = oControl.getAriaHasPopup(),
-			sHref = oControl.getHref(),
 			sRel = defaultLinkTypes(oControl.getRel(), oControl.getTarget()),
+			sHref = oControl.getHref(),
 			oAccAttributes =  {
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined,
 				haspopup: (sHasPopupType === AriaHasPopup.None) ? null : sHasPopupType.toLowerCase()
 			},
-			bIsValid = sHref && oControl._isHrefValid(sHref),
 			bEnabled = oControl.getEnabled(),
 			sTypeSemanticInfo = "";
+
+		// Set a valid non empty value for the href attribute representing that there is no navigation,
+		// so we don't confuse the screen readers.
+		/*eslint-disable no-script-url */
+		sHref = sHref && oControl._isHrefValid(sHref) && oControl.getEnabled() ? sHref : "javascript:void(0)";
 
 		// Link is rendered as a "<a>" element
 		oRm.openStart("a", oControl);
@@ -84,13 +88,7 @@
 			oRm.attr("title", oControl.getTooltip_AsString());
 		}
 
-		/* set href only if link is enabled - BCP incident 1570020625 */
-		if (bIsValid && bEnabled) {
-			oRm.attr("href", sHref);
-		} else if (oControl.getText()) {
-			// Add href only if there's text. Otherwise virtual cursor would stop on the empty link. BCP 2070055617
-			oRm.attr("href", "");
-		}
+		oRm.attr("href", sHref);
 
 		if (oControl.getTarget()) {
 			oRm.attr("target", oControl.getTarget());
