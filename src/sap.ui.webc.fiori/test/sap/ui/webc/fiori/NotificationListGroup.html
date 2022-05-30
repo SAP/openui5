@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>NotificationListItem - sap.ui.webc.fiori</title>
+	<title>NotificationListGroup - sap.ui.webc.fiori</title>
 	<script src="shared-config.js"></script>
 	<script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
 		data-sap-ui-libs="sap.ui.webc.fiori, sap.ui.webc.main" data-sap-ui-resourceroots='{
@@ -15,11 +15,12 @@
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
 				"sap/ui/webc/fiori/NotificationListItem",
+				"sap/ui/webc/fiori/NotificationListGroupItem",
 				"sap/ui/webc/fiori/NotificationAction",
 				"sap/ui/webc/main/Avatar",
 				"sap/ui/webc/main/Button"
 			], function (
-				NotificationListItem, NotificationAction, Avatar, Button
+				NotificationListItem, NotificationListGroupItem, NotificationAction, Avatar, Button
 			) {
 				var oNotificationListItem = new NotificationListItem({
 					titleText: "Notification List Title Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel",
@@ -38,8 +39,8 @@
 					avatar: new Avatar({
 						icon: "employee",
 						image: new Button({
-							icon: "employee"
-						})
+							icon: "employee",
+						}),
 					}),
 					close: function (oEvent) {
 						console.log("Event close fired for NotificationListItem with parameters: ", oEvent.getParameters());
@@ -121,7 +122,6 @@
 						new NotificationAction({
 							text: "Reject"
 						}),
-
 					],
 					avatar: new Avatar({
 						icon: "employee",
@@ -142,11 +142,22 @@
 					}
 				});
 
-				oNotificationListItem.placeAt("notificationItems");
-				oNotificationListItem2.placeAt("notificationItems");
-				oNotificationListItem3.placeAt("notificationItems");
-				oNotificationListItem4.placeAt("notificationItems");
-				oNotificationListItem5.placeAt("notificationItems");
+				var oNotificationGroup = new NotificationListGroupItem({
+					titleText: "Notification List Group",
+					busy: false,
+					priority: sap.ui.webc.main.Priority.Low,
+					showClose: true,
+					showCounter: true,
+					items: [
+						oNotificationListItem,
+						oNotificationListItem2,
+						oNotificationListItem3,
+						oNotificationListItem4,
+						oNotificationListItem5,
+					]
+				});
+
+				oNotificationGroup.placeAt("notificationGroup");
 			});
 		});
 	</script>
@@ -154,7 +165,7 @@
 
 <body id="body" class="sapUiBody">
 	<br><br>
-	<div id="notificationItems"></div>
+	<div id="notificationGroup"></div>
 </body>
 
 </html>
