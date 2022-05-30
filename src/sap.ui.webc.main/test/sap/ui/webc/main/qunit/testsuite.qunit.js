@@ -370,6 +370,14 @@ sap.ui.define(function() {
 				sinon: false,
 				group: "Designtime"
 			},
+			"designtime/CustomListItem": {
+				title: "QUnit Page for sap.ui.webc.main.CustomListItem design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.main", "sap.ui.rta"]
+				},
+				sinon: false,
+				group: "Designtime"
+			},
 			"designtime/DatePicker": {
 				title: "QUnit Page for sap.ui.webc.main.DatePicker design time and rta enabling",
 				ui5: {
