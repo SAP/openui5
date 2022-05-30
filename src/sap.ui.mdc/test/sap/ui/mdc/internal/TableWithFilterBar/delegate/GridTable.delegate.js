@@ -99,7 +99,7 @@ sap.ui.define([
 					var iMinutes = parseInt(aParts[1]);
 					aParts = aParts[2].split(".");
 					var iSeconds = parseInt(aParts[0]);
-					var iMilliseconds = parseInt(aParts[1]);
+					var iMilliseconds = parseInt(aParts[1].slice(0, 3)); // take only 3 digits
 					if (sSign === "-") {
 						iMinutes = iMinutes + iOffsetMinutes;
 						iHours = iHours + iOffsetHours;
