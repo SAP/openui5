@@ -6,6 +6,37 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * Single place to register listener for the "message" event of the window.
+	 * It helps to avoid multiple registered listeners from the different controllers at the same time, such as Integrate, LearnDetail, etc.
+	 * Only the last registered listener is called at most 1 time.
+	 */
+	var TopicFrameMessageManager = {
+		_fnCurrentCb: null,
+		_iCurrentCbCallCount: 0,
+		_registered: false,
+		_onTopicBootFinished: function () {
+			if (this._fnCurrentCb && this._iCurrentCbCallCount === 0) {
+				this._iCurrentCbCallCount = 1;
+				this._fnCurrentCb.apply(this, arguments);
+			}
+		},
+		startListening: function (fnCb) {
+			this._fnCurrentCb = fnCb;
+			this._iCurrentCbCallCount = 0;
+
+			if (this._registered) {
+				return;
+			}
+
+			window.addEventListener("message", this._onTopicBootFinished);
+			this._registered = true;
+		},
+		stopListening: function () {
+			window.removeEventListener("message", this._onTopicBootFinished);
+		}
+	};
+
+	/**
 	 * Serves as base class for controllers, which show topic (.html) and use iframe.
 	 */
 	return BaseController.extend("sap.ui.demo.cardExplorer.controller.Topic", {
@@ -19,11 +50,11 @@ sap.ui.define([
 		 * Only handles initial loading of the iframe.
 		 */
 		onFrameSourceChange: function () {
-			window.addEventListener("message", this._fnOnFrameMessageHandler, { once: true });
+			TopicFrameMessageManager.startListening(this._fnOnFrameMessageHandler);
 		},
 
 		onExit: function () {
-			window.removeEventListener("message", this._fnOnFrameMessageHandler);
+			TopicFrameMessageManager.stopListening();
 			this._fnOnFrameMessageHandler = null;
 		},
 
