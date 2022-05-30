@@ -3,6 +3,17 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "7b914cf032551c3d054ae24b4a291105d42a7f91",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix expand/collapse header button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280083433"
+          }
+        ]
+      },
+      {
         "id": "5cda6a8a6c7bf3b82090127d121f5206e349b057",
         "type": "FIX",
         "text": " sap.f.TargetHandler: Close all Dialogs when navigating back",

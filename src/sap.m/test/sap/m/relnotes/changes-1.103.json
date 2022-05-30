@@ -3,6 +3,80 @@
     "date": "May 2022",
     "notes": [
       {
+        "id": "b9c769fdde3aa18f0722e51d6e8e586ee03cec05",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: current option now looks as selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270081349"
+          }
+        ]
+      },
+      {
+        "id": "b213d707ba3042eae497a1d029b6ef3c22010ef4",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: accepts only years in range (1-9999)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270092118"
+          }
+        ]
+      },
+      {
+        "id": "343c8cd172285481cee709345093b1d4dee6b77f",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Now supports UTC formatter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270091756"
+          }
+        ]
+      },
+      {
+        "id": "90dbff03cbf60c016172faec6b05144be08f3976",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Sample for Input with ValueHelp only fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270032999"
+          }
+        ]
+      },
+      {
+        "id": "268333cc53158c42660ad16b473d82d331d496a8",
+        "type": "FIX",
+        "text": " GrowingEnablement: asynchronous items rendering issue is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280083462"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270108409"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003845712022"
+          }
+        ]
+      },
+      {
+        "id": "290f79f986c1dd839c2a0651473e2dcab1bd17c6",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: Placeholder is now announced by screen reader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015340"
+          }
+        ]
+      },
+      {
         "id": "20a8ae8518c0a55ecd45a24ed168a208237cab1f",
         "type": "FIX",
         "text": " sap.m.DynamicDateRange: fixed \"Today -X/+Y Days\" input/output",
