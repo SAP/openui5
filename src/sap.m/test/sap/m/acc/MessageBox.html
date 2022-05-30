@@ -21,6 +21,8 @@
                 }
 		});
 
+		var iAttemptCnt = 0;
+
 		var oPage = new sap.m.Page("oPage", {
 			title: "MessageBox Accessibility Test Page",
 			content: [
@@ -76,6 +78,48 @@
 							actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
 							defaultAction: sap.m.MessageBox.Action.NO,
 							details: "The security token required to upload the file to the backend system cannot be retrieved. Try refreshing your browser."
+						});
+					}
+				}),
+				new sap.m.Button("showDetailsAsyncMsgDialogButton", {
+					text: "Show Details Async",
+					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+					press: function () {
+						sap.m.MessageBox.show("Your file could not be uploaded because of a security problem.", {
+							icon: sap.m.MessageBox.Icon.INFORMATION,
+							title: "Information",
+							details: function () {
+								return new Promise(function (resolve) {
+									setTimeout(function () {
+										resolve("The security token required to upload the file to the backend system cannot be retrieved. Try refreshing your browser.")
+									}, 1500);
+								});
+							}
+						});
+					}
+				}),
+			
+				new sap.m.Button({
+					text: "Show details from callback - Try again",
+					width: "270px",
+					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+					press: function () {
+						sap.m.MessageBox.show("Your file could not be uploaded because of a security problem.", {
+							title: "Error",
+							details: function () {
+								if (iAttemptCnt === 0) {
+									iAttemptCnt++;
+									return new Promise(function (resolve, reject) {
+										setTimeout(reject, 1500);
+									});
+								}
+								return new Promise(function (resolve, reject) {
+									setTimeout(resolve.bind(null, "The security token required to upload the file to the backend system cannot be retrieved. Try refreshing your browser."), 1500);
+								});
+							},
+							onClose: function () {
+								iAttemptCnt = 0;
+							}
 						});
 					}
 				}),

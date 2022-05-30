@@ -35,15 +35,31 @@ sap.ui.define([
 		},
 
 		onShowJSONInfo: function () {
-			var JSON = {
+			var oData = {
 				glossary: {
 					title: "example glossary"
 				}
 			};
 			MessageBox.error("Error message", {
 				title: "Error",
-				id: "messageBoxId1",
-				details: JSON,
+				id: "messageBoxId3",
+				details: oData,
+				contentWidth: "100px",
+				styleClass: sResponsivePaddingClasses
+			});
+		},
+
+		onShowTextInfoAsync: function () {
+			MessageBox.information("Information", {
+				title: "Information",
+				id: "messageBoxId4",
+				details: function () {
+					return new Promise(function (resolve, reject) {
+						setTimeout(function () {
+							resolve("Asynchronously fetched details");
+						}, 2000); // Simulate network request delay
+					});
+				},
 				contentWidth: "100px",
 				styleClass: sResponsivePaddingClasses
 			});

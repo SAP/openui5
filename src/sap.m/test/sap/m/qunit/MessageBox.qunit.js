@@ -56,8 +56,6 @@ sap.ui.define([
 
 	createAndAppendDiv("content");
 
-
-
 	var page = new Page("myFirstPage", {
 		title: "MessageBox Test",
 		showNavButton: true
@@ -85,6 +83,10 @@ sap.ui.define([
 		"QUESTION": "sapMMessageBoxQuestion",
 		"STANDARD": "sapMMessageBoxStandard"
 	};
+
+	function pressLink (oLink) {
+		qutils.triggerEvent(Device.support.touch ? "tap" : "click", oLink);
+	}
 
 	QUnit.module("");
 
@@ -677,11 +679,7 @@ sap.ui.define([
 		assert.ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (Device.support.touch) {
-			sLinkText.tap();
-		} else {
-			sLinkText.trigger("click");
-		}
+		pressLink(sLinkText);
 
 		oCore.applyChanges();
 		assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
@@ -750,96 +748,6 @@ sap.ui.define([
 		assert.ok(oMessageBox.$().hasClass(sClassName));
 		$Layout = oCore.byId(sLayoutId).$();
 		assert.equal($Layout.length, 1, "Layout should be created");
-		oMessageBox.destroy();
-	});
-
-	QUnit.test("pass simple json to details", function (assert) {
-		var oJSON = { x: 1, y: 2, z: 3 };
-
-		MessageBox.show("No connection can be established to the backend system ABC", {
-			id: "messagedialog2",
-			title: sMessageTitle,
-			type: MessageBox.Icon.ERROR,
-			details: oJSON,
-			styleClass: sClassName,
-			initialFocus: "OK"
-		});
-		this.clock.tick(500);
-		var oMessageBox = oCore.byId("messagedialog2");
-		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
-		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
-		assert.ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
-		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
-		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (Device.support.touch) {
-			sLinkText.tap();
-		} else {
-			sLinkText.trigger("click");
-		}
-
-		oCore.applyChanges();
-		assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
-		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null, '\t'));
-		assert.ok(oMessageBox.$().hasClass(sClassName));
-		oMessageBox.destroy();
-	});
-
-	QUnit.test("pass text with special characters in details", function (assert) {
-		var deploymentErrorDetails = "sequenceflow4 : Error in element 'SequenceFlow4' field 'Condition': Dynamically evaluated expression is expected, e.g. {context.variableOfInterest == 'value of interest'} servicetask1 : Flow element 'ServiceTask1' is not properly connected to other flow elements";
-		MessageBox.show("No connection can be established to the backend system ABC", {
-			id: "messagedialogdetails",
-			title: sMessageTitle,
-			type: MessageBox.Icon.ERROR,
-			details: deploymentErrorDetails,
-			styleClass: sClassName,
-			initialFocus: "OK"
-		});
-		this.clock.tick(500);
-		var oMessageBox = oCore.byId("messagedialogdetails");
-		assert.ok(oMessageBox, "Dialog should be created");
-		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (Device.support.touch) {
-			sLinkText.tap();
-		} else {
-			sLinkText.trigger("click");
-		}
-
-		oCore.applyChanges();
-		assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
-		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), deploymentErrorDetails);
-		oMessageBox.destroy();
-	});
-
-	QUnit.test("pass control to details", function (assert) {
-		var oJSON = new Text("Hi");
-
-		MessageBox.show("No connection can be established to the backend system ABC", {
-			id: "messagedialog3",
-			title: sMessageTitle,
-			type: MessageBox.Icon.ERROR,
-			details: oJSON,
-			styleClass: sClassName,
-			initialFocus: "OK"
-		});
-		this.clock.tick(500);
-		var oMessageBox = oCore.byId("messagedialog3");
-		assert.ok(oMessageBox, "Dialog should be created");
-		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
-		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
-		assert.ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
-		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
-		var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-		if (Device.support.touch) {
-			sLinkText.tap();
-		} else {
-			sLinkText.trigger("click");
-		}
-
-		oCore.applyChanges();
-		assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
-		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null, '\t'));
-		assert.ok(oMessageBox.$().hasClass(sClassName));
 		oMessageBox.destroy();
 	});
 
@@ -1246,4 +1154,374 @@ sap.ui.define([
 		// clean
 		oDialog.destroy();
 	});
+
+	QUnit.module("Details provided asynchronously by callback");
+
+	QUnit.test("When 'details' is provided as function 'View Details' link is shown", function (assert) {
+		// act
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: function () {}
+		});
+		oCore.applyChanges();
+
+		var oMessageBoxDialog = oCore.byId("messageId");
+
+		// assert
+		assert.strictEqual(oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText").length, 1, "MessageBox has 'View Details' link displayed");
+
+		// clean up
+		oMessageBoxDialog.destroy();
+	});
+
+	QUnit.test("When 'View Details' is activated details are successfully displayed", function (assert) {
+		// arrange
+		var done = assert.async();
+		var sData = "Data to be displayed";
+		var oDataPromise = Promise.resolve(sData);
+
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: function () {
+				return oDataPromise;
+			}
+		});
+		oCore.applyChanges();
+
+		var oMessageBoxDialog = oCore.byId("messageId");
+		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
+
+		// Act
+		pressLink(oViewDetails);
+
+		oDataPromise.then(function () {
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(oMessageBoxDialog.$().find(".sapMMessageBoxDetails").length, 1, "Details text is displayed");
+			assert.strictEqual(oMessageBoxDialog.$().find(".sapMMessageBoxDetails").text(), sData, "Details text contains the resolved data");
+
+			// clean up
+			oMessageBoxDialog.destroy();
+
+			done();
+		});
+	});
+
+	QUnit.test("Busy state with details callback that resolves", function (assert) {
+		// arrange
+		var done = assert.async();
+		this.clock.restore();
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: function () {
+				return Promise.resolve("Data to be displayed");
+			}
+		});
+		oCore.applyChanges();
+
+		var oMessageBoxDialog = oCore.byId("messageId");
+		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText").control(0);
+
+		// Act
+		pressLink(oViewDetails);
+
+		// assert
+		assert.ok(oViewDetails.getBusy(), "ViewDetails link should be busy");
+
+		setTimeout(function () {
+			oCore.applyChanges();
+
+			// assert
+			assert.notOk(oViewDetails.getVisible(), "ViewDetails link should no longer be visible");
+
+			// clean up
+			oMessageBoxDialog.destroy();
+
+			done();
+		}, 100);
+	});
+
+	QUnit.test("Busy state with details callback that rejects", function (assert) {
+		// arrange
+		var done = assert.async();
+		this.clock.restore();
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: function () {
+				return Promise.reject("Error message");
+			}
+		});
+		oCore.applyChanges();
+		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+		var oMessageBoxDialog = oCore.byId("messageId");
+		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText").control(0);
+
+		// Act
+		pressLink(oViewDetails);
+
+		// assert
+		assert.ok(oViewDetails.getBusy(), "ViewDetails link should be busy");
+
+		setTimeout(function () {
+			oCore.applyChanges();
+			var oErrorMessage = oMessageBoxDialog.getContent()[0].getItems()[2];
+
+			// assert
+			assert.notOk(oViewDetails.getVisible(), "ViewDetails link should no longer be visible");
+			assert.ok(oErrorMessage.getVisible(), "Error message should be displayed");
+			assert.strictEqual(oErrorMessage.getText(), oResourceBundle.getText("MSGBOX_DETAILS_LOAD_ERROR"), "Error text should be correct");
+			assert.strictEqual(document.activeElement.getAttribute("id"), oErrorMessage.getLink().getDomRef().getAttribute("id"), "'Try again' should be focused");
+
+			// clean up
+			oMessageBoxDialog.destroy();
+
+			done();
+		}, 100);
+	});
+
+	QUnit.test("Close the MessageBox before details callback resolves", function (assert) {
+		// arrange
+		this.clock.restore();
+		var done = assert.async();
+		var oMessageBoxDialog;
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: function () {
+				return new Promise(function () { });
+			},
+			onClose: function () {
+				// assert
+				assert.notOk(oMessageBoxDialog.isOpen(), "The MessageBox should be closed");
+				done();
+			}
+		});
+		oCore.applyChanges();
+
+		oMessageBoxDialog = oCore.byId("messageId");
+		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
+
+		// Act
+		pressLink(oViewDetails);
+		qutils.triggerKeydown(oMessageBoxDialog.getDomRef(), KeyCodes.ESCAPE);
+	});
+
+	QUnit.test("Focused element after ViewDetails is pressed", function (assert) {
+		// arrange
+		var done = assert.async();
+		this.clock.restore();
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: function () {
+				return new Promise(function () { });
+			}
+		});
+		oCore.applyChanges();
+
+		var oMessageBoxDialog = oCore.byId("messageId");
+		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
+
+		// Act
+		pressLink(oViewDetails);
+
+		setTimeout(function () {
+			// assert
+			assert.strictEqual(
+				document.activeElement.getAttribute("id"),
+				oViewDetails.control(0).getDomRef("busyIndicator").getAttribute("id"),
+				"ViewDetails link should be focused");
+
+			// clean up
+			oMessageBoxDialog.destroy();
+			done();
+		}, 100);
+	});
+
+	QUnit.test("Focused element after details are loaded and shown", function (assert) {
+		// arrange
+		var done = assert.async();
+		this.clock.restore();
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: function () {
+				return new Promise(function (resolve) {
+					setTimeout(function () {
+						resolve("Message details");
+					}, 100);
+				});
+			}
+		});
+		oCore.applyChanges();
+
+		var oMessageBoxDialog = oCore.byId("messageId");
+		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
+
+		// Act
+		pressLink(oViewDetails);
+
+		setTimeout(function () {
+			// assert
+			assert.strictEqual(document.activeElement.getAttribute("id"), oMessageBoxDialog.getButtons()[0].getId(), "The first action button is focused");
+
+			// clean up
+			oMessageBoxDialog.destroy();
+			done();
+		}, 200);
+	});
+
+	QUnit.test("Focused element after 'Try again' is pressed", function (assert) {
+		// arrange
+		var done = assert.async();
+		this.clock.restore();
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: function () {
+				return Promise.reject("Error message");
+			}
+		});
+		oCore.applyChanges();
+		var oMessageBoxDialog = oCore.byId("messageId");
+		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText").control(0);
+		pressLink(oViewDetails);
+
+		setTimeout(function () {
+			oCore.applyChanges();
+			var oErrorMessage = oMessageBoxDialog.getContent()[0].getItems()[2];
+			var oTryAgain = oErrorMessage.getLink();
+
+			// act
+			pressLink(oTryAgain);
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(document.activeElement.getAttribute("id"), oViewDetails.getDomRef("busyIndicator").getAttribute("id"), "The busy indicator should be focused");
+
+			// clean up
+			oMessageBoxDialog.destroy();
+
+			done();
+		}, 100);
+	});
+
+	QUnit.module("Details - different types");
+
+	QUnit.test("pass simple json to details", function (assert) {
+		var oJSON = { x: 1, y: 2, z: 3 };
+
+		MessageBox.show("No connection can be established to the backend system ABC", {
+			id: "messagedialog2",
+			title: sMessageTitle,
+			type: MessageBox.Icon.ERROR,
+			details: oJSON,
+			styleClass: sClassName,
+			initialFocus: "OK"
+		});
+		this.clock.tick(500);
+		var oMessageBox = oCore.byId("messagedialog2");
+		assert.ok(oMessageBox, "Dialog should be created");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
+		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
+		assert.ok(oMessageBox.$().find("a.sapMMessageBoxLinkText").length != 0, "MessageBox has formatted link text");
+		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+		var sLinkText = oMessageBox.$().find("a.sapMMessageBoxLinkText");
+		pressLink(sLinkText);
+
+		oCore.applyChanges();
+		assert.ok(oMessageBox.$().find(".sapMMessageBoxDetails").length != 0, "MessageBox has formatted link text");
+		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null, "\t"));
+		assert.ok(oMessageBox.$().hasClass(sClassName));
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("pass text with special characters in details", function (assert) {
+		var deploymentErrorDetails = "sequenceflow4 : Error in element 'SequenceFlow4' field 'Condition': Dynamically evaluated expression is expected, e.g. {context.variableOfInterest == 'value of interest'} servicetask1 : Flow element 'ServiceTask1' is not properly connected to other flow elements";
+		MessageBox.show("No connection can be established to the backend system ABC", {
+			id: "messagedialogdetails",
+			title: sMessageTitle,
+			type: MessageBox.Icon.ERROR,
+			details: deploymentErrorDetails,
+			styleClass: sClassName,
+			initialFocus: "OK"
+		});
+		this.clock.tick(500);
+		var oMessageBox = oCore.byId("messagedialogdetails");
+		assert.ok(oMessageBox, "Dialog should be created");
+		var sLinkText = oMessageBox.$().find("a.sapMMessageBoxLinkText");
+		pressLink(sLinkText);
+
+		oCore.applyChanges();
+		assert.ok(oMessageBox.$().find(".sapMMessageBoxDetails").length != 0, "MessageBox has formatted link text");
+		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), deploymentErrorDetails);
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("pass control to details", function (assert) {
+		var oJSON = new Text("Hi");
+
+		MessageBox.show("No connection can be established to the backend system ABC", {
+			id: "messagedialog3",
+			title: sMessageTitle,
+			type: MessageBox.Icon.ERROR,
+			details: oJSON,
+			styleClass: sClassName,
+			initialFocus: "OK"
+		});
+
+		this.clock.tick(500);
+		var oMessageBox = oCore.byId("messagedialog3");
+		assert.ok(oMessageBox, "Dialog should be created");
+		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
+		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
+		assert.ok(oMessageBox.$().find("a.sapMMessageBoxLinkText").length != 0, "MessageBox has formatted link text");
+		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+		var sLinkText = oMessageBox.$().find("a.sapMMessageBoxLinkText");
+		pressLink(sLinkText);
+
+		oCore.applyChanges();
+		assert.ok(oMessageBox.$().find(".sapMMessageBoxDetails").length != 0, "MessageBox has formatted link text");
+		assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null, "\t"));
+		assert.ok(oMessageBox.$().hasClass(sClassName));
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("JSON details provided by callback", function (assert) {
+		// arrange
+		var done = assert.async();
+		var oData = {
+			a: "A",
+			b: 123,
+			c: {
+				c: "Data to be displayed"
+			}
+		};
+		var oDataPromise = Promise.resolve(oData);
+
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: function () {
+				return oDataPromise;
+			}
+		});
+		oCore.applyChanges();
+
+		var oMessageBoxDialog = oCore.byId("messageId");
+		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
+
+		// Act
+		pressLink(oViewDetails);
+
+		oDataPromise.then(function () {
+			oCore.applyChanges();
+
+			// assert
+			assert.strictEqual(oMessageBoxDialog.$().find(".sapMMessageBoxDetails").length, 1, "Details object is displayed");
+			assert.strictEqual(oMessageBoxDialog.$().find(".sapMMessageBoxDetails").text(), JSON.stringify(oData, null, "\t"), "Details text should contain stringified JSON data");
+
+			// clean up
+			oMessageBoxDialog.destroy();
+
+			done();
+		});
+	});
+
 });
