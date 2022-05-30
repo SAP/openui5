@@ -4642,4 +4642,26 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.ok(oIconDomRef.classList.contains("sapMGTTwoByHalfIcon"), "Icon div is present when state is loaded");
 		assert.ok(oContentDomRef.children[0].classList.contains("sapMGTHdrTxt"), "Text div is present when state is loaded");
 	});
+
+	QUnit.module("sap.m.GenericTileMode.LineMode Test a Link", {
+		beforeEach: function() {
+			this.stub(Device.media, "attachHandler");
+			this.oGenericTile = new GenericTile({
+				state: LoadState.Loaded,
+				header: "headerText",
+				subheader: "subheaderText",
+				mode: GenericTileMode.LineMode,
+				url: "Test url"
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Test a Link", function(assert) {
+		assert.equal(this.oGenericTile.$().attr("draggable"),undefined, "a Links are draggale by default hence draggable attr should not be set manually ");
+	});
 });
