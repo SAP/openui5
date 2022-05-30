@@ -413,11 +413,12 @@ sap.ui.define([
 
 		if (bIsTextVisible) {
 			oInnerControl.setAggregation("tooltip", null, bSuppressInvalidate);
+			oInnerIcon && oInnerIcon.setAggregation("tooltip", null, bSuppressInvalidate);
 			oInnerControl.setText(sText, bSuppressInvalidate);
 			this.addStyleClass("sapMObjectMarkerText");
 		} else {
 			if (oInnerIcon) {
-				oInnerControl.setAggregation("tooltip", sText, bSuppressInvalidate);
+				oInnerControl.setAggregation("tooltip", this.getTooltip_AsString() || sText, bSuppressInvalidate);
 			}
 			oInnerControl.setText(null, bSuppressInvalidate);
 			this.removeStyleClass("sapMObjectMarkerText");
@@ -656,8 +657,10 @@ sap.ui.define([
 
 	CustomLinkRenderer.render = function(oRm, oControl) {
 		if (oControl.getIconOnly()) {
-			var oIconControl = oControl._getIconAggregation();
-			oIconControl.setAlt(oControl.getTooltip_AsString());
+			var oIconControl = oControl._getIconAggregation(),
+				sTooltip = oControl.getTooltip_AsString();
+			oIconControl.setAlt(sTooltip);
+			oIconControl.setTooltip(sTooltip);
 			oRm.renderControl(oIconControl);
 		} else {
 			LinkRenderer.render.call(this, oRm, oControl);
