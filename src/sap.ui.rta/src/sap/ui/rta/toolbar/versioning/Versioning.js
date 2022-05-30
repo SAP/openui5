@@ -154,21 +154,23 @@ sap.ui.define([
 		var sType = "Active";
 		aVersions = aVersions || [];
 
-		if (sDisplayedVersion === Version.Number.Original) {
+		if (sDisplayedVersion === undefined || sDisplayedVersion === Version.Number.Original) {
 			sText = this.oTextResources.getText("TIT_ORIGINAL_APP");
 			sType = Version.Type.Inactive;
 			if (aVersions.length === 0 || (aVersions.length === 1 && aVersions[0].type === Version.Type.Draft)) {
 				sType = Version.Type.Active;
 			}
-		} else if (aVersions.length) {
+		} else {
 			var oDisplayedVersion = aVersions.find(function (oVersion) {
 				return oVersion.version === sDisplayedVersion;
 			});
-			sType = oDisplayedVersion.type;
-			if (sDisplayedVersion === Version.Number.Draft) {
-				sText = this.oTextResources.getText("TIT_DRAFT");
-			} else {
-				sText = oDisplayedVersion.title || this.oTextResources.getText("TIT_VERSION_1");
+			if (oDisplayedVersion) {
+				sType = oDisplayedVersion.type;
+				if (sDisplayedVersion === Version.Number.Draft) {
+					sText = this.oTextResources.getText("TIT_DRAFT");
+				} else {
+					sText = oDisplayedVersion.title || this.oTextResources.getText("TIT_VERSION_1");
+				}
 			}
 		}
 		setVersionButtonAccentColor(this.getToolbar().getControl("versionButton"), sType);
