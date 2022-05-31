@@ -278,11 +278,16 @@ sap.ui.define([
 				sourceParentContainer: { id: "Group1" },
 				targetParentContainer: { id: "Group2" }
 			};
+			var oPayloadWithoutSourceParentId = {
+				sourceParentContainer: { id: null },
+				targetParentContainer: { id: "Group2" }
+			};
 
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("someChangeId", this.oButton.getId(), "move", {}, oPayloadInsideGroup),
-					createMockChange("someOtherChangeId", this.oButton.getId(), "move", {}, oPayloadOutsideGroup)
+					createMockChange("changeId1", this.oButton.getId(), "move", {}, oPayloadInsideGroup),
+					createMockChange("changeId2", this.oButton.getId(), "move", {}, oPayloadOutsideGroup),
+					createMockChange("changeId3", this.oButton.getId(), "move", {}, oPayloadWithoutSourceParentId)
 				]
 			});
 			oCore.applyChanges();
@@ -293,13 +298,17 @@ sap.ui.define([
 			return oOpenPopoverPromise
 				.then(function() {
 					var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems();
-					assert.ok(
+					assert.notOk(
 						aItems[0].getCells()[1].getItems()[1].getVisible(),
+						"then the show details button is not visible if the element was moved in the same group"
+					);
+					assert.ok(
+						aItems[1].getCells()[1].getItems()[1].getVisible(),
 						"then the show details button is visible if the element was moved outside its group"
 					);
 					assert.notOk(
-						aItems[1].getCells()[1].getItems()[1].getVisible(),
-						"then the show details button is not visible if the element was moved in the same group"
+						aItems[2].getCells()[1].getItems()[1].getVisible(),
+						"then the show details button is not visible if the element has no source parent id"
 					);
 				}.bind(this));
 		});
