@@ -58,6 +58,9 @@ sap.ui.define([
 			},
 			displayTextForExecuteOnSelectionForStandardVariant: {
 				ignore: false
+			},
+			headerLevel: {
+				ignore: false
 			}
 		},
 		variantRenameDomRef: function(oVariantManagement) {

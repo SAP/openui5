@@ -1,13 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/MessageToast",
 	"sap/base/Log",
 	"sap/ui/core/Core"
 ], function(
 	Controller,
-	VariantModel,
 	VariantManagement,
 	MessageToast,
 	Log,
@@ -23,7 +21,7 @@ sap.ui.define([
 				defaultVariant: "1",
 				originalDefaultVariant: "2",
 				modified: false,
-				variantsEditable: false,
+				variantsEditable: true,
 				showFavorites: false,
 				variants: [
 					{
@@ -167,7 +165,7 @@ sap.ui.define([
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
 
-			var oModel = this.oVM.getModel(this.oVM._sModelName);
+			var oModel = this.oVM.getModel(this.oVM.getModelName());
 
 			this._sModelName = "Sample";
 			this.oVM.setModelName(this._sModelName);

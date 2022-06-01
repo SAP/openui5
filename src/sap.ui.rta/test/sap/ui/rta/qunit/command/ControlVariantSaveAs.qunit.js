@@ -132,12 +132,10 @@ sap.ui.define([
 			sandbox.stub(this.oModel.oFlexController, "applyChange");
 			sandbox.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 			sandbox.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
-			var fnCreateSaveAsDialog = this.oVariantManagement._createSaveAsDialog;
-			sandbox.stub(this.oVariantManagement, "_createSaveAsDialog").callsFake(function() {
-				fnCreateSaveAsDialog.call(this.oVariantManagement);
-				this.oVariantManagement.oSaveAsDialog.attachEventOnce("afterOpen", function() {
-					this.oVariantManagement._handleVariantSaveAs("myNewVariant");
-				}.bind(this));
+
+			this.oVariantManagement._createSaveAsDialog();
+			this.oVariantManagement._getEmbeddedVM().oSaveAsDialog.attachEventOnce("afterOpen", function() {
+				this.oVariantManagement._handleVariantSaveAs("myNewVariant");
 			}.bind(this));
 
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({data: {}});

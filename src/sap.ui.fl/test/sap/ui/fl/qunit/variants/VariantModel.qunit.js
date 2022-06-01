@@ -2649,7 +2649,7 @@ sap.ui.define([
 		}
 
 		function makeSelection(oVMControl, iIndex) {
-			var oVariantListControl = oVMControl.oVariantPopOver.getContent()[0].getContent()[0];
+			var oVariantListControl = oVMControl._getEmbeddedVM().oVariantPopOver.getContent()[0].getContent()[0];
 			var oSelectedItem = oVariantListControl.getItems()[iIndex];
 			oVariantListControl.fireItemPress({
 				item: oSelectedItem
@@ -2658,10 +2658,10 @@ sap.ui.define([
 
 		function selectTargetVariant(oVMControl, iIndex) {
 			// variant management control popover
-			if (oVMControl.oVariantPopOver && oVMControl.oVariantPopOver.isOpen()) {
+			if (oVMControl._getEmbeddedVM().oVariantPopOver && oVMControl._getEmbeddedVM().oVariantPopOver.isOpen()) {
 				makeSelection(oVMControl, iIndex);
 			} else {
-				oVMControl.oVariantPopOver.attachEventOnce("afterOpen", makeSelection.bind(null, oVMControl, iIndex));
+				oVMControl._getEmbeddedVM().oVariantPopOver.attachEventOnce("afterOpen", makeSelection.bind(null, oVMControl, iIndex));
 			}
 		}
 
