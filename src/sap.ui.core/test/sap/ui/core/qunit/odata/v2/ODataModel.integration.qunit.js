@@ -2415,7 +2415,6 @@ sap.ui.define([
 			});
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet?$skip=0&$top=100"
 			}, {
@@ -2802,14 +2801,12 @@ sap.ui.define([
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				requestUri : "SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"}
 			}, {
 				SalesOrderID : "1"
 			}, {"sap-message" : getMessageHeader([oMsgSalesOrder, oMsgSalesOrderToLineItems1])})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100",
 				headers : {"sap-message-scope" : "BusinessObject"}
 			}, {
@@ -2828,7 +2825,6 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('1')",
 					requestUri : "SalesOrderSet('1')",
 					headers : {"sap-message-scope" : "BusinessObject"}
 				}, {
@@ -2843,7 +2839,6 @@ sap.ui.define([
 					])
 				})
 				.expectRequest({
-					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100",
 					headers : {"sap-message-scope" : "BusinessObject"}
 				}, {
@@ -2874,7 +2869,6 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100",
 					headers : {"sap-message-scope" : "BusinessObject"}
 				}, {
@@ -2916,7 +2910,6 @@ sap.ui.define([
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2",
 				headers : {"sap-message-scope" : "BusinessObject"}
 			}, {
@@ -2951,7 +2944,6 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=2&$top=2",
 					headers : {"sap-message-scope" : "BusinessObject"}
 				}, {
@@ -3420,7 +3412,6 @@ usePreliminaryContext : false}}">\
 
 		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -3436,7 +3427,6 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
@@ -3510,7 +3500,6 @@ usePreliminaryContext : false}}">\
 
 		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -3526,7 +3515,6 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
@@ -3565,7 +3553,6 @@ usePreliminaryContext : false}}">\
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
@@ -3648,7 +3635,6 @@ usePreliminaryContext : false}}">\
 
 		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -3665,7 +3651,6 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
@@ -3705,7 +3690,6 @@ usePreliminaryContext : false}}">\
 
 		return this.createView(assert, sView, oModel).then(function() {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					headers : bWithMessageScope
 						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 						: {"sap-messages" : "transientOnly"},
@@ -3800,7 +3784,6 @@ usePreliminaryContext : false}}">\
 
 		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -3819,7 +3802,6 @@ usePreliminaryContext : false}}">\
 			.expectChange("salesOrderID", null)
 			.expectChange("salesOrderID", "1")
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
@@ -3838,7 +3820,6 @@ usePreliminaryContext : false}}">\
 			.expectChange("itemPosition1", ["10~0~"])
 			.expectChange("grossAmount1", ["111.0"])
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
@@ -3882,7 +3863,6 @@ usePreliminaryContext : false}}">\
 			// assume a sideeffect removed entity (SalesOrderID='1',ItemPosition='10~0~')
 			// with refresh only the data and the messages for that data is updated
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					headers : bWithMessageScope
 						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 						: {"sap-messages" : "transientOnly"},
@@ -3908,7 +3888,6 @@ usePreliminaryContext : false}}">\
 		}).then(function () {
 			// to update also the messages, the messages need to be read again via the root entity
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('1')",
 					headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 					requestUri : "SalesOrderSet('1')?$select=SalesOrderID"
 				}, {
@@ -3994,7 +3973,6 @@ usePreliminaryContext : false}}">\
 
 		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -4010,7 +3988,6 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
@@ -4048,7 +4025,6 @@ usePreliminaryContext : false}}">\
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					headers : bWithMessageScope
 						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 						: {"sap-messages" : "transientOnly"},
@@ -4135,7 +4111,6 @@ usePreliminaryContext : false}}">\
 			that = this;
 
 		this.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -4152,7 +4127,6 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
@@ -4242,8 +4216,6 @@ usePreliminaryContext : false}}">\
 						Note : "Quxx",
 						__metadata : {uri : "SalesOrderSet('1')"}
 					},
-					deepPath :
-						"/SalesOrderSet('1')",
 					headers : bWithMessageScope
 						? {"sap-message-scope" : "BusinessObject", "x-http-method" : "MERGE"}
 						: {"x-http-method" : "MERGE"},
@@ -4315,7 +4287,6 @@ usePreliminaryContext : false}}">\
 
 		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -4332,7 +4303,6 @@ usePreliminaryContext : false}}">\
 			.expectValue("note", "Foo")
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
@@ -4433,7 +4403,6 @@ usePreliminaryContext : false}}">\
 
 		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
 			.expectRequest({
-				deepPath : "/SalesOrderSet",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet?$skip=0&$top=2"
 			}, {
@@ -4466,7 +4435,6 @@ usePreliminaryContext : false}}">\
 			var oSalesOrder3NoteError = that.createResponseMessage("('3')/Note");
 
 			that.expectRequest({
-					deepPath : "/SalesOrderSet",
 					headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 					requestUri : "SalesOrderSet?$skip=0&$top=2"
 						+ (bFilter ? "&$filter=GrossAmount gt 100.0m" : "")
@@ -4542,7 +4510,6 @@ usePreliminaryContext : false}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet?$skip=0&$top=1"
 			}, {
@@ -4609,7 +4576,6 @@ usePreliminaryContext : false}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -4627,7 +4593,6 @@ usePreliminaryContext : false}}">\
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('1')",
 					headers : {"sap-message-scope" : "BusinessObject"},
 					requestUri : "SalesOrderSet('1')"
 				}, {
@@ -4694,7 +4659,6 @@ usePreliminaryContext : false}}">\
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
 				batchNo : 1,
-				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -4715,7 +4679,6 @@ usePreliminaryContext : false}}">\
 			.expectValue("salesOrderID", "1")
 			.expectRequest({
 				batchNo : 1,
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers :
 					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
@@ -4764,7 +4727,6 @@ usePreliminaryContext : false}}">\
 		}).then(function (oFilter) {
 			that.expectRequest({
 					batchNo : 2,
-					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					headers :
 						{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
@@ -4834,7 +4796,6 @@ usePreliminaryContext : false}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/CarrierCollection('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "CarrierCollection('1')"
 			}, {
@@ -4848,7 +4809,6 @@ usePreliminaryContext : false}}">\
 			})
 			.expectValue("carrierID", "1")
 			.expectRequest({
-				deepPath : "/CarrierCollection('1')/carrierFlights",
 				headers :
 					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
 				requestUri : "CarrierCollection('1')/carrierFlights"
@@ -4925,7 +4885,6 @@ usePreliminaryContext : false}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -4936,7 +4895,6 @@ usePreliminaryContext : false}}">\
 				"sap-message" : getMessageHeader([oSalesOrderToItem10ToProductPriceError])
 			})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers :
 					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=20"
@@ -4971,7 +4929,6 @@ usePreliminaryContext : false}}">\
 			assert.strictEqual(oTable.getItems().length, 0);
 
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					headers :
 						{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=20"
@@ -5082,7 +5039,6 @@ usePreliminaryContext : false}}">\
 							type : "gwsample_basic.SalesOrderLineItem"
 						}
 					},
-					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
 				}, oFixture.aResponses[0])
@@ -5094,13 +5050,11 @@ usePreliminaryContext : false}}">\
 							type : "gwsample_basic.SalesOrderLineItem"
 						}
 					},
-					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
 				}, oFixture.aResponses[1])
 				.expectRequest({
 					batchNo : 1,
-					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
 				}, oFixture.aResponses[2])
 				.expectMessages(oFixture.aExpectedMessages);
@@ -5164,7 +5118,6 @@ usePreliminaryContext : false}}">\
 					data : {
 						__metadata :  {type : "gwsample_basic.SalesOrderLineItem"}
 					},
-					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
 				}, createErrorResponse())
@@ -5200,7 +5153,6 @@ usePreliminaryContext : false}}">\
 							type : "gwsample_basic.SalesOrderLineItem"
 						}
 					},
-					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
 				}, {
@@ -5264,7 +5216,6 @@ usePreliminaryContext : false}}">\
 							},
 							Note : "Foo"
 						},
-						deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 						headers : {"Content-ID" : "~key~"},
 						method : "POST",
 						requestUri : "SalesOrderSet('1')/ToLineItems"
@@ -5366,7 +5317,6 @@ usePreliminaryContext : false}}">\
 								type : "gwsample_basic.SalesOrderLineItem"
 							}
 						},
-						deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 						headers : {"Content-ID" : "~key~"},
 						method : "POST",
 						requestUri : "SalesOrderSet('1')/ToLineItems"
@@ -5416,7 +5366,6 @@ usePreliminaryContext : false}}">\
 		var iBatchNo = 1,
 			oCreatedContext,
 			oGETRequest = {
-				deepPath : "/$~key~",
 				requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
 			},
 			oModel = createSalesOrdersModelMessageScope({canonicalRequests : true}),
@@ -5428,7 +5377,6 @@ usePreliminaryContext : false}}">\
 						type : "gwsample_basic.SalesOrderLineItem"
 					}
 				},
-				deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 				headers : {"Content-ID" : "~key~", "sap-messages" : "transientOnly"},
 				method : "POST",
 				requestUri : "SalesOrderSet('1')/ToLineItems"
@@ -5562,7 +5510,6 @@ usePreliminaryContext : false}}">\
 			var oErrorGET = createErrorResponse({message : "GET failed", statusCode : 424}),
 				oErrorPOST = createErrorResponse({message : "POST failed", statusCode : 400}),
 				oGETRequest = {
-					deepPath : "/$~key~",
 					requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
 				},
 				bHandlerCalled,
@@ -5573,7 +5520,6 @@ usePreliminaryContext : false}}">\
 							type : "gwsample_basic.SalesOrderLineItem"
 						}
 					},
-					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 					headers : {"Content-ID" : "~key~", "sap-messages" : "transientOnly"},
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
@@ -5676,7 +5622,6 @@ usePreliminaryContext : false}}">\
 							type : "GWSAMPLE_BASIC.SalesOrderLineItem"
 						}
 					},
-					deepPath : "/SalesOrderLineItemSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderLineItemSet"
 				}, {
@@ -5754,7 +5699,6 @@ usePreliminaryContext : false}}">\
 							type : "GWSAMPLE_BASIC.SalesOrderLineItem"
 						}
 					},
-					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
 				}, {
@@ -5921,7 +5865,6 @@ usePreliminaryContext : false}}">\
 						},
 						Note : "foo"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}, {
@@ -5994,7 +5937,6 @@ usePreliminaryContext : false}}">\
 						},
 						Note : "foo"
 					},
-					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
 				}, {
@@ -6183,7 +6125,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest(bIsBusinessObject ? {"sap-message-scope" : "BusinessObject"} : {})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : bIsBusinessObject ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -6223,10 +6164,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that = this;
 
 		this.expectHeadRequest()
-			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
-				requestUri : "SalesOrderSet('1')"
-			}, {
+			.expectRequest("SalesOrderSet('1')", {
 				__metadata : {
 					etag : "W/\"2020-05-19T08:08:58.312Z\"",
 					uri : "SalesOrderSet('1')"
@@ -6245,7 +6183,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						},
 						Note : "Bar"
 					},
-					deepPath : "/SalesOrderSet('1')",
 					headers : {
 						"If-Match" : "W/\"2020-05-19T08:08:58.312Z\""
 					},
@@ -6291,10 +6228,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that = this;
 
 		this.expectHeadRequest()
-			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
-				requestUri : "SalesOrderSet('1')"
-			}, {
+			.expectRequest("SalesOrderSet('1')", {
 				__metadata : {
 					etag : "InitialETag",
 					uri : "SalesOrderSet('1')"
@@ -6313,7 +6247,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						},
 						Note : "Bar"
 					},
-					deepPath : "/SalesOrderSet('1')",
 					headers : {
 						"If-Match" : "InitialETag"
 					},
@@ -6344,7 +6277,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						},
 						Note : "Baz"
 					},
-					deepPath : "/SalesOrderSet('1')",
 					headers : {
 						"If-Match" : "ETagAfter1stModification"
 					},
@@ -6390,7 +6322,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
 			.expectRequest({
 				batchNo : 1,
-				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -6412,11 +6343,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
 					batchNo : 2,
-					deepPath : "/SalesOrderSet('1')",
 					headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 					method : "DELETE",
 					requestUri : "SalesOrderSet('1')"
-				}, {})
+				}, NO_CONTENT)
 				.expectValue("salesOrderID", "")
 				.expectMessages([]);
 
@@ -6514,10 +6444,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
-					"deepPath" : "/" + oFixture.functionName,
-					"headers" : {},
-					"method" : oFixture.method,
-					"requestUri" : oFixture.functionName
+					method : oFixture.method,
+					requestUri : oFixture.functionName
 				}, oRequestPromise);
 
 			// code under test
@@ -6582,14 +6510,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/BusinessPartnerSet('100')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "BusinessPartnerSet('100')"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('100')"}
 			})
 			.expectRequest({
-				deepPath : "/BusinessPartnerSet('100')/ToSalesOrders",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
 			}, {
@@ -6614,7 +6540,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					"(SalesOrderID='1',ItemPosition='20')/Quantity");
 
 			that.expectRequest({
-					deepPath : "/SalesOrder_Confirm",
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : "POST",
@@ -6667,14 +6592,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/BusinessPartnerSet('100')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "BusinessPartnerSet('100')"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('100')"}
 			})
 			.expectRequest({
-				deepPath : "/BusinessPartnerSet('100')/ToSalesOrders",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
 			}, {
@@ -6699,7 +6622,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					"(SalesOrderID='1',ItemPosition='20')/Quantity");
 
 			that.expectRequest({
-					deepPath : "/SalesOrder_Confirm",
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : "POST",
@@ -6762,7 +6684,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')?$expand=ToBusinessPartner"
 					+ "&$select=ToBusinessPartner%2fBusinessPartnerID"
@@ -6797,7 +6718,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				oWebAddressError = that.createResponseMessage("WebAddress");
 
 			that.expectRequest({
-					deepPath : "/BusinessPartner_Refresh",
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : "POST",
@@ -6864,7 +6784,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -6872,7 +6791,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				SalesOrderID : "1"
 			})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToBusinessPartner",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')/ToBusinessPartner"
 			}, {
@@ -6887,7 +6805,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectValue("bpID0", "100");
 		if (bResultingEntityOnUI) {
 			this.expectRequest({
-					deepPath : "/ProductSet('Z')",
 					headers : {"sap-message-scope" : "BusinessObject"},
 					requestUri : "ProductSet('Z')"
 				}, {
@@ -6895,7 +6812,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					ProductID : "Z"
 				})
 				.expectRequest({
-					deepPath : "/ProductSet('Z')/ToSupplier",
 					headers : {"sap-message-scope" : "BusinessObject"},
 					requestUri : "ProductSet('Z')/ToSupplier"
 				}, {
@@ -6914,7 +6830,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				oWebAddressError = that.createResponseMessage("WebAddress");
 
 			that.expectRequest({
-					deepPath : "/BusinessPartner_Refresh",
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : "POST",
@@ -6972,7 +6887,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -6980,7 +6894,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				SalesOrderID : "1"
 			})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToBusinessPartner",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')/ToBusinessPartner"
 			}, {
@@ -6991,7 +6904,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// messages are removed
 			.expectValue("bpID0", "100")
 			.expectRequest({
-				deepPath : "/ProductSet('Z')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "ProductSet('Z')"
 			}, {
@@ -6999,7 +6911,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				ProductID : "Z"
 			})
 			.expectRequest({
-				deepPath : "/ProductSet('Z')/ToSupplier",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "ProductSet('Z')/ToSupplier"
 			}, {
@@ -7022,7 +6933,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				oWebAddressError = that.createResponseMessage("WebAddress");
 
 			that.expectRequest({
-					deepPath : "/BusinessPartner_Refresh",
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : "POST",
@@ -7063,8 +6973,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// BCP: 2070289685, 2070333970
 	// JIRA: CPOUI5MODELS-230
 [
-	{method : "GET", functionName : "/SalesOrder_Confirm_GET"},
-	{method : "POST", functionName : "/SalesOrder_Confirm"}
+	{method : "GET", functionName : "SalesOrder_Confirm_GET"},
+	{method : "POST", functionName : "SalesOrder_Confirm"}
 ].forEach(function (oFixture) {
 	var sTitle = "Messages: function import with lazy parameter determination, method="
 			+ oFixture.method;
@@ -7086,14 +6996,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that = this;
 
 		this.expectRequest({
-				deepPath : "/BusinessPartnerSet('100')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "BusinessPartnerSet('100')"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('100')"}
 			})
 			.expectRequest({
-				deepPath : "/BusinessPartnerSet('100')/ToSalesOrders",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
 			}, {
@@ -7107,7 +7015,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
 		return Promise.all([
-			oModel.callFunction(oFixture.functionName, {
+			oModel.callFunction("/" + oFixture.functionName, {
 				groupId : "changes",
 				method : oFixture.method,
 				refreshAfterChange : false,
@@ -7118,11 +7026,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			this.createView(assert, sView, oModel)
 		]).then(function (aResults) {
 			var oRequest = {
-					deepPath : oFixture.functionName,
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : oFixture.method,
-					requestUri : oFixture.functionName.slice(1) + "?SalesOrderID='42'"
+					requestUri : oFixture.functionName + "?SalesOrderID='42'"
 				},
 				oWebAddressError = that.createResponseMessage("WebAddress");
 
@@ -7189,7 +7096,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 1,
 					data : undefined,
-					deepPath : "/SalesOrder_Confirm",
 					encodeRequestUri : false,
 					headers : {
 						"Content-ID" : "~key~",
@@ -7206,7 +7112,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				})
 				.expectRequest({
 					batchNo : 1,
-					deepPath : "/$~key~",
 					headers : {"sap-message-scope" : "BusinessObject"},
 					requestUri : "$~key~?$expand=ToLineItems&$select=ToLineItems"
 				}, {
@@ -7253,7 +7158,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -7261,7 +7165,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				SalesOrderID : "1"
 			})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : {
 					"sap-message-scope" : "BusinessObject",
 					"sap-messages" : "transientOnly"
@@ -7286,7 +7189,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				oPromise;
 
 			that.expectRequest({
-					deepPath : "/LineItem_Create",
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : "POST",
@@ -7304,7 +7206,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					"sap-message" : getMessageHeader(oNoteError)
 				})
 				.expectRequest({
-					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					headers : {
 						"sap-message-scope" : "BusinessObject",
 						"sap-messages" : "transientOnly"
@@ -7377,14 +7278,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/BusinessPartnerSet('100')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "BusinessPartnerSet('100')"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('100')"}
 			})
 			.expectRequest({
-				deepPath : "/BusinessPartnerSet('100')/ToSalesOrders",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
 			}, {
@@ -7409,7 +7308,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					"(SalesOrderID='1',ItemPosition='20')/Quantity");
 
 			that.expectRequest({
-					deepPath : "/SalesOrder_Confirm",
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : "POST",
@@ -7773,7 +7671,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectHeadRequest()
 			.expectRequest({
 				batchNo : 1,
-				deepPath : "/SalesOrderSet",
 				requestUri : "SalesOrderSet?$skip=0&$top=100&$select=foo"
 			}, oErrorMessage)
 			.expectMessages([{
@@ -7788,7 +7685,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}])
 			.expectRequest({
 				batchNo : 1,
-				deepPath : "/SalesOrderSet('1')",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				Note : "bar"
@@ -8019,7 +7915,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -8027,7 +7922,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				SalesOrderID : "1"
 			}, {"sap-message" : getMessageHeader(oBusinessPartnerError)})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToBusinessPartner",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')/ToBusinessPartner"
 			}, NO_CONTENT
@@ -8047,8 +7941,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// updated. Messages for other entities of the same entity set are kept untouched.
 	// JIRA: CPOUI5MODELS-287
 [
-	"/BusinessPartner_Alternatives",
-	"/BusinessPartner_Alternatives_ReturnType"
+	"BusinessPartner_Alternatives",
+	"BusinessPartner_Alternatives_ReturnType"
 ].forEach(function (sFunctionName) {
 	var sTitle = "Messages: function import returning a collection for different entities;"
 		+ " messages are updated only for returned entities: " + sFunctionName;
@@ -8076,7 +7970,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/BusinessPartnerSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "BusinessPartnerSet('1')"
 			}, {
@@ -8088,7 +7981,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					oToProductADescriptionError1
 				])})
 			.expectRequest({
-				deepPath : "/BusinessPartnerSet('2')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "BusinessPartnerSet('2')"
 			}, {
@@ -8118,11 +8010,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					"('B')/Description");
 
 			that.expectRequest({
-					deepPath : sFunctionName,
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : "POST",
-					requestUri : sFunctionName.slice(1) + "?BusinessPartnerID='1'"
+					requestUri : sFunctionName + "?BusinessPartnerID='1'"
 				}, {
 					results : [{
 						__metadata : {uri : "BusinessPartnerSet('2')"},
@@ -8144,7 +8035,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					"/BusinessPartnerSet('1')/ToProducts");
 
 			return Promise.all([
-				oModel.callFunction(sFunctionName, {
+				oModel.callFunction("/" + sFunctionName, {
 					method : "POST",
 					refreshAfterChange : false,
 					urlParameters : {
@@ -8178,7 +8069,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')"
 			}, {
@@ -8186,7 +8076,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				SalesOrderID : "1"
 			})
 			.expectRequest({
-				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
 			}, {
@@ -8219,7 +8108,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					"(SalesOrderID='1',ItemPosition='20')/Quantity", undefined, "success");
 
 			that.expectRequest({
-					deepPath : "/SalesOrder_FixQuantities",
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : "POST",
@@ -8306,7 +8194,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			that.expectRequest({
 					batchNo : 1,
-					deepPath : "/SalesOrderItem_Clone",
 					encodeRequestUri : false,
 					headers : {
 						"Content-ID" : "~key~",
@@ -8321,7 +8208,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				})
 				.expectRequest({
 					batchNo : 1,
-					deepPath : "/$~key~",
 					headers : {"sap-message-scope" : "BusinessObject"},
 					requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
 				}, {
@@ -8471,7 +8357,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			that.expectRequest({
 					batchNo : 1,
-					deepPath : "/SalesOrderItem_Clone",
 					encodeRequestUri : false,
 					headers : {
 						"Content-ID" : "~key~",
@@ -8483,7 +8368,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, oErrorPOST)
 				.expectRequest({
 					batchNo : 1,
-					deepPath : "/$~key~",
 					headers : {"sap-message-scope" : "BusinessObject"},
 					requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
 				}, oErrorGET)
@@ -8560,7 +8444,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectHeadRequest()
 			.expectRequest({
 				batchNo : 1,
-				deepPath : "/" + sObjectUri,
 				requestUri : sObjectUri
 			}, {
 				DfsAllwncReqUUID : "fa163e35-93d9-1eda-b19c-c26490674ab4",
@@ -8569,18 +8452,17 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				// TreeTable becomes async so that its GET is not in the same $batch as the 1st GET
 				batchNo : 2,
-				deepPath : "/" + sObjectUri + "/to_AllwncReqToFe",
 				requestUri : sObjectUri + "/to_AllwncReqToFe"
 					+ "?$skip=0&$top=101&$inlinecount=allpages&$filter=HierarchyLevel%20le%200"
 			}, {
 				__count : "1",
 				results : [{
-					"ForceElementOrgID" : "4711"
-					// "HierarchyNode" : "32,FA163E2C58541EDA8E9C92E909255DAF",
-					// "HierarchyParentNode" : "",
-					// "HierarchyLevel" : 0,
-					// "HierarchyDescendantCount" : 0,
-					// "DrillDownState" : "collapsed"
+					ForceElementOrgID : "4711"
+					// HierarchyNode : "32,FA163E2C58541EDA8E9C92E909255DAF",
+					// HierarchyParentNode : "",
+					// HierarchyLevel : 0,
+					// HierarchyDescendantCount : 0,
+					// DrillDownState : "collapsed"
 				}]
 			})
 			.expectValue("reqID", "Request ID")
@@ -8625,7 +8507,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectHeadRequest()
 			.expectRequest({
 				batchNo : 1,
-				deepPath : "/C_RSHMaintSchedSmltdOrdAndOp",
 				requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=101&$inlinecount=allpages"
 					+ "&$filter=OrderOperationRowLevel%20le%200"
 			}, {
@@ -8645,15 +8526,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('1')"},
 						MaintenanceOrder : "Bar"
 					},
-					deepPath : "/C_RSHMaintSchedSmltdOrdAndOp('1')",
-					headers : {},
 					key : "C_RSHMaintSchedSmltdOrdAndOp('1')",
 					method : "MERGE",
 					requestUri : "C_RSHMaintSchedSmltdOrdAndOp('1')"
 				}, NO_CONTENT)
 				.expectRequest({
 					batchNo : 2,
-					deepPath : "/C_RSHMaintSchedSmltdOrdAndOp",
 					requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=101"
 						+ "&$inlinecount=allpages&$filter=OrderOperationRowLevel%20le%200"
 				}, {
@@ -8707,7 +8585,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectHeadRequest()
 				.expectRequest("DummySet('42')", {DummyID : "42"})
 				.expectRequest({
-					deepPath : "/DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp",
 					requestUri : "DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp"
 						+ "?$skip=0&$top=101&$inlinecount=allpages&"
 						+ "$filter=OrderOperationRowLevel%20le%200"
@@ -8741,7 +8618,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sCurrencyCodeJSON = "path : 'JSONModel>CurrencyCode',"
 				+ "type : 'sap.ui.model.odata.type.String'",
 			sCurrencyCodeStatic = "value : 'USD'",
-			oJSONModel = new JSONModel({"CurrencyCode" : "USD"}),
+			oJSONModel = new JSONModel({CurrencyCode : "USD"}),
 			oModel = createSalesOrdersModel({
 				defaultBindingMode : BindingMode.TwoWay,
 				refreshAfterChange : false
@@ -8851,10 +8728,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that = this;
 
 		this.expectHeadRequest()
-			.expectRequest({
-				deepPath : "/SalesOrderSet",
-				requestUri : "SalesOrderSet?$skip=0&$top=100"
-			}, {
+			.expectRequest("SalesOrderSet?$skip=0&$top=100", {
 				results : [{
 					__metadata : {uri : "SalesOrderSet('1')"},
 					Note : "Foo",
@@ -8865,10 +8739,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		return this.createView(assert, sView, {undefined : oModel, model2 : oModel}).then(
 				function () {
-			that.expectRequest({
-					deepPath : "/SalesOrderSet('1')/ToLineItems",
-					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
-				}, {
+			that.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
 					results : [{
 						__metadata : {
 							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
@@ -9253,8 +9124,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// Make URI distinct for each test to prevent code list caching
 			oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?foo=bar" + i, {
 				defaultBindingMode : "TwoWay",
-				metadataUrlParams : {"customMeta" : "custom/meta"},
-				serviceUrlParams : {"customService" : "custom/service"},
+				metadataUrlParams : {customMeta : "custom/meta"},
+				serviceUrlParams : {customService : "custom/service"},
 				tokenHandling : false
 			}),
 			sView = '\
@@ -9363,8 +9234,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test("OData Currency type with code list for currencies", function (assert) {
 		var oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?foo=bar", {
 				defaultBindingMode : "TwoWay",
-				metadataUrlParams : {"customMeta" : "custom/meta"},
-				serviceUrlParams : {"customService" : "custom/service"},
+				metadataUrlParams : {customMeta : "custom/meta"},
+				serviceUrlParams : {customService : "custom/service"},
 				tokenHandling : false
 			}),
 			sView = '\
@@ -9803,7 +9674,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 							type : "GWSAMPLE_BASIC.SalesOrderLineItem"
 						}
 					},
-					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
 				}, {
@@ -10301,7 +10171,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 							type : "GWSAMPLE_BASIC.SalesOrder"
 						}
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}, {
@@ -10359,7 +10228,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 							type : "GWSAMPLE_BASIC.SalesOrder"
 						}
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}, createErrorResponse({message : "POST failed", statusCode : 400}))
@@ -10518,7 +10386,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						},
 						Note : "foo"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}, new Promise(function (resolve) { fnResolve = resolve; }));
@@ -10562,7 +10429,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						},
 						CustomerID : "13"
 					},
-					deepPath : "/SalesOrderSet('42')",
 					headers : {
 						"If-Match" : "W/\"2022-04-14T08:08:58.312Z\""
 					},
@@ -10627,7 +10493,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						},
 						Note : "foo"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}, new Promise(function (resolve) { fnResolve = resolve; }));
@@ -10661,7 +10526,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						CustomerID : "13",
 						Note : "foo"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}, {
@@ -10726,7 +10590,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						},
 						Address : {Country : "de"}
 					},
-					deepPath : "/BusinessPartnerSet('~key~')",
 					method : "POST",
 					requestUri : "BusinessPartnerSet"
 				}, {
@@ -10835,7 +10698,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "New 2"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}, createErrorResponse({message : "POST failed", statusCode : 400}))
@@ -10978,10 +10840,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('44')",
 					method : "DELETE",
 					requestUri : "SalesOrderSet('44')"
-				}, {})
+				}, NO_CONTENT)
 				.expectRequest("SalesOrderSet?$skip=0&$top=20"
 					+ "&$filter=not(SalesOrderID eq '44' or SalesOrderID eq '43')", {
 					results : [{
@@ -11057,7 +10918,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "New 1"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}, createErrorResponse({message : "POST failed", statusCode : 400}))
@@ -11067,7 +10927,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "New 2"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}) // Response not relevant
@@ -11245,10 +11104,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		}).then(function () {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('44')",
 					method : "DELETE",
 					requestUri : "SalesOrderSet('44')"
-				}, {})
+				}, NO_CONTENT)
 				.expectRequest("SalesOrderSet?$skip=0&$top=105"
 					+ "&$filter=not(SalesOrderID eq '45' or SalesOrderID eq '44' "
 					+ "or SalesOrderID eq '43')", {
@@ -11368,10 +11226,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('44')",
 					method : "DELETE",
 					requestUri : "SalesOrderSet('44')"
-				}, {})
+				}, NO_CONTENT)
 				.expectRequest("SalesOrderSet?$skip=0&$top=105"
 					+ "&$filter=not(SalesOrderID eq '43' or SalesOrderID eq '44')"
 					+ "&$inlinecount=allpages", {
@@ -11539,7 +11396,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "New 2"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}, createErrorResponse({message : "POST failed", statusCode : 400}))
@@ -11693,10 +11549,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		}).then(function () {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('44')",
 					method : "DELETE",
 					requestUri : "SalesOrderSet('44')"
-				}, {})
+				}, NO_CONTENT)
 				.expectRequest("SalesOrderSet?$skip=0&$top=105"
 					+ "&$filter=not(SalesOrderID eq '43' or SalesOrderID eq '44'"
 					+ " or SalesOrderID eq '45')&$inlinecount=allpages", {
@@ -11869,7 +11724,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "New 1"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}, createErrorResponse({message : "POST failed", statusCode : 400}))
@@ -11879,7 +11733,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "New 2"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}) // Response not relevant
@@ -12040,10 +11893,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('44')",
 					method : "DELETE",
 					requestUri : "SalesOrderSet('44')"
-				}, {})
+				}, NO_CONTENT)
 				.expectRequest("SalesOrderSet?$skip=0&$top=105"
 					+ "&$filter=not(SalesOrderID eq '43' or SalesOrderID eq '44')", {
 					results : [{
@@ -12182,10 +12034,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		}).then(function () {
 			that.expectRequest({
-					deepPath : "/SalesOrderSet('44')",
 					method : "DELETE",
 					requestUri : "SalesOrderSet('44')"
-				}, {})
+				}, NO_CONTENT)
 				.expectRequest("SalesOrderSet?$skip=0&$top=20"
 					+ "&$filter=not(SalesOrderID eq '43' or SalesOrderID eq '44'"
 					+ " or SalesOrderID eq '45')", {
@@ -12230,7 +12081,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectHeadRequest()
 				.expectRequest({
 					deepPath : "/BusinessPartnerSet('4711')/ToSalesOrders('42')/ToLineItems",
-					headers : {},
 					method : "GET",
 					requestUri : "SalesOrderSet('42')/ToLineItems?$skip=0&$top=20"
 				}, {
@@ -13320,7 +13170,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectHeadRequest()
 				.expectRequest({
 					batchNo : 1,
-					deepPath : "/SalesOrder_Confirm",
 					encodeRequestUri : false,
 					method : "POST",
 					requestNo : (aOrderedFunctions.indexOf("callFunction") + 1),
@@ -13338,7 +13187,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "note"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestNo : (aOrderedFunctions.indexOf("createEntry") + 1),
 					requestUri : "SalesOrderSet"
@@ -13443,7 +13291,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.Product"},
 						Name : "iPhone"
 					},
-					deepPath : "/ProductSet('~key~')",
 					headers : {"sap-messages": "transientOnly"},
 					method : "POST",
 					requestUri : "ProductSet"
@@ -13453,10 +13300,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						Name : "iPhone"
 					},
 					statusCode : 201
-				}).expectRequest({
-					deepPath : "/$~key~",
-					requestUri : "$~key~?$expand=ToSupplier&$select=ToSupplier"
-				}, {
+				}).expectRequest("$~key~?$expand=ToSupplier&$select=ToSupplier", {
 					__metadata : {uri : "ProductSet('2')"},
 					ToSupplier : {
 						__metadata : {uri : "BusinessPartnerSet('42')"},
@@ -13601,7 +13445,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "Sales Order New 1"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
 					headers : {"sap-messages": "transientOnly"},
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
@@ -13615,7 +13458,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				})
 				.expectRequest({
 					batchNo : 5,
-					deepPath : "/$~key~",
 					requestUri : "$~key~?$expand=ToBusinessPartner&$select=ToBusinessPartner"
 				}, {
 					__metadata : {uri : "SalesOrderSet('2')"},
@@ -13658,7 +13500,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}).then(function () {
 			that.expectRequest({
 					batchNo : 7,
-					deepPath : "/BusinessPartnerSet('42')",
 					requestUri : "BusinessPartnerSet('42')"
 						+ "?$expand=ToSalesOrders%2CToSalesOrders%2FToBusinessPartner"
 						+ "%2CToSalesOrders%2FToLineItems"
@@ -13801,8 +13642,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "Sales Order New 1"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
-					headers : {},
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
 				}, {
@@ -13827,7 +13666,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					deepPath : "/BusinessPartnerSet('42')",
 					requestUri : "BusinessPartnerSet('42')?$expand=ToSalesOrders"
 				}, {
 					__metadata : {uri : "BusinessPartnerSet('42')"},
@@ -13873,8 +13711,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "Sales Order New 2"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
-					headers : {},
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
 				}, {
@@ -13891,8 +13727,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "Foo - New 3"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
-					headers : {},
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
 				}, {
@@ -14164,8 +13998,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "Sales Order New 1"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
-					headers : {},
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
 				}, {
@@ -14302,7 +14134,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "gwsample_basic.SalesOrder"},
 						Note : "Sales Order New 1"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
 					headers : {
 						"sap-message-scope" : "BusinessObject"
 					},
@@ -14419,7 +14250,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "Sales Order New 1"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
 				}, {
@@ -14501,7 +14331,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "Sales Order New 1"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
 				}, {
@@ -14607,7 +14436,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "Sales Order New 1"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
 				}, {
@@ -14710,7 +14538,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "Sales Order New 1"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
 				}, {
@@ -14821,7 +14648,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "Sales Order New 1"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
 				}, {
@@ -14941,8 +14767,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "Sales Order New: created persisted"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
-					headers : {},
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
 				}, {
@@ -15416,7 +15240,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oTable = that.oView.byId("table");
 			that.expectValue("itemNote", "New item", 1);
 
-			oTable.getBinding("rows").create({"Note" : "New item"}, true);
+			oTable.getBinding("rows").create({Note : "New item"}, true);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -15545,7 +15369,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "transient"
 					},
-					deepPath : "/SalesOrderSet('~key~')",
 					method : "POST",
 					requestUri : "SalesOrderSet"
 				}, {
@@ -15669,7 +15492,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						Note : "transient"
 					},
-					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
 					method : "POST",
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
 				}, {
@@ -15830,7 +15652,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					method : "DELETE",
 					requestUri : "SalesOrderSet('2')"
-				}, {})
+				}, NO_CONTENT)
 				.expectRequest("SalesOrderSet?"
 					+ "$filter=not(SalesOrderID eq '2')", {
 					results : [{
