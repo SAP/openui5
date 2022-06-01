@@ -954,7 +954,8 @@ function(
 				oClocks = this._getClocks(),
 				oInputs = this._getInputs(),
 				iIndexOfHH,
-				iIndexOfH;
+				iIndexOfH,
+				bEmpty = false;
 
 			sFormat = sFormat ? sFormat : "";
 			iIndexOfHH = sFormat.indexOf("HH");
@@ -969,7 +970,18 @@ function(
 				this._sLastChangeValue = sValue;
 			}
 
+			if (this.getDomRef() && !this._getInputValue()) {
+				bEmpty = true;
+			}
+
 			MaskEnabler.setValue.call(this, sValue);
+
+			// Make sure that the input element is empty in case it was empty before calling the setter,
+			// in order to enable the input field value selection, which is part of the prefered user interaction restricted API.
+			// Later on the updateDomValue method will fill the input field element properly
+			if (this.getDomRef() && this._bPreferUserInteraction && bEmpty) {
+				this.getFocusDomRef().value = "";
+			}
 
 			// We need to reset the mask temporary value when using a setter
 			// as the given value might not formatted according to mask value format

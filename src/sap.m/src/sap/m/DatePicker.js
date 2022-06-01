@@ -1073,7 +1073,7 @@ sap.ui.define([
 	// overwrite _getInputValue to do the output conversion
 	DatePicker.prototype.updateDomValue = function(sValue) {
 
-		if (this.isActive() && (this._$input.val() !== sValue)) {
+		if (this.isActive() && this._$input.val() !== sValue) {
 			// dom value updated other than value property
 			this._bCheckDomValue = true;
 
@@ -1083,11 +1083,18 @@ sap.ui.define([
 			var oDate = this._parseValue(sValue, true);
 			sValue = this._formatValue(oDate);
 
-			// update the DOM value when necessary
-			// otherwise cursor can goto end of text unnecessarily
-			this._$input.val(sValue);
-			if (document.activeElement === this._$input[0]) {
-				this._$input.cursorPos(this._curpos);
+			// if set to true, handle the user input and data
+			// model updates concurrency in order to not overwrite
+			// values coming from the user
+			if (this._bPreferUserInteraction) {
+				this.handleInputValueConcurrency(sValue);
+			} else {
+				// update the DOM value when necessary
+				// otherwise cursor can goto end of text unnecessarily
+				this._$input.val(sValue);
+				if (document.activeElement === this._$input[0]) {
+					this._$input.cursorPos(this._curpos);
+				}
 			}
 		}
 

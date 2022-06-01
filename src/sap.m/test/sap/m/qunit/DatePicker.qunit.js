@@ -2513,6 +2513,42 @@ sap.ui.define([
 		assert.ok(oPopupContent[1].isA("sap.ui.unified.Calendar"), "There is a sap.ui.unified.Calendar created in the popup content");
 	});
 
+	QUnit.test("_getInputValue", function (assert) {
+		// Prepare
+		var oGetInputValueSpy = this.spy(this.oDP, "_getInputValue"),
+			oGetFocusDomRefStub = this.stub(this.oDP, "getFocusDomRef").callsFake(function () {
+				return { value: undefined };
+			});
+
+		// Act
+		this.oDP.handleInputValueConcurrency("test");
+
+		// Assert
+		assert.ok(oGetInputValueSpy.notCalled, "Method from the sap.m.InputBase properly called");
+
+		// Clean
+		oGetFocusDomRefStub.restore();
+	});
+
+	QUnit.test("Overwriting the user input with model updates will be prevented", function (assert) {
+		// Prepare
+		var oDP = new DatePicker(),
+			oHandleInputValueConcurrencySpy = this.spy(oDP, "handleInputValueConcurrency");
+
+		oDP._setPreferUserInteraction(true);
+		oDP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oDP.setValue("test value");
+
+		// Assert
+		assert.ok(oHandleInputValueConcurrencySpy.calledOnce, "Model update is prevented");
+
+		// Clean
+		oDP.destroy();
+	});
+
 	//set the input value to an invalid one
 	function simulateUserInputViaTheInputField(assert) {
 		bChange = false;
