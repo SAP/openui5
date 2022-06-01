@@ -261,6 +261,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} mPropertyBag.title - Title of the to be activated version
 	 * @param {string} mPropertyBag.appComponent - Application Component
+	 * @param {string} mPropertyBag.displayedVersion - Id of the displayed version
 	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the updated list of versions for the application
 	 * when the version was activated;
 	 * rejects if an error occurs, the layer does not support draft handling, there is unsaved content, there is no draft to activate or
@@ -270,12 +271,11 @@ sap.ui.define([
 		var oModel = Versions.getVersionsModel(mPropertyBag);
 		var aVersions = oModel.getProperty("/versions");
 		var bDraftExists = _doesDraftExistInVersions(aVersions);
-		var sDisplayedVersion = oModel.getProperty("/displayedVersion");
 		var sActiveVersion = oModel.getProperty("/activeVersion");
-		if (sDisplayedVersion === sActiveVersion) {
+		if (mPropertyBag.displayedVersion === sActiveVersion) {
 			return Promise.reject("Version is already active");
 		}
-		mPropertyBag.version = sDisplayedVersion;
+		mPropertyBag.version = mPropertyBag.displayedVersion;
 
 		var oDirtyChangeInfo = _getDirtyChangesInfo(mPropertyBag);
 		var aChangePersistences = oDirtyChangeInfo.changePersistences;

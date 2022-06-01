@@ -179,6 +179,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} mPropertyBag.title - Title of the to be activated version
+	 * @param {string} mPropertyBag.displayedVersion - Id of the displayed version
 	 *
 	 * @ui5-restricted sap.ui.rta
 	 *
@@ -205,7 +206,8 @@ sap.ui.define([
 			reference: Utils.normalizeReference(sReference),
 			layer: mPropertyBag.layer,
 			title: mPropertyBag.title,
-			appComponent: Utils.getAppComponentForControl(mPropertyBag.control)
+			appComponent: Utils.getAppComponentForControl(mPropertyBag.control),
+			displayedVersion: mPropertyBag.displayedVersion
 		});
 	};
 

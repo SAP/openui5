@@ -526,7 +526,8 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				reference: sReference,
 				nonNormalizedReference: sReference,
-				appComponent: this.oAppComponent
+				appComponent: this.oAppComponent,
+				displayedVersion: "1"
 			};
 
 			var oFirstVersion = {
