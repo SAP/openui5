@@ -25,6 +25,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.ODataTreeBindingFlat
 	 * @function
+	 *
 	 * @public
 	 */
 	var ODataTreeBindingFlat = function() {
@@ -96,6 +97,10 @@ sap.ui.define([
 	 * Sets the number of expanded levels.
 	 *
 	 * @param {number} iLevels The number of levels which should be expanded, minimum is 0
+	 *
+	 * @protected
+	 * @see sap.ui.model.odata.v2.ODataTreeBinding#setNumberOfExpandedLevels
+	 * @ui5-restricted sap.ui.table.AnalyticalTable
 	 */
 	ODataTreeBindingFlat.prototype.setNumberOfExpandedLevels = function(iLevels) {
 		this.resetData();
@@ -224,6 +229,8 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aMissing An array of missing nodes
 	 * @returns {object} An object with <code>skip</code> and <code>top</code>
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._calculateRequestParameters = function (aMissing) {
 		var i,
@@ -252,6 +259,7 @@ sap.ui.define([
 	 * @param {number} iLength The number of nodes to cut
 	 *
 	 * @returns {object[]} The cut nodes
+	 *
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._retrieveNodeSection = function (iStartIndex, iLength) {
@@ -260,6 +268,9 @@ sap.ui.define([
 			: this._mapRetrieveNodeSection(iStartIndex, iLength);
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._mapRetrieveNodeSection = function (iStartIndex, iLength) {
 		var iNodeCounter = -1;
 		var aNodes =  [];
@@ -288,6 +299,9 @@ sap.ui.define([
 		return aNodes;
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._indexRetrieveNodeSection = function (iStartIndex, iLength) {
 		var i, aNodes =  [], oNodeInfo, oNode;
 
@@ -332,6 +346,7 @@ sap.ui.define([
 	 *   The requested tree nodes
 	 *
 	 * @protected
+	 * @ui5-restricted sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingFlat.prototype.getNodes = function (iStartIndex, iLength, iThreshold) {
 		return this._getContextsOrNodes(true, iStartIndex, iLength, iThreshold);
@@ -560,6 +575,8 @@ sap.ui.define([
 	 * @return {Promise<Object>} The promise resolves if the reload finishes successfully, otherwise it's rejected. The promise
 	 * 						resolves with an object which has the calculated iSkip, iTop and the loaded content under
 	 * 						property oData. It rejects with the error object which is returned from the server.
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._loadData = function (iSkip, iTop, iThreshold) {
 		var that = this;
@@ -595,6 +612,8 @@ sap.ui.define([
 	 * @return {Promise<Object>} The promise resolves if the reload finishes successfully, otherwise it's rejected. The promise
 	 * 						resolves with an object which has the calculated iSkip, iTop and the loaded content under
 	 * 						property oData. It rejects with the error object which is returned from the server.
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._restoreServerIndexNodes = function (iSkip, iTop, bInlineCount) {
 		var that = this;
@@ -609,6 +628,8 @@ sap.ui.define([
 	 *
 	 * @param {object} oData The content which contains the nodes from the backend
 	 * @param {int} iSkip The start index for the merging into inner structure
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._addServerIndexNodes = function (oData, iSkip) {
 		var oEntry, sKey, iIndex, i,
@@ -691,6 +712,8 @@ sap.ui.define([
 	 * @return {Promise<Object>} The promise resolves if the reload finishes successfully, otherwise it's rejected. The promise
 	 * 						resolves with an object which has the calculated iSkip, iTop and the loaded content under
 	 * 						property oData. It rejects with the error object which is returned from the server.
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._requestServerIndexNodes = function (iSkip, iTop, iThreshold, bInlineCount) {
 		return new Promise(function(resolve, reject) {
@@ -779,6 +802,9 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._propagateMagnitudeChange = function(oParent, iDelta) {
 		// propagate the magnitude along the parent chain, up to the top parent which is a
 		// server indexed node (checked by oParent.parent == null)
@@ -794,7 +820,11 @@ sap.ui.define([
 		}
 	};
 
-	// Calculates the magnitude of a server index node after the initial loading
+	/*
+	 * Calculates the magnitude of a server index node after the initial loading
+	 *
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._getInitialMagnitude = function(oNode) {
 		var iDelta = 0,
 			oChild;
@@ -820,6 +850,8 @@ sap.ui.define([
 	 * @param {object} oParentNode The parent node under which the children are loaded
 	 * @param {int} iSkip The start index of the loading
 	 * @param {int} iTop The number of nodes which will be loaded
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._loadChildren = function(oParentNode, iSkip, iTop) {
 		var that = this;
@@ -859,6 +891,8 @@ sap.ui.define([
 	 * @return {Promise<Object>} The promise resolves if the reload finishes successfully, otherwise it's rejected. The promise
 	 * 						resolves with an object which has the calculated iSkip, iTop and the loaded content under
 	 * 						property oData. It rejects with the error object which is returned from the server.
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._restoreChildren = function(oParentNode, iSkip, iTop) {
 		var that = this,
@@ -891,6 +925,8 @@ sap.ui.define([
 	 * @param {object} oData The content which contains the nodes from the backed
 	 * @param {object} oParentNode The parent node where the child nodes are saved
 	 * @param {int} iSkip The start index for the merging into inner structure
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._addChildNodes = function(oData, oParentNode, iSkip) {
 
@@ -924,6 +960,9 @@ sap.ui.define([
 		}
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._createChildNode = function(oEntry, oParentNode, iPositionInParent) {
 		var sKey = this.oModel.getKey(oEntry);
 
@@ -980,6 +1019,8 @@ sap.ui.define([
 	 * @return {Promise<Object>} The promise resolves if the reload finishes successfully, otherwise it's rejected. The promise
 	 * 						resolves with an object which has the calculated iSkip, iTop and the loaded content under
 	 * 						property oData. It rejects with the error object which is returned from the server.
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._requestChildren = function (oParentNode, iSkip, iTop, bInlineCount) {
 		return new Promise(function(resolve, reject) {
@@ -1079,6 +1120,8 @@ sap.ui.define([
 	 * @param {int} iLevel The maximum expansion level of the subtree
 	 * @return {Promise<Object>} Promise that resolves with the response data, parent key and level.
 	 				It rejects with the error object which is returned from the server.
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._loadSubTree = function (oParentNode, iLevel) {
 		var that = this;
@@ -1142,6 +1185,8 @@ sap.ui.define([
 	 *
 	 * @param {object} oData The content which contains the nodes from the backed
 	 * @param {object} oSubTreeRootNode The root node of the subtree
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._addSubTree = function(oData, oSubTreeRootNode) {
 		if (oData.results && oData.results.length > 0) {
@@ -1235,6 +1280,8 @@ sap.ui.define([
 	 * @param {int} iLevel The maximum expansion level of the subtree
 	 * @return {Promise<Object>} Promise that resolves with the response data, parent key and level.
 	 				It rejects with the error object which is returned from the server.
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._requestSubTree = function (oParentNode, iLevel) {
 		return new Promise(function(resolve, reject) {
@@ -1314,6 +1361,10 @@ sap.ui.define([
 	 *
 	 * @param {number} iRowIndex The index of the node
 	 * @returns {object|undefined} The found node or <code>undefined</code> if the tree is initial
+	 *
+	 * @private
+	 * @ui5-restricted sap.gantt.simple.GanttPrinting,
+	 * sap.suite.ui.generic.template.listTemplates.controller.DetailController
 	 */
 	ODataTreeBindingFlat.prototype.findNode = function (iRowIndex) {
 		return this._bReadOnly ? this._indexFindNode(iRowIndex) : this._mapFindNode(iRowIndex);
@@ -1324,6 +1375,8 @@ sap.ui.define([
 	 *
 	 * @param {number} iRowIndex The index of the node
 	 * @returns {object|undefined} The found node or <code>undefined</code> if the tree is initial
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._mapFindNode = function (iRowIndex) {
 		if (this.isInitial()) {
@@ -1355,6 +1408,8 @@ sap.ui.define([
 	 *
 	 * @param {number} iRowIndex The index of the node
 	 * @returns {object|undefined} The found node or <code>undefined</code> if the tree is initial
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._indexFindNode = function (iRowIndex) {
 		if (this.isInitial()) {
@@ -1384,6 +1439,9 @@ sap.ui.define([
 	 * Toggles a row index between expanded and collapsed.
 	 *
 	 * @param {number} iRowIndex The index of the row
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.Tree, sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingFlat.prototype.toggleIndex = function(iRowIndex) {
 
@@ -1404,6 +1462,10 @@ sap.ui.define([
 	 *
 	 * @param {any} vRowIndex Either an index or a node instance
 	 * @param {boolean} bSuppressChange Whether the change event should be suppressed
+	 *
+	 * @private
+	 * @ui5-restricted sap.gantt.simple.GanttPrinting, sap.m.Tree,
+	 * sap.ui.documentation.sdk.controller.App.controller, sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingFlat.prototype.expand = function (vRowIndex, bSuppressChange) {
 		var oToggledNode = vRowIndex;
@@ -1462,6 +1524,9 @@ sap.ui.define([
 	/**
 	 * Sets the number of expanded levels to the given level.
 	 * @param {int} iLevel the number of expanded levels
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.Tree, sap.ui.table.AnalyticalTable, sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingFlat.prototype.expandToLevel = function (iLevel) {
 		this.setNumberOfExpandedLevels(iLevel);
@@ -1478,6 +1543,9 @@ sap.ui.define([
 	 * @param {int} iLevel the level to which the data should be expanded
 	 * @param {boolean} bSuppressChange if set to true, no change event will be fired
 	 * @return {Promise} A promise resolving once the expansion process has been completed
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v2.ODataTreeBinding#expandNodeToLevel
 	 */
 	ODataTreeBindingFlat.prototype.expandNodeToLevel = function (iIndex, iLevel, bSuppressChange) {
 		if (!this._bReadOnly) {
@@ -1496,6 +1564,9 @@ sap.ui.define([
 	 *
 	 * @param {any} vRowIndex Either an index or a node instance
 	 * @param {boolean} bSuppressChange Whether the change event should be suppressed
+	 *
+	 * @private
+	 * @ui5-restricted sap.gantt.simple.GanttPrinting, sap.m.Tree, sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingFlat.prototype.collapse = function (vRowIndex, bSuppressChange) {
 		var oToggledNode = vRowIndex;
@@ -1558,6 +1629,9 @@ sap.ui.define([
 	 * Sets the number of expanded levels to the given level.
 	 * Makes sure to adapt the selection accordingly.
 	 * @param {int} iLevel the number of expanded levels
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.Tree, sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingFlat.prototype.collapseToLevel = function (iLevel) {
 		var iOldLeadIndex = -1,
@@ -1596,6 +1670,7 @@ sap.ui.define([
 	 * Returns an array containing nodes that are selected but invisible.
 	 *
 	 * @returns {object[]} The invisible and selected nodes
+	 *
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._getInvisibleSelectedNodes = function () {
@@ -1627,6 +1702,7 @@ sap.ui.define([
 	 * Removes the selection on all nodes inside invisible subtrees (removed OR collapsed).
 	 *
 	 * @param {boolean} bForceDeselect Whether the deselect is forced
+	 *
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._cleanUpSelection = function (bForceDeselect) {
@@ -1655,6 +1731,8 @@ sap.ui.define([
 	 * @param {object} oChild The child
 	 *
 	 * @returns {boolean} Whether the child is inside the subtree
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._isInSubtree = function (oAncestor, oChild) {
 		var bIsInSubtree = false;
@@ -1772,6 +1850,8 @@ sap.ui.define([
 	 *   If set to <code>true</code>, the original parent will be returned.
 	 * @returns {object}
 	 *   Parent node of the given node
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._getParent = function(oNode, bOldParent) {
 		return bOldParent ? oNode.originalParent : oNode.parent;
@@ -1780,6 +1860,8 @@ sap.ui.define([
 	/**
 	 * Makes sure that the collapsed and expanded maps/arrays are correctly sanitized,
 	 * by sorting them accordingly.
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._cleanTreeStateMaps = function () {
 		this._iLengthDelta = this._bReadOnly ? this._indexCleanTreeStateMaps() : this._mapCleanTreeStateMaps();
@@ -1789,6 +1871,8 @@ sap.ui.define([
 	 * Calculates the Length-Delta for the index-calculation algorithm.
 	 *
 	 * @returns {number} The calculated length-delta
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._indexCleanTreeStateMaps = function () {
 		return this._calcIndexDelta(this._aNodes.length);
@@ -1798,6 +1882,8 @@ sap.ui.define([
 	 * Calculates the Length-Delta for the _map algorithm.
 	 *
 	 * @returns {number} The calculated length-delta
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._mapCleanTreeStateMaps = function () {
 		var aAllChangedNodes = this._aCollapsed.concat(this._aRemoved).concat(this._aExpanded).concat(this._aAdded),
@@ -1942,6 +2028,11 @@ sap.ui.define([
 	 * @returns {sap.ui.model.Context|undefined}
 	 *   The context or <code>undefined</code> if the binding is inital or no node was found for the
 	 *   index
+	 *
+	 * @private
+	 * @ui5-restricted sap.gantt.GanttChart,
+	 * sap.suite.ui.generic.template.lib.presentationControl.SmartTableHandler,
+	 * sap.ui.table.AnalyticalTable, sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingFlat.prototype.getContextByIndex = function (iRowIndex) {
 		if (this.isInitial()) {
@@ -1960,6 +2051,9 @@ sap.ui.define([
 	 *   The index
 	 * @returns {object|undefined}
 	 *   The found node or <code>undefined</code> if the binding is inital or no node was found
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.TreeItemBase, sap.ui.table.AnalyticalTable, sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingFlat.prototype.getNodeByIndex = function (iRowIndex) {
 		if (this.isInitial()) {
@@ -1976,6 +2070,10 @@ sap.ui.define([
 	 *
 	 * @param {number} iRowIndex The index
 	 * @returns {boolean} Whether the index is expanded
+	 *
+	 * @private
+	 * @ui5-restricted sap.gantt.simple.GanttPrinting, sap.m.Tree, sap.m.TreeItemBase,
+	 * sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingFlat.prototype.isExpanded = function(iRowIndex) {
 		var oNode = this.findNode(iRowIndex);
@@ -1988,7 +2086,9 @@ sap.ui.define([
 	 * If the node is a leaf it has not children, otherwise the function returns true.
 	 * @param {object} oContext the context to check
 	 * @returns {boolean} node has children or not
+	 *
 	 * @protected
+	 * @see sap.ui.model.odata.v2.ODataTreeBinding#hasChildren
 	 */
 	ODataTreeBindingFlat.prototype.hasChildren = function(oContext) {
 		if (!oContext) {
@@ -2006,7 +2106,9 @@ sap.ui.define([
 	 *
 	 * @param {object} oNode The node to check
 	 * @returns {boolean} Whether the node has children or not
+	 *
 	 * @protected
+	 * @ui5-restricted sap.ui.table.AnalyticalTable, sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingFlat.prototype.nodeHasChildren = function (oNode) {
 		return !(oNode && oNode.nodeState.isLeaf);
@@ -2014,6 +2116,8 @@ sap.ui.define([
 
 	/*
 	 * @see sap.ui.model.odata.v2.ODataTreeBinding
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._hasChangedEntity = function (mChangedEntities) {
 		var bChangeDetected = false;
@@ -2037,6 +2141,8 @@ sap.ui.define([
 	 *
 	 * @param {object} oNode The node for which the selection should be changed
 	 * @param {boolean} bIsSelected The selection state for the given node
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype.setNodeSelection = function (oNode, bIsSelected) {
 
@@ -2064,6 +2170,9 @@ sap.ui.define([
 	 *
 	 * @param {number} iRowIndex the row index to check for selection state
 	 * @returns {boolean} Whether the given index is selected
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.isIndexSelected = function (iRowIndex) {
 		var oNode = this.findNode(iRowIndex);
@@ -2076,6 +2185,9 @@ sap.ui.define([
 	 *
 	 * @param {number} iRowIndex The row index which should be checked for "selectability"
 	 * @returns {boolean} Whether the row is selectable
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.isIndexSelectable = function (iRowIndex) {
 		var oNode = this.findNode(iRowIndex);
@@ -2086,12 +2198,16 @@ sap.ui.define([
 	 * Removes the selection from all nodes.
 	 *
 	 * @returns {object} An object with information about the selection status
+	 *
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._clearSelection = function () {
 		return this._bReadOnly ? this._indexClearSelection() : this._mapClearSelection();
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._indexClearSelection = function () {
 		var iOldLeadIndex = -1,
 			aChangedIndices = [],
@@ -2119,6 +2235,9 @@ sap.ui.define([
 		};
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._mapClearSelection = function () {
 		var iNodeCounter = -1;
 		var iOldLeadIndex = -1;
@@ -2164,6 +2283,9 @@ sap.ui.define([
 	 * Marks a single TreeTable node sitting on iRowIndex as selected.
 	 * Also sets the lead selection index to this node.
 	 * @param {int} iRowIndex the absolute row index which should be selected
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.TreeItemBase, sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.setSelectedIndex = function (iRowIndex) {
 		var oNode = this.findNode(iRowIndex);
@@ -2198,11 +2320,17 @@ sap.ui.define([
 	 * Retrieves the "Lead-Selection-Index"
 	 * Normally this is the last selected node/table row.
 	 * @return {int} returns the lead selection index or -1 if none is set
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.getSelectedIndex = function () {
 		return this._bReadOnly ? this._indexGetSelectedIndex() : this._mapGetSelectedIndex();
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._indexGetSelectedIndex = function () {
 		//if we have no nodes selected, the lead selection index is -1
 		if (!this._sLeadSelectionKey || isEmptyObject(this._mSelected)) {
@@ -2218,6 +2346,9 @@ sap.ui.define([
 		}
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._mapGetSelectedIndex = function () {
 		//if we have no nodes selected, the lead selection index is -1
 		if (!this._sLeadSelectionKey || isEmptyObject(this._mSelected)) {
@@ -2242,11 +2373,17 @@ sap.ui.define([
 	 * Returns an array with all selected row indices.
 	 * Only absolute row indices for nodes known to the client will can be retrieved this way
 	 * @return {int[]} an array with all selected indices
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.getSelectedIndices = function () {
 		return this._bReadOnly ? this._indexGetSelectedIndices() : this._mapGetSelectedIndices();
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._indexGetSelectedIndices = function () {
 		var aNodesInfo = this._getSelectedNodesInfo();
 
@@ -2255,6 +2392,9 @@ sap.ui.define([
 		});
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._mapGetSelectedIndices = function () {
 		var aResultIndices = [];
 
@@ -2279,8 +2419,11 @@ sap.ui.define([
 
 	/**
 	 * Returns the number of selected nodes.
-	 * @private
+	 *
 	 * @returns {int} number of selected nodes.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.getSelectedNodesCount = function () {
 		var iSelectedNodes;
@@ -2396,11 +2539,16 @@ sap.ui.define([
 	/**
 	 * Returns an array containing all selected contexts, ordered by their appearance in the tree.
 	 * @return {sap.ui.model.Context[]} an array containing the binding contexts for all selected nodes
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype.getSelectedContexts = function () {
 		return this._bReadOnly ? this._indexGetSelectedContexts() : this._mapGetSelectedContexts();
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._indexGetSelectedContexts = function () {
 		var aNodesInfo = this._getSelectedNodesInfo();
 
@@ -2412,6 +2560,8 @@ sap.ui.define([
 	/**
 	 * Returns an array containing all selected contexts, ordered by their appearance in the tree.
 	 * @return {sap.ui.model.Context[]} an array containing the binding contexts for all selected nodes
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._mapGetSelectedContexts = function () {
 		var aResultContexts = [];
@@ -2443,6 +2593,9 @@ sap.ui.define([
 	 *
 	 * @param {number} iFromIndex The first index to select
 	 * @param {number} iToIndex The last index to select
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.setSelectionInterval = function (iFromIndex, iToIndex) {
 		var iIndex, i,
@@ -2505,6 +2658,9 @@ sap.ui.define([
 			: this._mapSetSelectionInterval(iFromIndex, iToIndex, bSelectionValue);
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._indexSetSelectionInterval = function (iFromIndex, iToIndex, bSelectionValue) {
 		//make sure the "From" Index is always lower than the "To" Index
 		var iNewFromIndex = Math.min(iFromIndex, iToIndex),
@@ -2554,6 +2710,9 @@ sap.ui.define([
 		return mParams;
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._mapSetSelectionInterval = function (iFromIndex, iToIndex, bSelectionValue) {
 		//make sure the "From" Index is always lower than the "To" Index
 		var iNewFromIndex = Math.min(iFromIndex, iToIndex);
@@ -2628,6 +2787,9 @@ sap.ui.define([
 	 *
 	 * @param {number} iFromIndex The first index to mark
 	 * @param {number} iToIndex The last index to mark
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.TreeItemBase, sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.addSelectionInterval = function (iFromIndex, iToIndex) {
 		var mParams = this._setSelectionInterval(iFromIndex, iToIndex, true);
@@ -2639,6 +2801,9 @@ sap.ui.define([
 	 *
 	 * @param {number} iFromIndex The first index
 	 * @param {number} iToIndex The last index
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.TreeItemBase, sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.removeSelectionInterval = function (iFromIndex, iToIndex) {
 		var mParams = this._setSelectionInterval(iFromIndex, iToIndex, false);
@@ -2647,6 +2812,9 @@ sap.ui.define([
 
 	/**
 	 * Selects all available nodes
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.selectAll = function () {
 		if (this._bReadOnly) {
@@ -2656,6 +2824,9 @@ sap.ui.define([
 		}
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._indexSelectAll = function () {
 		// mark the tree as in selectAll mode
 		this._bSelectAll = true;
@@ -2693,6 +2864,9 @@ sap.ui.define([
 		this._publishSelectionChanges(mParams);
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._mapSelectAll = function () {
 		// mark the tree as in selectAll mode
 		this._bSelectAll = true;
@@ -2741,6 +2915,9 @@ sap.ui.define([
 	 * Removes the complete selection.
 	 * @param {boolean} bSuppressSelectionChangeEvent
 	 *   Whether the <code>selectionChange</code> event should be suppressed
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.clearSelection = function (bSuppressSelectionChangeEvent) {
 		var oChanges = this._clearSelection();
@@ -2756,6 +2933,8 @@ sap.ui.define([
 	 * check on the parameters.
 	 *
 	 * @param {object} mParams Event parameters
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._publishSelectionChanges = function (mParams) {
 
@@ -2791,6 +2970,9 @@ sap.ui.define([
 	 * collapsed as well.
 	 *
 	 * @param {boolean} bCollapseRecursive Whether recursive collapse should be enabled
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.table.AnalyticalTable, sap.ui.table.TreeTable
 	 */
 	ODataTreeBindingFlat.prototype.setCollapseRecursive = function (bCollapseRecursive) {
 		this.bCollapseRecursive = !!bCollapseRecursive;
@@ -2798,6 +2980,8 @@ sap.ui.define([
 
 	/**
 	 * Reset the bindings internal data structures.
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype.resetData = function () {
 		ODataTreeBinding.prototype.resetData.apply(this, arguments);
@@ -2832,8 +3016,10 @@ sap.ui.define([
 	 * tree.
 	 *
 	 * @param {sap.ui.model.Context} oContext The context
-	 *
 	 * @returns {object} The found node
+	 *
+	 * @private
+	 * @ui5-restricted fin.gl.hierarchy.manage
 	 */
 	ODataTreeBindingFlat.prototype._findNodeByContext = function (oContext) {
 		// First try to find the node in the cache.
@@ -2889,6 +3075,10 @@ sap.ui.define([
 	 *
 	 * @param {object} [mParameters] Parameters for the new entry
 	 * @returns {object} The new entry
+	 *
+	 * @private
+	 * @ui5-restricted
+
 	 */
 	ODataTreeBindingFlat.prototype.createEntry = function (mParameters) {
 		var sAbsolutePath = this.getResolvedPath();
@@ -2911,6 +3101,9 @@ sap.ui.define([
 	 * Submits the queued changes regarding this binding instance.
 	 *
 	 * @param {object} [mParameters] Additional parameters
+	 *
+	 * @private
+	 * @ui5-restricted
 	 */
 	ODataTreeBindingFlat.prototype.submitChanges = function (mParameters) {
 		mParameters = mParameters || {};
@@ -3003,6 +3196,8 @@ sap.ui.define([
 	 *   Information about done changes
 	 * @param {function} fnRestoreRequestErrorHandler
 	 *   Error handler to be called when the request fails
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._generateSubmitData
 			= function (oOptimizedChanges, fnRestoreRequestErrorHandler) {
@@ -3045,6 +3240,9 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._generatePreorderPositionRequest = function(oNode, mParameters) {
 		var sGroupId, sKeyProperty, sKeySelect, mUrlParameters,
 			successHandler, errorHandler,
@@ -3102,6 +3300,9 @@ sap.ui.define([
 		}
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._generateSiblingsPositionRequest = function(oNode, mParameters) {
 		var sGroupId, mUrlParameters, successHandler, errorHandler;
 			// aFilters = [], aSorters = this.aSorters || [];
@@ -3146,6 +3347,8 @@ sap.ui.define([
 	 *   The node
 	 * @returns {boolean|undefined}
 	 *   Whether the node is on the top level or <code>undefined</code> in error cases
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._nodeIsOnTopLevel = function (oNode) {
 		if (oNode && oNode.serverIndex >= 0) {
@@ -3173,6 +3376,8 @@ sap.ui.define([
 	 *   The node
 	 * @returns {object|undefined}
 	 *   The delete request's handle or <code>undefined</code> in case of a created node
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._generateDeleteRequest = function (oNode) {
 		var oContext = oNode.context;
@@ -3190,6 +3395,9 @@ sap.ui.define([
 		}
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._filterChangeForServerSections = function(oOptimizedChanges) {
 		var oChanges = {};
 
@@ -3211,6 +3419,9 @@ sap.ui.define([
 		return oChanges;
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._filterChangesForDeepSections = function(oOptimizedChanges) {
 		var mChanges = {};
 
@@ -3272,6 +3483,9 @@ sap.ui.define([
 		return mChanges;
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._optimizeOptimizedChanges = function(oOptimizedChanges) {
 		var aAddedNodes,
 			that = this;
@@ -3319,7 +3533,9 @@ sap.ui.define([
 		};
 	};
 
-
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._updateNodeInfoAfterSave = function(oNode) {
 		var bIsDeepOne = oNode.context.getProperty(this.oTreeProperties["hierarchy-preorder-rank-for"]) === undefined;
 
@@ -3342,6 +3558,9 @@ sap.ui.define([
 		}
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._requestExtraInfoForAddedNodes = function(aAdded) {
 		var aPromises = [],
 			that = this;
@@ -3391,6 +3610,10 @@ sap.ui.define([
 		});
 	};
 
+	/*
+	 * @private
+	 * @ui5-restricted
+	 */
 	ODataTreeBindingFlat.prototype._restoreTreeState = function(oOptimizedChanges) {
 		var that = this;
 
@@ -3444,6 +3667,8 @@ sap.ui.define([
 	 *   which has the calculated <code>iSkip</code>, <code>iTop</code> and the loaded content under
 	 *   property <code>oData</code>. Otherwise the error property is set with the error object
 	 *   which is returned from the server.
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._executeRestoreTreeState = function (oOptimizedChanges) {
 		var iCollapsedNodesCount,
@@ -3573,6 +3798,8 @@ sap.ui.define([
 	 * @return {array}
 	 *   The loaded sections. Each section is represented as an element in this array. The element
 	 *   has the following two properties: <code>iSkip</code> and <code>iTop</code>.
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._collectServerSections = function (aNodes) {
 		var aSections = [];
@@ -3597,6 +3824,9 @@ sap.ui.define([
 		return aSections;
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBindingFlat.prototype._adaptSections = function (aSections, oChanges, oConfig) {
 		var aRemoved = oChanges.removed || [],
 			aAdded = oChanges.added || [],
@@ -3756,6 +3986,10 @@ sap.ui.define([
 		}
 	};
 
+	/*
+	 * @private
+	 * @ui5-restricted fin.gl.hierarchy.manage
+	 */
 	ODataTreeBindingFlat.prototype._optimizeChanges = function () {
 		var aRemoved = [],
 			aCreationCancelled = [],
@@ -3880,6 +4114,8 @@ sap.ui.define([
 	 * 					oParentNode is the node where the deep nodes are collected and aChildSections
 	 * 					represents the loaded deep node sections under the oParentNode. Each element
 	 * 					in the aChildSections has these two properties: iSkip and iTop
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._collectDeepNodes = function () {
 		var aDeepNodes = [], that = this;
@@ -3901,6 +4137,8 @@ sap.ui.define([
 	 * Makes sure that the changed node is only tracked once.
 	 *
 	 * @param {object} oNode The changed node
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._trackChangedNode = function (oNode) {
 		if (this._aAllChangedNodes.indexOf(oNode) == -1) {
@@ -3910,6 +4148,9 @@ sap.ui.define([
 
 	/*
 	 * @see sap.ui.model.odata.v2.ODataTreeBinding#addContexts
+	 *
+	 * @private
+	 * @ui5-restricted
 	 */
 	ODataTreeBindingFlat.prototype.addContexts = function (oParentContext, vContextHandles) {
 		var oNodeInfo = this._findNodeByContext(oParentContext),
@@ -4055,6 +4296,8 @@ sap.ui.define([
 	 * This will only happen once per newly created node/context.
 	 *
 	 * @param {sap.ui.model.Context} oContext The new node's context
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._ensureHierarchyNodeIDForContext = function (oContext) {
 		if (oContext) {
@@ -4068,6 +4311,9 @@ sap.ui.define([
 
 	/*
 	 * @see sap.ui.model.odata.v2.ODataTreeBinding#removeContext
+	 *
+	 * @private
+	 * @ui5-restricted
 	 */
 	ODataTreeBindingFlat.prototype.removeContext = function (oContext) {
 		var that = this;
@@ -4162,6 +4408,8 @@ sap.ui.define([
 	 * @returns {number}
 	 *   Either the index of a server-indexed node or the server-index of a containing node (for
 	 *   deep noodes)
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._getRelatedServerIndex = function(oNode) {
 		if (oNode.serverIndex === undefined) {
@@ -4176,6 +4424,9 @@ sap.ui.define([
 	 *
 	 * @param {int} iRowIndex The row-index
 	 * @returns {{index: int}} Node info for the given row-index
+	 *
+	 * @private
+	 * @ui5-restricted s2p.mm.pur.srcgprojqtn.maintains1
 	 */
 	ODataTreeBindingFlat.prototype.getNodeInfoByRowIndex = function(iRowIndex) {
 		var iCPointer = 0, iEPointer = 0, oNode, bTypeCollapse, iValidCollapseIndex = -1;
@@ -4242,6 +4493,8 @@ sap.ui.define([
 	 *   The descendant's index
 	 * @returns {object|undefined}
 	 *   An object containing the found parent and the child's index or <code>undefined</code>
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._calcDirectIndex = function (oNode, iIndex) {
 		var oChild, i, iMagnitude;
@@ -4277,6 +4530,8 @@ sap.ui.define([
 	 *
 	 * @param {object} oNode The node
 	 * @returns {number} Row-Index for the given node
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype.getRowIndexByNode = function (oNode) {
 		var iDelta = 0;
@@ -4308,6 +4563,8 @@ sap.ui.define([
 	 * the current row-index for said node.
 	 *
 	 * @returns {object[]} The node infos
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._getSelectedNodesInfo = function () {
 		var aNodesInfo = [];
@@ -4361,6 +4618,8 @@ sap.ui.define([
 	 *
 	 * @param {number} iEndServerIndex The server index
 	 * @returns {number} The index delta
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._calcIndexDelta = function (iEndServerIndex) {
 		var i, bIgnore,
@@ -4457,6 +4716,8 @@ sap.ui.define([
 	 * Sorts the given nodes array based on the server-index or a containing server-index.
 	 *
 	 * @param {object[]} aNodes The nodes
+	 *
+	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._sortNodes = function(aNodes) {
 		var fnSort = function (a, b) {
@@ -4470,6 +4731,8 @@ sap.ui.define([
 
 	/**
 	* Abort all pending requests
+	*
+	* @private
 	*/
 	ODataTreeBindingFlat.prototype._abortPendingRequest = function() {
 		if (this._aPendingRequests.length || this._aPendingChildrenRequests.length) {
@@ -4498,6 +4761,7 @@ sap.ui.define([
 	 * @name sap.ui.model.odata.ODataTreeBindingFlat#selectionChanged
 	 * @event
 	 * @param {sap.ui.base.Event} oEvent
+	 *
 	 * @public
 	 */
 
@@ -4520,7 +4784,9 @@ sap.ui.define([
 	 *            <code>sap.ui.model.odata.ODataTreeBindingFlat</code> itself
 	 *
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 *
 	 * @protected
+	 * @ui5-restricted sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.attachSelectionChanged = function(oData, fnFunction, oListener) {
 		this.attachEvent("selectionChanged", oData, fnFunction, oListener);
@@ -4538,7 +4804,9 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 *
 	 * @protected
+	 * @ui5-restricted sap.ui.table.plugins.BindingSelection
 	 */
 	ODataTreeBindingFlat.prototype.detachSelectionChanged = function(fnFunction, oListener) {
 		this.detachEvent("selectionChanged", fnFunction, oListener);
@@ -4561,6 +4829,7 @@ sap.ui.define([
 	 * @param {boolean} [oParameters.indexChangesCouldNotBeDetermined]
 	 *						True in case changed indices could not be determined
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
+	 *
 	 * @protected
 	 */
 	ODataTreeBindingFlat.prototype.fireSelectionChanged = function(oParameters) {
@@ -4572,7 +4841,13 @@ sap.ui.define([
 	 * Stub for the TreeBinding API -> not used for Auto-Expand paging in the TreeTable.
 	 * Implementation see ODataTreeBinding (v2).
 	 */
+
+	// @override
+	// @see sap.ui.model.odata.v2.ODataTreeBinding#getRootContexts
 	ODataTreeBindingFlat.prototype.getRootContexts = function () {};
+
+	// @override
+	// @see sap.ui.model.odata.v2.ODataTreeBinding#getNodeContexts
 	ODataTreeBindingFlat.prototype.getNodeContexts = function () {};
 
 	return ODataTreeBindingFlat;

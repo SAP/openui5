@@ -204,6 +204,8 @@ sap.ui.define([
 	 *
 	 * @param {object} mParams The filter params
 	 * @returns {string} The filter to use with <code>$filter</code>
+	 *
+	 * @private
 	 */
 	ODataTreeBinding.prototype._getNodeFilterParams = function (mParams) {
 		var sPropName = mParams.isRoot ? this.oTreeProperties["hierarchy-node-for"]
@@ -219,6 +221,8 @@ sap.ui.define([
 	 * @param {string} sOperator The filter operator
 	 * @param {number} iLevel The filter level
 	 * @returns {string} The filter to use with <code>$filter</code>
+	 *
+	 * @private
 	 */
 	ODataTreeBinding.prototype._getLevelFilterParams = function (sOperator, iLevel) {
 		var oEntityType = this._getEntityType();
@@ -231,6 +235,7 @@ sap.ui.define([
 	 * Retrieves the root node given through sNodeId
 	 * @param {string} sNodeId the ID od the root node which should be loaded (e.g. when bound to a single entity)
 	 * @param {string} sRequestKey a key string used to store/clean-up request handles
+	 *
 	 * @private
 	 */
 	ODataTreeBinding.prototype._loadSingleRootNodeByNavigationProperties = function (sNodeId, sRequestKey) {
@@ -517,6 +522,7 @@ sap.ui.define([
 	 *   The navigation path
 	 * @return {sap.ui.model.odata.v2.Context[]}
 	 *   Contexts for the given node ID
+	 *
 	 * @private
 	 */
 	ODataTreeBinding.prototype._getContextsForNodeId = function(sNodeId, iStartIndex, iLength, iThreshold, mRequestParameters) {
@@ -739,6 +745,8 @@ sap.ui.define([
 	/**
 	 * Simple request to count how many nodes are available in the collection, starting at the given rootLevel.
 	 * Depending on the countMode of the binding, either a $count or a $inlinecount is sent.
+	 *
+	 * @private
 	 */
 	ODataTreeBinding.prototype._getCountForCollection = function () {
 
@@ -831,6 +839,7 @@ sap.ui.define([
 	 * when issuing a loading request.
 	 *
 	 * @param {string} sNodeId The node's ID
+	 *
 	 * @private
 	 */
 	ODataTreeBinding.prototype._getCountForNodeId = function(sNodeId) {
@@ -1267,6 +1276,8 @@ sap.ui.define([
 	 * Adds additional URL parameters.
 	 *
 	 * @param {string[]} aURLParams Additional URL parameters
+	 *
+	 * @private
 	 */
 	ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations = function (aURLParams) {
 		var that = this;
@@ -1641,6 +1652,8 @@ sap.ui.define([
 	/**
 	 * Process the currently set filters clientside. Uses the FilterProcessor and only works if the binding is running
 	 * in the OperationModes "Client" or "Auto".
+	 *
+	 * @private
 	 */
 	ODataTreeBinding.prototype._applyFilter = function () {
 		var that = this;
@@ -1678,6 +1691,9 @@ sap.ui.define([
 		}
 	};
 
+	/*
+	 * @private
+	 */
 	ODataTreeBinding.prototype._filterRecursive = function (oNode, mKeys, fnFilterKey) {
 		var aChildrenKeys = this.oKeys[oNode.id];
 
@@ -1803,6 +1819,7 @@ sap.ui.define([
 	/**
 	 * Sorts the data which is currently available on the client.
 	 * Only used when running in OperationMode.Client.
+	 *
 	 * @private
 	 */
 	ODataTreeBinding.prototype._applySort = function() {
@@ -1903,6 +1920,7 @@ sap.ui.define([
 	 * @param {object} oObject the object which will be processed
 	 * @param {string} sPath the binding path of the object
 	 * @param {string} sNavPath the path through the data object along the navigation properties
+	 *
 	 * @private
 	 */
 	ODataTreeBinding.prototype._processODataObject = function(oObject, sPath, sNavPath) {
@@ -2110,6 +2128,7 @@ sap.ui.define([
 	 *
 	 * @returns {this} A reference to itself
 	 * @private
+	 * @ui5-restricted sap.m.Tree, sap.ui.table.TreeTable
 	 */
 	ODataTreeBinding.prototype.applyAdapterInterface = function () {
 		/*
@@ -2156,6 +2175,7 @@ sap.ui.define([
 	 * (nav-props & annotations) or a flat paging adapter (magnitude) is applied.
 	 *
 	 * @param {function} fnFireEvent A function which is called after the adapter has been applied
+	 *
 	 * @private
 	 */
 	ODataTreeBinding.prototype._applyAdapter = function (fnFireEvent) {
@@ -2320,7 +2340,7 @@ sap.ui.define([
 	 * @return {string|undefined} The value of the hierarchy annotation
 	 * @since 1.56
 	 * @private
-	 * @ui5-restricted sap.ui.comp
+	 * @ui5-restricted sap.ui.comp.smarttable.SmartTable
 	 */
 	ODataTreeBinding.prototype.getTreeAnnotation = function(sAttributeName) {
 		return this.bHasTreeAnnotations ? this.oTreeProperties[sAttributeName] : undefined;
@@ -2366,9 +2386,11 @@ sap.ui.define([
 	 * This function is used by the TreeTable for the ungroup/ungroup-all feature.
 	 * @see sap.ui.table.TreeTable#_getGroupHeaderMenu
 	 * @param {int} iLevels the number of levels which should be expanded, minimum is 0
-	 * @protected
 	 * @name sap.ui.model.odata.ODataTreeBinding#setNumberOfExpandedLevels
 	 * @function
+	 *
+	 * @protected
+	 * @ui5-restricted sap.ui.table.AnalyticalTable
 	 */
 	ODataTreeBinding.prototype.setNumberOfExpandedLevels = function(iLevels) {
 		iLevels = iLevels || 0;
@@ -2384,10 +2406,12 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the currently set number of expanded levels from the Binding (commonly an ODataTreeBinding).
-	 * @protected
 	 * @name sap.ui.model.odata.ODataTreeBinding#getNumberOfExpandedLevels
 	 * @function
 	 * @returns {int} the number of expanded levels
+	 *
+	 * @protected
+	 * @ui5-restricted sap.m.Tree, sap.ui.table.AnalyticalTable
 	 */
 	ODataTreeBinding.prototype.getNumberOfExpandedLevels = function() {
 		return this.iNumberOfExpandedLevels;
@@ -2452,6 +2476,8 @@ sap.ui.define([
 	 * Creates valid odata filter strings for the application filters, given in "this.aApplicationFilters".
 	 * Also sets the created filter-string to "this.sFilterParams".
 	 * @returns {string} the concatenated OData filters
+	 *
+	 * @private
 	 */
 	ODataTreeBinding.prototype.getFilterParams = function() {
 		var oGroupedFilter;
@@ -2472,6 +2498,8 @@ sap.ui.define([
 
 	/**
 	* Abort all pending requests
+	*
+	* @private
 	*/
 	ODataTreeBinding.prototype._abortPendingRequest = function() {
 		if (!isEmptyObject(this.mRequestHandles)) {
@@ -2521,6 +2549,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oParentContext Parent context under which the new contexts will be inserted
 	 * @param {sap.ui.model.Context|sap.ui.model.Context[]} vContextHandle An array of contexts or a single context, which will be added to the tree.
 	 * @private
+	 * @ui5-restricted
 	 */
 
 	/**
@@ -2536,6 +2565,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} Context which should be removed
 	 * @return {sap.ui.model.Context} The removed context
 	 * @private
+	 * @ui5-restricted
 	 */
 
 	/**
@@ -2550,6 +2580,7 @@ sap.ui.define([
 	 * @function
 	 * @name sap.ui.model.odata.v2.ODataTreeBinding.prototype.createEntry
 	 * @private
+	 * @ui5-restricted
 	 */
 
 	/**
@@ -2565,6 +2596,7 @@ sap.ui.define([
 	 * @function
 	 * @name sap.ui.model.odata.v2.ODataTreeBinding.prototype.submitChanges
 	 * @private
+	 * @ui5-restricted
 	 */
 
 	return ODataTreeBinding;
