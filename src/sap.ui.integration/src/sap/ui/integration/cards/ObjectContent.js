@@ -70,6 +70,8 @@ sap.ui.define([
 
 	var FlexRendertype = mLibrary.FlexRendertype;
 
+	var FlexJustifyContent = mLibrary.FlexJustifyContent;
+
 	// shortcut for sap.ui.integration.CardActionArea
 	var ActionArea = library.CardActionArea;
 
@@ -222,12 +224,19 @@ sap.ui.define([
 		if (vLabel) {
 			// Checks if the label ends with ":" and if not we just add the ":"
 			vLabel = BindingHelper.formattedProperty(vLabel, function (sValue) {
-				return sValue && sValue[sValue.length - 1] === ":" ? sValue : sValue + ":";
+				return sValue && (sValue[sValue.length - 1] === ":" ? sValue : sValue + ":");
 			});
+
 			oLabel = new Label({
 				text: vLabel,
 				visible: vVisible
 			}).addStyleClass("sapFCardObjectItemLabel");
+
+			oLabel.addEventDelegate({
+				onBeforeRendering: function () {
+					oLabel.setVisible(oLabel.getVisible() && !!oLabel.getText());
+				}
+			});
 		}
 
 		oControl = this._createItem(oItem, vVisible, oLabel);
@@ -239,6 +248,7 @@ sap.ui.define([
 		if (oItem.icon) {
 			var oVbox = new VBox({
 				renderType: FlexRendertype.Bare,
+				justifyContent: FlexJustifyContent.Center,
 				items: [
 					oLabel,
 					oControl

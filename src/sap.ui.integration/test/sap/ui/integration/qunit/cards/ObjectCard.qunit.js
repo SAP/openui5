@@ -422,6 +422,38 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_EmptyLabelWithBinding = {
+		"sap.app": {
+			"id": "test.cards.object.card4",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"data": {
+				"json": {
+					"isManager": false,
+					"firstName": "Alain",
+					"lastName": "Chevalier"
+				}
+			},
+			"content": {
+				"groups": [
+					{
+						"items": [
+							{
+								"label": "{= ${isManager} ? 'Manager' : ''}",
+								"value": "{firstName} {lastName}",
+								"icon": {
+									"src": "sap-icon://account"
+								}
+							}
+						]
+					}
+				]
+			}
+		}
+	};
+
 	QUnit.module("Object Card", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -1151,6 +1183,24 @@ sap.ui.define([
 				}
 			}
 		});
+	});
+
+	QUnit.test("Empty label with binding is not rendered", function (assert) {
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
+				aItems = oLayout.getContent()[0].getItems(),
+				oLabel = aItems[0].getItems()[1].getItems()[0];
+
+			// Assert
+			assert.strictEqual(oLabel.getVisible(), false, "The empty label is not visible.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_EmptyLabelWithBinding);
 	});
 
 	QUnit.module("Accessibility", {

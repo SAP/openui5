@@ -45,6 +45,13 @@
 							"icon": {
 								"src": "{manager/photo}"
 							}
+						},
+						{
+							"label": "{= ${assistant/firstName} !== 'Donna' ? 'Assistant' : ''}",
+							"value": "{assistant/firstName} {assistant/lastName}",
+							"icon": {
+								"src": "{assistant/photo}"
+							}
 						}
 					]
 				},
