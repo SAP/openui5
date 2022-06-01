@@ -1177,6 +1177,32 @@
 			}
 		})
 
+		var oModel1 = new sap.ui.model.json.JSONModel();
+		oModel1.setData(oSuggestionData);
+
+		var oMultiInputWithStickySuggestions = new sap.m.MultiInput("multiInputWithStickySuggestions", {
+			showSuggestion: true,
+			suggestionColumns: [
+				new sap.m.Column({
+					header: new sap.m.Label({text: "Name"})
+				}),
+				new sap.m.Column({
+					header: new sap.m.Label({text: "Price"})
+				})
+			],
+			showTableSuggestionValueHelp: false
+		});
+		oMultiInputWithStickySuggestions.setModel(oModel1);
+		oMultiInputWithStickySuggestions.bindAggregation("suggestionRows", {
+			path: "/tabularSuggestionItems",
+			template: new sap.m.ColumnListItem({
+				cells: [
+					new sap.m.Label({text: "{name}"}),
+					new sap.m.Label({text: "{price}"})
+				]
+			})
+		});
+
 	   //******************************************
 		var app = new sap.m.App("myApp");
 
@@ -1260,7 +1286,8 @@
 					}),
 					new sap.m.Label({labelFor: multiInputWithDataBinding.getId(), text : "MultiInput with DataBinding", width: "100%"}),
 					multiInputWithDataBinding,
-					oCondensedTable
+					oCondensedTable,
+					oMultiInputWithStickySuggestions
 			],
 			showNavButton: true,
 			navButtonPress: function(){ app.to("page2"); }

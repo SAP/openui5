@@ -888,7 +888,8 @@ sap.ui.define([
 					this._bSuggestionItemTapped = true;
 					var oSelectedListItem = oEvent.getParameter("listItem");
 					oInput.setSelectionRow(oSelectedListItem, true);
-				}.bind(this)
+				}.bind(this),
+				sticky: [library.Sticky.ColumnHeaders]
 			});
 
 			this._oSuggestionTable.addEventDelegate({
