@@ -108,6 +108,12 @@ sap.ui.define([
 
 	FieldValueHelpMdcTableWrapper.prototype.fieldHelpClose = function() {
 		this._bSearchTriggered = false;
+
+		var oFilterBar = this._getFieldHelp()._getFilterBar();
+		if (oFilterBar) {
+			Engine.getInstance().reset(oFilterBar, ["Filter"]);
+		}
+
 		FieldValueHelpTableWrapperBase.prototype.fieldHelpClose.apply(this, arguments);
 		return this;
 	};

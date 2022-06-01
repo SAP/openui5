@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/FilterBar",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/mdc/p13n/Engine"
 ], function (
 		FieldValueHelpMdcTableWrapper,
 		FieldValueHelpDelegate,
@@ -31,7 +32,8 @@ sap.ui.define([
 		Text,
 		JSONModel,
 		FilterBar,
-		oCore
+		oCore,
+		Engine
 	) {
 	"use strict";
 
@@ -280,6 +282,23 @@ sap.ui.define([
 			oWrapper._bBusy = true;
 			oTable._oTable.fireRowSelectionChange();
 			assert.ok(oWrapper._fireSelectionChange.calledOnce, "_fireSelectionChange is not triggered while table is busy.");
+			fnDone();
+		});
+	});
+
+	QUnit.test("close triggers Engine.reset for given FilterBar", function(assert) {
+		var fnDone = assert.async();
+
+		_initTable(false, new GridTableType({rowCountMode: "Fixed"}));
+		oWrapper.initialize();
+		sinon.stub(oWrapper,"_isTableReady").returns(true);
+		sinon.spy(oWrapper, "_fireSelectionChange");
+		oTable._fullyInitialized().then(function () {
+			var oEngine = Engine.getInstance();
+			sinon.spy(oEngine, "reset");
+			oWrapper.fieldHelpClose();
+			assert.ok(oEngine.reset.calledWith(oValueHelp.getFilterBar()), "Engine reset called for FilterBar.");
+			oEngine.reset.restore();
 			fnDone();
 		});
 	});
