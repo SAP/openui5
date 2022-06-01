@@ -5,6 +5,8 @@ describe("sap.m.SinglePlanningCalendarCellAndAppNav", function() {
 
 	var CTRL_KEY = process.platform === 'darwin' ? protractor.Key.META : protractor.Key.CONTROL;
 
+	browser.testrunner.currentSuite.meta.controlName = "sap.m.SinglePlanningCalendar";
+
 	it("should select 2 appointments with Ctrl/Cmd + Click", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
