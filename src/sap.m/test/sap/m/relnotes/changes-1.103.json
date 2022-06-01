@@ -1,7 +1,23 @@
 {
   "1.103.0": {
-    "date": "May 2022",
+    "date": "June 2022",
     "notes": [
+      {
+        "id": "5480394af181aceabba45d8e6d30ae41395c8101",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: tooltip added to internal icon when necessary",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270097172"
+          }
+        ]
+      },
+      {
+        "id": "1dbff1c63fbb0d19e2c33287c2a66d9ec88ffdef",
+        "type": "FEATURE",
+        "text": " sap.m.MessageBox: Details now can be fetched asynchronously"
+      },
       {
         "id": "b9c769fdde3aa18f0722e51d6e8e586ee03cec05",
         "type": "FIX",
@@ -62,6 +78,21 @@
           {
             "type": "BCP",
             "reference": "002075129400003845712022"
+          }
+        ]
+      },
+      {
+        "id": "6297f4b217ff1c972b7bdcc3c36cc548c1c0453a",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: render link properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015352"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270035836"
           }
         ]
       },

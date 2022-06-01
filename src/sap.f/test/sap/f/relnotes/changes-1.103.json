@@ -1,7 +1,29 @@
 {
   "1.103.0": {
-    "date": "May 2022",
+    "date": "June 2022",
     "notes": [
+      {
+        "id": "94aafed7994882512aad1df97fc942a324711506",
+        "type": "FIX",
+        "text": " Integration cards: Removed empty column when using actions in a table card",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270098208"
+          }
+        ]
+      },
+      {
+        "id": "ba441cf89551caa24a27d1ae5f5e7dd629d80aa6",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected positioning issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270108645"
+          }
+        ]
+      },
       {
         "id": "7b914cf032551c3d054ae24b4a291105d42a7f91",
         "type": "FIX",
