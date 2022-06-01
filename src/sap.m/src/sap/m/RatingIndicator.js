@@ -271,6 +271,13 @@ sap.ui.define([
 			return;
 		}
 
+		var sDensityMode = this._getDensityMode();
+
+		if (sDensityMode === "Compact") {
+			sIconSize = "sapUiRIIconSizeCompact";
+			sIconPaddingSize = "sapUiRIIconPaddingCompact";
+		}
+
 		var mParamеters = Object.assign({
 				// add global styles as default
 				"sapUiRIIconSizeDisplayOnly": "1rem",
