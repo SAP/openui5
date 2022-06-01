@@ -102,7 +102,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		},
 
 		/**
-		 * Hook that will be executed is called when changes are done applying to controls during the XML flexibility change appliance process.
+		 * Hook that will be executed when changes are done applying to controls during the XML flexibility change appliance process.
 		 *
 		 * @param {Object<sap.ui.mdc.Control>} oControl Instance of an MDC control
 		 * @param {Object} mPropertyBag Property bag from SAPUI5 flexibility
