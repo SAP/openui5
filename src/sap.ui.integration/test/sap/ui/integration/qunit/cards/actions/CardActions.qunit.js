@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/library"
 ],
 	function (
 		SampleServices,
@@ -26,11 +27,13 @@ sap.ui.define([
 		Core,
 		Log,
 		KeyCodes,
-		qutils
+		qutils,
+		mLibrary
 	) {
 		"use strict";
 
 		var CardActionType = library.CardActionType;
+		var ListType = mLibrary.ListType;
 
 		var DOM_RENDER_LOCATION = "qunit-fixture",
 			LOG_MESSAGE = "Navigate successfully";
@@ -1062,8 +1065,8 @@ sap.ui.define([
 				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 
 				// Assert
-				assert.ok(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
-				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
+				assert.strictEqual(oCardListItems[0].getType(), ListType.Active, "Card list item is actionable");
+				assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
 
 				//Act
 				oCardListItems[0].firePress();
@@ -1416,7 +1419,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("List should be actionable ", function (assert) {
-
 			testNavigationServiceListContent.call(this, oManifest_ListCard_CONTENT_ACTION, assert);
 		});
 
@@ -1470,8 +1472,8 @@ sap.ui.define([
 
 				this.oCard.attachAction(function () {
 					// Assert
-					assert.ok(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
-					assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
+					assert.strictEqual(oCardListItems[0].getType(), ListType.Active, "Card list item is actionable");
+					assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
 					assert.ok(oLogSpy.calledWith(LOG_MESSAGE), "Provided message should be logged to the console.");
 					assert.ok(oActionSpy.callCount, "Card List item is clicked");
 
@@ -1508,11 +1510,11 @@ sap.ui.define([
 				Core.applyChanges();
 
 				// Assert
-				assert.notOk(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
-				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
-				assert.notOk(oCardListItems[2].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
-				assert.ok(oCardListItems[3].getType() === CardActionType.Navigation, "Card list item is actionable");
-				assert.ok(oCardListItems[4].getType() === CardActionType.Navigation, "Card list item is actionable");
+				assert.strictEqual(oCardListItems[0].getType(), ListType.Inactive, "Card list item is NOT actionable");
+				assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
+				assert.strictEqual(oCardListItems[2].getType(), ListType.Inactive, "Card list item is NOT actionable");
+				assert.strictEqual(oCardListItems[3].getType(), ListType.Active, "Card list item is actionable");
+				assert.strictEqual(oCardListItems[4].getType(), ListType.Active, "Card list item is actionable");
 
 				assert.ok(oActionSpy.callCount, "Card List item is clicked");
 
@@ -1536,8 +1538,8 @@ sap.ui.define([
 				Core.applyChanges();
 				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 				// Assert
-				assert.notOk(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
-				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
+				assert.strictEqual(oCardListItems[0].getType(), ListType.Inactive, "Card list item is NOT actionable");
+				assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
 				assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachAction should not be called");
 
 				//Clean up
@@ -1559,8 +1561,8 @@ sap.ui.define([
 				Core.applyChanges();
 				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 				// Assert
-				assert.notOk(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
-				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
+				assert.strictEqual(oCardListItems[0].getType(), ListType.Inactive, "Card list item is NOT actionable");
+				assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
 				assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachAction should not be called");
 
 				//Clean up
@@ -1605,8 +1607,8 @@ sap.ui.define([
 				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 
 				// Assert
-				assert.ok(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
-				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
+				assert.strictEqual(oCardListItems[0].getType(), ListType.Active, "Card list item is actionable");
+				assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
 
 				//Act
 				oCardListItems[0].firePress();

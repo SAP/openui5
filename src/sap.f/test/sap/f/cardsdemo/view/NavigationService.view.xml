@@ -21,6 +21,7 @@
 				</VBox>
 				<HBox wrap="Wrap">
 					<w:Card
+						id="listNavService"
 						action=".onActionLog"
 						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationService.json"
 						width="400px"
@@ -36,6 +37,7 @@
 						width="400px"
 						class="sapUiSmallMargin" />
 					<w:Card
+						id="tableNavService"
 						action=".onActionLog"
 						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigationService4.json"
 						width="400px"
