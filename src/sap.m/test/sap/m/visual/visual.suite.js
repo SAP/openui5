@@ -67,6 +67,7 @@ module.exports = [
 	"PlanningCalendar.spec.js",
 	"PlanningCalendarStickyHeader.spec.js",
 	"PlanningCalendarAppointmentSize.spec.js",
+	"PlanningCalendarPicker.spec.js",
 	"PlanningCalendarWidth.spec.js",
 	"PlanningCalendarWithLegend.spec.js",
 	"PlanningCalendarRelativeView.spec.js",
