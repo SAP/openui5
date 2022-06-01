@@ -2051,6 +2051,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("refreshInternal: singleton property", function () {
+		var oBinding = this.oModel.bindProperty("/Singleton/Property"),
+			that = this;
+
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+		this.mock(oBinding.oCachePromise).expects("then").callsFake(function (fnThen) {
+			that.mock(oBinding.oCache).expects("reset").withExactArgs();
+			that.mock(oBinding).expects("fetchCache").never();
+			that.mock(oBinding).expects("checkUpdateInternal").never();
+			return Promise.resolve().then(fnThen);
+		});
+
+		// code under test
+		return oBinding.refreshInternal("n/a", "myGroup", false, "n/a");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
 		var oPropertyBinding = this.oModel.bindProperty("Name");
 

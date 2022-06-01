@@ -520,7 +520,11 @@ sap.ui.define([
 			return SyncPromise.resolve();
 		}
 		return this.oCachePromise.then(function () {
-			that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true, bKeepCacheOnError);
+			if (that.oCache && that.oCache.reset) {
+				that.oCache.reset();
+			} else {
+				that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true, bKeepCacheOnError);
+			}
 
 			if (bCheckUpdate) {
 				return that.checkUpdateInternal(undefined, ChangeReason.Refresh, sGroupId);

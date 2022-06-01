@@ -322,6 +322,7 @@ sap.ui.define([
 		assert.ok(_Cache.create(this.oRequestor, "TEAMS") instanceof _Cache);
 		assert.ok(_Cache.createSingle(this.oRequestor, "TEAMS('42')") instanceof _Cache);
 		assert.ok(_Cache.createProperty(this.oRequestor, "TEAMS('42')/Team_Id") instanceof _Cache);
+		assert.ok(_Cache.createProperty(this.oRequestor, "Singleton/Team_Id") instanceof _Cache);
 	});
 
 	//*********************************************************************************************
@@ -4044,6 +4045,9 @@ sap.ui.define([
 		oHelperMock.expects("buildPath")
 			.withExactArgs(oCache.sResourcePath, "('31')/entity/path")
 			.returns("~/");
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oEntity), "groupId")
+			.returns(undefined);
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "~/?~", sinon.match.same(oRequestGroupLock), undefined,
@@ -4053,6 +4057,12 @@ sap.ui.define([
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath),
 				oCache.sMetaPath + "/entity/path", "('31')/entity/path");
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oEntity), "predicate")
+			.returns(undefined);
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oData), "predicate")
+			.returns("('AnyKeyPredicate')");
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('31')/entity/path",
 				sinon.match.same(oEntity), sinon.match.same(oData), [sRequestedPropertyPath]);
@@ -10418,34 +10428,40 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+["foo('bar')/baz", "foo/$count", "Singleton/baz"].forEach(function (sResourcePath) {
 	QUnit.test("PropertyCache#_delete", function (assert) {
-		var oCache = _Cache.createProperty(this.oRequestor, "foo");
+		var oCache = _Cache.createProperty(this.oRequestor, sResourcePath);
 
 		// code under test
 		assert.throws(function () {
 			oCache._delete();
 		}, new Error("Unsupported"));
 	});
+});
 
+["foo('bar')/baz", "foo/$count", "Singleton/baz"].forEach(function (sResourcePath) {
 	//*********************************************************************************************
 	QUnit.test("PropertyCache#create", function (assert) {
-		var oCache = _Cache.createProperty(this.oRequestor, "foo");
+		var oCache = _Cache.createProperty(this.oRequestor, sResourcePath);
 
 		// code under test
 		assert.throws(function () {
 			oCache.create();
 		}, new Error("Unsupported"));
 	});
+});
 
+["foo('bar')/baz", "foo/$count", "Singleton/baz"].forEach(function (sResourcePath) {
 	//*********************************************************************************************
 	QUnit.test("PropertyCache#update", function (assert) {
-		var oCache = _Cache.createProperty(this.oRequestor, "foo");
+		var oCache = _Cache.createProperty(this.oRequestor, sResourcePath);
 
 		// code under test
 		assert.throws(function () {
 			oCache.update();
 		}, new Error("Unsupported"));
 	});
+});
 
 	//*********************************************************************************************
 	[{}, {"Bar/Baz" : {}}].forEach(function (mTypeForMetaPath) {
@@ -11199,6 +11215,195 @@ sap.ui.define([
 
 		assert.deepEqual(aCollection, ["a", "b", "c"], "unchanged");
 		assert.deepEqual(aReturnedCollection, ["a", "b"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#createProperty: _SingletonPropertyCache", function (assert) {
+		var oCache,
+			oOtherQueryOptions = {custom : "other"},
+			oQueryOptions = {custom : "query"},
+			oSingleton0,
+			oSingleton1;
+
+		assert.strictEqual(this.oRequestor.$mSingletonCacheByPath, undefined);
+
+		// code under test
+		oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz", oQueryOptions);
+
+		oSingleton0 = oCache.oSingleton;
+		assert.ok(oCache instanceof _Cache);
+		assert.ok(oSingleton0 instanceof _Cache);
+		assert.strictEqual(oCache.sRelativePath, "foo/bar/baz");
+		assert.deepEqual(oCache.mQueryOptions, {});
+		assert.strictEqual(oSingleton0.mQueryOptions, oQueryOptions);
+		assert.deepEqual(oSingleton0.oPromise.getResult(), {});
+		assert.strictEqual(this.oRequestor.$mSingletonCacheByPath['Singleton{"custom":"query"}']
+			, oSingleton0);
+
+		// code under test (same singleton, other property, equal query options)
+		oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/bas",
+			{custom : "query"});
+
+		oSingleton1 = oCache.oSingleton;
+		assert.strictEqual(oCache.sRelativePath, "foo/bar/bas");
+		assert.strictEqual(oSingleton1.mQueryOptions, oQueryOptions);
+		assert.strictEqual(oSingleton1, oSingleton0);
+		assert.strictEqual(this.oRequestor.$mSingletonCacheByPath['Singleton{"custom":"query"}']
+			, oSingleton0);
+		assert.deepEqual(oCache.mQueryOptions, {});
+
+		// code under test (same singleton, same property, other query options)
+		oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz",
+			oOtherQueryOptions);
+
+		oSingleton1 = oCache.oSingleton;
+		assert.strictEqual(oCache.sRelativePath, "foo/bar/baz");
+		assert.deepEqual(oCache.mQueryOptions, {});
+		assert.notStrictEqual(oSingleton1, oSingleton0);
+		assert.strictEqual(this.oRequestor.$mSingletonCacheByPath['Singleton{"custom":"query"}']
+			, oSingleton0);
+		assert.strictEqual(this.oRequestor.$mSingletonCacheByPath['Singleton{"custom":"other"}']
+			, oSingleton1);
+		assert.strictEqual(oCache.oSingleton.mQueryOptions, oOtherQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_SingletonPropertyCache#reset", function () {
+		var oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz");
+
+		this.mock(oCache.oSingleton).expects("resetProperty").withExactArgs("foo/bar/baz");
+
+		// code under test
+		oCache.reset();
+	});
+
+	//*********************************************************************************************
+[{
+	oData : undefined,
+	sPath : "foo",
+	oResult : undefined
+}, {
+	oData : {},
+	sPath : "foo/bar",
+	oResult : {}
+}, {
+	oData : {
+		"@odata.etag" : "etag",
+		foo0 : "foo0",
+		foo : "foo",
+		foo2 : "foo1"
+	},
+	sPath : "foo",
+	oResult : {
+		foo0 : "foo0",
+		foo2 : "foo1"
+	}
+}, {
+	oData : {
+		foo : {
+			"@odata.etag" : "etag",
+			bar : {
+				"@odata.etag" : "etag",
+				baz : "baz",
+				baz1 : "baz1"
+			},
+			bar1 : "bar1"
+		}
+	},
+	sPath : "foo/bar/baz",
+	oResult : {
+		foo : {
+			bar : {
+				baz1 : "baz1"
+			},
+			bar1 : "bar1"
+		}
+	}
+}].forEach(function (oFixture) {
+	QUnit.test("_SingleCache#resetProperty: sPath: " + oFixture.sPath, function (assert) {
+		var oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz");
+
+		oCache.oSingleton.oPromise = SyncPromise.resolve(oFixture.oData);
+
+		// code under test
+		oCache.oSingleton.resetProperty(oFixture.sPath);
+
+		assert.deepEqual(oCache.oSingleton.getValue(""), oFixture.oResult);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_SingletonPropertyCache#fetchValue", function (assert) {
+		var oCache,
+			oHelperMock = this.mock(_Helper),
+			aPromises = [],
+			oSingletonMock;
+
+		oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo");
+		oSingletonMock = this.mock(oCache.oSingleton);
+
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Singleton/foo")
+			.returns(SyncPromise.resolve({$kind : "Property", $Type : "Edm.String"}));
+		oSingletonMock.expects("getLateQueryOptions")
+			.returns(null);
+		oHelperMock.expects("wrapChildQueryOptions")
+			.withExactArgs("/Singleton", "foo", {},
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata))
+			.returns("~wrappedChildQueryOptions~");
+		oHelperMock.expects("aggregateExpandSelect")
+			.withExactArgs(sinon.match.object, "~wrappedChildQueryOptions~");
+		oSingletonMock.expects("setLateQueryOptions")
+			.withExactArgs(sinon.match.object);
+		oSingletonMock.expects("fetchValue")
+			.withExactArgs("~groupLock~", "foo", "~fnDataRequested~", "~oListener~",
+			"~bCreateOnDemand~")
+			.resolves("~fooResult~");
+
+		// code under test (first property for singleton, getLateQueryOptions returns null)
+		aPromises.push(oCache.fetchValue("~groupLock~", "n/a", "~fnDataRequested~", "~oListener~",
+			"~bCreateOnDemand~").then(function (oResult) {
+				assert.strictEqual(oResult, "~fooResult~");
+		}));
+
+		oCache = new _Cache.createProperty(this.oRequestor, "Singleton/bar");
+
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Singleton/bar")
+			.returns(SyncPromise.resolve({$kind : "Property", $Type : "Edm.String"}));
+		oSingletonMock.expects("getLateQueryOptions")
+			.returns("~mLateQueryOptions~");
+		oHelperMock.expects("wrapChildQueryOptions")
+			.withExactArgs("/Singleton", "bar", {},
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata))
+			.returns("~wrappedChildQueryOptions~");
+		oHelperMock.expects("aggregateExpandSelect")
+			.withExactArgs("~mLateQueryOptions~", "~wrappedChildQueryOptions~");
+		oSingletonMock.expects("setLateQueryOptions")
+			.withExactArgs("~mLateQueryOptions~");
+		oSingletonMock.expects("fetchValue")
+			.withExactArgs("~groupLock~", "bar", "~fnDataRequested~", "~oListener~",
+			"~bCreateOnDemand~")
+			.resolves("~barResult0~");
+
+		// code under test
+		aPromises.push(oCache.fetchValue("~groupLock~", "n/a", "~fnDataRequested~", "~oListener~",
+			"~bCreateOnDemand~").then(function (oResult) {
+				assert.strictEqual(oResult, "~barResult0~");
+		}));
+
+		oSingletonMock.expects("fetchValue")
+			.withExactArgs("~groupLock~", "bar", "~fnDataRequested~", "~oListener~",
+			"~bCreateOnDemand~")
+			.resolves("~barResult1~");
+
+		// code under test (add $select to mLateQueryOptions only once)
+		aPromises.push(oCache.fetchValue("~groupLock~", "n/a", "~fnDataRequested~", "~oListener~",
+			"~bCreateOnDemand~").then(function (oResult) {
+				assert.strictEqual(oResult, "~barResult1~");
+		}));
+
+		return Promise.all(aPromises);
 	});
 });
 //TODO: resetCache if error in update?
