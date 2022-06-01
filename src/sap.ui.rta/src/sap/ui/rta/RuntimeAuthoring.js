@@ -937,12 +937,14 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._activate = function(sVersionTitle) {
 		var sLayer = this.getLayer();
 		var oSelector = this.getRootControlInstance();
+		var sDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
 		return this._serializeAndSave()
 		.then(function () {
 			return VersionsAPI.activate({
 				layer: sLayer,
 				control: oSelector,
-				title: sVersionTitle
+				title: sVersionTitle,
+				displayedVersion: sDisplayedVersion
 			});
 		}).then(function () {
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
