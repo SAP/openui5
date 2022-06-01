@@ -862,7 +862,7 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("Tooltips", function (assert) {
+	QUnit.test("Tooltips appearance", function (assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 				type: ObjectMarkerType.Locked
@@ -896,4 +896,70 @@ sap.ui.define([
 		// Cleanup
 		oMarker.destroy();
 	});
+
+	QUnit.test("Setting custom tooltips", function (assert) {
+		// Arrange
+		var sCustomTooltip = "CUSTOM",
+			oMarker = new ObjectMarker({
+				type: ObjectMarkerType.Locked,
+				tooltip: sCustomTooltip
+			}),
+			oInnerControl = oMarker._getInnerControl(),
+			oInnerIcon;
+
+		oMarker.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oMarker.setVisibility(ObjectMarkerVisibility.IconAndText);
+		oCore.applyChanges();
+		oInnerIcon = oInnerControl._getIconAggregation();
+
+		// Assert
+		assert.notOk(oInnerIcon.getTooltip(), "Inner control's icon tooltip of non-interactive ObjectMarker with IconAndText visibility doesn't exist");
+
+		// Act
+		oMarker.setVisibility(ObjectMarkerVisibility.IconOnly);
+		oCore.applyChanges();
+
+		// Assert
+		assert.notOk(oInnerIcon.getTooltip(), "Inner control's icon tooltip of non-interactive ObjectMarker with IconOnly visibility doesn't exist");
+
+		// Act; Attaching press converts ObjectMarker to interactive
+		oMarker.setVisibility(ObjectMarkerVisibility.IconAndText);
+		oMarker.attachPress(function() {});
+		oInnerControl = oMarker._getInnerControl();
+		oInnerIcon = oInnerControl._getIconAggregation();
+		oCore.applyChanges();
+
+		// Assert
+		assert.notOk(oInnerIcon.getTooltip(), "Inner control's icon tooltip of interactive ObjectMarker with IconAndText visibility doesn't exist");
+
+		// Act
+		oMarker.setVisibility(ObjectMarkerVisibility.IconOnly);
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(oInnerIcon.getTooltip(), sCustomTooltip, "Inner control's icon tooltip of interactive ObjectMarker with IconOnly visibility is set to custom-set tooltip");
+
+		// Act; remove custom tooltip
+		oMarker.setTooltip("");
+		oMarker.setVisibility(ObjectMarkerVisibility.IconAndText);
+		oCore.applyChanges();
+
+		// Assert
+		assert.notOk(oInnerIcon.getTooltip(), "Inner control's icon tooltip of interactive ObjectMarker with IconAndText visibility doesn't exist");
+
+		// Act
+		oMarker.setVisibility(ObjectMarkerVisibility.IconOnly);
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(oInnerIcon.getTooltip(), "Locked", "Inner control's icon tooltip of interactive ObjectMarker with IconOnly visibility is set to default one");
+
+		// Cleanup
+		oMarker.destroy();
+	});
+
+
 });
