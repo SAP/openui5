@@ -339,6 +339,13 @@ Copyright:
 License: Apache-2.0 and ISC
 Comment: these files contain content from SAP and node-lru-cache: LRUPersistentCache.js is overall written by SAP, but portions ('Least Recently Used' logic) are taken from the node-lru-cache project (see https://github.com/isaacs/node-lru-cache/blob/v2.7.3/README.md) and modified.
 
+Files: src/sap.ui.core/test/sap/ui/core/qunit/i18n/helper/_timezones.js
+Copyright:
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    Arthur David Olson, Paul Eggert and other contributors
+License: Apache-2.0 and LicenseRef-tzdata-PublicDomain
+Comment: these files contain content from SAP and Time Zone Database: _timezones.js is overall written by SAP, but the list of IANA timezone IDs is taken from the Timezone Database
+
 
 # Library: sap.ui.documentation:
 

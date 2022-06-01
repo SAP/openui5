@@ -393,6 +393,11 @@
             <copyright>Isaac Z. Schlueter and Contributors</copyright>
             <pattern partial="true" otherContent="SAP" explanation="LRUPersistentCache.js is overall written by SAP, but portions ('Least Recently Used' logic) are taken from the node-lru-cache project (see https://github.com/isaacs/node-lru-cache/blob/v2.7.3/README.md) and modified.">sap/ui/core/cache/LRUPersistentCache.js</pattern>
         </lib>
+        <lib name="tzdata" displayName="Time Zone Database" version="2022a" homepage="http://www.iana.org/time-zones">
+        	<license url="https://github.com/eggert/tz/blob/main/LICENSE" type="LicenseRef-tzdata-PublicDomain" />
+        	<copyright>Arthur David Olson, Paul Eggert and other contributors</copyright>
+        	<pattern partial="true" otherContent="SAP" explanation="_timezones.js is overall written by SAP, but the list of IANA timezone IDs is taken from the Timezone Database">../test/sap/ui/core/qunit/i18n/helper/_timezones.js</pattern>
+        </lib>
         <ignore>
             <file pattern="sap/ui/thirdparty/RequestRecorder.js" />
             <file pattern="sap/ui/thirdparty/sinon-ie.js" />
