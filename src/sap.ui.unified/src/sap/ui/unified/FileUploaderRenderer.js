@@ -23,8 +23,7 @@ sap.ui.define(['sap/ui/unified/library', "sap/ui/thirdparty/jquery"],
 	 * @param {sap.ui.unified.FileUploader} oFileUploader An object representation of the control that should be rendered.
 	 */
 	FileUploaderRenderer.render = function(oRm, oFileUploader) {
-		var bEnabled = oFileUploader.getEnabled(),
-			sTooltip = oFileUploader.getTooltip_AsString();
+		var bEnabled = oFileUploader.getEnabled();
 
 		oRm.openStart("div", oFileUploader);
 		oRm.class("sapUiFup");
@@ -95,9 +94,6 @@ sap.ui.define(['sap/ui/unified/library', "sap/ui/thirdparty/jquery"],
 		var sName = oFileUploader.getName() || oFileUploader.getId();
 		oRm.openStart("div");
 		oRm.class("sapUiFupInputMask");
-		if (sTooltip && sTooltip.length) {
-			oRm.attr('title', sTooltip);
-		}
 		oRm.openEnd();
 		oRm.voidStart("input");
 		oRm.attr("type", "hidden");

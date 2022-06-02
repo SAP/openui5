@@ -727,7 +727,7 @@ sap.ui.define([
 			if (sTooltip) {
 				this.oFileUpload.setAttribute("title", sTooltip);
 			} else {
-				this.oFileUpload.removeAttribute("title");
+				this.oFileUpload.setAttribute("title", this.getValue() ? this.getValue() : this._getNoFileChosenText());
 			}
 		}
 		return this;
@@ -1110,6 +1110,9 @@ sap.ui.define([
 			// when we do not upload we re-render (cause some browsers don't like
 			// to change the value of file uploader INPUT elements)
 			this.setProperty("value", sValue, bUpload);
+			if (this.oFileUpload && !this.getTooltip_AsString()) {
+				this.oFileUpload.setAttribute("title", sValue ? sValue : this._getNoFileChosenText());
+			}
 			if (this.oFilePath) {
 				this.oFilePath.setValue(sValue);
 				//refocus the Button, except bSupressFocus is set
@@ -1841,7 +1844,7 @@ sap.ui.define([
 	 * Helper to retrieve the I18N texts for a button
 	 * @private
 	 */
-	FileUploader.prototype.getBrowseText = function() {
+	 FileUploader.prototype.getBrowseText = function() {
 
 		// as the text is the same for all FileUploaders, get it only once
 		if (!FileUploader.prototype._sBrowseText) {
@@ -1850,6 +1853,22 @@ sap.ui.define([
 		}
 
 		return FileUploader.prototype._sBrowseText ? FileUploader.prototype._sBrowseText : "Browse...";
+
+	};
+
+	/**
+	 * Helper to retrieve the I18N text for the tooltip when there is no file chosen
+	 * @private
+	 */
+	 FileUploader.prototype._getNoFileChosenText = function() {
+
+		// as the text is the same for all FileUploaders, get it only once
+		if (!FileUploader.prototype._sNoFileChosenText) {
+			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+			FileUploader.prototype._sNoFileChosenText = rb.getText("FILEUPLOAD_NO_FILE_CHOSEN");
+		}
+
+		return FileUploader.prototype._sNoFileChosenText ? FileUploader.prototype._sNoFileChosenText : "No file chosen";
 
 	};
 
@@ -1932,9 +1951,9 @@ sap.ui.define([
 				aFileUpload.push('title="' + encodeXML(this.getTooltip_AsString()) + '" ');
 			//} else if (this.getTooltip() ) {
 				// object tooltip, do nothing - tooltip will be displayed
-			} else if (this.getValue() !== "") {
-				// only if there is no tooltip, then set value as fallback
-				aFileUpload.push('title="' + encodeXML(this.getValue()) + '" ');
+			} else {
+				// only if there is no tooltip, then set value or default tooltip as fallback
+				aFileUpload.push('title="' + encodeXML(this.getValue() ? this.getValue() : this._getNoFileChosenText()) + '" ');
 			}
 
 			if (!this.getEnabled()) {
