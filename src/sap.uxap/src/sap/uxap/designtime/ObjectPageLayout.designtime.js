@@ -149,10 +149,7 @@ function(
 				},
 				actions : {
 					move : function(oElement){
-						var oParent;
-						if (oElement && (oParent = oElement.getParent())
-							&& oParent.isA("sap.uxap.ObjectPageLayout")
-							&& oParent.indexOfHeaderContent(oElement) > -1){
+						if (oElement && oElement.getParent() && (oElement.getParent().isA(["sap.uxap.ObjectPageHeaderContent", "sap.uxap.ObjectPageDynamicHeaderContent"]))){
 							//only allow move inside the header
 							return "moveControls";
 						}
