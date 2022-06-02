@@ -42,9 +42,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', './library', 'sap/
 		var sTooltip = oON.getTooltip_AsString(),
 			sTextDir = oON.getTextDirection(),
 			sTextAlign = oON.getTextAlign(),
-			oAccAttributes = {
-				roledescription: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_NAME")
-			};
+			oAccAttributes = {};
 
 		oRm.openStart("div", oON);
 		oRm.class("sapMObjectNumber");
@@ -105,6 +103,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', './library', 'sap/
 
 		this.renderEmphasizedInfoElement(oRm, oON);
 		this.renderHiddenARIAElement(oRm, oON);
+		this.renderRoleDescriptionInfo(oRm, oON);
 
 		oRm.close("div");
 	};
@@ -155,6 +154,14 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', './library', 'sap/
 		oRm.class("sapUiPseudoInvisibleText");
 		oRm.openEnd();
 		oRm.text(oON._getStateText());
+		oRm.close("span");
+	};
+
+	ObjectNumberRenderer.renderRoleDescriptionInfo = function(oRm, oON) {
+		oRm.openStart("span", oON.getId() + "-roledescription");
+		oRm.class("sapUiPseudoInvisibleText");
+		oRm.openEnd();
+		oRm.text(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_NAME"));
 		oRm.close("span");
 	};
 
