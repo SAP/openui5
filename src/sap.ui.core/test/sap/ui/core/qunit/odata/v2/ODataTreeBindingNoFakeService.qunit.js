@@ -396,13 +396,15 @@ sap.ui.define([
 		var oBinding = {
 				_hasChangedEntity : function () {},
 				_fireRefresh : function () {},
-				resetData : function () {},
-				oKeys : {
-					"~nodeKeys" : ["~changedEntityKey"]
-				}
+				_isRefreshAfterChangeAllowed : function () {},
+				resetData : function () {}
 			},
 			bExpectChange = !mChangedEntities || mChangedEntities["~changedEntityKey"];
 
+		this.mock(oBinding).expects("_isRefreshAfterChangeAllowed")
+			.withExactArgs()
+			.exactly(mChangedEntities ? 1 : 0)
+			.returns(true);
 		this.mock(oBinding).expects("_hasChangedEntity")
 			.withExactArgs(mChangedEntities)
 			.returns(bExpectChange ? true : false)
@@ -419,6 +421,29 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bRefresh, bExpectChange ? true : undefined);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_refresh: don't check _hasChangedEntity if refreshAfterChange is not allowed",
+			function (assert) {
+		var oBinding = {
+				_hasChangedEntity : function () {},
+				_fireRefresh : function () {},
+				_isRefreshAfterChangeAllowed : function () {},
+				resetData : function () {}
+			};
+
+		this.mock(oBinding).expects("_isRefreshAfterChangeAllowed").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_hasChangedEntity").never();
+		this.mock(oBinding).expects("resetData").never();
+		this.mock(oBinding).expects("_fireRefresh").never();
+
+		// code under test
+		ODataTreeBinding.prototype._refresh.call(oBinding, /*bForceUpdate*/undefined,
+			"~mChangedEntities", /*mEntityTypes*/undefined);
+
+		assert.strictEqual(oBinding.bNeedsUpdate, undefined);
+		assert.strictEqual(oBinding.bRefresh, undefined);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("_refresh: uses getResolvedPath", function (assert) {
@@ -1111,4 +1136,10 @@ sap.ui.define([
 		ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations.call(oBinding, aUrlParams);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_isRefreshAfterChangeAllowed", function (assert) {
+		// code under test
+		assert.strictEqual(ODataTreeBinding.prototype._isRefreshAfterChangeAllowed(), true);
+	});
 });

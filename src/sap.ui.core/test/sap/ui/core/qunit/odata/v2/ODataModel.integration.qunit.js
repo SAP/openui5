@@ -220,6 +220,19 @@ sap.ui.define([
 	}
 
 	/**
+	 * Creates a V2 OData model for hierarchy maintenance.
+	 *
+	 * @param {object} [mModelParameters]
+	 *   Map of parameters for model construction. The default parameters are set in the createModel
+	 *   function.
+	 * @returns {sap.ui.model.odata.v2.ODataModel}
+	 *   The model
+	 */
+	function createHierarchyMaintenanceModel(mModelParameters) {
+		return createModel("/hierarchy/maintenance/", mModelParameters);
+	}
+
+	/**
 	 * Gets a string representation of the given messages to be used in "sap-message" response
 	 * header. In case of multiple messages, the first message is the outer message and the other
 	 * messages are stored as inner messages in the "details" property.
@@ -412,6 +425,8 @@ sap.ui.define([
 					: {source : "qunit/odata/v2/data/UI_C_DFS_ALLWNCREQ.metadata.xml"},
 				"/special/cases/$metadata"
 					: {source : "qunit/odata/v2/data/metadata_special_cases.xml"},
+				"/hierarchy/maintenance/$metadata"
+					: {source : "qunit/odata/v2/data/metadata_hierarchy_maintenance.xml"},
 				"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata"
 					: {source : "qunit/model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml"}
 			}, [{
@@ -984,18 +999,25 @@ sap.ui.define([
 				controller : oController && new (Controller.extend(uid(), oController))(),
 				definition : xml(sViewXML)
 			}).then(function (oView) {
+				that.oView = oView;
+
+				return Promise.all(Object.values(mNamedModels).filter(function (oModel) {
+					return oModel instanceof ODataModel;
+				}).map(function (oModel) {
+					return oModel.metadataLoaded(true);
+				}));
+			}).then(function () {
 				var sModelName;
 
-				that.oView = oView;
 				Object.keys(that.mChanges).forEach(function (sControlId) {
-					var oControl = oView.byId(sControlId);
+					var oControl = that.oView.byId(sControlId);
 
 					if (oControl) {
 						that.observe(assert, oControl, sControlId);
 					}
 				});
 				Object.keys(that.mListChanges).forEach(function (sControlId) {
-					var oControl = oView.byId(sControlId);
+					var oControl = that.oView.byId(sControlId);
 
 					if (oControl) {
 						that.observe(assert, oControl, sControlId, true);
@@ -1004,13 +1026,13 @@ sap.ui.define([
 
 				for (sModelName in mNamedModels) {
 					sModelName = sModelName === "undefined" ? undefined : sModelName;
-					oView.setModel(mNamedModels[sModelName], sModelName);
+					that.oView.setModel(mNamedModels[sModelName], sModelName);
 				}
 				// enable parse error messages in the message manager
-				sap.ui.getCore().getMessageManager().registerObject(oView, true);
+				sap.ui.getCore().getMessageManager().registerObject(that.oView, true);
 				// Place the view in the page so that it is actually rendered. In some situations,
 				// esp. for the table.Table this is essential.
-				oView.placeAt("qunit-fixture");
+				that.oView.placeAt("qunit-fixture");
 
 				return that.waitForChanges(assert);
 			});
@@ -16108,4 +16130,165 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A table using ODataTreeBindingFlat with restoreTreeStateAfterChange=true correctly
+	// restores the tree state for property and hierarchy changes, regardless of whether
+	// refreshAfterChange is true or false.
+	// JIRA: CPOUI5MODELS-958
+[false, true].forEach(function (bRefreshAfterChange) {
+	QUnit.test("ODataTreeBindingFlat: #submitChanges for refreshAfterChange=" + bRefreshAfterChange
+			+ " and restoreTreeStateAfterChange=true", function (assert) {
+		var oBinding, oTable,
+			oModel = createHierarchyMaintenanceModel({refreshAfterChange : bRefreshAfterChange}),
+			oNode100 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='100')"},
+				ErhaOrder : "1",
+				ErhaOrderItem : "100",
+				ErhaOrderItemName : "foo",
+				HierarchyNode : "100",
+				HierarchyParentNode : "",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 0,
+				HierarchyDrillState : "collapsed",
+				HierarchyPreorderRank : 0,
+				HierarchySiblingRank : 0
+			},
+			oNode200 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
+				ErhaOrder : "1",
+				ErhaOrderItem : "200",
+				ErhaOrderItemName : "bar",
+				HierarchyNode : "200",
+				HierarchyParentNode : "100",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 1,
+				HierarchyDrillState : "leaf",
+				HierarchyPreorderRank : 0,
+				HierarchySiblingRank : 0
+			},
+			oNode300 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"},
+				ErhaOrder : "1",
+				ErhaOrderItem : "300",
+				ErhaOrderItemName : "baz",
+				HierarchyNode : "300",
+				HierarchyParentNode : "100",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 1,
+				HierarchyDrillState : "leaf",
+				HierarchyPreorderRank : 1,
+				HierarchySiblingRank : 1
+			},
+			sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters : {\
+				countMode : \'Inline\',\
+				numberOfExpandedLevels : 0,\
+				restoreTreeStateAfterChange : true\
+			},\
+			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
+		}"\
+		visibleRowCount="3"\
+		visibleRowCountMode="Fixed" \>\
+	<Text id="itemName" text="{ErhaOrderItemName}" />\
+</t:TreeTable>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+					+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+			}, {
+				__count : "1",
+				results : [oNode100]
+			})
+			.expectValue("itemName", ["foo", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectRequest({
+					batchNo : 2,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+				}, {
+					__count : "2",
+					results : [oNode200, oNode300]
+				})
+				.expectValue("itemName", ["bar", "baz"], 1);
+
+			oTable.expand(0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oBinding = oTable.getBinding("rows");
+
+			that.expectRequest({
+					batchNo : 3,
+					method : "DELETE",
+					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"
+				}, NO_CONTENT)
+				.expectValue("itemName", "", 2)
+				.expectRequest({
+					batchNo : 4,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
+						+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+				}, {
+					__count : "1",
+					results : [oNode100]
+				})
+				.expectRequest({
+					batchNo : 4,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
+						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+				}, {
+					__count : "1",
+					results : [oNode200]
+				});
+
+			// code under test: hierarchy change
+			oBinding.removeContext(oTable.getContextByIndex(2));
+			oBinding.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("itemName", "bar: renamed", 1)
+				.expectRequest({
+					batchNo : 5,
+					data : {
+						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
+						ErhaOrderItemName : "bar: renamed"
+					},
+					key : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')",
+					method : "MERGE",
+					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"
+				}, NO_CONTENT)
+				.expectRequest({
+					batchNo : 6,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
+						+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+				}, {
+					__count : "1",
+					results : [oNode100]
+				})
+				.expectRequest({
+					batchNo : 6,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
+						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+				}, {
+					__count : "1",
+					results : [Object.assign(oNode200, {ErhaOrderItemName : "bar: renamed"})]
+				});
+
+			// code under test: property change
+			oModel.setProperty("ErhaOrderItemName", "bar: renamed", oTable.getContextByIndex(1));
+			oBinding.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
 });

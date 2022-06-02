@@ -1509,7 +1509,8 @@ sap.ui.define([
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
-				bChangeDetected = this._hasChangedEntity(mChangedEntities);
+				bChangeDetected = this._isRefreshAfterChangeAllowed()
+					&& this._hasChangedEntity(mChangedEntities);
 			}
 			if (!mChangedEntities && !mEntityTypes) { // default
 				bChangeDetected = true;
@@ -1521,6 +1522,18 @@ sap.ui.define([
 			this.bRefresh = true;
 			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
+	};
+
+	/**
+	 * Checks whether this binding with its configuration is allowed to perform a refresh triggered
+	 * by refreshAfterChange.
+	 *
+	 * @returns {boolean} Whether a refresh caused by refreshAfterChange is allowed
+	 *
+	 * @private
+	 */
+	ODataTreeBinding.prototype._isRefreshAfterChangeAllowed = function () {
+		return true;
 	};
 
 	/**
