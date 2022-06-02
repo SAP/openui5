@@ -434,6 +434,7 @@ sap.ui.define([
 			"sap.m.UploadCollectionParameter",
 			"sap.m.upload.Uploader",
 			"sap.m.upload.UploadSetItem",
+			"sap.m.VariantItem",
 			"sap.m.ViewSettingsCustomItem",
 			"sap.m.ViewSettingsCustomTab",
 			"sap.m.ViewSettingsFilterItem",
