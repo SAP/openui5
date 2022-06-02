@@ -315,6 +315,12 @@ License: ISC
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/ISC.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/cache/LRUPersistentCache.js
 
+Component: Time Zone Database, version: 2022a
+Copyright: Arthur David Olson, Paul Eggert and other contributors
+License: LicenseRef-tzdata-PublicDomain
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/LicenseRef-tzdata-PublicDomain.txt
+Contained in: src/sap.ui.core/test/sap/ui/core/qunit/i18n/helper/_timezones.js
+
 
 Library: sap.ui.documentation:
 
@@ -977,6 +983,21 @@ BEGIN of license: LicenseRef-JSONinJSPublicDomain
 See https://github.com/douglascrockford/JSON-js/blob/master/json2.js
 =================================
 END of license: LicenseRef-JSONinJSPublicDomain
+=================================
+
+
+=================================
+BEGIN of license: LicenseRef-tzdata-PublicDomain
+=================================
+
+Unless specified below, all files in the tz code and data (including
+this LICENSE file) are in the public domain.
+
+If the files date.c, newstrftime.3, and strftime.c are present, they
+contain material derived from BSD and use the BSD 3-clause license.
+
+=================================
+END of license: LicenseRef-tzdata-PublicDomain
 =================================
 
 
