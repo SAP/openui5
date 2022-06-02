@@ -10743,4 +10743,83 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A not yet initialized ODataListBinding (with transient context) is getting
+	// initialized after the entity of its parent ODataContextBinding which has the empty binding
+	// path and thus the transient context as element context got persisted.
+	// BCP: 002075129400002462642022
+	QUnit.test("ODataListBinding with created parent context initializes", function (assert) {
+		var oContext,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="objectPage">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<Text id="companyName" text="{CompanyName}"/>\
+	<t:Table id="table" visibleRowCount="2">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oObjectPage = that.oView.byId("objectPage"),
+				oTable = that.oView.byId("table");
+
+			that.expectValue("companyName", "SAP");
+
+			// ODataContextBinding must be created first!
+			oObjectPage.bindObject("", {select : "BusinessPartnerID,CompanyName"});
+			oContext = oModel.createEntry("/BusinessPartnerSet", {
+				properties : {CompanyName : "SAP"}
+			});
+			oObjectPage.setBindingContext(oContext);
+			// in the ticket scenario a failed $batch caused a #checkUpdate on the bindings; for
+			// simplicity a #updateBindings leads to the same binding behavior
+			oModel.updateBindings();
+			oTable.bindRows("ToSalesOrders");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.BusinessPartner"},
+						CompanyName : "SAP"
+					},
+					method : "POST",
+					requestUri : "BusinessPartnerSet"
+				}, {
+					data : {
+						__metadata : {uri : "BusinessPartnerSet('42')"},
+						BusinessPartnerID : "42",
+						CompanyName : "SAP"
+					},
+					statusCode : 201
+				})
+				.expectValue("businessPartnerID", "42")
+				.expectRequest("BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=102", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('1')"},
+						SalesOrderID : "1",
+						Note : "Note 1"
+					}, {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						SalesOrderID : "2",
+						Note : "Note 2"
+					}]
+				})
+				.expectValue("salesOrderID", ["1", "2"])
+				.expectValue("note", ["Note 1", "Note 2"]);
+
+			oModel.submitChanges();
+
+			return Promise.all([
+				oContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });
