@@ -619,6 +619,14 @@ sap.ui.define([
 		// Assert
 		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
 
+		pressSpy.resetHistory();
+
+		// Action
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.ENTER, false, false, true);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event was not fired for Ctrl+ENTER");
+
 		// Cleanup
 		oButton.destroy();
 	});

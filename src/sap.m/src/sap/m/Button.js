@@ -558,7 +558,8 @@ sap.ui.define([
 	 */
 	Button.prototype.onkeydown = function(oEvent) {
 
-		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.ESCAPE || oEvent.which === KeyCodes.SHIFT) {
+		if ((oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.ESCAPE || oEvent.which === KeyCodes.SHIFT)
+			&& !oEvent.ctrlKey && !oEvent.metaKey) {
 
 			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 				// mark the event for components that needs to know if the event was handled by the button
