@@ -592,6 +592,17 @@ sap.ui.define([
 		oMessagePopover.destroy();
 	});
 
+	QUnit.test("_restoreFocus", function (assert) {
+		var restoreFocusSpy = sinon.spy(this.oMessagePopover._oMessageView, "_restoreFocus");
+		this.oMessagePopover.openBy(this.oButton);
+
+		this.clock.tick(500);
+		assert.strictEqual(restoreFocusSpy.callCount, 1, "_restoreFocus() should be called after opening");
+
+		// Clean
+		restoreFocusSpy.restore();
+	});
+
 	QUnit.test("When initialized without items template should automatically perform binding to the Message Model", function (assert) {
 		var oModel = new JSONModel({
 			form: {
