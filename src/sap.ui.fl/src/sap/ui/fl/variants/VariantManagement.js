@@ -111,6 +111,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 	/**
 	 * Constructor for a new <code>VariantManagement</code>.
 	 * @param {string} [sId] - ID for the new control, generated automatically if no ID is given
@@ -221,6 +224,18 @@ sap.ui.define([
 					type: "string",
 					group: "Misc",
 					defaultValue: ""
+				},
+
+				/**
+                 * Semantic level of the header.
+                 * For more information, see {@link sap.m.Title#setLevel}.
+                 *
+                 * @since 1.104
+                 */
+				headerLevel: {
+					type: "sap.ui.core.TitleLevel",
+					group: "Appearance",
+					defaultValue: TitleLevel.Auto
 				}
 			},
 			associations: {
@@ -358,6 +373,10 @@ sap.ui.define([
 
 					return sText;
 				}.bind(this)
+			},
+			level: {
+				path: '/headerLevel',
+				model: VariantManagement.INNER_MODEL_NAME
 			}
 		});
 
@@ -498,6 +517,7 @@ sap.ui.define([
 			showPublic: false,
 			showContexts: false,
 			editable: true,
+			headerLevel: this.getHeaderLevel(),
 			popoverTitle: this._oRb.getText("VARIANT_MANAGEMENT_VARIANTS")
 		});
 		this.setModel(oModel, VariantManagement.INNER_MODEL_NAME);
@@ -514,6 +534,10 @@ sap.ui.define([
 		});
 		this.bindProperty("editable", {
 			path: "/editable",
+			model: VariantManagement.INNER_MODEL_NAME
+		});
+		this.bindProperty("headerLevel", {
+			path: "/headerLevel",
 			model: VariantManagement.INNER_MODEL_NAME
 		});
 	};
