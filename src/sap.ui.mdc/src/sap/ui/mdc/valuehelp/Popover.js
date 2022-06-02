@@ -6,16 +6,21 @@ sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/Container',
 	'sap/ui/mdc/util/loadModules',
 	"sap/ui/dom/units/Rem",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/library"
 ], function(
 	Container,
 	loadModules,
 	Rem,
-	jQuery
+	jQuery,
+	coreLibrary
 ) {
 	"use strict";
 
-	var MPopover, MLibrary, Toolbar, ToolbarSpacer;
+	var MPopover, MLibrary, Toolbar, ToolbarSpacer, ValueStateHeader;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Constructor for a new <code>Popover</code> container.
@@ -81,18 +86,32 @@ sap.ui.define([
 
 	Popover.prototype._getContainer = function () {
 		var oPopover = this.getAggregation("_container");
+		var fUpdateValueHelpHeader = function(oControl, oValueStateHeader) {
+			if (oControl && oControl.getValueState && oControl.getValueState() !== ValueState.None) {
+				oValueStateHeader.setText(oControl.getValueStateText());
+				oValueStateHeader.setValueState(oControl.getValueState());
+				oValueStateHeader.setVisible(true);
+			} else {
+				oValueStateHeader.setVisible(false);
+			}
+		};
 
 		if (!oPopover) {
 			return loadModules([
 				"sap/m/Popover",
 				"sap/m/library",
 				"sap/m/Toolbar",
-				"sap/m/ToolbarSpacer"
+				"sap/m/ToolbarSpacer",
+				"sap/m/ValueStateHeader"
 			]).then(function (aLoaded) {
 				MPopover = aLoaded[0];
 				MLibrary = aLoaded[1];
 				Toolbar = aLoaded[2];
 				ToolbarSpacer = aLoaded[3];
+				ValueStateHeader = aLoaded[4];
+
+				var oValueStateHeader = new ValueStateHeader();
+				fUpdateValueHelpHeader(this._getControl(), oValueStateHeader);
 
 				oPopover = new MPopover(this.getId() + "-pop", {
 					contentHeight: "auto",
@@ -102,8 +121,13 @@ sap.ui.define([
 					title: this.getTitle(),
 					titleAlignment: MLibrary.TitleAlignment.Center,
 					afterOpen: this._handleOpened.bind(this),
-					afterClose: this._handleClosed.bind(this)
+					afterClose: this._handleClosed.bind(this),
+					customHeader: oValueStateHeader
 				}).addStyleClass("sapMdcValueHelpPopover").addStyleClass("sapMComboBoxBasePicker").addStyleClass("sapMComboBoxBasePicker-CTX"); // to have a ComboBox popup
+
+				if (oValueStateHeader) {
+					oValueStateHeader.setPopup(oPopover);
+				}
 
 				oPopover.isPopupAdaptationAllowed = function () {
 					return false;
@@ -141,6 +165,8 @@ sap.ui.define([
 				return oPopover;
 			}.bind(this));
 		}
+
+		fUpdateValueHelpHeader(this._getControl(), oPopover.getCustomHeader());
 
 		return oPopover;
 	};
