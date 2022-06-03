@@ -490,6 +490,10 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		assert.strictEqual(this.oUploadCollection._oFileUploader.getButtonText(), sText, "Correct tooltip of FileUploader");
 	});
 
+	QUnit.test("Check the FileSizeFormat", function(assert) {
+		assert.strictEqual(this.oUploadCollection._oFormatDecimal.bBinary, false, "FileSizeFormat should be in KB");
+	});
+
 	QUnit.test("File upload button is visible", function(assert) {
 		assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
 	});
