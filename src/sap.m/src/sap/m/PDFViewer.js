@@ -227,7 +227,7 @@ sap.ui.define([
 			try {
 				//unbind all iFrame events before rendering
 				var oIframeElement = this._getIframeDOMElement();
-				oIframeElement.off();
+				oIframeElement.remove();
 			} catch (error) {
 				Log.info(error);
 			}
