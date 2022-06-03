@@ -9,6 +9,11 @@
 		"lastName": "Miller",
 		"photo": "../../images/Woman_avatar_02.png"
 	},
+	"assistant": {
+		"firstName": "Donna",
+		"lastName": "Moore",
+		"photo": "../../images/Woman_avatar_01.png"
+	},
 	"company": {
 		"name": "Company A",
 		"address": "481 West Street, Anytown OH 45066, USA",
