@@ -124,7 +124,7 @@ sap.ui.define([
 				if (bInstantUpload === false) {
 					this.bInstantUpload = bInstantUpload;
 					this._oFormatDecimal = FileSizeFormat.getInstance({
-						binaryFilesize: true,
+						binaryFilesize: false,
 						maxFractionDigits: 1,
 						maxIntegerDigits: 4
 					});
