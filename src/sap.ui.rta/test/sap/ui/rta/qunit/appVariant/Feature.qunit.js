@@ -99,7 +99,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			var oGetManifirstSupport = sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves({response: true});
+			var oGetManifirstSupport = sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
 
 			return RtaAppVariantFeature.isManifestSupported().then(function(bSuccess) {
 				assert.ok(oGetManifirstSupport.calledWith("BaseAppId"), "then getManifirstSupport is called with correct parameters");
@@ -115,17 +115,13 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			var oGetManifirstSupport = sandbox.stub(AppVariantUtils, "getManifirstSupport").rejects({status: "403", stack: "myErrorStacktrace"});
+			var oGetManifirstSupport = sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(false);
 			var oDialogSpy = sandbox.spy(AppVariantUtils, "showRelevantDialog");
-			var oLogSpy = sandbox.spy(Log, "error");
 
 			return RtaAppVariantFeature.isManifestSupported().then(function(bSuccess) {
 				assert.ok(oGetManifirstSupport.calledWith("BaseAppId"), "then getManifirstSupport is called with correct parameters");
 				assert.equal(oDialogSpy.notCalled, true, "then the dialog is not opened");
 				assert.equal(bSuccess, false, "then the error happened");
-				assert.equal(oLogSpy.calledOnce, true, "then the log method logs one time");
-				assert.equal(oLogSpy.firstCall.args[0], "Response status code is: 403", "then the status will be logged");
-				assert.equal(oLogSpy.firstCall.args[1], "Stacktrace: myErrorStacktrace", "then the stack will be logged");
 			});
 		});
 
