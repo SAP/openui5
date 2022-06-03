@@ -1194,7 +1194,7 @@ sap.ui.define([
 		var oContainer;
 		var sContainerId;
 		var iLength = aVisibleContainers.length;
-		var iContentLenght = 0;
+		var iContentLength = 0;
 		var i = 0;
 		var j = 0;
 
@@ -1237,10 +1237,10 @@ sap.ui.define([
 				this._mainGrid.setDefaultSpan(sDefaultSpan);
 				// update containers
 				var aLayoutContent = this._mainGrid.getContent();
-				iContentLenght = aLayoutContent.length;
+				iContentLength = aLayoutContent.length;
 				var bExchangeContent = false;
 				// check if content has changed
-				for ( i = 0; i < iContentLenght; i++) {
+				for ( i = 0; i < iContentLength; i++) {
 					var oContentElement = aLayoutContent[i];
 					oContainer = undefined;
 					if (oContentElement.getContainer) {
@@ -1278,7 +1278,7 @@ sap.ui.define([
 				if (bExchangeContent) {
 					// remove all content and add it new.
 					this._mainGrid.removeAllContent();
-					iContentLenght = 0;
+					iContentLength = 0;
 				}
 			}
 			this._mainGrid._setBreakPointTablet(this.getBreakpointM());
@@ -1286,11 +1286,11 @@ sap.ui.define([
 			this._mainGrid._setBreakPointLargeDesktop(this.getBreakpointXL());
 			this._mainGrid.__bIsUsed = true;
 
-			if (iContentLenght < iLength) {
+			if (iContentLength < iLength) {
 				// new containers added
 				var iStartIndex = 0;
-				if (iContentLenght > 0) {
-					iStartIndex = iContentLenght--;
+				if (iContentLength > 0) {
+					iStartIndex = iContentLength--;
 				}
 				for ( i = iStartIndex; i < iLength; i++) {
 					oContainer = aVisibleContainers[i];

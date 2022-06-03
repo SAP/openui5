@@ -809,7 +809,7 @@ sap.ui.define([
 		var aVisibleContainers = oForm.getVisibleFormContainers();
 		var oContainer;
 		var iLength = aVisibleContainers.length;
-		var iContentLenght = 0;
+		var iContentLength = 0;
 		var i = 0;
 		var j = 0;
 
@@ -820,10 +820,10 @@ sap.ui.define([
 			} else {
 				// update containers
 				var aLayoutContent = this._mainRFLayout.getContent();
-				iContentLenght = aLayoutContent.length;
+				iContentLength = aLayoutContent.length;
 				var bExchangeContent = false;
 				// check if content has changed
-				for ( i = 0; i < iContentLenght; i++) {
+				for ( i = 0; i < iContentLength; i++) {
 					var oContentElement = aLayoutContent[i];
 					oContainer = undefined;
 					if (oContentElement.getContainer) {
@@ -861,14 +861,14 @@ sap.ui.define([
 				if (bExchangeContent) {
 					// remove all content and add it new.
 					this._mainRFLayout.removeAllContent();
-					iContentLenght = 0;
+					iContentLength = 0;
 				}
 			}
-			if (iContentLenght < iLength) {
+			if (iContentLength < iLength) {
 				// new containers added
 				var iStartIndex = 0;
-				if (iContentLenght > 0) {
-					iStartIndex = iContentLenght--;
+				if (iContentLength > 0) {
+					iStartIndex = iContentLength--;
 				}
 				for ( i = iStartIndex; i < iLength; i++) {
 					oContainer = aVisibleContainers[i];
