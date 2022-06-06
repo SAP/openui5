@@ -58,6 +58,12 @@ sap.ui.define(function () {
 				}
 			},
 			"DynamicPageTitle": {
+				qunit: {
+					version: "edge"
+				},
+				sinon: {
+					version: "edge"
+				},
 				coverage: {
 					only: ["sap/f/DynamicPageTitle"]
 				}

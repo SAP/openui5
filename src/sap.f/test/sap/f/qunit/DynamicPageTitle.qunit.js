@@ -1124,8 +1124,8 @@ function (
 		assert.expect(3);
 
 		// Act
-		$qunitDOMLocation.width("200px");
-		oToolbar.addContent(oFactory.getGenericTag("Loooooong test"));
+		$qunitDOMLocation.width("300px");
+		oToolbar.addContent(oFactory.getGenericTag("Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooong test"));
 		this.oDynamicPageTitle.addContent(oToolbar);
 		Core.applyChanges();
 		oInvalidateSpy.reset();
