@@ -219,6 +219,62 @@ sap.ui.define([
 		oRadioButton2.destroy();
 	});
 
+	QUnit.test("RadioButton selection in same groupName should be changed after setSelected before rendering", function(assert) {
+		// arrange
+		var oRadioButton1 = new RadioButton({
+			groupName: "R1",
+			text:'Hello World2'
+		});
+		oRadioButton1.placeAt("qunit-fixture");
+		var oRadioButton2 = new RadioButton({
+			groupName: "R1",
+			text:'Hello World2',
+			selected: true
+		});
+		oRadioButton2.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oRadioButton1.setSelected(true);
+		Core.applyChanges();
+
+		// assertions
+		assert.equal(oRadioButton1.getSelected(),true, "The Radio Button should not be selected");
+		assert.equal(oRadioButton2.getSelected(),false, "The Radio Button should be selected");
+
+		// cleanup
+		oRadioButton1.destroy();
+		oRadioButton2.destroy();
+	});
+
+	QUnit.test("RadioButton selection in same groupName should NOT be changed too early (before setGroupName has passed)", function(assert) {
+		// arrange
+		var oRadioButton1 = new RadioButton({
+			groupName: "R1",
+			text:'Hello World2'
+		});
+		oRadioButton1.placeAt("qunit-fixture");
+		var oRadioButton2 = new RadioButton({
+			groupName: "R1",
+			text:'Hello World2',
+			selected: true
+		});
+		oRadioButton2.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// act
+		oRadioButton1.setSelected(true);
+		oRadioButton1.setGroupName("AnotherGroup");
+		Core.applyChanges();
+
+		// assertions
+		assert.ok(oRadioButton1.getSelected(), "Alone Radio Button in group 'R1' should be selected");
+		assert.ok(oRadioButton2.getSelected(), "Alone The Radio Button in group 'AnotherGroup' should be selected");
+
+		// cleanup
+		oRadioButton1.destroy();
+		oRadioButton2.destroy();
+	});
+
 	QUnit.test("setSelected after rendering with null value passed", function(assert) {
 		var oRadioButton = new RadioButton();
 
@@ -252,6 +308,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("tap", oRadioButton2.getId());
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(!oRadioButton1.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
@@ -282,7 +339,7 @@ sap.ui.define([
 		// act
 		oRadioButton1.setSelected(true);
 		oRadioButton2.setSelected(true);
-
+		Core.applyChanges();
 
 		// assert
 		assert.ok(!oRadioButton1.getSelected(), "RadioButton should not be selected");
@@ -493,6 +550,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ENTER);
 		sap.ui.test.qunit.triggerKeydown(oRadioButton2.getDomRef(), KeyCodes.ENTER);
 		sap.ui.test.qunit.triggerKeydown(oRadioButton3.getDomRef(), KeyCodes.ENTER);
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oRadioButton1.getSelected(), true, "RadioButton1 should be selected");
