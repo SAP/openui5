@@ -7,9 +7,13 @@
 @_sap_m_TileContent_NewsFooterTextColor: @_sap_m_NewsContent_SubHeaderTextColor;
 
 .sapMTileCnt.News {
-	background-color: @_sap_m_TileContent_NewsContentBackgroundColor;
+	background-color: @sapTile_OverlayBackground;
+	.sapMTileCntContent{
+		height: 3.625rem;
+	}
 }
 
 .sapMTileCnt.News .sapMTileCntFtrTxt {
-	color: @_sap_m_TileContent_NewsFooterTextColor;
+	color: @sapTile_OverlayForegroundColor;
+	top: 4rem;
 }

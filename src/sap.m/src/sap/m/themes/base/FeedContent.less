@@ -41,9 +41,10 @@
 	text-overflow: ellipsis;
 	padding-left: 1rem;
 	padding-top: 0.875rem;
-	font-size: 2.5rem;
+	font-size: 2.25rem;
 	line-height: 3rem;
-	max-width: 20.5rem;
+	max-width: 10.25rem;
+	min-width: 3rem;
 	float: right;
 	font-family: @sapUiFontHeaderFamily;
 	font-weight: @sapUiFontHeaderWeight;
@@ -58,8 +59,14 @@
 }
 
 .sapMFCCTxt .sapMText {
-	font-size: @sapMFontSmallSize;
+	font-size: @sapFontSize;
 	color: @sapUiTileTitleTextColor;
+}
+
+.sapMGT.TwoByOne.sapMTileSmallPhone{
+	.sapMFCCTxt .sapMText {
+		font-size: @sapFontSmallSize;
+	}
 }
 
 .sapMFCValue.Neutral {
@@ -103,9 +110,10 @@ html.sap-desktop .sapMFC:focus:not([tabindex]) {
 
 	.sapMFCValue {
 		padding-top: 1.188rem;
-		padding-left: 0.5rem;
+		padding-left: 0.4rem;
 		font-size: 2rem;
 		line-height: 2.25rem;
-		max-width: 17.75rem;
+		max-width: 8.25rem;
+		min-width: 2.5rem
 	}
 }

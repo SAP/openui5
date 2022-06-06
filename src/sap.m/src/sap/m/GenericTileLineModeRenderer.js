@@ -85,7 +85,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		oRm.class("sapMGT");
 		oRm.class(sScopeClass);
 		if (sScope ===  GenericTileScope.ActionMore) {
-				oRm.style("padding-right", "2.25rem");
+				oRm.style("padding-right", "3.3rem");
 		}
 		if (sState !== LoadState.Disabled && sScope === GenericTileScope.ActionRemove) {
 			oRm.class("sapMGTAcionRemove");
@@ -212,7 +212,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 
 			oRm.close("div"); //.sapMGTTouchArea
 		}
-
+		if (oControl._isInActionScope() && oControl.getState() !== LoadState.Disabled) {
+			oRm.renderControl(oControl._oRemoveButton);
+		}
 		if (bRenderLink) {
 			oRm.close("a");
 		} else {
@@ -297,8 +299,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.openEnd();
 
 			oRm.renderControl(oControl._oMoreIcon);
-			oRm.renderControl(oControl._oRemoveButton);
-
 			oRm.close("span");
 		}
 	};

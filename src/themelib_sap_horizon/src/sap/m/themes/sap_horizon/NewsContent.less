@@ -14,12 +14,15 @@
 .sapMTileCnt.News {
 	.sapMNwC {
 		.sapMNwCSbh {
-			color: @_sap_m_NewsContent_SubHeaderTextColor;
+			color: @sapTile_OverlayForegroundColor;
 			line-height: normal;
+			font-size: @sapFontSize;
 		}
 		.sapMNwCCTxt .sapMText, .sapMNwCCTxt .sapMFT {
-			color: @_sap_m_NewsContent_HeaderTextColor;
+			font-size: @sapFontSize;
 			line-height: normal;
+			font-weight: bold;
+			color: @sapTile_OverlayForegroundColor;
 		}
 	}
 }
@@ -36,6 +39,20 @@
 		}
 		.sapMNwCSbh{
 			color: @sapUiText;
+		}
+	}
+}
+
+.sapMTileSmallPhone{
+	.sapMTileCnt.News{
+		.sapMTileCntContent{
+			height: 3.25rem;
+			.sapMFT{
+				font-size: 0.75rem;
+			}
+		}
+		.sapMTileCntFtrTxt{
+			top: 3.6rem;
 		}
 	}
 }

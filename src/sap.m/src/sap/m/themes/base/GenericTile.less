@@ -322,6 +322,7 @@ border-radius: 0.25rem;
 		display: flex;
 		align-items: flex-end;
 		justify-content: flex-end;
+		min-width: 0;
 	}
 	.sapMGTTInfo {
 		padding: 0.125rem 1rem 0.125rem 0.25rem;
@@ -341,9 +342,6 @@ border-radius: 0.25rem;
 				color: @sapUiTileTitleTextColor;
 				padding-left: 0.15rem;
 			}
-		}
-		.sapMGTMarginTop4px{
-			margin-top: 0.25rem;
 		}
 		.sapMGTAppAndSystemInfoDivider{
 			height: 0.25rem;
@@ -553,7 +551,7 @@ border-radius: 0.25rem;
 		flex-direction: row-reverse;
 	}
 	.sapMGTTInfoContainer {
-		max-width: 13.5rem;
+		max-width: 10.875rem;
 		margin-left: 0.25rem;
 		margin-bottom: 0.5rem;
 		.sapMGTTInfo{
@@ -805,8 +803,8 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 		border-radius: 50%;
 		padding: 0px;
 		position: absolute;
-		top: -0.5rem;
-		right: -0.5rem;
+		top: -0.375rem;
+		right: -0.375rem;
 		z-index: 3; // Remark: If increased, this will break FLP footer visualization.
 		background-color: @sapUiButtonBackground;
 		color: @sapUiButtonTextColor;
@@ -1173,6 +1171,12 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	text-align: start;
 }
 
+.sapMGT.sapMGTScopeActions.sapMGTLineMode.sapMGTFailed,.sapMGT.sapMGTScopeSingleAction.sapMGTLineMode.sapMGTFailed {
+	.sapMBtn.sapMGTRemoveButton {
+		opacity: 1 !important;
+	}
+}
+
 /* COMPACT */
 .sapUiMedia-GenericTileDeviceSet-small {
 	&.sapUiSizeCompact, .sapUiSizeCompact {
@@ -1277,7 +1281,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 
 	.sapMGTLineMode.sapMGTScopeSingleAction {
 		.sapMGTHdrTxt:last-of-type, .sapMGTSubHdrTxt {
-			padding-right: 1rem;
+			padding-right: 1.3rem;
 		}
 	}
 
@@ -1533,7 +1537,7 @@ html[data-sap-ui-browser*='ff'] {
 
 					.sapMImageContentImageIcon {
 						height: 100%;
-						max-height: 2rem;
+						max-height: 1.75rem;
 					  }
 				}
 				.sapMTileCntContent > div:first-child {
@@ -1605,7 +1609,6 @@ html[data-sap-ui-browser*='ff'] {
 .TwoByOne.sapMGTActionMode {
 	height: 10.5rem;
 	width: 20rem;
-	overflow: hidden;
 	box-shadow: @sapContent_Shadow0;
 	.sapMGTTitle {
 		font-weight: bold;
@@ -2200,4 +2203,5 @@ html[data-sap-ui-browser*='ff'] {
 
 html.sap-desktop .sapMGT.sapMGTTwoByHalf.sapMGTIconMode.HighContrastTile:not(.sapMGTStateDisabled):hover {
 	box-shadow: 0 0 0 0.188rem @sapUiContentShadowColor inset;
+	border: none;
 }

@@ -27,19 +27,36 @@ html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
 }
 
 /* Bulleted indicator of multiple tiles*/
+.sapMSTBulleted{
+	display: flex;
+	margin-left: 3rem;
+	gap: 0.188rem;
+	width: fit-content;
+}
+
+.sapMST.TwoByOne.sapMTileSmallPhone{
+	.sapMSTBulleted{
+		margin-left: 2.2rem;
+	}
+}
+
 .sapMSTBulleted > span {
-	background-color: @sapUiContentNonInteractiveIconColor;
-	box-shadow: 0 0 0.25rem fade(@sapUiContentShadowColor, 25);
+	border: solid 0.0625rem @sapTile_OverlayForegroundColor;
+	opacity: 0.6;
+	box-shadow : 0 0 0.125rem @sapContent_ShadowColor;
+	margin: 0;
 }
 
 .sapMSTBulleted > span.sapMSTActive {
-	background-color: @sapUiContentContrastIconColor;
-	box-shadow: 0 0 0.25rem fade(@sapUiContentShadowColor, 25);
+	background: @sapTile_OverlayForegroundColor;
+	box-shadow: 0 0 0.063rem @sapContent_ShadowColor;
 }
 
 .sapMST {
-	border-radius: @sapElement_BorderCornerRadius;
+	border-radius: @sapTile_BorderCornerRadius;
 	border-color: @sapTile_BorderColor;
+	box-shadow: @sapContent_Shadow0;
+	background: @sapTile_Background;
 }
 
 .sapMST.TwoByOne {
@@ -51,7 +68,10 @@ html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
 }
 
 .sapMST .sapMSTIconDisplayArea {
-	background-color: darken(@sapUiBrand, 18);
+	background-color: @sapBlockLayer_Background;
+}
+.sapMST.sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea{
+	opacity: 0.8;
 }
 
 .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
@@ -62,11 +82,11 @@ html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
 	text-shadow: 0px 1px @sapUiButtonEmphasizedTextShadow;
 }
 
-html.sap-desktop .sapMST:focus .sapMSTFocusDiv,
-html.sap-desktop .sapMST:active .sapMSTFocusDiv {
-	border: none;
-	border-radius: @sapElement_BorderCornerRadius;
-	box-shadow: inset 0 0 0 0.063rem @sapContent_ContrastFocusColor, 0 0 0 @sapContent_FocusWidth @sapContent_FocusColor;
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv {
+	border-radius: @sapTile_BorderCornerRadius;
+	box-shadow: none;
+	border: 2px solid @sapContent_FocusColor;
+	inset: 0;
 }
 
 html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after,
@@ -76,10 +96,24 @@ html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
 }
 
 html.sap-desktop .sapMST:hover {
-	box-shadow: @sapContent_Shadow1 !important;;
+	box-shadow: @sapContent_Shadow2 !important;
 
 	.sapMGT:hover {
 		box-shadow: none !important;
+		opacity: 0.9;
 	}
 
+}
+
+html.sap-desktop .sapMST:active{
+	.sapMGT{
+		opacity: 0.8;
+	}
+}
+
+.sapMST:not(.sapMSTPauseIcon) .sapMSTIconNestedArea{
+	.sapUiIcon {
+		top: 0rem;
+		left: 0.15rem;
+	}
 }
