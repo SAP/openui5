@@ -6237,5 +6237,25 @@
         ]
       }
     ]
+  },
+  "1.38.55": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "7a7c1e9c8221258d110bc091f05f08a8eb20bfd8",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Empty Popover is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070107682"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270083289"
+          }
+        ]
+      }
+    ]
   }
 }
