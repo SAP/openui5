@@ -279,7 +279,6 @@ sap.ui.define([
 	/**
 	 * Flag indicating whether to use the cache
 	 * @private
-	 * @experimental
 	 * @since 1.44
 	 */
 	XMLView._bUseCache = sap.ui.getCore().getConfiguration().getViewCache() && Cache._isSupportedEnvironment();

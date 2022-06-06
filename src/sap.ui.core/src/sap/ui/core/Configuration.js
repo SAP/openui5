@@ -854,7 +854,7 @@ sap.ui.define([
 
 		/**
 		 * Checks whether the Cache Manager is switched on.
-		 * @experimental
+		 * @ui5-restricted sap.ui.core
 		 * @since 1.37.0
 		 * @returns {boolean}
 		 */
@@ -864,7 +864,7 @@ sap.ui.define([
 
 		/**
 		 * Enables/Disables the Cache configuration.
-		 * @experimental
+		 * @ui5-restricted sap.ui.core
 		 * @since 1.37.0
 		 * @param {boolean} on true to switch it on, false if to switch it off
 		 * @returns {this}
@@ -876,7 +876,7 @@ sap.ui.define([
 
 		/**
 		 * Checks whether the Cache Manager serialization support is switched on.
-		 * @experimental
+		 * @ui5-restricted sap.ui.core
 		 * @since 1.37.0
 		 * @returns {boolean}
 		 */
@@ -886,7 +886,7 @@ sap.ui.define([
 
 		/**
 		 * Enables/Disables the Cache serialization support
-		 * @experimental
+		 * @ui5-restricted sap.ui.core
 		 * @since 1.37.0
 		 * @param {boolean} on true to switch it on, false if to switch it off
 		 * @returns {this}
@@ -898,7 +898,7 @@ sap.ui.define([
 
 		/**
 		 * Returns all keys, that the CacheManager will ignore when set/get values.
-		 * @experimental
+		 * @ui5-restricted sap.ui.core
 		 * @since 1.37.0
 		 * @returns {string[]} array of keys that CacheManager should ignore
 		 * @see sap.ui.core.cache.LRUPersistentCache#keyMatchesExclusionStrings

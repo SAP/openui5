@@ -16,7 +16,7 @@ sap.ui.define([
 		/**
 		 * @classdesc
 		 * This object provides persistent caching functionality.
-		 * The component is both private and experimental. It is currently supported to a limited set of environments:
+		 * The component is both private and restricted to framework core usage. It is currently supported to a limited set of environments:
 		 * <ul>
 		 *  <li>Google Chrome(version >=49) for desktop</li>
 		 *  <li>Internet Explorer(version >=11) for desktop.</li>
@@ -53,7 +53,7 @@ sap.ui.define([
 		 * </ul>
 		 * @see sap.ui.core.Configuration
 		 * @private
-		 * @experimental
+		 * @ui5-restricted sap.ui.core
 		 * @since 1.40.0
 		 * @namespace
 		 * @alias sap.ui.core.cache.CacheManager
@@ -127,10 +127,10 @@ sap.ui.define([
 				Log.debug("Cache Manager: Setting value of type[" + typeof value + "] with key [" + key + "]");
 
 				pSet = this._callInstanceMethod("set", arguments).then(function callInstanceHandler() {
-					Log.debug("Cache Manager: Setting key [" + key + "] completed successfully");
+					this.logResolved("set");
 					oMsr.endAsync();
 					//nothing to return, just logging.
-				}, function (e) {
+				}.bind(this), function (e) {
 					Log.error("Cache Manager: Setting key [" + key + "] failed. Error:" + e);
 					oMsr.endAsync();
 					throw e;
@@ -157,10 +157,10 @@ sap.ui.define([
 
 				Log.debug("Cache Manager: Getting key [" + key + "]");
 				pGet = this._callInstanceMethod("get", arguments).then(function callInstanceHandler(v) {
-					Log.debug("Cache Manager: Getting key [" + key + "] done");
+					this.logResolved("get");
 					oMsr.endAsync();
 					return v;
-				}, function (e) {
+				}.bind(this), function (e) {
 					Log.debug("Cache Manager: Getting key [" + key + "] failed. Error: " + e);
 					oMsr.endAsync();
 					throw e;
@@ -182,10 +182,10 @@ sap.ui.define([
 				Log.debug("Cache Manager: has key [" + key + "] called");
 
 				pHas = this._callInstanceMethod("has", arguments).then(function callInstanceHandler(result) {
+					this.logResolved("has");
 					oMsr.endAsync();
-					Log.debug("Cache Manager: has key [" + key + "] returned " + result);
 					return result;
-				});
+				}.bind(this));
 				oMsr.endSync();
 				return pHas;
 			},
@@ -202,10 +202,10 @@ sap.ui.define([
 				Log.debug("Cache Manager: del called.");
 
 				pDel = this._callInstanceMethod("del", arguments).then(function callInstanceHandler() {
-					Log.debug("Cache Manager: del completed successfully.");
+					this.logResolved("del");
 					oMsr.endAsync();
 					//nothing to return, just logging.
-				}, function (e) {
+				}.bind(this), function (e) {
 					Log.debug("Cache Manager: del failed. Error: " + e);
 					oMsr.endAsync();
 					throw e;
@@ -232,8 +232,8 @@ sap.ui.define([
 				Log.debug("Cache Manager: delWithFilters called.");
 
 				pDel = this._callInstanceMethod("delWithFilters", arguments).then(function callInstanceHandler() {
-					Log.debug("Cache Manager: delWithFilters completed successfully.");
-				}, function (e) {
+					this.logResolved("delWithFilters");
+				}.bind(this), function (e) {
 					Log.debug("Cache Manager: delWithFilters failed. Error: " + e);
 					throw e;
 				});
@@ -252,10 +252,10 @@ sap.ui.define([
 				Log.debug("Cache Manager: Reset called.");
 
 				pReset = this._callInstanceMethod("reset", arguments).then(function callInstanceHandler() {
-					Log.debug("Cache Manager: Reset completed successfully.");
+					this.logResolved("reset");
 					oMsr.endAsync();
 					//nothing to return, just logging.
-				}, function (e) {
+				}.bind(this), function (e) {
 					Log.debug("Cache Manager: Reset failed. Error: " + e);
 					oMsr.endAsync();
 					throw e;
@@ -377,6 +377,10 @@ sap.ui.define([
 					});
 				}
 				return this._bSupportedEnvironment;
+			},
+
+			logResolved: function(sFnName) {
+				this._instance.logResolved && this._instance.logResolved(sFnName);
 			}
 		};
 

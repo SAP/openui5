@@ -9,7 +9,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 		/**
 		 * @classdesc
 		 * This object provides cache functionality with persistence in IndexedDB.
-		 * The component is an experimental and private.
+		 * The component is private and restricted to the factory class sap.ui.core.cache.CacheManager.
 		 * Do not use outside UI5 framework itself.
 		 * This implementation works with entries corresponding to a single ui5 version.
 		 * If the cache is loaded with different ui5 version, all previous entries will be deleted. The latter behavior is about of a further changes (feature requests)
@@ -18,7 +18,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 		 *
 		 * Do not use it directly, use {@link sap.ui.core.cache.CacheManager} instead
 		 * @private
-		 * @experimental
+		 * @ui5-restricted sap.ui.core.cache.CacheManager, sap.ui.core.Configuration
 		 * @since 1.40.0
 		 * @namespace
 		 * @alias sap.ui.core.cache.LRUPersistentCache
@@ -26,6 +26,9 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 
 		var LRUPersistentCache = {
 			name: "LRUPersistentCache",
+			logResolved: function(sFnName) {
+				Log.debug("Cache Manager: " + sFnName + " completed successfully.");
+			},
 
 			defaultOptions: {
 				databaseName: "ui5-cachemanager-db",
@@ -164,8 +167,12 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 					Log.warning("Cache Manager ignored 'has' for key [" + key + "]");
 					return Promise.resolve(false);
 				}
-				return this.get(key).then(function (value) {
-					return typeof value !== "undefined";
+				return this.get(key).then(function(value) {
+					var result = typeof value !== "undefined";
+
+					Log.debug("Cache Manager: has key [" + key + "] returned " + result);
+
+					return result;
 				});
 			},
 
