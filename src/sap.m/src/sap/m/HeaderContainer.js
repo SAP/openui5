@@ -313,11 +313,11 @@ sap.ui.define([
 				if (!this._isMobileView()) {
 					this._oArrowPrev = new Icon({
 						id: this.getId() + "-scrl-prev-button"
-					}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrLeft");
+					}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrLeft").addStyleClass("sapMHdrCntrBtnIcon");
 					this.setAggregation("_prevButton", this._oArrowPrev, true);
 					this._oArrowNext = new Icon({
 						id: this.getId() + "-scrl-next-button"
-					}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight");
+					}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight").addStyleClass("sapMHdrCntrBtnIcon");
 					this.setAggregation("_nextButton", this._oArrowNext, true);
 				}
 			}
