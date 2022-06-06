@@ -2270,6 +2270,49 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
+	QUnit.test("liveChange event", function(assert) {
+		var oDP = new DatePicker(),
+			spyLiveChange = this.spy(oDP, "fireLiveChange");
+
+		oDP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// act
+		oDP._$input.val("1");
+		oCore.applyChanges();
+		qutils.triggerEvent("input", oDP.getFocusDomRef());
+
+		// assert
+		assert.equal(spyLiveChange.callCount, 1, "1 character added - liveChange event fired 1 time");
+
+		// act
+		oDP._$input.val("12");
+		oCore.applyChanges();
+		qutils.triggerEvent("input", oDP.getFocusDomRef());
+
+		// assert
+		assert.equal(spyLiveChange.callCount, 2, "2 characters added - liveChange event fired 2 times");
+
+		// act
+		oDP._$input.val("123");
+		oCore.applyChanges();
+		qutils.triggerEvent("input", oDP.getFocusDomRef());
+
+		// assert
+		assert.equal(spyLiveChange.callCount, 3, "3 characters added - liveChange event fired 3 times");
+
+		// act
+		oDP._$input.val("123"); // no change since last time
+		oCore.applyChanges();
+		qutils.triggerEvent("input", oDP.getFocusDomRef());
+
+		// assert
+		assert.equal(spyLiveChange.callCount, 3, "no change since last time - liveChange event fired 3 times (no new firing)");
+
+		spyLiveChange = null;
+		oDP.destroy();
+	});
+
 	QUnit.module("SpecialDates - lazy loading", {
 		beforeEach: function (assert) {
 			this.oDP = new DatePicker("SDP", {

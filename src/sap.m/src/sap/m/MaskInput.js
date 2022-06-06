@@ -80,6 +80,28 @@ sap.ui.define(['./InputBase', './MaskEnabler', './MaskInputRenderer'], function(
 				rules: { type: "sap.m.MaskInputRule", multiple: true, singularName: "rule" }
 
 			},
+			events : {
+
+				/**
+				 * Fired when the value of the <code>MaskInput</code> is changed by user interaction - each keystroke, delete, paste, etc.
+				 *
+				 * <b>Note:</b> Browsing autocomplete suggestions doesn't fire the event.
+				 * @since 1.104.0
+				 */
+				liveChange: {
+					parameters : {
+						/**
+						 * The current value of the input, after a live change event.
+						 */
+						value: {type : "string"},
+
+						/**
+						 * The previous value of the input, before the last user interaction.
+						 */
+						previousValue: {type : "string"}
+					}
+				}
+			},
 			dnd: { draggable: false, droppable: true }
 		}
 	});
