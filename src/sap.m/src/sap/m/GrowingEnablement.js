@@ -535,8 +535,11 @@ sap.ui.define([
 
 		// destroy a single list item
 		deleteListItem : function(iIndex) {
-			this._oControl.getItems(true)[iIndex].destroy(true);
-			this._iRenderedDataItems--;
+			var oItem = this._oControl.getItems(true)[iIndex];
+			if (oItem) {
+				this._oControl.getItems(true)[iIndex].destroy(true);
+				this._iRenderedDataItems--;
+			}
 		},
 
 		/**
@@ -628,7 +631,7 @@ sap.ui.define([
 			if (!aContexts.length) {
 				// no context, destroy list items
 				this.destroyListItems();
-			} else if (!oControl.getItemsContainerDomRef()) {
+			} else if (!aItems.length && !oControl.getItemsContainerDomRef()) {
 				// no dom ref for compatibility reason start from scratch
 				this.rebuildListItems(aContexts, oBindingInfo);
 			} else if (!aDiff || !aItems.length && aDiff.length) {

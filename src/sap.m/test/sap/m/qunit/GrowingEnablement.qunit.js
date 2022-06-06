@@ -564,6 +564,12 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.strictEqual(oTable.getItems().length, 2, "2 items are rendered");
+		var sItemIds = oTable.getItems().toString();
+
+		oTable.setVisible(false).rerender();
+		oTable.getModel().refresh(true);
+		assert.strictEqual(oTable.getItems().toString(), sItemIds, "During the binding udpate the items are not destroy even though the table is invisible");
+		oTable.setVisible(true).rerender();
 
 		// hide all columns
 		var oColumn = oTable.getColumns()[0];
