@@ -311,7 +311,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 				};
 
 				oBinding.requestFilterForMessages(fnMessageFilter).then(function(oFilter) {
-					oFilter && this._setLinkText(this._translate("FILTER_ITEMS"));
+					this._setLinkText(oFilter ? this._translate("FILTER_ITEMS") : "");
 				}.bind(this));
 			}
 
