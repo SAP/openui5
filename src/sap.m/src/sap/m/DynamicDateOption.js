@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/unified/Calendar',
 	'sap/ui/unified/DateRange',
 	'sap/ui/unified/calendar/MonthPicker',
-	'sap/ui/unified/calendar/CustomMonthPicker'],
+	'sap/ui/unified/calendar/CustomMonthPicker',
+	'sap/ui/core/format/TimezoneUtil'],
 	function(
 		Element,
 		Label,
@@ -20,7 +21,8 @@ sap.ui.define([
 		Calendar,
 		DateRange,
 		MonthPicker,
-		CustomMonthPicker) {
+		CustomMonthPicker,
+		TimezoneUtil) {
 		"use strict";
 
 		/**
@@ -369,7 +371,7 @@ sap.ui.define([
 		};
 
 		DynamicDateOption.prototype._createDateTimeControl = function(oValue, iIndex, fnControlsUpdated) {
-			var oControl = new DateTimePicker();
+			var oControl = new DateTimePicker({timezone: TimezoneUtil.getLocalTimezone()});
 
 			if (oValue && this.getKey() === oValue.operator) {
 				oControl.setDateValue(oValue.values[iIndex]);
