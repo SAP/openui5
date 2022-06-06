@@ -1,0 +1,18 @@
+{
+  "1.104.0": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "1f023f2c6ca52821de4fa3f42341ae93dde11a3b",
+        "type": "FIX",
+        "text": " sap.ui.rta - AppVariantUtils.getManifirstSupport response fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270098574"
+          }
+        ]
+      }
+    ]
+  }
+}

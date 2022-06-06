@@ -1,0 +1,29 @@
+{
+  "1.104.0": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "382a0e31d904630775461a1387a8d9884f68d069",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Allow RTA revert moved headerContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180311371"
+          }
+        ]
+      },
+      {
+        "id": "a4031360cab8c2b31d62bcebbeb41d980c68032d",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Switch to HierarchicalSelect optimized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000511102022"
+          }
+        ]
+      }
+    ]
+  }
+}

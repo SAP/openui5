@@ -1,0 +1,29 @@
+{
+  "1.104.0": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "0396e25042a63b1355ca90a83a215ec739012d84",
+        "type": "FIX",
+        "text": " CardExplorer: on topics change previously registered listener is cleared properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280086905"
+          }
+        ]
+      },
+      {
+        "id": "94aafed7994882512aad1df97fc942a324711506",
+        "type": "FIX",
+        "text": " Integration cards: Removed empty column when using actions in a table card",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270098208"
+          }
+        ]
+      }
+    ]
+  }
+}

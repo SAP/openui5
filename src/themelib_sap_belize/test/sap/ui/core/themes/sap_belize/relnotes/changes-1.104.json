@@ -1,0 +1,29 @@
+{
+  "1.104.0": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "7db25eb681a366e4b12125a6423edca253e08194",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Hover color for IconTabBAr in ShellBar is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280050839"
+          }
+        ]
+      },
+      {
+        "id": "f088b2b2c832adb50c9e4976e7aed33bb6f47fcb",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: hours and minutes picker boxes are not truncated in belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270102006"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "1.104.0": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "91dea14e589d57e1e27138ec8e47ab9a3fc5c6ae",
+        "type": "FIX",
+        "text": " Demo Kit: Fix topic tables inner aligning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270056153"
+          }
+        ]
+      },
+      {
+        "id": "ee1ce50cbe7dca07ef886d5aee88030752e1ff50",
+        "type": "FEATURE",
+        "text": " Demo Kit: Save settings configuration through samples"
+      },
+      {
+        "id": "4fb1736907f04efe064f273db2a5cd0701c329df",
+        "type": "FIX",
+        "text": " Demo Kit: highlighter turned off for 'lines'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270055980"
+          }
+        ]
+      }
+    ]
+  }
+}
