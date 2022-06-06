@@ -15,6 +15,8 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Label",
 	"sap/m/ObjectStatus",
+	"sap/m/ComboBox",
+	"sap/m/TextArea",
 	"sap/base/Log",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/layout/AlignedFlowLayout",
@@ -28,7 +30,8 @@ sap.ui.define([
 	"sap/f/cards/NumericSideIndicator",
 	"sap/f/library",
 	"sap/m/OverflowToolbar",
-	"sap/m/OverflowToolbarButton"
+	"sap/m/OverflowToolbarButton",
+	"sap/ui/core/ListItem"
 ], function (
 	BaseContent,
 	ObjectContentRenderer,
@@ -43,6 +46,8 @@ sap.ui.define([
 	Link,
 	Label,
 	ObjectStatus,
+	ComboBox,
+	TextArea,
 	Log,
 	ResizeHandler,
 	AlignedFlowLayout,
@@ -56,7 +61,8 @@ sap.ui.define([
 	NumericSideIndicator,
 	fLibrary,
 	OverflowToolbar,
-	OverflowToolbarButton
+	OverflowToolbarButton,
+	ListItem
 ) {
 	"use strict";
 
@@ -303,6 +309,12 @@ sap.ui.define([
 			case "ButtonGroup":
 				oControl = this._createButtonGroupItem(oItem, vVisible);
 				break;
+			case "ComboBox":
+				oControl = this._createComboBoxItem(oItem, vVisible, oLabel);
+				break;
+			case "TextArea":
+				oControl = this._createTextAreaItem(oItem, vVisible, oLabel);
+				break;
 
 			// deprecated types
 			case "link":
@@ -534,6 +546,94 @@ sap.ui.define([
 			var oAction = aResolvedActions[0];
 			this.getActions().fireAction(this, oAction.type, oAction.parameters);
 		}
+	};
+
+	ObjectContent.prototype._createComboBoxItem = function (oItem, vVisible, oLabel) {
+		var oCard = this.getCardInstance(),
+			oFormModel = oCard.getModel("form"),
+			oSettings = {
+				visible: BindingHelper.reuse(vVisible),
+				placeholder: oItem.placeholder
+			},
+			oControl,
+			oItemTemplate,
+			fnUpdateValue;
+
+		if (oItem.selectedKey) {
+			oSettings.selectedKey = oItem.selectedKey;
+		} else if (oItem.value) {
+			oSettings.value = oItem.value;
+		}
+
+		oControl = new ComboBox(oSettings);
+
+		if (oLabel) {
+			oLabel.setLabelFor(oControl);
+		}
+
+		if (oItem.item) {
+			oItemTemplate = new ListItem({
+				key: oItem.item.template.key,
+				text: oItem.item.template.title
+			});
+
+			oControl.bindItems({
+				path: oItem.item.path || "/",
+				template: oItemTemplate,
+				templateShareable: false
+			});
+		}
+
+		if (!oItem.id) {
+			Log.error("Each input element must have an ID.", "sap.ui.integration.widgets.Card");
+			return oControl;
+		}
+
+		fnUpdateValue = function () {
+			oFormModel.setProperty("/" + oItem.id, {
+				key: oControl.getSelectedKey(),
+				value: oControl.getValue()
+			});
+		};
+
+		oControl.attachChange(fnUpdateValue);
+		oControl.addEventDelegate({
+			onAfterRendering: fnUpdateValue
+		});
+
+		return oControl;
+	};
+
+	ObjectContent.prototype._createTextAreaItem = function (oItem, vVisible, oLabel) {
+		var oCard = this.getCardInstance(),
+			oFormModel = oCard.getModel("form"),
+			oControl = new TextArea({
+				value: oItem.value,
+				visible: BindingHelper.reuse(vVisible),
+				rows: oItem.rows,
+				placeholder: oItem.placeholder
+			}),
+			fnUpdateValue;
+
+		if (oLabel) {
+			oLabel.setLabelFor(oControl);
+		}
+
+		if (!oItem.id) {
+			Log.error("Each input element must have an ID.", "sap.ui.integration.widgets.Card");
+			return oControl;
+		}
+
+		fnUpdateValue = function () {
+			oFormModel.setProperty("/" + oItem.id, oControl.getValue());
+		};
+
+		oControl.attachChange(fnUpdateValue);
+		oControl.addEventDelegate({
+			onAfterRendering: fnUpdateValue
+		});
+
+		return oControl;
 	};
 
 	ObjectContent.prototype._createAFLayout = function () {

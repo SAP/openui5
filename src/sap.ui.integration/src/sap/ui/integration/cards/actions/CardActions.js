@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/base/strings/capitalize",
+	"sap/base/util/deepClone",
 	"sap/ui/integration/cards/actions/ShowCardAction",
 	"sap/ui/integration/cards/actions/HideCardAction"
 ], function (
@@ -27,6 +28,7 @@ sap.ui.define([
 	BindingHelper,
 	BindingResolver,
 	capitalize,
+	deepClone,
 	ShowCardAction,
 	HideCardAction
 ) {
@@ -385,24 +387,34 @@ sap.ui.define([
 		var oHost = mConfig.host,
 			oCard = mConfig.card,
 			oExtension = oCard.getAggregation("_extension"),
-			mParameters = mConfig.parameters || {},
-			mActionParams = {
-				type: mConfig.action.type,
+			sType = mConfig.action.type,
+			mParameters = deepClone(mConfig.parameters, 100) || {},
+			mEventParams = {
+				type: sType,
 				card: oCard,
-				actionSource: mConfig.source,
-				parameters: mParameters
+				actionSource: mConfig.source
 			},
-			mActionParamsLegacy = Object.assign({}, mActionParams, {
-				manifestParameters: mParameters // for backward compatibility
-			}),
-			bActionResult = oCard.fireAction(mActionParamsLegacy);
+			mEventParamsLegacy,
+			bActionResult;
+
+		if (sType === CardActionType.Submit) {
+			mParameters.data = oCard.getModel("form").getData();
+		}
+
+		mEventParams.parameters = mParameters;
+
+		mEventParamsLegacy = Object.assign({}, mEventParams, {
+			manifestParameters: mParameters // for backward compatibility
+		});
+
+		bActionResult = oCard.fireAction(mEventParamsLegacy);
 
 		if (!bActionResult) {
 			return false;
 		}
 
 		if (oHost) {
-			bActionResult = oHost.fireAction(mActionParams);
+			bActionResult = oHost.fireAction(mEventParams);
 		}
 
 		if (!bActionResult) {
@@ -410,7 +422,7 @@ sap.ui.define([
 		}
 
 		if (oExtension) {
-			bActionResult = oExtension.fireAction(mActionParams);
+			bActionResult = oExtension.fireAction(mEventParams);
 		}
 
 		if (bActionResult) {

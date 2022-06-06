@@ -134,6 +134,8 @@
 								<li>"NumericData" (experimental since 1.98) - see <a href="#numericDataProperties">Additional Properties for ObjectGroupItem of type NumericData</a></li>
 								<li>"Status" (experimental since 1.98) - see <a href="#statusProperties">Additional Properties for ObjectGroupItem of type Status</a></li>
 								<li>"IconGroup" (experimental since 1.100) - see <a href="#iconGroupProperties">Additional Properties for ObjectGroupItem of type IconGroup</a></li>
+								<li>"ComboBox" (experimental since 1.104) - see <a href="#comboBoxProperties">Additional Properties for ObjectGroupItem of type ComboBox</a></li>
+								<li>"TextArea" (experimental since 1.104) - see <a href="#textAreaProperties">Additional Properties for ObjectGroupItem of type TextArea</a></li>
 							</ul>
 						</td>
 						<td>1.15.0</td>
@@ -513,6 +515,174 @@
 						<td>The size of the main indicator. Possible values are "S" and "L".</td>
 						<td>1.38</td>
 						<td>1.98</td>
+					</tr>
+				</table>
+			</div>
+
+
+
+			<h4 id="comboBoxProperties">Additional Properties for ObjectGroupItem of type ComboBox</h4>
+			<div>
+				Check samples on how to submit a form <a href="../../../index.html#/explore/object/formWithExtension" target="_parent">with extension</a> or <a href="../../../index.html#/explore/object/formWithExtension" target="_parent">with action handlers</a>.
+			</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>id</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>Defines the id of the form input. Will be used in the submitted payload.</td>
+						<td>1.44</td>
+						<td>1.104</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>string</td>
+						<td>No</td>
+						<td>
+							Defines the initial free text value for the input.
+							<br>
+							For defining an initially selected option use "selectedKey".
+						</td>
+						<td>1.44</td>
+						<td>1.104</td>
+					</tr>
+					<tr>
+						<td>selectedKey</td>
+						<td>string</td>
+						<td>No</td>
+						<td>
+							Defines the initially selected key from the given options.
+							<br>
+							If there is no option with that key, nothing will be selected.
+							<br>
+							This property overrides the "value" property.
+						</td>
+						<td>1.44</td>
+						<td>1.104</td>
+					</tr>
+					<tr>
+						<td>placeholder</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines a short hint intended to aid the user with data entry when the control has no value.</td>
+						<td>1.44</td>
+						<td>1.104</td>
+					</tr>
+					<tr>
+						<td>item</td>
+						<td><a href="#comboBoxItemBindingInfo">ComboBoxItemBindingInfo</a></td>
+						<td>No</td>
+						<td>Binding info object used to bind data to options of the ComboBox.</td>
+						<td>1.44</td>
+						<td>1.104</td>
+					</tr>
+				</table>
+			</div>
+
+			<h5 id="comboBoxItemBindingInfo">ComboBoxItemBindingInfo Properties</h5>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th colspan=2>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td colspan=2>path</td>
+						<td>string</td>
+						<td>/</td>
+						<td>No</td>
+						<td>The context path.</td>
+						<td>1.44</td>
+						<td>1.104</td>
+					</tr>
+					<tr>
+						<td colspan=2>template</td>
+						<td></td>
+						<td></td>
+						<td>Yes</td>
+						<td>Binding template for items</td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>title</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The title of the item which appears in the dropdown.</td>
+						<td>1.44</td>
+						<td>1.104</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>key</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The key of the item. This key corresponds to the value of the ComboBox.</td>
+						<td>1.44</td>
+						<td>1.104</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="textAreaProperties">Additional Properties for ObjectGroupItem of type TextArea</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>id</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>Defines the id of the form input. Will be used in the submitted payload.</td>
+						<td>1.44</td>
+						<td>1.104</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines the initial value for the TextArea.</td>
+						<td>1.44</td>
+						<td>1.104</td>
+					</tr>
+					<tr>
+						<td>placeholder</td>
+						<td>string</td>
+						<td>No</td>
+						<td>Defines a short hint intended to aid the user with data entry when the control has no value.</td>
+						<td>1.44</td>
+						<td>1.104</td>
+					</tr>
+					<tr>
+						<td>rows</td>
+						<td>integer</td>
+						<td>No</td>
+						<td>Number of visible text lines.</td>
+						<td>1.44</td>
+						<td>1.104</td>
 					</tr>
 				</table>
 			</div>

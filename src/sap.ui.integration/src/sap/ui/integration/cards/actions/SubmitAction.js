@@ -26,42 +26,57 @@ sap.ui.define([
 	 * @override
 	 */
 	SubmitAction.prototype.execute = function () {
-		var oSource = this.getSourceInstance(),
+		var oCard = this.getCardInstance(),
 			oSubmitActionHandler = this.getActionHandler();
 
-		if (!oSubmitActionHandler || !oSource.isA("sap.ui.integration.cards.BaseContent")) {
+		if (!oSubmitActionHandler) {
 			return;
 		}
 
 		var oDataProviderFactory = this.getCardInstance()._oDataProviderFactory,
-			oParameters = this.getParameters();
+			oData = oCard.getModel("form").getData();
 
-		oSource.onActionSubmitStart(oParameters);
+		this._onActionSubmitStart(oData);
 
 		var oDataProvider = oDataProviderFactory.create({
-			request: this._createRequest(oSubmitActionHandler, oParameters)
+			request: this._createRequest(oSubmitActionHandler, oData)
 		});
 
 		oDataProvider.getData()
 			.then(function (oResponse) {
-				oSource.onActionSubmitEnd(oResponse, null);
-			}, function (oError) {
+				this._onActionSubmitEnd(oResponse, null);
+			}.bind(this), function (oError) {
 				Log.error(oError);
-				oSource.onActionSubmitEnd(null, {error: oError});
-			})
+				this._onActionSubmitEnd(null, {error: oError});
+			}.bind(this))
 			.finally(function () {
 				// Cleanup the data provider
 				oDataProviderFactory.remove(oDataProvider);
 			});
-
 	};
 
-	SubmitAction.prototype._createRequest = function (oSubmitActionHandler, oDefaultParameters) {
+	SubmitAction.prototype._onActionSubmitStart = function (oData) {
+		var oSource = this.getSourceInstance();
+
+		if (oSource.isA("sap.ui.integration.cards.BaseContent")) {
+			oSource.onActionSubmitStart(oData);
+		}
+	};
+
+	SubmitAction.prototype._onActionSubmitEnd = function (oResponse, oError) {
+		var oSource = this.getSourceInstance();
+
+		if (oSource.isA("sap.ui.integration.cards.BaseContent")) {
+			oSource.onActionSubmitEnd(oResponse, oError);
+		}
+	};
+
+	SubmitAction.prototype._createRequest = function (oSubmitActionHandler, oData) {
 		return {
 			mode: oSubmitActionHandler.mode || "cors",
 			url: oSubmitActionHandler.url,
 			method: oSubmitActionHandler.method || "POST",
-			parameters: this._resolveActionHandlerParams(oSubmitActionHandler.parameters, oDefaultParameters) || oDefaultParameters,
+			parameters: this._resolveActionHandlerParams(oSubmitActionHandler.parameters) || oData,
 			headers: oSubmitActionHandler.headers,
 			xhrFields: {
 				withCredentials: !!oSubmitActionHandler.withCredentials
@@ -69,10 +84,8 @@ sap.ui.define([
 		};
 	};
 
-	SubmitAction.prototype._resolveActionHandlerParams = function (oActionHandlerParameters, oDefaultParameters) {
+	SubmitAction.prototype._resolveActionHandlerParams = function (oActionHandlerParameters) {
 		var oCard = this.getCardInstance();
-
-		oCard.getModel("form").setProperty("/", oDefaultParameters.data);
 
 		oActionHandlerParameters = BindingResolver.resolveValue(
 			BindingHelper.createBindingInfos(oActionHandlerParameters, oCard.getBindingNamespaces()),

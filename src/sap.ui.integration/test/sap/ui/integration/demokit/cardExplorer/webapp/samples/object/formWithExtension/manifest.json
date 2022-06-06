@@ -1,0 +1,109 @@
+
+{
+	"sap.app": {
+		"id": "card.explorer.object.formWithExtension",
+		"i18n": "i18n/i18n.properties",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"extension": "./SampleExtension",
+		"data": {
+			"json": {
+				"reasons": [
+					{
+						"id": "reason1",
+						"title": "Reason 1"
+					},
+					{
+						"id": "reason2",
+						"title": "Reason 2"
+					}
+				]
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"title": "PR255 - Laptop Purchase",
+			"subTitle": "Purchase Requisition"
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"value": "Status Open",
+							"type": "Status",
+							"state": "Warning"
+						},
+						{
+							"value": "Total Amount 1,000.00 USD"
+						}
+					]
+				},
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"id": "reason",
+							"label": "Reason",
+							"type": "ComboBox",
+							"placeholder": "Select",
+							"item": {
+								"path": "/reasons",
+								"template": {
+									"key": "{id}",
+									"title": "{title}"
+								}
+							}
+						},
+						{
+							"id": "comment",
+							"label": "Comment",
+							"type": "TextArea",
+							"rows": 4,
+							"placeholder": "Comment"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Submit",
+					"buttonType": "Accept",
+					"actions": [
+						{
+							"type": "Submit"
+						}
+					]
+				}
+			]
+		}
+	}
+}

@@ -230,6 +230,46 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'Form Inputs',
+								key: 'form',
+								experimental: true,
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/object/form/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Form Inputs with Extension',
+								key: 'formWithExtension',
+								experimental: true,
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/object/formWithExtension/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/object/formWithExtension/SampleExtension.js',
+										name: 'SampleExtension.js',
+										key: 'SampleExtension.js'
+									},
+									{
+										url: '/samples/object/formWithExtension/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n/i18n.properties'
+									}
+								]
 							}
 						]
 					},
