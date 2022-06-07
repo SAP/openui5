@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/m/ScrollContainer"
 ], function(
 	VerticalLayout,
 	DesignTime,
@@ -37,7 +38,8 @@ sap.ui.define([
 	KeyCodes,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	oCore,
+	ScrollContainer
 ) {
 	"use strict";
 
@@ -332,9 +334,20 @@ sap.ui.define([
 
 			this.oButton = new Button({text: "Button", id: "button"});
 			this.oLabel = new Label({text: "Label", id: "label"});
+			this.oInnerButton = new Button({text: "innerButton", id: "innerButton"});
+			this.oInnerVerticalLayout = new VerticalLayout({
+				id: "innerLayout",
+				content: [this.oInnerButton],
+				width: "400px"
+			});
+			this.oScrollContainer = new ScrollContainer({
+				id: "scrollContainer",
+				width: "100px",
+				content: [this.oInnerVerticalLayout]
+			});
 			this.oVerticalLayout = new VerticalLayout({
 				id: "layout",
-				content: [this.oButton, this.oLabel],
+				content: [this.oButton, this.oLabel, this.oScrollContainer],
 				width: "200px"
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -360,6 +373,8 @@ sap.ui.define([
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				this.oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
+				this.oInnerButtonOverlay = OverlayRegistry.getOverlay(this.oInnerButton);
+				this.oScrollContainerOverlay = OverlayRegistry.getOverlay(this.oScrollContainer);
 				this.oLayoutOverlay.setSelectable(true);
 
 				oCore.applyChanges();
@@ -654,6 +669,22 @@ sap.ui.define([
 					assert.equal(oStopEditSpy.callCount, 1, "stop was called");
 					fnDone();
 				});
+			}.bind(this));
+		});
+
+		QUnit.test("when scrolling happens right before renaming starts", function(assert) {
+			var fnDone = assert.async();
+
+			this.oScrollContainer.getDomRef().scrollTo(100, 0);
+			triggerAndWaitForStartEdit(this.oRenamePlugin, this.oInnerButtonOverlay).then(function() {
+				this.oScrollContainerOverlay.getAggregationOverlays()[0].attachEventOnce("scrollSynced", function() {
+					assert.deepEqual(
+						this.oRenamePlugin._$oEditableControlDomRef.offset(),
+						this.oRenamePlugin._$editableField.offset(),
+						"then the position of the editable control is still correct"
+					);
+					fnDone();
+				}.bind(this));
 			}.bind(this));
 		});
 	});

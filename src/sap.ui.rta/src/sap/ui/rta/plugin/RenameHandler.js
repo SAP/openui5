@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dt/OverlayUtil"
 ], function(
 	BindingParser,
 	jQuery,
@@ -24,7 +25,8 @@ sap.ui.define([
 	OverlayRegistry,
 	Utils,
 	DOMUtil,
-	KeyCodes
+	KeyCodes,
+	OverlayUtil
 ) {
 	"use strict";
 
@@ -84,6 +86,13 @@ sap.ui.define([
 				oOverlay.attachBrowserEvent("click", RenameHandler._onClick, this);
 			} else {
 				oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
+			}
+		},
+
+		_setEditableFieldPosition: function() {
+			if (this._$editableField) {
+				this._$editableField.offset({left: this._$oEditableControlDomRef.offset().left});
+				this._$editableField.offset({top: this._$oEditableControlDomRef.offset().top});
 			}
 		},
 
@@ -216,10 +225,16 @@ sap.ui.define([
 
 			this._$oEditableControlDomRef.css("visibility", "hidden");
 			_$oWrapper.offset({left: this._$oEditableControlDomRef.offset().left});
-			this._$editableField.offset({left: this._$oEditableControlDomRef.offset().left});
-			this._$editableField.offset({top: this._$oEditableControlDomRef.offset().top});
+			RenameHandler._setEditableFieldPosition();
 			this._$editableField.css("visibility", "");
 			this._$editableField.trigger("focus");
+
+			// If scrolling happens during startEdit, the position of the editable field can be wrong
+			// To avoid this, the position is recalculated after the scrollbar synchronization is ready
+			this._aOverlaysWithScrollbar = OverlayUtil.findParentOverlaysWithScrollbar(oOverlayForWrapper);
+			this._aOverlaysWithScrollbar.forEach(function(oOverlayWithScrollbar) {
+				oOverlayWithScrollbar.attachScrollSynced(RenameHandler._setEditableFieldPosition, this);
+			}.bind(this));
 
 			// keep Overlay selected while renaming
 			mPropertyBag.overlay.setSelected(true);
@@ -314,6 +329,9 @@ sap.ui.define([
 				oOverlay.focus();
 			}
 
+			this._aOverlaysWithScrollbar.forEach(function(oOverlayWithScrollbar) {
+				oOverlayWithScrollbar.detachScrollSynced(RenameHandler._setEditableFieldPosition, this);
+			}.bind(this));
 			delete this._$editableField;
 			delete this._$oEditableControlDomRef;
 			delete this._oEditedOverlay;
