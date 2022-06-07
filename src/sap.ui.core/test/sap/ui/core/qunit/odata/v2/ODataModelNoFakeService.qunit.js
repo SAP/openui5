@@ -5900,6 +5900,7 @@ sap.ui.define([
 					loaded : function () {}
 				},
 				bRefreshAfterChange : "~bRefreshAfterChangeFromModel",
+				getBindings : function () {},
 				_processChange : function () {},
 				_processRequestQueue : function () {},
 				_pushToRequestQueue : function () {},
@@ -5907,6 +5908,7 @@ sap.ui.define([
 			},
 			oRequest = {};
 
+		this.mock(oModel).expects("getBindings").withExactArgs().returns([]);
 		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataPromise);
 
 		// code under test
@@ -5930,6 +5932,166 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("submitChanges: calls _submitChanges on ODataTreeBindingFlat; w/o given parameters",
+			function (assert) {
+		var aBindings = [{_submitChanges : function () {}}, {}, {_submitChanges : function () {}}],
+			oMetadataPromise = Promise.resolve(),
+			oModel = {
+				mChangedEntities : {"~sKey" : {}},
+				sDefaultUpdateMethod : "~sDefaultUpdateMethod",
+				mDeferredGroups : {"~groupId" : "~groupId"},
+				mDeferredRequests : {},
+				oMetadata : {
+					loaded : function () {}
+				},
+				bRefreshAfterChange : "~bRefreshAfterChangeFromModel",
+				getBindings : function () {},
+				_processChange : function () {},
+				_processRequestQueue : function () {},
+				_pushToRequestQueue : function () {},
+				_resolveGroup : function () {}
+			},
+			aOrderedSuccessHandlerCalls = [],
+			oRequest = {},
+			fnSuccess;
+
+		this.mock(oModel).expects("getBindings")
+			.withExactArgs()
+			.returns(aBindings);
+		this.mock(aBindings[0]).expects("_submitChanges")
+			.withExactArgs({groupId : undefined})
+			.callsFake(function (mParameters) {
+				mParameters.success = function (vParam0, vParam1) {
+					assert.strictEqual(vParam0, "~foo");
+					assert.strictEqual(vParam1, "~bar");
+					aOrderedSuccessHandlerCalls.push("~success0");
+				};
+			});
+		this.mock(aBindings[2]).expects("_submitChanges")
+			.withExactArgs({groupId : undefined})
+			.callsFake(function (mParameters) {
+				mParameters.success = function (vParam0, vParam1) {
+					assert.strictEqual(vParam0, "~foo");
+					assert.strictEqual(vParam1, "~bar");
+					aOrderedSuccessHandlerCalls.push("~success1");
+				};
+			});
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataPromise);
+
+		// code under test
+		ODataModel.prototype.submitChanges.call(oModel, /*mParameters*/undefined);
+
+		// async, after metadata loaded promise is resolved
+		this.mock(oModel).expects("_resolveGroup")
+			.withExactArgs("~sKey")
+			.returns({changeSetId : "~changeSetId", groupId : "~groupId"});
+		this.mock(oModel).expects("_processChange")
+			.withExactArgs("~sKey", {}, "~sDefaultUpdateMethod")
+			.returns(oRequest);
+		this.mock(oModel).expects("_pushToRequestQueue")
+			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), "~groupId", "~changeSetId",
+				sinon.match.same(oRequest), /*fnSuccess*/undefined, /*fnError*/undefined,
+				/*oRequestHandle*/sinon.match.object, "~bRefreshAfterChangeFromModel");
+		this.mock(oModel).expects("_processRequestQueue")
+			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), undefined,
+				sinon.match.func, undefined)
+			.callsFake(function (mDeferredRequests, sGroupId, fnSuccess0, fnError) {
+				fnSuccess = fnSuccess0;
+			});
+
+		return oMetadataPromise.then(function () {
+			assert.strictEqual(oRequest.key, "~sKey");
+
+			// code under test: call success handler for this request queue
+			fnSuccess("~foo", "~bar");
+
+			assert.deepEqual(aOrderedSuccessHandlerCalls, ["~success0", "~success1"]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitChanges: calls _submitChanges on ODataTreeBindingFlat; w/ given parameters",
+			function (assert) {
+		var aBindings = [{_submitChanges : function () {}}, {_submitChanges : function () {}}],
+			oMetadataPromise = Promise.resolve(),
+			oModel = {
+				mChangedEntities : {"~sKey" : {}},
+				sDefaultUpdateMethod : "~sDefaultUpdateMethod",
+				mDeferredGroups : {"~groupId" : "~groupId"},
+				mDeferredRequests : {},
+				oMetadata : {
+					loaded : function () {}
+				},
+				bRefreshAfterChange : "~bRefreshAfterChangeFromModel",
+				getBindings : function () {},
+				_processChange : function () {},
+				_processRequestQueue : function () {},
+				_pushToRequestQueue : function () {},
+				_resolveGroup : function () {}
+			},
+			aOrderedSuccessHandlerCalls = [],
+			fnOriginalSuccess = function (vParam0, vParam1) {
+				assert.strictEqual(vParam0, "~foo");
+				assert.strictEqual(vParam1, "~bar");
+				aOrderedSuccessHandlerCalls.push("~successFromParams");
+			},
+			mParameters = {
+				groupId : "~groupId",
+				success : fnOriginalSuccess
+			},
+			oRequest = {},
+			fnSuccess;
+
+		this.mock(oModel).expects("getBindings")
+			.withExactArgs()
+			.returns(aBindings);
+		this.mock(aBindings[0]).expects("_submitChanges")
+			.withExactArgs({groupId : "~groupId"})
+			.callsFake(function (mParameters) {
+				mParameters.success = function (vParam0, vParam1) {
+					assert.strictEqual(vParam0, "~foo");
+					assert.strictEqual(vParam1, "~bar");
+					aOrderedSuccessHandlerCalls.push("~success0");
+				};
+			});
+		// second binding does nothing; e.g. unresolved
+		this.mock(aBindings[1]).expects("_submitChanges").withExactArgs({groupId : "~groupId"});
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataPromise);
+
+		// code under test
+		ODataModel.prototype.submitChanges.call(oModel, mParameters);
+
+		// async, after metadata loaded promise is resolved
+		this.mock(oModel).expects("_resolveGroup")
+			.withExactArgs("~sKey")
+			.returns({changeSetId : "~changeSetId", groupId : "~groupId"});
+		this.mock(oModel).expects("_processChange")
+			.withExactArgs("~sKey", {}, "~sDefaultUpdateMethod")
+			.returns(oRequest);
+		this.mock(oModel).expects("_pushToRequestQueue")
+			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), "~groupId", "~changeSetId",
+				sinon.match.same(oRequest), /*fnSuccess*/undefined, /*fnError*/undefined,
+				/*oRequestHandle*/sinon.match.object, "~bRefreshAfterChangeFromModel");
+		this.mock(oModel).expects("_processRequestQueue")
+			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), "~groupId",
+				sinon.match.func, undefined)
+			.callsFake(function (mDeferredRequests, sGroupId, fnSuccess0, fnError) {
+				fnSuccess = fnSuccess0;
+			});
+
+		return oMetadataPromise.then(function () {
+			assert.strictEqual(oRequest.key, "~sKey");
+
+			// code under test: call success handler for this request queue
+			fnSuccess("~foo", "~bar");
+
+			assert.strictEqual(fnOriginalSuccess, mParameters.success);
+			assert.notStrictEqual(fnSuccess, mParameters.success);
+			assert.deepEqual(aOrderedSuccessHandlerCalls, ["~successFromParams", "~success0"]);
+		});
+	});
 
 	//*********************************************************************************************
 [{
