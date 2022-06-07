@@ -14,11 +14,6 @@ sap.ui.define([
 	var IconFormatter = ManagedObject.extend("sap.ui.integration.formatters.IconFormatter", {
 		metadata: {
 			library: "sap.ui.integration",
-			properties: {
-				destinations: {
-					type: "object"
-				}
-			},
 			associations : {
 				/**
 				 * The card.
@@ -45,13 +40,6 @@ sap.ui.define([
 
 		if (sUrl.startsWith("data:") || IconPool.isIconURI(sUrl)) {
 			return sUrl;
-		}
-
-		if (this.getDestinations().hasDestination(sUrl)) {
-			return this.getDestinations().processString(sUrl)
-				.then(function (sResolvedUrl) {
-					return this._format(sResolvedUrl);
-				}.bind(this));
 		}
 
 		return this._format(sUrl);

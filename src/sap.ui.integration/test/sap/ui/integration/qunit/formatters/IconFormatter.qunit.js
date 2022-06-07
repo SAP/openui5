@@ -1,12 +1,10 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/integration/formatters/IconFormatter",
-	"sap/ui/integration/util/Destinations",
 	"sap/ui/integration/widgets/Card"
 ],
 function (
 	IconFormatter,
-	Destinations,
 	Card
 ) {
 	"use strict";
@@ -18,9 +16,7 @@ function (
 		beforeEach: function () {
 			this.oCard = new Card();
 			this.oCard._sAppId = APP_ID;
-			this.oDestinationsStub = sinon.createStubInstance(Destinations);
 			this.oIconFormatter = new IconFormatter({
-				destinations: this.oDestinationsStub,
 				card: this.oCard
 			});
 
@@ -58,7 +54,6 @@ function (
 				"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
 			];
 
-		this.oDestinationsStub.hasDestination.returns(false);
 
 		aSamples.forEach(function (sSample, iInd) {
 			var sSrc = this.oIconFormatter.formatSrc(sSample),
@@ -68,38 +63,17 @@ function (
 		}.bind(this));
 	});
 
-	QUnit.test("Absolute URL from destination", function (assert) {
-		var done = assert.async(),
-			sImageSrc = "http://my/image.png",
-			sSrcPromise;
+	QUnit.test("Absolute URL", function (assert) {
+		var sImageSrc = "http://my/image.png",
+			sSrc = this.oIconFormatter.formatSrc(sImageSrc);
 
-		this.oDestinationsStub.hasDestination.returns(true);
-		this.oDestinationsStub.processString.resolves(sImageSrc);
-
-		// Act
-		sSrcPromise = this.oIconFormatter.formatSrc(sImageSrc);
-
-		sSrcPromise.then(function (sSrc) {
-			assert.strictEqual(sSrc, sImageSrc, "The image src is as expected.");
-			done();
-		});
+		assert.strictEqual(sSrc, sImageSrc, "The image src is as expected.");
 	});
 
-	QUnit.test("Relative URL from destination", function (assert) {
-		var done = assert.async(),
-			sImageSrc = "./relative/path/from/destination/image.png",
-			sSrcPromise;
+	QUnit.test("Relative URL", function (assert) {
+		var sImageSrc = "./relative/path/image.png",
+			sSrc = this.oIconFormatter.formatSrc(sImageSrc);
 
-		this.oDestinationsStub.hasDestination.returns(true);
-		this.oDestinationsStub.processString.resolves(sImageSrc);
-
-		// Act
-		sSrcPromise = this.oIconFormatter.formatSrc(sImageSrc);
-
-		sSrcPromise.then(function (sSrc) {
-			assert.strictEqual(sSrc, APP_URL + "/" + sImageSrc, "The image src is as expected.");
-			done();
-		});
+		assert.strictEqual(sSrc, APP_URL + "/" + sImageSrc, "The image src is as expected.");
 	});
-
 });

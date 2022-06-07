@@ -124,6 +124,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * @ui5-restricted
+	 * @private
+	 */
+	Manifest.prototype.setJson = function (oJson) {
+		deepFreeze(oJson);
+		this.oJson = oJson;
+	};
+
+	/**
 	 * Returns a clone of the initial manifest without the <code>manifestChanges</code> applied to it and without any processing.
 	 * @ui5-restricted
 	 * @returns {Object} A clone of the initial manifest json.
@@ -276,10 +285,8 @@ sap.ui.define([
 	 * and replacing all placeholders.
 	 *
 	 * @private
-	 * @param {Object} oParams Parameters that should be replaced in the manifest.
 	 */
 	Manifest.prototype.processManifest = function () {
-
 		var iCurrentLevel = 0,
 			iMaxLevel = 15,
 			//Always need the unprocessed manifest
@@ -287,9 +294,7 @@ sap.ui.define([
 			oDataSources = this.get(APP_DATA_SOURCES);
 
 		process(oUnprocessedJson, this.oResourceBundle, iCurrentLevel, iMaxLevel, this._oCombinedParams, oDataSources, this._oCombinedFilters);
-		deepFreeze(oUnprocessedJson);
-
-		this.oJson = oUnprocessedJson;
+		this.setJson(oUnprocessedJson);
 	};
 
 	/**

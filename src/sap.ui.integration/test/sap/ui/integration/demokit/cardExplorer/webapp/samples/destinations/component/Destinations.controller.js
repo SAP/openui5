@@ -9,7 +9,7 @@ sap.ui.define([
 
 		onInit: function () {
 			var oHost = new Host({
-				resolveDestination: function(sDestinationName) {
+				resolveDestination: function(sDestinationName, oCard) {
 					switch (sDestinationName) {
 						case "Northwind":
 							return "https://services.odata.org/V3/Northwind/Northwind.svc";
