@@ -19,7 +19,8 @@ sap.ui.define([
 	"./MonthRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/core/InvisibleMessage'
 ], function(
 	Control,
 	Device,
@@ -36,9 +37,12 @@ sap.ui.define([
 	MonthRenderer,
 	containsOrEquals,
 	KeyCodes,
-	jQuery
+	jQuery,
+	InvisibleMessage
 ) {
 	"use strict";
+
+	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
 	// shortcut for sap.ui.core.CalendarType
 	var CalendarType = coreLibrary.CalendarType;
@@ -264,6 +268,8 @@ sap.ui.define([
 		this._aVisibleDays = [];
 
 		this._bAlwaysShowSpecialDates = false;
+
+		this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 	};
 
 	Month.prototype._getAriaRole = function(){
@@ -299,6 +305,7 @@ sap.ui.define([
 		// check if day names are too big -> use smaller ones
 		_checkNamesLength.call(this);
 
+		this._oInvisibleMessage = InvisibleMessage.getInstance();
 	};
 
 	Month.prototype.onmouseover = function(oEvent) {
@@ -1879,6 +1886,7 @@ sap.ui.define([
 				oDateRange.setProperty("startDate", oDate.toLocalJSDate()); // no-rerendering
 				oDateRange.setProperty("endDate", undefined); // no-rerendering
 			}
+			this._oInvisibleMessage.announce(this._oUnifiedRB.getText("APPOINTMENT_SELECTED"), InvisibleMessageMode.Assertive);
 		} else {
 			// multiple selection
 			if (this.getIntervalSelection()) {
@@ -1897,6 +1905,7 @@ sap.ui.define([
 					}
 				} else {
 					// not selected -> select
+					this._oInvisibleMessage.announce(this._oUnifiedRB.getText("APPOINTMENT_SELECTED"), InvisibleMessageMode.Assertive);
 					oDateRange = new DateRange({startDate: oDate.toLocalJSDate()});
 					oAggOwner.addAggregation("selectedDates", oDateRange, true); // no re-rendering
 				}

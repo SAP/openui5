@@ -460,6 +460,9 @@ sap.ui.define([
 
 		QUnit.test("select event is also called when click on sapUiCalDayName", function (assert) {
 			// Arrange
+			this.oM.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
 			var oTarget = document.createElement("span"),
 				oTargetParent = document.createElement("div"),
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget},
@@ -481,6 +484,9 @@ sap.ui.define([
 
 		QUnit.test("select event is also called when click on sapUiCalItemText", function (assert) {
 			// Arrange
+			this.oM.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
 			var oTarget = document.createElement("span"),
 				oTargetParent = document.createElement("div"),
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget},
@@ -624,6 +630,25 @@ sap.ui.define([
 				oCore.getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_WEEK"),
 				"Dummy cell's accessible name is provided in aria-label");
 		});
+
+		QUnit.test("Selected state announcement", function (assert) {
+			var oCore = sap.ui.getCore();
+
+			this.oSut.placeAt("qunit-fixture");
+			oCore.applyChanges();
+			var oInvisibleMessageSpy = this.spy(this.oSut._oInvisibleMessage, "announce");
+
+
+			//Act
+			this.oSut._selectDay(CalendarDate.fromLocalJSDate(new Date(), "Gregorian"));
+
+			//Assert
+			assert.ok(oInvisibleMessageSpy.calledOnce, "Selected state announcement is done");
+
+			//Clean
+			oInvisibleMessageSpy.restore();
+		});
+
 
 		QUnit.module("Unfinished range selection indication allowance", {
 			beforeEach: function () {
