@@ -52,6 +52,22 @@
 					<f:GridContainerItemLayoutData columns="5" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card
+				id="tablecard4"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				manifest="{manifests>/tablecard4}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="5" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				id="tablecard5"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				manifest="{manifests>/tablecard5}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="5" />
+				</w:layoutData>
+			</w:Card>
 		</f:GridContainer>
 	</Page>
 </mvc:View>

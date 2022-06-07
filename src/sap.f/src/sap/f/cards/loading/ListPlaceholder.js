@@ -30,7 +30,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * The maxItems set to the list.
+				 * The maximum number of items set to the list.
 				 */
 				maxItems: {
 					type : "int",
