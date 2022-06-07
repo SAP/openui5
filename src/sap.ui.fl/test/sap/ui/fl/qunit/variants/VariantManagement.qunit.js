@@ -1402,6 +1402,16 @@ sap.ui.define([
 			oVariantManagement.exit();
 			assert.equal(oVariantManagement._oRolesDialog, null);
 		});
+
+		QUnit.test("check setHeaderLevel", function(assert) {
+			assert.ok(this.oVariantManagement.getHeaderLevel(), "Auto");
+			assert.ok(this.oVariantManagement.oVariantText.getLevel(), "Auto");
+
+			this.oVariantManagement.setHeaderLevel("H1");
+
+			assert.ok(this.oVariantManagement.getHeaderLevel(), "H1");
+			assert.ok(this.oVariantManagement.oVariantText.getLevel(), "H1");
+		});
 	});
 
 	QUnit.done(function() {
