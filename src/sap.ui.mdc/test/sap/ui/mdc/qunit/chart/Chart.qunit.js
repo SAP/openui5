@@ -477,20 +477,4 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart setHeaderLevel function calls toolbar", function(assert) {
-		var done = assert.async();
-
-		this.oMDCChart.initialized().then(function(){
-
-			var toolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "_setHeaderLevel");
-
-			assert.ok(this.oMDCChart.setHeaderLevel(sap.ui.core.TitleLevel.H3));
-
-			assert.ok(toolbarSpy.calledOnce, "setHeaderLevel called on toolbar");
-			assert.equal(this.oMDCChart.getAggregation("_toolbar")._oTitle.getLevel(), sap.ui.core.TitleLevel.H3, "Level set on title");
-
-			done();
-		}.bind(this));
-	});
-
 });

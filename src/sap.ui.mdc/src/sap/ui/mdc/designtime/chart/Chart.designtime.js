@@ -80,9 +80,6 @@ sap.ui.define([
 			},
 			propertyInfo: {
 				ignore: true
-			},
-			headerLevel : {
-				ignore: false
 			}
 		},
 		aggregations: {
