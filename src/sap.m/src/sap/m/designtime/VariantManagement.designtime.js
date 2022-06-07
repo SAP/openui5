@@ -55,6 +55,9 @@ sap.ui.define([
 			},
 			displayTextForExecuteOnSelectionForStandardVariant: {
 				ignore: false
+			},
+			level: {
+				ignore: false
 			}
 		}
 	};

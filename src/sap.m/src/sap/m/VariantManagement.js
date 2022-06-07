@@ -103,6 +103,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 	/**
 	 * Constructor for a new <code>VariantManagement</code>.
 	 * @param {string} [sId] - ID for the new control, generated automatically if no ID is given
@@ -260,6 +263,16 @@ sap.ui.define([
 					type: "string",
 					group: "Misc",
 					defaultValue: ""
+				},
+
+				/**
+				 * Semantic level of the header.
+                 * For more information, see {@link sap.m.Title#setLevel}.
+				 */
+				level: {
+					type: "sap.ui.core.TitleLevel",
+                    group: "Appearance",
+                    defaultValue: TitleLevel.Auto
 				}
 			},
 			defaultAggregation: "items",
@@ -473,6 +486,10 @@ sap.ui.define([
 
 					return sText;
 				}.bind(this)
+			},
+			level: {
+				path: '/level',
+				model: "$mVariants"
 			}
 		});
 
