@@ -287,7 +287,7 @@ sap.ui.define([
 				path: "visualization",
 				allowBindings: true,
 				value: oVisualization,
-				visible: sType !== "group" && sType !== "separator",
+				visible: sType !== "separator",
 				placeholder: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VISUALIZATION.PLACEHOLDER"),
 				type: "textArea",
 				itemKey: sKey
