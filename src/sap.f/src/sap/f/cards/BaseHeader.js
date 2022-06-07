@@ -135,6 +135,26 @@ sap.ui.define([
 		return this.getDomRef("focusable");
 	};
 
+	BaseHeader.prototype.ontap = function (oEvent) {
+		var srcControl = oEvent.srcControl;
+		if (srcControl && srcControl.getId().indexOf("overflowButton") > -1) { // better way?
+			return;
+		}
+
+		if (this._isInteractive()) {
+			this.firePress();
+		}
+	};
+
+	/**
+	 * Fires the <code>sap.f.cards.NumericHeader</code> press event.
+	 */
+	BaseHeader.prototype.onsapselect = function () {
+		if (this._isInteractive()) {
+			this.firePress();
+		}
+	};
+
 	/**
 	 * Adds a CSS class on the header which removes its focus outline
 	 * to prevent drawing two focuses when the toolbar is focused.
@@ -335,6 +355,10 @@ sap.ui.define([
 		}
 
 		return oParent.isA("sap.f.GridContainer");
+	};
+
+	BaseHeader.prototype._isInteractive = function() {
+		return this.hasListeners("press");
 	};
 
 	return BaseHeader;

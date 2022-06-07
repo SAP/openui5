@@ -91,6 +91,9 @@ sap.ui.define([
 		},
 		metadata: {
 			library: "sap.ui.integration",
+			properties: {
+				interactive: { type: "boolean", defaultValue: false }
+			},
 			aggregations: {
 				/**
 				 * The internally used LoadingProvider.
@@ -147,6 +150,12 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @override
+	 */
+	NumericHeader.prototype._isInteractive = function () {
+		return this.getInteractive();
+	};
 
 	/**
 	 * @public

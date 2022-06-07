@@ -102,34 +102,6 @@ sap.ui.define([
 			}
 		};
 
-		var oManifest__Action_Disabled = {
-			"_version": "1.8.0",
-			"sap.app": {
-				"id": "test.card.actions.card3",
-				"type": "card"
-			},
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"title": "Request list content Card 2",
-					"subTitle": "Card Subtitle",
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"status": "100 of 200",
-					"actions": [
-						{
-							"enabled": false,
-							"type": "Navigation",
-							"parameters": {
-								"url": "https://www.sap.com"
-							}
-						}
-					]
-				}
-			}
-		};
-
 		var oManifest_ListCard_No_Actions = {
 			"_version": "1.8.0",
 			"sap.app": {
@@ -1309,7 +1281,7 @@ sap.ui.define([
 			this.oCard.setManifest(oIntegrationCardManifest);
 		});
 
-		QUnit.test("Enabled property of actions is set to false", function (assert) {
+		QUnit.test("Enabled property of header action set to 'false'", function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction");
 
@@ -1317,23 +1289,92 @@ sap.ui.define([
 				Core.applyChanges();
 				var oCardHeader = this.oCard.getCardHeader();
 				// Assert
-				assert.notOk(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header doesn't have a clickable style");
+				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header doesn't have a clickable style");
 
 				//Act
-				oCardHeader.firePress();
-				Core.applyChanges();
+				qutils.triggerEvent("tap", oCardHeader);
 
 				// Assert
-				assert.notOk(oActionSpy.callCount, "Card Header is not clicked");
+				assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
 
 				//Clean up
 				oActionSpy.restore();
 				done();
-
 			}.bind(this));
 
 			// Act
-			this.oCard.setManifest(oManifest__Action_Disabled);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.actions.enabledPropertySetToFalse",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Card Title",
+						"actions": [
+							{
+								"enabled": false,
+								"type": "Navigation",
+								"parameters": {
+									"url": "https://www.sap.com"
+								}
+							}
+						]
+					}
+				}
+			});
+		});
+
+		QUnit.test("Enabled property of header action set to 'false' with binding", function (assert) {
+			var done = assert.async(),
+				oActionSpy = sinon.spy(CardActions, "fireAction");
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oCardHeader = this.oCard.getCardHeader();
+
+				// Assert
+				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header doesn't have a clickable style");
+
+				// Act
+				qutils.triggerEvent("tap", oCardHeader);
+
+				// Assert
+				assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
+
+				// Clean up
+				oActionSpy.restore();
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest( {
+				"sap.app": {
+					"id": "test.card.actions.enabledPropertySetToFalseWithBinding",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": {
+							"headerActionEnabled": false
+						}
+					},
+					"header": {
+						"title": "Card Title",
+						"actions": [
+							{
+								"enabled": "{/headerActionEnabled}",
+								"type": "Navigation",
+								"parameters": {
+									"url": "https://www.sap.com"
+								}
+							}
+						]
+					}
+				}
+			});
 		});
 
 		QUnit.test("No actions available", function (assert) {
@@ -1345,7 +1386,7 @@ sap.ui.define([
 				var oCardHeader = this.oCard.getCardHeader();
 
 				// Assert
-				assert.notOk(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header has not a clickable style is added");
+				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header has not a clickable style is added");
 				assert.ok(oAttachNavigationSpy.callCount === 0, "_attachAction should not be called");
 
 				//Clean up
@@ -1378,30 +1419,118 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest_ListCard_Actions_Missing_Type);
 		});
 
-		QUnit.test("Actions 'enabled' is set to false", function (assert) {
+		QUnit.module("Action Enablement - NumericHeader", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px",
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+				});
+
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Enabled property of numeric header action set to 'false'", function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction");
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
-
 				var oCardHeader = this.oCard.getCardHeader();
-				assert.notOk(oCardHeader.hasStyleClass("sapFCardHeaderClickable"), "Card Header has not a clickable style is added");
+				// Assert
+				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header doesn't have a clickable style");
+
 				//Act
-				oCardHeader.firePress();
-				Core.applyChanges();
+				qutils.triggerEvent("tap", oCardHeader);
 
 				// Assert
-				assert.ok(oActionSpy.callCount === 0, "Card Header is can not be clicked");
+				assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
 
 				//Clean up
 				oActionSpy.restore();
 				done();
-
 			}.bind(this));
 
 			// Act
-			this.oCard.setManifest(oManifest_ListCard_CONTENT_ACTION);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.actions.numeric.enabledPropertySetToFalse",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Card Title",
+						"type": "Numeric",
+						"actions": [
+							{
+								"enabled": false,
+								"type": "Navigation",
+								"parameters": {
+									"url": "https://www.sap.com"
+								}
+							}
+						]
+					}
+				}
+			});
+		});
+
+		QUnit.test("Enabled property of numeric header action set to 'false' with binding", function (assert) {
+			var done = assert.async(),
+				oActionSpy = sinon.spy(CardActions, "fireAction");
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oCardHeader = this.oCard.getCardHeader();
+
+				// Assert
+				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header doesn't have a clickable style");
+
+				// Act
+				qutils.triggerEvent("tap", oCardHeader);
+
+				// Assert
+				assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
+
+				// Clean up
+				oActionSpy.restore();
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest( {
+				"sap.app": {
+					"id": "test.card.actions.numeric.enabledPropertySetToFalseWithBinding",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": {
+							"headerActionEnabled": false
+						}
+					},
+					"header": {
+						"title": "Card Title",
+						"type": "Numeric",
+						"actions": [
+							{
+								"enabled": "{/headerActionEnabled}",
+								"type": "Navigation",
+								"parameters": {
+									"url": "https://www.sap.com"
+								}
+							}
+						]
+					}
+				}
+			});
 		});
 
 		QUnit.module("Navigation Service - List Content", {

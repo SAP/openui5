@@ -89,7 +89,9 @@ sap.ui.define([
 
 		metadata: {
 			library: "sap.ui.integration",
-
+			properties: {
+				interactive: { type: "boolean", defaultValue: false }
+			},
 			aggregations: {
 				/**
 				 * The internally used LoadingProvider.
@@ -107,7 +109,6 @@ sap.ui.define([
 	});
 
 	Header.prototype.init = function () {
-
 		FHeader.prototype.init.call(this);
 
 		this._bReady = false;
@@ -127,7 +128,6 @@ sap.ui.define([
 	};
 
 	Header.prototype.exit = function () {
-
 		FHeader.prototype.exit.call(this);
 
 		this._oServiceManager = null;
@@ -142,6 +142,13 @@ sap.ui.define([
 			this._oActions.destroy();
 			this._oActions = null;
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	Header.prototype._isInteractive = function () {
+		return this.getInteractive();
 	};
 
 	/**

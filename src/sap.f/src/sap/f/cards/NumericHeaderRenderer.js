@@ -29,7 +29,7 @@ sap.ui.define([], function () {
 			oRm.class("sapFCardHeaderLoading");
 		}
 
-		if (oNumericHeader.hasListeners("press")) {
+		if (oNumericHeader._isInteractive()) {
 			oRm.class("sapFCardClickable");
 		}
 
