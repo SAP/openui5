@@ -23,8 +23,7 @@ sap.ui.define([
         "sap/ui/base/ManagedObjectObserver",
         "sap/ui/mdc/chart/DrillBreadcrumbs",
         "sap/ui/mdc/actiontoolbar/ActionToolbarAction",
-        "sap/ui/thirdparty/jquery",
-        "sap/ui/core/TitleLevel"
+        "sap/ui/thirdparty/jquery"
     ],
     function (
         Core,
@@ -47,8 +46,7 @@ sap.ui.define([
         ManagedObjectObserver,
         Breadcrumbs,
         ActionToolbarAction,
-        jQuery,
-        TitleLevel
+        jQuery
     ) {
         "use strict";
 
@@ -242,17 +240,6 @@ sap.ui.define([
                     propertyInfo: {
                         type: "object",
                         defaultValue: []
-                    },
-                    /**
-                    * Semantic level of the header.
-                    * For more information, see {@link sap.m.Title#setLevel}.
-                    *
-                    * @since 1.104
-                    */
-                    headerLevel: {
-                        type: "sap.ui.core.TitleLevel",
-                        group: "Appearance",
-                        defaultValue: TitleLevel.Auto
                     }
                 },
                 aggregations: {
@@ -1260,20 +1247,6 @@ sap.ui.define([
             }
 
             return Control.prototype.addAggregation.apply(this, ["actions", oControl]);
-        };
-
-        /**
-         * Specifies the header level for the title of the chart.
-         * @param {sap.ui.core.TitleLevel} sHeaderLevel Header level
-         * @returns {sap.ui.mdc.Chart} Reference to <code>this</code> in order to allow method chaining
-         */
-        Chart.prototype.setHeaderLevel = function(sHeaderLevel) {
-            if (this.getAggregation("_toolbar")) {
-                this.getAggregation("_toolbar")._setHeaderLevel(sHeaderLevel);
-            }
-
-            this.setProperty("headerLevel", sHeaderLevel);
-            return this;
         };
 
         return Chart;
