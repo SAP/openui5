@@ -59,3 +59,22 @@ html.sap-phone .sapFGridContainer { /* in "Explore" section */
 .StyleMessageIcon:focus-visible {
 	outline: none !important;
 }
+
+.styleManifestChangesVBox {
+	margin-right: 1.5rem !important;
+	margin-left: 1.5rem !important;
+	margin-top: 1rem !important;
+	margin-bottom: 1rem !important;
+}
+
+.styleCardConfiguration {
+	margin-left: 1rem !important;
+}
+
+.styleCardEditorLanguageLabel {
+	margin-top: 0.5rem;
+}
+
+.styleCardEditorLanguageSelect {
+	margin-left: 0.5rem;
+}
