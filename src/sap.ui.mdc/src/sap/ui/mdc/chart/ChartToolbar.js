@@ -86,10 +86,11 @@ sap.ui.define([
             this._chartInternalButtonsToEnable = [];
 
             /**add beginning**/
-            var title = new Title(oMDCChart.getId() + "-title", {
-                text: oMDCChart.getHeader()
+            this._oTitle = new Title(oMDCChart.getId() + "-title", {
+                text: oMDCChart.getHeader(),
+                level: oMDCChart.getHeaderLevel()
             });
-            this.addBegin(title);
+            this.addBegin(this._oTitle);
 
             /** variant management */
             if (oMDCChart.getVariant()){
@@ -323,5 +324,10 @@ sap.ui.define([
             }
 
         };
+
+        ChartToolbar.prototype._setHeaderLevel = function(sHeaderLevel) {
+            this._oTitle.setLevel(sHeaderLevel);
+        };
+
         return ChartToolbar;
     });
