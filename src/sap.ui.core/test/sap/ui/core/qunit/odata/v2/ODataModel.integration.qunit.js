@@ -16113,4 +16113,165 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A table using ODataTreeBindingFlat with refreshAfterChange=false and
+	// restoreTreeStateAfterChange=false. After property / hierarchy changes have been submitted the
+	// binding gets refreshed.
+	// JIRA: CPOUI5MODELS-959
+	QUnit.test("ODataTreeBindingFlat#submitChanges: refreshes the binding if both "
+			+ "refreshAfterChange and restoreTreeStateAfterChange are false", function (assert) {
+		var oBinding, oTable,
+			oModel = createHierarchyMaintenanceModel({refreshAfterChange : false}),
+			oNode100 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='100')"},
+				ErhaOrder : "1",
+				ErhaOrderItem : "100",
+				ErhaOrderItemName : "foo",
+				HierarchyNode : "100",
+				HierarchyParentNode : "",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 0,
+				HierarchyDrillState : "collapsed",
+				HierarchyPreorderRank : 0,
+				HierarchySiblingRank : 0
+			},
+			oNode200 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
+				ErhaOrder : "1",
+				ErhaOrderItem : "200",
+				ErhaOrderItemName : "bar",
+				HierarchyNode : "200",
+				HierarchyParentNode : "100",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 1,
+				HierarchyDrillState : "leaf",
+				HierarchyPreorderRank : 0,
+				HierarchySiblingRank : 0
+			},
+			oNode300 = {
+				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"},
+				ErhaOrder : "1",
+				ErhaOrderItem : "300",
+				ErhaOrderItemName : "baz",
+				HierarchyNode : "300",
+				HierarchyParentNode : "100",
+				HierarchyDescendantCount : 0,
+				HierarchyDistanceFromRoot : 1,
+				HierarchyDrillState : "leaf",
+				HierarchyPreorderRank : 1,
+				HierarchySiblingRank : 1
+			},
+			sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters : {\
+				countMode : \'Inline\',\
+				numberOfExpandedLevels : 0\
+			},\
+			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
+		}"\
+		visibleRowCount="3"\
+		visibleRowCountMode="Fixed" \>\
+	<Text id="itemName" text="{ErhaOrderItemName}" />\
+</t:TreeTable>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+					+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+			}, {
+				__count : "1",
+				results : [oNode100]
+			})
+			.expectValue("itemName", ["foo", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectRequest({
+					batchNo : 2,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+				}, {
+					__count : "2",
+					results : [oNode200, oNode300]
+				})
+				.expectValue("itemName", ["bar", "baz"], 1);
+
+			oTable.expand(0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oBinding = oTable.getBinding("rows");
+
+			that.expectRequest({
+					batchNo : 3,
+					method : "DELETE",
+					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"
+				}, NO_CONTENT)
+				.expectValue("itemName", "", 2)
+				.expectRequest({
+					batchNo : 4,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+						+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+				}, {
+					__count : "1",
+					results : [oNode100]
+				})
+				.expectValue("itemName", "", 1); // binding gets refreshed, no restore tree state
+
+			// code under test: hierarchy change
+			oBinding.removeContext(oTable.getContextByIndex(2));
+			oBinding.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectRequest({
+					batchNo : 5,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+				}, {
+					__count : "1",
+					results : [oNode200]
+				})
+				.expectValue("itemName", "bar", 1);
+
+			// manually expand the node again
+			oTable.expand(0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("itemName", "bar: renamed", 1)
+				.expectRequest({
+					batchNo : 6,
+					data : {
+						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
+						ErhaOrderItemName : "bar: renamed"
+					},
+					key : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')",
+					method : "MERGE",
+					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"
+				}, NO_CONTENT)
+				.expectRequest({
+					batchNo : 7,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+						+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+				}, {
+					__count : "1",
+					results : [oNode100]
+				})
+				.expectValue("itemName", "", 1); // binding gets refreshed, no restore tree state
+
+			// code under test: property change
+			oModel.setProperty("ErhaOrderItemName", "bar: renamed", oTable.getContextByIndex(1));
+			oBinding.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
