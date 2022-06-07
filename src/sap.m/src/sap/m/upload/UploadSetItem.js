@@ -458,6 +458,18 @@ sap.ui.define([
 		return this._isRestricted();
 	};
 
+	/**
+	 * Returns edit state of the item.
+	 *
+	 * @public
+         * @since 1.104.0
+	 * @returns {boolean} edit state of uploadSetItem
+	 *
+	 */
+	UploadSetItem.prototype.getEditState = function () {
+		return this._bInEditMode;
+	};
+
 	/* ============== */
 	/* Event handlers */
 	/* ============== */
