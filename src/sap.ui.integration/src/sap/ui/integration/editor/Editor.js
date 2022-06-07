@@ -1159,7 +1159,10 @@ sap.ui.define([
 			this._oDestinations.setHost(oHostInstance);
 		} else {
 			var sConfigurationPath = this.getConfigurationPath();
-			this._oDestinations = new Destinations(oHostInstance, this._manifestModel.getProperty(sConfigurationPath + "/destinations"));
+			this._oDestinations = new Destinations({
+				host: oHostInstance,
+				manifestConfig: this._manifestModel.getProperty(sConfigurationPath + "/destinations")
+			});
 		}
 	};
 

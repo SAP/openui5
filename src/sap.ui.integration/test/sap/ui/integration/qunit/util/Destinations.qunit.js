@@ -18,11 +18,13 @@ sap.ui.define([
 
 		var sResourcePath = "qunit/testResources/cardWithDestinations/",
 			sImagesResourcePath = "qunit/testResources/images/",
-			sBaseUrl = "test-resources/sap/ui/integration/";
+			sBaseUrl = "test-resources/sap/ui/integration/",
+			sNavigationUrl = "https://some.domain.com",
+			sCardId = "test1";
 
 		var oManifest_Valid = {
 			"sap.app": {
-				"id": "test1"
+				"id": sCardId
 			},
 			"sap.card": {
 				"type": "List",
@@ -36,6 +38,12 @@ sap.ui.define([
 						},
 						"imageDestination": {
 							"name": "imageDestination"
+						},
+						"emptyDestination": {
+							"name": "emptyDestination"
+						},
+						"navigationDestination": {
+							"name": "navigationDestination"
 						}
 					}
 				},
@@ -57,7 +65,16 @@ sap.ui.define([
 						"title": "{Name}",
 						"icon": {
 							"src": "{{destinations.imageDestination}}/{Image}"
-						}
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"city": "{{destinations.navigationDestination}}/{Name}",
+									"empty": "{{destinations.emptyDestination}}/empty"
+								}
+							}
+						]
 					}
 				}
 			}
@@ -65,7 +82,7 @@ sap.ui.define([
 
 		var oManifest_Invalid_Destinations = {
 			"sap.app": {
-				"id": "test1"
+				"id": sCardId
 			},
 			"sap.card": {
 				"type": "List",
@@ -95,7 +112,7 @@ sap.ui.define([
 
 		var oManifest_Mixed_Valid_Invalid_Destinations = {
 			"sap.app": {
-				"id": "test1"
+				"id": sCardId
 			},
 			"sap.card": {
 				"type": "List",
@@ -135,7 +152,7 @@ sap.ui.define([
 
 		var oManifest_DefaultUrl = {
 			"sap.app": {
-				"id": "test1"
+				"id": sCardId
 			},
 			"sap.card": {
 				"type": "List",
@@ -161,12 +178,16 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 				var aItems = this.oCard.getCardContent().getInnerList().getItems(),
 					sFirstItemIcon = aItems[0].getIcon(),
-					sExpectedIcon = sBaseUrl + "qunit/testResources/images/Woman_avatar_01.png";
+					sExpectedIcon = sBaseUrl + "qunit/testResources/images/Woman_avatar_01.png",
+					aActions = this.oCard.getCardContent().getConfiguration().item.actions;
 
 				// Assert
 				assert.ok(aItems.length, "The data request is successful.");
 				assert.strictEqual(this.oCard.getCardHeader().getTitle(), "Card Title", "header destination is resolved successfully");
 				assert.strictEqual(sFirstItemIcon, sExpectedIcon, "The icon path is correct.");
+
+				assert.ok(aActions[0].parameters.city.indexOf(sNavigationUrl + sCardId) > -1, "Navigation destination is resolved successfully");
+				assert.strictEqual(aActions[0].parameters.empty, "/empty", "Empty destination is resolved successfully");
 
 				done();
 			}.bind(this));
@@ -231,13 +252,17 @@ sap.ui.define([
 		QUnit.module("Destinations", {
 			beforeEach: function () {
 				this.oHost = new Host({
-					resolveDestination: function(sDestinationName) {
+					resolveDestination: function(sDestinationName, oCard) {
 						switch (sDestinationName) {
 							case "contentDestination":
 							case "headerDestination":
 								return sResourcePath;
 							case "imageDestination":
 								return sImagesResourcePath;
+							case "emptyDestination":
+								return "";
+							case "navigationDestination":
+								return sNavigationUrl + oCard.getManifestEntry("/sap.app/id");
 							default:
 								Log.error("Unknown destination.");
 								break;
@@ -271,7 +296,7 @@ sap.ui.define([
 		QUnit.module("Async Destinations", {
 			beforeEach: function () {
 				this.oHost = new Host({
-					resolveDestination: function(sDestinationName) {
+					resolveDestination: function(sDestinationName, oCard) {
 						switch (sDestinationName) {
 							case "contentDestination":
 							case "headerDestination":
@@ -282,6 +307,18 @@ sap.ui.define([
 								});
 							case "imageDestination":
 								return sImagesResourcePath;
+							case "emptyDestination":
+								return new Promise(function (resolve) {
+									setTimeout(function () {
+										resolve("");
+									}, 10);
+								});
+							case "navigationDestination":
+								return new Promise(function (resolve) {
+									setTimeout(function () {
+										resolve(sNavigationUrl + oCard.getManifestEntry("/sap.app/id"));
+									}, 10);
+								});
 							default:
 								Log.error("Unknown destination.");
 								break;
