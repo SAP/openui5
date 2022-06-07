@@ -6,7 +6,7 @@ describe("sap.uxap.ObjectPageAnchorBar", function() {
 	browser.testrunner.currentSuite.meta.controlName = 'sap.uxap.ObjectPageLayout';
 
 	it("Should load test page",function(){
-		expect(takeScreenshot()).toLookAs("initial");
+		expect(takeScreenshot(element(by.id("__xmlview0--ObjectPageLayout-anchorBar")))).toLookAs("initial");
 	});
 
 	it("Should open anchor menu", function() {
@@ -16,7 +16,7 @@ describe("sap.uxap.ObjectPageAnchorBar", function() {
 			element(by.css(".sapUxAPAnchorBarButton:nth-child(2) .sapMSBArrow")).click();
 		}
 
-		expect(takeScreenshot()).toLookAs("anchormenu");
+		expect(takeScreenshot(element(by.id("__menu2")))).toLookAs("anchormenu");
 	});
 
 	it("Should collapse header", function() {
