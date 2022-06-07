@@ -178,6 +178,7 @@ sap.ui.define([
 
 	Panel.prototype._createContent = function() {
 		var oVerticalLayout = new VerticalLayout({
+			width: "100%",
 			content: [
 				this._createAdditionalContentArea(),
 				this._createSeparator(),
