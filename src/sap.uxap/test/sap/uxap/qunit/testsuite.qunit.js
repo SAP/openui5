@@ -5,10 +5,10 @@ sap.ui.define(function () {
 		defaults: {
 			group: "Default",
 			qunit: {
-				version: 2
+				version: "edge"
 			},
 			sinon: {
-				version: 4
+				version: "edge"
 			},
 			ui5: {
 				language: "en",
