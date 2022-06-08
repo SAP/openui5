@@ -877,7 +877,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype._onUnload = function() {
 		var oCommandStack = this.getCommandStack();
-		var bUnsaved = oCommandStack.canUndo() || oCommandStack.canRedo();
+		var bUnsaved = oCommandStack.canUndo();
 		if (bUnsaved && this.getShowWindowUnloadDialog()) {
 			return this._getTextResources().getText("MSG_UNSAVED_CHANGES");
 		}

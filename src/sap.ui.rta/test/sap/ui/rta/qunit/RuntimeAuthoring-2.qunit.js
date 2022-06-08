@@ -760,9 +760,19 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "getCommandStack").returns({
 				canUndo: function() {
 					return false;
+				}
+			});
+			var sMessage = this.oRta._onUnload();
+			assert.equal(sMessage, undefined, "then the function returns no message");
+		});
+
+		QUnit.test("when _onUnload is called after all changes were undone", function(assert) {
+			sandbox.stub(this.oRta, "getCommandStack").returns({
+				canUndo: function() {
+					return false;
 				},
 				canRedo: function() {
-					return false;
+					return true;
 				}
 			});
 			var sMessage = this.oRta._onUnload();
