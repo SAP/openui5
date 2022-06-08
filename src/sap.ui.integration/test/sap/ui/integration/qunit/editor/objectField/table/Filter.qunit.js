@@ -178,8 +178,8 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.getBinding().getCount() === 9, "Table: RowCount beforeFiltering ok");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 					var oCell = oTable.getRows()[0].getCells()[0];
@@ -300,10 +300,10 @@ sap.ui.define([
 					assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 					var oNewRow = oTable.getRows()[0];
@@ -401,10 +401,10 @@ sap.ui.define([
 					assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
 					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 					var oNewRow = oTable.getRows()[0];

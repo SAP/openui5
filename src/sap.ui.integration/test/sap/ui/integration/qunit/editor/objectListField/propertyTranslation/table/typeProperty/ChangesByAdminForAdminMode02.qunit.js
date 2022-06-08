@@ -248,7 +248,7 @@ sap.ui.define([
 							var oTable1 = oField1.getAggregation("_field");
 							var oToolbar1 = oTable1.getToolbar();
 							assert.ok(oTable1.getBinding().getCount() === 11, "Table 1: value length is 11");
-							assert.ok(oToolbar1.getContent().length === 8, "Table toolbar 1: content length");
+							assert.ok(oToolbar1.getContent().length === 7, "Table toolbar 1: content length");
 							var oEditButton1 = oToolbar1.getContent()[2];
 							assert.ok(oEditButton1.getVisible(), "Table toolbar 1: edit button visible");
 							assert.ok(!oEditButton1.getEnabled(), "Table toolbar 1: edit button disabled");

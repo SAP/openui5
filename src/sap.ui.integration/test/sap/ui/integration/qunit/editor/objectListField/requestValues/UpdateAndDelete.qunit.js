@@ -184,7 +184,7 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 0, "Table: value length is 0");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oEditButton = oToolbar.getContent()[2];
@@ -354,7 +354,7 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 0, "Table: value length is 0");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oEditButton = oToolbar.getContent()[2];
@@ -515,7 +515,7 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 0, "Table: value length is 0");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oEditButton = oToolbar.getContent()[2];
@@ -692,7 +692,7 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 0, "Table: value length is 0");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oEditButton = oToolbar.getContent()[2];
@@ -907,7 +907,7 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 0, "Table: value length is 0");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oDeleteButton = oToolbar.getContent()[3];
@@ -986,7 +986,7 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === 0, "Table: value length is 0");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oDeleteButton = oToolbar.getContent()[3];
