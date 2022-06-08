@@ -137,6 +137,25 @@ sap.ui.define([
 		return oEvent;
 	}
 
+	function assertIndicatorVisible(assert, $Indicator, bVisible, sMessage) {
+		sMessage = sMessage ? sMessage + ": " : "";
+
+		if (bVisible) {
+			assert.ok($Indicator.is(":visible"), sMessage + "Indicator is visible");
+		} else {
+			assert.ok($Indicator.is(":hidden"), sMessage + "Indicator is hidden");
+		}
+
+		var $IndicatorWrapper = $Indicator.parent(".sapUiDnDIndicatorWrapper");
+		if ($IndicatorWrapper.length) {
+			if (bVisible) {
+				assert.ok($IndicatorWrapper.is(":visible"), sMessage + "Indicator wrapper is visible");
+			} else {
+				assert.ok($IndicatorWrapper.is(":hidden"), sMessage + "Indicator wrapper is hidden");
+			}
+		}
+	}
+
 	QUnit.module("DragSession", {
 		beforeEach: function() {
 			this.oControl = new DragAndDropControl({
@@ -554,11 +573,11 @@ sap.ui.define([
 
 		// drop
 		oDiv2.$().trigger("drop");
-		assert.ok($Indicator.is(":visible"), "Indicator is still visible after drop");
+		assertIndicatorVisible(assert, $Indicator, true, "After drop");
 
 		// cleanup
 		oDiv2.$().trigger("dragend");
-		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after dragend");
+		assertIndicatorVisible(assert, $Indicator, false, "After dragend");
 	});
 
 	QUnit.module("Drop on empty aggregation", {
@@ -617,7 +636,7 @@ sap.ui.define([
 
 		// clean up
 		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragend"));
-		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after dragend");
+		assertIndicatorVisible(assert, $Indicator, false, "After dragend");
 	});
 
 	QUnit.test("cleanup", function(assert) {
@@ -636,7 +655,7 @@ sap.ui.define([
 		oEvent.originalEvent = createNativeDragEventDummy("dragenter");
 		jQuery(oTargetDomRef).trigger(oEvent);
 		$Indicator = jQuery(oEvent.dragSession.getIndicator());
-		assert.ok($Indicator.is(":visible"), "Indicator is visible after dragenter");
+		assertIndicatorVisible(assert, $Indicator, true, "After dragenter");
 
 		// drop handling indicator
 		oTargetDomRef.focus();
@@ -644,7 +663,7 @@ sap.ui.define([
 
 		// assert
 		window.requestAnimationFrame(function() {
-			assert.ok($Indicator.is(":hidden"), "Indicator is hidden after drop without dragend");
+			assertIndicatorVisible(assert, $Indicator, false, "After drop without dragend");
 			done();
 		});
 	});

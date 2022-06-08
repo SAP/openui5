@@ -304,7 +304,8 @@ function(Device, UIArea, jQuery) {
 
 	function hideDropIndicator() {
 		if ($DropIndicator) {
-			$DropIndicator.removeAttr("style").hide();
+			$DropIndicator.removeAttr("style");
+			($DropIndicatorWrapper || $DropIndicator).hide();
 			mLastIndicatorStyle = {};
 		}
 	}
@@ -412,7 +413,8 @@ function(Device, UIArea, jQuery) {
 			mLastIndicatorStyle.height != mStyle.height) {
 			$Indicator.attr("data-drop-layout", sDropLayout);
 			$Indicator.attr("data-drop-position", sDropPosition);
-			$Indicator.css(jQuery.extend(mStyle, mIndicatorConfig)).show();
+			$Indicator.css(jQuery.extend(mStyle, mIndicatorConfig));
+			($DropIndicatorWrapper || $Indicator).show();
 			mLastIndicatorStyle = mStyle;
 		}
 
