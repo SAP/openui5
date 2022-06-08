@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library",
 	"sap/m/Toolbar",
+	"sap/m/Input",
 	"sap/ui/core/Core"
 ], function (
 		ValueHelpDelegate,
@@ -25,6 +26,7 @@ sap.ui.define([
 		JSONModel,
 		mLibrary,
 		Toolbar,
+		Input,
 		oCore
 	) {
 	"use strict";
@@ -517,6 +519,105 @@ sap.ui.define([
 					assert.ok(bClose, "close parameter");
 
 					fnDone();
+				}, iPopoverDuration);
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+
+	QUnit.module("popover valuehelp assigned to Input ", {
+		beforeEach: function() {
+			oValueHelpConfig = {maxConditions: 1};
+			oModel = new JSONModel({
+				_config: oValueHelpConfig,
+				filterValue: "X",
+				conditions: [Condition.createItemCondition("X", "Text")]
+			});
+
+			oContentField = new Input("I1");
+			oContent = new Content("Content1");
+			sinon.stub(oContent, "getContent").returns(oContentField);
+
+			oPopover = new Popover("P1", {
+				content: oContent
+			}).setModel(oModel, "$valueHelp");
+			sinon.stub(oPopover, "getParent").returns(oValueHelp);
+
+			oField = new Input("I2");
+			oField.placeAt("content");
+			oCore.applyChanges();
+
+		},
+		afterEach: _teardown
+	});
+
+	QUnit.test("open without ValueState", function(assert) {
+
+		var iOpened = 0;
+		oPopover.attachEvent("opened", function(oEvent) {
+			iOpened++;
+		});
+		var oPromise = oPopover.open(Promise.resolve());
+		assert.ok(oPromise instanceof Promise, "open returns promise");
+
+		if (oPromise) {
+			var fnDone = assert.async();
+			oPromise.then(function() {
+				setTimeout(function() { // wait until open
+					assert.equal(iOpened, 1, "Opened event fired once");
+					var oContainer = oPopover.getAggregation("_container");
+					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
+					assert.ok(oContainer.isOpen(), "sap.m.Popover is open");
+					assert.ok(oContainer.getCustomHeader().isA("sap.m.ValueStateHeader"), "custom header content is sap.m.ValueStateHeader");
+
+					assert.notOk(oContainer.getCustomHeader().getVisible(), "CustomHeader ValueStateHeader is NOT visible");
+
+					oPopover.close();
+					setTimeout(function() { // wait until closed
+						fnDone();
+					}, iPopoverDuration);
+				}, iPopoverDuration);
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("open with ValueState", function(assert) {
+		oField.setValueState("Error");
+		oField.setValueStateText("My Error message");
+
+		var iOpened = 0;
+		oPopover.attachEvent("opened", function(oEvent) {
+			iOpened++;
+		});
+		var oPromise = oPopover.open(Promise.resolve());
+		assert.ok(oPromise instanceof Promise, "open returns promise");
+
+		if (oPromise) {
+			var fnDone = assert.async();
+			oPromise.then(function() {
+				setTimeout(function() { // wait until open
+					assert.equal(iOpened, 1, "Opened event fired once");
+					var oContainer = oPopover.getAggregation("_container");
+					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
+					assert.ok(oContainer.isOpen(), "sap.m.Popover is open");
+					assert.ok(oContainer.getCustomHeader().isA("sap.m.ValueStateHeader"), "custom header content is sap.m.ValueStateHeader");
+
+					assert.equal(oContainer.getCustomHeader().getValueState(), "Error", "CustomHeader ValueState correct");
+					assert.equal(oContainer.getCustomHeader().getText(), "My Error message", "CustomHeader Text correct");
+					assert.ok(oContainer.getCustomHeader().getVisible(), "CustomHeader ValueStateHeader is visible");
+
+					oPopover.close();
+					setTimeout(function() { // wait until closed
+						fnDone();
+					}, iPopoverDuration);
 				}, iPopoverDuration);
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called");
