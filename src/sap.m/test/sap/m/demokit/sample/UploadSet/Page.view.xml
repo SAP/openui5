@@ -14,7 +14,7 @@
 				fileTypes="txt,doc,png"
 				maxFileNameLength="30"
 				maxFileSize="200"
-				mediaTypes="text/plain,application/msword,image/jpeg"
+				mediaTypes="text/plain,application/msword,image/jpeg,image/png"
 				uploadUrl="../../../../upload"
 				items="{path: '/items', templateShareable: false}"
 				mode="MultiSelect"

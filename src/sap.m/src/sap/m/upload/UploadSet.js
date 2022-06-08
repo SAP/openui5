@@ -584,7 +584,8 @@ sap.ui.define([
 				if (this._oToolbar && this._iFileUploaderPH > -1) {
 					this._setFileUploaderInToolbar(this.getDefaultFileUploader());
 				} else if (this._oToolbar) {
-					this._oToolbar.insertContent(this.getDefaultFileUploader());
+					// fallback position to add file uploader control if UploadSetToolbarPlaceHolder instance not found
+					this._oToolbar.addContent(this.getDefaultFileUploader());
 				}
 			}
 		}
