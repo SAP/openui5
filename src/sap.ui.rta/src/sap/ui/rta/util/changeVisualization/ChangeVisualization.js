@@ -498,8 +498,13 @@ sap.ui.define([
 					changes: aRelevantChanges
 				};
 
-				if (!this._oChangeIndicatorRegistry.hasChangeIndicator(sSelectorId)) {
+				var oChangeIndicator = this._oChangeIndicatorRegistry.getChangeIndicator(sSelectorId);
+				var sOverlayId = oOverlay.getId();
+				if (!oChangeIndicator) {
 					this._createChangeIndicator(oOverlay, sSelectorId);
+				} else if (oChangeIndicator.getOverlayId() !== sOverlayId) {
+					// Overlay id might change, e.g. during undo/redo of dirty changes
+					oChangeIndicator.setOverlayId(sOverlayId);
 				}
 				return undefined;
 			}.bind(this));
@@ -550,10 +555,6 @@ sap.ui.define([
 		oChangeIndicator.setModel(this._oChangeVisualizationModel);
 		oChangeIndicator.bindElement("/content/" + sSelectorId);
 		oChangeIndicator.setModel(this.getModel("i18n"), "i18n");
-
-		// Temporarily place the indicator in the static area
-		// It will move itself to the correct overlay after rendering
-		oChangeIndicator.placeAt(sap.ui.getCore().getStaticAreaRef());
 		this._oChangeIndicatorRegistry.registerChangeIndicator(sSelectorId, oChangeIndicator);
 	};
 

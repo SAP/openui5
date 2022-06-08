@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/categories/RenameVisualization",
 	"sap/ui/rta/util/changeVisualization/categories/MoveVisualization",
+	"sap/ui/rta/util/changeVisualization/categories/CombineVisualization",
 	"sap/ui/rta/util/changeVisualization/categories/SplitVisualization"
 ], function(
 	RenameVisualization,
 	MoveVisualization,
+	CombineVisualization,
 	SplitVisualization
 ) {
 	"use strict";
@@ -16,6 +18,7 @@ sap.ui.define([
 	var mCategories = {
 		rename: RenameVisualization,
 		move: MoveVisualization,
+		combine: CombineVisualization,
 		split: SplitVisualization
 	};
 
