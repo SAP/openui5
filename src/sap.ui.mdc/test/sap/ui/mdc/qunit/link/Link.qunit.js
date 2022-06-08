@@ -139,6 +139,28 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("retrieveAdditionalContent should only be called once when calling open", function(assert) {
+		var done = assert.async();
+		var oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					additionalContent: new Text({
+						text: "Additional Content"
+					})
+				}
+			}
+		});
+		var fnUseDelegateAdditionalContent = sinon.spy(oLink, "_useDelegateAdditionalContent");
+		assert.ok(fnUseDelegateAdditionalContent.notCalled, "_useDelegateAdditionalContent not called yet");
+
+		oLink.open(oLink).then(function() {
+			assert.ok(fnUseDelegateAdditionalContent.calledOnce, "_useDelegateAdditionalContent called once");
+			assert.ok(oLink._oPopover, "Popover created");
+			done();
+		});
+	});
+
 	QUnit.test("retrieveAllMetadata should return all LinkItems", function(assert) {
 		var done = assert.async();
 		var oLink = new Link({
