@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Icon",
-	"sap/m/Label"
+	"sap/m/Label",
+	'sap/ui/Device'
 ], function(
 	DynamicDateRange,
 	CustomDynamicDateOption,
@@ -18,7 +19,8 @@ sap.ui.define([
 	DateRange,
 	DateFormat,
 	Icon,
-	Label
+	Label,
+	Device
 ) {
 	"use strict";
 
@@ -125,6 +127,30 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oPopupCloseSpy.calledOnce, "The value help popover is closed");
+	});
+
+	QUnit.test("value help popover should stay opened on tablet when focus is moved to the control input field", function(assert) {
+		// arrange
+		this.ddr._createPopup();
+		this.stub(this.ddr._oPopup, "isOpen").returns(true);
+		this.stub(Device, "system").value({
+			desktop: false,
+			tablet: true,
+			phone: false
+		});
+		var oPopupCloseSpy = this.spy(this.ddr._oPopup, "close");
+		this.ddr._oNavContainer = {
+			to: function() {},
+			getPages: function() {
+				return [];
+			}
+		};
+
+		// act
+		this.ddr._oInput.onfocusin();
+
+		// assert
+		assert.ok(oPopupCloseSpy.notCalled, "The value help popover is opened");
 	});
 
 	QUnit.test("Setting value", function(assert) {
