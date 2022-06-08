@@ -783,8 +783,8 @@ sap.ui.define([
 
 		return FlexState.getStorageResponse(sReference)
 			.then(function(oStoredResponse) {
-				var aFlexObject = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey).filter(needsPersistencyCall);
-				var aPromises = aFlexObject.map(function(oFlexObject, index) {
+				var aFlexObjects = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey).filter(needsPersistencyCall);
+				var aPromises = aFlexObjects.map(function(oFlexObject, index) {
 					if (index === 0) {
 						var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {
 							layer: oFlexObject.getLayer(),
@@ -796,7 +796,7 @@ sap.ui.define([
 						// need to save first entry to generate draft version in backend
 						return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion)
 						.then(function() {
-							var aPromises = aFlexObject.map(function(oFlexObject, index) {
+							var aPromises = aFlexObjects.map(function(oFlexObject, index) {
 								if (index !== 0) {
 									var sDraftVersion = sParentVersion ? Version.Number.Draft : undefined;
 									return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sDraftVersion);
