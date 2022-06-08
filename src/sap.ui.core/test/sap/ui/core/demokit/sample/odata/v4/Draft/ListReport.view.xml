@@ -23,7 +23,7 @@
 					</Title>
 					<Button id="showMessages" icon="sap-icon://message-popup"
 							tooltip="Show messages" press="onToggleMessagePopover"
-							text="{ui>/iMessages}"
+							text="{ui>/iMessages} Messages"
 							type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 					<Link text="Read Me" target="_blank"
 							href="test-resources/sap/ui/core/demokit/sample/odata/v4/Draft/README.html"/>
