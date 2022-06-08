@@ -1458,13 +1458,18 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown: stream property", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Products"),
-			oData = [{productPicture : {}}];
+		var oCache = new _Cache(this.oRequestor, "Products", "~mQueryOptions~"),
+			oData = [{productPicture : {}}],
+			oHelperMock = this.mock(_Helper);
 
 		oData.$byPredicate = {"('42')" : oData[0]};
 
-		this.mock(_Helper).expects("getMetaPath")
-			.withExactArgs("('42')/productPicture/picture").returns("productPicture/picture");
+		oHelperMock.expects("getMetaPath")
+			.withExactArgs("('42')/productPicture/picture")
+			.returns("productPicture/picture");
+		oHelperMock.expects("isSelected")
+			.withExactArgs("productPicture/picture", "~mQueryOptions~")
+			.returns(true);
 		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/productPicture/picture")
 			.returns(SyncPromise.resolve({$Type : "Edm.Stream"}));
@@ -1669,8 +1674,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#drillDown: missing property instance annotation", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Products"),
+	QUnit.test("_Cache#drillDown: missing property annotation", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products", {$select : ["PostAddress"]}),
 			oData = {
 				WebAddress : "foo.bar",
 				"WebAddress@some.Annotation" : {foo : {bar : "string"}},
@@ -1678,10 +1683,7 @@ sap.ui.define([
 			},
 			oTransientData = {
 				"@$ui5.context.isTransient" : true
-			},
-			that = this;
-
-		oCache.mQueryOptions = {$select : ["PostAddress"]};
+			};
 
 		this.oLogMock.expects("info")
 			.withExactArgs("Failed to drill-down into WebAddress@some.Annotation/foo/missing, "
@@ -1718,21 +1720,125 @@ sap.ui.define([
 			oCache.drillDown(oData, "PostAddress@missing.Annotation")
 		]).then(function (aResults) {
 			assert.deepEqual(aResults, [undefined, undefined, undefined, undefined, undefined]);
+		});
+	});
 
-			oCache.mQueryOptions = undefined;
+	//*********************************************************************************************
+	QUnit.test("_Cache#drillDown: late request for missing property annotation", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products"),
+			oData = {};
 
-			that.oModelInterfaceMock.expects("fetchMetadata")
-				.withExactArgs("/Products/PostAddress")
-				.returns(SyncPromise.resolve({}));
-			that.mock(oCache).expects("fetchLateProperty")
-				.withExactArgs("~oGroupLock~", sinon.match.same(oData), "",
-					"PostAddress", "PostAddress@some.Annotation"
-				).returns("annotationValue");
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Products/PostAddress")
+			.returns(SyncPromise.resolve({}));
+		this.mock(_Helper).expects("isSelected")
+			.withExactArgs("PostAddress", undefined)
+			.returns(false);
+		this.mock(oCache).expects("fetchLateProperty")
+			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "", "PostAddress",
+				"PostAddress@some.Annotation")
+			.returns("annotationValue");
 
-			// code under test
-			return oCache.drillDown(oData, "PostAddress@some.Annotation", "~oGroupLock~");
-		}).then(function (sValue) {
-			assert.strictEqual(sValue, "annotationValue");
+		// code under test
+		return oCache.drillDown(oData, "PostAddress@some.Annotation", "~oGroupLock~")
+			.then(function (sValue) {
+				assert.strictEqual(sValue, "annotationValue");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#drillDown: missing Edm.Stream property annotation", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products", "~mQueryOptions~"),
+			oData = {},
+			oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("getMetaPath")
+			.withExactArgs("Picture@odata.mediaContentType");
+		oHelperMock.expects("getMetaPath")
+			.withExactArgs("Picture")
+			.returns("~PictureMetaPath~");
+		oHelperMock.expects("isSelected")
+			.withExactArgs("~PictureMetaPath~", "~mQueryOptions~")
+			.returns(false);
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Products/~PictureMetaPath~")
+			.returns(SyncPromise.resolve({$Type : "Edm.Stream"}));
+		this.mock(oCache).expects("fetchLateProperty")
+			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "", "Picture",
+				"Picture@odata.mediaContentType")
+			.returns("image/jpg");
+
+		// code under test
+		return oCache.drillDown(oData, "Picture@odata.mediaContentType", "~oGroupLock~")
+			.then(function (sValue) {
+				assert.strictEqual(sValue, "image/jpg");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#drillDown: missing Edm.Stream property", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products", "~mQueryOptions~"),
+			oData = {};
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("Picture")
+			.returns("~PictureMetaPath~");
+		this.mock(_Helper).expects("isSelected")
+			.withExactArgs("~PictureMetaPath~", "~mQueryOptions~")
+			.returns(false);
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Products/~PictureMetaPath~")
+			.returns(SyncPromise.resolve({$Type : "Edm.Stream"}));
+
+		this.mock(oCache).expects("fetchLateProperty")
+			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "", "Picture", "Picture")
+			.returns("~mediaReadLink~");
+
+		// code under test
+		return oCache.drillDown(oData, "Picture", "~oGroupLock~")
+			.then(function (sValue) {
+				assert.strictEqual(sValue, "~mediaReadLink~");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#drillDown: do not fetch Edm.Stream property late twice", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products", "~mQueryOptions~"),
+			oData = {"Picture@$ui5.noData" : true};
+
+		this.mock(_Helper).expects("isSelected").never();
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("Picture")
+			.returns("~PictureMetaPath~");
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Products/~PictureMetaPath~")
+			.returns(SyncPromise.resolve({$Type : "Edm.Stream"}));
+
+		// code under test
+		return oCache.drillDown(oData, "Picture", "~oGroupLock~").then(function (sResult) {
+			assert.strictEqual(sResult, "/~/Products/Picture", "default for Edm.Stream");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#drillDown: don't fetch Edm.Stream annotation late 2x", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products", "~mQueryOptions~"),
+			oData = {"Picture@$ui5.noData" : true},
+			oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("isSelected").never();
+		oHelperMock.expects("getMetaPath")
+			.withExactArgs("Picture@missing");
+		oHelperMock.expects("getMetaPath")
+			.withExactArgs("Picture")
+			.returns("~PictureMetaPath~");
+		this.oLogMock.expects("info")
+			.withExactArgs("Failed to drill-down into Picture@missing, invalid segment: "
+				+ "Picture@missing", "/~/Products", "sap.ui.model.odata.v4.lib._Cache");
+
+		// code under test
+		return oCache.drillDown(oData, "Picture@missing", "~oGroupLock~").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
 		});
 	});
 

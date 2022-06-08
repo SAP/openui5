@@ -1601,6 +1601,41 @@ sap.ui.define([
 		},
 
 		/**
+		 * Determines whether the given property path is selected in the given query options.
+		 *
+		* A property path is selected if $select in the query options or the matching $expand
+		* <ul>
+		*   <li> is missing
+		*   <li> contains "*"
+		*   <li> contains the property or its surrounding complex type
+		* </ul>.
+		*
+		 * @param {string} sPropertyPath The path to the structural property as meta path
+		 * @param {object} [mQueryOptions] The query options to be analyzed
+		 * @returns {boolean} Whether the property for the given path was already selected
+		 */
+		isSelected : function (sPropertyPath, mQueryOptions) {
+			var sPath, sRelativePath;
+
+			if (!mQueryOptions) {
+				return false;
+			}
+			if (mQueryOptions.$expand) {
+				for (sPath in mQueryOptions.$expand) {
+					sRelativePath = _Helper.getRelativePath(sPropertyPath, sPath);
+					if (sRelativePath) {
+						return _Helper.isSelected(sRelativePath, mQueryOptions.$expand[sPath]);
+					}
+				}
+			}
+			return !mQueryOptions.$select
+				|| mQueryOptions.$select.includes("*")
+				|| mQueryOptions.$select.some(function (sSelect) {
+					return _Helper.hasPathPrefix(sPropertyPath, sSelect);
+				});
+		},
+
+		/**
 		 * Make the given URL absolute using the given base URL. The URLs must not contain a host
 		 * or protocol part. Ensures that key predicates are not %-encoded.
 		 *

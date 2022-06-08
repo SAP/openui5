@@ -14,6 +14,7 @@
 				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
 				<Property Name="Name" Type="Edm.String" MaxLength="255"/>
 				<Property Name="Messages" Type="Collection(special.cases.Message)" />
+				<Property Name="Picture" Type="Edm.Stream" Nullable="true"/>
 				<Property Name="defaultChannel" Type="Edm.String" />
 				<Property Name="lastUsedChannel" Type="Edm.String" />
 				<Property Name="sendsAutographs" Type="Edm.Boolean" />
