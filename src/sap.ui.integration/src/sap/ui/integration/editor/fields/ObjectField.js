@@ -351,6 +351,8 @@ sap.ui.define([
 			var oSelectionColumn = new Column({
 				width: "3.2rem",
 				hAlign: "Center",
+				// hide selection column for object list field with properties defined only
+				visible: typeof oConfig.values === "undefined" ? false : true,
 				multiLabels: [
 					oSelectionColumnLabels
 				],
@@ -545,9 +547,6 @@ sap.ui.define([
 					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DELETE"),
 					enabled: "{= !!${/_canDelete}}",
 					press: that.onDelete.bind(that)
-				}),
-				new Icon({
-					src: "sap-icon://vertical-grip"
 				}),
 				new Button({
 					icon: "sap-icon://clear-filter",

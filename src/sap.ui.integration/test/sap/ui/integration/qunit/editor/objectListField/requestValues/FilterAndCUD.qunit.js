@@ -181,10 +181,10 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
@@ -210,7 +210,7 @@ sap.ui.define([
 							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 							var oToolbar = oTable.getToolbar();
-							assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+							assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 							var oAddButton = oToolbar.getContent()[1];
 							assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 							oAddButton.firePress();
@@ -325,10 +325,10 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
@@ -354,7 +354,7 @@ sap.ui.define([
 							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 							var oToolbar = oTable.getToolbar();
-							assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+							assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 							var oAddButton = oToolbar.getContent()[1];
 							assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 							oAddButton.firePress();
@@ -484,10 +484,10 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
@@ -657,10 +657,10 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
@@ -849,10 +849,10 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
@@ -1032,10 +1032,10 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
@@ -1233,12 +1233,12 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
 					var oDeleteButon = oToolbar.getContent()[3];
 					assert.ok(!oDeleteButon.getEnabled(), "Table toolbar: delete button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
@@ -1316,12 +1316,12 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
 					var oDeleteButon = oToolbar.getContent()[3];
 					assert.ok(!oDeleteButon.getEnabled(), "Table toolbar: delete button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {

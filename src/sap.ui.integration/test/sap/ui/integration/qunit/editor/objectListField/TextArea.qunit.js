@@ -313,8 +313,7 @@ sap.ui.define([
 					var oColumns = oTable.getColumns();
 					assert.ok(oColumns.length === 6, "Table: column number is 6");
 					var oSelectionColumn = oColumns[0];
-					var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(!oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column hided");
+					assert.ok(!oSelectionColumn.getVisible(), "Row 1: selection column is not visible");
 					assert.ok(oColumns[1].getLabel().getText() === "a", "Table: column 'a'");
 					assert.ok(oColumns[2].getLabel().getText() === "b", "Table: column 'b'");
 					assert.ok(oColumns[3].getLabel().getText() === "d", "Table: column 'd'");
@@ -322,33 +321,17 @@ sap.ui.define([
 					assert.ok(oColumns[5].getLabel().getText() === "e", "Table: column 'e'");
 					var oRow1 = oTable.getRows()[0];
 					assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), {"a": "aa", "b": "bb", "d": 2, "_dt": {"_selected": true}}), "Row 1: value");
-					var oSelectionCell1 = oRow1.getCells()[0];
-					assert.ok(oSelectionCell1.getVisible(), "Row 1: Cell 1 is visible");
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(!oSelectionCell1.getEnabled(), "Row 1: Cell 1 is disabled");
 					var oRow2 = oTable.getRows()[1];
 					assert.ok(deepEqual(cleanUUID(oRow2.getBindingContext().getObject()), {"b": "bbb", "c": "ccc", "d": 3, "_dt": {"_selected": true}}), "Row 2: value");
-					var oSelectionCell2 = oRow2.getCells()[0];
-					assert.ok(oSelectionCell2.getVisible(), "Row 2: Cell 1 is visible");
-					assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-					assert.ok(!oSelectionCell2.getEnabled(), "Row 2: Cell 1 is disabled");
 					var oRow3 = oTable.getRows()[2];
 					assert.ok(deepEqual(cleanUUID(oRow3.getBindingContext().getObject()), {"c": "cccc", "d": 1, "a": "aaaa", "e": false, "_dt": {"_selected": true}}), "Row 3: value");
-					var oSelectionCell3 = oRow3.getCells()[0];
-					assert.ok(oSelectionCell3.getVisible(), "Row 3: Cell 1 is visible");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
-					assert.ok(!oSelectionCell3.getEnabled(), "Row 3: Cell 1 is disabled");
 					var oRow4 = oTable.getRows()[3];
 					assert.ok(deepEqual(cleanUUID(oRow4.getBindingContext().getObject()), {"a": "aaa", "b": "bbb", "e": true, "_dt": {"_selected": true}}), "Row 4: value");
-					var oSelectionCell4 = oRow4.getCells()[0];
-					assert.ok(oSelectionCell4.getVisible(), "Row 4: Cell 1 is visible");
-					assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
-					assert.ok(!oSelectionCell4.getEnabled(), "Row 4: Cell 1 is disabled");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					resolve();
 				}.bind(this));
@@ -407,7 +390,7 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
@@ -492,26 +475,6 @@ sap.ui.define([
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 5, "Table: value length is 5");
 								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[4].getObject()), {"a": "a1","b": "b1","c": "c1","d": 2,"e": true, "_dt": {"_selected": true}}), "Table: new row");
-								var oRow1 = oTable.getRows()[0];
-								var oSelectionCell1 = oRow1.getCells()[0];
-								assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-								assert.ok(!oSelectionCell1.getEnabled(), "Row 1: Cell 1 is disabled");
-								var oRow2 = oTable.getRows()[1];
-								var oSelectionCell2 = oRow2.getCells()[0];
-								assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-								assert.ok(!oSelectionCell2.getEnabled(), "Row 2: Cell 1 is disabled");
-								var oRow3 = oTable.getRows()[2];
-								var oSelectionCell3 = oRow3.getCells()[0];
-								assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
-								assert.ok(!oSelectionCell3.getEnabled(), "Row 3: Cell 1 is disabled");
-								var oRow4 = oTable.getRows()[3];
-								var oSelectionCell4 = oRow4.getCells()[0];
-								assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
-								assert.ok(!oSelectionCell4.getEnabled(), "Row 4: Cell 1 is disabled");
-								var oRow5 = oTable.getRows()[4];
-								var oSelectionCell5 = oRow5.getCells()[0];
-								assert.ok(oSelectionCell5.getSelected(), "Row 5: Cell 1 is selected");
-								assert.ok(!oSelectionCell5.getEnabled(), "Row 5: Cell 1 is disabled");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([{"a": "a1","b": "b1","c": "c1","d": 2,"e": true}])), "Field 1: updated DT Value");
 								resolve();
 							});
@@ -542,7 +505,7 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
@@ -626,22 +589,6 @@ sap.ui.define([
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-								var oRow1 = oTable.getRows()[0];
-								var oSelectionCell1 = oRow1.getCells()[0];
-								assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-								assert.ok(!oSelectionCell1.getEnabled(), "Row 1: Cell 1 is disabled");
-								var oRow2 = oTable.getRows()[1];
-								var oSelectionCell2 = oRow2.getCells()[0];
-								assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-								assert.ok(!oSelectionCell2.getEnabled(), "Row 2: Cell 1 is disabled");
-								var oRow3 = oTable.getRows()[2];
-								var oSelectionCell3 = oRow3.getCells()[0];
-								assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
-								assert.ok(!oSelectionCell3.getEnabled(), "Row 3: Cell 1 is disabled");
-								var oRow4 = oTable.getRows()[3];
-								var oSelectionCell4 = oRow4.getCells()[0];
-								assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
-								assert.ok(!oSelectionCell4.getEnabled(), "Row 4: Cell 1 is disabled");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 								resolve();
 							});
@@ -672,7 +619,7 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
@@ -762,26 +709,6 @@ sap.ui.define([
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === 5, "Table: value length is 5");
 								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[4].getObject()), {"a": "a2","b": "b2","c": "c2","d": 3,"e": false, "_dt": {"_selected": true}}), "Table: new row");
-								var oRow1 = oTable.getRows()[0];
-								var oSelectionCell1 = oRow1.getCells()[0];
-								assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-								assert.ok(!oSelectionCell1.getEnabled(), "Row 1: Cell 1 is disabled");
-								var oRow2 = oTable.getRows()[1];
-								var oSelectionCell2 = oRow2.getCells()[0];
-								assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-								assert.ok(!oSelectionCell2.getEnabled(), "Row 2: Cell 1 is disabled");
-								var oRow3 = oTable.getRows()[2];
-								var oSelectionCell3 = oRow3.getCells()[0];
-								assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
-								assert.ok(!oSelectionCell3.getEnabled(), "Row 3: Cell 1 is disabled");
-								var oRow4 = oTable.getRows()[3];
-								var oSelectionCell4 = oRow4.getCells()[0];
-								assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
-								assert.ok(!oSelectionCell4.getEnabled(), "Row 4: Cell 1 is disabled");
-								var oRow5 = oTable.getRows()[4];
-								var oSelectionCell5 = oRow5.getCells()[0];
-								assert.ok(oSelectionCell5.getSelected(), "Row 5: Cell 1 is selected");
-								assert.ok(!oSelectionCell5.getEnabled(), "Row 5: Cell 1 is disabled");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([{"a": "a2","b": "b2","c": "c2","d": 3,"e": false}])), "Field 1: updated DT Value");
 								resolve();
 							});
@@ -812,7 +739,7 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					oAddButton.onAfterRendering = function(oEvent) {
@@ -901,22 +828,6 @@ sap.ui.define([
 							oCancelButtonInPopover.firePress();
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-								var oRow1 = oTable.getRows()[0];
-								var oSelectionCell1 = oRow1.getCells()[0];
-								assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-								assert.ok(!oSelectionCell1.getEnabled(), "Row 1: Cell 1 is disabled");
-								var oRow2 = oTable.getRows()[1];
-								var oSelectionCell2 = oRow2.getCells()[0];
-								assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-								assert.ok(!oSelectionCell2.getEnabled(), "Row 2: Cell 1 is disabled");
-								var oRow3 = oTable.getRows()[2];
-								var oSelectionCell3 = oRow3.getCells()[0];
-								assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
-								assert.ok(!oSelectionCell3.getEnabled(), "Row 3: Cell 1 is disabled");
-								var oRow4 = oTable.getRows()[3];
-								var oSelectionCell4 = oRow4.getCells()[0];
-								assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
-								assert.ok(!oSelectionCell4.getEnabled(), "Row 4: Cell 1 is disabled");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 								resolve();
 							});
@@ -978,10 +889,10 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(2);
@@ -1072,22 +983,6 @@ sap.ui.define([
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[2].getObject()), {"a": "a1","b": "b1","c": "c1","d": 2,"e": true,"_dt": {"_selected": true}}), "Table: row updated");
-								var oRow1 = oTable.getRows()[0];
-								var oSelectionCell1 = oRow1.getCells()[0];
-								assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-								assert.ok(!oSelectionCell1.getEnabled(), "Row 1: Cell 1 is disabled");
-								var oRow2 = oTable.getRows()[1];
-								var oSelectionCell2 = oRow2.getCells()[0];
-								assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-								assert.ok(!oSelectionCell2.getEnabled(), "Row 2: Cell 1 is disabled");
-								var oRow3 = oTable.getRows()[2];
-								var oSelectionCell3 = oRow3.getCells()[0];
-								assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
-								assert.ok(!oSelectionCell3.getEnabled(), "Row 3: Cell 1 is disabled");
-								var oRow4 = oTable.getRows()[3];
-								var oSelectionCell4 = oRow4.getCells()[0];
-								assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
-								assert.ok(!oSelectionCell4.getEnabled(), "Row 4: Cell 1 is disabled");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
 									{"a": "aa", "b": "bb", "d": 2},
 									{"b": "bbb", "c": "ccc", "d": 3},
@@ -1123,10 +1018,10 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(2);
@@ -1217,22 +1112,6 @@ sap.ui.define([
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[2].getObject()), {"c": "cccc", "d": 1, "a": "aaaa", "e": false, "_dt": {"_selected": true}}), "Table: row not updated");
-								var oRow1 = oTable.getRows()[0];
-								var oSelectionCell1 = oRow1.getCells()[0];
-								assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-								assert.ok(!oSelectionCell1.getEnabled(), "Row 1: Cell 1 is disabled");
-								var oRow2 = oTable.getRows()[1];
-								var oSelectionCell2 = oRow2.getCells()[0];
-								assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-								assert.ok(!oSelectionCell2.getEnabled(), "Row 2: Cell 1 is disabled");
-								var oRow3 = oTable.getRows()[2];
-								var oSelectionCell3 = oRow3.getCells()[0];
-								assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
-								assert.ok(!oSelectionCell3.getEnabled(), "Row 3: Cell 1 is disabled");
-								var oRow4 = oTable.getRows()[3];
-								var oSelectionCell4 = oRow4.getCells()[0];
-								assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
-								assert.ok(!oSelectionCell4.getEnabled(), "Row 4: Cell 1 is disabled");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 								resolve();
 							});
@@ -1263,10 +1142,10 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(2);
@@ -1362,22 +1241,6 @@ sap.ui.define([
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[2].getObject()), {"c": "c2", "d": 3, "a": "a2", "e": false, "b": "b2", "_dt": {"_selected": true}}), "Table: row updated");
-								var oRow1 = oTable.getRows()[0];
-								var oSelectionCell1 = oRow1.getCells()[0];
-								assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-								assert.ok(!oSelectionCell1.getEnabled(), "Row 1: Cell 1 is disabled");
-								var oRow2 = oTable.getRows()[1];
-								var oSelectionCell2 = oRow2.getCells()[0];
-								assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-								assert.ok(!oSelectionCell2.getEnabled(), "Row 2: Cell 1 is disabled");
-								var oRow3 = oTable.getRows()[2];
-								var oSelectionCell3 = oRow3.getCells()[0];
-								assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
-								assert.ok(!oSelectionCell3.getEnabled(), "Row 3: Cell 1 is disabled");
-								var oRow4 = oTable.getRows()[3];
-								var oSelectionCell4 = oRow4.getCells()[0];
-								assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
-								assert.ok(!oSelectionCell4.getEnabled(), "Row 4: Cell 1 is disabled");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), [
 									{"a": "aa", "b": "bb", "d": 2},
 									{"b": "bbb", "c": "ccc", "d": 3},
@@ -1413,10 +1276,10 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(2);
@@ -1512,22 +1375,6 @@ sap.ui.define([
 							wait().then(function () {
 								assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[2].getObject()), {"c": "cccc", "d": 1, "a": "aaaa", "e": false, "_dt": {"_selected": true}}), "Table: row not updated");
-								var oRow1 = oTable.getRows()[0];
-								var oSelectionCell1 = oRow1.getCells()[0];
-								assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-								assert.ok(!oSelectionCell1.getEnabled(), "Row 1: Cell 1 is disabled");
-								var oRow2 = oTable.getRows()[1];
-								var oSelectionCell2 = oRow2.getCells()[0];
-								assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-								assert.ok(!oSelectionCell2.getEnabled(), "Row 2: Cell 1 is disabled");
-								var oRow3 = oTable.getRows()[2];
-								var oSelectionCell3 = oRow3.getCells()[0];
-								assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
-								assert.ok(!oSelectionCell3.getEnabled(), "Row 3: Cell 1 is disabled");
-								var oRow4 = oTable.getRows()[3];
-								var oSelectionCell4 = oRow4.getCells()[0];
-								assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
-								assert.ok(!oSelectionCell4.getEnabled(), "Row 4: Cell 1 is disabled");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 								resolve();
 							});
@@ -1589,10 +1436,10 @@ sap.ui.define([
 					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
 					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 8, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
 					var oDeleteButton = oToolbar.getContent()[3];
 					assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
-					var oClearFilterButton = oToolbar.getContent()[5];
+					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
 					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(0);

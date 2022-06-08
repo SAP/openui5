@@ -284,7 +284,7 @@ sap.ui.define([
 							var oTable1 = oField1.getAggregation("_field");
 							var oToolbar1 = oTable1.getToolbar();
 							assert.ok(oTable1.getBinding().getCount() === 9, "Table 1: value length is 9");
-							assert.ok(oToolbar1.getContent().length === 8, "Table toolbar 1: content length");
+							assert.ok(oToolbar1.getContent().length === 7, "Table toolbar 1: content length");
 							var oEditButton1 = oToolbar1.getContent()[2];
 							assert.ok(oEditButton1.getVisible(), "Table toolbar 1: edit button visible");
 							assert.ok(!oEditButton1.getEnabled(), "Table toolbar 1: edit button disabled");
@@ -332,7 +332,7 @@ sap.ui.define([
 										var oTable2 = oField2.getAggregation("_field");
 										var oToolbar2 = oTable2.getToolbar();
 										assert.ok(oTable2.getBinding().getCount() === 9, "Table 2: value length is 9");
-										assert.ok(oToolbar2.getContent().length === 8, "Table toolbar 2: content length");
+										assert.ok(oToolbar2.getContent().length === 7, "Table toolbar 2: content length");
 										var oEditButton2 = oToolbar2.getContent()[2];
 										assert.ok(oEditButton2.getVisible(), "Table toolbar 2: edit button visible");
 										assert.ok(!oEditButton2.getEnabled(), "Table toolbar 2: edit button disabled");
@@ -405,7 +405,7 @@ sap.ui.define([
 													var oTable3 = oField3.getAggregation("_field");
 													var oToolbar3 = oTable3.getToolbar();
 													assert.ok(oTable3.getBinding().getCount() === 9, "Table 3: value length is 9");
-													assert.ok(oToolbar3.getContent().length === 8, "Table toolbar 3: content length");
+													assert.ok(oToolbar3.getContent().length === 7, "Table toolbar 3: content length");
 													var oEditButton3 = oToolbar3.getContent()[2];
 													assert.ok(oEditButton3.getVisible(), "Table toolbar 3: edit button visible");
 													assert.ok(!oEditButton3.getEnabled(), "Table toolbar 3: edit button disabled");
