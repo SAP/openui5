@@ -610,6 +610,85 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("insertAggregation('cell') should be skiped for sap.m.GroupHeaderListItem", function(assert) {
+		this.oTable.destroy();
+		this.oTable = new Table({
+			type: "ResponsiveTable",
+			delegate: {
+				name: sDelegatePath,
+				payload: {
+					collectionPath: "/testPath"
+				}
+			},
+			columns: [
+				new Column({
+					header: "Column1",
+					template: new Text({
+						text: "{cell1}"
+					}),
+					dataProperty: "column1"
+				}), new Column({
+					header: "Column2",
+					template: new Text({
+						text: "{cell2}"
+					}),
+					dataProperty: "column2"
+				})
+			],
+			models: new JSONModel({
+				testPath: new Array(10).fill({
+					column1: "cell1",
+					column2: "cell2",
+					column3: "cell3"
+				})
+			})
+		});
+
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
+			{
+				name: "column1",
+				path: "column1",
+				label: "column1"
+			},
+			{
+				name: "column2",
+				path: "column2",
+				label: "column2"
+			},
+			{
+				name: "column3",
+				path: "column3",
+				label: "column3"
+			}
+		]);
+
+		return this.oTable._fullyInitialized().then(function() {
+			this.oTable.setGroupConditions({
+				groupLevels: [
+					{name: "column1"}
+				]
+			});
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var aItems = this.oTable._oTable.getItems();
+			assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "Grouping applied as expected");
+			assert.strictEqual(aItems.length, 11, "1 group header item + 10 list items");
+
+			var fnIsASpy = sinon.spy(aItems[0], "isA");
+
+			// add a column
+			this.oTable.insertColumn(new Column({
+				header: "Column3",
+				template: new Text({
+					text: "{cell3}"
+				}),
+				dataProperty: "column3"
+			}), 1);
+
+			assert.ok(fnIsASpy.calledWith("sap.m.GroupHeaderListItem"), 10, "insertAggregation('cells') skipped for sap.m.GroupHeaderListItem");
+		}.bind(this));
+	});
+
 	QUnit.test("Destroy - MTable - remove template", function(assert) {
 		// Destroy the old/default table
 		this.oTable.destroy();

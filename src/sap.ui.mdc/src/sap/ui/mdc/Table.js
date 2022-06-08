@@ -2239,6 +2239,10 @@ sap.ui.define([
 		if (iIndex >= 0) {
 			this._oTemplate.insertCell(oCellTemplate, iIndex);
 			this._oTable.getItems().forEach(function(oItem) {
+				// ignore group headers since it does not have "cells" aggregation
+				if (oItem.isA("sap.m.GroupHeaderListItem")) {
+					return;
+				}
 				// Add lightweight placeholders that can be rendered - if they cannot be rendered, there will be errors in the console.
 				// The actual cells are created after rebind.
 				oItem.insertAggregation("cells", new InvisibleText(), iIndex, true);
