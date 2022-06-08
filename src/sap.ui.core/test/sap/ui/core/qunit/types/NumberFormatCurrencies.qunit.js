@@ -1668,6 +1668,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.test("format/parse indian lakhs/crores", function (assert) {
 		var oLocale = new Locale("en-IN");
 		var oFormat = getCurrencyInstance({}, oLocale);
+		var oFormatGroupingValidation = getCurrencyInstance({style: "short", strictGroupingValidation: true}, oLocale);
 
 		assert.equal(oFormat.format(100000, "INR"), "INR\xa01,00,000.00", "INR is formatted with correct grouping");
 		assert.deepEqual(oFormat.parse("INR\xa01,00,000.00"), [100000, "INR"], "INR is parsed with correct grouping");
@@ -1746,21 +1747,178 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.deepEqual(oFormat.parse("INR 100 00 00,000 Cr Cr"), [1e+23, "INR"], "missing grouping");
 
 		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oFormat.parse("INR 100 00,00 000 Cr Cr"), null, "ambiguous grouping");
-		assert.deepEqual(oFormat.parse("INR 100,00 00 000 Cr Cr"), null, "ambiguous grouping");
-		assert.deepEqual(oFormat.parse("INR 1,00 00 00 000 Cr Cr"), null, "ambiguous grouping");
-		assert.deepEqual(oFormat.parse("INR 100 00 00 0,00 Cr Cr"), null, "ambiguous grouping");
+		assert.deepEqual(oFormat.parse("INR 100 00,00 000 Cr Cr"), null, "Parse 'INR 100 00,00 000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 100,00 00 000 Cr Cr"), null, "Parse 'INR 100,00 00 000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 1,00 00 00 000 Cr Cr"), null, "Parse 'INR 1,00 00 00 000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 100 00 00 0,00 Cr Cr"), null, "Parse 'INR 100 00 00 0,00 Cr Cr'");
+
+		// grouping validation
+		// exactly one grouping separator is present and the one at the most right is missing
+		// this means it could have been confused with the decimal separator
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 100 00,00 000 Cr Cr"), null, "grouping validation 'INR 100 00,00 000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 100,00 00 000 Cr Cr"), null, "grouping validation: 'INR 100,00 00 000 Cr Cr'");
+
+		// 2 or more separators are present at the correct position
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 100,00 00,000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 100,00 00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 100,00,00,000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 100,00,00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 100,00,00 000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 100,00,00 000 Cr Cr'");
+
+		// 2 or more separators are present at the incorrect position
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 1,00 0,0 00 000 Cr Cr"), null, "Parse 'INR 1,00 0,0 00 000 Cr Cr'");
+
+		// wrong grouping position
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 100 00 00 0,00 Cr Cr"), null, "Parse 'INR 100 00 00 0,00 Cr Cr'");
 
 		// tolerated, despite wrong grouping, because of multiple grouping separators
-		assert.deepEqual(oFormat.parse("INR 100,00 00,000 Cr Cr"), [1e+23, "INR"], "incomplete grouping");
-		assert.deepEqual(oFormat.parse("INR 100 00,00,000 Cr Cr"), [1e+23, "INR"], "incomplete grouping");
-		assert.deepEqual(oFormat.parse("INR 100,00,00 000 Cr Cr"), [1e+23, "INR"], "incomplete grouping");
-		assert.deepEqual(oFormat.parse("INR 1,00,00,00,000 Cr Cr"), [1e+23, "INR"], "wrong grouping");
-		assert.deepEqual(oFormat.parse("INR 10,000,00,000 Cr Cr"), [1e+23, "INR"], "wrong grouping");
-		assert.deepEqual(oFormat.parse("INR 10,000,000,00 Cr Cr"), [1e+23, "INR"], "wrong grouping");
-		assert.deepEqual(oFormat.parse("INR 1,00,00,00000 Cr Cr"), [1e+23, "INR"], "wrong grouping");
-		assert.deepEqual(oFormat.parse("INR 1,00 00,00,000 Cr Cr"), [1e+23, "INR"], "wrong grouping");
-		assert.deepEqual(oFormat.parse("INR 1,00,00 00 000 Cr Cr"), [1e+23, "INR"], "wrong grouping");
+		// correct formatted: INR 100,00,00,000 Cr Cr
+		// 2 grouping separators present
+		assert.deepEqual(oFormat.parse("INR 1,00,00 000 Cr Cr"), [1e+21, "INR"], "Parse 'INR 1,00,00 000 Cr Cr'");
+		// 1 present at the most right
+		assert.deepEqual(oFormat.parse("INR 1 00,000 Cr Cr"), [1e+19, "INR"], "Parse 'INR 1 00,000 Cr Cr'");
+		// 1 present at the most right missing
+		assert.deepEqual(oFormat.parse("INR 1,00 000 Cr Cr"), null, "Parse 'INR 1,00 000 Cr Cr'");
+
+		// wrong position
+		assert.deepEqual(oFormat.parse("INR 10 0,0,0 Cr Cr"), [1e+18, "INR"], "Parse 'INR 10 0,0,0 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 1,00,0 Cr Cr"), [1e+17, "INR"], "Parse 'INR 1,00,0 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 10,00,0 Cr Cr"), [1e+18, "INR"], "Parse 'INR 10,00,0 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 1,0 000 Cr Cr"), null, "Parse 'INR 1,0 000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 10 0,00 Cr Cr"), null, "Parse 'INR 10 0,00 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 10 00,0 Cr Cr"), null, "Parse 'INR 10 00,0 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR ,1000 Cr Cr"), null, "Parse 'INR ,1000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 1000, Cr Cr"), null, "Parse 'INR 1000, Cr Cr'");
+
+
+		assert.deepEqual(oFormat.parse("INR 100,00 00,000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 100,00 00,000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 100 00,00,000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 100 00,00,000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 100,00,00 000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 100,00,00 000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 1,00,00,00,000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 1,00,00,00,000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 10,000,00,000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 10,000,00,000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 10,000,000,00 Cr Cr"), [1e+23, "INR"], "Parse 'INR 10,000,000,00 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 1,00,00,00000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 1,00,00,00000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 1,00 00,00,000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 1,00 00,00,000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("INR 1,00,00 00 000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 1,00,00 00 000 Cr Cr'");
+
+
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 1,0 000 Cr Cr"), null, "Parse 'INR 1,0 000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 10 0,00 Cr Cr"), null, "Parse 'INR 10 0,00 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 10 00,0 Cr Cr"), null, "Parse 'INR 10 00,0 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 10 0,0,0 Cr Cr"), null, "Parse 'INR 10 0,0,0 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 10,00,0 Cr Cr"), null, "Parse 'INR 10,00,0 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 1,00,0 Cr Cr"), null, "Parse 'INR 1,00,0 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR ,1000 Cr Cr"), null, "Parse 'INR ,1000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 1000, Cr Cr"), null, "Parse 'INR 1000, Cr Cr'");
+
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 100,00 00,000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 100,00 00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 100 00,00,000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 100 00,00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 100,00,00 000 Cr Cr"), [1e+23, "INR"], "Parse 'INR 100,00,00 000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 1,00,00,00,000 Cr Cr"), null, "Parse 'INR 1,00,00,00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 10,000,00,000 Cr Cr"), null, "Parse 'INR 10,000,00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 10,000,000,00 Cr Cr"), null, "Parse 'INR 10,000,000,00 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 1,00,00,00000 Cr Cr"), null, "Parse 'INR 1,00,00,00000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 1,00 00,00,000 Cr Cr"), null, "Parse 'INR 1,00 00,00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("INR 1,00,00 00 000 Cr Cr"), null, "Parse 'INR 1,00,00 00 000 Cr Cr'");
+	});
+
+	QUnit.test("format/parse INR with Indian locale", function (assert) {
+		var oFormatCurrency = getCurrencyInstance({strictGroupingValidation: true}, new Locale("en-IN"));
+
+		// valid
+		assert.deepEqual(oFormatCurrency.parse("INR 1"), [1e+0, "INR"], "validate 'INR 1'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10"), [1e+1, "INR"], "validate 'INR 10'");
+		assert.deepEqual(oFormatCurrency.parse("INR 100"), [1e+2, "INR"], "validate 'INR 100'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,000"), [1e+3, "INR"], "validate 'INR 1,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,000"), [1e+4, "INR"], "validate 'INR 10,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,00,000"), [1e+5, "INR"], "validate 'INR 1,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1 00,000"), [1e+5, "INR"], "validate 'INR 1 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,00,000"), [1e+6, "INR"], "validate 'INR 10,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10 00,000"), [1e+6, "INR"], "validate 'INR 10 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,00,00,000"), [1e+7, "INR"], "validate 'INR 1,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1 00,00,000"), [1e+7, "INR"], "validate 'INR 1 00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1 00 00,000"), [1e+7, "INR"], "validate 'INR 1 00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,00 00,000"), [1e+7, "INR"], "validate 'INR 1,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,00,00,000"), [1e+8, "INR"], "validate 'INR 10,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10 00,00,000"), [1e+8, "INR"], "validate 'INR 10 00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10 00 00,000"), [1e+8, "INR"], "validate 'INR 10 00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,00 00,000"), [1e+8, "INR"], "validate 'INR 10,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 100,00,00,000"), [1e+9, "INR"], "validate 'INR 100,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 100 00 00,000"), [1e+9, "INR"], "validate 'INR 100 00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 100,00 00,000"), [1e+9, "INR"], "validate 'INR 100,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 100 00,00,000"), [1e+9, "INR"], "validate 'INR 100 00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,000,00,00,000"), [1e+10, "INR"], "validate 'INR 1,000,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,000,00 00,000"), [1e+10, "INR"], "validate 'INR 1,000,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,000 00 00,000"), [1e+10, "INR"], "validate 'INR 1,000 00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1 000 00 00,000"), [1e+10, "INR"], "validate 'INR 1 000 00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1 000,00 00,000"), [1e+10, "INR"], "validate 'INR 1 000,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1 000 00,00,000"), [1e+10, "INR"], "validate 'INR 1 000 00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,000,00,00,000"), [1e+11, "INR"], "validate 'INR 10,000,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,000 00 00,000"), [1e+11, "INR"], "validate 'INR 10,000 00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10 000,00 00,000"), [1e+11, "INR"], "validate 'INR 10 000,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,00,000,00,00,000"), [1e+12, "INR"], "validate 'INR 1,00,000,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,00 000,00 00,000"), [1e+12, "INR"], "validate 'INR 1,00 000,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1 00,000 00,00,000"), [1e+12, "INR"], "validate 'INR 1 00,000 00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,00,000,00,00,000"), [1e+13, "INR"], "validate 'INR 10,00,000,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,00 000,00 00,000"), [1e+13, "INR"], "validate 'INR 10,00 000,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10 00 000 00 00,000"), [1e+13, "INR"], "validate 'INR 10,00 000,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 100 00 000 00 00,000"), [1e+14, "INR"], "validate 'INR 100 00 000 00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 100 00 000 00,00,000"), [1e+14, "INR"], "validate 'INR 100 00 000 00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 100 00 000,00,00,000"), [1e+14, "INR"], "validate 'INR 100 00 000,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 100,00,000 00 00 000"), [1e+14, "INR"], "validate 'INR 100,00,000 00 00 000'");
+
+		// invalid
+		assert.deepEqual(oFormatCurrency.parse("INR ,1"), null, "validate 'INR ,1'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,0"), null, "validate 'INR 1,0'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,00"), null, "validate 'INR 1,00'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,00"), null, "validate 'INR 10,00'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,0000"), null, "validate 'INR 1,0000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,0000"), null, "validate 'INR 10,0000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1 0,0000"), null, "validate 'INR 1 0,0000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,000,000"), null, "validate 'INR 1,000,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,000 000"), null, "validate 'INR 1,000 000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,0,00,000"), null, "validate 'INR 10,0,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,0 00 00,000"), null, "validate 'INR 1,0 00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,00,00,00,000"), null, "validate 'INR 1,00,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,00 00 00,000"), null, "validate 'INR 1,00 00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,00,00 00,000"), null, "validate 'INR 1,00,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,00 00,00,000"), null, "validate 'INR 1,00 00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,00,00,00,000"), null, "validate 'INR 10,00,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,0 000,00 00,000"), null, "validate 'INR 1,0 000,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10 0,00,00 00,000"), null, "validate 'INR 10 0,00,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,0,000,00,00,000"), null, "validate 'INR 10,0,000,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 10,0 000,00 00,000"), null, "validate 'INR 10,0 000,00 00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1 000,00 00,00,000"), null, "validate 'INR 1 000,00 00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,000,000,00,00,000"), null, "validate 'INR 1,000,000,00,00,000'");
+		assert.deepEqual(oFormatCurrency.parse("INR 1,000 000,00 00,000"), null, "validate 'INR 1,000 000,00 00,000'");
+
+	});
+
+	QUnit.test("format/parse EUR with Indian locale", function (assert) {
+		var oLocale = new Locale("en-IN");
+		var oFormat = getCurrencyInstance({style: "short"}, oLocale);
+		var oFormatGroupingValidation = getCurrencyInstance({style: "short", strictGroupingValidation: true}, oLocale);
+
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		// correct formatted: EUR 1,00,00,00,000 Cr Cr
+		assert.deepEqual(oFormat.parse("EUR 100,00 00,000 Cr Cr"), [1e+23, "EUR"], "Parse 'EUR 100,00 00,000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("EUR 100 00,00,000 Cr Cr"), [1e+23, "EUR"], "Parse 'EUR 100 00,00,000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("EUR 100,00,00 000 Cr Cr"), [1e+23, "EUR"], "Parse 'EUR 100,00,00 000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("EUR 1,00,00,00,000 Cr Cr"), [1e+23, "EUR"], "Parse 'EUR 1,00,00,00,000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("EUR 10,000,00,000 Cr Cr"), [1e+23, "EUR"], "Parse 'EUR 10,000,00,000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("EUR 10,000,000,00 Cr Cr"), [1e+23, "EUR"], "Parse 'EUR 10,000,000,00 Cr Cr'");
+		assert.deepEqual(oFormat.parse("EUR 1,00,00,00000 Cr Cr"), [1e+23, "EUR"], "Parse 'EUR 1,00,00,00000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("EUR 1,00 00,00,000 Cr Cr"), [1e+23, "EUR"], "Parse 'EUR 1,00 00,00,000 Cr Cr'");
+		assert.deepEqual(oFormat.parse("EUR 1,00,00 00 000 Cr Cr"), [1e+23, "EUR"], "Parse 'EUR 1,00,00 00 000 Cr Cr'");
+
+		// grouping validation
+		assert.deepEqual(oFormatGroupingValidation.parse("EUR 100,00 00,000 Cr Cr"), [1e+23, "EUR"], "validate 'EUR 100,00 00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("EUR 100 00,00,000 Cr Cr"), [1e+23, "EUR"], "validate 'EUR 100 00,00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("EUR 100,00,00 000 Cr Cr"), [1e+23, "EUR"], "validate 'EUR 100,00,00 000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("EUR 1,00,00,00,000 Cr Cr"), [1e+23, "EUR"], "validate 'EUR 1,00,00,00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("EUR 1,00,00,00000 Cr Cr"), [1e+23, "EUR"], "validate 'EUR 1,00,00,00000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("EUR 1,00 00,00,000 Cr Cr"), [1e+23, "EUR"], "validate 'EUR 1,00 00,00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("EUR 1,00,00 00 000 Cr Cr"), [1e+23, "EUR"], "validate 'EUR 1,00,00 00 000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("EUR 10,000,00,000 Cr Cr"), null, "validate 'EUR 10,000,00,000 Cr Cr'");
+		assert.deepEqual(oFormatGroupingValidation.parse("EUR 10,000,000,00 Cr Cr"), null, "validate 'EUR 10,000,000,00 Cr Cr'");
 	});
 
 	QUnit.test("getScale", function (assert) {

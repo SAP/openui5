@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/assert',
 	'sap/base/util/extend'
+
 ],
 	function(BaseObject, Locale, LocaleData, Log, assert, extend) {
 	"use strict";
@@ -46,6 +47,22 @@ sap.ui.define([
 	var rNumPlaceHolder = /0+(\.0+)?/;
 	// Regex for checking that the given string only consists of '0' characters
 	var rOnlyZeros = /^0+$/;
+
+	// Indian currency INR (e.g. xx.xx.yyy.xx.xx.yyy.xx.xx.yyy)
+	var getIndianCurrencyINRGroupingRegExp = function() {
+		return /^(?:\d{1,2},?\d{2},?\d{3}|\d{1,2},?\d{3}|\d{1,3})(?:,?\d{2},?\d{2},?\d{3})*$/;
+	};
+
+	/*
+	 * Is used to validate existing grouping separators.
+	 * e.g. yyy.yyy.yyy -> /^\d+(?:\.?\d{3})*\.?\d{3}$/
+	 */
+	var getGroupingRegExp = function(groupingSeparator, groupingSize, groupingBaseSize) {
+		var sGroupingEscaped = quote(groupingSeparator);
+		return new RegExp("^\\d+"
+			+ "(?:" + sGroupingEscaped + "?" + "\\d{" + groupingSize + "}" + ")*"
+			+ "" + sGroupingEscaped + "?" + "\\d{" + groupingBaseSize + "}" + "$");
+	};
 
 	/**
 	 * Internal enumeration to differentiate number types
@@ -147,6 +164,7 @@ sap.ui.define([
 		maxIntegerDigits: 99,
 		minFractionDigits: 0,
 		maxFractionDigits: 0,
+		strictGroupingValidation: false,
 		groupingEnabled: false,
 		groupingSize: 3,
 		groupingSeparator: ",",
@@ -173,6 +191,7 @@ sap.ui.define([
 		maxIntegerDigits: 99,
 		minFractionDigits: 0,
 		maxFractionDigits: 99,
+		strictGroupingValidation: false,
 		groupingEnabled: true,
 		groupingSize: 3,
 		groupingSeparator: ",",
@@ -199,6 +218,7 @@ sap.ui.define([
 		maxIntegerDigits: 99,
 		minFractionDigits: 0,
 		maxFractionDigits: 99,
+		strictGroupingValidation: false,
 		groupingEnabled: true,
 		groupingSize: 3,
 		groupingSeparator: ",",
@@ -227,6 +247,7 @@ sap.ui.define([
 		maxIntegerDigits: 99,
 		// the default value for min/maxFractionDigits is defined in oLocaleData.getCurrencyDigits
 		// they need to be left undefined here in order to detect whether they are set from outside
+		strictGroupingValidation: false,
 		groupingEnabled: true,
 		groupingSize: 3,
 		groupingSeparator: ",",
@@ -258,6 +279,7 @@ sap.ui.define([
 	NumberFormat.oDefaultUnitFormat = {
 		minIntegerDigits: 1,
 		maxIntegerDigits: 99,
+		strictGroupingValidation: false,
 		groupingEnabled: true,
 		groupingSize: 3,
 		groupingSeparator: ",",
@@ -338,6 +360,7 @@ sap.ui.define([
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
 	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are "" (empty string), NaN, null or 0.
 	 *  The 'format' and 'parse' are done in a symmetric way. For example when this parameter is set to NaN, empty string is parsed as NaN and NaN is formatted as empty string.
+	 * @param {boolean} [oFormatOptions.strictGroupingValidation=false] whether the positions of grouping separators are validated. Space characters used as grouping separators are not validated.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} float instance of the NumberFormat
 	 * @static
@@ -398,6 +421,7 @@ sap.ui.define([
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
 	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are only NaN, null or 0.
 	 *  The 'format' and 'parse' are done in a symmetric way. For example when this parameter is set to NaN, empty string is parsed as NaN and NaN is formatted as empty string.
+	 * @param {boolean} [oFormatOptions.strictGroupingValidation=false] whether the positions of grouping separators are validated. Space characters used as grouping separators are not validated.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} integer instance of the NumberFormat
 	 * @static
@@ -518,6 +542,7 @@ sap.ui.define([
 	 *  Globally available custom currencies can be added via the global configuration.
 	 *  See the above examples.
 	 *  See also {@link sap.ui.core.Configuration.FormatSettings#setCustomCurrencies} and {@link sap.ui.core.Configuration.FormatSettings#addCustomCurrencies}.
+	 * @param {boolean} [oFormatOptions.strictGroupingValidation=false] whether the positions of grouping separators are validated. Space characters used as grouping separators are not validated.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} unit instance of the NumberFormat
 	 * @static
@@ -622,6 +647,7 @@ sap.ui.define([
 	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
 	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are "" (empty string), NaN, null or 0.
 	 *  The 'format' and 'parse' are done in a symmetric way. For example when this parameter is set to NaN, empty string is parsed as [NaN, undefined] and NaN is formatted as empty string.
+	 * @param {boolean} [oFormatOptions.strictGroupingValidation=false] whether the positions of grouping separators are validated. Space characters used as grouping separators are not validated.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} unit instance of the NumberFormat
 	 * @static
@@ -683,6 +709,7 @@ sap.ui.define([
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
 	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are "" (empty string), NaN, null or 0.
 	 *  The 'format' and 'parse' are done in a symmetric way. For example when this parameter is set to NaN, empty string is parsed as NaN and NaN is formatted as empty string.
+	 * @param {boolean} [oFormatOptions.strictGroupingValidation=false] whether the positions of grouping separators are validated. Space characters used as grouping separators are not validated.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} percentage instance of the NumberFormat
 	 * @static
@@ -994,7 +1021,7 @@ sap.ui.define([
 	 * @param {string} sIntegerPart a string with the integer value, e.g. "1234567"
 	 * @param {object} oOptions the format options, relevant are: groupingSeparator,
 	 *   groupingBaseSize, groupingSize
-	 * @param {boolean} bIndianCurrency if it is an Indian currency
+	 * @param {boolean} bIndianCurrency if it is an Indian currency (locale en-IN and currency INR)
 	 * @returns {string} integer part with grouping, e.g. "1.234.567" for locale de-DE
 	 * @private
 	 */
@@ -1547,8 +1574,9 @@ sap.ui.define([
 	 */
 	NumberFormat.prototype.parse = function(sValue) {
 		var oOptions = this.oFormatOptions,
-			sPlusSigns = oOptions.plusSign + this.oLocaleData.getLenientNumberSymbols("plusSign") ,
-			sMinusSigns = oOptions.minusSign + this.oLocaleData.getLenientNumberSymbols("minusSign") ,
+			sPlusSigns = oOptions.plusSign + this.oLocaleData.getLenientNumberSymbols("plusSign"),
+			sMinusSigns = oOptions.minusSign + this.oLocaleData.getLenientNumberSymbols("minusSign"),
+			// Note: the minus sign ('-') needs to be quoted as well such that it is not confused with the range operator, e.g. in [A-Z]
 			sPlusMinusSigns = quote(sPlusSigns + sMinusSigns),
 			sGroupingSeparator = quote(oOptions.groupingSeparator),
 			sDecimalSeparator = quote(oOptions.decimalSeparator),
@@ -1788,7 +1816,7 @@ sap.ui.define([
 		}
 
 		// strict grouping validation
-		var bIsGroupingValid = checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, oGroupingRegExp);
+		var bIsGroupingValid = this._checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, bIndianCurrency && sMeasure === "INR");
 		if (!bIsGroupingValid) {
 			// treat invalid grouping the same way as if the value cannot be parsed
 			return (oOptions.type === mNumberType.CURRENCY || oOptions.type === mNumberType.UNIT) ? null : NaN;
@@ -2287,13 +2315,14 @@ sap.ui.define([
 	 *   <li>remove short/long format (e.g. "Mio"/"Million")</li>
 	 *   <li>resolve lenient symbols</li>
 	 *  </ul>
+	 * This means grouping separators which are space characters or RTL characters are not validated.
 	 * @param {object} oOptions the format options, relevant are: groupingSeparator, groupingSize, groupingBaseSize and decimalSeparator
 	 * @param {boolean} bScientificNotation is scientific notation, e.g. "1.234e+1"
-	 * @param {RegExp} oGroupingRegExp grouping regular expression
+	 * @param {boolean} bIndianCurrency is an indian currency, e.g. number in combination with currency "INR" and locale is "en_IN"
 	 * @returns {boolean} true if the grouping is done correctly, e.g. "1.23" is not grouped correctly for grouping separator "." and groupingSize 3
 	 * @private
 	 */
-	function checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, oGroupingRegExp) {
+	NumberFormat.prototype._checkGrouping = function(sValueWithGrouping, oOptions, bScientificNotation, bIndianCurrency) {
 		if (oOptions.groupingSeparator && sValueWithGrouping.includes(oOptions.groupingSeparator)) {
 			// All following checks are only done, if the value contains at least one (non-falsy) grouping separator.
 			// The examples below use the German locale:
@@ -2322,32 +2351,69 @@ sap.ui.define([
 				sValueWithGrouping = sValueWithGrouping.replace(/[eE].*/, "");
 			}
 
-			// if value includes a decimal separator, it is valid and no further checks are needed.
-			// Integer types are skipped, which often have identical decimal and grouping separators configured
-			// e.g. "1.2,3" (valid)
-			if (oOptions.decimalSeparator !== oOptions.groupingSeparator
-				&& sValueWithGrouping.includes(oOptions.decimalSeparator)) {
-				return true;
+			var bHasDecimalSeparator = sValueWithGrouping.includes(oOptions.decimalSeparator);
+			// Integer types often have identical decimal and grouping separators configured,
+			// therefore we do not remove the decimals part and validate them as if they would not
+			// have decimals
+			if (oOptions.decimalSeparator === oOptions.groupingSeparator) {
+				bHasDecimalSeparator = false;
+			} else if (bHasDecimalSeparator) {
+				// remove decimals part to be able to validate grouping
+				sValueWithGrouping = sValueWithGrouping.split(oOptions.decimalSeparator)[0];
 			}
 
-			// if value doesn't include exactly one grouping separator, it is valid and no further checks are needed
-			// e.g. 1.2.3 (valid)
-			if (sValueWithGrouping.split(oGroupingRegExp).length !== 2) {
-				return true;
+			// check if decimal and grouping separator were confused.
+			// This check is performed in addition to stricter grouping validation (strictGroupingValidation)
+			// to reduce the confusion between decimal and grouping separator.
+			// e.g. for "de": 1.234567 (is invalid)
+			// Pre-requisites (examples for "de")
+			// * number has exactly one grouping separator, e.g. "1.23"
+			//   since there can be only one decimal separator, if there is exactly one grouping
+			//   separator they could have been confused
+			// * number has no decimal separator, e.g. 1.23
+			//   if there is a decimal separator and a grouping separator present,
+			//   there cannot be a confusion
+			var bHasExactlyOneGroupingSeparator = sValueWithGrouping.split(oOptions.groupingSeparator).length === 2;
+			if (bHasExactlyOneGroupingSeparator && !bHasDecimalSeparator) {
+				// find least-significant ("lowest") grouping separator
+				var iLowestGroupingIndex = sValueWithGrouping.length - sValueWithGrouping.lastIndexOf(oOptions.groupingSeparator);
+				var iBaseGroupSize = oOptions.groupingBaseSize || oOptions.groupingSize;
+				// if least-significant grouping size doesn't match grouping base size, the value is invalid
+				// e.g. 12.34 (invalid)
+				if (iLowestGroupingIndex !== iBaseGroupSize + oOptions.groupingSeparator.length) {
+					return false;
+				}
 			}
 
-			// find least-significant ("lowest") grouping separator
-			var iLowestGroupingIndex = sValueWithGrouping.length - sValueWithGrouping.lastIndexOf(oOptions.groupingSeparator);
-			var iBaseGroupSize = oOptions.groupingBaseSize || oOptions.groupingSize;
-			// if least-significant grouping size doesn't match grouping base size, the value is invalid
-			// e.g. 12.34 (invalid)
-			if (iLowestGroupingIndex !== iBaseGroupSize + oOptions.groupingSeparator.length) {
-				return false;
+			/**
+			 * With strictGroupingValidation enabled the behaviour is closer to ABAP, the position
+			 * of the grouping separators are validated as well.
+			 * e.g. for "de" <code>1.2.3</code> becomes invalid
+			 */
+			if (oOptions.strictGroupingValidation) {
+				var rGrouping;
+				if (bIndianCurrency) {
+					this._rIndianCurrencyINRGrouping = this._rIndianCurrencyINRGrouping || getIndianCurrencyINRGroupingRegExp();
+					rGrouping = this._rIndianCurrencyINRGrouping;
+				} else {
+					this._rGrouping = this._rGrouping || getGroupingRegExp(oOptions.groupingSeparator, oOptions.groupingSize, oOptions.groupingBaseSize || oOptions.groupingSize);
+					rGrouping = this._rGrouping;
+				}
+
+				// e.g. for "de" with valid grouping separators at the correct position
+				// rGrouping: /^\d+(?:\.?\d{3})*\.?\d{3}$/
+				// sValueWithGrouping: 123 456.789
+				//                     123 456 789
+				//                     123.456.789
+				// Note: spaces are just there for visual aid.
+				if (!rGrouping.test(sValueWithGrouping)) {
+					return false;
+				}
 			}
 		}
 
 		return true;
-	}
+	};
 
 	/**
 	 * Whether or not the given value is in scientific notation
