@@ -3,6 +3,7 @@
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.f"
+	xmlns:m="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
 	xmlns:editor="sap.ui.codeeditor"
 	xmlns:cardExplorer="sap.ui.demo.cardExplorer.controls">
@@ -36,7 +37,7 @@
 				</Page>
 			</l:SplitPane>
 			<l:SplitPane requiredParentWidth="1">
-				<Page id="editPage">
+				<Page id="editPage" showFooter="{= ${settings>/editorType} === 'CARDEDITOR' &amp;&amp; ${settings>/editorMode} !== 'Translation'}">
 					<customHeader>
 						<OverflowToolbar id="toolbar">
 							<Button class="sapUiSmallMarginBegin" text="Run" type="Emphasized" icon="sap-icon://media-play" press="onRunPressed" enabled="{settings>/editable}">
@@ -71,6 +72,7 @@
 									<OverflowToolbarLayoutData priority="High" />
 								</layoutData>
 							</MenuButton>
+							<!--
 							<MenuButton
 								id="openConfigurationEditorButton"
 								text="Configuration Editor"
@@ -96,14 +98,28 @@
 									<OverflowToolbarLayoutData priority="High" />
 								</layoutData>
 							</MenuButton>
+							-->
 							<OverflowToolbarButton
-								text="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Visual Editor' : 'Switch to Text Editor'}"
-								tooltip="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Visual Editor' : 'Switch to Text Editor'}"
+								text="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Visual BAS Editor' : 'Switch to Text Editor'}"
+								tooltip="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Visual BAS Editor' : 'Switch to Text Editor'}"
 								icon="sap-icon://developer-settings"
 								enabled="{settings>/editable}"
 								type="Transparent"
 								visible="{= ${settings>/editable} &amp;&amp; ${settings>/internal} }"
-								press=".onChangeEditor"
+								press=".onChangeBASEditor"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</OverflowToolbarButton>
+							<OverflowToolbarButton
+								text="Show Card Configuration Editor"
+								tooltip="Show Card Configuration Editor"
+								icon="sap-icon://business-card"
+								enabled="{= ${settings>/editable} &amp;&amp; ${settings>/editorType} !== 'CARDEDITOR'}"
+								type="Transparent"
+								visible="{= ${settings>/designtimeEnabled} &amp;&amp; ${settings>/editable} &amp;&amp; ${settings>/internal} &amp;&amp; ${settings>/editorType} !== 'CARDEDITOR' }"
+								press=".onChangeCardEditor"
 							>
 								<layoutData>
 									<OverflowToolbarLayoutData priority="Low" />
@@ -124,6 +140,14 @@
 						</OverflowToolbar>
 					</customHeader>
 					<cardExplorer:FileEditor id="fileEditor" manifestChange="onFileEditorManifestChange" designtimeChange="onFileEditorDesigntimeChange" fileSwitch="onFileSwitch" visible="{= ${settings>/editorType} === 'TEXT' }" />
+					<footer>
+						<OverflowToolbar>
+							<ToolbarSpacer/>
+							<Button text="Apply" press=".onApplyCardEditorChanges" />
+							<Button text="Reset" press=".onResetCardEditor" />
+							<Button text="Show Manifest Changes" enabled="{settings>/manifestChanged}" press=".onShowManifestChanges"/>
+						</OverflowToolbar>
+					</footer>
 				</Page>
 			</l:SplitPane>
 		</l:PaneContainer>

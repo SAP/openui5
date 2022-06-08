@@ -15,7 +15,15 @@ sap.ui.define([], function () {
 			/**
 			 * Denotes the Visual Editor for the manifest (BAS editor)
 			 */
-			VISUAL: "VISUAL"
+			VISUAL: "VISUAL",
+			/**
+			 * Denotes the Text Editor and delta manifest changes content if there is
+			 */
+			 FILES: "FILES",
+			 /**
+			   * Denotes the Visual card configuration editor
+			  */
+			 CARDEDITOR: "CARDEDITOR"
 		},
 
 		CARD_BUNDLE_EXTENSION: "card.zip"

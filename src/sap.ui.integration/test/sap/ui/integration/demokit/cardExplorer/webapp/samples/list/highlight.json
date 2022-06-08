@@ -42,7 +42,7 @@
 			"editor": "dt/Configuration",
 			"parameters": {
 				"title" : {
-					"value": "List Card with Top 4 Products"
+					"value": "List Card with Top {{parameters.maxItems}} Products"
 				},
 				"subTitle": {
 					"value": "These are the top sellers this month"
@@ -81,7 +81,7 @@
 					}
 				]
 			},
-			"maxItems": 5,
+			"maxItems": "{{parameters.maxItems}}",
 			"item": {
 				"title": "{Name}",
 				"description": "{Description}",

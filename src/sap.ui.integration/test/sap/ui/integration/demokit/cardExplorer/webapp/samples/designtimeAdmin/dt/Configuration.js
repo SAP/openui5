@@ -52,6 +52,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "integer",
 						"allowDynamicValues": false,
 						"allowSettings": false,
+						"editableToUser": false,
+						"visibleToUser": false,
 						"visualization": {
 							"type": "Slider",
 							"settings": {

@@ -15,7 +15,14 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/integration/util/loadCardEditor",
 	"sap/base/util/restricted/_debounce",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/m/Dialog",
+	"sap/m/Button",
+	"sap/m/TextArea",
+	"sap/m/Label",
+	"sap/m/VBox",
+	"sap/m/HBox",
+	"sap/ui/integration/editor/Editor"
 ], function (
 	BaseController,
 	Constants,
@@ -33,11 +40,21 @@ sap.ui.define([
 	Device,
 	loadCardEditor,
 	_debounce,
-	ObjectPath
+	ObjectPath,
+	Dialog,
+	Button,
+	TextArea,
+	Label,
+	VBox,
+	HBox,
+	CardEditor
 ) {
 	"use strict";
 
-	var SAMPLE_CHANGED_ERROR = "Sample changed";
+	var SAMPLE_CHANGED_ERROR = "Sample changed",
+	oConfigurationCardMFChangesforAdmin = {},
+	oConfigurationCardMFChangesforContent = {},
+	oConfigurationCardMFChangesforTranslation = {};
 
 	return BaseController.extend("sap.ui.demo.cardExplorer.controller.ExploreSamples", {
 
@@ -88,6 +105,11 @@ sap.ui.define([
 				this._oVisualEditor.setJson(sValue);
 			}
 
+			if ((this._sEditSource !== "cardEditor" || bRerender === true) && this._oCardEditor) {
+				this._oCardEditor.setJson({});
+				this._oCardEditor.setJson(sValue);
+			}
+
 			if (exploreSettingsModel.getProperty("/schemaValidation")) {
 				this.validateManifest();
 			}
@@ -117,6 +139,13 @@ sap.ui.define([
 				var oJson = this._oVisualEditor.getJson();
 				this._oVisualEditor.setJson({});
 				this._oVisualEditor.setJson(oJson);
+			}
+			if ((this._sEditSource !== "cardEditor" || bRerender === true) && this._oCardEditor) {
+				var oDesigntimeMetadata = this._extractDesigntimeMetadata(sValue);
+				this._oCardEditor.updateDesigntimeMetadata(oDesigntimeMetadata);
+				var oJson = this._oCardEditor.getJson();
+				this._oCardEditor.setJson({});
+				this._oCardEditor.setJson(oJson);
 			}
 		},
 
@@ -193,7 +222,28 @@ sap.ui.define([
 					]);
 				}))
 				.then(this._cancelIfSampleChanged(function (aArgs) {
-					var oDialog = aArgs[0];
+					var oDialog = aArgs[0],
+					adminChanges,
+					contentChanges,
+					translationChanges,
+					oManifestSettings = [];
+					if (sMode === "admin") {
+						// aChanges = JSON.parse(oConfigurationCardMFChangesforAdmin || "{}");
+						adminChanges = oConfigurationCardMFChangesforAdmin || "{}";
+					} else if (sMode === "content") {
+						// aChanges = JSON.parse(oConfigurationCardMFChangesforContent || "{}");
+						contentChanges = oConfigurationCardMFChangesforContent || "{}";
+					} else if (sMode === "translation") {
+						// aChanges = JSON.parse(oConfigurationCardMFChangesforTranslation || "{}");
+						translationChanges = oConfigurationCardMFChangesforTranslation || "{}";
+					}
+					if (sMode === "admin") {
+						oManifestSettings.push(adminChanges);
+					} else if (sMode === "content") {
+						oManifestSettings.push(adminChanges, contentChanges);
+					} else if (sMode === "translation") {
+						oManifestSettings.push(adminChanges, contentChanges, translationChanges);
+					}
 
 					oDialog.setModel(new JSONModel({
 						title: "Configuration Editor for " + sEditorTitle,
@@ -201,6 +251,7 @@ sap.ui.define([
 								+ "You can edit it to adjust editor fields.<p>",
 						cardId: this._oCardSample.getId(),
 						mode: sMode,
+						manifestChanges: oManifestSettings,
 						previewPosition: sPreviewPosition,
 						designtime: this._extractDesigntimeMetadata(aArgs[1]),
 						language: Core.getConfiguration().getLanguage()
@@ -217,49 +268,90 @@ sap.ui.define([
 				}.bind(this));
 		},
 
-		//In the translation mode, configuration card editor will be reloaded if user update the language
-		onSwitchLanguage: function (oEvent) {
-			var selectedLanguage = oEvent.getParameter("selectedItem").getKey();
-			var oDialog = oEvent.getSource().getParent();
-			var dialogModel = oDialog.getModel("config");
-			dialogModel.setProperty("/language", selectedLanguage);
-			var oContent = oDialog.getContent(),
-				oEditor;
+		//User can select card editor mode to reload the related card editor
+		onSwitchEditorMode: function (oEvent) {
+			var selectedMode = oEvent.getParameter("selectedItem").getKey();
+			var oPanel = Core.byId("conf_card_panel");
 
-			for (var i = 0; i < oContent.length; i++) {
-				if (oContent[i].isA("sap.ui.integration.designtime.editor.CardEditor")) {
-					oEditor = oContent[i];
-				}
-			}
-
+			var oEditor = Core.byId("conf_card_editor");
 			if (oEditor) {
 				oEditor.destroy();
 			}
 
-			this._loadConfigurationEditor()
-				.then(function (CardEditor) {
-					var newEditor = new CardEditor({
-						id: "configurationCard11",
-						card: dialogModel.getProperty("/cardId"),
-						mode: dialogModel.getProperty("/mode"),
-						designtime: dialogModel.getProperty("/designtime"),
-						allowSettings: true,
-						allowDynamicValues: true,
-						language: dialogModel.getProperty("/language")
-					});
-					oDialog.addContent(newEditor);
+			var baseUrl = this._oCardSample.getBaseUrl(),
+			sJson;
+			this._loadConfigurationEditor().then(this._cancelIfSampleChanged(function () {
+				return this._oFileEditor.getCardManifestContent();
+			})).then(this._cancelIfSampleChanged(function (oManifestContent) {
+				var oManifestSettings = [];
+				if (selectedMode === "admin") {
+					oManifestSettings.push(oConfigurationCardMFChangesforAdmin);
+				} else if (selectedMode === "content") {
+					oManifestSettings.push(oConfigurationCardMFChangesforAdmin, oConfigurationCardMFChangesforContent);
+				}
+
+				sJson = JSON.parse(oManifestContent);
+				var editorPage = this.byId("editPage");
+				var oCardEditor = new CardEditor({id: "conf_card_editor"});
+				oCardEditor.setJson({ baseUrl: baseUrl, manifest: sJson, manifestChanges: oManifestSettings });
+				oCardEditor.setMode(selectedMode);
+				oCardEditor.attachReady(function() {
+					oPanel.addContent(oCardEditor);
+					editorPage.addContent(oPanel);
 				});
+			})).catch(function (oErr) {
+				if (oErr.message !== SAMPLE_CHANGED_ERROR) {
+					this._oFileEditor.showError(oErr.name + ": " + oErr.message);
+				}
+			}.bind(this));
 		},
 
-		onChangeEditor: function (oEvent) {
+		//In the translation mode, configuration card editor will be reloaded if user update the language
+		onSwitchLanguage: function (oEvent) {
+			var selectedLanguage = oEvent.getParameter("selectedItem").getKey();
+			var oPanel = Core.byId("conf_card_panel");
+			var oEditor = Core.byId("conf_card_editor");
+			if (oEditor) {
+				oEditor.destroy();
+			}
+
+			var baseUrl = this._oCardSample.getBaseUrl(),
+			sJson,
+			sMode = "translation";
+			this._loadConfigurationEditor().then(this._cancelIfSampleChanged(function () {
+				return this._oFileEditor.getCardManifestContent();
+			})).then(this._cancelIfSampleChanged(function (oManifestContent) {
+				sJson = JSON.parse(oManifestContent);
+				var editorPage = this.byId("editPage");
+				var oCardEditor = new CardEditor({id: "conf_card_editor"});
+				oCardEditor.setJson({ baseUrl: baseUrl, manifest: sJson });
+				oCardEditor.setLanguage(selectedLanguage);
+				oCardEditor.setMode(sMode);
+				oCardEditor.attachReady(function() {
+					oPanel.addContent(oCardEditor);
+					editorPage.addContent(oPanel);
+				});
+			})).catch(function (oErr) {
+				if (oErr.message !== SAMPLE_CHANGED_ERROR) {
+					this._oFileEditor.showError(oErr.name + ": " + oErr.message);
+				}
+			}.bind(this));
+		},
+
+		onChangeBASEditor: function (oEvent) {
 			var sEditorType = exploreSettingsModel.getProperty("/editorType");
+			if (Core.byId("conf_card_panel")) {
+				Core.byId("conf_card_panel").destroy();
+			}
 
 			if (sEditorType === Constants.EDITOR_TYPE.TEXT) {
 				exploreSettingsModel.setProperty("/editorType", Constants.EDITOR_TYPE.VISUAL);
+				exploreSettingsModel.refresh();
 				this._sEditSource = "cardEditor";
 				this._initVisualEditor();
 			} else {
 				exploreSettingsModel.setProperty("/editorType", Constants.EDITOR_TYPE.TEXT);
+				exploreSettingsModel.refresh();
 				this._sEditSource = "codeEditor";
 				this._oFileEditor.getCardManifestContent().then(function (sManifest) {
 					var sJson = JSON.parse(sManifest);
@@ -267,9 +359,31 @@ sap.ui.define([
 					if (templatePath === "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate") {
 						delete sJson["sap.card"].designtime;
 						this._oFileEditor.setCardManifestContent(JSON.stringify(sJson, '\t', 4));
+					} else {
+						this._oFileEditor.setCardManifestContent(JSON.stringify(sJson, '\t', 4));
 					}
 				}.bind(this));
+				var oHeader = this._oFileEditor._getHeader();
+				if (exploreSettingsModel.getProperty("/designtimeEnabled") && oConfigurationCardMFChangesforAdmin === null) {
+					oHeader.setSelectedKey(oHeader.getItems()[0].key);
+					for (var i = 0; i < oHeader.getItems().length; i++) {
+						if (oHeader.getItems()[i].getProperty("key") === "manifestChanges.json") {
+							oHeader.getItems()[i].setVisible(false);
+						}
+					}
+				}
 			}
+		},
+
+		onChangeCardEditor: function(oEvent) {
+			if (Core.byId("conf_card_panel")) {
+				Core.byId("conf_card_panel").destroy();
+			}
+
+			exploreSettingsModel.setProperty("/editorType", Constants.EDITOR_TYPE.CARDEDITOR);
+			exploreSettingsModel.refresh();
+			this._sEditSource = "cardEditor";
+			this._initCardEditor();
 		},
 
 		onChangeSplitterOrientation: function (oEvent) {
@@ -296,9 +410,15 @@ sap.ui.define([
 		_onDownloadCompressed: function (sManifest, sExtension) {
 			this._oFileEditor.getFilesWithContent()
 				.then(function (aFiles) {
+					var tFiles = aFiles;
+					for (var j = 0; j < tFiles.length; j++) {
+						if (tFiles[j].key === "manifestChanges.json") {
+							tFiles.splice(j, 1);
+						}
+					}
 					var sArchiveName = formatter.formatExampleName(JSON.parse(sManifest));
 
-					FileUtils.downloadFilesCompressed(aFiles, sArchiveName, sExtension);
+					FileUtils.downloadFilesCompressed(tFiles, sArchiveName, sExtension);
 				});
 		},
 
@@ -328,6 +448,32 @@ sap.ui.define([
 					subSample: item.getKey()
 				}
 			);
+
+			//initial editor display mode to text
+			var sEditorType = exploreSettingsModel.getProperty("/editorType");
+			if (sEditorType && sEditorType !== Constants.EDITOR_TYPE.TEXT) {
+				this.showTextEditor();
+			}
+		},
+
+		showTextEditor: function() {
+			if (Core.byId("conf_card_panel")) {
+				Core.byId("conf_card_panel").destroy();
+			}
+
+			exploreSettingsModel.setProperty("/editorType", Constants.EDITOR_TYPE.TEXT);
+			exploreSettingsModel.refresh();
+			this._sEditSource = "codeEditor";
+			this._oFileEditor.getCardManifestContent().then(function (sManifest) {
+				var sJson = JSON.parse(sManifest);
+				var templatePath = this._sanitizePath(ObjectPath.get(["sap.card", "designtime"], sJson) || "");
+				if (templatePath === "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate") {
+					delete sJson["sap.card"].designtime;
+					this._oFileEditor.setCardManifestContent(JSON.stringify(sJson, '\t', 4));
+				} else {
+					this._oFileEditor.setCardManifestContent(JSON.stringify(sJson, '\t', 4));
+				}
+			}.bind(this));
 		},
 
 		/**
@@ -393,6 +539,150 @@ sap.ui.define([
 				.finally(function () {
 					this.byId("editPage").setBusy(false);
 				}.bind(this));
+		},
+
+		_initCardEditor: function() {
+			var that = this,
+			baseUrl = this._oCardSample.getBaseUrl(),
+			sJson,
+			sMode = exploreSettingsModel.getProperty("/editorMode"),
+			cardTitle = "Card Editor with Company Administration Mode";
+			if (sMode === "Translation") {
+				cardTitle = "Card Editor with Translation Mode";
+			} else if (sMode === "AdminContent") {
+				cardTitle = "Card Editor with Administration Mode";
+			}
+
+			var oPanel = new sap.m.Panel({
+				id: "conf_card_panel",
+				expandable: false,
+				expanded: true,
+				headerToolbar: new sap.m.OverflowToolbar({
+					content: [
+						new sap.m.Label({
+							text: cardTitle
+						})
+					]
+				}),
+				content: [
+					new sap.m.HBox({
+						visible: sMode === "Translation",
+						items: [
+							new sap.m.Label({
+								text: "Select Translation Language"
+							}).addStyleClass("styleCardEditorLanguageLabel"),
+							new sap.m.Select({
+								autoAdjustWidth: true,
+								change: function(oEvent) {
+									that.onSwitchLanguage(oEvent);
+								},
+								items: [
+									new sap.ui.core.Item({
+										key: "en",
+										text: "English"
+									}),
+									new sap.ui.core.Item({
+										key: "fr",
+										text: "Français"
+									}),
+									new sap.ui.core.Item({
+										key: "de",
+										text: "Deutsch"
+									}),
+									new sap.ui.core.Item({
+										key: "zh-CN",
+										text: "简体中文"
+									})
+								]
+							}).addStyleClass("styleCardEditorLanguageSelect")
+						]
+					}),
+					new HBox({
+						visible: sMode === "AdminContent",
+						items: [
+							new sap.m.Label({
+								text: "Select Card Editor Mode"
+							}).addStyleClass("styleCardEditorLanguageLabel"),
+							new sap.m.Select({
+								autoAdjustWidth: true,
+								change: function(oEvent) {
+									that.onSwitchEditorMode(oEvent);
+								},
+								items: [
+									new sap.ui.core.Item({
+										key: "admin",
+										text: "Company Administrator"
+									}),
+									new sap.ui.core.Item({
+										key: "content",
+										text: "Page/Content Administrator"
+									})
+								]
+							}).addStyleClass("styleCardEditorLanguageSelect")
+						]
+					})
+				]
+			}).addStyleClass("sapUiBody").addStyleClass("sapUiSizeCompact");
+
+			if (sMode === "AdminContent") {
+				sMode = "admin";
+			}
+			this._loadConfigurationEditor().then(this._cancelIfSampleChanged(function () {
+				return this._oFileEditor.getCardManifestContent();
+			})).then(this._cancelIfSampleChanged(function (oManifestContent) {
+				var adminChanges,
+				contentChanges,
+				translationChanges,
+				oManifestSettings = [];
+				if (sMode === "admin") {
+					// aChanges = JSON.parse(oConfigurationCardMFChangesforAdmin || "{}");
+					adminChanges = oConfigurationCardMFChangesforAdmin || "{}";
+				} else if (sMode === "content") {
+					// aChanges = JSON.parse(oConfigurationCardMFChangesforContent || "{}");
+					contentChanges = oConfigurationCardMFChangesforContent || "{}";
+				} else if (sMode === "translation") {
+					// aChanges = JSON.parse(oConfigurationCardMFChangesforTranslation || "{}");
+					translationChanges = oConfigurationCardMFChangesforTranslation || "{}";
+				}
+				if (sMode === "admin") {
+					oManifestSettings.push(adminChanges);
+				} else if (sMode === "content") {
+					oManifestSettings.push(adminChanges, contentChanges);
+				} else if (sMode === "translation") {
+					oManifestSettings.push(adminChanges, contentChanges, translationChanges);
+				}
+
+				sJson = JSON.parse(oManifestContent);
+				var editorPage = this.byId("editPage");
+				var oCardEditor = new CardEditor({id: "conf_card_editor"});
+				oCardEditor.setJson({ baseUrl: baseUrl, manifest: sJson, manifestChanges: oManifestSettings});
+				oCardEditor.setMode(sMode);
+				oCardEditor.attachReady(function() {
+					oPanel.addContent(oCardEditor);
+					var isManifestChanged = false;
+					if (oManifestSettings.length > 0) {
+						if (typeof (oManifestSettings[0]) === "object" && JSON.stringify(oManifestSettings[0]) !== '{}') {
+							isManifestChanged = true;
+						} else if (typeof (oManifestSettings[0]) === "string" && oManifestSettings[0] !== '{}') {
+							isManifestChanged = true;
+						}
+					}
+					if (isManifestChanged) {
+						var oMessageStrip = new sap.m.MessageStrip({
+							id: "msgstrip_manifest_change",
+							showIcon: true,
+							type: "Warning",
+							text: "There are manifest changes."
+						});
+						oPanel.insertContent(oMessageStrip, -1);
+					}
+					editorPage.addContent(oPanel);
+				});
+			})).catch(function (oErr) {
+				if (oErr.message !== SAMPLE_CHANGED_ERROR) {
+					this._oFileEditor.showError(oErr.name + ": " + oErr.message);
+				}
+			}.bind(this));
 		},
 
 		_loadCardEditorBundle: function () {
@@ -562,15 +852,45 @@ sap.ui.define([
 				oFrameWrapperEl = this.byId("iframeWrapper"),
 				bUseIFrame = !!oCurrentSample.useIFrame;
 
-			this._updateConfigurationEditorMenu(oCurrentSample);
+			// this._updateConfigurationEditorMenu(oCurrentSample);
 			this.oModel.setProperty("/currentSampleKey", oCurrentSample.key);
 			this._oCurrSample = oCurrentSample;
+
+			exploreSettingsModel.getData().editorMode = "admin";
+			if (oCurrentSample.editorMode) {
+				exploreSettingsModel.getData().editorMode = oCurrentSample.editorMode;
+				exploreSettingsModel.refresh();
+			}
 
 			Promise.all([
 				this._initCardSample(oCurrentSample),
 				MockServerManager.initAll(!!oCurrentSample.mockServer),
 				this._initCaching(oCurrentSample)
 			]).then(this._cancelIfSampleChanged(function () {
+				//invisble "Show Card Configuration Editor" menu item if there is no designtime.js file
+				//load an additional file for manifestchanges
+				if (oCurrentSample && oCurrentSample.files) {
+					exploreSettingsModel.getData().designtimeEnabled = false;
+					for (var j = 0; j < oCurrentSample.files.length; j++) {
+						if (oCurrentSample.files[j].key === "manifestChanges.json") {
+							oCurrentSample.files.splice(j, 1);
+						}
+					}
+					var i = 0;
+					while (i < oCurrentSample.files.length) {
+						if (oCurrentSample.files[i].key === "designtime.js") {
+							oCurrentSample.files.push({
+								key: "manifestChanges.json",
+								name: "manifestChanges",
+								url: "/samples/manifestChanges.json"
+							});
+							exploreSettingsModel.getData().designtimeEnabled = true;
+							break;
+						}
+						i++;
+					}
+				}
+
 				this._oFileEditor
 					.setFiles(oCurrentSample.files || [{
 						url: oCurrentSample.manifestUrl,
@@ -615,6 +935,12 @@ sap.ui.define([
 					throw oErr;
 				}
 			});
+
+			//switch to text editor
+			var sEditorType = exploreSettingsModel.getProperty("/editorType");
+			if (sEditorType && sEditorType !== Constants.EDITOR_TYPE.TEXT) {
+				this.showTextEditor();
+			}
 		},
 
 		_initCardSample: function (oSample) {
@@ -726,11 +1052,24 @@ sap.ui.define([
 				}
 			}
 			//enable/disable menu items of "Configuration Editor" according to card mode, enable all menu items by default
-			exploreSettingsModel.getData().configMode = "All";
-			if (oCurrentSample.configMode) {
-				exploreSettingsModel.getData().configMode = oCurrentSample.configMode;
+			exploreSettingsModel.getData().editorMode = "admin";
+			if (oCurrentSample.editorMode) {
+				exploreSettingsModel.getData().editorMode = oCurrentSample.editorMode;
 				exploreSettingsModel.refresh();
 			}
+			//visible/invisible menu item "Show Manifest Changes" in "Configuration Editor"
+			exploreSettingsModel.getData().manifestChanges = "none";
+			if (oConfigurationCardMFChangesforAdmin && oConfigurationCardMFChangesforContent) {
+				exploreSettingsModel.getData().manifestChanges = "both";
+				exploreSettingsModel.refresh();
+			} else if (oConfigurationCardMFChangesforAdmin) {
+				exploreSettingsModel.getData().manifestChanges = "admin";
+				exploreSettingsModel.refresh();
+			} else if (oConfigurationCardMFChangesforContent) {
+				exploreSettingsModel.getData().manifestChanges = "content";
+				exploreSettingsModel.refresh();
+			}
+
 			exploreSettingsModel.getData().previewPosition = "right";
 			if (oCurrentSample.previewPosition) {
 				exploreSettingsModel.getData().previewPosition = oCurrentSample.previewPosition;
@@ -833,8 +1172,115 @@ sap.ui.define([
 			return sPath.trim().replace(/\/*$/, "");
 		},
 
+		onApplyCardEditorChanges: function () {
+			var oCardEditor = Core.byId("conf_card_editor");
+			if (oCardEditor) {
+				this._initalChanges = this._initalChanges || this._oCardSample.getManifestChanges() || [];
+				var aChanges,
+				sMode = oCardEditor.getMode();
+				if (sMode === "admin") {
+					oConfigurationCardMFChangesforAdmin = oCardEditor.getCurrentSettings();
+					aChanges = this._initalChanges.concat([oConfigurationCardMFChangesforAdmin]);
+				} else if (sMode === "content") {
+					oConfigurationCardMFChangesforContent = oCardEditor.getCurrentSettings();
+					aChanges = this._initalChanges.concat([oConfigurationCardMFChangesforAdmin, oConfigurationCardMFChangesforContent]);
+				}
+				this._oCardSample.setManifestChanges(aChanges);
+				this._oFileEditor.setCardManifestChangesContent(JSON.stringify(aChanges, '\t', 4));
+			}
+			//enable/disable "Show Manifest Changes" button
+			exploreSettingsModel.getData().manifestChanged = false;
+			if (oConfigurationCardMFChangesforAdmin || oConfigurationCardMFChangesforContent) {
+				exploreSettingsModel.getData().manifestChanged = true;
+				exploreSettingsModel.refresh();
+			}
+			//display a message strip
+			if (oConfigurationCardMFChangesforAdmin || oConfigurationCardMFChangesforContent) {
+				var oPanel = Core.byId("conf_card_panel");
+				var oMessageStrip = new sap.m.MessageStrip({
+					id: "msgstrip_manifest_change",
+					showIcon: true,
+					type: "Warning",
+					text: "There are manifest changes."
+				});
+				// var oLink = new sap.m.Link({
+				// 	text: "Check it.",
+				// 	press: function(oEvent) {
+				// 		this.onShowManifestChanges(oEvent);
+				// 	}
+				// });
+				// oMessageStrip.addAggregation(oLink);
+				oPanel.insertContent(oMessageStrip, -1);
+			}
+		},
+
+		onShowManifestChanges: function (oEvent) {
+			if (Core.byId("conf_card_panel")) {
+				Core.byId("conf_card_panel").destroy();
+			}
+			exploreSettingsModel.setProperty("/editorType", Constants.EDITOR_TYPE.TEXT);
+			exploreSettingsModel.refresh();
+			this._sEditSource = "codeEditor";
+			var oFileEditor = this._oFileEditor;
+			oFileEditor.getCardManifestChangesContent().then(function (sManifest) {
+				var sJson = JSON.parse(sManifest);
+				oFileEditor.setCardManifestChangesContent(JSON.stringify(sJson, '\t', 4));
+			});
+			var oHeader = oFileEditor._getHeader();
+			for (var i = 0; i < oHeader.getItems().length; i++) {
+				if (oHeader.getItems()[i].getProperty("key") === "manifestChanges.json") {
+					oHeader.getItems()[i].setVisible(true);
+				}
+			}
+			oHeader.setProperty("selectedKey", "manifestChanges.json");
+		},
+
+		onResetCardEditor: function () {
+			var oPanel = Core.byId("conf_card_panel"),
+			oMSGStrip = Core.byId("msgstrip_manifest_change"),
+			oEditor = Core.byId("conf_card_editor"),
+			oFileEditor = this._oFileEditor;
+			oConfigurationCardMFChangesforAdmin = null;
+			oPanel.removeContent(oMSGStrip);
+			oMSGStrip.destroy();
+			oEditor.destroy();
+			oFileEditor.getCardManifestChangesContent().then(function (sManifest) {
+				oFileEditor.setCardManifestChangesContent();
+			});
+			exploreSettingsModel.getData().manifestChanged = false;
+			exploreSettingsModel.refresh();
+
+			//reset card editor
+			var baseUrl = this._oCardSample.getBaseUrl(),
+			sJson,
+			sMode = "admin",
+			oCardEditor;
+			this._loadConfigurationEditor().then(this._cancelIfSampleChanged(function () {
+				return this._oFileEditor.getCardManifestContent();
+			})).then(this._cancelIfSampleChanged(function (oManifestContent) {
+				sJson = JSON.parse(oManifestContent);
+				var editorPage = this.byId("editPage");
+				oCardEditor = new CardEditor({id: "conf_card_editor"});
+				oCardEditor.setJson({ baseUrl: baseUrl, manifest: sJson });
+				oCardEditor.setMode(sMode);
+				oCardEditor.attachReady(function() {
+					oPanel.addContent(oCardEditor);
+					editorPage.addContent(oPanel);
+				});
+			})).catch(function (oErr) {
+				if (oErr.message !== SAMPLE_CHANGED_ERROR) {
+					this._oFileEditor.showError(oErr.name + ": " + oErr.message);
+				}
+			}.bind(this));
+
+			//reset runtime card
+			this._initalChanges = this._initalChanges || this._oCardSample.getManifestChanges() || [];
+			this._oCardSample.setManifestChanges(this._initalChanges);
+		},
+
 		onEditorDialogClose: function (oEvent) {
 			var oDialog = oEvent.getSource().getParent();
+			oDialog.close();
 			oDialog.destroy();
 		},
 

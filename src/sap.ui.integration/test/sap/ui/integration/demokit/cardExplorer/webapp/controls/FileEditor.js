@@ -67,6 +67,11 @@ sap.ui.define([
 					multiple: false,
 					visibility: "hidden"
 				},
+				_manifestChangeStrip: {
+					type: "sap.ui.core.Control",
+					multiple: false,
+					visibility: "hidden"
+				},
 				_image: {
 					type: "sap.ui.core.Control",
 					multiple: false,
@@ -106,6 +111,7 @@ sap.ui.define([
 				oRm.renderControl(oFileEditor._getErrorsStrip());
 				oRm.renderControl(oFileEditor._getSchemaErrorsStrip());
 				oRm.renderControl(oFileEditor._getReadOnlyWarningStrip());
+				oRm.renderControl(oFileEditor._getManifestChangeStrip());
 
 				if (oFileEditor.getFiles().length > 1) {
 					oRm.renderControl(oFileEditor._getHeader());
@@ -194,6 +200,22 @@ sap.ui.define([
 		return oStrip;
 	};
 
+	FileEditor.prototype._getManifestChangeStrip = function () {
+		var oStrip = this.getAggregation("_manifestChangeStrip");
+
+		if (!oStrip) {
+			oStrip = new MessageStrip({
+				showIcon: true,
+				type: "Warning",
+				text: "There are manifest changes.",
+				visible: false
+			});
+			this.setAggregation("_manifestChangeStrip", oStrip);
+		}
+
+		return oStrip;
+	};
+
 	FileEditor.prototype._getErrorsStrip = function () {
 		var oStrip = this.getAggregation("_errorsStrip");
 
@@ -241,6 +263,48 @@ sap.ui.define([
 		var sSelectedFileKey = this._getHeader().getSelectedKey(),
 			sFileExtension = sSelectedFileKey.split('.').pop(),
 			iSelectedFileIndex = this._aFiles.findIndex(function (oEl) { return oEl.key === sSelectedFileKey; }),
+			isManifestChanged = false,
+			oSelectedFile = this._aFiles[iSelectedFileIndex],
+			bEditable = this._isFileEditable(oSelectedFile);
+
+		this._aFiles.forEach(function (oFile) {
+			if (oFile.key === "manifestChanges.json" && oFile.content && oFile.content.length > 0) {
+				isManifestChanged = true;
+			}
+		});
+		sFileExtension = sFileExtension === 'js' ? 'javascript' : sFileExtension;
+
+		this._getReadOnlyWarningStrip().setVisible(!bEditable);
+		this._getManifestChangeStrip().setVisible(isManifestChanged);
+		this._getErrorsStrip().setVisible(false);
+		this._getSchemaErrorsStrip().setVisible(false);
+
+		if (FileUtils.isBlob(sSelectedFileKey)) {
+			this._getImage()
+				.setSrc(oSelectedFile.content)
+				.setVisible(true);
+
+			this._getEditor().setVisible(false);
+		} else {
+			this._bPreventLiveChange = true;
+			this._getEditor()
+				.setEditable(bEditable)
+				.setType(sFileExtension)
+				.setValue(oSelectedFile.content)
+				.setVisible(true);
+			this._bPreventLiveChange = false;
+
+			this._getImage().setVisible(false);
+		}
+
+		this.fireFileSwitch({
+			editable: bEditable
+		});
+	};
+
+	FileEditor.prototype.setSelectedFile = function (sSelectedFileKey) {
+		var sFileExtension = sSelectedFileKey.split('.').pop(),
+			iSelectedFileIndex = this._aFiles.findIndex(function (oEl) { return oEl.key === sSelectedFileKey; }),
 			oSelectedFile = this._aFiles[iSelectedFileIndex],
 			bEditable = this._isFileEditable(oSelectedFile);
 
@@ -276,10 +340,18 @@ sap.ui.define([
 
 	FileEditor.prototype._createIconTabFilters = function () {
 		this._aFiles.forEach(function (oFile) {
-			this._getHeader().addItem(new IconTabFilter({
-				key: oFile.key,
-				text: oFile.name
-			}));
+			if (oFile.key === "manifestChanges.json") {
+				this._getHeader().addItem(new IconTabFilter({
+					key: oFile.key,
+					text: oFile.name,
+					visible: oFile.content.length > 0
+				}));
+			} else {
+				this._getHeader().addItem(new IconTabFilter({
+					key: oFile.key,
+					text: oFile.name
+				}));
+			}
 		}.bind(this));
 	};
 	FileEditor.mimetypes = {
@@ -361,7 +433,7 @@ sap.ui.define([
 	 */
 	FileEditor.prototype._isFileEditable = function (oFile) {
 		return !oFile.isApplicationManifest
-			&& (oFile.name.endsWith("manifest.json") || oFile.name.endsWith("cardManifest.json") || oFile.key === "designtime.js");
+			&& (oFile.name.endsWith("manifest.json") || oFile.name.endsWith("cardManifest.json") || oFile.key === "designtime.js" || oFile.key === "manifestChanges.json");
 	};
 
 	FileEditor.prototype._findIndex = function (sName) {
@@ -438,6 +510,33 @@ sap.ui.define([
 
 	FileEditor.prototype.setCardManifestContent = function (sValue) {
 		this.getCardManifestFile().content = sValue;
+		this._update();
+	};
+
+	/**
+	 * @returns {Promise} Promise resolved with the manifest as string.
+	 */
+	FileEditor.prototype.getCardManifestChangesContent = function () {
+		var oManifestChangesFile = this.getCardManifestChangesFile();
+
+		// always try to return the content first, in case it is already loaded and edited
+		if (oManifestChangesFile.content) {
+			return Promise.resolve(oManifestChangesFile.content);
+		} else {
+			return oManifestChangesFile.promise;
+		}
+	};
+
+	FileEditor.prototype.getCardManifestChangesFile = function () {
+		return this._aFiles.find(function (oFile) {
+			if (oFile.key === "manifestChanges.json" && this._isFileEditable(oFile)) {
+				return oFile;
+			}
+		}.bind(this));
+	};
+
+	FileEditor.prototype.setCardManifestChangesContent = function (sValue) {
+		this.getCardManifestChangesFile().content = sValue;
 		this._update();
 	};
 

@@ -2213,7 +2213,7 @@ sap.ui.define([
 						key: 'designtimeAdmin',
 						target: 'exploreSamples',
 						title: 'Administrator Editor',
-						configMode: 'Admin',
+						editorMode: 'AdminContent',
 						files: [
 							{
 								url: '/samples/designtimeAdmin/dt/Configuration.js',
@@ -2233,33 +2233,10 @@ sap.ui.define([
 						]
 					},
 					{
-						key: 'designtimeContent',
-						target: 'exploreSamples',
-						title: 'Page/Content Administrator Editor',
-						configMode: 'Content',
-						files: [
-							{
-								url: '/samples/designtimeContent/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
-							},
-							{
-								url: '/samples/designtimeContent/manifest.json',
-								name: 'manifest.json',
-								key: 'cardManifest.json'
-							},
-							{
-								url: '/samples/designtimeAdmin/i18n/i18n.properties',
-								name: 'i18n/i18n.properties',
-								key: 'i18n.properties'
-							}
-						]
-					},
-					{
 						key: 'designtimeTranslation',
 						target: 'exploreSamples',
 						title: 'Translator Editor',
-						configMode: 'Translation',
+						editorMode: 'Translation',
 						files: [
 							{
 								url: '/samples/designtimeTranslation/dt/Configuration.js',
