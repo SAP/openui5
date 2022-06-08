@@ -132,6 +132,17 @@ function (
 	};
 
 	/**
+	 * Gets the value of the isActive property.
+	 * When set to <code>true</code>, then additional check for busy plugnis is triggered.
+	 * @return {boolean} bValue - <code>false</code> if inactive or some busy plugins available.
+	 */
+	Selection.prototype.getIsActive = function() {
+		return this.getProperty("isActive")
+			&& this.getDesignTime()
+			&& !this.getDesignTime().getBusyPlugins().length;
+	};
+
+	/**
 	 * Register an overlay
 	 *
 	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay object

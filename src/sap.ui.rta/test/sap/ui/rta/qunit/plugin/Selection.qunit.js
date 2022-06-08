@@ -528,6 +528,12 @@ sap.ui.define([
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			assert.notOk(this.oSelectionPlugin._checkDeveloperMode(oOverlay, {}), "_checkDeveloperMode returns false");
 		});
+
+		QUnit.test("Check isActive when selection is active but some plugins are in 'busy' state", function(assert) {
+			this.oSelectionPlugin.setIsActive(true);
+			sandbox.stub(this.oDesignTime, "getBusyPlugins").returns(["busy-plugin"]);
+			assert.notOk(this.oSelectionPlugin.getIsActive(), "then 'false' is returned");
+		});
 	});
 
 	QUnit.done(function () {
