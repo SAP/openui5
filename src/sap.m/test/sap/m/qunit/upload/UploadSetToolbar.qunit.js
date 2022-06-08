@@ -43,17 +43,11 @@ sap.ui.define("sap.m.qunit.UploadSetToolbar", [
 		}
 	});
 
-	QUnit.test("A Toolbar without place holder is provided. Test that fileuploader is inserted at the beginning of the toolbar", function (assert) {
+	QUnit.test("Test for adding file uploader to fallback position if UploadSetToolbarPlaceHolder instance missing", function (assert) {
 		//Act
 		this.oUploadSet = new UploadSet("noPHToolbarTest", {
 			toolbar: new OverflowToolbar({
-				content: [new Button({text: "Filter"}),
-					new ToolbarSpacer(),
-					new Button({icon: "sap-icon://money-bills"}),
-					new Button({text: "New"}),
-					new ToggleButton({text: "Toggle"}),
-					new Button({text: "Open"})
-				]
+				content: []
 			})
 		});
 		this.oUploadSet.placeAt("qunit-fixture");
@@ -61,7 +55,7 @@ sap.ui.define("sap.m.qunit.UploadSetToolbar", [
 
 		//Assert
 		var aToolbarElements = this.oUploadSet._oList.getAggregation("headerToolbar").getAggregation("content");
-		assert.ok(aToolbarElements[0] instanceof FileUploader, "First element is an instance of sap.m.FileUploader");
+		assert.ok(aToolbarElements[0] instanceof FileUploader, "File Uploader inserted at fallback position");
 	});
 
 	QUnit.module("UploadSet Toolbar Custom", {
