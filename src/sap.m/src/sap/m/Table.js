@@ -519,6 +519,12 @@ sap.ui.define([
 			this._clearAllButton.destroy();
 			this._clearAllButton = null;
 		}
+		if (this._aPopinHeaders) {
+			this._aPopinHeaders.forEach(function(oPopinHeader) {
+				oPopinHeader.destroy();
+			});
+			this._aPopinHeaders = null;
+		}
 	};
 
 	Table.prototype.destroyItems = function() {
