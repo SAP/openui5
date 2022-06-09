@@ -1576,6 +1576,19 @@ sap.ui.define([
 		},
 
 		/**
+		 * Tells whether the given map of binding parameters is defining data aggregation, but not a
+		 * recursive hierarchy.
+		 *
+		 * @param {object} [mParameters] - Map of binding parameters
+		 * @returns {boolean} Whether it's about data aggregation
+		 */
+		isDataAggregation : function (mParameters) {
+			return mParameters
+				&& mParameters.$$aggregation
+				&& !mParameters.$$aggregation.hierarchyQualifier;
+		},
+
+		/**
 		 * Tells whether the value is a safe integer.
 		 *
 		 * @param {number} iNumber The value

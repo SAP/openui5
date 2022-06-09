@@ -1,0 +1,52 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy"
+	xmlns="sap.ui.table"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<Table id="table" ariaLabelledBy="title"
+		rows="{path : '/EMPLOYEES', parameters : {
+				$count : false
+			}, suspended : true}" selectionMode="None" threshold="0"
+		visibleRowCount="5">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" level="H1" text="Organizational Chart"/>
+			</m:Toolbar>
+		</extension>
+		<Column hAlign="End" width="5em">
+			<m:Label text="Level"/>
+			<template>
+				<m:Text wrapping="false" text="{= %{@$ui5.node.level} }"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
+					id="expand"
+					icon="{= %{@$ui5.node.isExpanded} === true
+						? 'sap-icon://collapse'
+						: (%{@$ui5.node.isExpanded} === false
+							? 'sap-icon://expand' : 'sap-icon://e-care')}"
+					press=".onToggleExpand"
+					tooltip="{= %{@$ui5.node.isExpanded} === true
+						? 'Collapse'
+						: (%{@$ui5.node.isExpanded} === false ? 'Expand' : 'Leaf')}"
+					/>
+			</template>
+		</Column>
+		<Column template="ID">
+			<m:Label text="ID"/>
+		</Column>
+		<Column template="MANAGER_ID">
+			<m:Label text="Manager's ID"/>
+		</Column>
+		<Column template="Name">
+			<m:Label text="Name"/>
+		</Column>
+		<Column template="AGE">
+			<m:Label text="Age"/>
+		</Column>
+	</Table>
+</mvc:View>

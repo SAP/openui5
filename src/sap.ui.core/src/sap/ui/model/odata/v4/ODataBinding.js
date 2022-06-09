@@ -538,7 +538,7 @@ sap.ui.define([
 		// With $$aggregation, no auto-$expand/$select is needed
 		oQueryOptionsPromise = this.doFetchQueryOptions(oContext);
 		if (this.oModel.bAutoExpandSelect && this.aChildCanUseCachePromises
-				&& !this.mParameters.$$aggregation) {
+				&& !_Helper.isDataAggregation(this.mParameters)) {
 			// For auto-$expand/$select, wait for query options of dependent bindings:
 			// Promise.resolve() ensures all dependent bindings are created and have sent their
 			// query options promise to this binding via fetchIfChildCanUseCache.

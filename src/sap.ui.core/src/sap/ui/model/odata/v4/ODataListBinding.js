@@ -119,7 +119,7 @@ sap.ui.define([
 		// number of active (client-side) created contexts in aContexts
 		this.iActiveContexts = 0;
 		this.aApplicationFilters = _Helper.toArray(vFilters);
-		this.sChangeReason = oModel.bAutoExpandSelect && !mParameters.$$aggregation
+		this.sChangeReason = oModel.bAutoExpandSelect && !_Helper.isDataAggregation(mParameters)
 			? "AddVirtualContext"
 			: undefined;
 		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
@@ -3370,7 +3370,10 @@ sap.ui.define([
 	 *   used to turn on the handling of grand totals like in 1.84.0, using aggregates of aggregates
 	 *   and thus allowing to filter by aggregated properties while grand totals are needed. Beware
 	 *   that methods like "average" or "countdistinct" are not compatible with this approach, and
-	 *   it cannot be combined with group levels.
+	 *   it cannot be combined with group levels.<br>
+	 *   Since 1.105.0, either a recursive hierarchy or pure data aggregation is supported, but no
+	 *   mix; <code>hierarchyQualifier</code> is the leading property that decides between those two
+	 *   use cases - this is an <b>experimental API</b>!
 	 * @param {object} [oAggregation.aggregate]
 	 *   A map from aggregatable property names or aliases to objects containing the following
 	 *   details:
@@ -3392,6 +3395,9 @@ sap.ui.define([
 	 *       there is only one, or <code>null</code> otherwise ("multi-unit situation"). (SQL
 	 *       suggestion: <code>CASE WHEN MIN(Unit) = MAX(Unit) THEN MIN(Unit) END</code>)
 	 *   </ul>
+	 * @param {number} [oAggregation.expandTo=1]
+	 *   The number of initially expanded levels as a positive integer (@experimental as of version
+	 *   1.105.0), supported only if a <code>hierarchyQualifier</code> is given.
 	 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
 	 *   Tells whether the grand totals for aggregatable properties are displayed at the bottom only
 	 *   (since 1.86.0); <code>true</code> for bottom only, <code>false</code> for top and bottom,
@@ -3409,6 +3415,11 @@ sap.ui.define([
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
 	 *   filtering for aggregated properties or (since 1.93.0) with "$search".
+	 * @param {string} [oAggregation.hierarchyQualifier]
+	 *   The qualifier for the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
+	 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations at this binding's
+	 *   entity type (@experimental as of version 1.105.0). If present, a recursive hierarchy w/o
+	 *   data aggregation is defined and the only other supported property is <code>expandTo</code>.
 	 * @param {string} [oAggregation.search]
 	 *   Like the <a
 	 *   href="https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html">

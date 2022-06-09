@@ -380,14 +380,20 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("c'tor: no AddVirtualContext w/ $$aggregation", function (assert) {
-		var oBinding;
+		var oBinding,
+			mClonedParameters = {},
+			mParameters = {/*$$aggregation : {aggregate : {"n/a" : {}}}*/};
 
 		this.oModel.bAutoExpandSelect = true;
+		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(mParameters))
+			.returns(mClonedParameters);
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(mClonedParameters)).returns(true);
+		// avoid 2nd call to _Helper.clone
+		this.mock(ODataListBinding.prototype).expects("applyParameters");
 
 		// code under test
-		oBinding = this.bindList("/EMPLOYEES", null, [], [], {
-			$$aggregation : {aggregate : {"n/a" : {}}}
-		});
+		oBinding = this.bindList("/EMPLOYEES", null, [], [], mParameters);
 
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 	});

@@ -803,7 +803,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildApply: checkTypeof", function (assert) {
+	QUnit.test("buildApply: checkTypeof for data aggregation", function (assert) {
 		var oAggregation = {},
 			oError = new Error();
 
@@ -837,6 +837,44 @@ sap.ui.define([
 			// code under test
 			_AggregationHelper.buildApply(oAggregation);
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply: checkTypeof for recursive hierarchy", function (assert) {
+		var oAggregation = {hierarchyQualifier : "X"},
+			oError = new Error();
+
+		this.mock(_AggregationHelper).expects("checkTypeof")
+			.withExactArgs(sinon.match.same(oAggregation), {
+				expandTo : /^[1-9]\d*$/,
+				hierarchyQualifier : "string"
+			}, "$$aggregation")
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply(oAggregation);
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply: recursive hierarchy", function (assert) {
+		var oAggregation = {hierarchyQualifier : "X"};
+
+		this.mock(_AggregationHelper).expects("checkTypeof").twice()
+			.withExactArgs(sinon.match.same(oAggregation), {
+				expandTo : /^[1-9]\d*$/,
+				hierarchyQualifier : "string"
+			}, "$$aggregation");
+
+		// code under test
+		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, {}), {});
+
+		// code under test
+		assert.deepEqual(
+			_AggregationHelper.buildApply(oAggregation, {$$filterBeforeAggregate : "foo"}),
+			{$apply : "filter(foo)/"}
+		);
 	});
 
 	//*********************************************************************************************
@@ -908,6 +946,22 @@ sap.ui.define([
 				"grandTotal like 1.84" : "1.84"
 			});
 		}, new Error("Not a boolean value for '$$aggregation/grandTotal like 1.84'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply({
+				expandTo : 0,
+				hierarchyQualifier : "X"
+			});
+		}, new Error("Not a matching value for '$$aggregation/expandTo'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply({
+				expandTo : -1,
+				hierarchyQualifier : "X"
+			});
+		}, new Error("Not a matching value for '$$aggregation/expandTo'"));
 	});
 
 	//*********************************************************************************************
@@ -1040,7 +1094,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkTypeof: regular expression", function (assert) {
+		var oRegExp = /abc/i,
+			oRegExpMock = this.mock(oRegExp);
+
+		oRegExpMock.expects("test").withExactArgs("~value~").returns(true);
+
+		// code under test
+		_AggregationHelper.checkTypeof("~value~", oRegExp, "some/path");
+
+		oRegExpMock.expects("test").withExactArgs("~value~").returns(false);
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkTypeof("~value~", oRegExp, "some/path");
+		}, new Error("Not a matching value for 'some/path'"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("hasGrandTotal", function (assert) {
+		// code under test
+		assert.strictEqual(_AggregationHelper.hasGrandTotal(), undefined);
+
 		// code under test
 		assert.strictEqual(_AggregationHelper.hasGrandTotal({}), false);
 
@@ -1115,6 +1190,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("hasMinOrMax", function (assert) {
+		// code under test
+		assert.strictEqual(_AggregationHelper.hasMinOrMax(), undefined);
+
 		// code under test
 		assert.strictEqual(_AggregationHelper.hasMinOrMax({}), false);
 

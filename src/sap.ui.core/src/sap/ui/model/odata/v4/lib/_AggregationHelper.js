@@ -10,7 +10,8 @@ sap.ui.define([
 ], function (_Helper, _Parser, Filter) {
 	"use strict";
 
-	var mAggregationType = {
+	var rComma = /,|%2C|%2c/,
+		mDataAggregationType = {
 			aggregate : {
 				"*" : {
 					grandTotal : "boolean",
@@ -33,12 +34,15 @@ sap.ui.define([
 			search : "string",
 			subtotalsAtBottomOnly : "boolean"
 		},
-		rComma = /,|%2C|%2c/,
 		// Example: "Texts/Country asc"
 		// capture groups: 1 - the property path
 		rOrderbyItem = new RegExp("^(" + _Parser.sODataIdentifier
 			+ "(?:/" + _Parser.sODataIdentifier + ")*"
 			+ ")(?:" + _Parser.sWhitespace + "+(?:asc|desc))?$"),
+		mRecursiveHierarchyType = {
+			expandTo : /^[1-9]\d*$/, // a positive integer
+			hierarchyQualifier : "string"
+		},
 		/**
 		 * Collection of helper methods for data aggregation.
 		 *
@@ -221,7 +225,21 @@ sap.ui.define([
 
 			mQueryOptions = Object.assign({}, mQueryOptions);
 
-			_AggregationHelper.checkTypeof(oAggregation, mAggregationType, "$$aggregation");
+			if (oAggregation.hierarchyQualifier) {
+				_AggregationHelper.checkTypeof(oAggregation, mRecursiveHierarchyType,
+					"$$aggregation");
+				if (mQueryOptions.$$filterBeforeAggregate) {
+					sApply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/" + sApply;
+					delete mQueryOptions.$$filterBeforeAggregate;
+				}
+				if (sApply) {
+					mQueryOptions.$apply = sApply;
+				}
+
+				return mQueryOptions;
+			}
+
+			_AggregationHelper.checkTypeof(oAggregation, mDataAggregationType, "$$aggregation");
 			oAggregation.groupLevels = oAggregation.groupLevels || [];
 			bIsLeafLevel = !iLevel || iLevel > oAggregation.groupLevels.length;
 
@@ -340,10 +358,12 @@ sap.ui.define([
 		 * property is checked recursively. If <code>vType</code> is an object with a (single)
 		 * property "*", it is deemed a map; in this case <code>vValue</code> must be an object (not
 		 * an array, not <code>null</code>) as well, with an arbitrary set of keys, and each
-		 * property is checked recursively against the type specified for "*".
+		 * property is checked recursively against the type specified for "*". If <code>vType</code>
+		 * is a regular expression, then we {@link RegExp#test test} whether it matches the given
+		 * value.
 		 *
 		 * @param {any} vValue - Any value
-		 * @param {string|string[]} vType - The expected type
+		 * @param {string|string[]|RegExp} vType - The expected type
 		 * @param {string} [sPath] - The path which lead to the given value
 		 * @throws {Error} If the value is not of the given type
 		 *
@@ -357,6 +377,10 @@ sap.ui.define([
 				vValue.forEach(function (vElement, i) {
 					_AggregationHelper.checkTypeof(vElement, vType[0], sPath + "/" + i);
 				});
+			} else if (vType instanceof RegExp) {
+				if (!vType.test(vValue)) {
+					throw new Error("Not a matching value for '" + sPath + "'");
+				}
 			} else if (typeof vType === "object") {
 				var bIsMap = "*" in vType;
 
@@ -636,7 +660,7 @@ sap.ui.define([
 		/**
 		 * Tells whether grand total values are needed for at least one aggregatable property.
 		 *
-		 * @param {object} mAggregate
+		 * @param {object} [mAggregate]
 		 *   A map from aggregatable property names/aliases to details objects
 		 * @returns {boolean}
 		 *   Whether grand total values are needed for at least one aggregatable property
@@ -644,7 +668,7 @@ sap.ui.define([
 		 * @public
 		 */
 		hasGrandTotal : function (mAggregate) {
-			return Object.keys(mAggregate).some(function (sAlias) {
+			return mAggregate && Object.keys(mAggregate).some(function (sAlias) {
 				return mAggregate[sAlias].grandTotal;
 			});
 		},
@@ -653,7 +677,7 @@ sap.ui.define([
 		 * Tells whether minimum or maximum values are needed for at least one aggregatable
 		 * property.
 		 *
-		 * @param {object} mAggregate
+		 * @param {object} [mAggregate]
 		 *   A map from aggregatable property names/aliases to details objects
 		 * @returns {boolean}
 		 *   Whether minimum or maximum values are needed for at least one aggregatable
@@ -662,7 +686,7 @@ sap.ui.define([
 		 * @public
 		 */
 		hasMinOrMax : function (mAggregate) {
-			return Object.keys(mAggregate).some(function (sAlias) {
+			return mAggregate && Object.keys(mAggregate).some(function (sAlias) {
 				var oDetails = mAggregate[sAlias];
 
 				return oDetails.min || oDetails.max;

@@ -897,8 +897,10 @@ sap.ui.define([
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into, may be empty (only for collection cache)
 	 * @returns {object[]} The cache elements
+	 *
+	 * @public
 	 */
-	 _Cache.prototype.getAllElements = function (sPath) {
+	_Cache.prototype.getAllElements = function (sPath) {
 		var aAllElements;
 
 		if (sPath) {

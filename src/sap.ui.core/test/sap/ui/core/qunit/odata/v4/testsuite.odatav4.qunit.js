@@ -122,6 +122,11 @@ sap.ui.define(function () {
 				module : ["sap/ui/core/sample/odata/v4/Products/Opa.qunit"],
 				realOData : false // requires stable test data
 			},
+			"OPA.RecursiveHierarchy" : {
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/RecursiveHierarchy/Opa.qunit"],
+				realOData : false // requires stable test data
+			},
 			"OPA.SalesOrders" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/SalesOrders/Opa.qunit"]

@@ -4362,6 +4362,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("isDataAggregation", function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.isDataAggregation(), undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.isDataAggregation({}), undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.isDataAggregation({$$aggregation : {}}), true);
+
+		// code under test
+		assert.strictEqual(_Helper.isDataAggregation({$$aggregation : {hierarchyQualifier : "X"}}),
+			false);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("buildSelect", function (assert) {
 		assert.deepEqual(
 			// code under test
