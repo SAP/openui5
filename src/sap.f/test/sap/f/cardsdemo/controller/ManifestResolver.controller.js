@@ -14,20 +14,20 @@ sap.ui.define([
 			baseUrl: "sap/f/cardsdemo/bundles/listbundle/"
 		},
 		"listCardGrouping": {
-			path: "sap/f/cardsdemo/cardcontent/listcontent/groups.json",
-			baseUrl: "sap/f/cardsdemo/cardcontent/listcontent/"
+			path: "sap/f/cardsdemo/cardcontent/listContent/groups.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/listContent/"
 		},
 		"listCardNoData": {
-			path: "sap/f/cardsdemo/cardcontent/listcontent/noData.json",
-			baseUrl: "sap/f/cardsdemo/cardcontent/listcontent/"
+			path: "sap/f/cardsdemo/cardcontent/listContent/noData.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/listContent/"
 		},
 		"listCardBulletGraphActions": {
-			path: "sap/f/cardsdemo/cardcontent/listcontent/bulletGraphAndActions.json",
-			baseUrl: "sap/f/cardsdemo/cardcontent/listcontent/"
+			path: "sap/f/cardsdemo/cardcontent/listContent/bulletGraphAndActions.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/listContent/"
 		},
 		"stackedBar": {
-			path: "sap/f/cardsdemo/cardcontent/listcontent/stackedBar.json",
-			baseUrl: "sap/f/cardsdemo/cardcontent/listcontent/"
+			path: "sap/f/cardsdemo/cardcontent/listContent/stackedBar.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/listContent/"
 		}
 	};
 
