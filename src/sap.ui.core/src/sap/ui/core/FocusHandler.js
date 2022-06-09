@@ -4,17 +4,19 @@
 
 // Provides class sap.ui.core.FocusHandler
 sap.ui.define([
-	'../base/Object',
+	"../base/Object",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/_ready",
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control"
 ],
-	function(BaseObject, Log, jQuery) {
+	function(BaseObject, Log, jQuery, _ready) {
 	"use strict";
 
-
-
+		// Element, Core module references, lazily probed when needed
+		var Element;
+		var Core;
 
 		/**
 		 * Constructs an instance of an sap.ui.core.FocusHandler.
@@ -22,16 +24,13 @@ sap.ui.define([
 		 *
 		 * @class Keeps track of the focused element.
 		 * @param {Element} oRootRef e.g. document.body
-		 * @param {sap.ui.core.Core} oCore Reference to the Core implementation
 		 * @alias sap.ui.core.FocusHandler
 		 * @extends sap.ui.base.Object
 		 * @private
 		 */
 		var FocusHandler = BaseObject.extend("sap.ui.core.FocusHandler", /** @lends sap.ui.core.FocusHandler.prototype */ {
-			constructor : function(oRootRef, oCore) {
+			constructor : function() {
 				BaseObject.apply(this);
-
-				this.oCore = oCore;
 
 				// keep track of element currently in focus
 				this.oCurrent = null;
@@ -47,9 +46,12 @@ sap.ui.define([
 				this.fnEventHandler = this.onEvent.bind(this);
 
 				// initialize event handling
-				oRootRef.addEventListener("focus", this.fnEventHandler, true);
-				oRootRef.addEventListener("blur", this.fnEventHandler, true);
-				Log.debug("FocusHandler setup on Root " + oRootRef.type + (oRootRef.id ? ": " + oRootRef.id : ""), null, "sap.ui.core.FocusHandler");
+				_ready().then(function() {
+					var oRootRef = document.body;
+					oRootRef.addEventListener("focus", this.fnEventHandler, true);
+					oRootRef.addEventListener("blur", this.fnEventHandler, true);
+					Log.debug("FocusHandler setup on Root " + oRootRef.type + (oRootRef.id ? ": " + oRootRef.id : ""), null, "sap.ui.core.FocusHandler");
+				}.bind(this));
 			}
 		});
 
@@ -81,13 +83,16 @@ sap.ui.define([
 		 * @private
 		 */
 		FocusHandler.prototype.getControlFocusInfo = function(sControlId){
+			var oControl;
+
 			sControlId = sControlId || this.getCurrentFocusedControlId();
 
 			if (!sControlId) {
 				return null;
 			}
 
-			var oControl = this.oCore && this.oCore.byId(sControlId);
+			oControl = getControlById(sControlId);
+
 			if (oControl) {
 				return {
 					id : sControlId,
@@ -154,13 +159,15 @@ sap.ui.define([
 		 * @private
 		 */
 		FocusHandler.prototype.restoreFocus = function(oControlFocusInfo){
-			var oInfo = oControlFocusInfo || this.oLastFocusedControlInfo;
+			var oInfo = oControlFocusInfo || this.oLastFocusedControlInfo,
+				oControl;
 
 			if (!oInfo) {
 				return;
 			}
 
-			var oControl = this.oCore && this.oCore.byId(oInfo.id);
+			oControl = getControlById(oInfo.id);
+
 			var oFocusRef = oInfo.focusref;
 			if (oControl
 				&& oInfo.info
@@ -192,7 +199,6 @@ sap.ui.define([
 				oRootRef.removeEventListener("focus", this.fnEventHandler, true);
 				oRootRef.removeEventListener("blur", this.fnEventHandler, true);
 			}
-			this.oCore = null;
 		};
 
 		/**
@@ -244,7 +250,10 @@ sap.ui.define([
 		 * @private
 		 */
 		FocusHandler.prototype.onfocusEvent = function(sControlId){
-			var oControl = this.oCore && this.oCore.byId(sControlId);
+			var oControl;
+
+			oControl = getControlById(sControlId);
+
 			if (oControl) {
 				this.oLastFocusedControlInfo = this.getControlFocusInfo(sControlId);
 				Log.debug("Store focus info of control " + sControlId, null, "sap.ui.core.FocusHandler");
@@ -258,7 +267,7 @@ sap.ui.define([
 
 			if (this.oLast != this.oCurrent) {
 				// if same control is focused again (e.g. while re-rendering) no focusleave is needed
-				triggerFocusleave(this.oLast, sControlId, this.oCore);
+				triggerFocusleave(this.oLast, sControlId);
 			}
 
 			this.oLast = null;
@@ -289,7 +298,7 @@ sap.ui.define([
 		 */
 		FocusHandler.prototype.checkForLostFocus = function(){
 			if (this.oCurrent == null && this.oLast != null) {
-				triggerFocusleave(this.oLast, null, this.oCore);
+				triggerFocusleave(this.oLast, null);
 			}
 			this.oLast = null;
 		};
@@ -324,31 +333,50 @@ sap.ui.define([
 		 * @param {string} sRelatedControlId
 		 * @private
 		 */
-		var triggerFocusleave = function(sControlId, sRelatedControlId, oCore){
-			var oControl = sControlId ? oCore && oCore.byId(sControlId) : null;
+		var triggerFocusleave = function(sControlId, sRelatedControlId){
+			var oControl,
+				oRelatedControl;
+
+			oControl = getControlById(sControlId);
 			if (oControl) {
-				var oRelatedControl = sRelatedControlId ? oCore.byId(sRelatedControlId) : null;
 				var oEvent = jQuery.Event("sapfocusleave");
 				oEvent.target = oControl.getDomRef();
+				oRelatedControl = getControlById(sRelatedControlId);
 				oEvent.relatedControlId = oRelatedControl ? oRelatedControl.getId() : null;
 				oEvent.relatedControlFocusInfo = oRelatedControl ? oRelatedControl.getFocusInfo() : null;
 				//TODO: Cleanup the popup! The following is shit
-				var oControlUIArea = oControl.getUIArea();
-				var oUiArea = null;
-				if (oControlUIArea) {
-					oUiArea = oCore.getUIArea(oControlUIArea.getId());
-				} else {
-					var oPopupUIAreaDomRef = oCore.getStaticAreaRef();
-					if (oPopupUIAreaDomRef.contains(oEvent.target)) {
-						oUiArea = oCore.getUIArea(oPopupUIAreaDomRef.id);
+				// soft dependency to Core to prevent cyclic dependencies
+				Core = Core || sap.ui.require("sap/ui/core/Core");
+				if (Core) {
+					var oControlUIArea = oControl.getUIArea();
+					var oUiArea = null;
+					if (oControlUIArea) {
+						oUiArea = Core.getUIArea(oControlUIArea.getId());
+					} else {
+						var oPopupUIAreaDomRef = Core.getStaticAreaRef();
+						if (oPopupUIAreaDomRef.contains(oEvent.target)) {
+							oUiArea = Core.getUIArea(oPopupUIAreaDomRef.id);
+						}
 					}
-				}
-				if (oUiArea) {
-					oUiArea._handleEvent(oEvent);
+					if (oUiArea) {
+						//if rendering moves to UIArea and UIArea will be a ManagedObjectRegistry _handleElement must not go public
+						oUiArea._handleEvent(oEvent);
+					}
 				}
 			}
 		};
 
-	return FocusHandler;
+		function getControlById(sControlId) {
+			var oControl;
+			if (!Element) {
+				Element = sap.ui.require("sap/ui/core/Element");
+			}
+			if (Element) {
+				oControl = Element.registry.get(sControlId);
+			}
+			return oControl || null;
+		}
+
+	return new FocusHandler();
 
 });

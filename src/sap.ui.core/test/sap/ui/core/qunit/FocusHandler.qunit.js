@@ -1,19 +1,9 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/FocusHandler",
 	"sap/m/Input"
-], function(Input) {
+], function(FocusHandler, Input) {
 	"use strict";
-
-	// Initialization
-
-	// get access to the Core internals
-	var oFocusHandler = null;
-	var oPlugin = {};
-	oPlugin.startPlugin = function(oCore, bInit) {
-		oFocusHandler = oCore.oFocusHandler;
-	};
-	oPlugin.stopPlugin = function(oCore) {};
-	sap.ui.getCore().registerPlugin(oPlugin);
 
 	// Control initialization
 	var oControls = {};
@@ -39,33 +29,33 @@ sap.ui.define([
 	QUnit.module("Basic");
 
 	QUnit.test("Check FocusHandler initialized", function(assert) {
-		assert.ok(oFocusHandler, "FocusHandler initialized");
+		assert.ok(FocusHandler, "FocusHandler initialized");
 	});
 
 	QUnit.test("Check FocusHandler initial state", function(assert) {
-		assert.equal(oFocusHandler.oCurrent, null, "Initial Value 'Current':");
-		assert.equal(oFocusHandler.oLast, null, "Initial Value 'Last':");
+		assert.equal(FocusHandler.oCurrent, null, "Initial Value 'Current':");
+		assert.equal(FocusHandler.oLast, null, "Initial Value 'Last':");
 	});
 
 	QUnit.test("Check FocusHandler.getCurrentFocusedControlId", function(assert) {
-		assert.equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current not available:");
+		assert.equal(FocusHandler.oCurrent, FocusHandler.getCurrentFocusedControlId(), "Current not available:");
 		oControls["oControl1"].focus();
-		assert.equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current available:");
+		assert.equal(FocusHandler.oCurrent, FocusHandler.getCurrentFocusedControlId(), "Current available:");
 		document.getElementById("customInput").focus(); //Reset for next test
 	});
 
 	QUnit.module("Focus Tracking");
 
 	QUnit.test("Check Focus Tracking", function(assert) {
-		assert.equal(oFocusHandler.oCurrent, null, "Initial Value 'Current':");
+		assert.equal(FocusHandler.oCurrent, null, "Initial Value 'Current':");
 		oControls["oControl1"].focus();
-		assert.equal(oFocusHandler.oCurrent, "oControl1", "Value 'Current' after control focus:");
+		assert.equal(FocusHandler.oCurrent, "oControl1", "Value 'Current' after control focus:");
 		oControls["oControl2"].focus();
-		assert.equal(oFocusHandler.oCurrent, "oControl2", "Value 'Current' after control focus:");
+		assert.equal(FocusHandler.oCurrent, "oControl2", "Value 'Current' after control focus:");
 		document.getElementById("customInput").focus();
-		assert.equal(oFocusHandler.oCurrent, null, "Value 'Current' after outer focus:");
+		assert.equal(FocusHandler.oCurrent, null, "Value 'Current' after outer focus:");
 		oControls["oControl3"].focus();
-		assert.equal(oFocusHandler.oCurrent, "oControl3", "Value 'Current' after control focus:");
+		assert.equal(FocusHandler.oCurrent, "oControl3", "Value 'Current' after control focus:");
 	});
 
 	QUnit.test("Check sapfocusleave Event - Focus to Control", function(assert) {
@@ -110,8 +100,8 @@ sap.ui.define([
 			assert.ok(!oEvent.relatedControlFocusInfo, "Focus Info not available");
 		};
 		//Change the focus handler temporarily
-		var onfocusEvent_ORIG = oFocusHandler.onfocusEvent;
-		oFocusHandler.onfocusEvent = function(sControlId){
+		var onfocusEvent_ORIG = FocusHandler.onfocusEvent;
+		FocusHandler.onfocusEvent = function(sControlId){
 			//Do nothing to simulate a window blur
 		};
 
@@ -119,7 +109,7 @@ sap.ui.define([
 			assert.ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
 
 			//Revert the temporary changes
-			oFocusHandler.onfocusEvent = onfocusEvent_ORIG;
+			FocusHandler.onfocusEvent = onfocusEvent_ORIG;
 			delete oControls["oControl1"].onsapfocusleave;
 
 			document.getElementById("customInput").focus();
@@ -132,13 +122,13 @@ sap.ui.define([
 		//This test should only check whether the changes in the focus handler in the last test
 		//are successfully reverted.
 		var bOk = true;
-		bOk = bOk && oFocusHandler.oCurrent == null;
+		bOk = bOk && FocusHandler.oCurrent == null;
 		oControls["oControl2"].focus();
-		bOk = bOk && oFocusHandler.oCurrent == "oControl2";
+		bOk = bOk && FocusHandler.oCurrent == "oControl2";
 		oControls["oControl3"].focus();
-		bOk = bOk && oFocusHandler.oCurrent == "oControl3";
+		bOk = bOk && FocusHandler.oCurrent == "oControl3";
 		document.getElementById("customInput").focus();
-		bOk = bOk && oFocusHandler.oCurrent == null;
+		bOk = bOk && FocusHandler.oCurrent == null;
 		assert.ok(bOk, "Changes successfully reverted");
 	});
 
