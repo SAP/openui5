@@ -1704,6 +1704,7 @@ sap.ui.define([
 				enabled: true,
 				type: ButtonType.Emphasized,
 				press: function() {
+					this.oManagementDialog.close();
 					this._handleManageSavePressed();
 				}.bind(this)
 			});
@@ -2077,7 +2078,10 @@ sap.ui.define([
 
 		this.fireManageCancel();
 
-		this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
+		//fireCancel may have deleted the ManageViews dialog
+		if (this.oManagementTable) {
+			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
+		}
 	};
 
 	VariantManagement.prototype._handleManageFavoriteChanged = function(oIcon, oItem) {
@@ -2234,8 +2238,10 @@ sap.ui.define([
 
 		this.fireManage(this._collectManageData());
 
-		this._resumeManagementTableBinding();
-		this.oManagementDialog.close();
+		// the manage views dialog may be deleted.
+		if (this.oManagementDialog) {
+			this._resumeManagementTableBinding();
+		}
 	};
 
 	VariantManagement.prototype._resumeManagementTableBinding = function() {
