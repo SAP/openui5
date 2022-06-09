@@ -359,7 +359,11 @@ sap.ui.define([
 				this.getRouter().navTo("apiId", {id: this.entityId});
 			},
 
-			onNewTab : function () {
+			onNewTab: function () {
+				if (this.oModel.getProperty("/iframe")) {
+					URLHelper.redirect(this.sIFrameUrl, true);
+					return;
+				}
 				// this._applySearchParamValueToIframeURL('sap-ui-theme', this._sDefaultSampleTheme);
 				this.loadSampleSettings(function(eMessage){
 					this._applySearchParamValueToIframeURL('sap-ui-theme', eMessage.data.data.theme);
@@ -367,7 +371,9 @@ sap.ui.define([
 					this._applySearchParamValueToIframeURL('sap-ui-density', eMessage.data.data.density);
 				}.bind(this)).then(function(){
 					URLHelper.redirect(this.sIFrameUrl, true);
-				}.bind(this));
+				}.bind(this)).catch(function(err){
+					Log.error(err);
+				});
 			},
 
 			onPreviousSample: function (oEvent) {
