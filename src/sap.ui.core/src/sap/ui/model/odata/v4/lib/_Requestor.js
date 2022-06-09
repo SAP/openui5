@@ -548,6 +548,8 @@ sap.ui.define([
 						&& oCandidate.headers["If-Match"] === oChange.headers["If-Match"]) {
 					_Helper.merge(oCandidate.body, oChange.body);
 					oChange.$resolve(oCandidate.$promise);
+					oCandidate.$mergeRequests(oChange.$mergeRequests());
+
 					return true;
 				}
 			});
@@ -1709,7 +1711,7 @@ sap.ui.define([
 	 * @param {any} [vOwner]
 	 *   An additional precondition for the merging of GET requests: the owner must be identical.
 	 * @param {function(string[]):string[]} [fnMergeRequests]
-	 *   Function which is called during merging of GET requests. If a merged request has a
+	 *   Function which is called during merging of GET or PATCH requests. If a merged request has a
 	 *   function given, this function will be called and its return value is
 	 *   given to the one remaining request's function as a parameter.
 	 * @returns {Promise}

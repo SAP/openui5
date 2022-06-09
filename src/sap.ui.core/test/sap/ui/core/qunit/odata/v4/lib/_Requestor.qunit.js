@@ -1863,6 +1863,15 @@ sap.ui.define([
 					url : "Products"
 				})
 			],
+			fnMergePatch0 = this.spy(),
+			fnMergePatch1 = "~mergePatchRequests~",
+			fnMergePatch2 = this.stub(),
+			fnMergePatch3 = this.stub(),
+			fnMergePatch4 = this.spy(),
+			fnMergePatch5 = this.stub(),
+			fnMergePatch6 = this.spy(),
+			fnMergePatch7 = this.stub(),
+			fnMergePatch8 = this.stub(),
 			aPromises = [],
 			oRequestor = _Requestor.create("/", oModelInterface),
 			fnSubmit0 = this.spy(),
@@ -1871,22 +1880,38 @@ sap.ui.define([
 			fnSubmit3 = this.spy(),
 			fnSubmit4 = this.spy();
 
+		fnMergePatch2.returns("~oOldValue02~");
+		fnMergePatch3.returns("~oOldValue03~");
+		fnMergePatch5.returns("~oOldValue05~");
+		fnMergePatch7.returns("~oOldValue07~");
+		fnMergePatch8.returns("~oOldValue08~");
+
 		aPromises.push(oRequestor.request("PATCH", "Products('0')",
-			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0}, {Name : null}));
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0}, {Name : null},
+			undefined, undefined, undefined, undefined, undefined, undefined, undefined,
+			fnMergePatch0));
 		oRequestor.request("PATCH", "Products('0')", oRequestor.lockGroup("otherGroupId", {}),
-			{"If-Match" : oEntityProduct0OtherCache}, {Price : "5.0"});
+			{"If-Match" : oEntityProduct0OtherCache}, {Price : "5.0"}, undefined, undefined,
+			undefined, undefined, undefined, undefined, undefined, fnMergePatch1);
 		aPromises.push(oRequestor.request("PATCH", "Products('0')",
-			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0}, {Name : "bar"}));
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0}, {Name : "bar"},
+			undefined, undefined, undefined, undefined, undefined, undefined, undefined,
+			fnMergePatch2));
 		aPromises.push(oRequestor.request("GET", "Products", oRequestor.lockGroup("groupId", {}),
 			undefined, undefined, fnSubmit0));
 		aPromises.push(oRequestor.request("PATCH", "Products('0')",
 			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0},
-			{Note : "hello, world"}));
+			{Note : "hello, world"}, undefined, undefined, undefined, undefined, undefined,
+			undefined, undefined, fnMergePatch3));
 		// different entity in between
 		aPromises.push(oRequestor.request("PATCH", "Products('1')",
-			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct1}, {Name : "p1"}));
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct1}, {Name : "p1"},
+			undefined, undefined, undefined, undefined, undefined, undefined, undefined,
+			fnMergePatch4));
 		aPromises.push(oRequestor.request("PATCH", "Products('0')",
-			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0}, {Name : "bar2"}));
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0}, {Name : "bar2"},
+			undefined, undefined, undefined, undefined, undefined, undefined, undefined,
+			fnMergePatch5));
 		// same group but different cache
 		aPromises.push(oRequestor.request("PATCH", "Products('0')",
 			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0OtherCache},
@@ -1901,14 +1926,17 @@ sap.ui.define([
 		// first set to null: may be merged with each other, but not with PATCHES to properties
 		aPromises.push(oRequestor.request("PATCH", "BusinessPartners('42')",
 			oRequestor.lockGroup("groupId", {}), {"If-Match" : oBusinessPartners42},
-			{Address : null}));
+			{Address : null}, undefined, undefined, undefined, undefined, undefined, undefined,
+			undefined, fnMergePatch6));
 		// then two different properties therein: must be merged
 		aPromises.push(oRequestor.request("PATCH", "BusinessPartners('42')",
 			oRequestor.lockGroup("groupId", {}), {"If-Match" : oBusinessPartners42},
-			{Address : {City : "Walldorf"}}, fnSubmit3));
+			{Address : {City : "Walldorf"}}, fnSubmit3, undefined, undefined, undefined, undefined,
+			undefined, undefined, fnMergePatch7));
 		aPromises.push(oRequestor.request("PATCH", "BusinessPartners('42')",
 			oRequestor.lockGroup("groupId", {}), {"If-Match" : oBusinessPartners42},
-			{Address : {PostalCode : "69190"}}, fnSubmit4));
+			{Address : {PostalCode : "69190"}}, fnSubmit4, undefined, undefined, undefined,
+			undefined, undefined, undefined, fnMergePatch8));
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
 			.withExactArgs(aExpectedRequests, "groupId").resolves([
@@ -1936,6 +1964,25 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(fnSubmit3);
 		sinon.assert.calledOnce(fnSubmit4);
 		sinon.assert.calledWithExactly(fnSubmit4);
+
+		sinon.assert.calledThrice(fnMergePatch0);
+		sinon.assert.calledWithExactly(fnMergePatch0, "~oOldValue02~");
+		sinon.assert.calledWithExactly(fnMergePatch0, "~oOldValue03~");
+		sinon.assert.calledWithExactly(fnMergePatch0, "~oOldValue05~");
+		sinon.assert.calledOnce(fnMergePatch2);
+		sinon.assert.calledWithExactly(fnMergePatch2);
+		sinon.assert.calledOnce(fnMergePatch3);
+		sinon.assert.calledWithExactly(fnMergePatch3);
+		sinon.assert.notCalled(fnMergePatch4);
+		sinon.assert.calledOnce(fnMergePatch5);
+		sinon.assert.calledWithExactly(fnMergePatch5);
+		sinon.assert.calledTwice(fnMergePatch6);
+		sinon.assert.calledWithExactly(fnMergePatch6, "~oOldValue07~");
+		sinon.assert.calledWithExactly(fnMergePatch6, "~oOldValue08~");
+		sinon.assert.calledOnce(fnMergePatch7);
+		sinon.assert.calledWithExactly(fnMergePatch7);
+		sinon.assert.calledOnce(fnMergePatch8);
+		sinon.assert.calledWithExactly(fnMergePatch8);
 		return Promise.all(aPromises).then(function (aResults) {
 			assert.deepEqual(aResults, [
 				{Name : "bar2", Note : "hello, world"}, // 1st PATCH
@@ -2227,13 +2274,17 @@ sap.ui.define([
 			}],
 			oError0 = new Error("0"),
 			oError1 = new Error("1"),
+			fnMergePatch0 = this.spy(),
+			fnMergePatch1 = this.stub(),
 			oProduct = {},
 			aPromises = [],
 			oRequestor = _Requestor.create("/", oModelInterface),
 			aRequests;
 
+		fnMergePatch1.returns("~oOldData~");
 		aPromises.push(oRequestor.request("PATCH", "ProductList('HT-1001')",
-				this.createGroupLock(), {"If-Match" : oProduct}, {Name : "foo"})
+				this.createGroupLock(), {"If-Match" : oProduct}, {Name : "foo"}, undefined,
+				undefined, undefined, undefined, undefined, undefined, undefined, fnMergePatch0)
 			.catch(function (oError) {
 				assert.strictEqual(oError, oError0);
 			}));
@@ -2244,7 +2295,8 @@ sap.ui.define([
 			}));
 
 		aPromises.push(oRequestor.request("PATCH", "ProductList('HT-1001')",
-				this.createGroupLock(), {"If-Match" : oProduct}, {Name : "bar"})
+				this.createGroupLock(), {"If-Match" : oProduct}, {Name : "bar"}, undefined,
+				undefined, undefined, undefined, undefined, undefined, undefined, fnMergePatch1)
 			.catch(function (oError) {
 				// PATCHes are merged and thus rejected with the same error
 				assert.strictEqual(oError, oError0);
@@ -2286,6 +2338,11 @@ sap.ui.define([
 		aPromises.push(oRequestor.processBatch("groupId").then(function (oResult) {
 			assert.deepEqual(oResult, undefined);
 		}));
+
+		sinon.assert.calledOnce(fnMergePatch0);
+		sinon.assert.calledWithExactly(fnMergePatch0, "~oOldData~");
+		sinon.assert.calledOnce(fnMergePatch1);
+		sinon.assert.calledWithExactly(fnMergePatch1);
 
 		return Promise.all(aPromises);
 	});
@@ -4031,6 +4088,9 @@ sap.ui.define([
 				if (Array.isArray(vActualRequest)) { // change set
 					oFixture.requests.iChangeSet = i;
 					vActualRequest.forEach(function (oRequest) {
+						if (oRequest.method === "PATCH") {
+							oRequest.$mergeRequests = function () {};
+						}
 						if (oRequest.$resolve) {
 							that.mock(oRequest).expects("$resolve")
 								.withExactArgs(vActualRequest[oRequest._mergeInto].$promise);
