@@ -1485,7 +1485,12 @@ sap.ui.define([
 			return;
 		}
 
-		this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
+		sSelectedKey = this.oSelectedItem._getNonEmptyKey();
+		this.setProperty("selectedKey", sSelectedKey, true);
+		if (bIsParentIconTabBar) {
+			this.getParent().setProperty("selectedKey", sSelectedKey, true);
+		}
+
 	};
 
 	/**
