@@ -2079,7 +2079,7 @@ sap.ui.define([
 		this.fireManageCancel();
 
 		//fireCancel may have deleted the ManageViews dialog
-		if (this.oManagementTable) {
+		if (this.oManagementDialog) {
 			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
 		}
 	};
