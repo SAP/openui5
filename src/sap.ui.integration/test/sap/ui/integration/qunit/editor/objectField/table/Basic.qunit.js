@@ -218,8 +218,10 @@ sap.ui.define([
 					var oClearFitlersButton = oTableToolbar.getContent()[4];
 					assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
 					var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
+					assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
+					assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
 					var oSelectionColumn = oTable.getColumns()[0];
 					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
@@ -544,8 +546,10 @@ sap.ui.define([
 					var oClearFitlersButton = oTableToolbar.getContent()[4];
 					assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
 					var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
+					assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
+					assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
 					var oSelectionColumn = oTable.getColumns()[0];
 					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
@@ -894,8 +898,10 @@ sap.ui.define([
 					var oClearFitlersButton = oTableToolbar.getContent()[4];
 					assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
 					var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
+					assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
+					assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
 					var oSelectionColumn = oTable.getColumns()[0];
 					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
@@ -1208,8 +1214,10 @@ sap.ui.define([
 					var oClearFitlersButton = oTableToolbar.getContent()[4];
 					assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
 					var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
+					assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
+					assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
 					oTable.setSelectedIndex(0);
 					oTable.fireRowSelectionChange();
