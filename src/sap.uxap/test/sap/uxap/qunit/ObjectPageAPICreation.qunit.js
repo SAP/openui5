@@ -947,6 +947,24 @@ function (
 		helpers.renderObject(oObjectPage);
 	});
 
+	QUnit.test("ObjectPage DOM element resize listeners deregistered on exit", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPage,
+			oSpy1 = this.spy(oObjectPage, "_deregisterScreenSizeListener"),
+			oSpy2 = this.spy(oObjectPage, "_deregisterTitleSizeListener");
+
+		helpers.renderObject(oObjectPage);
+
+		// act
+		oSpy1.reset();
+		oSpy2.reset();
+		oObjectPage.destroy();
+
+		// assert
+		assert.strictEqual(oSpy1.callCount, 1, "screen size listener is deregistered");
+		assert.strictEqual(oSpy2.callCount, 1, "title-area size listener is deregistered");
+	});
+
 	QUnit.test("height metrics are updated on content-resize", function (assert) {
 		var oObjectPage = this.oObjectPage,
 			oHtmlBlock,

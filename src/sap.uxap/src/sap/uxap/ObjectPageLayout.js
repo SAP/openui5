@@ -1303,6 +1303,7 @@ sap.ui.define([
 		}
 
 		this._deregisterScreenSizeListener();
+		this._deregisterTitleSizeListener();
 
 		if (this._iContentResizeId) {
 			ResizeHandler.deregister(this._iContentResizeId);
