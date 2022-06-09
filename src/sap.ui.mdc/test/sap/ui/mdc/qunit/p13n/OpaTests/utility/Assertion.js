@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Descendant",
-	"sap/ui/mdc/integration/testlibrary/p13n/waitForPanelInP13n",
+	"test-resources/sap/ui/mdc/testutils/opa/p13n/waitForPanelInP13n",
 	"sap/ui/core/library",
 	"./Util"
 ], function(

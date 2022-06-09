@@ -70,22 +70,22 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				module: "test-resources/sap/ui/mdc/integration/ListReport/opaTestsFlVM.qunit",
 				sinon: false
 			},
-			"ValueHelp": {
-				loader: {
-					paths: {
-						"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
-						"sap/ui/mdc/integration": "test-resources/sap/ui/mdc/integration",
-						"sap/ui/v4demo": "test-resources/sap/ui/mdc/integration/valuehelp",
-						"delegates": "test-resources/sap/ui/mdc/delegates"
-					}
-				},
-				qunit: {
-					reorder: false
-				},
-				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-				module: "test-resources/sap/ui/mdc/integration/valuehelp/opaTests.qunit",
-				sinon: false
-			},
+			// "ValueHelp": {
+			// 	loader: {
+			// 		paths: {
+			// 			"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
+			// 			"sap/ui/mdc/integration": "test-resources/sap/ui/mdc/integration",
+			// 			"sap/ui/v4demo": "test-resources/sap/ui/mdc/integration/valuehelp",
+			// 			"delegates": "test-resources/sap/ui/mdc/delegates"
+			// 		}
+			// 	},
+			// 	qunit: {
+			// 		reorder: false
+			// 	},
+			// 	autostart: false, // tests are added asynchronously because the V4 server needs to be found first
+			// 	module: "test-resources/sap/ui/mdc/integration/valuehelp/opaTests.qunit",
+			// 	sinon: false
+			// },
 			"ActionToolbar": {
 				loader: {
 					paths: {
