@@ -20,7 +20,7 @@
 			<mdc:FilterBar
 					id="mdcFilterBar"
 					p13nMode="Item,Value"
-					delegate='\{ "name" : "sap/ui/mdc/odata/v4/FilterBarDelegate", "payload" : \{ "modelName" : null, "collectionName" : "ProductList" \} \}'>
+					delegate='\{ "name" : "delegates/odata/v4/FilterBarDelegate", "payload" : \{ "modelName" : null, "collectionName" : "ProductList" \} \}'>
 				<mdc:filterItems>
 					<mdc:FilterField label= "Product Name" dataType="Edm.String" conditions= "{$filters>/conditions/Name}"/>
 					<mdc:FilterField label= "Category" dataType="Edm.String" conditions= "{$filters>/conditions/Category}"/>

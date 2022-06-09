@@ -7,20 +7,10 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	'./ODataMetaModelUtil', 'sap/ui/mdc/enum/FieldDisplay', "sap/ui/fl/Utils", "sap/ui/mdc/FilterBarDelegate", 'sap/base/util/ObjectPath', 'sap/base/util/merge', 'sap/ui/mdc/odata/v4/TypeUtil', 'sap/ui/mdc/condition/FilterOperatorUtil', "sap/ui/model/FilterOperator", "sap/ui/model/Filter", 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/base/Log'
+	'sap/ui/mdc/odata/v4/ODataMetaModelUtil', 'sap/ui/mdc/enum/FieldDisplay', "sap/ui/fl/Utils", "sap/ui/mdc/FilterBarDelegate", 'sap/base/util/ObjectPath', 'sap/base/util/merge', 'sap/ui/mdc/odata/v4/TypeUtil', 'sap/ui/mdc/condition/FilterOperatorUtil', "sap/ui/model/FilterOperator", "sap/ui/model/Filter", 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/base/Log'
 	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, TypeUtil, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log) {
 	"use strict";
 
-	/**
-	 * Helper class for sap.ui.mdc.FilterBar.
-	 * <h3><b>Note:</b></h3>
-	 * The class is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
-	 * @author SAP SE
-	 * @private
-	 * @experimental
-	 * @since 1.60
-	 * @alias sap.ui.mdc.odata.v4.FilterBarDelegate
-	 */
 	var ODataFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 
 	// TO DO
