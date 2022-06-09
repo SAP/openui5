@@ -1,6 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/ui/core/Control",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
+	UriParameters,
 	Log,
 	MessageBox,
 	Control,
@@ -172,6 +174,28 @@ sap.ui.define([
 			.then(function(oRta) {
 				assert.strictEqual(oRta.getRootControl(), oAppComponent.getId(), "the corresponding app component is set as root control");
 			});
+		});
+
+		QUnit.test("with flexEnabled=false and fiori tools parameter=true", function(assert) {
+			sandbox.stub(oAppComponent, "getManifest").returns({
+				"sap.ui5": {
+					flexEnabled: false
+				}
+			});
+			sandbox.stub(UriParameters.prototype, "get")
+				.callThrough()
+				.withArgs("fiori-tools-rta-mode")
+				.returns("true");
+
+			return adaptationStarter({
+				rootControl: oAppComponent,
+				flexSettings: {
+					layer: "CUSTOMER"
+				}
+			})
+			.then(function() {
+				assert.strictEqual(this.fnRtaStartStub.callCount, 1, "rta was started");
+			}.bind(this));
 		});
 	});
 
