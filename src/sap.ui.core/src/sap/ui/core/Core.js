@@ -20,12 +20,10 @@ sap.ui.define([
 	'./ElementMetadata',
 	'./FocusHandler',
 	'./RenderManager',
-	'./ResizeHandler',
 	'./ThemeCheck',
 	'./UIArea',
 	'./message/MessageManager',
 	"sap/ui/util/ActivityDetection",
-	"sap/ui/dom/getScrollbarSize",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/Log",
 	"sap/ui/performance/Measurement",
@@ -60,12 +58,10 @@ sap.ui.define([
 		ElementMetadata,
 		FocusHandler,
 		RenderManager,
-		ResizeHandler,
 		ThemeCheck,
 		UIArea,
 		MessageManager,
 		ActivityDetection,
-		getScrollbarSize,
 		ResourceBundle,
 		Log,
 		Measurement,
@@ -1254,7 +1250,6 @@ sap.ui.define([
 
 		this.oFocusHandler = new FocusHandler(document.body, this);
 		this.oRenderManager._setFocusHandler(this.oFocusHandler); //Let the RenderManager know the FocusHandler
-		this.oResizeHandler = new ResizeHandler(this);
 		this.oThemeCheck = new ThemeCheck(this);
 
 		Log.info("Initialized",null,METHOD);
@@ -3085,8 +3080,6 @@ sap.ui.define([
 	 * @param {string} [oParameters.theme] Theme name (default is <code>sap.ui.getCore().getConfiguration().getTheme()</code>)
 	 */
 	Core.prototype.fireThemeChanged = function(oParameters) {
-		getScrollbarSize(true);
-
 		// special hook for resetting theming parameters before the controls get
 		// notified (lightweight coupling to static Parameters module)
 		var ThemeParameters = sap.ui.require("sap/ui/core/theming/Parameters");

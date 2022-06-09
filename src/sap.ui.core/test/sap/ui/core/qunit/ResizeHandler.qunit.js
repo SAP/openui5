@@ -1,11 +1,12 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"require"
-], function(Control, ResizeHandler, includeStylesheet, createAndAppendDiv, require) {
+], function(Log, Control, ResizeHandler, includeStylesheet, createAndAppendDiv, require) {
 	"use strict";
 
 	// setup page content
@@ -31,18 +32,15 @@ sap.ui.define([
 		top: "0"
 	});
 
-	// Initialization
-	var oResizeHandler = null;
-	var oPlugin = {};
-	oPlugin.startPlugin = function(oCore, bInit) {
-		oResizeHandler = oCore.oResizeHandler;
-	};
-	oPlugin.stopPlugin = function(oCore) {};
-	sap.ui.getCore().registerPlugin(oPlugin);
-
 	var lastResizeTarget = null;
 	var lastResizeTargetCtrl = null;
 	var lastSize = null;
+
+	function reset() {
+		lastResizeTarget = null;
+		lastResizeTargetCtrl = null;
+		lastSize = null;
+	}
 
 	function _register(oRef) {
 		var sResizeListenerId = ResizeHandler.register(oRef, doOnResize);
@@ -94,29 +92,32 @@ sap.ui.define([
 
 	QUnit.module("Basic");
 
-	QUnit.test("Check ResizeHandler initialized", function(assert) {
-		assert.ok(oResizeHandler, "ResizeHandler initialized");
+	QUnit.module("[Compatibility] Legacy API");
+
+	QUnit.test("Accessing Resizehandler via globals", function(assert) {
+		assert.equal(sap.ui.core.ResizeHandler.register, ResizeHandler.register);
+		assert.equal(sap.ui.core.ResizeHandler.deregister, ResizeHandler.deregister);
 	});
 
-	QUnit.test("Check Register/Deregister", function(assert) {
-		var oDomRef = document.getElementById("resizeArea");
-		var currentNumberOfEventListeners = oResizeHandler.aResizeListeners.length;
-		var sResizeListenerId = ResizeHandler.register(oDomRef, doOnResize);
-		assert.equal(oResizeHandler.aResizeListeners.length, currentNumberOfEventListeners + 1, "Number of event listeners after registration");
-		var bIsRegistered = false;
-		oResizeHandler.aResizeListeners.forEach(function(oResizeListener) {
-			if (oResizeListener.sId == sResizeListenerId) {
-				bIsRegistered = true;
-				assert.ok(oResizeListener.oDomRef == oDomRef, "Registered DOM Ref correct");
-				assert.ok(oResizeListener.fHandler == doOnResize, "Registered Handler correct");
-				return false; //break the loop
-			}
-		});
-		assert.ok(bIsRegistered, "Listener registered correctly");
-		ResizeHandler.deregister(sResizeListenerId);
-		assert.equal(oResizeHandler.aResizeListeners.length, currentNumberOfEventListeners, "Number of event listeners after de-registration");
+	QUnit.test("Module export stability", function(assert) {
+		assert.equal(ResizeHandler, sap.ui.core.ResizeHandler, "Global export and Module export are identical");
 	});
 
+	QUnit.test("Calling Constructor via globals", function(assert) {
+		var oLogSpy = this.spy(Log, "error");
+		var sLogMessage = "ResizeHandler is designed as a singleton and should not be created manually! Please require 'sap/ui/core/ResizeHandler' instead and use the module export directly without using 'new'.";
+
+		var oResizeHandler = new sap.ui.core.ResizeHandler();
+		assert.ok(oResizeHandler, "public constructor via globals works");
+
+		oResizeHandler = new ResizeHandler();
+		assert.ok(oResizeHandler, "public constructor via ResizeHandler module export");
+
+		// check for error log
+		assert.equal(oLogSpy.callCount, 2);
+		assert.equal(oLogSpy.getCall(0).args[0], sLogMessage, "Correct error log (Call 1)");
+		assert.equal(oLogSpy.getCall(1).args[0], sLogMessage, "Correct error log (Call 2)");
+	});
 
 	QUnit.module("DOM Element Resize");
 
@@ -138,7 +139,38 @@ sap.ui.define([
 		}, 300);
 	});
 
+	QUnit.test("Check that no DOM resize event is fired after deregister", function(assert) {
+		var done = assert.async();
+		assert.expect(3);
+		var oResizeAreaDom = document.getElementById("resizeArea");
+		var sResizeListenerId = _register(oResizeAreaDom);
 
+		// move 1px up from last test
+		setStyle("resizeAreaContainer", {
+			width:"151px",
+			height:"150px"
+		});
+
+		setTimeout(function(){
+			assert.ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
+			ResizeHandler.deregister(sResizeListenerId);
+
+			// check if handler is not called a second time after deregister
+			// (-1px again)
+			reset();
+
+			setStyle("resizeAreaContainer", {
+				width:"150px",
+				height:"150px"
+			});
+
+			setTimeout(function() {
+				// lastResizeTarget must not be updated
+				assert.ok(lastResizeTarget == null, "Listener should not have been called on DOM Resize");
+				done();
+			}, 300);
+		}, 300);
+	});
 
 	QUnit.test("Check DOM Resize width +1", function(assert) {
 		var done = assert.async();
@@ -354,13 +386,34 @@ sap.ui.define([
 		}, 300);
 	});
 
-	QUnit.test("Check Control Resize - Destroy", function(assert) {
-		assert.expect(3);
-		assert.ok(oResizeHandler.aResizeListeners.length == 0, "Number of Handlers before registration");
+	QUnit.test("Check Control Resize - After Destroy no resize should be triggered", function(assert) {
+		assert.expect(4);
+		var done = assert.async();
 		_register(control);
-		assert.ok(oResizeHandler.aResizeListeners.length == 1, "Number of Handlers after registration");
-		control.destroy();
-		assert.ok(oResizeHandler.aResizeListeners.length == 0, "Number of Handlers after destroy");
+
+		control.setWidth("151px");
+		control.setHeight("150px");
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function() {
+			assert.ok(lastResizeTargetCtrl == control, "Listener should be called on DOM Resize");
+			assert.ok(lastSize && lastSize.width == 151 && lastSize.height == 150, "New Size given");
+
+			reset();
+
+			// sap.ui.core.Control#destroy implicitly deregisters all listeners for a control!
+			control.destroy();
+
+			// after destruction, this should not lead to another resize-handler call
+			control.setWidth("150px");
+			control.setHeight("150px");
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function() {
+				assert.ok(lastResizeTargetCtrl == null, "Listener should not have been called on control resize");
+				done();
+			}, 300);
+		}, 300);
 	});
 
 	QUnit.module("Suspend/Resume resize listeners");

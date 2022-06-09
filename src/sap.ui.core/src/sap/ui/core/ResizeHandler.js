@@ -18,15 +18,14 @@ sap.ui.define([
 	// local logger, by default only logging errors
 	var log = Log.getLogger("sap.ui.core.ResizeHandler", Log.Level.ERROR);
 
-	/**
-	 * Reference to the Core (implementation view, not facade)
-	 * @type {sap.ui.core.Core}
-	 */
-	var oCoreRef = null;
+	var oResizeHandler;
 
 	/**
 	 * The resize handling API provides firing of resize events on all browsers by regularly
 	 * checking the width and height of registered DOM elements or controls and firing events accordingly.
+	 *
+	 * <b>Note</b>: The public usage of the constructor is deprecated since 1.103.0.
+	 * Please use the static module export directly.
 	 *
 	 * @namespace
 	 * @alias sap.ui.core.ResizeHandler
@@ -38,10 +37,8 @@ sap.ui.define([
 
 	var ResizeHandler = BaseObject.extend("sap.ui.core.ResizeHandler", /** @lends sap.ui.core.ResizeHandler.prototype */ {
 
-		constructor : function(oCore) {
+		constructor : function() {
 			BaseObject.apply(this);
-
-			oCoreRef = oCore;
 
 			this.aResizeListeners = [];
 			this.aSuspendedDomRefs = [];
@@ -55,8 +52,14 @@ sap.ui.define([
 			jQuery(window).on("unload", this.fDestroyHandler);
 
 			ActivityDetection.attachActivate(initListener, this);
-		}
 
+			if (oResizeHandler) {
+				log.error(
+					"ResizeHandler is designed as a singleton and should not be created manually! " +
+					"Please require 'sap/ui/core/ResizeHandler' instead and use the module export directly without using 'new'."
+				);
+			}
+		}
 	});
 
 	function clearListener(){
@@ -83,7 +86,6 @@ sap.ui.define([
 	ResizeHandler.prototype.destroy = function(oEvent) {
 		ActivityDetection.detachActivate(initListener, this);
 		jQuery(window).off("unload", this.fDestroyHandler);
-		oCoreRef = null;
 		this.aResizeListeners = [];
 		this.aSuspendedDomRefs = [];
 		clearListener.call(this);
@@ -229,10 +231,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ResizeHandler.register = function(oRef, fHandler) {
-		if (!oCoreRef || !oCoreRef.oResizeHandler) {
-			return null;
-		}
-		return oCoreRef.oResizeHandler.attachListener(oRef, fHandler);
+		return oResizeHandler.attachListener(oRef, fHandler);
 	};
 
 	/**
@@ -244,10 +243,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ResizeHandler.deregister = function(sId) {
-		if (!oCoreRef || !oCoreRef.oResizeHandler) {
-			return;
-		}
-		oCoreRef.oResizeHandler.detachListener(sId);
+		oResizeHandler.detachListener(sId);
 	};
 
 	/**
@@ -257,11 +253,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ResizeHandler.deregisterAllForControl = function(sControlId) {
-		if (!oCoreRef || !oCoreRef.oResizeHandler) {
-			return;
-		}
-
-		oCoreRef.oResizeHandler.aResizeListeners.filter(function(oResizeListener){
+		oResizeHandler.aResizeListeners.filter(function(oResizeListener){
 			return oResizeListener && oResizeListener.oControl && oResizeListener.oControl.getId() === sControlId;
 		}).forEach(function(oResizeListener) {
 			ResizeHandler.deregister(oResizeListener.sId);
@@ -275,17 +267,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ResizeHandler.suspend = function(oDomRef) {
-		if (!oCoreRef || !oCoreRef.oResizeHandler) {
-			return false;
-		}
-
 		// Check if the dom ref is valid within the document
 		if (!document.documentElement.contains(oDomRef)) {
 			return false;
 		}
 
 		// Check if the dom ref is already suspended
-		var oResizeHandler = oCoreRef.oResizeHandler;
 		if (oResizeHandler.aSuspendedDomRefs.indexOf(oDomRef) === -1) {
 			oResizeHandler.aSuspendedDomRefs.push(oDomRef);
 		}
@@ -300,12 +287,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ResizeHandler.resume = function(oDomRef) {
-		if (!oCoreRef || !oCoreRef.oResizeHandler) {
-			return false;
-		}
-
-		var oResizeHandler = oCoreRef.oResizeHandler,
-			iIndex = oResizeHandler.aSuspendedDomRefs.indexOf(oDomRef);
+		var iIndex = oResizeHandler.aSuspendedDomRefs.indexOf(oDomRef);
 
 		// If the dom ref is not registered, nothing to do
 		if (iIndex === -1) {
@@ -358,16 +340,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ResizeHandler.isSuspended = function(oDomRef, fnCallback) {
-		if (!oCoreRef || !oCoreRef.oResizeHandler) {
-			return false;
-		}
-		var oHandler = oCoreRef.oResizeHandler;
-		var vSuspended = oHandler._isSuspended(oDomRef);
+		var vSuspended = oResizeHandler._isSuspended(oDomRef);
 		if (fnCallback && vSuspended) { // DOM node causing the suspension
-			var aCallbacks = oHandler.mCallbacks.get(vSuspended);
+			var aCallbacks = oResizeHandler.mCallbacks.get(vSuspended);
 			if (!aCallbacks) {
 				aCallbacks = [];
-				oHandler.mCallbacks.set(vSuspended, aCallbacks);
+				oResizeHandler.mCallbacks.set(vSuspended, aCallbacks);
 			}
 			if (aCallbacks.indexOf(fnCallback) === -1) {
 				aCallbacks.push(fnCallback);
@@ -376,6 +354,7 @@ sap.ui.define([
 		return !!vSuspended;
 	};
 
-	return ResizeHandler;
+	oResizeHandler = new ResizeHandler();
 
+	return ResizeHandler;
 });
