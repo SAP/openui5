@@ -2,6 +2,7 @@
  * ! ${copyright}
  */
 sap.ui.define([
+	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/rta/util/showMessageBox",
 	"sap/ui/rta/RuntimeAuthoring"
 ], function(
+	UriParameters,
 	Log,
 	Control,
 	UIComponent,
@@ -39,13 +41,17 @@ sap.ui.define([
 	}
 
 	function checkFlexEnabled(oAppComponent) {
-		var oManifest = oAppComponent.getManifest() || {};
-		var vFlexEnabled = oManifest["sap.ui5"] && oManifest["sap.ui5"].flexEnabled;
+		// fiori tools is always a developer scenario where the flexEnabled flag should not be evaluated
+		var sFioriToolsMode = UriParameters.fromQuery(window.location.search).get("fiori-tools-rta-mode");
+		if (!sFioriToolsMode || sFioriToolsMode === "false") {
+			var oManifest = oAppComponent.getManifest() || {};
+			var vFlexEnabled = oManifest["sap.ui5"] && oManifest["sap.ui5"].flexEnabled;
 
-		if (vFlexEnabled === false) {
-			var oError = Error("This app is not enabled for key user adaptation");
-			oError.reason = "flexEnabled";
-			throw oError;
+			if (vFlexEnabled === false) {
+				var oError = Error("This app is not enabled for key user adaptation");
+				oError.reason = "flexEnabled";
+				throw oError;
+			}
 		}
 	}
 
