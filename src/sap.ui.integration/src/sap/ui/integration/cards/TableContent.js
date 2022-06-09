@@ -141,6 +141,74 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	TableContent.prototype.getStaticConfiguration = function () {
+		var aRows = this.getInnerList().getItems(),
+			oConfiguration = this.getParsedConfiguration(),
+			bHasGroups = aRows[0] && aRows[0].isA("sap.m.GroupHeaderListItem"),
+			aHeaders = [],
+			aResolvedRows = [],
+			aResolvedGroups = [],
+			oResolvedRow,
+			oResolvedGroup;
+
+		(oConfiguration.row.columns || []).forEach(function (oColumn) {
+			oColumn = BindingResolver.resolveValue(oColumn, this, this.getBindingContext().getPath());
+
+			aHeaders.push({
+				title: oColumn.title,
+				width: oColumn.width,
+				hAlign: oColumn.hAlign,
+				visible: oColumn.visible,
+				identifier: oColumn.identifier
+			});
+		}.bind(this));
+
+		aRows.forEach(function (oRow) {
+			if (oRow.isA("sap.m.GroupHeaderListItem")) {
+				if (oResolvedGroup) {
+					aResolvedGroups.push(oResolvedGroup);
+				}
+
+				aResolvedRows = [];
+				oResolvedGroup = {
+					title: oRow.getTitle(),
+					rows: aResolvedRows
+				};
+			} else {
+				oResolvedRow = BindingResolver.resolveValue(oConfiguration.row, this, oRow.getBindingContext().getPath());
+
+				(oResolvedRow.columns || []).forEach(function (oColumn) {
+					delete oColumn.title;
+					delete oColumn.width;
+					delete oColumn.hAlign;
+					delete oColumn.visible;
+					delete oColumn.identifier;
+				});
+
+				aResolvedRows.push(oResolvedRow);
+			}
+		}.bind(this));
+
+		if (oResolvedGroup) {
+			aResolvedGroups.push(oResolvedGroup);
+		}
+
+		var oStaticConfiguration = {
+			headers: aHeaders
+		};
+
+		if (bHasGroups) {
+			oStaticConfiguration.groups = aResolvedGroups;
+		} else {
+			oStaticConfiguration.rows = aResolvedRows;
+		}
+
+		return oStaticConfiguration;
+	};
+
+	/**
 	 * Handler for when data is changed.
 	 */
 	TableContent.prototype.onDataChanged = function () {

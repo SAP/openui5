@@ -28,6 +28,22 @@ sap.ui.define([
 		"stackedBar": {
 			path: "sap/f/cardsdemo/cardcontent/listContent/stackedBar.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/listContent/"
+		},
+		"tableCard1": {
+			path: "sap/f/cardsdemo/bundles/tablebundle/manifest.json",
+			baseUrl: "sap/f/cardsdemo/bundles/tablebundle/"
+		},
+		"tableCard2": {
+			path: "sap/f/cardsdemo/cardcontent/tableContent/bindings.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/tableContent/"
+		},
+		"tableCardGroups": {
+			path: "sap/f/cardsdemo/cardcontent/tableContent/groups.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/tableContent/"
+		},
+		"tableCardNoData": {
+			path: "sap/f/cardsdemo/cardcontent/tableContent/noData.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/tableContent/"
 		}
 	};
 

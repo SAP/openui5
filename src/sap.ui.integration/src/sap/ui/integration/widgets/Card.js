@@ -1959,7 +1959,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._handleNoDataItems = function (oCardContent, oError, bNoItems) {
-		if (bNoItems && this._oCardManifest.get(MANIFEST_PATHS.TYPE) === "List") {
+		if (bNoItems) {
 			oError._oCardOriginalContent = oCardContent;
 		}
 	};
