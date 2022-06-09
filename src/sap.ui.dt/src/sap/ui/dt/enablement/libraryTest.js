@@ -130,6 +130,8 @@ sap.ui.define([
 						assert.strictEqual(typeof mActions[sAction].changeType, "string", sControlName + " defines " + sAction + " with changetype:" + mActions[sAction].changeType);
 					} else if (typeof mActions[sAction] === "string") {
 						assert.strictEqual(typeof mActions[sAction], "string", sControlName + " defines " + sAction + " as string");
+					} else if (sAction === "settings" && typeof mActions[sAction] === "object") {
+						mModelChecks["/actions"].check(assert, mActions[sAction], sControlName);
 					} else {
 						assert.strictEqual(typeof mActions[sAction], "function", sControlName + " defines " + sAction + " as function");
 					}
