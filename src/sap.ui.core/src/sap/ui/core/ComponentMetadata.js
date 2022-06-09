@@ -437,7 +437,7 @@ sap.ui.define([
 		// the configuration of the static component metadata will be ignored
 		var oParent, oParentData;
 		if (bMerged && (oParent = this.getParent()) instanceof ComponentMetadata) {
-			oParentData = oParent.getManifestEntry(sKey, bMerged);
+			oParentData = oParent._getManifestEntry(sKey, bMerged);
 		}
 
 		// only extend / clone if there is data
