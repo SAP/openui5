@@ -1,6 +1,7 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/Item",
@@ -8,9 +9,11 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/layout/GridData",
 	"sap/ui/Device"
-], function (QUnitUtils, Menu, QuickAction, Item, Button, oCore, GridData, Device) {
+], function (QUnitUtils, createAndAppendDiv, Menu, QuickAction, Item, Button, oCore, GridData, Device) {
 	"use strict";
 	// Test setup
+
+	createAndAppendDiv("content");
 
 	var sText = "Test";
 
@@ -142,7 +145,7 @@ sap.ui.define([
 		},
 		beforeEach: function () {
 			this.oButton = new Button();
-			this.oButton.placeAt("qunit-fixture");
+			this.oButton.placeAt("content");
 			oCore.applyChanges();
 		},
 		afterEach: function () {
