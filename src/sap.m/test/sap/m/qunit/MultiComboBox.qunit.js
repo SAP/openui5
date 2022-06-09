@@ -5012,6 +5012,36 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Selecting the last item does not scroll the items container to the top", function (assert) {
+		var items = [];
+		var maxSize = 50;
+
+		for (var i = 0; i <= maxSize; i++) {
+			items.push(new Item({ key: 'Item' + i, text: 'Item' + i }));
+		}
+
+		var oMultiComboBox = new MultiComboBox({ items: items }).placeAt("MultiComboBoxContent");
+		Core.applyChanges();
+
+		// Open the items picker
+		qutils.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick(500);
+
+		var oPicker = oMultiComboBox.getPicker();
+
+		// Select the last item from list
+		var lastItem = oMultiComboBox._getList().getItems()[50];
+		lastItem.getDomRef().scrollIntoView();
+		oMultiComboBox._getList().setSelectedItem(lastItem, true, true);
+		this.clock.tick(500);
+
+		assert.notEqual(oPicker.getDomRef("cont").scrollTop, 0, "The items container should not be scrolled to the top");
+		assert.ok(oPicker.getDomRef("cont").scrollTop < oMultiComboBox._getSuggestionsPopover().getItemsContainer().getSelectedItem().getDomRef().offsetTop, "Selected Item should be visible after scrolling");
+
+		// clean up
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Focus handling");
 
 	QUnit.test("Focusing a token inside the MCB should not add css focus indication to the MCB itself", function(assert) {
