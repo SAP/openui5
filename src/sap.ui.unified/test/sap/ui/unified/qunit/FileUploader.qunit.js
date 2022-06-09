@@ -486,7 +486,6 @@ sap.ui.define([
 
 		// assert
 		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), sTooltip, "FileUploader tooltip is correct");
-		assert.equal(oFileUploader.$().find(".sapUiFupInputMask")[0].getAttribute("title"), sTooltip, "FileUploader mask tooltip is correct");
 
 		// cleanup
 		oFileUploader.destroy();
@@ -504,7 +503,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// assert (only tooltip type of string are added via the 'title' attribute)
-		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), null, "The title attribute is not set");
+		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), oFileUploader._getNoFileChosenText(), "The title attribute is set to default 'no file chosen' value");
 		assert.equal(oFileUploader.$().find(".sapUiFupInputMask")[0].getAttribute("title"), null, "The title attribute is not set");
 
 		// cleanup
@@ -603,6 +602,41 @@ sap.ui.define([
 		assert.ok(oFireAfterDialogCloseSpy.calledOnce, "'fireAfterDialogClose' event called once");
 
 		// cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.module("'title' attribute of the internal <input type='file'>");
+	QUnit.test("Test 'title' attribute in different scenarios", function (assert){
+		var oFileUploader = new FileUploader(),
+			sDefaultTitle = oFileUploader._getNoFileChosenText(),
+			sFileName = "test.txt",
+			sTooltip = "My tooltip";
+
+		// act
+		oFileUploader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert (default 'no file chosen' text must be added as 'title' attribute if there is no file chosen and no tooltip set)
+		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), sDefaultTitle, "The title attribute is set to default 'no file chosen' value");
+
+		// act
+		oFileUploader.setValue(sFileName);
+
+		// assert (file name passed as value must be added as 'title' attribute if there is no tooltip set)
+		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), sFileName, "The title attribute is set to file name passed as value");
+
+		// act
+		oFileUploader.setTooltip(sTooltip);
+
+		// assert (passed tooltip must be added as 'title' attribute no matter if there is value set or not)
+		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), sTooltip, "The title attribute is set to passed tooltip when there is value set");
+
+		// act
+		oFileUploader.setValue("");
+
+		// assert (passed tooltip must be added as 'title' attribute no matter if there is value set or not)
+		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), sTooltip, "The title attribute is set to passed tooltip when there is no value set");
+
 		oFileUploader.destroy();
 	});
 
