@@ -183,11 +183,10 @@ function (Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 	QUnit.test("Section receives correct AriaLabelledBy", function (assert) {
 		var oSection = this.objectPageView.byId("testSection"),
 				sSectionTitle = oSection.getTitle(),
-				oHiddenLabel = oSection.getAggregation("ariaLabelledBy"),
-				sSectionText = ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME");
+				oHiddenLabel = oSection.getAggregation("ariaLabelledBy");
 
-		assert.strictEqual(oSection._getAriaLabelledBy().getText(), sSectionTitle + " " + sSectionText,
-			"A hidden text is created with the title of the section plus the word 'Section' as text");
+		assert.strictEqual(oSection._getAriaLabelledBy().getText(), sSectionTitle,
+			"A hidden text is created with the title of the section");
 
 		assert.strictEqual(oHiddenLabel.sId, oSection.$().attr("aria-labelledby"),
 				"The 'aria-labelledby' attribute is correctly set to the section");
