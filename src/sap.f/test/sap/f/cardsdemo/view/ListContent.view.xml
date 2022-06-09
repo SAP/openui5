@@ -6,14 +6,6 @@
 	xmlns:w="sap.ui.integration.widgets"
 	displayBlock="true">
 	<Page title="{i18n>appTitle}">
-		<headerContent>
-			<CheckBox
-				text="Loading"
-				select=".onLoadingSelect"
-				tooltip="List placehoder doesn't react on dynamic switch of compact and cozy densities"
-			>
-			</CheckBox>
-		</headerContent>
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
@@ -31,6 +23,7 @@
 				<SegmentedButtonItem text="Compact" key="compact" />
 			</items>
 		</SegmentedButton>
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
 
 		<f:GridContainer
 			id="gridCont"

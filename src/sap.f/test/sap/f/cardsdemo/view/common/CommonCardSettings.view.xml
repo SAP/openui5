@@ -1,0 +1,22 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.CommonCardSettings">
+	<!-- Embed this view in the other views to display common settings -->
+	<!-- TODO: Put cozy/compact switch here -->
+	<VBox class="sapUiSmallMarginBegin">
+		<HBox
+			renderType="Bare"
+			alignItems="Center">
+			<Label
+				text="Loading"
+				showColon="true">
+			</Label>
+			<Switch
+				change=".onLoadingChange"
+				tooltip="List placehoder doesn't react on dynamic switch of compact and cozy densities">
+			</Switch>
+		</HBox>
+	</VBox>
+</mvc:View>

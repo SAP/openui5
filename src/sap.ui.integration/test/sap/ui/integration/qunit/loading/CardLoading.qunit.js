@@ -1340,7 +1340,6 @@ sap.ui.define([
 				var oDelegate = {
 					onAfterRendering: function () {
 						oCard.removeEventDelegate(oDelegate);
-						Core.applyChanges();
 						var oContent = oCard.getCardContent();
 						if (oContent) {
 							assert.strictEqual(jQuery(sCSSClass).length > 0, bExpected, sMassage);
@@ -1501,7 +1500,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Object - Loading indicator should be present - content level request", function (assert) {
-			isLoadingIndicatorShowingContent(oManifest_ObjectCard, this.oCard, "Object content has a loading placeholder", true, ".sapFCardContentGenericPlaceholder", assert);
+			isLoadingIndicatorShowingContent(oManifest_ObjectCard, this.oCard, "Object content has a loading placeholder", true, ".sapFCardContentObjectPlaceholder", assert);
 		});
 
 		QUnit.test("Table - Loading indicator should be present - card level request", function (assert) {
@@ -1558,7 +1557,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Object - Loading indicator should be present - content level request", function (assert) {
-			isLoadingIndicatorShowingContentDataReady(oManifest_ObjectCard, this.oCard, "Object content has a loading placeholder", false, ".sapFCardContentGenericPlaceholder", assert);
+			isLoadingIndicatorShowingContentDataReady(oManifest_ObjectCard, this.oCard, "Object content has a loading placeholder", false, ".sapFCardContentObjectPlaceholder", assert);
 		});
 
 		QUnit.test("Table - Loading indicator should be present - card level request", function (assert) {
@@ -1735,7 +1734,7 @@ sap.ui.define([
 		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
 			var sType = "Object";
 
-			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, "Generic", "Loading placeholder is of type GenericPlaceholder", assert);
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, "Object", "Loading placeholder is of type ObjectPlaceholder", assert);
 		});
 
 		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {

@@ -7,8 +7,17 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/f/cards/loading/GenericPlaceholder",
 	"sap/f/cards/loading/ListPlaceholder",
-	"sap/f/cards/loading/CalendarPlaceholder"
-], function (ListContentRenderer, library, Element, GenericPlaceholder, ListPlaceholder, CalendarPlaceholder) {
+	"sap/f/cards/loading/CalendarPlaceholder",
+	"sap/f/cards/loading/ObjectPlaceholder"
+], function (
+	ListContentRenderer,
+	library,
+	Element,
+	GenericPlaceholder,
+	ListPlaceholder,
+	CalendarPlaceholder,
+	ObjectPlaceholder
+) {
 	"use strict";
 
 	/**
@@ -85,6 +94,9 @@ sap.ui.define([
 					item: oConfiguration.item ? oConfiguration.item.template : {},
 					legendItem: oConfiguration.legendItem ? oConfiguration.legendItem.template : {}
 				});
+				break;
+			case "Object":
+				this._oContentPlaceholder = new ObjectPlaceholder();
 				break;
 
 			default:

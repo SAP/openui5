@@ -23,6 +23,7 @@
 				<SegmentedButtonItem text="Compact" key="compact" />
 			</items>
 		</SegmentedButton>
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
 
 		<f:GridContainer class="sapUiSmallMargin">
 			<w:Card

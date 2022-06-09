@@ -57,7 +57,7 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 		oRm.openEnd();
 
 		if (bLoading) {
-			oRm.renderControl(oCardContent._oLoadingPlaceholder);
+			oRm.renderControl(oCardContent.getAggregation("_loadingPlaceholder"));
 		}
 
 		if (oMessageContainer) {
