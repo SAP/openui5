@@ -704,9 +704,9 @@ sap.ui.define([
 					}
 
 					if (!bHasColSpan && oColumn) {
-						var oPopover = oColumn.getColumnHeaderMenu();
-						if (oPopover) {
-							mAttributes["aria-haspopup"] = oPopover.getAriaHasPopupType().toLowerCase();
+						var oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
+						if (oColumnHeaderMenu) {
+							mAttributes["aria-haspopup"] = oColumnHeaderMenu.getAriaHasPopupType().toLowerCase();
 						} else if (oColumn._menuHasItems()) {
 							mAttributes["aria-haspopup"] = "menu";
 						}

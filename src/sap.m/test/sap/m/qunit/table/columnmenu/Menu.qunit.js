@@ -1,4 +1,4 @@
-/*global QUnit*/
+/*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -157,26 +157,34 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("isOpen", function(assert) {
+		this.createMenu(true, true, true, true);
+		this.oColumnMenu.openBy(this.oButton);
+		var oIsOpenSpy = sinon.spy(this.oColumnMenu._oPopover, "isOpen");
+		this.oColumnMenu.isOpen();
+		assert.ok(oIsOpenSpy.calledOnce, "isOpen method of the popover is called");
+	});
+
 	QUnit.test("Open popover by a control/Close when another control is clicked", function (assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(this.oColumnMenu._oPopover.isOpen());
+		assert.ok(this.oColumnMenu.isOpen());
 		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
 
 		QUnitUtils.triggerEvent("mousedown", this.oButton1.getId());
 		this.clock.tick(1000);
-		assert.notOk(this.oColumnMenu._oPopover.isOpen());
+		assert.notOk(this.oColumnMenu.isOpen());
 	});
 
 	QUnit.test("Open popover by an HTMLElement/Close when another element is clicked", function (assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton.getDomRef());
-		assert.ok(this.oColumnMenu._oPopover.isOpen());
+		assert.ok(this.oColumnMenu.isOpen());
 		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
 
 		QUnitUtils.triggerEvent("mousedown", "content");
 		this.clock.tick(1000);
-		assert.notOk(this.oColumnMenu._oPopover.isOpen());
+		assert.notOk(this.oColumnMenu.isOpen());
 	});
 
 	QUnit.test("Open popup on mobile", function (assert) {
@@ -184,7 +192,7 @@ sap.ui.define([
 		this.createMenu(true, true, true, true);
 
 		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(this.oColumnMenu._oPopover.isOpen(), "Popover was opened");
+		assert.ok(this.oColumnMenu.isOpen(), "Popover was opened");
 		assert.ok(this.oColumnMenu._oPopover.getShowHeader(), "Header is shown on mobile");
 	});
 

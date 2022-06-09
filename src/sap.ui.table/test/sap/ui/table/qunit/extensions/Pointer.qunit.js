@@ -553,6 +553,7 @@ sap.ui.define([
 		var oColumn = oTable._getVisibleColumns()[3];
 		var bColumnReorderingTriggered = false;
 		var oPointerExtension = oTable._getPointerExtension();
+		var oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
 
 		oPointerExtension.doReorderColumn = function() {
 			bColumnReorderingTriggered = true;
@@ -560,6 +561,8 @@ sap.ui.define([
 
 		qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
 		assert.ok(oPointerExtension._bShowMenu, "Show Menu flag set to be used in onSelect later");
+		qutils.triggerMouseEvent(getColumnHeader(3), "click", 1, 1, 1, 1, 0);
+		assert.ok(oOpenContextMenuSpy.calledOnce, "openContextMenu is called");
 		setTimeout(function() {
 			assert.ok(!oPointerExtension._bShowMenu, "ShowMenu flag reset again");
 			assert.ok(bColumnReorderingTriggered, "Column Reordering triggered");
@@ -568,9 +571,12 @@ sap.ui.define([
 			oTable.setEnableColumnReordering(false);
 			oCore.applyChanges();
 			bColumnReorderingTriggered = false;
+			oOpenContextMenuSpy.resetHistory();
 
 			qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
 			assert.ok(!oPointerExtension._bShowMenu, "Menu was opened -> _bShowMenu is false");
+			qutils.triggerMouseEvent(getColumnHeader(3), "click", 1, 1, 1, 1, 0);
+			assert.ok(oOpenContextMenuSpy.notCalled, "Menu was opened -> openContextMenu is not called");
 			setTimeout(function() {
 				assert.ok(!bColumnReorderingTriggered, "Column Reordering not triggered (enableColumnReordering == false)");
 				done();

@@ -656,7 +656,7 @@ sap.ui.define([
 					cells: new Text({text: "cell"})
 				})
 			});
-			this.sut.setAssociation("columnHeaderMenu", this.oMenu);
+			this.sut.setAssociation("headerMenu", this.oMenu);
 
 			this.parent.placeAt("qunit-fixture");
 			Core.applyChanges();

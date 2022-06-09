@@ -91,26 +91,27 @@ sap.ui.define([
 			if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.COLUMNHEADER)) {
 				var bCellHasMenuButton = oCell.querySelector(".sapUiTableColDropDown") !== null;
 
-				if (Device.system.desktop || bCellHasMenuButton) {
-					MenuUtils._removeColumnHeaderCellMenu(oTable);
+				var oColumn = oTable.getColumns()[iColumnIndex];
+				var oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
 
-					var oColumn = oTable.getColumns()[iColumnIndex];
-					var oPopover = oColumn.getColumnHeaderMenu();
-					if (oPopover) {
-						oPopover.openBy(oColumn);
-					} else {
-						bExecuteDefault = oTable.fireColumnSelect({
-							column: oColumn
-						});
-
-						if (bExecuteDefault) {
-							return MenuUtils._openColumnContextMenu(oTable, oCell);
-						} else {
-							return true; // We do not know whether the event handler opens a context menu or not, so we just assume it is done.
-						}
-					}
-				} else {
+				if (!Device.system.desktop && !bCellHasMenuButton && !oColumnHeaderMenu) {
 					return MenuUtils._applyColumnHeaderCellMenu(oTable, oCell);
+				}
+				MenuUtils._removeColumnHeaderCellMenu(oTable);
+
+				if (oColumnHeaderMenu) {
+					oColumn._openHeaderMenu(oCell);
+					return true;
+				} else {
+					bExecuteDefault = oTable.fireColumnSelect({
+						column: oColumn
+					});
+
+					if (bExecuteDefault) {
+						return MenuUtils._openColumnContextMenu(oTable, oCell);
+					} else {
+						return true; // We do not know whether the event handler opens a context menu or not, so we just assume it is done.
+					}
 				}
 
 			} else if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.ANYCONTENTCELL)) {

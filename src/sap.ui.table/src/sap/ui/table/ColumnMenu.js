@@ -402,7 +402,7 @@ sap.ui.define([
 
 
 	/**
-	 * sets a new filter value into the filter field
+	 * Sets a new filter value into the filter field
 	 * @param {string} sValue value of the filter input field to be set
 	 * @returns {this} this reference for chaining
 	 * @private
@@ -419,7 +419,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * sets a new filter value into the filter field
+	 * Sets the value state of the filter field
 	 * @param {sap.ui.core.ValueState} sFilterState value state for filter text field item
 	 * @returns {this} this reference for chaining
 	 * @private

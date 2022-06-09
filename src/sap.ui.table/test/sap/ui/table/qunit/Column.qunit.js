@@ -3,17 +3,40 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Column",
 	"sap/ui/table/Table",
 	"sap/ui/table/CreationRow",
+	"sap/ui/table/menus/ColumnHeaderMenuAdapter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Menu",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
+	"sap/m/table/columnmenu/QuickSort",
+	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Button",
-	"sap/ui/core/Core"
-], function(TableQUnitUtils, qutils, Column, Table, CreationRow, JSONModel, Menu, ColumnMenu, QuickAction, Item, Button, oCore) {
+	"sap/ui/core/Core",
+	'sap/ui/Device'
+], function(
+	TableQUnitUtils,
+	qutils,
+	TableUtils,
+	Column,
+	Table,
+	CreationRow,
+	ColumnHeaderMenuAdapter,
+	JSONModel,
+	Menu,
+	ColumnMenu,
+	QuickAction,
+	QuickSort,
+	QuickSortItem,
+	Item,
+	Button,
+	oCore,
+	Device
+) {
 	"use strict";
 
 	QUnit.module("Basics");
@@ -1164,44 +1187,116 @@ sap.ui.define([
 
 	QUnit.module("ColumnHeaderMenu Association", {
 		beforeEach: function() {
-			this.oMenu = new ColumnMenu({
-				quickActions: [new QuickAction({label: "Quick Action A", content: new Button({text: "Execute"})})],
-				items: [new Item({label: "Item A", icon: "sap-icon://sort", content: new Button({text: "Execute"})})]
+			this.oMenu1 = new ColumnMenu({
+				quickSort: new QuickAction({
+					label: "Custom Quick Sort",
+					content: new sap.m.Button({text: "Sort by Property A"})
+				}),
+				quickActions: [new QuickAction({label: "Quick Action B", content: new Button({text: "Execute B"})})],
+				items: [new Item({label: "Item C", icon: "sap-icon://sort"})]
 			});
+			this.oMenu2 = new ColumnMenu({
+				quickActions: [new QuickAction({label: "Quick Action D", content: new Button({text: "Execute D"})})],
+				items: [new Item({label: "Item E", icon: "sap-icon://filter"})]
+			});
+			this.oColumn1 = TableQUnitUtils.createTextColumn();
+			this.oColumn1.setSortProperty("F");
+			this.oColumn1.setFilterProperty("F");
+			this.oColumn1.setAssociation("headerMenu", this.oMenu1);
+
+			this.oColumn2 = TableQUnitUtils.createTextColumn();
+			this.oColumn2.setSortProperty("G");
+			this.oColumn2.setFilterProperty("G");
+			this.oColumn2.setAssociation("headerMenu", this.oMenu2);
+
 			this.oTable = TableQUnitUtils.createTable({
-				columns: [TableQUnitUtils.createTextColumn().setAssociation("columnHeaderMenu", this.oMenu)]
+				columns: [this.oColumn1, this.oColumn2]
 			});
+			this.oTable.setEnableGrouping(true);
+			this.oTable.setEnableColumnFreeze(true);
 		},
 		afterEach: function() {
-			this.oMenu.destroy();
+			this.oMenu1.destroy();
+			this.oMenu2.destroy();
 			this.oTable.destroy();
 		},
-		/**
-		 * Triggers a mouse down event on the passed element simulating the specified button.
-		 *
-		 * @param {jQuery|HTMLElement} oElement The target of the event.
-		 * @param {int} iButton 0 = Left mouse button,
-		 *                      1 = Middle mouse button,
-		 *                      2 = Right mouse button
-		 */
-		 clickColumn: function(oElement, iButton) {
-			qutils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, iButton);
+		openColumnMenu: function(iColumnIndex) {
+			var oElement = this.oTable.qunit.getColumnHeaderCell(iColumnIndex);
+			oElement.focus();
+			qutils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(oElement, "click");
 		}
 	});
 
-	QUnit.test("aria-haspopup", function (assert) {
-		assert.equal(this.oTable.getColumns()[0].$().attr("aria-haspopup"), "dialog", "aria-haspopup was set correctly");
+	QUnit.test("_openHeaderMenu", function(assert) {
+		var done = assert.async();
+		var oColumn = this.oColumn1;
+		var oActivateSpy = sinon.spy(ColumnHeaderMenuAdapter, "activateFor");
+		var oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
+
+		assert.ok(!oColumn._isMenuOpen(), "the ColumnMenu is not open");
+
+		this.openColumnMenu(0);
+		assert.ok(oActivateSpy.calledOnce, "activateFor is called");
+		assert.ok(oActivateSpy.calledWithExactly(oColumn), "activateFor is called with the correct parameters");
+
+		setTimeout(function() {
+			assert.ok(oColumn._isMenuOpen(), "The ColumnMenu is open");
+			oColumn.destroy();
+			assert.ok(oUnlinkSpy.calledOnce, "unlink is called");
+			assert.ok(oUnlinkSpy.calledWithExactly(oColumn), "unlink is called with the correct parameter");
+			done();
+		}, 500);
 	});
 
-	QUnit.test("Open menu", function (assert) {
-		var oSpy = this.spy(this.oMenu, "openBy");
+	QUnit.test("_isMenuOpen", function(assert) {
+		var done = assert.async();
+		var oColumn = this.oColumn1;
 
-		var oElem = this.oTable.qunit.getColumnHeaderCell(0);
-		oElem.focus();
-		this.clickColumn(oElem, 0);
+		assert.ok(!oColumn._isMenuOpen(), "The ColumnMenu is not open");
+		this.openColumnMenu(0);
 
-		assert.equal(oSpy.callCount, 1, "openBy called exactly once");
-		assert.ok(oSpy.calledWith(this.oTable.getColumns()[0]), "openBy called with correct column");
+		setTimeout(function() {
+			var oHeaderMenu = oColumn.getHeaderMenuInstance();
+			var oIsOpenSpy = sinon.spy(oHeaderMenu, "isOpen");
+			assert.ok(oColumn._isMenuOpen(), "The ColumnMenu is open");
+			assert.ok(oIsOpenSpy.calledOnce);
+			done();
+		}, 500);
+	});
+
+	QUnit.test("aria-haspopup", function (assert) {
+		assert.equal(this.oColumn1.$().attr("aria-haspopup"), "dialog", "aria-haspopup was set correctly");
+	});
+
+	QUnit.test("_setGrouped", function(assert) {
+		var oColumn = this.oColumn1;
+		var oSetGroupedSpy = sinon.spy(this.oTable, "setGroupBy");
+
+		oColumn._setGrouped(true);
+		assert.ok(oSetGroupedSpy.calledOnce, "setGroupBy is called");
+		assert.ok(oSetGroupedSpy.calledWithExactly(oColumn), "setGroupBy is called with the correct parameter");
+
+		oColumn._setGrouped(false);
+		assert.ok(oSetGroupedSpy.calledTwice, "setGroupBy is called");
+		assert.ok(oSetGroupedSpy.calledWithExactly(null), "setGroupBy is called with the correct parameter");
+	});
+
+	QUnit.test("_unsort", function(assert) {
+		this.oTable._aSortedColumns = [this.oColumn1, this.oColumn2];
+		var oApplySortersSpy = sinon.spy(this.oColumn1, "_applySorters");
+
+		this.oColumn1._unsort();
+		assert.deepEqual(this.oTable._aSortedColumns, [this.oColumn2], "The column is removed from _aSortedColumns");
+		assert.ok(oApplySortersSpy.calledOnce, "The sorters are applied");
+	});
+
+	QUnit.test("_getFilterState", function(assert) {
+		var oColumn1 = this.oColumn1;
+		oColumn1.setFilterValue("A");
+
+		assert.equal(oColumn1._getFilterState(), "None", "FilterState None");
+		oColumn1.setFilterType(new sap.ui.model.type.Integer());
+		assert.equal(oColumn1._getFilterState(), "Error", "FilterState Error");
 	});
 });

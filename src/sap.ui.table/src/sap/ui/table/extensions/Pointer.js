@@ -721,7 +721,9 @@ sap.ui.define([
 
 			if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
 				var oPointerExtension = this._getPointerExtension();
-				if (oPointerExtension._bShowMenu) {
+				var oColumn = this._getVisibleColumns()[oCellInfo.columnIndex];
+
+				if (oPointerExtension._bShowMenu && !oColumn._isMenuOpen()) {
 					TableUtils.Menu.openContextMenu(this, oEvent.target);
 					delete oPointerExtension._bShowMenu;
 				}

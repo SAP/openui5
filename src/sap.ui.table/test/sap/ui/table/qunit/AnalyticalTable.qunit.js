@@ -836,6 +836,22 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("_setGrouped", function(assert) {
+		var done = assert.async();
+		this.oTable = createTable.call(this);
+		var oColumn = this.oTable.getColumns()[1];
+
+		assert.ok(!oColumn.getGrouped(), "The column is not grouped initially");
+		this.oTable.attachGroup(function(oEvent) {
+			assert.ok(oEvent.getParameter("column") === oColumn &&
+					  oEvent.getParameter("groupedColumns") === this.oTable._aGroupedColumns &&
+					  oEvent.getParameter("type") === "group", "The group event is fired with the correct parameters");
+			done();
+		}.bind(this));
+		oColumn._setGrouped(true);
+		assert.ok(oColumn.getGrouped(), "The column is grouped");
+	});
+
 	QUnit.test("Cell content visibility settings", function(assert) {
 		this.oTable = createTable.call(this);
 		var oColumn = this.oTable.getColumns()[1];
@@ -856,6 +872,7 @@ sap.ui.define([
 	QUnit.module("AnalyticalColumn - Column Menu", {
 		beforeEach: function() {
 			this._oTable = new AnalyticalTable();
+			this._oTable.addColumn(createColumn({name: "CostCenter"}));
 
 			this._oTable.removeColumn = function(oColumn) {
 				return this.removeAggregation('columns', oColumn);
@@ -898,6 +915,14 @@ sap.ui.define([
 					return aPropertyNames;
 				};
 
+				oBinding.getAnalyticalQueryResult = function() {
+					return {
+						findMeasureByPropertyName: function(arg1) {
+							return {value: true, argument: arg1};
+						}
+					};
+				};
+
 				return oBinding;
 			});
 			this._oColumn = new AnalyticalColumn();
@@ -907,6 +932,14 @@ sap.ui.define([
 			this._oColumn.destroy();
 			this._oTable.destroy();
 		}
+	});
+
+	QUnit.test("_isAggregatableByMenu", function(assert) {
+		var oColumn = this._oTable.getColumns()[0];
+
+		var oReturnValue = oColumn._isAggregatableByMenu();
+		assert.ok(oReturnValue.value, "", "findMeasureByPropertyName is called");
+		assert.equal(oReturnValue.argument, "CostCenter", "findMeasureByPropertyName is called with the correct parameter");
 	});
 
 	QUnit.test("Pre-Check Menu Item Creation without Parent", function(assert) {

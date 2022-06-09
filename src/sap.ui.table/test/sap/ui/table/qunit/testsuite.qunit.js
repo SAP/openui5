@@ -81,6 +81,12 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.ui.unified"]
 				}
 			},
+			"MobileColumnHeaderMenuAdapter": {
+				ui5: {
+					// Test has dependency to sap.m module
+					libs: ["sap.m"]
+				}
+			},
 			"Row": {
 			},
 			"RowAction": {

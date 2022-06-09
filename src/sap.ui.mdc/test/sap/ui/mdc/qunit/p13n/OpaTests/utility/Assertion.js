@@ -726,7 +726,7 @@ sap.ui.define([
 						setTimeout(resolve, 300);
 					})).then(function() {
 						var oContext = Opa5.getContext();
-						Opa5.assert.notOk(oContext.columnMenu._oPopover.isOpen(), "The column menu is closed");
+						Opa5.assert.notOk(oContext.columnMenu.isOpen(), "The column menu is closed");
 						delete oContext.columnMenu;
 					});
 				}

@@ -3035,6 +3035,14 @@ sap.ui.define([
 		}
 	};
 
+	Table.prototype._removeSortedColumn = function(oColumn) {
+		var iIndex = this._aSortedColumns.indexOf(oColumn);
+
+		if (iIndex > -1) {
+			this._aSortedColumns.splice(iIndex, 1);
+		}
+	};
+
 	/**
 	 * Gets the sorted columns in the order in which sorting was performed through the {@link sap.ui.table.Table#sort} method and menus.
 	 * Does not reflect sorting at binding level or the columns sort visualization set with {@link sap.ui.table.Column#setSorted} and

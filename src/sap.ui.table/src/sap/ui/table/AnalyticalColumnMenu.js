@@ -7,9 +7,6 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './library', "sap/
 	function(ColumnMenu, MenuRenderer, library, jQuery) {
 	"use strict";
 
-	// shortcut
-	var GroupEventType = library.GroupEventType;
-
 	/**
 	 * Constructor for a new AnalyticalColumnMenu.
 	 *
@@ -54,8 +51,7 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './library', "sap/
 	 * @private
 	 */
 	AnalyticalColumnMenu.prototype._addGroupMenuItem = function() {
-		var oColumn = this._oColumn,
-			oTable = this._oTable;
+		var oColumn = this._oColumn;
 
 		if (oColumn.isGroupableByMenu()) {
 			this._oGroupIcon = this._createMenuItem(
@@ -65,10 +61,8 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './library', "sap/
 				function(oEvent) {
 					var oMenuItem = oEvent.getSource();
 					var bGrouped = oColumn.getGrouped();
-					var sGroupEventType = bGrouped ? GroupEventType.group : GroupEventType.ungroup;
 
-					oColumn.setGrouped(!bGrouped);
-					oTable.fireGroup({column: oColumn, groupedColumns: oTable._aGroupedColumns, type: sGroupEventType});
+					oColumn._setGrouped(!bGrouped);
 					oMenuItem.setIcon(!bGrouped ? "sap-icon://accept" : null);
 				}
 			);
@@ -81,12 +75,9 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './library', "sap/
 	 * @private
 	 */
 	AnalyticalColumnMenu.prototype._addSumMenuItem = function() {
-		var oColumn = this._oColumn,
-			oTable = this._oTable,
-			oBinding = oTable.getBinding(),
-			oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
+		var oColumn = this._oColumn;
 
-		if (oTable && oResultSet && oResultSet.findMeasureByPropertyName(oColumn.getLeadingProperty())) {
+		if (oColumn._isAggregatableByMenu()) {
 			this._oSumItem = this._createMenuItem(
 				"total",
 				"TBL_TOTAL",

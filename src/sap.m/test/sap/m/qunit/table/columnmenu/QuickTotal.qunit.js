@@ -115,7 +115,7 @@ sap.ui.define([
 			assert.ok(oItem.getTotaled(), "The totaled property of the item is correct");
 
 			setTimeout(function() {
-				assert.ok(!oMenu._oPopover.isOpen(), "The popover closes");
+				assert.ok(!oMenu.isOpen(), "The popover closes");
 				done();
 			}, 1000);
 		});

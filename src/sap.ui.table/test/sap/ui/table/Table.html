@@ -81,19 +81,49 @@
 	}));
 
 	// create columns
-	var oControl, oColumn;
+	var oControl, oColumn, oMenu;
 
 	// sap.m.Text
 	oControl = new sap.m.Text({text: "{lastName}", wrapping: false});
+	oMenu = new sap.m.table.columnmenu.Menu({
+		quickActions: [
+			new sap.m.table.columnmenu.QuickAction({
+				label: "Quick Action A",
+				content: new sap.m.Button({text: "Execute QA"})
+			})
+		],
+		items: [
+			new sap.m.table.columnmenu.Item({
+				label: "Item A",
+				icon: "sap-icon://sort",
+				content: new sap.m.Button({text: "Execute"})
+			})
+		]
+	});
 	oColumn = new sap.ui.table.Column(
-			{label: new sap.m.Text({text: "m.Text"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "120px"});
+		{label: new sap.m.Text({text: "m.Text"}), template: oControl, width: "120px", sortProperty: "lastName", filterProperty: "lastName"});
+	oColumn.setAssociation("headerMenu",  oMenu);
+
 	oColumn.setCreationTemplate(new sap.m.Input({value: "{lastName}"}));
 	oTable.addColumn(oColumn);
 
 	// sap.m.Label
 	oControl = new sap.m.Label({text: "{name}"});
+	var oMenu2 = new sap.m.table.columnmenu.Menu({
+		quickSort: new sap.m.table.columnmenu.QuickAction({
+			label: "custom quick sort",
+			content: new sap.m.Button({text: "QA2.1"})
+		}),
+		quickActions: [
+			new sap.m.table.columnmenu.QuickAction({
+				label: "custom quick action",
+				content: new sap.m.Button({text: "QA2.2"})
+			})
+		]
+	});
 	oColumn = new sap.ui.table.Column(
 			{label: new sap.m.Label({text: "m.Label"}), template: oControl, sortProperty: "name", filterProperty: "name", width: "6em"});
+	oColumn.setAssociation("headerMenu",  oMenu2);
 	oColumn.setCreationTemplate(new sap.m.Input({value: "{name}"}));
 	oTable.addColumn(oColumn);
 
@@ -132,8 +162,9 @@
 
 	// sap.m.DatePicker
 	oControl = new sap.m.DatePicker({dateValue: "{birthdayDate}"});
-	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.DatePicker"}), template: oControl, width: "200px"});
+	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.DatePicker"}), template: oControl, width: "200px", filterProperty: "birthdayDate", filterType: new sap.ui.model.type.Date() });
 	oColumn.setCreationTemplate(new sap.m.DatePicker({dateValue: "{birthdayDate}"}));
+	oColumn.setAssociation("headerMenu",  new sap.m.table.columnmenu.Menu());
 	oTable.addColumn(oColumn);
 
 	// sap.m.Select

@@ -94,6 +94,26 @@ sap.ui.define([
 				quickActions: { type: "sap.m.table.columnmenu.QuickActionBase" },
 
 				/**
+				 * Defines the quick sorts of the column menu
+				 */
+				quickSort: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false},
+
+				/**
+				 * Defines the quick filters of the column menu
+				 */
+				quickFilter: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false},
+
+				/**
+				 * Defines the quick groups of the column menu
+				 */
+				quickGroup: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false},
+
+				/**
+				 * Defines the quick totals of the column menu
+				 */
+				quickTotal: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false},
+
+				/**
 				 * Defines the items of the column menu.
 				 */
 				items: { type: "sap.m.table.columnmenu.ItemBase" },
@@ -105,10 +125,50 @@ sap.ui.define([
 				_quickActions: { type: "sap.m.table.columnmenu.QuickActionBase", visibility: "hidden" },
 
 				/**
+				 * Defines quick sorts that are control-specific.
+				 * @private
+				 */
+				_quickSort: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false, visibility: "hidden"},
+
+				/**
+				 * Defines quick filters that are control-specific.
+				 * @private
+				 */
+				_quickFilter: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false, visibility: "hidden"},
+
+				/**
+				 * Defines quick groups that are control-specific.
+				 * @private
+				 */
+				_quickGroup: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false, visibility: "hidden"},
+
+				/**
+				 * Defines quick totals that are control-specific.
+				 * @private
+				 */
+				_quickTotal: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false, visibility: "hidden"},
+
+				/**
 				 * Defines menu items that are control-specific.
 				 * @private
 				 */
 				_items: { type: "sap.m.table.columnmenu.ItemBase", visibility: "hidden" }
+			},
+			events: {
+				/**
+				 * Fires before the column menu is opened
+				 */
+				beforeOpen: {},
+
+				/**
+				 * Fires before the column menu is closed
+				 */
+				beforeClose: {},
+
+				/**
+				 * Fires after the column menu is closed
+				 */
+				afterClose: {}
 			}
 		},
 		renderer: MenuRenderer
@@ -120,7 +180,7 @@ sap.ui.define([
 
 	Menu.prototype.init = function() {
 		this.fAnyEventHandlerProxy = jQuery.proxy(function(oEvent){
-			if (!this._oPopover.isOpen() || !this.getDomRef() || (oEvent.type != "mousedown" && oEvent.type != "touchstart")) {
+			if (!this.isOpen() || !this.getDomRef() || (oEvent.type != "mousedown" && oEvent.type != "touchstart")) {
 				return;
 			}
 			this.handleOuterEvent(this.getId(), oEvent);
@@ -156,7 +216,11 @@ sap.ui.define([
 		}
 		this._initItemsContainer();
 
-		this._oPopover.openBy(oAnchor);
+		if (!this.isOpen()) {
+			this.fireBeforeOpen();
+			this._oPopover.openBy(oAnchor);
+		}
+
 		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
 	};
 
@@ -169,6 +233,15 @@ sap.ui.define([
 	 */
 	Menu.prototype.getAriaHasPopupType = function () {
 		return ARIA_POPUP_TYPE;
+	};
+
+	/**
+	 * Returns true when the menu is open, otherwise it returns false.
+	 *
+	 * @returns {boolean} Whether the menu is open.
+	 */
+	Menu.prototype.isOpen = function () {
+		return this._oPopover && this._oPopover.isOpen();
 	};
 
 	/**
@@ -217,6 +290,7 @@ sap.ui.define([
 			contentWidth: MENU_WIDTH,
 			horizontalScrolling: false,
 			verticalScrolling: false,
+			beforeClose: [this.fireBeforeClose, this],
 			afterClose: [this.close, this]
 		});
 		this.addDependent(this._oPopover);
@@ -240,7 +314,7 @@ sap.ui.define([
 	};
 
 	Menu.prototype.onsapfocusleave = function(oEvent){
-		if (!this._oPopover.isOpen()) {
+		if (!this.isOpen()) {
 			return;
 		}
 		this.handleOuterEvent(this.getId(), oEvent);
@@ -436,12 +510,20 @@ sap.ui.define([
 	};
 
 	Menu.prototype._getAllEffectiveQuickActions = function() {
-		var aQuickActions = (this.getAggregation("_quickActions") || []).concat(this.getQuickActions());
-		return aQuickActions.reduce(function (a, oQuickAction) {
-			return a.concat(oQuickAction.getEffectiveQuickActions());
-		}, []).filter(function (oQuickAction) {
-			return oQuickAction.getVisible();
-		});
+		var aQuickActions = [].concat(this.getAggregation("_quickSort"))
+			.concat(this.getQuickSort())
+			.concat(this.getAggregation("_quickFilter"))
+			.concat(this.getQuickFilter())
+			.concat(this.getAggregation("_quickGroup"))
+			.concat(this.getQuickGroup())
+			.concat(this.getAggregation("_quickTotal"))
+			.concat(this.getQuickTotal())
+			.concat(this.getAggregation("_quickActions"))
+			.concat(this.getQuickActions());
+
+		return aQuickActions.reduce(function(aQuickActions, oQuickAction) {
+			return aQuickActions.concat(oQuickAction ? oQuickAction.getEffectiveQuickActions() : []);
+		}, []);
 	};
 
 	Menu.prototype._hasQuickActions = function() {

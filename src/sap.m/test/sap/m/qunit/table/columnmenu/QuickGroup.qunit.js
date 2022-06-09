@@ -115,7 +115,7 @@ sap.ui.define([
 			assert.ok(oItem.getGrouped(), "The grouped property of the item is correct");
 
 			setTimeout(function() {
-				assert.ok(!oMenu._oPopover.isOpen(), "The popover closes");
+				assert.ok(!oMenu.isOpen(), "The popover closes");
 				done();
 			}, 1000);
 		});
