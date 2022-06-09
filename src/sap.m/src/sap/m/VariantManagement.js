@@ -330,6 +330,13 @@ sap.ui.define([
 						},
 
 						/**
+						 * Indicates the check box state for 'Public'.
+						 */
+						'public': {
+							type: "boolean"
+						},
+
+						/**
 						 * Indicates the check box state for 'Create Tile'.
 						 * <br>Note:</br>This event parameter is used only internally.
 						 */
