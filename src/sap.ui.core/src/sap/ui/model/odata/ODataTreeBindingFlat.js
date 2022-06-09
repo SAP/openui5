@@ -2115,7 +2115,7 @@ sap.ui.define([
 	};
 
 	/*
-	 * @see sap.ui.model.odata.v2.ODataTreeBinding
+	 * @see sap.ui.model.odata.v2.ODataTreeBinding#_hasChangedEntity
 	 *
 	 * @private
 	 */
@@ -2130,6 +2130,29 @@ sap.ui.define([
 		});
 
 		return bChangeDetected;
+	};
+
+	/*
+	 * @see sap.ui.model.odata.v2.ODataTreeBinding#_isRefreshAfterChangeAllowed
+	 *
+	 * @private
+	 */
+	ODataTreeBindingFlat.prototype._isRefreshAfterChangeAllowed = function () {
+		return !this._isRestoreTreeStateSupported();
+	};
+
+	/**
+	 * Checks whether this binding supports restoring the tree state.
+	 *
+	 * @returns {boolean} Whether this binding supports restoring the tree state
+	 *
+	 * @private
+	 */
+	ODataTreeBindingFlat.prototype._isRestoreTreeStateSupported = function () {
+		return (
+			this._bRestoreTreeStateAfterChange &&
+			(!this.aApplicationFilters || this.aApplicationFilters.length === 0)
+		);
 	};
 
 	//*************************************************
@@ -3150,7 +3173,7 @@ sap.ui.define([
 					// Example from other bindings: ODataPropertyBinding still keeps a value that could not be successfully submitted.
 					// It is up to the application to handle such errors.
 					// A tree state restoration won't happen. The tree state will stay the same as no data is getting reset.
-				} else if (this._bRestoreTreeStateAfterChange && !bRestoreRequestFailed && (!this.aApplicationFilters || this.aApplicationFilters.length === 0)) {
+				} else if (!bRestoreRequestFailed && this._isRestoreTreeStateSupported()) {
 					// This is an temporary flag on the binding to turn off the restore feature by default.
 					// This flag defines whether the tree state before submitChanges should be restored afterwards.
 					// If this is true, a batch request is sent after the save action is finished to load the nodes
@@ -3222,7 +3245,7 @@ sap.ui.define([
 		aMoved.forEach(function(oNode) {
 			setParent(oNode);
 
-			if (this._bRestoreTreeStateAfterChange && (!this.aApplicationFilters || this.aApplicationFilters.length === 0)) {
+			if (this._isRestoreTreeStateSupported()) {
 				// Application filters are currently not supported for tree state restoration
 				//	this is due to the SiblingsPosition being requested via GET Entity (not filterable) instead of GET Entity Set (filterable
 				this._generatePreorderPositionRequest(oNode, mRestoreRequestParameters);

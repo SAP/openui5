@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="cds_zrh_erhaordermanage" xml:lang="en" sap:schema-version="1"
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<Annotation Term="Core.SchemaVersion" String="1.0.0"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm"/>
+			<EntityType Name="ErhaOrderItemType" sap:label="Order Item" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ErhaOrder"/>
+					<PropertyRef Name="ErhaOrderItem"/>
+				</Key>
+				<Property Name="Delete_mc" Type="Edm.Boolean" sap:label="Dyn. Method Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Update_mc" Type="Edm.Boolean" sap:label="Dyn. Method Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="ErhaOrder" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:label="Order" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="ErhaOrderItem" Type="Edm.String" Nullable="false" MaxLength="6" sap:display-format="NonNegative" sap:hierarchy-node-external-key-for="HierarchyNode" sap:label="Item" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="ErhaOrderItemName" Type="Edm.String" MaxLength="40" sap:label="Item Name"/>
+				<Property Name="ParentItem" Type="Edm.String" MaxLength="6" sap:display-format="NonNegative" sap:label="Parent Item" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="CreatedByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:label="Created By" sap:quickinfo="Created By User" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Created On" sap:quickinfo="Creation Date Time" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:label="Changed By" sap:quickinfo="Last Changed By User" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Changed On" sap:quickinfo="Last Change Date Time" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="HierarchyNode" Type="Edm.String" MaxLength="1333" sap:hierarchy-node-for="ErhaOrderItem"/>
+				<Property Name="HierarchyParentNode" Type="Edm.String" MaxLength="1333" sap:hierarchy-parent-node-for="HierarchyNode"/>
+				<Property Name="HierarchyDistanceFromRoot" Type="Edm.Int32" sap:hierarchy-level-for="HierarchyNode" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="HierarchyDescendantCount" Type="Edm.Int32" sap:hierarchy-node-descendant-count-for="HierarchyNode" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="HierarchyDrillState" Type="Edm.String" MaxLength="20" sap:hierarchy-drill-state-for="HierarchyNode" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="HierarchyPreorderRank" Type="Edm.Int32" sap:hierarchy-preorder-rank-for="HierarchyNode" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="HierarchySiblingRank" Type="Edm.Int32" sap:hierarchy-sibling-rank-for="HierarchyNode" sap:creatable="false" sap:updatable="false"/>
+				<NavigationProperty Name="to_ErhaOrder" Relationship="cds_zrh_erhaordermanage.assoc_E8E58BA809E1E1D34C5DA5DA48F898C8" FromRole="ToRole_assoc_E8E58BA809E1E1D34C5DA5DA48F898C8" ToRole="FromRole_assoc_E8E58BA809E1E1D34C5DA5DA48F898C8"/>
+			</EntityType>
+			<EntityType Name="ErhaOrderType" sap:label="Order" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ErhaOrder"/>
+				</Key>
+				<Property Name="Delete_mc" Type="Edm.Boolean" sap:label="Dyn. Method Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Update_mc" Type="Edm.Boolean" sap:label="Dyn. Method Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="to_Item_oc" Type="Edm.Boolean" sap:label="Dynamic CbA-Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="ErhaOrder" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative" sap:label="Order" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="ErhaOrderName" Type="Edm.String" MaxLength="40" sap:label="Order Name"/>
+				<Property Name="CreatedByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:label="Created By" sap:quickinfo="Created By User" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Created On" sap:quickinfo="Creation Date Time" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:label="Changed By" sap:quickinfo="Last Changed By User" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Changed On" sap:quickinfo="Last Change Date Time" sap:creatable="false" sap:updatable="false"/>
+				<NavigationProperty Name="to_Item" Relationship="cds_zrh_erhaordermanage.assoc_E8E58BA809E1E1D34C5DA5DA48F898C8" FromRole="FromRole_assoc_E8E58BA809E1E1D34C5DA5DA48F898C8" ToRole="ToRole_assoc_E8E58BA809E1E1D34C5DA5DA48F898C8"/>
+			</EntityType>
+			<EntityType Name="SAP__Currency" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CurrencyCode"/>
+				</Key>
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="Currency" sap:semantics="currency-code"/>
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="ISO Code"/>
+				<Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="15" sap:label="Short Text"/>
+				<Property Name="DecimalPlaces" Type="Edm.Byte" Nullable="false" sap:label="Decimals"/>
+			</EntityType>
+			<EntityType Name="SAP__UnitOfMeasure" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="UnitCode"/>
+				</Key>
+				<Property Name="UnitCode" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Internal UoM" sap:semantics="unit-of-measure"/>
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="ISO Code"/>
+				<Property Name="ExternalCode" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Commercial"/>
+				<Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Measurement Unit Txt"/>
+				<Property Name="DecimalPlaces" Type="Edm.Int16" sap:label="Decimal Places"/>
+			</EntityType>
+			<EntityType Name="SAP__DocumentDescription" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false" sap:label="UUID"/>
+				<Property Name="CreatedBy" Type="Edm.String" Nullable="false" MaxLength="12"/>
+				<Property Name="CreatedAt" Type="Edm.DateTime" Nullable="false" Precision="0" sap:label="Time Stamp"/>
+				<Property Name="FileName" Type="Edm.String" Nullable="false" MaxLength="256"/>
+				<Property Name="Title" Type="Edm.String" Nullable="false" MaxLength="256"/>
+				<NavigationProperty Name="Format" Relationship="cds_zrh_erhaordermanage.to_format" FromRole="FromRole_to_format" ToRole="ToRole_to_format"/>
+				<NavigationProperty Name="TableColumns" Relationship="cds_zrh_erhaordermanage.to_tablecolumns" FromRole="FromRole_to_tablecolumns" ToRole="ToRole_to_tablecolumns"/>
+				<NavigationProperty Name="CoverPage" Relationship="cds_zrh_erhaordermanage.to_coverpage" FromRole="FromRole_to_coverpage" ToRole="ToRole_to_coverpage"/>
+				<NavigationProperty Name="Signature" Relationship="cds_zrh_erhaordermanage.to_signature" FromRole="FromRole_to_signature" ToRole="ToRole_to_signature"/>
+				<NavigationProperty Name="PDFStandard" Relationship="cds_zrh_erhaordermanage.to_pdfstandard" FromRole="FromRole_to_pdfstandard" ToRole="ToRole_to_pdfstandard"/>
+			</EntityType>
+			<EntityType Name="SAP__Format" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="FitToPage" Type="cds_zrh_erhaordermanage.SAP__FitToPage" Nullable="false"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false" sap:label="UUID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="FontSize" Type="Edm.Int32" Nullable="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Orientation" Type="Edm.String" Nullable="false" MaxLength="10" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="PaperSize" Type="Edm.String" Nullable="false" MaxLength="10" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="BorderSize" Type="Edm.Int32" Nullable="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MarginSize" Type="Edm.Int32" Nullable="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="FontName" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="Font Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+			</EntityType>
+			<EntityType Name="SAP__PDFStandard" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false" sap:label="UUID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="UsePDFAConformance" Type="Edm.Boolean" Nullable="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DoEnableAccessibility" Type="Edm.Boolean" Nullable="false" sap:label="Indicator" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+			</EntityType>
+			<EntityType Name="SAP__TableColumns" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Id"/>
+					<PropertyRef Name="Name"/>
+					<PropertyRef Name="Header"/>
+				</Key>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false" sap:label="UUID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="256" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Header" Type="Edm.String" Nullable="false" MaxLength="256" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="HorizontalAlignment" Type="Edm.String" Nullable="false" MaxLength="10" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+			</EntityType>
+			<EntityType Name="SAP__CoverPage" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Title"/>
+					<PropertyRef Name="Id"/>
+					<PropertyRef Name="Name"/>
+				</Key>
+				<Property Name="Title" Type="Edm.String" Nullable="false" MaxLength="256" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false" sap:label="UUID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="256" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Value" Type="Edm.String" Nullable="false" MaxLength="256" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+			</EntityType>
+			<EntityType Name="SAP__Signature" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false" sap:label="UUID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="DoSign" Type="Edm.Boolean" Nullable="false" sap:label="Indicator" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Reason" Type="Edm.String" Nullable="false" MaxLength="256" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+			</EntityType>
+			<EntityType Name="SAP__ValueHelp" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="VALUEHELP"/>
+				</Key>
+				<Property Name="VALUEHELP" Type="Edm.String" Nullable="false"/>
+				<Property Name="FIELD_VALUE" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="DESCRIPTION" Type="Edm.String"/>
+			</EntityType>
+			<ComplexType Name="SAP__FitToPage">
+				<Property Name="ErrorRecoveryBehavior" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Error behavior" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="IsEnabled" Type="Edm.Boolean" Nullable="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MinimumFontSize" Type="Edm.Int32" Nullable="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+			</ComplexType>
+			<Association Name="to_format" sap:content-version="1">
+				<End Type="cds_zrh_erhaordermanage.SAP__DocumentDescription" Multiplicity="1" Role="FromRole_to_format"/>
+				<End Type="cds_zrh_erhaordermanage.SAP__Format" Multiplicity="1" Role="ToRole_to_format"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_to_format">
+						<PropertyRef Name="Id"/>
+					</Principal>
+					<Dependent Role="ToRole_to_format">
+						<PropertyRef Name="Id"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="to_tablecolumns" sap:content-version="1">
+				<End Type="cds_zrh_erhaordermanage.SAP__DocumentDescription" Multiplicity="1" Role="FromRole_to_tablecolumns"/>
+				<End Type="cds_zrh_erhaordermanage.SAP__TableColumns" Multiplicity="*" Role="ToRole_to_tablecolumns"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_to_tablecolumns">
+						<PropertyRef Name="Id"/>
+					</Principal>
+					<Dependent Role="ToRole_to_tablecolumns">
+						<PropertyRef Name="Id"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="to_coverpage" sap:content-version="1">
+				<End Type="cds_zrh_erhaordermanage.SAP__DocumentDescription" Multiplicity="1" Role="FromRole_to_coverpage"/>
+				<End Type="cds_zrh_erhaordermanage.SAP__CoverPage" Multiplicity="*" Role="ToRole_to_coverpage"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_to_coverpage">
+						<PropertyRef Name="Id"/>
+					</Principal>
+					<Dependent Role="ToRole_to_coverpage">
+						<PropertyRef Name="Id"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="to_signature" sap:content-version="1">
+				<End Type="cds_zrh_erhaordermanage.SAP__DocumentDescription" Multiplicity="1" Role="FromRole_to_signature"/>
+				<End Type="cds_zrh_erhaordermanage.SAP__Signature" Multiplicity="1" Role="ToRole_to_signature"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_to_signature">
+						<PropertyRef Name="Id"/>
+					</Principal>
+					<Dependent Role="ToRole_to_signature">
+						<PropertyRef Name="Id"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="to_pdfstandard" sap:content-version="1">
+				<End Type="cds_zrh_erhaordermanage.SAP__DocumentDescription" Multiplicity="1" Role="FromRole_to_pdfstandard"/>
+				<End Type="cds_zrh_erhaordermanage.SAP__PDFStandard" Multiplicity="1" Role="ToRole_to_pdfstandard"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_to_pdfstandard">
+						<PropertyRef Name="Id"/>
+					</Principal>
+					<Dependent Role="ToRole_to_pdfstandard">
+						<PropertyRef Name="Id"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="assoc_E8E58BA809E1E1D34C5DA5DA48F898C8" sap:content-version="1">
+				<End Type="cds_zrh_erhaordermanage.ErhaOrderType" Multiplicity="1" Role="FromRole_assoc_E8E58BA809E1E1D34C5DA5DA48F898C8">
+					<OnDelete Action="Cascade"/>
+				</End>
+				<End Type="cds_zrh_erhaordermanage.ErhaOrderItemType" Multiplicity="*" Role="ToRole_assoc_E8E58BA809E1E1D34C5DA5DA48F898C8"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_assoc_E8E58BA809E1E1D34C5DA5DA48F898C8">
+						<PropertyRef Name="ErhaOrder"/>
+					</Principal>
+					<Dependent Role="ToRole_assoc_E8E58BA809E1E1D34C5DA5DA48F898C8">
+						<PropertyRef Name="ErhaOrder"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<EntityContainer Name="cds_zrh_erhaordermanage_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx pdf">
+				<EntitySet Name="SAP__Currencies" EntityType="cds_zrh_erhaordermanage.SAP__Currency" sap:content-version="1"/>
+				<EntitySet Name="SAP__UnitsOfMeasure" EntityType="cds_zrh_erhaordermanage.SAP__UnitOfMeasure" sap:content-version="1"/>
+				<EntitySet Name="SAP__MyDocumentDescriptions" EntityType="cds_zrh_erhaordermanage.SAP__DocumentDescription" sap:content-version="1"/>
+				<EntitySet Name="SAP__FormatSet" EntityType="cds_zrh_erhaordermanage.SAP__Format" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+				<EntitySet Name="SAP__PDFStandardSet" EntityType="cds_zrh_erhaordermanage.SAP__PDFStandard" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+				<EntitySet Name="SAP__TableColumnsSet" EntityType="cds_zrh_erhaordermanage.SAP__TableColumns" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+				<EntitySet Name="SAP__CoverPageSet" EntityType="cds_zrh_erhaordermanage.SAP__CoverPage" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+				<EntitySet Name="SAP__SignatureSet" EntityType="cds_zrh_erhaordermanage.SAP__Signature" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+				<EntitySet Name="SAP__ValueHelpSet" EntityType="cds_zrh_erhaordermanage.SAP__ValueHelp" sap:content-version="1"/>
+				<EntitySet Name="ErhaOrderItem" EntityType="cds_zrh_erhaordermanage.ErhaOrderItemType" sap:content-version="1" sap:deletable-path="Delete_mc" sap:updatable-path="Update_mc"/>
+				<EntitySet Name="ErhaOrder" EntityType="cds_zrh_erhaordermanage.ErhaOrderType" sap:content-version="1" sap:deletable-path="Delete_mc" sap:updatable-path="Update_mc"/>
+				<AssociationSet Name="to_formatSet" Association="cds_zrh_erhaordermanage.to_format" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="SAP__MyDocumentDescriptions" Role="FromRole_to_format"/>
+					<End EntitySet="SAP__FormatSet" Role="ToRole_to_format"/>
+				</AssociationSet>
+				<AssociationSet Name="to_pdfstandardSet" Association="cds_zrh_erhaordermanage.to_pdfstandard" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="SAP__MyDocumentDescriptions" Role="FromRole_to_pdfstandard"/>
+					<End EntitySet="SAP__PDFStandardSet" Role="ToRole_to_pdfstandard"/>
+				</AssociationSet>
+				<AssociationSet Name="to_tablecolumnsSet" Association="cds_zrh_erhaordermanage.to_tablecolumns" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="SAP__MyDocumentDescriptions" Role="FromRole_to_tablecolumns"/>
+					<End EntitySet="SAP__TableColumnsSet" Role="ToRole_to_tablecolumns"/>
+				</AssociationSet>
+				<AssociationSet Name="to_signatureSet" Association="cds_zrh_erhaordermanage.to_signature" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="SAP__MyDocumentDescriptions" Role="FromRole_to_signature"/>
+					<End EntitySet="SAP__SignatureSet" Role="ToRole_to_signature"/>
+				</AssociationSet>
+				<AssociationSet Name="to_coverpageSet" Association="cds_zrh_erhaordermanage.to_coverpage" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="SAP__MyDocumentDescriptions" Role="FromRole_to_coverpage"/>
+					<End EntitySet="SAP__CoverPageSet" Role="ToRole_to_coverpage"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_E8E58BA809E1E1D34C5DA5DA48F898C8" Association="cds_zrh_erhaordermanage.assoc_E8E58BA809E1E1D34C5DA5DA48F898C8" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="ErhaOrder" Role="FromRole_assoc_E8E58BA809E1E1D34C5DA5DA48F898C8"/>
+					<End EntitySet="ErhaOrderItem" Role="ToRole_assoc_E8E58BA809E1E1D34C5DA5DA48F898C8"/>
+				</AssociationSet>
+			</EntityContainer>
+			<Annotations Target="cds_zrh_erhaordermanage.cds_zrh_erhaordermanage_Entities"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.ErhaOrderType/to_Item"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Common.Composition"/>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.cds_zrh_erhaordermanage_Entities/ErhaOrder"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>Delete_mc</PropertyPath>
+								<PropertyPath>Update_mc</PropertyPath>
+								<PropertyPath>to_Item_oc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.NavigationRestrictions">
+					<Record>
+						<PropertyValue Property="RestrictedProperties">
+							<Collection>
+								<Record>
+									<PropertyValue Property="NavigationProperty" NavigationPropertyPath="to_Item"/>
+									<PropertyValue Property="InsertRestrictions">
+										<Record>
+											<PropertyValue Property="Insertable" Path="to_Item_oc"/>
+										</Record>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__core.OptimisticConcurrency">
+					<Collection/>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>Delete_mc</PropertyPath>
+								<PropertyPath>Update_mc</PropertyPath>
+								<PropertyPath>to_Item_oc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.cds_zrh_erhaordermanage_Entities/ErhaOrderItem"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>Delete_mc</PropertyPath>
+								<PropertyPath>Update_mc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.NavigationRestrictions">
+					<Record>
+						<PropertyValue Property="RestrictedProperties">
+							<Collection>
+								<Record>
+									<PropertyValue Property="NavigationProperty" NavigationPropertyPath="to_ErhaOrder"/>
+									<PropertyValue Property="InsertRestrictions">
+										<Record>
+											<PropertyValue Property="Insertable" Bool="false"/>
+										</Record>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__core.OptimisticConcurrency">
+					<Collection/>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>Delete_mc</PropertyPath>
+								<PropertyPath>Update_mc</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.cds_zrh_erhaordermanage_Entities"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Org.OData.Capabilities.V1.BatchSupport">
+					<Record Type="Org.OData.Capabilities.V1.BatchSupportType">
+						<PropertyValue Property="ReferencesAcrossChangeSetsSupported" Bool="true"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__CodeList.CurrencyCodes">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata"/>
+						<PropertyValue Property="CollectionPath" String="SAP__Currencies"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__CodeList.UnitsOfMeasure">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata"/>
+						<PropertyValue Property="CollectionPath" String="SAP__UnitsOfMeasure"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__PDF.Features">
+					<Record>
+						<PropertyValue Property="DocumentDescriptionReference" String="./$metadata"/>
+						<PropertyValue Property="DocumentDescriptionCollection" String="SAP__MyDocumentDescriptions"/>
+						<PropertyValue Property="ArchiveFormat" Bool="true"/>
+						<PropertyValue Property="CoverPage" Bool="true"/>
+						<PropertyValue Property="Signature" Bool="true"/>
+						<PropertyValue Property="FitToPage" Bool="true"/>
+						<PropertyValue Property="FontName" Bool="true"/>
+						<PropertyValue Property="FontSize" Bool="true"/>
+						<PropertyValue Property="Margin" Bool="true"/>
+						<PropertyValue Property="Border" Bool="true"/>
+						<PropertyValue Property="ResultSizeDefault" Int="20000"/>
+						<PropertyValue Property="ResultSizeMaximum" Int="20000"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__CodeList.SAP__DocumentDescription">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata"/>
+						<PropertyValue Property="CollectionPath" String="SAP__MyDocumentDescriptions"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.SAP__Currency/CurrencyCode"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.Text" Path="Text"/>
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="DecimalPlaces"/>
+				<Annotation Term="SAP__CodeList.StandardCode" Path="ISOCode"/>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.SAP__UnitOfMeasure/UnitCode"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.Text" Path="Text"/>
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="DecimalPlaces"/>
+				<Annotation Term="SAP__CodeList.StandardCode" Path="ISOCode"/>
+				<Annotation Term="SAP__CodeList.ExternalCode" Path="ExternalCode"/>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.SAP__UnitOfMeasure"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__core.AlternateKeys">
+					<Collection>
+						<Record>
+							<PropertyValue Property="Key">
+								<Collection>
+									<Record>
+										<PropertyValue Property="Name" Path="ExternalCode"/>
+										<PropertyValue Property="Alias" String="ExternalCode"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.SAP__DocumentDescription/CreatedBy"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__core.Computed"/>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.SAP__DocumentDescription/CreatedAt"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__core.Computed"/>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.SAP__DocumentDescription"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__capabilties.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilties.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Bool="false"/>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilties.DeleteRestrictions">
+					<Record>
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilties.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Format/Orientation"/>
+									<PropertyValue Property="AllowedExpressions" String="Multivalue"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Format/PaperSize"/>
+									<PropertyValue Property="AllowedExpressions" String="Multivalue"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.SAP__Format/FitToPage/ErrorRecoveryBehavior"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata"/>
+						<PropertyValue Property="CollectionPath" String="../../../../SAP__ValueHelpSet?$filter=VALUEHELP%20eq%20%27ErrorRecoveryBehaviour%27"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.SAP__Format/FontName"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata"/>
+						<PropertyValue Property="CollectionPath" String="SAP__ValueHelpSet?$filter=VALUEHELP%20eq%20%27FontName%27"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.SAP__Format/PaperSize"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata"/>
+						<PropertyValue Property="CollectionPath" String="SAP__ValueHelpSet?$filter=VALUEHELP%20eq%20%27PaperSize%27"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.SAP__Format/Orientation"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata"/>
+						<PropertyValue Property="CollectionPath" String="SAP__ValueHelpSet?$filter=VALUEHELP%20eq%20%27FontName%27"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="cds_zrh_erhaordermanage.SAP__TableColumns/HorizontalAlignment"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata"/>
+						<PropertyValue Property="CollectionPath" String="SAP__ValueHelpSet?$filter=VALUEHELP%20eq%20%27HorizontalAlignment%27"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
