@@ -557,12 +557,14 @@ sap.ui.define([
 				}),
 				new Button({
 					icon: "sap-icon://multiselect-all",
+					visible: false,
 					enabled: "{= !${/_hasTableAllSelected}}",
 					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_SELECT_ALL_SELETIONS_TOOLTIP"),
 					press: that.selectAllTableSelections.bind(that)
 				}),
 				new Button({
 					icon: "sap-icon://multiselect-none",
+					visible: false,
 					enabled: "{= !!${/_hasTableSelected}}",
 					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_CLEAR_ALL_SELETIONS_TOOLTIP"),
 					press: that.clearAllTableSelections.bind(that)
