@@ -142,12 +142,19 @@ function (
 
 		var oPage1 = createPage("page1"),
 			done = assert.async(),
-			oSpy = sinon.spy(oPage1.getHeaderTitle(), "_onHeaderResize");
+			oStub = sinon.stub(oPage1.getHeaderTitle(), "_onHeaderResize").callsFake(function(oEvent) {
+				assert.strictEqual(oEvent.size.width, 0, "width resize is detected");
+				assert.strictEqual(oEvent.size.height, 0, "height resize is detected");
+				done();
+				 // cleanup
+				oStub.restore();
+				oPage1.destroy();
+			});
 
 		oPage1.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		assert.expect(1);
+		assert.expect(2);
 
 		function toggleHidden(bEnable) {
 			oPage1.toggleStyleClass("sapMNavItem", bEnable).toggleStyleClass("sapMNavItemHidden", bEnable);
@@ -156,13 +163,7 @@ function (
 		oPage1.attachEventOnce("onAfterRenderingDOMReady", function() {
 			toggleHidden(false); // hide page
 			oPage1.attachEventOnce("onAfterRenderingDOMReady", function() {
-				oSpy.resetHistory();
 				toggleHidden(true); // show page
-				setTimeout(function() {
-					assert.ok(oSpy.called, "resize is detected");
-					done();
-					oPage1.destroy(); // cleanup
-				}, 100);
 			});
 			oPage1.rerender();
 		});
