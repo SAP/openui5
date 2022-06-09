@@ -59,6 +59,11 @@ sap.ui.define(
 				oRm.attr("tabindex", "-1");
 				bEnabled ? oRm.class("sapMRIDisplayOnly") : oRm.class("sapMRIDisabled");
 			}
+
+			if (!oControl.getIconSize()) {
+				oRm.class("sapMRINoCustomIconSize");
+			}
+
 			oRm.class("sapMRI");
 			oRm.class("sapUiRatingIndicator" + oControl._getIconSizeLabel(this._fIconSize));
 
@@ -124,7 +129,7 @@ sap.ui.define(
 			oRm.openEnd();
 
 			for (var i = 0; i < this._iSymbolCount; i++) {
-				this.renderIcon("SELECTED", oRm, oControl);
+				this.renderIcon("SELECTED", oRm, oControl, i);
 			}
 
 			oRm.close("div");
@@ -147,7 +152,7 @@ sap.ui.define(
 			oRm.openEnd();
 
 			for (var i = 0; i < this._iSymbolCount; i++) {
-				this.renderIcon("UNSELECTED", oRm, oControl);
+				this.renderIcon("UNSELECTED", oRm, oControl, i);
 			}
 
 			oRm.close("div");
@@ -161,7 +166,7 @@ sap.ui.define(
 				oRm.openEnd();
 
 				for (var i = 0; i < this._iSymbolCount; i++) {
-					this.renderIcon("HOVERED", oRm, oControl);
+					this.renderIcon("HOVERED", oRm, oControl, i);
 				}
 				oRm.close("div");
 			}
@@ -175,7 +180,7 @@ sap.ui.define(
 			oRm.close("div");
 		};
 
-		RatingIndicatorRenderer.renderIcon = function(iconType, oRm, oControl) {
+		RatingIndicatorRenderer.renderIcon = function(iconType, oRm, oControl, iValue) {
 			var sIconURI = this.getIconURI(iconType, oControl),
 				sTagName = this.getIconTag(sIconURI),
 				bIsIconURI = IconPool.isIconURI(sIconURI),
@@ -193,6 +198,10 @@ sap.ui.define(
 
 			oRm.class("sapUiIcon");
 			oRm.class(this.getIconClass(iconType));
+
+			if (iValue >= Math.ceil(oControl.getValue())) {
+				oRm.class("sapMRIunratedIcon");
+			}
 
 			oRm.style("width", sSize);
 			oRm.style("height", sSize);
