@@ -442,17 +442,18 @@ sap.ui.define([
 			srcControl: groupItem
 		});
 
-		assert.equal(invisibleText.getText(), 'Tree Item 1 of 5  Root 1', "accessibility text is correct");
+		assert.equal(invisibleText.getText(), 'Tree Item  Root 1 1 of 5', "accessibility text is correct");
 
 		var secondLevelItem = groupItem.getItems()[2];
 
 		this.navigationList.setSelectedItem(secondLevelItem);
+		Core.applyChanges();
 
 		secondLevelItem.onfocusin({
 			srcControl: secondLevelItem
 		});
 
-		assert.equal(invisibleText.getText(), 'Tree Item 3 of 3 Selected Child 3', "accessibility text is correct");
+		assert.equal(invisibleText.getText(), 'Tree Item Selected Child 3 3 of 3', "accessibility text is correct");
 	});
 
 	QUnit.module('SelectedItem association', {

@@ -784,21 +784,26 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			this._updateAccessibilityText();
 		};
 
-
 		NavigationListItem.prototype._updateAccessibilityText = function() {
 			var invisibleText = NavigationListItem._getInvisibleText(),
 				navList = this.getNavigationList(),
 				bundle = this._resourceBundleMLib,
-				accType = navList.getExpanded() ? bundle.getText("ACC_CTR_TYPE_TREEITEM") : '',
 				$focusedItem = this._getAccessibilityItem(),
-				mPosition = this._getAccessibilityPosition(),
-				itemPosition = bundle.getText("LIST_ITEM_POSITION", [mPosition.index, mPosition.size]),
 				selected = navList._selectedItem === this ? bundle.getText("LIST_ITEM_SELECTED") : '',
-				itemText = navList.getExpanded() ? this.getText() : "",
-				text = accType + " " + itemPosition + " " + selected + " " + itemText;
+				text = selected;
+
+			// for role "treeitem" we have to manually describe the role and position
+			if (navList.getExpanded()) {
+				var accType = bundle.getText("ACC_CTR_TYPE_TREEITEM"),
+					mPosition = this._getAccessibilityPosition(),
+					itemPosition = bundle.getText("LIST_ITEM_POSITION", [mPosition.index, mPosition.size]),
+					itemText = this.getText();
+
+				itemPosition = bundle.getText("LIST_ITEM_POSITION", [mPosition.index, mPosition.size]);
+				text = accType + " " + selected + " " + itemText + " " + itemPosition;
+			}
 
 			invisibleText.setText(text);
-
 			$focusedItem.addAriaLabelledBy(invisibleText.getId());
 		};
 
