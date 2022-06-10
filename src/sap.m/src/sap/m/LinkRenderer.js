@@ -18,6 +18,9 @@
 	// shortcut for sap.ui.core.aria.HasPopup
 	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
+	// shortcut for sap.m.LinkAccessibleRole
+	var LinkAccessibleRole = mobileLibrary.LinkAccessibleRole;
+
 	/**
 	 * Link renderer
 	 * @namespace
@@ -46,17 +49,13 @@
 			sHasPopupType = oControl.getAriaHasPopup(),
 			sRel = defaultLinkTypes(oControl.getRel(), oControl.getTarget()),
 			sHref = oControl.getHref(),
+			sAccessibleRole = oControl.getAccessibleRole(),
 			oAccAttributes =  {
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined,
 				haspopup: (sHasPopupType === AriaHasPopup.None) ? null : sHasPopupType.toLowerCase()
 			},
 			bEnabled = oControl.getEnabled(),
 			sTypeSemanticInfo = "";
-
-		// Set a valid non empty value for the href attribute representing that there is no navigation,
-		// so we don't confuse the screen readers.
-		/*eslint-disable no-script-url */
-		sHref = sHref && oControl._isHrefValid(sHref) && oControl.getEnabled() ? sHref : "javascript:void(0)";
 
 		// Link is rendered as a "<a>" element
 		oRm.openStart("a", oControl);
@@ -71,6 +70,19 @@
 			oRm.class("sapMLnkEmphasized");
 			sTypeSemanticInfo += " " + oControl._sAriaLinkEmphasizedId;
 		}
+
+		switch (sAccessibleRole) {
+			case LinkAccessibleRole.Button:
+				oAccAttributes.role = LinkAccessibleRole.Button;
+				break;
+			default:
+				// Set a valid non empty value for the href attribute representing that there is no navigation,
+				// so we don't confuse the screen readers.
+				/*eslint-disable no-script-url */
+				sHref = sHref && oControl._isHrefValid(sHref) && oControl.getEnabled() ? sHref : "javascript:void(0)";
+		}
+
+		sHref && oRm.attr("href", sHref);
 
 		oAccAttributes.describedby = sTypeSemanticInfo ? {value: sTypeSemanticInfo.trim(), append: true} : undefined;
 
@@ -87,8 +99,6 @@
 		if (oControl.getTooltip_AsString()) {
 			oRm.attr("title", oControl.getTooltip_AsString());
 		}
-
-		oRm.attr("href", sHref);
 
 		if (oControl.getTarget()) {
 			oRm.attr("target", oControl.getTarget());

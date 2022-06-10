@@ -417,6 +417,43 @@ sap.ui.define([
 		oLink.destroy();
 	});
 
+	// Behavior tests
+	QUnit.test("Behavior test", function(assert) {
+		var oLink = new Link({
+				text: "Link",
+				href: "https://sap.com"
+			}),
+			oLinkDomRef;
+
+		oLink.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oLinkDomRef = oLink.getDomRef();
+
+		// assert
+		assert.notOk(oLinkDomRef.getAttribute("role"),
+			"There is no role attribute if the 'accessibleRole' property of the Link is not set initially.");
+
+		// act
+		oLink.setAccessibleRole("Button");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oLinkDomRef.getAttribute("role"), "Button",
+			"There is role attribute with value 'Button' if the 'accessibleRole' property of the Link is set to 'Button'.");
+
+		// act
+		oLink.setAccessibleRole("Default");
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oLinkDomRef.getAttribute("role"),
+			"There is no role attribute if the 'accessibleRole' property of the Link is set to 'Default'.");
+
+		oLink.destroy();
+	});
+
+
 	QUnit.test("textAlign set to END", function(assert) {
 		var oLink = new Link({
 			text: "(+359) 111 222 333",

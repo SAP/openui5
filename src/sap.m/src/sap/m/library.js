@@ -122,6 +122,7 @@ sap.ui.define([
 			"sap.m.LabelDesign",
 			"sap.m.LightBoxLoadingStates",
 			"sap.m.LinkConversion",
+			"sap.m.LinkAccessibleRole",
 			"sap.m.ListGrowingDirection",
 			"sap.m.ListHeaderDesign",
 			"sap.m.ListKeyboardMode",
@@ -1686,6 +1687,29 @@ sap.ui.define([
 		 * @public
 		 */
 		All: "All"
+	};
+
+	/**
+	 * Enumeration for possible Link accessibility roles.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.104.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	 thisLib.LinkAccessibleRole = {
+
+		/**
+		 * Default mode.
+		 * @public
+		 */
+		Default: "Default",
+
+		/**
+		 * Link will receive <code>role="Button"</code> attibute.
+		 * @public
+		 */
+		Button: "Button"
 	};
 
 	/**
