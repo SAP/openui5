@@ -37,7 +37,7 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection id="about" title="{i18n>ENTITY_ABOUT}">
+			<ObjectPageSection class="sapUiDemokitEntityAbout" id="about" title="{i18n>ENTITY_ABOUT}">
 				<subSections>
 					<ObjectPageSubSection>
 
@@ -54,7 +54,7 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection id="samples" title="{
+			<ObjectPageSection class="sapUiDemokitEntitySamples" id="samples" title="{
 					parts: [
 						'i18n>ENTITY_SAMPLES',
 						'/count/samples'

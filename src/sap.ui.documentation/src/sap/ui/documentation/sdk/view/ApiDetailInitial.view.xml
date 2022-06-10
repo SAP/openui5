@@ -60,7 +60,7 @@
 					<l:BlockLayoutCell
 							width="2"
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeA">
 						<l:VerticalLayout
 								width="100%">
@@ -79,7 +79,7 @@
 
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeB">
 						<l:VerticalLayout
 								width="100%">
@@ -95,8 +95,8 @@
 
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeD">
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeC">
 						<l:VerticalLayout
 								width="100%">
 							<custom:TitleLink
@@ -116,7 +116,7 @@
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeC">
 						<l:VerticalLayout
 								width="100%">
@@ -135,7 +135,7 @@
 
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeB">
 						<l:VerticalLayout
 								width="100%">
@@ -154,7 +154,7 @@
 
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeA"
 							width="2">
 						<l:VerticalLayout
@@ -176,8 +176,8 @@
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeD"
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeA"
 							width="2">
 						<l:VerticalLayout
 								width="100%">
@@ -196,7 +196,7 @@
 
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeB"
 							width="2">
 						<l:VerticalLayout
@@ -218,7 +218,7 @@
 				<l:BlockLayoutRow visible="{= !${versionData>/isOpenUI5}}">
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeA"
 							width="2">
 						<l:VerticalLayout
@@ -238,7 +238,7 @@
 
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeC">
 						<l:VerticalLayout
 								width="100%">
@@ -257,7 +257,7 @@
 
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeD">
 						<l:VerticalLayout
 								width="100%">

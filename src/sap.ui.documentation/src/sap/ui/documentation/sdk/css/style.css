@@ -219,8 +219,10 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 	height: 3rem;
 }
 
-.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
-.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
+.sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapUiTheme-sap_fiori_3_dark .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow,
+.sapUiTheme-sap_fiori_3_dark .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
 	border:none;
 	background: #2f3c48;
 }
@@ -246,8 +248,10 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 }
 
 /* Menu Select`s hover bakground */
-.sapContrast.sapUiDocumentationSelect.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover,
-.sapContrast .sapUiDocumentationSelect.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
+.sapUiTheme-sap_fiori_3 .sapContrast.sapUiDocumentationSelect.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover,
+.sapUiTheme-sap_fiori_3_dark .sapContrast.sapUiDocumentationSelect.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover,
+.sapUiTheme-sap_fiori_3 .sapContrast .sapUiDocumentationSelect.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover,
+.sapUiTheme-sap_fiori_3_dark .sapContrast .sapUiDocumentationSelect.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
 	background: #2f3c48;
 }
 
@@ -275,7 +279,8 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 }
 
 /* Menu Select`s label */
-.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
+.sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
+.sapUiTheme-sap_fiori_3_dark .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
 	color: #91c8f6;
 	font-size: 1rem;
 	border-bottom: 0.1625rem solid;
@@ -290,7 +295,8 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 }
 
 /* Menu Select`s arrow color on press */
-.sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
+:not(.sapUiTheme-sap_fiori_3) .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before,
+:not(.sapUiTheme-sap_fiori_3_dark) .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
 	color: #cae4fb;
 }
 
@@ -981,11 +987,13 @@ html.sapUiTheme-sap_belize_hcw .sapUiJSD a {
 	color: #000000;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .sapUiJSD a {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw)
+.sapUiJSD a {
 	color: #0070b1;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw) .sapUiJSD a,
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_fiori_3_hcb):not(.sapUiTheme-sap_fiori_3_hcw):not(.sapUiTheme-sap_horizon):not(.sapUiTheme-sap_horizon_dark)
+.sapUiJSD a,
 html.sapUiTheme-sap_fiori_3_hcb .sapUiJSD a:hover,
 html.sapUiTheme-sap_fiori_3_hcw .sapUiJSD a:hover,
 html.sapUiTheme-sap_belize_hcb .sapUiJSD a:hover,
@@ -1800,11 +1808,6 @@ html[dir="rtl"] .sapUiDemoKitTreeItemIcon {
 	background: #ffffff;
 }
 
-.sapUiTheme-sap_fiori_3 .sapUiDemokit .sapUiHomePage .sapMTitleStyleH1,
-.sapUiTheme-sap_fiori_3 .sapUiDemokit .sapUiDemoApps .sapMTitleStyleH1 {
-	font-size: 1.625rem;
-}
-
 .sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
 .sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect:hover,
 .sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow,
@@ -1839,4 +1842,10 @@ html[dir="rtl"] .sapUiDemoKitTreeItemIcon {
 .sapUiForcedHidden .editorSrcWindow {
 	width: 0;
 	height: 0;
+}
+
+/* override default 3rem on desktop */
+.sapUiDemokit .sapUiHomePage .sapMTitleStyleH1,
+.sapUiDemokit .sapUiDemoApps .sapMTitleStyleH1 {
+	font-size: 1.625rem;
 }
