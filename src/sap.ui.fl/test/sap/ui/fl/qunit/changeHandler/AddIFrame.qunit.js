@@ -168,7 +168,9 @@ sap.ui.define([
 					assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
 					var oCreatedControl = this.oHBox.getItems()[1];
 					assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
-					assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
+					return oCreatedControl._oSetUrlPromise.then(function() {
+						assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
+					});
 				}.bind(this));
 		});
 
@@ -180,7 +182,9 @@ sap.ui.define([
 					assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
 					var oCreatedControl = this.oHBox.getItems()[0];
 					assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
-					assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
+					return oCreatedControl._oSetUrlPromise.then(function() {
+						assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
+					});
 				}.bind(this));
 		});
 
