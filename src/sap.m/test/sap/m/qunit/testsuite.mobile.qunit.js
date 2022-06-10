@@ -129,6 +129,12 @@ sap.ui.define([
 			},
 			CheckBox: {
 				title: "Test Page for sap.m.CheckBox",
+				qunit: {
+					version: "edge"
+				},
+				sinon: {
+					version: "edge"
+				},
 				ui5: {
 					language: "en-US"
 				}
