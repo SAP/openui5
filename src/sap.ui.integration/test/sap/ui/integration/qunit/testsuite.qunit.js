@@ -1400,7 +1400,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/table/Filter": {
+			"editor/objectListField/table/filter/Basic": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1409,7 +1409,34 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/table/FilterAndCUD": {
+			"editor/objectListField/table/filter/CUD": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/table/sort/Filter": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/table/sort/PropertiesDefinedOnly": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/objectListField/table/sort/RequestValues": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [

@@ -303,8 +303,8 @@ sap.ui.define([
 						var oField1 = that.oEditor.getAggregation("_formContent")[2];
 						var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
 						var oField2 = that.oEditor.getAggregation("_formContent")[4];
-						var oSelectedValueOfField1 = merge(deepClone(oValueOfObject1InContentChange, 500), {"_dt": {"_selected": true}});
-						var oSelectedValueOfField2 = merge(deepClone(oValueOfObject2InContentChange, 500), {"_dt": {"_selected": true}});
+						var oSelectedValueOfField1 = merge(deepClone(oValueOfObject1InContentChange, 500), {"_dt": {"_selected": true, "_position": 1}});
+						var oSelectedValueOfField2 = merge(deepClone(oValueOfObject2InContentChange, 500), {"_dt": {"_selected": true, "_position": 1}});
 						wait().then(function () {
 							assert.ok(oLabel1.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 							assert.ok(oLabel1.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
@@ -313,7 +313,7 @@ sap.ui.define([
 							var oTable1 = oField1.getAggregation("_field");
 							var oToolbar1 = oTable1.getToolbar();
 							assert.ok(oTable1.getBinding().getCount() === 9, "Table 1: value length is 9");
-							assert.ok(oToolbar1.getContent().length === 7, "Table toolbar 1: content length");
+							assert.ok(oToolbar1.getContent().length === 9, "Table toolbar 1: content length");
 							var oEditButton1 = oToolbar1.getContent()[2];
 							assert.ok(oEditButton1.getVisible(), "Table toolbar 1: edit button visible");
 							assert.ok(!oEditButton1.getEnabled(), "Table toolbar 1: edit button disabled");
@@ -391,7 +391,7 @@ sap.ui.define([
 											var oTable2 = oField2.getAggregation("_field");
 											var oToolbar2 = oTable2.getToolbar();
 											assert.ok(oTable2.getBinding().getCount() === 9, "Table 2: value length is 9");
-											assert.ok(oToolbar2.getContent().length === 7, "Table toolbar 2: content length");
+											assert.ok(oToolbar2.getContent().length === 9, "Table toolbar 2: content length");
 											var oEditButton2 = oToolbar2.getContent()[2];
 											assert.ok(oEditButton2.getVisible(), "Table toolbar 2: edit button visible");
 											assert.ok(!oEditButton2.getEnabled(), "Table toolbar 2: edit button disabled");

@@ -41,6 +41,7 @@ sap.ui.define([
 
 	ObjectListField.prototype.initVisualization = function (oConfig) {
 		var that = this;
+		that._positionCount = 1;
 		that._newObjectTemplate = {
 			"_dt": {
 				"_selected": true,
@@ -71,12 +72,18 @@ sap.ui.define([
 			var oConfig = that.getConfiguration();
 			// select all the results come from config.value
 			if (!oConfig.values){
-				var oValue = deepClone(oConfig.value, 500) || [];
-				oValue.forEach(function (oItem) {
-					oItem._dt = oItem._dt || {};
-					oItem._dt._selected = true;
-					oItem._dt._uuid = oItem._dt._uuid || Utils.generateUuidV4();
-				});
+				var oValue = [];
+				if (Array.isArray(oConfig.value)) {
+					oValue = deepClone(oConfig.value, 500);
+					oValue.forEach(function (oItem) {
+						oItem._dt = oItem._dt || {};
+						oItem._dt._selected = true;
+						oItem._dt._uuid = oItem._dt._uuid || Utils.generateUuidV4();
+						oItem._dt._position = that._positionCount;
+						that._positionCount++;
+					});
+					//oConfig.value = deepClone(oValue, 500);
+				}
 				that.setModel(new JSONModel({
 					value: oValue,
 					_allSelected: true
@@ -129,6 +136,14 @@ sap.ui.define([
 			},
 			select: that.onSelectionColumnClick.bind(that)
 		});
+	};
+
+	ObjectListField.prototype.addNewObject = function (oEvent) {
+		var that = this;
+		var oControl = oEvent.getSource();
+		that._newObjectTemplate._dt._uuid = Utils.generateUuidV4();
+		that._newObjectTemplate._dt._position = that._positionCount;
+		that.openObjectDetailsPopover(that._newObjectTemplate, oControl, "add");
 	};
 
 	ObjectListField.prototype.onSelectionColumnClick = function(oEvent) {
@@ -189,6 +204,7 @@ sap.ui.define([
 		oModel.checkUpdate();
 		that.refreshValue();
 		that._oObjectDetailsPopover.close();
+		that._positionCount++;
 	};
 
 	ObjectListField.prototype.refreshValue = function () {
@@ -227,10 +243,11 @@ sap.ui.define([
 		var oConfig = that.getConfiguration();
 		var oTable = that.getAggregation("_field");
 		var oModel = oTable.getModel();
-		if (oConfig.value && Array.isArray(oConfig.value) && oConfig.value.length > 0) {
+		if (Array.isArray(oConfig.value) && oConfig.value.length > 0) {
 			var aValues = deepClone(oConfig.value, 500),
 				sPath = oTable.getBinding("rows").getPath();
 			if (Array.isArray(tResult) && tResult.length > 0) {
+				that._positionCount = oConfig.value.length + 1;
 				var aUUIDs = [];
 				// move the uuids into backup array
 				aValues.forEach(function (oItem) {
@@ -240,6 +257,7 @@ sap.ui.define([
 					} else {
 						sUuid = oItem._dt._uuid || Utils.generateUuidV4();
 						delete oItem._dt._uuid;
+						delete oItem._dt._position;
 					}
 					aUUIDs.push(sUuid);
 				});
@@ -256,15 +274,18 @@ sap.ui.define([
 					}
 					if (!bIsSelected) {
 						oRequestObject._dt._uuid = Utils.generateUuidV4();
+						oRequestObject._dt._position = that._positionCount;
+						that._positionCount++;
 						aNotSelectedObjects.push(oRequestObject);
 					}
 				}
-				// add uuid for each result in value, and mark them as selected
+				// add uuid and position for each result in value, and mark them as selected
 				for (var k = 0; k < aValues.length; k++) {
 					var oValueItem = aValues[k];
 					oValueItem._dt = oValueItem._dt || {};
 					oValueItem._dt._selected = true;
 					oValueItem._dt._uuid = aUUIDs[k];
+					oValueItem._dt._position = k + 1;
 				}
 				if (aNotSelectedObjects.length > 0) {
 					oModel.setProperty("/_allSelected", false);
@@ -273,20 +294,24 @@ sap.ui.define([
 					oModel.setProperty("/_allSelected", true);
 				}
 			} else {
-				// add uuid for each result in value, and mark them as selected
+				// add uuid and position for each result in value, and mark them as selected
 				aValues.forEach(function (oItem) {
 					oItem._dt = oItem._dt || {};
 					oItem._dt._selected = true;
 					oItem._dt._uuid = oItem._dt._uuid || Utils.generateUuidV4();
+					oItem._dt._position = that._positionCount;
+					that._positionCount++;
 				});
 				oModel.setProperty("/_allSelected", true);
 			}
 			oModel.setProperty(sPath, aValues);
 		} else {
-			// add uuid for each request result
+			// add uuid and position for each request result
 			if (Array.isArray(tResult) && tResult.length > 0) {
 				tResult.forEach(function(oResult) {
 					oResult._dt._uuid = Utils.generateUuidV4();
+					oResult._dt._position = that._positionCount;
+					that._positionCount++;
 				});
 			}
 			oModel.setProperty("/_allSelected", false);
