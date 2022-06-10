@@ -15,10 +15,23 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="Number Input" >
+		title="Input" >
 		<form:content>
-			<Label text="Number" />
-			<Input value="{path:'/number', type:'sap.ui.model.type.Currency'}"/>
+			<!--Note, the number of entered decimals is validated only with
+				sap.ui.model.odata.type.Currency but not with sap.ui.model.type.Currency.-->
+			<Label text="One field" />
+			<Input value="{parts: ['/amount', '/currency'], type:'sap.ui.model.type.Currency'}"/>
+			<Label text="Two field" />
+			<Input value="{
+				parts: ['/amount', '/currency'], 
+				type:'sap.ui.model.type.Currency',
+				formatOptions: {showMeasure: false}
+			}"/>
+			<Input value="{
+				parts: ['/amount', '/currency'], 
+				type:'sap.ui.model.type.Currency',
+				formatOptions: {showNumber: false}
+			}"/>
 		</form:content>
 	</form:SimpleForm>
 
@@ -32,121 +45,52 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="Min Integer Digits (minimal number of non-fraction digits)">
+		title="Format options">
 		<form:content>
-			<Label text="3 digits" />
+			<!--In editing scenarios it is important that the user sees all the backend data.
+				Hence format option preserveDecimals is defaulted to true.-->
+			<Label text="Default" />
 			<Text text="{
-				path: '/number',
+				parts: ['/amount', '/currency'],
+				type: 'sap.ui.model.type.Currency'
+			}" />
+
+			<Label text="preserveDecimals:false" />
+			<Text text="{
+				parts: ['/amount', '/currency'],
 				type: 'sap.ui.model.type.Currency',
 				formatOptions: {
-					minIntegerDigits: 3
+					preserveDecimals : false
 				}
 			}" />
 
-			<Label text="5 digits" />
+			<Label text="currencyCode:false" />
 			<Text text="{
-				path: '/number',
+				parts: ['/amount', '/currency'],
 				type: 'sap.ui.model.type.Currency',
 				formatOptions: {
-					minIntegerDigits: 5
+					currencyCode : false
+				}
+			}" />
+
+			<Label text="style:'short'" />
+			<Text text="{
+				parts: ['/amount', '/currency'],
+				type: 'sap.ui.model.type.Currency',
+				formatOptions: {
+					style : 'short'
+				}
+			}" />
+
+			<Label text="style:'long'" />
+			<Text text="{
+				parts: ['/amount', '/currency'],
+				type: 'sap.ui.model.type.Currency',
+				formatOptions: {
+					style : 'long'
 				}
 			}" />
 		</form:content>
 	</form:SimpleForm>
 
-	<form:SimpleForm
-		width="auto"
-		class="sapUiResponsiveMargin"
-		layout="ResponsiveGridLayout"
-		labelSpanL="3"
-		labelSpanM="3"
-		emptySpanL="4"
-		emptySpanM="4"
-		columnsL="1"
-		columnsM="1"
-		title="Max Integer Digits (maximal number of non-fraction digits)">
-		<form:content>
-			<Label text="1 digit" />
-			<Text text="{
-				path: '/number',
-				type: 'sap.ui.model.type.Currency',
-				formatOptions: {
-					maxIntegerDigits: 1
-				}
-			}" />
-
-			<Label text="5 digits" />
-			<Text text="{
-				path: '/number',
-				type: 'sap.ui.model.type.Currency',
-				formatOptions: {
-					maxIntegerDigits: 5
-				}
-			}" />
-		</form:content>
-	</form:SimpleForm>
-
-	<form:SimpleForm
-		width="auto"
-		class="sapUiResponsiveMargin"
-		layout="ResponsiveGridLayout"
-		labelSpanL="3"
-		labelSpanM="3"
-		emptySpanL="4"
-		emptySpanM="4"
-		columnsL="1"
-		columnsM="1"
-		title="Min Fraction Digits (minimal number of fraction digits)">
-		<form:content>
-			<Label text="1 digit" />
-			<Text text="{
-				path: '/number',
-				type: 'sap.ui.model.type.Currency',
-				formatOptions: {
-					minFractionDigits: 1
-				}
-			}" />
-
-			<Label text="5 digits" />
-			<Text text="{
-				path: '/number',
-				type: 'sap.ui.model.type.Currency',
-				formatOptions: {
-					minFractionDigits: 5
-				}
-			}" />
-		</form:content>
-	</form:SimpleForm>
-
-	<form:SimpleForm
-		width="auto"
-		class="sapUiResponsiveMargin"
-		layout="ResponsiveGridLayout"
-		labelSpanL="3"
-		labelSpanM="3"
-		emptySpanL="4"
-		emptySpanM="4"
-		columnsL="1"
-		columnsM="1"
-		title="Max Fraction Digits (maximal number of fraction digits)">
-		<form:content>
-			<Label text="1 digit" />
-			<Text text="{
-				path: '/number',
-				type: 'sap.ui.model.type.Currency',
-				formatOptions: {
-					maxFractionDigits: 1
-				}
-			}" />
-
-			<Label text="5 digits" />
-			<Text text="{
-				path: '/number',
-				type: 'sap.ui.model.type.Currency',
-				formatOptions: {
-					maxFractionDigits: 5
-				}
-			}" />
-		</form:content>
-	</form:SimpleForm>
 </mvc:View>
