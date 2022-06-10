@@ -177,7 +177,9 @@ sap.ui.define([
 			assert.strictEqual(aBlocks.length, 1, "The created sub section contains one block");
 			var oCreatedIFrame = aBlocks[0];
 			assert.ok(oCreatedIFrame.getId().indexOf(BASE_ID) === 0, "the created IFrame starts with the expected baseId");
-			assert.strictEqual(oCreatedIFrame.getUrl(), EXAMPLE_URL, "the created IFrame has the correct URL");
+			oCreatedIFrame._oSetUrlPromise.then(function() {
+				assert.strictEqual(oCreatedIFrame.getUrl(), EXAMPLE_URL, "the created IFrame has the correct URL");
+			});
 		}
 
 		QUnit.test("When applying the change on a js control tree", function(assert) {

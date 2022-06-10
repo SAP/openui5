@@ -73,6 +73,7 @@ function (
 			};
 
 			this.oChange = new Change(oChangeJson);
+			return this.oIFrame._oSetUrlPromise;
 		},
 		afterEach: function() {
 			this.oIFrame.destroy();
@@ -85,7 +86,10 @@ function (
 
 			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
 				.then(function() {
-					assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "then the IFrame url changes");
+					return this.oIFrame._oSetUrlPromise;
+				}.bind(this))
+				.then(function() {
+					assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "then the IFrame url changes");
 				}.bind(this));
 		});
 
@@ -97,7 +101,10 @@ function (
 			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
 				.then(UpdateIFrame.revertChange.bind(UpdateIFrame, this.oChange, this.oIFrame, mPropertyBag))
 				.then(function() {
-					assert.equal(this.oIFrame.getUrl(), originalUrl, "then the IFrame url is the same as before");
+					return this.oIFrame._oSetUrlPromise;
+				}.bind(this))
+				.then(function() {
+					assert.strictEqual(this.oIFrame.getUrl(), originalUrl, "then the IFrame url is the same as before");
 				}.bind(this));
 		});
 
@@ -108,10 +115,13 @@ function (
 
 			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
 				.then(function() {
+					return this.oIFrame._oSetUrlPromise;
+				}.bind(this))
+				.then(function() {
 					var oBindingInfo = this.oIFrame.getBindingInfo("url");
-					assert.equal(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path has changed as expected");
-					assert.equal(oBindingInfo.parts[0].model, "model", "and the property value binding model has changed as expected");
-					assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is correct");
+					assert.strictEqual(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path has changed as expected");
+					assert.strictEqual(oBindingInfo.parts[0].model, "model", "and the property value binding model has changed as expected");
+					assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is correct");
 				}.bind(this));
 		});
 
@@ -122,21 +132,24 @@ function (
 					url: sBoundUrl
 				}
 			});
-			assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "the initial bound value is correct");
+			return this.oIFrame._oSetUrlPromise.then(function() {
+				assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "the initial bound value is correct");
+				this.mSapUI5UrlChange.content.url = sOpenUI5Url;
 
-			this.mSapUI5UrlChange.content.url = sOpenUI5Url;
+				UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
 
-			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
-
-			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
-				.then(UpdateIFrame.revertChange.bind(UpdateIFrame, this.oChange, this.oIFrame, mPropertyBag))
-				.then(function() {
-					var oBindingInfo = this.oIFrame.getBindingInfo("url");
-					assert.equal(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path does not change");
-					assert.equal(oBindingInfo.parts[0].model, "model", "and the property value binding model does not change");
-
-					assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is still correct");
-				}.bind(this));
+				return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
+					.then(UpdateIFrame.revertChange.bind(UpdateIFrame, this.oChange, this.oIFrame, mPropertyBag))
+					.then(function() {
+						return this.oIFrame._oSetUrlPromise;
+					}.bind(this))
+					.then(function() {
+						var oBindingInfo = this.oIFrame.getBindingInfo("url");
+						assert.strictEqual(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path does not change");
+						assert.strictEqual(oBindingInfo.parts[0].model, "model", "and the property value binding model does not change");
+						assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is still correct");
+					}.bind(this));
+			}.bind(this));
 		});
 
 		QUnit.test("when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later", function (assert) {
