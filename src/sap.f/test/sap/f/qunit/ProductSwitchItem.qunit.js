@@ -153,4 +153,17 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitchItem", "sap/ui/qunit/QUni
 
 			assert.equal($ProductSwitchItem.attr("role"), "menuitemradio", "Role menuitem is set on the ProductSwitch item");
 		});
+
+		QUnit.test("Tooltip", function (assert) {
+			// Arrange
+			var $ProductSwitchItem = this.oProductSwitchItem.$(),
+				sTooltip = "Tooltip";
+
+			// Act
+			this.oProductSwitchItem.setTooltip(sTooltip);
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual($ProductSwitchItem.attr("title"), sTooltip, "Tooltip is set");
+		});
 	});

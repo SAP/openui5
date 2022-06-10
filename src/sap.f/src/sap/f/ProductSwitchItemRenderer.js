@@ -13,7 +13,8 @@ sap.ui.define([],
 			var oProductSwith = oControl._getProductSwitch(),
 				oAccessibilityState = {
 					role: "menuitemradio"
-				};
+				},
+				sTooltip = oControl.getTooltip_AsString();
 
 			if (oProductSwith) {
 				oAccessibilityState.setsize = oProductSwith._getItemsCount();
@@ -24,6 +25,9 @@ sap.ui.define([],
 			oRm.openStart("div", oControl);
 			oRm.class("sapFPSItemContainer");
 			oRm.attr("tabindex", 0);
+			if (sTooltip) {
+				oRm.attr("title", sTooltip);
+			}
 			oRm.accessibilityState(oControl, oAccessibilityState);
 
 			oRm.openEnd();
