@@ -1,0 +1,41 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.extension.sharedExtension"
+	},
+	"dependencies": {
+	  "libs": {
+		"sap.ui.core": {},
+		"sap.f": {},
+		"sap.m": {}
+	  }
+	},
+	"sap.card": {
+		"extension": "module:sap/my/lib/SharedExtension",
+		"configuration": {
+			"parameters": {
+				"suffix": {
+					"value": "{{parameters.TODAY_ISO}}"
+				}
+			}
+		},
+		"data": {
+			"extension": {
+				"method": "getData"
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Available Trainings",
+			"icon": {
+				"src": "sap-icon://activities"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{= extension.formatters.toUpperCase(${training}) }",
+				"description":  "{= extension.formatters.appendSuffix(${location}) }"
+			}
+		}
+	}
+}
