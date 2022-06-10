@@ -126,6 +126,7 @@ sap.ui.define([
 
 		oActions.attach({
 			area: ActionArea.Header,
+			enabledPropertyName: "interactive",
 			actions: mConfiguration.actions,
 			control: oHeader
 		});

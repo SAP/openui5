@@ -335,25 +335,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the <code>sap.f.cards.NumericHeader</code> press event.
-	 */
-	NumericHeader.prototype.ontap = function (oEvent) {
-		var srcControl = oEvent.srcControl;
-		if (srcControl && srcControl.getId().indexOf("overflowButton") > -1) { // better way?
-			return;
-		}
-
-		this.firePress();
-	};
-
-	/**
-	 * Fires the <code>sap.f.cards.NumericHeader</code> press event.
-	 */
-	NumericHeader.prototype.onsapselect = function () {
-		this.firePress();
-	};
-
-	/**
 	 * Helper function used to create aria-labelledby attribute.
 	 *
 	 * @private

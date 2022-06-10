@@ -290,25 +290,6 @@ sap.ui.define([
 		return sIds.replace(/ {2,}/g, ' ').trim();
 	};
 
-	/**
-	 * Fires the <code>sap.f.cards.Header</code> press event.
-	 */
-	Header.prototype.ontap = function (oEvent) {
-		var srcControl = oEvent.srcControl;
-		if (srcControl && srcControl.getId().indexOf("overflowButton") > -1) { // better way?
-			return;
-		}
-
-		this.firePress();
-	};
-
-	/**
-	 * Fires the <code>sap.f.cards.Header</code> press event.
-	 */
-	Header.prototype.onsapselect = function () {
-		this.firePress();
-	};
-
 	Header.prototype.isLoading = function () {
 		return false;
 	};
