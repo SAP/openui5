@@ -22,7 +22,7 @@
 			<mdc:FilterBar
 					id="ordersFilterBar"
 					liveMode="true"
-					delegate="{ name: 'sap/ui/mdc/odata/v4/FilterBarDelegate', payload: {collectionName: 'Orders'} }"
+					delegate="{ name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Orders'} }"
 					search="onSearch"
 					p13nMode="Item"
 				>

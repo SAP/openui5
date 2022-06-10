@@ -1,6 +1,6 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/FilterBarDelegate",
+	"delegates/odata/v4/FilterBarDelegate",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/mdc/FilterBar",
@@ -44,7 +44,7 @@ sap.ui.define([
 			this.oMockServer = createMockServer();
 
 			this._oFilterBar = new FilterBar({
-				delegate : {'name' : 'sap/ui/mdc/odata/v4/FilterBarDelegate',
+				delegate : {'name' : 'delegates/odata/v4/FilterBarDelegate',
 						   'payload' : {'modelName': 'sample',  'collectionName': 'TypeList'}}
 			});
 		},
