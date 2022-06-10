@@ -3760,6 +3760,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No Footer Text Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 0, "No Icon Container Created.");
+			assert.equal(this.oGenericTile._oMoreIcon.getType(), "Unstyled", "Button Created in Unstyled Type");
 			this.oGenericTile.setTileIcon("sap-icon://key");
 			this.oGenericTile.setBackgroundColor("teal");
 			oCore.applyChanges();
@@ -3774,9 +3775,11 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "No SubHeader Text Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 0, "No Content Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No Footer Text Created.");
+				assert.equal(this.oGenericTile._oMoreIcon.getTooltip_AsString(), "More", "More Action Button Tooltip is visible");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 1, "Icon Container Created.");
 				assert.ok(this.oGenericTile._oMoreIcon.isA("sap.m.Button"), "Button is created in place of action more icon");
+				assert.equal(this.oGenericTile._oMoreIcon.getType(), "Transparent", "Button Created in Transparent Type");
 				this.oGenericTile.setTileIcon(IMAGE_PATH + "female_BaySu.jpg");
 				oCore.applyChanges();
 				setTimeout(function(){
