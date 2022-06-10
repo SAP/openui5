@@ -61,19 +61,6 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("In different timezones we have the right rendering", function(assert) {
-			// Prepare
-			var oFormatSpy = this.spy(this.oYP._oYearFormat, "format");
-
-			// Act
-			this.oYP.invalidate();
-			oCore.applyChanges();
-
-			// Assert
-			assert.ok(oFormatSpy.getCall(0).args[1], "The format function is called with bUTC flag equal to true");
-
-		});
-
 		QUnit.module("interval selection", {
 			beforeEach: function() {
 				this.YP = new YearPicker({

@@ -272,6 +272,7 @@ sap.ui.define([
 		this.setProperty("_currentPicker", "monthPicker");
 
 		oMonthPicker._setYear(oDate.getYear());
+		oMonthPicker._setDate(oDate);
 
 		if (!bSkipFocus){
 			oMonthPicker.setMonth(oDate.getMonth());

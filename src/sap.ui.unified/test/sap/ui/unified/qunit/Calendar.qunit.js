@@ -472,8 +472,8 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual($yearRanges.length, 4, "Correct number of year ranges are displayed");
-		assert.strictEqual($yearRanges[0].innerText, "947 Reiwa - 966 Reiwa", "Correct first year range is displayed");
-		assert.strictEqual(document.activeElement.innerText, "987 Reiwa - 1006 Reiwa", "Correct year range is displayed and focused");
+		assert.strictEqual($yearRanges[0].innerText, "947 Reiwa – 966 Reiwa", "Correct first year range is displayed");
+		assert.strictEqual(document.activeElement.innerText, "987 Reiwa – 1006 Reiwa", "Correct year range is displayed and focused");
 
 		// Clean
 		oCal.destroy();
@@ -1138,7 +1138,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok($NextArrowButton.hasClass("sapUiCalDsbl"), "Header next button is disabled");
-		assert.strictEqual($yearRanges[$yearRanges.length - 1].innerText, "9980 - 9999", "Correct year range is displayed and focused");
+		assert.strictEqual($yearRanges[$yearRanges.length - 1].innerText, "9980 – 9999", "Correct year range is displayed and focused");
 
 		// Clean
 		oCal.destroy();
@@ -1168,7 +1168,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok($prevArrowButton.hasClass("sapUiCalDsbl"), "Header previous button is disabled");
-		assert.strictEqual($yearRanges[0].innerText, "0001 - 0020", "Correct year range is displayed and focused");
+		assert.strictEqual($yearRanges[0].innerText, "0001 – 0020", "Correct year range is displayed and focused");
 
 		// Clean
 		oCal.destroy();

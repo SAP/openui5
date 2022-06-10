@@ -201,6 +201,37 @@ sap.ui.define([
 		return true;
 	};
 
+	/**
+	 * Calculates the first and last displayed date about a given year range.
+	 * @param {integer} iYear the year about which the dates are calculated
+	 * @returns {object} two values - start and end date
+	 */
+	YearRangePicker.prototype._getDisplayedSecondaryDates = function(oDate){
+		var sSecondaryCalendarType = this.getSecondaryCalendarType(),
+			oFirstDate = new CalendarDate(oDate, oDate.getCalendarType()),
+			oLastDate = new CalendarDate(oDate, oDate.getCalendarType());
+
+		oFirstDate.setMonth(0, 1);
+		oFirstDate = new CalendarDate(oFirstDate, sSecondaryCalendarType);
+
+		oLastDate.setYear(oLastDate.getYear() + this.getRangeSize()); // create first day of next year range
+		oLastDate.setMonth(0, 1);
+		oLastDate.setDate(oLastDate.getDate() - 1); // go back one day to receive last day in previous year range
+		oLastDate = new CalendarDate(oLastDate, sSecondaryCalendarType);
+
+		return {start: oFirstDate, end: oLastDate};
+	};
+
+	YearRangePicker.prototype.setSecondaryCalendarType = function(sCalendarType){
+		this.setProperty("secondaryCalendarType", sCalendarType);
+		if (this._getSecondaryCalendarType()) {
+			this.setColumns(2);
+			this.setYears(8);
+			this.setRangeSize(8);
+		}
+		return this;
+	};
+
 	return YearRangePicker;
 
 });

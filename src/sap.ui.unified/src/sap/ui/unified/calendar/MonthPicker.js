@@ -96,6 +96,13 @@ sap.ui.define([
 			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
 
 			/**
+			 * If set, the months are also displayed in this calendar type
+			 * If not set, the months are only displayed in the primary calendar type
+			 * @since 1.104.0
+			 */
+			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
+
+			/**
 			 * The first displayed month. The value must be between 0 and 11
 			 */
 			_firstMonth : {type : "int", group : "Data", visibility: "hidden", defaultValue: 0},
@@ -277,13 +284,23 @@ sap.ui.define([
 		this._iYear = iYear;
 	};
 
+	/**
+	 * Sets date internally for the MonthPicker control
+	 * @ui5-restricted sap.ui.unified.Calendar
+	 * @private
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate month picker date
+	 */
+	MonthPicker.prototype._setDate = function (oDate) {
+		this._oDate = oDate;
+	};
+
 	/*
 	 * Use rendered locale for stand alone control
 	 * But as Calendar can have an own locale, use this one if used inside Calendar
 	 */
 	MonthPicker.prototype._getLocale = function(){
 
-		var oParent = this.getParent();
+		var oParent = this._oSelectedDatesControlOrigin;
 
 		if (oParent && oParent._getLocale) {
 			return oParent._getLocale();
@@ -302,7 +319,7 @@ sap.ui.define([
 	 */
 	MonthPicker.prototype._getLocaleData = function(){
 
-		var oParent = this.getParent();
+		var oParent = this._oSelectedDatesControlOrigin;
 
 		if (oParent && oParent._getLocaleData) {
 			return oParent._getLocaleData();
@@ -559,6 +576,35 @@ sap.ui.define([
 			iUpperThreshold = iReference + iThreshold;
 
 		return iValue >= iLowerThreshold && iValue <= iUpperThreshold;
+	};
+
+	/**
+	 * Returns if there is secondary calendar type set and if it is different from the primary one.
+	 * @returns {boolean} if there is secondary calendar type set and if it is different from the primary one
+	 */
+	MonthPicker.prototype._getSecondaryCalendarType = function(){
+		return this.getSecondaryCalendarType() === this.getPrimaryCalendarType() ? undefined : this.getSecondaryCalendarType();
+	};
+
+	/**
+	 * Calculates the first and last displayed date about a given month.
+	 * @param {integer} iCurrentMonth the month about which the dates are calculated
+	 * @returns {object} two values - start and end date
+	 */
+	MonthPicker.prototype._getDisplayedSecondaryDates = function(iCurrentMonth){
+		var sSecondaryCalendarType = this.getSecondaryCalendarType(),
+			oDate = new CalendarDate(this._oDate ? this._oDate : CalendarDate.fromLocalJSDate(new Date()), this.getPrimaryCalendarType()),
+			oFirstDate,
+			oLastDate;
+
+		oDate.setMonth(iCurrentMonth);
+		oDate.setDate(1);
+		oFirstDate = new CalendarDate(oDate, sSecondaryCalendarType);
+
+		oDate.setDate(CalendarUtils._daysInMonth(oDate));
+		oLastDate = new CalendarDate(oDate, sSecondaryCalendarType);
+
+		return {start: oFirstDate, end: oLastDate};
 	};
 
 	function _initItemNavigation(){
