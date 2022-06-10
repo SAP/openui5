@@ -1510,6 +1510,8 @@ sap.ui.define([
 	 * not explicitly kept alive. Once a context is not kept alive anymore, the implicit lifecycle
 	 * management again takes control and destroys the context if it is no longer needed.
 	 *
+	 * Note: This is only supported if the model uses the <code>autoExpandSelect</code> parameter.
+	 *
 	 * @param {boolean} bKeepAlive
 	 *   Whether to keep the context alive
 	 * @param {function} [fnOnBeforeDestroy]
