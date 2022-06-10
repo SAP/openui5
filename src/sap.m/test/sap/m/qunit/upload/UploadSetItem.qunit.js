@@ -408,4 +408,24 @@ sap.ui.define([
 		assert.equal(oItem._getIcon().getSrc(), 'sap-icon://document', "Default document icon is set as list item icon");
 	});
 
+	QUnit.test("Test for accessing edit state of the item", function (assert) {
+		//Setup
+		var oItem = this.oUploadSet.getItems()[0];
+		this.oUploadSet.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//Assert
+		oItem.setFileName("sample");
+		oItem.setThumbnailUrl();
+		oItem.setMediaType();
+
+		oCore.applyChanges();
+
+		assert.equal(oItem.getEditState(), false, "Initial edit state of the item returned sucessfully.");
+
+		oItem._setInEditMode(true);
+
+		assert.equal(oItem.getEditState(), true, "New edit state of the item returned sucessfully.");
+	});
+
 });
