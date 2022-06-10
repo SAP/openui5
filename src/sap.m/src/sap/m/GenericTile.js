@@ -438,8 +438,9 @@ sap.ui.define([
 				this._oMoreIcon = this._oMoreIcon || new Button({
 					id: this.getId() + "-action-more",
 					icon: "sap-icon://overflow",
-					type: "Transparent"
-				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
+					type: "Transparent",
+					tooltip :this._oRb.getText("GENERICTILE_MORE_ACTIONBUTTON_TEXT")
+				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon").addStyleClass(sTileClass + "ActionMoreButton");
 				this._oMoreIcon.ontouchstart = function() {
 					this.removeFocus();
 				}.bind(this);
@@ -1543,7 +1544,7 @@ sap.ui.define([
 			$Tile.attr("aria-label", sAriaText);
 		}
 		if (this._isInActionScope()) {
-			$Tile.find('*:not(.sapMGTRemoveButton)').removeAttr("aria-label").removeAttr("title").off("mouseenter");
+			$Tile.find('*:not(.sapMGTRemoveButton,.sapMGTActionMoreButton)').removeAttr("aria-label").removeAttr("title").off("mouseenter");
 		} else {
 			$Tile.find('*').removeAttr("aria-label").removeAttr("title").off("mouseenter");
 		}

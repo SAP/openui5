@@ -3783,6 +3783,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 1, "Icon Container Created.");
 				assert.ok(this.oGenericTile._oMoreIcon.isA("sap.m.Button"), "Button is created in place of action more icon");
 				assert.equal(this.oGenericTile._oMoreIcon.getType(), "Transparent", "Button Created in Transparent Type");
+				assert.equal(this.oGenericTile._oMoreIcon.getTooltip_AsString(), this.oGenericTile._oRb.getText("GENERICTILE_MORE_ACTIONBUTTON_TEXT"), "More Action Button Tooltip is visible");
 				this.oGenericTile.setTileIcon(IMAGE_PATH + "female_BaySu.jpg");
 				oCore.applyChanges();
 				setTimeout(function(){
