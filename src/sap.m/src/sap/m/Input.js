@@ -396,7 +396,7 @@ function(
 			/**
 			 * Fired when the value of the input is changed by user interaction - each keystroke, delete, paste, etc.
 			 *
-			 * <b>Note:</b> Browsing autocomplete suggestions does not fires the event.
+			 * <b>Note:</b> Browsing autocomplete suggestions does not fire the event.
 			 */
 			liveChange : {
 				parameters : {
