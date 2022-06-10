@@ -95,6 +95,10 @@ sap.ui.define([
 						regex: /^(¤(\s)*)?[#0]*(,[#0]+)*(\.[0#]+)?((\s)*¤)?$/,
 						help: "Number pattern consisting of '#' for optional digit, '0' for mandatory digit, ',' as grouping separator, '.' as decimal separator, '¤' for the currency symbol"
 					},
+					strictGroupingValidation: {
+						type: "boolean",
+						help: "To enable strict grouping validation set to \"true\""
+					},
 					groupingEnabled: {
 						type: "boolean",
 						help: "To enable grouping of integer digits set to \"true\""
@@ -240,6 +244,7 @@ sap.ui.define([
 		},
 
 		genericParse: function(oEvent) {
+			var oSource = oEvent.getSource();
 			var sValue = oEvent.getParameter("value");
 			var oModel = this.getView().getModel();
 			var sLocale = oModel.getProperty("/locale");
@@ -251,6 +256,7 @@ sap.ui.define([
 			var oNumberFormat = NumberFormat[sFunctionName](oOptions, oLocale);
 			var aParsed = oNumberFormat.parse(sValue);
 			if (Array.isArray(aParsed)) {
+				oSource.setValueState("None");
 				if (aParsed[0] != null) {
 					oModel.setProperty("/number", aParsed[0]);
 				}
@@ -262,7 +268,10 @@ sap.ui.define([
 					}
 				}
 			} else if (aParsed) {
+				oSource.setValueState("None");
 				oModel.setProperty("/number", aParsed);
+			} else if (!aParsed) {
+				oSource.setValueState("Error");
 			}
 
 		},
