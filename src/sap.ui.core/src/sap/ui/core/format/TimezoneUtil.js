@@ -209,7 +209,7 @@ sap.ui.define([], function() {
 			parseInt(oParts.hour),
 			parseInt(oParts.minute),
 			parseInt(oParts.second),
-			parseInt(oParts.fractionalSecond));
+			parseInt(oParts.fractionalSecond || 0)); // some older browsers don't support fractionalSecond, e.g. Safari < 14.1 */
 
 		return oDate;
 	};
