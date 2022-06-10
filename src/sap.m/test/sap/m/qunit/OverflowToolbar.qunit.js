@@ -191,7 +191,7 @@ sap.ui.define([
 
 	testAllFlexBoxModes("Shrinking a toolbar should move some buttons to the overflow", function (assert) {
 
-		// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+		// Create a toolbar 600px wide with 5 buttons x 100px each, so all can fit (button margins included)
 		var aDefaultContent = [
 					new Button({text: "1", width: "100px"}),
 					new Button({text: "2", width: "100px"}),
@@ -200,7 +200,7 @@ sap.ui.define([
 					new Button({text: "5", width: "100px"})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent);
 
 		// Before the resize, all buttons are visible
@@ -235,7 +235,7 @@ sap.ui.define([
 		assert.strictEqual(iVisibleButtons, aDefaultContent.length, "After opening the overflow area, all buttons are visible once more");
 
 		// Restore the toolbar to the original size
-		oOverflowTB.setWidth('550px');
+		oOverflowTB.setWidth('600px');
 		oCore.applyChanges();
 
 		// There should be no overflow button, no overflow area, all buttons visible again
@@ -254,7 +254,7 @@ sap.ui.define([
 			renderer: ButtonRenderer
 		});
 
-		// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+		// Create a toolbar 600px wide with 5 buttons x 100px each, so all can fit (button margins included)
 		var aDefaultContent = [
 					new MyButton({text: "1", width: "100px"}),
 					new MyButton({text: "2", width: "100px"}),
@@ -263,7 +263,7 @@ sap.ui.define([
 					new MyButton({text: "5", width: "100px"})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent);
 
 		// Before the resize, all buttons are visible
@@ -287,7 +287,7 @@ sap.ui.define([
 
 	testAllFlexBoxModes("Changing the width of a control moves other controls to the overflow", function (assert) {
 
-		// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+		// Create a toolbar 600px wide with 5 buttons x 100px each, so all can fit (button margins included)
 		var aDefaultContent = [
 					new Button({text: "1", width: "100px"}),
 					new Button({text: "2", width: "100px"}),
@@ -296,7 +296,7 @@ sap.ui.define([
 					new Button({text: "5", width: "100px"})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent);
 
 		// Before the resize, all buttons are visible
@@ -330,7 +330,7 @@ sap.ui.define([
 
 	testAllFlexBoxModes("Inserting a control moves other controls to the overflow", function (assert) {
 
-		// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+		// Create a toolbar 600px wide with 5 buttons x 100px each, so all can fit (button margins included)
 		var aDefaultContent = [
 					new Button({text: "1", width: "100px"}),
 					new Button({text: "2", width: "100px"}),
@@ -339,7 +339,7 @@ sap.ui.define([
 					new Button({text: "5", width: "100px"})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent);
 
 		// Before the resize, all buttons are visible
@@ -373,7 +373,7 @@ sap.ui.define([
 	});
 
 	testAllFlexBoxModes("Async: Changing the width of a control moves other controls to the overflow", function (assert) {
-		// Arrange - create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+		// Arrange - create a toolbar 600px wide with 5 buttons x 100px each, so all can fit (button margins included)
 		var aDefaultContent = [
 					new Button({text: "1", width: "100px"}),
 					new Button({text: "2", width: "100px"}),
@@ -382,7 +382,7 @@ sap.ui.define([
 					new Button({text: "5", width: "100px"})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px",
+					width: "600px",
 					asyncMode: true
 				}, aDefaultContent),
 				done = assert.async(),
@@ -431,7 +431,7 @@ sap.ui.define([
 
 	testAllFlexBoxModes("Buttons with layout to stay in overflow never go to the toolbar", function (assert) {
 
-		// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+		// Create a toolbar 600px wide with 5 buttons x 100px each, so all can fit (button margins included)
 		var aDefaultContent = [
 					getButton('1'),
 					getButton('2'),
@@ -440,7 +440,7 @@ sap.ui.define([
 					getButton('5')
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent);
 
 		// Initially there is an overflow button and not all buttons are visible on the toolbar
@@ -454,7 +454,7 @@ sap.ui.define([
 
 	testAllFlexBoxModes("Buttons with layout to stay in the toolbar never go to the overflow", function (assert) {
 
-		// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+		// Create a toolbar 600px wide with 5 buttons x 100px each, so all can fit (button margins included)
 		var aDefaultContent = [
 					getButton('1'),
 					getButton('2'),
@@ -463,7 +463,7 @@ sap.ui.define([
 					new Button({text: "5", width: "100px", layoutData: new OverflowToolbarLayoutData({moveToOverflow: false})})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent);
 
 		// Before the resize, the button with special layout is in the toolbar
@@ -1954,7 +1954,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("[_doLayout] Control-size cache is invalidated only when necessary and resize handler is called always", function (assert) {
-		// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+		// Create a toolbar 600px wide with 5 buttons x 100px each, so all can fit (button margins included)
 		var aDefaultContent = [
 					new Button({text: "1", width: "100px"}),
 					new Button({text: "2", width: "100px"}),
@@ -1963,7 +1963,7 @@ sap.ui.define([
 					new Button({text: "5", width: "100px"})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent);
 
 		var spyCache = this.spy(OverflowToolbar.prototype, "_cacheControlsInfo");
@@ -1991,7 +1991,7 @@ sap.ui.define([
 		assert.strictEqual(spyResizeHandler.callCount, 3, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
 		// Change the width of the toolbar again - the cache should not be invalidated
-		oOverflowTB.setWidth("550px");
+		oOverflowTB.setWidth("600px");
 		this.clock.tick(1000);
 
 		assert.strictEqual(spyCache.callCount, 2, "When there is just a resize (again), the cache isn't recalculated");
@@ -2034,7 +2034,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("[onThemeChanged] resets also values in _aControlSizes object", function (assert) {
-		// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+		// Create a toolbar 600px wide with 5 buttons x 100px each, so all can fit (button margins included)
 		var aDefaultContent = [
 			new Button({text: "1", width: "100px"}),
 			new Button({text: "2", width: "100px"}),
@@ -2043,7 +2043,7 @@ sap.ui.define([
 			new Button({text: "5", width: "100px"})
 		],
 		oOverflowTB = createOverflowToolbar({
-			width: "550px"
+			width: "600px"
 		}, aDefaultContent);
 
 		oOverflowTB.placeAt("qunit-fixture");
@@ -2072,7 +2072,7 @@ sap.ui.define([
 					new Button({text: "5", width: "100px"})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent, true),
 				spyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
@@ -2103,7 +2103,7 @@ sap.ui.define([
 					new Button({text: "1", width: "100px"})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent, true),
 				oSpyCache;
 
@@ -2130,7 +2130,7 @@ sap.ui.define([
 					new Button({text: "1", width: "100px"})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent, true),
 				oFirtItem = oOverflowTB.getContent()[0],
 				iInitialItemWidth = oFirtItem.$().outerWidth(true),
@@ -2164,7 +2164,7 @@ sap.ui.define([
 					new Text({text: "Label2" })
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent, true),
 				oSpyCache;
 
@@ -2305,7 +2305,7 @@ sap.ui.define([
 				new Button({text: "5", width: "100px"})
 			],
 			oOverflowTB = createOverflowToolbar({
-				width: "550px"
+				width: "600px"
 			}, aDefaultContent);
 
 		var spyResizeHandler = this.spy(OverflowToolbar.prototype, "_setControlsOverflowAndShrinking");
@@ -2334,7 +2334,7 @@ sap.ui.define([
 					new Button({text: "5", width: "100px"})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent);
 
 		var spyResizeHandler = this.spy(OverflowToolbar.prototype, "_setControlsOverflowAndShrinking");
@@ -2360,7 +2360,7 @@ sap.ui.define([
 					new Button({text: "2", width: "100px"})
 				],
 				oOverflowTB = createOverflowToolbar({
-					width: "550px"
+					width: "600px"
 				}, aDefaultContent);
 
 		var spyResizeHandler = this.spy(OverflowToolbar.prototype, "_setControlsOverflowAndShrinking");
@@ -2384,7 +2384,7 @@ sap.ui.define([
 			// arrange
 			var aDefaultContent = aControls,
 					oOverflowTB = createOverflowToolbar({
-						width: "550px"
+						width: "600px"
 					}, aDefaultContent),
 				spyResizeHandler = this.spy(OverflowToolbar.prototype, "_setControlsOverflowAndShrinking"),
 				spyInvalidate = this.spy(OverflowToolbar.prototype, "invalidate"),
@@ -2481,7 +2481,7 @@ sap.ui.define([
 			new Button({text: "5", width: "100px"})
 		],
 		oOverflowTB = createOverflowToolbar({
-			width: "550px"
+			width: "600px"
 		}, aDefaultContent),
 		done = assert.async(),
 		oSpy = this.spy,
@@ -2524,7 +2524,7 @@ sap.ui.define([
 				new Button({text: "5", width: "100px"})
 			],
 			oOverflowTB = createOverflowToolbar({
-				width: "550px"
+				width: "600px"
 			}, aDefaultContent),
 			done = assert.async(),
 			oSpy = this.spy,
@@ -2564,7 +2564,7 @@ sap.ui.define([
 				new Button({text: "2", width: "100px"})
 			],
 			oOverflowTB = createOverflowToolbar({
-				width: "550px"
+				width: "600px"
 			}, aDefaultContent),
 			done = assert.async(),
 			oSpy = this.spy,
@@ -2882,7 +2882,7 @@ sap.ui.define([
 			"Size is equal to minWidth (3rem) + left margin of first child");
 
 		// OFT has right padding, we deduct it
-		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton2), (50 * (300 - (0.25 * iRemInPx))) / 100 + (0.5 * iRemInPx),
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton2), (50 * (300 - (oOTB.$().innerWidth() - oOTB.$().width()))) / 100 + (0.5 * iRemInPx),
 			"Size is equal to minWidth (148px) + left margin");
 	});
 
@@ -3011,7 +3011,7 @@ sap.ui.define([
 		// Arrange
 		var oTestButton = new Button({width: "240px"}),
 			oTestButton2 = new Button({width: "248.5px"}),
-			oOTB = createOverflowToolbar({width: "504px"}, [oTestButton, oTestButton2]),
+			oOTB = createOverflowToolbar({width: "600px"}, [oTestButton, oTestButton2]),
 			oOverflowButton;
 
 		oOTB.placeAt("qunit-fixture");

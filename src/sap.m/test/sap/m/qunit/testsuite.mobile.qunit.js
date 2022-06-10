@@ -812,6 +812,9 @@ sap.ui.define([
 				sinon: {
 					version: 1, // one test fails with sinon-4 fakeTimer
 					useFakeTimers: true
+				},
+				qunit: {
+					version: "edge"
 				}
 			},
 			OverflowToolbarButton: {
