@@ -6554,4 +6554,102 @@ sap.ui.define([
 
 		assert.deepEqual(oModel.mChangedEntities, {key0 : {prop0 : "A"}});
 	});
+
+	//*********************************************************************************************
+[undefined, {}, {__metadata : undefined}, {__metadata : {}}].forEach(function (oData, i) {
+	QUnit.test("_resolveGroup: no group found #" + i, function (assert) {
+		var oModel = {
+				mChangeGroups : {/*no default group set*/},
+				oMetadata : {_getEntityTypeByPath : function () {}},
+				_getObject : function () {}
+			};
+
+		this.mock(oModel).expects("_getObject").withExactArgs("/~key").returns(oData);
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("/~key")
+			.returns({name : "foo"});
+
+		// code under test
+		assert.deepEqual(
+			ODataModel.prototype._resolveGroup.call(oModel, "/~key"),
+			{groupId: undefined, changeSetId: undefined});
+	});
+});
+
+	//*********************************************************************************************
+["/~key", "~key"].forEach(function (sKeyOrPath) {
+	QUnit.test("_resolveGroup: sKeyOrPath defaulting (" + sKeyOrPath + ")", function (assert) {
+		var oModel = {
+				mChangeGroups : {/*no default group set*/},
+				oMetadata : {_getEntityTypeByPath : function () {}},
+				_getObject : function () {}
+			};
+
+		this.mock(oModel).expects("_getObject").withExactArgs("/~key").returns(undefined);
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("/~key")
+			.returns({name : "foo"});
+
+		// code under test
+		assert.deepEqual(
+			ODataModel.prototype._resolveGroup.call(oModel, sKeyOrPath),
+			// groupId not relevant for test scenario
+			{groupId: undefined, changeSetId: undefined});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_resolveGroup: resolved from created entry", function (assert) {
+		var oModel = {_getObject : function () {}};
+
+		this.mock(oModel).expects("_getObject")
+			.withExactArgs("/~key")
+			.returns({__metadata : {created : {groupId: "~groupId", changeSetId: "~changeSetId"}}});
+
+		// code under test
+		assert.deepEqual(
+			ODataModel.prototype._resolveGroup.call(oModel, "/~key"),
+			{groupId: "~groupId", changeSetId: "~changeSetId"});
+	});
+
+	//*********************************************************************************************
+[{
+	entityTypeName : "~anyType",
+	result : {changeSetId : "changeSet0", groupId : "group0"}
+}, {
+	entityTypeName : "~type",
+	result : {changeSetId : "changeSet1", groupId : "group1"}
+}].forEach(function (oFixture) {
+	[false, true].forEach(function (bSingleMode) {
+	var sTitle = "_resolveGroup: resolved from mChangeGroups; entity type = "
+			+ oFixture.entityTypeName + "; single mode = " + bSingleMode;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = {
+				mChangeGroups : {
+					"*" : {changeSetId : "changeSet0", groupId : "group0", single : bSingleMode},
+					"~type" : {changeSetId : "changeSet1", groupId : "group1", single : bSingleMode}
+				},
+				oMetadata : {_getEntityTypeByPath : function () {}},
+				_getObject : function () {}
+			},
+			oResult;
+
+		this.mock(oModel).expects("_getObject").withExactArgs("/~key").returns(undefined);
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("/~key")
+			.returns({name : oFixture.entityTypeName});
+
+		// code under test
+		oResult = ODataModel.prototype._resolveGroup.call(oModel, "/~key");
+
+		if (bSingleMode) {
+			assert.strictEqual(oResult.groupId, oFixture.result.groupId);
+			assert.ok(oResult.changeSetId.startsWith("id-"));
+		} else {
+			assert.deepEqual(oResult, oFixture.result);
+		}
+	});
+	});
+});
 });
