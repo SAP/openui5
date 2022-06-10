@@ -290,13 +290,17 @@ sap.ui.define([
 				var sUrl = "https://example.com/{Product_Category}";
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				this.oAddIFrameDialog._oController.onShowPreview();
-				assert.strictEqual(
-					oCore.byId("sapUiRtaAddIFrameDialog_PreviewFrame").getUrl(),
-					"https://example.com/Ice%20Cream",
-					"then the preview url is encoded properly"
-				);
-				clickOnCancel();
+				var oIFrame = oCore.byId("sapUiRtaAddIFrameDialog_PreviewFrame");
+				oIFrame._oSetUrlPromise.then(function() {
+					assert.strictEqual(
+						oIFrame.getUrl(),
+						"https://example.com/Ice%20Cream",
+						"then the preview url is encoded properly"
+					);
+					clickOnCancel();
+				});
 			}, this);
+
 			return this.oAddIFrameDialog.open(mParameters);
 		});
 

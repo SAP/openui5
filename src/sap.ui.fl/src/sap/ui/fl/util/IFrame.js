@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"./getContainerUserInfo",
 	"sap/base/util/extend",
+	"sap/base/util/restricted/_CancelablePromise",
 	"sap/base/security/URLListValidator",
 	"sap/base/Log",
 	"sap/ui/core/library",
@@ -19,6 +20,7 @@ sap.ui.define([
 	JSONModel,
 	getContainerUserInfo,
 	extend,
+	CancelablePromise,
 	URLListValidator,
 	Log
 ) {
@@ -112,7 +114,30 @@ sap.ui.define([
 			var sEncodedUrl = decodeURI(sUrl) === sUrl ? encodeURI(sUrl) : sUrl;
 
 			if (IFrame.isValidUrl(sEncodedUrl)) {
-				this.setProperty("url", sEncodedUrl);
+				// Setting the url of the IFrame directly can lead to issues
+				// if the change doesn't result in a reload of the embedded page
+				// e.g. when a navigation parameter is changed
+				// To avoid problems with the ushell and the embedded apps, it is safer
+				// to unload the iframe content first and thus force a full browser reload
+
+				if (this._oSetUrlPromise) {
+					this._oSetUrlPromise.cancel();
+					delete this._oSetUrlPromise;
+				}
+
+				this.setProperty("url", "");
+
+				this._oSetUrlPromise = new CancelablePromise(function (fnResolve, fnReject, onCancel) {
+					onCancel.shouldReject = false;
+					// Use a timeout here to avoid issues with browser caching in Chrome
+					// that seem to lead to a mismatch between IFrame content and src,
+					// see Chromium issue 324102
+					setTimeout(fnResolve, 0);
+				});
+
+				this._oSetUrlPromise.then(function() {
+					this.setProperty("url", sEncodedUrl);
+				}.bind(this));
 			} else {
 				Log.error("Provided URL is not valid as an IFrame src");
 			}

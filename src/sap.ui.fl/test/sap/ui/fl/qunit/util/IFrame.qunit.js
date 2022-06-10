@@ -5,15 +5,19 @@ sap.ui.define([
 	"sap/base/security/URLListValidator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
-	"sap/ui/core/mvc/XMLView"
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	IFrame,
 	URLListValidator,
 	JSONModel,
 	Core,
-	XMLView
+	XMLView,
+	sinon
 ) {
 	"use strict";
+
+	var sandbox = sinon.createSandbox();
 
 	var sTitle = "IFrame Title";
 	var sProtocol = "https";
@@ -26,6 +30,17 @@ sap.ui.define([
 	var sUserFullName = sUserFirstName + " " + sUserLastName;
 	var sUserEmail = (sUserFirstName + "." + sUserLastName).toLowerCase() + "@sap.com";
 
+	function checkUrl(assert, oIFrame, sExpectedUrl, sDescription) {
+		return (oIFrame._oSetUrlPromise || Promise.resolve())
+			.then(function() {
+				assert.strictEqual(
+					oIFrame.getUrl(),
+					sExpectedUrl,
+					"then the url is properly updated" || sDescription
+				);
+			});
+	}
+
 	QUnit.module("Basic properties", {
 		beforeEach: function () {
 			this.oIFrame = new IFrame({
@@ -34,9 +49,11 @@ sap.ui.define([
 				url: sOpenUI5Url,
 				title: sTitle
 			});
+			return this.oIFrame._oSetUrlPromise;
 		},
 		afterEach: function () {
 			this.oIFrame.destroy();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("width", function (assert) {
@@ -48,7 +65,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("url", function (assert) {
-			assert.equal(this.oIFrame.getUrl(), sOpenUI5Url, "Url is correct using 'equals()'!");
+			return checkUrl(assert, this.oIFrame, sOpenUI5Url);
 		});
 
 		QUnit.test("title", function (assert) {
@@ -58,7 +75,22 @@ sap.ui.define([
 		QUnit.test("when trying to set the url to an invalid value", function(assert) {
 			// eslint-disable-next-line no-script-url
 			this.oIFrame.setUrl("javascript:someJs");
-			assert.strictEqual(this.oIFrame.getUrl(), sOpenUI5Url, "then the value is rejected");
+			return checkUrl(assert, this.oIFrame, sOpenUI5Url, "then the value is rejected");
+		});
+
+		QUnit.test("when changing a navigation parameter", function(assert) {
+			var oSetUrlSpy = sandbox.spy(this.oIFrame, "setProperty").withArgs("url");
+			var sNewUrl = sOpenUI5Url + "#someNavParameter";
+			this.oIFrame.setUrl(sNewUrl);
+			return checkUrl(assert, this.oIFrame, sNewUrl)
+				.then(function() {
+					assert.strictEqual(oSetUrlSpy.callCount, 2);
+					assert.strictEqual(
+						oSetUrlSpy.firstCall.args[1],
+						"",
+						"then the iframe is unloaded"
+					);
+				});
 		});
 	});
 
@@ -137,11 +169,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("url", function (assert) {
-			assert.equal(this.oIFrame.getUrl(), sOpenUI5Url, "Url is correct using 'equals()'!");
-		});
-
-		QUnit.test("url", function (assert) {
-			assert.equal(this.oIFrame.getUrl(), sOpenUI5Url, "Url is correct using 'equals()'!");
+			return checkUrl(assert, this.oIFrame, sOpenUI5Url);
 		});
 
 		QUnit.test("getFocusDomRef", function (assert) {
@@ -155,11 +183,13 @@ sap.ui.define([
 			var sSapUI5Url = sProtocol + "://sapui5." + sServer + "/";
 
 			this.oModel.setProperty("/flavor", "sapui5");
-			Core.applyChanges();
 
-			assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "URL has changed to the expected one");
-			assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
-			assert.strictEqual(oFocusDomRef.getAttribute("src"), sSapUI5Url, "iframe src has changed to the expected one");
+			return checkUrl(assert, this.oIFrame, sSapUI5Url)
+				.then(function() {
+					Core.applyChanges();
+					assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
+					assert.strictEqual(oFocusDomRef.getAttribute("src"), sSapUI5Url, "iframe src has changed to the expected one");
+				}.bind(this));
 		});
 	});
 
@@ -316,11 +346,7 @@ sap.ui.define([
 			var iFrame = this.myView.byId("iframe2");
 			var sEncodedUrl = encodeURI(sOpenUI5Url + "?someParameter=" + sUserFullName);
 			iFrame.setUrl(sEncodedUrl);
-			assert.strictEqual(
-				iFrame.getUrl(),
-				sEncodedUrl,
-				"then it is not encoded again"
-			);
+			return checkUrl(assert, iFrame, sEncodedUrl, "then it is not encoded again");
 		});
 		QUnit.test("Simple binding URL (with unexpected reference) should be reverted back to binding in settings", function(assert) {
 			var iFrame = this.myView.byId("iframe3");
