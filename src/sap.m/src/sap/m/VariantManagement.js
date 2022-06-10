@@ -237,16 +237,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Indicates that the control is in error state. If set to <code>true</code>, an error message will be displayed whenever the variant is
-				 * opened.
-				 */
-				inErrorState: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: false
-				},
-
-				/**
 				 * Determines the behavior for Apply Automatically if the standard variant is marked as the default variant.
 				 *
 				 */

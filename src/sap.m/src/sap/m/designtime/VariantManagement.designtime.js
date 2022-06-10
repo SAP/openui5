@@ -47,9 +47,6 @@ sap.ui.define([
 			popoverTitle: {
 				ignore: false
 			},
-			inErrorState: {
-				ignore: false
-			},
 			executeOnSelectionForStandardDefault: {
 				ignore: false
 			},
