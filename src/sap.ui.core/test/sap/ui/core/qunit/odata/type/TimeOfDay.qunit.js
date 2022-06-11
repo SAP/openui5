@@ -62,7 +62,6 @@ sap.ui.define([
 		assert.ok(oType instanceof TimeOfDay, "is a TimeOfDay");
 		assert.ok(oType instanceof ODataType, "is an ODataType");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.TimeOfDay", "type name");
-		assert.strictEqual(sap.ui.model.odata.type.TimeOfDay, TimeOfDay);
 		assert.strictEqual(oType.oFormatOptions, oFormatOptions, "format options");
 		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.strictEqual(oType.oConstraints, undefined, "default constraints");

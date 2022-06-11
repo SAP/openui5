@@ -103,7 +103,7 @@ sap.ui.define([
 				 * @param {number} iRow
 				 *   The item position in the table, with the top being 0
 				 * @param {string} sNewNote
-				 *   A message shortcut refering to <code>mNoteShort2Note</code>; if it is not
+				 *   A message shortcut referring to <code>mNoteShort2Note</code>; if it is not
 				 *   contained use the given note value
 				 */
 				changeItemNote : function (iRow, sNewNote) {
@@ -1078,7 +1078,7 @@ sap.ui.define([
 					this.waitFor({
 						autoWait : false,
 						check : function () {
-							return !!sap.ui.test.Opa5.getJQuery()(".sapMMessageToast").length;
+							return !!Opa5.getJQuery()(".sapMMessageToast").length;
 						},
 						errorMessage : "No Toast message detected!",
 						success : function () {
@@ -1162,7 +1162,7 @@ sap.ui.define([
 					});
 				},
 				/*
-				 * Checks wheter the sales order items table is empty.
+				 * Checks whether the sales order items table is empty.
 				 */
 				checkSalesOrderItemsTableIsEmpty : function () {
 					this.waitFor({

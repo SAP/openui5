@@ -395,7 +395,7 @@ function (
 	QUnit.test("_onResize does not invalidates infinitely when control is not visible", function (assert) {
 		// Arrange
 		var oSpy;
-		this.oPage = new sap.m.Page({
+		this.oPage = new Page({
 			content: [ this.oAvatarGroup ]
 		});
 		this.oPage.placeAt(DOM_RENDER_LOCATION);

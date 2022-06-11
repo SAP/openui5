@@ -255,7 +255,7 @@ sap.ui.define([
 		this.oTPC.setDisplayFormat("HH:mm:ss");
 
 		// assert
-		assert.ok(this.oTPC._getHoursClock() instanceof sap.m.TimePickerClock, "should be instance of sap.m.TimePickerClock");
+		assert.ok(this.oTPC._getHoursClock().isA("sap.m.TimePickerClock"), "should be instance of sap.m.TimePickerClock");
 		assert.ok(this.oTPC._getHoursClock().getId().indexOf("-clockH") !== -1, "id of the clock should contain '-clockH'");
 	});
 

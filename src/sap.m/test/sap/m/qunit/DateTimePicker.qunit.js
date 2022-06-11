@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/DateTime",
+	"sap/ui/model/type/String",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/Device",
 	"sap/m/TimePickerClocks",
@@ -25,6 +26,7 @@ sap.ui.define([
 	Button,
 	JSONModel,
 	DateTime,
+	TypeString,
 	ODataDateTime,
 	Device,
 	TimePickerClocks,
@@ -1155,7 +1157,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// act
-		oDTP.bindProperty("value", { path: '/date', type: new sap.ui.model.type.String() });
+		oDTP.bindProperty("value", { path: '/date', type: new TypeString() });
 		oCore.applyChanges();
 
 		// assert
@@ -1169,7 +1171,7 @@ sap.ui.define([
 	QUnit.test("timezone setter does not update 'value' when timezone is the same", function(assert) {
 		// arrange
 		var done = assert.async(),
-			oDTP = new sap.m.DateTimePicker("dtp", {
+			oDTP = new DateTimePicker("dtp", {
 				value: "2022-02-11T07:16:33",
 				valueFormat: "yyyy-MM-dd'T'HH:mm:ss",
 				displayFormat: "medium",

@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Control",
 	"sap/ui/core/Icon",
+	"sap/ui/core/Item",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/Grid",
 	"sap/m/SearchField",
@@ -50,6 +51,7 @@ sap.ui.define([
 	InvisibleText,
 	Control,
 	Icon,
+	Item,
 	HorizontalLayout,
 	Grid,
 	SearchField,
@@ -87,6 +89,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
+
+	// shortcut for sap.m.FlexAlignItems
+	var FlexAlignItems = mobileLibrary.FlexAlignItems;
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
@@ -794,17 +799,17 @@ sap.ui.define([
 		if (!this.oErrorVariantPopOver) {
 			oVBox = new VBox({
 				fitContainer: true,
-				alignItems: sap.m.FlexAlignItems.Center,
+				alignItems: FlexAlignItems.Center,
 				items: [
 					new Icon({
 						size: "4rem",
 						color: "lightgray",
 						src: "sap-icon://message-error"
 					}), new Title({
-						titleStyle: sap.ui.core.TitleLevel.H2,
+						titleStyle: TitleLevel.H2,
 						text: this._oRb.getText("VARIANT_MANAGEMENT_ERROR_TEXT1")
 					}), new Text({
-						textAlign: sap.ui.core.TextAlign.Center,
+						textAlign: TextAlign.Center,
 						text: this._oRb.getText("VARIANT_MANAGEMENT_ERROR_TEXT2")
 					})
 				]
@@ -942,7 +947,7 @@ sap.ui.define([
 		this.oVariantList.setNoDataText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA"));
 
 
-		var oItemTemplate = new sap.ui.core.Item({
+		var oItemTemplate = new Item({
 			key: "{$mVariants>key}",
 			text: "{$mVariants>title}"
 		});

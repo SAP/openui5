@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,browser,expect*/
+/*global describe,it,element,by,takeScreenshot,browser,expect,jQuery*/
 
 describe("sap.m.Wizard", function() {
 	"use strict";

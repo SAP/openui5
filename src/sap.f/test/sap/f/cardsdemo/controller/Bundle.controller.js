@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/integration/widgets/Card",
-	"sap/f/GridContainerItemLayoutData"
-], function (Controller, Card, GridContainerItemLayoutData) {
+	"sap/f/GridContainerItemLayoutData",
+	"sap/ui/thirdparty/jquery"
+], function (Controller, Card, GridContainerItemLayoutData, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.Bundle", {

@@ -2149,7 +2149,7 @@ sap.ui.define([
 	QUnit.module("Tooltips", function (hooks) {
 		hooks.before(function () {
 			// dummy class
-			SliderTooltipBase.extend("sap.xx.SliderTooltipCustom", {});
+			this.SliderTooltipCustom = SliderTooltipBase.extend("sap.xx.SliderTooltipCustom", {});
 		});
 
 		hooks.beforeEach(function () {
@@ -2173,7 +2173,7 @@ sap.ui.define([
 		QUnit.test("Custom tooltips: should be set if provided", function (assert) {
 			var aDefaultTooltips;
 
-			this.oSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
+			this.oSlider.addCustomTooltip(new this.SliderTooltipCustom());
 			Core.applyChanges();
 
 			aDefaultTooltips = this.oSlider.getAggregation("_defaultTooltips") || [];
@@ -2186,8 +2186,8 @@ sap.ui.define([
 			var log = sap.ui.require('sap/base/Log'),
 				fnWarningSpy = this.spy(log, "warning");
 
-			this.oSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
-			this.oSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
+			this.oSlider.addCustomTooltip(new this.SliderTooltipCustom());
+			this.oSlider.addCustomTooltip(new this.SliderTooltipCustom());
 			this.oSlider.placeAt("content");
 			Core.applyChanges();
 
@@ -2215,7 +2215,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Tooltips: Removing all custom tooltips should fallback the defaults", function (assert) {
-			var oTooltip = new sap.xx.SliderTooltipCustom(),
+			var oTooltip = new this.SliderTooltipCustom(),
 				oSliderTooltipContainer = this.oSlider.getAggregation("_tooltipContainer");
 
 			// act
@@ -2257,7 +2257,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Tooltips: Destroying Custom tooltip should fallback to default", function (assert) {
-			var oCustomTooltip = new sap.xx.SliderTooltipCustom(),
+			var oCustomTooltip = new this.SliderTooltipCustom(),
 				oSliderTooltipContainer = this.oSlider.getAggregation("_tooltipContainer");
 
 			this.oSlider.addCustomTooltip(oCustomTooltip);

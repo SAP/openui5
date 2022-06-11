@@ -5,10 +5,14 @@
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
+			data-sap-ui-async="true"
 			data-sap-ui-compatVersion="edge"
-			data-sap-ui-libs="sap.ui.core,sap.m,sap.ui.layout">
+			data-sap-ui-libs="sap.ui.core,sap.m,sap.ui.layout"
+			data-sap-ui-onInit="module:local/IconTabBar"
+			data-sap-ui-resourceRoots='{
+				"local": "./"
+			}'>
 		</script>
-		<script src="./IconTabBar.js"></script>
 		<link rel="stylesheet" href="IconTabBar.css">
 	</head>
 	<body id="body" class="sapUiBody">

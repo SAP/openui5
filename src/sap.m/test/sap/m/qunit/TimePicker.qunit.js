@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/TimePicker",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/DatePicker",
+	"sap/m/DateTimeField",
 	"sap/ui/model/type/Time",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -41,6 +42,7 @@ sap.ui.define([
 	TimePicker,
 	jQuery,
 	DatePicker,
+	DateTimeField,
 	Time,
 	JSONModel,
 	ODataModel,
@@ -3418,7 +3420,7 @@ sap.ui.define([
 
 	QUnit.test("Value state and value state text are properly updated", function(assert) {
 		// Arrange
-		var oFocusInSpy = this.spy(sap.m.DateTimeField.prototype, "onfocusin"),
+		var oFocusInSpy = this.spy(DateTimeField.prototype, "onfocusin"),
 			oFakeEvent = {
 				target: {
 					classList: {

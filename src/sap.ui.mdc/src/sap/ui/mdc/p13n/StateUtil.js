@@ -136,7 +136,7 @@ sap.ui.define([
 		 * @returns {Promise} <code>Promise</code> that resolves after the current state has been diffed
 		 */
 		diffState: function(oControl, oOldState, oNewState) {
-			return sap.ui.mdc.p13n.Engine.getInstance().diffState(oControl, Engine.getInstance().internalizeKeys(oControl, oOldState), Engine.getInstance().internalizeKeys(oControl, oNewState))
+			return Engine.getInstance().diffState(oControl, Engine.getInstance().internalizeKeys(oControl, oOldState), Engine.getInstance().internalizeKeys(oControl, oNewState))
 			.then(function(oEngineStateDiff){
 				return Engine.getInstance().externalizeKeys(oControl, oEngineStateDiff);
 			});

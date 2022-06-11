@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'sap/ui/Device',
 	'sap/ui/mdc/enum/EditMode',
 	'sap/ui/mdc/enum/FieldDisplay',
@@ -33,7 +32,6 @@ sap.ui.define([
 	'sap/base/util/restricted/_debounce',
 	'sap/ui/events/KeyCodes'
 ], function(
-	jQuery,
 	Device,
 	EditMode,
 	FieldDisplay,

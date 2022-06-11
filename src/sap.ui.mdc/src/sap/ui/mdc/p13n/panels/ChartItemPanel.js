@@ -24,9 +24,12 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/CustomData",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/ValueState"
-], function (BasePanel, Label, ColumnListItem, Select, Text, Item, MDCLib, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, ValueState) {
+	"sap/ui/core/library"
+], function (BasePanel, Label, ColumnListItem, Select, Text, Item, MDCLib, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
     // shortcut for sap.m.FlexJustifyContent
 	var FlexJustifyContent = mLibrary.FlexJustifyContent;

@@ -179,7 +179,7 @@ sap.ui.define([
 				}
 			},
 			getExtensionComponent: function() {
-				return sap.ui.core.Component.registry.filter(function(oComponent) {
+				return Component.registry.filter(function(oComponent) {
 					return oComponent.getManifestEntry("/sap.app/id") === "my.command.constructor";
 				})[0] || this;
 			}

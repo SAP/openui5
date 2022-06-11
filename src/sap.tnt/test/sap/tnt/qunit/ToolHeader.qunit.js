@@ -88,7 +88,7 @@ sap.ui.define([
 
 					},
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
+						priority: OverflowToolbarPriority.Low
 					})
 				}),
 				new Button({

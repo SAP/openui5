@@ -1511,7 +1511,7 @@ sap.ui.define([
 	QUnit.module("Tooltips", function (hooks) {
 		hooks.before(function () {
 			// dummy class
-			SliderTooltipBase.extend("sap.xx.SliderTooltipCustom", {});
+			this.SliderTooltipCustom = SliderTooltipBase.extend("sap.xx.SliderTooltipCustom", {});
 		});
 
 		hooks.beforeEach(function () {
@@ -1531,7 +1531,7 @@ sap.ui.define([
 			var oTooltipContainer = this.oRangeSlider.getAggregation("_tooltipContainer"),
 				oAssociatedTooltips;
 
-			this.oRangeSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
+			this.oRangeSlider.addCustomTooltip(new this.SliderTooltipCustom());
 			oCore.applyChanges();
 
 			oAssociatedTooltips = oTooltipContainer.getAssociatedTooltipsAsControls();
@@ -1546,9 +1546,9 @@ sap.ui.define([
 			var oTooltipContainer = this.oRangeSlider.getAggregation("_tooltipContainer"),
 				oAssociatedTooltips, aCustomTooltips;
 
-			this.oRangeSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
-			this.oRangeSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
-			this.oRangeSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
+			this.oRangeSlider.addCustomTooltip(new this.SliderTooltipCustom());
+			this.oRangeSlider.addCustomTooltip(new this.SliderTooltipCustom());
+			this.oRangeSlider.addCustomTooltip(new this.SliderTooltipCustom());
 			oCore.applyChanges();
 
 			oAssociatedTooltips = oTooltipContainer.getAssociatedTooltipsAsControls();
@@ -1562,8 +1562,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Tooltips: Destroying Custom tooltip when 2 are available", function (assert) {
-			var oFirstCustomTooltip = new sap.xx.SliderTooltipCustom(),
-				oSecondCustomTooltip = new sap.xx.SliderTooltipCustom(),
+			var oFirstCustomTooltip = new this.SliderTooltipCustom(),
+				oSecondCustomTooltip = new this.SliderTooltipCustom(),
 				oSliderTooltipContainer = this.oRangeSlider.getAggregation("_tooltipContainer"),
 				oAssociatedTooltips;
 
@@ -1585,9 +1585,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("Tooltips: Destroying Custom tooltip when more than 2 are available", function (assert) {
-			var oFirstCustomTooltip = new sap.xx.SliderTooltipCustom(),
-				oSecondCustomTooltip = new sap.xx.SliderTooltipCustom(),
-				oThirdCustomTooltip = new sap.xx.SliderTooltipCustom(),
+			var oFirstCustomTooltip = new this.SliderTooltipCustom(),
+				oSecondCustomTooltip = new this.SliderTooltipCustom(),
+				oThirdCustomTooltip = new this.SliderTooltipCustom(),
 				oSliderTooltipContainer = this.oRangeSlider.getAggregation("_tooltipContainer"),
 				oAssociatedTooltips;
 
@@ -1608,9 +1608,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("Tooltips: Destroying Custom tooltip when more than 2 are available", function (assert) {
-			var oFirstCustomTooltip = new sap.xx.SliderTooltipCustom(),
-				oSecondCustomTooltip = new sap.xx.SliderTooltipCustom(),
-				oThirdCustomTooltip = new sap.xx.SliderTooltipCustom(),
+			var oFirstCustomTooltip = new this.SliderTooltipCustom(),
+				oSecondCustomTooltip = new this.SliderTooltipCustom(),
+				oThirdCustomTooltip = new this.SliderTooltipCustom(),
 				oSliderTooltipContainer = this.oRangeSlider.getAggregation("_tooltipContainer"),
 				oAssociatedTooltips;
 

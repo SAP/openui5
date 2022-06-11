@@ -1,10 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/dnd/DragInfo',
 	'sap/ui/core/dnd/DropInfo'
-], function (Controller, JSONModel, jQuery, DragInfo, DropInfo) {
+], function (Controller, JSONModel, DragInfo, DropInfo) {
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.GridContainerQuery", {

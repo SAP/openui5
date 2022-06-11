@@ -665,7 +665,7 @@ sap.ui.define([
 
 			if (oRowContext) { // formatter is called with oRowContext null initially
 				aMessages = oRowContext.getMessages();
-				return aMessages.length ? aMessages[0].type : sap.ui.core.MessageType.None;
+				return aMessages.length ? aMessages[0].type : MessageType.None;
 			}
 
 			return undefined;

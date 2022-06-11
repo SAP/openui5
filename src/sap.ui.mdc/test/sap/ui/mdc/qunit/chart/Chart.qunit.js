@@ -28,6 +28,9 @@ function(
 ) {
     "use strict";
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = CoreLibrary.TitleLevel;
+
     var sDelegatePath = "test-resources/sap/ui/mdc/delegates/ChartDelegate";
 
 	QUnit.module("sap.ui.mdc.Chart: Simple Properties", {
@@ -484,7 +487,7 @@ function(
 
 			var toolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "_setHeaderLevel");
 
-			assert.ok(this.oMDCChart.setHeaderLevel(sap.ui.core.TitleLevel.H3));
+			assert.ok(this.oMDCChart.setHeaderLevel(TitleLevel.H3));
 
 			assert.ok(toolbarSpy.calledOnce, "setHeaderLevel called on toolbar");
 			assert.equal(this.oMDCChart.getAggregation("_toolbar")._oTitle.getLevel(), sap.ui.core.TitleLevel.H3, "Level set on title");

@@ -4961,7 +4961,7 @@ sap.ui.define([
 		var oListItem = oMultiComboBox._getList().getItems()[0];
 		var oDomListItem = oListItem.getDomRef();
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
+		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
 
@@ -4972,8 +4972,8 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxHasToken"), "The control should have a class set.");
 
 		oMultiComboBox.focus();
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
 
 		this.clock.tick(500);
 
@@ -5003,8 +5003,8 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxHasToken"), "The control should have a class set.");
 
 		oMultiComboBox.focus();
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
 
 		this.clock.tick(500);
 
@@ -5094,7 +5094,7 @@ sap.ui.define([
 
 	QUnit.test("Tokenizer should scroll to end when focus is outside MCB", function(assert) {
 
-		var oFakeEvent = sap.ui.base.Event,
+		var oFakeEvent = new Event(),
 			oMultiComboBox = new MultiComboBox({
 				items: [
 					new Item({
@@ -5436,7 +5436,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.getFocusDomRef().value = "I";
-		sap.ui.qunit.QUnitUtils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
+		qutils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
 
 		aListItems = oMultiComboBox._getList().getItems();
 		aListItems[4].getDomRef().focus(); // Focus random item just so that the focus is not in the input for the check in onAfterRenderingList();
@@ -5922,7 +5922,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getList().getItems()[0].getDomRef(), document.activeElement, "The first item in the list should be focused");
@@ -5934,7 +5934,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
@@ -5952,25 +5952,25 @@ sap.ui.define([
 		this.clock.tick();
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getList().getItems()[0].getDomRef(), document.activeElement, "The first item in the list should be focused");
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getFocusDomRef(), document.activeElement, "The input field should be focused");
@@ -6004,21 +6004,21 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.HOME);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.HOME);
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.END);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.END);
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getList().getItems()[this.oMultiComboBox._getList().getItems().length - 1].getDomRef(), document.activeElement, "The last item in the list should be focused");
@@ -6028,7 +6028,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.HOME);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.HOME);
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
@@ -6440,7 +6440,7 @@ sap.ui.define([
 		oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
 
 		oPickerTextFieldDomRef.value = "I";
-		sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
+		qutils.triggerEvent("input", oPickerTextFieldDomRef);
 		this.clock.tick(nPopoverAnimationTick);
 		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER); //onsapenter
 		this.clock.tick(nPopoverAnimationTick);
@@ -7531,7 +7531,7 @@ sap.ui.define([
 		var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
 
 		// act
-		sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oPickerTextFieldDomRef, {
+		qutils.triggerEvent("keydown", oPickerTextFieldDomRef, {
 			which: KeyCodes.L,
 			srcControl: oPickerTextField
 		});
@@ -7543,7 +7543,7 @@ sap.ui.define([
 		assert.notOk(oPickerTextField._bDoTypeAhead, '_bDoTypeAhead should be set to false');
 
 		// act
-		sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oMultiComboBox.getFocusDomRef(), {
+		qutils.triggerEvent("keydown", oMultiComboBox.getFocusDomRef(), {
 			which: KeyCodes.I,
 			srcControl: oMultiComboBox.getFocusDomRef()
 		});
@@ -8002,7 +8002,7 @@ sap.ui.define([
 		this.oMultiComboBox.open();
 		this.clock.tick();
 
-		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick();
 
 		// Assert
@@ -9129,7 +9129,7 @@ sap.ui.define([
 		assert.ok(this.oMultiComboBox.getSelectAllToolbar().hasStyleClass("sapMMultiComboBoxSelectAllFocused"), "The select all toolbar should have a focus class.");
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
 
 		// Assert
@@ -9147,14 +9147,14 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Act
-		sap.ui.test.qunit.triggerKeyup(document.activeElement, KeyCodes.SPACE);
+		qutils.triggerKeyup(document.activeElement, KeyCodes.SPACE);
 		this.clock.tick(500);
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectedItems().length, 4, "All list items should be selected");
 
 		// Act
-		sap.ui.test.qunit.triggerKeyup(document.activeElement, KeyCodes.SPACE);
+		qutils.triggerKeyup(document.activeElement, KeyCodes.SPACE);
 		this.clock.tick(500);
 
 		// Assert
@@ -9199,7 +9199,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox._$input.focus().val("b").trigger("input");
-		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.b);
+		qutils.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.b);
 		oMultiComboBox.onkeyup();
 		Core.applyChanges();
 		this.clock.tick();

@@ -1950,7 +1950,7 @@ sap.ui.define([
 			QUnit.test("_ensurePopover", function (assert) {
 				// Prepare
 				var oCPP = new ColorPalettePopover(),
-					oFakePopover = {destroy: jQuery.noop, getDomRef: jQuery.noop, removeDelegate: jQuery.noop},
+					oFakePopover = {destroy: this.stub(), getDomRef: this.stub(), removeDelegate: this.stub()},
 					oStubCreatePopover = this.stub(oCPP, "_createPopover").returns(oFakePopover);
 
 				oCPP._oPopover = null;

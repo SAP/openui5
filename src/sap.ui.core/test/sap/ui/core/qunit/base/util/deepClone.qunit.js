@@ -5,7 +5,7 @@
 sap.ui.define(['sap/base/util/deepClone', 'sap/ui/core/Control'], function(deepClone, Control) {
 	"use strict";
 
-	Control.extend("sap.ui.deepClone.Dummy",{
+	var Dummy = Control.extend("sap.ui.deepClone.Dummy",{
 		metadata: {
 			properties: {
 				test: {
@@ -151,7 +151,7 @@ sap.ui.define(['sap/base/util/deepClone', 'sap/ui/core/Control'], function(deepC
 
 		assert.throws(function() { deepClone(oPromise); }, "Error only plain objects are cloned");
 
-		var oDummy = new sap.ui.deepClone.Dummy({ text: "Do not clone"});
+		var oDummy = new Dummy({ text: "Do not clone"});
 
 		assert.throws(function() { deepClone(oDummy); }, "Error only plain objects are cloned");
 	});

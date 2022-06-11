@@ -149,8 +149,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Open Popup with a control which already has a not rendered parent", function(assert) {
-		var oPanel = new sap.m.Panel(),
-			oButton = new sap.m.Button(),
+		var oPanel = new Panel(),
+			oButton = new Button(),
 			done = assert.async(),
 			fnOpened = function() {
 				this.oPopup.detachOpened(fnOpened, this);

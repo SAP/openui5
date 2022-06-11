@@ -136,10 +136,10 @@ sap.ui.getCore().attachInit(function () {
 						text: "Scroll to div number",
 						press: function () {
 							var sValue = sap.ui.getCore().byId("input").getValue();
-							var $Element = jQuery("#div-" + sValue);
-							sap.ui.getCore().byId("oScrollContainer4").scrollToElement($Element[0]);
-							$Element.css("background-color", "white");
-							$Element.css("border", "skyblue");
+							var oElement = document.getElementById("div-" + sValue);
+							sap.ui.getCore().byId("oScrollContainer4").scrollToElement(oElement);
+							oElement.style.backgroundColor = "white";
+							oElement.style.border = "skyblue";
 						}
 					})
 				]
