@@ -63,7 +63,7 @@
     "@ui5/builder": "^2.11.5",
     "@ui5/project": "^2.6.0",
     "@ui5/server": "^2.4.0",
-    "async": "^0.9.0",
+    "async": "^3.2.4",
     "cheerio": "1.0.0-rc.9",
     "coffee-script": "^1.9.1",
     "cross-env": "^5.2.0",
