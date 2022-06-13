@@ -21,6 +21,7 @@
 				selectionChanged="onSelectionChange">
 			<upload:toolbar>
 				<OverflowToolbar>
+					<ToolbarSpacer/>
 					<Button
 							id="uploadSelectedButton"
 							text="Upload selected"

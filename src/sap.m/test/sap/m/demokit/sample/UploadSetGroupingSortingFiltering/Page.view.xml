@@ -29,6 +29,7 @@
 				mode="None">
 			<upload:toolbar>
 				<OverflowToolbar>
+				<ToolbarSpacer/>
 				</OverflowToolbar>
 			</upload:toolbar>
 			<upload:items>

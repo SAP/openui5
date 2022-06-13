@@ -36,7 +36,6 @@ sap.ui.define([
 			oUploadSet.getDefaultFileUploader().setIcon("sap-icon://attachment");
 
 			var overflowToolbar = oUploadSet.getToolbar();
-			overflowToolbar.addContent(new ToolbarSpacer());
 			overflowToolbar.addContent(new Button({
 				type:"Transparent",
 				icon:IconPool.getIconURI('drop-down-list'),
