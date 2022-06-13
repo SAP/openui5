@@ -116,6 +116,10 @@
 				regex: /^(¤(\s)*)?[#0]*(,[#0]+)*(\.[0#]+)?((\s)*¤)?$/,
 				help: "Number pattern consisting of '#' for optional digit, '0' for mandatory digit, ',' as grouping separator, '.' as decimal separator, '¤' for the currency symbol"
 			},
+			strictGroupingValidation: {
+				type: "boolean",
+				help: "To enable strict grouping validation set to \"true\""
+			},
 			groupingEnabled: {
 				type: "boolean",
 				help: "To enable grouping of integer digits set to \"true\""
@@ -296,6 +300,7 @@
 													}
 												},
 												change: function(oEvent) {
+													var oSource = oEvent.getSource();
 													var sValue = oEvent.getParameter("value");
 													var sLocale = oModel.getProperty("/locale");
 													var oFormatOptions = oModel.getProperty("/formatOptions");
@@ -306,6 +311,7 @@
 													var oNumberFormat = sap.ui.core.format.NumberFormat[sFunctionName](oOptions, oLocale);
 													var aParsed = oNumberFormat.parse(sValue);
 													if (Array.isArray(aParsed)) {
+														oSource.setValueState("None");
 														if (aParsed[0] != null) {
 															oModel.setProperty("/number", aParsed[0]);
 														}
@@ -317,7 +323,10 @@
 															}
 														}
 													} else if (aParsed) {
+														oSource.setValueState("None");
 														oModel.setProperty("/number", aParsed);
+													} else if (!aParsed) {
+														oSource.setValueState("Error");
 													}
 
 												}
