@@ -97,7 +97,7 @@ sap.ui.define([
 	/**
 	 * @const A list of model names which are used internally by the card.
 	 */
-	var RESERVED_MODEL_NAMES = ["parameters", "filters", "paginator", "form", "context", "i18n"];
+	var INTERNAL_MODEL_NAMES = ["parameters", "filters", "paginator", "form", "context", "i18n"];
 
 	var RESERVED_PARAMETER_NAMES = ["visibleItems", "allItems"];
 
@@ -431,6 +431,8 @@ sap.ui.define([
 
 		this.setAggregation("_loadingProvider", new LoadingProvider());
 
+		this._oIntegrationRb = Core.getLibraryResourceBundle("sap.ui.integration");
+
 		this._initModels();
 
 		this._oContentFactory = new ContentFactory(this);
@@ -511,11 +513,26 @@ sap.ui.define([
 	 */
 	Card.prototype._initModels = function () {
 		this.setModel(new JSONModel());
-		this.setModel(new JSONModel(), "parameters");
-		this.setModel(new JSONModel(), "filters");
-		this.setModel(new JSONModel(), "paginator");
-		this.setModel(new JSONModel(), "form");
-		this.setModel(new ContextModel(), "context");
+
+		INTERNAL_MODEL_NAMES.forEach(function (sModelName) {
+			var oModel;
+
+			switch (sModelName) {
+				case "context":
+					oModel = new ContextModel();
+				break;
+				case "i18n":
+					oModel = new ResourceModel({
+						bundle: this._oIntegrationRb
+					});
+				break;
+				default:
+					oModel = new JSONModel();
+				break;
+			}
+
+			this.setModel(oModel, sModelName);
+		}.bind(this));
 	};
 
 	/**
@@ -842,45 +859,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Loads the messagebundle.properties for the integration library.
-	 * For performance only call this method when the translations will be needed.
-	 *
-	 * @private
-	 */
-	Card.prototype._loadDefaultTranslations = function () {
-		if (this._defaultTranslationsLoaded) {
-			return;
-		}
-
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-
-		this._enhanceI18nModel(oResourceBundle);
-
-		this._defaultTranslationsLoaded = true;
-		this._oIntegrationRb = oResourceBundle;
-	};
-
-	/**
 	 * Enhances or creates the i18n model for the card.
 	 *
 	 * @param {module:sap/base/i18n/ResourceBundle} oResourceBundle The resource bundle which will be used to create the model or will enhance it.
 	 * @private
 	 */
 	Card.prototype._enhanceI18nModel = function (oResourceBundle) {
-		var oResourceModel = this.getModel("i18n");
+		var oResourceModel = this.getModel("i18n"),
+			oNewResourceModel;
 
-		if (oResourceModel) {
-			if (oResourceModel.getResourceBundle().oUrlInfo.url !== oResourceBundle.oUrlInfo.url) {
-				oResourceModel.enhance(oResourceBundle);
-			}
-			return;
-		}
-
-		oResourceModel = new ResourceModel({
-			bundle: oResourceBundle
+		// the library resource bundle must not be enhanced
+		// so the card resource bundle should be first
+		oNewResourceModel = new ResourceModel({
+			bundle: oResourceBundle,
+			enhanceWith: [
+				this._oIntegrationRb
+			]
 		});
 
-		this.setModel(oResourceModel, "i18n");
+		this.setModel(oNewResourceModel, "i18n");
+		oResourceModel.destroy();
 	};
 
 	/**
@@ -1055,6 +1053,7 @@ sap.ui.define([
 		this._oCardObserver = null;
 		this._oContentFactory = null;
 		this._bFirstRendering = null;
+		this._oIntegrationRb = null;
 
 		if (this._oActionsToolbar) {
 			this._oActionsToolbar.destroy();
@@ -1107,8 +1106,6 @@ sap.ui.define([
 		this.getModel("filters").setData({});
 		this.getModel("parameters").setData({});
 		this.getModel("paginator").setData({});
-
-		this.setModel(null, "i18n");
 
 		this._oContextParameters = null;
 
@@ -1870,7 +1867,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._handleError = function (sLogMessage, bNoItems) {
-		this._loadDefaultTranslations();
 		if (!bNoItems) {
 			Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
 		}
@@ -2345,7 +2341,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (RESERVED_MODEL_NAMES.indexOf(sModelName) > -1) {
+			if (INTERNAL_MODEL_NAMES.indexOf(sModelName) > -1) {
 				Log.error("The model name (data section name) '" + sModelName + "' is reserved for cards. Can not be used for creating a custom model.");
 				return;
 			}

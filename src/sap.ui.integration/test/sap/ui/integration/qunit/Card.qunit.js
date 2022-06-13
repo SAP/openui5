@@ -3460,6 +3460,79 @@ sap.ui.define([
 			}
 		});
 
+		QUnit.test("I18n module is initialized with integration library resource bundle", function (assert) {
+			var oCard = this.oCard,
+				oModel;
+
+			// Arrange
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			oCard.placeAt(DOM_RENDER_LOCATION);
+
+			// Assert
+			oModel = oCard.getModel("i18n");
+			assert.strictEqual(oModel.getResourceBundle(), Core.getLibraryResourceBundle("sap.ui.integration"), "The i18n model of the card is correctly initialized.");
+		});
+
+		QUnit.test("Integration library resource bundle is not enhanced", function (assert) {
+
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			// Arrange
+			oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+				assert.ok(oResourceBundle.aCustomBundles.length === 0, "The resource bundle for integration library is not enhanced.");
+
+				done();
+			});
+
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("I18n module is isolated", function (assert) {
+			var oContainer = new HBox(),
+				oCard = this.oCard,
+				oModel;
+
+			// Arrange
+			oContainer.setModel(new JSONModel(), "i18n");
+			oContainer.addItem(oCard);
+
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			oContainer.placeAt(DOM_RENDER_LOCATION);
+
+			// Assert
+			oModel = oCard.getModel("i18n");
+
+			assert.ok(oModel.isA("sap.ui.model.resource.ResourceModel"), "The i18n model of the card is ResourceModel.");
+
+			// Clean up
+			oContainer.destroy();
+		});
+
+		QUnit.test("Card translations work", function (assert) {
+
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			// Arrange
+			oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.strictEqual(oCard.getCardHeader().getTitle(), "Card Translation Bundle", "The translation for title is correct.");
+
+				done();
+			});
+
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
 		QUnit.test("Use getTranslatedText", function (assert) {
 
 			var done = assert.async(),
@@ -3477,6 +3550,31 @@ sap.ui.define([
 			});
 
 			oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsCustomCounter/manifest.json");
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Refresh reloads translations correctly", function (assert) {
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			// Arrange
+			oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				oCard.refresh();
+
+				oCard.attachEventOnce("_ready", function () {
+					Core.applyChanges();
+
+					// Assert
+					assert.strictEqual(oCard.getTranslatedText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
+					assert.strictEqual(oCard.getTranslatedText("CARD.COUNT_X_OF_Y", [3, 5]), "3 of 5", "The translation for COUNT_X_OF_Y is correct.");
+
+					done();
+				});
+			});
+
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsOwnCounter/manifest.json");
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
