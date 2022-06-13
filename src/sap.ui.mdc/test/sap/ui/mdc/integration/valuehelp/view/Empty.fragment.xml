@@ -19,7 +19,7 @@
 	xmlns:demo="sap.ui.v4demo.controls">
 
 	<Title class="sapUiSmallMarginBottom" level="H3" text="Supported Table Types" />
-	<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+	<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate="{name: 'sap/ui/mdc/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
 		<mdc:dependents>
 			<mdc:ValueHelp
 				id="FB0-FH1"

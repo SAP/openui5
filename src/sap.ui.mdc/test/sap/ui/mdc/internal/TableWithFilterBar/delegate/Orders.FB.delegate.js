@@ -7,7 +7,7 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enum/FieldDisplay', 'sap/ui/model/odata/type/Int32'
+	"sap/ui/mdc/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enum/FieldDisplay', 'sap/ui/model/odata/type/Int32'
 ], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, TypeInt32) {
 	"use strict";
 
