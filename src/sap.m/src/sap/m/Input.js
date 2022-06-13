@@ -1325,9 +1325,6 @@ function(
 	 * @returns {this} this Input instance for chaining.
 	 */
 	Input.prototype._doSelect = function(iStart, iEnd) {
-		if (Device.support.touch) {
-			return this;
-		}
 		var oDomRef = this._$input[0];
 		if (oDomRef) {
 			// if no Dom-Ref - no selection (Maybe popup closed)
