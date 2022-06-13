@@ -128,5 +128,25 @@
         ]
       }
     ]
+  },
+  "1.96.9": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "2d57905f3af131e1905bbdfc21a8e1ab77c84b8e",
+        "type": "FIX",
+        "text": " sap.m.AvatarGroup: Correct items to render count",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280056755"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270084148"
+          }
+        ]
+      }
+    ]
   }
 }

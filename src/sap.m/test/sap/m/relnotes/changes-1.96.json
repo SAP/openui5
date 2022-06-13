@@ -1017,5 +1017,51 @@
         ]
       }
     ]
+  },
+  "1.96.9": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "440cfe22d52c7f863b8d3a6f5495b684af8cfb3f",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Empty value can now be set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280018792"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003977232022"
+          }
+        ]
+      },
+      {
+        "id": "77e3b1e622c574048fed898eba09c83466e883bc",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Remove all should remove all conditions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280087314"
+          }
+        ]
+      },
+      {
+        "id": "eae9cafb1f33f63003849388826a949005fc700e",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Correctly detect when we tap the icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270102617"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170326343"
+          }
+        ]
+      }
+    ]
   }
 }

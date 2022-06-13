@@ -63,5 +63,21 @@
         ]
       }
     ]
+  },
+  "1.96.9": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "5039900ab8ed9782d8adc276229b839ffae2fee2",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Switch to HierarchicalSelect optimized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000511102022"
+          }
+        ]
+      }
+    ]
   }
 }

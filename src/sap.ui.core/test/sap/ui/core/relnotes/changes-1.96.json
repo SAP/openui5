@@ -406,5 +406,47 @@
         ]
       }
     ]
+  },
+  "1.96.9": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "034b1c405f3ee1775b3a8adeae832ed83182f386",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: strictGroupingValidation formatOption",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006986122021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180381028"
+          }
+        ]
+      },
+      {
+        "id": "3938c1e9b87af8a0a2323923bee492b300e50cb7",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#createEntry: consider refreshAfterChange also when retrying the creation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001245562022"
+          }
+        ]
+      },
+      {
+        "id": "fc0056c316c0821c6df297dcc6f4905ecf4c750a",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataContextBinding#_fireChange: Reset context's updated flag to initial value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002462642022"
+          }
+        ]
+      }
+    ]
   }
 }
