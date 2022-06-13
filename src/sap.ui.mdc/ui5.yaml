@@ -1,5 +1,5 @@
 ---
-specVersion: '1.1'
+specVersion: '2.0'
 type: library
 metadata:
   sapInternal: true
@@ -8,3 +8,6 @@ metadata:
     OpenUI5
      * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
      * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+resources:
+  configuration:
+    propertiesFileSourceEncoding: ISO-8859-1
