@@ -44,7 +44,7 @@
 			secondaryCalendarType="Gregorian"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
-		<Label text="DateTimePicker with steps for minutes and seconds sliders"/>
+		<Label text="DateTimePicker with steps for minutes and seconds sliders" labelFor="DTP7"/>
 		<DateTimePicker
 			id="DTP7"
 			valueFormat="yyyy-MM-dd-HH-mm-ss"
