@@ -603,6 +603,19 @@ sap.ui.define([
 		restoreFocusSpy.restore();
 	});
 
+	QUnit.test("_restoreFocus should not be called", function (assert) {
+		var restoreFocusSpy = sinon.spy(this.oMessagePopover._oMessageView, "_restoreFocus");
+		this.oMessagePopover.setInitiallyExpanded(false);
+		this.oMessagePopover.openBy(this.oButton);
+
+		this.clock.tick(500);
+		assert.strictEqual(restoreFocusSpy.callCount, 0, "_restoreFocus() should not be called after opening");
+		assert.strictEqual(document.activeElement, this.oMessagePopover._oMessageView._oSegmentedButton.getDomRef(), "The initial focus is over the segmented button");
+
+		// Clean
+		restoreFocusSpy.restore();
+	});
+
 	QUnit.test("When initialized without items template should automatically perform binding to the Message Model", function (assert) {
 		var oModel = new JSONModel({
 			form: {
