@@ -1067,7 +1067,7 @@ sap.ui.define([
 
 		if (this.getModified()) {
 			oItem = this._getItemByKey(this.getSelectedKey());
-			if (oItem && oItem.getChange()) {
+			if (oItem && oItem.getChangeable()) {
 				this.showSaveButton(true);
 			}
 		}

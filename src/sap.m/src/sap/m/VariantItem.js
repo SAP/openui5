@@ -118,7 +118,7 @@ sap.ui.define([
 				/**
 				 * Indicates if the item is changeable.
 				 */
-				change: {
+				changeable: {
 					type: "boolean",
 					group: "Misc",
 					defaultValue: false
