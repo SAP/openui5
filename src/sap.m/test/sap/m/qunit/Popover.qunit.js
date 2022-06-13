@@ -1553,15 +1553,15 @@ sap.ui.define([
 	QUnit.test("_getPopoverPositionCss should return an object with correct top, bottom, right and left position when Popover do not exceed vertically or horizontally of the window", function (assert){
 		var oPopover = new Popover(),
 				oPosParams = {
-					_fWidth: 416,
-					_fHeight: 802,
-					_fDocumentWidth: 1920,
-					_fDocumentHeight: 1139,
-					_fMarginTop: 50,
-					_fMarginRight: 10,
-					_fMarginBottom: 10,
-					_fMarginLeft: 265,
-					_fOffset: {
+					_fPopoverWidth: 416,
+					_fPopoverHeight: 802,
+					_fWithinAreaWidth: 1920,
+					_fWithinAreaHeight: 1139,
+					_fPopoverMarginTop: 50,
+					_fPopoverMarginRight: 10,
+					_fPopoverMarginBottom: 10,
+					_fPopoverMarginLeft: 265,
+					_fPopoverOffset: {
 						top: 21,
 						left: 265
 					}
@@ -1580,15 +1580,15 @@ sap.ui.define([
 	QUnit.test("_getPopoverPositionCss should return an object with correct top, bottom, right and left position when Popover do not exceed vertically or horizontally of the window but exceeds the defined 10px border of the screen", function (assert){
 		var oPopover = new Popover(),
 				oPosParams = {
-					_fWidth: 416,
-					_fHeight: 754,
-					_fDocumentWidth: 1920,
-					_fDocumentHeight: 1139,
-					_fMarginTop: 50,
-					_fMarginRight: 10,
-					_fMarginBottom: 162,
-					_fMarginLeft: 10,
-					_fOffset: {
+					_fPopoverWidth: 416,
+					_fPopoverHeight: 754,
+					_fWithinAreaWidth: 1920,
+					_fWithinAreaHeight: 1139,
+					_fPopoverMarginTop: 50,
+					_fPopoverMarginRight: 10,
+					_fPopoverMarginBottom: 162,
+					_fPopoverMarginLeft: 10,
+					_fPopoverOffset: {
 						top: 223,
 						left: 0
 					}
@@ -1599,7 +1599,7 @@ sap.ui.define([
 		assert.equal(oCalculatedParams.top, undefined, "top position should be equal to the 'undefined after calculations");
 		assert.equal(oCalculatedParams.right, undefined, "right position should be equal to the 'undefined after calculations");
 		assert.ok(isNaN(oCalculatedParams.bottom), "bottom position should be equal to 'NaN' after calculations");
-		assert.equal(oCalculatedParams.left, 10, "left position should be equal to _fMarginLeft after calculations");
+		assert.equal(oCalculatedParams.left, 10, "left position should be equal to _fPopoverMarginLeft after calculations");
 
 		oPopover.destroy();
 	});
@@ -1609,8 +1609,8 @@ sap.ui.define([
 
 		var iMaxContentWidth = oPopover._getMaxContentWidth({
 			_fDocumentWidth: 500,
-			_fMarginLeft: 10,
-			_fMarginRight: 10,
+			_fPopoverMarginLeft: 10,
+			_fPopoverMarginRight: 10,
 			_fPopoverBorderLeft: 10,
 			_fPopoverBorderRight: 10
 		});
@@ -1625,8 +1625,8 @@ sap.ui.define([
 
 		var iMaxContentHeight = oPopover._getMaxContentHeight({
 			_fDocumentHeight: 500,
-			_fMarginTop: 10,
-			_fMarginBottom: 10,
+			_fPopoverMarginTop: 10,
+			_fPopoverMarginBottom: 10,
 			_fHeaderHeight: 10,
 			_fSubHeaderHeight: 10,
 			_fFooterHeight: 10,
@@ -1731,7 +1731,7 @@ sap.ui.define([
 					_$parent: jQuery(),
 					_$arrow: jQuery(),
 					_fPopoverBorderTop: 1,
-					_fOffsetY: 0
+					_fPopoverOffsetY: 0
 				},
 				oExpectedPos = {
 					top: 355
