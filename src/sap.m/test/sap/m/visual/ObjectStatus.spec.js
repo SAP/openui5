@@ -1,4 +1,4 @@
-/*global describe,it,browser,element,by,takeScreenshot,expect*/
+/*global describe,it,browser,element,by,takeScreenshot,expect,jQuery*/
 
 describe('sap.m.ObjectStatus', function() {
 	"use strict";

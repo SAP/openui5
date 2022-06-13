@@ -123,7 +123,8 @@ sap.ui.define([
 		}
 		oNewSampleDomRef.textContent = sText;
 		oCustomSample.appendChild(oNewSampleDomRef);
-		document.getElementById("custom-tests").insertBefore(oCustomSample);
+		var oCustomTests = document.getElementById("custom-tests");
+		oCustomTests.insertBefore(oCustomSample, oCustomTests.firstChild);
 		triggerLink(oNewSampleDomRef);
 		document.getElementById("samples").scrollTop = document.getElementById("samples").scrollHeight;
 	}
@@ -152,11 +153,10 @@ sap.ui.define([
 	}
 
 	function renderLeaf(content, url, name, level) {
-		var sUrl = (url && url.indexOf("./") == 0) ? sap.ui.global.resourceRoot + "." + url : url;
 		content.push("<div class=\"leaf\">");
-		content.push("<a href=\"", sUrl, "\"");
-		content.push(" data-href=\"", sUrl, "\"");
-		content.push(" title=\"", sUrl, "\"");
+		content.push("<a href=\"", url, "\"");
+		content.push(" data-href=\"", url, "\"");
+		content.push(" title=\"", url, "\"");
 		content.push(" target=\"sap-ui-ContentWindow\">");
 		content.push(name);
 		content.push("</a></div>");

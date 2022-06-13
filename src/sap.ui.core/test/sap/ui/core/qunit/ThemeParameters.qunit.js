@@ -263,7 +263,7 @@ sap.ui.define([
 			url9: {
 				plain: "none",
 				themeImage: null,
-				themeImageForce: sap.ui.resource("sap.ui.core", "themes/base/img/1x1.gif")
+				themeImageForce: sap.ui.require.toUrl("sap/ui/core/themes/base/img/1x1.gif")
 			}
 		};
 
@@ -300,7 +300,7 @@ sap.ui.define([
 			url2: {
 				plain: "none",
 				themeImage: null,
-				themeImageForce: sap.ui.resource("sap.ui.core", "themes/base/img/1x1.gif")
+				themeImageForce: sap.ui.require.toUrl("sap/ui/core/themes/base/img/1x1.gif")
 			}
 		};
 

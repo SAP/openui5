@@ -5250,14 +5250,14 @@ sap.ui.define([
 	QUnit.module("ODataModelV2 abort requests", {
 		beforeEach : function() {
 			initServer();
-			sap.ui.core.util.MockServer.config({autoRespondAfter:50});
+			MockServer.config({autoRespondAfter:50});
 			oModel = initModel();
 		},
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
 			cleanSharedData();
-			sap.ui.core.util.MockServer.config({/*empty config resets to defaults*/});
+			MockServer.config({/*empty config resets to defaults*/});
 			stopServer();
 		}
 	});

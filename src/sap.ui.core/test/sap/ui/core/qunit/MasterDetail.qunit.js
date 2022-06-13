@@ -145,7 +145,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("test bind Context with JSON model and aggregation binding", function(assert) {
-		var oLB = new List("myLb", {displaySecondaryValues:true, height:"200px"});
+		var oLB = new List("myLb", {height:"200px"});
 		var oItemTemplate = new ListItem();
 		oLB.placeAt("target2");
 		var oModel = new JSONModel();
@@ -206,7 +206,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("test bind Context with JSON model and aggregation binding with wrong path", function(assert) {
-		var oLB = new List("myLb", {displaySecondaryValues:true, height:"200px"});
+		var oLB = new List("myLb", {height:"200px"});
 		var oItemTemplate = new ListItem();
 		oLB.placeAt("target2");
 		var oModel = new JSONModel();
@@ -229,7 +229,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("test bind Context with XML model and aggregation binding", function(assert) {
-		var oLB = new List("myLb", {displaySecondaryValues:true, height:"200px"});
+		var oLB = new List("myLb", {height:"200px"});
 		var oItemTemplate = new ListItem();
 		oLB.placeAt("target2");
 		var oModel = new XMLModel();
@@ -266,7 +266,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("test bind Context with XML model and aggregation binding with wrong path", function(assert) {
-		var oLB = new List("myLb", {displaySecondaryValues:true, height:"200px"});
+		var oLB = new List("myLb", {height:"200px"});
 		var oItemTemplate = new ListItem();
 		oLB.placeAt("target2");
 		var oModel = new JSONModel();

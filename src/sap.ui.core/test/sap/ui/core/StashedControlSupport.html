@@ -10,10 +10,10 @@
 	</script>
 
 	<script id="myview" type="text/xml">
-		<core:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" controllerName="mycontroller">
+		<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" controllerName="mycontroller">
 		<Panel id="Panel0">
 		<content>
-			<Panel headerText="Panel1" height="25%" showFooter="true" id="Panel1" stashed="true">
+			<Panel headerText="Panel1" height="25%" id="Panel1" stashed="true">
 				<content>
 					<f:SimpleForm editable="true" layout="ResponsiveGridLayout">
 						<f:content>
@@ -133,7 +133,7 @@
 					</l:VerticalLayout>
 				</content>
 			</Panel>
-			<Panel headerText="Panel2" height="25%" showFooter="true" id="Panel2" stashed="false">
+			<Panel headerText="Panel2" height="25%" id="Panel2" stashed="false">
 				<content>
 					<f:SimpleForm editable="true" layout="ResponsiveGridLayout">
 						<f:content>
@@ -253,7 +253,7 @@
 					</l:VerticalLayout>
 				</content>
 			</Panel>
-			<Panel headerText="Panel3" height="25%" showFooter="true" id="Panel3" stashed="{/stashed3}">
+			<Panel headerText="Panel3" height="25%" id="Panel3" stashed="{/stashed3}">
 				<content>
 					<f:SimpleForm editable="true" layout="ResponsiveGridLayout">
 						<f:content>
@@ -373,7 +373,7 @@
 					</l:VerticalLayout>
 				</content>
 			</Panel>
-			<Panel headerText="Panel4" height="25%" showFooter="true" id="Panel4" stashed="{/stashed4}">
+			<Panel headerText="Panel4" height="25%" id="Panel4" stashed="{/stashed4}">
 				<content>
 					<f:SimpleForm editable="true" layout="ResponsiveGridLayout">
 						<f:content>
@@ -495,7 +495,7 @@
 			</Panel>
 			</content>
 			</Panel>
-		</core:View>
+		</mvc:View>
 	</script>
 
 	<script>

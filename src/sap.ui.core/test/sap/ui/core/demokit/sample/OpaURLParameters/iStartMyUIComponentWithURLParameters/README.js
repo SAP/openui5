@@ -1,4 +1,4 @@
-/*global jQuery, QUnit */
+/*global QUnit */
 sap.ui.require(
 	[
 		"sap/m/Panel",
@@ -6,17 +6,17 @@ sap.ui.require(
 	], function(Panel, Text) {
 	"use strict";
 
-	jQuery("#readme").css({
+	Object.assign(document.getElementById("readme").style, {
 		top: "350px",
 		position: "fixed",
-		left: 0,
+		left: "0",
 		width: "20%"
 	});
 
 	QUnit.done(function () {
-		jQuery("#readme").css({
+		Object.assign(document.getElementById("readme").style, {
 			width: "100%",
-			top: "190px"
+			top: "250px"
 		});
 	});
 

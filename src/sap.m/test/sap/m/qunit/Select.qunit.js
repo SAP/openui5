@@ -80,8 +80,6 @@ sap.ui.define([
 		// shortcut for sap.ui.core.TextAlign
 		var TextAlign = coreLibrary.TextAlign;
 
-		var $ = jQuery;
-
 		createAndAppendDiv("content").className = "content";
 
 		var mTestModelData = {
@@ -490,7 +488,7 @@ sap.ui.define([
 			Device.system.phone = false;
 		};
 		var fnToTabletMode = function () {
-			$("html").removeClass("sapUiMedia-Std-Desktop")
+			jQuery("html").removeClass("sapUiMedia-Std-Desktop")
 				.removeClass("sapUiMedia-Std-Phone")
 				.addClass("sapUiMedia-Std-Tablet");
 			Device.system.desktop = false;

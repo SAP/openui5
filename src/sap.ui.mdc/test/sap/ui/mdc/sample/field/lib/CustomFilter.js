@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'sap/ui/mdc/enum/EditMode',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/core/Control',
@@ -14,7 +13,6 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/m/ToggleButton'
 ], function(
-	jQuery,
 	EditMode,
 	Condition,
 	Control,

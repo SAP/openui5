@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Model",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/message/MessageModel",
@@ -29,7 +30,7 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
 ], function (Log, uid, Input, Device, ManagedObjectObserver, SyncPromise, coreLibrary, Message,
-		Controller, View, BindingMode, Filter, FilterOperator, Sorter, JSONModel, MessageModel,
+		Controller, View, BindingMode, Filter, FilterOperator, Model, Sorter, JSONModel, MessageModel,
 		CountMode, MessageScope, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
@@ -986,7 +987,7 @@ sap.ui.define([
 				});
 			}
 
-			mNamedModels = vModel && !(vModel instanceof sap.ui.model.Model)
+			mNamedModels = vModel && !(vModel instanceof Model)
 				? vModel
 				: {undefined : vModel || createSalesOrdersModel()};
 			this.oModel = mNamedModels.undefined;

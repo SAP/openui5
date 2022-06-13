@@ -380,7 +380,7 @@ sap.ui.define([
 	QUnit.test("Test for thumnail url undefined", function (assert) {
 		//Setup
 		var oItem = this.oUploadSet.getItems()[0];
-		var oIconPoolSpy = this.spy(sap.ui.core.IconPool, "createControlByURI");
+		var oIconPoolSpy = this.spy(IconPool, "createControlByURI");
 		this.oUploadSet.placeAt("qunit-fixture");
 		oCore.applyChanges();
 

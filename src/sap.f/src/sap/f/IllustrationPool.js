@@ -29,9 +29,8 @@ sap.ui.define([
 		 * @deprecated as of version 1.98. Use the {@link sap.m.IllustrationPool} instead.
 		 * @since 1.88
 		 * @public
-		 * @alias sap.f.IllustrationPool
+		 * @name sap.f.IllustrationPool
 		 */
-		var IllustrationPool = IllustrationPool;
 
 		return IllustrationPool;
 

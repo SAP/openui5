@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/Token",
 	"sap/base/util/merge",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/MessageToast"
 ], function(
 		Controller,
@@ -27,6 +28,7 @@ sap.ui.define([
 		MessageBox,
 		Token,
 		merge,
+		jQuery,
 		MessageToast
 		) {
 	"use strict";

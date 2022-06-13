@@ -3,7 +3,6 @@
 /*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/MultiValueField",
@@ -37,7 +36,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
-	jQuery,
 	qutils,
 	library,
 	MultiValueField,

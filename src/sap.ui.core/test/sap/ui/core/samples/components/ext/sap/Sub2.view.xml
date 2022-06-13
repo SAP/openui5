@@ -16,7 +16,7 @@
 	<core:ExtensionPoint name="extension4" />
 
 
-	<Select items="{/names}" displaySecondaryValues="true">
+	<Select items="{/names}" showSecondaryValues="true">
 		<core:ExtensionPoint name="extension5">
 			<core:ListItem text="{name}" additionalText="(Original SAP ListItem)"/>
 		</core:ExtensionPoint>

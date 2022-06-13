@@ -452,7 +452,7 @@ sap.ui.define([
 							aMessages = oRowContext.getMessages();
 							return aMessages.length
 								? aMessages[0].type
-								: sap.ui.core.MessageType.None;
+								: MessageType.None;
 						}
 					},
 					parts : [

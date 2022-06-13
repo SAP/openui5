@@ -17,7 +17,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Select",
 	"sap/ui/core/Item",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
 	"sap/m/GenericTag",
+	"sap/m/Table",
 	"sap/m/Text",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/Slider",
@@ -47,7 +50,10 @@ sap.ui.define([
 	JSONModel,
 	Select,
 	Item,
+	Column,
+	ColumnListItem,
 	GenericTag,
+	Table,
 	Text,
 	OverflowToolbarButton,
 	Slider,
@@ -3516,9 +3522,9 @@ sap.ui.define([
 			],
 			width: "200px"
 		}),
-		oTable = new sap.m.Table({
-			columns: [new sap.m.Column({})],
-			items: [new sap.m.ColumnListItem({ cells: [oOtb]})]
+		oTable = new Table({
+			columns: [new Column({})],
+			items: [new ColumnListItem({ cells: [oOtb]})]
 		});
 
 		//Act

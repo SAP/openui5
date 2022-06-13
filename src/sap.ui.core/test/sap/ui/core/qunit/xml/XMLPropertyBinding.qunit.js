@@ -1,8 +1,10 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/type/Float",
 	"sap/ui/model/xml/XMLModel",
 	"sap/m/Input"
-], function(XMLModel, Input) {
+], function(ChangeReason, TypeFloat, XMLModel, Input) {
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
@@ -109,7 +111,7 @@ sap.ui.define([
 		assert.equal(bindings[5].getExternalValue(), "22" , "Property binding value");
 		assert.equal(bindings[6].getExternalValue(), "32" , "Property binding value");
 
-		bindings[0].setType(new sap.ui.model.type.Float(),"string");
+		bindings[0].setType(new TypeFloat(),"string");
 		assert.equal(bindings[0].getExternalValue(), "3.55" , "Property binding value");
 	});
 
@@ -126,7 +128,7 @@ sap.ui.define([
 
 		bindings[0].attachChange(callBackOnChange);
 
-		bindings[0].setType(new sap.ui.model.type.Float(),"string");
+		bindings[0].setType(new TypeFloat(), "string");
 		bindings[0].setValue(55.555);
 		assert.equal(bindings[0].getValue(), "55.555" , "Property binding value");
 		assert.equal(bindings[0].getExternalValue(), "55.555" , "Property binding value");
@@ -287,7 +289,7 @@ sap.ui.define([
 			assert.equal(sPath, "/name", "path check!");
 			assert.equal(oContext, undefined, "context check!");
 			assert.equal(oValue, "blubb", "property value check!");
-			assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+			assert.equal(sReason, ChangeReason.Binding, "property reason check!");
 			oInput.destroy();
 			done();
 		});
@@ -313,7 +315,7 @@ sap.ui.define([
 			assert.equal(sPath, "@firstName", "path check!");
 			assert.equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
 			assert.equal(oValue, "blubb", "property value check!");
-			assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+			assert.equal(sReason, ChangeReason.Binding, "property reason check!");
 			oInput.destroy();
 			done();
 		});
@@ -343,14 +345,14 @@ sap.ui.define([
 				assert.equal(sPath, "@firstName", "path check!");
 				assert.equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
 				assert.equal(oValue, "blubb", "property value check!");
-				assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				assert.equal(sReason, ChangeReason.Binding, "property reason check!");
 				oInput.setValue("Andreas");
 
 			} else if (iCount === 2) {
 				assert.equal(sPath, "@firstName", "path check!");
 				assert.equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
 				assert.equal(oValue, "Andreas", "property value check!");
-				assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				assert.equal(sReason, ChangeReason.Binding, "property reason check!");
 			}
 		});
 		oInput.bindObject("/teamMembers/member/1");

@@ -691,7 +691,7 @@ sap.ui.define([
 					}
 				})
 			}
-		}).setModel(new sap.ui.model.json.JSONModel({
+		}).setModel(new JSONModel({
 			selectedKey: "video",
 			media: [
 				{ key: "images", text: "images" },

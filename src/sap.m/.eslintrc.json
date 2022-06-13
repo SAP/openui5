@@ -1,14 +1,13 @@
 {
 	"overrides": [
 		/*
-		 * Productive code, sample and unit test code of sap.m has been cleaned up.
+		 * Productive code and test code of sap.m has been cleaned up.
 		 * No more references to the global jQuery allowed
 		 */
 		{
 			"files": [
 				"src/**/*.js",
-				"test/sap/m/demokit/**/*.js",
-				"test/sap/m/qunit/**/*.js"
+				"test/**/*.js"
 			],
 			"globals": {
 				"jQuery": "off"

@@ -1,4 +1,4 @@
-<Panel xmlns="sap.m" xmlns:core="sap.ui.core" text="Fragment 1">
+<Panel xmlns="sap.m" xmlns:core="sap.ui.core" headerText="Fragment 1">
 	<Text text="SAP Fragment in Panel with extension Point:"></Text>
 	<core:Fragment fragmentName="samples.components.ext.sap.Frag2" type="XML" />
 	<Text text="{path:'/number', formatter:'.formatNumber'}" tooltip="formatted number in SAP Fragment Frag1"></Text>

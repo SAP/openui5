@@ -11,7 +11,7 @@ sap.ui.define([
 ], function (Opa5, Press, Log, Ancestor, PropertyStrictEquals, Properties, p13nUtil, waitForP13nButtonWithMatchers, waitForP13nDialog) {
 	"use strict";
 
-    var oCore = sap.ui.test.Opa5.getWindow().sap.ui.getCore();
+    var oCore = Opa5.getWindow().sap.ui.getCore();
     var oMDCBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
     var waitForMDCChartWithId = function(sId, oSettings) {

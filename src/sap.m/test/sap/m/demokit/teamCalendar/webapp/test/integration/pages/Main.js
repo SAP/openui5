@@ -165,7 +165,7 @@ sap.ui.define([
 						pollingInterval: 100,
 						viewName: "Main",
 						check: function () {
-							return !!sap.ui.test.Opa5.getJQuery()(".sapMMessageToast").length;
+							return !!Opa5.getJQuery()(".sapMMessageToast").length;
 						},
 						success: function () {
 							Opa5.assert.ok(

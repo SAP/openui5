@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/SuggestionItem",
 	"sap/m/Page",
 	"sap/m/App",
+	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/core/HTML"
@@ -20,13 +21,14 @@ sap.ui.define([
 		SuggestionItem,
 		Page,
 		App,
+		coreLibrary,
 		JSONModel,
 		Filter,
 		HTML
 	) {
 		"use strict";
 
-		var InvisibleMessageMode = sap.ui.core.InvisibleMessageMode;
+		var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
 		//sample with TextArea control where a message is read out when the characters limit is reached
 		var oTextArea = new TextArea({

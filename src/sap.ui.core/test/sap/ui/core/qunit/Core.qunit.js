@@ -190,14 +190,6 @@ sap.ui.define([
 		assert.equal(mobilePath, "http://mobile.something.corp/sap/m/themes/my_theme/", "path should be as configured");
 		assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
 
-		corePath = sap.ui.resource("sap.ui.core", "themes/my_theme/img/x.png");
-		mobilePath = sap.ui.resource("sap.m", "themes/my_theme/img/x.png");
-		otherPath = sap.ui.resource("sap.ui.other", "themes/my_theme/img/x.png");
-
-		assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/img/x.png", "path should be as configured");
-		assert.equal(mobilePath, "http://mobile.something.corp/sap/m/themes/my_theme/img/x.png", "path should be as configured");
-		assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/img/x.png", "path should be as configured");
-
 		// Set theme root for all libs with forceUpdate
 		oCore.setThemeRoot("test_theme", "/foo/", true);
 
@@ -420,7 +412,8 @@ sap.ui.define([
 
 		oSpyCall = oSpySapUiRequireToUrl.getCall(0);
 
-		assert.equal(oSpyCall.args[0], 'sap/test/i18ntrue/messagebundle.properties', 'sap.ui.resource is called with the given message bundle name');
+		assert.equal(oSpyCall.args[0], 'sap/test/i18ntrue/messagebundle.properties',
+			'sap.ui.require.toUrl is called with the given message bundle name');
 
 		return pBundle.then(function(oBundle) {
 			assert.ok(oBundle, "Bundle should be loaded");
@@ -441,7 +434,8 @@ sap.ui.define([
 
 		oSpyCall = oSpySapUiRequireToUrl.getCall(0);
 
-		assert.equal(oSpyCall.args[0], 'sap/test/i18nmissing/messagebundle.properties', 'sap.ui.resource is called with default message bundle name');
+		assert.equal(oSpyCall.args[0], 'sap/test/i18nmissing/messagebundle.properties',
+			'sap.ui.require.toUrl is called with default message bundle name');
 
 		oSpySapUiRequireToUrl.restore();
 
@@ -478,7 +472,8 @@ sap.ui.define([
 
 		oSpyCall = oSpySapUiRequireToUrl.getCall(0);
 
-		assert.equal(oSpyCall.args[0], 'sap/test/i18nstring/i18n.properties', 'sap.ui.resource is called with the given message bundle name');
+		assert.equal(oSpyCall.args[0], 'sap/test/i18nstring/i18n.properties',
+			'sap.ui.require.toUrl is called with the given message bundle name');
 
 		oSpySapUiRequireToUrl.restore();
 
@@ -529,7 +524,8 @@ sap.ui.define([
 
 		oSpyCall = oSpySapUiRequireToUrl.getCall(0);
 
-		assert.equal(oSpyCall.args[0], 'sap/test/i18nobject/i18n.properties', 'sap.ui.resource is called with the given message bundle name');
+		assert.equal(oSpyCall.args[0], 'sap/test/i18nobject/i18n.properties',
+			'sap.ui.require.toUrl is called with the given message bundle name');
 
 		oSpySapUiRequireToUrl.restore();
 

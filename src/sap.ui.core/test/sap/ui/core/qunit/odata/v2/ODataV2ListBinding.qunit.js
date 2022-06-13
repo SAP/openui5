@@ -1814,7 +1814,7 @@ sap.ui.define([
 		var done = assert.async();
 		oModel.read("/Categories(1)", {urlParameters: {"$expand":"Products"}, success: function() {
 
-			var oListBinding = oModel.bindList("/Categories(1)/Products", null, new sap.ui.model.Sorter("UnitPrice"));
+			var oListBinding = oModel.bindList("/Categories(1)/Products", null, new Sorter("UnitPrice"));
 
 			oListBinding.initialize();
 			var aContexts = oListBinding.getContexts();

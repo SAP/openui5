@@ -53,6 +53,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.aria.HasPopup
 	var HasPopup = coreLibrary.aria.HasPopup;
 
+	// shortcut for sap.ui.core.VerticalAlign
+	var VerticalAlign = coreLibrary.VerticalAlign;
+
 	/**
 	 * Constructor for a new Menu.
 	 *
@@ -537,7 +540,7 @@ sap.ui.define([
 			var oLabel = new Label({
 				text: oEffectiveQuickAction.getLabel(),
 				layoutData: oGridData,
-				vAlign: sap.ui.core.VerticalAlign.Middle,
+				vAlign: VerticalAlign.Middle,
 				wrapping: true
 			}).setWidth("100%");
 			oLabel.addStyleClass("sapMTCMenuQALabel");
