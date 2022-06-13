@@ -1,6 +1,6 @@
 {
   "name": "@openui5/sap.ui.webc.fiori",
-  "version": "1.96.9-SNAPSHOT",
+  "version": "1.96.9",
   "description": "OpenUI5 UI Library sap.ui.webc.fiori",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
@@ -16,8 +16,8 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "dependencies": {
-    "@openui5/sap.ui.core": "1.96.9-SNAPSHOT",
-    "@openui5/sap.ui.webc.main": "1.96.9-SNAPSHOT",
-    "@openui5/sap.ui.webc.common": "1.96.9-SNAPSHOT"
+    "@openui5/sap.ui.core": "1.96.9",
+    "@openui5/sap.ui.webc.main": "1.96.9",
+    "@openui5/sap.ui.webc.common": "1.96.9"
   }
 }
