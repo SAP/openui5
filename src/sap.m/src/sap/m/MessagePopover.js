@@ -378,7 +378,7 @@ function(
 					that.fireAfterOpen({openBy: oEvent.getParameter("openBy")});
 
 					// ensure that the focus is in the correct place
-					that._oMessageView._restoreFocus();
+					that.getInitiallyExpanded() && that._oMessageView._restoreFocus();
 				},
 				afterClose: function (oEvent) {
 					that._oMessageView._navContainer.backToTop();
