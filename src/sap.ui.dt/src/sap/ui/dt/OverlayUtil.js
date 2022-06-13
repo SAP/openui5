@@ -662,5 +662,25 @@ function(
 		return findBoundControl(oElementOverlay, []);
 	};
 
+	/**
+	 * Returns all parent overlays that have scrollbars (with scrollbar synchronizers) on the tree
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay being checked
+	 * @returns {sap.ui.dt.Overlay[]} - Array with all parent overlays containing scrollbars
+	 */
+	OverlayUtil.findParentOverlaysWithScrollbar = function(oElementOverlay) {
+		var aOverlaysWithScrollbar = [];
+		function findParentsWithScrollbar(oOverlay) {
+			if (oOverlay._oScrollbarSynchronizers.size > 0) {
+				aOverlaysWithScrollbar.push(oOverlay);
+			}
+			if (!oOverlay.getParent()) {
+				return aOverlaysWithScrollbar;
+			}
+			return findParentsWithScrollbar(oOverlay.getParent());
+		}
+
+		return findParentsWithScrollbar(oElementOverlay);
+	};
+
 	return OverlayUtil;
 }, /* bExport= */true);
