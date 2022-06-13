@@ -7,7 +7,7 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/odata/v4/FilterBarDelegate"
+	"sap/ui/mdc/odata/v4/FilterBarDelegate"
 ], function(FilterBarDelegate) {
 	"use strict";
 

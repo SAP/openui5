@@ -216,7 +216,7 @@ sap.ui.define([
 			return new FilterBar("mdcFilterBar", {
 				liveMode: false,
 				delegate: {
-					name: "delegates/odata/v4/FilterBarDelegate",
+					name: "sap/ui/mdc/odata/v4/FilterBarDelegate",
 					payload: {
 						collectionName: sCollectionName
 					}

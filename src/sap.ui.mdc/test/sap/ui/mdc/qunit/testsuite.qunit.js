@@ -223,6 +223,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				group: "FilterBar Testsuite",
 				page: "test-resources/sap/ui/mdc/qunit/filterbar/testsuite.filterbar.qunit.html"
 			},
+			"FilterBarDelegate": {
+				group: "Delegates",
+				module: "./odata/v4/FilterBarDelegate.qunit"
+			},
 			"FilterUtil": {
 				group: "Util",
 				module: "./util/FilterUtil.qunit"

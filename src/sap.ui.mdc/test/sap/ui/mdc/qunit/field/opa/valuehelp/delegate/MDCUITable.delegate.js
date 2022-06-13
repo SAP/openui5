@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/mdc/odata/v4/util/DelegateUtil",
-	"delegates/odata/v4/FilterBarDelegate",
+	"sap/ui/mdc/odata/v4/FilterBarDelegate",
 	"sap/ui/mdc/odata/v4/ODataMetaModelUtil",
 	"sap/ui/mdc/odata/v4/TypeUtil",
 	"sap/ui/model/Filter",
