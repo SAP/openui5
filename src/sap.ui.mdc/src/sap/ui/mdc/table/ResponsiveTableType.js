@@ -303,7 +303,8 @@ sap.ui.define([
 		if (!this._oShowDetailsButton) {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			this.bHideDetails = true;
-			this._oShowDetailsButton = new SegmentedButton(this.getId() + "-showHideDetails", {
+			var oTable = this.getRelevantTable();
+			this._oShowDetailsButton = new SegmentedButton(oTable.getId() + "-showHideDetails", {
 				visible: false,
 				selectedKey: "hideDetails",
 				items: [
