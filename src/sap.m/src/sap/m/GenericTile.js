@@ -426,13 +426,19 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._initScopeContent = function (sTileClass) {
 		if (!this.getState || this.getState() !== LoadState.Disabled) {
+			if (this._oMoreIcon) {
+				//It destroys the existing button when the Tile is getting rendered more than once
+				this._oMoreIcon.destroy();
+				this._oMoreIcon = null;
+			}
 			if (this.isA("sap.m.GenericTile") && this._isIconMode() && this.getFrameType() === FrameType.TwoByHalf){
 				// Acts Like an actual Button in Icon mode for TwoByHalf Tile
 				this._oMoreIcon = this._oMoreIcon || new Button({
 					id: this.getId() + "-action-more",
 					icon: "sap-icon://overflow",
-					type: "Transparent"
-				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
+					type: "Transparent",
+					tooltip :this._oRb.getText("GENERICTILE_MORE_ACTIONBUTTON_TEXT")
+				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon").addStyleClass(sTileClass + "ActionMoreButton");
 				this._oMoreIcon.ontouchstart = function() {
 					this.removeFocus();
 				}.bind(this);
@@ -1536,7 +1542,7 @@ sap.ui.define([
 			$Tile.attr("aria-label", sAriaText);
 		}
 		if (this._isInActionScope()) {
-			$Tile.find('*:not(.sapMGTRemoveButton)').removeAttr("aria-label").removeAttr("title").off("mouseenter");
+			$Tile.find('*:not(.sapMGTRemoveButton,.sapMGTActionMoreButton)').removeAttr("aria-label").removeAttr("title").off("mouseenter");
 		} else {
 			$Tile.find('*').removeAttr("aria-label").removeAttr("title").off("mouseenter");
 		}
