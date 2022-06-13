@@ -59,7 +59,7 @@
 						</Column>
 					</columns>
 					<items>
-						<ColumnListItem type="Navigation">
+						<ColumnListItem type="Active">
 							<Text text="{tableData>firstName}" />
 							<Text text="{tableData>lastName}" />
 						</ColumnListItem>
