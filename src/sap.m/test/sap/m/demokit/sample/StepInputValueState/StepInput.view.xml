@@ -4,8 +4,9 @@
 	xmlns="sap.m">
 	<FlexBox items="{path: '/modelData'}" direction="Column">
 		<VBox class="sapUiTinyMargin" >
-			<Label text="{label}" />
+			<Label text="{label}" labelFor="SI" />
 			<StepInput
+				id="SI"
 				width="100%"
 				value="5"
 				valueState="{valueState}"/>
