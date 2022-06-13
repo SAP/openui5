@@ -3,6 +3,44 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "0fde5cb025aadd6a773cfca40b92818129244dcb",
+        "type": "FEATURE",
+        "text": " Edit state of UploadSetItems and handling the renaming or cancellation of operations is now exposed"
+      },
+      {
+        "id": "e6fc78850429dfac1cf34053b61bc3cd5f7140ce",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: value help now opens on tablet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280097708"
+          }
+        ]
+      },
+      {
+        "id": "b31dde8f95ff1ecd1f54793339ac14d5bf482783",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: DateTimeRangeSelection now works with timezone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280090355"
+          }
+        ]
+      },
+      {
+        "id": "ebabc98db639665db3d322918466e21fe433d739",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: fixed word wrapping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270100806"
+          }
+        ]
+      },
+      {
         "id": "b21550ef007b60ca058fad5d82878c3302dbf581",
         "type": "FIX",
         "text": " sap.m.Link: adjust type announcement",
@@ -80,6 +118,11 @@
         "id": "1dbff1c63fbb0d19e2c33287c2a66d9ec88ffdef",
         "type": "FEATURE",
         "text": " sap.m.MessageBox: Details now can be fetched asynchronously"
+      },
+      {
+        "id": "6168f33d5cf8df07503d2e95a91c363349b278c1",
+        "type": "FIX",
+        "text": " sap.m.Select: Horizontal scrollbar removed"
       },
       {
         "id": "b9c769fdde3aa18f0722e51d6e8e586ee03cec05",

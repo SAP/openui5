@@ -3,6 +3,22 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "284b33863089afd2c96d11650a3e3944dde52a7c",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Expression binding in enabled property of header actions now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270092850"
+          }
+        ]
+      },
+      {
+        "id": "55ba4b2615cdab25ab1f486613624ddcd9cc6798",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card now has dedicated loading placeholder"
+      },
+      {
         "id": "0396e25042a63b1355ca90a83a215ec739012d84",
         "type": "FIX",
         "text": " CardExplorer: on topics change previously registered listener is cleared properly",

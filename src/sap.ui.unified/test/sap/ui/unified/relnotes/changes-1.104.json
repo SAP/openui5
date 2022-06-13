@@ -3,6 +3,28 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "88f265ed112369b6750e60ecee1e6a6ddbb15b62",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust selected date announcements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015332"
+          }
+        ]
+      },
+      {
+        "id": "8ee9202dd0094b25aab5f89da5540e3ad42a4eff",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: added messagebundle entry for \"no file chosen\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270062388"
+          }
+        ]
+      },
+      {
         "id": "153096f01957832277f3debb47dceb430ddc6654",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: interval can only be selected in allowed range",

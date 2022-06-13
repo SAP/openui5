@@ -3,6 +3,17 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "1e7058433e610b13dedd492af044780ea61b2200",
+        "type": "FIX",
+        "text": " sap.ui.rta - set selection to inactive on busy state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980407636"
+          }
+        ]
+      },
+      {
         "id": "1f023f2c6ca52821de4fa3f42341ae93dde11a3b",
         "type": "FIX",
         "text": " sap.ui.rta - AppVariantUtils.getManifirstSupport response fixed",

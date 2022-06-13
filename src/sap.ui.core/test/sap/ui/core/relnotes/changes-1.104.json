@@ -3,6 +3,43 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "875d798e19fc8341359a17e24f55eb513b0dbf8d",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: strictGroupingValidation formatOption",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006986122021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180381028"
+          }
+        ]
+      },
+      {
+        "id": "949874034ab1c20d08690f841b04c2d864023576",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getAllCurrentContexts: do not fire unnecessary change events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270093727"
+          }
+        ]
+      },
+      {
+        "id": "e2ef993e69629cbbfd943da83753aec31b5ff64b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel#resetChanges: restore changes correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270079668"
+          }
+        ]
+      },
+      {
         "id": "82e049dfdd00981600b1c17c1214425113c4195e",
         "type": "FIX",
         "text": " sap.ui.model.odata.v2.ODataContextBinding#_fireChange: Reset context's updated flag to initial value",

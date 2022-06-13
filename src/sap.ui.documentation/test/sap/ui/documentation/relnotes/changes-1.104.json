@@ -3,6 +3,17 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "2e5438d4d0bf55e4b396e64b851e1ed509bca669",
+        "type": "FIX",
+        "text": " Demo Kit: Sample open in new tab fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280097317"
+          }
+        ]
+      },
+      {
         "id": "91dea14e589d57e1e27138ec8e47ab9a3fc5c6ae",
         "type": "FIX",
         "text": " Demo Kit: Fix topic tables inner aligning",

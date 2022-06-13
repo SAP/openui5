@@ -12,6 +12,11 @@
             "reference": "2270098574"
           }
         ]
+      },
+      {
+        "id": "5ea09517aacb61f283c37bd9e9a912bd674b6b53",
+        "type": "FEATURE",
+        "text": " fl.VariantManagement: Adjustable Header Level"
       }
     ]
   }
