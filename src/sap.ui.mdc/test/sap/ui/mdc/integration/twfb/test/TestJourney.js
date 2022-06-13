@@ -7,6 +7,7 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit"
+	// "test-resources/sap/ui/mdc/testutils/opa/Util"
 ], function(
 	Opa5,
 	opaTest
@@ -69,6 +70,7 @@ sap.ui.define([
 	QUnit.module("TwFb - Books", oModuleSettings);
 
 
+	/*
 	opaTest("twfb - start app and test mdc links", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
@@ -226,5 +228,118 @@ sap.ui.define([
 
 		Then.iTeardownMyUIComponent();
 	});
+*/
+
+	opaTest("twfb - Search one book, navigate to factsheet, change the price and save it.", function(Given, When, Then) {
+		var booksComponentID = "__component" + iComponent + "---books--";
+		var sFilterBarID = booksComponentID + "booksFilterBar";
+
+		// I start the Manage Books TwFb example app
+		// Already possible to start the app, but we see the current Books Service content and not a new (fresh) set of data.
+		Given.iStartMyUIComponentInViewMode();
+
+
+
+		// I should see the Standard Variant and Filterbar with empty FilterFields
+		Then.onTheVariant.iShouldSeeTheVariantManagerButton("Standard");
+
+		Then.onFilterBar.iShouldSeeTheFilterBar();
+		Then.onFilterBar.iShouldSeeTheAdaptFiltersButton();
+		//TODO iShouldSeeTheFilterFieldsWithLabels does not work when we have a basic search field on the Filterbar.
+		//Then.onFilterBar.iShouldSeeTheFilterFieldsWithLabels(["", "Author ID", "Title", "Stock range", "Published", "Language", "Genre", "Sub Genre"]);
+
+		// Chart (I should see a “Books Chart” Chart with Bars chart)
+		var sChartID = "__component" + iComponent + "---books--bookChart";
+		Then.onTheMDCChart.iShouldSeeAChart();
+		Then.onTheMDCChart.iShouldSeeTheChartWithChartType(sChartID, "column");
+
+
+
+		// I should see a Books table with columns (x,y,z) and n rows.
+		Then.onTable.iShouldSeeTheTableHeader("Books");
+
+
+
+		// I search books with titles “Wallpaper“ using the Search Books filter field
+		//TODO iEnterTextOnTheFilterField only works for FilterFields having a label, but not for the basic search
+		//TODO should work with id instead of label as parameter
+		// When.onTheMDCFilterField.iEnterTextOnTheFilterField("Title", "*Wallpaper*");
+
+		When.onFilterBar.iEnterFilterValue(sFilterBarID, {
+			Books: {
+				label: "Title",
+				values: ["*Wallpaper*"]
+			}
+		});
+		Then.onFilterBar.iShouldSeeFilters(sFilterBarID, {
+			"Title": [
+				{
+					operator: "Contains",
+					values: ["Wallpaper" ]
+				}
+			]
+		});
+
+
+
+		//I press the Go button (or press enter in the search field)
+		When.onFilterBar.iExpectSearch(sFilterBarID);
+
+
+
+		//I should see a table with one book and the title “The Yellow Wallpaper“
+		Then.onTable.iShouldSeeRowsWithData(1);
+
+
+		// I click on the row The Yellow Wallpaper
+		var link = {text: "The Yellow Wallpaper"};
+		When.onTheMDCLink.iPressTheLink(link);
+		When.onTheMDCLink.iPressLinkOnPopover(link, "Manage book");
+
+
+
+		//I should see a new Factsheet screen….
+		// Not available
+
+
+
+		//I toggle the screen into  edit mode (press Edit button)
+		When.util.iPressButton("Edit");
+
+
+
+		//I should see an editable field Price with value 48.79 GBP
+		var sFieldId = "__component" + iComponent + "---bookdetails--fPrice";
+		Then.onTheMDCField.iShouldSeeTheFieldWithValues(sFieldId, ['12', 'GBP']);
+
+
+
+		//I change the Price to 22 GBP
+		// TODO How can I change value and unit
+		When.onTheMDCField.iEnterTextOnTheField(sFieldId, '22');
+
+
+
+		//I save the changed price
+		When.util.iPressButton("Save");
+
+
+
+		//I should see a table with one row and a column Price with value 35.00 GBP
+		Then.onTable.iShouldSeeARowWithData(0, JSON.parse('["The Yellow Wallpaper","Mentally ill women  Fiction, Feminist fiction, Psychological fiction, Married women  Psychology  Fiction, Sex role  Fiction",102,["22","GBP"],815,"religious_text","prophecy"]'));
+
+
+
+		// TODO revert the database modifications
+		When.onTheMDCLink.iPressTheLink(link);
+		When.onTheMDCLink.iPressLinkOnPopover(link, "Manage book");
+		When.util.iPressButton("Edit");
+		When.onTheMDCField.iEnterTextOnTheField(sFieldId, "12.00");
+		When.util.iPressButton("Save");
+
+		//Then.iTeardownMyUIComponent();
+	});
+
+
 
 });

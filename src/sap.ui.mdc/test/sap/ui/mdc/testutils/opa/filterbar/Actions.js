@@ -7,35 +7,34 @@ sap.ui.define([
 	"sap/ui/test/matchers/Matcher",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/Ancestor",
-	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText",
 	"./Util",
+	"../Utils",
 	"../p13n/Actions",
 	"../p13n/Util",
 	"../p13n/waitForP13nButtonWithMatchers",
 	"../p13n/waitForP13nDialog",
-	"sap/ui/core/Core"
+	"./waitForAdaptFiltersButton"
 ], function(
 	Opa5,
 	Matcher,
 	Properties,
 	Ancestor,
-	Descendant,
 	PropertyStrictEquals,
 	Press,
 	EnterText,
 	FilterBarUtil,
+	Utils,
 	p13nActions,
 	p13nUtil,
 	waitForP13nButtonWithMatchers,
 	waitForP13nDialog,
-	oCore
+	waitForAdaptFiltersButton
 ) {
 	"use strict";
 
-	var oMDCBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var iEnterFilterValue = function(oGroupViewItem, mSettings) {
 		// Get sap.m.Panel of GroupViewItem
@@ -150,11 +149,11 @@ sap.ui.define([
 					// Add matcher for p13n button text
 					var oMatcher = new Matcher();
 					oMatcher.isMatching = function(oButton) {
-						return oButton.getText().includes(oMDCBundle.getText("filterbar.ADAPT"));
+						return oButton.getText().includes(Utils.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT"));
 					};
 					aButtonMatchers.push(oMatcher);
 					aDialogMatchers.push(new Properties({
-						title: oMDCBundle.getText("filterbar.ADAPT_TITLE")
+						title: Utils.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE")
 					}));
 
 					waitForP13nButtonWithMatchers.call(this, {
@@ -293,7 +292,32 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+
+		iChangeAdaptFiltersView: function(sViewMode) {
+			return this.waitFor({
+				controlType: "sap.ui.mdc.p13n.panels.AdaptFiltersPanel",
+				matchers: {
+					ancestor: {
+						controlType: "sap.ui.mdc.filterbar.FilterBarBase"
+					}
+				},
+				success:function(aGroupPanelBase) {
+					Opa5.assert.equal(aGroupPanelBase.length, 1, "Adapt Filters Panel found");
+					aGroupPanelBase[0].switchView(sViewMode);
+				}
+			});
+		},
+
+		iPressOnTheAdaptFiltersButton: function() {
+			return waitForAdaptFiltersButton.call(this, {
+				actions: new Press(),
+				success: function onAdaptFiltersButtonFound(oAdaptFiltersButton) {
+					Opa5.assert.ok(true, 'The "Adapt Filters" button was pressed');
+				}
+			});
 		}
+
     };
 
 	return oActions;
