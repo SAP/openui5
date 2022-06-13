@@ -462,11 +462,11 @@ sap.ui.define([
 			title: sGroupName
 		});
 
-		this._oLists["all"].addItem(oHeader);
+		this._oLists["all"].addAggregation("items", oHeader, true);
 
 		["error", "warning", "success", "information"].forEach(function (sListType) {
 			if (this._hasGroupItemsOfType(aItems, sListType)) {
-				this._oLists[sListType].addItem(oHeader.clone());
+				this._oLists[sListType].addAggregation("items", oHeader.clone(), true);
 			}
 		}, this);
 
@@ -715,7 +715,7 @@ sap.ui.define([
 			});
 
 			// no re-rendering
-			this._listPage.addContent(this._oLists[sListName]);
+			this._listPage.addAggregation("content", this._oLists[sListName], true);
 		}, this);
 
 		return this;
@@ -730,7 +730,7 @@ sap.ui.define([
 	MessageView.prototype._clearLists = function () {
 		LIST_TYPES.forEach(function (sListName) {
 			if (this._oLists[sListName]) {
-				this._oLists[sListName].destroyItems(true);
+				this._oLists[sListName].destroyAggregation("items", true);
 			}
 		}, this);
 
@@ -762,8 +762,8 @@ sap.ui.define([
 				oCloneListItem = this._mapItemToListItem(oMessageItem);
 
 			// add the mapped item to the List
-			this._oLists["all"].addItem(oListItem);
-			this._oLists[oMessageItem.getType().toLowerCase()].addItem(oCloneListItem);
+			this._oLists["all"].addAggregation("items", oListItem, true);
+			this._oLists[oMessageItem.getType().toLowerCase()].addAggregation("items", oCloneListItem, true);
 		}, this);
 	};
 
@@ -868,7 +868,7 @@ sap.ui.define([
 	 */
 	MessageView.prototype._clearSegmentedButton = function () {
 		if (this._oSegmentedButton) {
-			this._oSegmentedButton.destroyButtons(true);
+			this._oSegmentedButton.destroyAggregation("buttons", true);
 		}
 
 		return this;
@@ -903,7 +903,7 @@ sap.ui.define([
 					press: pressClosure(sListName)
 				}).addStyleClass(CSS_CLASS + "Btn" + sListName.charAt(0).toUpperCase() + sListName.slice(1));
 
-				this._oSegmentedButton.addButton(oButton);
+				this._oSegmentedButton.addButton(oButton, true);
 			}
 		}, this);
 
@@ -971,7 +971,7 @@ sap.ui.define([
 		}
 
 		oDetailsContent.addStyleClass("sapMMsgViewTitleText");
-		this._detailsPage.addContent(oDetailsContent);
+		this._detailsPage.addAggregation("content", oDetailsContent);
 	};
 
 	/**
