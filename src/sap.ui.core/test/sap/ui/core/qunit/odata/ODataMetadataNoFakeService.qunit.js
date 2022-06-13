@@ -175,6 +175,15 @@ sap.ui.define([
 	entitySet : {name : "~entitySetName"},
 	entityType : {
 		key : {
+			propertyRef : [{name : "property3"}]
+		}
+	},
+	result : "/~entitySetName(datetime'2022-06-16T10%3A30%3A00')", // values are encoded
+	resultCollection : "/~entitySetName"
+}, {
+	entitySet : {name : "~entitySetName"},
+	entityType : {
+		key : {
 			propertyRef : [{name : "property1"}]
 		}
 	},
@@ -197,6 +206,16 @@ sap.ui.define([
 		}
 	},
 	result : "/~entitySetName(property0='1',property2=2)",
+	resultCollection : "/~entitySetName"
+}, {
+	entitySet : {name : "~entitySetName"},
+	entityType : {
+		key : {
+			propertyRef : [{name : "property0"}, {name : "property3"}]
+		}
+	},
+	// values are encoded
+	result : "/~entitySetName(property0='1',property3=datetime'2022-06-16T10%3A30%3A00')",
 	resultCollection : "/~entitySetName"
 }, {
 	entitySet : undefined,
@@ -250,7 +269,8 @@ sap.ui.define([
 	QUnit.test("_getCanonicalPathOfFunctionImport: #" + i + "/" + j, function (assert) {
 		var mFunctionParameters = {
 				property0 : "'1'",
-				property2 : "2"
+				property2 : "2",
+				property3 : "datetime'2022-06-16T10:30:00'"
 			},
 			oMetaDataMock = this.mock(this.oMetadata);
 

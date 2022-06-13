@@ -59,6 +59,21 @@
 				<Property Name="DateTime" Type="Edm.DateTime" Precision="0" />
 				<Property Name="TimezoneID" Type="Edm.String" MaxLength="120"/>
 			</EntityType>
+			<ComplexType Name="DummyFunctionImportResult">
+				<Property Name="IsInvalid" Type="Edm.Boolean" sap:label="TRUE"/>
+			</ComplexType>
+			<EntityType Name="C_BankConditionTPType" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BankFeeConditionID"/>
+					<PropertyRef Name="ValidityStartDate"/>
+				</Key>
+				<Property Name="BankFeeConditionID" Type="Edm.String" Nullable="false"
+					MaxLength="10"/>
+				<Property Name="ValidityStartDate" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:display-format="Date"/>
+				<Property Name="BankFeeSrvcChrgMeth" Type="Edm.String" Nullable="false"
+					MaxLength="6"/>
+			</EntityType>
 			<Association Name="assoc_C_RSHMaintSchedSmltdOrdAndOps">
 				<End Type="special.cases.DummyType" Multiplicity="1"
 					Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
@@ -77,7 +92,8 @@
 				<End Type="special.cases.I_UserContactCardType" Multiplicity="*"
 					Role="ToRole_assoc_AllUserContactCards"/>
 			</Association>
-			<EntityContainer Name="Container" m:IsDefaultEntityContainer="true">
+			<EntityContainer Name="Container" m:IsDefaultEntityContainer="true"
+				sap:message-scope-supported="true">
 				<EntitySet Name="C_RSHMaintSchedSmltdOrdAndOp"
 					EntityType="special.cases.C_RSHMaintSchedSmltdOrdAndOpType"/>
 				<EntitySet Name="C_SubscrpnProductChargeTP"
@@ -89,6 +105,8 @@
 				<EntitySet Name="DummySet" EntityType="special.cases.DummyType"/>
 				<EntitySet Name="DateTimeWithTimezoneSet"
 					EntityType="special.cases.DateTimeWithTimezone"/>
+				<EntitySet Name="C_BankConditionTP"
+					EntityType="special.cases.C_BankConditionTPType"/>
 				<AssociationSet Name="assoc_C_RSHMaintSchedSmltdOrdAndOps"
 					Association="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps">
 					<End EntitySet="DummySet"
@@ -117,6 +135,15 @@
 				<FunctionImport Name="allUserAssignmentsPOST"
 					ReturnType="Collection(special.cases.UserAssignment)"
 					EntitySet="UserAssignments" m:HttpMethod="POST"/>
+				<!-- BCP: 2270075487: function import parameters need to be encoded for function
+					import target -->
+				<FunctionImport Name="C_BankConditionTPPrepare"
+					ReturnType="special.cases.DummyFunctionImportResult" m:HttpMethod="POST"
+					sap:action-for="special.cases.C_BankConditionTPType">
+					<Parameter Name="BankFeeConditionID" Type="Edm.String" MaxLength="10"/>
+					<Parameter Name="ValidityStartDate" Type="Edm.DateTime" Precision="0"
+						sap:display-format="Date"/>
+				</FunctionImport>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>
