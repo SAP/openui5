@@ -54,7 +54,8 @@ sap.ui.define([
     LinkPanelController.prototype._onLinkPressed = function(oEvent) {
         var oSource = oEvent.getParameter("oSource");
         var oPanel = this.getAdaptationControl();
-        var sHref = oSource && oSource.getCustomData() ? oSource.getCustomData()[0].getValue() : oSource.getHref();
+        var bUseInternalHref = !!(oSource && oSource.getCustomData() && oSource.getCustomData()[0].getValue());
+        var sHref = bUseInternalHref ? oSource.getCustomData()[0].getValue() : oSource.getHref();
 
         if (oPanel.getBeforeNavigationCallback) {
             oPanel.getBeforeNavigationCallback()(oEvent).then(function (bNavigate) {

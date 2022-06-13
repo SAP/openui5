@@ -368,6 +368,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("check internalHref", function(assert) {
+		var sBaseUrl = window.location.href;
 		var done = assert.async();
 		var oLink = new Link({
 			delegate: {
@@ -376,8 +377,8 @@ sap.ui.define([
 					items: [
 						new LinkItem({
 							text: "A",
-							href: "#A",
-							internalHref: "#AInternal"
+							href: sBaseUrl + "#A",
+							internalHref: sBaseUrl + "#AInternal"
 						}),
 						new LinkItem({
 							text: "B",
@@ -402,10 +403,64 @@ sap.ui.define([
 				assert.equal(this.oPanel.getDependents().length, 1, "Dialog opened");
 				assert.ok(this.oPanel.getDependents()[0].isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
 				assert.ok(this.oPanel.getDependents()[0].getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
-				assert.equal(this.oPanel.getDependents()[0].getContent()[0].getAggregation("_content").getItems()[0].getItems()[0].getCells()[0].getItems()[0].getItems()[0].getCustomData()[0].getValue(), "#AInternal", "Correct internal href");
+				assert.equal(this.oPanel.getDependents()[0].getContent()[0].getAggregation("_content").getItems()[0].getItems()[0].getCells()[0].getItems()[0].getItems()[0].getCustomData()[0].getValue(), sBaseUrl + "#AInternal", "Correct internal href");
 				assert.equal(this.oPanel.getDependents()[0].getContent()[0].getAggregation("_content").getItems()[0].getItems()[1].getCells()[0].getItems()[0].getItems()[0].getCustomData()[0].getValue(), "#BInternal", "Correct internal href");
 				assert.equal(this.oPanel.getDependents()[0].getContent()[0].getAggregation("_content").getItems()[0].getItems()[2].getCells()[0].getItems()[0].getItems()[0].getCustomData()[0].getValue(), "#CInternal", "Correct internal href");
-				done();
+
+				this.oPanel.getDependents()[0].getContent()[0].getAggregation("_content").getItems()[0].getItems()[0].getCells()[0].getItems()[0].getItems()[0].firePress();
+
+				setTimeout(function() {
+					assert.equal(window.location.href, sBaseUrl + "#AInternal", "Navigation happened with internalHref");
+
+					done();
+				}, 50);
+			}.bind(this), 500);
+		}.bind(this));
+	});
+
+	QUnit.test("check navigation without internalHref", function(assert) {
+		var sBaseUrl = window.location.href;
+		var done = assert.async();
+		var oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					items: [
+						new LinkItem({
+							text: "A",
+							href: sBaseUrl + "#A"
+						}),
+						new LinkItem({
+							text: "B",
+							href: "#B",
+							internalHref: "#BInternal"
+						}),
+						new LinkItem({
+							text: "C",
+							href: "#C",
+							internalHref: "#CInternal"
+						})
+					]
+				}
+			}
+		});
+
+		oLink.createPopover().then(function(oPopover) {
+			this.oPanel = oPopover.getContent()[0];
+			this.oPanel.onPressLinkPersonalization();
+
+			setTimeout(function() {
+				assert.equal(this.oPanel.getDependents().length, 1, "Dialog opened");
+				assert.ok(this.oPanel.getDependents()[0].isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
+				assert.ok(this.oPanel.getDependents()[0].getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
+
+				this.oPanel.getDependents()[0].getContent()[0].getAggregation("_content").getItems()[0].getItems()[0].getCells()[0].getItems()[0].getItems()[0].firePress();
+
+				setTimeout(function() {
+					assert.equal(window.location.href, sBaseUrl + "#A", "Navigation happened without internalHref");
+
+					done();
+				}, 50);
 			}.bind(this), 500);
 		}.bind(this));
 	});
