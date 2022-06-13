@@ -5303,6 +5303,13 @@ sap.ui.define([
 		assert.notOk(oInput._bDoTypeAhead, "Autocomplete shouldn't be allowed when deleting.");
 		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getSelectedItem(), null, "No items in the Suggestions list are selected when deleting.");
 
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("Ger").trigger("input");
+		this.clock.tick(300);
+
+		qutils.triggerKeydown(oInput._$input, KeyCodes.ARROW_DOWN);
+
+		assert.strictEqual(oInput._$input[0].selectionEnd - oInput._$input[0].selectionStart > 0, true, "Typeahheaded text is selected.");
+
 		// clean up
 		oInput.destroy();
 		oInput = null;
