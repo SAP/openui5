@@ -6678,6 +6678,56 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: Function import parameters need to be encoded when creating the default target
+	// path for for a function import. Otherwise messages cannot be assigned properly and it might
+	// lead to duplicate messages.
+	// BCP: 2270075487
+	QUnit.test("Messages: Encode key values for default function import target", function (assert) {
+		var oModel = createSpecialCasesModel(),
+			that = this;
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oError = that.createResponseMessage("BankFeeSrvcChrgMeth");
+
+			that.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+				.expectRequest({
+					encodeRequestUri : false,
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "POST",
+					requestUri : "C_BankConditionTPPrepare?BankFeeConditionID='F%26FF'"
+						+ "&ValidityStartDate=datetime'2022-06-16T10%3A30%3A00'"
+				}, {
+					"C_BankConditionTPPrepare" : {
+						__metadata  : {type : "special.cases.DummyFunctionImportResult"},
+						IsInvalid : false
+					}
+				}, {"sap-message" : getMessageHeader(oError)})
+				.expectMessage(oError,
+					"/C_BankConditionTP(BankFeeConditionID='F%26FF',"
+					+ "ValidityStartDate=datetime'2022-06-16T10%3A30%3A00')/");
+
+			return Promise.all([
+				// code under test
+				oModel.callFunction("/C_BankConditionTPPrepare", {
+					method : "POST",
+					urlParameters : {
+						BankFeeConditionID : "F&FF",
+						ValidityStartDate : new Date(Date.UTC(2022, 5, 16, 10, 30, 0))
+					}
+				}, {
+					"C_BankConditionTPPrepare" : {
+						__metadata : {type : "special.cases.DummyFunctionImportResult"},
+						IsInvalid : false
+					}
+				}).contextCreated(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Messages returned by a function import for a single entity referenced by a
 	// navigation property get the correct full target.
 	// JIRA: CPOUI5MODELS-230

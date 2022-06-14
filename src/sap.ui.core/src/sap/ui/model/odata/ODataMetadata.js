@@ -1707,17 +1707,20 @@ sap.ui.define([
 				// names of the entity keys are the same. Otherwise it is not guaranteed that the
 				// function parameter name is equal to the corresponding key property of the
 				// resulting entity type.
+				// Parameter values need to be encoded, property names contain only the characters
+				// _A-Za-z0-9 which don't need to be encoded.
 				if (aPropertyReferences.length === 1) {
 					sParameterName = aPropertyReferences[0].name;
 					if (mFunctionParameters[sParameterName]) {
-						sId = mFunctionParameters[sParameterName];
+						sId = encodeURIComponent(mFunctionParameters[sParameterName]);
 					}
 				} else {
 					aKeys = [];
 					for (i = 0; i < aPropertyReferences.length; i += 1) {
 						sParameterName = aPropertyReferences[i].name;
 						if (mFunctionParameters[sParameterName]) {
-							aKeys.push(sParameterName + "=" + mFunctionParameters[sParameterName]);
+							aKeys.push(sParameterName + "="
+								+ encodeURIComponent(mFunctionParameters[sParameterName]));
 						}
 					}
 					sId = aKeys.join(",");
