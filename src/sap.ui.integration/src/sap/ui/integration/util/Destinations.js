@@ -93,6 +93,11 @@ sap.ui.define([
 					if (vKey !== undefined) {
 						oObj[vKey] = sProcessedString;
 					}
+				})
+				.catch(function () {
+					if (vKey !== undefined) {
+						oObj[vKey] = "";
+					}
 				}));
 		}
 

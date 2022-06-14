@@ -23,11 +23,11 @@
 					data-demokit-href="#/api/sap.ui.integration.Host"
 					target="_blank"><code>sap.ui.integration.Host</code></a>.
 				The host application developer should set the <code>resolveDestination</code> to a function, which
-				resolves destination name to the corresponding URL.
+				resolves destination name to the corresponding absolute URL.
 				The card calls this function when it needs to send a request to the destination.
 				If a card depends on a destination, but this callback is not implemented, an error will be logged.
 				The callback receives <code>destinationName</code> as parameter and returns a string with the URL.
-				Or alternatively the callback may return a <code>Promise</code> which resolves with the URL as argument.
+				Or alternatively the callback may return a <code>Promise</code> which resolves with the absolute URL as argument.
 			</p>
 
 			<h2 id="examples">
@@ -37,7 +37,7 @@
 			Controller
 			<pre class="lang-js">
 var oHost = new sap.ui.integration.Host({
-	resolveDestination: function(sDestinationName) {
+	resolveDestination: function(sDestinationName, oCard) {
 		switch (sDestinationName) {
 			case "Northwind":
 				return "https://services.odata.org/V3/Northwind/Northwind.svc";

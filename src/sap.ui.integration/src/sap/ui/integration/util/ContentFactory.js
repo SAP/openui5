@@ -85,11 +85,8 @@ sap.ui.define([
 					oContent.setDataProviderFactory(mConfig.dataProviderFactory);
 					oContent.setIconFormatter(mConfig.iconFormatter);
 					oContent.setActions(oActions);
-
-					oCard.processDestinations(mConfig.contentManifest).then(function (mProcessedContentManifest) {
-						oContent.setConfiguration(mProcessedContentManifest, sType);
-						resolve(oContent);
-					});
+					oContent.setConfiguration(mConfig.contentManifest, sType);
+					resolve(oContent);
 				})
 				.catch(function (sError) {
 					reject(sError);

@@ -853,9 +853,9 @@ sap.ui.define([
 
 		oCardManifest.processParameters(oParameters);
 
-		this._prepareToApplyManifestSettings();
-
-		this._applyManifestSettings();
+		this._prepareToApplyManifestSettings().then(function () {
+			this._applyManifestSettings();
+		}.bind(this));
 	};
 
 	/**
@@ -1388,13 +1388,11 @@ sap.ui.define([
 			manifestConfig: this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS)
 		});
 		this._oIconFormatter = new IconFormatter({
-			destinations: this._oDestinations,
 			card: this
 		});
 
 		this._oDataProviderFactory = new DataProviderFactory({
 			host: this.getHostInstance(),
-			destinations: this._oDestinations,
 			extension: oExtension,
 			csrfTokensConfig: this._oCardManifest.get(MANIFEST_PATHS.CSRF_TOKENS),
 			card: this
@@ -1402,9 +1400,13 @@ sap.ui.define([
 
 		this._registerCustomModels();
 
-		if (oExtension) {
-			oExtension.onCardReady();
-		}
+		return this.processDestinations(this._oCardManifest.getJson()).then(function (oResult) {
+			this._oCardManifest.setJson(oResult);
+
+			if (oExtension) {
+				oExtension.onCardReady();
+			}
+		}.bind(this));
 	};
 
 	/**
@@ -2241,10 +2243,12 @@ sap.ui.define([
 	 * @returns {Promise} Resolves when the request is successful, rejects otherwise.
 	 */
 	Card.prototype.request = function (oConfiguration) {
-		return this._oDataProviderFactory
-			.create({ request: oConfiguration })
-			.setAllowCustomDataType(true)
-			.getData();
+		return this.processDestinations(oConfiguration).then(function (oResult) {
+			return this._oDataProviderFactory
+				.create({ request: oResult })
+				.setAllowCustomDataType(true)
+				.getData();
+		}.bind(this));
 	};
 
 	/**

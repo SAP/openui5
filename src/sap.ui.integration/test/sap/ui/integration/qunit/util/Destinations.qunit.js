@@ -20,7 +20,8 @@ sap.ui.define([
 			sImagesResourcePath = "qunit/testResources/images/",
 			sBaseUrl = "test-resources/sap/ui/integration/",
 			sNavigationUrl = "https://some.domain.com",
-			sCardId = "test1";
+			sCardId = "test1",
+			sInnerText = "Some text";
 
 		var oManifest_Valid = {
 			"sap.app": {
@@ -44,11 +45,14 @@ sap.ui.define([
 						},
 						"navigationDestination": {
 							"name": "navigationDestination"
+						},
+						"innerDestination": {
+							"name": "innerDestination"
 						}
 					}
 				},
 				"header": {
-					"title": "{title}",
+					"title": "{{destinations.innerDestination}} {title}",
 					"data": {
 						"request": {
 							"url": "{{destinations.headerDestination}}/header.json"
@@ -183,7 +187,7 @@ sap.ui.define([
 
 				// Assert
 				assert.ok(aItems.length, "The data request is successful.");
-				assert.strictEqual(this.oCard.getCardHeader().getTitle(), "Card Title", "header destination is resolved successfully");
+				assert.strictEqual(this.oCard.getCardHeader().getTitle(), sInnerText + " Card Title", "header destination is resolved successfully");
 				assert.strictEqual(sFirstItemIcon, sExpectedIcon, "The icon path is correct.");
 
 				assert.ok(aActions[0].parameters.city.indexOf(sNavigationUrl + sCardId) > -1, "Navigation destination is resolved successfully");
@@ -263,6 +267,8 @@ sap.ui.define([
 								return "";
 							case "navigationDestination":
 								return sNavigationUrl + oCard.getManifestEntry("/sap.app/id");
+							case "innerDestination":
+								return sInnerText;
 							default:
 								Log.error("Unknown destination.");
 								break;
@@ -317,6 +323,12 @@ sap.ui.define([
 								return new Promise(function (resolve) {
 									setTimeout(function () {
 										resolve(sNavigationUrl + oCard.getManifestEntry("/sap.app/id"));
+									}, 10);
+								});
+							case "innerDestination":
+								return new Promise(function (resolve) {
+									setTimeout(function () {
+										resolve(sInnerText);
 									}, 10);
 								});
 							default:
