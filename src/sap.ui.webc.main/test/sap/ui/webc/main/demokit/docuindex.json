@@ -155,6 +155,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.webc.main.DatePicker",
+				"name": "DatePicker",
+				"category": "Web Components",
+				"since": "1.104.0",
+				"samples": [
+					"sap.ui.webc.main.sample.DatePicker"
+				]
+			},
+			{
 				"id": "sap.ui.webc.main.List",
 				"name": "List",
 				"category": "Web Components",
@@ -449,6 +458,11 @@
 				"id": "sap.ui.webc.main.sample.Link",
 				"name": "Link",
 				"description": "Demonstrates the basic usage of Link"
+			},
+			{
+				"id": "sap.ui.webc.main.sample.DatePicker",
+				"name": "DatePicker",
+				"description": "Demonstrates the basic usage of DatePicker"
 			},
 			{
 				"id": "sap.ui.webc.main.sample.ListBasic",
