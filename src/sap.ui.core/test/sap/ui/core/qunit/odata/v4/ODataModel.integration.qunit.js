@@ -27156,7 +27156,7 @@ sap.ui.define([
 						technical : true,
 						type : "Error"
 					}]);
-				that.oLogMock.expects("error"); // don't care about console here
+				that.oLogMock.expects("error").twice(); // don't care about console here
 
 				oRoomIdBinding.setValue("23");
 				fnReject(oError);
@@ -27243,7 +27243,7 @@ sap.ui.define([
 						technical : true,
 						type : "Error"
 					}]);
-				that.oLogMock.expects("error"); // don't care about console here
+				that.oLogMock.expects("error").twice(); // don't care about console here
 
 				fnReject(createErrorInsideBatch());
 			}
@@ -40390,14 +40390,14 @@ sap.ui.define([
 	// error. Afterwards all changes are reverted via ODM#resetChanges. The initial values of the
 	// properties are displayed.
 	// JIRA: CPOUI5ODATAV4-1603
-	// BCP: 2270079668
+	// BCP: 2270079668, 2280103069
 	QUnit.test("BCP: 2270079668 - #resetChanges after failed PATCH", function (assert) {
 	var oBinding,
 		oContext,
 		oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
-		iPatchCompletedCount = 0,
+		iPatchCompleted = 0,
 		aPatchPromises = [],
-		fnPatchSent = sinon.spy(),
+		iPatchSent = 0,
 		sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Input id="grossAmount" value="{GrossAmount}"/>\
@@ -40429,11 +40429,14 @@ sap.ui.define([
 			oContext = that.oView.byId("form").getBindingContext();
 			oBinding = oContext.getBinding();
 
-			oBinding.attachPatchSent(fnPatchSent);
+			oBinding.attachPatchSent(function () {
+				iPatchSent += 1;
+			});
 			oBinding.attachPatchCompleted(function (oEvent) {
 				// the event is modified later, so we have to check immediately
 				assert.strictEqual(oEvent.getParameter("success"), false);
-				iPatchCompletedCount += 1;
+				assert.strictEqual(iPatchSent, 1, "patchSent was fired before");
+				iPatchCompleted += 1;
 			});
 
 			that.expectChange("grossAmount", "200.00")
@@ -40479,10 +40482,17 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.oLogMock.expects("error")
+			assert.strictEqual(iPatchSent, 0);
+			assert.strictEqual(iPatchCompleted, 0);
+
+			that.oLogMock.expects("error").thrice()
+				.withArgs("Failed to update path /SalesOrderList('1')/Note");
+			that.oLogMock.expects("error").thrice()
 				.withArgs("Failed to update path /SalesOrderList('1')/GrossAmount");
-			that.oLogMock.expects("error")
+			that.oLogMock.expects("error").thrice()
 				.withArgs("Failed to update path /SalesOrderList('1')/SO_2_BP/Address/City");
+			that.oLogMock.expects("error")
+				.withArgs("Failed to update path /SalesOrderList('1')/SO_2_BP/Address/PostalCode");
 
 			that.expectRequest({
 					method : "PATCH",
@@ -40515,6 +40525,9 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			assert.strictEqual(iPatchSent, 1);
+			assert.strictEqual(iPatchCompleted, 1);
+
 			that.expectCanceledError(
 					"Failed to update path /SalesOrderList('1')/GrossAmount",
 					"Request canceled: PATCH SalesOrderList('1'); group: update")
@@ -40564,8 +40577,8 @@ sap.ui.define([
 			assert.strictEqual(oContext.getValue("SO_2_BP/Address/PostalCode"), "42");
 			assert.strictEqual(oContext.hasPendingChanges(), false);
 			assert.strictEqual(oModel.hasPendingChanges(), false);
-			sinon.assert.calledOnce(fnPatchSent);
-			assert.strictEqual(iPatchCompletedCount, 1);
+			assert.strictEqual(iPatchSent, 1);
+			assert.strictEqual(iPatchCompleted, 1);
 		});
 	});
 
