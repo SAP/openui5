@@ -1584,13 +1584,11 @@ sap.ui.define([
 		});
 
 		function handler1() {
-			oBinding.detachChange(handler1);
-			oBinding.attachChange(handler2);
+			oBinding.attachEventOnce("change", handler2);
 			oBinding.expand(6, true);
 		}
 
 		function handler2() {
-			oBinding.detachChange(handler2);
 			iOldLength = oBinding.getLength();
 			sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
 
@@ -1602,14 +1600,12 @@ sap.ui.define([
 
 			oBinding.submitChanges({
 				success : function () {
-					oBinding.attachChange(handler3);
+					oBinding.attachEventOnce("change", handler3);
 				}
 			});
 		}
 
 		function handler3() {
-			oBinding.detachChange(handler3);
-
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength - 4, "New binding length is equal to old length minus four (child nodes of moved node)");
 
@@ -1621,7 +1617,7 @@ sap.ui.define([
 			}
 			done();
 		}
-		oBinding.attachChange(handler1);
+		oBinding.attachEventOnce("change", handler1);
 		requestData(oBinding, 0, 20, 100);
 	});
 
@@ -1638,7 +1634,6 @@ sap.ui.define([
 		});
 
 		function handler1() {
-			oBinding.detachChange(handler1);
 			iOldLength = oBinding.getLength();
 			sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
 
@@ -1650,14 +1645,12 @@ sap.ui.define([
 
 			oBinding.submitChanges({
 				success : function () {
-					oBinding.attachChange(handler2);
+					oBinding.attachEventOnce("change", handler2);
 				}
 			});
 		}
 
 		function handler2() {
-			oBinding.detachChange(handler2);
-
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength - 1, "New binding length is equal to old length minus one (child node of moved node)");
 
@@ -1669,7 +1662,7 @@ sap.ui.define([
 			}
 			done();
 		}
-		oBinding.attachChange(handler1);
+		oBinding.attachEventOnce("change", handler1);
 		requestData(oBinding, 0, 20, 100);
 	});
 
@@ -1687,31 +1680,26 @@ sap.ui.define([
 		});
 
 		function handler1() {
-			oBinding.detachChange(handler1);
-			oBinding.attachChange(handler2);
+			oBinding.attachEventOnce("change", handler2);
 			oBinding.expand(3, true);
 		}
 
 		function handler2() {
-			oBinding.detachChange(handler2);
-			oBinding.attachChange(handler3);
+			oBinding.attachEventOnce("change", handler3);
 			oBinding.expand(5, true);
 		}
 
 		function handler3() {
-			oBinding.detachChange(handler3);
-			oBinding.attachChange(handler4);
+			oBinding.attachEventOnce("change", handler4);
 			oBinding.expand(6, true);
 		}
 
 		function handler4() {
-			oBinding.detachChange(handler4);
-			oBinding.attachChange(handler5);
+			oBinding.attachEventOnce("change", handler5);
 			oBinding.expand(7, true);
 		}
 
 		function handler5() {
-			oBinding.detachChange(handler5);
 			iOldLength = oBinding.getLength();
 			sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
 
@@ -1723,14 +1711,12 @@ sap.ui.define([
 
 			oBinding.submitChanges({
 				success : function () {
-					oBinding.attachChange(handler6);
+					oBinding.attachEventOnce("change", handler6);
 				}
 			});
 		}
 
 		function handler6() {
-			oBinding.detachChange(handler6);
-
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength, "New binding length is equal to old length");
 
@@ -1742,7 +1728,7 @@ sap.ui.define([
 			}
 			done();
 		}
-		oBinding.attachChange(handler1);
+		oBinding.attachEventOnce("change", handler1);
 		requestData(oBinding, 0, 20, 100);
 	});
 });

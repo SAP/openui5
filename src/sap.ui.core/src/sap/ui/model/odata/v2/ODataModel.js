@@ -6066,15 +6066,29 @@ sap.ui.define([
 			bRefreshAfterChange = this.bRefreshAfterChange,
 			that = this;
 
-		if (mParameters) {
-			sGroupId = mParameters.groupId || mParameters.batchGroupId;
-			fnSuccess =	mParameters.success;
-			fnError = mParameters.error;
-			// ensure merge parameter backwards compatibility
-			if (mParameters.merge !== undefined) {
-				sMethod =  mParameters.merge ? "MERGE" : "PUT";
-			}
+		mParameters = mParameters || {};
+		sGroupId = mParameters.groupId || mParameters.batchGroupId;
+		fnSuccess = mParameters.success;
+		fnError = mParameters.error;
+		// ensure merge parameter backwards compatibility
+		if (mParameters.merge !== undefined) {
+			sMethod =  mParameters.merge ? "MERGE" : "PUT";
 		}
+
+		this.getBindings().forEach(function (oBinding) {
+			if (oBinding._submitChanges) {
+				var fnOldSuccess = fnSuccess || function () {},
+					mParameters0 = {groupId : sGroupId};
+
+				oBinding._submitChanges(mParameters0);
+				if (mParameters0.success) {
+					fnSuccess = function () {
+						fnOldSuccess.apply(null, arguments);
+						mParameters0.success.apply(null, arguments);
+					};
+				}
+			}
+		});
 
 		if (sGroupId && !this.mDeferredGroups[sGroupId]) {
 			Log.fatal(this + " submitChanges: \"" + sGroupId + "\" is not a deferred group!");

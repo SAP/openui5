@@ -19,6 +19,8 @@ sap.ui.define([
 		TreeBindingUtils, ODataTreeBinding) {
 	"use strict";
 
+	var sClassName = "sap.ui.model.odata.ODataTreeBindingFlat";
+
 	/**
 	 * Adapter for TreeBindings to add the ListBinding functionality and use the
 	 * tree structure in list based controls.
@@ -91,6 +93,8 @@ sap.ui.define([
 		this._aPendingRequests = [];
 		this._aPendingChildrenRequests = [];
 		this._aPendingSubtreeRequests = [];
+		// Whether ODataTreeBindingFlat#submitChanges has been called
+		this._bSubmitChangesCalled = false;
 	};
 
 	/**
@@ -3122,93 +3126,122 @@ sap.ui.define([
 
 	/**
 	 * Submits the queued changes regarding this binding instance.
+	 * Note: Only changes for this binding's groupId are submitted hence mParameters.groupId is
+	 * overwritten with this binding instance's groupId.
 	 *
-	 * @param {object} [mParameters] Additional parameters
+	 * @param {object} [mParameters]
+	 *   A map of parameters as described in {@link sap.ui.model.odata.v2.ODataModel#submitChanges}
 	 *
+	 * @deprecated Since 1.104 use {@link sap.ui.model.odata.v2.ODataModel#submitChanges} instead
 	 * @private
 	 * @ui5-restricted
 	 */
 	ODataTreeBindingFlat.prototype.submitChanges = function (mParameters) {
-		mParameters = mParameters || {};
+		var sResolvedPath = this.getResolvedPath();
 
-		// group id
-		var sAbsolutePath = this.getResolvedPath(),
-			oOptimizedChanges = this._optimizeChanges();
-
-		if (!sAbsolutePath) {
-			Log.warning("ODataTreeBindingFlat: submitChanges failed, because the binding-path could not be resolved.");
+		if (!sResolvedPath) {
+			Log.error("#submitChanges failed: binding is unresolved", this.getPath(), sClassName);
 			return;
 		}
-		mParameters.groupId = this._getCorrectChangeGroup(sAbsolutePath);
+		this._bSubmitChangesCalled = true;
+		mParameters = mParameters || {};
+		mParameters.groupId = this.oModel._resolveGroup(sResolvedPath).groupId;
+		this.oModel.submitChanges(mParameters);
+	};
 
-		// make sure not to lose the original success/error handlers
-		var fnOrgSuccess = mParameters.success || function() {};
-		var fnOrgError = mParameters.error || function() {};
-		var bRestoreRequestFailed = false;
+	/**
+	 * Prepares all hierarchy changes for this binding instance. Enhances the parameter
+	 * <code>mParameters</code> with a new <code>success</code> handler which takes care of needed
+	 * follow-up requests, either for restoring the tree state or for a binding refresh.
+	 * Note: If <code>mParameters.groupId</code> deviates from the change group defined for the
+	 * entity type of this binding, no changes are submitted.
+	 *
+	 * @param {object} mParameters
+	 *   A map of parameters
+	 * @param {string} [mParameters.groupId]
+	 *   Defines the group that is submitted. If not specified, all deferred groups are submitted.
+	 * @param {function} [mParameters.success]
+	 *   Should not be set as this function overrides <code>mParameters.success</code>
+	 *
+	 * @private
+	 */
+	ODataTreeBindingFlat.prototype._submitChanges = function (mParameters) {
+		var bHasOptimizedChanges, oOptimizedChanges,
+			sGroupId = mParameters.groupId,
+			sResolvedPath = this.getResolvedPath(),
+			bRestoreRequestFailed = false,
+			that = this;
 
-		// handlers used by the binding itself
+		function _logTreeRestoreFailed (oError) {
+			Log.error("Tree state restoration request failed for binding: " + sResolvedPath, oError,
+				sClassName);
+		}
+
+		if (!sResolvedPath
+				|| sGroupId && sGroupId !== this.oModel._resolveGroup(sResolvedPath).groupId) {
+			this._bSubmitChangesCalled = false;
+			return;
+		}
+
+		oOptimizedChanges = this._optimizeChanges();
+		bHasOptimizedChanges = Object.values(oOptimizedChanges).some(function (aChanges) {
+			return aChanges.length;
+		});
+
+		if (!bHasOptimizedChanges && !this._bSubmitChangesCalled) {
+			// do nothing to prevent an unnecessary refresh or restore of the tree state; the flag
+			// _bSubmitChangesCalled is already falsy and therefore needn't to be reset
+			return;
+		}
+
+		this._bSubmitChangesCalled = false;
 		mParameters.success = function (oData) {
-			// call original success handler
-			fnOrgSuccess(oData);
+			var bFailedChangeResponse,
+				aChangeResponses = oData.__batchResponses && oData.__batchResponses[0]
+					&& oData.__batchResponses[0].__changeResponses;
 
-			var bSomethingFailed = false;
+			if (aChangeResponses && aChangeResponses.length > 0) {
+				bFailedChangeResponse = aChangeResponses.some(function (oChangeResponse) {
+					var iStatusCode = parseInt(oChangeResponse.statusCode);
 
-			// check the change responses for errors
-			if (oData.__batchResponses && oData.__batchResponses[0] &&
-				oData.__batchResponses[0].__changeResponses && oData.__batchResponses[0].__changeResponses.length > 0) {
+					return iStatusCode < 200 || iStatusCode > 299;
+				});
 
-				var aChangeResponses = oData.__batchResponses[0].__changeResponses;
-
-				for (var i = 0; i < aChangeResponses.length; i++) {
-					var oResponse = aChangeResponses[i];
-					var iStatusCode = parseInt(oResponse.statusCode);
-					if (iStatusCode < 200 || iStatusCode > 299) {
-						bSomethingFailed = true;
-						break;
-					}
-				}
-
-				if (bSomethingFailed) {
+				if (bFailedChangeResponse) {
 					// Just like ODataModel.submitChanges, if a request fails we don't do anything.
-					// Example from other bindings: ODataPropertyBinding still keeps a value that could not be successfully submitted.
-					// It is up to the application to handle such errors.
-					// A tree state restoration won't happen. The tree state will stay the same as no data is getting reset.
-				} else if (!bRestoreRequestFailed && this._isRestoreTreeStateSupported()) {
-					// This is an temporary flag on the binding to turn off the restore feature by default.
-					// This flag defines whether the tree state before submitChanges should be restored afterwards.
-					// If this is true, a batch request is sent after the save action is finished to load the nodes
-					//	which were available before in order to properly restore the tree state.
-					// Application filters are currently not supported for tree state restoration
-					//	this is due to the SiblingsPosition being requested via GET Entity (not filterable) instead of GET Entity Set (filterable)
-					this._restoreTreeState(oOptimizedChanges).catch(function (err) {
-						Log.error("ODataTreeBindingFlat - " + err.message, err.stack);
-						this._refresh(true);
-					}.bind(this));
+					// Example from other bindings: ODataPropertyBinding still keeps a value that
+					// could not be successfully submitted. It is up to the application to handle
+					// such errors. A tree state restoration won't happen. The tree state will stay
+					// the same as no data is getting reset.
+				} else if (!bRestoreRequestFailed && that._isRestoreTreeStateSupported()) {
+					// This is an temporary flag on the binding to turn off the restore feature by
+					// default. This flag defines whether the tree state before submitChanges should
+					// be restored afterwards. If this is true, a batch request is sent after the
+					// save action is finished to load the nodes which were available before in
+					// order to properly restore the tree state. Application filters are currently
+					// not supported for tree state restoration this is due to the SiblingsPosition
+					// being requested via GET Entity (not filterable) instead of GET Entity Set
+					// (filterable)
+					that._restoreTreeState(oOptimizedChanges).catch(function (oError) {
+						_logTreeRestoreFailed(oError);
+						that._refresh(true);
+					});
 				} else {
 					// Trigger a refresh to reload the newly updated hierarchy
 					// This is the happy path, and only here a refresh has to be triggered.
-					this._refresh(true);
+					that._refresh(true);
 				}
 			} else {
-				// batch response does not contain change responses: error case
-				Log.warning("ODataTreeBindingFlat.submitChanges - success: Batch-request response does not contain change response.");
+				Log.warning("#submitChanges: no change response in batch response", sResolvedPath,
+					sClassName);
 			}
-
-		}.bind(this);
-
-		mParameters.error = function (oEvent) {
-			// call original error handler
-			fnOrgError(oEvent);
 		};
 
 		// built the actual requests for the change-set
-		this._generateSubmitData(oOptimizedChanges, function(err) {
-			Log.error("ODataTreeBindingFlat - Tree state restoration request failed. " + err.message, err.stack);
+		this._generateSubmitData(oOptimizedChanges, function (oError) {
+			_logTreeRestoreFailed(oError);
 			bRestoreRequestFailed = true;
 		});
-
-		// relay submit call to the model
-		this.oModel.submitChanges(mParameters);
 	};
 
 	/**

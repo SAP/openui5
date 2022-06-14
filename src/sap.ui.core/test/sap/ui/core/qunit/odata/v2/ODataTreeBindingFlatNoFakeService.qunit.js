@@ -3,11 +3,14 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/model/TreeBinding",
 	"sap/ui/model/odata/ODataTreeBindingFlat",
 	"sap/ui/test/TestUtils"
-], function (Log, ODataTreeBindingFlat, TestUtils) {
+], function (Log, TreeBinding, ODataTreeBindingFlat, TestUtils) {
 	/*global QUnit,sinon*/
 	"use strict";
+
+	var sClassName = "sap.ui.model.odata.ODataTreeBindingFlat";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.ODataTreeBindingFlat (ODataTreeBindingFlatNoFakeService)", {
@@ -20,6 +23,39 @@ sap.ui.define([
 		afterEach : function (assert) {
 			return TestUtils.awaitRendering();
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataTreeBindingFlat: basic test", function (assert) {
+		var oTreeBinding = new TreeBinding("model", "/path");
+
+		// code under test
+		ODataTreeBindingFlat.call(oTreeBinding);
+
+		assert.deepEqual(oTreeBinding.mParameters, {});
+		assert.strictEqual(oTreeBinding._iPageSize, 0);
+		assert.deepEqual(oTreeBinding._aNodes, []);
+		assert.deepEqual(oTreeBinding._aNodeCache, []);
+		assert.deepEqual(oTreeBinding._aCollapsed, []);
+		assert.deepEqual(oTreeBinding._aExpanded, []);
+		assert.deepEqual(oTreeBinding._aRemoved, []);
+		assert.deepEqual(oTreeBinding._aAdded, []);
+		assert.deepEqual(oTreeBinding._aNodeChanges, []);
+		assert.deepEqual(oTreeBinding._aAllChangedNodes, []);
+		assert.deepEqual(oTreeBinding._mSubtreeHandles, {});
+		assert.strictEqual(oTreeBinding._iLowestServerLevel, null);
+		assert.deepEqual(oTreeBinding._aExpandedAfterSelectAll, []);
+		assert.deepEqual(oTreeBinding._mSelected, {});
+		assert.deepEqual(oTreeBinding._mDeselected, {});
+		assert.strictEqual(oTreeBinding._bSelectAll, false);
+		assert.strictEqual(oTreeBinding._iLengthDelta, 0);
+		assert.strictEqual(oTreeBinding.bCollapseRecursive, true);
+		assert.strictEqual(oTreeBinding._bIsAdapted, true);
+		assert.strictEqual(oTreeBinding._bReadOnly, true);
+		assert.deepEqual(oTreeBinding._aPendingRequests, []);
+		assert.deepEqual(oTreeBinding._aPendingChildrenRequests, []);
+		assert.deepEqual(oTreeBinding._aPendingSubtreeRequests, []);
+		assert.strictEqual(oTreeBinding._bSubmitChangesCalled, false);
 	});
 
 	//*********************************************************************************************
@@ -152,188 +188,347 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitChanges: getResolvedPath is called", function (assert) {
+	QUnit.test("submitChanges: unresolved binding", function (assert) {
 		var oBinding = {
-				_optimizeChanges : function () {},
+				getPath : function () {},
 				getResolvedPath : function () {}
 			};
 
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
-		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(undefined);
-		this.oLogMock.expects("warning")
-			.withExactArgs("ODataTreeBindingFlat: submitChanges failed, because the binding-path"
-				+ " could not be resolved.");
+		this.mock(oBinding).expects("getPath").withExactArgs().returns("~path");
+		this.oLogMock.expects("error")
+			.withExactArgs("#submitChanges failed: binding is unresolved", "~path", sClassName);
 
 		// code under test
 		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding);
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function(bRestoreTreeStateSupported) {
-	var sTitle = "submitChanges: successful submit, _isRestoreTreeStateSupported="
-			+ bRestoreTreeStateSupported + "; call "
-			+ (bRestoreTreeStateSupported ? "_restoreTreeState" : "_refresh");
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("submitChanges: call ODataModel#submitChanges", function (assert) {
 		var oBinding = {
+				_bSubmitChangesCalled : false,
 				oModel : {
+					_resolveGroup : function () {},
 					submitChanges : function () {}
 				},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+		this.mock(oBinding.oModel).expects("_resolveGroup")
+			.withExactArgs("/foo")
+			.returns({groupId : "~groupId"});
+		this.mock(oBinding.oModel).expects("submitChanges").withExactArgs({groupId : "~groupId"});
+
+		// code under test
+		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding);
+
+		assert.strictEqual(oBinding._bSubmitChangesCalled, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitChanges: call ODataModel#submitChanges (w/ mParameters)", function (assert) {
+		var oBinding = {
+				_bSubmitChangesCalled : false,
+				oModel : {
+					_resolveGroup : function () {},
+					submitChanges : function () {}
+				},
+				getResolvedPath : function () {}
+			},
+			mParameters = {groupId : "~oldGroup"};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+		this.mock(oBinding.oModel).expects("_resolveGroup")
+			.withExactArgs("/foo")
+			.returns({groupId : "~groupId"});
+		this.mock(oBinding.oModel).expects("submitChanges")
+			.withExactArgs(sinon.match.same(mParameters).and(sinon.match({groupId : "~groupId"})));
+
+		// code under test
+		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding, mParameters);
+
+		assert.strictEqual(oBinding._bSubmitChangesCalled, true);
+	});
+
+
+	//*********************************************************************************************
+	QUnit.test("_submitChanges: binding is unresolved", function (assert) {
+		var oBinding = {
+				_bSubmitChangesCalled : "~foo",
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, {/*mParameters*/});
+
+		assert.strictEqual(oBinding._bSubmitChangesCalled, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_submitChanges: groupId doesn't match", function (assert) {
+		var oBinding = {
+				_bSubmitChangesCalled : "~bar",
+				oModel : {_resolveGroup : function () {}},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+		this.mock(oBinding.oModel).expects("_resolveGroup")
+			.withExactArgs("/foo")
+			.returns({groupId : "~groupId"});
+
+		// code under test
+		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, {groupId : "changes"});
+
+		assert.strictEqual(oBinding._bSubmitChangesCalled, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_submitChanges: does nothing if there are no hierarchy changes and the call was not"
+			+ " trigged by ODataTreeBindingFlat#submitChanges", function (assert) {
+		var oBinding = {
+				_bSubmitChangesCalled : false,
+				_optimizeChanges : function () {},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+		this.mock(oBinding).expects("_optimizeChanges")
+			.withExactArgs()
+			.returns({
+				added : [],
+				creationCancelled : [],
+				moved : [],
+				removed : []
+			});
+
+		// code under test
+		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, {/*mParameters*/});
+
+		assert.strictEqual(oBinding._bSubmitChangesCalled, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_submitChanges: overrides success handler and calls _generateSubmitData if there "
+			+ "are no hierarchy changes but the call was triggered by "
+			+ "ODataTreeBindingFlat#submitChanges", function (assert) {
+		var oBinding = {
+				_bSubmitChangesCalled : true,
 				_generateSubmitData : function () {},
-				_getCorrectChangeGroup : function () {},
+				_optimizeChanges : function () {},
+				getResolvedPath : function () {}
+			},
+			oOptimizedChanges = {
+				added : [],
+				creationCancelled : [],
+				moved : [],
+				removed : []
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
+		this.mock(oBinding).expects("_generateSubmitData")
+			.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
+
+		// code under test
+		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, {/*mParameters*/});
+
+		assert.strictEqual(oBinding._bSubmitChangesCalled, false);
+	});
+
+	//*********************************************************************************************
+[
+	[{statusCode : "200"}, {statusCode : "300"}],
+	[{statusCode : "200"}, {statusCode : "199"}]
+].forEach(function (aChangeResponses, i) {
+	QUnit.test("_submitChanges: error in change response, success handler does nothing: " + i,
+			function (assert) {
+		var oBinding = {
+				_generateSubmitData : function () {},
+				_optimizeChanges : function () {},
+				getResolvedPath : function () {}
+			},
+			oOptimizedChanges = {foo : [], bar : ["baz"]},
+			mParameters = {},
+			oResponseData = {__batchResponses : [{__changeResponses : aChangeResponses}]};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
+		this.mock(oBinding).expects("_generateSubmitData")
+			.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
+
+		// code under test
+		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
+
+		// code under test: success handler does nothing
+		mParameters.success(oResponseData);
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function(bRestoreTreeStateSupported) {
+	var sTitle = "_submitChanges: successful submit, _isRestoreTreeStateSupported="
+			+ bRestoreTreeStateSupported + "; call "
+			+ (bRestoreTreeStateSupported ? "_restoreTreeState" : "_refresh");
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				oModel : {submitChanges : function () {}},
+				_generateSubmitData : function () {},
 				_isRestoreTreeStateSupported : function () {},
 				_optimizeChanges : function () {},
 				_refresh : function () {},
 				_restoreTreeState : function () {},
 				getResolvedPath : function () {}
 			},
-			oResponseData = {__batchResponses : [{__changeResponses : [{statusCode : "200"}]}]},
-			fnSuccess;
+			oOptimizedChanges = {foo : [], bar : ["baz"]},
+			mParameters = {},
+			oResponseData = {__batchResponses : [{__changeResponses : [{statusCode : "200"}]}]};
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sAbsolutePath");
-		this.mock(oBinding).expects("_optimizeChanges")
-			.withExactArgs()
-			.returns("~oOptimizedChanges");
-		this.mock(oBinding).expects("_getCorrectChangeGroup")
-			.withExactArgs("~sAbsolutePath")
-			.returns("~groupId");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sResolvedPath");
+		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
 		this.mock(oBinding).expects("_generateSubmitData")
-			.withExactArgs("~oOptimizedChanges", sinon.match.func);
-		this.mock(oBinding.oModel).expects("submitChanges")
-			.withExactArgs({
-				error : sinon.match.func,
-				groupId : "~groupId",
-				success : sinon.match.func
-			})
-			.callsFake(function (mParameters) {
-				fnSuccess = mParameters.success;
-			});
+			.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
 
 		// code under test
-		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding);
+		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
 
 		this.mock(oBinding).expects("_isRestoreTreeStateSupported")
 			.withExactArgs()
 			.returns(bRestoreTreeStateSupported);
 		this.mock(oBinding).expects("_restoreTreeState")
-			.withExactArgs("~oOptimizedChanges")
+			.withExactArgs(sinon.match.same(oOptimizedChanges))
 			.exactly(bRestoreTreeStateSupported ? 1 : 0)
 			.returns(Promise.resolve());
 		this.mock(oBinding).expects("_refresh")
 			.withExactArgs(true)
 			.exactly(bRestoreTreeStateSupported ? 0 : 1);
 
-		// code under test - ODataModel#processSuccess calls the success handler with response data
-		fnSuccess(oResponseData);
+		// code under test
+		mParameters.success(oResponseData);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("submitChanges: _restoreTreeState returns rejected promise", function (assert) {
+	QUnit.test("_submitChanges: _restoreTreeState returns rejected promise", function (assert) {
 		var oBinding = {
-				oModel : {
-					submitChanges : function () {}
-				},
+				oModel : {submitChanges : function () {}},
 				_generateSubmitData : function () {},
-				_getCorrectChangeGroup : function () {},
 				_isRestoreTreeStateSupported : function () {},
 				_optimizeChanges : function () {},
 				_refresh : function () {},
 				_restoreTreeState : function () {},
 				getResolvedPath : function () {}
 			},
-			oError = {message: "~message", stack: "~stack"},
-			oPromise = Promise.reject(oError),
-			oResponseData = {__batchResponses : [{__changeResponses : [{statusCode : "200"}]}]},
-			fnSuccess;
+			oOptimizedChanges = {foo : [], bar : ["baz"]},
+			mParameters = {},
+			oPromise = Promise.reject("~error"),
+			oResponseData = {__batchResponses : [{__changeResponses : [{statusCode : "200"}]}]};
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sAbsolutePath");
-		this.mock(oBinding).expects("_optimizeChanges")
-			.withExactArgs()
-			.returns("~oOptimizedChanges");
-		this.mock(oBinding).expects("_getCorrectChangeGroup")
-			.withExactArgs("~sAbsolutePath")
-			.returns("~groupId");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sResolvedPath");
+		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
 		this.mock(oBinding).expects("_generateSubmitData")
-			.withExactArgs("~oOptimizedChanges", sinon.match.func);
-		this.mock(oBinding.oModel).expects("submitChanges")
-			.withExactArgs({
-				error : sinon.match.func,
-				groupId : "~groupId",
-				success : sinon.match.func
-			})
-			.callsFake(function (mParameters) {
-				fnSuccess = mParameters.success;
-			});
+			.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
 
 		// code under test
-		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding);
+		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
 
 		this.mock(oBinding).expects("_isRestoreTreeStateSupported").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_restoreTreeState")
-			.withExactArgs("~oOptimizedChanges")
+			.withExactArgs(sinon.match.same(oOptimizedChanges))
 			.returns(oPromise);
 		this.oLogMock.expects("error")
-			.withExactArgs("ODataTreeBindingFlat - ~message", "~stack");
+			.withExactArgs("Tree state restoration request failed for binding: ~sResolvedPath",
+				"~error", sClassName);
 		this.mock(oBinding).expects("_refresh").withExactArgs(true);
 
-		// code under test - ODataModel#processSuccess calls the success handler with response data
-		fnSuccess(oResponseData);
+		// code under test
+		mParameters.success(oResponseData);
 
 		return oPromise.catch(function () {});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitChanges: successful submit, restore request failed, "
+	QUnit.test("_submitChanges: successful submit, restore request failed, "
 			+ "don't restore tree state, refresh instead", function (assert) {
 		var oBinding = {
 				oModel : {
+					_resolveGroup : function () {},
 					submitChanges : function () {}
 				},
 				_generateSubmitData : function () {},
-				_getCorrectChangeGroup : function () {},
 				_optimizeChanges : function () {},
 				_refresh : function () {},
 				getResolvedPath : function () {}
 			},
+			oOptimizedChanges = {foo : [], bar : ["baz"]},
+			mParameters = {groupId : "~groupId"},
 			oResponseData = {__batchResponses : [{__changeResponses : [{statusCode : "200"}]}]},
-			fnSuccess,
 			that = this;
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sAbsolutePath");
-		this.mock(oBinding).expects("_optimizeChanges")
-			.withExactArgs()
-			.returns("~oOptimizedChanges");
-		this.mock(oBinding).expects("_getCorrectChangeGroup")
-			.withExactArgs("~sAbsolutePath")
-			.returns("~groupId");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sResolvedPath");
+		this.mock(oBinding.oModel).expects("_resolveGroup")
+			.withExactArgs("~sResolvedPath")
+			.returns({groupId : "~groupId"});
+		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
 		this.mock(oBinding).expects("_generateSubmitData")
-			.withExactArgs("~oOptimizedChanges", sinon.match.func)
+			.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func)
 			.callsFake(function (oOptimizedChanges, fnError) {
 				that.oLogMock.expects("error")
-					.withExactArgs("ODataTreeBindingFlat - Tree state restoration request failed. "
-						+ "~message", "~stack");
+					.withExactArgs("Tree state restoration request failed for binding: "
+						+ "~sResolvedPath", "~error", sClassName);
 
 				// code under test
-				fnError({message: "~message", stack: "~stack"});
-			});
-		this.mock(oBinding.oModel).expects("submitChanges")
-			.withExactArgs({
-				error : sinon.match.func,
-				groupId : "~groupId",
-				success : sinon.match.func
-			})
-			.callsFake(function (mParameters) {
-				fnSuccess = mParameters.success;
+				fnError("~error");
 			});
 
 		// code under test
-		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding);
+		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
 
 		this.mock(oBinding).expects("_refresh").withExactArgs(true);
 
-		// code under test - ODataModel#processSuccess calls the success handler with response data
-		fnSuccess(oResponseData);
+		// code under test
+		mParameters.success(oResponseData);
 	});
+
+	//*********************************************************************************************
+[
+	{},
+	{__batchResponses : []},
+	{__batchResponses : [{}]},
+	{__batchResponses : [{__changeResponses : []}]}
+].forEach(function (oResponseData, i) {
+	var sTitle = "_submitChanges: success handler logs warning if batch responses or change"
+			+ " responses are missing: " + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				_generateSubmitData : function () {},
+				_optimizeChanges : function () {},
+				getResolvedPath : function () {}
+			},
+			oOptimizedChanges = {foo : [], bar : ["baz"]},
+			mParameters = {};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
+		this.mock(oBinding).expects("_generateSubmitData")
+			.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
+
+		// code under test
+		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("#submitChanges: no change response in batch response", "/foo",
+				sClassName);
+
+		// code under test
+		mParameters.success(oResponseData);
+	});
+});
 
 	//*********************************************************************************************
 ["~sNewlyGeneratedId", undefined].forEach(function (sNewlyGeneratedId) {

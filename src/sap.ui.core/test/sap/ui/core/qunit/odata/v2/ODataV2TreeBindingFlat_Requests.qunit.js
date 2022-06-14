@@ -132,8 +132,6 @@ sap.ui.define([
 		var aNewNodeIds = [];
 
 		function handler1 (oEvent) {
-			oBinding.detachChange(handler1);
-
 			oN1002 = oBinding.findNode(1);
 			oN1029 = oBinding.findNode(28);
 			oN1031 = oBinding.findNode(30);
@@ -217,7 +215,7 @@ sap.ui.define([
 			oBinding.submitChanges();
 		}
 
-		oBinding.attachChange(handler1);
+		oBinding.attachEventOnce("change", handler1);
 		requestData(oBinding, 0, 100, 0);
 	});
 
@@ -234,8 +232,6 @@ sap.ui.define([
 		var oN1002, oN1029, oN1031;
 
 		function handler1 (oEvent) {
-			oBinding.detachChange(handler1);
-
 			oN1002 = oBinding.findNode(1);
 			oN1029 = oBinding.findNode(28);
 			oN1031 = oBinding.findNode(30);
@@ -288,7 +284,7 @@ sap.ui.define([
 			oBinding.submitChanges();
 		}
 
-		oBinding.attachChange(handler1);
+		oBinding.attachEventOnce("change", handler1);
 		requestData(oBinding, 0, 100, 0);
 	});
 
@@ -305,9 +301,7 @@ sap.ui.define([
 		var oN1001, oN1005, oN1630/*, oN1636*/;
 
 		function handler1 (oEvent) {
-			oBinding.detachChange(handler1);
-
-			oBinding.attachChange(handler2);
+			oBinding.attachEventOnce("change", handler2);
 
 			oN1001 = oBinding.findNode(0);
 			oN1005 = oBinding.findNode(4);
@@ -315,8 +309,6 @@ sap.ui.define([
 		}
 
 		function handler2 () {
-			oBinding.detachChange(handler2);
-
 			oN1630 = oBinding.findNode(5);
 			/*oN1636 = */oBinding.findNode(11);
 
@@ -337,7 +329,7 @@ sap.ui.define([
 			oBinding.submitChanges();
 		}
 
-		oBinding.attachChange(handler1);
+		oBinding.attachEventOnce("change", handler1);
 		requestData(oBinding, 0, 100, 0);
 	});
 
@@ -354,28 +346,22 @@ sap.ui.define([
 		var oN1005, oN1630, oN1638;
 
 		function handler1 (oEvent) {
-			oBinding.detachChange(handler1);
-
 			oN1005 = oBinding.findNode(4);
 			oBinding.expand(oN1005);
 
 			// register change event for loading the expanded children
-			oBinding.attachChange(handler2);
+			oBinding.attachEventOnce("change", handler2);
 		}
 
 		function handler2 () {
-			oBinding.detachChange(handler2);
-
 			oN1630 = oBinding.findNode(5);
 			oBinding.expand(oN1630);
 
 			// register change event for loading the expanded children
-			oBinding.attachChange(handler3);
+			oBinding.attachEventOnce("change", handler3);
 		}
 
 		function handler3 () {
-			oBinding.detachChange(handler3);
-
 			oN1638 = oBinding.findNode(6);
 
 			oBinding.removeContext(oN1638.context);
@@ -395,7 +381,7 @@ sap.ui.define([
 			oBinding.submitChanges();
 		}
 
-		oBinding.attachChange(handler1);
+		oBinding.attachEventOnce("change", handler1);
 		requestData(oBinding, 0, 100, 0);
 	});
 
@@ -412,19 +398,15 @@ sap.ui.define([
 		var oN1005, oN1630, oN1633;
 
 		function handler1 (oEvent) {
-			oBinding.detachChange(handler1);
-
 			oN1005 = oBinding.findNode(4);
 
 			oBinding.expand(oN1005);
 
 			// register change event for loading the expanded children
-			oBinding.attachChange(handler2);
+			oBinding.attachEventOnce("change", handler2);
 		}
 
 		function handler2 () {
-			oBinding.detachChange(handler2);
-
 			oN1630 = oBinding.findNode(5);
 			oN1633 = oBinding.findNode(8);
 
@@ -450,7 +432,7 @@ sap.ui.define([
 			oBinding.submitChanges();
 		}
 
-		oBinding.attachChange(handler1);
+		oBinding.attachEventOnce("change", handler1);
 		requestData(oBinding, 0, 100, 0);
 	});
 
@@ -469,29 +451,23 @@ sap.ui.define([
 		var oN1005, oN1630, oN1632, oN1642;
 
 		function handler1 (oEvent) {
-			oBinding.detachChange(handler1);
-
 			oN1005 = oBinding.findNode(4);
 
 			oBinding.expand(oN1005);
 
 			// register change event for loading the expanded children
-			oBinding.attachChange(handler2);
+			oBinding.attachEventOnce("change", handler2);
 		}
 
 		function handler2 () {
-			oBinding.detachChange(handler2);
-
 			oN1632 = oBinding.findNode(7);
 
 			oBinding.expand(oN1632);
 			// register change event for loading the expanded children
-			oBinding.attachChange(handler3);
+			oBinding.attachEventOnce("change", handler3);
 		}
 
 		function handler3 () {
-			oBinding.detachChange(handler3);
-
 			oN1630 = oBinding.findNode(5);
 			oN1642 = oBinding.findNode(9);
 
@@ -517,7 +493,7 @@ sap.ui.define([
 			oBinding.submitChanges();
 		}
 
-		oBinding.attachChange(handler1);
+		oBinding.attachEventOnce("change", handler1);
 		requestData(oBinding, 0, 100, 0);
 	});
 
@@ -536,28 +512,22 @@ sap.ui.define([
 		var oN1005, oN1630, oN1638;
 
 		function handler1 (oEvent) {
-			oBinding.detachChange(handler1);
-
 			oN1005 = oBinding.findNode(4);
 			oBinding.expand(oN1005);
 
 			// register change event for loading the expanded children
-			oBinding.attachChange(handler2);
+			oBinding.attachEventOnce("change", handler2);
 		}
 
 		function handler2 () {
-			oBinding.detachChange(handler2);
-
 			oN1630 = oBinding.findNode(5);
 			oBinding.expand(oN1630);
 
 			// register change event for loading the expanded children
-			oBinding.attachChange(handler3);
+			oBinding.attachEventOnce("change", handler3);
 		}
 
 		function handler3 () {
-			oBinding.detachChange(handler3);
-
 			oN1638 = oBinding.findNode(6);
 
 			// remove some nodes
@@ -606,7 +576,7 @@ sap.ui.define([
 			});
 		}
 
-		oBinding.attachChange(handler1);
+		oBinding.attachEventOnce("change", handler1);
 		requestData(oBinding, 0, 100, 0);
 	});
 
