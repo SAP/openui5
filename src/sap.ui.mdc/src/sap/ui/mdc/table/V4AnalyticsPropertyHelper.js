@@ -45,9 +45,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @inheritDoc
-	 */
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
 		TablePropertyHelper.prototype.prepareProperty.apply(this, arguments);
 		oProperty.aggregatable = oProperty.extension.defaultAggregate != null;
@@ -58,9 +55,7 @@ sap.ui.define([
 		 * @returns {object[]} The aggregatable properties
 		 */
 		oProperty.getAggregatableProperties = function() {
-			var aProperties = oProperty.isComplex() ? oProperty.getReferencedProperties() : [oProperty];
-
-			return aProperties.filter(function(oProperty) {
+			return oProperty.getSimpleProperties().filter(function(oProperty) {
 				return oProperty.aggregatable;
 			});
 		};

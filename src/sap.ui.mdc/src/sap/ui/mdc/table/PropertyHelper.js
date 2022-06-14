@@ -12,19 +12,8 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @typedef {Object} sap.ui.mdc.table.PropertyInfo
-	 * @extends sap.ui.mdc.util.PropertyInfo
+	 * @typedef {sap.ui.mdc.util.PropertyInfo} sap.ui.mdc.table.PropertyInfo
 	 *
-	 * @property {Object} [exportSettings]
-	 *   Object that contains information about the export settings, see {@link sap.ui.export.Spreadsheet}.
-	 * @property {int} [maxConditions]
-	 *   Defines the maximum number of filter conditions for the property. Possible values that can be used:
-	 *   <ul>
-	 *       <li>1 is a single-filter expression field</li>
-	 *       <li>-1 is a multi-filter expression field</li>
-	 *   </ul>
-	 *   This information is for example used in the <code>addItem</code> method of the <code>FilterBar</code> control to forward this information to
-	 *   the created <code>FilterField</code> instance.
 	 * @property {boolean} [filterable=true]
 	 *   Defines whether a property is filterable.
 	 * @property {boolean} [sortable=true]
@@ -37,8 +26,8 @@ sap.ui.define([
 	 *   Name of the unit property that is related to this property.
 	 * @property {string} [text]
 	 *   Name of the text property that is related to this property in a 1:1 relation.
-	 * @property {boolean} [required]
-	 *   Defines whether a filter condition for this property is required.
+	 * @property {object} [exportSettings]
+	 *   Object that contains information about the export settings, see {@link sap.ui.export.Spreadsheet}.
 	 * @property {Object} [visualSettings]
 	 *   This object contains all relevant properties for visual adjustments.
 	 * @property {Object} [visualSettings.widthCalculation]
@@ -57,17 +46,20 @@ sap.ui.define([
 	 *   Whether the referenced properties are arranged vertically
 	 * @property {sap.ui.mdc.util.PropertyHelper[]} [visualSettings.widthCalculation.excludeProperties]
 	 *   A list of invisible referenced property names
+	 * @property {string[]} [propertyInfos]
+	 *   The availability of this property makes the <code>PropertyInfo</code> a complex <code>PropertyInfo</code>. Provides a list of related
+	 *   properties (by name). These related properties must not themselves be complex.
 	 *
 	 * @private
 	 * @experimental
 	 * @ui5-restricted sap.fe
 	 * MDC_PUBLIC_CANDIDATE
-	*/
+	 */
 
 	/**
 	 * Constructor for a new table property helper.
 	 *
-	 * @param {Object[]} aProperties
+	 * @param {sap.ui.mdc.table.PropertyInfo[]} aProperties
 	 *     The properties to process in this helper
 	 * @param {Object<string, Object>} [mExtensions]
 	 *     Key-value map, where the key is the name of the property and the value is the extension containing mode-specific information.
@@ -129,9 +121,8 @@ sap.ui.define([
 	 * Gets the export settings for a column.
 	 *
 	 * @param {sap.ui.mdc.table.Column} oColumn The column for which to get the export settings
-	 * @param {boolean} [bSplitCells=false] Whether the <code>splitCells</code> configuration is enabled
-	 * @returns {Object[]} Array of export setting objects for the provided column. Will return more than one object if it is complex property and if <code>splitCells=true</code>
-	 * @public
+	 * @returns {Object[]} Array of export setting objects for the provided column. Will return more than one object if it is complex property.
+	 * @private
 	 */
 	PropertyHelper.prototype.getColumnExportSettings = function(oColumn) {
 		var aColumnExportSettings = [];
@@ -165,7 +156,7 @@ sap.ui.define([
 			return aColumnExportSettings;
 		}
 
-		aPropertiesFromComplexProperty = oProperty.getReferencedProperties();
+		aPropertiesFromComplexProperty = oProperty.getSimpleProperties();
 		if (Object.keys(oExportSettings).length) {
 			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings);
 			aPropertiesFromComplexProperty.forEach(function(oProperty) {
@@ -201,7 +192,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function getColumnExportSettingsObject(oColumn, oProperty, oExportSettings) {
-	var oExportObj = Object.assign({
+		var oExportObj = Object.assign({
 			columnId: oColumn.getId(),
 			label: oProperty.label,
 			width: getColumnWidthNumber(oColumn.getWidth()),
@@ -255,7 +246,7 @@ sap.ui.define([
 		var aTypes = [];
 		if (oProperty.isComplex()) {
 			// for complex properties generate [<TypeInstance>, <TypeSettings>][] structure
-			aTypes = oProperty.getReferencedProperties().flatMap(function(oProp) {
+			aTypes = oProperty.getSimpleProperties().flatMap(function(oProp) {
 				var mPropWidthCalculation = oProp.visualSettings ? oProp.visualSettings.widthCalculation : undefined;
 				return mPropWidthCalculation === null || mWidthCalculation.excludeProperties.includes(oProp.name) ? [] : [
 					[oProp.typeConfig.typeInstance, mPropWidthCalculation]

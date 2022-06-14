@@ -75,7 +75,7 @@ sap.ui.define([
 			renderType: "Bare"
 		});
 
-		oPropertyInfo.getReferencedProperties().forEach(function(oSimplePropertyInfo) {
+		oPropertyInfo.getSimpleProperties().forEach(function(oSimplePropertyInfo) {
 			var oText = new Text({
 				text: {
 					path: oSimplePropertyInfo.path

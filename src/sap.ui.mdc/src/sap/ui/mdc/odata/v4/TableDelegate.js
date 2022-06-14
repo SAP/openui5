@@ -456,14 +456,9 @@ sap.ui.define([
 				return;
 			}
 
-			if (oProperty.isComplex()) {
-				// Add the names of all related (simple) PropertyInfo in the list.
-				oProperty.getReferencedProperties().forEach(function(oProperty) {
-					oVisiblePropertiesSet.add(oProperty.name);
-				});
-			} else {
+			oProperty.getSimpleProperties().forEach(function(oProperty) {
 				oVisiblePropertiesSet.add(oProperty.name);
-			}
+			});
 		});
 
 		return Array.from(oVisiblePropertiesSet);
@@ -510,16 +505,14 @@ sap.ui.define([
 		return mColumnState;
 	}
 
-	// TODO: Move this to TablePropertyHelper (or even base PropertyHelper - another variant of getReferencedProperties?)
+	// TODO: Move this to TablePropertyHelper (or even base PropertyHelper - another variant of getSimpleProperties?)
 	function getColumnProperties(oTable, oColumn) {
 		var oProperty = oTable.getPropertyHelper().getProperty(oColumn.getDataProperty());
 
 		if (!oProperty) {
 			return [];
-		} else if (oProperty.isComplex()) {
-			return oProperty.getReferencedProperties();
 		} else {
-			return [oProperty];
+			return oProperty.getSimpleProperties();
 		}
 	}
 
@@ -546,18 +539,16 @@ sap.ui.define([
 	}
 
 	function checkForValidity(oControl, aItems, aStates) {
-		var oProperty, aProperties = [];
+		var aProperties = [];
 
-		aItems && aItems.forEach(function(oItem) {
-			oProperty = oControl.getPropertyHelper().getProperty(oItem.name);
-			if (!oProperty.isComplex()) {
-				aProperties.push(oProperty.name);
-			} else {
-				oProperty.getReferencedProperties().forEach(function(oReferencedProperty) {
-					aProperties.push(oReferencedProperty.name);
+		if (aItems) {
+			aItems.forEach(function(oItem) {
+				oControl.getPropertyHelper().getProperty(oItem.name).getSimpleProperties().forEach(function(oProperty) {
+					aProperties.push(oProperty.name);
 				});
-			}
-		});
+			});
+		}
+
 		var bOnlyVisibleColumns = aStates ? aStates.every(function(oState) {
 			return aProperties.find(function(sPropertyName) {
 				return oState.name ? oState.name === sPropertyName : oState === sPropertyName;

@@ -182,15 +182,15 @@ sap.ui.define([
 		},
 
 		createComplexColumn: function(oTable, oProperty) {
-			var aReferencedProperties = oProperty.getReferencedProperties();
+			var aProperties = oProperty.getSimpleProperties();
 			var oHBox = new HBox({
 				renderType: "Bare"
 			});
 
-			aReferencedProperties.forEach(function(oReferencedProperty) {
+			aProperties.forEach(function(oProperty) {
 				var oText = new Text({
 					text: {
-						path: oReferencedProperty.path,
+						path: oProperty.path,
 						formatter: function(sValue) {
 							return sValue + '\u2007';
 						}

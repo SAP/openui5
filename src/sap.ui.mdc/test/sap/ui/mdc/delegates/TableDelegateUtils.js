@@ -72,7 +72,7 @@ sap.ui.define([
 	TableDelegateUtils.createColumnTemplate = function(oTable, oProperty) {
 		if (oProperty.isComplex()) {
 			return new VBox({
-				items: oProperty.getReferencedProperties().map(function(oProperty) {
+				items: oProperty.getSimpleProperties().map(function(oProperty) {
 					return new Text({path: oProperty.path});
 				})
 			});

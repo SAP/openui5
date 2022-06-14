@@ -108,7 +108,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property referenced by complex property", function(assert) {
-		this.assertProperty(assert, this.oPropertyHelper.getProperty("complexProp").getReferencedProperties()[0]);
+		this.assertProperty(assert, this.oPropertyHelper.getProperty("complexProp").getSimpleProperties()[0]);
 	});
 
 	QUnit.test("getAggregatableProperties", function(assert) {
