@@ -1962,6 +1962,7 @@ sap.ui.define([
 				},
 				sEntityPath = "path/to/entity",
 				fnError0 = this.spy(),
+				fnError1 = this.spy(),
 				oError1 = new Error(),
 				oError2 = new Error(),
 				mTypeForMetaPath = {},
@@ -2136,14 +2137,16 @@ sap.ui.define([
 
 			// code under test - 2nd PATCH to be merged and skipped
 			oCacheUpdatePromise1 = oCache.update(oGroupLock1, "Address/PostalCode", "69190",
-					"~fnError~", "/~/BusinessPartnerList('0')", "path/to/entity",
-					sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent)
+					fnError1, "/~/BusinessPartnerList('0')", "path/to/entity", sUnitOrCurrencyPath,
+					bPatchWithoutSideEffects, fnPatchSent)
 				.then(function (oResult) {
 					assert.notOk(bCanceled);
+					sinon.assert.calledOnce(fnError1);
 					sinon.assert.calledWithExactly(fnError0, oError1);
 					assert.strictEqual(oResult, undefined, "no result");
 				}, function (oResult) {
 					assert.ok(bCanceled);
+					sinon.assert.calledOnce(fnError1);
 					sinon.assert.calledWithExactly(fnError0, oError1);
 					assert.strictEqual(oResult, oError2);
 				});
@@ -2178,6 +2181,7 @@ sap.ui.define([
 				}
 			},
 			sEntityPath = "path/to/entity",
+			fnError = this.spy(),
 			oError = new Error(),
 			sFullPath = "path/to/entity/Address/City",
 			oGroupLock = {
@@ -2241,7 +2245,7 @@ sap.ui.define([
 		});
 
 		// code under test
-		oUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", "~fnError~",
+		oUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
 			"/~/BusinessPartnerList('0')", "path/to/entity", undefined, false, fnPatchSent);
 
 		this.oRequestorMock.expects("lockGroup")
@@ -2256,9 +2260,11 @@ sap.ui.define([
 
 		return oUpdatePromise.then(function () {
 			assert.notOk(bError);
-		}, function (oError0) {
+			sinon.assert.notCalled(fnError);
+		}, function (oResult) {
 			assert.ok(bError);
-			assert.strictEqual(oError0, oError);
+			sinon.assert.calledWith(fnError, oError);
+			assert.strictEqual(oResult, oError);
 		}).finally(function () {
 			assert.deepEqual(oCache.mEditUrl2PatchPromise, {});
 		});

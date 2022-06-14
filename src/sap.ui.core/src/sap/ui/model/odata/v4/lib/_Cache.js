@@ -1811,6 +1811,7 @@ sap.ui.define([
 					oRequestLock.unlock();
 					oRequestLock = undefined;
 
+					fnErrorCallback(oError);
 					if (bSkip) {
 						// Note: this PATCH is already merged into another
 						// --> return the corresponding PATCH promise
@@ -1820,7 +1821,6 @@ sap.ui.define([
 					// Note: We arrive here only for the PATCH which was really sent to the server.
 					// The other ones which have been merged are still pending on this one!
 					// In the end, they will either succeed or be canceled.
-					fnErrorCallback(oError);
 					switch (that.oRequestor.getGroupSubmitMode(sGroupId)) {
 						case "API":
 							break;
