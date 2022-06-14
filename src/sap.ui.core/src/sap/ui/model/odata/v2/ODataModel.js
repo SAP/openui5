@@ -4642,25 +4642,29 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resolves batch group settings for an entity.
+	 * Resolves batch group settings based on a given entity key or a given resolved path to an
+	 * entity.
 	 *
-	 * @param {string} sKey Key of the entity
-	 * @returns {object} Batch group info
+	 * @param {string} sKeyOrPath
+	 *   The entity key or the resolved path to an entity
+	 * @returns {object}
+	 *   Batch group info containing <code>groupId</code> and <code>changeSetId</code>
+	 *
 	 * @private
 	 */
-	ODataModel.prototype._resolveGroup = function(sKey) {
-		var oChangeGroup, oEntityType, mParams, sGroupId, sChangeSetId, oData;
+	ODataModel.prototype._resolveGroup = function(sKeyOrPath) {
+		var oChangeGroup, sChangeSetId, mCreated, oData, oEntityType, sGroupId,
+			sPath = sKeyOrPath.startsWith("/") ? sKeyOrPath : ("/" + sKeyOrPath);
 
-		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
-		oData = this._getObject('/' + sKey);
-		if (oData) {
-			mParams = oData.__metadata.created;
-			//for created entries the group information is retrieved from the params
-			if (mParams) {
-				return {groupId: mParams.groupId, changeSetId: mParams.changeSetId};
-			}
+		oData = this._getObject(sPath);
+		mCreated = oData && oData.__metadata && oData.__metadata.created;
+		//for created entries the group information is retrieved from the params
+		if (mCreated) {
+			return {groupId: mCreated.groupId, changeSetId: mCreated.changeSetId};
 		}
+
 		//resolve groupId/changeSetId
+		oEntityType = this.oMetadata._getEntityTypeByPath(sPath);
 		if (this.mChangeGroups[oEntityType.name]) {
 			oChangeGroup = this.mChangeGroups[oEntityType.name];
 			sGroupId = oChangeGroup.groupId;

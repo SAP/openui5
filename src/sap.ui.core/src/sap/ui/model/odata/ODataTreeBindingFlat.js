@@ -3083,21 +3083,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resolves the correct change group for the given key/path.
-	 *
-	 * @param {string} [sKey] The key; leave empty to use the binding's resolved path
-	 * @returns {string} The change group's groupId
-	 *
-	 * @private
-	 */
-	ODataTreeBindingFlat.prototype._getCorrectChangeGroup = function (sKey) {
-		if (!sKey) {
-			sKey = this.getResolvedPath();
-		}
-		return this.oModel._resolveGroup(sKey).groupId;
-	};
-
-	/**
 	 * Creates a new entry, which can be added to this binding instance via addContexts(...).
 	 *
 	 * @param {object} [mParameters] Parameters for the new entry
@@ -3108,15 +3093,15 @@ sap.ui.define([
 
 	 */
 	ODataTreeBindingFlat.prototype.createEntry = function (mParameters) {
-		var sAbsolutePath = this.getResolvedPath();
-		var oNewEntry;
+		var oNewEntry,
+			sResolvedPath = this.getResolvedPath();
 
-		if (sAbsolutePath) {
+		if (sResolvedPath) {
 			mParameters = mParameters || {};
-			mParameters.groupId = this._getCorrectChangeGroup(sAbsolutePath);
+			mParameters.groupId = this.oModel._resolveGroup(sResolvedPath).groupId;
 			mParameters.refreshAfterChange = false;
 
-			oNewEntry = this.oModel.createEntry(sAbsolutePath, mParameters);
+			oNewEntry = this.oModel.createEntry(sResolvedPath, mParameters);
 		} else {
 			Log.warning("ODataTreeBindingFlat: createEntry failed, as the binding path could not be resolved.");
 		}
@@ -3257,10 +3242,14 @@ sap.ui.define([
 	 */
 	ODataTreeBindingFlat.prototype._generateSubmitData
 			= function (oOptimizedChanges, fnRestoreRequestErrorHandler) {
-		var aRemoved = oOptimizedChanges.removed,
+		var aAdded = oOptimizedChanges.added,
 			aCreationCancelled = oOptimizedChanges.creationCancelled,
-			aAdded = oOptimizedChanges.added,
 			aMoved = oOptimizedChanges.moved,
+			aRemoved = oOptimizedChanges.removed,
+			mRestoreRequestParameters = {
+				error: fnRestoreRequestErrorHandler,
+				groupId: this.oModel._resolveGroup(this.getResolvedPath()).groupId
+			},
 			that = this;
 
 		function setParent(oNode) {
@@ -3269,10 +3258,6 @@ sap.ui.define([
 			that.oModel.setProperty(that.oTreeProperties["hierarchy-parent-node-for"], sParentNodeID, oNode.context);
 
 		}
-		var mRestoreRequestParameters = {
-			groupId: this._getCorrectChangeGroup(),
-			error: fnRestoreRequestErrorHandler
-		};
 
 		aAdded.forEach(setParent); // No extra requests for add. Everything we need should be in the POST response
 		aMoved.forEach(function(oNode) {
@@ -3444,7 +3429,7 @@ sap.ui.define([
 			return undefined;
 		} else {
 			var oDeleteRequestHandle = this.oModel.remove(oContext.getPath(), {
-				groupId: this._getCorrectChangeGroup(),
+				groupId: this.oModel._resolveGroup(this.getResolvedPath()).groupId,
 				refreshAfterChange: false
 			});
 			return oDeleteRequestHandle;

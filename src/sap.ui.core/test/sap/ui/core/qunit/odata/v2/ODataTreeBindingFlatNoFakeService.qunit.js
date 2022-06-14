@@ -157,23 +157,46 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_getCorrectChangeGroup: getResolvedPath is called", function (assert) {
+[{
+	inputParameters : undefined,
+	expectedParameters : {groupId : "~groupId", refreshAfterChange : false}
+}, {
+	inputParameters : {bar : "~baz", groupId : "~value0", refreshAfterChange : "~value1"},
+	expectedParameters : {bar : "~baz", groupId : "~groupId", refreshAfterChange : false}
+}].forEach(function (oFixture) {
+	QUnit.test("createEntry: resolved binding", function (assert) {
 		var oBinding = {
-				oModel : {_resolveGroup : function () {}},
+				oModel : {
+					_resolveGroup : function () {},
+					createEntry : function () {}
+				},
 				getResolvedPath : function () {}
 			};
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
-		this.mock(oBinding.oModel).expects("_resolveGroup").withExactArgs("~resolvedPath")
-			.returns({groupId : "~changeGroup"});
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+		this.mock(oBinding.oModel).expects("_resolveGroup")
+			.withExactArgs("/foo")
+			.returns({groupId : "~groupId"});
+		this.mock(oBinding.oModel).expects("createEntry")
+			.withExactArgs("/foo", sinon.match(function (mParameters0) {
+				if (oFixture.inputParameters) {
+					assert.strictEqual(mParameters0, oFixture.inputParameters);
+				}
+				assert.deepEqual(mParameters0, oFixture.expectedParameters);
+
+				return true;
+			}))
+			.returns("~createdContext");
 
 		// code under test
-		assert.strictEqual(ODataTreeBindingFlat.prototype._getCorrectChangeGroup.call(oBinding),
-			"~changeGroup");
+		assert.strictEqual(
+			ODataTreeBindingFlat.prototype.createEntry.call(oBinding, oFixture.inputParameters),
+			"~createdContext");
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("createEntry: getResolvedPath is called", function (assert) {
+	QUnit.test("createEntry: unresolved binding", function (assert) {
 		var oBinding = {
 				getResolvedPath : function () {}
 			};
@@ -616,15 +639,18 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
-				oModel : {setProperty : function () {}},
+				oModel : {
+					_resolveGroup : function () {},
+					setProperty : function () {}
+				},
 				oTreeProperties : {
 					"hierarchy-node-for" : "~hierarchyNode",
 					"hierarchy-parent-node-for" : "~hierarchyParentNode"
 				},
 				_generatePreorderPositionRequest : function () {},
 				_generateSiblingsPositionRequest : function () {},
-				_getCorrectChangeGroup : function () {},
-				_isRestoreTreeStateSupported : function () {}
+				_isRestoreTreeStateSupported : function () {},
+				getResolvedPath : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
 			oModelMock = this.mock(oBinding.oModel),
@@ -641,7 +667,8 @@ sap.ui.define([
 				creationCancelled : []
 			};
 
-		oBindingMock.expects("_getCorrectChangeGroup").withExactArgs().returns("~groupId");
+		oBindingMock.expects("getResolvedPath").withExactArgs().returns("/foo");
+		oModelMock.expects("_resolveGroup").withExactArgs("/foo").returns({groupId : "~groupId"});
 		this.mock(oOptimizedChanges.moved[0].parent.context).expects("getProperty")
 			.withExactArgs("~hierarchyNode")
 			.returns("~parentID0");
@@ -680,4 +707,51 @@ sap.ui.define([
 			"~fnRestoreRequestErrorHandler");
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_generateDeleteRequest: for added node", function (assert) {
+		var oBinding = {
+				oModel : {deleteCreatedEntry : function () {}}
+			},
+			oNode = {
+				context : "~oContext",
+				nodeState : {added : true}
+			};
+
+		this.mock(oBinding.oModel).expects("deleteCreatedEntry").withExactArgs("~oContext");
+
+		// code under test
+		assert.strictEqual(
+			ODataTreeBindingFlat.prototype._generateDeleteRequest.call(oBinding, oNode),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_generateDeleteRequest: for persisted node", function (assert) {
+		var oBinding = {
+				oModel : {
+					_resolveGroup : function () {},
+					remove : function () {}
+				},
+				getResolvedPath : function () {}
+			},
+			oNode = {
+				context : {getPath : function () {}},
+				nodeState : {added : false}
+			};
+
+		this.mock(oNode.context).expects("getPath").withExactArgs().returns("~path");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+		this.mock(oBinding.oModel).expects("_resolveGroup")
+			.withExactArgs("/foo")
+			.returns({groupId : "~groupId"});
+		this.mock(oBinding.oModel).expects("remove")
+			.withExactArgs("~path", {groupId : "~groupId", refreshAfterChange : false})
+			.returns("~requestHandle");
+
+		// code under test
+		assert.strictEqual(
+			ODataTreeBindingFlat.prototype._generateDeleteRequest.call(oBinding, oNode),
+			"~requestHandle");
+	});
 });
