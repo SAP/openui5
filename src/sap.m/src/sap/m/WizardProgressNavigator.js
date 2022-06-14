@@ -664,7 +664,6 @@ function(
 			sTitle = sStepNumber + " " + sStepTextContent;
 
 			this._oActionSheet.addButton(new Button({
-				width: "200px",
 				text: sTitle,
 				icon: sIcon,
 				enabled: this._iActiveStep >= (i + 1),
