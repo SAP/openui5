@@ -3825,9 +3825,9 @@ sap.ui.define([
 				assert.ok(that.hasFilterInfoBar(), "Initial filter conditions: Filter info bar exists");
 				assert.ok(that.getFilterInfoBar().getVisible(), "Initial filter conditions: Filter info bar is visible");
 				assert.strictEqual(that.getFilterInfoText().getText(),
-					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel"])),
+					oResourceBundle.getText("table.ONE_FILTER_ACTIVE", oListFormat.format(["NameLabel"])),
 					"Initial filter conditions: The filter info bar text is correct (1 filter)");
-				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "Filtered by: NameLabel", "The associated invisible text is correct");
+				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), oResourceBundle.getText("table.ONE_FILTER_ACTIVE", oListFormat.format(["NameLabel"])), "The associated invisible text is correct");
 
 				that.oTable.setFilterConditions({
 					name: [
@@ -3853,7 +3853,7 @@ sap.ui.define([
 				var oFilterInfoBar = that.getFilterInfoBar();
 
 				assert.strictEqual(that.getFilterInfoText().getText(),
-					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabel"])),
+					oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [2, oListFormat.format(["NameLabel", "AgeLabel"])]),
 					"Change filter conditions: The filter info bar text is correct (2 filters)");
 
 				oFilterInfoBar.focus();
@@ -3898,9 +3898,10 @@ sap.ui.define([
 			}).then(function() {
 				assert.ok(that.getFilterInfoBar().getVisible(), "Set filter conditions: Filter info bar is visible");
 				assert.strictEqual(that.getFilterInfoText().getText(),
-					oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(["NameLabel", "AgeLabel", "GenderLabel"])),
+					oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [3, oListFormat.format(["NameLabel", "AgeLabel", "GenderLabel"])]),
 					"Set filter conditions: The filter info bar text is correct (3 filters)");
-				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "Filtered by: NameLabel, AgeLabel, and GenderLabel",
+				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(),
+					oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [3, oListFormat.format(["NameLabel", "AgeLabel", "GenderLabel"])]),
 					"The associated invisible text is correct");
 			}).then(function() {
 				return that.waitForFilterInfoBarRendered();

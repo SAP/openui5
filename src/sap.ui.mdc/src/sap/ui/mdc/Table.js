@@ -1102,7 +1102,13 @@ sap.ui.define([
 			});
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			var oListFormat = ListFormat.getInstance();
-			var sFilterText = oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(aPropertyLabels));
+
+			var sFilterText;
+			if (aPropertyLabels.length > 1) {
+				sFilterText = oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [aPropertyLabels.length, oListFormat.format(aPropertyLabels)]);
+			} else {
+				sFilterText = oResourceBundle.getText("table.ONE_FILTER_ACTIVE", aPropertyLabels[0]);
+			}
 
 			if (!oFilterInfoBar.getVisible()) {
 				oFilterInfoBar.setVisible(true);
