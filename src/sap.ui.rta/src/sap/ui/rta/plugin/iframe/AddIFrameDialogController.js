@@ -5,20 +5,20 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/library",
-	"sap/ui/rta/Utils",
 	"sap/ui/fl/util/IFrame",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/rta/plugin/iframe/urlCleaner"
+	"sap/ui/rta/plugin/iframe/urlCleaner",
+	"sap/ui/core/Core"
 ], function(
 	Log,
 	Controller,
 	coreLibrary,
-	Utils,
 	IFrame,
 	Filter,
 	FilterOperator,
-	urlCleaner
+	urlCleaner,
+	oCore
 ) {
 	"use strict";
 
@@ -29,16 +29,11 @@ sap.ui.define([
 	var _aNumericInputFields = ["frameWidth", "frameHeight"];
 	var _aSelectInputFields = ["asNewSection", "frameWidthUnit", "frameHeightUnit"];
 
-
-	function isValidUrl(sUrl) {
-		return IFrame.isValidUrl(encodeURI(sUrl));
-	}
-
 	return Controller.extend("sap.ui.rta.plugin.iframe.AddIFrameDialogController", {
 		constructor: function(oJSONModel, mSettings) {
 			this._oJSONModel = oJSONModel;
+			this._mSettings = mSettings;
 			this._importSettings(mSettings);
-			this._mParameterHashMap = this._buildParameterHashMap(mSettings);
 		},
 
 		/**
@@ -48,7 +43,7 @@ sap.ui.define([
 		onValidationSuccess: function(oEvent) {
 			oEvent.getSource().setValueState(ValueState.None);
 			this._oJSONModel.setProperty("/areAllFieldsValid",
-				this._areAllTextFieldsValid() && this._areAllValueStateNones());
+				this._areAllTextFieldsValid() && this._areAllValueStatesNotErrors());
 		},
 
 		/**
@@ -58,7 +53,7 @@ sap.ui.define([
 		onValidationError: function(oEvent) {
 			oEvent.getSource().setValueState(ValueState.Error);
 			this._oJSONModel.setProperty("/areAllFieldsValid", false);
-			this._setFocusOnInvalidInput();
+			this._setNumericValueState();
 		},
 
 		/**
@@ -66,9 +61,9 @@ sap.ui.define([
 		 */
 		onSizeUnitChange: function() {
 			//set the percent info text visible/hidden
-			var oWidthSizeUnit = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_WidthUnit").getSelectedKey();
-			var oHeightSizeUnit = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_HeightUnit").getSelectedKey();
-			var oInfoText = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PercentText");
+			var oWidthSizeUnit = oCore.byId("sapUiRtaAddIFrameDialog_WidthUnit").getSelectedKey();
+			var oHeightSizeUnit = oCore.byId("sapUiRtaAddIFrameDialog_HeightUnit").getSelectedKey();
+			var oInfoText = oCore.byId("sapUiRtaAddIFrameDialog_PercentText");
 			if (oWidthSizeUnit !== "%" && oHeightSizeUnit !== "%") {
 				oInfoText.addStyleClass("sapUiRtaAddIFrameDialogPercentText-invisible");
 			} else {
@@ -80,11 +75,15 @@ sap.ui.define([
 		 * Event handler for save button
 		 */
 		onSavePress: function() {
-			var sUrl = this._buildPreviewURL(this._buildReturnedURL());
-			if (isValidUrl(sUrl) && this._areAllTextFieldsValid() && this._areAllValueStateNones()) {
+			var oIFrame = oCore.byId("sapUiRtaAddIFrameDialog_PreviewFrame");
+			var sUrlParameters = oIFrame.encodeUrl(this._buildReturnedUrl(), oIFrame);
+			if (
+				(sUrlParameters.statusCode === IFrame.statusCodes.NONE
+				|| sUrlParameters.statusCode === IFrame.statusCodes.UNRESOLVED_JSON)
+				&& this._areAllTextFieldsValid()
+				&& this._areAllValueStatesNotErrors()
+			) {
 				this._close(this._buildReturnedSettings());
-			} else {
-				this._setFocusOnInvalidInput();
 			}
 		},
 
@@ -93,27 +92,11 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
 		onShowPreview: function() {
-			var sURL = this._buildPreviewURL(this._buildReturnedURL());
-			if (!isValidUrl(sURL)) {
-				return;
-			}
-			var oIFrame = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewFrame");
+			var oIFrame = oCore.byId("sapUiRtaAddIFrameDialog_PreviewFrame");
 			oIFrame.setUrl(""); // Resets the preview first
 			//enable/disable expanding the Panel
-			var oPanel = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewLinkPanel");
-			var oPanelButton = oPanel.getDependents()[0];
-			if (sURL) {
-				oPanelButton.setEnabled(true);
-			} else {
-				oPanel.setExpanded(false);
-				oPanelButton.setEnabled(false);
-			}
-			try {
-				this._oJSONModel.setProperty("/previewUrl/value", sURL);
-				oIFrame.setUrl(sURL);
-			} catch (oError) {
-				Log.error("Error previewing the URL: ", oError);
-			}
+			var sResolvedUrl = this._oJSONModel.getProperty("/resolvedUrl/url");
+			this._oJSONModel.setProperty("/previewUrl/value", sResolvedUrl);
 		},
 
 		/**
@@ -121,8 +104,8 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
 		onParameterPress: function(oEvent) {
-			var sKey = oEvent.getSource().getBindingContext().getObject().key;
-			this._oJSONModel.setProperty("/frameUrl/value", this._addURLParameter(sKey));
+			var sKey = oEvent.getSource().getBindingContext("dialogModel").getObject().key;
+			this._oJSONModel.setProperty("/frameUrl/value", this._addUrlParameter(sKey));
 			this.onUrlChange();
 		},
 
@@ -132,21 +115,8 @@ sap.ui.define([
 		 */
 		onSearch: function(oEvent) {
 			var oFilter = new Filter("label", FilterOperator.Contains, oEvent.getParameter("query"));
-			var oBinding = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_ParameterTable").getBinding("items");
+			var oBinding = oCore.byId("sapUiRtaAddIFrameDialog_ParameterTable").getBinding("items");
 			oBinding.filter([oFilter]);
-		},
-
-		/**
-		 * Build preview URL
-		 *
-		 * @param {string} sEditURL - URL with parameters in braces
-		 * @returns {string} URL with parameters and values
-		 * @private
-		 */
-		_buildPreviewURL: function(sEditURL) {
-			return sEditURL.replace(/{(.*?)}/g, function(sMatch) {
-				return this._mParameterHashMap[sMatch];
-			}.bind(this));
 		},
 
 		/**
@@ -156,8 +126,8 @@ sap.ui.define([
 		 * @returns {string} URL with the added parameter
 		 * @private
 		 */
-		_addURLParameter: function(sParameter) {
-			return this._buildReturnedURL() + sParameter;
+		_addUrlParameter: function(sParameter) {
+			return this._buildReturnedUrl() + sParameter;
 		},
 
 		/**
@@ -166,33 +136,18 @@ sap.ui.define([
 		 * @returns {string} URL to be returned
 		 * @private
 		 */
-		_buildReturnedURL: function() {
+		_buildReturnedUrl: function() {
 			return urlCleaner(this._oJSONModel.getProperty("/frameUrl/value"));
 		},
 
 		onUrlChange: function() {
-			var sUrl = this._buildPreviewURL(this._buildReturnedURL());
-			var oUrlInput = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_EditUrlTA");
-			if (isValidUrl(sUrl)) {
-				oUrlInput.setValueState("None");
-			} else {
-				oUrlInput.setValueState("Error");
-			}
+			var oIFrame = oCore.byId("sapUiRtaAddIFrameDialog_PreviewFrame");
+			var sUrlParameters = oIFrame.encodeUrl(this._buildReturnedUrl(), oIFrame);
+			this._setUrlFieldStatusMessage(sUrlParameters.statusCode);
+			this._oJSONModel.setProperty("/resolvedUrl/url", sUrlParameters.encodedUrl);
+			this._oJSONModel.setProperty("/resolvedUrl/errorCode", sUrlParameters.statusCode);
 		},
 
-		/**
-		 * Build hashmap for parameters
-		 *
-		 * @param {object} mParameters - URL parameters
-		 * @returns {object} Parameter hashmap
-		 * @private
-		 */
-		_buildParameterHashMap: function(mParameters) {
-			if (mParameters && mParameters.parameters) {
-				return Utils.buildHashMapFromArray(mParameters.parameters, "key", "value");
-			}
-			return {};
-		},
 
 		/**
 		 * Event handler for Cancel button
@@ -208,7 +163,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_close: function(mSettings) {
-			var oAddIFrameDialog = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog");
+			var oAddIFrameDialog = oCore.byId("sapUiRtaAddIFrameDialog");
 			this._mSettings = mSettings;
 			oAddIFrameDialog.close();
 		},
@@ -223,26 +178,24 @@ sap.ui.define([
 			return this._mSettings;
 		},
 
-		_areAllValueStateNones: function() {
+		_areAllValueStatesNotErrors: function() {
 			var oData = this._oJSONModel.getData();
-			return _aTextInputFields.concat(_aNumericInputFields).every(function (sFieldName) {
-				return oData[sFieldName]["valueState"] === ValueState.None;
+			return _aTextInputFields.concat(_aNumericInputFields).every(function(sFieldName) {
+				return oData[sFieldName]["valueState"] !== ValueState.Error;
 			}, this);
 		},
 
 		_areAllTextFieldsValid: function() {
 			var oJSONModel = this._oJSONModel;
-			return _aTextInputFields.reduce(function(bAllValid, sFieldName) {
+			return _aTextInputFields.every(function(sFieldName) {
 				var sValuePath = "/" + sFieldName + "/value";
-				var sValueState;
-				if (oJSONModel.getProperty(sValuePath).trim() === "") {
-					sValueState = ValueState.Error;
-				} else {
-					sValueState = ValueState.None;
+				var sValueState = oJSONModel.getProperty(sValuePath + "State");
+				if (sValueState === "Error") {
+					return false;
 				}
-				oJSONModel.setProperty(sValuePath + "State", sValueState);
-				return bAllValid && sValueState === ValueState.None;
-			}, true);
+
+				return true;
+			});
 		},
 
 		_buildReturnedSettings: function() {
@@ -293,19 +246,62 @@ sap.ui.define([
 		/**
 		 * Sets the focus on an invalid input
 		 * Processed on saving the dialog
-		 * Only numerical values are checked
+		 * Only numeric values are checked
 		 * An empty URL field disables the Save button and does not need to be checked
 		 *
 		 */
-		_setFocusOnInvalidInput: function() {
+		_setNumericValueState: function() {
 			var oData = this._oJSONModel.getData();
-			_aNumericInputFields.some(function(sFieldName) {
+			_aNumericInputFields.forEach(function(sFieldName) {
 				if (oData[sFieldName]["valueState"] === ValueState.Error) {
-					var oElement = sap.ui.getCore().byId(oData[sFieldName]["id"]);
-					oElement.focus();
-					return true;
+					this._setFieldState(sFieldName, "Error");
+				} else {
+					this._setFieldState(sFieldName, "None");
 				}
 			}, this);
+		},
+
+		/**
+		 *Sets a message on a dialog field and
+		 *saves the state type in the JSON model.
+		 *
+		 *@param {string} sFieldName - Field name
+		 *@param {string} sState - State of the message (e.g Error, Warning and None)
+		 *@param {string} sMessageText - Messagebundle text reference
+		 */
+		_setFieldState: function(sFieldName, sState, sMessageText) {
+			var oData = this._oJSONModel.getData();
+			var oElement = oCore.byId(oData[sFieldName]["id"]);
+			var oJSONModel = this._oJSONModel;
+			var sValuePath = "/" + sFieldName + "/valueState";
+			oJSONModel.setProperty(sValuePath, sState);
+			var sValueStateText = sMessageText && oCore.getLibraryResourceBundle("sap.ui.rta").getText(sMessageText);
+			oElement.setValueState(sState);
+			oElement.setValueStateText(sValueStateText);
+			if (sState !== "None") {
+				oElement.focus();
+			}
+		},
+
+		_setUrlFieldStatusMessage: function(nErrorCode) {
+			var sUrlInputField = _aTextInputFields[0];
+			switch (nErrorCode) {
+				case IFrame.statusCodes.INVALID:
+					this._setFieldState(sUrlInputField, "Error", "IFRAME_ADDIFRAME_DIALOG_URL_ERROR_TEXT_INVALID");
+					break;
+				case IFrame.statusCodes.DECODING_ERROR:
+					this._setFieldState(sUrlInputField, "Error", "IFRAME_ADDIFRAME_DIALOG_URL_ERROR_TEXT_INVALID_ENCODING");
+					break;
+				case IFrame.statusCodes.UNEVEN_BRACKETS:
+					this._setFieldState(sUrlInputField, "Error", "IFRAME_ADDIFRAME_DIALOG_URL_ERROR_TEXT_UNEVEN_BRACKETS");
+					break;
+				case IFrame.statusCodes.UNRESOLVED_JSON:
+					this._setFieldState(sUrlInputField, "Warning", "IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT_JSON_ENCODING");
+					break;
+				default:
+					this._setFieldState(sUrlInputField, "None");
+					break;
+			}
 		}
 	});
 });

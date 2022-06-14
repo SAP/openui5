@@ -52,7 +52,7 @@ sap.ui.define([
 		columnUiValueLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TABLE_UI_VALUE_LABEL")
 	};
 
-	function createJSONModel(bSetUpdateTitle) {
+	function createJsonModel(bSetUpdateTitle) {
 		if (bSetUpdateTitle) {
 			_mText.dialogTitle = _mText.dialogUpdateTitle;
 		} else {
@@ -88,11 +88,16 @@ sap.ui.define([
 			},
 			frameUrl: {
 				value: "",
-				valueState: ValueState.None
+				valueState: ValueState.None,
+				id: "sapUiRtaAddIFrameDialog_EditUrlTA"
 			},
 			previewUrl: { value: "" },
 			documentationLink: {
 				HTML: _sDocumentationHTML
+			},
+			resolvedUrl: {
+				url: "",
+				errorCode: 0
 			},
 			parameters: { value: [] },
 			unitsOfMeasure: [{
@@ -129,38 +134,42 @@ sap.ui.define([
 	/**
 	 * Open the Add IFrame Dialog
 	 *
-	 * @param {object|undefined} mSettings - existing IFrame settings
+	 * @param {object} oReferenceElement - Reference element that provides the model with the bindings for the dialog
+	 * @param {object} mSettings - Existing IFrame settings (optional)
 	 * @returns {Promise} promise resolving to IFrame settings
 	 * @public
 	 */
-	AddIFrameDialog.prototype.open = function(mSettings) {
+	AddIFrameDialog.prototype.open = function(oReferenceElement, mSettings) {
 		return new Promise(function(resolve) {
 			this._fnResolve = resolve;
-			this._createDialog(mSettings);
+			this._createDialog(oReferenceElement, mSettings);
 		}.bind(this));
 	};
 
 	/**
 	 * Create the Add IFrame Dialog
 	 *
-	 * @param {object|undefined} mSettings - existing IFrame settings
+	 * @param {object} oReferenceElement - Reference element that provides the model with the bindings for the dialog
+	 * @param {object} mSettings - Existing IFrame settings (optional)
 	 * @private
 	 */
-	AddIFrameDialog.prototype._createDialog = function(mSettings) {
+	AddIFrameDialog.prototype._createDialog = function(oReferenceElement, mSettings) {
 		// set the correct title
 		var bSetUpdateTitle = false;
 		if (mSettings) {
 			bSetUpdateTitle = mSettings.updateMode ? mSettings.updateMode : false;
 		}
-		this._oJSONModel = createJSONModel(bSetUpdateTitle);
-		this._oController = new AddIFrameDialogController(this._oJSONModel, mSettings);
+		this._oJsonModel = createJsonModel(bSetUpdateTitle);
+		this._oController = new AddIFrameDialogController(this._oJsonModel, mSettings);
 		Fragment.load({
 			name: "sap.ui.rta.plugin.iframe.AddIFrameDialog",
 			controller: this._oController
 		}).then(function(oAddIFrameDialog) {
 			this._oDialog = oAddIFrameDialog;
 			this._oDialog.addStyleClass(RtaUtils.getRtaStyleClassName());
-			this._oDialog.setModel(this._oJSONModel);
+			this._oDialog.setModel(this._oJsonModel, "dialogModel");
+			this._oDialog.setModel(oReferenceElement.getModel());
+			this._oDialog.setBindingContext(oReferenceElement.getBindingContext());
 			this._openDialog();
 		}.bind(this)).catch(function(oError) {
 			Log.error("Error loading fragment sap.ui.rta.plugin.iframe.AddIFrameDialog: ", oError);

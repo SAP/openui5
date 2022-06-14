@@ -68,8 +68,22 @@ sap.ui.define([
 			}
 		});
 
-		oHelperControl.bindProperty("resolved", oBindingInfo);
+		try {
+			oHelperControl.bindProperty("resolved", oBindingInfo);
+		} catch (oError) {
+			throw new Error("Binding could not be resolved: " + oError.message);
+		}
+
 		var vResolvedValue = oHelperControl.getResolved();
+		if (oBindingInfo.formatter) {
+			// The binding parser sets the path and formatter incorrectly if the binding has
+			// nested brackets and is not an expression binding.
+			// If it returns the string below we know that the binding could not be resolved.
+			var sReturnedBinding = "{" + (aParts && aParts[0] && aParts[0].path) + oBindingInfo.formatter() + "}";
+			if (sReturnedBinding === vValue) {
+				throw new Error("Binding could not be resolved");
+			}
+		}
 		oHelperControl.destroy();
 
 		return vResolvedValue;
