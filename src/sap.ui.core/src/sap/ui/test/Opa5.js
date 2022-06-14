@@ -858,7 +858,7 @@ sap.ui.define([
 		/**
 		 * Returns the QUnit utils object in the current context. If an iframe is launched, it will return the iframe's QUnit utils.
 		 * @public
-		 * @returns {sap.ui.test.qunit} The QUnit utils
+		 * @returns {object} The QUnit utils
 		 */
 		Opa5.getUtils = function () {
 			return iFrameLauncher.getUtils() || QUnitUtils;
