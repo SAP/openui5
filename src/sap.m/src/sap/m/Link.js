@@ -40,6 +40,9 @@ function(
 	// shortcut for sap.ui.core.aria.HasPopup
 	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
+	// shortcut for sap.m.LinkAccessibleRole
+	var LinkAccessibleRole = library.LinkAccessibleRole;
+
 	// shortcut for sap.m.EmptyIndicator
 	var EmptyIndicatorMode = library.EmptyIndicatorMode;
 
@@ -133,8 +136,9 @@ function(
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Defines the link target URI. Supports standard hyperlink behavior. If a JavaScript action should be triggered,
-			 * this should not be set, but instead an event handler for the <code>press</code> event should be registered.
+			 * Defines the link target URI. Supports standard hyperlink behavior.
+			 * <b>Note:</b> Don't set <code>href</code> property if an action should be triggered by the link. Instead set <code>accessibleRole</code>
+			 * property to <code>LinkAccessibleRole.Button</code> and register a <code>press</code> event handler.
 			 */
 			href : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
@@ -191,6 +195,16 @@ function(
 			 * @since 1.86.0
 			 */
 			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None},
+
+			/**
+			 * Describes the accessibility role of the link:<ul>
+			 * <li><code>LinkAccessibleRole.Default</code> - a navagation is expected to the location given in <code>href</code> property</li>
+			 * <li><code>LinkAccessibleRole.Button</code> - there will be <code>role</code> attribute with value "Button" rendered. In this scenario the <code>href</code>
+			 * property value shouldn't be set as navigation isn't expected to occur.</li></ul>
+			 *
+			 * @since 1.104.0
+			 */
+			accessibleRole : {type : "sap.m.LinkAccessibleRole", group : "Accessibility", defaultValue : LinkAccessibleRole.Default},
 
 			/**
 			 * Specifies if an empty indicator should be displayed when there is no text.
@@ -424,7 +438,8 @@ function(
 			sEmphasizedInfo = this.getEmphasized() ? oResourceBundle.getText("LINK_EMPHASIZED") : "",
 			sSubtleInfo = this.getSubtle() ? oResourceBundle.getText("LINK_SUBTLE") : "",
 			sText = this.getText(),
-			sDescription = sText;
+			sDescription = sText,
+			sAccessibleRole = this.getAccessibleRole();
 
 		if (sText) {
 			sEmphasizedInfo && (sDescription += " " + sEmphasizedInfo);
@@ -432,7 +447,7 @@ function(
 		}
 
 		return {
-			role: "link",
+			role: sAccessibleRole === LinkAccessibleRole.Default ? "link" : sAccessibleRole,
 			type: sText ? oResourceBundle.getText("ACC_CTR_TYPE_LINK") : undefined,
 			description: sDescription,
 			focusable: this.getEnabled(),
