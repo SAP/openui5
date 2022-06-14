@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
+sap.ui.define(["./BaseContentRenderer", "../library"], function (BaseContentRenderer, library) {
 	"use strict";
 
 	/**
@@ -29,6 +29,16 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 			iTableHeaderHeight = bIsCompact ? 2 : 2.75; // table header height in "rem"
 
 		return (iMaxItems * iRowHeight + iTableHeaderHeight) + "rem";
+	};
+
+	TableContentRenderer.getItemMinHeight = function (oConfiguration, oControl) {
+		if (!oConfiguration || !oConfiguration.row) {
+			return 0;
+		}
+
+		var bIsCompact = this.isCompact(oControl);
+
+		return bIsCompact ? 2 : 2.75;
 	};
 
 	return TableContentRenderer;

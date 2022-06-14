@@ -141,5 +141,76 @@
 				}
 			}
 		}
+	},
+	"tablecard4": {
+		"sap.app": {
+			"id": "tablecard4",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Sales Orders for Key Accounts 123"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/tableitems.json"
+					},
+					"path": "/tableCard3"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"title": "Customer",
+							"value": "{name}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"tablecard5": {
+		"sap.app": {
+			"id": "tablecard5",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Sales Orders for Key Accounts 1234567"
+			},
+			"content": {
+				"maxItems": 5,
+				"data": {
+					"request": {
+						"url": "./cardcontent/tableitems.json"
+					},
+					"path": "/tableCard3"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"title": "Customer",
+							"value": "{name}"
+						},
+						{
+							"title": "Net Amount",
+							"value": "{netAmount}"
+						}
+					]
+				}
+			}
+		}
 	}
 }

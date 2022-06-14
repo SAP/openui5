@@ -1504,7 +1504,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Table - Loading indicator should be present - card level request", function (assert) {
-			isLoadingIndicatorShowingContent(Manifest_TableCard_WithCardLevelData, this.oCard, "Table content has a loading placeholder", true, ".sapFCardContentGenericPlaceholder", assert);
+			isLoadingIndicatorShowingContent(Manifest_TableCard_WithCardLevelData, this.oCard, "Table content has a loading placeholder", true, ".sapFCardContentTablePlaceholder", assert);
 		});
 
 		QUnit.test("Filter - Loading indicator should be present", function (assert) {
@@ -1728,7 +1728,7 @@ sap.ui.define([
 				},
 				sType = "Table";
 
-			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, "Generic", "Loading placeholder is of type GenericPlaceholder", assert);
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, "Table", "Loading placeholder is of type TablePlaceholder", assert);
 		});
 
 		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {

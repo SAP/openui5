@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/f/cards/loading/GenericPlaceholder",
 	"sap/f/cards/loading/ListPlaceholder",
 	"sap/f/cards/loading/CalendarPlaceholder",
-	"sap/f/cards/loading/ObjectPlaceholder"
+	"sap/f/cards/loading/ObjectPlaceholder",
+	"sap/f/cards/loading/TablePlaceholder",
+	"../cards/TableContentRenderer"
 ], function (
 	ListContentRenderer,
 	library,
@@ -16,7 +18,9 @@ sap.ui.define([
 	GenericPlaceholder,
 	ListPlaceholder,
 	CalendarPlaceholder,
-	ObjectPlaceholder
+	ObjectPlaceholder,
+	TablePlaceholder,
+	TableContentRenderer
 ) {
 	"use strict";
 
@@ -97,6 +101,14 @@ sap.ui.define([
 				break;
 			case "Object":
 				this._oContentPlaceholder = new ObjectPlaceholder();
+				break;
+
+			case "Table":
+				this._oContentPlaceholder = new TablePlaceholder({
+					maxItems: oCard ? oCard.getContentPageSize(oConfiguration) || 2 : 2,
+					itemHeight: TableContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem",
+					columns: oConfiguration.row ? oConfiguration.row.columns.length || 2 : 2
+				});
 				break;
 
 			default:
