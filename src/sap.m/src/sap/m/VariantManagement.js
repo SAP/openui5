@@ -2436,7 +2436,7 @@ sap.ui.define([
 		} else {
 			oInputField.setValueState(ValueState.Error);
 
-			if (this._oSearchFieldOnMgmtDialog.getValue()) {
+			if (this._oSearchFieldOnMgmtDialog && this._oSearchFieldOnMgmtDialog.getValue()) {
 				oInputField.setValueStateText(this._oRb.getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE_SAVE"));
 			} else {
 				oInputField.setValueStateText(this._oRb.getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE"));
