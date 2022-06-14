@@ -2412,7 +2412,7 @@ sap.ui.define([
 			return;
 		}
 
-		var sValue = oInputField.getValue() || sTitle;
+		var sValue = sTitle || oInputField.getValue();
 		sValue = sValue.trim();
 
 		if (!this._checkIsDuplicate(sValue, sKey)) {
