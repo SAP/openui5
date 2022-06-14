@@ -2375,6 +2375,8 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.ok(oSpy.notCalled, "_rerenderContent is not called");
+		assert.strictEqual(oIconTabBar.getSelectedKey(), "1", "overridden 'getSelectedKey' should return correct value");
+		assert.strictEqual(oIconTabBar.getProperty("selectedKey"), "1", "The 'selectedKey' property should also be updated");
 
 		// Clean up
 		oSpy.restore();
