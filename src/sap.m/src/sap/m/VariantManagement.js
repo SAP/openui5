@@ -723,6 +723,14 @@ sap.ui.define([
 		}
 	};
 
+	VariantManagement.prototype._removeRenamedItem = function(oItem) {
+		var sKey = oItem.getKey();
+		var nIdx = this._aRenamedItems.indexOf(sKey);
+		if ( nIdx >= 0) {
+			this._aRenamedItems.splice(nIdx, 1);
+		}
+	};
+
 	VariantManagement.prototype._getRenamedItems = function() {
 		return this._aRenamedItems;
 	};
@@ -1604,6 +1612,11 @@ sap.ui.define([
 			sValue = parameters.newValue ? parameters.newValue : "";
 		}
 
+		this._triggerSearchInManageDialogByValue(sValue, oManagementTable);
+	};
+
+	VariantManagement.prototype._triggerSearchInManageDialogByValue = function(sValue, oManagementTable) {
+
 		var aFilters = [
 			this._getVisibleFilter(), new Filter({
 				filters: [
@@ -1719,8 +1732,8 @@ sap.ui.define([
 				enabled: true,
 				type: ButtonType.Emphasized,
 				press: function() {
-					this.oManagementDialog.close();
 					this._handleManageSavePressed();
+					//this.oManagementDialog.close();
 				}.bind(this)
 			});
 
@@ -1816,14 +1829,12 @@ sap.ui.define([
 
 		var fLiveChange = function(oEvent) {
 			var oItem = oEvent.oSource.getBindingContext(sModelName).getObject();
-			this._addRenamedItem(oItem);
-			this._checkVariantNameConstraints(oEvent.oSource, oItem.getKey());
+			this._handleManageTitleChange(oEvent.oSource, oItem);
 		}.bind(this);
 
 		var fChange = function(oEvent) {
 			var oItem = oEvent.oSource.getBindingContext(sModelName).getObject();
-			this._addRenamedItem(oItem);
-			this._handleManageTitleChanged(oItem);
+			this._handleManageTitleChange(oEvent.oSource, oItem);
 		}.bind(this);
 
 		var fSelectRB = function(oEvent) {
@@ -1856,6 +1867,12 @@ sap.ui.define([
 				change: fChange,
 				value: '{' + sModelName + ">title}"
 			});
+
+			if (oItem.getTitle() !== oItem.getOriginalTitle()) {
+				this._verifyVariantNameConstraints(oNameControl, oItem.getKey(), oItem.getTitle());
+			}
+
+
 		} else {
 			oNameControl = new ObjectIdentifier({
 				title: '{' + sModelName + ">title}"
@@ -2040,6 +2057,13 @@ sap.ui.define([
 		}
 	};
 
+
+	VariantManagement.prototype._handleManageTitleChange = function(oInput, oItem) {
+		this._checkVariantNameConstraints(oInput, oItem.getKey());
+
+		this._addRenamedItem(oItem);
+	};
+
 	VariantManagement.prototype._handleManageDefaultVariantChange = function(oRadioButton, oItem, bSelected) {
 		var sKey = oItem.getKey();
 
@@ -2094,9 +2118,9 @@ sap.ui.define([
 		this.fireManageCancel();
 
 		//fireCancel may have deleted the ManageViews dialog
-		if (this.oManagementDialog) {
-			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
-		}
+//		if (this.oManagementDialog) {
+//			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
+//		}
 	};
 
 	VariantManagement.prototype._handleManageFavoriteChanged = function(oIcon, oItem) {
@@ -2228,6 +2252,8 @@ sap.ui.define([
 			return;
 		}
 
+		this.oManagementDialog.close();
+
 		this._getDeletedItems().some(function(sItemKey) {
 			if (sItemKey === this.getSelectedKey()) {
 				var sKey = this.getStandardVariantKey();
@@ -2277,14 +2303,28 @@ sap.ui.define([
 		}
 	};
 
-	VariantManagement.prototype._anyInErrorState = function(oManagementTable) {
-		var aItems;
+	VariantManagement.prototype._focusOnFirstInputInErrorState = function(oManagementTable) {
+		if (oManagementTable) {
+			oManagementTable.getItems().some(function(oItem) {
+				var oInput = oItem.getCells()[VariantManagement.COLUMN_NAME_IDX];
+				if (oInput && oInput.getValueState && (oInput.getValueState() === ValueState.Error)) {
+					oInput.getDomRef().scrollIntoView();
+					oInput.focus();
+					return true;
+				}
+
+				return false;
+			});
+		}
+	};
+
+
+	VariantManagement.prototype._anyInErrorStateManageTable = function(oManagementTable) {
 		var oInput;
 		var bInError = false;
 
 		if (oManagementTable) {
-			aItems = oManagementTable.getItems();
-			aItems.some(function(oItem) {
+			oManagementTable.getItems().some(function(oItem) {
 				oInput = oItem.getCells()[VariantManagement.COLUMN_NAME_IDX];
 				if (oInput && oInput.getValueState && (oInput.getValueState() === ValueState.Error)) {
 					bInError = true;
@@ -2294,6 +2334,42 @@ sap.ui.define([
 		}
 
 		return bInError;
+	};
+
+	VariantManagement.prototype._anyInErrorState = function(oManagementTable) {
+		if (this._anyInErrorStateManageTable(oManagementTable)) {
+			return true;
+		}
+
+		var aRenamedKeys = this._getRenamedItems();
+
+		for (var i = aRenamedKeys.length - 1; i >= 0; i--) {
+			var oItem = this._getItemByKey(aRenamedKeys[i]);
+			if (oItem) {
+				if (oItem.getTitle() === oItem.getOriginalTitle()) {
+					this._removeRenamedItem(oItem);
+				}
+			}
+		}
+
+		var bError = false;
+		this._getRenamedItems().some(function(sKey, nIdx) {
+			var oItem = this._getItemByKey(sKey);
+			if (oItem) {
+				bError = this._checkIsDuplicateInModel(oItem.getTitle(), sKey);
+			}
+			return bError;
+
+		}.bind(this));
+
+		if (bError) {
+			this._oSearchFieldOnMgmtDialog.setValue("");
+			this._triggerSearchInManageDialogByValue("", oManagementTable);
+
+			this._focusOnFirstInputInErrorState(oManagementTable);
+		}
+
+		return bError;
 	};
 
 	// UTILS
@@ -2331,12 +2407,12 @@ sap.ui.define([
 	};
 
 
-	VariantManagement.prototype._verifyVariantNameConstraints = function(oInputField, sKey) {
+	VariantManagement.prototype._verifyVariantNameConstraints = function(oInputField, sKey, sTitle) {
 		if (!oInputField) {
 			return;
 		}
 
-		var sValue = oInputField.getValue();
+		var sValue = oInputField.getValue() || sTitle;
 		sValue = sValue.trim();
 
 		if (!this._checkIsDuplicate(sValue, sKey)) {
@@ -2359,7 +2435,13 @@ sap.ui.define([
 			}
 		} else {
 			oInputField.setValueState(ValueState.Error);
-			oInputField.setValueStateText(this._oRb.getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE"));
+
+			if (this._oSearchFieldOnMgmtDialog.getValue()) {
+				oInputField.setValueStateText(this._oRb.getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE_SAVE"));
+			} else {
+				oInputField.setValueStateText(this._oRb.getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE"));
+			}
+
 		}
 	};
 
@@ -2398,7 +2480,10 @@ sap.ui.define([
 
 	VariantManagement.prototype._checkIsDuplicate = function(sValue, sKey) {
 		if (this.oManagementDialog && this.oManagementDialog.isOpen()) {
-			return this._checkIsDuplicateInManageTable(sValue, sKey);
+			var bResult = this._checkIsDuplicateInManageTable(sValue, sKey);
+			if (this._oSearchFieldOnMgmtDialog.getValue() && bResult) {
+				return bResult;
+			}
 		}
 
 		return this._checkIsDuplicateInModel(sValue, sKey);
