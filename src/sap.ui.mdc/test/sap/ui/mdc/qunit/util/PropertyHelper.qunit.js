@@ -1681,8 +1681,8 @@ sap.ui.define([
 		assert.ok(Object.isFrozen(aProperties[0]), "Simple property is frozen");
 		assert.ok(Object.isFrozen(aProperties[1]), "Complex property is frozen");
 		assert.ok(Object.isFrozen(aProperties[2]), "Simple property referenced by a complex property is frozen");
-		assert.ok(Object.isFrozen(aProperties[1].getReferencedProperties()), "The return value of 'getReferencedProperties' is frozen");
-		assert.ok(Object.isFrozen(aProperties[1].getReferencedProperties()[0]), "Properties returned by 'getReferencedProperties' are frozen");
+		assert.ok(Object.isFrozen(aProperties[1].getSimpleProperties()), "The return value of 'getSimpleProperties' is frozen");
+		assert.ok(Object.isFrozen(aProperties[1].getSimpleProperties()[0]), "Properties returned by 'getSimpleProperties' are frozen");
 		assert.ok(Object.isFrozen(aProperties[0].additionalAttribute), "Object attributes are frozen");
 		assert.ok(Object.isFrozen(aProperties[0].additionalAttribute.object), "Objects nested in object attributes are frozen");
 		assert.ok(Object.isFrozen(aProperties[0].additionalAttribute.object.object), "Objects deeply nested in object attributes are frozen");
@@ -1697,8 +1697,8 @@ sap.ui.define([
 		assert.ok(Object.isFrozen(mPropertyMap.prop), "Simple property is frozen");
 		assert.ok(Object.isFrozen(mPropertyMap.complexProp), "Complex property is frozen");
 		assert.ok(Object.isFrozen(mPropertyMap.otherProp), "Simple property referenced by a complex property is frozen");
-		assert.ok(Object.isFrozen(mPropertyMap.complexProp.getReferencedProperties()), "The return value of 'getReferencedProperties' is frozen");
-		assert.ok(Object.isFrozen(mPropertyMap.complexProp.getReferencedProperties()[0]), "Properties returned by 'getReferencedProperties' are frozen");
+		assert.ok(Object.isFrozen(mPropertyMap.complexProp.getSimpleProperties()), "The return value of 'getSimpleProperties' is frozen");
+		assert.ok(Object.isFrozen(mPropertyMap.complexProp.getSimpleProperties()[0]), "Properties returned by 'getSimpleProperties' are frozen");
 		assert.ok(Object.isFrozen(mPropertyMap.prop.additionalAttribute), "Object attributes are frozen");
 		assert.ok(Object.isFrozen(mPropertyMap.prop.additionalAttribute.object), "Objects nested in object attributes are frozen");
 		assert.ok(Object.isFrozen(mPropertyMap.prop.additionalAttribute.object.object), "Objects deeply nested in object attributes are frozen");
@@ -2015,7 +2015,7 @@ sap.ui.define([
 		},
 		assertProperty: function(assert, oProperty) {
 			var aExpectedMethods = [
-				"isComplex", "getReferencedProperties", "getSortableProperties", "getFilterableProperties", "getVisibleProperties",
+				"isComplex", "getSimpleProperties", "getSortableProperties", "getFilterableProperties", "getVisibleProperties",
 				"getGroupableProperties"
 			];
 			var aActualMethods = [];
@@ -2041,7 +2041,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property referenced by complex property", function(assert) {
-		this.assertProperty(assert, this.oPropertyHelper.getProperty("complexProp").getReferencedProperties()[0]);
+		this.assertProperty(assert, this.oPropertyHelper.getProperty("complexProp").getSimpleProperties()[0]);
 	});
 
 	QUnit.test("isComplex", function(assert) {
@@ -2055,18 +2055,19 @@ sap.ui.define([
 		assert.strictEqual(oComplexProperty.isComplex(), true, "After destruction");
 	});
 
-	QUnit.test("getReferencedProperties", function(assert) {
+	QUnit.test("getSimpleProperties", function(assert) {
 		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
 		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
 
-		assert.deepEqual(oSimpleProperty.getReferencedProperties(), [], "Simple property");
-		assert.deepEqual(oComplexProperty.getReferencedProperties(), [oSimpleProperty], "Complex property");
-		assert.ok(Object.isFrozen(oComplexProperty.getReferencedProperties), "The function 'getReferencedProperties' is frozen");
-		assert.ok(Object.isFrozen(oComplexProperty.getReferencedProperties()), "The array returned by 'getReferencedProperties' is frozen");
-		assert.ok(Object.isFrozen(oComplexProperty.getReferencedProperties()[0]), "Properties returned by 'getReferencedProperties' are frozen");
+		assert.deepEqual(oSimpleProperty.getSimpleProperties(), [oSimpleProperty], "Simple property");
+		assert.deepEqual(oComplexProperty.getSimpleProperties(), [oSimpleProperty], "Complex property");
+		assert.ok(Object.isFrozen(oComplexProperty.getSimpleProperties), "The function 'getSimpleProperties' is frozen");
+		assert.ok(Object.isFrozen(oComplexProperty.getSimpleProperties()), "The array returned by 'getSimpleProperties' is frozen");
+		assert.ok(Object.isFrozen(oComplexProperty.getSimpleProperties()[0]), "Properties returned by 'getSimpleProperties' are frozen");
 
 		this.oPropertyHelper.destroy();
-		assert.deepEqual(oComplexProperty.getReferencedProperties(), [oSimpleProperty], "After destruction");
+		assert.deepEqual(oSimpleProperty.getSimpleProperties(), [oSimpleProperty], "Simple property: After destruction");
+		assert.deepEqual(oComplexProperty.getSimpleProperties(), [oSimpleProperty], "Complex property: After destruction");
 	});
 
 	QUnit.test("getSortableProperties", function(assert) {

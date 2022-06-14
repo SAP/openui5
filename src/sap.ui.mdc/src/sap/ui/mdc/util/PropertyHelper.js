@@ -31,10 +31,15 @@ sap.ui.define([
 	 *   Translatable text that labels the property.
 	 * @property {boolean} [visible=true]
 	 *   Whether the property is or can be visible to a user.
-	 * @property {string[]} [propertyInfos]
-	 *   The availability of this property makes <code>PropertyInfo</code> a complex <code>PropertyInfo</code>. Provides a list of related properties
-	 *   (by name).
-	 *   These related properties must be no complex <code>PropertyInfo</code> to avoid deep nesting.
+	 * @property {int} [maxConditions]
+	 *     *   Defines the maximum number of filter conditions for the property. Possible values that can be used:
+	 *     *   <ul>
+	 *     *       <li>1 is a single-filter expression field</li>
+	 *     *       <li>-1 is a multi-filter expression field</li>
+	 *     *   </ul>
+	 *     *   This information is for example used in the <code>addItem</code> method of the <code>FilterBar</code> control to forward this
+	 *     information to
+	 *     *   the created <code>FilterField</code> instance.
 	 * @property {object} [typeConfig]
 	 *   Object which contains type-specific information about the property, especially the type instance (for example, for model filter creation in
 	 *   Table <code>rebind</code>).
@@ -266,29 +271,28 @@ sap.ui.define([
 		 * Checks whether the property is complex.
 		 *
 		 * @this PropertyInfo
-		 * @returns {boolean|null} Whether the property is complex
+		 * @returns {boolean | null} Whether the property is complex
 		 */
 		isComplex: function() {
 			return PropertyHelper.isPropertyComplex(this);
 		},
 		/**
-		 * Gets all properties referenced by the property.
+		 * Gets all relevant simple properties. Returns itself if it is a simple property, and the referenced simple properties if it is complex.
 		 *
 		 * @this PropertyInfo
-		 * @returns {object[]} The referenced properties
+		 * @returns {sap.ui.mdc.util.PropertyInfo[]} The referenced simple properties if it is complex, otherwise itself
 		 */
-		getReferencedProperties: function() {
-			// TODO: Return all referenced properties, e.g. unit, text, etc.?
-			return this.propertyInfosProperties || [];
+		getSimpleProperties: function() {
+			return this.propertyInfosProperties || [this];
 		},
 		/**
 		 * Gets all sortable properties referenced by the property, including the property itself if it is not complex.
 		 *
 		 * @this PropertyInfo
-		 * @returns {object[]} The sortable properties
+		 * @returns {sap.ui.mdc.util.PropertyInfo[]} The sortable properties
 		 */
 		getSortableProperties: function() {
-			return extractProperties(this, function(oProperty) {
+			return this.getSimpleProperties().filter(function(oProperty) {
 				return oProperty.sortable;
 			});
 		},
@@ -296,10 +300,10 @@ sap.ui.define([
 		 * Gets all filterable properties referenced by the property, including the property itself if it is not complex.
 		 *
 		 * @this PropertyInfo
-		 * @returns {object[]} The filterable properties
+		 * @returns {sap.ui.mdc.util.PropertyInfo[]} The filterable properties
 		 */
 		getFilterableProperties: function() {
-			return extractProperties(this, function(oProperty) {
+			return this.getSimpleProperties().filter(function(oProperty) {
 				return oProperty.filterable;
 			});
 		},
@@ -310,7 +314,7 @@ sap.ui.define([
 		 * @returns {object[]} The groupable properties
 		 */
 		getGroupableProperties: function() {
-			return extractProperties(this, function(oProperty) {
+			return this.getSimpleProperties().filter(function(oProperty) {
 				return oProperty.groupable;
 			});
 		},
@@ -318,10 +322,10 @@ sap.ui.define([
 		 * Gets all visible properties referenced by the property, including the property itself if it is not complex.
 		 *
 		 * @this PropertyInfo
-		 * @returns {object[]} The visible properties
+		 * @returns {sap.ui.mdc.util.PropertyInfo[]} The visible properties
 		 */
 		getVisibleProperties: function() {
-			return extractProperties(this, function(oProperty) {
+			return this.getSimpleProperties().filter(function(oProperty) {
 				return oProperty.visible;
 			});
 		}
@@ -493,8 +497,8 @@ sap.ui.define([
 		if ("default" in mAttributeSection) {
 			var oDefault = mAttributeSection.default;
 
-			// ignoreIfNull will applies only if a default value for the attribute has been specified in its metadata
-			if (vValue === null && oDefault.ignoreIfNull && oDefault.value !== undefined) {
+			// "ignoreIfNull" takes effect only if a default value for the attribute has been specified in its metadata.
+			if (vValue === null && oDefault.ignoreIfNull && "value" in oDefault) {
 				return;
 			}
 
@@ -524,16 +528,6 @@ sap.ui.define([
 			mMap[oProperty.name] = oProperty;
 			return mMap;
 		}, {}));
-	}
-
-	function extractProperties(oProperty, fnFilter) {
-		if (oProperty.isComplex()) {
-			return oProperty.getReferencedProperties().filter(fnFilter);
-		} else if (fnFilter(oProperty)) {
-			return [oProperty];
-		} else {
-			return [];
-		}
 	}
 
 	function finalizeAttributeMetadata(mAttributeSection, sPath, bParentAllowedForComplexProperty) {
@@ -634,7 +628,7 @@ sap.ui.define([
 	/**
 	 * Constructor for a new helper for the given properties.
 	 *
-	 * @param {object[]} aProperties
+	 * @param {sap.ui.mdc.util.PropertyInfo[]} aProperties
 	 *     The properties to process in this helper
 	 * @param {Object<string, object>} [mExtensions]
 	 *     Key-value map, where the key is the name of the property and the value is the extension containing mode-specific information.
@@ -703,8 +697,8 @@ sap.ui.define([
 	 * The only method that may be called from here is {@link #validateProperty}. The properties are not yet stored in the helper, and therefore
 	 * any method that tries to access them might not work as expected.
 	 *
-	 * @param {object[]} aProperties The properties to validate
-	 * @param {object[]} [aPreviousProperties] The previous set of properties to validate against
+	 * @param {sap.ui.mdc.util.PropertyInfo[]} aProperties The properties to validate
+	 * @param {sap.ui.mdc.util.PropertyInfo[]} [aPreviousProperties] The previous set of properties to validate against
 	 * @throws {Error} If the properties are invalid
 	 * @protected
 	 */
@@ -728,9 +722,9 @@ sap.ui.define([
 	 * No other method of the helper must be called from here. The properties are not yet stored in the helper, and therefore
 	 * any method that tries to access them might not work as expected.
 	 *
-	 * @param {object} oProperty The property to validate
-	 * @param {object[]} aProperties The entire array properties
-	 * @param {object[]} [aPreviousProperties] The previous set of properties to validate against
+	 * @param {sap.ui.mdc.util.PropertyInfo} oProperty The property to validate
+	 * @param {sap.ui.mdc.util.PropertyInfo[]} aProperties The entire array properties
+	 * @param {sap.ui.mdc.util.PropertyInfo[]} [aPreviousProperties] The previous set of properties to validate against
 	 * @throws {Error} If the property is invalid
 	 * @protected
 	 */
@@ -824,7 +818,7 @@ sap.ui.define([
 	/**
 	 * Applies defaults and resolves property references.
 	 *
-	 * @param {object} oProperty The property to prepare
+	 * @param {sap.ui.mdc.util.PropertyInfo} oProperty The property to prepare
 	 * @protected
 	 */
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
@@ -853,7 +847,7 @@ sap.ui.define([
 	/**
 	 * If available, it gets the instance that acts as the parent of this helper. This may not reflect the UI5 object relationship tree.
 	 *
-	 * @returns {sap.ui.base.ManagedObject|null} The parent if one was passed to the constructor, <code>null</code> otherwise.
+	 * @returns {sap.ui.base.ManagedObject | null} The parent if one was passed to the constructor, <code>null</code> otherwise.
 	 * @public
 	 */
 	PropertyHelper.prototype.getParent = function() {
@@ -861,12 +855,10 @@ sap.ui.define([
 		return oPrivate ? oPrivate.oParent : null;
 	};
 
-
 	/**
-	 * Sets all properties known to this helper.
-  	 *
-	 * @param {object[]} aProperties The properties to process in this helper
-	 * @returns {sap.ui.mdc.util.PropertyHelper} returns propertyhelper instance
+	 * Sets all properties known to this helper. Properties that are currently known but are not in the set of new properties are no longer known.
+	 *
+	 * @param {sap.ui.mdc.util.PropertyInfo[]} aProperties The properties to process
 	 * @public
 	 * @since 1.100.0
 	 */
@@ -879,7 +871,7 @@ sap.ui.define([
 	/**
 	 * Gets all properties known to this helper.
 	 *
-	 * @returns {object[]} All properties
+	 * @returns {sap.ui.mdc.util.PropertyInfo[]} All properties
 	 * @public
 	 */
 	PropertyHelper.prototype.getProperties = function() {
@@ -890,7 +882,7 @@ sap.ui.define([
 	/**
 	 * Gets the properties as a key-value map, where the key is the <code>name</code> attribute of a property.
 	 *
-	 * @returns {object} A map of all properties
+	 * @returns {sap.ui.mdc.util.PropertyInfo} A map of all properties
 	 * @public
 	 */
 	PropertyHelper.prototype.getPropertyMap = function() {
@@ -902,7 +894,7 @@ sap.ui.define([
 	 * Gets a property by its name.
 	 *
 	 * @param {string} sName Name of a property
-	 * @returns {object|null} The property, or <code>null</code> if it is unknown
+	 * @returns {sap.ui.mdc.util.PropertyInfo | null} The property, or <code>null</code> if it is unknown
 	 * @public
 	 */
 	PropertyHelper.prototype.getProperty = function(sName) {
@@ -923,7 +915,7 @@ sap.ui.define([
 	/**
 	 * Checks whether a property is a complex property. Works with any <code>PropertyInfo</code>, even if unknown to the property helper.
 	 *
-	 * @param {object} oProperty A <code>PropertyInfo</code> object
+	 * @param {sap.ui.mdc.util.PropertyInfo} oProperty A <code>PropertyInfo</code> object
 	 * @returns {boolean} Whether the property is complex
 	 * @protected
 	 * @static
@@ -935,7 +927,7 @@ sap.ui.define([
 	/**
 	 * Gets all sortable properties.
 	 *
-	 * @returns {object[]} All sortable properties
+	 * @returns {sap.ui.mdc.util.PropertyInfo[]} All sortable properties
 	 * @public
 	 */
 	PropertyHelper.prototype.getSortableProperties = function() {
@@ -947,7 +939,7 @@ sap.ui.define([
 	/**
 	 * Gets all filterable properties.
 	 *
-	 * @returns {object[]} All filterable properties
+	 * @returns {sap.ui.mdc.util.PropertyInfo[]} All filterable properties
 	 * @public
 	 */
 	PropertyHelper.prototype.getFilterableProperties = function() {
@@ -971,7 +963,7 @@ sap.ui.define([
 	/**
 	 * Gets all key properties.
 	 *
-	 * @returns {object[]} All key properties
+	 * @returns {sap.ui.mdc.util.PropertyInfo[]} All key properties
 	 * @public
 	 */
 	PropertyHelper.prototype.getKeyProperties = function() {
@@ -983,7 +975,7 @@ sap.ui.define([
 	/**
 	 * Gets all visible properties.
 	 *
-	 * @returns {object[]} All visible properties
+	 * @returns {sap.ui.mdc.util.PropertyInfo[]} All visible properties
 	 * @public
 	 */
 	PropertyHelper.prototype.getVisibleProperties = function() {

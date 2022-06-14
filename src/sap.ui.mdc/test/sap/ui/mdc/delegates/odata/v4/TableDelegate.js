@@ -37,15 +37,15 @@ sap.ui.define([
 	TestTableDelegate.addItem = function(sPropertyName, oTable, mPropertyBag) {
 		return TableDelegateUtils.createColumn(oTable, sPropertyName, function(oTable, oProperty) {
 			if (oProperty.name.endsWith("_ComplexWithUnit")) {
-				var aReferencedProperties = oProperty.getReferencedProperties();
+				var aProperties = oProperty.getSimpleProperties();
 
 				return new Currency({
 					useSymbol: false,
 					value: {
-						path: aReferencedProperties[0].getPath()
+						path: aProperties[0].getPath()
 					},
 					currency: {
-						path: aReferencedProperties[1].getPath()
+						path: aProperties[1].getPath()
 					}
 				});
 			}
