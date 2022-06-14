@@ -11,13 +11,15 @@
 			<VBox class="sapUiTinyMarginTop">
 					<Label text="{i18n>APP_SETTINGS_DIALOG_THEME}" design="Standard" labelFor="ThemeSelect" />
 					<Select id="ThemeSelect" width="100%" class="sapUiSmallMarginBottom">
-						<core:Item key="sap_horizon" text="Horizon"/>
+						<core:Item key="sap_horizon" text="Morning Horizon (Light)"/>
+						<core:Item key="sap_horizon_dark" text="Evening Horizon (Dark)"/>
+						<core:Item key="sap_horizon_hcb" text="Horizon High Contrast Black"/>
+						<core:Item key="sap_horizon_hcw" text="Horizon High Contrast White"/>
 						<core:Item key="sap_fiori_3" text="Quartz Light"/>
 						<core:Item key="sap_fiori_3_dark" text="Quartz Dark"/>
+						<core:Item key="sap_fiori_3_hcb" text="Quartz High Contrast Black"/>
+						<core:Item key="sap_fiori_3_hcw" text="Quartz High Contrast White"/>
 						<core:Item key="sap_belize" text="Belize"/>
-						<core:Item key="sap_belize_plus" text="Belize Deep"/>
-						<core:Item key="sap_fiori_3_hcb" text="High Contrast Black"/>
-						<core:Item key="sap_fiori_3_hcw" text="High Contrast White"/>
 					</Select>
 
 					<Label text="{i18n>APP_SETTINGS_DIALOG_DENSITY}" design="Standard"  labelFor="CompactModeSwitch" />
