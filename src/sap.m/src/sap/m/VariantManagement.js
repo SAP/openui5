@@ -1044,6 +1044,11 @@ sap.ui.define([
 		}
 	};
 
+	VariantManagement.prototype.setModified = function(bValue) {
+		this.setProperty("modified", bValue);
+		return this;
+	};
+
 	VariantManagement.prototype._openVariantList = function() {
 		var oItem;
 
@@ -1070,6 +1075,11 @@ sap.ui.define([
 			if (oItem && oItem.getChangeable()) {
 				this.showSaveButton(true);
 			}
+		}
+
+		var oSelectedItem = this.oVariantList.getSelectedItem();
+		if (oSelectedItem) {
+			this.oVariantPopOver.setInitialFocus(oSelectedItem.getId());
 		}
 
 		var oControlRef = this._oCtrlRef ? this._oCtrlRef : this.oVariantLayout;
