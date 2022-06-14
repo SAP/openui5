@@ -7,7 +7,7 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/FilterBarDelegate", "sap/ui/v4demo/controls/CustomRangeSlider", "sap/ui/core/Core"
+	"delegates/odata/v4/FilterBarDelegate", "sap/ui/v4demo/controls/CustomRangeSlider", "sap/ui/core/Core"
 ], function (FilterBarDelegate, CustomRangeSlider, Core) {
 	"use strict";
 

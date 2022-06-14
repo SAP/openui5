@@ -17,7 +17,7 @@
 				<items>
 					<mdc:Chart id="IDChartOfAppUnderTestChart"
 								delegate='{
-									"name": "sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
+									"name": "delegates/odata/v4/vizChart/ChartDelegate",
 									"payload": {
 									   		collectionName: "Books"
 										}

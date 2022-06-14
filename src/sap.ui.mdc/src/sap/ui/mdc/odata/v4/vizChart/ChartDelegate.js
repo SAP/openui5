@@ -22,7 +22,7 @@ sap.ui.define([
     "sap/ui/mdc/p13n/panels/ChartItemPanel",
     "sap/m/MessageStrip",
     "../TypeUtil",
-    "../FilterBarDelegate",
+    "sap/ui/mdc/FilterBarDelegate",
     "sap/ui/model/Filter",
     "sap/ui/mdc/odata/v4/ChartPropertyHelper",
     "sap/ui/thirdparty/jquery"
