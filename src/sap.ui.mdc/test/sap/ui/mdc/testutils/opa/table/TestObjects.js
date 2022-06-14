@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"../p13n/Actions",
 	"../p13n/Assertions",
-	"./Actions",
-	"./Assertions"
+	"./Actions"
 ], function(
 	Opa5,
 	p13nActions,
 	p13nAssertions,
-	TableActions,
-	TableAssertions
+	TableActions
 ) {
 	"use strict";
 
@@ -29,6 +27,7 @@ sap.ui.define([
 				 * @property {string[]} values Filter values for the given operator
 				 * @property {string} inputControl <code>Control</code> that is used as input for the value
 				 */
+
 				/**
 				 * OPA5 test action
 				 * 1. Opens the personalization dialog of a given table.
@@ -51,6 +50,7 @@ sap.ui.define([
 				 * @property {string} key of the item that is the result of the personalization
 				 * @property {boolean} showFieldAsColumn Determines if the Show Field as Column checkbox is checked
 				 */
+
 				/**
 				 * Opa5 test action:
 				 * 1. Opens the personalization dialog of a given table.
@@ -59,8 +59,7 @@ sap.ui.define([
 				 * @memberof onTheMDCTable
 				 * @method iPersonalizeGroup
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control that is reset
-				 * @param {GroupPersonalizationConfiguration[]} aSettings An array containing the group personalization configuration objects
-				 * @param {function} fnOpenThePersonalizationDialog A function that opens the personalization dialog of the given control
+				 * @param {GroupPersonalizationConfiguration[]} aSettings An array containing the group personalization configuration objects //TODO: try do define the typedef in only one central space
 				 * @returns {Promise} Opa waitFor
 				 * @public
 				 */
@@ -76,7 +75,6 @@ sap.ui.define([
 				 * @method iPersonalizeColumns
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control that is personalized
 				 * @param {string[]} aItems Array containing the labels of the columns that are the result of the personalization
-				 * @param {function} fnOpenThePersonalizationDialog A function that opens the personalization dialog of the given control
 				 * @returns {Promise} Opa waitFor
 				 * @public
 				 */
@@ -88,6 +86,7 @@ sap.ui.define([
 				 * @property {string} key Key of the item that is the result of the personalization
 				 * @property {boolean} descending Determines whether the sort direction is descending
 				 */
+
 				/**
 				 * OPA5 test action
 				 * 1. Opens the personalization dialog of a given table.
@@ -97,7 +96,6 @@ sap.ui.define([
 				 * @method iPersonalizeSort
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is sorted
 				 * @param {SortPersonalizationConfiguration[]} aSettings Array containing the sort personalization configuration objects
-				 * @param {function} fnOpenThePersonalizationDialog A function that opens the personalization dialog of the given control
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */
@@ -113,7 +111,6 @@ sap.ui.define([
 				 * @memberof onTheMDCTable
 				 * @method iResetThePersonalization
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is reset
-				 * @param {function} fnOpenThePersonalizationDialog A function that opens the personalization dialog of the <code>mdc.Link</code>
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */
@@ -123,53 +120,13 @@ sap.ui.define([
 			},
 			assertions: {
 				/**
-				 * Opa5 test assertion
-				 * 1. Asserts that there is a <code>sap.ui.mdc.Table</code>.
-				 * 2. Asserts that the table is parent of a <code>sap.m.Title</code> with given text property.
-				 * @memberof onTheMDCTable
-				 * @method iShouldSeeTheTableHeader
-				 * @param {string} sName expected value of the <code>sap.m.Title</code> text property
-				 * @returns {Promise} OPA waitFor
-				 * @public
-				 */
-				iShouldSeeTheTableHeader: function(sName) {
-					return TableAssertions.iShouldSeeTheTableHeader.apply(this, arguments);
-				},
-				/**
-				 * Opa5 test assertion
-				 * 1. Asserts that there is a <code>sap.ui.mdc.Table</code>.
-				 * 2. Asserts that the table is parent of a defined number of <code>sap.m.ColumnListItem</code> controls.
-				 * @memberof onTheMDCTable
-				 * @method iShouldSeeRowsWithData
-				 * @param {integer} iAmountOfRows Number of <code>sap.m.ColumnListItem</code> controls which the table is a parent of
-				 * @returns {Promise} OPA waitFor
-				 * @public
-				 */
-				iShouldSeeRowsWithData: function(iAmountOfRows) {
-					return TableAssertions.iShouldSeeRowsWithData.apply(this, arguments);
-				},
-				/**
-				 * Opa5 test assertion
-				 * 1. Asserts that there is a <code>sap.ui.mdc.Table</code>.
-				 * 2. Asserts that the table is parent of a <code>sap.m.ColumnListItem</code>.
-				 * 3. Checks if the value of all cells inside the <code>sap.m.ColumnListItem</code> equals the expected data.
-				 * @memberof onTheMDCTable
-				 * @method iShouldSeeARowWithData
-				 * @param {integer} iIndexOfRow Index of the <code>sap.m.ColumnListItem</code> in question
-				 * @param {Object[]} aExpectedData Array containing the values of the cells inside the <code>sap.m.ColumnListItem</code>
-				 * @returns {Promise} OPA waitFor
-				 * @public
-				 */
-				iShouldSeeARowWithData: function(iIndexOfRow, aExpectedData) {
-					return TableAssertions.iShouldSeeARowWithData.apply(this, arguments);
-				},
-				/**
 				 * @typedef {object} FilterPersonalizationConfiguration
 				 * @property {string} key Key of the value that is the result of the personalization
 				 * @property {string} operator Operator defining how the items are filtered
 				 * @property {string[]} values Filter values for the given operator
 				 * @property {string} inputControl <code>Control</code> that is used as input for the value
 				 */
+
 				/**
 				 * OPA5 test assertion
 				 * 1. Opens the personalization dialog of a given table.
@@ -179,7 +136,6 @@ sap.ui.define([
 				 * @method iCheckFilterPersonalization
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is filtered
 				 * @param {FilterPersonalizationConfiguration[]} aConfigurations Array containing the filter personalization configuration objects
-				 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
 				 * @returns {Promise} OPA waitFor
 				 */
 				iCheckFilterPersonalization: function(oControl, aConfigurations) {

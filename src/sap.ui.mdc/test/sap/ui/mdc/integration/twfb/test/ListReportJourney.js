@@ -71,7 +71,6 @@ sap.ui.define([
 		Given.iStartMyUIComponentInViewMode();
 
 		// Toolbar tests
-		Then.onTheMDCTable.iShouldSeeTheTableHeader("Books");
 		Then.onPage.iShouldSeeAP13nButtonForTheTable();
 		Then.onPage.iShouldSeeAButtonWithTextForTheTable("Add Book");
 
@@ -85,18 +84,12 @@ sap.ui.define([
 			"Genre",
 			"SubGenre"
 		]);
-		Then.onPage.iShouldSeeRowsWithData(50);
-		Then.onPage.iShouldSeeARowWithData(0, ListReport.books["Pride and Prejudice"]);
-		Then.onPage.iShouldSeeARowWithData(2, ListReport.books["Alice's Adventures in Wonderland"]);
 
 		Then.iTeardownMyUIComponent();
 	});
 
 	opaTest("Table - check if sorting works correctly on Table via sort dialog", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
-
-		// check unsorted state
-		Then.onPage.iShouldSeeARowWithData(0, ListReport.books["Pride and Prejudice"]);
 
 		// 1) Sort by 'Title' (ascending)
 		When.waitFor({
@@ -105,7 +98,6 @@ sap.ui.define([
 				When.onTheMDCTable.iPersonalizeSort(aTables[0].getId(), [
 					{key: "Title", descending: false}
 				]);
-				Then.onPage.iShouldSeeARowWithData(0, ListReport.books["...So They Baked a Cake"]);
 			}
 		});
 
@@ -116,7 +108,6 @@ sap.ui.define([
 				When.onTheMDCTable.iPersonalizeSort(aTables[0].getId(), [
 					{key: "Title", descending: true}
 				]);
-				Then.onPage.iShouldSeeARowWithData(0, ListReport.books["Youth"]);
 			}
 		});
 
@@ -128,7 +119,6 @@ sap.ui.define([
 					{key: "Author ID", descending: false},
 					{key: "Title", descending: true}
 				]);
-				Then.onPage.iShouldSeeARowWithData(0, ListReport.books["The Complete Project Gutenberg Works of Jane Austen: A Linked Index of all PG Editions of Jane Austen"]);
 			}
 		});
 
@@ -138,23 +128,18 @@ sap.ui.define([
 	opaTest("Table - check if sorting works correctly on Table via column header menu", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
-		// check unsorted state
-		Then.onPage.iShouldSeeARowWithData(0, ListReport.books["Pride and Prejudice"]);
-
 		var fnSortByColumnTitle = function(sColumnTitle, sBookKeyAscending, sBookKeyDescending) {
 			//Sort Ascending (first click)
 			When.onPage.iClickOnColumnHeader(sColumnTitle);
 			Then.onPage.iShouldSeeAColumnHeaderMenu(sColumnTitle);
 			When.onPage.iClickOnColumnHeaderMenuSortAscendingButton(sColumnTitle);
 			Then.onPage.iShouldSeeAAscendingSortedColumn(sColumnTitle);
-			Then.onPage.iShouldSeeARowWithData(0, ListReport.books[sBookKeyAscending]);
 			//Sort Descending (second click)
 			//TODO: Need to check for the inconsistency with the actual value and the value in the model itself.
 			When.onPage.iClickOnColumnHeader(sColumnTitle);
 			Then.onPage.iShouldSeeAColumnHeaderMenu(sColumnTitle);
 			When.onPage.iClickOnColumnHeaderMenuSortDescendingButton(sColumnTitle);
 			Then.onPage.iShouldSeeADescendingSortedColumn(sColumnTitle);
-			Then.onPage.iShouldSeeARowWithData(0, ListReport.books[sBookKeyDescending]);
 		};
 
 		// Sort 3 different times

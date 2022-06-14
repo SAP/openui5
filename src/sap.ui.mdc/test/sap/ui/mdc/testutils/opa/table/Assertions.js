@@ -27,39 +27,6 @@ sap.ui.define([
 
 	return {
 		// Toolbar Assertions
-		iShouldSeeTheTableHeader: function(sName) {
-			return waitForTable.call(this, {
-				success: function(oTable) {
-					return this.waitFor({
-						controlType: "sap.m.Title",
-						matchers: [
-							new Ancestor(oTable, false),
-							new Properties({
-								text: sName
-							})
-						],
-						success: function() {
-							QUnit.assert.ok(true, "The table has the header '" + sName + "'");
-						},
-						errorMessage: "Table header is not displayed"
-					});
-				}
-			});
-		},
-		iShouldSeeASortButtonForTheTable: function() {
-			return waitForTable.call(this, {
-				success: function(oTable) {
-					waitForP13nButtonWithParentAndIcon.call(this, {
-						parent: oTable,
-						icon: TableUtil.SortButtonIcon,
-						success: function(oButton) {
-							QUnit.assert.ok(oButton, "The Table has a sort button.");
-						},
-						errorMessage: "The Table has no sort button"
-					});
-				}
-			});
-		},
 		iShouldSeeAP13nButtonForTheTable: function() {
 			return waitForTable.call(this, {
 				success: function(oTable) {
@@ -104,48 +71,6 @@ sap.ui.define([
 						aDisplayedColumns.push(oColumn.getHeader());
 					});
 					QUnit.assert.deepEqual(aDisplayedColumns, aColumnHeaders, "The Table has the correct column headers");
-				}
-			});
-		},
-		iShouldSeeRowsWithData: function(iAmountOfRows) {
-			return waitForTable.call(this, {
-				success: function(oTable) {
-					return this.waitFor({
-						controlType: "sap.m.ColumnListItem",
-						matchers: [
-							new Ancestor(oTable, false)
-						],
-						success: function(oRows) {
-							QUnit.assert.equal(oRows.length, iAmountOfRows, "The Table has " + iAmountOfRows + " rows");
-						},
-						errorMessage: "The Table has an incorrect amount of rows"
-					});
-				}
-			});
-		},
-		iShouldSeeARowWithData: function(iIndexOfRow, aExpectedData) {
-			return waitForTable.call(this, {
-				success: function(oTable) {
-					var aMatchers = [];
-					aMatchers.push(new AggregationContainsPropertyEqual({
-						aggregationName: "cells",
-						propertyName: "value",
-						propertyValue: aExpectedData[0]
-					}));
-					aMatchers.push(new Ancestor(oTable, false));
-					return this.waitFor({
-						controlType: "sap.m.ColumnListItem",
-						matchers: aMatchers,
-						success: function(aRows) {
-							var oRow = aRows[0];
-							QUnit.assert.equal(iIndexOfRow, oRow.getParent().indexOfItem(oRow), "Row found in correct index");
-							var aData = oRow.getCells().map(function(oCell) {
-								return oCell.getValue();
-							});
-							QUnit.assert.deepEqual(aData, aExpectedData, "The row with index " + iIndexOfRow + " contains the right data");
-						},
-						errorMessage: "The Table has wrong data in the row with index " + iIndexOfRow
-					});
 				}
 			});
 		},

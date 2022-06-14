@@ -69,7 +69,9 @@ sap.ui.define([
 		var oDataStateIndicator = oTable.getDataStateIndicator();
 		if (!oDataStateIndicator || !oDataStateIndicator.isFiltering()) {
 			var aFilters = createInnerFilters.call(this, oTable).concat(createOuterFilters.call(this, oTable));
-			oBindingInfo.filters = new Filter(aFilters, true);
+			if (aFilters.length) {
+				oBindingInfo.filters = new Filter(aFilters, true);
+			}
 		}
 
 		addSearchParameter(oTable, oBindingInfo);

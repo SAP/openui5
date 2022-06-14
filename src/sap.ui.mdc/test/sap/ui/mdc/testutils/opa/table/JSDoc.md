@@ -29,9 +29,6 @@
     * [.iPersonalizeColumns(oControl, aItems, fnOpenThePersonalizationDialog)](#onTheMDCTable.iPersonalizeColumns) ⇒ <code>Promise</code>
     * [.iPersonalizeSort(oControl, aSettings, fnOpenThePersonalizationDialog)](#onTheMDCTable.iPersonalizeSort) ⇒ <code>Promise</code>
     * [.iResetThePersonalization(oControl, fnOpenThePersonalizationDialog)](#onTheMDCTable.iResetThePersonalization) ⇒ <code>Promise</code>
-    * [.iShouldSeeTheTableHeader(sName)](#onTheMDCTable.iShouldSeeTheTableHeader) ⇒ <code>Promise</code>
-    * [.iShouldSeeRowsWithData(iAmountOfRows)](#onTheMDCTable.iShouldSeeRowsWithData) ⇒ <code>Promise</code>
-    * [.iShouldSeeARowWithData(iIndexOfRow, aExpectedData)](#onTheMDCTable.iShouldSeeARowWithData) ⇒ <code>Promise</code>
     * [.iCheckFilterPersonalization(oControl, aConfigurations, fnOpenThePersonalizationDialog)](#onTheMDCTable.iCheckFilterPersonalization) ⇒ <code>Promise</code>
     * [.iCheckAvailableFilters(oControl, aFilters)](#onTheMDCTable.iCheckAvailableFilters) ⇒ <code>Promise</code>
 
@@ -125,53 +122,6 @@ Opa5 test action
 | --- | --- | --- |
 | oControl | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>Control</code> that is reset |
 | fnOpenThePersonalizationDialog | <code>function</code> | A function that opens the personalization dialog of the <code>mdc.Link</code> |
-
-<a name="onTheMDCTable.iShouldSeeTheTableHeader"></a>
-
-### onTheMDCTable.iShouldSeeTheTableHeader(sName) ⇒ <code>Promise</code>
-Opa5 test assertion
-1. Asserts that there is a <code>sap.ui.mdc.Table</code>.
-2. Asserts that the table is parent of a <code>sap.m.Title</code> with given text property.
-
-**Kind**: static method of [<code>onTheMDCTable</code>](#onTheMDCTable)  
-**Returns**: <code>Promise</code> - OPA waitFor  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| sName | <code>string</code> | expected value of the <code>sap.m.Title</code> text property |
-
-<a name="onTheMDCTable.iShouldSeeRowsWithData"></a>
-
-### onTheMDCTable.iShouldSeeRowsWithData(iAmountOfRows) ⇒ <code>Promise</code>
-Opa5 test assertion
-1. Asserts that there is a <code>sap.ui.mdc.Table</code>.
-2. Asserts that the table is parent of a defined number of <code>sap.m.ColumnListItem</code> controls.
-
-**Kind**: static method of [<code>onTheMDCTable</code>](#onTheMDCTable)  
-**Returns**: <code>Promise</code> - OPA waitFor  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| iAmountOfRows | <code>integer</code> | Number of <code>sap.m.ColumnListItem</code> controls which the table is a parent of |
-
-<a name="onTheMDCTable.iShouldSeeARowWithData"></a>
-
-### onTheMDCTable.iShouldSeeARowWithData(iIndexOfRow, aExpectedData) ⇒ <code>Promise</code>
-Opa5 test assertion
-1. Asserts that there is a <code>sap.ui.mdc.Table</code>.
-2. Asserts that the table is parent of a <code>sap.m.ColumnListItem</code>.
-3. Checks if the value of all cells inside the <code>sap.m.ColumnListItem</code> equals the expected data.
-
-**Kind**: static method of [<code>onTheMDCTable</code>](#onTheMDCTable)  
-**Returns**: <code>Promise</code> - OPA waitFor  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| iIndexOfRow | <code>integer</code> | Index of the <code>sap.m.ColumnListItem</code> in question |
-| aExpectedData | <code>Array.&lt;Object&gt;</code> | Array containing the values of the cells inside the <code>sap.m.ColumnListItem</code> |
 
 <a name="onTheMDCTable.iCheckFilterPersonalization"></a>
 

@@ -440,12 +440,14 @@ sap.ui.define([
 	ResponsiveTableType.prototype._getShowDetailsButton = function() {
 		if (!this._oShowDetailsButton) {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			var sId = this.getTable().getId();
 			this.bHideDetails = true;
-			this._oShowDetailsButton = new SegmentedButton(this.getTable().getId() + "-showHideDetails", {
+			this._oShowDetailsButton = new SegmentedButton(sId + "-showHideDetails", {
 				visible: false,
 				selectedKey: "hideDetails",
 				items: [
 					new SegmentedButtonItem({
+						id: sId + "-showDetails",
 						icon: "sap-icon://detail-more",
 						key: "showDetails",
 						tooltip: oRb.getText("table.SHOWDETAILS_TEXT"),
@@ -456,6 +458,7 @@ sap.ui.define([
 						]
 					}),
 					new SegmentedButtonItem({
+						id: sId + "-hideDetails",
 						icon: "sap-icon://detail-less",
 						key: "hideDetails",
 						tooltip: oRb.getText("table.HIDEDETAILS_TEXT"),
