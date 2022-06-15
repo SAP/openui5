@@ -1391,17 +1391,17 @@ sap.ui.define([
 			card: this
 		});
 
-		this._oDataProviderFactory = new DataProviderFactory({
-			host: this.getHostInstance(),
-			extension: oExtension,
-			csrfTokensConfig: this._oCardManifest.get(MANIFEST_PATHS.CSRF_TOKENS),
-			card: this
-		});
-
-		this._registerCustomModels();
-
 		return this.processDestinations(this._oCardManifest.getJson()).then(function (oResult) {
 			this._oCardManifest.setJson(oResult);
+
+			this._oDataProviderFactory = new DataProviderFactory({
+				host: this.getHostInstance(),
+				extension: oExtension,
+				csrfTokensConfig: this._oCardManifest.get(MANIFEST_PATHS.CSRF_TOKENS),
+				card: this
+			});
+
+			this._registerCustomModels();
 
 			if (oExtension) {
 				oExtension.onCardReady();

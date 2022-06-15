@@ -192,6 +192,55 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_CsrfTokenWithDestination = {
+		"sap.app": {
+			"id": "test.card.csrf.card4"
+		},
+		"sap.card": {
+			"type": "List",
+			"configuration": {
+				"destinations": {
+					"fakeServiceDestination": {
+						"name": "FakeServiceDestination",
+						"defaultUrl": "/fakeService"
+					}
+				},
+				"csrfTokens": {
+					"token1": {
+						"name": "Token1",
+						"data": {
+							"request": {
+								"url": "{{destinations.fakeServiceDestination}}/getToken",
+								"method": "HEAD",
+								"headers": {
+									"X-CSRF-Token": "Fetch"
+								}
+							}
+						}
+					}
+				}
+			},
+			"data": {
+				"request": {
+					"url": "{{destinations.fakeServiceDestination}}/Products",
+					"method": "POST",
+					"headers": {
+						"X-CSRF-Token": "{{csrfTokens.token1}}"
+					}
+				},
+				"path": "/results"
+			},
+			"header": {
+				"title": "Some title"
+			},
+			"content": {
+				"item": {
+					"title": "{Name}"
+				}
+			}
+		}
+	};
+
 	QUnit.module("CSRF Token requests", {
 		beforeEach: function () {
 			this.oServer = sinon.createFakeServer({
@@ -461,6 +510,40 @@ sap.ui.define([
 		// respond to the actual data request
 		this.oServer.respondWith("/fakeService/Products", function (oXhr) {
 			assert.strictEqual(oXhr.requestHeaders["X-CSRF-Token"], "HostTokenValue", "The data request headers contain the provided token");
+
+			oXhr.respond(200, {
+				"Content-Type": "application/json"
+			}, JSON.stringify({"results": []}));
+
+			done();
+		});
+
+		oCard.startManifestProcessing();
+	});
+
+	QUnit.test("CSRF Token works with destinations", function (assert) {
+		var done = assert.async(),
+			oCard = new Card({
+				manifest: oManifest_CsrfTokenWithDestination,
+				baseUrl: "test-resources/sap/ui/integration/qunit/cardbundle/bundle/"
+			});
+
+		assert.expect(2);
+
+		this.oServer.respondWith("HEAD", "/fakeService/getToken", function (oXhr) {
+			var sCsrfHeader = oXhr.requestHeaders["X-CSRF-Token"];
+
+			assert.strictEqual(sCsrfHeader, "Fetch", "Request to obtain a token was executed");
+
+			oXhr.respond(200, {
+				"Content-Type": "application/json",
+				"X-CSRF-Token": "FAKETOKEN"
+			});
+		});
+
+		// respond to the actual data request
+		this.oServer.respondWith("POST", "/fakeService/Products", function (oXhr) {
+			assert.strictEqual(oXhr.requestHeaders["X-CSRF-Token"], "FAKETOKEN", "The data request header contains the provided token");
 
 			oXhr.respond(200, {
 				"Content-Type": "application/json"
