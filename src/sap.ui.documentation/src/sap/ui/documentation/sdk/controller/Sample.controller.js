@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/m/library",
 	"sap/base/Log",
-	"sap/base/util/UriParameters",
+	"../util/ParamUtils",
 	"sap/ui/core/Fragment",
 	"sap/ui/documentation/sdk/util/Resources",
 	"./config/sampleForwardingConfig",
@@ -34,7 +34,7 @@ sap.ui.define([
 	HTML,
 	mobileLibrary,
 	Log,
-	UriParameters,
+	ParamUtils,
 	Fragment,
 	ResourcesUtil,
 	sampleForwardingConfig,
@@ -93,10 +93,17 @@ sap.ui.define([
 			 * @private
 			 */
 			_onSampleMatched: function (event) {
+				var bShouldRedirect = ParamUtils.containsKey("dk-sample-standalone");
+
 				this._sId = event.getParameter("arguments").sampleId;
 				this._sEntityId = event.getParameter("arguments").entityId;
 
 				this.byId("page").setBusy(true);
+
+				// check whether to open sample standalone
+				if (bShouldRedirect) {
+					this._handleRedirect();
+				}
 
 				if (sampleForwardingConfig[this._sId]) {
 					return this.router.navTo("sample", {
@@ -203,6 +210,42 @@ sap.ui.define([
 							oPage.setBusy(false);
 						}, 0);
 					});
+			},
+
+			/**
+			 * Handles redirection from DemoKit to the sample page, rather than loading it as an iFrame.
+			 * The 'dk-sample-standalone' query parameter must be in the URI to take effect.
+			 * @private
+			 */
+			_handleRedirect : function () {
+				this._initIframeURL();
+				this._applySearchParamValueToIframeURL('sap-ui-theme', this._sDefaultSampleTheme);
+				this.sIFrameUrl += "&dk-sample-standalone";
+				URLHelper.redirect(this.sIFrameUrl, false);
+			},
+
+			/**
+			 * Initializes the URL of the sample itself, loaded either in an iFrame or standalone.
+			 * @private
+			 */
+			_initIframeURL : function () {
+				var sSampleOrigin = (window['sap-ui-documentation-config'] && window['sap-ui-documentation-config'].demoKitResourceOrigin) || "",
+					sSampleVersion = ResourcesUtil.getResourcesVersion(),
+					sSampleSearchParams = "";
+
+				// Assigning allowed query parameters from Demo Kit URL
+				ALLOWLIST_SAMPLES_SEARCH_PARAMS.forEach(function (oParam, index) {
+					if (new URL(document.location.href).searchParams.get(oParam)) {
+						sSampleSearchParams += (sSampleSearchParams === "_sId" ? "?" : "&") + oParam + "=" + new URL(document.location.href).searchParams.get(oParam);
+					}
+				});
+
+				sSampleSearchParams = (sSampleSearchParams === "" ? "?" : sSampleSearchParams + "&") +
+					"sap-ui-xx-sample-id=" + this._sId
+					+ "&sap-ui-xx-sample-origin=" + sSampleOrigin + sSampleVersion
+					+ "&sap-ui-xx-dk-origin=" + window.location.origin;
+
+				this.sIFrameUrl = ResourcesUtil.getResourceOrigin() + "/resources/sap/ui/documentation/sdk/index.html" + sSampleSearchParams;
 			},
 
 			/**
@@ -433,7 +476,7 @@ sap.ui.define([
 
 			_createIframe : function () {
 				return new Promise(function (resolve, reject) {
-					var sSampleId = this._sId,
+					var sSampleId,
 					sIframePath = "",
 					rExtractFilename = /\/([^\/]*)$/,// extracts everything after the last slash (e.g. some/path/index.html -> index.html)
 					rStripUI5Ending = /\..+$/,// removes everything after the first dot in the filename (e.g. someFile.qunit.html -> .qunit.html)
@@ -444,23 +487,8 @@ sap.ui.define([
 
 					this.fResolve = resolve;
 					this.fReject = reject;
-					var sSampleOrigin = (window['sap-ui-documentation-config'] && window['sap-ui-documentation-config'].demoKitResourceOrigin) || "",
-						sSampleVersion = ResourcesUtil.getResourcesVersion(),
-						sSampleSearchParams = "";
 
-					// Assigning allowed query parameters from Demo Kit URL
-					ALLOWLIST_SAMPLES_SEARCH_PARAMS.forEach(function(oParam, index){
-						if (new URL(document.location.href).searchParams.get(oParam)){
-							sSampleSearchParams += (sSampleSearchParams === "" ? "?" : "&") + oParam + "=" + new URL(document.location.href).searchParams.get(oParam);
-						}
-					});
-
-					sSampleSearchParams = (sSampleSearchParams === "" ? "?" : sSampleSearchParams + "&") +
-					"sap-ui-xx-sample-id=" + sSampleId
-					+ "&sap-ui-xx-sample-origin=" + sSampleOrigin + sSampleVersion
-					+ "&sap-ui-xx-dk-origin=" + window.location.origin;
-
-					this.sIFrameUrl = ResourcesUtil.getResourceOrigin() + "/resources/sap/ui/documentation/sdk/index.html" + sSampleSearchParams;
+					this._initIframeURL();
 
 					if (this._oHtmlControl) {
 						this._oHtmlControl.destroy();
