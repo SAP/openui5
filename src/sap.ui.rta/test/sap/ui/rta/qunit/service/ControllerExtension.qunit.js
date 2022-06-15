@@ -2,25 +2,27 @@
 
 sap.ui.define([
 	"sap/m/App",
-	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/Utils",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/UIComponent",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/util/ReloadManager",
+	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	App,
-	RuntimeAuthoring,
-	OverlayRegistry,
-	FlexUtils,
-	UIComponent,
-	ComponentContainer,
 	XMLView,
+	ComponentContainer,
+	UIComponent,
+	OverlayRegistry,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
+	FlexUtils,
+	ReloadManager,
+	RuntimeAuthoring,
 	sinon
 ) {
 	"use strict";
@@ -91,11 +93,11 @@ sap.ui.define([
 			sandbox.stub(PersistenceWriteAPI, "add").callsFake(function() {
 				this.iAddChangeCounter++;
 			}.bind(this));
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
 				isPublishEnabled: true
 			});
-			sandbox.stub(this.oRta, "_determineReload").resolves(false);
+			sandbox.stub(ReloadManager, "handleReloadOnStart").resolves(false);
 			return this.oRta.start().then(function () {
 				return this.oRta.getService("controllerExtension").then(function(oService) {
 					this.oControllerExtension = oService;
@@ -180,7 +182,7 @@ sap.ui.define([
 			server = sinon.fakeServer.create();
 			server.respondImmediately = true;
 
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
 				isPublishEnabled: true
 			});
@@ -189,7 +191,7 @@ sap.ui.define([
 				showToolbars: false,
 				rootControl: this.oComponent
 			});
-			sandbox.stub(this.oRta, "_determineReload").resolves(false);
+			sandbox.stub(ReloadManager, "handleReloadOnStart").resolves(false);
 			return this.oRta.start().then(function () {
 				return this.oRta.getService("controllerExtension").then(function(oService) {
 					this.oControllerExtension = oService;

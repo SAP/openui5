@@ -1,26 +1,27 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/ComponentContainer",
-	"sap/m/Page",
 	"sap/m/Button",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
-],
-function (
-	RuntimeAuthoring,
-	BasePlugin,
-	PersistenceWriteAPI,
-	UIComponent,
-	ComponentContainer,
-	Page,
+	"sap/m/Page",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/Core",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/util/ReloadManager",
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/thirdparty/sinon-4"
+], function(
 	Button,
-	sinon,
-	oCore
+	Page,
+	ComponentContainer,
+	UIComponent,
+	oCore,
+	PersistenceWriteAPI,
+	BasePlugin,
+	ReloadManager,
+	RuntimeAuthoring,
+	sinon
 ) {
 	"use strict";
 
@@ -39,11 +40,11 @@ function (
 				},
 				createContent: function() {
 					// eslint-disable-next-line no-return-assign
-					return new Page('page', {
+					return new Page("page", {
 						content: [
-							this.oButton1 = new Button('button1'),
-							this.oButton2 = new Button('button2'),
-							this.oButton3 = new Button('button3')
+							this.oButton1 = new Button("button1"),
+							this.oButton2 = new Button("button2"),
+							this.oButton3 = new Button("button3")
 						]
 					});
 				}.bind(this)
@@ -55,13 +56,13 @@ function (
 			this.oComponentContainer = new ComponentContainer("CompCont", {
 				component: this.oComponent
 			});
-			this.oComponentContainer.placeAt('qunit-fixture');
+			this.oComponentContainer.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.oHasChangeHandlerStud = sinon.stub(BasePlugin.prototype, 'hasChangeHandler').resolves(true);
+			this.oHasChangeHandlerStud = sinon.stub(BasePlugin.prototype, "hasChangeHandler").resolves(true);
 		},
 		beforeEach: function () {
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
 				isPublishEnabled: true
 			});
@@ -70,15 +71,14 @@ function (
 				showToolbars: false,
 				rootControl: this.oComponent
 			});
-
-			sandbox.stub(this.oRta, "_determineReload").resolves(false);
+			sandbox.stub(ReloadManager, "handleReloadOnStart").resolves(false);
 
 			return this.oRta.start().then(function () {
 				this.oRta._oDesignTime.getElementOverlays().forEach(function (oElementOverlay) {
 					oElementOverlay.setSelectable(true);
 				});
 
-				return this.oRta.getService('selection').then(function (oSelectionService) {
+				return this.oRta.getService("selection").then(function (oSelectionService) {
 					this.oSelectionService = oSelectionService;
 				}.bind(this));
 			}.bind(this));
@@ -88,7 +88,7 @@ function (
 			sandbox.restore();
 		},
 		after: function () {
-			QUnit.config.fixture = '';
+			QUnit.config.fixture = "";
 			this.oComponentContainer.destroy();
 			this.oHasChangeHandlerStud.restore();
 		}

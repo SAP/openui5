@@ -3,51 +3,53 @@
 QUnit.dump.maxDepth = 50;
 
 sap.ui.define([
-	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/DesignTime",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/apply/_internal/flexState/Loader",
-	"sap/ui/fl/write/_internal/extensionPoint/Registry",
-	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/m/Page",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Core",
+	"sap/ui/core/UIComponent",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/apply/_internal/flexState/Loader",
+	"sap/ui/fl/write/_internal/extensionPoint/Registry",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/util/ReloadManager",
+	"sap/ui/rta/RuntimeAuthoring",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel",
 	"testdata/StaticDesigntimeMetadata",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
-], function (
-	RuntimeAuthoring,
-	Plugin,
-	CommandFactory,
-	OverlayRegistry,
-	DesignTime,
-	PersistenceWriteAPI,
-	Loader,
-	ExtensionPointRegistry,
-	VerticalLayout,
+	"sap/ui/thirdparty/sinon-4"
+], function(
 	Button,
 	Page,
+	Controller,
+	XMLView,
+	ComponentContainer,
+	oCore,
+	UIComponent,
+	DesignTime,
+	OverlayRegistry,
+	Loader,
+	ExtensionPointRegistry,
+	PersistenceWriteAPI,
+	VerticalLayout,
+	JSONModel,
+	CommandFactory,
+	Plugin,
+	ReloadManager,
+	RuntimeAuthoring,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	UIComponent,
-	ComponentContainer,
-	XMLView,
-	Controller,
-	JSONModel,
 	StaticDesigntimeMetadata,
-	sinon,
-	oCore
+	sinon
 ) {
 	"use strict";
 
@@ -73,7 +75,7 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
 				isPublishEnabled: true
 			});
@@ -148,7 +150,7 @@ sap.ui.define([
 				showToolbars: false,
 				rootControl: this.oComp
 			});
-			sandbox.stub(this.oRta, "_determineReload").resolves(false);
+			sandbox.stub(ReloadManager, "handleReloadOnStart").resolves(false);
 
 			// check designtime metadata label property
 			var oExtendedDesigntimeMetadataForLayout = StaticDesigntimeMetadata.getVerticalLayoutDesigntimeMetadata();
@@ -309,7 +311,7 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
 				isPublishEnabled: true
 			});
@@ -360,7 +362,7 @@ sap.ui.define([
 				showToolbars: false
 			});
 			this.oRta.setPlugins({ testPlugin: oPlugin });
-			sandbox.stub(this.oRta, "_determineReload").resolves(false);
+			sandbox.stub(ReloadManager, "handleReloadOnStart").resolves(false);
 
 			this.oRta.getService("outline").then(function (oService) {
 				this.oOutline = oService;

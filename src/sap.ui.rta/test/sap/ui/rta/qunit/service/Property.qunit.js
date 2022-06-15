@@ -2,33 +2,35 @@
 QUnit.dump.maxDepth = 50;
 
 sap.ui.define([
-	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/base/util/restricted/_omit",
+	"sap/m/Button",
+	"sap/m/Page",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Control",
+	"sap/ui/core/Core",
+	"sap/ui/core/UIComponent",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/Control",
-	"sap/m/Page",
-	"sap/m/Button",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/ComponentContainer",
-	"sap/base/util/restricted/_omit",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/rta/util/ReloadManager",
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	RuntimeAuthoring,
-	ElementDesignTimeMetadata,
+	_omit,
+	Button,
+	Page,
+	ComponentContainer,
+	Control,
+	oCore,
+	UIComponent,
 	DesignTime,
+	ElementDesignTimeMetadata,
 	PersistenceWriteAPI,
 	VerticalLayout,
-	Control,
-	Page,
-	Button,
-	UIComponent,
-	ComponentContainer,
-	_omit,
-	sinon,
-	oCore
+	ReloadManager,
+	RuntimeAuthoring,
+	sinon
 ) {
 	"use strict";
 
@@ -53,7 +55,7 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
 				isPublishEnabled: true,
 				allContextsProvided: true
@@ -492,7 +494,7 @@ sap.ui.define([
 
 			oCore.applyChanges();
 
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
 				isPublishEnabled: false,
 				allContextsProvided: true
@@ -502,7 +504,7 @@ sap.ui.define([
 				showToolbars: false,
 				rootControl: oComp
 			});
-			sandbox.stub(oRta, "_determineReload").resolves(false);
+			sandbox.stub(ReloadManager, "handleReloadOnStart").resolves(false);
 
 
 			return oRta.start()
