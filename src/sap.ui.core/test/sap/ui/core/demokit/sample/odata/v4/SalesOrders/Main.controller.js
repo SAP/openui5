@@ -299,6 +299,18 @@ sap.ui.define([
 			MessageBox.confirm(sMessage, onConfirm, "Sales Order Deletion");
 		},
 
+		onDeleteSalesOrderDeferred : function () {
+			var oContext = this.byId("SalesOrderList").getSelectedItem().getBindingContext();
+
+			oContext.delete().catch(function (oError) {
+				if (!oError.canceled) {
+					MessageToast.show("Could not delete sales order "
+						+ oContext.getProperty("SalesOrderID"));
+				}
+			});
+			this.setSalesOrderBindingContext(null);
+		},
+
 		onDeleteSalesOrderLineItem : function () {
 			var sGroupId = this.getView().getModel().getGroupId(),
 				sMessage,
@@ -331,6 +343,18 @@ sap.ui.define([
 				+ "/" + oSOLineItemContext.getProperty("ItemPosition", true);
 			sMessage = "Do you really want to delete: " + sSalesOrderLineItem + "?";
 			MessageBox.confirm(sMessage, onConfirm, "Sales Order Line Item Deletion");
+		},
+
+		onDeleteSalesOrderLineItemDeferred : function () {
+			var oContext = this.byId("SO_2_SOITEM").getSelectedItem().getBindingContext();
+
+			oContext.delete().catch(function (oError) {
+				if (!oError.canceled) {
+					MessageToast.show("Could not delete line item "
+						+ oContext.getProperty("ItemPosition") + " of sales order "
+						+ oContext.getProperty("SalesOrderID"));
+				}
+			});
 		},
 
 		onDeleteSalesOrderSchedules : function () {

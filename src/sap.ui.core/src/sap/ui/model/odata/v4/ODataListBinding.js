@@ -123,6 +123,7 @@ sap.ui.define([
 			? "AddVirtualContext"
 			: undefined;
 		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
+		this.iDeletedContexts = 0; // number of (client-side) deleted contexts
 		this.oDiff = undefined;
 		this.aFilters = [];
 		this.sGroupId = mParameters.$$groupId;
@@ -262,7 +263,7 @@ sap.ui.define([
 	 *   Whether not to request the new count from the server; useful in case of
 	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
 	 *   unchanged; w/o a lock this should be true
-	 * @returns {Promise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
 	 * @throws {Error}
@@ -272,70 +273,59 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext, oETagEntity,
 			bDoNotRequestCount) {
-		var bDestroy,
-			bFireChange = false,
-			sPath = oContext.iIndex === undefined
+		var sPath = oContext.iIndex === undefined
 				// context is not in aContexts -> use the predicate
 				? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
 				: String(oContext.iIndex),
 			bReadCount = false,
 			that = this;
 
-		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity, bDoNotRequestCount,
-			function (iIndex, aEntities) {
-				var sContextPath, sPredicate, sResolvedPath, i$skipIndex, i;
+		if (oGroupLock && oContext.iIndex === undefined
+				&& this.oModel.isApiGroup(oGroupLock.getGroupId())) {
+			throw new Error("Cannot delete a kept-alive context in an API group when it is not in"
+				+ " the collection");
+		}
 
-				if (oContext.isKeepAlive()) {
-					oContext.resetKeepAlive(); // ensure that it is destroyed later
-					bDestroy = true;
-				}
-				if (oContext.created()) {
-					// happens only for a created context that is not transient anymore
-					that.destroyCreated(oContext);
-					bFireChange = true;
-				} else if (iIndex >= 0) {
-					// prepare all contexts for deletion
-					for (i = iIndex; i < that.aContexts.length; i += 1) {
-						oContext = that.aContexts[i];
-						if (oContext) {
-							that.mPreviousContextsByPath[oContext.getPath()] = oContext;
-						}
+		this.iDeletedContexts += 1;
+
+		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity, bDoNotRequestCount,
+			function (iIndex, iOffset) {
+				if (iIndex !== undefined) {
+					// An entity can only be deleted when its key predicate is known. So we can be
+					// sure to have key predicates and the contexts a related to entities and not
+					// rows. -> Shift them and adjust the indexes
+					if (iOffset > 0) { // we're re-inserting
+						delete that.mPreviousContextsByPath[oContext.getPath()];
+						that.aContexts.splice(iIndex, 0, oContext);
+					} else { // we're deleting
+						that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+						that.aContexts.splice(iIndex, 1);
+						oContext.iIndex = undefined;
+						// fire asynchronously so that multiple deletes only update the table once
+						Promise.resolve().then(function () {
+							that._fireChange({reason : ChangeReason.Remove});
+						});
 					}
-					sResolvedPath = that.getResolvedPath();
-					that.aContexts.splice(iIndex, 1); // adjust the contexts array
-					for (i = iIndex; i < that.aContexts.length; i += 1) {
-						if (that.aContexts[i]) {
-							i$skipIndex = i - that.iCreatedContexts;
-							// calculate the context path and try to re-use the context for it
-							sPredicate = _Helper.getPrivateAnnotation(aEntities[i], "predicate");
-							sContextPath = sResolvedPath + (sPredicate || "/" + i$skipIndex);
-							oContext = that.mPreviousContextsByPath[sContextPath];
-							if (oContext) {
-								delete that.mPreviousContextsByPath[sContextPath];
-								if (oContext.iIndex === i$skipIndex) {
-									oContext.checkUpdate(); // same row, but different data
-								} else {
-									oContext.iIndex = i$skipIndex; // same data, but different row
-								}
-							} else {
-								oContext
-									= Context.create(that.oModel, that, sContextPath, i$skipIndex);
-							}
-							that.aContexts[i] = oContext;
-						}
+					if (oContext.created()) {
+						that.iCreatedContexts += iOffset;
+						that.iActiveContexts += iOffset;
+					} else {
+						// iMaxLength is the number of server rows w/o the created entities
+						that.iMaxLength += iOffset; // this doesn't change Infinity
 					}
-					that.iMaxLength -= 1; // this doesn't change Infinity
-					bFireChange = true;
+					that.aContexts.forEach(function (oContext0, i) {
+						oContext0.iIndex = i - that.iCreatedContexts;
+					});
 				} else if (that.bLengthFinal) {
 					// a kept-alive context is not in aContexts  -> read the count afterwards
 					bReadCount = true;
 				}
-				// Do not destroy the context immediately to avoid timing issues with dependent
-				// bindings, keep it in mPreviousContextsByPath to destroy it later
 			}
 		).then(function () {
 			var iOldMaxLength = that.iMaxLength;
 
+			that.iDeletedContexts -= 1;
+			oContext.resetKeepAlive();
 			if (bReadCount) {
 				that.iMaxLength = that.fetchValue("$count", undefined, true).getResult()
 					- that.iActiveContexts;
@@ -343,18 +333,17 @@ sap.ui.define([
 				// Note: Although we know that oContext is not in aContexts, a "change" event needs
 				// to be fired in order to notify the control about the new length, for example, to
 				// update the 'More' button or the scrollbar.
-				bFireChange = iOldMaxLength !== that.iMaxLength;
+				if (iOldMaxLength !== that.iMaxLength) {
+					that._fireChange({reason : ChangeReason.Remove});
+				}
 			}
-			// Fire the change asynchronously so that Cache#delete is finished and #getContexts can
-			// read the data synchronously. This is important for extended change detection.
-			// Without change event there is no destroyPreviousContexts and a kept-alive context
-			// must be destroyed here.
-			if (bFireChange) {
-				that._fireChange({reason : ChangeReason.Remove});
-			} else if (bDestroy) {
-				delete that.mPreviousContextsByPath[oContext.getPath()];
-				oContext.destroy();
-			}
+			oContext.iIndex = Context.VIRTUAL; // prevent further cache access via this context
+			that.oModel.addPrerenderingTask(
+				that.destroyPreviousContexts.bind(that, [oContext.getPath()]));
+		}, function (oError) {
+			that.iDeletedContexts -= 1;
+			that._fireChange({reason : ChangeReason.Insert});
+			throw oError;
 		});
 	};
 
@@ -1126,9 +1115,9 @@ sap.ui.define([
 	 * Removes and destroys contexts from mPreviousContextsByPath.
 	 *
 	 * @param {string[]} [aPathsToDelete]
-	 *   If given, only contexts with paths in this list except kept-alive ones are removed and
-	 *   destroyed (transient contexts are removed only); otherwise all contexts in the list are
-	 *   removed and destroyed
+	 *   If given, only contexts with paths in this list except kept-alive and deleted ones are
+	 *   removed and destroyed (transient contexts are removed only); otherwise all contexts in the
+	 *   list are removed and destroyed
 	 *
 	 * @private
 	 */
@@ -1140,7 +1129,7 @@ sap.ui.define([
 				var oContext = mPreviousContextsByPath[sPath];
 
 				if (oContext) {
-					if (aPathsToDelete && oContext.isKeepAlive()) {
+					if (aPathsToDelete && (oContext.isKeepAlive() || oContext.isDeleted())) {
 						oContext.iIndex = undefined;
 					} else {
 						if (!oContext.isTransient()) {
@@ -1765,7 +1754,8 @@ sap.ui.define([
 	 *   are ignored if they relate to a
 	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
 	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
-	 *   of a {@link #getRootBinding root binding} do not count as pending changes.
+	 *   of a {@link #getRootBinding root binding} do not count as pending changes. Pending
+	 *   {@link sap.ui.model.odata.v4.Context#delete deletions} lead to an error.
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#filter
@@ -1783,6 +1773,10 @@ sap.ui.define([
 		if (sFilterType === FilterType.Control && _Helper.deepEqual(aFilters, this.aFilters)
 				|| _Helper.deepEqual(aFilters, this.aApplicationFilters)) {
 			return this;
+		}
+
+		if (this.iDeletedContexts) {
+			throw new Error("Cannot filter when delete requests are pending");
 		}
 
 		if (this.hasPendingChanges(true)) {
@@ -2723,6 +2717,10 @@ sap.ui.define([
 			});
 		}
 
+		if (this.iDeletedContexts) {
+			throw new Error("Cannot refresh when delete requests are pending");
+		}
+
 		if (this.isRootBindingSuspended()) {
 			// Note: side-effects (incl. refresh) are forbidden while suspended
 			this.refreshSuspended(sGroupId);
@@ -3155,7 +3153,7 @@ sap.ui.define([
 				aContexts = [oContext];
 			} else {
 				aContexts = this.getCurrentContexts().filter(function (oContext0) {
-					return !oContext0.isTransient();
+					return oContext0 && !oContext0.isTransient();
 				});
 				// add kept-alive contexts outside collection
 				Object.keys(this.mPreviousContextsByPath).forEach(function (sPath) {
@@ -3561,13 +3559,18 @@ sap.ui.define([
 	 *   the dynamic sorters.
 	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
-	 * @throws {Error}
-	 *   If there are pending changes that cannot be ignored or if an unsupported operation mode is
-	 *   used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}). Since 1.97.0, pending changes
-	 *   are ignored if they relate to a
-	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
-	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
-	 *   of a {@link #getRootBinding root binding} do not count as pending changes.
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> there are pending changes that cannot be ignored,
+	 *     <li> an unsupported operation mode is used (see
+	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}). Since 1.97.0, pending changes are
+	 *       ignored if they relate to a
+	 *       {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
+	 *       Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts of a
+	 *       {@link #getRootBinding root binding} do not count as pending changes.
+	 *     <li> contexts are {@link sap.ui.model.data.v4.Context#delete deleted} on the client, but
+	 *       the server request has not finished yet.
+	 *   </ul>
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#sort
@@ -3583,6 +3586,10 @@ sap.ui.define([
 
 		if (_Helper.deepEqual(aSorters, this.aSorters)) {
 			return this;
+		}
+
+		if (this.iDeletedContexts) {
+			throw new Error("Cannot sort when delete requests are pending");
 		}
 
 		if (this.hasPendingChanges(true)) {

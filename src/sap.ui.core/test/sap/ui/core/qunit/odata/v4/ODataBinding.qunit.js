@@ -2976,13 +2976,13 @@ sap.ui.define([
 	QUnit.test("doDeregisterChangeListener", function () {
 		var oBinding = new ODataBinding(),
 			oCache = {
-				deregisterChange : function () {}
+				deregisterChangeListener : function () {}
 			},
 			oListener = {},
 			sPath = "foo";
 
 		oBinding.oCache = oCache;
-		this.mock(oCache).expects("deregisterChange")
+		this.mock(oCache).expects("deregisterChangeListener")
 			.withExactArgs(sPath, sinon.match.same(oListener));
 
 		// code under test

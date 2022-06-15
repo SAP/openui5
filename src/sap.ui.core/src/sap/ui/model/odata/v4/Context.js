@@ -124,6 +124,7 @@ sap.ui.define([
 			// ensure to return a promise that is resolved w/o data
 			&& Promise.resolve(oCreatePromise).then(function () {});
 		this.oSyncCreatePromise = oCreatePromise;
+		this.bDeleted = false; // deleted on the client, but not on the server yet
 		this.iGeneration = iGeneration || 0;
 		this.bInactive = bInactive || undefined; // be in sync with the annotation
 		this.iIndex = iIndex;
@@ -274,16 +275,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deletes the OData entity this context points to.
+	 * Deletes the OData entity this context points to. The context is removed from the binding
+	 * immediately, even if {@link sap.ui.model.odata.v4.SubmitMode.API} is used, and the request is
+	 * only sent later when {@link sap.ui.model.odata.v4.ODataModel#submitBatch} is called. As long
+	 * as the context is deleted on the client, but not yet on the server, {@link #isDeleted}
+	 * returns <code>true</code>.
+	 *
+	 * Since 1.105 such a pending deletion is a pending change. It causes
+	 * <code>hasPendingChanges</code> to return <code>true</code> for the context, the binding
+	 * containing it, and the model. <code>resetChanges</code> in binding or model cancels the
+	 * deletion and restores the context.
+	 *
+	 * The usage of a group ID with {@link sap.ui.model.odata.v4.SubmitMode.API} is possible since
+	 * 1.105 - this is an experimental API.
 	 *
 	 * The context must not be used anymore after successful deletion.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the DELETE request; if not specified, the update group ID for
-	 *   the context's binding is used, see {@link #getUpdateGroupId}; the resulting group ID must
-	 *   not have {@link sap.ui.model.odata.v4.SubmitMode.API}. Since 1.81, if this context is
-	 *   transient (see {@link #isTransient}), no group ID needs to be specified. Since 1.98.0, you
-	 *   can use <code>null</code> to prevent the DELETE request in case of a kept-alive context
+	 *   the context's binding is used, see {@link #getUpdateGroupId}. Since 1.81, if this context
+	 *   is transient (see {@link #isTransient}), no group ID needs to be specified. Since 1.98.0,
+	 *   you can use <code>null</code> to prevent the DELETE request in case of a kept-alive context
 	 *   that is not in the collection and of which you know that it does not exist on the server
 	 *   anymore (for example, a draft after activation).
 	 * @param {boolean} [bDoNotRequestCount]
@@ -292,24 +304,40 @@ sap.ui.define([
 	 *   Since 1.98.0, this is implied if a <code>null</code> group ID is used.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not point
-	 *   to an entity, if it is not part of a list binding, if there are pending changes for the
-	 *   context's binding, if the resulting group ID has SubmitMode.API, or if the deletion on the
-	 *   server fails.
-	 *   <p>
-	 *   The error instance is flagged with <code>isConcurrentModification</code> in case a
-	 *   concurrent modification (e.g. by another user) of the entity between loading and deletion
-	 *   has been detected; this should be shown to the user who needs to decide whether to try
-	 *   deletion again. If the entity does not exist, we assume it has already been deleted by
-	 *   someone else and report success.
-	 * @throws {Error} If the given group ID is invalid, if this context's root binding is
-	 *   suspended, or if this context is not transient (see {@link #isTransient}) and has pending
-	 *   changes (see {@link #hasPendingChanges}), or if a <code>null</code> group ID is used with
-	 *   a context which is not kept-alive (see {@link #isKeepAlive}) or is still in the collection
-	 *   (has an index, see {@link #getIndex})
+	 *   instance of <code>Error</code> in case of failure, for example if:
+	 *   <ul>
+	 *     <li> the given context does not point to an entity,
+	 *     <li> the deletion on the server fails,
+	 *     <li> the deletion is canceled via <code>resetChanges</code> (in this case the error
+	 *       instance has the property <code>canceled</code> with value <code>true</code>).
+	 *   </ul>
+	 *   The error instance has the property <code>isConcurrentModification</code> with value
+	 *   <code>true</code> in case a concurrent modification (e.g. by another user) of the entity
+	 *   between loading and deletion has been detected; this should be shown to the user who needs
+	 *   to decide whether to try deletion again. If the entity does not exist, we assume it has
+	 *   already been deleted by someone else and report success.
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the given group ID is invalid,
+	 *     <li> this context's root binding is suspended,
+	 *     <li> a <code>null</code> group ID is used with a context which is not kept-alive
+	 *       (see {@link #isKeepAlive}),
+	 *     <li> the context is already being deleted,
+	 *     <li> the resulting group ID has {@link sap.ui.model.odata.v4.SubmitMode.API}, and the
+	 *       context is kept alive (see {@link #isKeepAlive}), but not in the current collection,
+	 *     <li> (only before 1.105) the resulting group ID has
+	 *       {@link sap.ui.model.odata.v4.SubmitMode.API}
+	 *   </ul>
 	 *
 	 * @function
 	 * @public
+	 * @see {#hasPendingChanges}
+	 * @see {sap.ui.model.odata.v4.ODataContextBinding#hasPendingChanges}
+	 * @see {sap.ui.model.odata.v4.ODataListBinding#hasPendingChanges}
+	 * @see {sap.ui.model.odata.v4.ODataModel#hasPendingChanges}
+	 * @see {sap.ui.model.odata.v4.ODataContextBinding#resetChanges}
+	 * @see {sap.ui.model.odata.v4.ODataListBinding#resetChanges}
+	 * @see {sap.ui.model.odata.v4.ODataModel#resetChanges}
 	 * @since 1.41.0
 	 */
 	Context.prototype.delete = function (sGroupId, bDoNotRequestCount/*, bRejectIfNotFound*/) {
@@ -317,11 +345,12 @@ sap.ui.define([
 			oModel = this.oModel,
 			that = this;
 
+		if (this.isDeleted()) {
+			throw new Error("Must not delete twice: " + this);
+		}
 		this.oBinding.checkSuspended();
 		if (this.isTransient()) {
 			sGroupId = null;
-		} else if (this.hasPendingChanges()) {
-			throw new Error("Cannot delete due to pending changes");
 		} else if (sGroupId === null) {
 			if (!(this.bKeepAlive && this.iIndex === undefined)) {
 				throw new Error("Cannot delete " + this);
@@ -332,15 +361,15 @@ sap.ui.define([
 		} else {
 			oModel.checkGroupId(sGroupId);
 			oGroupLock = this.oBinding.lockGroup(sGroupId, true, true);
-			sGroupId = oGroupLock.getGroupId();
-			if (this.oModel.isApiGroup(sGroupId)) {
-				throw new Error("Illegal update group ID: " + sGroupId);
-			}
 		}
 
-		return this._delete(oGroupLock, /*oETagEntity*/null, bDoNotRequestCount).then(function () {
+		this.bDeleted = true;
+
+		return Promise.resolve(this._delete(oGroupLock, /*oETagEntity*/null, bDoNotRequestCount))
+		.then(function () {
 			var sResourcePathPrefix = that.sPath.slice(1);
 
+			that.bDeleted = false;
 			// Messages have been updated via _Cache#_delete; "that" is already destroyed; remove
 			// all dependent caches in all bindings
 			oModel.getAllBindings().forEach(function (oBinding) {
@@ -351,6 +380,8 @@ sap.ui.define([
 				oGroupLock.unlock(true);
 			}
 			oModel.reportError("Failed to delete " + that, sClassName, oError);
+			that.bDeleted = false;
+			that.checkUpdate();
 			throw oError;
 		});
 	};
@@ -403,6 +434,7 @@ sap.ui.define([
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, for example if the annotation belongs to
 	 *   the read-only namespace "@$ui5.*"
+	 * @throws {Error} If the context is deleted
 	 *
 	 * @private
 	 */
@@ -412,6 +444,12 @@ sap.ui.define([
 			oValue,
 			that = this;
 
+		if (this.isDeleted()) {
+			if (oGroupLock) {
+				oGroupLock.unlock();
+			}
+			throw new Error("must not modify a deleted entity: " + this);
+		}
 		if (oGroupLock && this.isTransient() && !this.isInactive()) {
 			oValue = this.getValue();
 			oPromise = oValue && _Helper.getPrivateAnnotation(oValue, "transient");
@@ -873,10 +911,26 @@ sap.ui.define([
 	 */
 	Context.prototype.hasPendingChanges = function () {
 		return this.isTransient()
+			|| this.isDeleted()
 			|| this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
 				return oDependentBinding.hasPendingChanges();
 			})
 			|| this.oModel.withUnresolvedBindings("hasPendingChangesInCaches", this.sPath.slice(1));
+	};
+
+	/**
+	 * Returns whether this context is deleted on the client, but not on the server yet. The result
+	 * of this function can also be accessed via the "@$ui5.context.isDeleted" instance annotation
+	 * at the entity.
+	 *
+	 * @returns {boolean} <code>true</code> if this context is deleted
+	 *
+	 * @public
+	 * @see #delete
+	 * @since 1.105
+	 */
+	Context.prototype.isDeleted = function () {
+		return this.bDeleted;
 	};
 
 	/**
@@ -1615,8 +1669,8 @@ sap.ui.define([
 	 *     <li> {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges}.
 	 *   </ul>
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, for invalid group IDs, or if the new value is
-	 *   not primitive
+	 *   If the binding's root binding is suspended, for invalid group IDs, if the new value is
+	 *   not primitive, or if the context is deleted
 	 *
 	 * @public
 	 * @see #getProperty

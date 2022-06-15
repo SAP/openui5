@@ -379,7 +379,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.doDeregisterChangeListener = function (sPath, oListener) {
-		this.oCache.deregisterChange(sPath, oListener);
+		this.oCache.deregisterChangeListener(sPath, oListener);
 	};
 
 	/**
@@ -701,7 +701,7 @@ sap.ui.define([
 			}
 			// Can only become undefined when a list binding's context has been parked and is
 			// destroyed later. Such a context does no longer have a subpath of the binding's
-			// path. The only caller in this case is ODataPropertyBinding#deregisterChange
+			// path. The only caller in this case is ODataPropertyBinding#deregisterChangeListener
 			// which can safely be ignored.
 			return sRelativePath;
 		}

@@ -49,6 +49,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.getPath(), sPath);
 		assert.strictEqual(oContext.getModelIndex(), 42);
 		assert.strictEqual(oContext.created(), undefined);
+		assert.strictEqual(oContext.isDeleted(), false);
 		assert.strictEqual(oContext.isInactive(), undefined);
 		assert.strictEqual(oContext.isKeepAlive(), false);
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
@@ -463,6 +464,26 @@ sap.ui.define([
 			assert.strictEqual(oContext.hasPendingChanges(), bTransient);
 		});
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bDeleted) {
+	QUnit.test("hasPendingChanges: deleted=" + bDeleted, function (assert) {
+		var oModel = {
+				getDependentBindings : function () {},
+				withUnresolvedBindings : function () {}
+			},
+			oContext = Context.create(oModel, {/*oBinding*/}, "/TEAMS", 0);
+
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(bDeleted);
+		this.mock(oModel).expects("getDependentBindings").exactly(bDeleted ? 0 : 1)
+			.withExactArgs(sinon.match.same(oContext)).returns([]);
+		this.mock(oModel).expects("withUnresolvedBindings").exactly(bDeleted ? 0 : 1)
+			.withExactArgs("hasPendingChangesInCaches", "TEAMS").returns(false);
+
+		// code under test
+		assert.strictEqual(oContext.hasPendingChanges(), bDeleted);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("isTransient", function (assert) {
@@ -1039,6 +1060,7 @@ sap.ui.define([
 				{removeCachesAndMessages : function () {}},
 				{removeCachesAndMessages : function () {}}
 			],
+			oDeletePromise,
 			oGroupLock = {
 				getGroupId : function () {}
 			},
@@ -1048,21 +1070,15 @@ sap.ui.define([
 				isApiGroup : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/Foo/Bar('42')", 42),
-			oPromise = Promise.resolve(),
+			oPromise = SyncPromise.resolve(Promise.resolve()),
 			that = this;
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(bTransient);
-		this.mock(oContext).expects("hasPendingChanges").exactly(bTransient ? 0 : 1).withExactArgs()
-			.returns(false);
 		this.mock(oModel).expects("checkGroupId").exactly(bTransient ? 0 : 1)
 			.withExactArgs("myGroup");
 		this.mock(oBinding).expects("lockGroup").exactly(bTransient ? 0 : 1)
 			.withExactArgs("myGroup", true, true).returns(oGroupLock);
-		this.mock(oGroupLock).expects("getGroupId").exactly(bTransient ? 0 : 1)
-			.returns("myResultingGroup");
-		this.mock(oModel).expects("isApiGroup").exactly(bTransient ? 0 : 1)
-			.withExactArgs("myResultingGroup").returns(false);
 		this.mock(oContext).expects("_delete")
 			.withExactArgs(bTransient ? null : sinon.match.same(oGroupLock), null,
 				bTransient ? true : "~bDoNotRequestCount~")
@@ -1078,8 +1094,14 @@ sap.ui.define([
 		});
 
 		// code under test
-		return oContext.delete(sGroupId, "~bDoNotRequestCount~").then(function () {
+		oDeletePromise = oContext.delete(sGroupId, "~bDoNotRequestCount~");
+
+		assert.ok(oDeletePromise instanceof Promise);
+		assert.strictEqual(oContext.isDeleted(), true);
+
+		return oDeletePromise.then(function () {
 			assert.ok(true);
+			assert.strictEqual(oContext.isDeleted(), false);
 		}, function () {
 			assert.notOk(true);
 		});
@@ -1103,18 +1125,20 @@ sap.ui.define([
 				isApiGroup : function () {},
 				reportError : function () {}
 			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
+			oContextMock = this.mock(oContext);
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("hasPendingChanges").returns(false);
 		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true, true)
 			.returns(oGroupLock);
-		this.mock(oGroupLock).expects("getGroupId").returns("myResultingGroup");
-		this.mock(oModel).expects("isApiGroup").withExactArgs("myResultingGroup").returns(false);
-		this.mock(oContext).expects("_delete")
+		oContextMock.expects("checkUpdate").never();
+		oContextMock.expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), null, "~bDoNotRequestCount~")
-			.returns(Promise.reject(oError));
+			.returns(Promise.resolve().then(function () {
+				oContextMock.expects("checkUpdate").withExactArgs();
+				throw oError;
+			}));
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 		this.mock(oModel).expects("reportError")
 			.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context",
@@ -1126,6 +1150,7 @@ sap.ui.define([
 		}, function (oError0) {
 			assert.ok(true);
 			assert.strictEqual(oError0, oError);
+			assert.strictEqual(oContext.isDeleted(), false);
 		});
 	});
 
@@ -1142,9 +1167,8 @@ sap.ui.define([
 
 		oContext.bKeepAlive = true;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("hasPendingChanges").returns(false);
-		this.mock(oContext).expects("_delete").withExactArgs(null, null, true)
-			.returns(Promise.reject(oError));
+		this.mock(oContext).expects("_delete").withExactArgs(null, null, true).rejects(oError);
+		this.mock(oContext).expects("checkUpdate").withExactArgs();
 		this.mock(oModel).expects("reportError")
 			.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context",
 				oError);
@@ -1166,7 +1190,6 @@ sap.ui.define([
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("hasPendingChanges").returns(false);
 
 		// code under test
 		assert.throws(function () {
@@ -1183,7 +1206,6 @@ sap.ui.define([
 
 		oContext.bKeepAlive = true;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("hasPendingChanges").returns(false);
 
 		// code under test
 		assert.throws(function () {
@@ -1200,7 +1222,6 @@ sap.ui.define([
 			oError = new Error("suspended");
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs().throws(oError);
-		this.mock(oContext).expects("hasPendingChanges").never();
 
 		assert.throws(function () {
 			oContext.delete("$auto");
@@ -1219,7 +1240,6 @@ sap.ui.define([
 			oError = new Error("invalid group");
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
 		this.mock(oModel).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
 
 		assert.throws(function () {
@@ -1228,51 +1248,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete: API group", function (assert) {
-		var oBinding = {
-				checkSuspended : function () {},
-				lockGroup : function () {}
-			},
-			oGroupLock = {
-				getGroupId : function () {}
-			},
-			oModel = {
-				checkGroupId : function () {},
-				isApiGroup : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+	QUnit.test("delete: already deleted", function (assert) {
+		var oContext = Context.create("~oModel~", "~oBinding~", "/EMPLOYEES/42", 42);
 
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
-		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
-		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true, true)
-			.returns(oGroupLock);
-		// #lockGroup is where the defaulting to #getUpdateGroupId takes place!
-		this.mock(oGroupLock).expects("getGroupId").returns("myResultingGroup");
-		this.mock(oModel).expects("isApiGroup").withExactArgs("myResultingGroup").returns(true);
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
+		this.mock(oContext).expects("_delete").never();
 
 		assert.throws(function () {
 			oContext.delete("myGroup");
-		}, new Error("Illegal update group ID: myResultingGroup"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("delete: pending changes", function (assert) {
-		var oBinding = {
-				checkSuspended : function () {}
-			},
-			oModel = {
-				checkGroupId : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
-
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(true);
-
-		assert.throws(function () {
-			oContext.delete();
-		}, new Error("Cannot delete due to pending changes"));
+		}, new Error("Must not delete twice: " + oContext));
 	});
 
 	//*********************************************************************************************
@@ -2597,6 +2581,7 @@ sap.ui.define([
 			oError = new Error("This call intentionally failed"),
 		that = this;
 
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
 		this.mock(oContext).expects("isInactive").withExactArgs().returns(true);
 		this.mock(oContext).expects("getValue").never();
@@ -2621,6 +2606,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("doSetProperty: deleted", function (assert) {
+		var oModel = {getMetaModel : function () {}},
+			oContext = Context.create(oModel, {/*oBinding*/}, "/ProductList('HT-1000')"),
+			oGroupLock = {
+				unlock : function () {}
+			};
+
+		this.mock(oContext).expects("isDeleted").twice().withExactArgs().returns(true);
+		this.mock(oContext).expects("getValue").never();
+		this.mock(oContext).expects("withCache").never();
+		this.mock(oGroupLock).expects("unlock").withExactArgs();
+
+		assert.throws(function () {
+			oContext.doSetProperty("~sPath~", "~sValue~", oGroupLock);
+		}, new Error("must not modify a deleted entity: " + oContext));
+
+		assert.throws(function () {
+			oContext.doSetProperty("~sPath~", "~sValue~", null);
+		}, new Error("must not modify a deleted entity: " + oContext));
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bHasValue) {
 	QUnit.test("doSetProperty: withCache fails, bHasValue=" + bHasValue, function (assert) {
 		var oBinding = {},
@@ -2633,6 +2640,7 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
 			oError = new Error("This call intentionally failed");
 
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
 		this.mock(oContext).expects("isInactive").withExactArgs().returns(false);
 		this.mock(oContext).expects("getValue").withExactArgs()
@@ -2736,6 +2744,7 @@ sap.ui.define([
 			vWithCacheResult = {},
 			that = this;
 
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
 		this.mock(oContext).expects("getValue").never();
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().on(oContext)
 			.exactly(i === 1 ? 1 : 0).returns("~bKeepAlive~");

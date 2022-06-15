@@ -151,7 +151,13 @@
 							&amp;&amp; !${ui>/bCreateItemPending}}"
 						icon="sap-icon://delete"
 						id="deleteSalesOrder" press="onDeleteSalesOrder"
-						tooltip="Delete sales order"/>
+						tooltip="Delete sales order directly"/>
+					<Button
+						enabled="{= ${ui>/bSalesOrderSelected}
+							&amp;&amp; !${ui>/bCreateItemPending}}"
+						icon="sap-icon://delete"
+						id="deleteSalesOrderDeferred" press="onDeleteSalesOrderDeferred"
+						tooltip="Delete sales order via Save"/>
 					<Button
 						enabled="{= ${ui>/bSalesOrderSelected}
 							&amp;&amp; !${ui>/bSelectedSalesOrderTransient}
@@ -423,7 +429,12 @@
 						<Button
 							enabled="{ui>/bLineItemSelected}" icon="sap-icon://delete"
 							id="deleteSalesOrderLineItem" press="onDeleteSalesOrderLineItem"
-							tooltip="Delete sales order line item"/>
+							tooltip="Delete sales order line item directly"/>
+						<Button
+							enabled="{ui>/bLineItemSelected}" icon="sap-icon://delete"
+							id="deleteSalesOrderLineItemDeferred"
+							press="onDeleteSalesOrderLineItemDeferred"
+							tooltip="Delete sales order line item via Save"/>
 						<ToolbarSpacer/>
 						<Button enabled="{ui>/bRealOData}" icon="sap-icon://trend-up"
 							id="increaseSalesOrderItemsQuantity"

@@ -363,7 +363,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.deregisterChange = function () {
+	ODataPropertyBinding.prototype.deregisterChangeListener = function () {
 		var that = this;
 
 		this.withCache(function (_oCache, sPath, oBinding) {
@@ -381,7 +381,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#destroy
 	ODataPropertyBinding.prototype.destroy = function () {
-		this.deregisterChange();
+		this.deregisterChangeListener();
 		this.oModel.bindingDestroyed(this);
 		this.oCheckUpdateCallToken = undefined;
 		this.mQueryOptions = undefined;
@@ -670,7 +670,7 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.checkSuspended(true);
-				this.deregisterChange();
+				this.deregisterChangeListener();
 			}
 			this.oContext = oContext;
 			this.sResumeChangeReason = undefined;

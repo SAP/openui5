@@ -1597,18 +1597,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the pending PATCH request for the given promise from its group. Only requests for
-	 * which the <code>$cancel</code> callback is defined are removed.
+	 * Removes the pending PATCH or DELETE request for the given promise from its group. Only
+	 * requests for which the <code>$cancel</code> callback is defined are removed.
 	 *
 	 * @param {Promise} oPromise
-	 *   A promise that has been returned for a PATCH request. That request will be rejected with
-	 *   an error with property <code>canceled = true</code>.
+	 *   A promise that has been returned for a PATCH or DELETE request. That request will be
+	 *   rejected with an error with property <code>canceled = true</code>.
 	 * @throws {Error}
 	 *   If the request is not in the queue, assuming that it has been submitted already
 	 *
 	 * @private
 	 */
-	_Requestor.prototype.removePatch = function (oPromise) {
+	_Requestor.prototype.removeChangeRequest = function (oPromise) {
 		var bCanceled = this.cancelChangesByFilter(function (oChangeRequest) {
 				return oChangeRequest.$promise === oPromise;
 			});

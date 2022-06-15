@@ -2944,7 +2944,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("removePatch", function (assert) {
+	QUnit.test("removeChangeRequest", function (assert) {
 		var fnCancel = this.spy(),
 			oPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
@@ -2959,7 +2959,7 @@ sap.ui.define([
 			});
 
 		// code under test
-		oRequestor.removePatch(oPromise);
+		oRequestor.removeChangeRequest(oPromise);
 
 		sinon.assert.calledOnce(fnCancel);
 		this.mock(oRequestor).expects("request").never();
@@ -2968,7 +2968,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("removePatch: various requests", function (assert) {
+	QUnit.test("removeChangeRequest: various requests", function (assert) {
 		var fnCancel = this.spy(),
 			aExpectedRequests = [
 				sinon.match({
@@ -3012,7 +3012,7 @@ sap.ui.define([
 			.resolves([createResponse({}), createResponse({})]);
 
 		// code under test
-		oRequestor.removePatch(oPromise);
+		oRequestor.removeChangeRequest(oPromise);
 		oRequestor.processBatch("groupId");
 
 		sinon.assert.calledOnce(fnCancel);
@@ -3021,7 +3021,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("removePatch after processBatch", function (assert) {
+	QUnit.test("removeChangeRequest after processBatch", function (assert) {
 		var oPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
@@ -3035,7 +3035,7 @@ sap.ui.define([
 
 		// code under test
 		assert.throws(function () {
-			oRequestor.removePatch(oPromise);
+			oRequestor.removeChangeRequest(oPromise);
 		}, new Error("Cannot reset the changes, the batch request is running"));
 	});
 

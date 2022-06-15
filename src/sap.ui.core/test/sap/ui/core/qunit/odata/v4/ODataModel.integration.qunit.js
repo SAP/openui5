@@ -1971,6 +1971,9 @@ sap.ui.define([
 								oBinding = oContext.getBinding();
 							}
 							vRow = oContext.getIndex();
+							if (vRow === undefined) {
+								return sValue; // a deleted context w/o row
+							}
 						} else { // e.g. meta model
 							vRow = oContext.getPath();
 						}
@@ -5211,7 +5214,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectChange("teamId", null);
 
-			// #deregisterChange
+			// #deregisterChangeListener
 			that.oView.byId("teamId").getBinding("value").setContext(null);
 
 			return that.waitForChanges(assert);
@@ -5991,14 +5994,20 @@ sap.ui.define([
 			var aItems = that.oView.byId("table").getItems();
 
 			that.expectRequest({
+					batchNo : 2,
 					method : "DELETE",
 					url : "SalesOrderList('0500000002')"
 				})
 				.expectRequest({
+					batchNo : 2,
 					method : "DELETE",
 					url : "SalesOrderList('0500000003')"
 				})
-				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=1&$top=2", {
+				.expectRequest({
+					batchNo : 2,
+					method : "GET",
+					url : "SalesOrderList?$select=SalesOrderID&$skip=1&$top=2"
+				}, {
 					value : [{SalesOrderID : "0500000004"}]
 				})
 				.expectChange("id", [, "0500000004"]);
@@ -6039,10 +6048,15 @@ sap.ui.define([
 			var oDeletePromise;
 
 			that.expectRequest({
+					batchNo : 2,
 					method : "DELETE",
 					url : "SalesOrderList('0500000002')"
 				})
-				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=2&$top=4", {
+				.expectRequest({
+					batchNo : 2,
+					method : "GET",
+					url : "SalesOrderList?$select=SalesOrderID&$skip=2&$top=4"
+				}, {
 					value : [{SalesOrderID : "0500000004"}]
 				})
 				.expectChange("id", [,, "0500000004"]);
@@ -16551,12 +16565,528 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Deferred deletion of a bound context with a dependent list
+	// JIRA: CPOUI5ODATAV4-1629
+[
+	{desc : "submit"},
+	{desc : "reset via model", resetViaModel : true},
+	{desc : "reset via binding", resetViaBinding : true}
+].forEach(function (oFixture) {
+	QUnit.test("CPOUI5ODATAV4-1629: ODCB: deferred delete, " + oFixture.desc, function (assert) {
+		var oBinding,
+			oContext,
+			oModel = this.createSalesOrdersModel({updateGroupId : "update"}),
+			oPromise,
+			bReset = oFixture.resetViaModel || oFixture.resetViaBinding,
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Table items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+		<Text id="pos" text="{ItemPosition}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')", {SalesOrderID : "1"})
+			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$skip=0&$top=100",
+				{value : [{ItemPosition : "0010", SalesOrderID : "1"}]})
+			.expectChange("id", "1")
+			.expectChange("pos", ["0010"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("id", null)
+				.expectChange("pos", []);
+
+			oBinding = that.oView.byId("form").getObjectBinding();
+			oContext = oBinding.getBoundContext();
+			oPromise = oContext.delete();
+
+			assert.ok(oContext.isDeleted());
+			assert.ok(oContext.hasPendingChanges());
+			assert.ok(oBinding.hasPendingChanges());
+			assert.ok(oModel.hasPendingChanges());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			if (bReset) {
+				that.expectCanceledError("Failed to delete /SalesOrderList('1')",
+					"Request canceled: DELETE SalesOrderList('1'); group: update");
+				that.expectChange("id", "1")
+					.expectChange("pos", ["0010"]);
+			} else {
+				that.expectRequest({method : "DELETE", url : "SalesOrderList('1')"});
+			}
+
+			if (oFixture.resetViaModel) {
+				oModel.resetChanges();
+			} else if (oFixture.resetViaBinding) {
+				oBinding.resetChanges();
+			}
+
+			return Promise.all([
+				oPromise.then(function () {
+					assert.notOk(bReset);
+				}, function (oError) {
+					assert.ok(bReset);
+					assert.ok(oError.canceled);
+					assert.notOk(oContext.isDeleted());
+					assert.strictEqual(oContext.getProperty("SalesOrderID"), "1");
+				}),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Deferred deletion of a bound context. The binding becomes unresolved. Then the
+	// deletion is canceled. The element context must not be restored.
+	// JIRA CPOUI5ODATAV4-1629
+	QUnit.test("CPOUI5ODATAV4-1629: ODCB: deferred delete, context loss, reset", function (assert) {
+		var oBinding,
+			oContext,
+			oModel = this.createSalesOrdersModel({updateGroupId : "update"}),
+			oPromise,
+			sView = '\
+<FlexBox id="form" binding="{SalesOrderList(\'1\')}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')", {SalesOrderID : "1"})
+				.expectChange("id", "1");
+
+			oBinding = that.oView.byId("form").getObjectBinding();
+			oBinding.setContext(oModel.createBindingContext("/"));
+			oContext = oBinding.getBoundContext();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", null);
+
+			oPromise = oContext.delete();
+			oBinding.setContext(null);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectCanceledError("Failed to delete /SalesOrderList('1')",
+				"Request canceled: DELETE SalesOrderList('1'); group: update");
+
+			oModel.resetChanges();
+
+			return Promise.all([
+				oPromise.then(function () {
+					assert.notOk(true);
+				}, function () {
+					assert.strictEqual(oBinding.getBoundContext(), null);
+				}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Deferred deletion of row contexts with an object page
+	// JIRA: CPOUI5ODATAV4-1629
+[
+	{desc : "submit"},
+	{desc : "reset via model", resetViaModel : true},
+	{desc : "reset via binding", resetViaBinding : true}
+].forEach(function (oFixture) {
+	QUnit.test("CPOUI5ODATAV4-1629: ODLB: deferred delete, " + oFixture.desc, function (assert) {
+		var oBinding,
+			oContext2,
+			oContext3,
+			oContext4,
+			oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			oPromise2,
+			oPromise4,
+			bReset = oFixture.resetViaModel || oFixture.resetViaBinding,
+			sView = '\
+<Text id="count" text="{$count}"/>\
+<Table id="list" growing="true" growingThreshold="5" \
+		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
+	<Text id="listId" text="{SalesOrderID}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Input id="note" value="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=5", {
+				"@odata.count" : "20",
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"},
+					{SalesOrderID : "3"},
+					{SalesOrderID : "4"},
+					{SalesOrderID : "5"}
+				]
+			})
+			.expectChange("count")
+			.expectChange("listId", ["1", "2", "3", "4", "5"])
+			.expectChange("id")
+			.expectChange("note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("count", "20");
+
+			oBinding = that.oView.byId("list").getBinding("items");
+			that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+
+			return that.waitForChanges(assert, "count");
+		}).then(function () {
+			var aContexts;
+
+			that.expectChange("id", "2")
+				.expectRequest("SalesOrderList('2')?$select=Note", {Note : "Note 2"})
+				.expectChange("note", "Note 2");
+
+			aContexts = oBinding.getCurrentContexts();
+			oContext2 = aContexts[1];
+			oContext3 = aContexts[2];
+			oContext4 = aContexts[3];
+			that.oView.byId("objectPage").setBindingContext(oContext2);
+
+			return that.waitForChanges(assert, "object page");
+		}).then(function () {
+			that.expectChange("note", "Note 2 (changed)");
+
+			that.oView.byId("note").getBinding("value").setValue("Note 2 (changed)");
+
+			return that.waitForChanges(assert, "modify note");
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=5&$top=2", {
+					"@odata.count" : "18",
+					value : [
+						{SalesOrderID : "6"},
+						{SalesOrderID : "7"}
+					]
+				})
+				.expectChange("listId", [,,, "6", "7"]) // no change events for the moved rows
+				.expectChange("count", "19")
+				.expectChange("count", "18");
+				// the object page remains visible
+
+			oPromise2 = oContext2.delete();
+			oPromise4 = oContext4.delete();
+
+			assert.ok(oBinding.hasPendingChanges());
+			assert.ok(oModel.hasPendingChanges());
+
+			assert.throws(function () {
+				oContext2.setProperty("Note", "n/a");
+			}, /must not modify a deleted entity/);
+			assert.throws(function () {
+				that.oView.byId("note").getBinding("value").setValue("n/a");
+			}, /must not modify a deleted entity/);
+
+			return that.waitForChanges(assert, "deferred delete");
+		}).then(function () {
+			that.expectChange("count", "17")
+				.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('3')"
+				}, createErrorInsideBatch())
+				.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=6&$top=1")
+					// no response required
+				.expectChange("count", "18")
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+
+			that.oLogMock.expects("error").twice(); // exact errors do not interest
+
+			return Promise.all([
+				oContext3.delete("$auto").then(mustFail, function () {}),
+				that.waitForChanges(assert, "direct delete failed")
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getLength(), 18);
+
+			that.expectChange("count", "17")
+				.expectRequest({method : "DELETE", url : "SalesOrderList('3')"})
+				.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=6&$top=1", {
+					"@odata.count" : "17",
+					value : [{SalesOrderID : "8"}]
+				})
+				.expectChange("listId", [,,,, "8"]);
+
+			return Promise.all([
+				oContext3.delete("$auto"),
+				that.waitForChanges(assert, "direct delete succeeded")
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getLength(), 17);
+
+			if (bReset) {
+				that.expectCanceledError("Failed to update path /SalesOrderList('2')/Note",
+					"Request canceled: PATCH SalesOrderList('2'); group: update");
+				that.expectCanceledError("Failed to delete /SalesOrderList('4')[2]",
+					"Request canceled: DELETE SalesOrderList('4'); group: update");
+				that.expectCanceledError("Failed to delete /SalesOrderList('2')[1]",
+					"Request canceled: DELETE SalesOrderList('2'); group: update");
+				that.expectChange("listId", [, "2", "4"])
+					.expectChange("count", "18")
+					.expectChange("count", "19")
+					.expectChange("note", "Note 2");
+			} else {
+				that.expectRequest({
+						method : "PATCH",
+						url : "SalesOrderList('2')",
+						payload : {Note : "Note 2 (changed)"}
+					})
+					.expectRequest({method : "DELETE", url : "SalesOrderList('2')"})
+					.expectRequest({method : "DELETE", url : "SalesOrderList('4')"})
+					.expectChange("id", null) // The object page is cleared now
+					.expectChange("note", null);
+			}
+
+			if (oFixture.resetViaModel) {
+				oModel.resetChanges();
+			} else if (oFixture.resetViaBinding) {
+				oBinding.resetChanges();
+			}
+
+			return Promise.all([
+				oPromise2.then(function () {
+					assert.notOk(bReset);
+				}, function (oError) {
+					assert.ok(bReset);
+					assert.ok(oError.canceled);
+					assert.notOk(oContext2.isDeleted());
+					assert.strictEqual(oContext2.getProperty("SalesOrderID"), "2");
+				}),
+				oPromise4.then(function () {
+					assert.notOk(bReset);
+				}, function (oError) {
+					assert.ok(bReset);
+					assert.ok(oError.canceled);
+					assert.notOk(oContext4.isDeleted());
+					assert.strictEqual(oContext4.getProperty("SalesOrderID"), "4");
+				}),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, bReset ? "reset" : "submit")
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getLength(), bReset ? 19 : 17);
+			assert.notOk(oModel.hasPendingChanges());
+			assert.notOk(oBinding.hasPendingChanges());
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Deferred deletion of a row context in a binding w/o cache
+	// JIRA: CPOUI5ODATAV4-1629
+[
+	{desc : "submit"},
+	{desc : "reset via model", resetViaModel : true},
+	{desc : "reset via binding", resetViaBinding : true}
+].forEach(function (oFixture) {
+	var sTitle = "CPOUI5ODATAV4-1629: ODLB: no cache, deferred delete, " + oFixture.desc;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding,
+			oContext,
+			sEntityPath = "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')",
+			oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			oPromise,
+			bReset = oFixture.resetViaModel || oFixture.resetViaBinding,
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Table id="list" items="{SO_2_SOITEM}">\
+		<Text id="pos" text="{ItemPosition}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+				SalesOrderID : "1",
+				SO_2_SOITEM : [
+					{ItemPosition : "10", SalesOrderID : "1"},
+					{ItemPosition : "20", SalesOrderID : "1"},
+					{ItemPosition : "30", SalesOrderID : "1"},
+					{ItemPosition : "40", SalesOrderID : "1"}
+				]
+			})
+			.expectChange("id", "1")
+			.expectChange("pos", ["10", "20", "30", "40"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("list").getBinding("items");
+			assert.strictEqual(oBinding.getCount(), 4);
+			assert.strictEqual(oBinding.getLength(), 4);
+
+			that.expectChange("pos", [, "30", "40"]);
+
+			oContext = (oBinding.getCurrentContexts())[1];
+			oPromise = oContext.delete();
+
+			assert.ok(oBinding.hasPendingChanges());
+			assert.ok(oModel.hasPendingChanges());
+
+			return that.waitForChanges(assert, "deferred delete");
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 3);
+			assert.strictEqual(oBinding.getLength(), 3);
+
+			if (bReset) {
+				that.expectCanceledError("Failed to delete /" + sEntityPath + "[1]",
+					"Request canceled: DELETE " + sEntityPath + "; group: update");
+				that.expectChange("pos", [, "20", "30", "40"]);
+			} else {
+				that.expectRequest({method : "DELETE", url : sEntityPath});
+			}
+
+			if (oFixture.resetViaModel) {
+				oModel.resetChanges();
+			} else if (oFixture.resetViaBinding) {
+				oBinding.resetChanges();
+			}
+
+			return Promise.all([
+				oPromise.then(function () {
+					assert.notOk(bReset);
+				}, function (oError) {
+					assert.ok(bReset);
+					assert.ok(oError.canceled);
+					assert.notOk(oContext.isDeleted());
+					assert.strictEqual(oContext.getProperty("ItemPosition"), "20");
+				}),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, bReset ? "reset" : "submit")
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), bReset ? 4 : 3);
+			assert.strictEqual(oBinding.getLength(), bReset ? 4 : 3);
+			assert.notOk(oBinding.hasPendingChanges());
+			assert.notOk(oModel.hasPendingChanges());
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Deferred deletion of a created-persisted context. See that paging requests are
+	// correct when the context is deleted on the client and when the deletion has been canceled.
+	// JIRA: CPOUI5ODATAV4-1629
+	QUnit.test("CPOUI5ODATAV4-1629: ODLB: deferred delete, created-persisted", function (assert) {
+		var oBinding,
+			oContext,
+			oModel = this.createSalesOrdersModel({updateGroupId : "update"}),
+			oPromise,
+			sView = '\
+<Table id="list" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</Table>',
+			that = this;
+
+		function assertIDs(aExpectedIDs) {
+			assert.deepEqual(oBinding.getCurrentContexts().map(function (oContext) {
+				return oContext.getValue("SalesOrderID");
+			}), aExpectedIDs);
+		}
+
+		this.expectRequest("SalesOrderList?$skip=0&$top=3", {value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"},
+					{SalesOrderID : "3"}
+				]}
+			)
+			.expectChange("id", ["1", "2", "3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("id", [""])
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {}
+				}, {SalesOrderID : "new"})
+				.expectChange("id", ["new"]);
+
+			oBinding = that.oView.byId("list").getBinding("items");
+			oContext = oBinding.create({}, true);
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oContext.created(),
+				that.waitForChanges(assert, "create")
+			]);
+		}).then(function () {
+			assertIDs(["new", "1", "2"]);
+
+			that.expectChange("id", [,, "3"]);
+
+			oPromise = oContext.delete();
+
+			return that.waitForChanges(assert, "deferred delete");
+		}).then(function () {
+			assertIDs(["1", "2", "3"]);
+
+			that.expectRequest("SalesOrderList?$filter=not (SalesOrderID eq 'new')"
+					+ "&$skip=3&$top=3", {value : [
+						{SalesOrderID : "4"},
+						{SalesOrderID : "5"},
+						{SalesOrderID : "6"}
+					]}
+				)
+				.expectChange("id", [,,, "4", "5", "6"]);
+
+			that.oView.byId("list").requestItems();
+
+			return that.waitForChanges(assert, "show more items 1");
+		}).then(function () {
+			assertIDs(["1", "2", "3", "4", "5", "6"]);
+
+			that.expectChange("id", ["new"])
+				.expectCanceledError("Failed to delete /SalesOrderList('new')[-1]",
+				"Request canceled: DELETE SalesOrderList('new'); group: update");
+
+			oModel.resetChanges();
+
+			return Promise.all([
+				checkCanceled(assert, oPromise),
+				that.waitForChanges(assert, "resetChanges")
+			]);
+		}).then(function () {
+			assertIDs(["new", "1", "2", "3", "4", "5"]);
+
+			that.expectRequest("SalesOrderList?$filter=not (SalesOrderID eq 'new')"
+					+ "&$skip=6&$top=2", {value : [
+						{SalesOrderID : "7"},
+						{SalesOrderID : "8"}
+					]}
+				)
+				.expectChange("id", [,,,,,, "6", "7", "8"]);
+
+			that.oView.byId("list").requestItems();
+
+			return that.waitForChanges(assert, "show more items 2");
+		}).then(function () {
+			assertIDs(["new", "1", "2", "3", "4", "5", "6", "7", "8"]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: BCP 1870017061
 	// List/Detail, object page with a sap.ui.table.Table: When changing the entity for the object
 	// page the property bindings below the table's list binding complained about an invalid path in
-	// deregisterChange. This scenario only simulates the object page, the contexts from the list
-	// are hardcoded to keep the test small.
-	QUnit.test("deregisterChange", function (assert) {
+	// deregisterChangeListener. This scenario only simulates the object page, the contexts from the
+	// list are hardcoded to keep the test small.
+	QUnit.test("deregisterChangeListener", function (assert) {
 		var oModel = this.createSalesOrdersModel(),
 			sView = '\
 <FlexBox id="form">\
@@ -24188,7 +24718,11 @@ sap.ui.define([
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to delete /EMPLOYEES('1')[0]", sinon.match(oError.message),
 					"sap.ui.model.odata.v4.Context");
-			that.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"}, oError)
+			that.expectChange("name", ["Frederic Fall"])
+				.expectChange("status", ["Available"])
+				.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"}, oError)
+				.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
+				.expectChange("status", ["Occupied", "Available"])
 				.expectMessages([oReadMessage, oDeleteMessage]);
 
 			return Promise.all([
@@ -24205,12 +24739,12 @@ sap.ui.define([
 		}).then(function () {
 			var oContext = oTable.getItems()[0].getBindingContext();
 
-			that.expectRequest({
+			that.expectChange("name", ["Frederic Fall"])
+				.expectChange("status", ["Available"])
+				.expectRequest({
 					method : "DELETE",
 					url : "EMPLOYEES('1')"
 				})
-				.expectChange("name", ["Frederic Fall"])
-				.expectChange("status", ["Available"])
 				.expectMessages([oDeleteMessage]);
 
 			return Promise.all([
@@ -29309,8 +29843,6 @@ sap.ui.define([
 					.expectChange("listId", [,, "4"])
 					.expectChange("note", ["Note 1"]) // -> resetChanges before the list update
 					.expectChange("note", [,, "Note 4"]);
-				that.oLogMock.expects("error")
-					.withArgs("Failed to drill-down into ('1')/SO_2_BP, invalid segment: ('1')");
 			}
 			that.expectChange("count", "4")
 				.expectChange("id", null)
@@ -35361,11 +35893,8 @@ sap.ui.define([
 				that.checkMoreButton(assert, "[3/103]");
 			}
 
-			if (oFixture.bCountHasChanged) {
-				return that.waitForChanges(assert, "await rendering").then(function () {
-					sinon.assert.called(fnOnBeforeDestroy);
-				});
-			}
+			return that.waitForChanges(assert, "await rendering");
+		}).then(function () {
 			sinon.assert.called(fnOnBeforeDestroy);
 		});
 	});
@@ -40106,12 +40635,12 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM?"
 					+ "$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
-				value : [{
-					SalesOrderID : "42",
-					ItemPosition : "1",
-					Note : "Foohoo"
-				}]
-			})
+					value : [{
+						SalesOrderID : "42",
+						ItemPosition : "1",
+						Note : "Foohoo"
+					}]
+				})
 				.expectChange("itemPosition", ["1"])
 				.expectChange("note", ["Foohoo"]);
 

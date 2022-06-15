@@ -199,6 +199,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iCreatedContexts, 0);
 		assert.ok(oBinding.hasOwnProperty("iCurrentBegin"));
 		assert.ok(oBinding.hasOwnProperty("iCurrentEnd"));
+		assert.strictEqual(oBinding.iDeletedContexts, 0);
 		assert.ok(oBinding.hasOwnProperty("oDiff"));
 		assert.ok(oBinding.hasOwnProperty("aFilters"));
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
@@ -2701,6 +2702,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("refreshInternal: pending deletes", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		oBinding.iDeletedContexts = 1;
+
+		assert.throws(function () {
+			// code under test
+			oBinding.refreshInternal();
+		}, new Error("Cannot refresh when delete requests are pending"));
+	});
+
+//*********************************************************************************************
 	[false, true].forEach(function (bSuspended) {
 		var sTitle = "refreshInternal: dependent bindings, suspended=" + bSuspended;
 
@@ -3218,6 +3231,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("sort: pending deletes", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", null, null, null,
+				{$$operationMode : OperationMode.Server});
+
+		oBinding.aSorters.push("~initial sorters~");
+		oBinding.iDeletedContexts = 1;
+
+		assert.throws(function () {
+			// code under test
+			oBinding.sort();
+		}, new Error("Cannot sort when delete requests are pending"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("sort: same sorters skips processing", function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataListBinding.prototype),
@@ -3391,6 +3418,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("filter: pending deletes", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
+			{$$operationMode : OperationMode.Server});
+
+		oBinding.iDeletedContexts = 1;
+		this.mock(_Helper).expects("toArray").withExactArgs(undefined).returns([]);
+		this.mock(_Helper).expects("deepEqual")
+			.withExactArgs([], sinon.match.same(oBinding.aApplicationFilters))
+			.returns(false);
+
+		// code under test
+		assert.throws(function () {
+			oBinding.filter();
+		}, new Error("Cannot filter when delete requests are pending"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
 		var oBinding,
 			oBindingContext = {destroy : function () {}},
@@ -3477,36 +3521,46 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("destroyPreviousContexts: selection", function (assert) {
 		var oBinding = this.bindList("relative"),
-			oContext1 = {
+			oContext1 = { // no flag
 				destroy : function () {},
+				isDeleted : function () {},
 				isKeepAlive : function () {},
 				isTransient : function () {}
 			},
-			oContext2 = {
+			oContext2 = { // keepAlive
 				iIndex : 2,
 				isKeepAlive : function () {}
 			},
-			oContext3 = {
+			oContext3 = { // deleted
+				isDeleted : function () {},
+				isKeepAlive : function () {}
+			},
+			oContext4 = { // transient
+				isDeleted : function () {},
 				isKeepAlive : function () {},
 				isTransient : function () {}
 			},
-			oContext4 = {};
+			oContext5 = {};
 
 		oBinding.mPreviousContextsByPath
-			= {p1 : oContext1, p2 : oContext2, p3 : oContext3, p4 : oContext4};
+			= {p1 : oContext1, p2 : oContext2, p3 : oContext3, p4 : oContext4, p5 : oContext5};
 		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext1).expects("isDeleted").withExactArgs().returns(false);
 		this.mock(oContext1).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oContext1).expects("destroy").withExactArgs();
 		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(true);
 		this.mock(oContext3).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext3).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext3).expects("isDeleted").withExactArgs().returns(true);
+		this.mock(oContext4).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext4).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext4).expects("isTransient").withExactArgs().returns(true);
 
 		// code under test
-		oBinding.destroyPreviousContexts(["p1", "p2", "p3", "p5"]);
+		oBinding.destroyPreviousContexts(["p1", "p2", "p3", "p4", "p6"]);
 
 		assert.deepEqual(oBinding.mPreviousContextsByPath,
-			{p2 : oContext2, p4 : oContext4});
-		assert.deepEqual(oContext2.iIndex, undefined);
+			{p2 : oContext2, p3 : oContext3, p5 : oContext5});
+		assert.strictEqual(oContext2.iIndex, undefined);
 	});
 
 	//*********************************************************************************************
@@ -3983,127 +4037,150 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{
-		keyPredicates : false
-	}, {
-		keyPredicates : true,
-		keepAlive : false
-	}, {
-		keyPredicates : true,
-		keepAlive : true
-	}].forEach(function (oFixture) {
-		QUnit.test("_delete: success, " + JSON.stringify(oFixture), function (assert) {
+[false, true].forEach(function (bSuccess) {
+	[false, true].forEach(function (bCreated) { // the deleted context is created-persisted
+		var sTitle = "_delete: success=" + bSuccess + ", created=" + bCreated;
+
+		QUnit.test(sTitle, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES"),
+				oBindingMock = this.mock(oBinding),
+				oContext1,
+				oContext1Mock,
+				sContext1Path,
 				oCreatedContext = {
 					destroy : function () {},
 					getModelIndex : function () { return 0; }
 				},
-				aData = createData(6, 0, true, undefined, oFixture.keyPredicates),
-				aData2 = aData.slice(4, 6),
+				aData = createData(5, 0, true, undefined, true),
+				aData2 = aData.slice(4, 5),
+				oDeleteCall,
+				fnResolve,
+				fnReject,
+				oDeleteFromCachePromise = new Promise(function (resolve, reject) {
+					fnResolve = resolve;
+					fnReject = reject;
+				}),
 				oETagEntity = {},
 				aPreviousContexts,
+				oPromise,
+				oTaskExpectation,
 				that = this;
 
-			// [-1, 0, 1, 2, undefined, 4, 5]
 			oBinding.createContexts(0, aData.slice(0, 3));
-			aData2.$count = 6; // non-empty short read adds $count
+			aData2.$count = 5; // non-empty short read adds $count
 			oBinding.createContexts(4, aData2);
-			oBinding.aContexts.unshift(oCreatedContext);
-			oBinding.iCreatedContexts = 1;
-			aPreviousContexts = oBinding.aContexts.slice();
-			aData.unshift({/*created*/});
-			// We assume that we start deleting index 3, but when the response arrives, it has
-			// been moved to index 2.
-			aData.splice(2, 1); // [-1, 0, 2, 3, 4, 5]
+			// aContexts now is [0, 1, 2, undefined, 4]
+			oBinding.iDeletedContexts = 3;
+			oContext1 = oBinding.aContexts[1];
+			oContext1Mock = this.mock(oContext1);
+			sContext1Path = oContext1.getPath();
+			// fake a created context; it does not matter that it should have a negative index
+			this.mock(oContext1).expects("created").atLeast(1).withExactArgs()
+				.returns(bCreated ? "~createdPromise~" : undefined);
 
-			assert.strictEqual(oBinding.getLength(), 7);
-			this.mock(oBinding).expects("deleteFromCache")
-				.withExactArgs("myGroup", "EMPLOYEES('2')", "2", sinon.match.same(oETagEntity),
+			oBindingMock.expects("destroyPreviousContexts").never();
+			oContext1Mock.expects("resetKeepAlive").never();
+			oDeleteCall = oBindingMock.expects("deleteFromCache")
+				.withExactArgs("myGroup", "EMPLOYEES('1')", "1", sinon.match.same(oETagEntity),
 					"~bDoNotRequestCount~", sinon.match.func)
-				.callsArgWith(5, 2, aData)
-				.resolves();
+				.callsFake(function () {
+					// Although delete works with existing cache data and the cache immediately
+					// calls back, it is yet possibly asynchronous (oCachePromise, fetchValue).
+					// So we add a created context here, and the index becomes 2, although we
+					// started with index 1.
+					oBinding.aContexts.unshift(oCreatedContext); // [-1, 0, 1, 2, undefined, 4]
+					oBinding.iCreatedContexts = 1;
+					oBinding.iActiveContexts = 1;
+					aPreviousContexts = oBinding.aContexts.slice();
+					assert.strictEqual(oBinding.getLength(), 6);
+
+					arguments[5](2, -1); // now call the callback with the adjusted index
+
+					// expectations for then
+					oContext1Mock.expects("resetKeepAlive").exactly(bSuccess ? 1 : 0)
+						.withExactArgs();
+					oTaskExpectation = that.mock(that.oModel).expects("addPrerenderingTask")
+						.exactly(bSuccess ? 1 : 0).withExactArgs(sinon.match.func);
+					// expectations for catch
+					oBindingMock.expects("_fireChange").exactly(bSuccess ? 0 : 1)
+						.withExactArgs({reason : ChangeReason.Insert});
+
+					return oDeleteFromCachePromise;
+				});
 			oBinding.aContexts.forEach(function (oContext) {
-				// #destroy would only be called for created context
 				that.mock(oContext).expects("destroy").never();
 			});
-			if (!oFixture.keyPredicates) {
-				this.mock(oBinding.aContexts[2]).expects("checkUpdate").withExactArgs();
-				this.mock(oBinding.aContexts[5]).expects("checkUpdate").withExactArgs();
-			}
-			this.mock(oBinding.aContexts[3]).expects("isKeepAlive").withExactArgs()
-				.returns(oFixture.keepAlive);
-			this.mock(oBinding.aContexts[3]).expects("resetKeepAlive")
-				.exactly(oFixture.keepAlive ? 1 : 0).withExactArgs();
-			this.mock(oBinding).expects("_fireChange")
-				.withExactArgs({reason : ChangeReason.Remove});
-
-			// code under test
-			return oBinding._delete("myGroup", "EMPLOYEES('2')", oBinding.aContexts[3],
-					oETagEntity, "~bDoNotRequestCount~")
-				.then(function () {
-					assert.strictEqual(oBinding.iCreatedContexts, 1);
-					assert.strictEqual(oBinding.getLength(), 6);
-					assert.strictEqual(oBinding.aContexts.length, 6);
+			oBindingMock.expects("_fireChange")
+				.withExactArgs({reason : ChangeReason.Remove})
+				.callsFake(function () {
+					// aContexts : [-1, 0, 1, 2, undefined, 4] -> [-1, 0, 2, undefined, 4]
+					assert.strictEqual(oBinding.getLength(), 5);
+					assert.strictEqual(oBinding.aContexts.length, 5);
+					assert.strictEqual(oBinding.iCreatedContexts, bCreated ? 0 : 1);
+					assert.strictEqual(oBinding.iActiveContexts, bCreated ? 0 : 1);
 					assert.strictEqual(oBinding.aContexts[0], aPreviousContexts[0]);
 					assert.strictEqual(oBinding.aContexts[1], aPreviousContexts[1]);
+					assert.strictEqual(oBinding.aContexts[2], aPreviousContexts[3]);
 					assert.notOk(3 in oBinding.aContexts);
+					assert.strictEqual(oBinding.aContexts[4], aPreviousContexts[5]);
+					assert.strictEqual(
+						oBinding.mPreviousContextsByPath[oContext1.getPath()],
+						oContext1);
+					assert.strictEqual(oContext1.iIndex, undefined);
 					oBinding.aContexts.forEach(function (oContext, i) {
 						assert.strictEqual(oContext.getModelIndex(), i);
 					});
-					if (oFixture.keyPredicates) {
-						assert.strictEqual(
-							oBinding.mPreviousContextsByPath[aPreviousContexts[2].getPath()],
-							aPreviousContexts[2]);
-						assert.strictEqual(oBinding.aContexts[2], aPreviousContexts[3]);
-						assert.strictEqual(oBinding.aContexts[4], aPreviousContexts[5]);
-						assert.strictEqual(oBinding.aContexts[5], aPreviousContexts[6]);
+
+					// This assures that the change event must come before deleteFromCache finished
+					if (bSuccess) {
+						fnResolve();
 					} else {
+						oDeleteCall.args[0][5](2, 1); // call the callback for the re-insertion
+
+						// aContexts : [-1, 0, 2, undefined, 4] -> [-1, 0, 1, 2, undefined, 4]
+						assert.strictEqual(oBinding.getLength(), 6);
+						assert.strictEqual(oBinding.aContexts.length, 6);
+						assert.strictEqual(oBinding.iCreatedContexts, 1);
+						assert.strictEqual(oBinding.iActiveContexts, 1);
+						assert.strictEqual(oBinding.aContexts[0], aPreviousContexts[0]);
+						assert.strictEqual(oBinding.aContexts[1], aPreviousContexts[1]);
 						assert.strictEqual(oBinding.aContexts[2], aPreviousContexts[2]);
-						assert.strictEqual(
-							oBinding.mPreviousContextsByPath[aPreviousContexts[3].getPath()],
-							aPreviousContexts[3]);
-						assert.strictEqual(oBinding.aContexts[4].getPath(), "/EMPLOYEES/3");
+						assert.strictEqual(oBinding.aContexts[3], aPreviousContexts[3]);
+						assert.notOk(4 in oBinding.aContexts);
 						assert.strictEqual(oBinding.aContexts[5], aPreviousContexts[5]);
-						assert.strictEqual(
-							oBinding.mPreviousContextsByPath[aPreviousContexts[6].getPath()],
-							aPreviousContexts[6]);
+						assert.notOk(oContext1.getPath() in oBinding.mPreviousContextsByPath);
+						oBinding.aContexts.forEach(function (oContext, i) {
+							assert.strictEqual(oContext.getModelIndex(), i);
+						});
+
+						fnReject("~oError~");
 					}
 				});
+
+			// code under test
+			oPromise = oBinding._delete("myGroup", "EMPLOYEES('1')", oContext1, oETagEntity,
+				"~bDoNotRequestCount~");
+
+			assert.strictEqual(oBinding.iDeletedContexts, 4);
+
+			return oPromise.then(function () {
+				assert.ok(bSuccess);
+				assert.strictEqual(oBinding.iDeletedContexts, 3);
+				assert.strictEqual(oContext1.iIndex, Context.VIRTUAL);
+
+				oBindingMock.expects("destroyPreviousContexts").withExactArgs([sContext1Path]);
+
+				// code under test - run the prerendering task
+				oTaskExpectation.args[0][0]();
+			}, function (oError) {
+				assert.notOk(bSuccess);
+				assert.strictEqual(oError, "~oError~");
+				assert.strictEqual(oBinding.iDeletedContexts, 3);
+			});
 		});
 	});
+});
 	//TODO check the row of a pending update with higher index
-
-	//*********************************************************************************************
-	QUnit.test("_delete: transient context that has been persisted", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
-			oBindingMock = this.mock(oBinding),
-			oContext0 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
-				SyncPromise.resolve(Promise.resolve())),
-			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-24)", -2,
-				SyncPromise.resolve(Promise.resolve())),
-			oETagEntity = {};
-
-		// simulate created entities which are already persisted
-		oBinding.aContexts.unshift(oContext1, oContext0);
-		oBinding.iCreatedContexts = 2;
-		oBinding.iMaxLength = 42;
-
-		oBindingMock.expects("deleteFromCache")
-			.withExactArgs("myGroup", "EMPLOYEES('1')", "-1"/*TODO transientPredicate*/,
-				sinon.match.same(oETagEntity), "~bDoNotRequestCount~", sinon.match.func)
-			.callsArgWith(5)
-			.resolves();
-		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
-		this.stub(oContext0, "toString"); // called by SinonJS, would call #isTransient
-		this.mock(oBinding).expects("destroyCreated").withExactArgs(sinon.match.same(oContext0));
-
-		// code under test
-		return oBinding._delete("myGroup", "EMPLOYEES('1')", oContext0, oETagEntity,
-				"~bDoNotRequestCount~")
-			.then(function () {
-				assert.strictEqual(oBinding.iMaxLength, 42, "iMaxLength has not been reduced");
-			});
-	});
 
 	//*********************************************************************************************
 [
@@ -4119,13 +4196,14 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			aContexts = [{iIndex : -2}, {iIndex : -1}, {iIndex : 0}, {iIndex : 1}],
 			bFireChange = oFixture.newMaxLength === 41,
+			oGroupLock = {getGroupId : function () {}},
 			oKeptAliveContext = {
+				iIndex : undefined,
 				created : function () { return undefined; },
-				destroy : function () {},
 				getPath : function () { return "~contextPath~"; },
-				isKeepAlive : function () {},
 				resetKeepAlive : function () {}
 			},
+			oTaskExpectation,
 			that = this;
 
 		// simulate an active and an inactive created entity
@@ -4139,44 +4217,63 @@ sap.ui.define([
 			"~otherContext~" : {}
 		};
 
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
+		this.mock(this.oModel).expects("isApiGroup").withExactArgs("group").returns(false);
+		oBindingMock.expects("destroyPreviousContexts").never();
 		this.mock(_Helper).expects("getRelativePath")
 			.withExactArgs("~contextPath~", "/EMPLOYEES").returns("~predicate~");
 		oBindingMock.expects("deleteFromCache")
-			.withExactArgs("myGroup", "EMPLOYEES('1')", "~predicate~", "oETagEntity",
-				"~bDoNotRequestCount~", sinon.match.func)
-			.callsArgWith(5, undefined, [/*unused*/])
+			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')", "~predicate~",
+				"oETagEntity", "~bDoNotRequestCount~", sinon.match.func)
+			.callsArgWith(5, undefined, -1)
 			.returns(Promise.resolve().then(function () {
 				that.mock(oBinding).expects("fetchValue")
 					.exactly(oFixture.lengthFinal ? 1 : 0)
 					.withExactArgs("$count", undefined, true)
 					.returns(SyncPromise.resolve(oFixture.newMaxLength + 1));
+				oTaskExpectation = that.mock(that.oModel).expects("addPrerenderingTask")
+					.withExactArgs(sinon.match.func);
 			}));
-		this.mock(oKeptAliveContext).expects("isKeepAlive").returns(true);
 		this.mock(oKeptAliveContext).expects("resetKeepAlive").withExactArgs();
 		oBindingMock.expects("_fireChange")
 			.exactly(bFireChange ? 1 : 0)
 			.withExactArgs({reason : ChangeReason.Remove});
-		this.mock(oKeptAliveContext).expects("destroy").exactly(bFireChange ? 0 : 1)
-			.withExactArgs();
 
 		// code under test
-		return oBinding._delete("myGroup", "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity",
+		return oBinding._delete(oGroupLock, "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity",
 				"~bDoNotRequestCount~")
 			.then(function () {
-				assert.deepEqual(oBinding.mPreviousContextsByPath, bFireChange
-						? {
-							"~contextPath~" : oKeptAliveContext, // deleted in prerendering task
-							"~otherContext~" : {}
-						}
-						: {
-							"~otherContext~" : {}
-						});
 				assert.deepEqual(oBinding.aContexts, aContexts);
 				assert.strictEqual(oBinding.iMaxLength,
 					oFixture.lengthFinal ? oFixture.newMaxLength : Infinity);
+
+				oBindingMock.expects("destroyPreviousContexts").withExactArgs(["~contextPath~"]);
+
+				// code under test - run the prerendering task
+				oTaskExpectation.args[0][0]();
 			});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_delete: kept-alive context not in the collection, deferred", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oGroupLock = {getGroupId : function () {}},
+			oKeptAliveContext = {
+				iIndex : undefined,
+				getPath : function () { return "~contextPath~"; }
+			};
+
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
+		this.mock(this.oModel).expects("isApiGroup").withExactArgs("group").returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding._delete(oGroupLock, "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity",
+				"~bDoNotRequestCount~");
+		}, new Error("Cannot delete a kept-alive context in an API group"
+			+ " when it is not in the collection"));
+	});
 
 	//*********************************************************************************************
 	QUnit.test("create: callbacks and eventing", function (assert) {
@@ -4951,7 +5048,8 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			oContext1,
 			oContext2,
-			oExpectation;
+			oExpectation,
+			oGroupLock = {getGroupId : function () { return "$auto"; }};
 
 		oBinding.bLengthFinal = true;
 		oBinding.iMaxLength = 0;
@@ -4981,7 +5079,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve());
 
 		// code under test
-		oBinding._delete({}, "~", oContext1);
+		oBinding._delete(oGroupLock, "~", oContext1);
 
 		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
 
@@ -4993,7 +5091,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve());
 
 		// code under test
-		oBinding._delete({}, "~", oContext2);
+		oBinding._delete(oGroupLock, "~", oContext2);
 
 		oBinding.reset(undefined, true);
 
@@ -7137,11 +7235,11 @@ sap.ui.define([
 		oCanceledError.canceled = true;
 		oBinding.createContexts(3, createData(9, 3, true, 9, true));
 		oBinding.iCurrentBegin = 3;
-		oBinding.iCurrentEnd = 5;
+		oBinding.iCurrentEnd = 6;
 		oBinding.mPreviousContextsByPath["('6')"] = oPreviousContext6 = oBinding.aContexts[6];
 		oBinding.mPreviousContextsByPath["('7')"] = oPreviousContext7 = oBinding.aContexts[7];
 		oBinding.mPreviousContextsByPath["('8')"] = oPreviousContext8 = oBinding.aContexts[8];
-		oBinding.aContexts.length = 5;
+		oBinding.aContexts.length = 5; // less than iCurrentEnd, this can happen due to a delete
 
 		this.mock(oBinding).expects("lockGroup").exactly(bHasCache ? 1 : 0)
 			.withExactArgs(sGroupId).returns(oGroupLock);

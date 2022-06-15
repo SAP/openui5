@@ -430,7 +430,7 @@ sap.ui.define([
 			return this.oFirstLevel.fetchValue(oGroupLock, sPath, fnDataRequested, oListener);
 		}
 
-		this.registerChange(sPath, oListener);
+		this.registerChangeListener(sPath, oListener);
 
 		return this.drillDown(this.aElements, sPath, oGroupLock);
 	};
