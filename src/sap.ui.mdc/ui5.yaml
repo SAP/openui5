@@ -1,5 +1,5 @@
 ---
-specVersion: '2.0'
+specVersion: "2.0"
 type: library
 metadata:
   sapInternal: true
