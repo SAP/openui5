@@ -9,12 +9,12 @@ describe("sap.m.OverflowToolbar", function() {
 
 	it("OverflowToolar click overflow button with CheckBox in Popover Menu", function() {
 		element(by.id("otb6-overflowButton")).click();
-		expect(takeScreenshot()).toLookAs("popover-menu-with-checkbox");
+		expect(takeScreenshot(element(by.id("otb6-popover")))).toLookAs("popover-menu-with-checkbox");
 	});
 
 	it("OverflowToolar click overflow button",function() {
 		element(by.id("otb0-overflowButton")).click();
-		expect(takeScreenshot()).toLookAs("overflow-button-clicked");
+		expect(takeScreenshot(element(by.id("otb0-popover")))).toLookAs("overflow-button-clicked");
 	});
 
 	it("Resize OverflowToolar to 700px",function() {
@@ -26,5 +26,6 @@ describe("sap.m.OverflowToolbar", function() {
 		element(by.id("size_btn")).click();
 		expect(takeScreenshot()).toLookAs("overflowToolbar-resized-480");
 	});
+
 
 });

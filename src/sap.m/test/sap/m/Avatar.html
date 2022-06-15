@@ -19,7 +19,7 @@
 			sap.m.MessageToast.show(oEvent.getSource().getId() + " pressed");
 		}
 
-		var oPage = new sap.m.Page({
+		var oPage = new sap.m.Page("avatar-page", {
 			title: "sap.m.Avatar",
 			titleLevel: "H1",
 			content: [
@@ -79,6 +79,7 @@
 					displaySize: "M",
 
 					detailBox: new sap.m.LightBox({
+						id: "lightBox",
 						imageContent: new sap.m.LightBoxItem({
 							imageSrc: "images/Woman_avatar_01.png",
 							title: "LightBox example"
