@@ -783,6 +783,8 @@ sap.ui.define([
 			"_oGroupSelectModel",
 			"_sInitialContentKey"
 		]);
+
+		Container.prototype.exit.apply(this, arguments);
 	};
 
 	return Dialog;
