@@ -22,13 +22,16 @@ sap.ui.define([
 	QUnit.test("Is toolbar rendered in embedded mode", function (assert) {
 		var sExpectedTitleText = "My Cool Title";
 
-		assert.expect(4);
+		assert.expect(5);
 		var done = assert.async(),
 			oOptions = {
 			"title": sExpectedTitleText,
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
+				assert.equal(oPDFViewer.getDomRef().querySelector("#" + oPDFViewer.getId() + "-iframe").getAttribute("aria-label"),
+								oPDFViewer._getLibraryResourceBundle().getText("PDF_VIEWER_CONTENT_ACCESSIBILITY_LABEL"),
+								"AriaLabel is set correctly.");
 				checkToolbar();
 			},
 			"error": function () {

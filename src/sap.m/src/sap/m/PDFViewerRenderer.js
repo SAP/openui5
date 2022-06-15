@@ -119,6 +119,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/security/URLListValida
 
 				oRm.class("sapMPDFViewerContent");
 				oRm.class("sapMPDFViewerLoading");
+				oRm.attr("aria-label", oControl._getLibraryResourceBundle().getText("PDF_VIEWER_CONTENT_ACCESSIBILITY_LABEL"));
 				if (shouldShowToolbar(oControl)) {
 					oRm.class("sapMPDFViewerReducedContent");
 				}
