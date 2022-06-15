@@ -3,9 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/library",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Utils"
-], function(BaseCommand, JsControlTreeModifier, flUtils) {
+], function(BaseCommand, rtaLibrary, JsControlTreeModifier, flUtils) {
 	"use strict";
 
 	/**
@@ -75,7 +76,7 @@ sap.ui.define([
 			changeType: "setTitle",
 			title: this.getNewText(),
 			layer: this.sLayer,
-			generator: sap.ui.rta.GENERATOR_NAME
+			generator: rtaLibrary.GENERATOR_NAME
 		};
 
 		return Promise.resolve(this.oModel.addVariantChange(this.sVariantManagementReference, mPropertyBag))

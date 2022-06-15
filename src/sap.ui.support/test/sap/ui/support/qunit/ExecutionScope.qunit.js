@@ -10,6 +10,7 @@ sap.ui.define([
 		'sap/m/MaskInput',
 		'sap/m/ComboBox',
 		'sap/m/Input',
+		'sap/m/InputBase',
 		'sap/m/List',
 		'sap/m/StandardListItem',
 		'sap/ui/core/Core',
@@ -24,6 +25,7 @@ sap.ui.define([
 			 MaskInput,
 			 ComboBox,
 			 Input,
+			 InputBase,
 			 List,
 			 StandardListItem,
 			 oCore,
@@ -176,8 +178,8 @@ sap.ui.define([
 
 		QUnit.test("getElementsByClassName", function (assert) {
 			var pageElements = this.es.getElementsByClassName("sap.m.Page"),
-				buttonElements = this.es.getElementsByClassName(sap.m.Button),
-				inputBaseElements = this.es.getElementsByClassName(sap.m.InputBase);
+				buttonElements = this.es.getElementsByClassName(Button),
+				inputBaseElements = this.es.getElementsByClassName(InputBase);
 
 			assert.equal(
 				pageElements[0],

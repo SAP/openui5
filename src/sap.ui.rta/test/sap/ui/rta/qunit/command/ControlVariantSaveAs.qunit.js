@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
 	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/library",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	// needs to be included so that the ElementOverlay prototype is enhanced
@@ -22,12 +24,14 @@ sap.ui.define([
 	FlLayerUtils,
 	Change,
 	CommandFactory,
+	rtaLibrary,
 	ElementDesignTimeMetadata,
 	OverlayRegistry,
 	ElementOverlay,
 	VariantManagement,
 	VariantManagementState,
 	FlexTestAPI,
+	jQuery,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -154,7 +158,7 @@ sap.ui.define([
 				})
 				.then(function() {
 					oSaveAsVariant = oControlVariantSaveAsCommand.getVariantChange();
-					assert.equal(oSaveAsVariant.getDefinition().support.generator, sap.ui.rta.GENERATOR_NAME, "the generator was correctly set");
+					assert.equal(oSaveAsVariant.getDefinition().support.generator, rtaLibrary.GENERATOR_NAME, "the generator was correctly set");
 					aPreparedChanges = oControlVariantSaveAsCommand.getPreparedChange();
 					assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
 					assert.strictEqual(fnCreateDefaultFileNameSpy.callCount, 3, "then sap.ui.fl.Utils.createDefaultFileName() called thrice; once for variant duplicate and twice for the copied changes");

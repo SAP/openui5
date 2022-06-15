@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/core/Control",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
@@ -21,6 +22,7 @@ sap.ui.define([
 	OverlayRegistry,
 	ElementOverlay,
 	Control,
+	jQuery,
 	sinon
 ) {
 	"use strict";

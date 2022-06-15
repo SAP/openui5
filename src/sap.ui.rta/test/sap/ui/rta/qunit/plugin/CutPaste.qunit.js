@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/m/Page",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ],
@@ -23,6 +24,7 @@ function(
 	OverlayRegistry,
 	DesignTime,
 	Page,
+	jQuery,
 	sinon,
 	oCore
 ) {
@@ -245,7 +247,7 @@ function(
 				content: [oObjectStatus3]
 			});
 
-			this.oPage = new sap.m.Page("page", {
+			this.oPage = new Page("page", {
 				content: [this.oVerticalLayoutWoStableId]
 			}).placeAt("qunit-fixture");
 

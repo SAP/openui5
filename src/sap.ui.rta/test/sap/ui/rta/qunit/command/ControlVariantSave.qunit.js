@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	// needs to be included so that the ElementOverlay prototype is enhanced
@@ -26,6 +27,7 @@ sap.ui.define([
 	VariantManagement,
 	VariantManagementState,
 	FlexTestAPI,
+	jQuery,
 	sinon,
 	RtaQunitUtils
 ) {

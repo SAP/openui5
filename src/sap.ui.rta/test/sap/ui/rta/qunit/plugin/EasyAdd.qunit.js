@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/m/Button",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
@@ -27,6 +28,7 @@ sap.ui.define([
 	VBox,
 	Button,
 	QUnitUtils,
+	jQuery,
 	sinon,
 	RtaQunitUtils,
 	oCore

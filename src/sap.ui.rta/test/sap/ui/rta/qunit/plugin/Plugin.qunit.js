@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Rename",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function (
@@ -44,6 +45,7 @@ sap.ui.define([
 	Remove,
 	Rename,
 	JSONModel,
+	jQuery,
 	sinon,
 	oCore
 ) {

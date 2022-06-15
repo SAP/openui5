@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils",
 	"sap/ui/rta/plugin/additionalElements/ActionExtractor",
 	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -16,6 +17,7 @@ sap.ui.define([
 	AdditionalElementsUtils,
 	ActionExtractor,
 	CommandFactory,
+	jQuery,
 	sinon,
 	oCore
 ) {

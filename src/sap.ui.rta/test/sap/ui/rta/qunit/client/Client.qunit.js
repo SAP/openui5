@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/rta/Client",
 	"sap/ui/core/postmessage/Bus",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	RTAClient,
 	PostMessageBus,
+	jQuery,
 	sinon
 ) {
 	"use strict";

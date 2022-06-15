@@ -2,9 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/rta/enablement/elementActionTest",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	elementActionTest,
+	jQuery,
 	sinon
 ) {
 	"use strict";

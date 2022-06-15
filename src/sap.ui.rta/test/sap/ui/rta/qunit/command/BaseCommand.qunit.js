@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
@@ -59,6 +60,7 @@ sap.ui.define([
 	JSONModel,
 	flUtils,
 	flLayerUtils,
+	jQuery,
 	sinon,
 	RtaQunitUtils,
 	oCore

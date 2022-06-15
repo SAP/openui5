@@ -4,22 +4,26 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/library",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/variants/VariantManagement",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Layer,
 	flUtils,
 	CommandFactory,
+	rtaLibrary,
 	ElementDesignTimeMetadata,
 	OverlayRegistry,
 	VariantManagement,
 	FlexTestAPI,
 	VariantManagementState,
+	jQuery,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -29,7 +33,7 @@ sap.ui.define([
 
 	function checkGeneratorInChanges(aChanges, assert) {
 		aChanges.forEach(function(oChange) {
-			assert.equal(oChange.getDefinition().support.generator, sap.ui.rta.GENERATOR_NAME, "the generator was correctly set");
+			assert.equal(oChange.getDefinition().support.generator, rtaLibrary.GENERATOR_NAME, "the generator was correctly set");
 		});
 	}
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");

@@ -1,9 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
-	"rta/test/qunit/command/basicCommandTest"
+	"rta/test/qunit/command/basicCommandTest",
+	"sap/ui/thirdparty/jquery"
 ], function (
-	basicCommandTest
+	basicCommandTest,
+	jQuery
 ) {
 	"use strict";
 

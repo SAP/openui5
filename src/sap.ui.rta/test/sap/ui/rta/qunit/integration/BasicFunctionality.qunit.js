@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -24,6 +25,7 @@ sap.ui.define([
 	Device,
 	QUnitUtils,
 	KeyCodes,
+	jQuery,
 	sinon,
 	oCore
 ) {

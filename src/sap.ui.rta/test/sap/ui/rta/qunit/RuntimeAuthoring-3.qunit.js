@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/util/isPlainObject",
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/m/Button",
@@ -25,10 +26,12 @@ sap.ui.define([
 	"sap/ui/rta/service/index",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/Device",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
+	isPlainObject,
 	UriParameters,
 	Log,
 	Button,
@@ -53,6 +56,7 @@ sap.ui.define([
 	mServicesDictionary,
 	RuntimeAuthoring,
 	Utils,
+	jQuery,
 	sinon,
 	Device,
 	RtaQunitUtils
@@ -127,7 +131,7 @@ sap.ui.define([
 
 			return oServiceLoader
 				.then(function(oService) {
-					assert.ok(jQuery.isPlainObject(oService), "service api is returned");
+					assert.ok(isPlainObject(oService), "service api is returned");
 				})
 				.catch(function() {
 					assert.ok(false, "this should never be called");
@@ -427,7 +431,7 @@ sap.ui.define([
 			return this.oRta
 				.startService(sServiceName)
 				.then(function(oService) {
-					assert.ok(jQuery.isPlainObject(oService));
+					assert.ok(isPlainObject(oService));
 					assert.ok(typeof oService.serviceMethod === "function");
 					return oService.serviceMethod();
 				})

@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/base/Log",
 	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ActionExtractor,
@@ -27,6 +28,7 @@ sap.ui.define([
 	VerticalLayout,
 	Log,
 	Core,
+	jQuery,
 	sinon
 ) {
 	"use strict";

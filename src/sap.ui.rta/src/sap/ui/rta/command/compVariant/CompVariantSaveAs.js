@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
-	"sap/ui/rta/command/BaseCommand"
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/library"
 ], function(
 	SmartVariantManagementWriteAPI,
-	BaseCommand
+	BaseCommand,
+	rtaLibrary
 ) {
 	"use strict";
 
@@ -49,7 +51,7 @@ sap.ui.define([
 		this.mInformation = {
 			layer: mFlexSettings.layer,
 			command: sCommand, // used for ChangeVisualization and should end up in the support object in change definition
-			generator: sap.ui.rta.GENERATOR_NAME // also to be saved in the support section
+			generator: rtaLibrary.GENERATOR_NAME // also to be saved in the support section
 		};
 		return true;
 	};

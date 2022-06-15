@@ -239,7 +239,7 @@ sap.ui.define([
 					oFieldToAdd.focus();
 					QUnitUtils.triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, false, false, false);
 					var oOkButton = oCore.byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
-					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
+					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					oCore.applyChanges();
 				}.bind(this));
 

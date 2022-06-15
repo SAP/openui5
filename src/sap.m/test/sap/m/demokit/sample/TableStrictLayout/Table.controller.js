@@ -4,7 +4,7 @@ sap.ui.define([
 	], function(Controller, JSONModel) {
 	"use strict";
 
-	var TableController = Controller.extend("sap.m.sample.Table.Table", {
+	var TableController = Controller.extend("sap.m.sample.TableStrictLayout.Table", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample

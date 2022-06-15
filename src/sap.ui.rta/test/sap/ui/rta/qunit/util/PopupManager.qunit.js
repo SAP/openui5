@@ -23,7 +23,9 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/form/Form",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/dom/jquery/zIndex" // jQuery Plugin "zIndex"
 ], function(
 	merge,
 	Button,
@@ -47,6 +49,7 @@ sap.ui.define([
 	FlUtils,
 	Form,
 	RuntimeAuthoring,
+	jQuery,
 	sinon
 ) {
 	"use strict";

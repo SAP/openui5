@@ -3,15 +3,18 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/FileUploader",
-	"sap/ui/unified/FileUploaderHttpRequestMethod",
+	"sap/ui/unified/library",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/Device",
 	"sap/ui/core/Core"
-], function(qutils, FileUploader, FileUploaderHttpRequestMethod, TooltipBase, InvisibleText, Label, Text, Device, oCore) {
+], function(qutils, FileUploader, unifiedLibrary, TooltipBase, InvisibleText, Label, Text, Device, oCore) {
 	"use strict";
+
+	// shortcut for sap.ui.unified.FileUploaderHttpRequestMethod
+	var FileUploaderHttpRequestMethod = unifiedLibrary.FileUploaderHttpRequestMethod;
 
 	/**
 	* Helper function to create a FileUploader with useful default value
@@ -1254,7 +1257,7 @@ sap.ui.define([
 	QUnit.test("Label is redirected to internal button", function (assert) {
 		// setup
 		var sInternalButtonAriaLabelledby,
-			oLabel = new sap.m.Label("newLabel", {
+			oLabel = new Label("newLabel", {
 				text: "Select Document",
 				labelFor: "fu"
 			}),

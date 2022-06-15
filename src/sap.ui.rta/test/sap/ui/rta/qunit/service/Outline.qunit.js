@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"testdata/StaticDesigntimeMetadata",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
@@ -49,6 +50,7 @@ sap.ui.define([
 	ObjectPageSection,
 	ObjectPageSubSection,
 	StaticDesigntimeMetadata,
+	jQuery,
 	sinon
 ) {
 	"use strict";

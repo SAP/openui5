@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
@@ -21,6 +22,7 @@ sap.ui.define([
 	BasePlugin,
 	ReloadManager,
 	RuntimeAuthoring,
+	jQuery,
 	sinon
 ) {
 	"use strict";

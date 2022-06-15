@@ -6,7 +6,7 @@ sap.ui.define([
 	"use strict";
 
 
-	var TableController = Controller.extend("sap.m.sample.Table.Table", {
+	var TableController = Controller.extend("sap.m.sample.TableContextualWidthDynamic.Table", {
 
 		onInit: function () {
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));

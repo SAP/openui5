@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Core,
@@ -17,6 +18,7 @@ sap.ui.define([
 	AppVariantFeature,
 	Adaptation,
 	Device,
+	jQuery,
 	sinon
 ) {
 	"use strict";

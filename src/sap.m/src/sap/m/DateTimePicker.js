@@ -25,7 +25,8 @@ sap.ui.define([
 	'./Button',
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/IconPool",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
 ], function(
 	jQuery,
 	InputBase,

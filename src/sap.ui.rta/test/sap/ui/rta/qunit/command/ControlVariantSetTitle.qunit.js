@@ -5,11 +5,13 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Manifest",
 	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/library",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/variants/VariantManagement",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
@@ -17,11 +19,13 @@ sap.ui.define([
 	flUtils,
 	Manifest,
 	CommandFactory,
+	rtaLibrary,
 	ElementDesignTimeMetadata,
 	OverlayRegistry,
 	VariantManagement,
 	FlexTestAPI,
 	VariantManagementState,
+	jQuery,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -127,7 +131,7 @@ sap.ui.define([
 					var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
 					assert.deepEqual(oPreparedChange, oTitleChange, "then the prepared change is available");
 					assert.equal(oTitleChange.getText("title"), sNewText, "then title is correctly set in change");
-					assert.equal(oTitleChange.getDefinition().support.generator, sap.ui.rta.GENERATOR_NAME, "the generator was correctly set");
+					assert.equal(oTitleChange.getDefinition().support.generator, rtaLibrary.GENERATOR_NAME, "the generator was correctly set");
 					var oData = oControlVariantSetTitleCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].variants[1].title, sNewText, "then title is correctly set in model");
 					assert.equal(this.oVariantManagement.getTitle().getText(), sNewText, "then title is correctly set in variant management control");

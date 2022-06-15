@@ -3,21 +3,21 @@
  */
 
 sap.ui.define([
+	"sap/base/util/isPlainObject",
 	"sap/base/util/ObjectPath",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
-	"sap/ui/rta/util/BindingsExtractor",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/rta/util/BindingsExtractor"
 ], function(
+	isPlainObject,
 	ObjectPath,
 	Log,
 	JsControlTreeModifier,
 	ElementUtil,
 	DelegateMediatorAPI,
-	BindingsExtractor,
-	jQuery
+	BindingsExtractor
 ) {
 	"use strict";
 
@@ -250,7 +250,7 @@ sap.ui.define([
 
 	function _vBindingToPath(vBinding) {
 		return (
-			jQuery.isPlainObject(vBinding)
+			isPlainObject(vBinding)
 				? vBinding.parts[0].path //TODO what about complex bindings with multiple paths, this was not covered so far?
 				: !!vBinding.getPath && vBinding.getPath()
 		);

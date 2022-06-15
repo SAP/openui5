@@ -4,11 +4,12 @@
 /*global QUnit */
 sap.ui.define([
 	'sap/base/util/each',
+	'sap/ui/Global',
 	'sap/ui/test/Opa',
 	'sap/ui/test/Opa5',
 	'sap/ui/test/qunitPause',
 	'sap/ui/thirdparty/jquery'
-], function(each, Opa, Opa5, QUnitPause, jQuery) {
+], function(each, Global, Opa, Opa5, QUnitPause, jQuery) {
 	"use strict";
 
 	QUnitPause.setupAfterQUnit();
@@ -16,8 +17,8 @@ sap.ui.define([
 	QUnit.begin(function (oDetails) {
 		// add ui5 version in the user agent string bar
 		var oQUnitUserAgent = document.getElementById("#qunit-userAgent");
-		if (sap && sap.ui && oQUnitUserAgent) {
-			oQUnitUserAgent.innerText += "; UI5: " + sap.ui.version;
+		if (oQUnitUserAgent) {
+			oQUnitUserAgent.innerText += "; UI5: " + Global.version;
 		}
 
 		Opa._usageReport.begin({uri: window.location.href, totalTests: oDetails.totalTests});

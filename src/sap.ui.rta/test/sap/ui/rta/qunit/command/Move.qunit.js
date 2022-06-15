@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"rta/test/qunit/command/basicCommandTest",
-	"sap/ui/core/Control"
+	"sap/ui/core/Control",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	basicCommandTest,
-	Control
+	Control,
+	jQuery
 ) {
 	"use strict";
 

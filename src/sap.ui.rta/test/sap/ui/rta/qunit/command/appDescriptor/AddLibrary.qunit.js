@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/m/Button",
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
@@ -14,6 +16,8 @@ sap.ui.define([
 	DescriptorChangeFactory,
 	CommandFactory,
 	Button,
+	oCore,
+	jQuery,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -54,7 +58,8 @@ sap.ui.define([
 					assert.ok(true, "the descriptor change was submitted");
 					oAddLibraryCommand.execute()
 						.then(function() {
-							assert.ok(sap.uxap, "upon execution, 'sap.uxap' library is loaded");
+							assert.ok(
+								oCore.getLoadedLibraries()["sap.uxap"], "upon execution, 'sap.uxap' library is loaded");
 							done();
 						});
 				}

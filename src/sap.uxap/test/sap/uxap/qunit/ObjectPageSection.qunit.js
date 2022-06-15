@@ -823,7 +823,7 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 		var oObjectPageSubSection = new ObjectPageSubSection({
 				title: "Loooooooooooooooooooooooooooooong loooooooooooooooooooooooooooooooong looooooooooooooooooong tiiiiiiiiiiiiiiiiiiiiiitle",
 				blocks: new Text({ text: "SubSection1" }),
-				actions: [new sap.m.Button({ text: "Buton with looooooooooooooooooooooooong text "})]
+				actions: [new Button({ text: "Button with looooooooooooooooooooooooong text "})]
 			}),
 			oObjectPageSection = new ObjectPageSection({
 				title: "SubSection",
@@ -855,7 +855,7 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 		var oObjectPageSubSection = new ObjectPageSubSection({
 				title: "Not too long title",
 				blocks: new Text({ text: "SubSection1" }),
-				actions: [new sap.m.Button({ text: "Buton with looooooooooooooooooooooooong text "})]
+				actions: [new Button({ text: "Button with looooooooooooooooooooooooong text "})]
 			}),
 			oObjectPageSection = new ObjectPageSection({
 				title: "SubSection",

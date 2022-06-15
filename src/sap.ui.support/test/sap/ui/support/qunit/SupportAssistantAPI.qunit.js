@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/support/Bootstrap",
+	"sap/ui/support/library",
 	"sap/ui/support/RuleAnalyzer",
 	"sap/m/Panel",
 	"sap/m/Button",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Input"
 ], function (bootstrap,
+			 supportLibrary,
 			 RuleAnalyzer,
 			 Panel,
 			 Button,
@@ -16,6 +18,9 @@ sap.ui.define([
 			 Text,
 			 Input) {
 		"use strict";
+
+	// shortcut for sap.ui.support.Severity
+	var Severity = supportLibrary.Severity;
 
 	QUnit.module("sap.ui.support.Analyzer", {
 		beforeEach: function () {
@@ -124,7 +129,7 @@ sap.ui.define([
 					categories: ["Functionality"],
 					check : function (oIssueManager, oCoreFacade, oScope, fnResolve) {
 							oIssueManager.addIssue({
-								severity: sap.ui.support.Severity.High,
+								severity: Severity.High,
 								details: "Medium test issue details",
 								context: {
 									id: "Fake element id"

@@ -10,6 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -21,6 +23,8 @@ sap.ui.define([
 	LayerUtils,
 	ElementDesignTimeMetadata,
 	RtaQunitUtils,
+	XMLView,
+	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -45,7 +49,7 @@ sap.ui.define([
 						'</content>' +
 					'</Panel>' +
 				'</mvc:View>';
-			return sap.ui.core.mvc.XMLView.create({id: "testapp---view", definition: oXmlString})
+			return XMLView.create({id: "testapp---view", definition: oXmlString})
 				.then(function(oXMLView) {
 					this.oXMLView = oXMLView;
 					this.mExtensionPointReference = {

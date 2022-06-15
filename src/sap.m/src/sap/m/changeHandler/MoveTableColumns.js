@@ -111,7 +111,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/thirdparty/jquery"], function(Log, jQuery
 							iCurrentIndexInAggregation = aColumns.indexOf(oMovedElement);
 							iStoredSourceIndexInChange = mMovedElement.sourceIndex;
 							iTargetIndex = typeof fnIterator === "function" && fnIterator(iStoredSourceIndexInChange);
-							iTargetIndex = jQuery.isNumeric(iTargetIndex) ? iTargetIndex : mMovedElement.targetIndex;
+							iTargetIndex = typeof iTargetIndex === "number" ? iTargetIndex : mMovedElement.targetIndex;
 
 							if (iCurrentIndexInAggregation !== iTargetIndex) {
 								// By default we are getting the index from the aggregation, because it is possible that the order is

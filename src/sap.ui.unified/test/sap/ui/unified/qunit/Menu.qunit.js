@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Popup",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
 ], function(qutils, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Button, Device, KeyCodes, Popup, Core, jQuery) {
 	"use strict";
 

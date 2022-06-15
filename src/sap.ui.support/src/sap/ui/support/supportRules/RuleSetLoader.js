@@ -19,8 +19,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/util/EvalUtils",
 	"sap/ui/support/supportRules/util/Utils",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/URI"
+	"sap/ui/thirdparty/jquery"
 ], function (
 	Log,
 	extend,
@@ -33,8 +32,7 @@ sap.ui.define([
 	constants,
 	EvalUtils,
 	Utils,
-	jQuery,
-	URI
+	jQuery
 	) {
 		"use strict";
 
@@ -389,20 +387,15 @@ sap.ui.define([
 		 * Gets the load origin of the SupportAssistant.
 		 *
 		 * @private
-		 * @returns {boolean} Whether the SupportAssistant hasn't been fired from a different origin
+		 * @returns {boolean} Whether the SupportAssistant is loaded from a different origin
 		 */
 		RuleSetLoader._getLoadFromSupportOrigin = function () {
-			var bLoadFromSupportOrigin = false;
-			var coreUri = new URI(sap.ui.require.toUrl("sap/ui/core"));
-			var supportUri = new URI(sap.ui.require.toUrl("sap/ui/support"));
+			var coreUri = new URL(sap.ui.require.toUrl("sap/ui/core"), document.baseURI);
+			var supportUri = new URL(sap.ui.require.toUrl("sap/ui/support"), document.baseURI);
 
 			// If loading support tool from different origin,
 			// i.e. protocol or host (host name + port) different
-			if (coreUri.protocol() !== supportUri.protocol() || coreUri.host() !== supportUri.host()) {
-				bLoadFromSupportOrigin = true;
-			}
-
-			return bLoadFromSupportOrigin;
+			return coreUri.origin !== supportUri.origin;
 		};
 
 		/**
@@ -414,16 +407,16 @@ sap.ui.define([
 		 */
 		RuleSetLoader.fetchNonLoadedRuleSets = function (aLoadedLibraries) {
 
-			var aNonLoadedLibraries = [],
-				oLibraries = {};
-
-			sap.ui.getVersionInfo().libraries.forEach(function (oLib) {
-				oLibraries[oLib.name] = oLib;
-			});
-
-			this._fetchLibraryNamesWithSupportRules(oLibraries).then(function (oLibNamesWithRules) {
+			VersionInfo.load().then(function(oVersionInfo) {
+				var oLibraries = {};
+				oVersionInfo.libraries.forEach(function (oLib) {
+					oLibraries[oLib.name] = oLib;
+				});
+				return this._fetchLibraryNamesWithSupportRules(oLibraries);
+			}.bind(this)).then(function (oLibNamesWithRules) {
 
 				// Find the non loaded libraries which have rulesets.
+				var aNonLoadedLibraries = [];
 				oLibNamesWithRules.allRules.forEach(function (sLibName) {
 					if (aLoadedLibraries.indexOf(sLibName) < 0) {
 						aNonLoadedLibraries.push(sLibName);

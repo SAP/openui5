@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
-	function(Log, Measurement) {
+sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement", "sap/ui/Global"],
+	function(Log, Measurement, Global) {
 		"use strict";
 
 		/**
@@ -371,7 +371,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 								transaction.abort();
 							};
 							clearMetadataStoreReq.onsuccess = function () {
-								self._metadata = initMetadata(sap.ui.version);
+								self._metadata = initMetadata(Global.version);
 								assignRUCounters(self);
 							};
 						};
@@ -669,7 +669,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 		}
 
 		function initIndexedDB(instance) {
-			instance._ui5version = sap.ui.version;
+			instance._ui5version = Global.version;
 			return new Promise(function executorInitIndexedDB(resolve, reject) {
 				var DBOpenRequest;
 

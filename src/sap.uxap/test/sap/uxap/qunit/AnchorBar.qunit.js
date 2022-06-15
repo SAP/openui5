@@ -12,11 +12,12 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/uxap/AnchorBar",
 	"sap/m/Button",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/ui/dom/jquery/scrollLeftRTL" // jQuery Plugin "scrollLeftRTL"
 ], function (jQuery, QUnitUtils, KeyCodes, utils, Device, Core, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text) {
 	"use strict";
 
-	var $ = jQuery, iRenderingDelay = 2000,
+	var iRenderingDelay = 2000,
 		ANCHORBAR_CLASS_SELECTOR = ".sapUxAPAnchorBar",
 		HIERARCHICAL_CLASS_SELECTOR = ".sapUxAPHierarchicalSelect",
 		BREAK_POINTS = {
@@ -96,7 +97,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selected button", function (assert) {
-		//select button programatically
+		//select button programmatically
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			aAnchorBarContent = oAnchorBar.getContent(),
 			oFirstSectionButton = aAnchorBarContent[0],
@@ -105,7 +106,7 @@ sap.ui.define([
 
 		oAnchorBar.setSelectedButton(oLastSectionButton);
 
-		// allow for scroling
+		// allow for scrolling
 		this.clock.tick(iRenderingDelay);
 
 		assert.strictEqual(oLastSectionButton.$().hasClass("sapUxAPAnchorBarButtonSelected"), true, "select button programmatically");
@@ -115,14 +116,14 @@ sap.ui.define([
 
 		oAnchorBar.setSelectedButton(oMenuButton);
 
-		// allow for scroling
+		// allow for scrolling
 		this.clock.tick(iRenderingDelay);
 
 		checkButtonAriaAttribute(assert, oMenuButton, "aria-selected", "true", "ARIA selected state should be true for the selected split button");
 	});
 
 	QUnit.test("aria-selected is set correctly in _computeNextSectionInfo", function (assert) {
-		//select button programatically
+		//select button programmatically
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			aAnchorBarContent = oAnchorBar.getContent(),
 			oFirstSectionButton = aAnchorBarContent[0],
@@ -152,7 +153,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Custom button", function (assert) {
-		//select button programatically
+		//select button programmatically
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			oCustomButton = this.oObjectPage.getSections()[0].getCustomAnchorBarButton(),
 			aAnchorBarContent = oAnchorBar.getContent(),
@@ -166,7 +167,7 @@ sap.ui.define([
 
 		oCustomButton.setEnabled(false);
 
-		// allow for scroling
+		// allow for scrolling
 		this.clock.tick(iRenderingDelay);
 
 		assert.strictEqual(oFirstSectionButton.$().hasClass("sapUxAPAnchorBarButtonSelected"), true, "selection is preserved");
@@ -174,7 +175,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Custom button for sub-section", function (assert) {
-		//select button programatically
+		//select button programmatically
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			oCustomButton = this.oObjectPage.getSections()[1].getSubSections()[0].getCustomAnchorBarButton(),
 			oSecondSectionButton = oAnchorBar.getContent()[1],
@@ -186,9 +187,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Menu Button with long text should be able to have width, bigger than 12rem", function (assert) {
-		var $menuButton = $("#UxAP-69_anchorBar--ObjectPageLayout-anchBar-UxAP-69_anchorBar--section16-anchor");
+		var $menuButton = jQuery("#UxAP-69_anchorBar--ObjectPageLayout-anchBar-UxAP-69_anchorBar--section16-anchor");
 
-		assert.ok(parseInt($menuButton.css("width")) > (12 * parseInt($("body").css("font-size"))),
+		assert.ok(parseInt($menuButton.css("width")) > (12 * parseInt(jQuery("body").css("font-size"))),
 			"Max width style of MenuButton is overridden so that it is bigger than 12rem");
 	});
 
@@ -648,7 +649,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("ARIA role and role descrption of buttons", function (assert) {
+	QUnit.test("ARIA role and role description of buttons", function (assert) {
 		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
 			iAnchorBarContentLength = aAnchorBarContent.length,
 			sInvTextId = InvisibleText.getStaticId("sap.m", "SPLIT_BUTTON_DESCRIPTION"),

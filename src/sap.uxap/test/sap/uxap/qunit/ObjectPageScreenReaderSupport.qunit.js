@@ -1,11 +1,10 @@
 /*global QUnit*/
 
-sap.ui.define(["sap/ui/thirdparty/jquery",
-               "sap/ui/core/Core",
+sap.ui.define(["sap/ui/core/Core",
                "sap/uxap/ObjectPageLayout",
                "sap/uxap/ObjectPageSection",
                "sap/ui/core/mvc/XMLView"],
-function (jQuery, Core, ObjectPageLayout, ObjectPageSection, XMLView) {
+function (Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 	"use strict";
 
 	var sRoleAttribute = "role",
@@ -13,11 +12,11 @@ function (jQuery, Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 		getResourceBundleText = function (sResourceBundleKey) {
 			return ObjectPageLayout._getLibraryResourceBundle().getText(sResourceBundleKey);
 		},
-		assertCorrectRole = function ($elment, sRole, sMessage, assert) {
-			assert.strictEqual($elment.attr(sRoleAttribute), sRole, sMessage);
+		assertCorrectRole = function ($element, sRole, sMessage, assert) {
+			assert.strictEqual($element.attr(sRoleAttribute), sRole, sMessage);
 		},
-		assertCorrectRoleDescripiton = function ($elment, sRoleDescription, sMessage, assert) {
-			assert.strictEqual($elment.attr(sRoleDescriptionAttribute), sRoleDescription, sMessage);
+		assertCorrectRoleDescription = function ($element, sRoleDescription, sMessage, assert) {
+			assert.strictEqual($element.attr(sRoleDescriptionAttribute), sRoleDescription, sMessage);
 		};
 
 	QUnit.module("Screen reader support - Page elements", {
@@ -44,7 +43,7 @@ function (jQuery, Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 		var sRoleBundleText = getResourceBundleText("ROOT_ROLE_DESCRIPTION");
 
 		assertCorrectRole(this.oObjectPage.$(), "main", "Root element has appropriate main role set", assert);
-		assertCorrectRoleDescripiton(this.oObjectPage.$(), sRoleBundleText, "Root element has appropriate role description set", assert);
+		assertCorrectRoleDescription(this.oObjectPage.$(), sRoleBundleText, "Root element has appropriate role description set", assert);
 	});
 
 	QUnit.test("Root element aria-label", function (assert) {
@@ -74,7 +73,7 @@ function (jQuery, Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 		var sRoleBundleText = getResourceBundleText("HEADER_ROLE_DESCRIPTION");
 
 		assertCorrectRole(this.oObjectPage.$("headerTitle"), "banner", "Header element has appropriate banner role set", assert);
-		assertCorrectRoleDescripiton(this.oObjectPage.$("headerTitle"), sRoleBundleText, "Header element has appropriate role description set", assert);
+		assertCorrectRoleDescription(this.oObjectPage.$("headerTitle"), sRoleBundleText, "Header element has appropriate role description set", assert);
 	});
 
 	QUnit.test("Header element aria-label", function (assert) {
@@ -105,7 +104,7 @@ function (jQuery, Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 		var sRoleBundleText = getResourceBundleText("NAVIGATION_ROLE_DESCRIPTION");
 
 		assertCorrectRole(this.oObjectPage.$("anchorBar"), "navigation", "AnchorBar element has appropriate banner role set", assert);
-		assertCorrectRoleDescripiton(this.oObjectPage.$("anchorBar"), sRoleBundleText, "AnchorBar element has appropriate role description set", assert);
+		assertCorrectRoleDescription(this.oObjectPage.$("anchorBar"), sRoleBundleText, "AnchorBar element has appropriate role description set", assert);
 	});
 
 	QUnit.test("AnchorBar element aria-label", function (assert) {
@@ -142,7 +141,7 @@ function (jQuery, Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 		var sRoleBundleText = getResourceBundleText("FOOTER_ROLE_DESCRIPTION");
 
 		assertCorrectRole(this.oObjectPage.$("footerWrapper"), "region", "Footer element has appropriate banner role set", assert);
-		assertCorrectRoleDescripiton(this.oObjectPage.$("footerWrapper"), sRoleBundleText, "Footer element has appropriate role description set", assert);
+		assertCorrectRoleDescription(this.oObjectPage.$("footerWrapper"), sRoleBundleText, "Footer element has appropriate role description set", assert);
 	});
 
 	QUnit.test("Footer element aria-label", function (assert) {

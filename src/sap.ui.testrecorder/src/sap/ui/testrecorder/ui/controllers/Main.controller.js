@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/util/Storage",
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/dom/includeStylesheet",
 	"sap/ui/testrecorder/ui/models/SharedModel",
 	"sap/ui/testrecorder/CommunicationBus",
 	"sap/ui/testrecorder/CommunicationChannels",
@@ -20,7 +21,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/support/supportRules/ui/external/ElementTree",
 	"sap/ui/testrecorder/interaction/ContextMenu"
-], function ($, Device, Storage, Controller, SharedModel, CommunicationBus, CommunicationChannels, JSONModel, ResourceModel,
+], function ($, Device, Storage, Controller, includeStylesheet, SharedModel, CommunicationBus, CommunicationChannels, JSONModel, ResourceModel,
 		Binding, MessageToast, Dialog, CheckBox, Button, VBox, ElementTree, ContextMenu) {
 	"use strict";
 
@@ -30,7 +31,7 @@ sap.ui.define([
 			this._selectionId = null;
 			this._localStorage = new Storage(Storage.Type.local, "sap-ui-test-recorder");
 
-			$.sap.includeStyleSheet("sap/ui/testrecorder/ui/styles/overlay.css");
+			includeStylesheet("sap/ui/testrecorder/ui/styles/overlay.css");
 
 			this.elementTree = new ElementTree(null, {
 				filter: {

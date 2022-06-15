@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/CustomListItem",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -32,6 +33,7 @@ sap.ui.define([
 	List,
 	CustomListItem,
 	RtaQunitUtils,
+	jQuery,
 	sinon,
 	oCore
 ) {

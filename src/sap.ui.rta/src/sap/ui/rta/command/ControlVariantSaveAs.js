@@ -3,12 +3,14 @@
  */
 sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/library",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/rta/Utils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/ContextSharingAPI"
 ], function(
 	BaseCommand,
+	rtaLibrary,
 	JsControlTreeModifier,
 	rtaUtils,
 	flUtils,
@@ -103,7 +105,7 @@ sap.ui.define([
 		var mParams = this.getNewVariantParameters();
 		mParams.layer = this.sLayer;
 		mParams.newVariantReference = this.sNewVariantReference;
-		mParams.generator = sap.ui.rta.GENERATOR_NAME;
+		mParams.generator = rtaLibrary.GENERATOR_NAME;
 		return this.oModel._handleSave(this.oVariantManagementControl, mParams)
 			.then(function(aDirtyChanges) {
 				this._aPreparedChanges = aDirtyChanges;
