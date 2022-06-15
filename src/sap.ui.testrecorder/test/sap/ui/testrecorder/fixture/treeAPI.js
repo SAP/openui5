@@ -12,7 +12,7 @@ sap.ui.define([
 					path: "NumberOfProducts",
 					mode: "OneWay",
 					type: "sap.ui.model.odata.v2.ODataModel",
-					data: { "FeaturedProducts(HT-1000)": { ProductId: "HT-1000" } }
+					data: {"FeaturedProducts(HT-1000)": {ProductId: "HT-1000"}}
 				},
 				path: "NumberOfProducts",
 				type: "int",
@@ -22,7 +22,7 @@ sap.ui.define([
 		aggregations: {
 			items: {
 				model: {
-					data: { "Products('HT-2001')": { key: "value" } },
+					data: {"Products('HT-2001')": {key: "value"}},
 					mode: "OneWay",
 					names: [],
 					path: "ProductItems",

@@ -18,14 +18,14 @@ sap.ui.define([
 		treeText: "Button",
 		selector: {
 			controlType: "sap.m.Button",
-			properties: { text: "Button One" }
+			properties: {text: "Button One"}
 		}
 	}, {
 		// use only to change/clear highlighted control
 		text: "Clear Selection",
 		selector: {
 			controlType: "sap.m.Button",
-			properties: { text: "Clear Selection" }
+			properties: {text: "Clear Selection"}
 		}
 	}, {
 		text: "Button With ID",

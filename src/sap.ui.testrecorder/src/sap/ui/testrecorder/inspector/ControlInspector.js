@@ -152,7 +152,7 @@ sap.ui.define([
 		if (mData.domElementId) {
 			oHighlighter.highlight(mData.domElementId);
 		} else if (mData.controlId) {
-			var domElement = _ControlFinder._findElements({ id: mData.controlId })[0];
+			var domElement = _ControlFinder._findElements({id: mData.controlId})[0];
 			if (domElement) {
 				oHighlighter.highlight(domElement.id);
 			}
