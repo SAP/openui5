@@ -323,7 +323,7 @@ sap.ui.define([
 		assert.equal(oDate.getUTCDayPeriod(), 0, "getUTCDayPeriod");
 	});
 
-	QUnit.test("getWeek with locale en and en_US", function (assert) {
+	QUnit.test("getWeek with locale en_US (Split Week)", function (assert) {
 		this.dateSpy.restore();
 
 		var oWeekObject;
@@ -331,17 +331,15 @@ sap.ui.define([
 		var oGetRegionStub;
 		var oFormatLocaleObject = Core.getConfiguration().getFormatSettings().getFormatLocale();
 		var aLocales = [
-			{ language: "en", region: null },
 			{ language: "en", region: "US" }
 		];
 
-		// Locale "en" with no region will default to "en_US" for the calendar week
-		// US has a split week, which means that January 1st is always calendar week 1
+		// The US has a split week, which means that January 1st is always calendar week 1
 		// and the last week of the year always ends with December 31st.
-		// CW52: 2020-12-20 -> 2020-12-26
-		// CW53: 2020-12-27 -> 2020-12-31
-		// CW01: 2021-01-01 -> 2021-01-02
-		// Note: Month and calendar week starts with 0 instead of 1!
+		// CW52: 2020-12-20 - 2020-12-26 ({year:2020, week:51})
+		// CW53: 2020-12-27 - 2020-12-31 ({year:2020, week:52})
+		// CW01: 2021-01-01 - 2021-01-02 ({year:2021, week: 0})
+		// Note: function getWeek returns the calendar week index which starts at 0
 		aLocales.forEach(function(oLocale) {
 			oGetLanguageStub = this.stub(oFormatLocaleObject, "getLanguage").returns(oLocale.language);
 			oGetRegionStub = this.stub(oFormatLocaleObject, "getRegion").returns(oLocale.region);
@@ -350,38 +348,95 @@ sap.ui.define([
 
 			oWeekObject = new UniversalDate(2020, 11, 20).getWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 51, "Calendar week should be 52.");
+			assert.equal(oWeekObject.week, 51, "Calendar 'week' index should be 51.");
 
 			oWeekObject = new UniversalDate(2020, 11, 26).getWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 51, "Calendar week should be 52.");
+			assert.equal(oWeekObject.week, 51, "Calendar 'week' index should be 51.");
 
 			oWeekObject = new UniversalDate(2020, 11, 27).getWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 52, "Calendar week should be 53.");
+			assert.equal(oWeekObject.week, 52, "Calendar 'week' index should be 52.");
 
 			oWeekObject = new UniversalDate(2020, 11, 31).getWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 52, "Calendar week should be 53.");
+			assert.equal(oWeekObject.week, 52, "Calendar 'week' index should be 52.");
 
 			oWeekObject = new UniversalDate(2021, 0, 1).getWeek();
 			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
-			assert.equal(oWeekObject.week, 0, "Calendar week should be 1.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
 
 			oWeekObject = new UniversalDate(2021, 0, 2).getWeek();
 			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
-			assert.equal(oWeekObject.week, 0, "Calendar week should be 1.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
 
 			oWeekObject = new UniversalDate(2021, 0, 3).getWeek();
 			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
-			assert.equal(oWeekObject.week, 1, "Calendar week should be 2.");
+			assert.equal(oWeekObject.week, 1, "Calendar 'week' index should be 1.");
 
 			oGetLanguageStub.restore();
 			oGetRegionStub.restore();
 		}.bind(this));
 	});
 
-	QUnit.test("getWeek with locale de and en_GB", function (assert) {
+	QUnit.test("getWeek with locale en (Western Traditional)", function (assert) {
+		this.dateSpy.restore();
+
+		var oWeekObject;
+		var oGetLanguageStub;
+		var oGetRegionStub;
+		var oFormatLocaleObject = Core.getConfiguration().getFormatSettings().getFormatLocale();
+		var aLocales = [
+			{ language: "en", region: null }
+		];
+
+		// en
+		// Language "en" has the rule that "the first saturday in the year" is in the first week
+		// and the week starts with Sunday
+		// CW52 2020-12-20 - 2020-12-26 ({year:2020, week:51})
+		// CW01 2020-12-27 - 2021-01-02 ({year:2021, week: 0})
+		// CW02 2021-01-03 - 2021-01-09 ({year:2021, week: 1})
+		// Note: function getWeek returns the calendar week index which starts at 0
+		aLocales.forEach(function(oLocale) {
+			oGetLanguageStub = this.stub(oFormatLocaleObject, "getLanguage").returns(oLocale.language);
+			oGetRegionStub = this.stub(oFormatLocaleObject, "getRegion").returns(oLocale.region);
+			assert.equal(oFormatLocaleObject.getLanguage(), oLocale.language, "Language should be: " + oLocale.language);
+			assert.equal(oFormatLocaleObject.getRegion(), oLocale.region, "Region should be: " + oLocale.region);
+
+			oWeekObject = new UniversalDate(2020, 11, 20).getWeek();
+			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
+			assert.equal(oWeekObject.week, 51, "Calendar 'week' index should be 51.");
+
+			oWeekObject = new UniversalDate(2020, 11, 21).getWeek();
+			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
+			assert.equal(oWeekObject.week, 51, "Calendar 'week' index should be 51.");
+
+			oWeekObject = new UniversalDate(2020, 11, 27).getWeek();
+			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
+
+			oWeekObject = new UniversalDate(2020, 11, 28).getWeek();
+			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
+
+			oWeekObject = new UniversalDate(2021, 0, 3).getWeek();
+			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
+			assert.equal(oWeekObject.week, 1, "Calendar 'week' index should be 1.");
+
+			oWeekObject = new UniversalDate(2021, 0, 4).getWeek();
+			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
+			assert.equal(oWeekObject.week, 1, "Calendar 'week' index should be 1.");
+
+			oWeekObject = new UniversalDate(2021, 0, 10).getWeek();
+			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
+			assert.equal(oWeekObject.week, 2, "Calendar 'week' index should be 2.");
+
+			oGetLanguageStub.restore();
+			oGetRegionStub.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("getWeek with locale de and en_GB (ISO 8601)", function (assert) {
 		this.dateSpy.restore();
 
 		var oWeekObject;
@@ -394,11 +449,12 @@ sap.ui.define([
 		];
 
 		// de / en_GB
-		// Other languages than en_US has the rule of "the first thursday in the year",
+		// Other languages than en_US has the rule of "the first Thursday in the year",
 		// the first thursday in the year is part of calendar week 1 and every calendar week is 7 days long.
-		// CW52 2020-12-21 -- 2020-12-27
-		// CW53 2020-12-28 -- 2021-01-03
-		// CW01 2021-01-04 -- 2021-01-10
+		// CW52 2020-12-21 - 2020-12-27 ({year:2020, week:51})
+		// CW53 2020-12-28 - 2021-01-03 ({year:2020, week:52})
+		// CW01 2021-01-04 - 2021-01-10 ({year:2021, week: 0})
+		// Note: function getWeek returns the calendar week index which starts at 0
 		aLocales.forEach(function(oLocale) {
 			oGetLanguageStub = this.stub(oFormatLocaleObject, "getLanguage").returns(oLocale.language);
 			oGetRegionStub = this.stub(oFormatLocaleObject, "getRegion").returns(oLocale.region);
@@ -407,34 +463,34 @@ sap.ui.define([
 
 			oWeekObject = new UniversalDate(2020, 11, 21).getWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 51, "Calendar week should be 52.");
+			assert.equal(oWeekObject.week, 51, "Calendar 'week' index should be 51.");
 
 			oWeekObject = new UniversalDate(2020, 11, 27).getWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 51, "Calendar week should be 52.");
+			assert.equal(oWeekObject.week, 51, "Calendar 'week' index should be 51.");
 
 			oWeekObject = new UniversalDate(2020, 11, 28).getWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 52, "Calendar week should be 53.");
+			assert.equal(oWeekObject.week, 52, "Calendar 'week' index should be 52.");
 
 			oWeekObject = new UniversalDate(2021, 0, 3).getWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 52, "Calendar week should be 53.");
+			assert.equal(oWeekObject.week, 52, "Calendar 'week' index should be 52.");
 
 			oWeekObject = new UniversalDate(2021, 0, 4).getWeek();
 			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
-			assert.equal(oWeekObject.week, 0, "Calendar week should be 1.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
 
 			oWeekObject = new UniversalDate(2021, 0, 10).getWeek();
 			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
-			assert.equal(oWeekObject.week, 0, "Calendar week should be 1.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
 
 			oGetLanguageStub.restore();
 			oGetRegionStub.restore();
 		}.bind(this));
 	});
 
-	QUnit.test("getUTCWeek with locale en and en_US", function (assert) {
+	QUnit.test("getUTCWeek with locale en_US (split week)", function (assert) {
 		this.dateSpy.restore();
 
 		var oWeekObject;
@@ -442,17 +498,15 @@ sap.ui.define([
 		var oGetRegionStub;
 		var oFormatLocaleObject = Core.getConfiguration().getFormatSettings().getFormatLocale();
 		var aLocales = [
-			{ language: "en", region: null },
 			{ language: "en", region: "US" }
 		];
 
-		// Locale "en" with no region will default to "en_US" for the calendar week
-		// US has a split week, which means that January 1st is always calendar week 1
+		// The US has a split week, which means that January 1st is always calendar week 1
 		// and the last week of the year always ends with December 31st.
-		// CW52: 2020-12-20 -> 2020-12-26
-		// CW53: 2020-12-27 -> 2020-12-31
-		// CW01: 2021-01-01 -> 2021-01-02
-		// Note: Month and calendar week starts with 0 instead of 1!
+		// CW52: 2020-12-20 - 2020-12-26 ({year:2020, week:51})
+		// CW53: 2020-12-27 - 2020-12-31 ({year:2020, week:52})
+		// CW01: 2021-01-01 - 2021-01-02 ({year:2021, week: 0})
+		// Note: function getWeek returns the calendar week index which starts at 0
 		aLocales.forEach(function(oLocale) {
 			oGetLanguageStub = this.stub(oFormatLocaleObject, "getLanguage").returns(oLocale.language);
 			oGetRegionStub = this.stub(oFormatLocaleObject, "getRegion").returns(oLocale.region);
@@ -461,38 +515,91 @@ sap.ui.define([
 
 			oWeekObject = new UniversalDate(2020, 11, 20, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 51, "Calendar week should be 52.");
+			assert.equal(oWeekObject.week, 51, "Calendar 'week' index should be 51.");
 
 			oWeekObject = new UniversalDate(2020, 11, 26, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 51, "Calendar week should be 52.");
+			assert.equal(oWeekObject.week, 51, "Calendar 'week' index should be 51.");
 
 			oWeekObject = new UniversalDate(2020, 11, 27, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 52, "Calendar week should be 53.");
+			assert.equal(oWeekObject.week, 52, "Calendar 'week' index should be 52.");
 
 			oWeekObject = new UniversalDate(2020, 11, 31, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 52, "Calendar week should be 53.");
+			assert.equal(oWeekObject.week, 52, "Calendar 'week' index should be 52.");
 
 			oWeekObject = new UniversalDate(2021, 0, 1, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
-			assert.equal(oWeekObject.week, 0, "Calendar week should be 1.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
 
 			oWeekObject = new UniversalDate(2021, 0, 2, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
-			assert.equal(oWeekObject.week, 0, "Calendar week should be 1.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
 
 			oWeekObject = new UniversalDate(2021, 0, 3, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
-			assert.equal(oWeekObject.week, 1, "Calendar week should be 2.");
+			assert.equal(oWeekObject.week, 1, "Calendar 'week' index should be 1.");
 
 			oGetLanguageStub.restore();
 			oGetRegionStub.restore();
 		}.bind(this));
 	});
 
-	QUnit.test("getUTCWeek with locale de and en_GB", function (assert) {
+	QUnit.test("getUTCWeek with locale en (Western Traditional)", function (assert) {
+		this.dateSpy.restore();
+
+		var oWeekObject;
+		var oGetLanguageStub;
+		var oGetRegionStub;
+		var oFormatLocaleObject = Core.getConfiguration().getFormatSettings().getFormatLocale();
+		var aLocales = [
+			{ language: "en", region: null }
+		];
+
+		// en
+		// Language "en" has the rule that "the first Saturday in the year" is in the first week
+		// and the week starts with Sunday
+		// CW52 2020-12-20 - 2020-12-26 ({year:2020, week:51})
+		// CW01 2020-12-27 - 2021-01-02 ({year:2021, week: 0})
+		// CW02 2021-01-03 - 2021-01-09 ({year:2021, week: 1})
+		// Note: function getWeek returns the calendar week index which starts at 0
+		aLocales.forEach(function(oLocale) {
+			oGetLanguageStub = this.stub(oFormatLocaleObject, "getLanguage").returns(oLocale.language);
+			oGetRegionStub = this.stub(oFormatLocaleObject, "getRegion").returns(oLocale.region);
+			assert.equal(oFormatLocaleObject.getLanguage(), oLocale.language, "Language should be: " + oLocale.language);
+			assert.equal(oFormatLocaleObject.getRegion(), oLocale.region, "Region should be: " + oLocale.region);
+
+			oWeekObject = new UniversalDate(2020, 11, 21, 6).getUTCWeek();
+			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
+			assert.equal(oWeekObject.week, 51, "Calendar 'week' index should be 51.");
+
+			oWeekObject = new UniversalDate(2020, 11, 27, 6).getUTCWeek();
+			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
+
+			oWeekObject = new UniversalDate(2020, 11, 28, 6).getUTCWeek();
+			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
+
+			oWeekObject = new UniversalDate(2021, 0, 3, 6).getUTCWeek();
+			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
+			assert.equal(oWeekObject.week, 1, "Calendar 'week' index should be 1.");
+
+			oWeekObject = new UniversalDate(2021, 0, 4, 6).getUTCWeek();
+			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
+			assert.equal(oWeekObject.week, 1, "Calendar 'week' index should be 1.");
+
+			oWeekObject = new UniversalDate(2021, 0, 10, 6).getUTCWeek();
+			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
+			assert.equal(oWeekObject.week, 2, "Calendar 'week' index should be 2.");
+
+			oGetLanguageStub.restore();
+			oGetRegionStub.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("getUTCWeek with locale de and en_GB (ISO 8601)", function (assert) {
 		this.dateSpy.restore();
 
 		var oWeekObject;
@@ -505,11 +612,12 @@ sap.ui.define([
 		];
 
 		// de / en_GB
-		// Other languages than en_US has the rule of "the first thursday in the year",
-		// the first thursday in the year is part of calendar week 1 and every calendar week is 7 days long.
-		// CW52 2020-12-21 -- 2020-12-27
-		// CW53 2020-12-28 -- 2021-01-03
-		// CW01 2021-01-04 -- 2021-01-10
+		// Other languages than en_US has the rule of "the first Thursday in the year",
+		// The first Thursday in the year is part of calendar week 1 and every calendar week is 7 days long.
+		// CW52 2020-12-21 - 2020-12-27 ({year:2020, week:51})
+		// CW53 2020-12-28 - 2021-01-03 ({year:2020, week:52})
+		// CW01 2021-01-04 - 2021-01-10 ({year:2020, week: 0})
+		// Note: function getWeek returns the calendar week index which starts at 0
 		aLocales.forEach(function(oLocale) {
 			oGetLanguageStub = this.stub(oFormatLocaleObject, "getLanguage").returns(oLocale.language);
 			oGetRegionStub = this.stub(oFormatLocaleObject, "getRegion").returns(oLocale.region);
@@ -518,27 +626,27 @@ sap.ui.define([
 
 			oWeekObject = new UniversalDate(2020, 11, 21, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 51, "Calendar week should be 52.");
+			assert.equal(oWeekObject.week, 51, "Calendar 'week' index should be 51.");
 
 			oWeekObject = new UniversalDate(2020, 11, 27, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 51, "Calendar week should be 52.");
+			assert.equal(oWeekObject.week, 51, "Calendar 'week' index should be 51.");
 
 			oWeekObject = new UniversalDate(2020, 11, 28, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 52, "Calendar week should be 53.");
+			assert.equal(oWeekObject.week, 52, "Calendar 'week' index should be 52.");
 
 			oWeekObject = new UniversalDate(2021, 0, 3, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2020, "Calendar 'week year' should be 2020.");
-			assert.equal(oWeekObject.week, 52, "Calendar week should be 53.");
+			assert.equal(oWeekObject.week, 52, "Calendar 'week' index should be 52.");
 
 			oWeekObject = new UniversalDate(2021, 0, 4, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
-			assert.equal(oWeekObject.week, 0, "Calendar week should be 1.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
 
 			oWeekObject = new UniversalDate(2021, 0, 10, 6).getUTCWeek();
 			assert.equal(oWeekObject.year, 2021, "Calendar 'week year' should be 2021.");
-			assert.equal(oWeekObject.week, 0, "Calendar week should be 1.");
+			assert.equal(oWeekObject.week, 0, "Calendar 'week' index should be 0.");
 
 			oGetLanguageStub.restore();
 			oGetRegionStub.restore();
