@@ -6666,5 +6666,65 @@
 			"tri",
 			"tri-state"
 		]
+	},
+	"binary": {
+		"tags": [
+			"binary",
+			"shapes",
+			"symbol",
+			"gender"
+		]
+	},
+	"direction-arrows": {
+		"tags": [
+			"arrow",
+			"slider",
+			"direction",
+			"left",
+			"right"
+		]
+	},
+	"female": {
+		"tags": [
+			"female",
+			"woman",
+			"girl",
+			"shapes",
+			"symbol",
+			"gender"
+		]
+	},
+	"gender-male-and-female": {
+		"tags": [
+			"male",
+			"man",
+			"boy",
+			"female",
+			"woman",
+			"girl",
+			"shapes",
+			"symbol",
+			"gender"
+		]
+	},
+	"male": {
+		"tags": [
+			"male",
+			"man",
+			"boy",
+			"shapes",
+			"symbol",
+			"gender"
+		]
+	},
+	"rotate": {
+		"tags": [
+			"arrow",
+			"square",
+			"object",
+			"rotate",
+			"around",
+			"direction"
+		]
 	}
 }
