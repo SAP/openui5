@@ -14,7 +14,9 @@ sap.ui.define([
 	// "sap/ui/mdc/p13n/Engine",
 	// "sap/ui/mdc/enum/PersistenceMode",
 	'sap/ui/mdc/condition/FilterConverter',
-	'sap/base/util/restricted/_throttle'
+	'sap/base/util/restricted/_throttle',
+	'sap/ui/mdc/util/Common'
+
 ], function(
 	FilterableListContent,
 	loadModules,
@@ -27,7 +29,8 @@ sap.ui.define([
 	// Engine,
 	// PersistenceMode,
 	FilterConverter,
-	throttle
+	throttle,
+	Common
 ) {
 	"use strict";
 
@@ -670,6 +673,25 @@ sap.ui.define([
 			return FilterableListContent.prototype._isSingleSelect.apply(this, arguments);
 		}
 
+	};
+
+	MDCTable.prototype.exit = function name(params) {
+		Common.cleanup(this, [
+			"_oContentLayout",
+			"_oFilterBarVBox",
+			"_oTableBox",
+			"_oResourceBundle",
+			"_oScrollContainer",
+			"_oTableHelper",
+			"_bSelectionIsUpdating",
+			"_bScrolling",
+			"_bBusy",
+			"_sTableType",
+			"_oUITableSelectionPlugin",
+			"_oTable"
+		]);
+
+		FilterableListContent.prototype.exit.apply(this, arguments);
 	};
 
 	return MDCTable;

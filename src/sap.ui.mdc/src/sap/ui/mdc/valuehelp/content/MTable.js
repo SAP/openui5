@@ -850,7 +850,7 @@ sap.ui.define([
 	MTable.prototype.exit = function () {
 
 		Common.cleanup(this, [
-			"_sTableWidth", "_oTable", "_oScrollContainer", "_oContentLayout", "_oTablePanel", "_oFilterBarVBox", "_oMResourceBundle", "_oResourceBundle"
+			"_sTableWidth", "_oTable", "_oScrollContainer", "_oContentLayout", "_oTablePanel", "_oFilterBarVBox", "_oMResourceBundle", "_oResourceBundle", "_oTableDelegate"
 		]);
 
 		FilterableListContent.prototype.exit.apply(this, arguments);

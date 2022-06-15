@@ -407,6 +407,8 @@ sap.ui.define([
 			}
 			this._oCurrentContent = null;
 		}
+
+		Container.prototype.exit.apply(this, arguments);
 	};
 
 	return Popover;
