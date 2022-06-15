@@ -5,12 +5,12 @@
 sap.ui.define([
 	"./BaseController",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/URI",
+	"sap/ui/documentation/sdk/controller/util/URLUtil",
 	"sap/m/library"
 ], function (
 	BaseController,
 	jQuery,
-	URI,
+	DemokitURLUtil,
 	mLib
 ) {
 	"use strict";
@@ -42,22 +42,29 @@ sap.ui.define([
 		_onVersionInfo: function (oVersionInfo) {
 			var oMessagePage = this.getView().byId("page"),
 				oReadMoreBtn = this.getView().byId("readMoreButton"),
-				reVersion = new RegExp("^([0-9]+)(?:\\.([0-9]+)(?:\\.([0-9]+))?)?(.+)?"),
-				oURI = new URI(document.location.href),
-				aSegments = oURI.segment(),
-				sVersion,
+				sUrl = document.location.href,
+				sRedirectUrl,
+				sVersion = DemokitURLUtil.parseVersion(sUrl),
 				isRemoved = false;
 
 			oMessagePage.setBusy(false);
 
-			for (var i = 0, l = aSegments.length; i < l; i++) {
-				if (reVersion.test(aSegments[i])) {
-					sVersion = aSegments[i];
-					break;
-				}
+			isRemoved = this._isVersionRemoved(oVersionInfo, sVersion);
+
+			if (isRemoved && DemokitURLUtil.requestsDemokitView(sUrl)) {
+				// redirect to the latest (version-less) URL
+				sRedirectUrl = DemokitURLUtil.removeVersion(sUrl);
+				mLib.URLHelper.redirect(sRedirectUrl);
+				return;
 			}
 
-			isRemoved = this._isVersionRemoved(oVersionInfo, sVersion);
+			if (DemokitURLUtil.hasSEOOptimizedFormat(sUrl)) {
+				// 404 may be due to server not supporting SEO-optimized urls =>
+				// redirect to the corresponding non-optimized URL
+				sRedirectUrl = DemokitURLUtil.convertToNonSEOFormat(sUrl);
+				mLib.URLHelper.redirect(sRedirectUrl);
+				return;
+			}
 
 			if (isRemoved) {
 				// show removed message
