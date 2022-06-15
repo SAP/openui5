@@ -61,6 +61,8 @@ npm run serve-sdk
 
 3. Launch the Demo Kit at [http://localhost:8000/documentation.html](http://localhost:8000/documentation.html)
 
+4. To launch the Demo Kit showing the restricted APIs as well, just add the `visibility` URL parameter with a value of `internal` to the URL [http://localhost:8000/documentation.html?visibility=internal](http://localhost:8000/documentation.html?visibility=internal)
+
 ##### Available Build Configurations
 - `OPENUI5_LIBRARIES="sap.m,sap.ui.core"`: Filter libraries to build. It is required to perform a complete SDK build with `npm run build-sdk` before restricting the SDK build by using the environment variable `OPENUI5_LIBRARIES`.
 
