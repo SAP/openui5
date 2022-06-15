@@ -361,13 +361,7 @@ sap.ui.define([
         if (!this._oSearchField) {
 			this._oSearchField = new SearchField(this.getId() + "-searchField",{
 				liveChange: [this._filterByModeAndSearch, this],
-                width: "100%",
-				layoutData: new OverflowToolbarLayoutData({
-					shrinkable: true,
-					moveToOverflow: true,
-					priority: "High",
-					maxWidth: "16rem"
-				})
+                width: "100%"
             });
             this._oSearchField.setPlaceholder(this._getResourceText("p13nDialog.ADAPT_FILTER_SEARCH"));
 		}
