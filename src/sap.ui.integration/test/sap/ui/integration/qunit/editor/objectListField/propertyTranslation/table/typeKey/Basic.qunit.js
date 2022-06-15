@@ -126,7 +126,7 @@ sap.ui.define([
 		});
 	}
 
-	function cleanUUID(oValue) {
+	function cleanUUIDAndPosition(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
 		if (typeof oClonedValue === "string") {
 			oClonedValue = JSON.parse(oClonedValue);
@@ -135,6 +135,7 @@ sap.ui.define([
 			oClonedValue.forEach(function(oResult) {
 				if (oResult._dt) {
 					delete oResult._dt._uuid;
+					delete oResult._dt._position;
 				}
 				if (deepEqual(oResult._dt, {})) {
 					delete oResult._dt;
@@ -143,6 +144,7 @@ sap.ui.define([
 		} else if (typeof oClonedValue === "object") {
 			if (oClonedValue._dt) {
 				delete oClonedValue._dt._uuid;
+				delete oClonedValue._dt._position;
 			}
 			if (deepEqual(oClonedValue._dt, {})) {
 				delete oClonedValue._dt;
@@ -189,7 +191,7 @@ sap.ui.define([
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oKeyColumn = oTable.getColumns()[1];
@@ -203,7 +205,7 @@ sap.ui.define([
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
 							var oTextArea = oContents[15];
-							assert.ok(deepEqual(cleanUUID(oTextArea.getValue()), oDefaultNewObject), "SimpleForm field textArea: Has Default value");
+							assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), oDefaultNewObject), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
 							assert.ok(oFormLabel.getText() === "translated key en", "SimpleForm label 1: Has label text");
@@ -217,14 +219,14 @@ sap.ui.define([
 							oFormField.setValue("string value 1");
 							oFormField.fireChange({ value: "string value 1"});
 							assert.ok(oFormField.getValue() === "string value 1", "SimpleForm field 1: Has new value");
-							assert.ok(deepEqual(cleanUUID(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "string value 1"})), "SimpleForm: Value updated");
+							assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "string value 1"})), "SimpleForm: Value updated");
 							assert.ok(!oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp false");
 							assert.ok(!oFormField._oValueHelpIcon, "SimpleForm field 1: Value help icon not exist");
 							oFormField.setValue("{i18n>string1}");
 							oFormField.fireChange({ value: "{i18n>string1}"});
 							wait().then(function () {
 								assert.ok(oFormField.getValue() === "{i18n>string1}", "SimpleForm field 1: Has new value");
-								assert.ok(deepEqual(cleanUUID(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
+								assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
 								assert.ok(oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp true");
 								assert.ok(oFormField._oValueHelpIcon, "SimpleForm field 1: Value help icon exist");
 								assert.ok(oFormField._oValueHelpIcon.getVisible(), "SimpleForm field 1: Value help icon visible");
@@ -234,7 +236,7 @@ sap.ui.define([
 								oFormField.fireChange({ value: "string1"});
 								wait().then(function () {
 									assert.ok(oFormField.getValue() === "string1", "SimpleForm field 1: Has new value");
-									assert.ok(deepEqual(cleanUUID(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "string1"})), "SimpleForm: Value updated");
+									assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "string1"})), "SimpleForm: Value updated");
 									assert.ok(!oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp false");
 									assert.ok(oFormField._oValueHelpIcon, "SimpleForm field 1: Value help icon exist");
 									assert.ok(!oFormField._oValueHelpIcon.getVisible(), "SimpleForm field 1: Value help icon not visible");
@@ -276,7 +278,7 @@ sap.ui.define([
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oKeyColumn = oTable.getColumns()[1];
@@ -290,7 +292,7 @@ sap.ui.define([
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
 							var oTextArea = oContents[15];
-							assert.ok(deepEqual(cleanUUID(oTextArea.getValue()), oDefaultNewObject), "SimpleForm field textArea: Has Default value");
+							assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), oDefaultNewObject), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
 							assert.ok(oFormLabel.getText() === "translated key en", "SimpleForm label 1: Has label text");
@@ -305,7 +307,7 @@ sap.ui.define([
 							oFormField.fireChange({ value: "{{string1}}"});
 							wait().then(function () {
 								assert.ok(oFormField.getValue() === "{i18n>string1}", "SimpleForm field 1: Has new value");
-								assert.ok(deepEqual(cleanUUID(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
+								assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
 								assert.ok(oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp true");
 								var oValueHelpIcon1 = oFormField._oValueHelpIcon;
 								assert.ok(oValueHelpIcon1, "SimpleForm field 1: Value help icon exist");
@@ -364,7 +366,7 @@ sap.ui.define([
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
+					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oKeyColumn = oTable.getColumns()[1];
@@ -378,7 +380,7 @@ sap.ui.define([
 							var oContents = oSimpleForm.getContent();
 							assert.ok(oContents.length === 16, "SimpleForm: length");
 							var oTextArea = oContents[15];
-							assert.ok(deepEqual(cleanUUID(oTextArea.getValue()), oDefaultNewObject), "SimpleForm field textArea: Has Default value");
+							assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), oDefaultNewObject), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
 							assert.ok(oFormLabel.getText() === "translated key en", "SimpleForm label 1: Has label text");
@@ -393,7 +395,7 @@ sap.ui.define([
 							oFormField.fireChange({ value: "{i18n>string1}"});
 							wait().then(function () {
 								assert.ok(oFormField.getValue() === "{i18n>string1}", "SimpleForm field 1: Has new value");
-								assert.ok(deepEqual(cleanUUID(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
+								assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
 								assert.ok(oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp true");
 								var oValueHelpIcon1 = oFormField._oValueHelpIcon;
 								assert.ok(oValueHelpIcon1, "SimpleForm field 1: Value help icon exist");

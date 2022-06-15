@@ -177,7 +177,6 @@ sap.ui.define([
 		var oVisualization = {
 			type: Table,
 			settings: {
-				rows: "{" + sPath + "}",
 				visibleRowCount: 5,
 				busy: "{currentSettings>_loading}",
 				columns: columns,
@@ -187,6 +186,12 @@ sap.ui.define([
 				filter: that.onFilter.bind(that)
 			}
 		};
+		if (oConfig.type === "object") {
+			oVisualization.settings.rows = "{" + sPath + "}";
+		} else {
+			// for object list parameter, allow sort
+			oVisualization.settings.rows = "{path: '" + sPath + "', sorter: {path: '_dt/_position', descending: false}}";
+		}
 		return oVisualization;
 	};
 
@@ -527,49 +532,66 @@ sap.ui.define([
 		if (bAddButtonVisible && oConfig.values) {
 			bAddButtonVisible = oConfig.values.allowAdd === true;
 		}
-		return new OverflowToolbar({
-			content: [
-				new ToolbarSpacer(),
+		var oContents = [
+			new ToolbarSpacer(),
+			new Button({
+				icon: "sap-icon://add",
+				visible: bAddButtonVisible,
+				tooltip: sAddButtonTooltip,
+				press: that.addNewObject.bind(that)
+			}),
+			new Button({
+				icon: "sap-icon://edit",
+				tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_EDIT_TOOLTIP"),
+				enabled: "{= !!${/_hasTableSelected}}",
+				press: that.onEditOrViewDetail.bind(that)
+			}),
+			new Button({
+				icon: "sap-icon://delete",
+				tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DELETE"),
+				enabled: "{= !!${/_canDelete}}",
+				press: that.onDelete.bind(that)
+			}),
+			new Button({
+				icon: "sap-icon://clear-filter",
+				visible: bHasFilterDefined,
+				enabled: "{= !!${/_hasFilter}}",
+				tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_CLEAR_ALL_FILTERS_TOOLTIP"),
+				press: that.clearAllFilters.bind(that)
+			}),
+			new Button({
+				icon: "sap-icon://multiselect-all",
+				visible: false,
+				enabled: "{= !${/_hasTableAllSelected}}",
+				tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_SELECT_ALL_SELETIONS_TOOLTIP"),
+				press: that.selectAllTableSelections.bind(that)
+			}),
+			new Button({
+				icon: "sap-icon://multiselect-none",
+				visible: false,
+				enabled: "{= !!${/_hasTableSelected}}",
+				tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_CLEAR_ALL_SELETIONS_TOOLTIP"),
+				press: that.clearAllTableSelections.bind(that)
+			})
+		];
+		if (oConfig.type === "object[]") {
+			oContents = oContents.concat([
 				new Button({
-					icon: "sap-icon://add",
-					visible: bAddButtonVisible,
-					tooltip: sAddButtonTooltip,
-					press: that.addNewObject.bind(that)
+					icon: "sap-icon://navigation-up-arrow",
+					enabled: "{= !!${/_hasOnlyOneRowSelected}}",
+					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_MOVE_UP_TOOLTIP"),
+					press: that.moveRowUp.bind(that)
 				}),
 				new Button({
-					icon: "sap-icon://edit",
-					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_EDIT_TOOLTIP"),
-					enabled: "{= !!${/_hasTableSelected}}",
-					press: that.onEditOrViewDetail.bind(that)
-				}),
-				new Button({
-					icon: "sap-icon://delete",
-					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DELETE"),
-					enabled: "{= !!${/_canDelete}}",
-					press: that.onDelete.bind(that)
-				}),
-				new Button({
-					icon: "sap-icon://clear-filter",
-					visible: bHasFilterDefined,
-					enabled: "{= !!${/_hasFilter}}",
-					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_CLEAR_ALL_FILTERS_TOOLTIP"),
-					press: that.clearAllFilters.bind(that)
-				}),
-				new Button({
-					icon: "sap-icon://multiselect-all",
-					visible: false,
-					enabled: "{= !${/_hasTableAllSelected}}",
-					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_SELECT_ALL_SELETIONS_TOOLTIP"),
-					press: that.selectAllTableSelections.bind(that)
-				}),
-				new Button({
-					icon: "sap-icon://multiselect-none",
-					visible: false,
-					enabled: "{= !!${/_hasTableSelected}}",
-					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_CLEAR_ALL_SELETIONS_TOOLTIP"),
-					press: that.clearAllTableSelections.bind(that)
+					icon: "sap-icon://navigation-down-arrow",
+					enabled: "{= !!${/_hasOnlyOneRowSelected}}",
+					tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_MOVE_DOWN_TOOLTIP"),
+					press: that.moveRowDown.bind(that)
 				})
-			]
+			]);
+		}
+		return new OverflowToolbar({
+			content: oContents
 		});
 	};
 
@@ -682,8 +704,14 @@ sap.ui.define([
 		var aSelectedIndices = oTable.getSelectedIndices();
 		if (aSelectedIndices.length > 0) {
 			oModel.setProperty("/_hasTableSelected", true);
+			if (aSelectedIndices.length === 1) {
+				oModel.setProperty("/_hasOnlyOneRowSelected", true);
+			} else {
+				oModel.setProperty("/_hasOnlyOneRowSelected", false);
+			}
 		} else {
 			oModel.setProperty("/_hasTableSelected", false);
+			oModel.setProperty("/_hasOnlyOneRowSelected", false);
 			oModel.setProperty("/_canDelete", false);
 			return;
 		}
@@ -721,8 +749,44 @@ sap.ui.define([
 		var oModel = oTable.getModel();
 		oTable.clearSelection();
 		oModel.setProperty("/_hasTableSelected", false);
+		oModel.setProperty("/_hasOnlyOneRowSelected", false);
 		oModel.setProperty("/_canDelete", false);
 		oModel.setProperty("/_hasTableAllSelected", false);
+	};
+
+	ObjectField.prototype.moveRowUp = function (oEvent) {
+		this.moveSelectedRow("Up");
+	};
+
+	ObjectField.prototype.moveRowDown = function (oEvent) {
+		this.moveSelectedRow("Down");
+	};
+
+	ObjectField.prototype.moveSelectedRow = function (sDirection) {
+		var that = this;
+		var oTable = that.getAggregation("_field");
+		var oModel = oTable.getModel();
+		var iSelectedRowIndex = oTable.getSelectedIndex();
+		var oSelectedRowContext = oTable.getContextByIndex(iSelectedRowIndex);
+
+		var iSiblingRowIndex = iSelectedRowIndex + (sDirection === "Up" ? -1 : 1);
+		var oSiblingRowContext = oTable.getContextByIndex(iSiblingRowIndex);
+		if (!oSiblingRowContext) {
+			return;
+		}
+
+		// swap the selected and the siblings rank
+		var iSiblingRowRank = oSiblingRowContext.getProperty("_dt/_position");
+		var iSelectedRowRank = oSelectedRowContext.getProperty("_dt/_position");
+		oModel.setProperty("_dt/_position", iSiblingRowRank, oSelectedRowContext);
+		oModel.setProperty("_dt/_position", iSelectedRowRank, oSiblingRowContext);
+		oModel.refresh(true);
+
+		// after move select the sibling
+		oTable.setSelectedIndex(iSiblingRowIndex);
+
+		// save change
+		that.refreshValue();
 	};
 
 	ObjectField.prototype.onSelectionChange = function (oEvent) {
@@ -1684,6 +1748,7 @@ sap.ui.define([
 		oModel.setProperty("/_hasSelected", true);
 		oModel.setProperty("/_hasTableAllSelected", false);
 		oModel.setProperty("/_hasTableSelected", false);
+		oModel.setProperty("/_hasOnlyOneRowSelected", false);
 		oModel.checkUpdate();
 		that.refreshValue();
 		that.updateTable();

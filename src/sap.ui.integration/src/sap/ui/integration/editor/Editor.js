@@ -1492,8 +1492,22 @@ sap.ui.define([
 									break;
 								case "object":
 								case "object[]":
-									if (oItem.value && oItem.value !== "") {
-										mResult[oItem.manifestpath] = oItem.value;
+									if (Array.isArray(oItem.value)) {
+										var aValue = deepClone(oItem.value, 500);
+										// sort the value list according by the position value
+										aValue = aValue.sort(function (a, b) {
+											// if _position property not exists, do nothing
+											if (!a._dt || !a._dt._position || !b._dt || !b._dt._position) {
+												return 0;
+											}
+											return a._dt._position - b._dt._position;
+										});
+										// recount the position value
+										for (var i = 0; i < aValue.length; i++) {
+											var oValue = aValue[i];
+											oValue._dt._position = i + 1;
+										}
+										mResult[oItem.manifestpath] = aValue;
 									}
 									break;
 								default:

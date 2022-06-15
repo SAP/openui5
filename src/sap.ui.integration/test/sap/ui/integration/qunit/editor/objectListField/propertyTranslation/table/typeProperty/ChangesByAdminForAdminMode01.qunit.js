@@ -237,9 +237,9 @@ sap.ui.define([
 						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 						var oField1 = that.oEditor.getAggregation("_formContent")[2];
-						var oSelectedValue1 = merge(deepClone(oObject1InAdminChange, 500), {"_dt": {"_selected": true}});
-						var oSelectedValue2 = merge(deepClone(oObject2InAdminChange, 500), {"_dt": {"_selected": true}});
-						var oSelectedValue3 = merge(deepClone(oObject3InAdminChange, 500), {"_dt": {"_selected": true}});
+						var oSelectedValue1 = merge(deepClone(oObject1InAdminChange, 500), {"_dt": {"_selected": true, "_position": 1}});
+						var oSelectedValue2 = merge(deepClone(oObject2InAdminChange, 500), {"_dt": {"_selected": true, "_position": 2}});
+						var oSelectedValue3 = merge(deepClone(oObject3InAdminChange, 500), {"_dt": {"_selected": true, "_position": 3}});
 						wait().then(function () {
 							assert.ok(oLabel1.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 							assert.ok(oLabel1.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
@@ -248,7 +248,7 @@ sap.ui.define([
 							var oTable1 = oField1.getAggregation("_field");
 							var oToolbar1 = oTable1.getToolbar();
 							assert.ok(oTable1.getBinding().getCount() === 11, "Table 1: value length is 11");
-							assert.ok(oToolbar1.getContent().length === 7, "Table toolbar 1: content length");
+							assert.ok(oToolbar1.getContent().length === 9, "Table toolbar 1: content length");
 							var oEditButton1 = oToolbar1.getContent()[2];
 							assert.ok(oEditButton1.getVisible(), "Table toolbar 1: edit button visible");
 							assert.ok(!oEditButton1.getEnabled(), "Table toolbar 1: edit button disabled");
