@@ -647,36 +647,6 @@ sap.ui.define([
 	};
 
 
-	/**
-	 * Check if the item is delete enabled.
-	 * @private
-	 * @param {object} oItem - represents the variant
-	 * @returns {boolean} indicator if the item is delete enabled
-	 */
-	VariantManagement.prototype.isItemDeleteEnabled = function(oItem) {
-		return true;
-	};
-
-	/**
-	 * Check if the item is delete enabled.
-	 * @private
-	 * @param {object} oItem - represents the variant
-	 * @returns {boolean} indicator if the item is delete enabled
-	 */
-	VariantManagement.prototype.isItemDeleteVisible = function(oItem) {
-		return oItem.getRemove();
-	};
-
-	/**
-	 * Check if the item is delete enabled.
-	 * @private
-	 * @param {object} oItem - represents the variant
-	 * @returns {boolean} indicator if the item is delete enabled
-	 */
-	VariantManagement.prototype.isItemRenameAllowed = function(oItem) {
-		return oItem.getRename();
-	};
-
 	VariantManagement.prototype.getSelectedVariantText = function(sKey) {
 		var oItem = this._getItemByKey(sKey);
 
@@ -1037,18 +1007,13 @@ sap.ui.define([
 		// this.oVariantList.getBinding("items").filter(this._getFilters());
 	};
 
-	/**
-	 * Hide or show <i>Save</i> button and emphasize "most positive action" - either <i>Save</i> button if it is visible, or <i>Save As</i> button if <i>Save</i> is hidden.
-	 * @param {boolean} bShow - Indicator if <i>Save</i> button should be visible
-	 * @private
-	 */
-	VariantManagement.prototype.showSaveButton = function(bShow) {
-		if (bShow === false) {
-			this.oVariantSaveAsBtn.setType(ButtonType.Emphasized);
-			this.oVariantSaveBtn.setVisible(false);
-		} else {
+
+	VariantManagement.prototype._determineEmphasizedFooterButton = function() {
+		if (this.oVariantSaveBtn.getVisible()) {
+			this.oVariantSaveBtn.setType(ButtonType.Emphasized);
 			this.oVariantSaveAsBtn.setType(ButtonType.Default);
-			this.oVariantSaveBtn.setVisible(true);
+		} else {
+			this.oVariantSaveAsBtn.setType(ButtonType.Emphasized);
 		}
 	};
 
@@ -1058,8 +1023,6 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._openVariantList = function() {
-		var oItem;
-
 		if (this.getInErrorState()) {
 			this._openInErrorState();
 			return;
@@ -1076,14 +1039,7 @@ sap.ui.define([
 
 		this.oVariantSelectionPage.setShowSubHeader(this.oVariantList.getItems().length > 9);
 
-		this.showSaveButton(false);
-
-		if (this.getModified()) {
-			oItem = this._getItemByKey(this.getSelectedKey());
-			if (oItem && oItem.getChangeable()) {
-				this.showSaveButton(true);
-			}
-		}
+		this._determineEmphasizedFooterButton();
 
 		var oSelectedItem = this.oVariantList.getSelectedItem();
 		if (oSelectedItem) {
@@ -1236,6 +1192,7 @@ sap.ui.define([
 						this._sStyleClass = undefined;
 						this._oRolesComponentContainer = null;
 					}
+
 				}.bind(this),
 				beginButton: this.oSaveSave,
 				endButton: new Button(this.getId() + "-variantcancel", {
@@ -1407,13 +1364,13 @@ sap.ui.define([
 
 	/**
 	 * Opens the <i>Save As</i> dialog.
-	 * @param {string} sRtaStyleClassName - style-class to be used
+	 * @param {string} sStyleClassName - style-class to be used
 	 * @param {object} oRolesComponentContainer - component for roles handling
 	 */
-	VariantManagement.prototype.openSaveAsDialogForKeyUser = function (sRtaStyleClassName, oRolesComponentContainer) {
+	VariantManagement.prototype.openSaveAsDialog = function (sStyleClassName, oRolesComponentContainer) {
 		this._openSaveAsDialog(true);
-		this.oSaveAsDialog.addStyleClass(sRtaStyleClassName);
-		this._sStyleClass = sRtaStyleClassName; // indicates that dialog is running in key user scenario
+		this.oSaveAsDialog.addStyleClass(sStyleClassName);
+		this._sStyleClass = sStyleClassName; // indicates that dialog is running in key user scenario
 
 		this._bShowPublic = this.getSupportPublic();
 		this.setSupportPublic(false);
@@ -1432,6 +1389,7 @@ sap.ui.define([
 			this.oSaveAsDialog.open();
 		}
 	};
+
 
 	VariantManagement.prototype._openSaveAsDialog = function(bDoNotOpen) {
 		this._createSaveAsDialog();
@@ -1504,11 +1462,11 @@ sap.ui.define([
 				overwrite: false,
 				def: this.oDefault.getSelected(),
 				execute: this.oExecuteOnSelect.getSelected(),
-				"public": this._sStyleClass ? undefined : this.oPublic.getSelected(),
-				contexts: this._sStyleClass ? this._getContextInfoChanges() : undefined
+				"public": this.getSupportPublic() ? this.oPublic.getSelected() : undefined,
+				contexts: this._getContextInfoChanges()
 		};
 
-		if (!this._sStyleClass && this._getShowCreateTile() && this.oCreateTile) {
+		if (this._getShowCreateTile() && this.oCreateTile) {
 			oObj.tile = this.oCreateTile.getSelected();
 		}
 
@@ -1524,11 +1482,11 @@ sap.ui.define([
 					return this._getSelectedContexts();
 				}
 			} catch (ex) {
-				return null;
+				return undefined;
 			}
 		}
 
-		return null;
+		return undefined;
 	};
 
 	VariantManagement.prototype._handleVariantSave = function() {
@@ -1558,17 +1516,17 @@ sap.ui.define([
 	/**
 	 * Opens the <i>Manage Views</i> dialog.
 	 * @param {boolean} bCreateAlways - Indicates that if this is set to <code>true</code>, the former dialog will be destroyed before a new one is created
-	 * @param {string} sClass - style-class to be used
+	 * @param {string} sStyleClass - style-class to be used
 	 * @param {object} oRolesComponentContainer - component for roles handling
 	 */
-	VariantManagement.prototype.openManagementDialog = function(bCreateAlways, sClass, oRolesComponentContainer) {
+	VariantManagement.prototype.openManagementDialog = function(bCreateAlways, sStyleClass, oRolesComponentContainer) {
 		if (bCreateAlways && this.oManagementDialog) {
 			this.oManagementDialog.destroy();
 			this.oManagementDialog = undefined;
 		}
 
-		if (sClass) {
-			this._sStyleClass = sClass;
+		if (sStyleClass) {
+			this._sStyleClass = sStyleClass;
 			this._bShowPublic = this.getSupportPublic();
 			this.setSupportPublic(false);
 
@@ -1741,8 +1699,8 @@ sap.ui.define([
 				text: this._oRb.getText("VARIANT_MANAGEMENT_CANCEL"),
 				press: function() {
 					this._resumeManagementTableBinding();
-					this.oManagementDialog.close();
 					this._handleManageCancelPressed();
+					this.oManagementDialog.close();
 				}.bind(this)
 			});
 
@@ -1860,8 +1818,7 @@ sap.ui.define([
 			this._openRolesDialog(oItem, oEvent.oSource.getParent().getItems()[0]);
 		}.bind(this);
 
-		var bRenameEnabled = this.isItemRenameAllowed(oItem);
-		if (bRenameEnabled) {
+		if (oItem.getRename()) {
 			oNameControl = new Input({
 				liveChange: fLiveChange,
 				change: fChange,
@@ -1882,16 +1839,13 @@ sap.ui.define([
 			}
 		}
 
-		var bDeleteEnabled = this.isItemDeleteEnabled(oItem);
-		var bDeleteVisible = this.isItemDeleteVisible(oItem);
-
 		oDeleteButton = new Button({
 			icon: "sap-icon://decline",
-			enabled: bDeleteEnabled,
+			enabled: true,
 			type: ButtonType.Transparent,
 			press: fPress,
 			tooltip: this._oRb.getText("VARIANT_MANAGEMENT_DELETE"),
-			visible: bDeleteVisible
+			visible: oItem.getRemove()
 		});
 
 
@@ -1941,7 +1895,7 @@ sap.ui.define([
 		}
 
 		// roles
-		if (this._sStyleClass && (oItem.getKey() !== this.getStandardVariantKey())) {
+		if (this.getSupportContexts() && (oItem.getKey() !== this.getStandardVariantKey())) {
 			var oText = new Text({ wrapping: false });
 			this._determineRolesSpecificText(oItem.getContexts(), oText);
 			var oIcon = new Icon({
@@ -2006,7 +1960,7 @@ sap.ui.define([
 		//this.oManagementSave.setEnabled(false);
 		this._oSearchFieldOnMgmtDialog.setValue("");
 
-		// Ideally, this should be done only once in <code>_createtManagementDialog</code>. However, the binding does not recognize a change if filtering is involved.
+		// Ideally, this should be done only once in <code>_createManagementDialog</code>. However, the binding does not recognize a change if filtering is involved.
 		// After a deletion on the UI, the item is filtered out <code>.visible=false</code>. The real deletion will occur only when <i>OK</i> is pressed.
 		// Since the filtered items and the result after the real deletion are identical, no change is detected. Based on this, the context on the table is
 		// not invalidated....
@@ -2592,7 +2546,6 @@ sap.ui.define([
 		}
 
 		this._oRolesComponentContainer = null;
-		this._sStyleClass = null;
 
 
 		if (this._oRolesDialog && !this._oRolesDialog._bIsBeingDestroyed) {

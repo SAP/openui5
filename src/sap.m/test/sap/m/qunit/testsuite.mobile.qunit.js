@@ -1593,6 +1593,12 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			VariantManagement: {
+				title: "Test Page for sap.m.VariantManagement",
+				coverage: {
+					only: ["sap/m/VariantManagement"]
+				}
+			},
 			ViewSettingsDialog: {
 				title: "QUnit Page for sap.m.ViewSettingsDialog"
 			},
