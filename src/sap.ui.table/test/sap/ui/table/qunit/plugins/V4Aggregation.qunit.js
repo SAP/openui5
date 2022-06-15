@@ -34,28 +34,32 @@ sap.ui.define([
 			}, {
 				name: "Property5",
 				path: "prop5",
-				extension: {
-					defaultAggregate: {}
+				aggregatable: true,
+				aggregationDetails: {
+					customAggregate: {}
 				}
 			}, {
 				name: "Property6",
 				path: "prop6",
-				extension: {
-					defaultAggregate: {}
+				aggregatable: true,
+				aggregationDetails: {
+					customAggregate: {}
 				},
 				unit: "Property4"
 			}, {
 				name: "Property7",
 				path: "prop7",
-				extension: {
-					defaultAggregate: {}
+				aggregatable: true,
+				aggregationDetails: {
+					customAggregate: {}
 				},
 				groupable: true
 			}, {
 				name: "Property8",
 				path: "prop8",
-				extension: {
-					defaultAggregate: {
+				aggregatable: true,
+				aggregationDetails: {
+					customAggregate: {
 						contextDefiningProperties: ["Property1", "Property3", "Property4"]
 					}
 				}
@@ -63,16 +67,18 @@ sap.ui.define([
 				name: "Property9",
 				path: "prop9",
 				unit: "Property3",
-				extension: {
-					defaultAggregate: {
+				aggregatable: true,
+				aggregationDetails: {
+					customAggregate: {
 						contextDefiningProperties: []
 					}
 				}
 			}, {
 				name: "Property10",
 				path: "prop10",
-				extension: {
-					defaultAggregate: {
+				aggregatable: true,
+				aggregationDetails: {
+					customAggregate: {
 						contextDefiningProperties: ["Property4", "Property5"]
 					}
 				}
@@ -345,8 +351,9 @@ sap.ui.define([
 			this.oPlugin.setPropertyInfos([{
 				name: "Property1",
 				path: "prop1",
-				extension: {
-					defaultAggregate: {}
+				aggregatable: true,
+				aggregationDetails: {
+					customAggregate: {}
 				}
 			}]);
 		},

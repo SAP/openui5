@@ -87,36 +87,19 @@
 					group: "groupA",
 					groupLabel: "Group A",
 					filterable: false,
-					sortable: true,
-					groupable: true,
-					key: true,
-					unit: "PropertyA",
-					exportSettings: {something: "whatever"},
-					required: true
+					sortable: true
 				}, {
 					name: "ComplexPropertyA",
 					label: "Complex property A",
 					propertyInfos: ["PropertyA", "PropertyB"]
 				}
 			];
-			var mInitialExtensionAttributeMetadata = {
-				myExtensionAttribute: {
-					type: {
-						justSomeReferences: {type: "PropertyReference[]"}
-					}
-				}
+			var mInitialAdditionalAttributesMetadata = {
+				filterable: true,
+				sortable: true,
+				propertyInfos: true,
+				additionalAttribute: {type: "string", "default": {value: "default value"}}
 			};
-			var mInitialExtensions = {
-				PropertyB: {
-					myExtensionAttribute: {
-						justSomeReferences: [
-							"PropertyA"
-						]
-					}
-				}
-			};
-			var sInitialAllowedAttributes = "filterable, sortable, groupable, key, propertyInfos, unit, exportSettings, required";
-			var sAlwaysAllowedAttributes = "name, label, visible, path, typeConfig, maxConditions, group, groupLabel";
 			var oSettings = new JSONModel({helperSettingsEnabled: true});
 
 			var oPropertyInfosInput = new CodeEditor({
@@ -157,21 +140,10 @@
 					oSettings.setProperty("/helperSettingsEnabled", sValue === "sap.ui.mdc.util.PropertyHelper");
 				}
 			});
-			var oSelectedAttributesInput = new TextArea({
-				value: sInitialAllowedAttributes,
-				growing: true,
-				rows: 1,
-				placeholder: "Comma separated list of attribute names",
-				visible: "{/helperSettingsEnabled}"
-			});
-			var oExtensionAttributeInput = new CodeEditor({
+			var oAdditionalAttributesInput = new CodeEditor({
 				type: "json",
 				visible: "{/helperSettingsEnabled}"
-			}).setValue(stringify(mInitialExtensionAttributeMetadata));
-			var oExtensionsInput = new CodeEditor({
-				type: "json",
-				visible: "{/helperSettingsEnabled}"
-			}).setValue(stringify(mInitialExtensions));
+			}).setValue(stringify(mInitialAdditionalAttributesMetadata));
 			var oSettingsLayout = new CSSGrid({
 				items: [
 					new OverflowToolbar({
@@ -182,9 +154,7 @@
 								text: "Reset",
 								press: function() {
 									oPropertyHelperClassInput.setValue("sap.ui.mdc.util.PropertyHelper");
-									oSelectedAttributesInput.setValue(sInitialAllowedAttributes);
-									oExtensionAttributeInput.setValue(stringify(mInitialExtensionAttributeMetadata));
-									oExtensionsInput.setValue(stringify(mInitialExtensions));
+									oAdditionalAttributesInput.setValue(stringify(mInitialAdditionalAttributesMetadata));
 									oSettings.setProperty("/helperSettingsEnabled", true);
 									savePropertyHelperSettings();
 								}
@@ -200,14 +170,10 @@
 					}),
 					new Text({text: "Class"}),
 					oPropertyHelperClassInput,
-					new Text({text: "Allowed attributes" + "\nAlways allowed: " + sAlwaysAllowedAttributes + "", visible: "{/helperSettingsEnabled}"}),
-					oSelectedAttributesInput,
-					new Text({text: "Extension attribute metadata", visible: "{/helperSettingsEnabled}"}),
-					oExtensionAttributeInput,
-					new Text({text: "Extensions", visible: "{/helperSettingsEnabled}"}),
-					oExtensionsInput
+					new Text({text: "Additional attribute metadata", visible: "{/helperSettingsEnabled}"}),
+					oAdditionalAttributesInput,
 				],
-				gridTemplateRows: "auto auto auto auto auto auto 1fr auto 1fr"
+				gridTemplateRows: "auto auto auto auto 1fr"
 			});
 
 			var oPropertyOutput = new CodeEditor({
@@ -246,16 +212,10 @@
 
 			function update() {
 				var sPropertyInfos = oPropertyInfosInput.getValue();
-				var sSelectedAttributes = oSelectedAttributesInput.getValue();
-				var sExtensionMetadata = oExtensionAttributeInput.getValue();
-				var sExtensions = oExtensionsInput.getValue();
+				var sAdditionalAttributes = oAdditionalAttributesInput.getValue();
 				var bFullOutput = oFullOutputCheckBox.getSelected();
 				var aPropertyInfos = sPropertyInfos ? JSON.parse(sPropertyInfos) : undefined;
-				var aAllowedAttributes = sSelectedAttributes ? sSelectedAttributes.split(",").map(function(sValue) {
-					return sValue.trim();
-				}) : undefined;
-				var mExtensionAttributeMetadata = sExtensionMetadata ? JSON.parse(sExtensionMetadata) : undefined;
-				var mExtensions = sExtensions ? JSON.parse(sExtensions) : undefined;
+				var mAdditionalAttributesMetadata = sAdditionalAttributes ? JSON.parse(sAdditionalAttributes) : undefined;
 				var aLogEntries = [];
 				var oLogListener = {
 					onLogEntry: function(oLogEntry) {
@@ -273,7 +233,7 @@
 					try {
 						Log.addLogListener(oLogListener);
 						if (oSettings.getProperty("/helperSettingsEnabled")) {
-							oPropertyHelper = new PropertyHelper(aPropertyInfos, mExtensions, null, aAllowedAttributes, mExtensionAttributeMetadata);
+							oPropertyHelper = new PropertyHelper(aPropertyInfos, null, mAdditionalAttributesMetadata);
 						} else {
 							oPropertyHelper = new PropertyHelper(aPropertyInfos);
 						}

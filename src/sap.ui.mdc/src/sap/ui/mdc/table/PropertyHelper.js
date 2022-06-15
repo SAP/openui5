@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"../util/PropertyHelper",
-	"sap/m/table/Util"
+	"sap/m/table/Util",
+	"sap/ui/base/Object"
 ], function(
 	PropertyHelperBase,
-	TableUtil
+	TableUtil,
+	BaseObject
 ) {
 	"use strict";
 
@@ -63,14 +65,11 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.table.PropertyInfo[]} aProperties
 	 *     The properties to process in this helper
-	 * @param {Object<string, Object>} [mExtensions]
-	 *     Key-value map, where the key is the name of the property and the value is the extension containing mode-specific information.
-	 *     The extension of a property is stored in a reserved <code>extension</code> attribute, and its attributes must be specified with
-	 *     <code>mExtensionAttributeMetadata</code>.
 	 * @param {sap.ui.base.ManagedObject} [oParent]
 	 *     A reference to an instance that will act as the parent of this helper
-	 * @param {Object} [mExtensionAttributeMetadata]
-	 *     The attribute metadata for the model-specific property extension
+	 * @param {object} [mExtensionAttributes]
+	 *     Additional, model-specific attributes that the <code>PropertyInfo</code> may contain within the attribute "extension". Extension
+	 *     attributes cannot be mandatory.
 	 *
 	 * @class
 	 * Table property helpers in this SAPUI5 library provide tables with consistent and standardized structure of properties and their attributes.
@@ -89,34 +88,149 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.table.PropertyHelper", {
-		constructor: function(aProperties, mExtensions, oParent, mExtensionAttributeMetadata) {
-			var aAllowedAttributes = ["filterable", "sortable", "groupable", "key", "unit", "text", "exportSettings", "propertyInfos", "visualSettings"];
-			PropertyHelperBase.call(this, aProperties, mExtensions, oParent, aAllowedAttributes, mExtensionAttributeMetadata);
+		constructor: function(aProperties, oParent, mExtensionAttributes) {
+			PropertyHelperBase.call(this, aProperties, oParent, Object.assign({
+				// Enable default attributes
+				filterable: true,
+				sortable: true,
+				propertyInfos: true,
+
+				// Additional attributes
+				groupable: {
+					type: "boolean",
+					forComplexProperty: {
+						valueIfNotAllowed: false
+					}
+				},
+				key: {
+					type: "boolean",
+					forComplexProperty: {
+						valueIfNotAllowed: false
+					}
+				},
+				unit: {
+					type: "PropertyReference"
+				},
+				text: {
+					type: "PropertyReference"
+				},
+				exportSettings: {
+					type: "object",
+					"default": {
+						value: {},
+						ignoreIfNull: true
+					},
+					forComplexProperty: {
+						allowed: true
+					}
+				},
+				visualSettings: {
+					type: {
+						widthCalculation: {
+							type: {
+								minWidth: {
+									type: "int",
+									"default": {
+										value: 2
+									}
+								},
+								maxWidth: {
+									type: "int",
+									"default": {
+										value: 19
+									}
+								},
+								defaultWidth: {
+									type: "int",
+									"default": {
+										value: 8
+									}
+								},
+								gap: {
+									type: "float",
+									"default": {
+										value: 0
+									}
+								},
+								includeLabel: {
+									type: "boolean",
+									"default": {
+										value: true
+									}
+								},
+								truncateLabel: {
+									type: "boolean",
+									"default": {
+										value: true
+									}
+								},
+								verticalArrangement: {
+									type: "boolean",
+									"default": {
+										value: false
+									}
+								},
+								excludeProperties: {
+									type: "PropertyReference[]"
+								}
+							},
+							"default": {
+								value: {},
+								ignoreIfNull: true
+							}
+						}
+					},
+					"default": {
+						value: {}
+					},
+					forComplexProperty: {
+						allowed: true
+					}
+				}
+			}, mExtensionAttributes ? {
+				extension: {
+					type: mExtensionAttributes,
+					"default": {
+						value: {}
+					},
+					forComplexProperty: {
+						allowed: true,
+						propagateAllowance: false
+					}
+				}
+			} : {}, this._bEnableAggregatableAttribute ? {
+				aggregatable: {
+					type: "boolean",
+					forComplexProperty: {
+						valueIfNotAllowed: false
+					}
+				}
+			} : {}));
 		}
 	});
 
-	function isMdcColumnInstance(oColumn) {
-		return !!(oColumn && oColumn.isA && oColumn.isA("sap.ui.mdc.table.Column"));
-	}
-
-	function getColumnWidthNumber(sWidth) {
-		if (sWidth.indexOf("em") > 0) {
-			return Math.round(parseFloat(sWidth));
-		}
-
-		if (sWidth.indexOf("px") > 0) {
-			return Math.round(parseInt(sWidth) / 16);
-		}
-
-		return "";
-	}
-
-	/**
-	 * @inheritDoc
-	 */
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
 		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);
-		oProperty.aggregatable = false;
+
+		Object.defineProperty(oProperty, "getGroupableProperties", {
+			value: function() {
+				return oProperty.getSimpleProperties().filter(function(oProperty) {
+					return oProperty.groupable;
+				});
+			}
+		});
+	};
+
+	/**
+	 * Gets all groupable properties.
+	 *
+	 * @returns {sap.ui.mdc.table.PropertyInfo[]} All groupable properties
+	 * @public
+	 */
+	PropertyHelper.prototype.getGroupableProperties = function() {
+		return this.getProperties().filter(function(oProperty) {
+			return oProperty.groupable;
+		});
 	};
 
 	/**
@@ -129,7 +243,7 @@ sap.ui.define([
 	PropertyHelper.prototype.getColumnExportSettings = function(oColumn) {
 		var aColumnExportSettings = [];
 
-		if (!isMdcColumnInstance(oColumn)) {
+		if (!BaseObject.isA(oColumn, "sap.ui.mdc.table.Column")) {
 			return aColumnExportSettings;
 		}
 
@@ -169,13 +283,17 @@ sap.ui.define([
 		} else {
 			// when there are no exportSettings given for a ComplexProperty
 			aPropertiesFromComplexProperty.forEach(function(oProperty, iIndex) {
-				var oPropertyInfoExportSettings = oProperty.exportSettings,
-					oCurrentColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oPropertyInfoExportSettings);
+				if (!oProperty.exportSettings) {
+					return;
+				}
+
+				var oCurrentColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oProperty.exportSettings);
+
 				oCurrentColumnExportSettings.property = oProperty.path;
 				if (iIndex > 0) {
 					oCurrentColumnExportSettings.columnId = oColumn.getId() + "-additionalProperty" + iIndex;
 				}
-				if (oPropertyInfoExportSettings || oCurrentColumnExportSettings.property) {
+				if (oProperty.exportSettings || oCurrentColumnExportSettings.property) {
 					aColumnExportSettings.push(oCurrentColumnExportSettings);
 				}
 			});
@@ -184,25 +302,35 @@ sap.ui.define([
 		return aColumnExportSettings;
 	};
 
+	function getColumnWidthNumber(sWidth) {
+		if (sWidth.indexOf("em") > 0) {
+			return Math.round(parseFloat(sWidth));
+		}
+
+		if (sWidth.indexOf("px") > 0) {
+			return Math.round(parseInt(sWidth) / 16);
+		}
+
+		return "";
+	}
+
 	/**
 	 * Sets defaults to export settings and returns a new export settings object.
 	 *
 	 * @param {sap.ui.mdc.table.Column} oColumn The column from which to get default values
-	 * @param {Object} oProperty The property from which to get default values
+	 * @param {sap.ui.mdc.table.PropertyInfo} oProperty The property from which to get default values
 	 * @param {Object} oExportSettings The export settings for which to set defaults
 	 * @returns {Object} The new export settings object
 	 * @private
 	 */
 	function getColumnExportSettingsObject(oColumn, oProperty, oExportSettings) {
-		var oExportObj = Object.assign({
+		return Object.assign({
 			columnId: oColumn.getId(),
 			label: oProperty.label,
 			width: getColumnWidthNumber(oColumn.getWidth()),
 			textAlign: oColumn.getHAlign(),
 			type: "String"
 		}, oExportSettings);
-
-		return oExportObj;
 	}
 
 	/**
@@ -230,7 +358,7 @@ sap.ui.define([
 	/**
 	 * Calculates the column width based on the provided <code>PropertyInfo</code>.
 	 *
-	 * @param {Object} oProperty The properties of <code>PropertyInfo</code> of <code>Column</code> instance for which to set the width
+	 * @param {sap.ui.mdc.table.PropertyInfo} oProperty The property of the <code>Column</code> instance for which to set the width
 	 * @param {string} [sHeader] The header in case of it is different than the PropertyInfo header
 	 * @return {string} The calculated column width
 	 * @since 1.95

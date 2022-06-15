@@ -2,25 +2,261 @@
  * ${copyright}
  */
 
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/mdc/table/V4AnalyticsPropertyHelper"
-], function(PropertyHelper) {
+	"sap/ui/mdc/table/V4AnalyticsPropertyHelper",
+	"sap/base/Log"
+], function(PropertyHelper, Log) {
 	"use strict";
+
+	QUnit.module("Validation", {
+		beforeEach: function() {
+			this.logWarning = sinon.spy(Log, "warning");
+		},
+		afterEach: function() {
+			this.logWarning.restore();
+		}
+	});
+
+	QUnit.test("groupable=true and technicallyGroupable=false", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "prop",
+				label: "Property",
+				groupable: true,
+				extension: {
+					technicallyGroupable: false
+				}
+			}]);
+		}, "Error thrown");
+	});
+
+	QUnit.test("aggregatable=true and technicallyAggregatable=false", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "prop",
+				label: "Property",
+				aggregatable: true,
+				extension: {
+					technicallyAggregatable: false
+				}
+			}]);
+		}, "Error thrown");
+	});
+
+	QUnit.test("Complex property with attribute 'aggregatable'", function(assert) {
+		new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}, {
+			name: "complexProp",
+			label: "ComplexProperty",
+			propertyInfos: ["prop"],
+			aggregatable: true
+		}]).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+	});
+
+	QUnit.test("Complex property with attribute 'extension.technicallyGroupable'", function(assert) {
+		new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}, {
+			name: "complexProp",
+			label: "ComplexProperty",
+			propertyInfos: ["prop"],
+			extension: {
+				technicallyGroupable: false
+			}
+		}]).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+	});
+
+	QUnit.test("Complex property with attribute 'extension.technicallyAggregatable'", function(assert) {
+		new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}, {
+			name: "complexProp",
+			label: "ComplexProperty",
+			propertyInfos: ["prop"],
+			extension: {
+				technicallyAggregatable: false
+			}
+		}]).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+	});
+
+	QUnit.test("Complex property with attribute 'extension.customAggregate'", function(assert) {
+		new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}, {
+			name: "complexProp",
+			label: "ComplexProperty",
+			propertyInfos: ["prop"],
+			extension: {
+				customAggregate: {}
+			}
+		}]).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+	});
+
+	QUnit.module("Defaults", {
+		beforeEach: function() {
+			this.oSimplePropertyDefaults = {
+				name: "prop",
+				label: "Property",
+				tooltip: "",
+				caseSensitive: true,
+				exportSettings: {},
+				filterable: true,
+				group: "",
+				groupLabel: "",
+				groupable: false,
+				aggregatable: false,
+				key: false,
+				maxConditions: -1,
+				path: "",
+				sortable: true,
+				text: "",
+				typeConfig: null,
+				unit: "",
+				visible: true,
+				visualSettings: {
+					widthCalculation: {
+						defaultWidth: 8,
+						excludeProperties: [],
+						gap: 0,
+						includeLabel: true,
+						maxWidth: 19,
+						minWidth: 2,
+						truncateLabel: true,
+						verticalArrangement: false
+					}
+				},
+				extension: {
+					technicallyGroupable: false,
+					technicallyAggregatable: false,
+					customAggregate: null
+				}
+			};
+
+			this.oComplexPropertyDefaults = {
+				name: "complexProp",
+				label: "Complex Property",
+				tooltip: "",
+				exportSettings: {},
+				filterable: false,
+				group: "",
+				groupLabel: "",
+				groupable: false,
+				aggregatable: false,
+				key: false,
+				maxConditions: null,
+				path: null,
+				propertyInfos: ["prop"],
+				sortable: false,
+				typeConfig: null,
+				visible: true,
+				visualSettings: {
+					widthCalculation: {
+						defaultWidth: 8,
+						excludeProperties: [],
+						gap: 0,
+						includeLabel: true,
+						maxWidth: 19,
+						minWidth: 2,
+						truncateLabel: true,
+						verticalArrangement: false
+					}
+				},
+				extension: {
+					technicallyGroupable: false,
+					technicallyAggregatable: false
+				}
+			};
+		},
+		afterEach: function() {
+			delete this.oSimplePropertyDefaults;
+			delete this.oComplexPropertyDefaults;
+		}
+	});
+
+	QUnit.test("Simple property", function(assert) {
+		var oPropertyHelper = new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}]);
+
+		assert.deepEqual(oPropertyHelper.getProperties(), [this.oSimplePropertyDefaults]);
+		oPropertyHelper.destroy();
+	});
+
+	QUnit.test("Simple property with groupable=true and aggregatable=true", function(assert) {
+		var oPropertyHelper = new PropertyHelper([{
+			name: "prop",
+			label: "Property",
+			groupable: true,
+			aggregatable: true
+		}]);
+
+		assert.deepEqual(oPropertyHelper.getProperties(), [Object.assign(this.oSimplePropertyDefaults, {
+			groupable: true,
+			aggregatable: true,
+			extension: Object.assign(this.oSimplePropertyDefaults.extension, {
+				technicallyGroupable: true,
+				technicallyAggregatable: true
+			})
+		})]);
+		oPropertyHelper.destroy();
+	});
+
+	QUnit.test("Complex property", function(assert) {
+		var oPropertyHelper = new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}, {
+			name: "complexProp",
+			label: "Complex Property",
+			propertyInfos: ["prop"]
+		}]);
+
+		assert.deepEqual(oPropertyHelper.getProperty("complexProp"), this.oComplexPropertyDefaults);
+		oPropertyHelper.destroy();
+	});
 
 	QUnit.module("API", {
 		beforeEach: function() {
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "propA",
+				path: "propAPath",
 				label: "Property A",
-				unit: "unit"
+				unit: "unit",
+				groupable: true,
+				aggregatable: true,
+				key: true,
+				text: "propB",
+				extension: {
+					customAggregate: {
+						contextDefiningProperties: ["propB"]
+					}
+				}
 			}, {
 				name: "propB",
-				label: "Property B"
+				label: "Property B",
+				extension: {
+					technicallyAggregatable: true
+				}
 			}, {
 				name: "propC",
-				label: "Property C"
+				label: "Property C",
+				aggregatable: true,
+				extension: {
+					technicallyGroupable: true,
+					customAggregate: {}
+				}
 			}, {
 				name: "complexPropA",
 				label: "Complex property A",
@@ -36,16 +272,7 @@ sap.ui.define([
 			}, {
 				name: "unit",
 				label: "Unit"
-			}], {
-				propA: {
-					defaultAggregate: {
-						contextDefiningProperties: ["propB"]
-					}
-				},
-				propC: {
-					defaultAggregate: {}
-				}
-			});
+			}]);
 			this.aProperties = this.oPropertyHelper.getProperties();
 		},
 		afterEach: function() {
@@ -62,11 +289,63 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties(), [], "After destruction");
 	});
 
+	QUnit.test("getPropertiesForPlugin", function(assert) {
+		assert.deepEqual(this.oPropertyHelper.getPropertiesForPlugin(), [{
+			name: "propA",
+			aggregatable: true,
+			aggregationDetails: {
+				customAggregate: {
+					contextDefiningProperties: ["propB"]
+				}
+			},
+			groupable: true,
+			key: true,
+			path: "propAPath",
+			text: "propB",
+			unit: "unit"
+		}, {
+			name: "propB",
+			aggregatable: true,
+			groupable: false,
+			key: false,
+			path: "",
+			text: "",
+			unit: ""
+		}, {
+			name: "propC",
+			aggregatable: true,
+			aggregationDetails: {
+				customAggregate: {
+					contextDefiningProperties: []
+				}
+			},
+			groupable: true,
+			key: false,
+			path: "",
+			text: "",
+			unit: ""
+		}, {
+			name: "unit",
+			aggregatable: false,
+			groupable: false,
+			key: false,
+			path: "",
+			text: "",
+			unit: ""
+		}]);
+	});
+
 	QUnit.module("Property", {
 		beforeEach: function() {
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "prop",
-				label: "Property"
+				label: "Property",
+				aggregatable: true,
+				extension: {
+					customAggregate: {
+						contextDefiningProperties: ["prop2"]
+					}
+				}
 			}, {
 				name: "prop2",
 				label: "Property 2"
@@ -78,37 +357,11 @@ sap.ui.define([
 				name: "complexProp2",
 				label: "Complex property 2",
 				propertyInfos: ["prop2"]
-			}], {
-				prop: {
-					defaultAggregate: {
-						contextDefiningProperties: ["prop2"]
-					}
-				}
-			});
+			}]);
 		},
 		afterEach: function() {
 			this.oPropertyHelper.destroy();
-		},
-		assertProperty: function(assert, oProperty) {
-			var aExpectedMethods = ["getAggregatableProperties"];
-
-			for (var i = 0; i < aExpectedMethods.length; i++) {
-				var sMethod = aExpectedMethods[i];
-				assert.equal(typeof oProperty[sMethod], "function", "Has function '" + sMethod + "'");
-			}
 		}
-	});
-
-	QUnit.test("Simple property", function(assert) {
-		this.assertProperty(assert, this.oPropertyHelper.getProperty("prop"));
-	});
-
-	QUnit.test("Complex property", function(assert) {
-		this.assertProperty(assert, this.oPropertyHelper.getProperty("complexProp"));
-	});
-
-	QUnit.test("Property referenced by complex property", function(assert) {
-		this.assertProperty(assert, this.oPropertyHelper.getProperty("complexProp").getSimpleProperties()[0]);
 	});
 
 	QUnit.test("getAggregatableProperties", function(assert) {
@@ -127,16 +380,5 @@ sap.ui.define([
 		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
 		this.oPropertyHelper.destroy();
 		assert.deepEqual(oComplexProperty.getAggregatableProperties(), [oSimpleProperty], "After destruction");
-	});
-
-	QUnit.test("attribute: aggregatable", function(assert) {
-		assert.strictEqual(this.oPropertyHelper.getProperty("prop").aggregatable, true,
-			"Aggregatable simple property");
-		assert.strictEqual(this.oPropertyHelper.getProperty("complexProp").aggregatable, false,
-			"Complex property referencing aggregatable properties");
-		assert.strictEqual(this.oPropertyHelper.getProperty("prop2").aggregatable, false,
-			"Non-aggregatable simple property");
-		assert.strictEqual(this.oPropertyHelper.getProperty("complexProp2").aggregatable, false,
-			"Complex property referencing non-aggregatable properties");
 	});
 });

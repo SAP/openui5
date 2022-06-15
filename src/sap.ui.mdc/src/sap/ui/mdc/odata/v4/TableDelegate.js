@@ -62,50 +62,6 @@ sap.ui.define([
 		return V4AnalyticsPropertyHelper;
 	};
 
-	/**
-	 * Fetches the property extensions.
-	 *
-	 * <b>Note:</b> Property extensions add model-specific information. To ensure a clear separation from the standard property information, the
-	 * extensions need to be passed separately to the constructor, together with their attribute metadata. An extension has to be provided as a
-	 * key-value pair, where the key is the name of the property and the value is the extension of this property. It is not allowed to provide
-	 * extensions without the corresponding attribute metadata.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @param {object[]} aProperties <code>PropertyInfo</code>
-	 * @returns {Promise<Object<string, object>|null>} Key-value map, where the key is the name of the property, and the value is the extension
-	 * @protected
-	 */
-	Delegate.fetchPropertyExtensions = function(oTable, aProperties) {
-		return Promise.resolve(null);
-	};
-
-	/**
-	 * Retrieves the relevant metadata that will be used for the table binding, and returns the <code>PropertyInfo</code> array.
-	 * If it is not overridden, this method returns the same as <code>fetchProperties</code>.
-	 * When overriding the method make sure the returned result is consistent with what is returned by <code>fetchProperties</code>.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @returns {Promise} Once resolved, an array of <code>PropertyInfo</code> objects is returned
-	 * @protected
-	*/
-	Delegate.fetchPropertiesForBinding = function(oTable) {
-		return this.fetchProperties(oTable);
-	};
-
-	/**
-	 * Fetches the property extensions that will be used for the table binding.
-	 * If it is not overridden, this method returns the same as <code>fetchPropertyExtensions</code>.
-	 * When overriding the method make sure the returned result is consistent with what is returned by <code>fetchPropertyExtensions</code>.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @param {object[]} aProperties <code>PropertyInfo</code>
-	 * @returns {Promise<Object<string, object>|null>} Key-value map, where the key is the name of the property, and the value is the extension
-	 * @protected
-	 */
-	Delegate.fetchPropertyExtensionsForBinding = function(oTable, aProperties) {
-		return this.fetchPropertyExtensions(oTable, aProperties);
-	};
-
 	Delegate.preInit = function(oTable) {
 		if (!TableMap.has(oTable)) {
 			TableMap.set(oTable, {});
@@ -260,18 +216,20 @@ sap.ui.define([
 		}
 
 		if (oTable.isGroupingEnabled()) {
-			var aGroupProperties = oProperty.getGroupableProperties();
+			var aGroupableProperties = oProperty.getGroupableProperties();
 
-			if (aGroupProperties.length > 0) {
-				aItems.push(createGroupPopoverItem(aGroupProperties, oMDCColumn));
+			if (aGroupableProperties.length > 0) {
+				aItems.push(createGroupPopoverItem(aGroupableProperties, oMDCColumn));
 			}
 		}
 
 		if (oTable.isAggregationEnabled()) {
-			var aAggregateProperties = oProperty.getAggregatableProperties();
+			var aPropertiesThatCanBeTotaled = oProperty.getAggregatableProperties().filter(function(oProperty) {
+				return oProperty.extension.customAggregate != null;
+			});
 
-			if (aAggregateProperties.length > 0) {
-				aItems.push(createAggregatePopoverItem(aAggregateProperties, oMDCColumn));
+			if (aPropertiesThatCanBeTotaled.length > 0) {
+				aItems.push(createAggregatePopoverItem(aPropertiesThatCanBeTotaled, oMDCColumn));
 			}
 		}
 
@@ -480,10 +438,9 @@ sap.ui.define([
 
 	function getVisibleProperties(oTable) {
 		var oVisiblePropertiesSet = new Set();
-		var oPropertyHelper = TableMap.get(oTable).oPropertyHelperForBinding;
 
 		oTable.getColumns().forEach(function(oColumn) {
-			var oProperty = oPropertyHelper.getProperty(oColumn.getDataProperty());
+			var oProperty = oTable.getPropertyHelper().getProperty(oColumn.getDataProperty());
 
 			if (!oProperty) {
 				return;
@@ -657,13 +614,9 @@ sap.ui.define([
 					return oDelegate.formatGroupHeader(oTable, oContext, sProperty);
 				}
 			});
-
+			oPlugin.setPropertyInfos(oTable.getPropertyHelper().getPropertiesForPlugin());
 			oTable._oTable.addDependent(oPlugin);
 			mTableMap.plugin = oPlugin;
-
-			return fetchPropertyHelperForBinding(oTable);
-		}).then(function(oPropertyHelperForBinding) {
-			oPlugin.setPropertyInfos(oPropertyHelperForBinding.getProperties());
 		});
 	}
 
@@ -677,48 +630,16 @@ sap.ui.define([
 		return Promise.resolve();
 	}
 
-	function fetchPropertyHelperForBinding(oTable) {
-		var mTableMap = TableMap.get(oTable);
-
-		if (mTableMap.oPropertyHelperForBinding) {
-			return Promise.resolve(mTableMap.oPropertyHelperForBinding);
-		}
-
-		var oDelegate = oTable.getControlDelegate();
-		var aProperties;
-		var mExtensions;
-
-		return oDelegate.fetchPropertiesForBinding(oTable).then(function(aPropertiesForBinding) {
-			aProperties = aPropertiesForBinding;
-			return oDelegate.fetchPropertyExtensionsForBinding(oTable, aProperties);
-		}).then(function(mExtensionsForBinding) {
-			mExtensions = mExtensionsForBinding;
-			return oDelegate.getPropertyHelperClass();
-		}).then(function(PropertyHelper) {
-			mTableMap.oPropertyHelperForBinding = new PropertyHelper(aProperties, mExtensions, oTable);
-			return mTableMap.oPropertyHelperForBinding;
-		});
-	}
-
 	function setUpTableObserver(oTable) {
 		var mTableMap = TableMap.get(oTable);
 
 		if (!mTableMap.observer) {
 			mTableMap.observer = new ManagedObjectObserver(function(oChange) {
-				if (oChange.type === "destroy") {
-					// Destroy objects that are not in the lifecycle of the table.
-					if (mTableMap.oPropertyHelperForBinding) {
-						mTableMap.oPropertyHelperForBinding.destroy();
-					}
-
-				} else {
-					configureInnerTable(oTable);
-				}
+				configureInnerTable(oTable);
 			});
 
 			mTableMap.observer.observe(oTable, {
-				properties: ["p13nMode"],
-				destroy: true
+				properties: ["p13nMode"]
 			});
 		}
 	}

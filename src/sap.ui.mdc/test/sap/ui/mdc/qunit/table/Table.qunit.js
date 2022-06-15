@@ -4817,27 +4817,35 @@ sap.ui.define([
 	QUnit.module("Column resize", {
 		before: function() {
 			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [
-				{name: "Name", label: "Name", path: "Name", groupable: true},
-				{name: "Country", label: "Country", path: "Country", groupable: true},
+				{
+					name: "Name",
+					label: "Name",
+					path: "Name",
+					groupable: true,
+					aggregatable: true,
+					extension: {
+						customAggregate: {}
+					}
+				}, {
+					name: "Country",
+					label: "Country",
+					path: "Country",
+					groupable: true,
+					aggregatable: true,
+					extension: {
+						customAggregate: {}
+					}
+				},
 				{name: "name_country", label: "Complex Title & Description", propertyInfos: ["Name", "Country"]},
 				{name: "Name_2", label: "Name 2", propertyInfos: ["Name"]},
 				{name: "Name_3", label: "Name 3", propertyInfos: ["Name"]}
 			]);
-			MDCQUnitUtils.stubPropertyExtension(Table.prototype, {
-				Name: {
-					defaultAggregate: {}
-				},
-				Country: {
-					defaultAggregate: {}
-				}
-			});
 		},
 		beforeEach: function() {
 			return this.createTestObjects();
 
 		},
 		after: function() {
-			MDCQUnitUtils.restorePropertyExtension(Table.prototype);
 			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		afterEach: function() {

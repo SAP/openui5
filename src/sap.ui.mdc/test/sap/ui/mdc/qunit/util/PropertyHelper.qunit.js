@@ -15,12 +15,22 @@ sap.ui.define([
 	"use strict";
 
 	var PropertyHelper = _PropertyHelper.extend("sap.ui.mdc.util.test.PropertyHelper", {
-		constructor: function(aProperties, mExtensions, oParent, aAllowedAttributes, mExtensionAttributeMetadata) {
-			if (aAllowedAttributes && !Array.isArray(aAllowedAttributes)) {
-				this._mExperimentalAdditionalAttributes = aAllowedAttributes;
-			}
-			aAllowedAttributes = ["filterable", "sortable", "groupable", "key", "propertyInfos", "unit", "exportSettings", "required"];
-			_PropertyHelper.call(this, aProperties, mExtensions, oParent, aAllowedAttributes, mExtensionAttributeMetadata);
+		constructor: function(aProperties, oParent, mAdditionalAttributes) {
+			_PropertyHelper.call(this, aProperties, oParent, Object.assign({
+				filterable: true,
+				sortable: true,
+				propertyInfos: true,
+				unit: {
+					type: "PropertyReference"
+				},
+				exportSettings: {
+					type: "object",
+					"default": {
+						value: {}
+					},
+					forComplexProperty: {allowed: true}
+				}
+			}, mAdditionalAttributes));
 		}
 	});
 
@@ -106,19 +116,20 @@ sap.ui.define([
 		new PropertyHelper([{
 			name: "foo",
 			label: "bar",
-			extension: {}
-		}]).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged if property contains the 'extension' attribute");
-
-		this.logWarning.reset();
-		new PropertyHelper([{
-			name: "foo",
-			label: "bar",
 			typeConfig: {
 				doesNotExist: true
 			}
 		}]).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged if a deeply nested attribute is unknown");
+	});
+
+	QUnit.test("Default attribute that was not allowed", function(assert) {
+		new _PropertyHelper([{
+			name: "foo",
+			label: "bar",
+			filterable: true
+		}]).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged if a default attribute is set that is not allowed to be set");
 	});
 
 	QUnit.test("Missing mandatory attribute", function(assert) {
@@ -138,7 +149,7 @@ sap.ui.define([
 			name: "foo",
 			label: "bar",
 			additionalAttribute: {}
-		}], null, null, {
+		}], null, {
 			additionalAttribute: {
 				type: {
 					bar: {type: "string", mandatory: true}
@@ -166,7 +177,7 @@ sap.ui.define([
 				name: "foo",
 				label: "bar",
 				additionalAttribute: null
-			}], null, null, {
+			}], null, {
 				additionalAttribute: {type: "object", mandatory: true, "default": {value: {}}}
 			});
 		}, "Error thrown if mandatory attribute of type 'object' is set to 'null'");
@@ -176,7 +187,7 @@ sap.ui.define([
 				name: "foo",
 				label: "bar",
 				additionalAttribute: null
-			}], null, null, {
+			}], null, {
 				additionalAttribute: {
 					type: {
 						bar: {type: "object"}
@@ -218,7 +229,7 @@ sap.ui.define([
 				name: "foo",
 				label: "bar",
 				additionalAttribute: "bar"
-			}], null, null, {
+			}], null, {
 				additionalAttribute: {type: "string[]"}
 			});
 		}, "Error thrown if the value for an attribute of type 'string[]' is a string");
@@ -244,7 +255,7 @@ sap.ui.define([
 				name: "foo",
 				label: "bar",
 				additionalAttribute: undefined
-			}], null, null, {
+			}], null, {
 				additionalAttribute: {type: "object", mandatory: true}
 			});
 		}, "Error thrown if the value for an attribute of type 'object' is 'undefined'");
@@ -254,7 +265,7 @@ sap.ui.define([
 				name: "foo",
 				label: "bar",
 				additionalAttribute: null
-			}], null, null, {
+			}], null, {
 				additionalAttribute: {type: "object", mandatory: true}
 			});
 		}, "Error thrown if the value for an attribute of type 'object' is 'null'");
@@ -403,7 +414,7 @@ sap.ui.define([
 				name: "complexProperty",
 				label: "Complex property",
 				propertyInfos: ["prop"]
-			}], null, null, {
+			}], null, {
 				additionalAttribute: {
 					type: {
 						foo: {type: "PropertyReference"}
@@ -424,7 +435,7 @@ sap.ui.define([
 			}, {
 				name: "propB",
 				label: "Property B"
-			}], null, null, {
+			}], null, {
 				additionalAttribute: {
 					type: {
 						foo: {type: "PropertyReference[]"}
@@ -442,7 +453,7 @@ sap.ui.define([
 				additionalAttribute: {
 					foo: ["nonExistingProperty"]
 				}
-			}], null, null, {
+			}], null, {
 				additionalAttribute: {
 					type: {
 						foo: {type: "PropertyReference[]"}
@@ -463,7 +474,7 @@ sap.ui.define([
 			}, {
 				name: "propB",
 				label: "Property B"
-			}], null, null, {
+			}], null, {
 				additionalAttribute: {
 					type: {
 						foo: {type: "PropertyReference[]"}
@@ -481,7 +492,7 @@ sap.ui.define([
 				additionalAttribute: {
 					foo: ["propA"]
 				}
-			}], null, null, {
+			}], null, {
 				additionalAttribute: {
 					type: {
 						foo: {type: "PropertyReference[]"}
@@ -498,7 +509,7 @@ sap.ui.define([
 			additionalAttribute: {
 				foo: []
 			}
-		}], null, null, {
+		}], null, {
 			additionalAttribute: {
 				type: {
 					foo: {type: "PropertyReference[]"}
@@ -539,7 +550,7 @@ sap.ui.define([
 		}, "Error thrown if 'propertyInfos' is 'null'");
 	});
 
-	QUnit.test("Complex property with nested attribute including attributes with allowedForComplexProperty=false", function(assert) {
+	QUnit.test("Complex property with nested attribute including attributes that are not allowed for complex properties", function(assert) {
 		new PropertyHelper([{
 			name: "propA",
 			label: "prop A"
@@ -558,175 +569,17 @@ sap.ui.define([
 					bar: {
 						type: {
 							propA: {type: "string"},
-							propB: {type: "int", allowedForComplexProperty: false}
+							propB: {type: "int", forComplexProperty: {allowed: false}}
 						},
 						"default": {value: {}}
 					}
 				},
-				allowedForComplexProperty: true,
+				forComplexProperty: {
+					allowed: true
+				},
 				"default": {value: {}}
 			}
 		});
-		assert.equal(this.logWarning.callCount, 1, "Warning logged");
-	});
-
-	QUnit.module("Validation of extension attributes", {
-		beforeEach: function() {
-			this.logWarning = sinon.spy(Log, "warning");
-		},
-		afterEach: function() {
-			this.logWarning.restore();
-		}
-	});
-
-	QUnit.test("Extensions without attribute metadata", function(assert) {
-		assert.throws(function() {
-			new PropertyHelper([{
-				name: "foo",
-				label: "bar"
-			}], {
-				foo: {
-					extensionAttribute: "baz"
-				}
-			});
-		}, new Error("Property extensions are not supported."));
-	});
-
-	QUnit.test("Invalid extensions object", function(assert) {
-		assert.throws(function() {
-			new PropertyHelper([{
-				name: "foo",
-				label: "bar"
-			}], "notAnObject", null, null, {
-				extensionAttribute: {type: "string"}
-			});
-		}, new Error("Property extensions must be a plain object."));
-	});
-
-	QUnit.test("Extensions without property infos", function(assert) {
-		assert.throws(function() {
-			new PropertyHelper([], {
-				foo: {
-					extensionAttribute: "baz"
-				}
-			}, null, null, {
-				extensionAttribute: {type: "string"}
-			});
-		}, new Error("At least one property extension does not point to an existing property."));
-
-		assert.throws(function() {
-			new PropertyHelper(null, {
-				foo: {
-					extensionAttribute: "baz"
-				}
-			}, null, null, {
-				extensionAttribute: {type: "string"}
-			});
-		}, new Error("Invalid property definition: Property infos must be an array."));
-	});
-
-	QUnit.test("Property infos contain 'extension' attribute", function(assert) {
-		assert.throws(function() {
-			new PropertyHelper([{
-				name: "foo",
-				label: "bar",
-				extension: {}
-			}], {
-				foo: {
-					extensionAttribute: "baz"
-				}
-			}, null, null, {
-				extensionAttribute: {type: "string"}
-			});
-		}, "Error thrown");
-	});
-
-	QUnit.test("Extensions for non-existing properties", function(assert) {
-		assert.throws(function() {
-			new PropertyHelper([{
-				name: "foo",
-				label: "bar"
-			}], {
-				doesNotExist: {
-					extensionAttribute: "baz"
-				}
-			}, null, null, {
-				extensionAttribute: {type: "string"}
-			});
-		}, new Error("At least one property extension does not point to an existing property."));
-	});
-
-	QUnit.test("Unknown attribute", function(assert) {
-		new PropertyHelper([{
-			name: "foo",
-			label: "bar"
-		}], {
-			foo: {
-				doesNotExist: "baz"
-			}
-		}, null, null, {
-			extensionAttribute: {type: "string"}
-		}).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged if an attribute is unknown");
-
-		this.logWarning.reset();
-		new PropertyHelper([{
-			name: "foo",
-			label: "bar",
-			extensionAttribute: "test"
-		}], null, null, null, {
-			extensionAttribute: {type: "string"}
-		}).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged if an attribute is provided in the standard info");
-	});
-
-	QUnit.test("Missing mandatory attribute", function(assert) {
-		new PropertyHelper([{
-			name: "foo",
-			label: "bar"
-		}], null, null, null, {
-			extensionAttribute: {type: "string", mandatory: true}
-		}).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged if an attribute is missing");
-
-		this.logWarning.reset();
-		new PropertyHelper([{
-			name: "foo",
-			label: "bar"
-		}], {
-			foo: {
-				extensionAttribute: {}
-			}
-		}, null, null, {
-			extensionAttribute: {
-				type: {
-					bar: {type: "string", mandatory: true}
-				}
-			}
-		}).destroy();
-		assert.equal(this.logWarning.callCount, 0, "No warning logged if a deeply nested attribute is missing");
-	});
-
-	QUnit.test("Complex property with an attribute that is not allowed", function(assert) {
-		new PropertyHelper([{
-			name: "prop",
-			label: "Property"
-		}, {
-			name: "complexProperty",
-			label: "Complex property",
-			propertyInfos: ["prop"]
-		}], {
-			complexProperty: {
-				foo: {bar: "baz"}
-			}
-		}, null, null, {
-			foo: {
-				type: {
-					bar: {type: "string"}
-				},
-				allowedForComplexProperty: true
-			}
-		}).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged");
 	});
 
@@ -739,34 +592,63 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Adding reserved standard attribute", function(assert) {
+	QUnit.test("No additional attributes", function(assert) {
+		new _PropertyHelper([{
+			name: "foo",
+			label: "bar",
+			filterable: true
+		}]).destroy();
+		assert.ok(true, "No error thrown");
+	});
+
+	QUnit.test("Add a reserved standard attribute", function(assert) {
+		new _PropertyHelper([{
+			name: "foo",
+			label: "bar",
+			filterable: true
+		}], null, {
+			name: true,
+			filterable: true
+		}).destroy();
+		assert.ok(true, "No error thrown");
+	});
+
+	QUnit.test("Override a reserved standard attribute", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
 				label: "bar"
-			}], null, null, {
+			}], null, {
 				name: {type: "string"}
 			});
 		}, new Error("The attribute 'name' is reserved and cannot be overridden by additional attributes."));
 	});
 
-	QUnit.test("Adding reserved 'extension' attribute", function(assert) {
+	QUnit.test("Exclude a reserved standard attribute", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "foo",
 				label: "bar"
-			}], null, null, {
-				extension: {type: "string"}
+			}], null, {
+				name: false
 			});
-		}, new Error("The attribute 'extension' is reserved and cannot be overridden by additional attributes."));
+		}, new Error("The attribute 'name' is reserved and cannot be overridden by additional attributes."));
+
+		assert.throws(function() {
+			new PropertyHelper([{
+				name: "foo",
+				label: "bar"
+			}], null, {
+				name: undefined
+			});
+		}, new Error("The attribute 'name' is reserved and cannot be overridden by additional attributes."));
 	});
 
 	QUnit.test("Missing mandatory attribute", function(assert) {
-		this.logWarning.reset();
 		new PropertyHelper([{
 			name: "foo",
 			label: "bar"
-		}], null, null, null, {
+		}], null, {
 			additionalAttribute: {type: "string", mandatory: true}
 		}).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged if an attribute is missing");
@@ -780,8 +662,8 @@ sap.ui.define([
 			name: "complexProperty",
 			label: "Complex property",
 			propertyInfos: ["prop"],
-			additionalAttribute: true
-		}], null, null, {
+			additionalAttribute: "value"
+		}], null, {
 			additionalAttribute: {type: "string"}
 		}).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged");
@@ -790,11 +672,9 @@ sap.ui.define([
 	QUnit.module("Setting defaults and cloning of property infos", {
 		deepEqualProperties: function(assert, oPropertyHelper, aExpected, sMessage) {
 			var mSimpleDefaults = {
-				key: false,
 				visible: true,
 				sortable: true,
 				filterable: true,
-				groupable: false,
 				path: "",
 				unit: "",
 				group: "",
@@ -803,16 +683,13 @@ sap.ui.define([
 				exportSettings: {},
 				caseSensitive: true,
 				maxConditions: -1,
-				typeConfig: null,
-				required: false
+				typeConfig: null
 			};
 			var mComplexDefaults = {
 				propertyInfos: [],
-				key: false,
 				visible: true,
 				sortable: false,
 				filterable: false,
-				groupable: false,
 				path: null,
 				group: "",
 				groupLabel: "",
@@ -883,22 +760,13 @@ sap.ui.define([
 			name: "unit",
 			label: "Unit"
 		}];
-		var mExtensions = {
-			propB: {
-				complexAttr: {
-					intAttr: 2,
-					objectAttr: {foo: "bar"}
-				}
-			},
-			complexPropB: {
-				complexAttr: {}
-			}
-		};
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, mExtensions, null, {
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			additionalAttribute: {
 				type: "string",
 				"default": {value: "AttributeDefault"},
-				valueForComplexProperty: "DefaultForComplex"
+				forComplexProperty: {
+					valueIfNotAllowed: "DefaultForComplex"
+				}
 			},
 			additionalComplexAttribute: {
 				type: {
@@ -909,23 +777,6 @@ sap.ui.define([
 				type: "string",
 				"default": {value: "attribute:additionalComplexAttribute.subAttribute"}
 			}
-		}, {
-			complexAttr: {
-				type: {
-					intAttr: {type: "int", "default": {value: 2}, allowedForComplexProperty: true},
-					refAttr: {type: "PropertyReference", "default": {value: "attribute:unit"}},
-					objectAttr: {type: "object", "default": {value: {}}},
-					arrayAttr: {type: "string[]"}
-				},
-				"default": {
-					value: {
-						intAttr: 1
-					}
-				},
-				allowedForComplexProperty: true
-			},
-			stringAttr: {type: "string", "default": {value: "test"}},
-			defaultWithDeepPath: {type: "int", "default": {value: "attribute:extension.complexAttr.intAttr"}}
 		});
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
@@ -936,70 +787,30 @@ sap.ui.define([
 			additionalComplexAttribute: {
 				subAttribute: "subAttr"
 			},
-			additionalDefaultWithDeepPath: "subAttr",
-			extension: {
-				complexAttr: {
-					intAttr: 1,
-					refAttr: "unit",
-					objectAttr: {},
-					arrayAttr: []
-				},
-				stringAttr: "test",
-				defaultWithDeepPath: 1
-			}
+			additionalDefaultWithDeepPath: "subAttr"
 		}, {
 			name: "propB",
 			label: "Property B",
 			unit: "unit",
 			additionalAttribute: "AttributeDefault",
 			additionalComplexAttribute: null,
-			additionalDefaultWithDeepPath: "",
-			extension: {
-				complexAttr: {
-					intAttr: 2,
-					refAttr: "unit",
-					objectAttr: {foo: "bar"},
-					arrayAttr: []
-				},
-				stringAttr: "test",
-				defaultWithDeepPath: 2
-			}
+			additionalDefaultWithDeepPath: ""
 		}, {
 			name: "complexPropA",
 			label: "Complex property A",
 			propertyInfos: ["propA"],
-			additionalAttribute: "DefaultForComplex",
-			extension: {
-				complexAttr: {
-					intAttr: 1
-				}
-			}
+			additionalAttribute: "DefaultForComplex"
 		}, {
 			name: "complexPropB",
 			label: "Complex property B",
 			propertyInfos: ["propA"],
-			additionalAttribute: "DefaultForComplex",
-			extension: {
-				complexAttr: {
-					intAttr: 2
-				}
-			}
+			additionalAttribute: "DefaultForComplex"
 		}, {
 			name: "unit",
 			label: "Unit",
 			additionalAttribute: "AttributeDefault",
 			additionalComplexAttribute: null,
-			additionalDefaultWithDeepPath: "",
-			extension: {
-				complexAttr: {
-					intAttr: 1,
-					refAttr: "",
-					objectAttr: {},
-					arrayAttr: []
-				},
-				stringAttr: "test",
-				defaultWithDeepPath: 1
-			}
+			additionalDefaultWithDeepPath: ""
 		}]);
 
 		oPropertyHelper.destroy();
@@ -1010,7 +821,7 @@ sap.ui.define([
 			name: "prop",
 			label: "prop"
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, null, {
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			additionalAttribute: {
 				type: {
 					foo: {type: "string"}
@@ -1033,7 +844,7 @@ sap.ui.define([
 			label: "prop",
 			additionalAttribute: undefined
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, null, {
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			additionalAttribute: {
 				type: {
 					foo: {type: "string"}
@@ -1056,7 +867,7 @@ sap.ui.define([
 			label: "prop",
 			additionalAttribute: null
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, null, {
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			additionalAttribute: {
 				type: {
 					foo: {type: "string"}
@@ -1081,30 +892,15 @@ sap.ui.define([
 		}, {
 			name: "prop",
 			label: "Property"
-		}], {
-			complexProp: {foo: {}}
-		}, null, null, {
-			foo: {
-				type: {
-					bar: {type: "PropertyReference[]", "default": {value: "attribute:propertyInfos"}, allowedForComplexProperty: true}
-				},
-				allowedForComplexProperty: true
-			}
-		});
+		}]);
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "complexProp",
 			label: "Complex property",
-			propertyInfos: ["prop"],
-			extension: {
-				foo: {bar: ["prop"]}
-			}
+			propertyInfos: ["prop"]
 		}, {
 			name: "prop",
-			label: "Property",
-			extension: {
-				foo: null
-			}
+			label: "Property"
 		}]);
 
 		oPropertyHelper.destroy();
@@ -1114,23 +910,19 @@ sap.ui.define([
 		var oPropertyHelper = new PropertyHelper([{
 			name: "propA",
 			label: "Property A",
-			foo: {}
+			foo: {},
+			bar: {
+				props: ["propB"]
+			}
 		}, {
 			name: "propB",
 			label: "Property B"
-		}], {
-			propA: {
-				bar: {
-					props: ["propB"]
-				}
-			}
-		}, null, {
+		}], null, {
 			foo: {
 				type: {
-					props: {type: "PropertyReference[]", "default": {value: "attribute:extension.bar.props"}}
+					props: {type: "PropertyReference[]", "default": {value: "attribute:bar.props"}}
 				}
-			}
-		}, {
+			},
 			bar: {
 				type: {
 					props: {type: "PropertyReference[]"}
@@ -1142,16 +934,12 @@ sap.ui.define([
 			name: "propA",
 			label: "Property A",
 			foo: {props: ["propB"]},
-			extension: {
-				bar: {props: ["propB"]}
-			}
+			bar: {props: ["propB"]}
 		}, {
 			name: "propB",
 			label: "Property B",
 			foo: null,
-			extension: {
-				bar: null
-			}
+			bar: null
 		}]);
 
 		oPropertyHelper.destroy();
@@ -1166,7 +954,7 @@ sap.ui.define([
 			name: "propB",
 			label: "Property B",
 			foo: "propA"
-		}], null, null, {
+		}], null, {
 			foo: {type: "PropertyReference"}
 		});
 
@@ -1198,13 +986,13 @@ sap.ui.define([
 		}, {
 			name: "prop2",
 			label: "Property 2"
-		}], null, null, {
+		}], null, {
 			foo: {
 				type: {
-					bar: {type: "PropertyReference[]", "default": {value: "attribute:propertyInfos"}, allowedForComplexProperty: true},
-					baz: {type: "PropertyReference[]", allowedForComplexProperty: true}
+					bar: {type: "PropertyReference[]", "default": {value: "attribute:propertyInfos"}, forComplexProperty: {allowed: true}},
+					baz: {type: "PropertyReference[]", forComplexProperty: {allowed: true}}
 				},
-				allowedForComplexProperty: true
+				forComplexProperty: {allowed: true}
 			},
 			bar: {type: "PropertyReference", "default": {value: "attribute:baz"}},
 			baz: {type: "PropertyReference"}
@@ -1226,33 +1014,26 @@ sap.ui.define([
 			"Cached property reference of specified value");
 	});
 
-	QUnit.test("Propagate allowedForComplexProperty to child nodes", function(assert){
-		var aPropertyInfos = [{
+	QUnit.test("Propagation of 'allowed for complex property' to child attributes", function(assert){
+		var oPropertyHelper = new PropertyHelper([{
 			name: "prop",
-			label: "prop",
-			foo: {
-				bar: {
-					propA: "PropA",
-					propB: 10
-				}
-			}
+			label: "prop"
 		}, {
 			name: "complexProp",
 			label: "Complex property",
 			propertyInfos: ["prop"]
-		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, null, {
+		}], null, {
 			foo: {
 				type: {
 					bar: {
 						type: {
 							propA: {type: "string", "default": {value: "XYZ"}},
-							propB: {type: "int", "default": {value: 2}, allowedForComplexProperty: false}
+							propB: {type: "int", "default": {value: 2}, forComplexProperty: {allowed: false}}
 						}
 					}
 				},
 				"default": {value: {bar: {}}},
-				allowedForComplexProperty: true
+				forComplexProperty: {allowed: true}
 			}
 		});
 
@@ -1261,8 +1042,8 @@ sap.ui.define([
 			label: "prop",
 			foo: {
 				bar: {
-					propA: "PropA",
-					propB: 10
+					propA: "XYZ",
+					propB: 2
 				}
 			}
 		}, {
@@ -1274,6 +1055,38 @@ sap.ui.define([
 					propA: "XYZ"
 				}
 			}
+		}]);
+	});
+
+	QUnit.test("Prevent propagation of 'allowed for complex property' to child attributes", function(assert){
+		var oPropertyHelper = new PropertyHelper([{
+			name: "prop",
+			label: "prop"
+		}, {
+			name: "complexProp",
+			label: "Complex property",
+			propertyInfos: ["prop"]
+		}], null, {
+			foo: {
+				type: {
+					bar: {type: "string", "default": {value: "XYZ"}}
+				},
+				"default": {value: {}},
+				forComplexProperty: {allowed: true, propagateAllowance: false}
+			}
+		});
+
+		this.deepEqualProperties(assert, oPropertyHelper, [{
+			name: "prop",
+			label: "prop",
+			foo: {
+				bar: "XYZ"
+			}
+		}, {
+			name: "complexProp",
+			label: "Complex property",
+			propertyInfos: ["prop"],
+			foo: {}
 		}]);
 	});
 
@@ -1313,7 +1126,7 @@ sap.ui.define([
 			propertyInfos: ["propZ"],
 			foo: undefined
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, null, {
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			foo: {
 				type: {
 					bar: {
@@ -1326,7 +1139,7 @@ sap.ui.define([
 					lot: {type: "string", "default": {ignoreIfNull: true}}
 				},
 				"default": {value: {}},
-				allowedForComplexProperty: true
+				forComplexProperty: {allowed: true}
 			}
 		});
 
@@ -1391,26 +1204,15 @@ sap.ui.define([
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}];
-		var mExtensions = {
-			prop: {
-				foo: "bar"
-			}
-		};
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, mExtensions, null, null, {
-			foo: {type: "string"}
-		});
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos);
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
-			label: "prop",
-			extension: {
-				foo: "bar"
-			}
+			label: "prop"
 		}, {
 			name: "complexProperty",
 			label: "Complex property",
-			propertyInfos: ["prop"],
-			extension: {}
+			propertyInfos: ["prop"]
 		}]);
 
 		assert.deepEqual(aPropertyInfos, [{
@@ -1421,12 +1223,6 @@ sap.ui.define([
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}], "Original property infos were not modified");
-
-		assert.deepEqual(mExtensions, {
-			prop: {
-				foo: "bar"
-			}
-		}, "Original property extensions were not modified");
 
 		oPropertyHelper.destroy();
 	});
@@ -1450,33 +1246,11 @@ sap.ui.define([
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}];
-		var mExtensions = {
-			prop: {
-				foo: {
-					bar: {myAttr: 2},
-					baz: ["something"]
-				}
-			}
-		};
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, mExtensions, null, null, {
-			foo: {
-				type: {
-					bar: {type: "object"},
-					baz: {type: "string[]"}
-				}
-			}
-		});
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos);
 		var aClonedProperties = oPropertyHelper.getProperties();
 
 		assert.notStrictEqual(aClonedProperties, aPropertyInfos, "Property info array was cloned");
-		assert.notStrictEqual(aClonedProperties[0].extension, mExtensions.prop, "Property extension was cloned");
 		assert.notStrictEqual(aClonedProperties[0], aPropertyInfos[0], "Property object was cloned");
-		assert.notStrictEqual(aClonedProperties[0].extension.foo, mExtensions.prop.foo, "Complex settings object was cloned");
-		assert.notStrictEqual(aClonedProperties[0].extension.foo.bar, mExtensions.prop.foo.bar,
-			"Object nested in complex settings object was cloned");
-		assert.notStrictEqual(aClonedProperties[0].extension.foo.baz, mExtensions.prop.foo.baz,
-			"Array nested in complex settings object was cloned"
-		);
 		assert.notStrictEqual(aClonedProperties[0].exportSettings, aPropertyInfos[0].exportSettings, "Setting of type 'object' was cloned");
 		assert.notStrictEqual(aClonedProperties[0].typeConfig, aPropertyInfos[0].typeConfig, "Setting containing an instance was cloned");
 		assert.notStrictEqual(aClonedProperties[1], aPropertyInfos[1], "Complex property was cloned");
@@ -1500,22 +1274,7 @@ sap.ui.define([
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}];
-		var mExtensions = {
-			prop: {
-				foo: {
-					bar: {myAttr: 2},
-					baz: ["something"]
-				}
-			}
-		};
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, mExtensions, null, null, {
-			foo: {
-				type: {
-					bar: {type: "object"},
-					baz: {type: "string[]"}
-				}
-			}
-		});
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos);
 
 		aPropertyInfos.push({
 			name: "newProperty",
@@ -1525,8 +1284,6 @@ sap.ui.define([
 		aPropertyInfos[0].exportSettings.width = 0;
 		aPropertyInfos[0].typeConfig = {};
 		aPropertyInfos[1].propertyInfos.push("something");
-		mExtensions.prop.foo.bar.myOtherAttr = true;
-		mExtensions.prop.foo.baz.push("something else");
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
@@ -1534,18 +1291,11 @@ sap.ui.define([
 			exportSettings: {
 				label: "exportLabel",
 				width: 10
-			},
-			extension: {
-				foo: {
-					bar: {myAttr: 2},
-					baz: ["something"]
-				}
 			}
 		}, {
 			name: "complexProperty",
 			label: "Complex property",
-			propertyInfos: ["prop"],
-			extension: {}
+			propertyInfos: ["prop"]
 		}], "Cloned property infos did not change");
 
 		oPropertyHelper.destroy();
@@ -1584,7 +1334,7 @@ sap.ui.define([
 
 	QUnit.test("With a valid parent", function(assert) {
 		var oParent = new ManagedObject();
-		var oPropertyHelper = new PropertyHelper([], null, oParent);
+		var oPropertyHelper = new PropertyHelper([], oParent);
 
 		assert.strictEqual(oPropertyHelper.getParent(), oParent, "#getParent returns the reference to the parent");
 
@@ -1596,11 +1346,11 @@ sap.ui.define([
 
 	QUnit.test("With an invalid parent", function(assert) {
 		assert.throws(function() {
-			new PropertyHelper([], null, new (ManagedObject.getMetadata().getParent().getClass())());
+			new PropertyHelper([], new (ManagedObject.getMetadata().getParent().getClass())());
 		}, new Error("The type of the parent is invalid."), "Error thrown if the type of the parent is invalid");
 
 		assert.throws(function() {
-			new PropertyHelper([], null, {});
+			new PropertyHelper([], {});
 		}, new Error("The type of the parent is invalid."), "Error thrown if the parent is a plain object");
 	});
 
@@ -1625,27 +1375,10 @@ sap.ui.define([
 			}, {
 				name: "otherProp",
 				label: "My other property"
-			}], {
-				prop: {
-					foo: {
-						bar: {myAttr: 2},
-						baz: ["something"],
-						propertyRef: ["otherProp"]
-					}
-				}
-			}, null, {
+			}], null, {
 				additionalAttribute: {type: "object"},
 				singleRef: {type: "PropertyReference"},
 				multiRef: {type: "PropertyReference[]"}
-			}, {
-				foo: {
-					type: {
-						bar: {type: "object"},
-						baz: {type: "string[]"},
-						propertyRef: {type: "PropertyReference[]"},
-						singlePropertyRef: {type: "PropertyReference"}
-					}
-				}
 			});
 		},
 		after: function() {
@@ -1673,9 +1406,6 @@ sap.ui.define([
 		assert.ok(Object.isFrozen(oProp.additionalAttribute.array), "Plain object attribute: Nested array is frozen");
 		assert.ok(Object.isFrozen(oProp.additionalAttribute.array[0]), "Plain object attribute: Object in nested array is frozen");
 		assert.ok(Object.isFrozen(oProp.additionalAttribute.func), "Function attribute is frozen");
-		assert.ok(Object.isFrozen(oProp.extension.foo), "Complex object attribute is frozen");
-		assert.ok(Object.isFrozen(oProp.extension.foo.bar), "Complex object attribute: Nested object is frozen");
-		assert.ok(Object.isFrozen(oProp.extension.foo.baz), "Complex object attribute: Nested array is frozen");
 	});
 
 	QUnit.test("Property info array", function(assert) {
@@ -1723,10 +1453,7 @@ sap.ui.define([
 				name: "propA",
 				label: "Property A",
 				path: "propAPath",
-				key: true,
 				unit: "propB",
-				groupable: true,
-				aggregatable: true,
 				groupLabel: "Property A group label",
 				exportSettings: {
 					width: 20,
@@ -1791,18 +1518,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("setProperties", function(assert) {
-
 		var oValidatePropertiesSpy = sinon.spy();
 		var oValidatePropertySpy = sinon.spy();
 
 		var aReplacementProperties = [{
-			name: "replacedPropsA",
+			name: "ReplacedPropA",
 			label: "Replaced Property A",
 			sortable: false,
 			filterable: false,
 			visible: false
 		}, {
-			name: "replacedPropsB",
+			name: "ReplacedPropB",
 			label: "Replaced Property B",
 			sortable: false,
 			filterable: false,
@@ -1815,39 +1541,36 @@ sap.ui.define([
 				oValidatePropertiesSpy.apply(this, merge([], arguments));
 			},
 			validateProperty: function() {
-				oValidatePropertySpy.apply(this, merge([], arguments));
 				PropertyHelper.prototype.validateProperty.apply(this, arguments);
+				oValidatePropertySpy.apply(this, merge([], arguments));
 			}
 		});
 		var oMyPropertyHelper = new MyPropertyHelper(this.aOriginalProperties);
 
-		var aProperties = oMyPropertyHelper.getProperties();
-		assert.equal(aProperties.length, this.aOriginalProperties.length,
-			"The property array contains as many entries as there are properties");
-			this.aOriginalProperties.forEach(function(oOriginalProperty, iIndex) {
-			assert.strictEqual(aProperties[iIndex].name, oOriginalProperty.name,
-				"The property array references the correct property at index " + iIndex);
-		});
-
-		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(this.aOriginalProperties, undefined), "#validateProperties called once with the correct arguments");
-
-
+		oValidatePropertiesSpy.resetHistory();
+		oValidatePropertySpy.resetHistory();
 		oMyPropertyHelper.setProperties(aReplacementProperties);
-		aProperties = oMyPropertyHelper.getProperties();
+		var aProperties = oMyPropertyHelper.getProperties();
 
 		assert.equal(aProperties.length, aReplacementProperties.length,
 			"The property array contains as many entries as there are replaced properties");
-		aReplacementProperties.forEach(function(oOriginalProperty, iIndex) {
-			assert.strictEqual(aProperties[iIndex].name, oOriginalProperty.name,
+		aReplacementProperties.forEach(function(oReplacementProperty, iIndex) {
+			assert.strictEqual(aProperties[iIndex].name, oReplacementProperty.name,
 				"The property array references the correct replaced property at index " + iIndex);
 		});
+		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(aReplacementProperties, this.aOriginalProperties),
+			"#validateProperties called once with the correct arguments");
+		assert.equal(oValidatePropertySpy.callCount, 2, "#validateProperty called twice");
+		assert.ok(oValidatePropertySpy.getCall(0).calledWithExactly(aReplacementProperties[0], aReplacementProperties, this.aOriginalProperties),
+			"Arguments of first call");
+		assert.ok(oValidatePropertySpy.getCall(1).calledWithExactly(aReplacementProperties[1], aReplacementProperties, this.aOriginalProperties),
+			"Arguments of first call");
 
-		assert.ok(oValidatePropertiesSpy.calledTwice, "#validateProperties called twice");
-		assert.ok(oValidatePropertiesSpy.lastCall.calledWithExactly(aReplacementProperties, this.aOriginalProperties), "#validateProperties called a second time with the correct arguments");
-
+		assert.throws(function() {
+			oMyPropertyHelper.setProperties();
+		}, new Error("Invalid property definition: Property infos must be an array."));
 
 		oMyPropertyHelper.destroy();
-
 	});
 
 	QUnit.test("getPropertyMap", function(assert) {
@@ -1953,15 +1676,6 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getFilterableProperties(), [], "After destruction");
 	});
 
-	QUnit.test("getKeyProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getKeyProperties(), [
-			this.aProperties[0]
-		]);
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getKeyProperties(), [], "After destruction");
-	});
-
 	QUnit.test("getVisibleProperties", function(assert) {
 		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(), [
 			this.aProperties[0],
@@ -1973,21 +1687,11 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(), [], "After destruction");
 	});
 
-	QUnit.test("getGroupableProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(), [
-			this.aProperties[0]
-		]);
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(), [], "After destruction");
-	});
-
 	QUnit.module("Property", {
 		beforeEach: function() {
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "prop",
-				label: "Property",
-				groupable: true
+				label: "Property"
 			}, {
 				name: "prop2",
 				label: "Property 2",
@@ -2019,8 +1723,7 @@ sap.ui.define([
 		},
 		assertProperty: function(assert, oProperty) {
 			var aExpectedMethods = [
-				"isComplex", "getSimpleProperties", "getSortableProperties", "getFilterableProperties", "getVisibleProperties",
-				"getGroupableProperties"
+				"isComplex", "getSimpleProperties", "getSortableProperties", "getFilterableProperties", "getVisibleProperties"
 			];
 			var aActualMethods = [];
 
@@ -2106,23 +1809,6 @@ sap.ui.define([
 
 		this.oPropertyHelper.destroy();
 		assert.deepEqual(oComplexProperty.getFilterableProperties(), [oSimpleProperty], "After destruction");
-	});
-
-	QUnit.test("getGroupableProperties", function(assert) {
-		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
-		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
-
-		oSimpleProperty.getGroupableProperties().push("s"); // Returned array must not be influenced by changes to previously returned arrays.
-		assert.deepEqual(oSimpleProperty.getGroupableProperties(), [oSimpleProperty], "Groupable simple property");
-		assert.deepEqual(oComplexProperty.getGroupableProperties(), [oSimpleProperty], "Complex property referencing groupable properties");
-		assert.deepEqual(this.oPropertyHelper.getProperty("prop2").getGroupableProperties(), [], "Non-groupable simple property");
-		assert.deepEqual(this.oPropertyHelper.getProperty("complexProp2").getGroupableProperties(), [],
-			"Complex property referencing non-groupable properties");
-		assert.ok(Object.isFrozen(oSimpleProperty.getGroupableProperties), "The function is frozen");
-		assert.ok(Object.isFrozen(oSimpleProperty.getGroupableProperties()[0]), "Returned properties are frozen");
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(oComplexProperty.getGroupableProperties(), [oSimpleProperty], "After destruction");
 	});
 
 	QUnit.test("getVisibleProperties", function(assert) {
