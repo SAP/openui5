@@ -85,7 +85,8 @@
 			class="sapUiSmallMarginBottom"/>
 		<Text text="{path:'/dateValue', type:'sap.ui.model.type.Date', formatOptions: { style: 'long'}}" class="sapUiSmallMargin"/>
 	</Panel>
-	<Panel headerText="DatePicker showing usage of isValidValue function. It has set minDate=2016-01-01 and maxDate=2019-12-31">
+	<Panel headerText="DatePicker showing usage of isValidValue function.">
+		<Label text="DatePicker with minDate=2016-01-01 and maxDate=2019-12-31" labelFor="DP9"/>
 		<DatePicker
 			id="DP9" class="sapUiSmallMarginBottom"/>
 		<l:VerticalLayout>
