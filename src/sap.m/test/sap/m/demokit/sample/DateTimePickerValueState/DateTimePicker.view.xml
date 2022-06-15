@@ -4,8 +4,9 @@
 	xmlns="sap.m">
 	<FlexBox items="{path: '/modelData'}" direction="Column">
 		<VBox class="sapUiTinyMargin" >
-			<Label text="{label}" />
+			<Label text="{label}" labelFor="DTP" />
 			<DateTimePicker
+				id="DTP"
 				width="100%"
 				valueState="{valueState}"
 				valueStateText="{valueStateText}"/>
