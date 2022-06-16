@@ -109,6 +109,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.webc.main.ColorPalette",
+				"name": "ColorPalette",
+				"category": "Web Components",
+				"since": "1.100.0",
+				"samples": [
+					"sap.ui.webc.main.sample.ColorPalette"
+				]
+			},
+			{
 				"id": "sap.ui.webc.main.Dialog",
 				"name": "Dialog",
 				"category": "Web Components",
@@ -433,6 +442,11 @@
 				"id": "sap.ui.webc.main.sample.ComboBox",
 				"name": "ComboBox Example",
 				"description": "Demonstrates the basic usage of ComboBox"
+			},
+			{
+				"id": "sap.ui.webc.main.sample.ColorPalette",
+				"name": "ColorPalette",
+				"description": "Demonstrates the basic usage of ColorPalette"
 			},
 			{
 				"id": "sap.ui.webc.fiori.sample.DynamicSideContent",
