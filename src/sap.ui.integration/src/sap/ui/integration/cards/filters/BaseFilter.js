@@ -256,5 +256,20 @@ sap.ui.define([
 		this._oDataProvider.triggerDataUpdate();
 	};
 
+	BaseFilter.prototype._setValue = function () {
+		var oValueForModel = this.getValueForModel(),
+			oCard = this.getCardInstance(),
+			mParams = {},
+			sManifestKey;
+
+		this.setValue(oValueForModel);
+
+		if (oCard) {
+			sManifestKey = "/sap.card/configuration/filters/" + this.getKey() + "/value";
+			mParams[sManifestKey] = oValueForModel.value;
+			this.getCardInstance()._fireConfigurationChange(mParams);
+		}
+	};
+
 	return BaseFilter;
 });

@@ -43,6 +43,28 @@
 							"key": "stara_zagora"
 						}
 					]
+				},
+				"country": {
+					"type": "Search",
+					"label": "Country",
+					"value": "France",
+					"placeholder": "Provide a country name"
+				},
+				"period": {
+					"type": "DateRange",
+					"value": {
+						"option": "today",
+						"values": []
+					},
+					"options": [
+						"today",
+						"yesterday",
+						"tomorrow",
+						"dateRange",
+						"nextDays",
+						"lastDays"
+					],
+					"label": "Activity period"
 				}
 			}
 		},

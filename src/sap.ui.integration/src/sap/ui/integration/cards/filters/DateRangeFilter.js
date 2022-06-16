@@ -205,7 +205,7 @@ sap.ui.define([
 		oDdr.attachChange(function (oEvent) {
 			if (oEvent.getParameter("valid")) {
 				oDdr.setValueState(ValueState.None);
-				this.setValue(this.getValueForModel());
+				this._setValue();
 			} else {
 				oDdr.setValueState(ValueState.Error);
 			}

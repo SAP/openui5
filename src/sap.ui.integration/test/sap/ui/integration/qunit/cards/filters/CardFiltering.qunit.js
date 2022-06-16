@@ -143,8 +143,11 @@ sap.ui.define([
 			// Act
 			var oFilterBar = this.oCard.getAggregation("_filterBar"),
 				oSelect = oFilterBar._getFilters()[0]._getSelect(),
+				oSearchField = oFilterBar._getFilters()[2]._getSearchField(),
+				oDdr = oFilterBar._getFilters()[3]._getDdr(),
 				mArguments;
 
+			// select filter
 			oSelect.onSelectionChange({
 				getParameter: function () {
 					return oSelect.getItems()[0];
@@ -162,6 +165,48 @@ sap.ui.define([
 			assert.strictEqual(mArguments.changes["/sap.card/configuration/filters/category/value"], "flat_screens", "arguments are correct");
 			assert.strictEqual(mArguments.card, this.oCard, "card parameter is correct");
 
+			// search filter
+			oSearchField.getInputElement().value = "A";
+			oSearchField.onSearch();
+			Core.applyChanges();
+
+			assert.strictEqual(oFireConfigurationChangeSpy.callCount, 2, "configurationChange event is fired");
+			assert.strictEqual(oFireCardConfigurationChangeHostSpy.callCount, 2, "cardConfigurationChange event of the Host is fired");
+
+			mArguments = oFireConfigurationChangeSpy.args[1][0];
+			assert.strictEqual(mArguments.changes["/sap.card/configuration/filters/country/value"], "A", "arguments are correct");
+
+			mArguments = oFireCardConfigurationChangeHostSpy.args[1][0];
+			assert.strictEqual(mArguments.changes["/sap.card/configuration/filters/country/value"], "A", "arguments are correct");
+			assert.strictEqual(mArguments.card, this.oCard, "card parameter is correct");
+
+			// Dynamic Date Range filter
+			oDdr._handleInputChange({
+				getParameter: function () {
+					return "Oct 4, 2021 - Oct 5, 2021";
+				}
+			});
+			Core.applyChanges();
+
+			var oExpectedResult = {
+				"option": "dateRange",
+				"values": [
+					new Date("Oct 4, 2021"),
+					new Date("Oct 5, 2021")
+				]
+			};
+
+			assert.strictEqual(oFireConfigurationChangeSpy.callCount, 3, "configurationChange event is fired");
+			assert.strictEqual(oFireCardConfigurationChangeHostSpy.callCount, 3, "cardConfigurationChange event of the Host is fired");
+
+			mArguments = oFireConfigurationChangeSpy.args[2][0];
+			assert.deepEqual(mArguments.changes["/sap.card/configuration/filters/period/value"], oExpectedResult, "arguments are correct");
+
+			mArguments = oFireCardConfigurationChangeHostSpy.args[2][0];
+			assert.deepEqual(mArguments.changes["/sap.card/configuration/filters/period/value"], oExpectedResult, "arguments are correct");
+			assert.strictEqual(mArguments.card, this.oCard, "card parameter is correct");
+
+			// destory
 			oFireConfigurationChangeSpy.reset();
 			oFireCardConfigurationChangeHostSpy.reset();
 			oHost.destroy();
