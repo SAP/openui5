@@ -38,6 +38,13 @@ function(
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
+	var getNextSelectionNumber = (function () {
+		var i = 0;
+		return function () {
+			return i++;
+		};
+	}());
+
 	/**
 	 * Constructor for a new RadioButton.
 	 *
@@ -223,10 +230,20 @@ function(
 		PREV: "prev"
 	};
 
+	RadioButton.prototype.init = function () {
+		this._iSelectionNumber = -1;
+	};
+
 	RadioButton.prototype.onBeforeRendering = function() {
-		this._updateGroupName(this.getGroupName());
+		var sGroupName = this.getGroupName();
+
+		this._updateGroupName(sGroupName);
 		this._updateLabelProperties();
 
+		// If this radio button is selected, explicitly deselect the other radio buttons in the same group
+		if (this.getSelected() && sGroupName !== "" && this._isLastSelectedInGroup(sGroupName)) {
+			this._deselectOthersInGroup(sGroupName);
+		}
 	};
 
 	/**
@@ -302,22 +319,10 @@ function(
 	 * @public
 	 */
 	RadioButton.prototype.setSelected = function(bSelected) {
-		var sGroupName = this.getGroupName(),
-			aControlsInGroup = this._groupNames[sGroupName],
-			iLength = aControlsInGroup && aControlsInGroup.length;
-
 		this.setProperty("selected", bSelected);
-		this._updateGroupName(sGroupName);
 
-		if (bSelected && sGroupName) { // If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
-			for (var i = 0; i < iLength; i++) {
-				var oControl = aControlsInGroup[i];
-
-				if (oControl instanceof RadioButton && oControl !== this && oControl.getSelected()) {
-					oControl.fireSelect({ selected: false });
-					oControl.setSelected(false);
-				}
-			}
+		if (this.getSelected()) {
+			this._iSelectionNumber = getNextSelectionNumber();
 		}
 
 		return this;
@@ -591,6 +596,28 @@ function(
 
 		if (aNewGroup.indexOf(this) === -1) {
 			aNewGroup.push(this);
+		}
+	};
+
+	RadioButton.prototype._isLastSelectedInGroup = function (sGroupName) {
+		var aControlsInGroup = this._groupNames[sGroupName];
+
+		return aControlsInGroup.every(function (aButton) {
+			return aButton._iSelectionNumber <= this._iSelectionNumber;
+		}.bind(this));
+	};
+
+	RadioButton.prototype._deselectOthersInGroup = function (sGroupName) {
+		var aControlsInGroup = this._groupNames[sGroupName],
+			iLength = aControlsInGroup && aControlsInGroup.length;
+
+		for (var i = 0; i < iLength; i++) {
+			var oControl = aControlsInGroup[i];
+
+			if (oControl instanceof RadioButton && oControl !== this && oControl.getSelected()) {
+				oControl.fireSelect({ selected: false });
+				oControl.setSelected(false);
+			}
 		}
 	};
 
