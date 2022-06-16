@@ -13,7 +13,7 @@ sap.ui.define([
 		},
 		handleSelectedDatesChange: function(oEvent) {
 			var demoToast = this.getView().byId("demoToast");
-			demoToast.setText("Event selectedDatesChange fired.");
+			demoToast.setText("Event selectedDatesChange fired with value: " + oEvent.getParameter("values"));
 			demoToast.show();
 		}
 
