@@ -84,7 +84,6 @@ sap.ui.define([
 	}});
 
 
-	(function() {
 
 	MenuTextFieldItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo){
 		var rm = oRenderManager,
@@ -373,8 +372,6 @@ sap.ui.define([
 
 		return this._invisibleCountInformation;
 	};
-
-	}());
 
 
 	return MenuTextFieldItem;
