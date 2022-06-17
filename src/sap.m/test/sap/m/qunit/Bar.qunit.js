@@ -355,12 +355,7 @@ sap.ui.define([
 			oBarWidths = getBarContentStyles(sut);
 			assert.notEqual("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must not be set to 100%");
 			assert.notEqual("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must not be set to 100%");
-			if (sMsgPrefix === "after onAfterRendering") {
-				// onAfterRendering - regardless of the content, it should be resized in this live cycle
-				assert.notEqual("width:100%",oBarWidths.mid, sMsgPrefix + " Middle Content width must be set to 100%");
-			} else {
-				assert.equal("width:100%",oBarWidths.mid, sMsgPrefix + " Middle Content width must be set to 100%");
-			}
+			assert.equal("width:100%",oBarWidths.mid, sMsgPrefix + " Middle Content width must be set to 100%");
 		}
 
 		//Arrange
