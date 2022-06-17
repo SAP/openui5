@@ -119,16 +119,15 @@ sap.ui.define([
 		Given.iStartMyUIComponentInViewMode();
 
 		var sTableID = "__component" + iComponent + "---books--booksTable";
-		//???? why onTable and not onTheMDCTable?
 		//???? first parameter is called oControl. Why not oTable or vTableIdentifier.....
-		When.onTable.iPersonalizeColumns(sTableID, ["Genre", "Sub Genre"]);
-		When.onTable.iResetThePersonalization(sTableID);
+		When.onTheMDCTable.iPersonalizeColumns(sTableID, ["Genre", "Sub Genre"]);
+		When.onTheMDCTable.iResetThePersonalization(sTableID);
 		//Then TODO no assertions available
 
-		When.onTable.iPersonalizeFilter(sTableID, [{key : "Language", values: ["DE"], inputControl: "__component" + iComponent + "---books--booksTable--filter--language_code"}]);
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [{key : "Language", values: ["DE"], inputControl: "__component" + iComponent + "---books--booksTable--filter--language_code"}]);
 
-		When.onTable.iPersonalizeSort(sTableID, [{key: "Price", descending: false}]); //ERROR failed because of custom stock slider (when at the end I call teardown....)
-		// When.onTable.iResetThePersonalization(sTableID);
+		When.onTheMDCTable.iPersonalizeSort(sTableID, [{key: "Price", descending: false}]); //ERROR failed because of custom stock slider (when at the end I call teardown....)
+		// When.onTheMDCTable.iResetThePersonalization(sTableID);
 
 		Then.iTeardownMyUIComponent();
 	});
@@ -158,13 +157,13 @@ sap.ui.define([
 		}
 		]);
 		Then.onTheMDCChart.iShouldSeeTheDrillStack(["author_ID", "language_code"], sChartID); // why is sChartID the second param?
-		When.onTable.iResetThePersonalization(sChartID);
+		When.onTheMDCTable.iResetThePersonalization(sChartID);
 
 		//TODO does not exist for Chart
 		// When.onTheMDCChart.iPersonalizeFilter(sChartID, [{key : "language_code", operator: "EQ", values: ["DE"], inputControl: "__component0---books--booksTable--filter--language_code"}]);
 
 		When.onTheMDCChart.iPersonalizeSort(sChartID, [{key: "Language", descending: true}]); // This is not a key it is the label!
-		When.onTable.iResetThePersonalization(sChartID);
+		When.onTheMDCTable.iResetThePersonalization(sChartID);
 
 		// zoom is disabled for most chart types
 		//When.onTheMDCChart.iClickOnZoomIn(sChartID);
@@ -191,18 +190,18 @@ sap.ui.define([
 
 		var sFilterBarID = "__component" + iComponent + "---books--booksFilterBar";
 		// for the Filterbar the sFilterBarID can be Object instance or id string.
-		When.onFilterBar.iPersonalizeFilter(sFilterBarID, {	Books: ["Author ID"] });
+		When.onTheMDCFilterBar.iPersonalizeFilter(sFilterBarID, {	Books: ["Author ID"] });
 		//    When.onTheMDCChart.iPersonalizeFilter(sFilterBarID, [{key : "language_code", operator: "EQ", values: ["DE"], inputControl: "__component0---books--booksTable--filter--language_code"}]);
 		//TODO no assertions available
-		When.onFilterBar.iResetThePersonalization(sFilterBarID);
+		When.onTheMDCFilterBar.iResetThePersonalization(sFilterBarID);
 
-		When.onFilterBar.iEnterFilterValue(sFilterBarID, { // Why does this action always change FilterValues on the Adapt Filters dialog and not directly on the FB?
+		When.onTheMDCFilterBar.iEnterFilterValue(sFilterBarID, { // Why does this action always change FilterValues on the Adapt Filters dialog and not directly on the FB?
 			Books: {
 				label: "Author ID",
 				values: [ "101"] //, "102" ]
 			}
 		});
-		Then.onFilterBar.iShouldSeeFilters(sFilterBarID, {
+		Then.onTheMDCFilterBar.iShouldSeeFilters(sFilterBarID, {
 			// Why do I not need the Books group in the iShouldSeeFilters?
 			// Why can I not test the expected values in the format values: [ "101", "102" ]?
 			"Author ID": [
@@ -217,14 +216,14 @@ sap.ui.define([
 			]
 		});
 
-		When.onFilterBar.iExpectSearch(sFilterBarID);
+		When.onTheMDCFilterBar.iExpectSearch(sFilterBarID);
 
 		//ERROR Clear does not work. It waits for tokens which are not visible on the field
-		When.onFilterBar.iClearFilterValue(sFilterBarID, "Author ID");
-		Then.onFilterBar.iShouldSeeFilters(sFilterBarID, {
+		When.onTheMDCFilterBar.iClearFilterValue(sFilterBarID, "Author ID");
+		Then.onTheMDCFilterBar.iShouldSeeFilters(sFilterBarID, {
 			"Author ID": []
 		});
-		When.onFilterBar.iExpectSearch(sFilterBarID);
+		When.onTheMDCFilterBar.iExpectSearch(sFilterBarID);
 
 		Then.iTeardownMyUIComponent();
 	});
@@ -241,12 +240,12 @@ sap.ui.define([
 
 
 		// I should see the Standard Variant and Filterbar with empty FilterFields
-		Then.onTheVariant.iShouldSeeTheVariantManagerButton("Standard");
+		Then.onTheMDCVariant.iShouldSeeTheVariantManagerButton("Standard");
 
-		Then.onFilterBar.iShouldSeeTheFilterBar();
-		Then.onFilterBar.iShouldSeeTheAdaptFiltersButton();
+		Then.onTheMDCFilterBar.iShouldSeeTheFilterBar();
+		Then.onTheMDCFilterBar.iShouldSeeTheAdaptFiltersButton();
 		//TODO iShouldSeeTheFilterFieldsWithLabels does not work when we have a basic search field on the Filterbar.
-		//Then.onFilterBar.iShouldSeeTheFilterFieldsWithLabels(["", "Author ID", "Title", "Stock range", "Published", "Language", "Genre", "Sub Genre"]);
+		//Then.onTheMDCFilterBar.iShouldSeeTheFilterFieldsWithLabels(["", "Author ID", "Title", "Stock range", "Published", "Language", "Genre", "Sub Genre"]);
 
 		// Chart (I should see a “Books Chart” Chart with Bars chart)
 		var sChartID = "__component" + iComponent + "---books--bookChart";
@@ -256,7 +255,7 @@ sap.ui.define([
 
 
 		// I should see a Books table with columns (x,y,z) and n rows.
-		Then.onTable.iShouldSeeTheTableHeader("Books");
+		Then.onTheMDCTable.iShouldSeeTheTableHeader("Books");
 
 
 
@@ -265,13 +264,13 @@ sap.ui.define([
 		//TODO should work with id instead of label as parameter
 		// When.onTheMDCFilterField.iEnterTextOnTheFilterField("Title", "*Wallpaper*");
 
-		When.onFilterBar.iEnterFilterValue(sFilterBarID, {
+		When.onTheMDCFilterBar.iEnterFilterValue(sFilterBarID, {
 			Books: {
 				label: "Title",
 				values: ["*Wallpaper*"]
 			}
 		});
-		Then.onFilterBar.iShouldSeeFilters(sFilterBarID, {
+		Then.onTheMDCFilterBar.iShouldSeeFilters(sFilterBarID, {
 			"Title": [
 				{
 					operator: "Contains",
@@ -283,12 +282,12 @@ sap.ui.define([
 
 
 		//I press the Go button (or press enter in the search field)
-		When.onFilterBar.iExpectSearch(sFilterBarID);
+		When.onTheMDCFilterBar.iExpectSearch(sFilterBarID);
 
 
 
 		//I should see a table with one book and the title “The Yellow Wallpaper“
-		Then.onTable.iShouldSeeRowsWithData(1);
+		Then.onTheMDCTable.iShouldSeeRowsWithData(1);
 
 
 		// I click on the row The Yellow Wallpaper
@@ -326,7 +325,7 @@ sap.ui.define([
 
 
 		//I should see a table with one row and a column Price with value 35.00 GBP
-		Then.onTable.iShouldSeeARowWithData(0, JSON.parse('["The Yellow Wallpaper","Mentally ill women  Fiction, Feminist fiction, Psychological fiction, Married women  Psychology  Fiction, Sex role  Fiction",102,["22","GBP"],815,"religious_text","prophecy"]'));
+		Then.onTheMDCTable.iShouldSeeARowWithData(0, JSON.parse('["The Yellow Wallpaper","Mentally ill women  Fiction, Feminist fiction, Psychological fiction, Married women  Psychology  Fiction, Sex role  Fiction",102,["22","GBP"],815,"religious_text","prophecy"]'));
 
 
 
