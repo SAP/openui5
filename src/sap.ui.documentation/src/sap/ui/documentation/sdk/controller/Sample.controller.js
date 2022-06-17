@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/m/library",
 	"sap/base/Log",
-	"../util/ParamUtils",
 	"sap/ui/core/Fragment",
 	"sap/ui/documentation/sdk/util/Resources",
 	"./config/sampleForwardingConfig",
@@ -34,7 +33,6 @@ sap.ui.define([
 	HTML,
 	mobileLibrary,
 	Log,
-	ParamUtils,
 	Fragment,
 	ResourcesUtil,
 	sampleForwardingConfig,
@@ -93,7 +91,7 @@ sap.ui.define([
 			 * @private
 			 */
 			_onSampleMatched: function (event) {
-				var bShouldRedirect = ParamUtils.containsKey("dk-sample-standalone");
+				var bShouldRedirect = new URLSearchParams(window.location.search).has("dk-sample-standalone");
 
 				this._sId = event.getParameter("arguments").sampleId;
 				this._sEntityId = event.getParameter("arguments").entityId;

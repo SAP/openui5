@@ -178,23 +178,21 @@
 					var oContainer = new ComponentContainer({component : oComponent, height: "100%"})
 							.placeAt("content");
 					var oConfig = oComponent.getMetadata().getConfig();
+					var bOpenStandalone = new URLSearchParams(window.location.search).has("dk-sample-standalone");
 
 					// if dk-sample-standalone is used,
 					// display message for samples with own index.html
-					if (oConfig.sample && oConfig.sample.iframe) {
+					if (bOpenStandalone && oConfig.sample && oConfig.sample.iframe) {
 						sap.ui.require([
 							"sap/m/IllustratedMessage",
-							"sap/m/IllustratedMessageType",
-							"sap/ui/documentation/sdk/util/ParamUtils"
-						], function (IllustratedMessage, IllustratedMessageType, ParamUtils) {
-							if (ParamUtils.containsKey("dk-sample-standalone")) {
-								oContainer.destroy();
-								new IllustratedMessage({
-									title: "Sample unsupported",
-									description: "Samples with own index.html are currently unsupported by dk-sample-standalone.",
-									illustrationType: IllustratedMessageType.PageNotFound
-								}).placeAt("content");
-							}
+							"sap/m/IllustratedMessageType"
+						], function (IllustratedMessage, IllustratedMessageType) {
+							oContainer.destroy();
+							new IllustratedMessage({
+								title: "Sample unsupported",
+								description: "Samples with own index.html are currently unsupported by dk-sample-standalone.",
+								illustrationType: IllustratedMessageType.PageNotFound
+							}).placeAt("content");
 						});
 					}
 
