@@ -4734,4 +4734,30 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 	QUnit.test("Test a Link", function(assert) {
 		assert.equal(this.oGenericTile.$().attr("draggable"),undefined, "a Links are draggale by default hence draggable attr should not be set manually ");
 	});
+	QUnit.module("Loading State Tests", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile({
+				state: LoadState.Loading,
+				header: "headerText",
+				subheader: "subheaderText",
+				url: "Test url",
+				sizeBehavior: "Small",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter"
+				})
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+	QUnit.test("GenericTile in OneByOne FrameType", function(assert) {
+		//Assert
+		assert.equal(getComputedStyle(document.querySelector(".sapMGTContentShimmerPlaceholderItemHeader")).width,"116px","Header Shimmer Width Set Correctly");
+		assert.equal(getComputedStyle(document.querySelector(".sapMGTContentShimmerPlaceholderItemText")).width,"94px","Sub Header Shimmer Width Set Correctly");
+		assert.equal(getComputedStyle(document.querySelector(".sapMTileCntContentShimmerPlaceholderItemTextFooter")).width,"94px","Footer Shimmer Width Set Correctly");
+	});
 });
