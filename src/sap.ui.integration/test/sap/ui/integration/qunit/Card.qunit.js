@@ -855,6 +855,140 @@ sap.ui.define([
 				}
 			}
 		};
+		var oManifest_No_Data_Object = {
+			"sap.app": {
+				"id": "test.card.NoData"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": {
+						"firstName": "Donna",
+						"lastName": "Moore",
+						"position": "Sales Executive",
+						"phone": "+1 202 555 5555",
+						"email": "my@mymail.com",
+						"photo": "./DonnaMoore.png",
+						"agendaUrl": "/agenda",
+						"manager": {
+						},
+						"company": {
+							"name": "Robert Brown Entertainment",
+							"address": "481 West Street, Anytown OH 45066, USA",
+							"email": "mail@mycompany.com",
+							"emailSubject": "Subject",
+							"website": "www.company_a.example.com",
+							"url": "https://www.company_a.example.com"
+						}
+					}
+				},
+				"header": {},
+				"content": {
+					"hasData": "{/manager}",
+					"groups": [
+						{
+							"title": "Contact Details",
+							"items": [
+								{
+									"label": "First Name",
+									"value": "{firstName}"
+								},
+								{
+									"label": "Last Name",
+									"value": "{lastName}"
+								},
+								{
+									"label": "Phone",
+									"value": "{phone}",
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "tel:{phone}"
+											}
+										}
+									]
+								},
+								{
+									"label": "Email",
+									"value": "{email}",
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "mailto:{email}"
+											}
+										}
+									]
+								},
+								{
+									"label": "Agenda",
+									"value": "Book a meeting",
+									"actions": [
+										{
+											"type": "Navigation",
+											"enabled": "{= ${agendaUrl}}",
+											"parameters": {
+												"url": "{agendaUrl}"
+											}
+										}
+									]
+								}
+							]
+						},
+						{
+							"title": "Company Details",
+							"items": [
+								{
+									"label": "Company Name",
+									"value": "{company/name}"
+								},
+								{
+									"label": "Address",
+									"value": "{company/address}"
+								},
+								{
+									"label": "Email",
+									"value": "{company/email}",
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "mailto:{company/email}?subject={company/emailSubject}"
+											}
+										}
+									]
+								},
+								{
+									"label": "Website",
+									"value": "{company/website}",
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "{company/url}"
+											}
+										}
+									]
+								}
+							]
+						},
+						{
+							"title": "Organizational Details",
+							"items": [
+								{
+									"label": "Direct Manager",
+									"value": "{manager/firstName} {manager/lastName}",
+									"icon": {
+										"src": "{manager/photo}"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		};
 		var oManifest_No_Data_Table = {
 			"sap.app": {
 				"id": "test.card.NoData"
@@ -2124,6 +2258,27 @@ sap.ui.define([
 			}.bind(this));
 			// Act
 			this.oCard.setManifest(oManifest_No_Data_Table);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.test("IllustratedMessage should be used for error in no data scenario - Object Card", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+				var oFlexBox = this.oCard._getIllustratedMessage(undefined, true),
+					oIllustratedMessage = oFlexBox.getItems()[0];
+
+				// Assert
+				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message type should be no data for Object Card");
+				assert.strictEqual(this.oCard.getCardContent().getItems()[0].getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_CHART"), "Correct message is displayed");
+
+				// Clean up
+				done();
+			}.bind(this));
+			// Act
+			this.oCard.setManifest(oManifest_No_Data_Object);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});

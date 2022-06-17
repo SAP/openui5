@@ -1929,6 +1929,11 @@ sap.ui.define([
 				case "Analytical":
 					sIllustratedMessageType = IllustratedMessageType.NoEntries;
 					sTitle = this._oIntegrationRb.getText("CARD_NO_ITEMS_ERROR_CHART");
+					break;
+				case "Object":
+					sIllustratedMessageType = IllustratedMessageType.NoData;
+					sTitle = this._oIntegrationRb.getText("CARD_NO_ITEMS_ERROR_CHART");
+					break;
 			}
 		}
 

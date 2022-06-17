@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/m/ComboBox",
 	"sap/m/TextArea",
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
@@ -49,6 +50,7 @@ sap.ui.define([
 	ComboBox,
 	TextArea,
 	Log,
+	isEmptyObject,
 	ResizeHandler,
 	AlignedFlowLayout,
 	Rem,
@@ -115,6 +117,32 @@ sap.ui.define([
 		if (this._sResizeListenerId) {
 			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = "";
+		}
+	};
+
+	/**
+	 * Handler for when data is changed.
+	 */
+	ObjectContent.prototype.onDataChanged = function () {
+		this._handleNoItemsError(this.getParsedConfiguration().hasData);
+	};
+
+	/**
+	 * Used to show the illustrated message when there is empty data retrieved.
+	 *
+	 * @protected
+	 * @param {String} sValue value to resolve data.
+	 */
+	ObjectContent.prototype._handleNoItemsError = function (sValue) {
+		if (!sValue) {
+			return;
+		}
+
+		var oResolvedValue = BindingResolver.resolveValue(sValue, this, this.getBindingContext().getPath());
+
+		// check for falsy value, empty array or an empty object
+		if (!oResolvedValue || Array.isArray(oResolvedValue) && !oResolvedValue.length || isEmptyObject(oResolvedValue)) {
+			this.getParent()._handleError("No items available", true);
 		}
 	};
 
