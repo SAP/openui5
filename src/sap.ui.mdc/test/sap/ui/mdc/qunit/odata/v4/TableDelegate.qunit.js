@@ -836,7 +836,7 @@ sap.ui.define([
 			oValidationState = oTable.validateState(oState, "Group");
 			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
 				"Information message, Grouping and aggreagtion can't be used simulatneously");
-			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION", "Name"),
+			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", "Name"),
 				"Message text is correct");
 
 			oState = {
@@ -853,6 +853,21 @@ sap.ui.define([
 			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
 				"No message because oState.items is undefined");
 			assert.equal(oValidationState.message, undefined, "Message text is undefined");
+
+
+			// Test grouping on non visible column in ResponsiveTable
+			oTable.setType(TableType.ResponsiveTable);
+			return oTable._fullyInitialized().then(function() {
+				oState = {
+					items: [{name: "Name"}],
+					groupLevels: [{name: "Country"}]
+				};
+				oValidationState = oTable.validateState(oState, "Group");
+				assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
+					"Information message, Grouping can't be used on non visible column.");
+				assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE", "Country"),
+					"Message text is correct");
+			});
 		});
 	});
 
@@ -1279,9 +1294,10 @@ sap.ui.define([
 	QUnit.test("Transformation Search", function(assert) {
 		var done = assert.async();
 		var oTable = this.oTable;
+		var fnOriginalUpdateBindingInfo;
 
 		return oTable._fullyInitialized().then(function() {
-			var fnOriginalUpdateBindingInfo = oTable.getControlDelegate().updateBindingInfo;
+			fnOriginalUpdateBindingInfo = oTable.getControlDelegate().updateBindingInfo;
 			oTable.getControlDelegate().updateBindingInfo = function(oTable, oBindingInfo) {
 				fnOriginalUpdateBindingInfo(oTable, oBindingInfo);
 				oBindingInfo.parameters["$search"] = "Name";
@@ -1315,6 +1331,7 @@ sap.ui.define([
 				]),
 				search: "Name"
 			}), "Plugin#setAggregationInfo call");
+			oTable.getControlDelegate().updateBindingInfo = fnOriginalUpdateBindingInfo;
 			done();
 		});
 	});
@@ -1325,6 +1342,13 @@ sap.ui.define([
 				name: "Name",
 				path: "Name",
 				label: "Name",
+				sortable: true,
+				groupable: true,
+				filterable: true
+			},{
+				name: "Country",
+				label: "Country",
+				path: "Country",
 				sortable: true,
 				groupable: true,
 				filterable: true
@@ -1340,7 +1364,11 @@ sap.ui.define([
 						collectionPath: "/ProductList"
 					}
 				}
-			}).setModel(new ODataModel({
+			}).addColumn(new Column({
+				header: "Name",
+				dataProperty: "Name",
+				template: new Text({text: "Name"})
+			})).setModel(new ODataModel({
 				synchronizationMode: "None",
 				serviceUrl: "serviceUrl/",
 				operationMode: "Server"
@@ -1408,6 +1436,13 @@ sap.ui.define([
 		this.oTable.setGroupConditions()._rebind();
 		assert.ok(this.oSetAggregationSpy.secondCall.calledWithMatch( { groupLevels: [] }));
 		assert.equal(this.oRebindSpy.callCount, 0);
+
+		// Test grouping on non visible column in ResponsiveTable
+		this.oTable.setType(TableType.ResponsiveTable);
+		return this.oTable._fullyInitialized().then(function() {
+			this.oTable.setGroupConditions({ groupLevels: [{ name: "Country" }] })._rebind();
+			assert.deepEqual(this.oTable._oTable.getBindingInfo("items").sorter, [], "Column Country is not visible. No sorter applied");
+		}.bind(this));
 	});
 
 	QUnit.test("Aggregates", function(assert) {
