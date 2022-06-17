@@ -4708,4 +4708,30 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.ok(oIconDomRef.classList.contains("sapMGTTwoByHalfIcon"), "Icon div is present when state is loaded");
 		assert.ok(oContentDomRef.children[0].classList.contains("sapMGTHdrTxt"), "Text div is present when state is loaded");
 	});
+	QUnit.module("Loading State Tests", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile({
+				state: LoadState.Loading,
+				header: "headerText",
+				subheader: "subheaderText",
+				url: "Test url",
+				sizeBehavior: "Small",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter"
+				})
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+	QUnit.test("GenericTile in OneByOne FrameType", function(assert) {
+		//Assert
+		assert.equal(getComputedStyle(document.querySelector(".sapMGTContentShimmerPlaceholderItemHeader")).width,"116px","Header Shimmer Width Set Correctly");
+		assert.equal(getComputedStyle(document.querySelector(".sapMGTContentShimmerPlaceholderItemText")).width,"94px","Sub Header Shimmer Width Set Correctly");
+		assert.equal(getComputedStyle(document.querySelector(".sapMTileCntContentShimmerPlaceholderItemTextFooter")).width,"94px","Footer Shimmer Width Set Correctly");
+	});
 });
