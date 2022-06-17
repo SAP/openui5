@@ -192,6 +192,18 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 	}
 }
 .sapMGTStateLoading {
+	&.sapMTileSmallPhone:not(.sapMGTActionMode) {
+		.sapMTileCntContentShimmerPlaceholderWithDescription{
+			padding-top: 0;
+		}
+		.sapMTileCntContentShimmerPlaceholderItem {
+			.sapMTileCntContentShimmerPlaceholderRows {
+				.sapMTileCntContentShimmerPlaceholderItemTextFooter, .sapMTileCntContentShimmerPlaceholderItemBox {
+					top:0rem;
+				}
+			}
+		}
+	}
 	.sapMTileCntContentShimmerPlaceholderItem {
 		.sapMTileCntContentShimmerPlaceholderRows {
 			.sapMTileCntContentShimmerPlaceholderItemTextFooter, .sapMTileCntContentShimmerPlaceholderItemBox {
@@ -201,6 +213,11 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 	}
 	.sapMTileCntContentShimmerPlaceholderWithDescription {
 		padding: 1rem 0rem 0rem 0rem;
+	}
+}
+.sapMGT.sapMTileSmallPhone.sapMGTStateLoading.OneByOne {
+	.sapMTileCntContentShimmerPlaceholderItemTextFooter{
+		width: 5.875rem;
 	}
 }
 .sapMTileCntContentShimmerPlaceholderItem {
