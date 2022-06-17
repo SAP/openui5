@@ -311,6 +311,8 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', 'sap/ui/core/Core', './A
 		 * @private
 		 */
 		ActionSelect.prototype.exit = function () {
+			Select.prototype.exit.call(this);
+
 			if (this._oTutorMessageText) {
 				this._oTutorMessageText.destroy();
 				this._oTutorMessageText = null;
