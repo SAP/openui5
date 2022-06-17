@@ -2,7 +2,7 @@
 
     <Title class="sapUiSmallMarginBottom" level="H3" text="Supported Table Types" />
 
-    <mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate="{name: 'sap/ui/mdc/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+    <mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB0-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MDCUITableValueHelp.delegate', payload: {}}">
                 <mdcf:filterBar>

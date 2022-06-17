@@ -2,7 +2,7 @@
 
     <Title class="sapUiSmallMarginBottom" level="H3" text="Supported Table Types" />
 
-    <mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate="{name: 'sap/ui/mdc/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+    <mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB0-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MDCUITableValueHelp.delegate', payload: {}}">
                 <mdcf:filterBar>
@@ -25,7 +25,7 @@
         </mdc:filterItems>
     </mdc:FilterBar>
 
-    <mdc:FilterBar id="FB1" p13nMode="Value" liveMode="false" delegate="{name: 'sap/ui/mdc/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+    <mdc:FilterBar id="FB1" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB1-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MDCUITableValueHelp.delegate', payload: {}}">
                 <mdcf:filterBar>
@@ -88,7 +88,7 @@
         </mdc:filterItems>
     </mdc:FilterBar>
 
-    <mdc:FilterBar id="FB2" p13nMode="Value" liveMode="false" delegate="{name: 'sap/ui/mdc/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+    <mdc:FilterBar id="FB2" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB2-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MDCMTableValueHelp.delegate', payload: {}}">
                 <mdcf:filterBar>
@@ -115,7 +115,7 @@
     </mdc:FilterBar>
 
 
-    <mdc:FilterBar id="FB3" p13nMode="Value" liveMode="false" delegate="{name: 'sap/ui/mdc/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+    <mdc:FilterBar id="FB3" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB3-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MDCUITableValueHelp.delegate', payload: {}}">
                 <mdcf:filterBar>
@@ -179,7 +179,7 @@
     </mdc:FilterBar>
 
 
-    <mdc:FilterBar id="FB7" p13nMode="Value" liveMode="false" delegate="{name: 'sap/ui/mdc/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+    <mdc:FilterBar id="FB7" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB7-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MTableValueHelp.delegate', payload: {}}">
                 <mdcf:filterBar>
@@ -199,7 +199,7 @@
         </mdc:filterItems>
     </mdc:FilterBar>
 
-    <mdc:FilterBar id="FB8" p13nMode="Value" liveMode="false" delegate="{name: 'sap/ui/mdc/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+    <mdc:FilterBar id="FB8" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
         <mdc:dependents>
             <mdcf:FieldValueHelp title="Author" id="FB8-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
                 <mdcf:filterBar>
@@ -242,7 +242,7 @@
             <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FB8-FF1" label="M.Table via XML" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB8-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
         </mdc:filterItems>
     </mdc:FilterBar>
-    <mdc:FilterBar id="FB10" p13nMode="Value" liveMode="false" delegate="{name: 'sap/ui/mdc/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+    <mdc:FilterBar id="FB10" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
 <mdc:dependents>
     <mdcf:FieldValueHelp title="Classification" id="FB10-FH1" noDialog="false" keyPath="code" descriptionPath="label" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
         <mdcf:content>
