@@ -312,6 +312,7 @@ sap.ui.define([
 			return;
 
 		}
+
 		//middle bar will be shown
 		this._$MidBarPlaceHolder.css(this._getMidBarCss(iRightBarWidth, iBarWidth, iLeftBarWidth));
 	};
@@ -336,8 +337,8 @@ sap.ui.define([
 			iRightContentPadding = parseInt(this._$RightBar.css('padding-' + sRightOrLeft)),
 			iMidContentLeftPadding = parseInt(this._$MidBarPlaceHolder.css('padding-' + sLeftOrRight)),
 			iMidContentRightPadding = parseInt(this._$MidBarPlaceHolder.css('padding-' + sRightOrLeft)),
-			bEmptyLeftContent = iLeftBarWidth === iLeftContentPadding,
-			bEmptyRightContent = iRightBarWidth === iRightContentPadding,
+			bEmptyLeftContent = !this.getContentLeft().length,
+			bEmptyRightContent = !this.getContentRight().length,
 			iLeftContentDelta = iLeftContentPadding - iMidContentLeftPadding,
 			iRightContentDelta = iRightContentPadding - iMidContentRightPadding,
 			iSpaceBetweenLeftAndRight = iBarWidth - ( bEmptyRightContent ? iRightContentDelta : iRightBarWidth) - (bEmptyLeftContent ? iLeftContentDelta : iLeftBarWidth),
@@ -349,16 +350,19 @@ sap.ui.define([
 
 		if ((sTitleAlignment !== TitleAlignment.None && sTitleAlignment !== TitleAlignment.Center) ||
 			(iSpaceBetweenLeftAndRight > 0 && (bLeftContentIsOverlapping || bRightContentIsOverlapping))) {
-			//Left or Right content is overlapping the Middle content or there is Title alignment "Center" or "None" set
-
+			// Left or Right content is overlapping the Middle content or there is Title alignment "Center" or "None" set
 			// place the middle positioned element directly next to the end of left content area
 			oMidBarCss.position = "absolute";
 
-			//Use the remaining space
+			// Use the remaining space
 			oMidBarCss.width = iSpaceBetweenLeftAndRight + "px";
 
-			//Set left or right depending on LTR/RTL
+			// Set left or right depending on LTR/RTL
 			oMidBarCss[sLeftOrRight] = bEmptyLeftContent ? iLeftContentDelta : iLeftBarWidth;
+		}
+
+		if (bEmptyLeftContent && bEmptyRightContent ) {
+			oMidBarCss.width = "100%";
 		}
 
 		return oMidBarCss;
