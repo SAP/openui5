@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/library",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Utils"
 ], function(
 	BaseCommand,
+	rtaLibrary,
 	JsControlTreeModifier,
 	flUtils
 ) {
@@ -69,7 +71,7 @@ sap.ui.define([
 		this._aPreparedChanges = [];
 		this.getChanges().forEach(function(mChangeProperties) {
 			mChangeProperties.appComponent = this.oAppComponent;
-			mChangeProperties.generator = sap.ui.rta.GENERATOR_NAME;
+			mChangeProperties.generator = rtaLibrary.GENERATOR_NAME;
 			this._aPreparedChanges.push(this.oModel.addVariantChange(this.sVariantManagementReference, mChangeProperties));
 		}.bind(this));
 

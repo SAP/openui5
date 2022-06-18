@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/core/mvc/XMLView",
 	"sap/base/util/deepExtend"
 ], function(
 	MoveTableColumnsChangeHandler,
@@ -22,6 +23,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	oCore,
+	XMLView,
 	deepExtend
 ) {
 	'use strict';
@@ -285,6 +287,9 @@ sap.ui.define([
 
 			var Comp = UIComponent.extend("test", {
 				metadata: {
+					interfaces: [
+						"sap.ui.core.IAsyncContentCreation"
+					],
 					manifest : {
 						"sap.app": {
 							"id": "",
@@ -294,54 +299,56 @@ sap.ui.define([
 				},
 				createContent : function() {
 					// store it in outer scope
-					var oView = sap.ui.xmlview({
+					return XMLView.create({
 						id: this.createId("view"),
-						viewContent: oXmlString
-					 });
-					 return oView;
+						definition: oXmlString
+					});
 				}
 
 			});
+
 			this.oUiComponent = new Comp("comp");
 
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
-			});
-			this.oUiComponentContainer.placeAt("content");
+			return this.oUiComponent.rootControlLoaded().then(function() {
+				// Place component in container and display
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
+				this.oUiComponentContainer.placeAt("content");
 
-			this.oView = this.oUiComponent.getRootControl();
+				this.oView = this.oUiComponent.getRootControl();
 
-			oCore.applyChanges();
+				oCore.applyChanges();
 
-			this.oTable = this.oView.byId('myTable');
-			this.oColumn0 = this.oView.byId('column0');
-			this.oColumn0Template = this.oTable.getItems()[0].getCells()[0];
+				this.oTable = this.oView.byId('myTable');
+				this.oColumn0 = this.oView.byId('column0');
+				this.oColumn0Template = this.oTable.getItems()[0].getCells()[0];
 
-			this.oChange = new Change(createChangeDefinition({
-					"content": {
-						"movedElements": [
-							{
-								"selector": {
-									"id": "view--column0",
-									"idIsLocal": true
-								},
-								"sourceIndex": 0,
-								"targetIndex": 1
-							}
-						]
-					},
-					"dependentSelector": {
-						"target": {
-							"id": "view--myTable",
-							"idIsLocal": true
+				this.oChange = new Change(createChangeDefinition({
+						"content": {
+							"movedElements": [
+								{
+									"selector": {
+										"id": "view--column0",
+										"idIsLocal": true
+									},
+									"sourceIndex": 0,
+									"targetIndex": 1
+								}
+							]
 						},
-						"source": {
-							"id": "view--myTable",
-							"idIsLocal": true
+						"dependentSelector": {
+							"target": {
+								"id": "view--myTable",
+								"idIsLocal": true
+							},
+							"source": {
+								"id": "view--myTable",
+								"idIsLocal": true
+							}
 						}
-					}
-			}));
+				}));
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oChange = null;
@@ -411,6 +418,9 @@ sap.ui.define([
 
 			var Comp = UIComponent.extend("test", {
 				metadata: {
+					interfaces: [
+						"sap.ui.core.IAsyncContentCreation"
+					],
 					manifest : {
 						"sap.app": {
 							"id": "test",
@@ -419,76 +429,76 @@ sap.ui.define([
 					}
 				},
 				createContent : function() {
-					// store it in outer scope
-					var oView = sap.ui.xmlview({
-						 id : this.createId("view"),
-						 viewContent : oXmlStringWithBinding
-					 });
-					 return oView;
+					return XMLView.create({
+						id : this.createId("view"),
+						definition : oXmlStringWithBinding
+					});
 				}
 
 			});
 			this.oUiComponent = new Comp("comp");
 
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
-			});
+			return this.oUiComponent.rootControlLoaded().then(function() {
+				// Place component in container and display
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
 
 
-			this.oUiComponentContainer.placeAt("content");
+				this.oUiComponentContainer.placeAt("content");
 
-			this.oView = this.oUiComponent.getRootControl();
+				this.oView = this.oUiComponent.getRootControl();
 
-			this.oView.setModel(new JSONModel({
-				"records": [{
-					"column0": "test0_1",
-					"column1": "test1_1",
-					"column2": "test2_1"
-				},{
-					"column0": "test0_2",
-					"column1": "test1_2",
-					"column2": "test2_2"
-				},{
-					"column0": "test0_3",
-					"column1": "test1_3",
-					"column2": "test2_3"
-				}]
-			}));
+				this.oView.setModel(new JSONModel({
+					"records": [{
+						"column0": "test0_1",
+						"column1": "test1_1",
+						"column2": "test2_1"
+					},{
+						"column0": "test0_2",
+						"column1": "test1_2",
+						"column2": "test2_2"
+					},{
+						"column0": "test0_3",
+						"column1": "test1_3",
+						"column2": "test2_3"
+					}]
+				}));
 
-			oCore.applyChanges();
+				oCore.applyChanges();
 
-			this.oTable = this.oView.byId('myTable');
+				this.oTable = this.oView.byId('myTable');
 
 
-			this.oColumn0 = this.oView.byId('column0');
-			this.oColumn0Template = this.oTable.getBindingInfo('items').template.getCells()[0];
-			this.oColumn0Items = this.oTable.getItems()[0].getCells()[0];
+				this.oColumn0 = this.oView.byId('column0');
+				this.oColumn0Template = this.oTable.getBindingInfo('items').template.getCells()[0];
+				this.oColumn0Items = this.oTable.getItems()[0].getCells()[0];
 
-			this.oChange = new Change(createChangeDefinition({
-					"content": {
-						"movedElements": [
-							{
-								"selector": {
-									"id": "view--column0",
-									"idIsLocal": true
-								},
-								"sourceIndex": 0,
-								"targetIndex": 1
-							}
-						]
-					},
-					"dependentSelector": {
-						"target": {
-							"id": "view--myTable",
-							"idIsLocal": true
+				this.oChange = new Change(createChangeDefinition({
+						"content": {
+							"movedElements": [
+								{
+									"selector": {
+										"id": "view--column0",
+										"idIsLocal": true
+									},
+									"sourceIndex": 0,
+									"targetIndex": 1
+								}
+							]
 						},
-						"source": {
-							"id": "view--myTable",
-							"idIsLocal": true
+						"dependentSelector": {
+							"target": {
+								"id": "view--myTable",
+								"idIsLocal": true
+							},
+							"source": {
+								"id": "view--myTable",
+								"idIsLocal": true
+							}
 						}
-					}
-			}));
+				}));
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oChange = null;

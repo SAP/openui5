@@ -1,6 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/util/MockServer",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -8,6 +9,7 @@ sap.ui.define([
 ], function(
 	UIComponent,
 	MockServer,
+	BindingMode,
 	ODataModel,
 	JSONModel,
 	FeaturesAPI,
@@ -46,7 +48,7 @@ sap.ui.define([
 				loadMetadataAsync: true
 			});
 
-			oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+			oModel.setDefaultBindingMode(BindingMode.TwoWay);
 			this._oModel = oModel;
 
 			this.setModel(oModel);

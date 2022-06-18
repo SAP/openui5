@@ -512,7 +512,7 @@ sap.ui.define([
 		oPage.setCustomHeader(oHeader);
 		Core.applyChanges();
 
-		assert.ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef(), "Master button is inserted into the custom header"));
+		assert.ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is inserted into the custom header");
 
 		oSplitContainer.removeDetailPage(oPage);
 		assert.strictEqual(oPage.setCustomHeader, Page.prototype.setCustomHeader, "setCustomHeader function is restored after remove the Page from SplitContainer");

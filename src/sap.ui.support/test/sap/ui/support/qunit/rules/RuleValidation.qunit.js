@@ -1,9 +1,15 @@
 /*global QUnit*/
 
 sap.ui.define(
-	[ 'sap/ui/support/supportRules/RuleSetLoader', 'sap/ui/support/supportRules/util/RuleValidator' ],
-	function(RuleSetLoader, RuleValidator) {
+	[ 'sap/ui/support/library', 'sap/ui/support/supportRules/RuleSetLoader', 'sap/ui/support/supportRules/util/RuleValidator' ],
+	function(supportLibrary, RuleSetLoader, RuleValidator) {
 		'use strict';
+
+		// shortcut for sap.ui.support.Categories
+		var Categories = supportLibrary.Categories;
+
+		// shortcut for sap.ui.support.Audiences
+		var Audiences = supportLibrary.Audiences;
 
 		// Constants
 		var mLibrariesToLoad = {
@@ -58,13 +64,13 @@ sap.ui.define(
 					);
 
 					assert.equal(
-						RuleValidator.validateRuleCollection(oRule.audiences, sap.ui.support.Audiences),
+						RuleValidator.validateRuleCollection(oRule.audiences, Audiences),
 						true,
 						'audiences should be filled with data of type string'
 					);
 
 					assert.equal(
-						RuleValidator.validateRuleCollection(oRule.categories, sap.ui.support.Categories),
+						RuleValidator.validateRuleCollection(oRule.categories, Categories),
 						true,
 						'categories should be filled with data of type string'
 					);

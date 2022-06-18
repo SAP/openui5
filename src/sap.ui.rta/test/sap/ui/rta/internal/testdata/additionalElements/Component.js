@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariant",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
+	"sap/m/MessageBox",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Core"
 ], function(
@@ -12,6 +13,7 @@ sap.ui.define([
 	ABAPExtensibilityVariant,
 	JSONModel,
 	App,
+	MessageBox,
 	XMLView,
 	oCore
 ) {
@@ -108,7 +110,7 @@ sap.ui.define([
 			});
 
 			oCore.getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
-				sap.m.MessageBox.warning("Service Outdated, Please restart the UI - In real world other dialog will come up, that can restart the UI");
+				MessageBox.warning("Service Outdated, Please restart the UI - In real world other dialog will come up, that can restart the UI");
 			});
 		}
 	});

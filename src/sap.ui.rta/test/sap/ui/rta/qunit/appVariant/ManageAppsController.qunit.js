@@ -10,6 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/base/Event",
+	"sap/m/Menu",
+	"sap/m/MenuItem",
 	"sap/m/MessageToast",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
@@ -24,6 +26,8 @@ sap.ui.define([
 	Control,
 	ResourceBundle,
 	Event,
+	Menu,
+	MenuItem,
 	MessageToast,
 	Log,
 	jQuery,
@@ -240,8 +244,8 @@ sap.ui.define([
 		QUnit.test("when onMenuAction is called and copy id is pressed", function(assert) {
 			var oManageAppsController = new ManageAppsController();
 
-			var oEmptyEvent = new Event("emptyEventId", new sap.m.Menu(), {
-				item: new sap.m.MenuItem({text: "Copy ID"})
+			var oEmptyEvent = new Event("emptyEventId", new Menu(), {
+				item: new MenuItem({text: "Copy ID"})
 			});
 
 			var fnCopyID = sandbox.stub(oManageAppsController, "copyId");
@@ -253,8 +257,8 @@ sap.ui.define([
 		QUnit.test("when onMenuAction is called and handleUiAdaptation is pressed", function(assert) {
 			var oManageAppsController = new ManageAppsController();
 
-			var oEmptyEvent = new Event("emptyEventId", new sap.m.Menu(), {
-				item: new sap.m.MenuItem({text: "Adapt UI"})
+			var oEmptyEvent = new Event("emptyEventId", new Menu(), {
+				item: new MenuItem({text: "Adapt UI"})
 			});
 
 			var fnHandleUiAdaptation = sandbox.stub(oManageAppsController, "handleUiAdaptation");
@@ -266,8 +270,8 @@ sap.ui.define([
 		QUnit.test("when onMenuAction is called and deleteAppVariant is pressed", function(assert) {
 			var oManageAppsController = new ManageAppsController();
 
-			var oEmptyEvent = new Event("emptyEventId", new sap.m.Menu(), {
-				item: new sap.m.MenuItem({text: "Delete App Variant"})
+			var oEmptyEvent = new Event("emptyEventId", new Menu(), {
+				item: new MenuItem({text: "Delete App Variant"})
 			});
 
 			var fnDeleteAppVariant = sandbox.stub(oManageAppsController, "deleteAppVariant");

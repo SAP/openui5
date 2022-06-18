@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
@@ -35,6 +36,7 @@ sap.ui.define([
 	AdditionalElementsAnalyzer,
 	AddElementsDialog,
 	RTAPlugin,
+	jQuery,
 	sinon,
 	RtaQunitUtils,
 	oCore

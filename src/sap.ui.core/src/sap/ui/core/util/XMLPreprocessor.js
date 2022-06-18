@@ -1335,7 +1335,7 @@ sap.ui.define([
 					if (!oViewInfo.sync) {
 						return asyncRequire();
 					}
-					aURNs.forEach(sap.ui.requireSync);
+					aURNs.forEach(sap.ui.requireSync); // legacy-relevant: Sync path
 				}
 				return oSyncPromiseResolved;
 			}

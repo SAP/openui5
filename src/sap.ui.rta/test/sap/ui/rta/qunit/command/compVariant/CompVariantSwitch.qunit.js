@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Control,
 	CommandFactory,
+	jQuery,
 	sinon
 ) {
 	"use strict";

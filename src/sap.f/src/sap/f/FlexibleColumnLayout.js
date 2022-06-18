@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
-	"sap/ui/core/InvisibleMessage"
+	"sap/ui/core/InvisibleMessage",
+	"sap/ui/dom/jquery/Focusable" // provides jQuery.fn.firstFocusableDomRef
 ], function(
 	jQuery,
 	library,

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/core/mvc/XMLView",
-	"sap/uxap/AnchorBar"],
+	"sap/uxap/AnchorBar",
+	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */],
 function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar) {
 	"use strict";
 

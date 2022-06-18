@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MultiComboBox",
+	"sap/ui/core/Core",
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ComboBoxBaseRenderer",
@@ -34,6 +35,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	MultiComboBox,
+	oCore,
 	Item,
 	JSONModel,
 	ComboBoxBaseRenderer,
@@ -109,7 +111,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//sap.ui.getCore().applyChanges();
+		//oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
@@ -698,7 +700,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//sap.ui.getCore().applyChanges();
+		//oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
@@ -784,7 +786,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//sap.ui.getCore().applyChanges();
+		//oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -1640,7 +1642,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 
-		//sap.ui.getCore().applyChanges();
+		//oCore.applyChanges();
 		//assert.strictEqual(oMultiComboBox.getValue(), "item 1");
 
 		// cleanup
@@ -3520,8 +3522,7 @@ sap.ui.define([
 		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
 
 		// act - 'alg' + OpenList + TAP
-		sap.ui.test.qunit
-				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = Core.byId(oDomListItem.id);
@@ -3575,8 +3576,7 @@ sap.ui.define([
 		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
 
 		// act - 'alg' + OpenList + TAP
-		sap.ui.test.qunit
-				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = Core.byId(oDomListItem.id);
@@ -3733,8 +3733,7 @@ sap.ui.define([
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
 		// act
-		sap.ui.test.qunit
-				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 
 		// assertions
@@ -4199,7 +4198,7 @@ sap.ui.define([
 
 		  // arrange
 		  oMultiComboBox.placeAt("MultiComboBoxContent");
-		  sap.ui.getCore().applyChanges();
+		  oCore.applyChanges();
 		  oMultiComboBox.focus();
 
 		  var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -4436,8 +4435,7 @@ sap.ui.define([
 		oMultiComboBox.focus();
 
 		// act
-		sap.ui.test.qunit
-				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = Core.byId(oDomListItem.id);

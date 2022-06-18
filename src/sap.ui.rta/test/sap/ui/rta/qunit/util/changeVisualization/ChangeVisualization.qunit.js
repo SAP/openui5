@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/base/util/restricted/_merge",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	RtaQunitUtils,
 	sinon,
@@ -35,7 +36,8 @@ sap.ui.define([
 	merge,
 	RuntimeAuthoring,
 	OverlayRegistry,
-	oCore
+	oCore,
+	jQuery
 ) {
 	"use strict";
 
@@ -348,7 +350,7 @@ sap.ui.define([
 					checkModel(assert, aVizModel[2], this.oCheckModelMove);
 					checkBinding(assert, aVizModel[0], aMenuItems[0]);
 					checkBinding(assert, aVizModel[2], aMenuItems[2]);
-					sap.ui.dt.OverlayRegistry.getOverlay("Comp1---idMain1--rb2").destroy();
+					OverlayRegistry.getOverlay("Comp1---idMain1--rb2").destroy();
 					this.oChangeVisualization.getAggregation("popover").close();
 					this.oRta.setMode("navigation");
 					oCore.applyChanges();

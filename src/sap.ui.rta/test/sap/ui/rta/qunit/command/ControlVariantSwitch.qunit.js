@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
 	VariantManagement,
 	FlexTestAPI,
 	RtaQunitUtils,
+	jQuery,
 	sinon
 ) {
 	"use strict";

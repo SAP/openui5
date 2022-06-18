@@ -1,8 +1,9 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/iframe/urlCleaner"
-], function (urlCleaner) {
+	"sap/ui/rta/plugin/iframe/urlCleaner",
+	"sap/ui/thirdparty/jquery"
+], function (urlCleaner, jQuery) {
 	"use strict";
 
 	QUnit.module("Given the URL entered by the user ", {

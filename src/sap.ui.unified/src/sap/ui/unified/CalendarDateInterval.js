@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Core",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
 	"./DateRange"
 ], function(
 	CalendarUtils,
@@ -37,7 +36,6 @@ sap.ui.define([
 	CalendarType,
 	Core,
 	Log,
-	jQuery,
 	DateRange
 ) {
 	"use strict";

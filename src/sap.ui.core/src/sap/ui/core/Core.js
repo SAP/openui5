@@ -511,17 +511,14 @@ sap.ui.define([
 					oSyncPoint2.finishTask(iVersionInfoTask);
 				};
 
-				// only use async mode if library preload is async
-				var vReturn = sap.ui.getVersionInfo({ async: bAsync, failOnError: false });
-				if (vReturn instanceof Promise) {
-					vReturn.then(fnCallback, function(oError) {
-						// this should only happen when there is a script error as "failOnError=false"
-						// prevents throwing a loading error (e.g. HTTP 404)
+				// use async mode if library preload is async
+				if ( bAsync ) {
+					VersionInfo.load().then(fnCallback, function(oError) {
 						Log.error("Unexpected error when loading \"sap-ui-version.json\": " + oError);
 						oSyncPoint2.finishTask(iVersionInfoTask);
 					});
 				} else {
-					fnCallback(vReturn);
+					fnCallback(sap.ui.getVersionInfo({ async: bAsync, failOnError: false }));
 				}
 			}
 

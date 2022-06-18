@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/m/IllustratedMessage",
 	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selectors ":sapTabbable", ":sapFocusable"
 ], function(
 	TableQUnitUtils,
@@ -30,7 +31,8 @@ sap.ui.define([
 	BaseObject,
 	ResourceBundle,
 	jQuery,
-	oCore
+	oCore,
+	IllustratedMessage
 ) {
 	"use strict";
 
@@ -807,7 +809,7 @@ sap.ui.define([
 
 		oTable.setNoData(new Control());
 		assert.strictEqual(TableUtils.getNoDataText(oTable), null);
-		oTable.setNoData(new sap.m.IllustratedMessage());
+		oTable.setNoData(new IllustratedMessage());
 		assert.strictEqual(TableUtils.getNoDataText(oTable), null);
 		oTable.removeAllColumns();
 		assert.strictEqual(TableUtils.getNoDataText(oTable), null);

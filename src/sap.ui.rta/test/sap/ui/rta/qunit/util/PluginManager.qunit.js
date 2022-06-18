@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/rta/util/PluginManager",
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/rta/plugin/Settings",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -14,6 +15,7 @@ function(
 	PluginManager,
 	CreateContainerPlugin,
 	SettingsPlugin,
+	jQuery,
 	sinon
 ) {
 	"use strict";

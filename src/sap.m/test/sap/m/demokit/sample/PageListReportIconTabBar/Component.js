@@ -3,7 +3,6 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	"use strict";
 
 	return UIComponent.extend("sap.m.sample.PageListReportIconTabBar.Component", {
-
 		metadata : {
 			manifest: "json"
 		}

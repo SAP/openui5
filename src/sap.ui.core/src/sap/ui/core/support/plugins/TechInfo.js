@@ -12,9 +12,10 @@ sap.ui.define([
 	'../Plugin',
 	'../Support',
 	'../ToolsAPI',
-	'sap/base/security/encodeXML'
+	'sap/base/security/encodeXML',
+	'sap/ui/VersionInfo'
 ],
-	function(jQuery, Log, each, isEmptyObject, isPlainObject, Plugin, Support, ToolsAPI, encodeXML) {
+	function(jQuery, Log, each, isEmptyObject, isPlainObject, Plugin, Support, ToolsAPI, encodeXML, VersionInfo) {
 	"use strict";
 
 
@@ -56,8 +57,31 @@ sap.ui.define([
 		 * @private
 		 */
 		TechInfo.prototype.onsapUiSupportTechInfoData = function(oEvent){
+			// read and remember event parameters synchronously
+			var oReceivedData = oEvent.getParameter("data");
+
+			// retrieve and prepare version information
+			VersionInfo.load().then(function(oVersionInfo) {
+				return {
+					productName: oVersionInfo.name,
+					versionInfoEncoded:
+						"<a href='" + sap.ui.require.toUrl("sap-ui-version.json") + "'"
+						+ " target='_blank' class='sapUiSupportLink' title='Open Version Info'>"
+						+ encode(oVersionInfo.version) + "</a>"
+						+ formatBuildInfo(oVersionInfo.buildTimestamp, oVersionInfo.scmRevision)
+				};
+			}, function() {
+				return {
+					productName: "SAPUI5",
+					versionInfoEncoded: "not available"
+				};
+			}).then(function(oVersionInfo) {
+				this._createTechInfoUI(oReceivedData, oVersionInfo);
+			}.bind(this));
+		};
+
+		TechInfo.prototype._createTechInfoUI = function(oData, oVersionInfo) {
 			var that = this;
-			var oData = oEvent.getParameter("data");
 			oData.modules.sort();
 			this.e2eTraceStarted = oData["e2e-trace"].isStarted;
 			var html = ["<div class='sapUiSupportToolbar'>",
@@ -65,36 +89,10 @@ sap.ui.define([
 						"<div><div class='sapUiSupportTechInfoCntnt'>",
 						"<table border='0' cellpadding='3' class='infoTable'>"];
 
-			// version information
-			function formatBuildInfo(timestamp, scmRevision) {
-				var info = [];
-				if ( timestamp ) {
-					var match = /^(\d{4})(\d{2})(\d{2})-?(\d{2})(\d{2})$/.exec(timestamp);
-					if ( match ) {
-						timestamp = match[1] + '-' + match[2] + '-' + match[3] + 'T' + match[4] + ":" + match[5];
-					}
-					info.push("built at " + encode(timestamp));
-				}
-				if ( scmRevision ) {
-					info.push("last change " + encode(scmRevision));
-				}
-				return info.length === 0 ? "" : " (" + info.join(", ") + ")";
-			}
-			var sProductName = "SAPUI5";
-			var sVersionInfoEncoded = "not available";
-			try {
-				var oVersionInfo = sap.ui.getVersionInfo();
-				sProductName = oVersionInfo.name;
-				sVersionInfoEncoded =
-					"<a href='" + sap.ui.resource("", "sap-ui-version.json") + "' target='_blank' class='sapUiSupportLink' title='Open Version Info'>" + encode(oVersionInfo.version) + "</a>" +
-					formatBuildInfo(oVersionInfo.buildTimestamp, oVersionInfo.scmRevision);
-			} catch (ex) {
-				// ignore
-			}
-			line(html, true, true, sProductName, function(buffer) {
-				buffer.push(sVersionInfoEncoded);
+			line(html, true, true, oVersionInfo.productName, function(buffer) {
+				buffer.push(oVersionInfo.versionInfoEncoded);
 			});
-			if ( !/openui5/i.test(sProductName) ) {
+			if ( !/openui5/i.test(oVersionInfo.productName) ) {
 				line(html, true, true, "OpenUI5 Version", function(buffer){
 					buffer.push( encode(oData.version) + formatBuildInfo(oData.build, oData.change) );
 				});
@@ -326,6 +324,21 @@ sap.ui.define([
 				});
 				buffer.push("</table>");
 			});
+		}
+
+		function formatBuildInfo(timestamp, scmRevision) {
+			var info = [];
+			if ( timestamp ) {
+				var match = /^(\d{4})(\d{2})(\d{2})-?(\d{2})(\d{2})$/.exec(timestamp);
+				if ( match ) {
+					timestamp = match[1] + '-' + match[2] + '-' + match[3] + 'T' + match[4] + ":" + match[5];
+				}
+				info.push("built at " + encode(timestamp));
+			}
+			if ( scmRevision ) {
+				info.push("last change " + encode(scmRevision));
+			}
+			return info.length === 0 ? "" : " (" + info.join(", ") + ")";
 		}
 
 	return TechInfo;

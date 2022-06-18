@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -31,6 +32,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	VariantManagementState,
+	jQuery,
 	sinon
 ) {
 	"use strict";

@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/layout/form/FormElement",
 	"sap/m/Input",
 	"sap/ui/rta/util/BindingsExtractor",
+	"sap/ui/thirdparty/jquery",
 	"./TestUtils"
 ],
 function(
@@ -22,6 +23,7 @@ function(
 	FormElement,
 	Input,
 	BindingsExtractor,
+	jQuery,
 	TestUtils
 ) {
 	"use strict";

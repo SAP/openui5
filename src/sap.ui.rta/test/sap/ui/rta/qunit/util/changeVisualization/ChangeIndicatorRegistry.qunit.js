@@ -1,10 +1,12 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry"
 ],
 function(
+	jQuery,
 	sinon,
 	ChangeIndicatorRegistry
 ) {

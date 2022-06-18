@@ -1,8 +1,9 @@
 <mvc:View
-	controllerName="view.Table"
+	controllerName="sap.m.sample.TableTest.applicationUnderTest.view.Table"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
-	xmlns="sap.m">
+	xmlns="sap.m"
+	core:require="{Formatter:'sap/m/sample/TableTest/applicationUnderTest/view/Formatter'}">
 	<Table id="idProductsTable"
 		inset="false"
 		items="{
@@ -76,7 +77,7 @@
 								{path: 'WeightMeasure'},
 								{path: 'WeightUnit'}
 							],
-							formatter: 'view.Formatter.weightState'
+							formatter: 'Formatter.weightState'
 						}" />
 					<ObjectNumber
 							number="{

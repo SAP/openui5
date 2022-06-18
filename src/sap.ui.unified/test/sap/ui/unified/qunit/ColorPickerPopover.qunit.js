@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/ui/unified/library",
 	"sap/m/ResponsivePopover",
 	"sap/m/Button",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
 	ColorPickerPopover,
 	unifiedLibrary,
 	ResponsivePopover,
 	Button,
-	jQuery,
 	oCore
 ) {
 	"use strict";
@@ -213,7 +211,7 @@ sap.ui.define([
 	QUnit.test("_ensurePopover", function (assert) {
 		// Prepare
 		var oCPP = new ColorPickerPopover(),
-			oFakePopover = {destroy: jQuery.noop, getDomRef: jQuery.noop, removeDelegate: jQuery.noop},
+			oFakePopover = {destroy: this.stub(), getDomRef: this.stub(), removeDelegate: this.stub()},
 			oStubCreatePopover = this.stub(oCPP, "_createPopover").returns(oFakePopover);
 
 		oCPP._oPopover = null;

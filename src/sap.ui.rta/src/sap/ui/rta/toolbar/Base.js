@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/rta/util/Animation"
+	"sap/ui/rta/util/Animation",
+	"./BaseRenderer"
 ], function(
 	HBox,
 	ZIndexManager,
 	ResourceModel,
-	Animation
+	Animation,
+	BaseRenderer
 ) {
 	"use strict";
 
@@ -83,7 +85,9 @@ sap.ui.define([
 		 * added/removed during show/hide calls.
 		 * @type {boolean}
 		 */
-		animation: false
+		animation: false,
+
+		renderer: BaseRenderer
 	});
 
 	/**

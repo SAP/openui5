@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var PopinLayout = mobileLibrary.PopinLayout;
 
-	var TableController = Controller.extend("view.Table", {
+	var TableController = Controller.extend("sap.m.sample.TableTest.applicationUnderTest.view.Table", {
 
 		onInit: function () {
 			var oModel = new JSONModel();

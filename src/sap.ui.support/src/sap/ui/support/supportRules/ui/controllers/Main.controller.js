@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/support/supportRules/util/EvalUtils",
-	"sap/ui/thirdparty/URI",
 	"sap/ui/VersionInfo",
 	"sap/m/library"
 ], function (
@@ -31,7 +30,6 @@ sap.ui.define([
 	Constants,
 	Storage,
 	EvalUtils,
-	URI,
 	VersionInfo,
 	mobileLibrary
 ) {
@@ -94,7 +92,7 @@ sap.ui.define([
 			VersionInfo.load({ library: "sap.ui.core" }).then(function (oCoreLibInfo) {
 				CommunicationBus.publish(channelNames.POST_UI_INFORMATION, {
 					version: oCoreLibInfo,
-					location: new URI(sap.ui.require.toUrl("sap/ui/support"), window.location.origin + window.location.pathname).toString()
+					location: new URL(sap.ui.require.toUrl("sap/ui/support"), window.location.origin + window.location.pathname).toString()
 				});
 			});
 
@@ -102,7 +100,7 @@ sap.ui.define([
 		},
 
 		initSettingsPopoverModel: function () {
-			var supportAssistantOrigin = new URI(sap.ui.resource('sap.ui.support', ''), window.location.origin + window.location.pathname)._string,
+			var supportAssistantOrigin = new URL(sap.ui.require.toUrl("sap/ui/support"), window.location.origin + window.location.pathname).toString(),
 				supportAssistantVersion = sap.ui.version;
 
 			this.model.setProperty("/supportAssistantOrigin", supportAssistantOrigin);

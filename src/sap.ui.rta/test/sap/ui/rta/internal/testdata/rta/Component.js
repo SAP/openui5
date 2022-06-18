@@ -1,13 +1,17 @@
 sap.ui.define([
+	"sap/m/App",
 	"sap/ui/core/UIComponent",
 	"sap/ui/rta/test/SmartLinkUtil",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/mvc/XMLView"
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/model/json/JSONModel"
 ], function (
+	App,
 	UIComponent,
 	SmartLinkUtil,
 	CustomData,
-	XMLView
+	XMLView,
+	JSONModel
 ) {
 	"use strict";
 
@@ -18,7 +22,7 @@ sap.ui.define([
 
 		init: function() {
 			this._bShowAdaptButton = !!this.getComponentData().showAdaptButton;
-			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, arguments);
 		},
 
 		/**
@@ -30,7 +34,7 @@ sap.ui.define([
 			SmartLinkUtil.mockUShellServices();
 
 			// app specific setup
-			var oApp = new sap.m.App({
+			var oApp = new App({
 				id: this.createId("app"),
 				customData: [new CustomData({
 					key: "sap-ui-custom-settings",
@@ -42,7 +46,7 @@ sap.ui.define([
 				})]
 			});
 
-			var oModel = new sap.ui.model.json.JSONModel({
+			var oModel = new JSONModel({
 				showAdaptButton: this._bShowAdaptButton
 			});
 

@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/m/Button",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
 	XMLView,
 	BindingsExtractor,
 	Button,
+	jQuery,
 	sinon,
 	oCore
 ) {

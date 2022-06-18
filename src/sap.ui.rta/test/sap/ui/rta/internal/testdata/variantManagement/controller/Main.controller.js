@@ -61,7 +61,7 @@ sap.ui.define([
 			var oButton = oEvent.getSource();
 			var mChangeSpecificData = {};
 
-			jQuery.extend(mChangeSpecificData, {
+			Object.assign(mChangeSpecificData, {
 				developerMode: false,
 				layer: LayerUtils.getCurrentLayer()
 			});

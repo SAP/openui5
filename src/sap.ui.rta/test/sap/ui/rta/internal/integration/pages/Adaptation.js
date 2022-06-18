@@ -176,7 +176,7 @@ sap.ui.define([
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Button",
-						matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: oResources.getText("BTN_FREP_OK")
 						}),

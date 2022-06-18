@@ -219,7 +219,7 @@ function(
 	Utils.getFocusedOverlay = function() {
 		if (document.activeElement) {
 			var oElement = sap.ui.getCore().byId(document.activeElement.id);
-			if (oElement instanceof sap.ui.dt.ElementOverlay) {
+			if (oElement && oElement.isA("sap.ui.dt.ElementOverlay")) {
 				return oElement;
 			}
 		}

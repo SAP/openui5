@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/library",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/base/util/values"
 ], function(
 	BaseCommand,
+	rtaLibrary,
 	JsControlTreeModifier,
 	FlUtils,
 	Log,
@@ -204,7 +206,7 @@ sap.ui.define([
 			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
 		}
 		mChangeSpecificData.command = sCommand;
-		mChangeSpecificData.generator = sap.ui.rta.GENERATOR_NAME;
+		mChangeSpecificData.generator = rtaLibrary.GENERATOR_NAME;
 		return ChangesWriteAPI.create({changeSpecificData: mChangeSpecificData, selector: this._validateControlForChange(mFlexSettings)})
 			.then(function(oChange) {
 				// originalSelector is only present when making a change on/inside a template; the selector does not work with the JS propagation hook (the template has no parent),

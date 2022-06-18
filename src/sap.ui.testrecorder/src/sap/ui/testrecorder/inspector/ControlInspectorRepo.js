@@ -3,9 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/base/Object",
-	"sap/ui/thirdparty/jquery"
-], function (BaseObject, $) {
+	"sap/ui/base/Object"
+], function (BaseObject) {
 	"use strict";
 
 	var oControlInspectorRepo = null;

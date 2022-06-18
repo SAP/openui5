@@ -1,10 +1,14 @@
 /* global QUnit,sinon */
 sap.ui.define([
+	"sap/ui/support/library",
 	"sap/ui/support/supportRules/History",
 	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/RuleSetLoader"],
-function (History, IssueManager, RuleSetLoader) {
+function (supportLibrary, History, IssueManager, RuleSetLoader) {
 	"use strict";
+
+	// shortcut for sap.ui.support.HistoryFormats
+	var HistoryFormats = supportLibrary.HistoryFormats;
 
 	var oTemplateObject = {
 			analysisInfo: {
@@ -287,7 +291,7 @@ function (History, IssueManager, RuleSetLoader) {
 	QUnit.test("History getFormattedHistory - ABAP format passed", function (assert) {
 		// Act
 		History.saveAnalysis(this.oContext);
-		var oFormattedHistory = History.getFormattedHistory(sap.ui.support.HistoryFormats.Abap);
+		var oFormattedHistory = History.getFormattedHistory(HistoryFormats.Abap);
 
 		// Assert
 		// For ABAP parser the Collections should be arrays instead of dictionaries with key/value pairs.
@@ -322,7 +326,7 @@ function (History, IssueManager, RuleSetLoader) {
 	QUnit.test("History getFormattedHistory - String format passed", function (assert) {
 		// Act
 		History.saveAnalysis(this.oContext);
-		var sFormattedHistory = prepareHistoryString(History.getFormattedHistory(sap.ui.support.HistoryFormats.String));
+		var sFormattedHistory = prepareHistoryString(History.getFormattedHistory(HistoryFormats.String));
 
 		// Assert
 		assert.ok(sFormattedHistory === sReferenceFormattedHistory, "History should be a correctly formatted string.");

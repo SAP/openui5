@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	AddIFrameDialog,
 	isEmptyObject,
@@ -17,7 +18,8 @@ sap.ui.define([
 	QUnitUtils,
 	oCore,
 	JSONModel,
-	Button
+	Button,
+	jQuery
 ) {
 	"use strict";
 

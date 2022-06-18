@@ -1,10 +1,9 @@
 /*global QUnit, sinon*/
-sap.ui.define(["sap/ui/thirdparty/jquery",
-               "sap/ui/core/Core",
+sap.ui.define(["sap/ui/core/Core",
                "sap/ui/core/Configuration",
                "sap/ui/core/mvc/XMLView",
                "sap/uxap/ObjectPageLayout"],
-function (jQuery, Core, Configuration, XMLView, ObjectPageLayout) {
+function (Core, Configuration, XMLView, ObjectPageLayout) {
 	"use strict";
 
 	QUnit.module("ObjectPage - Rendering - Footer Visibility", {

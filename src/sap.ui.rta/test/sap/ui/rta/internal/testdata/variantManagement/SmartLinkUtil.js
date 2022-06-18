@@ -1,9 +1,11 @@
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/ui/comp/navpopover/Factory"
+	"sap/ui/comp/navpopover/Factory",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	BaseObject,
-	Factory
+	Factory,
+	jQuery
 ) {
 	"use strict";
 

@@ -5,6 +5,7 @@
 // Provides class sap.ui.rta.RuntimeAuthoring.
 sap.ui.define([
 	"sap/base/strings/capitalize",
+	"sap/base/util/isPlainObject",
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/m/MessageBox",
@@ -51,6 +52,7 @@ sap.ui.define([
 	"sap/ui/Device"
 ], function(
 	capitalize,
+	isPlainObject,
 	UriParameters,
 	Log,
 	MessageBox,
@@ -1653,7 +1655,7 @@ sap.ui.define([
 											"sap.ui.rta"
 										);
 									}
-									if (!jQuery.isPlainObject(oService)) {
+									if (!isPlainObject(oService)) {
 										throw DtUtil.createError(
 											"RuntimeAuthoring#startService",
 											DtUtil.printf("Invalid service format. Service should return simple javascript object after initialization. Service name = '{0}'", sName),

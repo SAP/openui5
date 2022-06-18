@@ -1,6 +1,5 @@
 /*global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageSection",
@@ -15,7 +14,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/mvc/XMLView",
 	"sap/uxap/library"],
-function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Button, Text, Title, Panel, VBox, GenericDiv, Device, XMLView, lib) {
+function(Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Button, Text, Title, Panel, VBox, GenericDiv, Device, XMLView, lib) {
 
 	"use strict";
 

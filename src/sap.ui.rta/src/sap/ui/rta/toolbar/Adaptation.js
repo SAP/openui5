@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/versioning/Versioning",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"./AdaptationRenderer"
 ], function(
 	Fragment,
 	Version,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Versioning,
 	AppVariantFeature,
 	Base,
-	Device
+	Device,
+	AdaptationRenderer
 ) {
 	"use strict";
 
@@ -38,7 +40,7 @@ sap.ui.define([
 	 * @experimental Since 1.48. This class is experimental. API might be changed in future.
 	 */
 	var Adaptation = Base.extend("sap.ui.rta.toolbar.Adaptation", {
-		renderer: "sap.ui.rta.toolbar.AdaptationRenderer",
+		renderer: AdaptationRenderer,
 		animation: true,
 		metadata: {
 			library: "sap.ui.rta",

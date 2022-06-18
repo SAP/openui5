@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/GridSettings",
 	"sap/ui/webc/main/Select",
 	"sap/ui/webc/main/Option",
-	"sap/ui/webc/main/Label"
+	"sap/ui/webc/main/Label",
+	"sap/ui/core/HTML"
 ], function(
 	BlockLayout,
 	BlockLayoutRow,
@@ -32,7 +33,8 @@ sap.ui.define([
 	GridSettings,
 	Select,
 	Option,
-	Label
+	Label,
+	HTML
 ) {
 	"use strict";
 
@@ -94,7 +96,7 @@ sap.ui.define([
 		var grid = new Grid();
 
 		function createRowWithTitle(sTitle) {
-			return new sap.ui.core.HTML({ content: "<h1>" + sTitle + "</h1>"})
+			return new HTML({ content: "<h1>" + sTitle + "</h1>"})
 				.setLayoutData(new GridData({ span: "XL12 L12 M12 S12" }));
 		}
 
@@ -130,7 +132,7 @@ sap.ui.define([
 		var layout = new VBox();
 
 		function createRowWithTitle(sTitle) {
-			return new sap.ui.core.HTML({ content: "<h1>" + sTitle + "</h1>"});
+			return new HTML({ content: "<h1>" + sTitle + "</h1>"});
 		}
 
 		function createCellWithContent(aContent) {
@@ -165,7 +167,7 @@ sap.ui.define([
 		var layout = new VBox();
 
 		function createRowWithTitle(sTitle) {
-			return new sap.ui.core.HTML({ content: "<h1>" + sTitle + "</h1>"});
+			return new HTML({ content: "<h1>" + sTitle + "</h1>"});
 		}
 
 		function createCellWithContent(aContent) {
@@ -229,7 +231,7 @@ sap.ui.define([
 			}));
 
 		function createRowWithTitle(sTitle) {
-			return new sap.ui.core.HTML({ content: "<h1>" + sTitle + "</h1>"})
+			return new HTML({ content: "<h1>" + sTitle + "</h1>"})
 				.setLayoutData(new ResponsiveColumnItemLayoutData({ columns: 5 }));
 		}
 
@@ -302,9 +304,3 @@ sap.ui.define([
 		Cell: Cell
 	};
 });
-
-
-
-
-
-

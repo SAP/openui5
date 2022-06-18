@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
+	"sap/ui/thirdparty/jquery",
 	"./TestUtils",
 	"sap/ui/core/Core"
 ], function(
@@ -12,6 +13,7 @@ sap.ui.define([
 	BindingsExtractor,
 	DesignTime,
 	DelegateMediatorAPI,
+	jQuery,
 	TestUtils,
 	oCore
 ) {

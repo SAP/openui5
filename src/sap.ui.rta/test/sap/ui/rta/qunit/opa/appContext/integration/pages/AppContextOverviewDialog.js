@@ -2,12 +2,14 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/Drag",
-	"sap/ui/test/actions/Drop"
+	"sap/ui/test/actions/Drop",
+	"sap/ui/test/matchers/Ancestor"
 ], function (
 	Opa5,
 	Press,
 	Drag,
-	Drop
+	Drop,
+	Ancestor
 ) {
 	"use strict";
 	Opa5.createPageObjects({
@@ -84,7 +86,7 @@ sap.ui.define([
 							var oAncestor = aAncestors[0];
 							return this.waitFor({
 								controlType: "sap.m.MenuButton",
-								matchers: new sap.ui.test.matchers.Ancestor(oAncestor),
+								matchers: new Ancestor(oAncestor),
 								success: function () {
 									Opa5.assert.ok(true, "Action button found and visible");
 								},

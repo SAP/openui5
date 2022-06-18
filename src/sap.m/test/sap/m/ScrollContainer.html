@@ -1,16 +1,21 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-
+	<meta charset="utf-8">
 	<title>ScrollContainer - sap.m</title>
 
-	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m,sap.ui.layout">
+			data-sap-ui-async="true"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-libs="sap.m,sap.ui.layout"
+			data-sap-ui-onInit="module:local/ScrollContainer"
+			data-sap-ui-resourceRoots='{
+				"local": "./"
+			}'
+			data-sap-ui-theme="sap_horizon"
+			>
 	</script>
-	<script src="./ScrollContainer.js"></script>
-
 	<link rel="stylesheet" href="./ScrollContainer.css"/>
 
 </head>

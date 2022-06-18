@@ -8,13 +8,15 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/base/util/includes",
-	"sap/base/util/restricted/_debounce"
+	"sap/base/util/restricted/_debounce",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Plugin,
 	OverlayRegistry,
 	OverlayUtil,
 	includes,
-	_debounce
+	_debounce,
+	jQuery
 ) {
 	"use strict";
 

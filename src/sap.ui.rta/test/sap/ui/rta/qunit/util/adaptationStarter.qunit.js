@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/rta/util/adaptationStarter",
 	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
@@ -20,6 +21,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	adaptationStarter,
 	RuntimeAuthoring,
+	jQuery,
 	sinon,
 	RtaQunitUtils
 ) {

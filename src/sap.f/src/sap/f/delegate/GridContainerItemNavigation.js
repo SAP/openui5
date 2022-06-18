@@ -5,7 +5,8 @@ sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
 	"./GridItemNavigation",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selector ":sapTabbable"
 ], function (
 	ItemNavigation,
 	GridItemNavigation,

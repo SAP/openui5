@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/m/Button",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	XMLView,
 	Utils,
@@ -39,7 +40,8 @@ sap.ui.define([
 	uid,
 	Button,
 	RtaQunitUtils,
-	oCore
+	oCore,
+	jQuery
 ) {
 	"use strict";
 

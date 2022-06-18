@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/DateRange"
 ], function(
 	Popover,
@@ -41,7 +40,6 @@ sap.ui.define([
 	containsOrEquals,
 	deepEqual,
 	Log,
-	jQuery,
 	DateRange
 ) {
 		"use strict";

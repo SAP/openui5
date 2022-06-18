@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <meta charset="utf-8">
-      <title>Walkthrough</title>
-      <script
-         id="sap-ui-bootstrap"
-         src="../../../../../../../resources/sap-ui-core.js"
-         data-sap-ui-theme="sap_belize"
-         data-sap-ui-libs="sap.m"
-         data-sap-ui-compatVersion="edge"
-         data-sap-ui-preload="async"
-         data-sap-ui-resourceroots='{
-            "sap.m.sample.TableTest": "./",
-            "view": "./view"            
-         }' >
-      </script>
-      <script>
-         sap.ui.getCore().attachInit(function () {
-            sap.ui.xmlview({
-               viewName : "view.Table"
-            }).placeAt("content");
-         });
-      </script>
-   </head>
-   <body class="sapUiBody" id="content">
-   </body>
+	<head>
+		<meta charset="utf-8">
+		<title>Walkthrough</title>
+		<script
+			id="sap-ui-bootstrap"
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-async="true"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{
+				"sap.m.sample.TableTest.applicationUnderTest": "./"
+			}'
+			data-sap-ui-theme="sap_horizon" >
+		</script>
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require(["sap/ui/core/mvc/XMLView"], function(XMLView) {
+					XMLView.create({
+						viewName : "sap.m.sample.TableTest.applicationUnderTest.view.Table"
+					}).then(function(oView) {
+						oView.placeAt("content");
+					});
+				});
+			});
+		</script>
+	</head>
+	<body class="sapUiBody" id="content">
+	</body>
 </html>

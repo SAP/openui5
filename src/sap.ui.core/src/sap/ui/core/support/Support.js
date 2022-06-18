@@ -940,7 +940,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', "sap/base/util/UriParame
 		if ( bAsync ) {
 			sap.ui.require(aModulesWhereToInjectSupportInfo, injectSupportInfo);
 		} else {
-			injectSupportInfo.apply(null, aModulesWhereToInjectSupportInfo.map(sap.ui.requireSync) );
+			injectSupportInfo.apply(null, aModulesWhereToInjectSupportInfo.map(sap.ui.requireSync) ); // legacy-relevant: Sync path
 		}
 	};
 
