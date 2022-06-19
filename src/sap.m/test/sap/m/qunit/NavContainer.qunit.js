@@ -132,10 +132,6 @@ sap.ui.define([
 	nc2.placeAt("content");
 
 
-	jQuery(document).ready(function() {
-
-	});
-
 
 
 	//** START OF TESTS ***
@@ -2341,6 +2337,10 @@ sap.ui.define([
 					this.oPopover.openBy(this.oOpeningBtn);
 				}
 			}, this);
+
+			// move #qunit-fixture into visible area to prevent auto-close of Popover
+			document.getElementById("qunit-fixture").style.top = "0";
+			document.getElementById("qunit-fixture").style.left = "0";
 		},
 		afterEach: function () {
 			this.oPopover.destroy();
@@ -2349,6 +2349,10 @@ sap.ui.define([
 			this.oPopover = null;
 			this.oNavC = null;
 			this.oOpeningBtn = null;
+
+			// restore default styles of #qunit-fixture
+			document.getElementById("qunit-fixture").style.top = "";
+			document.getElementById("qunit-fixture").style.left = "";
 		}
 	});
 
