@@ -88,7 +88,7 @@ sap.ui.define([
 		}
 
 		oSearchField.attachChange(function () {
-			this.setValue(this.getValueForModel());
+			this._setValue();
 		}.bind(this));
 
 		return oSearchField;

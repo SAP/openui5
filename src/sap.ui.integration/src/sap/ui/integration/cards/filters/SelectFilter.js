@@ -147,12 +147,7 @@ sap.ui.define([
 			oLabel = this.createLabel(oConfig);
 
 		oSelect.attachChange(function (oEvent) {
-			this.setValue(this.getValueForModel());
-
-			var sManifestKey = "/sap.card/configuration/filters/" + this.getKey() + "/value",
-				oParams = {};
-			oParams[sManifestKey] = oEvent.getParameter("selectedItem").getKey();
-			this.getCardInstance()._fireConfigurationChange(oParams);
+			this._setValue();
 		}.bind(this));
 
 		if (oConfig && oConfig.item) {

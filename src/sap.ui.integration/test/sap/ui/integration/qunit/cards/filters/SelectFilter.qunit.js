@@ -43,7 +43,7 @@ sap.ui.define([
 
 			// Assert
 			var oFilterBar = this.oCard.getAggregation("_filterBar");
-			assert.strictEqual(oFilterBar._getFilters().length, 2, "The filter bar has 2 filters");
+			assert.strictEqual(oFilterBar._getFilters().length, 4, "The filter bar has 4 filters");
 
 			var oFirstFilter = oFilterBar._getFilters()[0];
 			assert.strictEqual(oFirstFilter._getSelect().getItems().length, 2, "The filter options are 2.");
