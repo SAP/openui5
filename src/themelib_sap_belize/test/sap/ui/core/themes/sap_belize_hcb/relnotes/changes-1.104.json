@@ -3,6 +3,17 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "416a1f31b2a839f2885c39d98d373aac6e22c4ce",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Button icon width in Popover fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280088353"
+          }
+        ]
+      },
+      {
         "id": "7db25eb681a366e4b12125a6423edca253e08194",
         "type": "FIX",
         "text": " sap.m.IconTabBar: Hover color for IconTabBAr in ShellBar is now correct",

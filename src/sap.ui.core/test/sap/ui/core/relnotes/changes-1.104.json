@@ -3,6 +3,39 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "ff9d20f20feb1389179f4897c196523538db7cde",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#callFunction: encode key values for function target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270075487"
+          }
+        ]
+      },
+      {
+        "id": "913e28cb09a49567aa3415f95ab810e7cb526a07",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Cache#update: fire patchReceived event when merged PATCHes fail",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280103069"
+          }
+        ]
+      },
+      {
+        "id": "0c88244e53a69817a55d34723734357bcc947e0f",
+        "type": "FIX",
+        "text": " sap.ui.core.format.TimezoneUtil: fractionalSecond fallback",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280083818"
+          }
+        ]
+      },
+      {
         "id": "875d798e19fc8341359a17e24f55eb513b0dbf8d",
         "type": "FIX",
         "text": " sap.ui.core.format.NumberFormat: strictGroupingValidation formatOption",

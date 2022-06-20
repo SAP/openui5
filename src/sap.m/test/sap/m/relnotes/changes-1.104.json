@@ -3,9 +3,118 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "3f071ef7c174e18290eb2c015f1cfde5fa823f2f",
+        "type": "FIX",
+        "text": " sap.m.Bar: fixed middle content width"
+      },
+      {
+        "id": "74d59aa477973d72dd024eb9ee6e6d64b9a5dd12",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection in table with many radio buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003326492022"
+          }
+        ]
+      },
+      {
+        "id": "a3ca1a2fa72e8d3957a346292bf0f831b7a0dab5",
+        "type": "FEATURE",
+        "text": " sap.m.Link: new property 'accessibleRole' introduced"
+      },
+      {
+        "id": "416a1f31b2a839f2885c39d98d373aac6e22c4ce",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Button icon width in Popover fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280088353"
+          }
+        ]
+      },
+      {
+        "id": "4eb4942b3768768e29978bf626073b07264e0110",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: added missing label references in Demokit samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270013286"
+          }
+        ]
+      },
+      {
+        "id": "fdd524371bdc962b4c90be3022435a7885004f9e",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: added missing label references in Demokit samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270013286"
+          }
+        ]
+      },
+      {
+        "id": "040b8420a9685188499cc51c8c756ab56a817e0a",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Initial focus is correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280102376"
+          }
+        ]
+      },
+      {
+        "id": "dbb7d290cf020a59bcc1bdfed2097548fb43e128",
+        "type": "FIX",
+        "text": " sap.m.Popover: Prevent closing of Popover after lazy loading content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270033712"
+          }
+        ]
+      },
+      {
+        "id": "191f950015533861418a5fb2b9ef327715d45ccd",
+        "type": "FIX",
+        "text": " sap.m.Input: Keep typeaheaded text on item navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280088528"
+          }
+        ]
+      },
+      {
         "id": "0fde5cb025aadd6a773cfca40b92818129244dcb",
         "type": "FEATURE",
         "text": " Edit state of UploadSetItems and handling the renaming or cancellation of operations is now exposed"
+      },
+      {
+        "id": "3050332d4c0965f68c75d16b479303a3a4b7654e",
+        "type": "FIX",
+        "text": " sap.m.Bar: now resizing occurs whenever there is middleContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280083747"
+          }
+        ]
+      },
+      {
+        "id": "e0b3db5dff3d80b97a34f497b5f8574ab2a0b98f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: selectedKey property is now correctly updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280098933"
+          }
+        ]
       },
       {
         "id": "e6fc78850429dfac1cf34053b61bc3cd5f7140ce",

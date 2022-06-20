@@ -3,6 +3,27 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "f9d3a068f29a6d5c3670b10e58ecb2834d5e7c37",
+        "type": "FEATURE",
+        "text": " 72-SemiboldDuplex font for Horizon flavors"
+      },
+      {
+        "id": "e8f3ece2af428d584095360669dbdb12129f2ae2",
+        "type": "FEATURE",
+        "text": " 72Blackfull font for Horizon flavors"
+      },
+      {
+        "id": "3ad2eabfd231a1635e0606f226e656c9867f9f8f",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Align labels on morning horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270106046"
+          }
+        ]
+      },
+      {
         "id": "6e5f2021832f56bbc18b3bda000f2976cf0cee90",
         "type": "FIX",
         "text": " sap.m.ProgressIndicator: Fix cutting of items in a table",
