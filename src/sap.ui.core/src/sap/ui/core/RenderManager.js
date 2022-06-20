@@ -929,8 +929,10 @@ sap.ui.define([
 				var oEvent = new jQuery.Event("BeforeRendering");
 				// store the element on the event (aligned with jQuery syntax)
 				oEvent.srcControl = oControl;
+				oControl._bOnBeforeRenderingPhase = true;
 				oControl._handleEvent(oEvent);
 			} finally {
+				oControl._bOnBeforeRenderingPhase = false;
 				bLocked = false;
 			}
 		}

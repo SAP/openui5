@@ -179,7 +179,7 @@ sap.ui.define([
 
 			Element.apply(this,arguments);
 			this.bOutput = this.getDomRef() != null; // whether this control has already produced output
-
+			this._bOnBeforeRenderingPhase = false; // whether the control is in the onBeforeRendering phase
 		},
 
 		renderer : null // Control has no renderer
@@ -324,6 +324,13 @@ sap.ui.define([
 	 */
 	Control.prototype.invalidate = function(oOrigin) {
 		var oUIArea;
+
+		// invalidations that happen in the onBeforeRendering hook of controls can be ignored
+		// since the rendering of the control has not yet been started
+		if ( this._bOnBeforeRenderingPhase ) {
+			return;
+		}
+
 		if ( this.bOutput && (oUIArea = this.getUIArea()) ) {
 			// if this control has been rendered before (bOutput)
 			// and if it is contained in a UIArea (!!oUIArea)
