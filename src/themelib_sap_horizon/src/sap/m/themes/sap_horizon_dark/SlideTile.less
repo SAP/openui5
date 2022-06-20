@@ -27,24 +27,11 @@ html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
 }
 
 /* Bulleted indicator of multiple tiles*/
-.sapMSTBulleted{
-	display: flex;
-	margin-left: 3rem;
-	gap: 0.188rem;
-	width: fit-content;
-}
-
-.sapMST.TwoByOne.sapMTileSmallPhone{
-	.sapMSTBulleted{
-		margin-left: 2.2rem;
-	}
-}
-
 .sapMSTBulleted > span {
 	border: solid 0.0625rem @sapTile_OverlayForegroundColor;
 	opacity: 0.6;
 	box-shadow : 0 0 0.125rem @sapContent_ShadowColor;
-	margin: 0;
+	margin: 0 0.094rem;
 }
 
 .sapMSTBulleted > span.sapMSTActive {
