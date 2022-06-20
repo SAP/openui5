@@ -721,6 +721,6 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 
 		assert.ok(oConfig.canOverflow, "canOverflow is set to true");
 		assert.equal(typeof oConfig.getCustomImportance, "function", "getCustomImportance function is set");
-		assert.equal(oConfig.getCustomImportance(), "High", "customImportance is set to 'High'");
+		assert.equal(oConfig.getCustomImportance(), "Medium", "customImportance is set to 'Medium'");
 	});
 });
