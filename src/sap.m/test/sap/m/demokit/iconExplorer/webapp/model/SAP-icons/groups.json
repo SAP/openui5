@@ -126,7 +126,11 @@
 				{ "name" : "switch-classes" },
 				{ "name" : "user-settings" },
 				{ "name" : "visits" },
-				{ "name" : "add-employee" }
+				{ "name" : "add-employee" },
+				{ "name" : "binary" },
+				{ "name" : "female" },
+				{ "name" : "gender-male-and-female" },
+				{ "name" : "male" }
 			]
 		},
 		{
