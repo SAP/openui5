@@ -11,7 +11,7 @@ describe("sap.ui.integration.ObjectCardVisualTests", function () {
 		expect(takeScreenshot()).toLookAs("0_test_page");
 	});
 
-	var aCardIds = ["card1", "card2"];
+	var aCardIds = ["card1", "card2", "card3"];
 
 	it("Object Card", function () {
 		utils.navigateTo("Object Card");

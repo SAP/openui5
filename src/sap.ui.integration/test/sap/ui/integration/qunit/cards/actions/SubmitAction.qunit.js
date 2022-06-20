@@ -188,17 +188,16 @@ sap.ui.define([
 		var done = assert.async(),
 			oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
 			oDefaultPayload = {
-				data: {
-					someKey: "someValue"
-				}
+				someKey: "someValue"
 			};
+
+		this.oCard.getModel("form").setData(oDefaultPayload);
 
 		this.oCard.attachEvent("_ready", function () {
 			// Act
 			this.oCard.getCardContent().getActions().fireAction(
 				this.oCard.getCardContent(),
-				CardActionType.Submit,
-				oDefaultPayload
+				CardActionType.Submit
 			);
 
 			// Assert
@@ -239,14 +238,13 @@ sap.ui.define([
 				}
 			};
 
+		this.oCard.getModel("form").setData(oDefaultPayload);
+
 		this.oCard.attachEvent("_ready", function () {
 			// Act
 			this.oCard.getCardContent().getActions().fireAction(
 				this.oCard.getCardContent(),
-				CardActionType.Submit,
-				{
-					data: oDefaultPayload
-				}
+				CardActionType.Submit
 			);
 
 			// Assert
@@ -296,14 +294,13 @@ sap.ui.define([
 				}
 			};
 
+		this.oCard.getModel("form").setData(oDefaultPayload);
+
 		this.oCard.attachEvent("_ready", function () {
 			// Act
 			this.oCard.getCardContent().getActions().fireAction(
 				this.oCard.getCardContent(),
-				CardActionType.Submit,
-				{
-					data: oDefaultPayload
-				}
+				CardActionType.Submit
 			);
 
 			var oDataProviderSettings = oStubRequest.thisValues[0].getSettings();
@@ -339,6 +336,10 @@ sap.ui.define([
 	QUnit.test("Binding in action handler parameters", function (assert) {
 		var done = assert.async();
 
+		this.oCard.getModel("form").setData({
+			userName: "DonnaMoore"
+		});
+
 		this.oCard.attachEvent("_ready", function () {
 			// Arrange
 			var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
@@ -346,12 +347,7 @@ sap.ui.define([
 			// Act
 			this.oCard.getCardContent().getActions().fireAction(
 				this.oCard.getCardContent(),
-				CardActionType.Submit,
-				{
-					data: {
-						userName: "DonnaMoore"
-					}
-				}
+				CardActionType.Submit
 			);
 
 			// Assert
@@ -400,8 +396,7 @@ sap.ui.define([
 			// Act
 			this.oCard.getCardContent().getActions().fireAction(
 				this.oCard.getCardContent(),
-				CardActionType.Submit,
-				{}
+				CardActionType.Submit
 			);
 
 			// Assert

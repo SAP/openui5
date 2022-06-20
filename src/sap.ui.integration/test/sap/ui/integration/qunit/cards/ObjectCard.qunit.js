@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/m/library",
+	"sap/ui/integration/library",
 	"sap/ui/integration/cards/ObjectContent",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
@@ -11,6 +12,7 @@ sap.ui.define([
 ], function (
 	Log,
 	mLibrary,
+	library,
 	ObjectContent,
 	Card,
 	Core,
@@ -22,6 +24,7 @@ sap.ui.define([
 	// shortcut for sap.m.AvatarSize
 	var AvatarSize = mLibrary.AvatarSize;
 	var AvatarColor = mLibrary.AvatarColor;
+	var CardActionType = library.CardActionType;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -446,6 +449,70 @@ sap.ui.define([
 								"icon": {
 									"src": "sap-icon://account"
 								}
+							}
+						]
+					}
+				]
+			}
+		}
+	};
+
+	var oManifest_ObjectCardFormElements = {
+		"sap.app": {
+			"id": "test.cards.object.card5",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"data": {
+				"json": {
+					"initialSelection": "reason1",
+					"initialComment": "Free text comment",
+					"reasons": [
+						{
+							"id": "reason1",
+							"title": "Reason 1"
+						},
+						{
+							"id": "reason2",
+							"title": "Reason 2"
+						}
+					]
+				}
+			},
+			"header": {
+				"icon": {
+					"src": "sap-icon://product"
+				},
+				"title": "PR255 - MacBook Purchase",
+				"subTitle": "Procurement Purchase Requisition"
+			},
+			"content": {
+				"groups": [
+					{
+						"alignment": "Stretch",
+						"items": [
+							{
+								"id": "reason",
+								"label": "Reason",
+								"type": "ComboBox",
+								"placeholder": "Select",
+								"selectedKey": "{/initialSelection}",
+								"item": {
+									"path": "/reasons",
+									"template": {
+										"key": "{id}",
+										"title": "{title}"
+									}
+								}
+							},
+							{
+								"id": "comment",
+								"label": "Comment",
+								"type": "TextArea",
+								"value": "{/initialComment}",
+								"rows": 4,
+								"placeholder": "Comment"
 							}
 						]
 					}
@@ -1397,4 +1464,79 @@ sap.ui.define([
 		return oObjectContent;
 	});
 
+	QUnit.module("Form elements", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Elements are properly created", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			var oLayout = oCard.getCardContent().getAggregation("_content").getItems()[0],
+				aItems = oLayout.getItems(),
+				oComboBox = aItems[1],
+				oTextArea = aItems[3];
+
+			// Assert Combo Box
+			assert.ok(oComboBox.isA("sap.m.ComboBox"), "ComboBox is created.");
+			assert.strictEqual(oComboBox.getPlaceholder(), "Select", "ComboBox has correct placeholder.");
+			assert.strictEqual(oComboBox.getSelectedKey(), "reason1", "ComboBox has correct value.");
+			assert.strictEqual(oComboBox.getItems().length, 2, "ComboBox has 2 options.");
+			assert.strictEqual(oComboBox.getLabels()[0].getText(), "Reason:", "ComboBox is referenced to the correct label.");
+
+			// Assert Text Area
+			assert.ok(oTextArea.isA("sap.m.TextArea"), "TextArea is created.");
+			assert.strictEqual(oTextArea.getPlaceholder(), "Comment", "TextArea has correct placeholder.");
+			assert.strictEqual(oTextArea.getValue(), "Free text comment", "TextArea has correct value.");
+			assert.strictEqual(oTextArea.getRows(), 4, "TextArea has 4 rows.");
+			assert.strictEqual(oTextArea.getLabels()[0].getText(), "Comment:", "TextArea is referenced to the correct label.");
+
+			done();
+		});
+
+		oCard.setManifest(oManifest_ObjectCardFormElements);
+		Core.applyChanges();
+	});
+
+	QUnit.test("Element values are properly passed on submit action", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachAction(function (oEvent) {
+			var mParameters = oEvent.getParameter("parameters"),
+				mExpectedData = {
+					"reason": {
+						"key": "reason1",
+						"value": "Reason 1"
+					},
+					"comment": "Free text comment"
+				};
+
+			assert.deepEqual(mParameters.data, mExpectedData, "Data is properly passed to action handler.");
+			assert.deepEqual(oCard.getModel("form").getData(), mExpectedData, "Data is properly populated in the form model.");
+
+			done();
+		});
+
+		oCard.attachEvent("_ready", function () {
+			oCard.triggerAction({
+				"type": CardActionType.Submit
+			});
+		});
+
+		oCard.setManifest(oManifest_ObjectCardFormElements);
+		Core.applyChanges();
+	});
 });

@@ -277,9 +277,8 @@ sap.ui.define([
 					};
 					sType = library.CardActionType.Navigation;
 				} else if (oAction instanceof AdaptiveCards.SubmitAction) {
-					oPayload = {
-						data: oAction.data
-					};
+					this.getModel("form").setProperty("/", oAction.data);
+
 					sType = library.CardActionType.Submit;
 				} else {
 					// The other types of actions are entirely internal
