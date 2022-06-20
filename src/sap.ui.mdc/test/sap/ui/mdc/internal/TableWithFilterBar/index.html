@@ -8,7 +8,7 @@
 
     <script src="../../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
         data-sap-ui-compatVersion="edge"
-        data-sap-ui-oninit="module:sap/ui/v4demo/index"
+		data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
 		data-sap-ui-theme="sap_fiori_3"
 		data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
         data-sap-ui-resourceroots='{
@@ -35,6 +35,7 @@
 </head>
 
 <body class="sapUiBody sapUiSizeCompact" id="content">
+	<div data-sap-ui-component data-name="sap.ui.v4demo" data-id="container" data-settings='{"id" : "v4demo"}'></div>
 </body>
 
 </html>

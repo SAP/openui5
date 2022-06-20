@@ -1,10 +1,27 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/mdc/link/FakeFlpConnector"
-], function (UIComponent,  FakeFlpConnector) {
+	"sap/ui/mdc/link/FakeFlpConnector",
+	"sap/base/util/LoaderExtensions",
+	"sap/base/util/UriParameters"
+], function (UIComponent, FakeFlpConnector, LoaderExtensions, UriParameters) {
 	"use strict";
 
+	var fnLoadManifest = function() {
+		var oDefaultManifest = LoaderExtensions.loadResource("sap/ui/v4demo/manifest.json");
+
+		var oUriParams = new UriParameters(window.location.href);
+		if (oUriParams.get("service") === "tenant") {
+			oDefaultManifest["sap.app"].dataSources.default.uri = "/tenant(mdcmanagedbooks)/catalog-test/";
+		}
+
+		return oDefaultManifest;
+	};
+
 	return UIComponent.extend("sap.ui.v4demo.Component", {
+
+		metadata: {
+			manifest: fnLoadManifest()
+		},
 
 		init : function () {
 			// call the init function of the parent

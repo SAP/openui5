@@ -7,9 +7,12 @@
 
 sap.ui.require([
 	"sap/ui/test/Opa5",
-	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary"
+	"mdc/qunit/util/V4ServerHelper",
+	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary",
+	"test-resources/sap/ui/mdc/testutils/opa/Util"
 ], function(
-	Opa5
+	Opa5,
+	ODataV4ServerHelper
 ) {
 	"use strict";
 
@@ -18,7 +21,8 @@ sap.ui.require([
 		async: true,
 		appParams: {
 			"sap-ui-animation": false,
-			"sap-ui-xx-filterQueryPanel": true
+			"sap-ui-xx-filterQueryPanel": true,
+			"service": "tenant"
 		},
 		testLibs: {
 			mdcTestLibrary: {
@@ -27,10 +31,26 @@ sap.ui.require([
 		}
 	});
 
-	sap.ui.require([
-		"local/test/TestJourney"
-	], function() {
-		QUnit.start();
-	});
+	ODataV4ServerHelper.checkWhetherServerExists().then(onODataV4ServerChecked);
 
+	// this is where we decide to ONLY execute the test if the OData V4 server is available
+	function onODataV4ServerChecked(bServerAvailable) {
+
+		if (bServerAvailable) {
+
+			sap.ui.require([
+				"local/test/TestJourney"
+			], function() {
+				QUnit.start();
+			});
+
+		} else {
+
+			QUnit.test("V4 NOT AVAILABLE - v4server.integration TESTS SKIPPED", function(assert) {
+				assert.ok(true, "Tests are not executed when V4 Test Server is not available");
+			});
+
+			QUnit.start();
+		}
+	}
 });

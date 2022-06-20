@@ -103,6 +103,13 @@ sap.ui.define([
 				 */
 				iClearFilterValue: function(oFilterBar, sFilterLabel) {
 					return filterBarActions.iClearFilterValue.call(this, oFilterBar, sFilterLabel);
+				},
+
+				iChangeAdaptFiltersView: function(sViewMode) {
+					return filterBarActions.iChangeAdaptFiltersView.apply(this, arguments);
+				},
+				iPressOnTheAdaptFiltersButton: function() {
+					return filterBarActions.iPressOnTheAdaptFiltersButton.apply(this, arguments);
 				}
             },
             assertions: {
@@ -128,6 +135,16 @@ sap.ui.define([
 				 */
 				iShouldSeeFilters: function(oFilterBar, vSettings) {
 					return filterBarAssertions.iShouldSeeFilters.call(this, oFilterBar, vSettings);
+				},
+
+				iShouldSeeTheFilterBar: function() {
+					return filterBarAssertions.iShouldSeeTheFilterBar.apply(this, arguments);
+				},
+				iShouldSeeTheFilterFieldsWithLabels: function(aLabelNames) {
+					return filterBarAssertions.iShouldSeeTheFilterFieldsWithLabels.apply(this, arguments);
+				},
+				iShouldSeeTheAdaptFiltersButton: function() {
+					return filterBarAssertions.iShouldSeeTheAdaptFiltersButton.apply(this, arguments);
 				}
 			}
         }
