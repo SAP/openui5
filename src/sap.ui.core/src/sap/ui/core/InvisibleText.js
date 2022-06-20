@@ -187,6 +187,9 @@ sap.ui.define([
 				oText = new InvisibleText().setText( oBundle.getText(sTextKey) );
 				oText.toStatic();
 				sTextId = mTextIds[sKey] = oText.getId();
+				// A potential component-owner ID is unwanted for InvisibleTexts since its DOM is cached
+				// for infinity, its lifecycle needs to be decoupled from any currently active owner component.
+				delete oText._sOwnerId;
 			}
 		}
 
