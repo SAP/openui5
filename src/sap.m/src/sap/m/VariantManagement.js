@@ -1895,7 +1895,7 @@ sap.ui.define([
 		}
 
 		// roles
-		if (this.getSupportContexts() && (oItem.getKey() !== this.getStandardVariantKey())) {
+		if (this._sStyleClass && (oItem.getKey() !== this.getStandardVariantKey())) {
 			var oText = new Text({ wrapping: false });
 			this._determineRolesSpecificText(oItem.getContexts(), oText);
 			var oIcon = new Icon({
