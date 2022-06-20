@@ -11,11 +11,11 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/mdc/integration/testlibrary/p13n/Actions",
+	"test-resources/sap/ui/mdc/testutils/opa/p13n/waitForPanelInP13n",
 	"./actions/PressKey",
 	"sap/m/MessageBox",
 	"sap/ui/core/Core"
-], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, TestLibActions, PressKey, MessageBox, oCore) {
+], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, waitForPanelInP13n, PressKey, MessageBox, oCore) {
 	"use strict";
 
 	/**
@@ -107,7 +107,26 @@ sap.ui.define([
 		},
 
 		iTogglePanelInDialog: function(sGroupName) {
-			return TestLibActions.iToggleFilterPanel.call(this, sGroupName, true);
+			var fiToggleFilterPanel = function(sGroupName, bModal) {
+				return waitForPanelInP13n.call(this, {
+					groupName: sGroupName,
+					modal: !!bModal,
+					success: function(oPanel) {
+						Opa5.assert.ok(oPanel, "Groupable Panel found in p13n Dialog");
+						this.waitFor({
+							controlType: "sap.m.Button",
+							matchers: [
+								new Ancestor(oPanel)
+							],
+							success: function(aButtons) {
+								new Press().executeOn(aButtons[0]);
+							}
+						});
+					}
+				});
+			};
+
+			return fiToggleFilterPanel.call(this, sGroupName, true);
 		},
 
 		iSetP13nMode: function(sControl, aValue) {
