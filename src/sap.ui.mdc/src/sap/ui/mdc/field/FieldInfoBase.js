@@ -100,12 +100,6 @@ sap.ui.define([
 		return this.checkDirectNavigation().then(function(bNavigated) {
 			return bNavigated ? Promise.resolve() : this.createPopover().then(function(oPopover) {
 				if (oPopover) {
-					// Note: it is not needed to destroy this._oPopover in exit as through addDependent() the popover
-					// instance will be automatically destroyed once the FieldInfoBase instance is destroyed.
-					this._oPopover = oPopover;
-
-					this.addDependent(this._oPopover);
-
 					this._oPopover.openBy(oControl);
 
 					this._oPopover.attachAfterOpen(function() {
@@ -175,19 +169,27 @@ sap.ui.define([
 				}.bind(this)
 			});
 
-			sap.ui.require([
-				'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
-			], function(FlexRuntimeInfoAPI) {
-				if (FlexRuntimeInfoAPI.isFlexSupported({element: oPanel})) {
-					FlexRuntimeInfoAPI.waitForChanges({element: oPanel}).then(function () {
-						oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
-					});
-				} else if (oPanel) {
-					oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
-				}
-			});
+			// Note: it is not needed to destroy this._oPopover in exit as through addDependent() the popover
+			// instance will be automatically destroyed once the FieldInfoBase instance is destroyed.
+			this._oPopover = oPopover;
 
-			return oPopover;
+			this.addDependent(this._oPopover);
+
+			return new Promise(function(resolve, reject) {
+				sap.ui.require([
+					'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
+				], function(FlexRuntimeInfoAPI) {
+					if (FlexRuntimeInfoAPI.isFlexSupported({element: oPanel})) {
+						FlexRuntimeInfoAPI.waitForChanges({element: oPanel}).then(function () {
+							oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
+							resolve(oPopover);
+						});
+					} else if (oPanel) {
+						oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
+						resolve(oPopover);
+					}
+				});
+			});
 		}.bind(this));
 	};
 

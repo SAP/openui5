@@ -234,7 +234,18 @@ sap.ui.define([
 
 					var oPanelAdditionalContent = !aAdditionalContent.length && !aMLinkItems.length ? this._getNoContent() : aAdditionalContent;
 
-					var oPanel = new Panel(this._createPanelId(Utils, FlexRuntimeInfoAPI), {
+					var sPanelId = this._createPanelId(Utils, FlexRuntimeInfoAPI);
+					var oExistingPanel = sap.ui.getCore().byId(sPanelId);
+					if (oExistingPanel) {
+						SapBaseLog.warning("Duplicate ID '" + sPanelId + "'. The instance of sap.ui.mdc.link.Panel should be destroyed first in order to avoid duplicate creation of sap.ui.mdc.link.Panel with stable ID.");
+						// close Popover if existing
+						if (oExistingPanel.getParent() && oExistingPanel.getParent().close) {
+							oExistingPanel.getParent().close();
+						}
+						oExistingPanel.destroy();
+					}
+
+					var oPanel = new Panel(sPanelId, {
 						enablePersonalization: this.getEnablePersonalization(), // brake the binding chain
 						items: aMBaselineLinkItems.map(function(oMLinkItem) {
 							return new PanelItem(oMLinkItem.key, {
@@ -261,7 +272,6 @@ sap.ui.define([
 						beforeNavigationCallback: this._beforeNavigationCallback.bind(this),
 						metadataHelperPath: "sap/ui/mdc/Link"
 					});
-
 					oPanel.setModel(new JSONModel({
 						metadata: jQuery.extend(true, [], this._getInternalModel().getProperty("/linkItems")),
 						baseline: jQuery.extend(true, [], this._getInternalModel().getProperty("/baselineLinkItems"))
@@ -352,7 +362,7 @@ sap.ui.define([
 		if (this.getParent()) {
 			oField = this.getParent();
 		}
-		var oControl = typeof this.getSourceControl() === "string" ? sap.ui.getCore().byId(this.getSourceControl()) : this.getSourceControl();
+		var oControl = this._getSourceControl();
 		if (!oControl) {
 			//SapBaseLog.error("Invalid source control: " + this.getSourceControl() + ". The mandatory 'sourceControl' association should be defined due to personalization reasons, parent: " + oField + " used instead.");
 			this.setSourceControl(oField);
@@ -606,7 +616,7 @@ sap.ui.define([
 	 * @returns {Object} The binding context of the SourceControl / link
 	 */
 	Link.prototype._getControlBindingContext = function() {
-		var oControl = typeof this.getSourceControl() === "string" ? sap.ui.getCore().byId(this.getSourceControl()) : this.getSourceControl();
+		var oControl = this._getSourceControl();
 		return oControl && oControl.getBindingContext() || this.getBindingContext();
 	};
 
@@ -616,6 +626,15 @@ sap.ui.define([
 	 */
 	Link.prototype._getInternalModel = function() {
 		return this.getModel("$sapuimdcLink");
+	};
+
+	/**
+	 * Returns the object which is defined in the association "sourceControl"
+	 * @private
+	 * @returns {sap.ui.core.Control} Associated sourceControl
+	 */
+	Link.prototype._getSourceControl = function() {
+		return typeof this.getSourceControl() === "string" ? sap.ui.getCore().byId(this.getSourceControl()) : this.getSourceControl();
 	};
 
 	return Link;
