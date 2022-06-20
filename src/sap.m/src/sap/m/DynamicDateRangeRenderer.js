@@ -23,6 +23,9 @@ sap.ui.define([],
 
 		oRm.openStart("div", oControl);
 		oRm.class("sapMDynamicDateRange");
+		if (oControl.getHideInput()) {
+			oRm.class("sapMDDRHiddenInput");
+		}
 		oRm.openEnd();
 
 		oRm.renderControl(oControl._oInput);

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/Core",
 	"sap/ui/core/format/DateFormat",
+	"sap/m/Button",
 	"sap/ui/core/Icon",
 	"sap/m/Label",
 	'sap/ui/Device'
@@ -20,6 +21,7 @@ sap.ui.define([
 	DateRange,
 	oCore,
 	DateFormat,
+	Button,
 	Icon,
 	Label,
 	Device
@@ -1143,6 +1145,34 @@ sap.ui.define([
 		oResult = this.ddr._parseValue("Jul 1, 10000, 11:33:00 AM");
 		// assert
 		assert.strictEqual(oResult, null, "(datetime) When year is > 9999, parsing returns null (value is not parsed)");
+	});
+
+	QUnit.test("Open DynamicDateRange from Button", function(assert) {
+		// Prepare
+		var oDDR = new DynamicDateRange("HDDR", {
+				hideInput: true
+			}).placeAt("qunit-fixture"),
+			oButton = new Button({
+				icon: "sap-icon://appointment-2",
+				press: function() {
+					oCore.byId("HDDR").openBy(this.getDomRef());
+				}
+			}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
+		// Act
+		oButton.firePress();
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oDDR._oPopup, oDDR.getId() + ": popup object exists");
+		assert.ok(oCore.byId(oDDR.getId() + "-RP-popover"), oDDR.getId() + ": popover control exists");
+		assert.ok(document.body.querySelector("#" + oDDR.getId() + "-RP-popover"), "popover exists in DOM");
+
+		// Clean
+		oDDR.destroy();
+		oButton.destroy();
 	});
 
 });

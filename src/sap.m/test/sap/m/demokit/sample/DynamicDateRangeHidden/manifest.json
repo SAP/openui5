@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.DynamicDateRange",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.DynamicDateRangeHidden.DynamicDateRange",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"DynamicDateRange.view.xml",
+					"DynamicDateRange.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -312,7 +312,7 @@
 			"category": "User Input",
 			"since": "1.92",
 			"formFactors": "M",
-			"samples": ["sap.m.sample.DynamicDateRange", "sap.m.sample.DynamicDateRangeWithCustomOptions"]
+			"samples": ["sap.m.sample.DynamicDateRange", "sap.m.sample.DynamicDateRangeWithCustomOptions", "sap.m.sample.DynamicDateRangeHidden"]
 		},
 		{
 		  "id": "sap.m.DatePicker",
@@ -2378,6 +2378,11 @@
 			"id": "sap.m.sample.DynamicDateRangeWithCustomOptions",
 			"name": "Dynamic Date Range With Custom Options (Experimental)",
 			"description": "This example shows the Dynamic Date Range control with custom options for interval or date selection."
+		},
+		{
+			"id": "sap.m.sample.DynamicDateRangeHidden",
+			"name": "Dynamic Date Range - Open by Another Control",
+			"description": "This example shows Dynamic Date Range which is opened by another control."
 		},
 		{
 		  "id": "sap.m.sample.DatePicker",

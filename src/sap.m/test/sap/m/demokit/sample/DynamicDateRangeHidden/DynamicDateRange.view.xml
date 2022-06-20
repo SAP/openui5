@@ -1,0 +1,37 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.m.sample.DynamicDateRangeHidden.DynamicDateRange"
+	xmlns="sap.m">
+
+	<Title
+		class="sapUiSmallMargin"
+		text="Open Dynamic Date Range by Another Control" />
+
+	<VBox class="sapUiSmallMargin" >
+		<Label text="By Button with text" />
+		<Button
+			ariaHasPopup="true"
+			text="Open Dynamic Date Range"
+			press=".openDynamicDateRange" />
+	</VBox>
+	<VBox class="sapUiSmallMargin" >
+		<Label text="By Button with icon" />
+		<Button
+			ariaHasPopup="true"
+			tooltip="Open Dynamic Date Range"
+			icon="sap-icon://check-availability"
+			press=".openDynamicDateRange" />
+	</VBox>
+	<VBox class="sapUiSmallMargin" >
+		<Label text="By Link" />
+		<Link
+			ariaHasPopup="true"
+			text="Open Dynamic Date Range"
+			press=".openDynamicDateRange" />
+	</VBox>
+	<DynamicDateRange
+		id="HiddenDDR"
+		hideInput="true"
+		change=".changeDateHandler" />
+
+</mvc:View>
