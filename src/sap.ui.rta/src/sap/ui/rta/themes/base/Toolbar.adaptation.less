@@ -6,13 +6,14 @@
 @_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder: @sapUiTextInverted; //#fff
 @_sap_ui_rta_Toolbar_Adaptation_BtnHoverBG: @sapUiSegmentedButtonHoverBackground; //#ec8b46
 @_sap_ui_rta_Toolbar_Adaptation_BorderColor: @sapUiLightBorder; //#808080
-@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: @sapUiCriticalText; // #df6e0c
-@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: @sapUiPositiveText; // #b5e7a8
+@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: lighten(@sapUiActive, 20%); //#f5c5a3
+@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: lighten(@sapUiContentHelpColor, 66%); //#b7ffb7
 @_sap_ui_rta_Toolbar_Adaptation_BoxShadow_DarkColor: @sapUiDarkShadowTint; // #000
 @_sap_ui_rta_Toolbar_Adaptation_BoxShadow_LightColor: @sapUiLightShadowTint; // #fff
 @_sap_ui_rta_Toolbar_Adaptation_BtnHoverText: @sapUiTextInverted; //#fff
 @_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverTextColor: @sapUiTextInverted; //#fff
 @_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol: @sapUiTextInverted; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_VersionHistoryHover: darken(@_sap_ui_rta_Toolbar_Adaptation_BaseColor, 5%);
 
 .sapUiRtaMode {
 
@@ -192,6 +193,9 @@
 
 		.sapUiRtaVersionsList {
 			border-bottom: 0.05rem solid @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+			ul > li:first-child.sapMLIBFocusable:focus {
+				outline: none;
+			}
 		}
 
 		.sapMLIBHighlightSuccess ~ .sapMLIBContent .sapMFeedListItemTextString {
@@ -200,17 +204,19 @@
 
 		.sapMLIBHighlightSuccess ~ .sapMLIBContent .sapMFeedListItemInfoText,
 		.sapMLIBHighlightSuccess ~ .sapMLIBContent .sapMFeedListItemTimestampText {
-			color: darken(@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor, 10%);
+			color: @_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor;
 		}
 
 		.sapMFeedListItemTextString {
 			color: @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+			cursor: pointer;
 		}
 
 		.sapMFeedListItemFooter,
 		.sapMFeedListItemTimestampText,
 		.sapMFeedListItemInfoText {
-			color: darken(@_sap_ui_rta_Toolbar_Adaptation_TextColor, 20%);
+			color: @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+			cursor: pointer;
 		}
 
 		.sapMPopoverArr:after,
@@ -219,6 +225,15 @@
 		.sapMListTblNavCol {
 			background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
 			border: 0;
+		}
+
+		.sapMLIBFocusable:focus {
+			outline: 0.0625rem dotted @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+			outline-offset: calc(-0.0625rem - 0.0625rem);
+		}
+
+		.sapMLIBHoverable:hover {
+			background: @_sap_ui_rta_Toolbar_Adaptation_VersionHistoryHover;
 		}
 	}
 }
