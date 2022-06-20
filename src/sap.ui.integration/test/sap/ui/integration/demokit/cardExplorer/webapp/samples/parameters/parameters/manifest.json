@@ -92,7 +92,7 @@
 				},
 				"path": "/value/"
 			},
-			"maxItems": "{{parameters.maxNumberOfOrders}}",
+			"maxItems": "{parameters>/maxNumberOfOrders/value}",
 
 			"row": {
 				"columns": [{

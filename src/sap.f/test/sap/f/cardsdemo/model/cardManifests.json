@@ -13,7 +13,7 @@
 					"status": {
 						"text": "Count"
 					},
-					"dataTimestamp": "{{parameters.NOW_ISO}}"
+					"dataTimestamp": "{parameters>/NOW_ISO}"
 				},
 				"type": "List",
 				"content": {}
@@ -110,7 +110,7 @@
 			"sap.card": {
 				"header": {
 					"title": "Card Title with dataTimestamp",
-					"dataTimestamp": "{{parameters.NOW_ISO}}"
+					"dataTimestamp": "{parameters>/NOW_ISO}"
 				},
 				"type": "List",
 				"content": {}
@@ -434,7 +434,7 @@
 						"state": "{state}"
 					},
 					"details": "{details}",
-					"dataTimestamp": "{{parameters.NOW_ISO}}",
+					"dataTimestamp": "{parameters>/NOW_ISO}",
 					"sideIndicators": [
 						{
 							"title": "Target",
@@ -578,7 +578,7 @@
 				"type": "Numeric",
 				"header": {
 					"title": "Numeric card with data timestamp",
-					"dataTimestamp": "{{parameters.NOW_ISO}}"
+					"dataTimestamp": "{parameters>/NOW_ISO}"
 				}
 			}
 		},
@@ -2126,6 +2126,144 @@
 				"type": "Object",
 				"header": {
 					"title": "Card with Date Range Filter",
+					"icon": {
+						"src": "sap-icon://filter"
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Values",
+							"items": [
+								{
+									"label": "range/start",
+									"value": "{filters>/f/range/start}"
+								},
+								{
+									"label": "range/end",
+									"value": "{filters>/f/range/end}"
+								},
+								{
+									"label": "rangeOData/start",
+									"value": "{filters>/f/rangeOData/start}"
+								},
+								{
+									"label": "rangeOData/end",
+									"value": "{filters>/f/rangeOData/end}"
+								},
+								{
+									"label": "value/option",
+									"value": "{filters>/f/value/option}"
+								},
+								{
+									"label": "value/values",
+									"value": "{filters>/f/value/values}"
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		"dateRangeFilterWithParameter": {
+			"sap.app": {
+				"id": "cardsdemo.filters.filter",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"configuration": {
+					"filters": {
+						"f": {
+							"type": "DateRange",
+							"value": "{parameters>/range/value}"
+						}
+					},
+					"parameters": {
+						"range": {
+							"value": {
+								"option": "dateRange",
+								"values": ["1997-05-01", "1997-05-31"]
+							}
+						}
+					}
+				},
+				"type": "Object",
+				"header": {
+					"title": "Card with Date Range Filter with Parameter",
+					"icon": {
+						"src": "sap-icon://filter"
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Values",
+							"items": [
+								{
+									"label": "range/start",
+									"value": "{filters>/f/range/start}"
+								},
+								{
+									"label": "range/end",
+									"value": "{filters>/f/range/end}"
+								},
+								{
+									"label": "rangeOData/start",
+									"value": "{filters>/f/rangeOData/start}"
+								},
+								{
+									"label": "rangeOData/end",
+									"value": "{filters>/f/rangeOData/end}"
+								},
+								{
+									"label": "value/option",
+									"value": "{filters>/f/value/option}"
+								},
+								{
+									"label": "value/values",
+									"value": "{filters>/f/value/values}"
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		"dateRangeFilterWithParameter2": {
+			"sap.app": {
+				"id": "cardsdemo.filters.filter",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"configuration": {
+					"filters": {
+						"f": {
+							"type": "DateRange",
+							"value": {
+								"option": "{parameters>/range/value}",
+								"values": ["1997-05-01", "1997-05-31"]
+							}
+						}
+					},
+					"parameters": {
+						"range": {
+							"value": "dateRange"
+						}
+					}
+				},
+				"type": "Object",
+				"header": {
+					"title": "Card with Date Range Filter with Parameter 2",
 					"icon": {
 						"src": "sap-icon://filter"
 					}

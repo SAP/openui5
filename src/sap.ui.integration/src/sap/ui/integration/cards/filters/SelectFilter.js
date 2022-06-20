@@ -90,7 +90,7 @@ sap.ui.define([
 		}
 
 		return {
-			value: this.getConfig().value
+			value: this._getSelect().getSelectedKey()
 		};
 	};
 
@@ -172,7 +172,7 @@ sap.ui.define([
 			template: this._oItemTemplate
 		});
 
-		oSelect.setSelectedKey(oConfig.value);
+		oSelect.setSelectedKey(BindingResolver.resolveValue(oConfig.value, this.getCardInstance()));
 
 		if (oLabel) {
 			oSelect.addAriaLabelledBy(oLabel);

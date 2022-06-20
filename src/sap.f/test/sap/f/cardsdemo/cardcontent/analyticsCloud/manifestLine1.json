@@ -56,7 +56,7 @@
 				"url": "./dataLine1.json",
 				"parameters": {
 					"story": "{parameters>/storyId/value}",
-					"sap-language": "{{parameters.LOCALE}}"
+					"sap-language": "{parameters>/LOCALE}"
 				},
 				"withCredentials": true
 			},

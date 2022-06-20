@@ -138,15 +138,18 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 
 	it("Filters", function () {
 		utils.navigateTo("Filters");
+		var aCardIds = ["card", "cardDateRange", "cardDateRangeParam", "cardDateRangeParam2"];
 
-		utils.takePictureOfElement({
-			control: {
-				viewNamespace: "sap.f.cardsdemo.view.",
-				viewName: "Filters",
-				interaction: "root",
-				id: "card"
-			}
-		}, "7_Filters");
+		aCardIds.forEach(function (sId) {
+			utils.takePictureOfElement({
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "Filters",
+					interaction: "root",
+					id: sId
+				}
+			}, "7_Filters_" + sId);
+		});
 
 		utils.navigateBack();
 	});
@@ -183,5 +186,23 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 				}
 			}, "9_Transparent_Card_" + sId);
 		});
+	});
+
+	it("Parameters", function () {
+		utils.navigateTo("Parameters");
+		var aCardIds = ["weatherCard", "manifestOnly", "listCard", "defaultFromManifest", "defaultFromManifestOverwrite"];
+
+		aCardIds.forEach(function (sId) {
+			utils.takePictureOfElement({
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "Parameters",
+					interaction: "root",
+					id: sId
+				}
+			}, "10_Parameters_" + sId);
+		});
+
+		utils.navigateBack();
 	});
 });

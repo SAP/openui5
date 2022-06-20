@@ -67,7 +67,7 @@
 						"src": "{icon}"
 					},
 					"title": {
-						"value": "{Name}, {{parameters.TODAY_ISO}}"
+						"value": "{Name}, {parameters>/TODAY_ISO}"
 					},
 					"description": {
 						"value": "Stationed in: {parameters>/city/value}, {parameters>/country/value}"
@@ -107,7 +107,7 @@
 						"src": "{icon}"
 					},
 					"title": {
-						"value": "{Name}, {{parameters.TODAY_ISO}}"
+						"value": "{Name}, {parameters>/TODAY_ISO}"
 					},
 					"description": {
 						"value": "Stationed in: {parameters>/city/value}, {parameters>/country/value}"
@@ -149,7 +149,7 @@
 						"src": "{icon}"
 					},
 					"title": {
-						"value": "{Name}, {{parameters.TODAY_ISO}}"
+						"value": "{Name}, {parameters>/TODAY_ISO}"
 					},
 					"description": {
 						"value": "Stationed in: {parameters>/city/value}, {parameters>/country/value}"
@@ -229,7 +229,7 @@
 						"src": "{icon}"
 					},
 					"title": {
-						"value": "{Name}, {{parameters.TODAY_ISO}}"
+						"value": "{Name}, {parameters>/TODAY_ISO}"
 					},
 					"description": {
 						"value": "Stationed in: {parameters>/city/value}, {parameters>/country/value}"

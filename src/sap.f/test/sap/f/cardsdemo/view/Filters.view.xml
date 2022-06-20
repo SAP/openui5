@@ -20,7 +20,17 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card manifest="{manifests>/filters/dateRangeFilter}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+			<w:Card id="cardDateRange" manifest="{manifests>/filters/dateRangeFilter}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card id="cardDateRangeParam" manifest="{manifests>/filters/dateRangeFilterWithParameter}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card id="cardDateRangeParam2" manifest="{manifests>/filters/dateRangeFilterWithParameter2}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
@@ -30,7 +40,6 @@
 			<Slider value="{settings>/cardWidth}"></Slider>
 			<w:Card
 				width="{settings>/cardWidth}%"
-			
 				manifest="{manifests>/filters/multipleFilters}"
 				baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:layoutData>

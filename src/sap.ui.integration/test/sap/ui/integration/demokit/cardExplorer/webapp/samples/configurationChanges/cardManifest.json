@@ -8,7 +8,7 @@
 		"configuration": {
 			"filters": {
 				"shipper": {
-					"value": "{{parameters.selectedShipperID}}",
+					"value": "{parameters>/selectedShipperID/value}",
 					"type": "string",
 					"label": "Shipper",
 					"item": {
@@ -79,7 +79,7 @@
 					}
 				]
 			},
-			"maxItems": "{{parameters.maxOrdersShown}}"
+			"maxItems": "{parameters>/maxOrdersShown/value}"
 		}
 	}
 }

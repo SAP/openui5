@@ -209,7 +209,7 @@
 				"title": "{CompanyName}",
 				"description": "{ContactName}",
 			},
-			"maxItems": "{{parameters.numberOfCustomers}}"
+			"maxItems": "{parameters>/numberOfCustomers/value}"
 		}
 	}
 }</pre>
@@ -232,7 +232,7 @@ oCard.setParameters(oParameters);</pre>
 		"type": "List",
 		"header": {
 			"title": "Some title",
-			"subTitle": "Date: {parameters>/TODAY_ISO/value}"
+			"subTitle": "Date: {parameters>/TODAY_ISO}"
 		},
 		...
 	}

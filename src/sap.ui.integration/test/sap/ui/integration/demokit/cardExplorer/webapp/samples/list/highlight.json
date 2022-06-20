@@ -81,7 +81,7 @@
 					}
 				]
 			},
-			"maxItems": "{{parameters.maxItems}}",
+			"maxItems": "{parameters>/maxItems/value}",
 			"item": {
 				"title": "{Name}",
 				"description": "{Description}",

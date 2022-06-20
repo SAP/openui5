@@ -30,7 +30,7 @@
 	"configuration": {
 	  "parameters": {
 		"toDate": {
-		  "value": "{{parameters.TODAY_ISO}}",
+		  "value": "{parameters>/TODAY_ISO}",
 		  "type": "date",
 		  "label": "To",
 		  "description": "End date for the searched period."
