@@ -22,8 +22,9 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @ui5-restricted
+	 * @public
+	 * @abstract
+	 *
 	 * @experimental Since 1.96.
 	 * @since 1.96
 	 * @alias sap.m.p13n.BasePanel

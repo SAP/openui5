@@ -3118,8 +3118,7 @@ sap.ui.define([
 	 * @since 1.97
 	 * @name sap.m.p13n.IContent
 	 * @interface
-	 * @private
-	 * @ui5-restricted
+	 * @public
 	 * @experimental
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3131,8 +3130,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.m.p13n.IContent.getTitle
-	 * @private
-	 * @ui5-restricted
+	 * @public
 	 * @experimental
 	 */
 
