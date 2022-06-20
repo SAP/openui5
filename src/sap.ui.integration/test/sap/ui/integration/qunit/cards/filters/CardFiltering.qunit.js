@@ -220,6 +220,123 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.test("stateChange event is fired for select filter", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oCard = this.oCard,
+			oHost = new Host();
+
+		assert.expect(2);
+
+		oCard.setHost(oHost);
+
+		oCard.attachEvent("_ready", function () {
+			var oFilterBar = this.oCard.getAggregation("_filterBar"),
+				oSelect = oFilterBar._getFilters()[0]._getSelect();
+
+			oCard.attachEventOnce("stateChanged", function () {
+				assert.ok(true, "stateChanged is called after select filter change");
+			});
+
+			oHost.attachEventOnce("cardStateChanged", function () {
+				assert.ok(true, "cardStateChanged for host is called after select filter change");
+
+				oHost.destroy();
+				done();
+			});
+
+			// Act - select filter
+			oSelect.onSelectionChange({
+				getParameter: function () {
+					return oSelect.getItems()[0];
+				}
+			});
+			Core.applyChanges();
+
+		}.bind(this));
+
+		// Act
+		oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
+		oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("stateChange event is fired for search field", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oCard = this.oCard,
+			oHost = new Host();
+
+		assert.expect(2);
+
+		oCard.setHost(oHost);
+
+		oCard.attachEvent("_ready", function () {
+			var oFilterBar = this.oCard.getAggregation("_filterBar"),
+				oSearchField = oFilterBar._getFilters()[2]._getSearchField();
+
+			oCard.attachEventOnce("stateChanged", function () {
+				assert.ok(true, "stateChanged is called after search filter change");
+			});
+
+			oHost.attachEventOnce("cardStateChanged", function () {
+				assert.ok(true, "cardStateChanged for host is called after search filter change");
+
+				oHost.destroy();
+				done();
+			});
+
+			// Act - search filter
+			oSearchField.getInputElement().value = "A";
+			oSearchField.onSearch();
+			Core.applyChanges();
+
+		}.bind(this));
+
+		// Act
+		oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
+		oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("stateChange event is fired for date range filter", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oCard = this.oCard,
+			oHost = new Host();
+
+		assert.expect(2);
+
+		oCard.setHost(oHost);
+
+		oCard.attachEvent("_ready", function () {
+			var oFilterBar = this.oCard.getAggregation("_filterBar"),
+				oDdr = oFilterBar._getFilters()[3]._getDdr();
+
+			oCard.attachEventOnce("stateChanged", function () {
+				assert.ok(true, "stateChanged is called after date range filter change");
+			});
+
+			oHost.attachEventOnce("cardStateChanged", function () {
+				assert.ok(true, "cardStateChanged for host is called after date range filter change");
+
+				oHost.destroy();
+				done();
+			});
+
+			// Act - Dynamic Date Range filter
+			oDdr._handleInputChange({
+				getParameter: function () {
+					return "Oct 4, 2021 - Oct 5, 2021";
+				}
+			});
+			Core.applyChanges();
+
+		}.bind(this));
+
+		// Act
+		oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
+		oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 	QUnit.module("Dynamic filters", {
 		beforeEach: function () {
 			this.oCard = new Card({

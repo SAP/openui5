@@ -290,6 +290,11 @@ sap.ui.define([
 	};
 
 	Header.prototype.onDataRequestComplete = function () {
+		var oCard = this.getCardInstance();
+		if (oCard) {
+			oCard._fireDataChange();
+		}
+
 		this.fireEvent("_dataReady");
 		this.hideLoadingPlaceholders();
 	};

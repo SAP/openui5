@@ -145,6 +145,20 @@ sap.ui.define([
 					},
 
 					/**
+					 * Fired when the state of a card is changed.
+					 * For example - the card is ready, new page is selected inside the card, a filter is changed or data is refreshed.
+					 * @experimental since 1.107
+					 */
+					cardStateChanged: {
+						parameters: {
+							/**
+							 * The card the changes are fired from.
+							 */
+							card: { type: "sap.ui.core.Control" }
+						}
+					},
+
+					/**
 					 * Fired when a message from channels like navigator.serviceWorker is received.
 					 * @experimental since 1.91
 					 */

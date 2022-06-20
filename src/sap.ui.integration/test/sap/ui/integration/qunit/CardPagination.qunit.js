@@ -2,9 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/Host",
 	"sap/ui/core/Core"
 ], function (
 	Card,
+	Host,
 	Core
 ) {
 	"use strict";
@@ -242,5 +244,42 @@ sap.ui.define([
 
 			oPaginator._next();
 		});
+	});
+
+	QUnit.test("Event stateChanged is fired", function (assert) {
+		var done = assert.async(),
+			oCard = new Card({
+				manifest: oManifestClientSide
+			}),
+			oHost = new Host();
+
+		assert.expect(2);
+
+		oCard.setHost(oHost);
+
+		oCard.attachEventOnce("_ready", function () {
+			var oPaginator = oCard.getAggregation("_footer").getAggregation("paginator");
+
+			oCard.attachEventOnce("stateChanged", function () {
+				assert.ok(true, "stateChanged is called after page change");
+			});
+
+			oHost.attachEventOnce("cardStateChanged", function () {
+				assert.ok(true, "cardStateChanged for host is called after page change");
+
+				// Clean up
+				oCard.destroy();
+				oHost.destroy();
+				done();
+			});
+
+			// Act
+			oPaginator._next();
+			Core.applyChanges();
+		});
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
 	});
 });
